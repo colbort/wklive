@@ -110,7 +110,7 @@ function selectLanguage(option: { locale?: AppLocale }) {
   justify-content: center;
   border: 0;
   border-radius: 50%;
-  background: #252733;
+  background: var(--control-bg-soft);
   color: var(--text);
 }
 
@@ -142,7 +142,7 @@ function selectLanguage(option: { locale?: AppLocale }) {
   gap: 14px;
   border: 0;
   border-radius: 20px;
-  background: #1d1f2a;
+  background: var(--panel-bg-alt);
   padding: 0 20px 0 24px;
   color: var(--text);
   text-align: left;
@@ -173,12 +173,12 @@ function selectLanguage(option: { locale?: AppLocale }) {
   display: block;
   width: 28px;
   height: 28px;
-  border: 2px solid #3a3d49;
+  border: 2px solid var(--border-strong);
   border-radius: 50%;
 }
 
 .language-row--active i {
-  border: 2px solid #00c313;
+  border: 2px solid var(--success-strong);
   box-shadow: none;
 }
 
@@ -187,7 +187,7 @@ function selectLanguage(option: { locale?: AppLocale }) {
   position: absolute;
   inset: 5px;
   border-radius: 50%;
-  background: #00c313;
+  background: var(--success-strong);
 }
 
 @media (min-width: 0) {

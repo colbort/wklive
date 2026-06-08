@@ -124,7 +124,7 @@ button {
   overflow: hidden;
   padding: 3px 8px;
   border-radius: 999px;
-  background: #4a4c58;
+  background: var(--selection-bg);
   color: var(--text);
   font-size: 0.55rem;
   font-weight: 800;

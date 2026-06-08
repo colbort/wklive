@@ -760,8 +760,8 @@ function markUpload(type: IdentityFileKey) {
 
 <style scoped>
 .register-page {
-  width: min(100%, var(--app-width, 414px));
-  max-width: var(--app-width, 414px);
+  width: min(100%, var(--app-width, 100vw));
+  max-width: var(--app-width, 100vw);
   height: 100dvh;
   min-height: 100dvh;
   overflow-x: hidden;
@@ -770,7 +770,7 @@ function markUpload(type: IdentityFileKey) {
   -webkit-overflow-scrolling: touch;
   margin: 0 auto;
   padding: 24px 28px 34px;
-  background: #0d0e17;
+  background: var(--page-bg-soft);
   color: var(--text);
 }
 
@@ -783,7 +783,7 @@ function markUpload(type: IdentityFileKey) {
   justify-content: space-between;
   margin: -24px -28px 0;
   padding: 24px 28px 10px;
-  background: #0d0e17;
+  background: var(--page-bg-soft);
 }
 
 .icon-button {
@@ -794,7 +794,7 @@ function markUpload(type: IdentityFileKey) {
   justify-content: center;
   border: 0;
   border-radius: 50%;
-  background: #252733;
+  background: var(--control-bg-soft);
   color: var(--text);
 }
 
@@ -880,7 +880,7 @@ function markUpload(type: IdentityFileKey) {
   left: calc(50% + 24px);
   width: calc(100% - 28px);
   height: 3px;
-  background: #2a2c36;
+  background: var(--control-bg-muted);
 }
 
 .step-item span {
@@ -892,18 +892,18 @@ function markUpload(type: IdentityFileKey) {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #666973;
+  background: var(--selection-bg-muted);
   color: var(--text);
   font-size: 1rem;
 }
 
 .step-item.active span {
-  background: #f2fff2;
+  background: var(--text-strong);
   color: transparent;
 }
 
 .step-item.done span {
-  background: #00c313;
+  background: var(--success-strong);
   font-size: 0;
 }
 
@@ -915,18 +915,18 @@ function markUpload(type: IdentityFileKey) {
 
 .step-status-svg--done {
   fill: none;
-  stroke: #fff;
+  stroke: var(--text-strong);
   stroke-width: 2.4;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .step-status-svg--active {
-  fill: #00c313;
+  fill: var(--success-strong);
 }
 
 .step-status-svg--active circle:last-child {
-  fill: #fff;
+  fill: var(--text-strong);
 }
 
 .step-item em {
@@ -958,7 +958,7 @@ function markUpload(type: IdentityFileKey) {
 
 .step-panel p {
   margin: -16px 0 14px;
-  color: #8f9098;
+  color: var(--text-subtle);
   font-size: 1.1rem;
   font-weight: 800;
 }
@@ -990,7 +990,7 @@ function markUpload(type: IdentityFileKey) {
   align-items: center;
   gap: 14px;
   border-radius: 28px;
-  background: #20212b;
+  background: var(--panel-bg-soft);
   padding: 0 28px;
 }
 
@@ -1006,7 +1006,7 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .auth-field input::placeholder {
-  color: #8f9098;
+  color: var(--text-subtle);
 }
 
 .field-action {
@@ -1017,7 +1017,7 @@ function markUpload(type: IdentityFileKey) {
   justify-content: center;
   border: 0;
   background: transparent;
-  color: #9b9ca4;
+  color: var(--text-placeholder);
 }
 
 .field-action--hidden {
@@ -1071,18 +1071,18 @@ function markUpload(type: IdentityFileKey) {
 .strength-bars span {
   height: 5px;
   border-radius: 5px;
-  background: #1e202b;
+  background: var(--panel-bg-alt);
 }
 
 .strength-bars span.active {
-  background: #00c313;
+  background: var(--success-strong);
 }
 
 .agree-control {
   display: inline-flex;
   align-items: center;
   gap: 14px;
-  color: #8f9098;
+  color: var(--text-subtle);
   font-size: 1.2rem;
   font-weight: 800;
 }
@@ -1097,7 +1097,7 @@ function markUpload(type: IdentityFileKey) {
   width: 30px;
   height: 30px;
   place-items: center;
-  border: 2px solid #00c313;
+  border: 2px solid var(--success-strong);
   border-radius: 8px;
 }
 
@@ -1109,7 +1109,7 @@ function markUpload(type: IdentityFileKey) {
 
 .agree-control span svg path {
   fill: none;
-  stroke: #00c313;
+  stroke: var(--success-strong);
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2.6;
@@ -1125,7 +1125,7 @@ function markUpload(type: IdentityFileKey) {
 
 .agree-control b,
 .auth-switch button {
-  color: #00c313;
+  color: var(--success-strong);
 }
 
 .primary-button {
@@ -1134,7 +1134,7 @@ function markUpload(type: IdentityFileKey) {
   margin-top: 34px;
   border: 0;
   border-radius: 50px;
-  background: #00c313;
+  background: var(--success-strong);
   color: var(--text);
   font-size: 1.5rem;
   font-weight: 900;
@@ -1146,7 +1146,7 @@ function markUpload(type: IdentityFileKey) {
 
 .auth-error {
   margin: 14px 0 -10px;
-  color: #ff6666;
+  color: var(--danger-text);
   font-size: 0.8rem;
   font-weight: 700;
 }
@@ -1154,7 +1154,7 @@ function markUpload(type: IdentityFileKey) {
 .auth-switch {
   margin: 28px 0 0;
   text-align: center;
-  color: #8f9098;
+  color: var(--text-subtle);
   font-size: 1rem;
   font-weight: 800;
 }
@@ -1184,9 +1184,9 @@ function markUpload(type: IdentityFileKey) {
   min-width: 188px;
   border: 0;
   border-radius: 42px;
-  background: #20212b;
+  background: var(--panel-bg-soft);
   padding: 26px;
-  color: #00c313;
+  color: var(--success-strong);
   text-align: center;
   font-size: 1.3rem;
   font-weight: 900;
@@ -1205,10 +1205,10 @@ function markUpload(type: IdentityFileKey) {
 .code-boxes input {
   width: 100%;
   aspect-ratio: 0.78;
-  border: 2px solid #3a3c47;
+  border: 2px solid var(--border-strong);
   border-radius: 28px;
   outline: 0;
-  background: #2a2b35;
+  background: var(--control-bg-muted);
   color: var(--text);
   text-align: center;
   font-size: 1.6rem;
@@ -1216,11 +1216,11 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .code-boxes input:focus {
-  border-color: #00c313;
+  border-color: var(--success-strong);
 }
 
 .required-field > span {
-  color: #ff4b43;
+  color: var(--danger-strong);
   font-size: 1.2rem;
   font-weight: 900;
 }
@@ -1279,7 +1279,7 @@ function markUpload(type: IdentityFileKey) {
   min-height: 146px;
   border: 0;
   border-radius: 22px;
-  background: #2a2b35;
+  background: var(--control-bg-muted);
   color: var(--text);
   overflow: hidden;
 }
@@ -1295,7 +1295,7 @@ function markUpload(type: IdentityFileKey) {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #00c313;
+  background: var(--success-strong);
   transform: translate(-50%, -50%);
 }
 
@@ -1303,7 +1303,7 @@ function markUpload(type: IdentityFileKey) {
   content: '';
   position: absolute;
   inset: 10px;
-  border: 3px solid #fff;
+  border: 3px solid var(--text-strong);
   border-radius: 50%;
 }
 
@@ -1326,7 +1326,7 @@ function markUpload(type: IdentityFileKey) {
   position: absolute;
   display: block;
   border-radius: 6px;
-  background: #7c7d76;
+  background: var(--selection-bg-muted);
 }
 
 .upload-card-art--front i:nth-child(1) {
@@ -1367,7 +1367,7 @@ function markUpload(type: IdentityFileKey) {
   left: 8px;
   height: 8px;
   border-radius: 8px;
-  background: #7c7d76;
+  background: var(--selection-bg-muted);
 }
 
 .upload-card-art--front::before {
@@ -1449,7 +1449,7 @@ function markUpload(type: IdentityFileKey) {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   border-radius: 24px;
-  background: #20212b;
+  background: var(--panel-bg-soft);
   padding: 24px;
 }
 
@@ -1458,7 +1458,7 @@ function markUpload(type: IdentityFileKey) {
   min-width: 0;
   justify-items: center;
   gap: 8px;
-  color: #8f9098;
+  color: var(--text-subtle);
   font-size: 0.85rem;
   font-weight: 900;
   line-height: 1.1;
@@ -1467,11 +1467,11 @@ function markUpload(type: IdentityFileKey) {
 
 .require-box b {
   margin-right: 8px;
-  color: #00c313;
+  color: var(--success-strong);
 }
 
 .require-box span:not(:first-child) b {
-  color: #ff5c4d;
+  color: var(--danger-strong);
 }
 
 .require-thumb {
@@ -1480,7 +1480,7 @@ function markUpload(type: IdentityFileKey) {
   width: 76px;
   height: 46px;
   border-radius: 12px;
-  background: #454650;
+  background: var(--selection-bg);
   overflow: hidden;
 }
 
@@ -1489,7 +1489,7 @@ function markUpload(type: IdentityFileKey) {
   content: '';
   position: absolute;
   border-radius: 4px;
-  background: #8b8c8e;
+  background: var(--muted);
 }
 
 .require-thumb::before {
@@ -1522,7 +1522,7 @@ function markUpload(type: IdentityFileKey) {
   width: auto;
   height: auto;
   border-radius: 12px;
-  background: linear-gradient(100deg, transparent 18%, #fff 54%, transparent 80%);
+  background: linear-gradient(100deg, transparent 18%, var(--text-strong) 54%, transparent 80%);
   opacity: 0.78;
 }
 
@@ -1534,7 +1534,7 @@ function markUpload(type: IdentityFileKey) {
   align-items: center;
   justify-content: center;
   border-radius: 24px;
-  background: #fff;
+  background: var(--text-strong);
 }
 
 .qr-card img {
@@ -1551,7 +1551,7 @@ function markUpload(type: IdentityFileKey) {
   justify-content: space-between;
   gap: 14px;
   border-radius: 22px;
-  background: #2a2b35;
+  background: var(--control-bg-muted);
   padding-left: 28px;
 }
 
@@ -1569,7 +1569,7 @@ function markUpload(type: IdentityFileKey) {
   min-width: 146px;
   border: 0;
   border-radius: 22px;
-  background: #00c313;
+  background: var(--success-strong);
   color: var(--text);
   font-size: 1.3rem;
   font-weight: 900;

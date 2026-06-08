@@ -145,8 +145,8 @@ function displayPercent() {
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  background: #202631;
-  color: #fff;
+  background: var(--panel-bg-muted);
+  color: var(--text-strong);
   font-size: 0.72rem;
   font-weight: 700;
 }
@@ -203,7 +203,7 @@ function displayPercent() {
   padding: 4px 8px;
   border-radius: 999px;
   background: var(--success);
-  color: #fff;
+  color: var(--text-strong);
   font-size: 0.64rem;
   font-style: normal;
   font-weight: 600;
@@ -212,16 +212,16 @@ function displayPercent() {
 
 .quote-row--down .quote-row__price,
 .quote-row--down .quote-row__change strong {
-  color: #ff4f43;
+  color: var(--danger-strong);
 }
 
 .quote-row--down .quote-row__change em {
-  background: #ff4f43;
-  color: #fff;
+  background: var(--danger-strong);
+  color: var(--text-strong);
 }
 
 .quote-row--active {
-  background: rgba(255, 255, 255, 0.015);
+  background: var(--row-hover-bg);
 }
 
 .quote-row--sheet {

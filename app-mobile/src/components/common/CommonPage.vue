@@ -280,7 +280,7 @@ function onRightClick() {
 
 <style scoped>
 .page-414 {
-  width: min(100%, var(--app-width, 414px));
+  width: var(--app-width, 100vw);
   height: 100%;
   margin: 0 auto;
   background: var(--page-bg);
@@ -362,9 +362,9 @@ function onRightClick() {
 /* 左侧返回按钮 */
 .header-left {
   position: absolute;
-  left: 24px;
+  left: var(--header-side-space);
   top: 0;
-  width: 44px;
+  width: var(--header-action-size);
   height: var(--nav-height);
   border: none;
   outline: none;
@@ -383,8 +383,8 @@ function onRightClick() {
 }
 
 .back-icon-svg {
-  width: 24px;
-  height: 24px;
+  width: var(--header-icon-size);
+  height: var(--header-icon-size);
   display: block;
   color: var(--text);
 }
@@ -392,8 +392,8 @@ function onRightClick() {
 /* 标题永远居中 */
 .header-title {
   position: absolute;
-  left: 100px;
-  right: 100px;
+  left: var(--header-title-inset);
+  right: var(--header-title-inset);
   top: 0;
   height: var(--nav-height);
   display: flex;
@@ -412,10 +412,10 @@ function onRightClick() {
 /* 右侧按钮，可没有 */
 .header-right {
   position: absolute;
-  right: 24px;
+  right: var(--header-side-space);
   top: 0;
-  min-width: 44px;
-  max-width: 120px;
+  min-width: var(--header-action-size);
+  max-width: clamp(108px, 6rem, 144px);
   height: var(--nav-height);
   border: none;
   outline: none;
@@ -436,15 +436,15 @@ function onRightClick() {
 }
 
 .right-text {
-  max-width: 108px;
+  max-width: clamp(96px, 5.4rem, 130px);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .right-icon {
-  width: 22px;
-  height: 22px;
+  width: var(--header-icon-size);
+  height: var(--header-icon-size);
   object-fit: contain;
   display: block;
 }

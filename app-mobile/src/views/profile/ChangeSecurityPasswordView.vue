@@ -214,7 +214,7 @@ async function submitPassword() {
   justify-content: center;
   border: 0;
   border-radius: 999px;
-  background: #242631;
+  background: var(--control-bg);
   color: var(--text);
 }
 
@@ -236,7 +236,7 @@ async function submitPassword() {
   min-height: 76px;
   padding: 0 24px;
   border-radius: 22px;
-  background: #292a33;
+  background: var(--field-bg);
 }
 
 .password-field input {
@@ -250,7 +250,7 @@ async function submitPassword() {
 }
 
 .password-field input::placeholder {
-  color: #8d8e95;
+  color: var(--text-subtle);
 }
 
 .eye-button {
@@ -261,7 +261,7 @@ async function submitPassword() {
   justify-content: center;
   border: 0;
   background: transparent;
-  color: #8d8e95;
+  color: var(--text-subtle);
 }
 
 .eye-button span {
@@ -304,22 +304,22 @@ async function submitPassword() {
 .strength-bars span {
   height: 4px;
   border-radius: 999px;
-  background: #171923;
+  background: var(--panel-bg-deep);
 }
 
 .strength-bars span.active {
-  background: #00c313;
+  background: var(--success-strong);
 }
 
 .form-message {
   margin: -6px 0 0;
-  color: #00c313;
+  color: var(--success-strong);
   font-size: 0.7rem;
   font-weight: 700;
 }
 
 .form-message--error {
-  color: #ff6868;
+  color: var(--danger-text);
 }
 
 .submit-button {
@@ -327,7 +327,7 @@ async function submitPassword() {
   margin-top: 12px;
   border: 0;
   border-radius: 999px;
-  background: #00bd09;
+  background: var(--success-deep);
   color: var(--text);
   font-size: 1.2rem;
   font-weight: 900;

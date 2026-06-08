@@ -168,8 +168,8 @@ function submitReset() {
 
 <style scoped>
 .auth-page {
-  width: min(100%, var(--app-width, 414px));
-  max-width: var(--app-width, 414px);
+  width: min(100%, var(--app-width, 100vw));
+  max-width: var(--app-width, 100vw);
   height: 100dvh;
   min-height: 100dvh;
   overflow-x: hidden;
@@ -178,7 +178,7 @@ function submitReset() {
   -webkit-overflow-scrolling: touch;
   margin: 0 auto;
   padding: 24px 28px 42px;
-  background: #0d0e17;
+  background: var(--page-bg-soft);
   color: var(--text);
 }
 
@@ -191,7 +191,7 @@ function submitReset() {
   justify-content: space-between;
   margin: -24px -28px 0;
   padding: 24px 28px 10px;
-  background: #0d0e17;
+  background: var(--page-bg-soft);
 }
 
 .auth-topbar__right {
@@ -207,7 +207,7 @@ function submitReset() {
   justify-content: center;
   border: 0;
   border-radius: 50%;
-  background: #252733;
+  background: var(--control-bg-soft);
   color: var(--text);
 }
 
@@ -297,7 +297,7 @@ function submitReset() {
   align-items: center;
   gap: 14px;
   border-radius: 28px;
-  background: #20212b;
+  background: var(--panel-bg-soft);
   padding: 0 22px;
 }
 
@@ -313,7 +313,7 @@ function submitReset() {
 }
 
 .auth-field input::placeholder {
-  color: #8f9098;
+  color: var(--text-subtle);
 }
 
 .field-action {
@@ -324,7 +324,7 @@ function submitReset() {
   justify-content: center;
   border: 0;
   background: transparent;
-  color: #9b9ca4;
+  color: var(--text-placeholder);
 }
 
 .eye-off-icon {
@@ -368,16 +368,16 @@ function submitReset() {
 .strength-bars span {
   height: 5px;
   border-radius: 5px;
-  background: #1e202b;
+  background: var(--panel-bg-alt);
 }
 
 .strength-bars span.active {
-  background: #00c313;
+  background: var(--success-strong);
 }
 
 .auth-error {
   margin: -14px 0 0;
-  color: #ff6666;
+  color: var(--danger-text);
   font-size: 0.8rem;
   font-weight: 700;
 }
@@ -387,7 +387,7 @@ function submitReset() {
   margin-top: 34px;
   border: 0;
   border-radius: 50px;
-  background: #00c313;
+  background: var(--success-strong);
   color: var(--text);
   font-size: 1.5rem;
   font-weight: 900;
@@ -395,7 +395,7 @@ function submitReset() {
 
 .login-link {
   justify-self: center;
-  color: #00c313;
+  color: var(--success-strong);
   font-size: 1.3rem;
   font-weight: 900;
   text-decoration: none;
@@ -411,7 +411,7 @@ function submitReset() {
   min-height: 96px;
   border: 0;
   border-radius: 48px;
-  background: #464750;
+  background: var(--selection-bg);
   color: var(--text);
   font-size: 1.4rem;
   font-weight: 900;
@@ -630,7 +630,7 @@ function submitReset() {
   .auth-field {
     min-height: 58px;
     border-radius: 18px;
-    background: #1f212c;
+    background: var(--panel-bg-alt);
     padding: 0 14px;
   }
 

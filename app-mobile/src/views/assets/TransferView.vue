@@ -407,7 +407,7 @@ input {
   min-height: 56px;
   padding: 0 16px;
   border-radius: 14px;
-  background: #454751;
+  background: var(--selection-bg);
   text-align: left;
 }
 
@@ -419,7 +419,7 @@ input {
 .transfer-picker i {
   width: 1px;
   height: 32px;
-  background: #666975;
+  background: var(--selection-bg-muted);
 }
 
 .transfer-picker em {
@@ -433,7 +433,7 @@ input {
 }
 
 .transfer-picker b {
-  color: #c1c3ca;
+  color: var(--text-soft);
   font-size: 0.75rem;
 }
 

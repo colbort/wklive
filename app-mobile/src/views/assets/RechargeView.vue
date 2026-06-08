@@ -510,7 +510,7 @@ h2 {
   margin: 24px auto 22px;
   place-items: center;
   border-radius: 22px;
-  background: #fff;
+  background: var(--text-strong);
 }
 
 .qr-card img {
@@ -577,7 +577,7 @@ h2 {
 
 .divider {
   margin: 24px -18px 28px;
-  border-top: 1px dashed #2c2f3a;
+  border-top: 1px dashed var(--border-muted);
 }
 
 .field-block {

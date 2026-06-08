@@ -271,12 +271,12 @@ path {
 }
 
 .app-icon--nav-home .app-icon__nav-active-cut {
-  fill: #08110a;
+  fill: var(--nav-symbol-fill);
 }
 
 .app-icon__fill {
-  fill: #c5c8d0;
-  stroke: #c5c8d0;
+  fill: var(--text-icon-muted);
+  stroke: var(--text-icon-muted);
 }
 
 .app-icon__solid {
@@ -285,7 +285,7 @@ path {
 }
 
 .app-icon__cut {
-  stroke: #252733;
+  stroke: var(--control-bg-soft);
   stroke-width: 1.4;
 }
 </style>

@@ -152,7 +152,7 @@ function formatTime(value: number) {
   display: flex;
   gap: 22px;
   padding: 20px 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--divider-soft);
   align-items: flex-start;
 }
 
@@ -197,7 +197,7 @@ button.active::after {
 }
 
 .trade-orders-panel__state--error {
-  color: #ff6b5f;
+  color: var(--danger);
 }
 
 .trade-orders-panel__list {
@@ -216,7 +216,7 @@ button.active::after {
   min-width: 0;
   padding: 12px;
   border-radius: 8px;
-  background: #151823;
+  background: var(--page-bg-soft);
 }
 
 .trade-orders-panel__item div {

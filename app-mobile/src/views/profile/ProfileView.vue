@@ -248,7 +248,7 @@ function goLogin() {
   padding: 10px 24px calc(88px + env(safe-area-inset-bottom));
   overflow-x: hidden;
   background: var(--page-bg);
-  color: #f7f8fb;
+  color: var(--text);
 }
 
 .profile-header {
@@ -308,8 +308,8 @@ function goLogin() {
 }
 
 .profile-avatar--image {
-  background: #1b1d27;
-  border-color: rgba(255, 255, 255, 0.1);
+  background: var(--panel-bg);
+  border-color: var(--divider-visible);
 }
 
 .profile-user__info {
@@ -329,7 +329,7 @@ function goLogin() {
 
 .profile-user__info p {
   margin: 0;
-  color: #9396a1;
+  color: var(--muted);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -351,7 +351,7 @@ function goLogin() {
 
 .profile-hero p {
   margin: 0;
-  color: #9b9daa;
+  color: var(--text-placeholder);
   font-size: 0.85rem;
   font-weight: 700;
 }
@@ -377,7 +377,7 @@ function goLogin() {
   align-items: center;
   gap: 10px;
   flex: none;
-  color: #04c704;
+  color: var(--success-strong);
   font-size: 0.8rem;
   font-weight: 500;
 }
@@ -392,8 +392,8 @@ function goLogin() {
   width: 14px;
   height: 14px;
   transform: rotate(-45deg);
-  border-right: 2px solid #8b8e99;
-  border-bottom: 2px solid #8b8e99;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
 }
 
 .profile-menu__arrow {
@@ -410,17 +410,17 @@ function goLogin() {
 .profile-actions > button {
   min-height: 52px;
   border-radius: 999px;
-  color: #fff;
+  color: var(--text-strong);
   font-size: 0.9rem;
   font-weight: 600;
 }
 
 .profile-actions > .profile-actions__login {
-  background: #272832;
+  background: var(--control-bg-soft);
 }
 
 .profile-actions > .profile-actions__register {
-  background: #04b900;
+  background: var(--success-deep);
 }
 
 .profile-menu {
@@ -436,7 +436,7 @@ function goLogin() {
   min-height: 54px;
   padding: 0 18px;
   border-radius: 17px;
-  background: #1b1d27;
+  background: var(--panel-bg);
   text-align: left;
 }
 
@@ -477,7 +477,7 @@ function goLogin() {
 .profile-menu__value {
   grid-column: 4;
   overflow: hidden;
-  color: #f7f8fb;
+  color: var(--text);
   font-size: 0.8rem;
   text-align: right;
   text-overflow: ellipsis;

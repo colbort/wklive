@@ -433,7 +433,7 @@ input {
 }
 
 .asset-input--unit i {
-  color: #c9cbd3;
+  color: var(--text-soft);
   font-style: normal;
   font-weight: 800;
 }
@@ -521,7 +521,7 @@ input {
 .bank-withdraw-divider {
   height: 1px;
   margin: 8px 0 24px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--divider-soft);
 }
 
 .withdraw-summary {

@@ -134,19 +134,20 @@ function changeLanguage() {
             </RouterLink>
           </div>
 
-          <img class="ave-hero__portal" :src="heroPortalImage" alt="">
+          <img class="ave-hero__portal" :src="heroPortalImage" alt="" />
         </section>
 
         <section class="ave-section ave-section--smart">
           <h2>
-            {{ t('home.smartTradingPrefix') }}<span>{{ t('home.smartTradingEmphasis') }}</span>{{ t('home.smartTradingSuffix') }}
+            {{ t('home.smartTradingPrefix') }}<span>{{ t('home.smartTradingEmphasis') }}</span
+            >{{ t('home.smartTradingSuffix') }}
           </h2>
           <p>{{ t('home.alwaysTrading') }}</p>
-          <img class="ave-section__phones" :src="smartPhonesImage" alt="">
+          <img class="ave-section__phones" :src="smartPhonesImage" alt="" />
 
           <div class="ave-feature-list">
             <article v-for="item in featureCards" :key="item.titleKey" class="ave-feature-card">
-              <img :src="item.icon" alt="">
+              <img :src="item.icon" alt="" />
               <div>
                 <h3>{{ t(item.titleKey) }}</h3>
                 <p>{{ t(item.descKey) }}</p>
@@ -157,18 +158,19 @@ function changeLanguage() {
 
         <section class="ave-section ave-section--strategy">
           <h2>
-            {{ t('home.strategyPrefix') }}<span>{{ t('home.strategyEmphasis') }}</span>{{ t('home.strategySuffix') }}
+            {{ t('home.strategyPrefix') }}<span>{{ t('home.strategyEmphasis') }}</span
+            >{{ t('home.strategySuffix') }}
           </h2>
           <p>{{ t('home.strategySub') }}</p>
 
           <div class="ave-strategy-scene">
-            <img class="ave-strategy-scene__orders" :src="strategyOrdersImage" alt="">
-            <img class="ave-strategy-scene__chart" :src="strategyChartImage" alt="">
+            <img class="ave-strategy-scene__orders" :src="strategyOrdersImage" alt="" />
+            <img class="ave-strategy-scene__chart" :src="strategyChartImage" alt="" />
           </div>
 
           <div class="ave-flat-list">
             <article v-for="item in strategyFeatures" :key="item.titleKey" class="ave-flat-item">
-              <img :src="item.icon" alt="">
+              <img :src="item.icon" alt="" />
               <div>
                 <h3>{{ t(item.titleKey) }}</h3>
                 <p>{{ t(item.descKey) }}</p>
@@ -179,7 +181,7 @@ function changeLanguage() {
 
         <section class="ave-section ave-section--contract">
           <h2>{{ t('home.contractTitle') }}</h2>
-          <img class="ave-contract__phones" :src="contractPhonesImage" alt="">
+          <img class="ave-contract__phones" :src="contractPhonesImage" alt="" />
 
           <div class="ave-toggle-card">
             <article v-for="item in contractFeatures" :key="item.titleKey" class="ave-toggle-item">
@@ -200,7 +202,7 @@ function changeLanguage() {
 
           <div class="ave-trust-card">
             <article v-for="item in trustFeatures" :key="item.titleKey" class="ave-trust-item">
-              <img :src="item.icon" alt="">
+              <img :src="item.icon" alt="" />
               <div>
                 <h3>{{ t(item.titleKey) }}</h3>
                 <p>{{ t(item.descKey) }}</p>
@@ -215,7 +217,7 @@ function changeLanguage() {
           <RouterLink to="/trades" class="ave-home__cta">
             {{ t('home.startTrading') }}
           </RouterLink>
-          <img class="ave-reward__image" :src="rewardImage" alt="">
+          <img class="ave-reward__image" :src="rewardImage" alt="" />
         </section>
       </section>
     </template>
@@ -223,6 +225,22 @@ function changeLanguage() {
 </template>
 
 <style scoped>
+.ave-home-tabbar,
+.ave-home {
+  --home-green: rgb(0 185 15);
+  --home-bg: rgb(11 14 24);
+  --home-muted: rgb(255 255 255 / 55%);
+  --home-grid-line: rgb(124 146 170 / 8%);
+  --home-header-bg: rgb(10 13 22 / 96%);
+  --home-action-bg: rgb(29 32 44 / 90%);
+  --home-aurora: rgb(78 92 78 / 28%);
+  --home-card-border: rgb(143 146 160 / 50%);
+  --home-card-bg-start: rgb(40 43 55 / 80%);
+  --home-card-bg-end: rgb(21 24 34 / 72%);
+  --home-feature-bg-start: rgb(50 53 66 / 78%);
+  --home-feature-bg-end: rgb(24 27 38 / 72%);
+}
+
 .ave-home-tabbar {
   display: flex;
   align-items: center;
@@ -231,8 +249,8 @@ function changeLanguage() {
   height: 72px;
   padding: 8px 18px;
   background:
-    linear-gradient(rgba(124, 146, 170, 0.08) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(124, 146, 170, 0.08) 2px, transparent 2px), rgba(10, 13, 22, 0.96);
+    linear-gradient(var(--home-grid-line) 2px, transparent 2px),
+    linear-gradient(90deg, var(--home-grid-line) 2px, transparent 2px), var(--home-header-bg);
   background-size:
     104px 104px,
     104px 104px,
@@ -294,7 +312,7 @@ function changeLanguage() {
   place-items: center;
   border: 0;
   border-radius: 50%;
-  background: rgba(29, 32, 44, 0.9);
+  background: var(--home-action-bg);
   color: var(--text);
   font: inherit;
   font-size: 0.95rem;
@@ -306,16 +324,13 @@ function changeLanguage() {
 }
 
 .ave-home {
-  --home-green: #00b90f;
-  --home-bg: #0b0e18;
-  --home-muted: rgba(255, 255, 255, 0.55);
-  width: min(100%, var(--app-width, 414px));
+  width: min(100%, var(--app-width, 100vw));
   margin: 0 auto;
   overflow: hidden;
   background:
-    radial-gradient(circle at 18% 2%, rgba(78, 92, 78, 0.28), transparent 24rem),
-    linear-gradient(rgba(124, 146, 170, 0.08) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(124, 146, 170, 0.08) 2px, transparent 2px), var(--home-bg);
+    radial-gradient(circle at 18% 2%, var(--home-aurora), transparent 24rem),
+    linear-gradient(var(--home-grid-line) 2px, transparent 2px),
+    linear-gradient(90deg, var(--home-grid-line) 2px, transparent 2px), var(--home-bg);
   background-size:
     auto,
     206px 206px,
@@ -395,7 +410,7 @@ function changeLanguage() {
 .ave-hero__portal {
   position: absolute;
   left: 50%;
-  width: min(100%, var(--app-width, 414px));
+  width: min(100%, var(--app-width, 100vw));
   transform: translateX(-50%);
 }
 
@@ -421,7 +436,7 @@ function changeLanguage() {
 
 .ave-section__phones {
   display: block;
-  width: min(100%, var(--app-width, 414px));
+  width: min(100%, var(--app-width, 100vw));
   margin: 28px 0 16px 50%;
   transform: translateX(-50%);
 }
@@ -430,9 +445,9 @@ function changeLanguage() {
 .ave-flat-list,
 .ave-trust-card,
 .ave-toggle-card {
-  border: 1px solid rgba(143, 146, 160, 0.5);
-  background: linear-gradient(135deg, rgba(40, 43, 55, 0.8), rgba(21, 24, 34, 0.72));
-  box-shadow: inset 0 0 80px rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--home-card-border);
+  background: linear-gradient(135deg, var(--home-card-bg-start), var(--home-card-bg-end));
+  box-shadow: inset 0 0 80px var(--white-alpha-02);
 }
 
 .ave-feature-list {
@@ -451,10 +466,10 @@ function changeLanguage() {
   min-height: 84px;
   padding: 12px 18px;
   text-align: left;
-  border: 1px solid rgba(143, 146, 160, 0.5);
+  border: 1px solid var(--home-card-border);
   border-radius: 16px;
   background:
-    linear-gradient(90deg, rgba(50, 53, 66, 0.78), rgba(24, 27, 38, 0.72)),
+    linear-gradient(90deg, var(--home-feature-bg-start), var(--home-feature-bg-end)),
     url('../../../assets/home/boxbg.png') center / cover no-repeat;
 }
 
@@ -501,7 +516,7 @@ function changeLanguage() {
   left: 50%;
   top: 0;
   z-index: 2;
-  width: min(100%, var(--app-width, 414px));
+  width: min(100%, var(--app-width, 100vw));
   transform: translateX(-50%);
 }
 
@@ -528,7 +543,7 @@ function changeLanguage() {
   gap: 12px;
   padding: 18px 2px;
   text-align: left;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--divider-soft);
 }
 
 .ave-flat-item:first-child {
@@ -548,7 +563,7 @@ function changeLanguage() {
 
 .ave-contract__phones {
   display: block;
-  width: min(100%, var(--app-width, 414px));
+  width: min(100%, var(--app-width, 100vw));
   margin: 26px 0 20px 50%;
   transform: translateX(-50%);
 }
@@ -567,7 +582,7 @@ function changeLanguage() {
   gap: 12px;
   align-items: start;
   padding: 15px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--divider-soft);
 }
 
 .ave-toggle-item:first-child {
@@ -591,7 +606,7 @@ function changeLanguage() {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--text-strong);
 }
 
 .ave-section--trust {
@@ -633,7 +648,7 @@ function changeLanguage() {
 
 .ave-reward__image {
   display: block;
-  width: min(100%, var(--app-width, 414px));
+  width: min(100%, var(--app-width, 100vw));
   margin: 34px 0 0 50%;
   transform: translateX(-50%);
 }

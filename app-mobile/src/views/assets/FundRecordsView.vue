@@ -157,7 +157,7 @@ function coinIconText(coin: string) {
 }
 
 function coinIconStyle(coin: string) {
-  return { backgroundColor: configForCoin(coin)?.iconBgColor || '#16ad77' }
+  return { backgroundColor: configForCoin(coin)?.iconBgColor || 'var(--coin-fallback-bg)' }
 }
 
 function formatRecordAmount(value: number, currency: string) {
@@ -328,7 +328,7 @@ button {
   height: 46px;
   margin-top: 15px;
   border-radius: 50%;
-  background: #20232e;
+  background: var(--panel-bg-muted);
 }
 
 :deep(.header-title) {
@@ -340,7 +340,7 @@ button {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   height: var(--menu-bar-height);
-  border-bottom: 1px solid #1f212b;
+  border-bottom: 1px solid var(--border-subtle);
   background: var(--page-bg);
 }
 
@@ -364,7 +364,7 @@ button {
   min-width: 112px;
   min-height: 60px;
   padding: 0 24px;
-  border: 1px solid #282a34;
+  border: 1px solid var(--border-soft);
   border-radius: 999px;
   color: var(--muted);
   font-size: 0.8rem;
@@ -405,7 +405,7 @@ button {
   min-height: 104px;
   padding: 18px 16px 14px 16px;
   border-radius: 24px;
-  background: #1d1f2a;
+  background: var(--panel-bg-alt);
 }
 
 .record-item--clickable {
@@ -507,22 +507,22 @@ button {
 }
 
 .record-status--processing {
-  background: rgba(255, 122, 0, 0.13);
-  color: #ff8a00;
+  background: var(--warning-bg-soft);
+  color: var(--warning-strong);
 }
 
 .record-status--success {
-  background: rgba(0, 199, 10, 0.13);
+  background: var(--success-bg-soft);
   color: var(--accent);
 }
 
 .record-status--failed {
-  background: rgba(255, 118, 118, 0.13);
+  background: var(--danger-bg-soft);
   color: var(--danger);
 }
 
 .record-status--closed {
-  background: rgba(141, 144, 154, 0.13);
+  background: var(--neutral-bg-soft);
   color: var(--muted);
 }
 
@@ -552,7 +552,7 @@ button {
   width: 78px;
   height: 86px;
   border-radius: 16px 16px 18px 6px;
-  background: linear-gradient(90deg, #242632 0 72%, #11131d 72% 100%);
+  background: linear-gradient(90deg, var(--control-bg) 0 72%, var(--page-bg-soft) 72% 100%);
 }
 
 .empty-records__paper::before {
@@ -562,7 +562,7 @@ button {
   width: 72px;
   height: 20px;
   border-radius: 0 0 18px 18px;
-  background: linear-gradient(90deg, #252734, #181a24);
+  background: linear-gradient(90deg, var(--control-bg-soft), var(--panel-bg));
   content: '';
 }
 
@@ -572,7 +572,7 @@ button {
   height: 5px;
   margin: 18px 0 0 16px;
   border-radius: 999px;
-  background: #333541;
+  background: var(--border-muted);
 }
 
 .empty-records__paper i + i {

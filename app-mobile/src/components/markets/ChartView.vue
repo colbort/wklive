@@ -871,7 +871,7 @@ function formatTime(ts: number) {
   z-index: 60;
   background: var(--page-bg);
   border-bottom: 1px solid var(--divider);
-  box-shadow: 0 8px 18px rgba(5, 6, 14, 0.36);
+  box-shadow: var(--shadow-floating);
 }
 
 .chart-sticky-tabs--pinned {
@@ -880,7 +880,7 @@ function formatTime(ts: number) {
   left: 50%;
   right: auto;
   z-index: 90;
-  width: min(100%, var(--app-width, 414px));
+  width: min(100%, var(--app-width, 100vw));
   box-sizing: border-box;
   transform: translateX(-50%);
 }
@@ -948,7 +948,7 @@ function formatTime(ts: number) {
   height: 34px;
   line-height: 34px;
   border-radius: 999px;
-  background: #161923;
+  background: var(--panel-bg-deep);
   color: var(--muted);
   font-size: 0.7rem;
   font-weight: 400;
@@ -957,12 +957,12 @@ function formatTime(ts: number) {
 
 .interval-pill--time {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--divider-soft);
 }
 
 .interval-pill--active {
-  background: #fff;
-  color: #11131b;
+  background: var(--text-strong);
+  color: var(--text-dark);
 }
 
 .tool-row {
@@ -970,7 +970,7 @@ function formatTime(ts: number) {
   grid-template-columns: repeat(3, 1fr);
   padding-right: 0;
   padding-left: 0;
-  border-bottom: 1px solid #252733;
+  border-bottom: 1px solid var(--control-bg-soft);
 }
 
 .tool-row button {
@@ -979,7 +979,7 @@ function formatTime(ts: number) {
   gap: 8px;
   justify-content: center;
   align-items: center;
-  border-right: 1px solid #252733;
+  border-right: 1px solid var(--control-bg-soft);
   background: var(--page-bg);
   color: var(--muted);
   font-size: 0.7rem;
@@ -1007,7 +1007,7 @@ function formatTime(ts: number) {
   padding: 0 14px;
   min-height: 34px;
   border-radius: 999px;
-  background: #161923;
+  background: var(--panel-bg-deep);
   color: var(--muted);
   font-size: 0.7rem;
   font-weight: 400;
@@ -1035,17 +1035,17 @@ function formatTime(ts: number) {
   border-radius: 16px;
   padding: 16px 20px;
   border: 1px solid transparent;
-  background: #1b1d27;
-  color: #d3d7df;
+  background: var(--panel-bg);
+  color: var(--text-soft);
   text-align: center;
   font-size: 0.8rem;
   font-weight: 500;
 }
 
 .time-sheet__item--active {
-  background: #10131d;
+  background: var(--page-bg-soft);
   color: var(--accent);
-  border-color: rgba(8, 194, 0, 0.18);
+  border-color: var(--accent-border-soft);
 }
 
 .chart-board {
@@ -1255,7 +1255,7 @@ function formatTime(ts: number) {
   padding: 5px 10px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: rgba(25, 27, 37, 0.92);
+  background: var(--chart-toolbar-bg);
   color: var(--text);
   font-size: 0.6rem;
   font-weight: 500;
@@ -1380,7 +1380,7 @@ function formatTime(ts: number) {
 }
 
 .depth-row--ask i {
-  background: rgba(255, 74, 92, 0.28);
+  background: var(--danger-bg-emphasis);
 }
 
 .depth-row--bid span {
@@ -1388,7 +1388,7 @@ function formatTime(ts: number) {
 }
 
 .depth-row--bid i {
-  background: rgba(12, 217, 119, 0.22);
+  background: var(--success-bg-emphasis);
 }
 
 .depth-mid {

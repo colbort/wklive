@@ -675,7 +675,7 @@ function confirmRiskSettings() {
   margin-bottom: 14px;
   overflow: hidden;
   border-radius: 999px;
-  background: #242631;
+  background: var(--control-bg);
 }
 
 .mode-switch.compact {
@@ -722,7 +722,7 @@ function confirmRiskSettings() {
   min-height: 48px;
   padding: 0 12px;
   border-radius: 12px;
-  background: #242631;
+  background: var(--control-bg);
   color: var(--text);
   text-align: left;
 }
@@ -748,8 +748,8 @@ function confirmRiskSettings() {
   right: 16px;
   width: 8px;
   height: 8px;
-  border-right: 2px solid #777c88;
-  border-bottom: 2px solid #777c88;
+  border-right: 2px solid var(--text-disabled);
+  border-bottom: 2px solid var(--text-disabled);
   transform: rotate(45deg) translateY(-2px);
   content: '';
 }
@@ -768,7 +768,7 @@ function confirmRiskSettings() {
   min-height: clamp(64px, 12.5vw, 90px);
   border: 0;
   border-radius: clamp(20px, 3.9vw, 28px);
-  background: #3d3e47;
+  background: var(--control-bg-strong);
   color: var(--text);
   font: inherit;
   font-size: clamp(1.05rem, 3.9vw, 1.4rem);
@@ -817,7 +817,7 @@ function confirmRiskSettings() {
   width: clamp(22px, 3.4vw, 25px);
   height: clamp(22px, 3.4vw, 25px);
   flex: 0 0 auto;
-  border: 2px solid #d9ddea;
+  border: 2px solid var(--text-soft);
   border-radius: 7px;
 }
 
@@ -832,8 +832,8 @@ function confirmRiskSettings() {
   left: 7px;
   width: 6px;
   height: 11px;
-  border-right: 3px solid #fff;
-  border-bottom: 3px solid #fff;
+  border-right: 3px solid var(--text-strong);
+  border-bottom: 3px solid var(--text-strong);
   transform: rotate(45deg);
   content: '';
 }
@@ -851,7 +851,7 @@ function confirmRiskSettings() {
   min-height: clamp(52px, 9.8vw, 64px);
   padding: 0 clamp(18px, 3.7vw, 24px);
   border-radius: clamp(16px, 3vw, 20px);
-  background: #3d3e47;
+  background: var(--control-bg-strong);
 }
 
 .risk-field input,
@@ -869,7 +869,7 @@ function confirmRiskSettings() {
 
 .risk-field input::placeholder,
 .risk-qty input::placeholder {
-  color: #8d8f97;
+  color: var(--text-subtle);
 }
 
 .risk-field strong {
@@ -881,7 +881,7 @@ function confirmRiskSettings() {
 
 .risk-divider {
   height: 1px;
-  background: #3d3e47;
+  background: var(--control-bg-strong);
 }
 
 .risk-qty {
@@ -896,7 +896,7 @@ function confirmRiskSettings() {
   min-height: clamp(52px, 9.8vw, 64px);
   padding: 0 clamp(20px, 3.7vw, 24px);
   border-radius: clamp(16px, 3vw, 20px);
-  background: #3d3e47;
+  background: var(--control-bg-strong);
 }
 
 .risk-confirm {
@@ -964,13 +964,13 @@ function confirmRiskSettings() {
     linear-gradient(90deg, var(--accent) 0 var(--progress, 0%), transparent var(--progress, 0%)),
     linear-gradient(
       90deg,
-      #1c1f2a 0 24%,
+      var(--panel-bg-alt) 0 24%,
       transparent 24% 25%,
-      #1c1f2a 25% 49%,
+      var(--panel-bg-alt) 25% 49%,
       transparent 49% 50%,
-      #1c1f2a 50% 74%,
+      var(--panel-bg-alt) 50% 74%,
       transparent 74% 75%,
-      #1c1f2a 75%
+      var(--panel-bg-alt) 75%
     );
 }
 
@@ -1057,8 +1057,8 @@ function confirmRiskSettings() {
   left: 6px;
   width: 5px;
   height: 9px;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
+  border-right: 2px solid var(--text-strong);
+  border-bottom: 2px solid var(--text-strong);
   transform: rotate(45deg);
   content: '';
 }
@@ -1076,7 +1076,7 @@ function confirmRiskSettings() {
 .dual-actions button {
   min-height: 46px;
   border-radius: 12px;
-  background: #181b25;
+  background: var(--panel-bg);
   color: var(--text);
   font-size: 0.75rem;
   font-weight: 700;
@@ -1088,11 +1088,11 @@ function confirmRiskSettings() {
 }
 
 .wide-action--buy {
-  background: #10d27a;
+  background: var(--success);
 }
 
 .wide-action--sell {
-  background: #ff4438;
+  background: var(--danger-strong);
 }
 
 .wide-action:disabled {
@@ -1102,13 +1102,13 @@ function confirmRiskSettings() {
 
 .order-message {
   margin: -4px 0 12px;
-  color: #10d27a;
+  color: var(--success);
   font-size: 0.65rem;
   line-height: 1.45;
 }
 
 .order-message--error {
-  color: #ff6b5f;
+  color: var(--danger);
 }
 
 .dual-actions {
@@ -1124,7 +1124,7 @@ function confirmRiskSettings() {
   gap: 14px;
   margin: 0 -22px 22px;
   padding: 16px 28px;
-  background: #282a34;
+  background: var(--border-soft);
 }
 
 .stock-alert span {
@@ -1133,7 +1133,7 @@ function confirmRiskSettings() {
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  background: #ffa51f;
+  background: var(--warning-strong);
   color: var(--page-bg);
 }
 
@@ -1179,7 +1179,7 @@ function confirmRiskSettings() {
   margin-bottom: 22px;
   overflow: hidden;
   border-radius: 16px;
-  background: radial-gradient(circle at 68% 20%, rgba(7, 201, 128, 0.26), transparent 36%), #10131d;
+  background: radial-gradient(circle at 68% 20%, var(--success-bg-glow), transparent 36%), var(--page-bg-soft);
 }
 
 .mini-chart svg {
@@ -1189,7 +1189,7 @@ function confirmRiskSettings() {
 
 .mini-chart path {
   fill: none;
-  stroke: #fff;
+  stroke: var(--text-strong);
   stroke-width: 4;
   stroke-linecap: round;
 }
@@ -1206,7 +1206,7 @@ function confirmRiskSettings() {
   min-height: 76px;
   padding: 14px 10px;
   border-radius: 14px;
-  background: #242631;
+  background: var(--control-bg);
   color: var(--muted);
   text-align: left;
 }

@@ -199,7 +199,7 @@ input {
 .asset-select-accounts button {
   min-height: 54px;
   border-radius: 18px;
-  background: #41434d;
+  background: var(--selection-bg-muted);
   font-size: 0.9rem;
   font-weight: 800;
 }
@@ -215,7 +215,7 @@ input {
   min-height: 64px;
   padding: 0 20px;
   border-radius: 18px;
-  background: #41434d;
+  background: var(--selection-bg-muted);
 }
 
 .asset-select-search span {
@@ -245,7 +245,7 @@ input {
   gap: 12px;
   min-height: 72px;
   padding: 0 26px;
-  border-bottom: 1px solid #333541;
+  border-bottom: 1px solid var(--border-muted);
   text-align: left;
 }
 

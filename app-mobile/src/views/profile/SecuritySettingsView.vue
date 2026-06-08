@@ -118,7 +118,7 @@ function handleRowClick(key: string) {
   justify-content: center;
   border: 0;
   border-radius: 999px;
-  background: #242631;
+  background: var(--control-bg);
   color: var(--text);
 }
 
@@ -141,7 +141,7 @@ function handleRowClick(key: string) {
   padding: 0 24px;
   border: 0;
   border-radius: 22px;
-  background: #1b1d27;
+  background: var(--panel-bg);
   color: var(--text);
   text-align: left;
 }

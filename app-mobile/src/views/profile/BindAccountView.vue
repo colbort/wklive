@@ -168,7 +168,7 @@ async function submitBindAccount() {
   justify-content: center;
   border: 0;
   border-radius: 999px;
-  background: #242631;
+  background: var(--control-bg);
   color: var(--text);
 }
 
@@ -189,7 +189,7 @@ async function submitBindAccount() {
 }
 
 .bind-account-field span {
-  color: #a0a3ad;
+  color: var(--text-placeholder);
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -200,7 +200,7 @@ async function submitBindAccount() {
   border: 0;
   border-radius: 22px;
   outline: 2px solid transparent;
-  background: #1b1d27;
+  background: var(--panel-bg);
   color: var(--text);
   padding: 0 22px;
   font-size: 0.95rem;
@@ -208,22 +208,22 @@ async function submitBindAccount() {
 }
 
 .bind-account-field input:focus {
-  outline-color: #00c313;
+  outline-color: var(--success-strong);
 }
 
 .bind-account-field input::placeholder {
-  color: #777a86;
+  color: var(--text-disabled);
 }
 
 .form-message {
   margin: -4px 0 0;
-  color: #00c313;
+  color: var(--success-strong);
   font-size: 0.7rem;
   font-weight: 700;
 }
 
 .form-message--error {
-  color: #ff6868;
+  color: var(--danger-text);
 }
 
 .submit-button {
@@ -231,7 +231,7 @@ async function submitBindAccount() {
   margin-top: 12px;
   border: 0;
   border-radius: 999px;
-  background: #00c313;
+  background: var(--success-strong);
   color: var(--text);
   font-size: 1.1rem;
   font-weight: 900;

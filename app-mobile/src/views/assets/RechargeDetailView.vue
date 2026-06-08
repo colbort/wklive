@@ -182,7 +182,7 @@ onMounted(() => {
         <header class="detail-head">
           <span
             class="detail-coin-icon"
-            :style="{ backgroundColor: coinConfig?.iconBgColor || '#16ad77' }"
+            :style="{ backgroundColor: coinConfig?.iconBgColor || 'var(--coin-fallback-bg)' }"
           >
             <img v-if="coinConfig?.iconUrl" :src="coinConfig.iconUrl" :alt="order.currency">
             <span v-else>{{ coinIconText() }}</span>
@@ -279,7 +279,7 @@ onMounted(() => {
   overflow: hidden;
   border: 1px solid var(--divider);
   border-radius: 18px;
-  background: #0f111a;
+  background: var(--page-bg-soft);
 }
 
 .detail-head {
@@ -325,7 +325,7 @@ onMounted(() => {
   overflow: hidden;
   padding: 2px 6px;
   border-radius: 6px;
-  background: #444650;
+  background: var(--selection-bg);
   color: var(--text);
   font-size: 0.7rem;
   font-weight: 600;
@@ -343,22 +343,22 @@ onMounted(() => {
 }
 
 .detail-status--processing {
-  background: rgba(255, 122, 0, 0.13);
-  color: #ff8a00;
+  background: var(--warning-bg-soft);
+  color: var(--warning-strong);
 }
 
 .detail-status--success {
-  background: rgba(0, 199, 10, 0.13);
+  background: var(--success-bg-soft);
   color: var(--accent);
 }
 
 .detail-status--failed {
-  background: rgba(255, 118, 118, 0.13);
+  background: var(--danger-bg-soft);
   color: var(--danger);
 }
 
 .detail-status--closed {
-  background: rgba(141, 144, 154, 0.13);
+  background: var(--neutral-bg-soft);
   color: var(--muted);
 }
 
@@ -401,7 +401,7 @@ onMounted(() => {
   width: 72px;
   height: 72px;
   border-radius: 14px;
-  background: #fff;
+  background: var(--text-strong);
   object-fit: cover;
 }
 

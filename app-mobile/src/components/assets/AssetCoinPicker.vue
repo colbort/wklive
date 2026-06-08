@@ -56,7 +56,7 @@ button {
   overflow: hidden;
   padding: 3px 7px;
   border-radius: 999px;
-  background: #4a4c58;
+  background: var(--selection-bg);
   color: var(--text);
   font-size: 0.5rem;
   font-weight: 800;

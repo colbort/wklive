@@ -357,7 +357,7 @@ onMounted(() => {
                   <span
                     class="asset-coin-row__icon"
                     :style="{
-                      backgroundColor: item.config.iconBgColor || '#17391f',
+                      backgroundColor: item.config.iconBgColor || 'var(--coin-fallback-bg-dark)',
                     }"
                   >
                     <img
@@ -395,7 +395,7 @@ onMounted(() => {
             <span
               class="coin-action-sheet__coin"
               :style="{
-                backgroundColor: selectedCoinConfig.iconBgColor || '#16ad77',
+                backgroundColor: selectedCoinConfig.iconBgColor || 'var(--coin-fallback-bg)',
               }"
             >
               <img
@@ -547,7 +547,7 @@ button:not(.app-menu__item) {
 }
 
 .asset-actions button.active span {
-  background: rgba(2, 185, 4, 0.14);
+  background: var(--success-surface);
 }
 
 .asset-actions button:nth-child(3n) {
@@ -777,7 +777,7 @@ button:not(.app-menu__item) {
   align-content: center;
   gap: 10px;
   border-radius: 16px;
-  background: #233329;
+  background: var(--info-surface);
 }
 
 .coin-action span {
@@ -787,7 +787,7 @@ button:not(.app-menu__item) {
   place-items: center;
   border-radius: 16px;
   background: var(--info);
-  color: #071018;
+  color: var(--text-inverse);
   font-size: 1.3rem;
   font-weight: 800;
 }
@@ -801,31 +801,31 @@ button:not(.app-menu__item) {
 }
 
 .coin-action--withdraw {
-  background: #3a2a27;
-  color: #ff8a22;
+  background: var(--warning-surface);
+  color: var(--warning-strong);
 }
 
 .coin-action--withdraw span {
-  background: #ff9e3d;
+  background: var(--warning-chip);
 }
 
 .coin-action--transfer-in {
-  color: #22df8d;
+  color: var(--success-text);
 }
 
 .coin-action--transfer-in span {
-  background: #00b80c;
+  background: var(--success-chip);
   color: var(--text);
 }
 
 .coin-action--transfer-out {
-  background: #3b262b;
-  color: #ff4d43;
+  background: var(--danger-surface);
+  color: var(--danger-hot);
 }
 
 .coin-action--transfer-out span {
-  background: #e75a5b;
-  color: #071018;
+  background: var(--danger-chip);
+  color: var(--text-inverse);
 }
 
 @media (max-width: 520px) {

@@ -127,7 +127,7 @@ function selectCountry(country: CountryDialCode) {
   gap: 10px;
   min-height: 46px;
   border-radius: 16px;
-  background: #191b25;
+  background: var(--panel-bg);
   padding: 0 16px;
 }
 
@@ -147,7 +147,7 @@ function selectCountry(country: CountryDialCode) {
 }
 
 .country-search input::placeholder {
-  color: #8e9098;
+  color: var(--text-subtle);
 }
 
 .country-list {
@@ -166,7 +166,7 @@ function selectCountry(country: CountryDialCode) {
   align-items: center;
   justify-content: space-between;
   border: 0;
-  border-bottom: 1px solid #1d1f28;
+  border-bottom: 1px solid var(--border-subtle);
   background: transparent;
   color: var(--text);
   font-size: 0.8rem;
@@ -175,11 +175,11 @@ function selectCountry(country: CountryDialCode) {
 }
 
 .country-row--selected {
-  color: #00c819;
+  color: var(--success-strong);
 }
 
 .country-row b {
-  color: #00c819;
+  color: var(--success-strong);
   font-size: 0.9rem;
   font-weight: 900;
 }

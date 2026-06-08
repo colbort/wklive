@@ -110,7 +110,7 @@ function formatDepthVolume(level: DepthLevel) {
 .order-book-preview header {
   padding-bottom: 8px;
   margin-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--divider-faint);
   color: var(--muted);
   font-size: 0.6rem;
   line-height: 1.15;
@@ -157,7 +157,7 @@ function formatDepthVolume(level: DepthLevel) {
   bottom: 0;
   z-index: -1;
   width: 46%;
-  background: rgba(255, 68, 56, 0.14);
+  background: var(--danger-bg-muted);
   content: '';
 }
 
@@ -193,7 +193,7 @@ function formatDepthVolume(level: DepthLevel) {
 }
 
 .bids p::after {
-  background: rgba(16, 210, 122, 0.14);
+  background: var(--success-bg-muted);
 }
 
 .mid-price {

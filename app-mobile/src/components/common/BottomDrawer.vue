@@ -105,7 +105,7 @@ function closeFromBackdrop(enabled: boolean) {
   align-items: flex-end;
   justify-content: center;
   overflow: hidden;
-  background: rgba(3, 4, 10, 0.08);
+  background: var(--overlay-bg);
   backdrop-filter: blur(8px);
 }
 
@@ -113,14 +113,14 @@ function closeFromBackdrop(enabled: boolean) {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: min(100%, var(--app-width, 414px));
+  width: var(--app-width, 100vw);
   max-height: var(--bottom-drawer-max-height);
-  padding: 16px 22px calc(18px + env(safe-area-inset-bottom));
+  padding: var(--page-padding-y) var(--page-padding-x) calc(var(--page-padding-y) + env(safe-area-inset-bottom));
   overflow: hidden;
-  border-radius: 28px 28px 0 0;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   background: var(--sheet-bg);
   color: var(--text);
-  box-shadow: 0 -24px 70px rgba(0, 0, 0, 0.42);
+  box-shadow: var(--shadow-drawer);
   box-sizing: border-box;
   touch-action: pan-y;
 }
@@ -128,11 +128,11 @@ function closeFromBackdrop(enabled: boolean) {
 .bottom-drawer__handle {
   display: block;
   flex: 0 0 auto;
-  width: 54px;
-  height: 5px;
-  margin: 0 auto 18px;
+  width: clamp(42px, 2.7rem, 62px);
+  height: clamp(4px, .25rem, 6px);
+  margin: 0 auto var(--space-lg);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.52);
+  background: var(--handle-bg);
 }
 
 .bottom-drawer__header {
@@ -141,8 +141,8 @@ function closeFromBackdrop(enabled: boolean) {
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  min-height: 42px;
-  margin-bottom: 10px;
+  min-height: var(--icon-button-size);
+  margin-bottom: var(--space-sm);
 }
 
 .bottom-drawer__header h2 {
@@ -158,8 +158,8 @@ function closeFromBackdrop(enabled: boolean) {
   position: absolute;
   top: 50%;
   right: 2px;
-  width: 40px;
-  height: 40px;
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
   transform: translateY(-50%);
   border: 0;
   background: transparent;
