@@ -42,6 +42,10 @@ function formatPrice(value?: number | null) {
 function formatPercent(value: number) {
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
 }
+
+function productIconText(product: ItickTenantProduct) {
+  return (product.baseCoin || product.symbol || product.code || '?').slice(0, 2).toUpperCase()
+}
 </script>
 
 <template>
@@ -90,9 +94,13 @@ function formatPercent(value: number) {
         }"
         @click="emit('selectProduct', row.product)"
       >
+        <span class="quote-row__icon">
+          <img v-if="row.product.icon" :src="row.product.icon" :alt="row.product.symbol">
+          <span v-else>{{ productIconText(row.product) }}</span>
+        </span>
+
         <span class="quote-row__name">
           <strong>{{ row.product.symbol }}</strong>
-          <small>{{ row.product.displayName || row.product.name || row.product.market }}</small>
         </span>
 
         <strong class="quote-row__price">
@@ -133,10 +141,10 @@ function formatPercent(value: number) {
   box-sizing: border-box;
   display: flex;
   flex-wrap: nowrap;
-  gap: 30px;
+  gap: 28px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0px 28px 0;
+  padding: 0 28px 0;
   border-bottom: 1px solid var(--divider);
   background: var(--page-bg);
   scrollbar-width: none;
@@ -216,13 +224,13 @@ function formatPercent(value: number) {
 
 .quote-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(68px, 0.38fr) minmax(64px, 0.34fr);
+  grid-template-columns: 54px minmax(0, 1fr) minmax(88px, 0.42fr) minmax(76px, 0.36fr);
   align-items: center;
-  column-gap: 14px;
-  width: calc(100% - 56px);
-  min-height: 72px;
-  margin: 0 28px;
-  padding: 13px 0;
+  column-gap: 8px;
+  width: calc(100% - 36px);
+  min-height: 86px;
+  margin: 0 18px;
+  padding: 15px 0;
   border: 0;
   border-bottom: 1px solid var(--divider);
   background: transparent;
@@ -240,50 +248,62 @@ function formatPercent(value: number) {
   }
 
   .quote-row {
-    grid-template-columns: minmax(0, 1fr) minmax(58px, 0.38fr) minmax(54px, 0.34fr);
-    column-gap: 10px;
-    width: calc(100% - 44px);
-    min-height: 72px;
-    margin: 0 22px;
+    grid-template-columns: 48px minmax(0, 1fr) minmax(76px, 0.42fr) minmax(68px, 0.36fr);
+    column-gap: 6px;
+    width: calc(100% - 32px);
+    min-height: 80px;
+    margin: 0 16px;
   }
 
-  .quote-row__change strong,
+  .quote-row__price,
+  .quote-row__change strong {
+    font-size: 0.76rem;
+  }
+
   .quote-row__change em {
     font-size: 0.6rem;
   }
 }
 
+.quote-row__icon {
+  display: grid;
+  width: 45px;
+  height: 45px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #202631;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.quote-row__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .quote-row__name {
   display: grid;
-  gap: 8px;
   min-width: 0;
 }
 
 .quote-row__name strong {
   overflow: hidden;
   color: var(--text);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  line-height: 1.08;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.quote-row__name small {
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 0.7rem;
-  font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.12;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .quote-row__price {
   overflow: hidden;
-  color: var(--muted);
-  font-size: 0.75rem;
-  font-weight: 400;
+  color: var(--success);
+  font-size: 0.86rem;
+  font-weight: 600;
   text-align: right;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -291,39 +311,40 @@ function formatPercent(value: number) {
 
 .quote-row__change {
   display: grid;
-  gap: 5px;
+  gap: 6px;
   justify-items: end;
 }
 
 .quote-row__change strong {
   overflow: hidden;
   max-width: 100%;
-  color: var(--muted);
-  font-size: 0.85rem;
-  font-weight: 500;
+  color: var(--success);
+  font-size: 0.82rem;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .quote-row__change em {
-  min-width: 0;
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--accent);
-  font-size: 0.65rem;
+  min-width: 54px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--success);
+  color: #fff;
+  font-size: 0.64rem;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
 }
 
-.quote-row--down,
+.quote-row--down .quote-row__price,
 .quote-row--down .quote-row__change strong {
-  color: var(--muted);
+  color: #ff4f43;
 }
 
 .quote-row--down .quote-row__change em {
-  color: #ff5959;
+  background: #ff4f43;
+  color: #fff;
 }
 
 .quote-row--active {
