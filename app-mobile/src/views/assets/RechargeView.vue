@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import QRCode from 'qrcode'
 
 import { apiGetAssetOptions, apiListAssetCoinConfigs } from '@/api/asset'
@@ -8,8 +8,8 @@ import { apiCreateCryptoRechargeOrder, apiGetMyCryptoRechargeAddress } from '@/a
 import { apiUploadFile } from '@/api/upload'
 import AssetCoinSelectSheet from '@/components/assets/AssetCoinSelectSheet.vue'
 import AssetCoinPicker from '@/components/assets/AssetCoinPicker.vue'
-import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
 import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
+import CommonPage from '@/components/common/CommonPage.vue'
 import { useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import type { AssetCoinConfig } from '@/types/asset'
@@ -21,6 +21,7 @@ import {
 } from '@/utils/assetAmount'
 
 const route = useRoute()
+const router = useRouter()
 const assetOptions = useOptions(apiGetAssetOptions)
 const { t } = useI18n()
 const coinConfigs = ref<AssetCoinConfig[]>([])
@@ -298,13 +299,15 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <AssetFlowLayout
+  <CommonPage
     :title="t('assetFlow.recharge')"
     :right-text="step === 'select' ? t('assetFlow.records') : undefined"
-    :right-to="{ name: 'asset-flows', query: { tab: 'recharge' } }"
-    narrow
+    :nav-height="76"
+    @back="router.back()"
+    @right-click="router.push({ name: 'asset-flows', query: { tab: 'recharge' } })"
   >
-    <template v-if="step === 'select'">
+    <section class="asset-flow-content">
+      <template v-if="step === 'select'">
       <h2>{{ t('assetFlow.paymentMethod') }}</h2>
       <AssetCoinPicker
         :coin="selectedCoin"
@@ -320,9 +323,9 @@ onBeforeUnmount(() => {
         :label="addressLoading ? t('assetFlow.getting') : t('assetFlow.recharge')"
         @click="startRecharge"
       />
-    </template>
+      </template>
 
-    <template v-else>
+      <template v-else>
       <div class="detail-coin">
         <AssetCoinPicker
           :coin="selectedCoin"
@@ -394,7 +397,8 @@ onBeforeUnmount(() => {
         :label="submitLoading ? t('common.submitting') : t('assetFlow.complete')"
         @click="completeRecharge"
       />
-    </template>
+      </template>
+    </section>
 
     <AssetCoinSelectSheet
       v-model="coinSheetVisible"
@@ -403,7 +407,7 @@ onBeforeUnmount(() => {
       :operation-type="1"
       @select="selectConfig"
     />
-  </AssetFlowLayout>
+  </CommonPage>
 </template>
 
 <style scoped>
@@ -413,6 +417,38 @@ input {
   background: transparent;
   color: inherit;
   font: inherit;
+}
+
+.asset-flow-content {
+  min-height: calc(100dvh - 76px);
+  padding: 20px 18px 56px;
+  background: #0b0c15;
+  color: #f8f8fb;
+}
+
+:deep(.header-bar) {
+  background: #0b0c15;
+}
+
+:deep(.header-left) {
+  left: 18px;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-top: 20px;
+  border-radius: 50%;
+  background: #242633;
+}
+
+:deep(.header-title) {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+:deep(.header-right) {
+  right: 18px;
+  color: #fff;
+  font-size: 14px;
 }
 
 h2 {

@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { useI18n } from '@/i18n'
-import type { ItickTenantCategory, ItickTenantProduct, QuotePayload } from '@/types/itick'
+import type { ItickTenantCategory, ItickTenantProduct } from '@/types/itick'
 import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type ProductSheetRow = {
@@ -13,8 +13,6 @@ type ProductSheetRow = {
 }
 
 defineProps<{
-  categories: ItickTenantCategory[]
-  selectedCategoryType: number | null
   selectedCategory: ItickTenantCategory | null
   selectedProduct: ItickTenantProduct | null
   selectedProductKey: string
@@ -22,14 +20,12 @@ defineProps<{
   priceTrend: 'up' | 'down'
   placeholderPrice: string
   placeholderChange: string
-  selectedQuote: QuotePayload | null
   productMenuOpen: boolean
   productSheetRows: ProductSheetRow[]
   coinGlyph: (product: ItickTenantProduct) => string
 }>()
 
 const emit = defineEmits<{
-  (e: 'select-category', categoryType: number): void
   (e: 'open-product-menu'): void
   (e: 'close-product-sheet'): void
   (e: 'select-product', product: ItickTenantProduct): void
@@ -40,18 +36,6 @@ const { t } = useI18n()
 
 <template>
   <div class="trade-header">
-    <nav class="trade-categories" :aria-label="t('market.category')">
-      <button
-        v-for="category in categories"
-        :key="category.id"
-        type="button"
-        :class="{ active: category.categoryType === selectedCategoryType }"
-        @click="emit('select-category', category.categoryType)"
-      >
-        {{ marketCategoryLabel(category) }}
-      </button>
-    </nav>
-
     <header class="trade-symbol">
       <button type="button" class="trade-symbol__main" @click="emit('open-product-menu')">
         <strong>{{ selectedProduct?.symbol || t('market.selectProduct') }}</strong>
@@ -119,52 +103,12 @@ const { t } = useI18n()
   padding: 0 18px 1px;
 }
 
-.trade-categories {
-  position: fixed;
-  top: 0;
-  right: auto;
-  left: 50%;
-  z-index: 25;
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 20px;
-  width: min(100%, var(--app-width, 414px));
-  max-width: var(--app-width, 414px);
-  padding: 10px 22px 8px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  margin-bottom: 0;
-  background: #0b0c15;
-  transform: translateX(-50%);
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-.trade-categories::-webkit-scrollbar {
-  display: none;
-}
-
-.trade-categories button,
 .trade-symbol button,
 .product-sheet-row {
   border: 0;
   background: transparent;
   color: inherit;
   font: inherit;
-}
-
-.trade-categories button {
-  flex: 0 0 auto;
-  color: #8f929d;
-  font-size: 15px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.trade-categories button.active {
-  color: #fff;
-  font-size: 17px;
-  font-weight: 600;
 }
 
 .trade-symbol {
@@ -203,26 +147,12 @@ const { t } = useI18n()
 }
 
 @media (max-width: 390px) {
-  .trade-categories {
-    gap: 18px;
-    padding-right: 14px;
-    padding-left: 14px;
-  }
-
   .trade-header {
     max-width: calc(100% + 28px);
     margin-right: -14px;
     margin-left: -14px;
     padding-right: 14px;
     padding-left: 14px;
-  }
-
-  .trade-categories button {
-    font-size: 14px;
-  }
-
-  .trade-categories button.active {
-    font-size: 16px;
   }
 
   .trade-symbol__icons {

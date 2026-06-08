@@ -760,8 +760,8 @@ function markUpload(type: IdentityFileKey) {
 
 <style scoped>
 .register-page {
-  width: 100%;
-  max-width: 100%;
+  width: min(100%, var(--app-width, 414px));
+  max-width: var(--app-width, 414px);
   height: 100dvh;
   min-height: 100dvh;
   overflow-x: hidden;

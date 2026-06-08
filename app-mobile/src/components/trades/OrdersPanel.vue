@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
 
+import LoginPrompt from '@/components/common/LoginPrompt.vue'
 import { useI18n } from '@/i18n'
 import type { TradeOrder, TradeSymbol } from '@/types/trade'
 
@@ -84,9 +85,7 @@ function formatTime(value: number) {
       <button class="trade-orders-panel__refresh" type="button" @click="emit('refresh')">{{ t('trade.refresh') }}</button>
     </div>
 
-    <p v-if="!isLoggedIn" class="trade-orders-panel__state trade-orders-panel__auth">
-      {{ t('trade.loginOrRegisterViewData') }}
-    </p>
+    <LoginPrompt v-if="!isLoggedIn" :action-text="t('assets.viewData')" compact />
     <p v-else-if="!selectedTradeSymbol" class="trade-orders-panel__state">{{ t('trade.unavailable') }}</p>
     <p v-else-if="loading" class="trade-orders-panel__state">{{ t('trade.orderLoading') }}</p>
     <p v-else-if="error" class="trade-orders-panel__state trade-orders-panel__state--error">{{ error }}</p>
@@ -170,10 +169,6 @@ button.active::after {
 
 .trade-orders-panel__state--error {
   color: #ff6b5f;
-}
-
-.trade-orders-panel__auth span {
-  color: #02b904;
 }
 
 .trade-orders-panel__list {

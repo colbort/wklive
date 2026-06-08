@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import {
   apiGetAssetOptions,
@@ -9,9 +9,9 @@ import {
   apiTransferMyAsset,
 } from '@/api/asset'
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
-import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
 import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
 import AssetTransferSelectSheet from '@/components/assets/AssetTransferSelectSheet.vue'
+import CommonPage from '@/components/common/CommonPage.vue'
 import { optionText, useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
@@ -24,6 +24,7 @@ import {
 } from '@/utils/assetAmount'
 
 const route = useRoute()
+const router = useRouter()
 const assetOptions = useOptions(apiGetAssetOptions)
 const { t } = useI18n()
 const coinConfigs = ref<AssetCoinConfig[]>([])
@@ -252,60 +253,66 @@ onMounted(() => {
 </script>
 
 <template>
-  <AssetFlowLayout :title="t('assetFlow.transfer')" narrow>
-    <section class="transfer-card">
-      <label class="transfer-field">
-        <span class="transfer-field__head">
-          <strong>{{ t('assetFlow.transferFrom') }}</strong>
-          <small v-if="fromCoin">{{ t('assetFlow.available') }} <b>{{ availableAmount }}</b> {{ fromCoin }}</small>
+  <CommonPage
+    :title="t('assetFlow.transfer')"
+    :nav-height="76"
+    @back="router.back()"
+  >
+    <section class="asset-flow-content">
+      <section class="transfer-card">
+        <label class="transfer-field">
+          <span class="transfer-field__head">
+            <strong>{{ t('assetFlow.transferFrom') }}</strong>
+            <small v-if="fromCoin">{{ t('assetFlow.available') }} <b>{{ availableAmount }}</b> {{ fromCoin }}</small>
+          </span>
+          <button type="button" class="transfer-picker" @click="openPicker('from')">
+            <span>{{ fromAccountLabel }}</span>
+            <i />
+            <span v-if="fromCoin" class="transfer-picker__coin">
+              <AssetCoinIcon :coin="fromCoin" :config="fromConfig" />
+              <strong>{{ fromCoin }}</strong>
+            </span>
+            <em v-else>{{ fromPlaceholder }}</em>
+            <b>⌄</b>
+          </button>
+        </label>
+
+        <label class="transfer-field">
+          <span class="transfer-field__head"><strong>{{ t('assetFlow.transferTo') }}</strong></span>
+          <button type="button" class="transfer-picker" @click="openPicker('to')">
+            <span>{{ toAccountLabel }}</span>
+            <i />
+            <span v-if="toCoin" class="transfer-picker__coin">
+              <AssetCoinIcon :coin="toCoin" :config="toConfig" />
+              <strong>{{ toCoin }}</strong>
+            </span>
+            <em v-else>{{ toPlaceholder }}</em>
+            <b>⌄</b>
+          </button>
+        </label>
+      </section>
+
+      <label class="amount-field">
+        <span>{{ t('assetFlow.transferAmount') }}</span>
+        <span class="amount-input">
+          <input v-model="amount" inputmode="decimal">
+          <strong v-if="fromCoin">{{ fromCoin }}</strong>
         </span>
-        <button type="button" class="transfer-picker" @click="openPicker('from')">
-          <span>{{ fromAccountLabel }}</span>
-          <i />
-          <span v-if="fromCoin" class="transfer-picker__coin">
-            <AssetCoinIcon :coin="fromCoin" :config="fromConfig" />
-            <strong>{{ fromCoin }}</strong>
-          </span>
-          <em v-else>{{ fromPlaceholder }}</em>
-          <b>⌄</b>
-        </button>
       </label>
 
-      <label class="transfer-field">
-        <span class="transfer-field__head"><strong>{{ t('assetFlow.transferTo') }}</strong></span>
-        <button type="button" class="transfer-picker" @click="openPicker('to')">
-          <span>{{ toAccountLabel }}</span>
-          <i />
-          <span v-if="toCoin" class="transfer-picker__coin">
-            <AssetCoinIcon :coin="toCoin" :config="toConfig" />
-            <strong>{{ toCoin }}</strong>
-          </span>
-          <em v-else>{{ toPlaceholder }}</em>
-          <b>⌄</b>
-        </button>
-      </label>
+      <p v-if="pageError" class="state-text state-text--error">
+        {{ pageError }}
+      </p>
+      <p v-if="pageTip" class="state-text state-text--success">
+        {{ pageTip }}
+      </p>
+
+      <AssetPrimaryButton
+        class="transfer-button"
+        :label="submitLoading ? t('assetFlow.transfering') : t('assetFlow.transfer')"
+        @click="submitTransfer"
+      />
     </section>
-
-    <label class="amount-field">
-      <span>{{ t('assetFlow.transferAmount') }}</span>
-      <span class="amount-input">
-        <input v-model="amount" inputmode="decimal">
-        <strong v-if="fromCoin">{{ fromCoin }}</strong>
-      </span>
-    </label>
-
-    <p v-if="pageError" class="state-text state-text--error">
-      {{ pageError }}
-    </p>
-    <p v-if="pageTip" class="state-text state-text--success">
-      {{ pageTip }}
-    </p>
-
-    <AssetPrimaryButton
-      class="transfer-button"
-      :label="submitLoading ? t('assetFlow.transfering') : t('assetFlow.transfer')"
-      @click="submitTransfer"
-    />
 
     <AssetTransferSelectSheet
       :model-value="pickerVisible"
@@ -321,7 +328,7 @@ onMounted(() => {
       @update:model-value="updatePickerVisible"
       @select="selectTransferAsset"
     />
-  </AssetFlowLayout>
+  </CommonPage>
 </template>
 
 <style scoped>
@@ -331,6 +338,32 @@ input {
   background: transparent;
   color: inherit;
   font: inherit;
+}
+
+.asset-flow-content {
+  min-height: calc(100dvh - 76px);
+  padding: 20px 18px 56px;
+  background: #0b0c15;
+  color: #f8f8fb;
+}
+
+:deep(.header-bar) {
+  background: #0b0c15;
+}
+
+:deep(.header-left) {
+  left: 18px;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-top: 20px;
+  border-radius: 50%;
+  background: #242633;
+}
+
+:deep(.header-title) {
+  font-size: 18px;
+  font-weight: 800;
 }
 
 .transfer-card {

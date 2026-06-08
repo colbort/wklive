@@ -34,8 +34,6 @@ type TradeSymbolDetail = {
 }
 
 defineProps<{
-  categories: ItickTenantCategory[]
-  selectedCategoryType: number | null
   selectedCategory: ItickTenantCategory | null
   selectedProduct: ItickTenantProduct | null
   selectedProductKey: string
@@ -78,7 +76,6 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'select-category', categoryType: number): void
   (e: 'open-product-menu'): void
   (e: 'close-product-sheet'): void
   (e: 'select-product', product: ItickTenantProduct): void
@@ -99,8 +96,6 @@ const emit = defineEmits<{
 <template>
   <div class="trade-view">
     <TradeHeader
-      :categories="categories"
-      :selected-category-type="selectedCategoryType"
       :selected-category="selectedCategory"
       :selected-product="selectedProduct"
       :selected-product-key="selectedProductKey"
@@ -108,11 +103,9 @@ const emit = defineEmits<{
       :price-trend="priceTrend"
       :placeholder-price="placeholderPrice"
       :placeholder-change="placeholderChange"
-      :selected-quote="selectedQuote"
       :product-menu-open="productMenuOpen"
       :product-sheet-rows="productSheetRows"
       :coin-glyph="coinGlyph"
-      @select-category="emit('select-category', $event)"
       @open-product-menu="emit('open-product-menu')"
       @close-product-sheet="emit('close-product-sheet')"
       @select-product="emit('select-product', $event)"
@@ -221,12 +214,6 @@ const emit = defineEmits<{
   min-width: 0;
   max-width: 100%;
   overflow-x: hidden;
-}
-
-@media (max-width: 767px) {
-  .trade-view {
-    padding-top: 50px;
-  }
 }
 
 .contract-layout {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
+import LoginPrompt from '@/components/common/LoginPrompt.vue'
 import MarketChartView from '@/components/markets/ChartView.vue'
 import MarketQuotesView from '@/components/markets/QuotesView.vue'
 import MarketTopTabs from '@/components/markets/TopTabs.vue'
@@ -152,9 +153,7 @@ watch(activeTopTab, () => {
       <div v-if="isLoggedIn" class="watchlist-empty">
         {{ t('market.watchlistPreparing') }}
       </div>
-      <div v-else class="watchlist-empty">
-        {{ t('market.watchlistLogin') }}
-      </div>
+      <LoginPrompt v-else :action-text="t('assets.viewData')" compact />
     </div>
 
     <div v-else class="markets-page__content markets-page__content--chart">

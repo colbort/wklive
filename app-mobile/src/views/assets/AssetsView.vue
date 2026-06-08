@@ -5,6 +5,8 @@ import { useRouter } from 'vue-router'
 import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
 import { getAccessToken } from '@/api/http'
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
+import CommonPage from '@/components/common/CommonPage.vue'
+import LoginPrompt from '@/components/common/LoginPrompt.vue'
 import { optionText, useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
@@ -34,7 +36,6 @@ const activeAssetAction = ref<AssetActionKey>('cryptoRecharge')
 const activeOrderScope = ref('stock')
 const coinConfigs = ref<AssetCoinConfig[]>([])
 const coinConfigsLoading = ref(false)
-const coinConfigsMessage = ref('')
 const summaryAssets = ref<AssetUserAsset[]>([])
 const summaryLoading = ref(false)
 const selectedCoinConfig = ref<AssetCoinConfig | null>(null)
@@ -89,6 +90,15 @@ const assetAccounts = computed(() => {
         label: t(`options.${account.code}`),
         walletType: account.walletType,
       }))
+})
+
+const pageMenus = computed(() => {
+  if (activeTopTab.value !== 'assets') return []
+
+  return assetAccounts.value.map((account) => ({
+    label: account.label,
+    value: account.key,
+  }))
 })
 
 const activeWalletType = computed(() => {
@@ -215,10 +225,8 @@ async function loadAssetSummary() {
 
 async function loadCoinConfigs() {
   coinConfigs.value = []
-  coinConfigsMessage.value = ''
 
   if (!getAccessToken()) {
-    coinConfigsMessage.value = t('assets.loginFirst')
     return
   }
 
@@ -230,17 +238,12 @@ async function loadCoinConfigs() {
     })
 
     if (!isSuccessCode(resp.code)) {
-      coinConfigsMessage.value = resp.msg || t('assets.coinConfigLoadFailed')
       return
     }
 
     coinConfigs.value = resp.data || []
-    if (!coinConfigs.value.length) {
-      coinConfigsMessage.value = t('assets.noCoins')
-    }
   } catch (error) {
     console.warn('list asset coin configs failed', error)
-    coinConfigsMessage.value = t('assets.coinConfigLoadFailed')
   } finally {
     coinConfigsLoading.value = false
   }
@@ -286,203 +289,191 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="assets-page">
-    <nav class="assets-top-tabs" :aria-label="t('assets.pageLabel')">
-      <button
-        v-for="tab in pageTabs.slice(0, 2)"
-        :key="tab.key"
-        type="button"
-        :class="{ active: activeTopTab === tab.key }"
-        @click="activeTopTab = tab.key"
-      >
-        {{ t(tab.shortLabelKey) }}
-      </button>
-    </nav>
+  <CommonPage
+    :show-back="false"
+    :nav-height="76"
+    :menus="pageMenus"
+    :model-value="activeAssetAccount"
+    @update:model-value="activeAssetAccount = String($event)"
+  >
+    <template #tabbar>
+      <nav class="assets-page-tabbar" :aria-label="t('assets.pageLabel')">
+        <button
+          v-for="tab in pageTabs.slice(0, 2)"
+          :key="tab.key"
+          type="button"
+          :class="{ active: activeTopTab === tab.key }"
+          @click="activeTopTab = tab.key"
+        >
+          {{ t(tab.shortLabelKey) }}
+        </button>
+      </nav>
+    </template>
 
-    <template v-if="activeTopTab === 'assets'">
-      <div class="assets-center">
-        <section class="assets-main-panel">
-          <section class="asset-actions">
-            <button
-              v-for="action in assetActions"
-              :key="action.key"
-              type="button"
-              :class="{ active: activeAssetAction === action.key }"
-              @click="handleAssetAction(action.key)"
-            >
-              <span>{{ action.icon }}</span>
-              <strong>{{ t(action.labelKey) }}</strong>
-            </button>
-          </section>
+    <template #custom>
+      <section v-if="activeTopTab === 'assets'" class="asset-actions">
+        <button
+          v-for="action in assetActions"
+          :key="action.key"
+          type="button"
+          :class="{ active: activeAssetAction === action.key }"
+          @click="handleAssetAction(action.key)"
+        >
+          <span>{{ action.icon }}</span>
+          <strong>{{ t(action.labelKey) }}</strong>
+        </button>
+      </section>
+    </template>
 
-          <nav class="assets-sub-tabs" :aria-label="t('assets.accountLabel')">
-            <button
-              v-for="account in assetAccounts"
-              :key="account.key"
-              type="button"
-              :class="{ active: activeAssetAccount === account.key }"
-              @click="activeAssetAccount = account.key"
-            >
-              {{ account.label }}
-            </button>
-          </nav>
+    <section class="assets-page">
+      <template v-if="activeTopTab === 'assets'">
+        <div class="assets-center">
+          <section class="assets-main-panel">
+            <header class="asset-list-head">
+              <h2>{{ activeAccountLabel }}</h2>
+              <span>◎</span>
+            </header>
 
-          <header class="asset-list-head">
-            <h2>{{ activeAccountLabel }}</h2>
-            <span>◎</span>
-          </header>
-
-          <section class="asset-coin-configs" aria-live="polite">
-            <div v-if="coinConfigsLoading || summaryLoading" class="asset-coin-configs__state">
-              {{ t('common.loading') }}
-            </div>
-            <div
-              v-else-if="coinConfigsMessage && !displayedAssets.length"
-              class="asset-coin-configs__state"
-            >
-              {{ coinConfigsMessage }}
-            </div>
-            <div v-else class="asset-coin-list">
-              <button
-                v-for="item in displayedAssets"
-                :key="item.config.id || item.config.coin"
-                type="button"
-                class="asset-coin-row"
-                @click="openCoinActions(item.config)"
-              >
-                <span
-                  class="asset-coin-row__icon"
-                  :style="{
-                    backgroundColor: item.config.iconBgColor || '#17391f',
-                  }"
+            <section class="asset-coin-configs" aria-live="polite">
+              <div v-if="coinConfigsLoading || summaryLoading" class="asset-coin-configs__state">
+                {{ t('common.loading') }}
+              </div>
+              <div v-else class="asset-coin-list">
+                <button
+                  v-for="item in displayedAssets"
+                  :key="item.config.id || item.config.coin"
+                  type="button"
+                  class="asset-coin-row"
+                  @click="openCoinActions(item.config)"
                 >
-                  <img
-                    v-if="item.config.iconUrl"
-                    :src="item.config.iconUrl"
-                    :alt="coinConfigName(item.config)"
+                  <span
+                    class="asset-coin-row__icon"
+                    :style="{
+                      backgroundColor: item.config.iconBgColor || '#17391f',
+                    }"
                   >
-                  <span v-else>{{ coinConfigIconText(item.config) }}</span>
-                </span>
-                <span class="asset-coin-row__main">
-                  <strong>{{ item.config.coin }}</strong>
-                </span>
-                <span class="asset-coin-row__meta">{{ item.amount }}</span>
+                    <img
+                      v-if="item.config.iconUrl"
+                      :src="item.config.iconUrl"
+                      :alt="coinConfigName(item.config)"
+                    >
+                    <span v-else>{{ coinConfigIconText(item.config) }}</span>
+                  </span>
+                  <span class="asset-coin-row__main">
+                    <strong>{{ item.config.coin }}</strong>
+                  </span>
+                  <span class="asset-coin-row__meta">{{ item.amount }}</span>
+                </button>
+              </div>
+            </section>
+
+            <LoginPrompt v-if="!getAccessToken()" :action-text="t('assets.viewAssets')" />
+          </section>
+        </div>
+
+        <BottomDrawer
+          :model-value="Boolean(selectedCoinConfig)"
+          :title="t('assets.coinAction')"
+          :close-label="t('common.close')"
+          max-height="68dvh"
+          :z-index="90"
+          @update:model-value="
+            (value) => {
+              if (!value) closeCoinActions()
+            }
+          "
+        >
+          <div v-if="selectedCoinConfig" class="coin-action-sheet">
+            <span
+              class="coin-action-sheet__coin"
+              :style="{
+                backgroundColor: selectedCoinConfig.iconBgColor || '#16ad77',
+              }"
+            >
+              <img
+                v-if="selectedCoinConfig.iconUrl"
+                :src="selectedCoinConfig.iconUrl"
+                :alt="coinConfigName(selectedCoinConfig)"
+              >
+              <span v-else>{{ coinConfigIconText(selectedCoinConfig) }}</span>
+            </span>
+            <strong>{{ selectedCoinConfig.coin }}</strong>
+
+            <div class="coin-action-sheet__grid">
+              <button
+                type="button"
+                class="coin-action coin-action--recharge"
+                @click="openAssetFlow('recharge')"
+              >
+                <span>⇣</span>
+                <strong>{{ t('userMenu.recharge') }}</strong>
+              </button>
+              <button
+                type="button"
+                class="coin-action coin-action--withdraw"
+                @click="openAssetFlow('withdraw')"
+              >
+                <span>⇡</span>
+                <strong>{{ t('userMenu.withdraw') }}</strong>
+              </button>
+              <button
+                type="button"
+                class="coin-action coin-action--transfer-in"
+                @click="openAssetFlow('transfer', 'in')"
+              >
+                <span>↯</span>
+                <strong>{{ t('assets.transferIn') }}</strong>
+              </button>
+              <button
+                type="button"
+                class="coin-action coin-action--transfer-out"
+                @click="openAssetFlow('transfer', 'out')"
+              >
+                <span>↟</span>
+                <strong>{{ t('assets.transferOut') }}</strong>
               </button>
             </div>
-          </section>
-
-          <div v-if="!getAccessToken()" class="asset-login-tip">
-            <span>{{ t('common.login') }}</span>/<span>{{ t('common.register') }}</span> {{ t('assets.viewAssets') }}
           </div>
-        </section>
-      </div>
+        </BottomDrawer>
+      </template>
 
-      <BottomDrawer
-        :model-value="Boolean(selectedCoinConfig)"
-        :title="t('assets.coinAction')"
-        :close-label="t('common.close')"
-        max-height="68dvh"
-        :z-index="90"
-        @update:model-value="
-          (value) => {
-            if (!value) closeCoinActions()
-          }
-        "
-      >
-        <div v-if="selectedCoinConfig" class="coin-action-sheet">
-          <span
-            class="coin-action-sheet__coin"
-            :style="{
-              backgroundColor: selectedCoinConfig.iconBgColor || '#16ad77',
-            }"
+      <template v-else-if="activeTopTab === 'orders'">
+        <nav class="assets-sub-tabs assets-sub-tabs--orders" :aria-label="t('assets.orderCategory')">
+          <button
+            v-for="scope in orderScopes"
+            :key="scope.key"
+            type="button"
+            :class="{ active: activeOrderScope === scope.key }"
+            @click="activeOrderScope = scope.key"
           >
-            <img
-              v-if="selectedCoinConfig.iconUrl"
-              :src="selectedCoinConfig.iconUrl"
-              :alt="coinConfigName(selectedCoinConfig)"
-            >
-            <span v-else>{{ coinConfigIconText(selectedCoinConfig) }}</span>
-          </span>
-          <strong>{{ selectedCoinConfig.coin }}</strong>
+            {{ t(scope.labelKey) }}
+          </button>
+        </nav>
 
-          <div class="coin-action-sheet__grid">
-            <button
-              type="button"
-              class="coin-action coin-action--recharge"
-              @click="openAssetFlow('recharge')"
-            >
-              <span>⇣</span>
-              <strong>{{ t('userMenu.recharge') }}</strong>
-            </button>
-            <button
-              type="button"
-              class="coin-action coin-action--withdraw"
-              @click="openAssetFlow('withdraw')"
-            >
-              <span>⇡</span>
-              <strong>{{ t('userMenu.withdraw') }}</strong>
-            </button>
-            <button
-              type="button"
-              class="coin-action coin-action--transfer-in"
-              @click="openAssetFlow('transfer', 'in')"
-            >
-              <span>↯</span>
-              <strong>{{ t('assets.transferIn') }}</strong>
-            </button>
-            <button
-              type="button"
-              class="coin-action coin-action--transfer-out"
-              @click="openAssetFlow('transfer', 'out')"
-            >
-              <span>↟</span>
-              <strong>{{ t('assets.transferOut') }}</strong>
-            </button>
-          </div>
-        </div>
-      </BottomDrawer>
-    </template>
+        <nav class="assets-order-tabs" :aria-label="t('assets.orderStatus')">
+          <button
+            v-for="(tab, index) in orderTabs"
+            :key="tab"
+            type="button"
+            :class="{ active: index === 0 }"
+          >
+            {{ t(tab) }}
+          </button>
+        </nav>
 
-    <template v-else-if="activeTopTab === 'orders'">
-      <nav class="assets-sub-tabs assets-sub-tabs--orders" :aria-label="t('assets.orderCategory')">
-        <button
-          v-for="scope in orderScopes"
-          :key="scope.key"
-          type="button"
-          :class="{ active: activeOrderScope === scope.key }"
-          @click="activeOrderScope = scope.key"
-        >
-          {{ t(scope.labelKey) }}
-        </button>
-      </nav>
+        <LoginPrompt :action-text="t('assets.viewData')" compact />
+      </template>
 
-      <nav class="assets-order-tabs" :aria-label="t('assets.orderStatus')">
-        <button
-          v-for="(tab, index) in orderTabs"
-          :key="tab"
-          type="button"
-          :class="{ active: index === 0 }"
-        >
-          {{ t(tab) }}
-        </button>
-      </nav>
-
-      <div class="asset-login-tip asset-login-tip--orders">
-        <span>{{ t('common.login') }}</span>/<span>{{ t('common.register') }}</span> {{ t('assets.viewData') }}
-      </div>
-    </template>
-
-    <template v-else>
-      <div class="asset-login-tip asset-login-tip--orders">
-        <span>{{ t('common.login') }}</span>/<span>{{ t('common.register') }}</span> {{ t('assets.viewProfile') }}
-      </div>
-    </template>
-  </section>
+      <template v-else>
+        <LoginPrompt :action-text="t('assets.viewProfile')" compact />
+      </template>
+    </section>
+  </CommonPage>
 </template>
 
 <style scoped>
 .assets-page {
-  min-height: calc(100dvh - 72px);
+  min-height: calc(100dvh - 76px);
   padding: 18px 16px 96px;
   background: #0b0c15;
   color: #f6f7fb;
@@ -495,7 +486,6 @@ button {
   font: inherit;
 }
 
-.assets-top-tabs,
 .assets-sub-tabs,
 .assets-order-tabs {
   display: flex;
@@ -504,29 +494,28 @@ button {
   overflow-x: hidden;
 }
 
-.assets-top-tabs {
-  position: sticky;
-  top: 0;
-  z-index: 25;
-  /* margin-bottom: 10px; */
-  margin-right: -16px;
-  margin-left: -16px;
-  padding: 14px 16px 12px;
+.assets-page-tabbar {
+  display: flex;
+  align-items: center;
+  height: 76px;
+  gap: 42px;
+  padding: 0 24px;
   background: #0b0c15;
 }
 
-.assets-top-tabs button {
+.assets-page-tabbar button {
+  position: relative;
   flex: 0 0 auto;
   color: #8f929d;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 700;
   white-space: nowrap;
 }
 
-.assets-top-tabs button.active {
+.assets-page-tabbar button.active {
   color: #fff;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 800;
 }
 
 .assets-center {
@@ -536,7 +525,7 @@ button {
 .asset-actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 0 -16px 54px;
+  margin: 0;
   border-top: 1px solid #242633;
   border-bottom: 1px solid #242633;
 }
@@ -581,6 +570,44 @@ button {
 .asset-actions strong {
   font-size: 14px;
   font-weight: 500;
+}
+
+:deep(.sub-menu) {
+  justify-content: flex-start;
+  gap: 28px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 20px;
+  border-bottom: 1px solid #242633;
+  background: #0b0c15;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+:deep(.sub-menu::-webkit-scrollbar) {
+  display: none;
+}
+
+:deep(.sub-menu-item) {
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  color: #8f929d;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+:deep(.sub-menu-item.active) {
+  color: #fff;
+  font-weight: 800;
+}
+
+:deep(.sub-menu-item.active::after) {
+  right: 8px;
+  bottom: 0;
+  left: 8px;
+  width: auto;
+  background: #02b904;
 }
 
 .asset-list-head {
@@ -725,22 +752,6 @@ button {
   border-bottom: 1px solid #242633;
 }
 
-.asset-login-tip {
-  display: grid;
-  min-height: 210px;
-  place-items: center;
-  color: #8f929d;
-  font-size: 14px;
-}
-
-.asset-login-tip--orders {
-  min-height: 160px;
-}
-
-.asset-login-tip span {
-  color: #02b904;
-}
-
 .coin-action-sheet {
   display: grid;
   justify-items: center;
@@ -846,37 +857,16 @@ button {
     min-height: 86px;
   }
 
-  .asset-actions {
-    margin-right: -18px;
-    margin-left: -18px;
-  }
-
   .assets-sub-tabs,
   .asset-coin-configs {
     margin-right: -18px;
     margin-left: -18px;
-  }
-
-  .assets-top-tabs button.active {
-    font-size: 18px;
-  }
-
-  .assets-top-tabs {
-    margin-right: -18px;
-    margin-left: -18px;
-    padding-right: 18px;
-    padding-left: 18px;
   }
 }
 
 @media (max-width: 390px) {
   .assets-page {
     padding: 16px 14px 92px;
-  }
-
-  .asset-actions {
-    margin-right: -14px;
-    margin-left: -14px;
   }
 
   .asset-actions button {
@@ -899,13 +889,6 @@ button {
   .asset-coin-configs {
     margin-right: -14px;
     margin-left: -14px;
-  }
-
-  .assets-top-tabs {
-    margin-right: -14px;
-    margin-left: -14px;
-    padding-right: 14px;
-    padding-left: 14px;
   }
 
   .asset-coin-row {

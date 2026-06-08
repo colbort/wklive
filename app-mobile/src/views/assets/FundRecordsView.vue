@@ -8,7 +8,7 @@ import {
   apiListMyRechargeOrders,
   apiListMyWithdrawOrders,
 } from '@/api/payment'
-import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
+import CommonPage from '@/components/common/CommonPage.vue'
 import { useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import type { AssetCoinConfig } from '@/types/asset'
@@ -30,6 +30,11 @@ const rechargeOrders = ref<RechargeOrder[]>([])
 const withdrawOrders = ref<WithdrawOrder[]>([])
 const loading = ref(false)
 const pageError = ref('')
+
+const recordMenus = computed(() => [
+  { label: t('assetFlow.rechargeRecords'), value: 'recharge' },
+  { label: t('assetFlow.withdrawRecords'), value: 'withdraw' },
+])
 
 const visibleRecords = computed(() => {
   if (activeTab.value === 'recharge') {
@@ -71,6 +76,10 @@ function selectMainTab(tab: MainTab) {
   activeTab.value = tab
   pageError.value = ''
   void loadActiveRecords()
+}
+
+function selectMenu(value: string | number) {
+  selectMainTab(value === 'withdraw' ? 'withdraw' : 'recharge')
 }
 
 function selectWithdrawTab(tab: WithdrawTab) {
@@ -205,95 +214,88 @@ onMounted(() => {
 </script>
 
 <template>
-  <AssetFlowLayout class="fund-record-layout" :title="t('assetFlow.records')" narrow>
-    <nav class="record-tabs" aria-label="fund record type">
-      <button
-        type="button"
-        :class="{ 'record-tabs__item--active': activeTab === 'recharge' }"
-        @click="selectMainTab('recharge')"
-      >
-        {{ t('assetFlow.rechargeRecords') }}
-      </button>
-      <button
-        type="button"
-        :class="{ 'record-tabs__item--active': activeTab === 'withdraw' }"
-        @click="selectMainTab('withdraw')"
-      >
-        {{ t('assetFlow.withdrawRecords') }}
-      </button>
-    </nav>
-
-    <div v-if="activeTab === 'withdraw'" class="withdraw-type-tabs">
-      <button
-        type="button"
-        :class="{ 'withdraw-type-tabs__item--active': withdrawTab === 'crypto' }"
-        @click="selectWithdrawTab('crypto')"
-      >
-        {{ t('assetFlow.crypto') }}
-      </button>
-      <button
-        type="button"
-        :class="{ 'withdraw-type-tabs__item--active': withdrawTab === 'bank' }"
-        @click="selectWithdrawTab('bank')"
-      >
-        {{ t('assetFlow.bankCard') }}
-      </button>
-    </div>
-
-    <p v-if="pageError" class="records-state records-state--error">
-      {{ pageError }}
-    </p>
-    <p v-else-if="loading" class="records-state">
-      {{ t('common.loading') }}
-    </p>
-
-    <section v-else-if="visibleRecords.length" class="record-list">
-      <article
-        v-for="record in visibleRecords"
-        :key="`${activeTab}-${record.id}`"
-        class="record-item"
-        :class="{ 'record-item--clickable': activeTab === 'recharge' }"
-        @click="openRecord(record)"
-      >
-        <span class="record-coin-icon" :style="coinIconStyle(record.currency)">
-          <img
-            v-if="configForCoin(record.currency)?.iconUrl"
-            :src="configForCoin(record.currency)?.iconUrl"
-            :alt="record.currency"
-          >
-          <span v-else>{{ coinIconText(record.currency) }}</span>
-        </span>
-        <div class="record-main">
-          <div class="record-title-group">
-            <strong>{{ record.currency }}</strong>
-            <span>
-              {{ record.title }}{{ t('assetFlow.accountSeparator')
-              }}<b>{{ record.accountLabel }}</b>
-            </span>
-          </div>
-          <span class="record-time">{{ formatRecordTime(record.time) }}</span>
-        </div>
-        <aside class="record-side">
-          <b>{{ formatRecordAmount(record.amount, record.currency) }}</b>
-          <span class="record-status" :class="statusClass(record.statusValue)">{{
-            record.status
-          }}</span>
-        </aside>
-      </article>
-    </section>
-
-    <section v-else class="empty-records">
-      <div class="empty-records__icon" aria-hidden="true">
-        <span class="empty-records__paper">
-          <i />
-          <i />
-          <i />
-        </span>
-        <span class="empty-records__lens" />
+  <CommonPage
+    class="fund-record-layout"
+    :title="t('assetFlow.records')"
+    :nav-height="76"
+    :menus="recordMenus"
+    :model-value="activeTab"
+    @back="router.back()"
+    @update:model-value="selectMenu"
+  >
+    <section class="fund-record-page">
+      <div v-if="activeTab === 'withdraw'" class="withdraw-type-tabs">
+        <button
+          type="button"
+          :class="{ 'withdraw-type-tabs__item--active': withdrawTab === 'crypto' }"
+          @click="selectWithdrawTab('crypto')"
+        >
+          {{ t('assetFlow.crypto') }}
+        </button>
+        <button
+          type="button"
+          :class="{ 'withdraw-type-tabs__item--active': withdrawTab === 'bank' }"
+          @click="selectWithdrawTab('bank')"
+        >
+          {{ t('assetFlow.bankCard') }}
+        </button>
       </div>
-      <p>{{ t('common.none') }}</p>
+
+      <p v-if="pageError" class="records-state records-state--error">
+        {{ pageError }}
+      </p>
+      <p v-else-if="loading" class="records-state">
+        {{ t('common.loading') }}
+      </p>
+
+      <section v-else-if="visibleRecords.length" class="record-list">
+        <article
+          v-for="record in visibleRecords"
+          :key="`${activeTab}-${record.id}`"
+          class="record-item"
+          :class="{ 'record-item--clickable': activeTab === 'recharge' }"
+          @click="openRecord(record)"
+        >
+          <span class="record-coin-icon" :style="coinIconStyle(record.currency)">
+            <img
+              v-if="configForCoin(record.currency)?.iconUrl"
+              :src="configForCoin(record.currency)?.iconUrl"
+              :alt="record.currency"
+            >
+            <span v-else>{{ coinIconText(record.currency) }}</span>
+          </span>
+          <div class="record-main">
+            <div class="record-title-group">
+              <strong>{{ record.currency }}</strong>
+              <span>
+                {{ record.title }}{{ t('assetFlow.accountSeparator')
+                }}<b>{{ record.accountLabel }}</b>
+              </span>
+            </div>
+            <span class="record-time">{{ formatRecordTime(record.time) }}</span>
+          </div>
+          <aside class="record-side">
+            <b>{{ formatRecordAmount(record.amount, record.currency) }}</b>
+            <span class="record-status" :class="statusClass(record.statusValue)">{{
+              record.status
+            }}</span>
+          </aside>
+        </article>
+      </section>
+
+      <section v-else class="empty-records">
+        <div class="empty-records__icon" aria-hidden="true">
+          <span class="empty-records__paper">
+            <i />
+            <i />
+            <i />
+          </span>
+          <span class="empty-records__lens" />
+        </div>
+        <p>{{ t('common.none') }}</p>
+      </section>
     </section>
-  </AssetFlowLayout>
+  </CommonPage>
 </template>
 
 <style scoped>
@@ -304,47 +306,61 @@ button {
   font: inherit;
 }
 
-.fund-record-layout :deep(.asset-flow-body) {
-  padding-top: 0;
-}
-
 .fund-record-layout {
   overflow-x: clip;
 }
 
-.record-tabs {
-  position: sticky;
-  top: 54px;
-  z-index: 29;
+.fund-record-page {
+  min-height: calc(100dvh - 152px);
+  padding: 22px 18px 96px;
+  background: #0b0c15;
+  color: #f6f7fb;
+}
+
+:deep(.header-bar) {
+  background: #0b0c15;
+}
+
+:deep(.header-left) {
+  left: 18px;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  margin-top: 15px;
+  border-radius: 50%;
+  background: #20232e;
+}
+
+:deep(.header-title) {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+:deep(.sub-menu) {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin: 0 -18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  height: 76px;
   border-bottom: 1px solid #1f212b;
   background: #0b0c15;
 }
 
-.record-tabs button {
-  position: relative;
-  min-height: 70px;
+:deep(.sub-menu-item) {
+  height: 76px;
+  justify-content: center;
   color: #777985;
   font-size: 21px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
-.record-tabs__item--active {
-  color: #fff !important;
+:deep(.sub-menu-item.active) {
+  color: #fff;
 }
 
-.record-tabs__item--active::after {
-  position: absolute;
+:deep(.sub-menu-item.active::after) {
   bottom: -1px;
-  left: 50%;
   width: 36px;
   height: 4px;
-  border-radius: 999px;
   background: #00c70a;
-  content: '';
-  transform: translateX(-50%);
 }
 
 .withdraw-type-tabs {
@@ -597,17 +613,6 @@ button {
 }
 
 @media (max-width: 390px) {
-  .record-tabs {
-    top: 50px;
-    margin-right: -14px;
-    margin-left: -14px;
-  }
-
-  .record-tabs button {
-    min-height: 66px;
-    font-size: 19px;
-  }
-
   .withdraw-type-tabs button {
     min-width: 104px;
     min-height: 56px;

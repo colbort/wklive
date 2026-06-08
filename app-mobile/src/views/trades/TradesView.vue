@@ -15,6 +15,7 @@ import {
   apiTradePlaceOrder,
   apiTradeSetLeverage,
 } from '@/api/trade'
+import CommonPage from '@/components/common/CommonPage.vue'
 import TradeView from '@/components/trades/TradeView.vue'
 import { useTradingDesk } from '@/composables/useTradingDesk'
 import { t } from '@/i18n'
@@ -31,6 +32,7 @@ import type {
   TradeSymbolSpot,
 } from '@/types/trade'
 import { formatAssetMinorAmount } from '@/utils/assetAmount'
+import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type SubmitSide = 'buy' | 'sell'
 type TradeSymbolDetail = {
@@ -863,76 +865,156 @@ async function cancelTradeOrder(order: TradeOrder) {
 </script>
 
 <template>
-  <section class="trade-page" :aria-busy="loadingBootstrap">
-    <TradeView
-      :categories="categories"
-      :selected-category-type="selectedCategoryType"
-      :selected-category="selectedCategory"
-      :selected-product="selectedProduct"
-      :selected-product-key="selectedProductKey"
-      :trade-kind="tradeKind"
-      :price-trend="priceTrend"
-      :placeholder-price="placeholderPrice"
-      :placeholder-change="placeholderChange"
-      :selected-quote="selectedQuote"
-      :depth-snapshot="depthSnapshot"
-      :tick-snapshot="tickSnapshot"
-      :product-menu-open="productMenuOpen"
-      :product-sheet-rows="productSheetRows"
-      :order-mode="orderMode"
-      :selected-trade-symbol="displaySelectedTradeSymbol"
-      :trade-symbol-detail="tradeSymbolDetail"
-      :trade-symbol-loading="loadingTradeSymbols || loadingTradeDetail"
-      :is-logged-in="isLoggedIn"
-      :trade-available="tradeAvailable"
-      :trade-price="tradePrice"
-      :trade-qty="tradeQty"
-      :trade-percent="tradePercent"
-      :margin-mode="marginMode"
-      :leverage="leverage"
-      :max-leverage="maxTradeLeverage"
-      :leverage-values="tradeLeverageValues"
-      :take-profit-price="takeProfitPrice"
-      :stop-loss-price="stopLossPrice"
-      :settle-asset="selectedTradeSettleAsset"
-      :available-balance="availableBalance"
-      :long-position-qty="longPositionQty"
-      :short-position-qty="shortPositionQty"
-      :trade-message="tradeMessage"
-      :trade-error="tradeError"
-      :submitting-side="submittingSide"
-      :trade-orders="displayTradeOrders"
-      :orders-loading="loadingTradeOrders"
-      :orders-error="ordersError"
-      :canceling-order-id="cancelingOrderId"
-      :coin-glyph="coinGlyph"
-      @select-category="selectedCategoryType = $event"
-      @open-product-menu="productMenuOpen = true"
-      @close-product-sheet="closeProductSheet"
-      @select-product="selectProduct"
-      @update:order-mode="orderMode = $event"
-      @update:trade-price="tradePrice = $event"
-      @update:trade-qty="tradeQty = $event"
-      @update:trade-percent="tradePercent = $event"
-      @update:margin-mode="updateMarginMode"
-      @update:leverage="updateLeverage"
-      @update:take-profit-price="takeProfitPrice = $event"
-      @update:stop-loss-price="stopLossPrice = $event"
-      @submit-order="submitTradeOrder"
-      @cancel-order="cancelTradeOrder"
-      @refresh-orders="refreshTradeOrders"
-    />
-  </section>
+  <CommonPage
+    :show-back="false"
+    :nav-height="50"
+  >
+    <template #tabbar>
+      <nav class="trade-category-tabbar" :aria-label="t('market.category')">
+        <button
+          v-for="category in categories"
+          :key="category.id"
+          type="button"
+          class="trade-category-tabbar__item"
+          :class="{ 'trade-category-tabbar__item--active': category.categoryType === selectedCategoryType }"
+          @click="selectedCategoryType = category.categoryType"
+        >
+          {{ marketCategoryLabel(category) }}
+        </button>
+      </nav>
+    </template>
+
+    <section class="trade-page" :aria-busy="loadingBootstrap">
+      <TradeView
+        :selected-category="selectedCategory"
+        :selected-product="selectedProduct"
+        :selected-product-key="selectedProductKey"
+        :trade-kind="tradeKind"
+        :price-trend="priceTrend"
+        :placeholder-price="placeholderPrice"
+        :placeholder-change="placeholderChange"
+        :selected-quote="selectedQuote"
+        :depth-snapshot="depthSnapshot"
+        :tick-snapshot="tickSnapshot"
+        :product-menu-open="productMenuOpen"
+        :product-sheet-rows="productSheetRows"
+        :order-mode="orderMode"
+        :selected-trade-symbol="displaySelectedTradeSymbol"
+        :trade-symbol-detail="tradeSymbolDetail"
+        :trade-symbol-loading="loadingTradeSymbols || loadingTradeDetail"
+        :is-logged-in="isLoggedIn"
+        :trade-available="tradeAvailable"
+        :trade-price="tradePrice"
+        :trade-qty="tradeQty"
+        :trade-percent="tradePercent"
+        :margin-mode="marginMode"
+        :leverage="leverage"
+        :max-leverage="maxTradeLeverage"
+        :leverage-values="tradeLeverageValues"
+        :take-profit-price="takeProfitPrice"
+        :stop-loss-price="stopLossPrice"
+        :settle-asset="selectedTradeSettleAsset"
+        :available-balance="availableBalance"
+        :long-position-qty="longPositionQty"
+        :short-position-qty="shortPositionQty"
+        :trade-message="tradeMessage"
+        :trade-error="tradeError"
+        :submitting-side="submittingSide"
+        :trade-orders="displayTradeOrders"
+        :orders-loading="loadingTradeOrders"
+        :orders-error="ordersError"
+        :canceling-order-id="cancelingOrderId"
+        :coin-glyph="coinGlyph"
+        @open-product-menu="productMenuOpen = true"
+        @close-product-sheet="closeProductSheet"
+        @select-product="selectProduct"
+        @update:order-mode="orderMode = $event"
+        @update:trade-price="tradePrice = $event"
+        @update:trade-qty="tradeQty = $event"
+        @update:trade-percent="tradePercent = $event"
+        @update:margin-mode="updateMarginMode"
+        @update:leverage="updateLeverage"
+        @update:take-profit-price="takeProfitPrice = $event"
+        @update:stop-loss-price="stopLossPrice = $event"
+        @submit-order="submitTradeOrder"
+        @cancel-order="cancelTradeOrder"
+        @refresh-orders="refreshTradeOrders"
+      />
+    </section>
+  </CommonPage>
 </template>
 
 <style scoped>
 .trade-page {
   width: 100%;
   max-width: 100%;
-  min-height: calc(100dvh - 72px);
-  padding: 18px 22px 112px;
+  min-height: 100%;
+  padding: 0 22px calc(96px + env(safe-area-inset-bottom));
   overflow-x: hidden;
   background: #0b0c15;
   color: #f6f7fb;
+}
+
+.trade-category-tabbar {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 20px;
+  width: 100%;
+  height: 50px;
+  padding: 10px 22px 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: #0b0c15;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.trade-category-tabbar::-webkit-scrollbar {
+  display: none;
+}
+
+.trade-category-tabbar__item {
+  position: relative;
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: #8f929d;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.trade-category-tabbar__item--active {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.trade-category-tabbar__item--active::after {
+  position: absolute;
+  right: 2px;
+  bottom: -8px;
+  left: 2px;
+  height: 3px;
+  border-radius: 999px;
+  background: #08c200;
+  content: '';
+}
+
+@media (max-width: 390px) {
+  .trade-category-tabbar {
+    gap: 18px;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .trade-category-tabbar__item {
+    font-size: 14px;
+  }
+
+  .trade-category-tabbar__item--active {
+    font-size: 16px;
+  }
 }
 </style>

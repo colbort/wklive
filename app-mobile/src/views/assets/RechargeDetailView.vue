@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { apiGetAssetOptions, apiListAssetCoinConfigs } from '@/api/asset'
 import { apiGetMyRechargeOrder } from '@/api/payment'
-import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
+import CommonPage from '@/components/common/CommonPage.vue'
 import { useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import { useSystemStore } from '@/stores/system'
@@ -13,6 +13,7 @@ import type { RechargeOrder } from '@/types/payment'
 import { formatAssetMinorAmount } from '@/utils/assetAmount'
 
 const route = useRoute()
+const router = useRouter()
 const { t } = useI18n()
 const assetOptions = useOptions(apiGetAssetOptions)
 const systemStore = useSystemStore()
@@ -163,71 +164,104 @@ onMounted(() => {
 </script>
 
 <template>
-  <AssetFlowLayout class="recharge-detail-layout" :title="t('assetFlow.rechargeDetail')" narrow>
-    <p v-if="pageError" class="detail-state detail-state--error">
-      {{ pageError }}
-    </p>
-    <p v-else-if="loading" class="detail-state">
-      {{ t('common.loading') }}
-    </p>
+  <CommonPage
+    class="recharge-detail-layout"
+    :title="t('assetFlow.rechargeDetail')"
+    :nav-height="76"
+    @back="router.back()"
+  >
+    <section class="asset-flow-content">
+      <p v-if="pageError" class="detail-state detail-state--error">
+        {{ pageError }}
+      </p>
+      <p v-else-if="loading" class="detail-state">
+        {{ t('common.loading') }}
+      </p>
 
-    <section v-else-if="order" class="recharge-detail-card">
-      <header class="detail-head">
-        <span
-          class="detail-coin-icon"
-          :style="{ backgroundColor: coinConfig?.iconBgColor || '#16ad77' }"
-        >
-          <img v-if="coinConfig?.iconUrl" :src="coinConfig.iconUrl" :alt="order.currency">
-          <span v-else>{{ coinIconText() }}</span>
-        </span>
-        <strong>{{ order.currency }}</strong>
-        <small v-if="chainLabel">{{ chainLabel }}</small>
-        <span class="detail-status" :class="statusClass(order.status)">
-          {{ rechargeStatusLabel(order.status) }}
-        </span>
-      </header>
+      <section v-else-if="order" class="recharge-detail-card">
+        <header class="detail-head">
+          <span
+            class="detail-coin-icon"
+            :style="{ backgroundColor: coinConfig?.iconBgColor || '#16ad77' }"
+          >
+            <img v-if="coinConfig?.iconUrl" :src="coinConfig.iconUrl" :alt="order.currency">
+            <span v-else>{{ coinIconText() }}</span>
+          </span>
+          <strong>{{ order.currency }}</strong>
+          <small v-if="chainLabel">{{ chainLabel }}</small>
+          <span class="detail-status" :class="statusClass(order.status)">
+            {{ rechargeStatusLabel(order.status) }}
+          </span>
+        </header>
 
-      <dl class="detail-list">
-        <div>
-          <dt>{{ t('assetFlow.rechargeChannel') }}</dt>
-          <dd>{{ t('assetFlow.crypto') }}</dd>
-        </div>
-        <div>
-          <dt>{{ t('assetFlow.rechargeAmount') }}</dt>
-          <dd>{{ formatRechargeAmount() }}</dd>
-        </div>
-        <div>
-          <dt>{{ t('assetFlow.rechargeAddress') }}</dt>
-          <dd class="detail-break">
-            {{ rechargeAddress || '-' }}
-          </dd>
-        </div>
-        <div>
-          <dt>{{ t('assetFlow.voucher') }}</dt>
-          <dd>
-            <img
-              v-if="voucherImageUrl"
-              class="voucher-image"
-              :src="voucherImageUrl"
-              :alt="t('assetFlow.voucher')"
-            >
-            <span v-else>-</span>
-          </dd>
-        </div>
-        <div>
-          <dt>{{ t('assetFlow.rechargeAccount') }}</dt>
-          <dd>{{ rechargeAccountLabel }}</dd>
-        </div>
-        <div>
-          <dt>{{ t('assetFlow.rechargeTime') }}</dt>
-          <dd>{{ formatRecordTime(order.createTimes) }}</dd>
-        </div>
-      </dl>
+        <dl class="detail-list">
+          <div>
+            <dt>{{ t('assetFlow.rechargeChannel') }}</dt>
+            <dd>{{ t('assetFlow.crypto') }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('assetFlow.rechargeAmount') }}</dt>
+            <dd>{{ formatRechargeAmount() }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('assetFlow.rechargeAddress') }}</dt>
+            <dd class="detail-break">
+              {{ rechargeAddress || '-' }}
+            </dd>
+          </div>
+          <div>
+            <dt>{{ t('assetFlow.voucher') }}</dt>
+            <dd>
+              <img
+                v-if="voucherImageUrl"
+                class="voucher-image"
+                :src="voucherImageUrl"
+                :alt="t('assetFlow.voucher')"
+              >
+              <span v-else>-</span>
+            </dd>
+          </div>
+          <div>
+            <dt>{{ t('assetFlow.rechargeAccount') }}</dt>
+            <dd>{{ rechargeAccountLabel }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('assetFlow.rechargeTime') }}</dt>
+            <dd>{{ formatRecordTime(order.createTimes) }}</dd>
+          </div>
+        </dl>
+      </section>
     </section>
-  </AssetFlowLayout>
+  </CommonPage>
 </template>
 
 <style scoped>
+.asset-flow-content {
+  min-height: calc(100dvh - 76px);
+  padding: 20px 18px 56px;
+  background: #0b0c15;
+  color: #f8f8fb;
+}
+
+:deep(.header-bar) {
+  background: #0b0c15;
+}
+
+:deep(.header-left) {
+  left: 18px;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-top: 20px;
+  border-radius: 50%;
+  background: #242633;
+}
+
+:deep(.header-title) {
+  font-size: 18px;
+  font-weight: 800;
+}
+
 .detail-state {
   margin: 72px 0 0;
   color: #8d909a;
@@ -238,10 +272,6 @@ onMounted(() => {
 
 .detail-state--error {
   color: #ff7676;
-}
-
-.recharge-detail-layout :deep(.asset-flow-body) {
-  padding-top: 0;
 }
 
 .recharge-detail-card {

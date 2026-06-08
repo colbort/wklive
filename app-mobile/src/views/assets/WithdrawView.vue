@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
 import { apiCreateWithdrawOrder } from '@/api/payment'
 import AssetCoinSelectSheet from '@/components/assets/AssetCoinSelectSheet.vue'
 import AssetCoinPicker from '@/components/assets/AssetCoinPicker.vue'
-import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
 import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
+import CommonPage from '@/components/common/CommonPage.vue'
 import { useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
@@ -20,6 +20,7 @@ import {
 } from '@/utils/assetAmount'
 
 const route = useRoute()
+const router = useRouter()
 const assetOptions = useOptions(apiGetAssetOptions)
 const { t } = useI18n()
 const coinConfigs = ref<AssetCoinConfig[]>([])
@@ -186,136 +187,139 @@ onMounted(() => {
 </script>
 
 <template>
-  <AssetFlowLayout
+  <CommonPage
     :title="t('assetFlow.withdraw')"
     :right-text="t('assetFlow.records')"
-    :right-to="{ name: 'asset-flows', query: { tab: 'withdraw' } }"
-    narrow
+    :nav-height="76"
+    @back="router.back()"
+    @right-click="router.push({ name: 'asset-flows', query: { tab: 'withdraw' } })"
   >
-    <button type="button" class="asset-type-pill">
-      {{ isBankWithdraw ? t('assetFlow.bankCard') : t('assetFlow.crypto') }}
-    </button>
+    <section class="asset-flow-content">
+      <button type="button" class="asset-type-pill">
+        {{ isBankWithdraw ? t('assetFlow.bankCard') : t('assetFlow.crypto') }}
+      </button>
 
-    <template v-if="isBankWithdraw">
-      <label class="field-block">
-        <span class="field-block__row">
-          <span>{{ t('assetFlow.withdrawAmount') }}</span>
-          <small>{{ t('assetFlow.withdrawable') }} <b>{{ availableAmount }}</b> {{ coin }}</small>
-        </span>
-        <span class="asset-input asset-input--unit">
+      <template v-if="isBankWithdraw">
+        <label class="field-block">
+          <span class="field-block__row">
+            <span>{{ t('assetFlow.withdrawAmount') }}</span>
+            <small>{{ t('assetFlow.withdrawable') }} <b>{{ availableAmount }}</b> {{ coin }}</small>
+          </span>
+          <span class="asset-input asset-input--unit">
+            <input
+              v-model="amount"
+              :placeholder="t('assetFlow.amountPlaceholder')"
+              inputmode="decimal"
+            >
+            <i>{{ coin }}</i>
+          </span>
+        </label>
+
+        <div class="bank-currency-grid">
+          <label class="field-block">
+            <span>{{ t('assetFlow.withdrawCoin') }}</span>
+            <span class="bank-select-box">
+              <span class="bank-select-box__coin">₮</span>
+              <strong>{{ coin }}</strong>
+              <i>›</i>
+            </span>
+          </label>
+          <label class="field-block">
+            <span>{{ t('assetFlow.arrivalCurrency') }}</span>
+            <span class="bank-select-box">
+              <span class="bank-select-box__flag">🇺🇸</span>
+              <strong>{{ withdrawTargetCurrency }}</strong>
+              <i>›</i>
+            </span>
+          </label>
+        </div>
+
+        <div class="bank-withdraw-divider" />
+
+        <label class="field-block">
+          <span>{{ t('assetFlow.bankName') }}</span>
+          <input v-model="bankName" class="asset-input" :placeholder="t('assetFlow.inputEllipsis')">
+        </label>
+
+        <label class="field-block">
+          <span>{{ t('assetFlow.payeeName') }}</span>
           <input
-            v-model="amount"
-            :placeholder="t('assetFlow.amountPlaceholder')"
-            inputmode="decimal"
+            v-model="bankAccountName"
+            class="asset-input"
+            :placeholder="t('assetFlow.identityUnverified')"
           >
-          <i>{{ coin }}</i>
-        </span>
-      </label>
+        </label>
 
-      <div class="bank-currency-grid">
         <label class="field-block">
-          <span>{{ t('assetFlow.withdrawCoin') }}</span>
-          <span class="bank-select-box">
-            <span class="bank-select-box__coin">₮</span>
-            <strong>{{ coin }}</strong>
-            <i>›</i>
+          <span>{{ t('assetFlow.bankCardNo') }}</span>
+          <input
+            v-model="bankAccountNo"
+            class="asset-input"
+            :placeholder="t('assetFlow.inputEllipsis')"
+          >
+        </label>
+
+        <label class="field-block">
+          <span>{{ t('assetFlow.openingBank') }}</span>
+          <input
+            v-model="bankBranchName"
+            class="asset-input"
+            :placeholder="t('assetFlow.inputEllipsis')"
+          >
+        </label>
+      </template>
+
+      <template v-else>
+        <label class="field-block">
+          <span>{{ t('assetFlow.coin') }}</span>
+          <AssetCoinPicker
+            :coin="coin"
+            :config="selectedConfig || undefined"
+            :chain="selectedChain"
+            @click="coinSheetVisible = true"
+          />
+        </label>
+
+        <label class="field-block">
+          <span>{{ t('assetFlow.withdrawAddress') }}</span>
+          <span class="asset-input asset-input--address">
+            <input v-model="address" :placeholder="t('assetFlow.addressPlaceholder')">
+            <i>▣</i>
           </span>
         </label>
+
         <label class="field-block">
-          <span>{{ t('assetFlow.arrivalCurrency') }}</span>
-          <span class="bank-select-box">
-            <span class="bank-select-box__flag">🇺🇸</span>
-            <strong>{{ withdrawTargetCurrency }}</strong>
-            <i>›</i>
+          <span class="field-block__row">
+            <span>{{ t('assetFlow.withdrawAmount') }}</span>
+            <small>{{ t('assetFlow.withdrawable') }} <b>{{ availableAmount }}</b> {{ coin }}</small>
           </span>
+          <input v-model="amount" class="asset-input" inputmode="decimal">
         </label>
-      </div>
 
-      <div class="bank-withdraw-divider" />
+        <dl class="withdraw-summary">
+          <div>
+            <dt>{{ t('assetFlow.fee') }}</dt>
+            <dd>{{ feeAmount }} {{ coin }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('assetFlow.receivedAmount') }}</dt>
+            <dd>{{ receivedAmount }} {{ coin }}</dd>
+          </div>
+        </dl>
+      </template>
 
-      <label class="field-block">
-        <span>{{ t('assetFlow.bankName') }}</span>
-        <input v-model="bankName" class="asset-input" :placeholder="t('assetFlow.inputEllipsis')">
-      </label>
+      <p v-if="pageError" class="state-text state-text--error">
+        {{ pageError }}
+      </p>
+      <p v-if="pageTip" class="state-text state-text--success">
+        {{ pageTip }}
+      </p>
 
-      <label class="field-block">
-        <span>{{ t('assetFlow.payeeName') }}</span>
-        <input
-          v-model="bankAccountName"
-          class="asset-input"
-          :placeholder="t('assetFlow.identityUnverified')"
-        >
-      </label>
-
-      <label class="field-block">
-        <span>{{ t('assetFlow.bankCardNo') }}</span>
-        <input
-          v-model="bankAccountNo"
-          class="asset-input"
-          :placeholder="t('assetFlow.inputEllipsis')"
-        >
-      </label>
-
-      <label class="field-block">
-        <span>{{ t('assetFlow.openingBank') }}</span>
-        <input
-          v-model="bankBranchName"
-          class="asset-input"
-          :placeholder="t('assetFlow.inputEllipsis')"
-        >
-      </label>
-    </template>
-
-    <template v-else>
-      <label class="field-block">
-        <span>{{ t('assetFlow.coin') }}</span>
-        <AssetCoinPicker
-          :coin="coin"
-          :config="selectedConfig || undefined"
-          :chain="selectedChain"
-          @click="coinSheetVisible = true"
-        />
-      </label>
-
-      <label class="field-block">
-        <span>{{ t('assetFlow.withdrawAddress') }}</span>
-        <span class="asset-input asset-input--address">
-          <input v-model="address" :placeholder="t('assetFlow.addressPlaceholder')">
-          <i>▣</i>
-        </span>
-      </label>
-
-      <label class="field-block">
-        <span class="field-block__row">
-          <span>{{ t('assetFlow.withdrawAmount') }}</span>
-          <small>{{ t('assetFlow.withdrawable') }} <b>{{ availableAmount }}</b> {{ coin }}</small>
-        </span>
-        <input v-model="amount" class="asset-input" inputmode="decimal">
-      </label>
-
-      <dl class="withdraw-summary">
-        <div>
-          <dt>{{ t('assetFlow.fee') }}</dt>
-          <dd>{{ feeAmount }} {{ coin }}</dd>
-        </div>
-        <div>
-          <dt>{{ t('assetFlow.receivedAmount') }}</dt>
-          <dd>{{ receivedAmount }} {{ coin }}</dd>
-        </div>
-      </dl>
-    </template>
-
-    <p v-if="pageError" class="state-text state-text--error">
-      {{ pageError }}
-    </p>
-    <p v-if="pageTip" class="state-text state-text--success">
-      {{ pageTip }}
-    </p>
-
-    <AssetPrimaryButton
-      :label="submitLoading ? t('common.submitting') : t('assetFlow.withdraw')"
-      @click="submitWithdraw"
-    />
+      <AssetPrimaryButton
+        :label="submitLoading ? t('common.submitting') : t('assetFlow.withdraw')"
+        @click="submitWithdraw"
+      />
+    </section>
 
     <AssetCoinSelectSheet
       v-model="coinSheetVisible"
@@ -324,7 +328,7 @@ onMounted(() => {
       :operation-type="2"
       @select="selectConfig"
     />
-  </AssetFlowLayout>
+  </CommonPage>
 </template>
 
 <style scoped>
@@ -334,6 +338,38 @@ input {
   background: transparent;
   color: inherit;
   font: inherit;
+}
+
+.asset-flow-content {
+  min-height: calc(100dvh - 76px);
+  padding: 20px 18px 56px;
+  background: #0b0c15;
+  color: #f8f8fb;
+}
+
+:deep(.header-bar) {
+  background: #0b0c15;
+}
+
+:deep(.header-left) {
+  left: 18px;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-top: 20px;
+  border-radius: 50%;
+  background: #242633;
+}
+
+:deep(.header-title) {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+:deep(.header-right) {
+  right: 18px;
+  color: #fff;
+  font-size: 14px;
 }
 
 .asset-type-pill {
