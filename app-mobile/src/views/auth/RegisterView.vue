@@ -771,7 +771,7 @@ function markUpload(type: IdentityFileKey) {
   margin: 0 auto;
   padding: 24px 28px 34px;
   background: #0d0e17;
-  color: #fff;
+  color: var(--text);
 }
 
 .register-topbar {
@@ -795,7 +795,7 @@ function markUpload(type: IdentityFileKey) {
   border: 0;
   border-radius: 50%;
   background: #252733;
-  color: #fff;
+  color: var(--text);
 }
 
 .chevron-left {
@@ -845,7 +845,7 @@ function markUpload(type: IdentityFileKey) {
 .skip-button {
   border: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font-size: 26px;
   font-weight: 900;
 }
@@ -869,7 +869,7 @@ function markUpload(type: IdentityFileKey) {
   min-width: 0;
   justify-items: center;
   gap: 12px;
-  color: #fff;
+  color: var(--text);
   font-weight: 900;
 }
 
@@ -893,7 +893,7 @@ function markUpload(type: IdentityFileKey) {
   justify-content: center;
   border-radius: 50%;
   background: #666973;
-  color: #fff;
+  color: var(--text);
   font-size: 20px;
 }
 
@@ -966,7 +966,7 @@ function markUpload(type: IdentityFileKey) {
 .auth-tabs {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  border-bottom: 1px solid #20222d;
+  border-bottom: 1px solid var(--divider);
 }
 
 .auth-tabs button {
@@ -974,15 +974,6 @@ function markUpload(type: IdentityFileKey) {
   height: 60px;
   border: 0;
   background: transparent;
-  color: var(--menu-color);
-  font-size: var(--menu-font-size);
-  font-weight: var(--menu-font-weight);
-}
-
-.auth-tabs button.active {
-  color: var(--menu-active-color);
-  font-size: var(--menu-active-font-size);
-  font-weight: var(--menu-active-font-weight);
 }
 
 .auth-tabs button.active::after {
@@ -991,8 +982,6 @@ function markUpload(type: IdentityFileKey) {
   right: 0;
   bottom: -1px;
   left: 0;
-  height: 5px;
-  background: #00c313;
 }
 
 .auth-field {
@@ -1011,7 +1000,7 @@ function markUpload(type: IdentityFileKey) {
   border: 0;
   outline: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font-size: 24px;
   font-weight: 800;
 }
@@ -1146,7 +1135,7 @@ function markUpload(type: IdentityFileKey) {
   border: 0;
   border-radius: 50px;
   background: #00c313;
-  color: #fff;
+  color: var(--text);
   font-size: 30px;
   font-weight: 900;
 }
@@ -1220,7 +1209,7 @@ function markUpload(type: IdentityFileKey) {
   border-radius: 28px;
   outline: 0;
   background: #2a2b35;
-  color: #fff;
+  color: var(--text);
   text-align: center;
   font-size: 32px;
   font-weight: 900;
@@ -1291,7 +1280,7 @@ function markUpload(type: IdentityFileKey) {
   border: 0;
   border-radius: 22px;
   background: #2a2b35;
-  color: #fff;
+  color: var(--text);
   overflow: hidden;
 }
 
@@ -1569,7 +1558,7 @@ function markUpload(type: IdentityFileKey) {
 .secret-card strong {
   min-width: 0;
   overflow: hidden;
-  color: #fff;
+  color: var(--text);
   font-size: 25px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1581,7 +1570,7 @@ function markUpload(type: IdentityFileKey) {
   border: 0;
   border-radius: 22px;
   background: #00c313;
-  color: #fff;
+  color: var(--text);
   font-size: 26px;
   font-weight: 900;
 }

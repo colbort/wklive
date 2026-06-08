@@ -302,7 +302,11 @@ onMounted(() => {
           v-for="tab in pageTabs.slice(0, 2)"
           :key="tab.key"
           type="button"
-          :class="{ active: activeTopTab === tab.key }"
+          class="app-menu__item"
+          :class="{
+            active: activeTopTab === tab.key,
+            'app-menu__item--active': activeTopTab === tab.key,
+          }"
           @click="activeTopTab = tab.key"
         >
           {{ t(tab.shortLabelKey) }}
@@ -475,8 +479,8 @@ onMounted(() => {
 .assets-page {
   min-height: calc(100dvh - 76px);
   padding: 18px 16px 96px;
-  background: #0b0c15;
-  color: #f6f7fb;
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 button {
@@ -497,25 +501,16 @@ button {
 .assets-page-tabbar {
   display: flex;
   align-items: center;
-  height: 76px;
-  gap: 42px;
-  padding: 0 24px;
-  background: #0b0c15;
+  height: var(--menu-bar-height);
+  gap: var(--menu-gap-lg);
+  padding: 0 var(--menu-padding-x);
+  background: var(--page-bg);
 }
 
 .assets-page-tabbar button {
   position: relative;
   flex: 0 0 auto;
-  color: var(--menu-color);
-  font-size: var(--menu-font-size);
-  font-weight: var(--menu-font-weight);
   white-space: nowrap;
-}
-
-.assets-page-tabbar button.active {
-  color: var(--menu-active-color);
-  font-size: var(--menu-active-font-size);
-  font-weight: var(--menu-active-font-weight);
 }
 
 .assets-center {
@@ -526,17 +521,17 @@ button {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0;
-  border-top: 1px solid #242633;
-  border-bottom: 1px solid #242633;
+  border-top: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .asset-actions button {
   display: grid;
-  min-height: 112px;
+  min-height: var(--action-button-height);
   place-items: center;
   align-content: center;
-  gap: 10px;
-  border-right: 1px solid #242633;
+  gap: var(--action-button-gap);
+  border-right: 1px solid var(--border-soft);
 }
 
 .asset-actions button:disabled {
@@ -553,17 +548,17 @@ button {
 }
 
 .asset-actions button:nth-child(n + 4) {
-  border-top: 1px solid #242633;
+  border-top: 1px solid var(--border-soft);
 }
 
 .asset-actions span {
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 1.7rem;
+  height: 1.7rem;
   place-items: center;
-  border: 2px solid #02b904;
-  border-radius: 12px;
-  color: #02b904;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
   font-size: 18px;
 }
 
@@ -574,12 +569,12 @@ button {
 
 :deep(.sub-menu) {
   justify-content: flex-start;
-  gap: 28px;
+  gap: var(--menu-gap);
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0 20px;
-  border-bottom: 1px solid #242633;
-  background: #0b0c15;
+  padding: 0 var(--menu-padding-x);
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--page-bg);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
@@ -591,24 +586,14 @@ button {
 :deep(.sub-menu-item) {
   flex: 0 0 auto;
   justify-content: flex-start;
-  color: var(--menu-color);
-  font-size: var(--menu-font-size);
-  font-weight: var(--menu-font-weight);
   white-space: nowrap;
 }
 
-:deep(.sub-menu-item.active) {
-  color: var(--menu-active-color);
-  font-size: var(--menu-active-font-size);
-  font-weight: var(--menu-active-font-weight);
-}
-
 :deep(.sub-menu-item.active::after) {
-  right: 8px;
+  right: .4rem;
   bottom: 0;
-  left: 8px;
+  left: .4rem;
   width: auto;
-  background: #02b904;
 }
 
 .asset-list-head {
@@ -621,19 +606,19 @@ button {
 }
 
 .asset-list-head span {
-  color: #8f929d;
+  color: var(--muted);
 }
 
 .asset-coin-configs {
   margin: 18px -16px 0;
-  border-bottom: 1px solid #242633;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .asset-coin-configs__state {
   min-height: 76px;
   display: grid;
   place-items: center;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 13px;
 }
 
@@ -649,7 +634,7 @@ button {
   gap: 12px;
   min-height: 66px;
   padding: 10px 24px;
-  border-top: 1px solid #242633;
+  border-top: 1px solid var(--border-soft);
   text-align: left;
 }
 
@@ -660,7 +645,7 @@ button {
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  color: #fff;
+  color: var(--text);
   font-size: 11px;
   font-weight: 700;
 }
@@ -679,7 +664,7 @@ button {
 
 .asset-coin-row__main strong {
   overflow: hidden;
-  color: #f6f7fb;
+  color: var(--text);
   font-size: 14px;
   font-weight: 600;
   text-overflow: ellipsis;
@@ -688,13 +673,13 @@ button {
 
 .asset-coin-row__main small,
 .asset-coin-row__meta {
-  color: #8f929d;
+  color: var(--muted);
   font-size: 12px;
 }
 
 .asset-coin-row__meta {
   white-space: nowrap;
-  color: #f6f7fb;
+  color: var(--text);
   font-size: 15px;
   font-weight: 700;
 }
@@ -702,7 +687,7 @@ button {
 .assets-sub-tabs {
   margin: 0 -16px;
   padding: 0 16px;
-  border-bottom: 1px solid #242633;
+  border-bottom: 1px solid var(--border-soft);
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
@@ -722,36 +707,23 @@ button {
 .assets-order-tabs button {
   position: relative;
   flex: 0 0 auto;
-  padding: 0 0 12px;
-  color: var(--menu-color);
-  font-size: var(--menu-font-size);
-  font-weight: var(--menu-font-weight);
+  padding: 0 0 .6rem;
   white-space: nowrap;
-}
-
-.assets-sub-tabs button.active,
-.assets-order-tabs button.active {
-  color: var(--menu-active-color);
-  font-size: var(--menu-active-font-size);
-  font-weight: var(--menu-active-font-weight);
 }
 
 .assets-sub-tabs button.active::after,
 .assets-order-tabs button.active::after {
   position: absolute;
-  right: 8px;
+  right: .4rem;
   bottom: 0;
-  left: 8px;
-  height: 3px;
-  border-radius: 999px;
-  background: #02b904;
+  left: .4rem;
   content: '';
 }
 
 .assets-order-tabs {
   margin-top: 24px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #242633;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .coin-action-sheet {
@@ -769,7 +741,7 @@ button {
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  color: #fff;
+  color: var(--text);
   font-size: 18px;
   font-weight: 800;
 }
@@ -808,7 +780,7 @@ button {
   height: 44px;
   place-items: center;
   border-radius: 16px;
-  background: #49c9ff;
+  background: var(--info);
   color: #071018;
   font-size: 26px;
   font-weight: 800;
@@ -819,7 +791,7 @@ button {
 }
 
 .coin-action--recharge {
-  color: #49c9ff;
+  color: var(--info);
 }
 
 .coin-action--withdraw {
@@ -837,7 +809,7 @@ button {
 
 .coin-action--transfer-in span {
   background: #00b80c;
-  color: #fff;
+  color: var(--text);
 }
 
 .coin-action--transfer-out {

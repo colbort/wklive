@@ -27,8 +27,11 @@ const { t } = useI18n()
         v-for="tab in tabs"
         :key="tab.key"
         type="button"
-        class="top-tab"
-        :class="{ 'top-tab--active': activeTab === tab.key }"
+        class="top-tab app-menu__item"
+        :class="{
+          'top-tab--active': activeTab === tab.key,
+          'app-menu__item--active': activeTab === tab.key,
+        }"
         @click="emit('change', tab.key)"
       >
         {{ t(tab.label) }}
@@ -55,7 +58,7 @@ const { t } = useI18n()
     28px
     calc(8px * (1 - var(--market-top-collapse, 0)));
   min-height: calc(64px * (1 - var(--market-top-collapse, 0)));
-  background: #0b0c15;
+  background: var(--page-bg);
   opacity: calc(1 - var(--market-top-collapse, 0));
   transform: translateY(calc(-10px * var(--market-top-collapse, 0)));
   transition: opacity 0.08s linear;
@@ -72,41 +75,26 @@ const { t } = useI18n()
 
 .top-tabs {
   display: flex;
-  gap: 26px;
+  gap: var(--menu-gap);
 }
 
-.top-tab,
-.search-button {
+.top-tab {
   border: 0;
   background: transparent;
-  color: inherit;
-  font: inherit;
   cursor: pointer;
 }
 
 .top-tab {
   position: relative;
-  padding: 4px 0 9px;
-  color: var(--menu-color);
-  font-size: var(--menu-font-size);
-  font-weight: var(--menu-font-weight);
+  padding: .2rem 0 .45rem;
   line-height: 1.2;
-}
-
-.top-tab--active {
-  color: var(--menu-active-color);
-  font-size: var(--menu-active-font-size);
-  font-weight: var(--menu-active-font-weight);
 }
 
 .top-tab--active::after {
   position: absolute;
-  right: 3px;
+  right: .15rem;
   bottom: 0;
-  left: 3px;
-  height: 3px;
-  border-radius: 999px;
-  background: #08c200;
+  left: .15rem;
   content: '';
 }
 
@@ -116,8 +104,12 @@ const { t } = useI18n()
   place-items: center;
   width: 46px;
   height: 46px;
+  border: 0;
   border-radius: 999px;
   background: #242631;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }
 
 .search-button span {
@@ -145,7 +137,7 @@ const { t } = useI18n()
   }
 
   .top-tabs {
-    gap: 24px;
+    gap: var(--menu-gap);
   }
 
   .search-button {

@@ -1140,7 +1140,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   margin: 0 auto;
   padding: 24px 28px 42px;
   background: #0d0e17;
-  color: #fff;
+  color: var(--text);
 }
 
 .auth-topbar {
@@ -1165,7 +1165,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border: 0;
   border-radius: 50%;
   background: #252733;
-  color: #fff;
+  color: var(--text);
 }
 
 .chevron-left {
@@ -1229,7 +1229,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 .auth-tabs {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  border-bottom: 1px solid #20222d;
+  border-bottom: 1px solid var(--divider);
 }
 
 .auth-tabs button {
@@ -1237,15 +1237,6 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   height: 54px;
   border: 0;
   background: transparent;
-  color: var(--menu-color);
-  font-size: var(--menu-font-size);
-  font-weight: var(--menu-font-weight);
-}
-
-.auth-tabs button.active {
-  color: var(--menu-active-color);
-  font-size: var(--menu-active-font-size);
-  font-weight: var(--menu-active-font-weight);
 }
 
 .auth-tabs button.active::after {
@@ -1254,8 +1245,6 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   right: 0;
   bottom: -1px;
   left: 0;
-  height: 5px;
-  background: #00c313;
 }
 
 .auth-form {
@@ -1280,7 +1269,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border: 0;
   outline: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font-size: 26px;
   font-weight: 800;
 }
@@ -1314,7 +1303,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border-radius: 18px;
   outline: 2px solid transparent;
   background: #20212b;
-  color: #fff;
+  color: var(--text);
   font-size: 28px;
   font-weight: 900;
   text-align: center;
@@ -1484,7 +1473,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
 .remember-control em,
 .auth-row a {
-  color: #fff;
+  color: var(--text);
   font-size: 24px;
   font-style: normal;
   font-weight: 800;
@@ -1504,7 +1493,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border: 0;
   border-radius: 50px;
   background: #00c313;
-  color: #fff;
+  color: var(--text);
   font-size: 30px;
   font-weight: 900;
 }
@@ -1518,7 +1507,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   justify-items: center;
   gap: 20px;
   margin-top: 60px;
-  color: #fff;
+  color: var(--text);
 }
 
 .quick-login__divider {
@@ -1619,9 +1608,9 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   z-index: 90;
   width: min(100%, var(--app-width, 414px));
   overflow-y: auto;
-  background: #0b0c15;
+  background: var(--page-bg);
   padding: 22px 22px 48px;
-  color: #fff;
+  color: var(--text);
   transform: translateX(-50%);
 }
 
@@ -1659,7 +1648,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border-radius: 20px;
   background: #1d1f2a;
   padding: 0 20px 0 24px;
-  color: #fff;
+  color: var(--text);
   text-align: left;
 }
 
@@ -1719,13 +1708,13 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   justify-content: center;
   border: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font-size: 28px;
   line-height: 1;
 }
 
 .wallet-sheet__back {
-  color: #fff;
+  color: var(--text);
 }
 
 .wallet-sheet__back-icon {
@@ -1766,7 +1755,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   align-items: center;
   justify-content: center;
   border-radius: 24px;
-  color: #fff;
+  color: var(--text);
   font-size: 38px;
   font-weight: 900;
 }
@@ -1790,7 +1779,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
 .wallet-pending strong {
   margin-top: 54px;
-  color: #fff;
+  color: var(--text);
   font-size: 26px;
   font-weight: 800;
 }
@@ -1812,7 +1801,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border-radius: 18px;
   background: transparent;
   padding: 0 30px;
-  color: #fff;
+  color: var(--text);
   font-size: 22px;
   font-weight: 700;
 }
@@ -1837,7 +1826,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border-radius: 16px;
   background: transparent;
   padding: 14px 18px;
-  color: #fff;
+  color: var(--text);
   text-align: left;
 }
 
@@ -1884,7 +1873,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   justify-content: center;
   border-radius: 12px;
   background: #2b2b2b;
-  color: #fff;
+  color: var(--text);
   font-size: 22px;
   font-weight: 900;
 }
@@ -2137,7 +2126,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   .field-icon-svg {
     width: 21px;
     height: 21px;
-    color: #fff;
+    color: var(--text);
   }
 
   .field-action {

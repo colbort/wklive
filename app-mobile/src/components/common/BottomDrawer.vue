@@ -130,8 +130,8 @@ function closeFromBackdrop(enabled: boolean) {
   padding: 22px 22px calc(18px + env(safe-area-inset-bottom));
   overflow: hidden;
   border-radius: 28px 28px 0 0;
-  background: #24252d;
-  color: #f6f7fb;
+  background: var(--sheet-bg);
+  color: var(--text);
   box-shadow: 0 -24px 70px rgba(0, 0, 0, 0.42);
   box-sizing: border-box;
   touch-action: pan-y;
@@ -159,7 +159,7 @@ function closeFromBackdrop(enabled: boolean) {
 
 .bottom-drawer__header h2 {
   margin: 0;
-  color: #ffffff;
+  color: var(--text);
   font-size: 22px;
   font-weight: 700;
   line-height: 1.2;
@@ -175,7 +175,7 @@ function closeFromBackdrop(enabled: boolean) {
   transform: translateY(-50%);
   border: 0;
   background: transparent;
-  color: #ffffff;
+  color: var(--text);
   font: inherit;
   font-size: 31px;
   line-height: 1;

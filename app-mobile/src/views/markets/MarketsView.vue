@@ -183,8 +183,8 @@ watch(activeTopTab, () => {
   max-width: 100%;
   min-height: calc(100dvh - 72px);
   padding: 18px 22px 112px;
-  background: #0b0c15;
-  color: #f6f7fb;
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 .markets-page__content {
@@ -199,7 +199,7 @@ watch(activeTopTab, () => {
 }
 
 .watchlist-empty {
-  color: #8f929d;
+  color: var(--muted);
   font-size: 15px;
 }
 

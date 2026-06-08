@@ -84,7 +84,7 @@ function onSave() {
   margin: 18px 24px 18px;
   height: 180px;
   border-radius: 24px;
-  background: #1b1e29;
+  background: var(--panel-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -95,7 +95,7 @@ function onSave() {
 .banner-title {
   font-size: 24px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .banner-desc {
@@ -103,7 +103,7 @@ function onSave() {
   padding: 0 28px;
   font-size: 14px;
   line-height: 22px;
-  color: #9ca1ad;
+  color: var(--muted);
   text-align: center;
 }
 
@@ -116,7 +116,7 @@ function onSave() {
   margin-bottom: 16px;
   font-size: 20px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .list-item {
@@ -124,20 +124,20 @@ function onSave() {
   margin-bottom: 16px;
   padding: 0 20px 0 24px;
   border-radius: 22px;
-  background: #1b1e29;
+  background: var(--panel-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
   font-size: 18px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .arrow {
   font-size: 40px;
   line-height: 1;
-  color: #9ca1ad;
+  color: var(--muted);
   font-weight: 300;
 }
 </style>

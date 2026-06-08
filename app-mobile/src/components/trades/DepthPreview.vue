@@ -105,7 +105,7 @@ function formatDepthVolume(level: DepthLevel) {
   padding-bottom: 8px;
   margin-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  color: #8f929d;
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.15;
   text-align: right;
@@ -156,7 +156,7 @@ function formatDepthVolume(level: DepthLevel) {
 }
 
 .order-book-preview .empty-row {
-  color: #8f929d;
+  color: var(--muted);
 }
 
 .order-book-preview .empty-row::after {
@@ -164,26 +164,26 @@ function formatDepthVolume(level: DepthLevel) {
 }
 
 .order-book-preview strong {
-  color: #fff;
+  color: var(--text);
   font-weight: 700;
   text-align: right;
 }
 
 .asks span {
-  color: #ff574c;
+  color: var(--danger-strong);
 }
 
 .bids span,
 .mid-price--up {
-  color: #0cd977;
+  color: var(--success);
 }
 
 .mid-price--down {
-  color: #ff574c;
+  color: var(--danger-strong);
 }
 
 .mid-price--flat {
-  color: #fff;
+  color: var(--text);
 }
 
 .bids p::after {
@@ -208,7 +208,7 @@ function formatDepthVolume(level: DepthLevel) {
 }
 
 .mid-price span {
-  color: #8f929d;
+  color: var(--muted);
   font-size: 13px;
   text-align: left;
 }

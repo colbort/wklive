@@ -306,8 +306,8 @@ function onRightClick() {
   width: min(100%, var(--app-width, 414px));
   height: 100%;
   margin: 0 auto;
-  background: #0b0d16;
-  color: #ffffff;
+  background: var(--page-bg);
+  color: var(--text);
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
@@ -325,7 +325,7 @@ function onRightClick() {
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
-  background: #0b0d16;
+  background: var(--page-bg);
   -webkit-overflow-scrolling: touch;
 }
 
@@ -352,7 +352,7 @@ function onRightClick() {
 .header-bar {
   width: 100%;
   height: var(--nav-height);
-  background: #0b0d16;
+  background: var(--page-bg);
   position: relative;
   z-index: 40;
   box-sizing: border-box;
@@ -363,7 +363,7 @@ function onRightClick() {
 .tabbar-wrap {
   width: 100%;
   height: var(--nav-height);
-  background: #0b0d16;
+  background: var(--page-bg);
   position: relative;
   z-index: 40;
   box-sizing: border-box;
@@ -377,7 +377,7 @@ function onRightClick() {
   left: 0;
   width: 100%;
   height: var(--nav-height);
-  background: #0b0d16;
+  background: var(--page-bg);
   transform: none;
   z-index: 90;
 }
@@ -399,7 +399,7 @@ function onRightClick() {
   padding: 0;
   margin: 0;
   background: transparent;
-  color: #ffffff;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -414,7 +414,7 @@ function onRightClick() {
   width: 24px;
   height: 24px;
   display: block;
-  color: #ffffff;
+  color: var(--text);
 }
 
 /* 标题永远居中 */
@@ -427,7 +427,7 @@ function onRightClick() {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--text);
   font-size: 22px;
   font-weight: 800;
   text-align: center;
@@ -450,7 +450,7 @@ function onRightClick() {
   padding: 0;
   margin: 0;
   background: transparent;
-  color: #21ff00;
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -479,7 +479,7 @@ function onRightClick() {
 
 /* 自定义区域 */
 .custom-area {
-  background: #0b0d16;
+  background: var(--page-bg);
   box-sizing: border-box;
 }
 
@@ -487,7 +487,7 @@ function onRightClick() {
 .sub-menu {
   width: 100%;
   height: var(--nav-height);
-  background: #1b1e29;
+  background: var(--panel-bg);
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -506,34 +506,22 @@ function onRightClick() {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--menu-color);
-  font-size: var(--menu-font-size);
-  font-weight: var(--menu-font-weight);
   position: relative;
   cursor: pointer;
   user-select: none;
 }
 
-.sub-menu-item.active {
-  color: var(--menu-active-color);
-  font-size: var(--menu-active-font-size);
-  font-weight: var(--menu-active-font-weight);
-}
-
 .sub-menu-item.active::after {
   content: '';
   position: absolute;
-  bottom: 8px;
-  width: 24px;
-  height: 3px;
-  border-radius: 3px;
-  background: #21ff00;
+  bottom: .4rem;
+  width: 1.2rem;
 }
 
 /* 内容区域 */
 .content {
   min-height: calc(100vh - var(--nav-height));
-  background: #0b0d16;
+  background: var(--page-bg);
   box-sizing: border-box;
   padding: 0;
 }

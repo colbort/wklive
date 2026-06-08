@@ -422,12 +422,12 @@ input {
 .asset-flow-content {
   min-height: calc(100dvh - 76px);
   padding: 20px 18px 56px;
-  background: #0b0c15;
-  color: #f8f8fb;
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 :deep(.header-bar) {
-  background: #0b0c15;
+  background: var(--page-bg);
 }
 
 :deep(.header-left) {
@@ -437,7 +437,7 @@ input {
   height: 36px;
   margin-top: 20px;
   border-radius: 50%;
-  background: #242633;
+  background: var(--border-soft);
 }
 
 :deep(.header-title) {
@@ -447,7 +447,7 @@ input {
 
 :deep(.header-right) {
   right: 18px;
-  color: #fff;
+  color: var(--text);
   font-size: 14px;
 }
 
@@ -470,13 +470,13 @@ h2 {
 
 .state-text {
   margin: 14px 0 0;
-  color: #a8abb6;
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.6;
 }
 
 .state-text--error {
-  color: #ff7676;
+  color: var(--danger);
 }
 
 .detail-coin {
@@ -524,14 +524,14 @@ h2 {
   min-height: 58px;
   padding: 0 16px;
   border-radius: 16px;
-  background: #20222d;
+  background: var(--divider);
 }
 
 .address-row strong,
 .memo-row strong {
   flex: 1;
   overflow-wrap: anywhere;
-  color: #fff;
+  color: var(--text);
   font-size: 14px;
   line-height: 1.35;
 }
@@ -541,16 +541,16 @@ h2 {
   flex: 0 0 auto;
   min-width: 56px;
   min-height: 34px;
-  border: 1px solid #02b904;
+  border: 1px solid var(--accent);
   border-radius: 999px;
-  color: #02d107;
+  color: var(--accent);
   font-size: 14px;
   font-weight: 800;
 }
 
 .address-countdown {
   margin: 10px 0 0;
-  color: #ffce6a;
+  color: var(--warning);
   font-size: 12px;
   font-weight: 800;
   text-align: center;
@@ -566,7 +566,7 @@ h2 {
 
 .memo-row span {
   grid-column: 1 / -1;
-  color: #ffce6a;
+  color: var(--warning);
   font-size: 12px;
   font-weight: 800;
 }
@@ -585,7 +585,7 @@ h2 {
   grid-template-columns: 78px auto;
   align-items: center;
   gap: 16px;
-  color: #8f929e;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 800;
   text-align: left;
@@ -598,8 +598,8 @@ h2 {
   place-items: center;
   overflow: hidden;
   border-radius: 18px;
-  background: #292b36;
-  color: #9b9da6;
+  background: var(--field-bg);
+  color: var(--muted);
 }
 
 .voucher-upload__thumb b {
@@ -646,7 +646,7 @@ h2 {
 
 .copy-tip {
   margin: -8px 0 18px;
-  color: #02d107;
+  color: var(--accent);
   font-size: 13px;
   font-weight: 800;
   text-align: center;

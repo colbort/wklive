@@ -48,7 +48,7 @@ function onMore() {
 .custom-tabbar {
   width: 100%;
   height: 58px;
-  background: #0b0d16;
+  background: var(--page-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,7 +65,7 @@ function onMore() {
   padding: 0;
   margin: 0;
   background: transparent;
-  color: #21ff00;
+  color: var(--accent);
   font-size: 15px;
   font-weight: 800;
   cursor: pointer;
@@ -82,7 +82,7 @@ function onMore() {
 .tabbar-title {
   flex: 1;
   text-align: center;
-  color: #ffffff;
+  color: var(--text);
   font-size: 22px;
   font-weight: 800;
   overflow: hidden;
@@ -99,7 +99,7 @@ function onMore() {
   margin-bottom: 16px;
   font-size: 22px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .list-item {
@@ -107,20 +107,20 @@ function onMore() {
   margin-bottom: 16px;
   padding: 0 20px 0 24px;
   border-radius: 22px;
-  background: #1b1e29;
+  background: var(--panel-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
   font-size: 18px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .arrow {
   font-size: 40px;
   line-height: 1;
-  color: #9ca1ad;
+  color: var(--muted);
   font-weight: 300;
 }
 </style>

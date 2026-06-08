@@ -140,8 +140,8 @@ async function submitBindAccount() {
   margin: 0 auto;
   padding: 18px 36px;
   overflow-x: hidden;
-  background: #0b0c15;
-  color: #fff;
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 .bind-account-header {
@@ -169,7 +169,7 @@ async function submitBindAccount() {
   border: 0;
   border-radius: 999px;
   background: #242631;
-  color: #fff;
+  color: var(--text);
 }
 
 .back-icon-svg {
@@ -201,7 +201,7 @@ async function submitBindAccount() {
   border-radius: 22px;
   outline: 2px solid transparent;
   background: #1b1d27;
-  color: #fff;
+  color: var(--text);
   padding: 0 22px;
   font-size: 19px;
   font-weight: 700;
@@ -232,7 +232,7 @@ async function submitBindAccount() {
   border: 0;
   border-radius: 999px;
   background: #00c313;
-  color: #fff;
+  color: var(--text);
   font-size: 22px;
   font-weight: 900;
 }

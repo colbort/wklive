@@ -239,12 +239,12 @@ onMounted(() => {
 .asset-flow-content {
   min-height: calc(100dvh - 76px);
   padding: 20px 18px 56px;
-  background: #0b0c15;
-  color: #f8f8fb;
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 :deep(.header-bar) {
-  background: #0b0c15;
+  background: var(--page-bg);
 }
 
 :deep(.header-left) {
@@ -254,7 +254,7 @@ onMounted(() => {
   height: 36px;
   margin-top: 20px;
   border-radius: 50%;
-  background: #242633;
+  background: var(--border-soft);
 }
 
 :deep(.header-title) {
@@ -264,20 +264,20 @@ onMounted(() => {
 
 .detail-state {
   margin: 72px 0 0;
-  color: #8d909a;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 800;
   text-align: center;
 }
 
 .detail-state--error {
-  color: #ff7676;
+  color: var(--danger);
 }
 
 .recharge-detail-card {
   margin: 30px 0 0;
   overflow: hidden;
-  border: 1px solid #222431;
+  border: 1px solid var(--divider);
   border-radius: 18px;
   background: #0f111a;
 }
@@ -289,7 +289,7 @@ onMounted(() => {
   gap: 8px;
   min-height: 74px;
   padding: 14px 20px;
-  border-bottom: 1px solid #222431;
+  border-bottom: 1px solid var(--divider);
 }
 
 .detail-coin-icon {
@@ -299,7 +299,7 @@ onMounted(() => {
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  color: #fff;
+  color: var(--text);
   font-size: 12px;
   font-weight: 700;
 }
@@ -313,7 +313,7 @@ onMounted(() => {
 .detail-head strong {
   min-width: 0;
   overflow: hidden;
-  color: #fff;
+  color: var(--text);
   font-size: 16px;
   font-weight: 600;
   text-overflow: ellipsis;
@@ -326,7 +326,7 @@ onMounted(() => {
   padding: 2px 6px;
   border-radius: 6px;
   background: #444650;
-  color: #fff;
+  color: var(--text);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.1;
@@ -349,17 +349,17 @@ onMounted(() => {
 
 .detail-status--success {
   background: rgba(0, 199, 10, 0.13);
-  color: #00d10a;
+  color: var(--accent);
 }
 
 .detail-status--failed {
   background: rgba(255, 118, 118, 0.13);
-  color: #ff7676;
+  color: var(--danger);
 }
 
 .detail-status--closed {
   background: rgba(141, 144, 154, 0.13);
-  color: #8d909a;
+  color: var(--muted);
 }
 
 .detail-list {
@@ -384,12 +384,12 @@ onMounted(() => {
 }
 
 .detail-list dt {
-  color: #858891;
+  color: var(--muted);
 }
 
 .detail-list dd {
   min-width: 0;
-  color: #fff;
+  color: var(--text);
 }
 
 .detail-break {

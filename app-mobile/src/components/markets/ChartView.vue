@@ -677,7 +677,7 @@ function coinGlyph(product: ItickTenantProduct) {
   gap: 14px;
   padding-top: 10px;
   padding-bottom: 8px;
-  background: #0b0c15;
+  background: var(--page-bg);
 }
 
 .symbol-switch {
@@ -687,7 +687,7 @@ function coinGlyph(product: ItickTenantProduct) {
   min-width: 140px;
   border: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font: inherit;
   font-size: 19px;
   font-weight: 500;
@@ -705,7 +705,7 @@ function coinGlyph(product: ItickTenantProduct) {
 .star-button {
   border: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font-size: 30px;
   font-weight: 300;
   line-height: 1;
@@ -730,7 +730,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .chart-summary__price {
   overflow: hidden;
-  color: #0cd977;
+  color: var(--success);
   font-size: 30px;
   font-weight: 500;
   line-height: 1;
@@ -764,7 +764,7 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .chart-stats em {
-  color: #9ca0aa;
+  color: var(--muted);
   font-size: 12px;
   font-weight: 400;
   line-height: 1;
@@ -773,7 +773,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .chart-stats strong {
   overflow: hidden;
-  color: #9ca0aa;
+  color: var(--muted);
   font-size: 13px;
   font-weight: 500;
   line-height: 1.08;
@@ -782,7 +782,7 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .up {
-  color: #0cd977 !important;
+  color: var(--success) !important;
 }
 
 .down {
@@ -790,13 +790,13 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .flat {
-  color: #d7d9df !important;
+  color: var(--text) !important;
 }
 
 .chart-sticky-tabs {
   z-index: 60;
-  background: #0b0c15;
-  border-bottom: 1px solid #20222d;
+  background: var(--page-bg);
+  border-bottom: 1px solid var(--divider);
   box-shadow: 0 8px 18px rgba(5, 6, 14, 0.36);
 }
 
@@ -830,13 +830,13 @@ function coinGlyph(product: ItickTenantProduct) {
 .sub-tab {
   position: relative;
   padding: 12px 0 13px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 19px;
   font-weight: 500;
 }
 
 .sub-tab--active {
-  color: #fff;
+  color: var(--text);
   font-weight: 500;
 }
 
@@ -847,7 +847,7 @@ function coinGlyph(product: ItickTenantProduct) {
   left: 3px;
   height: 3px;
   border-radius: 999px 999px 0 0;
-  background: #08c200;
+  background: var(--accent);
   content: '';
 }
 
@@ -859,7 +859,7 @@ function coinGlyph(product: ItickTenantProduct) {
   overflow-x: auto;
   padding-top: 8px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #20222d;
+  border-bottom: 1px solid var(--divider);
   scrollbar-width: none;
 }
 
@@ -875,14 +875,14 @@ function coinGlyph(product: ItickTenantProduct) {
   line-height: 34px;
   border-radius: 999px;
   background: #161923;
-  color: #8d929d;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 400;
   white-space: nowrap;
 }
 
 .interval-pill--time {
-  color: #ffffff;
+  color: var(--text);
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -906,8 +906,8 @@ function coinGlyph(product: ItickTenantProduct) {
   justify-content: center;
   align-items: center;
   border-right: 1px solid #252733;
-  background: #0b0c15;
-  color: #8f929d;
+  background: var(--page-bg);
+  color: var(--muted);
   font-size: 14px;
   font-weight: 400;
   padding: 0;
@@ -934,7 +934,7 @@ function coinGlyph(product: ItickTenantProduct) {
   min-height: 34px;
   border-radius: 999px;
   background: #161923;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 400;
 }
@@ -970,7 +970,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .time-sheet__item--active {
   background: #10131d;
-  color: #08c200;
+  color: var(--accent);
   border-color: rgba(8, 194, 0, 0.18);
 }
 
@@ -980,7 +980,7 @@ function coinGlyph(product: ItickTenantProduct) {
   grid-template-columns: 58px minmax(0, 1fr) 86px;
   min-height: 500px;
   overflow: hidden;
-  border-bottom: 1px solid #20222d;
+  border-bottom: 1px solid var(--divider);
   user-select: none;
 }
 
@@ -989,7 +989,7 @@ function coinGlyph(product: ItickTenantProduct) {
   align-content: start;
   gap: 24px;
   padding-top: 34px;
-  border-right: 1px solid #242633;
+  border-right: 1px solid var(--border-soft);
 }
 
 .chart-tool {
@@ -998,7 +998,7 @@ function coinGlyph(product: ItickTenantProduct) {
   width: 34px;
   height: 34px;
   margin: 0 auto;
-  color: #8f929d;
+  color: var(--muted);
 }
 
 .chart-tool--line::before,
@@ -1015,7 +1015,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .chart-tool--line::before {
   top: 16px;
-  box-shadow: 0 0 0 4px #0b0c15, 0 0 0 5px currentColor;
+  box-shadow: 0 0 0 4px var(--page-bg), 0 0 0 5px currentColor;
 }
 
 .chart-tool--trend::before {
@@ -1085,7 +1085,7 @@ function coinGlyph(product: ItickTenantProduct) {
   flex-wrap: wrap;
   gap: 6px 12px;
   align-items: center;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 12px;
   font-weight: 400;
   line-height: 1.2;
@@ -1095,7 +1095,7 @@ function coinGlyph(product: ItickTenantProduct) {
 .ma-legend button {
   border: 0;
   background: transparent;
-  color: #8f929d;
+  color: var(--muted);
   font: inherit;
   padding: 0;
 }
@@ -1133,13 +1133,13 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .candle-up {
-  fill: #0cd977;
-  stroke: #0cd977;
+  fill: var(--success);
+  stroke: var(--success);
 }
 
 .candle-down {
-  fill: #ff574c;
-  stroke: #ff574c;
+  fill: var(--danger-strong);
+  stroke: var(--danger-strong);
 }
 
 .ma-line {
@@ -1165,7 +1165,7 @@ function coinGlyph(product: ItickTenantProduct) {
   align-content: start;
   gap: 82px;
   padding: 58px 6px 0 8px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 12px;
   font-weight: 500;
 }
@@ -1178,7 +1178,7 @@ function coinGlyph(product: ItickTenantProduct) {
   transform: translateX(-50%);
   border-radius: 999px;
   background: rgba(25, 27, 37, 0.92);
-  color: #d7d9df;
+  color: var(--text);
   font-size: 12px;
   font-weight: 500;
 }
@@ -1188,12 +1188,12 @@ function coinGlyph(product: ItickTenantProduct) {
   grid-template-columns: 58px minmax(0, 1fr) 86px;
   min-height: 150px;
   padding-bottom: 18px;
-  border-top: 1px solid #242633;
+  border-top: 1px solid var(--border-soft);
 }
 
 .volume-tools {
   grid-row: 1 / 3;
-  border-right: 1px solid #242633;
+  border-right: 1px solid var(--border-soft);
 }
 
 .volume-labels {
@@ -1203,12 +1203,12 @@ function coinGlyph(product: ItickTenantProduct) {
   align-items: center;
   gap: 8px 18px;
   padding: 12px 18px 0 16px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 13px;
 }
 
 .volume-labels strong {
-  color: #ff574c;
+  color: var(--danger-strong);
   font-weight: 500;
   margin-left: auto;
 }
@@ -1233,11 +1233,11 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .volume-up {
-  background: #0cd977;
+  background: var(--success);
 }
 
 .volume-down {
-  background: #ff574c;
+  background: var(--danger-strong);
 }
 
 .depth-board,
@@ -1250,8 +1250,8 @@ function coinGlyph(product: ItickTenantProduct) {
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: 10px 0 12px;
-  border-bottom: 1px solid #242633;
-  color: #8f929d;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--muted);
   font-size: 14px;
   line-height: 1.25;
 }
@@ -1293,12 +1293,12 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .depth-row strong {
-  color: #f4f5f8;
+  color: var(--text);
   text-align: right;
 }
 
 .depth-row--ask span {
-  color: #ff574c;
+  color: var(--danger-strong);
 }
 
 .depth-row--ask i {
@@ -1306,7 +1306,7 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .depth-row--bid span {
-  color: #0cd977;
+  color: var(--success);
 }
 
 .depth-row--bid i {
@@ -1326,7 +1326,7 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .depth-mid span {
-  color: #8f929d;
+  color: var(--muted);
   font-size: 18px;
 }
 
@@ -1342,7 +1342,7 @@ function coinGlyph(product: ItickTenantProduct) {
   grid-template-columns: 1fr 1fr 88px;
   gap: 12px;
   padding: 14px 0 12px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -1357,7 +1357,7 @@ function coinGlyph(product: ItickTenantProduct) {
   gap: 12px;
   align-items: center;
   min-height: 34px;
-  color: #f4f5f8;
+  color: var(--text);
   font-size: 15px;
 }
 
@@ -1368,11 +1368,11 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .trade-row span {
-  color: #0cd977;
+  color: var(--success);
 }
 
 .trade-row--down span {
-  color: #ff574c;
+  color: var(--danger-strong);
 }
 
 .trade-row strong,
@@ -1385,7 +1385,7 @@ function coinGlyph(product: ItickTenantProduct) {
   place-items: center;
   min-height: 240px;
   margin: 0;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -1418,7 +1418,7 @@ function coinGlyph(product: ItickTenantProduct) {
   height: 44px;
   border-radius: 999px;
   background: linear-gradient(145deg, #4099ff, #67c2ff);
-  color: #fff;
+  color: var(--text);
   font-size: 21px;
   font-weight: 500;
 }
@@ -1438,7 +1438,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .product-sheet-row__symbol {
   overflow: hidden;
-  color: #fff;
+  color: var(--text);
   font-size: 17px;
   font-weight: 500;
   text-overflow: ellipsis;
@@ -1483,7 +1483,7 @@ function coinGlyph(product: ItickTenantProduct) {
   overflow: hidden;
   border-radius: 14px;
   background: #06d171;
-  color: #fff;
+  color: var(--text);
   font-size: 13px;
   text-align: center;
   text-overflow: ellipsis;
@@ -1508,7 +1508,7 @@ function coinGlyph(product: ItickTenantProduct) {
   justify-content: center;
   min-height: 26px;
   padding-top: 12px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 14px;
 }
 </style>

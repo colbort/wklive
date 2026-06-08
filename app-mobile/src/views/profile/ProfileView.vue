@@ -247,7 +247,7 @@ function goLogin() {
   margin: 0 auto;
   padding: 10px 24px calc(88px + env(safe-area-inset-bottom));
   overflow-x: hidden;
-  background: #0b0c15;
+  background: var(--page-bg);
   color: #f7f8fb;
 }
 
@@ -261,7 +261,7 @@ function goLogin() {
   min-height: 36px;
   margin: -10px -24px 20px;
   padding: 10px 24px 6px;
-  background: #0b0c15;
+  background: var(--page-bg);
 }
 
 .profile-header h1 {
@@ -319,7 +319,7 @@ function goLogin() {
 .profile-user__info h2 {
   margin: 0 0 5px;
   overflow: hidden;
-  color: #fff;
+  color: var(--text);
   font-size: 18px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -358,7 +358,7 @@ function goLogin() {
 
 .profile-hero__error {
   margin: -18px 0 0;
-  color: #ff6b6b;
+  color: var(--danger);
   font-size: 16px;
   font-weight: 600;
 }
@@ -414,7 +414,7 @@ function goLogin() {
 }
 
 .profile-actions__register {
-  background: #02b904;
+  background: var(--accent);
 }
 
 .profile-menu {
@@ -440,7 +440,7 @@ function goLogin() {
   height: 28px;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--text);
   line-height: 1;
 }
 

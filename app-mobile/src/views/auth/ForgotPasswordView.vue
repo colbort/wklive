@@ -179,7 +179,7 @@ function submitReset() {
   margin: 0 auto;
   padding: 24px 28px 42px;
   background: #0d0e17;
-  color: #fff;
+  color: var(--text);
 }
 
 .auth-topbar {
@@ -208,7 +208,7 @@ function submitReset() {
   border: 0;
   border-radius: 50%;
   background: #252733;
-  color: #fff;
+  color: var(--text);
 }
 
 .chevron-left {
@@ -307,7 +307,7 @@ function submitReset() {
   border: 0;
   outline: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font-size: 24px;
   font-weight: 800;
 }
@@ -388,7 +388,7 @@ function submitReset() {
   border: 0;
   border-radius: 50px;
   background: #00c313;
-  color: #fff;
+  color: var(--text);
   font-size: 30px;
   font-weight: 900;
 }
@@ -412,7 +412,7 @@ function submitReset() {
   border: 0;
   border-radius: 48px;
   background: #464750;
-  color: #fff;
+  color: var(--text);
   font-size: 28px;
   font-weight: 900;
 }
@@ -577,13 +577,13 @@ function submitReset() {
 @media (min-width: 0) {
   .auth-page {
     padding: 16px 22px 28px;
-    background: #0b0c15;
+    background: var(--page-bg);
   }
 
   .auth-topbar {
     margin: -16px -22px 0;
     padding: 16px 22px 6px;
-    background: #0b0c15;
+    background: var(--page-bg);
   }
 
   .auth-topbar__right {

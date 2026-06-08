@@ -343,12 +343,12 @@ input {
 .asset-flow-content {
   min-height: calc(100dvh - 76px);
   padding: 20px 18px 56px;
-  background: #0b0c15;
-  color: #f8f8fb;
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 :deep(.header-bar) {
-  background: #0b0c15;
+  background: var(--page-bg);
 }
 
 :deep(.header-left) {
@@ -358,7 +358,7 @@ input {
   height: 36px;
   margin-top: 20px;
   border-radius: 50%;
-  background: #242633;
+  background: var(--border-soft);
 }
 
 :deep(.header-title) {
@@ -368,7 +368,7 @@ input {
 
 :deep(.header-right) {
   right: 18px;
-  color: #fff;
+  color: var(--text);
   font-size: 14px;
 }
 
@@ -377,7 +377,7 @@ input {
   min-height: 36px;
   margin-bottom: 22px;
   border-radius: 999px;
-  background: #02b904;
+  background: var(--accent);
   font-size: 15px;
   font-weight: 800;
 }
@@ -398,13 +398,13 @@ input {
 }
 
 .field-block small {
-  color: #9b9da6;
+  color: var(--muted);
   font-size: 12px;
   font-weight: 700;
 }
 
 .field-block b {
-  color: #fff;
+  color: var(--text);
 }
 
 .asset-input {
@@ -413,7 +413,7 @@ input {
   padding: 0 16px;
   border-radius: 14px;
   outline: 0;
-  background: #292b36;
+  background: var(--field-bg);
 }
 
 .asset-input--unit {
@@ -446,13 +446,13 @@ input {
 }
 
 .asset-input--address i {
-  color: #9699a2;
+  color: var(--muted);
   font-style: normal;
 }
 
 .asset-input::placeholder,
 .asset-input--address input::placeholder {
-  color: #8f929d;
+  color: var(--muted);
 }
 
 .bank-currency-grid {
@@ -473,7 +473,7 @@ input {
   min-height: 58px;
   padding: 0 12px;
   border-radius: 14px;
-  background: #292b36;
+  background: var(--field-bg);
 }
 
 .bank-select-box strong {
@@ -486,7 +486,7 @@ input {
 }
 
 .bank-select-box i {
-  color: #9699a2;
+  color: var(--muted);
   font-size: 24px;
   font-style: normal;
 }
@@ -504,7 +504,7 @@ input {
 
 .bank-select-box__coin {
   background: linear-gradient(135deg, #21b78c, #129f75);
-  color: #fff;
+  color: var(--text);
   font-size: 18px;
   font-weight: 900;
 }
@@ -533,7 +533,7 @@ input {
 }
 
 .withdraw-summary dt {
-  color: #9b9da6;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 700;
 }
@@ -553,10 +553,10 @@ input {
 }
 
 .state-text--error {
-  color: #ff7676;
+  color: var(--danger);
 }
 
 .state-text--success {
-  color: #02d107;
+  color: var(--accent);
 }
 </style>

@@ -875,8 +875,11 @@ async function cancelTradeOrder(order: TradeOrder) {
           v-for="category in categories"
           :key="category.id"
           type="button"
-          class="trade-category-tabbar__item"
-          :class="{ 'trade-category-tabbar__item--active': category.categoryType === selectedCategoryType }"
+          class="trade-category-tabbar__item app-menu__item"
+          :class="{
+            'trade-category-tabbar__item--active': category.categoryType === selectedCategoryType,
+            'app-menu__item--active': category.categoryType === selectedCategoryType,
+          }"
           @click="selectedCategoryType = category.categoryType"
         >
           {{ marketCategoryLabel(category) }}
@@ -951,20 +954,20 @@ async function cancelTradeOrder(order: TradeOrder) {
   min-height: 100%;
   padding: 0 22px calc(96px + env(safe-area-inset-bottom));
   overflow-x: hidden;
-  background: #0b0c15;
-  color: #f6f7fb;
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 .trade-category-tabbar {
   display: flex;
   flex-wrap: nowrap;
-  gap: 20px;
+  gap: var(--menu-gap);
   width: 100%;
-  height: 50px;
-  padding: 10px 22px 8px;
+  height: 2.5rem;
+  padding: .5rem var(--menu-padding-x) .4rem;
   overflow-x: auto;
   overflow-y: hidden;
-  background: #0b0c15;
+  background: var(--page-bg);
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -978,33 +981,21 @@ async function cancelTradeOrder(order: TradeOrder) {
   flex: 0 0 auto;
   border: 0;
   background: transparent;
-  color: var(--menu-color);
   font: inherit;
-  font-size: var(--menu-font-size);
-  font-weight: var(--menu-font-weight);
   white-space: nowrap;
-}
-
-.trade-category-tabbar__item--active {
-  color: var(--menu-active-color);
-  font-size: var(--menu-active-font-size);
-  font-weight: var(--menu-active-font-weight);
 }
 
 .trade-category-tabbar__item--active::after {
   position: absolute;
-  right: 2px;
-  bottom: -8px;
-  left: 2px;
-  height: 3px;
-  border-radius: 999px;
-  background: #08c200;
+  right: .1rem;
+  bottom: -.4rem;
+  left: .1rem;
   content: '';
 }
 
 @media (max-width: 390px) {
   .trade-category-tabbar {
-    gap: 18px;
+    gap: var(--menu-gap);
     padding-right: 14px;
     padding-left: 14px;
   }

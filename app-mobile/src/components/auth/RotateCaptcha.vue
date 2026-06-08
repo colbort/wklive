@@ -117,7 +117,7 @@ function validateOnRelease() {
 
 .rotate-captcha h1 {
   margin: 0;
-  color: #fff;
+  color: var(--text);
   font-size: 30px;
   line-height: 1.15;
   font-weight: 900;

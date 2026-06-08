@@ -198,7 +198,7 @@ input {
 }
 
 .asset-select-accounts button.active {
-  background: #02b904;
+  background: var(--accent);
 }
 
 .asset-select-search {
@@ -212,7 +212,7 @@ input {
 }
 
 .asset-select-search span {
-  color: #fff;
+  color: var(--text);
   font-size: 26px;
 }
 
@@ -223,7 +223,7 @@ input {
 }
 
 .asset-select-search input::placeholder {
-  color: #9b9da6;
+  color: var(--muted);
 }
 
 .asset-select-list {
@@ -247,7 +247,7 @@ input {
 }
 
 .asset-select-row span {
-  color: #fff;
+  color: var(--text);
   font-size: 15px;
 }
 
@@ -256,7 +256,7 @@ input {
 }
 
 .asset-select-row em {
-  color: #02b904;
+  color: var(--accent);
   font-size: 22px;
   font-style: normal;
   font-weight: 800;
@@ -265,7 +265,7 @@ input {
 
 .asset-select-empty {
   margin: 26px;
-  color: #9b9da6;
+  color: var(--muted);
   font-size: 14px;
   text-align: center;
 }

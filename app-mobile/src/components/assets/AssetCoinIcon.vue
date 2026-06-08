@@ -26,7 +26,7 @@ function coinIconText() {
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  color: #fff;
+  color: var(--text);
   font-size: 9px;
   font-weight: 800;
 }

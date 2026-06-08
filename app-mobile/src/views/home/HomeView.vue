@@ -250,7 +250,7 @@ const trustFeatures = [
 }
 
 .ave-home-brand strong {
-  color: #fff;
+  color: var(--text);
   font-size: 30px;
   font-weight: 800;
   line-height: 1;
@@ -271,7 +271,7 @@ const trustFeatures = [
   border: 0;
   border-radius: 50%;
   background: rgba(29, 32, 44, 0.9);
-  color: #fff;
+  color: var(--text);
   font: inherit;
   font-size: 21px;
 }
@@ -297,7 +297,7 @@ const trustFeatures = [
     206px 206px,
     206px 206px,
     auto;
-  color: #fff;
+  color: var(--text);
 }
 
 .ave-home span {
@@ -326,7 +326,7 @@ const trustFeatures = [
 .ave-section h2,
 .ave-reward h2 {
   margin: 0;
-  color: #fff;
+  color: var(--text);
   font-weight: 800;
   letter-spacing: 0;
 }
@@ -340,7 +340,7 @@ const trustFeatures = [
 
 .ave-hero p {
   margin: 22px 0 0;
-  color: #fff;
+  color: var(--text);
   font-size: clamp(20px, 5.4vw, 23px);
   font-weight: 700;
 }
@@ -354,7 +354,7 @@ const trustFeatures = [
   margin-top: 24px;
   border-radius: 999px;
   background: var(--home-green);
-  color: #fff;
+  color: var(--text);
   font-size: 24px;
   font-weight: 700;
   line-height: 1;
@@ -445,7 +445,7 @@ const trustFeatures = [
 .ave-toggle-item h3,
 .ave-trust-item h3 {
   margin: 0 0 8px;
-  color: #fff;
+  color: var(--text);
   font-size: clamp(20px, 5.2vw, 22px);
   font-weight: 800;
   line-height: 1.18;
@@ -603,7 +603,7 @@ const trustFeatures = [
 }
 
 .ave-reward > p {
-  color: #fff;
+  color: var(--text);
   font-size: 20px;
 }
 

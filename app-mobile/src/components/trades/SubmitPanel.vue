@@ -656,15 +656,15 @@ function confirmRiskSettings() {
 }
 
 .mode-switch button {
-  color: #8f929d;
+  color: var(--muted);
   font-size: 16px;
   font-weight: 600;
 }
 
 .mode-switch button.active {
   border-radius: 999px;
-  background: #02b904;
-  color: #fff;
+  background: var(--accent);
+  color: var(--text);
 }
 
 .form-row {
@@ -682,7 +682,7 @@ function confirmRiskSettings() {
   padding: 0 12px;
   border-radius: 12px;
   background: #242631;
-  color: #f6f7fb;
+  color: var(--text);
   text-align: left;
 }
 
@@ -728,7 +728,7 @@ function confirmRiskSettings() {
   border: 0;
   border-radius: clamp(20px, 3.9vw, 28px);
   background: #3d3e47;
-  color: #fff;
+  color: var(--text);
   font: inherit;
   font-size: clamp(21px, 3.9vw, 28px);
   font-weight: 800;
@@ -736,7 +736,7 @@ function confirmRiskSettings() {
 
 .margin-mode-list button.active,
 .leverage-grid button.active {
-  background: #02b904;
+  background: var(--accent);
 }
 
 .leverage-grid {
@@ -760,7 +760,7 @@ function confirmRiskSettings() {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #fff;
+  color: var(--text);
   font-size: clamp(18px, 2.9vw, 20px);
   font-weight: 700;
 }
@@ -781,8 +781,8 @@ function confirmRiskSettings() {
 }
 
 .risk-check-row input:checked + span {
-  border-color: #02b904;
-  background: #02b904;
+  border-color: var(--accent);
+  background: var(--accent);
 }
 
 .risk-check-row input:checked + span::after {
@@ -820,7 +820,7 @@ function confirmRiskSettings() {
   border: 0;
   outline: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font: inherit;
   font-size: clamp(17px, 2.8vw, 20px);
   font-weight: 600;
@@ -833,7 +833,7 @@ function confirmRiskSettings() {
 
 .risk-field strong {
   margin-left: clamp(8px, 1.8vw, 12px);
-  color: #fff;
+  color: var(--text);
   font-size: clamp(17px, 2.8vw, 20px);
   font-weight: 700;
 }
@@ -846,7 +846,7 @@ function confirmRiskSettings() {
 .risk-qty {
   display: grid;
   gap: clamp(16px, 2.6vw, 18px);
-  color: #fff;
+  color: var(--text);
   font-size: clamp(18px, 2.9vw, 20px);
   font-weight: 700;
 }
@@ -863,8 +863,8 @@ function confirmRiskSettings() {
   margin-top: clamp(14px, 2.4vw, 18px);
   border: 0;
   border-radius: clamp(24px, 5.5vw, 36px);
-  background: #02b904;
-  color: #fff;
+  background: var(--accent);
+  color: var(--text);
   font: inherit;
   font-size: clamp(19px, 2.9vw, 21px);
   font-weight: 700;
@@ -878,14 +878,14 @@ function confirmRiskSettings() {
 .form-row button:disabled,
 .form-row select:disabled,
 .form-row input:disabled {
-  color: #8f929d;
+  color: var(--muted);
 }
 
 .trade-input {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 16px;
 }
 
@@ -895,12 +895,12 @@ function confirmRiskSettings() {
   border: 0;
   outline: 0;
   background: transparent;
-  color: #f6f7fb;
+  color: var(--text);
   font: inherit;
 }
 
 .trade-input--field input::placeholder {
-  color: #8f929d;
+  color: var(--muted);
 }
 
 .trade-input.split {
@@ -908,7 +908,7 @@ function confirmRiskSettings() {
 }
 
 .trade-input.split strong {
-  color: #fff;
+  color: var(--text);
   font-weight: 500;
 }
 
@@ -920,7 +920,7 @@ function confirmRiskSettings() {
   margin-bottom: 6px;
   border-radius: 999px;
   background:
-    linear-gradient(90deg, #02b904 0 var(--progress, 0%), transparent var(--progress, 0%)),
+    linear-gradient(90deg, var(--accent) 0 var(--progress, 0%), transparent var(--progress, 0%)),
     linear-gradient(
       90deg,
       #1c1f2a 0 24%,
@@ -938,7 +938,7 @@ function confirmRiskSettings() {
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #02b904;
+  background: var(--accent);
 }
 
 .percent-hit {
@@ -955,7 +955,7 @@ function confirmRiskSettings() {
   display: flex;
   justify-content: space-between;
   margin-bottom: 14px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 13px;
 }
 
@@ -969,7 +969,7 @@ function confirmRiskSettings() {
 }
 
 .percent-labels button.active {
-  color: #f6f7fb;
+  color: var(--text);
 }
 
 .account-lines {
@@ -977,12 +977,12 @@ function confirmRiskSettings() {
   grid-template-columns: 1fr auto;
   gap: 7px 12px;
   margin-bottom: 14px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 13px;
 }
 
 .account-lines strong {
-  color: #fff;
+  color: var(--text);
   font-weight: 500;
 }
 
@@ -992,7 +992,7 @@ function confirmRiskSettings() {
   gap: 8px;
   margin: 7px 0 14px;
   padding: 0;
-  color: #fff;
+  color: var(--text);
   font-size: 15px;
   font-weight: 600;
 }
@@ -1001,13 +1001,13 @@ function confirmRiskSettings() {
   position: relative;
   width: 18px;
   height: 18px;
-  border: 1px solid #f6f7fb;
+  border: 1px solid var(--text);
   border-radius: 4px;
 }
 
 .risk-trigger span.active {
-  border-color: #02b904;
-  background: #02b904;
+  border-color: var(--accent);
+  background: var(--accent);
 }
 
 .risk-trigger span.active::after {
@@ -1024,11 +1024,11 @@ function confirmRiskSettings() {
 
 .risk-trigger:disabled {
   cursor: not-allowed;
-  color: #8f929d;
+  color: var(--muted);
 }
 
 .risk-trigger:disabled span {
-  border-color: #8f929d;
+  border-color: var(--muted);
 }
 
 .wide-action,
@@ -1036,7 +1036,7 @@ function confirmRiskSettings() {
   min-height: 46px;
   border-radius: 12px;
   background: #181b25;
-  color: #fff;
+  color: var(--text);
   font-size: 15px;
   font-weight: 700;
 }
@@ -1093,7 +1093,7 @@ function confirmRiskSettings() {
   height: 28px;
   border-radius: 999px;
   background: #ffa51f;
-  color: #0b0c15;
+  color: var(--page-bg);
 }
 
 .stock-alert strong {
@@ -1109,12 +1109,12 @@ function confirmRiskSettings() {
 
 .inner-tabs button {
   position: relative;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 17px;
 }
 
 .inner-tabs button.active {
-  color: #fff;
+  color: var(--text);
 }
 
 .inner-tabs button.active::after {
@@ -1124,7 +1124,7 @@ function confirmRiskSettings() {
   left: 0;
   height: 3px;
   border-radius: 999px;
-  background: #02b904;
+  background: var(--accent);
   content: '';
 }
 
@@ -1166,13 +1166,13 @@ function confirmRiskSettings() {
   padding: 14px 10px;
   border-radius: 14px;
   background: #242631;
-  color: #8f929d;
+  color: var(--muted);
   text-align: left;
 }
 
 .duration-grid button.active {
-  background: #02b904;
-  color: #fff;
+  background: var(--accent);
+  color: var(--text);
 }
 
 .duration-grid strong {
@@ -1188,12 +1188,12 @@ function confirmRiskSettings() {
   display: grid;
   grid-template-columns: 1fr auto;
   margin-bottom: 22px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 14px;
 }
 
 .buyable strong {
-  color: #fff;
+  color: var(--text);
   font-weight: 500;
 }
 

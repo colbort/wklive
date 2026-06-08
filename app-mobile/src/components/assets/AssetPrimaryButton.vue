@@ -14,8 +14,8 @@ defineProps<{
   min-height: 60px;
   border: 0;
   border-radius: 16px;
-  background: #02b904;
-  color: #fff;
+  background: var(--accent);
+  color: var(--text);
   font: inherit;
   font-size: 18px;
   font-weight: 800;

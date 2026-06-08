@@ -313,12 +313,12 @@ button {
 .fund-record-page {
   min-height: calc(100dvh - 152px);
   padding: 22px 18px 96px;
-  background: #0b0c15;
-  color: #f6f7fb;
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 :deep(.header-bar) {
-  background: #0b0c15;
+  background: var(--page-bg);
 }
 
 :deep(.header-left) {
@@ -339,30 +339,19 @@ button {
 :deep(.sub-menu) {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  height: 76px;
+  height: var(--menu-bar-height);
   border-bottom: 1px solid #1f212b;
-  background: #0b0c15;
+  background: var(--page-bg);
 }
 
 :deep(.sub-menu-item) {
-  height: 76px;
+  height: var(--menu-bar-height);
   justify-content: center;
-  color: var(--menu-color);
-  font-size: var(--menu-font-size);
-  font-weight: var(--menu-font-weight);
-}
-
-:deep(.sub-menu-item.active) {
-  color: var(--menu-active-color);
-  font-size: var(--menu-active-font-size);
-  font-weight: var(--menu-active-font-weight);
 }
 
 :deep(.sub-menu-item.active::after) {
   bottom: -1px;
-  width: 36px;
-  height: 4px;
-  background: #00c70a;
+  width: 1.8rem;
 }
 
 .withdraw-type-tabs {
@@ -377,27 +366,27 @@ button {
   padding: 0 24px;
   border: 1px solid #282a34;
   border-radius: 999px;
-  color: #8b8d98;
+  color: var(--muted);
   font-size: 16px;
   font-weight: 900;
 }
 
 .withdraw-type-tabs__item--active {
-  border-color: #00c70a !important;
-  background: #00b908 !important;
-  color: #fff !important;
+  border-color: var(--accent) !important;
+  background: var(--accent) !important;
+  color: var(--text) !important;
 }
 
 .records-state {
   margin: 76px 0 0;
-  color: #8d909a;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 800;
   text-align: center;
 }
 
 .records-state--error {
-  color: #ff7676;
+  color: var(--danger);
 }
 
 .record-list {
@@ -431,7 +420,7 @@ button {
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  color: #fff;
+  color: var(--text);
   font-size: 12px;
   font-weight: 700;
   margin-top: 1px;
@@ -459,7 +448,7 @@ button {
 .record-main strong,
 .record-side b {
   display: block;
-  color: #fff;
+  color: var(--text);
   font-size: 16px;
   font-weight: 500;
   line-height: 1.15;
@@ -471,7 +460,7 @@ button {
   min-width: 0;
   overflow: hidden;
   margin-top: 0;
-  color: #8d909a;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 500;
   line-height: 1.25;
@@ -480,7 +469,7 @@ button {
 }
 
 .record-title-group span b {
-  color: #fff;
+  color: var(--text);
   font-weight: 600;
 }
 
@@ -524,24 +513,24 @@ button {
 
 .record-status--success {
   background: rgba(0, 199, 10, 0.13);
-  color: #00d10a;
+  color: var(--accent);
 }
 
 .record-status--failed {
   background: rgba(255, 118, 118, 0.13);
-  color: #ff7676;
+  color: var(--danger);
 }
 
 .record-status--closed {
   background: rgba(141, 144, 154, 0.13);
-  color: #8d909a;
+  color: var(--muted);
 }
 
 .empty-records {
   display: grid;
   place-items: center;
   padding-top: 112px;
-  color: #858891;
+  color: var(--muted);
 }
 
 .empty-records p {
@@ -597,7 +586,7 @@ button {
   top: 42px;
   width: 52px;
   height: 52px;
-  border: 9px solid #00b908;
+  border: 9px solid var(--accent);
   border-radius: 50%;
 }
 
@@ -608,7 +597,7 @@ button {
   width: 34px;
   height: 9px;
   border-radius: 999px;
-  background: #00b908;
+  background: var(--accent);
   content: '';
   transform: rotate(45deg);
   transform-origin: left center;

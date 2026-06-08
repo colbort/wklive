@@ -8,16 +8,37 @@
   --muted: #8b8d98;
   --accent: #08c200;
   --accent-strong: #08d100;
+  --success: #0cd977;
   --gold: #f3c66d;
   --danger: #ff6b7a;
+  --danger-strong: #ff574c;
+  --warning: #ffce6a;
+  --info: #49c9ff;
   --shadow: 0 24px 80px rgba(2, 7, 17, 0.45);
   --app-width: 414px;
+  --page-bg: #0b0c15;
+  --panel-bg: #1b1e29;
+  --sheet-bg: #24252d;
+  --field-bg: #292b36;
+  --field-bg-strong: #343640;
+  --border-soft: #242633;
+  --divider: #20222d;
   --menu-color: rgb(136 136 136 / 1);
-  --menu-font-size: .30rm;
-  --menu-font-weight: 400;
+  --menu-font-size: max(.3rem, 15px);
+  --menu-font-weight: 300;
   --menu-active-color: rgb(255 255 255);
-  --menu-active-font-size: .36rm;
-  --menu-active-font-weight: 600;
+  --menu-active-font-size: max(.36rem, 18px);
+  --menu-active-font-weight: 400;
+  --menu-bar-height: 3.8rem;
+  --menu-gap: 1.2rem;
+  --menu-gap-lg: 2.1rem;
+  --menu-padding-x: 1.1rem;
+  --menu-underline-color: var(--accent);
+  --menu-underline-height: .15rem;
+  --menu-underline-radius: 999px;
+  --action-button-height: 5.6rem;
+  --action-button-gap: .5rem;
+  --radius-sm: .6rem;
 }
 
 * {
@@ -75,6 +96,45 @@ button {
   font: inherit;
 }
 
+:is(
+  .sub-menu-item,
+  .app-menu__item,
+  .top-tab,
+  .assets-sub-tabs button,
+  .assets-order-tabs button,
+  .auth-tabs button
+) {
+  color: var(--menu-color);
+  font-size: var(--menu-font-size);
+  font-weight: var(--menu-font-weight);
+}
+
+:is(
+  .sub-menu-item.active,
+  .app-menu__item--active,
+  .top-tab--active,
+  .assets-sub-tabs button.active,
+  .assets-order-tabs button.active,
+  .auth-tabs button.active
+) {
+  color: var(--menu-active-color);
+  font-size: var(--menu-active-font-size);
+  font-weight: var(--menu-active-font-weight);
+}
+
+:is(
+  .sub-menu-item.active::after,
+  .app-menu__item--active::after,
+  .top-tab--active::after,
+  .assets-sub-tabs button.active::after,
+  .assets-order-tabs button.active::after,
+  .auth-tabs button.active::after
+) {
+  height: var(--menu-underline-height);
+  border-radius: var(--menu-underline-radius);
+  background: var(--menu-underline-color);
+}
+
 .app-shell {
   display: flex;
   flex-direction: column;
@@ -87,7 +147,7 @@ button {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: #0b0c15;
+  background: var(--page-bg);
 }
 
 .app-shell::before {
@@ -218,7 +278,7 @@ button {
 
 .site-nav__entry--active .site-nav__item,
 .site-nav__entry:hover .site-nav__item {
-  color: #08c200;
+  color: var(--accent);
   background: rgba(255, 255, 255, 0.04);
 }
 
@@ -295,7 +355,7 @@ button {
   text-align: center;
   font-size: 14px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text);
   background: #2e313e;
 }
 
@@ -308,11 +368,11 @@ button {
 }
 
 .site-nav__market-row--up em {
-  color: #08c200;
+  color: var(--accent);
 }
 
 .site-nav__market-row--up small {
-  background: #08c200;
+  background: var(--accent);
   color: #041107;
 }
 
@@ -324,7 +384,7 @@ button {
   height: 54px;
   border-radius: 999px;
   background: linear-gradient(135deg, #ffb52c, #ff8a00);
-  color: #fff;
+  color: var(--text);
   font-size: 28px;
   font-weight: 800;
 }
@@ -867,8 +927,8 @@ button {
   width: 22px;
   height: 3px;
   border-radius: 999px;
-  background: #02b904;
-  box-shadow: 0 7px 0 #02b904;
+  background: var(--accent);
+  box-shadow: 0 7px 0 var(--accent);
   content: '';
 }
 
@@ -934,7 +994,7 @@ button {
   width: 100%;
   padding: 0 28px;
   border: 0;
-  color: #fff;
+  color: var(--text);
   background: transparent;
   text-align: left;
 }
@@ -945,7 +1005,7 @@ button {
 
 .site-user-menu__row:hover {
   background: #30323b;
-  color: #02b904;
+  color: var(--accent);
 }
 
 .site-user-menu__row span {
@@ -993,7 +1053,7 @@ button {
   place-items: center;
   border-radius: 50%;
   background: #16ad77;
-  color: #fff;
+  color: var(--text);
   font-weight: 800;
 }
 
@@ -1007,7 +1067,7 @@ button {
 
 .site-user-assets__row strong,
 .site-user-assets__row em {
-  color: #fff;
+  color: var(--text);
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -1020,7 +1080,7 @@ button {
   padding: 9px 18px;
   border-radius: 999px;
   background: #42444f;
-  color: #fff;
+  color: var(--text);
   text-align: center;
 }
 

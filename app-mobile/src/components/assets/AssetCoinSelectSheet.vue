@@ -105,7 +105,7 @@ button {
 }
 
 .asset-coin-sheet__item.is-active {
-  background: #343640;
+  background: var(--field-bg-strong);
 }
 
 .asset-coin-sheet__item strong {
@@ -123,7 +123,7 @@ button {
   padding: 3px 8px;
   border-radius: 999px;
   background: #4a4c58;
-  color: #fff;
+  color: var(--text);
   font-size: 11px;
   font-weight: 800;
   text-overflow: ellipsis;
@@ -132,7 +132,7 @@ button {
 
 .asset-coin-sheet__check {
   justify-self: end;
-  color: #02b904;
+  color: var(--accent);
   font-size: 20px;
   font-weight: 900;
 }
@@ -146,7 +146,7 @@ button {
 
 .asset-coin-sheet__empty {
   margin: 12px 28px 22px;
-  color: #9b9da6;
+  color: var(--muted);
   font-size: 14px;
   text-align: center;
 }

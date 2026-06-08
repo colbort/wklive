@@ -39,7 +39,7 @@ button {
   min-height: 56px;
   padding: 0 16px;
   border-radius: 14px;
-  background: #292b36;
+  background: var(--field-bg);
   text-align: left;
 }
 
@@ -57,7 +57,7 @@ button {
   padding: 3px 7px;
   border-radius: 999px;
   background: #4a4c58;
-  color: #fff;
+  color: var(--text);
   font-size: 10px;
   font-weight: 800;
   text-overflow: ellipsis;
@@ -66,7 +66,7 @@ button {
 
 .asset-picker__arrow {
   justify-self: end;
-  color: #989aa3;
+  color: var(--muted);
   font-size: 24px;
 }
 

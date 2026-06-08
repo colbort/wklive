@@ -35,7 +35,7 @@ const { t } = useI18n()
   display: grid;
   align-content: start;
   min-height: 210px;
-  color: #8f929d;
+  color: var(--muted);
   text-align: center;
 }
 
@@ -48,8 +48,8 @@ const { t } = useI18n()
   min-height: 92px;
   place-items: center;
   margin: 0;
-  border-bottom: 1px solid #242633;
-  color: #8f929d;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--muted);
   font-size: 14px;
   font-weight: 600;
 }
@@ -64,17 +64,17 @@ const { t } = useI18n()
 }
 
 .login-prompt__link {
-  color: #02b904;
+  color: var(--accent);
   text-decoration: none;
 }
 
 .login-prompt__actions i {
-  color: #8f929d;
+  color: var(--muted);
   font-style: normal;
 }
 
 .login-prompt__actions strong {
-  color: #8f929d;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 700;
 }

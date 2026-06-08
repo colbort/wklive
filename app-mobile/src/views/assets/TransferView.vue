@@ -343,12 +343,12 @@ input {
 .asset-flow-content {
   min-height: calc(100dvh - 76px);
   padding: 20px 18px 56px;
-  background: #0b0c15;
-  color: #f8f8fb;
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 :deep(.header-bar) {
-  background: #0b0c15;
+  background: var(--page-bg);
 }
 
 :deep(.header-left) {
@@ -358,7 +358,7 @@ input {
   height: 36px;
   margin-top: 20px;
   border-radius: 50%;
-  background: #242633;
+  background: var(--border-soft);
 }
 
 :deep(.header-title) {
@@ -371,7 +371,7 @@ input {
   gap: 18px;
   padding: 18px 18px;
   border-radius: 18px;
-  background: #292b36;
+  background: var(--field-bg);
 }
 
 .transfer-field {
@@ -393,13 +393,13 @@ input {
 }
 
 .transfer-field__head small {
-  color: #9b9da6;
+  color: var(--muted);
   font-size: 12px;
   font-weight: 700;
 }
 
 .transfer-field__head b {
-  color: #02b904;
+  color: var(--accent);
 }
 
 .transfer-picker {
@@ -428,7 +428,7 @@ input {
 
 .transfer-picker em {
   overflow: hidden;
-  color: #9b9da6;
+  color: var(--muted);
   font-size: 14px;
   font-style: normal;
   font-weight: 700;
@@ -468,7 +468,7 @@ input {
   min-height: 56px;
   padding: 0 16px;
   border-radius: 14px;
-  background: #292b36;
+  background: var(--field-bg);
 }
 
 .amount-input input {
@@ -491,10 +491,10 @@ input {
 }
 
 .state-text--error {
-  color: #ff6b6b;
+  color: var(--danger);
 }
 
 .state-text--success {
-  color: #02b904;
+  color: var(--accent);
 }
 </style>

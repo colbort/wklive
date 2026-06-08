@@ -103,7 +103,7 @@ function selectCountry(country: CountryDialCode) {
   gap: 8px;
   border: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font-size: 18px;
   font-weight: 600;
 }
@@ -111,7 +111,7 @@ function selectCountry(country: CountryDialCode) {
 .phone-prefix svg {
   width: 16px;
   height: 16px;
-  color: #9a9ca6;
+  color: var(--muted);
 }
 
 .country-sheet-body {
@@ -141,7 +141,7 @@ function selectCountry(country: CountryDialCode) {
   border: 0;
   outline: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font-size: 16px;
   font-weight: 600;
 }
@@ -168,7 +168,7 @@ function selectCountry(country: CountryDialCode) {
   border: 0;
   border-bottom: 1px solid #1d1f28;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font-size: 16px;
   font-weight: 500;
   text-align: left;

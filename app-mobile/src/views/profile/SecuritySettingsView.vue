@@ -89,8 +89,8 @@ function handleRowClick(key: string) {
   margin: 0 auto;
   padding: 18px 36px;
   overflow-x: hidden;
-  background: #0b0c15;
-  color: #fff;
+  background: var(--page-bg);
+  color: var(--text);
 }
 
 .security-header {
@@ -119,7 +119,7 @@ function handleRowClick(key: string) {
   border: 0;
   border-radius: 999px;
   background: #242631;
-  color: #fff;
+  color: var(--text);
 }
 
 .back-icon-svg {
@@ -142,7 +142,7 @@ function handleRowClick(key: string) {
   border: 0;
   border-radius: 22px;
   background: #1b1d27;
-  color: #fff;
+  color: var(--text);
   text-align: left;
 }
 

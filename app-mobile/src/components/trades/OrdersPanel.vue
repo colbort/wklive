@@ -132,7 +132,7 @@ button {
   padding: 0 0 14px;
   border: 0;
   background: transparent;
-  color: #8f929d;
+  color: var(--muted);
   font: inherit;
   font-size: 17px;
   font-weight: 700;
@@ -144,7 +144,7 @@ button {
 }
 
 button.active {
-  color: #fff;
+  color: var(--text);
 }
 
 button.active::after {
@@ -154,7 +154,7 @@ button.active::after {
   left: 6px;
   height: 3px;
   border-radius: 999px;
-  background: #02b904;
+  background: var(--accent);
   content: '';
 }
 
@@ -163,7 +163,7 @@ button.active::after {
   min-height: 88px;
   margin: 0;
   place-items: center;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -204,24 +204,24 @@ button.active::after {
 }
 
 .trade-orders-panel__item strong {
-  color: #fff;
+  color: var(--text);
   font-size: 13px;
   font-weight: 600;
 }
 
 .trade-orders-panel__item span {
-  color: #8f929d;
+  color: var(--muted);
   font-size: 12px;
 }
 
 .trade-orders-panel__item button {
   padding: 0;
-  color: #02b904;
+  color: var(--accent);
   font-size: 13px;
 }
 
 .trade-orders-panel__item button:disabled {
-  color: #8f929d;
+  color: var(--muted);
 }
 
 @media (max-width: 390px) {

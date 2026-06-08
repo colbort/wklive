@@ -79,9 +79,9 @@ function selectLanguage(option: { locale?: AppLocale }) {
   overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
-  background: #0b0c15;
+  background: var(--page-bg);
   padding: 22px 22px 48px;
-  color: #fff;
+  color: var(--text);
 }
 
 .language-header {
@@ -111,7 +111,7 @@ function selectLanguage(option: { locale?: AppLocale }) {
   border: 0;
   border-radius: 50%;
   background: #252733;
-  color: #fff;
+  color: var(--text);
 }
 
 .chevron-left {
@@ -144,7 +144,7 @@ function selectLanguage(option: { locale?: AppLocale }) {
   border-radius: 20px;
   background: #1d1f2a;
   padding: 0 20px 0 24px;
-  color: #fff;
+  color: var(--text);
   text-align: left;
 }
 

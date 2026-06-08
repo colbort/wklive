@@ -51,8 +51,11 @@ function formatPercent(value: number) {
         v-for="category in categories"
         :key="category.id"
         type="button"
-        class="category-tab"
-        :class="{ 'category-tab--active': category.categoryType === selectedCategoryType }"
+        class="category-tab app-menu__item"
+        :class="{
+          'category-tab--active': category.categoryType === selectedCategoryType,
+          'app-menu__item--active': category.categoryType === selectedCategoryType,
+        }"
         @click="emit('selectCategory', category.categoryType)"
       >
         {{ marketCategoryLabel(category) }}
@@ -125,8 +128,8 @@ function formatPercent(value: number) {
   overflow-x: auto;
   overflow-y: hidden;
   padding: 18px 28px 0;
-  border-bottom: 1px solid #21232e;
-  background: #0b0c15;
+  border-bottom: 1px solid var(--divider);
+  background: var(--page-bg);
   scrollbar-width: none;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
@@ -150,25 +153,20 @@ function formatPercent(value: number) {
 .quote-row {
   border: 0;
   background: transparent;
+  cursor: pointer;
+}
+
+.quote-row {
   color: inherit;
   font: inherit;
-  cursor: pointer;
 }
 
 .category-tab {
   position: relative;
   flex: 0 0 auto;
   padding: 0 0 16px;
-  color: #8c8f99;
-  font-size: 18px;
-  font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
-}
-
-.category-tab--active {
-  color: #ffffff;
-  font-weight: 600;
 }
 
 .category-tab--active::after {
@@ -176,9 +174,6 @@ function formatPercent(value: number) {
   right: 2px;
   bottom: 0;
   left: 2px;
-  height: 3px;
-  border-radius: 999px 999px 0 0;
-  background: #08c200;
   content: '';
 }
 
@@ -211,7 +206,7 @@ function formatPercent(value: number) {
 }
 
 .connection-dot--open {
-  background: #08c200;
+  background: var(--accent);
   box-shadow: 0 0 12px rgba(8, 194, 0, 0.58);
 }
 
@@ -228,7 +223,7 @@ function formatPercent(value: number) {
   min-height: 72px;
   margin: 0 28px;
   padding: 13px 0;
-  border-bottom: 1px solid #20222d;
+  border-bottom: 1px solid var(--divider);
   text-align: left;
 }
 
@@ -275,7 +270,7 @@ function formatPercent(value: number) {
 
 .quote-row__name strong {
   overflow: hidden;
-  color: #fff;
+  color: var(--text);
   font-size: 22px;
   font-weight: 700;
   line-height: 1.08;
@@ -285,7 +280,7 @@ function formatPercent(value: number) {
 
 .quote-row__name small {
   overflow: hidden;
-  color: #8e919b;
+  color: var(--muted);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.2;
@@ -295,7 +290,7 @@ function formatPercent(value: number) {
 
 .quote-row__price {
   overflow: hidden;
-  color: #8e919b;
+  color: var(--muted);
   font-size: 17px;
   font-weight: 700;
   text-align: right;
@@ -312,7 +307,7 @@ function formatPercent(value: number) {
 .quote-row__change strong {
   overflow: hidden;
   max-width: 100%;
-  color: #8e919b;
+  color: var(--muted);
   font-size: 17px;
   font-weight: 700;
   text-overflow: ellipsis;
@@ -324,7 +319,7 @@ function formatPercent(value: number) {
   padding: 0;
   border-radius: 0;
   background: transparent;
-  color: #08c200;
+  color: var(--accent);
   font-size: 13px;
   font-style: normal;
   font-weight: 500;
@@ -333,7 +328,7 @@ function formatPercent(value: number) {
 
 .quote-row--down .quote-row__price,
 .quote-row--down .quote-row__change strong {
-  color: #8e919b;
+  color: var(--muted);
 }
 
 .quote-row--down .quote-row__change em {
@@ -349,7 +344,7 @@ function formatPercent(value: number) {
   place-items: center;
   min-height: 260px;
   padding: 32px 18px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 14px;
   text-align: center;
 }

@@ -188,17 +188,17 @@ const { t } = useI18n()
 }
 
 .trade-symbol__sub {
-  color: #8f929d;
+  color: var(--muted);
   font-size: 14px;
 }
 
 .trade-symbol__quote {
-  color: #0cd977;
+  color: var(--success);
   font-size: 14px;
 }
 
 .trade-symbol__quote.down {
-  color: #ff574c;
+  color: var(--danger-strong);
 }
 
 .trade-symbol__quote span {
@@ -218,7 +218,7 @@ const { t } = useI18n()
 }
 
 .trade-symbol__icons button {
-  color: #fff;
+  color: var(--text);
   font-size: 25px;
 }
 
@@ -247,7 +247,7 @@ const { t } = useI18n()
   height: 44px;
   border-radius: 999px;
   background: linear-gradient(145deg, #4099ff, #67c2ff);
-  color: #fff;
+  color: var(--text);
   font-size: 21px;
   font-weight: 500;
 }
@@ -267,7 +267,7 @@ const { t } = useI18n()
 
 .product-sheet-row__symbol {
   overflow: hidden;
-  color: #fff;
+  color: var(--text);
   font-size: 17px;
   font-weight: 500;
   text-overflow: ellipsis;
@@ -312,7 +312,7 @@ const { t } = useI18n()
   overflow: hidden;
   border-radius: 14px;
   background: #06d171;
-  color: #fff;
+  color: var(--text);
   font-size: 13px;
   text-align: center;
   text-overflow: ellipsis;
@@ -337,7 +337,7 @@ const { t } = useI18n()
   justify-content: center;
   min-height: 26px;
   padding-top: 12px;
-  color: #8f929d;
+  color: var(--muted);
   font-size: 14px;
 }
 </style>
