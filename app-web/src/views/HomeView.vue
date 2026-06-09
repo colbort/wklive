@@ -86,7 +86,7 @@ const socials = [
     </section>
 
     <section class="smart-section section-pad">
-      <h2>更明智的<span>交易</span>，从这里开始</h2>
+      <h2 class="section-title">更明智的<span>交易</span>，从这里开始</h2>
       <div class="smart-cards">
         <article
           v-for="card in smartCards"
@@ -101,7 +101,7 @@ const socials = [
     </section>
 
     <section class="strategy-section section-pad">
-      <h2>高级功能支持<span>多样化</span>策略</h2>
+      <h2 class="section-title">高级功能支持<span>多样化</span>策略</h2>
       <div class="strategy-list">
         <article v-for="item in strategyItems" :key="item.title" class="strategy-item">
           <img :src="item.icon" alt="">
@@ -127,7 +127,7 @@ const socials = [
     </section>
 
     <section class="trust-section section-pad">
-      <h2>专业、值得信赖的<span>综合交易所</span></h2>
+      <h2 class="section-title">专业、值得信赖的<span>综合交易所</span></h2>
       <p>全球数百万用户的共同选择</p>
       <div class="trust-cards">
         <article v-for="(card, index) in trustCards" :key="card[0]" class="trust-card">
@@ -308,9 +308,7 @@ h2 span {
   padding-top: var(--px-44);
 }
 
-.smart-section h2,
-.strategy-section h2,
-.trust-section h2 {
+.section-title {
   text-align: center;
   font-size: var(--font-size-64);
   font-weight: var(--font-weight-950);
@@ -478,7 +476,7 @@ h2 span {
 .futures-copy {
   position: absolute;
   z-index: 3;
-  bottom: var(--px-60);
+  bottom: var(--px-10);
   right: var(--px-24);
   width: var(--px-850);
 }
@@ -842,9 +840,7 @@ h2 span {
     min-width: var(--px-540);
   }
 
-  .smart-section h2,
-  .strategy-section h2,
-  .trust-section h2,
+  .section-title,
   .futures-copy h2 {
     font-size: var(--font-size-54);
   }
@@ -868,7 +864,7 @@ h2 span {
   }
 
   .futures-copy {
-    bottom: var(--px-120);
+    bottom: var(--px-10);
     right: var(--px-24);
     width: var(--px-690);
   }
@@ -923,9 +919,7 @@ h2 span {
     min-width: var(--px-480);
   }
 
-  .smart-section h2,
-  .strategy-section h2,
-  .trust-section h2,
+  .section-title,
   .futures-copy h2 {
     font-size: var(--font-size-46);
   }
@@ -939,7 +933,7 @@ h2 span {
   }
 
   .futures-copy {
-    bottom: var(--px-90);
+    bottom: var(--px-10);
     right: var(--px-18);
     width: var(--px-620);
   }
