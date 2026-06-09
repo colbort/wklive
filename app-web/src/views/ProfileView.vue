@@ -39,7 +39,7 @@ button {
   min-height: 120px;
   place-items: center;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--px-12);
   background: var(--surface-soft);
   color: var(--text);
   font-weight: 800;

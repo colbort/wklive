@@ -67,7 +67,7 @@ input {
   height: 42px;
   padding: 0 14px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--px-8);
   background: var(--surface-soft);
   color: var(--text);
 }

@@ -48,7 +48,7 @@ input,
 button {
   height: 48px;
   border: 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--px-8);
 }
 
 input {

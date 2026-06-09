@@ -56,7 +56,7 @@
   min-height: 620px;
   place-items: center;
   border: 1px dashed var(--border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--px-12);
   color: var(--text-muted);
 }
 
@@ -82,7 +82,7 @@ button,
 input {
   height: 48px;
   border: 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--px-8);
 }
 
 button {

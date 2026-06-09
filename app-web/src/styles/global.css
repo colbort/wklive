@@ -13,8 +13,143 @@
   --accent-soft: rgb(6 203 30 / 14%);
   --danger: rgb(255 82 82);
   --warning: rgb(255 190 92);
-  --radius: 12px;
-  --radius-sm: 8px;
+  --white: rgb(255 255 255);
+  --px-1: 1px;
+  --px-2: 2px;
+  --px-4: 4px;
+  --px-5: 5px;
+  --px-6: 6px;
+  --px-7: 7px;
+  --px-8: 8px;
+  --px-9: 9px;
+  --px-10: 10px;
+  --px-12: 12px;
+  --px-13: 13px;
+  --px-14: 14px;
+  --px-15: 15px;
+  --px-16: 16px;
+  --px-18: 18px;
+  --px-20: 20px;
+  --px-21: 21px;
+  --px-22: 22px;
+  --px-24: 24px;
+  --px-25: 25px;
+  --px-28: 28px;
+  --px-30: 30px;
+  --px-32: 32px;
+  --px-34: 34px;
+  --px-36: 36px;
+  --px-38: 38px;
+  --px-40: 40px;
+  --px-42: 42px;
+  --px-44: 44px;
+  --px-46: 46px;
+  --px-48: 48px;
+  --px-50: 50px;
+  --px-52: 52px;
+  --px-54: 54px;
+  --px-56: 56px;
+  --px-58: 58px;
+  --px-60: 60px;
+  --px-62: 62px;
+  --px-64: 64px;
+  --px-68: 68px;
+  --px-70: 70px;
+  --px-72: 72px;
+  --px-74: 74px;
+  --px-76: 76px;
+  --px-78: 78px;
+  --px-80: 80px;
+  --px-82: 82px;
+  --px-86: 86px;
+  --px-88: 88px;
+  --px-90: 90px;
+  --px-92: 92px;
+  --px-96: 96px;
+  --px-100: 100px;
+  --px-102: 102px;
+  --px-104: 104px;
+  --px-110: 110px;
+  --px-112: 112px;
+  --px-120: 120px;
+  --px-122: 122px;
+  --px-130: 130px;
+  --px-132: 132px;
+  --px-148: 148px;
+  --px-150: 150px;
+  --px-155: 155px;
+  --px-160: 160px;
+  --px-164: 164px;
+  --px-170: 170px;
+  --px-180: 180px;
+  --px-184: 184px;
+  --px-200: 200px;
+  --px-205: 205px;
+  --px-240: 240px;
+  --px-260: 260px;
+  --px-286: 286px;
+  --px-290: 290px;
+  --px-300: 300px;
+  --px-370: 370px;
+  --px-390: 390px;
+  --px-420: 420px;
+  --px-456: 456px;
+  --px-480: 480px;
+  --px-500: 500px;
+  --px-540: 540px;
+  --px-560: 560px;
+  --px-570: 570px;
+  --px-600: 600px;
+  --px-610: 610px;
+  --px-620: 620px;
+  --px-675: 675px;
+  --px-690: 690px;
+  --px-730: 730px;
+  --px-745: 745px;
+  --px-750: 750px;
+  --px-760: 760px;
+  --px-780: 780px;
+  --px-850: 850px;
+  --px-900: 900px;
+  --px-930: 930px;
+  --px-960: 960px;
+  --px-999: 999px;
+  --px-1030: 1030px;
+  --px-1280: 1280px;
+  --px-1480: 1480px;
+  --px-1650: 1650px;
+  --px-1900: 1900px;
+  --px-1920: 1920px;
+  --font-size-10: .10rem;
+  --font-size-13: .13rem;
+  --font-size-15: .15rem;
+  --font-size-18: .18rem;
+  --font-size-19: .19rem;
+  --font-size-21: .21rem;
+  --font-size-22: .22rem;
+  --font-size-24: .24rem;
+  --font-size-26: .26rem;
+  --font-size-28: .28rem;
+  --font-size-30: .30rem;
+  --font-size-32: .32rem;
+  --font-size-34: .34rem;
+  --font-size-38: .38rem;
+  --font-size-40: .40rem;
+  --font-size-46: .46rem;
+  --font-size-50: .50rem;
+  --font-size-54: .54rem;
+  --font-size-58: .58rem;
+  --font-size-64: .64rem;
+  --font-size-70: .70rem;
+  --font-size-78: .78rem;
+  --font-size-82: .82rem;
+  --font-size-102: 1.02rem;
+  --font-weight-400: 400;
+  --font-weight-600: 600;
+  --font-weight-700: 700;
+  --font-weight-800: 800;
+  --font-weight-900: 900;
+  --font-weight-950: 950;
   --shadow: 0 24px 80px rgb(0 0 0 / 28%);
   font-family:
     Inter, "PingFang SC", "Microsoft YaHei", ui-sans-serif, system-ui, -apple-system,
@@ -35,13 +170,17 @@ html,
 body,
 #app {
   width: 100%;
-  min-width: 1280px;
+  min-width: var(--px-1280);
   height: 100%;
   min-height: 100%;
   margin: 0;
   padding: 0;
   border: 0;
   background: var(--bg);
+}
+
+html {
+  font-size: var(--px-100);
 }
 
 body {
@@ -66,8 +205,8 @@ a {
 }
 
 .page-card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: var(--px-1) solid var(--border);
+  border-radius: var(--px-12);
   background: var(--surface);
   box-shadow: var(--shadow);
 }
