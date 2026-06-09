@@ -627,9 +627,9 @@ h2 span {
   display: grid;
   max-width: var(--px-1900);
   margin: 0 auto;
-  padding: var(--px-40) 0 var(--px-48);
+  padding: var(--px-30) 0 var(--px-48);
   grid-template-columns: var(--px-456) minmax(0, 1fr);
-  gap: var(--px-200);
+  gap: var(--px-100);
 }
 
 .footer-logo {
@@ -647,7 +647,7 @@ h2 span {
   display: inline-flex;
   align-items: center;
   gap: var(--px-12);
-  margin-top: var(--px-24);
+  margin-top: var(--px-16);
   padding: 0;
   border: 0;
   background: transparent;
@@ -697,7 +697,7 @@ h2 span {
 
 .download-card {
   width: var(--px-360);
-  margin-top: var(--px-34);
+  margin-top: var(--px-10);
   padding: var(--px-24) var(--px-28) var(--px-26);
   border-radius: var(--px-20);
   background: rgb(29 32 44);
