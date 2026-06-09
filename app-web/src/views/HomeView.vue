@@ -343,15 +343,15 @@ h2 span {
 
 .smart-card {
   min-height: var(--px-180);
-  padding: var(--px-42) var(--px-48) var(--px-34);
+  padding: var(--px-28) var(--px-48) var(--px-34);
   transition:
     background 0.2s ease,
     color 0.2s ease;
 }
 
 .smart-card img {
-  width: var(--px-60);
-  height: var(--px-60);
+  width: var(--px-80);
+  height: var(--px-80);
   object-fit: contain;
   transition:
     filter 0.2s ease,
@@ -360,7 +360,7 @@ h2 span {
 }
 
 .smart-card h3 {
-  margin-top: var(--px-48);
+  margin-top: var(--px-32);
   font-size: var(--font-size-34);
   line-height: 1.2;
 }
@@ -375,8 +375,8 @@ h2 span {
 }
 
 .smart-card:hover {
-  min-height: var(--px-420);
-  margin-top: calc(var(--px-170) * -1);
+  min-height: var(--px-480);
+  margin-top: calc(var(--px-230) * -1);
   border-radius: var(--px-24) var(--px-24) 0 0;
   background: var(--accent);
 }
@@ -394,12 +394,12 @@ h2 span {
 
 .strategy-section {
   min-height: var(--px-960);
-  padding-top: var(--px-164);
+  padding-top: var(--px-60);
 }
 
 .strategy-list {
   display: grid;
-  max-width: var(--px-1480);
+  max-width: var(--px-1000);
   margin: var(--px-120) auto 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--px-160);
