@@ -478,7 +478,7 @@ h2 span {
 .futures-copy {
   position: absolute;
   z-index: 3;
-  top: var(--px-690);
+  bottom: var(--px-130);
   right: var(--px-24);
   width: var(--px-850);
 }
@@ -868,7 +868,7 @@ h2 span {
   }
 
   .futures-copy {
-    top: var(--px-900);
+    bottom: var(--px-120);
     right: var(--px-24);
     width: var(--px-690);
   }
@@ -939,7 +939,7 @@ h2 span {
   }
 
   .futures-copy {
-    top: var(--px-570);
+    bottom: var(--px-90);
     right: var(--px-18);
     width: var(--px-620);
   }
