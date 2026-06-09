@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useLanguageDialog } from '@/composables/useLanguageDialog'
 import { t } from '@/i18n'
 
@@ -89,6 +90,111 @@ const socials = [
 ]
 
 const { openLanguageDialog } = useLanguageDialog()
+
+const SUPPORT_POSITION_KEY = 'home_support_button_position'
+const SUPPORT_BUTTON_SIZE = 112
+const SUPPORT_BUTTON_GAP = 28
+
+const isSupportDragging = ref(false)
+const supportPosition = ref({
+  x: typeof window === 'undefined'
+    ? SUPPORT_BUTTON_GAP
+    : window.innerWidth - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP,
+  y: typeof window === 'undefined'
+    ? SUPPORT_BUTTON_GAP
+    : window.innerHeight - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP,
+})
+
+let supportDragOffsetX = 0
+let supportDragOffsetY = 0
+
+const supportButtonStyle = computed(() => ({
+  left: `${supportPosition.value.x}px`,
+  top: `${supportPosition.value.y}px`,
+}))
+
+function clampSupportPosition(x: number, y: number) {
+  const maxX = Math.max(SUPPORT_BUTTON_GAP, window.innerWidth - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP)
+  const maxY = Math.max(SUPPORT_BUTTON_GAP, window.innerHeight - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP)
+
+  return {
+    x: Math.min(Math.max(x, SUPPORT_BUTTON_GAP), maxX),
+    y: Math.min(Math.max(y, SUPPORT_BUTTON_GAP), maxY),
+  }
+}
+
+function setSupportPosition(x: number, y: number) {
+  supportPosition.value = clampSupportPosition(x, y)
+}
+
+function saveSupportPosition() {
+  localStorage.setItem(SUPPORT_POSITION_KEY, JSON.stringify(supportPosition.value))
+}
+
+function restoreSupportPosition() {
+  const fallback = {
+    x: window.innerWidth - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP,
+    y: window.innerHeight - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP,
+  }
+
+  try {
+    const saved = localStorage.getItem(SUPPORT_POSITION_KEY)
+    if (!saved) {
+      setSupportPosition(fallback.x, fallback.y)
+      return
+    }
+
+    const parsed = JSON.parse(saved) as { x?: number; y?: number }
+    setSupportPosition(
+      typeof parsed.x === 'number' ? parsed.x : fallback.x,
+      typeof parsed.y === 'number' ? parsed.y : fallback.y,
+    )
+  } catch {
+    setSupportPosition(fallback.x, fallback.y)
+  }
+}
+
+function handleSupportPointerDown(event: PointerEvent) {
+  const button = event.currentTarget as HTMLButtonElement
+  const rect = button.getBoundingClientRect()
+
+  supportDragOffsetX = event.clientX - rect.left
+  supportDragOffsetY = event.clientY - rect.top
+  isSupportDragging.value = true
+  button.setPointerCapture(event.pointerId)
+}
+
+function handleSupportPointerMove(event: PointerEvent) {
+  if (!isSupportDragging.value) return
+
+  event.preventDefault()
+  setSupportPosition(event.clientX - supportDragOffsetX, event.clientY - supportDragOffsetY)
+}
+
+function handleSupportPointerEnd(event: PointerEvent) {
+  if (!isSupportDragging.value) return
+
+  const button = event.currentTarget as HTMLButtonElement
+  if (button.hasPointerCapture(event.pointerId)) {
+    button.releasePointerCapture(event.pointerId)
+  }
+  isSupportDragging.value = false
+  saveSupportPosition()
+}
+
+function handleSupportWindowResize() {
+  setSupportPosition(supportPosition.value.x, supportPosition.value.y)
+  saveSupportPosition()
+}
+
+onMounted(() => {
+  restoreSupportPosition()
+  window.addEventListener('resize', handleSupportWindowResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleSupportWindowResize)
+})
 </script>
 
 <template>
@@ -219,8 +325,18 @@ const { openLanguageDialog } = useLanguageDialog()
       </p>
     </footer>
 
-    <button class="support-button" type="button" aria-label="在线客服">
-      <img :src="supportImg" alt="">
+    <button
+      class="support-button"
+      :class="{ 'support-button--dragging': isSupportDragging }"
+      :style="supportButtonStyle"
+      type="button"
+      aria-label="在线客服"
+      @pointerdown="handleSupportPointerDown"
+      @pointermove="handleSupportPointerMove"
+      @pointerup="handleSupportPointerEnd"
+      @pointercancel="handleSupportPointerEnd"
+    >
+      <img :src="supportImg" alt="" draggable="false">
     </button>
   </div>
 </template>
@@ -785,16 +901,21 @@ h2 span {
 .support-button {
   position: fixed;
   z-index: 30;
-  right: var(--px-28);
-  bottom: var(--px-28);
   display: grid;
-  width: var(--px-112);
-  height: var(--px-112);
+  width: var(--px-100);
+  height: var(--px-100);
   place-items: center;
   border: 0;
-  border-radius: var(--px-28);
+  border-radius: var(--px-32);
   background: #9cb993;
   box-shadow: 0 18px 60px rgb(0 0 0 / 26%);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.support-button--dragging {
+  cursor: grabbing;
 }
 
 .support-button img {
@@ -802,6 +923,8 @@ h2 span {
   width: var(--px-72);
   height: var(--px-80);
   object-fit: contain;
+  pointer-events: none;
+  user-select: none;
 }
 
 @media (max-width: 1500px) {
@@ -925,9 +1048,5 @@ h2 span {
     height: var(--px-124);
   }
 
-  .support-button {
-    right: var(--px-24);
-    bottom: var(--px-24);
-  }
 }
 </style>
