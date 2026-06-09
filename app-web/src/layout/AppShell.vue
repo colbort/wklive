@@ -7,6 +7,9 @@ import { t, toggleLocale } from '@/i18n'
 import webLogoDark from '../../assets/home/weblogo_dark.png'
 import searchIcon from '../../assets/home/search-white.svg'
 import menuIcon from '../../assets/home/menu.svg'
+import clientDownloadIcon from '../../assets/home/link_1.svg'
+import supportIcon from '../../assets/home/link_2.svg'
+import languageIcon from '../../assets/home/link_4.svg'
 
 type NavItem = {
   path: RouteLocationRaw
@@ -88,15 +91,15 @@ onMounted(async () => {
           </button>
           <div class="menu-panel">
             <button class="menu-panel__item" type="button">
-              <span class="menu-panel__icon">▯</span>
+              <img :src="clientDownloadIcon" class="menu-panel__icon" alt="">
               {{ t('menu.download') }}
             </button>
             <button class="menu-panel__item" type="button">
-              <span class="menu-panel__icon">◖</span>
+              <img :src="supportIcon" class="menu-panel__icon" alt="">
               {{ t('menu.support') }}
             </button>
             <button class="menu-panel__item" type="button" @click="toggleLocale">
-              <span class="menu-panel__icon">◎</span>
+              <img :src="languageIcon" class="menu-panel__icon" alt="">
               {{ t('menu.language') }}
             </button>
           </div>

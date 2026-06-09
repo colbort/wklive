@@ -17,6 +17,7 @@ import svg5 from '../../assets/home/svg5.svg'
 import svg6 from '../../assets/home/svg6.svg'
 import webLogoDark from '../../assets/home/weblogo_dark.png'
 import youtubeIcon from '../../assets/home/youtube.png'
+import languageIcon from '../../assets/home/link_4.svg'
 
 const smartCards = [
   {
@@ -170,7 +171,7 @@ const socials = [
             <img :src="webLogoDark" alt="AVE">
           </div>
           <button type="button" class="lang-button">
-            <span class="lang-button__icon" />
+            <img :src="languageIcon" class="lang-button__icon" alt="Language">
             中文简体
             <i />
           </button>
