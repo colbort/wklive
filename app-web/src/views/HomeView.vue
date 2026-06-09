@@ -399,7 +399,7 @@ h2 span {
 
 .strategy-list {
   display: grid;
-  max-width: var(--px-1000);
+  max-width: var(--px-1480);
   margin: var(--px-120) auto 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--px-160);
