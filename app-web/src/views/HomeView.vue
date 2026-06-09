@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import boxBg from '../../assets/home/boxbg.png'
-import icon1 from '../../assets/home/icon1.png'
-import icon2 from '../../assets/home/icon2.png'
-import icon3 from '../../assets/home/icon3.png'
 import icon4 from '../../assets/home/icon4.png'
 import icon5 from '../../assets/home/icon5.png'
 import heroImg from '../../assets/home/img1.png'
@@ -16,6 +13,9 @@ import linkedInIcon from '../../assets/home/linkin.svg'
 import telegramIcon from '../../assets/home/telegram.svg'
 import twitterIcon from '../../assets/home/twitter.svg'
 import supportImg from '../../assets/home/support.png'
+import svg1 from '../../assets/home/svg1.svg'
+import svg2 from '../../assets/home/svg2.svg'
+import svg3 from '../../assets/home/svg3.svg'
 import webLogoDark from '../../assets/home/weblogo_dark.png'
 import youtubeIcon from '../../assets/home/youtube.png'
 
@@ -23,18 +23,17 @@ const smartCards = [
   {
     title: '深度流动性',
     text: '享受极低滑点，轻松完成大额交易',
-    icon: icon1,
+    icon: svg1,
   },
   {
     title: '专业级图表工具',
     text: '多维数据分析，精准把握市场趋势',
-    icon: icon2,
-    featured: true,
+    icon: svg2,
   },
   {
     title: '超低费用结构',
     text: '节省成本，最大化您的收益',
-    icon: icon3,
+    icon: svg3,
   },
 ]
 
@@ -95,7 +94,6 @@ const socials = [
           v-for="card in smartCards"
           :key="card.title"
           class="smart-card"
-          :class="{ 'smart-card--featured': card.featured }"
         >
           <img :src="card.icon" alt="">
           <h3>{{ card.title }}</h3>
@@ -335,7 +333,7 @@ h2 span {
   position: relative;
   display: grid;
   max-width: var(--px-1900);
-  margin: var(--px-370) auto 0;
+  margin: var(--px-220) auto 0;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: end;
   border: 1px solid rgb(255 255 255 / 24%);
@@ -344,45 +342,53 @@ h2 span {
 }
 
 .smart-card {
-  min-height: var(--px-390);
-  padding: var(--px-64) var(--px-56) var(--px-48);
+  min-height: var(--px-180);
+  padding: var(--px-42) var(--px-48) var(--px-34);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .smart-card img {
-  width: var(--px-112);
-  height: var(--px-112);
+  width: var(--px-60);
+  height: var(--px-60);
   object-fit: contain;
+  transition:
+    filter 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease;
 }
 
 .smart-card h3 {
-  margin-top: var(--px-78);
-  font-size: var(--font-size-40);
+  margin-top: var(--px-48);
+  font-size: var(--font-size-34);
   line-height: 1.2;
 }
 
 .smart-card p {
-  margin-top: var(--px-34);
+  margin-top: var(--px-22);
   color: var(--text-soft);
-  font-size: var(--font-size-26);
+  font-size: var(--font-size-22);
   font-weight: var(--font-weight-800);
   line-height: 1.45;
+  transition: color 0.2s ease;
 }
 
-.smart-card--featured {
-  min-height: var(--px-675);
-  margin-top: calc(var(--px-286) * -1);
+.smart-card:hover {
+  min-height: var(--px-420);
+  margin-top: calc(var(--px-170) * -1);
   border-radius: var(--px-24) var(--px-24) 0 0;
   background: var(--accent);
 }
 
-.smart-card--featured img {
-  width: var(--px-132);
-  height: var(--px-132);
+.smart-card:hover img {
+  width: var(--px-90);
+  height: var(--px-90);
   filter: brightness(0) invert(1);
 }
 
-.smart-card--featured h3,
-.smart-card--featured p {
+.smart-card:hover h3,
+.smart-card:hover p {
   color: var(--white);
 }
 
@@ -944,17 +950,8 @@ h2 span {
     font-size: var(--font-size-46);
   }
 
-  .smart-cards {
-    margin-top: var(--px-300);
-  }
-
   .smart-card {
     padding: var(--px-48) var(--px-36) var(--px-40);
-  }
-
-  .smart-card--featured {
-    min-height: var(--px-600);
-    margin-top: calc(var(--px-240) * -1);
   }
 
   .strategy-list {
