@@ -422,7 +422,7 @@ h2 span {
   z-index: 1;
   display: block;
   width: 100%;
-  margin: var(--px-130) auto calc(var(--px-260) * -1);
+  margin: var(--px-130) auto calc(var(--px-420) * -1);
   opacity: 0.86;
 }
 
@@ -477,8 +477,8 @@ h2 span {
 .futures-copy {
   position: absolute;
   z-index: 3;
-  top: var(--px-420);
-  right: var(--px-120);
+  top: var(--px-690);
+  right: var(--px-24);
   width: var(--px-850);
 }
 
@@ -867,8 +867,8 @@ h2 span {
   }
 
   .futures-copy {
-    top: var(--px-390);
-    right: var(--px-72);
+    top: var(--px-900);
+    right: var(--px-24);
     width: var(--px-690);
   }
 
@@ -938,8 +938,8 @@ h2 span {
   }
 
   .futures-copy {
-    top: var(--px-370);
-    right: var(--px-48);
+    top: var(--px-570);
+    right: var(--px-18);
     width: var(--px-620);
   }
 
