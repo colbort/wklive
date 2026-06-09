@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import boxBg from '../../assets/home/boxbg.png'
 import icon4 from '../../assets/home/icon4.png'
 import icon5 from '../../assets/home/icon5.png'
 import heroImg from '../../assets/home/img1.png'
 import toolsImg from '../../assets/home/img2.png'
-import trustImg from '../../assets/home/img5.png'
 import rewardImg from '../../assets/home/img6.png'
 import facebookIcon from '../../assets/home/facebook.png'
 import linkedInIcon from '../../assets/home/linkin.svg'
@@ -14,6 +12,9 @@ import supportImg from '../../assets/home/support.png'
 import svg1 from '../../assets/home/svg1.svg'
 import svg2 from '../../assets/home/svg2.svg'
 import svg3 from '../../assets/home/svg3.svg'
+import svg4 from '../../assets/home/svg4.svg'
+import svg5 from '../../assets/home/svg5.svg'
+import svg6 from '../../assets/home/svg6.svg'
 import webLogoDark from '../../assets/home/weblogo_dark.png'
 import youtubeIcon from '../../assets/home/youtube.png'
 
@@ -56,9 +57,21 @@ const futuresFeatures = [
 ]
 
 const trustCards = [
-  ['极简交易体验', '全平台支持 - 桌面端与移动端，随时随地轻松买卖加密货币'],
-  ['资产安全 全力守护', '3亿USDT用户保护基金 -- 行业领先保障，为您的交易保驾护航'],
-  ['全天候专业支持', '24/7 客服 - 屡获殊荣的团队，随时解答您的疑问'],
+  {
+    title: '极简交易体验',
+    text: '全平台支持 - 桌面端与移动端，随时随地轻松买卖加密货币',
+    icon: svg4,
+  },
+  {
+    title: '资产安全 全力守护',
+    text: '3亿USDT用户保护基金 -- 行业领先保障，为您的交易保驾护航',
+    icon: svg5,
+  },
+  {
+    title: '全天候专业支持',
+    text: '24/7 客服 - 屡获殊荣的团队，随时解答您的疑问',
+    icon: svg6,
+  },
 ]
 
 const footerProducts = ['股票', '外汇', '大宗商品', '加密货币', '期权合约']
@@ -130,10 +143,10 @@ const socials = [
       <h2 class="section-title">专业、值得信赖的<span>综合交易所</span></h2>
       <p>全球数百万用户的共同选择</p>
       <div class="trust-cards">
-        <article v-for="(card, index) in trustCards" :key="card[0]" class="trust-card">
-          <img :src="index === 1 ? trustImg : boxBg" alt="">
-          <h3>{{ card[0] }}</h3>
-          <p>{{ card[1] }}</p>
+        <article v-for="card in trustCards" :key="card.title" class="trust-card">
+          <img :src="card.icon" alt="">
+          <h3>{{ card.title }}</h3>
+          <p>{{ card.text }}</p>
         </article>
       </div>
     </section>
@@ -285,13 +298,13 @@ h2 span {
   align-items: center;
   justify-content: center;
   min-width: var(--px-290);
-  height: var(--px-104);
+  height: var(--px-80);
   margin-top: var(--px-110);
   border-radius: var(--px-999);
   background: var(--accent);
   color: var(--white);
-  font-size: var(--font-size-40);
-  font-weight: var(--font-weight-900);
+  font-size: var(--font-size-30);
+  font-weight: var(--font-weight-600);
 }
 
 .hero-art {
@@ -490,7 +503,7 @@ h2 span {
 .trust-cards {
   display: grid;
   max-width: var(--px-1920);
-  margin: var(--px-130) auto 0;
+  margin: var(--px-80) auto 0;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--px-38);
 }
@@ -502,24 +515,41 @@ h2 span {
   border-radius: var(--px-16);
   background: linear-gradient(180deg, rgb(255 255 255 / 7%), rgb(255 255 255 / 2%));
   text-align: center;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.trust-card:hover {
+  border-color: rgb(0 194 18 / 70%);
+  background: linear-gradient(180deg, rgb(0 194 18 / 16%), rgb(255 255 255 / 3%));
+  box-shadow: 0 var(--px-24) var(--px-80) rgb(0 194 18 / 12%);
+  transform: translateY(calc(var(--px-10) * -1));
 }
 
 .trust-card img {
-  width: var(--px-122);
-  height: var(--px-122);
+  width: var(--px-100);
+  height: var(--px-100);
   object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.trust-card:hover img {
+  transform: scale(1.08);
 }
 
 .trust-card h3 {
-  margin-top: 62px;
-  font-size: var(--font-size-38);
+  margin-top: 16px;
+  font-size: var(--font-size-32);
   line-height: 1.2;
 }
 
 .trust-card p {
-  margin-top: 38px;
+  margin-top: 24px;
   color: var(--text-soft);
-  font-size: var(--font-size-24);
+  font-size: var(--font-size-19);
   font-weight: var(--font-weight-800);
   line-height: 1.42;
 }

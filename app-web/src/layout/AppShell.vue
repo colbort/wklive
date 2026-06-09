@@ -149,6 +149,7 @@ onMounted(async () => {
   min-width: 0;
   align-items: center;
   gap: var(--px-28);
+  padding-left: var(--px-28);
   padding-right: var(--px-28);
   border-right: 1px solid rgb(255 255 255 / 7%);
   color: var(--text);
@@ -350,6 +351,7 @@ onMounted(async () => {
 
   .nav {
     gap: var(--px-18);
+    padding-left: var(--px-18);
     padding-right: var(--px-20);
     font-size: var(--font-size-18);
   }
