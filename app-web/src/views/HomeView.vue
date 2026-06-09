@@ -66,11 +66,13 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
   <div class="home-page">
     <section class="hero-section grid-bg">
       <div class="hero-copy">
-        <h1><span>从股票到加密</span>，<br />平台全搞定</h1>
+        <h1><span>从股票到加密</span>，<br>平台全搞定</h1>
         <p>安心托付，交易致远</p>
-        <RouterLink to="/trades" class="primary-cta">开始交易</RouterLink>
+        <RouterLink to="/trades" class="primary-cta">
+          开始交易
+        </RouterLink>
       </div>
-      <img class="hero-art" :src="heroImg" alt="" />
+      <img class="hero-art" :src="heroImg" alt="">
     </section>
 
     <section class="smart-section section-pad">
@@ -82,7 +84,7 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
           class="smart-card"
           :class="{ 'smart-card--featured': card.featured }"
         >
-          <img :src="card.icon" alt="" />
+          <img :src="card.icon" alt="">
           <h3>{{ card.title }}</h3>
           <p>{{ card.text }}</p>
         </article>
@@ -93,29 +95,29 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
       <h2>高级功能支持<span>多样化</span>策略</h2>
       <div class="strategy-list">
         <article v-for="item in strategyItems" :key="item.title" class="strategy-item">
-          <img :src="item.icon" alt="" />
+          <img :src="item.icon" alt="">
           <div>
             <h3>{{ item.title }}</h3>
             <p>{{ item.text }}</p>
           </div>
         </article>
       </div>
-      <img class="tools-art" :src="toolsImg" alt="" />
+      <img class="tools-art" :src="toolsImg" alt="">
     </section>
 
     <section class="market-flow section-pad">
-      <img class="trade-card trade-card--left" :src="tradeImg" alt="" />
-      <img class="poster-card" :src="posterImg" alt="" />
-      <h2><span>永续合约</span>，无到期日的期货<br />交易</h2>
+      <img class="trade-card trade-card--left" :src="tradeImg" alt="">
+      <img class="poster-card" :src="posterImg" alt="">
+      <h2><span>永续合约</span>，无到期日的期货<br>交易</h2>
     </section>
 
     <section class="futures-section section-pad">
-      <div class="orbit-line"></div>
+      <div class="orbit-line" />
       <div class="futures-copy">
-        <h2><span>永续合约</span>，无到期日的期货<br />交易</h2>
+        <h2><span>永续合约</span>，无到期日的期货<br>交易</h2>
         <ul>
           <li v-for="[title, text] in futuresFeatures" :key="title">
-            <span></span>
+            <span />
             <div>
               <strong>{{ title }}</strong>
               <p>{{ text }}</p>
@@ -130,7 +132,7 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
       <p>全球数百万用户的共同选择</p>
       <div class="trust-cards">
         <article v-for="(card, index) in trustCards" :key="card[0]" class="trust-card">
-          <img :src="index === 1 ? trustImg : boxBg" alt="" />
+          <img :src="index === 1 ? trustImg : boxBg" alt="">
           <h3>{{ card[0] }}</h3>
           <p>{{ card[1] }}</p>
         </article>
@@ -139,36 +141,38 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
 
     <section class="reward-section section-pad">
       <div class="reward-copy">
-        <h2>智享交易，安享<br />财富</h2>
+        <h2>智享交易，安享<br>财富</h2>
         <p>新用户可得丰富奖励</p>
-        <RouterLink to="/login" class="primary-cta">立即注册</RouterLink>
+        <RouterLink to="/login" class="primary-cta">
+          立即注册
+        </RouterLink>
       </div>
-      <img :src="rewardImg" alt="" />
+      <img :src="rewardImg" alt="">
     </section>
 
     <footer class="site-footer">
-      <div class="footer-line"></div>
+      <div class="footer-line" />
       <div class="footer-inner">
         <div class="footer-brand">
           <div class="footer-logo">
-            <span class="mini-mark"><span></span></span>
+            <span class="mini-mark"><span /></span>
             <strong>AVE</strong>
           </div>
           <button type="button" class="lang-button">
             <span>◎</span>
             中文简体
-            <i></i>
+            <i />
           </button>
           <div class="download-card">
             <h3>APP下载</h3>
             <p>扫码下载手机端，随时随地交易</p>
             <div class="qr-row">
               <div>
-                <span class="qr-code"></span>
+                <span class="qr-code" />
                 <em>IOS</em>
               </div>
               <div>
-                <span class="qr-code"></span>
+                <span class="qr-code" />
                 <em>Android</em>
               </div>
             </div>
@@ -191,11 +195,13 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
           </div>
         </div>
       </div>
-      <p class="copyright">© 2025 AVE交易所. 保留所有权利 Copyright © 2022-2026</p>
+      <p class="copyright">
+        © 2025 AVE交易所. 保留所有权利 Copyright © 2022-2026
+      </p>
     </footer>
 
     <button class="support-button" type="button" aria-label="在线客服">
-      <span></span>
+      <span />
     </button>
   </div>
 </template>
@@ -238,7 +244,7 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
   left: 0;
   height: 300px;
   background: linear-gradient(180deg, transparent, #0b0d16);
-  content: "";
+  content: '';
 }
 
 .hero-copy {
@@ -420,7 +426,7 @@ h2 span {
   border: 4px solid rgb(0 166 9 / 72%);
   border-color: rgb(0 166 9 / 72%) transparent transparent transparent;
   border-radius: 50%;
-  content: "";
+  content: '';
   pointer-events: none;
 }
 
@@ -634,7 +640,7 @@ h2 span {
   border-radius: 7px;
   background: #0a0c15;
   clip-path: polygon(50% 0, 100% 84%, 50% 57%, 0 84%);
-  content: "";
+  content: '';
 }
 
 .lang-button {
@@ -704,10 +710,10 @@ h2 span {
   border: 16px solid #fff;
   border-radius: 18px;
   background:
-    linear-gradient(90deg, #000 12px, transparent 12px 22px, #000 22px 34px, transparent 34px)
-      0 0 / 46px 46px,
-    linear-gradient(#000 12px, transparent 12px 22px, #000 22px 34px, transparent 34px) 0 0 /
+    linear-gradient(90deg, #000 12px, transparent 12px 22px, #000 22px 34px, transparent 34px) 0 0 /
       46px 46px,
+    linear-gradient(#000 12px, transparent 12px 22px, #000 22px 34px, transparent 34px) 0 0 / 46px
+      46px,
     #fff;
 }
 
@@ -797,7 +803,7 @@ h2 span {
   height: 22px;
   border-radius: 18px 18px 6px 6px;
   background: #2d1f1d;
-  content: "";
+  content: '';
 }
 
 .support-button span::after {
@@ -808,7 +814,7 @@ h2 span {
   height: 5px;
   border-radius: 999px;
   background: #2b7e45;
-  content: "";
+  content: '';
 }
 
 @media (max-width: 1500px) {

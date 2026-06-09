@@ -1,13 +1,13 @@
 <script setup lang="ts">
 const navItems = [
-  { path: '/markets', label: '加密货币合约' },
-  { path: '/markets', label: '股票' },
-  { path: '/markets', label: '外汇' },
-  { path: '/markets', label: '大宗商品' },
-  { path: '/trades', label: '期权合约' },
-  { path: '/profile', label: '公司资质' },
-  { path: '/profile', label: '白皮书' },
-  { path: '/profile', label: '监管文件' },
+  { path: '/crypto-contracts', label: '加密货币合约' },
+  { path: '/stocks', label: '股票' },
+  { path: '/forex', label: '外汇' },
+  { path: '/commodities', label: '大宗商品' },
+  { path: '/options-contracts', label: '期权合约' },
+  { path: '/company-credentials', label: '公司资质' },
+  { path: '/whitepaper', label: '白皮书' },
+  { path: '/regulatory-files', label: '监管文件' },
 ]
 </script>
 
@@ -15,7 +15,7 @@ const navItems = [
   <div class="app-shell">
     <header class="site-header">
       <RouterLink to="/home" class="brand" aria-label="AVE 首页">
-        <span class="brand__mark"><span></span></span>
+        <span class="brand__mark"><span /></span>
         <strong>AVE</strong>
       </RouterLink>
 
@@ -27,17 +27,23 @@ const navItems = [
 
       <div class="header-actions">
         <button class="icon-button" type="button" aria-label="搜索">
-          <span class="search-icon"></span>
+          <span class="search-icon" />
         </button>
-        <span class="divider"></span>
-        <RouterLink to="/login" class="pill pill--ghost">模拟注册</RouterLink>
-        <RouterLink to="/login" class="pill pill--outline">登录</RouterLink>
-        <RouterLink to="/login" class="pill pill--solid">注册</RouterLink>
-        <span class="divider"></span>
+        <span class="divider" />
+        <RouterLink to="/login" class="pill pill--ghost">
+          模拟注册
+        </RouterLink>
+        <RouterLink to="/login" class="pill pill--outline">
+          登录
+        </RouterLink>
+        <RouterLink to="/login" class="pill pill--solid">
+          注册
+        </RouterLink>
+        <span class="divider" />
         <button class="icon-button icon-button--menu" type="button" aria-label="菜单">
-          <span></span>
-          <span></span>
-          <span></span>
+          <span />
+          <span />
+          <span />
         </button>
       </div>
     </header>
@@ -113,7 +119,7 @@ const navItems = [
   border-radius: 7px;
   background: rgb(10 12 22);
   clip-path: polygon(50% 0, 100% 84%, 50% 57%, 0 84%);
-  content: "";
+  content: '';
 }
 
 .brand__mark span {
@@ -191,7 +197,7 @@ const navItems = [
   transform: rotate(45deg);
   border-radius: 2px;
   background: currentColor;
-  content: "";
+  content: '';
 }
 
 .pill {

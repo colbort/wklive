@@ -3,12 +3,20 @@
     <header>
       <h2>资产总览</h2>
       <div>
-        <button type="button">充值</button>
-        <button type="button">提现</button>
-        <button type="button">划转</button>
+        <button type="button">
+          充值
+        </button>
+        <button type="button">
+          提现
+        </button>
+        <button type="button">
+          划转
+        </button>
       </div>
     </header>
-    <div class="empty">登录后查看资产数据</div>
+    <div class="empty">
+      登录后查看资产数据
+    </div>
   </section>
 </template>
 

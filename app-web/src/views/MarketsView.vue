@@ -14,7 +14,7 @@ const rows = [
         <h2>市场行情</h2>
         <p>外汇、加密货币、股票、期货、指数、基金</p>
       </div>
-      <input type="search" placeholder="搜索产品" />
+      <input type="search" placeholder="搜索产品">
     </header>
 
     <table>
@@ -30,7 +30,9 @@ const rows = [
         <tr v-for="row in rows" :key="row[0]">
           <td>{{ row[0] }}</td>
           <td>{{ row[1] }}</td>
-          <td :class="{ down: row[2].startsWith('-') }">{{ row[2] }}</td>
+          <td :class="{ down: row[2].startsWith('-') }">
+            {{ row[2] }}
+          </td>
           <td>{{ row[3] }}</td>
         </tr>
       </tbody>

@@ -2,10 +2,18 @@
   <section class="page-card profile-page">
     <h2>用户中心</h2>
     <div class="profile-grid">
-      <RouterLink to="/login">登录 / 注册</RouterLink>
-      <button type="button">实名认证</button>
-      <button type="button">安全设置</button>
-      <button type="button">收款账户</button>
+      <RouterLink to="/login">
+        登录 / 注册
+      </RouterLink>
+      <button type="button">
+        实名认证
+      </button>
+      <button type="button">
+        安全设置
+      </button>
+      <button type="button">
+        收款账户
+      </button>
     </div>
   </section>
 </template>

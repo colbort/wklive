@@ -5,18 +5,28 @@
         <strong>BTCUSDT</strong>
         <span class="muted">63,850.7200 +3.15%</span>
       </header>
-      <div class="chart-placeholder">PC K 线区域</div>
+      <div class="chart-placeholder">
+        PC K 线区域
+      </div>
     </div>
 
     <aside class="page-card order-panel">
       <h2>下单</h2>
       <div class="switch">
-        <button type="button">限价</button>
-        <button type="button" class="active">市价</button>
+        <button type="button">
+          限价
+        </button>
+        <button type="button" class="active">
+          市价
+        </button>
       </div>
-      <input placeholder="数量(BTC)" />
-      <button type="button" class="buy">买入开多</button>
-      <button type="button" class="sell">卖出开空</button>
+      <input placeholder="数量(BTC)">
+      <button type="button" class="buy">
+        买入开多
+      </button>
+      <button type="button" class="sell">
+        卖出开空
+      </button>
     </aside>
   </section>
 </template>

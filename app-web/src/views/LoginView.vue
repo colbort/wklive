@@ -8,11 +8,15 @@ const password = ref('')
 <template>
   <main class="login-page">
     <section class="page-card login-card">
-      <RouterLink to="/home" class="back">返回首页</RouterLink>
+      <RouterLink to="/home" class="back">
+        返回首页
+      </RouterLink>
       <h1>登录</h1>
-      <input v-model="account" placeholder="邮箱 / 手机" />
-      <input v-model="password" placeholder="密码" type="password" />
-      <button type="button">登录</button>
+      <input v-model="account" placeholder="邮箱 / 手机">
+      <input v-model="password" placeholder="密码" type="password">
+      <button type="button">
+        登录
+      </button>
     </section>
   </main>
 </template>
