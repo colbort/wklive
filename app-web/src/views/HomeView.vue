@@ -477,13 +477,13 @@ h2 span {
 .futures-copy {
   position: absolute;
   z-index: 3;
-  top: var(--px-620);
+  top: var(--px-420);
   right: var(--px-120);
-  width: var(--px-780);
+  width: var(--px-850);
 }
 
 .futures-copy h2 {
-  font-size: var(--font-size-64);
+  font-size: var(--font-size-58);
   font-weight: var(--font-weight-950);
   line-height: 1.34;
 }
@@ -512,14 +512,14 @@ h2 span {
 
 .futures-copy strong {
   display: block;
-  font-size: var(--font-size-28);
+  font-size: var(--font-size-22);
   line-height: 1.2;
 }
 
 .futures-copy p {
   margin-top: 16px;
   color: var(--text-soft);
-  font-size: var(--font-size-22);
+  font-size: var(--font-size-18);
   font-weight: var(--font-weight-800);
 }
 
@@ -867,8 +867,9 @@ h2 span {
   }
 
   .futures-copy {
-    top: var(--px-560);
-    right: var(--px-80);
+    top: var(--px-390);
+    right: var(--px-72);
+    width: var(--px-690);
   }
 
   .reward-copy h2 {
@@ -937,8 +938,9 @@ h2 span {
   }
 
   .futures-copy {
-    top: var(--px-520);
+    top: var(--px-370);
     right: var(--px-48);
+    width: var(--px-620);
   }
 
   .footer-inner {
