@@ -425,54 +425,6 @@ h2 span {
   opacity: 0.86;
 }
 
-.market-flow {
-  min-height: var(--px-900);
-}
-
-.market-flow::before {
-  position: absolute;
-  width: var(--px-1650);
-  height: var(--px-570);
-  border: 4px solid rgb(0 166 9 / 72%);
-  border-color: rgb(0 166 9 / 72%) transparent transparent transparent;
-  border-radius: 50%;
-  content: '';
-  pointer-events: none;
-}
-
-.market-flow::before {
-  top: 82px;
-  left: 50%;
-  transform: translateX(-48%) rotate(4deg);
-}
-
-.trade-card,
-.poster-card {
-  position: absolute;
-  opacity: 0.82;
-}
-
-.trade-card--left {
-  left: var(--px-150);
-  top: var(--px-90);
-  width: var(--px-500);
-}
-
-.poster-card {
-  right: var(--px-290);
-  top: var(--px-170);
-  width: var(--px-540);
-}
-
-.market-flow h2 {
-  position: absolute;
-  right: 124px;
-  bottom: 60px;
-  font-size: var(--font-size-58);
-  font-weight: var(--font-weight-950);
-  line-height: 1.35;
-}
-
 .futures-copy {
   position: absolute;
   z-index: 3;
@@ -855,17 +807,7 @@ h2 span {
     font-size: var(--font-size-22);
   }
 
-  .strategy-list {
-    gap: var(--px-96);
-  }
-
-  .market-flow h2 {
-    font-size: var(--font-size-50);
-  }
-
   .futures-copy {
-    bottom: var(--px-10);
-    right: var(--px-24);
     width: var(--px-690);
   }
 
@@ -955,13 +897,6 @@ h2 span {
   .support-button {
     right: var(--px-24);
     bottom: var(--px-24);
-    width: var(--px-112);
-    height: var(--px-112);
-  }
-
-  .support-button img {
-    width: var(--px-72);
-    height: var(--px-80);
   }
 }
 </style>
