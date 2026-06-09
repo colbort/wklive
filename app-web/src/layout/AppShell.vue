@@ -55,27 +55,10 @@ const navItems = [
 </template>
 
 <style scoped>
-:global(html),
-:global(body),
-:global(#app) {
-  width: 100%;
-  min-height: 100%;
-  margin: 0;
-  border-radius: 0;
-  background: var(--bg, #090c14);
-}
-
-:global(body) {
-  overflow-x: auto;
-}
-
 .app-shell {
   width: 100%;
-  min-width: 100vw;
   min-height: 100vh;
-  border-radius: 0;
-  background: var(--bg, #090c14);
-  overflow: visible;
+  background: var(--bg);
 }
 
 .site-header {
@@ -87,7 +70,6 @@ const navItems = [
   height: 88px;
   padding: 0 32px;
   border-bottom: 1px solid rgb(255 255 255 / 5%);
-  border-radius: 0;
   background: rgb(10 12 22 / 96%);
   backdrop-filter: blur(18px);
 }
@@ -243,7 +225,6 @@ const navItems = [
 
 .content {
   min-width: 0;
-  border-radius: 0;
 }
 
 @media (max-width: 1500px) {

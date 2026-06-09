@@ -209,6 +209,8 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
 <style scoped>
 .home-page {
   position: relative;
+  width: 100%;
+  min-width: 100%;
   overflow: hidden;
   background:
     radial-gradient(circle at 9% 62%, rgb(77 105 110 / 16%), transparent 24%),
@@ -232,6 +234,7 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
 .hero-section {
   position: relative;
   display: flex;
+  width: 100%;
   min-height: 930px;
   align-items: center;
   padding: 92px 64px 120px;
