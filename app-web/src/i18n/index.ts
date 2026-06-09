@@ -7,7 +7,7 @@ const messages = {
   'en-US': enUS,
 } as const
 
-type Locale = keyof typeof messages
+export type Locale = keyof typeof messages
 type MessageKey = keyof typeof zhCN
 
 const LOCALE_STORAGE_KEY = 'app_locale'

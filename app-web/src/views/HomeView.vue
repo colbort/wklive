@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useLanguageDialog } from '@/composables/useLanguageDialog'
+import { t } from '@/i18n'
+
 import icon4 from '../../assets/home/icon4.png'
 import icon5 from '../../assets/home/icon5.png'
 import heroImg from '../../assets/home/img1.png'
@@ -84,6 +87,8 @@ const socials = [
   { name: 'Telegram', icon: telegramIcon },
   { name: 'YouTube', icon: youtubeIcon },
 ]
+
+const { openLanguageDialog } = useLanguageDialog()
 </script>
 
 <template>
@@ -100,13 +105,11 @@ const socials = [
     </section>
 
     <section class="smart-section section-pad">
-      <h2 class="section-title">更明智的<span>交易</span>，从这里开始</h2>
+      <h2 class="section-title">
+        更明智的<span>交易</span>，从这里开始
+      </h2>
       <div class="smart-cards">
-        <article
-          v-for="card in smartCards"
-          :key="card.title"
-          class="smart-card"
-        >
+        <article v-for="card in smartCards" :key="card.title" class="smart-card">
           <img :src="card.icon" alt="">
           <h3>{{ card.title }}</h3>
           <p>{{ card.text }}</p>
@@ -115,7 +118,9 @@ const socials = [
     </section>
 
     <section class="strategy-section section-pad">
-      <h2 class="section-title">高级功能支持<span>多样化</span>策略</h2>
+      <h2 class="section-title">
+        高级功能支持<span>多样化</span>策略
+      </h2>
       <div class="strategy-list">
         <article v-for="item in strategyItems" :key="item.title" class="strategy-item">
           <img :src="item.icon" alt="">
@@ -141,7 +146,9 @@ const socials = [
     </section>
 
     <section class="trust-section section-pad">
-      <h2 class="section-title">专业、值得信赖的<span>综合交易所</span></h2>
+      <h2 class="section-title">
+        专业、值得信赖的<span>综合交易所</span>
+      </h2>
       <p>全球数百万用户的共同选择</p>
       <div class="trust-cards">
         <article v-for="card in trustCards" :key="card.title" class="trust-card">
@@ -170,9 +177,9 @@ const socials = [
           <div class="footer-logo">
             <img :src="webLogoDark" alt="AVE">
           </div>
-          <button type="button" class="lang-button">
+          <button type="button" class="lang-button" @click="openLanguageDialog">
             <img :src="languageIcon" class="lang-button__icon" alt="Language">
-            中文简体
+            {{ t('menu.language') }}
             <i />
           </button>
           <div class="download-card">
@@ -720,7 +727,10 @@ h2 span {
 
 .footer-links {
   display: grid;
-  grid-template-columns: minmax(var(--px-180), 1fr) minmax(var(--px-180), 1fr) minmax(var(--px-260), 1.2fr);
+  grid-template-columns: minmax(var(--px-180), 1fr) minmax(var(--px-180), 1fr) minmax(
+      var(--px-260),
+      1.2fr
+    );
   gap: var(--px-80);
   padding-top: var(--px-96);
 }
