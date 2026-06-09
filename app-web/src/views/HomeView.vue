@@ -421,8 +421,9 @@ h2 span {
   position: relative;
   z-index: 1;
   display: block;
-  width: 100%;
-  margin: var(--px-130) auto calc(var(--px-420) * -1);
+  width: 120vw;
+  max-width: none;
+  margin: var(--px-150) 0 calc(var(--px-420) * -1) calc((120vw - 100%) / -2);
   opacity: 0.86;
 }
 
