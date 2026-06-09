@@ -237,8 +237,7 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
   width: 100%;
   min-height: var(--px-930);
   align-items: center;
-  padding: var(--px-92) var(--px-64)
-    var(--px-120);
+  padding: var(--px-92) var(--px-64) var(--px-120);
 }
 
 .hero-section::after {
@@ -960,5 +959,4 @@ h2 span {
     height: var(--px-112);
   }
 }
-
 </style>

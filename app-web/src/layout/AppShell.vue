@@ -56,7 +56,7 @@ onMounted(async () => {
   <div class="app-shell">
     <header class="site-header">
       <RouterLink to="/home" class="brand" aria-label="AVE">
-        <img :src="webLogoDark" alt="AVE" />
+        <img :src="webLogoDark" alt="AVE">
       </RouterLink>
 
       <nav class="nav" aria-label="Navigation">
@@ -79,7 +79,12 @@ onMounted(async () => {
         <RouterLink to="/login" class="pill pill--solid">
           {{ t('actions.register') }}
         </RouterLink>
-        <button class="lang-toggle" type="button" :aria-label="t('actions.switchLanguage')" @click="toggleLocale">
+        <button
+          class="lang-toggle"
+          type="button"
+          :aria-label="t('actions.switchLanguage')"
+          @click="toggleLocale"
+        >
           {{ currentLanguageLabel }}
         </button>
         <span class="divider" />
@@ -325,5 +330,4 @@ onMounted(async () => {
     height: var(--px-46);
   }
 }
-
 </style>
