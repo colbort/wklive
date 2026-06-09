@@ -2,9 +2,11 @@
 import { computed, onMounted, ref } from 'vue'
 import type { RouteLocationRaw } from 'vue-router'
 import { apiListVisibleCategories, getTenantCode } from '@wklive/api'
-import { currentLanguageLabel, t, toggleLocale } from '@/i18n'
+import { t, toggleLocale } from '@/i18n'
 
 import webLogoDark from '../../assets/home/weblogo_dark.png'
+import searchIcon from '../../assets/home/search-white.svg'
+import menuIcon from '../../assets/home/menu.svg'
 
 type NavItem = {
   path: RouteLocationRaw
@@ -67,7 +69,7 @@ onMounted(async () => {
 
       <div class="header-actions">
         <button class="icon-button" type="button" :aria-label="t('actions.search')">
-          <span class="search-icon" />
+          <img :src="searchIcon" alt="">
         </button>
         <span class="divider" />
         <RouterLink to="/login" class="pill pill--ghost">
@@ -79,20 +81,26 @@ onMounted(async () => {
         <RouterLink to="/login" class="pill pill--solid">
           {{ t('actions.register') }}
         </RouterLink>
-        <button
-          class="lang-toggle"
-          type="button"
-          :aria-label="t('actions.switchLanguage')"
-          @click="toggleLocale"
-        >
-          {{ currentLanguageLabel }}
-        </button>
         <span class="divider" />
-        <button class="icon-button icon-button--menu" type="button" :aria-label="t('actions.menu')">
-          <span />
-          <span />
-          <span />
-        </button>
+        <div class="menu-popover">
+          <button class="icon-button icon-button--menu" type="button" :aria-label="t('actions.menu')">
+            <img :src="menuIcon" alt="">
+          </button>
+          <div class="menu-panel">
+            <button class="menu-panel__item" type="button">
+              <span class="menu-panel__icon">▯</span>
+              {{ t('menu.download') }}
+            </button>
+            <button class="menu-panel__item" type="button">
+              <span class="menu-panel__icon">◖</span>
+              {{ t('menu.support') }}
+            </button>
+            <button class="menu-panel__item" type="button" @click="toggleLocale">
+              <span class="menu-panel__icon">◎</span>
+              {{ t('menu.language') }}
+            </button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -115,9 +123,9 @@ onMounted(async () => {
   top: 0;
   display: flex;
   align-items: center;
-  gap: var(--px-28);
-  height: var(--px-88);
-  padding: 0 var(--px-32);
+  gap: var(--px-20);
+  height: var(--px-76);
+  padding: 0 var(--px-28);
   border-bottom: 1px solid rgb(255 255 255 / 5%);
   background: rgb(10 12 22 / 96%);
   backdrop-filter: blur(18px);
@@ -131,7 +139,7 @@ onMounted(async () => {
 
 .brand img {
   display: block;
-  width: var(--px-148);
+  width: var(--px-100);
   height: auto;
 }
 
@@ -140,11 +148,11 @@ onMounted(async () => {
   flex: 1 1 auto;
   min-width: 0;
   align-items: center;
-  gap: var(--px-34);
-  padding-right: var(--px-38);
+  gap: var(--px-28);
+  padding-right: var(--px-28);
   border-right: 1px solid rgb(255 255 255 / 7%);
   color: var(--text);
-  font-size: var(--font-size-21);
+  font-size: var(--font-size-18);
   font-weight: var(--font-weight-800);
   overflow-x: auto;
   overscroll-behavior-inline: contain;
@@ -172,20 +180,20 @@ onMounted(async () => {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: var(--px-10);
+  gap: var(--px-6);
 }
 
 .divider {
   width: 1px;
-  height: var(--px-42);
-  margin: 0 var(--px-8);
+  height: var(--px-32);
+  margin: 0 var(--px-4);
   background: rgb(255 255 255 / 7%);
 }
 
 .icon-button {
   display: grid;
-  width: var(--px-54);
-  height: var(--px-54);
+  width: var(--px-36);
+  height: var(--px-36);
   place-items: center;
   border: 0;
   border-radius: 50%;
@@ -193,34 +201,23 @@ onMounted(async () => {
   color: var(--text);
 }
 
-.search-icon {
-  width: var(--px-21);
-  height: var(--px-21);
-  border: var(--px-2) solid currentColor;
-  border-radius: 50%;
-}
-
-.search-icon::after {
+.icon-button img {
   display: block;
-  width: var(--px-9);
-  height: var(--px-2);
-  margin: calc(var(--px-21) - var(--px-5)) 0 0 calc(var(--px-21) - var(--px-6));
-  transform: rotate(45deg);
-  border-radius: var(--px-2);
-  background: currentColor;
-  content: '';
+  width: var(--px-16);
+  height: var(--px-16);
+  object-fit: contain;
 }
 
 .pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: var(--px-96);
-  height: var(--px-50);
-  padding: 0 var(--px-22);
+  min-width: var(--px-78);
+  height: var(--px-40);
+  padding: 0 var(--px-16);
   border-radius: var(--px-999);
-  font-size: var(--font-size-19);
-  font-weight: var(--font-weight-800);
+  font-size: var(--font-size-15);
+  font-weight: var(--font-weight-700);
 }
 
 .pill--ghost {
@@ -239,29 +236,101 @@ onMounted(async () => {
 }
 
 .lang-toggle {
-  min-width: var(--px-50);
-  height: var(--px-50);
-  padding: 0 var(--px-10);
+  min-width: var(--px-40);
+  height: var(--px-40);
+  padding: 0 var(--px-8);
   border: 1px solid rgb(255 255 255 / 14%);
   border-radius: var(--px-999);
   background: transparent;
   color: var(--text);
-  font-size: var(--font-size-18);
-  font-weight: var(--font-weight-800);
+  font-size: var(--font-size-15);
+  font-weight: var(--font-weight-700);
 }
 
 .icon-button--menu {
-  gap: var(--px-5);
   border: 1px solid rgb(255 255 255 / 18%);
   background: transparent;
 }
 
-.icon-button--menu span {
-  display: block;
-  width: var(--px-25);
-  height: var(--px-2);
-  border-radius: var(--px-2);
-  background: var(--text);
+.icon-button--menu img {
+  width: var(--px-18);
+  height: var(--px-18);
+}
+
+.menu-popover {
+  position: relative;
+  display: flex;
+}
+
+.menu-popover::after {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: var(--px-260);
+  height: var(--px-18);
+  content: '';
+}
+
+.menu-panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + var(--px-14));
+  right: 0;
+  display: grid;
+  width: var(--px-260);
+  padding: var(--px-18) var(--px-28);
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: var(--px-28);
+  background: rgb(11 13 24 / 98%);
+  box-shadow: 0 var(--px-24) var(--px-80) rgb(0 0 0 / 35%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(calc(var(--px-8) * -1));
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.menu-popover:hover .menu-panel,
+.menu-popover:focus-within .menu-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.menu-panel__item {
+  display: flex;
+  align-items: center;
+  gap: var(--px-16);
+  min-height: var(--px-70);
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+  background: transparent;
+  color: var(--text);
+  font-size: var(--font-size-21);
+  font-weight: var(--font-weight-800);
+}
+
+.menu-panel__item:last-child {
+  border-bottom: 0;
+}
+
+.menu-panel__item:hover {
+  color: var(--accent);
+}
+
+.menu-panel__icon {
+  display: grid;
+  width: var(--px-36);
+  height: var(--px-36);
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 50%;
+  color: var(--text);
+  font-size: var(--font-size-18);
+  line-height: 1;
 }
 
 .content {
@@ -270,40 +339,9 @@ onMounted(async () => {
 
 @media (max-width: 1500px) {
   .site-header {
-    gap: var(--px-24);
-    padding: 0 var(--px-20);
-  }
-
-  .brand img {
-    width: var(--px-132);
-  }
-
-  .nav {
-    gap: var(--px-20);
-    padding-right: var(--px-24);
-    font-size: var(--font-size-18);
-  }
-
-  .header-actions {
-    gap: var(--px-8);
-  }
-
-  .icon-button {
-    width: var(--px-50);
-    height: var(--px-50);
-  }
-
-  .pill {
-    min-width: var(--px-88);
-    padding: 0 var(--px-16);
-    font-size: var(--font-size-18);
-  }
-}
-
-@media (max-width: 1280px) {
-  .site-header {
     gap: var(--px-18);
-    padding: 0 var(--px-16);
+    height: var(--px-70);
+    padding: 0 var(--px-18);
   }
 
   .brand img {
@@ -312,22 +350,61 @@ onMounted(async () => {
 
   .nav {
     gap: var(--px-18);
+    padding-right: var(--px-20);
+    font-size: var(--font-size-18);
+  }
+
+  .header-actions {
+    gap: var(--px-5);
   }
 
   .icon-button {
-    width: var(--px-46);
-    height: var(--px-46);
+    width: var(--px-34);
+    height: var(--px-34);
   }
 
   .pill {
-    min-width: var(--px-78);
-    height: var(--px-46);
-    padding: 0 var(--px-14);
+    min-width: var(--px-70);
+    height: var(--px-38);
+    padding: 0 var(--px-12);
   }
 
   .lang-toggle {
-    min-width: var(--px-46);
-    height: var(--px-46);
+    min-width: var(--px-38);
+    height: var(--px-38);
+  }
+}
+
+@media (max-width: 1280px) {
+  .site-header {
+    gap: var(--px-14);
+    height: var(--px-64);
+    padding: 0 var(--px-14);
+  }
+
+  .brand img {
+    width: var(--px-110);
+  }
+
+  .nav {
+    gap: var(--px-16);
+    font-size: var(--font-size-15);
+  }
+
+  .icon-button {
+    width: var(--px-32);
+    height: var(--px-32);
+  }
+
+  .pill {
+    min-width: var(--px-64);
+    height: var(--px-36);
+    padding: 0 var(--px-10);
+  }
+
+  .lang-toggle {
+    min-width: var(--px-36);
+    height: var(--px-36);
   }
 }
 </style>

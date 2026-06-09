@@ -11,6 +11,9 @@ const enUS: Record<keyof typeof zhCN, string> = {
   'actions.menu': 'Menu',
   'actions.switchLanguage': 'Switch language',
   'locale.short': 'EN',
+  'menu.download': 'Client download',
+  'menu.support': 'Contact support',
+  'menu.language': 'English',
 }
 
 export default enUS

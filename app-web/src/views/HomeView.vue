@@ -11,6 +11,13 @@ import tradeImg from '../../assets/home/img3.png'
 import posterImg from '../../assets/home/img4.png'
 import trustImg from '../../assets/home/img5.png'
 import rewardImg from '../../assets/home/img6.png'
+import facebookIcon from '../../assets/home/facebook.png'
+import linkedInIcon from '../../assets/home/linkin.svg'
+import telegramIcon from '../../assets/home/telegram.svg'
+import twitterIcon from '../../assets/home/twitter.svg'
+import supportImg from '../../assets/home/support.png'
+import webLogoDark from '../../assets/home/weblogo_dark.png'
+import youtubeIcon from '../../assets/home/youtube.png'
 
 const smartCards = [
   {
@@ -59,7 +66,13 @@ const trustCards = [
 
 const footerProducts = ['股票', '外汇', '大宗商品', '加密货币', '期权合约']
 const footerOther = ['订单中心', '资产中心', '用户中心']
-const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
+const socials = [
+  { name: 'Twitter', icon: twitterIcon },
+  { name: 'LinkedIn', icon: linkedInIcon },
+  { name: 'Facebook', icon: facebookIcon },
+  { name: 'Telegram', icon: telegramIcon },
+  { name: 'YouTube', icon: youtubeIcon },
+]
 </script>
 
 <template>
@@ -155,11 +168,10 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
       <div class="footer-inner">
         <div>
           <div class="footer-logo">
-            <span class="mini-mark" />
-            <strong>AVE</strong>
+            <img :src="webLogoDark" alt="AVE">
           </div>
           <button type="button" class="lang-button">
-            <span>◎</span>
+            <span class="lang-button__icon" />
             中文简体
             <i />
           </button>
@@ -189,8 +201,8 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
           </div>
           <div>
             <h3>社交媒体&社区</h3>
-            <a v-for="item in socials" :key="item" href="#">
-              <span>{{ item.slice(0, 1) }}</span>{{ item }}
+            <a v-for="item in socials" :key="item.name" href="#">
+              <img :src="item.icon" alt="">{{ item.name }}
             </a>
           </div>
         </div>
@@ -201,7 +213,7 @@ const socials = ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube']
     </footer>
 
     <button class="support-button" type="button" aria-label="在线客服">
-      <span />
+      <img :src="supportImg" alt="">
     </button>
   </div>
 </template>
@@ -601,7 +613,7 @@ h2 span {
 
 .site-footer {
   position: relative;
-  padding: 0 var(--px-64) 0;
+  padding: var(--px-24) var(--px-72) 0;
   background: #0a0c15;
 }
 
@@ -615,103 +627,113 @@ h2 span {
   display: grid;
   max-width: var(--px-1900);
   margin: 0 auto;
-  padding: var(--px-64) 0 var(--px-48);
-  grid-template-columns: var(--px-560) 1fr;
+  padding: var(--px-40) 0 var(--px-48);
+  grid-template-columns: var(--px-456) minmax(0, 1fr);
   gap: var(--px-200);
 }
 
 .footer-logo {
   display: flex;
   align-items: center;
-  gap: 14px;
-  font-size: var(--font-size-46);
-  font-weight: var(--font-weight-950);
 }
 
-.mini-mark {
-  position: relative;
-  display: grid;
-  width: var(--px-64);
-  height: var(--px-64);
-  border-radius: 14px;
-  background: linear-gradient(135deg, #2ed8c6, #31bd86 48%, #8155e7);
-}
-
-.mini-mark::before {
-  position: absolute;
-  inset: 10px 13px;
-  border-radius: 7px;
-  background: #0a0c15;
-  clip-path: polygon(50% 0, 100% 84%, 50% 57%, 0 84%);
-  content: '';
+.footer-logo img {
+  display: block;
+  width: var(--px-148);
+  height: auto;
 }
 
 .lang-button {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 72px;
+  gap: var(--px-12);
+  margin-top: var(--px-24);
+  padding: 0;
   border: 0;
   background: transparent;
   color: var(--text);
-  font-size: var(--font-size-18);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-600);
 }
 
-.lang-button span {
+.lang-button__icon {
+  position: relative;
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: var(--px-30);
+  height: var(--px-30);
   place-items: center;
   border-radius: 50%;
   background: rgb(255 255 255 / 8%);
 }
 
+.lang-button__icon::before,
+.lang-button__icon::after {
+  position: absolute;
+  border: 1px solid var(--white);
+  content: '';
+}
+
+.lang-button__icon::before {
+  width: var(--px-18);
+  height: var(--px-18);
+  border-radius: 50%;
+}
+
+.lang-button__icon::after {
+  width: var(--px-8);
+  height: var(--px-18);
+  border-top: 0;
+  border-bottom: 0;
+  border-radius: 50%;
+}
+
 .lang-button i {
   width: 0;
   height: 0;
-  border-top: 7px solid currentColor;
-  border-right: 6px solid transparent;
-  border-left: 6px solid transparent;
+  border-top: var(--px-5) solid currentColor;
+  border-right: var(--px-5) solid transparent;
+  border-left: var(--px-5) solid transparent;
 }
 
 .download-card {
-  width: var(--px-456);
-  margin-top: 68px;
-  padding: var(--px-38) var(--px-36);
-  border-radius: var(--px-24);
+  width: var(--px-360);
+  margin-top: var(--px-34);
+  padding: var(--px-24) var(--px-28) var(--px-26);
+  border-radius: var(--px-20);
   background: rgb(29 32 44);
 }
 
 .download-card h3 {
-  font-size: var(--font-size-28);
+  font-size: var(--font-size-22);
+  font-weight: var(--font-weight-800);
 }
 
 .download-card p {
-  margin-top: 28px;
+  margin-top: var(--px-16);
   color: var(--text-soft);
-  font-size: var(--font-size-22);
+  font-size: var(--font-size-16);
   font-weight: var(--font-weight-800);
 }
 
 .qr-row {
   display: grid;
-  margin-top: 40px;
+  margin-top: var(--px-24);
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: var(--px-16);
 }
 
 .qr-row > div {
   display: grid;
   justify-items: center;
-  gap: 18px;
+  gap: var(--px-12);
 }
 
 .qr-code {
   display: block;
-  width: var(--px-184);
-  height: var(--px-184);
-  border: var(--px-16) solid var(--white);
-  border-radius: 18px;
+  width: var(--px-132);
+  height: var(--px-132);
+  border: var(--px-12) solid var(--white);
+  border-radius: var(--px-14);
   background:
     linear-gradient(90deg, #000 12px, transparent 12px 22px, #000 22px 34px, transparent 34px) 0 0 /
       46px 46px,
@@ -722,66 +744,73 @@ h2 span {
 
 .qr-row em {
   color: var(--text);
-  font-size: var(--font-size-22);
+  font-size: var(--font-size-16);
   font-style: normal;
+  font-weight: var(--font-weight-600);
 }
 
 .footer-links {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--px-86);
-  padding-top: 96px;
+  grid-template-columns: minmax(var(--px-180), 1fr) minmax(var(--px-180), 1fr) minmax(var(--px-260), 1.2fr);
+  gap: var(--px-80);
+  padding-top: var(--px-96);
 }
 
 .footer-links div {
   display: grid;
   align-content: start;
-  gap: 32px;
+  gap: var(--px-28);
+  min-width: 0;
 }
 
 .footer-links h3 {
-  margin-bottom: 14px;
-  font-size: var(--font-size-30);
+  margin-bottom: var(--px-12);
+  font-size: var(--font-size-28);
+  font-weight: var(--font-weight-800);
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .footer-links a {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--px-14);
   color: var(--text);
-  font-size: var(--font-size-24);
-  font-weight: var(--font-weight-800);
+  font-size: var(--font-size-21);
+  font-weight: var(--font-weight-600);
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
-.footer-links a span {
-  display: grid;
-  width: var(--px-30);
-  height: var(--px-30);
-  place-items: center;
-  border-radius: 50%;
-  background: #0b8fea;
-  font-size: var(--font-size-15);
-  font-weight: var(--font-weight-950);
+.footer-links a:hover {
+  color: var(--accent);
+}
+
+.footer-links a img {
+  display: block;
+  width: var(--px-28);
+  height: var(--px-28);
+  object-fit: contain;
 }
 
 .copyright {
-  margin: 0 calc(var(--px-64) * -1);
-  padding: 28px var(--px-64);
+  margin: 0 calc(var(--px-72) * -1);
+  padding: var(--px-28) var(--px-72);
   border-top: 1px solid rgb(255 255 255 / 7%);
   color: rgb(255 255 255 / 45%);
   text-align: center;
-  font-size: var(--font-size-18);
+  font-size: var(--font-size-15);
   font-weight: var(--font-weight-800);
 }
 
 .support-button {
   position: fixed;
   z-index: 30;
-  right: var(--px-34);
-  bottom: var(--px-34);
+  right: var(--px-28);
+  bottom: var(--px-28);
   display: grid;
-  width: var(--px-130);
-  height: var(--px-130);
+  width: var(--px-112);
+  height: var(--px-112);
   place-items: center;
   border: 0;
   border-radius: var(--px-28);
@@ -789,35 +818,11 @@ h2 span {
   box-shadow: 0 18px 60px rgb(0 0 0 / 26%);
 }
 
-.support-button span {
-  position: relative;
-  width: 62px;
-  height: 62px;
-  border-radius: 50% 50% 45% 45%;
-  background:
-    radial-gradient(circle at 36% 39%, #111 0 4px, transparent 5px),
-    radial-gradient(circle at 64% 39%, #111 0 4px, transparent 5px),
-    linear-gradient(#ffd9c9, #ffd9c9);
-}
-
-.support-button span::before {
-  position: absolute;
-  inset: -8px 5px auto;
-  height: 22px;
-  border-radius: 18px 18px 6px 6px;
-  background: #2d1f1d;
-  content: '';
-}
-
-.support-button span::after {
-  position: absolute;
-  right: 8px;
-  bottom: 12px;
-  left: 8px;
-  height: 5px;
-  border-radius: 999px;
-  background: #2b7e45;
-  content: '';
+.support-button img {
+  display: block;
+  width: var(--px-72);
+  height: var(--px-80);
+  object-fit: contain;
 }
 
 @media (max-width: 1500px) {
@@ -887,12 +892,25 @@ h2 span {
   }
 
   .footer-inner {
-    grid-template-columns: var(--px-480) 1fr;
-    gap: var(--px-120);
+    grid-template-columns: var(--px-420) minmax(0, 1fr);
+    gap: var(--px-96);
   }
 
   .download-card {
-    width: var(--px-420);
+    width: var(--px-340);
+  }
+
+  .footer-links {
+    gap: var(--px-42);
+    padding-top: var(--px-86);
+  }
+
+  .footer-links h3 {
+    font-size: var(--font-size-24);
+  }
+
+  .footer-links a {
+    font-size: var(--font-size-18);
   }
 }
 
@@ -948,8 +966,17 @@ h2 span {
   }
 
   .footer-inner {
-    grid-template-columns: var(--px-420) 1fr;
-    gap: var(--px-80);
+    grid-template-columns: var(--px-370) minmax(0, 1fr);
+    gap: var(--px-64);
+  }
+
+  .download-card {
+    width: var(--px-320);
+  }
+
+  .qr-code {
+    width: var(--px-124);
+    height: var(--px-124);
   }
 
   .support-button {
@@ -957,6 +984,11 @@ h2 span {
     bottom: var(--px-24);
     width: var(--px-112);
     height: var(--px-112);
+  }
+
+  .support-button img {
+    width: var(--px-72);
+    height: var(--px-80);
   }
 }
 </style>

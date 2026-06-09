@@ -9,6 +9,9 @@ const zhCN = {
   'actions.menu': '菜单',
   'actions.switchLanguage': '切换语言',
   'locale.short': '中',
+  'menu.download': '客户端下载',
+  'menu.support': '联系客服',
+  'menu.language': '中文简体',
 } as const
 
 export default zhCN
