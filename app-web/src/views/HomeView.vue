@@ -310,7 +310,7 @@ h2 span {
 
 .section-title {
   text-align: center;
-  font-size: var(--font-size-64);
+  font-size: var(--font-size-50);
   font-weight: var(--font-weight-950);
   line-height: 1.18;
 }
@@ -428,28 +428,28 @@ h2 span {
 .futures-copy {
   position: absolute;
   z-index: 3;
-  bottom: var(--px-10);
-  right: var(--px-24);
+  bottom: calc(var(--px-70) * -3);
+  right: calc(var(--px-30) * -5);
   width: var(--px-850);
 }
 
 .futures-copy h2 {
-  font-size: var(--font-size-58);
+  font-size: var(--font-size-50);
   font-weight: var(--font-weight-950);
   line-height: 1.34;
 }
 
 .futures-copy ul {
   display: grid;
-  gap: var(--px-52);
-  margin: var(--px-86) 0 0;
+  gap: var(--px-40);
+  margin: var(--px-70) 0 0;
   padding: 0;
   list-style: none;
 }
 
 .futures-copy li {
   display: flex;
-  gap: 16px;
+  gap: var(--px-10);
 }
 
 .futures-copy li > span {
@@ -476,14 +476,14 @@ h2 span {
 
 .trust-section {
   min-height: var(--px-900);
-  padding-top: var(--px-180);
+  padding-top: var(--px-480);
 }
 
 .trust-section > p {
   margin-top: 26px;
   text-align: center;
   color: var(--text-soft);
-  font-size: var(--font-size-28);
+  font-size: var(--font-size-21);
   font-weight: var(--font-weight-800);
 }
 
@@ -792,11 +792,6 @@ h2 span {
     min-width: var(--px-540);
   }
 
-  .section-title,
-  .futures-copy h2 {
-    font-size: var(--font-size-54);
-  }
-
   .smart-card h3,
   .strategy-item h3 {
     font-size: var(--font-size-26);
@@ -808,6 +803,7 @@ h2 span {
   }
 
   .futures-copy {
+    right: calc(var(--px-20) * -1);
     width: var(--px-690);
   }
 
@@ -861,11 +857,6 @@ h2 span {
     min-width: var(--px-480);
   }
 
-  .section-title,
-  .futures-copy h2 {
-    font-size: var(--font-size-46);
-  }
-
   .smart-card {
     padding: var(--px-48) var(--px-36) var(--px-40);
   }
@@ -875,8 +866,7 @@ h2 span {
   }
 
   .futures-copy {
-    bottom: var(--px-10);
-    right: var(--px-18);
+    right: calc(var(--px-16) * -1);
     width: var(--px-620);
   }
 
