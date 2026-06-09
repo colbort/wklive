@@ -4,8 +4,6 @@ import icon4 from '../../assets/home/icon4.png'
 import icon5 from '../../assets/home/icon5.png'
 import heroImg from '../../assets/home/img1.png'
 import toolsImg from '../../assets/home/img2.png'
-import tradeImg from '../../assets/home/img3.png'
-import posterImg from '../../assets/home/img4.png'
 import trustImg from '../../assets/home/img5.png'
 import rewardImg from '../../assets/home/img6.png'
 import facebookIcon from '../../assets/home/facebook.png'
@@ -114,16 +112,6 @@ const socials = [
         </article>
       </div>
       <img class="tools-art" :src="toolsImg" alt="">
-    </section>
-
-    <section class="market-flow section-pad">
-      <img class="trade-card trade-card--left" :src="tradeImg" alt="">
-      <img class="poster-card" :src="posterImg" alt="">
-      <h2><span>永续合约</span>，无到期日的期货<br>交易</h2>
-    </section>
-
-    <section class="futures-section section-pad">
-      <div class="orbit-line" />
       <div class="futures-copy">
         <h2><span>永续合约</span>，无到期日的期货<br>交易</h2>
         <ul>
@@ -393,16 +381,17 @@ h2 span {
 }
 
 .strategy-section {
+  position: relative;
   min-height: var(--px-960);
   padding-top: var(--px-60);
 }
 
 .strategy-list {
   display: grid;
-  max-width: var(--px-1480);
+  max-width: var(--px-1280);
   margin: var(--px-120) auto 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--px-160);
+  gap: var(--px-96);
 }
 
 .strategy-item {
@@ -429,8 +418,10 @@ h2 span {
 }
 
 .tools-art {
+  position: relative;
+  z-index: 1;
   display: block;
-  width: var(--px-730);
+  width: 100%;
   margin: var(--px-130) auto calc(var(--px-260) * -1);
   opacity: 0.86;
 }
@@ -439,8 +430,7 @@ h2 span {
   min-height: var(--px-900);
 }
 
-.market-flow::before,
-.futures-section .orbit-line {
+.market-flow::before {
   position: absolute;
   width: var(--px-1650);
   height: var(--px-570);
@@ -484,21 +474,12 @@ h2 span {
   line-height: 1.35;
 }
 
-.futures-section {
-  min-height: var(--px-930);
-}
-
-.futures-section .orbit-line {
-  top: 48px;
-  left: -370px;
-  height: 690px;
-  transform: rotate(-18deg);
-}
-
 .futures-copy {
+  position: absolute;
+  z-index: 3;
+  top: var(--px-620);
+  right: var(--px-120);
   width: var(--px-780);
-  margin-left: auto;
-  margin-right: var(--px-300);
 }
 
 .futures-copy h2 {
@@ -869,7 +850,7 @@ h2 span {
 
   .smart-card h3,
   .strategy-item h3 {
-    font-size: var(--font-size-34);
+    font-size: var(--font-size-26);
   }
 
   .smart-card p,
@@ -881,16 +862,13 @@ h2 span {
     gap: var(--px-96);
   }
 
-  .tools-art {
-    width: var(--px-620);
-  }
-
   .market-flow h2 {
     font-size: var(--font-size-50);
   }
 
   .futures-copy {
-    margin-right: var(--px-160);
+    top: var(--px-560);
+    right: var(--px-80);
   }
 
   .reward-copy h2 {
@@ -959,7 +937,8 @@ h2 span {
   }
 
   .futures-copy {
-    margin-right: var(--px-72);
+    top: var(--px-520);
+    right: var(--px-48);
   }
 
   .footer-inner {
