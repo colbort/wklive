@@ -478,7 +478,7 @@ h2 span {
 .futures-copy {
   position: absolute;
   z-index: 3;
-  bottom: var(--px-130);
+  bottom: var(--px-60);
   right: var(--px-24);
   width: var(--px-850);
 }
