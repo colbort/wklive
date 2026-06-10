@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { useLanguageDialog } from '@/composables/useLanguageDialog'
+import { useLanguagePanel } from '@/composables/useLanguagePanel'
+import { useSupportPanel } from '@/composables/useSupportPanel'
 import { t } from '@/i18n'
 
 import icon4 from '../../assets/home/icon4.png'
@@ -89,10 +90,11 @@ const socials = [
   { name: 'YouTube', icon: youtubeIcon },
 ]
 
-const { openLanguageDialog } = useLanguageDialog()
+const { openLanguagePanel } = useLanguagePanel()
+const { openSupportPanel } = useSupportPanel()
 
 const SUPPORT_POSITION_KEY = 'home_support_button_position'
-const SUPPORT_BUTTON_SIZE = 112
+const SUPPORT_BUTTON_SIZE = 100
 const SUPPORT_BUTTON_GAP = 28
 
 const isSupportDragging = ref(false)
@@ -107,6 +109,9 @@ const supportPosition = ref({
 
 let supportDragOffsetX = 0
 let supportDragOffsetY = 0
+let supportDragStartX = 0
+let supportDragStartY = 0
+let hasSupportMoved = false
 
 const supportButtonStyle = computed(() => ({
   left: `${supportPosition.value.x}px`,
@@ -160,6 +165,9 @@ function handleSupportPointerDown(event: PointerEvent) {
 
   supportDragOffsetX = event.clientX - rect.left
   supportDragOffsetY = event.clientY - rect.top
+  supportDragStartX = event.clientX
+  supportDragStartY = event.clientY
+  hasSupportMoved = false
   isSupportDragging.value = true
   button.setPointerCapture(event.pointerId)
 }
@@ -168,6 +176,9 @@ function handleSupportPointerMove(event: PointerEvent) {
   if (!isSupportDragging.value) return
 
   event.preventDefault()
+  if (Math.abs(event.clientX - supportDragStartX) > 4 || Math.abs(event.clientY - supportDragStartY) > 4) {
+    hasSupportMoved = true
+  }
   setSupportPosition(event.clientX - supportDragOffsetX, event.clientY - supportDragOffsetY)
 }
 
@@ -180,6 +191,9 @@ function handleSupportPointerEnd(event: PointerEvent) {
   }
   isSupportDragging.value = false
   saveSupportPosition()
+  if (!hasSupportMoved) {
+    openSupportPanel()
+  }
 }
 
 function handleSupportWindowResize() {
@@ -283,7 +297,7 @@ onBeforeUnmount(() => {
           <div class="footer-logo">
             <img :src="webLogoDark" alt="AVE">
           </div>
-          <button type="button" class="lang-button" @click="openLanguageDialog">
+          <button type="button" class="lang-button" @click="openLanguagePanel">
             <img :src="languageIcon" class="lang-button__icon" alt="Language">
             {{ t('menu.language') }}
             <i />
