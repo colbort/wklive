@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import type { RouteLocationRaw } from 'vue-router'
-import { apiListVisibleCategories, getTenantCode } from '@wklive/api'
+import { apiListVisibleCategories, apiListVisibleProducts, getTenantCode } from '@wklive/api'
 import { t } from '@/i18n'
 import { useLanguagePanel } from '@/composables/useLanguagePanel'
 import { useSupportPanel } from '@/composables/useSupportPanel'
+import ProductPreviewPanel from '@/components/ProductPreviewPanel.vue'
+import type { CategoryPreviewItem } from '@/components/ProductPreviewPanel.vue'
 import LanguagePanel from '@/components/LanguagePanel.vue'
 import SupportPanel from '@/components/SupportPanel.vue'
 
@@ -14,10 +16,15 @@ import menuIcon from '../../assets/home/menu.svg'
 import clientDownloadIcon from '../../assets/home/link_1.svg'
 import supportIcon from '../../assets/home/link_2.svg'
 import languageIcon from '../../assets/home/link_4.svg'
+import { ItickTenantProduct } from '@wklive/api/types/itick'
 
 type NavItem = {
   path: RouteLocationRaw
   label: string
+}
+
+type CategoryNavItem = NavItem & {
+  categoryType: number
 }
 
 const fixedNavItems = computed<NavItem[]>(() => [
@@ -26,17 +33,97 @@ const fixedNavItems = computed<NavItem[]>(() => [
   { path: '/regulatory-files', label: t('nav.regulatoryFiles') },
 ])
 
-const categoryNavItems = ref<NavItem[]>([])
+const categoryNavItems = ref<CategoryNavItem[]>([])
+const isCategoryPreviewOpen = ref(false)
+const activeCategoryCode = ref(0)
+const previewLoading = ref(false)
+const previewError = ref(false)
+const previewRequestId = ref(0)
+const marketPreviewCache = ref<Record<number, CategoryPreviewItem[]>>({})
 const { openLanguagePanel } = useLanguagePanel()
 const { openSupportPanel } = useSupportPanel()
 
-const navItems = computed(() => [...categoryNavItems.value, ...fixedNavItems.value])
+const marketPreviewItems = computed(() => marketPreviewCache.value[activeCategoryCode.value] || [])
 
 function buildCategoryPath(categoryCode: string) {
   return {
     path: '/markets',
     query: { categoryCode },
   }
+}
+
+function buildProductPath(product: ItickTenantProduct) {
+  return {
+    path: '/markets',
+    query: {
+      categoryCode: product.categoryCode,
+      market: product.market,
+      symbol: product.symbol,
+    },
+  }
+}
+
+function getCoinClass(index: number) {
+  const coinClasses = ['coin--btc', 'coin--eth', 'coin--bch', 'coin--xrp', 'coin--ltc', 'coin--doge']
+  return coinClasses[index % coinClasses.length]
+}
+
+async function loadCategoryPreview(categoryType: number) {
+  if (marketPreviewCache.value[categoryType]) return
+
+  const tenantCode = getTenantCode()
+  if (!tenantCode) return
+
+  const requestId = previewRequestId.value + 1
+  previewRequestId.value = requestId
+  previewLoading.value = true
+  previewError.value = false
+
+  try {
+    const resp = await apiListVisibleProducts({
+      tenantCode,
+      categoryType: categoryType,
+      cursor: 0,
+      limit: 20,
+    })
+
+    if (requestId !== previewRequestId.value) return
+
+    const products = (resp.data || [])
+    marketPreviewCache.value = {
+      ...marketPreviewCache.value,
+      [categoryType]: products.map((product, index) => ({
+        path: buildProductPath(product),
+        symbol: product.symbol,
+        price: '--',
+        change: '--',
+        coin: product.baseCoin,
+        coinClass: getCoinClass(index),
+        icon: product.icon,
+      })),
+    }
+  } catch (error) {
+    if (requestId !== previewRequestId.value) return
+    previewError.value = true
+    console.warn('Failed to load visible products', error)
+  } finally {
+    if (requestId === previewRequestId.value) {
+      previewLoading.value = false
+    }
+  }
+}
+
+function openCategoryPreview(item?: CategoryNavItem) {
+  console.warn('Open category preview', item?.categoryType)
+  if (item) {
+    activeCategoryCode.value = item.categoryType
+    void loadCategoryPreview(item.categoryType)
+  }
+  isCategoryPreviewOpen.value = true
+}
+
+function closeCategoryPreview() {
+  isCategoryPreviewOpen.value = false
 }
 
 onMounted(async () => {
@@ -56,6 +143,7 @@ onMounted(async () => {
     categoryNavItems.value = categories.map((category) => ({
       path: buildCategoryPath(category.categoryCode),
       label: category.categoryName,
+      categoryType: category.categoryType,
     }))
   } catch (error) {
     console.warn('Failed to load visible categories', error)
@@ -65,18 +153,44 @@ onMounted(async () => {
 
 <template>
   <div class="app-shell">
-    <header class="site-header">
+    <header class="site-header" @mouseleave="closeCategoryPreview">
       <RouterLink to="/home" class="brand" aria-label="AVE">
         <img :src="webLogoDark" alt="AVE">
       </RouterLink>
 
       <nav class="nav" aria-label="Navigation">
-        <RouterLink v-for="item in navItems" :key="item.label" :to="item.path">
+        <RouterLink
+          v-for="item in categoryNavItems"
+          :key="item.label"
+          :to="item.path"
+          class="nav__link nav__link--category"
+          @mouseenter="openCategoryPreview(item)"
+          @focus="openCategoryPreview(item)"
+        >
+          {{ item.label }}
+        </RouterLink>
+        <RouterLink
+          v-for="item in fixedNavItems"
+          :key="item.label"
+          :to="item.path"
+          class="nav__link"
+          @mouseenter="closeCategoryPreview"
+          @focus="closeCategoryPreview"
+        >
           {{ item.label }}
         </RouterLink>
       </nav>
 
-      <div class="header-actions">
+      <ProductPreviewPanel
+        v-show="isCategoryPreviewOpen"
+        :items="marketPreviewItems"
+        :loading="previewLoading"
+        :error="previewError"
+        @mouseenter="openCategoryPreview()"
+        @mouseleave="closeCategoryPreview"
+      />
+
+      <div class="header-actions" @mouseenter="closeCategoryPreview">
         <button class="icon-button" type="button" :aria-label="t('actions.search')">
           <img :src="searchIcon" alt="">
         </button>
@@ -184,6 +298,7 @@ onMounted(async () => {
 .nav a {
   flex: 0 0 auto;
   transition:
+    background 0.2s ease,
     color 0.2s ease,
     opacity 0.2s ease;
 }
@@ -191,6 +306,18 @@ onMounted(async () => {
 .nav a:hover,
 .nav a.router-link-active {
   color: var(--accent);
+}
+
+.nav__link {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 var(--px-6);
+}
+
+.nav__link--category:hover,
+.nav__link--category:focus-visible {
+  background: rgb(255 255 255 / 8%);
 }
 
 .header-actions {
