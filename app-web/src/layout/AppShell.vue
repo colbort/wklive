@@ -391,7 +391,6 @@ onMounted(async () => {
     min-width: var(--px-38);
     height: var(--px-38);
   }
-
 }
 
 @media (max-width: 1280px) {

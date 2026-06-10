@@ -99,12 +99,14 @@ const SUPPORT_BUTTON_GAP = 28
 
 const isSupportDragging = ref(false)
 const supportPosition = ref({
-  x: typeof window === 'undefined'
-    ? SUPPORT_BUTTON_GAP
-    : window.innerWidth - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP,
-  y: typeof window === 'undefined'
-    ? SUPPORT_BUTTON_GAP
-    : window.innerHeight - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP,
+  x:
+    typeof window === 'undefined'
+      ? SUPPORT_BUTTON_GAP
+      : window.innerWidth - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP,
+  y:
+    typeof window === 'undefined'
+      ? SUPPORT_BUTTON_GAP
+      : window.innerHeight - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP,
 })
 
 let supportDragOffsetX = 0
@@ -119,8 +121,14 @@ const supportButtonStyle = computed(() => ({
 }))
 
 function clampSupportPosition(x: number, y: number) {
-  const maxX = Math.max(SUPPORT_BUTTON_GAP, window.innerWidth - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP)
-  const maxY = Math.max(SUPPORT_BUTTON_GAP, window.innerHeight - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP)
+  const maxX = Math.max(
+    SUPPORT_BUTTON_GAP,
+    window.innerWidth - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP,
+  )
+  const maxY = Math.max(
+    SUPPORT_BUTTON_GAP,
+    window.innerHeight - SUPPORT_BUTTON_SIZE - SUPPORT_BUTTON_GAP,
+  )
 
   return {
     x: Math.min(Math.max(x, SUPPORT_BUTTON_GAP), maxX),
@@ -176,7 +184,10 @@ function handleSupportPointerMove(event: PointerEvent) {
   if (!isSupportDragging.value) return
 
   event.preventDefault()
-  if (Math.abs(event.clientX - supportDragStartX) > 4 || Math.abs(event.clientY - supportDragStartY) > 4) {
+  if (
+    Math.abs(event.clientX - supportDragStartX) > 4 ||
+    Math.abs(event.clientY - supportDragStartY) > 4
+  ) {
     hasSupportMoved = true
   }
   setSupportPosition(event.clientX - supportDragOffsetX, event.clientY - supportDragOffsetY)
@@ -1061,6 +1072,5 @@ h2 span {
     width: var(--px-124);
     height: var(--px-124);
   }
-
 }
 </style>
