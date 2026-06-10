@@ -10,6 +10,7 @@ import heroImg from '../../assets/home/img1.png'
 import toolsImg from '../../assets/home/img2.png'
 import rewardImg from '../../assets/home/img6.png'
 import facebookIcon from '../../assets/home/facebook.png'
+import boxBg from '../../assets/home/boxbg.png'
 import linkedInIcon from '../../assets/home/linkin.svg'
 import telegramIcon from '../../assets/home/telegram.svg'
 import twitterIcon from '../../assets/home/twitter.svg'
@@ -282,7 +283,12 @@ onBeforeUnmount(() => {
       </h2>
       <p>全球数百万用户的共同选择</p>
       <div class="trust-cards">
-        <article v-for="card in trustCards" :key="card.title" class="trust-card">
+        <article
+          v-for="card in trustCards"
+          :key="card.title"
+          class="trust-card"
+          :style="{ '--trust-card-bg': `url(${boxBg})` }"
+        >
           <img :src="card.icon" alt="">
           <h3>{{ card.title }}</h3>
           <p>{{ card.text }}</p>
@@ -658,24 +664,36 @@ h2 span {
 }
 
 .trust-card {
+  position: relative;
+  z-index: 0;
   min-height: var(--px-420);
   padding: var(--px-76) var(--px-52) var(--px-44);
-  border: 1px solid rgb(255 255 255 / 20%);
+  border: 0;
   border-radius: var(--px-16);
-  background: linear-gradient(180deg, rgb(255 255 255 / 7%), rgb(255 255 255 / 2%));
+  background: transparent;
   text-align: center;
   transition:
-    border-color 0.2s ease,
-    background 0.2s ease,
     box-shadow 0.2s ease,
     transform 0.2s ease;
 }
 
+.trust-card::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border: var(--px-34) solid transparent;
+  border-image: var(--trust-card-bg) 34 fill / var(--px-34) stretch;
+  content: '';
+  transition: filter 0.2s ease;
+}
+
 .trust-card:hover {
-  border-color: rgb(0 194 18 / 70%);
-  background: linear-gradient(180deg, rgb(0 194 18 / 16%), rgb(255 255 255 / 3%));
   box-shadow: 0 var(--px-24) var(--px-80) rgb(0 194 18 / 12%);
   transform: translateY(calc(var(--px-10) * -1));
+}
+
+.trust-card:hover::before {
+  filter: brightness(1.08);
 }
 
 .trust-card img {
