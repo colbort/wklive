@@ -80,12 +80,12 @@ const supportMessageTime = computed(() => {
 .support-panel {
   position: fixed;
   z-index: 40;
-  right: var(--px-42);
-  bottom: var(--px-42);
+  right: var(--px-20);
+  bottom: var(--px-20);
   display: grid;
   width: min(var(--px-1200), calc(100vw - var(--px-84)));
-  height: min(var(--px-780), calc(100vh - var(--px-84)));
-  grid-template-rows: var(--px-138) 1fr var(--px-130);
+  height: calc(100vh - var(--px-50));
+  grid-template-rows: var(--px-110) 1fr var(--px-92);
   border-radius: var(--px-28);
   background: #0c0e17;
   box-shadow: 0 var(--px-28) var(--px-100) rgb(0 0 0 / 42%);
@@ -96,14 +96,14 @@ const supportMessageTime = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--px-48);
+  padding: 0 var(--px-30);
   background: rgb(29 32 44);
 }
 
 .support-panel__title {
   display: flex;
   align-items: center;
-  gap: var(--px-28);
+  gap: var(--px-22);
 }
 
 .support-panel__badge,
@@ -115,8 +115,8 @@ const supportMessageTime = computed(() => {
 }
 
 .support-panel__badge {
-  width: var(--px-74);
-  height: var(--px-74);
+  width: var(--px-56);
+  height: var(--px-56);
 }
 
 .support-panel__badge svg,
@@ -130,20 +130,20 @@ const supportMessageTime = computed(() => {
 
 .support-panel__title h2 {
   margin: 0;
-  font-size: var(--font-size-34);
+  font-size: var(--font-size-28);
   font-weight: var(--font-weight-800);
 }
 
 .support-panel__actions {
   display: flex;
   align-items: center;
-  gap: var(--px-18);
+  gap: var(--px-14);
 }
 
 .support-panel__round {
   position: relative;
-  width: var(--px-64);
-  height: var(--px-64);
+  width: var(--px-50);
+  height: var(--px-50);
   border: 0;
   border-radius: 50%;
   background: rgb(255 255 255 / 9%);
@@ -151,8 +151,8 @@ const supportMessageTime = computed(() => {
 
 .support-panel__round img {
   display: block;
-  width: var(--px-36);
-  height: var(--px-36);
+  width: var(--px-28);
+  height: var(--px-28);
   object-fit: contain;
 }
 
@@ -177,8 +177,8 @@ const supportMessageTime = computed(() => {
 }
 
 .support-message__avatar {
-  width: var(--px-56);
-  height: var(--px-56);
+  width: var(--px-44);
+  height: var(--px-44);
 }
 
 .support-message p {
@@ -208,16 +208,16 @@ const supportMessageTime = computed(() => {
 .support-panel__footer {
   display: grid;
   align-items: center;
-  grid-template-columns: var(--px-82) 1fr var(--px-82);
-  gap: var(--px-22);
-  padding: 0 var(--px-44);
+  grid-template-columns: var(--px-64) 1fr var(--px-64);
+  gap: var(--px-18);
+  padding: 0 var(--px-40);
   border-top: 1px solid rgb(255 255 255 / 8%);
   background: rgb(29 32 44);
 }
 
 .support-panel__footer input {
   width: 100%;
-  height: var(--px-62);
+  height: var(--px-52);
   border: 0;
   border-radius: var(--px-20);
   outline: 0;
@@ -229,8 +229,8 @@ const supportMessageTime = computed(() => {
 .support-panel__attach,
 .support-panel__send {
   position: relative;
-  width: var(--px-54);
-  height: var(--px-54);
+  width: var(--px-44);
+  height: var(--px-44);
   border: 0;
   background: transparent;
 }
@@ -238,8 +238,8 @@ const supportMessageTime = computed(() => {
 .support-panel__attach svg,
 .support-panel__send svg {
   display: block;
-  width: var(--px-42);
-  height: var(--px-42);
+  width: var(--px-34);
+  height: var(--px-34);
   fill: var(--accent);
 }
 </style>
