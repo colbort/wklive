@@ -57,14 +57,14 @@ defineEmits<{
 .category-preview {
   position: absolute;
   z-index: 35;
-  top: calc(100% + var(--px-10));
-  left: var(--px-82);
-  width: var(--px-520);
-  max-height: calc(100vh - var(--px-100));
-  padding: var(--px-28) var(--px-26);
+  top: calc(100%);
+  left: var(--px-70);
+  width: var(--px-390);
+  max-height: calc(100vh - var(--px-300));
+  padding: var(--px-18) var(--px-20);
   overflow: hidden auto;
   border: 1px solid rgb(255 255 255 / 10%);
-  border-radius: var(--px-28);
+  border-radius: var(--px-24);
   background: rgb(36 37 45);
   box-shadow: 0 var(--px-24) var(--px-80) rgb(0 0 0 / 36%);
 }
@@ -80,11 +80,11 @@ defineEmits<{
 
 .category-preview__row {
   display: grid;
-  grid-template-columns: var(--px-64) 1fr auto;
+  grid-template-columns: var(--px-48) 1fr auto;
   align-items: center;
-  min-height: var(--px-112);
-  gap: var(--px-18);
-  padding: 0 var(--px-10);
+  min-height: var(--px-64);
+  gap: var(--px-12);
+  padding: 0;
   border-bottom: 1px solid rgb(255 255 255 / 8%);
   color: var(--text);
   transition: background 0.18s ease;
@@ -100,12 +100,12 @@ defineEmits<{
 
 .category-preview__coin {
   display: grid;
-  width: var(--px-54);
-  height: var(--px-54);
+  width: var(--px-34);
+  height: var(--px-34);
   place-items: center;
   border-radius: 50%;
   color: var(--white);
-  font-size: var(--font-size-30);
+  font-size: var(--font-size-19);
   font-weight: var(--font-weight-900);
   line-height: 1;
 }
@@ -143,26 +143,26 @@ defineEmits<{
 }
 
 .category-preview__symbol {
-  font-size: var(--font-size-24);
+  font-size: var(--font-size-18);
   font-weight: var(--font-weight-900);
 }
 
 .category-preview__market {
   display: grid;
   justify-items: end;
-  gap: var(--px-8);
+  gap: var(--px-4);
   color: rgb(255 76 66);
-  font-size: var(--font-size-24);
+  font-size: var(--font-size-18);
   font-weight: var(--font-weight-900);
   line-height: 1;
 }
 
 .category-preview__market span:last-child {
-  padding: var(--px-8) var(--px-10);
-  border-radius: var(--px-8);
+  padding: var(--px-4) var(--px-7);
+  border-radius: var(--px-6);
   background: rgb(255 76 66);
   color: var(--white);
-  font-size: var(--font-size-18);
+  font-size: var(--font-size-13);
 }
 
 .category-preview__state {
