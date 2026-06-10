@@ -234,6 +234,7 @@ const supportMessageTime = computed(() => {
 .support-panel__footer input {
   width: 100%;
   height: var(--px-52);
+  padding: 0 var(--px-20);
   border: 0;
   border-radius: var(--px-20);
   outline: 0;
