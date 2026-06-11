@@ -682,12 +682,14 @@ export default {
   },
   menu: {
     // ===== User =====
+    '10': 'User Management',
     '11': 'User List',
     '40': 'KYC List',
     '60': 'User Banks',
 
     // ===== Payment =====
-    '102': 'Platforms',
+    '100': 'Payment Management',
+    '101': 'Platforms',
     '120': 'Products',
     '140': 'Tenant Platforms',
     '160': 'Tenant Accounts',
@@ -703,6 +705,7 @@ export default {
     '310': 'Recharge Transactions',
 
     // ===== ITICK =====
+    '400': 'ITICK Data',
     '401': 'Categories',
     '420': 'Products',
     '430': 'Tenant Categories',
@@ -710,13 +713,15 @@ export default {
     '470': 'Init Display',
 
     // ===== Asset =====
-    '510': 'Asset Configs',
+    '500': 'Assets',
+    '510': 'Asset Config',
     '520': 'User Assets',
     '530': 'Asset Flows',
     '540': 'Asset Freezes',
     '550': 'Asset Locks',
 
     // ===== Option =====
+    '600': 'Options',
     '610': 'Contracts',
     '620': 'Market Detail',
     '630': 'Market Snapshots',
@@ -729,12 +734,14 @@ export default {
     '700': 'Bills',
 
     // ===== Staking =====
+    '800': 'Staking',
     '810': 'Staking Products',
     '820': 'Staking Orders',
     '830': 'Reward Logs',
     '840': 'Redeem Logs',
 
     // ===== Trade =====
+    '1000': 'Trade',
     '1010': 'Symbols',
     '1020': 'Orders',
     '1030': 'Fill Details',
@@ -748,18 +755,20 @@ export default {
     '1110': 'Risk Check Logs',
     '1120': 'User Leverage Config',
     '1130': 'Trade Events',
-    '11100': 'Verification Codes',
 
     // ===== System =====
+    '10000': 'System',
     '10100': 'Users',
     '10200': 'Roles',
     '10300': 'Menus',
     '10400': 'Configs',
+    '10500': 'Scheduled Jobs',
     '10600': 'Job List',
     '10700': 'Job Logs',
     '10800': 'Login Logs',
     '10900': 'Op Logs',
     '11000': 'Tenants',
+    '11100': 'Verification Codes',
   },
   itick: {
     categories: 'Categories',

@@ -18,7 +18,9 @@ export function buildRoutesFromMenus(menus: MenuNode[]): RouteRecordRaw[] {
 
   const dfs = (nodes: MenuNode[]) => {
     for (const n of sortChildren(nodes)) {
-      if (n.status === 0 || n.visible === 0) continue
+      console.warn('processing menu node', n, 'path', n.path, 'component', n.component)
+      if (n.enabled !== 1 || n.visible !== 1) continue
+      console.warn('processing menu node', n)
       if (n.menuType === 2 && n.path) {
         const comp = resolveView(n.component)
         routes.push({

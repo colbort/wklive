@@ -2265,7 +2265,7 @@ type MenuNode struct {
 	Icon      string     `json:"icon,optional"`
 	Sort      int64      `json:"sort"`
 	Visible   int64      `json:"visible"`
-	Status    int64      `json:"status"`
+	Enabled   int64      `json:"enabled"`
 	Perms     string     `json:"perms,optional"`
 	Children  []MenuNode `json:"children,optional"`
 }

@@ -127,7 +127,6 @@ CREATE TABLE sys_menu (
 
   PRIMARY KEY (id),
   INDEX idx_parent(parent_id),
-  INDEX idx_scope(scope),
   INDEX idx_perms(perms)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜单权限';
 

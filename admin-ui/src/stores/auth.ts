@@ -28,7 +28,7 @@ export type MenuNode = {
   icon?: string
   sort: number
   visible?: number
-  status?: number
+  enabled?: number
   perms?: string
   children?: MenuNode[]
 }

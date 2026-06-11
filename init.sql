@@ -1,11 +1,11 @@
-INSERT INTO `sys_role` (id, tenant_id, name, code, status, remark, create_times, update_times)
+INSERT INTO `sys_role` (id, tenant_id, name, code, enabled, remark, create_times, update_times)
 VALUES
 (1, 0, '超级管理员', 'super_admin', 1, '', UNIX_TIMESTAMP()*1000, UNIX_TIMESTAMP()*1000),
 (2, 0, '租户超级管理员', 'tenant_super_admin', 1, '', UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000);
 
 INSERT INTO `sys_user` (
   id, tenant_id, user_type, is_owner,
-  username, password, nickname, avatar, status,
+  username, password, nickname, avatar, enabled,
   google_secret, google_enabled, perms_ver,
   last_login_ip, last_login_at, create_by, create_times, update_times
 )
@@ -38,7 +38,7 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 21),
 (0, 1, 22),
 (0, 1, 23),
-(0, 1, 25),
+(0, 1, 24),
 (0, 1, 40),
 (0, 1, 41),
 (0, 1, 60),
@@ -50,12 +50,12 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 66),
 
 (0, 1, 100),
+(0, 1, 101),
 (0, 1, 102),
 (0, 1, 103),
 (0, 1, 104),
 (0, 1, 105),
 (0, 1, 106),
-(0, 1, 107),
 (0, 1, 120),
 (0, 1, 121),
 (0, 1, 122),
@@ -291,7 +291,7 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 21),
 (0, 2, 22),
 (0, 2, 23),
-(0, 2, 25),
+(0, 2, 24),
 (0, 2, 40),
 (0, 2, 41),
 (0, 2, 60),
@@ -503,7 +503,7 @@ VALUES
 (21, 11, '删除用户', 3, 'DELETE', '/member/users/{id}', 'users:user:delete', '', '', 21),
 (22, 11, '获取用户安全设置', 3, 'GET', '/member/users/{id}/security', 'users:user:security:detail', '', '', 22),
 (23, 11, '重置用户谷歌2FA', 3, 'PUT', '/member/users/{id}/reset2fa', 'users:user:reset:google2fa', '', '', 23),
-(25, 11, '校验推荐人', 3, 'GET', '/member/users/referrer/check', 'users:user:referrer:check', '', '', 25),
+(24, 11, '校验推荐人', 3, 'GET', '/member/users/referrer/check', 'users:user:referrer:check', '', '', 24),
 
 (40, 10, '实名认证信息列表', 2, 'GET', '/member/user-identities', 'users:user:identities:list', 'users/identity', '', 40),
 (41, 40, '审核实名认证信息', 3, 'PUT', '/member/user-identities/{id}/review', 'users:user:identities:review', '', '', 41),
@@ -522,12 +522,12 @@ VALUES (100, 0, '支付管理', 1, 'Payment', 100);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(102, 100, '平台管理', 2, 'GET', '/payment/platforms', 'payment:platform:list', 'payment/platforms', 'Bank', 102),
-(103, 102, '创建支付平台', 3, 'POST', '/payment/platform', 'payment:platform:add', '', '', 103),
-(104, 102, '更新支付平台', 3, 'PUT', '/payment/platform', 'payment:platform:update', '', '', 104),
-(105, 102, '获取支付平台详情', 3, 'GET', '/payment/platform', 'payment:platform:detail', '', '', 105),
-(106, 102, '删除支付平台', 3, 'DELETE', '/payment/platform/{id}', 'payment:platform:delete', '', '', 106),
-(107, 102, '平台支付通道', 3, 'GET', '/payment/platforms/options', 'payment:platform:options', '', '', 107),
+(101, 100, '平台管理', 2, 'GET', '/payment/platforms', 'payment:platform:list', 'payment/platforms', 'Bank', 101),
+(102, 101, '创建支付平台', 3, 'POST', '/payment/platform', 'payment:platform:add', '', '', 102),
+(103, 101, '更新支付平台', 3, 'PUT', '/payment/platform', 'payment:platform:update', '', '', 103),
+(104, 101, '获取支付平台详情', 3, 'GET', '/payment/platform', 'payment:platform:detail', '', '', 104),
+(105, 101, '删除支付平台', 3, 'DELETE', '/payment/platform/{id}', 'payment:platform:delete', '', '', 105),
+(106, 101, '平台支付通道', 3, 'GET', '/payment/platforms/options', 'payment:platform:options', '', '', 106),
 
 (120, 100, '产品管理', 2, 'GET', '/payment/products', 'payment:product:list', 'payment/products', 'Gold', 120),
 (121, 120, '创建支付产品', 3, 'POST', '/payment/product', 'payment:product:add', '', '', 121),

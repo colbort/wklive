@@ -15,7 +15,7 @@ CREATE TABLE `t_itick_category` (
   KEY `idx_enabled_visible_sort` (`enabled`, `app_visible`, `sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='itick产品类型表';
 
-INSERT INTO `t_itick_category` (`id`, `category_type`, `category_type_name`, `category_code`, `enabled`, `app_visible`, `sort`, `icon`, `remark`, `create_times`, `update_times`) VALUES
+INSERT INTO `t_itick_category` (`id`, `category_type`, `category_name`, `category_code`, `enabled`, `app_visible`, `sort`, `icon`, `remark`, `create_times`, `update_times`) VALUES
 (1, 1, '外汇', 'forex', 1, 1, 1, '', '', 0, 0),
 (2, 2, '加密货币', 'crypto', 1, 1, 2, '', '', 0, 0),
 (3, 3, '股票', 'stock', 1, 1, 3, '', '', 0, 0),

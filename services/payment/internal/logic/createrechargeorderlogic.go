@@ -111,7 +111,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 		Body:         sql.NullString{String: in.Body, Valid: in.Body != ""},
 		ClientType:   int64(in.ClientType),
 		ClientIp:     sql.NullString{String: clientIP, Valid: clientIP != ""},
-		VoucherImage: sql.NullString{String: "", Valid: true},
+		VoucherImage: "",
 		Status:       int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING),
 		CreateTimes:  now,
 		UpdateTimes:  now,

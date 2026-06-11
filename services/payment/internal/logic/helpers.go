@@ -420,7 +420,7 @@ func toRechargeOrderProto(item *models.TRechargeOrder) *payment.RechargeOrder {
 		ThirdOrderNo: item.ThirdOrderNo.String,
 		PayUrl:       item.PayUrl.String,
 		QrContent:    item.QrContent.String,
-		VoucherImage: item.VoucherImage.String,
+		VoucherImage: item.VoucherImage,
 		RequestData:  item.RequestData.String,
 		ResponseData: item.ResponseData.String,
 		NotifyData:   item.NotifyData.String,

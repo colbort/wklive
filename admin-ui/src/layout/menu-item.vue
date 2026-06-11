@@ -24,12 +24,13 @@ function iconComp(icon?: string) {
 }
 
 function go(path?: string) {
+  console.warn('go to', path)
   if (path) router.push(path)
 }
 
 const children = computed(() =>
   (props.node.children || [])
-    .filter((x) => x.menuType !== 3 && x.visible !== 0 && x.status !== 0)
+    .filter((x) => x.menuType !== 3 && x.visible !== 0 && x.enabled !== 0)
     .slice()
     .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)),
 )
