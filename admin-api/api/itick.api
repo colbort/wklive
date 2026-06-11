@@ -158,7 +158,7 @@ type GetCategoryResp {
 type ListCategoriesReq {
 	PageReq
 	categoryType int64 `json:"categoryType,optional"`
-	enabled      int32 `json:"enable,optional"` // 0全部 1启用 2禁用
+	enabled      int32 `json:"enabled,optional"` // 0全部 1启用 2禁用
 	appVisible   int32 `json:"appVisible,optional"`
 }
 
@@ -313,7 +313,7 @@ type ListTenantCategoriesReq {
 	PageReq
 	tenantId      int64 `json:"tenantId,optional"`
 	categoryType  int64 `json:"categoryType,optional"`
-	status        int32 `json:"status,optional"` // 0全部 1启用 2禁用
+	enabled       int32 `json:"enabled,optional"` // 0全部 1启用 2禁用
 	visibleStatus int32 `json:"visibleStatus,optional"` // 0全部 1显示 2隐藏
 }
 
@@ -373,8 +373,8 @@ type ListTenantProductsReq {
 	categoryType  int64  `form:"categoryType,optional"`
 	market        string `form:"market,optional"`
 	keyword       string `form:"keyword,optional"`
-	status        int32  `form:"status,optional"` // 0全部 1启用 2禁用
-	visibleStatus int32  `form:"visibleStatus,optional"` // 0全部 1显示 2隐藏
+	enabled       int32  `form:"enabled,optional"` // 0全部 1启用 2禁用
+	appVisible    int32  `form:"appVisible,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantProductsResp {
@@ -502,4 +502,3 @@ service admin {
 	@handler InitTenantItickDisplay
 	post /tenant-display/init (InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp)
 }
-

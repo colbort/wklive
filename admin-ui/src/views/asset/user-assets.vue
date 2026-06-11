@@ -47,8 +47,8 @@
         <el-form-item :label="t('asset.coin')">
           <el-input v-model="query.coin" clearable />
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="query.status" clearable style="width: 160px">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="query.enabled" clearable style="width: 160px">
             <el-option
               v-for="item in assetStatusOptions"
               :key="item.value"
@@ -205,8 +205,8 @@
         <el-descriptions-item :label="t('asset.coin')">
           {{ detailData.coin }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('common.status')">
-          {{ optionLabel('assetStatus', detailData.status) }}
+        <el-descriptions-item :label="t('common.enabled')">
+          {{ optionLabel('assetStatus', detailData.enabled) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.totalAmount')">
           {{ detailData.totalAmount }}
@@ -264,7 +264,7 @@ const query = reactive({
   userId: undefined as number | undefined,
   walletType: undefined as number | undefined,
   coin: '',
-  status: undefined as number | undefined,
+  enabled: undefined as number | undefined,
   limit: 20,
 })
 
@@ -330,7 +330,7 @@ function resetQuery() {
   query.userId = undefined
   query.walletType = undefined
   query.coin = ''
-  query.status = undefined
+  query.enabled = undefined
   query.limit = 100
   loadList()
 }

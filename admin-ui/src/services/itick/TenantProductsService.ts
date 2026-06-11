@@ -69,8 +69,8 @@ export type ListTenantProductsReq = {
   categoryType?: number
   market?: string
   keyword?: string
-  status?: number
-  visibleStatus?: number
+  enabled?: number
+  appVisible?: number
   cursor?: number
   limit?: number
 }

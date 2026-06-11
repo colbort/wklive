@@ -30,7 +30,7 @@ export type SysMenuCreateReq = {
   icon: string
   sort: number
   visible: number
-  status: number
+  enabled: number
   perms: string
 }
 
@@ -48,7 +48,7 @@ export type SysMenuUpdateReq = {
   icon: string
   sort: number
   visible: number
-  status: number
+  enabled: number
   perms: string
 }
 
@@ -57,7 +57,7 @@ export type SysMenuListReq = {
   limit?: number
   keyword: string
   menuType: number
-  status: number
+  enabled: number
   visible: number
 }
 
@@ -71,7 +71,7 @@ export type SysMenuItem = {
   icon: string
   sort: number
   visible: number
-  status: number
+  enabled: number
   perms: string // 按钮必须有，例如 sys:user:add
 }
 

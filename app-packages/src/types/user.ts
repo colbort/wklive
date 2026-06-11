@@ -91,7 +91,7 @@ export interface UserBank {
   branchName: string
   countryCode: string
   isDefault: number
-  status: number
+  enabled: number
   createTimes: number
   updateTimes: number
 }

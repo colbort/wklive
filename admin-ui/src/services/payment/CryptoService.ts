@@ -38,7 +38,7 @@ export type CryptoWalletAccount = {
   apiSecretCipher: string
   callbackSecretCipher: string
   extConfig: string
-  status: number
+  enabled: number
   isDefault: number
   createTimes: number
   updateTimes: number
@@ -84,7 +84,7 @@ export type ListCryptoWalletAccountsReq = {
   tenantId?: number
   keyword?: string
   provider?: string
-  status?: number
+  enabled?: number
   isDefault?: number
   cursor?: number
   limit?: number

@@ -173,7 +173,7 @@ export interface ContractLeverageConfig {
   maxLeverage: number
   operatorId: number
   source: number
-  status: number
+  enabled: number
   remark: string
   createTimes: number
   updateTimes: number
@@ -188,7 +188,7 @@ export interface TradeSymbolLeverageConfig {
   leverageValues: number[]
   defaultLeverage: number
   maxLeverage: number
-  status: number
+  enabled: number
   sort: number
   remark: string
   createTimes: number

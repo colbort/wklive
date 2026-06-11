@@ -28,9 +28,9 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item :label="t('common.status')">
+        <el-form-item :label="t('common.enabled')">
           <el-select
-            v-model="queryForm.status"
+            v-model="queryForm.enabled"
             clearable
             :placeholder="t('common.all')"
             style="width: 140px"
@@ -155,10 +155,10 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.status')" width="90" align="center">
+        <el-table-column :label="t('common.enabled')" width="90" align="center">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
+            <el-tag :type="row.enabled === 1 ? 'success' : 'danger'">
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -352,8 +352,8 @@
           </el-col>
 
           <el-col :span="12">
-            <el-form-item :label="t('common.status')" prop="status">
-              <el-radio-group v-model="formData.status">
+            <el-form-item :label="t('common.enabled')" prop="enabled">
+              <el-radio-group v-model="formData.enabled">
                 <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">
                   {{ getOptionLabel(t, item.code, item.value) }}
                 </el-radio>
@@ -411,14 +411,14 @@ type MenuFormData = {
   icon: string
   sort: number
   visible: number
-  status: number
+  enabled: number
   perms: string
 }
 
 type QueryFormData = {
   keyword: string
   menuType: number | undefined
-  status: number | undefined
+  enabled: number | undefined
   visible: number | undefined
 }
 
@@ -436,7 +436,7 @@ const { form: queryForm } = useForm<QueryFormData>({
   initialData: {
     keyword: '',
     menuType: undefined,
-    status: undefined,
+    enabled: undefined,
     visible: undefined,
   },
 })
@@ -464,7 +464,7 @@ const createDefaultForm = (): MenuFormData => ({
   icon: '',
   sort: 0,
   visible: 1,
-  status: 1,
+  enabled: 1,
   perms: '',
 })
 
@@ -661,7 +661,7 @@ async function getList() {
         limit: queryPage.limit,
         keyword: queryForm.keyword || '',
         menuType: queryForm.menuType ?? 0,
-        status: queryForm.status ?? 0,
+        enabled: queryForm.enabled ?? 0,
         visible: queryForm.visible ?? 0,
       })
 
@@ -692,7 +692,7 @@ function handleSearch() {
 function handleReset() {
   queryForm.keyword = ''
   queryForm.menuType = undefined
-  queryForm.status = undefined
+  queryForm.enabled = undefined
   queryForm.visible = undefined
   queryPage.cursor = undefined
   queryPage.limit = 20
@@ -727,7 +727,7 @@ function handleEdit(row: SysMenuItem) {
     icon: row.icon,
     sort: row.sort,
     visible: row.visible,
-    status: row.status,
+    enabled: row.enabled,
     perms: row.perms,
   })
 
@@ -774,7 +774,7 @@ async function handleSubmit() {
           icon: formData.icon.trim(),
           sort: formData.sort,
           visible: formData.visible,
-          status: formData.status,
+          enabled: formData.enabled,
           perms: formData.perms.trim(),
         }
 
@@ -793,7 +793,7 @@ async function handleSubmit() {
           icon: formData.icon.trim(),
           sort: formData.sort,
           visible: formData.visible,
-          status: formData.status,
+          enabled: formData.enabled,
           perms: formData.perms.trim(),
         }
 

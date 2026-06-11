@@ -18,8 +18,8 @@
         <el-form-item :label="t('common.keyword')">
           <el-input v-model="platformQuery.keyword" clearable />
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="platformQuery.status" clearable style="width: 160px">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="platformQuery.enabled" clearable style="width: 160px">
             <el-option :label="t('payment.all')" :value="0" />
             <el-option
               v-for="item in statusOptions"
@@ -70,10 +70,10 @@
           min-width="220"
           show-overflow-tooltip
         />
-        <el-table-column :label="t('common.status')" width="100">
+        <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
+            <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -181,8 +181,8 @@
             </el-upload>
           </div>
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="platformForm.status" style="width: 100%">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="platformForm.enabled" style="width: 100%">
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
@@ -292,7 +292,7 @@ const detailDisplayData = computed(() => {
   return rest
 })
 
-const platformQuery = reactive({ platformCode: '', keyword: '', status: 0 })
+const platformQuery = reactive({ platformCode: '', keyword: '', enabled: 0 })
 
 const platformForm = reactive({
   id: 0,
@@ -302,7 +302,7 @@ const platformForm = reactive({
   notifyUrl: '',
   returnUrl: '',
   icon: '',
-  status: 1,
+  enabled: 1,
   remark: '',
 })
 
@@ -332,7 +332,7 @@ const loadOptions = async () => {
 }
 
 const resetPlatformQuery = () => {
-  Object.assign(platformQuery, { platformCode: '', keyword: '', status: 0 })
+  Object.assign(platformQuery, { platformCode: '', keyword: '', enabled: 0 })
   loadPlatforms()
 }
 
@@ -348,7 +348,7 @@ const openPlatformDialog = (row?: PayPlatform) => {
       notifyUrl: '',
       returnUrl: '',
       icon: '',
-      status: 1,
+      enabled: 1,
       remark: '',
     },
   )

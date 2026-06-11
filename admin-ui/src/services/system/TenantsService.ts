@@ -13,7 +13,7 @@ export type SysTenantCreateReq = {
   username: string
   tenantName: string
   tenantPassword: string
-  status: number
+  enabled: number
   expireTime: number
   contactName: string
   contactPhone: string
@@ -24,7 +24,7 @@ export type SysTenantUpdateReq = {
   id: number
   tenantCode?: string
   tenantName?: string
-  status?: number
+  enabled?: number
   expireTime?: number
   contactName?: string
   contactPhone?: string
@@ -35,7 +35,7 @@ export type SysTenantItem = {
   id: number
   tenantCode: string
   tenantName: string
-  status: number
+  enabled: number
   expireTime: number
   contactName: string
   contactPhone: string
@@ -46,7 +46,7 @@ export type SysTenantItem = {
 
 export type SysTenantListReq = {
   keyword?: string
-  status?: number
+  enabled?: number
   tenantCode?: string
   tenantName?: string
   contactName?: string

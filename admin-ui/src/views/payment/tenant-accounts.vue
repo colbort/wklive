@@ -39,10 +39,10 @@
         <el-table-column prop="accountCode" :label="t('payment.accountCode')" min-width="140" />
         <el-table-column prop="accountName" :label="t('payment.accountName')" min-width="160" />
         <el-table-column prop="merchantId" :label="t('payment.merchantId')" min-width="140" />
-        <el-table-column :label="t('common.status')" width="100">
+        <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
-            <el-tag :class="getStatusTagClass(row.status)" disable-transitions>
-              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
+            <el-tag :class="getStatusTagClass(row.enabled)" disable-transitions>
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -163,8 +163,8 @@
         <el-form-item :label="t('payment.extConfig')">
           <el-input v-model="form.extConfig" type="textarea" :rows="3" />
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="form.status" style="width: 100%">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="form.enabled" style="width: 100%">
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
@@ -264,7 +264,7 @@ const createEmptyForm = () => ({
   publicKey: '',
   certCipher: '',
   extConfig: '',
-  status: 1,
+  enabled: 1,
   isDefault: 1,
   remark: '',
 })

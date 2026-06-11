@@ -12,7 +12,7 @@ type AssetUserAsset {
 	availableAmount string `json:"availableAmount"` // 可用资产
 	frozenAmount    string `json:"frozenAmount"` // 冻结资产
 	lockedAmount    string `json:"lockedAmount"` // 锁定资产
-	status          int64  `json:"status"` // 状态
+	enabled         int64  `json:"enabled"` // 启用状态
 	version         int64  `json:"version"` // 乐观锁版本号
 	remark          string `json:"remark"` // 备注
 	createTimes     int64  `json:"createTimes"` // 创建时间
@@ -36,7 +36,7 @@ type AssetCoinConfig {
 	rechargeEnabled int64  `json:"rechargeEnabled"` // 充值页是否展示
 	withdrawEnabled int64  `json:"withdrawEnabled"` // 提现页是否展示
 	transferEnabled int64  `json:"transferEnabled"` // 划转页是否展示
-	status          int64  `json:"status"` // 状态
+	enabled         int64  `json:"enabled"` // 启用状态
 	sort            int64  `json:"sort"` // 排序
 	remark          string `json:"remark"` // 备注
 	createTimes     int64  `json:"createTimes"` // 创建时间
@@ -273,4 +273,3 @@ service app {
 	@handler TransferMyAsset
 	post /transfer (TransferMyAssetReq) returns (TransferMyAssetResp)
 }
-

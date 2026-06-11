@@ -37,10 +37,10 @@
         <el-table-column prop="channelId" :label="t('payment.channelId')" width="100" />
         <el-table-column prop="ruleName" :label="t('payment.ruleName')" min-width="140" />
         <el-table-column prop="priority" :label="t('payment.priority')" width="90" />
-        <el-table-column :label="t('common.status')" width="100">
+        <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
-            <el-tag :class="getStatusTagClass(row.status)" disable-transitions>
-              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
+            <el-tag :class="getStatusTagClass(row.enabled)" disable-transitions>
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -115,8 +115,8 @@
         <el-form-item :label="t('payment.priority')">
           <el-input-number v-model="ruleForm.priority" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="ruleForm.status" style="width: 100%">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="ruleForm.enabled" style="width: 100%">
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
@@ -210,7 +210,7 @@ const ruleForm = reactive({
   channelId: 0,
   ruleName: '',
   priority: 0,
-  status: 1,
+  enabled: 1,
   singleAmountMin: 0,
   singleAmountMax: 0,
   userTotalRechargeMin: 0,
@@ -279,7 +279,7 @@ const openRuleDialog = (row?: TenantPayChannelRule) => {
       channelId: 0,
       ruleName: '',
       priority: 0,
-      status: 1,
+      enabled: 1,
       singleAmountMin: 0,
       singleAmountMax: 0,
       userTotalRechargeMin: 0,

@@ -3,6 +3,7 @@ type GetSystemCore {
 	siteName string `json:"siteName"`
 	siteLogo string `json:"siteLogo"`
 	assetUrl string `json:"assetUrl"`
+	options []OptionsGroup `json:"options"`
 }
 
 type GetSystemCoreResp {

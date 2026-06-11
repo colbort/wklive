@@ -93,7 +93,7 @@ type UserBank {
 	branchName  string `json:"branchName,optional"`
 	countryCode string `json:"countryCode,optional"`
 	isDefault   int64  `json:"isDefault"`
-	status      int64  `json:"status"`
+	enabled     int64  `json:"enabled"`
 	createTimes int64  `json:"createTimes,optional"`
 	updateTimes int64  `json:"updateTimes,optional"`
 }
@@ -158,8 +158,7 @@ type UserBankListItem {
 	branchName  string `json:"branchName,optional"`
 	countryCode string `json:"countryCode,optional"`
 	isDefault   int64  `json:"isDefault"`
-	status      int64  `json:"status"`
+	enabled     int64  `json:"enabled"`
 	createTimes int64  `json:"createTimes,optional"`
 	updateTimes int64  `json:"updateTimes,optional"`
 }
-

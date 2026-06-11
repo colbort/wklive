@@ -11,7 +11,7 @@ type PayPlatform {
 	notifyUrl    string `json:"notifyUrl"`
 	returnUrl    string `json:"returnUrl"`
 	icon         string `json:"icon"`
-	status       int64  `json:"status"` // 0未知 1启用 2禁用
+	enabled      int64  `json:"enabled"` // 0未知 1启用 2禁用
 	remark       string `json:"remark"`
 	createTimes  int64  `json:"createTimes"`
 	updateTimes  int64  `json:"updateTimes"`
@@ -29,7 +29,7 @@ type PayProduct {
 	productName string `json:"productName"`
 	sceneType   int64  `json:"sceneType"` // 0未知 1APP 2H5 3WEB 4收银台 5链上
 	currency    string `json:"currency"`
-	status      int64  `json:"status"` // 0未知 1启用 2禁用
+	enabled     int64  `json:"enabled"` // 0未知 1启用 2禁用
 	remark      string `json:"remark"`
 	createTimes int64  `json:"createTimes"`
 	updateTimes int64  `json:"updateTimes"`
@@ -39,7 +39,7 @@ type TenantPayPlatform {
 	id          int64  `json:"id"`
 	tenantId    int64  `json:"tenantId"`
 	platformId  int64  `json:"platformId"`
-	status      int64  `json:"status"` // 0未知 1启用 2禁用
+	enabled     int64  `json:"enabled"` // 0未知 1启用 2禁用
 	openStatus  int64  `json:"openStatus"` // 0未知 1待配置 2已开通 3审核中 4已拒绝
 	remark      string `json:"remark"`
 	createTimes int64  `json:"createTimes"`
@@ -62,7 +62,7 @@ type TenantPayAccount {
 	publicKey           string `json:"publicKey"`
 	certCipher          string `json:"certCipher"`
 	extConfig           string `json:"extConfig"`
-	status              int64  `json:"status"` // 0未知 1启用 2禁用
+	enabled             int64  `json:"enabled"` // 0未知 1启用 2禁用
 	isDefault           int64  `json:"isDefault"`
 	remark              string `json:"remark"`
 	createTimes         int64  `json:"createTimes"`
@@ -82,7 +82,7 @@ type TenantPayChannel {
 	currency        string `json:"currency"`
 	sort            int64  `json:"sort"`
 	visible         int64  `json:"visible"`
-	status          int64  `json:"status"` // 0未知 1启用 2禁用
+	enabled         int64  `json:"enabled"` // 0未知 1启用 2禁用
 	singleMinAmount int64  `json:"singleMinAmount"`
 	singleMaxAmount int64  `json:"singleMaxAmount"`
 	dailyMaxAmount  int64  `json:"dailyMaxAmount"`
@@ -102,7 +102,7 @@ type TenantPayChannelRule {
 	channelId            int64  `json:"channelId"`
 	ruleName             string `json:"ruleName"`
 	priority             int64  `json:"priority"`
-	status               int64  `json:"status"` // 0未知 1启用 2禁用
+	enabled              int64  `json:"enabled"` // 0未知 1启用 2禁用
 	singleAmountMin      int64  `json:"singleAmountMin"`
 	singleAmountMax      int64  `json:"singleAmountMax"`
 	userTotalRechargeMin int64  `json:"userTotalRechargeMin"`
@@ -215,7 +215,7 @@ type CryptoWalletAccount {
 	apiSecretCipher      string `json:"apiSecretCipher"`
 	callbackSecretCipher string `json:"callbackSecretCipher"`
 	extConfig            string `json:"extConfig"`
-	status               int64  `json:"status"`
+	enabled              int64  `json:"enabled"`
 	isDefault            int64  `json:"isDefault"`
 	createTimes          int64  `json:"createTimes"`
 	updateTimes          int64  `json:"updateTimes"`
@@ -253,7 +253,7 @@ type CreatePayPlatformReq {
 	notifyUrl    string `json:"notifyUrl,optional"`
 	returnUrl    string `json:"returnUrl,optional"`
 	icon         string `json:"icon,optional"`
-	status       int64  `json:"status"`
+	enabled      int64  `json:"enabled"`
 	remark       string `json:"remark,optional"`
 }
 
@@ -264,7 +264,7 @@ type UpdatePayPlatformReq {
 	notifyUrl    string `json:"notifyUrl,optional"`
 	returnUrl    string `json:"returnUrl,optional"`
 	icon         string `json:"icon,optional"`
-	status       int64  `json:"status"`
+	enabled      int64  `json:"enabled"`
 	remark       string `json:"remark,optional"`
 }
 
@@ -291,7 +291,7 @@ type ListPayPlatformsReq {
 	PageReq
 	keyword      string `form:"keyword,optional"`
 	platformCode string `form:"platformCode,optional"`
-	status       int64  `form:"status,optional"`
+	enabled      int64  `form:"enabled,optional"`
 	platformType int64  `form:"platformType,optional"`
 }
 
@@ -314,7 +314,7 @@ type CreatePayProductReq {
 	productName string `json:"productName"`
 	sceneType   int64  `json:"sceneType"`
 	currency    string `json:"currency"`
-	status      int64  `json:"status"`
+	enabled     int64  `json:"enabled"`
 	remark      string `json:"remark,optional"`
 }
 
@@ -323,7 +323,7 @@ type UpdatePayProductReq {
 	productName string `json:"productName"`
 	sceneType   int64  `json:"sceneType"`
 	currency    string `json:"currency"`
-	status      int64  `json:"status"`
+	enabled     int64  `json:"enabled"`
 	remark      string `json:"remark,optional"`
 }
 
@@ -341,7 +341,7 @@ type ListPayProductsReq {
 	platformId  int64  `form:"platformId,optional"`
 	keyword     string `form:"keyword,optional"`
 	productCode string `form:"productCode,optional"`
-	status      int64  `form:"status,optional"`
+	enabled     int64  `form:"enabled,optional"`
 	sceneType   int64  `form:"sceneType,optional"`
 }
 
@@ -361,7 +361,7 @@ type DeletePayProductReq {
 type OpenTenantPayPlatformReq {
 	tenantId   int64  `json:"tenantId"`
 	platformId int64  `json:"platformId"`
-	status     int64  `json:"status"`
+	enabled    int64  `json:"enabled"`
 	openStatus int64  `json:"openStatus"`
 	remark     string `json:"remark,optional"`
 }
@@ -369,7 +369,7 @@ type OpenTenantPayPlatformReq {
 type UpdateTenantPayPlatformReq {
 	id         int64  `json:"id"`
 	tenantId   int64  `json:"tenantId"`
-	status     int64  `json:"status"`
+	enabled    int64  `json:"enabled"`
 	openStatus int64  `json:"openStatus"`
 	remark     string `json:"remark,optional"`
 }
@@ -388,7 +388,7 @@ type ListTenantPayPlatformsReq {
 	PageReq
 	tenantId   int64 `form:"tenantId,optional"`
 	platformId int64 `form:"platformId,optional"`
-	status     int64 `form:"status,optional"`
+	enabled    int64 `form:"enabled,optional"`
 	openStatus int64 `form:"openStatus,optional"`
 }
 
@@ -420,7 +420,7 @@ type CreateTenantPayAccountReq {
 	publicKey           string `json:"publicKey,optional"`
 	certCipher          string `json:"certCipher,optional"`
 	extConfig           string `json:"extConfig,optional"`
-	status              int64  `json:"status"`
+	enabled             int64  `json:"enabled"`
 	isDefault           int64  `json:"isDefault"`
 	remark              string `json:"remark,optional"`
 }
@@ -438,7 +438,7 @@ type UpdateTenantPayAccountReq {
 	publicKey        string `json:"publicKey,optional"`
 	certCipher       string `json:"certCipher,optional"`
 	extConfig        string `json:"extConfig,optional"`
-	status           int64  `json:"status"`
+	enabled          int64  `json:"enabled"`
 	isDefault        int64  `json:"isDefault"`
 	remark           string `json:"remark,optional"`
 }
@@ -459,7 +459,7 @@ type ListTenantPayAccountsReq {
 	platformId          int64  `form:"platformId,optional"`
 	tenantPayPlatformId int64  `form:"tenantPayPlatformId,optional"`
 	keyword             string `form:"keyword,optional"`
-	status              int64  `form:"status,optional"`
+	enabled             int64  `form:"enabled,optional"`
 }
 
 type ListTenantPayAccountsResp {
@@ -487,7 +487,7 @@ type CreateTenantPayChannelReq {
 	currency        string `json:"currency"`
 	sort            int64  `json:"sort"`
 	visible         int64  `json:"visible"`
-	status          int64  `json:"status"`
+	enabled         int64  `json:"enabled"`
 	singleMinAmount int64  `json:"singleMinAmount"`
 	singleMaxAmount int64  `json:"singleMaxAmount"`
 	dailyMaxAmount  int64  `json:"dailyMaxAmount"`
@@ -508,7 +508,7 @@ type UpdateTenantPayChannelReq {
 	currency        string `json:"currency"`
 	sort            int64  `json:"sort"`
 	visible         int64  `json:"visible"`
-	status          int64  `json:"status"`
+	enabled         int64  `json:"enabled"`
 	singleMinAmount int64  `json:"singleMinAmount"`
 	singleMaxAmount int64  `json:"singleMaxAmount"`
 	dailyMaxAmount  int64  `json:"dailyMaxAmount"`
@@ -537,7 +537,7 @@ type ListTenantPayChannelsReq {
 	productId  int64  `form:"productId,optional"`
 	accountId  int64  `form:"accountId,optional"`
 	keyword    string `form:"keyword,optional"`
-	status     int64  `form:"status,optional"`
+	enabled    int64  `form:"enabled,optional"`
 	visible    int64  `form:"visible,optional"`
 }
 
@@ -559,7 +559,7 @@ type CreateTenantPayChannelRuleReq {
 	channelId            int64  `json:"channelId"`
 	ruleName             string `json:"ruleName"`
 	priority             int64  `json:"priority"`
-	status               int64  `json:"status"`
+	enabled              int64  `json:"enabled"`
 	singleAmountMin      int64  `json:"singleAmountMin"`
 	singleAmountMax      int64  `json:"singleAmountMax"`
 	userTotalRechargeMin int64  `json:"userTotalRechargeMin"`
@@ -580,7 +580,7 @@ type UpdateTenantPayChannelRuleReq {
 	tenantId             int64  `json:"tenantId"`
 	ruleName             string `json:"ruleName"`
 	priority             int64  `json:"priority"`
-	status               int64  `json:"status"`
+	enabled              int64  `json:"enabled"`
 	singleAmountMin      int64  `json:"singleAmountMin"`
 	singleAmountMax      int64  `json:"singleAmountMax"`
 	userTotalRechargeMin int64  `json:"userTotalRechargeMin"`
@@ -610,7 +610,7 @@ type ListTenantPayChannelRulesReq {
 	PageReq
 	tenantId  int64 `form:"tenantId,optional"`
 	channelId int64 `form:"channelId,optional"`
-	status    int64 `form:"status,optional"`
+	enabled   int64 `form:"enabled,optional"`
 }
 
 type ListTenantPayChannelRulesResp {
@@ -880,7 +880,7 @@ type CreateCryptoWalletAccountReq {
 	apiSecretCipher      string `json:"apiSecretCipher,optional"`
 	callbackSecretCipher string `json:"callbackSecretCipher,optional"`
 	extConfig            string `json:"extConfig,optional"`
-	status               int64  `json:"status"`
+	enabled              int64  `json:"enabled"`
 	isDefault            int64  `json:"isDefault"`
 }
 
@@ -893,7 +893,7 @@ type UpdateCryptoWalletAccountReq {
 	apiSecretCipher      string `json:"apiSecretCipher,optional"`
 	callbackSecretCipher string `json:"callbackSecretCipher,optional"`
 	extConfig            string `json:"extConfig,optional"`
-	status               int64  `json:"status"`
+	enabled              int64  `json:"enabled"`
 	isDefault            int64  `json:"isDefault"`
 }
 
@@ -912,7 +912,7 @@ type ListCryptoWalletAccountsReq {
 	tenantId  int64  `form:"tenantId,optional"`
 	keyword   string `form:"keyword,optional"`
 	provider  string `form:"provider,optional"`
-	status    int64  `form:"status,optional"`
+	enabled   int64  `form:"enabled,optional"`
 	isDefault int64  `form:"isDefault,optional"`
 }
 

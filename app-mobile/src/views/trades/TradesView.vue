@@ -198,7 +198,7 @@ const activeLeverageConfig = computed(() => {
   return (
     tradeSymbolDetail.value?.leverageConfigs.find((config) => {
       return (
-        config.status === 1 &&
+        config.enabled === 1 &&
         config.marketType === symbol.marketType &&
         config.marginMode === marginMode.value
       )

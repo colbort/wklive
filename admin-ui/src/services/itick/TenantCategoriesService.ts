@@ -59,8 +59,8 @@ export type BatchUpsertTenantCategoriesReq = {
 export type ListTenantCategoriesReq = {
   tenantId: number
   categoryType?: number
-  status?: number
-  visibleStatus?: number
+  enabled?: number
+  appVisible?: number
   cursor?: number
   limit?: number
 }

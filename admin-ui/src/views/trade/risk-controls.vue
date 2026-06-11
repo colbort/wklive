@@ -340,7 +340,7 @@ interface LeverageForm {
   maxLeverage: number
   operatorId: number
   source: number
-  status: number
+  enabled: number
   remark: string
 }
 
@@ -385,7 +385,7 @@ const tradeLimitForm = reactive<SetUserTradeLimitReq>({
   riskLevel: 0,
   operatorId: 0,
   source: 0,
-  status: 1,
+  enabled: 1,
   effectiveStartTime: 0,
   effectiveEndTime: 0,
   remark: '',
@@ -408,7 +408,7 @@ const symbolLimitForm = reactive<SetUserSymbolLimitReq>({
   priceDeviationRate: '',
   operatorId: 0,
   source: 0,
-  status: 0,
+  enabled: 0,
   effectiveStartTime: 0,
   effectiveEndTime: 0,
   remark: '',
@@ -438,7 +438,7 @@ const leverageForm = reactive<LeverageForm>({
   maxLeverage: 1,
   operatorId: 0,
   source: 0,
-  status: 0,
+  enabled: 0,
   remark: '',
 })
 

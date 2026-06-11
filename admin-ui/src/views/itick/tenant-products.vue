@@ -80,7 +80,7 @@
         </el-form-item>
 
         <el-form-item :label="t('itick.enabledStatus')">
-          <el-select v-model="queryParams.status" clearable style="width: 180px">
+          <el-select v-model="queryParams.enabled" clearable style="width: 180px">
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
@@ -91,7 +91,7 @@
         </el-form-item>
 
         <el-form-item :label="t('itick.appVisible')">
-          <el-select v-model="queryParams.visibleStatus" clearable style="width: 180px">
+          <el-select v-model="queryParams.appVisible" clearable style="width: 180px">
             <el-option
               v-for="item in visibleOptions"
               :key="item.value"
@@ -691,8 +691,8 @@ const { form: queryParams, reset: resetQueryParams } = useForm<ListTenantProduct
     categoryType: 0,
     market: '',
     keyword: '',
-    status: 0,
-    visibleStatus: 0,
+    enabled: 0,
+    appVisible: 0,
     cursor: undefined,
     limit: 20,
   },
@@ -785,11 +785,11 @@ const cleanedQueryParams = computed<ListTenantProductsReq | null>(() => {
   if (queryParams.keyword?.trim()) {
     params.keyword = queryParams.keyword.trim()
   }
-  if (queryParams.status) {
-    params.status = queryParams.status
+  if (queryParams.enabled) {
+    params.enabled = queryParams.enabled
   }
-  if (queryParams.visibleStatus) {
-    params.visibleStatus = queryParams.visibleStatus
+  if (queryParams.appVisible) {
+    params.appVisible = queryParams.appVisible
   }
 
   return params

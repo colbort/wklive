@@ -119,7 +119,7 @@ export type UserBankItem = {
   branchName: string // 支行名称
   countryCode: string // 国家/地区
   isDefault: number // 是否默认：0否 1是
-  status: number // 状态：1正常 2禁用
+  enabled: number // 启用状态：1启用 2禁用
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
 }
@@ -302,7 +302,7 @@ export type ListMemberUserBanksReq = {
   tenantId?: number // 租户ID
   userId?: number // 用户ID
   keyword?: string // 关键字
-  status?: number // 银行卡状态
+  enabled?: number // 银行卡启用状态
 }
 
 export type AddUserBankReq = {
@@ -315,14 +315,14 @@ export type AddUserBankReq = {
   branchName?: string // 支行名称
   countryCode?: string // 国家/地区
   isDefault: number // 是否默认：0否 1是
-  status: number // 状态：1正常 2禁用
+  enabled: number // 启用状态：1启用 2禁用
 }
 
 export type UpdateMemberUserBankReq = AddUserBankReq
 
 export type UpdateMemberUserBankStatusReq = {
   tenantId: number // 租户ID
-  status: number // 银行卡状态
+  enabled: number // 银行卡启用状态
 }
 
 export type SetDefaultUserBankReq = {

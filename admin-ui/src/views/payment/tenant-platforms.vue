@@ -19,8 +19,8 @@
         <el-form-item :label="t('payment.platformId')">
           <el-input-number v-model="query.platformId" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="query.status" clearable style="width: 160px">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="query.enabled" clearable style="width: 160px">
             <el-option :label="t('payment.all')" :value="0" />
             <el-option
               v-for="item in statusOptions"
@@ -42,10 +42,10 @@
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
         <el-table-column prop="platformId" :label="t('payment.platformId')" width="100" />
-        <el-table-column :label="t('common.status')" width="100">
+        <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
-            <el-tag :class="getOptionTagClass(row.status)" disable-transitions>
-              {{ getStatusLabel(row.status) }}
+            <el-tag :class="getOptionTagClass(row.enabled)" disable-transitions>
+              {{ getStatusLabel(row.enabled) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -116,8 +116,8 @@
             <span v-if="platformVerified" class="verified-text"> {{ t('payment.verified') }} </span>
           </div>
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="form.status" style="width: 100%">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="form.enabled" style="width: 100%">
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
@@ -186,10 +186,10 @@ const verifiedTenantId = ref(0)
 const verifiedPlatformId = ref(0)
 
 // query parameters for the list
-const query = reactive({ tenantId: 0, platformId: 0, status: 0 })
+const query = reactive({ tenantId: 0, platformId: 0, enabled: 0 })
 
 // form data for create / edit
-const form = reactive({ id: 0, tenantId: 0, platformId: 0, status: 1, openStatus: 1, remark: '' })
+const form = reactive({ id: 0, tenantId: 0, platformId: 0, enabled: 1, openStatus: 1, remark: '' })
 
 // option groups fetched from backend
 const optionGroups = ref<OptionGroup[]>([])
@@ -235,7 +235,7 @@ const loadList = async () => {
 const openDialog = (row?: TenantPayPlatform) => {
   Object.assign(
     form,
-    row || { id: 0, tenantId: 0, platformId: 0, status: 1, openStatus: 1, remark: '' },
+    row || { id: 0, tenantId: 0, platformId: 0, enabled: 1, openStatus: 1, remark: '' },
   )
   tenantVerified.value = !!row?.id
   platformVerified.value = !!row?.id
@@ -298,7 +298,7 @@ const submit = async () => {
     await tenantService.openTenantPlatform({
       tenantId: form.tenantId,
       platformId: form.platformId,
-      status: form.status,
+      enabled: form.enabled,
       openStatus: form.openStatus,
       remark: form.remark,
     })

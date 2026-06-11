@@ -108,7 +108,7 @@ const tradeLimitForm = reactive<SetUserTradeLimitReq>({
   riskLevel: 0,
   operatorId: 0,
   source: 0,
-  status: 1,
+  enabled: 1,
   effectiveStartTime: 0,
   effectiveEndTime: 0,
   remark: '',

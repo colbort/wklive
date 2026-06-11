@@ -77,8 +77,8 @@
             <el-option :label="t('common.disabled')" :value="1" />
           </el-select>
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="query.status" clearable style="width: 160px">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="query.enabled" clearable style="width: 160px">
             <el-option
               v-for="item in assetStatusOptions"
               :key="item.value"
@@ -169,9 +169,9 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="status" :label="t('common.status')" min-width="100">
+        <el-table-column prop="enabled" :label="t('common.enabled')" min-width="100">
           <template #default="{ row }">
-            {{ formatOption(assetStatusOptions, row.status) }}
+            {{ formatOption(assetStatusOptions, row.enabled) }}
           </template>
         </el-table-column>
         <el-table-column prop="sort" :label="t('common.sort')" min-width="90" />
@@ -321,8 +321,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="t('common.status')">
-              <el-select v-model="form.status" style="width: 100%">
+            <el-form-item :label="t('common.enabled')">
+              <el-select v-model="form.enabled" style="width: 100%">
                 <el-option
                   v-for="item in assetStatusOptions"
                   :key="item.value"
@@ -418,7 +418,7 @@ const query = reactive({
   rechargeEnabled: undefined as number | undefined,
   withdrawEnabled: undefined as number | undefined,
   transferEnabled: undefined as number | undefined,
-  status: undefined as number | undefined,
+  enabled: undefined as number | undefined,
   limit: 20,
 })
 
@@ -439,7 +439,7 @@ const form = reactive({
   rechargeEnabled: 2,
   withdrawEnabled: 2,
   transferEnabled: 2,
-  status: 2,
+  enabled: 2,
   sort: 0,
   remark: '',
 })
@@ -512,7 +512,7 @@ function resetFormData() {
   form.rechargeEnabled = 2
   form.withdrawEnabled = 2
   form.transferEnabled = 2
-  form.status = 2
+  form.enabled = 2
   form.sort = 0
   form.remark = ''
   formRef.value?.clearValidate()
@@ -535,7 +535,7 @@ function fillForm(row: AssetCoinConfig) {
   form.rechargeEnabled = Number(row.rechargeEnabled || 1)
   form.withdrawEnabled = Number(row.withdrawEnabled || 1)
   form.transferEnabled = Number(row.transferEnabled || 2)
-  form.status = Number(row.status || 2)
+  form.enabled = Number(row.enabled || 2)
   form.sort = Number(row.sort || 0)
   form.remark = row.remark || ''
 }
@@ -571,7 +571,7 @@ function resetQuery() {
   query.rechargeEnabled = undefined
   query.withdrawEnabled = undefined
   query.transferEnabled = undefined
-  query.status = undefined
+  query.enabled = undefined
   query.limit = 100
   loadList()
 }
@@ -623,7 +623,7 @@ async function submitForm() {
       rechargeEnabled: form.rechargeEnabled,
       withdrawEnabled: form.withdrawEnabled,
       transferEnabled: form.transferEnabled,
-      status: form.status,
+      enabled: form.enabled,
       sort: form.sort,
       remark: form.remark,
     }

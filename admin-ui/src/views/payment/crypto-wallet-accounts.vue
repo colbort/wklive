@@ -26,8 +26,8 @@
         <el-form-item :label="t('payment.provider')">
           <el-input v-model="query.provider" clearable />
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="query.status" clearable style="width: 140px">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="query.enabled" clearable style="width: 140px">
             <el-option :label="t('common.enabled')" :value="1" /><el-option
               :label="t('common.disabled')"
               :value="2"
@@ -67,7 +67,7 @@
           prop="isDefault"
           :label="t('common.default')"
           width="80"
-        /><el-table-column prop="status" :label="t('common.status')" width="80" />
+        /><el-table-column prop="enabled" :label="t('common.enabled')" width="80" />
         <el-table-column :label="t('common.actions')" width="140" fixed="right">
           <template #default="{ row }">
             <el-button
@@ -130,8 +130,8 @@
         <el-form-item :label="t('payment.extConfig')">
           <el-input v-model="form.extConfig" type="textarea" />
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="form.status" style="width: 100%">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="form.enabled" style="width: 100%">
             <el-option :label="t('common.enabled')" :value="1" /><el-option
               :label="t('common.disabled')"
               :value="2"
@@ -186,7 +186,7 @@ const query = reactive({
   tenantId: 0,
   keyword: '',
   provider: '',
-  status: undefined as number | undefined,
+  enabled: undefined as number | undefined,
 })
 const form = reactive({
   id: 0,
@@ -198,7 +198,7 @@ const form = reactive({
   apiSecretCipher: '',
   callbackSecretCipher: '',
   extConfig: '',
-  status: 1,
+  enabled: 1,
   isDefault: 0,
   createTimes: 0,
   updateTimes: 0,
@@ -223,7 +223,7 @@ async function loadList() {
   }
 }
 function resetQuery() {
-  Object.assign(query, { tenantId: 0, keyword: '', provider: '', status: undefined })
+  Object.assign(query, { tenantId: 0, keyword: '', provider: '', enabled: undefined })
   void loadList()
 }
 function openDialog(row?: CryptoWalletAccount) {
@@ -239,7 +239,7 @@ function openDialog(row?: CryptoWalletAccount) {
       apiSecretCipher: '',
       callbackSecretCipher: '',
       extConfig: '',
-      status: 1,
+      enabled: 1,
       isDefault: 0,
       createTimes: 0,
       updateTimes: 0,

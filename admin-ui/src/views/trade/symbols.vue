@@ -617,7 +617,7 @@
           </el-form-item>
 
           <el-form-item :label="t('trade.status')">
-            <el-select v-model="leverageForm.status" class="full-width">
+            <el-select v-model="leverageForm.enabled" class="full-width">
               <el-option
                 v-for="item in enableStatusOptions"
                 :key="item.value"
@@ -700,8 +700,8 @@
         </el-table-column>
         <el-table-column :label="t('trade.status')" width="110">
           <template #default="{ row }">
-            <el-tag size="small" :type="row.status === 1 ? 'success' : 'info'" effect="light">
-              {{ optionLabel('enableStatus', row.status) }}
+            <el-tag size="small" :type="row.enabled === 1 ? 'success' : 'info'" effect="light">
+              {{ optionLabel('enableStatus', row.enabled) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -858,7 +858,7 @@ interface SymbolForm {
   quoteAsset: string
   settleAsset: string
   contractType: number
-  status: number
+  enabled: number
   priceScale: number
   qtyScale: number
   minPrice: string
@@ -1200,7 +1200,7 @@ const applyLeverageForm = (config: LeverageForm | TradeSymbolLeverageConfig) => 
     leverageValues: [...(config.leverageValues || [])],
     defaultLeverage: config.defaultLeverage,
     maxLeverage: config.maxLeverage,
-    status: config.status,
+    enabled: config.enabled,
     sort: config.sort,
     remark: config.remark || '',
   })
@@ -1367,7 +1367,7 @@ const nextLeverageMarginMode = () =>
 const newLeverageConfig = (marginMode = nextLeverageMarginMode()) => {
   applyLeverageForm({
     ...getDefaultLeverageForm(leverageSymbol.value, marginMode, leverageValueOptions.value),
-    status: enabledStatusValue.value,
+    enabled: enabledStatusValue.value,
   })
 }
 

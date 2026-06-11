@@ -29,7 +29,7 @@ export type AssetUserAsset = {
   availableAmount: string // 可用资产
   frozenAmount: string // 冻结资产
   lockedAmount: string // 锁定资产
-  status: number // 状态
+  enabled: number // 启用状态
   version: number // 乐观锁版本号
   remark: string // 备注
   createTimes: number // 创建时间
@@ -130,7 +130,7 @@ export type AssetCoinConfig = {
   rechargeEnabled: number // 是否允许充值
   withdrawEnabled: number // 是否允许提现
   transferEnabled: number // 是否允许划转
-  status: number // 状态
+  enabled: number // 启用状态
   sort: number // 排序
   remark: string // 备注
   createTimes: number // 创建时间
@@ -193,7 +193,7 @@ export type PageAssetLocksReq = {
   coin?: string // 币种
   bizType?: number // 业务类型
   bizNo?: string // 业务单号
-  status?: number // 状态
+  enabled?: number // 启用状态
 }
 
 export type PageAssetCoinConfigsReq = {
@@ -209,7 +209,7 @@ export type PageAssetCoinConfigsReq = {
   rechargeEnabled?: number // 是否允许充值
   withdrawEnabled?: number // 是否允许提现
   transferEnabled?: number // 是否允许划转
-  status?: number // 状态
+  enabled?: number // 启用状态
 }
 
 export type GetAssetCoinConfigReq = {
@@ -233,7 +233,7 @@ export type CreateAssetCoinConfigReq = {
   rechargeEnabled?: number // 是否允许充值
   withdrawEnabled?: number // 是否允许提现
   transferEnabled?: number // 是否允许划转
-  status?: number // 状态
+  enabled?: number // 启用状态
   sort?: number // 排序
   remark?: string // 备注
 }

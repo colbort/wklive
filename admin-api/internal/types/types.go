@@ -13,7 +13,7 @@ type AddUserBankReq struct {
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
 	IsDefault   int64  `json:"isDefault"`
-	Status      int64  `json:"status"`
+	Enabled     int64  `json:"enabled"`
 }
 
 type AddUserBankResp struct {
@@ -316,7 +316,7 @@ type AssetCoinConfig struct {
 	RechargeEnabled int64  `json:"rechargeEnabled"`
 	WithdrawEnabled int64  `json:"withdrawEnabled"`
 	TransferEnabled int64  `json:"transferEnabled"`
-	Status          int64  `json:"status"`
+	Enabled         int64  `json:"enabled"`
 	Sort            int64  `json:"sort"`
 	Remark          string `json:"remark"`
 	CreateTimes     int64  `json:"createTimes"`
@@ -410,7 +410,7 @@ type AssetUserAsset struct {
 	AvailableAmount string `json:"availableAmount"`
 	FrozenAmount    string `json:"frozenAmount"`
 	LockedAmount    string `json:"lockedAmount"`
-	Status          int64  `json:"status"`
+	Enabled         int64  `json:"enabled"`
 	Version         int64  `json:"version"`
 	Remark          string `json:"remark"`
 	CreateTimes     int64  `json:"createTimes"`
@@ -463,8 +463,8 @@ type BizTradeEvent struct {
 }
 
 type ChangeUserStatusReq struct {
-	Id     int64 `json:"id"`
-	Status int64 `json:"status"` // 1启用 0禁用
+	Id      int64 `json:"id"`
+	Enabled int64 `json:"enabled"` // 0未知 1启用 2禁用
 }
 
 type CheckUserReferrerData struct {
@@ -500,7 +500,7 @@ type ContractLeverageConfig struct {
 	MaxLeverage   int64  `json:"maxLeverage"`
 	OperatorId    int64  `json:"operatorId"`
 	Source        int64  `json:"source"`
-	Status        int64  `json:"status"`
+	Enabled       int64  `json:"enabled"`
 	Remark        string `json:"remark"`
 	CreateTimes   int64  `json:"createTimes"`
 	UpdateTimes   int64  `json:"updateTimes"`
@@ -601,7 +601,7 @@ type CreateAssetCoinConfigReq struct {
 	RechargeEnabled int64  `json:"rechargeEnabled,optional"`
 	WithdrawEnabled int64  `json:"withdrawEnabled,optional"`
 	TransferEnabled int64  `json:"transferEnabled,optional"`
-	Status          int64  `json:"status,optional"`
+	Enabled         int64  `json:"enabled,optional"`
 	Sort            int64  `json:"sort,optional"`
 	Remark          string `json:"remark,optional"`
 }
@@ -687,7 +687,7 @@ type CreateCryptoWalletAccountReq struct {
 	ApiSecretCipher      string `json:"apiSecretCipher,optional"`
 	CallbackSecretCipher string `json:"callbackSecretCipher,optional"`
 	ExtConfig            string `json:"extConfig,optional"`
-	Status               int64  `json:"status"`
+	Enabled              int64  `json:"enabled"`
 	IsDefault            int64  `json:"isDefault"`
 }
 
@@ -698,7 +698,7 @@ type CreatePayPlatformReq struct {
 	NotifyUrl    string `json:"notifyUrl,optional"`
 	ReturnUrl    string `json:"returnUrl,optional"`
 	Icon         string `json:"icon,optional"`
-	Status       int64  `json:"status"`
+	Enabled      int64  `json:"enabled"`
 	Remark       string `json:"remark,optional"`
 }
 
@@ -708,7 +708,7 @@ type CreatePayProductReq struct {
 	ProductName string `json:"productName"`
 	SceneType   int64  `json:"sceneType"`
 	Currency    string `json:"currency"`
-	Status      int64  `json:"status"`
+	Enabled     int64  `json:"enabled"`
 	Remark      string `json:"remark,optional"`
 }
 
@@ -778,7 +778,7 @@ type CreateTenantPayAccountReq struct {
 	PublicKey           string `json:"publicKey,optional"`
 	CertCipher          string `json:"certCipher,optional"`
 	ExtConfig           string `json:"extConfig,optional"`
-	Status              int64  `json:"status"`
+	Enabled             int64  `json:"enabled"`
 	IsDefault           int64  `json:"isDefault"`
 	Remark              string `json:"remark,optional"`
 }
@@ -795,7 +795,7 @@ type CreateTenantPayChannelReq struct {
 	Currency        string `json:"currency"`
 	Sort            int64  `json:"sort"`
 	Visible         int64  `json:"visible"`
-	Status          int64  `json:"status"`
+	Enabled         int64  `json:"enabled"`
 	SingleMinAmount int64  `json:"singleMinAmount"`
 	SingleMaxAmount int64  `json:"singleMaxAmount"`
 	DailyMaxAmount  int64  `json:"dailyMaxAmount"`
@@ -812,7 +812,7 @@ type CreateTenantPayChannelRuleReq struct {
 	ChannelId            int64  `json:"channelId"`
 	RuleName             string `json:"ruleName"`
 	Priority             int64  `json:"priority"`
-	Status               int64  `json:"status"`
+	Enabled              int64  `json:"enabled"`
 	SingleAmountMin      int64  `json:"singleAmountMin"`
 	SingleAmountMax      int64  `json:"singleAmountMax"`
 	UserTotalRechargeMin int64  `json:"userTotalRechargeMin"`
@@ -912,7 +912,7 @@ type CryptoWalletAccount struct {
 	ApiSecretCipher      string `json:"apiSecretCipher"`
 	CallbackSecretCipher string `json:"callbackSecretCipher"`
 	ExtConfig            string `json:"extConfig"`
-	Status               int64  `json:"status"`
+	Enabled              int64  `json:"enabled"`
 	IsDefault            int64  `json:"isDefault"`
 	CreateTimes          int64  `json:"createTimes"`
 	UpdateTimes          int64  `json:"updateTimes"`
@@ -1361,7 +1361,7 @@ type GetSymbolLeverageConfigListReq struct {
 	SymbolId   int64 `form:"symbolId,optional"`
 	MarketType int64 `form:"marketType,optional"`
 	MarginMode int64 `form:"marginMode,optional"`
-	Status     int64 `form:"status,optional"`
+	Enabled    int64 `form:"enabled,optional"`
 }
 
 type GetSymbolLeverageConfigListResp struct {
@@ -1411,9 +1411,10 @@ type GetSyncTaskStatusResp struct {
 }
 
 type GetSystemCore struct {
-	SiteName string `json:"siteName"`
-	SiteLogo string `json:"siteLogo"`
-	AssetUrl string `json:"assetUrl"`
+	SiteName string         `json:"siteName"`
+	SiteLogo string         `json:"siteLogo"`
+	AssetUrl string         `json:"assetUrl"`
+	Options  []OptionsGroup `json:"options"`
 }
 
 type GetSystemCoreResp struct {
@@ -1819,7 +1820,7 @@ type ListBillsResp struct {
 type ListCategoriesReq struct {
 	PageReq
 	CategoryType int64 `json:"categoryType,optional"`
-	Enabled      int32 `json:"enable,optional"` // 0全部 1启用 2禁用
+	Enabled      int32 `json:"enabled,optional"` // 0全部 1启用 2禁用
 	AppVisible   int32 `json:"appVisible,optional"`
 }
 
@@ -1885,7 +1886,7 @@ type ListCryptoWalletAccountsReq struct {
 	TenantId  int64  `form:"tenantId,optional"`
 	Keyword   string `form:"keyword,optional"`
 	Provider  string `form:"provider,optional"`
-	Status    int64  `form:"status,optional"`
+	Enabled   int64  `form:"enabled,optional"`
 	IsDefault int64  `form:"isDefault,optional"`
 }
 
@@ -1945,7 +1946,7 @@ type ListPayPlatformsReq struct {
 	PageReq
 	Keyword      string `form:"keyword,optional"`
 	PlatformCode string `form:"platformCode,optional"`
-	Status       int64  `form:"status,optional"`
+	Enabled      int64  `form:"enabled,optional"`
 	PlatformType int64  `form:"platformType,optional"`
 }
 
@@ -1959,7 +1960,7 @@ type ListPayProductsReq struct {
 	PlatformId  int64  `form:"platformId,optional"`
 	Keyword     string `form:"keyword,optional"`
 	ProductCode string `form:"productCode,optional"`
-	Status      int64  `form:"status,optional"`
+	Enabled     int64  `form:"enabled,optional"`
 	SceneType   int64  `form:"sceneType,optional"`
 }
 
@@ -2054,7 +2055,7 @@ type ListTenantCategoriesReq struct {
 	PageReq
 	TenantId      int64 `json:"tenantId,optional"`
 	CategoryType  int64 `json:"categoryType,optional"`
-	Status        int32 `json:"status,optional"`        // 0全部 1启用 2禁用
+	Enabled       int32 `json:"enabled,optional"`       // 0全部 1启用 2禁用
 	VisibleStatus int32 `json:"visibleStatus,optional"` // 0全部 1显示 2隐藏
 }
 
@@ -2069,7 +2070,7 @@ type ListTenantPayAccountsReq struct {
 	PlatformId          int64  `form:"platformId,optional"`
 	TenantPayPlatformId int64  `form:"tenantPayPlatformId,optional"`
 	Keyword             string `form:"keyword,optional"`
-	Status              int64  `form:"status,optional"`
+	Enabled             int64  `form:"enabled,optional"`
 }
 
 type ListTenantPayAccountsResp struct {
@@ -2081,7 +2082,7 @@ type ListTenantPayChannelRulesReq struct {
 	PageReq
 	TenantId  int64 `form:"tenantId,optional"`
 	ChannelId int64 `form:"channelId,optional"`
-	Status    int64 `form:"status,optional"`
+	Enabled   int64 `form:"enabled,optional"`
 }
 
 type ListTenantPayChannelRulesResp struct {
@@ -2096,7 +2097,7 @@ type ListTenantPayChannelsReq struct {
 	ProductId  int64  `form:"productId,optional"`
 	AccountId  int64  `form:"accountId,optional"`
 	Keyword    string `form:"keyword,optional"`
-	Status     int64  `form:"status,optional"`
+	Enabled    int64  `form:"enabled,optional"`
 	Visible    int64  `form:"visible,optional"`
 }
 
@@ -2109,7 +2110,7 @@ type ListTenantPayPlatformsReq struct {
 	PageReq
 	TenantId   int64 `form:"tenantId,optional"`
 	PlatformId int64 `form:"platformId,optional"`
-	Status     int64 `form:"status,optional"`
+	Enabled    int64 `form:"enabled,optional"`
 	OpenStatus int64 `form:"openStatus,optional"`
 }
 
@@ -2120,12 +2121,12 @@ type ListTenantPayPlatformsResp struct {
 
 type ListTenantProductsReq struct {
 	PageReq
-	TenantId      int64  `form:"tenantId,optional"`
-	CategoryType  int64  `form:"categoryType,optional"`
-	Market        string `form:"market,optional"`
-	Keyword       string `form:"keyword,optional"`
-	Status        int32  `form:"status,optional"`        // 0全部 1启用 2禁用
-	VisibleStatus int32  `form:"visibleStatus,optional"` // 0全部 1显示 2隐藏
+	TenantId     int64  `form:"tenantId,optional"`
+	CategoryType int64  `form:"categoryType,optional"`
+	Market       string `form:"market,optional"`
+	Keyword      string `form:"keyword,optional"`
+	Enabled      int32  `form:"enabled,optional"`    // 0全部 1启用 2禁用
+	AppVisible   int32  `form:"appVisible,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantProductsResp struct {
@@ -2152,7 +2153,7 @@ type ListUserBanksReq struct {
 	TenantId int64  `form:"tenantId,optional"`
 	UserId   int64  `form:"userId,optional"`
 	Keyword  string `form:"keyword,optional"`
-	Status   int64  `form:"status,optional"`
+	Enabled  int64  `form:"enabled,optional"`
 }
 
 type ListUserBanksResp struct {
@@ -2338,7 +2339,7 @@ type OpLogListResp struct {
 type OpenTenantPayPlatformReq struct {
 	TenantId   int64  `json:"tenantId"`
 	PlatformId int64  `json:"platformId"`
-	Status     int64  `json:"status"`
+	Enabled    int64  `json:"enabled"`
 	OpenStatus int64  `json:"openStatus"`
 	Remark     string `json:"remark,optional"`
 }
@@ -2635,7 +2636,7 @@ type PageAssetCoinConfigsReq struct {
 	RechargeEnabled int64  `form:"rechargeEnabled,optional"`
 	WithdrawEnabled int64  `form:"withdrawEnabled,optional"`
 	TransferEnabled int64  `form:"transferEnabled,optional"`
-	Status          int64  `form:"status,optional"`
+	Enabled         int64  `form:"enabled,optional"`
 }
 
 type PageAssetCoinConfigsResp struct {
@@ -2703,7 +2704,7 @@ type PageUserAssetsReq struct {
 	UserId     int64  `form:"userId,optional"`
 	WalletType int64  `form:"walletType,optional"`
 	Coin       string `form:"coin,optional"`
-	Status     int64  `form:"status,optional"`
+	Enabled    int64  `form:"enabled,optional"`
 }
 
 type PageUserAssetsResp struct {
@@ -2735,7 +2736,7 @@ type PayPlatform struct {
 	NotifyUrl    string `json:"notifyUrl"`
 	ReturnUrl    string `json:"returnUrl"`
 	Icon         string `json:"icon"`
-	Status       int64  `json:"status"` // 0未知 1启用 2禁用
+	Enabled      int64  `json:"enabled"` // 0未知 1启用 2禁用
 	Remark       string `json:"remark"`
 	CreateTimes  int64  `json:"createTimes"`
 	UpdateTimes  int64  `json:"updateTimes"`
@@ -2753,7 +2754,7 @@ type PayProduct struct {
 	ProductName string `json:"productName"`
 	SceneType   int64  `json:"sceneType"` // 0未知 1APP 2H5 3WEB 4收银台 5链上
 	Currency    string `json:"currency"`
-	Status      int64  `json:"status"` // 0未知 1启用 2禁用
+	Enabled     int64  `json:"enabled"` // 0未知 1启用 2禁用
 	Remark      string `json:"remark"`
 	CreateTimes int64  `json:"createTimes"`
 	UpdateTimes int64  `json:"updateTimes"`
@@ -2929,7 +2930,7 @@ type RiskUserSymbolLimit struct {
 	PriceDeviationRate  string `json:"priceDeviationRate"`
 	OperatorId          int64  `json:"operatorId"`
 	Source              int64  `json:"source"`
-	Status              int64  `json:"status"`
+	Enabled             int64  `json:"enabled"`
 	EffectiveStartTime  int64  `json:"effectiveStartTime"`
 	EffectiveEndTime    int64  `json:"effectiveEndTime"`
 	Remark              string `json:"remark"`
@@ -2957,7 +2958,7 @@ type RiskUserTradeLimit struct {
 	RiskLevel            int64  `json:"riskLevel"`
 	OperatorId           int64  `json:"operatorId"`
 	Source               int64  `json:"source"`
-	Status               int64  `json:"status"`
+	Enabled              int64  `json:"enabled"`
 	EffectiveStartTime   int64  `json:"effectiveStartTime"`
 	EffectiveEndTime     int64  `json:"effectiveEndTime"`
 	Remark               string `json:"remark"`
@@ -3005,7 +3006,7 @@ type SetSymbolLeverageConfigReq struct {
 	LeverageValues  []int64 `json:"leverageValues"`
 	DefaultLeverage int64   `json:"defaultLeverage"`
 	MaxLeverage     int64   `json:"maxLeverage"`
-	Status          int64   `json:"status"`
+	Enabled         int64   `json:"enabled"`
 	Sort            int64   `json:"sort"`
 	Remark          string  `json:"remark,optional"`
 }
@@ -3022,7 +3023,7 @@ type SetUserLeverageConfigReq struct {
 	MaxLeverage   int64  `json:"maxLeverage"`
 	OperatorId    int64  `json:"operatorId"`
 	Source        int64  `json:"source"`
-	Status        int64  `json:"status"`
+	Enabled       int64  `json:"enabled"`
 	Remark        string `json:"remark,optional"`
 }
 
@@ -3043,7 +3044,7 @@ type SetUserSymbolLimitReq struct {
 	PriceDeviationRate  string `json:"priceDeviationRate"`
 	OperatorId          int64  `json:"operatorId"`
 	Source              int64  `json:"source"`
-	Status              int64  `json:"status"`
+	Enabled             int64  `json:"enabled"`
 	EffectiveStartTime  int64  `json:"effectiveStartTime"`
 	EffectiveEndTime    int64  `json:"effectiveEndTime"`
 	Remark              string `json:"remark,optional"`
@@ -3080,7 +3081,7 @@ type SetUserTradeLimitReq struct {
 	RiskLevel            int64  `json:"riskLevel"`
 	OperatorId           int64  `json:"operatorId"`
 	Source               int64  `json:"source"`
-	Status               int64  `json:"status"`
+	Enabled              int64  `json:"enabled"`
 	EffectiveStartTime   int64  `json:"effectiveStartTime"`
 	EffectiveEndTime     int64  `json:"effectiveEndTime"`
 	Remark               string `json:"remark,optional"`
@@ -3361,7 +3362,7 @@ type SysMenuCreateReq struct {
 	Icon      string `json:"icon,optional"`
 	Sort      int64  `json:"sort,optional"`
 	Visible   int64  `json:"visible,optional"`
-	Status    int64  `json:"status,optional"`
+	Enabled   int64  `json:"enabled,optional"`
 	Perms     string `json:"perms,optional"`
 }
 
@@ -3380,14 +3381,14 @@ type SysMenuItem struct {
 	Icon      string `json:"icon,optional"`
 	Sort      int64  `json:"sort"`
 	Visible   int64  `json:"visible"`
-	Status    int64  `json:"status"`
+	Enabled   int64  `json:"enabled"`
 	Perms     string `json:"perms,optional"`
 }
 
 type SysMenuListReq struct {
 	PageReq
 	Keyword  string `form:"keyword,optional"`  // 按 name/perms 模糊
-	Status   int64  `form:"status,optional"`   // 0/1
+	Enabled  int64  `form:"enabled,optional"`  // 0未知 1启用 2禁用
 	Visible  int64  `form:"visible,optional"`  // 0/1
 	MenuType int64  `form:"menuType,optional"` // 1/2/3
 }
@@ -3417,7 +3418,7 @@ type SysMenuUpdateReq struct {
 	Icon      string `json:"icon,optional"`
 	Sort      int64  `json:"sort,optional"`
 	Visible   int64  `json:"visible,optional"`
-	Status    int64  `json:"status,optional"`
+	Enabled   int64  `json:"enabled,optional"`
 	Perms     string `json:"perms,optional"`
 }
 
@@ -3432,10 +3433,10 @@ type SysPermListResp struct {
 }
 
 type SysRoleCreateReq struct {
-	Name   string `json:"name"`
-	Code   string `json:"code"`
-	Status int64  `json:"status,optional"`
-	Remark string `json:"remark,optional"`
+	Name    string `json:"name"`
+	Code    string `json:"code"`
+	Enabled int64  `json:"enabled,optional"`
+	Remark  string `json:"remark,optional"`
 }
 
 type SysRoleDeleteReq struct {
@@ -3466,7 +3467,7 @@ type SysRoleItem struct {
 	Id          int64  `json:"id"`
 	Name        string `json:"name"`
 	Code        string `json:"code"`
-	Status      int64  `json:"status"`
+	Enabled     int64  `json:"enabled"`
 	Remark      string `json:"remark,optional"`
 	TenantId    int64  `json:"tenantId"`
 	CreateTimes int64  `json:"createTimes"`
@@ -3475,7 +3476,7 @@ type SysRoleItem struct {
 type SysRoleListReq struct {
 	PageReq
 	Keyword string `form:"keyword,optional"`
-	Status  int64  `form:"status,optional"`
+	Enabled int64  `form:"enabled,optional"`
 }
 
 type SysRoleListResp struct {
@@ -3484,17 +3485,17 @@ type SysRoleListResp struct {
 }
 
 type SysRoleUpdateReq struct {
-	Id     int64  `json:"id"`
-	Name   string `json:"name,optional"`
-	Status int64  `json:"status,optional"`
-	Remark string `json:"remark,optional"`
+	Id      int64  `json:"id"`
+	Name    string `json:"name,optional"`
+	Enabled int64  `json:"enabled,optional"`
+	Remark  string `json:"remark,optional"`
 }
 
 type SysTenantCreateReq struct {
 	Username       string `json:"username"`
 	TenantName     string `json:"tenantName"`
 	TenantPassword string `json:"tenantPassword"`
-	Status         int64  `json:"status"`
+	Enabled        int64  `json:"enabled"`
 	ExpireTime     int64  `json:"expireTime"`
 	ContactName    string `json:"contactName,optional"`
 	ContactPhone   string `json:"contactPhone,optional"`
@@ -3519,7 +3520,7 @@ type SysTenantItem struct {
 	Id           int64  `json:"id"`
 	TenantCode   string `json:"tenantCode"`
 	TenantName   string `json:"tenantName"`
-	Status       int64  `json:"status"`
+	Enabled      int64  `json:"enabled"`
 	ExpireTime   int64  `json:"expireTime"`
 	ContactName  string `json:"contactName,optional"`
 	ContactPhone string `json:"contactPhone,optional"`
@@ -3531,7 +3532,7 @@ type SysTenantItem struct {
 type SysTenantListReq struct {
 	PageReq
 	Keyword      string `form:"keyword,optional"` // 按 tenant_code/tenant_name/contact_name/contact_phone 模糊
-	Status       int64  `form:"status,optional"`  // 0/1
+	Enabled      int64  `form:"enabled,optional"` // 0全部 1启用 2禁用
 	TenantCode   string `form:"tenantCode,optional"`
 	TenantName   string `form:"tenantName,optional"`
 	ContactName  string `form:"contactName,optional"`
@@ -3547,7 +3548,7 @@ type SysTenantUpdateReq struct {
 	Id             int64  `json:"id"`
 	TenantName     string `json:"tenantName,optional"`
 	TenantPassword string `json:"tenantPassword,optional"`
-	Status         int64  `json:"status,optional"`
+	Enabled        int64  `json:"enabled,optional"`
 	ExpireTime     int64  `json:"expireTime,optional"`
 	ContactName    string `json:"contactName,optional"`
 	ContactPhone   string `json:"contactPhone,optional"`
@@ -3558,7 +3559,7 @@ type SysUserCreateReq struct {
 	Username string  `json:"username"`
 	Password string  `json:"password"`
 	Nickname string  `json:"nickname,optional"`
-	Status   int64   `json:"status,optional"` // 1启用 0禁用
+	Enabled  int64   `json:"enabled,optional"` // 0未知 1启用 2禁用
 	RoleIds  []int64 `json:"roleIds,optional"`
 }
 
@@ -3575,7 +3576,7 @@ type SysUserItem struct {
 	Id               int64   `json:"id"`
 	Username         string  `json:"username"`
 	Nickname         string  `json:"nickname"`
-	Status           int64   `json:"status"`
+	Enabled          int64   `json:"enabled"`
 	RoleIds          []int64 `json:"roleIds"`
 	CreateTimes      int64   `json:"createTimes"`
 	Google2faEnabled int64   `json:"google2faEnabled"`
@@ -3584,7 +3585,7 @@ type SysUserItem struct {
 type SysUserListReq struct {
 	PageReq
 	Keyword string `form:"keyword,optional"`
-	Status  int64  `form:"status,optional"`
+	Enabled int64  `form:"enabled,optional"`
 }
 
 type SysUserListResp struct {
@@ -3595,7 +3596,7 @@ type SysUserListResp struct {
 type SysUserUpdateReq struct {
 	Id       int64   `json:"id"`
 	Nickname string  `json:"nickname,optional"`
-	Status   int64   `json:"status,optional"`
+	Enabled  int64   `json:"enabled,optional"`
 	RoleIds  []int64 `json:"roleIds,optional"`
 }
 
@@ -3629,7 +3630,7 @@ type TenantPayAccount struct {
 	PublicKey           string `json:"publicKey"`
 	CertCipher          string `json:"certCipher"`
 	ExtConfig           string `json:"extConfig"`
-	Status              int64  `json:"status"` // 0未知 1启用 2禁用
+	Enabled             int64  `json:"enabled"` // 0未知 1启用 2禁用
 	IsDefault           int64  `json:"isDefault"`
 	Remark              string `json:"remark"`
 	CreateTimes         int64  `json:"createTimes"`
@@ -3649,7 +3650,7 @@ type TenantPayChannel struct {
 	Currency        string `json:"currency"`
 	Sort            int64  `json:"sort"`
 	Visible         int64  `json:"visible"`
-	Status          int64  `json:"status"` // 0未知 1启用 2禁用
+	Enabled         int64  `json:"enabled"` // 0未知 1启用 2禁用
 	SingleMinAmount int64  `json:"singleMinAmount"`
 	SingleMaxAmount int64  `json:"singleMaxAmount"`
 	DailyMaxAmount  int64  `json:"dailyMaxAmount"`
@@ -3669,7 +3670,7 @@ type TenantPayChannelRule struct {
 	ChannelId            int64  `json:"channelId"`
 	RuleName             string `json:"ruleName"`
 	Priority             int64  `json:"priority"`
-	Status               int64  `json:"status"` // 0未知 1启用 2禁用
+	Enabled              int64  `json:"enabled"` // 0未知 1启用 2禁用
 	SingleAmountMin      int64  `json:"singleAmountMin"`
 	SingleAmountMax      int64  `json:"singleAmountMax"`
 	UserTotalRechargeMin int64  `json:"userTotalRechargeMin"`
@@ -3691,7 +3692,7 @@ type TenantPayPlatform struct {
 	Id          int64  `json:"id"`
 	TenantId    int64  `json:"tenantId"`
 	PlatformId  int64  `json:"platformId"`
-	Status      int64  `json:"status"`     // 0未知 1启用 2禁用
+	Enabled     int64  `json:"enabled"`    // 0未知 1启用 2禁用
 	OpenStatus  int64  `json:"openStatus"` // 0未知 1待配置 2已开通 3审核中 4已拒绝
 	Remark      string `json:"remark"`
 	CreateTimes int64  `json:"createTimes"`
@@ -3849,7 +3850,7 @@ type TradeSymbolLeverageConfig struct {
 	LeverageValues  []int64 `json:"leverageValues"`
 	DefaultLeverage int64   `json:"defaultLeverage"`
 	MaxLeverage     int64   `json:"maxLeverage"`
-	Status          int64   `json:"status"`
+	Enabled         int64   `json:"enabled"`
 	Sort            int64   `json:"sort"`
 	Remark          string  `json:"remark"`
 	CreateTimes     int64   `json:"createTimes"`
@@ -3905,7 +3906,7 @@ type UpdateAssetCoinConfigReq struct {
 	RechargeEnabled int64  `json:"rechargeEnabled,optional"`
 	WithdrawEnabled int64  `json:"withdrawEnabled,optional"`
 	TransferEnabled int64  `json:"transferEnabled,optional"`
-	Status          int64  `json:"status,optional"`
+	Enabled         int64  `json:"enabled,optional"`
 	Sort            int64  `json:"sort,optional"`
 	Remark          string `json:"remark,optional"`
 }
@@ -3977,7 +3978,7 @@ type UpdateCryptoWalletAccountReq struct {
 	ApiSecretCipher      string `json:"apiSecretCipher,optional"`
 	CallbackSecretCipher string `json:"callbackSecretCipher,optional"`
 	ExtConfig            string `json:"extConfig,optional"`
-	Status               int64  `json:"status"`
+	Enabled              int64  `json:"enabled"`
 	IsDefault            int64  `json:"isDefault"`
 }
 
@@ -4010,7 +4011,7 @@ type UpdatePayPlatformReq struct {
 	NotifyUrl    string `json:"notifyUrl,optional"`
 	ReturnUrl    string `json:"returnUrl,optional"`
 	Icon         string `json:"icon,optional"`
-	Status       int64  `json:"status"`
+	Enabled      int64  `json:"enabled"`
 	Remark       string `json:"remark,optional"`
 }
 
@@ -4019,7 +4020,7 @@ type UpdatePayProductReq struct {
 	ProductName string `json:"productName"`
 	SceneType   int64  `json:"sceneType"`
 	Currency    string `json:"currency"`
-	Status      int64  `json:"status"`
+	Enabled     int64  `json:"enabled"`
 	Remark      string `json:"remark,optional"`
 }
 
@@ -4091,7 +4092,7 @@ type UpdateTenantPayAccountReq struct {
 	PublicKey        string `json:"publicKey,optional"`
 	CertCipher       string `json:"certCipher,optional"`
 	ExtConfig        string `json:"extConfig,optional"`
-	Status           int64  `json:"status"`
+	Enabled          int64  `json:"enabled"`
 	IsDefault        int64  `json:"isDefault"`
 	Remark           string `json:"remark,optional"`
 }
@@ -4105,7 +4106,7 @@ type UpdateTenantPayChannelReq struct {
 	Currency        string `json:"currency"`
 	Sort            int64  `json:"sort"`
 	Visible         int64  `json:"visible"`
-	Status          int64  `json:"status"`
+	Enabled         int64  `json:"enabled"`
 	SingleMinAmount int64  `json:"singleMinAmount"`
 	SingleMaxAmount int64  `json:"singleMaxAmount"`
 	DailyMaxAmount  int64  `json:"dailyMaxAmount"`
@@ -4122,7 +4123,7 @@ type UpdateTenantPayChannelRuleReq struct {
 	TenantId             int64  `json:"tenantId"`
 	RuleName             string `json:"ruleName"`
 	Priority             int64  `json:"priority"`
-	Status               int64  `json:"status"`
+	Enabled              int64  `json:"enabled"`
 	SingleAmountMin      int64  `json:"singleAmountMin"`
 	SingleAmountMax      int64  `json:"singleAmountMax"`
 	UserTotalRechargeMin int64  `json:"userTotalRechargeMin"`
@@ -4141,7 +4142,7 @@ type UpdateTenantPayChannelRuleReq struct {
 type UpdateTenantPayPlatformReq struct {
 	Id         int64  `json:"id"`
 	TenantId   int64  `json:"tenantId"`
-	Status     int64  `json:"status"`
+	Enabled    int64  `json:"enabled"`
 	OpenStatus int64  `json:"openStatus"`
 	Remark     string `json:"remark,optional"`
 }
@@ -4166,7 +4167,7 @@ type UpdateUserBankReq struct {
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
 	IsDefault   int64  `json:"isDefault"`
-	Status      int64  `json:"status"`
+	Enabled     int64  `json:"enabled"`
 }
 
 type UpdateUserBankResp struct {
@@ -4177,7 +4178,7 @@ type UpdateUserBankResp struct {
 type UpdateUserBankStatusReq struct {
 	TenantId int64 `json:"tenantId"`
 	Id       int64 `path:"id"`
-	Status   int64 `json:"status"`
+	Enabled  int64 `json:"enabled"`
 }
 
 type UpdateUserBaseReq struct {
@@ -4238,7 +4239,7 @@ type UserBankItem struct {
 	BranchName  string `json:"branchName"`  // 支行名称
 	CountryCode string `json:"countryCode"` // 国家地区
 	IsDefault   int64  `json:"isDefault"`   // 是否默认：0否 1是
-	Status      int64  `json:"status"`      // 状态：1正常 2禁用
+	Enabled     int64  `json:"enabled"`     // 启用状态：1启用 2禁用
 	CreateTimes int64  `json:"createTimes"` // 创建时间
 	UpdateTimes int64  `json:"updateTimes"` // 更新时间
 }

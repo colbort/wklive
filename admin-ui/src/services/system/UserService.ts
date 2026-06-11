@@ -22,7 +22,7 @@ export type SysUserItem = {
   id: number
   username: string
   nickname: string
-  status: number
+  enabled: number
   roleIds: number[]
   createTimes: number
   google2faEnabled: number
@@ -41,19 +41,19 @@ export interface CreateUserRequest {
   username: string
   password: string
   nickname?: string
-  status?: number
+  enabled?: number
   roleIds?: number[]
 }
 
 export interface UpdateUserRequest {
   nickname?: string
-  status?: number
+  enabled?: number
   roleIds?: number[]
 }
 
 export interface UserQueryParams {
   keyword?: string
-  status?: number
+  enabled?: number
   cursor?: number
   limit?: number
 }
@@ -126,8 +126,8 @@ export class UserService implements BaseService {
   /**
    * 更新用户状态
    */
-  async updateUserStatus(id: number, status: number): Promise<RespBase<User>> {
-    return apiChangeUserStatus({ id, status })
+  async updateUserStatus(id: number, enabled: number): Promise<RespBase<User>> {
+    return apiChangeUserStatus({ id, enabled })
   }
 
   /**

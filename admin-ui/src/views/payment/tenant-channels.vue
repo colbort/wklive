@@ -41,10 +41,10 @@
         <el-table-column prop="channelName" :label="t('payment.channelName')" min-width="140" />
         <el-table-column prop="displayName" :label="t('payment.displayName')" min-width="140" />
         <el-table-column prop="currency" :label="t('payment.currency')" width="90" />
-        <el-table-column :label="t('common.status')" width="100">
+        <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
-            <el-tag :class="getStatusTagClass(row.status)" disable-transitions>
-              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
+            <el-tag :class="getStatusTagClass(row.enabled)" disable-transitions>
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -163,8 +163,8 @@
         <el-form-item :label="t('payment.currency')">
           <el-input v-model="channelForm.currency" />
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="channelForm.status" style="width: 100%">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="channelForm.enabled" style="width: 100%">
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
@@ -267,7 +267,7 @@ const channelForm = reactive({
   currency: '',
   sort: 0,
   visible: 1,
-  status: 1,
+  enabled: 1,
   singleMinAmount: 0,
   singleMaxAmount: 0,
   dailyMaxAmount: 0,
@@ -356,7 +356,7 @@ const openChannelDialog = (row?: TenantPayChannel) => {
       currency: '',
       sort: 0,
       visible: 1,
-      status: 1,
+      enabled: 1,
       singleMinAmount: 0,
       singleMaxAmount: 0,
       dailyMaxAmount: 0,

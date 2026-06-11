@@ -27,7 +27,7 @@ const { loading, withLoading: withMainLoading } = useLoading()
 const { form: queryForm } = useForm({
   initialData: {
     keyword: '',
-    status: undefined as number | undefined,
+    enabled: undefined as number | undefined,
   },
 })
 
@@ -46,7 +46,7 @@ async function fetchList() {
     try {
       const res = await userService.getList({
         keyword: queryForm.keyword || undefined,
-        status: queryForm.status,
+        enabled: queryForm.enabled,
         cursor: pagination.cursor,
         limit: pagination.limit,
       })
@@ -64,7 +64,7 @@ function onSearch() {
 }
 function onReset() {
   queryForm.keyword = ''
-  queryForm.status = undefined
+  queryForm.enabled = undefined
   resetAndLoad(fetchList)
 }
 
@@ -81,7 +81,7 @@ const roles = ref<SysRole[]>([])
 async function fetchRoles() {
   await withRoleLoading(async () => {
     try {
-      const res = await roleService.getList({ cursor: undefined, limit: 9999, status: 1 })
+      const res = await roleService.getList({ cursor: undefined, limit: 9999, enabled: 1 })
       if (res.code !== 200) throw new Error(res.msg || 'role list failed')
       roles.value = res.data || []
     } catch (error: unknown) {
@@ -98,7 +98,7 @@ const { form: editForm } = useForm({
     username: '',
     password: '',
     nickname: '',
-    status: 1,
+    enabled: 1,
     roleIds: [] as number[],
   },
 })
@@ -110,7 +110,7 @@ function openCreate() {
   editForm.username = ''
   editForm.password = ''
   editForm.nickname = ''
-  editForm.status = 1
+  editForm.enabled = 1
   editForm.roleIds = []
   editVisible.value = true
 }
@@ -121,7 +121,7 @@ function openEdit(row: SysUserItem) {
   editForm.username = row.username
   editForm.password = ''
   editForm.nickname = row.nickname || ''
-  editForm.status = row.status
+  editForm.enabled = row.enabled
   editForm.roleIds = (row.roleIds || []).slice()
   editVisible.value = true
 }
@@ -138,7 +138,7 @@ async function submitEdit() {
           username: editForm.username,
           password: editForm.password,
           nickname: editForm.nickname || undefined,
-          status: editForm.status,
+          enabled: editForm.enabled,
           roleIds: editForm.roleIds,
         })
         if (res.code !== 200) throw new Error(res.msg || 'create failed')
@@ -146,7 +146,7 @@ async function submitEdit() {
       } else {
         const res = await userService.update(editForm.id, {
           nickname: editForm.nickname || undefined,
-          status: editForm.status,
+          enabled: editForm.enabled,
           roleIds: editForm.roleIds,
         })
         if (res.code !== 200) throw new Error(res.msg || 'update failed')
@@ -177,7 +177,7 @@ async function onDelete(row: SysUserItem) {
 
 async function onToggleStatus(row: SysUserItem) {
   try {
-    const next = row.status === 1 ? 2 : 1
+    const next = row.enabled === 1 ? 2 : 1
     const res = await userService.updateUserStatus(row.id, next)
     if (res.code !== 200) throw new Error(res.msg || 'status failed')
     ElMessage.success(t('common.success'))
@@ -395,10 +395,10 @@ onMounted(async () => {
               @keyup.enter="onSearch"
             />
             <el-select
-              v-model="queryForm.status"
+              v-model="queryForm.enabled"
               style="width: 140px"
               clearable
-              :placeholder="t('common.status')"
+              :placeholder="t('common.enabled')"
             >
               <el-option
                 v-for="o in statusOptions"
@@ -443,10 +443,10 @@ onMounted(async () => {
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.status')" width="110">
+        <el-table-column :label="t('common.enabled')" width="110">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
+            <el-tag :type="row.enabled === 1 ? 'success' : 'danger'">
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -486,7 +486,7 @@ onMounted(async () => {
                   </el-dropdown-item>
 
                   <el-dropdown-item v-perm="'sys:user:status'" divided @click="onToggleStatus(row)">
-                    {{ row.status === 1 ? t('common.disable') : t('common.enable') }}
+                    {{ row.enabled === 1 ? t('common.disable') : t('common.enable') }}
                   </el-dropdown-item>
 
                   <el-dropdown-item v-perm="'sys:user:delete'" @click="onDelete(row)">
@@ -531,8 +531,8 @@ onMounted(async () => {
         <el-form-item :label="t('common.nickname')">
           <el-input v-model="editForm.nickname" />
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-radio-group v-model="editForm.status">
+        <el-form-item :label="t('common.enabled')">
+          <el-radio-group v-model="editForm.enabled">
             <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">
               {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>

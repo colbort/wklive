@@ -34,9 +34,9 @@
             @keyup.enter="fetchList"
           />
         </el-form-item>
-        <el-form-item :label="t('system.status')">
+        <el-form-item :label="t('system.enabled')">
           <el-select
-            v-model="queryForm.status"
+            v-model="queryForm.enabled"
             :placeholder="t('system.pleaseSelectStatus')"
             clearable
             @change="fetchList"
@@ -80,10 +80,10 @@
         <el-table-column prop="tenantName" :label="t('system.tenantName')" min-width="150" />
         <el-table-column prop="contactName" :label="t('system.contactName')" min-width="120" />
         <el-table-column prop="contactPhone" :label="t('system.contactPhone')" min-width="130" />
-        <el-table-column :label="t('system.status')" width="100" align="center">
+        <el-table-column :label="t('system.enabled')" width="100" align="center">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
+            <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -231,8 +231,8 @@
 
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item :label="t('system.status')" prop="status">
-              <el-radio-group v-model="formData.status">
+            <el-form-item :label="t('system.enabled')" prop="enabled">
+              <el-radio-group v-model="formData.enabled">
                 <el-radio v-for="item in statusOptions" :key="item.value" :value="item.value">
                   {{ getOptionLabel(t, item.code, item.value) }}
                 </el-radio>
@@ -312,7 +312,7 @@ const { form: queryForm } = useForm({
     tenantCode: '',
     tenantName: '',
     contactName: '',
-    status: 0,
+    enabled: 0,
   },
 })
 
@@ -329,7 +329,7 @@ const { form: formData, reset: resetForm } = useForm({
     username: '',
     tenantName: '',
     tenantPassword: '',
-    status: 1,
+    enabled: 1,
     expireTime: Date.now() + 365 * 24 * 60 * 60 * 1000,
     contactName: '',
     contactPhone: '',
@@ -345,7 +345,7 @@ const formRules = {
   tenantPassword: [
     { required: true, message: t('common.pleaseInputNewPassword'), trigger: 'blur' },
   ],
-  status: [{ required: true, message: t('system.pleaseSelectStatus'), trigger: 'change' }],
+  enabled: [{ required: true, message: t('system.pleaseSelectStatus'), trigger: 'change' }],
   expireTime: [{ required: true, message: t('validation.required'), trigger: 'change' }],
   contactName: [{ required: true, message: t('system.pleaseInputContactName'), trigger: 'blur' }],
   contactPhone: [{ required: true, message: t('system.pleaseInputContactPhone'), trigger: 'blur' }],
@@ -359,7 +359,7 @@ async function fetchList() {
         tenantCode: queryForm.tenantCode || undefined,
         tenantName: queryForm.tenantName || undefined,
         contactName: queryForm.contactName || undefined,
-        status: queryForm.status === 0 ? undefined : queryForm.status,
+        enabled: queryForm.enabled === 0 ? undefined : queryForm.enabled,
         cursor: pagination.cursor,
         limit: pagination.limit,
       }
@@ -394,7 +394,7 @@ function handleReset() {
   queryForm.tenantCode = ''
   queryForm.tenantName = ''
   queryForm.contactName = ''
-  queryForm.status = 0
+  queryForm.enabled = 0
   resetAndLoad(fetchList)
 }
 
@@ -421,7 +421,7 @@ function handleEdit(row: SysTenantItem) {
     id: row.id,
     tenantCode: row.tenantCode,
     tenantName: row.tenantName,
-    status: row.status,
+    enabled: row.enabled,
     expireTime: row.expireTime,
     contactName: row.contactName,
     contactPhone: row.contactPhone,
@@ -463,7 +463,7 @@ async function handleSubmit() {
     if (isEdit.value) {
       const res = await tenantsService.update(formData.id, {
         tenantName: formData.tenantName,
-        status: formData.status,
+        enabled: formData.enabled,
         expireTime: formData.expireTime,
         contactName: formData.contactName,
         contactPhone: formData.contactPhone,
@@ -476,7 +476,7 @@ async function handleSubmit() {
         username: formData.username,
         tenantName: formData.tenantName,
         tenantPassword: formData.tenantPassword,
-        status: formData.status,
+        enabled: formData.enabled,
         expireTime: formData.expireTime,
         contactName: formData.contactName,
         contactPhone: formData.contactPhone,

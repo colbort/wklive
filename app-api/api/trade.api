@@ -175,7 +175,7 @@ type ContractLeverageConfig {
 	maxLeverage   int64  `json:"maxLeverage"` // 最大杠杆
 	operatorId    int64  `json:"operatorId"`
 	source        int64  `json:"source"`
-	status        int64  `json:"status"` // 状态
+	enabled       int64  `json:"enabled"` // 启用状态
 	remark        string `json:"remark"` // 备注
 	createTimes   int64  `json:"createTimes"` // 创建时间
 	updateTimes   int64  `json:"updateTimes"` // 更新时间
@@ -190,7 +190,7 @@ type TradeSymbolLeverageConfig {
 	leverageValues  []int64 `json:"leverageValues"`
 	defaultLeverage int64   `json:"defaultLeverage"`
 	maxLeverage     int64   `json:"maxLeverage"`
-	status          int64   `json:"status"`
+	enabled         int64   `json:"enabled"`
 	sort            int64   `json:"sort"`
 	remark          string  `json:"remark"`
 	createTimes     int64   `json:"createTimes"`
@@ -421,4 +421,3 @@ service app {
 	@handler SetLeverage
 	post /leverage (SetLeverageReq) returns (TradeAppCommonResp)
 }
-

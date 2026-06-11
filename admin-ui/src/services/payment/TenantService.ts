@@ -23,7 +23,7 @@ export type TenantPayPlatform = {
   id: number // 主键ID
   tenantId: number // 租户ID
   platformId: number // 平台ID
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   openStatus: number // 开通状态：1待配置 2已开通 3审核中 4驳回
   remark: string // 备注
   createTimes: number // 创建时间
@@ -46,7 +46,7 @@ export type TenantPayAccount = {
   publicKey: string // 公钥
   certCipher: string // 证书密文
   extConfig: string // 扩展配置(JSON)
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   isDefault: number // 是否默认账号：0否 1是
   remark: string // 备注
   createTimes: number // 创建时间
@@ -66,7 +66,7 @@ export type TenantPayChannel = {
   currency: string // 币种
   sort: number // 排序
   visible: number // 是否显示：0否 1是
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   singleMinAmount: number // 单笔最小金额，单位分
   singleMaxAmount: number // 单笔最大金额，单位分
   dailyMaxAmount: number // 单日最大金额，单位分
@@ -86,7 +86,7 @@ export type TenantPayChannelRule = {
   channelId: number // 通道ID
   ruleName: string // 规则名称
   priority: number // 优先级，越小越优先
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   singleAmountMin: number // 单笔充值最小金额，单位分
   singleAmountMax: number // 单笔充值最大金额，单位分
   userTotalRechargeMin: number // 用户累计充值最小金额，单位分
@@ -107,7 +107,7 @@ export type TenantPayChannelRule = {
 export type ListTenantPayPlatformsReq = {
   tenantId?: number // 租户ID
   platformId?: number // 平台ID
-  status?: number // 状态：1启用 2停用
+  enabled?: number // 状态：1启用 2停用
   openStatus?: number // 开通状态
   cursor?: number // 分页游标
   limit?: number // 分页大小
@@ -116,7 +116,7 @@ export type ListTenantPayPlatformsReq = {
 export type OpenTenantPayPlatformReq = {
   tenantId: number // 租户ID
   platformId: number // 平台ID
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   openStatus: number // 开通状态
   remark?: string // 备注
 }
@@ -124,7 +124,7 @@ export type OpenTenantPayPlatformReq = {
 export type UpdateTenantPayPlatformReq = {
   id: number // 主键ID
   tenantId: number // 租户ID
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   openStatus: number // 开通状态
   remark?: string // 备注
 }
@@ -134,7 +134,7 @@ export type ListTenantPayAccountsReq = {
   platformId?: number // 平台ID
   tenantPayPlatformId?: number // 租户开通平台ID
   keyword?: string // 关键字
-  status?: number // 状态：1启用 2停用
+  enabled?: number // 状态：1启用 2停用
   cursor?: number // 分页游标
   limit?: number // 分页大小
 }
@@ -154,7 +154,7 @@ export type CreateTenantPayAccountReq = {
   publicKey?: string // 公钥
   certCipher?: string // 证书密文
   extConfig?: string // 扩展配置(JSON)
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   isDefault: number // 是否默认账号：0否 1是
   remark?: string // 备注
 }
@@ -172,7 +172,7 @@ export type UpdateTenantPayAccountReq = {
   publicKey?: string // 公钥
   certCipher?: string // 证书密文
   extConfig?: string // 扩展配置(JSON)
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   isDefault: number // 是否默认账号：0否 1是
   remark?: string // 备注
 }
@@ -183,7 +183,7 @@ export type ListTenantPayChannelsReq = {
   productId?: number // 产品ID
   accountId?: number // 账号ID
   keyword?: string // 关键字
-  status?: number // 状态：1启用 2停用
+  enabled?: number // 状态：1启用 2停用
   visible?: number // 是否显示：0否 1是
   cursor?: number // 分页游标
   limit?: number // 分页大小
@@ -201,7 +201,7 @@ export type CreateTenantPayChannelReq = {
   currency: string // 币种
   sort: number // 排序
   visible: number // 是否显示：0否 1是
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   singleMinAmount: number // 单笔最小金额，单位分
   singleMaxAmount: number // 单笔最大金额，单位分
   dailyMaxAmount: number // 单日最大金额，单位分
@@ -222,7 +222,7 @@ export type UpdateTenantPayChannelReq = {
   currency: string // 币种
   sort: number // 排序
   visible: number // 是否显示：0否 1是
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   singleMinAmount: number // 单笔最小金额，单位分
   singleMaxAmount: number // 单笔最大金额，单位分
   dailyMaxAmount: number // 单日最大金额，单位分
@@ -237,7 +237,7 @@ export type UpdateTenantPayChannelReq = {
 export type ListTenantPayChannelRulesReq = {
   tenantId?: number // 租户ID
   channelId?: number // 通道ID
-  status?: number // 状态：1启用 2停用
+  enabled?: number // 状态：1启用 2停用
   cursor?: number // 分页游标
   limit?: number // 分页大小
 }
@@ -247,7 +247,7 @@ export type CreateTenantPayChannelRuleReq = {
   channelId: number // 通道ID
   ruleName: string // 规则名称
   priority: number // 优先级，越小越优先
-  status: number // 状态：1启用 2停用
+  enabled: number // 状态：1启用 2停用
   singleAmountMin: number // 单笔充值最小金额，单位分
   singleAmountMax: number // 单笔充值最大金额，单位分
   userTotalRechargeMin: number // 用户累计充值最小金额，单位分

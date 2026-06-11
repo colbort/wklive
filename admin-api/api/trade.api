@@ -234,7 +234,7 @@ type ContractLeverageConfig {
 	maxLeverage   int64  `json:"maxLeverage"`
 	operatorId    int64  `json:"operatorId"`
 	source        int64  `json:"source"`
-	status        int64  `json:"status"`
+	enabled       int64  `json:"enabled"`
 	remark        string `json:"remark"`
 	createTimes   int64  `json:"createTimes"`
 	updateTimes   int64  `json:"updateTimes"`
@@ -249,7 +249,7 @@ type TradeSymbolLeverageConfig {
 	leverageValues  []int64 `json:"leverageValues"`
 	defaultLeverage int64   `json:"defaultLeverage"`
 	maxLeverage     int64   `json:"maxLeverage"`
-	status          int64   `json:"status"`
+	enabled         int64   `json:"enabled"`
 	sort            int64   `json:"sort"`
 	remark          string  `json:"remark"`
 	createTimes     int64   `json:"createTimes"`
@@ -276,7 +276,7 @@ type RiskUserTradeLimit {
 	riskLevel            int64  `json:"riskLevel"`
 	operatorId           int64  `json:"operatorId"`
 	source               int64  `json:"source"`
-	status               int64  `json:"status"`
+	enabled              int64  `json:"enabled"`
 	effectiveStartTime   int64  `json:"effectiveStartTime"`
 	effectiveEndTime     int64  `json:"effectiveEndTime"`
 	remark               string `json:"remark"`
@@ -302,7 +302,7 @@ type RiskUserSymbolLimit {
 	priceDeviationRate  string `json:"priceDeviationRate"`
 	operatorId          int64  `json:"operatorId"`
 	source              int64  `json:"source"`
-	status              int64  `json:"status"`
+	enabled             int64  `json:"enabled"`
 	effectiveStartTime  int64  `json:"effectiveStartTime"`
 	effectiveEndTime    int64  `json:"effectiveEndTime"`
 	remark              string `json:"remark"`
@@ -469,7 +469,7 @@ type SetSymbolLeverageConfigReq {
 	leverageValues  []int64 `json:"leverageValues"`
 	defaultLeverage int64   `json:"defaultLeverage"`
 	maxLeverage     int64   `json:"maxLeverage"`
-	status          int64   `json:"status"`
+	enabled         int64   `json:"enabled"`
 	sort            int64   `json:"sort"`
 	remark          string  `json:"remark,optional"`
 }
@@ -493,7 +493,7 @@ type GetSymbolLeverageConfigListReq {
 	symbolId   int64 `form:"symbolId,optional"`
 	marketType int64 `form:"marketType,optional"`
 	marginMode int64 `form:"marginMode,optional"`
-	status     int64 `form:"status,optional"`
+	enabled    int64 `form:"enabled,optional"`
 }
 
 type GetSymbolLeverageConfigListResp {
@@ -637,7 +637,7 @@ type SetUserTradeLimitReq {
 	riskLevel            int64  `json:"riskLevel"`
 	operatorId           int64  `json:"operatorId"`
 	source               int64  `json:"source"`
-	status               int64  `json:"status"`
+	enabled              int64  `json:"enabled"`
 	effectiveStartTime   int64  `json:"effectiveStartTime"`
 	effectiveEndTime     int64  `json:"effectiveEndTime"`
 	remark               string `json:"remark,optional"`
@@ -660,7 +660,7 @@ type SetUserSymbolLimitReq {
 	priceDeviationRate  string `json:"priceDeviationRate"`
 	operatorId          int64  `json:"operatorId"`
 	source              int64  `json:"source"`
-	status              int64  `json:"status"`
+	enabled             int64  `json:"enabled"`
 	effectiveStartTime  int64  `json:"effectiveStartTime"`
 	effectiveEndTime    int64  `json:"effectiveEndTime"`
 	remark              string `json:"remark,optional"`
@@ -741,7 +741,7 @@ type SetUserLeverageConfigReq {
 	maxLeverage   int64  `json:"maxLeverage"`
 	operatorId    int64  `json:"operatorId"`
 	source        int64  `json:"source"`
-	status        int64  `json:"status"`
+	enabled       int64  `json:"enabled"`
 	remark        string `json:"remark,optional"`
 }
 
@@ -893,4 +893,3 @@ service admin {
 	@handler RetryTradeEvent
 	post /events/retry (RetryTradeEventReq) returns (AdminCommonResp)
 }
-

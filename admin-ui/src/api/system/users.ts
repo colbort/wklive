@@ -3,7 +3,7 @@ import type { RespBase, SysUserItem, Google2FABindInitResp } from '@/services'
 
 export function apiUserList(params: {
   keyword?: string
-  status?: number
+  enabled?: number
   cursor?: number
   limit?: number
 }): Promise<RespBase<SysUserItem[]>> {
@@ -18,7 +18,7 @@ export function apiUserCreate(data: {
   username: string
   password: string
   nickname?: string
-  status?: number
+  enabled?: number
   roleIds?: number[]
 }): Promise<RespBase> {
   return post<RespBase>('/admin/system/users', data)
@@ -27,7 +27,7 @@ export function apiUserCreate(data: {
 export function apiUserUpdate(data: {
   id: number
   nickname?: string
-  status?: number
+  enabled?: number
   roleIds?: number[]
 }): Promise<RespBase> {
   return put<RespBase>('/admin/system/users', data)
@@ -37,7 +37,7 @@ export function apiUserDelete(id: number): Promise<RespBase> {
   return del<RespBase>(`/admin/system/users/${id}`)
 }
 
-export function apiChangeUserStatus(data: { id: number; status: number }): Promise<RespBase> {
+export function apiChangeUserStatus(data: { id: number; enabled: number }): Promise<RespBase> {
   return post<RespBase>('/admin/system/users/status', data)
 }
 

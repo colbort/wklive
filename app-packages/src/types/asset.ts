@@ -10,7 +10,7 @@ export interface AssetUserAsset {
   availableAmount: string
   frozenAmount: string
   lockedAmount: string
-  status: number
+  enabled: number
   version: number
   remark: string
   createTimes: number
@@ -34,7 +34,7 @@ export interface AssetCoinConfig {
   rechargeEnabled: number
   withdrawEnabled: number
   transferEnabled: number
-  status: number
+  enabled: number
   sort: number
   remark: string
   createTimes: number

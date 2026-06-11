@@ -40,7 +40,7 @@ const query = reactive({
   tenantId: undefined as number | undefined,
   userId: undefined as number | undefined,
   keyword: '',
-  status: undefined as number | undefined,
+  enabled: undefined as number | undefined,
   limit: 20,
 })
 
@@ -55,7 +55,7 @@ type UserBankForm = {
   branchName: string
   countryCode: string
   isDefault: number
-  status: number
+  enabled: number
 }
 
 const form = reactive<UserBankForm>({
@@ -69,13 +69,13 @@ const form = reactive<UserBankForm>({
   branchName: '',
   countryCode: '',
   isDefault: 0,
-  status: 1,
+  enabled: 1,
 })
 
 const statusForm = reactive({
   id: 0,
   tenantId: 0,
-  status: 1,
+  enabled: 1,
 })
 
 const isCreate = computed(() => !form.id)
@@ -217,7 +217,7 @@ function resetQuery() {
     tenantId: undefined,
     userId: undefined,
     keyword: '',
-    status: undefined,
+    enabled: undefined,
     cursor: pagination.cursor,
     limit: pagination.limit,
   })
@@ -236,7 +236,7 @@ function openCreate() {
     branchName: '',
     countryCode: '',
     isDefault: 0,
-    status: 1,
+    enabled: 1,
   })
   resetTenantCheck()
   resetUserCheck()
@@ -284,7 +284,7 @@ async function submitEdit() {
         branchName: form.branchName || undefined,
         countryCode: form.countryCode || undefined,
         isDefault: Number(form.isDefault),
-        status: Number(form.status),
+        enabled: Number(form.enabled),
       }
       const res = await memberUserService.updateBank(Number(form.id), payload)
       if (!checkCode(res.code)) throw new Error(res.msg || t('users.updateFailed'))
@@ -307,7 +307,7 @@ async function submitEdit() {
         branchName: form.branchName || undefined,
         countryCode: form.countryCode || undefined,
         isDefault: Number(form.isDefault),
-        status: Number(form.status),
+        enabled: Number(form.enabled),
       }
       const res = await memberUserService.addBank(payload)
       if (!checkCode(res.code)) throw new Error(res.msg || t('users.createFailed'))
@@ -331,7 +331,7 @@ function openStatus(row: UserBankItem) {
   Object.assign(statusForm, {
     id: row.id,
     tenantId,
-    status: Number(row.status || 1),
+    enabled: Number(row.enabled || 1),
   })
   statusVisible.value = true
 }
@@ -340,7 +340,7 @@ async function submitStatus() {
   try {
     const res = await memberUserService.updateBankStatus(statusForm.id, {
       tenantId: Number(statusForm.tenantId),
-      status: Number(statusForm.status),
+      enabled: Number(statusForm.enabled),
     })
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.updateFailed'))
     ElMessage.success(t('users.updateSuccess'))
@@ -422,8 +422,8 @@ onMounted(fetchOptions)
         <el-form-item :label="t('common.keyword')">
           <el-input v-model="query.keyword" clearable />
         </el-form-item>
-        <el-form-item :label="t('users.status')">
-          <el-select v-model="query.status" clearable style="width: 140px">
+        <el-form-item :label="t('users.enabled')">
+          <el-select v-model="query.enabled" clearable style="width: 140px">
             <el-option
               v-for="item in bankStatusOptions"
               :key="item.value"
@@ -463,10 +463,10 @@ onMounted(fetchOptions)
             </span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('users.status')" width="90">
+        <el-table-column :label="t('users.enabled')" width="90">
           <template #default="{ row }">
-            <span :class="getBankStatusTagClass(row.status)">
-              {{ getBankStatusLabel(row.status) }}
+            <span :class="getBankStatusTagClass(row.enabled)">
+              {{ getBankStatusLabel(row.enabled) }}
             </span>
           </template>
         </el-table-column>
@@ -499,7 +499,7 @@ onMounted(fetchOptions)
               type="warning"
               @click="openStatus(row)"
             >
-              {{ t('users.status') }}
+              {{ t('users.enabled') }}
             </el-button>
             <el-button
               v-perm="'users:user:bank:default'"
@@ -612,8 +612,8 @@ onMounted(fetchOptions)
         <el-form-item :label="t('common.default')">
           <el-switch v-model="form.isDefault" :active-value="1" :inactive-value="0" />
         </el-form-item>
-        <el-form-item :label="t('users.status')">
-          <el-select v-model="form.status" style="width: 100%">
+        <el-form-item :label="t('users.enabled')">
+          <el-select v-model="form.enabled" style="width: 100%">
             <el-option
               v-for="item in bankStatusOptions"
               :key="item.value"
@@ -641,8 +641,8 @@ onMounted(fetchOptions)
 
     <el-dialog v-model="statusVisible" :title="t('users.changeBankStatus')" width="420px">
       <el-form label-width="90px">
-        <el-form-item :label="t('users.status')">
-          <el-select v-model="statusForm.status" style="width: 100%">
+        <el-form-item :label="t('users.enabled')">
+          <el-select v-model="statusForm.enabled" style="width: 100%">
             <el-option
               v-for="item in bankStatusOptions"
               :key="item.value"
@@ -699,9 +699,9 @@ onMounted(fetchOptions)
             {{ getBooleanLabel(detailData.isDefault) }}
           </span>
         </el-descriptions-item>
-        <el-descriptions-item :label="t('users.status')">
-          <span :class="getBankStatusTagClass(detailData.status)">
-            {{ getBankStatusLabel(detailData.status) }}
+        <el-descriptions-item :label="t('users.enabled')">
+          <span :class="getBankStatusTagClass(detailData.enabled)">
+            {{ getBankStatusLabel(detailData.enabled) }}
           </span>
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.createTimes')">

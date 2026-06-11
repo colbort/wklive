@@ -47,10 +47,10 @@
           </template>
         </el-table-column>
         <el-table-column prop="currency" :label="t('payment.currency')" width="100" />
-        <el-table-column :label="t('common.status')" width="100">
+        <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
+            <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -134,8 +134,8 @@
         <el-form-item :label="t('payment.currency')">
           <el-input v-model="productForm.currency" />
         </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="productForm.status" style="width: 100%">
+        <el-form-item :label="t('common.enabled')">
+          <el-select v-model="productForm.enabled" style="width: 100%">
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
@@ -212,7 +212,7 @@ const productForm = reactive({
   productName: '',
   sceneType: 1,
   currency: '',
-  status: 1,
+  enabled: 1,
   remark: '',
 })
 
@@ -252,7 +252,7 @@ const openProductDialog = (row?: PayProduct) => {
       productName: '',
       sceneType: 1,
       currency: '',
-      status: 1,
+      enabled: 1,
       remark: '',
     },
   )

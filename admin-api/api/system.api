@@ -2,14 +2,14 @@
 type SysUserListReq {
 	PageReq
 	keyword string `form:"keyword,optional"`
-	status  int64  `form:"status,optional"`
+	enabled int64  `form:"enabled,optional"`
 }
 
 type SysUserItem {
 	id               int64   `json:"id"`
 	username         string  `json:"username"`
 	nickname         string  `json:"nickname"`
-	status           int64   `json:"status"`
+	enabled          int64   `json:"enabled"`
 	roleIds          []int64 `json:"roleIds"`
 	createTimes      int64   `json:"createTimes"`
 	google2faEnabled int64   `json:"google2faEnabled"`
@@ -29,14 +29,14 @@ type SysUserCreateReq {
 	username string  `json:"username"`
 	password string  `json:"password"`
 	nickname string  `json:"nickname,optional"`
-	status   int64   `json:"status,optional"` // 1启用 0禁用
+	enabled  int64   `json:"enabled,optional"` // 0未知 1启用 2禁用
 	roleIds  []int64 `json:"roleIds,optional"`
 }
 
 type SysUserUpdateReq {
 	id       int64   `json:"id"`
 	nickname string  `json:"nickname,optional"`
-	status   int64   `json:"status,optional"`
+	enabled  int64   `json:"enabled,optional"`
 	roleIds  []int64 `json:"roleIds,optional"`
 }
 
@@ -51,7 +51,7 @@ type AssignUserRolesReq {
 
 type ChangeUserStatusReq {
 	id     int64 `json:"id"`
-	status int64 `json:"status"` // 1启用 0禁用
+	enabled int64 `json:"enabled"` // 0未知 1启用 2禁用
 }
 
 type ResetUserPwdReq {
@@ -100,7 +100,7 @@ type SysRoleItem {
 	id          int64  `json:"id"`
 	name        string `json:"name"`
 	code        string `json:"code"`
-	status      int64  `json:"status"`
+	enabled     int64  `json:"enabled"`
 	remark      string `json:"remark,optional"`
 	tenantId    int64  `json:"tenantId"`
 	createTimes int64  `json:"createTimes"`
@@ -109,7 +109,7 @@ type SysRoleItem {
 type SysRoleListReq {
 	PageReq
 	keyword string `form:"keyword,optional"`
-	status  int64  `form:"status,optional"`
+	enabled int64  `form:"enabled,optional"`
 }
 
 type SysRoleListResp {
@@ -120,14 +120,14 @@ type SysRoleListResp {
 type SysRoleCreateReq {
 	name   string `json:"name"`
 	code   string `json:"code"`
-	status int64  `json:"status,optional"`
+	enabled int64  `json:"enabled,optional"`
 	remark string `json:"remark,optional"`
 }
 
 type SysRoleUpdateReq {
 	id     int64  `json:"id"`
 	name   string `json:"name,optional"`
-	status int64  `json:"status,optional"`
+	enabled int64  `json:"enabled,optional"`
 	remark string `json:"remark,optional"`
 }
 
@@ -177,7 +177,7 @@ type SysMenuItem {
 	icon      string `json:"icon,optional"`
 	sort      int64  `json:"sort"`
 	visible   int64  `json:"visible"`
-	status    int64  `json:"status"`
+	enabled   int64  `json:"enabled"`
 	perms     string `json:"perms,optional"`
 }
 
@@ -200,7 +200,7 @@ type SysMenuCreateReq {
 	icon      string `json:"icon,optional"`
 	sort      int64  `json:"sort,optional"`
 	visible   int64  `json:"visible,optional"`
-	status    int64  `json:"status,optional"`
+	enabled   int64  `json:"enabled,optional"`
 	perms     string `json:"perms,optional"`
 }
 
@@ -215,7 +215,7 @@ type SysMenuUpdateReq {
 	icon      string `json:"icon,optional"`
 	sort      int64  `json:"sort,optional"`
 	visible   int64  `json:"visible,optional"`
-	status    int64  `json:"status,optional"`
+	enabled   int64  `json:"enabled,optional"`
 	perms     string `json:"perms,optional"`
 }
 
@@ -226,7 +226,7 @@ type SysMenuDeleteReq {
 type SysMenuListReq {
 	PageReq
 	keyword  string `form:"keyword,optional"` // 按 name/perms 模糊
-	status   int64  `form:"status,optional"` // 0/1
+	enabled  int64  `form:"enabled,optional"` // 0未知 1启用 2禁用
 	visible  int64  `form:"visible,optional"` // 0/1
 	menuType int64  `form:"menuType,optional"` // 1/2/3
 }
@@ -474,7 +474,7 @@ type SysTenantCreateReq {
 	username       string `json:"username"`
 	tenantName     string `json:"tenantName"`
 	tenantPassword string `json:"tenantPassword"`
-	status         int64  `json:"status"`
+	enabled        int64  `json:"enabled"`
 	expireTime     int64  `json:"expireTime"`
 	contactName    string `json:"contactName,optional"`
 	contactPhone   string `json:"contactPhone,optional"`
@@ -485,7 +485,7 @@ type SysTenantUpdateReq {
 	id             int64  `json:"id"`
 	tenantName     string `json:"tenantName,optional"`
 	tenantPassword string `json:"tenantPassword,optional"`
-	status         int64  `json:"status,optional"`
+	enabled        int64  `json:"enabled,optional"`
 	expireTime     int64  `json:"expireTime,optional"`
 	contactName    string `json:"contactName,optional"`
 	contactPhone   string `json:"contactPhone,optional"`
@@ -500,7 +500,7 @@ type SysTenantItem {
 	id           int64  `json:"id"`
 	tenantCode   string `json:"tenantCode"`
 	tenantName   string `json:"tenantName"`
-	status       int64  `json:"status"`
+	enabled      int64  `json:"enabled"`
 	expireTime   int64  `json:"expireTime"`
 	contactName  string `json:"contactName,optional"`
 	contactPhone string `json:"contactPhone,optional"`
@@ -512,7 +512,7 @@ type SysTenantItem {
 type SysTenantListReq {
 	PageReq
 	keyword      string `form:"keyword,optional"` // 按 tenant_code/tenant_name/contact_name/contact_phone 模糊
-	status       int64  `form:"status,optional"` // 0/1
+	enabled      int64  `form:"enabled,optional"` // 0全部 1启用 2禁用
 	tenantCode   string `form:"tenantCode,optional"`
 	tenantName   string `form:"tenantName,optional"`
 	contactName  string `form:"contactName,optional"`

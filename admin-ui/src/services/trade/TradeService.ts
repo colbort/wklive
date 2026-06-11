@@ -47,7 +47,7 @@ export type TradeSymbol = {
   quoteAsset: string
   settleAsset: string
   contractType: number
-  status: number
+  enabled: number
   priceScale: number
   qtyScale: number
   minPrice: string
@@ -107,7 +107,7 @@ export type TradeSymbolLeverageConfig = {
   leverageValues: number[]
   defaultLeverage: number
   maxLeverage: number
-  status: number
+  enabled: number
   sort: number
   remark: string
   createTimes: number
@@ -296,7 +296,7 @@ export type ContractLeverageConfig = {
   maxLeverage: number
   operatorId: number
   source: number
-  status: number // 状态
+  enabled: number // 启用状态
   remark: string // 备注
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
@@ -322,7 +322,7 @@ export type RiskUserTradeLimit = {
   riskLevel: number
   operatorId: number
   source: number
-  status: number // 状态
+  enabled: number // 启用状态
   effectiveStartTime: number
   effectiveEndTime: number
   remark: string
@@ -348,7 +348,7 @@ export type RiskUserSymbolLimit = {
   priceDeviationRate: string
   operatorId: number
   source: number
-  status: number
+  enabled: number
   effectiveStartTime: number
   effectiveEndTime: number
   remark: string
@@ -456,7 +456,7 @@ export type GetSymbolLeverageConfigListReq = {
   symbolId?: number
   marketType?: number
   marginMode?: number
-  status?: number
+  enabled?: number
 }
 
 export type GetOrderListAdminReq = {

@@ -303,7 +303,7 @@ type AssetCoinConfig struct {
 	RechargeEnabled int64  `json:"rechargeEnabled"` // 充值页是否展示
 	WithdrawEnabled int64  `json:"withdrawEnabled"` // 提现页是否展示
 	TransferEnabled int64  `json:"transferEnabled"` // 划转页是否展示
-	Status          int64  `json:"status"`          // 状态
+	Enabled         int64  `json:"enabled"`         // 启用状态
 	Sort            int64  `json:"sort"`            // 排序
 	Remark          string `json:"remark"`          // 备注
 	CreateTimes     int64  `json:"createTimes"`     // 创建时间
@@ -392,7 +392,7 @@ type AssetUserAsset struct {
 	AvailableAmount string `json:"availableAmount"` // 可用资产
 	FrozenAmount    string `json:"frozenAmount"`    // 冻结资产
 	LockedAmount    string `json:"lockedAmount"`    // 锁定资产
-	Status          int64  `json:"status"`          // 状态
+	Enabled         int64  `json:"enabled"`         // 启用状态
 	Version         int64  `json:"version"`         // 乐观锁版本号
 	Remark          string `json:"remark"`          // 备注
 	CreateTimes     int64  `json:"createTimes"`     // 创建时间
@@ -475,7 +475,7 @@ type ContractLeverageConfig struct {
 	MaxLeverage   int64  `json:"maxLeverage"`   // 最大杠杆
 	OperatorId    int64  `json:"operatorId"`
 	Source        int64  `json:"source"`
-	Status        int64  `json:"status"`      // 状态
+	Enabled       int64  `json:"enabled"`     // 启用状态
 	Remark        string `json:"remark"`      // 备注
 	CreateTimes   int64  `json:"createTimes"` // 创建时间
 	UpdateTimes   int64  `json:"updateTimes"` // 更新时间
@@ -1712,12 +1712,13 @@ type SubmitIdentityResp struct {
 }
 
 type SystemCore struct {
-	IsCaptchaEnabled  bool       `json:"isCaptchaEnabled"`  // 是否开启验证码
-	IsRegisterEnabled bool       `json:"isRegisterEnabled"` // 是否开启注册
-	IsGuestEnabled    bool       `json:"isGuestEnabled"`    // 是否允许游客登录
-	IsCryptoEnabled   bool       `json:"isCryptoEnabled"`   // 是否加密接口提交数据
-	AssetUrl          string     `json:"assetUrl,optional"` // 对象存储访问地址
-	Intervals         []Interval `json:"intervals"`         // kline 支持粒度
+	IsCaptchaEnabled  bool           `json:"isCaptchaEnabled"`  // 是否开启验证码
+	IsRegisterEnabled bool           `json:"isRegisterEnabled"` // 是否开启注册
+	IsGuestEnabled    bool           `json:"isGuestEnabled"`    // 是否允许游客登录
+	IsCryptoEnabled   bool           `json:"isCryptoEnabled"`   // 是否加密接口提交数据
+	AssetUrl          string         `json:"assetUrl,optional"` // 对象存储访问地址
+	Intervals         []Interval     `json:"intervals"`         // kline 支持粒度
+	Options           []OptionsGroup `json:"options"`
 }
 
 type TenantInfo struct {
@@ -1856,7 +1857,7 @@ type TradeSymbolLeverageConfig struct {
 	LeverageValues  []int64 `json:"leverageValues"`
 	DefaultLeverage int64   `json:"defaultLeverage"`
 	MaxLeverage     int64   `json:"maxLeverage"`
-	Status          int64   `json:"status"`
+	Enabled         int64   `json:"enabled"`
 	Sort            int64   `json:"sort"`
 	Remark          string  `json:"remark"`
 	CreateTimes     int64   `json:"createTimes"`
@@ -1979,7 +1980,7 @@ type UserBank struct {
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
 	IsDefault   int64  `json:"isDefault"`
-	Status      int64  `json:"status"`
+	Enabled     int64  `json:"enabled"`
 	CreateTimes int64  `json:"createTimes,optional"`
 	UpdateTimes int64  `json:"updateTimes,optional"`
 }
@@ -1995,7 +1996,7 @@ type UserBankListItem struct {
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
 	IsDefault   int64  `json:"isDefault"`
-	Status      int64  `json:"status"`
+	Enabled     int64  `json:"enabled"`
 	CreateTimes int64  `json:"createTimes,optional"`
 	UpdateTimes int64  `json:"updateTimes,optional"`
 }

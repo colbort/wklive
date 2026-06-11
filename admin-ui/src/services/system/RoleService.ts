@@ -16,7 +16,7 @@ export type SysRole = {
   name: string
   code: string
   remark?: string
-  status?: number
+  enabled?: number
   tenantId?: number
   isSuper?: boolean // 可选：如果后端有的话
 }
@@ -28,13 +28,13 @@ export type RoleListResp = {
   total: number
 }
 
-export type RoleItem = { id: number; name: string; code: string; status: number; remark?: string }
+export type RoleItem = { id: number; name: string; code: string; enabled: number; remark?: string }
 
 export interface CreateRoleRequest {
   name: string
   code: string
   description?: string
-  status?: number
+  enabled?: number
   menuIds?: number[]
   permIds?: number[]
 }
@@ -44,14 +44,14 @@ export interface UpdateRoleRequest {
   name?: string
   code?: string
   description?: string
-  status?: number
+  enabled?: number
   menuIds?: number[]
   permIds?: number[]
 }
 
 export type RoleQueryParams = {
   keyword?: string
-  status?: number
+  enabled?: number
   cursor?: number
   limit?: number
 }

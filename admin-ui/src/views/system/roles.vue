@@ -35,7 +35,7 @@ const { pagination, updateFromResponse, resetAndLoad, nextAndLoad, prevAndLoad }
 const { loading, withLoading } = useLoading()
 const { confirm } = useConfirm()
 const { form: queryForm } = useForm({
-  initialData: { keyword: '', status: 0 as 0 | 1 | 2 },
+  initialData: { keyword: '', enabled: 0 as 0 | 1 | 2 },
 })
 
 const tableData = ref<SysRole[]>([])
@@ -46,11 +46,11 @@ async function fetchList() {
     try {
       const q: RoleQueryParams = {
         keyword: queryForm.keyword,
-        status: queryForm.status,
+        enabled: queryForm.enabled,
         cursor: pagination.cursor,
         limit: pagination.limit,
       }
-      if (q.status === 0) delete q.status
+      if (q.enabled === 0) delete q.enabled
 
       const resp = await roleService.getList(q)
       tableData.value = resp.data || []
@@ -108,7 +108,7 @@ function onSearch() {
 
 function onReset() {
   queryForm.keyword = ''
-  queryForm.status = 0
+  queryForm.enabled = 0
   onSearch()
 }
 
@@ -129,7 +129,7 @@ const { form: editForm } = useForm({
     name: '',
     code: '',
     remark: '',
-    status: 1 as 1 | 2,
+    enabled: 1 as 1 | 2,
   },
 })
 const editIsUpdate = computed(() => editForm.id > 0)
@@ -140,7 +140,7 @@ function openCreate() {
   editForm.name = ''
   editForm.code = ''
   editForm.remark = ''
-  editForm.status = 1
+  editForm.enabled = 1
   editVisible.value = true
 }
 function openUpdate(row: SysRole) {
@@ -149,7 +149,7 @@ function openUpdate(row: SysRole) {
   editForm.name = row.name
   editForm.code = row.code
   editForm.remark = row.remark || ''
-  editForm.status = row.status === 2 ? 2 : 1
+  editForm.enabled = row.enabled === 2 ? 2 : 1
   editVisible.value = true
 }
 
@@ -366,9 +366,9 @@ onMounted(async () => {
         />
 
         <el-select
-          v-model="queryForm.status"
+          v-model="queryForm.enabled"
           style="width: 140px"
-          :placeholder="t('common.status')"
+          :placeholder="t('common.enabled')"
           @change="onSearch"
         >
           <el-option :label="t('common.all')" :value="0" />
@@ -393,10 +393,10 @@ onMounted(async () => {
         <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
         <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
 
-        <el-table-column :label="t('common.status')" width="110">
+        <el-table-column :label="t('common.enabled')" width="110">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
+            <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -478,11 +478,11 @@ onMounted(async () => {
         </el-form-item>
 
         <el-form-item
-          :label="t('common.status')"
-          prop="status"
+          :label="t('common.enabled')"
+          prop="enabled"
           :rules="[{ required: true, message: t('common.required') }]"
         >
-          <el-radio-group v-model="editForm.status">
+          <el-radio-group v-model="editForm.enabled">
             <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">
               {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
