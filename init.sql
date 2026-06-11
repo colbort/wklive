@@ -829,5 +829,5 @@ INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, compo
 VALUES (11100, 10000, '验证码记录', 2, 'GET', '/system/verification-codes', 'sys:verification-code:list', 'system/verification-codes', 'Message', 11100);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(11101, 11100, '验证码详情', 3, 'GET', '/system/verification-codes/records/{id}', 'sys:verification-code:detail', 11101),
+(11101, 11100, '验证码详情', 3, 'GET', '/system/verification-codes/{id}', 'sys:verification-code:detail', 11101),
 (11102, 11100, '测试发送验证码', 3, 'POST', '/system/verification-codes/test', 'sys:verification-code:test', 11102);
