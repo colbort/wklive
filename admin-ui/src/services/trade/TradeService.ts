@@ -47,7 +47,7 @@ export type TradeSymbol = {
   quoteAsset: string
   settleAsset: string
   contractType: number
-  enabled: number
+  status: number
   priceScale: number
   qtyScale: number
   minPrice: string

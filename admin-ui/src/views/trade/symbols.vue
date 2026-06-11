@@ -858,7 +858,7 @@ interface SymbolForm {
   quoteAsset: string
   settleAsset: string
   contractType: number
-  enabled: number
+  status: number
   priceScale: number
   qtyScale: number
   minPrice: string
@@ -909,7 +909,7 @@ interface LeverageForm {
   leverageValues: number[]
   defaultLeverage: number
   maxLeverage: number
-  status: number
+  enabled: number
   sort: number
   remark: string
 }
@@ -1060,7 +1060,7 @@ const getDefaultLeverageForm = (
     leverageValues: values,
     defaultLeverage: values[0] || 1,
     maxLeverage: Math.max(1, Number(row?.maxLeverage || values[values.length - 1] || 1)),
-    status: 1,
+    enabled: 1,
     sort: marginMode,
     remark: '',
   }

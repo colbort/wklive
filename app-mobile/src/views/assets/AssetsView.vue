@@ -143,7 +143,7 @@ const displayedAssets = computed(() => {
           rechargeEnabled: 1,
           withdrawEnabled: 1,
           transferEnabled: 1,
-          status: asset.enabled || 1,
+          enabled: asset.enabled || 1,
           sort: 0,
           remark: '',
           createTimes: asset.createTimes,
