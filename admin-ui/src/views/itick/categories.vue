@@ -40,7 +40,7 @@
             style="width: 180px"
           >
             <el-option
-              v-for="item in statusOptions"
+              v-for="item in enabledOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -88,7 +88,7 @@
         <el-table-column :label="t('itick.enabledStatus')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
+              {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -215,7 +215,7 @@
 
         <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
           <el-radio-group v-model="form.enabled">
-            <el-radio v-for="item in statusOptions" :key="item.value" :value="item.value">
+            <el-radio v-for="item in enabledOptions" :key="item.value" :value="item.value">
               {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
@@ -307,7 +307,7 @@
           {{ detail.categoryName || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.enabledStatus')">
-          {{ getOptionValueLabel(optionGroups, 'status', detail.enabled, t) || '-' }}
+          {{ getOptionValueLabel(optionGroups, 'enabled', detail.enabled, t) || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.appVisible')">
           {{ getOptionValueLabel(optionGroups, 'visible', detail.appVisible, t) || '-' }}
@@ -419,7 +419,7 @@ const formDialogVisible = ref(false)
 const detailDialogVisible = ref(false)
 const formMode = ref<'add' | 'edit'>('add')
 const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'categoryType'))
-const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
 const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
 

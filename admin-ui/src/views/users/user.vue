@@ -203,7 +203,7 @@ function getGuestTagClass(value?: number) {
   return Number(value) === 2 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
 }
 
-function getBankStatusTagClass(value?: number) {
+function getBankEnabledTagClass(value?: number) {
   const bankStatusMap: Record<number, string> = {
     1: 'option-tag option-tag--green',
     2: 'option-tag option-tag--red',
@@ -211,7 +211,7 @@ function getBankStatusTagClass(value?: number) {
   return bankStatusMap[Number(value ?? 0)] || 'option-tag'
 }
 
-function getBankStatusLabel(value?: number) {
+function getBankEnabledLabel(value?: number) {
   return getOptionValueLabel(optionGroups.value, 'bankStatus', value, t)
 }
 
@@ -1168,10 +1168,10 @@ onMounted(fetchCreateOptions)
                     </span>
                   </template>
                 </el-table-column>
-                <el-table-column :label="t('users.status')" width="90">
+                <el-table-column :label="t('users.enabled')" width="90">
                   <template #default="{ row }">
-                    <span :class="getBankStatusTagClass(row.status)">
-                      {{ getBankStatusLabel(row.status) }}
+                    <span :class="getBankEnabledTagClass(row.enabled)">
+                      {{ getBankEnabledLabel(row.enabled) }}
                     </span>
                   </template>
                 </el-table-column>

@@ -8,7 +8,6 @@ import type {
   UpdateCategoryReq,
   SyncCategoryProductsReq,
   SyncCategoryProductsResp,
-  OptionGroup,
 } from '@/services'
 
 export function apiItickCategoryList(

@@ -1103,7 +1103,7 @@ export default {
     bankDetail: '银行卡详情',
     editBank: '编辑银行卡',
     addBank: '新增银行卡',
-    changeBankStatus: '修改银行卡状态',
+    changeBankEnabled: '修改银行卡启用状态',
     confirmTenant: '确认租户',
     confirmUser: '确认用户',
     tenantConfirmed: '已确认租户：{name}',

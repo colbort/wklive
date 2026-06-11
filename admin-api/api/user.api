@@ -288,7 +288,7 @@ type ResetLoginPasswordReq {
 type ResetPayPasswordReq {
 	tenantId       int64  `json:"tenantId"`
 	userId         int64  `path:"userId"`
-	newPayPassword string `json:"newPayPassword"`
+	newPassword    string `json:"newPassword"`
 }
 
 type UnlockUserReq {

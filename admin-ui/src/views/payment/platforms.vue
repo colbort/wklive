@@ -22,7 +22,7 @@
           <el-select v-model="platformQuery.enabled" clearable style="width: 160px">
             <el-option :label="t('payment.all')" :value="0" />
             <el-option
-              v-for="item in statusOptions"
+              v-for="item in enabledOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -73,7 +73,7 @@
         <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
+              {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -184,7 +184,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="platformForm.enabled" style="width: 100%">
             <el-option
-              v-for="item in statusOptions"
+              v-for="item in enabledOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -284,7 +284,7 @@ const platformDialogVisible = ref(false)
 const selectedPlatformCode = ref('')
 const optionGroups = ref<OptionGroup[]>([])
 const platformTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'platformType'))
-const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const detailDisplayData = computed(() => {
   if (!detailData.value) return null
 

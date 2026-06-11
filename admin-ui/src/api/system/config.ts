@@ -5,7 +5,6 @@ import type {
   SysConfigItem,
   SysConfigCreateReq,
   SysConfigUpdateReq,
-  OptionGroup,
 } from '@/services'
 
 // ===== API 函数 =====

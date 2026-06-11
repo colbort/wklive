@@ -51,7 +51,7 @@ function getBooleanTagClass(value?: number) {
   return Number(value) === 1 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
 }
 
-function getBankStatusTagClass(value?: number) {
+function getBankEnabledTagClass(value?: number) {
   const bankStatusMap: Record<number, string> = {
     1: 'option-tag option-tag--green',
     2: 'option-tag option-tag--red',
@@ -59,7 +59,7 @@ function getBankStatusTagClass(value?: number) {
   return bankStatusMap[Number(value ?? 0)] || 'option-tag'
 }
 
-function getBankStatusLabel(value?: number) {
+function getBankEnabledLabel(value?: number) {
   return getOptionValueLabel(optionGroups.value, 'bankStatus', value, t)
 }
 
@@ -399,19 +399,19 @@ onMounted(fetchOptions)
               {{ detailData.user.lastLoginIp || '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.lastLoginTime')">
-              {{ formatDate(detailData.user.lastLoginTime) }}
+              {{ detailData.user.lastLoginTime ? formatDate(detailData.user.lastLoginTime) : '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.registerIp')">
               {{ detailData.user.registerIp || '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.registerTime')">
-              {{ formatDate(detailData.user.registerTime) }}
+              {{ detailData.user.registerTime ? formatDate(detailData.user.registerTime) : '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('common.createTimes')">
-              {{ formatDate(detailData.user.createTimes) }}
+              {{ detailData.user.createTimes ? formatDate(detailData.user.createTimes) : '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('common.updateTimes')">
-              {{ formatDate(detailData.user.updateTimes) }}
+              {{ detailData.user.updateTimes ? formatDate(detailData.user.updateTimes) : '--' }}
             </el-descriptions-item>
           </el-descriptions>
         </el-tab-pane>
@@ -579,10 +579,10 @@ onMounted(fetchOptions)
                 </span>
               </template>
             </el-table-column>
-            <el-table-column :label="t('users.status')" width="90">
+            <el-table-column :label="t('users.enabled')" width="90">
               <template #default="{ row }">
-                <span :class="getBankStatusTagClass(row.status)">
-                  {{ getBankStatusLabel(row.status) }}
+                <span :class="getBankEnabledTagClass(row.enabled)">
+                  {{ getBankEnabledLabel(row.enabled) }}
                 </span>
               </template>
             </el-table-column>

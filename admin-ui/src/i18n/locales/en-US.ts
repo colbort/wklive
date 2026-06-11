@@ -1104,7 +1104,7 @@ export default {
     bankDetail: 'Bank Detail',
     editBank: 'Edit Bank Card',
     addBank: 'Add Bank Card',
-    changeBankStatus: 'Change Bank Card Status',
+    changeBankEnabled: 'Change Bank Card Enabled Status',
     confirmTenant: 'Confirm Tenant',
     confirmUser: 'Confirm User',
     tenantConfirmed: 'Tenant confirmed: {name}',

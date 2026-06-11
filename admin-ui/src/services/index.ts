@@ -359,6 +359,6 @@ export type {
   ListMemberUserBanksReq,
   AddUserBankReq,
   UpdateMemberUserBankReq,
-  UpdateMemberUserBankStatusReq,
+  UpdateMemberUserBankEnabledReq,
   SetDefaultUserBankReq,
 } from './member/MemberUserService'

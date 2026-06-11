@@ -25,7 +25,6 @@ import type {
   GetUserSymbolLimitReq,
   GetUserTradeConfigReq,
   GetUserTradeLimitReq,
-  OptionGroup,
   RespBase,
   RetryTradeEventReq,
   RiskOrderCheckLog,

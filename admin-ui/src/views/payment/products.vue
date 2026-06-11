@@ -50,7 +50,7 @@
         <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
+              {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -137,7 +137,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="productForm.enabled" style="width: 100%">
             <el-option
-              v-for="item in statusOptions"
+              v-for="item in enabledOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -195,7 +195,7 @@ const platformChecking = ref(false)
 const platformVerified = ref(false)
 const verifiedPlatformId = ref(0)
 const optionGroups = ref<OptionGroup[]>([])
-const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const sceneTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'sceneType'))
 const isSubmitDisabled = computed(
   () =>

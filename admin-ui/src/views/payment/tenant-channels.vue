@@ -43,8 +43,8 @@
         <el-table-column prop="currency" :label="t('payment.currency')" width="90" />
         <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
-            <el-tag :class="getStatusTagClass(row.enabled)" disable-transitions>
-              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
+            <el-tag :class="getEnabledTagClass(row.enabled)" disable-transitions>
+              {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -166,7 +166,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="channelForm.enabled" style="width: 100%">
             <el-option
-              v-for="item in statusOptions"
+              v-for="item in enabledOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -248,7 +248,7 @@ const detailData = ref<TenantPayChannel | null>(null)
 const channelDialogVisible = ref(false)
 
 const optionGroups = ref<OptionGroup[]>([])
-const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
 const feeTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'feeType'))
 
@@ -544,7 +544,7 @@ const showChannelDetail = async (row: TenantPayChannel) => {
   detailVisible.value = true
 }
 
-function getStatusTagClass(value?: number) {
+function getEnabledTagClass(value?: number) {
   const num = Number(value ?? 0)
   if (num === 1) return 'option-tag option-tag--green'
   if (num === 2) return 'option-tag option-tag--red'

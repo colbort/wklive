@@ -6,7 +6,7 @@ import {
   apiMemberUserBankList,
   apiMemberUserBankSetDefault,
   apiMemberUserBankUpdate,
-  apiMemberUserBankUpdateStatus,
+  apiMemberUserBankUpdateEnabled,
   apiMemberUserCheckReferrer,
   apiMemberUserCreate,
   apiMemberUserDelete,
@@ -38,30 +38,30 @@ export type UserBase = {
   tenantId: number // 租户ID
   userNo: string // 用户编号
   username: string // 用户名
-  nickname: string // 昵称
-  avatar: string // 头像
+  nickname?: string // 昵称
+  avatar?: string // 头像
   passwordHash: string // 登录密码哈希
-  language: string // 语言
-  timezone: string // 时区
-  inviteCode: string // 邀请码
-  signature: string // 个性签名
+  language?: string // 语言
+  timezone?: string // 时区
+  inviteCode?: string // 邀请码
+  signature?: string // 个性签名
   registerType: number // 注册方式
   status: number // 用户状态
   memberLevel: number // 会员等级
-  source: string // 注册来源
-  referrerUserId: number // 邀请人ID
-  lastLoginIp: string // 最后登录IP
-  lastLoginTime: number // 最后登录时间
-  registerIp: string // 注册IP
-  registerTime: number // 注册时间
+  source?: string // 注册来源
+  referrerUserId?: number // 邀请人ID
+  lastLoginIp?: string // 最后登录IP
+  lastLoginTime?: number // 最后登录时间
+  registerIp?: string // 注册IP
+  registerTime?: number // 注册时间
   isGuest: number // 是否游客
   isRecharge: number // 是否已充值
   deviceId: string // 设备ID
   fingerprint: string // 浏览器指纹
-  remark: string // 备注
+  remark?: string // 备注
   deleted: number // 是否删除
-  createTimes: number // 创建时间
-  updateTimes: number // 更新时间
+  createTimes?: number // 创建时间
+  updateTimes?: number // 更新时间
 }
 
 export type UserIdentity = {
@@ -320,7 +320,7 @@ export type AddUserBankReq = {
 
 export type UpdateMemberUserBankReq = AddUserBankReq
 
-export type UpdateMemberUserBankStatusReq = {
+export type UpdateMemberUserBankEnabledReq = {
   tenantId: number // 租户ID
   enabled: number // 银行卡启用状态
 }
@@ -415,8 +415,8 @@ export class MemberUserService {
     return apiMemberUserBankDelete(id, tenantId)
   }
 
-  updateBankStatus(id: number, data: UpdateMemberUserBankStatusReq) {
-    return apiMemberUserBankUpdateStatus(id, data)
+  updateBankEnabled(id: number, data: UpdateMemberUserBankEnabledReq) {
+    return apiMemberUserBankUpdateEnabled(id, data)
   }
 
   setDefaultBank(id: number, data: SetDefaultUserBankReq) {

@@ -21,7 +21,7 @@ type RoleMenuNode = MenuNode & {
 // ===== i18n =====
 const { t } = useI18n()
 const optionGroups = ref<OptionGroup[]>([])
-const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 
 // ===== helpers =====
 function isSuperRole(r: SysRole | null | undefined) {
@@ -373,7 +373,7 @@ onMounted(async () => {
         >
           <el-option :label="t('common.all')" :value="0" />
           <el-option
-            v-for="item in statusOptions"
+            v-for="item in enabledOptions"
             :key="item.value"
             :label="getOptionLabel(t, item.code, item.value)"
             :value="item.value"
@@ -396,7 +396,7 @@ onMounted(async () => {
         <el-table-column :label="t('common.enabled')" width="110">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
+              {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -483,7 +483,7 @@ onMounted(async () => {
           :rules="[{ required: true, message: t('common.required') }]"
         >
           <el-radio-group v-model="editForm.enabled">
-            <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">
+            <el-radio v-for="item in enabledOptions" :key="item.value" :label="item.value">
               {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>

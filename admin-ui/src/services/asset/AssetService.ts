@@ -149,7 +149,7 @@ export type PageUserAssetsReq = {
   userId?: number // 用户ID
   walletType?: number // 钱包类型
   coin?: string // 币种
-  status?: number // 状态
+  enabled?: number // 启用状态
 }
 
 export type GetUserAssetDetailReq = {
@@ -193,7 +193,7 @@ export type PageAssetLocksReq = {
   coin?: string // 币种
   bizType?: number // 业务类型
   bizNo?: string // 业务单号
-  enabled?: number // 启用状态
+  status?: number // 状态
 }
 
 export type PageAssetCoinConfigsReq = {

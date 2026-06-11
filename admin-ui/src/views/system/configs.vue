@@ -314,10 +314,10 @@ const keys = ref<OptionItem[]>([])
 const systemCoreForm = ref<SystemCore>({
   site_name: '',
   site_logo: '',
-  is_captcha_enabled: false,
-  is_register_enabled: false,
-  is_guest_enabled: false,
-  is_crypto_enabled: false,
+  is_captcha_enabled: 2,
+  is_register_enabled: 2,
+  is_guest_enabled: 2,
+  is_crypto_enabled: 2,
 })
 
 const activeTab = ref('aliyun')
@@ -372,7 +372,7 @@ const withdrawConfigForm = ref<WithdrawConfig>({
 })
 
 const emailConfigForm = ref<EmailConfig>({
-  enabled: false,
+  enabled: 2,
   smtp_host: '',
   smtp_port: 587,
   username: '',
@@ -384,7 +384,7 @@ const emailConfigForm = ref<EmailConfig>({
 })
 
 const phoneConfigForm = ref<PhoneConfig>({
-  enabled: false,
+  enabled: 2,
   provider: '',
   endpoint: '',
   method: 'POST',
@@ -394,6 +394,12 @@ const phoneConfigForm = ref<PhoneConfig>({
 
 const configNumber = (data: Record<string, unknown>, camelKey: string, snakeKey: string) =>
   Number(data[camelKey] ?? data[snakeKey] ?? 0)
+
+function enableValue(value: unknown) {
+  if (value === true || value === 1 || value === '1') return 1
+  if (value === false || value === 2 || value === '2') return 2
+  return 2
+}
 
 // Form validation rules
 const formRules = {
@@ -442,10 +448,10 @@ function resetTypeForms() {
   systemCoreForm.value = {
     site_name: '',
     site_logo: '',
-    is_captcha_enabled: false,
-    is_register_enabled: false,
-    is_guest_enabled: false,
-    is_crypto_enabled: false,
+    is_captcha_enabled: 2,
+    is_register_enabled: 2,
+    is_guest_enabled: 2,
+    is_crypto_enabled: 2,
   }
   objectStorageForm.value = {
     aliyun_oss: {
@@ -493,7 +499,7 @@ function resetTypeForms() {
     freeWithdrawTimesPerDay: 0,
   }
   emailConfigForm.value = {
-    enabled: false,
+    enabled: 2,
     smtp_host: '',
     smtp_port: 587,
     username: '',
@@ -504,7 +510,7 @@ function resetTypeForms() {
     body_template: 'Your verification code is {{code}}',
   }
   phoneConfigForm.value = {
-    enabled: false,
+    enabled: 2,
     provider: '',
     endpoint: '',
     method: 'POST',
@@ -518,10 +524,10 @@ function handleConfigKeyChange(value: string) {
     systemCoreForm.value = {
       site_name: '',
       site_logo: '',
-      is_captcha_enabled: false,
-      is_register_enabled: false,
-      is_guest_enabled: false,
-      is_crypto_enabled: false,
+      is_captcha_enabled: 2,
+      is_register_enabled: 2,
+      is_guest_enabled: 2,
+      is_crypto_enabled: 2,
     }
     formData.configValue = ''
   } else if (value === 'OBJECT_STORAGE') {
@@ -579,7 +585,7 @@ function handleConfigKeyChange(value: string) {
     formData.configValue = ''
   } else if (value === 'EMAIL_CONFIG') {
     emailConfigForm.value = {
-      enabled: false,
+      enabled: 2,
       smtp_host: '',
       smtp_port: 587,
       username: '',
@@ -592,7 +598,7 @@ function handleConfigKeyChange(value: string) {
     formData.configValue = ''
   } else if (value === 'PHONE_CONFIG') {
     phoneConfigForm.value = {
-      enabled: false,
+      enabled: 2,
       provider: '',
       endpoint: '',
       method: 'POST',
@@ -641,19 +647,19 @@ function handleEdit(row: SysConfigItem) {
       systemCoreForm.value = {
         site_name: parsed.site_name || '',
         site_logo: parsed.site_logo || '',
-        is_captcha_enabled: Boolean(parsed.is_captcha_enabled),
-        is_register_enabled: Boolean(parsed.is_register_enabled),
-        is_guest_enabled: Boolean(parsed.is_guest_enabled),
-        is_crypto_enabled: Boolean(parsed.is_crypto_enabled),
+        is_captcha_enabled: enableValue(parsed.is_captcha_enabled),
+        is_register_enabled: enableValue(parsed.is_register_enabled),
+        is_guest_enabled: enableValue(parsed.is_guest_enabled),
+        is_crypto_enabled: enableValue(parsed.is_crypto_enabled),
       }
     } catch {
       systemCoreForm.value = {
         site_name: '',
         site_logo: '',
-        is_captcha_enabled: false,
-        is_register_enabled: false,
-        is_guest_enabled: false,
-        is_crypto_enabled: false,
+        is_captcha_enabled: 2,
+        is_register_enabled: 2,
+        is_guest_enabled: 2,
+        is_crypto_enabled: 2,
       }
     }
   } else if (row.configKey === 'OBJECT_STORAGE') {
@@ -743,7 +749,7 @@ function handleEdit(row: SysConfigItem) {
     try {
       const parsed = JSON.parse(row.configValue || '{}')
       emailConfigForm.value = {
-        enabled: Boolean(parsed.enabled),
+        enabled: enableValue(parsed.enabled),
         smtp_host: parsed.smtp_host || '',
         smtp_port: Number(parsed.smtp_port || 587),
         username: parsed.username || '',
@@ -760,7 +766,7 @@ function handleEdit(row: SysConfigItem) {
     try {
       const parsed = JSON.parse(row.configValue || '{}')
       phoneConfigForm.value = {
-        enabled: Boolean(parsed.enabled),
+        enabled: enableValue(parsed.enabled),
         provider: parsed.provider || '',
         endpoint: parsed.endpoint || '',
         method: parsed.method || 'POST',

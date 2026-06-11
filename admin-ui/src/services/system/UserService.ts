@@ -5,7 +5,7 @@ import {
   apiUserCreate,
   apiUserUpdate,
   apiUserDelete,
-  apiChangeUserStatus,
+  apiChangeUserEnabled,
   apiResetUserPwd,
   apiAssignUserRoles,
   apiGoogle2faInit,
@@ -124,10 +124,10 @@ export class UserService implements BaseService {
   }
 
   /**
-   * 更新用户状态
+   * 更新用户启用状态
    */
-  async updateUserStatus(id: number, enabled: number): Promise<RespBase<User>> {
-    return apiChangeUserStatus({ id, enabled })
+  async updateUserEnabled(id: number, enabled: number): Promise<RespBase<User>> {
+    return apiChangeUserEnabled({ id, enabled })
   }
 
   /**

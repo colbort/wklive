@@ -11,7 +11,6 @@ import type {
   AdminProductUpdateReq,
   AdminRedeemLogListReq,
   AdminRewardLogListReq,
-  OptionGroup,
   RespBase,
   StakeOrder,
   StakeProduct,

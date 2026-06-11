@@ -25,7 +25,6 @@ import type {
   OptionContractDetail,
   OptionExercise,
   OptionExerciseDetail,
-  OptionGroup,
   OptionMarket,
   OptionMarketSnapshot,
   OptionOrder,

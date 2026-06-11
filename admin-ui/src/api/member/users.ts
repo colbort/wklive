@@ -1,8 +1,6 @@
 import { del, get, post, put } from '@/utils/request'
 
 import {
-  OptionGroup,
-  RespBase,
   AddUserBankReq,
   CheckUserReferrerResp,
   CreateMemberUserReq,
@@ -20,7 +18,7 @@ import {
   SetDefaultUserBankReq,
   UpdateMemberUserBaseReq,
   UpdateMemberUserBankReq,
-  UpdateMemberUserBankStatusReq,
+  UpdateMemberUserBankEnabledReq,
   UpdateMemberUserLevelReq,
   UpdateMemberUserRiskLevelReq,
   UpdateMemberUserStatusReq,
@@ -152,9 +150,9 @@ export function apiMemberUserBankDelete(id: number, tenantId: number): Promise<M
   return del(`/admin/member/user-banks/${id}`, { tenantId })
 }
 
-export function apiMemberUserBankUpdateStatus(
+export function apiMemberUserBankUpdateEnabled(
   id: number,
-  data: UpdateMemberUserBankStatusReq,
+  data: UpdateMemberUserBankEnabledReq,
 ): Promise<MemberRespBase> {
   return put(`/admin/member/user-banks/${id}/status`, data)
 }
@@ -165,4 +163,3 @@ export function apiMemberUserBankSetDefault(
 ): Promise<MemberRespBase> {
   return put(`/admin/member/user-banks/${id}/default`, data)
 }
-

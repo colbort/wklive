@@ -36,7 +36,7 @@
             style="width: 140px"
           >
             <el-option
-              v-for="item in statusOptions"
+              v-for="item in enabledOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -158,7 +158,7 @@
         <el-table-column :label="t('common.enabled')" width="90" align="center">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'danger'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
+              {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -354,7 +354,7 @@
           <el-col :span="12">
             <el-form-item :label="t('common.enabled')" prop="enabled">
               <el-radio-group v-model="formData.enabled">
-                <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">
+                <el-radio v-for="item in enabledOptions" :key="item.value" :label="item.value">
                   {{ getOptionLabel(t, item.code, item.value) }}
                 </el-radio>
               </el-radio-group>
@@ -426,7 +426,7 @@ const iconMap = ElementPlusIconsVue as Record<string, Component>
 const iconNames = Object.keys(iconMap).sort()
 const optionGroups = ref<OptionGroup[]>([])
 const menuTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'menuType'))
-const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
 
 // Composables

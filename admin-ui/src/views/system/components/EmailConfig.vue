@@ -1,7 +1,13 @@
 <template>
   <div class="email-config">
     <el-form-item :label="t('system.enabled')">
-      <el-switch v-model="form.enabled" />
+      <el-switch
+        v-model="form.enabled"
+        :active-value="1"
+        :inactive-value="2"
+        :active-text="t('common.enabled')"
+        :inactive-text="t('common.disabled')"
+      />
     </el-form-item>
     <el-row :gutter="20">
       <el-col :xs="24" :sm="14">

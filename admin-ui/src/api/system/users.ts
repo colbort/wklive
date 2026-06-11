@@ -37,7 +37,7 @@ export function apiUserDelete(id: number): Promise<RespBase> {
   return del<RespBase>(`/admin/system/users/${id}`)
 }
 
-export function apiChangeUserStatus(data: { id: number; enabled: number }): Promise<RespBase> {
+export function apiChangeUserEnabled(data: { id: number; enabled: number }): Promise<RespBase> {
   return post<RespBase>('/admin/system/users/status', data)
 }
 

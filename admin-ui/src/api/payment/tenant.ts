@@ -17,7 +17,6 @@ import type {
   CreateTenantPayChannelRuleReq,
   UpdateTenantPayChannelRuleReq,
   ListTenantPayChannelRulesReq,
-  OptionGroup,
 } from '@/services'
 
 export function apiTenantPayPlatformList(

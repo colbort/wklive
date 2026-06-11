@@ -41,8 +41,8 @@
         <el-table-column prop="merchantId" :label="t('payment.merchantId')" min-width="140" />
         <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
-            <el-tag :class="getStatusTagClass(row.enabled)" disable-transitions>
-              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
+            <el-tag :class="getEnabledTagClass(row.enabled)" disable-transitions>
+              {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -166,7 +166,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="form.enabled" style="width: 100%">
             <el-option
-              v-for="item in statusOptions"
+              v-for="item in enabledOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -230,7 +230,7 @@ const detailVisible = ref(false)
 const detailData = ref<Record<string, unknown>>({})
 
 const optionGroups = ref<OptionGroup[]>([])
-const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const yesNoOptions = computed(() => findOptionGroup(optionGroups.value, 'yesNo'))
 
 const tenantPlatformChecking = ref(false)
@@ -452,7 +452,7 @@ const showDetail = async (row: TenantPayAccount) => {
   detailVisible.value = true
 }
 
-function getStatusTagClass(value?: number) {
+function getEnabledTagClass(value?: number) {
   const num = Number(value ?? 0)
   if (num === 1) return 'option-tag option-tag--green'
   if (num === 2) return 'option-tag option-tag--red'

@@ -14,7 +14,6 @@ import type {
   AssetUserAsset,
   CreateAssetCoinConfigReq,
   GetAssetCoinConfigReq,
-  OptionGroup,
   PageAssetCoinConfigsReq,
   PageAssetFlowsReq,
   PageAssetFreezesReq,

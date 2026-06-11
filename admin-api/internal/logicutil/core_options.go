@@ -29,7 +29,7 @@ func CoreOptions() []types.OptionsGroup {
 func SystemOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
 		EnumGroup("sysConfigType", "系统配置类型", system.SysConfigType_UNKNOWN.Descriptor()),
-		EnumGroup("status", "状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
+		EnumGroup("enabled", "启用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
 		EnumGroup("menuType", "菜单类型", system.MenuType_MENU_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("visible", "可见状态", common.Switch_SWITCH_UNKNOWN.Descriptor()),
 		EnumGroup("method", "请求方法", system.RequestMethod_REQUEST_METHOD_UNKNOWN.Descriptor()),
@@ -69,7 +69,7 @@ func AssetOptions() []types.OptionsGroup {
 func PaymentOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
 		EnumGroup("platformType", "平台类型", payment.PlatformType_PLATFORM_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("status", "状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
+		EnumGroup("enabled", "启用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
 		EnumGroup("visible", "显示状态", common.Switch_SWITCH_UNKNOWN.Descriptor()),
 		EnumGroup("yesNo", "是否", common.YesNo_YES_NO_UNKNOWN.Descriptor()),
 		EnumGroup("openStatus", "开通状态", payment.OpenStatus_OPEN_STATUS_UNKNOWN.Descriptor()),
@@ -145,7 +145,7 @@ func ItickOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
 		EnumGroup("categoryType", "产品类型", itick.CategoryType_CATEGORY_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("klineType", "K线周期", itick.KlineType_KLINE_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("status", "状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
+		EnumGroup("enabled", "启用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
 		EnumGroup("visible", "显示状态", common.Switch_SWITCH_UNKNOWN.Descriptor()),
 	}
 }

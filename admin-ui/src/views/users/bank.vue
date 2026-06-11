@@ -22,7 +22,7 @@ const loading = ref(false)
 const submitLoading = ref(false)
 const list = ref<UserBankItem[]>([])
 const editVisible = ref(false)
-const statusVisible = ref(false)
+const enabledVisible = ref(false)
 const detailVisible = ref(false)
 const detailData = ref<UserBankItem>()
 const tenantChecked = ref(false)
@@ -72,7 +72,7 @@ const form = reactive<UserBankForm>({
   enabled: 1,
 })
 
-const statusForm = reactive({
+const enabledForm = reactive({
   id: 0,
   tenantId: 0,
   enabled: 1,
@@ -97,7 +97,7 @@ function getBooleanTagClass(value?: number) {
   return Number(value) === 1 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
 }
 
-function getBankStatusTagClass(value?: number) {
+function getBankEnabledTagClass(value?: number) {
   const bankStatusMap: Record<number, string> = {
     1: 'option-tag option-tag--green',
     2: 'option-tag option-tag--red',
@@ -105,7 +105,7 @@ function getBankStatusTagClass(value?: number) {
   return bankStatusMap[Number(value ?? 0)] || 'option-tag'
 }
 
-function getBankStatusLabel(value?: number) {
+function getBankEnabledLabel(value?: number) {
   return getOptionValueLabel(optionGroups.value, 'bankStatus', value, t)
 }
 
@@ -322,29 +322,29 @@ async function submitEdit() {
   }
 }
 
-function openStatus(row: UserBankItem) {
+function openEnabledDialog(row: UserBankItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   if (!tenantId) {
     ElMessage.warning(t('users.queryTenantPrompt'))
     return
   }
-  Object.assign(statusForm, {
+  Object.assign(enabledForm, {
     id: row.id,
     tenantId,
     enabled: Number(row.enabled || 1),
   })
-  statusVisible.value = true
+  enabledVisible.value = true
 }
 
-async function submitStatus() {
+async function submitEnabled() {
   try {
-    const res = await memberUserService.updateBankStatus(statusForm.id, {
-      tenantId: Number(statusForm.tenantId),
-      enabled: Number(statusForm.enabled),
+    const res = await memberUserService.updateBankEnabled(enabledForm.id, {
+      tenantId: Number(enabledForm.tenantId),
+      enabled: Number(enabledForm.enabled),
     })
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.updateFailed'))
     ElMessage.success(t('users.updateSuccess'))
-    statusVisible.value = false
+    enabledVisible.value = false
     fetchList()
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.updateFailed'))
@@ -465,8 +465,8 @@ onMounted(fetchOptions)
         </el-table-column>
         <el-table-column :label="t('users.enabled')" width="90">
           <template #default="{ row }">
-            <span :class="getBankStatusTagClass(row.enabled)">
-              {{ getBankStatusLabel(row.enabled) }}
+            <span :class="getBankEnabledTagClass(row.enabled)">
+              {{ getBankEnabledLabel(row.enabled) }}
             </span>
           </template>
         </el-table-column>
@@ -497,7 +497,7 @@ onMounted(fetchOptions)
               v-perm="'users:user:bank:update:status'"
               link
               type="warning"
-              @click="openStatus(row)"
+              @click="openEnabledDialog(row)"
             >
               {{ t('users.enabled') }}
             </el-button>
@@ -639,10 +639,10 @@ onMounted(fetchOptions)
       </template>
     </el-dialog>
 
-    <el-dialog v-model="statusVisible" :title="t('users.changeBankStatus')" width="420px">
+    <el-dialog v-model="enabledVisible" :title="t('users.changeBankEnabled')" width="420px">
       <el-form label-width="90px">
         <el-form-item :label="t('users.enabled')">
-          <el-select v-model="statusForm.enabled" style="width: 100%">
+          <el-select v-model="enabledForm.enabled" style="width: 100%">
             <el-option
               v-for="item in bankStatusOptions"
               :key="item.value"
@@ -653,10 +653,10 @@ onMounted(fetchOptions)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="statusVisible = false">
+        <el-button @click="enabledVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button v-perm="'users:user:bank:update:status'" type="primary" @click="submitStatus">
+        <el-button v-perm="'users:user:bank:update:status'" type="primary" @click="submitEnabled">
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -700,8 +700,8 @@ onMounted(fetchOptions)
           </span>
         </el-descriptions-item>
         <el-descriptions-item :label="t('users.enabled')">
-          <span :class="getBankStatusTagClass(detailData.enabled)">
-            {{ getBankStatusLabel(detailData.enabled) }}
+          <span :class="getBankEnabledTagClass(detailData.enabled)">
+            {{ getBankEnabledLabel(detailData.enabled) }}
           </span>
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.createTimes')">

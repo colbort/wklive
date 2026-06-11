@@ -23,7 +23,7 @@
           <el-select v-model="query.enabled" clearable style="width: 160px">
             <el-option :label="t('payment.all')" :value="0" />
             <el-option
-              v-for="item in statusOptions"
+              v-for="item in enabledOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -45,7 +45,7 @@
         <el-table-column :label="t('common.enabled')" width="100">
           <template #default="{ row }">
             <el-tag :class="getOptionTagClass(row.enabled)" disable-transitions>
-              {{ getStatusLabel(row.enabled) }}
+              {{ getEnabledLabel(row.enabled) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -119,7 +119,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="form.enabled" style="width: 100%">
             <el-option
-              v-for="item in statusOptions"
+              v-for="item in enabledOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -193,7 +193,7 @@ const form = reactive({ id: 0, tenantId: 0, platformId: 0, enabled: 1, openStatu
 
 // option groups fetched from backend
 const optionGroups = ref<OptionGroup[]>([])
-const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const openStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'openStatus'))
 const submitDisabled = computed(
   () =>
@@ -315,8 +315,8 @@ const showDetail = async (row: TenantPayPlatform) => {
   detailVisible.value = true
 }
 
-const getStatusLabel = (value?: number) =>
-  getOptionValueLabel(optionGroups.value, 'status', value, t)
+const getEnabledLabel = (value?: number) =>
+  getOptionValueLabel(optionGroups.value, 'enabled', value, t)
 
 const getOpenStatusLabel = (value?: number) =>
   getOptionValueLabel(optionGroups.value, 'openStatus', value, t)

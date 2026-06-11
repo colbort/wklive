@@ -15,7 +15,15 @@ import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/op
 
 const { t } = useI18n()
 const optionGroups = ref<OptionGroup[]>([])
-const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
+const enabledRadioOptions = computed(() =>
+  enabledOptions.value.length
+    ? enabledOptions.value
+    : [
+        { value: 1, code: 'COMMON_STATUS_ENABLED' },
+        { value: 2, code: 'COMMON_STATUS_DISABLED' },
+      ],
+)
 
 // Pagination and main list
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -175,11 +183,11 @@ async function onDelete(row: SysUserItem) {
   }
 }
 
-async function onToggleStatus(row: SysUserItem) {
+async function onToggleEnabled(row: SysUserItem) {
   try {
     const next = row.enabled === 1 ? 2 : 1
-    const res = await userService.updateUserStatus(row.id, next)
-    if (res.code !== 200) throw new Error(res.msg || 'status failed')
+    const res = await userService.updateUserEnabled(row.id, next)
+    if (res.code !== 200) throw new Error(res.msg || 'enabled failed')
     ElMessage.success(t('common.success'))
     fetchList()
   } catch (error: unknown) {
@@ -374,6 +382,14 @@ const roleNameMap = computed(() => {
   return m
 })
 
+function enabledLabel(value: number | undefined) {
+  const label = getOptionValueLabel(optionGroups.value, 'enabled', value, t)
+  if (label) return label
+  if (value === 1) return t('common.enabled')
+  if (value === 2) return t('common.disabled')
+  return value ?? '-'
+}
+
 onMounted(async () => {
   await Promise.all([fetchRoles(), fetchList(), fetchOptions()])
 })
@@ -401,7 +417,7 @@ onMounted(async () => {
               :placeholder="t('common.enabled')"
             >
               <el-option
-                v-for="o in statusOptions"
+                v-for="o in enabledOptions"
                 :key="o.value"
                 :label="getOptionLabel(t, o.code)"
                 :value="o.value"
@@ -446,7 +462,7 @@ onMounted(async () => {
         <el-table-column :label="t('common.enabled')" width="110">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'danger'">
-              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
+              {{ enabledLabel(row.enabled) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -485,7 +501,7 @@ onMounted(async () => {
                     {{ t('perms.sys:user:google2fa') }}
                   </el-dropdown-item>
 
-                  <el-dropdown-item v-perm="'sys:user:status'" divided @click="onToggleStatus(row)">
+                  <el-dropdown-item v-perm="'sys:user:status'" divided @click="onToggleEnabled(row)">
                     {{ row.enabled === 1 ? t('common.disable') : t('common.enable') }}
                   </el-dropdown-item>
 
@@ -532,11 +548,14 @@ onMounted(async () => {
           <el-input v-model="editForm.nickname" />
         </el-form-item>
         <el-form-item :label="t('common.enabled')">
-          <el-radio-group v-model="editForm.enabled">
-            <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">
-              {{ getOptionLabel(t, item.code, item.value) }}
-            </el-radio>
-          </el-radio-group>
+          <el-select v-model="editForm.enabled" style="width: 100%">
+            <el-option
+              v-for="item in enabledRadioOptions"
+              :key="item.value"
+              :label="String(getOptionLabel(t, item.code, item.value))"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item :label="t('common.role')">
           <el-select

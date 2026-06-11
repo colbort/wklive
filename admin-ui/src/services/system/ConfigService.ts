@@ -51,10 +51,10 @@ export type SysConfigDeleteReq = {
 export type SystemCore = {
   site_name: string // 网站名称
   site_logo: string // 网站LOGO
-  is_captcha_enabled: boolean // 是否开启验证码
-  is_register_enabled: boolean // 是否开启注册
-  is_guest_enabled: boolean // 是否允许游客登录
-  is_crypto_enabled: boolean // 是否加密接口提交数据
+  is_captcha_enabled: number // 是否开启验证码
+  is_register_enabled: number // 是否开启注册
+  is_guest_enabled: number // 是否允许游客登录
+  is_crypto_enabled: number // 是否加密接口提交数据
 }
 
 export type ItickConfig = {
@@ -119,7 +119,7 @@ export type WithdrawConfig = {
 }
 
 export type EmailConfig = {
-  enabled: boolean
+  enabled: number
   smtp_host: string
   smtp_port: number
   username: string
@@ -131,7 +131,7 @@ export type EmailConfig = {
 }
 
 export type PhoneConfig = {
-  enabled: boolean
+  enabled: number
   provider: string
   endpoint: string
   method: string

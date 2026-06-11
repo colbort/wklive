@@ -20,7 +20,7 @@ export type PayPlatform = {
   notifyUrl: string // 统一异步通知地址
   returnUrl: string // 默认同步跳转地址
   icon: string // 图标
-  enabled: number // 状态：1启用 2停用
+  enabled: number // 启用状态：1启用 2停用
   remark: string // 备注
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
@@ -38,7 +38,7 @@ export type PayProduct = {
   productName: string // 产品名称
   sceneType: number // 场景：1APP 2H5 3WEB 4收银台 5链上
   currency: string // 币种
-  enabled: number // 状态：1启用 2停用
+  enabled: number // 启用状态：1启用 2停用
   remark: string // 备注
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
@@ -51,7 +51,7 @@ export type CreatePayPlatformReq = {
   notifyUrl?: string // 统一异步通知地址
   returnUrl?: string // 默认同步跳转地址
   icon?: string // 图标
-  enabled: number // 状态：1启用 2停用
+  enabled: number // 启用状态：1启用 2停用
   remark?: string // 备注
 }
 
@@ -62,14 +62,14 @@ export type UpdatePayPlatformReq = {
   notifyUrl?: string // 统一异步通知地址
   returnUrl?: string // 默认同步跳转地址
   icon?: string // 图标
-  enabled: number // 状态：1启用 2停用
+  enabled: number // 启用状态：1启用 2停用
   remark?: string // 备注
 }
 
 export type ListPayPlatformsReq = {
   keyword?: string // 关键字
   platformCode?: string // 平台编码
-  enabled?: number // 状态：1启用 2停用
+  enabled?: number // 启用状态：1启用 2停用
   platformType?: number // 平台类型
   cursor?: number // 分页游标
   limit?: number // 分页大小
@@ -81,7 +81,7 @@ export type CreatePayProductReq = {
   productName: string // 产品名称
   sceneType: number // 场景：1APP 2H5 3WEB 4收银台 5链上
   currency: string // 币种
-  enabled: number // 状态：1启用 2停用
+  enabled: number // 启用状态：1启用 2停用
   remark?: string // 备注
 }
 
@@ -90,7 +90,7 @@ export type UpdatePayProductReq = {
   productName: string // 产品名称
   sceneType: number // 场景：1APP 2H5 3WEB 4收银台 5链上
   currency: string // 币种
-  enabled: number // 状态：1启用 2停用
+  enabled: number // 启用状态：1启用 2停用
   remark?: string // 备注
 }
 
@@ -98,7 +98,7 @@ export type ListPayProductsReq = {
   platformId?: number // 平台ID
   keyword?: string // 关键字
   productCode?: string // 产品编码
-  enabled?: number // 状态：1启用 2停用
+  enabled?: number // 启用状态：1启用 2停用
   sceneType?: number // 场景类型
   cursor?: number // 分页游标
   limit?: number // 分页大小

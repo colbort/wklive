@@ -1,6 +1,6 @@
 import type { OptionGroup, RespBase } from '@/services'
 import {
-    apiTradeCreateSymbol,
+  apiTradeCreateSymbol,
   apiTradeGetEvent,
   apiTradeGetFill,
   apiTradeGetOrder,

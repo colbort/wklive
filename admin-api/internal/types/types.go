@@ -1768,6 +1768,7 @@ type ListBillsReq struct {
 	TenantId        int64     `form:"tenantId,optional"`
 	UserId          int64     `form:"userId,optional"`
 	AccountId       int64     `form:"accountId,optional"`
+	BizNo           string    `form:"bizNo,optional"`
 	RefType         int64     `form:"refType,optional"`
 	CreateTimeRange TimeRange `form:"createTimeRange,optional"`
 }
@@ -1861,6 +1862,7 @@ type ListExercisesReq struct {
 	UserId            int64     `form:"userId,optional"`
 	AccountId         int64     `form:"accountId,optional"`
 	ContractId        int64     `form:"contractId,optional"`
+	ExerciseType      int64     `form:"exerciseType,optional"`
 	Status            int64     `form:"status,optional"`
 	ExerciseTimeRange TimeRange `form:"exerciseTimeRange,optional"`
 }
@@ -1935,6 +1937,7 @@ type ListPositionsReq struct {
 	UserId     int64 `form:"userId,optional"`
 	AccountId  int64 `form:"accountId,optional"`
 	ContractId int64 `form:"contractId,optional"`
+	Side       int64 `form:"side,optional"`
 	Status     int64 `form:"status,optional"`
 }
 
@@ -2000,10 +2003,10 @@ type ListRechargeOrdersResp struct {
 
 type ListSettlementsReq struct {
 	PageReq
-	TenantId        int64     `form:"tenantId,optional"`
-	ContractId      int64     `form:"contractId,optional"`
-	Status          int64     `form:"status,optional"`
-	ExpireTimeRange TimeRange `form:"expireTimeRange,optional"`
+	TenantId            int64     `form:"tenantId,optional"`
+	ContractId          int64     `form:"contractId,optional"`
+	Status              int64     `form:"status,optional"`
+	SettlementTimeRange TimeRange `form:"settlementTimeRange,optional"`
 }
 
 type ListSettlementsResp struct {
@@ -2551,11 +2554,11 @@ type OptionTrade struct {
 	UnderlyingSymbol string `json:"underlyingSymbol"`
 	BuyOrderId       int64  `json:"buyOrderId"`
 	BuyOrderNo       string `json:"buyOrderNo"`
-	BuyUid           int64  `json:"buyUid"`
+	BuyUserId        int64  `json:"buyUserId"`
 	BuyAccountId     int64  `json:"buyAccountId"`
 	SellOrderId      int64  `json:"sellOrderId"`
 	SellOrderNo      string `json:"sellOrderNo"`
-	SellUid          int64  `json:"sellUid"`
+	SellUserId       int64  `json:"sellUserId"`
 	SellAccountId    int64  `json:"sellAccountId"`
 	Price            string `json:"price"`
 	Qty              string `json:"qty"`
@@ -2802,9 +2805,9 @@ type ResetLoginPasswordReq struct {
 }
 
 type ResetPayPasswordReq struct {
-	TenantId       int64  `json:"tenantId"`
-	UserId         int64  `path:"userId"`
-	NewPayPassword string `json:"newPayPassword"`
+	TenantId    int64  `json:"tenantId"`
+	UserId      int64  `path:"userId"`
+	NewPassword string `json:"newPassword"`
 }
 
 type ResetUserGoogle2FAReq struct {

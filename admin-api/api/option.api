@@ -114,11 +114,11 @@ type OptionTrade {
 	underlyingSymbol string `json:"underlyingSymbol"`
 	buyOrderId       int64  `json:"buyOrderId"`
 	buyOrderNo       string `json:"buyOrderNo"`
-	buyUid           int64  `json:"buyUid"`
+	buyUserId        int64  `json:"buyUserId"`
 	buyAccountId     int64  `json:"buyAccountId"`
 	sellOrderId      int64  `json:"sellOrderId"`
 	sellOrderNo      string `json:"sellOrderNo"`
-	sellUid          int64  `json:"sellUid"`
+	sellUserId       int64  `json:"sellUserId"`
 	sellAccountId    int64  `json:"sellAccountId"`
 	price            string `json:"price"`
 	qty              string `json:"qty"`
@@ -470,6 +470,7 @@ type ListPositionsReq {
 	userId     int64 `form:"userId,optional"`
 	accountId  int64 `form:"accountId,optional"`
 	contractId int64 `form:"contractId,optional"`
+	side       int64 `form:"side,optional"`
 	status     int64 `form:"status,optional"`
 }
 
@@ -495,6 +496,7 @@ type ListExercisesReq {
 	userId            int64     `form:"userId,optional"`
 	accountId         int64     `form:"accountId,optional"`
 	contractId        int64     `form:"contractId,optional"`
+	exerciseType      int64     `form:"exerciseType,optional"`
 	status            int64     `form:"status,optional"`
 	exerciseTimeRange TimeRange `form:"exerciseTimeRange,optional"`
 }
@@ -520,7 +522,7 @@ type ListSettlementsReq {
 	tenantId        int64     `form:"tenantId,optional"`
 	contractId      int64     `form:"contractId,optional"`
 	status          int64     `form:"status,optional"`
-	expireTimeRange TimeRange `form:"expireTimeRange,optional"`
+	settlementTimeRange TimeRange `form:"settlementTimeRange,optional"`
 }
 
 type ListSettlementsResp {
@@ -570,6 +572,7 @@ type ListBillsReq {
 	tenantId        int64     `form:"tenantId,optional"`
 	userId          int64     `form:"userId,optional"`
 	accountId       int64     `form:"accountId,optional"`
+	bizNo           string    `form:"bizNo,optional"`
 	refType         int64     `form:"refType,optional"`
 	createTimeRange TimeRange `form:"createTimeRange,optional"`
 }
