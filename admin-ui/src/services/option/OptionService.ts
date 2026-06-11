@@ -1,7 +1,6 @@
 import type { OptionGroup, RespBase } from '@/services'
 import {
-  apiOptions,
-  apiOptionCreateContract,
+    apiOptionCreateContract,
   apiOptionGetAccount,
   apiOptionGetBill,
   apiOptionGetContract,
@@ -23,6 +22,7 @@ import {
   apiOptionUpdateContract,
   apiOptionUpdateMarket,
 } from '@/api/option'
+import { getCoreOptions } from '@/stores/core'
 export type OptionAdminCommonResp = RespBase
 
 export type TimeRange = {
@@ -456,7 +456,7 @@ export type ListBillsReq = {
 
 export class OptionService {
   getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   listContracts(params: ListContractsReq) {

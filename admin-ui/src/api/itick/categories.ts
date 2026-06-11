@@ -35,6 +35,3 @@ export function apiSyncCategoryProducts(
   return post<SyncCategoryProductsResp>('/admin/itick/categories/sync-products', params)
 }
 
-export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
-  return get('/admin/itick/options')
-}

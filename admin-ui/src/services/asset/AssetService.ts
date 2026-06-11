@@ -14,10 +14,10 @@ import {
   apiPageAssetFlows,
   apiPageAssetFreezes,
   apiPageAssetLocks,
-  apiOptions,
-  apiPageUserAssets,
+    apiPageUserAssets,
   apiUpdateAssetCoinConfig,
 } from '@/api/asset'
+import { getCoreOptions } from '@/stores/core'
 
 export type AssetUserAsset = {
   id: number // 主键ID
@@ -279,7 +279,7 @@ export type AdminUnlockAssetReq = {
 
 export class AssetService {
   getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   getUserAssets(params: PageUserAssetsReq): Promise<RespBase<AssetUserAsset[]>> {

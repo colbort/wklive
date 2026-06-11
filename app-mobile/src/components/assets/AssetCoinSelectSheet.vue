@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
-import { apiGetAssetOptions } from '@/api/asset'
+import { apiGetCoreOptions } from '@/api/core'
 import { useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import type { AssetCoinConfig } from '@/types/asset'
@@ -19,7 +19,7 @@ const emit = defineEmits<{
   select: [config: AssetCoinConfig]
 }>()
 
-const assetOptions = useOptions(apiGetAssetOptions)
+const assetOptions = useOptions(apiGetCoreOptions)
 const { t } = useI18n()
 
 function closeSheet() {

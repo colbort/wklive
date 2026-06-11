@@ -997,11 +997,6 @@ type GetAssetCoinConfigReq struct {
 	TenantId int64 `form:"tenantId,optional"`
 }
 
-type GetAssetOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
-}
-
 type GetBillReq struct {
 	TenantId int64  `form:"tenantId,optional"`
 	Id       int64  `form:"id,optional"`
@@ -1115,11 +1110,6 @@ type GetFillListAdminResp struct {
 	Data []TradeFill `json:"data"`
 }
 
-type GetItickOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
-}
-
 type GetMarginAccountListAdminReq struct {
 	PageReq
 	TenantId    int64  `form:"tenantId,optional"`
@@ -1141,11 +1131,6 @@ type GetMarketReq struct {
 type GetMarketResp struct {
 	RespBase
 	Data OptionMarket `json:"data"`
-}
-
-type GetOptionOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
 }
 
 type GetOrderDetailAdminReq struct {
@@ -1206,11 +1191,6 @@ type GetPayProductReq struct {
 type GetPayProductResp struct {
 	RespBase
 	Data PayProduct `json:"data"`
-}
-
-type GetPaymentOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
 }
 
 type GetPositionDetailAdminReq struct {
@@ -1333,11 +1313,6 @@ type GetSettlementResp struct {
 	Data OptionSettlementDetail `json:"data"`
 }
 
-type GetStakingOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
-}
-
 type GetSymbolDetailAdminData struct {
 	Symbol          TradeSymbol                 `json:"symbol"`
 	Spot            TradeSymbolSpot             `json:"spot,optional"`
@@ -1420,11 +1395,6 @@ type GetSystemCore struct {
 type GetSystemCoreResp struct {
 	RespBase
 	Data GetSystemCore `json:"data"`
-}
-
-type GetSystemOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
 }
 
 type GetTenantCategoryReq struct {
@@ -1512,11 +1482,6 @@ type GetTradeEventListResp struct {
 	Data []BizTradeEvent `json:"data"`
 }
 
-type GetTradeOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
-}
-
 type GetTradeReq struct {
 	TenantId int64  `form:"tenantId,optional"`
 	Id       int64  `form:"id,optional"`
@@ -1570,11 +1535,6 @@ type GetUserLeverageConfigReq struct {
 type GetUserLeverageConfigResp struct {
 	RespBase
 	Data ContractLeverageConfig `json:"data"`
-}
-
-type GetUserOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
 }
 
 type GetUserRechargeStatReq struct {

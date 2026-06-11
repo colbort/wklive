@@ -79,21 +79,6 @@ type SendVerificationCodeReq {
 	scene   int64  `json:"scene" validate:"required"` // 业务场景
 }
 
-type GetUserOptionsResp {
-	RespBase
-	data []OptionsGroup `json:"data"`
-}
-
-@server (
-	prefix:     /app/user
-	group:      user_public
-	middleware: PublicRateLimit
-)
-service app {
-	@handler GetUserOptions
-	get /options returns (GetUserOptionsResp)
-}
-
 @server (
 	prefix:     /app/user
 	group:      user_public

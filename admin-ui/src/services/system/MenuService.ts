@@ -7,8 +7,8 @@ import {
   sysMenuDelete,
   sysMenuUpdate,
 } from '@/api/system/menus'
-import { apiOptions } from '@/api/system/options'
 import type { OptionGroup } from '@/services'
+import { getCoreOptions } from '@/stores/core'
 
 // ===== 菜单相关类型定义 =====
 
@@ -106,7 +106,7 @@ export class MenuService implements BaseService {
   }
 
   async getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   /**

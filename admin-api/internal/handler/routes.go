@@ -80,11 +80,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: asset.PageAssetLocksHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
-				Path:    "/options",
-				Handler: asset.GetAssetOptionsHandler(serverCtx),
-			},
-			{
 				Method:  http.MethodPost,
 				Path:    "/sub",
 				Handler: asset.AdminSubAssetHandler(serverCtx),
@@ -173,11 +168,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/categories/sync-products",
 				Handler: itick.SyncCategoryProductsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/options",
-				Handler: itick.GetItickOptionsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -338,11 +328,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/options",
-				Handler: option.GetOptionOptionsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
 				Path:    "/orders",
 				Handler: option.AdminListOrdersHandler(serverCtx),
 			},
@@ -447,11 +432,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/crypto-wallet-accounts",
 				Handler: payment.ListCryptoWalletAccountsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/options",
-				Handler: payment.GetPaymentOptionsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
@@ -697,11 +677,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/options",
-				Handler: staking.GetStakingOptionsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
 				Path:    "/orders",
 				Handler: staking.OrderListHandler(serverCtx),
 			},
@@ -851,11 +826,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/menus/tree/:tenantId",
 				Handler: system.SysMenuTreeHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/options",
-				Handler: system.GetSystemOptionsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -1041,11 +1011,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/options",
-				Handler: trade.GetTradeOptionsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
 				Path:    "/orders",
 				Handler: trade.GetOrderListAdminHandler(serverCtx),
 			},
@@ -1166,11 +1131,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/options",
-				Handler: user.GetUserOptionsHandler(serverCtx),
-			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/user-banks",

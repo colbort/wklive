@@ -7,7 +7,7 @@ import {
   apiRoleGrant,
   apiRoleGrantDetail,
 } from '@/api/system/roles'
-import { apiOptions } from '@/api/system/options'
+import { getCoreOptions } from '@/stores/core'
 
 // ===== 角色相关类型定义 =====
 
@@ -68,7 +68,7 @@ export type RoleGrantRequest = {
  */
 export class RoleService implements BaseService {
   async getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   /**

@@ -3,7 +3,8 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import QRCode from 'qrcode'
 
-import { apiGetAssetOptions, apiListAssetCoinConfigs } from '@/api/asset'
+import { apiGetCoreOptions } from '@/api/core'
+import { apiListAssetCoinConfigs } from '@/api/asset'
 import { apiCreateCryptoRechargeOrder, apiGetMyCryptoRechargeAddress } from '@/api/payment'
 import { apiUploadFile } from '@/api/upload'
 import AssetCoinSelectSheet from '@/components/assets/AssetCoinSelectSheet.vue'
@@ -22,7 +23,7 @@ import {
 
 const route = useRoute()
 const router = useRouter()
-const assetOptions = useOptions(apiGetAssetOptions)
+const assetOptions = useOptions(apiGetCoreOptions)
 const { t } = useI18n()
 const coinConfigs = ref<AssetCoinConfig[]>([])
 const selectedConfig = ref<AssetCoinConfig | null>(null)

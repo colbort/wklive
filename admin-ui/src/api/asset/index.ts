@@ -112,6 +112,3 @@ export function apiAdminUnlockAsset(
   return post<AssetChangeResp>('/admin/asset/unlock', params)
 }
 
-export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
-  return get('/admin/asset/options')
-}

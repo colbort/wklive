@@ -1,6 +1,6 @@
 import { authHttp, http } from './http'
 import { compactParams } from './utils'
-import type { OptionsGroup, RespBase } from '../types/api'
+import type { RespBase } from '../types/api'
 import type {
   AppCancelOrderReq,
   AppExerciseReq,
@@ -24,12 +24,6 @@ import type {
   OptionPositionDetail,
   OptionTradeDetail,
 } from '../types/option'
-
-export function apiOptionGetOptions(): Promise<
-  RespBase & { data: OptionsGroup[] }
-> {
-  return http.get('/option/options').then((res: { data: any }) => res.data)
-}
 
 export function apiOptionListContracts(
   params: AppListContractsReq,

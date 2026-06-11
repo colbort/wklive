@@ -1,7 +1,6 @@
 import type { OptionGroup, RespBase } from '@/services'
 import {
-  apiOptions,
-  apiOpenTenantPayPlatform,
+    apiOpenTenantPayPlatform,
   apiTenantPayAccountCreate,
   apiTenantPayAccountDetail,
   apiTenantPayAccountList,
@@ -18,6 +17,7 @@ import {
   apiTenantPayPlatformList,
   apiUpdateTenantPayPlatform,
 } from '@/api/payment/tenant'
+import { getCoreOptions } from '@/stores/core'
 
 export type TenantPayPlatform = {
   id: number // 主键ID
@@ -267,7 +267,7 @@ export type UpdateTenantPayChannelRuleReq = CreateTenantPayChannelRuleReq & { id
 
 export class TenantService {
   getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
   getTenantPlatformList(params: ListTenantPayPlatformsReq): Promise<RespBase<TenantPayPlatform[]>> {
     return apiTenantPayPlatformList(params)

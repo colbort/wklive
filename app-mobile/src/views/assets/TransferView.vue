@@ -3,7 +3,9 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import {
-  apiGetAssetOptions,
+  apiGetCoreOptions,
+} from '@/api/core'
+import {
   apiGetMyAssetSummary,
   apiListAssetCoinConfigs,
   apiTransferMyAsset,
@@ -25,7 +27,7 @@ import {
 
 const route = useRoute()
 const router = useRouter()
-const assetOptions = useOptions(apiGetAssetOptions)
+const assetOptions = useOptions(apiGetCoreOptions)
 const { t } = useI18n()
 const coinConfigs = ref<AssetCoinConfig[]>([])
 const assets = ref<AssetUserAsset[]>([])

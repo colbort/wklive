@@ -14,7 +14,7 @@ import {
   apiGoogle2faReset,
   apiGoogle2faBind,
 } from '@/api/system/users'
-import { apiOptions } from '@/api/system/options'
+import { getCoreOptions } from '@/stores/core'
 
 // ===== 用户相关类型定义 =====
 
@@ -64,7 +64,7 @@ export interface UserQueryParams {
  */
 export class UserService implements BaseService {
   async getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   /**

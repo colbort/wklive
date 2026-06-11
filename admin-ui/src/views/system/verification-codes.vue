@@ -8,7 +8,7 @@ import TenantSelect from '@/components/TenantSelect.vue'
 import { useLoading } from '@/composables/useLoading'
 import { useOptions } from '@/composables/useOptions'
 import { usePagination } from '@/composables/usePagination'
-import { apiOptions } from '@/api/system/options'
+import { getCoreOptions } from '@/stores/core'
 import { formatDate } from '@/utils'
 import { verificationCodeService } from '@/services'
 import type { OptionGroup, VerificationCodeRecordItem } from '@/services'
@@ -71,7 +71,7 @@ function statusTagType(status: number) {
 
 async function loadOptions() {
   try {
-    const res = await apiOptions()
+    const res = await getCoreOptions()
     if (res.code === 200) {
       optionGroups.value = res.data || []
     }

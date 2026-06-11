@@ -1,4 +1,5 @@
 import type { RespBase, BaseService, OptionGroup } from '@/services'
+import { getCoreOptions } from '@/stores/core'
 
 import {
   apiSysTenantList,
@@ -7,7 +8,6 @@ import {
   apiSysTenantDelete,
   apiSysTenantDetail,
 } from '@/api/system/tenants'
-import { apiOptions } from '@/api/system/options'
 
 export type SysTenantCreateReq = {
   username: string
@@ -63,7 +63,7 @@ export type SysTenantDetailReq = {
 // ========= 租户服务 =========
 export class TenantsService implements BaseService {
   async getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   async getList(params: SysTenantListReq): Promise<RespBase<SysTenantItem[]>> {

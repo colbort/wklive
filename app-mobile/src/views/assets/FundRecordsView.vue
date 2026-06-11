@@ -2,9 +2,9 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { apiGetAssetOptions, apiListAssetCoinConfigs } from '@/api/asset'
+import { apiGetCoreOptions } from '@/api/core'
+import { apiListAssetCoinConfigs } from '@/api/asset'
 import {
-  apiGetPaymentOptions,
   apiListMyRechargeOrders,
   apiListMyWithdrawOrders,
 } from '@/api/payment'
@@ -21,8 +21,8 @@ type WithdrawTab = 'crypto' | 'bank'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const assetOptions = useOptions(apiGetAssetOptions)
-const paymentOptions = useOptions(apiGetPaymentOptions)
+const assetOptions = useOptions(apiGetCoreOptions)
+const paymentOptions = useOptions(apiGetCoreOptions)
 const activeTab = ref<MainTab>(route.query.tab === 'withdraw' ? 'withdraw' : 'recharge')
 const withdrawTab = ref<WithdrawTab>('crypto')
 const coinConfigs = ref<AssetCoinConfig[]>([])

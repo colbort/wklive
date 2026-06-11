@@ -93,6 +93,7 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 			SiteName: core.SiteName,
 			SiteLogo: core.SiteLogo,
 			AssetUrl: assetUrl,
+			Options:  logicutil.CoreOptions(),
 		},
 	}, nil
 }

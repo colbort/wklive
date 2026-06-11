@@ -1,3 +1,5 @@
+import type { OptionsGroup } from './api'
+
 export interface GetSystemCoreReq {}
 
 export interface Interval {
@@ -12,6 +14,7 @@ export interface SystemCore {
   isGuestEnabled: boolean
   isCryptoEnabled: boolean
   intervals: Interval[]
+  options?: OptionsGroup[]
 }
 
 export type GetSystemCoreResp = SystemCore

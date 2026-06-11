@@ -2,7 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
+import { apiGetCoreOptions } from '@/api/core'
+import { apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
 import { getAccessToken } from '@/api/http'
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import CommonPage from '@/components/common/CommonPage.vue'
@@ -28,7 +29,7 @@ const ASSET_OPERATION_TYPES: Partial<Record<AssetActionKey, number>> = {
 }
 
 const router = useRouter()
-const assetOptions = useOptions(apiGetAssetOptions)
+const assetOptions = useOptions(apiGetCoreOptions)
 const { t } = useI18n()
 const activeTopTab = ref<AssetTopTab>('assets')
 const activeAssetAccount = ref('cash')

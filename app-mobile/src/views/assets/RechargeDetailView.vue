@@ -2,7 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { apiGetAssetOptions, apiListAssetCoinConfigs } from '@/api/asset'
+import { apiGetCoreOptions } from '@/api/core'
+import { apiListAssetCoinConfigs } from '@/api/asset'
 import { apiGetMyRechargeOrder } from '@/api/payment'
 import CommonPage from '@/components/common/CommonPage.vue'
 import { useOptions } from '@/composables/useOptions'
@@ -15,7 +16,7 @@ import { formatAssetMinorAmount } from '@/utils/assetAmount'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const assetOptions = useOptions(apiGetAssetOptions)
+const assetOptions = useOptions(apiGetCoreOptions)
 const systemStore = useSystemStore()
 const order = ref<RechargeOrder | null>(null)
 const coinConfigs = ref<AssetCoinConfig[]>([])

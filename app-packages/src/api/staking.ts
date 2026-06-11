@@ -1,6 +1,6 @@
 import { authHttp, http } from './http'
 import { compactParams } from './utils'
-import type { OptionsGroup, RespBase } from '../types/api'
+import type { RespBase } from '../types/api'
 import type {
   AppCreateOrderReq,
   AppMyOrderDetailReq,
@@ -15,12 +15,6 @@ import type {
   StakeRedeemLog,
   StakeRewardLog,
 } from '../types/staking'
-
-export function apiGetStakingOptions(): Promise<
-  RespBase & { data: OptionsGroup[] }
-> {
-  return http.get('/staking/options').then((res: { data: any }) => res.data)
-}
 
 export function apiStakingListProducts(
   params: AppProductListReq,

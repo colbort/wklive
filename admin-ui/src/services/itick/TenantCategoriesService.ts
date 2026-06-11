@@ -1,4 +1,5 @@
 import type { RespBase, BaseService, OptionGroup } from '@/services'
+import { getCoreOptions } from '@/stores/core'
 
 import {
   apiItickTenantCategoryBatchUpsert,
@@ -7,7 +8,6 @@ import {
   apiItickTenantCategoryList,
   apiItickTenantCategoryUpdate,
 } from '@/api/itick/tenant-categories'
-import { apiOptions } from '@/api/itick/categories'
 
 export type ItickTenantCategory = {
   id: number
@@ -69,7 +69,7 @@ export type ListTenantCategoriesReq = {
 
 export class TenantCategoriesService implements BaseService {
   async getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   async getList(params: ListTenantCategoriesReq): Promise<RespBase<ItickTenantCategory[]>> {

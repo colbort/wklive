@@ -397,20 +397,12 @@ type AppListBillsResp {
 	data []OptionBill `json:"data"`
 }
 
-type GetOptionOptionsResp {
-	RespBase
-	data []OptionsGroup `json:"data"`
-}
-
 @server (
 	prefix:     /app/option
 	group:      option
 	middleware: PublicRateLimit
 )
 service app {
-	@handler GetOptionOptions
-	get /options returns (GetOptionOptionsResp)
-
 	@handler AppListContracts
 	get /contracts (AppListContractsReq) returns (AppListContractsResp)
 
@@ -469,4 +461,3 @@ service app {
 	@handler AppExercise
 	post /exercise (AppExerciseReq) returns (AppExerciseResp)
 }
-

@@ -630,11 +630,6 @@ type DepthLevel struct {
 	Volume float64 `json:"volume"`
 }
 
-type GetAssetOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
-}
-
 type GetFillListReq struct {
 	PageReq
 	MarketType int64     `form:"marketType,optional"`
@@ -650,11 +645,6 @@ type GetFillListResp struct {
 type GetIdentityResp struct {
 	RespBase
 	Data UserIdentity `json:"data"`
-}
-
-type GetItickOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
 }
 
 type GetKlineReq struct {
@@ -757,11 +747,6 @@ type GetMyWithdrawOrderResp struct {
 	Data WithdrawOrder `json:"data"`
 }
 
-type GetOptionOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
-}
-
 type GetOrderDetailData struct {
 	Order    TradeOrder          `json:"order"`
 	Spot     TradeSymbolSpot     `json:"spot"`
@@ -790,11 +775,6 @@ type GetOrderListReq struct {
 type GetOrderListResp struct {
 	RespBase
 	Data []TradeOrder `json:"data"`
-}
-
-type GetPaymentOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
 }
 
 type GetPositionListReq struct {
@@ -828,11 +808,6 @@ type GetSecurityResp struct {
 	Data UserSecurity `json:"data"`
 }
 
-type GetStakingOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
-}
-
 type GetSymbolDetailData struct {
 	Symbol          TradeSymbol                 `json:"symbol"`
 	Spot            TradeSymbolSpot             `json:"spot"`
@@ -862,16 +837,6 @@ type GetSymbolListResp struct {
 type GetSystemCoreResp struct {
 	RespBase
 	Data SystemCore `json:"data"`
-}
-
-type GetTradeOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
-}
-
-type GetUserOptionsResp struct {
-	RespBase
-	Data []OptionsGroup `json:"data"`
 }
 
 type GuestLogin struct {

@@ -2,7 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
+import { apiGetCoreOptions } from '@/api/core'
+import { apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
 import { apiCreateWithdrawOrder } from '@/api/payment'
 import AssetCoinSelectSheet from '@/components/assets/AssetCoinSelectSheet.vue'
 import AssetCoinPicker from '@/components/assets/AssetCoinPicker.vue'
@@ -21,7 +22,7 @@ import {
 
 const route = useRoute()
 const router = useRouter()
-const assetOptions = useOptions(apiGetAssetOptions)
+const assetOptions = useOptions(apiGetCoreOptions)
 const { t } = useI18n()
 const coinConfigs = ref<AssetCoinConfig[]>([])
 const assets = ref<AssetUserAsset[]>([])

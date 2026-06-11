@@ -1,6 +1,6 @@
 import { authHttp, http } from './http'
 import { compactParams } from './utils'
-import type { OptionsGroup, RespBase } from '../types/api'
+import type { RespBase } from '../types/api'
 import type {
   AssetCoinConfig,
   AssetFlow,
@@ -18,12 +18,6 @@ import type {
   TransferMyAssetResp,
   UserAssetSummary,
 } from '../types/asset'
-
-export function apiGetAssetOptions(): Promise<
-  RespBase & { data: OptionsGroup[] }
-> {
-  return http.get('/asset/options').then((res: { data: any }) => res.data)
-}
 
 export function apiListAssetCoinConfigs(
   params: ListAssetCoinConfigsReq,

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
-import { apiGetTradeOptions } from '@/api/trade'
+import { apiGetCoreOptions } from '@/api/core'
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { optionText, useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
@@ -75,7 +75,7 @@ const riskStopLossPrice = ref('')
 const riskTakeProfitPercent = ref('')
 const riskStopLossPercent = ref('')
 const riskQty = ref('')
-const tradeOptions = useOptions(apiGetTradeOptions)
+const tradeOptions = useOptions(apiGetCoreOptions)
 const { t } = useI18n()
 const orderTypeOptions = computed(() => {
   const options = tradeOptions.getGroup('orderType').filter((option) => {

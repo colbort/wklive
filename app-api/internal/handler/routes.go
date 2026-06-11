@@ -22,20 +22,6 @@ import (
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.PublicRateLimit},
-			[]rest.Route{
-				{
-					Method:  http.MethodGet,
-					Path:    "/options",
-					Handler: asset.GetAssetOptionsHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/app/asset"),
-	)
-
-	server.AddRoutes(
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
@@ -124,11 +110,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/options",
-					Handler: itick.GetItickOptionsHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
 					Path:    "/products",
 					Handler: itick.ListVisibleProductsHandler(serverCtx),
 				},
@@ -160,11 +141,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/contracts/detail",
 					Handler: option.AppGetContractDetailHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/options",
-					Handler: option.GetOptionOptionsHandler(serverCtx),
 				},
 			}...,
 		),
@@ -249,20 +225,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/app/option"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.PublicRateLimit},
-			[]rest.Route{
-				{
-					Method:  http.MethodGet,
-					Path:    "/options",
-					Handler: payment.GetPaymentOptionsHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/app/payment"),
 	)
 
 	server.AddRoutes(
@@ -366,11 +328,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,
-					Path:    "/options",
-					Handler: staking.GetStakingOptionsHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
 					Path:    "/products",
 					Handler: staking.AppProductListHandler(serverCtx),
 				},
@@ -438,11 +395,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.PublicRateLimit},
 			[]rest.Route{
-				{
-					Method:  http.MethodGet,
-					Path:    "/options",
-					Handler: trade.GetTradeOptionsHandler(serverCtx),
-				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/symbols",
@@ -650,20 +602,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
-		rest.WithPrefix("/app/user"),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.PublicRateLimit},
-			[]rest.Route{
-				{
-					Method:  http.MethodGet,
-					Path:    "/options",
-					Handler: user_public.GetUserOptionsHandler(serverCtx),
-				},
-			}...,
-		),
 		rest.WithPrefix("/app/user"),
 	)
 

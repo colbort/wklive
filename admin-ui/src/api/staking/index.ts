@@ -73,6 +73,3 @@ export function apiStakingManualRedeem(params: AdminManualRedeemReq): Promise<Re
   return post<boolean>('/admin/staking/manual-redeem', params)
 }
 
-export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
-  return get('/admin/staking/options')
-}

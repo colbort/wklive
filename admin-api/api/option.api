@@ -579,20 +579,12 @@ type ListBillsResp {
 	data []OptionBill `json:"data"`
 }
 
-type GetOptionOptionsResp {
-	RespBase
-	data []OptionsGroup `json:"data"`
-}
-
 @server (
 	prefix: /admin/option
 	group:  option
 	jwt:    Jwt
 )
 service admin {
-	@handler GetOptionOptions
-	get /options returns (GetOptionOptionsResp)
-
 	@handler AdminCreateContract
 	post /contracts (CreateContractReq) returns (CreateContractResp)
 
@@ -656,4 +648,3 @@ service admin {
 	@handler AdminListBills
 	get /bills (ListBillsReq) returns (ListBillsResp)
 }
-

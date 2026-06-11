@@ -1,6 +1,6 @@
 import { authHttp, http } from './http'
 import { buildPath, compactParams } from './utils'
-import type { OptionsGroup, RespBase } from '../types/api'
+import type { RespBase } from '../types/api'
 import type {
   AvailableRechargeChannel,
   CancelMyRechargeOrderReq,
@@ -25,12 +25,6 @@ import type {
   UserRechargeStat,
   WithdrawOrder,
 } from '../types/payment'
-
-export function apiGetPaymentOptions(): Promise<
-  RespBase & { data: OptionsGroup[] }
-> {
-  return http.get('/payment/options').then((res: { data: any }) => res.data)
-}
 
 export function apiGetMyRechargeStat(
   params: GetMyRechargeStatReq,

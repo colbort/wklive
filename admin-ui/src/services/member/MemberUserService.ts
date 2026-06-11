@@ -23,8 +23,8 @@ import {
   apiMemberUserUpdateLevel,
   apiMemberUserUpdateRiskLevel,
   apiMemberUserUpdateStatus,
-  apiOptions,
-} from '@/api/member/users'
+  } from '@/api/member/users'
+import { getCoreOptions } from '@/stores/core'
 
 export type MemberRespBase<T = any> = RespBase<T> & {
   detail?: T // 详情数据
@@ -423,7 +423,7 @@ export class MemberUserService {
     return apiMemberUserBankSetDefault(id, data)
   }
   getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 }
 

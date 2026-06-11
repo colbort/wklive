@@ -342,20 +342,12 @@ type AdminChangeAssetResp {
 	data AdminChangeAssetData `json:"data"`
 }
 
-type GetAssetOptionsResp {
-	RespBase
-	data []OptionsGroup `json:"data"`
-}
-
 @server (
 	prefix: /admin/asset
 	group:  asset
 	jwt:    Jwt
 )
 service admin {
-	@handler GetAssetOptions
-	get /options returns (GetAssetOptionsResp)
-
 	@handler CreateAssetCoinConfig
 	post /coin-configs (CreateAssetCoinConfigReq) returns (AssetCoinConfigResp)
 

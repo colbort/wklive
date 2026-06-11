@@ -282,11 +282,6 @@ type GetPayPlatformsResp {
 	data []PayPlatformItem `json:"data"`
 }
 
-type GetPaymentOptionsResp {
-	RespBase
-	data []OptionsGroup `json:"data"`
-}
-
 type ListPayPlatformsReq {
 	PageReq
 	keyword      string `form:"keyword,optional"`
@@ -988,9 +983,6 @@ type ListCryptoRechargeTxsResp {
 	jwt:    Jwt
 )
 service admin {
-	@handler GetPaymentOptions
-	get /options returns (GetPaymentOptionsResp)
-
 	// 添加平台
 	@handler CreatePayPlatform
 	post /platform (CreatePayPlatformReq) returns (RespBase)

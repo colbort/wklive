@@ -145,6 +145,3 @@ export function apiOptionGetBill(params: GetBillReq): Promise<RespBase<OptionBil
   return get<OptionBill>('/admin/option/bills/detail', params)
 }
 
-export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
-  return get('/admin/option/options')
-}

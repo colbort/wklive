@@ -4,8 +4,8 @@ import {
   apiSysConfigCreate,
   apiSysConfigUpdate,
   apiSysConfigDelete,
-  apiOptions,
-} from '@/api/system/config'
+  } from '@/api/system/config'
+import { getCoreOptions } from '@/stores/core'
 
 // ===== 系统配置类型定义 =====
 
@@ -159,7 +159,7 @@ export class ConfigService implements BaseService {
   }
 
   async getKeys(): Promise<RespBase<OptionItem[]>> {
-    const res = await apiOptions()
+    const res = await getCoreOptions()
     const group = (res.data || []).find((item) => item.key === 'sysConfigType')
     return {
       ...res,

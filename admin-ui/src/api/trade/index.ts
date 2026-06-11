@@ -193,6 +193,3 @@ export function apiTradeRetryEvent(params: RetryTradeEventReq): Promise<RespBase
   return post('/admin/trade/events/retry', params)
 }
 
-export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
-  return get('/admin/trade/options')
-}

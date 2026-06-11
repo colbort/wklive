@@ -231,20 +231,12 @@ type WsMessage {
 	Payload      []byte        `json:"payload,omitempty"`
 }
 
-type GetItickOptionsResp {
-	RespBase
-	data []OptionsGroup `json:"data"`
-}
-
 @server (
 	prefix:     /app/itick
 	group:      itick
 	middleware: PublicRateLimit
 )
 service app {
-	@handler GetItickOptions
-	get /options returns (GetItickOptionsResp)
-
 	// 获取允许显示的产品类型
 	@handler ListVisibleCategories
 	get /categories (ListVisibleCategoriesReq) returns (ListVisibleCategoriesResp)

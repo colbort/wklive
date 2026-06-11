@@ -534,20 +534,12 @@ type SysTenantDetailResp {
 	data SysTenantItem `json:"data"`
 }
 
-type GetSystemOptionsResp {
-	RespBase
-	data []OptionsGroup `json:"data"`
-}
-
 @server (
 	prefix: /admin/system
 	group:  system
 	jwt:    Jwt
 )
 service admin {
-	@handler GetSystemOptions
-	get /options returns (GetSystemOptionsResp)
-
 	// --- 后台用户 ---
 	@handler SysUserList
 	get /users (SysUserListReq) returns (SysUserListResp)

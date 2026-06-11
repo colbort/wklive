@@ -166,6 +166,3 @@ export function apiMemberUserBankSetDefault(
   return put(`/admin/member/user-banks/${id}/default`, data)
 }
 
-export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
-  return get('/admin/member/options')
-}

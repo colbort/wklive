@@ -38,7 +38,6 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 21),
 (0, 1, 22),
 (0, 1, 23),
-(0, 1, 24),
 (0, 1, 25),
 (0, 1, 40),
 (0, 1, 41),
@@ -49,10 +48,8 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 64),
 (0, 1, 65),
 (0, 1, 66),
-(0, 1, 80),
 
 (0, 1, 100),
-(0, 1, 101),
 (0, 1, 102),
 (0, 1, 103),
 (0, 1, 104),
@@ -134,10 +131,8 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 453),
 (0, 1, 454),
 (0, 1, 470),
-(0, 1, 480),
 
 (0, 1, 500),
-(0, 1, 501),
 (0, 1, 510),
 (0, 1, 511),
 (0, 1, 512),
@@ -156,7 +151,6 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 552),
 
 (0, 1, 600),
-(0, 1, 601),
 (0, 1, 610),
 (0, 1, 611),
 (0, 1, 612),
@@ -180,7 +174,6 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 701),
 
 (0, 1, 800),
-(0, 1, 801),
 (0, 1, 810),
 (0, 1, 811),
 (0, 1, 812),
@@ -194,7 +187,6 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 841),
 
 (0, 1, 1000),
-(0, 1, 1001),
 (0, 1, 1010),
 (0, 1, 1011),
 (0, 1, 1012),
@@ -279,7 +271,6 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 11002),
 (0, 1, 11003),
 (0, 1, 11004),
-(0, 1, 11005),
 (0, 1, 11100),
 (0, 1, 11101),
 (0, 1, 11102);
@@ -300,7 +291,6 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 21),
 (0, 2, 22),
 (0, 2, 23),
-(0, 2, 24),
 (0, 2, 25),
 (0, 2, 40),
 (0, 2, 41),
@@ -311,11 +301,9 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 64),
 (0, 2, 65),
 (0, 2, 66),
-(0, 2, 80),
 
 -- 支付管理：只保留租户相关
 (0, 2, 100),
-(0, 2, 101),
 (0, 2, 140),
 (0, 2, 141),
 (0, 2, 142),
@@ -376,11 +364,9 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 453),
 (0, 2, 454),
 (0, 2, 470),
-(0, 2, 480),
 
 -- 资产管理
 (0, 2, 500),
-(0, 2, 501),
 (0, 2, 510),
 (0, 2, 511),
 (0, 2, 512),
@@ -400,7 +386,6 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 
 -- 期权管理
 (0, 2, 600),
-(0, 2, 601),
 (0, 2, 610),
 (0, 2, 611),
 (0, 2, 612),
@@ -425,7 +410,6 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 
 -- 质押管理
 (0, 2, 800),
-(0, 2, 801),
 (0, 2, 810),
 (0, 2, 811),
 (0, 2, 812),
@@ -440,7 +424,6 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 
 -- 交易管理
 (0, 2, 1000),
-(0, 2, 1001),
 (0, 2, 1010),
 (0, 2, 1011),
 (0, 2, 1012),
@@ -497,7 +480,6 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 10206),
 (0, 2, 10300),
 (0, 2, 10304),
-(0, 2, 11005),
 (0, 2, 11100),
 (0, 2, 11101),
 (0, 2, 11102);
@@ -521,7 +503,6 @@ VALUES
 (21, 11, '删除用户', 3, 'DELETE', '/member/users/{id}', 'users:user:delete', '', '', 21),
 (22, 11, '获取用户安全设置', 3, 'GET', '/member/users/{id}/security', 'users:user:security:detail', '', '', 22),
 (23, 11, '重置用户谷歌2FA', 3, 'PUT', '/member/users/{id}/reset2fa', 'users:user:reset:google2fa', '', '', 23),
-(24, 11, '获取用户选项', 3, 'GET', '/member/options', 'users:user:options', '', '', 24),
 (25, 11, '校验推荐人', 3, 'GET', '/member/users/referrer/check', 'users:user:referrer:check', '', '', 25),
 
 (40, 10, '实名认证信息列表', 2, 'GET', '/member/user-identities', 'users:user:identities:list', 'users/identity', '', 40),
@@ -533,8 +514,7 @@ VALUES
 (63, 60, '更新用户银行卡', 3, 'PUT', '/member/user-banks/{id}', 'users:user:bank:update', '', '', 63),
 (64, 60, '删除用户银行卡', 3, 'DELETE', '/member/user-banks/{id}', 'users:user:bank:delete', '', '', 64),
 (65, 60, '更新用户银行卡状态', 3, 'PUT', '/member/user-banks/{id}/status', 'users:user:bank:update:status', '', '', 65),
-(66, 60, '设置默认用户银行卡', 3, 'PUT', '/member/user-banks/{id}/default', 'users:user:bank:default', '', '', 66),
-(80, 10, '会员服务选项', 3, 'GET', '/member/options', 'users:options', '', '', 80);
+(66, 60, '设置默认用户银行卡', 3, 'PUT', '/member/user-banks/{id}/default', 'users:user:bank:default', '', '', 66);
 
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -542,7 +522,6 @@ VALUES (100, 0, '支付管理', 1, 'Payment', 100);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(101, 100, '支付服务选项', 3, 'GET', '/payment/options', 'payment:options', '', '', 101),
 (102, 100, '平台管理', 2, 'GET', '/payment/platforms', 'payment:platform:list', 'payment/platforms', 'Bank', 102),
 (103, 102, '创建支付平台', 3, 'POST', '/payment/platform', 'payment:platform:add', '', '', 103),
 (104, 102, '更新支付平台', 3, 'PUT', '/payment/platform', 'payment:platform:update', '', '', 104),
@@ -651,8 +630,7 @@ VALUES
 (454, 450, '获取租户产品详情', 3, 'GET', '/itick/tenant-products/{id}', 'itick:tenant-itick:detail', '', '', 454),
 
 -- 初始化租户展示配置
-(470, 400, '初始化租户展示配置', 2, 'POST', '/itick/tenant-display/init', 'itick:tenant-display:init', 'itick/tenant-display-init', 'Setting', 470),
-(480, 400, 'ITICK服务选项', 3, 'GET', '/itick/options', 'itick:options', '', '', 480);
+(470, 400, '初始化租户展示配置', 2, 'POST', '/itick/tenant-display/init', 'itick:tenant-display:init', 'itick/tenant-display-init', 'Setting', 470);
 
 
 -- 资产（asset）
@@ -661,7 +639,6 @@ VALUES (500, 0, '资产管理', 1, 'Wallet', 500);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(501, 500, '资产服务选项', 3, 'GET', '/asset/options', 'asset:options', '', '', 501),
 (510, 500, '资产配置', 2, 'GET', '/asset/coin-configs', 'asset:config:list', 'asset/configs', 'Lock', 510),
 (511, 510, '添加资产配置', 3, 'POST', '/asset/coin-configs', 'asset:config:add', '', 'Lock', 511),
 (512, 510, '删除资产配置', 3, 'DELETE', '/asset/coin-configs/{id}', 'asset:config:delete', '', 'Lock', 512),
@@ -685,7 +662,6 @@ VALUES (600, 0, '期权管理', 1, 'TrendCharts', 600);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(601, 600, '期权服务选项', 3, 'GET', '/option/options', 'option:options', '', '', 601),
 (610, 600, '合约列表', 2, 'GET', '/option/contracts', 'option:contract:list', 'option/contracts', 'Tickets', 610),
 (611, 610, '创建合约', 3, 'POST', '/option/contracts', 'option:contract:add', '', '', 611),
 (612, 610, '更新合约', 3, 'POST', '/option/contracts/update', 'option:contract:update', '', '', 612),
@@ -714,7 +690,6 @@ VALUES (800, 0, '质押管理', 1, 'Coin', 800);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(801, 800, '质押服务选项', 3, 'GET', '/staking/options', 'staking:options', '', '', 801),
 (810, 800, '质押产品列表', 2, 'GET', '/staking/products', 'staking:product:list', 'staking/products', 'Coin', 810),
 (811, 810, '获取质押产品详情', 3, 'GET', '/staking/products/detail', 'staking:product:detail', '', '', 811),
 (812, 810, '创建质押产品', 3, 'POST', '/staking/products', 'staking:product:add', '', '', 812),
@@ -733,7 +708,6 @@ VALUES (1000, 0, '交易管理', 1, 'DataBoard', 1000);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(1001, 1000, '交易服务选项', 3, 'GET', '/trade/options', 'trade:options', '', '', 1001),
 (1010, 1000, '交易对列表', 2, 'GET', '/trade/symbols', 'trade:symbol:list', 'trade/symbols', 'Switch', 1010),
 (1011, 1010, '获取交易对详情', 3, 'GET', '/trade/symbols/detail', 'trade:symbol:detail', '', '', 1011),
 (1012, 1010, '创建交易对', 3, 'POST', '/trade/symbols', 'trade:symbol:add', '', '', 1012),
@@ -849,8 +823,7 @@ VALUES
 (11001, 11000, '新增租户', 3, 'POST', '/system/tenants', 'sys:tenant:add', 11001),
 (11002, 11000, '编辑租户', 3, 'PUT', '/system/tenants', 'sys:tenant:update', 11002),
 (11003, 11000, '删除租户', 3, 'DELETE', '/system/tenants/{id}', 'sys:tenant:delete', 11003),
-(11004, 11000, '获取租户详情', 3, 'GET', '/system/tenant/detail', 'sys:tenant:detail', 11004),
-(11005, 10000, '系统服务选项', 3, 'GET', '/system/options', 'sys:options', 11005);
+(11004, 11000, '获取租户详情', 3, 'GET', '/system/tenant/detail', 'sys:tenant:detail', 11004);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES (11100, 10000, '验证码记录', 2, 'GET', '/system/verification-codes', 'sys:verification-code:list', 'system/verification-codes', 'Message', 11100);

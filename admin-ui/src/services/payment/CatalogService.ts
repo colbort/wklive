@@ -10,7 +10,7 @@ import {
   apiPayProductList,
   apiPayProductUpdate,
 } from '@/api/payment/catalog'
-import { apiOptions } from '@/api/payment/tenant'
+import { getCoreOptions } from '@/stores/core'
 
 export type PayPlatform = {
   id: number // 平台ID
@@ -106,7 +106,7 @@ export type ListPayProductsReq = {
 
 export class CatalogService {
   async getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   async getPayPlatforms(): Promise<RespBase<PayPlatformItem[]>> {

@@ -1,7 +1,6 @@
 import type { OptionGroup, RespBase } from '@/services'
 import {
-  apiOptions,
-  apiStakingChangeProductStatus,
+    apiStakingChangeProductStatus,
   apiStakingCreateProduct,
   apiStakingGetOrder,
   apiStakingGetProduct,
@@ -13,6 +12,7 @@ import {
   apiStakingManualReward,
   apiStakingUpdateProduct,
 } from '@/api/staking'
+import { getCoreOptions } from '@/stores/core'
 
 export type StakeProduct = {
   id: number // 主键ID
@@ -258,7 +258,7 @@ export type AdminManualRedeemReq = {
 
 export class StakingService {
   getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   listProducts(params: AdminProductListReq) {

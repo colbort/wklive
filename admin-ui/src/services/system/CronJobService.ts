@@ -10,7 +10,7 @@ import {
   apiSysCronJobHandlers,
   apiSysCronJobLogList,
 } from '@/api/system/cronjob'
-import { apiOptions } from '@/api/system/options'
+import { getCoreOptions } from '@/stores/core'
 
 export type SysCronJobItem = {
   id: number
@@ -106,7 +106,7 @@ export type SysCronJobLogListResp = RespBase<SysCronJobLogItem[]>
 
 export class CronJobService implements BaseService {
   async getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   async getList(params: SysCronJobListReq): Promise<RespBase<SysCronJobItem[]>> {

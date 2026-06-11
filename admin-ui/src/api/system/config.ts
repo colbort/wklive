@@ -26,6 +26,3 @@ export function apiSysConfigDelete(id: number): Promise<RespBase> {
   return del(`/admin/system/configs/${id}`)
 }
 
-export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
-  return get('/admin/system/options')
-}

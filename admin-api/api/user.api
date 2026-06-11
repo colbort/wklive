@@ -211,11 +211,6 @@ type CheckUserReferrerResp {
 	data CheckUserReferrerData `json:"data"`
 }
 
-type GetUserOptionsResp {
-	RespBase
-	data []OptionsGroup `json:"data"`
-}
-
 type GetUserDetailReq {
 	userId int64 `path:"userId"`
 }
@@ -444,9 +439,6 @@ type SetDefaultUserBankReq {
 	jwt:    Jwt
 )
 service admin {
-	@handler GetUserOptions
-	get /options returns (GetUserOptionsResp)
-
 	@handler CreateUser
 	post /users (CreateUserReq) returns (CreateUserResp)
 

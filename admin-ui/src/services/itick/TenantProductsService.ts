@@ -1,4 +1,5 @@
 import type { RespBase, BaseService, OptionGroup } from '@/services'
+import { getCoreOptions } from '@/stores/core'
 
 import {
   apiInitTenantItickDisplay,
@@ -8,7 +9,6 @@ import {
   apiItickTenantProductList,
   apiItickTenantProductUpdate,
 } from '@/api/itick/tenant-products'
-import { apiOptions } from '@/api/itick/categories'
 
 export type ItickTenantProduct = {
   id: number
@@ -89,7 +89,7 @@ export type InitTenantItickDisplayResp = {
 
 export class TenantProductsService implements BaseService {
   async getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   async getList(params: ListTenantProductsReq): Promise<RespBase<ItickTenantProduct[]>> {

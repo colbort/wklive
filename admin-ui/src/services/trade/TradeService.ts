@@ -1,7 +1,6 @@
 import type { OptionGroup, RespBase } from '@/services'
 import {
-  apiOptions,
-  apiTradeCreateSymbol,
+    apiTradeCreateSymbol,
   apiTradeGetEvent,
   apiTradeGetFill,
   apiTradeGetOrder,
@@ -31,6 +30,7 @@ import {
   apiTradeSetUserTradeLimit,
   apiTradeUpdateSymbol,
 } from '@/api/trade'
+import { getCoreOptions } from '@/stores/core'
 
 export type TimeRange = {
   startTime?: number // 开始时间
@@ -625,7 +625,7 @@ export type RetryTradeEventReq = {
 
 export class TradeService {
   getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return apiOptions()
+    return getCoreOptions()
   }
 
   listSymbols(params: GetSymbolListAdminReq) {

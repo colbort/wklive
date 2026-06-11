@@ -789,20 +789,12 @@ type RetryTradeEventReq {
 	operatorId int64 `json:"operatorId"`
 }
 
-type GetTradeOptionsResp {
-	RespBase
-	data []OptionsGroup `json:"data"`
-}
-
 @server (
 	prefix: /admin/trade
 	group:  trade
 	jwt:    Jwt
 )
 service admin {
-	@handler GetTradeOptions
-	get /options returns (GetTradeOptionsResp)
-
 	@handler CreateSymbol
 	post /symbols (CreateSymbolReq) returns (AdminCommonResp)
 

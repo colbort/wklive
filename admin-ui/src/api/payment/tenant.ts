@@ -108,6 +108,3 @@ export function apiTenantPayChannelRuleUpdate(
   return put('/admin/payment/tenant-channel-rule', params)
 }
 
-export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
-  return get('/admin/payment/options')
-}
