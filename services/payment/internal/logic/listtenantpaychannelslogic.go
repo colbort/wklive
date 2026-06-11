@@ -34,7 +34,7 @@ func (l *ListTenantPayChannelsLogic) ListTenantPayChannels(in *payment.ListTenan
 			in.TenantId = tenantId
 		}
 	}
-	channels, total, err := l.svcCtx.TenantPayChannelModel.FindPage(l.ctx, in.TenantId, in.PlatformId, in.ProductId, in.AccountId, in.Keyword, int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	channels, total, err := l.svcCtx.TenantPayChannelModel.FindPage(l.ctx, in.TenantId, in.PlatformId, in.ProductId, in.AccountId, in.Keyword, int64(in.Enabled), in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

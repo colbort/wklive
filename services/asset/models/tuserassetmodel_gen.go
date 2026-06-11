@@ -45,13 +45,13 @@ type (
 		Id              int64   `db:"id"`               // 主键ID
 		TenantId        int64   `db:"tenant_id"`        // 租户ID
 		UserId          int64   `db:"user_id"`          // 用户ID
-		WalletType      int64   `db:"wallet_type"`      // 钱包类型:1现货 2资金 3合约 4理财 5期权
+		WalletType      int64   `db:"wallet_type"`      // 钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权
 		Coin            string  `db:"coin"`             // 币种代码,如 USDT/BTC/ETH
 		TotalAmount     float64 `db:"total_amount"`     // 总资产
 		AvailableAmount float64 `db:"available_amount"` // 可用资产
 		FrozenAmount    float64 `db:"frozen_amount"`    // 冻结资产
 		LockedAmount    float64 `db:"locked_amount"`    // 锁定资产/锁仓资产
-		Status          int64   `db:"status"`           // 状态:1正常 0禁用
+		Enabled         int64   `db:"enabled"`          // 启用开关:1启用 0禁用
 		Version         int64   `db:"version"`          // 版本号,用于乐观锁
 		Remark          string  `db:"remark"`           // 备注
 		CreateTimes     int64   `db:"create_times"`     // 创建时间戳(毫秒)
@@ -123,7 +123,7 @@ func (m *defaultTUserAssetModel) Insert(ctx context.Context, data *TUserAsset) (
 	tUserAssetTenantIdUserIdWalletTypeCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTUserAssetTenantIdUserIdWalletTypeCoinPrefix, data.TenantId, data.UserId, data.WalletType, data.Coin)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserAssetRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.WalletType, data.Coin, data.TotalAmount, data.AvailableAmount, data.FrozenAmount, data.LockedAmount, data.Status, data.Version, data.Remark, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.WalletType, data.Coin, data.TotalAmount, data.AvailableAmount, data.FrozenAmount, data.LockedAmount, data.Enabled, data.Version, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tUserAssetIdKey, tUserAssetTenantIdUserIdWalletTypeCoinKey)
 	return ret, err
 }
@@ -138,7 +138,7 @@ func (m *defaultTUserAssetModel) Update(ctx context.Context, newData *TUserAsset
 	tUserAssetTenantIdUserIdWalletTypeCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTUserAssetTenantIdUserIdWalletTypeCoinPrefix, data.TenantId, data.UserId, data.WalletType, data.Coin)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserAssetRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.WalletType, newData.Coin, newData.TotalAmount, newData.AvailableAmount, newData.FrozenAmount, newData.LockedAmount, newData.Status, newData.Version, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.WalletType, newData.Coin, newData.TotalAmount, newData.AvailableAmount, newData.FrozenAmount, newData.LockedAmount, newData.Enabled, newData.Version, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tUserAssetIdKey, tUserAssetTenantIdUserIdWalletTypeCoinKey)
 	return err
 }

@@ -17,6 +17,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	uc "wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -97,7 +98,7 @@ func (l *SendVerificationCodeLogic) sendEmail(tenantId int64, email, scene, code
 	if err != nil {
 		return "smtp", err
 	}
-	if !config.Enabled {
+	if config.Enabled != common.Enable_ENABLE_ENABLED {
 		return "smtp", fmt.Errorf("email verification code is disabled")
 	}
 	if config.SmtpHost == "" || config.SmtpPort == 0 || config.FromEmail == "" {
@@ -140,7 +141,7 @@ func (l *SendVerificationCodeLogic) sendPhone(tenantId int64, phone, scene, code
 	if err != nil {
 		return "", err
 	}
-	if !config.Enabled {
+	if config.Enabled != common.Enable_ENABLE_ENABLED {
 		return config.Provider, fmt.Errorf("phone verification code is disabled")
 	}
 	if config.Endpoint == "" {

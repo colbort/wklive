@@ -39,8 +39,8 @@ func (l *UpdateCategoryLogic) UpdateCategory(in *itick.UpdateCategoryReq) (*itic
 	}
 
 	item.CategoryName = in.CategoryName
-	item.Enabled = in.Enabled
-	item.AppVisible = in.AppVisible
+	item.Enabled = int64(in.Enabled)
+	item.AppVisible = int64(in.AppVisible)
 	item.Sort = in.Sort
 	item.Icon = in.Icon
 	item.Remark = in.Remark

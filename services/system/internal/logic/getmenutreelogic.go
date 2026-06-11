@@ -59,7 +59,7 @@ func (l *GetMenuTreeLogic) GetMenuTree(in *system.SysMenuTreeReq) (*system.SysMe
 			Icon:      m.Icon,
 			Sort:      m.Sort,
 			Visible:   visibleStatusToProto(m.Visible),
-			Status:    commonStatusToProto(m.Status),
+			Enabled:   commonStatusToProto(m.Enabled),
 			Perms:     m.Perms,
 		}
 		data = append(data, item)

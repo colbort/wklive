@@ -40,8 +40,8 @@ func (l *SetUserTradeConfigLogic) SetUserTradeConfig(in *trade.SetUserTradeConfi
 	item.PositionMode = int64(in.PositionMode)
 	item.MarginMode = int64(in.MarginMode)
 	item.DefaultLeverage = in.DefaultLeverage
-	item.TradeEnabled = in.TradeEnabled
-	item.ReduceOnlyEnabled = in.ReduceOnlyEnabled
+	item.TradeEnabled = enableToModel(in.TradeEnabled, item.TradeEnabled)
+	item.ReduceOnlyEnabled = enableToModel(in.ReduceOnlyEnabled, item.ReduceOnlyEnabled)
 	item.UpdateTimes = now
 	if item.Id == 0 {
 		_, err = l.svcCtx.TradeUserConfigModel.Insert(l.ctx, item)

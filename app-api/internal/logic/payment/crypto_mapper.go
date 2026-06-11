@@ -33,7 +33,7 @@ func cryptoRechargeAddressFromPB(item *payment.CryptoRechargeAddress) types.Cryp
 		Id:            item.Id,
 		TenantId:      item.TenantId,
 		UserId:        item.UserId,
-		WalletType:    item.WalletType,
+		WalletType:    int64(item.WalletType),
 		Coin:          item.Coin,
 		ChainCode:     int64(item.ChainCode.Number()),
 		Address:       item.Address,

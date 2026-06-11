@@ -14,17 +14,32 @@ export type CategoryPreviewItem = {
 defineProps<{
   items: CategoryPreviewItem[]
   loading: boolean
+  loadingMore: boolean
   error: boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   mouseenter: []
   mouseleave: []
+  loadMore: []
 }>()
+
+function handleScroll(event: Event) {
+  const target = event.currentTarget as HTMLElement
+  const distanceToBottom = target.scrollHeight - target.scrollTop - target.clientHeight
+  if (distanceToBottom <= 128) {
+    emit('loadMore')
+  }
+}
 </script>
 
 <template>
-  <div class="category-preview" @mouseenter="$emit('mouseenter')" @mouseleave="$emit('mouseleave')">
+  <div
+    class="category-preview"
+    @mouseenter="$emit('mouseenter')"
+    @mouseleave="$emit('mouseleave')"
+    @scroll="handleScroll"
+  >
     <RouterLink
       v-for="item in items"
       :key="item.symbol"
@@ -42,6 +57,9 @@ defineEmits<{
       </span>
     </RouterLink>
     <div v-if="loading" class="category-preview__state">
+      Loading...
+    </div>
+    <div v-else-if="loadingMore" class="category-preview__state category-preview__state--more">
       Loading...
     </div>
     <div v-else-if="error" class="category-preview__state">
@@ -172,5 +190,10 @@ defineEmits<{
   color: var(--text-muted);
   font-size: var(--font-size-18);
   font-weight: var(--font-weight-700);
+}
+
+.category-preview__state--more {
+  min-height: var(--px-48);
+  font-size: var(--font-size-13);
 }
 </style>

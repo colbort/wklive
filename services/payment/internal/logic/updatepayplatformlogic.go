@@ -61,8 +61,8 @@ func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatform
 	if in.Icon != "" {
 		platform.Icon = sql.NullString{String: in.Icon, Valid: true}
 	}
-	if in.Status != 0 {
-		platform.Status = int64(in.Status)
+	if in.Enabled != 0 {
+		platform.Enabled = int64(in.Enabled)
 	}
 	if in.Remark != "" {
 		platform.Remark = sql.NullString{String: in.Remark, Valid: true}

@@ -35,12 +35,12 @@ func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq)
 		}, nil
 	}
 
-	if user.Status == commonStatusToModel(in.Status) {
+	if user.Enabled == commonStatusToModel(in.Enabled) {
 		return &system.RespBase{
 			Base: helper.GetErrResp(i18n.UserStatusUnchanged, i18n.Translate(i18n.UserStatusUnchanged, l.ctx)),
 		}, nil
 	}
-	user.Status = commonStatusToModel(in.Status)
+	user.Enabled = commonStatusToModel(in.Enabled)
 	if err = l.svcCtx.UserModel.Update(l.ctx, user); err != nil {
 		return nil, err
 	}

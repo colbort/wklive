@@ -46,8 +46,8 @@ type (
 		CategoryType int64  `db:"category_type"` // 产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund
 		CategoryName string `db:"category_name"` // 产品类型名称
 		CategoryCode string `db:"category_code"` // 产品类型标识, 如 forex/crypto/stock/future/indices/fund
-		Enabled      int64  `db:"enabled"`       // 是否启用: 0-否 1-是
-		AppVisible   int64  `db:"app_visible"`   // APP是否可见: 0-否 1-是
+		Enabled      int64  `db:"enabled"`       // 启用状态: 1-启用 2-禁用
+		AppVisible   int64  `db:"app_visible"`   // APP可见开关: 1-显示 2-隐藏
 		Sort         int64  `db:"sort"`          // 排序值,越小越靠前
 		Icon         string `db:"icon"`          // 图标
 		Remark       string `db:"remark"`        // 备注

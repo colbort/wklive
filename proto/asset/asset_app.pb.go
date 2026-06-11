@@ -24,7 +24,7 @@ const (
 
 type ListAssetCoinConfigsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`                      // 账户类型
+	WalletType    common.WalletType      `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`                     // 账户类型
 	OperationType AssetCoinOperationType `protobuf:"varint,2,opt,name=operation_type,json=operationType,proto3,enum=asset.AssetCoinOperationType" json:"operation_type,omitempty"` // 操作场景
 	CoinType      AssetCoinType          `protobuf:"varint,3,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                         // 币种类型,0表示全部
 	unknownFields protoimpl.UnknownFields
@@ -61,11 +61,11 @@ func (*ListAssetCoinConfigsReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ListAssetCoinConfigsReq) GetWalletType() WalletType {
+func (x *ListAssetCoinConfigsReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *ListAssetCoinConfigsReq) GetOperationType() AssetCoinOperationType {
@@ -224,8 +224,8 @@ func (x *GetMyAssetSummaryResp) GetData() *UserAssetSummary {
 
 type ListMyAssetsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
-	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种,空表示全部
+	WalletType    common.WalletType      `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
+	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种,空表示全部
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -260,11 +260,11 @@ func (*ListMyAssetsReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ListMyAssetsReq) GetWalletType() WalletType {
+func (x *ListMyAssetsReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *ListMyAssetsReq) GetCoin() string {
@@ -328,8 +328,8 @@ func (x *ListMyAssetsResp) GetData() []*UserAsset {
 
 type GetMyAssetReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
-	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
+	WalletType    common.WalletType      `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型
+	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -364,11 +364,11 @@ func (*GetMyAssetReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *GetMyAssetReq) GetWalletType() WalletType {
+func (x *GetMyAssetReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *GetMyAssetReq) GetCoin() string {
@@ -432,12 +432,12 @@ func (x *GetMyAssetResp) GetData() *UserAsset {
 
 type ListMyAssetFlowsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
-	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
-	BizType       BizType                `protobuf:"varint,3,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`             // 业务类型,0表示全部
-	SceneType     SceneType              `protobuf:"varint,4,opt,name=scene_type,json=sceneType,proto3,enum=asset.SceneType" json:"scene_type,omitempty"`     // 业务场景,0表示全部
-	TimeRange     *common.TimeRange      `protobuf:"bytes,5,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`                           // 时间范围
-	Page          *common.PageReq        `protobuf:"bytes,6,opt,name=page,proto3" json:"page,omitempty"`                                                      // 分页
+	WalletType    common.WalletType      `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
+	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
+	BizType       BizType                `protobuf:"varint,3,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`              // 业务类型,0表示全部
+	SceneType     SceneType              `protobuf:"varint,4,opt,name=scene_type,json=sceneType,proto3,enum=asset.SceneType" json:"scene_type,omitempty"`      // 业务场景,0表示全部
+	TimeRange     *common.TimeRange      `protobuf:"bytes,5,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`                            // 时间范围
+	Page          *common.PageReq        `protobuf:"bytes,6,opt,name=page,proto3" json:"page,omitempty"`                                                       // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -472,11 +472,11 @@ func (*ListMyAssetFlowsReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *ListMyAssetFlowsReq) GetWalletType() WalletType {
+func (x *ListMyAssetFlowsReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *ListMyAssetFlowsReq) GetCoin() string {
@@ -568,10 +568,10 @@ func (x *ListMyAssetFlowsResp) GetData() []*AssetFlow {
 
 type ListMyFreezesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
-	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
-	Status        FreezeStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=asset.FreezeStatus" json:"status,omitempty"`                         // 冻结状态
-	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                                      // 分页
+	WalletType    common.WalletType      `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型
+	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
+	Status        FreezeStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=asset.FreezeStatus" json:"status,omitempty"`                          // 冻结状态
+	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                                       // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -606,11 +606,11 @@ func (*ListMyFreezesReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *ListMyFreezesReq) GetWalletType() WalletType {
+func (x *ListMyFreezesReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *ListMyFreezesReq) GetCoin() string {
@@ -688,10 +688,10 @@ func (x *ListMyFreezesResp) GetData() []*AssetFreeze {
 
 type ListMyLocksReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
-	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
-	Status        LockStatus             `protobuf:"varint,3,opt,name=status,proto3,enum=asset.LockStatus" json:"status,omitempty"`                           // 锁仓状态
-	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                                      // 分页
+	WalletType    common.WalletType      `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型
+	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
+	Status        LockStatus             `protobuf:"varint,3,opt,name=status,proto3,enum=asset.LockStatus" json:"status,omitempty"`                            // 锁仓状态
+	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                                       // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -726,11 +726,11 @@ func (*ListMyLocksReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *ListMyLocksReq) GetWalletType() WalletType {
+func (x *ListMyLocksReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *ListMyLocksReq) GetCoin() string {
@@ -808,12 +808,12 @@ func (x *ListMyLocksResp) GetData() []*AssetLock {
 
 type TransferMyAssetReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	FromWalletType WalletType             `protobuf:"varint,1,opt,name=from_wallet_type,json=fromWalletType,proto3,enum=asset.WalletType" json:"from_wallet_type,omitempty"` // 转出钱包类型
-	ToWalletType   WalletType             `protobuf:"varint,2,opt,name=to_wallet_type,json=toWalletType,proto3,enum=asset.WalletType" json:"to_wallet_type,omitempty"`       // 转入钱包类型
-	FromCoin       string                 `protobuf:"bytes,3,opt,name=from_coin,json=fromCoin,proto3" json:"from_coin,omitempty"`                                            // 转出币种
-	ToCoin         string                 `protobuf:"bytes,4,opt,name=to_coin,json=toCoin,proto3" json:"to_coin,omitempty"`                                                  // 转入币种
-	Amount         string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`                                                                // 划转金额
-	Remark         string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                                                // 备注
+	FromWalletType common.WalletType      `protobuf:"varint,1,opt,name=from_wallet_type,json=fromWalletType,proto3,enum=common.WalletType" json:"from_wallet_type,omitempty"` // 转出钱包类型
+	ToWalletType   common.WalletType      `protobuf:"varint,2,opt,name=to_wallet_type,json=toWalletType,proto3,enum=common.WalletType" json:"to_wallet_type,omitempty"`       // 转入钱包类型
+	FromCoin       string                 `protobuf:"bytes,3,opt,name=from_coin,json=fromCoin,proto3" json:"from_coin,omitempty"`                                             // 转出币种
+	ToCoin         string                 `protobuf:"bytes,4,opt,name=to_coin,json=toCoin,proto3" json:"to_coin,omitempty"`                                                   // 转入币种
+	Amount         string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`                                                                 // 划转金额
+	Remark         string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                                                 // 备注
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -848,18 +848,18 @@ func (*TransferMyAssetReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *TransferMyAssetReq) GetFromWalletType() WalletType {
+func (x *TransferMyAssetReq) GetFromWalletType() common.WalletType {
 	if x != nil {
 		return x.FromWalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
-func (x *TransferMyAssetReq) GetToWalletType() WalletType {
+func (x *TransferMyAssetReq) GetToWalletType() common.WalletType {
 	if x != nil {
 		return x.ToWalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *TransferMyAssetReq) GetFromCoin() string {
@@ -998,9 +998,9 @@ var File_proto_asset_asset_app_proto protoreflect.FileDescriptor
 
 const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"\n" +
-	"\x1bproto/asset/asset_app.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\"\xc6\x01\n" +
-	"\x17ListAssetCoinConfigsReq\x122\n" +
-	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\x1bproto/asset/asset_app.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\"\xc7\x01\n" +
+	"\x17ListAssetCoinConfigsReq\x123\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12D\n" +
 	"\x0eoperation_type\x18\x02 \x01(\x0e2\x1d.asset.AssetCoinOperationTypeR\roperationType\x121\n" +
 	"\tcoin_type\x18\x03 \x01(\x0e2\x14.asset.AssetCoinTypeR\bcoinType\"l\n" +
@@ -1010,23 +1010,23 @@ const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"\x14GetMyAssetSummaryReq\"j\n" +
 	"\x15GetMyAssetSummaryResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
-	"\x04data\x18\x02 \x01(\v2\x17.asset.UserAssetSummaryR\x04data\"Y\n" +
-	"\x0fListMyAssetsReq\x122\n" +
-	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\x04data\x18\x02 \x01(\v2\x17.asset.UserAssetSummaryR\x04data\"Z\n" +
+	"\x0fListMyAssetsReq\x123\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x02 \x01(\tR\x04coin\"^\n" +
 	"\x10ListMyAssetsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x03(\v2\x10.asset.UserAssetR\x04data\"W\n" +
-	"\rGetMyAssetReq\x122\n" +
-	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\x04data\x18\x02 \x03(\v2\x10.asset.UserAssetR\x04data\"X\n" +
+	"\rGetMyAssetReq\x123\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x02 \x01(\tR\x04coin\"\\\n" +
 	"\x0eGetMyAssetResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x01(\v2\x10.asset.UserAssetR\x04data\"\x90\x02\n" +
-	"\x13ListMyAssetFlowsReq\x122\n" +
-	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\x04data\x18\x02 \x01(\v2\x10.asset.UserAssetR\x04data\"\x91\x02\n" +
+	"\x13ListMyAssetFlowsReq\x123\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x02 \x01(\tR\x04coin\x12)\n" +
 	"\bbiz_type\x18\x03 \x01(\x0e2\x0e.asset.BizTypeR\abizType\x12/\n" +
@@ -1037,28 +1037,28 @@ const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"b\n" +
 	"\x14ListMyAssetFlowsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetFlowR\x04data\"\xac\x01\n" +
-	"\x10ListMyFreezesReq\x122\n" +
-	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetFlowR\x04data\"\xad\x01\n" +
+	"\x10ListMyFreezesReq\x123\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x02 \x01(\tR\x04coin\x12+\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x13.asset.FreezeStatusR\x06status\x12#\n" +
 	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"a\n" +
 	"\x11ListMyFreezesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04data\x18\x02 \x03(\v2\x12.asset.AssetFreezeR\x04data\"\xa8\x01\n" +
-	"\x0eListMyLocksReq\x122\n" +
-	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\x04data\x18\x02 \x03(\v2\x12.asset.AssetFreezeR\x04data\"\xa9\x01\n" +
+	"\x0eListMyLocksReq\x123\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x02 \x01(\tR\x04coin\x12)\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x11.asset.LockStatusR\x06status\x12#\n" +
 	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"]\n" +
 	"\x0fListMyLocksResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetLockR\x04data\"\xf0\x01\n" +
-	"\x12TransferMyAssetReq\x12;\n" +
-	"\x10from_wallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\x0efromWalletType\x127\n" +
-	"\x0eto_wallet_type\x18\x02 \x01(\x0e2\x11.asset.WalletTypeR\ftoWalletType\x12\x1b\n" +
+	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetLockR\x04data\"\xf2\x01\n" +
+	"\x12TransferMyAssetReq\x12<\n" +
+	"\x10from_wallet_type\x18\x01 \x01(\x0e2\x12.common.WalletTypeR\x0efromWalletType\x128\n" +
+	"\x0eto_wallet_type\x18\x02 \x01(\x0e2\x12.common.WalletTypeR\ftoWalletType\x12\x1b\n" +
 	"\tfrom_coin\x18\x03 \x01(\tR\bfromCoin\x12\x17\n" +
 	"\ato_coin\x18\x04 \x01(\tR\x06toCoin\x12\x16\n" +
 	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x16\n" +
@@ -1112,7 +1112,7 @@ var file_proto_asset_asset_app_proto_goTypes = []any{
 	(*TransferMyAssetReq)(nil),       // 14: asset.TransferMyAssetReq
 	(*TransferMyAssetResp)(nil),      // 15: asset.TransferMyAssetResp
 	(*TransferMyAssetData)(nil),      // 16: asset.TransferMyAssetData
-	(WalletType)(0),                  // 17: asset.WalletType
+	(common.WalletType)(0),           // 17: common.WalletType
 	(AssetCoinOperationType)(0),      // 18: asset.AssetCoinOperationType
 	(AssetCoinType)(0),               // 19: asset.AssetCoinType
 	(*common.RespBase)(nil),          // 20: common.RespBase
@@ -1130,38 +1130,38 @@ var file_proto_asset_asset_app_proto_goTypes = []any{
 	(*AssetLock)(nil),                // 32: asset.AssetLock
 }
 var file_proto_asset_asset_app_proto_depIdxs = []int32{
-	17, // 0: asset.ListAssetCoinConfigsReq.wallet_type:type_name -> asset.WalletType
+	17, // 0: asset.ListAssetCoinConfigsReq.wallet_type:type_name -> common.WalletType
 	18, // 1: asset.ListAssetCoinConfigsReq.operation_type:type_name -> asset.AssetCoinOperationType
 	19, // 2: asset.ListAssetCoinConfigsReq.coin_type:type_name -> asset.AssetCoinType
 	20, // 3: asset.ListAssetCoinConfigsResp.base:type_name -> common.RespBase
 	21, // 4: asset.ListAssetCoinConfigsResp.data:type_name -> asset.AssetCoinConfig
 	20, // 5: asset.GetMyAssetSummaryResp.base:type_name -> common.RespBase
 	22, // 6: asset.GetMyAssetSummaryResp.data:type_name -> asset.UserAssetSummary
-	17, // 7: asset.ListMyAssetsReq.wallet_type:type_name -> asset.WalletType
+	17, // 7: asset.ListMyAssetsReq.wallet_type:type_name -> common.WalletType
 	20, // 8: asset.ListMyAssetsResp.base:type_name -> common.RespBase
 	23, // 9: asset.ListMyAssetsResp.data:type_name -> asset.UserAsset
-	17, // 10: asset.GetMyAssetReq.wallet_type:type_name -> asset.WalletType
+	17, // 10: asset.GetMyAssetReq.wallet_type:type_name -> common.WalletType
 	20, // 11: asset.GetMyAssetResp.base:type_name -> common.RespBase
 	23, // 12: asset.GetMyAssetResp.data:type_name -> asset.UserAsset
-	17, // 13: asset.ListMyAssetFlowsReq.wallet_type:type_name -> asset.WalletType
+	17, // 13: asset.ListMyAssetFlowsReq.wallet_type:type_name -> common.WalletType
 	24, // 14: asset.ListMyAssetFlowsReq.biz_type:type_name -> asset.BizType
 	25, // 15: asset.ListMyAssetFlowsReq.scene_type:type_name -> asset.SceneType
 	26, // 16: asset.ListMyAssetFlowsReq.time_range:type_name -> common.TimeRange
 	27, // 17: asset.ListMyAssetFlowsReq.page:type_name -> common.PageReq
 	20, // 18: asset.ListMyAssetFlowsResp.base:type_name -> common.RespBase
 	28, // 19: asset.ListMyAssetFlowsResp.data:type_name -> asset.AssetFlow
-	17, // 20: asset.ListMyFreezesReq.wallet_type:type_name -> asset.WalletType
+	17, // 20: asset.ListMyFreezesReq.wallet_type:type_name -> common.WalletType
 	29, // 21: asset.ListMyFreezesReq.status:type_name -> asset.FreezeStatus
 	27, // 22: asset.ListMyFreezesReq.page:type_name -> common.PageReq
 	20, // 23: asset.ListMyFreezesResp.base:type_name -> common.RespBase
 	30, // 24: asset.ListMyFreezesResp.data:type_name -> asset.AssetFreeze
-	17, // 25: asset.ListMyLocksReq.wallet_type:type_name -> asset.WalletType
+	17, // 25: asset.ListMyLocksReq.wallet_type:type_name -> common.WalletType
 	31, // 26: asset.ListMyLocksReq.status:type_name -> asset.LockStatus
 	27, // 27: asset.ListMyLocksReq.page:type_name -> common.PageReq
 	20, // 28: asset.ListMyLocksResp.base:type_name -> common.RespBase
 	32, // 29: asset.ListMyLocksResp.data:type_name -> asset.AssetLock
-	17, // 30: asset.TransferMyAssetReq.from_wallet_type:type_name -> asset.WalletType
-	17, // 31: asset.TransferMyAssetReq.to_wallet_type:type_name -> asset.WalletType
+	17, // 30: asset.TransferMyAssetReq.from_wallet_type:type_name -> common.WalletType
+	17, // 31: asset.TransferMyAssetReq.to_wallet_type:type_name -> common.WalletType
 	20, // 32: asset.TransferMyAssetResp.base:type_name -> common.RespBase
 	16, // 33: asset.TransferMyAssetResp.data:type_name -> asset.TransferMyAssetData
 	23, // 34: asset.TransferMyAssetData.from_asset:type_name -> asset.UserAsset

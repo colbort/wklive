@@ -46,7 +46,7 @@ type (
 		UserId               int64   `db:"user_id"`                // 用户ID
 		SymbolId             int64   `db:"symbol_id"`              // 交易标的ID
 		MarketType           int64   `db:"market_type"`            // 市场类型：2秒合约 3U本位 4币本位
-		PositionSide         int64   `db:"position_side"`          // 持仓方向：1多 2空
+		PositionSide         int64   `db:"position_side"`          // 持仓方向：1净持仓 2多 3空
 		ActionType           int64   `db:"action_type"`            // 变更动作类型：1开仓 2加仓 3减仓 4平仓 5强平 6结算 7资金费结转 8手动调整
 		BeforeQty            float64 `db:"before_qty"`             // 变更前持仓数量
 		AfterQty             float64 `db:"after_qty"`              // 变更后持仓数量

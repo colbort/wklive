@@ -201,8 +201,8 @@ message SetSpotSymbolConfigReq {
   int64 symbol_id = 2;
   string maker_fee_rate = 3;
   string taker_fee_rate = 4;
-  int64 buy_enabled = 5;
-  int64 sell_enabled = 6;
+  common.Enable buy_enabled = 5; // 状态,0表示全部，1表示启用，2表示禁用
+  common.Enable sell_enabled = 6; // 状态,0表示全部，1表示启用，2表示禁用
 }
 
 message SetContractSymbolConfigReq {
@@ -218,8 +218,8 @@ message SetContractSymbolConfigReq {
   int64 delivery_time = 10;
   int64 support_cross = 11;
   int64 support_isolated = 12;
-  int64 buy_enabled = 13;
-  int64 sell_enabled = 14;
+  common.Enable buy_enabled = 13; // 状态,0表示全部，1表示启用，2表示禁用
+  common.Enable sell_enabled = 14; // 状态,0表示全部，1表示启用，2表示禁用
 }
 
 message SetSymbolLeverageConfigReq {
@@ -230,7 +230,7 @@ message SetSymbolLeverageConfigReq {
   repeated int64 leverage_values = 5;
   int64 default_leverage = 6;
   int64 max_leverage = 7;
-  int64 status = 8;
+  common.Enable enabled = 8; // 状态,0表示全部，1表示启用，2表示禁用
   int64 sort = 9;
   string remark = 10;
 }
@@ -254,7 +254,7 @@ message GetSymbolLeverageConfigListReq {
   int64 symbol_id = 3;
   MarketType market_type = 4;
   MarginMode margin_mode = 5;
-  int64 status = 6;
+  common.Enable enabled = 6; // 状态,0表示全部，1表示启用，2表示禁用
 }
 
 message GetSymbolLeverageConfigListResp {
@@ -388,7 +388,7 @@ message SetUserTradeLimitReq {
   int64 can_cancel = 6;
   int64 can_trigger_order = 7;
   int64 can_api_trade = 8;
-  int64 trade_enabled = 9;
+  common.Enable trade_enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
   int64 only_reduce_only = 10;
   int64 max_open_order_count = 11;
   int64 max_order_count_per_day = 12;
@@ -398,7 +398,7 @@ message SetUserTradeLimitReq {
   int64 risk_level = 16;
   int64 operator_id = 17;
   SourceType source = 18;
-  int64 status = 19;
+  common.Enable enabled = 19; // 状态,0表示全部，1表示启用，2表示禁用
   int64 effective_start_time = 20;
   int64 effective_end_time = 21;
   string remark = 22;
@@ -421,7 +421,7 @@ message SetUserSymbolLimitReq {
   string price_deviation_rate = 14;
   int64 operator_id = 15;
   SourceType source = 16;
-  int64 status = 17;
+  common.Enable enabled = 17; // 状态,0表示全部，1表示启用，2表示禁用
   int64 effective_start_time = 18;
   int64 effective_end_time = 19;
   string remark = 20;
@@ -458,8 +458,8 @@ message SetUserTradeConfigReq {
   PositionMode position_mode = 5;
   MarginMode margin_mode = 6;
   int64 default_leverage = 7;
-  int64 trade_enabled = 8;
-  int64 reduce_only_enabled = 9;
+  common.Enable trade_enabled = 8; // 状态,0表示全部，1表示启用，2表示禁用
+  common.Enable reduce_only_enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
 }
 
 message GetUserTradeConfigReq {
@@ -502,7 +502,7 @@ message SetUserLeverageConfigReq {
   int64 max_leverage = 9;
   int64 operator_id = 10;
   SourceType source = 11;
-  int64 status = 12;
+  common.Enable enabled = 12; // 状态,0表示全部，1表示启用，2表示禁用
   string remark = 13;
 }
 

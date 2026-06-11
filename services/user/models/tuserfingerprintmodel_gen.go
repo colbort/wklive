@@ -23,15 +23,15 @@ var (
 	tUserFingerprintRowsExpectAutoSet   = strings.Join(stringx.Remove(tUserFingerprintFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tUserFingerprintRowsWithPlaceHolder = strings.Join(stringx.Remove(tUserFingerprintFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTUserFingerprintIdPrefix                            = "cache:tUserFingerprint:id:"
-	cacheTUserFingerprintTenantIdUserIdFingerprintHashPrefix = "cache:tUserFingerprint:tenantId:userId:fingerprintHash:"
+	cacheTUserFingerprintIdPrefix             = "cache:tUserFingerprint:id:"
+	cacheTUserFingerprintTenantIdUserIdPrefix = "cache:tUserFingerprint:tenantId:userId:"
 )
 
 type (
 	tUserFingerprintModel interface {
 		Insert(ctx context.Context, data *TUserFingerprint) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TUserFingerprint, error)
-		FindOneByTenantIdUserIdFingerprintHash(ctx context.Context, tenantId int64, userId int64, fingerprintHash string) (*TUserFingerprint, error)
+		FindOneByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUserFingerprint, error)
 		Update(ctx context.Context, data *TUserFingerprint) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -71,11 +71,11 @@ func (m *defaultTUserFingerprintModel) Delete(ctx context.Context, id int64) err
 	}
 
 	tUserFingerprintIdKey := fmt.Sprintf("%s%v", cacheTUserFingerprintIdPrefix, id)
-	tUserFingerprintTenantIdUserIdFingerprintHashKey := fmt.Sprintf("%s%v:%v:%v", cacheTUserFingerprintTenantIdUserIdFingerprintHashPrefix, data.TenantId, data.UserId, data.FingerprintHash)
+	tUserFingerprintTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserFingerprintTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tUserFingerprintIdKey, tUserFingerprintTenantIdUserIdFingerprintHashKey)
+	}, tUserFingerprintIdKey, tUserFingerprintTenantIdUserIdKey)
 	return err
 }
 
@@ -96,12 +96,12 @@ func (m *defaultTUserFingerprintModel) FindOne(ctx context.Context, id int64) (*
 	}
 }
 
-func (m *defaultTUserFingerprintModel) FindOneByTenantIdUserIdFingerprintHash(ctx context.Context, tenantId int64, userId int64, fingerprintHash string) (*TUserFingerprint, error) {
-	tUserFingerprintTenantIdUserIdFingerprintHashKey := fmt.Sprintf("%s%v:%v:%v", cacheTUserFingerprintTenantIdUserIdFingerprintHashPrefix, tenantId, userId, fingerprintHash)
+func (m *defaultTUserFingerprintModel) FindOneByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUserFingerprint, error) {
+	tUserFingerprintTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserFingerprintTenantIdUserIdPrefix, tenantId, userId)
 	var resp TUserFingerprint
-	err := m.QueryRowIndexCtx(ctx, &resp, tUserFingerprintTenantIdUserIdFingerprintHashKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `fingerprint_hash` = ? limit 1", tUserFingerprintRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, fingerprintHash); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tUserFingerprintTenantIdUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? limit 1", tUserFingerprintRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -118,11 +118,11 @@ func (m *defaultTUserFingerprintModel) FindOneByTenantIdUserIdFingerprintHash(ct
 
 func (m *defaultTUserFingerprintModel) Insert(ctx context.Context, data *TUserFingerprint) (sql.Result, error) {
 	tUserFingerprintIdKey := fmt.Sprintf("%s%v", cacheTUserFingerprintIdPrefix, data.Id)
-	tUserFingerprintTenantIdUserIdFingerprintHashKey := fmt.Sprintf("%s%v:%v:%v", cacheTUserFingerprintTenantIdUserIdFingerprintHashPrefix, data.TenantId, data.UserId, data.FingerprintHash)
+	tUserFingerprintTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserFingerprintTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserFingerprintRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.DeviceId, data.FingerprintHash, data.MatchKey, data.Fingerprint, data.SourceIp, data.FirstSeenTime, data.LastSeenTime, data.CreateTimes, data.UpdateTimes)
-	}, tUserFingerprintIdKey, tUserFingerprintTenantIdUserIdFingerprintHashKey)
+	}, tUserFingerprintIdKey, tUserFingerprintTenantIdUserIdKey)
 	return ret, err
 }
 
@@ -133,11 +133,11 @@ func (m *defaultTUserFingerprintModel) Update(ctx context.Context, newData *TUse
 	}
 
 	tUserFingerprintIdKey := fmt.Sprintf("%s%v", cacheTUserFingerprintIdPrefix, data.Id)
-	tUserFingerprintTenantIdUserIdFingerprintHashKey := fmt.Sprintf("%s%v:%v:%v", cacheTUserFingerprintTenantIdUserIdFingerprintHashPrefix, data.TenantId, data.UserId, data.FingerprintHash)
+	tUserFingerprintTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserFingerprintTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserFingerprintRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.DeviceId, newData.FingerprintHash, newData.MatchKey, newData.Fingerprint, newData.SourceIp, newData.FirstSeenTime, newData.LastSeenTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tUserFingerprintIdKey, tUserFingerprintTenantIdUserIdFingerprintHashKey)
+	}, tUserFingerprintIdKey, tUserFingerprintTenantIdUserIdKey)
 	return err
 }
 

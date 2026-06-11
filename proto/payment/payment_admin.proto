@@ -18,7 +18,7 @@ message CreatePayPlatformReq {
   string notify_url = 4;
   string return_url = 5;
   string icon = 6;
-  payment.CommonStatus status = 7;
+  common.Enable enabled = 7; // 状态,0表示全部，1表示启用，2表示禁用
   string remark = 8;
 }
 
@@ -29,7 +29,7 @@ message UpdatePayPlatformReq {
   string notify_url = 4;
   string return_url = 5;
   string icon = 6;
-  payment.CommonStatus status = 7;
+  common.Enable enabled = 7; // 状态,0表示全部，1表示启用，2表示禁用
   string remark = 8;
 }
 
@@ -44,7 +44,7 @@ message ListPayPlatformsReq {
   common.PageReq page = 1;
   string keyword = 2;
   string platform_code = 3;
-  payment.CommonStatus status = 4;
+  common.Enable enabled = 4; // 状态,0表示全部，1表示启用，2表示禁用
   payment.PlatformType platform_type = 5;
 }
 
@@ -60,7 +60,7 @@ message CreatePayProductReq {
   string product_name = 3;
   payment.SceneType scene_type = 4;
   string currency = 5;
-  payment.CommonStatus status = 6;
+  common.Enable enabled = 6; // 状态,0表示全部，1表示启用，2表示禁用
   string remark = 7;
 }
 
@@ -69,7 +69,7 @@ message UpdatePayProductReq {
   string product_name = 2;
   payment.SceneType scene_type = 3;
   string currency = 4;
-  payment.CommonStatus status = 5;
+  common.Enable enabled = 5; // 状态,0表示全部，1表示启用，2表示禁用
   string remark = 6;
 }
 
@@ -85,7 +85,7 @@ message ListPayProductsReq {
   int64 platform_id = 2;
   string keyword = 3;
   string product_code = 4;
-  payment.CommonStatus status = 5;
+  common.Enable enabled = 5; // 状态,0表示全部，1表示启用，2表示禁用
   payment.SceneType scene_type = 6;
 }
 
@@ -98,7 +98,7 @@ message ListPayProductsResp {
 message OpenTenantPayPlatformReq {
   int64 tenant_id = 1;
   int64 platform_id = 2;
-  payment.CommonStatus status = 3;
+  common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
   payment.OpenStatus open_status = 4;
   string remark = 5;
 }
@@ -106,7 +106,7 @@ message OpenTenantPayPlatformReq {
 message UpdateTenantPayPlatformReq {
   int64 id = 1;
   int64 tenant_id = 2;
-  payment.CommonStatus status = 3;
+  common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
   payment.OpenStatus open_status = 4;
   string remark = 5;
 }
@@ -125,7 +125,7 @@ message ListTenantPayPlatformsReq {
   common.PageReq page = 1;
   int64 tenant_id = 2;
   int64 platform_id = 3;
-  payment.CommonStatus status = 4;
+  common.Enable enabled = 4; // 状态,0表示全部，1表示启用，2表示禁用
   payment.OpenStatus open_status = 5;
 }
 
@@ -150,7 +150,7 @@ message CreateTenantPayAccountReq {
   string public_key = 12;
   string cert_cipher = 13;
   string ext_config = 14;
-  payment.CommonStatus status = 15;
+  common.Enable enabled = 15; // 状态,0表示全部，1表示启用，2表示禁用
   int64 is_default = 16;
   string remark = 17;
 }
@@ -168,7 +168,7 @@ message UpdateTenantPayAccountReq {
   string public_key = 10;
   string cert_cipher = 11;
   string ext_config = 12;
-  payment.CommonStatus status = 13;
+  common.Enable enabled = 13; // 状态,0表示全部，1表示启用，2表示禁用
   int64 is_default = 14;
   string remark = 15;
 }
@@ -189,7 +189,7 @@ message ListTenantPayAccountsReq {
   int64 platform_id = 3;
   int64 tenant_pay_platform_id = 4;
   string keyword = 5;
-  payment.CommonStatus status = 6;
+  common.Enable enabled = 6; // 状态,0表示全部，1表示启用，2表示禁用
 }
 
 message ListTenantPayAccountsResp {
@@ -209,8 +209,8 @@ message CreateTenantPayChannelReq {
   string icon = 8;
   string currency = 9;
   int64 sort = 10;
-  int64 visible = 11;
-  payment.CommonStatus status = 12;
+  common.Switch visible = 11; // 是否在前端展示,0表示全部，1表示显示，2表示隐藏
+  common.Enable enabled = 12; // 状态,0表示全部，1表示启用，2表示禁用
   int64 single_min_amount = 13;
   int64 single_max_amount = 14;
   int64 daily_max_amount = 15;
@@ -230,8 +230,8 @@ message UpdateTenantPayChannelReq {
   string icon = 5;
   string currency = 6;
   int64 sort = 7;
-  int64 visible = 8;
-  payment.CommonStatus status = 9;
+  common.Switch visible = 8; // 是否在前端展示,0表示全部，1表示显示，2表示隐藏
+  common.Enable enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
   int64 single_min_amount = 10;
   int64 single_max_amount = 11;
   int64 daily_max_amount = 12;
@@ -260,8 +260,8 @@ message ListTenantPayChannelsReq {
   int64 product_id = 4;
   int64 account_id = 5;
   string keyword = 6;
-  payment.CommonStatus status = 7;
-  int64 visible = 8;
+  common.Enable enabled = 7; // 状态,0表示全部，1表示启用，2表示禁用
+  common.Switch visible = 8; // 是否在前端展示,0表示全部，1表示显示，2表示隐藏
 }
 
 message ListTenantPayChannelsResp {
@@ -275,7 +275,7 @@ message CreateTenantPayChannelRuleReq {
   int64 channel_id = 2;
   string rule_name = 3;
   int64 priority = 4;
-  payment.CommonStatus status = 5;
+  common.Enable enabled = 5; // 状态,0表示全部，1表示启用，2表示禁用
   int64 single_amount_min = 6;
   int64 single_amount_max = 7;
   int64 user_total_recharge_min = 8;
@@ -296,7 +296,7 @@ message UpdateTenantPayChannelRuleReq {
   int64 tenant_id = 2;
   string rule_name = 3;
   int64 priority = 4;
-  payment.CommonStatus status = 5;
+  common.Enable enabled = 5; // 状态,0表示全部，1表示启用，2表示禁用
   int64 single_amount_min = 6;
   int64 single_amount_max = 7;
   int64 user_total_recharge_min = 8;
@@ -326,7 +326,7 @@ message ListTenantPayChannelRulesReq {
   common.PageReq page = 1;
   int64 tenant_id = 2;
   int64 channel_id = 3;
-  payment.CommonStatus status = 4;
+  common.Enable enabled = 4; // 状态,0表示全部，1表示启用，2表示禁用
 }
 
 message ListTenantPayChannelRulesResp {
@@ -500,7 +500,7 @@ message GetWithdrawNotifyLogResp {
 message CreateCryptoRechargeAddressReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  int64 wallet_type = 3;
+  common.WalletType wallet_type = 3;
   string coin = 4;
   common.ChainCode chain_code = 5;
   string address = 6;
@@ -534,7 +534,7 @@ message ListCryptoRechargeAddressesReq {
   common.PageReq page = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
-  int64 wallet_type = 4;
+  common.WalletType wallet_type = 4;
   string coin = 5;
   common.ChainCode chain_code = 6;
   string address = 7;
@@ -557,7 +557,7 @@ message CreateCryptoWalletAccountReq {
   string api_secret_cipher = 6;
   string callback_secret_cipher = 7;
   string ext_config = 8;
-  payment.CommonStatus status = 9;
+  common.Enable enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
   int64 is_default = 10;
 }
 
@@ -570,7 +570,7 @@ message UpdateCryptoWalletAccountReq {
   string api_secret_cipher = 6;
   string callback_secret_cipher = 7;
   string ext_config = 8;
-  payment.CommonStatus status = 9;
+  common.Enable enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
   int64 is_default = 10;
 }
 
@@ -589,7 +589,7 @@ message ListCryptoWalletAccountsReq {
   int64 tenant_id = 2;
   string keyword = 3;
   string provider = 4;
-  payment.CommonStatus status = 5;
+  common.Enable enabled = 5; // 状态,0表示全部，1表示启用，2表示禁用
   int64 is_default = 6;
 }
 

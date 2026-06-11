@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -27,7 +28,7 @@ func orderBookKey(order *models.TTradeOrder) string {
 
 func orderBookKeyBySide(tenantID, symbolID, marketType, side int64) string {
 	sideName := "sell"
-	if side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+	if side == int64(common.Side_SIDE_BUY) {
 		sideName = "buy"
 	}
 	return fmt.Sprintf("%s:%d:%d:%d:%s", orderBookKeyPrefix, tenantID, marketType, symbolID, sideName)
@@ -48,7 +49,7 @@ func orderBookScore(order *models.TTradeOrder) float64 {
 	if order.OrderType == int64(trade.OrderType_ORDER_TYPE_MARKET) {
 		return orderBookMarketScore
 	}
-	if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+	if order.Side == int64(common.Side_SIDE_BUY) {
 		return -order.Price
 	}
 	return order.Price

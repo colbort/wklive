@@ -52,25 +52,25 @@ func completeAssetIdempotent(ctx context.Context, model models.AssetIdempotentMo
 	return model.Update(ctx, record)
 }
 
-func ToAssetStatus(status int64) asset.AssetStatus {
+func ToAssetStatus(status int64) common.Enable {
 	switch status {
 	case 1:
-		return asset.AssetStatus_ASSET_STATUS_ENABLED
+		return common.Enable_ENABLE_ENABLED
 	case 0:
-		return asset.AssetStatus_ASSET_STATUS_DISABLED
+		return common.Enable_ENABLE_DISABLED
 	default:
-		return asset.AssetStatus_ASSET_STATUS_UNKNOWN
+		return common.Enable_ENABLE_UNKNOWN
 	}
 }
 
-func ToAssetCoinSwitch(value int64) asset.AssetCoinSwitch {
+func ToAssetCoinSwitch(value int64) common.Switch {
 	switch value {
 	case 1:
-		return asset.AssetCoinSwitch_ASSET_COIN_SWITCH_ON
+		return common.Switch_SWITCH_ON
 	case 0:
-		return asset.AssetCoinSwitch_ASSET_COIN_SWITCH_OFF
+		return common.Switch_SWITCH_OFF
 	default:
-		return asset.AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+		return common.Switch_SWITCH_UNKNOWN
 	}
 }
 
@@ -238,13 +238,13 @@ func toUserAssetProto(data *models.TUserAsset) *asset.UserAsset {
 		Id:              data.Id,
 		TenantId:        data.TenantId,
 		UserId:          data.UserId,
-		WalletType:      asset.WalletType(data.WalletType),
+		WalletType:      common.WalletType(data.WalletType),
 		Coin:            data.Coin,
 		TotalAmount:     conv.FloatString(data.TotalAmount),
 		AvailableAmount: conv.FloatString(data.AvailableAmount),
 		FrozenAmount:    conv.FloatString(data.FrozenAmount),
 		LockedAmount:    conv.FloatString(data.LockedAmount),
-		Status:          ToAssetStatus(data.Status),
+		Enabled:         ToAssetStatus(data.Enabled),
 		Version:         data.Version,
 		Remark:          data.Remark,
 		CreateTimes:     data.CreateTimes,
@@ -259,7 +259,7 @@ func toAssetCoinConfigProto(data *models.TAssetCoinConfig) *asset.AssetCoinConfi
 	return &asset.AssetCoinConfig{
 		Id:              data.Id,
 		TenantId:        data.TenantId,
-		WalletType:      asset.WalletType(data.WalletType),
+		WalletType:      common.WalletType(data.WalletType),
 		Coin:            data.Coin,
 		Symbol:          data.Symbol,
 		CoinName:        data.CoinName,
@@ -273,7 +273,7 @@ func toAssetCoinConfigProto(data *models.TAssetCoinConfig) *asset.AssetCoinConfi
 		RechargeEnabled: ToAssetCoinSwitch(data.RechargeEnabled),
 		WithdrawEnabled: ToAssetCoinSwitch(data.WithdrawEnabled),
 		TransferEnabled: ToAssetCoinSwitch(data.TransferEnabled),
-		Status:          ToAssetStatus(data.Status),
+		Enabled:         ToAssetStatus(data.Enabled),
 		Sort:            int32(data.Sort),
 		Remark:          data.Remark,
 		CreateTimes:     data.CreateTimes,
@@ -290,7 +290,7 @@ func toAssetFlowProto(data *models.TAssetFlow) *asset.AssetFlow {
 		FlowNo:                 data.FlowNo,
 		TenantId:               data.TenantId,
 		UserId:                 data.UserId,
-		WalletType:             asset.WalletType(data.WalletType),
+		WalletType:             common.WalletType(data.WalletType),
 		Coin:                   data.Coin,
 		BizType:                ToBizTypeValue(data.BizType),
 		SceneType:              ToSceneTypeValue(data.SceneType),
@@ -323,7 +323,7 @@ func toAssetFreezeProto(data *models.TAssetFreeze) *asset.AssetFreeze {
 		FreezeNo:       data.FreezeNo,
 		TenantId:       data.TenantId,
 		UserId:         data.UserId,
-		WalletType:     asset.WalletType(data.WalletType),
+		WalletType:     common.WalletType(data.WalletType),
 		Coin:           data.Coin,
 		BizType:        ToBizTypeValue(data.BizType),
 		SceneType:      ToSceneTypeValue(data.SceneType),
@@ -350,7 +350,7 @@ func toAssetLockProto(data *models.TAssetLock) *asset.AssetLock {
 		LockNo:       data.LockNo,
 		TenantId:     data.TenantId,
 		UserId:       data.UserId,
-		WalletType:   asset.WalletType(data.WalletType),
+		WalletType:   common.WalletType(data.WalletType),
 		Coin:         data.Coin,
 		BizType:      ToBizTypeValue(data.BizType),
 		SceneType:    ToSceneTypeValue(data.SceneType),
@@ -475,33 +475,33 @@ func assetSceneType(in asset.SceneType) string {
 	return FromSceneTypeEnum(in)
 }
 
-func assetStatusFilter(status asset.AssetStatus) int64 {
-	switch status {
-	case asset.AssetStatus_ASSET_STATUS_ENABLED:
+func assetEnabledFilter(enabled common.Enable) int64 {
+	switch enabled {
+	case common.Enable_ENABLE_ENABLED:
 		return 1
-	case asset.AssetStatus_ASSET_STATUS_DISABLED:
+	case common.Enable_ENABLE_DISABLED:
 		return 0
 	default:
 		return 0
 	}
 }
 
-func assetCoinStatusValue(status asset.AssetStatus, defaultValue int64) int64 {
-	switch status {
-	case asset.AssetStatus_ASSET_STATUS_ENABLED:
+func assetCoinEnabledValue(enabled common.Enable, defaultValue int64) int64 {
+	switch enabled {
+	case common.Enable_ENABLE_ENABLED:
 		return 1
-	case asset.AssetStatus_ASSET_STATUS_DISABLED:
+	case common.Enable_ENABLE_DISABLED:
 		return 0
 	default:
 		return defaultValue
 	}
 }
 
-func assetCoinSwitchValue(value asset.AssetCoinSwitch, defaultValue int64) int64 {
+func assetCoinSwitchValue(value common.Switch, defaultValue int64) int64 {
 	switch value {
-	case asset.AssetCoinSwitch_ASSET_COIN_SWITCH_ON:
+	case common.Switch_SWITCH_ON:
 		return 1
-	case asset.AssetCoinSwitch_ASSET_COIN_SWITCH_OFF:
+	case common.Switch_SWITCH_OFF:
 		return 0
 	default:
 		return defaultValue

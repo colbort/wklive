@@ -47,8 +47,8 @@ func (l *UpdateUserBankStatusLogic) UpdateUserBankStatus(in *user.UpdateUserBank
 	}
 
 	// 更新银行卡状态
-	if in.Status != 0 {
-		userBank.Status = int64(in.Status)
+	if in.Enabled != 0 {
+		userBank.Enabled = int64(in.Enabled)
 	}
 	userBank.UpdateTimes = utils.NowMillis()
 
@@ -57,7 +57,7 @@ func (l *UpdateUserBankStatusLogic) UpdateUserBankStatus(in *user.UpdateUserBank
 		return nil, err
 	}
 
-	l.Logger.Infof("管理员更新银行卡 %d 状态为 %d", in.Id, in.Status)
+	l.Logger.Infof("管理员更新银行卡 %d 状态为 %d", in.Id, in.Enabled)
 
 	return &user.AdminCommonResp{
 		Base: helper.OkResp(),

@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -76,12 +77,12 @@ func (x *Interval) GetKType() int32 {
 // 系统配置
 type SystemCore struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	SiteName          string                 `protobuf:"bytes,1,opt,name=site_name,json=siteName,proto3" json:"site_name,omitempty"`                               // 网站名称
-	SiteLogo          string                 `protobuf:"bytes,2,opt,name=site_logo,json=siteLogo,proto3" json:"site_logo,omitempty"`                               // 网站LOGO
-	IsCaptchaEnabled  bool                   `protobuf:"varint,3,opt,name=is_captcha_enabled,json=isCaptchaEnabled,proto3" json:"is_captcha_enabled,omitempty"`    // 是否开启验证码
-	IsRegisterEnabled bool                   `protobuf:"varint,4,opt,name=is_register_enabled,json=isRegisterEnabled,proto3" json:"is_register_enabled,omitempty"` // 是否开启注册
-	IsGuestEnabled    bool                   `protobuf:"varint,5,opt,name=is_guest_enabled,json=isGuestEnabled,proto3" json:"is_guest_enabled,omitempty"`          // 是否允许游客登录
-	IsCryptoEnabled   bool                   `protobuf:"varint,6,opt,name=is_crypto_enabled,json=isCryptoEnabled,proto3" json:"is_crypto_enabled,omitempty"`       // 是否加密接口提交数据
+	SiteName          string                 `protobuf:"bytes,1,opt,name=site_name,json=siteName,proto3" json:"site_name,omitempty"`                                                  // 网站名称
+	SiteLogo          string                 `protobuf:"bytes,2,opt,name=site_logo,json=siteLogo,proto3" json:"site_logo,omitempty"`                                                  // 网站LOGO
+	IsCaptchaEnabled  common.Enable          `protobuf:"varint,3,opt,name=is_captcha_enabled,json=isCaptchaEnabled,proto3,enum=common.Enable" json:"is_captcha_enabled,omitempty"`    // 是否开启验证码,0表示全部，1表示启用，2表示禁用
+	IsRegisterEnabled common.Enable          `protobuf:"varint,4,opt,name=is_register_enabled,json=isRegisterEnabled,proto3,enum=common.Enable" json:"is_register_enabled,omitempty"` // 是否开启注册,0表示全部，1表示启用，2表示禁用
+	IsGuestEnabled    common.Enable          `protobuf:"varint,5,opt,name=is_guest_enabled,json=isGuestEnabled,proto3,enum=common.Enable" json:"is_guest_enabled,omitempty"`          // 是否允许游客登录,0表示全部，1表示启用，2表示禁用
+	IsCryptoEnabled   common.Enable          `protobuf:"varint,6,opt,name=is_crypto_enabled,json=isCryptoEnabled,proto3,enum=common.Enable" json:"is_crypto_enabled,omitempty"`       // 是否加密接口提交数据,0表示全部，1表示启用，2表示禁用
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -130,32 +131,32 @@ func (x *SystemCore) GetSiteLogo() string {
 	return ""
 }
 
-func (x *SystemCore) GetIsCaptchaEnabled() bool {
+func (x *SystemCore) GetIsCaptchaEnabled() common.Enable {
 	if x != nil {
 		return x.IsCaptchaEnabled
 	}
-	return false
+	return common.Enable(0)
 }
 
-func (x *SystemCore) GetIsRegisterEnabled() bool {
+func (x *SystemCore) GetIsRegisterEnabled() common.Enable {
 	if x != nil {
 		return x.IsRegisterEnabled
 	}
-	return false
+	return common.Enable(0)
 }
 
-func (x *SystemCore) GetIsGuestEnabled() bool {
+func (x *SystemCore) GetIsGuestEnabled() common.Enable {
 	if x != nil {
 		return x.IsGuestEnabled
 	}
-	return false
+	return common.Enable(0)
 }
 
-func (x *SystemCore) GetIsCryptoEnabled() bool {
+func (x *SystemCore) GetIsCryptoEnabled() common.Enable {
 	if x != nil {
 		return x.IsCryptoEnabled
 	}
-	return false
+	return common.Enable(0)
 }
 
 // 阿里云 OSS配置
@@ -688,7 +689,7 @@ func (x *WithdrawConfig) GetFreeWithdrawTimesPerDay() int32 {
 
 type EmailConfig struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Enabled         bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`                                       // 是否启用邮件验证码
+	Enabled         common.Enable          `protobuf:"varint,1,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                    // 状态,0表示全部，1表示启用，2表示禁用
 	SmtpHost        string                 `protobuf:"bytes,2,opt,name=smtp_host,json=smtpHost,proto3" json:"smtp_host,omitempty"`                      // SMTP 主机
 	SmtpPort        int32                  `protobuf:"varint,3,opt,name=smtp_port,json=smtpPort,proto3" json:"smtp_port,omitempty"`                     // SMTP 端口
 	Username        string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`                                      // SMTP 用户名
@@ -731,11 +732,11 @@ func (*EmailConfig) Descriptor() ([]byte, []int) {
 	return file_proto_system_config_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *EmailConfig) GetEnabled() bool {
+func (x *EmailConfig) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return false
+	return common.Enable(0)
 }
 
 func (x *EmailConfig) GetSmtpHost() string {
@@ -796,7 +797,7 @@ func (x *EmailConfig) GetBodyTemplate() string {
 
 type PhoneConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`                              // 是否启用短信验证码
+	Enabled       common.Enable          `protobuf:"varint,1,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 状态,0表示全部，1表示启用，2表示禁用
 	Provider      string                 `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`                             // 短信服务商标识
 	Endpoint      string                 `protobuf:"bytes,3,opt,name=endpoint,proto3" json:"endpoint,omitempty"`                             // HTTP 网关地址
 	Method        string                 `protobuf:"bytes,4,opt,name=method,proto3" json:"method,omitempty"`                                 // HTTP 方法，默认 POST
@@ -836,11 +837,11 @@ func (*PhoneConfig) Descriptor() ([]byte, []int) {
 	return file_proto_system_config_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *PhoneConfig) GetEnabled() bool {
+func (x *PhoneConfig) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return false
+	return common.Enable(0)
 }
 
 func (x *PhoneConfig) GetProvider() string {
@@ -882,18 +883,18 @@ var File_proto_system_config_proto protoreflect.FileDescriptor
 
 const file_proto_system_config_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/system/config.proto\x12\x06system\"5\n" +
+	"\x19proto/system/config.proto\x12\x06system\x1a\x19proto/common/common.proto\"5\n" +
 	"\bInterval\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x15\n" +
-	"\x06k_type\x18\x02 \x01(\x05R\x05kType\"\xfa\x01\n" +
+	"\x06k_type\x18\x02 \x01(\x05R\x05kType\"\xba\x02\n" +
 	"\n" +
 	"SystemCore\x12\x1b\n" +
 	"\tsite_name\x18\x01 \x01(\tR\bsiteName\x12\x1b\n" +
-	"\tsite_logo\x18\x02 \x01(\tR\bsiteLogo\x12,\n" +
-	"\x12is_captcha_enabled\x18\x03 \x01(\bR\x10isCaptchaEnabled\x12.\n" +
-	"\x13is_register_enabled\x18\x04 \x01(\bR\x11isRegisterEnabled\x12(\n" +
-	"\x10is_guest_enabled\x18\x05 \x01(\bR\x0eisGuestEnabled\x12*\n" +
-	"\x11is_crypto_enabled\x18\x06 \x01(\bR\x0fisCryptoEnabled\"\xbd\x01\n" +
+	"\tsite_logo\x18\x02 \x01(\tR\bsiteLogo\x12<\n" +
+	"\x12is_captcha_enabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\x10isCaptchaEnabled\x12>\n" +
+	"\x13is_register_enabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\x11isRegisterEnabled\x128\n" +
+	"\x10is_guest_enabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\x0eisGuestEnabled\x12:\n" +
+	"\x11is_crypto_enabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\x0fisCryptoEnabled\"\xbd\x01\n" +
 	"\x0fAliyunOssConfig\x12\x1a\n" +
 	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12\"\n" +
 	"\raccess_key_id\x18\x02 \x01(\tR\vaccessKeyId\x12*\n" +
@@ -948,9 +949,9 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\x1bdaily_amount_limit_per_user\x18\x05 \x01(\x03R\x17dailyAmountLimitPerUser\x12,\n" +
 	"\x12allowed_time_range\x18\x06 \x01(\tR\x10allowedTimeRange\x12H\n" +
 	"!pending_withdrawal_limit_per_user\x18\a \x01(\x05R\x1dpendingWithdrawalLimitPerUser\x12<\n" +
-	"\x1bfree_withdraw_times_per_day\x18\b \x01(\x05R\x17freeWithdrawTimesPerDay\"\xa5\x02\n" +
-	"\vEmailConfig\x12\x18\n" +
-	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1b\n" +
+	"\x1bfree_withdraw_times_per_day\x18\b \x01(\x05R\x17freeWithdrawTimesPerDay\"\xb5\x02\n" +
+	"\vEmailConfig\x12(\n" +
+	"\aenabled\x18\x01 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1b\n" +
 	"\tsmtp_host\x18\x02 \x01(\tR\bsmtpHost\x12\x1b\n" +
 	"\tsmtp_port\x18\x03 \x01(\x05R\bsmtpPort\x12\x1a\n" +
 	"\busername\x18\x04 \x01(\tR\busername\x12\x1a\n" +
@@ -959,9 +960,9 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"from_email\x18\x06 \x01(\tR\tfromEmail\x12\x1b\n" +
 	"\tfrom_name\x18\a \x01(\tR\bfromName\x12)\n" +
 	"\x10subject_template\x18\b \x01(\tR\x0fsubjectTemplate\x12#\n" +
-	"\rbody_template\x18\t \x01(\tR\fbodyTemplate\"\xbf\x01\n" +
-	"\vPhoneConfig\x12\x18\n" +
-	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1a\n" +
+	"\rbody_template\x18\t \x01(\tR\fbodyTemplate\"\xcf\x01\n" +
+	"\vPhoneConfig\x12(\n" +
+	"\aenabled\x18\x01 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1a\n" +
 	"\bprovider\x18\x02 \x01(\tR\bprovider\x12\x1a\n" +
 	"\bendpoint\x18\x03 \x01(\tR\bendpoint\x12\x16\n" +
 	"\x06method\x18\x04 \x01(\tR\x06method\x12!\n" +
@@ -993,16 +994,23 @@ var file_proto_system_config_proto_goTypes = []any{
 	(*WithdrawConfig)(nil),      // 8: system.WithdrawConfig
 	(*EmailConfig)(nil),         // 9: system.EmailConfig
 	(*PhoneConfig)(nil),         // 10: system.PhoneConfig
+	(common.Enable)(0),          // 11: common.Enable
 }
 var file_proto_system_config_proto_depIdxs = []int32{
-	2, // 0: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
-	3, // 1: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
-	4, // 2: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	11, // 0: system.SystemCore.is_captcha_enabled:type_name -> common.Enable
+	11, // 1: system.SystemCore.is_register_enabled:type_name -> common.Enable
+	11, // 2: system.SystemCore.is_guest_enabled:type_name -> common.Enable
+	11, // 3: system.SystemCore.is_crypto_enabled:type_name -> common.Enable
+	2,  // 4: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
+	3,  // 5: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
+	4,  // 6: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
+	11, // 7: system.EmailConfig.enabled:type_name -> common.Enable
+	11, // 8: system.PhoneConfig.enabled:type_name -> common.Enable
+	9,  // [9:9] is the sub-list for method output_type
+	9,  // [9:9] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_proto_system_config_proto_init() }

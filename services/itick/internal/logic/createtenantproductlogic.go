@@ -54,8 +54,8 @@ func (l *CreateTenantProductLogic) CreateTenantProduct(in *itick.CreateTenantPro
 	_, err = l.svcCtx.ItickTenantProductModel.Insert(l.ctx, &models.TItickTenantProduct{
 		TenantId:    in.TenantId,
 		ProductId:   in.ProductId,
-		Enabled:     in.Enabled,
-		AppVisible:  in.AppVisible,
+		Enabled:     int64(in.Enabled),
+		AppVisible:  int64(in.AppVisible),
 		Sort:        in.Sort,
 		Remark:      in.Remark,
 		CreateTimes: now,

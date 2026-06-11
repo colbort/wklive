@@ -3,6 +3,7 @@ package logic
 import (
 	"strings"
 
+	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/socket/client"
@@ -18,8 +19,8 @@ func toCategoryProto(item *models.TItickCategory) *itick.ItickCategory {
 		CategoryType: itick.CategoryType(item.CategoryType),
 		CategoryCode: item.CategoryCode,
 		CategoryName: item.CategoryName,
-		Enabled:      item.Enabled,
-		AppVisible:   item.AppVisible,
+		Enabled:      common.Enable(item.Enabled),
+		AppVisible:   common.Switch(item.AppVisible),
 		Sort:         item.Sort,
 		Icon:         item.Icon,
 		Remark:       item.Remark,
@@ -44,8 +45,8 @@ func toProductProto(item *models.TItickProduct) *itick.ItickProduct {
 		DisplayName:  item.DisplayName,
 		BaseCoin:     item.BaseCoin,
 		QuoteCoin:    item.QuoteCoin,
-		Enabled:      item.Enabled,
-		AppVisible:   item.AppVisible,
+		Enabled:      common.Enable(item.Enabled),
+		AppVisible:   common.Switch(item.AppVisible),
 		Sort:         item.Sort,
 		Icon:         item.Icon,
 		Remark:       item.Remark,
@@ -122,8 +123,8 @@ func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.T
 		Id:          item.Id,
 		TenantId:    item.TenantId,
 		CategoryId:  item.CategoryId,
-		Enabled:     item.Enabled,
-		AppVisible:  item.AppVisible,
+		Enabled:     common.Enable(item.Enabled),
+		AppVisible:  common.Switch(item.AppVisible),
 		Sort:        item.Sort,
 		Remark:      item.Remark,
 		CreateTimes: item.CreateTimes,
@@ -150,8 +151,8 @@ func toTenantProductProto(item *models.TItickTenantProduct, product *models.TIti
 		Id:          item.Id,
 		TenantId:    item.TenantId,
 		ProductId:   item.ProductId,
-		Enabled:     item.Enabled,
-		AppVisible:  item.AppVisible,
+		Enabled:     common.Enable(item.Enabled),
+		AppVisible:  common.Switch(item.AppVisible),
 		Sort:        item.Sort,
 		Remark:      item.Remark,
 		CreateTimes: item.CreateTimes,

@@ -75,7 +75,7 @@ func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.AppComm
 			MarginMode:   int64(in.MarginMode),
 			CreateTimes:  now,
 			Source:       int64(trade.SourceType_SOURCE_TYPE_USER),
-			Status:       1,
+			Enabled:      1,
 			PositionMode: int64(in.PositionMode),
 		}
 	}

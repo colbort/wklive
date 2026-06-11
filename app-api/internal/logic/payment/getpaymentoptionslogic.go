@@ -31,7 +31,7 @@ func (l *GetPaymentOptionsLogic) GetPaymentOptions() (resp *types.GetPaymentOpti
 		RespBase: types.RespBase{Code: 200, Msg: "success"},
 		Data: []types.OptionsGroup{
 			logicutil.EnumGroup("platformType", "平台类型", payment.PlatformType_PLATFORM_TYPE_UNKNOWN.Descriptor()),
-			logicutil.EnumGroup("status", "状态", payment.CommonStatus_COMMON_STATUS_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("status", "状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
 			logicutil.Group("visible", "显示状态",
 				logicutil.Option(0, "YES_NO_NO"),
 				logicutil.Option(1, "YES_NO_YES"),

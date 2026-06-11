@@ -42,8 +42,8 @@ func (l *UpdateProductLogic) UpdateProduct(in *itick.UpdateProductReq) (*itick.A
 	item.DisplayName = in.DisplayName
 	item.BaseCoin = in.BaseCoin
 	item.QuoteCoin = in.QuoteCoin
-	item.Enabled = in.Enabled
-	item.AppVisible = in.AppVisible
+	item.Enabled = int64(in.Enabled)
+	item.AppVisible = int64(in.AppVisible)
 	item.Sort = in.Sort
 	item.Icon = in.Icon
 	item.Remark = in.Remark

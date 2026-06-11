@@ -75,7 +75,7 @@ type CreatePayPlatformReq struct {
 	NotifyUrl     string                 `protobuf:"bytes,4,opt,name=notify_url,json=notifyUrl,proto3" json:"notify_url,omitempty"`
 	ReturnUrl     string                 `protobuf:"bytes,5,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
 	Icon          string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,7,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,7,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -153,11 +153,11 @@ func (x *CreatePayPlatformReq) GetIcon() string {
 	return ""
 }
 
-func (x *CreatePayPlatformReq) GetStatus() CommonStatus {
+func (x *CreatePayPlatformReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *CreatePayPlatformReq) GetRemark() string {
@@ -175,7 +175,7 @@ type UpdatePayPlatformReq struct {
 	NotifyUrl     string                 `protobuf:"bytes,4,opt,name=notify_url,json=notifyUrl,proto3" json:"notify_url,omitempty"`
 	ReturnUrl     string                 `protobuf:"bytes,5,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
 	Icon          string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,7,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,7,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -253,11 +253,11 @@ func (x *UpdatePayPlatformReq) GetIcon() string {
 	return ""
 }
 
-func (x *UpdatePayPlatformReq) GetStatus() CommonStatus {
+func (x *UpdatePayPlatformReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *UpdatePayPlatformReq) GetRemark() string {
@@ -368,7 +368,7 @@ type ListPayPlatformsReq struct {
 	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	PlatformCode  string                 `protobuf:"bytes,3,opt,name=platform_code,json=platformCode,proto3" json:"platform_code,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	PlatformType  PlatformType           `protobuf:"varint,5,opt,name=platform_type,json=platformType,proto3,enum=payment.PlatformType" json:"platform_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -425,11 +425,11 @@ func (x *ListPayPlatformsReq) GetPlatformCode() string {
 	return ""
 }
 
-func (x *ListPayPlatformsReq) GetStatus() CommonStatus {
+func (x *ListPayPlatformsReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *ListPayPlatformsReq) GetPlatformType() PlatformType {
@@ -499,7 +499,7 @@ type CreatePayProductReq struct {
 	ProductName   string                 `protobuf:"bytes,3,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	SceneType     SceneType              `protobuf:"varint,4,opt,name=scene_type,json=sceneType,proto3,enum=payment.SceneType" json:"scene_type,omitempty"`
 	Currency      string                 `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,6,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -570,11 +570,11 @@ func (x *CreatePayProductReq) GetCurrency() string {
 	return ""
 }
 
-func (x *CreatePayProductReq) GetStatus() CommonStatus {
+func (x *CreatePayProductReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *CreatePayProductReq) GetRemark() string {
@@ -590,7 +590,7 @@ type UpdatePayProductReq struct {
 	ProductName   string                 `protobuf:"bytes,2,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	SceneType     SceneType              `protobuf:"varint,3,opt,name=scene_type,json=sceneType,proto3,enum=payment.SceneType" json:"scene_type,omitempty"`
 	Currency      string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -654,11 +654,11 @@ func (x *UpdatePayProductReq) GetCurrency() string {
 	return ""
 }
 
-func (x *UpdatePayProductReq) GetStatus() CommonStatus {
+func (x *UpdatePayProductReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *UpdatePayProductReq) GetRemark() string {
@@ -770,7 +770,7 @@ type ListPayProductsReq struct {
 	PlatformId    int64                  `protobuf:"varint,2,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
 	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	ProductCode   string                 `protobuf:"bytes,4,opt,name=product_code,json=productCode,proto3" json:"product_code,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	SceneType     SceneType              `protobuf:"varint,6,opt,name=scene_type,json=sceneType,proto3,enum=payment.SceneType" json:"scene_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -834,11 +834,11 @@ func (x *ListPayProductsReq) GetProductCode() string {
 	return ""
 }
 
-func (x *ListPayProductsReq) GetStatus() CommonStatus {
+func (x *ListPayProductsReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *ListPayProductsReq) GetSceneType() SceneType {
@@ -905,7 +905,7 @@ type OpenTenantPayPlatformReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	PlatformId    int64                  `protobuf:"varint,2,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	OpenStatus    OpenStatus             `protobuf:"varint,4,opt,name=open_status,json=openStatus,proto3,enum=payment.OpenStatus" json:"open_status,omitempty"`
 	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -956,11 +956,11 @@ func (x *OpenTenantPayPlatformReq) GetPlatformId() int64 {
 	return 0
 }
 
-func (x *OpenTenantPayPlatformReq) GetStatus() CommonStatus {
+func (x *OpenTenantPayPlatformReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *OpenTenantPayPlatformReq) GetOpenStatus() OpenStatus {
@@ -981,7 +981,7 @@ type UpdateTenantPayPlatformReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	OpenStatus    OpenStatus             `protobuf:"varint,4,opt,name=open_status,json=openStatus,proto3,enum=payment.OpenStatus" json:"open_status,omitempty"`
 	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1032,11 +1032,11 @@ func (x *UpdateTenantPayPlatformReq) GetTenantId() int64 {
 	return 0
 }
 
-func (x *UpdateTenantPayPlatformReq) GetStatus() CommonStatus {
+func (x *UpdateTenantPayPlatformReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *UpdateTenantPayPlatformReq) GetOpenStatus() OpenStatus {
@@ -1162,7 +1162,7 @@ type ListTenantPayPlatformsReq struct {
 	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	PlatformId    int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	OpenStatus    OpenStatus             `protobuf:"varint,5,opt,name=open_status,json=openStatus,proto3,enum=payment.OpenStatus" json:"open_status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1219,11 +1219,11 @@ func (x *ListTenantPayPlatformsReq) GetPlatformId() int64 {
 	return 0
 }
 
-func (x *ListTenantPayPlatformsReq) GetStatus() CommonStatus {
+func (x *ListTenantPayPlatformsReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *ListTenantPayPlatformsReq) GetOpenStatus() OpenStatus {
@@ -1302,7 +1302,7 @@ type CreateTenantPayAccountReq struct {
 	PublicKey           string                 `protobuf:"bytes,12,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 	CertCipher          string                 `protobuf:"bytes,13,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`
 	ExtConfig           string                 `protobuf:"bytes,14,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`
-	Status              CommonStatus           `protobuf:"varint,15,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled             common.Enable          `protobuf:"varint,15,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	IsDefault           int64                  `protobuf:"varint,16,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	Remark              string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields       protoimpl.UnknownFields
@@ -1437,11 +1437,11 @@ func (x *CreateTenantPayAccountReq) GetExtConfig() string {
 	return ""
 }
 
-func (x *CreateTenantPayAccountReq) GetStatus() CommonStatus {
+func (x *CreateTenantPayAccountReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *CreateTenantPayAccountReq) GetIsDefault() int64 {
@@ -1472,7 +1472,7 @@ type UpdateTenantPayAccountReq struct {
 	PublicKey        string                 `protobuf:"bytes,10,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 	CertCipher       string                 `protobuf:"bytes,11,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`
 	ExtConfig        string                 `protobuf:"bytes,12,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`
-	Status           CommonStatus           `protobuf:"varint,13,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled          common.Enable          `protobuf:"varint,13,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	IsDefault        int64                  `protobuf:"varint,14,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	Remark           string                 `protobuf:"bytes,15,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -1593,11 +1593,11 @@ func (x *UpdateTenantPayAccountReq) GetExtConfig() string {
 	return ""
 }
 
-func (x *UpdateTenantPayAccountReq) GetStatus() CommonStatus {
+func (x *UpdateTenantPayAccountReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *UpdateTenantPayAccountReq) GetIsDefault() int64 {
@@ -1725,7 +1725,7 @@ type ListTenantPayAccountsReq struct {
 	PlatformId          int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
 	TenantPayPlatformId int64                  `protobuf:"varint,4,opt,name=tenant_pay_platform_id,json=tenantPayPlatformId,proto3" json:"tenant_pay_platform_id,omitempty"`
 	Keyword             string                 `protobuf:"bytes,5,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Status              CommonStatus           `protobuf:"varint,6,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled             common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -1795,11 +1795,11 @@ func (x *ListTenantPayAccountsReq) GetKeyword() string {
 	return ""
 }
 
-func (x *ListTenantPayAccountsReq) GetStatus() CommonStatus {
+func (x *ListTenantPayAccountsReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 type ListTenantPayAccountsResp struct {
@@ -1867,8 +1867,8 @@ type CreateTenantPayChannelReq struct {
 	Icon            string                 `protobuf:"bytes,8,opt,name=icon,proto3" json:"icon,omitempty"`
 	Currency        string                 `protobuf:"bytes,9,opt,name=currency,proto3" json:"currency,omitempty"`
 	Sort            int64                  `protobuf:"varint,10,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible         int64                  `protobuf:"varint,11,opt,name=visible,proto3" json:"visible,omitempty"`
-	Status          CommonStatus           `protobuf:"varint,12,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Visible         common.Switch          `protobuf:"varint,11,opt,name=visible,proto3,enum=common.Switch" json:"visible,omitempty"` // 是否在前端展示,0表示全部，1表示显示，2表示隐藏
+	Enabled         common.Enable          `protobuf:"varint,12,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	SingleMinAmount int64                  `protobuf:"varint,13,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"`
 	SingleMaxAmount int64                  `protobuf:"varint,14,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"`
 	DailyMaxAmount  int64                  `protobuf:"varint,15,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`
@@ -1982,18 +1982,18 @@ func (x *CreateTenantPayChannelReq) GetSort() int64 {
 	return 0
 }
 
-func (x *CreateTenantPayChannelReq) GetVisible() int64 {
+func (x *CreateTenantPayChannelReq) GetVisible() common.Switch {
 	if x != nil {
 		return x.Visible
 	}
-	return 0
+	return common.Switch(0)
 }
 
-func (x *CreateTenantPayChannelReq) GetStatus() CommonStatus {
+func (x *CreateTenantPayChannelReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *CreateTenantPayChannelReq) GetSingleMinAmount() int64 {
@@ -2068,8 +2068,8 @@ type UpdateTenantPayChannelReq struct {
 	Icon            string                 `protobuf:"bytes,5,opt,name=icon,proto3" json:"icon,omitempty"`
 	Currency        string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
 	Sort            int64                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible         int64                  `protobuf:"varint,8,opt,name=visible,proto3" json:"visible,omitempty"`
-	Status          CommonStatus           `protobuf:"varint,9,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Visible         common.Switch          `protobuf:"varint,8,opt,name=visible,proto3,enum=common.Switch" json:"visible,omitempty"` // 是否在前端展示,0表示全部，1表示显示，2表示隐藏
+	Enabled         common.Enable          `protobuf:"varint,9,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	SingleMinAmount int64                  `protobuf:"varint,10,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"`
 	SingleMaxAmount int64                  `protobuf:"varint,11,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"`
 	DailyMaxAmount  int64                  `protobuf:"varint,12,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`
@@ -2162,18 +2162,18 @@ func (x *UpdateTenantPayChannelReq) GetSort() int64 {
 	return 0
 }
 
-func (x *UpdateTenantPayChannelReq) GetVisible() int64 {
+func (x *UpdateTenantPayChannelReq) GetVisible() common.Switch {
 	if x != nil {
 		return x.Visible
 	}
-	return 0
+	return common.Switch(0)
 }
 
-func (x *UpdateTenantPayChannelReq) GetStatus() CommonStatus {
+func (x *UpdateTenantPayChannelReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *UpdateTenantPayChannelReq) GetSingleMinAmount() int64 {
@@ -2351,8 +2351,8 @@ type ListTenantPayChannelsReq struct {
 	ProductId     int64                  `protobuf:"varint,4,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	AccountId     int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	Keyword       string                 `protobuf:"bytes,6,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,7,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
-	Visible       int64                  `protobuf:"varint,8,opt,name=visible,proto3" json:"visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,7,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
+	Visible       common.Switch          `protobuf:"varint,8,opt,name=visible,proto3,enum=common.Switch" json:"visible,omitempty"` // 是否在前端展示,0表示全部，1表示显示，2表示隐藏
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2429,18 +2429,18 @@ func (x *ListTenantPayChannelsReq) GetKeyword() string {
 	return ""
 }
 
-func (x *ListTenantPayChannelsReq) GetStatus() CommonStatus {
+func (x *ListTenantPayChannelsReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
-func (x *ListTenantPayChannelsReq) GetVisible() int64 {
+func (x *ListTenantPayChannelsReq) GetVisible() common.Switch {
 	if x != nil {
 		return x.Visible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 type ListTenantPayChannelsResp struct {
@@ -2502,7 +2502,7 @@ type CreateTenantPayChannelRuleReq struct {
 	ChannelId            int64                  `protobuf:"varint,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	RuleName             string                 `protobuf:"bytes,3,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`
 	Priority             int64                  `protobuf:"varint,4,opt,name=priority,proto3" json:"priority,omitempty"`
-	Status               CommonStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled              common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	SingleAmountMin      int64                  `protobuf:"varint,6,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`
 	SingleAmountMax      int64                  `protobuf:"varint,7,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`
 	UserTotalRechargeMin int64                  `protobuf:"varint,8,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`
@@ -2578,11 +2578,11 @@ func (x *CreateTenantPayChannelRuleReq) GetPriority() int64 {
 	return 0
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetStatus() CommonStatus {
+func (x *CreateTenantPayChannelRuleReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *CreateTenantPayChannelRuleReq) GetSingleAmountMin() int64 {
@@ -2682,7 +2682,7 @@ type UpdateTenantPayChannelRuleReq struct {
 	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	RuleName             string                 `protobuf:"bytes,3,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`
 	Priority             int64                  `protobuf:"varint,4,opt,name=priority,proto3" json:"priority,omitempty"`
-	Status               CommonStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled              common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	SingleAmountMin      int64                  `protobuf:"varint,6,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`
 	SingleAmountMax      int64                  `protobuf:"varint,7,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`
 	UserTotalRechargeMin int64                  `protobuf:"varint,8,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`
@@ -2758,11 +2758,11 @@ func (x *UpdateTenantPayChannelRuleReq) GetPriority() int64 {
 	return 0
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetStatus() CommonStatus {
+func (x *UpdateTenantPayChannelRuleReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *UpdateTenantPayChannelRuleReq) GetSingleAmountMin() int64 {
@@ -2965,7 +2965,7 @@ type ListTenantPayChannelRulesReq struct {
 	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ChannelId     int64                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3021,11 +3021,11 @@ func (x *ListTenantPayChannelRulesReq) GetChannelId() int64 {
 	return 0
 }
 
-func (x *ListTenantPayChannelRulesReq) GetStatus() CommonStatus {
+func (x *ListTenantPayChannelRulesReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 type ListTenantPayChannelRulesResp struct {
@@ -4641,7 +4641,7 @@ type CreateCryptoRechargeAddressReq struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
 	TenantId      int64                       `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                       `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	WalletType    int64                       `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`
+	WalletType    common.WalletType           `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin          string                      `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
 	ChainCode     common.ChainCode            `protobuf:"varint,5,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
 	Address       string                      `protobuf:"bytes,6,opt,name=address,proto3" json:"address,omitempty"`
@@ -4697,11 +4697,11 @@ func (x *CreateCryptoRechargeAddressReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *CreateCryptoRechargeAddressReq) GetWalletType() int64 {
+func (x *CreateCryptoRechargeAddressReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return 0
+	return common.WalletType(0)
 }
 
 func (x *CreateCryptoRechargeAddressReq) GetCoin() string {
@@ -4954,7 +4954,7 @@ type ListCryptoRechargeAddressesReq struct {
 	Page          *common.PageReq             `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId      int64                       `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	WalletType    int64                       `protobuf:"varint,4,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`
+	WalletType    common.WalletType           `protobuf:"varint,4,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin          string                      `protobuf:"bytes,5,opt,name=coin,proto3" json:"coin,omitempty"`
 	ChainCode     common.ChainCode            `protobuf:"varint,6,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
 	Address       string                      `protobuf:"bytes,7,opt,name=address,proto3" json:"address,omitempty"`
@@ -5015,11 +5015,11 @@ func (x *ListCryptoRechargeAddressesReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *ListCryptoRechargeAddressesReq) GetWalletType() int64 {
+func (x *ListCryptoRechargeAddressesReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return 0
+	return common.WalletType(0)
 }
 
 func (x *ListCryptoRechargeAddressesReq) GetCoin() string {
@@ -5120,7 +5120,7 @@ type CreateCryptoWalletAccountReq struct {
 	ApiSecretCipher      string                 `protobuf:"bytes,6,opt,name=api_secret_cipher,json=apiSecretCipher,proto3" json:"api_secret_cipher,omitempty"`
 	CallbackSecretCipher string                 `protobuf:"bytes,7,opt,name=callback_secret_cipher,json=callbackSecretCipher,proto3" json:"callback_secret_cipher,omitempty"`
 	ExtConfig            string                 `protobuf:"bytes,8,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`
-	Status               CommonStatus           `protobuf:"varint,9,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled              common.Enable          `protobuf:"varint,9,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	IsDefault            int64                  `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
@@ -5212,11 +5212,11 @@ func (x *CreateCryptoWalletAccountReq) GetExtConfig() string {
 	return ""
 }
 
-func (x *CreateCryptoWalletAccountReq) GetStatus() CommonStatus {
+func (x *CreateCryptoWalletAccountReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *CreateCryptoWalletAccountReq) GetIsDefault() int64 {
@@ -5236,7 +5236,7 @@ type UpdateCryptoWalletAccountReq struct {
 	ApiSecretCipher      string                 `protobuf:"bytes,6,opt,name=api_secret_cipher,json=apiSecretCipher,proto3" json:"api_secret_cipher,omitempty"`
 	CallbackSecretCipher string                 `protobuf:"bytes,7,opt,name=callback_secret_cipher,json=callbackSecretCipher,proto3" json:"callback_secret_cipher,omitempty"`
 	ExtConfig            string                 `protobuf:"bytes,8,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`
-	Status               CommonStatus           `protobuf:"varint,9,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled              common.Enable          `protobuf:"varint,9,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	IsDefault            int64                  `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
@@ -5328,11 +5328,11 @@ func (x *UpdateCryptoWalletAccountReq) GetExtConfig() string {
 	return ""
 }
 
-func (x *UpdateCryptoWalletAccountReq) GetStatus() CommonStatus {
+func (x *UpdateCryptoWalletAccountReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *UpdateCryptoWalletAccountReq) GetIsDefault() int64 {
@@ -5452,7 +5452,7 @@ type ListCryptoWalletAccountsReq struct {
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	Provider      string                 `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	IsDefault     int64                  `protobuf:"varint,6,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -5516,11 +5516,11 @@ func (x *ListCryptoWalletAccountsReq) GetProvider() string {
 	return ""
 }
 
-func (x *ListCryptoWalletAccountsReq) GetStatus() CommonStatus {
+func (x *ListCryptoWalletAccountsReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *ListCryptoWalletAccountsReq) GetIsDefault() int64 {
@@ -6289,7 +6289,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\n" +
 	"!proto/payment/payment_admin.proto\x12\apayment\x1a\x19proto/common/common.proto\x1a\x18proto/payment/enum.proto\x1a\x19proto/payment/model.proto\"7\n" +
 	"\x0fAdminCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xb5\x02\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xb0\x02\n" +
 	"\x14CreatePayPlatformReq\x12#\n" +
 	"\rplatform_code\x18\x01 \x01(\tR\fplatformCode\x12#\n" +
 	"\rplatform_name\x18\x02 \x01(\tR\fplatformName\x12:\n" +
@@ -6298,9 +6298,9 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"notify_url\x18\x04 \x01(\tR\tnotifyUrl\x12\x1d\n" +
 	"\n" +
 	"return_url\x18\x05 \x01(\tR\treturnUrl\x12\x12\n" +
-	"\x04icon\x18\x06 \x01(\tR\x04icon\x12-\n" +
-	"\x06status\x18\a \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x16\n" +
-	"\x06remark\x18\b \x01(\tR\x06remark\"\xa0\x02\n" +
+	"\x04icon\x18\x06 \x01(\tR\x04icon\x12(\n" +
+	"\aenabled\x18\a \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x16\n" +
+	"\x06remark\x18\b \x01(\tR\x06remark\"\x9b\x02\n" +
 	"\x14UpdatePayPlatformReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rplatform_name\x18\x02 \x01(\tR\fplatformName\x12:\n" +
@@ -6309,23 +6309,23 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"notify_url\x18\x04 \x01(\tR\tnotifyUrl\x12\x1d\n" +
 	"\n" +
 	"return_url\x18\x05 \x01(\tR\treturnUrl\x12\x12\n" +
-	"\x04icon\x18\x06 \x01(\tR\x04icon\x12-\n" +
-	"\x06status\x18\a \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x16\n" +
+	"\x04icon\x18\x06 \x01(\tR\x04icon\x12(\n" +
+	"\aenabled\x18\a \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x16\n" +
 	"\x06remark\x18\b \x01(\tR\x06remark\"#\n" +
 	"\x11GetPayPlatformReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"d\n" +
 	"\x12GetPayPlatformResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
-	"\x04data\x18\x02 \x01(\v2\x14.payment.PayPlatformR\x04data\"\xe4\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x14.payment.PayPlatformR\x04data\"\xdf\x01\n" +
 	"\x13ListPayPlatformsReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12#\n" +
-	"\rplatform_code\x18\x03 \x01(\tR\fplatformCode\x12-\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12:\n" +
+	"\rplatform_code\x18\x03 \x01(\tR\fplatformCode\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12:\n" +
 	"\rplatform_type\x18\x05 \x01(\x0e2\x15.payment.PlatformTypeR\fplatformType\"f\n" +
 	"\x14ListPayPlatformsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
-	"\x04data\x18\x02 \x03(\v2\x14.payment.PayPlatformR\x04data\"\x92\x02\n" +
+	"\x04data\x18\x02 \x03(\v2\x14.payment.PayPlatformR\x04data\"\x8d\x02\n" +
 	"\x13CreatePayProductReq\x12\x1f\n" +
 	"\vplatform_id\x18\x01 \x01(\x03R\n" +
 	"platformId\x12!\n" +
@@ -6333,46 +6333,46 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\fproduct_name\x18\x03 \x01(\tR\vproductName\x121\n" +
 	"\n" +
 	"scene_type\x18\x04 \x01(\x0e2\x12.payment.SceneTypeR\tsceneType\x12\x1a\n" +
-	"\bcurrency\x18\x05 \x01(\tR\bcurrency\x12-\n" +
-	"\x06status\x18\x06 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remark\"\xde\x01\n" +
+	"\bcurrency\x18\x05 \x01(\tR\bcurrency\x12(\n" +
+	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x16\n" +
+	"\x06remark\x18\a \x01(\tR\x06remark\"\xd9\x01\n" +
 	"\x13UpdatePayProductReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
 	"\fproduct_name\x18\x02 \x01(\tR\vproductName\x121\n" +
 	"\n" +
 	"scene_type\x18\x03 \x01(\x0e2\x12.payment.SceneTypeR\tsceneType\x12\x1a\n" +
-	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12-\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x16\n" +
+	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12(\n" +
+	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x16\n" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\"\"\n" +
 	"\x10GetPayProductReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"b\n" +
 	"\x11GetPayProductResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x01(\v2\x13.payment.PayProductR\x04data\"\xf9\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.payment.PayProductR\x04data\"\xf4\x01\n" +
 	"\x12ListPayProductsReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1f\n" +
 	"\vplatform_id\x18\x02 \x01(\x03R\n" +
 	"platformId\x12\x18\n" +
 	"\akeyword\x18\x03 \x01(\tR\akeyword\x12!\n" +
-	"\fproduct_code\x18\x04 \x01(\tR\vproductCode\x12-\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x121\n" +
+	"\fproduct_code\x18\x04 \x01(\tR\vproductCode\x12(\n" +
+	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x121\n" +
 	"\n" +
 	"scene_type\x18\x06 \x01(\x0e2\x12.payment.SceneTypeR\tsceneType\"d\n" +
 	"\x13ListPayProductsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x03(\v2\x13.payment.PayProductR\x04data\"\xd5\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.payment.PayProductR\x04data\"\xd0\x01\n" +
 	"\x18OpenTenantPayPlatformReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x02 \x01(\x03R\n" +
-	"platformId\x12-\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x124\n" +
+	"platformId\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x124\n" +
 	"\vopen_status\x18\x04 \x01(\x0e2\x13.payment.OpenStatusR\n" +
 	"openStatus\x12\x16\n" +
-	"\x06remark\x18\x05 \x01(\tR\x06remark\"\xc6\x01\n" +
+	"\x06remark\x18\x05 \x01(\tR\x06remark\"\xc1\x01\n" +
 	"\x1aUpdateTenantPayPlatformReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12-\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x124\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x124\n" +
 	"\vopen_status\x18\x04 \x01(\x0e2\x13.payment.OpenStatusR\n" +
 	"openStatus\x12\x16\n" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\"F\n" +
@@ -6381,18 +6381,18 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"p\n" +
 	"\x18GetTenantPayPlatformResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x01(\v2\x1a.payment.TenantPayPlatformR\x04data\"\xe3\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x1a.payment.TenantPayPlatformR\x04data\"\xde\x01\n" +
 	"\x19ListTenantPayPlatformsReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x03 \x01(\x03R\n" +
-	"platformId\x12-\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x124\n" +
+	"platformId\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x124\n" +
 	"\vopen_status\x18\x05 \x01(\x0e2\x13.payment.OpenStatusR\n" +
 	"openStatus\"r\n" +
 	"\x1aListTenantPayPlatformsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x03(\v2\x1a.payment.TenantPayPlatformR\x04data\"\xf6\x04\n" +
+	"\x04data\x18\x02 \x03(\v2\x1a.payment.TenantPayPlatformR\x04data\"\xf1\x04\n" +
 	"\x19CreateTenantPayAccountReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x123\n" +
 	"\x16tenant_pay_platform_id\x18\x02 \x01(\x03R\x13tenantPayPlatformId\x12\x1f\n" +
@@ -6413,11 +6413,11 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\vcert_cipher\x18\r \x01(\tR\n" +
 	"certCipher\x12\x1d\n" +
 	"\n" +
-	"ext_config\x18\x0e \x01(\tR\textConfig\x12-\n" +
-	"\x06status\x18\x0f \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x1d\n" +
+	"ext_config\x18\x0e \x01(\tR\textConfig\x12(\n" +
+	"\aenabled\x18\x0f \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\x10 \x01(\x03R\tisDefault\x12\x16\n" +
-	"\x06remark\x18\x11 \x01(\tR\x06remark\"\x8d\x04\n" +
+	"\x06remark\x18\x11 \x01(\tR\x06remark\"\x88\x04\n" +
 	"\x19UpdateTenantPayAccountReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12!\n" +
@@ -6435,8 +6435,8 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\vcert_cipher\x18\v \x01(\tR\n" +
 	"certCipher\x12\x1d\n" +
 	"\n" +
-	"ext_config\x18\f \x01(\tR\textConfig\x12-\n" +
-	"\x06status\x18\r \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x1d\n" +
+	"ext_config\x18\f \x01(\tR\textConfig\x12(\n" +
+	"\aenabled\x18\r \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\x0e \x01(\x03R\tisDefault\x12\x16\n" +
 	"\x06remark\x18\x0f \x01(\tR\x06remark\"E\n" +
@@ -6445,18 +6445,18 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"n\n" +
 	"\x17GetTenantPayAccountResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.payment.TenantPayAccountR\x04data\"\xfb\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.payment.TenantPayAccountR\x04data\"\xf6\x01\n" +
 	"\x18ListTenantPayAccountsReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x03 \x01(\x03R\n" +
 	"platformId\x123\n" +
 	"\x16tenant_pay_platform_id\x18\x04 \x01(\x03R\x13tenantPayPlatformId\x12\x18\n" +
-	"\akeyword\x18\x05 \x01(\tR\akeyword\x12-\n" +
-	"\x06status\x18\x06 \x01(\x0e2\x15.payment.CommonStatusR\x06status\"p\n" +
+	"\akeyword\x18\x05 \x01(\tR\akeyword\x12(\n" +
+	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\"p\n" +
 	"\x19ListTenantPayAccountsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x03(\v2\x19.payment.TenantPayAccountR\x04data\"\xe0\x05\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.payment.TenantPayAccountR\x04data\"\xeb\x05\n" +
 	"\x19CreateTenantPayChannelReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x02 \x01(\x03R\n" +
@@ -6471,9 +6471,9 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x04icon\x18\b \x01(\tR\x04icon\x12\x1a\n" +
 	"\bcurrency\x18\t \x01(\tR\bcurrency\x12\x12\n" +
 	"\x04sort\x18\n" +
-	" \x01(\x03R\x04sort\x12\x18\n" +
-	"\avisible\x18\v \x01(\x03R\avisible\x12-\n" +
-	"\x06status\x18\f \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12*\n" +
+	" \x01(\x03R\x04sort\x12(\n" +
+	"\avisible\x18\v \x01(\x0e2\x0e.common.SwitchR\avisible\x12(\n" +
+	"\aenabled\x18\f \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
 	"\x11single_min_amount\x18\r \x01(\x03R\x0fsingleMinAmount\x12*\n" +
 	"\x11single_max_amount\x18\x0e \x01(\x03R\x0fsingleMaxAmount\x12(\n" +
 	"\x10daily_max_amount\x18\x0f \x01(\x03R\x0edailyMaxAmount\x12&\n" +
@@ -6483,7 +6483,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x10fee_fixed_amount\x18\x13 \x01(\x03R\x0efeeFixedAmount\x12\x1d\n" +
 	"\n" +
 	"ext_config\x18\x14 \x01(\tR\textConfig\x12\x16\n" +
-	"\x06remark\x18\x15 \x01(\tR\x06remark\"\xee\x04\n" +
+	"\x06remark\x18\x15 \x01(\tR\x06remark\"\xf9\x04\n" +
 	"\x19UpdateTenantPayChannelReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12!\n" +
@@ -6491,9 +6491,9 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\x12\x12\n" +
 	"\x04icon\x18\x05 \x01(\tR\x04icon\x12\x1a\n" +
 	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12\x12\n" +
-	"\x04sort\x18\a \x01(\x03R\x04sort\x12\x18\n" +
-	"\avisible\x18\b \x01(\x03R\avisible\x12-\n" +
-	"\x06status\x18\t \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12*\n" +
+	"\x04sort\x18\a \x01(\x03R\x04sort\x12(\n" +
+	"\avisible\x18\b \x01(\x0e2\x0e.common.SwitchR\avisible\x12(\n" +
+	"\aenabled\x18\t \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
 	"\x11single_min_amount\x18\n" +
 	" \x01(\x03R\x0fsingleMinAmount\x12*\n" +
 	"\x11single_max_amount\x18\v \x01(\x03R\x0fsingleMaxAmount\x12(\n" +
@@ -6510,7 +6510,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"n\n" +
 	"\x17GetTenantPayChannelResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.payment.TenantPayChannelR\x04data\"\x9e\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.payment.TenantPayChannelR\x04data\"\xa9\x02\n" +
 	"\x18ListTenantPayChannelsReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -6520,19 +6520,19 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"product_id\x18\x04 \x01(\x03R\tproductId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x05 \x01(\x03R\taccountId\x12\x18\n" +
-	"\akeyword\x18\x06 \x01(\tR\akeyword\x12-\n" +
-	"\x06status\x18\a \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x18\n" +
-	"\avisible\x18\b \x01(\x03R\avisible\"p\n" +
+	"\akeyword\x18\x06 \x01(\tR\akeyword\x12(\n" +
+	"\aenabled\x18\a \x01(\x0e2\x0e.common.EnableR\aenabled\x12(\n" +
+	"\avisible\x18\b \x01(\x0e2\x0e.common.SwitchR\avisible\"p\n" +
 	"\x19ListTenantPayChannelsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x03(\v2\x19.payment.TenantPayChannelR\x04data\"\xc5\x05\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.payment.TenantPayChannelR\x04data\"\xc0\x05\n" +
 	"\x1dCreateTenantPayChannelRuleReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x02 \x01(\x03R\tchannelId\x12\x1b\n" +
 	"\trule_name\x18\x03 \x01(\tR\bruleName\x12\x1a\n" +
-	"\bpriority\x18\x04 \x01(\x03R\bpriority\x12-\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12*\n" +
+	"\bpriority\x18\x04 \x01(\x03R\bpriority\x12(\n" +
+	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
 	"\x11single_amount_min\x18\x06 \x01(\x03R\x0fsingleAmountMin\x12*\n" +
 	"\x11single_amount_max\x18\a \x01(\x03R\x0fsingleAmountMax\x125\n" +
 	"\x17user_total_recharge_min\x18\b \x01(\x03R\x14userTotalRechargeMin\x125\n" +
@@ -6547,13 +6547,13 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\n" +
 	"allow_tags\x18\x10 \x01(\tR\tallowTags\x12\x1b\n" +
 	"\tdeny_tags\x18\x11 \x01(\tR\bdenyTags\x12\x16\n" +
-	"\x06remark\x18\x12 \x01(\tR\x06remark\"\xb6\x05\n" +
+	"\x06remark\x18\x12 \x01(\tR\x06remark\"\xb1\x05\n" +
 	"\x1dUpdateTenantPayChannelRuleReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
 	"\trule_name\x18\x03 \x01(\tR\bruleName\x12\x1a\n" +
-	"\bpriority\x18\x04 \x01(\x03R\bpriority\x12-\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12*\n" +
+	"\bpriority\x18\x04 \x01(\x03R\bpriority\x12(\n" +
+	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
 	"\x11single_amount_min\x18\x06 \x01(\x03R\x0fsingleAmountMin\x12*\n" +
 	"\x11single_amount_max\x18\a \x01(\x03R\x0fsingleAmountMax\x125\n" +
 	"\x17user_total_recharge_min\x18\b \x01(\x03R\x14userTotalRechargeMin\x125\n" +
@@ -6574,13 +6574,13 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"v\n" +
 	"\x1bGetTenantPayChannelRuleResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x121\n" +
-	"\x04data\x18\x02 \x01(\v2\x1d.payment.TenantPayChannelRuleR\x04data\"\xae\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x1d.payment.TenantPayChannelRuleR\x04data\"\xa9\x01\n" +
 	"\x1cListTenantPayChannelRulesReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x03 \x01(\x03R\tchannelId\x12-\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x15.payment.CommonStatusR\x06status\"x\n" +
+	"channel_id\x18\x03 \x01(\x03R\tchannelId\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\"x\n" +
 	"\x1dListTenantPayChannelRulesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x121\n" +
 	"\x04data\x18\x02 \x03(\v2\x1d.payment.TenantPayChannelRuleR\x04data\"N\n" +
@@ -6708,11 +6708,11 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"k\n" +
 	"\x18GetWithdrawNotifyLogResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x01(\v2\x15.payment.PayNotifyLogR\x04data\"\xbd\x03\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.payment.PayNotifyLogR\x04data\"\xd1\x03\n" +
 	"\x1eCreateCryptoRechargeAddressReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1f\n" +
-	"\vwallet_type\x18\x03 \x01(\x03R\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x120\n" +
 	"\n" +
@@ -6736,12 +6736,12 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"x\n" +
 	"\x1cGetCryptoRechargeAddressResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
-	"\x04data\x18\x02 \x01(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\x81\x03\n" +
+	"\x04data\x18\x02 \x01(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\x95\x03\n" +
 	"\x1eListCryptoRechargeAddressesReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1f\n" +
-	"\vwallet_type\x18\x04 \x01(\x03R\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x04 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x05 \x01(\tR\x04coin\x120\n" +
 	"\n" +
@@ -6751,7 +6751,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\faddress_type\x18\t \x01(\x0e2\".payment.CryptoRechargeAddressTypeR\vaddressType\"{\n" +
 	"\x1fListCryptoRechargeAddressesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
-	"\x04data\x18\x02 \x03(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\x92\x03\n" +
+	"\x04data\x18\x02 \x03(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\x8d\x03\n" +
 	"\x1cCreateCryptoWalletAccountReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12!\n" +
 	"\faccount_code\x18\x02 \x01(\tR\vaccountCode\x12!\n" +
@@ -6761,11 +6761,11 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x11api_secret_cipher\x18\x06 \x01(\tR\x0fapiSecretCipher\x124\n" +
 	"\x16callback_secret_cipher\x18\a \x01(\tR\x14callbackSecretCipher\x12\x1d\n" +
 	"\n" +
-	"ext_config\x18\b \x01(\tR\textConfig\x12-\n" +
-	"\x06status\x18\t \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x1d\n" +
+	"ext_config\x18\b \x01(\tR\textConfig\x12(\n" +
+	"\aenabled\x18\t \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\n" +
-	" \x01(\x03R\tisDefault\"\xff\x02\n" +
+	" \x01(\x03R\tisDefault\"\xfa\x02\n" +
 	"\x1cUpdateCryptoWalletAccountReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12!\n" +
@@ -6775,8 +6775,8 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x11api_secret_cipher\x18\x06 \x01(\tR\x0fapiSecretCipher\x124\n" +
 	"\x16callback_secret_cipher\x18\a \x01(\tR\x14callbackSecretCipher\x12\x1d\n" +
 	"\n" +
-	"ext_config\x18\b \x01(\tR\textConfig\x12-\n" +
-	"\x06status\x18\t \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x1d\n" +
+	"ext_config\x18\b \x01(\tR\textConfig\x12(\n" +
+	"\aenabled\x18\t \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\n" +
 	" \x01(\x03R\tisDefault\"H\n" +
@@ -6785,13 +6785,13 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"t\n" +
 	"\x1aGetCryptoWalletAccountResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x01(\v2\x1c.payment.CryptoWalletAccountR\x04data\"\xe3\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x1c.payment.CryptoWalletAccountR\x04data\"\xde\x01\n" +
 	"\x1bListCryptoWalletAccountsReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x18\n" +
 	"\akeyword\x18\x03 \x01(\tR\akeyword\x12\x1a\n" +
-	"\bprovider\x18\x04 \x01(\tR\bprovider\x12-\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x1d\n" +
+	"\bprovider\x18\x04 \x01(\tR\bprovider\x12(\n" +
+	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\x06 \x01(\x03R\tisDefault\"v\n" +
 	"\x1cListCryptoWalletAccountsResp\x12$\n" +
@@ -7012,7 +7012,7 @@ var file_proto_payment_payment_admin_proto_goTypes = []any{
 	(*PayPlatformsResp)(nil),                  // 81: payment.PayPlatformsResp
 	(*common.RespBase)(nil),                   // 82: common.RespBase
 	(PlatformType)(0),                         // 83: payment.PlatformType
-	(CommonStatus)(0),                         // 84: payment.CommonStatus
+	(common.Enable)(0),                        // 84: common.Enable
 	(*PayPlatform)(nil),                       // 85: payment.PayPlatform
 	(*common.PageReq)(nil),                    // 86: common.PageReq
 	(SceneType)(0),                            // 87: payment.SceneType
@@ -7020,261 +7020,268 @@ var file_proto_payment_payment_admin_proto_goTypes = []any{
 	(OpenStatus)(0),                           // 89: payment.OpenStatus
 	(*TenantPayPlatform)(nil),                 // 90: payment.TenantPayPlatform
 	(*TenantPayAccount)(nil),                  // 91: payment.TenantPayAccount
-	(FeeType)(0),                              // 92: payment.FeeType
-	(*TenantPayChannel)(nil),                  // 93: payment.TenantPayChannel
-	(*TenantPayChannelRule)(nil),              // 94: payment.TenantPayChannelRule
-	(*UserRechargeStat)(nil),                  // 95: payment.UserRechargeStat
-	(*RechargeOrder)(nil),                     // 96: payment.RechargeOrder
-	(PayOrderStatus)(0),                       // 97: payment.PayOrderStatus
-	(RechargeType)(0),                         // 98: payment.RechargeType
-	(*PayNotifyLog)(nil),                      // 99: payment.PayNotifyLog
-	(NotifyProcessStatus)(0),                  // 100: payment.NotifyProcessStatus
-	(SignResult)(0),                           // 101: payment.SignResult
-	(*WithdrawOrder)(nil),                     // 102: payment.WithdrawOrder
-	(common.ChainCode)(0),                     // 103: common.ChainCode
-	(CryptoRechargeAddressSource)(0),          // 104: payment.CryptoRechargeAddressSource
-	(CryptoRechargeAddressType)(0),            // 105: payment.CryptoRechargeAddressType
-	(CryptoRechargeAddressStatus)(0),          // 106: payment.CryptoRechargeAddressStatus
-	(*CryptoRechargeAddress)(nil),             // 107: payment.CryptoRechargeAddress
-	(*CryptoWalletAccount)(nil),               // 108: payment.CryptoWalletAccount
-	(CryptoRechargeTxStatus)(0),               // 109: payment.CryptoRechargeTxStatus
-	(*CryptoRechargeTx)(nil),                  // 110: payment.CryptoRechargeTx
+	(common.Switch)(0),                        // 92: common.Switch
+	(FeeType)(0),                              // 93: payment.FeeType
+	(*TenantPayChannel)(nil),                  // 94: payment.TenantPayChannel
+	(*TenantPayChannelRule)(nil),              // 95: payment.TenantPayChannelRule
+	(*UserRechargeStat)(nil),                  // 96: payment.UserRechargeStat
+	(*RechargeOrder)(nil),                     // 97: payment.RechargeOrder
+	(PayOrderStatus)(0),                       // 98: payment.PayOrderStatus
+	(RechargeType)(0),                         // 99: payment.RechargeType
+	(*PayNotifyLog)(nil),                      // 100: payment.PayNotifyLog
+	(NotifyProcessStatus)(0),                  // 101: payment.NotifyProcessStatus
+	(SignResult)(0),                           // 102: payment.SignResult
+	(*WithdrawOrder)(nil),                     // 103: payment.WithdrawOrder
+	(common.WalletType)(0),                    // 104: common.WalletType
+	(common.ChainCode)(0),                     // 105: common.ChainCode
+	(CryptoRechargeAddressSource)(0),          // 106: payment.CryptoRechargeAddressSource
+	(CryptoRechargeAddressType)(0),            // 107: payment.CryptoRechargeAddressType
+	(CryptoRechargeAddressStatus)(0),          // 108: payment.CryptoRechargeAddressStatus
+	(*CryptoRechargeAddress)(nil),             // 109: payment.CryptoRechargeAddress
+	(*CryptoWalletAccount)(nil),               // 110: payment.CryptoWalletAccount
+	(CryptoRechargeTxStatus)(0),               // 111: payment.CryptoRechargeTxStatus
+	(*CryptoRechargeTx)(nil),                  // 112: payment.CryptoRechargeTx
 }
 var file_proto_payment_payment_admin_proto_depIdxs = []int32{
 	82,  // 0: payment.AdminCommonResp.base:type_name -> common.RespBase
 	83,  // 1: payment.CreatePayPlatformReq.platform_type:type_name -> payment.PlatformType
-	84,  // 2: payment.CreatePayPlatformReq.status:type_name -> payment.CommonStatus
+	84,  // 2: payment.CreatePayPlatformReq.enabled:type_name -> common.Enable
 	83,  // 3: payment.UpdatePayPlatformReq.platform_type:type_name -> payment.PlatformType
-	84,  // 4: payment.UpdatePayPlatformReq.status:type_name -> payment.CommonStatus
+	84,  // 4: payment.UpdatePayPlatformReq.enabled:type_name -> common.Enable
 	82,  // 5: payment.GetPayPlatformResp.base:type_name -> common.RespBase
 	85,  // 6: payment.GetPayPlatformResp.data:type_name -> payment.PayPlatform
 	86,  // 7: payment.ListPayPlatformsReq.page:type_name -> common.PageReq
-	84,  // 8: payment.ListPayPlatformsReq.status:type_name -> payment.CommonStatus
+	84,  // 8: payment.ListPayPlatformsReq.enabled:type_name -> common.Enable
 	83,  // 9: payment.ListPayPlatformsReq.platform_type:type_name -> payment.PlatformType
 	82,  // 10: payment.ListPayPlatformsResp.base:type_name -> common.RespBase
 	85,  // 11: payment.ListPayPlatformsResp.data:type_name -> payment.PayPlatform
 	87,  // 12: payment.CreatePayProductReq.scene_type:type_name -> payment.SceneType
-	84,  // 13: payment.CreatePayProductReq.status:type_name -> payment.CommonStatus
+	84,  // 13: payment.CreatePayProductReq.enabled:type_name -> common.Enable
 	87,  // 14: payment.UpdatePayProductReq.scene_type:type_name -> payment.SceneType
-	84,  // 15: payment.UpdatePayProductReq.status:type_name -> payment.CommonStatus
+	84,  // 15: payment.UpdatePayProductReq.enabled:type_name -> common.Enable
 	82,  // 16: payment.GetPayProductResp.base:type_name -> common.RespBase
 	88,  // 17: payment.GetPayProductResp.data:type_name -> payment.PayProduct
 	86,  // 18: payment.ListPayProductsReq.page:type_name -> common.PageReq
-	84,  // 19: payment.ListPayProductsReq.status:type_name -> payment.CommonStatus
+	84,  // 19: payment.ListPayProductsReq.enabled:type_name -> common.Enable
 	87,  // 20: payment.ListPayProductsReq.scene_type:type_name -> payment.SceneType
 	82,  // 21: payment.ListPayProductsResp.base:type_name -> common.RespBase
 	88,  // 22: payment.ListPayProductsResp.data:type_name -> payment.PayProduct
-	84,  // 23: payment.OpenTenantPayPlatformReq.status:type_name -> payment.CommonStatus
+	84,  // 23: payment.OpenTenantPayPlatformReq.enabled:type_name -> common.Enable
 	89,  // 24: payment.OpenTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
-	84,  // 25: payment.UpdateTenantPayPlatformReq.status:type_name -> payment.CommonStatus
+	84,  // 25: payment.UpdateTenantPayPlatformReq.enabled:type_name -> common.Enable
 	89,  // 26: payment.UpdateTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
 	82,  // 27: payment.GetTenantPayPlatformResp.base:type_name -> common.RespBase
 	90,  // 28: payment.GetTenantPayPlatformResp.data:type_name -> payment.TenantPayPlatform
 	86,  // 29: payment.ListTenantPayPlatformsReq.page:type_name -> common.PageReq
-	84,  // 30: payment.ListTenantPayPlatformsReq.status:type_name -> payment.CommonStatus
+	84,  // 30: payment.ListTenantPayPlatformsReq.enabled:type_name -> common.Enable
 	89,  // 31: payment.ListTenantPayPlatformsReq.open_status:type_name -> payment.OpenStatus
 	82,  // 32: payment.ListTenantPayPlatformsResp.base:type_name -> common.RespBase
 	90,  // 33: payment.ListTenantPayPlatformsResp.data:type_name -> payment.TenantPayPlatform
-	84,  // 34: payment.CreateTenantPayAccountReq.status:type_name -> payment.CommonStatus
-	84,  // 35: payment.UpdateTenantPayAccountReq.status:type_name -> payment.CommonStatus
+	84,  // 34: payment.CreateTenantPayAccountReq.enabled:type_name -> common.Enable
+	84,  // 35: payment.UpdateTenantPayAccountReq.enabled:type_name -> common.Enable
 	82,  // 36: payment.GetTenantPayAccountResp.base:type_name -> common.RespBase
 	91,  // 37: payment.GetTenantPayAccountResp.data:type_name -> payment.TenantPayAccount
 	86,  // 38: payment.ListTenantPayAccountsReq.page:type_name -> common.PageReq
-	84,  // 39: payment.ListTenantPayAccountsReq.status:type_name -> payment.CommonStatus
+	84,  // 39: payment.ListTenantPayAccountsReq.enabled:type_name -> common.Enable
 	82,  // 40: payment.ListTenantPayAccountsResp.base:type_name -> common.RespBase
 	91,  // 41: payment.ListTenantPayAccountsResp.data:type_name -> payment.TenantPayAccount
-	84,  // 42: payment.CreateTenantPayChannelReq.status:type_name -> payment.CommonStatus
-	92,  // 43: payment.CreateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
-	84,  // 44: payment.UpdateTenantPayChannelReq.status:type_name -> payment.CommonStatus
-	92,  // 45: payment.UpdateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
-	82,  // 46: payment.GetTenantPayChannelResp.base:type_name -> common.RespBase
-	93,  // 47: payment.GetTenantPayChannelResp.data:type_name -> payment.TenantPayChannel
-	86,  // 48: payment.ListTenantPayChannelsReq.page:type_name -> common.PageReq
-	84,  // 49: payment.ListTenantPayChannelsReq.status:type_name -> payment.CommonStatus
-	82,  // 50: payment.ListTenantPayChannelsResp.base:type_name -> common.RespBase
-	93,  // 51: payment.ListTenantPayChannelsResp.data:type_name -> payment.TenantPayChannel
-	84,  // 52: payment.CreateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
-	84,  // 53: payment.UpdateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
-	82,  // 54: payment.GetTenantPayChannelRuleResp.base:type_name -> common.RespBase
-	94,  // 55: payment.GetTenantPayChannelRuleResp.data:type_name -> payment.TenantPayChannelRule
-	86,  // 56: payment.ListTenantPayChannelRulesReq.page:type_name -> common.PageReq
-	84,  // 57: payment.ListTenantPayChannelRulesReq.status:type_name -> payment.CommonStatus
-	82,  // 58: payment.ListTenantPayChannelRulesResp.base:type_name -> common.RespBase
-	94,  // 59: payment.ListTenantPayChannelRulesResp.data:type_name -> payment.TenantPayChannelRule
-	82,  // 60: payment.GetUserRechargeStatResp.base:type_name -> common.RespBase
-	95,  // 61: payment.GetUserRechargeStatResp.data:type_name -> payment.UserRechargeStat
-	86,  // 62: payment.ListUserRechargeStatsReq.page:type_name -> common.PageReq
-	82,  // 63: payment.ListUserRechargeStatsResp.base:type_name -> common.RespBase
-	95,  // 64: payment.ListUserRechargeStatsResp.data:type_name -> payment.UserRechargeStat
-	82,  // 65: payment.GetRechargeOrderResp.base:type_name -> common.RespBase
-	96,  // 66: payment.GetRechargeOrderResp.data:type_name -> payment.RechargeOrder
-	86,  // 67: payment.ListRechargeOrdersReq.page:type_name -> common.PageReq
-	97,  // 68: payment.ListRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
-	98,  // 69: payment.ListRechargeOrdersReq.recharge_type:type_name -> payment.RechargeType
-	82,  // 70: payment.ListRechargeOrdersResp.base:type_name -> common.RespBase
-	96,  // 71: payment.ListRechargeOrdersResp.data:type_name -> payment.RechargeOrder
-	82,  // 72: payment.GetRechargeNotifyLogResp.base:type_name -> common.RespBase
-	99,  // 73: payment.GetRechargeNotifyLogResp.data:type_name -> payment.PayNotifyLog
-	86,  // 74: payment.ListRechargeNotifyLogsReq.page:type_name -> common.PageReq
-	100, // 75: payment.ListRechargeNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
-	101, // 76: payment.ListRechargeNotifyLogsReq.sign_result:type_name -> payment.SignResult
-	82,  // 77: payment.ListRechargeNotifyLogsResp.base:type_name -> common.RespBase
-	99,  // 78: payment.ListRechargeNotifyLogsResp.data:type_name -> payment.PayNotifyLog
-	86,  // 79: payment.ListWithdrawOrdersReq.page:type_name -> common.PageReq
-	82,  // 80: payment.ListWithdrawOrdersResp.base:type_name -> common.RespBase
-	102, // 81: payment.ListWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
-	82,  // 82: payment.GetWithdrawOrderResp.base:type_name -> common.RespBase
-	102, // 83: payment.GetWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
-	86,  // 84: payment.ListWithdrawNotifyLogsReq.page:type_name -> common.PageReq
-	100, // 85: payment.ListWithdrawNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
-	101, // 86: payment.ListWithdrawNotifyLogsReq.sign_result:type_name -> payment.SignResult
-	82,  // 87: payment.ListWithdrawNotifyLogsResp.base:type_name -> common.RespBase
-	99,  // 88: payment.ListWithdrawNotifyLogsResp.data:type_name -> payment.PayNotifyLog
-	82,  // 89: payment.GetWithdrawNotifyLogResp.base:type_name -> common.RespBase
-	99,  // 90: payment.GetWithdrawNotifyLogResp.data:type_name -> payment.PayNotifyLog
-	103, // 91: payment.CreateCryptoRechargeAddressReq.chain_code:type_name -> common.ChainCode
-	104, // 92: payment.CreateCryptoRechargeAddressReq.address_source:type_name -> payment.CryptoRechargeAddressSource
-	105, // 93: payment.CreateCryptoRechargeAddressReq.address_type:type_name -> payment.CryptoRechargeAddressType
-	106, // 94: payment.CreateCryptoRechargeAddressReq.status:type_name -> payment.CryptoRechargeAddressStatus
-	104, // 95: payment.UpdateCryptoRechargeAddressReq.address_source:type_name -> payment.CryptoRechargeAddressSource
-	105, // 96: payment.UpdateCryptoRechargeAddressReq.address_type:type_name -> payment.CryptoRechargeAddressType
-	106, // 97: payment.UpdateCryptoRechargeAddressReq.status:type_name -> payment.CryptoRechargeAddressStatus
-	82,  // 98: payment.GetCryptoRechargeAddressResp.base:type_name -> common.RespBase
-	107, // 99: payment.GetCryptoRechargeAddressResp.data:type_name -> payment.CryptoRechargeAddress
-	86,  // 100: payment.ListCryptoRechargeAddressesReq.page:type_name -> common.PageReq
-	103, // 101: payment.ListCryptoRechargeAddressesReq.chain_code:type_name -> common.ChainCode
-	106, // 102: payment.ListCryptoRechargeAddressesReq.status:type_name -> payment.CryptoRechargeAddressStatus
-	105, // 103: payment.ListCryptoRechargeAddressesReq.address_type:type_name -> payment.CryptoRechargeAddressType
-	82,  // 104: payment.ListCryptoRechargeAddressesResp.base:type_name -> common.RespBase
-	107, // 105: payment.ListCryptoRechargeAddressesResp.data:type_name -> payment.CryptoRechargeAddress
-	84,  // 106: payment.CreateCryptoWalletAccountReq.status:type_name -> payment.CommonStatus
-	84,  // 107: payment.UpdateCryptoWalletAccountReq.status:type_name -> payment.CommonStatus
-	82,  // 108: payment.GetCryptoWalletAccountResp.base:type_name -> common.RespBase
-	108, // 109: payment.GetCryptoWalletAccountResp.data:type_name -> payment.CryptoWalletAccount
-	86,  // 110: payment.ListCryptoWalletAccountsReq.page:type_name -> common.PageReq
-	84,  // 111: payment.ListCryptoWalletAccountsReq.status:type_name -> payment.CommonStatus
-	82,  // 112: payment.ListCryptoWalletAccountsResp.base:type_name -> common.RespBase
-	108, // 113: payment.ListCryptoWalletAccountsResp.data:type_name -> payment.CryptoWalletAccount
-	103, // 114: payment.CreateCryptoRechargeTxReq.chain_code:type_name -> common.ChainCode
-	109, // 115: payment.CreateCryptoRechargeTxReq.status:type_name -> payment.CryptoRechargeTxStatus
-	109, // 116: payment.UpdateCryptoRechargeTxReq.status:type_name -> payment.CryptoRechargeTxStatus
-	103, // 117: payment.GetCryptoRechargeTxReq.chain_code:type_name -> common.ChainCode
-	82,  // 118: payment.GetCryptoRechargeTxResp.base:type_name -> common.RespBase
-	110, // 119: payment.GetCryptoRechargeTxResp.data:type_name -> payment.CryptoRechargeTx
-	86,  // 120: payment.ListCryptoRechargeTxsReq.page:type_name -> common.PageReq
-	103, // 121: payment.ListCryptoRechargeTxsReq.chain_code:type_name -> common.ChainCode
-	109, // 122: payment.ListCryptoRechargeTxsReq.status:type_name -> payment.CryptoRechargeTxStatus
-	82,  // 123: payment.ListCryptoRechargeTxsResp.base:type_name -> common.RespBase
-	110, // 124: payment.ListCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
-	82,  // 125: payment.PayPlatformsResp.base:type_name -> common.RespBase
-	80,  // 126: payment.PayPlatformsResp.data:type_name -> payment.PayPlatformItem
-	79,  // 127: payment.PaymentAdmin.GetPayPlatforms:input_type -> payment.AdminEmpty
-	1,   // 128: payment.PaymentAdmin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
-	2,   // 129: payment.PaymentAdmin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
-	3,   // 130: payment.PaymentAdmin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
-	5,   // 131: payment.PaymentAdmin.ListPayPlatforms:input_type -> payment.ListPayPlatformsReq
-	7,   // 132: payment.PaymentAdmin.CreatePayProduct:input_type -> payment.CreatePayProductReq
-	8,   // 133: payment.PaymentAdmin.UpdatePayProduct:input_type -> payment.UpdatePayProductReq
-	9,   // 134: payment.PaymentAdmin.GetPayProduct:input_type -> payment.GetPayProductReq
-	11,  // 135: payment.PaymentAdmin.ListPayProducts:input_type -> payment.ListPayProductsReq
-	13,  // 136: payment.PaymentAdmin.OpenTenantPayPlatform:input_type -> payment.OpenTenantPayPlatformReq
-	14,  // 137: payment.PaymentAdmin.UpdateTenantPayPlatform:input_type -> payment.UpdateTenantPayPlatformReq
-	15,  // 138: payment.PaymentAdmin.GetTenantPayPlatform:input_type -> payment.GetTenantPayPlatformReq
-	17,  // 139: payment.PaymentAdmin.ListTenantPayPlatforms:input_type -> payment.ListTenantPayPlatformsReq
-	19,  // 140: payment.PaymentAdmin.CreateTenantPayAccount:input_type -> payment.CreateTenantPayAccountReq
-	20,  // 141: payment.PaymentAdmin.UpdateTenantPayAccount:input_type -> payment.UpdateTenantPayAccountReq
-	21,  // 142: payment.PaymentAdmin.GetTenantPayAccount:input_type -> payment.GetTenantPayAccountReq
-	23,  // 143: payment.PaymentAdmin.ListTenantPayAccounts:input_type -> payment.ListTenantPayAccountsReq
-	25,  // 144: payment.PaymentAdmin.CreateTenantPayChannel:input_type -> payment.CreateTenantPayChannelReq
-	26,  // 145: payment.PaymentAdmin.UpdateTenantPayChannel:input_type -> payment.UpdateTenantPayChannelReq
-	27,  // 146: payment.PaymentAdmin.GetTenantPayChannel:input_type -> payment.GetTenantPayChannelReq
-	29,  // 147: payment.PaymentAdmin.ListTenantPayChannels:input_type -> payment.ListTenantPayChannelsReq
-	31,  // 148: payment.PaymentAdmin.CreateTenantPayChannelRule:input_type -> payment.CreateTenantPayChannelRuleReq
-	32,  // 149: payment.PaymentAdmin.UpdateTenantPayChannelRule:input_type -> payment.UpdateTenantPayChannelRuleReq
-	33,  // 150: payment.PaymentAdmin.GetTenantPayChannelRule:input_type -> payment.GetTenantPayChannelRuleReq
-	35,  // 151: payment.PaymentAdmin.ListTenantPayChannelRules:input_type -> payment.ListTenantPayChannelRulesReq
-	37,  // 152: payment.PaymentAdmin.GetUserRechargeStat:input_type -> payment.GetUserRechargeStatReq
-	39,  // 153: payment.PaymentAdmin.ListUserRechargeStats:input_type -> payment.ListUserRechargeStatsReq
-	43,  // 154: payment.PaymentAdmin.ListRechargeOrders:input_type -> payment.ListRechargeOrdersReq
-	41,  // 155: payment.PaymentAdmin.GetRechargeOrder:input_type -> payment.GetRechargeOrderReq
-	45,  // 156: payment.PaymentAdmin.CloseRechargeOrder:input_type -> payment.CloseRechargeOrderReq
-	46,  // 157: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:input_type -> payment.ManualMarkRechargeOrderSuccessReq
-	47,  // 158: payment.PaymentAdmin.RetryNotify:input_type -> payment.RetryNotifyReq
-	50,  // 159: payment.PaymentAdmin.ListRechargeNotifyLogs:input_type -> payment.ListRechargeNotifyLogsReq
-	48,  // 160: payment.PaymentAdmin.GetRechargeNotifyLog:input_type -> payment.GetRechargeNotifyLogReq
-	52,  // 161: payment.PaymentAdmin.ListWithdrawOrders:input_type -> payment.ListWithdrawOrdersReq
-	54,  // 162: payment.PaymentAdmin.GetWithdrawOrder:input_type -> payment.GetWithdrawOrderReq
-	56,  // 163: payment.PaymentAdmin.AuditWithdrawOrder:input_type -> payment.AuditWithdrawOrderReq
-	57,  // 164: payment.PaymentAdmin.ListWithdrawNotifyLogs:input_type -> payment.ListWithdrawNotifyLogsReq
-	59,  // 165: payment.PaymentAdmin.GetWithdrawNotifyLog:input_type -> payment.GetWithdrawNotifyLogReq
-	61,  // 166: payment.PaymentAdmin.CreateCryptoRechargeAddress:input_type -> payment.CreateCryptoRechargeAddressReq
-	62,  // 167: payment.PaymentAdmin.UpdateCryptoRechargeAddress:input_type -> payment.UpdateCryptoRechargeAddressReq
-	63,  // 168: payment.PaymentAdmin.GetCryptoRechargeAddress:input_type -> payment.GetCryptoRechargeAddressReq
-	65,  // 169: payment.PaymentAdmin.ListCryptoRechargeAddresses:input_type -> payment.ListCryptoRechargeAddressesReq
-	67,  // 170: payment.PaymentAdmin.CreateCryptoWalletAccount:input_type -> payment.CreateCryptoWalletAccountReq
-	68,  // 171: payment.PaymentAdmin.UpdateCryptoWalletAccount:input_type -> payment.UpdateCryptoWalletAccountReq
-	69,  // 172: payment.PaymentAdmin.GetCryptoWalletAccount:input_type -> payment.GetCryptoWalletAccountReq
-	71,  // 173: payment.PaymentAdmin.ListCryptoWalletAccounts:input_type -> payment.ListCryptoWalletAccountsReq
-	73,  // 174: payment.PaymentAdmin.CreateCryptoRechargeTx:input_type -> payment.CreateCryptoRechargeTxReq
-	74,  // 175: payment.PaymentAdmin.UpdateCryptoRechargeTx:input_type -> payment.UpdateCryptoRechargeTxReq
-	75,  // 176: payment.PaymentAdmin.GetCryptoRechargeTx:input_type -> payment.GetCryptoRechargeTxReq
-	77,  // 177: payment.PaymentAdmin.ListCryptoRechargeTxs:input_type -> payment.ListCryptoRechargeTxsReq
-	81,  // 178: payment.PaymentAdmin.GetPayPlatforms:output_type -> payment.PayPlatformsResp
-	0,   // 179: payment.PaymentAdmin.CreatePayPlatform:output_type -> payment.AdminCommonResp
-	0,   // 180: payment.PaymentAdmin.UpdatePayPlatform:output_type -> payment.AdminCommonResp
-	4,   // 181: payment.PaymentAdmin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
-	6,   // 182: payment.PaymentAdmin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
-	0,   // 183: payment.PaymentAdmin.CreatePayProduct:output_type -> payment.AdminCommonResp
-	0,   // 184: payment.PaymentAdmin.UpdatePayProduct:output_type -> payment.AdminCommonResp
-	10,  // 185: payment.PaymentAdmin.GetPayProduct:output_type -> payment.GetPayProductResp
-	12,  // 186: payment.PaymentAdmin.ListPayProducts:output_type -> payment.ListPayProductsResp
-	0,   // 187: payment.PaymentAdmin.OpenTenantPayPlatform:output_type -> payment.AdminCommonResp
-	0,   // 188: payment.PaymentAdmin.UpdateTenantPayPlatform:output_type -> payment.AdminCommonResp
-	16,  // 189: payment.PaymentAdmin.GetTenantPayPlatform:output_type -> payment.GetTenantPayPlatformResp
-	18,  // 190: payment.PaymentAdmin.ListTenantPayPlatforms:output_type -> payment.ListTenantPayPlatformsResp
-	0,   // 191: payment.PaymentAdmin.CreateTenantPayAccount:output_type -> payment.AdminCommonResp
-	0,   // 192: payment.PaymentAdmin.UpdateTenantPayAccount:output_type -> payment.AdminCommonResp
-	22,  // 193: payment.PaymentAdmin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
-	24,  // 194: payment.PaymentAdmin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
-	0,   // 195: payment.PaymentAdmin.CreateTenantPayChannel:output_type -> payment.AdminCommonResp
-	0,   // 196: payment.PaymentAdmin.UpdateTenantPayChannel:output_type -> payment.AdminCommonResp
-	28,  // 197: payment.PaymentAdmin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
-	30,  // 198: payment.PaymentAdmin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
-	0,   // 199: payment.PaymentAdmin.CreateTenantPayChannelRule:output_type -> payment.AdminCommonResp
-	0,   // 200: payment.PaymentAdmin.UpdateTenantPayChannelRule:output_type -> payment.AdminCommonResp
-	34,  // 201: payment.PaymentAdmin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
-	36,  // 202: payment.PaymentAdmin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
-	38,  // 203: payment.PaymentAdmin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
-	40,  // 204: payment.PaymentAdmin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
-	44,  // 205: payment.PaymentAdmin.ListRechargeOrders:output_type -> payment.ListRechargeOrdersResp
-	42,  // 206: payment.PaymentAdmin.GetRechargeOrder:output_type -> payment.GetRechargeOrderResp
-	0,   // 207: payment.PaymentAdmin.CloseRechargeOrder:output_type -> payment.AdminCommonResp
-	0,   // 208: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:output_type -> payment.AdminCommonResp
-	0,   // 209: payment.PaymentAdmin.RetryNotify:output_type -> payment.AdminCommonResp
-	51,  // 210: payment.PaymentAdmin.ListRechargeNotifyLogs:output_type -> payment.ListRechargeNotifyLogsResp
-	49,  // 211: payment.PaymentAdmin.GetRechargeNotifyLog:output_type -> payment.GetRechargeNotifyLogResp
-	53,  // 212: payment.PaymentAdmin.ListWithdrawOrders:output_type -> payment.ListWithdrawOrdersResp
-	55,  // 213: payment.PaymentAdmin.GetWithdrawOrder:output_type -> payment.GetWithdrawOrderResp
-	0,   // 214: payment.PaymentAdmin.AuditWithdrawOrder:output_type -> payment.AdminCommonResp
-	58,  // 215: payment.PaymentAdmin.ListWithdrawNotifyLogs:output_type -> payment.ListWithdrawNotifyLogsResp
-	60,  // 216: payment.PaymentAdmin.GetWithdrawNotifyLog:output_type -> payment.GetWithdrawNotifyLogResp
-	0,   // 217: payment.PaymentAdmin.CreateCryptoRechargeAddress:output_type -> payment.AdminCommonResp
-	0,   // 218: payment.PaymentAdmin.UpdateCryptoRechargeAddress:output_type -> payment.AdminCommonResp
-	64,  // 219: payment.PaymentAdmin.GetCryptoRechargeAddress:output_type -> payment.GetCryptoRechargeAddressResp
-	66,  // 220: payment.PaymentAdmin.ListCryptoRechargeAddresses:output_type -> payment.ListCryptoRechargeAddressesResp
-	0,   // 221: payment.PaymentAdmin.CreateCryptoWalletAccount:output_type -> payment.AdminCommonResp
-	0,   // 222: payment.PaymentAdmin.UpdateCryptoWalletAccount:output_type -> payment.AdminCommonResp
-	70,  // 223: payment.PaymentAdmin.GetCryptoWalletAccount:output_type -> payment.GetCryptoWalletAccountResp
-	72,  // 224: payment.PaymentAdmin.ListCryptoWalletAccounts:output_type -> payment.ListCryptoWalletAccountsResp
-	0,   // 225: payment.PaymentAdmin.CreateCryptoRechargeTx:output_type -> payment.AdminCommonResp
-	0,   // 226: payment.PaymentAdmin.UpdateCryptoRechargeTx:output_type -> payment.AdminCommonResp
-	76,  // 227: payment.PaymentAdmin.GetCryptoRechargeTx:output_type -> payment.GetCryptoRechargeTxResp
-	78,  // 228: payment.PaymentAdmin.ListCryptoRechargeTxs:output_type -> payment.ListCryptoRechargeTxsResp
-	178, // [178:229] is the sub-list for method output_type
-	127, // [127:178] is the sub-list for method input_type
-	127, // [127:127] is the sub-list for extension type_name
-	127, // [127:127] is the sub-list for extension extendee
-	0,   // [0:127] is the sub-list for field type_name
+	92,  // 42: payment.CreateTenantPayChannelReq.visible:type_name -> common.Switch
+	84,  // 43: payment.CreateTenantPayChannelReq.enabled:type_name -> common.Enable
+	93,  // 44: payment.CreateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
+	92,  // 45: payment.UpdateTenantPayChannelReq.visible:type_name -> common.Switch
+	84,  // 46: payment.UpdateTenantPayChannelReq.enabled:type_name -> common.Enable
+	93,  // 47: payment.UpdateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
+	82,  // 48: payment.GetTenantPayChannelResp.base:type_name -> common.RespBase
+	94,  // 49: payment.GetTenantPayChannelResp.data:type_name -> payment.TenantPayChannel
+	86,  // 50: payment.ListTenantPayChannelsReq.page:type_name -> common.PageReq
+	84,  // 51: payment.ListTenantPayChannelsReq.enabled:type_name -> common.Enable
+	92,  // 52: payment.ListTenantPayChannelsReq.visible:type_name -> common.Switch
+	82,  // 53: payment.ListTenantPayChannelsResp.base:type_name -> common.RespBase
+	94,  // 54: payment.ListTenantPayChannelsResp.data:type_name -> payment.TenantPayChannel
+	84,  // 55: payment.CreateTenantPayChannelRuleReq.enabled:type_name -> common.Enable
+	84,  // 56: payment.UpdateTenantPayChannelRuleReq.enabled:type_name -> common.Enable
+	82,  // 57: payment.GetTenantPayChannelRuleResp.base:type_name -> common.RespBase
+	95,  // 58: payment.GetTenantPayChannelRuleResp.data:type_name -> payment.TenantPayChannelRule
+	86,  // 59: payment.ListTenantPayChannelRulesReq.page:type_name -> common.PageReq
+	84,  // 60: payment.ListTenantPayChannelRulesReq.enabled:type_name -> common.Enable
+	82,  // 61: payment.ListTenantPayChannelRulesResp.base:type_name -> common.RespBase
+	95,  // 62: payment.ListTenantPayChannelRulesResp.data:type_name -> payment.TenantPayChannelRule
+	82,  // 63: payment.GetUserRechargeStatResp.base:type_name -> common.RespBase
+	96,  // 64: payment.GetUserRechargeStatResp.data:type_name -> payment.UserRechargeStat
+	86,  // 65: payment.ListUserRechargeStatsReq.page:type_name -> common.PageReq
+	82,  // 66: payment.ListUserRechargeStatsResp.base:type_name -> common.RespBase
+	96,  // 67: payment.ListUserRechargeStatsResp.data:type_name -> payment.UserRechargeStat
+	82,  // 68: payment.GetRechargeOrderResp.base:type_name -> common.RespBase
+	97,  // 69: payment.GetRechargeOrderResp.data:type_name -> payment.RechargeOrder
+	86,  // 70: payment.ListRechargeOrdersReq.page:type_name -> common.PageReq
+	98,  // 71: payment.ListRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
+	99,  // 72: payment.ListRechargeOrdersReq.recharge_type:type_name -> payment.RechargeType
+	82,  // 73: payment.ListRechargeOrdersResp.base:type_name -> common.RespBase
+	97,  // 74: payment.ListRechargeOrdersResp.data:type_name -> payment.RechargeOrder
+	82,  // 75: payment.GetRechargeNotifyLogResp.base:type_name -> common.RespBase
+	100, // 76: payment.GetRechargeNotifyLogResp.data:type_name -> payment.PayNotifyLog
+	86,  // 77: payment.ListRechargeNotifyLogsReq.page:type_name -> common.PageReq
+	101, // 78: payment.ListRechargeNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
+	102, // 79: payment.ListRechargeNotifyLogsReq.sign_result:type_name -> payment.SignResult
+	82,  // 80: payment.ListRechargeNotifyLogsResp.base:type_name -> common.RespBase
+	100, // 81: payment.ListRechargeNotifyLogsResp.data:type_name -> payment.PayNotifyLog
+	86,  // 82: payment.ListWithdrawOrdersReq.page:type_name -> common.PageReq
+	82,  // 83: payment.ListWithdrawOrdersResp.base:type_name -> common.RespBase
+	103, // 84: payment.ListWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
+	82,  // 85: payment.GetWithdrawOrderResp.base:type_name -> common.RespBase
+	103, // 86: payment.GetWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
+	86,  // 87: payment.ListWithdrawNotifyLogsReq.page:type_name -> common.PageReq
+	101, // 88: payment.ListWithdrawNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
+	102, // 89: payment.ListWithdrawNotifyLogsReq.sign_result:type_name -> payment.SignResult
+	82,  // 90: payment.ListWithdrawNotifyLogsResp.base:type_name -> common.RespBase
+	100, // 91: payment.ListWithdrawNotifyLogsResp.data:type_name -> payment.PayNotifyLog
+	82,  // 92: payment.GetWithdrawNotifyLogResp.base:type_name -> common.RespBase
+	100, // 93: payment.GetWithdrawNotifyLogResp.data:type_name -> payment.PayNotifyLog
+	104, // 94: payment.CreateCryptoRechargeAddressReq.wallet_type:type_name -> common.WalletType
+	105, // 95: payment.CreateCryptoRechargeAddressReq.chain_code:type_name -> common.ChainCode
+	106, // 96: payment.CreateCryptoRechargeAddressReq.address_source:type_name -> payment.CryptoRechargeAddressSource
+	107, // 97: payment.CreateCryptoRechargeAddressReq.address_type:type_name -> payment.CryptoRechargeAddressType
+	108, // 98: payment.CreateCryptoRechargeAddressReq.status:type_name -> payment.CryptoRechargeAddressStatus
+	106, // 99: payment.UpdateCryptoRechargeAddressReq.address_source:type_name -> payment.CryptoRechargeAddressSource
+	107, // 100: payment.UpdateCryptoRechargeAddressReq.address_type:type_name -> payment.CryptoRechargeAddressType
+	108, // 101: payment.UpdateCryptoRechargeAddressReq.status:type_name -> payment.CryptoRechargeAddressStatus
+	82,  // 102: payment.GetCryptoRechargeAddressResp.base:type_name -> common.RespBase
+	109, // 103: payment.GetCryptoRechargeAddressResp.data:type_name -> payment.CryptoRechargeAddress
+	86,  // 104: payment.ListCryptoRechargeAddressesReq.page:type_name -> common.PageReq
+	104, // 105: payment.ListCryptoRechargeAddressesReq.wallet_type:type_name -> common.WalletType
+	105, // 106: payment.ListCryptoRechargeAddressesReq.chain_code:type_name -> common.ChainCode
+	108, // 107: payment.ListCryptoRechargeAddressesReq.status:type_name -> payment.CryptoRechargeAddressStatus
+	107, // 108: payment.ListCryptoRechargeAddressesReq.address_type:type_name -> payment.CryptoRechargeAddressType
+	82,  // 109: payment.ListCryptoRechargeAddressesResp.base:type_name -> common.RespBase
+	109, // 110: payment.ListCryptoRechargeAddressesResp.data:type_name -> payment.CryptoRechargeAddress
+	84,  // 111: payment.CreateCryptoWalletAccountReq.enabled:type_name -> common.Enable
+	84,  // 112: payment.UpdateCryptoWalletAccountReq.enabled:type_name -> common.Enable
+	82,  // 113: payment.GetCryptoWalletAccountResp.base:type_name -> common.RespBase
+	110, // 114: payment.GetCryptoWalletAccountResp.data:type_name -> payment.CryptoWalletAccount
+	86,  // 115: payment.ListCryptoWalletAccountsReq.page:type_name -> common.PageReq
+	84,  // 116: payment.ListCryptoWalletAccountsReq.enabled:type_name -> common.Enable
+	82,  // 117: payment.ListCryptoWalletAccountsResp.base:type_name -> common.RespBase
+	110, // 118: payment.ListCryptoWalletAccountsResp.data:type_name -> payment.CryptoWalletAccount
+	105, // 119: payment.CreateCryptoRechargeTxReq.chain_code:type_name -> common.ChainCode
+	111, // 120: payment.CreateCryptoRechargeTxReq.status:type_name -> payment.CryptoRechargeTxStatus
+	111, // 121: payment.UpdateCryptoRechargeTxReq.status:type_name -> payment.CryptoRechargeTxStatus
+	105, // 122: payment.GetCryptoRechargeTxReq.chain_code:type_name -> common.ChainCode
+	82,  // 123: payment.GetCryptoRechargeTxResp.base:type_name -> common.RespBase
+	112, // 124: payment.GetCryptoRechargeTxResp.data:type_name -> payment.CryptoRechargeTx
+	86,  // 125: payment.ListCryptoRechargeTxsReq.page:type_name -> common.PageReq
+	105, // 126: payment.ListCryptoRechargeTxsReq.chain_code:type_name -> common.ChainCode
+	111, // 127: payment.ListCryptoRechargeTxsReq.status:type_name -> payment.CryptoRechargeTxStatus
+	82,  // 128: payment.ListCryptoRechargeTxsResp.base:type_name -> common.RespBase
+	112, // 129: payment.ListCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
+	82,  // 130: payment.PayPlatformsResp.base:type_name -> common.RespBase
+	80,  // 131: payment.PayPlatformsResp.data:type_name -> payment.PayPlatformItem
+	79,  // 132: payment.PaymentAdmin.GetPayPlatforms:input_type -> payment.AdminEmpty
+	1,   // 133: payment.PaymentAdmin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
+	2,   // 134: payment.PaymentAdmin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
+	3,   // 135: payment.PaymentAdmin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
+	5,   // 136: payment.PaymentAdmin.ListPayPlatforms:input_type -> payment.ListPayPlatformsReq
+	7,   // 137: payment.PaymentAdmin.CreatePayProduct:input_type -> payment.CreatePayProductReq
+	8,   // 138: payment.PaymentAdmin.UpdatePayProduct:input_type -> payment.UpdatePayProductReq
+	9,   // 139: payment.PaymentAdmin.GetPayProduct:input_type -> payment.GetPayProductReq
+	11,  // 140: payment.PaymentAdmin.ListPayProducts:input_type -> payment.ListPayProductsReq
+	13,  // 141: payment.PaymentAdmin.OpenTenantPayPlatform:input_type -> payment.OpenTenantPayPlatformReq
+	14,  // 142: payment.PaymentAdmin.UpdateTenantPayPlatform:input_type -> payment.UpdateTenantPayPlatformReq
+	15,  // 143: payment.PaymentAdmin.GetTenantPayPlatform:input_type -> payment.GetTenantPayPlatformReq
+	17,  // 144: payment.PaymentAdmin.ListTenantPayPlatforms:input_type -> payment.ListTenantPayPlatformsReq
+	19,  // 145: payment.PaymentAdmin.CreateTenantPayAccount:input_type -> payment.CreateTenantPayAccountReq
+	20,  // 146: payment.PaymentAdmin.UpdateTenantPayAccount:input_type -> payment.UpdateTenantPayAccountReq
+	21,  // 147: payment.PaymentAdmin.GetTenantPayAccount:input_type -> payment.GetTenantPayAccountReq
+	23,  // 148: payment.PaymentAdmin.ListTenantPayAccounts:input_type -> payment.ListTenantPayAccountsReq
+	25,  // 149: payment.PaymentAdmin.CreateTenantPayChannel:input_type -> payment.CreateTenantPayChannelReq
+	26,  // 150: payment.PaymentAdmin.UpdateTenantPayChannel:input_type -> payment.UpdateTenantPayChannelReq
+	27,  // 151: payment.PaymentAdmin.GetTenantPayChannel:input_type -> payment.GetTenantPayChannelReq
+	29,  // 152: payment.PaymentAdmin.ListTenantPayChannels:input_type -> payment.ListTenantPayChannelsReq
+	31,  // 153: payment.PaymentAdmin.CreateTenantPayChannelRule:input_type -> payment.CreateTenantPayChannelRuleReq
+	32,  // 154: payment.PaymentAdmin.UpdateTenantPayChannelRule:input_type -> payment.UpdateTenantPayChannelRuleReq
+	33,  // 155: payment.PaymentAdmin.GetTenantPayChannelRule:input_type -> payment.GetTenantPayChannelRuleReq
+	35,  // 156: payment.PaymentAdmin.ListTenantPayChannelRules:input_type -> payment.ListTenantPayChannelRulesReq
+	37,  // 157: payment.PaymentAdmin.GetUserRechargeStat:input_type -> payment.GetUserRechargeStatReq
+	39,  // 158: payment.PaymentAdmin.ListUserRechargeStats:input_type -> payment.ListUserRechargeStatsReq
+	43,  // 159: payment.PaymentAdmin.ListRechargeOrders:input_type -> payment.ListRechargeOrdersReq
+	41,  // 160: payment.PaymentAdmin.GetRechargeOrder:input_type -> payment.GetRechargeOrderReq
+	45,  // 161: payment.PaymentAdmin.CloseRechargeOrder:input_type -> payment.CloseRechargeOrderReq
+	46,  // 162: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:input_type -> payment.ManualMarkRechargeOrderSuccessReq
+	47,  // 163: payment.PaymentAdmin.RetryNotify:input_type -> payment.RetryNotifyReq
+	50,  // 164: payment.PaymentAdmin.ListRechargeNotifyLogs:input_type -> payment.ListRechargeNotifyLogsReq
+	48,  // 165: payment.PaymentAdmin.GetRechargeNotifyLog:input_type -> payment.GetRechargeNotifyLogReq
+	52,  // 166: payment.PaymentAdmin.ListWithdrawOrders:input_type -> payment.ListWithdrawOrdersReq
+	54,  // 167: payment.PaymentAdmin.GetWithdrawOrder:input_type -> payment.GetWithdrawOrderReq
+	56,  // 168: payment.PaymentAdmin.AuditWithdrawOrder:input_type -> payment.AuditWithdrawOrderReq
+	57,  // 169: payment.PaymentAdmin.ListWithdrawNotifyLogs:input_type -> payment.ListWithdrawNotifyLogsReq
+	59,  // 170: payment.PaymentAdmin.GetWithdrawNotifyLog:input_type -> payment.GetWithdrawNotifyLogReq
+	61,  // 171: payment.PaymentAdmin.CreateCryptoRechargeAddress:input_type -> payment.CreateCryptoRechargeAddressReq
+	62,  // 172: payment.PaymentAdmin.UpdateCryptoRechargeAddress:input_type -> payment.UpdateCryptoRechargeAddressReq
+	63,  // 173: payment.PaymentAdmin.GetCryptoRechargeAddress:input_type -> payment.GetCryptoRechargeAddressReq
+	65,  // 174: payment.PaymentAdmin.ListCryptoRechargeAddresses:input_type -> payment.ListCryptoRechargeAddressesReq
+	67,  // 175: payment.PaymentAdmin.CreateCryptoWalletAccount:input_type -> payment.CreateCryptoWalletAccountReq
+	68,  // 176: payment.PaymentAdmin.UpdateCryptoWalletAccount:input_type -> payment.UpdateCryptoWalletAccountReq
+	69,  // 177: payment.PaymentAdmin.GetCryptoWalletAccount:input_type -> payment.GetCryptoWalletAccountReq
+	71,  // 178: payment.PaymentAdmin.ListCryptoWalletAccounts:input_type -> payment.ListCryptoWalletAccountsReq
+	73,  // 179: payment.PaymentAdmin.CreateCryptoRechargeTx:input_type -> payment.CreateCryptoRechargeTxReq
+	74,  // 180: payment.PaymentAdmin.UpdateCryptoRechargeTx:input_type -> payment.UpdateCryptoRechargeTxReq
+	75,  // 181: payment.PaymentAdmin.GetCryptoRechargeTx:input_type -> payment.GetCryptoRechargeTxReq
+	77,  // 182: payment.PaymentAdmin.ListCryptoRechargeTxs:input_type -> payment.ListCryptoRechargeTxsReq
+	81,  // 183: payment.PaymentAdmin.GetPayPlatforms:output_type -> payment.PayPlatformsResp
+	0,   // 184: payment.PaymentAdmin.CreatePayPlatform:output_type -> payment.AdminCommonResp
+	0,   // 185: payment.PaymentAdmin.UpdatePayPlatform:output_type -> payment.AdminCommonResp
+	4,   // 186: payment.PaymentAdmin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
+	6,   // 187: payment.PaymentAdmin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
+	0,   // 188: payment.PaymentAdmin.CreatePayProduct:output_type -> payment.AdminCommonResp
+	0,   // 189: payment.PaymentAdmin.UpdatePayProduct:output_type -> payment.AdminCommonResp
+	10,  // 190: payment.PaymentAdmin.GetPayProduct:output_type -> payment.GetPayProductResp
+	12,  // 191: payment.PaymentAdmin.ListPayProducts:output_type -> payment.ListPayProductsResp
+	0,   // 192: payment.PaymentAdmin.OpenTenantPayPlatform:output_type -> payment.AdminCommonResp
+	0,   // 193: payment.PaymentAdmin.UpdateTenantPayPlatform:output_type -> payment.AdminCommonResp
+	16,  // 194: payment.PaymentAdmin.GetTenantPayPlatform:output_type -> payment.GetTenantPayPlatformResp
+	18,  // 195: payment.PaymentAdmin.ListTenantPayPlatforms:output_type -> payment.ListTenantPayPlatformsResp
+	0,   // 196: payment.PaymentAdmin.CreateTenantPayAccount:output_type -> payment.AdminCommonResp
+	0,   // 197: payment.PaymentAdmin.UpdateTenantPayAccount:output_type -> payment.AdminCommonResp
+	22,  // 198: payment.PaymentAdmin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
+	24,  // 199: payment.PaymentAdmin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
+	0,   // 200: payment.PaymentAdmin.CreateTenantPayChannel:output_type -> payment.AdminCommonResp
+	0,   // 201: payment.PaymentAdmin.UpdateTenantPayChannel:output_type -> payment.AdminCommonResp
+	28,  // 202: payment.PaymentAdmin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
+	30,  // 203: payment.PaymentAdmin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
+	0,   // 204: payment.PaymentAdmin.CreateTenantPayChannelRule:output_type -> payment.AdminCommonResp
+	0,   // 205: payment.PaymentAdmin.UpdateTenantPayChannelRule:output_type -> payment.AdminCommonResp
+	34,  // 206: payment.PaymentAdmin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
+	36,  // 207: payment.PaymentAdmin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
+	38,  // 208: payment.PaymentAdmin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
+	40,  // 209: payment.PaymentAdmin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
+	44,  // 210: payment.PaymentAdmin.ListRechargeOrders:output_type -> payment.ListRechargeOrdersResp
+	42,  // 211: payment.PaymentAdmin.GetRechargeOrder:output_type -> payment.GetRechargeOrderResp
+	0,   // 212: payment.PaymentAdmin.CloseRechargeOrder:output_type -> payment.AdminCommonResp
+	0,   // 213: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:output_type -> payment.AdminCommonResp
+	0,   // 214: payment.PaymentAdmin.RetryNotify:output_type -> payment.AdminCommonResp
+	51,  // 215: payment.PaymentAdmin.ListRechargeNotifyLogs:output_type -> payment.ListRechargeNotifyLogsResp
+	49,  // 216: payment.PaymentAdmin.GetRechargeNotifyLog:output_type -> payment.GetRechargeNotifyLogResp
+	53,  // 217: payment.PaymentAdmin.ListWithdrawOrders:output_type -> payment.ListWithdrawOrdersResp
+	55,  // 218: payment.PaymentAdmin.GetWithdrawOrder:output_type -> payment.GetWithdrawOrderResp
+	0,   // 219: payment.PaymentAdmin.AuditWithdrawOrder:output_type -> payment.AdminCommonResp
+	58,  // 220: payment.PaymentAdmin.ListWithdrawNotifyLogs:output_type -> payment.ListWithdrawNotifyLogsResp
+	60,  // 221: payment.PaymentAdmin.GetWithdrawNotifyLog:output_type -> payment.GetWithdrawNotifyLogResp
+	0,   // 222: payment.PaymentAdmin.CreateCryptoRechargeAddress:output_type -> payment.AdminCommonResp
+	0,   // 223: payment.PaymentAdmin.UpdateCryptoRechargeAddress:output_type -> payment.AdminCommonResp
+	64,  // 224: payment.PaymentAdmin.GetCryptoRechargeAddress:output_type -> payment.GetCryptoRechargeAddressResp
+	66,  // 225: payment.PaymentAdmin.ListCryptoRechargeAddresses:output_type -> payment.ListCryptoRechargeAddressesResp
+	0,   // 226: payment.PaymentAdmin.CreateCryptoWalletAccount:output_type -> payment.AdminCommonResp
+	0,   // 227: payment.PaymentAdmin.UpdateCryptoWalletAccount:output_type -> payment.AdminCommonResp
+	70,  // 228: payment.PaymentAdmin.GetCryptoWalletAccount:output_type -> payment.GetCryptoWalletAccountResp
+	72,  // 229: payment.PaymentAdmin.ListCryptoWalletAccounts:output_type -> payment.ListCryptoWalletAccountsResp
+	0,   // 230: payment.PaymentAdmin.CreateCryptoRechargeTx:output_type -> payment.AdminCommonResp
+	0,   // 231: payment.PaymentAdmin.UpdateCryptoRechargeTx:output_type -> payment.AdminCommonResp
+	76,  // 232: payment.PaymentAdmin.GetCryptoRechargeTx:output_type -> payment.GetCryptoRechargeTxResp
+	78,  // 233: payment.PaymentAdmin.ListCryptoRechargeTxs:output_type -> payment.ListCryptoRechargeTxsResp
+	183, // [183:234] is the sub-list for method output_type
+	132, // [132:183] is the sub-list for method input_type
+	132, // [132:132] is the sub-list for extension type_name
+	132, // [132:132] is the sub-list for extension extendee
+	0,   // [0:132] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_payment_admin_proto_init() }

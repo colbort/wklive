@@ -59,7 +59,7 @@ type (
 		LockDays         int64   `db:"lock_days"`          // 锁仓天数快照
 		InterestMode     int64   `db:"interest_mode"`      // 计息方式快照：1按天计息 2到期一次性计息
 		RewardMode       int64   `db:"reward_mode"`        // 发息方式快照：1每日发放 2到期发放
-		AllowEarlyRedeem int64   `db:"allow_early_redeem"` // 是否允许提前赎回快照：0否 1是
+		AllowEarlyRedeem int64   `db:"allow_early_redeem"` // 是否允许提前赎回快照：1否 2是
 		EarlyRedeemRate  float64 `db:"early_redeem_rate"`  // 提前赎回手续费率快照
 		InterestDays     int64   `db:"interest_days"`      // 已计息天数
 		StartTimes       int64   `db:"start_times"`        // 起息时间戳
@@ -71,7 +71,7 @@ type (
 		RedeemAmount     float64 `db:"redeem_amount"`      // 赎回本金数量
 		RedeemFee        float64 `db:"redeem_fee"`         // 赎回手续费
 		Status           int64   `db:"status"`             // 订单状态：1质押中 2已到期 3已赎回 4提前赎回 5已取消
-		RedeemType       int64   `db:"redeem_type"`        // 赎回类型：0未赎回 1到期赎回 2提前赎回
+		RedeemType       int64   `db:"redeem_type"`        // 赎回类型：1未赎回 2到期赎回 3提前赎回 4手动赎回
 		RedeemApplyTimes int64   `db:"redeem_apply_times"` // 申请赎回时间戳
 		RedeemTimes      int64   `db:"redeem_times"`       // 实际赎回时间戳
 		Source           int64   `db:"source"`             // 来源：1后台 2H5 3APP 4API

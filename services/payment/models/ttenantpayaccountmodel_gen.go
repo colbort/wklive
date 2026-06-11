@@ -57,7 +57,7 @@ type (
 		PublicKey           sql.NullString `db:"public_key"`             // 公钥
 		CertCipher          sql.NullString `db:"cert_cipher"`            // 证书密文
 		ExtConfig           sql.NullString `db:"ext_config"`             // 扩展配置
-		Status              int64          `db:"status"`                 // 状态：1启用 2停用
+		Enabled             int64          `db:"enabled"`                // 启用状态：1启用 2禁用
 		IsDefault           int64          `db:"is_default"`             // 是否默认账号：0否 1是
 		Remark              sql.NullString `db:"remark"`                 // 备注
 		CreateTimes         int64          `db:"create_times"`           // 创建时间
@@ -129,7 +129,7 @@ func (m *defaultTTenantPayAccountModel) Insert(ctx context.Context, data *TTenan
 	tTenantPayAccountTenantIdAccountCodeKey := fmt.Sprintf("%s%v:%v", cacheTTenantPayAccountTenantIdAccountCodePrefix, data.TenantId, data.AccountCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTenantPayAccountRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.TenantPayPlatformId, data.PlatformId, data.AccountCode, data.AccountName, data.AppId, data.MerchantId, data.MerchantName, data.ApiKeyCipher, data.ApiSecretCipher, data.PrivateKeyCipher, data.PublicKey, data.CertCipher, data.ExtConfig, data.Status, data.IsDefault, data.Remark, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.TenantPayPlatformId, data.PlatformId, data.AccountCode, data.AccountName, data.AppId, data.MerchantId, data.MerchantName, data.ApiKeyCipher, data.ApiSecretCipher, data.PrivateKeyCipher, data.PublicKey, data.CertCipher, data.ExtConfig, data.Enabled, data.IsDefault, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tTenantPayAccountIdKey, tTenantPayAccountTenantIdAccountCodeKey)
 	return ret, err
 }
@@ -144,7 +144,7 @@ func (m *defaultTTenantPayAccountModel) Update(ctx context.Context, newData *TTe
 	tTenantPayAccountTenantIdAccountCodeKey := fmt.Sprintf("%s%v:%v", cacheTTenantPayAccountTenantIdAccountCodePrefix, data.TenantId, data.AccountCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTenantPayAccountRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.TenantPayPlatformId, newData.PlatformId, newData.AccountCode, newData.AccountName, newData.AppId, newData.MerchantId, newData.MerchantName, newData.ApiKeyCipher, newData.ApiSecretCipher, newData.PrivateKeyCipher, newData.PublicKey, newData.CertCipher, newData.ExtConfig, newData.Status, newData.IsDefault, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.TenantPayPlatformId, newData.PlatformId, newData.AccountCode, newData.AccountName, newData.AppId, newData.MerchantId, newData.MerchantName, newData.ApiKeyCipher, newData.ApiSecretCipher, newData.PrivateKeyCipher, newData.PublicKey, newData.CertCipher, newData.ExtConfig, newData.Enabled, newData.IsDefault, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTenantPayAccountIdKey, tTenantPayAccountTenantIdAccountCodeKey)
 	return err
 }

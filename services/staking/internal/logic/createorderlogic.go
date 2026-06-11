@@ -9,6 +9,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
@@ -134,7 +135,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 	lockResp, err := l.svcCtx.AssetClient.LockAsset(l.ctx, &asset.LockAssetReq{
 		TenantId:   tenantId,
 		UserId:     userId,
-		WalletType: asset.WalletType_WALLET_TYPE_EARN,
+		WalletType: common.WalletType_WALLET_TYPE_EARN,
 		Coin:       product.CoinSymbol,
 		Amount:     conv.FloatString(amount),
 		BizType:    asset.BizType_BIZ_TYPE_STAKING,

@@ -6,6 +6,7 @@ import (
 	"math"
 
 	"wklive/common/i18n"
+	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/models"
 )
@@ -27,31 +28,31 @@ func optionTurnover(contract *models.TOptionContract, price, qty float64) float6
 }
 
 func oppositeOrderSide(side int64) int64 {
-	if side == int64(option.Side_SIDE_BUY) {
-		return int64(option.Side_SIDE_SELL)
+	if side == int64(common.Side_SIDE_BUY) {
+		return int64(common.Side_SIDE_SELL)
 	}
-	if side == int64(option.Side_SIDE_SELL) {
-		return int64(option.Side_SIDE_BUY)
+	if side == int64(common.Side_SIDE_SELL) {
+		return int64(common.Side_SIDE_BUY)
 	}
 	return 0
 }
 
 func openPositionSide(orderSide int64) int64 {
-	if orderSide == int64(option.Side_SIDE_BUY) {
-		return int64(option.PositionSide_POSITION_SIDE_LONG)
+	if orderSide == int64(common.Side_SIDE_BUY) {
+		return int64(common.PositionSide_POSITION_SIDE_LONG)
 	}
-	if orderSide == int64(option.Side_SIDE_SELL) {
-		return int64(option.PositionSide_POSITION_SIDE_SHORT)
+	if orderSide == int64(common.Side_SIDE_SELL) {
+		return int64(common.PositionSide_POSITION_SIDE_SHORT)
 	}
 	return 0
 }
 
 func closePositionSide(orderSide int64) int64 {
-	if orderSide == int64(option.Side_SIDE_SELL) {
-		return int64(option.PositionSide_POSITION_SIDE_LONG)
+	if orderSide == int64(common.Side_SIDE_SELL) {
+		return int64(common.PositionSide_POSITION_SIDE_LONG)
 	}
-	if orderSide == int64(option.Side_SIDE_BUY) {
-		return int64(option.PositionSide_POSITION_SIDE_SHORT)
+	if orderSide == int64(common.Side_SIDE_BUY) {
+		return int64(common.PositionSide_POSITION_SIDE_SHORT)
 	}
 	return 0
 }
@@ -112,7 +113,7 @@ func updateOpenPosition(ctx context.Context, model models.OptionPositionModel, c
 	multiplier := optionMultiplier(contract)
 	if errors.Is(err, models.ErrNotFound) {
 		exerciseableQty := 0.0
-		if side == int64(option.PositionSide_POSITION_SIDE_LONG) {
+		if side == int64(common.PositionSide_POSITION_SIDE_LONG) {
 			exerciseableQty = qty
 		}
 		_, err = model.Insert(ctx, &models.TOptionPosition{
@@ -145,7 +146,7 @@ func updateOpenPosition(ctx context.Context, model models.OptionPositionModel, c
 	pos.AvailableQty = normalizeZero(pos.AvailableQty + qty)
 	pos.MarkPrice = price
 	pos.PositionValue = pos.MarkPrice * pos.PositionQty * multiplier
-	if side == int64(option.PositionSide_POSITION_SIDE_LONG) {
+	if side == int64(common.PositionSide_POSITION_SIDE_LONG) {
 		pos.ExerciseableQty = normalizeZero(pos.ExerciseableQty + qty)
 		pos.UnrealizedPnl = (pos.MarkPrice - pos.OpenAvgPrice) * pos.PositionQty * multiplier
 	} else {
@@ -173,7 +174,7 @@ func updateClosePosition(ctx context.Context, model models.OptionPositionModel, 
 
 	reduceQty := minFloat64(qty, pos.PositionQty)
 	multiplier := optionMultiplier(contract)
-	if side == int64(option.PositionSide_POSITION_SIDE_LONG) {
+	if side == int64(common.PositionSide_POSITION_SIDE_LONG) {
 		pos.RealizedPnl += (price - pos.OpenAvgPrice) * reduceQty * multiplier
 		pos.ExerciseableQty = normalizeZero(maxFloat64(pos.ExerciseableQty-reduceQty, 0))
 	} else {

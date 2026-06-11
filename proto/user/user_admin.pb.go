@@ -1688,7 +1688,7 @@ type ListUserBanksReq struct {
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Keyword       string                 `protobuf:"bytes,4,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Status        BankStatus             `protobuf:"varint,5,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1751,11 +1751,11 @@ func (x *ListUserBanksReq) GetKeyword() string {
 	return ""
 }
 
-func (x *ListUserBanksReq) GetStatus() BankStatus {
+func (x *ListUserBanksReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return BankStatus_BANK_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 type ListUserBanksResp struct {
@@ -1925,7 +1925,7 @@ type AddUserBankReq struct {
 	BranchName    string                 `protobuf:"bytes,7,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,8,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
 	IsDefault     int64                  `protobuf:"varint,9,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
-	Status        BankStatus             `protobuf:"varint,10,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,10,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2023,11 +2023,11 @@ func (x *AddUserBankReq) GetIsDefault() int64 {
 	return 0
 }
 
-func (x *AddUserBankReq) GetStatus() BankStatus {
+func (x *AddUserBankReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return BankStatus_BANK_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 type AddUserBankResp struct {
@@ -2094,7 +2094,7 @@ type UpdateUserBankReq struct {
 	BranchName    string                 `protobuf:"bytes,8,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
 	IsDefault     int64                  `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
-	Status        BankStatus             `protobuf:"varint,11,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,11,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2199,11 +2199,11 @@ func (x *UpdateUserBankReq) GetIsDefault() int64 {
 	return 0
 }
 
-func (x *UpdateUserBankReq) GetStatus() BankStatus {
+func (x *UpdateUserBankReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return BankStatus_BANK_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 type UpdateUserBankResp struct {
@@ -2314,7 +2314,7 @@ type UpdateUserBankStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Status        BankStatus             `protobuf:"varint,3,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2363,11 +2363,11 @@ func (x *UpdateUserBankStatusReq) GetId() int64 {
 	return 0
 }
 
-func (x *UpdateUserBankStatusReq) GetStatus() BankStatus {
+func (x *UpdateUserBankStatusReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return BankStatus_BANK_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 type SetDefaultUserBankReq struct {
@@ -2577,7 +2577,7 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x18\n" +
 	"\akeyword\x18\x04 \x01(\tR\akeyword\x12(\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x10.user.BankStatusR\x06status\"a\n" +
+	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\"a\n" +
 	"\x11ListUserBanksResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04data\x18\x02 \x03(\v2\x12.user.UserBankItemR\x04data\"=\n" +
@@ -2600,8 +2600,8 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\fcountry_code\x18\b \x01(\tR\vcountryCode\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\t \x01(\x03R\tisDefault\x12(\n" +
-	"\x06status\x18\n" +
-	" \x01(\x0e2\x10.user.BankStatusR\x06status\"_\n" +
+	"\aenabled\x18\n" +
+	" \x01(\x0e2\x0e.common.EnableR\aenabled\"_\n" +
 	"\x0fAddUserBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"\xe2\x02\n" +
@@ -2620,7 +2620,7 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\n" +
 	"is_default\x18\n" +
 	" \x01(\x03R\tisDefault\x12(\n" +
-	"\x06status\x18\v \x01(\x0e2\x10.user.BankStatusR\x06status\"b\n" +
+	"\aenabled\x18\v \x01(\x0e2\x0e.common.EnableR\aenabled\"b\n" +
 	"\x12UpdateUserBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"@\n" +
@@ -2630,7 +2630,7 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\x17UpdateUserBankStatusReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12(\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x10.user.BankStatusR\x06status\"]\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\"]\n" +
 	"\x15SetDefaultUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x17\n" +
@@ -2723,7 +2723,7 @@ var file_proto_user_user_admin_proto_goTypes = []any{
 	(IdType)(0),                     // 44: user.IdType
 	(*UserIdentityItem)(nil),        // 45: user.UserIdentityItem
 	(*UserIdentity)(nil),            // 46: user.UserIdentity
-	(BankStatus)(0),                 // 47: user.BankStatus
+	(common.Enable)(0),              // 47: common.Enable
 	(*UserBankItem)(nil),            // 48: user.UserBankItem
 }
 var file_proto_user_user_admin_proto_depIdxs = []int32{
@@ -2755,18 +2755,18 @@ var file_proto_user_user_admin_proto_depIdxs = []int32{
 	34, // 25: user.ReviewUserIdentityResp.base:type_name -> common.RespBase
 	46, // 26: user.ReviewUserIdentityResp.data:type_name -> user.UserIdentity
 	38, // 27: user.ListUserBanksReq.page:type_name -> common.PageReq
-	47, // 28: user.ListUserBanksReq.status:type_name -> user.BankStatus
+	47, // 28: user.ListUserBanksReq.enabled:type_name -> common.Enable
 	34, // 29: user.ListUserBanksResp.base:type_name -> common.RespBase
 	48, // 30: user.ListUserBanksResp.data:type_name -> user.UserBankItem
 	34, // 31: user.GetUserBankResp.base:type_name -> common.RespBase
 	48, // 32: user.GetUserBankResp.data:type_name -> user.UserBankItem
-	47, // 33: user.AddUserBankReq.status:type_name -> user.BankStatus
+	47, // 33: user.AddUserBankReq.enabled:type_name -> common.Enable
 	34, // 34: user.AddUserBankResp.base:type_name -> common.RespBase
 	48, // 35: user.AddUserBankResp.data:type_name -> user.UserBankItem
-	47, // 36: user.UpdateUserBankReq.status:type_name -> user.BankStatus
+	47, // 36: user.UpdateUserBankReq.enabled:type_name -> common.Enable
 	34, // 37: user.UpdateUserBankResp.base:type_name -> common.RespBase
 	48, // 38: user.UpdateUserBankResp.data:type_name -> user.UserBankItem
-	47, // 39: user.UpdateUserBankStatusReq.status:type_name -> user.BankStatus
+	47, // 39: user.UpdateUserBankStatusReq.enabled:type_name -> common.Enable
 	1,  // 40: user.UserAdmin.CreateUser:input_type -> user.CreateUserReq
 	3,  // 41: user.UserAdmin.GetUserDetail:input_type -> user.GetUserDetailReq
 	5,  // 42: user.UserAdmin.ListUsers:input_type -> user.ListUsersReq

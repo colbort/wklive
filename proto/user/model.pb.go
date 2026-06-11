@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -519,18 +520,18 @@ func (x *UserIdentity) GetUpdateTimes() int64 {
 
 type UserSecurity struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                     // 主键ID
-	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                         // 租户ID
-	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                               // 用户ID
-	PayPasswordHash string                 `protobuf:"bytes,4,opt,name=pay_password_hash,json=payPasswordHash,proto3" json:"pay_password_hash,omitempty"`   // 支付密码哈希
-	GoogleSecret    string                 `protobuf:"bytes,5,opt,name=google_secret,json=googleSecret,proto3" json:"google_secret,omitempty"`              // Google密钥
-	GoogleEnabled   int64                  `protobuf:"varint,6,opt,name=google_enabled,json=googleEnabled,proto3" json:"google_enabled,omitempty"`          // Google2FA是否启用：0否 1是
-	LoginErrorCount int64                  `protobuf:"varint,7,opt,name=login_error_count,json=loginErrorCount,proto3" json:"login_error_count,omitempty"`  // 登录错误次数
-	PayErrorCount   int64                  `protobuf:"varint,8,opt,name=pay_error_count,json=payErrorCount,proto3" json:"pay_error_count,omitempty"`        // 支付密码错误次数
-	LockUntil       int64                  `protobuf:"varint,9,opt,name=lock_until,json=lockUntil,proto3" json:"lock_until,omitempty"`                      // 锁定到期时间
-	RiskLevel       RiskLevel              `protobuf:"varint,10,opt,name=risk_level,json=riskLevel,proto3,enum=user.RiskLevel" json:"risk_level,omitempty"` // 风控等级：0正常 1关注 2高风险
-	CreateTimes     int64                  `protobuf:"varint,11,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`               // 创建时间
-	UpdateTimes     int64                  `protobuf:"varint,12,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`               // 更新时间
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                               // 主键ID
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                   // 租户ID
+	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                         // 用户ID
+	PayPasswordHash string                 `protobuf:"bytes,4,opt,name=pay_password_hash,json=payPasswordHash,proto3" json:"pay_password_hash,omitempty"`             // 支付密码哈希
+	GoogleSecret    string                 `protobuf:"bytes,5,opt,name=google_secret,json=googleSecret,proto3" json:"google_secret,omitempty"`                        // Google密钥
+	GoogleEnabled   common.Enable          `protobuf:"varint,6,opt,name=google_enabled,json=googleEnabled,proto3,enum=common.Enable" json:"google_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
+	LoginErrorCount int64                  `protobuf:"varint,7,opt,name=login_error_count,json=loginErrorCount,proto3" json:"login_error_count,omitempty"`            // 登录错误次数
+	PayErrorCount   int64                  `protobuf:"varint,8,opt,name=pay_error_count,json=payErrorCount,proto3" json:"pay_error_count,omitempty"`                  // 支付密码错误次数
+	LockUntil       int64                  `protobuf:"varint,9,opt,name=lock_until,json=lockUntil,proto3" json:"lock_until,omitempty"`                                // 锁定到期时间
+	RiskLevel       RiskLevel              `protobuf:"varint,10,opt,name=risk_level,json=riskLevel,proto3,enum=user.RiskLevel" json:"risk_level,omitempty"`           // 风控等级：0正常 1关注 2高风险
+	CreateTimes     int64                  `protobuf:"varint,11,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                         // 创建时间
+	UpdateTimes     int64                  `protobuf:"varint,12,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                         // 更新时间
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -600,11 +601,11 @@ func (x *UserSecurity) GetGoogleSecret() string {
 	return ""
 }
 
-func (x *UserSecurity) GetGoogleEnabled() int64 {
+func (x *UserSecurity) GetGoogleEnabled() common.Enable {
 	if x != nil {
 		return x.GoogleEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *UserSecurity) GetLoginErrorCount() int64 {
@@ -1285,7 +1286,7 @@ type UserBankItem struct {
 	BranchName    string                 `protobuf:"bytes,8,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`      // 支行名称
 	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`   // 国家地区
 	IsDefault     int64                  `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`       // 是否默认：0否 1是
-	Status        BankStatus             `protobuf:"varint,11,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`         // 状态：1正常 2禁用
+	Enabled       common.Enable          `protobuf:"varint,11,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`         // 状态：1正常 2禁用
 	CreateTimes   int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"` // 创建时间
 	UpdateTimes   int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"` // 更新时间
 	unknownFields protoimpl.UnknownFields
@@ -1392,11 +1393,11 @@ func (x *UserBankItem) GetIsDefault() int64 {
 	return 0
 }
 
-func (x *UserBankItem) GetStatus() BankStatus {
+func (x *UserBankItem) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return BankStatus_BANK_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *UserBankItem) GetCreateTimes() int64 {
@@ -1417,7 +1418,7 @@ var File_proto_user_model_proto protoreflect.FileDescriptor
 
 const file_proto_user_model_proto_rawDesc = "" +
 	"\n" +
-	"\x16proto/user/model.proto\x12\x04user\x1a\x15proto/user/enum.proto\"\x89\a\n" +
+	"\x16proto/user/model.proto\x12\x04user\x1a\x19proto/common/common.proto\x1a\x15proto/user/enum.proto\"\x89\a\n" +
 	"\bUserBase\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -1481,14 +1482,14 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"verifyTime\x12\x1b\n" +
 	"\tverify_by\x18\x17 \x01(\x03R\bverifyBy\x12!\n" +
 	"\fcreate_times\x18\x18 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\"\xb5\x03\n" +
+	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\"\xc5\x03\n" +
 	"\fUserSecurity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12*\n" +
 	"\x11pay_password_hash\x18\x04 \x01(\tR\x0fpayPasswordHash\x12#\n" +
-	"\rgoogle_secret\x18\x05 \x01(\tR\fgoogleSecret\x12%\n" +
-	"\x0egoogle_enabled\x18\x06 \x01(\x03R\rgoogleEnabled\x12*\n" +
+	"\rgoogle_secret\x18\x05 \x01(\tR\fgoogleSecret\x125\n" +
+	"\x0egoogle_enabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\rgoogleEnabled\x12*\n" +
 	"\x11login_error_count\x18\a \x01(\x03R\x0floginErrorCount\x12&\n" +
 	"\x0fpay_error_count\x18\b \x01(\x03R\rpayErrorCount\x12\x1d\n" +
 	"\n" +
@@ -1587,7 +1588,7 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"\n" +
 	"is_default\x18\n" +
 	" \x01(\x03R\tisDefault\x12(\n" +
-	"\x06status\x18\v \x01(\x0e2\x10.user.BankStatusR\x06status\x12!\n" +
+	"\aenabled\x18\v \x01(\x0e2\x0e.common.EnableR\aenabled\x12!\n" +
 	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\r \x01(\x03R\vupdateTimesB\x18Z\x16wklive/proto/user;userb\x06proto3"
 
@@ -1619,8 +1620,8 @@ var file_proto_user_model_proto_goTypes = []any{
 	(IdType)(0),              // 11: user.IdType
 	(KycLevel)(0),            // 12: user.KycLevel
 	(VerifyStatus)(0),        // 13: user.VerifyStatus
-	(RiskLevel)(0),           // 14: user.RiskLevel
-	(BankStatus)(0),          // 15: user.BankStatus
+	(common.Enable)(0),       // 14: common.Enable
+	(RiskLevel)(0),           // 15: user.RiskLevel
 }
 var file_proto_user_model_proto_depIdxs = []int32{
 	8,  // 0: user.UserBase.register_type:type_name -> user.RegisterType
@@ -1629,26 +1630,27 @@ var file_proto_user_model_proto_depIdxs = []int32{
 	11, // 3: user.UserIdentity.id_type:type_name -> user.IdType
 	12, // 4: user.UserIdentity.kyc_level:type_name -> user.KycLevel
 	13, // 5: user.UserIdentity.verify_status:type_name -> user.VerifyStatus
-	14, // 6: user.UserSecurity.risk_level:type_name -> user.RiskLevel
-	0,  // 7: user.UserProfile.user:type_name -> user.UserBase
-	1,  // 8: user.UserProfile.identity:type_name -> user.UserIdentity
-	2,  // 9: user.UserProfile.security:type_name -> user.UserSecurity
-	0,  // 10: user.UserDetail.user:type_name -> user.UserBase
-	1,  // 11: user.UserDetail.identity:type_name -> user.UserIdentity
-	2,  // 12: user.UserDetail.security:type_name -> user.UserSecurity
-	7,  // 13: user.UserDetail.banks:type_name -> user.UserBankItem
-	8,  // 14: user.UserItem.register_type:type_name -> user.RegisterType
-	9,  // 15: user.UserItem.status:type_name -> user.UserStatus
-	10, // 16: user.UserIdentityItem.gender:type_name -> user.Gender
-	11, // 17: user.UserIdentityItem.id_type:type_name -> user.IdType
-	12, // 18: user.UserIdentityItem.kyc_level:type_name -> user.KycLevel
-	13, // 19: user.UserIdentityItem.verify_status:type_name -> user.VerifyStatus
-	15, // 20: user.UserBankItem.status:type_name -> user.BankStatus
-	21, // [21:21] is the sub-list for method output_type
-	21, // [21:21] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	14, // 6: user.UserSecurity.google_enabled:type_name -> common.Enable
+	15, // 7: user.UserSecurity.risk_level:type_name -> user.RiskLevel
+	0,  // 8: user.UserProfile.user:type_name -> user.UserBase
+	1,  // 9: user.UserProfile.identity:type_name -> user.UserIdentity
+	2,  // 10: user.UserProfile.security:type_name -> user.UserSecurity
+	0,  // 11: user.UserDetail.user:type_name -> user.UserBase
+	1,  // 12: user.UserDetail.identity:type_name -> user.UserIdentity
+	2,  // 13: user.UserDetail.security:type_name -> user.UserSecurity
+	7,  // 14: user.UserDetail.banks:type_name -> user.UserBankItem
+	8,  // 15: user.UserItem.register_type:type_name -> user.RegisterType
+	9,  // 16: user.UserItem.status:type_name -> user.UserStatus
+	10, // 17: user.UserIdentityItem.gender:type_name -> user.Gender
+	11, // 18: user.UserIdentityItem.id_type:type_name -> user.IdType
+	12, // 19: user.UserIdentityItem.kyc_level:type_name -> user.KycLevel
+	13, // 20: user.UserIdentityItem.verify_status:type_name -> user.VerifyStatus
+	14, // 21: user.UserBankItem.enabled:type_name -> common.Enable
+	22, // [22:22] is the sub-list for method output_type
+	22, // [22:22] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_model_proto_init() }

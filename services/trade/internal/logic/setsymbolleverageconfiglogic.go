@@ -53,7 +53,7 @@ func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymb
 			SymbolId:    in.SymbolId,
 			MarketType:  int64(in.MarketType),
 			MarginMode:  int64(in.MarginMode),
-			Status:      1,
+			Enabled:     1,
 			Sort:        int64(in.MarginMode),
 			CreateTimes: now,
 		}
@@ -97,8 +97,8 @@ func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymb
 		item.MaxLeverage = maxLeverage
 	}
 
-	if in.Status > 0 {
-		item.Status = in.Status
+	if in.Enabled > 0 {
+		item.Enabled = enableToModel(in.Enabled, item.Enabled)
 	}
 	if in.Sort > 0 {
 		item.Sort = in.Sort

@@ -9,10 +9,10 @@ import (
 
 type TenantPayChannelModel interface {
 	tTenantPayChannelModel
-	FindPage(ctx context.Context, tenantId int64, platformId int64, productId int64, accountId int64, keyword string, status int64, cursor int64, limit int64) ([]*TTenantPayChannel, int64, error)
+	FindPage(ctx context.Context, tenantId int64, platformId int64, productId int64, accountId int64, keyword string, enabled int64, cursor int64, limit int64) ([]*TTenantPayChannel, int64, error)
 }
 
-func (m *defaultTTenantPayChannelModel) FindPage(ctx context.Context, tenantId int64, platformId int64, productId int64, accountId int64, keyword string, status int64, cursor int64, limit int64) ([]*TTenantPayChannel, int64, error) {
+func (m *defaultTTenantPayChannelModel) FindPage(ctx context.Context, tenantId int64, platformId int64, productId int64, accountId int64, keyword string, enabled int64, cursor int64, limit int64) ([]*TTenantPayChannel, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -23,7 +23,7 @@ func (m *defaultTTenantPayChannelModel) FindPage(ctx context.Context, tenantId i
 	if keyword != "" {
 		builder.And("(channel_code LIKE ? OR channel_name LIKE ? OR display_name LIKE ?)", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
 	}
-	builder.EqInt64("status", status)
+	builder.EqInt64("enabled", enabled)
 
 	where := builder.Where()
 	args := builder.Args()

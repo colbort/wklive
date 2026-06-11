@@ -6,6 +6,7 @@ import (
 	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/staking"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func (l *GetStakingOptionsLogic) GetStakingOptions() (resp *types.GetStakingOpti
 	return &types.GetStakingOptionsResp{
 		RespBase: types.RespBase{Code: 200, Msg: "success"},
 		Data: []types.OptionsGroup{
-			logicutil.EnumGroup("yesNo", "是否", staking.YesNo_YES_NO_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("yesNo", "是否", common.YesNo_YES_NO_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("productStatus", "产品状态", staking.ProductStatus_PRODUCT_STATUS_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("productType", "产品类型", staking.ProductType_PRODUCT_TYPE_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("interestMode", "计息模式", staking.InterestMode_INTEREST_MODE_UNKNOWN.Descriptor()),

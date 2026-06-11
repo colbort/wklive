@@ -78,8 +78,8 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 	if in.ExtConfig != "" {
 		account.ExtConfig = sql.NullString{String: in.ExtConfig, Valid: true}
 	}
-	if in.Status != 0 {
-		account.Status = int64(in.Status)
+	if in.Enabled != 0 {
+		account.Enabled = int64(in.Enabled)
 	}
 	if in.IsDefault != 0 {
 		account.IsDefault = in.IsDefault

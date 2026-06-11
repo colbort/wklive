@@ -27,7 +27,7 @@ func NewSysMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysMe
 // 获取菜单列表
 func (l *SysMenuListLogic) SysMenuList(in *system.SysMenuListReq) (*system.SysMenuListResp, error) {
 	// 2) 查分页
-	items, total, err := l.svcCtx.MenuModel.FindPage(l.ctx, in.Keyword, menuTypeToModel(in.MenuType), commonStatusToModel(in.Status), visibleStatusToModel(in.Visible), in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.MenuModel.FindPage(l.ctx, in.Keyword, menuTypeToModel(in.MenuType), commonStatusToModel(in.Enabled), visibleStatusToModel(in.Visible), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (l *SysMenuListLogic) SysMenuList(in *system.SysMenuListReq) (*system.SysMe
 			Icon:      r.Icon,
 			Sort:      r.Sort,
 			Visible:   visibleStatusToProto(r.Visible),
-			Status:    commonStatusToProto(r.Status),
+			Enabled:   commonStatusToProto(r.Enabled),
 			Perms:     r.Perms,
 		})
 	}

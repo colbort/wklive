@@ -40,7 +40,7 @@ func (l *CreatePayProductLogic) CreatePayProduct(in *payment.CreatePayProductReq
 		ProductName: in.ProductName,
 		SceneType:   int64(in.SceneType),
 		Currency:    in.Currency,
-		Status:      int64(in.Status),
+		Enabled:     int64(in.Enabled),
 		Remark:      sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes: now,
 		UpdateTimes: now,

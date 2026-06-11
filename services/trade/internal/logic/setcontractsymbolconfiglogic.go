@@ -59,8 +59,8 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 	cfg.DeliveryTime = in.DeliveryTime
 	cfg.SupportCross = in.SupportCross
 	cfg.SupportIsolated = in.SupportIsolated
-	cfg.BuyEnabled = in.BuyEnabled
-	cfg.SellEnabled = in.SellEnabled
+	cfg.BuyEnabled = enableToModel(in.BuyEnabled, cfg.BuyEnabled)
+	cfg.SellEnabled = enableToModel(in.SellEnabled, cfg.SellEnabled)
 	cfg.UpdateTimes = now
 	if cfg.Id == 0 {
 		if _, err = l.svcCtx.TradeSymbolContractModel.Insert(l.ctx, cfg); err != nil {

@@ -4,6 +4,7 @@ package staking;
 
 option go_package = "wklive/proto/staking;staking";
 
+import "proto/common/common.proto";
 import "proto/staking/enum.proto";
 
 // 质押产品
@@ -27,7 +28,7 @@ message StakeProduct {
   string user_limit_amount = 17;
   InterestMode interest_mode = 18;
   RewardMode reward_mode = 19;
-  YesNo allow_early_redeem = 20;
+  common.YesNo allow_early_redeem = 20; // 是否允许提前赎回
   string early_redeem_rate = 21;
   ProductStatus status = 22;
   int64 sort = 23;
@@ -57,7 +58,7 @@ message StakeOrder {
   int64 lock_days = 15;
   InterestMode interest_mode = 16;
   RewardMode reward_mode = 17;
-  YesNo allow_early_redeem = 18;
+  common.YesNo allow_early_redeem = 18; // 是否允许提前赎回
   string early_redeem_rate = 19;
   int64 interest_days = 20;
   int64 start_times = 21;

@@ -50,7 +50,7 @@ type (
 		BaseAsset     string  `db:"base_asset"`     // 基础资产，例如BTC
 		QuoteAsset    string  `db:"quote_asset"`    // 计价资产，例如USDT
 		SettleAsset   string  `db:"settle_asset"`   // 结算资产，现货一般等于quote_asset
-		ContractType  int64   `db:"contract_type"`  // 合约类型：0非合约 1永续 2交割 3秒合约
+		ContractType  int64   `db:"contract_type"`  // 合约类型：0未知 1非合约 2永续 3交割 4秒合约
 		Status        int64   `db:"status"`         // 交易状态：1启用 2停用 3仅平仓
 		PriceScale    int64   `db:"price_scale"`    // 价格精度，小数位数
 		QtyScale      int64   `db:"qty_scale"`      // 数量精度，小数位数

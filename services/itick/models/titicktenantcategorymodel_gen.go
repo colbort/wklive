@@ -45,8 +45,8 @@ type (
 		Id          int64  `db:"id"`           // 主键ID
 		TenantId    int64  `db:"tenant_id"`    // 租户ID
 		CategoryId  int64  `db:"category_id"`  // 产品类型ID, 对应 itick_category.id
-		Enabled     int64  `db:"enabled"`      // 是否启用: 0-否 1-是
-		AppVisible  int64  `db:"app_visible"`  // APP是否可见: 0-否 1-是
+		Enabled     int64  `db:"enabled"`      // 启用状态: 1-启用 2-禁用
+		AppVisible  int64  `db:"app_visible"`  // APP可见开关: 1-显示 2-隐藏
 		Sort        int64  `db:"sort"`         // 租户排序, 越小越靠前
 		Remark      string `db:"remark"`       // 备注
 		CreateTimes int64  `db:"create_times"` // 创建时间(毫秒时间戳)

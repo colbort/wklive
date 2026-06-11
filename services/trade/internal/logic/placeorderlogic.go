@@ -9,6 +9,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -287,9 +288,9 @@ func (l *PlaceOrderLogic) orderAmountPrice(symbol *models.TTradeSymbol, orderTyp
 }
 
 func (l *PlaceOrderLogic) postOnlyWouldTake(tenantID, symbolID, marketType, side int64, price float64) (bool, error) {
-	oppositeSide := int64(trade.TradeSide_TRADE_SIDE_SELL)
-	if side == int64(trade.TradeSide_TRADE_SIDE_SELL) {
-		oppositeSide = int64(trade.TradeSide_TRADE_SIDE_BUY)
+	oppositeSide := int64(common.Side_SIDE_SELL)
+	if side == int64(common.Side_SIDE_SELL) {
+		oppositeSide = int64(common.Side_SIDE_BUY)
 	}
 	orders, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(
 		l.ctx,
@@ -308,7 +309,7 @@ func (l *PlaceOrderLogic) postOnlyWouldTake(tenantID, symbolID, marketType, side
 	if opposite.OrderType == int64(trade.OrderType_ORDER_TYPE_MARKET) {
 		return true, nil
 	}
-	if side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+	if side == int64(common.Side_SIDE_BUY) {
 		return price+orderFillEpsilon >= opposite.Price, nil
 	}
 	return opposite.Price+orderFillEpsilon >= price, nil

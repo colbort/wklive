@@ -6,7 +6,6 @@ import (
 	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/payment"
 
@@ -32,7 +31,7 @@ func (l *GetPaymentOptionsLogic) GetPaymentOptions() (resp *types.GetPaymentOpti
 		RespBase: types.RespBase{Code: 200, Msg: "success"},
 		Data: []types.OptionsGroup{
 			logicutil.EnumGroup("platformType", "平台类型", payment.PlatformType_PLATFORM_TYPE_UNKNOWN.Descriptor()),
-			logicutil.EnumGroup("status", "状态", payment.CommonStatus_COMMON_STATUS_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("status", "状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
 			logicutil.Group("visible", "显示状态",
 				logicutil.Option(0, "YES_NO_NO"),
 				logicutil.Option(1, "YES_NO_YES"),
@@ -54,7 +53,7 @@ func (l *GetPaymentOptionsLogic) GetPaymentOptions() (resp *types.GetPaymentOpti
 			logicutil.EnumGroup("cryptoRechargeAddressStatus", "链上充值地址状态", payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("cryptoRechargeTxStatus", "链上充值交易状态", payment.CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("chainCode", "链类型", common.ChainCode_CHAIN_CODE_UNKNOWN.Descriptor()),
-			logicutil.EnumGroup("walletType", "钱包类型", asset.WalletType_WALLET_TYPE_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("walletType", "钱包类型", common.WalletType_WALLET_TYPE_UNKNOWN.Descriptor()),
 		},
 	}, nil
 }

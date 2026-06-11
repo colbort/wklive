@@ -756,8 +756,8 @@ type SetSpotSymbolConfigReq struct {
 	SymbolId      int64                  `protobuf:"varint,2,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MakerFeeRate  string                 `protobuf:"bytes,3,opt,name=maker_fee_rate,json=makerFeeRate,proto3" json:"maker_fee_rate,omitempty"`
 	TakerFeeRate  string                 `protobuf:"bytes,4,opt,name=taker_fee_rate,json=takerFeeRate,proto3" json:"taker_fee_rate,omitempty"`
-	BuyEnabled    int64                  `protobuf:"varint,5,opt,name=buy_enabled,json=buyEnabled,proto3" json:"buy_enabled,omitempty"`
-	SellEnabled   int64                  `protobuf:"varint,6,opt,name=sell_enabled,json=sellEnabled,proto3" json:"sell_enabled,omitempty"`
+	BuyEnabled    common.Enable          `protobuf:"varint,5,opt,name=buy_enabled,json=buyEnabled,proto3,enum=common.Enable" json:"buy_enabled,omitempty"`    // 状态,0表示全部，1表示启用，2表示禁用
+	SellEnabled   common.Enable          `protobuf:"varint,6,opt,name=sell_enabled,json=sellEnabled,proto3,enum=common.Enable" json:"sell_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -820,18 +820,18 @@ func (x *SetSpotSymbolConfigReq) GetTakerFeeRate() string {
 	return ""
 }
 
-func (x *SetSpotSymbolConfigReq) GetBuyEnabled() int64 {
+func (x *SetSpotSymbolConfigReq) GetBuyEnabled() common.Enable {
 	if x != nil {
 		return x.BuyEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *SetSpotSymbolConfigReq) GetSellEnabled() int64 {
+func (x *SetSpotSymbolConfigReq) GetSellEnabled() common.Enable {
 	if x != nil {
 		return x.SellEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 type SetContractSymbolConfigReq struct {
@@ -848,8 +848,8 @@ type SetContractSymbolConfigReq struct {
 	DeliveryTime           int64                  `protobuf:"varint,10,opt,name=delivery_time,json=deliveryTime,proto3" json:"delivery_time,omitempty"`
 	SupportCross           int64                  `protobuf:"varint,11,opt,name=support_cross,json=supportCross,proto3" json:"support_cross,omitempty"`
 	SupportIsolated        int64                  `protobuf:"varint,12,opt,name=support_isolated,json=supportIsolated,proto3" json:"support_isolated,omitempty"`
-	BuyEnabled             int64                  `protobuf:"varint,13,opt,name=buy_enabled,json=buyEnabled,proto3" json:"buy_enabled,omitempty"`
-	SellEnabled            int64                  `protobuf:"varint,14,opt,name=sell_enabled,json=sellEnabled,proto3" json:"sell_enabled,omitempty"`
+	BuyEnabled             common.Enable          `protobuf:"varint,13,opt,name=buy_enabled,json=buyEnabled,proto3,enum=common.Enable" json:"buy_enabled,omitempty"`    // 状态,0表示全部，1表示启用，2表示禁用
+	SellEnabled            common.Enable          `protobuf:"varint,14,opt,name=sell_enabled,json=sellEnabled,proto3,enum=common.Enable" json:"sell_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
@@ -968,18 +968,18 @@ func (x *SetContractSymbolConfigReq) GetSupportIsolated() int64 {
 	return 0
 }
 
-func (x *SetContractSymbolConfigReq) GetBuyEnabled() int64 {
+func (x *SetContractSymbolConfigReq) GetBuyEnabled() common.Enable {
 	if x != nil {
 		return x.BuyEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *SetContractSymbolConfigReq) GetSellEnabled() int64 {
+func (x *SetContractSymbolConfigReq) GetSellEnabled() common.Enable {
 	if x != nil {
 		return x.SellEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 type SetSymbolLeverageConfigReq struct {
@@ -991,7 +991,7 @@ type SetSymbolLeverageConfigReq struct {
 	LeverageValues  []int64                `protobuf:"varint,5,rep,packed,name=leverage_values,json=leverageValues,proto3" json:"leverage_values,omitempty"`
 	DefaultLeverage int64                  `protobuf:"varint,6,opt,name=default_leverage,json=defaultLeverage,proto3" json:"default_leverage,omitempty"`
 	MaxLeverage     int64                  `protobuf:"varint,7,opt,name=max_leverage,json=maxLeverage,proto3" json:"max_leverage,omitempty"`
-	Status          int64                  `protobuf:"varint,8,opt,name=status,proto3" json:"status,omitempty"`
+	Enabled         common.Enable          `protobuf:"varint,8,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	Sort            int64                  `protobuf:"varint,9,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark          string                 `protobuf:"bytes,10,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -1077,11 +1077,11 @@ func (x *SetSymbolLeverageConfigReq) GetMaxLeverage() int64 {
 	return 0
 }
 
-func (x *SetSymbolLeverageConfigReq) GetStatus() int64 {
+func (x *SetSymbolLeverageConfigReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *SetSymbolLeverageConfigReq) GetSort() int64 {
@@ -1233,7 +1233,7 @@ type GetSymbolLeverageConfigListReq struct {
 	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	MarginMode    MarginMode             `protobuf:"varint,5,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
-	Status        int64                  `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1303,11 +1303,11 @@ func (x *GetSymbolLeverageConfigListReq) GetMarginMode() MarginMode {
 	return MarginMode_MARGIN_MODE_UNKNOWN
 }
 
-func (x *GetSymbolLeverageConfigListReq) GetStatus() int64 {
+func (x *GetSymbolLeverageConfigListReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 type GetSymbolLeverageConfigListResp struct {
@@ -2524,7 +2524,7 @@ type SetUserTradeLimitReq struct {
 	CanCancel            int64                  `protobuf:"varint,6,opt,name=can_cancel,json=canCancel,proto3" json:"can_cancel,omitempty"`
 	CanTriggerOrder      int64                  `protobuf:"varint,7,opt,name=can_trigger_order,json=canTriggerOrder,proto3" json:"can_trigger_order,omitempty"`
 	CanApiTrade          int64                  `protobuf:"varint,8,opt,name=can_api_trade,json=canApiTrade,proto3" json:"can_api_trade,omitempty"`
-	TradeEnabled         int64                  `protobuf:"varint,9,opt,name=trade_enabled,json=tradeEnabled,proto3" json:"trade_enabled,omitempty"`
+	TradeEnabled         common.Enable          `protobuf:"varint,9,opt,name=trade_enabled,json=tradeEnabled,proto3,enum=common.Enable" json:"trade_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	OnlyReduceOnly       int64                  `protobuf:"varint,10,opt,name=only_reduce_only,json=onlyReduceOnly,proto3" json:"only_reduce_only,omitempty"`
 	MaxOpenOrderCount    int64                  `protobuf:"varint,11,opt,name=max_open_order_count,json=maxOpenOrderCount,proto3" json:"max_open_order_count,omitempty"`
 	MaxOrderCountPerDay  int64                  `protobuf:"varint,12,opt,name=max_order_count_per_day,json=maxOrderCountPerDay,proto3" json:"max_order_count_per_day,omitempty"`
@@ -2534,7 +2534,7 @@ type SetUserTradeLimitReq struct {
 	RiskLevel            int64                  `protobuf:"varint,16,opt,name=risk_level,json=riskLevel,proto3" json:"risk_level,omitempty"`
 	OperatorId           int64                  `protobuf:"varint,17,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source               SourceType             `protobuf:"varint,18,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
-	Status               int64                  `protobuf:"varint,19,opt,name=status,proto3" json:"status,omitempty"`
+	Enabled              common.Enable          `protobuf:"varint,19,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	EffectiveStartTime   int64                  `protobuf:"varint,20,opt,name=effective_start_time,json=effectiveStartTime,proto3" json:"effective_start_time,omitempty"`
 	EffectiveEndTime     int64                  `protobuf:"varint,21,opt,name=effective_end_time,json=effectiveEndTime,proto3" json:"effective_end_time,omitempty"`
 	Remark               string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -2628,11 +2628,11 @@ func (x *SetUserTradeLimitReq) GetCanApiTrade() int64 {
 	return 0
 }
 
-func (x *SetUserTradeLimitReq) GetTradeEnabled() int64 {
+func (x *SetUserTradeLimitReq) GetTradeEnabled() common.Enable {
 	if x != nil {
 		return x.TradeEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *SetUserTradeLimitReq) GetOnlyReduceOnly() int64 {
@@ -2698,11 +2698,11 @@ func (x *SetUserTradeLimitReq) GetSource() SourceType {
 	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
-func (x *SetUserTradeLimitReq) GetStatus() int64 {
+func (x *SetUserTradeLimitReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *SetUserTradeLimitReq) GetEffectiveStartTime() int64 {
@@ -2744,7 +2744,7 @@ type SetUserSymbolLimitReq struct {
 	PriceDeviationRate  string                 `protobuf:"bytes,14,opt,name=price_deviation_rate,json=priceDeviationRate,proto3" json:"price_deviation_rate,omitempty"`
 	OperatorId          int64                  `protobuf:"varint,15,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source              SourceType             `protobuf:"varint,16,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
-	Status              int64                  `protobuf:"varint,17,opt,name=status,proto3" json:"status,omitempty"`
+	Enabled             common.Enable          `protobuf:"varint,17,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	EffectiveStartTime  int64                  `protobuf:"varint,18,opt,name=effective_start_time,json=effectiveStartTime,proto3" json:"effective_start_time,omitempty"`
 	EffectiveEndTime    int64                  `protobuf:"varint,19,opt,name=effective_end_time,json=effectiveEndTime,proto3" json:"effective_end_time,omitempty"`
 	Remark              string                 `protobuf:"bytes,20,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -2894,11 +2894,11 @@ func (x *SetUserSymbolLimitReq) GetSource() SourceType {
 	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
-func (x *SetUserSymbolLimitReq) GetStatus() int64 {
+func (x *SetUserSymbolLimitReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *SetUserSymbolLimitReq) GetEffectiveStartTime() int64 {
@@ -3163,8 +3163,8 @@ type SetUserTradeConfigReq struct {
 	PositionMode      PositionMode           `protobuf:"varint,5,opt,name=position_mode,json=positionMode,proto3,enum=trade.PositionMode" json:"position_mode,omitempty"`
 	MarginMode        MarginMode             `protobuf:"varint,6,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
 	DefaultLeverage   int64                  `protobuf:"varint,7,opt,name=default_leverage,json=defaultLeverage,proto3" json:"default_leverage,omitempty"`
-	TradeEnabled      int64                  `protobuf:"varint,8,opt,name=trade_enabled,json=tradeEnabled,proto3" json:"trade_enabled,omitempty"`
-	ReduceOnlyEnabled int64                  `protobuf:"varint,9,opt,name=reduce_only_enabled,json=reduceOnlyEnabled,proto3" json:"reduce_only_enabled,omitempty"`
+	TradeEnabled      common.Enable          `protobuf:"varint,8,opt,name=trade_enabled,json=tradeEnabled,proto3,enum=common.Enable" json:"trade_enabled,omitempty"`                  // 状态,0表示全部，1表示启用，2表示禁用
+	ReduceOnlyEnabled common.Enable          `protobuf:"varint,9,opt,name=reduce_only_enabled,json=reduceOnlyEnabled,proto3,enum=common.Enable" json:"reduce_only_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -3248,18 +3248,18 @@ func (x *SetUserTradeConfigReq) GetDefaultLeverage() int64 {
 	return 0
 }
 
-func (x *SetUserTradeConfigReq) GetTradeEnabled() int64 {
+func (x *SetUserTradeConfigReq) GetTradeEnabled() common.Enable {
 	if x != nil {
 		return x.TradeEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *SetUserTradeConfigReq) GetReduceOnlyEnabled() int64 {
+func (x *SetUserTradeConfigReq) GetReduceOnlyEnabled() common.Enable {
 	if x != nil {
 		return x.ReduceOnlyEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 type GetUserTradeConfigReq struct {
@@ -3547,7 +3547,7 @@ type SetUserLeverageConfigReq struct {
 	MaxLeverage   int64                  `protobuf:"varint,9,opt,name=max_leverage,json=maxLeverage,proto3" json:"max_leverage,omitempty"`
 	OperatorId    int64                  `protobuf:"varint,10,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source        SourceType             `protobuf:"varint,11,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
-	Status        int64                  `protobuf:"varint,12,opt,name=status,proto3" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,12,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	Remark        string                 `protobuf:"bytes,13,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3660,11 +3660,11 @@ func (x *SetUserLeverageConfigReq) GetSource() SourceType {
 	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
-func (x *SetUserLeverageConfigReq) GetStatus() int64 {
+func (x *SetUserLeverageConfigReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *SetUserLeverageConfigReq) GetRemark() string {
@@ -4189,15 +4189,15 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x01(\v2\x1f.trade.GetSymbolDetailAdminDataR\x04data\"\x8f\x01\n" +
 	"\x18GetSymbolDetailAdminData\x12&\n" +
 	"\x04data\x18\x01 \x01(\v2\x12.trade.TradeSymbolR\x04data\x12K\n" +
-	"\x10leverage_configs\x18\x02 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x0fleverageConfigs\"\xe2\x01\n" +
+	"\x10leverage_configs\x18\x02 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x0fleverageConfigs\"\x82\x02\n" +
 	"\x16SetSpotSymbolConfigReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1b\n" +
 	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\x12$\n" +
 	"\x0emaker_fee_rate\x18\x03 \x01(\tR\fmakerFeeRate\x12$\n" +
-	"\x0etaker_fee_rate\x18\x04 \x01(\tR\ftakerFeeRate\x12\x1f\n" +
-	"\vbuy_enabled\x18\x05 \x01(\x03R\n" +
-	"buyEnabled\x12!\n" +
-	"\fsell_enabled\x18\x06 \x01(\x03R\vsellEnabled\"\xc2\x04\n" +
+	"\x0etaker_fee_rate\x18\x04 \x01(\tR\ftakerFeeRate\x12/\n" +
+	"\vbuy_enabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\n" +
+	"buyEnabled\x121\n" +
+	"\fsell_enabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\vsellEnabled\"\xe2\x04\n" +
 	"\x1aSetContractSymbolConfigReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1b\n" +
 	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\x12#\n" +
@@ -4213,10 +4213,10 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\rdelivery_time\x18\n" +
 	" \x01(\x03R\fdeliveryTime\x12#\n" +
 	"\rsupport_cross\x18\v \x01(\x03R\fsupportCross\x12)\n" +
-	"\x10support_isolated\x18\f \x01(\x03R\x0fsupportIsolated\x12\x1f\n" +
-	"\vbuy_enabled\x18\r \x01(\x03R\n" +
-	"buyEnabled\x12!\n" +
-	"\fsell_enabled\x18\x0e \x01(\x03R\vsellEnabled\"\xf9\x02\n" +
+	"\x10support_isolated\x18\f \x01(\x03R\x0fsupportIsolated\x12/\n" +
+	"\vbuy_enabled\x18\r \x01(\x0e2\x0e.common.EnableR\n" +
+	"buyEnabled\x121\n" +
+	"\fsell_enabled\x18\x0e \x01(\x0e2\x0e.common.EnableR\vsellEnabled\"\x8b\x03\n" +
 	"\x1aSetSymbolLeverageConfigReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1b\n" +
 	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\x122\n" +
@@ -4226,8 +4226,8 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"marginMode\x12'\n" +
 	"\x0fleverage_values\x18\x05 \x03(\x03R\x0eleverageValues\x12)\n" +
 	"\x10default_leverage\x18\x06 \x01(\x03R\x0fdefaultLeverage\x12!\n" +
-	"\fmax_leverage\x18\a \x01(\x03R\vmaxLeverage\x12\x16\n" +
-	"\x06status\x18\b \x01(\x03R\x06status\x12\x12\n" +
+	"\fmax_leverage\x18\a \x01(\x03R\vmaxLeverage\x12(\n" +
+	"\aenabled\x18\b \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\t \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\n" +
 	" \x01(\tR\x06remark\"\xce\x01\n" +
@@ -4241,7 +4241,7 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"marginMode\"y\n" +
 	"\x1bGetSymbolLeverageConfigResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x124\n" +
-	"\x04data\x18\x02 \x01(\v2 .trade.TradeSymbolLeverageConfigR\x04data\"\xff\x01\n" +
+	"\x04data\x18\x02 \x01(\v2 .trade.TradeSymbolLeverageConfigR\x04data\"\x91\x02\n" +
 	"\x1eGetSymbolLeverageConfigListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
@@ -4249,8 +4249,8 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x122\n" +
 	"\vmargin_mode\x18\x05 \x01(\x0e2\x11.trade.MarginModeR\n" +
-	"marginMode\x12\x16\n" +
-	"\x06status\x18\x06 \x01(\x03R\x06status\"}\n" +
+	"marginMode\x12(\n" +
+	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\"}\n" +
 	"\x1fGetSymbolLeverageConfigListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x124\n" +
 	"\x04data\x18\x02 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x04data\"\xb9\x02\n" +
@@ -4345,7 +4345,7 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"time_range\x18\a \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"l\n" +
 	"\x19GetCancelLogListAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x03(\v2\x15.trade.TradeCancelLogR\x04data\"\xf0\x06\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.trade.TradeCancelLogR\x04data\"\x92\a\n" +
 	"\x14SetUserTradeLimitReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
@@ -4356,8 +4356,8 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\n" +
 	"can_cancel\x18\x06 \x01(\x03R\tcanCancel\x12*\n" +
 	"\x11can_trigger_order\x18\a \x01(\x03R\x0fcanTriggerOrder\x12\"\n" +
-	"\rcan_api_trade\x18\b \x01(\x03R\vcanApiTrade\x12#\n" +
-	"\rtrade_enabled\x18\t \x01(\x03R\ftradeEnabled\x12(\n" +
+	"\rcan_api_trade\x18\b \x01(\x03R\vcanApiTrade\x123\n" +
+	"\rtrade_enabled\x18\t \x01(\x0e2\x0e.common.EnableR\ftradeEnabled\x12(\n" +
 	"\x10only_reduce_only\x18\n" +
 	" \x01(\x03R\x0eonlyReduceOnly\x12/\n" +
 	"\x14max_open_order_count\x18\v \x01(\x03R\x11maxOpenOrderCount\x124\n" +
@@ -4369,11 +4369,11 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"risk_level\x18\x10 \x01(\x03R\triskLevel\x12\x1f\n" +
 	"\voperator_id\x18\x11 \x01(\x03R\n" +
 	"operatorId\x12)\n" +
-	"\x06source\x18\x12 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
-	"\x06status\x18\x13 \x01(\x03R\x06status\x120\n" +
+	"\x06source\x18\x12 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12(\n" +
+	"\aenabled\x18\x13 \x01(\x0e2\x0e.common.EnableR\aenabled\x120\n" +
 	"\x14effective_start_time\x18\x14 \x01(\x03R\x12effectiveStartTime\x12,\n" +
 	"\x12effective_end_time\x18\x15 \x01(\x03R\x10effectiveEndTime\x12\x16\n" +
-	"\x06remark\x18\x16 \x01(\tR\x06remark\"\xbe\x06\n" +
+	"\x06remark\x18\x16 \x01(\tR\x06remark\"\xd0\x06\n" +
 	"\x15SetUserSymbolLimitReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
@@ -4393,8 +4393,8 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\x14price_deviation_rate\x18\x0e \x01(\tR\x12priceDeviationRate\x12\x1f\n" +
 	"\voperator_id\x18\x0f \x01(\x03R\n" +
 	"operatorId\x12)\n" +
-	"\x06source\x18\x10 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
-	"\x06status\x18\x11 \x01(\x03R\x06status\x120\n" +
+	"\x06source\x18\x10 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12(\n" +
+	"\aenabled\x18\x11 \x01(\x0e2\x0e.common.EnableR\aenabled\x120\n" +
 	"\x14effective_start_time\x18\x12 \x01(\x03R\x12effectiveStartTime\x12,\n" +
 	"\x12effective_end_time\x18\x13 \x01(\x03R\x10effectiveEndTime\x12\x16\n" +
 	"\x06remark\x18\x14 \x01(\tR\x06remark\"\x80\x01\n" +
@@ -4414,7 +4414,7 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"marketType\"n\n" +
 	"\x16GetUserSymbolLimitResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x01(\v2\x1a.trade.RiskUserSymbolLimitR\x04data\"\x8c\x03\n" +
+	"\x04data\x18\x02 \x01(\v2\x1a.trade.RiskUserSymbolLimitR\x04data\"\xac\x03\n" +
 	"\x15SetUserTradeConfigReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
@@ -4424,9 +4424,9 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\rposition_mode\x18\x05 \x01(\x0e2\x13.trade.PositionModeR\fpositionMode\x122\n" +
 	"\vmargin_mode\x18\x06 \x01(\x0e2\x11.trade.MarginModeR\n" +
 	"marginMode\x12)\n" +
-	"\x10default_leverage\x18\a \x01(\x03R\x0fdefaultLeverage\x12#\n" +
-	"\rtrade_enabled\x18\b \x01(\x03R\ftradeEnabled\x12.\n" +
-	"\x13reduce_only_enabled\x18\t \x01(\x03R\x11reduceOnlyEnabled\"\x9e\x01\n" +
+	"\x10default_leverage\x18\a \x01(\x03R\x0fdefaultLeverage\x123\n" +
+	"\rtrade_enabled\x18\b \x01(\x0e2\x0e.common.EnableR\ftradeEnabled\x12>\n" +
+	"\x13reduce_only_enabled\x18\t \x01(\x0e2\x0e.common.EnableR\x11reduceOnlyEnabled\"\x9e\x01\n" +
 	"\x15GetUserTradeConfigReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
@@ -4450,7 +4450,7 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"time_range\x18\b \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"r\n" +
 	"\x1cGetRiskOrderCheckLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
-	"\x04data\x18\x02 \x03(\v2\x18.trade.RiskOrderCheckLogR\x04data\"\xfa\x03\n" +
+	"\x04data\x18\x02 \x03(\v2\x18.trade.RiskOrderCheckLogR\x04data\"\x8c\x04\n" +
 	"\x18SetUserLeverageConfigReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
@@ -4466,8 +4466,8 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\voperator_id\x18\n" +
 	" \x01(\x03R\n" +
 	"operatorId\x12)\n" +
-	"\x06source\x18\v \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
-	"\x06status\x18\f \x01(\x03R\x06status\x12\x16\n" +
+	"\x06source\x18\v \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12(\n" +
+	"\aenabled\x18\f \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x16\n" +
 	"\x06remark\x18\r \x01(\tR\x06remark\"\xd5\x01\n" +
 	"\x18GetUserLeverageConfigReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
@@ -4610,28 +4610,29 @@ var file_proto_trade_trade_admin_proto_goTypes = []any{
 	(*common.PageReq)(nil),                  // 56: common.PageReq
 	(*TradeSymbol)(nil),                     // 57: trade.TradeSymbol
 	(*TradeSymbolLeverageConfig)(nil),       // 58: trade.TradeSymbolLeverageConfig
-	(MarginMode)(0),                         // 59: trade.MarginMode
-	(OrderStatus)(0),                        // 60: trade.OrderStatus
-	(*TimeRange)(nil),                       // 61: trade.TimeRange
-	(*TradeOrder)(nil),                      // 62: trade.TradeOrder
-	(*TradeFill)(nil),                       // 63: trade.TradeFill
-	(*ContractPosition)(nil),                // 64: trade.ContractPosition
-	(PositionActionType)(0),                 // 65: trade.PositionActionType
-	(*ContractPositionHistory)(nil),         // 66: trade.ContractPositionHistory
-	(*ContractMarginAccount)(nil),           // 67: trade.ContractMarginAccount
-	(CancelSource)(0),                       // 68: trade.CancelSource
-	(*TradeCancelLog)(nil),                  // 69: trade.TradeCancelLog
-	(SourceType)(0),                         // 70: trade.SourceType
-	(*RiskUserTradeLimit)(nil),              // 71: trade.RiskUserTradeLimit
-	(*RiskUserSymbolLimit)(nil),             // 72: trade.RiskUserSymbolLimit
-	(PositionMode)(0),                       // 73: trade.PositionMode
-	(*TradeUserConfig)(nil),                 // 74: trade.TradeUserConfig
-	(RiskCheckType)(0),                      // 75: trade.RiskCheckType
-	(RiskCheckResult)(0),                    // 76: trade.RiskCheckResult
-	(*RiskOrderCheckLog)(nil),               // 77: trade.RiskOrderCheckLog
-	(*ContractLeverageConfig)(nil),          // 78: trade.ContractLeverageConfig
-	(EventStatus)(0),                        // 79: trade.EventStatus
-	(*BizTradeEvent)(nil),                   // 80: trade.BizTradeEvent
+	(common.Enable)(0),                      // 59: common.Enable
+	(MarginMode)(0),                         // 60: trade.MarginMode
+	(OrderStatus)(0),                        // 61: trade.OrderStatus
+	(*TimeRange)(nil),                       // 62: trade.TimeRange
+	(*TradeOrder)(nil),                      // 63: trade.TradeOrder
+	(*TradeFill)(nil),                       // 64: trade.TradeFill
+	(*ContractPosition)(nil),                // 65: trade.ContractPosition
+	(PositionActionType)(0),                 // 66: trade.PositionActionType
+	(*ContractPositionHistory)(nil),         // 67: trade.ContractPositionHistory
+	(*ContractMarginAccount)(nil),           // 68: trade.ContractMarginAccount
+	(CancelSource)(0),                       // 69: trade.CancelSource
+	(*TradeCancelLog)(nil),                  // 70: trade.TradeCancelLog
+	(SourceType)(0),                         // 71: trade.SourceType
+	(*RiskUserTradeLimit)(nil),              // 72: trade.RiskUserTradeLimit
+	(*RiskUserSymbolLimit)(nil),             // 73: trade.RiskUserSymbolLimit
+	(PositionMode)(0),                       // 74: trade.PositionMode
+	(*TradeUserConfig)(nil),                 // 75: trade.TradeUserConfig
+	(RiskCheckType)(0),                      // 76: trade.RiskCheckType
+	(RiskCheckResult)(0),                    // 77: trade.RiskCheckResult
+	(*RiskOrderCheckLog)(nil),               // 78: trade.RiskOrderCheckLog
+	(*ContractLeverageConfig)(nil),          // 79: trade.ContractLeverageConfig
+	(EventStatus)(0),                        // 80: trade.EventStatus
+	(*BizTradeEvent)(nil),                   // 81: trade.BizTradeEvent
 }
 var file_proto_trade_trade_admin_proto_depIdxs = []int32{
 	52,  // 0: trade.AdminCommonResp.base:type_name -> common.RespBase
@@ -4648,156 +4649,168 @@ var file_proto_trade_trade_admin_proto_depIdxs = []int32{
 	7,   // 11: trade.GetSymbolDetailAdminResp.data:type_name -> trade.GetSymbolDetailAdminData
 	57,  // 12: trade.GetSymbolDetailAdminData.data:type_name -> trade.TradeSymbol
 	58,  // 13: trade.GetSymbolDetailAdminData.leverage_configs:type_name -> trade.TradeSymbolLeverageConfig
-	53,  // 14: trade.SetSymbolLeverageConfigReq.market_type:type_name -> trade.MarketType
-	59,  // 15: trade.SetSymbolLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	53,  // 16: trade.GetSymbolLeverageConfigReq.market_type:type_name -> trade.MarketType
-	59,  // 17: trade.GetSymbolLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	52,  // 18: trade.GetSymbolLeverageConfigResp.base:type_name -> common.RespBase
-	58,  // 19: trade.GetSymbolLeverageConfigResp.data:type_name -> trade.TradeSymbolLeverageConfig
-	56,  // 20: trade.GetSymbolLeverageConfigListReq.page:type_name -> common.PageReq
-	53,  // 21: trade.GetSymbolLeverageConfigListReq.market_type:type_name -> trade.MarketType
-	59,  // 22: trade.GetSymbolLeverageConfigListReq.margin_mode:type_name -> trade.MarginMode
-	52,  // 23: trade.GetSymbolLeverageConfigListResp.base:type_name -> common.RespBase
-	58,  // 24: trade.GetSymbolLeverageConfigListResp.data:type_name -> trade.TradeSymbolLeverageConfig
-	56,  // 25: trade.GetOrderListAdminReq.page:type_name -> common.PageReq
-	53,  // 26: trade.GetOrderListAdminReq.market_type:type_name -> trade.MarketType
-	60,  // 27: trade.GetOrderListAdminReq.status:type_name -> trade.OrderStatus
-	61,  // 28: trade.GetOrderListAdminReq.time_range:type_name -> trade.TimeRange
-	52,  // 29: trade.GetOrderListAdminResp.base:type_name -> common.RespBase
-	62,  // 30: trade.GetOrderListAdminResp.data:type_name -> trade.TradeOrder
-	52,  // 31: trade.GetOrderDetailAdminResp.base:type_name -> common.RespBase
-	62,  // 32: trade.GetOrderDetailAdminResp.data:type_name -> trade.TradeOrder
-	56,  // 33: trade.GetFillListAdminReq.page:type_name -> common.PageReq
-	53,  // 34: trade.GetFillListAdminReq.market_type:type_name -> trade.MarketType
-	61,  // 35: trade.GetFillListAdminReq.time_range:type_name -> trade.TimeRange
-	52,  // 36: trade.GetFillListAdminResp.base:type_name -> common.RespBase
-	63,  // 37: trade.GetFillListAdminResp.data:type_name -> trade.TradeFill
-	52,  // 38: trade.GetFillDetailAdminResp.base:type_name -> common.RespBase
-	63,  // 39: trade.GetFillDetailAdminResp.data:type_name -> trade.TradeFill
-	56,  // 40: trade.GetPositionListAdminReq.page:type_name -> common.PageReq
-	53,  // 41: trade.GetPositionListAdminReq.market_type:type_name -> trade.MarketType
-	52,  // 42: trade.GetPositionListAdminResp.base:type_name -> common.RespBase
-	64,  // 43: trade.GetPositionListAdminResp.data:type_name -> trade.ContractPosition
-	52,  // 44: trade.GetPositionDetailAdminResp.base:type_name -> common.RespBase
-	64,  // 45: trade.GetPositionDetailAdminResp.data:type_name -> trade.ContractPosition
-	56,  // 46: trade.GetPositionHistoryListAdminReq.page:type_name -> common.PageReq
-	53,  // 47: trade.GetPositionHistoryListAdminReq.market_type:type_name -> trade.MarketType
-	65,  // 48: trade.GetPositionHistoryListAdminReq.action_type:type_name -> trade.PositionActionType
-	61,  // 49: trade.GetPositionHistoryListAdminReq.time_range:type_name -> trade.TimeRange
-	52,  // 50: trade.GetPositionHistoryListAdminResp.base:type_name -> common.RespBase
-	66,  // 51: trade.GetPositionHistoryListAdminResp.data:type_name -> trade.ContractPositionHistory
-	56,  // 52: trade.GetMarginAccountListAdminReq.page:type_name -> common.PageReq
-	53,  // 53: trade.GetMarginAccountListAdminReq.market_type:type_name -> trade.MarketType
-	52,  // 54: trade.GetMarginAccountListAdminResp.base:type_name -> common.RespBase
-	67,  // 55: trade.GetMarginAccountListAdminResp.data:type_name -> trade.ContractMarginAccount
-	56,  // 56: trade.GetCancelLogListAdminReq.page:type_name -> common.PageReq
-	68,  // 57: trade.GetCancelLogListAdminReq.cancel_source:type_name -> trade.CancelSource
-	61,  // 58: trade.GetCancelLogListAdminReq.time_range:type_name -> trade.TimeRange
-	52,  // 59: trade.GetCancelLogListAdminResp.base:type_name -> common.RespBase
-	69,  // 60: trade.GetCancelLogListAdminResp.data:type_name -> trade.TradeCancelLog
-	53,  // 61: trade.SetUserTradeLimitReq.market_type:type_name -> trade.MarketType
-	70,  // 62: trade.SetUserTradeLimitReq.source:type_name -> trade.SourceType
-	53,  // 63: trade.SetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
-	70,  // 64: trade.SetUserSymbolLimitReq.source:type_name -> trade.SourceType
-	53,  // 65: trade.GetUserTradeLimitReq.market_type:type_name -> trade.MarketType
-	52,  // 66: trade.GetUserTradeLimitResp.base:type_name -> common.RespBase
-	71,  // 67: trade.GetUserTradeLimitResp.data:type_name -> trade.RiskUserTradeLimit
-	53,  // 68: trade.GetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
-	52,  // 69: trade.GetUserSymbolLimitResp.base:type_name -> common.RespBase
-	72,  // 70: trade.GetUserSymbolLimitResp.data:type_name -> trade.RiskUserSymbolLimit
-	53,  // 71: trade.SetUserTradeConfigReq.market_type:type_name -> trade.MarketType
-	73,  // 72: trade.SetUserTradeConfigReq.position_mode:type_name -> trade.PositionMode
-	59,  // 73: trade.SetUserTradeConfigReq.margin_mode:type_name -> trade.MarginMode
-	53,  // 74: trade.GetUserTradeConfigReq.market_type:type_name -> trade.MarketType
-	52,  // 75: trade.GetUserTradeConfigResp.base:type_name -> common.RespBase
-	74,  // 76: trade.GetUserTradeConfigResp.data:type_name -> trade.TradeUserConfig
-	56,  // 77: trade.GetRiskOrderCheckLogListReq.page:type_name -> common.PageReq
-	53,  // 78: trade.GetRiskOrderCheckLogListReq.market_type:type_name -> trade.MarketType
-	75,  // 79: trade.GetRiskOrderCheckLogListReq.check_type:type_name -> trade.RiskCheckType
-	76,  // 80: trade.GetRiskOrderCheckLogListReq.check_result:type_name -> trade.RiskCheckResult
-	61,  // 81: trade.GetRiskOrderCheckLogListReq.time_range:type_name -> trade.TimeRange
-	52,  // 82: trade.GetRiskOrderCheckLogListResp.base:type_name -> common.RespBase
-	77,  // 83: trade.GetRiskOrderCheckLogListResp.data:type_name -> trade.RiskOrderCheckLog
-	53,  // 84: trade.SetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
-	59,  // 85: trade.SetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	73,  // 86: trade.SetUserLeverageConfigReq.position_mode:type_name -> trade.PositionMode
-	70,  // 87: trade.SetUserLeverageConfigReq.source:type_name -> trade.SourceType
-	53,  // 88: trade.GetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
-	59,  // 89: trade.GetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	52,  // 90: trade.GetUserLeverageConfigResp.base:type_name -> common.RespBase
-	78,  // 91: trade.GetUserLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
-	56,  // 92: trade.GetTradeEventListReq.page:type_name -> common.PageReq
-	79,  // 93: trade.GetTradeEventListReq.event_status:type_name -> trade.EventStatus
-	61,  // 94: trade.GetTradeEventListReq.time_range:type_name -> trade.TimeRange
-	52,  // 95: trade.GetTradeEventListResp.base:type_name -> common.RespBase
-	80,  // 96: trade.GetTradeEventListResp.data:type_name -> trade.BizTradeEvent
-	52,  // 97: trade.GetTradeEventDetailResp.base:type_name -> common.RespBase
-	80,  // 98: trade.GetTradeEventDetailResp.data:type_name -> trade.BizTradeEvent
-	1,   // 99: trade.TradeAdmin.CreateSymbol:input_type -> trade.CreateSymbolReq
-	2,   // 100: trade.TradeAdmin.UpdateSymbol:input_type -> trade.UpdateSymbolReq
-	3,   // 101: trade.TradeAdmin.GetSymbolListAdmin:input_type -> trade.GetSymbolListAdminReq
-	5,   // 102: trade.TradeAdmin.GetSymbolDetailAdmin:input_type -> trade.GetSymbolDetailAdminReq
-	8,   // 103: trade.TradeAdmin.SetSpotSymbolConfig:input_type -> trade.SetSpotSymbolConfigReq
-	9,   // 104: trade.TradeAdmin.SetContractSymbolConfig:input_type -> trade.SetContractSymbolConfigReq
-	10,  // 105: trade.TradeAdmin.SetSymbolLeverageConfig:input_type -> trade.SetSymbolLeverageConfigReq
-	11,  // 106: trade.TradeAdmin.GetSymbolLeverageConfig:input_type -> trade.GetSymbolLeverageConfigReq
-	13,  // 107: trade.TradeAdmin.GetSymbolLeverageConfigList:input_type -> trade.GetSymbolLeverageConfigListReq
-	15,  // 108: trade.TradeAdmin.GetOrderListAdmin:input_type -> trade.GetOrderListAdminReq
-	17,  // 109: trade.TradeAdmin.GetOrderDetailAdmin:input_type -> trade.GetOrderDetailAdminReq
-	19,  // 110: trade.TradeAdmin.GetFillListAdmin:input_type -> trade.GetFillListAdminReq
-	21,  // 111: trade.TradeAdmin.GetFillDetailAdmin:input_type -> trade.GetFillDetailAdminReq
-	23,  // 112: trade.TradeAdmin.GetPositionListAdmin:input_type -> trade.GetPositionListAdminReq
-	25,  // 113: trade.TradeAdmin.GetPositionDetailAdmin:input_type -> trade.GetPositionDetailAdminReq
-	27,  // 114: trade.TradeAdmin.GetPositionHistoryListAdmin:input_type -> trade.GetPositionHistoryListAdminReq
-	29,  // 115: trade.TradeAdmin.GetMarginAccountListAdmin:input_type -> trade.GetMarginAccountListAdminReq
-	31,  // 116: trade.TradeAdmin.GetCancelLogListAdmin:input_type -> trade.GetCancelLogListAdminReq
-	33,  // 117: trade.TradeAdmin.SetUserTradeLimit:input_type -> trade.SetUserTradeLimitReq
-	34,  // 118: trade.TradeAdmin.SetUserSymbolLimit:input_type -> trade.SetUserSymbolLimitReq
-	35,  // 119: trade.TradeAdmin.GetUserTradeLimit:input_type -> trade.GetUserTradeLimitReq
-	37,  // 120: trade.TradeAdmin.GetUserSymbolLimit:input_type -> trade.GetUserSymbolLimitReq
-	39,  // 121: trade.TradeAdmin.SetUserTradeConfig:input_type -> trade.SetUserTradeConfigReq
-	40,  // 122: trade.TradeAdmin.GetUserTradeConfig:input_type -> trade.GetUserTradeConfigReq
-	42,  // 123: trade.TradeAdmin.GetRiskOrderCheckLogList:input_type -> trade.GetRiskOrderCheckLogListReq
-	44,  // 124: trade.TradeAdmin.SetUserLeverageConfig:input_type -> trade.SetUserLeverageConfigReq
-	45,  // 125: trade.TradeAdmin.GetUserLeverageConfig:input_type -> trade.GetUserLeverageConfigReq
-	47,  // 126: trade.TradeAdmin.GetTradeEventList:input_type -> trade.GetTradeEventListReq
-	49,  // 127: trade.TradeAdmin.GetTradeEventDetail:input_type -> trade.GetTradeEventDetailReq
-	51,  // 128: trade.TradeAdmin.RetryTradeEvent:input_type -> trade.RetryTradeEventReq
-	0,   // 129: trade.TradeAdmin.CreateSymbol:output_type -> trade.AdminCommonResp
-	0,   // 130: trade.TradeAdmin.UpdateSymbol:output_type -> trade.AdminCommonResp
-	4,   // 131: trade.TradeAdmin.GetSymbolListAdmin:output_type -> trade.GetSymbolListAdminResp
-	6,   // 132: trade.TradeAdmin.GetSymbolDetailAdmin:output_type -> trade.GetSymbolDetailAdminResp
-	0,   // 133: trade.TradeAdmin.SetSpotSymbolConfig:output_type -> trade.AdminCommonResp
-	0,   // 134: trade.TradeAdmin.SetContractSymbolConfig:output_type -> trade.AdminCommonResp
-	0,   // 135: trade.TradeAdmin.SetSymbolLeverageConfig:output_type -> trade.AdminCommonResp
-	12,  // 136: trade.TradeAdmin.GetSymbolLeverageConfig:output_type -> trade.GetSymbolLeverageConfigResp
-	14,  // 137: trade.TradeAdmin.GetSymbolLeverageConfigList:output_type -> trade.GetSymbolLeverageConfigListResp
-	16,  // 138: trade.TradeAdmin.GetOrderListAdmin:output_type -> trade.GetOrderListAdminResp
-	18,  // 139: trade.TradeAdmin.GetOrderDetailAdmin:output_type -> trade.GetOrderDetailAdminResp
-	20,  // 140: trade.TradeAdmin.GetFillListAdmin:output_type -> trade.GetFillListAdminResp
-	22,  // 141: trade.TradeAdmin.GetFillDetailAdmin:output_type -> trade.GetFillDetailAdminResp
-	24,  // 142: trade.TradeAdmin.GetPositionListAdmin:output_type -> trade.GetPositionListAdminResp
-	26,  // 143: trade.TradeAdmin.GetPositionDetailAdmin:output_type -> trade.GetPositionDetailAdminResp
-	28,  // 144: trade.TradeAdmin.GetPositionHistoryListAdmin:output_type -> trade.GetPositionHistoryListAdminResp
-	30,  // 145: trade.TradeAdmin.GetMarginAccountListAdmin:output_type -> trade.GetMarginAccountListAdminResp
-	32,  // 146: trade.TradeAdmin.GetCancelLogListAdmin:output_type -> trade.GetCancelLogListAdminResp
-	0,   // 147: trade.TradeAdmin.SetUserTradeLimit:output_type -> trade.AdminCommonResp
-	0,   // 148: trade.TradeAdmin.SetUserSymbolLimit:output_type -> trade.AdminCommonResp
-	36,  // 149: trade.TradeAdmin.GetUserTradeLimit:output_type -> trade.GetUserTradeLimitResp
-	38,  // 150: trade.TradeAdmin.GetUserSymbolLimit:output_type -> trade.GetUserSymbolLimitResp
-	0,   // 151: trade.TradeAdmin.SetUserTradeConfig:output_type -> trade.AdminCommonResp
-	41,  // 152: trade.TradeAdmin.GetUserTradeConfig:output_type -> trade.GetUserTradeConfigResp
-	43,  // 153: trade.TradeAdmin.GetRiskOrderCheckLogList:output_type -> trade.GetRiskOrderCheckLogListResp
-	0,   // 154: trade.TradeAdmin.SetUserLeverageConfig:output_type -> trade.AdminCommonResp
-	46,  // 155: trade.TradeAdmin.GetUserLeverageConfig:output_type -> trade.GetUserLeverageConfigResp
-	48,  // 156: trade.TradeAdmin.GetTradeEventList:output_type -> trade.GetTradeEventListResp
-	50,  // 157: trade.TradeAdmin.GetTradeEventDetail:output_type -> trade.GetTradeEventDetailResp
-	0,   // 158: trade.TradeAdmin.RetryTradeEvent:output_type -> trade.AdminCommonResp
-	129, // [129:159] is the sub-list for method output_type
-	99,  // [99:129] is the sub-list for method input_type
-	99,  // [99:99] is the sub-list for extension type_name
-	99,  // [99:99] is the sub-list for extension extendee
-	0,   // [0:99] is the sub-list for field type_name
+	59,  // 14: trade.SetSpotSymbolConfigReq.buy_enabled:type_name -> common.Enable
+	59,  // 15: trade.SetSpotSymbolConfigReq.sell_enabled:type_name -> common.Enable
+	59,  // 16: trade.SetContractSymbolConfigReq.buy_enabled:type_name -> common.Enable
+	59,  // 17: trade.SetContractSymbolConfigReq.sell_enabled:type_name -> common.Enable
+	53,  // 18: trade.SetSymbolLeverageConfigReq.market_type:type_name -> trade.MarketType
+	60,  // 19: trade.SetSymbolLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	59,  // 20: trade.SetSymbolLeverageConfigReq.enabled:type_name -> common.Enable
+	53,  // 21: trade.GetSymbolLeverageConfigReq.market_type:type_name -> trade.MarketType
+	60,  // 22: trade.GetSymbolLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	52,  // 23: trade.GetSymbolLeverageConfigResp.base:type_name -> common.RespBase
+	58,  // 24: trade.GetSymbolLeverageConfigResp.data:type_name -> trade.TradeSymbolLeverageConfig
+	56,  // 25: trade.GetSymbolLeverageConfigListReq.page:type_name -> common.PageReq
+	53,  // 26: trade.GetSymbolLeverageConfigListReq.market_type:type_name -> trade.MarketType
+	60,  // 27: trade.GetSymbolLeverageConfigListReq.margin_mode:type_name -> trade.MarginMode
+	59,  // 28: trade.GetSymbolLeverageConfigListReq.enabled:type_name -> common.Enable
+	52,  // 29: trade.GetSymbolLeverageConfigListResp.base:type_name -> common.RespBase
+	58,  // 30: trade.GetSymbolLeverageConfigListResp.data:type_name -> trade.TradeSymbolLeverageConfig
+	56,  // 31: trade.GetOrderListAdminReq.page:type_name -> common.PageReq
+	53,  // 32: trade.GetOrderListAdminReq.market_type:type_name -> trade.MarketType
+	61,  // 33: trade.GetOrderListAdminReq.status:type_name -> trade.OrderStatus
+	62,  // 34: trade.GetOrderListAdminReq.time_range:type_name -> trade.TimeRange
+	52,  // 35: trade.GetOrderListAdminResp.base:type_name -> common.RespBase
+	63,  // 36: trade.GetOrderListAdminResp.data:type_name -> trade.TradeOrder
+	52,  // 37: trade.GetOrderDetailAdminResp.base:type_name -> common.RespBase
+	63,  // 38: trade.GetOrderDetailAdminResp.data:type_name -> trade.TradeOrder
+	56,  // 39: trade.GetFillListAdminReq.page:type_name -> common.PageReq
+	53,  // 40: trade.GetFillListAdminReq.market_type:type_name -> trade.MarketType
+	62,  // 41: trade.GetFillListAdminReq.time_range:type_name -> trade.TimeRange
+	52,  // 42: trade.GetFillListAdminResp.base:type_name -> common.RespBase
+	64,  // 43: trade.GetFillListAdminResp.data:type_name -> trade.TradeFill
+	52,  // 44: trade.GetFillDetailAdminResp.base:type_name -> common.RespBase
+	64,  // 45: trade.GetFillDetailAdminResp.data:type_name -> trade.TradeFill
+	56,  // 46: trade.GetPositionListAdminReq.page:type_name -> common.PageReq
+	53,  // 47: trade.GetPositionListAdminReq.market_type:type_name -> trade.MarketType
+	52,  // 48: trade.GetPositionListAdminResp.base:type_name -> common.RespBase
+	65,  // 49: trade.GetPositionListAdminResp.data:type_name -> trade.ContractPosition
+	52,  // 50: trade.GetPositionDetailAdminResp.base:type_name -> common.RespBase
+	65,  // 51: trade.GetPositionDetailAdminResp.data:type_name -> trade.ContractPosition
+	56,  // 52: trade.GetPositionHistoryListAdminReq.page:type_name -> common.PageReq
+	53,  // 53: trade.GetPositionHistoryListAdminReq.market_type:type_name -> trade.MarketType
+	66,  // 54: trade.GetPositionHistoryListAdminReq.action_type:type_name -> trade.PositionActionType
+	62,  // 55: trade.GetPositionHistoryListAdminReq.time_range:type_name -> trade.TimeRange
+	52,  // 56: trade.GetPositionHistoryListAdminResp.base:type_name -> common.RespBase
+	67,  // 57: trade.GetPositionHistoryListAdminResp.data:type_name -> trade.ContractPositionHistory
+	56,  // 58: trade.GetMarginAccountListAdminReq.page:type_name -> common.PageReq
+	53,  // 59: trade.GetMarginAccountListAdminReq.market_type:type_name -> trade.MarketType
+	52,  // 60: trade.GetMarginAccountListAdminResp.base:type_name -> common.RespBase
+	68,  // 61: trade.GetMarginAccountListAdminResp.data:type_name -> trade.ContractMarginAccount
+	56,  // 62: trade.GetCancelLogListAdminReq.page:type_name -> common.PageReq
+	69,  // 63: trade.GetCancelLogListAdminReq.cancel_source:type_name -> trade.CancelSource
+	62,  // 64: trade.GetCancelLogListAdminReq.time_range:type_name -> trade.TimeRange
+	52,  // 65: trade.GetCancelLogListAdminResp.base:type_name -> common.RespBase
+	70,  // 66: trade.GetCancelLogListAdminResp.data:type_name -> trade.TradeCancelLog
+	53,  // 67: trade.SetUserTradeLimitReq.market_type:type_name -> trade.MarketType
+	59,  // 68: trade.SetUserTradeLimitReq.trade_enabled:type_name -> common.Enable
+	71,  // 69: trade.SetUserTradeLimitReq.source:type_name -> trade.SourceType
+	59,  // 70: trade.SetUserTradeLimitReq.enabled:type_name -> common.Enable
+	53,  // 71: trade.SetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
+	71,  // 72: trade.SetUserSymbolLimitReq.source:type_name -> trade.SourceType
+	59,  // 73: trade.SetUserSymbolLimitReq.enabled:type_name -> common.Enable
+	53,  // 74: trade.GetUserTradeLimitReq.market_type:type_name -> trade.MarketType
+	52,  // 75: trade.GetUserTradeLimitResp.base:type_name -> common.RespBase
+	72,  // 76: trade.GetUserTradeLimitResp.data:type_name -> trade.RiskUserTradeLimit
+	53,  // 77: trade.GetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
+	52,  // 78: trade.GetUserSymbolLimitResp.base:type_name -> common.RespBase
+	73,  // 79: trade.GetUserSymbolLimitResp.data:type_name -> trade.RiskUserSymbolLimit
+	53,  // 80: trade.SetUserTradeConfigReq.market_type:type_name -> trade.MarketType
+	74,  // 81: trade.SetUserTradeConfigReq.position_mode:type_name -> trade.PositionMode
+	60,  // 82: trade.SetUserTradeConfigReq.margin_mode:type_name -> trade.MarginMode
+	59,  // 83: trade.SetUserTradeConfigReq.trade_enabled:type_name -> common.Enable
+	59,  // 84: trade.SetUserTradeConfigReq.reduce_only_enabled:type_name -> common.Enable
+	53,  // 85: trade.GetUserTradeConfigReq.market_type:type_name -> trade.MarketType
+	52,  // 86: trade.GetUserTradeConfigResp.base:type_name -> common.RespBase
+	75,  // 87: trade.GetUserTradeConfigResp.data:type_name -> trade.TradeUserConfig
+	56,  // 88: trade.GetRiskOrderCheckLogListReq.page:type_name -> common.PageReq
+	53,  // 89: trade.GetRiskOrderCheckLogListReq.market_type:type_name -> trade.MarketType
+	76,  // 90: trade.GetRiskOrderCheckLogListReq.check_type:type_name -> trade.RiskCheckType
+	77,  // 91: trade.GetRiskOrderCheckLogListReq.check_result:type_name -> trade.RiskCheckResult
+	62,  // 92: trade.GetRiskOrderCheckLogListReq.time_range:type_name -> trade.TimeRange
+	52,  // 93: trade.GetRiskOrderCheckLogListResp.base:type_name -> common.RespBase
+	78,  // 94: trade.GetRiskOrderCheckLogListResp.data:type_name -> trade.RiskOrderCheckLog
+	53,  // 95: trade.SetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
+	60,  // 96: trade.SetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	74,  // 97: trade.SetUserLeverageConfigReq.position_mode:type_name -> trade.PositionMode
+	71,  // 98: trade.SetUserLeverageConfigReq.source:type_name -> trade.SourceType
+	59,  // 99: trade.SetUserLeverageConfigReq.enabled:type_name -> common.Enable
+	53,  // 100: trade.GetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
+	60,  // 101: trade.GetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	52,  // 102: trade.GetUserLeverageConfigResp.base:type_name -> common.RespBase
+	79,  // 103: trade.GetUserLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
+	56,  // 104: trade.GetTradeEventListReq.page:type_name -> common.PageReq
+	80,  // 105: trade.GetTradeEventListReq.event_status:type_name -> trade.EventStatus
+	62,  // 106: trade.GetTradeEventListReq.time_range:type_name -> trade.TimeRange
+	52,  // 107: trade.GetTradeEventListResp.base:type_name -> common.RespBase
+	81,  // 108: trade.GetTradeEventListResp.data:type_name -> trade.BizTradeEvent
+	52,  // 109: trade.GetTradeEventDetailResp.base:type_name -> common.RespBase
+	81,  // 110: trade.GetTradeEventDetailResp.data:type_name -> trade.BizTradeEvent
+	1,   // 111: trade.TradeAdmin.CreateSymbol:input_type -> trade.CreateSymbolReq
+	2,   // 112: trade.TradeAdmin.UpdateSymbol:input_type -> trade.UpdateSymbolReq
+	3,   // 113: trade.TradeAdmin.GetSymbolListAdmin:input_type -> trade.GetSymbolListAdminReq
+	5,   // 114: trade.TradeAdmin.GetSymbolDetailAdmin:input_type -> trade.GetSymbolDetailAdminReq
+	8,   // 115: trade.TradeAdmin.SetSpotSymbolConfig:input_type -> trade.SetSpotSymbolConfigReq
+	9,   // 116: trade.TradeAdmin.SetContractSymbolConfig:input_type -> trade.SetContractSymbolConfigReq
+	10,  // 117: trade.TradeAdmin.SetSymbolLeverageConfig:input_type -> trade.SetSymbolLeverageConfigReq
+	11,  // 118: trade.TradeAdmin.GetSymbolLeverageConfig:input_type -> trade.GetSymbolLeverageConfigReq
+	13,  // 119: trade.TradeAdmin.GetSymbolLeverageConfigList:input_type -> trade.GetSymbolLeverageConfigListReq
+	15,  // 120: trade.TradeAdmin.GetOrderListAdmin:input_type -> trade.GetOrderListAdminReq
+	17,  // 121: trade.TradeAdmin.GetOrderDetailAdmin:input_type -> trade.GetOrderDetailAdminReq
+	19,  // 122: trade.TradeAdmin.GetFillListAdmin:input_type -> trade.GetFillListAdminReq
+	21,  // 123: trade.TradeAdmin.GetFillDetailAdmin:input_type -> trade.GetFillDetailAdminReq
+	23,  // 124: trade.TradeAdmin.GetPositionListAdmin:input_type -> trade.GetPositionListAdminReq
+	25,  // 125: trade.TradeAdmin.GetPositionDetailAdmin:input_type -> trade.GetPositionDetailAdminReq
+	27,  // 126: trade.TradeAdmin.GetPositionHistoryListAdmin:input_type -> trade.GetPositionHistoryListAdminReq
+	29,  // 127: trade.TradeAdmin.GetMarginAccountListAdmin:input_type -> trade.GetMarginAccountListAdminReq
+	31,  // 128: trade.TradeAdmin.GetCancelLogListAdmin:input_type -> trade.GetCancelLogListAdminReq
+	33,  // 129: trade.TradeAdmin.SetUserTradeLimit:input_type -> trade.SetUserTradeLimitReq
+	34,  // 130: trade.TradeAdmin.SetUserSymbolLimit:input_type -> trade.SetUserSymbolLimitReq
+	35,  // 131: trade.TradeAdmin.GetUserTradeLimit:input_type -> trade.GetUserTradeLimitReq
+	37,  // 132: trade.TradeAdmin.GetUserSymbolLimit:input_type -> trade.GetUserSymbolLimitReq
+	39,  // 133: trade.TradeAdmin.SetUserTradeConfig:input_type -> trade.SetUserTradeConfigReq
+	40,  // 134: trade.TradeAdmin.GetUserTradeConfig:input_type -> trade.GetUserTradeConfigReq
+	42,  // 135: trade.TradeAdmin.GetRiskOrderCheckLogList:input_type -> trade.GetRiskOrderCheckLogListReq
+	44,  // 136: trade.TradeAdmin.SetUserLeverageConfig:input_type -> trade.SetUserLeverageConfigReq
+	45,  // 137: trade.TradeAdmin.GetUserLeverageConfig:input_type -> trade.GetUserLeverageConfigReq
+	47,  // 138: trade.TradeAdmin.GetTradeEventList:input_type -> trade.GetTradeEventListReq
+	49,  // 139: trade.TradeAdmin.GetTradeEventDetail:input_type -> trade.GetTradeEventDetailReq
+	51,  // 140: trade.TradeAdmin.RetryTradeEvent:input_type -> trade.RetryTradeEventReq
+	0,   // 141: trade.TradeAdmin.CreateSymbol:output_type -> trade.AdminCommonResp
+	0,   // 142: trade.TradeAdmin.UpdateSymbol:output_type -> trade.AdminCommonResp
+	4,   // 143: trade.TradeAdmin.GetSymbolListAdmin:output_type -> trade.GetSymbolListAdminResp
+	6,   // 144: trade.TradeAdmin.GetSymbolDetailAdmin:output_type -> trade.GetSymbolDetailAdminResp
+	0,   // 145: trade.TradeAdmin.SetSpotSymbolConfig:output_type -> trade.AdminCommonResp
+	0,   // 146: trade.TradeAdmin.SetContractSymbolConfig:output_type -> trade.AdminCommonResp
+	0,   // 147: trade.TradeAdmin.SetSymbolLeverageConfig:output_type -> trade.AdminCommonResp
+	12,  // 148: trade.TradeAdmin.GetSymbolLeverageConfig:output_type -> trade.GetSymbolLeverageConfigResp
+	14,  // 149: trade.TradeAdmin.GetSymbolLeverageConfigList:output_type -> trade.GetSymbolLeverageConfigListResp
+	16,  // 150: trade.TradeAdmin.GetOrderListAdmin:output_type -> trade.GetOrderListAdminResp
+	18,  // 151: trade.TradeAdmin.GetOrderDetailAdmin:output_type -> trade.GetOrderDetailAdminResp
+	20,  // 152: trade.TradeAdmin.GetFillListAdmin:output_type -> trade.GetFillListAdminResp
+	22,  // 153: trade.TradeAdmin.GetFillDetailAdmin:output_type -> trade.GetFillDetailAdminResp
+	24,  // 154: trade.TradeAdmin.GetPositionListAdmin:output_type -> trade.GetPositionListAdminResp
+	26,  // 155: trade.TradeAdmin.GetPositionDetailAdmin:output_type -> trade.GetPositionDetailAdminResp
+	28,  // 156: trade.TradeAdmin.GetPositionHistoryListAdmin:output_type -> trade.GetPositionHistoryListAdminResp
+	30,  // 157: trade.TradeAdmin.GetMarginAccountListAdmin:output_type -> trade.GetMarginAccountListAdminResp
+	32,  // 158: trade.TradeAdmin.GetCancelLogListAdmin:output_type -> trade.GetCancelLogListAdminResp
+	0,   // 159: trade.TradeAdmin.SetUserTradeLimit:output_type -> trade.AdminCommonResp
+	0,   // 160: trade.TradeAdmin.SetUserSymbolLimit:output_type -> trade.AdminCommonResp
+	36,  // 161: trade.TradeAdmin.GetUserTradeLimit:output_type -> trade.GetUserTradeLimitResp
+	38,  // 162: trade.TradeAdmin.GetUserSymbolLimit:output_type -> trade.GetUserSymbolLimitResp
+	0,   // 163: trade.TradeAdmin.SetUserTradeConfig:output_type -> trade.AdminCommonResp
+	41,  // 164: trade.TradeAdmin.GetUserTradeConfig:output_type -> trade.GetUserTradeConfigResp
+	43,  // 165: trade.TradeAdmin.GetRiskOrderCheckLogList:output_type -> trade.GetRiskOrderCheckLogListResp
+	0,   // 166: trade.TradeAdmin.SetUserLeverageConfig:output_type -> trade.AdminCommonResp
+	46,  // 167: trade.TradeAdmin.GetUserLeverageConfig:output_type -> trade.GetUserLeverageConfigResp
+	48,  // 168: trade.TradeAdmin.GetTradeEventList:output_type -> trade.GetTradeEventListResp
+	50,  // 169: trade.TradeAdmin.GetTradeEventDetail:output_type -> trade.GetTradeEventDetailResp
+	0,   // 170: trade.TradeAdmin.RetryTradeEvent:output_type -> trade.AdminCommonResp
+	141, // [141:171] is the sub-list for method output_type
+	111, // [111:141] is the sub-list for method input_type
+	111, // [111:111] is the sub-list for extension type_name
+	111, // [111:111] is the sub-list for extension extendee
+	0,   // [0:111] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_trade_admin_proto_init() }

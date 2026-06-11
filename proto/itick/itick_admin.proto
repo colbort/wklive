@@ -17,8 +17,8 @@ message AdminCommonResp { common.RespBase base = 1; }
 message CreateCategoryReq {
   itick.CategoryType category_type = 1;
   string category_name = 2;
-  int64 enabled = 3;
-  int64 app_visible = 4;
+  common.Enable enabled = 3;     // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 5;
   string icon = 6;
   string remark = 7;
@@ -27,8 +27,8 @@ message CreateCategoryReq {
 message UpdateCategoryReq {
   int64 id = 1;
   string category_name = 2;
-  int64 enabled = 3;
-  int64 app_visible = 4;
+  common.Enable enabled = 3;     // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 5;
   string icon = 6;
   string remark = 7;
@@ -44,8 +44,8 @@ message GetCategoryResp {
 message ListCategoriesReq {
   common.PageReq page = 1;
   itick.CategoryType category_type = 2;
-  int32 enabled = 3;     // 0全部 1启用 2禁用
-  int32 app_visible = 4; // 0全部 1可见 2不可见
+  common.Enable enabled = 3;     // 启用状态,0全部 1启用 2禁用
+  common.Switch app_visible = 4; // APP可见开关,0全部 1可见 2隐藏
 }
 
 message ListCategoriesResp {
@@ -86,8 +86,8 @@ message CreateProductReq {
   string display_name = 6;
   string base_coin = 7;
   string quote_coin = 8;
-  int64 enabled = 9;
-  int64 app_visible = 10;
+  common.Enable enabled = 9;      // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 10; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 11;
   string icon = 12;
   string remark = 13;
@@ -100,8 +100,8 @@ message UpdateProductReq {
   string display_name = 4;
   string base_coin = 5;
   string quote_coin = 6;
-  int64 enabled = 7;
-  int64 app_visible = 8;
+  common.Enable enabled = 7;     // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 8; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 9;
   string icon = 10;
   string remark = 11;
@@ -120,8 +120,8 @@ message ListProductsReq {
   string category_name = 3;
   string market = 4;
   string keyword = 5;
-  int32 enabled = 6;     // 0全部 1启用 2禁用
-  int32 app_visible = 7; // 0全部 1显示 2隐藏
+  common.Enable enabled = 6;     // 启用状态,0全部 1启用 2禁用
+  common.Switch app_visible = 7; // APP可见开关,0全部 1显示 2隐藏
 }
 
 message ListProductsResp {
@@ -154,8 +154,8 @@ message GetProductKlineResp {
 message CreateTenantCategoryReq {
   int64 tenant_id = 1;
   int64 category_id = 2;
-  int64 enabled = 3;
-  int64 app_visible = 4;
+  common.Enable enabled = 3;     // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 5;
   string remark = 6;
 }
@@ -163,8 +163,8 @@ message CreateTenantCategoryReq {
 message UpdateTenantCategoryReq {
   int64 id = 1;
   int64 tenant_id = 2;
-  int64 enabled = 3;
-  int64 app_visible = 4;
+  common.Enable enabled = 3;     // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 5;
   string remark = 6;
 }
@@ -177,8 +177,8 @@ message BatchUpsertTenantCategoriesReq {
 message TenantCategoryItem {
   int64 id = 1;
   int64 category_id = 2;
-  int64 enabled = 3;
-  int64 app_visible = 4;
+  common.Enable enabled = 3;     // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 5;
   string remark = 6;
 }
@@ -197,8 +197,8 @@ message ListTenantCategoriesReq {
   common.PageReq page = 1;
   int64 tenant_id = 2;
   itick.CategoryType category_type = 3;
-  int32 status = 4;         // 0全部 1启用 2禁用
-  int32 visible_status = 5; // 0全部 1显示 2隐藏
+  common.Enable enabled = 4;        // 启用状态,0全部 1启用 2禁用
+  common.Switch visible_status = 5; // 可见开关,0全部 1显示 2隐藏
 }
 
 message ListTenantCategoriesResp {
@@ -213,8 +213,8 @@ message ListTenantCategoriesResp {
 message CreateTenantProductReq {
   int64 tenant_id = 1;
   int64 product_id = 2;
-  int64 enabled = 3;
-  int64 app_visible = 4;
+  common.Enable enabled = 3;     // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 5;
   string remark = 6;
 }
@@ -222,8 +222,8 @@ message CreateTenantProductReq {
 message UpdateTenantProductReq {
   int64 id = 1;
   int64 tenant_id = 2;
-  int64 enabled = 3;
-  int64 app_visible = 4;
+  common.Enable enabled = 3;     // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 5;
   string remark = 6;
 }
@@ -236,8 +236,8 @@ message BatchUpsertTenantProductsReq {
 message TenantProductItem {
   int64 id = 1;
   int64 product_id = 2;
-  int64 enabled = 3;
-  int64 app_visible = 4;
+  common.Enable enabled = 3;     // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 5;
   string remark = 6;
 }
@@ -258,8 +258,8 @@ message ListTenantProductsReq {
   itick.CategoryType category_type = 3;
   string market = 4;
   string keyword = 5;
-  int32 status = 6;         // 0全部 1启用 2禁用
-  int32 visible_status = 7; // 0全部 1显示 2隐藏
+  common.Enable enabled = 6;         // 启用状态,0全部 1启用 2禁用
+  common.Switch app_visible = 7; // 可见开关,0全部 1显示 2隐藏
 }
 
 message ListTenantProductsResp {

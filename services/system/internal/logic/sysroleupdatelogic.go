@@ -39,7 +39,7 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system
 	var data models.SysRole
 	_ = copier.Copy(&data, one)
 	_ = copier.Copy(&data, in)
-	data.Status = commonStatusToModel(in.Status)
+	data.Enabled = commonStatusToModel(in.Enabled)
 
 	err = l.svcCtx.RoleModel.Update(l.ctx, &data)
 	if err != nil {

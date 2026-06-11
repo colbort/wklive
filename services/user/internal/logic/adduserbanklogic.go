@@ -62,7 +62,7 @@ func (l *AddUserBankLogic) AddUserBank(in *user.AddUserBankReq) (*user.AddUserBa
 		BranchName:  sql.NullString{String: in.BranchName, Valid: in.BranchName != ""},
 		CountryCode: sql.NullString{String: in.CountryCode, Valid: in.CountryCode != ""},
 		IsDefault:   isDefault,
-		Status:      int64(in.Status),
+		Enabled:     int64(in.Enabled),
 		CreateTimes: now,
 		UpdateTimes: now,
 	}

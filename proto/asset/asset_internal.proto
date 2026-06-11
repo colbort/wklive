@@ -55,7 +55,7 @@ service AssetInternal {
 message AddAvailableReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  WalletType wallet_type = 3;
+  common.WalletType  wallet_type = 3;
   string coin = 4;
   string amount = 5;
   BizType biz_type = 6;
@@ -68,7 +68,7 @@ message AddAvailableReq {
 message SubAvailableReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  WalletType wallet_type = 3;
+  common.WalletType  wallet_type = 3;
   string coin = 4;
   string amount = 5;
   BizType biz_type = 6;
@@ -81,7 +81,7 @@ message SubAvailableReq {
 message FreezeAssetReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  WalletType wallet_type = 3;
+  common.WalletType  wallet_type = 3;
   string coin = 4;
   string amount = 5;
   BizType biz_type = 6;
@@ -151,7 +151,7 @@ message DeductFrozenAssetByBizNoReq {
 message LockAssetReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  WalletType wallet_type = 3;
+  common.WalletType  wallet_type = 3;
   string coin = 4;
   string amount = 5;
   BizType biz_type = 6;
@@ -222,8 +222,8 @@ message DeductLockedAssetByBizNoReq {
 message TransferAssetReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  WalletType from_wallet_type = 3;
-  WalletType to_wallet_type = 4;
+  common.WalletType  from_wallet_type = 3;
+  common.WalletType  to_wallet_type = 4;
   string coin = 5;
   string amount = 6;
   BizType biz_type = 7;

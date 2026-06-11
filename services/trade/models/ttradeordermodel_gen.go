@@ -52,7 +52,7 @@ type (
 		SymbolId      int64          `db:"symbol_id"`       // 交易标的ID
 		MarketType    int64          `db:"market_type"`     // 市场类型：1现货 2秒合约 3U本位 4币本位
 		Side          int64          `db:"side"`            // 买卖方向：1买 2卖
-		PositionSide  int64          `db:"position_side"`   // 持仓方向：0无 1多 2空，现货一般为0
+		PositionSide  int64          `db:"position_side"`   // 持仓方向：0未知/无 1净持仓 2多 3空，现货一般为0
 		OrderType     int64          `db:"order_type"`      // 成交方式：1限价 2市价
 		TimeInForce   int64          `db:"time_in_force"`   // 订单有效方式：0默认 1GTC 2IOC 3FOK 4PostOnly
 		Status        int64          `db:"status"`          // 订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期 7冻结中 8等待触发

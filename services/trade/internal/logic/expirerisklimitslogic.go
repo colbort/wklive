@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 
@@ -42,8 +43,8 @@ func (l *ExpireRiskLimitsLogic) ExpireRiskLimits(in *trade.TradeTaskReq) (*trade
 				if in.GetTenantId() > 0 && item.TenantId != in.GetTenantId() {
 					continue
 				}
-				if item.Status == int64(trade.EnableStatus_ENABLE_STATUS_ENABLED) && item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
-					item.Status = int64(trade.EnableStatus_ENABLE_STATUS_DISABLED)
+				if item.Enabled == enableToModel(common.Enable_ENABLE_ENABLED, 1) && item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
+					item.Enabled = enableToModel(common.Enable_ENABLE_DISABLED, 0)
 					item.UpdateTimes = now
 					if err := l.svcCtx.RiskUserTradeLimitModel.Update(l.ctx, item); err != nil {
 						return nil, err
@@ -68,8 +69,8 @@ func (l *ExpireRiskLimitsLogic) ExpireRiskLimits(in *trade.TradeTaskReq) (*trade
 				if in.GetTenantId() > 0 && item.TenantId != in.GetTenantId() {
 					continue
 				}
-				if item.Status == int64(trade.EnableStatus_ENABLE_STATUS_ENABLED) && item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
-					item.Status = int64(trade.EnableStatus_ENABLE_STATUS_DISABLED)
+				if item.Enabled == enableToModel(common.Enable_ENABLE_ENABLED, 1) && item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
+					item.Enabled = enableToModel(common.Enable_ENABLE_DISABLED, 0)
 					item.UpdateTimes = now
 					if err := l.svcCtx.RiskUserSymbolLimitModel.Update(l.ctx, item); err != nil {
 						return nil, err

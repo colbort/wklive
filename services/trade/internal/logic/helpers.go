@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"wklive/common/conv"
-	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/models"
 )
@@ -18,6 +18,28 @@ import (
 func mustParseFloat(v string) float64 {
 	value, _ := conv.ParseFloatField(v)
 	return value
+}
+
+func enableToProto(value int64) common.Enable {
+	switch value {
+	case 1:
+		return common.Enable_ENABLE_ENABLED
+	case 0:
+		return common.Enable_ENABLE_DISABLED
+	default:
+		return common.Enable_ENABLE_UNKNOWN
+	}
+}
+
+func enableToModel(value common.Enable, defaultValue int64) int64 {
+	switch value {
+	case common.Enable_ENABLE_ENABLED:
+		return 1
+	case common.Enable_ENABLE_DISABLED:
+		return 0
+	default:
+		return defaultValue
+	}
 }
 
 type orderAssetExt struct {
@@ -72,8 +94,8 @@ func spotSymbolToProto(item *models.TTradeSymbolSpot) *trade.TradeSymbolSpot {
 		SymbolId:     item.SymbolId,
 		MakerFeeRate: conv.FloatString(item.MakerFeeRate),
 		TakerFeeRate: conv.FloatString(item.TakerFeeRate),
-		BuyEnabled:   item.BuyEnabled,
-		SellEnabled:  item.SellEnabled,
+		BuyEnabled:   enableToProto(item.BuyEnabled),
+		SellEnabled:  enableToProto(item.SellEnabled),
 		CreateTimes:  item.CreateTimes,
 		UpdateTimes:  item.UpdateTimes,
 	}
@@ -97,8 +119,8 @@ func contractSymbolToProto(item *models.TTradeSymbolContract) *trade.TradeSymbol
 		DeliveryTime:           item.DeliveryTime,
 		SupportCross:           item.SupportCross,
 		SupportIsolated:        item.SupportIsolated,
-		BuyEnabled:             item.BuyEnabled,
-		SellEnabled:            item.SellEnabled,
+		BuyEnabled:             enableToProto(item.BuyEnabled),
+		SellEnabled:            enableToProto(item.SellEnabled),
 		CreateTimes:            item.CreateTimes,
 		UpdateTimes:            item.UpdateTimes,
 	}
@@ -117,8 +139,8 @@ func userConfigToProto(item *models.TTradeUserConfig) *trade.TradeUserConfig {
 		PositionMode:      trade.PositionMode(item.PositionMode),
 		MarginMode:        trade.MarginMode(item.MarginMode),
 		DefaultLeverage:   item.DefaultLeverage,
-		TradeEnabled:      item.TradeEnabled,
-		ReduceOnlyEnabled: item.ReduceOnlyEnabled,
+		TradeEnabled:      enableToProto(item.TradeEnabled),
+		ReduceOnlyEnabled: enableToProto(item.ReduceOnlyEnabled),
 		CreateTimes:       item.CreateTimes,
 		UpdateTimes:       item.UpdateTimes,
 	}
@@ -136,7 +158,7 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 		UserId:        item.UserId,
 		SymbolId:      item.SymbolId,
 		MarketType:    trade.MarketType(item.MarketType),
-		Side:          trade.TradeSide(item.Side),
+		Side:          common.Side(item.Side),
 		PositionSide:  trade.PositionSide(item.PositionSide),
 		OrderType:     trade.OrderType(item.OrderType),
 		TimeInForce:   trade.TimeInForce(item.TimeInForce),
@@ -213,7 +235,7 @@ func fillToProto(item *models.TTradeFill) *trade.TradeFill {
 		UserId:        item.UserId,
 		SymbolId:      item.SymbolId,
 		MarketType:    trade.MarketType(item.MarketType),
-		Side:          trade.TradeSide(item.Side),
+		Side:          common.Side(item.Side),
 		PositionSide:  trade.PositionSide(item.PositionSide),
 		Price:         conv.FloatString(item.Price),
 		Qty:           conv.FloatString(item.Qty),
@@ -354,7 +376,7 @@ func leverageConfigToProto(item *models.TContractLeverageConfig) *trade.Contract
 		MaxLeverage:   item.MaxLeverage,
 		OperatorId:    item.OperatorId,
 		Source:        trade.SourceType(item.Source),
-		Status:        item.Status,
+		Enabled:       enableToProto(item.Enabled),
 		Remark:        item.Remark,
 		CreateTimes:   item.CreateTimes,
 		UpdateTimes:   item.UpdateTimes,
@@ -374,7 +396,7 @@ func symbolLeverageConfigToProto(item *models.TTradeSymbolLeverageConfig) *trade
 		LeverageValues:  parseLeverageValues(item.LeverageValues),
 		DefaultLeverage: item.DefaultLeverage,
 		MaxLeverage:     item.MaxLeverage,
-		Status:          item.Status,
+		Enabled:         enableToProto(item.Enabled),
 		Sort:            item.Sort,
 		Remark:          item.Remark,
 		CreateTimes:     item.CreateTimes,
@@ -462,7 +484,7 @@ func riskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUser
 		CanCancel:            item.CanCancel,
 		CanTriggerOrder:      item.CanTriggerOrder,
 		CanApiTrade:          item.CanApiTrade,
-		TradeEnabled:         item.TradeEnabled,
+		TradeEnabled:         enableToProto(item.TradeEnabled),
 		OnlyReduceOnly:       item.OnlyReduceOnly,
 		MaxOpenOrderCount:    item.MaxOpenOrderCount,
 		MaxOrderCountPerDay:  item.MaxOrderCountPerDay,
@@ -472,7 +494,7 @@ func riskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUser
 		RiskLevel:            item.RiskLevel,
 		OperatorId:           item.OperatorId,
 		Source:               trade.SourceType(item.Source),
-		Status:               item.Status,
+		Enabled:              enableToProto(item.Enabled),
 		EffectiveStartTime:   item.EffectiveStartTime,
 		EffectiveEndTime:     item.EffectiveEndTime,
 		Remark:               item.Remark,
@@ -503,7 +525,7 @@ func riskUserSymbolLimitToProto(item *models.TRiskUserSymbolLimit) *trade.RiskUs
 		PriceDeviationRate:  conv.FloatString(item.PriceDeviationRate),
 		OperatorId:          item.OperatorId,
 		Source:              trade.SourceType(item.Source),
-		Status:              item.Status,
+		Enabled:             enableToProto(item.Enabled),
 		EffectiveStartTime:  item.EffectiveStartTime,
 		EffectiveEndTime:    item.EffectiveEndTime,
 		Remark:              item.Remark,
@@ -585,7 +607,7 @@ func ensureConfiguredLeverage(ctx context.Context, model models.TradeSymbolLever
 	}
 
 	cfg, err := model.FindOneByTenantIdSymbolIdMarketTypeMarginMode(ctx, tenantId, symbol.Id, symbol.MarketType, int64(marginMode))
-	if errors.Is(err, models.ErrNotFound) || (err == nil && cfg.Status != 1) {
+	if errors.Is(err, models.ErrNotFound) || (err == nil && cfg.Enabled != 1) {
 		return ensureLeverage(symbol, leverage), true, nil
 	}
 	if err != nil {
@@ -809,11 +831,11 @@ func parseOrderAssetExt(raw string) (orderAssetExt, error) {
 	return ext, nil
 }
 
-func spotFrozenAssetAndAmount(symbol *models.TTradeSymbol, side trade.TradeSide, qty, amount float64) (string, float64) {
+func spotFrozenAssetAndAmount(symbol *models.TTradeSymbol, side common.Side, qty, amount float64) (string, float64) {
 	if symbol == nil {
 		return "", 0
 	}
-	if side == trade.TradeSide_TRADE_SIDE_SELL {
+	if side == common.Side_SIDE_SELL {
 		return symbol.BaseAsset, toTradeMinorAmount(qty)
 	}
 	return symbol.QuoteAsset, amount
@@ -973,17 +995,17 @@ func shouldTriggerOrder(order *models.TTradeOrder, triggerPrice float64) bool {
 	}
 	switch triggerKindForOrder(order) {
 	case trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT:
-		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+		if order.Side == int64(common.Side_SIDE_BUY) {
 			return triggerPrice <= order.TriggerPrice+orderFillEpsilon
 		}
 		return triggerPrice+orderFillEpsilon >= order.TriggerPrice
 	case trade.TriggerKind_TRIGGER_KIND_STOP_LOSS:
-		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+		if order.Side == int64(common.Side_SIDE_BUY) {
 			return triggerPrice+orderFillEpsilon >= order.TriggerPrice
 		}
 		return triggerPrice <= order.TriggerPrice+orderFillEpsilon
 	case trade.TriggerKind_TRIGGER_KIND_CONDITIONAL:
-		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+		if order.Side == int64(common.Side_SIDE_BUY) {
 			return triggerPrice+orderFillEpsilon >= order.TriggerPrice
 		}
 		return triggerPrice <= order.TriggerPrice+orderFillEpsilon
@@ -992,11 +1014,11 @@ func shouldTriggerOrder(order *models.TTradeOrder, triggerPrice float64) bool {
 	}
 }
 
-func walletTypeForMarket(marketType trade.MarketType) asset.WalletType {
+func walletTypeForMarket(marketType trade.MarketType) common.WalletType {
 	switch marketType {
 	case trade.MarketType_MARKET_TYPE_SPOT:
-		return asset.WalletType_WALLET_TYPE_SPOT
+		return common.WalletType_WALLET_TYPE_SPOT
 	default:
-		return asset.WalletType_WALLET_TYPE_CONTRACT
+		return common.WalletType_WALLET_TYPE_CONTRACT
 	}
 }

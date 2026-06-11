@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/models"
 
@@ -66,7 +67,7 @@ func (l *AppPlaceOrderLogic) matchOrder(contract *models.TOptionContract, order 
 
 				buyOrder := incoming
 				sellOrder := maker
-				if incoming.Side == int64(option.Side_SIDE_SELL) {
+				if incoming.Side == int64(common.Side_SIDE_SELL) {
 					buyOrder = maker
 					sellOrder = incoming
 				}
@@ -139,13 +140,13 @@ func (l *AppPlaceOrderLogic) matchOrder(contract *models.TOptionContract, order 
 }
 
 func makerSide(side int64) int64 {
-	if side == int64(option.Side_SIDE_BUY) {
-		return int64(option.MakerSide_MAKER_SIDE_BUY)
+	if side == int64(common.Side_SIDE_BUY) {
+		return int64(common.Side_SIDE_BUY)
 	}
-	if side == int64(option.Side_SIDE_SELL) {
-		return int64(option.MakerSide_MAKER_SIDE_SELL)
+	if side == int64(common.Side_SIDE_SELL) {
+		return int64(common.Side_SIDE_SELL)
 	}
-	return int64(option.MakerSide_MAKER_SIDE_UNKNOWN)
+	return int64(common.Side_SIDE_UNKNOWN)
 }
 
 func updateMarketLastTrade(ctx context.Context, model models.OptionMarketModel, contract *models.TOptionContract, price float64, now int64) error {

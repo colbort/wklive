@@ -54,8 +54,8 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 	if in.Priority != 0 {
 		rule.Priority = in.Priority
 	}
-	if in.Status != 0 {
-		rule.Status = int64(in.Status)
+	if in.Enabled != 0 {
+		rule.Enabled = int64(in.Enabled)
 	}
 	if in.SingleAmountMin != 0 {
 		rule.SingleAmountMin = in.SingleAmountMin

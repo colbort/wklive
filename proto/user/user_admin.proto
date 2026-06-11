@@ -184,7 +184,7 @@ message ListUserBanksReq {
   int64 tenant_id = 2;
   int64 user_id = 3;
   string keyword = 4;
-  user.BankStatus status = 5;
+  common.Enable enabled = 5;
 }
 
 message ListUserBanksResp {
@@ -212,7 +212,7 @@ message AddUserBankReq {
   string branch_name = 7;
   string country_code = 8;
   int64 is_default = 9;
-  user.BankStatus status = 10;
+  common.Enable enabled = 10;
 }
 
 message AddUserBankResp {
@@ -231,7 +231,7 @@ message UpdateUserBankReq {
   string branch_name = 8;
   string country_code = 9;
   int64 is_default = 10;
-  user.BankStatus status = 11;
+  common.Enable enabled = 11;
 }
 
 message UpdateUserBankResp {
@@ -247,7 +247,7 @@ message DeleteUserBankReq {
 message UpdateUserBankStatusReq {
   int64 tenant_id = 1;
   int64 id = 2;
-  user.BankStatus status = 3;
+  common.Enable enabled = 3;
 }
 
 message SetDefaultUserBankReq {

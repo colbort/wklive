@@ -15,23 +15,11 @@ enum SysConfigType {
   PHONE_CONFIG = 7; // 手机短信配置
 }
 
-enum CommonStatus {
-  COMMON_STATUS_UNKNOWN = 0;
-  COMMON_STATUS_ENABLED = 1; // 启用
-  COMMON_STATUS_DISABLED = 2; // 禁用
-}
-
 enum MenuType {
   MENU_TYPE_UNKNOWN = 0;
   MENU_TYPE_DIR = 1; // 目录
   MENU_TYPE_MENU = 2; // 菜单
   MENU_TYPE_BUTTON = 3; // 按钮
-}
-
-enum VisibleStatus {
-  VISIBLE_STATUS_UNKNOWN = 0;
-  VISIBLE_STATUS_VISIBLE = 1; // 显示
-  VISIBLE_STATUS_HIDDEN = 2; // 隐藏
 }
 
 enum RequestMethod {

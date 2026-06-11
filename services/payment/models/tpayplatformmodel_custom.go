@@ -9,10 +9,10 @@ import (
 
 type PayPlatformModel interface {
 	tPayPlatformModel
-	FindPage(ctx context.Context, keyword string, platformCode string, platformType int64, status int64, cursor int64, limit int64) ([]*TPayPlatform, int64, error)
+	FindPage(ctx context.Context, keyword string, platformCode string, platformType int64, enabled int64, cursor int64, limit int64) ([]*TPayPlatform, int64, error)
 }
 
-func (m *defaultTPayPlatformModel) FindPage(ctx context.Context, keyword string, platformCode string, platformType int64, status int64, cursor int64, limit int64) ([]*TPayPlatform, int64, error) {
+func (m *defaultTPayPlatformModel) FindPage(ctx context.Context, keyword string, platformCode string, platformType int64, enabled int64, cursor int64, limit int64) ([]*TPayPlatform, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -21,7 +21,7 @@ func (m *defaultTPayPlatformModel) FindPage(ctx context.Context, keyword string,
 	}
 	builder.EqString("platform_code", platformCode)
 	builder.EqInt64("platform_type", platformType)
-	builder.EqInt64("status", status)
+	builder.EqInt64("enabled", enabled)
 
 	where := builder.Where()
 	args := builder.Args()

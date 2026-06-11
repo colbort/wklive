@@ -46,14 +46,14 @@ type (
 		FlowNo                 string         `db:"flow_no"`                  // 资产流水单号
 		TenantId               int64          `db:"tenant_id"`                // 租户ID
 		UserId                 int64          `db:"user_id"`                  // 用户ID
-		WalletType             int64          `db:"wallet_type"`              // 钱包类型:1现货 2资金 3合约 4理财 5期权
+		WalletType             int64          `db:"wallet_type"`              // 钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权
 		Coin                   string         `db:"coin"`                     // 币种代码,如 USDT/BTC/ETH
 		ChangeType             string         `db:"change_type"`              // 变动类型
 		BizType                string         `db:"biz_type"`                 // 业务类型:payment/trade/staking/option/system/transfer
 		SceneType              string         `db:"scene_type"`               // 业务场景:recharge/withdraw/place_order/cancel_order/trade_match/staking_lock/staking_unlock/manual_adjust
 		BizId                  int64          `db:"biz_id"`                   // 业务ID
 		BizNo                  string         `db:"biz_no"`                   // 业务单号
-		OpType                 int64          `db:"op_type"`                  // 操作方向:1增加 2减少 3冻结 4解冻 5锁定 6解锁 7扣减冻结 8扣减锁定
+		OpType                 int64          `db:"op_type"`                  // 操作方向:1增加 2减少 3冻结 4解冻 5锁定 6解锁 7扣减冻结 8扣减锁定 9划转转入 10划转转出
 		ChangeAmount           float64        `db:"change_amount"`            // 本次变动金额
 		BeforeTotalAmount      float64        `db:"before_total_amount"`      // 变动前总资产
 		AfterTotalAmount       float64        `db:"after_total_amount"`       // 变动后总资产

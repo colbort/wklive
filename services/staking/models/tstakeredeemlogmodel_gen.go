@@ -49,13 +49,13 @@ type (
 		UserId       int64   `db:"user_id"`        // 用户ID
 		ProductId    int64   `db:"product_id"`     // 质押产品ID
 		RedeemNo     string  `db:"redeem_no"`      // 赎回单号
-		RedeemType   int64   `db:"redeem_type"`    // 赎回类型：1到期赎回 2提前赎回 3手动赎回
+		RedeemType   int64   `db:"redeem_type"`    // 赎回类型：1未赎回 2到期赎回 3提前赎回 4手动赎回
 		StakeAmount  float64 `db:"stake_amount"`   // 原始质押数量
 		RedeemAmount float64 `db:"redeem_amount"`  // 实际赎回本金数量
 		RewardAmount float64 `db:"reward_amount"`  // 本次一并发放收益数量
 		FeeRate      float64 `db:"fee_rate"`       // 手续费率
 		FeeAmount    float64 `db:"fee_amount"`     // 手续费数量
-		RedeemStatus int64   `db:"redeem_status"`  // 赎回状态：0失败 1成功 2处理中
+		RedeemStatus int64   `db:"redeem_status"`  // 赎回状态：1失败 2成功 3处理中
 		RedeemTimes  int64   `db:"redeem_times"`   // 赎回时间戳
 		Remark       string  `db:"remark"`         // 备注
 		CreateUserId int64   `db:"create_user_id"` // 创建人ID

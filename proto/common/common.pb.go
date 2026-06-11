@@ -93,6 +93,312 @@ func (ChainCode) EnumDescriptor() ([]byte, []int) {
 	return file_proto_common_common_proto_rawDescGZIP(), []int{0}
 }
 
+// 是否
+type YesNo int32
+
+const (
+	YesNo_YES_NO_UNKNOWN YesNo = 0
+	YesNo_YES_NO_NO      YesNo = 1 // 否
+	YesNo_YES_NO_YES     YesNo = 2 // 是
+)
+
+// Enum value maps for YesNo.
+var (
+	YesNo_name = map[int32]string{
+		0: "YES_NO_UNKNOWN",
+		1: "YES_NO_NO",
+		2: "YES_NO_YES",
+	}
+	YesNo_value = map[string]int32{
+		"YES_NO_UNKNOWN": 0,
+		"YES_NO_NO":      1,
+		"YES_NO_YES":     2,
+	}
+)
+
+func (x YesNo) Enum() *YesNo {
+	p := new(YesNo)
+	*p = x
+	return p
+}
+
+func (x YesNo) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (YesNo) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_common_common_proto_enumTypes[1].Descriptor()
+}
+
+func (YesNo) Type() protoreflect.EnumType {
+	return &file_proto_common_common_proto_enumTypes[1]
+}
+
+func (x YesNo) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use YesNo.Descriptor instead.
+func (YesNo) EnumDescriptor() ([]byte, []int) {
+	return file_proto_common_common_proto_rawDescGZIP(), []int{1}
+}
+
+type Enable int32
+
+const (
+	Enable_ENABLE_UNKNOWN  Enable = 0 // 未知
+	Enable_ENABLE_ENABLED  Enable = 1 // 启用
+	Enable_ENABLE_DISABLED Enable = 2 // 禁用
+)
+
+// Enum value maps for Enable.
+var (
+	Enable_name = map[int32]string{
+		0: "ENABLE_UNKNOWN",
+		1: "ENABLE_ENABLED",
+		2: "ENABLE_DISABLED",
+	}
+	Enable_value = map[string]int32{
+		"ENABLE_UNKNOWN":  0,
+		"ENABLE_ENABLED":  1,
+		"ENABLE_DISABLED": 2,
+	}
+)
+
+func (x Enable) Enum() *Enable {
+	p := new(Enable)
+	*p = x
+	return p
+}
+
+func (x Enable) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Enable) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_common_common_proto_enumTypes[2].Descriptor()
+}
+
+func (Enable) Type() protoreflect.EnumType {
+	return &file_proto_common_common_proto_enumTypes[2]
+}
+
+func (x Enable) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Enable.Descriptor instead.
+func (Enable) EnumDescriptor() ([]byte, []int) {
+	return file_proto_common_common_proto_rawDescGZIP(), []int{2}
+}
+
+// 展示/操作开关
+type Switch int32
+
+const (
+	Switch_SWITCH_UNKNOWN Switch = 0
+	Switch_SWITCH_ON      Switch = 1 // 开启/展示
+	Switch_SWITCH_OFF     Switch = 2 // 关闭/隐藏
+)
+
+// Enum value maps for Switch.
+var (
+	Switch_name = map[int32]string{
+		0: "SWITCH_UNKNOWN",
+		1: "SWITCH_ON",
+		2: "SWITCH_OFF",
+	}
+	Switch_value = map[string]int32{
+		"SWITCH_UNKNOWN": 0,
+		"SWITCH_ON":      1,
+		"SWITCH_OFF":     2,
+	}
+)
+
+func (x Switch) Enum() *Switch {
+	p := new(Switch)
+	*p = x
+	return p
+}
+
+func (x Switch) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Switch) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_common_common_proto_enumTypes[3].Descriptor()
+}
+
+func (Switch) Type() protoreflect.EnumType {
+	return &file_proto_common_common_proto_enumTypes[3]
+}
+
+func (x Switch) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Switch.Descriptor instead.
+func (Switch) EnumDescriptor() ([]byte, []int) {
+	return file_proto_common_common_proto_rawDescGZIP(), []int{3}
+}
+
+type Side int32
+
+const (
+	Side_SIDE_UNKNOWN Side = 0
+	Side_SIDE_BUY     Side = 1
+	Side_SIDE_SELL    Side = 2
+)
+
+// Enum value maps for Side.
+var (
+	Side_name = map[int32]string{
+		0: "SIDE_UNKNOWN",
+		1: "SIDE_BUY",
+		2: "SIDE_SELL",
+	}
+	Side_value = map[string]int32{
+		"SIDE_UNKNOWN": 0,
+		"SIDE_BUY":     1,
+		"SIDE_SELL":    2,
+	}
+)
+
+func (x Side) Enum() *Side {
+	p := new(Side)
+	*p = x
+	return p
+}
+
+func (x Side) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Side) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_common_common_proto_enumTypes[4].Descriptor()
+}
+
+func (Side) Type() protoreflect.EnumType {
+	return &file_proto_common_common_proto_enumTypes[4]
+}
+
+func (x Side) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Side.Descriptor instead.
+func (Side) EnumDescriptor() ([]byte, []int) {
+	return file_proto_common_common_proto_rawDescGZIP(), []int{4}
+}
+
+type PositionSide int32
+
+const (
+	PositionSide_POSITION_SIDE_UNKNOWN PositionSide = 0
+	PositionSide_POSITION_SIDE_LONG    PositionSide = 1 // 多头
+	PositionSide_POSITION_SIDE_SHORT   PositionSide = 2 // 空头
+)
+
+// Enum value maps for PositionSide.
+var (
+	PositionSide_name = map[int32]string{
+		0: "POSITION_SIDE_UNKNOWN",
+		1: "POSITION_SIDE_LONG",
+		2: "POSITION_SIDE_SHORT",
+	}
+	PositionSide_value = map[string]int32{
+		"POSITION_SIDE_UNKNOWN": 0,
+		"POSITION_SIDE_LONG":    1,
+		"POSITION_SIDE_SHORT":   2,
+	}
+)
+
+func (x PositionSide) Enum() *PositionSide {
+	p := new(PositionSide)
+	*p = x
+	return p
+}
+
+func (x PositionSide) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PositionSide) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_common_common_proto_enumTypes[5].Descriptor()
+}
+
+func (PositionSide) Type() protoreflect.EnumType {
+	return &file_proto_common_common_proto_enumTypes[5]
+}
+
+func (x PositionSide) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PositionSide.Descriptor instead.
+func (PositionSide) EnumDescriptor() ([]byte, []int) {
+	return file_proto_common_common_proto_rawDescGZIP(), []int{5}
+}
+
+// 钱包类型
+type WalletType int32
+
+const (
+	WalletType_WALLET_TYPE_UNKNOWN  WalletType = 0
+	WalletType_WALLET_TYPE_SPOT     WalletType = 1 // 现金账户/现货钱包
+	WalletType_WALLET_TYPE_FUNDING  WalletType = 2 // 股票账户/资金钱包
+	WalletType_WALLET_TYPE_CONTRACT WalletType = 3 // 合约账户/合约钱包
+	WalletType_WALLET_TYPE_EARN     WalletType = 4 // 理财钱包
+	WalletType_WALLET_TYPE_OPTION   WalletType = 5 // 期权钱包
+)
+
+// Enum value maps for WalletType.
+var (
+	WalletType_name = map[int32]string{
+		0: "WALLET_TYPE_UNKNOWN",
+		1: "WALLET_TYPE_SPOT",
+		2: "WALLET_TYPE_FUNDING",
+		3: "WALLET_TYPE_CONTRACT",
+		4: "WALLET_TYPE_EARN",
+		5: "WALLET_TYPE_OPTION",
+	}
+	WalletType_value = map[string]int32{
+		"WALLET_TYPE_UNKNOWN":  0,
+		"WALLET_TYPE_SPOT":     1,
+		"WALLET_TYPE_FUNDING":  2,
+		"WALLET_TYPE_CONTRACT": 3,
+		"WALLET_TYPE_EARN":     4,
+		"WALLET_TYPE_OPTION":   5,
+	}
+)
+
+func (x WalletType) Enum() *WalletType {
+	p := new(WalletType)
+	*p = x
+	return p
+}
+
+func (x WalletType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (WalletType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_common_common_proto_enumTypes[6].Descriptor()
+}
+
+func (WalletType) Type() protoreflect.EnumType {
+	return &file_proto_common_common_proto_enumTypes[6]
+}
+
+func (x WalletType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use WalletType.Descriptor instead.
+func (WalletType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_common_common_proto_rawDescGZIP(), []int{6}
+}
+
 type Empty struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -423,7 +729,37 @@ const file_proto_common_common_proto_rawDesc = "" +
 	"\x12CHAIN_CODE_POLYGON\x10\x06\x12\x14\n" +
 	"\x10CHAIN_CODE_TRC20\x10\x14\x12\x14\n" +
 	"\x10CHAIN_CODE_ERC20\x10\x15\x12\x14\n" +
-	"\x10CHAIN_CODE_BEP20\x10\x16B\x1cZ\x1awklive/proto/common;commonb\x06proto3"
+	"\x10CHAIN_CODE_BEP20\x10\x16*:\n" +
+	"\x05YesNo\x12\x12\n" +
+	"\x0eYES_NO_UNKNOWN\x10\x00\x12\r\n" +
+	"\tYES_NO_NO\x10\x01\x12\x0e\n" +
+	"\n" +
+	"YES_NO_YES\x10\x02*E\n" +
+	"\x06Enable\x12\x12\n" +
+	"\x0eENABLE_UNKNOWN\x10\x00\x12\x12\n" +
+	"\x0eENABLE_ENABLED\x10\x01\x12\x13\n" +
+	"\x0fENABLE_DISABLED\x10\x02*;\n" +
+	"\x06Switch\x12\x12\n" +
+	"\x0eSWITCH_UNKNOWN\x10\x00\x12\r\n" +
+	"\tSWITCH_ON\x10\x01\x12\x0e\n" +
+	"\n" +
+	"SWITCH_OFF\x10\x02*5\n" +
+	"\x04Side\x12\x10\n" +
+	"\fSIDE_UNKNOWN\x10\x00\x12\f\n" +
+	"\bSIDE_BUY\x10\x01\x12\r\n" +
+	"\tSIDE_SELL\x10\x02*Z\n" +
+	"\fPositionSide\x12\x19\n" +
+	"\x15POSITION_SIDE_UNKNOWN\x10\x00\x12\x16\n" +
+	"\x12POSITION_SIDE_LONG\x10\x01\x12\x17\n" +
+	"\x13POSITION_SIDE_SHORT\x10\x02*\x9c\x01\n" +
+	"\n" +
+	"WalletType\x12\x17\n" +
+	"\x13WALLET_TYPE_UNKNOWN\x10\x00\x12\x14\n" +
+	"\x10WALLET_TYPE_SPOT\x10\x01\x12\x17\n" +
+	"\x13WALLET_TYPE_FUNDING\x10\x02\x12\x18\n" +
+	"\x14WALLET_TYPE_CONTRACT\x10\x03\x12\x14\n" +
+	"\x10WALLET_TYPE_EARN\x10\x04\x12\x16\n" +
+	"\x12WALLET_TYPE_OPTION\x10\x05B\x1cZ\x1awklive/proto/common;commonb\x06proto3"
 
 var (
 	file_proto_common_common_proto_rawDescOnce sync.Once
@@ -437,15 +773,21 @@ func file_proto_common_common_proto_rawDescGZIP() []byte {
 	return file_proto_common_common_proto_rawDescData
 }
 
-var file_proto_common_common_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_proto_common_common_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
 var file_proto_common_common_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_proto_common_common_proto_goTypes = []any{
 	(ChainCode)(0),    // 0: common.ChainCode
-	(*Empty)(nil),     // 1: common.Empty
-	(*RespBase)(nil),  // 2: common.RespBase
-	(*PageReq)(nil),   // 3: common.PageReq
-	(*TokenInfo)(nil), // 4: common.TokenInfo
-	(*TimeRange)(nil), // 5: common.TimeRange
+	(YesNo)(0),        // 1: common.YesNo
+	(Enable)(0),       // 2: common.Enable
+	(Switch)(0),       // 3: common.Switch
+	(Side)(0),         // 4: common.Side
+	(PositionSide)(0), // 5: common.PositionSide
+	(WalletType)(0),   // 6: common.WalletType
+	(*Empty)(nil),     // 7: common.Empty
+	(*RespBase)(nil),  // 8: common.RespBase
+	(*PageReq)(nil),   // 9: common.PageReq
+	(*TokenInfo)(nil), // 10: common.TokenInfo
+	(*TimeRange)(nil), // 11: common.TimeRange
 }
 var file_proto_common_common_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -465,7 +807,7 @@ func file_proto_common_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_common_common_proto_rawDesc), len(file_proto_common_common_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      7,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,

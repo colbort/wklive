@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/conv"
+	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -129,11 +130,11 @@ func toContractProto(item *models.TOptionContract) *option.OptionContract {
 		ListTime:         item.ListTime,
 		ExpireTime:       item.ExpireTime,
 		DeliverTime:      item.DeliverTime,
-		IsAutoExercise:   option.YesNo(item.IsAutoExercise),
+		IsAutoExercise:   common.YesNo(item.IsAutoExercise),
 		Status:           option.ContractStatus(item.Status),
 		Sort:             item.Sort,
 		Remark:           item.Remark,
-		IsDeleted:        option.YesNo(item.IsDeleted),
+		IsDeleted:        common.YesNo(item.IsDeleted),
 		CreateTimes:      item.CreateTimes,
 		UpdateTimes:      item.UpdateTimes,
 	}
@@ -235,7 +236,7 @@ func toOrderProto(item *models.TOptionOrder) *option.OptionOrder {
 		AccountId:        item.AccountId,
 		ContractId:       item.ContractId,
 		UnderlyingSymbol: item.UnderlyingSymbol,
-		Side:             option.Side(item.Side),
+		Side:             common.Side(item.Side),
 		PositionEffect:   option.PositionEffect(item.PositionEffect),
 		OrderType:        option.OrderType(item.OrderType),
 		Price:            conv.FloatString(item.Price),
@@ -249,8 +250,8 @@ func toOrderProto(item *models.TOptionOrder) *option.OptionOrder {
 		MarginAmount:     conv.FloatString(item.MarginAmount),
 		Source:           option.OrderSource(item.Source),
 		ClientOrderId:    item.ClientOrderId,
-		ReduceOnly:       option.YesNo(item.ReduceOnly),
-		Mmp:              option.YesNo(item.Mmp),
+		ReduceOnly:       common.YesNo(item.ReduceOnly),
+		Mmp:              common.YesNo(item.Mmp),
 		Status:           option.OrderStatus(item.Status),
 		CancelReason:     item.CancelReason,
 		MatchTime:        item.MatchTime,
@@ -284,7 +285,7 @@ func toTradeProto(item *models.TOptionTrade) *option.OptionTrade {
 		BuyFee:           conv.FloatString(item.BuyFee),
 		SellFee:          conv.FloatString(item.SellFee),
 		FeeCoin:          item.FeeCoin,
-		MakerSide:        option.MakerSide(item.MakerSide),
+		MakerSide:        common.Side(item.MakerSide),
 		TradeTime:        item.TradeTime,
 		CreateTimes:      item.CreateTimes,
 	}
@@ -301,7 +302,7 @@ func toPositionProto(item *models.TOptionPosition) *option.OptionPosition {
 		AccountId:         item.AccountId,
 		ContractId:        item.ContractId,
 		UnderlyingSymbol:  item.UnderlyingSymbol,
-		Side:              option.PositionSide(item.Side),
+		Side:              common.PositionSide(item.Side),
 		PositionQty:       conv.FloatString(item.PositionQty),
 		AvailableQty:      conv.FloatString(item.AvailableQty),
 		FrozenQty:         conv.FloatString(item.FrozenQty),
@@ -364,7 +365,7 @@ func toSettlementProto(item *models.TOptionSettlement) *option.OptionSettlement 
 		DeliveryPrice:    conv.FloatString(item.DeliveryPrice),
 		TheoreticalPrice: conv.FloatString(item.TheoreticalPrice),
 		Iv:               conv.FloatString(item.Iv),
-		IsItm:            option.YesNo(item.IsItm),
+		IsItm:            common.YesNo(item.IsItm),
 		ExerciseResult:   option.ExerciseResult(item.ExerciseResult),
 		Status:           option.SettlementStatus(item.Status),
 		Remark:           item.Remark,

@@ -48,7 +48,7 @@ type (
 		ChannelId     sql.NullInt64  `db:"channel_id"`     // 通道ID
 		NotifyStatus  int64          `db:"notify_status"`  // 处理状态：1待处理 2成功 3失败
 		NotifyBody    sql.NullString `db:"notify_body"`    // 回调原文
-		SignResult    int64          `db:"sign_result"`    // 验签结果：0未验 1通过 2失败
+		SignResult    int64          `db:"sign_result"`    // 验签结果：1未验 2通过 3失败
 		ProcessResult sql.NullString `db:"process_result"` // 处理结果
 		ErrorMessage  sql.NullString `db:"error_message"`  // 错误信息
 		NotifyTime    int64          `db:"notify_time"`    // 回调时间

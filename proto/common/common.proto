@@ -46,3 +46,45 @@ enum ChainCode {
   CHAIN_CODE_ERC20 = 21;    // Token on Ethereum
   CHAIN_CODE_BEP20 = 22;    // Token on BSC
 }
+
+// 是否
+enum YesNo {
+  YES_NO_UNKNOWN = 0;
+  YES_NO_NO = 1; // 否
+  YES_NO_YES = 2; // 是
+}
+
+enum Enable {
+  ENABLE_UNKNOWN = 0; // 未知
+  ENABLE_ENABLED = 1; // 启用
+  ENABLE_DISABLED = 2; // 禁用
+}
+
+// 展示/操作开关
+enum Switch {
+  SWITCH_UNKNOWN = 0;
+  SWITCH_ON = 1; // 开启/展示
+  SWITCH_OFF = 2; // 关闭/隐藏
+}
+
+enum Side {
+  SIDE_UNKNOWN = 0;
+  SIDE_BUY = 1;
+  SIDE_SELL = 2;
+}
+
+enum PositionSide {
+  POSITION_SIDE_UNKNOWN = 0;
+  POSITION_SIDE_LONG = 1; // 多头
+  POSITION_SIDE_SHORT = 2; // 空头
+}
+
+// 钱包类型
+enum WalletType {
+  WALLET_TYPE_UNKNOWN = 0;
+  WALLET_TYPE_SPOT = 1; // 现金账户/现货钱包
+  WALLET_TYPE_FUNDING = 2; // 股票账户/资金钱包
+  WALLET_TYPE_CONTRACT = 3; // 合约账户/合约钱包
+  WALLET_TYPE_EARN = 4; // 理财钱包
+  WALLET_TYPE_OPTION = 5; // 期权钱包
+}

@@ -86,7 +86,7 @@ type CreateContractReq struct {
 	ListTime         int64                  `protobuf:"varint,16,opt,name=list_time,json=listTime,proto3" json:"list_time,omitempty"`
 	ExpireTime       int64                  `protobuf:"varint,17,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
 	DeliverTime      int64                  `protobuf:"varint,18,opt,name=deliver_time,json=deliverTime,proto3" json:"deliver_time,omitempty"`
-	IsAutoExercise   YesNo                  `protobuf:"varint,19,opt,name=is_auto_exercise,json=isAutoExercise,proto3,enum=option.YesNo" json:"is_auto_exercise,omitempty"`
+	IsAutoExercise   common.YesNo           `protobuf:"varint,19,opt,name=is_auto_exercise,json=isAutoExercise,proto3,enum=common.YesNo" json:"is_auto_exercise,omitempty"` // 是否自动行权
 	Status           ContractStatus         `protobuf:"varint,20,opt,name=status,proto3,enum=option.ContractStatus" json:"status,omitempty"`
 	Sort             int64                  `protobuf:"varint,21,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -250,11 +250,11 @@ func (x *CreateContractReq) GetDeliverTime() int64 {
 	return 0
 }
 
-func (x *CreateContractReq) GetIsAutoExercise() YesNo {
+func (x *CreateContractReq) GetIsAutoExercise() common.YesNo {
 	if x != nil {
 		return x.IsAutoExercise
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
 func (x *CreateContractReq) GetStatus() ContractStatus {
@@ -351,11 +351,11 @@ type UpdateContractReq struct {
 	ListTime         int64                  `protobuf:"varint,17,opt,name=list_time,json=listTime,proto3" json:"list_time,omitempty"`
 	ExpireTime       int64                  `protobuf:"varint,18,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
 	DeliverTime      int64                  `protobuf:"varint,19,opt,name=deliver_time,json=deliverTime,proto3" json:"deliver_time,omitempty"`
-	IsAutoExercise   YesNo                  `protobuf:"varint,20,opt,name=is_auto_exercise,json=isAutoExercise,proto3,enum=option.YesNo" json:"is_auto_exercise,omitempty"`
+	IsAutoExercise   common.YesNo           `protobuf:"varint,20,opt,name=is_auto_exercise,json=isAutoExercise,proto3,enum=common.YesNo" json:"is_auto_exercise,omitempty"` // 是否自动行权
 	Status           ContractStatus         `protobuf:"varint,21,opt,name=status,proto3,enum=option.ContractStatus" json:"status,omitempty"`
 	Sort             int64                  `protobuf:"varint,22,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,23,opt,name=remark,proto3" json:"remark,omitempty"`
-	IsDeleted        YesNo                  `protobuf:"varint,24,opt,name=is_deleted,json=isDeleted,proto3,enum=option.YesNo" json:"is_deleted,omitempty"`
+	IsDeleted        common.YesNo           `protobuf:"varint,24,opt,name=is_deleted,json=isDeleted,proto3,enum=common.YesNo" json:"is_deleted,omitempty"` // 是否删除
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -523,11 +523,11 @@ func (x *UpdateContractReq) GetDeliverTime() int64 {
 	return 0
 }
 
-func (x *UpdateContractReq) GetIsAutoExercise() YesNo {
+func (x *UpdateContractReq) GetIsAutoExercise() common.YesNo {
 	if x != nil {
 		return x.IsAutoExercise
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
 func (x *UpdateContractReq) GetStatus() ContractStatus {
@@ -551,11 +551,11 @@ func (x *UpdateContractReq) GetRemark() string {
 	return ""
 }
 
-func (x *UpdateContractReq) GetIsDeleted() YesNo {
+func (x *UpdateContractReq) GetIsDeleted() common.YesNo {
 	if x != nil {
 		return x.IsDeleted
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
 type GetContractReq struct {
@@ -1354,7 +1354,7 @@ type ListOrdersReq struct {
 	ContractId       int64                  `protobuf:"varint,4,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	UnderlyingSymbol string                 `protobuf:"bytes,5,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
 	OrderNo          string                 `protobuf:"bytes,6,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Side             Side                   `protobuf:"varint,7,opt,name=side,proto3,enum=option.Side" json:"side,omitempty"`
+	Side             common.Side            `protobuf:"varint,7,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionEffect   PositionEffect         `protobuf:"varint,8,opt,name=position_effect,json=positionEffect,proto3,enum=option.PositionEffect" json:"position_effect,omitempty"`
 	OrderType        OrderType              `protobuf:"varint,9,opt,name=order_type,json=orderType,proto3,enum=option.OrderType" json:"order_type,omitempty"`
 	Status           OrderStatus            `protobuf:"varint,10,opt,name=status,proto3,enum=option.OrderStatus" json:"status,omitempty"`
@@ -1436,11 +1436,11 @@ func (x *ListOrdersReq) GetOrderNo() string {
 	return ""
 }
 
-func (x *ListOrdersReq) GetSide() Side {
+func (x *ListOrdersReq) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
-	return Side_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *ListOrdersReq) GetPositionEffect() PositionEffect {
@@ -1888,7 +1888,7 @@ type ListPositionsReq struct {
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId    int64                  `protobuf:"varint,4,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
-	Side          PositionSide           `protobuf:"varint,5,opt,name=side,proto3,enum=option.PositionSide" json:"side,omitempty"`
+	Side          common.PositionSide    `protobuf:"varint,5,opt,name=side,proto3,enum=common.PositionSide" json:"side,omitempty"` // 持仓方向
 	Status        PositionStatus         `protobuf:"varint,6,opt,name=status,proto3,enum=option.PositionStatus" json:"status,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,7,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1953,11 +1953,11 @@ func (x *ListPositionsReq) GetContractId() int64 {
 	return 0
 }
 
-func (x *ListPositionsReq) GetSide() PositionSide {
+func (x *ListPositionsReq) GetSide() common.PositionSide {
 	if x != nil {
 		return x.Side
 	}
-	return PositionSide_POSITION_SIDE_UNKNOWN
+	return common.PositionSide(0)
 }
 
 func (x *ListPositionsReq) GetStatus() PositionStatus {
@@ -3060,7 +3060,7 @@ const file_proto_option_option_admin_proto_rawDesc = "" +
 	"\vexpire_time\x18\x11 \x01(\x03R\n" +
 	"expireTime\x12!\n" +
 	"\fdeliver_time\x18\x12 \x01(\x03R\vdeliverTime\x127\n" +
-	"\x10is_auto_exercise\x18\x13 \x01(\x0e2\r.option.YesNoR\x0eisAutoExercise\x12.\n" +
+	"\x10is_auto_exercise\x18\x13 \x01(\x0e2\r.common.YesNoR\x0eisAutoExercise\x12.\n" +
 	"\x06status\x18\x14 \x01(\x0e2\x16.option.ContractStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x15 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x16 \x01(\tR\x06remark\"J\n" +
@@ -3095,12 +3095,12 @@ const file_proto_option_option_admin_proto_rawDesc = "" +
 	"\vexpire_time\x18\x12 \x01(\x03R\n" +
 	"expireTime\x12!\n" +
 	"\fdeliver_time\x18\x13 \x01(\x03R\vdeliverTime\x127\n" +
-	"\x10is_auto_exercise\x18\x14 \x01(\x0e2\r.option.YesNoR\x0eisAutoExercise\x12.\n" +
+	"\x10is_auto_exercise\x18\x14 \x01(\x0e2\r.common.YesNoR\x0eisAutoExercise\x12.\n" +
 	"\x06status\x18\x15 \x01(\x0e2\x16.option.ContractStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x16 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x17 \x01(\tR\x06remark\x12,\n" +
 	"\n" +
-	"is_deleted\x18\x18 \x01(\x0e2\r.option.YesNoR\tisDeleted\"b\n" +
+	"is_deleted\x18\x18 \x01(\x0e2\r.common.YesNoR\tisDeleted\"b\n" +
 	"\x0eGetContractReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12#\n" +
@@ -3179,7 +3179,7 @@ const file_proto_option_option_admin_proto_rawDesc = "" +
 	"contractId\x12+\n" +
 	"\x11underlying_symbol\x18\x05 \x01(\tR\x10underlyingSymbol\x12\x19\n" +
 	"\border_no\x18\x06 \x01(\tR\aorderNo\x12 \n" +
-	"\x04side\x18\a \x01(\x0e2\f.option.SideR\x04side\x12?\n" +
+	"\x04side\x18\a \x01(\x0e2\f.common.SideR\x04side\x12?\n" +
 	"\x0fposition_effect\x18\b \x01(\x0e2\x16.option.PositionEffectR\x0epositionEffect\x120\n" +
 	"\n" +
 	"order_type\x18\t \x01(\x0e2\x11.option.OrderTypeR\torderType\x12+\n" +
@@ -3221,7 +3221,7 @@ const file_proto_option_option_admin_proto_rawDesc = "" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x04 \x01(\x03R\n" +
 	"contractId\x12(\n" +
-	"\x04side\x18\x05 \x01(\x0e2\x14.option.PositionSideR\x04side\x12.\n" +
+	"\x04side\x18\x05 \x01(\x0e2\x14.common.PositionSideR\x04side\x12.\n" +
 	"\x06status\x18\x06 \x01(\x0e2\x16.option.PositionStatusR\x06status\x12#\n" +
 	"\x04page\x18\a \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
 	"\x11ListPositionsResp\x12$\n" +
@@ -3387,7 +3387,7 @@ var file_proto_option_option_admin_proto_goTypes = []any{
 	(OptionType)(0),                 // 42: option.OptionType
 	(ExerciseStyle)(0),              // 43: option.ExerciseStyle
 	(SettlementType)(0),             // 44: option.SettlementType
-	(YesNo)(0),                      // 45: option.YesNo
+	(common.YesNo)(0),               // 45: common.YesNo
 	(ContractStatus)(0),             // 46: option.ContractStatus
 	(*OptionContractDetail)(nil),    // 47: option.OptionContractDetail
 	(*common.TimeRange)(nil),        // 48: common.TimeRange
@@ -3395,13 +3395,13 @@ var file_proto_option_option_admin_proto_goTypes = []any{
 	(*OptionMarket)(nil),            // 50: option.OptionMarket
 	(*OptionMarketSnapshot)(nil),    // 51: option.OptionMarketSnapshot
 	(*OptionOrderDetail)(nil),       // 52: option.OptionOrderDetail
-	(Side)(0),                       // 53: option.Side
+	(common.Side)(0),                // 53: common.Side
 	(PositionEffect)(0),             // 54: option.PositionEffect
 	(OrderType)(0),                  // 55: option.OrderType
 	(OrderStatus)(0),                // 56: option.OrderStatus
 	(*OptionTradeDetail)(nil),       // 57: option.OptionTradeDetail
 	(*OptionPositionDetail)(nil),    // 58: option.OptionPositionDetail
-	(PositionSide)(0),               // 59: option.PositionSide
+	(common.PositionSide)(0),        // 59: common.PositionSide
 	(PositionStatus)(0),             // 60: option.PositionStatus
 	(*OptionExerciseDetail)(nil),    // 61: option.OptionExerciseDetail
 	(ExerciseType)(0),               // 62: option.ExerciseType
@@ -3418,15 +3418,15 @@ var file_proto_option_option_admin_proto_depIdxs = []int32{
 	42,  // 1: option.CreateContractReq.option_type:type_name -> option.OptionType
 	43,  // 2: option.CreateContractReq.exercise_style:type_name -> option.ExerciseStyle
 	44,  // 3: option.CreateContractReq.settlement_type:type_name -> option.SettlementType
-	45,  // 4: option.CreateContractReq.is_auto_exercise:type_name -> option.YesNo
+	45,  // 4: option.CreateContractReq.is_auto_exercise:type_name -> common.YesNo
 	46,  // 5: option.CreateContractReq.status:type_name -> option.ContractStatus
 	41,  // 6: option.CreateContractResp.base:type_name -> common.RespBase
 	42,  // 7: option.UpdateContractReq.option_type:type_name -> option.OptionType
 	43,  // 8: option.UpdateContractReq.exercise_style:type_name -> option.ExerciseStyle
 	44,  // 9: option.UpdateContractReq.settlement_type:type_name -> option.SettlementType
-	45,  // 10: option.UpdateContractReq.is_auto_exercise:type_name -> option.YesNo
+	45,  // 10: option.UpdateContractReq.is_auto_exercise:type_name -> common.YesNo
 	46,  // 11: option.UpdateContractReq.status:type_name -> option.ContractStatus
-	45,  // 12: option.UpdateContractReq.is_deleted:type_name -> option.YesNo
+	45,  // 12: option.UpdateContractReq.is_deleted:type_name -> common.YesNo
 	41,  // 13: option.GetContractResp.base:type_name -> common.RespBase
 	47,  // 14: option.GetContractResp.data:type_name -> option.OptionContractDetail
 	42,  // 15: option.ListContractsReq.option_type:type_name -> option.OptionType
@@ -3444,7 +3444,7 @@ var file_proto_option_option_admin_proto_depIdxs = []int32{
 	51,  // 27: option.ListMarketSnapshotsResp.data:type_name -> option.OptionMarketSnapshot
 	41,  // 28: option.GetOrderResp.base:type_name -> common.RespBase
 	52,  // 29: option.GetOrderResp.data:type_name -> option.OptionOrderDetail
-	53,  // 30: option.ListOrdersReq.side:type_name -> option.Side
+	53,  // 30: option.ListOrdersReq.side:type_name -> common.Side
 	54,  // 31: option.ListOrdersReq.position_effect:type_name -> option.PositionEffect
 	55,  // 32: option.ListOrdersReq.order_type:type_name -> option.OrderType
 	56,  // 33: option.ListOrdersReq.status:type_name -> option.OrderStatus
@@ -3460,7 +3460,7 @@ var file_proto_option_option_admin_proto_depIdxs = []int32{
 	57,  // 43: option.ListTradesResp.data:type_name -> option.OptionTradeDetail
 	41,  // 44: option.GetPositionResp.base:type_name -> common.RespBase
 	58,  // 45: option.GetPositionResp.data:type_name -> option.OptionPositionDetail
-	59,  // 46: option.ListPositionsReq.side:type_name -> option.PositionSide
+	59,  // 46: option.ListPositionsReq.side:type_name -> common.PositionSide
 	60,  // 47: option.ListPositionsReq.status:type_name -> option.PositionStatus
 	49,  // 48: option.ListPositionsReq.page:type_name -> common.PageReq
 	41,  // 49: option.ListPositionsResp.base:type_name -> common.RespBase

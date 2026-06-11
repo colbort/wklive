@@ -68,10 +68,10 @@ func (l *ListTenantCategoriesLogic) ListTenantCategories(in *itick.ListTenantCat
 		if in.CategoryType > 0 && int64(in.CategoryType) != category.CategoryType {
 			continue
 		}
-		if !statusMatches(in.Status, item.Enabled) {
+		if !statusMatches(int32(in.Enabled), item.Enabled) {
 			continue
 		}
-		if !statusMatches(in.VisibleStatus, item.AppVisible) {
+		if !statusMatches(int32(in.VisibleStatus), item.AppVisible) {
 			continue
 		}
 

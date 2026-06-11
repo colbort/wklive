@@ -58,7 +58,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 			Base: helper.GetErrResp(tenant.Base.Code, tenant.Base.Msg),
 		}, nil
 	}
-	if tenant.Data.Status != 1 {
+	if tenant.Data.Enabled != 1 {
 		return &user.RegisterResp{
 			Base: helper.GetErrResp(i18n.TenantDisabled, i18n.Translate(i18n.TenantDisabled, l.ctx)),
 		}, nil

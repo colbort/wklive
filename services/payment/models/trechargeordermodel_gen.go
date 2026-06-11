@@ -54,7 +54,7 @@ type (
 		AccountId    int64          `db:"account_id"`     // 账号ID
 		ChannelId    int64          `db:"channel_id"`     // 通道ID
 		RechargeType int64          `db:"recharge_type"`  // 充值类型：0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他
-		WalletType   int64          `db:"wallet_type"`    // 钱包类型:1现货 2资金 3合约 4理财 5期权
+		WalletType   int64          `db:"wallet_type"`    // 钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权
 		Currency     string         `db:"currency"`       // 币种
 		OrderAmount  int64          `db:"order_amount"`   // 订单金额，单位分
 		PayAmount    int64          `db:"pay_amount"`     // 实际支付金额，单位分
@@ -68,7 +68,7 @@ type (
 		ThirdOrderNo sql.NullString `db:"third_order_no"` // 三方订单号
 		PayUrl       sql.NullString `db:"pay_url"`        // 支付链接
 		QrContent    sql.NullString `db:"qr_content"`     // 二维码内容
-		VoucherImage sql.NullString `db:"voucher_image"`  // 充值凭证图片
+		VoucherImage string         `db:"voucher_image"`  // 充值凭证图片
 		RequestData  sql.NullString `db:"request_data"`   // 请求快照
 		ResponseData sql.NullString `db:"response_data"`  // 响应快照
 		NotifyData   sql.NullString `db:"notify_data"`    // 回调数据

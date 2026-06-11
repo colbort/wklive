@@ -26,7 +26,7 @@ func NewListPayPlatformsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 平台列表
 func (l *ListPayPlatformsLogic) ListPayPlatforms(in *payment.ListPayPlatformsReq) (*payment.ListPayPlatformsResp, error) {
-	items, total, err := l.svcCtx.PayPlatformModel.FindPage(l.ctx, in.Keyword, in.PlatformCode, int64(in.PlatformType), int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.PayPlatformModel.FindPage(l.ctx, in.Keyword, in.PlatformCode, int64(in.PlatformType), int64(in.Enabled), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

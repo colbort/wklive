@@ -26,7 +26,7 @@ type AddAvailableReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`
+	WalletType    common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
 	Amount        string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`
 	BizType       BizType                `protobuf:"varint,6,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`
@@ -82,11 +82,11 @@ func (x *AddAvailableReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *AddAvailableReq) GetWalletType() WalletType {
+func (x *AddAvailableReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *AddAvailableReq) GetCoin() string {
@@ -142,7 +142,7 @@ type SubAvailableReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`
+	WalletType    common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
 	Amount        string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`
 	BizType       BizType                `protobuf:"varint,6,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`
@@ -198,11 +198,11 @@ func (x *SubAvailableReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *SubAvailableReq) GetWalletType() WalletType {
+func (x *SubAvailableReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *SubAvailableReq) GetCoin() string {
@@ -258,7 +258,7 @@ type FreezeAssetReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`
+	WalletType    common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
 	Amount        string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`
 	BizType       BizType                `protobuf:"varint,6,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`
@@ -315,11 +315,11 @@ func (x *FreezeAssetReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *FreezeAssetReq) GetWalletType() WalletType {
+func (x *FreezeAssetReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *FreezeAssetReq) GetCoin() string {
@@ -902,7 +902,7 @@ type LockAssetReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`
+	WalletType    common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
 	Amount        string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`
 	BizType       BizType                `protobuf:"varint,6,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`
@@ -960,11 +960,11 @@ func (x *LockAssetReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *LockAssetReq) GetWalletType() WalletType {
+func (x *LockAssetReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *LockAssetReq) GetCoin() string {
@@ -1554,8 +1554,8 @@ type TransferAssetReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	FromWalletType WalletType             `protobuf:"varint,3,opt,name=from_wallet_type,json=fromWalletType,proto3,enum=asset.WalletType" json:"from_wallet_type,omitempty"`
-	ToWalletType   WalletType             `protobuf:"varint,4,opt,name=to_wallet_type,json=toWalletType,proto3,enum=asset.WalletType" json:"to_wallet_type,omitempty"`
+	FromWalletType common.WalletType      `protobuf:"varint,3,opt,name=from_wallet_type,json=fromWalletType,proto3,enum=common.WalletType" json:"from_wallet_type,omitempty"`
+	ToWalletType   common.WalletType      `protobuf:"varint,4,opt,name=to_wallet_type,json=toWalletType,proto3,enum=common.WalletType" json:"to_wallet_type,omitempty"`
 	Coin           string                 `protobuf:"bytes,5,opt,name=coin,proto3" json:"coin,omitempty"`
 	Amount         string                 `protobuf:"bytes,6,opt,name=amount,proto3" json:"amount,omitempty"`
 	BizType        BizType                `protobuf:"varint,7,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`
@@ -1611,18 +1611,18 @@ func (x *TransferAssetReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *TransferAssetReq) GetFromWalletType() WalletType {
+func (x *TransferAssetReq) GetFromWalletType() common.WalletType {
 	if x != nil {
 		return x.FromWalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
-func (x *TransferAssetReq) GetToWalletType() WalletType {
+func (x *TransferAssetReq) GetToWalletType() common.WalletType {
 	if x != nil {
 		return x.ToWalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *TransferAssetReq) GetCoin() string {
@@ -1886,11 +1886,11 @@ var File_proto_asset_asset_internal_proto protoreflect.FileDescriptor
 
 const file_proto_asset_asset_internal_proto_rawDesc = "" +
 	"\n" +
-	" proto/asset/asset_internal.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\"\xc9\x02\n" +
+	" proto/asset/asset_internal.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\"\xca\x02\n" +
 	"\x0fAddAvailableReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
 	"\x06amount\x18\x05 \x01(\tR\x06amount\x12)\n" +
@@ -1900,11 +1900,11 @@ const file_proto_asset_asset_internal_proto_rawDesc = "" +
 	"\x06biz_id\x18\b \x01(\x03R\x05bizId\x12\x15\n" +
 	"\x06biz_no\x18\t \x01(\tR\x05bizNo\x12\x16\n" +
 	"\x06remark\x18\n" +
-	" \x01(\tR\x06remark\"\xc9\x02\n" +
+	" \x01(\tR\x06remark\"\xca\x02\n" +
 	"\x0fSubAvailableReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
 	"\x06amount\x18\x05 \x01(\tR\x06amount\x12)\n" +
@@ -1914,11 +1914,11 @@ const file_proto_asset_asset_internal_proto_rawDesc = "" +
 	"\x06biz_id\x18\b \x01(\x03R\x05bizId\x12\x15\n" +
 	"\x06biz_no\x18\t \x01(\tR\x05bizNo\x12\x16\n" +
 	"\x06remark\x18\n" +
-	" \x01(\tR\x06remark\"\xe9\x02\n" +
+	" \x01(\tR\x06remark\"\xea\x02\n" +
 	"\x0eFreezeAssetReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
 	"\x06amount\x18\x05 \x01(\tR\x06amount\x12)\n" +
@@ -1978,11 +1978,11 @@ const file_proto_asset_asset_internal_proto_rawDesc = "" +
 	"scene_type\x18\x06 \x01(\x0e2\x10.asset.SceneTypeR\tsceneType\x12\x15\n" +
 	"\x06biz_id\x18\a \x01(\x03R\x05bizId\x12\x15\n" +
 	"\x06biz_no\x18\b \x01(\tR\x05bizNo\x12\x16\n" +
-	"\x06remark\x18\t \x01(\tR\x06remark\"\x80\x03\n" +
+	"\x06remark\x18\t \x01(\tR\x06remark\"\x81\x03\n" +
 	"\fLockAssetReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
 	"\x06amount\x18\x05 \x01(\tR\x06amount\x12)\n" +
@@ -2043,12 +2043,12 @@ const file_proto_asset_asset_internal_proto_rawDesc = "" +
 	"scene_type\x18\x06 \x01(\x0e2\x10.asset.SceneTypeR\tsceneType\x12\x15\n" +
 	"\x06biz_id\x18\a \x01(\x03R\x05bizId\x12\x15\n" +
 	"\x06biz_no\x18\b \x01(\tR\x05bizNo\x12\x16\n" +
-	"\x06remark\x18\t \x01(\tR\x06remark\"\x8c\x03\n" +
+	"\x06remark\x18\t \x01(\tR\x06remark\"\x8e\x03\n" +
 	"\x10TransferAssetReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12;\n" +
-	"\x10from_wallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\x0efromWalletType\x127\n" +
-	"\x0eto_wallet_type\x18\x04 \x01(\x0e2\x11.asset.WalletTypeR\ftoWalletType\x12\x12\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12<\n" +
+	"\x10from_wallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\x0efromWalletType\x128\n" +
+	"\x0eto_wallet_type\x18\x04 \x01(\x0e2\x12.common.WalletTypeR\ftoWalletType\x12\x12\n" +
 	"\x04coin\x18\x05 \x01(\tR\x04coin\x12\x16\n" +
 	"\x06amount\x18\x06 \x01(\tR\x06amount\x12)\n" +
 	"\bbiz_type\x18\a \x01(\x0e2\x0e.asset.BizTypeR\abizType\x12/\n" +
@@ -2121,20 +2121,20 @@ var file_proto_asset_asset_internal_proto_goTypes = []any{
 	(*TransferAssetData)(nil),           // 18: asset.TransferAssetData
 	(*ChangeAssetResp)(nil),             // 19: asset.ChangeAssetResp
 	(*ChangeAssetData)(nil),             // 20: asset.ChangeAssetData
-	(WalletType)(0),                     // 21: asset.WalletType
+	(common.WalletType)(0),              // 21: common.WalletType
 	(BizType)(0),                        // 22: asset.BizType
 	(SceneType)(0),                      // 23: asset.SceneType
 	(*common.RespBase)(nil),             // 24: common.RespBase
 	(*UserAsset)(nil),                   // 25: asset.UserAsset
 }
 var file_proto_asset_asset_internal_proto_depIdxs = []int32{
-	21, // 0: asset.AddAvailableReq.wallet_type:type_name -> asset.WalletType
+	21, // 0: asset.AddAvailableReq.wallet_type:type_name -> common.WalletType
 	22, // 1: asset.AddAvailableReq.biz_type:type_name -> asset.BizType
 	23, // 2: asset.AddAvailableReq.scene_type:type_name -> asset.SceneType
-	21, // 3: asset.SubAvailableReq.wallet_type:type_name -> asset.WalletType
+	21, // 3: asset.SubAvailableReq.wallet_type:type_name -> common.WalletType
 	22, // 4: asset.SubAvailableReq.biz_type:type_name -> asset.BizType
 	23, // 5: asset.SubAvailableReq.scene_type:type_name -> asset.SceneType
-	21, // 6: asset.FreezeAssetReq.wallet_type:type_name -> asset.WalletType
+	21, // 6: asset.FreezeAssetReq.wallet_type:type_name -> common.WalletType
 	22, // 7: asset.FreezeAssetReq.biz_type:type_name -> asset.BizType
 	23, // 8: asset.FreezeAssetReq.scene_type:type_name -> asset.SceneType
 	24, // 9: asset.FreezeAssetResp.base:type_name -> common.RespBase
@@ -2150,7 +2150,7 @@ var file_proto_asset_asset_internal_proto_depIdxs = []int32{
 	22, // 19: asset.DeductFrozenAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
 	22, // 20: asset.DeductFrozenAssetByBizNoReq.biz_type:type_name -> asset.BizType
 	23, // 21: asset.DeductFrozenAssetByBizNoReq.scene_type:type_name -> asset.SceneType
-	21, // 22: asset.LockAssetReq.wallet_type:type_name -> asset.WalletType
+	21, // 22: asset.LockAssetReq.wallet_type:type_name -> common.WalletType
 	22, // 23: asset.LockAssetReq.biz_type:type_name -> asset.BizType
 	23, // 24: asset.LockAssetReq.scene_type:type_name -> asset.SceneType
 	24, // 25: asset.LockAssetResp.base:type_name -> common.RespBase
@@ -2166,8 +2166,8 @@ var file_proto_asset_asset_internal_proto_depIdxs = []int32{
 	22, // 35: asset.DeductLockedAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
 	22, // 36: asset.DeductLockedAssetByBizNoReq.biz_type:type_name -> asset.BizType
 	23, // 37: asset.DeductLockedAssetByBizNoReq.scene_type:type_name -> asset.SceneType
-	21, // 38: asset.TransferAssetReq.from_wallet_type:type_name -> asset.WalletType
-	21, // 39: asset.TransferAssetReq.to_wallet_type:type_name -> asset.WalletType
+	21, // 38: asset.TransferAssetReq.from_wallet_type:type_name -> common.WalletType
+	21, // 39: asset.TransferAssetReq.to_wallet_type:type_name -> common.WalletType
 	22, // 40: asset.TransferAssetReq.biz_type:type_name -> asset.BizType
 	23, // 41: asset.TransferAssetReq.scene_type:type_name -> asset.SceneType
 	24, // 42: asset.TransferAssetResp.base:type_name -> common.RespBase

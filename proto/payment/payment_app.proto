@@ -49,7 +49,7 @@ message CreateRechargeOrderResp {
 
 // 创建链上充值订单
 message CreateCryptoRechargeOrderReq {
-  int64 wallet_type = 1;
+  common.WalletType wallet_type = 1;
   string coin = 2;
   common.ChainCode chain_code = 3;
   int64 recharge_amount = 4; // 单位：分
@@ -144,7 +144,7 @@ message GetMyWithdrawOrderResp {
 
 // 获取/分配我的链上充值地址
 message GetMyCryptoRechargeAddressReq {
-  int64 wallet_type = 1;
+  common.WalletType wallet_type = 1;
   string coin = 2;
   common.ChainCode chain_code = 3;
 }
@@ -156,7 +156,7 @@ message GetMyCryptoRechargeAddressResp {
 
 // 我的链上充值地址列表
 message ListMyCryptoRechargeAddressesReq {
-  int64 wallet_type = 1;
+  common.WalletType wallet_type = 1;
   string coin = 2;
   common.ChainCode chain_code = 3;
 }

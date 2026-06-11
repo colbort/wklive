@@ -52,7 +52,7 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 	}
 	clientIP, _ := utils.GetClientIPFromMd(l.ctx)
 
-	addressItem, err := l.svcCtx.CryptoRechargeAddressModel.FindOneByTenantIdUserIdWalletTypeCoinChainCode(l.ctx, tenantId, userId, in.WalletType, in.Coin, int64(in.ChainCode))
+	addressItem, err := l.svcCtx.CryptoRechargeAddressModel.FindOneByTenantIdUserIdWalletTypeCoinChainCode(l.ctx, tenantId, userId, int64(in.WalletType), in.Coin, int64(in.ChainCode))
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			return &payment.CreateCryptoRechargeOrderResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressExpired, i18n.Translate(i18n.CryptoRechargeAddressExpired, l.ctx))}, nil
@@ -88,7 +88,7 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 		OrderNo:      orderNo,
 		BizOrderNo:   sql.NullString{String: in.BizOrderNo, Valid: in.BizOrderNo != ""},
 		RechargeType: int64(payment.RechargeType_RECHARGE_TYPE_CRYPTO),
-		WalletType:   in.WalletType,
+		WalletType:   int64(in.WalletType),
 		Currency:     in.Coin,
 		OrderAmount:  in.RechargeAmount,
 		PayAmount:    in.RechargeAmount,

@@ -26,20 +26,20 @@ const (
 // 用户资产
 type UserAsset struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                         // 主键ID
-	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                             // 租户ID
-	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                   // 用户ID
-	WalletType      WalletType             `protobuf:"varint,4,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
-	Coin            string                 `protobuf:"bytes,5,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
-	TotalAmount     string                 `protobuf:"bytes,6,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`                     // 总资产
-	AvailableAmount string                 `protobuf:"bytes,7,opt,name=available_amount,json=availableAmount,proto3" json:"available_amount,omitempty"`         // 可用资产
-	FrozenAmount    string                 `protobuf:"bytes,8,opt,name=frozen_amount,json=frozenAmount,proto3" json:"frozen_amount,omitempty"`                  // 冻结资产
-	LockedAmount    string                 `protobuf:"bytes,9,opt,name=locked_amount,json=lockedAmount,proto3" json:"locked_amount,omitempty"`                  // 锁定资产
-	Status          AssetStatus            `protobuf:"varint,10,opt,name=status,proto3,enum=asset.AssetStatus" json:"status,omitempty"`                         // 状态
-	Version         int64                  `protobuf:"varint,11,opt,name=version,proto3" json:"version,omitempty"`                                              // 乐观锁版本号
-	Remark          string                 `protobuf:"bytes,12,opt,name=remark,proto3" json:"remark,omitempty"`                                                 // 备注
-	CreateTimes     int64                  `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                   // 创建时间戳(毫秒)
-	UpdateTimes     int64                  `protobuf:"varint,14,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                   // 更新时间戳(毫秒)
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                          // 主键ID
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                              // 租户ID
+	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                    // 用户ID
+	WalletType      common.WalletType      `protobuf:"varint,4,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型
+	Coin            string                 `protobuf:"bytes,5,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
+	TotalAmount     string                 `protobuf:"bytes,6,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`                      // 总资产
+	AvailableAmount string                 `protobuf:"bytes,7,opt,name=available_amount,json=availableAmount,proto3" json:"available_amount,omitempty"`          // 可用资产
+	FrozenAmount    string                 `protobuf:"bytes,8,opt,name=frozen_amount,json=frozenAmount,proto3" json:"frozen_amount,omitempty"`                   // 冻结资产
+	LockedAmount    string                 `protobuf:"bytes,9,opt,name=locked_amount,json=lockedAmount,proto3" json:"locked_amount,omitempty"`                   // 锁定资产
+	Enabled         common.Enable          `protobuf:"varint,10,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                            // 状态 0表示全部，1表示启用，2表示禁用
+	Version         int64                  `protobuf:"varint,11,opt,name=version,proto3" json:"version,omitempty"`                                               // 乐观锁版本号
+	Remark          string                 `protobuf:"bytes,12,opt,name=remark,proto3" json:"remark,omitempty"`                                                  // 备注
+	CreateTimes     int64                  `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                    // 创建时间戳(毫秒)
+	UpdateTimes     int64                  `protobuf:"varint,14,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                    // 更新时间戳(毫秒)
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -95,11 +95,11 @@ func (x *UserAsset) GetUserId() int64 {
 	return 0
 }
 
-func (x *UserAsset) GetWalletType() WalletType {
+func (x *UserAsset) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *UserAsset) GetCoin() string {
@@ -137,11 +137,11 @@ func (x *UserAsset) GetLockedAmount() string {
 	return ""
 }
 
-func (x *UserAsset) GetStatus() AssetStatus {
+func (x *UserAsset) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return AssetStatus_ASSET_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *UserAsset) GetVersion() int64 {
@@ -175,27 +175,27 @@ func (x *UserAsset) GetUpdateTimes() int64 {
 // APP资产操作币种显示配置
 type AssetCoinConfig struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                              // 主键ID
-	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                                  // 租户ID
-	WalletType      WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`                      // 账户类型
-	Coin            string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                                           // 币种代码
-	Symbol          string                 `protobuf:"bytes,5,opt,name=symbol,proto3" json:"symbol,omitempty"`                                                                       // 展示符号/资产标识
-	CoinName        string                 `protobuf:"bytes,6,opt,name=coin_name,json=coinName,proto3" json:"coin_name,omitempty"`                                                   // 币种名称
-	CoinType        AssetCoinType          `protobuf:"varint,7,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                         // 币种类型
-	ChainCode       common.ChainCode       `protobuf:"varint,8,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`                         // 链类型
-	IconUrl         string                 `protobuf:"bytes,9,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"`                                                      // 币种图标URL
-	IconText        string                 `protobuf:"bytes,10,opt,name=icon_text,json=iconText,proto3" json:"icon_text,omitempty"`                                                  // 币种图标文案/符号
-	IconBgColor     string                 `protobuf:"bytes,11,opt,name=icon_bg_color,json=iconBgColor,proto3" json:"icon_bg_color,omitempty"`                                       // 图标背景色
-	DecimalPlaces   int32                  `protobuf:"varint,12,opt,name=decimal_places,json=decimalPlaces,proto3" json:"decimal_places,omitempty"`                                  // 资产展示精度
-	AppVisible      AssetCoinSwitch        `protobuf:"varint,13,opt,name=app_visible,json=appVisible,proto3,enum=asset.AssetCoinSwitch" json:"app_visible,omitempty"`                // APP操作页是否展示
-	RechargeEnabled AssetCoinSwitch        `protobuf:"varint,14,opt,name=recharge_enabled,json=rechargeEnabled,proto3,enum=asset.AssetCoinSwitch" json:"recharge_enabled,omitempty"` // 充值页是否展示
-	WithdrawEnabled AssetCoinSwitch        `protobuf:"varint,15,opt,name=withdraw_enabled,json=withdrawEnabled,proto3,enum=asset.AssetCoinSwitch" json:"withdraw_enabled,omitempty"` // 提现页是否展示
-	TransferEnabled AssetCoinSwitch        `protobuf:"varint,16,opt,name=transfer_enabled,json=transferEnabled,proto3,enum=asset.AssetCoinSwitch" json:"transfer_enabled,omitempty"` // 划转页是否展示
-	Status          AssetStatus            `protobuf:"varint,17,opt,name=status,proto3,enum=asset.AssetStatus" json:"status,omitempty"`                                              // 状态
-	Sort            int32                  `protobuf:"varint,18,opt,name=sort,proto3" json:"sort,omitempty"`                                                                         // 排序,越小越靠前
-	Remark          string                 `protobuf:"bytes,19,opt,name=remark,proto3" json:"remark,omitempty"`                                                                      // 备注
-	CreateTimes     int64                  `protobuf:"varint,20,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                        // 创建时间戳(毫秒)
-	UpdateTimes     int64                  `protobuf:"varint,21,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                        // 更新时间戳(毫秒)
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                      // 主键ID
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                          // 租户ID
+	WalletType      common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`             // 账户类型
+	Coin            string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                                   // 币种代码
+	Symbol          string                 `protobuf:"bytes,5,opt,name=symbol,proto3" json:"symbol,omitempty"`                                                               // 展示符号/资产标识
+	CoinName        string                 `protobuf:"bytes,6,opt,name=coin_name,json=coinName,proto3" json:"coin_name,omitempty"`                                           // 币种名称
+	CoinType        AssetCoinType          `protobuf:"varint,7,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                 // 币种类型
+	ChainCode       common.ChainCode       `protobuf:"varint,8,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`                 // 链类型
+	IconUrl         string                 `protobuf:"bytes,9,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"`                                              // 币种图标URL
+	IconText        string                 `protobuf:"bytes,10,opt,name=icon_text,json=iconText,proto3" json:"icon_text,omitempty"`                                          // 币种图标文案/符号
+	IconBgColor     string                 `protobuf:"bytes,11,opt,name=icon_bg_color,json=iconBgColor,proto3" json:"icon_bg_color,omitempty"`                               // 图标背景色
+	DecimalPlaces   int32                  `protobuf:"varint,12,opt,name=decimal_places,json=decimalPlaces,proto3" json:"decimal_places,omitempty"`                          // 资产展示精度
+	AppVisible      common.Switch          `protobuf:"varint,13,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"`                // APP操作页展示开关
+	RechargeEnabled common.Switch          `protobuf:"varint,14,opt,name=recharge_enabled,json=rechargeEnabled,proto3,enum=common.Switch" json:"recharge_enabled,omitempty"` // 充值页展示开关
+	WithdrawEnabled common.Switch          `protobuf:"varint,15,opt,name=withdraw_enabled,json=withdrawEnabled,proto3,enum=common.Switch" json:"withdraw_enabled,omitempty"` // 提现页展示开关
+	TransferEnabled common.Switch          `protobuf:"varint,16,opt,name=transfer_enabled,json=transferEnabled,proto3,enum=common.Switch" json:"transfer_enabled,omitempty"` // 划转页展示开关
+	Enabled         common.Enable          `protobuf:"varint,17,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                        // 状态 0表示全部，1表示启用，2表示禁用
+	Sort            int32                  `protobuf:"varint,18,opt,name=sort,proto3" json:"sort,omitempty"`                                                                 // 排序,越小越靠前
+	Remark          string                 `protobuf:"bytes,19,opt,name=remark,proto3" json:"remark,omitempty"`                                                              // 备注
+	CreateTimes     int64                  `protobuf:"varint,20,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                // 创建时间戳(毫秒)
+	UpdateTimes     int64                  `protobuf:"varint,21,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                // 更新时间戳(毫秒)
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -244,11 +244,11 @@ func (x *AssetCoinConfig) GetTenantId() int64 {
 	return 0
 }
 
-func (x *AssetCoinConfig) GetWalletType() WalletType {
+func (x *AssetCoinConfig) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *AssetCoinConfig) GetCoin() string {
@@ -314,39 +314,39 @@ func (x *AssetCoinConfig) GetDecimalPlaces() int32 {
 	return 0
 }
 
-func (x *AssetCoinConfig) GetAppVisible() AssetCoinSwitch {
+func (x *AssetCoinConfig) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+	return common.Switch(0)
 }
 
-func (x *AssetCoinConfig) GetRechargeEnabled() AssetCoinSwitch {
+func (x *AssetCoinConfig) GetRechargeEnabled() common.Switch {
 	if x != nil {
 		return x.RechargeEnabled
 	}
-	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+	return common.Switch(0)
 }
 
-func (x *AssetCoinConfig) GetWithdrawEnabled() AssetCoinSwitch {
+func (x *AssetCoinConfig) GetWithdrawEnabled() common.Switch {
 	if x != nil {
 		return x.WithdrawEnabled
 	}
-	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+	return common.Switch(0)
 }
 
-func (x *AssetCoinConfig) GetTransferEnabled() AssetCoinSwitch {
+func (x *AssetCoinConfig) GetTransferEnabled() common.Switch {
 	if x != nil {
 		return x.TransferEnabled
 	}
-	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+	return common.Switch(0)
 }
 
-func (x *AssetCoinConfig) GetStatus() AssetStatus {
+func (x *AssetCoinConfig) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return AssetStatus_ASSET_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *AssetCoinConfig) GetSort() int32 {
@@ -384,7 +384,7 @@ type AssetFlow struct {
 	FlowNo                 string                 `protobuf:"bytes,2,opt,name=flow_no,json=flowNo,proto3" json:"flow_no,omitempty"`                                                     // 流水单号
 	TenantId               int64                  `protobuf:"varint,3,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                              // 租户ID
 	UserId                 int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                                    // 用户ID
-	WalletType             WalletType             `protobuf:"varint,5,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`                  // 钱包类型
+	WalletType             common.WalletType      `protobuf:"varint,5,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`                 // 钱包类型
 	Coin                   string                 `protobuf:"bytes,6,opt,name=coin,proto3" json:"coin,omitempty"`                                                                       // 币种
 	BizType                BizType                `protobuf:"varint,7,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`                              // 业务类型
 	SceneType              SceneType              `protobuf:"varint,8,opt,name=scene_type,json=sceneType,proto3,enum=asset.SceneType" json:"scene_type,omitempty"`                      // 业务场景
@@ -468,11 +468,11 @@ func (x *AssetFlow) GetUserId() int64 {
 	return 0
 }
 
-func (x *AssetFlow) GetWalletType() WalletType {
+func (x *AssetFlow) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *AssetFlow) GetCoin() string {
@@ -625,26 +625,26 @@ func (x *AssetFlow) GetUpdateTimes() int64 {
 // 冻结明细
 type AssetFreeze struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                         // 主键ID
-	FreezeNo       string                 `protobuf:"bytes,2,opt,name=freeze_no,json=freezeNo,proto3" json:"freeze_no,omitempty"`                              // 冻结单号
-	TenantId       int64                  `protobuf:"varint,3,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                             // 租户ID
-	UserId         int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                   // 用户ID
-	WalletType     WalletType             `protobuf:"varint,5,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
-	Coin           string                 `protobuf:"bytes,6,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
-	BizType        BizType                `protobuf:"varint,7,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`             // 业务类型
-	SceneType      SceneType              `protobuf:"varint,8,opt,name=scene_type,json=sceneType,proto3,enum=asset.SceneType" json:"scene_type,omitempty"`     // 业务场景
-	BizId          int64                  `protobuf:"varint,9,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`                                      // 业务ID
-	BizNo          string                 `protobuf:"bytes,10,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`                                      // 业务单号
-	Amount         string                 `protobuf:"bytes,11,opt,name=amount,proto3" json:"amount,omitempty"`                                                 // 冻结总金额
-	UsedAmount     string                 `protobuf:"bytes,12,opt,name=used_amount,json=usedAmount,proto3" json:"used_amount,omitempty"`                       // 已使用金额
-	UnfreezeAmount string                 `protobuf:"bytes,13,opt,name=unfreeze_amount,json=unfreezeAmount,proto3" json:"unfreeze_amount,omitempty"`           // 已解冻金额
-	RemainAmount   string                 `protobuf:"bytes,14,opt,name=remain_amount,json=remainAmount,proto3" json:"remain_amount,omitempty"`                 // 剩余冻结金额
-	Status         FreezeStatus           `protobuf:"varint,15,opt,name=status,proto3,enum=asset.FreezeStatus" json:"status,omitempty"`                        // 状态
-	ExpireTime     int64                  `protobuf:"varint,16,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`                      // 过期时间
-	Remark         string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`                                                 // 备注
-	ExtJson        *structpb.Struct       `protobuf:"bytes,18,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`                                // 扩展字段
-	CreateTimes    int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                   // 创建时间戳
-	UpdateTimes    int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                   // 更新时间戳
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                          // 主键ID
+	FreezeNo       string                 `protobuf:"bytes,2,opt,name=freeze_no,json=freezeNo,proto3" json:"freeze_no,omitempty"`                               // 冻结单号
+	TenantId       int64                  `protobuf:"varint,3,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                              // 租户ID
+	UserId         int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                    // 用户ID
+	WalletType     common.WalletType      `protobuf:"varint,5,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型
+	Coin           string                 `protobuf:"bytes,6,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
+	BizType        BizType                `protobuf:"varint,7,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`              // 业务类型
+	SceneType      SceneType              `protobuf:"varint,8,opt,name=scene_type,json=sceneType,proto3,enum=asset.SceneType" json:"scene_type,omitempty"`      // 业务场景
+	BizId          int64                  `protobuf:"varint,9,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`                                       // 业务ID
+	BizNo          string                 `protobuf:"bytes,10,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`                                       // 业务单号
+	Amount         string                 `protobuf:"bytes,11,opt,name=amount,proto3" json:"amount,omitempty"`                                                  // 冻结总金额
+	UsedAmount     string                 `protobuf:"bytes,12,opt,name=used_amount,json=usedAmount,proto3" json:"used_amount,omitempty"`                        // 已使用金额
+	UnfreezeAmount string                 `protobuf:"bytes,13,opt,name=unfreeze_amount,json=unfreezeAmount,proto3" json:"unfreeze_amount,omitempty"`            // 已解冻金额
+	RemainAmount   string                 `protobuf:"bytes,14,opt,name=remain_amount,json=remainAmount,proto3" json:"remain_amount,omitempty"`                  // 剩余冻结金额
+	Status         FreezeStatus           `protobuf:"varint,15,opt,name=status,proto3,enum=asset.FreezeStatus" json:"status,omitempty"`                         // 状态
+	ExpireTime     int64                  `protobuf:"varint,16,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`                       // 过期时间
+	Remark         string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`                                                  // 备注
+	ExtJson        *structpb.Struct       `protobuf:"bytes,18,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`                                 // 扩展字段
+	CreateTimes    int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                    // 创建时间戳
+	UpdateTimes    int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                    // 更新时间戳
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -707,11 +707,11 @@ func (x *AssetFreeze) GetUserId() int64 {
 	return 0
 }
 
-func (x *AssetFreeze) GetWalletType() WalletType {
+func (x *AssetFreeze) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *AssetFreeze) GetCoin() string {
@@ -822,26 +822,26 @@ func (x *AssetFreeze) GetUpdateTimes() int64 {
 // 锁仓明细
 type AssetLock struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                         // 主键ID
-	LockNo        string                 `protobuf:"bytes,2,opt,name=lock_no,json=lockNo,proto3" json:"lock_no,omitempty"`                                    // 锁仓单号
-	TenantId      int64                  `protobuf:"varint,3,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                             // 租户ID
-	UserId        int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                   // 用户ID
-	WalletType    WalletType             `protobuf:"varint,5,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
-	Coin          string                 `protobuf:"bytes,6,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
-	BizType       BizType                `protobuf:"varint,7,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`             // 业务类型
-	SceneType     SceneType              `protobuf:"varint,8,opt,name=scene_type,json=sceneType,proto3,enum=asset.SceneType" json:"scene_type,omitempty"`     // 业务场景
-	BizId         int64                  `protobuf:"varint,9,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`                                      // 业务ID
-	BizNo         string                 `protobuf:"bytes,10,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`                                      // 业务单号
-	Amount        string                 `protobuf:"bytes,11,opt,name=amount,proto3" json:"amount,omitempty"`                                                 // 锁仓总金额
-	UnlockAmount  string                 `protobuf:"bytes,12,opt,name=unlock_amount,json=unlockAmount,proto3" json:"unlock_amount,omitempty"`                 // 已解锁金额
-	RemainAmount  string                 `protobuf:"bytes,13,opt,name=remain_amount,json=remainAmount,proto3" json:"remain_amount,omitempty"`                 // 剩余锁仓金额
-	Status        LockStatus             `protobuf:"varint,14,opt,name=status,proto3,enum=asset.LockStatus" json:"status,omitempty"`                          // 状态
-	StartTime     int64                  `protobuf:"varint,15,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`                         // 开始时间
-	EndTime       int64                  `protobuf:"varint,16,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`                               // 结束时间
-	Remark        string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`                                                 // 备注
-	ExtJson       *structpb.Struct       `protobuf:"bytes,18,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`                                // 扩展字段
-	CreateTimes   int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                   // 创建时间
-	UpdateTimes   int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                   // 更新时间
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                          // 主键ID
+	LockNo        string                 `protobuf:"bytes,2,opt,name=lock_no,json=lockNo,proto3" json:"lock_no,omitempty"`                                     // 锁仓单号
+	TenantId      int64                  `protobuf:"varint,3,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                              // 租户ID
+	UserId        int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                    // 用户ID
+	WalletType    common.WalletType      `protobuf:"varint,5,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型
+	Coin          string                 `protobuf:"bytes,6,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
+	BizType       BizType                `protobuf:"varint,7,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`              // 业务类型
+	SceneType     SceneType              `protobuf:"varint,8,opt,name=scene_type,json=sceneType,proto3,enum=asset.SceneType" json:"scene_type,omitempty"`      // 业务场景
+	BizId         int64                  `protobuf:"varint,9,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`                                       // 业务ID
+	BizNo         string                 `protobuf:"bytes,10,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`                                       // 业务单号
+	Amount        string                 `protobuf:"bytes,11,opt,name=amount,proto3" json:"amount,omitempty"`                                                  // 锁仓总金额
+	UnlockAmount  string                 `protobuf:"bytes,12,opt,name=unlock_amount,json=unlockAmount,proto3" json:"unlock_amount,omitempty"`                  // 已解锁金额
+	RemainAmount  string                 `protobuf:"bytes,13,opt,name=remain_amount,json=remainAmount,proto3" json:"remain_amount,omitempty"`                  // 剩余锁仓金额
+	Status        LockStatus             `protobuf:"varint,14,opt,name=status,proto3,enum=asset.LockStatus" json:"status,omitempty"`                           // 状态
+	StartTime     int64                  `protobuf:"varint,15,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`                          // 开始时间
+	EndTime       int64                  `protobuf:"varint,16,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`                                // 结束时间
+	Remark        string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`                                                  // 备注
+	ExtJson       *structpb.Struct       `protobuf:"bytes,18,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`                                 // 扩展字段
+	CreateTimes   int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                    // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                    // 更新时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -904,11 +904,11 @@ func (x *AssetLock) GetUserId() int64 {
 	return 0
 }
 
-func (x *AssetLock) GetWalletType() WalletType {
+func (x *AssetLock) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNKNOWN
+	return common.WalletType(0)
 }
 
 func (x *AssetLock) GetCoin() string {
@@ -1222,28 +1222,28 @@ var File_proto_asset_model_proto protoreflect.FileDescriptor
 
 const file_proto_asset_model_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/asset/model.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x16proto/asset/enum.proto\"\xd5\x03\n" +
+	"\x17proto/asset/model.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x16proto/asset/enum.proto\"\xd4\x03\n" +
 	"\tUserAsset\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x122\n" +
-	"\vwallet_type\x18\x04 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x04 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x05 \x01(\tR\x04coin\x12!\n" +
 	"\ftotal_amount\x18\x06 \x01(\tR\vtotalAmount\x12)\n" +
 	"\x10available_amount\x18\a \x01(\tR\x0favailableAmount\x12#\n" +
 	"\rfrozen_amount\x18\b \x01(\tR\ffrozenAmount\x12#\n" +
-	"\rlocked_amount\x18\t \x01(\tR\flockedAmount\x12*\n" +
-	"\x06status\x18\n" +
-	" \x01(\x0e2\x12.asset.AssetStatusR\x06status\x12\x18\n" +
+	"\rlocked_amount\x18\t \x01(\tR\flockedAmount\x12(\n" +
+	"\aenabled\x18\n" +
+	" \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x18\n" +
 	"\aversion\x18\v \x01(\x03R\aversion\x12\x16\n" +
 	"\x06remark\x18\f \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\xc3\x06\n" +
+	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\xa2\x06\n" +
 	"\x0fAssetCoinConfig\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x122\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x123\n" +
+	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
 	"\x06symbol\x18\x05 \x01(\tR\x06symbol\x12\x1b\n" +
@@ -1255,23 +1255,23 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"\ticon_text\x18\n" +
 	" \x01(\tR\biconText\x12\"\n" +
 	"\ricon_bg_color\x18\v \x01(\tR\viconBgColor\x12%\n" +
-	"\x0edecimal_places\x18\f \x01(\x05R\rdecimalPlaces\x127\n" +
-	"\vapp_visible\x18\r \x01(\x0e2\x16.asset.AssetCoinSwitchR\n" +
-	"appVisible\x12A\n" +
-	"\x10recharge_enabled\x18\x0e \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0frechargeEnabled\x12A\n" +
-	"\x10withdraw_enabled\x18\x0f \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0fwithdrawEnabled\x12A\n" +
-	"\x10transfer_enabled\x18\x10 \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0ftransferEnabled\x12*\n" +
-	"\x06status\x18\x11 \x01(\x0e2\x12.asset.AssetStatusR\x06status\x12\x12\n" +
+	"\x0edecimal_places\x18\f \x01(\x05R\rdecimalPlaces\x12/\n" +
+	"\vapp_visible\x18\r \x01(\x0e2\x0e.common.SwitchR\n" +
+	"appVisible\x129\n" +
+	"\x10recharge_enabled\x18\x0e \x01(\x0e2\x0e.common.SwitchR\x0frechargeEnabled\x129\n" +
+	"\x10withdraw_enabled\x18\x0f \x01(\x0e2\x0e.common.SwitchR\x0fwithdrawEnabled\x129\n" +
+	"\x10transfer_enabled\x18\x10 \x01(\x0e2\x0e.common.SwitchR\x0ftransferEnabled\x12(\n" +
+	"\aenabled\x18\x11 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\x12 \x01(\x05R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x13 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x14 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x15 \x01(\x03R\vupdateTimes\"\x8b\b\n" +
+	"\fupdate_times\x18\x15 \x01(\x03R\vupdateTimes\"\x8c\b\n" +
 	"\tAssetFlow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aflow_no\x18\x02 \x01(\tR\x06flowNo\x12\x1b\n" +
 	"\ttenant_id\x18\x03 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x03R\x06userId\x122\n" +
-	"\vwallet_type\x18\x05 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x05 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x06 \x01(\tR\x04coin\x12)\n" +
 	"\bbiz_type\x18\a \x01(\x0e2\x0e.asset.BizTypeR\abizType\x12/\n" +
@@ -1296,13 +1296,13 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"\x06remark\x18\x17 \x01(\tR\x06remark\x122\n" +
 	"\bext_json\x18\x18 \x01(\v2\x17.google.protobuf.StructR\aextJson\x12!\n" +
 	"\fcreate_times\x18\x19 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x1a \x01(\x03R\vupdateTimes\"\xa9\x05\n" +
+	"\fupdate_times\x18\x1a \x01(\x03R\vupdateTimes\"\xaa\x05\n" +
 	"\vAssetFreeze\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tfreeze_no\x18\x02 \x01(\tR\bfreezeNo\x12\x1b\n" +
 	"\ttenant_id\x18\x03 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x03R\x06userId\x122\n" +
-	"\vwallet_type\x18\x05 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x05 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x06 \x01(\tR\x04coin\x12)\n" +
 	"\bbiz_type\x18\a \x01(\x0e2\x0e.asset.BizTypeR\abizType\x12/\n" +
@@ -1322,13 +1322,13 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"\x06remark\x18\x11 \x01(\tR\x06remark\x122\n" +
 	"\bext_json\x18\x12 \x01(\v2\x17.google.protobuf.StructR\aextJson\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\x95\x05\n" +
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\x96\x05\n" +
 	"\tAssetLock\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\alock_no\x18\x02 \x01(\tR\x06lockNo\x12\x1b\n" +
 	"\ttenant_id\x18\x03 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x03R\x06userId\x122\n" +
-	"\vwallet_type\x18\x05 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x05 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x06 \x01(\tR\x04coin\x12)\n" +
 	"\bbiz_type\x18\a \x01(\x0e2\x0e.asset.BizTypeR\abizType\x12/\n" +
@@ -1389,11 +1389,11 @@ var file_proto_asset_model_proto_goTypes = []any{
 	(*AssetLock)(nil),        // 4: asset.AssetLock
 	(*AssetIdempotent)(nil),  // 5: asset.AssetIdempotent
 	(*UserAssetSummary)(nil), // 6: asset.UserAssetSummary
-	(WalletType)(0),          // 7: asset.WalletType
-	(AssetStatus)(0),         // 8: asset.AssetStatus
+	(common.WalletType)(0),   // 7: common.WalletType
+	(common.Enable)(0),       // 8: common.Enable
 	(AssetCoinType)(0),       // 9: asset.AssetCoinType
 	(common.ChainCode)(0),    // 10: common.ChainCode
-	(AssetCoinSwitch)(0),     // 11: asset.AssetCoinSwitch
+	(common.Switch)(0),       // 11: common.Switch
 	(BizType)(0),             // 12: asset.BizType
 	(SceneType)(0),           // 13: asset.SceneType
 	(AssetOpType)(0),         // 14: asset.AssetOpType
@@ -1403,27 +1403,27 @@ var file_proto_asset_model_proto_goTypes = []any{
 	(IdempotentStatus)(0),    // 18: asset.IdempotentStatus
 }
 var file_proto_asset_model_proto_depIdxs = []int32{
-	7,  // 0: asset.UserAsset.wallet_type:type_name -> asset.WalletType
-	8,  // 1: asset.UserAsset.status:type_name -> asset.AssetStatus
-	7,  // 2: asset.AssetCoinConfig.wallet_type:type_name -> asset.WalletType
+	7,  // 0: asset.UserAsset.wallet_type:type_name -> common.WalletType
+	8,  // 1: asset.UserAsset.enabled:type_name -> common.Enable
+	7,  // 2: asset.AssetCoinConfig.wallet_type:type_name -> common.WalletType
 	9,  // 3: asset.AssetCoinConfig.coin_type:type_name -> asset.AssetCoinType
 	10, // 4: asset.AssetCoinConfig.chain_code:type_name -> common.ChainCode
-	11, // 5: asset.AssetCoinConfig.app_visible:type_name -> asset.AssetCoinSwitch
-	11, // 6: asset.AssetCoinConfig.recharge_enabled:type_name -> asset.AssetCoinSwitch
-	11, // 7: asset.AssetCoinConfig.withdraw_enabled:type_name -> asset.AssetCoinSwitch
-	11, // 8: asset.AssetCoinConfig.transfer_enabled:type_name -> asset.AssetCoinSwitch
-	8,  // 9: asset.AssetCoinConfig.status:type_name -> asset.AssetStatus
-	7,  // 10: asset.AssetFlow.wallet_type:type_name -> asset.WalletType
+	11, // 5: asset.AssetCoinConfig.app_visible:type_name -> common.Switch
+	11, // 6: asset.AssetCoinConfig.recharge_enabled:type_name -> common.Switch
+	11, // 7: asset.AssetCoinConfig.withdraw_enabled:type_name -> common.Switch
+	11, // 8: asset.AssetCoinConfig.transfer_enabled:type_name -> common.Switch
+	8,  // 9: asset.AssetCoinConfig.enabled:type_name -> common.Enable
+	7,  // 10: asset.AssetFlow.wallet_type:type_name -> common.WalletType
 	12, // 11: asset.AssetFlow.biz_type:type_name -> asset.BizType
 	13, // 12: asset.AssetFlow.scene_type:type_name -> asset.SceneType
 	14, // 13: asset.AssetFlow.op_type:type_name -> asset.AssetOpType
 	15, // 14: asset.AssetFlow.ext_json:type_name -> google.protobuf.Struct
-	7,  // 15: asset.AssetFreeze.wallet_type:type_name -> asset.WalletType
+	7,  // 15: asset.AssetFreeze.wallet_type:type_name -> common.WalletType
 	12, // 16: asset.AssetFreeze.biz_type:type_name -> asset.BizType
 	13, // 17: asset.AssetFreeze.scene_type:type_name -> asset.SceneType
 	16, // 18: asset.AssetFreeze.status:type_name -> asset.FreezeStatus
 	15, // 19: asset.AssetFreeze.ext_json:type_name -> google.protobuf.Struct
-	7,  // 20: asset.AssetLock.wallet_type:type_name -> asset.WalletType
+	7,  // 20: asset.AssetLock.wallet_type:type_name -> common.WalletType
 	12, // 21: asset.AssetLock.biz_type:type_name -> asset.BizType
 	13, // 22: asset.AssetLock.scene_type:type_name -> asset.SceneType
 	17, // 23: asset.AssetLock.status:type_name -> asset.LockStatus

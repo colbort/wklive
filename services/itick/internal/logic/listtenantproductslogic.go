@@ -9,6 +9,7 @@ import (
 	"wklive/proto/itick"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
+	"wklive/services/itick/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,7 +30,11 @@ func NewListTenantProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 租户产品列表
 func (l *ListTenantProductsLogic) ListTenantProducts(in *itick.ListTenantProductsReq) (*itick.ListTenantProductsResp, error) {
-	items, _, err := l.svcCtx.ItickTenantProductModel.FindPage(l.ctx, in.TenantId, in.Page.Cursor, in.Page.Limit)
+	items, _, err := l.svcCtx.ItickTenantProductModel.FindPage(l.ctx, models.TenantProductPageFilter{
+		TenantId:     in.TenantId,
+		CategoryType: int64(in.CategoryType),
+		AppVisible:   int64(in.AppVisible),
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -72,10 +77,10 @@ func (l *ListTenantProductsLogic) ListTenantProducts(in *itick.ListTenantProduct
 		if market != "" && product.Market != market {
 			continue
 		}
-		if !statusMatches(in.Status, item.Enabled) {
+		if !statusMatches(int32(in.Enabled), item.Enabled) {
 			continue
 		}
-		if !statusMatches(in.VisibleStatus, item.AppVisible) {
+		if !statusMatches(int32(in.AppVisible), item.AppVisible) {
 			continue
 		}
 		if !keywordMatches(in.Keyword, product.Symbol, product.Code, product.Name, product.DisplayName, product.CategoryName) {

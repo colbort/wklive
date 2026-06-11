@@ -2,6 +2,7 @@ package logic
 
 import (
 	"wklive/common/conv"
+	"wklive/proto/common"
 	"wklive/proto/staking"
 	"wklive/services/staking/models"
 )
@@ -30,7 +31,7 @@ func productToProto(item *models.TStakeProduct) *staking.StakeProduct {
 		UserLimitAmount:  conv.FloatString(item.UserLimitAmount),
 		InterestMode:     staking.InterestMode(item.InterestMode),
 		RewardMode:       staking.RewardMode(item.RewardMode),
-		AllowEarlyRedeem: staking.YesNo(item.AllowEarlyRedeem),
+		AllowEarlyRedeem: common.YesNo(item.AllowEarlyRedeem),
 		EarlyRedeemRate:  conv.FloatString(item.EarlyRedeemRate),
 		Status:           staking.ProductStatus(item.Status),
 		Sort:             item.Sort,
@@ -64,7 +65,7 @@ func orderToProto(item *models.TStakeOrder) *staking.StakeOrder {
 		LockDays:         item.LockDays,
 		InterestMode:     staking.InterestMode(item.InterestMode),
 		RewardMode:       staking.RewardMode(item.RewardMode),
-		AllowEarlyRedeem: staking.YesNo(item.AllowEarlyRedeem),
+		AllowEarlyRedeem: common.YesNo(item.AllowEarlyRedeem),
 		EarlyRedeemRate:  conv.FloatString(item.EarlyRedeemRate),
 		InterestDays:     item.InterestDays,
 		StartTimes:       int64(item.StartTimes),

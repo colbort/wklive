@@ -12,8 +12,8 @@ import (
 
 type UserAssetModel interface {
 	tUserAssetModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64, cursor int64, limit int64) ([]*TUserAsset, int64, error)
-	FindAll(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64) ([]*TUserAsset, error)
+	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, enabled int64, cursor int64, limit int64) ([]*TUserAsset, int64, error)
+	FindAll(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, enabled int64) ([]*TUserAsset, error)
 	// 增加已有资产的可用余额，调用方需要先创建不存在的资产记录
 	AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (int64, error)
 	SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
@@ -31,7 +31,7 @@ type UserAssetModel interface {
 	UnlockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
 }
 
-func (m *defaultTUserAssetModel) FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64, cursor int64, limit int64) ([]*TUserAsset, int64, error) {
+func (m *defaultTUserAssetModel) FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, enabled int64, cursor int64, limit int64) ([]*TUserAsset, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -39,7 +39,7 @@ func (m *defaultTUserAssetModel) FindPage(ctx context.Context, tenantId int64, u
 	builder.EqInt64("user_id", userId)
 	builder.EqInt64("wallet_type", walletType)
 	builder.EqString("coin", coin)
-	builder.EqInt64("status", status)
+	builder.EqInt64("enabled", enabled)
 
 	where := builder.Where()
 	args := builder.Args()
@@ -82,13 +82,13 @@ func (m *defaultTUserAssetModel) FindPage(ctx context.Context, tenantId int64, u
 	return list, total, nil
 }
 
-func (m *defaultTUserAssetModel) FindAll(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64) ([]*TUserAsset, error) {
+func (m *defaultTUserAssetModel) FindAll(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, enabled int64) ([]*TUserAsset, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", tenantId)
 	builder.EqInt64("user_id", userId)
 	builder.EqInt64("wallet_type", walletType)
 	builder.EqString("coin", coin)
-	builder.EqInt64("status", status)
+	builder.EqInt64("enabled", enabled)
 
 	where := builder.Where()
 	args := builder.Args()
@@ -137,7 +137,7 @@ func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantI
 			available_amount = available_amount + ?,
 			version = version + 1,
 			update_times = ?
-		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? AND status = 1`,
+		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? AND enabled = 1`,
 		m.table)
 
 	args := []any{amount, amount, updateTimes, tenantId, userId, walletType, coin}
@@ -172,7 +172,7 @@ func (m *defaultTUserAssetModel) SubAvailableAmount(ctx context.Context, tenantI
 			available_amount = available_amount - ?,
 			version = version + 1,
 			update_times = ?
-		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? AND status = 1 AND available_amount >= ?
+		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? AND enabled = 1 AND available_amount >= ?
 	`, m.table)
 
 	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
@@ -198,7 +198,7 @@ func (m *defaultTUserAssetModel) DeductLockedAmount(ctx context.Context, tenantI
 			total_amount = total_amount - ?,
 			version = version + 1,
 			update_times = ?
-		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? AND status = 1 AND locked_amount >= ?
+		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? AND enabled = 1 AND locked_amount >= ?
 	`, m.table)
 
 	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
@@ -226,7 +226,7 @@ func (m *defaultTUserAssetModel) FreezeAmount(ctx context.Context, tenantId, use
 			version = version + 1,
 			update_times = ?
 		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? 
-			AND status = 1 AND available_amount >= ?
+			AND enabled = 1 AND available_amount >= ?
 	`, m.table)
 
 	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
@@ -255,7 +255,7 @@ func (m *defaultTUserAssetModel) UnfreezeAmount(ctx context.Context, tenantId, u
 			version = version + 1,
 			update_times = ?
 		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? 
-			AND status = 1 AND frozen_amount >= ?
+			AND enabled = 1 AND frozen_amount >= ?
 	`, m.table)
 
 	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
@@ -284,7 +284,7 @@ func (m *defaultTUserAssetModel) DeductFromFrozen(ctx context.Context, tenantId,
 			version = version + 1,
 			update_times = ?
 		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? 
-			AND status = 1 AND frozen_amount >= ?
+			AND enabled = 1 AND frozen_amount >= ?
 	`, m.table)
 
 	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
@@ -313,7 +313,7 @@ func (m *defaultTUserAssetModel) LockAmount(ctx context.Context, tenantId, userI
 			version = version + 1,
 			update_times = ?
 		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? 
-			AND status = 1 AND available_amount >= ?
+			AND enabled = 1 AND available_amount >= ?
 	`, m.table)
 
 	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
@@ -342,7 +342,7 @@ func (m *defaultTUserAssetModel) UnlockAmount(ctx context.Context, tenantId, use
 			version = version + 1,
 			update_times = ?
 		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? 
-			AND status = 1 AND locked_amount >= ?
+			AND enabled = 1 AND locked_amount >= ?
 	`, m.table)
 
 	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)

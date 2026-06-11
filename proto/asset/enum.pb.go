@@ -21,115 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// 钱包类型
-type WalletType int32
-
-const (
-	WalletType_WALLET_TYPE_UNKNOWN  WalletType = 0
-	WalletType_WALLET_TYPE_SPOT     WalletType = 1 // 现金账户/现货钱包
-	WalletType_WALLET_TYPE_FUNDING  WalletType = 2 // 股票账户/资金钱包
-	WalletType_WALLET_TYPE_CONTRACT WalletType = 3 // 合约账户/合约钱包
-	WalletType_WALLET_TYPE_EARN     WalletType = 4 // 理财钱包
-	WalletType_WALLET_TYPE_OPTION   WalletType = 5 // 期权钱包
-)
-
-// Enum value maps for WalletType.
-var (
-	WalletType_name = map[int32]string{
-		0: "WALLET_TYPE_UNKNOWN",
-		1: "WALLET_TYPE_SPOT",
-		2: "WALLET_TYPE_FUNDING",
-		3: "WALLET_TYPE_CONTRACT",
-		4: "WALLET_TYPE_EARN",
-		5: "WALLET_TYPE_OPTION",
-	}
-	WalletType_value = map[string]int32{
-		"WALLET_TYPE_UNKNOWN":  0,
-		"WALLET_TYPE_SPOT":     1,
-		"WALLET_TYPE_FUNDING":  2,
-		"WALLET_TYPE_CONTRACT": 3,
-		"WALLET_TYPE_EARN":     4,
-		"WALLET_TYPE_OPTION":   5,
-	}
-)
-
-func (x WalletType) Enum() *WalletType {
-	p := new(WalletType)
-	*p = x
-	return p
-}
-
-func (x WalletType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (WalletType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[0].Descriptor()
-}
-
-func (WalletType) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[0]
-}
-
-func (x WalletType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use WalletType.Descriptor instead.
-func (WalletType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{0}
-}
-
-// 资产状态
-type AssetStatus int32
-
-const (
-	AssetStatus_ASSET_STATUS_UNKNOWN  AssetStatus = 0
-	AssetStatus_ASSET_STATUS_DISABLED AssetStatus = 1 // 禁用
-	AssetStatus_ASSET_STATUS_ENABLED  AssetStatus = 2 // 正常
-)
-
-// Enum value maps for AssetStatus.
-var (
-	AssetStatus_name = map[int32]string{
-		0: "ASSET_STATUS_UNKNOWN",
-		1: "ASSET_STATUS_DISABLED",
-		2: "ASSET_STATUS_ENABLED",
-	}
-	AssetStatus_value = map[string]int32{
-		"ASSET_STATUS_UNKNOWN":  0,
-		"ASSET_STATUS_DISABLED": 1,
-		"ASSET_STATUS_ENABLED":  2,
-	}
-)
-
-func (x AssetStatus) Enum() *AssetStatus {
-	p := new(AssetStatus)
-	*p = x
-	return p
-}
-
-func (x AssetStatus) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (AssetStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[1].Descriptor()
-}
-
-func (AssetStatus) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[1]
-}
-
-func (x AssetStatus) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use AssetStatus.Descriptor instead.
-func (AssetStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{1}
-}
-
 // 变动方向
 type AssetOpType int32
 
@@ -188,11 +79,11 @@ func (x AssetOpType) String() string {
 }
 
 func (AssetOpType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[2].Descriptor()
+	return file_proto_asset_enum_proto_enumTypes[0].Descriptor()
 }
 
 func (AssetOpType) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[2]
+	return &file_proto_asset_enum_proto_enumTypes[0]
 }
 
 func (x AssetOpType) Number() protoreflect.EnumNumber {
@@ -201,7 +92,7 @@ func (x AssetOpType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AssetOpType.Descriptor instead.
 func (AssetOpType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{2}
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{0}
 }
 
 // 业务类型
@@ -256,11 +147,11 @@ func (x BizType) String() string {
 }
 
 func (BizType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[3].Descriptor()
+	return file_proto_asset_enum_proto_enumTypes[1].Descriptor()
 }
 
 func (BizType) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[3]
+	return &file_proto_asset_enum_proto_enumTypes[1]
 }
 
 func (x BizType) Number() protoreflect.EnumNumber {
@@ -269,7 +160,7 @@ func (x BizType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use BizType.Descriptor instead.
 func (BizType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{3}
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{1}
 }
 
 // 业务场景
@@ -353,11 +244,11 @@ func (x SceneType) String() string {
 }
 
 func (SceneType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[4].Descriptor()
+	return file_proto_asset_enum_proto_enumTypes[2].Descriptor()
 }
 
 func (SceneType) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[4]
+	return &file_proto_asset_enum_proto_enumTypes[2]
 }
 
 func (x SceneType) Number() protoreflect.EnumNumber {
@@ -366,7 +257,7 @@ func (x SceneType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SceneType.Descriptor instead.
 func (SceneType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{4}
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{2}
 }
 
 // 冻结状态
@@ -412,11 +303,11 @@ func (x FreezeStatus) String() string {
 }
 
 func (FreezeStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[5].Descriptor()
+	return file_proto_asset_enum_proto_enumTypes[3].Descriptor()
 }
 
 func (FreezeStatus) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[5]
+	return &file_proto_asset_enum_proto_enumTypes[3]
 }
 
 func (x FreezeStatus) Number() protoreflect.EnumNumber {
@@ -425,7 +316,7 @@ func (x FreezeStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use FreezeStatus.Descriptor instead.
 func (FreezeStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{5}
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{3}
 }
 
 // 锁仓状态
@@ -468,11 +359,11 @@ func (x LockStatus) String() string {
 }
 
 func (LockStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[6].Descriptor()
+	return file_proto_asset_enum_proto_enumTypes[4].Descriptor()
 }
 
 func (LockStatus) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[6]
+	return &file_proto_asset_enum_proto_enumTypes[4]
 }
 
 func (x LockStatus) Number() protoreflect.EnumNumber {
@@ -481,7 +372,7 @@ func (x LockStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use LockStatus.Descriptor instead.
 func (LockStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{6}
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{4}
 }
 
 // 幂等状态
@@ -521,11 +412,11 @@ func (x IdempotentStatus) String() string {
 }
 
 func (IdempotentStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[7].Descriptor()
+	return file_proto_asset_enum_proto_enumTypes[5].Descriptor()
 }
 
 func (IdempotentStatus) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[7]
+	return &file_proto_asset_enum_proto_enumTypes[5]
 }
 
 func (x IdempotentStatus) Number() protoreflect.EnumNumber {
@@ -534,7 +425,7 @@ func (x IdempotentStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use IdempotentStatus.Descriptor instead.
 func (IdempotentStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{7}
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{5}
 }
 
 // 资产币种类型
@@ -571,11 +462,11 @@ func (x AssetCoinType) String() string {
 }
 
 func (AssetCoinType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[8].Descriptor()
+	return file_proto_asset_enum_proto_enumTypes[6].Descriptor()
 }
 
 func (AssetCoinType) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[8]
+	return &file_proto_asset_enum_proto_enumTypes[6]
 }
 
 func (x AssetCoinType) Number() protoreflect.EnumNumber {
@@ -584,57 +475,7 @@ func (x AssetCoinType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AssetCoinType.Descriptor instead.
 func (AssetCoinType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{8}
-}
-
-// 资产币种展示/操作开关
-type AssetCoinSwitch int32
-
-const (
-	AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN AssetCoinSwitch = 0
-	AssetCoinSwitch_ASSET_COIN_SWITCH_OFF     AssetCoinSwitch = 1 // 关闭/隐藏
-	AssetCoinSwitch_ASSET_COIN_SWITCH_ON      AssetCoinSwitch = 2 // 开启/展示
-)
-
-// Enum value maps for AssetCoinSwitch.
-var (
-	AssetCoinSwitch_name = map[int32]string{
-		0: "ASSET_COIN_SWITCH_UNKNOWN",
-		1: "ASSET_COIN_SWITCH_OFF",
-		2: "ASSET_COIN_SWITCH_ON",
-	}
-	AssetCoinSwitch_value = map[string]int32{
-		"ASSET_COIN_SWITCH_UNKNOWN": 0,
-		"ASSET_COIN_SWITCH_OFF":     1,
-		"ASSET_COIN_SWITCH_ON":      2,
-	}
-)
-
-func (x AssetCoinSwitch) Enum() *AssetCoinSwitch {
-	p := new(AssetCoinSwitch)
-	*p = x
-	return p
-}
-
-func (x AssetCoinSwitch) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (AssetCoinSwitch) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[9].Descriptor()
-}
-
-func (AssetCoinSwitch) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[9]
-}
-
-func (x AssetCoinSwitch) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use AssetCoinSwitch.Descriptor instead.
-func (AssetCoinSwitch) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{9}
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{6}
 }
 
 // 资产币种操作场景
@@ -674,11 +515,11 @@ func (x AssetCoinOperationType) String() string {
 }
 
 func (AssetCoinOperationType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_asset_enum_proto_enumTypes[10].Descriptor()
+	return file_proto_asset_enum_proto_enumTypes[7].Descriptor()
 }
 
 func (AssetCoinOperationType) Type() protoreflect.EnumType {
-	return &file_proto_asset_enum_proto_enumTypes[10]
+	return &file_proto_asset_enum_proto_enumTypes[7]
 }
 
 func (x AssetCoinOperationType) Number() protoreflect.EnumNumber {
@@ -687,26 +528,14 @@ func (x AssetCoinOperationType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AssetCoinOperationType.Descriptor instead.
 func (AssetCoinOperationType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_asset_enum_proto_rawDescGZIP(), []int{10}
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{7}
 }
 
 var File_proto_asset_enum_proto protoreflect.FileDescriptor
 
 const file_proto_asset_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x16proto/asset/enum.proto\x12\x05asset*\x9c\x01\n" +
-	"\n" +
-	"WalletType\x12\x17\n" +
-	"\x13WALLET_TYPE_UNKNOWN\x10\x00\x12\x14\n" +
-	"\x10WALLET_TYPE_SPOT\x10\x01\x12\x17\n" +
-	"\x13WALLET_TYPE_FUNDING\x10\x02\x12\x18\n" +
-	"\x14WALLET_TYPE_CONTRACT\x10\x03\x12\x14\n" +
-	"\x10WALLET_TYPE_EARN\x10\x04\x12\x16\n" +
-	"\x12WALLET_TYPE_OPTION\x10\x05*\\\n" +
-	"\vAssetStatus\x12\x18\n" +
-	"\x14ASSET_STATUS_UNKNOWN\x10\x00\x12\x19\n" +
-	"\x15ASSET_STATUS_DISABLED\x10\x01\x12\x18\n" +
-	"\x14ASSET_STATUS_ENABLED\x10\x02*\xbd\x02\n" +
+	"\x16proto/asset/enum.proto\x12\x05asset*\xbd\x02\n" +
 	"\vAssetOpType\x12\x19\n" +
 	"\x15ASSET_OP_TYPE_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11ASSET_OP_TYPE_ADD\x10\x01\x12\x15\n" +
@@ -770,11 +599,7 @@ const file_proto_asset_enum_proto_rawDesc = "" +
 	"\rAssetCoinType\x12\x1b\n" +
 	"\x17ASSET_COIN_TYPE_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14ASSET_COIN_TYPE_FIAT\x10\x01\x12\x1a\n" +
-	"\x16ASSET_COIN_TYPE_CRYPTO\x10\x02*e\n" +
-	"\x0fAssetCoinSwitch\x12\x1d\n" +
-	"\x19ASSET_COIN_SWITCH_UNKNOWN\x10\x00\x12\x19\n" +
-	"\x15ASSET_COIN_SWITCH_OFF\x10\x01\x12\x18\n" +
-	"\x14ASSET_COIN_SWITCH_ON\x10\x02*\xb7\x01\n" +
+	"\x16ASSET_COIN_TYPE_CRYPTO\x10\x02*\xb7\x01\n" +
 	"\x16AssetCoinOperationType\x12%\n" +
 	"!ASSET_COIN_OPERATION_TYPE_UNKNOWN\x10\x00\x12&\n" +
 	"\"ASSET_COIN_OPERATION_TYPE_RECHARGE\x10\x01\x12&\n" +
@@ -793,19 +618,16 @@ func file_proto_asset_enum_proto_rawDescGZIP() []byte {
 	return file_proto_asset_enum_proto_rawDescData
 }
 
-var file_proto_asset_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 11)
+var file_proto_asset_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
 var file_proto_asset_enum_proto_goTypes = []any{
-	(WalletType)(0),             // 0: asset.WalletType
-	(AssetStatus)(0),            // 1: asset.AssetStatus
-	(AssetOpType)(0),            // 2: asset.AssetOpType
-	(BizType)(0),                // 3: asset.BizType
-	(SceneType)(0),              // 4: asset.SceneType
-	(FreezeStatus)(0),           // 5: asset.FreezeStatus
-	(LockStatus)(0),             // 6: asset.LockStatus
-	(IdempotentStatus)(0),       // 7: asset.IdempotentStatus
-	(AssetCoinType)(0),          // 8: asset.AssetCoinType
-	(AssetCoinSwitch)(0),        // 9: asset.AssetCoinSwitch
-	(AssetCoinOperationType)(0), // 10: asset.AssetCoinOperationType
+	(AssetOpType)(0),            // 0: asset.AssetOpType
+	(BizType)(0),                // 1: asset.BizType
+	(SceneType)(0),              // 2: asset.SceneType
+	(FreezeStatus)(0),           // 3: asset.FreezeStatus
+	(LockStatus)(0),             // 4: asset.LockStatus
+	(IdempotentStatus)(0),       // 5: asset.IdempotentStatus
+	(AssetCoinType)(0),          // 6: asset.AssetCoinType
+	(AssetCoinOperationType)(0), // 7: asset.AssetCoinOperationType
 }
 var file_proto_asset_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -825,7 +647,7 @@ func file_proto_asset_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_asset_enum_proto_rawDesc), len(file_proto_asset_enum_proto_rawDesc)),
-			NumEnums:      11,
+			NumEnums:      8,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

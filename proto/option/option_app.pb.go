@@ -286,14 +286,14 @@ type AppPlaceOrderReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	AccountId      int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId     int64                  `protobuf:"varint,2,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
-	Side           Side                   `protobuf:"varint,3,opt,name=side,proto3,enum=option.Side" json:"side,omitempty"`
+	Side           common.Side            `protobuf:"varint,3,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionEffect PositionEffect         `protobuf:"varint,4,opt,name=position_effect,json=positionEffect,proto3,enum=option.PositionEffect" json:"position_effect,omitempty"`
 	OrderType      OrderType              `protobuf:"varint,5,opt,name=order_type,json=orderType,proto3,enum=option.OrderType" json:"order_type,omitempty"`
 	Price          string                 `protobuf:"bytes,6,opt,name=price,proto3" json:"price,omitempty"`
 	Qty            string                 `protobuf:"bytes,7,opt,name=qty,proto3" json:"qty,omitempty"`
 	ClientOrderId  string                 `protobuf:"bytes,8,opt,name=client_order_id,json=clientOrderId,proto3" json:"client_order_id,omitempty"`
-	ReduceOnly     YesNo                  `protobuf:"varint,9,opt,name=reduce_only,json=reduceOnly,proto3,enum=option.YesNo" json:"reduce_only,omitempty"`
-	Mmp            YesNo                  `protobuf:"varint,10,opt,name=mmp,proto3,enum=option.YesNo" json:"mmp,omitempty"`
+	ReduceOnly     common.YesNo           `protobuf:"varint,9,opt,name=reduce_only,json=reduceOnly,proto3,enum=common.YesNo" json:"reduce_only,omitempty"` // 是否只减仓
+	Mmp            common.YesNo           `protobuf:"varint,10,opt,name=mmp,proto3,enum=common.YesNo" json:"mmp,omitempty"`                                // 是否做市商保护单
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -342,11 +342,11 @@ func (x *AppPlaceOrderReq) GetContractId() int64 {
 	return 0
 }
 
-func (x *AppPlaceOrderReq) GetSide() Side {
+func (x *AppPlaceOrderReq) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
-	return Side_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *AppPlaceOrderReq) GetPositionEffect() PositionEffect {
@@ -384,18 +384,18 @@ func (x *AppPlaceOrderReq) GetClientOrderId() string {
 	return ""
 }
 
-func (x *AppPlaceOrderReq) GetReduceOnly() YesNo {
+func (x *AppPlaceOrderReq) GetReduceOnly() common.YesNo {
 	if x != nil {
 		return x.ReduceOnly
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
-func (x *AppPlaceOrderReq) GetMmp() YesNo {
+func (x *AppPlaceOrderReq) GetMmp() common.YesNo {
 	if x != nil {
 		return x.Mmp
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
 type AppPlaceOrderResp struct {
@@ -678,7 +678,7 @@ type AppListCurrentOrdersReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId    int64                  `protobuf:"varint,2,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
-	Side          Side                   `protobuf:"varint,3,opt,name=side,proto3,enum=option.Side" json:"side,omitempty"`
+	Side          common.Side            `protobuf:"varint,3,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -728,11 +728,11 @@ func (x *AppListCurrentOrdersReq) GetContractId() int64 {
 	return 0
 }
 
-func (x *AppListCurrentOrdersReq) GetSide() Side {
+func (x *AppListCurrentOrdersReq) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
-	return Side_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *AppListCurrentOrdersReq) GetPage() *common.PageReq {
@@ -1801,17 +1801,17 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +
 	"contractId\x12 \n" +
-	"\x04side\x18\x03 \x01(\x0e2\f.option.SideR\x04side\x12?\n" +
+	"\x04side\x18\x03 \x01(\x0e2\f.common.SideR\x04side\x12?\n" +
 	"\x0fposition_effect\x18\x04 \x01(\x0e2\x16.option.PositionEffectR\x0epositionEffect\x120\n" +
 	"\n" +
 	"order_type\x18\x05 \x01(\x0e2\x11.option.OrderTypeR\torderType\x12\x14\n" +
 	"\x05price\x18\x06 \x01(\tR\x05price\x12\x10\n" +
 	"\x03qty\x18\a \x01(\tR\x03qty\x12&\n" +
 	"\x0fclient_order_id\x18\b \x01(\tR\rclientOrderId\x12.\n" +
-	"\vreduce_only\x18\t \x01(\x0e2\r.option.YesNoR\n" +
+	"\vreduce_only\x18\t \x01(\x0e2\r.common.YesNoR\n" +
 	"reduceOnly\x12\x1f\n" +
 	"\x03mmp\x18\n" +
-	" \x01(\x0e2\r.option.YesNoR\x03mmp\"h\n" +
+	" \x01(\x0e2\r.common.YesNoR\x03mmp\"h\n" +
 	"\x11AppPlaceOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x01(\v2\x19.option.AppPlaceOrderDataR\x04data\"I\n" +
@@ -1836,7 +1836,7 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +
 	"contractId\x12 \n" +
-	"\x04side\x18\x03 \x01(\x0e2\f.option.SideR\x04side\x12#\n" +
+	"\x04side\x18\x03 \x01(\x0e2\f.common.SideR\x04side\x12#\n" +
 	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"o\n" +
 	"\x18AppListCurrentOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
@@ -1985,10 +1985,10 @@ var file_proto_option_option_app_proto_goTypes = []any{
 	(ContractStatus)(0),              // 32: option.ContractStatus
 	(*common.PageReq)(nil),           // 33: common.PageReq
 	(*OptionContractDetail)(nil),     // 34: option.OptionContractDetail
-	(Side)(0),                        // 35: option.Side
+	(common.Side)(0),                 // 35: common.Side
 	(PositionEffect)(0),              // 36: option.PositionEffect
 	(OrderType)(0),                   // 37: option.OrderType
-	(YesNo)(0),                       // 38: option.YesNo
+	(common.YesNo)(0),                // 38: common.YesNo
 	(*OptionOrderDetail)(nil),        // 39: option.OptionOrderDetail
 	(OrderStatus)(0),                 // 40: option.OrderStatus
 	(*common.TimeRange)(nil),         // 41: common.TimeRange
@@ -2010,16 +2010,16 @@ var file_proto_option_option_app_proto_depIdxs = []int32{
 	34, // 5: option.AppListContractsResp.data:type_name -> option.OptionContractDetail
 	30, // 6: option.AppGetContractDetailResp.base:type_name -> common.RespBase
 	34, // 7: option.AppGetContractDetailResp.data:type_name -> option.OptionContractDetail
-	35, // 8: option.AppPlaceOrderReq.side:type_name -> option.Side
+	35, // 8: option.AppPlaceOrderReq.side:type_name -> common.Side
 	36, // 9: option.AppPlaceOrderReq.position_effect:type_name -> option.PositionEffect
 	37, // 10: option.AppPlaceOrderReq.order_type:type_name -> option.OrderType
-	38, // 11: option.AppPlaceOrderReq.reduce_only:type_name -> option.YesNo
-	38, // 12: option.AppPlaceOrderReq.mmp:type_name -> option.YesNo
+	38, // 11: option.AppPlaceOrderReq.reduce_only:type_name -> common.YesNo
+	38, // 12: option.AppPlaceOrderReq.mmp:type_name -> common.YesNo
 	30, // 13: option.AppPlaceOrderResp.base:type_name -> common.RespBase
 	7,  // 14: option.AppPlaceOrderResp.data:type_name -> option.AppPlaceOrderData
 	30, // 15: option.AppGetOrderDetailResp.base:type_name -> common.RespBase
 	39, // 16: option.AppGetOrderDetailResp.data:type_name -> option.OptionOrderDetail
-	35, // 17: option.AppListCurrentOrdersReq.side:type_name -> option.Side
+	35, // 17: option.AppListCurrentOrdersReq.side:type_name -> common.Side
 	33, // 18: option.AppListCurrentOrdersReq.page:type_name -> common.PageReq
 	30, // 19: option.AppListCurrentOrdersResp.base:type_name -> common.RespBase
 	39, // 20: option.AppListCurrentOrdersResp.data:type_name -> option.OptionOrderDetail

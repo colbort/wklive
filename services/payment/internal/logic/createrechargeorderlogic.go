@@ -63,7 +63,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	}
 
 	// 验证通道可用性
-	if channel.Status != 1 {
+	if channel.Enabled != 1 {
 		return &payment.CreateRechargeOrderResp{
 			Base: helper.GetErrResp(i18n.PaymentChannelUnavailable, i18n.Translate(i18n.PaymentChannelUnavailable, l.ctx)),
 		}, nil

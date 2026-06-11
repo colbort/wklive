@@ -65,10 +65,10 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 		channel.Sort = in.Sort
 	}
 	if in.Visible != 0 {
-		channel.Visible = in.Visible
+		channel.Visible = switchToModel(in.Visible, channel.Visible)
 	}
-	if in.Status != 0 {
-		channel.Status = int64(in.Status)
+	if in.Enabled != 0 {
+		channel.Enabled = int64(in.Enabled)
 	}
 	if in.SingleMinAmount != 0 {
 		channel.SingleMinAmount = in.SingleMinAmount

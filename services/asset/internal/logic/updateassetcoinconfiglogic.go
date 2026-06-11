@@ -58,7 +58,7 @@ func (l *UpdateAssetCoinConfigLogic) UpdateAssetCoinConfig(in *asset.UpdateAsset
 		RechargeEnabled: assetCoinSwitchValue(in.RechargeEnabled, old.RechargeEnabled),
 		WithdrawEnabled: assetCoinSwitchValue(in.WithdrawEnabled, old.WithdrawEnabled),
 		TransferEnabled: assetCoinSwitchValue(in.TransferEnabled, old.TransferEnabled),
-		Status:          assetCoinStatusValue(in.Status, old.Status),
+		Enabled:         assetCoinEnabledValue(in.Enabled, old.Enabled),
 		Sort:            int64(in.Sort),
 		Remark:          in.Remark,
 		CreateTimes:     old.CreateTimes,

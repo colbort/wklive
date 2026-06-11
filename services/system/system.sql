@@ -21,11 +21,11 @@ CREATE TABLE sys_user (
   nickname VARCHAR(64) DEFAULT '' COMMENT '昵称',
   avatar VARCHAR(255) DEFAULT '' COMMENT '头像',
 
-  status TINYINT DEFAULT 1 COMMENT '状态 1正常 2禁用',
+  enabled TINYINT DEFAULT 1 COMMENT '启用开关：1启用 2禁用',
 
   -- google 2fa
   google_secret VARCHAR(255) DEFAULT '' COMMENT '2FA secret(加密存储)',
-  google_enabled TINYINT DEFAULT 0 COMMENT '是否开启2FA',
+  google_enabled TINYINT DEFAULT 0 COMMENT 'Google2FA开关：1启用 0禁用',
 
   perms_ver INT DEFAULT 1 COMMENT '权限版本(角色变化强制token失效)',
 
@@ -41,7 +41,7 @@ CREATE TABLE sys_user (
   INDEX idx_tenant_id(tenant_id),
   INDEX idx_user_type(user_type),
   INDEX idx_owner(is_owner),
-  INDEX idx_status(status)
+  INDEX idx_enabled(enabled)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='统一用户表';
 
 
@@ -60,7 +60,7 @@ CREATE TABLE sys_role (
   name VARCHAR(64) NOT NULL DEFAULT '' COMMENT '角色名称',
   code VARCHAR(64) NOT NULL DEFAULT '' COMMENT '角色标识(如admin)',
 
-  status TINYINT DEFAULT 1 COMMENT '1启用 2禁用',
+  enabled TINYINT DEFAULT 1 COMMENT '启用开关：1启用 2禁用',
 
   remark VARCHAR(255) DEFAULT '',
 
@@ -71,7 +71,7 @@ CREATE TABLE sys_role (
   UNIQUE KEY uk_tenant_role_name(tenant_id, name),
   UNIQUE KEY uk_tenant_role_code(tenant_id, code),
   INDEX idx_tenant_id(tenant_id),
-  INDEX idx_status(status)
+  INDEX idx_enabled(enabled)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
 
 
@@ -108,7 +108,7 @@ CREATE TABLE sys_menu (
 
   name VARCHAR(64) NOT NULL DEFAULT '' COMMENT '名称',
 
-  menu_type TINYINT NOT NULL DEFAULT 0 COMMENT '1目录 2菜单 3按钮',
+  menu_type TINYINT NOT NULL DEFAULT 0 COMMENT '菜单类型：0未知 1目录 2菜单 3按钮',
 
   method VARCHAR(16) DEFAULT '' COMMENT '请求方法 GET POST PUT DELETE',
   path VARCHAR(255) DEFAULT '' COMMENT '路由路径',
@@ -119,8 +119,8 @@ CREATE TABLE sys_menu (
   icon VARCHAR(64) DEFAULT '',
   sort INT DEFAULT 0,
 
-  visible TINYINT DEFAULT 1 COMMENT '1显示 2隐藏',
-  status TINYINT DEFAULT 1 COMMENT '1启用 2禁用',
+  visible TINYINT DEFAULT 1 COMMENT '显示开关：1显示 2隐藏',
+  enabled TINYINT DEFAULT 1 COMMENT '启用开关：1启用 2禁用',
 
   create_times BIGINT NOT NULL DEFAULT 0,
   update_times BIGINT NOT NULL DEFAULT 0,
@@ -247,11 +247,11 @@ DROP TABLE IF EXISTS sys_verification_code_record;
 CREATE TABLE sys_verification_code_record (
   id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
-  channel TINYINT NOT NULL DEFAULT 0 COMMENT '发送渠道：1邮箱 2手机短信',
+  channel TINYINT NOT NULL DEFAULT 0 COMMENT '发送渠道：0未知 1邮箱 2手机短信',
   target VARCHAR(128) NOT NULL DEFAULT '' COMMENT '发送目标：邮箱或手机号',
-  scene SMALLINT NOT NULL DEFAULT 0 COMMENT '业务场景：1注册 2登录 3重置密码 4绑定邮箱 5绑定手机 6修改密码 7提现 100测试',
+  scene SMALLINT NOT NULL DEFAULT 0 COMMENT '业务场景：0未知 1注册 2登录 3重置密码 4绑定邮箱 5绑定手机 6修改密码 7提现 100测试',
   code VARCHAR(16) NOT NULL DEFAULT '' COMMENT '验证码',
-  status TINYINT NOT NULL DEFAULT 0 COMMENT '发送状态：1成功 2失败',
+  status TINYINT NOT NULL DEFAULT 0 COMMENT '发送状态：0未知 1成功 2失败',
   provider VARCHAR(64) DEFAULT NULL COMMENT '服务商',
   error_message VARCHAR(512) DEFAULT NULL COMMENT '失败原因',
   create_times BIGINT NOT NULL DEFAULT 0,
@@ -275,7 +275,7 @@ CREATE TABLE sys_job (
   job_group VARCHAR(50) DEFAULT 'DEFAULT' COMMENT '任务分组',
   invoke_target VARCHAR(500) NOT NULL DEFAULT '' COMMENT '调用目标',
   cron_expression VARCHAR(100) NOT NULL DEFAULT '' COMMENT 'cron表达式',
-  status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0停用 1启用',
+  status TINYINT NOT NULL DEFAULT 1 COMMENT '任务状态：0停用 1启用',
   remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
   create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
   create_times BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -319,7 +319,7 @@ CREATE TABLE sys_tenant (
   id BIGINT NOT NULL AUTO_INCREMENT COMMENT '租户ID',
   tenant_code VARCHAR(64) NOT NULL DEFAULT '' COMMENT '租户编码',
   tenant_name VARCHAR(128) NOT NULL DEFAULT '' COMMENT '租户名称',
-  status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用',
+  enabled TINYINT NOT NULL DEFAULT 1 COMMENT '启用开关：1启用 2禁用',
   expire_time BIGINT DEFAULT 0 COMMENT '到期时间',
   contact_name VARCHAR(64) DEFAULT NULL COMMENT '联系人',
   contact_phone VARCHAR(32) DEFAULT NULL COMMENT '联系电话',
@@ -333,6 +333,6 @@ CREATE TABLE sys_tenant (
   update_times BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (id),
   UNIQUE KEY uk_tenant_code (tenant_code),
-  KEY idx_status (status),
+  KEY idx_enabled (enabled),
   KEY idx_expire_time (expire_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户表';

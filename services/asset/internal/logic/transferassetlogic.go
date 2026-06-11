@@ -81,7 +81,7 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 				Coin:            in.Coin,
 				TotalAmount:     amount,
 				AvailableAmount: amount,
-				Status:          1,
+				Enabled:         1,
 				Version:         1,
 				Remark:          in.Remark,
 				CreateTimes:     ts,

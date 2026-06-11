@@ -47,14 +47,14 @@ type (
 		Id            int64  `db:"id"`             // 主键ID
 		TenantId      int64  `db:"tenant_id"`      // 租户ID
 		UserId        int64  `db:"user_id"`        // 用户ID
-		WalletType    int64  `db:"wallet_type"`    // 账户类型:1现金账户 2股票账户 3合约账户 4理财账户 5期权账户
+		WalletType    int64  `db:"wallet_type"`    // 账户类型:1现金/现货 2股票/资金 3合约 4理财 5期权
 		Coin          string `db:"coin"`           // 币种:USDT/BTC/ETH
 		ChainCode     int64  `db:"chain_code"`     // 链类型
 		Address       string `db:"address"`        // 充值地址
 		Memo          string `db:"memo"`           // memo/tag，如XRP/EOS/TON等
 		AddressSource int64  `db:"address_source"` // 地址来源:1系统生成 2第三方分配 3手工导入
 		AddressType   int64  `db:"address_type"`   // 地址类型:1用户独享 2平台公共地址+memo
-		Status        int64  `db:"status"`         // 状态:1可用 0禁用 2冻结
+		Status        int64  `db:"status"`         // 地址状态:1可用 0禁用 2冻结
 		LastUsedTime  int64  `db:"last_used_time"` // 最近使用时间
 		CreateTimes   int64  `db:"create_times"`   // 创建时间
 		UpdateTimes   int64  `db:"update_times"`   // 更新时间

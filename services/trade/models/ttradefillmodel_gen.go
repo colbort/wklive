@@ -51,7 +51,7 @@ type (
 		SymbolId      int64   `db:"symbol_id"`      // 交易标的ID
 		MarketType    int64   `db:"market_type"`    // 市场类型：1现货 2秒合约 3U本位 4币本位
 		Side          int64   `db:"side"`           // 买卖方向：1买 2卖
-		PositionSide  int64   `db:"position_side"`  // 持仓方向：0无 1多 2空
+		PositionSide  int64   `db:"position_side"`  // 持仓方向：0未知/无 1净持仓 2多 3空
 		Price         float64 `db:"price"`          // 成交价格
 		Qty           float64 `db:"qty"`            // 成交数量
 		Amount        float64 `db:"amount"`         // 成交金额

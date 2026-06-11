@@ -84,7 +84,7 @@ func (l *AddAvailableLogic) AddAvailable(in *asset.AddAvailableReq) (*asset.Chan
 				AvailableAmount: amount,
 				FrozenAmount:    0,
 				LockedAmount:    0,
-				Status:          1,
+				Enabled:         1,
 				Version:         1,
 				Remark:          in.Remark,
 				CreateTimes:     ts,

@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -560,8 +561,8 @@ type TradeSymbolSpot struct {
 	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MakerFeeRate  string                 `protobuf:"bytes,4,opt,name=maker_fee_rate,json=makerFeeRate,proto3" json:"maker_fee_rate,omitempty"`
 	TakerFeeRate  string                 `protobuf:"bytes,5,opt,name=taker_fee_rate,json=takerFeeRate,proto3" json:"taker_fee_rate,omitempty"`
-	BuyEnabled    int64                  `protobuf:"varint,6,opt,name=buy_enabled,json=buyEnabled,proto3" json:"buy_enabled,omitempty"`
-	SellEnabled   int64                  `protobuf:"varint,7,opt,name=sell_enabled,json=sellEnabled,proto3" json:"sell_enabled,omitempty"`
+	BuyEnabled    common.Enable          `protobuf:"varint,6,opt,name=buy_enabled,json=buyEnabled,proto3,enum=common.Enable" json:"buy_enabled,omitempty"`    // 状态,0表示全部，1表示启用，2表示禁用
+	SellEnabled   common.Enable          `protobuf:"varint,7,opt,name=sell_enabled,json=sellEnabled,proto3,enum=common.Enable" json:"sell_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	CreateTimes   int64                  `protobuf:"varint,8,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes   int64                  `protobuf:"varint,9,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -633,18 +634,18 @@ func (x *TradeSymbolSpot) GetTakerFeeRate() string {
 	return ""
 }
 
-func (x *TradeSymbolSpot) GetBuyEnabled() int64 {
+func (x *TradeSymbolSpot) GetBuyEnabled() common.Enable {
 	if x != nil {
 		return x.BuyEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *TradeSymbolSpot) GetSellEnabled() int64 {
+func (x *TradeSymbolSpot) GetSellEnabled() common.Enable {
 	if x != nil {
 		return x.SellEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *TradeSymbolSpot) GetCreateTimes() int64 {
@@ -676,8 +677,8 @@ type TradeSymbolContract struct {
 	DeliveryTime           int64                  `protobuf:"varint,11,opt,name=delivery_time,json=deliveryTime,proto3" json:"delivery_time,omitempty"`
 	SupportCross           int64                  `protobuf:"varint,12,opt,name=support_cross,json=supportCross,proto3" json:"support_cross,omitempty"`
 	SupportIsolated        int64                  `protobuf:"varint,13,opt,name=support_isolated,json=supportIsolated,proto3" json:"support_isolated,omitempty"`
-	BuyEnabled             int64                  `protobuf:"varint,14,opt,name=buy_enabled,json=buyEnabled,proto3" json:"buy_enabled,omitempty"`
-	SellEnabled            int64                  `protobuf:"varint,15,opt,name=sell_enabled,json=sellEnabled,proto3" json:"sell_enabled,omitempty"`
+	BuyEnabled             common.Enable          `protobuf:"varint,14,opt,name=buy_enabled,json=buyEnabled,proto3,enum=common.Enable" json:"buy_enabled,omitempty"`    // 状态,0表示全部，1表示启用，2表示禁用
+	SellEnabled            common.Enable          `protobuf:"varint,15,opt,name=sell_enabled,json=sellEnabled,proto3,enum=common.Enable" json:"sell_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	CreateTimes            int64                  `protobuf:"varint,16,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes            int64                  `protobuf:"varint,17,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields          protoimpl.UnknownFields
@@ -805,18 +806,18 @@ func (x *TradeSymbolContract) GetSupportIsolated() int64 {
 	return 0
 }
 
-func (x *TradeSymbolContract) GetBuyEnabled() int64 {
+func (x *TradeSymbolContract) GetBuyEnabled() common.Enable {
 	if x != nil {
 		return x.BuyEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *TradeSymbolContract) GetSellEnabled() int64 {
+func (x *TradeSymbolContract) GetSellEnabled() common.Enable {
 	if x != nil {
 		return x.SellEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *TradeSymbolContract) GetCreateTimes() int64 {
@@ -843,8 +844,8 @@ type TradeUserConfig struct {
 	PositionMode      PositionMode           `protobuf:"varint,6,opt,name=position_mode,json=positionMode,proto3,enum=trade.PositionMode" json:"position_mode,omitempty"`
 	MarginMode        MarginMode             `protobuf:"varint,7,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
 	DefaultLeverage   int64                  `protobuf:"varint,8,opt,name=default_leverage,json=defaultLeverage,proto3" json:"default_leverage,omitempty"`
-	TradeEnabled      int64                  `protobuf:"varint,9,opt,name=trade_enabled,json=tradeEnabled,proto3" json:"trade_enabled,omitempty"`
-	ReduceOnlyEnabled int64                  `protobuf:"varint,10,opt,name=reduce_only_enabled,json=reduceOnlyEnabled,proto3" json:"reduce_only_enabled,omitempty"`
+	TradeEnabled      common.Enable          `protobuf:"varint,9,opt,name=trade_enabled,json=tradeEnabled,proto3,enum=common.Enable" json:"trade_enabled,omitempty"`                   // 状态,0表示全部，1表示启用，2表示禁用
+	ReduceOnlyEnabled common.Enable          `protobuf:"varint,10,opt,name=reduce_only_enabled,json=reduceOnlyEnabled,proto3,enum=common.Enable" json:"reduce_only_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	CreateTimes       int64                  `protobuf:"varint,11,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes       int64                  `protobuf:"varint,12,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields     protoimpl.UnknownFields
@@ -937,18 +938,18 @@ func (x *TradeUserConfig) GetDefaultLeverage() int64 {
 	return 0
 }
 
-func (x *TradeUserConfig) GetTradeEnabled() int64 {
+func (x *TradeUserConfig) GetTradeEnabled() common.Enable {
 	if x != nil {
 		return x.TradeEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *TradeUserConfig) GetReduceOnlyEnabled() int64 {
+func (x *TradeUserConfig) GetReduceOnlyEnabled() common.Enable {
 	if x != nil {
 		return x.ReduceOnlyEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *TradeUserConfig) GetCreateTimes() int64 {
@@ -974,7 +975,7 @@ type TradeOrder struct {
 	UserId        int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,6,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,7,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
-	Side          TradeSide              `protobuf:"varint,8,opt,name=side,proto3,enum=trade.TradeSide" json:"side,omitempty"`
+	Side          common.Side            `protobuf:"varint,8,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionSide  PositionSide           `protobuf:"varint,9,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	OrderType     OrderType              `protobuf:"varint,10,opt,name=order_type,json=orderType,proto3,enum=trade.OrderType" json:"order_type,omitempty"`
 	TimeInForce   TimeInForce            `protobuf:"varint,11,opt,name=time_in_force,json=timeInForce,proto3,enum=trade.TimeInForce" json:"time_in_force,omitempty"`
@@ -1080,11 +1081,11 @@ func (x *TradeOrder) GetMarketType() MarketType {
 	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
-func (x *TradeOrder) GetSide() TradeSide {
+func (x *TradeOrder) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *TradeOrder) GetPositionSide() PositionSide {
@@ -1499,7 +1500,7 @@ type TradeFill struct {
 	UserId        int64                  `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,7,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,8,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
-	Side          TradeSide              `protobuf:"varint,9,opt,name=side,proto3,enum=trade.TradeSide" json:"side,omitempty"`
+	Side          common.Side            `protobuf:"varint,9,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionSide  PositionSide           `protobuf:"varint,10,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	Price         string                 `protobuf:"bytes,11,opt,name=price,proto3" json:"price,omitempty"`
 	Qty           string                 `protobuf:"bytes,12,opt,name=qty,proto3" json:"qty,omitempty"`
@@ -1600,11 +1601,11 @@ func (x *TradeFill) GetMarketType() MarketType {
 	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
-func (x *TradeFill) GetSide() TradeSide {
+func (x *TradeFill) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *TradeFill) GetPositionSide() PositionSide {
@@ -2459,7 +2460,7 @@ type ContractLeverageConfig struct {
 	MaxLeverage   int64                  `protobuf:"varint,10,opt,name=max_leverage,json=maxLeverage,proto3" json:"max_leverage,omitempty"`
 	OperatorId    int64                  `protobuf:"varint,11,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source        SourceType             `protobuf:"varint,12,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
-	Status        int64                  `protobuf:"varint,13,opt,name=status,proto3" json:"status,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,13,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	Remark        string                 `protobuf:"bytes,14,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,15,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes   int64                  `protobuf:"varint,16,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
@@ -2581,11 +2582,11 @@ func (x *ContractLeverageConfig) GetSource() SourceType {
 	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
-func (x *ContractLeverageConfig) GetStatus() int64 {
+func (x *ContractLeverageConfig) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *ContractLeverageConfig) GetRemark() string {
@@ -2619,7 +2620,7 @@ type TradeSymbolLeverageConfig struct {
 	LeverageValues  []int64                `protobuf:"varint,6,rep,packed,name=leverage_values,json=leverageValues,proto3" json:"leverage_values,omitempty"`
 	DefaultLeverage int64                  `protobuf:"varint,7,opt,name=default_leverage,json=defaultLeverage,proto3" json:"default_leverage,omitempty"`
 	MaxLeverage     int64                  `protobuf:"varint,8,opt,name=max_leverage,json=maxLeverage,proto3" json:"max_leverage,omitempty"`
-	Status          int64                  `protobuf:"varint,9,opt,name=status,proto3" json:"status,omitempty"`
+	Enabled         common.Enable          `protobuf:"varint,9,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	Sort            int64                  `protobuf:"varint,10,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark          string                 `protobuf:"bytes,11,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes     int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
@@ -2714,11 +2715,11 @@ func (x *TradeSymbolLeverageConfig) GetMaxLeverage() int64 {
 	return 0
 }
 
-func (x *TradeSymbolLeverageConfig) GetStatus() int64 {
+func (x *TradeSymbolLeverageConfig) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *TradeSymbolLeverageConfig) GetSort() int64 {
@@ -2760,7 +2761,7 @@ type RiskUserTradeLimit struct {
 	CanCancel            int64                  `protobuf:"varint,7,opt,name=can_cancel,json=canCancel,proto3" json:"can_cancel,omitempty"`
 	CanTriggerOrder      int64                  `protobuf:"varint,8,opt,name=can_trigger_order,json=canTriggerOrder,proto3" json:"can_trigger_order,omitempty"`
 	CanApiTrade          int64                  `protobuf:"varint,9,opt,name=can_api_trade,json=canApiTrade,proto3" json:"can_api_trade,omitempty"`
-	TradeEnabled         int64                  `protobuf:"varint,10,opt,name=trade_enabled,json=tradeEnabled,proto3" json:"trade_enabled,omitempty"`
+	TradeEnabled         common.Enable          `protobuf:"varint,10,opt,name=trade_enabled,json=tradeEnabled,proto3,enum=common.Enable" json:"trade_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	OnlyReduceOnly       int64                  `protobuf:"varint,11,opt,name=only_reduce_only,json=onlyReduceOnly,proto3" json:"only_reduce_only,omitempty"`
 	MaxOpenOrderCount    int64                  `protobuf:"varint,12,opt,name=max_open_order_count,json=maxOpenOrderCount,proto3" json:"max_open_order_count,omitempty"`
 	MaxOrderCountPerDay  int64                  `protobuf:"varint,13,opt,name=max_order_count_per_day,json=maxOrderCountPerDay,proto3" json:"max_order_count_per_day,omitempty"`
@@ -2770,7 +2771,7 @@ type RiskUserTradeLimit struct {
 	RiskLevel            int64                  `protobuf:"varint,17,opt,name=risk_level,json=riskLevel,proto3" json:"risk_level,omitempty"`
 	OperatorId           int64                  `protobuf:"varint,18,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source               SourceType             `protobuf:"varint,19,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
-	Status               int64                  `protobuf:"varint,20,opt,name=status,proto3" json:"status,omitempty"`
+	Enabled              common.Enable          `protobuf:"varint,20,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	EffectiveStartTime   int64                  `protobuf:"varint,21,opt,name=effective_start_time,json=effectiveStartTime,proto3" json:"effective_start_time,omitempty"`
 	EffectiveEndTime     int64                  `protobuf:"varint,22,opt,name=effective_end_time,json=effectiveEndTime,proto3" json:"effective_end_time,omitempty"`
 	Remark               string                 `protobuf:"bytes,23,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -2873,11 +2874,11 @@ func (x *RiskUserTradeLimit) GetCanApiTrade() int64 {
 	return 0
 }
 
-func (x *RiskUserTradeLimit) GetTradeEnabled() int64 {
+func (x *RiskUserTradeLimit) GetTradeEnabled() common.Enable {
 	if x != nil {
 		return x.TradeEnabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *RiskUserTradeLimit) GetOnlyReduceOnly() int64 {
@@ -2943,11 +2944,11 @@ func (x *RiskUserTradeLimit) GetSource() SourceType {
 	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
-func (x *RiskUserTradeLimit) GetStatus() int64 {
+func (x *RiskUserTradeLimit) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *RiskUserTradeLimit) GetEffectiveStartTime() int64 {
@@ -3004,7 +3005,7 @@ type RiskUserSymbolLimit struct {
 	PriceDeviationRate  string                 `protobuf:"bytes,15,opt,name=price_deviation_rate,json=priceDeviationRate,proto3" json:"price_deviation_rate,omitempty"`
 	OperatorId          int64                  `protobuf:"varint,16,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source              SourceType             `protobuf:"varint,17,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
-	Status              int64                  `protobuf:"varint,18,opt,name=status,proto3" json:"status,omitempty"`
+	Enabled             common.Enable          `protobuf:"varint,18,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	EffectiveStartTime  int64                  `protobuf:"varint,19,opt,name=effective_start_time,json=effectiveStartTime,proto3" json:"effective_start_time,omitempty"`
 	EffectiveEndTime    int64                  `protobuf:"varint,20,opt,name=effective_end_time,json=effectiveEndTime,proto3" json:"effective_end_time,omitempty"`
 	Remark              string                 `protobuf:"bytes,21,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -3163,11 +3164,11 @@ func (x *RiskUserSymbolLimit) GetSource() SourceType {
 	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
-func (x *RiskUserSymbolLimit) GetStatus() int64 {
+func (x *RiskUserSymbolLimit) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *RiskUserSymbolLimit) GetEffectiveStartTime() int64 {
@@ -3585,7 +3586,7 @@ var File_proto_trade_model_proto protoreflect.FileDescriptor
 
 const file_proto_trade_model_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/trade/model.proto\x12\x05trade\x1a\x16proto/trade/enum.proto\"(\n" +
+	"\x17proto/trade/model.proto\x12\x05trade\x1a\x19proto/common/common.proto\x1a\x16proto/trade/enum.proto\"(\n" +
 	"\tTenantReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"?\n" +
 	"\aUserReq\x12\x1b\n" +
@@ -3635,18 +3636,18 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x04sort\x18\x17 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x18 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x19 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x1a \x01(\x03R\vupdateTimes\"\xb1\x02\n" +
+	"\fupdate_times\x18\x1a \x01(\x03R\vupdateTimes\"\xd1\x02\n" +
 	"\x0fTradeSymbolSpot\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x12$\n" +
 	"\x0emaker_fee_rate\x18\x04 \x01(\tR\fmakerFeeRate\x12$\n" +
-	"\x0etaker_fee_rate\x18\x05 \x01(\tR\ftakerFeeRate\x12\x1f\n" +
-	"\vbuy_enabled\x18\x06 \x01(\x03R\n" +
-	"buyEnabled\x12!\n" +
-	"\fsell_enabled\x18\a \x01(\x03R\vsellEnabled\x12!\n" +
+	"\x0etaker_fee_rate\x18\x05 \x01(\tR\ftakerFeeRate\x12/\n" +
+	"\vbuy_enabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\n" +
+	"buyEnabled\x121\n" +
+	"\fsell_enabled\x18\a \x01(\x0e2\x0e.common.EnableR\vsellEnabled\x12!\n" +
 	"\fcreate_times\x18\b \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\t \x01(\x03R\vupdateTimes\"\x91\x05\n" +
+	"\fupdate_times\x18\t \x01(\x03R\vupdateTimes\"\xb1\x05\n" +
 	"\x13TradeSymbolContract\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
@@ -3663,12 +3664,12 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	" \x01(\x03R\x16fundingIntervalMinutes\x12#\n" +
 	"\rdelivery_time\x18\v \x01(\x03R\fdeliveryTime\x12#\n" +
 	"\rsupport_cross\x18\f \x01(\x03R\fsupportCross\x12)\n" +
-	"\x10support_isolated\x18\r \x01(\x03R\x0fsupportIsolated\x12\x1f\n" +
-	"\vbuy_enabled\x18\x0e \x01(\x03R\n" +
-	"buyEnabled\x12!\n" +
-	"\fsell_enabled\x18\x0f \x01(\x03R\vsellEnabled\x12!\n" +
+	"\x10support_isolated\x18\r \x01(\x03R\x0fsupportIsolated\x12/\n" +
+	"\vbuy_enabled\x18\x0e \x01(\x0e2\x0e.common.EnableR\n" +
+	"buyEnabled\x121\n" +
+	"\fsell_enabled\x18\x0f \x01(\x0e2\x0e.common.EnableR\vsellEnabled\x12!\n" +
 	"\fcreate_times\x18\x10 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x11 \x01(\x03R\vupdateTimes\"\xdc\x03\n" +
+	"\fupdate_times\x18\x11 \x01(\x03R\vupdateTimes\"\xfc\x03\n" +
 	"\x0fTradeUserConfig\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -3679,12 +3680,12 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\rposition_mode\x18\x06 \x01(\x0e2\x13.trade.PositionModeR\fpositionMode\x122\n" +
 	"\vmargin_mode\x18\a \x01(\x0e2\x11.trade.MarginModeR\n" +
 	"marginMode\x12)\n" +
-	"\x10default_leverage\x18\b \x01(\x03R\x0fdefaultLeverage\x12#\n" +
-	"\rtrade_enabled\x18\t \x01(\x03R\ftradeEnabled\x12.\n" +
+	"\x10default_leverage\x18\b \x01(\x03R\x0fdefaultLeverage\x123\n" +
+	"\rtrade_enabled\x18\t \x01(\x0e2\x0e.common.EnableR\ftradeEnabled\x12>\n" +
 	"\x13reduce_only_enabled\x18\n" +
-	" \x01(\x03R\x11reduceOnlyEnabled\x12!\n" +
+	" \x01(\x0e2\x0e.common.EnableR\x11reduceOnlyEnabled\x12!\n" +
 	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\xa8\b\n" +
+	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\xa4\b\n" +
 	"\n" +
 	"TradeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -3694,8 +3695,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x1b\n" +
 	"\tsymbol_id\x18\x06 \x01(\x03R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\a \x01(\x0e2\x11.trade.MarketTypeR\n" +
-	"marketType\x12$\n" +
-	"\x04side\x18\b \x01(\x0e2\x10.trade.TradeSideR\x04side\x128\n" +
+	"marketType\x12 \n" +
+	"\x04side\x18\b \x01(\x0e2\f.common.SideR\x04side\x128\n" +
 	"\rposition_side\x18\t \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\x12/\n" +
 	"\n" +
 	"order_type\x18\n" +
@@ -3746,7 +3747,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	" \x01(\tR\x0ftakeProfitPrice\x12&\n" +
 	"\x0fstop_loss_price\x18\v \x01(\tR\rstopLossPrice\x12!\n" +
 	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\"\xe2\x04\n" +
+	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\"\xde\x04\n" +
 	"\tTradeFill\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -3756,8 +3757,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\auser_id\x18\x06 \x01(\x03R\x06userId\x12\x1b\n" +
 	"\tsymbol_id\x18\a \x01(\x03R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\b \x01(\x0e2\x11.trade.MarketTypeR\n" +
-	"marketType\x12$\n" +
-	"\x04side\x18\t \x01(\x0e2\x10.trade.TradeSideR\x04side\x128\n" +
+	"marketType\x12 \n" +
+	"\x04side\x18\t \x01(\x0e2\f.common.SideR\x04side\x128\n" +
 	"\rposition_side\x18\n" +
 	" \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\x12\x14\n" +
 	"\x05price\x18\v \x01(\tR\x05price\x12\x10\n" +
@@ -3867,7 +3868,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\frealized_pnl\x18\f \x01(\tR\vrealizedPnl\x12\x18\n" +
 	"\aversion\x18\r \x01(\x03R\aversion\x12!\n" +
 	"\fcreate_times\x18\x0e \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x0f \x01(\x03R\vupdateTimes\"\xce\x04\n" +
+	"\fupdate_times\x18\x0f \x01(\x03R\vupdateTimes\"\xe0\x04\n" +
 	"\x16ContractLeverageConfig\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -3884,11 +3885,11 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	" \x01(\x03R\vmaxLeverage\x12\x1f\n" +
 	"\voperator_id\x18\v \x01(\x03R\n" +
 	"operatorId\x12)\n" +
-	"\x06source\x18\f \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
-	"\x06status\x18\r \x01(\x03R\x06status\x12\x16\n" +
+	"\x06source\x18\f \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12(\n" +
+	"\aenabled\x18\r \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x16\n" +
 	"\x06remark\x18\x0e \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x0f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"\xce\x03\n" +
+	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"\xe0\x03\n" +
 	"\x19TradeSymbolLeverageConfig\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
@@ -3899,13 +3900,13 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"marginMode\x12'\n" +
 	"\x0fleverage_values\x18\x06 \x03(\x03R\x0eleverageValues\x12)\n" +
 	"\x10default_leverage\x18\a \x01(\x03R\x0fdefaultLeverage\x12!\n" +
-	"\fmax_leverage\x18\b \x01(\x03R\vmaxLeverage\x12\x16\n" +
-	"\x06status\x18\t \x01(\x03R\x06status\x12\x12\n" +
+	"\fmax_leverage\x18\b \x01(\x03R\vmaxLeverage\x12(\n" +
+	"\aenabled\x18\t \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\n" +
 	" \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\v \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\"\xc4\a\n" +
+	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\"\xe6\a\n" +
 	"\x12RiskUserTradeLimit\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -3917,9 +3918,9 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\n" +
 	"can_cancel\x18\a \x01(\x03R\tcanCancel\x12*\n" +
 	"\x11can_trigger_order\x18\b \x01(\x03R\x0fcanTriggerOrder\x12\"\n" +
-	"\rcan_api_trade\x18\t \x01(\x03R\vcanApiTrade\x12#\n" +
+	"\rcan_api_trade\x18\t \x01(\x03R\vcanApiTrade\x123\n" +
 	"\rtrade_enabled\x18\n" +
-	" \x01(\x03R\ftradeEnabled\x12(\n" +
+	" \x01(\x0e2\x0e.common.EnableR\ftradeEnabled\x12(\n" +
 	"\x10only_reduce_only\x18\v \x01(\x03R\x0eonlyReduceOnly\x12/\n" +
 	"\x14max_open_order_count\x18\f \x01(\x03R\x11maxOpenOrderCount\x124\n" +
 	"\x17max_order_count_per_day\x18\r \x01(\x03R\x13maxOrderCountPerDay\x126\n" +
@@ -3930,13 +3931,13 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"risk_level\x18\x11 \x01(\x03R\triskLevel\x12\x1f\n" +
 	"\voperator_id\x18\x12 \x01(\x03R\n" +
 	"operatorId\x12)\n" +
-	"\x06source\x18\x13 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
-	"\x06status\x18\x14 \x01(\x03R\x06status\x120\n" +
+	"\x06source\x18\x13 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12(\n" +
+	"\aenabled\x18\x14 \x01(\x0e2\x0e.common.EnableR\aenabled\x120\n" +
 	"\x14effective_start_time\x18\x15 \x01(\x03R\x12effectiveStartTime\x12,\n" +
 	"\x12effective_end_time\x18\x16 \x01(\x03R\x10effectiveEndTime\x12\x16\n" +
 	"\x06remark\x18\x17 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x18 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\"\x92\a\n" +
+	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\"\xa4\a\n" +
 	"\x13RiskUserSymbolLimit\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -3957,8 +3958,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x14price_deviation_rate\x18\x0f \x01(\tR\x12priceDeviationRate\x12\x1f\n" +
 	"\voperator_id\x18\x10 \x01(\x03R\n" +
 	"operatorId\x12)\n" +
-	"\x06source\x18\x11 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
-	"\x06status\x18\x12 \x01(\x03R\x06status\x120\n" +
+	"\x06source\x18\x11 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12(\n" +
+	"\aenabled\x18\x12 \x01(\x0e2\x0e.common.EnableR\aenabled\x120\n" +
 	"\x14effective_start_time\x18\x13 \x01(\x03R\x12effectiveStartTime\x12,\n" +
 	"\x12effective_end_time\x18\x14 \x01(\x03R\x10effectiveEndTime\x12\x16\n" +
 	"\x06remark\x18\x15 \x01(\tR\x06remark\x12!\n" +
@@ -4058,72 +4059,84 @@ var file_proto_trade_model_proto_goTypes = []any{
 	(MarketType)(0),                   // 24: trade.MarketType
 	(ContractType)(0),                 // 25: trade.ContractType
 	(SymbolStatus)(0),                 // 26: trade.SymbolStatus
-	(PositionMode)(0),                 // 27: trade.PositionMode
-	(MarginMode)(0),                   // 28: trade.MarginMode
-	(TradeSide)(0),                    // 29: trade.TradeSide
-	(PositionSide)(0),                 // 30: trade.PositionSide
-	(OrderType)(0),                    // 31: trade.OrderType
-	(TimeInForce)(0),                  // 32: trade.TimeInForce
-	(OrderStatus)(0),                  // 33: trade.OrderStatus
-	(OrderSourceType)(0),              // 34: trade.OrderSourceType
-	(TriggerKind)(0),                  // 35: trade.TriggerKind
-	(LiquidityType)(0),                // 36: trade.LiquidityType
-	(PositionActionType)(0),           // 37: trade.PositionActionType
-	(SourceType)(0),                   // 38: trade.SourceType
-	(RiskCheckType)(0),                // 39: trade.RiskCheckType
-	(RiskCheckResult)(0),              // 40: trade.RiskCheckResult
-	(EventStatus)(0),                  // 41: trade.EventStatus
+	(common.Enable)(0),                // 27: common.Enable
+	(PositionMode)(0),                 // 28: trade.PositionMode
+	(MarginMode)(0),                   // 29: trade.MarginMode
+	(common.Side)(0),                  // 30: common.Side
+	(PositionSide)(0),                 // 31: trade.PositionSide
+	(OrderType)(0),                    // 32: trade.OrderType
+	(TimeInForce)(0),                  // 33: trade.TimeInForce
+	(OrderStatus)(0),                  // 34: trade.OrderStatus
+	(OrderSourceType)(0),              // 35: trade.OrderSourceType
+	(TriggerKind)(0),                  // 36: trade.TriggerKind
+	(LiquidityType)(0),                // 37: trade.LiquidityType
+	(PositionActionType)(0),           // 38: trade.PositionActionType
+	(SourceType)(0),                   // 39: trade.SourceType
+	(RiskCheckType)(0),                // 40: trade.RiskCheckType
+	(RiskCheckResult)(0),              // 41: trade.RiskCheckResult
+	(EventStatus)(0),                  // 42: trade.EventStatus
 }
 var file_proto_trade_model_proto_depIdxs = []int32{
 	24, // 0: trade.TradeSymbol.market_type:type_name -> trade.MarketType
 	25, // 1: trade.TradeSymbol.contract_type:type_name -> trade.ContractType
 	26, // 2: trade.TradeSymbol.status:type_name -> trade.SymbolStatus
-	24, // 3: trade.TradeUserConfig.market_type:type_name -> trade.MarketType
-	27, // 4: trade.TradeUserConfig.position_mode:type_name -> trade.PositionMode
-	28, // 5: trade.TradeUserConfig.margin_mode:type_name -> trade.MarginMode
-	24, // 6: trade.TradeOrder.market_type:type_name -> trade.MarketType
-	29, // 7: trade.TradeOrder.side:type_name -> trade.TradeSide
-	30, // 8: trade.TradeOrder.position_side:type_name -> trade.PositionSide
-	31, // 9: trade.TradeOrder.order_type:type_name -> trade.OrderType
-	32, // 10: trade.TradeOrder.time_in_force:type_name -> trade.TimeInForce
-	33, // 11: trade.TradeOrder.status:type_name -> trade.OrderStatus
-	34, // 12: trade.TradeOrder.source:type_name -> trade.OrderSourceType
-	35, // 13: trade.TradeOrder.trigger_kind:type_name -> trade.TriggerKind
-	28, // 14: trade.TradeOrderContract.margin_mode:type_name -> trade.MarginMode
-	24, // 15: trade.TradeFill.market_type:type_name -> trade.MarketType
-	29, // 16: trade.TradeFill.side:type_name -> trade.TradeSide
-	30, // 17: trade.TradeFill.position_side:type_name -> trade.PositionSide
-	36, // 18: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
-	24, // 19: trade.ContractPosition.market_type:type_name -> trade.MarketType
-	30, // 20: trade.ContractPosition.position_side:type_name -> trade.PositionSide
-	28, // 21: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
-	24, // 22: trade.ContractPositionHistory.market_type:type_name -> trade.MarketType
-	30, // 23: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
-	37, // 24: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
-	38, // 25: trade.ContractPositionHistory.source:type_name -> trade.SourceType
-	24, // 26: trade.ContractMarginAccount.market_type:type_name -> trade.MarketType
-	24, // 27: trade.ContractLeverageConfig.market_type:type_name -> trade.MarketType
-	28, // 28: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	27, // 29: trade.ContractLeverageConfig.position_mode:type_name -> trade.PositionMode
-	38, // 30: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
-	24, // 31: trade.TradeSymbolLeverageConfig.market_type:type_name -> trade.MarketType
-	28, // 32: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	24, // 33: trade.RiskUserTradeLimit.market_type:type_name -> trade.MarketType
-	38, // 34: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
-	24, // 35: trade.RiskUserSymbolLimit.market_type:type_name -> trade.MarketType
-	38, // 36: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
-	24, // 37: trade.RiskOrderCheckLog.market_type:type_name -> trade.MarketType
-	39, // 38: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
-	40, // 39: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
-	38, // 40: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
-	24, // 41: trade.BizTradeEvent.market_type:type_name -> trade.MarketType
-	38, // 42: trade.BizTradeEvent.source:type_name -> trade.SourceType
-	41, // 43: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
-	44, // [44:44] is the sub-list for method output_type
-	44, // [44:44] is the sub-list for method input_type
-	44, // [44:44] is the sub-list for extension type_name
-	44, // [44:44] is the sub-list for extension extendee
-	0,  // [0:44] is the sub-list for field type_name
+	27, // 3: trade.TradeSymbolSpot.buy_enabled:type_name -> common.Enable
+	27, // 4: trade.TradeSymbolSpot.sell_enabled:type_name -> common.Enable
+	27, // 5: trade.TradeSymbolContract.buy_enabled:type_name -> common.Enable
+	27, // 6: trade.TradeSymbolContract.sell_enabled:type_name -> common.Enable
+	24, // 7: trade.TradeUserConfig.market_type:type_name -> trade.MarketType
+	28, // 8: trade.TradeUserConfig.position_mode:type_name -> trade.PositionMode
+	29, // 9: trade.TradeUserConfig.margin_mode:type_name -> trade.MarginMode
+	27, // 10: trade.TradeUserConfig.trade_enabled:type_name -> common.Enable
+	27, // 11: trade.TradeUserConfig.reduce_only_enabled:type_name -> common.Enable
+	24, // 12: trade.TradeOrder.market_type:type_name -> trade.MarketType
+	30, // 13: trade.TradeOrder.side:type_name -> common.Side
+	31, // 14: trade.TradeOrder.position_side:type_name -> trade.PositionSide
+	32, // 15: trade.TradeOrder.order_type:type_name -> trade.OrderType
+	33, // 16: trade.TradeOrder.time_in_force:type_name -> trade.TimeInForce
+	34, // 17: trade.TradeOrder.status:type_name -> trade.OrderStatus
+	35, // 18: trade.TradeOrder.source:type_name -> trade.OrderSourceType
+	36, // 19: trade.TradeOrder.trigger_kind:type_name -> trade.TriggerKind
+	29, // 20: trade.TradeOrderContract.margin_mode:type_name -> trade.MarginMode
+	24, // 21: trade.TradeFill.market_type:type_name -> trade.MarketType
+	30, // 22: trade.TradeFill.side:type_name -> common.Side
+	31, // 23: trade.TradeFill.position_side:type_name -> trade.PositionSide
+	37, // 24: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
+	24, // 25: trade.ContractPosition.market_type:type_name -> trade.MarketType
+	31, // 26: trade.ContractPosition.position_side:type_name -> trade.PositionSide
+	29, // 27: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
+	24, // 28: trade.ContractPositionHistory.market_type:type_name -> trade.MarketType
+	31, // 29: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
+	38, // 30: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
+	39, // 31: trade.ContractPositionHistory.source:type_name -> trade.SourceType
+	24, // 32: trade.ContractMarginAccount.market_type:type_name -> trade.MarketType
+	24, // 33: trade.ContractLeverageConfig.market_type:type_name -> trade.MarketType
+	29, // 34: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	28, // 35: trade.ContractLeverageConfig.position_mode:type_name -> trade.PositionMode
+	39, // 36: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
+	27, // 37: trade.ContractLeverageConfig.enabled:type_name -> common.Enable
+	24, // 38: trade.TradeSymbolLeverageConfig.market_type:type_name -> trade.MarketType
+	29, // 39: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	27, // 40: trade.TradeSymbolLeverageConfig.enabled:type_name -> common.Enable
+	24, // 41: trade.RiskUserTradeLimit.market_type:type_name -> trade.MarketType
+	27, // 42: trade.RiskUserTradeLimit.trade_enabled:type_name -> common.Enable
+	39, // 43: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
+	27, // 44: trade.RiskUserTradeLimit.enabled:type_name -> common.Enable
+	24, // 45: trade.RiskUserSymbolLimit.market_type:type_name -> trade.MarketType
+	39, // 46: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
+	27, // 47: trade.RiskUserSymbolLimit.enabled:type_name -> common.Enable
+	24, // 48: trade.RiskOrderCheckLog.market_type:type_name -> trade.MarketType
+	40, // 49: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
+	41, // 50: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
+	39, // 51: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
+	24, // 52: trade.BizTradeEvent.market_type:type_name -> trade.MarketType
+	39, // 53: trade.BizTradeEvent.source:type_name -> trade.SourceType
+	42, // 54: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
+	55, // [55:55] is the sub-list for method output_type
+	55, // [55:55] is the sub-list for method input_type
+	55, // [55:55] is the sub-list for extension type_name
+	55, // [55:55] is the sub-list for extension extendee
+	0,  // [0:55] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_model_proto_init() }

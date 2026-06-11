@@ -51,8 +51,8 @@ func (l *SetSpotSymbolConfigLogic) SetSpotSymbolConfig(in *trade.SetSpotSymbolCo
 	}
 	cfg.MakerFeeRate = mustParseFloat(in.MakerFeeRate)
 	cfg.TakerFeeRate = mustParseFloat(in.TakerFeeRate)
-	cfg.BuyEnabled = in.BuyEnabled
-	cfg.SellEnabled = in.SellEnabled
+	cfg.BuyEnabled = enableToModel(in.BuyEnabled, cfg.BuyEnabled)
+	cfg.SellEnabled = enableToModel(in.SellEnabled, cfg.SellEnabled)
 	cfg.UpdateTimes = now
 	if cfg.Id == 0 {
 		if _, err = l.svcCtx.TradeSymbolSpotModel.Insert(l.ctx, cfg); err != nil {

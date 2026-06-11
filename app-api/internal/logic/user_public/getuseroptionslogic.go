@@ -6,6 +6,7 @@ import (
 	"wklive/app-api/internal/logicutil"
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,7 +38,7 @@ func (l *GetUserOptionsLogic) GetUserOptions() (resp *types.GetUserOptionsResp, 
 			logicutil.EnumGroup("idType", "证件类型", user.IdType_ID_TYPE_NONE.Descriptor()),
 			logicutil.EnumGroup("kycLevel", "KYC等级", user.KycLevel_KYC_LEVEL_NONE.Descriptor()),
 			logicutil.EnumGroup("verifyStatus", "实名状态", user.VerifyStatus_VERIFY_STATUS_NONE.Descriptor()),
-			logicutil.EnumGroup("bankStatus", "银行卡状态", user.BankStatus_BANK_STATUS_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("bankStatus", "银行卡状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
 		},
 	}, nil
 }

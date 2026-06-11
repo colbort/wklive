@@ -76,7 +76,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) processDailyReward(order *models.TS
 	resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 		TenantId:   order.TenantId,
 		UserId:     order.UserId,
-		WalletType: asset.WalletType_WALLET_TYPE_EARN,
+		WalletType: common.WalletType_WALLET_TYPE_EARN,
 		Coin:       order.RewardCoinSymbol,
 		Amount:     conv.FloatString(rewardAmount),
 		BizType:    asset.BizType_BIZ_TYPE_STAKING,
@@ -184,7 +184,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 		resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 			TenantId:   order.TenantId,
 			UserId:     order.UserId,
-			WalletType: asset.WalletType_WALLET_TYPE_EARN,
+			WalletType: common.WalletType_WALLET_TYPE_EARN,
 			Coin:       order.RewardCoinSymbol,
 			Amount:     conv.FloatString(rewardAmount),
 			BizType:    asset.BizType_BIZ_TYPE_STAKING,

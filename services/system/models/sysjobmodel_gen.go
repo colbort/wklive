@@ -45,7 +45,7 @@ type (
 		JobGroup       string         `db:"job_group"`       // 任务分组
 		InvokeTarget   string         `db:"invoke_target"`   // 调用目标
 		CronExpression string         `db:"cron_expression"` // cron表达式
-		Status         int64          `db:"status"`          // 状态：0停用 1启用
+		Status         int64          `db:"status"`          // 任务状态：0停用 1启用
 		Remark         sql.NullString `db:"remark"`          // 备注
 		CreateBy       sql.NullString `db:"create_by"`       // 创建人
 		CreateTimes    int64          `db:"create_times"`    // 创建时间

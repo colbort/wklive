@@ -54,8 +54,8 @@ type (
 		DeliveryPrice    float64 `db:"delivery_price"`    // 交割结算价
 		TheoreticalPrice float64 `db:"theoretical_price"` // 结算理论价
 		Iv               float64 `db:"iv"`                // 结算时IV
-		IsItm            int64   `db:"is_itm"`            // 是否实值：0否 1是
-		ExerciseResult   int64   `db:"exercise_result"`   // 行权结果：0未执行 1自动行权 2自动放弃
+		IsItm            int64   `db:"is_itm"`            // 是否实值：1否 2是
+		ExerciseResult   int64   `db:"exercise_result"`   // 行权结果：1未执行 2自动行权 3自动放弃
 		Status           int64   `db:"status"`            // 状态：1待结算 2结算中 3已完成 4失败
 		Remark           string  `db:"remark"`            // 备注
 		CreateTimes      int64   `db:"create_times"`      // 创建时间

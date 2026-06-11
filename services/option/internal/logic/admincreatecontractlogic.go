@@ -8,6 +8,7 @@ import (
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -88,7 +89,7 @@ func (l *AdminCreateContractLogic) AdminCreateContract(in *option.CreateContract
 		Status:           int64(in.Status),
 		Sort:             int64(in.Sort),
 		Remark:           in.Remark,
-		IsDeleted:        int64(option.YesNo_YES_NO_NO),
+		IsDeleted:        int64(common.YesNo_YES_NO_NO),
 		CreateTimes:      now,
 		UpdateTimes:      now,
 	}

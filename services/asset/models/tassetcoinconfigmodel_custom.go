@@ -9,7 +9,7 @@ import (
 
 type AssetCoinConfigModel interface {
 	tAssetCoinConfigModel
-	FindPage(ctx context.Context, tenantId int64, walletType int64, coin string, symbol string, coinType int64, chainCode int64, appVisible int64, rechargeEnabled int64, withdrawEnabled int64, transferEnabled int64, status int64, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error)
+	FindPage(ctx context.Context, tenantId int64, walletType int64, coin string, symbol string, coinType int64, chainCode int64, appVisible int64, rechargeEnabled int64, withdrawEnabled int64, transferEnabled int64, enabled int64, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error)
 	FindVisibleByOperation(ctx context.Context, tenantId int64, walletType int64, operationType int64, coinType int64) ([]*TAssetCoinConfig, error)
 }
 
@@ -25,7 +25,7 @@ const (
 	assetCoinOperationTransfer = int64(3)
 )
 
-func (m *defaultTAssetCoinConfigModel) FindPage(ctx context.Context, tenantId int64, walletType int64, coin string, symbol string, coinType int64, chainCode int64, appVisible int64, rechargeEnabled int64, withdrawEnabled int64, transferEnabled int64, status int64, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error) {
+func (m *defaultTAssetCoinConfigModel) FindPage(ctx context.Context, tenantId int64, walletType int64, coin string, symbol string, coinType int64, chainCode int64, appVisible int64, rechargeEnabled int64, withdrawEnabled int64, transferEnabled int64, enabled int64, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -39,7 +39,7 @@ func (m *defaultTAssetCoinConfigModel) FindPage(ctx context.Context, tenantId in
 	appendSwitchFilter(builder, "recharge_enabled", rechargeEnabled)
 	appendSwitchFilter(builder, "withdraw_enabled", withdrawEnabled)
 	appendSwitchFilter(builder, "transfer_enabled", transferEnabled)
-	appendStatusFilter(builder, status)
+	appendEnabledFilter(builder, enabled)
 
 	where := builder.Where()
 	args := builder.Args()
@@ -88,7 +88,7 @@ func (m *defaultTAssetCoinConfigModel) FindVisibleByOperation(ctx context.Contex
 	builder.EqInt64("wallet_type", walletType)
 	builder.EqInt64("coin_type", coinType)
 	builder.And("app_visible = ?", int64(1))
-	builder.And("status = ?", int64(1))
+	builder.And("enabled = ?", int64(1))
 	switch operationType {
 	case assetCoinOperationRecharge:
 		builder.And("recharge_enabled = ?", int64(1))
@@ -157,11 +157,11 @@ func appendSwitchFilter(builder *sqlutil.PageQueryBuilder, column string, value 
 	}
 }
 
-func appendStatusFilter(builder *sqlutil.PageQueryBuilder, status int64) {
-	switch status {
+func appendEnabledFilter(builder *sqlutil.PageQueryBuilder, enabled int64) {
+	switch enabled {
 	case assetCoinStatusDisabled:
-		builder.And("status = ?", int64(0))
+		builder.And("enabled = ?", int64(0))
 	case assetCoinStatusEnabled:
-		builder.And("status = ?", int64(1))
+		builder.And("enabled = ?", int64(1))
 	}
 }

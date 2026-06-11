@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package user;
 
+import "proto/common/common.proto";
 import "proto/user/enum.proto";
 
 option go_package = "wklive/proto/user;user";
@@ -71,7 +72,7 @@ message UserSecurity {
   int64 user_id = 3; // 用户ID
   string pay_password_hash = 4; // 支付密码哈希
   string google_secret = 5; // Google密钥
-  int64 google_enabled = 6; // Google2FA是否启用：0否 1是
+  common.Enable google_enabled = 6; // 状态,0表示全部，1表示启用，2表示禁用
   int64 login_error_count = 7; // 登录错误次数
   int64 pay_error_count = 8; // 支付密码错误次数
   int64 lock_until = 9; // 锁定到期时间
@@ -163,7 +164,7 @@ message UserBankItem {
   string branch_name = 8; // 支行名称
   string country_code = 9; // 国家地区
   int64 is_default = 10; // 是否默认：0否 1是
-  user.BankStatus status = 11; // 状态：1正常 2禁用
+  common.Enable enabled = 11; // 状态：1正常 2禁用
   int64 create_times = 12; // 创建时间
   int64 update_times = 13; // 更新时间
 }

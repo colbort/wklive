@@ -103,7 +103,7 @@ message AdminProductCreateReq {
   string user_limit_amount = 15;
   InterestMode interest_mode = 16;
   RewardMode reward_mode = 17;
-  YesNo allow_early_redeem = 18;
+  common.YesNo allow_early_redeem = 18; // 是否允许提前赎回
   string early_redeem_rate = 19;
   ProductStatus status = 20;
   int64 sort = 21;
@@ -135,7 +135,7 @@ message AdminProductUpdateReq {
   string user_limit_amount = 15;
   InterestMode interest_mode = 16;
   RewardMode reward_mode = 17;
-  YesNo allow_early_redeem = 18;
+  common.YesNo allow_early_redeem = 18; // 是否允许提前赎回
   string early_redeem_rate = 19;
   ProductStatus status = 20;
   int64 sort = 21;

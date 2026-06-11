@@ -56,8 +56,8 @@ type (
 		Lug          string `db:"lug"`           // slug, URL友好标识
 		BaseCoin     string `db:"base_coin"`     // 基础币种, 如 BTC
 		QuoteCoin    string `db:"quote_coin"`    // 计价币种, 如 USDT
-		Enabled      int64  `db:"enabled"`       // 是否启用: 0-否 1-是
-		AppVisible   int64  `db:"app_visible"`   // APP是否可见: 0-否 1-是
+		Enabled      int64  `db:"enabled"`       // 启用状态: 1-启用 2-禁用
+		AppVisible   int64  `db:"app_visible"`   // APP可见开关: 1-显示 2-隐藏
 		Sort         int64  `db:"sort"`          // 排序值,越小越靠前
 		Icon         string `db:"icon"`          // 图标
 		Remark       string `db:"remark"`        // 备注

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"testing"
 
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/models"
 )
@@ -233,11 +234,11 @@ func TestMatchExecutionPrice(t *testing.T) {
 
 func TestSelectOrderMatchPlanSkipsMarketMarketPair(t *testing.T) {
 	buys := []*models.TTradeOrder{
-		{Id: 1, Side: int64(trade.TradeSide_TRADE_SIDE_BUY), OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET), Qty: 1},
+		{Id: 1, Side: int64(common.Side_SIDE_BUY), OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET), Qty: 1},
 	}
 	sells := []*models.TTradeOrder{
-		{Id: 2, Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET), Qty: 1},
-		{Id: 3, Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 10, Qty: 1},
+		{Id: 2, Side: int64(common.Side_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET), Qty: 1},
+		{Id: 3, Side: int64(common.Side_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 10, Qty: 1},
 	}
 	plan := selectOrderMatchPlan(buys, sells)
 	if plan == nil {
@@ -250,11 +251,11 @@ func TestSelectOrderMatchPlanSkipsMarketMarketPair(t *testing.T) {
 
 func TestSelectOrderMatchPlanKeepsBookPriority(t *testing.T) {
 	buys := []*models.TTradeOrder{
-		{Id: 100, Side: int64(trade.TradeSide_TRADE_SIDE_BUY), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 100, Qty: 1},
-		{Id: 1, Side: int64(trade.TradeSide_TRADE_SIDE_BUY), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 99, Qty: 1},
+		{Id: 100, Side: int64(common.Side_SIDE_BUY), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 100, Qty: 1},
+		{Id: 1, Side: int64(common.Side_SIDE_BUY), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 99, Qty: 1},
 	}
 	sells := []*models.TTradeOrder{
-		{Id: 2, Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 90, Qty: 1},
+		{Id: 2, Side: int64(common.Side_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 90, Qty: 1},
 	}
 	plan := selectOrderMatchPlan(buys, sells)
 	if plan == nil {
@@ -287,7 +288,7 @@ func TestOrderFillNeedByAmountUsesMinorAmount(t *testing.T) {
 func TestCanApplyOrderFill(t *testing.T) {
 	qtyOrder := &models.TTradeOrder{
 		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
-		Side:      int64(trade.TradeSide_TRADE_SIDE_SELL),
+		Side:      int64(common.Side_SIDE_SELL),
 		Price:     10,
 		Qty:       10,
 		FilledQty: 4,
@@ -313,11 +314,11 @@ func TestCanApplyOrderFill(t *testing.T) {
 }
 
 func TestFillMatchesOrder(t *testing.T) {
-	order := &models.TTradeOrder{OrderNo: "TRD1", UserId: 1, SymbolId: 2, MarketType: 1, Side: int64(trade.TradeSide_TRADE_SIDE_BUY)}
-	if !fillMatchesOrder(order, &models.TTradeFill{OrderNo: "TRD1", UserId: 1, SymbolId: 2, MarketType: 1, Side: int64(trade.TradeSide_TRADE_SIDE_BUY)}) {
+	order := &models.TTradeOrder{OrderNo: "TRD1", UserId: 1, SymbolId: 2, MarketType: 1, Side: int64(common.Side_SIDE_BUY)}
+	if !fillMatchesOrder(order, &models.TTradeFill{OrderNo: "TRD1", UserId: 1, SymbolId: 2, MarketType: 1, Side: int64(common.Side_SIDE_BUY)}) {
 		t.Fatal("matching fill metadata should pass")
 	}
-	if fillMatchesOrder(order, &models.TTradeFill{OrderNo: "TRD2", UserId: 1, SymbolId: 2, MarketType: 1, Side: int64(trade.TradeSide_TRADE_SIDE_BUY)}) {
+	if fillMatchesOrder(order, &models.TTradeFill{OrderNo: "TRD2", UserId: 1, SymbolId: 2, MarketType: 1, Side: int64(common.Side_SIDE_BUY)}) {
 		t.Fatal("mismatched order no should fail")
 	}
 }
@@ -335,31 +336,31 @@ func TestShouldTriggerOrder(t *testing.T) {
 	}{
 		{
 			name:  "sell take profit triggers upward",
-			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT), Side: int64(trade.TradeSide_TRADE_SIDE_SELL)},
+			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT), Side: int64(common.Side_SIDE_SELL)},
 			price: 101,
 			want:  true,
 		},
 		{
 			name:  "sell stop loss triggers downward",
-			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_STOP_LOSS), Side: int64(trade.TradeSide_TRADE_SIDE_SELL)},
+			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_STOP_LOSS), Side: int64(common.Side_SIDE_SELL)},
 			price: 99,
 			want:  true,
 		},
 		{
 			name:  "buy take profit triggers downward",
-			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT), Side: int64(trade.TradeSide_TRADE_SIDE_BUY)},
+			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT), Side: int64(common.Side_SIDE_BUY)},
 			price: 99,
 			want:  true,
 		},
 		{
 			name:  "buy stop loss triggers upward",
-			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_STOP_LOSS), Side: int64(trade.TradeSide_TRADE_SIDE_BUY)},
+			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_STOP_LOSS), Side: int64(common.Side_SIDE_BUY)},
 			price: 101,
 			want:  true,
 		},
 		{
 			name:  "non waiting order does not trigger",
-			order: models.TTradeOrder{Status: int64(trade.OrderStatus_ORDER_STATUS_PENDING), TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_STOP_LOSS), Side: int64(trade.TradeSide_TRADE_SIDE_SELL)},
+			order: models.TTradeOrder{Status: int64(trade.OrderStatus_ORDER_STATUS_PENDING), TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_STOP_LOSS), Side: int64(common.Side_SIDE_SELL)},
 			price: 99,
 			want:  false,
 		},
@@ -405,28 +406,28 @@ func TestPostOnlyWouldTake(t *testing.T) {
 
 func TestCanFullyFillFromBook(t *testing.T) {
 	order := &models.TTradeOrder{
-		Side:      int64(trade.TradeSide_TRADE_SIDE_BUY),
+		Side:      int64(common.Side_SIDE_BUY),
 		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
 		Price:     100,
 		Qty:       10,
 	}
 	opposites := []*models.TTradeOrder{
-		{Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 99, Qty: 4},
-		{Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 100, Qty: 6},
+		{Side: int64(common.Side_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 99, Qty: 4},
+		{Side: int64(common.Side_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 100, Qty: 6},
 	}
 	if !canFullyFillFromBook(order, opposites) {
 		t.Fatal("order should be fully fillable across multiple levels")
 	}
 
 	largeFOK := []*models.TTradeOrder{
-		{Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_FOK), Price: 99, Qty: 20},
+		{Side: int64(common.Side_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_FOK), Price: 99, Qty: 20},
 	}
 	if canFullyFillFromBook(order, largeFOK) {
 		t.Fatal("order should not partially fill an opposite FOK order")
 	}
 
 	withSkippedFOK := append(largeFOK, &models.TTradeOrder{
-		Side:      int64(trade.TradeSide_TRADE_SIDE_SELL),
+		Side:      int64(common.Side_SIDE_SELL),
 		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
 		Price:     100,
 		Qty:       10,
@@ -439,14 +440,14 @@ func TestCanFullyFillFromBook(t *testing.T) {
 func TestCanFullyFillFromBookRespectsPostOnly(t *testing.T) {
 	order := &models.TTradeOrder{
 		Id:          1,
-		Side:        int64(trade.TradeSide_TRADE_SIDE_BUY),
+		Side:        int64(common.Side_SIDE_BUY),
 		OrderType:   int64(trade.OrderType_ORDER_TYPE_LIMIT),
 		TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_FOK),
 		Price:       100,
 		Qty:         10,
 	}
 	opposites := []*models.TTradeOrder{
-		{Id: 2, Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_POST_ONLY), Price: 99, Qty: 10},
+		{Id: 2, Side: int64(common.Side_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_POST_ONLY), Price: 99, Qty: 10},
 	}
 	if canFullyFillFromBook(order, opposites) {
 		t.Fatal("post-only liquidity that would take should not satisfy FOK")
@@ -455,14 +456,14 @@ func TestCanFullyFillFromBookRespectsPostOnly(t *testing.T) {
 
 func TestCanFullyFillFromBookByAmount(t *testing.T) {
 	order := &models.TTradeOrder{
-		Side:      int64(trade.TradeSide_TRADE_SIDE_BUY),
+		Side:      int64(common.Side_SIDE_BUY),
 		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
 		Price:     100,
 		Amount:    10000,
 	}
 	opposites := []*models.TTradeOrder{
-		{Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 10, Qty: 5},
-		{Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 20, Qty: 2.5},
+		{Side: int64(common.Side_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 10, Qty: 5},
+		{Side: int64(common.Side_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 20, Qty: 2.5},
 	}
 	if !canFullyFillFromBook(order, opposites) {
 		t.Fatal("amount based order should be fillable by accumulated turnover")
@@ -512,7 +513,7 @@ func TestOrderBookKeyAndMember(t *testing.T) {
 		TenantId:   7,
 		SymbolId:   4,
 		MarketType: int64(trade.MarketType_MARKET_TYPE_USDT_CONTRACT),
-		Side:       int64(trade.TradeSide_TRADE_SIDE_BUY),
+		Side:       int64(common.Side_SIDE_BUY),
 	}
 	if got, want := orderBookKey(order), "trade:book:7:3:4:buy"; got != want {
 		t.Fatalf("orderBookKey() = %q, want %q", got, want)
@@ -524,11 +525,11 @@ func TestOrderBookKeyAndMember(t *testing.T) {
 }
 
 func TestOrderBookScorePriority(t *testing.T) {
-	marketBuy := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET), Side: int64(trade.TradeSide_TRADE_SIDE_BUY)}
-	highBuy := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(trade.TradeSide_TRADE_SIDE_BUY), Price: 101}
-	lowBuy := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(trade.TradeSide_TRADE_SIDE_BUY), Price: 100}
-	lowSell := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(trade.TradeSide_TRADE_SIDE_SELL), Price: 100}
-	highSell := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(trade.TradeSide_TRADE_SIDE_SELL), Price: 101}
+	marketBuy := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET), Side: int64(common.Side_SIDE_BUY)}
+	highBuy := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(common.Side_SIDE_BUY), Price: 101}
+	lowBuy := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(common.Side_SIDE_BUY), Price: 100}
+	lowSell := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(common.Side_SIDE_SELL), Price: 100}
+	highSell := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(common.Side_SIDE_SELL), Price: 101}
 
 	if !(orderBookScore(marketBuy) < orderBookScore(highBuy)) {
 		t.Fatal("market order should rank before limit orders")

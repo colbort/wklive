@@ -49,7 +49,7 @@ type (
 		NotifyUrl    sql.NullString `db:"notify_url"`    // 统一异步通知地址
 		ReturnUrl    sql.NullString `db:"return_url"`    // 默认同步跳转地址
 		Icon         sql.NullString `db:"icon"`          // 图标
-		Status       int64          `db:"status"`        // 状态：1启用 2停用
+		Enabled      int64          `db:"enabled"`       // 启用状态：1启用 2禁用
 		Remark       sql.NullString `db:"remark"`        // 备注
 		CreateTimes  int64          `db:"create_times"`  // 创建时间
 		UpdateTimes  int64          `db:"update_times"`  // 更新时间
@@ -120,7 +120,7 @@ func (m *defaultTPayPlatformModel) Insert(ctx context.Context, data *TPayPlatfor
 	tPayPlatformPlatformCodeKey := fmt.Sprintf("%s%v", cacheTPayPlatformPlatformCodePrefix, data.PlatformCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tPayPlatformRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.PlatformCode, data.PlatformName, data.PlatformType, data.NotifyUrl, data.ReturnUrl, data.Icon, data.Status, data.Remark, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.PlatformCode, data.PlatformName, data.PlatformType, data.NotifyUrl, data.ReturnUrl, data.Icon, data.Enabled, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tPayPlatformIdKey, tPayPlatformPlatformCodeKey)
 	return ret, err
 }
@@ -135,7 +135,7 @@ func (m *defaultTPayPlatformModel) Update(ctx context.Context, newData *TPayPlat
 	tPayPlatformPlatformCodeKey := fmt.Sprintf("%s%v", cacheTPayPlatformPlatformCodePrefix, data.PlatformCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tPayPlatformRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.PlatformCode, newData.PlatformName, newData.PlatformType, newData.NotifyUrl, newData.ReturnUrl, newData.Icon, newData.Status, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.PlatformCode, newData.PlatformName, newData.PlatformType, newData.NotifyUrl, newData.ReturnUrl, newData.Icon, newData.Enabled, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tPayPlatformIdKey, tPayPlatformPlatformCodeKey)
 	return err
 }

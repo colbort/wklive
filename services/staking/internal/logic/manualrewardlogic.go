@@ -8,6 +8,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
@@ -49,7 +50,7 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 	resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 		TenantId:   order.TenantId,
 		UserId:     order.UserId,
-		WalletType: asset.WalletType_WALLET_TYPE_EARN,
+		WalletType: common.WalletType_WALLET_TYPE_EARN,
 		Coin:       order.RewardCoinSymbol,
 		Amount:     conv.FloatString(rewardAmount),
 		BizType:    asset.BizType_BIZ_TYPE_STAKING,

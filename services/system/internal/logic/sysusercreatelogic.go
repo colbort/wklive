@@ -67,7 +67,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 		Nickname:      in.Nickname,
 		Password:      string(hashedPassword),
 		PermsVer:      1,
-		Status:        commonStatusToModel(in.Status),
+		Enabled:       commonStatusToModel(in.Enabled),
 		Avatar:        in.Avatar,
 		GoogleSecret:  "",
 		GoogleEnabled: 0,

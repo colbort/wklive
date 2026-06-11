@@ -416,7 +416,7 @@ func (x *CreateRechargeOrderResp) GetData() *RechargeOrder {
 // 创建链上充值订单
 type CreateCryptoRechargeOrderReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	WalletType     int64                  `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`
+	WalletType     common.WalletType      `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin           string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`
 	ChainCode      common.ChainCode       `protobuf:"varint,3,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
 	RechargeAmount int64                  `protobuf:"varint,4,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
@@ -457,11 +457,11 @@ func (*CreateCryptoRechargeOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *CreateCryptoRechargeOrderReq) GetWalletType() int64 {
+func (x *CreateCryptoRechargeOrderReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return 0
+	return common.WalletType(0)
 }
 
 func (x *CreateCryptoRechargeOrderReq) GetCoin() string {
@@ -1312,7 +1312,7 @@ func (x *GetMyWithdrawOrderResp) GetData() *WithdrawOrder {
 // 获取/分配我的链上充值地址
 type GetMyCryptoRechargeAddressReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    int64                  `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`
+	WalletType    common.WalletType      `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`
 	ChainCode     common.ChainCode       `protobuf:"varint,3,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1349,11 +1349,11 @@ func (*GetMyCryptoRechargeAddressReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *GetMyCryptoRechargeAddressReq) GetWalletType() int64 {
+func (x *GetMyCryptoRechargeAddressReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return 0
+	return common.WalletType(0)
 }
 
 func (x *GetMyCryptoRechargeAddressReq) GetCoin() string {
@@ -1425,7 +1425,7 @@ func (x *GetMyCryptoRechargeAddressResp) GetData() *CryptoRechargeAddress {
 // 我的链上充值地址列表
 type ListMyCryptoRechargeAddressesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    int64                  `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`
+	WalletType    common.WalletType      `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`
 	ChainCode     common.ChainCode       `protobuf:"varint,3,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1462,11 +1462,11 @@ func (*ListMyCryptoRechargeAddressesReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *ListMyCryptoRechargeAddressesReq) GetWalletType() int64 {
+func (x *ListMyCryptoRechargeAddressesReq) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return 0
+	return common.WalletType(0)
 }
 
 func (x *ListMyCryptoRechargeAddressesReq) GetCoin() string {
@@ -1817,9 +1817,9 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"bizOrderNo\"k\n" +
 	"\x17CreateRechargeOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x04data\"\xab\x02\n" +
-	"\x1cCreateCryptoRechargeOrderReq\x12\x1f\n" +
-	"\vwallet_type\x18\x01 \x01(\x03R\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x04data\"\xbf\x02\n" +
+	"\x1cCreateCryptoRechargeOrderReq\x123\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x02 \x01(\tR\x04coin\x120\n" +
 	"\n" +
@@ -1876,18 +1876,18 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"j\n" +
 	"\x16GetMyWithdrawOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.payment.WithdrawOrderR\x04data\"\x86\x01\n" +
-	"\x1dGetMyCryptoRechargeAddressReq\x12\x1f\n" +
-	"\vwallet_type\x18\x01 \x01(\x03R\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.payment.WithdrawOrderR\x04data\"\x9a\x01\n" +
+	"\x1dGetMyCryptoRechargeAddressReq\x123\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x02 \x01(\tR\x04coin\x120\n" +
 	"\n" +
 	"chain_code\x18\x03 \x01(\x0e2\x11.common.ChainCodeR\tchainCode\"z\n" +
 	"\x1eGetMyCryptoRechargeAddressResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
-	"\x04data\x18\x02 \x01(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\x89\x01\n" +
-	" ListMyCryptoRechargeAddressesReq\x12\x1f\n" +
-	"\vwallet_type\x18\x01 \x01(\x03R\n" +
+	"\x04data\x18\x02 \x01(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\x9d\x01\n" +
+	" ListMyCryptoRechargeAddressesReq\x123\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x02 \x01(\tR\x04coin\x120\n" +
 	"\n" +
@@ -1981,13 +1981,14 @@ var file_proto_payment_payment_app_proto_goTypes = []any{
 	(ClientType)(0),                           // 33: payment.ClientType
 	(*VisiblePayChannel)(nil),                 // 34: payment.VisiblePayChannel
 	(*RechargeOrder)(nil),                     // 35: payment.RechargeOrder
-	(common.ChainCode)(0),                     // 36: common.ChainCode
-	(*CryptoRechargeAddress)(nil),             // 37: payment.CryptoRechargeAddress
-	(*common.PageReq)(nil),                    // 38: common.PageReq
-	(PayOrderStatus)(0),                       // 39: payment.PayOrderStatus
-	(*WithdrawOrder)(nil),                     // 40: payment.WithdrawOrder
-	(CryptoRechargeTxStatus)(0),               // 41: payment.CryptoRechargeTxStatus
-	(*CryptoRechargeTx)(nil),                  // 42: payment.CryptoRechargeTx
+	(common.WalletType)(0),                    // 36: common.WalletType
+	(common.ChainCode)(0),                     // 37: common.ChainCode
+	(*CryptoRechargeAddress)(nil),             // 38: payment.CryptoRechargeAddress
+	(*common.PageReq)(nil),                    // 39: common.PageReq
+	(PayOrderStatus)(0),                       // 40: payment.PayOrderStatus
+	(*WithdrawOrder)(nil),                     // 41: payment.WithdrawOrder
+	(CryptoRechargeTxStatus)(0),               // 42: payment.CryptoRechargeTxStatus
+	(*CryptoRechargeTx)(nil),                  // 43: payment.CryptoRechargeTx
 }
 var file_proto_payment_payment_app_proto_depIdxs = []int32{
 	31, // 0: payment.AppCommonResp.base:type_name -> common.RespBase
@@ -1999,75 +2000,78 @@ var file_proto_payment_payment_app_proto_depIdxs = []int32{
 	33, // 6: payment.CreateRechargeOrderReq.client_type:type_name -> payment.ClientType
 	31, // 7: payment.CreateRechargeOrderResp.base:type_name -> common.RespBase
 	35, // 8: payment.CreateRechargeOrderResp.data:type_name -> payment.RechargeOrder
-	36, // 9: payment.CreateCryptoRechargeOrderReq.chain_code:type_name -> common.ChainCode
-	33, // 10: payment.CreateCryptoRechargeOrderReq.client_type:type_name -> payment.ClientType
-	31, // 11: payment.CreateCryptoRechargeOrderResp.base:type_name -> common.RespBase
-	9,  // 12: payment.CreateCryptoRechargeOrderResp.data:type_name -> payment.CreateCryptoRechargeOrderData
-	35, // 13: payment.CreateCryptoRechargeOrderData.order:type_name -> payment.RechargeOrder
-	37, // 14: payment.CreateCryptoRechargeOrderData.address:type_name -> payment.CryptoRechargeAddress
-	31, // 15: payment.GetMyRechargeOrderResp.base:type_name -> common.RespBase
-	35, // 16: payment.GetMyRechargeOrderResp.data:type_name -> payment.RechargeOrder
-	38, // 17: payment.ListMyRechargeOrdersReq.page:type_name -> common.PageReq
-	39, // 18: payment.ListMyRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
-	31, // 19: payment.ListMyRechargeOrdersResp.base:type_name -> common.RespBase
-	35, // 20: payment.ListMyRechargeOrdersResp.data:type_name -> payment.RechargeOrder
-	31, // 21: payment.QueryMyRechargeOrderStatusResp.base:type_name -> common.RespBase
-	35, // 22: payment.QueryMyRechargeOrderStatusResp.data:type_name -> payment.RechargeOrder
-	31, // 23: payment.CreateWithdrawOrderResp.base:type_name -> common.RespBase
-	38, // 24: payment.ListMyWithdrawOrdersReq.page:type_name -> common.PageReq
-	39, // 25: payment.ListMyWithdrawOrdersReq.status:type_name -> payment.PayOrderStatus
-	31, // 26: payment.ListMyWithdrawOrdersResp.base:type_name -> common.RespBase
-	40, // 27: payment.ListMyWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
-	31, // 28: payment.GetMyWithdrawOrderResp.base:type_name -> common.RespBase
-	40, // 29: payment.GetMyWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
-	36, // 30: payment.GetMyCryptoRechargeAddressReq.chain_code:type_name -> common.ChainCode
-	31, // 31: payment.GetMyCryptoRechargeAddressResp.base:type_name -> common.RespBase
-	37, // 32: payment.GetMyCryptoRechargeAddressResp.data:type_name -> payment.CryptoRechargeAddress
-	36, // 33: payment.ListMyCryptoRechargeAddressesReq.chain_code:type_name -> common.ChainCode
-	31, // 34: payment.ListMyCryptoRechargeAddressesResp.base:type_name -> common.RespBase
-	37, // 35: payment.ListMyCryptoRechargeAddressesResp.data:type_name -> payment.CryptoRechargeAddress
-	38, // 36: payment.ListMyCryptoRechargeTxsReq.page:type_name -> common.PageReq
-	36, // 37: payment.ListMyCryptoRechargeTxsReq.chain_code:type_name -> common.ChainCode
-	41, // 38: payment.ListMyCryptoRechargeTxsReq.status:type_name -> payment.CryptoRechargeTxStatus
-	31, // 39: payment.ListMyCryptoRechargeTxsResp.base:type_name -> common.RespBase
-	42, // 40: payment.ListMyCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
-	31, // 41: payment.GetMyCryptoRechargeTxResp.base:type_name -> common.RespBase
-	42, // 42: payment.GetMyCryptoRechargeTxResp.data:type_name -> payment.CryptoRechargeTx
-	1,  // 43: payment.PaymentApp.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
-	3,  // 44: payment.PaymentApp.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
-	5,  // 45: payment.PaymentApp.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
-	7,  // 46: payment.PaymentApp.CreateCryptoRechargeOrder:input_type -> payment.CreateCryptoRechargeOrderReq
-	10, // 47: payment.PaymentApp.GetMyRechargeOrder:input_type -> payment.GetMyRechargeOrderReq
-	12, // 48: payment.PaymentApp.ListMyRechargeOrders:input_type -> payment.ListMyRechargeOrdersReq
-	14, // 49: payment.PaymentApp.CancelMyRechargeOrder:input_type -> payment.CancelMyRechargeOrderReq
-	15, // 50: payment.PaymentApp.QueryMyRechargeOrderStatus:input_type -> payment.QueryMyRechargeOrderStatusReq
-	17, // 51: payment.PaymentApp.CreateWithdrawOrder:input_type -> payment.CreateWithdrawOrderReq
-	19, // 52: payment.PaymentApp.ListMyWithdrawOrders:input_type -> payment.ListMyWithdrawOrdersReq
-	21, // 53: payment.PaymentApp.GetMyWithdrawOrder:input_type -> payment.GetMyWithdrawOrderReq
-	23, // 54: payment.PaymentApp.GetMyCryptoRechargeAddress:input_type -> payment.GetMyCryptoRechargeAddressReq
-	25, // 55: payment.PaymentApp.ListMyCryptoRechargeAddresses:input_type -> payment.ListMyCryptoRechargeAddressesReq
-	27, // 56: payment.PaymentApp.ListMyCryptoRechargeTxs:input_type -> payment.ListMyCryptoRechargeTxsReq
-	29, // 57: payment.PaymentApp.GetMyCryptoRechargeTx:input_type -> payment.GetMyCryptoRechargeTxReq
-	2,  // 58: payment.PaymentApp.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
-	4,  // 59: payment.PaymentApp.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
-	6,  // 60: payment.PaymentApp.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
-	8,  // 61: payment.PaymentApp.CreateCryptoRechargeOrder:output_type -> payment.CreateCryptoRechargeOrderResp
-	11, // 62: payment.PaymentApp.GetMyRechargeOrder:output_type -> payment.GetMyRechargeOrderResp
-	13, // 63: payment.PaymentApp.ListMyRechargeOrders:output_type -> payment.ListMyRechargeOrdersResp
-	0,  // 64: payment.PaymentApp.CancelMyRechargeOrder:output_type -> payment.AppCommonResp
-	16, // 65: payment.PaymentApp.QueryMyRechargeOrderStatus:output_type -> payment.QueryMyRechargeOrderStatusResp
-	18, // 66: payment.PaymentApp.CreateWithdrawOrder:output_type -> payment.CreateWithdrawOrderResp
-	20, // 67: payment.PaymentApp.ListMyWithdrawOrders:output_type -> payment.ListMyWithdrawOrdersResp
-	22, // 68: payment.PaymentApp.GetMyWithdrawOrder:output_type -> payment.GetMyWithdrawOrderResp
-	24, // 69: payment.PaymentApp.GetMyCryptoRechargeAddress:output_type -> payment.GetMyCryptoRechargeAddressResp
-	26, // 70: payment.PaymentApp.ListMyCryptoRechargeAddresses:output_type -> payment.ListMyCryptoRechargeAddressesResp
-	28, // 71: payment.PaymentApp.ListMyCryptoRechargeTxs:output_type -> payment.ListMyCryptoRechargeTxsResp
-	30, // 72: payment.PaymentApp.GetMyCryptoRechargeTx:output_type -> payment.GetMyCryptoRechargeTxResp
-	58, // [58:73] is the sub-list for method output_type
-	43, // [43:58] is the sub-list for method input_type
-	43, // [43:43] is the sub-list for extension type_name
-	43, // [43:43] is the sub-list for extension extendee
-	0,  // [0:43] is the sub-list for field type_name
+	36, // 9: payment.CreateCryptoRechargeOrderReq.wallet_type:type_name -> common.WalletType
+	37, // 10: payment.CreateCryptoRechargeOrderReq.chain_code:type_name -> common.ChainCode
+	33, // 11: payment.CreateCryptoRechargeOrderReq.client_type:type_name -> payment.ClientType
+	31, // 12: payment.CreateCryptoRechargeOrderResp.base:type_name -> common.RespBase
+	9,  // 13: payment.CreateCryptoRechargeOrderResp.data:type_name -> payment.CreateCryptoRechargeOrderData
+	35, // 14: payment.CreateCryptoRechargeOrderData.order:type_name -> payment.RechargeOrder
+	38, // 15: payment.CreateCryptoRechargeOrderData.address:type_name -> payment.CryptoRechargeAddress
+	31, // 16: payment.GetMyRechargeOrderResp.base:type_name -> common.RespBase
+	35, // 17: payment.GetMyRechargeOrderResp.data:type_name -> payment.RechargeOrder
+	39, // 18: payment.ListMyRechargeOrdersReq.page:type_name -> common.PageReq
+	40, // 19: payment.ListMyRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
+	31, // 20: payment.ListMyRechargeOrdersResp.base:type_name -> common.RespBase
+	35, // 21: payment.ListMyRechargeOrdersResp.data:type_name -> payment.RechargeOrder
+	31, // 22: payment.QueryMyRechargeOrderStatusResp.base:type_name -> common.RespBase
+	35, // 23: payment.QueryMyRechargeOrderStatusResp.data:type_name -> payment.RechargeOrder
+	31, // 24: payment.CreateWithdrawOrderResp.base:type_name -> common.RespBase
+	39, // 25: payment.ListMyWithdrawOrdersReq.page:type_name -> common.PageReq
+	40, // 26: payment.ListMyWithdrawOrdersReq.status:type_name -> payment.PayOrderStatus
+	31, // 27: payment.ListMyWithdrawOrdersResp.base:type_name -> common.RespBase
+	41, // 28: payment.ListMyWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
+	31, // 29: payment.GetMyWithdrawOrderResp.base:type_name -> common.RespBase
+	41, // 30: payment.GetMyWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
+	36, // 31: payment.GetMyCryptoRechargeAddressReq.wallet_type:type_name -> common.WalletType
+	37, // 32: payment.GetMyCryptoRechargeAddressReq.chain_code:type_name -> common.ChainCode
+	31, // 33: payment.GetMyCryptoRechargeAddressResp.base:type_name -> common.RespBase
+	38, // 34: payment.GetMyCryptoRechargeAddressResp.data:type_name -> payment.CryptoRechargeAddress
+	36, // 35: payment.ListMyCryptoRechargeAddressesReq.wallet_type:type_name -> common.WalletType
+	37, // 36: payment.ListMyCryptoRechargeAddressesReq.chain_code:type_name -> common.ChainCode
+	31, // 37: payment.ListMyCryptoRechargeAddressesResp.base:type_name -> common.RespBase
+	38, // 38: payment.ListMyCryptoRechargeAddressesResp.data:type_name -> payment.CryptoRechargeAddress
+	39, // 39: payment.ListMyCryptoRechargeTxsReq.page:type_name -> common.PageReq
+	37, // 40: payment.ListMyCryptoRechargeTxsReq.chain_code:type_name -> common.ChainCode
+	42, // 41: payment.ListMyCryptoRechargeTxsReq.status:type_name -> payment.CryptoRechargeTxStatus
+	31, // 42: payment.ListMyCryptoRechargeTxsResp.base:type_name -> common.RespBase
+	43, // 43: payment.ListMyCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
+	31, // 44: payment.GetMyCryptoRechargeTxResp.base:type_name -> common.RespBase
+	43, // 45: payment.GetMyCryptoRechargeTxResp.data:type_name -> payment.CryptoRechargeTx
+	1,  // 46: payment.PaymentApp.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
+	3,  // 47: payment.PaymentApp.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
+	5,  // 48: payment.PaymentApp.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
+	7,  // 49: payment.PaymentApp.CreateCryptoRechargeOrder:input_type -> payment.CreateCryptoRechargeOrderReq
+	10, // 50: payment.PaymentApp.GetMyRechargeOrder:input_type -> payment.GetMyRechargeOrderReq
+	12, // 51: payment.PaymentApp.ListMyRechargeOrders:input_type -> payment.ListMyRechargeOrdersReq
+	14, // 52: payment.PaymentApp.CancelMyRechargeOrder:input_type -> payment.CancelMyRechargeOrderReq
+	15, // 53: payment.PaymentApp.QueryMyRechargeOrderStatus:input_type -> payment.QueryMyRechargeOrderStatusReq
+	17, // 54: payment.PaymentApp.CreateWithdrawOrder:input_type -> payment.CreateWithdrawOrderReq
+	19, // 55: payment.PaymentApp.ListMyWithdrawOrders:input_type -> payment.ListMyWithdrawOrdersReq
+	21, // 56: payment.PaymentApp.GetMyWithdrawOrder:input_type -> payment.GetMyWithdrawOrderReq
+	23, // 57: payment.PaymentApp.GetMyCryptoRechargeAddress:input_type -> payment.GetMyCryptoRechargeAddressReq
+	25, // 58: payment.PaymentApp.ListMyCryptoRechargeAddresses:input_type -> payment.ListMyCryptoRechargeAddressesReq
+	27, // 59: payment.PaymentApp.ListMyCryptoRechargeTxs:input_type -> payment.ListMyCryptoRechargeTxsReq
+	29, // 60: payment.PaymentApp.GetMyCryptoRechargeTx:input_type -> payment.GetMyCryptoRechargeTxReq
+	2,  // 61: payment.PaymentApp.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
+	4,  // 62: payment.PaymentApp.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
+	6,  // 63: payment.PaymentApp.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
+	8,  // 64: payment.PaymentApp.CreateCryptoRechargeOrder:output_type -> payment.CreateCryptoRechargeOrderResp
+	11, // 65: payment.PaymentApp.GetMyRechargeOrder:output_type -> payment.GetMyRechargeOrderResp
+	13, // 66: payment.PaymentApp.ListMyRechargeOrders:output_type -> payment.ListMyRechargeOrdersResp
+	0,  // 67: payment.PaymentApp.CancelMyRechargeOrder:output_type -> payment.AppCommonResp
+	16, // 68: payment.PaymentApp.QueryMyRechargeOrderStatus:output_type -> payment.QueryMyRechargeOrderStatusResp
+	18, // 69: payment.PaymentApp.CreateWithdrawOrder:output_type -> payment.CreateWithdrawOrderResp
+	20, // 70: payment.PaymentApp.ListMyWithdrawOrders:output_type -> payment.ListMyWithdrawOrdersResp
+	22, // 71: payment.PaymentApp.GetMyWithdrawOrder:output_type -> payment.GetMyWithdrawOrderResp
+	24, // 72: payment.PaymentApp.GetMyCryptoRechargeAddress:output_type -> payment.GetMyCryptoRechargeAddressResp
+	26, // 73: payment.PaymentApp.ListMyCryptoRechargeAddresses:output_type -> payment.ListMyCryptoRechargeAddressesResp
+	28, // 74: payment.PaymentApp.ListMyCryptoRechargeTxs:output_type -> payment.ListMyCryptoRechargeTxsResp
+	30, // 75: payment.PaymentApp.GetMyCryptoRechargeTx:output_type -> payment.GetMyCryptoRechargeTxResp
+	61, // [61:76] is the sub-list for method output_type
+	46, // [46:61] is the sub-list for method input_type
+	46, // [46:46] is the sub-list for extension type_name
+	46, // [46:46] is the sub-list for extension extendee
+	0,  // [0:46] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_payment_app_proto_init() }

@@ -7,6 +7,7 @@ import (
 
 	"wklive/common/conv"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -81,11 +82,11 @@ func (l *ProcessOrderMatchingLogic) matchOrderBook(key models.TradeOrderMatchKey
 }
 
 func (l *ProcessOrderMatchingLogic) findNextOrderMatch(key models.TradeOrderMatchKey) (*orderMatchPlan, error) {
-	buys, err := l.findOpenMatchOrdersFromBook(key, int64(trade.TradeSide_TRADE_SIDE_BUY), orderMatchBookDepth)
+	buys, err := l.findOpenMatchOrdersFromBook(key, int64(common.Side_SIDE_BUY), orderMatchBookDepth)
 	if err != nil {
 		return nil, err
 	}
-	sells, err := l.findOpenMatchOrdersFromBook(key, int64(trade.TradeSide_TRADE_SIDE_SELL), orderMatchBookDepth)
+	sells, err := l.findOpenMatchOrdersFromBook(key, int64(common.Side_SIDE_SELL), orderMatchBookDepth)
 	if err != nil {
 		return nil, err
 	}
@@ -220,7 +221,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 		}
 
 		for _, lockedPlan := range lockedPlans {
-			if lockedPlan == nil || !sameMatchBook(lockedPlan.BuyOrder, key, int64(trade.TradeSide_TRADE_SIDE_BUY)) || !sameMatchBook(lockedPlan.SellOrder, key, int64(trade.TradeSide_TRADE_SIDE_SELL)) {
+			if lockedPlan == nil || !sameMatchBook(lockedPlan.BuyOrder, key, int64(common.Side_SIDE_BUY)) || !sameMatchBook(lockedPlan.SellOrder, key, int64(common.Side_SIDE_SELL)) {
 				return nil
 			}
 			buyFillNo, err := l.svcCtx.GenerateBizNo(ctx, "FIL")
@@ -320,9 +321,9 @@ func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orde
 	if focal == nil || !isMatchableOrderStatus(focal.Status) {
 		return nil, false, nil
 	}
-	oppositeSide := int64(trade.TradeSide_TRADE_SIDE_SELL)
-	if focal.Side == int64(trade.TradeSide_TRADE_SIDE_SELL) {
-		oppositeSide = int64(trade.TradeSide_TRADE_SIDE_BUY)
+	oppositeSide := int64(common.Side_SIDE_SELL)
+	if focal.Side == int64(common.Side_SIDE_SELL) {
+		oppositeSide = int64(common.Side_SIDE_BUY)
 	}
 	opposites, err := orderModel.FindOpenMatchOrders(ctx, key.TenantId, key.SymbolId, key.MarketType, oppositeSide, matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
 	if err != nil {
@@ -389,7 +390,7 @@ func sameMatchBook(order *models.TTradeOrder, key models.TradeOrderMatchKey, sid
 }
 
 func matchSides(left, right *models.TTradeOrder) (*models.TTradeOrder, *models.TTradeOrder) {
-	if left.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+	if left.Side == int64(common.Side_SIDE_BUY) {
 		return left, right
 	}
 	return right, left
@@ -404,7 +405,7 @@ func buildMatchFill(order *models.TTradeOrder, fillNo string, liquidity trade.Li
 		UserId:        order.UserId,
 		SymbolId:      order.SymbolId,
 		MarketType:    trade.MarketType(order.MarketType),
-		Side:          trade.TradeSide(order.Side),
+		Side:          common.Side(order.Side),
 		PositionSide:  trade.PositionSide(order.PositionSide),
 		Price:         conv.FloatString(plan.Price),
 		Qty:           conv.FloatString(plan.Qty),
@@ -503,7 +504,7 @@ func canFullyFillFromBook(order *models.TTradeOrder, opposites []*models.TTradeO
 			price float64
 			ok    bool
 		)
-		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+		if order.Side == int64(common.Side_SIDE_BUY) {
 			price, ok = matchExecutionPrice(order, opposite)
 		} else {
 			price, ok = matchExecutionPrice(opposite, order)
@@ -579,11 +580,11 @@ func (l *ProcessOrderMatchingLogic) matchFeeRates(key models.TradeOrderMatchKey)
 }
 
 func (l *ProcessOrderMatchingLogic) expireResidualImmediateOrders(key models.TradeOrderMatchKey) error {
-	buys, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.MarketType, int64(trade.TradeSide_TRADE_SIDE_BUY), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
+	buys, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.MarketType, int64(common.Side_SIDE_BUY), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
 	if err != nil {
 		return err
 	}
-	sells, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.MarketType, int64(trade.TradeSide_TRADE_SIDE_SELL), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
+	sells, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.MarketType, int64(common.Side_SIDE_SELL), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
 	if err != nil {
 		return err
 	}
@@ -627,7 +628,7 @@ func residualExpireReason(order *models.TTradeOrder, buys, sells []*models.TTrad
 
 func postOnlyWouldTakeTop(order *models.TTradeOrder, buys, sells []*models.TTradeOrder) bool {
 	opposites := sells
-	if order.Side == int64(trade.TradeSide_TRADE_SIDE_SELL) {
+	if order.Side == int64(common.Side_SIDE_SELL) {
 		opposites = buys
 	}
 	for _, opposite := range opposites {
@@ -635,7 +636,7 @@ func postOnlyWouldTakeTop(order *models.TTradeOrder, buys, sells []*models.TTrad
 			price float64
 			ok    bool
 		)
-		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+		if order.Side == int64(common.Side_SIDE_BUY) {
 			price, ok = matchExecutionPrice(order, opposite)
 			if ok && price > 0 && liquidityTypeForOrder(order, opposite) == trade.LiquidityType_LIQUIDITY_TYPE_TAKER {
 				return true

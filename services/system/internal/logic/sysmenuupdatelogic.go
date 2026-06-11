@@ -42,7 +42,7 @@ func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system
 	data.MenuType = menuTypeToModel(in.MenuType)
 	data.Method = requestMethodToString(in.Method)
 	data.Visible = visibleStatusToModel(in.Visible)
-	data.Status = commonStatusToModel(in.Status)
+	data.Enabled = commonStatusToModel(in.Enabled)
 
 	err = l.svcCtx.MenuModel.Update(l.ctx, &data)
 	if err != nil {

@@ -4,6 +4,7 @@ package trade;
 
 option go_package = "wklive/proto/trade;trade";
 
+import "proto/common/common.proto";
 import "proto/trade/enum.proto";
 
 message TenantReq { int64 tenant_id = 1; }
@@ -62,8 +63,8 @@ message TradeSymbolSpot {
   int64 symbol_id = 3;
   string maker_fee_rate = 4;
   string taker_fee_rate = 5;
-  int64 buy_enabled = 6;
-  int64 sell_enabled = 7;
+  common.Enable buy_enabled = 6; // 状态,0表示全部，1表示启用，2表示禁用
+  common.Enable sell_enabled = 7; // 状态,0表示全部，1表示启用，2表示禁用
   int64 create_times = 8;
   int64 update_times = 9;
 }
@@ -82,8 +83,8 @@ message TradeSymbolContract {
   int64 delivery_time = 11;
   int64 support_cross = 12;
   int64 support_isolated = 13;
-  int64 buy_enabled = 14;
-  int64 sell_enabled = 15;
+  common.Enable buy_enabled = 14; // 状态,0表示全部，1表示启用，2表示禁用
+  common.Enable sell_enabled = 15; // 状态,0表示全部，1表示启用，2表示禁用
   int64 create_times = 16;
   int64 update_times = 17;
 }
@@ -97,8 +98,8 @@ message TradeUserConfig {
   PositionMode position_mode = 6;
   MarginMode margin_mode = 7;
   int64 default_leverage = 8;
-  int64 trade_enabled = 9;
-  int64 reduce_only_enabled = 10;
+  common.Enable trade_enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
+  common.Enable reduce_only_enabled = 10; // 状态,0表示全部，1表示启用，2表示禁用
   int64 create_times = 11;
   int64 update_times = 12;
 }
@@ -111,7 +112,7 @@ message TradeOrder {
   int64 user_id = 5;
   int64 symbol_id = 6;
   MarketType market_type = 7;
-  TradeSide side = 8;
+  common.Side side = 8; // 买卖方向
   PositionSide position_side = 9;
   OrderType order_type = 10;
   TimeInForce time_in_force = 11;
@@ -173,7 +174,7 @@ message TradeFill {
   int64 user_id = 6;
   int64 symbol_id = 7;
   MarketType market_type = 8;
-  TradeSide side = 9;
+  common.Side side = 9; // 买卖方向
   PositionSide position_side = 10;
   string price = 11;
   string qty = 12;
@@ -289,7 +290,7 @@ message ContractLeverageConfig {
   int64 max_leverage = 10;
   int64 operator_id = 11;
   SourceType source = 12;
-  int64 status = 13;
+  common.Enable enabled = 13; // 状态,0表示全部，1表示启用，2表示禁用
   string remark = 14;
   int64 create_times = 15;
   int64 update_times = 16;
@@ -304,7 +305,7 @@ message TradeSymbolLeverageConfig {
   repeated int64 leverage_values = 6;
   int64 default_leverage = 7;
   int64 max_leverage = 8;
-  int64 status = 9;
+  common.Enable enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
   int64 sort = 10;
   string remark = 11;
   int64 create_times = 12;
@@ -321,7 +322,7 @@ message RiskUserTradeLimit {
   int64 can_cancel = 7;
   int64 can_trigger_order = 8;
   int64 can_api_trade = 9;
-  int64 trade_enabled = 10;
+  common.Enable trade_enabled = 10; // 状态,0表示全部，1表示启用，2表示禁用
   int64 only_reduce_only = 11;
   int64 max_open_order_count = 12;
   int64 max_order_count_per_day = 13;
@@ -331,7 +332,7 @@ message RiskUserTradeLimit {
   int64 risk_level = 17;
   int64 operator_id = 18;
   SourceType source = 19;
-  int64 status = 20;
+  common.Enable enabled = 20; // 状态,0表示全部，1表示启用，2表示禁用
   int64 effective_start_time = 21;
   int64 effective_end_time = 22;
   string remark = 23;
@@ -357,7 +358,7 @@ message RiskUserSymbolLimit {
   string price_deviation_rate = 15;
   int64 operator_id = 16;
   SourceType source = 17;
-  int64 status = 18;
+  common.Enable enabled = 18; // 状态,0表示全部，1表示启用，2表示禁用
   int64 effective_start_time = 19;
   int64 effective_end_time = 20;
   string remark = 21;

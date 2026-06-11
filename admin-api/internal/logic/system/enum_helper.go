@@ -3,14 +3,15 @@ package system
 import (
 	"strings"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 )
 
-func toCommonStatus(v int64) system.CommonStatus {
-	return system.CommonStatus(v)
+func toCommonStatus(v int64) common.Enable {
+	return common.Enable(v)
 }
 
-func fromCommonStatus(v system.CommonStatus) int64 {
+func fromCommonStatus(v common.Enable) int64 {
 	return int64(v)
 }
 
@@ -22,11 +23,11 @@ func fromMenuType(v system.MenuType) int64 {
 	return int64(v)
 }
 
-func toVisibleStatus(v int64) system.VisibleStatus {
-	return system.VisibleStatus(v)
+func toVisibleStatus(v int64) common.Switch {
+	return common.Switch(v)
 }
 
-func fromVisibleStatus(v system.VisibleStatus) int64 {
+func fromVisibleStatus(v common.Switch) int64 {
 	return int64(v)
 }
 

@@ -75,8 +75,8 @@ func tradeSymbolSpotToTypes(item *trade.TradeSymbolSpot) types.TradeSymbolSpot {
 		SymbolId:     item.GetSymbolId(),
 		MakerFeeRate: item.GetMakerFeeRate(),
 		TakerFeeRate: item.GetTakerFeeRate(),
-		BuyEnabled:   item.GetBuyEnabled(),
-		SellEnabled:  item.GetSellEnabled(),
+		BuyEnabled:   int64(item.GetBuyEnabled()),
+		SellEnabled:  int64(item.GetSellEnabled()),
 		CreateTimes:  item.GetCreateTimes(),
 		UpdateTimes:  item.GetUpdateTimes(),
 	}
@@ -97,8 +97,8 @@ func tradeSymbolContractToTypes(item *trade.TradeSymbolContract) types.TradeSymb
 		DeliveryTime:           item.GetDeliveryTime(),
 		SupportCross:           item.GetSupportCross(),
 		SupportIsolated:        item.GetSupportIsolated(),
-		BuyEnabled:             item.GetBuyEnabled(),
-		SellEnabled:            item.GetSellEnabled(),
+		BuyEnabled:             int64(item.GetBuyEnabled()),
+		SellEnabled:            int64(item.GetSellEnabled()),
 		CreateTimes:            item.GetCreateTimes(),
 		UpdateTimes:            item.GetUpdateTimes(),
 	}

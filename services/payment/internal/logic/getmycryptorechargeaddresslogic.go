@@ -38,7 +38,7 @@ func (l *GetMyCryptoRechargeAddressLogic) GetMyCryptoRechargeAddress(in *payment
 	if err != nil {
 		return nil, err
 	}
-	item, err := l.svcCtx.CryptoRechargeAddressModel.FindOneByTenantIdUserIdWalletTypeCoinChainCode(l.ctx, tenantId, userId, in.WalletType, in.Coin, int64(in.ChainCode))
+	item, err := l.svcCtx.CryptoRechargeAddressModel.FindOneByTenantIdUserIdWalletTypeCoinChainCode(l.ctx, tenantId, userId, int64(in.WalletType), in.Coin, int64(in.ChainCode))
 	if err != nil {
 		if !errors.Is(err, models.ErrNotFound) {
 			return nil, err
@@ -76,12 +76,12 @@ func (l *GetMyCryptoRechargeAddressLogic) GetMyCryptoRechargeAddress(in *payment
 func (l *GetMyCryptoRechargeAddressLogic) reserveAssignableAddress(tenantId, userId int64, in *payment.GetMyCryptoRechargeAddressReq) (*models.TCryptoRechargeAddress, error) {
 	now := utils.NowMillis()
 	reusableBefore := now - cryptoRechargeAddressHoldSeconds*1000
-	items, err := l.svcCtx.CryptoRechargeAddressModel.FindAssignableCandidates(l.ctx, tenantId, in.WalletType, in.Coin, int64(in.ChainCode), reusableBefore, 50)
+	items, err := l.svcCtx.CryptoRechargeAddressModel.FindAssignableCandidates(l.ctx, tenantId, int64(in.WalletType), in.Coin, int64(in.ChainCode), reusableBefore, 50)
 	if err != nil {
 		return nil, err
 	}
 	if len(items) == 0 {
-		hasAddress, err := l.svcCtx.CryptoRechargeAddressModel.HasEnabledAddress(l.ctx, tenantId, in.WalletType, in.Coin, int64(in.ChainCode))
+		hasAddress, err := l.svcCtx.CryptoRechargeAddressModel.HasEnabledAddress(l.ctx, tenantId, int64(in.WalletType), in.Coin, int64(in.ChainCode))
 		if err != nil {
 			return nil, err
 		}
@@ -108,7 +108,7 @@ func (l *GetMyCryptoRechargeAddressLogic) reserveAssignableAddress(tenantId, use
 		}
 
 		item.UserId = userId
-		item.WalletType = in.WalletType
+		item.WalletType = int64(in.WalletType)
 		item.Coin = in.Coin
 		item.ChainCode = int64(in.ChainCode)
 		item.Status = 1

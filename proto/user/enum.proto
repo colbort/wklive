@@ -53,12 +53,6 @@ enum VerifyStatus {
   VERIFY_STATUS_REJECTED = 3;
 }
 
-enum BankStatus {
-  BANK_STATUS_UNKNOWN = 0;
-  BANK_STATUS_NORMAL = 1;
-  BANK_STATUS_DISABLED = 2;
-}
-
 enum RiskLevel {
   RISK_LEVEL_NORMAL = 0;
   RISK_LEVEL_ATTENTION = 1;

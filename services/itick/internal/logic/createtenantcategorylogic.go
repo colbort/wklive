@@ -54,8 +54,8 @@ func (l *CreateTenantCategoryLogic) CreateTenantCategory(in *itick.CreateTenantC
 	_, err = l.svcCtx.ItickTenantCategoryModel.Insert(l.ctx, &models.TItickTenantCategory{
 		TenantId:    in.TenantId,
 		CategoryId:  in.CategoryId,
-		Enabled:     in.Enabled,
-		AppVisible:  in.AppVisible,
+		Enabled:     int64(in.Enabled),
+		AppVisible:  int64(in.AppVisible),
 		Sort:        in.Sort,
 		Remark:      in.Remark,
 		CreateTimes: now,

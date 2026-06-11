@@ -47,7 +47,7 @@ func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.Lis
 
 	data := make([]*user.UserBankItem, 0)
 	for _, bank := range items {
-		if in.Status != 0 && bank.Status != int64(in.Status) {
+		if in.Enabled != 0 && bank.Enabled != int64(in.Enabled) {
 			continue
 		}
 		u, err := l.svcCtx.UserModel.FindOne(l.ctx, bank.UserId)

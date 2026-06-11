@@ -47,7 +47,7 @@ type (
 		UserId          int64          `db:"user_id"`           // 用户ID
 		PayPasswordHash sql.NullString `db:"pay_password_hash"` // 支付密码哈希
 		GoogleSecret    sql.NullString `db:"google_secret"`     // Google密钥
-		GoogleEnabled   int64          `db:"google_enabled"`    // Google2FA是否启用：0否 1是
+		GoogleEnabled   int64          `db:"google_enabled"`    // Google2FA启用状态：1启用 2禁用
 		LoginErrorCount int64          `db:"login_error_count"` // 登录错误次数
 		PayErrorCount   int64          `db:"pay_error_count"`   // 支付密码错误次数
 		LockUntil       int64          `db:"lock_until"`        // 锁定到期时间

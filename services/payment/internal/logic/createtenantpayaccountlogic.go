@@ -49,7 +49,7 @@ func (l *CreateTenantPayAccountLogic) CreateTenantPayAccount(in *payment.CreateT
 		PublicKey:           sql.NullString{String: in.PublicKey, Valid: true},
 		CertCipher:          sql.NullString{String: in.CertCipher, Valid: true},
 		ExtConfig:           sql.NullString{String: in.ExtConfig, Valid: true},
-		Status:              int64(in.Status),
+		Enabled:             int64(in.Enabled),
 		IsDefault:           in.IsDefault,
 		Remark:              sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes:         now,

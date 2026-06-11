@@ -9,10 +9,10 @@ import (
 
 type TradeSymbolLeverageConfigModel interface {
 	tTradeSymbolLeverageConfigModel
-	FindPage(ctx context.Context, tenantId int64, symbolId int64, marketType int64, marginMode int64, status int64, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error)
+	FindPage(ctx context.Context, tenantId int64, symbolId int64, marketType int64, marginMode int64, enabled int64, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error)
 }
 
-func (m *defaultTTradeSymbolLeverageConfigModel) FindPage(ctx context.Context, tenantId int64, symbolId int64, marketType int64, marginMode int64, status int64, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error) {
+func (m *defaultTTradeSymbolLeverageConfigModel) FindPage(ctx context.Context, tenantId int64, symbolId int64, marketType int64, marginMode int64, enabled int64, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -20,8 +20,8 @@ func (m *defaultTTradeSymbolLeverageConfigModel) FindPage(ctx context.Context, t
 	builder.EqInt64("symbol_id", symbolId)
 	builder.EqInt64("market_type", marketType)
 	builder.EqInt64("margin_mode", marginMode)
-	if status > 0 {
-		builder.And("status = ?", status)
+	if enabled > 0 {
+		builder.And("enabled = ?", enabled)
 	}
 
 	where := builder.Where()

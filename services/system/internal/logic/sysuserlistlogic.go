@@ -33,7 +33,7 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 		l.ctx,
 		in.Keyword,
 		tenantId,
-		commonStatusToModel(in.Status),
+		commonStatusToModel(in.Enabled),
 		in.Page.Cursor,
 		in.Page.Limit,
 	)
@@ -72,10 +72,10 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 			Id:               u.Id,
 			Username:         u.Username,
 			Nickname:         u.Nickname,
-			Status:           commonStatusToProto(u.Status),
+			Enabled:          commonStatusToProto(u.Enabled),
 			RoleIds:          roleMap[u.Id],
 			CreateTimes:      u.CreateTimes,
-			Google2FaEnabled: u.GoogleEnabled,
+			Google2FaEnabled: binaryEnableToProto(u.GoogleEnabled),
 		})
 	}
 

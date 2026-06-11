@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -28,8 +29,8 @@ type ItickCategory struct {
 	CategoryType  CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	CategoryCode  string                 `protobuf:"bytes,3,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	CategoryName  string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
-	Enabled       int64                  `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,6,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,6,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
 	Icon          string                 `protobuf:"bytes,8,opt,name=icon,proto3" json:"icon,omitempty"`
 	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -97,18 +98,18 @@ func (x *ItickCategory) GetCategoryName() string {
 	return ""
 }
 
-func (x *ItickCategory) GetEnabled() int64 {
+func (x *ItickCategory) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *ItickCategory) GetAppVisible() int64 {
+func (x *ItickCategory) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *ItickCategory) GetSort() int64 {
@@ -160,8 +161,8 @@ type ItickProduct struct {
 	DisplayName   string                 `protobuf:"bytes,9,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	BaseCoin      string                 `protobuf:"bytes,10,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
 	QuoteCoin     string                 `protobuf:"bytes,11,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
-	Enabled       int64                  `protobuf:"varint,12,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,13,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,12,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,13,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,14,opt,name=sort,proto3" json:"sort,omitempty"`
 	Icon          string                 `protobuf:"bytes,15,opt,name=icon,proto3" json:"icon,omitempty"`
 	Remark        string                 `protobuf:"bytes,16,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -278,18 +279,18 @@ func (x *ItickProduct) GetQuoteCoin() string {
 	return ""
 }
 
-func (x *ItickProduct) GetEnabled() int64 {
+func (x *ItickProduct) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *ItickProduct) GetAppVisible() int64 {
+func (x *ItickProduct) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *ItickProduct) GetSort() int64 {
@@ -606,8 +607,8 @@ type ItickTenantCategory struct {
 	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId    int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	CategoryId  int64                  `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	Enabled     int64                  `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible  int64                  `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled     common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible  common.Switch          `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort        int64                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark      string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes int64                  `protobuf:"varint,8,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
@@ -673,18 +674,18 @@ func (x *ItickTenantCategory) GetCategoryId() int64 {
 	return 0
 }
 
-func (x *ItickTenantCategory) GetEnabled() int64 {
+func (x *ItickTenantCategory) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *ItickTenantCategory) GetAppVisible() int64 {
+func (x *ItickTenantCategory) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *ItickTenantCategory) GetSort() int64 {
@@ -755,8 +756,8 @@ type ItickTenantProduct struct {
 	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId    int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProductId   int64                  `protobuf:"varint,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	Enabled     int64                  `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible  int64                  `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled     common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible  common.Switch          `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort        int64                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark      string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes int64                  `protobuf:"varint,8,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
@@ -829,18 +830,18 @@ func (x *ItickTenantProduct) GetProductId() int64 {
 	return 0
 }
 
-func (x *ItickTenantProduct) GetEnabled() int64 {
+func (x *ItickTenantProduct) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *ItickTenantProduct) GetAppVisible() int64 {
+func (x *ItickTenantProduct) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *ItickTenantProduct) GetSort() int64 {
@@ -959,21 +960,21 @@ var File_proto_itick_model_proto protoreflect.FileDescriptor
 
 const file_proto_itick_model_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/itick/model.proto\x12\x05itick\x1a\x16proto/itick/enum.proto\"\xe4\x02\n" +
+	"\x17proto/itick/model.proto\x12\x05itick\x1a\x19proto/common/common.proto\x1a\x16proto/itick/enum.proto\"\x84\x03\n" +
 	"\rItickCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x128\n" +
 	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
 	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\x12#\n" +
-	"\rcategory_name\x18\x04 \x01(\tR\fcategoryName\x12\x18\n" +
-	"\aenabled\x18\x05 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x06 \x01(\x03R\n" +
+	"\rcategory_name\x18\x04 \x01(\tR\fcategoryName\x12(\n" +
+	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x06 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\a \x01(\x03R\x04sort\x12\x12\n" +
 	"\x04icon\x18\b \x01(\tR\x04icon\x12\x16\n" +
 	"\x06remark\x18\t \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\n" +
 	" \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\x9a\x04\n" +
+	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xba\x04\n" +
 	"\fItickProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x128\n" +
 	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
@@ -987,9 +988,9 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\tbase_coin\x18\n" +
 	" \x01(\tR\bbaseCoin\x12\x1d\n" +
 	"\n" +
-	"quote_coin\x18\v \x01(\tR\tquoteCoin\x12\x18\n" +
-	"\aenabled\x18\f \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\r \x01(\x03R\n" +
+	"quote_coin\x18\v \x01(\tR\tquoteCoin\x12(\n" +
+	"\aenabled\x18\f \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\r \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x0e \x01(\x03R\x04sort\x12\x12\n" +
 	"\x04icon\x18\x0f \x01(\tR\x04icon\x12\x16\n" +
@@ -1028,14 +1029,14 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\bturnover\x18\v \x01(\x01R\bturnover\x12\x19\n" +
 	"\bquote_ts\x18\f \x01(\x03R\aquoteTs\x12!\n" +
 	"\ftrade_status\x18\r \x01(\x03R\vtradeStatus\x12\x16\n" +
-	"\x06market\x18\x0e \x01(\tR\x06market\"\xc9\x03\n" +
+	"\x06market\x18\x0e \x01(\tR\x06market\"\xe9\x03\n" +
 	"\x13ItickTenantCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vcategory_id\x18\x03 \x01(\x03R\n" +
-	"categoryId\x12\x18\n" +
-	"\aenabled\x18\x04 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x05 \x01(\x03R\n" +
+	"categoryId\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x05 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x06 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\x12!\n" +
@@ -1047,14 +1048,14 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\x04icon\x18\f \x01(\tR\x04icon\x12\x1f\n" +
 	"\vtenant_name\x18\r \x01(\tR\n" +
 	"tenantName\x12#\n" +
-	"\rcategory_code\x18\x0e \x01(\tR\fcategoryCode\"\xfd\x04\n" +
+	"\rcategory_code\x18\x0e \x01(\tR\fcategoryCode\"\x9d\x05\n" +
 	"\x12ItickTenantProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x03 \x01(\x03R\tproductId\x12\x18\n" +
-	"\aenabled\x18\x04 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x05 \x01(\x03R\n" +
+	"product_id\x18\x03 \x01(\x03R\tproductId\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x05 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x06 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\x12!\n" +
@@ -1097,19 +1098,29 @@ var file_proto_itick_model_proto_goTypes = []any{
 	(*ItickTenantCategory)(nil), // 4: itick.ItickTenantCategory
 	(*ItickTenantProduct)(nil),  // 5: itick.ItickTenantProduct
 	(CategoryType)(0),           // 6: itick.CategoryType
-	(KlineType)(0),              // 7: itick.KlineType
+	(common.Enable)(0),          // 7: common.Enable
+	(common.Switch)(0),          // 8: common.Switch
+	(KlineType)(0),              // 9: itick.KlineType
 }
 var file_proto_itick_model_proto_depIdxs = []int32{
-	6, // 0: itick.ItickCategory.category_type:type_name -> itick.CategoryType
-	6, // 1: itick.ItickProduct.category_type:type_name -> itick.CategoryType
-	7, // 2: itick.Kline.k_type:type_name -> itick.KlineType
-	6, // 3: itick.ItickTenantCategory.category_type:type_name -> itick.CategoryType
-	6, // 4: itick.ItickTenantProduct.category_type:type_name -> itick.CategoryType
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	6,  // 0: itick.ItickCategory.category_type:type_name -> itick.CategoryType
+	7,  // 1: itick.ItickCategory.enabled:type_name -> common.Enable
+	8,  // 2: itick.ItickCategory.app_visible:type_name -> common.Switch
+	6,  // 3: itick.ItickProduct.category_type:type_name -> itick.CategoryType
+	7,  // 4: itick.ItickProduct.enabled:type_name -> common.Enable
+	8,  // 5: itick.ItickProduct.app_visible:type_name -> common.Switch
+	9,  // 6: itick.Kline.k_type:type_name -> itick.KlineType
+	7,  // 7: itick.ItickTenantCategory.enabled:type_name -> common.Enable
+	8,  // 8: itick.ItickTenantCategory.app_visible:type_name -> common.Switch
+	6,  // 9: itick.ItickTenantCategory.category_type:type_name -> itick.CategoryType
+	7,  // 10: itick.ItickTenantProduct.enabled:type_name -> common.Enable
+	8,  // 11: itick.ItickTenantProduct.app_visible:type_name -> common.Switch
+	6,  // 12: itick.ItickTenantProduct.category_type:type_name -> itick.CategoryType
+	13, // [13:13] is the sub-list for method output_type
+	13, // [13:13] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_proto_itick_model_proto_init() }

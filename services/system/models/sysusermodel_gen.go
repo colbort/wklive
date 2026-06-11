@@ -50,9 +50,9 @@ type (
 		Password      string `db:"password"`       // bcrypt密码
 		Nickname      string `db:"nickname"`       // 昵称
 		Avatar        string `db:"avatar"`         // 头像
-		Status        int64  `db:"status"`         // 状态 1正常 2禁用
+		Enabled       int64  `db:"enabled"`        // 启用开关：1启用 2禁用
 		GoogleSecret  string `db:"google_secret"`  // 2FA secret(加密存储)
-		GoogleEnabled int64  `db:"google_enabled"` // 是否开启2FA
+		GoogleEnabled int64  `db:"google_enabled"` // Google2FA开关：1启用 0禁用
 		PermsVer      int64  `db:"perms_ver"`      // 权限版本(角色变化强制token失效)
 		LastLoginIp   string `db:"last_login_ip"`  // 最后登录IP
 		LastLoginAt   int64  `db:"last_login_at"`  // 最后登录时间
@@ -126,7 +126,7 @@ func (m *defaultSysUserModel) Insert(ctx context.Context, data *SysUser) (sql.Re
 	sysUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheSysUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysUserRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserType, data.IsOwner, data.Username, data.Password, data.Nickname, data.Avatar, data.Status, data.GoogleSecret, data.GoogleEnabled, data.PermsVer, data.LastLoginIp, data.LastLoginAt, data.CreateBy, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserType, data.IsOwner, data.Username, data.Password, data.Nickname, data.Avatar, data.Enabled, data.GoogleSecret, data.GoogleEnabled, data.PermsVer, data.LastLoginIp, data.LastLoginAt, data.CreateBy, data.CreateTimes, data.UpdateTimes)
 	}, sysUserIdKey, sysUserTenantIdUsernameKey)
 	return ret, err
 }
@@ -141,7 +141,7 @@ func (m *defaultSysUserModel) Update(ctx context.Context, newData *SysUser) erro
 	sysUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheSysUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysUserRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserType, newData.IsOwner, newData.Username, newData.Password, newData.Nickname, newData.Avatar, newData.Status, newData.GoogleSecret, newData.GoogleEnabled, newData.PermsVer, newData.LastLoginIp, newData.LastLoginAt, newData.CreateBy, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserType, newData.IsOwner, newData.Username, newData.Password, newData.Nickname, newData.Avatar, newData.Enabled, newData.GoogleSecret, newData.GoogleEnabled, newData.PermsVer, newData.LastLoginIp, newData.LastLoginAt, newData.CreateBy, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, sysUserIdKey, sysUserTenantIdUsernameKey)
 	return err
 }

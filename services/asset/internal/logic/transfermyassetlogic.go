@@ -9,6 +9,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
@@ -46,7 +47,7 @@ func (l *TransferMyAssetLogic) TransferMyAsset(in *asset.TransferMyAssetReq) (*a
 	if fromCoin == "" || toCoin == "" {
 		return nil, i18n.StatusError(l.ctx, i18n.TransferCoinRequired)
 	}
-	if in.FromWalletType == asset.WalletType_WALLET_TYPE_UNKNOWN || in.ToWalletType == asset.WalletType_WALLET_TYPE_UNKNOWN {
+	if in.FromWalletType == common.WalletType_WALLET_TYPE_UNKNOWN || in.ToWalletType == common.WalletType_WALLET_TYPE_UNKNOWN {
 		return nil, i18n.StatusError(l.ctx, i18n.WalletTypeRequired)
 	}
 	if in.FromWalletType == in.ToWalletType && fromCoin == toCoin {
@@ -114,7 +115,7 @@ func (l *TransferMyAssetLogic) usdtRate(coin string) (float64, error) {
 	return rate, nil
 }
 
-func (l *TransferMyAssetLogic) transferAsset(tenantId, userId int64, fromWalletType, toWalletType asset.WalletType, fromCoin, toCoin string, fromAmount, toAmount float64, bizNo, remark string) (*asset.TransferMyAssetResp, error) {
+func (l *TransferMyAssetLogic) transferAsset(tenantId, userId int64, fromWalletType, toWalletType common.WalletType, fromCoin, toCoin string, fromAmount, toAmount float64, bizNo, remark string) (*asset.TransferMyAssetResp, error) {
 	ts := utils.NowMillis()
 	var (
 		beforeFrom *models.TUserAsset
@@ -153,7 +154,7 @@ func (l *TransferMyAssetLogic) transferAsset(tenantId, userId int64, fromWalletT
 				Coin:            toCoin,
 				TotalAmount:     toAmount,
 				AvailableAmount: toAmount,
-				Status:          1,
+				Enabled:         1,
 				Version:         1,
 				Remark:          remark,
 				CreateTimes:     ts,

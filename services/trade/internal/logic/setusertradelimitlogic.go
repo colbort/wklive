@@ -42,7 +42,7 @@ func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitRe
 	item.CanCancel = in.CanCancel
 	item.CanTriggerOrder = in.CanTriggerOrder
 	item.CanApiTrade = in.CanApiTrade
-	item.TradeEnabled = in.TradeEnabled
+	item.TradeEnabled = enableToModel(in.TradeEnabled, item.TradeEnabled)
 	item.OnlyReduceOnly = in.OnlyReduceOnly
 	item.MaxOpenOrderCount = in.MaxOpenOrderCount
 	item.MaxOrderCountPerDay = in.MaxOrderCountPerDay
@@ -52,7 +52,7 @@ func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitRe
 	item.RiskLevel = in.RiskLevel
 	item.OperatorId = in.OperatorId
 	item.Source = int64(in.Source)
-	item.Status = in.Status
+	item.Enabled = enableToModel(in.Enabled, item.Enabled)
 	item.EffectiveStartTime = in.EffectiveStartTime
 	item.EffectiveEndTime = in.EffectiveEndTime
 	item.Remark = in.Remark

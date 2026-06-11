@@ -53,7 +53,7 @@ type (
 		BeforeReward     float64 `db:"before_reward"`      // 发放前累计收益
 		AfterReward      float64 `db:"after_reward"`       // 发放后累计收益
 		RewardType       int64   `db:"reward_type"`        // 收益类型：1日收益 2到期收益 3补发收益 4手动发放
-		RewardStatus     int64   `db:"reward_status"`      // 发放状态：0失败 1成功
+		RewardStatus     int64   `db:"reward_status"`      // 发放状态：1失败 2成功
 		RewardTimes      int64   `db:"reward_times"`       // 收益发放时间戳
 		Remark           string  `db:"remark"`             // 备注
 		CreateUserId     int64   `db:"create_user_id"`     // 创建人ID

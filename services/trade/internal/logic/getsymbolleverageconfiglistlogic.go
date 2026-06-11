@@ -29,7 +29,7 @@ func NewGetSymbolLeverageConfigListLogic(ctx context.Context, svcCtx *svc.Servic
 // 获取交易对杠杆档位配置列表
 func (l *GetSymbolLeverageConfigListLogic) GetSymbolLeverageConfigList(in *trade.GetSymbolLeverageConfigListReq) (*trade.GetSymbolLeverageConfigListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	data, total, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, in.TenantId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode), in.Status, cursor, limit)
+	data, total, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, in.TenantId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode), enableToModel(in.Enabled, 0), cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

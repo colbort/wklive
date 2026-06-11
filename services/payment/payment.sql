@@ -6,7 +6,7 @@ CREATE TABLE `t_pay_platform` (
   `notify_url` varchar(255) DEFAULT NULL COMMENT '统一异步通知地址',
   `return_url` varchar(255) DEFAULT NULL COMMENT '默认同步跳转地址',
   `icon` varchar(255) DEFAULT NULL COMMENT '图标',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1启用 2停用',
+  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态：1启用 2禁用',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
@@ -21,7 +21,7 @@ CREATE TABLE `t_pay_product` (
   `product_name` varchar(128) NOT NULL COMMENT '产品名称',
   `scene_type` tinyint NOT NULL DEFAULT 1 COMMENT '场景：1APP 2H5 3WEB 4收银台 5链上',
   `currency` varchar(16) NOT NULL DEFAULT 'CNY' COMMENT '币种',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1启用 2停用',
+  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态：1启用 2禁用',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
@@ -34,7 +34,7 @@ CREATE TABLE `t_tenant_pay_platform` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` bigint NOT NULL COMMENT '租户ID',
   `platform_id` bigint NOT NULL COMMENT '平台ID',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1启用 2停用',
+  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态：1启用 2禁用',
   `open_status` tinyint NOT NULL DEFAULT 1 COMMENT '开通状态：1待配置 2已开通 3审核中 4驳回',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -60,7 +60,7 @@ CREATE TABLE `t_tenant_pay_account` (
   `public_key` longtext COMMENT '公钥',
   `cert_cipher` longtext COMMENT '证书密文',
   `ext_config` json DEFAULT NULL COMMENT '扩展配置',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1启用 2停用',
+  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态：1启用 2禁用',
   `is_default` tinyint NOT NULL DEFAULT 0 COMMENT '是否默认账号：0否 1是',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -68,7 +68,7 @@ CREATE TABLE `t_tenant_pay_account` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_account_code` (`tenant_id`, `account_code`),
   KEY `idx_tenant_platform` (`tenant_id`, `platform_id`),
-  KEY `idx_tenant_status` (`tenant_id`, `status`)
+  KEY `idx_tenant_enabled` (`tenant_id`, `enabled`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户支付账号表';
 
 CREATE TABLE `t_tenant_pay_channel` (
@@ -83,8 +83,8 @@ CREATE TABLE `t_tenant_pay_channel` (
   `icon` varchar(255) DEFAULT NULL COMMENT '图标',
   `currency` varchar(16) NOT NULL DEFAULT 'CNY' COMMENT '币种',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
-  `visible` tinyint NOT NULL DEFAULT 1 COMMENT '是否显示：0否 1是',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1启用 2停用',
+  `visible` tinyint NOT NULL DEFAULT 1 COMMENT '显示开关：1显示 0隐藏',
+  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态：1启用 2禁用',
 
   `single_min_amount` bigint NOT NULL DEFAULT 0 COMMENT '单笔最小金额，单位分',
   `single_max_amount` bigint NOT NULL DEFAULT 0 COMMENT '单笔最大金额，0表示不限制，单位分',
@@ -101,7 +101,7 @@ CREATE TABLE `t_tenant_pay_channel` (
   `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_channel_code` (`tenant_id`, `channel_code`),
-  KEY `idx_tenant_visible_status` (`tenant_id`, `visible`, `status`),
+  KEY `idx_tenant_visible_enabled` (`tenant_id`, `visible`, `enabled`),
   KEY `idx_account_id` (`account_id`),
   KEY `idx_product_id` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户支付通道表';
@@ -112,7 +112,7 @@ CREATE TABLE `t_tenant_pay_channel_rule` (
   `channel_id` bigint NOT NULL COMMENT '通道ID',
   `rule_name` varchar(128) NOT NULL COMMENT '规则名称',
   `priority` int NOT NULL DEFAULT 100 COMMENT '优先级，越小越优先',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1启用 2停用',
+  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态：1启用 2禁用',
 
   `single_amount_min` bigint NOT NULL DEFAULT 0 COMMENT '单笔充值最小金额，单位分',
   `single_amount_max` bigint NOT NULL DEFAULT 0 COMMENT '单笔充值最大金额，0表示不限制，单位分',
@@ -136,7 +136,7 @@ CREATE TABLE `t_tenant_pay_channel_rule` (
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  KEY `idx_tenant_channel_status` (`tenant_id`, `channel_id`, `status`),
+  KEY `idx_tenant_channel_enabled` (`tenant_id`, `channel_id`, `enabled`),
   KEY `idx_tenant_priority` (`tenant_id`, `priority`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户支付通道显示规则表';
 
@@ -168,7 +168,7 @@ CREATE TABLE `t_recharge_order` (
   `account_id` bigint NOT NULL COMMENT '账号ID',
   `channel_id` bigint NOT NULL COMMENT '通道ID',
   `recharge_type` tinyint NOT NULL DEFAULT 0 COMMENT '充值类型：0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他',
-  `wallet_type` tinyint NOT NULL DEFAULT 1 COMMENT '钱包类型:1现货 2资金 3合约 4理财 5期权',
+  `wallet_type` tinyint NOT NULL DEFAULT 1 COMMENT '钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权',
   `currency` varchar(16) NOT NULL DEFAULT 'CNY' COMMENT '币种',
   `order_amount` bigint NOT NULL COMMENT '订单金额，单位分',
   `pay_amount` bigint NOT NULL DEFAULT 0 COMMENT '实际支付金额，单位分',
@@ -212,7 +212,7 @@ CREATE TABLE `t_recharge_notify_log` (
   `channel_id` bigint DEFAULT NULL COMMENT '通道ID',
   `notify_status` tinyint NOT NULL DEFAULT 1 COMMENT '处理状态：1待处理 2成功 3失败',
   `notify_body` longtext COMMENT '回调原文',
-  `sign_result` tinyint NOT NULL DEFAULT 0 COMMENT '验签结果：0未验 1通过 2失败',
+  `sign_result` tinyint NOT NULL DEFAULT 0 COMMENT '验签结果：1未验 2通过 3失败',
   `process_result` varchar(255) DEFAULT NULL COMMENT '处理结果',
   `error_message` varchar(1000) DEFAULT NULL COMMENT '错误信息',
   `notify_time` bigint NOT NULL DEFAULT 0 COMMENT '回调时间',
@@ -270,7 +270,7 @@ CREATE TABLE `t_withdraw_notify_log` (
   `channel_id` bigint DEFAULT NULL COMMENT '通道ID',
   `notify_status` tinyint NOT NULL DEFAULT 1 COMMENT '处理状态：1待处理 2成功 3失败',
   `notify_body` longtext COMMENT '回调原文',
-  `sign_result` tinyint NOT NULL DEFAULT 0 COMMENT '验签结果：0未验 1通过 2失败',
+  `sign_result` tinyint NOT NULL DEFAULT 0 COMMENT '验签结果：1未验 2通过 3失败',
   `process_result` varchar(255) DEFAULT NULL COMMENT '处理结果',
   `error_message` varchar(1000) DEFAULT NULL COMMENT '错误信息',
   `notify_time` bigint NOT NULL DEFAULT 0 COMMENT '回调时间',
@@ -287,7 +287,7 @@ CREATE TABLE `t_crypto_recharge_address` (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
   `user_id` bigint NOT NULL DEFAULT 0 COMMENT '用户ID',
 
-  `wallet_type` tinyint NOT NULL DEFAULT 1 COMMENT '账户类型:1现金账户 2股票账户 3合约账户 4理财账户 5期权账户',
+  `wallet_type` tinyint NOT NULL DEFAULT 1 COMMENT '账户类型:1现金/现货 2股票/资金 3合约 4理财 5期权',
 
   `coin` varchar(20) NOT NULL DEFAULT '' COMMENT '币种:USDT/BTC/ETH',
   `chain_code` tinyint NOT NULL DEFAULT 0 COMMENT '链类型',
@@ -298,7 +298,7 @@ CREATE TABLE `t_crypto_recharge_address` (
   `address_source` tinyint NOT NULL DEFAULT 1 COMMENT '地址来源:1系统生成 2第三方分配 3手工导入',
   `address_type` tinyint NOT NULL DEFAULT 1 COMMENT '地址类型:1用户独享 2平台公共地址+memo',
 
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态:1可用 0禁用 2冻结',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '地址状态:1可用 0禁用 2冻结',
 
   `last_used_time` bigint NOT NULL DEFAULT 0 COMMENT '最近使用时间',
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -328,7 +328,7 @@ CREATE TABLE `t_crypto_wallet_account` (
 
   `ext_config` json DEFAULT NULL COMMENT '扩展配置',
 
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态:1启用 0禁用',
+  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态:1启用 0禁用',
   `is_default` tinyint NOT NULL DEFAULT 0 COMMENT '是否默认:1是 0否',
 
   `create_times` bigint NOT NULL DEFAULT 0,
@@ -336,7 +336,7 @@ CREATE TABLE `t_crypto_wallet_account` (
 
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_account_code` (`tenant_id`, `account_code`),
-  KEY `idx_tenant_status` (`tenant_id`, `status`)
+  KEY `idx_tenant_enabled` (`tenant_id`, `enabled`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='链上钱包账号配置表';
 
 CREATE TABLE `t_crypto_recharge_tx` (

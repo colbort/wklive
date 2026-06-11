@@ -59,7 +59,7 @@ type (
 		PriceDeviationRate  float64 `db:"price_deviation_rate"`   // 允许价格偏离率，0表示不限制
 		OperatorId          int64   `db:"operator_id"`            // 操作人ID，系统操作时可为0
 		Source              int64   `db:"source"`                 // 来源：1系统 2用户 3后台管理 4任务
-		Status              int64   `db:"status"`                 // 状态：1启用 0禁用
+		Enabled             int64   `db:"enabled"`                // 启用开关：1启用 0禁用
 		EffectiveStartTime  int64   `db:"effective_start_time"`   // 限制生效开始时间，毫秒时间戳
 		EffectiveEndTime    int64   `db:"effective_end_time"`     // 限制生效结束时间，毫秒时间戳
 		Remark              string  `db:"remark"`                 // 备注
@@ -132,7 +132,7 @@ func (m *defaultTRiskUserSymbolLimitModel) Insert(ctx context.Context, data *TRi
 	tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarketType)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRiskUserSymbolLimitRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SymbolId, data.MarketType, data.MaxPositionQty, data.MaxPositionNotional, data.MaxOpenOrders, data.MaxOrderQty, data.MaxOrderNotional, data.MinOrderQty, data.MinOrderNotional, data.MaxLongPositionQty, data.MaxShortPositionQty, data.PriceDeviationRate, data.OperatorId, data.Source, data.Status, data.EffectiveStartTime, data.EffectiveEndTime, data.Remark, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SymbolId, data.MarketType, data.MaxPositionQty, data.MaxPositionNotional, data.MaxOpenOrders, data.MaxOrderQty, data.MaxOrderNotional, data.MinOrderQty, data.MinOrderNotional, data.MaxLongPositionQty, data.MaxShortPositionQty, data.PriceDeviationRate, data.OperatorId, data.Source, data.Enabled, data.EffectiveStartTime, data.EffectiveEndTime, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tRiskUserSymbolLimitIdKey, tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey)
 	return ret, err
 }
@@ -147,7 +147,7 @@ func (m *defaultTRiskUserSymbolLimitModel) Update(ctx context.Context, newData *
 	tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarketType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tRiskUserSymbolLimitRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SymbolId, newData.MarketType, newData.MaxPositionQty, newData.MaxPositionNotional, newData.MaxOpenOrders, newData.MaxOrderQty, newData.MaxOrderNotional, newData.MinOrderQty, newData.MinOrderNotional, newData.MaxLongPositionQty, newData.MaxShortPositionQty, newData.PriceDeviationRate, newData.OperatorId, newData.Source, newData.Status, newData.EffectiveStartTime, newData.EffectiveEndTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SymbolId, newData.MarketType, newData.MaxPositionQty, newData.MaxPositionNotional, newData.MaxOpenOrders, newData.MaxOrderQty, newData.MaxOrderNotional, newData.MinOrderQty, newData.MinOrderNotional, newData.MaxLongPositionQty, newData.MaxShortPositionQty, newData.PriceDeviationRate, newData.OperatorId, newData.Source, newData.Enabled, newData.EffectiveStartTime, newData.EffectiveEndTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tRiskUserSymbolLimitIdKey, tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey)
 	return err
 }

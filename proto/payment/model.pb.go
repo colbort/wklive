@@ -31,7 +31,7 @@ type PayPlatform struct {
 	NotifyUrl     string                 `protobuf:"bytes,5,opt,name=notify_url,json=notifyUrl,proto3" json:"notify_url,omitempty"`                                     // 统一异步通知地址
 	ReturnUrl     string                 `protobuf:"bytes,6,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`                                     // 默认同步跳转地址
 	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`                                                                // 图标
-	Status        CommonStatus           `protobuf:"varint,8,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                                 // 状态：1启用 2停用
+	Enabled       common.Enable          `protobuf:"varint,8,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                      // 状态,0表示全部，1表示启用，2表示禁用
 	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`                                                            // 备注
 	CreateTimes   int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                             // 创建时间
 	UpdateTimes   int64                  `protobuf:"varint,11,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                             // 更新时间
@@ -118,11 +118,11 @@ func (x *PayPlatform) GetIcon() string {
 	return ""
 }
 
-func (x *PayPlatform) GetStatus() CommonStatus {
+func (x *PayPlatform) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *PayPlatform) GetRemark() string {
@@ -154,7 +154,7 @@ type PayProduct struct {
 	ProductName   string                 `protobuf:"bytes,4,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`                   // 产品名称
 	SceneType     SceneType              `protobuf:"varint,5,opt,name=scene_type,json=sceneType,proto3,enum=payment.SceneType" json:"scene_type,omitempty"` // 场景：1APP 2H5 3WEB 4收银台 5链上
 	Currency      string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`                                            // 币种
-	Status        CommonStatus           `protobuf:"varint,7,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                     // 状态：1启用 2停用
+	Enabled       common.Enable          `protobuf:"varint,7,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                          // 状态,0表示全部，1表示启用，2表示禁用
 	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`                                                // 备注
 	CreateTimes   int64                  `protobuf:"varint,9,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                  // 创建时间
 	UpdateTimes   int64                  `protobuf:"varint,10,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                 // 更新时间
@@ -234,11 +234,11 @@ func (x *PayProduct) GetCurrency() string {
 	return ""
 }
 
-func (x *PayProduct) GetStatus() CommonStatus {
+func (x *PayProduct) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *PayProduct) GetRemark() string {
@@ -267,7 +267,7 @@ type TenantPayPlatform struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                           // 主键ID
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                               // 租户ID
 	PlatformId    int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                         // 平台ID
-	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                         // 状态：1启用 2停用
+	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                              // 状态,0表示全部，1表示启用，2表示禁用
 	OpenStatus    OpenStatus             `protobuf:"varint,5,opt,name=open_status,json=openStatus,proto3,enum=payment.OpenStatus" json:"open_status,omitempty"` // 开通状态：1待配置 2已开通 3审核中 4驳回
 	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                                    // 备注
 	CreateTimes   int64                  `protobuf:"varint,7,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                      // 创建时间
@@ -327,11 +327,11 @@ func (x *TenantPayPlatform) GetPlatformId() int64 {
 	return 0
 }
 
-func (x *TenantPayPlatform) GetStatus() CommonStatus {
+func (x *TenantPayPlatform) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *TenantPayPlatform) GetOpenStatus() OpenStatus {
@@ -375,7 +375,7 @@ type TenantPayAccount struct {
 	MerchantName        string                 `protobuf:"bytes,9,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`                           // 商户名称
 	PublicKey           string                 `protobuf:"bytes,10,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`                                   // 公钥
 	ExtConfig           string                 `protobuf:"bytes,11,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                                   // 扩展配置(JSON)
-	Status              CommonStatus           `protobuf:"varint,12,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                               // 状态：1启用 2停用
+	Enabled             common.Enable          `protobuf:"varint,12,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                    // 状态,0表示全部，1表示启用，2表示禁用
 	IsDefault           int64                  `protobuf:"varint,13,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`                                  // 是否默认账号：0否 1是
 	Remark              string                 `protobuf:"bytes,14,opt,name=remark,proto3" json:"remark,omitempty"`                                                          // 备注
 	CreateTimes         int64                  `protobuf:"varint,15,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                            // 创建时间
@@ -495,11 +495,11 @@ func (x *TenantPayAccount) GetExtConfig() string {
 	return ""
 }
 
-func (x *TenantPayAccount) GetStatus() CommonStatus {
+func (x *TenantPayAccount) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *TenantPayAccount) GetIsDefault() int64 {
@@ -571,8 +571,8 @@ type TenantPayChannel struct {
 	Icon            string                 `protobuf:"bytes,9,opt,name=icon,proto3" json:"icon,omitempty"`                                                  // 图标
 	Currency        string                 `protobuf:"bytes,10,opt,name=currency,proto3" json:"currency,omitempty"`                                         // 币种
 	Sort            int64                  `protobuf:"varint,11,opt,name=sort,proto3" json:"sort,omitempty"`                                                // 排序
-	Visible         int64                  `protobuf:"varint,12,opt,name=visible,proto3" json:"visible,omitempty"`                                          // 是否显示：0否 1是
-	Status          CommonStatus           `protobuf:"varint,13,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                  // 状态：1启用 2停用
+	Visible         common.Switch          `protobuf:"varint,12,opt,name=visible,proto3,enum=common.Switch" json:"visible,omitempty"`                       // 显示开关 0表示全部，1表示显示，2表示隐藏
+	Enabled         common.Enable          `protobuf:"varint,13,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                       // 状态,0表示全部，1表示启用，2表示禁用
 	SingleMinAmount int64                  `protobuf:"varint,14,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"` // 单笔最小金额，单位分
 	SingleMaxAmount int64                  `protobuf:"varint,15,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"` // 单笔最大金额，0表示不限制，单位分
 	DailyMaxAmount  int64                  `protobuf:"varint,16,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`    // 单日最大金额，0表示不限制，单位分
@@ -695,18 +695,18 @@ func (x *TenantPayChannel) GetSort() int64 {
 	return 0
 }
 
-func (x *TenantPayChannel) GetVisible() int64 {
+func (x *TenantPayChannel) GetVisible() common.Switch {
 	if x != nil {
 		return x.Visible
 	}
-	return 0
+	return common.Switch(0)
 }
 
-func (x *TenantPayChannel) GetStatus() CommonStatus {
+func (x *TenantPayChannel) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *TenantPayChannel) GetSingleMinAmount() int64 {
@@ -793,7 +793,7 @@ type TenantPayChannelRule struct {
 	ChannelId            int64                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                                       // 通道ID
 	RuleName             string                 `protobuf:"bytes,4,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`                                           // 规则名称
 	Priority             int64                  `protobuf:"varint,5,opt,name=priority,proto3" json:"priority,omitempty"`                                                          // 优先级，越小越优先
-	Status               CommonStatus           `protobuf:"varint,6,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                                    // 状态：1启用 2停用
+	Enabled              common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                         // 状态,0表示全部，1表示启用，2表示禁用
 	SingleAmountMin      int64                  `protobuf:"varint,7,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`                   // 单笔充值最小金额，单位分
 	SingleAmountMax      int64                  `protobuf:"varint,8,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`                   // 单笔充值最大金额，0表示不限制，单位分
 	UserTotalRechargeMin int64                  `protobuf:"varint,9,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`  // 用户累计充值最小金额，单位分
@@ -878,11 +878,11 @@ func (x *TenantPayChannelRule) GetPriority() int64 {
 	return 0
 }
 
-func (x *TenantPayChannelRule) GetStatus() CommonStatus {
+func (x *TenantPayChannelRule) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *TenantPayChannelRule) GetSingleAmountMin() int64 {
@@ -1150,7 +1150,7 @@ type RechargeOrder struct {
 	CreateTimes   int64                  `protobuf:"varint,32,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                              // 创建时间
 	UpdateTimes   int64                  `protobuf:"varint,33,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                              // 更新时间
 	RechargeType  RechargeType           `protobuf:"varint,34,opt,name=recharge_type,json=rechargeType,proto3,enum=payment.RechargeType" json:"recharge_type,omitempty"` // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
-	WalletType    int64                  `protobuf:"varint,35,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`                                 // 钱包类型:1现货 2资金 3合约 4理财 5期权
+	WalletType    common.WalletType      `protobuf:"varint,35,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`          // 钱包类型
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1423,11 +1423,11 @@ func (x *RechargeOrder) GetRechargeType() RechargeType {
 	return RechargeType_RECHARGE_TYPE_UNKNOWN
 }
 
-func (x *RechargeOrder) GetWalletType() int64 {
+func (x *RechargeOrder) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return 0
+	return common.WalletType(0)
 }
 
 type PayNotifyLog struct {
@@ -1975,7 +1975,7 @@ type CryptoRechargeAddress struct {
 	Id            int64                       `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                                     // 主键ID
 	TenantId      int64                       `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                                         // 租户ID
 	UserId        int64                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                                               // 用户ID
-	WalletType    int64                       `protobuf:"varint,4,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`                                                   // 账户类型
+	WalletType    common.WalletType           `protobuf:"varint,4,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`                            // 账户类型
 	Coin          string                      `protobuf:"bytes,5,opt,name=coin,proto3" json:"coin,omitempty"`                                                                                  // 币种:USDT/BTC/ETH
 	ChainCode     common.ChainCode            `protobuf:"varint,6,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`                                // 链网络:TRC20/ERC20/BEP20/BTC/ETH
 	Address       string                      `protobuf:"bytes,7,opt,name=address,proto3" json:"address,omitempty"`                                                                            // 充值地址
@@ -2041,11 +2041,11 @@ func (x *CryptoRechargeAddress) GetUserId() int64 {
 	return 0
 }
 
-func (x *CryptoRechargeAddress) GetWalletType() int64 {
+func (x *CryptoRechargeAddress) GetWalletType() common.WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return 0
+	return common.WalletType(0)
 }
 
 func (x *CryptoRechargeAddress) GetCoin() string {
@@ -2129,7 +2129,7 @@ type CryptoWalletAccount struct {
 	ApiSecretCipher      string                 `protobuf:"bytes,7,opt,name=api_secret_cipher,json=apiSecretCipher,proto3" json:"api_secret_cipher,omitempty"`                // API Secret密文
 	CallbackSecretCipher string                 `protobuf:"bytes,8,opt,name=callback_secret_cipher,json=callbackSecretCipher,proto3" json:"callback_secret_cipher,omitempty"` // 回调验签密钥密文
 	ExtConfig            string                 `protobuf:"bytes,9,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                                    // 扩展配置(JSON)
-	Status               CommonStatus           `protobuf:"varint,10,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                               // 状态
+	Enabled              common.Enable          `protobuf:"varint,10,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                    // 状态, 0表示全部，1表示启用，2表示禁用
 	IsDefault            int64                  `protobuf:"varint,11,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`                                  // 是否默认:1是 0否
 	CreateTimes          int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                            // 创建时间
 	UpdateTimes          int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                            // 更新时间
@@ -2230,11 +2230,11 @@ func (x *CryptoWalletAccount) GetExtConfig() string {
 	return ""
 }
 
-func (x *CryptoWalletAccount) GetStatus() CommonStatus {
+func (x *CryptoWalletAccount) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return CommonStatus_COMMON_STATUS_UNKNOWN
+	return common.Enable(0)
 }
 
 func (x *CryptoWalletAccount) GetIsDefault() int64 {
@@ -2450,7 +2450,7 @@ var File_proto_payment_model_proto protoreflect.FileDescriptor
 
 const file_proto_payment_model_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/payment/model.proto\x12\apayment\x1a\x19proto/common/common.proto\x1a\x18proto/payment/enum.proto\"\x82\x03\n" +
+	"\x19proto/payment/model.proto\x12\apayment\x1a\x19proto/common/common.proto\x1a\x18proto/payment/enum.proto\"\xfd\x02\n" +
 	"\vPayPlatform\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rplatform_code\x18\x02 \x01(\tR\fplatformCode\x12#\n" +
@@ -2460,12 +2460,12 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"notify_url\x18\x05 \x01(\tR\tnotifyUrl\x12\x1d\n" +
 	"\n" +
 	"return_url\x18\x06 \x01(\tR\treturnUrl\x12\x12\n" +
-	"\x04icon\x18\a \x01(\tR\x04icon\x12-\n" +
-	"\x06status\x18\b \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x16\n" +
+	"\x04icon\x18\a \x01(\tR\x04icon\x12(\n" +
+	"\aenabled\x18\b \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x16\n" +
 	"\x06remark\x18\t \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\n" +
 	" \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xdf\x02\n" +
+	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xda\x02\n" +
 	"\n" +
 	"PayProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
@@ -2475,23 +2475,23 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\fproduct_name\x18\x04 \x01(\tR\vproductName\x121\n" +
 	"\n" +
 	"scene_type\x18\x05 \x01(\x0e2\x12.payment.SceneTypeR\tsceneType\x12\x1a\n" +
-	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12-\n" +
-	"\x06status\x18\a \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x16\n" +
+	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12(\n" +
+	"\aenabled\x18\a \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x16\n" +
 	"\x06remark\x18\b \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\t \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\n" +
-	" \x01(\x03R\vupdateTimes\"\xa4\x02\n" +
+	" \x01(\x03R\vupdateTimes\"\x9f\x02\n" +
 	"\x11TenantPayPlatform\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x03 \x01(\x03R\n" +
-	"platformId\x12-\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x124\n" +
+	"platformId\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x124\n" +
 	"\vopen_status\x18\x05 \x01(\x0e2\x13.payment.OpenStatusR\n" +
 	"openStatus\x12\x16\n" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\a \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\"\xc3\x05\n" +
+	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\"\xbe\x05\n" +
 	"\x10TenantPayAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x123\n" +
@@ -2508,8 +2508,8 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"public_key\x18\n" +
 	" \x01(\tR\tpublicKey\x12\x1d\n" +
 	"\n" +
-	"ext_config\x18\v \x01(\tR\textConfig\x12-\n" +
-	"\x06status\x18\f \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x1d\n" +
+	"ext_config\x18\v \x01(\tR\textConfig\x12(\n" +
+	"\aenabled\x18\f \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\r \x01(\x03R\tisDefault\x12\x16\n" +
 	"\x06remark\x18\x0e \x01(\tR\x06remark\x12!\n" +
@@ -2519,7 +2519,7 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x11api_secret_cipher\x18\x12 \x01(\tR\x0fapiSecretCipher\x12,\n" +
 	"\x12private_key_cipher\x18\x13 \x01(\tR\x10privateKeyCipher\x12\x1f\n" +
 	"\vcert_cipher\x18\x14 \x01(\tR\n" +
-	"certCipher\"\xad\x06\n" +
+	"certCipher\"\xb8\x06\n" +
 	"\x10TenantPayChannel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -2535,9 +2535,9 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x04icon\x18\t \x01(\tR\x04icon\x12\x1a\n" +
 	"\bcurrency\x18\n" +
 	" \x01(\tR\bcurrency\x12\x12\n" +
-	"\x04sort\x18\v \x01(\x03R\x04sort\x12\x18\n" +
-	"\avisible\x18\f \x01(\x03R\avisible\x12-\n" +
-	"\x06status\x18\r \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12*\n" +
+	"\x04sort\x18\v \x01(\x03R\x04sort\x12(\n" +
+	"\avisible\x18\f \x01(\x0e2\x0e.common.SwitchR\avisible\x12(\n" +
+	"\aenabled\x18\r \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
 	"\x11single_min_amount\x18\x0e \x01(\x03R\x0fsingleMinAmount\x12*\n" +
 	"\x11single_max_amount\x18\x0f \x01(\x03R\x0fsingleMaxAmount\x12(\n" +
 	"\x10daily_max_amount\x18\x10 \x01(\x03R\x0edailyMaxAmount\x12&\n" +
@@ -2549,15 +2549,15 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"ext_config\x18\x15 \x01(\tR\textConfig\x12\x16\n" +
 	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x17 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x18 \x01(\x03R\vupdateTimes\"\x92\x06\n" +
+	"\fupdate_times\x18\x18 \x01(\x03R\vupdateTimes\"\x8d\x06\n" +
 	"\x14TenantPayChannelRule\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x03 \x01(\x03R\tchannelId\x12\x1b\n" +
 	"\trule_name\x18\x04 \x01(\tR\bruleName\x12\x1a\n" +
-	"\bpriority\x18\x05 \x01(\x03R\bpriority\x12-\n" +
-	"\x06status\x18\x06 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12*\n" +
+	"\bpriority\x18\x05 \x01(\x03R\bpriority\x12(\n" +
+	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
 	"\x11single_amount_min\x18\a \x01(\x03R\x0fsingleAmountMin\x12*\n" +
 	"\x11single_amount_max\x18\b \x01(\x03R\x0fsingleAmountMax\x125\n" +
 	"\x17user_total_recharge_min\x18\t \x01(\x03R\x14userTotalRechargeMin\x125\n" +
@@ -2587,7 +2587,7 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x11last_success_time\x18\t \x01(\x03R\x0flastSuccessTime\x12!\n" +
 	"\fcreate_times\x18\n" +
 	" \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\x8a\t\n" +
+	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\x9e\t\n" +
 	"\rRechargeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -2636,8 +2636,8 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x06remark\x18\x1f \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18  \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18! \x01(\x03R\vupdateTimes\x12:\n" +
-	"\rrecharge_type\x18\" \x01(\x0e2\x15.payment.RechargeTypeR\frechargeType\x12\x1f\n" +
-	"\vwallet_type\x18# \x01(\x03R\n" +
+	"\rrecharge_type\x18\" \x01(\x0e2\x15.payment.RechargeTypeR\frechargeType\x123\n" +
+	"\vwallet_type\x18# \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\"\xdb\x03\n" +
 	"\fPayNotifyLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -2717,12 +2717,12 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\n" +
 	"account_id\x18\x1a \x01(\x03R\taccountId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x1b \x01(\x03R\tchannelId\"\xb0\x04\n" +
+	"channel_id\x18\x1b \x01(\x03R\tchannelId\"\xc4\x04\n" +
 	"\x15CryptoRechargeAddress\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1f\n" +
-	"\vwallet_type\x18\x04 \x01(\x03R\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x123\n" +
+	"\vwallet_type\x18\x04 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x05 \x01(\tR\x04coin\x120\n" +
 	"\n" +
@@ -2735,7 +2735,7 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x06status\x18\v \x01(\x0e2$.payment.CryptoRechargeAddressStatusR\x06status\x12$\n" +
 	"\x0elast_used_time\x18\f \x01(\x03R\flastUsedTime\x12!\n" +
 	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\xdf\x03\n" +
+	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\xda\x03\n" +
 	"\x13CryptoWalletAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12!\n" +
@@ -2746,9 +2746,9 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x11api_secret_cipher\x18\a \x01(\tR\x0fapiSecretCipher\x124\n" +
 	"\x16callback_secret_cipher\x18\b \x01(\tR\x14callbackSecretCipher\x12\x1d\n" +
 	"\n" +
-	"ext_config\x18\t \x01(\tR\textConfig\x12-\n" +
-	"\x06status\x18\n" +
-	" \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x1d\n" +
+	"ext_config\x18\t \x01(\tR\textConfig\x12(\n" +
+	"\aenabled\x18\n" +
+	" \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\v \x01(\x03R\tisDefault\x12!\n" +
 	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
@@ -2806,52 +2806,57 @@ var file_proto_payment_model_proto_goTypes = []any{
 	(*CryptoWalletAccount)(nil),      // 12: payment.CryptoWalletAccount
 	(*CryptoRechargeTx)(nil),         // 13: payment.CryptoRechargeTx
 	(PlatformType)(0),                // 14: payment.PlatformType
-	(CommonStatus)(0),                // 15: payment.CommonStatus
+	(common.Enable)(0),               // 15: common.Enable
 	(SceneType)(0),                   // 16: payment.SceneType
 	(OpenStatus)(0),                  // 17: payment.OpenStatus
-	(FeeType)(0),                     // 18: payment.FeeType
-	(ClientType)(0),                  // 19: payment.ClientType
-	(PayOrderStatus)(0),              // 20: payment.PayOrderStatus
-	(RechargeType)(0),                // 21: payment.RechargeType
-	(NotifyProcessStatus)(0),         // 22: payment.NotifyProcessStatus
-	(SignResult)(0),                  // 23: payment.SignResult
-	(common.ChainCode)(0),            // 24: common.ChainCode
-	(CryptoRechargeAddressSource)(0), // 25: payment.CryptoRechargeAddressSource
-	(CryptoRechargeAddressType)(0),   // 26: payment.CryptoRechargeAddressType
-	(CryptoRechargeAddressStatus)(0), // 27: payment.CryptoRechargeAddressStatus
-	(CryptoRechargeTxStatus)(0),      // 28: payment.CryptoRechargeTxStatus
+	(common.Switch)(0),               // 18: common.Switch
+	(FeeType)(0),                     // 19: payment.FeeType
+	(ClientType)(0),                  // 20: payment.ClientType
+	(PayOrderStatus)(0),              // 21: payment.PayOrderStatus
+	(RechargeType)(0),                // 22: payment.RechargeType
+	(common.WalletType)(0),           // 23: common.WalletType
+	(NotifyProcessStatus)(0),         // 24: payment.NotifyProcessStatus
+	(SignResult)(0),                  // 25: payment.SignResult
+	(common.ChainCode)(0),            // 26: common.ChainCode
+	(CryptoRechargeAddressSource)(0), // 27: payment.CryptoRechargeAddressSource
+	(CryptoRechargeAddressType)(0),   // 28: payment.CryptoRechargeAddressType
+	(CryptoRechargeAddressStatus)(0), // 29: payment.CryptoRechargeAddressStatus
+	(CryptoRechargeTxStatus)(0),      // 30: payment.CryptoRechargeTxStatus
 }
 var file_proto_payment_model_proto_depIdxs = []int32{
 	14, // 0: payment.PayPlatform.platform_type:type_name -> payment.PlatformType
-	15, // 1: payment.PayPlatform.status:type_name -> payment.CommonStatus
+	15, // 1: payment.PayPlatform.enabled:type_name -> common.Enable
 	16, // 2: payment.PayProduct.scene_type:type_name -> payment.SceneType
-	15, // 3: payment.PayProduct.status:type_name -> payment.CommonStatus
-	15, // 4: payment.TenantPayPlatform.status:type_name -> payment.CommonStatus
+	15, // 3: payment.PayProduct.enabled:type_name -> common.Enable
+	15, // 4: payment.TenantPayPlatform.enabled:type_name -> common.Enable
 	17, // 5: payment.TenantPayPlatform.open_status:type_name -> payment.OpenStatus
-	15, // 6: payment.TenantPayAccount.status:type_name -> payment.CommonStatus
-	15, // 7: payment.TenantPayChannel.status:type_name -> payment.CommonStatus
-	18, // 8: payment.TenantPayChannel.fee_type:type_name -> payment.FeeType
-	15, // 9: payment.TenantPayChannelRule.status:type_name -> payment.CommonStatus
-	19, // 10: payment.RechargeOrder.client_type:type_name -> payment.ClientType
-	20, // 11: payment.RechargeOrder.status:type_name -> payment.PayOrderStatus
-	21, // 12: payment.RechargeOrder.recharge_type:type_name -> payment.RechargeType
-	22, // 13: payment.PayNotifyLog.notify_status:type_name -> payment.NotifyProcessStatus
-	23, // 14: payment.PayNotifyLog.sign_result:type_name -> payment.SignResult
-	18, // 15: payment.VisiblePayChannel.fee_type:type_name -> payment.FeeType
-	19, // 16: payment.WithdrawOrder.client_type:type_name -> payment.ClientType
-	20, // 17: payment.WithdrawOrder.status:type_name -> payment.PayOrderStatus
-	24, // 18: payment.CryptoRechargeAddress.chain_code:type_name -> common.ChainCode
-	25, // 19: payment.CryptoRechargeAddress.address_source:type_name -> payment.CryptoRechargeAddressSource
-	26, // 20: payment.CryptoRechargeAddress.address_type:type_name -> payment.CryptoRechargeAddressType
-	27, // 21: payment.CryptoRechargeAddress.status:type_name -> payment.CryptoRechargeAddressStatus
-	15, // 22: payment.CryptoWalletAccount.status:type_name -> payment.CommonStatus
-	24, // 23: payment.CryptoRechargeTx.chain_code:type_name -> common.ChainCode
-	28, // 24: payment.CryptoRechargeTx.status:type_name -> payment.CryptoRechargeTxStatus
-	25, // [25:25] is the sub-list for method output_type
-	25, // [25:25] is the sub-list for method input_type
-	25, // [25:25] is the sub-list for extension type_name
-	25, // [25:25] is the sub-list for extension extendee
-	0,  // [0:25] is the sub-list for field type_name
+	15, // 6: payment.TenantPayAccount.enabled:type_name -> common.Enable
+	18, // 7: payment.TenantPayChannel.visible:type_name -> common.Switch
+	15, // 8: payment.TenantPayChannel.enabled:type_name -> common.Enable
+	19, // 9: payment.TenantPayChannel.fee_type:type_name -> payment.FeeType
+	15, // 10: payment.TenantPayChannelRule.enabled:type_name -> common.Enable
+	20, // 11: payment.RechargeOrder.client_type:type_name -> payment.ClientType
+	21, // 12: payment.RechargeOrder.status:type_name -> payment.PayOrderStatus
+	22, // 13: payment.RechargeOrder.recharge_type:type_name -> payment.RechargeType
+	23, // 14: payment.RechargeOrder.wallet_type:type_name -> common.WalletType
+	24, // 15: payment.PayNotifyLog.notify_status:type_name -> payment.NotifyProcessStatus
+	25, // 16: payment.PayNotifyLog.sign_result:type_name -> payment.SignResult
+	19, // 17: payment.VisiblePayChannel.fee_type:type_name -> payment.FeeType
+	20, // 18: payment.WithdrawOrder.client_type:type_name -> payment.ClientType
+	21, // 19: payment.WithdrawOrder.status:type_name -> payment.PayOrderStatus
+	23, // 20: payment.CryptoRechargeAddress.wallet_type:type_name -> common.WalletType
+	26, // 21: payment.CryptoRechargeAddress.chain_code:type_name -> common.ChainCode
+	27, // 22: payment.CryptoRechargeAddress.address_source:type_name -> payment.CryptoRechargeAddressSource
+	28, // 23: payment.CryptoRechargeAddress.address_type:type_name -> payment.CryptoRechargeAddressType
+	29, // 24: payment.CryptoRechargeAddress.status:type_name -> payment.CryptoRechargeAddressStatus
+	15, // 25: payment.CryptoWalletAccount.enabled:type_name -> common.Enable
+	26, // 26: payment.CryptoRechargeTx.chain_code:type_name -> common.ChainCode
+	30, // 27: payment.CryptoRechargeTx.status:type_name -> payment.CryptoRechargeTxStatus
+	28, // [28:28] is the sub-list for method output_type
+	28, // [28:28] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_model_proto_init() }

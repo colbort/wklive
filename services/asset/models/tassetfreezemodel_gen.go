@@ -46,7 +46,7 @@ type (
 		FreezeNo       string         `db:"freeze_no"`       // 冻结单号
 		TenantId       int64          `db:"tenant_id"`       // 租户ID
 		UserId         int64          `db:"user_id"`         // 用户ID
-		WalletType     int64          `db:"wallet_type"`     // 钱包类型:1现货 2资金 3合约 4理财 5期权
+		WalletType     int64          `db:"wallet_type"`     // 钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权
 		Coin           string         `db:"coin"`            // 币种代码
 		BizType        string         `db:"biz_type"`        // 业务类型:trade/withdraw/option/system
 		SceneType      string         `db:"scene_type"`      // 业务场景:place_order/withdraw_apply/option_open/manual_freeze

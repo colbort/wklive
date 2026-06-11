@@ -41,7 +41,7 @@ func (l *CreatePayPlatformLogic) CreatePayPlatform(in *payment.CreatePayPlatform
 		NotifyUrl:    sql.NullString{String: in.NotifyUrl, Valid: true},
 		ReturnUrl:    sql.NullString{String: in.ReturnUrl, Valid: true},
 		Icon:         sql.NullString{String: in.Icon, Valid: true},
-		Status:       int64(in.Status),
+		Enabled:      int64(in.Enabled),
 		Remark:       sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes:  now,
 		UpdateTimes:  now,

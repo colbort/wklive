@@ -204,7 +204,7 @@ type CheckOrderRiskReq struct {
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
-	Side          TradeSide              `protobuf:"varint,5,opt,name=side,proto3,enum=trade.TradeSide" json:"side,omitempty"`
+	Side          common.Side            `protobuf:"varint,5,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionSide  PositionSide           `protobuf:"varint,6,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	OrderType     OrderType              `protobuf:"varint,7,opt,name=order_type,json=orderType,proto3,enum=trade.OrderType" json:"order_type,omitempty"`
 	Price         string                 `protobuf:"bytes,8,opt,name=price,proto3" json:"price,omitempty"`
@@ -272,11 +272,11 @@ func (x *CheckOrderRiskReq) GetMarketType() MarketType {
 	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
-func (x *CheckOrderRiskReq) GetSide() TradeSide {
+func (x *CheckOrderRiskReq) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *CheckOrderRiskReq) GetPositionSide() PositionSide {
@@ -386,14 +386,14 @@ const file_proto_trade_trade_internal_proto_rawDesc = "" +
 	"\x18RecordPositionHistoryReq\x128\n" +
 	"\ahistory\x18\x01 \x01(\v2\x1e.trade.ContractPositionHistoryR\ahistory\"A\n" +
 	"\x13CreateTradeEventReq\x12*\n" +
-	"\x05event\x18\x01 \x01(\v2\x14.trade.BizTradeEventR\x05event\"\xeb\x02\n" +
+	"\x05event\x18\x01 \x01(\v2\x14.trade.BizTradeEventR\x05event\"\xe7\x02\n" +
 	"\x11CheckOrderRiskReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
-	"marketType\x12$\n" +
-	"\x04side\x18\x05 \x01(\x0e2\x10.trade.TradeSideR\x04side\x128\n" +
+	"marketType\x12 \n" +
+	"\x04side\x18\x05 \x01(\x0e2\f.common.SideR\x04side\x128\n" +
 	"\rposition_side\x18\x06 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\x12/\n" +
 	"\n" +
 	"order_type\x18\a \x01(\x0e2\x10.trade.OrderTypeR\torderType\x12\x14\n" +
@@ -438,7 +438,7 @@ var file_proto_trade_trade_internal_proto_goTypes = []any{
 	(*ContractPositionHistory)(nil),  // 8: trade.ContractPositionHistory
 	(*BizTradeEvent)(nil),            // 9: trade.BizTradeEvent
 	(MarketType)(0),                  // 10: trade.MarketType
-	(TradeSide)(0),                   // 11: trade.TradeSide
+	(common.Side)(0),                 // 11: common.Side
 	(PositionSide)(0),                // 12: trade.PositionSide
 	(OrderType)(0),                   // 13: trade.OrderType
 }
@@ -448,7 +448,7 @@ var file_proto_trade_trade_internal_proto_depIdxs = []int32{
 	8,  // 2: trade.RecordPositionHistoryReq.history:type_name -> trade.ContractPositionHistory
 	9,  // 3: trade.CreateTradeEventReq.event:type_name -> trade.BizTradeEvent
 	10, // 4: trade.CheckOrderRiskReq.market_type:type_name -> trade.MarketType
-	11, // 5: trade.CheckOrderRiskReq.side:type_name -> trade.TradeSide
+	11, // 5: trade.CheckOrderRiskReq.side:type_name -> common.Side
 	12, // 6: trade.CheckOrderRiskReq.position_side:type_name -> trade.PositionSide
 	13, // 7: trade.CheckOrderRiskReq.order_type:type_name -> trade.OrderType
 	1,  // 8: trade.TradeInternal.RecordOrderFill:input_type -> trade.RecordOrderFillReq

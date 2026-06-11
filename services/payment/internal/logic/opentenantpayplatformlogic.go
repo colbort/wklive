@@ -37,7 +37,7 @@ func (l *OpenTenantPayPlatformLogic) OpenTenantPayPlatform(in *payment.OpenTenan
 	tenantPlatform := &models.TTenantPayPlatform{
 		TenantId:    in.TenantId,
 		PlatformId:  in.PlatformId,
-		Status:      int64(in.Status),
+		Enabled:     int64(in.Enabled),
 		OpenStatus:  int64(in.OpenStatus),
 		Remark:      sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes: now,

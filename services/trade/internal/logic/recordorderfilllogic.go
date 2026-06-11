@@ -8,6 +8,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -157,10 +158,10 @@ func canApplyOrderFillPrice(order *models.TTradeOrder, fill *models.TTradeFill) 
 	if order == nil || fill == nil || order.OrderType != int64(trade.OrderType_ORDER_TYPE_LIMIT) || order.Price <= 0 || fill.Price <= 0 {
 		return true
 	}
-	if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+	if order.Side == int64(common.Side_SIDE_BUY) {
 		return fill.Price <= order.Price+orderFillEpsilon
 	}
-	if order.Side == int64(trade.TradeSide_TRADE_SIDE_SELL) {
+	if order.Side == int64(common.Side_SIDE_SELL) {
 		return fill.Price+orderFillEpsilon >= order.Price
 	}
 	return false

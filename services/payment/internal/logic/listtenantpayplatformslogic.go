@@ -38,7 +38,7 @@ func (l *ListTenantPayPlatformsLogic) ListTenantPayPlatforms(in *payment.ListTen
 		l.ctx,
 		in.TenantId,
 		in.PlatformId,
-		int64(in.Status),
+		int64(in.Enabled),
 		int64(in.OpenStatus),
 		in.Page.Cursor,
 		in.Page.Limit,

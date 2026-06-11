@@ -46,8 +46,8 @@ func (l *UpdateTenantPayPlatformLogic) UpdateTenantPayPlatform(in *payment.Updat
 	}
 
 	now := utils.NowMillis()
-	if in.Status != 0 {
-		tenantPlatform.Status = int64(in.Status)
+	if in.Enabled != 0 {
+		tenantPlatform.Enabled = int64(in.Enabled)
 	}
 	if in.OpenStatus != 0 {
 		tenantPlatform.OpenStatus = int64(in.OpenStatus)

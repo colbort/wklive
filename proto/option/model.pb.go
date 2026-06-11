@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -42,11 +43,11 @@ type OptionContract struct {
 	ListTime         int64                  `protobuf:"varint,17,opt,name=list_time,json=listTime,proto3" json:"list_time,omitempty"`
 	ExpireTime       int64                  `protobuf:"varint,18,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
 	DeliverTime      int64                  `protobuf:"varint,19,opt,name=deliver_time,json=deliverTime,proto3" json:"deliver_time,omitempty"`
-	IsAutoExercise   YesNo                  `protobuf:"varint,20,opt,name=is_auto_exercise,json=isAutoExercise,proto3,enum=option.YesNo" json:"is_auto_exercise,omitempty"`
+	IsAutoExercise   common.YesNo           `protobuf:"varint,20,opt,name=is_auto_exercise,json=isAutoExercise,proto3,enum=common.YesNo" json:"is_auto_exercise,omitempty"` // 是否自动行权
 	Status           ContractStatus         `protobuf:"varint,21,opt,name=status,proto3,enum=option.ContractStatus" json:"status,omitempty"`
 	Sort             int64                  `protobuf:"varint,22,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,23,opt,name=remark,proto3" json:"remark,omitempty"`
-	IsDeleted        YesNo                  `protobuf:"varint,24,opt,name=is_deleted,json=isDeleted,proto3,enum=option.YesNo" json:"is_deleted,omitempty"`
+	IsDeleted        common.YesNo           `protobuf:"varint,24,opt,name=is_deleted,json=isDeleted,proto3,enum=common.YesNo" json:"is_deleted,omitempty"` // 是否删除
 	CreateTimes      int64                  `protobuf:"varint,25,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes      int64                  `protobuf:"varint,26,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -216,11 +217,11 @@ func (x *OptionContract) GetDeliverTime() int64 {
 	return 0
 }
 
-func (x *OptionContract) GetIsAutoExercise() YesNo {
+func (x *OptionContract) GetIsAutoExercise() common.YesNo {
 	if x != nil {
 		return x.IsAutoExercise
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
 func (x *OptionContract) GetStatus() ContractStatus {
@@ -244,11 +245,11 @@ func (x *OptionContract) GetRemark() string {
 	return ""
 }
 
-func (x *OptionContract) GetIsDeleted() YesNo {
+func (x *OptionContract) GetIsDeleted() common.YesNo {
 	if x != nil {
 		return x.IsDeleted
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
 func (x *OptionContract) GetCreateTimes() int64 {
@@ -658,7 +659,7 @@ type OptionOrder struct {
 	AccountId        int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId       int64                  `protobuf:"varint,6,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	UnderlyingSymbol string                 `protobuf:"bytes,7,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
-	Side             Side                   `protobuf:"varint,8,opt,name=side,proto3,enum=option.Side" json:"side,omitempty"`
+	Side             common.Side            `protobuf:"varint,8,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionEffect   PositionEffect         `protobuf:"varint,9,opt,name=position_effect,json=positionEffect,proto3,enum=option.PositionEffect" json:"position_effect,omitempty"`
 	OrderType        OrderType              `protobuf:"varint,10,opt,name=order_type,json=orderType,proto3,enum=option.OrderType" json:"order_type,omitempty"`
 	Price            string                 `protobuf:"bytes,11,opt,name=price,proto3" json:"price,omitempty"`
@@ -672,8 +673,8 @@ type OptionOrder struct {
 	MarginAmount     string                 `protobuf:"bytes,19,opt,name=margin_amount,json=marginAmount,proto3" json:"margin_amount,omitempty"`
 	Source           OrderSource            `protobuf:"varint,20,opt,name=source,proto3,enum=option.OrderSource" json:"source,omitempty"`
 	ClientOrderId    string                 `protobuf:"bytes,21,opt,name=client_order_id,json=clientOrderId,proto3" json:"client_order_id,omitempty"`
-	ReduceOnly       YesNo                  `protobuf:"varint,22,opt,name=reduce_only,json=reduceOnly,proto3,enum=option.YesNo" json:"reduce_only,omitempty"`
-	Mmp              YesNo                  `protobuf:"varint,23,opt,name=mmp,proto3,enum=option.YesNo" json:"mmp,omitempty"`
+	ReduceOnly       common.YesNo           `protobuf:"varint,22,opt,name=reduce_only,json=reduceOnly,proto3,enum=common.YesNo" json:"reduce_only,omitempty"` // 是否只减仓
+	Mmp              common.YesNo           `protobuf:"varint,23,opt,name=mmp,proto3,enum=common.YesNo" json:"mmp,omitempty"`                                 // 是否做市商保护单
 	Status           OrderStatus            `protobuf:"varint,24,opt,name=status,proto3,enum=option.OrderStatus" json:"status,omitempty"`
 	CancelReason     string                 `protobuf:"bytes,25,opt,name=cancel_reason,json=cancelReason,proto3" json:"cancel_reason,omitempty"`
 	MatchTime        int64                  `protobuf:"varint,26,opt,name=match_time,json=matchTime,proto3" json:"match_time,omitempty"`
@@ -763,11 +764,11 @@ func (x *OptionOrder) GetUnderlyingSymbol() string {
 	return ""
 }
 
-func (x *OptionOrder) GetSide() Side {
+func (x *OptionOrder) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
-	return Side_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *OptionOrder) GetPositionEffect() PositionEffect {
@@ -861,18 +862,18 @@ func (x *OptionOrder) GetClientOrderId() string {
 	return ""
 }
 
-func (x *OptionOrder) GetReduceOnly() YesNo {
+func (x *OptionOrder) GetReduceOnly() common.YesNo {
 	if x != nil {
 		return x.ReduceOnly
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
-func (x *OptionOrder) GetMmp() YesNo {
+func (x *OptionOrder) GetMmp() common.YesNo {
 	if x != nil {
 		return x.Mmp
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
 func (x *OptionOrder) GetStatus() OrderStatus {
@@ -938,7 +939,7 @@ type OptionTrade struct {
 	BuyFee           string                 `protobuf:"bytes,17,opt,name=buy_fee,json=buyFee,proto3" json:"buy_fee,omitempty"`
 	SellFee          string                 `protobuf:"bytes,18,opt,name=sell_fee,json=sellFee,proto3" json:"sell_fee,omitempty"`
 	FeeCoin          string                 `protobuf:"bytes,19,opt,name=fee_coin,json=feeCoin,proto3" json:"fee_coin,omitempty"`
-	MakerSide        MakerSide              `protobuf:"varint,20,opt,name=maker_side,json=makerSide,proto3,enum=option.MakerSide" json:"maker_side,omitempty"`
+	MakerSide        common.Side            `protobuf:"varint,20,opt,name=maker_side,json=makerSide,proto3,enum=common.Side" json:"maker_side,omitempty"` // maker方向
 	TradeTime        int64                  `protobuf:"varint,21,opt,name=trade_time,json=tradeTime,proto3" json:"trade_time,omitempty"`
 	CreateTimes      int64                  `protobuf:"varint,22,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -1108,11 +1109,11 @@ func (x *OptionTrade) GetFeeCoin() string {
 	return ""
 }
 
-func (x *OptionTrade) GetMakerSide() MakerSide {
+func (x *OptionTrade) GetMakerSide() common.Side {
 	if x != nil {
 		return x.MakerSide
 	}
-	return MakerSide_MAKER_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *OptionTrade) GetTradeTime() int64 {
@@ -1137,7 +1138,7 @@ type OptionPosition struct {
 	AccountId         int64                  `protobuf:"varint,4,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId        int64                  `protobuf:"varint,5,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	UnderlyingSymbol  string                 `protobuf:"bytes,6,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
-	Side              PositionSide           `protobuf:"varint,7,opt,name=side,proto3,enum=option.PositionSide" json:"side,omitempty"`
+	Side              common.PositionSide    `protobuf:"varint,7,opt,name=side,proto3,enum=common.PositionSide" json:"side,omitempty"` // 持仓方向
 	PositionQty       string                 `protobuf:"bytes,8,opt,name=position_qty,json=positionQty,proto3" json:"position_qty,omitempty"`
 	AvailableQty      string                 `protobuf:"bytes,9,opt,name=available_qty,json=availableQty,proto3" json:"available_qty,omitempty"`
 	FrozenQty         string                 `protobuf:"bytes,10,opt,name=frozen_qty,json=frozenQty,proto3" json:"frozen_qty,omitempty"`
@@ -1229,11 +1230,11 @@ func (x *OptionPosition) GetUnderlyingSymbol() string {
 	return ""
 }
 
-func (x *OptionPosition) GetSide() PositionSide {
+func (x *OptionPosition) GetSide() common.PositionSide {
 	if x != nil {
 		return x.Side
 	}
-	return PositionSide_POSITION_SIDE_UNKNOWN
+	return common.PositionSide(0)
 }
 
 func (x *OptionPosition) GetPositionQty() string {
@@ -1557,7 +1558,7 @@ type OptionSettlement struct {
 	DeliveryPrice    string                 `protobuf:"bytes,8,opt,name=delivery_price,json=deliveryPrice,proto3" json:"delivery_price,omitempty"`
 	TheoreticalPrice string                 `protobuf:"bytes,9,opt,name=theoretical_price,json=theoreticalPrice,proto3" json:"theoretical_price,omitempty"`
 	Iv               string                 `protobuf:"bytes,10,opt,name=iv,proto3" json:"iv,omitempty"`
-	IsItm            YesNo                  `protobuf:"varint,11,opt,name=is_itm,json=isItm,proto3,enum=option.YesNo" json:"is_itm,omitempty"`
+	IsItm            common.YesNo           `protobuf:"varint,11,opt,name=is_itm,json=isItm,proto3,enum=common.YesNo" json:"is_itm,omitempty"` // 是否实值
 	ExerciseResult   ExerciseResult         `protobuf:"varint,12,opt,name=exercise_result,json=exerciseResult,proto3,enum=option.ExerciseResult" json:"exercise_result,omitempty"`
 	Status           SettlementStatus       `protobuf:"varint,13,opt,name=status,proto3,enum=option.SettlementStatus" json:"status,omitempty"`
 	Remark           string                 `protobuf:"bytes,14,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -1667,11 +1668,11 @@ func (x *OptionSettlement) GetIv() string {
 	return ""
 }
 
-func (x *OptionSettlement) GetIsItm() YesNo {
+func (x *OptionSettlement) GetIsItm() common.YesNo {
 	if x != nil {
 		return x.IsItm
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
 func (x *OptionSettlement) GetExerciseResult() ExerciseResult {
@@ -2337,7 +2338,7 @@ var File_proto_option_model_proto protoreflect.FileDescriptor
 
 const file_proto_option_model_proto_rawDesc = "" +
 	"\n" +
-	"\x18proto/option/model.proto\x12\x06option\x1a\x17proto/option/enum.proto\"\xd7\a\n" +
+	"\x18proto/option/model.proto\x12\x06option\x1a\x19proto/common/common.proto\x1a\x17proto/option/enum.proto\"\xd7\a\n" +
 	"\x0eOptionContract\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12#\n" +
@@ -2366,12 +2367,12 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\vexpire_time\x18\x12 \x01(\x03R\n" +
 	"expireTime\x12!\n" +
 	"\fdeliver_time\x18\x13 \x01(\x03R\vdeliverTime\x127\n" +
-	"\x10is_auto_exercise\x18\x14 \x01(\x0e2\r.option.YesNoR\x0eisAutoExercise\x12.\n" +
+	"\x10is_auto_exercise\x18\x14 \x01(\x0e2\r.common.YesNoR\x0eisAutoExercise\x12.\n" +
 	"\x06status\x18\x15 \x01(\x0e2\x16.option.ContractStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x16 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x17 \x01(\tR\x06remark\x12,\n" +
 	"\n" +
-	"is_deleted\x18\x18 \x01(\x0e2\r.option.YesNoR\tisDeleted\x12!\n" +
+	"is_deleted\x18\x18 \x01(\x0e2\r.common.YesNoR\tisDeleted\x12!\n" +
 	"\fcreate_times\x18\x19 \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x1a \x01(\x03R\vupdateTimes\"\xa2\x05\n" +
 	"\fOptionMarket\x12\x0e\n" +
@@ -2434,7 +2435,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\vcontract_id\x18\x06 \x01(\x03R\n" +
 	"contractId\x12+\n" +
 	"\x11underlying_symbol\x18\a \x01(\tR\x10underlyingSymbol\x12 \n" +
-	"\x04side\x18\b \x01(\x0e2\f.option.SideR\x04side\x12?\n" +
+	"\x04side\x18\b \x01(\x0e2\f.common.SideR\x04side\x12?\n" +
 	"\x0fposition_effect\x18\t \x01(\x0e2\x16.option.PositionEffectR\x0epositionEffect\x120\n" +
 	"\n" +
 	"order_type\x18\n" +
@@ -2451,9 +2452,9 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\rmargin_amount\x18\x13 \x01(\tR\fmarginAmount\x12+\n" +
 	"\x06source\x18\x14 \x01(\x0e2\x13.option.OrderSourceR\x06source\x12&\n" +
 	"\x0fclient_order_id\x18\x15 \x01(\tR\rclientOrderId\x12.\n" +
-	"\vreduce_only\x18\x16 \x01(\x0e2\r.option.YesNoR\n" +
+	"\vreduce_only\x18\x16 \x01(\x0e2\r.common.YesNoR\n" +
 	"reduceOnly\x12\x1f\n" +
-	"\x03mmp\x18\x17 \x01(\x0e2\r.option.YesNoR\x03mmp\x12+\n" +
+	"\x03mmp\x18\x17 \x01(\x0e2\r.common.YesNoR\x03mmp\x12+\n" +
 	"\x06status\x18\x18 \x01(\x0e2\x13.option.OrderStatusR\x06status\x12#\n" +
 	"\rcancel_reason\x18\x19 \x01(\tR\fcancelReason\x12\x1d\n" +
 	"\n" +
@@ -2461,7 +2462,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\vcancel_time\x18\x1b \x01(\x03R\n" +
 	"cancelTime\x12!\n" +
 	"\fcreate_times\x18\x1c \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x1d \x01(\x03R\vupdateTimes\"\xc6\x05\n" +
+	"\fupdate_times\x18\x1d \x01(\x03R\vupdateTimes\"\xc1\x05\n" +
 	"\vOptionTrade\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -2486,9 +2487,9 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\bturnover\x18\x10 \x01(\tR\bturnover\x12\x17\n" +
 	"\abuy_fee\x18\x11 \x01(\tR\x06buyFee\x12\x19\n" +
 	"\bsell_fee\x18\x12 \x01(\tR\asellFee\x12\x19\n" +
-	"\bfee_coin\x18\x13 \x01(\tR\afeeCoin\x120\n" +
+	"\bfee_coin\x18\x13 \x01(\tR\afeeCoin\x12+\n" +
 	"\n" +
-	"maker_side\x18\x14 \x01(\x0e2\x11.option.MakerSideR\tmakerSide\x12\x1d\n" +
+	"maker_side\x18\x14 \x01(\x0e2\f.common.SideR\tmakerSide\x12\x1d\n" +
 	"\n" +
 	"trade_time\x18\x15 \x01(\x03R\ttradeTime\x12!\n" +
 	"\fcreate_times\x18\x16 \x01(\x03R\vcreateTimes\"\xa5\x06\n" +
@@ -2501,7 +2502,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\vcontract_id\x18\x05 \x01(\x03R\n" +
 	"contractId\x12+\n" +
 	"\x11underlying_symbol\x18\x06 \x01(\tR\x10underlyingSymbol\x12(\n" +
-	"\x04side\x18\a \x01(\x0e2\x14.option.PositionSideR\x04side\x12!\n" +
+	"\x04side\x18\a \x01(\x0e2\x14.common.PositionSideR\x04side\x12!\n" +
 	"\fposition_qty\x18\b \x01(\tR\vpositionQty\x12#\n" +
 	"\ravailable_qty\x18\t \x01(\tR\favailableQty\x12\x1d\n" +
 	"\n" +
@@ -2562,7 +2563,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x11theoretical_price\x18\t \x01(\tR\x10theoreticalPrice\x12\x0e\n" +
 	"\x02iv\x18\n" +
 	" \x01(\tR\x02iv\x12$\n" +
-	"\x06is_itm\x18\v \x01(\x0e2\r.option.YesNoR\x05isItm\x12?\n" +
+	"\x06is_itm\x18\v \x01(\x0e2\r.common.YesNoR\x05isItm\x12?\n" +
 	"\x0fexercise_result\x18\f \x01(\x0e2\x16.option.ExerciseResultR\x0eexerciseResult\x120\n" +
 	"\x06status\x18\r \x01(\x0e2\x18.option.SettlementStatusR\x06status\x12\x16\n" +
 	"\x06remark\x18\x0e \x01(\tR\x06remark\x12!\n" +
@@ -2660,47 +2661,46 @@ var file_proto_option_model_proto_goTypes = []any{
 	(OptionType)(0),                // 16: option.OptionType
 	(ExerciseStyle)(0),             // 17: option.ExerciseStyle
 	(SettlementType)(0),            // 18: option.SettlementType
-	(YesNo)(0),                     // 19: option.YesNo
+	(common.YesNo)(0),              // 19: common.YesNo
 	(ContractStatus)(0),            // 20: option.ContractStatus
-	(Side)(0),                      // 21: option.Side
+	(common.Side)(0),               // 21: common.Side
 	(PositionEffect)(0),            // 22: option.PositionEffect
 	(OrderType)(0),                 // 23: option.OrderType
 	(OrderSource)(0),               // 24: option.OrderSource
 	(OrderStatus)(0),               // 25: option.OrderStatus
-	(MakerSide)(0),                 // 26: option.MakerSide
-	(PositionSide)(0),              // 27: option.PositionSide
-	(PositionStatus)(0),            // 28: option.PositionStatus
-	(ExerciseType)(0),              // 29: option.ExerciseType
-	(ExerciseStatus)(0),            // 30: option.ExerciseStatus
-	(ExerciseResult)(0),            // 31: option.ExerciseResult
-	(SettlementStatus)(0),          // 32: option.SettlementStatus
-	(AccountStatus)(0),             // 33: option.AccountStatus
-	(BillRefType)(0),               // 34: option.BillRefType
+	(common.PositionSide)(0),       // 26: common.PositionSide
+	(PositionStatus)(0),            // 27: option.PositionStatus
+	(ExerciseType)(0),              // 28: option.ExerciseType
+	(ExerciseStatus)(0),            // 29: option.ExerciseStatus
+	(ExerciseResult)(0),            // 30: option.ExerciseResult
+	(SettlementStatus)(0),          // 31: option.SettlementStatus
+	(AccountStatus)(0),             // 32: option.AccountStatus
+	(BillRefType)(0),               // 33: option.BillRefType
 }
 var file_proto_option_model_proto_depIdxs = []int32{
 	16, // 0: option.OptionContract.option_type:type_name -> option.OptionType
 	17, // 1: option.OptionContract.exercise_style:type_name -> option.ExerciseStyle
 	18, // 2: option.OptionContract.settlement_type:type_name -> option.SettlementType
-	19, // 3: option.OptionContract.is_auto_exercise:type_name -> option.YesNo
+	19, // 3: option.OptionContract.is_auto_exercise:type_name -> common.YesNo
 	20, // 4: option.OptionContract.status:type_name -> option.ContractStatus
-	19, // 5: option.OptionContract.is_deleted:type_name -> option.YesNo
-	21, // 6: option.OptionOrder.side:type_name -> option.Side
+	19, // 5: option.OptionContract.is_deleted:type_name -> common.YesNo
+	21, // 6: option.OptionOrder.side:type_name -> common.Side
 	22, // 7: option.OptionOrder.position_effect:type_name -> option.PositionEffect
 	23, // 8: option.OptionOrder.order_type:type_name -> option.OrderType
 	24, // 9: option.OptionOrder.source:type_name -> option.OrderSource
-	19, // 10: option.OptionOrder.reduce_only:type_name -> option.YesNo
-	19, // 11: option.OptionOrder.mmp:type_name -> option.YesNo
+	19, // 10: option.OptionOrder.reduce_only:type_name -> common.YesNo
+	19, // 11: option.OptionOrder.mmp:type_name -> common.YesNo
 	25, // 12: option.OptionOrder.status:type_name -> option.OrderStatus
-	26, // 13: option.OptionTrade.maker_side:type_name -> option.MakerSide
-	27, // 14: option.OptionPosition.side:type_name -> option.PositionSide
-	28, // 15: option.OptionPosition.status:type_name -> option.PositionStatus
-	29, // 16: option.OptionExercise.exercise_type:type_name -> option.ExerciseType
-	30, // 17: option.OptionExercise.status:type_name -> option.ExerciseStatus
-	19, // 18: option.OptionSettlement.is_itm:type_name -> option.YesNo
-	31, // 19: option.OptionSettlement.exercise_result:type_name -> option.ExerciseResult
-	32, // 20: option.OptionSettlement.status:type_name -> option.SettlementStatus
-	33, // 21: option.OptionAccount.status:type_name -> option.AccountStatus
-	34, // 22: option.OptionBill.ref_type:type_name -> option.BillRefType
+	21, // 13: option.OptionTrade.maker_side:type_name -> common.Side
+	26, // 14: option.OptionPosition.side:type_name -> common.PositionSide
+	27, // 15: option.OptionPosition.status:type_name -> option.PositionStatus
+	28, // 16: option.OptionExercise.exercise_type:type_name -> option.ExerciseType
+	29, // 17: option.OptionExercise.status:type_name -> option.ExerciseStatus
+	19, // 18: option.OptionSettlement.is_itm:type_name -> common.YesNo
+	30, // 19: option.OptionSettlement.exercise_result:type_name -> option.ExerciseResult
+	31, // 20: option.OptionSettlement.status:type_name -> option.SettlementStatus
+	32, // 21: option.OptionAccount.status:type_name -> option.AccountStatus
+	33, // 22: option.OptionBill.ref_type:type_name -> option.BillRefType
 	0,  // 23: option.OptionContractDetail.contract:type_name -> option.OptionContract
 	1,  // 24: option.OptionContractDetail.market:type_name -> option.OptionMarket
 	5,  // 25: option.OptionPositionDetail.position:type_name -> option.OptionPosition

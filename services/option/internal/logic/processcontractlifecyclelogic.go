@@ -8,6 +8,7 @@ import (
 
 	"wklive/common/conv"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -92,7 +93,7 @@ func (l *ProcessContractLifecycleLogic) processExpiredContracts(now int64) error
 			if err := l.expireContractOrders(contract, now); err != nil {
 				return err
 			}
-			if contract.IsAutoExercise == int64(option.YesNo_YES_NO_YES) {
+			if contract.IsAutoExercise == int64(common.YesNo_YES_NO_YES) {
 				if err := l.autoExerciseContract(contract, now); err != nil {
 					return err
 				}
@@ -191,7 +192,7 @@ func (l *ProcessContractLifecycleLogic) autoExerciseContract(contract *models.TO
 		}
 		for _, position := range positions {
 			cursor = position.Id
-			if position.Side != int64(option.PositionSide_POSITION_SIDE_LONG) {
+			if position.Side != int64(common.PositionSide_POSITION_SIDE_LONG) {
 				continue
 			}
 			if position.ExerciseableQty <= 0 || intrinsicValue <= optionFloatEpsilon {
@@ -269,19 +270,19 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 	deliveryPrice := 0.0
 	theoreticalPrice := 0.0
 	iv := 0.0
-	isITM := int64(option.YesNo_YES_NO_NO)
+	isITM := int64(common.YesNo_YES_NO_NO)
 	if market != nil {
 		deliveryPrice = market.UnderlyingPrice
 		theoreticalPrice = market.TheoreticalPrice
 		iv = market.Iv
 		if (contract.OptionType == int64(option.OptionType_OPTION_TYPE_CALL) && deliveryPrice > contract.StrikePrice) ||
 			(contract.OptionType == int64(option.OptionType_OPTION_TYPE_PUT) && deliveryPrice < contract.StrikePrice) {
-			isITM = int64(option.YesNo_YES_NO_YES)
+			isITM = int64(common.YesNo_YES_NO_YES)
 		}
 	}
 	exerciseResult := int64(option.ExerciseResult_EXERCISE_RESULT_NONE)
-	if contract.IsAutoExercise == int64(option.YesNo_YES_NO_YES) {
-		if isITM == int64(option.YesNo_YES_NO_YES) {
+	if contract.IsAutoExercise == int64(common.YesNo_YES_NO_YES) {
+		if isITM == int64(common.YesNo_YES_NO_YES) {
 			exerciseResult = int64(option.ExerciseResult_EXERCISE_RESULT_AUTO_EXERCISE)
 		} else {
 			exerciseResult = int64(option.ExerciseResult_EXERCISE_RESULT_AUTO_ABANDON)
@@ -358,12 +359,12 @@ func settleContractPositions(ctx context.Context, positionModel models.OptionPos
 			qty := position.PositionQty
 			payoff := optionSettlementPayoff(contract, deliveryPrice, qty)
 			changeAmount := 0.0
-			if position.Side == int64(option.PositionSide_POSITION_SIDE_LONG) {
-				if contract.IsAutoExercise == int64(option.YesNo_YES_NO_YES) || position.Status == int64(option.PositionStatus_POSITION_STATUS_EXERCISED) {
+			if position.Side == int64(common.PositionSide_POSITION_SIDE_LONG) {
+				if contract.IsAutoExercise == int64(common.YesNo_YES_NO_YES) || position.Status == int64(option.PositionStatus_POSITION_STATUS_EXERCISED) {
 					changeAmount = payoff
 				}
-			} else if position.Side == int64(option.PositionSide_POSITION_SIDE_SHORT) {
-				if contract.IsAutoExercise == int64(option.YesNo_YES_NO_YES) {
+			} else if position.Side == int64(common.PositionSide_POSITION_SIDE_SHORT) {
+				if contract.IsAutoExercise == int64(common.YesNo_YES_NO_YES) {
 					changeAmount = -payoff
 				}
 			}

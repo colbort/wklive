@@ -4,18 +4,6 @@ package option;
 
 option go_package = "wklive/proto/option;option";
 
-enum YesNo {
-  YES_NO_UNKNOWN = 0;
-  YES_NO_NO = 1;
-  YES_NO_YES = 2;
-}
-
-enum CommonStatus {
-  COMMON_STATUS_UNKNOWN = 0;
-  COMMON_STATUS_DISABLE = 1;
-  COMMON_STATUS_ENABLE = 2;
-}
-
 enum OptionType {
   OPTION_TYPE_UNKNOWN = 0;
   OPTION_TYPE_CALL = 1; // 看涨
@@ -42,12 +30,6 @@ enum ContractStatus {
   CONTRACT_STATUS_EXPIRED = 4; // 已到期
   CONTRACT_STATUS_SETTLED = 5; // 已结算
   CONTRACT_STATUS_OFFLINE = 6; // 已下线
-}
-
-enum Side {
-  SIDE_UNKNOWN = 0;
-  SIDE_BUY = 1;
-  SIDE_SELL = 2;
 }
 
 enum PositionEffect {
@@ -81,18 +63,6 @@ enum OrderStatus {
   ORDER_STATUS_CANCELED = 4;    // 已撤单
   ORDER_STATUS_REJECTED = 5;    // 拒单
   ORDER_STATUS_EXPIRED = 6;     // 已过期
-}
-
-enum MakerSide {
-  MAKER_SIDE_UNKNOWN = 0;
-  MAKER_SIDE_BUY = 1;
-  MAKER_SIDE_SELL = 2;
-}
-
-enum PositionSide {
-  POSITION_SIDE_UNKNOWN = 0;
-  POSITION_SIDE_LONG = 1;  // 多头
-  POSITION_SIDE_SHORT = 2; // 空头
 }
 
 enum PositionStatus {

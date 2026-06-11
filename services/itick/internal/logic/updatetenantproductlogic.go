@@ -38,8 +38,8 @@ func (l *UpdateTenantProductLogic) UpdateTenantProduct(in *itick.UpdateTenantPro
 		}, nil
 	}
 
-	item.Enabled = in.Enabled
-	item.AppVisible = in.AppVisible
+	item.Enabled = int64(in.Enabled)
+	item.AppVisible = int64(in.AppVisible)
 	item.Sort = in.Sort
 	item.Remark = in.Remark
 	item.UpdateTimes = cutils.NowMillis()

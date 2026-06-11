@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"wklive/common/helper"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -38,7 +39,7 @@ func (l *SysPermListLogic) SysPermList(in *system.Empty) (*system.SysPermListRes
 		if int32(menu.MenuType) == int32(system.MenuType_MENU_TYPE_DIR) {
 			continue
 		}
-		if int32(menu.Status) != int32(system.CommonStatus_COMMON_STATUS_ENABLED) {
+		if int32(menu.Enabled) != int32(common.Enable_ENABLE_ENABLED) {
 			continue
 		}
 

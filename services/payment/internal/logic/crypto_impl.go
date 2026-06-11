@@ -28,7 +28,7 @@ func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 	_, err := svcCtx.CryptoRechargeAddressModel.Insert(ctx, &models.TCryptoRechargeAddress{
 		TenantId:      in.TenantId,
 		UserId:        in.UserId,
-		WalletType:    in.WalletType,
+		WalletType:    int64(in.WalletType),
 		Coin:          in.Coin,
 		ChainCode:     int64(in.ChainCode),
 		Address:       in.Address,
@@ -85,7 +85,7 @@ func getCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, t
 }
 
 func listCryptoRechargeAddresses(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.ListCryptoRechargeAddressesReq) (*payment.ListCryptoRechargeAddressesResp, error) {
-	items, total, err := svcCtx.CryptoRechargeAddressModel.FindPage(ctx, in.TenantId, in.UserId, in.WalletType, in.Coin, int64(in.ChainCode), in.Address, int64(in.Status), int64(in.AddressType), in.Page.Cursor, in.Page.Limit)
+	items, total, err := svcCtx.CryptoRechargeAddressModel.FindPage(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, int64(in.ChainCode), in.Address, int64(in.Status), int64(in.AddressType), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func createCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 		ApiSecretCipher:      nullableString(in.ApiSecretCipher),
 		CallbackSecretCipher: nullableString(in.CallbackSecretCipher),
 		ExtConfig:            nullableString(in.ExtConfig),
-		Status:               toCryptoWalletStatusDB(in.Status, 1),
+		Enabled:              toCryptoWalletStatusDB(in.Enabled, 1),
 		IsDefault:            in.IsDefault,
 		CreateTimes:          now,
 		UpdateTimes:          now,
@@ -147,7 +147,7 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if in.ExtConfig != "" {
 		item.ExtConfig = nullableString(in.ExtConfig)
 	}
-	item.Status = toCryptoWalletStatusDB(in.Status, item.Status)
+	item.Enabled = toCryptoWalletStatusDB(in.Enabled, item.Enabled)
 	item.IsDefault = in.IsDefault
 	item.UpdateTimes = utils.NowMillis()
 	if err := svcCtx.CryptoWalletAccountModel.Update(ctx, item); err != nil {
@@ -157,7 +157,7 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 }
 
 func listCryptoWalletAccounts(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.ListCryptoWalletAccountsReq) (*payment.ListCryptoWalletAccountsResp, error) {
-	items, total, err := svcCtx.CryptoWalletAccountModel.FindPage(ctx, in.TenantId, in.Keyword, in.Provider, int64(in.Status), in.IsDefault, in.Page.Cursor, in.Page.Limit)
+	items, total, err := svcCtx.CryptoWalletAccountModel.FindPage(ctx, in.TenantId, in.Keyword, in.Provider, int64(in.Enabled), in.IsDefault, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

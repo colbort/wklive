@@ -79,7 +79,7 @@ message GetSymbolDetailData {
 message PlaceOrderReq {
   int64 symbol_id = 1;
   MarketType market_type = 2;
-  TradeSide side = 3;
+  common.Side side = 3; // 买卖方向
   PositionSide position_side = 4;
   OrderType order_type = 5;
   TimeInForce time_in_force = 6;
@@ -113,7 +113,7 @@ message CancelOrderReq {
 message CancelAllOrdersReq {
   MarketType market_type = 1;
   int64 symbol_id = 2;
-  TradeSide side = 3;
+  common.Side side = 3; // 买卖方向
   PositionSide position_side = 4;
 }
 
@@ -127,7 +127,7 @@ message GetOrderListReq {
   MarketType market_type = 2;
   int64 symbol_id = 3;
   OrderStatus status = 4;
-  TradeSide side = 5;
+  common.Side side = 5; // 买卖方向
   TimeRange time_range = 6;
 }
 

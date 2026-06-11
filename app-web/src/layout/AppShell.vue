@@ -27,6 +27,12 @@ type CategoryNavItem = NavItem & {
   categoryType: number
 }
 
+type ProductPreviewPage = {
+  items: CategoryPreviewItem[]
+  nextCursor: number
+  hasNext: boolean
+}
+
 const fixedNavItems = computed<NavItem[]>(() => [
   { path: '/company-credentials', label: t('nav.companyCredentials') },
   { path: '/whitepaper', label: t('nav.whitepaper') },
@@ -37,13 +43,15 @@ const categoryNavItems = ref<CategoryNavItem[]>([])
 const isCategoryPreviewOpen = ref(false)
 const activeCategoryCode = ref(0)
 const previewLoading = ref(false)
+const previewLoadingMore = ref(false)
 const previewError = ref(false)
 const previewRequestId = ref(0)
-const marketPreviewCache = ref<Record<number, CategoryPreviewItem[]>>({})
+const marketPreviewCache = ref<Record<number, ProductPreviewPage>>({})
 const { openLanguagePanel } = useLanguagePanel()
 const { openSupportPanel } = useSupportPanel()
 
-const marketPreviewItems = computed(() => marketPreviewCache.value[activeCategoryCode.value] || [])
+const marketPreviewItems = computed(() => marketPreviewCache.value[activeCategoryCode.value]?.items || [])
+const activePreviewPage = computed(() => marketPreviewCache.value[activeCategoryCode.value])
 
 function buildCategoryPath(categoryCode: string) {
   return {
@@ -68,39 +76,55 @@ function getCoinClass(index: number) {
   return coinClasses[index % coinClasses.length]
 }
 
-async function loadCategoryPreview(categoryType: number) {
-  if (marketPreviewCache.value[categoryType]) return
+function mapProductsToPreviewItems(products: ItickTenantProduct[], startIndex = 0) {
+  return products.map((product, index) => ({
+    path: buildProductPath(product),
+    symbol: product.symbol,
+    price: '--',
+    change: '--',
+    coin: product.baseCoin,
+    coinClass: getCoinClass(startIndex + index),
+    icon: product.icon,
+  }))
+}
+
+async function loadCategoryPreview(categoryType: number, cursor = 0) {
+  const cachedPage = marketPreviewCache.value[categoryType]
+  if (cursor === 0 && cachedPage) return
+  if (cursor !== 0 && (!cachedPage?.hasNext || previewLoadingMore.value)) return
 
   const tenantCode = getTenantCode()
   if (!tenantCode) return
 
   const requestId = previewRequestId.value + 1
   previewRequestId.value = requestId
-  previewLoading.value = true
+  if (cursor === 0) {
+    previewLoading.value = true
+  } else {
+    previewLoadingMore.value = true
+  }
   previewError.value = false
 
   try {
     const resp = await apiListVisibleProducts({
       tenantCode,
       categoryType: categoryType,
-      cursor: 0,
-      limit: 20,
+      cursor,
+      limit: 10,
     })
 
     if (requestId !== previewRequestId.value) return
 
-    const products = (resp.data || [])
+    const products = resp.data || []
+    const currentItems = cursor === 0 ? [] : cachedPage?.items || []
+    const nextCursor = Number(resp.nextCursor ?? cursor + products.length)
     marketPreviewCache.value = {
       ...marketPreviewCache.value,
-      [categoryType]: products.map((product, index) => ({
-        path: buildProductPath(product),
-        symbol: product.symbol,
-        price: '--',
-        change: '--',
-        coin: product.baseCoin,
-        coinClass: getCoinClass(index),
-        icon: product.icon,
-      })),
+      [categoryType]: {
+        items: [...currentItems, ...mapProductsToPreviewItems(products, currentItems.length)],
+        nextCursor,
+        hasNext: Boolean(resp.hasNext ?? products.length >= 20),
+      },
     }
   } catch (error) {
     if (requestId !== previewRequestId.value) return
@@ -109,8 +133,16 @@ async function loadCategoryPreview(categoryType: number) {
   } finally {
     if (requestId === previewRequestId.value) {
       previewLoading.value = false
+      previewLoadingMore.value = false
     }
   }
+}
+
+function loadNextPreviewPage() {
+  const page = activePreviewPage.value
+  if (!page?.hasNext || previewLoading.value || previewLoadingMore.value) return
+
+  void loadCategoryPreview(activeCategoryCode.value, page.nextCursor)
 }
 
 function openCategoryPreview(item?: CategoryNavItem) {
@@ -185,9 +217,11 @@ onMounted(async () => {
         v-show="isCategoryPreviewOpen"
         :items="marketPreviewItems"
         :loading="previewLoading"
+        :loading-more="previewLoadingMore"
         :error="previewError"
         @mouseenter="openCategoryPreview()"
         @mouseleave="closeCategoryPreview"
+        @load-more="loadNextPreviewPage"
       />
 
       <div class="header-actions" @mouseenter="closeCategoryPreview">

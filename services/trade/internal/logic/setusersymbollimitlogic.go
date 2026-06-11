@@ -49,7 +49,7 @@ func (l *SetUserSymbolLimitLogic) SetUserSymbolLimit(in *trade.SetUserSymbolLimi
 	item.PriceDeviationRate = mustParseFloat(in.PriceDeviationRate)
 	item.OperatorId = in.OperatorId
 	item.Source = int64(in.Source)
-	item.Status = int64(in.Status)
+	item.Enabled = enableToModel(in.Enabled, item.Enabled)
 	item.EffectiveStartTime = in.EffectiveStartTime
 	item.EffectiveEndTime = in.EffectiveEndTime
 	item.Remark = in.Remark

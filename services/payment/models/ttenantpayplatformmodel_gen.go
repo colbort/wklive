@@ -45,7 +45,7 @@ type (
 		Id          int64          `db:"id"`           // 主键ID
 		TenantId    int64          `db:"tenant_id"`    // 租户ID
 		PlatformId  int64          `db:"platform_id"`  // 平台ID
-		Status      int64          `db:"status"`       // 状态：1启用 2停用
+		Enabled     int64          `db:"enabled"`      // 启用状态：1启用 2禁用
 		OpenStatus  int64          `db:"open_status"`  // 开通状态：1待配置 2已开通 3审核中 4驳回
 		Remark      sql.NullString `db:"remark"`       // 备注
 		CreateTimes int64          `db:"create_times"` // 创建时间
@@ -117,7 +117,7 @@ func (m *defaultTTenantPayPlatformModel) Insert(ctx context.Context, data *TTena
 	tTenantPayPlatformTenantIdPlatformIdKey := fmt.Sprintf("%s%v:%v", cacheTTenantPayPlatformTenantIdPlatformIdPrefix, data.TenantId, data.PlatformId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, tTenantPayPlatformRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.PlatformId, data.Status, data.OpenStatus, data.Remark, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.PlatformId, data.Enabled, data.OpenStatus, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tTenantPayPlatformIdKey, tTenantPayPlatformTenantIdPlatformIdKey)
 	return ret, err
 }
@@ -132,7 +132,7 @@ func (m *defaultTTenantPayPlatformModel) Update(ctx context.Context, newData *TT
 	tTenantPayPlatformTenantIdPlatformIdKey := fmt.Sprintf("%s%v:%v", cacheTTenantPayPlatformTenantIdPlatformIdPrefix, data.TenantId, data.PlatformId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTenantPayPlatformRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.PlatformId, newData.Status, newData.OpenStatus, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.PlatformId, newData.Enabled, newData.OpenStatus, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTenantPayPlatformIdKey, tTenantPayPlatformTenantIdPlatformIdKey)
 	return err
 }

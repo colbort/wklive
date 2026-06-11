@@ -9,6 +9,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -153,7 +154,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		resp, err := l.svcCtx.AssetClient.FreezeAsset(l.ctx, &asset.FreezeAssetReq{
 			TenantId:   tenantId,
 			UserId:     userId,
-			WalletType: asset.WalletType_WALLET_TYPE_OPTION,
+			WalletType: common.WalletType_WALLET_TYPE_OPTION,
 			Coin:       contract.SettleCoin,
 			Amount:     conv.FloatString(marginAmount),
 			BizType:    asset.BizType_BIZ_TYPE_OPTION,

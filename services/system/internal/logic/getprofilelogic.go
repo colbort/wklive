@@ -39,7 +39,7 @@ func (l *GetProfileLogic) GetProfile(in *system.Empty) (*system.ProfileResp, err
 	if err != nil {
 		return nil, err
 	}
-	if u.Status != 1 {
+	if u.Enabled != 1 {
 		return nil, i18n.StatusError(l.ctx, i18n.UserDisabled)
 	}
 
@@ -119,7 +119,7 @@ func buildMenuTreeAndPerms(rows []*models.SysMenu) ([]*system.SysMenuNode, []str
 			Icon:      r.Icon,
 			Sort:      r.Sort,
 			Visible:   visibleStatusToProto(r.Visible),
-			Status:    commonStatusToProto(r.Status),
+			Enabled:   commonStatusToProto(r.Enabled),
 			Perms:     r.Perms,
 			Children:  nil,
 		}

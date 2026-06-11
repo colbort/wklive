@@ -21,12 +21,6 @@ enum RechargeType {
   RECHARGE_TYPE_OTHER = 5;  // 其他
 }
 
-enum CommonStatus {
-  COMMON_STATUS_UNKNOWN = 0;
-  COMMON_STATUS_ENABLED = 1;
-  COMMON_STATUS_DISABLED = 2;
-}
-
 enum OpenStatus {
   OPEN_STATUS_UNKNOWN = 0;
   OPEN_STATUS_PENDING_CONFIG = 1;

@@ -47,7 +47,7 @@ type (
 		UserId           int64   `db:"user_id"`           // 用户ID
 		SymbolId         int64   `db:"symbol_id"`         // 交易标的ID
 		MarketType       int64   `db:"market_type"`       // 市场类型：2秒合约 3U本位 4币本位
-		PositionSide     int64   `db:"position_side"`     // 持仓方向：1多 2空
+		PositionSide     int64   `db:"position_side"`     // 持仓方向：1净持仓 2多 3空
 		MarginMode       int64   `db:"margin_mode"`       // 保证金模式：1全仓 2逐仓
 		Leverage         int64   `db:"leverage"`          // 当前杠杆倍数
 		Qty              float64 `db:"qty"`               // 当前持仓数量

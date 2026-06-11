@@ -83,14 +83,14 @@ message AppGetContractDetailResp {
 message AppPlaceOrderReq {
   int64 account_id = 1;
   int64 contract_id = 2;
-  Side side = 3;
+  common.Side side = 3; // 买卖方向
   PositionEffect position_effect = 4;
   OrderType order_type = 5;
   string price = 6;
   string qty = 7;
   string client_order_id = 8;
-  YesNo reduce_only = 9;
-  YesNo mmp = 10;
+  common.YesNo reduce_only = 9; // 是否只减仓
+  common.YesNo mmp = 10; // 是否做市商保护单
 }
 
 message AppPlaceOrderResp {
@@ -123,7 +123,7 @@ message AppGetOrderDetailResp {
 message AppListCurrentOrdersReq {
   int64 account_id = 1;
   int64 contract_id = 2;
-  Side side = 3;
+  common.Side side = 3; // 买卖方向
   common.PageReq page = 4;
 }
 

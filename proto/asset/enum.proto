@@ -4,23 +4,6 @@ package asset;
 
 option go_package = "wklive/proto/asset;asset";
 
-// 钱包类型
-enum WalletType {
-  WALLET_TYPE_UNKNOWN = 0;
-  WALLET_TYPE_SPOT = 1; // 现金账户/现货钱包
-  WALLET_TYPE_FUNDING = 2; // 股票账户/资金钱包
-  WALLET_TYPE_CONTRACT = 3; // 合约账户/合约钱包
-  WALLET_TYPE_EARN = 4; // 理财钱包
-  WALLET_TYPE_OPTION = 5; // 期权钱包
-}
-
-// 资产状态
-enum AssetStatus {
-  ASSET_STATUS_UNKNOWN = 0;
-  ASSET_STATUS_DISABLED = 1; // 禁用
-  ASSET_STATUS_ENABLED = 2; // 正常
-}
-
 // 变动方向
 enum AssetOpType {
   ASSET_OP_TYPE_UNKNOWN = 0;
@@ -112,13 +95,6 @@ enum AssetCoinType {
   ASSET_COIN_TYPE_UNKNOWN = 0;
   ASSET_COIN_TYPE_FIAT = 1; // 法币
   ASSET_COIN_TYPE_CRYPTO = 2; // 加密货币
-}
-
-// 资产币种展示/操作开关
-enum AssetCoinSwitch {
-  ASSET_COIN_SWITCH_UNKNOWN = 0;
-  ASSET_COIN_SWITCH_OFF = 1; // 关闭/隐藏
-  ASSET_COIN_SWITCH_ON = 2; // 开启/展示
 }
 
 // 资产币种操作场景

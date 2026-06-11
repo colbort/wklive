@@ -13,10 +13,10 @@ import (
 
 type CryptoWalletAccountModel interface {
 	tCryptoWalletAccountModel
-	FindPage(ctx context.Context, tenantId int64, keyword string, provider string, status int64, isDefault int64, cursor int64, limit int64) ([]*TCryptoWalletAccount, int64, error)
+	FindPage(ctx context.Context, tenantId int64, keyword string, provider string, enabled int64, isDefault int64, cursor int64, limit int64) ([]*TCryptoWalletAccount, int64, error)
 }
 
-func (m *defaultTCryptoWalletAccountModel) FindPage(ctx context.Context, tenantId int64, keyword string, provider string, status int64, isDefault int64, cursor int64, limit int64) ([]*TCryptoWalletAccount, int64, error) {
+func (m *defaultTCryptoWalletAccountModel) FindPage(ctx context.Context, tenantId int64, keyword string, provider string, enabled int64, isDefault int64, cursor int64, limit int64) ([]*TCryptoWalletAccount, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -25,7 +25,7 @@ func (m *defaultTCryptoWalletAccountModel) FindPage(ctx context.Context, tenantI
 		builder.And("(account_code LIKE ? OR account_name LIKE ?)", "%"+keyword+"%", "%"+keyword+"%")
 	}
 	builder.EqString("provider", provider)
-	appendCryptoWalletStatusFilter(builder, status)
+	appendCryptoWalletStatusFilter(builder, enabled)
 	builder.EqInt64("is_default", isDefault)
 
 	where := builder.Where()
@@ -54,11 +54,11 @@ func (m *defaultTCryptoWalletAccountModel) FindPage(ctx context.Context, tenantI
 	return list, total, nil
 }
 
-func appendCryptoWalletStatusFilter(builder *sqlutil.PageQueryBuilder, status int64) {
-	switch status {
+func appendCryptoWalletStatusFilter(builder *sqlutil.PageQueryBuilder, enabled int64) {
+	switch enabled {
 	case 1:
-		builder.And("status = ?", int64(1))
+		builder.And("enabled = ?", int64(1))
 	case 2:
-		builder.And("status = ?", int64(0))
+		builder.And("enabled = ?", int64(0))
 	}
 }

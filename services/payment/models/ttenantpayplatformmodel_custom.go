@@ -9,16 +9,16 @@ import (
 
 type TenantPayPlatformModel interface {
 	tTenantPayPlatformModel
-	FindPage(ctx context.Context, tenantId int64, platformId int64, status int64, openStatus int64, cursor int64, limit int64) ([]*TTenantPayPlatform, int64, error)
+	FindPage(ctx context.Context, tenantId int64, platformId int64, enabled int64, openStatus int64, cursor int64, limit int64) ([]*TTenantPayPlatform, int64, error)
 }
 
-func (m *defaultTTenantPayPlatformModel) FindPage(ctx context.Context, tenantId int64, platformId int64, status int64, openStatus int64, cursor int64, limit int64) ([]*TTenantPayPlatform, int64, error) {
+func (m *defaultTTenantPayPlatformModel) FindPage(ctx context.Context, tenantId int64, platformId int64, enabled int64, openStatus int64, cursor int64, limit int64) ([]*TTenantPayPlatform, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", tenantId)
 	builder.EqInt64("platform_id", platformId)
-	builder.EqInt64("status", status)
+	builder.EqInt64("enabled", enabled)
 	builder.EqInt64("open_status", openStatus)
 
 	where := builder.Where()

@@ -29,7 +29,7 @@ func NewSysRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRo
 func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRoleListResp, error) {
 	tenantId, _ := utils.GetTenantIdFromMd(l.ctx)
 	// 2) 查分页
-	items, total, err := l.svcCtx.RoleModel.FindPage(l.ctx, in.Keyword, tenantId, commonStatusToModel(in.Status), in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.RoleModel.FindPage(l.ctx, in.Keyword, tenantId, commonStatusToModel(in.Enabled), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 			Id:          r.Id,
 			Name:        r.Name,
 			Code:        r.Code,
-			Status:      commonStatusToProto(r.Status),
+			Enabled:     commonStatusToProto(r.Enabled),
 			TenantId:    r.TenantId,
 			Remark:      r.Remark,
 			CreateTimes: r.CreateTimes,

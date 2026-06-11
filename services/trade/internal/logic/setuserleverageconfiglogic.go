@@ -43,7 +43,7 @@ func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeve
 	item.MaxLeverage = in.MaxLeverage
 	item.OperatorId = in.OperatorId
 	item.Source = int64(in.Source)
-	item.Status = in.Status
+	item.Enabled = enableToModel(in.Enabled, item.Enabled)
 	item.Remark = in.Remark
 	item.UpdateTimes = now
 	if item.Id == 0 {

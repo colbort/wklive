@@ -66,7 +66,7 @@ service AssetAdmin {
 
 message CreateAssetCoinConfigReq {
   int64 tenant_id = 1;                      // 租户ID
-  WalletType wallet_type = 2;               // 账户类型
+  common.WalletType  wallet_type = 2;               // 账户类型
   string coin = 3;                          // 币种代码
   string symbol = 4;                        // 展示符号/资产标识
   string coin_name = 5;                     // 币种名称
@@ -76,11 +76,11 @@ message CreateAssetCoinConfigReq {
   string icon_text = 9;                     // 币种图标文案/符号
   string icon_bg_color = 10;                // 图标背景色
   int32 decimal_places = 11;                // 资产展示精度
-  AssetCoinSwitch app_visible = 12;         // APP操作页是否展示
-  AssetCoinSwitch recharge_enabled = 13;    // 充值页是否展示
-  AssetCoinSwitch withdraw_enabled = 14;    // 提现页是否展示
-  AssetCoinSwitch transfer_enabled = 15;    // 划转页是否展示
-  AssetStatus status = 16;                  // 状态
+  common.Switch app_visible = 12;           // APP操作页展示开关
+  common.Switch recharge_enabled = 13;      // 充值页展示开关
+  common.Switch withdraw_enabled = 14;      // 提现页展示开关
+  common.Switch transfer_enabled = 15;      // 划转页展示开关
+  common.Enable enabled = 16;                // 状态 0表示全部，1表示启用，2表示禁用
   int32 sort = 17;                          // 排序
   string remark = 18;                       // 备注
 }
@@ -88,7 +88,7 @@ message CreateAssetCoinConfigReq {
 message UpdateAssetCoinConfigReq {
   int64 id = 1;                             // 主键ID
   int64 tenant_id = 2;                      // 租户ID
-  WalletType wallet_type = 3;               // 账户类型
+  common.WalletType  wallet_type = 3;               // 账户类型
   string coin = 4;                          // 币种代码
   string symbol = 5;                        // 展示符号/资产标识
   string coin_name = 6;                     // 币种名称
@@ -98,11 +98,11 @@ message UpdateAssetCoinConfigReq {
   string icon_text = 10;                    // 币种图标文案/符号
   string icon_bg_color = 11;                // 图标背景色
   int32 decimal_places = 12;                // 资产展示精度
-  AssetCoinSwitch app_visible = 13;         // APP操作页是否展示
-  AssetCoinSwitch recharge_enabled = 14;    // 充值页是否展示
-  AssetCoinSwitch withdraw_enabled = 15;    // 提现页是否展示
-  AssetCoinSwitch transfer_enabled = 16;    // 划转页是否展示
-  AssetStatus status = 17;                  // 状态
+  common.Switch app_visible = 13;           // APP操作页展示开关
+  common.Switch recharge_enabled = 14;      // 充值页展示开关
+  common.Switch withdraw_enabled = 15;      // 提现页展示开关
+  common.Switch transfer_enabled = 16;      // 划转页展示开关
+  common.Enable enabled = 17;                // 状态 0表示全部，1表示启用，2表示禁用
   int32 sort = 18;                          // 排序
   string remark = 19;                       // 备注
 }
@@ -119,15 +119,15 @@ message GetAssetCoinConfigReq {
 
 message PageAssetCoinConfigsReq {
   int64 tenant_id = 1;                      // 租户ID,0表示全部
-  WalletType wallet_type = 2;               // 账户类型,0表示全部
+  common.WalletType  wallet_type = 2;               // 账户类型,0表示全部
   string coin = 3;                          // 币种,空表示全部
   string symbol = 4;                        // 展示符号/资产标识,空表示全部
   AssetCoinType coin_type = 5;              // 币种类型,0表示全部
-  AssetCoinSwitch app_visible = 6;          // APP操作页是否展示,0表示全部
-  AssetCoinSwitch recharge_enabled = 7;     // 充值页是否展示,0表示全部
-  AssetCoinSwitch withdraw_enabled = 8;     // 提现页是否展示,0表示全部
-  AssetCoinSwitch transfer_enabled = 9;     // 划转页是否展示,0表示全部
-  AssetStatus status = 10;                  // 状态,0表示全部
+  common.Switch app_visible = 6;            // APP操作页展示开关,0表示全部
+  common.Switch recharge_enabled = 7;       // 充值页展示开关,0表示全部
+  common.Switch withdraw_enabled = 8;       // 提现页展示开关,0表示全部
+  common.Switch transfer_enabled = 9;       // 划转页展示开关,0表示全部
+  common.Enable enabled = 10;                // 状态,0表示全部 1表示启用，2表示禁用
   common.PageReq page = 11;                 // 分页
   common.ChainCode chain_code = 12;                // 链类型,0表示全部
 }
@@ -149,9 +149,9 @@ message DeleteAssetCoinConfigResp {
 message PageUserAssetsReq {
   int64 tenant_id = 1;        // 租户ID,0表示全部
   int64 user_id = 2;          // 用户ID,0表示全部
-  WalletType wallet_type = 3; // 钱包类型
+  common.WalletType  wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
-  AssetStatus status = 5;     // 状态
+  common.Enable enabled = 5;     // 状态,0表示全部 1表示启用，2表示禁用
   common.PageReq page = 6;    // 分页
 }
 
@@ -163,7 +163,7 @@ message PageUserAssetsResp {
 message GetUserAssetDetailReq {
   int64 tenant_id = 1;        // 租户ID
   int64 user_id = 2;          // 用户ID
-  WalletType wallet_type = 3; // 钱包类型
+  common.WalletType  wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
 }
 
@@ -175,7 +175,7 @@ message GetUserAssetDetailResp {
 message PageAssetFlowsReq {
   int64 tenant_id = 1;             // 租户ID,0表示全部
   int64 user_id = 2;               // 用户ID,0表示全部
-  WalletType wallet_type = 3;      // 钱包类型
+  common.WalletType  wallet_type = 3;      // 钱包类型
   string coin = 4;                 // 币种
   BizType biz_type = 5;            // 业务类型
   SceneType scene_type = 6;        // 业务场景
@@ -192,7 +192,7 @@ message PageAssetFlowsResp {
 message PageAssetFreezesReq {
   int64 tenant_id = 1;        // 租户ID
   int64 user_id = 2;          // 用户ID
-  WalletType wallet_type = 3; // 钱包类型
+  common.WalletType  wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
   BizType biz_type = 5;       // 业务类型
   string biz_no = 6;          // 业务单号
@@ -208,7 +208,7 @@ message PageAssetFreezesResp {
 message PageAssetLocksReq {
   int64 tenant_id = 1;        // 租户ID
   int64 user_id = 2;          // 用户ID
-  WalletType wallet_type = 3; // 钱包类型
+  common.WalletType  wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
   BizType biz_type = 5;       // 业务类型
   string biz_no = 6;          // 业务单号
@@ -224,7 +224,7 @@ message PageAssetLocksResp {
 message AdminAddAssetReq {
   int64 tenant_id = 1;        // 租户ID
   int64 user_id = 2;          // 用户ID
-  WalletType wallet_type = 3; // 钱包类型
+  common.WalletType  wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
   string amount = 5;          // 金额
   string biz_no = 6;          // 业务单号,建议传唯一值
@@ -235,7 +235,7 @@ message AdminAddAssetReq {
 message AdminSubAssetReq {
   int64 tenant_id = 1;        // 租户ID
   int64 user_id = 2;          // 用户ID
-  WalletType wallet_type = 3; // 钱包类型
+  common.WalletType  wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
   string amount = 5;          // 金额
   string biz_no = 6;          // 业务单号,建议传唯一值
@@ -246,7 +246,7 @@ message AdminSubAssetReq {
 message AdminFreezeAssetReq {
   int64 tenant_id = 1;        // 租户ID
   int64 user_id = 2;          // 用户ID
-  WalletType wallet_type = 3; // 钱包类型
+  common.WalletType  wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
   string amount = 5;          // 金额
   string biz_no = 6;          // 业务单号
@@ -266,7 +266,7 @@ message AdminUnfreezeAssetReq {
 message AdminLockAssetReq {
   int64 tenant_id = 1;        // 租户ID
   int64 user_id = 2;          // 用户ID
-  WalletType wallet_type = 3; // 钱包类型
+  common.WalletType  wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
   string amount = 5;          // 金额
   string biz_no = 6;          // 业务单号

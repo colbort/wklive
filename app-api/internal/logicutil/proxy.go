@@ -43,6 +43,7 @@ func Proxy[Resp any, PReq any, PResp any](ctx context.Context, req any, call fun
 	if err := copyValue(reflect.ValueOf(resp), reflect.ValueOf(protoResp)); err != nil {
 		return SystemErrorResp[Resp](ctx, err)
 	}
+	setPageRespFields(reflect.ValueOf(resp), reflect.ValueOf(protoResp))
 
 	return resp, nil
 }
@@ -260,6 +261,33 @@ func setPageField(dst, src reflect.Value) {
 	if limitDst, ok := findField(pageField, "Limit"); ok {
 		_ = copyValue(limitDst, limitField)
 	}
+}
+
+func setPageRespFields(dst, src reflect.Value) {
+	baseField, ok := findField(src, "Base")
+	if !ok {
+		baseField = src
+	}
+
+	targetField, ok := findField(dst, "RespBase")
+	if !ok {
+		targetField = dst
+	}
+
+	copyNamedField(targetField, baseField, "Total")
+	copyNamedField(targetField, baseField, "HasNext")
+	copyNamedField(targetField, baseField, "HasPrev")
+	copyNamedField(targetField, baseField, "NextCursor")
+	copyNamedField(targetField, baseField, "PrevCursor")
+}
+
+func copyNamedField(dst, src reflect.Value, name string) {
+	srcField, okSrc := findField(src, name)
+	dstField, okDst := findField(dst, name)
+	if !okSrc || !okDst {
+		return
+	}
+	_ = copyValue(dstField, srcField)
 }
 
 func setInt64Field(target any, value int64, names ...string) {

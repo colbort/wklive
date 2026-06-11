@@ -55,8 +55,8 @@ func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq
 	if in.Currency != "" {
 		product.Currency = in.Currency
 	}
-	if in.Status != 0 {
-		product.Status = int64(in.Status)
+	if in.Enabled != 0 {
+		product.Enabled = int64(in.Enabled)
 	}
 	if in.Remark != "" {
 		product.Remark = sql.NullString{String: in.Remark, Valid: true}

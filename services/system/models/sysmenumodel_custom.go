@@ -10,16 +10,16 @@ import (
 
 type MenuModel interface {
 	sysMenuModel
-	FindByIds(ctx context.Context, ids []int64, visible int64, status int64) ([]*SysMenu, error)
+	FindByIds(ctx context.Context, ids []int64, visible int64, enabled int64) ([]*SysMenu, error)
 	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
 	ListAll(ctx context.Context) ([]*SysMenu, error)
-	FindPage(ctx context.Context, keyword string, menuType, status, visible, cursor, limit int64) ([]*SysMenu, int64, error)
+	FindPage(ctx context.Context, keyword string, menuType, enabled, visible, cursor, limit int64) ([]*SysMenu, int64, error)
 	FindOneByName(ctx context.Context, name string) (*SysMenu, error)
 	FindOneByPath(ctx context.Context, path string) (*SysMenu, error)
 	FindOneByPerms(ctx context.Context, perms string) (*SysMenu, error)
 }
 
-func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64, visible int64, status int64) ([]*SysMenu, error) {
+func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64, visible int64, enabled int64) ([]*SysMenu, error) {
 	if len(ids) == 0 {
 		return []*SysMenu{}, nil
 	}
@@ -33,9 +33,9 @@ func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64, visibl
 		query += " AND visible = ?"
 		args = append(args, visible)
 	}
-	if status != 0 {
-		query += " AND status = ?"
-		args = append(args, status)
+	if enabled != 0 {
+		query += " AND enabled = ?"
+		args = append(args, enabled)
 	}
 
 	query += " order by `sort` asc"
@@ -71,7 +71,7 @@ func (m *defaultSysMenuModel) ListAll(ctx context.Context) ([]*SysMenu, error) {
 func (m *defaultSysMenuModel) FindPage(
 	ctx context.Context,
 	keyword string,
-	menuType, status, visible int64,
+	menuType, enabled, visible int64,
 	cursor, limit int64,
 ) ([]*SysMenu, int64, error) {
 
@@ -88,7 +88,7 @@ func (m *defaultSysMenuModel) FindPage(
 		builder.And("(name LIKE ? OR code LIKE ?)", like, like)
 	}
 	builder.EqInt64("menu_type", menuType)
-	builder.EqInt64("status", status)
+	builder.EqInt64("enabled", enabled)
 	builder.EqInt64("visible", visible)
 
 	where := builder.Where()

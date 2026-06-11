@@ -8,7 +8,7 @@ import (
 
 type RoleModel interface {
 	sysRoleModel
-	FindPage(ctx context.Context, keyword string, tenantId int64, status, cursor, limit int64) ([]*SysRole, int64, error)
+	FindPage(ctx context.Context, keyword string, tenantId int64, enabled, cursor, limit int64) ([]*SysRole, int64, error)
 	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
 	FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error)
 }
@@ -17,7 +17,7 @@ func (m *defaultSysRoleModel) FindPage(
 	ctx context.Context,
 	keyword string,
 	tenantId int64,
-	status int64,
+	enabled int64,
 	cursor, limit int64,
 ) ([]*SysRole, int64, error) {
 
@@ -29,7 +29,7 @@ func (m *defaultSysRoleModel) FindPage(
 		like := "%" + keyword + "%"
 		builder.And("(name LIKE ? OR code LIKE ?)", like, like)
 	}
-	builder.EqInt64("status", status)
+	builder.EqInt64("enabled", enabled)
 	builder.EqInt64("tenant_id", tenantId)
 
 	where := builder.Where()

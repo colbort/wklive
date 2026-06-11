@@ -39,7 +39,7 @@ func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment
 		ChannelId:            in.ChannelId,
 		RuleName:             in.RuleName,
 		Priority:             in.Priority,
-		Status:               int64(in.Status),
+		Enabled:              int64(in.Enabled),
 		SingleAmountMin:      in.SingleAmountMin,
 		SingleAmountMax:      in.SingleAmountMax,
 		UserTotalRechargeMin: in.UserTotalRechargeMin,

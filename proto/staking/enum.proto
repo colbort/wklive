@@ -4,13 +4,6 @@ package staking;
 
 option go_package = "wklive/proto/staking;staking";
 
-// 是否
-enum YesNo {
-  YES_NO_UNKNOWN = 0;
-  YES_NO_NO = 1; // 否
-  YES_NO_YES = 2; // 是
-}
-
 // 产品状态
 enum ProductStatus {
   PRODUCT_STATUS_UNKNOWN = 0;

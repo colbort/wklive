@@ -338,7 +338,7 @@ type PlaceOrderReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	SymbolId        int64                  `protobuf:"varint,1,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MarketType      MarketType             `protobuf:"varint,2,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
-	Side            TradeSide              `protobuf:"varint,3,opt,name=side,proto3,enum=trade.TradeSide" json:"side,omitempty"`
+	Side            common.Side            `protobuf:"varint,3,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionSide    PositionSide           `protobuf:"varint,4,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	OrderType       OrderType              `protobuf:"varint,5,opt,name=order_type,json=orderType,proto3,enum=trade.OrderType" json:"order_type,omitempty"`
 	TimeInForce     TimeInForce            `protobuf:"varint,6,opt,name=time_in_force,json=timeInForce,proto3,enum=trade.TimeInForce" json:"time_in_force,omitempty"`
@@ -404,11 +404,11 @@ func (x *PlaceOrderReq) GetMarketType() MarketType {
 	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
-func (x *PlaceOrderReq) GetSide() TradeSide {
+func (x *PlaceOrderReq) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *PlaceOrderReq) GetPositionSide() PositionSide {
@@ -646,7 +646,7 @@ type CancelAllOrdersReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	MarketType    MarketType             `protobuf:"varint,1,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,2,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	Side          TradeSide              `protobuf:"varint,3,opt,name=side,proto3,enum=trade.TradeSide" json:"side,omitempty"`
+	Side          common.Side            `protobuf:"varint,3,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionSide  PositionSide           `protobuf:"varint,4,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -696,11 +696,11 @@ func (x *CancelAllOrdersReq) GetSymbolId() int64 {
 	return 0
 }
 
-func (x *CancelAllOrdersReq) GetSide() TradeSide {
+func (x *CancelAllOrdersReq) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *CancelAllOrdersReq) GetPositionSide() PositionSide {
@@ -768,7 +768,7 @@ type GetOrderListReq struct {
 	MarketType    MarketType             `protobuf:"varint,2,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	Status        OrderStatus            `protobuf:"varint,4,opt,name=status,proto3,enum=trade.OrderStatus" json:"status,omitempty"`
-	Side          TradeSide              `protobuf:"varint,5,opt,name=side,proto3,enum=trade.TradeSide" json:"side,omitempty"`
+	Side          common.Side            `protobuf:"varint,5,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	TimeRange     *TimeRange             `protobuf:"bytes,6,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -832,11 +832,11 @@ func (x *GetOrderListReq) GetStatus() OrderStatus {
 	return OrderStatus_ORDER_STATUS_UNKNOWN
 }
 
-func (x *GetOrderListReq) GetSide() TradeSide {
+func (x *GetOrderListReq) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNKNOWN
+	return common.Side(0)
 }
 
 func (x *GetOrderListReq) GetTimeRange() *TimeRange {
@@ -1609,12 +1609,12 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x06symbol\x18\x01 \x01(\v2\x12.trade.TradeSymbolR\x06symbol\x12*\n" +
 	"\x04spot\x18\x02 \x01(\v2\x16.trade.TradeSymbolSpotR\x04spot\x126\n" +
 	"\bcontract\x18\x03 \x01(\v2\x1a.trade.TradeSymbolContractR\bcontract\x12K\n" +
-	"\x10leverage_configs\x18\x04 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x0fleverageConfigs\"\xcd\x06\n" +
+	"\x10leverage_configs\x18\x04 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x0fleverageConfigs\"\xc9\x06\n" +
 	"\rPlaceOrderReq\x12\x1b\n" +
 	"\tsymbol_id\x18\x01 \x01(\x03R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\x02 \x01(\x0e2\x11.trade.MarketTypeR\n" +
-	"marketType\x12$\n" +
-	"\x04side\x18\x03 \x01(\x0e2\x10.trade.TradeSideR\x04side\x128\n" +
+	"marketType\x12 \n" +
+	"\x04side\x18\x03 \x01(\x0e2\f.common.SideR\x04side\x128\n" +
 	"\rposition_side\x18\x04 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\x12/\n" +
 	"\n" +
 	"order_type\x18\x05 \x01(\x0e2\x10.trade.OrderTypeR\torderType\x126\n" +
@@ -1641,23 +1641,23 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x0eCancelOrderReq\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12&\n" +
-	"\x0fclient_order_id\x18\x03 \x01(\tR\rclientOrderId\"\xc5\x01\n" +
+	"\x0fclient_order_id\x18\x03 \x01(\tR\rclientOrderId\"\xc1\x01\n" +
 	"\x12CancelAllOrdersReq\x122\n" +
 	"\vmarket_type\x18\x01 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12\x1b\n" +
-	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\x12$\n" +
-	"\x04side\x18\x03 \x01(\x0e2\x10.trade.TradeSideR\x04side\x128\n" +
+	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\x12 \n" +
+	"\x04side\x18\x03 \x01(\x0e2\f.common.SideR\x04side\x128\n" +
 	"\rposition_side\x18\x04 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\"O\n" +
 	"\x13CancelAllOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\x03R\x04data\"\x8a\x02\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\x86\x02\n" +
 	"\x0fGetOrderListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x122\n" +
 	"\vmarket_type\x18\x02 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x12*\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x12.trade.OrderStatusR\x06status\x12$\n" +
-	"\x04side\x18\x05 \x01(\x0e2\x10.trade.TradeSideR\x04side\x12/\n" +
+	"\x06status\x18\x04 \x01(\x0e2\x12.trade.OrderStatusR\x06status\x12 \n" +
+	"\x04side\x18\x05 \x01(\x0e2\f.common.SideR\x04side\x12/\n" +
 	"\n" +
 	"time_range\x18\x06 \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"_\n" +
 	"\x10GetOrderListResp\x12$\n" +
@@ -1776,7 +1776,7 @@ var file_proto_trade_trade_app_proto_goTypes = []any{
 	(*TradeSymbolSpot)(nil),           // 29: trade.TradeSymbolSpot
 	(*TradeSymbolContract)(nil),       // 30: trade.TradeSymbolContract
 	(*TradeSymbolLeverageConfig)(nil), // 31: trade.TradeSymbolLeverageConfig
-	(TradeSide)(0),                    // 32: trade.TradeSide
+	(common.Side)(0),                  // 32: common.Side
 	(PositionSide)(0),                 // 33: trade.PositionSide
 	(OrderType)(0),                    // 34: trade.OrderType
 	(TimeInForce)(0),                  // 35: trade.TimeInForce
@@ -1809,7 +1809,7 @@ var file_proto_trade_trade_app_proto_depIdxs = []int32{
 	30, // 9: trade.GetSymbolDetailData.contract:type_name -> trade.TradeSymbolContract
 	31, // 10: trade.GetSymbolDetailData.leverage_configs:type_name -> trade.TradeSymbolLeverageConfig
 	26, // 11: trade.PlaceOrderReq.market_type:type_name -> trade.MarketType
-	32, // 12: trade.PlaceOrderReq.side:type_name -> trade.TradeSide
+	32, // 12: trade.PlaceOrderReq.side:type_name -> common.Side
 	33, // 13: trade.PlaceOrderReq.position_side:type_name -> trade.PositionSide
 	34, // 14: trade.PlaceOrderReq.order_type:type_name -> trade.OrderType
 	35, // 15: trade.PlaceOrderReq.time_in_force:type_name -> trade.TimeInForce
@@ -1820,13 +1820,13 @@ var file_proto_trade_trade_app_proto_depIdxs = []int32{
 	25, // 20: trade.PlaceOrderResp.base:type_name -> common.RespBase
 	40, // 21: trade.PlaceOrderResp.data:type_name -> trade.TradeOrder
 	26, // 22: trade.CancelAllOrdersReq.market_type:type_name -> trade.MarketType
-	32, // 23: trade.CancelAllOrdersReq.side:type_name -> trade.TradeSide
+	32, // 23: trade.CancelAllOrdersReq.side:type_name -> common.Side
 	33, // 24: trade.CancelAllOrdersReq.position_side:type_name -> trade.PositionSide
 	25, // 25: trade.CancelAllOrdersResp.base:type_name -> common.RespBase
 	41, // 26: trade.GetOrderListReq.page:type_name -> common.PageReq
 	26, // 27: trade.GetOrderListReq.market_type:type_name -> trade.MarketType
 	42, // 28: trade.GetOrderListReq.status:type_name -> trade.OrderStatus
-	32, // 29: trade.GetOrderListReq.side:type_name -> trade.TradeSide
+	32, // 29: trade.GetOrderListReq.side:type_name -> common.Side
 	43, // 30: trade.GetOrderListReq.time_range:type_name -> trade.TimeRange
 	25, // 31: trade.GetOrderListResp.base:type_name -> common.RespBase
 	40, // 32: trade.GetOrderListResp.data:type_name -> trade.TradeOrder

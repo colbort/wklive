@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -43,7 +44,7 @@ type StakeProduct struct {
 	UserLimitAmount  string                 `protobuf:"bytes,17,opt,name=user_limit_amount,json=userLimitAmount,proto3" json:"user_limit_amount,omitempty"`
 	InterestMode     InterestMode           `protobuf:"varint,18,opt,name=interest_mode,json=interestMode,proto3,enum=staking.InterestMode" json:"interest_mode,omitempty"`
 	RewardMode       RewardMode             `protobuf:"varint,19,opt,name=reward_mode,json=rewardMode,proto3,enum=staking.RewardMode" json:"reward_mode,omitempty"`
-	AllowEarlyRedeem YesNo                  `protobuf:"varint,20,opt,name=allow_early_redeem,json=allowEarlyRedeem,proto3,enum=staking.YesNo" json:"allow_early_redeem,omitempty"`
+	AllowEarlyRedeem common.YesNo           `protobuf:"varint,20,opt,name=allow_early_redeem,json=allowEarlyRedeem,proto3,enum=common.YesNo" json:"allow_early_redeem,omitempty"` // 是否允许提前赎回
 	EarlyRedeemRate  string                 `protobuf:"bytes,21,opt,name=early_redeem_rate,json=earlyRedeemRate,proto3" json:"early_redeem_rate,omitempty"`
 	Status           ProductStatus          `protobuf:"varint,22,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
 	Sort             int64                  `protobuf:"varint,23,opt,name=sort,proto3" json:"sort,omitempty"`
@@ -219,11 +220,11 @@ func (x *StakeProduct) GetRewardMode() RewardMode {
 	return RewardMode_REWARD_MODE_UNKNOWN
 }
 
-func (x *StakeProduct) GetAllowEarlyRedeem() YesNo {
+func (x *StakeProduct) GetAllowEarlyRedeem() common.YesNo {
 	if x != nil {
 		return x.AllowEarlyRedeem
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
 func (x *StakeProduct) GetEarlyRedeemRate() string {
@@ -302,7 +303,7 @@ type StakeOrder struct {
 	LockDays         int64                  `protobuf:"varint,15,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
 	InterestMode     InterestMode           `protobuf:"varint,16,opt,name=interest_mode,json=interestMode,proto3,enum=staking.InterestMode" json:"interest_mode,omitempty"`
 	RewardMode       RewardMode             `protobuf:"varint,17,opt,name=reward_mode,json=rewardMode,proto3,enum=staking.RewardMode" json:"reward_mode,omitempty"`
-	AllowEarlyRedeem YesNo                  `protobuf:"varint,18,opt,name=allow_early_redeem,json=allowEarlyRedeem,proto3,enum=staking.YesNo" json:"allow_early_redeem,omitempty"`
+	AllowEarlyRedeem common.YesNo           `protobuf:"varint,18,opt,name=allow_early_redeem,json=allowEarlyRedeem,proto3,enum=common.YesNo" json:"allow_early_redeem,omitempty"` // 是否允许提前赎回
 	EarlyRedeemRate  string                 `protobuf:"bytes,19,opt,name=early_redeem_rate,json=earlyRedeemRate,proto3" json:"early_redeem_rate,omitempty"`
 	InterestDays     int64                  `protobuf:"varint,20,opt,name=interest_days,json=interestDays,proto3" json:"interest_days,omitempty"`
 	StartTimes       int64                  `protobuf:"varint,21,opt,name=start_times,json=startTimes,proto3" json:"start_times,omitempty"`
@@ -476,11 +477,11 @@ func (x *StakeOrder) GetRewardMode() RewardMode {
 	return RewardMode_REWARD_MODE_UNKNOWN
 }
 
-func (x *StakeOrder) GetAllowEarlyRedeem() YesNo {
+func (x *StakeOrder) GetAllowEarlyRedeem() common.YesNo {
 	if x != nil {
 		return x.AllowEarlyRedeem
 	}
-	return YesNo_YES_NO_UNKNOWN
+	return common.YesNo(0)
 }
 
 func (x *StakeOrder) GetEarlyRedeemRate() string {
@@ -1021,7 +1022,7 @@ var File_proto_staking_model_proto protoreflect.FileDescriptor
 
 const file_proto_staking_model_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/staking/model.proto\x12\astaking\x1a\x18proto/staking/enum.proto\"\x98\b\n" +
+	"\x19proto/staking/model.proto\x12\astaking\x1a\x19proto/common/common.proto\x1a\x18proto/staking/enum.proto\"\x97\b\n" +
 	"\fStakeProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
@@ -1048,8 +1049,8 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x11user_limit_amount\x18\x11 \x01(\tR\x0fuserLimitAmount\x12:\n" +
 	"\rinterest_mode\x18\x12 \x01(\x0e2\x15.staking.InterestModeR\finterestMode\x124\n" +
 	"\vreward_mode\x18\x13 \x01(\x0e2\x13.staking.RewardModeR\n" +
-	"rewardMode\x12<\n" +
-	"\x12allow_early_redeem\x18\x14 \x01(\x0e2\x0e.staking.YesNoR\x10allowEarlyRedeem\x12*\n" +
+	"rewardMode\x12;\n" +
+	"\x12allow_early_redeem\x18\x14 \x01(\x0e2\r.common.YesNoR\x10allowEarlyRedeem\x12*\n" +
 	"\x11early_redeem_rate\x18\x15 \x01(\tR\x0fearlyRedeemRate\x12.\n" +
 	"\x06status\x18\x16 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x17 \x01(\x03R\x04sort\x12\x16\n" +
@@ -1057,7 +1058,7 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x0ecreate_user_id\x18\x19 \x01(\x03R\fcreateUserId\x12$\n" +
 	"\x0eupdate_user_id\x18\x1a \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18\x1b \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x1c \x01(\x03R\vupdateTimes\"\xa0\v\n" +
+	"\fupdate_times\x18\x1c \x01(\x03R\vupdateTimes\"\x9f\v\n" +
 	"\n" +
 	"StakeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -1081,8 +1082,8 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\tlock_days\x18\x0f \x01(\x03R\blockDays\x12:\n" +
 	"\rinterest_mode\x18\x10 \x01(\x0e2\x15.staking.InterestModeR\finterestMode\x124\n" +
 	"\vreward_mode\x18\x11 \x01(\x0e2\x13.staking.RewardModeR\n" +
-	"rewardMode\x12<\n" +
-	"\x12allow_early_redeem\x18\x12 \x01(\x0e2\x0e.staking.YesNoR\x10allowEarlyRedeem\x12*\n" +
+	"rewardMode\x12;\n" +
+	"\x12allow_early_redeem\x18\x12 \x01(\x0e2\r.common.YesNoR\x10allowEarlyRedeem\x12*\n" +
 	"\x11early_redeem_rate\x18\x13 \x01(\tR\x0fearlyRedeemRate\x12#\n" +
 	"\rinterest_days\x18\x14 \x01(\x03R\finterestDays\x12\x1f\n" +
 	"\vstart_times\x18\x15 \x01(\x03R\n" +
@@ -1178,7 +1179,7 @@ var file_proto_staking_model_proto_goTypes = []any{
 	(ProductType)(0),       // 4: staking.ProductType
 	(InterestMode)(0),      // 5: staking.InterestMode
 	(RewardMode)(0),        // 6: staking.RewardMode
-	(YesNo)(0),             // 7: staking.YesNo
+	(common.YesNo)(0),      // 7: common.YesNo
 	(ProductStatus)(0),     // 8: staking.ProductStatus
 	(OrderStatus)(0),       // 9: staking.OrderStatus
 	(RedeemType)(0),        // 10: staking.RedeemType
@@ -1191,12 +1192,12 @@ var file_proto_staking_model_proto_depIdxs = []int32{
 	4,  // 0: staking.StakeProduct.product_type:type_name -> staking.ProductType
 	5,  // 1: staking.StakeProduct.interest_mode:type_name -> staking.InterestMode
 	6,  // 2: staking.StakeProduct.reward_mode:type_name -> staking.RewardMode
-	7,  // 3: staking.StakeProduct.allow_early_redeem:type_name -> staking.YesNo
+	7,  // 3: staking.StakeProduct.allow_early_redeem:type_name -> common.YesNo
 	8,  // 4: staking.StakeProduct.status:type_name -> staking.ProductStatus
 	4,  // 5: staking.StakeOrder.product_type:type_name -> staking.ProductType
 	5,  // 6: staking.StakeOrder.interest_mode:type_name -> staking.InterestMode
 	6,  // 7: staking.StakeOrder.reward_mode:type_name -> staking.RewardMode
-	7,  // 8: staking.StakeOrder.allow_early_redeem:type_name -> staking.YesNo
+	7,  // 8: staking.StakeOrder.allow_early_redeem:type_name -> common.YesNo
 	9,  // 9: staking.StakeOrder.status:type_name -> staking.OrderStatus
 	10, // 10: staking.StakeOrder.redeem_type:type_name -> staking.RedeemType
 	11, // 11: staking.StakeOrder.source:type_name -> staking.SourceType

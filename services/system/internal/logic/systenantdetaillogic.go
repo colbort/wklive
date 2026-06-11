@@ -49,7 +49,7 @@ func (l *SysTenantDetailLogic) SysTenantDetail(in *system.SysTenantDetailReq) (*
 			Id:           result.Id,
 			TenantCode:   result.TenantCode,
 			TenantName:   result.TenantName,
-			Status:       commonStatusToProto(result.Status),
+			Enabled:      commonStatusToProto(result.Enabled),
 			ExpireTime:   result.ExpireTime,
 			ContactName:  result.ContactName.String,
 			ContactPhone: result.ContactPhone.String,

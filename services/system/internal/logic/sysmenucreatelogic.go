@@ -61,7 +61,7 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 		Icon:        in.Icon,
 		Sort:        in.Sort,
 		Visible:     visibleStatusToModel(in.Visible),
-		Status:      commonStatusToModel(in.Status),
+		Enabled:     commonStatusToModel(in.Enabled),
 		CreateTimes: utils.NowMillis(),
 		UpdateTimes: utils.NowMillis(),
 	})

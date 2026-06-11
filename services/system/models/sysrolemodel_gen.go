@@ -48,7 +48,7 @@ type (
 		TenantId    int64  `db:"tenant_id"` // 所属租户ID：0=系统角色，>0=租户角色
 		Name        string `db:"name"`      // 角色名称
 		Code        string `db:"code"`      // 角色标识(如admin)
-		Status      int64  `db:"status"`    // 1启用 2禁用
+		Enabled     int64  `db:"enabled"`   // 启用开关：1启用 2禁用
 		Remark      string `db:"remark"`
 		CreateTimes int64  `db:"create_times"`
 		UpdateTimes int64  `db:"update_times"`
@@ -141,7 +141,7 @@ func (m *defaultSysRoleModel) Insert(ctx context.Context, data *SysRole) (sql.Re
 	sysRoleTenantIdNameKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdNamePrefix, data.TenantId, data.Name)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, sysRoleRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.Name, data.Code, data.Status, data.Remark, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.Name, data.Code, data.Enabled, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, sysRoleIdKey, sysRoleTenantIdCodeKey, sysRoleTenantIdNameKey)
 	return ret, err
 }
@@ -157,7 +157,7 @@ func (m *defaultSysRoleModel) Update(ctx context.Context, newData *SysRole) erro
 	sysRoleTenantIdNameKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdNamePrefix, data.TenantId, data.Name)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysRoleRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Name, newData.Code, newData.Status, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Name, newData.Code, newData.Enabled, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, sysRoleIdKey, sysRoleTenantIdCodeKey, sysRoleTenantIdNameKey)
 	return err
 }

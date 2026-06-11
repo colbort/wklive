@@ -36,6 +36,28 @@ func rechargeTypeFromPlatform(item *models.TPayPlatform) payment.RechargeType {
 	}
 }
 
+func switchToProto(value int64) common.Switch {
+	switch value {
+	case 1:
+		return common.Switch_SWITCH_ON
+	case 0:
+		return common.Switch_SWITCH_OFF
+	default:
+		return common.Switch_SWITCH_UNKNOWN
+	}
+}
+
+func switchToModel(value common.Switch, defaultValue int64) int64 {
+	switch value {
+	case common.Switch_SWITCH_ON:
+		return 1
+	case common.Switch_SWITCH_OFF:
+		return 0
+	default:
+		return defaultValue
+	}
+}
+
 func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, thirdTradeNo string, payAmount int64, remark string) error {
 	if order == nil {
 		return i18n.StatusError(ctx, i18n.OrderNotFound)
@@ -116,7 +138,7 @@ func freezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, o
 	resp, err := svcCtx.AssetCli.FreezeAsset(ctx, &asset.FreezeAssetReq{
 		TenantId:   order.TenantId,
 		UserId:     order.UserId,
-		WalletType: asset.WalletType_WALLET_TYPE_SPOT,
+		WalletType: common.WalletType_WALLET_TYPE_SPOT,
 		Coin:       order.Currency,
 		Amount:     strconv.FormatInt(order.Amount, 10),
 		BizType:    asset.BizType_BIZ_TYPE_PAYMENT,
@@ -191,11 +213,11 @@ func unfreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext,
 	return nil
 }
 
-func rechargeOrderWalletType(order *models.TRechargeOrder) asset.WalletType {
+func rechargeOrderWalletType(order *models.TRechargeOrder) common.WalletType {
 	if order == nil || order.WalletType <= 0 {
-		return asset.WalletType_WALLET_TYPE_SPOT
+		return common.WalletType_WALLET_TYPE_SPOT
 	}
-	return asset.WalletType(order.WalletType)
+	return common.WalletType(order.WalletType)
 }
 
 func toPayPlatformProto(item *models.TPayPlatform) *payment.PayPlatform {
@@ -210,7 +232,7 @@ func toPayPlatformProto(item *models.TPayPlatform) *payment.PayPlatform {
 		NotifyUrl:    item.NotifyUrl.String,
 		ReturnUrl:    item.ReturnUrl.String,
 		Icon:         item.Icon.String,
-		Status:       payment.CommonStatus(item.Status),
+		Enabled:      common.Enable(item.Enabled),
 		Remark:       item.Remark.String,
 		CreateTimes:  item.CreateTimes,
 		UpdateTimes:  item.UpdateTimes,
@@ -228,7 +250,7 @@ func toPayProductProto(item *models.TPayProduct) *payment.PayProduct {
 		ProductName: item.ProductName,
 		SceneType:   payment.SceneType(item.SceneType),
 		Currency:    item.Currency,
-		Status:      payment.CommonStatus(item.Status),
+		Enabled:     common.Enable(item.Enabled),
 		Remark:      item.Remark.String,
 		CreateTimes: item.CreateTimes,
 		UpdateTimes: item.UpdateTimes,
@@ -243,7 +265,7 @@ func toTenantPayPlatformProto(item *models.TTenantPayPlatform) *payment.TenantPa
 		Id:          item.Id,
 		TenantId:    item.TenantId,
 		PlatformId:  item.PlatformId,
-		Status:      payment.CommonStatus(item.Status),
+		Enabled:     common.Enable(item.Enabled),
 		OpenStatus:  payment.OpenStatus(item.OpenStatus),
 		Remark:      item.Remark.String,
 		CreateTimes: item.CreateTimes,
@@ -271,7 +293,7 @@ func toTenantPayAccountProto(item *models.TTenantPayAccount) *payment.TenantPayA
 		PublicKey:           item.PublicKey.String,
 		CertCipher:          item.CertCipher.String,
 		ExtConfig:           item.ExtConfig.String,
-		Status:              payment.CommonStatus(item.Status),
+		Enabled:             common.Enable(item.Enabled),
 		IsDefault:           item.IsDefault,
 		Remark:              item.Remark.String,
 		CreateTimes:         item.CreateTimes,
@@ -295,8 +317,8 @@ func toTenantPayChannelProto(item *models.TTenantPayChannel) *payment.TenantPayC
 		Icon:            item.Icon.String,
 		Currency:        item.Currency,
 		Sort:            item.Sort,
-		Visible:         item.Visible,
-		Status:          payment.CommonStatus(item.Status),
+		Visible:         switchToProto(item.Visible),
+		Enabled:         common.Enable(item.Enabled),
 		SingleMinAmount: item.SingleMinAmount,
 		SingleMaxAmount: item.SingleMaxAmount,
 		DailyMaxAmount:  item.DailyMaxAmount,
@@ -331,7 +353,7 @@ func toTenantPayChannelRuleProto(item *models.TTenantPayChannelRule) *payment.Te
 		ChannelId:            item.ChannelId,
 		RuleName:             item.RuleName,
 		Priority:             item.Priority,
-		Status:               payment.CommonStatus(item.Status),
+		Enabled:              common.Enable(item.Enabled),
 		SingleAmountMin:      item.SingleAmountMin,
 		SingleAmountMax:      item.SingleAmountMax,
 		UserTotalRechargeMin: item.UserTotalRechargeMin,
@@ -384,7 +406,7 @@ func toRechargeOrderProto(item *models.TRechargeOrder) *payment.RechargeOrder {
 		AccountId:    item.AccountId,
 		ChannelId:    item.ChannelId,
 		RechargeType: payment.RechargeType(item.RechargeType),
-		WalletType:   item.WalletType,
+		WalletType:   common.WalletType(item.WalletType),
 		Currency:     item.Currency,
 		OrderAmount:  item.OrderAmount,
 		PayAmount:    item.PayAmount,
@@ -497,7 +519,7 @@ func toCryptoRechargeAddressProto(item *models.TCryptoRechargeAddress) *payment.
 		Id:            item.Id,
 		TenantId:      item.TenantId,
 		UserId:        item.UserId,
-		WalletType:    item.WalletType,
+		WalletType:    common.WalletType(item.WalletType),
 		Coin:          item.Coin,
 		ChainCode:     common.ChainCode(item.ChainCode),
 		Address:       item.Address,
@@ -525,7 +547,7 @@ func toCryptoWalletAccountProto(item *models.TCryptoWalletAccount) *payment.Cryp
 		ApiSecretCipher:      item.ApiSecretCipher.String,
 		CallbackSecretCipher: item.CallbackSecretCipher.String,
 		ExtConfig:            item.ExtConfig.String,
-		Status:               toCryptoWalletStatusProto(item.Status),
+		Enabled:              toCryptoWalletStatusProto(item.Enabled),
 		IsDefault:            item.IsDefault,
 		CreateTimes:          item.CreateTimes,
 		UpdateTimes:          item.UpdateTimes,
@@ -585,24 +607,24 @@ func toCryptoAddressStatusProto(status int64) payment.CryptoRechargeAddressStatu
 	}
 }
 
-func toCryptoWalletStatusDB(status payment.CommonStatus, defaultValue int64) int64 {
+func toCryptoWalletStatusDB(status common.Enable, defaultValue int64) int64 {
 	switch status {
-	case payment.CommonStatus_COMMON_STATUS_ENABLED:
+	case common.Enable_ENABLE_ENABLED:
 		return 1
-	case payment.CommonStatus_COMMON_STATUS_DISABLED:
+	case common.Enable_ENABLE_DISABLED:
 		return 0
 	default:
 		return defaultValue
 	}
 }
 
-func toCryptoWalletStatusProto(status int64) payment.CommonStatus {
+func toCryptoWalletStatusProto(status int64) common.Enable {
 	switch status {
 	case 1:
-		return payment.CommonStatus_COMMON_STATUS_ENABLED
+		return common.Enable_ENABLE_ENABLED
 	case 0:
-		return payment.CommonStatus_COMMON_STATUS_DISABLED
+		return common.Enable_ENABLE_DISABLED
 	default:
-		return payment.CommonStatus_COMMON_STATUS_UNKNOWN
+		return common.Enable_ENABLE_UNKNOWN
 	}
 }

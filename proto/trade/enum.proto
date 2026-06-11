@@ -27,12 +27,6 @@ enum SymbolStatus {
   SYMBOL_STATUS_CLOSE_ONLY = 3;
 }
 
-enum TradeSide {
-  TRADE_SIDE_UNKNOWN = 0;
-  TRADE_SIDE_BUY = 1;
-  TRADE_SIDE_SELL = 2;
-}
-
 enum PositionSide {
   POSITION_SIDE_UNKNOWN = 0;
   POSITION_SIDE_NET = 1;
@@ -152,17 +146,6 @@ enum CancelSource {
   CANCEL_SOURCE_SYSTEM = 2; // 系统撤单
   CANCEL_SOURCE_RISK = 3; // 风控撤单
   CANCEL_SOURCE_TIMEOUT = 4; // 超时撤单
-}
-
-enum SwitchStatus {
-  SWITCH_STATUS_UNKNOWN = 0; // 未知
-  SWITCH_STATUS_DISABLED = 1; // 禁用
-  SWITCH_STATUS_ENABLED = 2; // 启用
-}
-
-enum EnableStatus {
-  ENABLE_STATUS_DISABLED = 0; // 禁用
-  ENABLE_STATUS_ENABLED = 1; // 启用
 }
 
 enum TriggerType {

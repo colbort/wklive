@@ -35,7 +35,7 @@ func (l *ListMyCryptoRechargeAddressesLogic) ListMyCryptoRechargeAddresses(in *p
 	if err != nil {
 		return nil, err
 	}
-	items, _, err := l.svcCtx.CryptoRechargeAddressModel.FindPage(l.ctx, tenantId, userId, in.WalletType, in.Coin, int64(in.ChainCode), "", int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED), 0, 0, 100)
+	items, _, err := l.svcCtx.CryptoRechargeAddressModel.FindPage(l.ctx, tenantId, userId, int64(in.WalletType), in.Coin, int64(in.ChainCode), "", int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED), 0, 0, 100)
 	if err != nil {
 		return nil, err
 	}

@@ -10,6 +10,7 @@ import (
 	"wklive/app-api/internal/logicutil"
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/proto/system"
 
@@ -70,10 +71,10 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 		})
 	}
 	data := types.SystemCore{
-		IsCaptchaEnabled:  config.IsCaptchaEnabled,
-		IsRegisterEnabled: config.IsRegisterEnabled,
-		IsGuestEnabled:    config.IsGuestEnabled,
-		IsCryptoEnabled:   config.IsCryptoEnabled,
+		IsCaptchaEnabled:  enableToBool(config.IsCaptchaEnabled),
+		IsRegisterEnabled: enableToBool(config.IsRegisterEnabled),
+		IsGuestEnabled:    enableToBool(config.IsGuestEnabled),
+		IsCryptoEnabled:   enableToBool(config.IsCryptoEnabled),
 		AssetUrl:          objectStorageAssetUrl(&storage),
 		Intervals:         intervals,
 	}
@@ -84,6 +85,10 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 		},
 		Data: data,
 	}, nil
+}
+
+func enableToBool(value common.Enable) bool {
+	return value == common.Enable_ENABLE_ENABLED
 }
 
 func objectStorageAssetUrl(storage *system.ObjectStorageConfig) string {

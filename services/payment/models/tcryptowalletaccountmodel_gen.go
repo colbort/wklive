@@ -51,7 +51,7 @@ type (
 		ApiSecretCipher      sql.NullString `db:"api_secret_cipher"`      // API Secret密文
 		CallbackSecretCipher sql.NullString `db:"callback_secret_cipher"` // 回调验签密钥密文
 		ExtConfig            sql.NullString `db:"ext_config"`             // 扩展配置
-		Status               int64          `db:"status"`                 // 状态:1启用 0禁用
+		Enabled              int64          `db:"enabled"`                // 启用状态:1启用 0禁用
 		IsDefault            int64          `db:"is_default"`             // 是否默认:1是 0否
 		CreateTimes          int64          `db:"create_times"`
 		UpdateTimes          int64          `db:"update_times"`
@@ -122,7 +122,7 @@ func (m *defaultTCryptoWalletAccountModel) Insert(ctx context.Context, data *TCr
 	tCryptoWalletAccountTenantIdAccountCodeKey := fmt.Sprintf("%s%v:%v", cacheTCryptoWalletAccountTenantIdAccountCodePrefix, data.TenantId, data.AccountCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tCryptoWalletAccountRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.AccountCode, data.AccountName, data.Provider, data.ApiKeyCipher, data.ApiSecretCipher, data.CallbackSecretCipher, data.ExtConfig, data.Status, data.IsDefault, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.AccountCode, data.AccountName, data.Provider, data.ApiKeyCipher, data.ApiSecretCipher, data.CallbackSecretCipher, data.ExtConfig, data.Enabled, data.IsDefault, data.CreateTimes, data.UpdateTimes)
 	}, tCryptoWalletAccountIdKey, tCryptoWalletAccountTenantIdAccountCodeKey)
 	return ret, err
 }
@@ -137,7 +137,7 @@ func (m *defaultTCryptoWalletAccountModel) Update(ctx context.Context, newData *
 	tCryptoWalletAccountTenantIdAccountCodeKey := fmt.Sprintf("%s%v:%v", cacheTCryptoWalletAccountTenantIdAccountCodePrefix, data.TenantId, data.AccountCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tCryptoWalletAccountRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.AccountCode, newData.AccountName, newData.Provider, newData.ApiKeyCipher, newData.ApiSecretCipher, newData.CallbackSecretCipher, newData.ExtConfig, newData.Status, newData.IsDefault, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.AccountCode, newData.AccountName, newData.Provider, newData.ApiKeyCipher, newData.ApiSecretCipher, newData.CallbackSecretCipher, newData.ExtConfig, newData.Enabled, newData.IsDefault, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tCryptoWalletAccountIdKey, tCryptoWalletAccountTenantIdAccountCodeKey)
 	return err
 }

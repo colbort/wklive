@@ -23,15 +23,15 @@ var (
 	tAssetCoinConfigRowsExpectAutoSet   = strings.Join(stringx.Remove(tAssetCoinConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tAssetCoinConfigRowsWithPlaceHolder = strings.Join(stringx.Remove(tAssetCoinConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTAssetCoinConfigIdPrefix                     = "cache:tAssetCoinConfig:id:"
-	cacheTAssetCoinConfigTenantIdWalletTypeCoinPrefix = "cache:tAssetCoinConfig:tenantId:walletType:coin:"
+	cacheTAssetCoinConfigIdPrefix                              = "cache:tAssetCoinConfig:id:"
+	cacheTAssetCoinConfigTenantIdWalletTypeCoinChainCodePrefix = "cache:tAssetCoinConfig:tenantId:walletType:coin:chainCode:"
 )
 
 type (
 	tAssetCoinConfigModel interface {
 		Insert(ctx context.Context, data *TAssetCoinConfig) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TAssetCoinConfig, error)
-		FindOneByTenantIdWalletTypeCoin(ctx context.Context, tenantId int64, walletType int64, coin string) (*TAssetCoinConfig, error)
+		FindOneByTenantIdWalletTypeCoinChainCode(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (*TAssetCoinConfig, error)
 		Update(ctx context.Context, data *TAssetCoinConfig) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -44,21 +44,21 @@ type (
 	TAssetCoinConfig struct {
 		Id              int64  `db:"id"`               // 主键ID
 		TenantId        int64  `db:"tenant_id"`        // 租户ID
-		WalletType      int64  `db:"wallet_type"`      // 账户类型:1现金账户 2股票账户 3合约账户 4 理财账户 5期权账户
+		WalletType      int64  `db:"wallet_type"`      // 账户类型:1现金/现货 2股票/资金 3合约 4理财 5期权
 		Coin            string `db:"coin"`             // 币种代码,如 USD/USDT/BTC/ETH
 		Symbol          string `db:"symbol"`           // 展示符号/资产标识,如 USD/USDT/BTCUSDT/ETHUSDT
 		CoinName        string `db:"coin_name"`        // 币种名称
 		CoinType        int64  `db:"coin_type"`        // 币种类型:1法币 2加密货币
-		ChainCode       int64  `db:"chain_code"`       // 链类型
+		ChainCode       int64  `db:"chain_code"`       // 链类型:0未知 1BTC 2ETH 3TRX 4BSC 5SOL 6POLYGON 20TRC20 21ERC20 22BEP20
 		IconUrl         string `db:"icon_url"`         // 币种图标URL
 		IconText        string `db:"icon_text"`        // 币种图标文案/符号
 		IconBgColor     string `db:"icon_bg_color"`    // 图标背景色
 		DecimalPlaces   int64  `db:"decimal_places"`   // 资产展示精度
-		AppVisible      int64  `db:"app_visible"`      // APP操作页是否展示:1展示 0隐藏
-		RechargeEnabled int64  `db:"recharge_enabled"` // 充值页是否展示:1展示 0隐藏
-		WithdrawEnabled int64  `db:"withdraw_enabled"` // 提现页是否展示:1展示 0隐藏
-		TransferEnabled int64  `db:"transfer_enabled"` // 划转页是否展示:1展示 0隐藏
-		Status          int64  `db:"status"`           // 状态:1启用 0禁用
+		AppVisible      int64  `db:"app_visible"`      // APP操作页展示开关:1显示 0隐藏
+		RechargeEnabled int64  `db:"recharge_enabled"` // 充值页展示开关:1显示 0隐藏
+		WithdrawEnabled int64  `db:"withdraw_enabled"` // 提现页展示开关:1显示 0隐藏
+		TransferEnabled int64  `db:"transfer_enabled"` // 划转页展示开关:1显示 0隐藏
+		Enabled         int64  `db:"enabled"`          // 启用开关:1启用 0禁用
 		Sort            int64  `db:"sort"`             // 排序,越小越靠前
 		Remark          string `db:"remark"`           // 备注
 		CreateTimes     int64  `db:"create_times"`     // 创建时间戳(毫秒)
@@ -80,11 +80,11 @@ func (m *defaultTAssetCoinConfigModel) Delete(ctx context.Context, id int64) err
 	}
 
 	tAssetCoinConfigIdKey := fmt.Sprintf("%s%v", cacheTAssetCoinConfigIdPrefix, id)
-	tAssetCoinConfigTenantIdWalletTypeCoinKey := fmt.Sprintf("%s%v:%v:%v", cacheTAssetCoinConfigTenantIdWalletTypeCoinPrefix, data.TenantId, data.WalletType, data.Coin)
+	tAssetCoinConfigTenantIdWalletTypeCoinChainCodeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTAssetCoinConfigTenantIdWalletTypeCoinChainCodePrefix, data.TenantId, data.WalletType, data.Coin, data.ChainCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tAssetCoinConfigIdKey, tAssetCoinConfigTenantIdWalletTypeCoinKey)
+	}, tAssetCoinConfigIdKey, tAssetCoinConfigTenantIdWalletTypeCoinChainCodeKey)
 	return err
 }
 
@@ -105,12 +105,12 @@ func (m *defaultTAssetCoinConfigModel) FindOne(ctx context.Context, id int64) (*
 	}
 }
 
-func (m *defaultTAssetCoinConfigModel) FindOneByTenantIdWalletTypeCoin(ctx context.Context, tenantId int64, walletType int64, coin string) (*TAssetCoinConfig, error) {
-	tAssetCoinConfigTenantIdWalletTypeCoinKey := fmt.Sprintf("%s%v:%v:%v", cacheTAssetCoinConfigTenantIdWalletTypeCoinPrefix, tenantId, walletType, coin)
+func (m *defaultTAssetCoinConfigModel) FindOneByTenantIdWalletTypeCoinChainCode(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (*TAssetCoinConfig, error) {
+	tAssetCoinConfigTenantIdWalletTypeCoinChainCodeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTAssetCoinConfigTenantIdWalletTypeCoinChainCodePrefix, tenantId, walletType, coin, chainCode)
 	var resp TAssetCoinConfig
-	err := m.QueryRowIndexCtx(ctx, &resp, tAssetCoinConfigTenantIdWalletTypeCoinKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `wallet_type` = ? and `coin` = ? limit 1", tAssetCoinConfigRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, walletType, coin); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tAssetCoinConfigTenantIdWalletTypeCoinChainCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `wallet_type` = ? and `coin` = ? and `chain_code` = ? limit 1", tAssetCoinConfigRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, walletType, coin, chainCode); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -127,11 +127,11 @@ func (m *defaultTAssetCoinConfigModel) FindOneByTenantIdWalletTypeCoin(ctx conte
 
 func (m *defaultTAssetCoinConfigModel) Insert(ctx context.Context, data *TAssetCoinConfig) (sql.Result, error) {
 	tAssetCoinConfigIdKey := fmt.Sprintf("%s%v", cacheTAssetCoinConfigIdPrefix, data.Id)
-	tAssetCoinConfigTenantIdWalletTypeCoinKey := fmt.Sprintf("%s%v:%v:%v", cacheTAssetCoinConfigTenantIdWalletTypeCoinPrefix, data.TenantId, data.WalletType, data.Coin)
+	tAssetCoinConfigTenantIdWalletTypeCoinChainCodeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTAssetCoinConfigTenantIdWalletTypeCoinChainCodePrefix, data.TenantId, data.WalletType, data.Coin, data.ChainCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tAssetCoinConfigRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.WalletType, data.Coin, data.Symbol, data.CoinName, data.CoinType, data.ChainCode, data.IconUrl, data.IconText, data.IconBgColor, data.DecimalPlaces, data.AppVisible, data.RechargeEnabled, data.WithdrawEnabled, data.TransferEnabled, data.Status, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, tAssetCoinConfigIdKey, tAssetCoinConfigTenantIdWalletTypeCoinKey)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.WalletType, data.Coin, data.Symbol, data.CoinName, data.CoinType, data.ChainCode, data.IconUrl, data.IconText, data.IconBgColor, data.DecimalPlaces, data.AppVisible, data.RechargeEnabled, data.WithdrawEnabled, data.TransferEnabled, data.Enabled, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
+	}, tAssetCoinConfigIdKey, tAssetCoinConfigTenantIdWalletTypeCoinChainCodeKey)
 	return ret, err
 }
 
@@ -142,11 +142,11 @@ func (m *defaultTAssetCoinConfigModel) Update(ctx context.Context, newData *TAss
 	}
 
 	tAssetCoinConfigIdKey := fmt.Sprintf("%s%v", cacheTAssetCoinConfigIdPrefix, data.Id)
-	tAssetCoinConfigTenantIdWalletTypeCoinKey := fmt.Sprintf("%s%v:%v:%v", cacheTAssetCoinConfigTenantIdWalletTypeCoinPrefix, data.TenantId, data.WalletType, data.Coin)
+	tAssetCoinConfigTenantIdWalletTypeCoinChainCodeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTAssetCoinConfigTenantIdWalletTypeCoinChainCodePrefix, data.TenantId, data.WalletType, data.Coin, data.ChainCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tAssetCoinConfigRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.WalletType, newData.Coin, newData.Symbol, newData.CoinName, newData.CoinType, newData.ChainCode, newData.IconUrl, newData.IconText, newData.IconBgColor, newData.DecimalPlaces, newData.AppVisible, newData.RechargeEnabled, newData.WithdrawEnabled, newData.TransferEnabled, newData.Status, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tAssetCoinConfigIdKey, tAssetCoinConfigTenantIdWalletTypeCoinKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.WalletType, newData.Coin, newData.Symbol, newData.CoinName, newData.CoinType, newData.ChainCode, newData.IconUrl, newData.IconText, newData.IconBgColor, newData.DecimalPlaces, newData.AppVisible, newData.RechargeEnabled, newData.WithdrawEnabled, newData.TransferEnabled, newData.Enabled, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tAssetCoinConfigIdKey, tAssetCoinConfigTenantIdWalletTypeCoinChainCodeKey)
 	return err
 }
 

@@ -96,7 +96,7 @@ message CreateContractReq {
   int64 list_time = 16;
   int64 expire_time = 17;
   int64 deliver_time = 18;
-  YesNo is_auto_exercise = 19;
+  common.YesNo is_auto_exercise = 19; // 是否自动行权
   ContractStatus status = 20;
   int64 sort = 21;
   string remark = 22;
@@ -127,11 +127,11 @@ message UpdateContractReq {
   int64 list_time = 17;
   int64 expire_time = 18;
   int64 deliver_time = 19;
-  YesNo is_auto_exercise = 20;
+  common.YesNo is_auto_exercise = 20; // 是否自动行权
   ContractStatus status = 21;
   int64 sort = 22;
   string remark = 23;
-  YesNo is_deleted = 24;
+  common.YesNo is_deleted = 24; // 是否删除
 }
 
 message GetContractReq {
@@ -223,7 +223,7 @@ message ListOrdersReq {
   int64 contract_id = 4;
   string underlying_symbol = 5;
   string order_no = 6;
-  Side side = 7;
+  common.Side side = 7; // 买卖方向
   PositionEffect position_effect = 8;
   OrderType order_type = 9;
   OrderStatus status = 10;
@@ -276,7 +276,7 @@ message ListPositionsReq {
   int64 user_id = 2;
   int64 account_id = 3;
   int64 contract_id = 4;
-  PositionSide side = 5;
+  common.PositionSide side = 5; // 持仓方向
   PositionStatus status = 6;
   common.PageReq page = 7;
 }

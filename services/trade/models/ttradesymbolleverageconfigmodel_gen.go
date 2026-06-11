@@ -50,7 +50,7 @@ type (
 		LeverageValues  string `db:"leverage_values"`  // 可选杠杆倍数，逗号分隔，如1,2,5,10,20,50,75,100,125
 		DefaultLeverage int64  `db:"default_leverage"` // 默认杠杆倍数
 		MaxLeverage     int64  `db:"max_leverage"`     // 当前模式允许的最大杠杆倍数
-		Status          int64  `db:"status"`           // 状态：1启用 0禁用
+		Enabled         int64  `db:"enabled"`          // 启用开关：1启用 0禁用
 		Sort            int64  `db:"sort"`             // 排序值，越小越靠前
 		Remark          string `db:"remark"`           // 备注
 		CreateTimes     int64  `db:"create_times"`     // 创建时间，毫秒时间戳
@@ -122,7 +122,7 @@ func (m *defaultTTradeSymbolLeverageConfigModel) Insert(ctx context.Context, dat
 	tTradeSymbolLeverageConfigTenantIdSymbolIdMarketTypeMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeSymbolLeverageConfigTenantIdSymbolIdMarketTypeMarginModePrefix, data.TenantId, data.SymbolId, data.MarketType, data.MarginMode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSymbolLeverageConfigRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.SymbolId, data.MarketType, data.MarginMode, data.LeverageValues, data.DefaultLeverage, data.MaxLeverage, data.Status, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.SymbolId, data.MarketType, data.MarginMode, data.LeverageValues, data.DefaultLeverage, data.MaxLeverage, data.Enabled, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tTradeSymbolLeverageConfigIdKey, tTradeSymbolLeverageConfigTenantIdSymbolIdMarketTypeMarginModeKey)
 	return ret, err
 }
@@ -137,7 +137,7 @@ func (m *defaultTTradeSymbolLeverageConfigModel) Update(ctx context.Context, new
 	tTradeSymbolLeverageConfigTenantIdSymbolIdMarketTypeMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeSymbolLeverageConfigTenantIdSymbolIdMarketTypeMarginModePrefix, data.TenantId, data.SymbolId, data.MarketType, data.MarginMode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeSymbolLeverageConfigRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SymbolId, newData.MarketType, newData.MarginMode, newData.LeverageValues, newData.DefaultLeverage, newData.MaxLeverage, newData.Status, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SymbolId, newData.MarketType, newData.MarginMode, newData.LeverageValues, newData.DefaultLeverage, newData.MaxLeverage, newData.Enabled, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeSymbolLeverageConfigIdKey, tTradeSymbolLeverageConfigTenantIdSymbolIdMarketTypeMarginModeKey)
 	return err
 }

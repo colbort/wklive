@@ -18,7 +18,7 @@ type UserModel interface {
 	sysUserModel
 	FindOneByUsername(ctx context.Context, username string) (*SysUser, error)
 	FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error)
-	FindPage(ctx context.Context, keyword string, tenantId int64, status, cursor, limit int64) ([]*SysUser, int64, error)
+	FindPage(ctx context.Context, keyword string, tenantId int64, enabled, cursor, limit int64) ([]*SysUser, int64, error)
 	TransCtx(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error)
 	InsertGoogle2FASecret(ctx context.Context, userId int64, secret string) error
@@ -54,7 +54,7 @@ func (m *defaultSysUserModel) FindPage(
 	ctx context.Context,
 	keyword string,
 	tenantId int64,
-	status int64,
+	enabled int64,
 	cursor, limit int64,
 ) ([]*SysUser, int64, error) {
 
@@ -66,7 +66,7 @@ func (m *defaultSysUserModel) FindPage(
 		like := "%" + keyword + "%"
 		builder.And("(username LIKE ? OR nickname LIKE ?)", like, like)
 	}
-	builder.EqInt64("status", status)
+	builder.EqInt64("enabled", enabled)
 	builder.EqInt64("tenant_id", tenantId)
 
 	where := builder.Where()
@@ -113,7 +113,7 @@ func (m *defaultSysUserModel) TransCtx(ctx context.Context, fn func(context cont
 
 func (m *defaultSysUserModel) InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error) {
 	query := fmt.Sprintf(
-		"insert into %s (`tenant_id`, `user_type`, `is_owner`, `username`, `password`, `nickname`, `avatar`, `status`, `google_secret`, `google_enabled`, `perms_ver`, `last_login_ip`, `last_login_at`, `create_by`, `create_times`, `update_times`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"insert into %s (`tenant_id`, `user_type`, `is_owner`, `username`, `password`, `nickname`, `avatar`, `enabled`, `google_secret`, `google_enabled`, `perms_ver`, `last_login_ip`, `last_login_at`, `create_by`, `create_times`, `update_times`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		m.table,
 	)
 	ret, err := session.ExecCtx(
@@ -126,7 +126,7 @@ func (m *defaultSysUserModel) InsertCtx(ctx context.Context, session sqlx.Sessio
 		data.Password,
 		data.Nickname,
 		data.Avatar,
-		data.Status,
+		data.Enabled,
 		data.GoogleSecret,
 		data.GoogleEnabled,
 		data.PermsVer,

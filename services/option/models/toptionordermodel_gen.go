@@ -65,8 +65,8 @@ type (
 		MarginAmount     float64 `db:"margin_amount"`     // 冻结保证金
 		Source           int64   `db:"source"`            // 订单来源：1APP 2WEB 3API 4ADMIN
 		ClientOrderId    string  `db:"client_order_id"`   // 客户端订单号
-		ReduceOnly       int64   `db:"reduce_only"`       // 是否只减仓：0否 1是
-		Mmp              int64   `db:"mmp"`               // 是否做市商保护单：0否 1是
+		ReduceOnly       int64   `db:"reduce_only"`       // 是否只减仓：1否 2是
+		Mmp              int64   `db:"mmp"`               // 是否做市商保护单：1否 2是
 		Status           int64   `db:"status"`            // 状态：1待撮合 2部分成交 3完全成交 4已撤单 5拒单 6已过期
 		CancelReason     string  `db:"cancel_reason"`     // 撤单/拒单原因
 		MatchTime        int64   `db:"match_time"`        // 最后成交时间

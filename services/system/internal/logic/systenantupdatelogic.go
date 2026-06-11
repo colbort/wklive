@@ -65,8 +65,8 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(in *system.SysTenantUpdateReq) (*
 				return err
 			}
 		}
-		if in.Status != 0 {
-			tenant.Status = commonStatusToModel(in.Status)
+		if in.Enabled != 0 {
+			tenant.Enabled = commonStatusToModel(in.Enabled)
 		}
 		if in.ExpireTime != 0 {
 			tenant.ExpireTime = in.ExpireTime

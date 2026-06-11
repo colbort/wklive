@@ -46,7 +46,7 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 
-	if user.Status != 1 {
+	if user.Enabled != 1 {
 		return nil, i18n.StatusError(l.ctx, i18n.UserDisabledForLogin)
 	}
 
@@ -106,7 +106,7 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 			Token:            token,
 			UserId:           user.Id,
 			Nickname:         user.Nickname,
-			Google2FaEnabled: user.GoogleEnabled,
+			Google2FaEnabled: binaryEnableToProto(user.GoogleEnabled),
 			PermsVer:         user.PermsVer,
 		},
 	}, nil

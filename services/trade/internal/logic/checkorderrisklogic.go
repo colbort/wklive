@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -42,7 +43,7 @@ func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trad
 			resp.Passed = 0
 			rejectCode = "TRADE_DISABLED"
 			rejectMsg = "trade disabled"
-		} else if in.Side == trade.TradeSide_TRADE_SIDE_BUY && limitCfg.CanOpen == 0 {
+		} else if in.Side == common.Side_SIDE_BUY && limitCfg.CanOpen == 0 {
 			resp.Passed = 0
 			rejectCode = "OPEN_DISABLED"
 			rejectMsg = "open disabled"

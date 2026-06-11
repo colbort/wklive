@@ -45,7 +45,7 @@ type (
 		Id           int64          `db:"id"`            // 租户ID
 		TenantCode   string         `db:"tenant_code"`   // 租户编码
 		TenantName   string         `db:"tenant_name"`   // 租户名称
-		Status       int64          `db:"status"`        // 状态：1正常 2禁用
+		Enabled      int64          `db:"enabled"`       // 启用开关：1启用 2禁用
 		ExpireTime   int64          `db:"expire_time"`   // 到期时间
 		ContactName  sql.NullString `db:"contact_name"`  // 联系人
 		ContactPhone sql.NullString `db:"contact_phone"` // 联系电话
@@ -124,7 +124,7 @@ func (m *defaultSysTenantModel) Insert(ctx context.Context, data *SysTenant) (sq
 	sysTenantTenantCodeKey := fmt.Sprintf("%s%v", cacheSysTenantTenantCodePrefix, data.TenantCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysTenantRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantCode, data.TenantName, data.Status, data.ExpireTime, data.ContactName, data.ContactPhone, data.LoginIp, data.LoginTime, data.LoginCount, data.Remark, data.CreateBy, data.CreateTimes, data.UpdateBy, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantCode, data.TenantName, data.Enabled, data.ExpireTime, data.ContactName, data.ContactPhone, data.LoginIp, data.LoginTime, data.LoginCount, data.Remark, data.CreateBy, data.CreateTimes, data.UpdateBy, data.UpdateTimes)
 	}, sysTenantIdKey, sysTenantTenantCodeKey)
 	return ret, err
 }
@@ -139,7 +139,7 @@ func (m *defaultSysTenantModel) Update(ctx context.Context, newData *SysTenant) 
 	sysTenantTenantCodeKey := fmt.Sprintf("%s%v", cacheSysTenantTenantCodePrefix, data.TenantCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysTenantRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantCode, newData.TenantName, newData.Status, newData.ExpireTime, newData.ContactName, newData.ContactPhone, newData.LoginIp, newData.LoginTime, newData.LoginCount, newData.Remark, newData.CreateBy, newData.CreateTimes, newData.UpdateBy, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantCode, newData.TenantName, newData.Enabled, newData.ExpireTime, newData.ContactName, newData.ContactPhone, newData.LoginIp, newData.LoginTime, newData.LoginCount, newData.Remark, newData.CreateBy, newData.CreateTimes, newData.UpdateBy, newData.UpdateTimes, newData.Id)
 	}, sysTenantIdKey, sysTenantTenantCodeKey)
 	return err
 }

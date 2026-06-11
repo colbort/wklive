@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package option;
 
+import "proto/common/common.proto";
 import "proto/option/enum.proto";
 
 option go_package = "wklive/proto/option;option";
@@ -26,11 +27,11 @@ message OptionContract {
   int64 list_time = 17;
   int64 expire_time = 18;
   int64 deliver_time = 19;
-  YesNo is_auto_exercise = 20;
+  common.YesNo is_auto_exercise = 20; // 是否自动行权
   ContractStatus status = 21;
   int64 sort = 22;
   string remark = 23;
-  YesNo is_deleted = 24;
+  common.YesNo is_deleted = 24; // 是否删除
   int64 create_times = 25;
   int64 update_times = 26;
 }
@@ -88,7 +89,7 @@ message OptionOrder {
   int64 account_id = 5;
   int64 contract_id = 6;
   string underlying_symbol = 7;
-  Side side = 8;
+  common.Side side = 8; // 买卖方向
   PositionEffect position_effect = 9;
   OrderType order_type = 10;
   string price = 11;
@@ -102,8 +103,8 @@ message OptionOrder {
   string margin_amount = 19;
   OrderSource source = 20;
   string client_order_id = 21;
-  YesNo reduce_only = 22;
-  YesNo mmp = 23;
+  common.YesNo reduce_only = 22; // 是否只减仓
+  common.YesNo mmp = 23; // 是否做市商保护单
   OrderStatus status = 24;
   string cancel_reason = 25;
   int64 match_time = 26;
@@ -132,7 +133,7 @@ message OptionTrade {
   string buy_fee = 17;
   string sell_fee = 18;
   string fee_coin = 19;
-  MakerSide maker_side = 20;
+  common.Side maker_side = 20; // maker方向
   int64 trade_time = 21;
   int64 create_times = 22;
 }
@@ -144,7 +145,7 @@ message OptionPosition {
   int64 account_id = 4;
   int64 contract_id = 5;
   string underlying_symbol = 6;
-  PositionSide side = 7;
+  common.PositionSide side = 7; // 持仓方向
   string position_qty = 8;
   string available_qty = 9;
   string frozen_qty = 10;
@@ -197,7 +198,7 @@ message OptionSettlement {
   string delivery_price = 8;
   string theoretical_price = 9;
   string iv = 10;
-  YesNo is_itm = 11;
+  common.YesNo is_itm = 11; // 是否实值
   ExerciseResult exercise_result = 12;
   SettlementStatus status = 13;
   string remark = 14;

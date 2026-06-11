@@ -104,7 +104,7 @@ CREATE TABLE `t_user_security` (
   `user_id` bigint NOT NULL COMMENT '用户ID',
   `pay_password_hash` varchar(255) DEFAULT NULL COMMENT '支付密码哈希',
   `google_secret` varchar(255) DEFAULT NULL COMMENT 'Google密钥',
-  `google_enabled` tinyint NOT NULL DEFAULT 0 COMMENT 'Google2FA是否启用：0否 1是',
+  `google_enabled` tinyint NOT NULL DEFAULT 0 COMMENT 'Google2FA启用状态：1启用 2禁用',
   `login_error_count` int NOT NULL DEFAULT 0 COMMENT '登录错误次数',
   `pay_error_count` int NOT NULL DEFAULT 0 COMMENT '支付密码错误次数',
   `lock_until` bigint DEFAULT 0 COMMENT '锁定到期时间',
@@ -129,12 +129,12 @@ CREATE TABLE `t_user_bank` (
   `branch_name` varchar(255) DEFAULT NULL COMMENT '支行名称',
   `country_code` varchar(16) DEFAULT NULL COMMENT '国家地区',
   `is_default` tinyint NOT NULL DEFAULT 0 COMMENT '是否默认：0否 1是',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用',
+  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用',
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `idx_tenant_user_id` (`tenant_id`, `user_id`),
-  KEY `idx_tenant_status` (`tenant_id`, `status`),
+  KEY `idx_tenant_status` (`tenant_id`, `enabled`),
   KEY `idx_tenant_is_default` (`tenant_id`, `is_default`),
   KEY `idx_tenant_account_no` (`tenant_id`, `account_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户银行卡表';

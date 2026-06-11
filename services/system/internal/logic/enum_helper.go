@@ -3,15 +3,27 @@ package logic
 import (
 	"strings"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 )
 
-func commonStatusToProto(v int64) system.CommonStatus {
-	return system.CommonStatus(v)
+func commonStatusToProto(v int64) common.Enable {
+	return common.Enable(v)
 }
 
-func commonStatusToModel(v system.CommonStatus) int64 {
+func commonStatusToModel(v common.Enable) int64 {
 	return int64(v)
+}
+
+func binaryEnableToProto(v int64) common.Enable {
+	switch v {
+	case 1:
+		return common.Enable_ENABLE_ENABLED
+	case 0:
+		return common.Enable_ENABLE_DISABLED
+	default:
+		return common.Enable_ENABLE_UNKNOWN
+	}
 }
 
 func menuTypeToProto(v int64) system.MenuType {
@@ -22,11 +34,11 @@ func menuTypeToModel(v system.MenuType) int64 {
 	return int64(v)
 }
 
-func visibleStatusToProto(v int64) system.VisibleStatus {
-	return system.VisibleStatus(v)
+func visibleStatusToProto(v int64) common.Switch {
+	return common.Switch(v)
 }
 
-func visibleStatusToModel(v system.VisibleStatus) int64 {
+func visibleStatusToModel(v common.Switch) int64 {
 	return int64(v)
 }
 

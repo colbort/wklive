@@ -48,7 +48,7 @@ type (
 		ProductName string         `db:"product_name"` // 产品名称
 		SceneType   int64          `db:"scene_type"`   // 场景：1APP 2H5 3WEB 4收银台 5链上
 		Currency    string         `db:"currency"`     // 币种
-		Status      int64          `db:"status"`       // 状态：1启用 2停用
+		Enabled     int64          `db:"enabled"`      // 启用状态：1启用 2禁用
 		Remark      sql.NullString `db:"remark"`       // 备注
 		CreateTimes int64          `db:"create_times"` // 创建时间
 		UpdateTimes int64          `db:"update_times"` // 更新时间
@@ -119,7 +119,7 @@ func (m *defaultTPayProductModel) Insert(ctx context.Context, data *TPayProduct)
 	tPayProductProductCodeKey := fmt.Sprintf("%s%v", cacheTPayProductProductCodePrefix, data.ProductCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tPayProductRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.PlatformId, data.ProductCode, data.ProductName, data.SceneType, data.Currency, data.Status, data.Remark, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.PlatformId, data.ProductCode, data.ProductName, data.SceneType, data.Currency, data.Enabled, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tPayProductIdKey, tPayProductProductCodeKey)
 	return ret, err
 }
@@ -134,7 +134,7 @@ func (m *defaultTPayProductModel) Update(ctx context.Context, newData *TPayProdu
 	tPayProductProductCodeKey := fmt.Sprintf("%s%v", cacheTPayProductProductCodePrefix, data.ProductCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tPayProductRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.PlatformId, newData.ProductCode, newData.ProductName, newData.SceneType, newData.Currency, newData.Status, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.PlatformId, newData.ProductCode, newData.ProductName, newData.SceneType, newData.Currency, newData.Enabled, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tPayProductIdKey, tPayProductProductCodeKey)
 	return err
 }

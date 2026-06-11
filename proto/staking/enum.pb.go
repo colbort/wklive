@@ -21,56 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// 是否
-type YesNo int32
-
-const (
-	YesNo_YES_NO_UNKNOWN YesNo = 0
-	YesNo_YES_NO_NO      YesNo = 1 // 否
-	YesNo_YES_NO_YES     YesNo = 2 // 是
-)
-
-// Enum value maps for YesNo.
-var (
-	YesNo_name = map[int32]string{
-		0: "YES_NO_UNKNOWN",
-		1: "YES_NO_NO",
-		2: "YES_NO_YES",
-	}
-	YesNo_value = map[string]int32{
-		"YES_NO_UNKNOWN": 0,
-		"YES_NO_NO":      1,
-		"YES_NO_YES":     2,
-	}
-)
-
-func (x YesNo) Enum() *YesNo {
-	p := new(YesNo)
-	*p = x
-	return p
-}
-
-func (x YesNo) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (YesNo) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[0].Descriptor()
-}
-
-func (YesNo) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[0]
-}
-
-func (x YesNo) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use YesNo.Descriptor instead.
-func (YesNo) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{0}
-}
-
 // 产品状态
 type ProductStatus int32
 
@@ -108,11 +58,11 @@ func (x ProductStatus) String() string {
 }
 
 func (ProductStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[1].Descriptor()
+	return file_proto_staking_enum_proto_enumTypes[0].Descriptor()
 }
 
 func (ProductStatus) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[1]
+	return &file_proto_staking_enum_proto_enumTypes[0]
 }
 
 func (x ProductStatus) Number() protoreflect.EnumNumber {
@@ -121,7 +71,7 @@ func (x ProductStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ProductStatus.Descriptor instead.
 func (ProductStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{1}
+	return file_proto_staking_enum_proto_rawDescGZIP(), []int{0}
 }
 
 // 产品类型
@@ -158,11 +108,11 @@ func (x ProductType) String() string {
 }
 
 func (ProductType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[2].Descriptor()
+	return file_proto_staking_enum_proto_enumTypes[1].Descriptor()
 }
 
 func (ProductType) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[2]
+	return &file_proto_staking_enum_proto_enumTypes[1]
 }
 
 func (x ProductType) Number() protoreflect.EnumNumber {
@@ -171,7 +121,7 @@ func (x ProductType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ProductType.Descriptor instead.
 func (ProductType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{2}
+	return file_proto_staking_enum_proto_rawDescGZIP(), []int{1}
 }
 
 // 计息方式
@@ -208,11 +158,11 @@ func (x InterestMode) String() string {
 }
 
 func (InterestMode) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[3].Descriptor()
+	return file_proto_staking_enum_proto_enumTypes[2].Descriptor()
 }
 
 func (InterestMode) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[3]
+	return &file_proto_staking_enum_proto_enumTypes[2]
 }
 
 func (x InterestMode) Number() protoreflect.EnumNumber {
@@ -221,7 +171,7 @@ func (x InterestMode) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use InterestMode.Descriptor instead.
 func (InterestMode) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{3}
+	return file_proto_staking_enum_proto_rawDescGZIP(), []int{2}
 }
 
 // 发息方式
@@ -258,11 +208,11 @@ func (x RewardMode) String() string {
 }
 
 func (RewardMode) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[4].Descriptor()
+	return file_proto_staking_enum_proto_enumTypes[3].Descriptor()
 }
 
 func (RewardMode) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[4]
+	return &file_proto_staking_enum_proto_enumTypes[3]
 }
 
 func (x RewardMode) Number() protoreflect.EnumNumber {
@@ -271,7 +221,7 @@ func (x RewardMode) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RewardMode.Descriptor instead.
 func (RewardMode) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{4}
+	return file_proto_staking_enum_proto_rawDescGZIP(), []int{3}
 }
 
 // 订单状态
@@ -317,11 +267,11 @@ func (x OrderStatus) String() string {
 }
 
 func (OrderStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[5].Descriptor()
+	return file_proto_staking_enum_proto_enumTypes[4].Descriptor()
 }
 
 func (OrderStatus) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[5]
+	return &file_proto_staking_enum_proto_enumTypes[4]
 }
 
 func (x OrderStatus) Number() protoreflect.EnumNumber {
@@ -330,7 +280,7 @@ func (x OrderStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use OrderStatus.Descriptor instead.
 func (OrderStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{5}
+	return file_proto_staking_enum_proto_rawDescGZIP(), []int{4}
 }
 
 // 赎回类型
@@ -373,11 +323,11 @@ func (x RedeemType) String() string {
 }
 
 func (RedeemType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[6].Descriptor()
+	return file_proto_staking_enum_proto_enumTypes[5].Descriptor()
 }
 
 func (RedeemType) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[6]
+	return &file_proto_staking_enum_proto_enumTypes[5]
 }
 
 func (x RedeemType) Number() protoreflect.EnumNumber {
@@ -386,7 +336,7 @@ func (x RedeemType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RedeemType.Descriptor instead.
 func (RedeemType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{6}
+	return file_proto_staking_enum_proto_rawDescGZIP(), []int{5}
 }
 
 // 收益类型
@@ -429,11 +379,11 @@ func (x RewardType) String() string {
 }
 
 func (RewardType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[7].Descriptor()
+	return file_proto_staking_enum_proto_enumTypes[6].Descriptor()
 }
 
 func (RewardType) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[7]
+	return &file_proto_staking_enum_proto_enumTypes[6]
 }
 
 func (x RewardType) Number() protoreflect.EnumNumber {
@@ -442,7 +392,7 @@ func (x RewardType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RewardType.Descriptor instead.
 func (RewardType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{7}
+	return file_proto_staking_enum_proto_rawDescGZIP(), []int{6}
 }
 
 // 收益状态
@@ -479,11 +429,11 @@ func (x RewardStatus) String() string {
 }
 
 func (RewardStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[8].Descriptor()
+	return file_proto_staking_enum_proto_enumTypes[7].Descriptor()
 }
 
 func (RewardStatus) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[8]
+	return &file_proto_staking_enum_proto_enumTypes[7]
 }
 
 func (x RewardStatus) Number() protoreflect.EnumNumber {
@@ -492,7 +442,7 @@ func (x RewardStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RewardStatus.Descriptor instead.
 func (RewardStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{8}
+	return file_proto_staking_enum_proto_rawDescGZIP(), []int{7}
 }
 
 // 赎回状态
@@ -532,11 +482,11 @@ func (x RedeemStatus) String() string {
 }
 
 func (RedeemStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[9].Descriptor()
+	return file_proto_staking_enum_proto_enumTypes[8].Descriptor()
 }
 
 func (RedeemStatus) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[9]
+	return &file_proto_staking_enum_proto_enumTypes[8]
 }
 
 func (x RedeemStatus) Number() protoreflect.EnumNumber {
@@ -545,7 +495,7 @@ func (x RedeemStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RedeemStatus.Descriptor instead.
 func (RedeemStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{9}
+	return file_proto_staking_enum_proto_rawDescGZIP(), []int{8}
 }
 
 // 来源
@@ -588,11 +538,11 @@ func (x SourceType) String() string {
 }
 
 func (SourceType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_staking_enum_proto_enumTypes[10].Descriptor()
+	return file_proto_staking_enum_proto_enumTypes[9].Descriptor()
 }
 
 func (SourceType) Type() protoreflect.EnumType {
-	return &file_proto_staking_enum_proto_enumTypes[10]
+	return &file_proto_staking_enum_proto_enumTypes[9]
 }
 
 func (x SourceType) Number() protoreflect.EnumNumber {
@@ -601,19 +551,14 @@ func (x SourceType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SourceType.Descriptor instead.
 func (SourceType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_staking_enum_proto_rawDescGZIP(), []int{10}
+	return file_proto_staking_enum_proto_rawDescGZIP(), []int{9}
 }
 
 var File_proto_staking_enum_proto protoreflect.FileDescriptor
 
 const file_proto_staking_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x18proto/staking/enum.proto\x12\astaking*:\n" +
-	"\x05YesNo\x12\x12\n" +
-	"\x0eYES_NO_UNKNOWN\x10\x00\x12\r\n" +
-	"\tYES_NO_NO\x10\x01\x12\x0e\n" +
-	"\n" +
-	"YES_NO_YES\x10\x02*\x80\x01\n" +
+	"\x18proto/staking/enum.proto\x12\astaking*\x80\x01\n" +
 	"\rProductStatus\x12\x1a\n" +
 	"\x16PRODUCT_STATUS_UNKNOWN\x10\x00\x12\x1a\n" +
 	"\x16PRODUCT_STATUS_DISABLE\x10\x01\x12\x19\n" +
@@ -682,19 +627,18 @@ func file_proto_staking_enum_proto_rawDescGZIP() []byte {
 	return file_proto_staking_enum_proto_rawDescData
 }
 
-var file_proto_staking_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 11)
+var file_proto_staking_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
 var file_proto_staking_enum_proto_goTypes = []any{
-	(YesNo)(0),         // 0: staking.YesNo
-	(ProductStatus)(0), // 1: staking.ProductStatus
-	(ProductType)(0),   // 2: staking.ProductType
-	(InterestMode)(0),  // 3: staking.InterestMode
-	(RewardMode)(0),    // 4: staking.RewardMode
-	(OrderStatus)(0),   // 5: staking.OrderStatus
-	(RedeemType)(0),    // 6: staking.RedeemType
-	(RewardType)(0),    // 7: staking.RewardType
-	(RewardStatus)(0),  // 8: staking.RewardStatus
-	(RedeemStatus)(0),  // 9: staking.RedeemStatus
-	(SourceType)(0),    // 10: staking.SourceType
+	(ProductStatus)(0), // 0: staking.ProductStatus
+	(ProductType)(0),   // 1: staking.ProductType
+	(InterestMode)(0),  // 2: staking.InterestMode
+	(RewardMode)(0),    // 3: staking.RewardMode
+	(OrderStatus)(0),   // 4: staking.OrderStatus
+	(RedeemType)(0),    // 5: staking.RedeemType
+	(RewardType)(0),    // 6: staking.RewardType
+	(RewardStatus)(0),  // 7: staking.RewardStatus
+	(RedeemStatus)(0),  // 8: staking.RedeemStatus
+	(SourceType)(0),    // 9: staking.SourceType
 }
 var file_proto_staking_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -714,7 +658,7 @@ func file_proto_staking_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_staking_enum_proto_rawDesc), len(file_proto_staking_enum_proto_rawDesc)),
-			NumEnums:      11,
+			NumEnums:      10,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

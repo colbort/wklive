@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -26,12 +27,12 @@ func NewPageUserAssetsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 
 // 分页查询资产
 func (l *PageUserAssetsLogic) PageUserAssets(in *asset.PageUserAssetsReq) (*asset.PageUserAssetsResp, error) {
-	status := int64(0)
-	if in.Status != asset.AssetStatus_ASSET_STATUS_UNKNOWN {
-		status = assetStatusFilter(in.Status)
+	enabled := int64(0)
+	if in.Enabled != common.Enable_ENABLE_UNKNOWN {
+		enabled = assetEnabledFilter(in.Enabled)
 	}
 
-	list, total, err := l.svcCtx.UserAssetModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, status, in.Page.Cursor, in.Page.Limit)
+	list, total, err := l.svcCtx.UserAssetModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, enabled, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

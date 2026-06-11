@@ -70,8 +70,8 @@ type CreateCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CategoryType  CategoryType           `protobuf:"varint,1,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	CategoryName  string                 `protobuf:"bytes,2,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
-	Enabled       int64                  `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
 	Icon          string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
 	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -123,18 +123,18 @@ func (x *CreateCategoryReq) GetCategoryName() string {
 	return ""
 }
 
-func (x *CreateCategoryReq) GetEnabled() int64 {
+func (x *CreateCategoryReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *CreateCategoryReq) GetAppVisible() int64 {
+func (x *CreateCategoryReq) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *CreateCategoryReq) GetSort() int64 {
@@ -162,8 +162,8 @@ type UpdateCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CategoryName  string                 `protobuf:"bytes,2,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
-	Enabled       int64                  `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
 	Icon          string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
 	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -215,18 +215,18 @@ func (x *UpdateCategoryReq) GetCategoryName() string {
 	return ""
 }
 
-func (x *UpdateCategoryReq) GetEnabled() int64 {
+func (x *UpdateCategoryReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *UpdateCategoryReq) GetAppVisible() int64 {
+func (x *UpdateCategoryReq) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *UpdateCategoryReq) GetSort() int64 {
@@ -350,8 +350,8 @@ type ListCategoriesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	CategoryType  CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
-	Enabled       int32                  `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`                         // 0全部 1启用 2禁用
-	AppVisible    int32                  `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"` // 0全部 1可见 2不可见
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态,0全部 1启用 2禁用
+	AppVisible    common.Switch          `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关,0全部 1可见 2隐藏
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -400,18 +400,18 @@ func (x *ListCategoriesReq) GetCategoryType() CategoryType {
 	return CategoryType_CATEGORY_TYPE_UNKNOWN
 }
 
-func (x *ListCategoriesReq) GetEnabled() int32 {
+func (x *ListCategoriesReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *ListCategoriesReq) GetAppVisible() int32 {
+func (x *ListCategoriesReq) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 type ListCategoriesResp struct {
@@ -728,8 +728,8 @@ type CreateProductReq struct {
 	DisplayName   string                 `protobuf:"bytes,6,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	BaseCoin      string                 `protobuf:"bytes,7,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
 	QuoteCoin     string                 `protobuf:"bytes,8,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
-	Enabled       int64                  `protobuf:"varint,9,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,10,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,9,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                          // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,10,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,11,opt,name=sort,proto3" json:"sort,omitempty"`
 	Icon          string                 `protobuf:"bytes,12,opt,name=icon,proto3" json:"icon,omitempty"`
 	Remark        string                 `protobuf:"bytes,13,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -823,18 +823,18 @@ func (x *CreateProductReq) GetQuoteCoin() string {
 	return ""
 }
 
-func (x *CreateProductReq) GetEnabled() int64 {
+func (x *CreateProductReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *CreateProductReq) GetAppVisible() int64 {
+func (x *CreateProductReq) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *CreateProductReq) GetSort() int64 {
@@ -866,8 +866,8 @@ type UpdateProductReq struct {
 	DisplayName   string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	BaseCoin      string                 `protobuf:"bytes,5,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
 	QuoteCoin     string                 `protobuf:"bytes,6,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
-	Enabled       int64                  `protobuf:"varint,7,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,8,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,7,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,8,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,9,opt,name=sort,proto3" json:"sort,omitempty"`
 	Icon          string                 `protobuf:"bytes,10,opt,name=icon,proto3" json:"icon,omitempty"`
 	Remark        string                 `protobuf:"bytes,11,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -947,18 +947,18 @@ func (x *UpdateProductReq) GetQuoteCoin() string {
 	return ""
 }
 
-func (x *UpdateProductReq) GetEnabled() int64 {
+func (x *UpdateProductReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *UpdateProductReq) GetAppVisible() int64 {
+func (x *UpdateProductReq) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *UpdateProductReq) GetSort() int64 {
@@ -1085,8 +1085,8 @@ type ListProductsReq struct {
 	CategoryName  string                 `protobuf:"bytes,3,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
 	Market        string                 `protobuf:"bytes,4,opt,name=market,proto3" json:"market,omitempty"`
 	Keyword       string                 `protobuf:"bytes,5,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Enabled       int32                  `protobuf:"varint,6,opt,name=enabled,proto3" json:"enabled,omitempty"`                         // 0全部 1启用 2禁用
-	AppVisible    int32                  `protobuf:"varint,7,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"` // 0全部 1显示 2隐藏
+	Enabled       common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态,0全部 1启用 2禁用
+	AppVisible    common.Switch          `protobuf:"varint,7,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关,0全部 1显示 2隐藏
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1156,18 +1156,18 @@ func (x *ListProductsReq) GetKeyword() string {
 	return ""
 }
 
-func (x *ListProductsReq) GetEnabled() int32 {
+func (x *ListProductsReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *ListProductsReq) GetAppVisible() int32 {
+func (x *ListProductsReq) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 type ListProductsResp struct {
@@ -1362,8 +1362,8 @@ type CreateTenantCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	CategoryId    int64                  `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	Enabled       int64                  `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1414,18 +1414,18 @@ func (x *CreateTenantCategoryReq) GetCategoryId() int64 {
 	return 0
 }
 
-func (x *CreateTenantCategoryReq) GetEnabled() int64 {
+func (x *CreateTenantCategoryReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *CreateTenantCategoryReq) GetAppVisible() int64 {
+func (x *CreateTenantCategoryReq) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *CreateTenantCategoryReq) GetSort() int64 {
@@ -1446,8 +1446,8 @@ type UpdateTenantCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Enabled       int64                  `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1498,18 +1498,18 @@ func (x *UpdateTenantCategoryReq) GetTenantId() int64 {
 	return 0
 }
 
-func (x *UpdateTenantCategoryReq) GetEnabled() int64 {
+func (x *UpdateTenantCategoryReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *UpdateTenantCategoryReq) GetAppVisible() int64 {
+func (x *UpdateTenantCategoryReq) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *UpdateTenantCategoryReq) GetSort() int64 {
@@ -1582,8 +1582,8 @@ type TenantCategoryItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CategoryId    int64                  `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	Enabled       int64                  `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1634,18 +1634,18 @@ func (x *TenantCategoryItem) GetCategoryId() int64 {
 	return 0
 }
 
-func (x *TenantCategoryItem) GetEnabled() int64 {
+func (x *TenantCategoryItem) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *TenantCategoryItem) GetAppVisible() int64 {
+func (x *TenantCategoryItem) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *TenantCategoryItem) GetSort() int64 {
@@ -1771,8 +1771,8 @@ type ListTenantCategoriesReq struct {
 	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	CategoryType  CategoryType           `protobuf:"varint,3,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
-	Status        int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`                                    // 0全部 1启用 2禁用
-	VisibleStatus int32                  `protobuf:"varint,5,opt,name=visible_status,json=visibleStatus,proto3" json:"visible_status,omitempty"` // 0全部 1显示 2隐藏
+	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                  // 启用状态,0全部 1启用 2禁用
+	VisibleStatus common.Switch          `protobuf:"varint,5,opt,name=visible_status,json=visibleStatus,proto3,enum=common.Switch" json:"visible_status,omitempty"` // 可见开关,0全部 1显示 2隐藏
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1828,18 +1828,18 @@ func (x *ListTenantCategoriesReq) GetCategoryType() CategoryType {
 	return CategoryType_CATEGORY_TYPE_UNKNOWN
 }
 
-func (x *ListTenantCategoriesReq) GetStatus() int32 {
+func (x *ListTenantCategoriesReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *ListTenantCategoriesReq) GetVisibleStatus() int32 {
+func (x *ListTenantCategoriesReq) GetVisibleStatus() common.Switch {
 	if x != nil {
 		return x.VisibleStatus
 	}
-	return 0
+	return common.Switch(0)
 }
 
 type ListTenantCategoriesResp struct {
@@ -1898,8 +1898,8 @@ type CreateTenantProductReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProductId     int64                  `protobuf:"varint,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	Enabled       int64                  `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1950,18 +1950,18 @@ func (x *CreateTenantProductReq) GetProductId() int64 {
 	return 0
 }
 
-func (x *CreateTenantProductReq) GetEnabled() int64 {
+func (x *CreateTenantProductReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *CreateTenantProductReq) GetAppVisible() int64 {
+func (x *CreateTenantProductReq) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *CreateTenantProductReq) GetSort() int64 {
@@ -1982,8 +1982,8 @@ type UpdateTenantProductReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Enabled       int64                  `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2034,18 +2034,18 @@ func (x *UpdateTenantProductReq) GetTenantId() int64 {
 	return 0
 }
 
-func (x *UpdateTenantProductReq) GetEnabled() int64 {
+func (x *UpdateTenantProductReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *UpdateTenantProductReq) GetAppVisible() int64 {
+func (x *UpdateTenantProductReq) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *UpdateTenantProductReq) GetSort() int64 {
@@ -2118,8 +2118,8 @@ type TenantProductItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ProductId     int64                  `protobuf:"varint,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	Enabled       int64                  `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    int64                  `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible    common.Switch          `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2170,18 +2170,18 @@ func (x *TenantProductItem) GetProductId() int64 {
 	return 0
 }
 
-func (x *TenantProductItem) GetEnabled() int64 {
+func (x *TenantProductItem) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *TenantProductItem) GetAppVisible() int64 {
+func (x *TenantProductItem) GetAppVisible() common.Switch {
 	if x != nil {
 		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 func (x *TenantProductItem) GetSort() int64 {
@@ -2309,8 +2309,8 @@ type ListTenantProductsReq struct {
 	CategoryType  CategoryType           `protobuf:"varint,3,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	Market        string                 `protobuf:"bytes,4,opt,name=market,proto3" json:"market,omitempty"`
 	Keyword       string                 `protobuf:"bytes,5,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Status        int32                  `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"`                                    // 0全部 1启用 2禁用
-	VisibleStatus int32                  `protobuf:"varint,7,opt,name=visible_status,json=visibleStatus,proto3" json:"visible_status,omitempty"` // 0全部 1显示 2隐藏
+	Enabled       common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 启用状态,0全部 1启用 2禁用
+	AppVisible    common.Switch          `protobuf:"varint,7,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // 可见开关,0全部 1显示 2隐藏
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2380,18 +2380,18 @@ func (x *ListTenantProductsReq) GetKeyword() string {
 	return ""
 }
 
-func (x *ListTenantProductsReq) GetStatus() int32 {
+func (x *ListTenantProductsReq) GetEnabled() common.Enable {
 	if x != nil {
-		return x.Status
+		return x.Enabled
 	}
-	return 0
+	return common.Enable(0)
 }
 
-func (x *ListTenantProductsReq) GetVisibleStatus() int32 {
+func (x *ListTenantProductsReq) GetAppVisible() common.Switch {
 	if x != nil {
-		return x.VisibleStatus
+		return x.AppVisible
 	}
-	return 0
+	return common.Switch(0)
 }
 
 type ListTenantProductsResp struct {
@@ -2608,21 +2608,21 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\n" +
 	"\x1dproto/itick/itick_admin.proto\x12\x05itick\x1a\x19proto/common/common.proto\x1a\x16proto/itick/enum.proto\x1a\x17proto/itick/model.proto\"7\n" +
 	"\x0fAdminCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xed\x01\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x8d\x02\n" +
 	"\x11CreateCategoryReq\x128\n" +
 	"\rcategory_type\x18\x01 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
-	"\rcategory_name\x18\x02 \x01(\tR\fcategoryName\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x04 \x01(\x03R\n" +
+	"\rcategory_name\x18\x02 \x01(\tR\fcategoryName\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x12\n" +
 	"\x04icon\x18\x06 \x01(\tR\x04icon\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remark\"\xc3\x01\n" +
+	"\x06remark\x18\a \x01(\tR\x06remark\"\xe3\x01\n" +
 	"\x11UpdateCategoryReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
-	"\rcategory_name\x18\x02 \x01(\tR\fcategoryName\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x04 \x01(\x03R\n" +
+	"\rcategory_name\x18\x02 \x01(\tR\fcategoryName\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x12\n" +
 	"\x04icon\x18\x06 \x01(\tR\x04icon\x12\x16\n" +
@@ -2631,12 +2631,12 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"a\n" +
 	"\x0fGetCategoryResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
-	"\x04data\x18\x02 \x01(\v2\x14.itick.ItickCategoryR\x04data\"\xad\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x14.itick.ItickCategoryR\x04data\"\xcd\x01\n" +
 	"\x11ListCategoriesReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x128\n" +
-	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\x05R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x04 \x01(\x05R\n" +
+	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\"d\n" +
 	"\x12ListCategoriesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
@@ -2654,7 +2654,7 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x15GetSyncTaskStatusData\x12\x17\n" +
 	"\atask_no\x18\x01 \x01(\tR\x06taskNo\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\x05R\x06status\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage\"\xfe\x02\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"\x9e\x03\n" +
 	"\x10CreateProductReq\x128\n" +
 	"\rcategory_type\x18\x01 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12\x16\n" +
@@ -2664,14 +2664,14 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\fdisplay_name\x18\x06 \x01(\tR\vdisplayName\x12\x1b\n" +
 	"\tbase_coin\x18\a \x01(\tR\bbaseCoin\x12\x1d\n" +
 	"\n" +
-	"quote_coin\x18\b \x01(\tR\tquoteCoin\x12\x18\n" +
-	"\aenabled\x18\t \x01(\x03R\aenabled\x12\x1f\n" +
+	"quote_coin\x18\b \x01(\tR\tquoteCoin\x12(\n" +
+	"\aenabled\x18\t \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
 	"\vapp_visible\x18\n" +
-	" \x01(\x03R\n" +
+	" \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\v \x01(\x03R\x04sort\x12\x12\n" +
 	"\x04icon\x18\f \x01(\tR\x04icon\x12\x16\n" +
-	"\x06remark\x18\r \x01(\tR\x06remark\"\xa4\x02\n" +
+	"\x06remark\x18\r \x01(\tR\x06remark\"\xc4\x02\n" +
 	"\x10UpdateProductReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
@@ -2679,9 +2679,9 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\x12\x1b\n" +
 	"\tbase_coin\x18\x05 \x01(\tR\bbaseCoin\x12\x1d\n" +
 	"\n" +
-	"quote_coin\x18\x06 \x01(\tR\tquoteCoin\x12\x18\n" +
-	"\aenabled\x18\a \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\b \x01(\x03R\n" +
+	"quote_coin\x18\x06 \x01(\tR\tquoteCoin\x12(\n" +
+	"\aenabled\x18\a \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\b \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\t \x01(\x03R\x04sort\x12\x12\n" +
 	"\x04icon\x18\n" +
@@ -2691,15 +2691,15 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"_\n" +
 	"\x0eGetProductResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x01(\v2\x13.itick.ItickProductR\x04data\"\x82\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.itick.ItickProductR\x04data\"\xa2\x02\n" +
 	"\x0fListProductsReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x128\n" +
 	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
 	"\rcategory_name\x18\x03 \x01(\tR\fcategoryName\x12\x16\n" +
 	"\x06market\x18\x04 \x01(\tR\x06market\x12\x18\n" +
-	"\akeyword\x18\x05 \x01(\tR\akeyword\x12\x18\n" +
-	"\aenabled\x18\x06 \x01(\x05R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\a \x01(\x05R\n" +
+	"\akeyword\x18\x05 \x01(\tR\akeyword\x12(\n" +
+	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\a \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\"a\n" +
 	"\x10ListProductsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
@@ -2713,33 +2713,33 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x05limit\x18\x06 \x01(\x03R\x05limit\"]\n" +
 	"\x13GetProductKlineResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12 \n" +
-	"\x04data\x18\x02 \x03(\v2\f.itick.KlineR\x04data\"\xbe\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\f.itick.KlineR\x04data\"\xde\x01\n" +
 	"\x17CreateTenantCategoryReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vcategory_id\x18\x02 \x01(\x03R\n" +
-	"categoryId\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x04 \x01(\x03R\n" +
+	"categoryId\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x16\n" +
-	"\x06remark\x18\x06 \x01(\tR\x06remark\"\xad\x01\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remark\"\xcd\x01\n" +
 	"\x17UpdateTenantCategoryReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x04 \x01(\x03R\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\"l\n" +
 	"\x1eBatchUpsertTenantCategoriesReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12-\n" +
-	"\x04data\x18\x02 \x03(\v2\x19.itick.TenantCategoryItemR\x04data\"\xac\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.itick.TenantCategoryItemR\x04data\"\xcc\x01\n" +
 	"\x12TenantCategoryItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vcategory_id\x18\x02 \x01(\x03R\n" +
-	"categoryId\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x04 \x01(\x03R\n" +
+	"categoryId\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\"C\n" +
@@ -2748,42 +2748,42 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"m\n" +
 	"\x15GetTenantCategoryResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x01(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xd4\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xf6\x01\n" +
 	"\x17ListTenantCategoriesReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x128\n" +
-	"\rcategory_type\x18\x03 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\x05R\x06status\x12%\n" +
-	"\x0evisible_status\x18\x05 \x01(\x05R\rvisibleStatus\"p\n" +
+	"\rcategory_type\x18\x03 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x125\n" +
+	"\x0evisible_status\x18\x05 \x01(\x0e2\x0e.common.SwitchR\rvisibleStatus\"p\n" +
 	"\x18ListTenantCategoriesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x03(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xbb\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xdb\x01\n" +
 	"\x16CreateTenantProductReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x02 \x01(\x03R\tproductId\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x04 \x01(\x03R\n" +
+	"product_id\x18\x02 \x01(\x03R\tproductId\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x16\n" +
-	"\x06remark\x18\x06 \x01(\tR\x06remark\"\xac\x01\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remark\"\xcc\x01\n" +
 	"\x16UpdateTenantProductReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x04 \x01(\x03R\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\"i\n" +
 	"\x1cBatchUpsertTenantProductsReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12,\n" +
-	"\x04data\x18\x02 \x03(\v2\x18.itick.TenantProductItemR\x04data\"\xa9\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x18.itick.TenantProductItemR\x04data\"\xc9\x01\n" +
 	"\x11TenantProductItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x02 \x01(\x03R\tproductId\x12\x18\n" +
-	"\aenabled\x18\x03 \x01(\x03R\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x04 \x01(\x03R\n" +
+	"product_id\x18\x02 \x01(\x03R\tproductId\x12(\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\"B\n" +
@@ -2792,15 +2792,16 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"k\n" +
 	"\x14GetTenantProductResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.itick.ItickTenantProductR\x04data\"\x84\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.itick.ItickTenantProductR\x04data\"\xa0\x02\n" +
 	"\x15ListTenantProductsReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x128\n" +
 	"\rcategory_type\x18\x03 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x16\n" +
 	"\x06market\x18\x04 \x01(\tR\x06market\x12\x18\n" +
-	"\akeyword\x18\x05 \x01(\tR\akeyword\x12\x16\n" +
-	"\x06status\x18\x06 \x01(\x05R\x06status\x12%\n" +
-	"\x0evisible_status\x18\a \x01(\x05R\rvisibleStatus\"m\n" +
+	"\akeyword\x18\x05 \x01(\tR\akeyword\x12(\n" +
+	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\x12/\n" +
+	"\vapp_visible\x18\a \x01(\x0e2\x0e.common.SwitchR\n" +
+	"appVisible\"m\n" +
 	"\x16ListTenantProductsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.itick.ItickTenantProductR\x04data\"V\n" +
@@ -2894,101 +2895,131 @@ var file_proto_itick_itick_admin_proto_goTypes = []any{
 	(*InitTenantItickDisplayData)(nil),     // 38: itick.InitTenantItickDisplayData
 	(*common.RespBase)(nil),                // 39: common.RespBase
 	(CategoryType)(0),                      // 40: itick.CategoryType
-	(*ItickCategory)(nil),                  // 41: itick.ItickCategory
-	(*common.PageReq)(nil),                 // 42: common.PageReq
-	(*ItickProduct)(nil),                   // 43: itick.ItickProduct
-	(KlineType)(0),                         // 44: itick.KlineType
-	(*Kline)(nil),                          // 45: itick.Kline
-	(*ItickTenantCategory)(nil),            // 46: itick.ItickTenantCategory
-	(*ItickTenantProduct)(nil),             // 47: itick.ItickTenantProduct
+	(common.Enable)(0),                     // 41: common.Enable
+	(common.Switch)(0),                     // 42: common.Switch
+	(*ItickCategory)(nil),                  // 43: itick.ItickCategory
+	(*common.PageReq)(nil),                 // 44: common.PageReq
+	(*ItickProduct)(nil),                   // 45: itick.ItickProduct
+	(KlineType)(0),                         // 46: itick.KlineType
+	(*Kline)(nil),                          // 47: itick.Kline
+	(*ItickTenantCategory)(nil),            // 48: itick.ItickTenantCategory
+	(*ItickTenantProduct)(nil),             // 49: itick.ItickTenantProduct
 }
 var file_proto_itick_itick_admin_proto_depIdxs = []int32{
 	39, // 0: itick.AdminCommonResp.base:type_name -> common.RespBase
 	40, // 1: itick.CreateCategoryReq.category_type:type_name -> itick.CategoryType
-	39, // 2: itick.GetCategoryResp.base:type_name -> common.RespBase
-	41, // 3: itick.GetCategoryResp.data:type_name -> itick.ItickCategory
-	42, // 4: itick.ListCategoriesReq.page:type_name -> common.PageReq
-	40, // 5: itick.ListCategoriesReq.category_type:type_name -> itick.CategoryType
-	39, // 6: itick.ListCategoriesResp.base:type_name -> common.RespBase
-	41, // 7: itick.ListCategoriesResp.data:type_name -> itick.ItickCategory
-	39, // 8: itick.SyncCategoryProductsResp.base:type_name -> common.RespBase
-	39, // 9: itick.GetSyncTaskStatusResp.base:type_name -> common.RespBase
-	11, // 10: itick.GetSyncTaskStatusResp.data:type_name -> itick.GetSyncTaskStatusData
-	40, // 11: itick.CreateProductReq.category_type:type_name -> itick.CategoryType
-	39, // 12: itick.GetProductResp.base:type_name -> common.RespBase
-	43, // 13: itick.GetProductResp.data:type_name -> itick.ItickProduct
-	42, // 14: itick.ListProductsReq.page:type_name -> common.PageReq
-	40, // 15: itick.ListProductsReq.category_type:type_name -> itick.CategoryType
-	39, // 16: itick.ListProductsResp.base:type_name -> common.RespBase
-	43, // 17: itick.ListProductsResp.data:type_name -> itick.ItickProduct
-	44, // 18: itick.GetProductKlineReq.k_type:type_name -> itick.KlineType
-	39, // 19: itick.GetProductKlineResp.base:type_name -> common.RespBase
-	45, // 20: itick.GetProductKlineResp.data:type_name -> itick.Kline
-	23, // 21: itick.BatchUpsertTenantCategoriesReq.data:type_name -> itick.TenantCategoryItem
-	39, // 22: itick.GetTenantCategoryResp.base:type_name -> common.RespBase
-	46, // 23: itick.GetTenantCategoryResp.data:type_name -> itick.ItickTenantCategory
-	42, // 24: itick.ListTenantCategoriesReq.page:type_name -> common.PageReq
-	40, // 25: itick.ListTenantCategoriesReq.category_type:type_name -> itick.CategoryType
-	39, // 26: itick.ListTenantCategoriesResp.base:type_name -> common.RespBase
-	46, // 27: itick.ListTenantCategoriesResp.data:type_name -> itick.ItickTenantCategory
-	31, // 28: itick.BatchUpsertTenantProductsReq.data:type_name -> itick.TenantProductItem
-	39, // 29: itick.GetTenantProductResp.base:type_name -> common.RespBase
-	47, // 30: itick.GetTenantProductResp.data:type_name -> itick.ItickTenantProduct
-	42, // 31: itick.ListTenantProductsReq.page:type_name -> common.PageReq
-	40, // 32: itick.ListTenantProductsReq.category_type:type_name -> itick.CategoryType
-	39, // 33: itick.ListTenantProductsResp.base:type_name -> common.RespBase
-	47, // 34: itick.ListTenantProductsResp.data:type_name -> itick.ItickTenantProduct
-	39, // 35: itick.InitTenantItickDisplayResp.base:type_name -> common.RespBase
-	38, // 36: itick.InitTenantItickDisplayResp.data:type_name -> itick.InitTenantItickDisplayData
-	5,  // 37: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
-	1,  // 38: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
-	2,  // 39: itick.ItickAdmin.UpdateCategory:input_type -> itick.UpdateCategoryReq
-	3,  // 40: itick.ItickAdmin.GetCategory:input_type -> itick.GetCategoryReq
-	7,  // 41: itick.ItickAdmin.SyncCategoryProducts:input_type -> itick.SyncCategoryProductsReq
-	9,  // 42: itick.ItickAdmin.GetSyncTaskStatus:input_type -> itick.GetSyncTaskStatusReq
-	16, // 43: itick.ItickAdmin.ListProducts:input_type -> itick.ListProductsReq
-	12, // 44: itick.ItickAdmin.CreateProduct:input_type -> itick.CreateProductReq
-	13, // 45: itick.ItickAdmin.UpdateProduct:input_type -> itick.UpdateProductReq
-	14, // 46: itick.ItickAdmin.GetProduct:input_type -> itick.GetProductReq
-	18, // 47: itick.ItickAdmin.GetProductKline:input_type -> itick.GetProductKlineReq
-	26, // 48: itick.ItickAdmin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
-	20, // 49: itick.ItickAdmin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
-	21, // 50: itick.ItickAdmin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
-	22, // 51: itick.ItickAdmin.BatchUpsertTenantCategories:input_type -> itick.BatchUpsertTenantCategoriesReq
-	24, // 52: itick.ItickAdmin.GetTenantCategory:input_type -> itick.GetTenantCategoryReq
-	34, // 53: itick.ItickAdmin.ListTenantProducts:input_type -> itick.ListTenantProductsReq
-	28, // 54: itick.ItickAdmin.CreateTenantProduct:input_type -> itick.CreateTenantProductReq
-	29, // 55: itick.ItickAdmin.UpdateTenantProduct:input_type -> itick.UpdateTenantProductReq
-	30, // 56: itick.ItickAdmin.BatchUpsertTenantProducts:input_type -> itick.BatchUpsertTenantProductsReq
-	32, // 57: itick.ItickAdmin.GetTenantProduct:input_type -> itick.GetTenantProductReq
-	36, // 58: itick.ItickAdmin.InitTenantItickDisplay:input_type -> itick.InitTenantItickDisplayReq
-	6,  // 59: itick.ItickAdmin.ListCategories:output_type -> itick.ListCategoriesResp
-	0,  // 60: itick.ItickAdmin.CreateCategory:output_type -> itick.AdminCommonResp
-	0,  // 61: itick.ItickAdmin.UpdateCategory:output_type -> itick.AdminCommonResp
-	4,  // 62: itick.ItickAdmin.GetCategory:output_type -> itick.GetCategoryResp
-	8,  // 63: itick.ItickAdmin.SyncCategoryProducts:output_type -> itick.SyncCategoryProductsResp
-	10, // 64: itick.ItickAdmin.GetSyncTaskStatus:output_type -> itick.GetSyncTaskStatusResp
-	17, // 65: itick.ItickAdmin.ListProducts:output_type -> itick.ListProductsResp
-	0,  // 66: itick.ItickAdmin.CreateProduct:output_type -> itick.AdminCommonResp
-	0,  // 67: itick.ItickAdmin.UpdateProduct:output_type -> itick.AdminCommonResp
-	15, // 68: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
-	19, // 69: itick.ItickAdmin.GetProductKline:output_type -> itick.GetProductKlineResp
-	27, // 70: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
-	0,  // 71: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.AdminCommonResp
-	0,  // 72: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.AdminCommonResp
-	0,  // 73: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.AdminCommonResp
-	25, // 74: itick.ItickAdmin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
-	35, // 75: itick.ItickAdmin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
-	0,  // 76: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.AdminCommonResp
-	0,  // 77: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.AdminCommonResp
-	0,  // 78: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.AdminCommonResp
-	33, // 79: itick.ItickAdmin.GetTenantProduct:output_type -> itick.GetTenantProductResp
-	37, // 80: itick.ItickAdmin.InitTenantItickDisplay:output_type -> itick.InitTenantItickDisplayResp
-	59, // [59:81] is the sub-list for method output_type
-	37, // [37:59] is the sub-list for method input_type
-	37, // [37:37] is the sub-list for extension type_name
-	37, // [37:37] is the sub-list for extension extendee
-	0,  // [0:37] is the sub-list for field type_name
+	41, // 2: itick.CreateCategoryReq.enabled:type_name -> common.Enable
+	42, // 3: itick.CreateCategoryReq.app_visible:type_name -> common.Switch
+	41, // 4: itick.UpdateCategoryReq.enabled:type_name -> common.Enable
+	42, // 5: itick.UpdateCategoryReq.app_visible:type_name -> common.Switch
+	39, // 6: itick.GetCategoryResp.base:type_name -> common.RespBase
+	43, // 7: itick.GetCategoryResp.data:type_name -> itick.ItickCategory
+	44, // 8: itick.ListCategoriesReq.page:type_name -> common.PageReq
+	40, // 9: itick.ListCategoriesReq.category_type:type_name -> itick.CategoryType
+	41, // 10: itick.ListCategoriesReq.enabled:type_name -> common.Enable
+	42, // 11: itick.ListCategoriesReq.app_visible:type_name -> common.Switch
+	39, // 12: itick.ListCategoriesResp.base:type_name -> common.RespBase
+	43, // 13: itick.ListCategoriesResp.data:type_name -> itick.ItickCategory
+	39, // 14: itick.SyncCategoryProductsResp.base:type_name -> common.RespBase
+	39, // 15: itick.GetSyncTaskStatusResp.base:type_name -> common.RespBase
+	11, // 16: itick.GetSyncTaskStatusResp.data:type_name -> itick.GetSyncTaskStatusData
+	40, // 17: itick.CreateProductReq.category_type:type_name -> itick.CategoryType
+	41, // 18: itick.CreateProductReq.enabled:type_name -> common.Enable
+	42, // 19: itick.CreateProductReq.app_visible:type_name -> common.Switch
+	41, // 20: itick.UpdateProductReq.enabled:type_name -> common.Enable
+	42, // 21: itick.UpdateProductReq.app_visible:type_name -> common.Switch
+	39, // 22: itick.GetProductResp.base:type_name -> common.RespBase
+	45, // 23: itick.GetProductResp.data:type_name -> itick.ItickProduct
+	44, // 24: itick.ListProductsReq.page:type_name -> common.PageReq
+	40, // 25: itick.ListProductsReq.category_type:type_name -> itick.CategoryType
+	41, // 26: itick.ListProductsReq.enabled:type_name -> common.Enable
+	42, // 27: itick.ListProductsReq.app_visible:type_name -> common.Switch
+	39, // 28: itick.ListProductsResp.base:type_name -> common.RespBase
+	45, // 29: itick.ListProductsResp.data:type_name -> itick.ItickProduct
+	46, // 30: itick.GetProductKlineReq.k_type:type_name -> itick.KlineType
+	39, // 31: itick.GetProductKlineResp.base:type_name -> common.RespBase
+	47, // 32: itick.GetProductKlineResp.data:type_name -> itick.Kline
+	41, // 33: itick.CreateTenantCategoryReq.enabled:type_name -> common.Enable
+	42, // 34: itick.CreateTenantCategoryReq.app_visible:type_name -> common.Switch
+	41, // 35: itick.UpdateTenantCategoryReq.enabled:type_name -> common.Enable
+	42, // 36: itick.UpdateTenantCategoryReq.app_visible:type_name -> common.Switch
+	23, // 37: itick.BatchUpsertTenantCategoriesReq.data:type_name -> itick.TenantCategoryItem
+	41, // 38: itick.TenantCategoryItem.enabled:type_name -> common.Enable
+	42, // 39: itick.TenantCategoryItem.app_visible:type_name -> common.Switch
+	39, // 40: itick.GetTenantCategoryResp.base:type_name -> common.RespBase
+	48, // 41: itick.GetTenantCategoryResp.data:type_name -> itick.ItickTenantCategory
+	44, // 42: itick.ListTenantCategoriesReq.page:type_name -> common.PageReq
+	40, // 43: itick.ListTenantCategoriesReq.category_type:type_name -> itick.CategoryType
+	41, // 44: itick.ListTenantCategoriesReq.enabled:type_name -> common.Enable
+	42, // 45: itick.ListTenantCategoriesReq.visible_status:type_name -> common.Switch
+	39, // 46: itick.ListTenantCategoriesResp.base:type_name -> common.RespBase
+	48, // 47: itick.ListTenantCategoriesResp.data:type_name -> itick.ItickTenantCategory
+	41, // 48: itick.CreateTenantProductReq.enabled:type_name -> common.Enable
+	42, // 49: itick.CreateTenantProductReq.app_visible:type_name -> common.Switch
+	41, // 50: itick.UpdateTenantProductReq.enabled:type_name -> common.Enable
+	42, // 51: itick.UpdateTenantProductReq.app_visible:type_name -> common.Switch
+	31, // 52: itick.BatchUpsertTenantProductsReq.data:type_name -> itick.TenantProductItem
+	41, // 53: itick.TenantProductItem.enabled:type_name -> common.Enable
+	42, // 54: itick.TenantProductItem.app_visible:type_name -> common.Switch
+	39, // 55: itick.GetTenantProductResp.base:type_name -> common.RespBase
+	49, // 56: itick.GetTenantProductResp.data:type_name -> itick.ItickTenantProduct
+	44, // 57: itick.ListTenantProductsReq.page:type_name -> common.PageReq
+	40, // 58: itick.ListTenantProductsReq.category_type:type_name -> itick.CategoryType
+	41, // 59: itick.ListTenantProductsReq.enabled:type_name -> common.Enable
+	42, // 60: itick.ListTenantProductsReq.app_visible:type_name -> common.Switch
+	39, // 61: itick.ListTenantProductsResp.base:type_name -> common.RespBase
+	49, // 62: itick.ListTenantProductsResp.data:type_name -> itick.ItickTenantProduct
+	39, // 63: itick.InitTenantItickDisplayResp.base:type_name -> common.RespBase
+	38, // 64: itick.InitTenantItickDisplayResp.data:type_name -> itick.InitTenantItickDisplayData
+	5,  // 65: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
+	1,  // 66: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
+	2,  // 67: itick.ItickAdmin.UpdateCategory:input_type -> itick.UpdateCategoryReq
+	3,  // 68: itick.ItickAdmin.GetCategory:input_type -> itick.GetCategoryReq
+	7,  // 69: itick.ItickAdmin.SyncCategoryProducts:input_type -> itick.SyncCategoryProductsReq
+	9,  // 70: itick.ItickAdmin.GetSyncTaskStatus:input_type -> itick.GetSyncTaskStatusReq
+	16, // 71: itick.ItickAdmin.ListProducts:input_type -> itick.ListProductsReq
+	12, // 72: itick.ItickAdmin.CreateProduct:input_type -> itick.CreateProductReq
+	13, // 73: itick.ItickAdmin.UpdateProduct:input_type -> itick.UpdateProductReq
+	14, // 74: itick.ItickAdmin.GetProduct:input_type -> itick.GetProductReq
+	18, // 75: itick.ItickAdmin.GetProductKline:input_type -> itick.GetProductKlineReq
+	26, // 76: itick.ItickAdmin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
+	20, // 77: itick.ItickAdmin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
+	21, // 78: itick.ItickAdmin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
+	22, // 79: itick.ItickAdmin.BatchUpsertTenantCategories:input_type -> itick.BatchUpsertTenantCategoriesReq
+	24, // 80: itick.ItickAdmin.GetTenantCategory:input_type -> itick.GetTenantCategoryReq
+	34, // 81: itick.ItickAdmin.ListTenantProducts:input_type -> itick.ListTenantProductsReq
+	28, // 82: itick.ItickAdmin.CreateTenantProduct:input_type -> itick.CreateTenantProductReq
+	29, // 83: itick.ItickAdmin.UpdateTenantProduct:input_type -> itick.UpdateTenantProductReq
+	30, // 84: itick.ItickAdmin.BatchUpsertTenantProducts:input_type -> itick.BatchUpsertTenantProductsReq
+	32, // 85: itick.ItickAdmin.GetTenantProduct:input_type -> itick.GetTenantProductReq
+	36, // 86: itick.ItickAdmin.InitTenantItickDisplay:input_type -> itick.InitTenantItickDisplayReq
+	6,  // 87: itick.ItickAdmin.ListCategories:output_type -> itick.ListCategoriesResp
+	0,  // 88: itick.ItickAdmin.CreateCategory:output_type -> itick.AdminCommonResp
+	0,  // 89: itick.ItickAdmin.UpdateCategory:output_type -> itick.AdminCommonResp
+	4,  // 90: itick.ItickAdmin.GetCategory:output_type -> itick.GetCategoryResp
+	8,  // 91: itick.ItickAdmin.SyncCategoryProducts:output_type -> itick.SyncCategoryProductsResp
+	10, // 92: itick.ItickAdmin.GetSyncTaskStatus:output_type -> itick.GetSyncTaskStatusResp
+	17, // 93: itick.ItickAdmin.ListProducts:output_type -> itick.ListProductsResp
+	0,  // 94: itick.ItickAdmin.CreateProduct:output_type -> itick.AdminCommonResp
+	0,  // 95: itick.ItickAdmin.UpdateProduct:output_type -> itick.AdminCommonResp
+	15, // 96: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
+	19, // 97: itick.ItickAdmin.GetProductKline:output_type -> itick.GetProductKlineResp
+	27, // 98: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
+	0,  // 99: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.AdminCommonResp
+	0,  // 100: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.AdminCommonResp
+	0,  // 101: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.AdminCommonResp
+	25, // 102: itick.ItickAdmin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
+	35, // 103: itick.ItickAdmin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
+	0,  // 104: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.AdminCommonResp
+	0,  // 105: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.AdminCommonResp
+	0,  // 106: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.AdminCommonResp
+	33, // 107: itick.ItickAdmin.GetTenantProduct:output_type -> itick.GetTenantProductResp
+	37, // 108: itick.ItickAdmin.InitTenantItickDisplay:output_type -> itick.InitTenantItickDisplayResp
+	87, // [87:109] is the sub-list for method output_type
+	65, // [65:87] is the sub-list for method input_type
+	65, // [65:65] is the sub-list for extension type_name
+	65, // [65:65] is the sub-list for extension extendee
+	0,  // [0:65] is the sub-list for field type_name
 }
 
 func init() { file_proto_itick_itick_admin_proto_init() }

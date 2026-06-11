@@ -76,8 +76,8 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 		bank.CountryCode = sql.NullString{String: in.CountryCode, Valid: true}
 	}
 	bank.IsDefault = isDefault
-	if in.Status != 0 {
-		bank.Status = int64(in.Status)
+	if in.Enabled != 0 {
+		bank.Enabled = int64(in.Enabled)
 	}
 	bank.UpdateTimes = now
 

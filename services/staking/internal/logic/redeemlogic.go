@@ -9,6 +9,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
@@ -63,7 +64,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			redeemType = staking.RedeemType_REDEEM_TYPE_EARLY
 		}
 	}
-	if redeemType == staking.RedeemType_REDEEM_TYPE_EARLY && order.AllowEarlyRedeem != int64(staking.YesNo_YES_NO_YES) {
+	if redeemType == staking.RedeemType_REDEEM_TYPE_EARLY && order.AllowEarlyRedeem != int64(common.YesNo_YES_NO_YES) {
 		return &staking.AppRedeemResp{Base: helper.GetErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
 	}
 
@@ -139,7 +140,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 			TenantId:   order.TenantId,
 			UserId:     order.UserId,
-			WalletType: asset.WalletType_WALLET_TYPE_EARN,
+			WalletType: common.WalletType_WALLET_TYPE_EARN,
 			Coin:       order.RewardCoinSymbol,
 			Amount:     conv.FloatString(rewardAmount),
 			BizType:    asset.BizType_BIZ_TYPE_STAKING,
