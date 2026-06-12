@@ -129,7 +129,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		RegisterIp:     sql.NullString{String: registerIP, Valid: registerIP != ""},
 		RegisterTime:   now,
 		IsGuest:        2,
-		IsRecharge:     0,
+		IsRecharge:     1,
 		DeviceId:       deviceId,
 		Fingerprint:    sql.NullString{String: in.Fingerprint, Valid: true},
 		Remark:         sql.NullString{},

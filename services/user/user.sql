@@ -20,7 +20,7 @@ CREATE TABLE `t_user` (
   `register_ip` varchar(64) DEFAULT NULL COMMENT '注册IP',
   `register_time` bigint NOT NULL DEFAULT 0 COMMENT '注册时间',
   `is_guest` tinyint NOT NULL DEFAULT 1 COMMENT '是否游客；1正常用户，2游客',
-  `is_recharge` tinyint NOT NULL DEFAULT 0 COMMENT '是否充值；0没有充值，1已充值',
+  `is_recharge` tinyint NOT NULL DEFAULT 1 COMMENT '是否充值；1否 2是',
   `device_id` varchar(64) NOT NULL DEFAULT '' COMMENT '设备唯一ID',
   `fingerprint` text COMMENT '浏览器指纹JSON',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',

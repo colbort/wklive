@@ -26,7 +26,7 @@ export type ItickCategory = {
 export type ListCategoriesReq = {
   categoryType?: number
   enabled?: number // 0全部 1启用 2禁用
-  appVisible?: number // 0全部 1启用 2禁用
+  appVisible?: number // 0全部 1显示 2隐藏
   cursor?: number
   limit?: number
 }

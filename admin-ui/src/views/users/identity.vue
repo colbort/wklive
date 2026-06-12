@@ -44,11 +44,11 @@ function checkCode(code: number) {
 }
 
 function getBooleanLabel(value?: number) {
-  return Number(value) === 1 ? t('users.yes') : t('users.no')
+  return Number(value) === 2 ? t('users.yes') : t('users.no')
 }
 
 function getBooleanTagClass(value?: number) {
-  return Number(value) === 1 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
+  return Number(value) === 2 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
 }
 
 function getBankEnabledTagClass(value?: number) {

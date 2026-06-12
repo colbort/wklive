@@ -2525,7 +2525,7 @@ type SetUserTradeLimitReq struct {
 	CanTriggerOrder      int64                  `protobuf:"varint,7,opt,name=can_trigger_order,json=canTriggerOrder,proto3" json:"can_trigger_order,omitempty"`
 	CanApiTrade          int64                  `protobuf:"varint,8,opt,name=can_api_trade,json=canApiTrade,proto3" json:"can_api_trade,omitempty"`
 	TradeEnabled         common.Enable          `protobuf:"varint,9,opt,name=trade_enabled,json=tradeEnabled,proto3,enum=common.Enable" json:"trade_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	OnlyReduceOnly       int64                  `protobuf:"varint,10,opt,name=only_reduce_only,json=onlyReduceOnly,proto3" json:"only_reduce_only,omitempty"`
+	OnlyReduceOnly       common.Enable          `protobuf:"varint,10,opt,name=only_reduce_only,json=onlyReduceOnly,proto3,enum=common.Enable" json:"only_reduce_only,omitempty"`
 	MaxOpenOrderCount    int64                  `protobuf:"varint,11,opt,name=max_open_order_count,json=maxOpenOrderCount,proto3" json:"max_open_order_count,omitempty"`
 	MaxOrderCountPerDay  int64                  `protobuf:"varint,12,opt,name=max_order_count_per_day,json=maxOrderCountPerDay,proto3" json:"max_order_count_per_day,omitempty"`
 	MaxCancelCountPerDay int64                  `protobuf:"varint,13,opt,name=max_cancel_count_per_day,json=maxCancelCountPerDay,proto3" json:"max_cancel_count_per_day,omitempty"`
@@ -2635,11 +2635,11 @@ func (x *SetUserTradeLimitReq) GetTradeEnabled() common.Enable {
 	return common.Enable(0)
 }
 
-func (x *SetUserTradeLimitReq) GetOnlyReduceOnly() int64 {
+func (x *SetUserTradeLimitReq) GetOnlyReduceOnly() common.Enable {
 	if x != nil {
 		return x.OnlyReduceOnly
 	}
-	return 0
+	return common.Enable(0)
 }
 
 func (x *SetUserTradeLimitReq) GetMaxOpenOrderCount() int64 {
@@ -4345,7 +4345,7 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"time_range\x18\a \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"l\n" +
 	"\x19GetCancelLogListAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x03(\v2\x15.trade.TradeCancelLogR\x04data\"\x92\a\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.trade.TradeCancelLogR\x04data\"\xa2\a\n" +
 	"\x14SetUserTradeLimitReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
@@ -4357,9 +4357,9 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"can_cancel\x18\x06 \x01(\x03R\tcanCancel\x12*\n" +
 	"\x11can_trigger_order\x18\a \x01(\x03R\x0fcanTriggerOrder\x12\"\n" +
 	"\rcan_api_trade\x18\b \x01(\x03R\vcanApiTrade\x123\n" +
-	"\rtrade_enabled\x18\t \x01(\x0e2\x0e.common.EnableR\ftradeEnabled\x12(\n" +
+	"\rtrade_enabled\x18\t \x01(\x0e2\x0e.common.EnableR\ftradeEnabled\x128\n" +
 	"\x10only_reduce_only\x18\n" +
-	" \x01(\x03R\x0eonlyReduceOnly\x12/\n" +
+	" \x01(\x0e2\x0e.common.EnableR\x0eonlyReduceOnly\x12/\n" +
 	"\x14max_open_order_count\x18\v \x01(\x03R\x11maxOpenOrderCount\x124\n" +
 	"\x17max_order_count_per_day\x18\f \x01(\x03R\x13maxOrderCountPerDay\x126\n" +
 	"\x18max_cancel_count_per_day\x18\r \x01(\x03R\x14maxCancelCountPerDay\x12*\n" +
@@ -4704,113 +4704,114 @@ var file_proto_trade_trade_admin_proto_depIdxs = []int32{
 	70,  // 66: trade.GetCancelLogListAdminResp.data:type_name -> trade.TradeCancelLog
 	53,  // 67: trade.SetUserTradeLimitReq.market_type:type_name -> trade.MarketType
 	59,  // 68: trade.SetUserTradeLimitReq.trade_enabled:type_name -> common.Enable
-	71,  // 69: trade.SetUserTradeLimitReq.source:type_name -> trade.SourceType
-	59,  // 70: trade.SetUserTradeLimitReq.enabled:type_name -> common.Enable
-	53,  // 71: trade.SetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
-	71,  // 72: trade.SetUserSymbolLimitReq.source:type_name -> trade.SourceType
-	59,  // 73: trade.SetUserSymbolLimitReq.enabled:type_name -> common.Enable
-	53,  // 74: trade.GetUserTradeLimitReq.market_type:type_name -> trade.MarketType
-	52,  // 75: trade.GetUserTradeLimitResp.base:type_name -> common.RespBase
-	72,  // 76: trade.GetUserTradeLimitResp.data:type_name -> trade.RiskUserTradeLimit
-	53,  // 77: trade.GetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
-	52,  // 78: trade.GetUserSymbolLimitResp.base:type_name -> common.RespBase
-	73,  // 79: trade.GetUserSymbolLimitResp.data:type_name -> trade.RiskUserSymbolLimit
-	53,  // 80: trade.SetUserTradeConfigReq.market_type:type_name -> trade.MarketType
-	74,  // 81: trade.SetUserTradeConfigReq.position_mode:type_name -> trade.PositionMode
-	60,  // 82: trade.SetUserTradeConfigReq.margin_mode:type_name -> trade.MarginMode
-	59,  // 83: trade.SetUserTradeConfigReq.trade_enabled:type_name -> common.Enable
-	59,  // 84: trade.SetUserTradeConfigReq.reduce_only_enabled:type_name -> common.Enable
-	53,  // 85: trade.GetUserTradeConfigReq.market_type:type_name -> trade.MarketType
-	52,  // 86: trade.GetUserTradeConfigResp.base:type_name -> common.RespBase
-	75,  // 87: trade.GetUserTradeConfigResp.data:type_name -> trade.TradeUserConfig
-	56,  // 88: trade.GetRiskOrderCheckLogListReq.page:type_name -> common.PageReq
-	53,  // 89: trade.GetRiskOrderCheckLogListReq.market_type:type_name -> trade.MarketType
-	76,  // 90: trade.GetRiskOrderCheckLogListReq.check_type:type_name -> trade.RiskCheckType
-	77,  // 91: trade.GetRiskOrderCheckLogListReq.check_result:type_name -> trade.RiskCheckResult
-	62,  // 92: trade.GetRiskOrderCheckLogListReq.time_range:type_name -> trade.TimeRange
-	52,  // 93: trade.GetRiskOrderCheckLogListResp.base:type_name -> common.RespBase
-	78,  // 94: trade.GetRiskOrderCheckLogListResp.data:type_name -> trade.RiskOrderCheckLog
-	53,  // 95: trade.SetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
-	60,  // 96: trade.SetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	74,  // 97: trade.SetUserLeverageConfigReq.position_mode:type_name -> trade.PositionMode
-	71,  // 98: trade.SetUserLeverageConfigReq.source:type_name -> trade.SourceType
-	59,  // 99: trade.SetUserLeverageConfigReq.enabled:type_name -> common.Enable
-	53,  // 100: trade.GetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
-	60,  // 101: trade.GetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	52,  // 102: trade.GetUserLeverageConfigResp.base:type_name -> common.RespBase
-	79,  // 103: trade.GetUserLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
-	56,  // 104: trade.GetTradeEventListReq.page:type_name -> common.PageReq
-	80,  // 105: trade.GetTradeEventListReq.event_status:type_name -> trade.EventStatus
-	62,  // 106: trade.GetTradeEventListReq.time_range:type_name -> trade.TimeRange
-	52,  // 107: trade.GetTradeEventListResp.base:type_name -> common.RespBase
-	81,  // 108: trade.GetTradeEventListResp.data:type_name -> trade.BizTradeEvent
-	52,  // 109: trade.GetTradeEventDetailResp.base:type_name -> common.RespBase
-	81,  // 110: trade.GetTradeEventDetailResp.data:type_name -> trade.BizTradeEvent
-	1,   // 111: trade.TradeAdmin.CreateSymbol:input_type -> trade.CreateSymbolReq
-	2,   // 112: trade.TradeAdmin.UpdateSymbol:input_type -> trade.UpdateSymbolReq
-	3,   // 113: trade.TradeAdmin.GetSymbolListAdmin:input_type -> trade.GetSymbolListAdminReq
-	5,   // 114: trade.TradeAdmin.GetSymbolDetailAdmin:input_type -> trade.GetSymbolDetailAdminReq
-	8,   // 115: trade.TradeAdmin.SetSpotSymbolConfig:input_type -> trade.SetSpotSymbolConfigReq
-	9,   // 116: trade.TradeAdmin.SetContractSymbolConfig:input_type -> trade.SetContractSymbolConfigReq
-	10,  // 117: trade.TradeAdmin.SetSymbolLeverageConfig:input_type -> trade.SetSymbolLeverageConfigReq
-	11,  // 118: trade.TradeAdmin.GetSymbolLeverageConfig:input_type -> trade.GetSymbolLeverageConfigReq
-	13,  // 119: trade.TradeAdmin.GetSymbolLeverageConfigList:input_type -> trade.GetSymbolLeverageConfigListReq
-	15,  // 120: trade.TradeAdmin.GetOrderListAdmin:input_type -> trade.GetOrderListAdminReq
-	17,  // 121: trade.TradeAdmin.GetOrderDetailAdmin:input_type -> trade.GetOrderDetailAdminReq
-	19,  // 122: trade.TradeAdmin.GetFillListAdmin:input_type -> trade.GetFillListAdminReq
-	21,  // 123: trade.TradeAdmin.GetFillDetailAdmin:input_type -> trade.GetFillDetailAdminReq
-	23,  // 124: trade.TradeAdmin.GetPositionListAdmin:input_type -> trade.GetPositionListAdminReq
-	25,  // 125: trade.TradeAdmin.GetPositionDetailAdmin:input_type -> trade.GetPositionDetailAdminReq
-	27,  // 126: trade.TradeAdmin.GetPositionHistoryListAdmin:input_type -> trade.GetPositionHistoryListAdminReq
-	29,  // 127: trade.TradeAdmin.GetMarginAccountListAdmin:input_type -> trade.GetMarginAccountListAdminReq
-	31,  // 128: trade.TradeAdmin.GetCancelLogListAdmin:input_type -> trade.GetCancelLogListAdminReq
-	33,  // 129: trade.TradeAdmin.SetUserTradeLimit:input_type -> trade.SetUserTradeLimitReq
-	34,  // 130: trade.TradeAdmin.SetUserSymbolLimit:input_type -> trade.SetUserSymbolLimitReq
-	35,  // 131: trade.TradeAdmin.GetUserTradeLimit:input_type -> trade.GetUserTradeLimitReq
-	37,  // 132: trade.TradeAdmin.GetUserSymbolLimit:input_type -> trade.GetUserSymbolLimitReq
-	39,  // 133: trade.TradeAdmin.SetUserTradeConfig:input_type -> trade.SetUserTradeConfigReq
-	40,  // 134: trade.TradeAdmin.GetUserTradeConfig:input_type -> trade.GetUserTradeConfigReq
-	42,  // 135: trade.TradeAdmin.GetRiskOrderCheckLogList:input_type -> trade.GetRiskOrderCheckLogListReq
-	44,  // 136: trade.TradeAdmin.SetUserLeverageConfig:input_type -> trade.SetUserLeverageConfigReq
-	45,  // 137: trade.TradeAdmin.GetUserLeverageConfig:input_type -> trade.GetUserLeverageConfigReq
-	47,  // 138: trade.TradeAdmin.GetTradeEventList:input_type -> trade.GetTradeEventListReq
-	49,  // 139: trade.TradeAdmin.GetTradeEventDetail:input_type -> trade.GetTradeEventDetailReq
-	51,  // 140: trade.TradeAdmin.RetryTradeEvent:input_type -> trade.RetryTradeEventReq
-	0,   // 141: trade.TradeAdmin.CreateSymbol:output_type -> trade.AdminCommonResp
-	0,   // 142: trade.TradeAdmin.UpdateSymbol:output_type -> trade.AdminCommonResp
-	4,   // 143: trade.TradeAdmin.GetSymbolListAdmin:output_type -> trade.GetSymbolListAdminResp
-	6,   // 144: trade.TradeAdmin.GetSymbolDetailAdmin:output_type -> trade.GetSymbolDetailAdminResp
-	0,   // 145: trade.TradeAdmin.SetSpotSymbolConfig:output_type -> trade.AdminCommonResp
-	0,   // 146: trade.TradeAdmin.SetContractSymbolConfig:output_type -> trade.AdminCommonResp
-	0,   // 147: trade.TradeAdmin.SetSymbolLeverageConfig:output_type -> trade.AdminCommonResp
-	12,  // 148: trade.TradeAdmin.GetSymbolLeverageConfig:output_type -> trade.GetSymbolLeverageConfigResp
-	14,  // 149: trade.TradeAdmin.GetSymbolLeverageConfigList:output_type -> trade.GetSymbolLeverageConfigListResp
-	16,  // 150: trade.TradeAdmin.GetOrderListAdmin:output_type -> trade.GetOrderListAdminResp
-	18,  // 151: trade.TradeAdmin.GetOrderDetailAdmin:output_type -> trade.GetOrderDetailAdminResp
-	20,  // 152: trade.TradeAdmin.GetFillListAdmin:output_type -> trade.GetFillListAdminResp
-	22,  // 153: trade.TradeAdmin.GetFillDetailAdmin:output_type -> trade.GetFillDetailAdminResp
-	24,  // 154: trade.TradeAdmin.GetPositionListAdmin:output_type -> trade.GetPositionListAdminResp
-	26,  // 155: trade.TradeAdmin.GetPositionDetailAdmin:output_type -> trade.GetPositionDetailAdminResp
-	28,  // 156: trade.TradeAdmin.GetPositionHistoryListAdmin:output_type -> trade.GetPositionHistoryListAdminResp
-	30,  // 157: trade.TradeAdmin.GetMarginAccountListAdmin:output_type -> trade.GetMarginAccountListAdminResp
-	32,  // 158: trade.TradeAdmin.GetCancelLogListAdmin:output_type -> trade.GetCancelLogListAdminResp
-	0,   // 159: trade.TradeAdmin.SetUserTradeLimit:output_type -> trade.AdminCommonResp
-	0,   // 160: trade.TradeAdmin.SetUserSymbolLimit:output_type -> trade.AdminCommonResp
-	36,  // 161: trade.TradeAdmin.GetUserTradeLimit:output_type -> trade.GetUserTradeLimitResp
-	38,  // 162: trade.TradeAdmin.GetUserSymbolLimit:output_type -> trade.GetUserSymbolLimitResp
-	0,   // 163: trade.TradeAdmin.SetUserTradeConfig:output_type -> trade.AdminCommonResp
-	41,  // 164: trade.TradeAdmin.GetUserTradeConfig:output_type -> trade.GetUserTradeConfigResp
-	43,  // 165: trade.TradeAdmin.GetRiskOrderCheckLogList:output_type -> trade.GetRiskOrderCheckLogListResp
-	0,   // 166: trade.TradeAdmin.SetUserLeverageConfig:output_type -> trade.AdminCommonResp
-	46,  // 167: trade.TradeAdmin.GetUserLeverageConfig:output_type -> trade.GetUserLeverageConfigResp
-	48,  // 168: trade.TradeAdmin.GetTradeEventList:output_type -> trade.GetTradeEventListResp
-	50,  // 169: trade.TradeAdmin.GetTradeEventDetail:output_type -> trade.GetTradeEventDetailResp
-	0,   // 170: trade.TradeAdmin.RetryTradeEvent:output_type -> trade.AdminCommonResp
-	141, // [141:171] is the sub-list for method output_type
-	111, // [111:141] is the sub-list for method input_type
-	111, // [111:111] is the sub-list for extension type_name
-	111, // [111:111] is the sub-list for extension extendee
-	0,   // [0:111] is the sub-list for field type_name
+	59,  // 69: trade.SetUserTradeLimitReq.only_reduce_only:type_name -> common.Enable
+	71,  // 70: trade.SetUserTradeLimitReq.source:type_name -> trade.SourceType
+	59,  // 71: trade.SetUserTradeLimitReq.enabled:type_name -> common.Enable
+	53,  // 72: trade.SetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
+	71,  // 73: trade.SetUserSymbolLimitReq.source:type_name -> trade.SourceType
+	59,  // 74: trade.SetUserSymbolLimitReq.enabled:type_name -> common.Enable
+	53,  // 75: trade.GetUserTradeLimitReq.market_type:type_name -> trade.MarketType
+	52,  // 76: trade.GetUserTradeLimitResp.base:type_name -> common.RespBase
+	72,  // 77: trade.GetUserTradeLimitResp.data:type_name -> trade.RiskUserTradeLimit
+	53,  // 78: trade.GetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
+	52,  // 79: trade.GetUserSymbolLimitResp.base:type_name -> common.RespBase
+	73,  // 80: trade.GetUserSymbolLimitResp.data:type_name -> trade.RiskUserSymbolLimit
+	53,  // 81: trade.SetUserTradeConfigReq.market_type:type_name -> trade.MarketType
+	74,  // 82: trade.SetUserTradeConfigReq.position_mode:type_name -> trade.PositionMode
+	60,  // 83: trade.SetUserTradeConfigReq.margin_mode:type_name -> trade.MarginMode
+	59,  // 84: trade.SetUserTradeConfigReq.trade_enabled:type_name -> common.Enable
+	59,  // 85: trade.SetUserTradeConfigReq.reduce_only_enabled:type_name -> common.Enable
+	53,  // 86: trade.GetUserTradeConfigReq.market_type:type_name -> trade.MarketType
+	52,  // 87: trade.GetUserTradeConfigResp.base:type_name -> common.RespBase
+	75,  // 88: trade.GetUserTradeConfigResp.data:type_name -> trade.TradeUserConfig
+	56,  // 89: trade.GetRiskOrderCheckLogListReq.page:type_name -> common.PageReq
+	53,  // 90: trade.GetRiskOrderCheckLogListReq.market_type:type_name -> trade.MarketType
+	76,  // 91: trade.GetRiskOrderCheckLogListReq.check_type:type_name -> trade.RiskCheckType
+	77,  // 92: trade.GetRiskOrderCheckLogListReq.check_result:type_name -> trade.RiskCheckResult
+	62,  // 93: trade.GetRiskOrderCheckLogListReq.time_range:type_name -> trade.TimeRange
+	52,  // 94: trade.GetRiskOrderCheckLogListResp.base:type_name -> common.RespBase
+	78,  // 95: trade.GetRiskOrderCheckLogListResp.data:type_name -> trade.RiskOrderCheckLog
+	53,  // 96: trade.SetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
+	60,  // 97: trade.SetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	74,  // 98: trade.SetUserLeverageConfigReq.position_mode:type_name -> trade.PositionMode
+	71,  // 99: trade.SetUserLeverageConfigReq.source:type_name -> trade.SourceType
+	59,  // 100: trade.SetUserLeverageConfigReq.enabled:type_name -> common.Enable
+	53,  // 101: trade.GetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
+	60,  // 102: trade.GetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	52,  // 103: trade.GetUserLeverageConfigResp.base:type_name -> common.RespBase
+	79,  // 104: trade.GetUserLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
+	56,  // 105: trade.GetTradeEventListReq.page:type_name -> common.PageReq
+	80,  // 106: trade.GetTradeEventListReq.event_status:type_name -> trade.EventStatus
+	62,  // 107: trade.GetTradeEventListReq.time_range:type_name -> trade.TimeRange
+	52,  // 108: trade.GetTradeEventListResp.base:type_name -> common.RespBase
+	81,  // 109: trade.GetTradeEventListResp.data:type_name -> trade.BizTradeEvent
+	52,  // 110: trade.GetTradeEventDetailResp.base:type_name -> common.RespBase
+	81,  // 111: trade.GetTradeEventDetailResp.data:type_name -> trade.BizTradeEvent
+	1,   // 112: trade.TradeAdmin.CreateSymbol:input_type -> trade.CreateSymbolReq
+	2,   // 113: trade.TradeAdmin.UpdateSymbol:input_type -> trade.UpdateSymbolReq
+	3,   // 114: trade.TradeAdmin.GetSymbolListAdmin:input_type -> trade.GetSymbolListAdminReq
+	5,   // 115: trade.TradeAdmin.GetSymbolDetailAdmin:input_type -> trade.GetSymbolDetailAdminReq
+	8,   // 116: trade.TradeAdmin.SetSpotSymbolConfig:input_type -> trade.SetSpotSymbolConfigReq
+	9,   // 117: trade.TradeAdmin.SetContractSymbolConfig:input_type -> trade.SetContractSymbolConfigReq
+	10,  // 118: trade.TradeAdmin.SetSymbolLeverageConfig:input_type -> trade.SetSymbolLeverageConfigReq
+	11,  // 119: trade.TradeAdmin.GetSymbolLeverageConfig:input_type -> trade.GetSymbolLeverageConfigReq
+	13,  // 120: trade.TradeAdmin.GetSymbolLeverageConfigList:input_type -> trade.GetSymbolLeverageConfigListReq
+	15,  // 121: trade.TradeAdmin.GetOrderListAdmin:input_type -> trade.GetOrderListAdminReq
+	17,  // 122: trade.TradeAdmin.GetOrderDetailAdmin:input_type -> trade.GetOrderDetailAdminReq
+	19,  // 123: trade.TradeAdmin.GetFillListAdmin:input_type -> trade.GetFillListAdminReq
+	21,  // 124: trade.TradeAdmin.GetFillDetailAdmin:input_type -> trade.GetFillDetailAdminReq
+	23,  // 125: trade.TradeAdmin.GetPositionListAdmin:input_type -> trade.GetPositionListAdminReq
+	25,  // 126: trade.TradeAdmin.GetPositionDetailAdmin:input_type -> trade.GetPositionDetailAdminReq
+	27,  // 127: trade.TradeAdmin.GetPositionHistoryListAdmin:input_type -> trade.GetPositionHistoryListAdminReq
+	29,  // 128: trade.TradeAdmin.GetMarginAccountListAdmin:input_type -> trade.GetMarginAccountListAdminReq
+	31,  // 129: trade.TradeAdmin.GetCancelLogListAdmin:input_type -> trade.GetCancelLogListAdminReq
+	33,  // 130: trade.TradeAdmin.SetUserTradeLimit:input_type -> trade.SetUserTradeLimitReq
+	34,  // 131: trade.TradeAdmin.SetUserSymbolLimit:input_type -> trade.SetUserSymbolLimitReq
+	35,  // 132: trade.TradeAdmin.GetUserTradeLimit:input_type -> trade.GetUserTradeLimitReq
+	37,  // 133: trade.TradeAdmin.GetUserSymbolLimit:input_type -> trade.GetUserSymbolLimitReq
+	39,  // 134: trade.TradeAdmin.SetUserTradeConfig:input_type -> trade.SetUserTradeConfigReq
+	40,  // 135: trade.TradeAdmin.GetUserTradeConfig:input_type -> trade.GetUserTradeConfigReq
+	42,  // 136: trade.TradeAdmin.GetRiskOrderCheckLogList:input_type -> trade.GetRiskOrderCheckLogListReq
+	44,  // 137: trade.TradeAdmin.SetUserLeverageConfig:input_type -> trade.SetUserLeverageConfigReq
+	45,  // 138: trade.TradeAdmin.GetUserLeverageConfig:input_type -> trade.GetUserLeverageConfigReq
+	47,  // 139: trade.TradeAdmin.GetTradeEventList:input_type -> trade.GetTradeEventListReq
+	49,  // 140: trade.TradeAdmin.GetTradeEventDetail:input_type -> trade.GetTradeEventDetailReq
+	51,  // 141: trade.TradeAdmin.RetryTradeEvent:input_type -> trade.RetryTradeEventReq
+	0,   // 142: trade.TradeAdmin.CreateSymbol:output_type -> trade.AdminCommonResp
+	0,   // 143: trade.TradeAdmin.UpdateSymbol:output_type -> trade.AdminCommonResp
+	4,   // 144: trade.TradeAdmin.GetSymbolListAdmin:output_type -> trade.GetSymbolListAdminResp
+	6,   // 145: trade.TradeAdmin.GetSymbolDetailAdmin:output_type -> trade.GetSymbolDetailAdminResp
+	0,   // 146: trade.TradeAdmin.SetSpotSymbolConfig:output_type -> trade.AdminCommonResp
+	0,   // 147: trade.TradeAdmin.SetContractSymbolConfig:output_type -> trade.AdminCommonResp
+	0,   // 148: trade.TradeAdmin.SetSymbolLeverageConfig:output_type -> trade.AdminCommonResp
+	12,  // 149: trade.TradeAdmin.GetSymbolLeverageConfig:output_type -> trade.GetSymbolLeverageConfigResp
+	14,  // 150: trade.TradeAdmin.GetSymbolLeverageConfigList:output_type -> trade.GetSymbolLeverageConfigListResp
+	16,  // 151: trade.TradeAdmin.GetOrderListAdmin:output_type -> trade.GetOrderListAdminResp
+	18,  // 152: trade.TradeAdmin.GetOrderDetailAdmin:output_type -> trade.GetOrderDetailAdminResp
+	20,  // 153: trade.TradeAdmin.GetFillListAdmin:output_type -> trade.GetFillListAdminResp
+	22,  // 154: trade.TradeAdmin.GetFillDetailAdmin:output_type -> trade.GetFillDetailAdminResp
+	24,  // 155: trade.TradeAdmin.GetPositionListAdmin:output_type -> trade.GetPositionListAdminResp
+	26,  // 156: trade.TradeAdmin.GetPositionDetailAdmin:output_type -> trade.GetPositionDetailAdminResp
+	28,  // 157: trade.TradeAdmin.GetPositionHistoryListAdmin:output_type -> trade.GetPositionHistoryListAdminResp
+	30,  // 158: trade.TradeAdmin.GetMarginAccountListAdmin:output_type -> trade.GetMarginAccountListAdminResp
+	32,  // 159: trade.TradeAdmin.GetCancelLogListAdmin:output_type -> trade.GetCancelLogListAdminResp
+	0,   // 160: trade.TradeAdmin.SetUserTradeLimit:output_type -> trade.AdminCommonResp
+	0,   // 161: trade.TradeAdmin.SetUserSymbolLimit:output_type -> trade.AdminCommonResp
+	36,  // 162: trade.TradeAdmin.GetUserTradeLimit:output_type -> trade.GetUserTradeLimitResp
+	38,  // 163: trade.TradeAdmin.GetUserSymbolLimit:output_type -> trade.GetUserSymbolLimitResp
+	0,   // 164: trade.TradeAdmin.SetUserTradeConfig:output_type -> trade.AdminCommonResp
+	41,  // 165: trade.TradeAdmin.GetUserTradeConfig:output_type -> trade.GetUserTradeConfigResp
+	43,  // 166: trade.TradeAdmin.GetRiskOrderCheckLogList:output_type -> trade.GetRiskOrderCheckLogListResp
+	0,   // 167: trade.TradeAdmin.SetUserLeverageConfig:output_type -> trade.AdminCommonResp
+	46,  // 168: trade.TradeAdmin.GetUserLeverageConfig:output_type -> trade.GetUserLeverageConfigResp
+	48,  // 169: trade.TradeAdmin.GetTradeEventList:output_type -> trade.GetTradeEventListResp
+	50,  // 170: trade.TradeAdmin.GetTradeEventDetail:output_type -> trade.GetTradeEventDetailResp
+	0,   // 171: trade.TradeAdmin.RetryTradeEvent:output_type -> trade.AdminCommonResp
+	142, // [142:172] is the sub-list for method output_type
+	112, // [112:142] is the sub-list for method input_type
+	112, // [112:112] is the sub-list for extension type_name
+	112, // [112:112] is the sub-list for extension extendee
+	0,   // [0:112] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_trade_admin_proto_init() }

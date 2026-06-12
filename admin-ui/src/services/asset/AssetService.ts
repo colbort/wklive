@@ -126,10 +126,10 @@ export type AssetCoinConfig = {
   iconText: string // 图标文字
   iconBgColor: string // 图标背景色
   decimalPlaces: number // 精度
-  appVisible: number // App是否显示
-  rechargeEnabled: number // 是否允许充值
-  withdrawEnabled: number // 是否允许提现
-  transferEnabled: number // 是否允许划转
+  appVisible: number // App是否显示：1显示 2隐藏
+  rechargeEnabled: number // 是否允许充值：1启用 2禁用
+  withdrawEnabled: number // 是否允许提现：1启用 2禁用
+  transferEnabled: number // 是否允许划转：1启用 2禁用
   enabled: number // 启用状态
   sort: number // 排序
   remark: string // 备注
@@ -205,10 +205,10 @@ export type PageAssetCoinConfigsReq = {
   symbol?: string // 币种符号
   coinType?: number // 币种类型
   chainCode?: number // 链类型
-  appVisible?: number // App是否显示
-  rechargeEnabled?: number // 是否允许充值
-  withdrawEnabled?: number // 是否允许提现
-  transferEnabled?: number // 是否允许划转
+  appVisible?: number // App是否显示：1显示 2隐藏
+  rechargeEnabled?: number // 是否允许充值：1启用 2禁用
+  withdrawEnabled?: number // 是否允许提现：1启用 2禁用
+  transferEnabled?: number // 是否允许划转：1启用 2禁用
   enabled?: number // 启用状态
 }
 
@@ -229,10 +229,10 @@ export type CreateAssetCoinConfigReq = {
   iconText?: string // 图标文字
   iconBgColor?: string // 图标背景色
   decimalPlaces?: number // 精度
-  appVisible?: number // App是否显示
-  rechargeEnabled?: number // 是否允许充值
-  withdrawEnabled?: number // 是否允许提现
-  transferEnabled?: number // 是否允许划转
+  appVisible?: number // App是否显示：1显示 2隐藏
+  rechargeEnabled?: number // 是否允许充值：1启用 2禁用
+  withdrawEnabled?: number // 是否允许提现：1启用 2禁用
+  transferEnabled?: number // 是否允许划转：1启用 2禁用
   enabled?: number // 启用状态
   sort?: number // 排序
   remark?: string // 备注

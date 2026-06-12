@@ -93,7 +93,7 @@ const symbolLimitForm = reactive<SetUserSymbolLimitReq>({
   priceDeviationRate: '',
   operatorId: 0,
   source: 0,
-  enabled: 0,
+  enabled: 1,
   effectiveStartTime: 0,
   effectiveEndTime: 0,
   remark: '',

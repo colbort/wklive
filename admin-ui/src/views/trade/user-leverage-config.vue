@@ -92,7 +92,7 @@ const leverageForm = reactive<SetUserLeverageConfigReq>({
   shortLeverage: 1,
   maxLeverage: 1,
   operatorId: 0,
-  enabled: 0,
+  enabled: 1,
   remark: '',
 })
 

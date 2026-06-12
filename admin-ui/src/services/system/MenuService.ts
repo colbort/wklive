@@ -29,8 +29,8 @@ export type SysMenuCreateReq = {
   component: string
   icon: string
   sort: number
-  visible: number
-  enabled: number
+  visible: number // 显示开关：1显示 2隐藏
+  enabled: number // 启用状态：1启用 2禁用
   perms: string
 }
 
@@ -47,8 +47,8 @@ export type SysMenuUpdateReq = {
   component: string
   icon: string
   sort: number
-  visible: number
-  enabled: number
+  visible: number // 显示开关：1显示 2隐藏
+  enabled: number // 启用状态：1启用 2禁用
   perms: string
 }
 
@@ -57,8 +57,8 @@ export type SysMenuListReq = {
   limit?: number
   keyword: string
   menuType: number
-  enabled: number
-  visible: number
+  enabled: number // 启用状态：1启用 2禁用
+  visible: number // 显示开关：1显示 2隐藏
 }
 
 export type SysMenuItem = {
@@ -70,8 +70,8 @@ export type SysMenuItem = {
   component: string
   icon: string
   sort: number
-  visible: number
-  enabled: number
+  visible: number // 显示开关：1显示 2隐藏
+  enabled: number // 启用状态：1启用 2禁用
   perms: string // 按钮必须有，例如 sys:user:add
 }
 

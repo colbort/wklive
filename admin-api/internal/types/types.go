@@ -4323,7 +4323,7 @@ type UserItem struct {
 	RegisterIp     string `json:"registerIp"`     // 注册IP
 	RegisterTime   int64  `json:"registerTime"`   // 注册时间
 	IsGuest        int64  `json:"isGuest"`        // 是否游客；1正常用户，2游客
-	IsRecharge     int64  `json:"isRecharge"`     // 是否充值；0没有充值，1已充值
+	IsRecharge     int64  `json:"isRecharge"`     // 是否充值；1否 2是
 	DeviceId       string `json:"deviceId"`       // 设备唯一ID
 	Fingerprint    string `json:"fingerprint"`    // 浏览器指纹
 	Remark         string `json:"remark"`         // 备注

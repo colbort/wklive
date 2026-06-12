@@ -22,10 +22,10 @@ export type SysUserItem = {
   id: number
   username: string
   nickname: string
-  enabled: number
+  enabled: number // 启用状态：1启用 2禁用
   roleIds: number[]
   createTimes: number
-  google2faEnabled: number
+  google2faEnabled: number // Google 2FA 是否启用：1启用 2禁用
 }
 
 export type Google2FABindInitResp = {
@@ -41,19 +41,19 @@ export interface CreateUserRequest {
   username: string
   password: string
   nickname?: string
-  enabled?: number
+  enabled?: number // 启用状态：1启用 2禁用
   roleIds?: number[]
 }
 
 export interface UpdateUserRequest {
   nickname?: string
-  enabled?: number
+  enabled?: number // 启用状态：1启用 2禁用
   roleIds?: number[]
 }
 
 export interface UserQueryParams {
   keyword?: string
-  enabled?: number
+  enabled?: number // 启用状态：1启用 2禁用
   cursor?: number
   limit?: number
 }

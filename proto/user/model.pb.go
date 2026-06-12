@@ -45,7 +45,7 @@ type UserBase struct {
 	RegisterIp     string                 `protobuf:"bytes,19,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`                              // 注册IP
 	RegisterTime   int64                  `protobuf:"varint,20,opt,name=register_time,json=registerTime,proto3" json:"register_time,omitempty"`                       // 注册时间
 	IsGuest        int64                  `protobuf:"varint,21,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客；1正常用户，2游客
-	IsRecharge     int64                  `protobuf:"varint,22,opt,name=is_recharge,json=isRecharge,proto3" json:"is_recharge,omitempty"`                             // 是否充值；0没有充值，1已充值
+	IsRecharge     common.YesNo           `protobuf:"varint,22,opt,name=is_recharge,json=isRecharge,proto3,enum=common.YesNo" json:"is_recharge,omitempty"`           // 是否充值；1否 2是
 	DeviceId       string                 `protobuf:"bytes,23,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`                                    // 设备唯一ID
 	Fingerprint    string                 `protobuf:"bytes,24,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`                                              // 浏览器指纹
 	Remark         string                 `protobuf:"bytes,25,opt,name=remark,proto3" json:"remark,omitempty"`                                                        // 备注
@@ -233,11 +233,11 @@ func (x *UserBase) GetIsGuest() int64 {
 	return 0
 }
 
-func (x *UserBase) GetIsRecharge() int64 {
+func (x *UserBase) GetIsRecharge() common.YesNo {
 	if x != nil {
 		return x.IsRecharge
 	}
-	return 0
+	return common.YesNo(0)
 }
 
 func (x *UserBase) GetDeviceId() string {
@@ -801,7 +801,7 @@ type UserItem struct {
 	RegisterIp     string                 `protobuf:"bytes,19,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`                              // 注册IP
 	RegisterTime   int64                  `protobuf:"varint,20,opt,name=register_time,json=registerTime,proto3" json:"register_time,omitempty"`                       // 注册时间
 	IsGuest        int64                  `protobuf:"varint,21,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客；1正常用户，2游客
-	IsRecharge     int64                  `protobuf:"varint,22,opt,name=is_recharge,json=isRecharge,proto3" json:"is_recharge,omitempty"`                             // 是否充值；0没有充值，1已充值
+	IsRecharge     common.YesNo           `protobuf:"varint,22,opt,name=is_recharge,json=isRecharge,proto3,enum=common.YesNo" json:"is_recharge,omitempty"`           // 是否充值；1否 2是
 	DeviceId       string                 `protobuf:"bytes,23,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`                                    // 设备唯一ID
 	Fingerprint    string                 `protobuf:"bytes,24,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`                                              // 浏览器指纹
 	Remark         string                 `protobuf:"bytes,25,opt,name=remark,proto3" json:"remark,omitempty"`                                                        // 备注
@@ -989,11 +989,11 @@ func (x *UserItem) GetIsGuest() int64 {
 	return 0
 }
 
-func (x *UserItem) GetIsRecharge() int64 {
+func (x *UserItem) GetIsRecharge() common.YesNo {
 	if x != nil {
 		return x.IsRecharge
 	}
-	return 0
+	return common.YesNo(0)
 }
 
 func (x *UserItem) GetDeviceId() string {
@@ -1418,7 +1418,7 @@ var File_proto_user_model_proto protoreflect.FileDescriptor
 
 const file_proto_user_model_proto_rawDesc = "" +
 	"\n" +
-	"\x16proto/user/model.proto\x12\x04user\x1a\x19proto/common/common.proto\x1a\x15proto/user/enum.proto\"\x89\a\n" +
+	"\x16proto/user/model.proto\x12\x04user\x1a\x19proto/common/common.proto\x1a\x15proto/user/enum.proto\"\x98\a\n" +
 	"\bUserBase\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -1443,8 +1443,8 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"\vregister_ip\x18\x13 \x01(\tR\n" +
 	"registerIp\x12#\n" +
 	"\rregister_time\x18\x14 \x01(\x03R\fregisterTime\x12\x19\n" +
-	"\bis_guest\x18\x15 \x01(\x03R\aisGuest\x12\x1f\n" +
-	"\vis_recharge\x18\x16 \x01(\x03R\n" +
+	"\bis_guest\x18\x15 \x01(\x03R\aisGuest\x12.\n" +
+	"\vis_recharge\x18\x16 \x01(\x0e2\r.common.YesNoR\n" +
 	"isRecharge\x12\x1b\n" +
 	"\tdevice_id\x18\x17 \x01(\tR\bdeviceId\x12 \n" +
 	"\vfingerprint\x18\x18 \x01(\tR\vfingerprint\x12\x16\n" +
@@ -1508,7 +1508,7 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"\x04user\x18\x01 \x01(\v2\x0e.user.UserBaseR\x04user\x12.\n" +
 	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\x12.\n" +
 	"\bsecurity\x18\x03 \x01(\v2\x12.user.UserSecurityR\bsecurity\x12(\n" +
-	"\x05banks\x18\x04 \x03(\v2\x12.user.UserBankItemR\x05banks\"\x89\a\n" +
+	"\x05banks\x18\x04 \x03(\v2\x12.user.UserBankItemR\x05banks\"\x98\a\n" +
 	"\bUserItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -1533,8 +1533,8 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"\vregister_ip\x18\x13 \x01(\tR\n" +
 	"registerIp\x12#\n" +
 	"\rregister_time\x18\x14 \x01(\x03R\fregisterTime\x12\x19\n" +
-	"\bis_guest\x18\x15 \x01(\x03R\aisGuest\x12\x1f\n" +
-	"\vis_recharge\x18\x16 \x01(\x03R\n" +
+	"\bis_guest\x18\x15 \x01(\x03R\aisGuest\x12.\n" +
+	"\vis_recharge\x18\x16 \x01(\x0e2\r.common.YesNoR\n" +
 	"isRecharge\x12\x1b\n" +
 	"\tdevice_id\x18\x17 \x01(\tR\bdeviceId\x12 \n" +
 	"\vfingerprint\x18\x18 \x01(\tR\vfingerprint\x12\x16\n" +
@@ -1616,43 +1616,45 @@ var file_proto_user_model_proto_goTypes = []any{
 	(*UserBankItem)(nil),     // 7: user.UserBankItem
 	(RegisterType)(0),        // 8: user.RegisterType
 	(UserStatus)(0),          // 9: user.UserStatus
-	(Gender)(0),              // 10: user.Gender
-	(IdType)(0),              // 11: user.IdType
-	(KycLevel)(0),            // 12: user.KycLevel
-	(VerifyStatus)(0),        // 13: user.VerifyStatus
-	(common.Enable)(0),       // 14: common.Enable
-	(RiskLevel)(0),           // 15: user.RiskLevel
-	(common.YesNo)(0),        // 16: common.YesNo
+	(common.YesNo)(0),        // 10: common.YesNo
+	(Gender)(0),              // 11: user.Gender
+	(IdType)(0),              // 12: user.IdType
+	(KycLevel)(0),            // 13: user.KycLevel
+	(VerifyStatus)(0),        // 14: user.VerifyStatus
+	(common.Enable)(0),       // 15: common.Enable
+	(RiskLevel)(0),           // 16: user.RiskLevel
 }
 var file_proto_user_model_proto_depIdxs = []int32{
 	8,  // 0: user.UserBase.register_type:type_name -> user.RegisterType
 	9,  // 1: user.UserBase.status:type_name -> user.UserStatus
-	10, // 2: user.UserIdentity.gender:type_name -> user.Gender
-	11, // 3: user.UserIdentity.id_type:type_name -> user.IdType
-	12, // 4: user.UserIdentity.kyc_level:type_name -> user.KycLevel
-	13, // 5: user.UserIdentity.verify_status:type_name -> user.VerifyStatus
-	14, // 6: user.UserSecurity.google_enabled:type_name -> common.Enable
-	15, // 7: user.UserSecurity.risk_level:type_name -> user.RiskLevel
-	0,  // 8: user.UserProfile.user:type_name -> user.UserBase
-	1,  // 9: user.UserProfile.identity:type_name -> user.UserIdentity
-	2,  // 10: user.UserProfile.security:type_name -> user.UserSecurity
-	0,  // 11: user.UserDetail.user:type_name -> user.UserBase
-	1,  // 12: user.UserDetail.identity:type_name -> user.UserIdentity
-	2,  // 13: user.UserDetail.security:type_name -> user.UserSecurity
-	7,  // 14: user.UserDetail.banks:type_name -> user.UserBankItem
-	8,  // 15: user.UserItem.register_type:type_name -> user.RegisterType
-	9,  // 16: user.UserItem.status:type_name -> user.UserStatus
-	10, // 17: user.UserIdentityItem.gender:type_name -> user.Gender
-	11, // 18: user.UserIdentityItem.id_type:type_name -> user.IdType
-	12, // 19: user.UserIdentityItem.kyc_level:type_name -> user.KycLevel
-	13, // 20: user.UserIdentityItem.verify_status:type_name -> user.VerifyStatus
-	16, // 21: user.UserBankItem.is_default:type_name -> common.YesNo
-	14, // 22: user.UserBankItem.enabled:type_name -> common.Enable
-	23, // [23:23] is the sub-list for method output_type
-	23, // [23:23] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	10, // 2: user.UserBase.is_recharge:type_name -> common.YesNo
+	11, // 3: user.UserIdentity.gender:type_name -> user.Gender
+	12, // 4: user.UserIdentity.id_type:type_name -> user.IdType
+	13, // 5: user.UserIdentity.kyc_level:type_name -> user.KycLevel
+	14, // 6: user.UserIdentity.verify_status:type_name -> user.VerifyStatus
+	15, // 7: user.UserSecurity.google_enabled:type_name -> common.Enable
+	16, // 8: user.UserSecurity.risk_level:type_name -> user.RiskLevel
+	0,  // 9: user.UserProfile.user:type_name -> user.UserBase
+	1,  // 10: user.UserProfile.identity:type_name -> user.UserIdentity
+	2,  // 11: user.UserProfile.security:type_name -> user.UserSecurity
+	0,  // 12: user.UserDetail.user:type_name -> user.UserBase
+	1,  // 13: user.UserDetail.identity:type_name -> user.UserIdentity
+	2,  // 14: user.UserDetail.security:type_name -> user.UserSecurity
+	7,  // 15: user.UserDetail.banks:type_name -> user.UserBankItem
+	8,  // 16: user.UserItem.register_type:type_name -> user.RegisterType
+	9,  // 17: user.UserItem.status:type_name -> user.UserStatus
+	10, // 18: user.UserItem.is_recharge:type_name -> common.YesNo
+	11, // 19: user.UserIdentityItem.gender:type_name -> user.Gender
+	12, // 20: user.UserIdentityItem.id_type:type_name -> user.IdType
+	13, // 21: user.UserIdentityItem.kyc_level:type_name -> user.KycLevel
+	14, // 22: user.UserIdentityItem.verify_status:type_name -> user.VerifyStatus
+	10, // 23: user.UserBankItem.is_default:type_name -> common.YesNo
+	15, // 24: user.UserBankItem.enabled:type_name -> common.Enable
+	25, // [25:25] is the sub-list for method output_type
+	25, // [25:25] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_model_proto_init() }

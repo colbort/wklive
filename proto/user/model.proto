@@ -29,7 +29,7 @@ message UserBase {
   string register_ip = 19; // 注册IP
   int64 register_time = 20; // 注册时间
   int64 is_guest = 21; // 是否游客；1正常用户，2游客
-  int64 is_recharge = 22; // 是否充值；0没有充值，1已充值
+  common.YesNo is_recharge = 22; // 是否充值；1否 2是
   string device_id = 23; // 设备唯一ID
   string fingerprint = 24; // 浏览器指纹
   string remark = 25; // 备注
@@ -116,7 +116,7 @@ message UserItem {
   string register_ip = 19; // 注册IP
   int64 register_time = 20; // 注册时间
   int64 is_guest = 21; // 是否游客；1正常用户，2游客
-  int64 is_recharge = 22; // 是否充值；0没有充值，1已充值
+  common.YesNo is_recharge = 22; // 是否充值；1否 2是
   string device_id = 23; // 设备唯一ID
   string fingerprint = 24; // 浏览器指纹
   string remark = 25; // 备注

@@ -165,6 +165,10 @@ function getEnabledLabel(value?: number) {
   return Number(value) === 1 ? t('users.yes') : t('users.no')
 }
 
+function getYesNoLabel(value?: number) {
+  return Number(value) === 2 ? t('users.yes') : t('users.no')
+}
+
 function getGuestLabel(value?: number) {
   return Number(value) === 2 ? t('users.yes') : t('users.no')
 }
@@ -196,7 +200,7 @@ function getOptionTagClass(groupKey: string, value?: number) {
 }
 
 function getBooleanTagClass(value?: number) {
-  return Number(value) === 1 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
+  return Number(value) === 2 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
 }
 
 function getGuestTagClass(value?: number) {
@@ -708,7 +712,7 @@ onMounted(fetchCreateOptions)
         <el-table-column :label="t('users.isRecharge')" width="90">
           <template #default="{ row }">
             <span :class="getBooleanTagClass(row.isRecharge)">
-              {{ getEnabledLabel(row.isRecharge) }}
+              {{ getYesNoLabel(row.isRecharge) }}
             </span>
           </template>
         </el-table-column>
@@ -1164,7 +1168,7 @@ onMounted(fetchCreateOptions)
                 <el-table-column :label="t('users.defaultBank')" width="90">
                   <template #default="{ row }">
                     <span :class="getBooleanTagClass(row.isDefault)">
-                      {{ getEnabledLabel(row.isDefault) }}
+                      {{ getYesNoLabel(row.isDefault) }}
                     </span>
                   </template>
                 </el-table-column>

@@ -111,7 +111,7 @@ type UserItem {
 	registerIp     string `json:"registerIp"` // 注册IP
 	registerTime   int64  `json:"registerTime"` // 注册时间
 	isGuest        int64  `json:"isGuest"` // 是否游客；1正常用户，2游客
-	isRecharge     int64  `json:"isRecharge"` // 是否充值；0没有充值，1已充值
+	isRecharge     int64  `json:"isRecharge"` // 是否充值；1否 2是
 	deviceId       string `json:"deviceId"` // 设备唯一ID
 	fingerprint    string `json:"fingerprint"` // 浏览器指纹
 	remark         string `json:"remark"` // 备注

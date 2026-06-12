@@ -1,6 +1,6 @@
 import type { OptionGroup, RespBase } from '@/services'
 import {
-    apiOptionCreateContract,
+  apiOptionCreateContract,
   apiOptionGetAccount,
   apiOptionGetBill,
   apiOptionGetContract,
@@ -50,11 +50,11 @@ export type OptionContract = {
   listTime: number
   expireTime: number
   deliverTime: number
-  isAutoExercise: number
+  isAutoExercise: number // 是否自动行权：1否 2是
   status: number
   sort: number // 排序
   remark: string // 备注
-  isDeleted: number // 是否删除
+  isDeleted: number // 是否删除：1否 2是
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
 }
@@ -126,8 +126,8 @@ export type OptionOrder = {
   marginAmount: string
   source: number
   clientOrderId: string
-  reduceOnly: number
-  mmp: number
+  reduceOnly: number // 是否只减仓：1否 2是
+  mmp: number // 是否做市商保护单：1否 2是
   status: number
   cancelReason: string
   matchTime: number
@@ -221,7 +221,7 @@ export type OptionSettlement = {
   deliveryPrice: string
   theoreticalPrice: string
   iv: string
-  isItm: number
+  isItm: number // 是否实值：1否 2是
   exerciseResult: number
   status: number
   remark: string

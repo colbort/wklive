@@ -47,11 +47,11 @@
           <el-switch
             v-model="tradeLimitForm.onlyReduceOnly"
             :active-value="1"
-            :inactive-value="0"
+            :inactive-value="2"
           />
         </el-form-item>
         <el-form-item :label="t('trade.tradeEnabled')">
-          <el-switch v-model="tradeLimitForm.tradeEnabled" :active-value="1" :inactive-value="0" />
+          <el-switch v-model="tradeLimitForm.tradeEnabled" :active-value="1" :inactive-value="2" />
         </el-form-item>
         <el-form-item :label="t('trade.maxOpenOrderCount')">
           <el-input-number v-model="tradeLimitForm.maxOpenOrderCount" :min="0" :precision="0" />
@@ -99,7 +99,7 @@ const tradeLimitForm = reactive<SetUserTradeLimitReq>({
   canTriggerOrder: 1,
   canApiTrade: 1,
   tradeEnabled: 1,
-  onlyReduceOnly: 0,
+  onlyReduceOnly: 2,
   maxOpenOrderCount: 0,
   maxOrderCountPerDay: 0,
   maxCancelCountPerDay: 0,

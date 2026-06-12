@@ -165,7 +165,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		RegisterIp:     sql.NullString{String: registerIP, Valid: registerIP != ""},
 		RegisterTime:   now,
 		IsGuest:        1,
-		IsRecharge:     0,
+		IsRecharge:     1,
 		DeviceId:       in.DeviceId,
 		Fingerprint:    sql.NullString{String: in.Fingerprint, Valid: in.Fingerprint != ""},
 		Remark:         sql.NullString{String: "", Valid: true},

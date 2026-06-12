@@ -55,26 +55,26 @@
         </el-form-item>
         <el-form-item :label="t('asset.appVisible')">
           <el-select v-model="query.appVisible" clearable style="width: 140px">
-            <el-option :label="t('common.visible')" :value="2" />
-            <el-option :label="t('common.hidden')" :value="1" />
+            <el-option :label="t('common.visible')" :value="1" />
+            <el-option :label="t('common.hidden')" :value="2" />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('asset.rechargeEnabled')">
           <el-select v-model="query.rechargeEnabled" clearable style="width: 140px">
-            <el-option :label="t('common.enabled')" :value="2" />
-            <el-option :label="t('common.disabled')" :value="1" />
+            <el-option :label="t('common.enabled')" :value="1" />
+            <el-option :label="t('common.disabled')" :value="2" />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('asset.withdrawEnabled')">
           <el-select v-model="query.withdrawEnabled" clearable style="width: 140px">
-            <el-option :label="t('common.enabled')" :value="2" />
-            <el-option :label="t('common.disabled')" :value="1" />
+            <el-option :label="t('common.enabled')" :value="1" />
+            <el-option :label="t('common.disabled')" :value="2" />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('asset.transferEnabled')">
           <el-select v-model="query.transferEnabled" clearable style="width: 140px">
-            <el-option :label="t('common.enabled')" :value="2" />
-            <el-option :label="t('common.disabled')" :value="1" />
+            <el-option :label="t('common.enabled')" :value="1" />
+            <el-option :label="t('common.disabled')" :value="2" />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('common.enabled')">
@@ -143,28 +143,28 @@
         <el-table-column prop="decimalPlaces" :label="t('asset.decimalPlaces')" min-width="100" />
         <el-table-column prop="appVisible" :label="t('asset.appVisible')" min-width="100">
           <template #default="{ row }">
-            <el-tag :type="row.appVisible === 2 ? 'success' : 'info'">
-              {{ row.appVisible === 2 ? t('common.visible') : t('common.hidden') }}
+            <el-tag :type="row.appVisible === 1 ? 'success' : 'info'">
+              {{ row.appVisible === 1 ? t('common.visible') : t('common.hidden') }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="rechargeEnabled" :label="t('asset.rechargeEnabled')" min-width="110">
           <template #default="{ row }">
-            <el-tag :type="row.rechargeEnabled === 2 ? 'success' : 'info'">
+            <el-tag :type="row.rechargeEnabled === 1 ? 'success' : 'info'">
               {{ formatEnabled(row.rechargeEnabled) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="withdrawEnabled" :label="t('asset.withdrawEnabled')" min-width="110">
           <template #default="{ row }">
-            <el-tag :type="row.withdrawEnabled === 2 ? 'success' : 'info'">
+            <el-tag :type="row.withdrawEnabled === 1 ? 'success' : 'info'">
               {{ formatEnabled(row.withdrawEnabled) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="transferEnabled" :label="t('asset.transferEnabled')" min-width="110">
           <template #default="{ row }">
-            <el-tag :type="row.transferEnabled === 2 ? 'success' : 'info'">
+            <el-tag :type="row.transferEnabled === 1 ? 'success' : 'info'">
               {{ formatEnabled(row.transferEnabled) }}
             </el-tag>
           </template>
@@ -335,24 +335,24 @@
           <el-col :span="12">
             <el-form-item :label="t('asset.appVisible')">
               <el-select v-model="form.appVisible" style="width: 100%">
-                <el-option :label="t('common.visible')" :value="2" />
-                <el-option :label="t('common.hidden')" :value="1" />
+                <el-option :label="t('common.visible')" :value="1" />
+                <el-option :label="t('common.hidden')" :value="2" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('asset.rechargeEnabled')">
-              <el-switch v-model="form.rechargeEnabled" :active-value="2" :inactive-value="1" />
+              <el-switch v-model="form.rechargeEnabled" :active-value="1" :inactive-value="2" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('asset.withdrawEnabled')">
-              <el-switch v-model="form.withdrawEnabled" :active-value="2" :inactive-value="1" />
+              <el-switch v-model="form.withdrawEnabled" :active-value="1" :inactive-value="2" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('asset.transferEnabled')">
-              <el-switch v-model="form.transferEnabled" :active-value="2" :inactive-value="1" />
+              <el-switch v-model="form.transferEnabled" :active-value="1" :inactive-value="2" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -435,11 +435,11 @@ const form = reactive({
   iconText: '',
   iconBgColor: '',
   decimalPlaces: 8,
-  appVisible: 2,
+  appVisible: 1,
   rechargeEnabled: 2,
   withdrawEnabled: 2,
-  transferEnabled: 2,
-  enabled: 2,
+  transferEnabled: 1,
+  enabled: 1,
   sort: 0,
   remark: '',
 })
@@ -483,7 +483,7 @@ const dialogTitle = computed(() =>
 const detailTitle = computed(() => `${t('asset.coinConfigs')}${t('asset.detail')}`)
 
 function formatEnabled(value: number) {
-  return value === 2 ? t('common.enabled') : t('common.disabled')
+  return value === 1 ? t('common.enabled') : t('common.disabled')
 }
 
 function formatOption(options: OptionItem[], value: number) {
@@ -508,11 +508,11 @@ function resetFormData() {
   form.iconText = ''
   form.iconBgColor = ''
   form.decimalPlaces = 8
-  form.appVisible = 2
+  form.appVisible = 1
   form.rechargeEnabled = 2
   form.withdrawEnabled = 2
-  form.transferEnabled = 2
-  form.enabled = 2
+  form.transferEnabled = 1
+  form.enabled = 1
   form.sort = 0
   form.remark = ''
   formRef.value?.clearValidate()
@@ -531,11 +531,11 @@ function fillForm(row: AssetCoinConfig) {
   form.iconText = row.iconText || ''
   form.iconBgColor = row.iconBgColor || ''
   form.decimalPlaces = Number(row.decimalPlaces || 0)
-  form.appVisible = Number(row.appVisible || 2)
-  form.rechargeEnabled = Number(row.rechargeEnabled || 1)
-  form.withdrawEnabled = Number(row.withdrawEnabled || 1)
-  form.transferEnabled = Number(row.transferEnabled || 2)
-  form.enabled = Number(row.enabled || 2)
+  form.appVisible = Number(row.appVisible || 1)
+  form.rechargeEnabled = Number(row.rechargeEnabled || 2)
+  form.withdrawEnabled = Number(row.withdrawEnabled || 2)
+  form.transferEnabled = Number(row.transferEnabled || 1)
+  form.enabled = Number(row.enabled || 1)
   form.sort = Number(row.sort || 0)
   form.remark = row.remark || ''
 }

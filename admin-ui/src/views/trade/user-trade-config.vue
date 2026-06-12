@@ -44,13 +44,13 @@
           <el-input-number v-model="tradeConfigForm.defaultLeverage" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item :label="t('trade.tradeEnabled')">
-          <el-switch v-model="tradeConfigForm.tradeEnabled" :active-value="1" :inactive-value="0" />
+          <el-switch v-model="tradeConfigForm.tradeEnabled" :active-value="1" :inactive-value="2" />
         </el-form-item>
         <el-form-item :label="t('trade.reduceOnlyEnabled')">
           <el-switch
             v-model="tradeConfigForm.reduceOnlyEnabled"
             :active-value="1"
-            :inactive-value="0"
+            :inactive-value="2"
           />
         </el-form-item>
         <el-button
@@ -89,7 +89,7 @@ const tradeConfigForm = reactive<SetUserTradeConfigReq>({
   marginMode: 0,
   defaultLeverage: 1,
   tradeEnabled: 1,
-  reduceOnlyEnabled: 0,
+  reduceOnlyEnabled: 2,
 })
 
 const loadCurrent = async () => {}

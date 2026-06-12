@@ -68,7 +68,7 @@ const form = reactive<UserBankForm>({
   accountNo: '',
   branchName: '',
   countryCode: '',
-  isDefault: 0,
+  isDefault: 1,
   enabled: 1,
 })
 
@@ -90,11 +90,11 @@ function checkCode(code: number) {
 }
 
 function getBooleanLabel(value?: number) {
-  return Number(value) === 1 ? t('users.yes') : t('users.no')
+  return Number(value) === 2 ? t('users.yes') : t('users.no')
 }
 
 function getBooleanTagClass(value?: number) {
-  return Number(value) === 1 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
+  return Number(value) === 2 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
 }
 
 function getBankEnabledTagClass(value?: number) {
@@ -235,7 +235,7 @@ function openCreate() {
     accountNo: '',
     branchName: '',
     countryCode: '',
-    isDefault: 0,
+    isDefault: 1,
     enabled: 1,
   })
   resetTenantCheck()
@@ -610,7 +610,7 @@ onMounted(fetchOptions)
           <el-input v-model="form.countryCode" />
         </el-form-item>
         <el-form-item :label="t('common.default')">
-          <el-switch v-model="form.isDefault" :active-value="1" :inactive-value="0" />
+          <el-switch v-model="form.isDefault" :active-value="2" :inactive-value="1" />
         </el-form-item>
         <el-form-item :label="t('users.enabled')">
           <el-select v-model="form.enabled" style="width: 100%">

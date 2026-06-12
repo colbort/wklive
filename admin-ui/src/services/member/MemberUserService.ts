@@ -23,7 +23,7 @@ import {
   apiMemberUserUpdateLevel,
   apiMemberUserUpdateRiskLevel,
   apiMemberUserUpdateStatus,
-  } from '@/api/member/users'
+} from '@/api/member/users'
 import { getCoreOptions } from '@/stores/core'
 
 export type MemberRespBase<T = any> = RespBase<T> & {
@@ -54,8 +54,8 @@ export type UserBase = {
   lastLoginTime?: number // 最后登录时间
   registerIp?: string // 注册IP
   registerTime?: number // 注册时间
-  isGuest: number // 是否游客
-  isRecharge: number // 是否已充值
+  isGuest: number // 是否游客：1正常用户 2游客
+  isRecharge: number // 是否已充值：1否 2是
   deviceId: string // 设备ID
   fingerprint: string // 浏览器指纹
   remark?: string // 备注
@@ -98,7 +98,7 @@ export type UserSecurity = {
   userId: number // 用户ID
   payPasswordHash: string // 支付密码哈希
   googleSecret: string // Google 密钥
-  googleEnabled: number // Google 2FA 是否启用
+  googleEnabled: number // Google 2FA 是否启用：1启用 2禁用
   loginErrorCount: number // 登录错误次数
   payErrorCount: number // 支付密码错误次数
   lockUntil: number // 锁定到期时间
@@ -152,8 +152,8 @@ export type UserItem = {
   lastLoginTime: number // 最后登录时间
   registerIp: string // 注册IP
   registerTime: number // 注册时间
-  isGuest: number // 是否游客
-  isRecharge: number // 是否已充值
+  isGuest: number // 是否游客：1正常用户 2游客
+  isRecharge: number // 是否已充值：1否 2是
   deviceId: string // 设备ID
   fingerprint: string // 浏览器指纹
   remark: string // 备注
@@ -302,7 +302,7 @@ export type ListMemberUserBanksReq = {
   tenantId?: number // 租户ID
   userId?: number // 用户ID
   keyword?: string // 关键字
-  enabled?: number // 银行卡启用状态
+  enabled?: number // 银行卡启用状态：1启用 2禁用
 }
 
 export type AddUserBankReq = {
@@ -322,7 +322,7 @@ export type UpdateMemberUserBankReq = AddUserBankReq
 
 export type UpdateMemberUserBankEnabledReq = {
   tenantId: number // 租户ID
-  enabled: number // 银行卡启用状态
+  enabled: number // 银行卡启用状态：1启用 2禁用
 }
 
 export type SetDefaultUserBankReq = {

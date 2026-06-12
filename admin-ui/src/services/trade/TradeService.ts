@@ -312,7 +312,7 @@ export type RiskUserTradeLimit = {
   canCancel: number // 撤单权限：0禁止 1允许
   canTriggerOrder: number // 条件单权限：0禁止 1允许
   canApiTrade: number // API交易权限：0禁止 1允许
-  tradeEnabled: number // 交易开关：0关 1开
+  tradeEnabled: number // 交易开关：1启用 2禁用
   onlyReduceOnly: number // 仅减仓开关：1启用 2禁用
   maxOpenOrderCount: number
   maxOrderCountPerDay: number
