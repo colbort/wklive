@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"database/sql"
+	uc "wklive/common/utils"
+
 	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
@@ -28,12 +30,21 @@ func NewSysConfigUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 更新系统配置
 func (l *SysConfigUpdateLogic) SysConfigUpdate(in *system.SysConfigUpdateReq) (*system.RespBase, error) {
-	if err := utils.CheckConfig(in.ConfigKey, in.ConfigValue); err != nil {
-		return nil, errorx.Wrap(err, i18n.Translate(i18n.ConfigValidationFailed, l.ctx))
-	}
 	config, err := l.svcCtx.ConfigModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
+	}
+
+	configKey := config.ConfigKey.String
+	configValue := config.ConfigValue.String
+	if in.ConfigKey != "" {
+		configKey = in.ConfigKey
+	}
+	if in.ConfigValue != "" {
+		configValue = in.ConfigValue
+	}
+	if err := utils.CheckConfig(configKey, configValue); err != nil {
+		return nil, errorx.Wrap(err, i18n.Translate(i18n.ConfigValidationFailed, l.ctx))
 	}
 
 	if in.ConfigKey != "" {
@@ -45,6 +56,7 @@ func (l *SysConfigUpdateLogic) SysConfigUpdate(in *system.SysConfigUpdateReq) (*
 	if in.Remark != "" {
 		config.Remark = sql.NullString{String: in.Remark, Valid: true}
 	}
+	config.UpdateTimes = uc.NowMillis()
 	err = l.svcCtx.ConfigModel.Update(l.ctx, config)
 	if err != nil {
 		return nil, err

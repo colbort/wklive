@@ -11,6 +11,7 @@ import (
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type ChangeLoginPasswordLogic struct {
@@ -52,11 +53,20 @@ func (l *ChangeLoginPasswordLogic) ChangeLoginPassword(in *user.ChangeLoginPassw
 		}, nil
 	}
 
+	if in.NewPassword == "" {
+		return nil, i18n.StatusError(l.ctx, i18n.ParamError)
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
 	// TODO: 验证旧密码是否正确
 	// 在实际项目中需要对密码进行验证
 
 	// 更新密码
-	tuser.PasswordHash = in.NewPassword
+	tuser.PasswordHash = string(hashedPassword)
 	tuser.UpdateTimes = utils.NowMillis()
 
 	err = l.svcCtx.UserModel.Update(l.ctx, tuser)

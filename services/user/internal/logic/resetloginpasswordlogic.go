@@ -11,6 +11,7 @@ import (
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type ResetLoginPasswordLogic struct {
@@ -40,9 +41,25 @@ func (l *ResetLoginPasswordLogic) ResetLoginPassword(in *user.ResetLoginPassword
 			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
+	if tuser.TenantId != in.TenantId {
+		return &user.AdminCommonResp{
+			Base: helper.GetErrResp(i18n.NoPermissionOperateThisUser, i18n.Translate(i18n.NoPermissionOperateThisUser, l.ctx)),
+		}, nil
+	}
+
+	if in.NewPassword == "" {
+		return &user.AdminCommonResp{
+			Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
+		}, nil
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
 
 	// 重置登录密码
-	tuser.PasswordHash = in.NewPassword
+	tuser.PasswordHash = string(hashedPassword)
 	tuser.UpdateTimes = utils.NowMillis()
 
 	err = l.svcCtx.UserModel.Update(l.ctx, tuser)

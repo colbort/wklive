@@ -7,9 +7,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
-	"wklive/services/system/models"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -42,14 +40,23 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system
 		return nil, i18n.StatusError(l.ctx, i18n.SuperAdminUpdateForbidden)
 	}
 
-	var data models.SysRole
-	_ = copier.Copy(&data, one)
-	copyNonZero(&data, in)
+	if in.Name != "" {
+		one.Name = in.Name
+	}
 	if in.Enabled != common.Enable_ENABLE_UNKNOWN {
-		data.Enabled = commonStatusToModel(in.Enabled)
+		one.Enabled = commonStatusToModel(in.Enabled)
+	}
+	if in.Remark != "" {
+		one.Remark = in.Remark
+	}
+	if in.TenantId != 0 {
+		one.TenantId = in.TenantId
+	}
+	if in.Code != "" {
+		one.Code = in.Code
 	}
 
-	err = l.svcCtx.RoleModel.Update(l.ctx, &data)
+	err = l.svcCtx.RoleModel.Update(l.ctx, one)
 	if err != nil {
 		return nil, err
 	}

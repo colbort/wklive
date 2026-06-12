@@ -56,6 +56,10 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 		return nil, err
 	}
 
+	if in.TenantPassword == "" {
+		return nil, i18n.StatusError(l.ctx, i18n.ParamError)
+	}
+
 	const ownerRoleTemplateId int64 = 2
 	const ownerRoleCode = "tenant_owner"
 	const ownerRoleName = "租户主账号"

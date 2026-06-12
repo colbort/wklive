@@ -12,6 +12,7 @@ import (
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type ChangePayPasswordLogic struct {
@@ -65,11 +66,20 @@ func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq
 		}, nil
 	}
 
+	if in.NewPassword == "" {
+		return nil, i18n.StatusError(l.ctx, i18n.ParamError)
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
 	// TODO: 验证旧密码是否正确
 	// 在实际项目中需要对密码进行验证
 
 	// 更新支付密码
-	userSecurity.PayPasswordHash = sql.NullString{String: in.NewPassword, Valid: true}
+	userSecurity.PayPasswordHash = sql.NullString{String: string(hashedPassword), Valid: true}
 	userSecurity.UpdateTimes = utils.NowMillis()
 
 	err = l.svcCtx.UserSecurityModel.Update(l.ctx, userSecurity)

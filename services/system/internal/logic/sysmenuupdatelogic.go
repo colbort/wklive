@@ -4,6 +4,8 @@ import (
 	"context"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -35,7 +37,40 @@ func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system
 		}, nil
 	}
 
-	copyNonZero(one, in)
+	if in.ParentId != 0 {
+		one.ParentId = in.ParentId
+	}
+	if in.Name != "" {
+		one.Name = in.Name
+	}
+	if in.MenuType != system.MenuType_MENU_TYPE_UNKNOWN {
+		one.MenuType = menuTypeToModel(in.MenuType)
+	}
+	if in.Method != system.RequestMethod_REQUEST_METHOD_UNKNOWN {
+		one.Method = requestMethodToString(in.Method)
+	}
+	if in.Path != "" {
+		one.Path = in.Path
+	}
+	if in.Component != "" {
+		one.Component = in.Component
+	}
+	if in.Icon != "" {
+		one.Icon = in.Icon
+	}
+	if in.Sort != 0 {
+		one.Sort = in.Sort
+	}
+	if in.Visible != common.Switch_SWITCH_UNKNOWN {
+		one.Visible = visibleStatusToModel(in.Visible)
+	}
+	if in.Enabled != common.Enable_ENABLE_UNKNOWN {
+		one.Enabled = commonStatusToModel(in.Enabled)
+	}
+	if in.Perms != "" {
+		one.Perms = in.Perms
+	}
+	one.UpdateTimes = utils.NowMillis()
 
 	err = l.svcCtx.MenuModel.Update(l.ctx, one)
 	if err != nil {

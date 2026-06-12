@@ -7,9 +7,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
-	"wklive/services/system/models"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -42,14 +40,26 @@ func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system
 			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
-	var data models.SysUser
-	_ = copier.Copy(&data, one)
-	copyNonZero(&data, in)
+	if in.Nickname != "" {
+		one.Nickname = in.Nickname
+	}
 	if in.Enabled != common.Enable_ENABLE_UNKNOWN {
-		data.Enabled = commonStatusToModel(in.Enabled)
+		one.Enabled = commonStatusToModel(in.Enabled)
+	}
+	if in.TenantId != 0 {
+		one.TenantId = in.TenantId
+	}
+	if in.UserType != system.UserType_USER_TYPE_UNKNOWN {
+		one.UserType = int64(in.UserType)
+	}
+	if in.IsOwner != common.YesNo_YES_NO_UNKNOWN {
+		one.IsOwner = yesNoToModel(in.IsOwner)
+	}
+	if in.Avatar != "" {
+		one.Avatar = in.Avatar
 	}
 
-	err = l.svcCtx.UserModel.Update(l.ctx, &data)
+	err = l.svcCtx.UserModel.Update(l.ctx, one)
 	if err != nil {
 		return nil, err
 	}

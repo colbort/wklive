@@ -55,6 +55,10 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 		}, nil
 	}
 
+	if in.Password == "" {
+		return nil, i18n.StatusError(l.ctx, i18n.ParamError)
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -45,11 +46,9 @@ func (l *ReviewUserIdentityLogic) ReviewUserIdentity(in *user.ReviewUserIdentity
 
 	// 更新审核信息
 	identity.VerifyStatus = int64(in.VerifyStatus)
-	identity.RejectReason.String = in.RejectReason
-	identity.RejectReason.Valid = in.RejectReason != ""
+	identity.RejectReason = sql.NullString{String: in.RejectReason, Valid: true}
 	identity.VerifyTime = now
-	identity.VerifyBy.Int64 = in.VerifyBy
-	identity.VerifyBy.Valid = in.VerifyBy > 0
+	identity.VerifyBy = sql.NullInt64{Int64: in.VerifyBy, Valid: true}
 	identity.UpdateTimes = now
 
 	err = l.svcCtx.UserIdentityModel.Update(l.ctx, identity)
