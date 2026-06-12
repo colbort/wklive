@@ -33,9 +33,7 @@ body {
 }
 
 .module-page .page-header,
-.payment-page .page-header,
-.itick-tenant-categories .page-header,
-.itick-tenant-products .page-header {
+.payment-page .page-header {
   grid-row: 1;
   grid-column: 1;
   align-self: end;
@@ -48,18 +46,14 @@ body {
 }
 
 .module-page .page-header h2,
-.payment-page .page-header h2,
-.itick-tenant-categories .page-header h2,
-.itick-tenant-products .page-header h2 {
+.payment-page .page-header h2 {
   display: none;
 }
 
 .module-page .page-header > div,
 .payment-page .page-header > div,
 .module-page .header-actions,
-.payment-page .header-actions,
-.itick-tenant-categories .header-actions,
-.itick-tenant-products .header-actions {
+.payment-page .header-actions {
   display: flex;
   gap: 12px;
   align-items: center;
@@ -68,33 +62,25 @@ body {
 }
 
 .module-page .page-header .el-button,
-.payment-page .page-header .el-button,
-.itick-tenant-categories .page-header .el-button,
-.itick-tenant-products .page-header .el-button {
+.payment-page .page-header .el-button {
   display: none;
 }
 
 .module-page .page-header .page-create-action,
-.payment-page .page-header .page-create-action,
-.itick-tenant-categories .page-header .page-create-action,
-.itick-tenant-products .page-header .page-create-action {
+.payment-page .page-header .page-create-action {
   display: inline-flex;
 }
 
 .module-page .page-header:has(.page-create-action),
-.payment-page .page-header:has(.page-create-action),
-.itick-tenant-categories .page-header:has(.page-create-action),
-.itick-tenant-products .page-header:has(.page-create-action) {
+.payment-page .page-header:has(.page-create-action) {
   display: flex;
 }
 
 .module-page .query-card,
-.payment-page .query-card,
-.app-container .query-card,
-.itick-tenant-categories .query-card,
-.itick-tenant-products .query-card {
+.payment-page .query-card {
   grid-row: 1;
   grid-column: 1;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
 }
 
 .module-page .query-card,
@@ -108,12 +94,6 @@ body {
   border-radius: var(--admin-card-radius);
   border-color: var(--admin-card-border);
   box-shadow: none;
-}
-
-.module-page .query-card,
-.payment-page .query-card,
-.app-container .query-card {
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
 }
 
 .module-page .table-card,
@@ -154,10 +134,7 @@ body {
 }
 
 .module-page .query-card .el-form,
-.payment-page .query-card .el-form,
-.app-container .query-card .el-form,
-.module-page .query-card-inner,
-.payment-page .query-card-inner {
+.payment-page .query-card .el-form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--admin-query-item-width), 1fr));
   column-gap: 24px;
@@ -166,28 +143,24 @@ body {
 }
 
 .module-page .query-card .el-form-item,
-.payment-page .query-card .el-form-item,
-.app-container .query-card .el-form-item {
+.payment-page .query-card .el-form-item {
   margin: 0;
   width: 100%;
 }
 
 .module-page .crud-query-card--plain,
-.payment-page .crud-query-card--plain,
-.app-container .crud-query-card--plain {
+.payment-page .crud-query-card--plain {
   margin-bottom: 16px;
 }
 
 .module-page .query-card .el-form-item__label,
-.payment-page .query-card .el-form-item__label,
-.app-container .query-card .el-form-item__label {
+.payment-page .query-card .el-form-item__label {
   flex: 0 0 100px;
   background: transparent;
 }
 
 .module-page .query-card .el-form-item__content,
-.payment-page .query-card .el-form-item__content,
-.app-container .query-card .el-form-item__content {
+.payment-page .query-card .el-form-item__content {
   flex: 1;
   min-width: 0;
 }
@@ -199,16 +172,14 @@ body {
   .query-card
   .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)),
 .module-page .query-card .crud-query-actions,
-.payment-page .query-card .crud-query-actions,
-.app-container .query-card .crud-query-actions {
+.payment-page .query-card .crud-query-actions {
   width: auto;
   min-width: max-content;
   justify-self: end;
 }
 
 .module-page .query-card .crud-query-actions + .crud-query-actions,
-.payment-page .query-card .crud-query-actions + .crud-query-actions,
-.app-container .query-card .crud-query-actions + .crud-query-actions {
+.payment-page .query-card .crud-query-actions + .crud-query-actions {
   justify-self: start;
 }
 
@@ -221,8 +192,7 @@ body {
   .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor))
   .el-form-item__content,
 .module-page .query-card .crud-query-actions .el-form-item__content,
-.payment-page .query-card .crud-query-actions .el-form-item__content,
-.app-container .query-card .crud-query-actions .el-form-item__content {
+.payment-page .query-card .crud-query-actions .el-form-item__content {
   width: auto;
   display: inline-flex;
   flex-wrap: wrap;
@@ -236,11 +206,7 @@ body {
 .payment-page .query-card .el-form-item:has(.el-input) .el-form-item__content,
 .payment-page .query-card .el-form-item:has(.el-input-number) .el-form-item__content,
 .payment-page .query-card .el-form-item:has(.el-select) .el-form-item__content,
-.payment-page .query-card .el-form-item:has(.el-date-editor) .el-form-item__content,
-.app-container .query-card .el-form-item:has(.el-input) .el-form-item__content,
-.app-container .query-card .el-form-item:has(.el-input-number) .el-form-item__content,
-.app-container .query-card .el-form-item:has(.el-select) .el-form-item__content,
-.app-container .query-card .el-form-item:has(.el-date-editor) .el-form-item__content {
+.payment-page .query-card .el-form-item:has(.el-date-editor) .el-form-item__content {
   width: var(--admin-query-control-width);
 }
 
@@ -251,11 +217,7 @@ body {
 .payment-page .query-card .el-input,
 .payment-page .query-card .el-input-number,
 .payment-page .query-card .el-select,
-.payment-page .query-card .el-date-editor,
-.app-container .query-card .el-input,
-.app-container .query-card .el-input-number,
-.app-container .query-card .el-select,
-.app-container .query-card .el-date-editor {
+.payment-page .query-card .el-date-editor {
   width: 100% !important;
 }
 
@@ -328,9 +290,7 @@ body {
   }
 
   .module-page .page-header,
-  .payment-page .page-header,
-  .itick-tenant-categories .page-header,
-  .itick-tenant-products .page-header {
+  .payment-page .page-header {
     grid-row: 2;
     justify-self: stretch;
     max-width: none;

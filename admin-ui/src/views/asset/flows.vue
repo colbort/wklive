@@ -1,5 +1,5 @@
 <template>
-  <div class="module-page flow-page">
+  <div class="module-page">
     <div class="page-header">
       <h2>{{ t('asset.flows') }}</h2>
       <div class="header-actions">
@@ -42,14 +42,13 @@
       </el-form-item>
     </CrudQueryCard>
 
-    <el-card shadow="never" class="table-card flow-table-card">
+    <el-card shadow="never" class="table-card">
       <!-- prettier-ignore -->
       <el-table
         v-loading="loading"
         :data="rows"
         stripe
         height="100%"
-        class="flow-table"
       >
         <el-table-column
           prop="flowNo"
@@ -341,32 +340,3 @@ function opTypeTagType(opType?: number | string) {
 onMounted(loadList)
 onMounted(loadOptions)
 </script>
-
-<style scoped>
-.flow-page {
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.flow-table-card {
-  flex: 1;
-  min-height: 0;
-}
-
-.flow-table-card :deep(.el-card__body) {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-}
-
-.flow-table {
-  flex: 1;
-  min-height: 0;
-}
-
-.query-card :deep(.el-form-item) {
-  margin-bottom: 12px;
-}
-</style>

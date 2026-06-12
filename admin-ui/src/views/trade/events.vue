@@ -438,10 +438,6 @@ onMounted(async () => {
   width: 180px;
 }
 
-.query-card :deep(.el-input-number) {
-  width: 160px;
-}
-
 .detail-header {
   display: grid;
   gap: 4px;

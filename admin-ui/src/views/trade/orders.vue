@@ -518,10 +518,6 @@ onMounted(async () => {
   width: 160px;
 }
 
-.query-card :deep(.el-input-number) {
-  width: 160px;
-}
-
 .query-keyword {
   width: 220px;
 }

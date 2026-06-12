@@ -7,7 +7,12 @@
     <el-button :disabled="disabled || !hasNext" type="primary" @click="emit('next')">
       {{ t('common.nextPage') }}
     </el-button>
-    <el-select v-if="showLimit" :model-value="limit" style="width: 100px" @change="handleLimitChange">
+    <el-select
+      v-if="showLimit"
+      :model-value="limit"
+      style="width: 100px"
+      @change="handleLimitChange"
+    >
       <el-option :value="10" :label="t('common.perPage10')" />
       <el-option :value="20" :label="t('common.perPage20')" />
       <el-option :value="50" :label="t('common.perPage50')" />

@@ -17,7 +17,7 @@ import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 const { t } = useI18n()
 const { loading, withLoading } = useLoading()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
-  usePagination<number>(10)
+  usePagination<number>(20)
 
 const optionGroups = ref<OptionGroup[]>([])
 const { optionItems, optionLabel } = useOptions(optionGroups)

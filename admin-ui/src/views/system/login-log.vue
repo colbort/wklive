@@ -14,7 +14,7 @@ const { t } = useI18n()
 
 // Pagination and list
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
-  usePagination<number>(10)
+  usePagination<number>(20)
 const { loading, withLoading } = useLoading()
 
 // Query form

@@ -316,9 +316,3 @@ function handleNextPage() {
 onMounted(loadList)
 onMounted(loadOptions)
 </script>
-
-<style scoped>
-.query-card :deep(.el-form-item) {
-  margin-bottom: 12px;
-}
-</style>

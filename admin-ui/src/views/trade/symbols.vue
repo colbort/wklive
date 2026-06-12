@@ -39,10 +39,6 @@
       </el-form-item>
 
       <template #actions>
-        <el-button @click="loadCurrent">
-          <el-icon><Refresh /></el-icon>
-          {{ t('common.refresh') }}
-        </el-button>
         <el-button v-perm="'trade:symbol:add'" type="primary" @click="openSymbolDialog()">
           <el-icon><Plus /></el-icon>
           {{ t('trade.addSymbol') }}
@@ -810,7 +806,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Plus, Refresh } from '@element-plus/icons-vue'
+import { Plus } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import {

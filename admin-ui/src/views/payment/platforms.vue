@@ -444,10 +444,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.query-card :deep(.el-form-item) {
-  margin-bottom: 12px;
-}
-
 .platform-icon-upload {
   display: flex;
   align-items: center;

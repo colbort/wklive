@@ -39,7 +39,7 @@ const jobStatusSelectOptions = computed(() =>
 
 // Pagination and main list
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
-  usePagination<number>(10)
+  usePagination<number>(20)
 const list = ref<SysCronJobItem[]>([])
 const { loading, withLoading } = useLoading()
 

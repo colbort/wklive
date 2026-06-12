@@ -679,10 +679,6 @@ onMounted(loadOptions)
 </script>
 
 <style scoped>
-.query-card :deep(.el-form-item) {
-  margin-bottom: 12px;
-}
-
 .detail-pre {
   margin: 0;
   max-height: 520px;

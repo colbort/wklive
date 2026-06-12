@@ -69,7 +69,9 @@ function isTimeKey(key: string) {
 }
 
 function isLongText(value: unknown) {
-  return typeof value === 'string' && (value.length > 80 || value.includes('{') || value.includes('['))
+  return (
+    typeof value === 'string' && (value.length > 80 || value.includes('{') || value.includes('['))
+  )
 }
 
 function formatJsonText(value: string) {
@@ -85,9 +87,10 @@ function displayValue(key: string, value: unknown) {
   if (isTimeKey(key) && typeof value === 'number') return formatDate(value)
   if (booleanKeys.has(key)) return Number(value) === 1 ? t('users.yes') : t('users.no')
 
-  const groupKey = key === 'status' && props.data && 'orderNo' in props.data
-    ? 'payOrderStatus'
-    : optionGroupByKey[key]
+  const groupKey =
+    key === 'status' && props.data && 'orderNo' in props.data
+      ? 'payOrderStatus'
+      : optionGroupByKey[key]
   if (groupKey && props.optionGroups.length) {
     const label = getOptionValueLabel(props.optionGroups, groupKey, value as string | number, t)
     if (String(label) !== String(value) && label !== 0) return label
@@ -108,7 +111,9 @@ function displayValue(key: string, value: unknown) {
       :span="isLongText(value) || typeof value === 'object' ? columns : 1"
     >
       <pre v-if="isLongText(value)" class="detail-code">{{ formatJsonText(String(value)) }}</pre>
-      <pre v-else-if="typeof value === 'object' && value !== null" class="detail-code">{{ displayValue(key, value) }}</pre>
+      <pre v-else-if="typeof value === 'object' && value !== null" class="detail-code">{{
+        displayValue(key, value)
+      }}</pre>
       <span v-else class="detail-value">{{ displayValue(key, value) }}</span>
     </el-descriptions-item>
   </el-descriptions>
@@ -125,7 +130,7 @@ function displayValue(key: string, value: unknown) {
   overflow: auto;
   white-space: pre-wrap;
   word-break: break-word;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   font-size: 12px;
   line-height: 1.5;
   color: #334155;

@@ -1,5 +1,5 @@
 <template>
-  <div class="payment-page module-page crypto-address-page">
+  <div class="payment-page module-page">
     <div class="page-header">
       <h2>{{ t('payment.cryptoRechargeAddresses') }}</h2>
       <div class="header-actions">
@@ -70,13 +70,12 @@
       </el-form-item>
     </CrudQueryCard>
 
-    <el-card shadow="never" class="table-card crypto-address-table-card">
+    <el-card shadow="never" class="table-card">
       <el-table
         v-loading="loading"
         :data="list"
         stripe
         height="100%"
-        class="crypto-address-table"
       >
         <el-table-column prop="id" :label="t('common.id')" width="80" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="90" />
@@ -416,28 +415,3 @@ onMounted(() => {
   void loadList()
 })
 </script>
-
-<style scoped>
-.crypto-address-page {
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.crypto-address-table-card {
-  flex: 1;
-  min-height: 0;
-}
-
-.crypto-address-table-card :deep(.el-card__body) {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-}
-
-.crypto-address-table {
-  flex: 1;
-  min-height: 0;
-}
-</style>

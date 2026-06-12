@@ -4,7 +4,12 @@
       <slot name="header" />
     </template>
 
-    <el-form :model="model" inline :label-width="labelWidth" class="crud-query-form">
+    <el-form
+      :model="model"
+      inline
+      :label-width="labelWidth"
+      class="crud-query-form"
+    >
       <slot />
 
       <el-form-item v-if="showActions && (showSearch || showReset)" class="crud-query-actions">
@@ -23,7 +28,12 @@
   </el-card>
 
   <div v-else class="query-card crud-query-card crud-query-card--plain">
-    <el-form :model="model" inline :label-width="labelWidth" class="crud-query-form">
+    <el-form
+      :model="model"
+      inline
+      :label-width="labelWidth"
+      class="crud-query-form"
+    >
       <slot />
 
       <el-form-item v-if="showActions && (showSearch || showReset)" class="crud-query-actions">

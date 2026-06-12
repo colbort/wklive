@@ -9,7 +9,9 @@
   >
     <slot />
     <template #footer>
-      <el-button @click="visible = false"> Cancel </el-button>
+      <el-button @click="visible = false">
+        Cancel
+      </el-button>
       <el-button type="primary" :loading="loading" @click="handleConfirm">
         {{ confirmText }}
       </el-button>
@@ -17,7 +19,7 @@
   </el-dialog>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
 
 interface Props {
