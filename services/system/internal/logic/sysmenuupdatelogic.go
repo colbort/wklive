@@ -6,9 +6,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
-	"wklive/services/system/models"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -37,23 +35,9 @@ func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system
 		}, nil
 	}
 
-	var data models.SysMenu
-	_ = copier.Copy(&data, one)
-	copyNonZero(&data, in)
-	if in.MenuType != system.MenuType_MENU_TYPE_UNKNOWN {
-		data.MenuType = menuTypeToModel(in.MenuType)
-	}
-	if in.Method != system.RequestMethod_REQUEST_METHOD_UNKNOWN {
-		data.Method = requestMethodToString(in.Method)
-	}
-	if in.Visible != 0 {
-		data.Visible = visibleStatusToModel(in.Visible)
-	}
-	if in.Enabled != 0 {
-		data.Enabled = commonStatusToModel(in.Enabled)
-	}
+	copyNonZero(one, in)
 
-	err = l.svcCtx.MenuModel.Update(l.ctx, &data)
+	err = l.svcCtx.MenuModel.Update(l.ctx, one)
 	if err != nil {
 		return nil, err
 	}
