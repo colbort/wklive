@@ -180,6 +180,21 @@ body {
   min-width: 0;
 }
 
+.module-page .query-card .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)),
+.payment-page .query-card .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)) {
+  width: auto;
+  min-width: max-content;
+  justify-self: end;
+}
+
+.module-page .query-card .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)) .el-form-item__content,
+.payment-page .query-card .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)) .el-form-item__content {
+  width: auto;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .module-page .query-card .el-form-item:has(.el-input) .el-form-item__content,
 .module-page .query-card .el-form-item:has(.el-input-number) .el-form-item__content,
 .module-page .query-card .el-form-item:has(.el-select) .el-form-item__content,

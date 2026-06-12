@@ -405,14 +405,6 @@ onMounted(fetchOptions)
         <el-button @click="fetchList">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button
-          v-perm="'users:user:bank:add'"
-          class="page-create-action"
-          type="primary"
-          @click="openCreate"
-        >
-          {{ t('users.addBank') }}
-        </el-button>
       </div>
     </div>
 
@@ -443,6 +435,9 @@ onMounted(fetchOptions)
           </el-button>
           <el-button @click="resetQuery">
             {{ t('common.reset') }}
+          </el-button>
+          <el-button v-perm="'users:user:bank:add'" type="primary" @click="openCreate">
+            {{ t('users.addBank') }}
           </el-button>
         </el-form-item>
       </el-form>
