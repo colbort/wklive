@@ -20,11 +20,11 @@ export interface OptionContract {
   listTime: number
   expireTime: number
   deliverTime: number
-  isAutoExercise: number
+  isAutoExercise: number // 是否自动行权：1是 2否
   status: number
   sort: number
   remark: string
-  isDeleted: number
+  isDeleted: number // 是否删除：1是 2否
   createTimes: number
   updateTimes: number
 }
@@ -76,8 +76,8 @@ export interface OptionOrder {
   marginAmount: string
   source: number
   clientOrderId: string
-  reduceOnly: number
-  mmp: number
+  reduceOnly: number // 是否只减仓：1是 2否
+  mmp: number // 是否做市商保护单：1是 2否
   status: number
   cancelReason: string
   matchTime: number
@@ -240,8 +240,8 @@ export interface AppPlaceOrderReq {
   price: string
   qty: string
   clientOrderId?: string
-  reduceOnly?: number
-  mmp?: number
+  reduceOnly?: number // 是否只减仓：1是 2否
+  mmp?: number // 是否做市商保护单：1是 2否
 }
 
 export interface AppCancelOrderReq {

@@ -160,8 +160,8 @@ export type TradeOrder = {
   fee: string
   feeAsset: string
   source: number
-  isReduceOnly: number // 是否只减仓：1否 2是
-  isCloseOnly: number // 是否只平仓：1否 2是
+  isReduceOnly: number // 是否只减仓：1是 2否
+  isCloseOnly: number // 是否只平仓：1是 2否
   triggerPrice: string
   triggerType: number
   triggerKind: number

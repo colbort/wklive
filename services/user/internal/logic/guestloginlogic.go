@@ -12,6 +12,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
@@ -129,7 +130,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		RegisterIp:     sql.NullString{String: registerIP, Valid: registerIP != ""},
 		RegisterTime:   now,
 		IsGuest:        2,
-		IsRecharge:     1,
+		IsRecharge:     int64(common.YesNo_YES_NO_NO),
 		DeviceId:       deviceId,
 		Fingerprint:    sql.NullString{String: in.Fingerprint, Valid: true},
 		Remark:         sql.NullString{},

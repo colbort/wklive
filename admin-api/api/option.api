@@ -20,7 +20,7 @@ type OptionContract {
 	listTime         int64  `json:"listTime"`
 	expireTime       int64  `json:"expireTime"`
 	deliverTime      int64  `json:"deliverTime"`
-	isAutoExercise   int64  `json:"isAutoExercise"`
+	isAutoExercise   int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
 	status           int64  `json:"status"`
 	sort             int64  `json:"sort"`
 	remark           string `json:"remark"`
@@ -96,8 +96,8 @@ type OptionOrder {
 	marginAmount     string `json:"marginAmount"`
 	source           int64  `json:"source"`
 	clientOrderId    string `json:"clientOrderId"`
-	reduceOnly       int64  `json:"reduceOnly"`
-	mmp              int64  `json:"mmp"`
+	reduceOnly       int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
+	mmp              int64  `json:"mmp"` // 是否做市商保护单：1是 2否
 	status           int64  `json:"status"`
 	cancelReason     string `json:"cancelReason"`
 	matchTime        int64  `json:"matchTime"`
@@ -191,7 +191,7 @@ type OptionSettlement {
 	deliveryPrice    string `json:"deliveryPrice"`
 	theoreticalPrice string `json:"theoreticalPrice"`
 	iv               string `json:"iv"`
-	isItm            int64  `json:"isItm"`
+	isItm            int64  `json:"isItm"` // 是否实值：1是 2否
 	exerciseResult   int64  `json:"exerciseResult"`
 	status           int64  `json:"status"`
 	remark           string `json:"remark"`
@@ -284,7 +284,7 @@ type CreateContractReq {
 	listTime         int64  `json:"listTime"`
 	expireTime       int64  `json:"expireTime"`
 	deliverTime      int64  `json:"deliverTime"`
-	isAutoExercise   int64  `json:"isAutoExercise"`
+	isAutoExercise   int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
 	status           int64  `json:"status"`
 	sort             int64  `json:"sort"`
 	remark           string `json:"remark,optional"`
@@ -315,7 +315,7 @@ type UpdateContractReq {
 	listTime         int64  `json:"listTime"`
 	expireTime       int64  `json:"expireTime"`
 	deliverTime      int64  `json:"deliverTime"`
-	isAutoExercise   int64  `json:"isAutoExercise"`
+	isAutoExercise   int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
 	status           int64  `json:"status"`
 	sort             int64  `json:"sort"`
 	remark           string `json:"remark,optional"`

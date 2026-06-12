@@ -9,6 +9,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
@@ -165,7 +166,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		RegisterIp:     sql.NullString{String: registerIP, Valid: registerIP != ""},
 		RegisterTime:   now,
 		IsGuest:        1,
-		IsRecharge:     1,
+		IsRecharge:     int64(common.YesNo_YES_NO_NO),
 		DeviceId:       in.DeviceId,
 		Fingerprint:    sql.NullString{String: in.Fingerprint, Valid: in.Fingerprint != ""},
 		Remark:         sql.NullString{String: "", Valid: true},

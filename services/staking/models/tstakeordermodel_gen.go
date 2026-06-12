@@ -59,7 +59,7 @@ type (
 		LockDays         int64   `db:"lock_days"`          // 锁仓天数快照
 		InterestMode     int64   `db:"interest_mode"`      // 计息方式快照：1按天计息 2到期一次性计息
 		RewardMode       int64   `db:"reward_mode"`        // 发息方式快照：1每日发放 2到期发放
-		AllowEarlyRedeem int64   `db:"allow_early_redeem"` // 是否允许提前赎回快照：1否 2是
+		AllowEarlyRedeem int64   `db:"allow_early_redeem"` // 是否允许提前赎回快照：1是 2否
 		EarlyRedeemRate  float64 `db:"early_redeem_rate"`  // 提前赎回手续费率快照
 		InterestDays     int64   `db:"interest_days"`      // 已计息天数
 		StartTimes       int64   `db:"start_times"`        // 起息时间戳

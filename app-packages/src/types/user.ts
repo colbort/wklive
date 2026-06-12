@@ -90,7 +90,7 @@ export interface UserBank {
   accountNo: string
   branchName: string
   countryCode: string
-  isDefault: number
+  isDefault: number // 是否默认：1是 2否
   enabled: number
   createTimes: number
   updateTimes: number

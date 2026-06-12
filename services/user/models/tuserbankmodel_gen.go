@@ -49,7 +49,7 @@ type (
 		AccountNo   string         `db:"account_no"`   // 银行卡号
 		BranchName  sql.NullString `db:"branch_name"`  // 支行名称
 		CountryCode sql.NullString `db:"country_code"` // 国家地区
-		IsDefault   int64          `db:"is_default"`   // 是否默认：1否，2是
+		IsDefault   int64          `db:"is_default"`   // 是否默认：1是，2否
 		Enabled     int64          `db:"enabled"`      // 状态：1正常 2禁用
 		CreateTimes int64          `db:"create_times"` // 创建时间
 		UpdateTimes int64          `db:"update_times"` // 更新时间

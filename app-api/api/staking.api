@@ -22,7 +22,7 @@ type StakeProduct {
 	userLimitAmount  string `json:"userLimitAmount"`
 	interestMode     int64  `json:"interestMode"`
 	rewardMode       int64  `json:"rewardMode"`
-	allowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	allowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
 	earlyRedeemRate  string `json:"earlyRedeemRate"`
 	status           int64  `json:"status"`
 	sort             int64  `json:"sort"` // 排序
@@ -51,7 +51,7 @@ type StakeOrder {
 	lockDays         int64  `json:"lockDays"` // 锁仓天数
 	interestMode     int64  `json:"interestMode"`
 	rewardMode       int64  `json:"rewardMode"`
-	allowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	allowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
 	earlyRedeemRate  string `json:"earlyRedeemRate"`
 	interestDays     int64  `json:"interestDays"` // 已计息天数
 	startTimes       int64  `json:"startTimes"`

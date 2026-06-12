@@ -13,7 +13,7 @@ CREATE TABLE sys_user (
 
   tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
   user_type TINYINT NOT NULL DEFAULT 1 COMMENT '用户类型：1系统管理员 2租户主账号 3租户管理员',
-  is_owner TINYINT NOT NULL DEFAULT 1 COMMENT '是否租户主账号：1否 2是',
+  is_owner TINYINT NOT NULL DEFAULT 2 COMMENT '是否租户主账号：1是 2否',
 
   username VARCHAR(64) NOT NULL DEFAULT '' COMMENT '登录账号',
   password VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'bcrypt密码',

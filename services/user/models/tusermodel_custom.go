@@ -101,7 +101,7 @@ func (m *defaultTUserModel) CountRecentNoRecharge(ctx context.Context, id int64)
 		SELECT COUNT(*) AS cnt
 		FROM %s u
 		WHERE u.create_times >= ?
-		AND is_recharge = 1
+		AND is_recharge = 2
 		AND referrer_user_id = ?
 	`, m.table)
 

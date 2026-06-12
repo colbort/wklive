@@ -139,7 +139,7 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="t('common.default')">
-          <el-switch v-model="form.isDefault" :active-value="2" :inactive-value="1" />
+          <el-switch v-model="form.isDefault" :active-value="1" :inactive-value="2" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -199,7 +199,7 @@ const form = reactive({
   callbackSecretCipher: '',
   extConfig: '',
   enabled: 1,
-  isDefault: 1,
+  isDefault: 2,
   createTimes: 0,
   updateTimes: 0,
 })
@@ -240,7 +240,7 @@ function openDialog(row?: CryptoWalletAccount) {
       callbackSecretCipher: '',
       extConfig: '',
       enabled: 1,
-      isDefault: 1,
+      isDefault: 2,
       createTimes: 0,
       updateTimes: 0,
     },

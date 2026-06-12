@@ -376,7 +376,7 @@ type TenantPayAccount struct {
 	PublicKey           string                 `protobuf:"bytes,10,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`                                   // 公钥
 	ExtConfig           string                 `protobuf:"bytes,11,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                                   // 扩展配置(JSON)
 	Enabled             common.Enable          `protobuf:"varint,12,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                    // 状态,0表示全部，1表示启用，2表示禁用
-	IsDefault           common.YesNo           `protobuf:"varint,13,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`                // 是否默认账号：1否 2是
+	IsDefault           common.YesNo           `protobuf:"varint,13,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`                // 是否默认账号：1是 2否
 	Remark              string                 `protobuf:"bytes,14,opt,name=remark,proto3" json:"remark,omitempty"`                                                          // 备注
 	CreateTimes         int64                  `protobuf:"varint,15,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                            // 创建时间
 	UpdateTimes         int64                  `protobuf:"varint,16,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                            // 更新时间
@@ -802,8 +802,8 @@ type TenantPayChannelRule struct {
 	MemberLevelMax       int64                  `protobuf:"varint,12,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`                     // 会员等级最大值，0表示不限制
 	KycLevelMin          int64                  `protobuf:"varint,13,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`                              // KYC等级最小值
 	KycLevelMax          int64                  `protobuf:"varint,14,opt,name=kyc_level_max,json=kycLevelMax,proto3" json:"kyc_level_max,omitempty"`                              // KYC等级最大值，0表示不限制
-	AllowNewUser         common.YesNo           `protobuf:"varint,15,opt,name=allow_new_user,json=allowNewUser,proto3,enum=common.YesNo" json:"allow_new_user,omitempty"`         // 是否允许新用户：1否 2是
-	AllowOldUser         common.YesNo           `protobuf:"varint,16,opt,name=allow_old_user,json=allowOldUser,proto3,enum=common.YesNo" json:"allow_old_user,omitempty"`         // 是否允许老用户：1否 2是
+	AllowNewUser         common.YesNo           `protobuf:"varint,15,opt,name=allow_new_user,json=allowNewUser,proto3,enum=common.YesNo" json:"allow_new_user,omitempty"`         // 是否允许新用户：1是 2否
+	AllowOldUser         common.YesNo           `protobuf:"varint,16,opt,name=allow_old_user,json=allowOldUser,proto3,enum=common.YesNo" json:"allow_old_user,omitempty"`         // 是否允许老用户：1是 2否
 	AllowTags            string                 `protobuf:"bytes,17,opt,name=allow_tags,json=allowTags,proto3" json:"allow_tags,omitempty"`                                       // 允许的用户标签(JSON数组)
 	DenyTags             string                 `protobuf:"bytes,18,opt,name=deny_tags,json=denyTags,proto3" json:"deny_tags,omitempty"`                                          // 禁止的用户标签(JSON数组)
 	Remark               string                 `protobuf:"bytes,19,opt,name=remark,proto3" json:"remark,omitempty"`                                                              // 备注
@@ -2130,7 +2130,7 @@ type CryptoWalletAccount struct {
 	CallbackSecretCipher string                 `protobuf:"bytes,8,opt,name=callback_secret_cipher,json=callbackSecretCipher,proto3" json:"callback_secret_cipher,omitempty"` // 回调验签密钥密文
 	ExtConfig            string                 `protobuf:"bytes,9,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                                    // 扩展配置(JSON)
 	Enabled              common.Enable          `protobuf:"varint,10,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                    // 状态, 0表示全部，1表示启用，2表示禁用
-	IsDefault            common.YesNo           `protobuf:"varint,11,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`                // 是否默认:1否 2是
+	IsDefault            common.YesNo           `protobuf:"varint,11,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`                // 是否默认:1是 2否
 	CreateTimes          int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                            // 创建时间
 	UpdateTimes          int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                            // 更新时间
 	unknownFields        protoimpl.UnknownFields

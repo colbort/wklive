@@ -63,7 +63,7 @@ type TenantPayAccount {
 	certCipher          string `json:"certCipher"`
 	extConfig           string `json:"extConfig"`
 	enabled             int64  `json:"enabled"` // 0未知 1启用 2禁用
-	isDefault           int64  `json:"isDefault"`
+	isDefault           int64  `json:"isDefault"` // 是否默认账号：1是 2否
 	remark              string `json:"remark"`
 	createTimes         int64  `json:"createTimes"`
 	updateTimes         int64  `json:"updateTimes"`
@@ -111,8 +111,8 @@ type TenantPayChannelRule {
 	memberLevelMax       int64  `json:"memberLevelMax"`
 	kycLevelMin          int64  `json:"kycLevelMin"`
 	kycLevelMax          int64  `json:"kycLevelMax"`
-	allowNewUser         int64  `json:"allowNewUser"`
-	allowOldUser         int64  `json:"allowOldUser"`
+	allowNewUser         int64  `json:"allowNewUser"` // 是否允许新用户：1是 2否
+	allowOldUser         int64  `json:"allowOldUser"` // 是否允许老用户：1是 2否
 	allowTags            string `json:"allowTags"`
 	denyTags             string `json:"denyTags"`
 	remark               string `json:"remark"`
@@ -216,7 +216,7 @@ type CryptoWalletAccount {
 	callbackSecretCipher string `json:"callbackSecretCipher"`
 	extConfig            string `json:"extConfig"`
 	enabled              int64  `json:"enabled"`
-	isDefault            int64  `json:"isDefault"`
+	isDefault            int64  `json:"isDefault"` // 是否默认账号：1是 2否
 	createTimes          int64  `json:"createTimes"`
 	updateTimes          int64  `json:"updateTimes"`
 }
@@ -416,7 +416,7 @@ type CreateTenantPayAccountReq {
 	certCipher          string `json:"certCipher,optional"`
 	extConfig           string `json:"extConfig,optional"`
 	enabled             int64  `json:"enabled"`
-	isDefault           int64  `json:"isDefault"`
+	isDefault           int64  `json:"isDefault"` // 是否默认账号：1是 2否
 	remark              string `json:"remark,optional"`
 }
 
@@ -434,7 +434,7 @@ type UpdateTenantPayAccountReq {
 	certCipher       string `json:"certCipher,optional"`
 	extConfig        string `json:"extConfig,optional"`
 	enabled          int64  `json:"enabled"`
-	isDefault        int64  `json:"isDefault"`
+	isDefault        int64  `json:"isDefault"` // 是否默认账号：1是 2否
 	remark           string `json:"remark,optional"`
 }
 
@@ -563,8 +563,8 @@ type CreateTenantPayChannelRuleReq {
 	memberLevelMax       int64  `json:"memberLevelMax"`
 	kycLevelMin          int64  `json:"kycLevelMin"`
 	kycLevelMax          int64  `json:"kycLevelMax"`
-	allowNewUser         int64  `json:"allowNewUser"`
-	allowOldUser         int64  `json:"allowOldUser"`
+	allowNewUser         int64  `json:"allowNewUser"` // 是否允许新用户：1是 2否
+	allowOldUser         int64  `json:"allowOldUser"` // 是否允许老用户：1是 2否
 	allowTags            string `json:"allowTags,optional"`
 	denyTags             string `json:"denyTags,optional"`
 	remark               string `json:"remark,optional"`
@@ -584,8 +584,8 @@ type UpdateTenantPayChannelRuleReq {
 	memberLevelMax       int64  `json:"memberLevelMax"`
 	kycLevelMin          int64  `json:"kycLevelMin"`
 	kycLevelMax          int64  `json:"kycLevelMax"`
-	allowNewUser         int64  `json:"allowNewUser"`
-	allowOldUser         int64  `json:"allowOldUser"`
+	allowNewUser         int64  `json:"allowNewUser"` // 是否允许新用户：1是 2否
+	allowOldUser         int64  `json:"allowOldUser"` // 是否允许老用户：1是 2否
 	allowTags            string `json:"allowTags,optional"`
 	denyTags             string `json:"denyTags,optional"`
 	remark               string `json:"remark,optional"`
@@ -876,7 +876,7 @@ type CreateCryptoWalletAccountReq {
 	callbackSecretCipher string `json:"callbackSecretCipher,optional"`
 	extConfig            string `json:"extConfig,optional"`
 	enabled              int64  `json:"enabled"`
-	isDefault            int64  `json:"isDefault"`
+	isDefault            int64  `json:"isDefault"` // 是否默认：1是 2否
 }
 
 type UpdateCryptoWalletAccountReq {
@@ -889,7 +889,7 @@ type UpdateCryptoWalletAccountReq {
 	callbackSecretCipher string `json:"callbackSecretCipher,optional"`
 	extConfig            string `json:"extConfig,optional"`
 	enabled              int64  `json:"enabled"`
-	isDefault            int64  `json:"isDefault"`
+	isDefault            int64  `json:"isDefault"` // 是否默认：1是 2否
 }
 
 type GetCryptoWalletAccountReq {
@@ -908,7 +908,7 @@ type ListCryptoWalletAccountsReq {
 	keyword   string `form:"keyword,optional"`
 	provider  string `form:"provider,optional"`
 	enabled   int64  `form:"enabled,optional"`
-	isDefault int64  `form:"isDefault,optional"`
+	isDefault int64  `form:"isDefault,optional"` // 是否默认：1是 2否
 }
 
 type ListCryptoWalletAccountsResp {

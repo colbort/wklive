@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -85,7 +86,7 @@ func profileResp(u *models.SysUser, menus []*system.SysMenuNode, perms []string,
 				Avatar:   u.Avatar,
 				TenantId: u.TenantId,
 				UserType: system.UserType(u.UserType),
-				IsOwner:  u.IsOwner,
+				IsOwner:  common.YesNo(u.IsOwner),
 			},
 			Menus:   menus,
 			Perms:   perms,

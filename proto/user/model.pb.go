@@ -45,7 +45,7 @@ type UserBase struct {
 	RegisterIp     string                 `protobuf:"bytes,19,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`                              // 注册IP
 	RegisterTime   int64                  `protobuf:"varint,20,opt,name=register_time,json=registerTime,proto3" json:"register_time,omitempty"`                       // 注册时间
 	IsGuest        int64                  `protobuf:"varint,21,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客；1正常用户，2游客
-	IsRecharge     common.YesNo           `protobuf:"varint,22,opt,name=is_recharge,json=isRecharge,proto3,enum=common.YesNo" json:"is_recharge,omitempty"`           // 是否充值；1否 2是
+	IsRecharge     common.YesNo           `protobuf:"varint,22,opt,name=is_recharge,json=isRecharge,proto3,enum=common.YesNo" json:"is_recharge,omitempty"`           // 是否充值；1是 2否
 	DeviceId       string                 `protobuf:"bytes,23,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`                                    // 设备唯一ID
 	Fingerprint    string                 `protobuf:"bytes,24,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`                                              // 浏览器指纹
 	Remark         string                 `protobuf:"bytes,25,opt,name=remark,proto3" json:"remark,omitempty"`                                                        // 备注
@@ -801,7 +801,7 @@ type UserItem struct {
 	RegisterIp     string                 `protobuf:"bytes,19,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`                              // 注册IP
 	RegisterTime   int64                  `protobuf:"varint,20,opt,name=register_time,json=registerTime,proto3" json:"register_time,omitempty"`                       // 注册时间
 	IsGuest        int64                  `protobuf:"varint,21,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客；1正常用户，2游客
-	IsRecharge     common.YesNo           `protobuf:"varint,22,opt,name=is_recharge,json=isRecharge,proto3,enum=common.YesNo" json:"is_recharge,omitempty"`           // 是否充值；1否 2是
+	IsRecharge     common.YesNo           `protobuf:"varint,22,opt,name=is_recharge,json=isRecharge,proto3,enum=common.YesNo" json:"is_recharge,omitempty"`           // 是否充值；1是 2否
 	DeviceId       string                 `protobuf:"bytes,23,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`                                    // 设备唯一ID
 	Fingerprint    string                 `protobuf:"bytes,24,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`                                              // 浏览器指纹
 	Remark         string                 `protobuf:"bytes,25,opt,name=remark,proto3" json:"remark,omitempty"`                                                        // 备注
@@ -1285,7 +1285,7 @@ type UserBankItem struct {
 	AccountNo     string                 `protobuf:"bytes,7,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`                     // 银行卡号
 	BranchName    string                 `protobuf:"bytes,8,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`                  // 支行名称
 	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`               // 国家地区
-	IsDefault     common.YesNo           `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"` // 是否默认：1否 2是
+	IsDefault     common.YesNo           `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"` // 是否默认：1是 2否
 	Enabled       common.Enable          `protobuf:"varint,11,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                     // 状态：1正常 2禁用
 	CreateTimes   int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`             // 创建时间
 	UpdateTimes   int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`             // 更新时间

@@ -55,7 +55,7 @@ export type UserBase = {
   registerIp?: string // 注册IP
   registerTime?: number // 注册时间
   isGuest: number // 是否游客：1正常用户 2游客
-  isRecharge: number // 是否已充值：1否 2是
+  isRecharge: number // 是否已充值：1是 2否
   deviceId: string // 设备ID
   fingerprint: string // 浏览器指纹
   remark?: string // 备注
@@ -118,7 +118,7 @@ export type UserBankItem = {
   accountNo: string // 银行卡号
   branchName: string // 支行名称
   countryCode: string // 国家/地区
-  isDefault: number // 是否默认：1否 2是
+  isDefault: number // 是否默认：1是 2否
   enabled: number // 启用状态：1启用 2禁用
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
@@ -153,7 +153,7 @@ export type UserItem = {
   registerIp: string // 注册IP
   registerTime: number // 注册时间
   isGuest: number // 是否游客：1正常用户 2游客
-  isRecharge: number // 是否已充值：1否 2是
+  isRecharge: number // 是否已充值：1是 2否
   deviceId: string // 设备ID
   fingerprint: string // 浏览器指纹
   remark: string // 备注
@@ -314,7 +314,7 @@ export type AddUserBankReq = {
   accountNo: string // 银行卡号
   branchName?: string // 支行名称
   countryCode?: string // 国家/地区
-  isDefault: number // 是否默认：1否 2是
+  isDefault: number // 是否默认：1是 2否
   enabled: number // 启用状态：1启用 2禁用
 }
 

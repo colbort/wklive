@@ -74,7 +74,7 @@ func (l *CreateUserLogic) CreateUser(in *user.CreateUserReq) (*user.CreateUserRe
 		CreateTimes:    now,
 		UpdateTimes:    now,
 		IsGuest:        1,
-		IsRecharge:     1,
+		IsRecharge:     int64(common.YesNo_YES_NO_NO),
 		DeviceId:       "",
 		Fingerprint:    sql.NullString{String: "", Valid: true},
 	}

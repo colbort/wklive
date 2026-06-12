@@ -65,8 +65,8 @@ type (
 		Fee           float64        `db:"fee"`             // 累计手续费
 		FeeAsset      string         `db:"fee_asset"`       // 手续费币种
 		Source        int64          `db:"source"`          // 订单来源：1App 2Web 3API 4System
-		IsReduceOnly  int64          `db:"is_reduce_only"`  // 是否只减仓：1否 2是
-		IsCloseOnly   int64          `db:"is_close_only"`   // 是否只允许平仓：1否 2是
+		IsReduceOnly  int64          `db:"is_reduce_only"`  // 是否只减仓：1是 2否
+		IsCloseOnly   int64          `db:"is_close_only"`   // 是否只允许平仓：1是 2否
 		TriggerPrice  float64        `db:"trigger_price"`   // 触发价格，非条件单则为0
 		TriggerType   int64          `db:"trigger_type"`    // 触发价格类型：0无 1最新价 2标记价 3指数价
 		TriggerKind   int64          `db:"trigger_kind"`    // 触发用途：0无 1条件单 2止盈 3止损

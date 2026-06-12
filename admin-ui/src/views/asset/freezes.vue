@@ -222,7 +222,7 @@
           {{ optionLabel('bizType', detailData.bizType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.sceneType')">
-          {{ optionLabel('sceneType', detailData.sceneType) }}
+          {{ optionLabel('assetSceneType', detailData.sceneType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.bizId')">
           {{ detailData.bizId }}

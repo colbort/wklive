@@ -92,7 +92,7 @@ type UserBank {
 	accountNo   string `json:"accountNo"`
 	branchName  string `json:"branchName,optional"`
 	countryCode string `json:"countryCode,optional"`
-	isDefault   int64  `json:"isDefault"`
+	isDefault   int64  `json:"isDefault"` // 是否默认：1是 2否
 	enabled     int64  `json:"enabled"`
 	createTimes int64  `json:"createTimes,optional"`
 	updateTimes int64  `json:"updateTimes,optional"`
@@ -157,7 +157,7 @@ type UserBankListItem {
 	accountNo   string `json:"accountNo"`
 	branchName  string `json:"branchName,optional"`
 	countryCode string `json:"countryCode,optional"`
-	isDefault   int64  `json:"isDefault"`
+	isDefault   int64  `json:"isDefault"` // 是否默认：1是 2否
 	enabled     int64  `json:"enabled"`
 	createTimes int64  `json:"createTimes,optional"`
 	updateTimes int64  `json:"updateTimes,optional"`

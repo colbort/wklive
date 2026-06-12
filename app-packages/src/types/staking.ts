@@ -20,7 +20,7 @@ export interface StakeProduct {
   userLimitAmount: string
   interestMode: number
   rewardMode: number
-  allowEarlyRedeem: number
+  allowEarlyRedeem: number // 是否允许提前赎回：1是 2否
   earlyRedeemRate: string
   status: number
   sort: number
@@ -49,7 +49,7 @@ export interface StakeOrder {
   lockDays: number
   interestMode: number
   rewardMode: number
-  allowEarlyRedeem: number
+  allowEarlyRedeem: number // 是否允许提前赎回：1是 2否
   earlyRedeemRate: string
   interestDays: number
   startTimes: number

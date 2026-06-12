@@ -1,6 +1,6 @@
 import type { OptionGroup, RespBase } from '@/services'
 import {
-    apiOpenTenantPayPlatform,
+  apiOpenTenantPayPlatform,
   apiTenantPayAccountCreate,
   apiTenantPayAccountDetail,
   apiTenantPayAccountList,
@@ -47,7 +47,7 @@ export type TenantPayAccount = {
   certCipher: string // 证书密文
   extConfig: string // 扩展配置(JSON)
   enabled: number // 启用状态：1启用 2禁用
-  isDefault: number // 是否默认账号：1否 2是
+  isDefault: number // 是否默认账号：1是 2否
   remark: string // 备注
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
@@ -95,8 +95,8 @@ export type TenantPayChannelRule = {
   memberLevelMax: number // 会员等级最大值
   kycLevelMin: number // KYC等级最小值
   kycLevelMax: number // KYC等级最大值
-  allowNewUser: number // 是否允许新用户：1否 2是
-  allowOldUser: number // 是否允许老用户：1否 2是
+  allowNewUser: number // 是否允许新用户：1是 2否
+  allowOldUser: number // 是否允许老用户：1是 2否
   allowTags: string // 允许的用户标签(JSON数组)
   denyTags: string // 禁止的用户标签(JSON数组)
   remark: string // 备注
@@ -155,7 +155,7 @@ export type CreateTenantPayAccountReq = {
   certCipher?: string // 证书密文
   extConfig?: string // 扩展配置(JSON)
   enabled: number // 启用状态：1启用 2禁用
-  isDefault: number // 是否默认账号：1否 2是
+  isDefault: number // 是否默认账号：1是 2否
   remark?: string // 备注
 }
 
@@ -173,7 +173,7 @@ export type UpdateTenantPayAccountReq = {
   certCipher?: string // 证书密文
   extConfig?: string // 扩展配置(JSON)
   enabled: number // 启用状态：1启用 2禁用
-  isDefault: number // 是否默认账号：1否 2是
+  isDefault: number // 是否默认账号：1是 2否
   remark?: string // 备注
 }
 
@@ -256,8 +256,8 @@ export type CreateTenantPayChannelRuleReq = {
   memberLevelMax: number // 会员等级最大值
   kycLevelMin: number // KYC等级最小值
   kycLevelMax: number // KYC等级最大值
-  allowNewUser: number // 是否允许新用户：1否 2是
-  allowOldUser: number // 是否允许老用户：1否 2是
+  allowNewUser: number // 是否允许新用户：1是 2否
+  allowOldUser: number // 是否允许老用户：1是 2否
   allowTags?: string // 允许的用户标签(JSON数组)
   denyTags?: string // 禁止的用户标签(JSON数组)
   remark?: string // 备注

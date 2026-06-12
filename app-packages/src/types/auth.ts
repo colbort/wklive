@@ -194,7 +194,7 @@ export interface AddBankReq {
   accountNo: string
   branchName?: string
   countryCode?: string
-  isDefault?: number
+  isDefault?: number // 是否默认：1是 2否
 }
 
 export interface UpdateBankReq extends AddBankReq {

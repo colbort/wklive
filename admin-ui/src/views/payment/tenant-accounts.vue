@@ -265,7 +265,7 @@ const createEmptyForm = () => ({
   certCipher: '',
   extConfig: '',
   enabled: 1,
-  isDefault: 1,
+  isDefault: 2,
   remark: '',
 })
 

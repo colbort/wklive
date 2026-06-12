@@ -50,11 +50,11 @@ export type OptionContract = {
   listTime: number
   expireTime: number
   deliverTime: number
-  isAutoExercise: number // 是否自动行权：1否 2是
+  isAutoExercise: number // 是否自动行权：1是 2否
   status: number
   sort: number // 排序
   remark: string // 备注
-  isDeleted: number // 是否删除：1否 2是
+  isDeleted: number // 是否删除：1是 2否
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
 }
@@ -126,8 +126,8 @@ export type OptionOrder = {
   marginAmount: string
   source: number
   clientOrderId: string
-  reduceOnly: number // 是否只减仓：1否 2是
-  mmp: number // 是否做市商保护单：1否 2是
+  reduceOnly: number // 是否只减仓：1是 2否
+  mmp: number // 是否做市商保护单：1是 2否
   status: number
   cancelReason: string
   matchTime: number
@@ -221,7 +221,7 @@ export type OptionSettlement = {
   deliveryPrice: string
   theoreticalPrice: string
   iv: string
-  isItm: number // 是否实值：1否 2是
+  isItm: number // 是否实值：1是 2否
   exerciseResult: number
   status: number
   remark: string

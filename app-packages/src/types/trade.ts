@@ -83,8 +83,8 @@ export interface TradeOrder {
   fee: string
   feeAsset: string
   source: number
-  isReduceOnly: number
-  isCloseOnly: number
+  isReduceOnly: number // 是否只减仓：1是 2否
+  isCloseOnly: number // 是否只允许平仓：1是 2否
   triggerPrice: string
   triggerType: number
   triggerKind: number
@@ -215,8 +215,8 @@ export interface PlaceOrderReq {
   price?: string
   qty?: string
   amount?: string
-  isReduceOnly?: number
-  isCloseOnly?: number
+  isReduceOnly?: number // 是否只减仓：1是 2否
+  isCloseOnly?: number // 是否只允许平仓：1是 2否
   triggerPrice?: string
   triggerType?: number
   triggerKind?: number

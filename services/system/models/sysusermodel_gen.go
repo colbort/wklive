@@ -45,7 +45,7 @@ type (
 		Id            int64  `db:"id"`             // 用户ID
 		TenantId      int64  `db:"tenant_id"`      // 所属租户ID：0=系统侧，>0=租户ID
 		UserType      int64  `db:"user_type"`      // 用户类型：1系统管理员 2租户主账号 3租户管理员
-		IsOwner       int64  `db:"is_owner"`       // 是否租户主账号：1否 2是
+		IsOwner       int64  `db:"is_owner"`       // 是否租户主账号：1是 2否
 		Username      string `db:"username"`       // 登录账号
 		Password      string `db:"password"`       // bcrypt密码
 		Nickname      string `db:"nickname"`       // 昵称

@@ -98,8 +98,8 @@ type TradeOrder {
 	fee           string `json:"fee"`
 	feeAsset      string `json:"feeAsset"`
 	source        int64  `json:"source"`
-	isReduceOnly  int64  `json:"isReduceOnly"`
-	isCloseOnly   int64  `json:"isCloseOnly"`
+	isReduceOnly  int64  `json:"isReduceOnly"` // 是否只减仓：1是 2否
+	isCloseOnly   int64  `json:"isCloseOnly"` // 是否只允许平仓：1是 2否
 	triggerPrice  string `json:"triggerPrice"`
 	triggerType   int64  `json:"triggerType"`
 	triggerKind   int64  `json:"triggerKind"`

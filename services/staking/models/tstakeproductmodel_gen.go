@@ -61,7 +61,7 @@ type (
 		UserLimitAmount  float64 `db:"user_limit_amount"`  // 单用户最大可质押数量，0表示不限制
 		InterestMode     int64   `db:"interest_mode"`      // 计息方式：1按天计息 2到期一次性计息
 		RewardMode       int64   `db:"reward_mode"`        // 发息方式：1每日发放 2到期发放
-		AllowEarlyRedeem int64   `db:"allow_early_redeem"` // 是否允许提前赎回：1否 2是
+		AllowEarlyRedeem int64   `db:"allow_early_redeem"` // 是否允许提前赎回：1是 2否
 		EarlyRedeemRate  float64 `db:"early_redeem_rate"`  // 提前赎回手续费率，例如5.0000表示5%
 		Status           int64   `db:"status"`             // 产品状态：1禁用 2启用 3下架
 		Sort             int64   `db:"sort"`               // 排序值，越大越靠前

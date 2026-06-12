@@ -2741,7 +2741,7 @@ type ProfileUser struct {
 	Avatar   string `json:"avatar,optional"`
 	TenantId int64  `json:"tenantId"` // 所属租户ID：0=系统侧，>0=租户ID
 	UserType int64  `json:"userType"` // 用户类型：1系统管理员 2租户主账号 3租户管理员
-	IsOwner  int64  `json:"isOwner"`  // 是否租户主账号：1否 2是
+	IsOwner  int64  `json:"isOwner"`  // 是否租户主账号：1是 2否
 }
 
 type Quote struct {
@@ -4201,7 +4201,7 @@ type UserBankItem struct {
 	AccountNo   string `json:"accountNo"`   // 银行卡号
 	BranchName  string `json:"branchName"`  // 支行名称
 	CountryCode string `json:"countryCode"` // 国家地区
-	IsDefault   int64  `json:"isDefault"`   // 是否默认：1否 2是
+	IsDefault   int64  `json:"isDefault"`   // 是否默认：1是 2否
 	Enabled     int64  `json:"enabled"`     // 启用状态：1启用 2禁用
 	CreateTimes int64  `json:"createTimes"` // 创建时间
 	UpdateTimes int64  `json:"updateTimes"` // 更新时间
@@ -4323,7 +4323,7 @@ type UserItem struct {
 	RegisterIp     string `json:"registerIp"`     // 注册IP
 	RegisterTime   int64  `json:"registerTime"`   // 注册时间
 	IsGuest        int64  `json:"isGuest"`        // 是否游客；1正常用户，2游客
-	IsRecharge     int64  `json:"isRecharge"`     // 是否充值；1否 2是
+	IsRecharge     int64  `json:"isRecharge"`     // 是否充值；1是 2否
 	DeviceId       string `json:"deviceId"`       // 设备唯一ID
 	Fingerprint    string `json:"fingerprint"`    // 浏览器指纹
 	Remark         string `json:"remark"`         // 备注

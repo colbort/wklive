@@ -10,7 +10,7 @@ type AddBankReq struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   int64  `json:"isDefault,optional"`
+	IsDefault   int64  `json:"isDefault,optional"` // 是否默认：1是 2否
 }
 
 type AddBankResp struct {
@@ -241,8 +241,8 @@ type AppPlaceOrderReq struct {
 	Price          string `json:"price"`
 	Qty            string `json:"qty"`
 	ClientOrderId  string `json:"clientOrderId,optional"` // 客户端订单号
-	ReduceOnly     int64  `json:"reduceOnly,optional"`    // 是否只减仓
-	Mmp            int64  `json:"mmp,optional"`           // 是否做市商保护
+	ReduceOnly     int64  `json:"reduceOnly,optional"`    // 是否只减仓：1是 2否
+	Mmp            int64  `json:"mmp,optional"`           // 是否做市商保护：1是 2否
 }
 
 type AppPlaceOrderResp struct {
@@ -1195,7 +1195,7 @@ type OptionContract struct {
 	ListTime         int64  `json:"listTime"`
 	ExpireTime       int64  `json:"expireTime"`
 	DeliverTime      int64  `json:"deliverTime"`
-	IsAutoExercise   int64  `json:"isAutoExercise"`
+	IsAutoExercise   int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`        // 排序
 	Remark           string `json:"remark"`      // 备注
@@ -1285,8 +1285,8 @@ type OptionOrder struct {
 	MarginAmount     string `json:"marginAmount"`
 	Source           int64  `json:"source"`
 	ClientOrderId    string `json:"clientOrderId"`
-	ReduceOnly       int64  `json:"reduceOnly"`
-	Mmp              int64  `json:"mmp"`
+	ReduceOnly       int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
+	Mmp              int64  `json:"mmp"`        // 是否做市商保护：1是 2否
 	Status           int64  `json:"status"`
 	CancelReason     string `json:"cancelReason"`
 	MatchTime        int64  `json:"matchTime"`
@@ -1388,8 +1388,8 @@ type PlaceOrderReq struct {
 	Price           string `json:"price,optional"`
 	Qty             string `json:"qty,optional"`
 	Amount          string `json:"amount,optional"`
-	IsReduceOnly    int64  `json:"isReduceOnly,optional"` // 是否只减仓：1否 2是
-	IsCloseOnly     int64  `json:"isCloseOnly,optional"`  // 是否只平仓：1否 2是
+	IsReduceOnly    int64  `json:"isReduceOnly,optional"` // 是否只减仓：1是 2否
+	IsCloseOnly     int64  `json:"isCloseOnly,optional"`  // 是否只平仓：1是 2否
 	TriggerPrice    string `json:"triggerPrice,optional"`
 	TriggerType     int64  `json:"triggerType,optional"`
 	TriggerKind     int64  `json:"triggerKind,optional"`
@@ -1554,7 +1554,7 @@ type StakeOrder struct {
 	LockDays         int64  `json:"lockDays"` // 锁仓天数
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
-	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
 	EarlyRedeemRate  string `json:"earlyRedeemRate"`
 	InterestDays     int64  `json:"interestDays"` // 已计息天数
 	StartTimes       int64  `json:"startTimes"`
@@ -1597,7 +1597,7 @@ type StakeProduct struct {
 	UserLimitAmount  string `json:"userLimitAmount"`
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
-	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
 	EarlyRedeemRate  string `json:"earlyRedeemRate"`
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`         // 排序
@@ -1753,8 +1753,8 @@ type TradeOrder struct {
 	Fee           string `json:"fee"`
 	FeeAsset      string `json:"feeAsset"`
 	Source        int64  `json:"source"`
-	IsReduceOnly  int64  `json:"isReduceOnly"` // 是否只减仓：1否 2是
-	IsCloseOnly   int64  `json:"isCloseOnly"`  // 是否只平仓：1否 2是
+	IsReduceOnly  int64  `json:"isReduceOnly"` // 是否只减仓：1是 2否
+	IsCloseOnly   int64  `json:"isCloseOnly"`  // 是否只平仓：1是 2否
 	TriggerPrice  string `json:"triggerPrice"`
 	TriggerType   int64  `json:"triggerType"` // 触发类型
 	TriggerKind   int64  `json:"triggerKind"` // 触发用途：0无 1条件单 2止盈 3止损
@@ -1868,7 +1868,7 @@ type UpdateBankReq struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   int64  `json:"isDefault,optional"`
+	IsDefault   int64  `json:"isDefault,optional"` // 是否默认：1是 2否
 }
 
 type UpdateBankResp struct {
@@ -1944,7 +1944,7 @@ type UserBank struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   int64  `json:"isDefault"`
+	IsDefault   int64  `json:"isDefault"` // 是否默认：1是 2否
 	Enabled     int64  `json:"enabled"`
 	CreateTimes int64  `json:"createTimes,optional"`
 	UpdateTimes int64  `json:"updateTimes,optional"`
@@ -1960,7 +1960,7 @@ type UserBankListItem struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   int64  `json:"isDefault"`
+	IsDefault   int64  `json:"isDefault"` // 是否默认：1是 2否
 	Enabled     int64  `json:"enabled"`
 	CreateTimes int64  `json:"createTimes,optional"`
 	UpdateTimes int64  `json:"updateTimes,optional"`

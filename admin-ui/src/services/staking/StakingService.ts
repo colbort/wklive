@@ -34,7 +34,7 @@ export type StakeProduct = {
   userLimitAmount: string // 单用户限额
   interestMode: number // 计息模式
   rewardMode: number // 奖励模式
-  allowEarlyRedeem: number // 是否允许提前赎回：1否 2是
+  allowEarlyRedeem: number // 是否允许提前赎回：1是 2否
   earlyRedeemRate: string // 提前赎回费率
   status: number // 状态
   sort: number // 排序
@@ -63,7 +63,7 @@ export type StakeOrder = {
   lockDays: number // 锁仓天数
   interestMode: number // 计息模式
   rewardMode: number // 奖励模式
-  allowEarlyRedeem: number // 是否允许提前赎回：1否 2是
+  allowEarlyRedeem: number // 是否允许提前赎回：1是 2否
   earlyRedeemRate: string // 提前赎回费率
   interestDays: number // 已计息天数
   startTimes: number // 开始时间
@@ -166,7 +166,7 @@ export type AdminProductCreateReq = {
   userLimitAmount: string // 单用户限额
   interestMode: number // 计息模式
   rewardMode: number // 奖励模式
-  allowEarlyRedeem: number // 是否允许提前赎回：1否 2是
+  allowEarlyRedeem: number // 是否允许提前赎回：1是 2否
   earlyRedeemRate: string // 提前赎回费率
   status: number // 状态
   sort: number // 排序

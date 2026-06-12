@@ -61,11 +61,11 @@ type (
 		ListTime         int64   `db:"list_time"`         // 上市时间
 		ExpireTime       int64   `db:"expire_time"`       // 到期时间
 		DeliverTime      int64   `db:"deliver_time"`      // 交割/结算时间
-		IsAutoExercise   int64   `db:"is_auto_exercise"`  // 是否自动行权：1否 2是
+		IsAutoExercise   int64   `db:"is_auto_exercise"`  // 是否自动行权：1是 2否
 		Status           int64   `db:"status"`            // 状态：1待上市 2可交易 3暂停交易 4已到期 5已结算 6已下线
 		Sort             int64   `db:"sort"`              // 排序值
 		Remark           string  `db:"remark"`            // 备注
-		IsDeleted        int64   `db:"is_deleted"`        // 是否删除：1否 2是
+		IsDeleted        int64   `db:"is_deleted"`        // 是否删除：1是 2否
 		CreateTimes      int64   `db:"create_times"`      // 创建时间
 		UpdateTimes      int64   `db:"update_times"`      // 更新时间
 	}

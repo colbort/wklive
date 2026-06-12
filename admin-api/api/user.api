@@ -111,7 +111,7 @@ type UserItem {
 	registerIp     string `json:"registerIp"` // 注册IP
 	registerTime   int64  `json:"registerTime"` // 注册时间
 	isGuest        int64  `json:"isGuest"` // 是否游客；1正常用户，2游客
-	isRecharge     int64  `json:"isRecharge"` // 是否充值；1否 2是
+	isRecharge     int64  `json:"isRecharge"` // 是否充值；1是 2否
 	deviceId       string `json:"deviceId"` // 设备唯一ID
 	fingerprint    string `json:"fingerprint"` // 浏览器指纹
 	remark         string `json:"remark"` // 备注
@@ -158,7 +158,7 @@ type UserBankItem {
 	accountNo   string `json:"accountNo"` // 银行卡号
 	branchName  string `json:"branchName"` // 支行名称
 	countryCode string `json:"countryCode"` // 国家地区
-	isDefault   int64  `json:"isDefault"` // 是否默认：1否，2是
+	isDefault   int64  `json:"isDefault"` // 是否默认：1是，2否
 	enabled     int64  `json:"enabled"` // 启用状态：1启用 2禁用
 	createTimes int64  `json:"createTimes"` // 创建时间
 	updateTimes int64  `json:"updateTimes"` // 更新时间
@@ -388,7 +388,7 @@ type AddUserBankReq {
 	accountNo   string `json:"accountNo"`
 	branchName  string `json:"branchName,optional"`
 	countryCode string `json:"countryCode,optional"`
-	isDefault   int64  `json:"isDefault"` // 是否默认：1否，2是
+	isDefault   int64  `json:"isDefault"` // 是否默认：1是，2否
 	enabled     int64  `json:"enabled"`
 }
 
@@ -407,7 +407,7 @@ type UpdateUserBankReq {
 	accountNo   string `json:"accountNo"`
 	branchName  string `json:"branchName,optional"`
 	countryCode string `json:"countryCode,optional"`
-	isDefault   int64  `json:"isDefault"` // 是否默认：1否，2是
+	isDefault   int64  `json:"isDefault"` // 是否默认：1是，2否
 	enabled     int64  `json:"enabled"`
 }
 

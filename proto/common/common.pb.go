@@ -98,21 +98,21 @@ type YesNo int32
 
 const (
 	YesNo_YES_NO_UNKNOWN YesNo = 0
-	YesNo_YES_NO_NO      YesNo = 1 // 否
-	YesNo_YES_NO_YES     YesNo = 2 // 是
+	YesNo_YES_NO_YES     YesNo = 1 // 是
+	YesNo_YES_NO_NO      YesNo = 2 // 否
 )
 
 // Enum value maps for YesNo.
 var (
 	YesNo_name = map[int32]string{
 		0: "YES_NO_UNKNOWN",
-		1: "YES_NO_NO",
-		2: "YES_NO_YES",
+		1: "YES_NO_YES",
+		2: "YES_NO_NO",
 	}
 	YesNo_value = map[string]int32{
 		"YES_NO_UNKNOWN": 0,
-		"YES_NO_NO":      1,
-		"YES_NO_YES":     2,
+		"YES_NO_YES":     1,
+		"YES_NO_NO":      2,
 	}
 )
 
@@ -731,10 +731,10 @@ const file_proto_common_common_proto_rawDesc = "" +
 	"\x10CHAIN_CODE_ERC20\x10\x15\x12\x14\n" +
 	"\x10CHAIN_CODE_BEP20\x10\x16*:\n" +
 	"\x05YesNo\x12\x12\n" +
-	"\x0eYES_NO_UNKNOWN\x10\x00\x12\r\n" +
-	"\tYES_NO_NO\x10\x01\x12\x0e\n" +
+	"\x0eYES_NO_UNKNOWN\x10\x00\x12\x0e\n" +
 	"\n" +
-	"YES_NO_YES\x10\x02*E\n" +
+	"YES_NO_YES\x10\x01\x12\r\n" +
+	"\tYES_NO_NO\x10\x02*E\n" +
 	"\x06Enable\x12\x12\n" +
 	"\x0eENABLE_UNKNOWN\x10\x00\x12\x12\n" +
 	"\x0eENABLE_ENABLED\x10\x01\x12\x13\n" +

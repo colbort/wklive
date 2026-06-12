@@ -595,11 +595,11 @@ const contractForm = reactive<UpdateContractReq>({
   listTime: 0,
   expireTime: 0,
   deliverTime: 0,
-  isAutoExercise: 0,
+  isAutoExercise: 2,
   status: 0,
   sort: 0,
   remark: '',
-  isDeleted: 0,
+  isDeleted: 2,
 })
 
 const marketForm = reactive<UpdateMarketReq>({
@@ -628,8 +628,8 @@ const optionTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'op
 const exerciseStyleOptions = computed(() => findOptionGroup(optionGroups.value, 'exerciseStyle'))
 const settlementTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'settlementType'))
 const yesNoFallbackOptions: OptionItem[] = [
-  { value: 1, code: 'YES_NO_NO' },
-  { value: 2, code: 'YES_NO_YES' },
+  { value: 1, code: 'YES_NO_YES' },
+  { value: 2, code: 'YES_NO_NO' },
 ]
 const yesNoOptions = computed(() => {
   const options = findOptionGroup(optionGroups.value, 'yesNo').filter((item) => item.value !== 0)
@@ -643,6 +643,9 @@ const loadOptions = async () => {
 
 const firstBusinessOptionValue = (options: OptionItem[], fallback = 0) =>
   options.find((item) => item.value !== 0)?.value ?? options[0]?.value ?? fallback
+
+const optionValueByCode = (options: OptionItem[], code: string, fallback = 0) =>
+  options.find((item) => item.code === code)?.value ?? fallback
 
 const optionLabel = (key: string, value?: number | string) => {
   if (key === 'yesNo') {
@@ -755,11 +758,11 @@ const resetContractForm = () => {
     listTime: 0,
     expireTime: 0,
     deliverTime: 0,
-    isAutoExercise: firstBusinessOptionValue(yesNoOptions.value, 1),
+    isAutoExercise: optionValueByCode(yesNoOptions.value, 'YES_NO_NO', 2),
     status: firstBusinessOptionValue(contractStatusOptions.value),
     sort: 0,
     remark: '',
-    isDeleted: 0,
+    isDeleted: 2,
   })
 }
 

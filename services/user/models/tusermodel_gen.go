@@ -67,7 +67,7 @@ type (
 		RegisterIp     sql.NullString `db:"register_ip"`      // 注册IP
 		RegisterTime   int64          `db:"register_time"`    // 注册时间
 		IsGuest        int64          `db:"is_guest"`         // 是否游客；1正常用户，2游客
-		IsRecharge     int64          `db:"is_recharge"`      // 是否充值；1否 2是
+		IsRecharge     int64          `db:"is_recharge"`      // 是否充值；1是 2否
 		DeviceId       string         `db:"device_id"`        // 设备唯一ID
 		Fingerprint    sql.NullString `db:"fingerprint"`      // 浏览器指纹JSON
 		Remark         sql.NullString `db:"remark"`           // 备注

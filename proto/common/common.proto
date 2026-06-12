@@ -50,8 +50,8 @@ enum ChainCode {
 // 是否
 enum YesNo {
   YES_NO_UNKNOWN = 0;
-  YES_NO_NO = 1; // 否
-  YES_NO_YES = 2; // 是
+  YES_NO_YES = 1; // 是
+  YES_NO_NO = 2; // 否
 }
 
 enum Enable {

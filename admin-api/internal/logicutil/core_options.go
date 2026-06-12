@@ -15,6 +15,7 @@ import (
 
 func CoreOptions() []types.OptionsGroup {
 	options := make([]types.OptionsGroup, 0)
+	options = append(options, CommonOptions()...)
 	options = append(options, SystemOptions()...)
 	options = append(options, UserOptions()...)
 	options = append(options, AssetOptions()...)
@@ -26,12 +27,25 @@ func CoreOptions() []types.OptionsGroup {
 	return options
 }
 
+func CommonOptions() []types.OptionsGroup {
+	return []types.OptionsGroup{
+		EnumGroup("walletType", "钱包类型", common.WalletType_WALLET_TYPE_UNKNOWN.Descriptor()),
+		EnumGroup("chainCode", "链类型", common.ChainCode_CHAIN_CODE_UNKNOWN.Descriptor()),
+		EnumGroup("yesNo", "是否", common.YesNo_YES_NO_UNKNOWN.Descriptor()),
+		EnumGroup("visible", "显示状态", common.Switch_SWITCH_UNKNOWN.Descriptor()),
+		EnumGroup("tradeSide", "买卖方向", common.Side_SIDE_UNKNOWN.Descriptor()),
+		EnumGroup("enabled", "启用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
+		EnumGroup("commonStatus", "通用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
+		EnumGroup("enableStatus", "启用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
+		EnumGroup("assetStatus", "资产状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
+		EnumGroup("bankStatus", "银行卡状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
+	}
+}
+
 func SystemOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
 		EnumGroup("sysConfigType", "系统配置类型", system.SysConfigType_UNKNOWN.Descriptor()),
-		EnumGroup("enabled", "启用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
 		EnumGroup("menuType", "菜单类型", system.MenuType_MENU_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("visible", "可见状态", common.Switch_SWITCH_UNKNOWN.Descriptor()),
 		EnumGroup("method", "请求方法", system.RequestMethod_REQUEST_METHOD_UNKNOWN.Descriptor()),
 		EnumGroup("jobStatus", "任务状态", system.JobStatus_JOB_STATUS_DISABLED.Descriptor()),
 		EnumGroup("verificationCodeChannel", "验证码渠道", system.VerificationCodeChannel_VERIFICATION_CODE_CHANNEL_UNKNOWN.Descriptor()),
@@ -50,17 +64,13 @@ func UserOptions() []types.OptionsGroup {
 		EnumGroup("idType", "证件类型", user.IdType_ID_TYPE_NONE.Descriptor()),
 		EnumGroup("kycLevel", "KYC等级", user.KycLevel_KYC_LEVEL_NONE.Descriptor()),
 		EnumGroup("verifyStatus", "实名状态", user.VerifyStatus_VERIFY_STATUS_NONE.Descriptor()),
-		EnumGroup("bankStatus", "银行卡状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
 	}
 }
 
 func AssetOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
-		EnumGroup("walletType", "钱包类型", common.WalletType_WALLET_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("bizType", "业务类型", asset.BizType_BIZ_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("sceneType", "业务场景", asset.SceneType_SCENE_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("chainCode", "链类型", common.ChainCode_CHAIN_CODE_UNKNOWN.Descriptor()),
-		EnumGroup("assetStatus", "资产状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
+		EnumGroup("assetSceneType", "业务场景", asset.SceneType_SCENE_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("freezeStatus", "冻结状态", asset.FreezeStatus_FREEZE_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("lockStatus", "锁定状态", asset.LockStatus_LOCK_STATUS_UNKNOWN.Descriptor()),
 	}
@@ -69,9 +79,6 @@ func AssetOptions() []types.OptionsGroup {
 func PaymentOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
 		EnumGroup("platformType", "平台类型", payment.PlatformType_PLATFORM_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("enabled", "启用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
-		EnumGroup("visible", "显示状态", common.Switch_SWITCH_UNKNOWN.Descriptor()),
-		EnumGroup("yesNo", "是否", common.YesNo_YES_NO_UNKNOWN.Descriptor()),
 		EnumGroup("openStatus", "开通状态", payment.OpenStatus_OPEN_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("sceneType", "场景类型", payment.SceneType_SCENE_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("feeType", "费用类型", payment.FeeType_FEE_TYPE_UNKNOWN.Descriptor()),
@@ -84,8 +91,6 @@ func PaymentOptions() []types.OptionsGroup {
 		EnumGroup("cryptoRechargeAddressType", "链上充值地址类型", payment.CryptoRechargeAddressType_CRYPTO_RECHARGE_ADDRESS_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("cryptoRechargeAddressStatus", "链上充值地址状态", payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("cryptoRechargeTxStatus", "链上充值交易状态", payment.CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_UNKNOWN.Descriptor()),
-		EnumGroup("chainCode", "链类型", common.ChainCode_CHAIN_CODE_UNKNOWN.Descriptor()),
-		EnumGroup("walletType", "钱包类型", common.WalletType_WALLET_TYPE_UNKNOWN.Descriptor()),
 	}
 }
 
@@ -94,7 +99,6 @@ func TradeOptions() []types.OptionsGroup {
 		EnumGroup("marketType", "市场类型", trade.MarketType_MARKET_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("contractType", "合约类型", trade.ContractType_CONTRACT_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("symbolStatus", "交易对状态", trade.SymbolStatus_SYMBOL_STATUS_UNKNOWN.Descriptor()),
-		EnumGroup("tradeSide", "买卖方向", common.Side_SIDE_UNKNOWN.Descriptor()),
 		EnumGroup("orderType", "订单类型", trade.OrderType_ORDER_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("triggerKind", "触发用途", trade.TriggerKind_TRIGGER_KIND_NONE.Descriptor()),
 		EnumGroup("timeInForce", "有效方式", trade.TimeInForce_TIME_IN_FORCE_UNKNOWN.Descriptor()),
@@ -102,7 +106,6 @@ func TradeOptions() []types.OptionsGroup {
 		EnumGroup("eventStatus", "事件状态", trade.EventStatus_EVENT_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("marginMode", "保证金模式", trade.MarginMode_MARGIN_MODE_UNKNOWN.Descriptor()),
 		EnumGroup("positionMode", "持仓模式", trade.PositionMode_POSITION_MODE_UNKNOWN.Descriptor()),
-		EnumGroup("enableStatus", "启用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
 		Group(
 			"leverageValue",
 			"杠杆倍数",
@@ -121,8 +124,6 @@ func TradeOptions() []types.OptionsGroup {
 
 func OptionOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
-		EnumGroup("commonStatus", "通用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
-		EnumGroup("yesNo", "是否", common.YesNo_YES_NO_UNKNOWN.Descriptor()),
 		EnumGroup("optionType", "期权类型", option.OptionType_OPTION_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("exerciseStyle", "行权方式", option.ExerciseStyle_EXERCISE_STYLE_UNKNOWN.Descriptor()),
 		EnumGroup("settlementType", "结算方式", option.SettlementType_SETTLEMENT_TYPE_UNKNOWN.Descriptor()),
@@ -132,12 +133,11 @@ func OptionOptions() []types.OptionsGroup {
 
 func StakingOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
-		EnumGroup("yesNo", "是否", common.YesNo_YES_NO_UNKNOWN.Descriptor()),
 		EnumGroup("productStatus", "产品状态", staking.ProductStatus_PRODUCT_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("productType", "产品类型", staking.ProductType_PRODUCT_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("interestMode", "计息模式", staking.InterestMode_INTEREST_MODE_UNKNOWN.Descriptor()),
 		EnumGroup("rewardMode", "奖励模式", staking.RewardMode_REWARD_MODE_UNKNOWN.Descriptor()),
-		EnumGroup("orderStatus", "订单状态", staking.OrderStatus_ORDER_STATUS_UNKNOWN.Descriptor()),
+		EnumGroup("stakingOrderStatus", "质押订单状态", staking.OrderStatus_ORDER_STATUS_UNKNOWN.Descriptor()),
 	}
 }
 
@@ -145,7 +145,5 @@ func ItickOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
 		EnumGroup("categoryType", "产品类型", itick.CategoryType_CATEGORY_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("klineType", "K线周期", itick.KlineType_KLINE_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("enabled", "启用状态", common.Enable_ENABLE_UNKNOWN.Descriptor()),
-		EnumGroup("visible", "显示状态", common.Switch_SWITCH_UNKNOWN.Descriptor()),
 	}
 }

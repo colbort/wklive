@@ -22,7 +22,7 @@ type OptionContract {
 	listTime         int64  `json:"listTime"`
 	expireTime       int64  `json:"expireTime"`
 	deliverTime      int64  `json:"deliverTime"`
-	isAutoExercise   int64  `json:"isAutoExercise"`
+	isAutoExercise   int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
 	status           int64  `json:"status"`
 	sort             int64  `json:"sort"` // 排序
 	remark           string `json:"remark"` // 备注
@@ -78,8 +78,8 @@ type OptionOrder {
 	marginAmount     string `json:"marginAmount"`
 	source           int64  `json:"source"`
 	clientOrderId    string `json:"clientOrderId"`
-	reduceOnly       int64  `json:"reduceOnly"`
-	mmp              int64  `json:"mmp"`
+	reduceOnly       int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
+	mmp              int64  `json:"mmp"` // 是否做市商保护：1是 2否
 	status           int64  `json:"status"`
 	cancelReason     string `json:"cancelReason"`
 	matchTime        int64  `json:"matchTime"`
@@ -257,8 +257,8 @@ type AppPlaceOrderReq {
 	price          string `json:"price"`
 	qty            string `json:"qty"`
 	clientOrderId  string `json:"clientOrderId,optional"` // 客户端订单号
-	reduceOnly     int64  `json:"reduceOnly,optional"` // 是否只减仓
-	mmp            int64  `json:"mmp,optional"` // 是否做市商保护
+	reduceOnly     int64  `json:"reduceOnly,optional"` // 是否只减仓：1是 2否
+	mmp            int64  `json:"mmp,optional"` // 是否做市商保护：1是 2否
 }
 
 type AppPlaceOrderData {
