@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -43,7 +44,7 @@ func (l *SysUserDeleteLogic) SysUserDelete(in *system.SysUserDeleteReq) (*system
 	if err != nil {
 		return nil, err
 	}
-	if one.IsOwner == 1 {
+	if one.IsOwner == int64(common.YesNo_YES_NO_YES) {
 		return &system.RespBase{
 			Base: helper.GetErrResp(i18n.TenantOwnerCannotBeDeleted, i18n.Translate(i18n.TenantOwnerCannotBeDeleted, l.ctx)),
 		}, nil

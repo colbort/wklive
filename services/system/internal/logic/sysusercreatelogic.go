@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -62,7 +63,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	data := models.SysUser{
 		TenantId:      tenantId,
 		UserType:      userType,
-		IsOwner:       0,
+		IsOwner:       int64(common.YesNo_YES_NO_NO),
 		Username:      in.Username,
 		Nickname:      in.Nickname,
 		Password:      string(hashedPassword),
@@ -70,7 +71,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 		Enabled:       commonStatusToModel(in.Enabled),
 		Avatar:        in.Avatar,
 		GoogleSecret:  "",
-		GoogleEnabled: 0,
+		GoogleEnabled: int64(common.Enable_ENABLE_DISABLED),
 		LastLoginIp:   "",
 		LastLoginAt:   0,
 		CreateBy:      creatorId,

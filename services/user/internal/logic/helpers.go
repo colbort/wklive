@@ -159,24 +159,13 @@ func toUserSecurityProto(security *models.TUserSecurity) *user.UserSecurity {
 		UserId:          security.UserId,
 		PayPasswordHash: security.PayPasswordHash.String,
 		GoogleSecret:    security.GoogleSecret.String,
-		GoogleEnabled:   binaryEnableToProto(security.GoogleEnabled),
+		GoogleEnabled:   common.Enable(security.GoogleEnabled),
 		LoginErrorCount: security.LoginErrorCount,
 		PayErrorCount:   security.PayErrorCount,
 		LockUntil:       security.LockUntil,
 		RiskLevel:       user.RiskLevel(security.RiskLevel),
 		CreateTimes:     security.CreateTimes,
 		UpdateTimes:     security.UpdateTimes,
-	}
-}
-
-func binaryEnableToProto(value int64) common.Enable {
-	switch value {
-	case 1:
-		return common.Enable_ENABLE_ENABLED
-	case 0:
-		return common.Enable_ENABLE_DISABLED
-	default:
-		return common.Enable_ENABLE_UNKNOWN
 	}
 }
 
@@ -195,8 +184,8 @@ func toUserBankItemProto(bank *models.TUserBank) *user.UserBankItem {
 		AccountNo:   bank.AccountNo,
 		BranchName:  bank.BranchName.String,
 		CountryCode: bank.CountryCode.String,
-		IsDefault:   bank.IsDefault,
-		Enabled:      binaryEnableToProto(bank.Enabled),
+		IsDefault:   common.YesNo(bank.IsDefault),
+		Enabled:     common.Enable(bank.Enabled),
 		CreateTimes: bank.CreateTimes,
 		UpdateTimes: bank.UpdateTimes,
 	}

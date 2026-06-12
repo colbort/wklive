@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -48,7 +49,7 @@ func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBank
 	}
 
 	// 如果已经是默认卡，直接返回
-	if userBank.IsDefault == 1 {
+	if userBank.IsDefault == int64(common.YesNo_YES_NO_YES) {
 		return &user.AdminCommonResp{
 			Base: helper.OkResp(),
 		}, nil
@@ -58,11 +59,9 @@ func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBank
 	// TODO: 需要在 UserBankModel 中声明方法，这里暂时跳过
 
 	// 再将指定的卡设置为默认
-	err = l.svcCtx.UserBankModel.Update(l.ctx, &models.TUserBank{
-		Id:          in.Id,
-		IsDefault:   1,
-		UpdateTimes: utils.NowMillis(),
-	})
+	userBank.IsDefault = int64(common.YesNo_YES_NO_YES)
+	userBank.UpdateTimes = utils.NowMillis()
+	err = l.svcCtx.UserBankModel.Update(l.ctx, userBank)
 	if err != nil {
 		return nil, err
 	}

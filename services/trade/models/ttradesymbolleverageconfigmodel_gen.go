@@ -50,7 +50,7 @@ type (
 		LeverageValues  string `db:"leverage_values"`  // 可选杠杆倍数，逗号分隔，如1,2,5,10,20,50,75,100,125
 		DefaultLeverage int64  `db:"default_leverage"` // 默认杠杆倍数
 		MaxLeverage     int64  `db:"max_leverage"`     // 当前模式允许的最大杠杆倍数
-		Enabled         int64  `db:"enabled"`          // 启用开关：1启用 0禁用
+		Enabled         int64  `db:"enabled"`          // 启用开关：1启用 2禁用
 		Sort            int64  `db:"sort"`             // 排序值，越小越靠前
 		Remark          string `db:"remark"`           // 备注
 		CreateTimes     int64  `db:"create_times"`     // 创建时间，毫秒时间戳

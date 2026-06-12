@@ -13,7 +13,7 @@ CREATE TABLE sys_user (
 
   tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
   user_type TINYINT NOT NULL DEFAULT 1 COMMENT '用户类型：1系统管理员 2租户主账号 3租户管理员',
-  is_owner TINYINT NOT NULL DEFAULT 0 COMMENT '是否租户主账号：1是 0否',
+  is_owner TINYINT NOT NULL DEFAULT 1 COMMENT '是否租户主账号：1否 2是',
 
   username VARCHAR(64) NOT NULL DEFAULT '' COMMENT '登录账号',
   password VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'bcrypt密码',
@@ -25,7 +25,7 @@ CREATE TABLE sys_user (
 
   -- google 2fa
   google_secret VARCHAR(255) DEFAULT '' COMMENT '2FA secret(加密存储)',
-  google_enabled TINYINT DEFAULT 0 COMMENT 'Google2FA开关：1启用 0禁用',
+  google_enabled TINYINT DEFAULT 2 COMMENT 'Google2FA开关：1启用 2禁用',
 
   perms_ver INT DEFAULT 1 COMMENT '权限版本(角色变化强制token失效)',
 

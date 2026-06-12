@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -46,6 +47,8 @@ func (l *SetSpotSymbolConfigLogic) SetSpotSymbolConfig(in *trade.SetSpotSymbolCo
 		cfg = &models.TTradeSymbolSpot{
 			TenantId:    in.TenantId,
 			SymbolId:    in.SymbolId,
+			BuyEnabled:  int64(common.Enable_ENABLE_ENABLED),
+			SellEnabled: int64(common.Enable_ENABLE_ENABLED),
 			CreateTimes: now,
 		}
 	}

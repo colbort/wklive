@@ -195,7 +195,7 @@ type AppRedeemReq {
 }
 
 type AppRedeemData {
-	success  int64  `json:"success"` // 是否成功：0否 1是
+	success  int64  `json:"success"` // 执行结果：0失败 1成功
 	redeemNo string `json:"redeemNo"` // 赎回单号
 }
 

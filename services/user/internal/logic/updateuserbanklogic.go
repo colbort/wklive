@@ -51,8 +51,8 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 	}
 
 	now := utils.NowMillis()
-	isDefault, hasIsDefault := yesNoToDefaultFlag(common.YesNo(in.IsDefault))
-	if hasIsDefault && isDefault == 1 {
+	isDefault := common.YesNo(in.IsDefault)
+	if isDefault == common.YesNo_YES_NO_YES {
 		// 如果设置为默认，需要取消其他卡的默认设置
 		// TODO: 更新其他卡的默认状态
 	}
@@ -76,8 +76,8 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 	if in.CountryCode != "" {
 		bank.CountryCode = sql.NullString{String: in.CountryCode, Valid: true}
 	}
-	if hasIsDefault {
-		bank.IsDefault = isDefault
+	if isDefault != common.YesNo_YES_NO_UNKNOWN {
+		bank.IsDefault = int64(in.IsDefault)
 	}
 	if in.Enabled != 0 {
 		bank.Enabled = int64(in.Enabled)

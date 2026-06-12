@@ -18,7 +18,7 @@ import (
 
 func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoRechargeAddressReq) (*payment.AdminCommonResp, error) {
 	now := utils.NowMillis()
-	status := toCryptoAddressStatusDB(in.Status, 1)
+	status := toCryptoAddressStatusDB(in.Status, int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED))
 	if in.AddressSource == 0 {
 		in.AddressSource = payment.CryptoRechargeAddressSource_CRYPTO_RECHARGE_ADDRESS_SOURCE_MANUAL
 	}
@@ -101,6 +101,10 @@ func listCryptoRechargeAddresses(ctx context.Context, svcCtx *svc.ServiceContext
 
 func createCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoWalletAccountReq) (*payment.AdminCommonResp, error) {
 	now := utils.NowMillis()
+	isDefault := int64(in.IsDefault)
+	if common.YesNo(in.IsDefault) == common.YesNo_YES_NO_UNKNOWN {
+		isDefault = int64(common.YesNo_YES_NO_NO)
+	}
 	_, err := svcCtx.CryptoWalletAccountModel.Insert(ctx, &models.TCryptoWalletAccount{
 		TenantId:             in.TenantId,
 		AccountCode:          in.AccountCode,
@@ -110,8 +114,8 @@ func createCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 		ApiSecretCipher:      nullableString(in.ApiSecretCipher),
 		CallbackSecretCipher: nullableString(in.CallbackSecretCipher),
 		ExtConfig:            nullableString(in.ExtConfig),
-		Enabled:              toCryptoWalletStatusDB(in.Enabled, 1),
-		IsDefault:            in.IsDefault,
+		Enabled:              toCryptoWalletStatusDB(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
+		IsDefault:            isDefault,
 		CreateTimes:          now,
 		UpdateTimes:          now,
 	})
@@ -148,8 +152,8 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 		item.ExtConfig = nullableString(in.ExtConfig)
 	}
 	item.Enabled = toCryptoWalletStatusDB(in.Enabled, item.Enabled)
-	if in.IsDefault != 0 {
-		item.IsDefault = in.IsDefault
+	if common.YesNo(in.IsDefault) != common.YesNo_YES_NO_UNKNOWN {
+		item.IsDefault = int64(in.IsDefault)
 	}
 	item.UpdateTimes = utils.NowMillis()
 	if err := svcCtx.CryptoWalletAccountModel.Update(ctx, item); err != nil {
@@ -159,7 +163,7 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 }
 
 func listCryptoWalletAccounts(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.ListCryptoWalletAccountsReq) (*payment.ListCryptoWalletAccountsResp, error) {
-	items, total, err := svcCtx.CryptoWalletAccountModel.FindPage(ctx, in.TenantId, in.Keyword, in.Provider, int64(in.Enabled), in.IsDefault, in.Page.Cursor, in.Page.Limit)
+	items, total, err := svcCtx.CryptoWalletAccountModel.FindPage(ctx, in.TenantId, in.Keyword, in.Provider, int64(in.Enabled), int64(in.IsDefault), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

@@ -134,7 +134,7 @@ type AddBankReq {
 	accountNo   string `json:"accountNo"`
 	branchName  string `json:"branchName,optional"`
 	countryCode string `json:"countryCode,optional"`
-	isDefault   int64  `json:"isDefault,optional"`
+	isDefault   int64  `json:"isDefault,optional"` // 是否默认：1否，2是
 }
 
 type AddBankResp {
@@ -150,7 +150,7 @@ type UpdateBankReq {
 	accountNo   string `json:"accountNo"`
 	branchName  string `json:"branchName,optional"`
 	countryCode string `json:"countryCode,optional"`
-	isDefault   int64  `json:"isDefault,optional"`
+	isDefault   int64  `json:"isDefault,optional"` // 是否默认：1否，2是
 }
 
 type UpdateBankResp {

@@ -72,8 +72,8 @@ export type TradeSymbolSpot = {
   symbolId: number
   makerFeeRate: string
   takerFeeRate: string
-  buyEnabled: number // 是否允许买入：0否 1是
-  sellEnabled: number // 是否允许卖出：0否 1是
+  buyEnabled: number // 买入开关：1启用 2禁用
+  sellEnabled: number // 卖出开关：1启用 2禁用
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
 }
@@ -90,10 +90,10 @@ export type TradeSymbolContract = {
   takerFeeRate: string
   fundingIntervalMinutes: number // 资金费率间隔分钟数
   deliveryTime: number // 交割时间
-  supportCross: number // 是否支持全仓：0否 1是
-  supportIsolated: number // 是否支持逐仓：0否 1是
-  buyEnabled: number // 是否允许买入：0否 1是
-  sellEnabled: number // 是否允许卖出：0否 1是
+  supportCross: number // 全仓支持状态：0不支持 1支持
+  supportIsolated: number // 逐仓支持状态：0不支持 1支持
+  buyEnabled: number // 买入开关：1启用 2禁用
+  sellEnabled: number // 卖出开关：1启用 2禁用
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
 }
@@ -132,8 +132,8 @@ export type TradeUserConfig = {
   positionMode: number
   marginMode: number
   defaultLeverage: number // 默认杠杆
-  tradeEnabled: number // 是否允许交易：0否 1是
-  reduceOnlyEnabled: number // 是否只允许减仓：0否 1是
+  tradeEnabled: number // 交易开关：1启用 2禁用
+  reduceOnlyEnabled: number // 仅减仓开关：1启用 2禁用
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
 }
@@ -160,8 +160,8 @@ export type TradeOrder = {
   fee: string
   feeAsset: string
   source: number
-  isReduceOnly: number // 是否只减仓：0否 1是
-  isCloseOnly: number // 是否只平仓：0否 1是
+  isReduceOnly: number // 是否只减仓：1否 2是
+  isCloseOnly: number // 是否只平仓：1否 2是
   triggerPrice: string
   triggerType: number
   triggerKind: number
@@ -307,13 +307,13 @@ export type RiskUserTradeLimit = {
   tenantId: number
   userId: number
   marketType: number
-  canOpen: number // 是否允许开仓：0否 1是
-  canClose: number // 是否允许平仓：0否 1是
-  canCancel: number // 是否允许撤单：0否 1是
-  canTriggerOrder: number // 是否允许条件单：0否 1是
-  canApiTrade: number // 是否允许 API 交易：0否 1是
+  canOpen: number // 开仓权限：0禁止 1允许
+  canClose: number // 平仓权限：0禁止 1允许
+  canCancel: number // 撤单权限：0禁止 1允许
+  canTriggerOrder: number // 条件单权限：0禁止 1允许
+  canApiTrade: number // API交易权限：0禁止 1允许
   tradeEnabled: number // 交易开关：0关 1开
-  onlyReduceOnly: number // 是否仅允许减仓：0否 1是
+  onlyReduceOnly: number // 仅减仓开关：1启用 2禁用
   maxOpenOrderCount: number
   maxOrderCountPerDay: number
   maxCancelCountPerDay: number
@@ -563,8 +563,8 @@ export type SetUserTradeConfigReq = {
   positionMode: number // 仓位模式
   marginMode: number // 保证金模式
   defaultLeverage: number // 默认杠杆
-  tradeEnabled: number // 是否允许交易：0否 1是
-  reduceOnlyEnabled: number // 是否只允许减仓：0否 1是
+  tradeEnabled: number // 交易开关：1启用 2禁用
+  reduceOnlyEnabled: number // 仅减仓开关：1启用 2禁用
 }
 
 export type GetUserTradeConfigReq = {

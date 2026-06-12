@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -35,7 +36,15 @@ func (l *SetUserTradeConfigLogic) SetUserTradeConfig(in *trade.SetUserTradeConfi
 		return nil, err
 	}
 	if item == nil {
-		item = &models.TTradeUserConfig{TenantId: in.TenantId, UserId: in.UserId, MarketType: int64(in.MarketType), SymbolId: in.SymbolId, CreateTimes: now}
+		item = &models.TTradeUserConfig{
+			TenantId:          in.TenantId,
+			UserId:            in.UserId,
+			MarketType:        int64(in.MarketType),
+			SymbolId:          in.SymbolId,
+			TradeEnabled:      int64(common.Enable_ENABLE_ENABLED),
+			ReduceOnlyEnabled: int64(common.Enable_ENABLE_DISABLED),
+			CreateTimes:       now,
+		}
 	}
 	item.PositionMode = int64(in.PositionMode)
 	item.MarginMode = int64(in.MarginMode)

@@ -43,8 +43,8 @@ func (l *ExpireRiskLimitsLogic) ExpireRiskLimits(in *trade.TradeTaskReq) (*trade
 				if in.GetTenantId() > 0 && item.TenantId != in.GetTenantId() {
 					continue
 				}
-				if item.Enabled == enableToModel(common.Enable_ENABLE_ENABLED, 1) && item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
-					item.Enabled = enableToModel(common.Enable_ENABLE_DISABLED, 0)
+				if item.Enabled == enableToModel(common.Enable_ENABLE_ENABLED, int64(common.Enable_ENABLE_ENABLED)) && item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
+					item.Enabled = enableToModel(common.Enable_ENABLE_DISABLED, int64(common.Enable_ENABLE_DISABLED))
 					item.UpdateTimes = now
 					if err := l.svcCtx.RiskUserTradeLimitModel.Update(l.ctx, item); err != nil {
 						return nil, err
@@ -69,8 +69,8 @@ func (l *ExpireRiskLimitsLogic) ExpireRiskLimits(in *trade.TradeTaskReq) (*trade
 				if in.GetTenantId() > 0 && item.TenantId != in.GetTenantId() {
 					continue
 				}
-				if item.Enabled == enableToModel(common.Enable_ENABLE_ENABLED, 1) && item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
-					item.Enabled = enableToModel(common.Enable_ENABLE_DISABLED, 0)
+				if item.Enabled == enableToModel(common.Enable_ENABLE_ENABLED, int64(common.Enable_ENABLE_ENABLED)) && item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
+					item.Enabled = enableToModel(common.Enable_ENABLE_DISABLED, int64(common.Enable_ENABLE_DISABLED))
 					item.UpdateTimes = now
 					if err := l.svcCtx.RiskUserSymbolLimitModel.Update(l.ctx, item); err != nil {
 						return nil, err

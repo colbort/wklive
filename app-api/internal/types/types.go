@@ -271,7 +271,7 @@ type AppProductListResp struct {
 }
 
 type AppRedeemData struct {
-	Success  int64  `json:"success"`  // 是否成功：0否 1是
+	Success  int64  `json:"success"`  // 执行结果：0失败 1成功
 	RedeemNo string `json:"redeemNo"` // 赎回单号
 }
 
@@ -1388,8 +1388,8 @@ type PlaceOrderReq struct {
 	Price           string `json:"price,optional"`
 	Qty             string `json:"qty,optional"`
 	Amount          string `json:"amount,optional"`
-	IsReduceOnly    int64  `json:"isReduceOnly,optional"` // 是否只减仓：0否 1是
-	IsCloseOnly     int64  `json:"isCloseOnly,optional"`  // 是否只平仓：0否 1是
+	IsReduceOnly    int64  `json:"isReduceOnly,optional"` // 是否只减仓：1否 2是
+	IsCloseOnly     int64  `json:"isCloseOnly,optional"`  // 是否只平仓：1否 2是
 	TriggerPrice    string `json:"triggerPrice,optional"`
 	TriggerType     int64  `json:"triggerType,optional"`
 	TriggerKind     int64  `json:"triggerKind,optional"`
@@ -1753,8 +1753,8 @@ type TradeOrder struct {
 	Fee           string `json:"fee"`
 	FeeAsset      string `json:"feeAsset"`
 	Source        int64  `json:"source"`
-	IsReduceOnly  int64  `json:"isReduceOnly"` // 是否只减仓：0否 1是
-	IsCloseOnly   int64  `json:"isCloseOnly"`  // 是否只平仓：0否 1是
+	IsReduceOnly  int64  `json:"isReduceOnly"` // 是否只减仓：1否 2是
+	IsCloseOnly   int64  `json:"isCloseOnly"`  // 是否只平仓：1否 2是
 	TriggerPrice  string `json:"triggerPrice"`
 	TriggerType   int64  `json:"triggerType"` // 触发类型
 	TriggerKind   int64  `json:"triggerKind"` // 触发用途：0无 1条件单 2止盈 3止损
@@ -1805,10 +1805,10 @@ type TradeSymbolContract struct {
 	TakerFeeRate           string `json:"takerFeeRate"`
 	FundingIntervalMinutes int64  `json:"fundingIntervalMinutes"` // 资金费率间隔分钟数
 	DeliveryTime           int64  `json:"deliveryTime"`
-	SupportCross           int64  `json:"supportCross"`    // 是否支持全仓：0否 1是
-	SupportIsolated        int64  `json:"supportIsolated"` // 是否支持逐仓：0否 1是
-	BuyEnabled             int64  `json:"buyEnabled"`      // 是否允许买入：0否 1是
-	SellEnabled            int64  `json:"sellEnabled"`     // 是否允许卖出：0否 1是
+	SupportCross           int64  `json:"supportCross"`    // 全仓支持状态：0不支持 1支持
+	SupportIsolated        int64  `json:"supportIsolated"` // 逐仓支持状态：0不支持 1支持
+	BuyEnabled             int64  `json:"buyEnabled"`      // 买入开关：1启用 2禁用
+	SellEnabled            int64  `json:"sellEnabled"`     // 卖出开关：1启用 2禁用
 	CreateTimes            int64  `json:"createTimes"`
 	UpdateTimes            int64  `json:"updateTimes"`
 }
@@ -1835,8 +1835,8 @@ type TradeSymbolSpot struct {
 	SymbolId     int64  `json:"symbolId"`
 	MakerFeeRate string `json:"makerFeeRate"`
 	TakerFeeRate string `json:"takerFeeRate"`
-	BuyEnabled   int64  `json:"buyEnabled"`  // 是否允许买入：0否 1是
-	SellEnabled  int64  `json:"sellEnabled"` // 是否允许卖出：0否 1是
+	BuyEnabled   int64  `json:"buyEnabled"`  // 买入开关：1启用 2禁用
+	SellEnabled  int64  `json:"sellEnabled"` // 卖出开关：1启用 2禁用
 	CreateTimes  int64  `json:"createTimes"`
 	UpdateTimes  int64  `json:"updateTimes"`
 }

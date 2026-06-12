@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -34,6 +35,10 @@ func (l *CreateTenantPayAccountLogic) CreateTenantPayAccount(in *payment.CreateT
 	)
 
 	now := utils.NowMillis()
+	isDefault := int64(in.IsDefault)
+	if common.YesNo(in.IsDefault) == common.YesNo_YES_NO_UNKNOWN {
+		isDefault = int64(common.YesNo_YES_NO_NO)
+	}
 	account := &models.TTenantPayAccount{
 		TenantId:            in.TenantId,
 		TenantPayPlatformId: in.TenantPayPlatformId,
@@ -49,8 +54,8 @@ func (l *CreateTenantPayAccountLogic) CreateTenantPayAccount(in *payment.CreateT
 		PublicKey:           sql.NullString{String: in.PublicKey, Valid: true},
 		CertCipher:          sql.NullString{String: in.CertCipher, Valid: true},
 		ExtConfig:           sql.NullString{String: in.ExtConfig, Valid: true},
-		Enabled:             int64(in.Enabled),
-		IsDefault:           in.IsDefault,
+		Enabled:             enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
+		IsDefault:           isDefault,
 		Remark:              sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes:         now,
 		UpdateTimes:         now,

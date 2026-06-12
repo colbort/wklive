@@ -54,7 +54,7 @@ type (
 		MaxLeverage   int64  `db:"max_leverage"`   // 当前允许的最大杠杆倍数
 		OperatorId    int64  `db:"operator_id"`    // 操作人ID，系统操作时可为0
 		Source        int64  `db:"source"`         // 来源：1系统 2用户 3后台管理 4任务
-		Enabled       int64  `db:"enabled"`        // 启用开关：1启用 0禁用
+		Enabled       int64  `db:"enabled"`        // 启用开关：1启用 2禁用
 		Remark        string `db:"remark"`         // 备注
 		CreateTimes   int64  `db:"create_times"`   // 创建时间，毫秒时间戳
 		UpdateTimes   int64  `db:"update_times"`   // 更新时间，毫秒时间戳

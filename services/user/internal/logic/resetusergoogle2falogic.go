@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -42,11 +43,9 @@ func (l *ResetUserGoogle2FALogic) ResetUserGoogle2FA(in *user.ResetUserGoogle2FA
 	}
 
 	// 禁用 Google 2FA
-	err = l.svcCtx.UserSecurityModel.Update(l.ctx, &models.TUserSecurity{
-		Id:            userSecurity.Id,
-		GoogleEnabled: 0,
-		UpdateTimes:   utils.NowMillis(),
-	})
+	userSecurity.GoogleEnabled = int64(common.Enable_ENABLE_DISABLED)
+	userSecurity.UpdateTimes = utils.NowMillis()
+	err = l.svcCtx.UserSecurityModel.Update(l.ctx, userSecurity)
 	if err != nil {
 		return nil, err
 	}

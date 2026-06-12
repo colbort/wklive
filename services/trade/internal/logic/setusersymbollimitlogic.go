@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -35,7 +36,14 @@ func (l *SetUserSymbolLimitLogic) SetUserSymbolLimit(in *trade.SetUserSymbolLimi
 		return nil, err
 	}
 	if item == nil {
-		item = &models.TRiskUserSymbolLimit{TenantId: in.TenantId, UserId: in.UserId, SymbolId: in.SymbolId, MarketType: int64(in.MarketType), CreateTimes: now}
+		item = &models.TRiskUserSymbolLimit{
+			TenantId:    in.TenantId,
+			UserId:      in.UserId,
+			SymbolId:    in.SymbolId,
+			MarketType:  int64(in.MarketType),
+			Enabled:     int64(common.Enable_ENABLE_ENABLED),
+			CreateTimes: now,
+		}
 	}
 	item.MaxPositionQty = mustParseFloat(in.MaxPositionQty)
 	item.MaxPositionNotional = mustParseFloat(in.MaxPositionNotional)

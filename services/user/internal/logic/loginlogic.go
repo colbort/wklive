@@ -8,6 +8,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
@@ -105,7 +106,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-	if userSecurity != nil && userSecurity.GoogleEnabled == 1 {
+	if userSecurity != nil && userSecurity.GoogleEnabled == int64(common.Enable_ENABLE_ENABLED) {
 		if in.GoogleCode == "" {
 			return &user.LoginResp{
 				Base: helper.GetErrResp(i18n.Google2FACodeRequired, i18n.Translate(i18n.Google2FACodeRequired, l.ctx)),

@@ -9,6 +9,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
@@ -85,10 +86,11 @@ func (l *CreateUserLogic) CreateUser(in *user.CreateUserReq) (*user.CreateUserRe
 	}
 
 	userSecurity := &models.TUserSecurity{
-		Id:          l.svcCtx.Node.Generate().Int64(),
-		TenantId:    tenant.Data.Id,
-		CreateTimes: now,
-		UpdateTimes: now,
+		Id:            l.svcCtx.Node.Generate().Int64(),
+		TenantId:      tenant.Data.Id,
+		GoogleEnabled: int64(common.Enable_ENABLE_DISABLED),
+		CreateTimes:   now,
+		UpdateTimes:   now,
 	}
 
 	userId := int64(0)

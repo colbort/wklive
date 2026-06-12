@@ -71,7 +71,7 @@ type (
 		DeviceId       string         `db:"device_id"`        // 设备唯一ID
 		Fingerprint    sql.NullString `db:"fingerprint"`      // 浏览器指纹JSON
 		Remark         sql.NullString `db:"remark"`           // 备注
-		Deleted        int64          `db:"deleted"`          // 是否删除：0否 1是
+		Deleted        int64          `db:"deleted"`          // 删除状态：0未删除 1已删除
 		CreateTimes    int64          `db:"create_times"`     // 创建时间
 		UpdateTimes    int64          `db:"update_times"`     // 更新时间
 	}

@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -81,8 +82,8 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 	if in.Enabled != 0 {
 		account.Enabled = int64(in.Enabled)
 	}
-	if in.IsDefault != 0 {
-		account.IsDefault = in.IsDefault
+	if common.YesNo(in.IsDefault) != common.YesNo_YES_NO_UNKNOWN {
+		account.IsDefault = int64(in.IsDefault)
 	}
 	if in.Remark != "" {
 		account.Remark = sql.NullString{String: in.Remark, Valid: true}

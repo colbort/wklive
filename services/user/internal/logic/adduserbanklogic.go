@@ -44,10 +44,17 @@ func (l *AddUserBankLogic) AddUserBank(in *user.AddUserBankReq) (*user.AddUserBa
 	}
 
 	now := utils.NowMillis()
-	isDefault, _ := yesNoToDefaultFlag(common.YesNo(in.IsDefault))
+	isDefault := int64(in.IsDefault)
+	if common.YesNo(in.IsDefault) == common.YesNo_YES_NO_UNKNOWN {
+		isDefault = int64(common.YesNo_YES_NO_NO)
+	}
+	enabled := int64(in.Enabled)
+	if common.Enable(in.Enabled) == common.Enable_ENABLE_UNKNOWN {
+		enabled = int64(common.Enable_ENABLE_ENABLED)
+	}
 
 	// 如果设置为默认，需要取消其他卡的默认设置
-	if isDefault == 1 {
+	if common.YesNo(isDefault) == common.YesNo_YES_NO_YES {
 		// TODO: 更新其他卡的默认状态
 	}
 
@@ -63,7 +70,7 @@ func (l *AddUserBankLogic) AddUserBank(in *user.AddUserBankReq) (*user.AddUserBa
 		BranchName:  sql.NullString{String: in.BranchName, Valid: in.BranchName != ""},
 		CountryCode: sql.NullString{String: in.CountryCode, Valid: in.CountryCode != ""},
 		IsDefault:   isDefault,
-		Enabled:     int64(in.Enabled),
+		Enabled:     enabled,
 		CreateTimes: now,
 		UpdateTimes: now,
 	}

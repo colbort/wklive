@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 )
@@ -45,7 +46,7 @@ func (l *Google2FAEnableLogic) Google2FAEnable(in *system.Google2FAEnableReq) (*
 		}, nil
 	}
 
-	user.GoogleEnabled = 1
+	user.GoogleEnabled = int64(common.Enable_ENABLE_ENABLED)
 	if err = l.svcCtx.UserModel.Update(l.ctx, user); err != nil {
 		return nil, err
 	}

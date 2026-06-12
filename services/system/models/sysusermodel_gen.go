@@ -45,14 +45,14 @@ type (
 		Id            int64  `db:"id"`             // 用户ID
 		TenantId      int64  `db:"tenant_id"`      // 所属租户ID：0=系统侧，>0=租户ID
 		UserType      int64  `db:"user_type"`      // 用户类型：1系统管理员 2租户主账号 3租户管理员
-		IsOwner       int64  `db:"is_owner"`       // 是否租户主账号：1是 0否
+		IsOwner       int64  `db:"is_owner"`       // 是否租户主账号：1否 2是
 		Username      string `db:"username"`       // 登录账号
 		Password      string `db:"password"`       // bcrypt密码
 		Nickname      string `db:"nickname"`       // 昵称
 		Avatar        string `db:"avatar"`         // 头像
 		Enabled       int64  `db:"enabled"`        // 启用开关：1启用 2禁用
 		GoogleSecret  string `db:"google_secret"`  // 2FA secret(加密存储)
-		GoogleEnabled int64  `db:"google_enabled"` // Google2FA开关：1启用 0禁用
+		GoogleEnabled int64  `db:"google_enabled"` // Google2FA开关：1启用 2禁用
 		PermsVer      int64  `db:"perms_ver"`      // 权限版本(角色变化强制token失效)
 		LastLoginIp   string `db:"last_login_ip"`  // 最后登录IP
 		LastLoginAt   int64  `db:"last_login_at"`  // 最后登录时间

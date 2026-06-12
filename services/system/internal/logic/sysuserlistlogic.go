@@ -75,7 +75,7 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 			Enabled:          commonStatusToProto(u.Enabled),
 			RoleIds:          roleMap[u.Id],
 			CreateTimes:      u.CreateTimes,
-			Google2FaEnabled: binaryEnableToProto(u.GoogleEnabled),
+			Google2FaEnabled: commonStatusToProto(u.GoogleEnabled),
 		})
 	}
 

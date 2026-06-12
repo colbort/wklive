@@ -15,15 +15,12 @@ func commonStatusToModel(v common.Enable) int64 {
 	return int64(v)
 }
 
-func binaryEnableToProto(v int64) common.Enable {
-	switch v {
-	case 1:
-		return common.Enable_ENABLE_ENABLED
-	case 0:
-		return common.Enable_ENABLE_DISABLED
-	default:
-		return common.Enable_ENABLE_UNKNOWN
-	}
+func yesNoToProto(v int64) common.YesNo {
+	return common.YesNo(v)
+}
+
+func yesNoToModel(v common.YesNo) int64 {
+	return int64(v)
 }
 
 func menuTypeToProto(v int64) system.MenuType {

@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -37,7 +38,7 @@ func (l *OpenTenantPayPlatformLogic) OpenTenantPayPlatform(in *payment.OpenTenan
 	tenantPlatform := &models.TTenantPayPlatform{
 		TenantId:    in.TenantId,
 		PlatformId:  in.PlatformId,
-		Enabled:     int64(in.Enabled),
+		Enabled:     enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		OpenStatus:  int64(in.OpenStatus),
 		Remark:      sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes: now,

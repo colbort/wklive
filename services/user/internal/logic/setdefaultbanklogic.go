@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -58,7 +59,7 @@ func (l *SetDefaultBankLogic) SetDefaultBank(in *user.SetDefaultBankReq) (*user.
 	// TODO: 自定义查询方法，找出该用户的所有银行卡并更新
 
 	// 将当前卡设置为默认
-	bank.IsDefault = 1
+	bank.IsDefault = int64(common.YesNo_YES_NO_YES)
 	bank.UpdateTimes = now
 	err = l.svcCtx.UserBankModel.Update(l.ctx, bank)
 	if err != nil {

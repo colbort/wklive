@@ -33,7 +33,7 @@ message UserBase {
   string device_id = 23; // 设备唯一ID
   string fingerprint = 24; // 浏览器指纹
   string remark = 25; // 备注
-  int64 deleted = 26; // 是否删除：0否 1是
+  int64 deleted = 26; // 删除状态：0未删除 1已删除
   int64 create_times = 27; // 创建时间
   int64 update_times = 28; // 更新时间
 }
@@ -120,7 +120,7 @@ message UserItem {
   string device_id = 23; // 设备唯一ID
   string fingerprint = 24; // 浏览器指纹
   string remark = 25; // 备注
-  int64 deleted = 26; // 是否删除：0否 1是
+  int64 deleted = 26; // 删除状态：0未删除 1已删除
   int64 create_times = 27; // 创建时间
   int64 update_times = 28; // 更新时间
 }
@@ -163,7 +163,7 @@ message UserBankItem {
   string account_no = 7; // 银行卡号
   string branch_name = 8; // 支行名称
   string country_code = 9; // 国家地区
-  int64 is_default = 10; // 是否默认：0否 1是
+  common.YesNo is_default = 10; // 是否默认：1否 2是
   common.Enable enabled = 11; // 状态：1正常 2禁用
   int64 create_times = 12; // 创建时间
   int64 update_times = 13; // 更新时间

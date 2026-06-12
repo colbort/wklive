@@ -51,8 +51,8 @@ type (
 		CanCancel            int64   `db:"can_cancel"`               // 是否允许撤单：1允许 0禁止
 		CanTriggerOrder      int64   `db:"can_trigger_order"`        // 是否允许条件单：1允许 0禁止
 		CanApiTrade          int64   `db:"can_api_trade"`            // 是否允许API交易：1允许 0禁止
-		TradeEnabled         int64   `db:"trade_enabled"`            // 交易开关：1启用 0禁用
-		OnlyReduceOnly       int64   `db:"only_reduce_only"`         // 仅减仓开关：1启用 0禁用
+		TradeEnabled         int64   `db:"trade_enabled"`            // 交易开关：1启用 2禁用
+		OnlyReduceOnly       int64   `db:"only_reduce_only"`         // 仅减仓开关：1启用 2禁用
 		MaxOpenOrderCount    int64   `db:"max_open_order_count"`     // 最大挂单数，0表示不限
 		MaxOrderCountPerDay  int64   `db:"max_order_count_per_day"`  // 单日最大下单次数，0表示不限
 		MaxCancelCountPerDay int64   `db:"max_cancel_count_per_day"` // 单日最大撤单次数，0表示不限
@@ -61,7 +61,7 @@ type (
 		RiskLevel            int64   `db:"risk_level"`               // 风险等级：0默认 1低风险限制 2中风险限制 3高风险限制
 		OperatorId           int64   `db:"operator_id"`              // 操作人ID，系统操作时可为0
 		Source               int64   `db:"source"`                   // 来源：1系统 2用户 3后台管理 4任务
-		Enabled              int64   `db:"enabled"`                  // 启用开关：1启用 0禁用
+		Enabled              int64   `db:"enabled"`                  // 启用开关：1启用 2禁用
 		EffectiveStartTime   int64   `db:"effective_start_time"`     // 限制生效开始时间，毫秒时间戳，0表示立即生效
 		EffectiveEndTime     int64   `db:"effective_end_time"`       // 限制生效结束时间，毫秒时间戳，0表示长期有效
 		Remark               string  `db:"remark"`                   // 备注

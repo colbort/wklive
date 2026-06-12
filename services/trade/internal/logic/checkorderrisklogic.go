@@ -39,7 +39,7 @@ func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trad
 		return nil, err
 	}
 	if limitCfg != nil {
-		if limitCfg.TradeEnabled == 0 {
+		if limitCfg.TradeEnabled == int64(common.Enable_ENABLE_DISABLED) {
 			resp.Passed = 0
 			rejectCode = "TRADE_DISABLED"
 			rejectMsg = "trade disabled"

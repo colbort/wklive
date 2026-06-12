@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -81,11 +82,11 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 	if in.KycLevelMax != 0 {
 		rule.KycLevelMax = in.KycLevelMax
 	}
-	if in.AllowNewUser != 0 {
-		rule.AllowNewUser = in.AllowNewUser
+	if common.YesNo(in.AllowNewUser) != common.YesNo_YES_NO_UNKNOWN {
+		rule.AllowNewUser = int64(in.AllowNewUser)
 	}
-	if in.AllowOldUser != 0 {
-		rule.AllowOldUser = in.AllowOldUser
+	if common.YesNo(in.AllowOldUser) != common.YesNo_YES_NO_UNKNOWN {
+		rule.AllowOldUser = int64(in.AllowOldUser)
 	}
 	if in.AllowTags != "" {
 		rule.AllowTags = sql.NullString{String: in.AllowTags, Valid: true}

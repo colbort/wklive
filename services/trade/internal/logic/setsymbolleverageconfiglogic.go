@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -53,7 +54,7 @@ func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymb
 			SymbolId:    in.SymbolId,
 			MarketType:  int64(in.MarketType),
 			MarginMode:  int64(in.MarginMode),
-			Enabled:     1,
+			Enabled:     int64(common.Enable_ENABLE_ENABLED),
 			Sort:        int64(in.MarginMode),
 			CreateTimes: now,
 		}

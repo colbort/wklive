@@ -59,20 +59,15 @@ func (m *defaultTCryptoRechargeAddressModel) FindPage(ctx context.Context, tenan
 }
 
 func appendCryptoAddressStatusFilter(builder *sqlutil.PageQueryBuilder, status int64) {
-	switch status {
-	case 1:
-		builder.And("status = ?", int64(0))
-	case 2:
-		builder.And("status = ?", int64(1))
-	case 3:
-		builder.And("status = ?", int64(2))
+	if status != 0 {
+		builder.And("status = ?", status)
 	}
 }
 
 func (m *defaultTCryptoRechargeAddressModel) FindOneAssignable(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (*TCryptoRechargeAddress, error) {
 	query := fmt.Sprintf(
 		`SELECT %s FROM %s
-		WHERE tenant_id = ? AND user_id = 0 AND wallet_type = ? AND coin = ? AND chain_code = ? AND status = 1
+		WHERE tenant_id = ? AND user_id = 0 AND wallet_type = ? AND coin = ? AND chain_code = ? AND status = 2
 		ORDER BY address_type DESC, last_used_time ASC, id ASC
 		LIMIT 1`,
 		tCryptoRechargeAddressRows, m.table,
@@ -90,7 +85,7 @@ func (m *defaultTCryptoRechargeAddressModel) FindAssignableCandidates(ctx contex
 	limit = sqlutil.NormalizeLimit(limit)
 	query := fmt.Sprintf(
 		`SELECT %s FROM %s
-		WHERE tenant_id = ? AND wallet_type = ? AND coin = ? AND chain_code = ? AND status = 1
+		WHERE tenant_id = ? AND wallet_type = ? AND coin = ? AND chain_code = ? AND status = 2
 			AND (user_id = 0 OR last_used_time <= ?)
 		ORDER BY address_type DESC, last_used_time ASC, id ASC
 		LIMIT ?`,
@@ -108,7 +103,7 @@ func (m *defaultTCryptoRechargeAddressModel) FindAssignableCandidates(ctx contex
 func (m *defaultTCryptoRechargeAddressModel) HasEnabledAddress(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (bool, error) {
 	query := fmt.Sprintf(
 		`SELECT COUNT(1) FROM %s
-		WHERE tenant_id = ? AND wallet_type = ? AND coin = ? AND chain_code = ? AND status = 1`,
+		WHERE tenant_id = ? AND wallet_type = ? AND coin = ? AND chain_code = ? AND status = 2`,
 		m.table,
 	)
 

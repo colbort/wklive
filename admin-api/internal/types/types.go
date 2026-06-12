@@ -2741,7 +2741,7 @@ type ProfileUser struct {
 	Avatar   string `json:"avatar,optional"`
 	TenantId int64  `json:"tenantId"` // 所属租户ID：0=系统侧，>0=租户ID
 	UserType int64  `json:"userType"` // 用户类型：1系统管理员 2租户主账号 3租户管理员
-	IsOwner  int64  `json:"isOwner"`  // 是否租户主账号：1是 0否
+	IsOwner  int64  `json:"isOwner"`  // 是否租户主账号：1否 2是
 }
 
 type Quote struct {
@@ -4201,7 +4201,7 @@ type UserBankItem struct {
 	AccountNo   string `json:"accountNo"`   // 银行卡号
 	BranchName  string `json:"branchName"`  // 支行名称
 	CountryCode string `json:"countryCode"` // 国家地区
-	IsDefault   int64  `json:"isDefault"`   // 是否默认：0否 1是
+	IsDefault   int64  `json:"isDefault"`   // 是否默认：1否 2是
 	Enabled     int64  `json:"enabled"`     // 启用状态：1启用 2禁用
 	CreateTimes int64  `json:"createTimes"` // 创建时间
 	UpdateTimes int64  `json:"updateTimes"` // 更新时间
@@ -4327,7 +4327,7 @@ type UserItem struct {
 	DeviceId       string `json:"deviceId"`       // 设备唯一ID
 	Fingerprint    string `json:"fingerprint"`    // 浏览器指纹
 	Remark         string `json:"remark"`         // 备注
-	Deleted        int64  `json:"deleted"`        // 是否删除：0否 1是
+	Deleted        int64  `json:"deleted"`        // 删除状态：0未删除 1已删除
 	CreateTimes    int64  `json:"createTimes"`    // 创建时间
 	UpdateTimes    int64  `json:"updateTimes"`    // 更新时间
 }
@@ -4359,7 +4359,7 @@ type UserSecurity struct {
 	UserId          int64  `json:"userId"`          // 用户ID
 	PayPasswordHash string `json:"payPasswordHash"` // 支付密码哈希
 	GoogleSecret    string `json:"googleSecret"`    // Google密钥
-	GoogleEnabled   int64  `json:"googleEnabled"`   // Google2FA是否启用：0否 1是
+	GoogleEnabled   int64  `json:"googleEnabled"`   // Google2FA是否启用：1启用 2禁用
 	LoginErrorCount int64  `json:"loginErrorCount"` // 登录错误次数
 	PayErrorCount   int64  `json:"payErrorCount"`   // 支付密码错误次数
 	LockUntil       int64  `json:"lockUntil"`       // 锁定到期时间

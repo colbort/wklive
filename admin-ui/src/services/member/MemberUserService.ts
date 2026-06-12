@@ -118,7 +118,7 @@ export type UserBankItem = {
   accountNo: string // 银行卡号
   branchName: string // 支行名称
   countryCode: string // 国家/地区
-  isDefault: number // 是否默认：0否 1是
+  isDefault: number // 是否默认：1否 2是
   enabled: number // 启用状态：1启用 2禁用
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
@@ -314,7 +314,7 @@ export type AddUserBankReq = {
   accountNo: string // 银行卡号
   branchName?: string // 支行名称
   countryCode?: string // 国家/地区
-  isDefault: number // 是否默认：0否 1是
+  isDefault: number // 是否默认：1否 2是
   enabled: number // 启用状态：1启用 2禁用
 }
 

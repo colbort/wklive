@@ -151,7 +151,7 @@ message CreateTenantPayAccountReq {
   string cert_cipher = 13;
   string ext_config = 14;
   common.Enable enabled = 15; // 状态,0表示全部，1表示启用，2表示禁用
-  int64 is_default = 16;
+  common.YesNo is_default = 16;
   string remark = 17;
 }
 
@@ -169,7 +169,7 @@ message UpdateTenantPayAccountReq {
   string cert_cipher = 11;
   string ext_config = 12;
   common.Enable enabled = 13; // 状态,0表示全部，1表示启用，2表示禁用
-  int64 is_default = 14;
+  common.YesNo is_default = 14;
   string remark = 15;
 }
 
@@ -284,8 +284,8 @@ message CreateTenantPayChannelRuleReq {
   int64 member_level_max = 11;
   int64 kyc_level_min = 12;
   int64 kyc_level_max = 13;
-  int64 allow_new_user = 14;
-  int64 allow_old_user = 15;
+  common.YesNo allow_new_user = 14;
+  common.YesNo allow_old_user = 15;
   string allow_tags = 16;
   string deny_tags = 17;
   string remark = 18;
@@ -305,8 +305,8 @@ message UpdateTenantPayChannelRuleReq {
   int64 member_level_max = 11;
   int64 kyc_level_min = 12;
   int64 kyc_level_max = 13;
-  int64 allow_new_user = 14;
-  int64 allow_old_user = 15;
+  common.YesNo allow_new_user = 14;
+  common.YesNo allow_old_user = 15;
   string allow_tags = 16;
   string deny_tags = 17;
   string remark = 18;
@@ -558,7 +558,7 @@ message CreateCryptoWalletAccountReq {
   string callback_secret_cipher = 7;
   string ext_config = 8;
   common.Enable enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
-  int64 is_default = 10;
+  common.YesNo is_default = 10;
 }
 
 message UpdateCryptoWalletAccountReq {
@@ -571,7 +571,7 @@ message UpdateCryptoWalletAccountReq {
   string callback_secret_cipher = 7;
   string ext_config = 8;
   common.Enable enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
-  int64 is_default = 10;
+  common.YesNo is_default = 10;
 }
 
 message GetCryptoWalletAccountReq {
@@ -590,7 +590,7 @@ message ListCryptoWalletAccountsReq {
   string keyword = 3;
   string provider = 4;
   common.Enable enabled = 5; // 状态,0表示全部，1表示启用，2表示禁用
-  int64 is_default = 6;
+  common.YesNo is_default = 6;
 }
 
 message ListCryptoWalletAccountsResp {

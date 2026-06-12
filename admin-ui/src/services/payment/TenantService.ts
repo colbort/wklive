@@ -47,7 +47,7 @@ export type TenantPayAccount = {
   certCipher: string // 证书密文
   extConfig: string // 扩展配置(JSON)
   enabled: number // 启用状态：1启用 2停用
-  isDefault: number // 是否默认账号：0否 1是
+  isDefault: number // 是否默认账号：1否 2是
   remark: string // 备注
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
@@ -65,7 +65,7 @@ export type TenantPayChannel = {
   icon: string // 图标
   currency: string // 币种
   sort: number // 排序
-  visible: number // 是否显示：0否 1是
+  visible: number // 是否显示：1显示 2隐藏
   enabled: number // 启用状态：1启用 2停用
   singleMinAmount: number // 单笔最小金额，单位分
   singleMaxAmount: number // 单笔最大金额，单位分
@@ -95,8 +95,8 @@ export type TenantPayChannelRule = {
   memberLevelMax: number // 会员等级最大值
   kycLevelMin: number // KYC等级最小值
   kycLevelMax: number // KYC等级最大值
-  allowNewUser: number // 是否允许新用户：0否 1是
-  allowOldUser: number // 是否允许老用户：0否 1是
+  allowNewUser: number // 是否允许新用户：1否 2是
+  allowOldUser: number // 是否允许老用户：1否 2是
   allowTags: string // 允许的用户标签(JSON数组)
   denyTags: string // 禁止的用户标签(JSON数组)
   remark: string // 备注
@@ -155,7 +155,7 @@ export type CreateTenantPayAccountReq = {
   certCipher?: string // 证书密文
   extConfig?: string // 扩展配置(JSON)
   enabled: number // 启用状态：1启用 2停用
-  isDefault: number // 是否默认账号：0否 1是
+  isDefault: number // 是否默认账号：1否 2是
   remark?: string // 备注
 }
 
@@ -173,7 +173,7 @@ export type UpdateTenantPayAccountReq = {
   certCipher?: string // 证书密文
   extConfig?: string // 扩展配置(JSON)
   enabled: number // 启用状态：1启用 2停用
-  isDefault: number // 是否默认账号：0否 1是
+  isDefault: number // 是否默认账号：1否 2是
   remark?: string // 备注
 }
 
@@ -184,7 +184,7 @@ export type ListTenantPayChannelsReq = {
   accountId?: number // 账号ID
   keyword?: string // 关键字
   enabled?: number // 启用状态：1启用 2停用
-  visible?: number // 是否显示：0否 1是
+  visible?: number // 是否显示：1显示 2隐藏
   cursor?: number // 分页游标
   limit?: number // 分页大小
 }
@@ -200,7 +200,7 @@ export type CreateTenantPayChannelReq = {
   icon?: string // 图标
   currency: string // 币种
   sort: number // 排序
-  visible: number // 是否显示：0否 1是
+  visible: number // 是否显示：1显示 2隐藏
   enabled: number // 启用状态：1启用 2停用
   singleMinAmount: number // 单笔最小金额，单位分
   singleMaxAmount: number // 单笔最大金额，单位分
@@ -221,7 +221,7 @@ export type UpdateTenantPayChannelReq = {
   icon?: string // 图标
   currency: string // 币种
   sort: number // 排序
-  visible: number // 是否显示：0否 1是
+  visible: number // 是否显示：1显示 2隐藏
   enabled: number // 启用状态：1启用 2停用
   singleMinAmount: number // 单笔最小金额，单位分
   singleMaxAmount: number // 单笔最大金额，单位分
@@ -256,8 +256,8 @@ export type CreateTenantPayChannelRuleReq = {
   memberLevelMax: number // 会员等级最大值
   kycLevelMin: number // KYC等级最小值
   kycLevelMax: number // KYC等级最大值
-  allowNewUser: number // 是否允许新用户：0否 1是
-  allowOldUser: number // 是否允许老用户：0否 1是
+  allowNewUser: number // 是否允许新用户：1否 2是
+  allowOldUser: number // 是否允许老用户：1否 2是
   allowTags?: string // 允许的用户标签(JSON数组)
   denyTags?: string // 禁止的用户标签(JSON数组)
   remark?: string // 备注

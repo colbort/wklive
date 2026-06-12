@@ -37,7 +37,7 @@ message AdminLoginData {
   int64 perms_ver = 7;
   int64 tenant_id = 8;
   system.UserType user_type = 9;
-  int64 is_owner = 10;
+  common.YesNo is_owner = 10;
   string avatar = 11;
 }
 
@@ -48,7 +48,7 @@ message ProfileUser {
   string avatar = 4;
   int64 tenant_id = 5;
   system.UserType user_type = 6;
-  int64 is_owner = 7;
+  common.YesNo is_owner = 7;
 }
 
 message SysMenuNode {
@@ -155,7 +155,7 @@ message SysUserItem {
   common.Enable google2fa_enabled = 7; // 状态,0表示全部，1表示启用，2表示禁用
   int64 tenant_id = 8;
   system.UserType user_type = 9;
-  int64 is_owner = 10;
+  common.YesNo is_owner = 10;
   string avatar = 11;
   int64 perms_ver = 12;
   string last_login_ip = 13;
@@ -188,7 +188,7 @@ message SysUserCreateReq {
   repeated int64 role_ids = 5;
   int64 tenant_id = 6;
   system.UserType user_type = 7;
-  int64 is_owner = 8;
+  common.YesNo is_owner = 8;
   string avatar = 9;
 }
 message SysUserUpdateReq {
@@ -198,7 +198,7 @@ message SysUserUpdateReq {
   repeated int64 role_ids = 4;
   int64 tenant_id = 5;
   system.UserType user_type = 6;
-  int64 is_owner = 7;
+  common.YesNo is_owner = 7;
   string avatar = 8;
 }
 message SysUserDeleteReq { int64 id = 1; }

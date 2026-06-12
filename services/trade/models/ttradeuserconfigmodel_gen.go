@@ -50,8 +50,8 @@ type (
 		PositionMode      int64 `db:"position_mode"`       // 持仓模式：1单向持仓 2双向持仓
 		MarginMode        int64 `db:"margin_mode"`         // 保证金模式：1全仓 2逐仓
 		DefaultLeverage   int64 `db:"default_leverage"`    // 默认杠杆倍数
-		TradeEnabled      int64 `db:"trade_enabled"`       // 交易开关：1启用 0禁用
-		ReduceOnlyEnabled int64 `db:"reduce_only_enabled"` // 仅减仓开关：1启用 0禁用
+		TradeEnabled      int64 `db:"trade_enabled"`       // 交易开关：1启用 2禁用
+		ReduceOnlyEnabled int64 `db:"reduce_only_enabled"` // 仅减仓开关：1启用 2禁用
 		CreateTimes       int64 `db:"create_times"`        // 创建时间，毫秒时间戳
 		UpdateTimes       int64 `db:"update_times"`        // 更新时间，毫秒时间戳
 	}

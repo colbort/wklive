@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -40,7 +41,7 @@ func (l *CreatePayProductLogic) CreatePayProduct(in *payment.CreatePayProductReq
 		ProductName: in.ProductName,
 		SceneType:   int64(in.SceneType),
 		Currency:    in.Currency,
-		Enabled:     int64(in.Enabled),
+		Enabled:     enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		Remark:      sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes: now,
 		UpdateTimes: now,

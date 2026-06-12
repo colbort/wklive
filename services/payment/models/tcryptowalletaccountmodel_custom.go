@@ -55,10 +55,7 @@ func (m *defaultTCryptoWalletAccountModel) FindPage(ctx context.Context, tenantI
 }
 
 func appendCryptoWalletStatusFilter(builder *sqlutil.PageQueryBuilder, enabled int64) {
-	switch enabled {
-	case 1:
-		builder.And("enabled = ?", int64(1))
-	case 2:
-		builder.And("enabled = ?", int64(0))
+	if enabled != 0 {
+		builder.And("enabled = ?", enabled)
 	}
 }

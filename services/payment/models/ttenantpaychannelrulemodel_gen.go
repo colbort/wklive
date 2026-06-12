@@ -54,8 +54,8 @@ type (
 		MemberLevelMax       int64          `db:"member_level_max"`        // 会员等级最大值，0表示不限制
 		KycLevelMin          int64          `db:"kyc_level_min"`           // KYC等级最小值
 		KycLevelMax          int64          `db:"kyc_level_max"`           // KYC等级最大值，0表示不限制
-		AllowNewUser         int64          `db:"allow_new_user"`          // 是否允许新用户：0否 1是
-		AllowOldUser         int64          `db:"allow_old_user"`          // 是否允许老用户：0否 1是
+		AllowNewUser         int64          `db:"allow_new_user"`          // 是否允许新用户：1否 2是
+		AllowOldUser         int64          `db:"allow_old_user"`          // 是否允许老用户：1否 2是
 		AllowTags            sql.NullString `db:"allow_tags"`              // 允许的用户标签(JSON数组)
 		DenyTags             sql.NullString `db:"deny_tags"`               // 禁止的用户标签(JSON数组)
 		Remark               sql.NullString `db:"remark"`                  // 备注

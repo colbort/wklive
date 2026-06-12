@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -34,12 +35,20 @@ func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment
 	)
 
 	now := utils.NowMillis()
+	allowNewUser := int64(in.AllowNewUser)
+	if common.YesNo(in.AllowNewUser) == common.YesNo_YES_NO_UNKNOWN {
+		allowNewUser = int64(common.YesNo_YES_NO_YES)
+	}
+	allowOldUser := int64(in.AllowOldUser)
+	if common.YesNo(in.AllowOldUser) == common.YesNo_YES_NO_UNKNOWN {
+		allowOldUser = int64(common.YesNo_YES_NO_YES)
+	}
 	rule := &models.TTenantPayChannelRule{
 		TenantId:             in.TenantId,
 		ChannelId:            in.ChannelId,
 		RuleName:             in.RuleName,
 		Priority:             in.Priority,
-		Enabled:              int64(in.Enabled),
+		Enabled:              enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		SingleAmountMin:      in.SingleAmountMin,
 		SingleAmountMax:      in.SingleAmountMax,
 		UserTotalRechargeMin: in.UserTotalRechargeMin,
@@ -48,8 +57,8 @@ func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment
 		MemberLevelMax:       in.MemberLevelMax,
 		KycLevelMin:          in.KycLevelMin,
 		KycLevelMax:          in.KycLevelMax,
-		AllowNewUser:         in.AllowNewUser,
-		AllowOldUser:         in.AllowOldUser,
+		AllowNewUser:         allowNewUser,
+		AllowOldUser:         allowOldUser,
 		AllowTags:            sql.NullString{String: in.AllowTags, Valid: true},
 		DenyTags:             sql.NullString{String: in.DenyTags, Valid: true},
 		Remark:               sql.NullString{String: in.Remark, Valid: true},

@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -41,7 +42,7 @@ func (l *CreatePayPlatformLogic) CreatePayPlatform(in *payment.CreatePayPlatform
 		NotifyUrl:    sql.NullString{String: in.NotifyUrl, Valid: true},
 		ReturnUrl:    sql.NullString{String: in.ReturnUrl, Valid: true},
 		Icon:         sql.NullString{String: in.Icon, Valid: true},
-		Enabled:      int64(in.Enabled),
+		Enabled:      enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		Remark:       sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes:  now,
 		UpdateTimes:  now,

@@ -126,8 +126,8 @@ message TradeOrder {
   string fee = 19;
   string fee_asset = 20;
   OrderSourceType source = 21;
-  int64 is_reduce_only = 22;
-  int64 is_close_only = 23;
+  common.YesNo is_reduce_only = 22;
+  common.YesNo is_close_only = 23;
   string trigger_price = 24;
   int64 trigger_type = 25;
   string cancel_reason = 26;
@@ -323,7 +323,7 @@ message RiskUserTradeLimit {
   int64 can_trigger_order = 8;
   int64 can_api_trade = 9;
   common.Enable trade_enabled = 10; // 状态,0表示全部，1表示启用，2表示禁用
-  int64 only_reduce_only = 11;
+  common.Enable only_reduce_only = 11;
   int64 max_open_order_count = 12;
   int64 max_order_count_per_day = 13;
   int64 max_cancel_count_per_day = 14;

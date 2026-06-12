@@ -51,7 +51,7 @@ type (
 		AvailableAmount float64 `db:"available_amount"` // 可用资产
 		FrozenAmount    float64 `db:"frozen_amount"`    // 冻结资产
 		LockedAmount    float64 `db:"locked_amount"`    // 锁定资产/锁仓资产
-		Enabled         int64   `db:"enabled"`          // 启用开关:1启用 0禁用
+		Enabled         int64   `db:"enabled"`          // 启用开关:1启用 2禁用
 		Version         int64   `db:"version"`          // 版本号,用于乐观锁
 		Remark          string  `db:"remark"`           // 备注
 		CreateTimes     int64   `db:"create_times"`     // 创建时间戳(毫秒)

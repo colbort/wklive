@@ -59,7 +59,7 @@ type (
 		PriceDeviationRate  float64 `db:"price_deviation_rate"`   // 允许价格偏离率，0表示不限制
 		OperatorId          int64   `db:"operator_id"`            // 操作人ID，系统操作时可为0
 		Source              int64   `db:"source"`                 // 来源：1系统 2用户 3后台管理 4任务
-		Enabled             int64   `db:"enabled"`                // 启用开关：1启用 0禁用
+		Enabled             int64   `db:"enabled"`                // 启用开关：1启用 2禁用
 		EffectiveStartTime  int64   `db:"effective_start_time"`   // 限制生效开始时间，毫秒时间戳
 		EffectiveEndTime    int64   `db:"effective_end_time"`     // 限制生效结束时间，毫秒时间戳
 		Remark              string  `db:"remark"`                 // 备注

@@ -51,8 +51,8 @@ type (
 		ApiSecretCipher      sql.NullString `db:"api_secret_cipher"`      // API Secret密文
 		CallbackSecretCipher sql.NullString `db:"callback_secret_cipher"` // 回调验签密钥密文
 		ExtConfig            sql.NullString `db:"ext_config"`             // 扩展配置
-		Enabled              int64          `db:"enabled"`                // 启用状态:1启用 0禁用
-		IsDefault            int64          `db:"is_default"`             // 是否默认:1是 0否
+		Enabled              int64          `db:"enabled"`                // 启用状态:1启用 2禁用
+		IsDefault            int64          `db:"is_default"`             // 是否默认:1否 2是
 		CreateTimes          int64          `db:"create_times"`
 		UpdateTimes          int64          `db:"update_times"`
 	}

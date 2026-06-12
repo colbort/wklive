@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -35,7 +36,15 @@ func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitRe
 		return nil, err
 	}
 	if item == nil {
-		item = &models.TRiskUserTradeLimit{TenantId: in.TenantId, UserId: in.UserId, MarketType: int64(in.MarketType), CreateTimes: now}
+		item = &models.TRiskUserTradeLimit{
+			TenantId:       in.TenantId,
+			UserId:         in.UserId,
+			MarketType:     int64(in.MarketType),
+			TradeEnabled:   int64(common.Enable_ENABLE_ENABLED),
+			OnlyReduceOnly: int64(common.Enable_ENABLE_DISABLED),
+			Enabled:        int64(common.Enable_ENABLE_ENABLED),
+			CreateTimes:    now,
+		}
 	}
 	item.CanOpen = in.CanOpen
 	item.CanClose = in.CanClose
@@ -43,7 +52,7 @@ func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitRe
 	item.CanTriggerOrder = in.CanTriggerOrder
 	item.CanApiTrade = in.CanApiTrade
 	item.TradeEnabled = enableToModel(in.TradeEnabled, item.TradeEnabled)
-	item.OnlyReduceOnly = in.OnlyReduceOnly
+	item.OnlyReduceOnly = enableToModel(common.Enable(in.OnlyReduceOnly), item.OnlyReduceOnly)
 	item.MaxOpenOrderCount = in.MaxOpenOrderCount
 	item.MaxOrderCountPerDay = in.MaxOrderCountPerDay
 	item.MaxCancelCountPerDay = in.MaxCancelCountPerDay

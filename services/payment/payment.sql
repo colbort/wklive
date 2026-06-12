@@ -61,7 +61,7 @@ CREATE TABLE `t_tenant_pay_account` (
   `cert_cipher` longtext COMMENT '证书密文',
   `ext_config` json DEFAULT NULL COMMENT '扩展配置',
   `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态：1启用 2禁用',
-  `is_default` tinyint NOT NULL DEFAULT 0 COMMENT '是否默认账号：0否 1是',
+  `is_default` tinyint NOT NULL DEFAULT 1 COMMENT '是否默认账号：1否 2是',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
@@ -83,7 +83,7 @@ CREATE TABLE `t_tenant_pay_channel` (
   `icon` varchar(255) DEFAULT NULL COMMENT '图标',
   `currency` varchar(16) NOT NULL DEFAULT 'CNY' COMMENT '币种',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
-  `visible` tinyint NOT NULL DEFAULT 1 COMMENT '显示开关：1显示 0隐藏',
+  `visible` tinyint NOT NULL DEFAULT 1 COMMENT '显示开关：1显示 2隐藏',
   `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态：1启用 2禁用',
 
   `single_min_amount` bigint NOT NULL DEFAULT 0 COMMENT '单笔最小金额，单位分',
@@ -126,8 +126,8 @@ CREATE TABLE `t_tenant_pay_channel_rule` (
   `kyc_level_min` tinyint NOT NULL DEFAULT 0 COMMENT 'KYC等级最小值',
   `kyc_level_max` tinyint NOT NULL DEFAULT 0 COMMENT 'KYC等级最大值，0表示不限制',
 
-  `allow_new_user` tinyint NOT NULL DEFAULT 1 COMMENT '是否允许新用户：0否 1是',
-  `allow_old_user` tinyint NOT NULL DEFAULT 1 COMMENT '是否允许老用户：0否 1是',
+  `allow_new_user` tinyint NOT NULL DEFAULT 2 COMMENT '是否允许新用户：1否 2是',
+  `allow_old_user` tinyint NOT NULL DEFAULT 2 COMMENT '是否允许老用户：1否 2是',
 
   `allow_tags` json DEFAULT NULL COMMENT '允许的用户标签(JSON数组)',
   `deny_tags` json DEFAULT NULL COMMENT '禁止的用户标签(JSON数组)',
@@ -298,7 +298,7 @@ CREATE TABLE `t_crypto_recharge_address` (
   `address_source` tinyint NOT NULL DEFAULT 1 COMMENT '地址来源:1系统生成 2第三方分配 3手工导入',
   `address_type` tinyint NOT NULL DEFAULT 1 COMMENT '地址类型:1用户独享 2平台公共地址+memo',
 
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '地址状态:1可用 0禁用 2冻结',
+  `status` tinyint NOT NULL DEFAULT 2 COMMENT '地址状态:1禁用 2可用 3冻结',
 
   `last_used_time` bigint NOT NULL DEFAULT 0 COMMENT '最近使用时间',
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -328,8 +328,8 @@ CREATE TABLE `t_crypto_wallet_account` (
 
   `ext_config` json DEFAULT NULL COMMENT '扩展配置',
 
-  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态:1启用 0禁用',
-  `is_default` tinyint NOT NULL DEFAULT 0 COMMENT '是否默认:1是 0否',
+  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态:1启用 2禁用',
+  `is_default` tinyint NOT NULL DEFAULT 1 COMMENT '是否默认:1否 2是',
 
   `create_times` bigint NOT NULL DEFAULT 0,
   `update_times` bigint NOT NULL DEFAULT 0,

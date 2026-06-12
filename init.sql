@@ -11,7 +11,7 @@ INSERT INTO `sys_user` (
 )
 VALUES
 (
-  1, 0, 1, 0,
+  1, 0, 1, 1,
   'admin',
   '$2a$10$KdJbtCoUCeO.jcI9LJb6me4YAnMt8JScsCWyA9FEPfuaz4bRCfMee',
   '超级管理员', '', 1,

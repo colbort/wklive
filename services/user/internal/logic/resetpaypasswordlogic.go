@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -63,6 +64,7 @@ func (l *ResetPayPasswordLogic) ResetPayPassword(in *user.ResetPayPasswordReq) (
 			TenantId:        in.TenantId,
 			UserId:          in.UserId,
 			PayPasswordHash: sql.NullString{String: in.NewPassword, Valid: true},
+			GoogleEnabled:   int64(common.Enable_ENABLE_DISABLED),
 			CreateTimes:     now,
 			UpdateTimes:     now,
 		}

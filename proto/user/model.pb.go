@@ -49,7 +49,7 @@ type UserBase struct {
 	DeviceId       string                 `protobuf:"bytes,23,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`                                    // 设备唯一ID
 	Fingerprint    string                 `protobuf:"bytes,24,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`                                              // 浏览器指纹
 	Remark         string                 `protobuf:"bytes,25,opt,name=remark,proto3" json:"remark,omitempty"`                                                        // 备注
-	Deleted        int64                  `protobuf:"varint,26,opt,name=deleted,proto3" json:"deleted,omitempty"`                                                     // 是否删除：0否 1是
+	Deleted        int64                  `protobuf:"varint,26,opt,name=deleted,proto3" json:"deleted,omitempty"`                                                     // 删除状态：0未删除 1已删除
 	CreateTimes    int64                  `protobuf:"varint,27,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                          // 创建时间
 	UpdateTimes    int64                  `protobuf:"varint,28,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                          // 更新时间
 	unknownFields  protoimpl.UnknownFields
@@ -805,7 +805,7 @@ type UserItem struct {
 	DeviceId       string                 `protobuf:"bytes,23,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`                                    // 设备唯一ID
 	Fingerprint    string                 `protobuf:"bytes,24,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`                                              // 浏览器指纹
 	Remark         string                 `protobuf:"bytes,25,opt,name=remark,proto3" json:"remark,omitempty"`                                                        // 备注
-	Deleted        int64                  `protobuf:"varint,26,opt,name=deleted,proto3" json:"deleted,omitempty"`                                                     // 是否删除：0否 1是
+	Deleted        int64                  `protobuf:"varint,26,opt,name=deleted,proto3" json:"deleted,omitempty"`                                                     // 删除状态：0未删除 1已删除
 	CreateTimes    int64                  `protobuf:"varint,27,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                          // 创建时间
 	UpdateTimes    int64                  `protobuf:"varint,28,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                          // 更新时间
 	unknownFields  protoimpl.UnknownFields
@@ -1276,19 +1276,19 @@ func (x *UserIdentityItem) GetUpdateTimes() int64 {
 
 type UserBankItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                       // 主键ID
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`           // 租户ID
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                 // 用户ID
-	BankName      string                 `protobuf:"bytes,4,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`            // 银行名称
-	BankCode      string                 `protobuf:"bytes,5,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`            // 银行编码
-	AccountName   string                 `protobuf:"bytes,6,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`   // 开户名
-	AccountNo     string                 `protobuf:"bytes,7,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`         // 银行卡号
-	BranchName    string                 `protobuf:"bytes,8,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`      // 支行名称
-	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`   // 国家地区
-	IsDefault     int64                  `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`       // 是否默认：0否 1是
-	Enabled       common.Enable          `protobuf:"varint,11,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`         // 状态：1正常 2禁用
-	CreateTimes   int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"` // 创建时间
-	UpdateTimes   int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"` // 更新时间
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                   // 主键ID
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                       // 租户ID
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                             // 用户ID
+	BankName      string                 `protobuf:"bytes,4,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`                        // 银行名称
+	BankCode      string                 `protobuf:"bytes,5,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`                        // 银行编码
+	AccountName   string                 `protobuf:"bytes,6,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`               // 开户名
+	AccountNo     string                 `protobuf:"bytes,7,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`                     // 银行卡号
+	BranchName    string                 `protobuf:"bytes,8,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`                  // 支行名称
+	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`               // 国家地区
+	IsDefault     common.YesNo           `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"` // 是否默认：1否 2是
+	Enabled       common.Enable          `protobuf:"varint,11,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                     // 状态：1正常 2禁用
+	CreateTimes   int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`             // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`             // 更新时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1386,11 +1386,11 @@ func (x *UserBankItem) GetCountryCode() string {
 	return ""
 }
 
-func (x *UserBankItem) GetIsDefault() int64 {
+func (x *UserBankItem) GetIsDefault() common.YesNo {
 	if x != nil {
 		return x.IsDefault
 	}
-	return 0
+	return common.YesNo(0)
 }
 
 func (x *UserBankItem) GetEnabled() common.Enable {
@@ -1572,7 +1572,7 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"verifyTime\x12\x1b\n" +
 	"\tverify_by\x18\x17 \x01(\x03R\bverifyBy\x12!\n" +
 	"\fcreate_times\x18\x18 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\"\xa3\x03\n" +
+	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\"\xb2\x03\n" +
 	"\fUserBankItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -1584,10 +1584,10 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"account_no\x18\a \x01(\tR\taccountNo\x12\x1f\n" +
 	"\vbranch_name\x18\b \x01(\tR\n" +
 	"branchName\x12!\n" +
-	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1d\n" +
+	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12,\n" +
 	"\n" +
 	"is_default\x18\n" +
-	" \x01(\x03R\tisDefault\x12(\n" +
+	" \x01(\x0e2\r.common.YesNoR\tisDefault\x12(\n" +
 	"\aenabled\x18\v \x01(\x0e2\x0e.common.EnableR\aenabled\x12!\n" +
 	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\r \x01(\x03R\vupdateTimesB\x18Z\x16wklive/proto/user;userb\x06proto3"
@@ -1622,6 +1622,7 @@ var file_proto_user_model_proto_goTypes = []any{
 	(VerifyStatus)(0),        // 13: user.VerifyStatus
 	(common.Enable)(0),       // 14: common.Enable
 	(RiskLevel)(0),           // 15: user.RiskLevel
+	(common.YesNo)(0),        // 16: common.YesNo
 }
 var file_proto_user_model_proto_depIdxs = []int32{
 	8,  // 0: user.UserBase.register_type:type_name -> user.RegisterType
@@ -1645,12 +1646,13 @@ var file_proto_user_model_proto_depIdxs = []int32{
 	11, // 18: user.UserIdentityItem.id_type:type_name -> user.IdType
 	12, // 19: user.UserIdentityItem.kyc_level:type_name -> user.KycLevel
 	13, // 20: user.UserIdentityItem.verify_status:type_name -> user.VerifyStatus
-	14, // 21: user.UserBankItem.enabled:type_name -> common.Enable
-	22, // [22:22] is the sub-list for method output_type
-	22, // [22:22] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	16, // 21: user.UserBankItem.is_default:type_name -> common.YesNo
+	14, // 22: user.UserBankItem.enabled:type_name -> common.Enable
+	23, // [23:23] is the sub-list for method output_type
+	23, // [23:23] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_model_proto_init() }

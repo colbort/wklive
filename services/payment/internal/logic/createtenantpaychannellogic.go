@@ -7,6 +7,7 @@ import (
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -51,8 +52,8 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 		Icon:            sql.NullString{String: in.Icon, Valid: true},
 		Currency:        in.Currency,
 		Sort:            in.Sort,
-		Visible:         switchToModel(in.Visible, 0),
-		Enabled:         int64(in.Enabled),
+		Visible:         switchToModel(in.Visible, int64(common.Switch_SWITCH_OFF)),
+		Enabled:         enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		SingleMinAmount: in.SingleMinAmount,
 		SingleMaxAmount: in.SingleMaxAmount,
 		DailyMaxAmount:  in.DailyMaxAmount,

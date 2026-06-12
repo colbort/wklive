@@ -2082,7 +2082,7 @@ type AddBankReq struct {
 	AccountNo     string                 `protobuf:"bytes,4,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
 	BranchName    string                 `protobuf:"bytes,5,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,6,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     int64                  `protobuf:"varint,7,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	IsDefault     common.YesNo           `protobuf:"varint,7,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2159,11 +2159,11 @@ func (x *AddBankReq) GetCountryCode() string {
 	return ""
 }
 
-func (x *AddBankReq) GetIsDefault() int64 {
+func (x *AddBankReq) GetIsDefault() common.YesNo {
 	if x != nil {
 		return x.IsDefault
 	}
-	return 0
+	return common.YesNo(0)
 }
 
 type AddBankResp struct {
@@ -2227,7 +2227,7 @@ type UpdateBankReq struct {
 	AccountNo     string                 `protobuf:"bytes,5,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
 	BranchName    string                 `protobuf:"bytes,6,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,7,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     int64                  `protobuf:"varint,8,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	IsDefault     common.YesNo           `protobuf:"varint,8,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2311,11 +2311,11 @@ func (x *UpdateBankReq) GetCountryCode() string {
 	return ""
 }
 
-func (x *UpdateBankReq) GetIsDefault() int64 {
+func (x *UpdateBankReq) GetIsDefault() common.YesNo {
 	if x != nil {
 		return x.IsDefault
 	}
-	return 0
+	return common.YesNo(0)
 }
 
 type UpdateBankResp struct {
@@ -2607,7 +2607,7 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\"]\n" +
 	"\rListBanksResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04data\x18\x02 \x03(\v2\x12.user.UserBankItemR\x04data\"\xeb\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x12.user.UserBankItemR\x04data\"\xfa\x01\n" +
 	"\n" +
 	"AddBankReq\x12\x1b\n" +
 	"\tbank_name\x18\x01 \x01(\tR\bbankName\x12\x1b\n" +
@@ -2617,12 +2617,12 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"account_no\x18\x04 \x01(\tR\taccountNo\x12\x1f\n" +
 	"\vbranch_name\x18\x05 \x01(\tR\n" +
 	"branchName\x12!\n" +
-	"\fcountry_code\x18\x06 \x01(\tR\vcountryCode\x12\x1d\n" +
+	"\fcountry_code\x18\x06 \x01(\tR\vcountryCode\x12,\n" +
 	"\n" +
-	"is_default\x18\a \x01(\x03R\tisDefault\"[\n" +
+	"is_default\x18\a \x01(\x0e2\r.common.YesNoR\tisDefault\"[\n" +
 	"\vAddBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"\xfe\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"\x8d\x02\n" +
 	"\rUpdateBankReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tbank_name\x18\x02 \x01(\tR\bbankName\x12\x1b\n" +
@@ -2632,9 +2632,9 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"account_no\x18\x05 \x01(\tR\taccountNo\x12\x1f\n" +
 	"\vbranch_name\x18\x06 \x01(\tR\n" +
 	"branchName\x12!\n" +
-	"\fcountry_code\x18\a \x01(\tR\vcountryCode\x12\x1d\n" +
+	"\fcountry_code\x18\a \x01(\tR\vcountryCode\x12,\n" +
 	"\n" +
-	"is_default\x18\b \x01(\x03R\tisDefault\"^\n" +
+	"is_default\x18\b \x01(\x0e2\r.common.YesNoR\tisDefault\"^\n" +
 	"\x0eUpdateBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"\x1f\n" +
@@ -2737,6 +2737,7 @@ var file_proto_user_user_app_proto_goTypes = []any{
 	(*UserSecurity)(nil),           // 49: user.UserSecurity
 	(*common.PageReq)(nil),         // 50: common.PageReq
 	(*UserBankItem)(nil),           // 51: user.UserBankItem
+	(common.YesNo)(0),              // 52: common.YesNo
 }
 var file_proto_user_user_app_proto_depIdxs = []int32{
 	41, // 0: user.AppCommonResp.base:type_name -> common.RespBase
@@ -2775,59 +2776,61 @@ var file_proto_user_user_app_proto_depIdxs = []int32{
 	50, // 33: user.ListBanksReq.page:type_name -> common.PageReq
 	41, // 34: user.ListBanksResp.base:type_name -> common.RespBase
 	51, // 35: user.ListBanksResp.data:type_name -> user.UserBankItem
-	41, // 36: user.AddBankResp.base:type_name -> common.RespBase
-	51, // 37: user.AddBankResp.data:type_name -> user.UserBankItem
-	41, // 38: user.UpdateBankResp.base:type_name -> common.RespBase
-	51, // 39: user.UpdateBankResp.data:type_name -> user.UserBankItem
-	1,  // 40: user.UserApp.Register:input_type -> user.RegisterReq
-	4,  // 41: user.UserApp.Login:input_type -> user.LoginReq
-	7,  // 42: user.UserApp.GuestLogin:input_type -> user.GuestLoginReq
-	10, // 43: user.UserApp.Logout:input_type -> user.LogoutReq
-	11, // 44: user.UserApp.RefreshToken:input_type -> user.RefreshTokenReq
-	13, // 45: user.UserApp.GetProfile:input_type -> user.GetProfileReq
-	15, // 46: user.UserApp.UpdateProfile:input_type -> user.UpdateProfileReq
-	17, // 47: user.UserApp.ChangeLoginPassword:input_type -> user.ChangeLoginPasswordReq
-	18, // 48: user.UserApp.GetIdentity:input_type -> user.GetIdentityReq
-	20, // 49: user.UserApp.SubmitIdentity:input_type -> user.SubmitIdentityReq
-	22, // 50: user.UserApp.UpdateIdentity:input_type -> user.UpdateIdentityReq
-	24, // 51: user.UserApp.GetSecurity:input_type -> user.GetSecurityReq
-	26, // 52: user.UserApp.SetPayPassword:input_type -> user.SetPayPasswordReq
-	27, // 53: user.UserApp.ChangePayPassword:input_type -> user.ChangePayPasswordReq
-	28, // 54: user.UserApp.InitGoogle2FA:input_type -> user.InitGoogle2FAReq
-	31, // 55: user.UserApp.EnableGoogle2FA:input_type -> user.EnableGoogle2FAReq
-	32, // 56: user.UserApp.DisableGoogle2FA:input_type -> user.DisableGoogle2FAReq
-	33, // 57: user.UserApp.ListBanks:input_type -> user.ListBanksReq
-	35, // 58: user.UserApp.AddBank:input_type -> user.AddBankReq
-	37, // 59: user.UserApp.UpdateBank:input_type -> user.UpdateBankReq
-	39, // 60: user.UserApp.DeleteBank:input_type -> user.DeleteBankReq
-	40, // 61: user.UserApp.SetDefaultBank:input_type -> user.SetDefaultBankReq
-	2,  // 62: user.UserApp.Register:output_type -> user.RegisterResp
-	5,  // 63: user.UserApp.Login:output_type -> user.LoginResp
-	9,  // 64: user.UserApp.GuestLogin:output_type -> user.GuestLoginResp
-	0,  // 65: user.UserApp.Logout:output_type -> user.AppCommonResp
-	12, // 66: user.UserApp.RefreshToken:output_type -> user.RefreshTokenResp
-	14, // 67: user.UserApp.GetProfile:output_type -> user.GetProfileResp
-	16, // 68: user.UserApp.UpdateProfile:output_type -> user.UpdateProfileResp
-	0,  // 69: user.UserApp.ChangeLoginPassword:output_type -> user.AppCommonResp
-	19, // 70: user.UserApp.GetIdentity:output_type -> user.GetIdentityResp
-	21, // 71: user.UserApp.SubmitIdentity:output_type -> user.SubmitIdentityResp
-	23, // 72: user.UserApp.UpdateIdentity:output_type -> user.UpdateIdentityResp
-	25, // 73: user.UserApp.GetSecurity:output_type -> user.GetSecurityResp
-	0,  // 74: user.UserApp.SetPayPassword:output_type -> user.AppCommonResp
-	0,  // 75: user.UserApp.ChangePayPassword:output_type -> user.AppCommonResp
-	29, // 76: user.UserApp.InitGoogle2FA:output_type -> user.InitGoogle2FAResp
-	0,  // 77: user.UserApp.EnableGoogle2FA:output_type -> user.AppCommonResp
-	0,  // 78: user.UserApp.DisableGoogle2FA:output_type -> user.AppCommonResp
-	34, // 79: user.UserApp.ListBanks:output_type -> user.ListBanksResp
-	36, // 80: user.UserApp.AddBank:output_type -> user.AddBankResp
-	38, // 81: user.UserApp.UpdateBank:output_type -> user.UpdateBankResp
-	0,  // 82: user.UserApp.DeleteBank:output_type -> user.AppCommonResp
-	0,  // 83: user.UserApp.SetDefaultBank:output_type -> user.AppCommonResp
-	62, // [62:84] is the sub-list for method output_type
-	40, // [40:62] is the sub-list for method input_type
-	40, // [40:40] is the sub-list for extension type_name
-	40, // [40:40] is the sub-list for extension extendee
-	0,  // [0:40] is the sub-list for field type_name
+	52, // 36: user.AddBankReq.is_default:type_name -> common.YesNo
+	41, // 37: user.AddBankResp.base:type_name -> common.RespBase
+	51, // 38: user.AddBankResp.data:type_name -> user.UserBankItem
+	52, // 39: user.UpdateBankReq.is_default:type_name -> common.YesNo
+	41, // 40: user.UpdateBankResp.base:type_name -> common.RespBase
+	51, // 41: user.UpdateBankResp.data:type_name -> user.UserBankItem
+	1,  // 42: user.UserApp.Register:input_type -> user.RegisterReq
+	4,  // 43: user.UserApp.Login:input_type -> user.LoginReq
+	7,  // 44: user.UserApp.GuestLogin:input_type -> user.GuestLoginReq
+	10, // 45: user.UserApp.Logout:input_type -> user.LogoutReq
+	11, // 46: user.UserApp.RefreshToken:input_type -> user.RefreshTokenReq
+	13, // 47: user.UserApp.GetProfile:input_type -> user.GetProfileReq
+	15, // 48: user.UserApp.UpdateProfile:input_type -> user.UpdateProfileReq
+	17, // 49: user.UserApp.ChangeLoginPassword:input_type -> user.ChangeLoginPasswordReq
+	18, // 50: user.UserApp.GetIdentity:input_type -> user.GetIdentityReq
+	20, // 51: user.UserApp.SubmitIdentity:input_type -> user.SubmitIdentityReq
+	22, // 52: user.UserApp.UpdateIdentity:input_type -> user.UpdateIdentityReq
+	24, // 53: user.UserApp.GetSecurity:input_type -> user.GetSecurityReq
+	26, // 54: user.UserApp.SetPayPassword:input_type -> user.SetPayPasswordReq
+	27, // 55: user.UserApp.ChangePayPassword:input_type -> user.ChangePayPasswordReq
+	28, // 56: user.UserApp.InitGoogle2FA:input_type -> user.InitGoogle2FAReq
+	31, // 57: user.UserApp.EnableGoogle2FA:input_type -> user.EnableGoogle2FAReq
+	32, // 58: user.UserApp.DisableGoogle2FA:input_type -> user.DisableGoogle2FAReq
+	33, // 59: user.UserApp.ListBanks:input_type -> user.ListBanksReq
+	35, // 60: user.UserApp.AddBank:input_type -> user.AddBankReq
+	37, // 61: user.UserApp.UpdateBank:input_type -> user.UpdateBankReq
+	39, // 62: user.UserApp.DeleteBank:input_type -> user.DeleteBankReq
+	40, // 63: user.UserApp.SetDefaultBank:input_type -> user.SetDefaultBankReq
+	2,  // 64: user.UserApp.Register:output_type -> user.RegisterResp
+	5,  // 65: user.UserApp.Login:output_type -> user.LoginResp
+	9,  // 66: user.UserApp.GuestLogin:output_type -> user.GuestLoginResp
+	0,  // 67: user.UserApp.Logout:output_type -> user.AppCommonResp
+	12, // 68: user.UserApp.RefreshToken:output_type -> user.RefreshTokenResp
+	14, // 69: user.UserApp.GetProfile:output_type -> user.GetProfileResp
+	16, // 70: user.UserApp.UpdateProfile:output_type -> user.UpdateProfileResp
+	0,  // 71: user.UserApp.ChangeLoginPassword:output_type -> user.AppCommonResp
+	19, // 72: user.UserApp.GetIdentity:output_type -> user.GetIdentityResp
+	21, // 73: user.UserApp.SubmitIdentity:output_type -> user.SubmitIdentityResp
+	23, // 74: user.UserApp.UpdateIdentity:output_type -> user.UpdateIdentityResp
+	25, // 75: user.UserApp.GetSecurity:output_type -> user.GetSecurityResp
+	0,  // 76: user.UserApp.SetPayPassword:output_type -> user.AppCommonResp
+	0,  // 77: user.UserApp.ChangePayPassword:output_type -> user.AppCommonResp
+	29, // 78: user.UserApp.InitGoogle2FA:output_type -> user.InitGoogle2FAResp
+	0,  // 79: user.UserApp.EnableGoogle2FA:output_type -> user.AppCommonResp
+	0,  // 80: user.UserApp.DisableGoogle2FA:output_type -> user.AppCommonResp
+	34, // 81: user.UserApp.ListBanks:output_type -> user.ListBanksResp
+	36, // 82: user.UserApp.AddBank:output_type -> user.AddBankResp
+	38, // 83: user.UserApp.UpdateBank:output_type -> user.UpdateBankResp
+	0,  // 84: user.UserApp.DeleteBank:output_type -> user.AppCommonResp
+	0,  // 85: user.UserApp.SetDefaultBank:output_type -> user.AppCommonResp
+	64, // [64:86] is the sub-list for method output_type
+	42, // [42:64] is the sub-list for method input_type
+	42, // [42:42] is the sub-list for extension type_name
+	42, // [42:42] is the sub-list for extension extendee
+	0,  // [0:42] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_user_app_proto_init() }

@@ -389,7 +389,7 @@ message SetUserTradeLimitReq {
   int64 can_trigger_order = 7;
   int64 can_api_trade = 8;
   common.Enable trade_enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
-  int64 only_reduce_only = 10;
+  common.Enable only_reduce_only = 10;
   int64 max_open_order_count = 11;
   int64 max_order_count_per_day = 12;
   int64 max_cancel_count_per_day = 13;

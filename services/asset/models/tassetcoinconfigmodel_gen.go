@@ -58,7 +58,7 @@ type (
 		RechargeEnabled int64  `db:"recharge_enabled"` // 充值页展示开关:1显示 0隐藏
 		WithdrawEnabled int64  `db:"withdraw_enabled"` // 提现页展示开关:1显示 0隐藏
 		TransferEnabled int64  `db:"transfer_enabled"` // 划转页展示开关:1显示 0隐藏
-		Enabled         int64  `db:"enabled"`          // 启用开关:1启用 0禁用
+		Enabled         int64  `db:"enabled"`          // 启用开关:1启用 2禁用
 		Sort            int64  `db:"sort"`             // 排序,越小越靠前
 		Remark          string `db:"remark"`           // 备注
 		CreateTimes     int64  `db:"create_times"`     // 创建时间戳(毫秒)

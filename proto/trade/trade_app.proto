@@ -87,8 +87,8 @@ message PlaceOrderReq {
   string price = 8;
   string qty = 9;
   string amount = 10;
-  int64 is_reduce_only = 11;
-  int64 is_close_only = 12;
+  common.YesNo is_reduce_only = 11;
+  common.YesNo is_close_only = 12;
   string trigger_price = 13;
   TriggerType trigger_type = 14;
   MarginMode margin_mode = 15;

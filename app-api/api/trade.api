@@ -37,8 +37,8 @@ type TradeSymbolSpot {
 	symbolId     int64  `json:"symbolId"`
 	makerFeeRate string `json:"makerFeeRate"`
 	takerFeeRate string `json:"takerFeeRate"`
-	buyEnabled   int64  `json:"buyEnabled"` // 是否允许买入：0否 1是
-	sellEnabled  int64  `json:"sellEnabled"` // 是否允许卖出：0否 1是
+	buyEnabled   int64  `json:"buyEnabled"` // 买入开关：1启用 2禁用
+	sellEnabled  int64  `json:"sellEnabled"` // 卖出开关：1启用 2禁用
 	createTimes  int64  `json:"createTimes"`
 	updateTimes  int64  `json:"updateTimes"`
 }
@@ -55,10 +55,10 @@ type TradeSymbolContract {
 	takerFeeRate           string `json:"takerFeeRate"`
 	fundingIntervalMinutes int64  `json:"fundingIntervalMinutes"` // 资金费率间隔分钟数
 	deliveryTime           int64  `json:"deliveryTime"`
-	supportCross           int64  `json:"supportCross"` // 是否支持全仓：0否 1是
-	supportIsolated        int64  `json:"supportIsolated"` // 是否支持逐仓：0否 1是
-	buyEnabled             int64  `json:"buyEnabled"` // 是否允许买入：0否 1是
-	sellEnabled            int64  `json:"sellEnabled"` // 是否允许卖出：0否 1是
+	supportCross           int64  `json:"supportCross"` // 全仓支持状态：0不支持 1支持
+	supportIsolated        int64  `json:"supportIsolated"` // 逐仓支持状态：0不支持 1支持
+	buyEnabled             int64  `json:"buyEnabled"` // 买入开关：1启用 2禁用
+	sellEnabled            int64  `json:"sellEnabled"` // 卖出开关：1启用 2禁用
 	createTimes            int64  `json:"createTimes"`
 	updateTimes            int64  `json:"updateTimes"`
 }
@@ -85,8 +85,8 @@ type TradeOrder {
 	fee           string `json:"fee"`
 	feeAsset      string `json:"feeAsset"`
 	source        int64  `json:"source"`
-	isReduceOnly  int64  `json:"isReduceOnly"` // 是否只减仓：0否 1是
-	isCloseOnly   int64  `json:"isCloseOnly"` // 是否只平仓：0否 1是
+	isReduceOnly  int64  `json:"isReduceOnly"` // 是否只减仓：1否 2是
+	isCloseOnly   int64  `json:"isCloseOnly"` // 是否只平仓：1否 2是
 	triggerPrice  string `json:"triggerPrice"`
 	triggerType   int64  `json:"triggerType"` // 触发类型
 	triggerKind   int64  `json:"triggerKind"` // 触发用途：0无 1条件单 2止盈 3止损
@@ -238,8 +238,8 @@ type PlaceOrderReq {
 	price           string `json:"price,optional"`
 	qty             string `json:"qty,optional"`
 	amount          string `json:"amount,optional"`
-	isReduceOnly    int64  `json:"isReduceOnly,optional"` // 是否只减仓：0否 1是
-	isCloseOnly     int64  `json:"isCloseOnly,optional"` // 是否只平仓：0否 1是
+	isReduceOnly    int64  `json:"isReduceOnly,optional"` // 是否只减仓：1否 2是
+	isCloseOnly     int64  `json:"isCloseOnly,optional"` // 是否只平仓：1否 2是
 	triggerPrice    string `json:"triggerPrice,optional"`
 	triggerType     int64  `json:"triggerType,optional"`
 	triggerKind     int64  `json:"triggerKind,optional"`

@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -35,7 +36,15 @@ func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeve
 		return nil, err
 	}
 	if item == nil {
-		item = &models.TContractLeverageConfig{TenantId: in.TenantId, UserId: in.UserId, SymbolId: in.SymbolId, MarketType: int64(in.MarketType), MarginMode: int64(in.MarginMode), CreateTimes: now}
+		item = &models.TContractLeverageConfig{
+			TenantId:    in.TenantId,
+			UserId:      in.UserId,
+			SymbolId:    in.SymbolId,
+			MarketType:  int64(in.MarketType),
+			MarginMode:  int64(in.MarginMode),
+			Enabled:     int64(common.Enable_ENABLE_ENABLED),
+			CreateTimes: now,
+		}
 	}
 	item.PositionMode = int64(in.PositionMode)
 	item.LongLeverage = in.LongLeverage

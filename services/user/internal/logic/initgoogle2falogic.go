@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -73,12 +74,13 @@ func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.Ini
 		}
 	} else {
 		userSecurity = &models.TUserSecurity{
-			Id:           l.svcCtx.Node.Generate().Int64(),
-			TenantId:     tuser.TenantId,
-			UserId:       userId,
-			GoogleSecret: sql.NullString{String: secret, Valid: true},
-			CreateTimes:  now,
-			UpdateTimes:  now,
+			Id:            l.svcCtx.Node.Generate().Int64(),
+			TenantId:      tuser.TenantId,
+			UserId:        userId,
+			GoogleSecret:  sql.NullString{String: secret, Valid: true},
+			GoogleEnabled: int64(common.Enable_ENABLE_DISABLED),
+			CreateTimes:   now,
+			UpdateTimes:   now,
 		}
 
 		_, err = l.svcCtx.UserSecurityModel.Insert(l.ctx, userSecurity)

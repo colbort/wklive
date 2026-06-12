@@ -1924,7 +1924,7 @@ type AddUserBankReq struct {
 	AccountNo     string                 `protobuf:"bytes,6,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
 	BranchName    string                 `protobuf:"bytes,7,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,8,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     int64                  `protobuf:"varint,9,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	IsDefault     common.YesNo           `protobuf:"varint,9,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`
 	Enabled       common.Enable          `protobuf:"varint,10,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2016,11 +2016,11 @@ func (x *AddUserBankReq) GetCountryCode() string {
 	return ""
 }
 
-func (x *AddUserBankReq) GetIsDefault() int64 {
+func (x *AddUserBankReq) GetIsDefault() common.YesNo {
 	if x != nil {
 		return x.IsDefault
 	}
-	return 0
+	return common.YesNo(0)
 }
 
 func (x *AddUserBankReq) GetEnabled() common.Enable {
@@ -2093,7 +2093,7 @@ type UpdateUserBankReq struct {
 	AccountNo     string                 `protobuf:"bytes,7,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
 	BranchName    string                 `protobuf:"bytes,8,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     int64                  `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	IsDefault     common.YesNo           `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`
 	Enabled       common.Enable          `protobuf:"varint,11,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2192,11 +2192,11 @@ func (x *UpdateUserBankReq) GetCountryCode() string {
 	return ""
 }
 
-func (x *UpdateUserBankReq) GetIsDefault() int64 {
+func (x *UpdateUserBankReq) GetIsDefault() common.YesNo {
 	if x != nil {
 		return x.IsDefault
 	}
-	return 0
+	return common.YesNo(0)
 }
 
 func (x *UpdateUserBankReq) GetEnabled() common.Enable {
@@ -2586,7 +2586,7 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"_\n" +
 	"\x0fGetUserBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"\xcf\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"\xde\x02\n" +
 	"\x0eAddUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
@@ -2597,14 +2597,14 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"account_no\x18\x06 \x01(\tR\taccountNo\x12\x1f\n" +
 	"\vbranch_name\x18\a \x01(\tR\n" +
 	"branchName\x12!\n" +
-	"\fcountry_code\x18\b \x01(\tR\vcountryCode\x12\x1d\n" +
+	"\fcountry_code\x18\b \x01(\tR\vcountryCode\x12,\n" +
 	"\n" +
-	"is_default\x18\t \x01(\x03R\tisDefault\x12(\n" +
+	"is_default\x18\t \x01(\x0e2\r.common.YesNoR\tisDefault\x12(\n" +
 	"\aenabled\x18\n" +
 	" \x01(\x0e2\x0e.common.EnableR\aenabled\"_\n" +
 	"\x0fAddUserBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"\xe2\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"\xf1\x02\n" +
 	"\x11UpdateUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x17\n" +
@@ -2616,10 +2616,10 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"account_no\x18\a \x01(\tR\taccountNo\x12\x1f\n" +
 	"\vbranch_name\x18\b \x01(\tR\n" +
 	"branchName\x12!\n" +
-	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1d\n" +
+	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12,\n" +
 	"\n" +
 	"is_default\x18\n" +
-	" \x01(\x03R\tisDefault\x12(\n" +
+	" \x01(\x0e2\r.common.YesNoR\tisDefault\x12(\n" +
 	"\aenabled\x18\v \x01(\x0e2\x0e.common.EnableR\aenabled\"b\n" +
 	"\x12UpdateUserBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
@@ -2725,6 +2725,7 @@ var file_proto_user_user_admin_proto_goTypes = []any{
 	(*UserIdentity)(nil),            // 46: user.UserIdentity
 	(common.Enable)(0),              // 47: common.Enable
 	(*UserBankItem)(nil),            // 48: user.UserBankItem
+	(common.YesNo)(0),               // 49: common.YesNo
 }
 var file_proto_user_user_admin_proto_depIdxs = []int32{
 	34, // 0: user.AdminCommonResp.base:type_name -> common.RespBase
@@ -2760,62 +2761,64 @@ var file_proto_user_user_admin_proto_depIdxs = []int32{
 	48, // 30: user.ListUserBanksResp.data:type_name -> user.UserBankItem
 	34, // 31: user.GetUserBankResp.base:type_name -> common.RespBase
 	48, // 32: user.GetUserBankResp.data:type_name -> user.UserBankItem
-	47, // 33: user.AddUserBankReq.enabled:type_name -> common.Enable
-	34, // 34: user.AddUserBankResp.base:type_name -> common.RespBase
-	48, // 35: user.AddUserBankResp.data:type_name -> user.UserBankItem
-	47, // 36: user.UpdateUserBankReq.enabled:type_name -> common.Enable
-	34, // 37: user.UpdateUserBankResp.base:type_name -> common.RespBase
-	48, // 38: user.UpdateUserBankResp.data:type_name -> user.UserBankItem
-	47, // 39: user.UpdateUserBankStatusReq.enabled:type_name -> common.Enable
-	1,  // 40: user.UserAdmin.CreateUser:input_type -> user.CreateUserReq
-	3,  // 41: user.UserAdmin.GetUserDetail:input_type -> user.GetUserDetailReq
-	5,  // 42: user.UserAdmin.ListUsers:input_type -> user.ListUsersReq
-	7,  // 43: user.UserAdmin.UpdateUserBase:input_type -> user.UpdateUserBaseReq
-	9,  // 44: user.UserAdmin.UpdateUserStatus:input_type -> user.UpdateUserStatusReq
-	10, // 45: user.UserAdmin.UpdateUserLevel:input_type -> user.UpdateUserLevelReq
-	11, // 46: user.UserAdmin.ResetLoginPassword:input_type -> user.ResetLoginPasswordReq
-	12, // 47: user.UserAdmin.ResetPayPassword:input_type -> user.ResetPayPasswordReq
-	13, // 48: user.UserAdmin.UnlockUser:input_type -> user.UnlockUserReq
-	14, // 49: user.UserAdmin.UpdateRiskLevel:input_type -> user.UpdateRiskLevelReq
-	15, // 50: user.UserAdmin.DeleteUser:input_type -> user.DeleteUserReq
-	16, // 51: user.UserAdmin.GetUserSecurity:input_type -> user.GetUserSecurityReq
-	18, // 52: user.UserAdmin.ResetUserGoogle2FA:input_type -> user.ResetUserGoogle2FAReq
-	19, // 53: user.UserAdmin.ListUserIdentities:input_type -> user.ListUserIdentitiesReq
-	21, // 54: user.UserAdmin.ReviewUserIdentity:input_type -> user.ReviewUserIdentityReq
-	23, // 55: user.UserAdmin.ListUserBanks:input_type -> user.ListUserBanksReq
-	25, // 56: user.UserAdmin.GetUserBank:input_type -> user.GetUserBankReq
-	27, // 57: user.UserAdmin.AddUserBank:input_type -> user.AddUserBankReq
-	29, // 58: user.UserAdmin.UpdateUserBank:input_type -> user.UpdateUserBankReq
-	31, // 59: user.UserAdmin.DeleteUserBank:input_type -> user.DeleteUserBankReq
-	32, // 60: user.UserAdmin.UpdateUserBankStatus:input_type -> user.UpdateUserBankStatusReq
-	33, // 61: user.UserAdmin.SetDefaultUserBank:input_type -> user.SetDefaultUserBankReq
-	2,  // 62: user.UserAdmin.CreateUser:output_type -> user.CreateUserResp
-	4,  // 63: user.UserAdmin.GetUserDetail:output_type -> user.GetUserDetailResp
-	6,  // 64: user.UserAdmin.ListUsers:output_type -> user.ListUsersResp
-	8,  // 65: user.UserAdmin.UpdateUserBase:output_type -> user.UpdateUserBaseResp
-	0,  // 66: user.UserAdmin.UpdateUserStatus:output_type -> user.AdminCommonResp
-	0,  // 67: user.UserAdmin.UpdateUserLevel:output_type -> user.AdminCommonResp
-	0,  // 68: user.UserAdmin.ResetLoginPassword:output_type -> user.AdminCommonResp
-	0,  // 69: user.UserAdmin.ResetPayPassword:output_type -> user.AdminCommonResp
-	0,  // 70: user.UserAdmin.UnlockUser:output_type -> user.AdminCommonResp
-	0,  // 71: user.UserAdmin.UpdateRiskLevel:output_type -> user.AdminCommonResp
-	0,  // 72: user.UserAdmin.DeleteUser:output_type -> user.AdminCommonResp
-	17, // 73: user.UserAdmin.GetUserSecurity:output_type -> user.GetUserSecurityResp
-	0,  // 74: user.UserAdmin.ResetUserGoogle2FA:output_type -> user.AdminCommonResp
-	20, // 75: user.UserAdmin.ListUserIdentities:output_type -> user.ListUserIdentitiesResp
-	22, // 76: user.UserAdmin.ReviewUserIdentity:output_type -> user.ReviewUserIdentityResp
-	24, // 77: user.UserAdmin.ListUserBanks:output_type -> user.ListUserBanksResp
-	26, // 78: user.UserAdmin.GetUserBank:output_type -> user.GetUserBankResp
-	28, // 79: user.UserAdmin.AddUserBank:output_type -> user.AddUserBankResp
-	30, // 80: user.UserAdmin.UpdateUserBank:output_type -> user.UpdateUserBankResp
-	0,  // 81: user.UserAdmin.DeleteUserBank:output_type -> user.AdminCommonResp
-	0,  // 82: user.UserAdmin.UpdateUserBankStatus:output_type -> user.AdminCommonResp
-	0,  // 83: user.UserAdmin.SetDefaultUserBank:output_type -> user.AdminCommonResp
-	62, // [62:84] is the sub-list for method output_type
-	40, // [40:62] is the sub-list for method input_type
-	40, // [40:40] is the sub-list for extension type_name
-	40, // [40:40] is the sub-list for extension extendee
-	0,  // [0:40] is the sub-list for field type_name
+	49, // 33: user.AddUserBankReq.is_default:type_name -> common.YesNo
+	47, // 34: user.AddUserBankReq.enabled:type_name -> common.Enable
+	34, // 35: user.AddUserBankResp.base:type_name -> common.RespBase
+	48, // 36: user.AddUserBankResp.data:type_name -> user.UserBankItem
+	49, // 37: user.UpdateUserBankReq.is_default:type_name -> common.YesNo
+	47, // 38: user.UpdateUserBankReq.enabled:type_name -> common.Enable
+	34, // 39: user.UpdateUserBankResp.base:type_name -> common.RespBase
+	48, // 40: user.UpdateUserBankResp.data:type_name -> user.UserBankItem
+	47, // 41: user.UpdateUserBankStatusReq.enabled:type_name -> common.Enable
+	1,  // 42: user.UserAdmin.CreateUser:input_type -> user.CreateUserReq
+	3,  // 43: user.UserAdmin.GetUserDetail:input_type -> user.GetUserDetailReq
+	5,  // 44: user.UserAdmin.ListUsers:input_type -> user.ListUsersReq
+	7,  // 45: user.UserAdmin.UpdateUserBase:input_type -> user.UpdateUserBaseReq
+	9,  // 46: user.UserAdmin.UpdateUserStatus:input_type -> user.UpdateUserStatusReq
+	10, // 47: user.UserAdmin.UpdateUserLevel:input_type -> user.UpdateUserLevelReq
+	11, // 48: user.UserAdmin.ResetLoginPassword:input_type -> user.ResetLoginPasswordReq
+	12, // 49: user.UserAdmin.ResetPayPassword:input_type -> user.ResetPayPasswordReq
+	13, // 50: user.UserAdmin.UnlockUser:input_type -> user.UnlockUserReq
+	14, // 51: user.UserAdmin.UpdateRiskLevel:input_type -> user.UpdateRiskLevelReq
+	15, // 52: user.UserAdmin.DeleteUser:input_type -> user.DeleteUserReq
+	16, // 53: user.UserAdmin.GetUserSecurity:input_type -> user.GetUserSecurityReq
+	18, // 54: user.UserAdmin.ResetUserGoogle2FA:input_type -> user.ResetUserGoogle2FAReq
+	19, // 55: user.UserAdmin.ListUserIdentities:input_type -> user.ListUserIdentitiesReq
+	21, // 56: user.UserAdmin.ReviewUserIdentity:input_type -> user.ReviewUserIdentityReq
+	23, // 57: user.UserAdmin.ListUserBanks:input_type -> user.ListUserBanksReq
+	25, // 58: user.UserAdmin.GetUserBank:input_type -> user.GetUserBankReq
+	27, // 59: user.UserAdmin.AddUserBank:input_type -> user.AddUserBankReq
+	29, // 60: user.UserAdmin.UpdateUserBank:input_type -> user.UpdateUserBankReq
+	31, // 61: user.UserAdmin.DeleteUserBank:input_type -> user.DeleteUserBankReq
+	32, // 62: user.UserAdmin.UpdateUserBankStatus:input_type -> user.UpdateUserBankStatusReq
+	33, // 63: user.UserAdmin.SetDefaultUserBank:input_type -> user.SetDefaultUserBankReq
+	2,  // 64: user.UserAdmin.CreateUser:output_type -> user.CreateUserResp
+	4,  // 65: user.UserAdmin.GetUserDetail:output_type -> user.GetUserDetailResp
+	6,  // 66: user.UserAdmin.ListUsers:output_type -> user.ListUsersResp
+	8,  // 67: user.UserAdmin.UpdateUserBase:output_type -> user.UpdateUserBaseResp
+	0,  // 68: user.UserAdmin.UpdateUserStatus:output_type -> user.AdminCommonResp
+	0,  // 69: user.UserAdmin.UpdateUserLevel:output_type -> user.AdminCommonResp
+	0,  // 70: user.UserAdmin.ResetLoginPassword:output_type -> user.AdminCommonResp
+	0,  // 71: user.UserAdmin.ResetPayPassword:output_type -> user.AdminCommonResp
+	0,  // 72: user.UserAdmin.UnlockUser:output_type -> user.AdminCommonResp
+	0,  // 73: user.UserAdmin.UpdateRiskLevel:output_type -> user.AdminCommonResp
+	0,  // 74: user.UserAdmin.DeleteUser:output_type -> user.AdminCommonResp
+	17, // 75: user.UserAdmin.GetUserSecurity:output_type -> user.GetUserSecurityResp
+	0,  // 76: user.UserAdmin.ResetUserGoogle2FA:output_type -> user.AdminCommonResp
+	20, // 77: user.UserAdmin.ListUserIdentities:output_type -> user.ListUserIdentitiesResp
+	22, // 78: user.UserAdmin.ReviewUserIdentity:output_type -> user.ReviewUserIdentityResp
+	24, // 79: user.UserAdmin.ListUserBanks:output_type -> user.ListUserBanksResp
+	26, // 80: user.UserAdmin.GetUserBank:output_type -> user.GetUserBankResp
+	28, // 81: user.UserAdmin.AddUserBank:output_type -> user.AddUserBankResp
+	30, // 82: user.UserAdmin.UpdateUserBank:output_type -> user.UpdateUserBankResp
+	0,  // 83: user.UserAdmin.DeleteUserBank:output_type -> user.AdminCommonResp
+	0,  // 84: user.UserAdmin.UpdateUserBankStatus:output_type -> user.AdminCommonResp
+	0,  // 85: user.UserAdmin.SetDefaultUserBank:output_type -> user.AdminCommonResp
+	64, // [64:86] is the sub-list for method output_type
+	42, // [42:64] is the sub-list for method input_type
+	42, // [42:42] is the sub-list for extension type_name
+	42, // [42:42] is the sub-list for extension extendee
+	0,  // [0:42] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_user_admin_proto_init() }

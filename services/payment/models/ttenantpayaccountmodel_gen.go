@@ -58,7 +58,7 @@ type (
 		CertCipher          sql.NullString `db:"cert_cipher"`            // 证书密文
 		ExtConfig           sql.NullString `db:"ext_config"`             // 扩展配置
 		Enabled             int64          `db:"enabled"`                // 启用状态：1启用 2禁用
-		IsDefault           int64          `db:"is_default"`             // 是否默认账号：0否 1是
+		IsDefault           int64          `db:"is_default"`             // 是否默认账号：1否 2是
 		Remark              sql.NullString `db:"remark"`                 // 备注
 		CreateTimes         int64          `db:"create_times"`           // 创建时间
 		UpdateTimes         int64          `db:"update_times"`           // 更新时间

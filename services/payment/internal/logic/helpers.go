@@ -37,25 +37,14 @@ func rechargeTypeFromPlatform(item *models.TPayPlatform) payment.RechargeType {
 }
 
 func switchToProto(value int64) common.Switch {
-	switch value {
-	case 1:
-		return common.Switch_SWITCH_ON
-	case 0:
-		return common.Switch_SWITCH_OFF
-	default:
-		return common.Switch_SWITCH_UNKNOWN
-	}
+	return common.Switch(value)
 }
 
 func switchToModel(value common.Switch, defaultValue int64) int64 {
-	switch value {
-	case common.Switch_SWITCH_ON:
-		return 1
-	case common.Switch_SWITCH_OFF:
-		return 0
-	default:
+	if value == common.Switch_SWITCH_UNKNOWN {
 		return defaultValue
 	}
+	return int64(value)
 }
 
 func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, thirdTradeNo string, payAmount int64, remark string) error {
@@ -294,7 +283,7 @@ func toTenantPayAccountProto(item *models.TTenantPayAccount) *payment.TenantPayA
 		CertCipher:          item.CertCipher.String,
 		ExtConfig:           item.ExtConfig.String,
 		Enabled:             common.Enable(item.Enabled),
-		IsDefault:           item.IsDefault,
+		IsDefault:           common.YesNo(item.IsDefault),
 		Remark:              item.Remark.String,
 		CreateTimes:         item.CreateTimes,
 		UpdateTimes:         item.UpdateTimes,
@@ -362,8 +351,8 @@ func toTenantPayChannelRuleProto(item *models.TTenantPayChannelRule) *payment.Te
 		MemberLevelMax:       item.MemberLevelMax,
 		KycLevelMin:          item.KycLevelMin,
 		KycLevelMax:          item.KycLevelMax,
-		AllowNewUser:         item.AllowNewUser,
-		AllowOldUser:         item.AllowOldUser,
+		AllowNewUser:         common.YesNo(item.AllowNewUser),
+		AllowOldUser:         common.YesNo(item.AllowOldUser),
 		AllowTags:            item.AllowTags.String,
 		DenyTags:             item.DenyTags.String,
 		Remark:               item.Remark.String,
@@ -548,7 +537,7 @@ func toCryptoWalletAccountProto(item *models.TCryptoWalletAccount) *payment.Cryp
 		CallbackSecretCipher: item.CallbackSecretCipher.String,
 		ExtConfig:            item.ExtConfig.String,
 		Enabled:              toCryptoWalletStatusProto(item.Enabled),
-		IsDefault:            item.IsDefault,
+		IsDefault:            common.YesNo(item.IsDefault),
 		CreateTimes:          item.CreateTimes,
 		UpdateTimes:          item.UpdateTimes,
 	}
@@ -582,49 +571,30 @@ func toCryptoRechargeTxProto(item *models.TCryptoRechargeTx) *payment.CryptoRech
 }
 
 func toCryptoAddressStatusDB(status payment.CryptoRechargeAddressStatus, defaultValue int64) int64 {
-	switch status {
-	case payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_DISABLED:
-		return 0
-	case payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED:
-		return 1
-	case payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_FROZEN:
-		return 2
-	default:
+	if status == payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN {
 		return defaultValue
 	}
+	return int64(status)
 }
 
 func toCryptoAddressStatusProto(status int64) payment.CryptoRechargeAddressStatus {
-	switch status {
-	case 0:
-		return payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_DISABLED
-	case 1:
-		return payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED
-	case 2:
-		return payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_FROZEN
-	default:
-		return payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN
-	}
+	return payment.CryptoRechargeAddressStatus(status)
 }
 
 func toCryptoWalletStatusDB(status common.Enable, defaultValue int64) int64 {
-	switch status {
-	case common.Enable_ENABLE_ENABLED:
-		return 1
-	case common.Enable_ENABLE_DISABLED:
-		return 0
-	default:
+	if status == common.Enable_ENABLE_UNKNOWN {
 		return defaultValue
 	}
+	return int64(status)
 }
 
 func toCryptoWalletStatusProto(status int64) common.Enable {
-	switch status {
-	case 1:
-		return common.Enable_ENABLE_ENABLED
-	case 0:
-		return common.Enable_ENABLE_DISABLED
-	default:
-		return common.Enable_ENABLE_UNKNOWN
+	return common.Enable(status)
+}
+
+func enableToModel(enabled common.Enable, defaultValue int64) int64 {
+	if enabled == common.Enable_ENABLE_UNKNOWN {
+		return defaultValue
 	}
+	return int64(enabled)
 }

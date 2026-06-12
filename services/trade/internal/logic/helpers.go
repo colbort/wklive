@@ -21,25 +21,21 @@ func mustParseFloat(v string) float64 {
 }
 
 func enableToProto(value int64) common.Enable {
-	switch value {
-	case 1:
-		return common.Enable_ENABLE_ENABLED
-	case 0:
-		return common.Enable_ENABLE_DISABLED
-	default:
-		return common.Enable_ENABLE_UNKNOWN
-	}
+	return common.Enable(value)
 }
 
 func enableToModel(value common.Enable, defaultValue int64) int64 {
-	switch value {
-	case common.Enable_ENABLE_ENABLED:
-		return 1
-	case common.Enable_ENABLE_DISABLED:
-		return 0
-	default:
+	if value == common.Enable_ENABLE_UNKNOWN {
 		return defaultValue
 	}
+	return int64(value)
+}
+
+func yesNoToModel(value common.YesNo, defaultValue int64) int64 {
+	if value == common.YesNo_YES_NO_UNKNOWN {
+		return defaultValue
+	}
+	return int64(value)
 }
 
 type orderAssetExt struct {

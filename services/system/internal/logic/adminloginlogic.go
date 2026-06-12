@@ -9,6 +9,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -50,7 +51,7 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 		return nil, i18n.StatusError(l.ctx, i18n.UserDisabledForLogin)
 	}
 
-	if user.GoogleEnabled == 1 {
+	if user.GoogleEnabled == int64(common.Enable_ENABLE_ENABLED) {
 		if in.GoogleCode == "" {
 			return nil, i18n.StatusError(l.ctx, i18n.Google2FACodeRequired)
 		}
@@ -106,7 +107,7 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 			Token:            token,
 			UserId:           user.Id,
 			Nickname:         user.Nickname,
-			Google2FaEnabled: binaryEnableToProto(user.GoogleEnabled),
+			Google2FaEnabled: commonStatusToProto(user.GoogleEnabled),
 			PermsVer:         user.PermsVer,
 		},
 	}, nil

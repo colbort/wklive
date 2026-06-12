@@ -10,6 +10,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -138,14 +139,14 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 		userRes, err := userModel.InsertCtx(ctx, session, &models.SysUser{
 			TenantId:      newTenantId,
 			UserType:      int64(system.UserType_USER_TYPE_TENANT_OWNER),
-			IsOwner:       1,
+			IsOwner:       int64(common.YesNo_YES_NO_YES),
 			Username:      in.Username,
 			Password:      string(hashedPassword),
 			Nickname:      in.TenantName,
 			Avatar:        "",
 			Enabled:       commonStatusToModel(in.Enabled),
 			GoogleSecret:  "",
-			GoogleEnabled: 0,
+			GoogleEnabled: int64(common.Enable_ENABLE_DISABLED),
 			PermsVer:      1,
 			LastLoginIp:   "",
 			LastLoginAt:   0,

@@ -58,7 +58,7 @@ message TenantPayAccount {
   string public_key = 10;                  // 公钥
   string ext_config = 11;                  // 扩展配置(JSON)
   common.Enable enabled = 12;        // 状态,0表示全部，1表示启用，2表示禁用
-  int64 is_default = 13;                   // 是否默认账号：0否 1是
+  common.YesNo is_default = 13;            // 是否默认账号：1否 2是
   string remark = 14;                      // 备注
   int64 create_times = 15;                 // 创建时间
   int64 update_times = 16;                 // 更新时间
@@ -110,8 +110,8 @@ message TenantPayChannelRule {
   int64 member_level_max = 12;             // 会员等级最大值，0表示不限制
   int64 kyc_level_min = 13;                // KYC等级最小值
   int64 kyc_level_max = 14;                // KYC等级最大值，0表示不限制
-  int64 allow_new_user = 15;               // 是否允许新用户：0否 1是
-  int64 allow_old_user = 16;               // 是否允许老用户：0否 1是
+  common.YesNo allow_new_user = 15;        // 是否允许新用户：1否 2是
+  common.YesNo allow_old_user = 16;        // 是否允许老用户：1否 2是
   string allow_tags = 17;                  // 允许的用户标签(JSON数组)
   string deny_tags = 18;                   // 禁止的用户标签(JSON数组)
   string remark = 19;                      // 备注
@@ -262,7 +262,7 @@ message CryptoWalletAccount {
   string callback_secret_cipher = 8;       // 回调验签密钥密文
   string ext_config = 9;                   // 扩展配置(JSON)
   common.Enable enabled = 10;        // 状态, 0表示全部，1表示启用，2表示禁用
-  int64 is_default = 11;                   // 是否默认:1是 0否
+  common.YesNo is_default = 11;            // 是否默认:1否 2是
   int64 create_times = 12;                 // 创建时间
   int64 update_times = 13;                 // 更新时间
 }

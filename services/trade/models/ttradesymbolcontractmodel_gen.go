@@ -55,8 +55,8 @@ type (
 		DeliveryTime           int64   `db:"delivery_time"`            // 交割时间或到期时间，永续合约为0
 		SupportCross           int64   `db:"support_cross"`            // 是否支持全仓：1支持 0不支持
 		SupportIsolated        int64   `db:"support_isolated"`         // 是否支持逐仓：1支持 0不支持
-		BuyEnabled             int64   `db:"buy_enabled"`              // 开多/买入开关：1启用 0禁用
-		SellEnabled            int64   `db:"sell_enabled"`             // 开空/卖出开关：1启用 0禁用
+		BuyEnabled             int64   `db:"buy_enabled"`              // 开多/买入开关：1启用 2禁用
+		SellEnabled            int64   `db:"sell_enabled"`             // 开空/卖出开关：1启用 2禁用
 		CreateTimes            int64   `db:"create_times"`             // 创建时间，毫秒时间戳
 		UpdateTimes            int64   `db:"update_times"`             // 更新时间，毫秒时间戳
 	}
