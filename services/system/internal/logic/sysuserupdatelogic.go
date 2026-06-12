@@ -4,6 +4,7 @@ import (
 	"context"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -43,8 +44,10 @@ func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system
 	}
 	var data models.SysUser
 	_ = copier.Copy(&data, one)
-	_ = copier.Copy(&data, in)
-	data.Enabled = commonStatusToModel(in.Enabled)
+	copyNonZero(&data, in)
+	if in.Enabled != common.Enable_ENABLE_UNKNOWN {
+		data.Enabled = commonStatusToModel(in.Enabled)
+	}
 
 	err = l.svcCtx.UserModel.Update(l.ctx, &data)
 	if err != nil {

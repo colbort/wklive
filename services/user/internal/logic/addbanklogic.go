@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -47,7 +48,7 @@ func (l *AddBankLogic) AddBank(in *user.AddBankReq) (*user.AddBankResp, error) {
 	}
 
 	now := utils.NowMillis()
-	isDefault := in.IsDefault
+	isDefault, _ := yesNoToDefaultFlag(common.YesNo(in.IsDefault))
 
 	// 如果设置为默认，需要取消其他卡的默认设置
 	if isDefault == 1 {
@@ -66,7 +67,7 @@ func (l *AddBankLogic) AddBank(in *user.AddBankReq) (*user.AddBankResp, error) {
 		BranchName:  sql.NullString{String: in.BranchName, Valid: in.BranchName != ""},
 		CountryCode: sql.NullString{String: in.CountryCode, Valid: in.CountryCode != ""},
 		IsDefault:   isDefault,
-		Enabled:      1, // 正常
+		Enabled:     1, // 正常
 		CreateTimes: now,
 		UpdateTimes: now,
 	}

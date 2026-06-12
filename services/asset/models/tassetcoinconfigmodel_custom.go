@@ -14,12 +14,6 @@ type AssetCoinConfigModel interface {
 }
 
 const (
-	assetCoinSwitchOff = int64(1)
-	assetCoinSwitchOn  = int64(2)
-
-	assetCoinStatusDisabled = int64(1)
-	assetCoinStatusEnabled  = int64(2)
-
 	assetCoinOperationRecharge = int64(1)
 	assetCoinOperationWithdraw = int64(2)
 	assetCoinOperationTransfer = int64(3)
@@ -149,19 +143,13 @@ func (m *defaultTAssetCoinConfigModel) FindVisibleByOperation(ctx context.Contex
 }
 
 func appendSwitchFilter(builder *sqlutil.PageQueryBuilder, column string, value int64) {
-	switch value {
-	case assetCoinSwitchOff:
-		builder.And(fmt.Sprintf("%s = ?", column), int64(0))
-	case assetCoinSwitchOn:
-		builder.And(fmt.Sprintf("%s = ?", column), int64(1))
+	if value != 0 {
+		builder.And(fmt.Sprintf("%s = ?", column), value)
 	}
 }
 
 func appendEnabledFilter(builder *sqlutil.PageQueryBuilder, enabled int64) {
-	switch enabled {
-	case assetCoinStatusDisabled:
-		builder.And("enabled = ?", int64(0))
-	case assetCoinStatusEnabled:
-		builder.And("enabled = ?", int64(1))
+	if enabled != 0 {
+		builder.And("enabled = ?", enabled)
 	}
 }

@@ -2,13 +2,14 @@ package logic
 
 import (
 	"context"
-	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysMenuUpdateLogic struct {
@@ -38,11 +39,19 @@ func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system
 
 	var data models.SysMenu
 	_ = copier.Copy(&data, one)
-	_ = copier.Copy(&data, in)
-	data.MenuType = menuTypeToModel(in.MenuType)
-	data.Method = requestMethodToString(in.Method)
-	data.Visible = visibleStatusToModel(in.Visible)
-	data.Enabled = commonStatusToModel(in.Enabled)
+	copyNonZero(&data, in)
+	if in.MenuType != system.MenuType_MENU_TYPE_UNKNOWN {
+		data.MenuType = menuTypeToModel(in.MenuType)
+	}
+	if in.Method != system.RequestMethod_REQUEST_METHOD_UNKNOWN {
+		data.Method = requestMethodToString(in.Method)
+	}
+	if in.Visible != 0 {
+		data.Visible = visibleStatusToModel(in.Visible)
+	}
+	if in.Enabled != 0 {
+		data.Enabled = commonStatusToModel(in.Enabled)
+	}
 
 	err = l.svcCtx.MenuModel.Update(l.ctx, &data)
 	if err != nil {

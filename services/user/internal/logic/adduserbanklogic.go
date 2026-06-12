@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -43,7 +44,7 @@ func (l *AddUserBankLogic) AddUserBank(in *user.AddUserBankReq) (*user.AddUserBa
 	}
 
 	now := utils.NowMillis()
-	isDefault := in.IsDefault
+	isDefault, _ := yesNoToDefaultFlag(common.YesNo(in.IsDefault))
 
 	// 如果设置为默认，需要取消其他卡的默认设置
 	if isDefault == 1 {

@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
@@ -42,8 +43,8 @@ func (l *CreateAssetCoinConfigLogic) CreateAssetCoinConfig(in *asset.CreateAsset
 		IconBgColor:     in.IconBgColor,
 		DecimalPlaces:   int64(in.DecimalPlaces),
 		AppVisible:      assetCoinSwitchValue(in.AppVisible, 1),
-		RechargeEnabled: assetCoinSwitchValue(in.RechargeEnabled, 0),
-		WithdrawEnabled: assetCoinSwitchValue(in.WithdrawEnabled, 0),
+		RechargeEnabled: assetCoinSwitchValue(in.RechargeEnabled, int64(common.Switch_SWITCH_OFF)),
+		WithdrawEnabled: assetCoinSwitchValue(in.WithdrawEnabled, int64(common.Switch_SWITCH_OFF)),
 		TransferEnabled: assetCoinSwitchValue(in.TransferEnabled, 1),
 		Enabled:         assetCoinEnabledValue(in.Enabled, 1),
 		Sort:            int64(in.Sort),

@@ -53,25 +53,11 @@ func completeAssetIdempotent(ctx context.Context, model models.AssetIdempotentMo
 }
 
 func ToAssetStatus(status int64) common.Enable {
-	switch status {
-	case 1:
-		return common.Enable_ENABLE_ENABLED
-	case 0:
-		return common.Enable_ENABLE_DISABLED
-	default:
-		return common.Enable_ENABLE_UNKNOWN
-	}
+	return common.Enable(status)
 }
 
 func ToAssetCoinSwitch(value int64) common.Switch {
-	switch value {
-	case 1:
-		return common.Switch_SWITCH_ON
-	case 0:
-		return common.Switch_SWITCH_OFF
-	default:
-		return common.Switch_SWITCH_UNKNOWN
-	}
+	return common.Switch(value)
 }
 
 func ToFreezeStatus(status int64) asset.FreezeStatus {
@@ -476,36 +462,21 @@ func assetSceneType(in asset.SceneType) string {
 }
 
 func assetEnabledFilter(enabled common.Enable) int64 {
-	switch enabled {
-	case common.Enable_ENABLE_ENABLED:
-		return 1
-	case common.Enable_ENABLE_DISABLED:
-		return 0
-	default:
-		return 0
-	}
+	return int64(enabled)
 }
 
 func assetCoinEnabledValue(enabled common.Enable, defaultValue int64) int64 {
-	switch enabled {
-	case common.Enable_ENABLE_ENABLED:
-		return 1
-	case common.Enable_ENABLE_DISABLED:
-		return 0
-	default:
+	if enabled == common.Enable_ENABLE_UNKNOWN {
 		return defaultValue
 	}
+	return int64(enabled)
 }
 
 func assetCoinSwitchValue(value common.Switch, defaultValue int64) int64 {
-	switch value {
-	case common.Switch_SWITCH_ON:
-		return 1
-	case common.Switch_SWITCH_OFF:
-		return 0
-	default:
+	if value == common.Switch_SWITCH_UNKNOWN {
 		return defaultValue
 	}
+	return int64(value)
 }
 
 func assetCoinTypeValue(value asset.AssetCoinType, defaultValue int64) int64 {

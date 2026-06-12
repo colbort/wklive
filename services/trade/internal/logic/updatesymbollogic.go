@@ -37,22 +37,54 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Admi
 	if err != nil {
 		return nil, err
 	}
-	item.DisplaySymbol = in.DisplaySymbol
-	item.Status = int64(in.Status)
-	item.PriceScale = int64(in.PriceScale)
-	item.QtyScale = int64(in.QtyScale)
-	item.MinPrice = mustParseFloat(in.MinPrice)
-	item.MaxPrice = mustParseFloat(in.MaxPrice)
-	item.PriceTick = mustParseFloat(in.PriceTick)
-	item.MinQty = mustParseFloat(in.MinQty)
-	item.MaxQty = mustParseFloat(in.MaxQty)
-	item.QtyStep = mustParseFloat(in.QtyStep)
-	item.MinNotional = mustParseFloat(in.MinNotional)
-	item.MaxLeverage = int64(in.MaxLeverage)
-	item.OpenTime = in.OpenTime
-	item.CloseTime = in.CloseTime
-	item.Sort = int64(in.Sort)
-	item.Remark = in.Remark
+	if in.DisplaySymbol != "" {
+		item.DisplaySymbol = in.DisplaySymbol
+	}
+	if in.Status != trade.SymbolStatus_SYMBOL_STATUS_UNKNOWN {
+		item.Status = int64(in.Status)
+	}
+	if in.PriceScale != 0 {
+		item.PriceScale = int64(in.PriceScale)
+	}
+	if in.QtyScale != 0 {
+		item.QtyScale = int64(in.QtyScale)
+	}
+	if in.MinPrice != "" {
+		item.MinPrice = mustParseFloat(in.MinPrice)
+	}
+	if in.MaxPrice != "" {
+		item.MaxPrice = mustParseFloat(in.MaxPrice)
+	}
+	if in.PriceTick != "" {
+		item.PriceTick = mustParseFloat(in.PriceTick)
+	}
+	if in.MinQty != "" {
+		item.MinQty = mustParseFloat(in.MinQty)
+	}
+	if in.MaxQty != "" {
+		item.MaxQty = mustParseFloat(in.MaxQty)
+	}
+	if in.QtyStep != "" {
+		item.QtyStep = mustParseFloat(in.QtyStep)
+	}
+	if in.MinNotional != "" {
+		item.MinNotional = mustParseFloat(in.MinNotional)
+	}
+	if in.MaxLeverage != 0 {
+		item.MaxLeverage = int64(in.MaxLeverage)
+	}
+	if in.OpenTime != 0 {
+		item.OpenTime = in.OpenTime
+	}
+	if in.CloseTime != 0 {
+		item.CloseTime = in.CloseTime
+	}
+	if in.Sort != 0 {
+		item.Sort = int64(in.Sort)
+	}
+	if in.Remark != "" {
+		item.Remark = in.Remark
+	}
 	item.UpdateTimes = utils.NowMillis()
 	if err = l.svcCtx.TradeSymbolModel.Update(l.ctx, item); err != nil {
 		return nil, err

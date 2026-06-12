@@ -212,7 +212,7 @@ message AddBankReq {
   string account_no = 4;
   string branch_name = 5;
   string country_code = 6;
-  int64 is_default = 7;
+  common.YesNo is_default = 7;
 }
 
 message AddBankResp {
@@ -228,7 +228,7 @@ message UpdateBankReq {
   string account_no = 5;
   string branch_name = 6;
   string country_code = 7;
-  int64 is_default = 8;
+  common.YesNo is_default = 8;
 }
 
 message UpdateBankResp {

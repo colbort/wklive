@@ -33,11 +33,13 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 		cron.SecondOptional | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor,
 	)
 
-	_, err := parser.Parse(in.CronExpression)
-	if err != nil {
-		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InvalidCronExpression, i18n.Translate(i18n.InvalidCronExpression, l.ctx)),
-		}, nil
+	if in.CronExpression != "" {
+		_, err := parser.Parse(in.CronExpression)
+		if err != nil {
+			return &system.RespBase{
+				Base: helper.GetErrResp(i18n.InvalidCronExpression, i18n.Translate(i18n.InvalidCronExpression, l.ctx)),
+			}, nil
+		}
 	}
 	job, err := l.svcCtx.JobModel.FindOne(l.ctx, in.Id)
 	if err != nil {
@@ -50,12 +52,24 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 			Base: helper.GetErrResp(i18n.CronJobNotFound, i18n.Translate(i18n.CronJobNotFound, l.ctx)),
 		}, nil
 	}
-	job.JobName = in.JobName
-	job.JobGroup = in.JobGroup
-	job.InvokeTarget = in.InvokeTarget
-	job.CronExpression = in.CronExpression
-	job.Status = jobStatusToModel(in.Status)
-	job.Remark = sql.NullString{String: in.Remark, Valid: true}
+	if in.JobName != "" {
+		job.JobName = in.JobName
+	}
+	if in.JobGroup != "" {
+		job.JobGroup = in.JobGroup
+	}
+	if in.InvokeTarget != "" {
+		job.InvokeTarget = in.InvokeTarget
+	}
+	if in.CronExpression != "" {
+		job.CronExpression = in.CronExpression
+	}
+	if in.Status != 0 {
+		job.Status = jobStatusToModel(in.Status)
+	}
+	if in.Remark != "" {
+		job.Remark = sql.NullString{String: in.Remark, Valid: true}
+	}
 	userName, err := utils.GetUsernameFromMd(l.ctx)
 	if err != nil {
 		return &system.RespBase{

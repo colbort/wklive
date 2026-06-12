@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -50,8 +51,8 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 	}
 
 	now := utils.NowMillis()
-	isDefault := in.IsDefault
-	if isDefault == 1 {
+	isDefault, hasIsDefault := yesNoToDefaultFlag(common.YesNo(in.IsDefault))
+	if hasIsDefault && isDefault == 1 {
 		// 如果设置为默认，需要取消其他卡的默认设置
 		// TODO: 更新其他卡的默认状态
 	}
@@ -75,7 +76,9 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 	if in.CountryCode != "" {
 		bank.CountryCode = sql.NullString{String: in.CountryCode, Valid: true}
 	}
-	bank.IsDefault = isDefault
+	if hasIsDefault {
+		bank.IsDefault = isDefault
+	}
 	if in.Enabled != 0 {
 		bank.Enabled = int64(in.Enabled)
 	}

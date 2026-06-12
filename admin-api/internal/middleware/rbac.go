@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"sync"
 	"wklive/admin-api/internal/svc"
 	"wklive/common/utils"
 	"wklive/proto/system"
@@ -25,13 +26,37 @@ type PermissionRule struct {
 
 type RbacMiddleware struct {
 	svcCtx *svc.ServiceContext
+	mu     sync.RWMutex
 	rules  []PermissionRule
 }
 
 func NewRbacMiddleware(svcCtx *svc.ServiceContext) *RbacMiddleware {
-	result, err := svcCtx.SystemCli.SysPermList(context.Background(), &system.Empty{})
+	m := &RbacMiddleware{
+		svcCtx: svcCtx,
+	}
+	m.refreshRules(context.Background())
+
+	return m
+}
+
+func (m *RbacMiddleware) refreshRules(ctx context.Context) {
+	rules, err := loadPermissionRules(ctx, m.svcCtx)
 	if err != nil {
 		logx.Errorf("fetch system permissions failed: %v", err)
+		return
+	}
+
+	m.mu.Lock()
+	m.rules = rules
+	m.mu.Unlock()
+
+	logx.Infof("loaded rbac permission rules: %d", len(rules))
+}
+
+func loadPermissionRules(ctx context.Context, svcCtx *svc.ServiceContext) ([]PermissionRule, error) {
+	result, err := svcCtx.SystemCli.SysPermList(ctx, &system.Empty{})
+	if err != nil {
+		return nil, err
 	}
 
 	rules := make([]PermissionRule, 0)
@@ -59,10 +84,24 @@ func NewRbacMiddleware(svcCtx *svc.ServiceContext) *RbacMiddleware {
 		}
 	}
 
-	return &RbacMiddleware{
-		svcCtx: svcCtx,
-		rules:  rules,
+	return rules, nil
+}
+
+func (m *RbacMiddleware) requiredPermission(ctx context.Context, path, method string) string {
+	m.mu.RLock()
+	requiredPerm := getRequiredPermission(m.rules, path, method)
+	m.mu.RUnlock()
+	if requiredPerm != "" {
+		return requiredPerm
 	}
+
+	m.refreshRules(ctx)
+
+	m.mu.RLock()
+	requiredPerm = getRequiredPermission(m.rules, path, method)
+	m.mu.RUnlock()
+
+	return requiredPerm
 }
 
 func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
@@ -91,7 +130,7 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		requiredPerm := getRequiredPermission(m.rules, path, method)
+		requiredPerm := m.requiredPermission(r.Context(), path, method)
 		if requiredPerm == "" {
 			logx.Errorf("permission route not found, method=%s path=%s", method, path)
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -276,6 +315,8 @@ func compilePathPattern(route string) (*regexp.Regexp, int, error) {
 		}
 
 		if strings.HasPrefix(part, "{") && strings.HasSuffix(part, "}") {
+			parts[i] = `[^/]+`
+		} else if strings.HasPrefix(part, ":") {
 			parts[i] = `[^/]+`
 		} else {
 			staticSegs++

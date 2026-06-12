@@ -38,10 +38,18 @@ func (l *UpdateTenantProductLogic) UpdateTenantProduct(in *itick.UpdateTenantPro
 		}, nil
 	}
 
-	item.Enabled = int64(in.Enabled)
-	item.AppVisible = int64(in.AppVisible)
-	item.Sort = in.Sort
-	item.Remark = in.Remark
+	if in.Enabled != 0 {
+		item.Enabled = int64(in.Enabled)
+	}
+	if in.AppVisible != 0 {
+		item.AppVisible = int64(in.AppVisible)
+	}
+	if in.Sort != 0 {
+		item.Sort = in.Sort
+	}
+	if in.Remark != "" {
+		item.Remark = in.Remark
+	}
 	item.UpdateTimes = cutils.NowMillis()
 
 	if err := l.svcCtx.ItickTenantProductModel.Update(l.ctx, item); err != nil {

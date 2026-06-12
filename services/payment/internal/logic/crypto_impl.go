@@ -148,7 +148,9 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 		item.ExtConfig = nullableString(in.ExtConfig)
 	}
 	item.Enabled = toCryptoWalletStatusDB(in.Enabled, item.Enabled)
-	item.IsDefault = in.IsDefault
+	if in.IsDefault != 0 {
+		item.IsDefault = in.IsDefault
+	}
 	item.UpdateTimes = utils.NowMillis()
 	if err := svcCtx.CryptoWalletAccountModel.Update(ctx, item); err != nil {
 		return nil, err

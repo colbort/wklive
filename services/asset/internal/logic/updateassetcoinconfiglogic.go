@@ -8,6 +8,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
@@ -41,54 +42,65 @@ func (l *UpdateAssetCoinConfigLogic) UpdateAssetCoinConfig(in *asset.UpdateAsset
 		return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 	}
 
-	data := &models.TAssetCoinConfig{
-		Id:              old.Id,
-		TenantId:        in.TenantId,
-		WalletType:      int64(in.WalletType),
-		Coin:            in.Coin,
-		Symbol:          in.Symbol,
-		CoinName:        in.CoinName,
-		CoinType:        assetCoinTypeValue(in.CoinType, old.CoinType),
-		ChainCode:       int64(in.ChainCode),
-		IconUrl:         in.IconUrl,
-		IconText:        in.IconText,
-		IconBgColor:     in.IconBgColor,
-		DecimalPlaces:   int64(in.DecimalPlaces),
-		AppVisible:      assetCoinSwitchValue(in.AppVisible, old.AppVisible),
-		RechargeEnabled: assetCoinSwitchValue(in.RechargeEnabled, old.RechargeEnabled),
-		WithdrawEnabled: assetCoinSwitchValue(in.WithdrawEnabled, old.WithdrawEnabled),
-		TransferEnabled: assetCoinSwitchValue(in.TransferEnabled, old.TransferEnabled),
-		Enabled:         assetCoinEnabledValue(in.Enabled, old.Enabled),
-		Sort:            int64(in.Sort),
-		Remark:          in.Remark,
-		CreateTimes:     old.CreateTimes,
-		UpdateTimes:     utils.NowMillis(),
+	if in.TenantId != 0 {
+		old.TenantId = in.TenantId
 	}
-	if data.TenantId == 0 {
-		data.TenantId = old.TenantId
+	if in.WalletType != 0 {
+		old.WalletType = int64(in.WalletType)
 	}
-	if data.WalletType == 0 {
-		data.WalletType = old.WalletType
+	if in.Coin != "" {
+		old.Coin = in.Coin
 	}
-	if data.Coin == "" {
-		data.Coin = old.Coin
+	if in.Symbol != "" {
+		old.Symbol = in.Symbol
 	}
-	if data.Symbol == "" {
-		data.Symbol = old.Symbol
+	if in.CoinName != "" {
+		old.CoinName = in.CoinName
 	}
-	if data.CoinName == "" {
-		data.CoinName = old.CoinName
+	if in.CoinType != asset.AssetCoinType_ASSET_COIN_TYPE_UNKNOWN {
+		old.CoinType = int64(in.CoinType)
 	}
-	if data.DecimalPlaces == 0 {
-		data.DecimalPlaces = old.DecimalPlaces
+	if in.ChainCode != 0 {
+		old.ChainCode = int64(in.ChainCode)
 	}
-	if data.ChainCode == 0 {
-		data.ChainCode = old.ChainCode
+	if in.IconUrl != "" {
+		old.IconUrl = in.IconUrl
 	}
+	if in.IconText != "" {
+		old.IconText = in.IconText
+	}
+	if in.IconBgColor != "" {
+		old.IconBgColor = in.IconBgColor
+	}
+	if in.DecimalPlaces != 0 {
+		old.DecimalPlaces = int64(in.DecimalPlaces)
+	}
+	if in.AppVisible != common.Switch_SWITCH_UNKNOWN {
+		old.AppVisible = int64(in.AppVisible)
+	}
+	if in.RechargeEnabled != common.Switch_SWITCH_UNKNOWN {
+		old.RechargeEnabled = int64(in.RechargeEnabled)
+	}
+	if in.WithdrawEnabled != common.Switch_SWITCH_UNKNOWN {
+		old.WithdrawEnabled = int64(in.WithdrawEnabled)
+	}
+	if in.TransferEnabled != common.Switch_SWITCH_UNKNOWN {
+		old.TransferEnabled = int64(in.TransferEnabled)
+	}
+	if in.Enabled != common.Enable_ENABLE_UNKNOWN {
+		old.Enabled = int64(in.Enabled)
+	}
+	if in.Sort != 0 {
+		old.Sort = int64(in.Sort)
+	}
+	if in.Remark != "" {
+		old.Remark = in.Remark
+	}
+	old.UpdateTimes = utils.NowMillis()
 
-	if err := l.svcCtx.AssetCoinConfigModel.Update(l.ctx, data); err != nil {
+	if err := l.svcCtx.AssetCoinConfigModel.Update(l.ctx, old); err != nil {
 		return nil, err
 	}
 
-	return &asset.AssetCoinConfigResp{Base: helper.OkResp(), Data: toAssetCoinConfigProto(data)}, nil
+	return &asset.AssetCoinConfigResp{Base: helper.OkResp(), Data: toAssetCoinConfigProto(old)}, nil
 }
