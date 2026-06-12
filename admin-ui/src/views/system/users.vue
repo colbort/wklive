@@ -12,6 +12,7 @@ import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const optionGroups = ref<OptionGroup[]>([])
@@ -422,47 +423,35 @@ onMounted(async () => {
 
 <template>
   <div class="module-page">
-    <el-card class="table-card">
-      <template #header>
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
-          <div>{{ t('system.users') }}</div>
+    <CrudQueryCard :model="queryForm" @search="onSearch" @reset="onReset">
+      <el-form-item :label="t('common.keyword')">
+        <el-input
+          v-model="queryForm.keyword"
+          clearable
+          :placeholder="t('common.accountNicknameKeyword')"
+          @keyup.enter="onSearch"
+        />
+      </el-form-item>
 
-          <div style="display: flex; gap: 8px">
-            <el-input
-              v-model="queryForm.keyword"
-              style="width: 220px"
-              clearable
-              :placeholder="t('common.accountNicknameKeyword')"
-              @keyup.enter="onSearch"
-            />
-            <el-select
-              v-model="queryForm.enabled"
-              style="width: 140px"
-              clearable
-              :placeholder="t('common.enabled')"
-            >
-              <el-option
-                v-for="o in enabledSelectOptions"
-                :key="o.value"
-                :label="enabledOptionLabel(o.value, o.code)"
-                :value="o.value"
-              />
-            </el-select>
+      <el-form-item :label="t('common.enabled')">
+        <el-select v-model="queryForm.enabled" clearable :placeholder="t('common.enabled')">
+          <el-option
+            v-for="o in enabledSelectOptions"
+            :key="o.value"
+            :label="enabledOptionLabel(o.value, o.code)"
+            :value="o.value"
+          />
+        </el-select>
+      </el-form-item>
 
-            <el-button @click="onSearch">
-              {{ t('common.search') }}
-            </el-button>
-            <el-button @click="onReset">
-              {{ t('common.reset') }}
-            </el-button>
-
-            <el-button v-perm="'sys:user:add'" type="primary" @click="openCreate">
-              {{ t('perms.sys:user:add') }}
-            </el-button>
-          </div>
-        </div>
+      <template #actions>
+        <el-button v-perm="'sys:user:add'" type="primary" @click="openCreate">
+          {{ t('perms.sys:user:add') }}
+        </el-button>
       </template>
+    </CrudQueryCard>
 
+    <el-card class="table-card">
       <el-table v-loading="loading" :data="list" row-key="id">
         <el-table-column prop="id" :label="t('common.id')" width="80" />
         <el-table-column prop="username" :label="t('common.username')" min-width="140" />

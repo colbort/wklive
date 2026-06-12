@@ -22,6 +22,7 @@ import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { confirm } = useConfirm()
@@ -266,63 +267,35 @@ onMounted(() => {
 
 <template>
   <div class="module-page">
-    <el-card class="table-card">
-      <template #header>
-        <div style="display: flex; justify-content: space-between; align-items: center">
-          <span>{{ t('system.cronJobs') }}</span>
-          <el-button v-perm="'sys:job:add'" type="primary" @click="handleCreate">
-            <el-icon><Plus /></el-icon>
-            {{ t('common.add') }}
-          </el-button>
-        </div>
+    <CrudQueryCard :model="queryForm" @search="onSearch" @reset="onReset">
+      <el-form-item :label="t('system.jobName')">
+        <el-input v-model="queryForm.jobName" :placeholder="t('common.pleaseEnter')" clearable />
+      </el-form-item>
+
+      <el-form-item :label="t('system.jobGroup')">
+        <el-input v-model="queryForm.jobGroup" :placeholder="t('common.pleaseEnter')" clearable />
+      </el-form-item>
+
+      <el-form-item :label="t('common.status')">
+        <el-select v-model="queryForm.status" :placeholder="t('common.pleaseSelect')" clearable>
+          <el-option
+            v-for="item in jobStatusSelectOptions"
+            :key="item.value"
+            :label="jobStatusLabel(item.value, item.code)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+
+      <template #actions>
+        <el-button v-perm="'sys:job:add'" type="primary" @click="handleCreate">
+          <el-icon><Plus /></el-icon>
+          {{ t('common.add') }}
+        </el-button>
       </template>
+    </CrudQueryCard>
 
-      <!-- Query Form -->
-      <el-form :model="queryForm" inline style="margin-bottom: 16px">
-        <el-form-item :label="t('system.jobName')">
-          <el-input
-            v-model="queryForm.jobName"
-            :placeholder="t('common.pleaseEnter')"
-            clearable
-            style="width: 180px"
-          />
-        </el-form-item>
-
-        <el-form-item :label="t('system.jobGroup')">
-          <el-input
-            v-model="queryForm.jobGroup"
-            :placeholder="t('common.pleaseEnter')"
-            clearable
-            style="width: 180px"
-          />
-        </el-form-item>
-
-        <el-form-item :label="t('common.status')">
-          <el-select
-            v-model="queryForm.status"
-            :placeholder="t('common.pleaseSelect')"
-            clearable
-            style="width: 140px"
-          >
-            <el-option
-              v-for="item in jobStatusSelectOptions"
-              :key="item.value"
-              :label="jobStatusLabel(item.value, item.code)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="onSearch">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="onReset">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-
+    <el-card class="table-card">
       <!-- Table -->
       <el-table
         v-loading="loading"

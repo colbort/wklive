@@ -139,5 +139,3 @@ function handleNextPage() {
 
 onMounted(loadRows)
 </script>
-
-<style scoped></style>

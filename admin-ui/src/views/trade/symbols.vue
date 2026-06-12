@@ -1,25 +1,11 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('trade.symbols') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadCurrent">
-          <el-icon><Refresh /></el-icon>
-          {{ t('common.refresh') }}
-        </el-button>
-        <el-button
-          v-perm="'trade:symbol:add'"
-          class="page-create-action"
-          type="primary"
-          @click="openSymbolDialog()"
-        >
-          <el-icon><Plus /></el-icon>
-          {{ t('trade.addSymbol') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="90px"
+      @search="loadCurrent"
+      @reset="resetCurrent"
+    >
       <el-form-item :label="t('trade.tenantId')">
         <div class="query-field">
           <TenantSelect v-model="query.tenantId" class="tenant-select-filter" include-system />
@@ -52,14 +38,16 @@
         <el-input v-model="query.keyword" clearable class="query-keyword" />
       </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" @click="loadCurrent">
-          {{ t('common.search') }}
+      <template #actions>
+        <el-button @click="loadCurrent">
+          <el-icon><Refresh /></el-icon>
+          {{ t('common.refresh') }}
         </el-button>
-        <el-button @click="resetCurrent">
-          {{ t('common.reset') }}
+        <el-button v-perm="'trade:symbol:add'" type="primary" @click="openSymbolDialog()">
+          <el-icon><Plus /></el-icon>
+          {{ t('trade.addSymbol') }}
         </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">

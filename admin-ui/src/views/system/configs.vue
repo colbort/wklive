@@ -1,19 +1,6 @@
 <template>
   <div class="sys-config module-page">
-    <div class="page-header">
-      <h2>{{ t('system.config') }}</h2>
-      <el-button
-        v-perm="'sys:config:add'"
-        class="page-create-action"
-        type="primary"
-        @click="handleCreate"
-      >
-        <el-icon><Plus /></el-icon>
-        {{ t('common.add') }}
-      </el-button>
-    </div>
-
-    <CrudQueryCard :model="queryForm" :show-actions="false">
+    <CrudQueryCard :model="queryForm" @search="fetchList" @reset="handleReset">
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect
           v-model="queryForm.tenantId"
@@ -38,16 +25,12 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="fetchList">
-          <el-icon><Search /></el-icon>
-          {{ t('common.search') }}
+      <template #actions>
+        <el-button v-perm="'sys:config:add'" type="primary" @click="handleCreate">
+          <el-icon><Plus /></el-icon>
+          {{ t('common.add') }}
         </el-button>
-        <el-button @click="handleReset">
-          <el-icon><Refresh /></el-icon>
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
@@ -250,7 +233,7 @@
 import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { Plus, Search, Refresh } from '@element-plus/icons-vue'
+import { Plus } from '@element-plus/icons-vue'
 import { configService } from '@/services'
 import type { SysConfigItem, SysConfigCreateReq, OptionItem } from '@/services'
 import type {
@@ -920,30 +903,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.sys-config {
-  padding: 20px;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.page-header h2 {
-  margin: 0;
-  color: #333;
-}
-
-.query-card {
-  margin-bottom: 20px;
-}
-
-.table-card {
-  margin-bottom: 20px;
-}
-
 .config-value {
   display: inline-block;
   max-width: 200px;

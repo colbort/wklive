@@ -18,6 +18,9 @@
         <el-button type="primary" @click="loadRules">
           {{ t('common.search') }}
         </el-button>
+        <el-button @click="resetRuleQuery">
+          {{ t('common.reset') }}
+        </el-button>
         <el-button
           v-perm="'payment:tenant-channel-rule:add'"
           type="primary"
@@ -260,6 +263,12 @@ const loadRules = async () => {
   } finally {
     ruleLoading.value = false
   }
+}
+
+function resetRuleQuery() {
+  ruleQuery.tenantId = 0
+  ruleQuery.channelId = 0
+  resetAndLoad(loadRules)
 }
 
 const resetRuleVerifyState = () => {

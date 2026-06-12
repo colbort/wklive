@@ -9,6 +9,7 @@ import { formatDate } from '@/utils'
 import { logService, type OptionGroup } from '@/services'
 import type { OpLogItem } from '@/services/system/LogService'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const optionGroups = ref<OptionGroup[]>([])
@@ -86,57 +87,32 @@ onMounted(() => {
 
 <template>
   <div class="module-page">
+    <CrudQueryCard :model="queryForm" @search="onSearch" @reset="onReset">
+      <el-form-item :label="t('common.username')">
+        <el-input
+          v-model="queryForm.username"
+          :placeholder="t('common.pleaseInputUsername')"
+          clearable
+        />
+      </el-form-item>
+
+      <el-form-item :label="t('common.method')">
+        <el-select v-model="queryForm.method" :placeholder="t('common.pleaseSelect')" clearable>
+          <el-option
+            v-for="item in methodOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.code"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item :label="t('common.path')">
+        <el-input v-model="queryForm.path" :placeholder="t('common.pleaseInputPath')" clearable />
+      </el-form-item>
+    </CrudQueryCard>
+
     <el-card class="table-card">
-      <template #header>
-        {{ t('system.opLog') }}
-      </template>
-
-      <!-- Query Form -->
-      <el-form :model="queryForm" inline style="margin-bottom: 16px">
-        <el-form-item :label="t('common.username')">
-          <el-input
-            v-model="queryForm.username"
-            :placeholder="t('common.pleaseInputUsername')"
-            clearable
-            style="width: 200px"
-          />
-        </el-form-item>
-
-        <el-form-item :label="t('common.method')">
-          <el-select
-            v-model="queryForm.method"
-            :placeholder="t('common.pleaseSelect')"
-            clearable
-            style="width: 200px"
-          >
-            <el-option
-              v-for="item in methodOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.code"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item :label="t('common.path')">
-          <el-input
-            v-model="queryForm.path"
-            :placeholder="t('common.pleaseInputPath')"
-            clearable
-            style="width: 200px"
-          />
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="onSearch">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="onReset">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-
       <!-- Table -->
       <el-table
         v-loading="loading"

@@ -90,6 +90,7 @@ body {
 
 .module-page .query-card,
 .payment-page .query-card,
+.app-container .query-card,
 .itick-tenant-categories .query-card,
 .itick-tenant-products .query-card {
   grid-row: 1;
@@ -110,7 +111,8 @@ body {
 }
 
 .module-page .query-card,
-.payment-page .query-card {
+.payment-page .query-card,
+.app-container .query-card {
   background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
 }
 
@@ -153,6 +155,7 @@ body {
 
 .module-page .query-card .el-form,
 .payment-page .query-card .el-form,
+.app-container .query-card .el-form,
 .module-page .query-card-inner,
 .payment-page .query-card-inner {
   display: grid;
@@ -163,19 +166,28 @@ body {
 }
 
 .module-page .query-card .el-form-item,
-.payment-page .query-card .el-form-item {
+.payment-page .query-card .el-form-item,
+.app-container .query-card .el-form-item {
   margin: 0;
   width: 100%;
 }
 
+.module-page .crud-query-card--plain,
+.payment-page .crud-query-card--plain,
+.app-container .crud-query-card--plain {
+  margin-bottom: 16px;
+}
+
 .module-page .query-card .el-form-item__label,
-.payment-page .query-card .el-form-item__label {
+.payment-page .query-card .el-form-item__label,
+.app-container .query-card .el-form-item__label {
   flex: 0 0 100px;
   background: transparent;
 }
 
 .module-page .query-card .el-form-item__content,
-.payment-page .query-card .el-form-item__content {
+.payment-page .query-card .el-form-item__content,
+.app-container .query-card .el-form-item__content {
   flex: 1;
   min-width: 0;
 }
@@ -187,10 +199,17 @@ body {
   .query-card
   .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)),
 .module-page .query-card .crud-query-actions,
-.payment-page .query-card .crud-query-actions {
+.payment-page .query-card .crud-query-actions,
+.app-container .query-card .crud-query-actions {
   width: auto;
   min-width: max-content;
   justify-self: end;
+}
+
+.module-page .query-card .crud-query-actions + .crud-query-actions,
+.payment-page .query-card .crud-query-actions + .crud-query-actions,
+.app-container .query-card .crud-query-actions + .crud-query-actions {
+  justify-self: start;
 }
 
 .module-page
@@ -202,7 +221,8 @@ body {
   .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor))
   .el-form-item__content,
 .module-page .query-card .crud-query-actions .el-form-item__content,
-.payment-page .query-card .crud-query-actions .el-form-item__content {
+.payment-page .query-card .crud-query-actions .el-form-item__content,
+.app-container .query-card .crud-query-actions .el-form-item__content {
   width: auto;
   display: inline-flex;
   flex-wrap: wrap;
@@ -216,7 +236,11 @@ body {
 .payment-page .query-card .el-form-item:has(.el-input) .el-form-item__content,
 .payment-page .query-card .el-form-item:has(.el-input-number) .el-form-item__content,
 .payment-page .query-card .el-form-item:has(.el-select) .el-form-item__content,
-.payment-page .query-card .el-form-item:has(.el-date-editor) .el-form-item__content {
+.payment-page .query-card .el-form-item:has(.el-date-editor) .el-form-item__content,
+.app-container .query-card .el-form-item:has(.el-input) .el-form-item__content,
+.app-container .query-card .el-form-item:has(.el-input-number) .el-form-item__content,
+.app-container .query-card .el-form-item:has(.el-select) .el-form-item__content,
+.app-container .query-card .el-form-item:has(.el-date-editor) .el-form-item__content {
   width: var(--admin-query-control-width);
 }
 
@@ -227,7 +251,11 @@ body {
 .payment-page .query-card .el-input,
 .payment-page .query-card .el-input-number,
 .payment-page .query-card .el-select,
-.payment-page .query-card .el-date-editor {
+.payment-page .query-card .el-date-editor,
+.app-container .query-card .el-input,
+.app-container .query-card .el-input-number,
+.app-container .query-card .el-select,
+.app-container .query-card .el-date-editor {
   width: 100% !important;
 }
 

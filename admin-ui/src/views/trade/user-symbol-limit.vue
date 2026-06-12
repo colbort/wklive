@@ -8,30 +8,25 @@
         </el-button>
       </div>
     </div>
-    <el-card shadow="never" class="query-card">
-      <template #header>
-        {{ t('trade.riskQuery') }}
-      </template>
-      <el-form :model="riskQuery" inline label-width="90px">
-        <el-form-item :label="t('trade.tenantId')">
-          <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('trade.userId')">
-          <el-input-number v-model="riskQuery.userId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('trade.symbolId')">
-          <el-input-number v-model="riskQuery.symbolId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('trade.marketType')">
-          <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadRiskData">
-            {{ t('trade.loadConfig') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="riskQuery" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('trade.tenantId')">
+        <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('trade.userId')">
+        <el-input-number v-model="riskQuery.userId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('trade.symbolId')">
+        <el-input-number v-model="riskQuery.symbolId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('trade.marketType')">
+        <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadRiskData">
+          {{ t('trade.loadConfig') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
     <el-card shadow="never">
       <el-form label-width="120px">
         <el-form-item :label="t('trade.maxPositionQty')">
@@ -67,6 +62,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { GetUserSymbolLimitReq, SetUserSymbolLimitReq, tradeService } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 
@@ -127,4 +123,3 @@ const submitSymbolLimit = async () => {
 
 onMounted(loadCurrent)
 </script>
-<style scoped></style>

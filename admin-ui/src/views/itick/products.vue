@@ -1,25 +1,11 @@
 <template>
   <div class="itick-products module-page">
-    <div class="page-header">
-      <h2>{{ t('itick.products') }}</h2>
-      <div class="header-actions">
-        <el-button
-          v-perm="'itick:product:add'"
-          class="page-create-action"
-          type="primary"
-          @click="handleAdd"
-        >
-          <el-icon><Plus /></el-icon>
-          {{ t('common.add') }}
-        </el-button>
-        <el-button @click="refreshCurrentPage">
-          <el-icon><Refresh /></el-icon>
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="queryParams" label-width="90px" :show-actions="false">
+    <CrudQueryCard
+      :model="queryParams"
+      label-width="90px"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
       <el-form-item :label="t('itick.categoryType')">
         <el-select
           v-model="queryParams.categoryType"
@@ -88,14 +74,12 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" @click="handleQuery">
-          {{ t('common.search') }}
+      <template #actions>
+        <el-button v-perm="'itick:product:add'" type="primary" @click="handleAdd">
+          <el-icon><Plus /></el-icon>
+          {{ t('common.add') }}
         </el-button>
-        <el-button @click="resetQuery">
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
@@ -671,10 +655,6 @@ const handleLimitChange = () => {
   resetAndLoad(getList)
 }
 
-const refreshCurrentPage = () => {
-  getList()
-}
-
 const handleAdd = async () => {
   formMode.value = 'add'
   resetForm()
@@ -828,63 +808,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.itick-products {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
-  padding: 20px;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.page-header h2 {
-  margin: 0;
-  color: #333;
-}
-
-.query-card {
-  margin-bottom: 16px;
-}
-
-.table-card {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-  margin-bottom: 0;
-}
-
-.table-card :deep(.el-card__body) {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.table-card :deep(.el-table) {
-  flex: 1;
-  min-height: 0;
-}
-
-.table-card :deep(.el-table__inner-wrapper) {
-  height: 100%;
-}
-
-.table-card :deep(.el-table__body-wrapper) {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-}
-
 .pagination-bar {
   display: flex;
   justify-content: center;

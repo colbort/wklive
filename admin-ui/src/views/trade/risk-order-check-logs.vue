@@ -1,65 +1,25 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('trade.riskOrderCheckLogs') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadCurrent">
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-    <el-card shadow="never" class="query-card">
-      <template #header>
-        {{ t('trade.riskQuery') }}
-      </template>
-      <el-form :model="riskQuery" inline label-width="90px">
-        <el-form-item :label="t('trade.tenantId')">
-          <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('trade.userId')">
-          <el-input-number v-model="riskQuery.userId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('trade.symbolId')">
-          <el-input-number v-model="riskQuery.symbolId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('trade.marketType')">
-          <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadRiskData">
-            {{ t('trade.loadConfig') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard
+      :model="riskQuery"
+      label-width="90px"
+      @search="loadRiskLogs"
+      @reset="resetRiskLogQuery"
+    >
+      <el-form-item :label="t('trade.tenantId')">
+        <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('trade.userId')">
+        <el-input-number v-model="riskQuery.userId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('trade.symbolId')">
+        <el-input-number v-model="riskQuery.symbolId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('trade.marketType')">
+        <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
+      </el-form-item>
+    </CrudQueryCard>
     <el-card shadow="never" class="table-card">
-      <template #header>
-        {{ t('trade.riskLogs') }}
-      </template>
-      <el-form
-        :model="riskLogQuery"
-        inline
-        label-width="90px"
-        class="query-card-inner"
-      >
-        <el-form-item :label="t('trade.tenantId')">
-          <TenantSelect v-model="riskLogQuery.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('trade.userId')">
-          <el-input-number v-model="riskLogQuery.userId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('trade.symbolId')">
-          <el-input-number v-model="riskLogQuery.symbolId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('trade.orderNo')">
-          <el-input v-model="riskLogQuery.orderNo" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadRiskLogs">
-            {{ t('common.search') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
       <el-table v-loading="loading" :data="rows" stripe>
         <el-table-column
           prop="orderNo"
@@ -107,6 +67,7 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { tradeService, type GetRiskOrderCheckLogListReq, type RiskOrderCheckLog } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -137,14 +98,6 @@ const riskLogQuery = reactive<GetRiskOrderCheckLogListReq>({
   limit: 20,
 })
 
-const loadCurrent = async () => {
-  await loadRiskLogs()
-}
-
-const loadRiskData = async () => {
-  await loadRiskLogs()
-}
-
 const loadRiskLogs = async () => {
   loading.value = true
   try {
@@ -160,18 +113,25 @@ const loadRiskLogs = async () => {
   }
 }
 
+function resetRiskLogQuery() {
+  riskLogQuery.tenantId = 0
+  riskLogQuery.userId = 0
+  riskLogQuery.symbolId = 0
+  riskLogQuery.orderNo = ''
+  resetAndLoad(loadRiskLogs)
+}
+
 function handleLimitChange() {
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadRiskLogs)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadCurrent)
+  prevAndLoad(loadRiskLogs)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadCurrent)
+  nextAndLoad(loadRiskLogs)
 }
 
-onMounted(loadCurrent)
+onMounted(loadRiskLogs)
 </script>
-<style scoped></style>

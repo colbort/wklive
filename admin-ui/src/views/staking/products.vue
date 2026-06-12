@@ -1,23 +1,11 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('staking.products') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadProducts">
-          {{ t('common.refresh') }}
-        </el-button>
-        <el-button
-          v-perm="'staking:product:add'"
-          class="page-create-action"
-          type="primary"
-          @click="openProductDialog()"
-        >
-          {{ t('staking.addProduct') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="90px"
+      @search="loadProducts"
+      @reset="resetQuery"
+    >
       <el-form-item :label="t('staking.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -27,14 +15,11 @@
       <el-form-item :label="t('staking.productName')">
         <el-input v-model="query.productName" clearable />
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadProducts">
-          {{ t('common.search') }}
+      <template #actions>
+        <el-button v-perm="'staking:product:add'" type="primary" @click="openProductDialog()">
+          {{ t('staking.addProduct') }}
         </el-button>
-        <el-button @click="resetQuery">
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
@@ -416,5 +401,3 @@ onMounted(async () => {
   await Promise.all([loadProducts(), loadOptions()])
 })
 </script>
-
-<style scoped></style>

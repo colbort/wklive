@@ -9,6 +9,7 @@ import { usePagination, useLoading, useConfirm, useForm } from '@/composables'
 
 import { roleService, menuService } from '@/services'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 type RoleMenuNode = MenuNode & {
   parentId?: number
@@ -367,31 +368,14 @@ onMounted(async () => {
 
 <template>
   <div class="module-page">
-    <el-card class="table-card">
-      <template #header>
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
-          <div>{{ t('system.roles') }}</div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap">
-            <el-button v-perm="'sys:role:add'" type="primary" @click="openCreate">
-              {{ t('perms.sys:role:add') }}
-            </el-button>
-          </div>
-        </div>
-      </template>
+    <CrudQueryCard :model="queryForm" @search="onSearch" @reset="onReset">
+      <el-form-item :label="t('common.keyword')">
+        <el-input v-model="queryForm.keyword" :placeholder="t('common.keyword')" clearable />
+      </el-form-item>
 
-      <div
-        style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap"
-      >
-        <el-input
-          v-model="queryForm.keyword"
-          :placeholder="t('common.keyword')"
-          clearable
-          style="max-width: 260px"
-        />
-
+      <el-form-item :label="t('common.enabled')">
         <el-select
           v-model="queryForm.enabled"
-          style="width: 140px"
           :placeholder="t('common.enabled')"
           @change="onSearch"
         >
@@ -403,15 +387,16 @@ onMounted(async () => {
             :value="item.value"
           />
         </el-select>
+      </el-form-item>
 
-        <el-button @click="onSearch">
-          {{ t('common.search') }}
+      <template #actions>
+        <el-button v-perm="'sys:role:add'" type="primary" @click="openCreate">
+          {{ t('perms.sys:role:add') }}
         </el-button>
-        <el-button @click="onReset">
-          {{ t('common.reset') }}
-        </el-button>
-      </div>
+      </template>
+    </CrudQueryCard>
 
+    <el-card class="table-card">
       <el-table v-loading="loading" :data="tableData" style="width: 100%">
         <el-table-column prop="id" :label="t('common.id')" width="90" />
         <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />

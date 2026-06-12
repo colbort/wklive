@@ -8,6 +8,7 @@ import { useForm } from '@/composables/useForm'
 import { formatDate } from '@/utils'
 import { logService } from '@/services'
 import type { LoginLogItem } from '@/services/system/LogService'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 
@@ -69,44 +70,28 @@ onMounted(() => {
 
 <template>
   <div class="module-page">
+    <CrudQueryCard :model="queryForm" @search="onSearch" @reset="onReset">
+      <el-form-item :label="t('common.username')">
+        <el-input
+          v-model="queryForm.username"
+          :placeholder="t('common.pleaseInputUsername')"
+          clearable
+        />
+      </el-form-item>
+
+      <el-form-item :label="t('common.result')">
+        <el-select
+          v-model="queryForm.success"
+          :placeholder="t('common.pleaseSelectResult')"
+          clearable
+        >
+          <el-option :label="t('common.success')" :value="1" />
+          <el-option :label="t('common.failed')" :value="0" />
+        </el-select>
+      </el-form-item>
+    </CrudQueryCard>
+
     <el-card class="table-card">
-      <template #header>
-        {{ t('system.loginLog') }}
-      </template>
-
-      <!-- Query Form -->
-      <el-form :model="queryForm" inline style="margin-bottom: 16px">
-        <el-form-item :label="t('common.username')">
-          <el-input
-            v-model="queryForm.username"
-            :placeholder="t('common.pleaseInputUsername')"
-            clearable
-            style="width: 220px"
-          />
-        </el-form-item>
-
-        <el-form-item :label="t('common.result')">
-          <el-select
-            v-model="queryForm.success"
-            :placeholder="t('common.pleaseSelectResult')"
-            clearable
-            style="width: 140px"
-          >
-            <el-option :label="t('common.success')" :value="1" />
-            <el-option :label="t('common.failed')" :value="0" />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="onSearch">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="onReset">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-
       <!-- Table -->
       <el-table
         v-loading="loading"

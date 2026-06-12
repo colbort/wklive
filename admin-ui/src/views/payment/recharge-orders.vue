@@ -33,6 +33,9 @@
         <el-button type="primary" @click="loadList">
           {{ t('common.search') }}
         </el-button>
+        <el-button @click="resetQuery">
+          {{ t('common.reset') }}
+        </el-button>
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never" class="table-card">
@@ -238,6 +241,15 @@ const loadList = async () => {
   } finally {
     loading.value = false
   }
+}
+
+function resetQuery() {
+  query.tenantId = 0
+  query.userId = 0
+  query.orderNo = ''
+  query.bizOrderNo = ''
+  query.status = undefined
+  resetAndLoad(loadList)
 }
 
 const showDetail = async (row: RechargeOrder) => {

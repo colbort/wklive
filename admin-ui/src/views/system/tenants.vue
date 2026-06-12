@@ -1,19 +1,6 @@
 <template>
   <div class="sys-tenants module-page">
-    <div class="page-header">
-      <h2>{{ t('system.tenants') }}</h2>
-      <el-button
-        v-perm="'sys:tenant:add'"
-        class="page-create-action"
-        type="primary"
-        @click="handleCreate"
-      >
-        <el-icon><Plus /></el-icon>
-        {{ t('common.add') }}
-      </el-button>
-    </div>
-
-    <CrudQueryCard :model="queryForm" :show-actions="false">
+    <CrudQueryCard :model="queryForm" @search="fetchList" @reset="handleReset">
       <el-form-item :label="t('system.tenantCode')">
         <el-input
           v-model="queryForm.tenantCode"
@@ -54,16 +41,11 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="fetchList">
-          <el-icon><Search /></el-icon>
-          {{ t('common.search') }}
+      <template #actions>
+        <el-button v-perm="'sys:tenant:add'" type="primary" @click="handleCreate">
+          {{ t('common.add') }}
         </el-button>
-        <el-button @click="handleReset">
-          <el-icon><Refresh /></el-icon>
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
@@ -292,7 +274,6 @@
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { Plus, Search, Refresh } from '@element-plus/icons-vue'
 import { tenantsService } from '@/services/system/TenantsService'
 import type { OptionGroup } from '@/services'
 import type { SysTenantItem, SysTenantCreateReq } from '@/services/system/TenantsService'
@@ -531,29 +512,3 @@ onMounted(() => {
   fetchList()
 })
 </script>
-
-<style scoped>
-.sys-tenants {
-  padding: 20px;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.page-header h2 {
-  margin: 0;
-  color: #333;
-}
-
-.query-card {
-  margin-bottom: 20px;
-}
-
-.table-card {
-  margin-bottom: 20px;
-}
-</style>

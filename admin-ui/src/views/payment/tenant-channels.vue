@@ -21,6 +21,9 @@
         <el-button type="primary" @click="loadChannels">
           {{ t('common.search') }}
         </el-button>
+        <el-button @click="resetChannelQuery">
+          {{ t('common.reset') }}
+        </el-button>
         <el-button
           v-perm="'payment:tenant-channel:add'"
           type="primary"
@@ -326,6 +329,13 @@ const loadChannels = async () => {
   } finally {
     channelLoading.value = false
   }
+}
+
+function resetChannelQuery() {
+  channelQuery.tenantId = 0
+  channelQuery.platformId = 0
+  channelQuery.keyword = ''
+  resetAndLoad(loadChannels)
 }
 
 const resetChannelVerifyState = () => {

@@ -1,93 +1,64 @@
 <template>
-  <div class="app-container">
-    <el-card shadow="never" class="mb-16">
-      <el-form :model="queryForm" inline label-width="80px">
-        <el-form-item :label="t('common.keyword')">
-          <el-input
-            v-model="queryForm.keyword"
-            :placeholder="t('system.pleaseInputMenuName')"
-            clearable
-            style="width: 220px"
-            @keyup.enter="handleSearch"
+  <div class="module-page">
+    <CrudQueryCard
+      :model="queryForm"
+      label-width="80px"
+      @search="handleSearch"
+      @reset="handleReset"
+    >
+      <el-form-item :label="t('common.keyword')">
+        <el-input
+          v-model="queryForm.keyword"
+          :placeholder="t('system.pleaseInputMenuName')"
+          clearable
+          @keyup.enter="handleSearch"
+        />
+      </el-form-item>
+
+      <el-form-item :label="t('system.menuType')">
+        <el-select v-model="queryForm.menuType" clearable :placeholder="t('common.all')">
+          <el-option
+            v-for="item in menuTypeOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
           />
-        </el-form-item>
+        </el-select>
+      </el-form-item>
 
-        <el-form-item :label="t('system.menuType')">
-          <el-select
-            v-model="queryForm.menuType"
-            clearable
-            :placeholder="t('common.all')"
-            style="width: 140px"
-          >
-            <el-option
-              v-for="item in menuTypeOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+      <el-form-item :label="t('common.enabled')">
+        <el-select v-model="queryForm.enabled" clearable :placeholder="t('common.all')">
+          <el-option
+            v-for="item in enabledSelectOptions"
+            :key="item.value"
+            :label="enabledOptionLabel(item.value, item.code)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
 
-        <el-form-item :label="t('common.enabled')">
-          <el-select
-            v-model="queryForm.enabled"
-            clearable
-            :placeholder="t('common.all')"
-            style="width: 140px"
-          >
-            <el-option
-              v-for="item in enabledSelectOptions"
-              :key="item.value"
-              :label="enabledOptionLabel(item.value, item.code)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+      <el-form-item :label="t('common.visible')">
+        <el-select v-model="queryForm.visible" clearable :placeholder="t('common.all')">
+          <el-option
+            v-for="item in visibleSelectOptions"
+            :key="item.value"
+            :label="visibleOptionLabel(item.value, item.code)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
 
-        <el-form-item :label="t('common.visible')">
-          <el-select
-            v-model="queryForm.visible"
-            clearable
-            :placeholder="t('common.all')"
-            style="width: 140px"
-          >
-            <el-option
-              v-for="item in visibleSelectOptions"
-              :key="item.value"
-              :label="visibleOptionLabel(item.value, item.code)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="handleSearch">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="handleReset">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
-
-    <el-card shadow="never">
-      <template #header>
-        <div class="toolbar">
-          <div class="toolbar-left">
-            <span class="card-title">{{ t('system.menus') }}</span>
-          </div>
-          <div class="toolbar-right">
-            <el-button v-perm="'sys:menu:add'" type="primary" @click="handleAdd(0)">
-              {{ t('system.addMenu') }}
-            </el-button>
-            <el-button @click="getList">
-              {{ t('common.refresh') }}
-            </el-button>
-          </div>
-        </div>
+      <template #actions>
+        <el-button v-perm="'sys:menu:add'" type="primary" @click="handleAdd(0)">
+          {{ t('system.addMenu') }}
+        </el-button>
+        <el-button @click="getList">
+          {{ t('common.refresh') }}
+        </el-button>
       </template>
+    </CrudQueryCard>
 
+    <el-card class="table-card" shadow="never">
       <el-table
         v-loading="loading"
         :data="tableData"
@@ -390,6 +361,7 @@ import type {
   SysMenuTreeItem,
   SysMenuUpdateReq,
 } from '@/services/system/MenuService'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t, te } = useI18n()
 
@@ -862,37 +834,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.app-container {
-  padding: 16px;
-}
-
-.mb-16 {
-  margin-bottom: 16px;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.toolbar-left {
-  display: flex;
-  align-items: center;
-}
-
-.toolbar-right {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-}
-
 .menu-icon-cell {
   display: flex;
   align-items: center;

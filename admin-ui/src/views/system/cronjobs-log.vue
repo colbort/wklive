@@ -8,6 +8,7 @@ import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { formatDate } from '@/utils'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 
@@ -87,53 +88,28 @@ onMounted(() => {
 
 <template>
   <div class="module-page">
+    <CrudQueryCard :model="queryForm" @search="onSearch" @reset="onReset">
+      <el-form-item :label="t('system.jobName')">
+        <el-input v-model="queryForm.jobName" :placeholder="t('common.pleaseEnter')" clearable />
+      </el-form-item>
+
+      <el-form-item :label="t('system.invokeTarget')">
+        <el-input
+          v-model="queryForm.invokeTarget"
+          :placeholder="t('common.pleaseEnter')"
+          clearable
+        />
+      </el-form-item>
+
+      <el-form-item :label="t('common.status')">
+        <el-select v-model="queryForm.status" :placeholder="t('common.pleaseSelect')" clearable>
+          <el-option :label="t('common.success')" :value="1" />
+          <el-option :label="t('common.failed')" :value="0" />
+        </el-select>
+      </el-form-item>
+    </CrudQueryCard>
+
     <el-card class="table-card">
-      <template #header>
-        {{ t('system.cronJobLog') }}
-      </template>
-
-      <!-- Query Form -->
-      <el-form :model="queryForm" inline style="margin-bottom: 16px">
-        <el-form-item :label="t('system.jobName')">
-          <el-input
-            v-model="queryForm.jobName"
-            :placeholder="t('common.pleaseEnter')"
-            clearable
-            style="width: 180px"
-          />
-        </el-form-item>
-
-        <el-form-item :label="t('system.invokeTarget')">
-          <el-input
-            v-model="queryForm.invokeTarget"
-            :placeholder="t('common.pleaseEnter')"
-            clearable
-            style="width: 180px"
-          />
-        </el-form-item>
-
-        <el-form-item :label="t('common.status')">
-          <el-select
-            v-model="queryForm.status"
-            :placeholder="t('common.pleaseSelect')"
-            clearable
-            style="width: 140px"
-          >
-            <el-option :label="t('common.success')" :value="1" />
-            <el-option :label="t('common.failed')" :value="0" />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="onSearch">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="onReset">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-
       <!-- Table -->
       <el-table
         v-loading="loading"

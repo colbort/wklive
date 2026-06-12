@@ -9,35 +9,32 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
+    <CrudQueryCard :model="riskQuery" label-width="90px" :show-actions="false">
       <template #header>
         {{ t('trade.riskQuery') }}
       </template>
+      <el-form-item :label="t('trade.tenantId')">
+        <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
+      </el-form-item>
 
-      <el-form :model="riskQuery" inline label-width="90px">
-        <el-form-item :label="t('trade.tenantId')">
-          <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
-        </el-form-item>
+      <el-form-item :label="t('trade.userId')">
+        <el-input-number v-model="riskQuery.userId" :min="0" :precision="0" />
+      </el-form-item>
 
-        <el-form-item :label="t('trade.userId')">
-          <el-input-number v-model="riskQuery.userId" :min="0" :precision="0" />
-        </el-form-item>
+      <el-form-item :label="t('trade.symbolId')">
+        <el-input-number v-model="riskQuery.symbolId" :min="0" :precision="0" />
+      </el-form-item>
 
-        <el-form-item :label="t('trade.symbolId')">
-          <el-input-number v-model="riskQuery.symbolId" :min="0" :precision="0" />
-        </el-form-item>
+      <el-form-item :label="t('trade.marketType')">
+        <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
+      </el-form-item>
 
-        <el-form-item :label="t('trade.marketType')">
-          <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="loadRiskData">
-            {{ t('trade.loadConfig') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+      <el-form-item>
+        <el-button type="primary" @click="loadRiskData">
+          {{ t('trade.loadConfig') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <div class="risk-grid">
       <el-card shadow="never">
@@ -206,11 +203,12 @@
         {{ t('trade.riskLogs') }}
       </template>
 
-      <el-form
+      <CrudQueryCard
         :model="riskLogQuery"
-        inline
+        :card="false"
         label-width="90px"
-        class="query-card-inner"
+        @search="loadRiskLogs"
+        @reset="resetRiskLogQuery"
       >
         <el-form-item :label="t('trade.tenantId')">
           <TenantSelect v-model="riskLogQuery.tenantId" class="tenant-select-filter" />
@@ -227,13 +225,7 @@
         <el-form-item :label="t('trade.orderNo')">
           <el-input v-model="riskLogQuery.orderNo" clearable />
         </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="loadRiskLogs">
-            {{ t('common.search') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
+      </CrudQueryCard>
 
       <el-table v-loading="loading" :data="rows" stripe>
         <el-table-column
@@ -296,6 +288,7 @@ import {
   type RiskOrderCheckLog,
 } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -491,6 +484,14 @@ const loadRiskLogs = async () => {
   }
 }
 
+function resetRiskLogQuery() {
+  riskLogQuery.tenantId = 0
+  riskLogQuery.userId = 0
+  riskLogQuery.symbolId = 0
+  riskLogQuery.orderNo = ''
+  resetAndLoad(loadRiskLogs)
+}
+
 const showDetail = (row: RiskOrderCheckLog) => {
   detailData.value = row
   detailVisible.value = true
@@ -561,10 +562,6 @@ onMounted(loadCurrent)
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  margin-bottom: 16px;
-}
-
-.query-card-inner {
   margin-bottom: 16px;
 }
 </style>

@@ -2,7 +2,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import { Search, Refresh, Message, View } from '@element-plus/icons-vue'
+import { Message, View } from '@element-plus/icons-vue'
 import CursorPagination from '@/components/common/CursorPagination.vue'
 import TenantSelect from '@/components/TenantSelect.vue'
 import { useLoading } from '@/composables/useLoading'
@@ -189,15 +189,7 @@ onMounted(() => {
 
 <template>
   <div class="module-page verification-code-page">
-    <div class="page-header">
-      <h2>{{ t('system.verificationCodes') }}</h2>
-      <el-button v-perm="'sys:verification-code:test'" type="primary" @click="openTestDialog">
-        <el-icon><Message /></el-icon>
-        {{ t('system.testSendVerificationCode') }}
-      </el-button>
-    </div>
-
-    <CrudQueryCard :model="queryForm" :show-actions="false">
+    <CrudQueryCard :model="queryForm" @search="onSearch" @reset="onReset">
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="queryForm.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -239,16 +231,12 @@ onMounted(() => {
           style="width: 220px"
         />
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSearch">
-          <el-icon><Search /></el-icon>
-          {{ t('common.search') }}
+      <template #actions>
+        <el-button v-perm="'sys:verification-code:test'" type="primary" @click="openTestDialog">
+          <el-icon><Message /></el-icon>
+          {{ t('system.testSendVerificationCode') }}
         </el-button>
-        <el-button @click="onReset">
-          <el-icon><Refresh /></el-icon>
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
@@ -435,14 +423,3 @@ onMounted(() => {
     </el-dialog>
   </div>
 </template>
-
-<style scoped>
-.verification-code-page :deep(.el-form-item) {
-  margin-bottom: 14px;
-}
-
-.break-text {
-  word-break: break-all;
-  white-space: pre-wrap;
-}
-</style>

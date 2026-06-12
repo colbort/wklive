@@ -333,5 +333,3 @@ function handleNextPage() {
 
 onMounted(loadOrders)
 </script>
-
-<style scoped></style>
