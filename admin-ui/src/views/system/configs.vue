@@ -181,7 +181,7 @@
           </el-select>
           <el-input
             v-else
-            :model-value="t('options.' + formData.configKey)"
+            :model-value="getConfigKeyLabel(formData.configKey)"
             :placeholder="t('common.pleaseEnter')"
             disabled
           />
@@ -416,6 +416,12 @@ async function loadKeys() {
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : 'Failed to load keys')
   }
+}
+
+function getConfigKeyLabel(configKey: string) {
+  if (!configKey) return ''
+  const key = keys.value.find((item) => item.code === configKey)
+  return key ? getOptionLabel(t, key.code, key.value) : t(`options.${configKey}`)
 }
 
 // Fetch list

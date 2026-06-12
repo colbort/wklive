@@ -5,6 +5,17 @@
   --admin-muted-bg: #f8fafc;
 }
 
+html,
+body,
+#app {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+}
+
 .module-page,
 .payment-page {
   display: flex;

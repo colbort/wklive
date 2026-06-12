@@ -110,6 +110,7 @@ onBeforeUnmount(() => {
 .layout {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
 
 .sider {
@@ -117,13 +118,13 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   background: #fff;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
 }
 
 .brand {
   height: 56px;
+  flex: 0 0 56px;
   display: flex;
   align-items: center;
   padding: 0 16px;
@@ -146,13 +147,16 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 .content {
   padding: 16px;
-  overflow: auto;
+  overflow: hidden;
   flex: 1;
   background: #f7f8fa;
   min-width: 0;
+  min-height: 0;
 }
 
 .resizer {

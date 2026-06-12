@@ -49,8 +49,11 @@ function iconComp(icon?: string) {
 
 <style scoped>
 .aside-menu {
+  flex: 1;
+  min-height: 0;
   border-right: none;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 :deep(.el-menu--collapse) {
