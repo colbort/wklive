@@ -43,9 +43,9 @@
           >
             <el-option :label="t('common.all')" :value="0" />
             <el-option
-              v-for="item in enabledOptions"
+              v-for="item in enabledSelectOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="enabledOptionLabel(item.value, item.code)"
               :value="item.value"
             />
           </el-select>
@@ -83,7 +83,7 @@
         <el-table-column :label="t('system.enabled')" width="100" align="center">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
+              {{ enabledLabel(row.enabled) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -232,11 +232,14 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="t('system.enabled')" prop="enabled">
-              <el-radio-group v-model="formData.enabled">
-                <el-radio v-for="item in enabledOptions" :key="item.value" :value="item.value">
-                  {{ getOptionLabel(t, item.code, item.value) }}
-                </el-radio>
-              </el-radio-group>
+              <el-select v-model="formData.enabled" style="width: 100%">
+                <el-option
+                  v-for="item in enabledSelectOptions"
+                  :key="item.value"
+                  :label="enabledOptionLabel(item.value, item.code)"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -299,6 +302,15 @@ import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/op
 const { t } = useI18n()
 const optionGroups = ref<OptionGroup[]>([])
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
+const enabledSelectOptions = computed(() => {
+  const options = enabledOptions.value.filter((item) => item.value !== 0)
+  return options.length
+    ? options
+    : [
+        { value: 1, code: 'COMMON_STATUS_ENABLED' },
+        { value: 2, code: 'COMMON_STATUS_DISABLED' },
+      ]
+})
 
 // Pagination and main list
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -349,6 +361,19 @@ const formRules = {
   expireTime: [{ required: true, message: t('validation.required'), trigger: 'change' }],
   contactName: [{ required: true, message: t('system.pleaseInputContactName'), trigger: 'blur' }],
   contactPhone: [{ required: true, message: t('system.pleaseInputContactPhone'), trigger: 'blur' }],
+}
+
+function enabledOptionLabel(value: number | string | undefined, code?: string) {
+  if (Number(value) === 1) return t('common.enabled')
+  if (Number(value) === 2) return t('common.disabled')
+  if (Number(value) === 0) return t('common.all')
+  return getOptionLabel(t, code, Number(value))
+}
+
+function enabledLabel(value: number | undefined) {
+  const label = getOptionValueLabel(optionGroups.value, 'enabled', value, t)
+  if (label && label !== value) return label
+  return enabledOptionLabel(value)
 }
 
 // Fetch list

@@ -83,7 +83,7 @@ func (m *defaultSysRoleMenuModel) InsertBatch(ctx context.Context, data []*SysRo
 }
 
 func (m *defaultSysRoleMenuModel) TransactCtx(ctx context.Context, fn func(context.Context, g.Session) error) error {
-	return m.TransactCtx(ctx, fn)
+	return m.CachedConn.TransactCtx(ctx, fn)
 }
 
 func (m *defaultSysRoleMenuModel) ListByRoleId(ctx context.Context, roleId int64) ([]*SysRoleMenu, error) {

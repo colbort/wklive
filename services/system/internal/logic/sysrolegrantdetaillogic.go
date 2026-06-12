@@ -27,7 +27,7 @@ func NewSysRoleGrantDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 获取角色授权详情
 func (l *SysRoleGrantDetailLogic) SysRoleGrantDetail(in *system.SysRoleGrantDetailReq) (*system.SysRoleGrantDetailResp, error) {
-	roleMenus, err := l.svcCtx.RoleMenuModel.ListByRoleId(l.ctx, in.RoleId)
+	roleMenus, err := l.svcCtx.RoleMenuModel.ListByRoleId(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (l *SysRoleGrantDetailLogic) SysRoleGrantDetail(in *system.SysRoleGrantDeta
 	return &system.SysRoleGrantDetailResp{
 		Base: helper.OkResp(),
 		Data: &system.SysRoleGrantDetailData{
-			RoleId:   in.RoleId,
+			RoleId:   in.Id,
 			MenuIds:  menuIds,
 			PermKeys: permKeys,
 		},

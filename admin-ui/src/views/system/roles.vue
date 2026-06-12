@@ -22,11 +22,38 @@ type RoleMenuNode = MenuNode & {
 const { t } = useI18n()
 const optionGroups = ref<OptionGroup[]>([])
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
+const enabledSelectOptions = computed(() => {
+  const options = enabledOptions.value.filter((item) => item.value !== 0)
+  return options.length
+    ? options
+    : [
+        { value: 1, code: 'COMMON_STATUS_ENABLED' },
+        { value: 2, code: 'COMMON_STATUS_DISABLED' },
+      ]
+})
 
 // ===== helpers =====
 function isSuperRole(r: SysRole | null | undefined) {
   if (!r) return false
-  return r.isSuper === true || r.code === 'super_admin' || r.id === 1
+  return (
+    r.isSuper === true ||
+    r.code === 'super_admin' ||
+    r.code === 'tenant_super_admin' ||
+    r.id === 1
+  )
+}
+
+function enabledOptionLabel(value: number | string | undefined, code?: string) {
+  if (Number(value) === 1) return t('common.enabled')
+  if (Number(value) === 2) return t('common.disabled')
+  if (Number(value) === 0) return t('common.all')
+  return getOptionLabel(t, code, Number(value))
+}
+
+function enabledLabel(value: number | undefined) {
+  const label = getOptionValueLabel(optionGroups.value, 'enabled', value, t)
+  if (label && label !== value) return label
+  return enabledOptionLabel(value)
 }
 
 // ===== state =====
@@ -297,7 +324,7 @@ function collectCheckedMenuIds(): number[] {
 
   return allIds.filter((id) => {
     const node = menuNodeMap.value.get(Number(id))
-    return node && node.menuType !== 3
+    return node && (!node.children || node.children.length === 0)
   })
 }
 
@@ -373,9 +400,9 @@ onMounted(async () => {
         >
           <el-option :label="t('common.all')" :value="0" />
           <el-option
-            v-for="item in enabledOptions"
+            v-for="item in enabledSelectOptions"
             :key="item.value"
-            :label="getOptionLabel(t, item.code, item.value)"
+            :label="enabledOptionLabel(item.value, item.code)"
             :value="item.value"
           />
         </el-select>
@@ -396,7 +423,7 @@ onMounted(async () => {
         <el-table-column :label="t('common.enabled')" width="110">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
+              {{ enabledLabel(row.enabled) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -482,11 +509,14 @@ onMounted(async () => {
           prop="enabled"
           :rules="[{ required: true, message: t('common.required') }]"
         >
-          <el-radio-group v-model="editForm.enabled">
-            <el-radio v-for="item in enabledOptions" :key="item.value" :label="item.value">
-              {{ getOptionLabel(t, item.code, item.value) }}
-            </el-radio>
-          </el-radio-group>
+          <el-select v-model="editForm.enabled" style="width: 100%">
+            <el-option
+              v-for="item in enabledSelectOptions"
+              :key="item.value"
+              :label="enabledOptionLabel(item.value, item.code)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
 
         <el-form-item :label="t('common.remark')" prop="remark">

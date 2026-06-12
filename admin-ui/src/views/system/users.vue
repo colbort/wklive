@@ -16,14 +16,15 @@ import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/op
 const { t } = useI18n()
 const optionGroups = ref<OptionGroup[]>([])
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
-const enabledRadioOptions = computed(() =>
-  enabledOptions.value.length
-    ? enabledOptions.value
+const enabledSelectOptions = computed(() => {
+  const options = enabledOptions.value.filter((item) => item.value !== 0)
+  return options.length
+    ? options
     : [
         { value: 1, code: 'COMMON_STATUS_ENABLED' },
         { value: 2, code: 'COMMON_STATUS_DISABLED' },
-      ],
-)
+      ]
+})
 
 // Pagination and main list
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -124,6 +125,7 @@ function openCreate() {
 }
 
 function openEdit(row: SysUserItem) {
+  if (isProtectedUser(row)) return
   editMode.value = 'update'
   editForm.id = row.id
   editForm.username = row.username
@@ -171,6 +173,7 @@ async function submitEdit() {
 const { confirm } = useConfirm()
 
 async function onDelete(row: SysUserItem) {
+  if (isProtectedUser(row)) return
   try {
     await confirm(t('common.confirmDeleteUser', { username: row.username }), { type: 'warning' })
     const res = await userService.delete(row.id)
@@ -184,6 +187,7 @@ async function onDelete(row: SysUserItem) {
 }
 
 async function onToggleEnabled(row: SysUserItem) {
+  if (isProtectedUser(row)) return
   try {
     const next = row.enabled === 1 ? 2 : 1
     const res = await userService.updateUserEnabled(row.id, next)
@@ -202,6 +206,7 @@ const { form: pwdForm } = useForm({
 const { loading: pwdSubmitLoading, withLoading: withPwdLoading } = useLoading()
 
 function openResetPwd(row: SysUserItem) {
+  if (isProtectedUser(row)) return
   pwdForm.id = row.id
   pwdForm.username = row.username
   pwdForm.password = ''
@@ -232,6 +237,7 @@ const { form: roleForm } = useForm({
 const { loading: roleAssignLoading, withLoading: withRoleAssignLoading } = useLoading()
 
 function openAssignRoles(row: SysUserItem) {
+  if (isProtectedUser(row)) return
   roleForm.userId = row.id
   roleForm.username = row.username
   roleForm.roleIds = (row.roleIds || []).slice()
@@ -382,12 +388,31 @@ const roleNameMap = computed(() => {
   return m
 })
 
+const roleMap = computed(() => {
+  const m = new Map<number, SysRole>()
+  roles.value.forEach((r) => m.set(r.id, r))
+  return m
+})
+
+function isProtectedUser(row: SysUserItem) {
+  if (row.id === 1) return true
+  return (row.roleIds || []).some((roleId) => {
+    const code = roleMap.value.get(roleId)?.code
+    return code === 'super_admin' || code === 'tenant_super_admin'
+  })
+}
+
+function enabledOptionLabel(value: number | string | undefined, code?: string) {
+  if (Number(value) === 1) return t('common.enabled')
+  if (Number(value) === 2) return t('common.disabled')
+  if (Number(value) === 0) return t('common.all')
+  return getOptionLabel(t, code, Number(value))
+}
+
 function enabledLabel(value: number | undefined) {
   const label = getOptionValueLabel(optionGroups.value, 'enabled', value, t)
-  if (label) return label
-  if (value === 1) return t('common.enabled')
-  if (value === 2) return t('common.disabled')
-  return value ?? '-'
+  if (label && label !== value) return label
+  return enabledOptionLabel(value)
 }
 
 onMounted(async () => {
@@ -417,9 +442,9 @@ onMounted(async () => {
               :placeholder="t('common.enabled')"
             >
               <el-option
-                v-for="o in enabledOptions"
+                v-for="o in enabledSelectOptions"
                 :key="o.value"
-                :label="getOptionLabel(t, o.code)"
+                :label="enabledOptionLabel(o.value, o.code)"
                 :value="o.value"
               />
             </el-select>
@@ -485,15 +510,27 @@ onMounted(async () => {
 
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-perm="'sys:user:update'" @click="openEdit(row)">
+                  <el-dropdown-item
+                    v-perm="'sys:user:update'"
+                    :disabled="isProtectedUser(row)"
+                    @click="openEdit(row)"
+                  >
                     {{ t('perms.sys:user:update') }}
                   </el-dropdown-item>
 
-                  <el-dropdown-item v-perm="'sys:user:resetpwd'" @click="openResetPwd(row)">
+                  <el-dropdown-item
+                    v-perm="'sys:user:resetpwd'"
+                    :disabled="isProtectedUser(row)"
+                    @click="openResetPwd(row)"
+                  >
                     {{ t('perms.sys:user:resetpwd') }}
                   </el-dropdown-item>
 
-                  <el-dropdown-item v-perm="'sys:user:assignrole'" @click="openAssignRoles(row)">
+                  <el-dropdown-item
+                    v-perm="'sys:user:assignrole'"
+                    :disabled="isProtectedUser(row)"
+                    @click="openAssignRoles(row)"
+                  >
                     {{ t('perms.sys:user:assignrole') }}
                   </el-dropdown-item>
 
@@ -501,11 +538,20 @@ onMounted(async () => {
                     {{ t('perms.sys:user:google2fa') }}
                   </el-dropdown-item>
 
-                  <el-dropdown-item v-perm="'sys:user:status'" divided @click="onToggleEnabled(row)">
+                  <el-dropdown-item
+                    v-perm="'sys:user:status'"
+                    divided
+                    :disabled="isProtectedUser(row)"
+                    @click="onToggleEnabled(row)"
+                  >
                     {{ row.enabled === 1 ? t('common.disable') : t('common.enable') }}
                   </el-dropdown-item>
 
-                  <el-dropdown-item v-perm="'sys:user:delete'" @click="onDelete(row)">
+                  <el-dropdown-item
+                    v-perm="'sys:user:delete'"
+                    :disabled="isProtectedUser(row)"
+                    @click="onDelete(row)"
+                  >
                     <span style="color: var(--el-color-danger)">
                       {{ t('perms.sys:user:delete') }}
                     </span>
@@ -550,9 +596,9 @@ onMounted(async () => {
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="editForm.enabled" style="width: 100%">
             <el-option
-              v-for="item in enabledRadioOptions"
+              v-for="item in enabledSelectOptions"
               :key="item.value"
-              :label="String(getOptionLabel(t, item.code, item.value))"
+              :label="enabledOptionLabel(item.value, item.code)"
               :value="item.value"
             />
           </el-select>

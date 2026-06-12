@@ -36,9 +36,9 @@
             style="width: 140px"
           >
             <el-option
-              v-for="item in enabledOptions"
+              v-for="item in enabledSelectOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="enabledOptionLabel(item.value, item.code)"
               :value="item.value"
             />
           </el-select>
@@ -52,9 +52,9 @@
             style="width: 140px"
           >
             <el-option
-              v-for="item in visibleOptions"
+              v-for="item in visibleSelectOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="visibleOptionLabel(item.value, item.code)"
               :value="item.value"
             />
           </el-select>
@@ -150,7 +150,7 @@
         <el-table-column :label="t('common.visible')" width="90" align="center">
           <template #default="{ row }">
             <el-tag :type="row.visible === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'visible', row.visible, t) }}
+              {{ visibleLabel(row.visible) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -158,7 +158,7 @@
         <el-table-column :label="t('common.enabled')" width="90" align="center">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'danger'">
-              {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
+              {{ enabledLabel(row.enabled) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -310,27 +310,15 @@
           </el-col>
         </el-row>
 
-        <el-row v-if="formData.menuType !== 3" :gutter="16">
+        <el-row :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('system.sort')" prop="sort">
               <el-input-number
                 v-model="formData.sort"
                 :min="0"
-                :max="9999"
+                :max="999999"
                 style="width: 100%"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row v-if="formData.menuType === 3" :gutter="16">
-          <el-col :span="12">
-            <el-form-item :label="t('system.sort')" prop="sort">
-              <el-input-number
-                v-model="formData.sort"
-                :min="0"
-                :max="9999"
-                style="width: 100%"
+                @change="handleSortChange"
               />
             </el-form-item>
           </el-col>
@@ -343,21 +331,27 @@
         <el-row :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('common.visible')" prop="visible">
-              <el-radio-group v-model="formData.visible">
-                <el-radio v-for="item in visibleOptions" :key="item.value" :label="item.value">
-                  {{ getOptionLabel(t, item.code, item.value) }}
-                </el-radio>
-              </el-radio-group>
+              <el-select v-model="formData.visible" style="width: 100%">
+                <el-option
+                  v-for="item in visibleSelectOptions"
+                  :key="item.value"
+                  :label="visibleOptionLabel(item.value, item.code)"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item :label="t('common.enabled')" prop="enabled">
-              <el-radio-group v-model="formData.enabled">
-                <el-radio v-for="item in enabledOptions" :key="item.value" :label="item.value">
-                  {{ getOptionLabel(t, item.code, item.value) }}
-                </el-radio>
-              </el-radio-group>
+              <el-select v-model="formData.enabled" style="width: 100%">
+                <el-option
+                  v-for="item in enabledSelectOptions"
+                  :key="item.value"
+                  :label="enabledOptionLabel(item.value, item.code)"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -428,6 +422,24 @@ const optionGroups = ref<OptionGroup[]>([])
 const menuTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'menuType'))
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
+const enabledSelectOptions = computed(() => {
+  const options = enabledOptions.value.filter((item) => item.value !== 0)
+  return options.length
+    ? options
+    : [
+        { value: 1, code: 'COMMON_STATUS_ENABLED' },
+        { value: 2, code: 'COMMON_STATUS_DISABLED' },
+      ]
+})
+const visibleSelectOptions = computed(() => {
+  const options = visibleOptions.value.filter((item) => item.value !== 0)
+  return options.length
+    ? options
+    : [
+        { value: 1, code: 'SWITCH_ON' },
+        { value: 2, code: 'SWITCH_OFF' },
+      ]
+})
 
 // Composables
 const { loading, withLoading: withMainLoading } = useLoading()
@@ -473,6 +485,7 @@ const { form: formData } = useForm<MenuFormData>({
 })
 
 const currentEditId = computed(() => formData.id ?? 0)
+const isTopMenu = computed(() => Number(formData.parentId) === 0)
 
 const currentIconComponent = computed(() => {
   return resolveIconComponent(formData.icon)
@@ -532,7 +545,7 @@ const rules = computed<FormRules>(() => ({
   path: [
     {
       validator: (_rule, value, callback) => {
-        if (formData.menuType !== 3 && !String(value || '').trim()) {
+        if (formData.menuType !== 3 && !isTopMenu.value && !String(value || '').trim()) {
           callback(new Error(t('system.pleaseInputPath')))
           return
         }
@@ -585,6 +598,32 @@ function getMenuTitle(row: SysMenuItem) {
   const key = `menu.${row.id}`
   if (te(key)) return t(key)
   return row.name
+}
+
+function enabledOptionLabel(value: number | string | undefined, code?: string) {
+  if (Number(value) === 1) return t('common.enabled')
+  if (Number(value) === 2) return t('common.disabled')
+  if (Number(value) === 0) return t('common.all')
+  return getOptionLabel(t, code, Number(value))
+}
+
+function enabledLabel(value: number | undefined) {
+  const label = getOptionValueLabel(optionGroups.value, 'enabled', value, t)
+  if (label && label !== value) return label
+  return enabledOptionLabel(value)
+}
+
+function visibleOptionLabel(value: number | string | undefined, code?: string) {
+  if (Number(value) === 1) return t('common.visible')
+  if (Number(value) === 2) return t('common.hidden')
+  if (Number(value) === 0) return t('common.all')
+  return getOptionLabel(t, code, Number(value))
+}
+
+function visibleLabel(value: number | undefined) {
+  const label = getOptionValueLabel(optionGroups.value, 'visible', value, t)
+  if (label && label !== value) return label
+  return visibleOptionLabel(value)
 }
 
 function buildTree(list: SysMenuItem[]): SysMenuTreeItem[] {
@@ -644,6 +683,10 @@ function handleMenuTypeChange() {
   nextTick(() => {
     formRef.value?.clearValidate(['path', 'component', 'perms'])
   })
+}
+
+function handleSortChange(value: number | undefined) {
+  formData.sort = Number(value ?? 0)
 }
 
 function showError(error: unknown) {
@@ -772,7 +815,7 @@ async function handleSubmit() {
           path: formData.path.trim(),
           component: formData.component.trim(),
           icon: formData.icon.trim(),
-          sort: formData.sort,
+          sort: Number(formData.sort || 0),
           visible: formData.visible,
           enabled: formData.enabled,
           perms: formData.perms.trim(),
@@ -791,7 +834,7 @@ async function handleSubmit() {
           path: formData.path.trim(),
           component: formData.component.trim(),
           icon: formData.icon.trim(),
-          sort: formData.sort,
+          sort: Number(formData.sort || 0),
           visible: formData.visible,
           enabled: formData.enabled,
           perms: formData.perms.trim(),

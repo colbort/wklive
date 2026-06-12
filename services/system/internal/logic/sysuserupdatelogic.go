@@ -2,13 +2,14 @@ package logic
 
 import (
 	"context"
-	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysUserUpdateLogic struct {
@@ -26,6 +27,11 @@ func NewSysUserUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system.RespBase, error) {
+	if in.Id == 1 {
+		return &system.RespBase{
+			Base: helper.GetErrResp(i18n.SuperAdminCannotBeDeleted, i18n.Translate(i18n.SuperAdminCannotBeDeleted, l.ctx)),
+		}, nil
+	}
 	one, err := l.svcCtx.UserModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err

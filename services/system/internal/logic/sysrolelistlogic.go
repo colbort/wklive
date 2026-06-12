@@ -42,9 +42,6 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 	// 3) 组装返回
 	data := make([]*system.SysRoleItem, 0, len(items))
 	for _, r := range items {
-		if r.Code == "super_admin" || r.Code == "tenant_super_admin" {
-			continue
-		}
 		data = append(data, &system.SysRoleItem{
 			Id:          r.Id,
 			Name:        r.Name,

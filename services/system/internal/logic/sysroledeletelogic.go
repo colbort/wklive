@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -25,7 +26,17 @@ func NewSysRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleDeleteLogic) SysRoleDelete(in *system.SysRoleDeleteReq) (*system.RespBase, error) {
-	err := l.svcCtx.RoleModel.Delete(l.ctx, in.Id)
+	role, err := l.svcCtx.RoleModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	if role == nil {
+		return nil, i18n.StatusError(l.ctx, i18n.RoleNotFound)
+	}
+	if role.Code == "super_admin" || role.Code == "tenant_super_admin" {
+		return nil, i18n.StatusError(l.ctx, i18n.SuperAdminDeleteForbidden)
+	}
+	err = l.svcCtx.RoleModel.Delete(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}

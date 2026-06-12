@@ -49,6 +49,10 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 		return nil, i18n.StatusError(l.ctx, i18n.RoleNotFound)
 	}
 
+	if role.Code == "super_admin" || role.Code == "tenant_super_admin" {
+		return nil, i18n.StatusError(l.ctx, i18n.SuperAdminUpdateForbidden)
+	}
+
 	if len(menuIds) > 0 {
 		existIds, err := l.svcCtx.MenuModel.FindIdsByIds(l.ctx, menuIds)
 		if err != nil {
@@ -78,11 +82,12 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 			return nil
 		}
 		rows := make([]*models.SysRoleMenu, 0, len(menuIds))
-		for _, mid := range menuIds {
-			rows = append(rows, &models.SysRoleMenu{
-				RoleId: in.RoleId,
-				MenuId: mid,
-			})
+			for _, mid := range menuIds {
+				rows = append(rows, &models.SysRoleMenu{
+					TenantId: role.TenantId,
+					RoleId: in.RoleId,
+					MenuId: mid,
+				})
 		}
 		return l.svcCtx.RoleMenuModel.InsertBatch(ctx, rows)
 	})

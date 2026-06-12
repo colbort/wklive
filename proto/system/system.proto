@@ -259,7 +259,7 @@ message SysRoleGrantReq {
   repeated int64 menu_ids = 2;
 }
 
-message SysRoleGrantDetailReq { int64 role_id = 1; }
+message SysRoleGrantDetailReq { int64 id = 1; }
 message SysRoleGrantDetailResp {
   common.RespBase base = 1;
   SysRoleGrantDetailData data = 2;

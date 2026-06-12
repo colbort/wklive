@@ -27,6 +27,14 @@ const { t } = useI18n()
 const { confirm } = useConfirm()
 const optionGroups = ref<OptionGroup[]>([])
 const jobStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'jobStatus'))
+const jobStatusSelectOptions = computed(() =>
+  jobStatusOptions.value.length
+    ? jobStatusOptions.value
+    : [
+        { value: 0, code: 'JOB_STATUS_DISABLED' },
+        { value: 1, code: 'JOB_STATUS_ENABLED' },
+      ],
+)
 
 // Pagination and main list
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -74,6 +82,18 @@ const formRules = computed(() => ({
   invokeTarget: [{ required: true, message: t('common.required'), trigger: 'blur' }],
   cronExpression: [{ required: true, message: t('common.required'), trigger: 'blur' }],
 }))
+
+function jobStatusLabel(value: number | undefined, code?: string) {
+  if (value === 0) return t('options.JOB_STATUS_DISABLED')
+  if (value === 1) return t('options.JOB_STATUS_ENABLED')
+  return getOptionLabel(t, code, value)
+}
+
+function jobStatusValueLabel(value: number | undefined) {
+  const label = getOptionValueLabel(optionGroups.value, 'jobStatus', value, t)
+  if (label && label !== value) return label
+  return jobStatusLabel(value)
+}
 
 // Fetch list
 async function fetchList() {
@@ -285,9 +305,9 @@ onMounted(() => {
             style="width: 140px"
           >
             <el-option
-              v-for="item in jobStatusOptions"
+              v-for="item in jobStatusSelectOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="jobStatusLabel(item.value, item.code)"
               :value="item.value"
             />
           </el-select>
@@ -318,7 +338,7 @@ onMounted(() => {
         <el-table-column prop="status" :label="t('common.status')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'info'">
-              {{ getOptionValueLabel(optionGroups, 'jobStatus', row.status, t) }}
+              {{ jobStatusValueLabel(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -450,11 +470,14 @@ onMounted(() => {
           </el-form-item>
 
           <el-form-item :label="t('common.status')">
-            <el-radio-group v-model="formData.status">
-              <el-radio v-for="item in jobStatusOptions" :key="item.value" :label="item.value">
-                {{ getOptionLabel(t, item.code, item.value) }}
-              </el-radio>
-            </el-radio-group>
+            <el-select v-model="formData.status" style="width: 100%">
+              <el-option
+                v-for="item in jobStatusSelectOptions"
+                :key="item.value"
+                :label="jobStatusLabel(item.value, item.code)"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
 
           <el-form-item :label="t('common.remark')">

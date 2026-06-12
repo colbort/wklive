@@ -2615,7 +2615,7 @@ func (x *SysRoleGrantReq) GetMenuIds() []int64 {
 
 type SysRoleGrantDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RoleId        int64                  `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2650,9 +2650,9 @@ func (*SysRoleGrantDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_system_system_proto_rawDescGZIP(), []int{38}
 }
 
-func (x *SysRoleGrantDetailReq) GetRoleId() int64 {
+func (x *SysRoleGrantDetailReq) GetId() int64 {
 	if x != nil {
-		return x.RoleId
+		return x.Id
 	}
 	return 0
 }
@@ -6779,9 +6779,9 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"E\n" +
 	"\x0fSysRoleGrantReq\x12\x17\n" +
 	"\arole_id\x18\x01 \x01(\x03R\x06roleId\x12\x19\n" +
-	"\bmenu_ids\x18\x02 \x03(\x03R\amenuIds\"0\n" +
-	"\x15SysRoleGrantDetailReq\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\x03R\x06roleId\"r\n" +
+	"\bmenu_ids\x18\x02 \x03(\x03R\amenuIds\"'\n" +
+	"\x15SysRoleGrantDetailReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"r\n" +
 	"\x16SysRoleGrantDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
 	"\x04data\x18\x02 \x01(\v2\x1e.system.SysRoleGrantDetailDataR\x04data\"i\n" +

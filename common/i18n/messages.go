@@ -220,6 +220,8 @@ const (
 	TenantOwnerRoleTemplateNotFound        = 2191
 	SyncTaskFailed                         = 2192
 	AssetCoinConfigNotFound                = 2193
+	SuperAdminUpdateForbidden              = 2194
+	SuperAdminDeleteForbidden              = 2195
 )
 
 // MessageMap 定义所有支持的错误消息翻译
@@ -1063,5 +1065,13 @@ var MessageMap = map[int32]map[Language]string{
 	TenantOwnerCannotBeDeleted: {
 		EN: "Tenant owner account cannot be deleted",
 		ZH: "租户主账号不能删除",
+	},
+	SuperAdminUpdateForbidden: {
+		EN: "System super administrator cannot be modified",
+		ZH: "系统超级管理员不能修改",
+	},
+	SuperAdminDeleteForbidden: {
+		EN: "System super administrator cannot be deleted",
+		ZH: "系统超级管理员不能删除",
 	},
 }
