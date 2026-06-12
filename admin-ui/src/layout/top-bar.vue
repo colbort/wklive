@@ -2,7 +2,7 @@
 import { computed, ref, nextTick, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { setLocale, type Locale } from '@/i18n'
-import { useAuthStore, apiUpdateProfile } from '@/stores'
+import { useAuthStore, apiUpdateProfile, type MenuNode } from '@/stores'
 import { useRoute, useRouter } from 'vue-router'
 import { Expand, Fold, User, Setting, Lock } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
@@ -27,17 +27,40 @@ const route = useRoute()
 
 const current = computed(() => locale.value as Locale)
 
-type MenuTrailNode = {
-  id: number
-  name: string
-  path?: string
-  menuType?: number
-  children?: MenuTrailNode[]
+type MenuTrailNode = MenuNode
+
+type BreadcrumbItem = {
+  key: string
+  label: string
+  node?: MenuTrailNode
+  children: MenuTrailNode[]
 }
 
 function menuLabel(node: MenuTrailNode) {
   const key = `menu.${node.id}`
   return te(key) ? t(key) : node.name
+}
+
+function visibleMenuChildren(node?: MenuTrailNode) {
+  return (node?.children || [])
+    .filter((child) => child.menuType !== 3 && child.visible !== 0 && child.enabled !== 0)
+    .slice()
+    .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+}
+
+function firstNavigablePath(node?: MenuTrailNode): string | undefined {
+  if (!node || node.menuType === 3 || node.visible === 0 || node.enabled === 0) return undefined
+  if (node.path) return node.path
+  for (const child of visibleMenuChildren(node)) {
+    const path = firstNavigablePath(child)
+    if (path) return path
+  }
+  return undefined
+}
+
+function goBreadcrumbNode(node: MenuTrailNode) {
+  const path = firstNavigablePath(node)
+  if (path && path !== route.path) router.push(path)
 }
 
 function findMenuTrail(
@@ -61,14 +84,33 @@ const fallbackPageTitle = computed(() => {
   return ''
 })
 
-const breadcrumbItems = computed(() => {
-  const items = [t('app.title')]
+const breadcrumbItems = computed<BreadcrumbItem[]>(() => {
+  const items: BreadcrumbItem[] = [
+    {
+      key: 'app-title',
+      label: t('app.title'),
+      children: [],
+    },
+  ]
   const trail = findMenuTrail(auth.menus as MenuTrailNode[], route.path)
 
   if (trail.length) {
-    items.push(...trail.filter((node) => node.menuType !== 3).map(menuLabel))
+    items.push(
+      ...trail
+        .filter((node) => node.menuType !== 3)
+        .map((node) => ({
+          key: String(node.id),
+          label: menuLabel(node),
+          node,
+          children: visibleMenuChildren(node),
+        })),
+    )
   } else if (fallbackPageTitle.value) {
-    items.push(fallbackPageTitle.value)
+    items.push({
+      key: `fallback-${route.path}`,
+      label: fallbackPageTitle.value,
+      children: [],
+    })
   }
 
   return items
@@ -481,8 +523,28 @@ onBeforeUnmount(() => {
       </el-button>
 
       <el-breadcrumb class="top-breadcrumb" separator=">">
-        <el-breadcrumb-item v-for="item in breadcrumbItems" :key="item">
-          {{ item }}
+        <el-breadcrumb-item v-for="item in breadcrumbItems" :key="item.key">
+          <el-dropdown
+            v-if="item.children.length"
+            trigger="hover"
+            placement="bottom-start"
+            @command="goBreadcrumbNode"
+          >
+            <span class="breadcrumb-dropdown-trigger">{{ item.label }}</span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item
+                  v-for="child in item.children"
+                  :key="child.id"
+                  :command="child"
+                  :disabled="!firstNavigablePath(child)"
+                >
+                  {{ menuLabel(child) }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <span v-else>{{ item.label }}</span>
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -570,19 +632,44 @@ onBeforeUnmount(() => {
 }
 
 .top-breadcrumb {
+  --top-breadcrumb-font-size: 20px;
   min-width: 0;
-  font-size: 20px;
+  font-size: var(--top-breadcrumb-font-size);
+  line-height: 1.4;
   font-weight: 700;
 }
 
 .top-breadcrumb :deep(.el-breadcrumb__inner) {
   color: var(--el-text-color-primary);
+  font-size: inherit;
   font-weight: 700;
+  line-height: inherit;
+}
+
+.top-breadcrumb :deep(.el-dropdown),
+.top-breadcrumb :deep(.el-tooltip__trigger) {
+  color: inherit;
+  font-size: var(--top-breadcrumb-font-size);
+  font-weight: 700;
+  line-height: inherit;
+  vertical-align: baseline;
 }
 
 .top-breadcrumb :deep(.el-breadcrumb__separator) {
   color: var(--el-text-color-secondary);
   font-weight: 600;
+}
+
+.breadcrumb-dropdown-trigger {
+  cursor: pointer;
+  color: var(--el-text-color-primary);
+  font-size: var(--top-breadcrumb-font-size);
+  font-weight: 700;
+  line-height: inherit;
+}
+
+.breadcrumb-dropdown-trigger:hover {
+  color: var(--el-color-primary);
 }
 
 .right {
