@@ -5,6 +5,7 @@
   --admin-muted-bg: #f8fafc;
   --admin-page-action-width: min(360px, 30vw);
   --admin-query-control-width: 180px;
+  --admin-query-item-width: 200px;
 }
 
 html,
@@ -154,14 +155,29 @@ body {
 .payment-page .query-card .el-form,
 .module-page .query-card-inner,
 .payment-page .query-card-inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--admin-query-item-width), 1fr));
+  column-gap: 24px;
+  row-gap: 12px;
+  align-items: center;
 }
 
 .module-page .query-card .el-form-item,
 .payment-page .query-card .el-form-item {
-  margin-bottom: 12px;
+  margin: 0;
+  width: 100%;
+}
+
+.module-page .query-card .el-form-item__label,
+.payment-page .query-card .el-form-item__label {
+  flex: 0 0 100px;
+  background: red;
+}
+
+.module-page .query-card .el-form-item__content,
+.payment-page .query-card .el-form-item__content {
+  flex: 1;
+  min-width: 0;
 }
 
 .module-page .query-card .el-form-item:has(.el-input) .el-form-item__content,
