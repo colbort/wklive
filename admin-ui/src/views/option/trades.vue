@@ -12,7 +12,7 @@
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="90px">
         <el-form-item :label="t('option.tenantId')">
-          <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
         </el-form-item>
         <el-form-item :label="t('option.contractId')">
           <el-input-number v-model="query.contractId" :min="0" :precision="0" />
@@ -94,6 +94,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { optionService, type OptionTrade, type OptionTradeDetail } from '@/services'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

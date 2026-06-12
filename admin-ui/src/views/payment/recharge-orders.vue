@@ -9,7 +9,7 @@
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="90px">
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
         </el-form-item>
         <el-form-item :label="t('common.userId')">
           <el-input-number v-model="query.userId" :min="0" :precision="0" />
@@ -186,6 +186,7 @@ import { catalogService, rechargeService, type OptionGroup, type RechargeOrder }
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import { amountToCent, centToAmount, formatCentAmount, formatCentFields } from '@/utils/amount'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 const { systemCore, loadSystemCore } = useSystemCore()

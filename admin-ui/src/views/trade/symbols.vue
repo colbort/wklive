@@ -7,7 +7,12 @@
           <el-icon><Refresh /></el-icon>
           {{ t('common.refresh') }}
         </el-button>
-        <el-button v-perm="'trade:symbol:add'" type="primary" @click="openSymbolDialog()">
+        <el-button
+          v-perm="'trade:symbol:add'"
+          class="page-create-action"
+          type="primary"
+          @click="openSymbolDialog()"
+        >
           <el-icon><Plus /></el-icon>
           {{ t('trade.addSymbol') }}
         </el-button>
@@ -23,7 +28,7 @@
       >
         <el-form-item :label="t('trade.tenantId')">
           <div class="query-field">
-            <TenantSelect v-model="query.tenantId" include-system />
+            <TenantSelect v-model="query.tenantId" class="tenant-select-filter" include-system />
           </div>
         </el-form-item>
 

@@ -14,7 +14,7 @@
       </template>
       <el-form :model="riskQuery" inline label-width="90px">
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number v-model="riskQuery.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
         </el-form-item>
         <el-form-item :label="t('trade.userId')">
           <el-input-number v-model="riskQuery.userId" :min="0" :precision="0" />
@@ -69,6 +69,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { GetUserLeverageConfigReq, SetUserLeverageConfigReq, tradeService } from '@/services'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 

@@ -16,7 +16,7 @@
 
       <el-form :model="riskQuery" inline label-width="90px">
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number v-model="riskQuery.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
         </el-form-item>
 
         <el-form-item :label="t('trade.userId')">
@@ -213,7 +213,7 @@
         class="query-card-inner"
       >
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number v-model="riskLogQuery.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="riskLogQuery.tenantId" class="tenant-select-filter" />
         </el-form-item>
 
         <el-form-item :label="t('trade.userId')">
@@ -295,6 +295,7 @@ import {
   tradeService,
   type RiskOrderCheckLog,
 } from '@/services'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

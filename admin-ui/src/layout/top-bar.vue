@@ -3,7 +3,7 @@ import { computed, ref, nextTick, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { setLocale, type Locale } from '@/i18n'
 import { useAuthStore, apiUpdateProfile } from '@/stores'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Expand, Fold, User, Setting, Lock } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { uploadService } from '@/services'
@@ -20,11 +20,59 @@ const emit = defineEmits<{
   (e: 'toggle-sider'): void
 }>()
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 
 const current = computed(() => locale.value as Locale)
+
+type MenuTrailNode = {
+  id: number
+  name: string
+  path?: string
+  menuType?: number
+  children?: MenuTrailNode[]
+}
+
+function menuLabel(node: MenuTrailNode) {
+  const key = `menu.${node.id}`
+  return te(key) ? t(key) : node.name
+}
+
+function findMenuTrail(
+  nodes: MenuTrailNode[],
+  path: string,
+  parents: MenuTrailNode[] = [],
+): MenuTrailNode[] {
+  for (const node of nodes || []) {
+    if (node.menuType !== 3 && node.path === path) return [...parents, node]
+    const trail = findMenuTrail(node.children || [], path, [...parents, node])
+    if (trail.length) return trail
+  }
+  return []
+}
+
+const fallbackPageTitle = computed(() => {
+  const key = route.meta?.titleKey
+  if (typeof key === 'string' && te(key)) return t(key)
+  if (typeof route.meta?.title === 'string') return route.meta.title
+  if (typeof key === 'string') return t(key)
+  return ''
+})
+
+const breadcrumbItems = computed(() => {
+  const items = [t('app.title')]
+  const trail = findMenuTrail(auth.menus as MenuTrailNode[], route.path)
+
+  if (trail.length) {
+    items.push(...trail.filter((node) => node.menuType !== 3).map(menuLabel))
+  } else if (fallbackPageTitle.value) {
+    items.push(fallbackPageTitle.value)
+  }
+
+  return items
+})
 
 const cropperDialogVisible = ref(false)
 const cropperImage = ref<HTMLImageElement | null>(null)
@@ -432,7 +480,11 @@ onBeforeUnmount(() => {
         </el-icon>
       </el-button>
 
-      <span class="title">{{ t('app.title') }}</span>
+      <el-breadcrumb class="top-breadcrumb" separator=">">
+        <el-breadcrumb-item v-for="item in breadcrumbItems" :key="item">
+          {{ item }}
+        </el-breadcrumb-item>
+      </el-breadcrumb>
     </div>
 
     <div class="right">
@@ -517,8 +569,20 @@ onBeforeUnmount(() => {
   min-width: 0;
 }
 
-.title {
+.top-breadcrumb {
+  min-width: 0;
+  font-size: 20px;
   font-weight: 700;
+}
+
+.top-breadcrumb :deep(.el-breadcrumb__inner) {
+  color: var(--el-text-color-primary);
+  font-weight: 700;
+}
+
+.top-breadcrumb :deep(.el-breadcrumb__separator) {
+  color: var(--el-text-color-secondary);
+  font-weight: 600;
 }
 
 .right {

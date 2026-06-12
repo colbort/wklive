@@ -199,13 +199,7 @@ onMounted(() => {
     <el-card class="query-card" shadow="never">
       <el-form :model="queryForm" inline>
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number
-            v-model="queryForm.tenantId"
-            :min="0"
-            :precision="0"
-            clearable
-            style="width: 150px"
-          />
+          <TenantSelect v-model="queryForm.tenantId" class="tenant-select-filter" />
         </el-form-item>
         <el-form-item :label="t('system.channel')">
           <el-select v-model="queryForm.channel" clearable style="width: 150px">

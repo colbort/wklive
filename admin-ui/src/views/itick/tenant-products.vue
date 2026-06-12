@@ -5,6 +5,7 @@
       <div class="header-actions">
         <el-button
           v-perm="'itick:tenant-itick:add'"
+          class="page-create-action"
           type="primary"
           :disabled="!queryParams.tenantId"
           @click="handleAdd"
@@ -39,13 +40,7 @@
     <el-card class="query-card" shadow="never">
       <el-form :model="queryParams" inline label-width="90px">
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number
-            v-model="queryParams.tenantId"
-            :min="1"
-            :precision="0"
-            controls-position="right"
-            style="width: 180px"
-          />
+          <TenantSelect v-model="queryParams.tenantId" class="tenant-select-filter" />
         </el-form-item>
 
         <el-form-item :label="t('itick.categoryType')">

@@ -6,7 +6,7 @@
         <el-button @click="loadList">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="primary" @click="openDialog()">
+        <el-button class="page-create-action" type="primary" @click="openDialog()">
           {{ t('payment.addCryptoRechargeTx') }}
         </el-button>
       </div>
@@ -15,7 +15,7 @@
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="90px">
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
         </el-form-item>
         <el-form-item :label="t('common.userId')">
           <el-input-number v-model="query.userId" :min="0" :precision="0" />

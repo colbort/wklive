@@ -3,7 +3,12 @@
     <div class="page-header">
       <h2>{{ t('payment.tenantPlatforms') }}</h2>
       <div class="header-actions">
-        <el-button v-perm="'payment:tenant-platform:add'" type="primary" @click="openDialog()">
+        <el-button
+          v-perm="'payment:tenant-platform:add'"
+          class="page-create-action"
+          type="primary"
+          @click="openDialog()"
+        >
           {{ t('payment.addTenantPlatform') }}
         </el-button>
         <el-button @click="loadList">
@@ -14,7 +19,7 @@
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="90px">
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
         </el-form-item>
         <el-form-item :label="t('payment.platformId')">
           <el-input-number v-model="query.platformId" :min="0" :precision="0" />

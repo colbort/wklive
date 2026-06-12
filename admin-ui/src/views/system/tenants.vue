@@ -2,7 +2,12 @@
   <div class="sys-tenants module-page">
     <div class="page-header">
       <h2>{{ t('system.tenants') }}</h2>
-      <el-button v-perm="'sys:tenant:add'" type="primary" @click="handleCreate">
+      <el-button
+        v-perm="'sys:tenant:add'"
+        class="page-create-action"
+        type="primary"
+        @click="handleCreate"
+      >
         <el-icon><Plus /></el-icon>
         {{ t('common.add') }}
       </el-button>

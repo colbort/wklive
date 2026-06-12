@@ -3,6 +3,8 @@
   --admin-card-radius: 14px;
   --admin-card-border: var(--el-border-color-light);
   --admin-muted-bg: #f8fafc;
+  --admin-page-action-width: min(360px, 30vw);
+  --admin-query-control-width: 180px;
 }
 
 html,
@@ -18,8 +20,10 @@ body {
 
 .module-page,
 .payment-page {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   gap: var(--admin-page-gap);
   padding: 4px 0 12px;
   height: 100%;
@@ -31,22 +35,22 @@ body {
 .payment-page .page-header,
 .itick-tenant-categories .page-header,
 .itick-tenant-products .page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  grid-row: 1;
+  grid-column: 1;
+  align-self: end;
+  justify-self: end;
+  z-index: 4;
+  display: none;
+  justify-content: flex-end;
+  max-width: var(--admin-page-action-width);
+  margin: 0 24px 24px 0;
 }
 
 .module-page .page-header h2,
 .payment-page .page-header h2,
 .itick-tenant-categories .page-header h2,
 .itick-tenant-products .page-header h2 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--el-text-color-primary);
+  display: none;
 }
 
 .module-page .page-header > div,
@@ -59,6 +63,36 @@ body {
   gap: 12px;
   align-items: center;
   flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.module-page .page-header .el-button,
+.payment-page .page-header .el-button,
+.itick-tenant-categories .page-header .el-button,
+.itick-tenant-products .page-header .el-button {
+  display: none;
+}
+
+.module-page .page-header .page-create-action,
+.payment-page .page-header .page-create-action,
+.itick-tenant-categories .page-header .page-create-action,
+.itick-tenant-products .page-header .page-create-action {
+  display: inline-flex;
+}
+
+.module-page .page-header:has(.page-create-action),
+.payment-page .page-header:has(.page-create-action),
+.itick-tenant-categories .page-header:has(.page-create-action),
+.itick-tenant-products .page-header:has(.page-create-action) {
+  display: flex;
+}
+
+.module-page .query-card,
+.payment-page .query-card,
+.itick-tenant-categories .query-card,
+.itick-tenant-products .query-card {
+  grid-row: 1;
+  grid-column: 1;
 }
 
 .module-page .query-card,
@@ -81,6 +115,8 @@ body {
 
 .module-page .table-card,
 .payment-page .table-card {
+  grid-row: 2;
+  grid-column: 1;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -126,6 +162,28 @@ body {
 .module-page .query-card .el-form-item,
 .payment-page .query-card .el-form-item {
   margin-bottom: 12px;
+}
+
+.module-page .query-card .el-form-item:has(.el-input) .el-form-item__content,
+.module-page .query-card .el-form-item:has(.el-input-number) .el-form-item__content,
+.module-page .query-card .el-form-item:has(.el-select) .el-form-item__content,
+.module-page .query-card .el-form-item:has(.el-date-editor) .el-form-item__content,
+.payment-page .query-card .el-form-item:has(.el-input) .el-form-item__content,
+.payment-page .query-card .el-form-item:has(.el-input-number) .el-form-item__content,
+.payment-page .query-card .el-form-item:has(.el-select) .el-form-item__content,
+.payment-page .query-card .el-form-item:has(.el-date-editor) .el-form-item__content {
+  width: var(--admin-query-control-width);
+}
+
+.module-page .query-card .el-input,
+.module-page .query-card .el-input-number,
+.module-page .query-card .el-select,
+.module-page .query-card .el-date-editor,
+.payment-page .query-card .el-input,
+.payment-page .query-card .el-input-number,
+.payment-page .query-card .el-select,
+.payment-page .query-card .el-date-editor {
+  width: 100% !important;
 }
 
 .module-page .el-tabs,
@@ -192,7 +250,23 @@ body {
 @media (max-width: 768px) {
   .module-page,
   .payment-page {
+    grid-template-rows: auto auto minmax(0, 1fr);
     gap: 12px;
+  }
+
+  .module-page .page-header,
+  .payment-page .page-header,
+  .itick-tenant-categories .page-header,
+  .itick-tenant-products .page-header {
+    grid-row: 2;
+    justify-self: stretch;
+    max-width: none;
+    margin: 0;
+  }
+
+  .module-page .table-card,
+  .payment-page .table-card {
+    grid-row: 3;
   }
 
   .module-page .page-header h2,

@@ -6,7 +6,12 @@
         <el-button @click="loadList">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button v-perm="'asset:user-asset:add'" type="primary" @click="openChangeDialog('add')">
+        <el-button
+          v-perm="'asset:user-asset:add'"
+          class="page-create-action"
+          type="primary"
+          @click="openChangeDialog('add')"
+        >
           {{ t('asset.addAsset') }}
         </el-button>
         <el-button v-perm="'asset:user-asset:sub'" type="warning" @click="openChangeDialog('sub')">
@@ -29,7 +34,7 @@
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="88px">
         <el-form-item :label="t('asset.tenantId')">
-          <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
         </el-form-item>
         <el-form-item :label="t('asset.userId')">
           <el-input-number v-model="query.userId" :min="0" :precision="0" />
@@ -244,6 +249,7 @@ import { useI18n } from 'vue-i18n'
 import { useOptions, usePagination } from '@/composables'
 import { assetService, type AssetUserAsset, type OptionGroup } from '@/services'
 import { formatDate } from '@/utils'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

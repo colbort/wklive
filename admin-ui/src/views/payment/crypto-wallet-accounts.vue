@@ -8,6 +8,7 @@
         </el-button>
         <el-button
           v-perm="'payment:crypto-wallet-account:add'"
+          class="page-create-action"
           type="primary"
           @click="openDialog()"
         >
@@ -18,7 +19,7 @@
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="90px">
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
         </el-form-item>
         <el-form-item :label="t('common.keyword')">
           <el-input v-model="query.keyword" clearable />

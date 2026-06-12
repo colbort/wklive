@@ -10,7 +10,7 @@
     <el-card shadow="never" class="query-card">
       <el-form :model="ruleQuery" inline label-width="90px">
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number v-model="ruleQuery.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="ruleQuery.tenantId" class="tenant-select-filter" />
         </el-form-item>
         <el-form-item :label="t('payment.channelId')">
           <el-input-number v-model="ruleQuery.channelId" :min="0" :precision="0" />

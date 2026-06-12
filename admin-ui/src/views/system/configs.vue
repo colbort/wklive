@@ -2,7 +2,12 @@
   <div class="sys-config module-page">
     <div class="page-header">
       <h2>{{ t('system.config') }}</h2>
-      <el-button v-perm="'sys:config:add'" type="primary" @click="handleCreate">
+      <el-button
+        v-perm="'sys:config:add'"
+        class="page-create-action"
+        type="primary"
+        @click="handleCreate"
+      >
         <el-icon><Plus /></el-icon>
         {{ t('common.add') }}
       </el-button>
@@ -11,12 +16,7 @@
     <el-card class="query-card" shadow="never">
       <el-form :model="queryForm" inline>
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number
-            v-model="queryForm.tenantId"
-            :min="0"
-            :precision="0"
-            @change="fetchList"
-          />
+          <TenantSelect v-model="queryForm.tenantId" class="tenant-select-filter" include-system @change="fetchList" />
         </el-form-item>
         <el-form-item :label="t('system.configKey')">
           <el-select

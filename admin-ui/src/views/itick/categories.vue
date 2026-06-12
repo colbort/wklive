@@ -3,7 +3,12 @@
     <div class="page-header">
       <h2>{{ t('itick.categories') }}</h2>
       <div class="header-actions">
-        <el-button v-perm="'itick:category:add'" type="primary" @click="handleAdd">
+        <el-button
+          v-perm="'itick:category:add'"
+          class="page-create-action"
+          type="primary"
+          @click="handleAdd"
+        >
           <el-icon><Plus /></el-icon>
           {{ t('common.add') }}
         </el-button>
