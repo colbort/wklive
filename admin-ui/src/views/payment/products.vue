@@ -10,30 +10,28 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="productQuery" inline label-width="90px">
-        <el-form-item :label="t('payment.platformId')">
-          <el-input-number v-model="productQuery.platformId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('payment.productCode')">
-          <el-input v-model="productQuery.productCode" clearable />
-        </el-form-item>
-        <el-form-item :label="t('common.keyword')">
-          <el-input v-model="productQuery.keyword" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadProducts">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetProductQuery">
-            {{ t('common.reset') }}
-          </el-button>
-          <el-button v-perm="'payment:product:add'" type="primary" @click="openProductDialog()">
-            {{ t('payment.addProduct') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="productQuery" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('payment.platformId')">
+        <el-input-number v-model="productQuery.platformId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('payment.productCode')">
+        <el-input v-model="productQuery.productCode" clearable />
+      </el-form-item>
+      <el-form-item :label="t('common.keyword')">
+        <el-input v-model="productQuery.keyword" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadProducts">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetProductQuery">
+          {{ t('common.reset') }}
+        </el-button>
+        <el-button v-perm="'payment:product:add'" type="primary" @click="openProductDialog()">
+          {{ t('payment.addProduct') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="productLoading" :data="products" stripe>
@@ -179,6 +177,7 @@ import { ElMessage } from 'element-plus'
 import { catalogService, type OptionGroup, type PayProduct } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

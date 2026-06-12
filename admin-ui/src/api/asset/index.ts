@@ -110,4 +110,3 @@ export function apiAdminUnlockAsset(
 ): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/unlock', params)
 }
-

@@ -12,43 +12,41 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('common.userId')">
-          <el-input-number v-model="query.userId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('payment.orderNo')">
-          <el-input v-model="query.orderNo" clearable />
-        </el-form-item>
-        <el-form-item :label="t('payment.currency')">
-          <el-input v-model="query.coin" clearable />
-        </el-form-item>
-        <el-form-item :label="t('payment.chain')">
-          <el-select v-model="query.chainCode" clearable style="width: 150px">
-            <el-option
-              v-for="item in chainCodeOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Hash">
-          <el-input v-model="query.txHash" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadList">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetQuery">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('common.userId')">
+        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('payment.orderNo')">
+        <el-input v-model="query.orderNo" clearable />
+      </el-form-item>
+      <el-form-item :label="t('payment.currency')">
+        <el-input v-model="query.coin" clearable />
+      </el-form-item>
+      <el-form-item :label="t('payment.chain')">
+        <el-select v-model="query.chainCode" clearable style="width: 150px">
+          <el-option
+            v-for="item in chainCodeOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="Hash">
+        <el-input v-model="query.txHash" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadList">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetQuery">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
@@ -188,6 +186,7 @@ import { catalogService, cryptoService, type CryptoRechargeTx, type OptionGroup 
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

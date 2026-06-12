@@ -13,39 +13,42 @@
       </el-button>
     </div>
 
-    <el-card class="query-card" shadow="never">
-      <el-form :model="queryForm" inline>
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="queryForm.tenantId" class="tenant-select-filter" include-system @change="fetchList" />
-        </el-form-item>
-        <el-form-item :label="t('system.configKey')">
-          <el-select
-            v-model="queryForm.keyword"
-            :placeholder="t('system.pleaseSelect')"
-            filterable
-            clearable
-            @change="fetchList"
-          >
-            <el-option
-              v-for="key in keys"
-              :key="key.code"
-              :label="getOptionLabel(t, key.code, key.value)"
-              :value="key.code"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="fetchList">
-            <el-icon><Search /></el-icon>
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="handleReset">
-            <el-icon><Refresh /></el-icon>
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="queryForm" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect
+          v-model="queryForm.tenantId"
+          class="tenant-select-filter"
+          include-system
+          @change="fetchList"
+        />
+      </el-form-item>
+      <el-form-item :label="t('system.configKey')">
+        <el-select
+          v-model="queryForm.keyword"
+          :placeholder="t('system.pleaseSelect')"
+          filterable
+          clearable
+          @change="fetchList"
+        >
+          <el-option
+            v-for="key in keys"
+            :key="key.code"
+            :label="getOptionLabel(t, key.code, key.value)"
+            :value="key.code"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="fetchList">
+          <el-icon><Search /></el-icon>
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="handleReset">
+          <el-icon><Refresh /></el-icon>
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
       <el-table
@@ -272,6 +275,7 @@ import EmailConfigComponent from './components/EmailConfig.vue'
 import PhoneConfigComponent from './components/PhoneConfig.vue'
 import { getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 

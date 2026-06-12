@@ -3,38 +3,29 @@
     <div class="page-header">
       <h2>{{ t('payment.tenantAccounts') }}</h2>
       <div>
-        <el-button
-          v-perm="'payment:tenant-account:add'"
-          class="page-create-action"
-          type="primary"
-          @click="openDialog()"
-        >
-          {{ t('payment.addAccount') }}
-        </el-button>
         <el-button @click="loadList">
           {{ t('common.refresh') }}
         </el-button>
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('payment.platformId')">
-          <el-input-number v-model="query.platformId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('common.keyword')">
-          <el-input v-model="query.keyword" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadList">
-            {{ t('common.search') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" @search="loadList" @reset="resetQuery">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('payment.platformId')">
+        <el-input-number v-model="query.platformId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('common.keyword')">
+        <el-input v-model="query.keyword" clearable />
+      </el-form-item>
+
+      <template #actions>
+        <el-button v-perm="'payment:tenant-account:add'" type="primary" @click="openDialog()">
+          {{ t('payment.addAccount') }}
+        </el-button>
+      </template>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
@@ -222,6 +213,7 @@ import { ElMessage } from 'element-plus'
 import { catalogService, tenantService, type OptionGroup, type TenantPayAccount } from '@/services'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 
 const { t } = useI18n()
@@ -248,8 +240,8 @@ const verifiedTenantPlatformId = ref(0)
 const verifiedPlatformId = ref(0)
 
 const query = reactive({
-  tenantId: 0,
-  platformId: 0,
+  tenantId: undefined as number | undefined,
+  platformId: undefined as number | undefined,
   keyword: '',
 })
 
@@ -308,6 +300,13 @@ const loadList = async () => {
   } finally {
     loading.value = false
   }
+}
+
+function resetQuery() {
+  query.tenantId = undefined
+  query.platformId = undefined
+  query.keyword = ''
+  resetAndLoad(loadList)
 }
 
 const resetVerifyState = () => {

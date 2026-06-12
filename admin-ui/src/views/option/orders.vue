@@ -9,27 +9,25 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('option.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('option.userId')">
-          <el-input-number v-model="query.userId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('option.orderNo')">
-          <el-input v-model="query.orderNo" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadCurrent">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetCurrent">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('option.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('option.userId')">
+        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('option.orderNo')">
+        <el-input v-model="query.orderNo" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadCurrent">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetCurrent">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
@@ -91,6 +89,7 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { optionService, type OptionOrder, type OptionOrderDetail } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

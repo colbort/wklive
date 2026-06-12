@@ -191,4 +191,3 @@ export function apiTradeGetEvent(params: GetTradeEventDetailReq): Promise<RespBa
 export function apiTradeRetryEvent(params: RetryTradeEventReq): Promise<RespBase> {
   return post('/admin/trade/events/retry', params)
 }
-

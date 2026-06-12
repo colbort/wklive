@@ -24,4 +24,3 @@ export function apiSysConfigUpdate(data: SysConfigUpdateReq): Promise<RespBase> 
 export function apiSysConfigDelete(id: number): Promise<RespBase> {
   return del(`/admin/system/configs/${id}`)
 }
-

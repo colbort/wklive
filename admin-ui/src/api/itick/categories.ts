@@ -33,4 +33,3 @@ export function apiSyncCategoryProducts(
 ): Promise<RespBase<SyncCategoryProductsResp>> {
   return post<SyncCategoryProductsResp>('/admin/itick/categories/sync-products', params)
 }
-

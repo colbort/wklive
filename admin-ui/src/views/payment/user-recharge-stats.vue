@@ -8,27 +8,25 @@
         </el-button>
       </div>
     </div>
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="120px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('common.userId')">
-          <el-input-number v-model="query.userId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('payment.successTotalAmountMin')">
-          <el-input-number v-model="query.successTotalAmountMin" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('payment.successTotalAmountMax')">
-          <el-input-number v-model="query.successTotalAmountMax" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadList">
-            {{ t('common.search') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="120px" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('common.userId')">
+        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('payment.successTotalAmountMin')">
+        <el-input-number v-model="query.successTotalAmountMin" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('payment.successTotalAmountMax')">
+        <el-input-number v-model="query.successTotalAmountMax" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadList">
+          {{ t('common.search') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" :label="t('common.id')" width="80" />
@@ -127,6 +125,7 @@ import { ElMessage } from 'element-plus'
 import { rechargeService, type UserRechargeStat } from '@/services'
 import { formatDate } from '@/utils'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

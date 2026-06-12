@@ -9,29 +9,27 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="currentQuery" inline label-width="90px">
-        <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
-          <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
+    <CrudQueryCard :model="currentQuery" label-width="90px" :show-actions="false">
+      <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
+        <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
 
-          <el-input-number
-            v-else
-            v-model="currentQuery[field.key]"
-            :min="0"
-            :precision="0"
-          />
-        </el-form-item>
+        <el-input-number
+          v-else
+          v-model="currentQuery[field.key]"
+          :min="0"
+          :precision="0"
+        />
+      </el-form-item>
 
-        <el-form-item>
-          <el-button type="primary" @click="loadCurrent">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetCurrent">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+      <el-form-item>
+        <el-button type="primary" @click="loadCurrent">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetCurrent">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
@@ -75,6 +73,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { tradeService, type ContractPositionHistory } from '@/services'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

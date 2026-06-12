@@ -6,37 +6,35 @@
         {{ t('common.refresh') }}
       </el-button>
     </div>
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('common.userId')">
-          <el-input-number v-model="query.userId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('payment.orderNo')">
-          <el-input v-model="query.orderNo" clearable />
-        </el-form-item>
-        <el-form-item :label="t('payment.bizOrderNo')">
-          <el-input v-model="query.bizOrderNo" clearable />
-        </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="query.status" clearable style="width: 150px">
-            <el-option
-              v-for="item in payOrderStatusOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadList">
-            {{ t('common.search') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('common.userId')">
+        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('payment.orderNo')">
+        <el-input v-model="query.orderNo" clearable />
+      </el-form-item>
+      <el-form-item :label="t('payment.bizOrderNo')">
+        <el-input v-model="query.bizOrderNo" clearable />
+      </el-form-item>
+      <el-form-item :label="t('common.status')">
+        <el-select v-model="query.status" clearable style="width: 150px">
+          <el-option
+            v-for="item in payOrderStatusOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadList">
+          {{ t('common.search') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="orderNo" :label="t('payment.orderNo')" min-width="180" />
@@ -187,6 +185,7 @@ import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescrip
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import { amountToCent, centToAmount, formatCentAmount, formatCentFields } from '@/utils/amount'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { systemCore, loadSystemCore } = useSystemCore()

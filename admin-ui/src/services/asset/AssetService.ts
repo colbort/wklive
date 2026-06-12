@@ -14,7 +14,7 @@ import {
   apiPageAssetFlows,
   apiPageAssetFreezes,
   apiPageAssetLocks,
-    apiPageUserAssets,
+  apiPageUserAssets,
   apiUpdateAssetCoinConfig,
 } from '@/api/asset'
 import { getCoreOptions } from '@/stores/core'

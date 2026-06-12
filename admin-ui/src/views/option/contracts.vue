@@ -17,47 +17,45 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('option.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('option.contractCode')">
-          <el-input v-model="query.contractCode" clearable />
-        </el-form-item>
-        <el-form-item :label="t('option.underlying')">
-          <el-input v-model="query.underlyingSymbol" clearable />
-        </el-form-item>
-        <el-form-item :label="t('option.optionType')">
-          <el-select v-model="query.optionType" clearable style="width: 180px">
-            <el-option
-              v-for="item in optionTypeOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="query.status" clearable style="width: 180px">
-            <el-option
-              v-for="item in contractStatusOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadCurrent">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetCurrent">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('option.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('option.contractCode')">
+        <el-input v-model="query.contractCode" clearable />
+      </el-form-item>
+      <el-form-item :label="t('option.underlying')">
+        <el-input v-model="query.underlyingSymbol" clearable />
+      </el-form-item>
+      <el-form-item :label="t('option.optionType')">
+        <el-select v-model="query.optionType" clearable style="width: 180px">
+          <el-option
+            v-for="item in optionTypeOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('common.status')">
+        <el-select v-model="query.status" clearable style="width: 180px">
+          <el-option
+            v-for="item in contractStatusOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadCurrent">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetCurrent">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
@@ -556,6 +554,7 @@ import {
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

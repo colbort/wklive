@@ -16,35 +16,33 @@
         </el-button>
       </div>
     </div>
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('common.keyword')">
-          <el-input v-model="query.keyword" clearable />
-        </el-form-item>
-        <el-form-item :label="t('payment.provider')">
-          <el-input v-model="query.provider" clearable />
-        </el-form-item>
-        <el-form-item :label="t('common.enabled')">
-          <el-select v-model="query.enabled" clearable style="width: 140px">
-            <el-option :label="t('common.enabled')" :value="1" /><el-option
-              :label="t('common.disabled')"
-              :value="2"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadList">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetQuery">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('common.keyword')">
+        <el-input v-model="query.keyword" clearable />
+      </el-form-item>
+      <el-form-item :label="t('payment.provider')">
+        <el-input v-model="query.provider" clearable />
+      </el-form-item>
+      <el-form-item :label="t('common.enabled')">
+        <el-select v-model="query.enabled" clearable style="width: 140px">
+          <el-option :label="t('common.enabled')" :value="1" /><el-option
+            :label="t('common.disabled')"
+            :value="2"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadList">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetQuery">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" :label="t('common.id')" width="80" /><el-table-column
@@ -175,6 +173,7 @@ import { ElMessage } from 'element-plus'
 import { cryptoService, type CryptoWalletAccount } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
   usePagination<number>(20)

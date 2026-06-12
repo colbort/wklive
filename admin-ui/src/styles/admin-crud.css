@@ -171,7 +171,7 @@ body {
 .module-page .query-card .el-form-item__label,
 .payment-page .query-card .el-form-item__label {
   flex: 0 0 100px;
-  background: red;
+  background: transparent;
 }
 
 .module-page .query-card .el-form-item__content,
@@ -180,15 +180,29 @@ body {
   min-width: 0;
 }
 
-.module-page .query-card .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)),
-.payment-page .query-card .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)) {
+.module-page
+  .query-card
+  .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)),
+.payment-page
+  .query-card
+  .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)),
+.module-page .query-card .crud-query-actions,
+.payment-page .query-card .crud-query-actions {
   width: auto;
   min-width: max-content;
   justify-self: end;
 }
 
-.module-page .query-card .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)) .el-form-item__content,
-.payment-page .query-card .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)) .el-form-item__content {
+.module-page
+  .query-card
+  .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor))
+  .el-form-item__content,
+.payment-page
+  .query-card
+  .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor))
+  .el-form-item__content,
+.module-page .query-card .crud-query-actions .el-form-item__content,
+.payment-page .query-card .crud-query-actions .el-form-item__content {
   width: auto;
   display: inline-flex;
   flex-wrap: wrap;

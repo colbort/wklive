@@ -36,10 +36,7 @@ const enabledSelectOptions = computed(() => {
 function isSuperRole(r: SysRole | null | undefined) {
   if (!r) return false
   return (
-    r.isSuper === true ||
-    r.code === 'super_admin' ||
-    r.code === 'tenant_super_admin' ||
-    r.id === 1
+    r.isSuper === true || r.code === 'super_admin' || r.code === 'tenant_super_admin' || r.id === 1
   )
 }
 

@@ -9,27 +9,25 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('staking.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('staking.orderNo')">
-          <el-input v-model="query.orderNo" clearable />
-        </el-form-item>
-        <el-form-item :label="t('staking.redeemNo')">
-          <el-input v-model="query.redeemNo" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadRows">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetQuery">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('staking.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('staking.orderNo')">
+        <el-input v-model="query.orderNo" clearable />
+      </el-form-item>
+      <el-form-item :label="t('staking.redeemNo')">
+        <el-input v-model="query.redeemNo" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadRows">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetQuery">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
@@ -91,6 +89,7 @@ import { stakingService, type StakeRedeemLog } from '@/services'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

@@ -14,6 +14,7 @@ import {
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -408,40 +409,38 @@ onMounted(fetchOptions)
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('users.userId')">
-          <el-input-number v-model="query.userId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('common.keyword')">
-          <el-input v-model="query.keyword" clearable />
-        </el-form-item>
-        <el-form-item :label="t('users.enabled')">
-          <el-select v-model="query.enabled" clearable style="width: 140px">
-            <el-option
-              v-for="item in bankStatusOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="fetchList">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetQuery">
-            {{ t('common.reset') }}
-          </el-button>
-          <el-button v-perm="'users:user:bank:add'" type="primary" @click="openCreate">
-            {{ t('users.addBank') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('users.userId')">
+        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('common.keyword')">
+        <el-input v-model="query.keyword" clearable />
+      </el-form-item>
+      <el-form-item :label="t('users.enabled')">
+        <el-select v-model="query.enabled" clearable style="width: 140px">
+          <el-option
+            v-for="item in bankStatusOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="fetchList">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetQuery">
+          {{ t('common.reset') }}
+        </el-button>
+        <el-button v-perm="'users:user:bank:add'" type="primary" @click="openCreate">
+          {{ t('users.addBank') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
@@ -485,7 +484,12 @@ onMounted(fetchOptions)
             >
               {{ t('common.detail') }}
             </el-button>
-            <el-button v-perm="'users:user:bank:update'" link type="primary" @click="openEdit(row)">
+            <el-button
+              v-perm="'users:user:bank:update'"
+              link
+              type="primary"
+              @click="openEdit(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
             <el-button
@@ -504,7 +508,12 @@ onMounted(fetchOptions)
             >
               {{ t('users.setDefault') }}
             </el-button>
-            <el-button v-perm="'users:user:bank:delete'" link type="danger" @click="remove(row)">
+            <el-button
+              v-perm="'users:user:bank:delete'"
+              link
+              type="danger"
+              @click="remove(row)"
+            >
               {{ t('common.delete') }}
             </el-button>
           </template>

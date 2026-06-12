@@ -10,38 +10,36 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="platformQuery" inline label-width="90px">
-        <el-form-item :label="t('payment.platformCode')">
-          <el-input v-model="platformQuery.platformCode" clearable />
-        </el-form-item>
-        <el-form-item :label="t('common.keyword')">
-          <el-input v-model="platformQuery.keyword" clearable />
-        </el-form-item>
-        <el-form-item :label="t('common.enabled')">
-          <el-select v-model="platformQuery.enabled" clearable style="width: 160px">
-            <el-option :label="t('payment.all')" :value="0" />
-            <el-option
-              v-for="item in enabledOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadPlatforms">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetPlatformQuery">
-            {{ t('common.reset') }}
-          </el-button>
-          <el-button v-perm="'payment:platform:add'" type="primary" @click="openPlatformDialog()">
-            {{ t('payment.addPlatform') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="platformQuery" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('payment.platformCode')">
+        <el-input v-model="platformQuery.platformCode" clearable />
+      </el-form-item>
+      <el-form-item :label="t('common.keyword')">
+        <el-input v-model="platformQuery.keyword" clearable />
+      </el-form-item>
+      <el-form-item :label="t('common.enabled')">
+        <el-select v-model="platformQuery.enabled" clearable style="width: 160px">
+          <el-option :label="t('payment.all')" :value="0" />
+          <el-option
+            v-for="item in enabledOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadPlatforms">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetPlatformQuery">
+          {{ t('common.reset') }}
+        </el-button>
+        <el-button v-perm="'payment:platform:add'" type="primary" @click="openPlatformDialog()">
+          {{ t('payment.addPlatform') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="platformLoading" :data="platforms" stripe>
@@ -267,6 +265,7 @@ import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescrip
 import { apiUploadFile } from '@/api/system/upload'
 import { buildSystemAssetUrl, useSystemCore } from '@/composables/useSystemCore'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

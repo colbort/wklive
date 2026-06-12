@@ -17,27 +17,25 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('staking.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('staking.productNo')">
-          <el-input v-model="query.productNo" clearable />
-        </el-form-item>
-        <el-form-item :label="t('staking.productName')">
-          <el-input v-model="query.productName" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadProducts">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetQuery">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('staking.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('staking.productNo')">
+        <el-input v-model="query.productNo" clearable />
+      </el-form-item>
+      <el-form-item :label="t('staking.productName')">
+        <el-input v-model="query.productName" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadProducts">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetQuery">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
@@ -54,7 +52,12 @@
           show-overflow-tooltip
         />
         <el-table-column :label="t('staking.coinSymbol')" prop="coinSymbol" width="120" />
-        <el-table-column prop="apr" label="APR" min-width="120" show-overflow-tooltip />
+        <el-table-column
+          prop="apr"
+          label="APR"
+          min-width="120"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('staking.lockDays')" prop="lockDays" width="120" />
         <el-table-column :label="t('common.status')" prop="status" width="100" />
         <el-table-column :label="t('common.actions')" width="220" fixed="right">
@@ -243,6 +246,7 @@ import {
 } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

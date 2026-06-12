@@ -13,60 +13,58 @@
       </el-button>
     </div>
 
-    <el-card class="query-card" shadow="never">
-      <el-form :model="queryForm" inline>
-        <el-form-item :label="t('system.tenantCode')">
-          <el-input
-            v-model="queryForm.tenantCode"
-            :placeholder="t('system.tenantCodePlaceholder')"
-            clearable
-            @keyup.enter="fetchList"
+    <CrudQueryCard :model="queryForm" :show-actions="false">
+      <el-form-item :label="t('system.tenantCode')">
+        <el-input
+          v-model="queryForm.tenantCode"
+          :placeholder="t('system.tenantCodePlaceholder')"
+          clearable
+          @keyup.enter="fetchList"
+        />
+      </el-form-item>
+      <el-form-item :label="t('system.tenantName')">
+        <el-input
+          v-model="queryForm.tenantName"
+          :placeholder="t('system.tenantNamePlaceholder')"
+          clearable
+          @keyup.enter="fetchList"
+        />
+      </el-form-item>
+      <el-form-item :label="t('system.contactName')">
+        <el-input
+          v-model="queryForm.contactName"
+          :placeholder="t('system.contactNamePlaceholder')"
+          clearable
+          @keyup.enter="fetchList"
+        />
+      </el-form-item>
+      <el-form-item :label="t('system.enabled')">
+        <el-select
+          v-model="queryForm.enabled"
+          :placeholder="t('system.pleaseSelectStatus')"
+          clearable
+          @change="fetchList"
+        >
+          <el-option :label="t('common.all')" :value="0" />
+          <el-option
+            v-for="item in enabledSelectOptions"
+            :key="item.value"
+            :label="enabledOptionLabel(item.value, item.code)"
+            :value="item.value"
           />
-        </el-form-item>
-        <el-form-item :label="t('system.tenantName')">
-          <el-input
-            v-model="queryForm.tenantName"
-            :placeholder="t('system.tenantNamePlaceholder')"
-            clearable
-            @keyup.enter="fetchList"
-          />
-        </el-form-item>
-        <el-form-item :label="t('system.contactName')">
-          <el-input
-            v-model="queryForm.contactName"
-            :placeholder="t('system.contactNamePlaceholder')"
-            clearable
-            @keyup.enter="fetchList"
-          />
-        </el-form-item>
-        <el-form-item :label="t('system.enabled')">
-          <el-select
-            v-model="queryForm.enabled"
-            :placeholder="t('system.pleaseSelectStatus')"
-            clearable
-            @change="fetchList"
-          >
-            <el-option :label="t('common.all')" :value="0" />
-            <el-option
-              v-for="item in enabledSelectOptions"
-              :key="item.value"
-              :label="enabledOptionLabel(item.value, item.code)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="fetchList">
-            <el-icon><Search /></el-icon>
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="handleReset">
-            <el-icon><Refresh /></el-icon>
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="fetchList">
+          <el-icon><Search /></el-icon>
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="handleReset">
+          <el-icon><Refresh /></el-icon>
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
       <el-table
@@ -303,6 +301,7 @@ import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const optionGroups = ref<OptionGroup[]>([])

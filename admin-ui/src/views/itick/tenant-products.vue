@@ -37,75 +37,73 @@
       </div>
     </div>
 
-    <el-card class="query-card" shadow="never">
-      <el-form :model="queryParams" inline label-width="90px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="queryParams.tenantId" class="tenant-select-filter" />
-        </el-form-item>
+    <CrudQueryCard :model="queryParams" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="queryParams.tenantId" class="tenant-select-filter" />
+      </el-form-item>
 
-        <el-form-item :label="t('itick.categoryType')">
-          <el-select v-model="queryParams.categoryType" clearable style="width: 180px">
-            <el-option
-              v-for="item in categoryTypeOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item :label="t('itick.market')">
-          <el-input
-            v-model="queryParams.market"
-            :placeholder="t('itick.pleaseInputMarket')"
-            clearable
-            style="width: 180px"
-            @keyup.enter="handleQuery"
+      <el-form-item :label="t('itick.categoryType')">
+        <el-select v-model="queryParams.categoryType" clearable style="width: 180px">
+          <el-option
+            v-for="item in categoryTypeOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
           />
-        </el-form-item>
+        </el-select>
+      </el-form-item>
 
-        <el-form-item :label="t('itick.keyword')">
-          <el-input
-            v-model="queryParams.keyword"
-            placeholder="name / symbol / code"
-            clearable
-            style="width: 180px"
-            @keyup.enter="handleQuery"
+      <el-form-item :label="t('itick.market')">
+        <el-input
+          v-model="queryParams.market"
+          :placeholder="t('itick.pleaseInputMarket')"
+          clearable
+          style="width: 180px"
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+
+      <el-form-item :label="t('itick.keyword')">
+        <el-input
+          v-model="queryParams.keyword"
+          placeholder="name / symbol / code"
+          clearable
+          style="width: 180px"
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+
+      <el-form-item :label="t('itick.enabledStatus')">
+        <el-select v-model="queryParams.enabled" clearable style="width: 180px">
+          <el-option
+            v-for="item in enabledOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
           />
-        </el-form-item>
+        </el-select>
+      </el-form-item>
 
-        <el-form-item :label="t('itick.enabledStatus')">
-          <el-select v-model="queryParams.enabled" clearable style="width: 180px">
-            <el-option
-              v-for="item in enabledOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+      <el-form-item :label="t('itick.appVisible')">
+        <el-select v-model="queryParams.appVisible" clearable style="width: 180px">
+          <el-option
+            v-for="item in visibleOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
 
-        <el-form-item :label="t('itick.appVisible')">
-          <el-select v-model="queryParams.appVisible" clearable style="width: 180px">
-            <el-option
-              v-for="item in visibleOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="handleQuery">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetQuery">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+      <el-form-item>
+        <el-button type="primary" @click="handleQuery">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetQuery">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
       <el-table v-loading="loading" :data="list" stripe>
@@ -662,6 +660,7 @@ import {
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 type FormData = {
   id?: number

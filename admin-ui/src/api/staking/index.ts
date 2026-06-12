@@ -71,4 +71,3 @@ export function apiStakingManualReward(params: AdminManualRewardReq): Promise<Re
 export function apiStakingManualRedeem(params: AdminManualRedeemReq): Promise<RespBase<boolean>> {
   return post<boolean>('/admin/staking/manual-redeem', params)
 }
-

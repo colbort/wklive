@@ -7,31 +7,29 @@
       </el-button>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="channelQuery" inline label-width="90px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="channelQuery.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('payment.platformId')">
-          <el-input-number v-model="channelQuery.platformId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('common.keyword')">
-          <el-input v-model="channelQuery.keyword" clearable />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadChannels">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button
-            v-perm="'payment:tenant-channel:add'"
-            type="primary"
-            @click="openChannelDialog()"
-          >
-            {{ t('payment.addChannel') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="channelQuery" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="channelQuery.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('payment.platformId')">
+        <el-input-number v-model="channelQuery.platformId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('common.keyword')">
+        <el-input v-model="channelQuery.keyword" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadChannels">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button
+          v-perm="'payment:tenant-channel:add'"
+          type="primary"
+          @click="openChannelDialog()"
+        >
+          {{ t('payment.addChannel') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="channelLoading" :data="channels" stripe>
@@ -236,6 +234,7 @@ import { catalogService, tenantService, type OptionGroup, type TenantPayChannel 
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

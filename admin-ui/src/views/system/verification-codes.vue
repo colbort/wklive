@@ -12,6 +12,7 @@ import { getCoreOptions } from '@/stores/core'
 import { formatDate } from '@/utils'
 import { verificationCodeService } from '@/services'
 import type { OptionGroup, VerificationCodeRecordItem } from '@/services'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { loading, withLoading } = useLoading()
@@ -196,61 +197,59 @@ onMounted(() => {
       </el-button>
     </div>
 
-    <el-card class="query-card" shadow="never">
-      <el-form :model="queryForm" inline>
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="queryForm.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('system.channel')">
-          <el-select v-model="queryForm.channel" clearable style="width: 150px">
-            <el-option
-              v-for="item in effectiveChannelOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('system.scene')">
-          <el-select v-model="queryForm.scene" clearable style="width: 170px">
-            <el-option
-              v-for="item in effectiveSceneOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="queryForm.status" clearable style="width: 150px">
-            <el-option
-              v-for="item in statusOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('system.target')">
-          <el-input
-            v-model="queryForm.target"
-            :placeholder="t('system.emailOrPhone')"
-            clearable
-            style="width: 220px"
+    <CrudQueryCard :model="queryForm" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="queryForm.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('system.channel')">
+        <el-select v-model="queryForm.channel" clearable style="width: 150px">
+          <el-option
+            v-for="item in effectiveChannelOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
           />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSearch">
-            <el-icon><Search /></el-icon>
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="onReset">
-            <el-icon><Refresh /></el-icon>
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('system.scene')">
+        <el-select v-model="queryForm.scene" clearable style="width: 170px">
+          <el-option
+            v-for="item in effectiveSceneOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('common.status')">
+        <el-select v-model="queryForm.status" clearable style="width: 150px">
+          <el-option
+            v-for="item in statusOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('system.target')">
+        <el-input
+          v-model="queryForm.target"
+          :placeholder="t('system.emailOrPhone')"
+          clearable
+          style="width: 220px"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSearch">
+          <el-icon><Search /></el-icon>
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="onReset">
+          <el-icon><Refresh /></el-icon>
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
       <el-table

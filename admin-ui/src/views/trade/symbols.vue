@@ -19,55 +19,48 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form
-        :model="query"
-        inline
-        label-width="90px"
-        class="query-form"
-      >
-        <el-form-item :label="t('trade.tenantId')">
-          <div class="query-field">
-            <TenantSelect v-model="query.tenantId" class="tenant-select-filter" include-system />
-          </div>
-        </el-form-item>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('trade.tenantId')">
+        <div class="query-field">
+          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" include-system />
+        </div>
+      </el-form-item>
 
-        <el-form-item :label="t('trade.marketType')">
-          <el-select v-model="query.marketType" clearable class="query-field">
-            <el-option
-              v-for="item in marketTypeOptions"
-              :key="item.value"
-              :label="optionItemLabel(item)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+      <el-form-item :label="t('trade.marketType')">
+        <el-select v-model="query.marketType" clearable class="query-field">
+          <el-option
+            v-for="item in marketTypeOptions"
+            :key="item.value"
+            :label="optionItemLabel(item)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
 
-        <el-form-item :label="t('trade.status')">
-          <el-select v-model="query.status" clearable class="query-field">
-            <el-option
-              v-for="item in symbolStatusOptions"
-              :key="item.value"
-              :label="optionItemLabel(item)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+      <el-form-item :label="t('trade.status')">
+        <el-select v-model="query.status" clearable class="query-field">
+          <el-option
+            v-for="item in symbolStatusOptions"
+            :key="item.value"
+            :label="optionItemLabel(item)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
 
-        <el-form-item :label="t('common.keyword')">
-          <el-input v-model="query.keyword" clearable class="query-keyword" />
-        </el-form-item>
+      <el-form-item :label="t('common.keyword')">
+        <el-input v-model="query.keyword" clearable class="query-keyword" />
+      </el-form-item>
 
-        <el-form-item>
-          <el-button type="primary" @click="loadCurrent">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetCurrent">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+      <el-form-item>
+        <el-button type="primary" @click="loadCurrent">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetCurrent">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
@@ -842,6 +835,7 @@ import {
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 type TagType = '' | 'success' | 'warning' | 'info' | 'danger'
 type DatePickerValue = Date | string | number | null | undefined

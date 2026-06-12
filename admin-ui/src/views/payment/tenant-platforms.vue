@@ -3,45 +3,41 @@
     <div class="page-header">
       <h2>{{ t('payment.tenantPlatforms') }}</h2>
       <div class="header-actions">
-        <el-button
-          v-perm="'payment:tenant-platform:add'"
-          class="page-create-action"
-          type="primary"
-          @click="openDialog()"
-        >
-          {{ t('payment.addTenantPlatform') }}
-        </el-button>
         <el-button @click="loadList">
           {{ t('common.refresh') }}
         </el-button>
       </div>
     </div>
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('payment.platformId')">
-          <el-input-number v-model="query.platformId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('common.enabled')">
-          <el-select v-model="query.enabled" clearable style="width: 160px">
-            <el-option :label="t('payment.all')" :value="0" />
-            <el-option
-              v-for="item in enabledOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadList">
-            {{ t('common.search') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('payment.platformId')">
+        <el-input-number v-model="query.platformId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item :label="t('common.enabled')">
+        <el-select v-model="query.enabled" clearable style="width: 160px">
+          <el-option :label="t('payment.all')" :value="0" />
+          <el-option
+            v-for="item in enabledOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadList">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetQuery">
+          {{ t('common.reset') }}
+        </el-button>
+        <el-button v-perm="'payment:tenant-platform:add'" type="primary" @click="openDialog()">
+          {{ t('payment.addTenantPlatform') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" label="ID" width="80" />
@@ -173,6 +169,7 @@ import { catalogService, tenantService, type TenantPayPlatform, type OptionGroup
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -191,7 +188,11 @@ const verifiedTenantId = ref(0)
 const verifiedPlatformId = ref(0)
 
 // query parameters for the list
-const query = reactive({ tenantId: 0, platformId: 0, enabled: 0 })
+const query = reactive({
+  tenantId: undefined as number | undefined,
+  platformId: undefined as number | undefined,
+  enabled: 0,
+})
 
 // form data for create / edit
 const form = reactive({ id: 0, tenantId: 0, platformId: 0, enabled: 1, openStatus: 1, remark: '' })
@@ -234,6 +235,13 @@ const loadList = async () => {
   } finally {
     loading.value = false
   }
+}
+
+function resetQuery() {
+  query.tenantId = undefined
+  query.platformId = undefined
+  query.enabled = 0
+  resetAndLoad(loadList)
 }
 
 // open dialog for create or edit

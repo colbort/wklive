@@ -106,4 +106,3 @@ export function apiTenantPayChannelRuleUpdate(
 ): Promise<RespBase> {
   return put('/admin/payment/tenant-channel-rule', params)
 }
-

@@ -10,56 +10,54 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('trade.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('trade.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
 
-        <el-form-item :label="t('trade.userId')">
-          <el-input-number v-model="query.userId" :min="0" :precision="0" />
-        </el-form-item>
+      <el-form-item :label="t('trade.userId')">
+        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+      </el-form-item>
 
-        <el-form-item :label="t('trade.symbolId')">
-          <el-input-number v-model="query.symbolId" :min="0" :precision="0" />
-        </el-form-item>
+      <el-form-item :label="t('trade.symbolId')">
+        <el-input-number v-model="query.symbolId" :min="0" :precision="0" />
+      </el-form-item>
 
-        <el-form-item :label="t('trade.marketType')">
-          <el-select v-model="query.marketType" clearable class="query-field">
-            <el-option
-              v-for="item in marketTypeOptions"
-              :key="item.value"
-              :label="optionItemLabel(item)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+      <el-form-item :label="t('trade.marketType')">
+        <el-select v-model="query.marketType" clearable class="query-field">
+          <el-option
+            v-for="item in marketTypeOptions"
+            :key="item.value"
+            :label="optionItemLabel(item)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
 
-        <el-form-item :label="t('trade.status')">
-          <el-select v-model="query.status" clearable class="query-field">
-            <el-option
-              v-for="item in orderStatusOptions"
-              :key="item.value"
-              :label="optionItemLabel(item)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
+      <el-form-item :label="t('trade.status')">
+        <el-select v-model="query.status" clearable class="query-field">
+          <el-option
+            v-for="item in orderStatusOptions"
+            :key="item.value"
+            :label="optionItemLabel(item)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
 
-        <el-form-item :label="t('common.keyword')">
-          <el-input v-model="query.keyword" clearable class="query-keyword" />
-        </el-form-item>
+      <el-form-item :label="t('common.keyword')">
+        <el-input v-model="query.keyword" clearable class="query-keyword" />
+      </el-form-item>
 
-        <el-form-item>
-          <el-button type="primary" @click="loadCurrent">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetCurrent">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+      <el-form-item>
+        <el-button type="primary" @click="loadCurrent">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetCurrent">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
@@ -302,6 +300,7 @@ import { tradeService, type OptionGroup, type OptionItem, type TradeOrder } from
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

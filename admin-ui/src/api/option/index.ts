@@ -143,4 +143,3 @@ export function apiOptionListBills(params: ListBillsReq): Promise<RespBase<Optio
 export function apiOptionGetBill(params: GetBillReq): Promise<RespBase<OptionBill>> {
   return get<OptionBill>('/admin/option/bills/detail', params)
 }
-

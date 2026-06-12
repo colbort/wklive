@@ -7,28 +7,26 @@
       </el-button>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="ruleQuery" inline label-width="90px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="ruleQuery.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('payment.channelId')">
-          <el-input-number v-model="ruleQuery.channelId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadRules">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button
-            v-perm="'payment:tenant-channel-rule:add'"
-            type="primary"
-            @click="openRuleDialog()"
-          >
-            {{ t('payment.addRule') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="ruleQuery" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="ruleQuery.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('payment.channelId')">
+        <el-input-number v-model="ruleQuery.channelId" :min="0" :precision="0" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadRules">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button
+          v-perm="'payment:tenant-channel-rule:add'"
+          type="primary"
+          @click="openRuleDialog()"
+        >
+          {{ t('payment.addRule') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="ruleLoading" :data="rules" stripe>
@@ -187,6 +185,7 @@ import { tenantService, type OptionGroup, type TenantPayChannelRule } from '@/se
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

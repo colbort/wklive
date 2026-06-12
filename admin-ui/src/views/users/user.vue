@@ -17,6 +17,7 @@ import {
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -627,53 +628,51 @@ onMounted(fetchCreateOptions)
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('common.keyword')">
-          <el-input v-model="query.keyword" clearable />
-        </el-form-item>
-        <el-form-item :label="t('users.username')">
-          <el-input v-model="query.username" clearable />
-        </el-form-item>
-        <el-form-item :label="t('users.phone')">
-          <el-input v-model="query.phone" clearable />
-        </el-form-item>
-        <el-form-item :label="t('users.email')">
-          <el-input v-model="query.email" clearable />
-        </el-form-item>
-        <el-form-item :label="t('users.status')">
-          <el-select v-model="query.status" clearable style="width: 140px">
-            <el-option
-              v-for="item in createOptions.statuses"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('users.verifyStatus')">
-          <el-select v-model="query.verifyStatus" clearable style="width: 140px">
-            <el-option
-              v-for="item in findOptionGroup(optionGroups, 'verifyStatus')"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="fetchList">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetQuery">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+      <el-form-item :label="t('common.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('common.keyword')">
+        <el-input v-model="query.keyword" clearable />
+      </el-form-item>
+      <el-form-item :label="t('users.username')">
+        <el-input v-model="query.username" clearable />
+      </el-form-item>
+      <el-form-item :label="t('users.phone')">
+        <el-input v-model="query.phone" clearable />
+      </el-form-item>
+      <el-form-item :label="t('users.email')">
+        <el-input v-model="query.email" clearable />
+      </el-form-item>
+      <el-form-item :label="t('users.status')">
+        <el-select v-model="query.status" clearable style="width: 140px">
+          <el-option
+            v-for="item in createOptions.statuses"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('users.verifyStatus')">
+        <el-select v-model="query.verifyStatus" clearable style="width: 140px">
+          <el-option
+            v-for="item in findOptionGroup(optionGroups, 'verifyStatus')"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="fetchList">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetQuery">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>

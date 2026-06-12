@@ -17,91 +17,89 @@
       </div>
     </div>
 
-    <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="104px">
-        <el-form-item :label="t('asset.tenantId')">
-          <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-        </el-form-item>
-        <el-form-item :label="t('asset.walletType')">
-          <el-select v-model="query.walletType" clearable style="width: 160px">
-            <el-option
-              v-for="item in walletTypeOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('asset.coin')">
-          <el-input v-model="query.coin" clearable />
-        </el-form-item>
-        <el-form-item :label="t('asset.symbol')">
-          <el-input v-model="query.symbol" clearable />
-        </el-form-item>
-        <el-form-item :label="t('asset.coinType')">
-          <el-select v-model="query.coinType" clearable style="width: 140px">
-            <el-option
-              v-for="item in coinTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('asset.chainCode')">
-          <el-select v-model="query.chainCode" clearable style="width: 150px">
-            <el-option
-              v-for="item in chainCodeOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('asset.appVisible')">
-          <el-select v-model="query.appVisible" clearable style="width: 140px">
-            <el-option :label="t('common.visible')" :value="1" />
-            <el-option :label="t('common.hidden')" :value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('asset.rechargeEnabled')">
-          <el-select v-model="query.rechargeEnabled" clearable style="width: 140px">
-            <el-option :label="t('common.enabled')" :value="1" />
-            <el-option :label="t('common.disabled')" :value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('asset.withdrawEnabled')">
-          <el-select v-model="query.withdrawEnabled" clearable style="width: 140px">
-            <el-option :label="t('common.enabled')" :value="1" />
-            <el-option :label="t('common.disabled')" :value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('asset.transferEnabled')">
-          <el-select v-model="query.transferEnabled" clearable style="width: 140px">
-            <el-option :label="t('common.enabled')" :value="1" />
-            <el-option :label="t('common.disabled')" :value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('common.enabled')">
-          <el-select v-model="query.enabled" clearable style="width: 160px">
-            <el-option
-              v-for="item in assetStatusOptions"
-              :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="loadList">
-            {{ t('common.search') }}
-          </el-button>
-          <el-button @click="resetQuery">
-            {{ t('common.reset') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+    <CrudQueryCard :model="query" label-width="104px" :show-actions="false">
+      <el-form-item :label="t('asset.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('asset.walletType')">
+        <el-select v-model="query.walletType" clearable style="width: 160px">
+          <el-option
+            v-for="item in walletTypeOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('asset.coin')">
+        <el-input v-model="query.coin" clearable />
+      </el-form-item>
+      <el-form-item :label="t('asset.symbol')">
+        <el-input v-model="query.symbol" clearable />
+      </el-form-item>
+      <el-form-item :label="t('asset.coinType')">
+        <el-select v-model="query.coinType" clearable style="width: 140px">
+          <el-option
+            v-for="item in coinTypeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('asset.chainCode')">
+        <el-select v-model="query.chainCode" clearable style="width: 150px">
+          <el-option
+            v-for="item in chainCodeOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('asset.appVisible')">
+        <el-select v-model="query.appVisible" clearable style="width: 140px">
+          <el-option :label="t('common.visible')" :value="1" />
+          <el-option :label="t('common.hidden')" :value="2" />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('asset.rechargeEnabled')">
+        <el-select v-model="query.rechargeEnabled" clearable style="width: 140px">
+          <el-option :label="t('common.enabled')" :value="1" />
+          <el-option :label="t('common.disabled')" :value="2" />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('asset.withdrawEnabled')">
+        <el-select v-model="query.withdrawEnabled" clearable style="width: 140px">
+          <el-option :label="t('common.enabled')" :value="1" />
+          <el-option :label="t('common.disabled')" :value="2" />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('asset.transferEnabled')">
+        <el-select v-model="query.transferEnabled" clearable style="width: 140px">
+          <el-option :label="t('common.enabled')" :value="1" />
+          <el-option :label="t('common.disabled')" :value="2" />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('common.enabled')">
+        <el-select v-model="query.enabled" clearable style="width: 160px">
+          <el-option
+            v-for="item in assetStatusOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="loadList">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetQuery">
+          {{ t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table
@@ -397,6 +395,7 @@ import { assetService, type AssetCoinConfig, type OptionGroup, type OptionItem }
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

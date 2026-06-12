@@ -7,7 +7,7 @@ import {
   apiItickCategoryUpdate,
   apiItickCategoryDetail,
   apiSyncCategoryProducts,
-  } from '@/api/itick/categories'
+} from '@/api/itick/categories'
 
 export type ItickCategory = {
   id: number
