@@ -2,7 +2,7 @@
   <div class="module-page">
     <CrudQueryCard
       :model="queryForm"
-      label-width="80px"
+      label-width="auto"
       @search="handleSearch"
       @reset="handleReset"
     >

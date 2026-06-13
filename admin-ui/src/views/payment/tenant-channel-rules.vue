@@ -7,7 +7,7 @@
       </el-button>
     </div>
 
-    <CrudQueryCard :model="ruleQuery" label-width="90px" :show-actions="false">
+    <CrudQueryCard :model="ruleQuery" label-width="auto" :show-actions="false">
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="ruleQuery.tenantId" class="tenant-select-filter" />
       </el-form-item>

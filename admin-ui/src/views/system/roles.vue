@@ -373,7 +373,12 @@ onMounted(async () => {
 
 <template>
   <div class="module-page">
-    <CrudQueryCard :model="queryForm" @search="onSearch" @reset="onReset">
+    <CrudQueryCard
+      :model="queryForm"
+      label-width="auto"
+      @search="onSearch"
+      @reset="onReset"
+    >
       <el-form-item :label="t('common.keyword')">
         <el-input v-model="queryForm.keyword" :placeholder="t('common.keyword')" clearable />
       </el-form-item>
@@ -437,7 +442,12 @@ onMounted(async () => {
               {{ t('system.viewGrant') }}
             </el-button>
 
-            <el-button v-else v-perm="'sys:role:grant'" size="small" @click="openGrant(row)">
+            <el-button
+              v-else
+              v-perm="'sys:role:grant'"
+              size="small"
+              @click="openGrant(row)"
+            >
               {{ t('system.grant') }}
             </el-button>
 

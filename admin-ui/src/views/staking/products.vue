@@ -2,7 +2,7 @@
   <div class="module-page">
     <CrudQueryCard
       :model="query"
-      label-width="90px"
+      label-width="auto"
       @search="loadProducts"
       @reset="resetQuery"
     >

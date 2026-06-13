@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <CrudQueryCard :model="currentQuery" label-width="90px" :show-actions="false">
+    <CrudQueryCard :model="currentQuery" label-width="auto" :show-actions="false">
       <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
         <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
 

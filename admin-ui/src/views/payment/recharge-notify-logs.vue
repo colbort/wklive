@@ -6,7 +6,7 @@
         {{ t('common.refresh') }}
       </el-button>
     </div>
-    <CrudQueryCard :model="query" label-width="100px" :show-actions="false">
+    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>

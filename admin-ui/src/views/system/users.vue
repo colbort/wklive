@@ -423,7 +423,12 @@ onMounted(async () => {
 
 <template>
   <div class="module-page">
-    <CrudQueryCard :model="queryForm" @search="onSearch" @reset="onReset">
+    <CrudQueryCard
+      :model="queryForm"
+      label-width="auto"
+      @search="onSearch"
+      @reset="onReset"
+    >
       <el-form-item :label="t('common.keyword')">
         <el-input
           v-model="queryForm.keyword"

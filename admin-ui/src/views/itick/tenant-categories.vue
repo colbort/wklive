@@ -2,7 +2,7 @@
   <div class="itick-tenant-categories module-page">
     <CrudQueryCard
       :model="queryParams"
-      label-width="90px"
+      label-width="auto"
       @search="handleQuery"
       @reset="resetQuery"
     >

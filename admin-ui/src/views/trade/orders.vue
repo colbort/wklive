@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <CrudQueryCard :model="query" label-width="90px" :show-actions="false">
+    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>

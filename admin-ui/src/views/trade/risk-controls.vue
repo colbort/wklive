@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <CrudQueryCard :model="riskQuery" label-width="90px" :show-actions="false">
+    <CrudQueryCard :model="riskQuery" label-width="auto" :show-actions="false">
       <template #header>
         {{ t('trade.riskQuery') }}
       </template>

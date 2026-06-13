@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <CrudQueryCard :model="platformQuery" label-width="90px" :show-actions="false">
+    <CrudQueryCard :model="platformQuery" label-width="auto" :show-actions="false">
       <el-form-item :label="t('payment.platformCode')">
         <el-input v-model="platformQuery.platformCode" clearable />
       </el-form-item>

@@ -8,7 +8,7 @@
         </el-button>
       </div>
     </div>
-    <CrudQueryCard :model="riskQuery" label-width="90px" :show-actions="false">
+    <CrudQueryCard :model="riskQuery" label-width="auto" :show-actions="false">
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
       </el-form-item>

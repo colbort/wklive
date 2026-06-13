@@ -9,6 +9,7 @@
       inline
       :label-width="labelWidth"
       class="crud-query-form"
+      :class="{ 'crud-query-form--auto-label': labelWidth === 'auto' }"
     >
       <slot />
 
@@ -33,6 +34,7 @@
       inline
       :label-width="labelWidth"
       class="crud-query-form"
+      :class="{ 'crud-query-form--auto-label': labelWidth === 'auto' }"
     >
       <slot />
 

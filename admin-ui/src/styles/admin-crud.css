@@ -159,6 +159,21 @@ body {
   background: transparent;
 }
 
+.module-page .query-card .crud-query-form--auto-label .el-form-item__label,
+.payment-page .query-card .crud-query-form--auto-label .el-form-item__label {
+  flex: 0 0 auto;
+  width: auto !important;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+.module-page .query-card .crud-query-form--auto-label .el-form-item__label-wrap,
+.payment-page .query-card .crud-query-form--auto-label .el-form-item__label-wrap {
+  flex: 0 0 auto;
+  width: auto !important;
+  margin-left: 0 !important;
+}
+
 .module-page .query-card .el-form-item__content,
 .payment-page .query-card .el-form-item__content {
   flex: 1;
