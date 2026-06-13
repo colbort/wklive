@@ -64,13 +64,7 @@
       </el-form-item>
 
       <template #actions>
-        <el-button
-          v-perm="'itick:tenant-itick:add'"
-          type="primary"
-          :disabled="!queryParams.tenantId"
-          @click="handleAdd"
-        >
-          <el-icon><Plus /></el-icon>
+        <el-button v-perm="'itick:tenant-itick:add'" type="primary" @click="handleAdd">
           {{ t('common.add') }}
         </el-button>
         <el-button
@@ -627,7 +621,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
-import { EditPen, Operation, Plus } from '@element-plus/icons-vue'
+import { EditPen, Operation } from '@element-plus/icons-vue'
 import { ElMessage, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables/usePagination'

@@ -19,8 +19,7 @@ body {
   margin: 0;
 }
 
-.module-page,
-.payment-page {
+:is(.module-page, .payment-page) {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -32,8 +31,7 @@ body {
   overflow: hidden;
 }
 
-.module-page .page-header,
-.payment-page .page-header {
+:is(.module-page, .payment-page) .page-header {
   grid-row: 1;
   grid-column: 1;
   align-self: end;
@@ -45,15 +43,12 @@ body {
   margin: 0 24px 24px 0;
 }
 
-.module-page .page-header h2,
-.payment-page .page-header h2 {
+:is(.module-page, .payment-page) .page-header h2 {
   display: none;
 }
 
-.module-page .page-header > div,
-.payment-page .page-header > div,
-.module-page .header-actions,
-.payment-page .header-actions {
+:is(.module-page, .payment-page) .page-header > div,
+:is(.module-page, .payment-page) .header-actions {
   display: flex;
   gap: 12px;
   align-items: center;
@@ -61,43 +56,34 @@ body {
   justify-content: flex-end;
 }
 
-.module-page .page-header .el-button,
-.payment-page .page-header .el-button {
+:is(.module-page, .payment-page) .page-header .el-button {
   display: none;
 }
 
-.module-page .page-header .page-create-action,
-.payment-page .page-header .page-create-action {
+:is(.module-page, .payment-page) .page-header .page-create-action {
   display: inline-flex;
 }
 
-.module-page .page-header:has(.page-create-action),
-.payment-page .page-header:has(.page-create-action) {
+:is(.module-page, .payment-page) .page-header:has(.page-create-action) {
   display: flex;
 }
 
-.module-page .query-card,
-.payment-page .query-card {
+:is(.module-page, .payment-page) .query-card {
   grid-row: 1;
   grid-column: 1;
   background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
 }
 
-.module-page .query-card,
-.payment-page .query-card,
-.module-page .table-card,
-.payment-page .table-card,
-.module-page > .el-card:not(.query-card),
-.payment-page > .el-card:not(.query-card),
-.module-page .el-tab-pane > .el-card,
-.payment-page .el-tab-pane > .el-card {
+:is(.module-page, .payment-page) .query-card,
+:is(.module-page, .payment-page) .table-card,
+:is(.module-page, .payment-page) > .el-card:not(.query-card),
+:is(.module-page, .payment-page) .el-tab-pane > .el-card {
   border-radius: var(--admin-card-radius);
   border-color: var(--admin-card-border);
   box-shadow: none;
 }
 
-.module-page .table-card,
-.payment-page .table-card {
+:is(.module-page, .payment-page) .table-card {
   grid-row: 2;
   grid-column: 1;
   display: flex;
@@ -106,8 +92,7 @@ body {
   min-height: 0;
 }
 
-.module-page .table-card > .el-card__body,
-.payment-page .table-card > .el-card__body {
+:is(.module-page, .payment-page) .table-card > .el-card__body {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -115,26 +100,22 @@ body {
   overflow: hidden;
 }
 
-.module-page .table-card .el-table,
-.payment-page .table-card .el-table {
+:is(.module-page, .payment-page) .table-card .el-table {
   flex: 1;
   min-height: 0;
 }
 
-.module-page .table-card .el-table__inner-wrapper,
-.payment-page .table-card .el-table__inner-wrapper {
+:is(.module-page, .payment-page) .table-card .el-table__inner-wrapper {
   height: 100%;
 }
 
-.module-page .table-card .el-table__body-wrapper,
-.payment-page .table-card .el-table__body-wrapper {
+:is(.module-page, .payment-page) .table-card .el-table__body-wrapper {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
 }
 
-.module-page .query-card .el-form,
-.payment-page .query-card .el-form {
+:is(.module-page, .payment-page) .query-card .el-form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--admin-query-item-width), 1fr));
   column-gap: 24px;
@@ -142,128 +123,107 @@ body {
   align-items: center;
 }
 
-.module-page .query-card .el-form-item,
-.payment-page .query-card .el-form-item {
+:is(.module-page, .payment-page) .query-card .el-form-item {
   margin: 0;
   width: 100%;
 }
 
-.module-page .crud-query-card--plain,
-.payment-page .crud-query-card--plain {
+:is(.module-page, .payment-page) .crud-query-card--plain {
   margin-bottom: 16px;
 }
 
-.module-page .query-card .el-form-item__label,
-.payment-page .query-card .el-form-item__label {
+:is(.module-page, .payment-page) .query-card .el-form-item__label {
   flex: 0 0 100px;
   background: transparent;
 }
 
-.module-page .query-card .crud-query-form--auto-label .el-form-item__label,
-.payment-page .query-card .crud-query-form--auto-label .el-form-item__label {
+:is(.module-page, .payment-page) .query-card .crud-query-form--auto-label .el-form-item__label {
   flex: 0 0 auto;
   width: auto !important;
   min-width: max-content;
   white-space: nowrap;
 }
 
-.module-page .query-card .crud-query-form--auto-label .el-form-item__label-wrap,
-.payment-page .query-card .crud-query-form--auto-label .el-form-item__label-wrap {
+:is(.module-page, .payment-page)
+  .query-card
+  .crud-query-form--auto-label
+  .el-form-item__label-wrap {
   flex: 0 0 auto;
   width: auto !important;
   margin-left: 0 !important;
 }
 
-.module-page .query-card .el-form-item__content,
-.payment-page .query-card .el-form-item__content {
+:is(.module-page, .payment-page) .query-card .el-form-item__content {
   flex: 1;
   min-width: 0;
 }
 
-.module-page
+:is(.module-page, .payment-page)
   .query-card
   .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)),
-.payment-page
-  .query-card
-  .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)),
-.module-page .query-card .crud-query-actions,
-.payment-page .query-card .crud-query-actions {
+:is(.module-page, .payment-page) .query-card .crud-query-actions {
   width: auto;
   min-width: max-content;
   justify-self: end;
 }
 
-.module-page .query-card .crud-query-actions + .crud-query-actions,
-.payment-page .query-card .crud-query-actions + .crud-query-actions {
+:is(.module-page, .payment-page) .query-card .crud-query-actions + .crud-query-actions {
   justify-self: start;
 }
 
-.module-page
+:is(.module-page, .payment-page)
   .query-card
   .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor))
   .el-form-item__content,
-.payment-page
-  .query-card
-  .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor))
-  .el-form-item__content,
-.module-page .query-card .crud-query-actions .el-form-item__content,
-.payment-page .query-card .crud-query-actions .el-form-item__content {
+:is(.module-page, .payment-page) .query-card .crud-query-actions .el-form-item__content {
   width: auto;
   display: inline-flex;
   flex-wrap: wrap;
   gap: 12px;
 }
 
-.module-page .query-card .el-form-item:has(.el-input) .el-form-item__content,
-.module-page .query-card .el-form-item:has(.el-input-number) .el-form-item__content,
-.module-page .query-card .el-form-item:has(.el-select) .el-form-item__content,
-.module-page .query-card .el-form-item:has(.el-date-editor) .el-form-item__content,
-.payment-page .query-card .el-form-item:has(.el-input) .el-form-item__content,
-.payment-page .query-card .el-form-item:has(.el-input-number) .el-form-item__content,
-.payment-page .query-card .el-form-item:has(.el-select) .el-form-item__content,
-.payment-page .query-card .el-form-item:has(.el-date-editor) .el-form-item__content {
+:is(.module-page, .payment-page) .query-card .el-form-item:has(.el-input) .el-form-item__content,
+:is(.module-page, .payment-page)
+  .query-card
+  .el-form-item:has(.el-input-number)
+  .el-form-item__content,
+:is(.module-page, .payment-page) .query-card .el-form-item:has(.el-select) .el-form-item__content,
+:is(.module-page, .payment-page)
+  .query-card
+  .el-form-item:has(.el-date-editor)
+  .el-form-item__content {
   width: var(--admin-query-control-width);
 }
 
-.module-page .query-card .el-input,
-.module-page .query-card .el-input-number,
-.module-page .query-card .el-select,
-.module-page .query-card .el-date-editor,
-.payment-page .query-card .el-input,
-.payment-page .query-card .el-input-number,
-.payment-page .query-card .el-select,
-.payment-page .query-card .el-date-editor {
+:is(.module-page, .payment-page) .query-card .el-input,
+:is(.module-page, .payment-page) .query-card .el-input-number,
+:is(.module-page, .payment-page) .query-card .el-select,
+:is(.module-page, .payment-page) .query-card .el-date-editor {
   width: 100% !important;
 }
 
-.module-page .el-tabs,
-.payment-page .el-tabs {
+:is(.module-page, .payment-page) .el-tabs {
   margin-top: -4px;
 }
 
-.module-page .el-tabs__header,
-.payment-page .el-tabs__header {
+:is(.module-page, .payment-page) .el-tabs__header {
   margin-bottom: 0;
 }
 
-.module-page .el-tabs__nav-wrap::after,
-.payment-page .el-tabs__nav-wrap::after {
+:is(.module-page, .payment-page) .el-tabs__nav-wrap::after {
   background-color: var(--el-border-color-lighter);
 }
 
-.module-page .el-table,
-.payment-page .el-table {
+:is(.module-page, .payment-page) .el-table {
   --el-table-border-color: var(--el-border-color-lighter);
 }
 
-.module-page .el-dialog__body,
-.payment-page .el-dialog__body {
+:is(.module-page, .payment-page) .el-dialog__body {
   max-height: 70vh;
   overflow: auto;
 }
 
-.module-page .detail-pre,
-.payment-page .detail-pre {
+:is(.module-page, .payment-page) .detail-pre {
   margin: 0;
   padding: 16px 18px;
   border-radius: 12px;
@@ -275,14 +235,12 @@ body {
   font-size: 13px;
 }
 
-.module-page .el-descriptions,
-.payment-page .el-descriptions {
+:is(.module-page, .payment-page) .el-descriptions {
   border-radius: 12px;
   overflow: hidden;
 }
 
-.module-page .pagination-bar,
-.payment-page .pagination-bar {
+:is(.module-page, .payment-page) .pagination-bar {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -290,50 +248,42 @@ body {
   margin-top: 16px;
 }
 
-.module-page .risk-grid,
-.payment-page .risk-grid {
+:is(.module-page, .payment-page) .risk-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 16px;
 }
 
 @media (max-width: 768px) {
-  .module-page,
-  .payment-page {
+  :is(.module-page, .payment-page) {
     grid-template-rows: auto auto minmax(0, 1fr);
     gap: 12px;
   }
 
-  .module-page .page-header,
-  .payment-page .page-header {
+  :is(.module-page, .payment-page) .page-header {
     grid-row: 2;
     justify-self: stretch;
     max-width: none;
     margin: 0;
   }
 
-  .module-page .table-card,
-  .payment-page .table-card {
+  :is(.module-page, .payment-page) .table-card {
     grid-row: 3;
   }
 
-  .module-page .page-header h2,
-  .payment-page .page-header h2 {
+  :is(.module-page, .payment-page) .page-header h2 {
     font-size: 20px;
   }
 
-  .module-page .page-header,
-  .payment-page .page-header {
+  :is(.module-page, .payment-page) .page-header {
     align-items: flex-start;
   }
 
-  .module-page .page-header > div,
-  .payment-page .page-header > div {
+  :is(.module-page, .payment-page) .page-header > div {
     width: 100%;
   }
 
-  .module-page .page-header > div .el-button,
-  .payment-page .page-header > div .el-button {
+  :is(.module-page, .payment-page) .page-header > div .el-button {
     flex: 1 1 auto;
   }
 }
