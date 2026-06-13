@@ -342,8 +342,7 @@ export function useTradingDesk(options: {
       if (socket !== nextSocket) return
       reconnectEnabled = true
       wsState.value = 'open'
-      sendQuoteSubscription()
-      sendSelectedDetailSubscription()
+      sendSubscriptions()
       startPingLoop()
     })
 
@@ -412,11 +411,8 @@ export function useTradingDesk(options: {
     }
   }
 
-  function sendQuoteSubscription() {
-    const topics = products.value
-      .map((product) => productTopic(product, 'quote'))
-      .filter((topic): topic is ItickWsTopicConfig => Boolean(topic))
-
+  function sendSubscriptions() {
+    const topics = [...getQuoteTopics(), ...getSelectedDetailTopics()]
     if (!topics.length) return
 
     sendJson({
@@ -425,27 +421,30 @@ export function useTradingDesk(options: {
     })
   }
 
-  function sendSelectedDetailSubscription() {
-    if (!options.detailVisible.value) return
+  function getQuoteTopics(): ItickWsTopicConfig[] {
+    return products.value
+      .map((product) => productTopic(product, 'quote'))
+      .filter((topic): topic is ItickWsTopicConfig => Boolean(topic))
+  }
+
+  function getSelectedDetailTopics(): ItickWsTopicConfig[] {
+    if (!options.detailVisible.value) return []
     const selected = selectedProduct.value
-    if (!selected) return
+    if (!selected) return []
 
     const depthTopic = productTopic(selected, 'depth')
     const tickTopic = productTopic(selected, 'tick')
     const klineTopic = productTopic(selected, 'kline')
-    if (!depthTopic || !tickTopic || !klineTopic) return
+    if (!depthTopic || !tickTopic || !klineTopic) return []
 
-    sendJson({
-      type: 'subscribe',
-      topics: [
-        depthTopic,
-        tickTopic,
-        {
-          ...klineTopic,
-          interval: selectedInterval.value?.name || DEFAULT_INTERVAL,
-        },
-      ],
-    })
+    return [
+      depthTopic,
+      tickTopic,
+      {
+        ...klineTopic,
+        interval: selectedInterval.value?.name || DEFAULT_INTERVAL,
+      },
+    ]
   }
 
   function sendJson(payload: ItickWsSubscribeMessage | { type: 'ping'; clientTs: number }) {

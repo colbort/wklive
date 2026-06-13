@@ -5,6 +5,9 @@ import path from 'node:path'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
   const isCapacitor = env.VITE_APP_TARGET === 'capacitor'
+  const devProxyTarget =
+    env.VITE_DEV_PROXY_TARGET || env.VITE_API_BASE_URL || 'http://localhost:5555'
+  const devProxyOrigin = new URL(devProxyTarget).origin
 
   return {
     base: isCapacitor ? './' : env.VITE_ROUTER_BASE || '/',
@@ -26,9 +29,14 @@ export default defineConfig(({ mode }) => {
       cors: true,
       proxy: {
         '/app': {
-          target: env.VITE_API_BASE_URL || 'http://localhost:5555',
+          target: devProxyTarget,
           changeOrigin: true,
           ws: true,
+          configure: (proxy) => {
+            proxy.on('proxyReqWs', (proxyReq) => {
+              proxyReq.setHeader('origin', devProxyOrigin)
+            })
+          },
           rewrite: (requestPath) => requestPath.replace(/^\/app/, '/app'),
         },
       },

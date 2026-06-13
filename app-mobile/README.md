@@ -69,6 +69,12 @@ npm run dev
 http://localhost:5174
 ```
 
+局域网其他设备访问时，使用当前电脑的局域网 IP：
+
+```text
+http://当前电脑局域网IP:5174
+```
+
 默认代理到：
 
 ```text
@@ -98,11 +104,14 @@ Capacitor 打包环境：
 常用配置：
 
 ```env
-VITE_API_BASE_URL=http://127.0.0.1:5555
+VITE_API_BASE_URL=
+VITE_DEV_PROXY_TARGET=http://127.0.0.1:5555
 VITE_API_BASE_PATH=/app
 VITE_ROUTER_BASE=/
 VITE_TENANT_CODE=NFQYN
 ```
+
+开发环境建议让 `VITE_API_BASE_URL` 为空，浏览器请求当前页面同源的 `/app`，再由 Vite 代理转发到 `VITE_DEV_PROXY_TARGET`。这样局域网其他电脑访问页面时，不会把 `127.0.0.1` 当成访问者自己的电脑。
 
 ## 常用命令
 

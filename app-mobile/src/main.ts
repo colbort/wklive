@@ -12,7 +12,13 @@ import '@/styles/global.css'
 const app = createApp(App)
 const pinia = createPinia()
 
-configureApiClient({ translateApiError })
+configureApiClient({
+  apiBaseUrl:
+    import.meta.env.VITE_APP_TARGET === 'capacitor'
+      ? import.meta.env.VITE_API_BASE_URL
+      : '',
+  translateApiError,
+})
 
 app.use(pinia)
 app.use(createI18n())
