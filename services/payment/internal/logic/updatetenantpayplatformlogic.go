@@ -45,6 +45,17 @@ func (l *UpdateTenantPayPlatformLogic) UpdateTenantPayPlatform(in *payment.Updat
 		}, nil
 	}
 
+	allowTenantUpdate, resp, err := applyAdminTenantUpdateScope(l.ctx, tenantPlatform.TenantId, i18n.TenantPlatformNotFound)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		return resp, nil
+	}
+	if allowTenantUpdate {
+		tenantPlatform.TenantId = in.TenantId
+	}
+
 	now := utils.NowMillis()
 	if in.Enabled != 0 {
 		tenantPlatform.Enabled = int64(in.Enabled)

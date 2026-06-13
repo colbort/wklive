@@ -48,6 +48,17 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 		}, nil
 	}
 
+	allowTenantUpdate, resp, err := applyAdminTenantUpdateScope(l.ctx, account.TenantId, i18n.TenantPayAccountNotFound)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		return resp, nil
+	}
+	if allowTenantUpdate {
+		account.TenantId = in.TenantId
+	}
+
 	now := utils.NowMillis()
 	if in.AccountName != "" {
 		account.AccountName = in.AccountName

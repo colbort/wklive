@@ -129,6 +129,24 @@ func GetTenantIdFromMd(ctx context.Context) (int64, error) {
 	return tenantId, nil
 }
 
+func GetUserTypeFromMd(ctx context.Context) (int64, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return 0, fmt.Errorf("no metadata in context")
+	}
+
+	var userType int64
+	if vals := md.Get(CtxKeyUserType); len(vals) > 0 && vals[0] != "" {
+		var err error
+		userType, err = strconv.ParseInt(vals[0], 10, 64)
+		if err != nil {
+			return 0, fmt.Errorf("invalid x-user-type: %w", err)
+		}
+	}
+
+	return userType, nil
+}
+
 func GetTenantCodeFromMd(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {

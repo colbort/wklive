@@ -129,6 +129,14 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
+		userResp, err := m.svcCtx.SystemCli.SysUserDetail(r.Context(), &system.SysUserDetailReq{
+			Id: userId,
+		})
+		if err != nil || userResp == nil || userResp.Data == nil {
+			logx.Errorf("get user detail failed, userId=%d err=%v", userId, err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
 
 		requiredPerm := m.requiredPermission(r.Context(), path, method)
 		if requiredPerm == "" {
@@ -164,6 +172,10 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
+
+		ctx := context.WithValue(r.Context(), utils.CtxKeyTenantId, userResp.Data.TenantId)
+		ctx = context.WithValue(ctx, utils.CtxKeyUserType, int64(userResp.Data.UserType))
+		r = r.WithContext(ctx)
 
 		next(w, r)
 	}

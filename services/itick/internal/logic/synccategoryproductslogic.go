@@ -17,7 +17,6 @@ import (
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -70,8 +69,8 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 		}, nil
 	}
 
-	// 拷贝参数，避免直接引用请求对象
-	reqCopy := proto.Clone(in).(*itick.SyncCategoryProductsReq)
+	// 拷贝必要参数，避免异步任务直接引用请求对象
+	reqCopy := &itick.SyncCategoryProductsReq{Id: in.Id}
 
 	// 后台异步执行
 	go func(taskNo string, reqCopy *itick.SyncCategoryProductsReq) {

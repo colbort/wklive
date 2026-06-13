@@ -48,6 +48,17 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 		}, nil
 	}
 
+	allowTenantUpdate, resp, err := applyAdminTenantUpdateScope(l.ctx, channel.TenantId, i18n.PaymentChannelNotFound)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		return resp, nil
+	}
+	if allowTenantUpdate {
+		channel.TenantId = in.TenantId
+	}
+
 	now := utils.NowMillis()
 	if in.ChannelName != "" {
 		channel.ChannelName = in.ChannelName

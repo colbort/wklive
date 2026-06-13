@@ -229,6 +229,11 @@ const menuTreeRef = ref<TreeInstance>()
 const checkedPermKeys = ref<string[]>([])
 
 const grantReadonly = computed(() => isSuperRole(currentRole.value))
+const grantDialogTitle = computed(() =>
+  t(grantReadonly.value ? 'system.viewGrantTitle' : 'system.grantTitle', {
+    role: currentRole.value?.name || '',
+  }),
+)
 
 function flattenMenuTree(nodes: RoleMenuNode[], result: RoleMenuNode[] = []): RoleMenuNode[] {
   for (const node of nodes || []) {
@@ -424,11 +429,15 @@ onMounted(async () => {
             </el-button>
 
             <el-button
-              v-perm="'sys:role:grant'"
+              v-if="isSuperRole(row)"
+              v-perm="'sys:role:grant:detail'"
               size="small"
-              :disabled="isSuperRole(row)"
               @click="openGrant(row)"
             >
+              {{ t('system.viewGrant') }}
+            </el-button>
+
+            <el-button v-else v-perm="'sys:role:grant'" size="small" @click="openGrant(row)">
               {{ t('system.grant') }}
             </el-button>
 
@@ -523,7 +532,7 @@ onMounted(async () => {
 
     <el-dialog
       v-model="grantVisible"
-      :title="t('system.grantTitle', { role: currentRole?.name || '' })"
+      :title="grantDialogTitle"
       width="400px"
       :style="{ maxWidth: '460px' }"
       @closed="onGrantClosed"
@@ -564,9 +573,9 @@ onMounted(async () => {
           {{ t('common.cancel') }}
         </el-button>
         <el-button
+          v-if="!grantReadonly"
           v-perm="'sys:role:grant'"
           type="primary"
-          :disabled="grantReadonly"
           @click="submitGrant"
         >
           {{ t('common.save') }}

@@ -50,9 +50,18 @@ func updateCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 	if err != nil {
 		return nil, err
 	}
-	if in.TenantId > 0 && item.TenantId != in.TenantId {
-		return &payment.AdminCommonResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressNotFound, i18n.Translate(i18n.CryptoRechargeAddressNotFound, ctx))}, nil
+
+	allowTenantUpdate, resp, err := applyAdminTenantUpdateScope(ctx, item.TenantId, i18n.CryptoRechargeAddressNotFound)
+	if err != nil {
+		return nil, err
 	}
+	if resp != nil {
+		return resp, nil
+	}
+	if allowTenantUpdate {
+		item.TenantId = in.TenantId
+	}
+
 	if in.Address != "" {
 		item.Address = in.Address
 	}
@@ -130,8 +139,15 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if err != nil {
 		return nil, err
 	}
-	if in.TenantId > 0 && item.TenantId != in.TenantId {
-		return &payment.AdminCommonResp{Base: helper.GetErrResp(i18n.CryptoWalletAccountNotFound, i18n.Translate(i18n.CryptoWalletAccountNotFound, ctx))}, nil
+	allowTenantUpdate, resp, err := applyAdminTenantUpdateScope(ctx, item.TenantId, i18n.CryptoWalletAccountNotFound)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		return resp, nil
+	}
+	if allowTenantUpdate {
+		item.TenantId = in.TenantId
 	}
 	if in.AccountName != "" {
 		item.AccountName = in.AccountName
@@ -219,8 +235,15 @@ func updateCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 	if err != nil {
 		return nil, err
 	}
-	if in.TenantId > 0 && item.TenantId != in.TenantId {
-		return &payment.AdminCommonResp{Base: helper.GetErrResp(i18n.CryptoRechargeTxNotFound, i18n.Translate(i18n.CryptoRechargeTxNotFound, ctx))}, nil
+	allowTenantUpdate, resp, err := applyAdminTenantUpdateScope(ctx, item.TenantId, i18n.CryptoRechargeTxNotFound)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		return resp, nil
+	}
+	if allowTenantUpdate {
+		item.TenantId = in.TenantId
 	}
 	if in.OrderId > 0 {
 		item.OrderId = in.OrderId
@@ -280,6 +303,37 @@ type listCryptoTxReq struct {
 	createTimeEnd   int64
 	cursor          int64
 	limit           int64
+}
+
+func applyAdminTenantUpdateScope(
+	ctx context.Context,
+	currentTenantId int64,
+	notFoundCode int32,
+) (bool, *payment.AdminCommonResp, error) {
+	userType, err := utils.GetUserTypeFromMd(ctx)
+	if err != nil {
+		return false, nil, i18n.StatusError(ctx, i18n.UserNotFound)
+	}
+
+	switch userType {
+	case utils.SysUserTypeSystemAdmin:
+		return true, nil, nil
+	case utils.SysUserTypeTenantOwner, utils.SysUserTypeTenantAdmin:
+		tenantId, err := utils.GetTenantIdFromMd(ctx)
+		if err != nil {
+			return false, nil, i18n.StatusError(ctx, i18n.UserNotFound)
+		}
+		if currentTenantId != tenantId {
+			return false, &payment.AdminCommonResp{
+				Base: helper.GetErrResp(notFoundCode, i18n.Translate(notFoundCode, ctx)),
+			}, nil
+		}
+		return false, nil, nil
+	default:
+		return false, &payment.AdminCommonResp{
+			Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)),
+		}, nil
+	}
 }
 
 func nullableString(value string) sql.NullString {
