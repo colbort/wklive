@@ -56,6 +56,11 @@ func (l *AdminUnlockAssetLogic) AdminUnlockAsset(in *asset.AdminUnlockAssetReq) 
 			in.TenantId, lock.TenantId, in.LockNo, in.Amount, in.BizNo, err)
 		return nil, err
 	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, lock.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &asset.AdminChangeAssetResp{Base: base}, nil
+	}
 	if amount > lock.RemainAmount {
 		err := i18n.StatusError(l.ctx, i18n.UnlockAmountExceedsLocked)
 		l.Errorf("AdminUnlockAsset amount exceeds locked amount, tenantId=%d lockNo=%s amount=%s remainAmount=%v bizNo=%s err=%v",

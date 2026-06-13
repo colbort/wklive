@@ -32,25 +32,30 @@ func NewSetSymbolLeverageConfigLogic(ctx context.Context, svcCtx *svc.ServiceCon
 // 设置交易对杠杆档位配置
 func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymbolLeverageConfigReq) (*trade.AdminCommonResp, error) {
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
-	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.TenantId != in.TenantId) {
+	if errors.Is(err, models.ErrNotFound) {
 		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
+	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &trade.AdminCommonResp{Base: base}, nil
 	}
 	if !isContractMarket(in.MarketType) || symbol.MarketType != int64(in.MarketType) || in.MarginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN {
 		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
 	now := utils.NowMillis()
-	item, err := l.svcCtx.SymbolLeverageCfgModel.FindOneByTenantIdSymbolIdMarketTypeMarginMode(l.ctx, in.TenantId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode))
+	item, err := l.svcCtx.SymbolLeverageCfgModel.FindOneByTenantIdSymbolIdMarketTypeMarginMode(l.ctx, symbol.TenantId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	isCreate := item == nil
 	if isCreate {
 		item = &models.TTradeSymbolLeverageConfig{
-			TenantId:    in.TenantId,
+			TenantId:    symbol.TenantId,
 			SymbolId:    in.SymbolId,
 			MarketType:  int64(in.MarketType),
 			MarginMode:  int64(in.MarginMode),

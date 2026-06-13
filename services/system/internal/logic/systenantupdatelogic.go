@@ -31,6 +31,14 @@ func NewSysTenantUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 更新租户
 func (l *SysTenantUpdateLogic) SysTenantUpdate(in *system.SysTenantUpdateReq) (*system.RespBase, error) {
+	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
+
 	var tenantNotFound bool
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)

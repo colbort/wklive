@@ -40,6 +40,11 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 	if order == nil || order.TenantId != in.TenantId {
 		return &staking.AdminManualRewardResp{Page: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &staking.AdminManualRewardResp{Page: base}, nil
+	}
 
 	rewardAmount, err := conv.ParseFloatField(in.RewardAmount)
 	if err != nil || rewardAmount <= 0 {

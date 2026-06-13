@@ -31,6 +31,13 @@ func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq
 	var (
 		errLogic = "UpdatePayProduct"
 	)
+	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &payment.AdminCommonResp{
+			Base: base,
+		}, nil
+	}
 
 	// 査询产品是否存在
 	product, err := l.svcCtx.PayProductModel.FindOne(l.ctx, in.Id)

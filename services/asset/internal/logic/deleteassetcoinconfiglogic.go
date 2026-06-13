@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
@@ -36,7 +37,14 @@ func (l *DeleteAssetCoinConfigLogic) DeleteAssetCoinConfig(in *asset.DeleteAsset
 		}
 		return nil, err
 	}
-	if in.TenantId != 0 && old.TenantId != in.TenantId {
+	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, old.TenantId)
+	if err != nil {
+		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
+	}
+	if forbidden {
+		return &asset.DeleteAssetCoinConfigResp{Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+	}
+	if !allowed {
 		return &asset.DeleteAssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 	}
 

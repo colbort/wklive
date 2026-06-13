@@ -8,6 +8,7 @@ import (
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -36,19 +37,37 @@ func (l *AdminUpdateContractLogic) AdminUpdateContract(in *option.UpdateContract
 		}
 		return nil, err
 	}
-	if in.TenantId != 0 && item.TenantId != in.TenantId {
+	allowTenantUpdate, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, item.TenantId)
+	if err != nil {
+		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
+	}
+	if forbidden {
+		return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+	}
+	if !allowed {
 		return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 	}
+	targetTenantId := item.TenantId
+	if allowTenantUpdate {
+		targetTenantId = in.TenantId
+	}
 
-	if in.ContractCode != "" && in.ContractCode != item.ContractCode {
-		dup, err := l.svcCtx.OptionContractModel.FindOneByTenantIdContractCode(l.ctx, item.TenantId, in.ContractCode)
+	if targetTenantId != item.TenantId || (in.ContractCode != "" && in.ContractCode != item.ContractCode) {
+		contractCode := item.ContractCode
+		if in.ContractCode != "" {
+			contractCode = in.ContractCode
+		}
+		dup, err := l.svcCtx.OptionContractModel.FindOneByTenantIdContractCode(l.ctx, targetTenantId, contractCode)
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
 			return nil, err
 		}
 		if dup != nil && dup.Id != item.Id {
 			return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.ContractCodeAlreadyExists, i18n.Translate(i18n.ContractCodeAlreadyExists, l.ctx))}, nil
 		}
-		item.ContractCode = in.ContractCode
+		item.ContractCode = contractCode
+	}
+	if allowTenantUpdate {
+		item.TenantId = in.TenantId
 	}
 	if in.UnderlyingSymbol != "" {
 		item.UnderlyingSymbol = in.UnderlyingSymbol

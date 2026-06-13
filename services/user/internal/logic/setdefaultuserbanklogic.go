@@ -41,6 +41,13 @@ func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBank
 			Base: helper.GetErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, userBank.TenantId, i18n.NoPermissionOperateThisBankCard); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &user.AdminCommonResp{
+			Base: base,
+		}, nil
+	}
 
 	if userBank.UserId != in.UserId {
 		return &user.AdminCommonResp{

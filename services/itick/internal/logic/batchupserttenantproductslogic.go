@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
 
@@ -26,6 +27,11 @@ func NewBatchUpsertTenantProductsLogic(ctx context.Context, svcCtx *svc.ServiceC
 
 // 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
 func (l *BatchUpsertTenantProductsLogic) BatchUpsertTenantProducts(in *itick.BatchUpsertTenantProductsReq) (*itick.AdminCommonResp, error) {
+	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &itick.AdminCommonResp{Base: base}, nil
+	}
 
 	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
 }

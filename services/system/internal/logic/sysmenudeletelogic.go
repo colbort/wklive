@@ -25,6 +25,14 @@ func NewSysMenuDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 
 // Delete a menu
 func (l *SysMenuDeleteLogic) SysMenuDelete(in *system.SysMenuDeleteReq) (*system.RespBase, error) {
+	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
+
 	menu, err := l.svcCtx.MenuModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err

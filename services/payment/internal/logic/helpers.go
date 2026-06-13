@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"wklive/common/conv"
+	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
@@ -17,6 +18,17 @@ import (
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
+
+func systemAdminWriteScopeResp(ctx context.Context) (*common.RespBase, error) {
+	userType, err := utils.GetUserTypeFromMd(ctx)
+	if err != nil {
+		return nil, i18n.StatusError(ctx, i18n.UserNotFound)
+	}
+	if userType != utils.SysUserTypeSystemAdmin {
+		return helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)), nil
+	}
+	return nil, nil
+}
 
 func rechargeTypeFromPlatform(item *models.TPayPlatform) payment.RechargeType {
 	if item == nil {

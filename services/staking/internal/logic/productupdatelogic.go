@@ -38,8 +38,18 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*
 		}
 		return nil, err
 	}
-	if item.TenantId != in.TenantId {
+	allowTenantUpdate, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, item.TenantId)
+	if err != nil {
+		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
+	}
+	if forbidden {
+		return &staking.AdminProductUpdateResp{Page: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+	}
+	if !allowed {
 		return &staking.AdminProductUpdateResp{Page: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+	}
+	if allowTenantUpdate {
+		item.TenantId = in.TenantId
 	}
 
 	if in.ProductName != "" {

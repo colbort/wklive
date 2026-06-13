@@ -40,6 +40,13 @@ func (l *UpdateUserStatusLogic) UpdateUserStatus(in *user.UpdateUserStatusReq) (
 			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &user.AdminCommonResp{
+			Base: base,
+		}, nil
+	}
 
 	// 更新用户状态
 	if in.Status != 0 {

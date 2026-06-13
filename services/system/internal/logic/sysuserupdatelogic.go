@@ -40,19 +40,28 @@ func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system
 			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
+	allowTenantUpdate, base, err := adminTenantWriteScope(l.ctx, one.TenantId, i18n.NoPermissionOperateThisUser)
+	if err != nil {
+		return nil, err
+	}
+	if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
 	if in.Nickname != "" {
 		one.Nickname = in.Nickname
 	}
 	if in.Enabled != common.Enable_ENABLE_UNKNOWN {
 		one.Enabled = commonStatusToModel(in.Enabled)
 	}
-	if in.TenantId != 0 {
+	if allowTenantUpdate && in.TenantId != 0 {
 		one.TenantId = in.TenantId
 	}
-	if in.UserType != system.UserType_USER_TYPE_UNKNOWN {
+	if allowTenantUpdate && in.UserType != system.UserType_USER_TYPE_UNKNOWN {
 		one.UserType = int64(in.UserType)
 	}
-	if in.IsOwner != common.YesNo_YES_NO_UNKNOWN {
+	if allowTenantUpdate && in.IsOwner != common.YesNo_YES_NO_UNKNOWN {
 		one.IsOwner = yesNoToModel(in.IsOwner)
 	}
 	if in.Avatar != "" {

@@ -44,6 +44,11 @@ func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in 
 			Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
+	if _, base, err := applyAdminTenantUpdateScope(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return base, nil
+	}
 
 	// 只有待支付/支付中状态的订单才能标记为成功
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) &&

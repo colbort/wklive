@@ -49,6 +49,13 @@ func (l *SysUserDeleteLogic) SysUserDelete(in *system.SysUserDeleteReq) (*system
 			Base: helper.GetErrResp(i18n.TenantOwnerCannotBeDeleted, i18n.Translate(i18n.TenantOwnerCannotBeDeleted, l.ctx)),
 		}, nil
 	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, one.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)

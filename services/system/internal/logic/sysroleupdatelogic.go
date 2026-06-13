@@ -39,6 +39,15 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system
 	if one.Code == "super_admin" || one.Code == "tenant_super_admin" {
 		return nil, i18n.StatusError(l.ctx, i18n.SuperAdminUpdateForbidden)
 	}
+	allowTenantUpdate, base, err := adminTenantWriteScope(l.ctx, one.TenantId, i18n.RoleNotFound)
+	if err != nil {
+		return nil, err
+	}
+	if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
 
 	if in.Name != "" {
 		one.Name = in.Name
@@ -49,7 +58,7 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system
 	if in.Remark != "" {
 		one.Remark = in.Remark
 	}
-	if in.TenantId != 0 {
+	if allowTenantUpdate && in.TenantId != 0 {
 		one.TenantId = in.TenantId
 	}
 	if in.Code != "" {

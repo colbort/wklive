@@ -31,6 +31,12 @@ func NewAdminAddAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Adm
 
 // 后台人工加币
 func (l *AdminAddAssetLogic) AdminAddAsset(in *asset.AdminAddAssetReq) (*asset.AdminChangeAssetResp, error) {
+	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &asset.AdminChangeAssetResp{Base: base}, nil
+	}
+
 	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
 		l.Errorf("AdminAddAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",

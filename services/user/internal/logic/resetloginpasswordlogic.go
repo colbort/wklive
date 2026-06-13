@@ -41,9 +41,11 @@ func (l *ResetLoginPasswordLogic) ResetLoginPassword(in *user.ResetLoginPassword
 			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
-	if tuser.TenantId != in.TenantId {
+	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
+		return nil, err
+	} else if base != nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.NoPermissionOperateThisUser, i18n.Translate(i18n.NoPermissionOperateThisUser, l.ctx)),
+			Base: base,
 		}, nil
 	}
 

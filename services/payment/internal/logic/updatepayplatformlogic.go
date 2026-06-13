@@ -31,6 +31,13 @@ func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatform
 	var (
 		errLogic = "UpdatePayPlatform"
 	)
+	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &payment.AdminCommonResp{
+			Base: base,
+		}, nil
+	}
 
 	// 査询平台是否存在
 	platform, err := l.svcCtx.PayPlatformModel.FindOne(l.ctx, in.Id)

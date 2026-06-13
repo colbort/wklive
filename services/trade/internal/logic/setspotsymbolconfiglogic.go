@@ -32,20 +32,25 @@ func NewSetSpotSymbolConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext
 // 设置现货交易对配置
 func (l *SetSpotSymbolConfigLogic) SetSpotSymbolConfig(in *trade.SetSpotSymbolConfigReq) (*trade.AdminCommonResp, error) {
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
-	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.TenantId != in.TenantId) {
+	if errors.Is(err, models.ErrNotFound) {
 		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
 	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &trade.AdminCommonResp{Base: base}, nil
+	}
 	now := utils.NowMillis()
-	cfg, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, in.TenantId, in.SymbolId)
+	cfg, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if cfg == nil {
 		cfg = &models.TTradeSymbolSpot{
-			TenantId:    in.TenantId,
+			TenantId:    symbol.TenantId,
 			SymbolId:    in.SymbolId,
 			BuyEnabled:  int64(common.Enable_ENABLE_ENABLED),
 			SellEnabled: int64(common.Enable_ENABLE_ENABLED),

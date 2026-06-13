@@ -34,6 +34,13 @@ func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq)
 			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, user.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
 
 	if user.Enabled == commonStatusToModel(in.Enabled) {
 		return &system.RespBase{

@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
@@ -30,6 +31,12 @@ func NewSetUserLeverageConfigLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 设置用户杠杆配置
 func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeverageConfigReq) (*trade.AdminCommonResp, error) {
+	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &trade.AdminCommonResp{Base: base}, nil
+	}
+
 	now := utils.NowMillis()
 	item, err := l.svcCtx.ContractLeverageCfgModel.FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(l.ctx, in.TenantId, in.UserId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {

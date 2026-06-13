@@ -29,6 +29,14 @@ func NewSysCronJobUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 更新系统定时任务
 func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq) (*system.RespBase, error) {
+	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
+
 	parser := cron.NewParser(
 		cron.SecondOptional | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor,
 	)

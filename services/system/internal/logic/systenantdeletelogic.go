@@ -29,6 +29,14 @@ func NewSysTenantDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 删除租户
 func (l *SysTenantDeleteLogic) SysTenantDelete(in *system.SysTenantDeleteReq) (*system.RespBase, error) {
+	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
+
 	tenant, err := l.svcCtx.TenantMode.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || tenant == nil {
 		return &system.RespBase{

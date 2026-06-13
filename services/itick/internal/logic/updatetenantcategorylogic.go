@@ -32,7 +32,21 @@ func (l *UpdateTenantCategoryLogic) UpdateTenantCategory(in *itick.UpdateTenantC
 	if err != nil {
 		return nil, err
 	}
-	if item == nil || item.TenantId != in.TenantId {
+	if item == nil {
+		return &itick.AdminCommonResp{
+			Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
+		}, nil
+	}
+	_, allowed, forbidden, err := cutils.ResolveAdminTenantWriteScopeFromMd(l.ctx, item.TenantId)
+	if err != nil {
+		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
+	}
+	if forbidden {
+		return &itick.AdminCommonResp{
+			Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx)),
+		}, nil
+	}
+	if !allowed {
 		return &itick.AdminCommonResp{
 			Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil

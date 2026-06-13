@@ -42,6 +42,13 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 			Base: helper.GetErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, bank.TenantId, i18n.NoPermissionModifyThisBankCard); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &user.UpdateUserBankResp{
+			Base: base,
+		}, nil
+	}
 
 	// 验证银行卡是否属于该用户
 	if bank.UserId != in.UserId {

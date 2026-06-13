@@ -31,6 +31,12 @@ func NewAdminFreezeAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 后台冻结资产
 func (l *AdminFreezeAssetLogic) AdminFreezeAsset(in *asset.AdminFreezeAssetReq) (*asset.AdminChangeAssetResp, error) {
+	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &asset.AdminChangeAssetResp{Base: base}, nil
+	}
+
 	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
 		l.Errorf("AdminFreezeAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",

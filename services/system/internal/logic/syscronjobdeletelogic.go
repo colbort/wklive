@@ -25,6 +25,14 @@ func NewSysCronJobDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 删除系统定时任务
 func (l *SysCronJobDeleteLogic) SysCronJobDelete(in *system.SysCronJobDeleteReq) (*system.RespBase, error) {
+	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
+
 	job, err := l.svcCtx.JobModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return &system.RespBase{

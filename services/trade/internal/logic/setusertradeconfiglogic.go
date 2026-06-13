@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
@@ -30,6 +31,12 @@ func NewSetUserTradeConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 设置用户交易配置
 func (l *SetUserTradeConfigLogic) SetUserTradeConfig(in *trade.SetUserTradeConfigReq) (*trade.AdminCommonResp, error) {
+	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &trade.AdminCommonResp{Base: base}, nil
+	}
+
 	now := utils.NowMillis()
 	item, err := l.svcCtx.TradeUserConfigModel.FindOneByTenantIdUserIdMarketTypeSymbolId(l.ctx, in.TenantId, in.UserId, int64(in.MarketType), in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {

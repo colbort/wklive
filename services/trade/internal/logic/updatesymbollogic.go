@@ -31,11 +31,24 @@ func NewUpdateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 // 更新交易对信息
 func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.AdminCommonResp, error) {
 	item, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.Id)
-	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != in.TenantId) {
+	if errors.Is(err, models.ErrNotFound) {
 		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
+	}
+	allowTenantUpdate, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, item.TenantId)
+	if err != nil {
+		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
+	}
+	if forbidden {
+		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+	}
+	if !allowed {
+		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+	}
+	if allowTenantUpdate {
+		item.TenantId = in.TenantId
 	}
 	if in.DisplaySymbol != "" {
 		item.DisplaySymbol = in.DisplaySymbol

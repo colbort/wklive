@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
@@ -30,6 +31,12 @@ func NewSetUserSymbolLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 设置用户交易对限制
 func (l *SetUserSymbolLimitLogic) SetUserSymbolLimit(in *trade.SetUserSymbolLimitReq) (*trade.AdminCommonResp, error) {
+	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &trade.AdminCommonResp{Base: base}, nil
+	}
+
 	now := utils.NowMillis()
 	item, err := l.svcCtx.RiskUserSymbolLimitModel.FindOneByTenantIdUserIdSymbolIdMarketType(l.ctx, in.TenantId, in.UserId, in.SymbolId, int64(in.MarketType))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {

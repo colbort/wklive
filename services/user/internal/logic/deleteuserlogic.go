@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -29,13 +30,20 @@ func NewDeleteUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 
 // 删除用户
 func (l *DeleteUserLogic) DeleteUser(in *user.DeleteUserReq) (*user.AdminCommonResp, error) {
-	tuser, err := l.svcCtx.UserModel.FindByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
-	if err != nil && errors.Is(err, models.ErrNotFound) {
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if tuser == nil {
 		return &user.AdminCommonResp{
-			Base: helper.FailWithCode(401),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+		}, nil
+	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &user.AdminCommonResp{
+			Base: base,
 		}, nil
 	}
 

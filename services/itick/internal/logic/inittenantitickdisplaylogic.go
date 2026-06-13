@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
 
@@ -26,6 +27,12 @@ func NewInitTenantItickDisplayLogic(ctx context.Context, svcCtx *svc.ServiceCont
 
 // 初始化租户展示配置
 func (l *InitTenantItickDisplayLogic) InitTenantItickDisplay(in *itick.InitTenantItickDisplayReq) (*itick.InitTenantItickDisplayResp, error) {
+	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &itick.InitTenantItickDisplayResp{Base: base}, nil
+	}
+
 	// now := cutils.NowMillis()
 	categoryCount := int64(0)
 	productCount := int64(0)

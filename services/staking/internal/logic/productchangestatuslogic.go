@@ -37,7 +37,14 @@ func (l *ProductChangeStatusLogic) ProductChangeStatus(in *staking.AdminProductC
 		}
 		return nil, err
 	}
-	if item.TenantId != in.TenantId {
+	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, item.TenantId)
+	if err != nil {
+		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
+	}
+	if forbidden {
+		return &staking.AdminProductChangeStatusResp{Page: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+	}
+	if !allowed {
 		return &staking.AdminProductChangeStatusResp{Page: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 

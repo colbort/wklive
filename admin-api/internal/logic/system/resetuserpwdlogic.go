@@ -6,6 +6,7 @@ package system
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 
@@ -27,7 +28,5 @@ func NewResetUserPwdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Rese
 }
 
 func (l *ResetUserPwdLogic) ResetUserPwd(req *types.ResetUserPwdReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.ResetUserPwd)
 }

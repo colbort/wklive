@@ -310,30 +310,21 @@ func applyAdminTenantUpdateScope(
 	currentTenantId int64,
 	notFoundCode int32,
 ) (bool, *payment.AdminCommonResp, error) {
-	userType, err := utils.GetUserTypeFromMd(ctx)
+	allowTenantUpdate, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(ctx, currentTenantId)
 	if err != nil {
 		return false, nil, i18n.StatusError(ctx, i18n.UserNotFound)
 	}
-
-	switch userType {
-	case utils.SysUserTypeSystemAdmin:
-		return true, nil, nil
-	case utils.SysUserTypeTenantOwner, utils.SysUserTypeTenantAdmin:
-		tenantId, err := utils.GetTenantIdFromMd(ctx)
-		if err != nil {
-			return false, nil, i18n.StatusError(ctx, i18n.UserNotFound)
-		}
-		if currentTenantId != tenantId {
-			return false, &payment.AdminCommonResp{
-				Base: helper.GetErrResp(notFoundCode, i18n.Translate(notFoundCode, ctx)),
-			}, nil
-		}
-		return false, nil, nil
-	default:
+	if forbidden {
 		return false, &payment.AdminCommonResp{
 			Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)),
 		}, nil
 	}
+	if !allowed {
+		return false, &payment.AdminCommonResp{
+			Base: helper.GetErrResp(notFoundCode, i18n.Translate(notFoundCode, ctx)),
+		}, nil
+	}
+	return allowTenantUpdate, nil, nil
 }
 
 func nullableString(value string) sql.NullString {

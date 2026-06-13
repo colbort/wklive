@@ -44,6 +44,19 @@ func (l *AdminUnfreezeAssetLogic) AdminUnfreezeAsset(in *asset.AdminUnfreezeAsse
 		return nil, err
 	}
 
+	freeze, err := l.svcCtx.AssetFreezeModel.FindOneByFreezeNo(l.ctx, in.FreezeNo)
+	if err != nil {
+		return nil, err
+	}
+	if freeze.TenantId != in.TenantId {
+		return nil, i18n.StatusError(l.ctx, i18n.AssetTenantMismatch)
+	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, freeze.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &asset.AdminChangeAssetResp{Base: base}, nil
+	}
+
 	ts := utils.NowMillis()
 	var after *models.TUserAsset
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {

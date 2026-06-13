@@ -36,6 +36,13 @@ func (l *SysRoleDeleteLogic) SysRoleDelete(in *system.SysRoleDeleteReq) (*system
 	if role.Code == "super_admin" || role.Code == "tenant_super_admin" {
 		return nil, i18n.StatusError(l.ctx, i18n.SuperAdminDeleteForbidden)
 	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, role.TenantId, i18n.RoleNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
 	err = l.svcCtx.RoleModel.Delete(l.ctx, in.Id)
 	if err != nil {
 		return nil, err

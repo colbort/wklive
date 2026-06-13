@@ -43,9 +43,11 @@ func (l *ResetPayPasswordLogic) ResetPayPassword(in *user.ResetPayPasswordReq) (
 			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
-	if tuser.TenantId != in.TenantId {
+	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
+		return nil, err
+	} else if base != nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.NoPermissionOperateThisUser, i18n.Translate(i18n.NoPermissionOperateThisUser, l.ctx)),
+			Base: base,
 		}, nil
 	}
 
@@ -59,7 +61,7 @@ func (l *ResetPayPasswordLogic) ResetPayPassword(in *user.ResetPayPasswordReq) (
 	}
 
 	// 获取或创建用户安全信息
-	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
+	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

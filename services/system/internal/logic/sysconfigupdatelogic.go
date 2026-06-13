@@ -34,6 +34,13 @@ func (l *SysConfigUpdateLogic) SysConfigUpdate(in *system.SysConfigUpdateReq) (*
 	if err != nil {
 		return nil, err
 	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, config.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &system.RespBase{
+			Base: base,
+		}, nil
+	}
 
 	configKey := config.ConfigKey.String
 	configValue := config.ConfigValue.String
