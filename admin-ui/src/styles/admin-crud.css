@@ -78,7 +78,7 @@ body {
 }
 
 :is(.module-page, .payment-page) .query-card .el-form {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(auto-fit, minmax(var(--admin-query-item-width), 1fr));
   column-gap: 24px;
   row-gap: 12px;
@@ -126,11 +126,27 @@ body {
 :is(.module-page, .payment-page) .query-card .crud-query-actions {
   width: auto;
   min-width: max-content;
+}
+
+:is(.module-page, .payment-page)
+  .query-card
+  .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)) {
+  justify-self: start;
+}
+
+:is(.module-page, .payment-page) .query-card .crud-query-actions {
   justify-self: end;
 }
 
-:is(.module-page, .payment-page) .query-card .crud-query-actions + .crud-query-actions {
+:is(.module-page, .payment-page)
+  .query-card
+  .el-form:has(.crud-query-extra-actions)
+  .crud-query-actions:not(.crud-query-extra-actions) {
   justify-self: start;
+}
+
+:is(.module-page, .payment-page) .query-card .crud-query-extra-actions {
+  justify-self: end;
 }
 
 :is(.module-page, .payment-page)
