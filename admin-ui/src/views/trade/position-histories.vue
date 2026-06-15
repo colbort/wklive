@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="currentQuery"
       label-width="auto"
-      @search="loadCurrent"
-      @reset="resetCurrent"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
         <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
@@ -113,7 +113,7 @@ const currentColumns: CurrentColumn[] = [
   { prop: 'realizedPnlDelta', label: t('trade.realizedPnl') },
 ]
 
-const loadCurrent = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await tradeService.listPositionHistories({
@@ -128,12 +128,12 @@ const loadCurrent = async () => {
   }
 }
 
-const resetCurrent = () => {
+const resetQuery = () => {
   currentQuery.tenantId = undefined
   currentQuery.userId = undefined
   currentQuery.symbolId = undefined
   currentQuery.limit = 100
-  loadCurrent()
+  loadList()
 }
 
 const showDetail = (row: ContractPositionHistory) => {
@@ -142,18 +142,18 @@ const showDetail = (row: ContractPositionHistory) => {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadCurrent)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadCurrent)
+  nextAndLoad(loadList)
 }
 
-onMounted(loadCurrent)
+onMounted(loadList)
 </script>
 
 <style scoped>

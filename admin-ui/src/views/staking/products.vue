@@ -3,7 +3,7 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="loadProducts"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('staking.tenantId')">
@@ -290,7 +290,7 @@ const loadOptions = async () => {
   optionGroups.value = res.data || []
 }
 
-const loadProducts = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await stakingService.listProducts({
@@ -311,7 +311,7 @@ const resetQuery = () => {
   query.productName = ''
   query.coinSymbol = ''
   query.limit = 100
-  loadProducts()
+  loadList()
 }
 
 const showDetail = async (row: StakeProduct) => {
@@ -361,7 +361,7 @@ const submitProduct = async () => {
     else await stakingService.createProduct(productForm)
     ElMessage.success(t('staking.saveSuccess'))
     productVisible.value = false
-    loadProducts()
+    loadList()
   } finally {
     submitLoading.value = false
   }
@@ -382,22 +382,22 @@ const changeStatus = async (row: StakeProduct) => {
     operatorUid: row.updateUserId || 0,
   })
   ElMessage.success(t('staking.statusUpdated'))
-  loadProducts()
+  loadList()
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadProducts)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadProducts)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadProducts)
+  nextAndLoad(loadList)
 }
 
 onMounted(async () => {
-  await Promise.all([loadProducts(), loadOptions()])
+  await Promise.all([loadList(), loadOptions()])
 })
 </script>

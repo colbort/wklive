@@ -3,7 +3,7 @@
     <CrudQueryCard
       :model="queryParams"
       label-width="auto"
-      @search="handleQuery"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('itick.categoryType')">
@@ -28,7 +28,7 @@
           :placeholder="t('itick.pleaseInputMarket')"
           clearable
           style="width: 180px"
-          @keyup.enter="handleQuery"
+          @keyup.enter="loadList"
         />
       </el-form-item>
 
@@ -38,7 +38,7 @@
           :placeholder="t('common.keyword')"
           clearable
           style="width: 180px"
-          @keyup.enter="handleQuery"
+          @keyup.enter="loadList"
         />
       </el-form-item>
 
@@ -642,7 +642,7 @@ const loadOptions = async () => {
   }
 }
 
-const handleQuery = () => {
+const loadList = () => {
   resetAndLoad(getList)
 }
 

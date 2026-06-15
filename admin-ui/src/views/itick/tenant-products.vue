@@ -3,7 +3,7 @@
     <CrudQueryCard
       :model="queryParams"
       label-width="auto"
-      @search="getList"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('common.tenantId')">
@@ -769,7 +769,7 @@ const cleanedQueryParams = computed<ListTenantProductsReq>(() => {
   return params
 })
 
-const getList = async () => {
+const loadList = async () => {
   await withLoading(async () => {
     const res = await tenantProductsService.getList(cleanedQueryParams.value)
     list.value = res?.data || []
@@ -1010,7 +1010,7 @@ const confirmProductPicker = () => {
 }
 
 const handleQuery = () => {
-  resetAndLoad(getList)
+  resetAndLoad(loadList)
 }
 
 const resetQuery = () => {
@@ -1020,15 +1020,15 @@ const resetQuery = () => {
 }
 
 const handleLimitChange = () => {
-  resetAndLoad(getList)
+  resetAndLoad(loadList)
 }
 
 const handlePrevPage = () => {
-  prevAndLoad(getList)
+  prevAndLoad(loadList)
 }
 
 const handleNextPage = () => {
-  nextAndLoad(getList)
+  nextAndLoad(loadList)
 }
 
 const handleAdd = async () => {
@@ -1110,7 +1110,7 @@ const submitForm = async () => {
     }
 
     formDialogVisible.value = false
-    getList()
+    loadList()
   } catch {
     ElMessage.error(t(formMode.value === 'add' ? 'itick.createdFailed' : 'itick.updatedFailed'))
   } finally {
@@ -1174,7 +1174,7 @@ const submitBatch = async () => {
     })
     ElMessage.success(t('itick.batchSavedSuccess'))
     batchDialogVisible.value = false
-    getList()
+    loadList()
   } catch {
     ElMessage.error(t('itick.batchSavedFailed'))
   } finally {
@@ -1207,7 +1207,7 @@ const submitInit = async () => {
       }),
     )
     initDialogVisible.value = false
-    getList()
+    loadList()
   } catch {
     ElMessage.error(t('itick.initFailed'))
   } finally {
@@ -1218,7 +1218,7 @@ const submitInit = async () => {
 onMounted(() => {
   loadSystemCore()
   loadOptions()
-  getList()
+  loadList()
 })
 
 onBeforeUnmount(() => {

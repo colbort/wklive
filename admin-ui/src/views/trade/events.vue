@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="loadCurrent"
-      @reset="resetCurrent"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
@@ -346,7 +346,7 @@ function formatJsonText(value?: string) {
   }
 }
 
-const loadCurrent = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await tradeService.listEvents({
@@ -365,13 +365,13 @@ const loadCurrent = async () => {
   }
 }
 
-const resetCurrent = () => {
+const resetQuery = () => {
   query.tenantId = undefined
   query.bizType = ''
   query.bizId = ''
   query.eventStatus = undefined
   timeRangeValue.value = []
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 const showDetail = async (row: BizTradeEvent) => {
@@ -394,7 +394,7 @@ const retryEvent = async (row: BizTradeEvent) => {
     operatorId: 0,
   })
   ElMessage.success(t('trade.eventRetrySubmitted'))
-  loadCurrent()
+  loadList()
 }
 
 async function loadOptions() {
@@ -402,20 +402,20 @@ async function loadOptions() {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadCurrent)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadCurrent)
+  nextAndLoad(loadList)
 }
 
 onMounted(async () => {
   await loadOptions()
-  await loadCurrent()
+  await loadList()
 })
 </script>
 

@@ -4,7 +4,8 @@
       :model="riskQuery"
       label-width="auto"
       :show-actions="false"
-      @search="loadRiskData"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
@@ -85,9 +86,7 @@ const leverageForm = reactive<SetUserLeverageConfigReq>({
   remark: '',
 })
 
-const loadCurrent = async () => {}
-
-const loadRiskData = async () => {
+const loadList = async () => {
   submitLoading.value = true
   try {
     Object.assign(
@@ -100,6 +99,10 @@ const loadRiskData = async () => {
   }
 }
 
+function resetQuery() {
+  void loadList()
+}
+
 const submitLeverage = async () => {
   submitLoading.value = true
   try {
@@ -110,5 +113,5 @@ const submitLeverage = async () => {
   }
 }
 
-onMounted(loadCurrent)
+onMounted(loadList)
 </script>

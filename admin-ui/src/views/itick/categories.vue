@@ -3,7 +3,7 @@
     <CrudQueryCard
       :model="queryParams"
       label-width="auto"
-      @search="handleQuery"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('itick.categoryType')">
@@ -462,7 +462,7 @@ const loadOptions = async () => {
   }
 }
 
-const handleQuery = () => {
+const loadList = () => {
   resetAndLoad(getList)
 }
 

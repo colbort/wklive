@@ -60,11 +60,11 @@ async function fetchOptions() {
   }
 }
 
-function onSearch() {
+function loadList() {
   resetAndLoad(fetchList)
 }
 
-function onReset() {
+function resetQuery() {
   queryForm.username = ''
   queryForm.method = ''
   queryForm.path = ''
@@ -90,8 +90,8 @@ onMounted(() => {
     <CrudQueryCard
       :model="queryForm"
       label-width="auto"
-      @search="onSearch"
-      @reset="onReset"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('common.username')">
         <el-input

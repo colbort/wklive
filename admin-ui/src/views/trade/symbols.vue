@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="loadCurrent"
-      @reset="resetCurrent"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('trade.tenantId')">
         <div class="query-field">
@@ -1197,7 +1197,7 @@ const loadOptions = async () => {
   }
 }
 
-const loadCurrent = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await tradeService.listSymbols({
@@ -1212,12 +1212,12 @@ const loadCurrent = async () => {
   }
 }
 
-const resetCurrent = () => {
+const resetQuery = () => {
   query.tenantId = undefined
   query.marketType = undefined
   query.keyword = ''
   query.status = undefined
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 const showDetail = async (row: TradeSymbol) => {
@@ -1241,7 +1241,7 @@ const submitSymbol = async () => {
     }
     ElMessage.success(t('trade.saveSuccess'))
     symbolVisible.value = false
-    loadCurrent()
+    loadList()
   } finally {
     submitLoading.value = false
   }
@@ -1418,20 +1418,20 @@ const submitLeverageConfig = async () => {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadCurrent)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadCurrent)
+  nextAndLoad(loadList)
 }
 
 onMounted(() => {
   loadOptions()
-  loadCurrent()
+  loadList()
 })
 </script>
 

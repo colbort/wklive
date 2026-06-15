@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="loadCurrent"
-      @reset="resetCurrent"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('option.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
@@ -331,7 +331,7 @@ const marketForm = reactive<UpdateMarketReq>({
   snapshotTime: 0,
 })
 
-const loadCurrent = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const resp = await optionService.listMarketSnapshots({
@@ -350,11 +350,11 @@ const loadCurrent = async () => {
   }
 }
 
-const resetCurrent = () => {
+const resetQuery = () => {
   query.tenantId = undefined
   query.contractId = 0
   query.limit = 100
-  loadCurrent()
+  loadList()
 }
 
 const showDetail = async (row: OptionMarketSnapshot) => {
@@ -409,25 +409,25 @@ const submitMarket = async () => {
     await optionService.updateMarket(marketForm)
     ElMessage.success(t('common.updateSuccess'))
     marketVisible.value = false
-    loadCurrent()
+    loadList()
   } finally {
     submitLoading.value = false
   }
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadCurrent)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadCurrent)
+  nextAndLoad(loadList)
 }
 
-onMounted(loadCurrent)
+onMounted(loadList)
 </script>
 
 <style scoped>

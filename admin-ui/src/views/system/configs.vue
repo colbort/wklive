@@ -3,15 +3,15 @@
     <CrudQueryCard
       :model="queryForm"
       label-width="auto"
-      @search="fetchList"
-      @reset="handleReset"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect
           v-model="queryForm.tenantId"
           class="tenant-select-filter"
           include-system
-          @change="fetchList"
+          @change="loadList"
         />
       </el-form-item>
       <el-form-item :label="t('system.configKey')">
@@ -20,7 +20,7 @@
           :placeholder="t('system.pleaseSelect')"
           filterable
           clearable
-          @change="fetchList"
+          @change="loadList"
         >
           <el-option
             v-for="key in keys"
@@ -122,7 +122,7 @@
         @next="nextPage"
         @limit-change="
           () => {
-            resetAndLoad(fetchList)
+            resetAndLoad(loadList)
           }
         "
       />
@@ -417,7 +417,7 @@ function getConfigKeyLabel(configKey: string) {
 }
 
 // Fetch list
-async function fetchList() {
+async function loadList() {
   await withLoading(async () => {
     try {
       const res = await configService.getList({
@@ -436,10 +436,10 @@ async function fetchList() {
 }
 
 // Handle reset
-function handleReset() {
+function resetQuery() {
   queryForm.tenantId = 0
   queryForm.keyword = ''
-  resetAndLoad(fetchList)
+  resetAndLoad(loadList)
 }
 
 function resetTypeForms() {
@@ -608,11 +608,11 @@ function handleConfigKeyChange(value: string) {
 }
 
 function nextPage() {
-  nextAndLoad(fetchList)
+  nextAndLoad(loadList)
 }
 
 function prevPage() {
-  prevAndLoad(fetchList)
+  prevAndLoad(loadList)
 }
 
 // Handle create
@@ -795,7 +795,7 @@ async function handleDelete(row: SysConfigItem) {
     if (res.code !== 200) throw new Error(res.msg || 'delete failed')
 
     ElMessage.success(t('common.deleteSuccess'))
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     if ((error instanceof Error ? error.message : '') !== 'cancel') {
       ElMessage.error(error instanceof Error ? error.message : t('common.deleteFailed'))
@@ -892,7 +892,7 @@ async function handleSubmit() {
     }
 
     dialogVisible.value = false
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('common.operationFailed'))
   } finally {
@@ -903,7 +903,7 @@ async function handleSubmit() {
 // Initialize
 onMounted(() => {
   loadKeys()
-  fetchList()
+  loadList()
 })
 </script>
 

@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="riskQuery"
       label-width="auto"
-      @search="loadRiskLogs"
-      @reset="resetRiskLogQuery"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
@@ -98,7 +98,7 @@ const riskLogQuery = reactive<GetRiskOrderCheckLogListReq>({
   limit: 20,
 })
 
-const loadRiskLogs = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await tradeService.listRiskLogs({
@@ -113,25 +113,25 @@ const loadRiskLogs = async () => {
   }
 }
 
-function resetRiskLogQuery() {
+function resetQuery() {
   riskLogQuery.tenantId = 0
   riskLogQuery.userId = 0
   riskLogQuery.symbolId = 0
   riskLogQuery.orderNo = ''
-  resetAndLoad(loadRiskLogs)
+  resetAndLoad(loadList)
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadRiskLogs)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadRiskLogs)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadRiskLogs)
+  nextAndLoad(loadList)
 }
 
-onMounted(loadRiskLogs)
+onMounted(loadList)
 </script>

@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="loadCurrent"
-      @reset="resetCurrent"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('option.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
@@ -95,7 +95,7 @@ const query = reactive({
   limit: 20,
 })
 
-const loadCurrent = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await optionService.listOrders({
@@ -110,13 +110,13 @@ const loadCurrent = async () => {
   }
 }
 
-const resetCurrent = () => {
+const resetQuery = () => {
   query.tenantId = undefined
   query.userId = undefined
   query.orderNo = ''
   query.contractId = undefined
   query.limit = 100
-  loadCurrent()
+  loadList()
 }
 
 const showDetail = async (row: OptionOrder) => {
@@ -127,18 +127,18 @@ const showDetail = async (row: OptionOrder) => {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadCurrent)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadCurrent)
+  nextAndLoad(loadList)
 }
 
-onMounted(loadCurrent)
+onMounted(loadList)
 </script>
 
 <style scoped></style>

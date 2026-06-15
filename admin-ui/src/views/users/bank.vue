@@ -195,7 +195,7 @@ async function verifyUser() {
   }
 }
 
-async function fetchList() {
+async function loadList() {
   loading.value = true
   try {
     const res = await memberUserService.listBanks({
@@ -222,7 +222,7 @@ function resetQuery() {
     cursor: pagination.cursor,
     limit: pagination.limit,
   })
-  fetchList()
+  loadList()
 }
 
 function openCreate() {
@@ -315,7 +315,7 @@ async function submitEdit() {
     }
     ElMessage.success(t('users.saveSuccess'))
     editVisible.value = false
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.saveFailed'))
   } finally {
@@ -346,7 +346,7 @@ async function submitEnabled() {
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.updateFailed'))
     ElMessage.success(t('users.updateSuccess'))
     enabledVisible.value = false
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.updateFailed'))
   }
@@ -358,7 +358,7 @@ async function setDefault(row: UserBankItem) {
     const res = await memberUserService.setDefaultBank(row.id, { tenantId, userId: row.userId })
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.setFailed'))
     ElMessage.success(t('users.setSuccess'))
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.setFailed'))
   }
@@ -375,7 +375,7 @@ async function remove(row: UserBankItem) {
     const res = await memberUserService.deleteBank(row.id, tenantId)
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.deleteFailed'))
     ElMessage.success(t('users.deleteSuccess'))
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     if (error === 'cancel') return
     ElMessage.error(error instanceof Error ? error.message : t('users.deleteFailed'))
@@ -383,18 +383,18 @@ async function remove(row: UserBankItem) {
 }
 
 function handleLimitChange() {
-  resetAndLoad(fetchList)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(fetchList)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(fetchList)
+  nextAndLoad(loadList)
 }
 
-onMounted(fetchList)
+onMounted(loadList)
 onMounted(fetchOptions)
 </script>
 
@@ -403,7 +403,7 @@ onMounted(fetchOptions)
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="fetchList"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('common.tenantId')">

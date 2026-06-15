@@ -4,7 +4,8 @@
       :model="riskQuery"
       label-width="auto"
       :show-actions="false"
-      @search="loadRiskData"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <template #header>
         {{ t('trade.riskQuery') }}
@@ -197,8 +198,8 @@
         :model="riskLogQuery"
         :card="false"
         label-width="90px"
-        @search="loadRiskLogs"
-        @reset="resetRiskLogQuery"
+        @search="loadList"
+        @reset="resetQuery"
       >
         <el-form-item :label="t('trade.tenantId')">
           <TenantSelect v-model="riskLogQuery.tenantId" class="tenant-select-filter" />
@@ -426,40 +427,7 @@ const leverageForm = reactive<LeverageForm>({
   remark: '',
 })
 
-const loadCurrent = async () => {
-  await loadRiskLogs()
-}
-
-const loadRiskData = async () => {
-  submitLoading.value = true
-  try {
-    Object.assign(
-      tradeLimitForm,
-      riskQuery,
-      (await tradeService.getUserTradeLimit(riskQuery)).data || {},
-    )
-    Object.assign(
-      symbolLimitForm,
-      riskQuery,
-      (await tradeService.getUserSymbolLimit(riskQuery)).data || {},
-    )
-    Object.assign(
-      tradeConfigForm,
-      riskQuery,
-      (await tradeService.getUserTradeConfig(riskQuery)).data || {},
-    )
-    Object.assign(
-      leverageForm,
-      riskQuery,
-      (await tradeService.getUserLeverageConfig(riskQuery)).data || {},
-    )
-    await loadRiskLogs()
-  } finally {
-    submitLoading.value = false
-  }
-}
-
-const loadRiskLogs = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await tradeService.listRiskLogs({
@@ -474,12 +442,12 @@ const loadRiskLogs = async () => {
   }
 }
 
-function resetRiskLogQuery() {
+function resetQuery() {
   riskLogQuery.tenantId = 0
   riskLogQuery.userId = 0
   riskLogQuery.symbolId = 0
   riskLogQuery.orderNo = ''
-  resetAndLoad(loadRiskLogs)
+  resetAndLoad(loadList)
 }
 
 const showDetail = (row: RiskOrderCheckLog) => {
@@ -528,18 +496,18 @@ const submitLeverage = async () => {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadCurrent)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadCurrent)
+  nextAndLoad(loadList)
 }
 
-onMounted(loadCurrent)
+onMounted(loadList)
 </script>
 
 <style scoped>

@@ -3,7 +3,7 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="handleQuery"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('common.tenantId')">
@@ -315,7 +315,7 @@ function params() {
     Object.entries(query).filter(([, v]) => v !== '' && v !== 0 && v !== undefined),
   )
 }
-async function loadList() {
+async function fetchList() {
   loading.value = true
   try {
     const res = await cryptoService.listRechargeAddresses({
@@ -350,19 +350,19 @@ function resetQuery() {
     status: undefined,
   })
   reset()
-  void loadList()
+  void fetchList()
 }
-function handleQuery() {
-  resetAndLoad(loadList)
+function loadList() {
+  resetAndLoad(fetchList)
 }
 function handleLimitChange() {
-  resetAndLoad(loadList)
+  resetAndLoad(fetchList)
 }
 function handlePrevPage() {
-  prevAndLoad(loadList)
+  prevAndLoad(fetchList)
 }
 function handleNextPage() {
-  nextAndLoad(loadList)
+  nextAndLoad(fetchList)
 }
 function openDialog(row?: CryptoRechargeAddress) {
   Object.assign(

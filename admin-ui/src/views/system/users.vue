@@ -69,10 +69,10 @@ async function fetchList() {
   })
 }
 
-function onSearch() {
+function loadList() {
   resetAndLoad(fetchList)
 }
-function onReset() {
+function resetQuery() {
   queryForm.keyword = ''
   queryForm.enabled = undefined
   resetAndLoad(fetchList)
@@ -426,15 +426,15 @@ onMounted(async () => {
     <CrudQueryCard
       :model="queryForm"
       label-width="auto"
-      @search="onSearch"
-      @reset="onReset"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('common.keyword')">
         <el-input
           v-model="queryForm.keyword"
           clearable
           :placeholder="t('common.accountNicknameKeyword')"
-          @keyup.enter="onSearch"
+          @keyup.enter="loadList"
         />
       </el-form-item>
 

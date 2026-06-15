@@ -3,7 +3,7 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="loadRows"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('staking.tenantId')">
@@ -84,7 +84,7 @@ const query = reactive({
   limit: 20,
 })
 
-const loadRows = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await stakingService.listRewardLogs({
@@ -105,7 +105,7 @@ const resetQuery = () => {
   query.userId = undefined
   query.productId = undefined
   query.limit = 100
-  loadRows()
+  loadList()
 }
 
 const showDetail = (row: StakeRewardLog) => {
@@ -114,16 +114,16 @@ const showDetail = (row: StakeRewardLog) => {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadRows)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadRows)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadRows)
+  nextAndLoad(loadList)
 }
 
-onMounted(loadRows)
+onMounted(loadList)
 </script>

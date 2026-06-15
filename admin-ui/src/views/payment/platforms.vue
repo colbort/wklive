@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="platformQuery"
       label-width="auto"
-      @search="loadPlatforms"
-      @reset="resetPlatformQuery"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('payment.platformCode')">
         <el-input v-model="platformQuery.platformCode" clearable />
@@ -293,7 +293,7 @@ const platformForm = reactive({
   remark: '',
 })
 
-const loadPlatforms = async () => {
+const loadList = async () => {
   platformLoading.value = true
   try {
     const res = await catalogService.getPlatformList({
@@ -318,9 +318,9 @@ const loadOptions = async () => {
   optionGroups.value = res.data || []
 }
 
-const resetPlatformQuery = () => {
+const resetQuery = () => {
   Object.assign(platformQuery, { platformCode: '', keyword: '', enabled: 0 })
-  loadPlatforms()
+  loadList()
 }
 
 const openPlatformDialog = (row?: PayPlatform) => {
@@ -401,7 +401,7 @@ const submitPlatform = async () => {
     }
     ElMessage.success(t('common.operationSuccess'))
     platformDialogVisible.value = false
-    loadPlatforms()
+    loadList()
   } finally {
     submitLoading.value = false
   }
@@ -415,19 +415,19 @@ const showPlatformDetail = async (row: PayPlatform) => {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadPlatforms)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadPlatforms)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadPlatforms)
+  nextAndLoad(loadList)
 }
 
 onMounted(async () => {
-  await Promise.all([loadSystemCore(), loadPlatforms(), loadSupportedPlatforms(), loadOptions()])
+  await Promise.all([loadSystemCore(), loadList(), loadSupportedPlatforms(), loadOptions()])
 })
 </script>
 

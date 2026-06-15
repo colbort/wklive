@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="ruleQuery"
       label-width="auto"
-      @search="loadRules"
-      @reset="resetRuleQuery"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="ruleQuery.tenantId" class="tenant-select-filter" />
@@ -240,7 +240,7 @@ const loadOptions = async () => {
   optionGroups.value = res.data || []
 }
 
-const loadRules = async () => {
+const loadList = async () => {
   ruleLoading.value = true
   try {
     const res = await tenantService.getTenantChannelRuleList({
@@ -257,10 +257,10 @@ const loadRules = async () => {
   }
 }
 
-function resetRuleQuery() {
+function resetQuery() {
   ruleQuery.tenantId = 0
   ruleQuery.channelId = 0
-  resetAndLoad(loadRules)
+  resetAndLoad(loadList)
 }
 
 const resetRuleVerifyState = () => {
@@ -366,7 +366,7 @@ const submitRule = async () => {
   }
   ElMessage.success(t('common.operationSuccess'))
   ruleDialogVisible.value = false
-  loadRules()
+  loadList()
 }
 
 const showRuleDetail = async (row: TenantPayChannelRule) => {
@@ -383,19 +383,19 @@ function getEnabledTagClass(value?: number) {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadRules)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadRules)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadRules)
+  nextAndLoad(loadList)
 }
 
 onMounted(async () => {
-  await Promise.all([loadOptions(), loadRules()])
+  await Promise.all([loadOptions(), loadList()])
 })
 </script>
 

@@ -110,7 +110,7 @@ async function fetchOptions() {
   }
 }
 
-async function fetchList() {
+async function loadList() {
   loading.value = true
   try {
     const res = await memberUserService.listIdentities({
@@ -140,7 +140,7 @@ function resetQuery() {
     cursor: pagination.cursor,
     limit: pagination.limit,
   })
-  fetchList()
+  loadList()
 }
 
 async function showDetail(row: UserIdentityItem) {
@@ -176,7 +176,7 @@ async function submitReview() {
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.reviewFailed'))
     ElMessage.success(t('users.reviewSuccess'))
     reviewVisible.value = false
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.reviewFailed'))
   } finally {
@@ -185,18 +185,18 @@ async function submitReview() {
 }
 
 function handleLimitChange() {
-  resetAndLoad(fetchList)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(fetchList)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(fetchList)
+  nextAndLoad(loadList)
 }
 
-onMounted(fetchList)
+onMounted(loadList)
 onMounted(fetchOptions)
 </script>
 
@@ -205,7 +205,7 @@ onMounted(fetchOptions)
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="fetchList"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('common.tenantId')">

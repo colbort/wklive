@@ -291,7 +291,7 @@ async function verifyReferrer() {
   }
 }
 
-async function fetchList() {
+async function loadList() {
   loading.value = true
   try {
     const res = await memberUserService.getList({
@@ -322,7 +322,7 @@ function resetQuery() {
     cursor: pagination.cursor,
     limit: pagination.limit,
   })
-  fetchList()
+  loadList()
 }
 
 async function showDetail(row: UserItem) {
@@ -478,7 +478,7 @@ async function submitEdit() {
     }
     ElMessage.success(t('users.saveSuccess'))
     editVisible.value = false
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.saveFailed'))
   } finally {
@@ -541,7 +541,7 @@ async function quickAction(row: UserItem, action: 'unlock' | 'reset2fa' | 'delet
       if (!checkCode(res.code)) throw new Error(res.msg || t('users.resetFailed'))
     }
     ElMessage.success(t('common.operationSuccess'))
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     if (error === 'cancel') return
     ElMessage.error(error instanceof Error ? error.message : t('users.operationFailed'))
@@ -587,25 +587,25 @@ async function updateSimpleValue(row: UserItem, field: 'status' | 'memberLevel' 
       if (!checkCode(res.code)) throw new Error(res.msg || t('users.updateFailed'))
     }
     ElMessage.success(t('users.updateSuccess'))
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.updateFailed'))
   }
 }
 
 function handleLimitChange() {
-  resetAndLoad(fetchList)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(fetchList)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(fetchList)
+  nextAndLoad(loadList)
 }
 
-onMounted(fetchList)
+onMounted(loadList)
 onMounted(fetchCreateOptions)
 </script>
 
@@ -614,7 +614,7 @@ onMounted(fetchCreateOptions)
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="fetchList"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('common.tenantId')">

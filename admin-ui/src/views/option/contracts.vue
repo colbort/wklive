@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="loadCurrent"
-      @reset="resetCurrent"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('option.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
@@ -711,7 +711,7 @@ const contractStatusTagType = (status?: number): TagType => {
   }
 }
 
-const loadCurrent = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await optionService.listContracts({
@@ -779,14 +779,14 @@ const resetMarketForm = () => {
   })
 }
 
-const resetCurrent = () => {
+const resetQuery = () => {
   query.tenantId = undefined
   query.contractCode = ''
   query.underlyingSymbol = ''
   query.optionType = undefined
   query.status = undefined
   query.limit = 100
-  loadCurrent()
+  loadList()
 }
 
 const showDetail = async (row: OptionContractDetail) => {
@@ -825,7 +825,7 @@ const submitContract = async () => {
     }
     ElMessage.success(contractForm.id ? t('common.updateSuccess') : t('common.createSuccess'))
     contractVisible.value = false
-    loadCurrent()
+    loadList()
   } finally {
     submitLoading.value = false
   }
@@ -869,28 +869,28 @@ const submitMarket = async () => {
     await optionService.updateMarket(marketForm)
     ElMessage.success(t('common.updateSuccess'))
     marketVisible.value = false
-    loadCurrent()
+    loadList()
   } finally {
     submitLoading.value = false
   }
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadCurrent)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadCurrent)
+  nextAndLoad(loadList)
 }
 
 onMounted(async () => {
   await loadOptions()
   resetContractForm()
-  await loadCurrent()
+  await loadList()
 })
 </script>
 

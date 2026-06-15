@@ -3,7 +3,7 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="loadOrders"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('staking.tenantId')">
@@ -226,7 +226,7 @@ const redeemForm = reactive<AdminManualRedeemReq>({
   remark: '',
 })
 
-const loadOrders = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await stakingService.listOrders({
@@ -247,7 +247,7 @@ const resetQuery = () => {
   query.userId = undefined
   query.productId = undefined
   query.limit = 100
-  loadOrders()
+  loadList()
 }
 
 const showDetail = async (row: StakeOrder) => {
@@ -274,7 +274,7 @@ const submitReward = async () => {
     await stakingService.manualReward(rewardForm)
     ElMessage.success(t('staking.rewardSuccess'))
     rewardVisible.value = false
-    loadOrders()
+    loadList()
   } finally {
     submitLoading.value = false
   }
@@ -301,23 +301,23 @@ const submitRedeem = async () => {
     await stakingService.manualRedeem(redeemForm)
     ElMessage.success(t('staking.redeemSuccess'))
     redeemVisible.value = false
-    loadOrders()
+    loadList()
   } finally {
     submitLoading.value = false
   }
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadOrders)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadOrders)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadOrders)
+  nextAndLoad(loadList)
 }
 
-onMounted(loadOrders)
+onMounted(loadList)
 </script>

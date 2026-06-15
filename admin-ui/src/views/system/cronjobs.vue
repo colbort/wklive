@@ -138,11 +138,11 @@ async function fetchOptions() {
 }
 
 // Search and reset
-function onSearch() {
+function loadList() {
   resetAndLoad(fetchList)
 }
 
-function onReset() {
+function resetQuery() {
   queryForm.jobName = ''
   queryForm.jobGroup = ''
   queryForm.status = undefined
@@ -270,8 +270,8 @@ onMounted(() => {
     <CrudQueryCard
       :model="queryForm"
       label-width="auto"
-      @search="onSearch"
-      @reset="onReset"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('system.jobName')">
         <el-input v-model="queryForm.jobName" :placeholder="t('common.pleaseEnter')" clearable />

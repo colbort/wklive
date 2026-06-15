@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="loadCurrent"
-      @reset="resetCurrent"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
@@ -390,7 +390,7 @@ const optionLabel = (key: string, value?: number | string) => {
   return option ? optionItemLabel(option) : String(value)
 }
 
-const loadCurrent = async () => {
+const loadList = async () => {
   loading.value = true
   try {
     const res = await tradeService.listOrders({
@@ -410,14 +410,14 @@ const loadCurrent = async () => {
   }
 }
 
-const resetCurrent = () => {
+const resetQuery = () => {
   query.tenantId = undefined
   query.userId = undefined
   query.symbolId = undefined
   query.marketType = undefined
   query.status = undefined
   query.keyword = ''
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 const showDetail = async (row: TradeOrder) => {
@@ -437,15 +437,15 @@ const loadOptions = async () => {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadCurrent)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadCurrent)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadCurrent)
+  nextAndLoad(loadList)
 }
 
 function sideTagType(side: number) {
@@ -495,7 +495,7 @@ function formatJsonText(value: string) {
 
 onMounted(async () => {
   await loadOptions()
-  await loadCurrent()
+  await loadList()
 })
 </script>
 

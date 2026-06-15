@@ -127,14 +127,14 @@ function buildMenuTree(flat: MenuNode[]): RoleMenuNode[] {
   return roots
 }
 
-function onSearch() {
+function loadList() {
   resetAndLoad(fetchList)
 }
 
-function onReset() {
+function resetQuery() {
   queryForm.keyword = ''
   queryForm.enabled = 0
-  onSearch()
+  loadList()
 }
 
 function nextPage() {
@@ -376,8 +376,8 @@ onMounted(async () => {
     <CrudQueryCard
       :model="queryForm"
       label-width="auto"
-      @search="onSearch"
-      @reset="onReset"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('common.keyword')">
         <el-input v-model="queryForm.keyword" :placeholder="t('common.keyword')" clearable />
@@ -387,7 +387,7 @@ onMounted(async () => {
         <el-select
           v-model="queryForm.enabled"
           :placeholder="t('common.enabled')"
-          @change="onSearch"
+          @change="loadList"
         >
           <el-option :label="t('common.all')" :value="0" />
           <el-option

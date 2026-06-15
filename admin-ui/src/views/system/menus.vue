@@ -3,15 +3,15 @@
     <CrudQueryCard
       :model="queryForm"
       label-width="auto"
-      @search="handleSearch"
-      @reset="handleReset"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('common.keyword')">
         <el-input
           v-model="queryForm.keyword"
           :placeholder="t('system.pleaseInputMenuName')"
           clearable
-          @keyup.enter="handleSearch"
+          @keyup.enter="loadList"
         />
       </el-form-item>
 
@@ -699,12 +699,12 @@ async function loadOptions() {
   optionGroups.value = res.data || []
 }
 
-function handleSearch() {
+function loadList() {
   queryPage.cursor = undefined
   getList()
 }
 
-function handleReset() {
+function resetQuery() {
   queryForm.keyword = ''
   queryForm.menuType = undefined
   queryForm.enabled = undefined

@@ -102,11 +102,11 @@ async function fetchList() {
   })
 }
 
-function onSearch() {
+function loadList() {
   resetAndLoad(fetchList)
 }
 
-function onReset() {
+function resetQuery() {
   queryForm.tenantId = undefined
   queryForm.channel = undefined
   queryForm.target = ''
@@ -192,8 +192,8 @@ onMounted(() => {
     <CrudQueryCard
       :model="queryForm"
       label-width="auto"
-      @search="onSearch"
-      @reset="onReset"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="queryForm.tenantId" class="tenant-select-filter" />

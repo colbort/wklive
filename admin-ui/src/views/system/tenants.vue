@@ -3,15 +3,15 @@
     <CrudQueryCard
       :model="queryForm"
       label-width="auto"
-      @search="fetchList"
-      @reset="handleReset"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('system.tenantCode')">
         <el-input
           v-model="queryForm.tenantCode"
           :placeholder="t('system.tenantCodePlaceholder')"
           clearable
-          @keyup.enter="fetchList"
+          @keyup.enter="loadList"
         />
       </el-form-item>
       <el-form-item :label="t('system.tenantName')">
@@ -19,7 +19,7 @@
           v-model="queryForm.tenantName"
           :placeholder="t('system.tenantNamePlaceholder')"
           clearable
-          @keyup.enter="fetchList"
+          @keyup.enter="loadList"
         />
       </el-form-item>
       <el-form-item :label="t('system.contactName')">
@@ -27,7 +27,7 @@
           v-model="queryForm.contactName"
           :placeholder="t('system.contactNamePlaceholder')"
           clearable
-          @keyup.enter="fetchList"
+          @keyup.enter="loadList"
         />
       </el-form-item>
       <el-form-item :label="t('system.enabled')">
@@ -35,7 +35,7 @@
           v-model="queryForm.enabled"
           :placeholder="t('system.pleaseSelectStatus')"
           clearable
-          @change="fetchList"
+          @change="loadList"
         >
           <el-option :label="t('common.all')" :value="0" />
           <el-option
@@ -367,7 +367,7 @@ function enabledLabel(value: number | undefined) {
 }
 
 // Fetch list
-async function fetchList() {
+async function loadList() {
   await withLoading(async () => {
     try {
       const params = {
@@ -401,24 +401,24 @@ async function fetchOptions() {
 // Handle pagination
 function handleSizeChange(size: number) {
   pagination.limit = size
-  resetAndLoad(fetchList)
+  resetAndLoad(loadList)
 }
 
 // Handle reset
-function handleReset() {
+function resetQuery() {
   queryForm.tenantCode = ''
   queryForm.tenantName = ''
   queryForm.contactName = ''
   queryForm.enabled = 0
-  resetAndLoad(fetchList)
+  resetAndLoad(loadList)
 }
 
 function nextPage() {
-  nextAndLoad(fetchList)
+  nextAndLoad(loadList)
 }
 
 function prevPage() {
-  prevAndLoad(fetchList)
+  prevAndLoad(loadList)
 }
 
 // Handle create
@@ -458,7 +458,7 @@ async function handleDelete(row: SysTenantItem) {
     if (res.code !== 200) throw new Error(res.msg || 'delete failed')
 
     ElMessage.success(t('common.deleteSuccess'))
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     if ((error instanceof Error ? error.message : '') !== 'cancel') {
       ElMessage.error(error instanceof Error ? error.message : t('common.deleteFailed'))
@@ -503,7 +503,7 @@ async function handleSubmit() {
     }
 
     dialogVisible.value = false
-    fetchList()
+    loadList()
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('common.operationFailed'))
   } finally {
@@ -514,6 +514,6 @@ async function handleSubmit() {
 // Initialize
 onMounted(() => {
   fetchOptions()
-  fetchList()
+  loadList()
 })
 </script>

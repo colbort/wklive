@@ -3,7 +3,7 @@
     <CrudQueryCard
       :model="query"
       label-width="auto"
-      @search="handleQuery"
+      @search="loadList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('asset.tenantId')">
@@ -254,7 +254,7 @@ async function loadOptions() {
   optionGroups.value = res.data || []
 }
 
-async function loadList() {
+async function fetchList() {
   loading.value = true
   try {
     const res = await assetService.getFlows({
@@ -274,8 +274,8 @@ async function loadList() {
   }
 }
 
-function handleQuery() {
-  resetAndLoad(loadList)
+function loadList() {
+  resetAndLoad(fetchList)
 }
 
 function resetQuery() {
@@ -284,19 +284,19 @@ function resetQuery() {
   query.walletType = undefined
   query.coin = ''
   query.bizNo = ''
-  resetAndLoad(loadList)
+  resetAndLoad(fetchList)
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadList)
+  resetAndLoad(fetchList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadList)
+  prevAndLoad(fetchList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadList)
+  nextAndLoad(fetchList)
 }
 
 function showDetail(row: AssetFlow) {
@@ -325,6 +325,6 @@ function opTypeTagType(opType?: number | string) {
   }
 }
 
-onMounted(loadList)
+onMounted(fetchList)
 onMounted(loadOptions)
 </script>

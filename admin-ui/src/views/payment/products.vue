@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="productQuery"
       label-width="auto"
-      @search="loadProducts"
-      @reset="resetProductQuery"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('payment.platformId')">
         <el-input-number v-model="productQuery.platformId" :min="0" :precision="0" />
@@ -203,7 +203,7 @@ const productForm = reactive({
   remark: '',
 })
 
-const loadProducts = async () => {
+const loadList = async () => {
   productLoading.value = true
   try {
     const res = await catalogService.getProductList({
@@ -224,9 +224,9 @@ const loadOptions = async () => {
   optionGroups.value = res.data || []
 }
 
-const resetProductQuery = () => {
+const resetQuery = () => {
   Object.assign(productQuery, { platformId: 0, productCode: '', keyword: '' })
-  loadProducts()
+  loadList()
 }
 
 const openProductDialog = (row?: PayProduct) => {
@@ -301,7 +301,7 @@ const submitProduct = async () => {
     }
     ElMessage.success(t('common.operationSuccess'))
     productDialogVisible.value = false
-    loadProducts()
+    loadList()
   } finally {
     submitLoading.value = false
   }
@@ -315,19 +315,19 @@ const showProductDetail = async (row: PayProduct) => {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadProducts)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadProducts)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadProducts)
+  nextAndLoad(loadList)
 }
 
 onMounted(async () => {
-  await Promise.all([loadProducts(), loadOptions()])
+  await Promise.all([loadList(), loadOptions()])
 })
 </script>
 

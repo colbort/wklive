@@ -317,19 +317,6 @@ async function showDetail(row: AssetUserAsset) {
   detailVisible.value = true
 }
 
-function openChangeDialog(mode: typeof changeMode.value) {
-  changeMode.value = mode
-  changeForm.tenantId = 0
-  changeForm.userId = 0
-  changeForm.walletType = 1
-  changeForm.coin = ''
-  changeForm.amount = ''
-  changeForm.bizNo = ''
-  changeForm.operatorId = 0
-  changeForm.remark = ''
-  changeVisible.value = true
-}
-
 async function submitChange() {
   submitLoading.value = true
   try {

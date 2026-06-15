@@ -3,8 +3,8 @@
     <CrudQueryCard
       :model="channelQuery"
       label-width="auto"
-      @search="loadChannels"
-      @reset="resetChannelQuery"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="channelQuery.tenantId" class="tenant-select-filter" />
@@ -305,7 +305,7 @@ const loadOptions = async () => {
   optionGroups.value = res.data || []
 }
 
-const loadChannels = async () => {
+const loadList = async () => {
   channelLoading.value = true
   try {
     const res = await tenantService.getTenantChannelList({
@@ -323,11 +323,11 @@ const loadChannels = async () => {
   }
 }
 
-function resetChannelQuery() {
+function resetQuery() {
   channelQuery.tenantId = 0
   channelQuery.platformId = 0
   channelQuery.keyword = ''
-  resetAndLoad(loadChannels)
+  resetAndLoad(loadList)
 }
 
 const resetChannelVerifyState = () => {
@@ -536,7 +536,7 @@ const submitChannel = async () => {
   }
   ElMessage.success(t('common.operationSuccess'))
   channelDialogVisible.value = false
-  loadChannels()
+  loadList()
 }
 
 const showChannelDetail = async (row: TenantPayChannel) => {
@@ -553,19 +553,19 @@ function getEnabledTagClass(value?: number) {
 }
 
 function handleLimitChange() {
-  resetAndLoad(loadChannels)
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  prevAndLoad(loadChannels)
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  nextAndLoad(loadChannels)
+  nextAndLoad(loadList)
 }
 
 onMounted(async () => {
-  await Promise.all([loadOptions(), loadChannels()])
+  await Promise.all([loadOptions(), loadList()])
 })
 </script>
 

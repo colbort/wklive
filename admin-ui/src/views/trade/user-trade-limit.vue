@@ -4,7 +4,8 @@
       :model="riskQuery"
       label-width="auto"
       :show-actions="false"
-      @search="loadRiskData"
+      @search="loadList"
+      @reset="resetQuery"
     >
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
@@ -103,9 +104,7 @@ const tradeLimitForm = reactive<SetUserTradeLimitReq>({
   remark: '',
 })
 
-const loadCurrent = async () => {}
-
-const loadRiskData = async () => {
+const loadList = async () => {
   submitLoading.value = true
   try {
     Object.assign(
@@ -118,6 +117,10 @@ const loadRiskData = async () => {
   }
 }
 
+function resetQuery() {
+  void loadList()
+}
+
 const submitTradeLimit = async () => {
   submitLoading.value = true
   try {
@@ -128,5 +131,5 @@ const submitTradeLimit = async () => {
   }
 }
 
-onMounted(loadCurrent)
+onMounted(loadList)
 </script>
