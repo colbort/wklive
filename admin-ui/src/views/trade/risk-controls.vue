@@ -14,7 +14,7 @@
       </el-form-item>
 
       <el-form-item :label="t('trade.userId')">
-        <el-input-number v-model="riskQuery.userId" :min="0" :precision="0" />
+        <UserSelect v-model="riskQuery.userId" :tenant-id="riskQuery.tenantId || undefined" />
       </el-form-item>
 
       <el-form-item :label="t('trade.symbolId')">
@@ -205,7 +205,7 @@
         </el-form-item>
 
         <el-form-item :label="t('trade.userId')">
-          <el-input-number v-model="riskLogQuery.userId" :min="0" :precision="0" />
+          <UserSelect v-model="riskLogQuery.userId" :tenant-id="riskLogQuery.tenantId || undefined" />
         </el-form-item>
 
         <el-form-item :label="t('trade.symbolId')">
@@ -283,6 +283,7 @@ import {
   type RiskOrderCheckLog,
 } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()

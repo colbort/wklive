@@ -12,7 +12,7 @@
         <el-input v-model="query.orderNo" clearable />
       </el-form-item>
       <el-form-item :label="t('staking.userId')">
-        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId || undefined" />
       </el-form-item>
     </CrudQueryCard>
 
@@ -189,6 +189,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()

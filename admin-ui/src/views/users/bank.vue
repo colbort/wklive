@@ -14,6 +14,7 @@ import {
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
@@ -409,7 +410,7 @@ onMounted(fetchOptions)
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('users.userId')">
-        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('common.keyword')">
         <el-input v-model="query.keyword" clearable />
@@ -554,10 +555,9 @@ onMounted(fetchOptions)
         </el-form-item>
         <el-form-item :label="t('users.userId')">
           <div class="verify-row">
-            <el-input-number
+            <UserSelect
               v-model="form.userId"
-              :min="0"
-              :precision="0"
+              :tenant-id="form.tenantId || undefined"
               :disabled="!isCreate"
               @change="onUserChange"
             />

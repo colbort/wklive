@@ -9,7 +9,7 @@
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('common.userId')">
-        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('payment.orderNo')">
         <el-input v-model="query.orderNo" clearable />
@@ -107,7 +107,7 @@
         </el-form-item>
         <template v-if="!form.id">
           <el-form-item :label="t('common.userId')">
-            <el-input-number v-model="form.userId" :min="0" :precision="0" />
+            <UserSelect v-model="form.userId" :tenant-id="form.tenantId || undefined" />
           </el-form-item>
           <el-form-item :label="t('payment.currency')">
             <el-input v-model="form.coin" />
@@ -188,6 +188,7 @@ import { ElMessage } from 'element-plus'
 import { catalogService, cryptoService, type CryptoRechargeTx, type OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
@@ -202,8 +203,8 @@ const detailData = ref<CryptoRechargeTx | null>(null)
 const optionGroups = ref<OptionGroup[]>([])
 const chainCodeOptions = computed(() => findOptionGroup(optionGroups.value, 'chainCode'))
 const query = reactive({
-  tenantId: 0,
-  userId: 0,
+  tenantId: undefined as number | undefined,
+  userId: undefined as number | undefined,
   orderNo: '',
   coin: '',
   chainCode: undefined as number | undefined,
@@ -250,8 +251,8 @@ async function loadList() {
 }
 function resetQuery() {
   Object.assign(query, {
-    tenantId: 0,
-    userId: 0,
+    tenantId: undefined as number | undefined,
+    userId: undefined as number | undefined,
     orderNo: '',
     coin: '',
     chainCode: undefined,

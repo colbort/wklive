@@ -9,7 +9,7 @@
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('common.userId')">
-        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('payment.orderNo')">
         <el-input v-model="query.orderNo" clearable />
@@ -131,6 +131,7 @@ import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescrip
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import { formatCentAmount, formatCentFields } from '@/utils/amount'
 import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
@@ -159,8 +160,8 @@ const auditForm = reactive({
 })
 
 const query = reactive({
-  tenantId: 0,
-  userId: 0,
+  tenantId: undefined as number | undefined,
+  userId: undefined as number | undefined,
   orderNo: '',
   status: undefined as number | undefined,
 })
@@ -185,8 +186,8 @@ const loadList = async () => {
 }
 
 function resetQuery() {
-  query.tenantId = 0
-  query.userId = 0
+  query.tenantId = undefined as number | undefined
+  query.userId = undefined as number | undefined
   query.orderNo = ''
   query.status = undefined
   resetAndLoad(loadList)

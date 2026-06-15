@@ -98,32 +98,32 @@
       :title="form.id ? t('payment.editCryptoWalletAccount') : t('payment.addCryptoWalletAccount')"
       width="680px"
     >
-      <el-form label-width="130px">
-        <el-form-item :label="t('common.tenantId')">
+      <el-form class="crypto-wallet-form" label-width="110px">
+        <el-form-item class="form-item--half" :label="t('common.tenantId')">
           <TenantSelect v-model="form.tenantId" include-system />
         </el-form-item>
-        <el-form-item :label="t('payment.accountCode')">
+        <el-form-item class="form-item--half" :label="t('payment.accountCode')">
           <el-input v-model="form.accountCode" :disabled="Boolean(form.id)" />
         </el-form-item>
-        <el-form-item :label="t('payment.accountName')">
+        <el-form-item class="form-item--half" :label="t('payment.accountName')">
           <el-input v-model="form.accountName" />
         </el-form-item>
-        <el-form-item :label="t('payment.provider')">
+        <el-form-item class="form-item--half" :label="t('payment.provider')">
           <el-input v-model="form.provider" />
         </el-form-item>
-        <el-form-item label="API Key">
+        <el-form-item class="form-item--full" label="API Key">
           <el-input v-model="form.apiKeyCipher" type="textarea" />
         </el-form-item>
-        <el-form-item label="API Secret">
+        <el-form-item class="form-item--full" label="API Secret">
           <el-input v-model="form.apiSecretCipher" type="textarea" />
         </el-form-item>
-        <el-form-item :label="t('payment.callbackSecret')">
+        <el-form-item class="form-item--full" :label="t('payment.callbackSecret')">
           <el-input v-model="form.callbackSecretCipher" type="textarea" />
         </el-form-item>
-        <el-form-item :label="t('payment.extConfig')">
+        <el-form-item class="form-item--full" :label="t('payment.extConfig')">
           <el-input v-model="form.extConfig" type="textarea" />
         </el-form-item>
-        <el-form-item :label="t('common.enabled')">
+        <el-form-item class="form-item--half" :label="t('common.enabled')">
           <el-select v-model="form.enabled" style="width: 100%">
             <el-option :label="t('common.enabled')" :value="1" /><el-option
               :label="t('common.disabled')"
@@ -131,7 +131,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item :label="t('common.default')">
+        <el-form-item class="form-item--half" :label="t('common.default')">
           <el-switch v-model="form.isDefault" :active-value="1" :inactive-value="2" />
         </el-form-item>
       </el-form>
@@ -177,7 +177,7 @@ const loading = ref(false),
 const list = ref<CryptoWalletAccount[]>([]),
   detailData = ref<CryptoWalletAccount | null>(null)
 const query = reactive({
-  tenantId: 0,
+  tenantId: undefined as number | undefined,
   keyword: '',
   provider: '',
   enabled: undefined as number | undefined,
@@ -217,7 +217,7 @@ async function loadList() {
   }
 }
 function resetQuery() {
-  Object.assign(query, { tenantId: 0, keyword: '', provider: '', enabled: undefined })
+  Object.assign(query, { tenantId: undefined as number | undefined, keyword: '', provider: '', enabled: undefined })
   void loadList()
 }
 function openDialog(row?: CryptoWalletAccount) {
@@ -269,3 +269,36 @@ function handleNextPage() {
 
 onMounted(loadList)
 </script>
+
+<style scoped>
+.crypto-wallet-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 20px;
+  row-gap: 16px;
+}
+
+.crypto-wallet-form :deep(.el-form-item) {
+  margin-bottom: 0;
+}
+
+.crypto-wallet-form .form-item--full {
+  grid-column: 1 / -1;
+}
+
+.crypto-wallet-form :deep(.el-input),
+.crypto-wallet-form :deep(.el-select),
+.crypto-wallet-form :deep(.el-textarea) {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .crypto-wallet-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .crypto-wallet-form .form-item--full {
+    grid-column: auto;
+  }
+}
+</style>

@@ -75,7 +75,11 @@ const loading = ref(false)
 const list = ref<PayNotifyLog[]>([])
 const detailVisible = ref(false)
 const detailData = ref<PayNotifyLog | null>(null)
-const query = reactive({ tenantId: 0, orderNo: '', notifyStatus: 0 })
+const query = reactive({
+  tenantId: undefined as number | undefined,
+  orderNo: '',
+  notifyStatus: 0,
+})
 
 const loadList = async () => {
   loading.value = true
@@ -96,7 +100,7 @@ const loadList = async () => {
 }
 
 function resetQuery() {
-  query.tenantId = 0
+  query.tenantId = undefined as number | undefined
   query.orderNo = ''
   query.notifyStatus = 0
   resetAndLoad(loadList)

@@ -9,7 +9,7 @@
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('common.userId')">
-        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('payment.successTotalAmountMin')">
         <el-input-number v-model="query.successTotalAmountMin" :min="0" :precision="0" />
@@ -116,6 +116,7 @@ import { ElMessage } from 'element-plus'
 import { rechargeService, type UserRechargeStat } from '@/services'
 import { formatDate } from '@/utils'
 import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
@@ -127,8 +128,8 @@ const list = ref<UserRechargeStat[]>([])
 const detailVisible = ref(false)
 const detailData = ref<UserRechargeStat | null>(null)
 const query = reactive({
-  tenantId: 0,
-  userId: 0,
+  tenantId: undefined as number | undefined,
+  userId: undefined as number | undefined,
   successTotalAmountMin: 0,
   successTotalAmountMax: 0,
 })
@@ -153,8 +154,8 @@ const loadList = async () => {
 }
 
 function resetQuery() {
-  query.tenantId = 0
-  query.userId = 0
+  query.tenantId = undefined as number | undefined
+  query.userId = undefined as number | undefined
   query.successTotalAmountMin = 0
   query.successTotalAmountMax = 0
   resetAndLoad(loadList)

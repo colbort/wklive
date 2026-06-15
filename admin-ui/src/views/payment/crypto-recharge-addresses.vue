@@ -9,7 +9,7 @@
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('common.userId')">
-        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('payment.walletType')">
         <el-select v-model="query.walletType" clearable style="width: 150px">
@@ -152,7 +152,7 @@
         </el-form-item>
         <template v-if="!form.id">
           <el-form-item :label="t('common.userId')">
-            <el-input-number v-model="form.userId" :min="0" :precision="0" />
+            <UserSelect v-model="form.userId" :tenant-id="form.tenantId || undefined" />
           </el-form-item>
           <el-form-item :label="t('payment.walletType')">
             <el-select v-model="form.walletType" style="width: 100%">
@@ -256,6 +256,7 @@ import {
   type OptionGroup,
 } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 

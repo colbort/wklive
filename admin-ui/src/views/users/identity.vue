@@ -7,6 +7,7 @@ import { memberUserService, type UserIdentityItem, type OptionGroup, UserDetail 
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
@@ -215,7 +216,7 @@ onMounted(fetchOptions)
         <el-input v-model="query.keyword" clearable />
       </el-form-item>
       <el-form-item :label="t('users.userId')">
-        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('users.username')">
         <el-input v-model="query.username" clearable />

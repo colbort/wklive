@@ -9,7 +9,7 @@
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('asset.userId')">
-        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('asset.walletType')">
         <el-select v-model="query.walletType" clearable style="width: 160px">
@@ -204,6 +204,7 @@ import { assetService, type AssetFlow, type OptionGroup, type OptionItem } from 
 import { formatCentAmount, formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
