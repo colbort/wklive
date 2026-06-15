@@ -168,7 +168,12 @@
             {{ formatDate(row.createTimes) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="190" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="190"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'asset:config:detail'"

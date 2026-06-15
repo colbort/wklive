@@ -120,7 +120,12 @@
             {{ row.sort || 0 }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="260" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="260"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'trade:symbol:detail'"
@@ -687,7 +692,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="90">
+        <el-table-column :label="t('common.actions')" align="center" width="90">
           <template #default="{ row }">
             <el-button
               v-perm="'trade:symbol:leverage-config:update'"

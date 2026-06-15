@@ -125,7 +125,12 @@
             {{ optionLabel('freezeStatus', row.status) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="180" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="180"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('asset.detail') }}

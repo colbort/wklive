@@ -102,7 +102,12 @@
             <el-tag>{{ optionLabel('cryptoRechargeAddressStatus', row.status) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="140" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="140"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'payment:crypto-recharge-address:detail'"

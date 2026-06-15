@@ -113,7 +113,12 @@
             {{ formatDate(row.updateTimes) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="180" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="180"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'itick:tenant-category:detail'"
@@ -367,7 +372,12 @@
             <el-input v-model="row.remark" maxlength="200" show-word-limit />
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="90" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="90"
+          fixed="right"
+        >
           <template #default="{ $index }">
             <el-button link type="danger" @click="removeBatchRow($index)">
               {{ t('common.delete') }}

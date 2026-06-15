@@ -128,7 +128,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.actions')" width="110" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="110"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
               <el-icon><View /></el-icon>

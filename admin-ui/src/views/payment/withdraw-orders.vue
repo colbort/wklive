@@ -52,7 +52,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="180">
+        <el-table-column :label="t('common.actions')" align="center" width="180">
           <template #default="{ row }">
             <el-button
               v-perm="'payment:withdraw-order:detail'"

@@ -422,7 +422,12 @@ onMounted(async () => {
 
         <el-table-column prop="remark" :label="t('common.remark')" min-width="200" />
 
-        <el-table-column :label="t('common.actions')" width="320" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="320"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'sys:role:update'"

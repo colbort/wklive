@@ -716,7 +716,12 @@ onMounted(fetchCreateOptions)
             {{ formatDate(row.registerTime) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="120" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="120"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-dropdown trigger="click">
               <el-button size="small">

@@ -46,7 +46,7 @@
             {{ getOptionValueLabel(optionGroups, 'visible', row.visible, t) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="160">
+        <el-table-column :label="t('common.actions')" align="center" width="160">
           <template #default="{ row }">
             <el-button
               v-perm="'payment:tenant-channel:detail'"

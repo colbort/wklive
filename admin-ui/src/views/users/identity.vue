@@ -283,6 +283,7 @@ onMounted(fetchOptions)
         <el-table-column
           :label="t('common.actions')"
           :width="hasReviewableIdentity ? 110 : 70"
+          align="center"
           fixed="right"
         >
           <template #default="{ row }">

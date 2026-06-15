@@ -45,7 +45,12 @@
           show-overflow-tooltip
         />
         <el-table-column :label="t('staking.redeemStatus')" prop="redeemStatus" width="100" />
-        <el-table-column :label="t('common.actions')" width="100" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="100"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('itick.detail') }}

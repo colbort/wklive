@@ -105,7 +105,12 @@
           min-width="140"
           show-overflow-tooltip
         />
-        <el-table-column :label="t('common.actions')" width="120" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="120"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'asset:user-asset:detail'"

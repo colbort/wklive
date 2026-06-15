@@ -59,7 +59,12 @@
         <el-table-column prop="amount" :label="t('payment.quantity')" width="120" />
         <el-table-column prop="confirmCount" :label="t('payment.confirmCount')" width="90" />
         <el-table-column prop="status" :label="t('common.status')" width="90" />
-        <el-table-column :label="t('common.actions')" width="140" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="140"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'payment:crypto-recharge-tx:detail'"

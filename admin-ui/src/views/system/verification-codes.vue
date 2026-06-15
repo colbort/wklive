@@ -304,8 +304,8 @@ onMounted(() => {
         <el-table-column
           :label="t('common.actions')"
           width="110"
-          fixed="right"
           align="center"
+          fixed="right"
         >
           <template #default="{ row }">
             <el-button

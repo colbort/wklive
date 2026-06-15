@@ -44,7 +44,7 @@
           :label="t('payment.todaySuccessCount')"
           width="100"
         />
-        <el-table-column :label="t('common.actions')" width="100">
+        <el-table-column :label="t('common.actions')" align="center" width="100">
           <template #default="{ row }">
             <el-button
               v-perm="'payment:user-recharge-stat:detail'"
