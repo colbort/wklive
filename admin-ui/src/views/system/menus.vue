@@ -52,9 +52,6 @@
         <el-button v-perm="'sys:menu:add'" type="primary" @click="handleAdd(0)">
           {{ t('system.addMenu') }}
         </el-button>
-        <el-button @click="getList">
-          {{ t('common.refresh') }}
-        </el-button>
       </template>
     </CrudQueryCard>
 

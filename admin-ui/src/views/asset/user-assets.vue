@@ -35,6 +35,25 @@
           />
         </el-select>
       </el-form-item>
+      <template #actions>
+        <el-button v-perm="'asset:user-asset:add'" type="primary" @click="openChangeDialog('add')">
+          {{ t('asset.addAsset') }}
+        </el-button>
+        <el-button v-perm="'asset:user-asset:sub'" type="warning" @click="openChangeDialog('sub')">
+          {{ t('asset.subAsset') }}
+        </el-button>
+        <el-button v-perm="'asset:freeze:add'" type="primary" @click="openChangeDialog('freeze')">
+          {{ t('asset.freezeAsset') }}
+        </el-button>
+        <el-button
+          v-perm="'asset:lock:add'"
+          type="primary"
+          plain
+          @click="openChangeDialog('lock')"
+        >
+          {{ t('asset.lockAsset') }}
+        </el-button>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
@@ -315,6 +334,21 @@ async function showDetail(row: AssetUserAsset) {
   })
   detailData.value = res.data || row
   detailVisible.value = true
+}
+
+function openChangeDialog(mode: typeof changeMode.value) {
+  changeMode.value = mode
+  Object.assign(changeForm, {
+    tenantId: query.tenantId || 0,
+    userId: query.userId || 0,
+    walletType: query.walletType || 1,
+    coin: query.coin || '',
+    amount: '',
+    bizNo: '',
+    operatorId: 0,
+    remark: '',
+  })
+  changeVisible.value = true
 }
 
 async function submitChange() {

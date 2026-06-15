@@ -32,7 +32,7 @@
         <el-input v-model="query.txHash" clearable />
       </el-form-item>
       <template #actions>
-        <el-button type="primary" @click="openDialog()">
+        <el-button v-perm="'payment:crypto-recharge-tx:add'" type="primary" @click="openDialog()">
           {{ t('payment.addCryptoRechargeTx') }}
         </el-button>
       </template>
@@ -69,7 +69,12 @@
             >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openDialog(row)">
+            <el-button
+              v-perm="'payment:crypto-recharge-tx:update'"
+              link
+              type="primary"
+              @click="openDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -155,7 +160,11 @@
         <el-button @click="dialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" @click="submit">
+        <el-button
+          v-perm="form.id ? 'payment:crypto-recharge-tx:update' : 'payment:crypto-recharge-tx:add'"
+          type="primary"
+          @click="submit"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
