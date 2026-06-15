@@ -1,15 +1,11 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('staking.rewardLogs') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadRows">
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="loadRows"
+      @reset="resetQuery"
+    >
       <el-form-item :label="t('staking.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -18,14 +14,6 @@
       </el-form-item>
       <el-form-item :label="t('staking.userId')">
         <el-input-number v-model="query.userId" :min="0" :precision="0" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadRows">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetQuery">
-          {{ t('common.reset') }}
-        </el-button>
       </el-form-item>
     </CrudQueryCard>
 

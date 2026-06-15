@@ -1,12 +1,11 @@
 <template>
   <div class="payment-page">
-    <div class="page-header">
-      <h2>{{ t('payment.withdrawNotifyLogs') }}</h2>
-      <el-button @click="loadList">
-        {{ t('common.refresh') }}
-      </el-button>
-    </div>
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="loadList"
+      @reset="resetQuery"
+    >
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -15,14 +14,6 @@
       </el-form-item>
       <el-form-item :label="t('payment.notifyStatus')">
         <el-input-number v-model="query.notifyStatus" :min="0" :precision="0" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadList">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetQuery">
-          {{ t('common.reset') }}
-        </el-button>
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never" class="table-card">

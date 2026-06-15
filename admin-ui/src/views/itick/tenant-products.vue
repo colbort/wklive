@@ -3,7 +3,7 @@
     <CrudQueryCard
       :model="queryParams"
       label-width="auto"
-      @search="handleQuery"
+      @search="getList"
       @reset="resetQuery"
     >
       <el-form-item :label="t('common.tenantId')">
@@ -741,17 +741,15 @@ const rules: FormRules<FormData> = {
   appVisible: [{ required: true, message: t('itick.pleaseSelectAppVisible'), trigger: 'change' }],
 }
 
-const cleanedQueryParams = computed<ListTenantProductsReq | null>(() => {
-  if (!queryParams.tenantId) {
-    return null
-  }
-
+const cleanedQueryParams = computed<ListTenantProductsReq>(() => {
   const params: ListTenantProductsReq = {
-    tenantId: Number(queryParams.tenantId),
     cursor: pagination.cursor,
     limit: pagination.limit,
   }
 
+  if (queryParams.tenantId) {
+    params.tenantId = Number(queryParams.tenantId)
+  }
   if (queryParams.categoryType) {
     params.categoryType = Number(queryParams.categoryType)
   }
@@ -772,16 +770,8 @@ const cleanedQueryParams = computed<ListTenantProductsReq | null>(() => {
 })
 
 const getList = async () => {
-  if (!cleanedQueryParams.value) {
-    list.value = []
-    reset()
-    return
-  }
-
   await withLoading(async () => {
-    const res = await tenantProductsService.getList(
-      cleanedQueryParams.value as ListTenantProductsReq,
-    )
+    const res = await tenantProductsService.getList(cleanedQueryParams.value)
     list.value = res?.data || []
     updateFromResponse(res)
   }).catch(() => {
@@ -1228,9 +1218,7 @@ const submitInit = async () => {
 onMounted(() => {
   loadSystemCore()
   loadOptions()
-  if (queryParams.tenantId) {
-    getList()
-  }
+  getList()
 })
 
 onBeforeUnmount(() => {

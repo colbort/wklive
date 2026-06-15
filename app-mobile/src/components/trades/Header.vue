@@ -21,7 +21,7 @@ defineProps<{
   selectedProduct: ItickTenantProduct | null
   selectedProductKey: string
   tradeKind: 'stock' | 'option' | 'forex' | 'commodity' | 'crypto'
-  priceTrend: 'up' | 'down'
+  priceTrend: 'up' | 'down' | 'flat'
   placeholderPrice: string
   placeholderChange: string
   productMenuOpen: boolean
@@ -48,7 +48,7 @@ const { t } = useI18n()
       <div v-if="tradeKind === 'stock'" class="trade-symbol__sub">
         {{ selectedProduct?.displayName || selectedProduct?.name || '--' }}
       </div>
-      <div v-else class="trade-symbol__quote" :class="priceTrend">
+      <div v-else class="trade-symbol__quote" :class="`trade-symbol__quote--${priceTrend}`">
         <span>{{ placeholderPrice }}</span>
         <em>{{ placeholderChange }}</em>
       </div>
@@ -171,8 +171,16 @@ const { t } = useI18n()
   font-size: 0.7rem;
 }
 
-.trade-symbol__quote.down {
+.trade-symbol__quote--up {
+  color: var(--success);
+}
+
+.trade-symbol__quote--down {
   color: var(--danger-strong);
+}
+
+.trade-symbol__quote--flat {
+  color: var(--text);
 }
 
 .trade-symbol__quote span {

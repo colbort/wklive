@@ -1,16 +1,11 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('trade.orders') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadCurrent">
-          <el-icon><Refresh /></el-icon>
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="loadCurrent"
+      @reset="resetCurrent"
+    >
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -47,15 +42,6 @@
 
       <el-form-item :label="t('common.keyword')">
         <el-input v-model="query.keyword" clearable class="query-keyword" />
-      </el-form-item>
-
-      <el-form-item>
-        <el-button type="primary" @click="loadCurrent">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetCurrent">
-          {{ t('common.reset') }}
-        </el-button>
       </el-form-item>
     </CrudQueryCard>
 
@@ -294,7 +280,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Refresh, View } from '@element-plus/icons-vue'
+import { View } from '@element-plus/icons-vue'
 import { usePagination } from '@/composables'
 import { tradeService, type OptionGroup, type OptionItem, type TradeOrder } from '@/services'
 import { formatDate } from '@/utils'

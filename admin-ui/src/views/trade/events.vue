@@ -1,16 +1,11 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('trade.events') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadCurrent">
-          <el-icon><Refresh /></el-icon>
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="loadCurrent"
+      @reset="resetCurrent"
+    >
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -42,15 +37,6 @@
           clearable
           class="time-range"
         />
-      </el-form-item>
-
-      <el-form-item>
-        <el-button type="primary" @click="loadCurrent">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetCurrent">
-          {{ t('common.reset') }}
-        </el-button>
       </el-form-item>
     </CrudQueryCard>
 
@@ -244,7 +230,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { Refresh, RefreshRight, View } from '@element-plus/icons-vue'
+import { RefreshRight, View } from '@element-plus/icons-vue'
 import { usePagination } from '@/composables'
 import { tradeService, type BizTradeEvent, type OptionGroup, type OptionItem } from '@/services'
 import { formatDate } from '@/utils'

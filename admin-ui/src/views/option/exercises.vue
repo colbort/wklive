@@ -1,15 +1,11 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('option.exercises') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadCurrent">
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="loadCurrent"
+      @reset="resetCurrent"
+    >
       <el-form-item :label="t('option.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -18,14 +14,6 @@
       </el-form-item>
       <el-form-item :label="t('option.exerciseNo')">
         <el-input v-model="query.exerciseNo" clearable />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadCurrent">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetCurrent">
-          {{ t('common.reset') }}
-        </el-button>
       </el-form-item>
     </CrudQueryCard>
 

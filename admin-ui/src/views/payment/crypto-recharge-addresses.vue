@@ -1,23 +1,11 @@
 <template>
   <div class="payment-page module-page">
-    <div class="page-header">
-      <h2>{{ t('payment.cryptoRechargeAddresses') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadList">
-          {{ t('common.refresh') }}
-        </el-button>
-        <el-button
-          v-perm="'payment:crypto-recharge-address:add'"
-          class="page-create-action"
-          type="primary"
-          @click="openDialog()"
-        >
-          {{ t('payment.addCryptoRechargeAddress') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -60,14 +48,15 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleQuery">
-          {{ t('common.search') }}
+      <template #actions>
+        <el-button
+          v-perm="'payment:crypto-recharge-address:add'"
+          type="primary"
+          @click="openDialog()"
+        >
+          {{ t('payment.addCryptoRechargeAddress') }}
         </el-button>
-        <el-button @click="resetQuery">
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">

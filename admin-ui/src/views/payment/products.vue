@@ -1,16 +1,11 @@
 <template>
   <div class="payment-page module-page">
-    <div class="page-header">
-      <h2>{{ t('payment.products') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadProducts">
-          <el-icon><Refresh /></el-icon>
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="productQuery" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="productQuery"
+      label-width="auto"
+      @search="loadProducts"
+      @reset="resetProductQuery"
+    >
       <el-form-item :label="t('payment.platformId')">
         <el-input-number v-model="productQuery.platformId" :min="0" :precision="0" />
       </el-form-item>
@@ -20,17 +15,11 @@
       <el-form-item :label="t('common.keyword')">
         <el-input v-model="productQuery.keyword" clearable />
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadProducts">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetProductQuery">
-          {{ t('common.reset') }}
-        </el-button>
+      <template #actions>
         <el-button v-perm="'payment:product:add'" type="primary" @click="openProductDialog()">
           {{ t('payment.addProduct') }}
         </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
@@ -172,7 +161,6 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
-import { Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { catalogService, type OptionGroup, type PayProduct } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'

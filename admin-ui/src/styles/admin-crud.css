@@ -3,7 +3,6 @@
   --admin-card-radius: 14px;
   --admin-card-border: var(--el-border-color-light);
   --admin-muted-bg: #f8fafc;
-  --admin-page-action-width: min(360px, 30vw);
   --admin-query-control-width: 180px;
   --admin-query-item-width: 200px;
 }
@@ -29,43 +28,6 @@ body {
   height: 100%;
   min-height: 0;
   overflow: hidden;
-}
-
-:is(.module-page, .payment-page) .page-header {
-  grid-row: 1;
-  grid-column: 1;
-  align-self: end;
-  justify-self: end;
-  z-index: 4;
-  display: none;
-  justify-content: flex-end;
-  max-width: var(--admin-page-action-width);
-  margin: 0 24px 24px 0;
-}
-
-:is(.module-page, .payment-page) .page-header h2 {
-  display: none;
-}
-
-:is(.module-page, .payment-page) .page-header > div,
-:is(.module-page, .payment-page) .header-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-:is(.module-page, .payment-page) .page-header .el-button {
-  display: none;
-}
-
-:is(.module-page, .payment-page) .page-header .page-create-action {
-  display: inline-flex;
-}
-
-:is(.module-page, .payment-page) .page-header:has(.page-create-action) {
-  display: flex;
 }
 
 :is(.module-page, .payment-page) .query-card {
@@ -256,34 +218,11 @@ body {
 
 @media (max-width: 768px) {
   :is(.module-page, .payment-page) {
-    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     gap: 12px;
   }
 
-  :is(.module-page, .payment-page) .page-header {
-    grid-row: 2;
-    justify-self: stretch;
-    max-width: none;
-    margin: 0;
-  }
-
   :is(.module-page, .payment-page) .table-card {
-    grid-row: 3;
-  }
-
-  :is(.module-page, .payment-page) .page-header h2 {
-    font-size: 20px;
-  }
-
-  :is(.module-page, .payment-page) .page-header {
-    align-items: flex-start;
-  }
-
-  :is(.module-page, .payment-page) .page-header > div {
-    width: 100%;
-  }
-
-  :is(.module-page, .payment-page) .page-header > div .el-button {
-    flex: 1 1 auto;
+    grid-row: 2;
   }
 }

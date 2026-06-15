@@ -1,14 +1,5 @@
 <template>
   <div class="payment-page">
-    <div class="page-header">
-      <h2>{{ t('payment.tenantAccounts') }}</h2>
-      <div>
-        <el-button @click="loadList">
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-
     <CrudQueryCard
       :model="query"
       label-width="auto"

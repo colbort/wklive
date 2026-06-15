@@ -1,23 +1,11 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('asset.freezes') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadList">
-          {{ t('common.refresh') }}
-        </el-button>
-        <el-button
-          v-perm="'asset:freeze:unfreeze'"
-          type="success"
-          plain
-          @click="openChangeDialog"
-        >
-          {{ t('asset.unfreezeAsset') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="loadList"
+      @reset="resetQuery"
+    >
       <el-form-item :label="t('asset.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -60,14 +48,16 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadList">
-          {{ t('common.search') }}
+      <template #actions>
+        <el-button
+          v-perm="'asset:freeze:unfreeze'"
+          type="success"
+          plain
+          @click="openChangeDialog"
+        >
+          {{ t('asset.unfreezeAsset') }}
         </el-button>
-        <el-button @click="resetQuery">
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">

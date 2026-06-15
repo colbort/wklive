@@ -1,37 +1,11 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('asset.userAssets') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadList">
-          {{ t('common.refresh') }}
-        </el-button>
-        <el-button
-          v-perm="'asset:user-asset:add'"
-          class="page-create-action"
-          type="primary"
-          @click="openChangeDialog('add')"
-        >
-          {{ t('asset.addAsset') }}
-        </el-button>
-        <el-button v-perm="'asset:user-asset:sub'" type="warning" @click="openChangeDialog('sub')">
-          {{ t('asset.subAsset') }}
-        </el-button>
-        <el-button v-perm="'asset:freeze:add'" type="primary" @click="openChangeDialog('freeze')">
-          {{ t('asset.freezeAsset') }}
-        </el-button>
-        <el-button
-          v-perm="'asset:lock:add'"
-          type="primary"
-          plain
-          @click="openChangeDialog('lock')"
-        >
-          {{ t('asset.lockAsset') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="loadList"
+      @reset="resetQuery"
+    >
       <el-form-item :label="t('asset.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -60,14 +34,6 @@
             :value="item.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadList">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetQuery">
-          {{ t('common.reset') }}
-        </el-button>
       </el-form-item>
     </CrudQueryCard>
 

@@ -38,7 +38,7 @@ defineProps<{
   selectedProduct: ItickTenantProduct | null
   selectedProductKey: string
   tradeKind: 'stock' | 'option' | 'forex' | 'commodity' | 'crypto'
-  priceTrend: 'up' | 'down'
+  priceTrend: 'up' | 'down' | 'flat'
   placeholderPrice: string
   placeholderChange: string
   selectedQuote: QuotePayload | null

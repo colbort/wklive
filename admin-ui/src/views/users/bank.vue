@@ -400,16 +400,12 @@ onMounted(fetchOptions)
 
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('users.banks') }}</h2>
-      <div class="header-actions">
-        <el-button @click="fetchList">
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="fetchList"
+      @reset="resetQuery"
+    >
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -429,17 +425,11 @@ onMounted(fetchOptions)
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="fetchList">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetQuery">
-          {{ t('common.reset') }}
-        </el-button>
+      <template #actions>
         <el-button v-perm="'users:user:bank:add'" type="primary" @click="openCreate">
           {{ t('users.addBank') }}
         </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">

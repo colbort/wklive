@@ -1,11 +1,18 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('option.marketSnapshots') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadCurrent">
-          {{ t('common.refresh') }}
-        </el-button>
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="loadCurrent"
+      @reset="resetCurrent"
+    >
+      <el-form-item :label="t('option.tenantId')">
+        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('option.contractId')">
+        <el-input-number v-model="query.contractId" :min="0" :precision="0" />
+      </el-form-item>
+      <template #actions>
         <el-button
           v-perm="'option:market:update'"
           type="primary"
@@ -14,24 +21,7 @@
         >
           {{ t('option.updateMarket') }}
         </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
-      <el-form-item :label="t('option.tenantId')">
-        <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
-      </el-form-item>
-      <el-form-item :label="t('option.contractId')">
-        <el-input-number v-model="query.contractId" :min="0" :precision="0" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadCurrent">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetCurrent">
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">

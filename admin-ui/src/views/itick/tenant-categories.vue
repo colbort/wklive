@@ -468,17 +468,15 @@ const rules: FormRules<FormData> = {
   appVisible: [{ required: true, message: t('itick.pleaseSelectAppVisible'), trigger: 'change' }],
 }
 
-const cleanedQueryParams = computed<ListTenantCategoriesReq | null>(() => {
-  if (!queryParams.tenantId) {
-    return null
-  }
-
+const cleanedQueryParams = computed<ListTenantCategoriesReq>(() => {
   const params: ListTenantCategoriesReq = {
-    tenantId: Number(queryParams.tenantId),
     cursor: pagination.cursor,
     limit: pagination.limit,
   }
 
+  if (queryParams.tenantId) {
+    params.tenantId = Number(queryParams.tenantId)
+  }
   if (queryParams.categoryType) {
     params.categoryType = Number(queryParams.categoryType)
   }
@@ -493,16 +491,8 @@ const cleanedQueryParams = computed<ListTenantCategoriesReq | null>(() => {
 })
 
 const getList = async () => {
-  if (!cleanedQueryParams.value) {
-    list.value = []
-    reset()
-    return
-  }
-
   await withLoading(async () => {
-    const res = await tenantCategoriesService.getList(
-      cleanedQueryParams.value as ListTenantCategoriesReq,
-    )
+    const res = await tenantCategoriesService.getList(cleanedQueryParams.value)
     list.value = res?.data || []
     updateFromResponse(res)
   }).catch(() => {
@@ -691,9 +681,7 @@ const submitBatch = async () => {
 onMounted(() => {
   loadSystemCore()
   loadOptions()
-  if (queryParams.tenantId) {
-    getList()
-  }
+  getList()
 })
 </script>
 

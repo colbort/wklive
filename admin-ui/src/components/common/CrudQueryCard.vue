@@ -22,7 +22,10 @@
         </el-button>
       </el-form-item>
 
-      <el-form-item v-if="$slots.actions" class="crud-query-actions crud-query-extra-actions">
+      <el-form-item
+        v-if="showActions && $slots.actions"
+        class="crud-query-actions crud-query-extra-actions"
+      >
         <slot name="actions" />
       </el-form-item>
     </el-form>
@@ -47,7 +50,10 @@
         </el-button>
       </el-form-item>
 
-      <el-form-item v-if="$slots.actions" class="crud-query-actions crud-query-extra-actions">
+      <el-form-item
+        v-if="showActions && $slots.actions"
+        class="crud-query-actions crud-query-extra-actions"
+      >
         <slot name="actions" />
       </el-form-item>
     </el-form>

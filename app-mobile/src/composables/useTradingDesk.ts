@@ -79,25 +79,45 @@ export function useTradingDesk(options: {
     const product = selectedProduct.value
     return product ? (quoteMap.value[productKey(product)] ?? null) : null
   })
+  const selectedPriceStats = computed(() => {
+    const quote = selectedQuote.value
+    const lastPrice = firstPositiveNumber(tickSnapshot.value[0]?.lastPrice, quote?.lastPrice)
+    const previousPrice = firstPositiveNumber(tickSnapshot.value[1]?.lastPrice, quote?.open)
+    const openPrice = firstPositiveNumber(quote?.open)
+    const changeValue =
+      lastPrice !== null && openPrice !== null ? lastPrice - openPrice : null
+    const changeRate =
+      changeValue !== null && openPrice !== null ? (changeValue / openPrice) * 100 : null
+    const direction =
+      lastPrice === null || previousPrice === null
+        ? ('flat' as const)
+        : lastPrice > previousPrice
+          ? ('up' as const)
+          : lastPrice < previousPrice
+            ? ('down' as const)
+            : ('flat' as const)
+
+    return {
+      lastPrice,
+      changeValue,
+      changeRate,
+      direction,
+    }
+  })
   const selectedInterval = computed(() => {
     return (
       intervals.value.find((item) => item.name === selectedIntervalName.value) ?? intervals.value[0]
     )
   })
   const placeholderPrice = computed(() => {
-    const value = selectedQuote.value?.lastPrice
-    if (!value || !Number.isFinite(value)) return '--'
-    return formatPrice(value)
+    return formatPrice(selectedPriceStats.value.lastPrice)
   })
   const placeholderChange = computed(() => {
-    const quote = selectedQuote.value
-    if (!quote || !quote.open) return ''
-    return formatPercent(((quote.lastPrice - quote.open) / quote.open) * 100)
+    const value = selectedPriceStats.value.changeRate
+    return value === null ? '' : formatPercent(value)
   })
-  const priceTrend = computed<'up' | 'down'>(() => {
-    const quote = selectedQuote.value
-    if (!quote || quote.lastPrice >= quote.open) return 'up'
-    return 'down'
+  const priceTrend = computed<'up' | 'down' | 'flat'>(() => {
+    return selectedPriceStats.value.direction
   })
   const marketRows = computed(() =>
     products.value.map((product) => {
@@ -748,6 +768,11 @@ function asRecord(value: unknown): Record<string, unknown> {
 function toNumber(value: unknown) {
   const next = Number(value)
   return Number.isFinite(next) ? next : 0
+}
+
+function firstPositiveNumber(...values: Array<number | null | undefined>) {
+  const next = values.find((value) => Number.isFinite(value) && Number(value) > 0)
+  return next === undefined || next === null ? null : Number(next)
 }
 
 function getChangeRate(quote?: QuotePayload | null) {

@@ -1,15 +1,11 @@
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('asset.flows') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadList">
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
       <el-form-item :label="t('asset.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -31,14 +27,6 @@
       </el-form-item>
       <el-form-item :label="t('asset.bizNo')">
         <el-input v-model="query.bizNo" clearable />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleQuery">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetQuery">
-          {{ t('common.reset') }}
-        </el-button>
       </el-form-item>
     </CrudQueryCard>
 

@@ -1,16 +1,11 @@
 <template>
   <div class="payment-page module-page">
-    <div class="page-header">
-      <h2>{{ t('payment.platforms') }}</h2>
-      <div class="header-actions">
-        <el-button @click="loadPlatforms">
-          <el-icon><Refresh /></el-icon>
-          {{ t('common.refresh') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="platformQuery" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="platformQuery"
+      label-width="auto"
+      @search="loadPlatforms"
+      @reset="resetPlatformQuery"
+    >
       <el-form-item :label="t('payment.platformCode')">
         <el-input v-model="platformQuery.platformCode" clearable />
       </el-form-item>
@@ -28,17 +23,11 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadPlatforms">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetPlatformQuery">
-          {{ t('common.reset') }}
-        </el-button>
+      <template #actions>
         <el-button v-perm="'payment:platform:add'" type="primary" @click="openPlatformDialog()">
           {{ t('payment.addPlatform') }}
         </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
@@ -252,7 +241,6 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
-import { Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import type { UploadFile } from 'element-plus'
 import {

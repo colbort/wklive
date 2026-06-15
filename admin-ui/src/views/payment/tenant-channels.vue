@@ -1,13 +1,11 @@
 <template>
   <div class="payment-page">
-    <div class="page-header">
-      <h2>{{ t('payment.tenantChannels') }}</h2>
-      <el-button @click="loadChannels">
-        {{ t('common.refresh') }}
-      </el-button>
-    </div>
-
-    <CrudQueryCard :model="channelQuery" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="channelQuery"
+      label-width="auto"
+      @search="loadChannels"
+      @reset="resetChannelQuery"
+    >
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="channelQuery.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -17,13 +15,7 @@
       <el-form-item :label="t('common.keyword')">
         <el-input v-model="channelQuery.keyword" clearable />
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="loadChannels">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="resetChannelQuery">
-          {{ t('common.reset') }}
-        </el-button>
+      <template #actions>
         <el-button
           v-perm="'payment:tenant-channel:add'"
           type="primary"
@@ -31,7 +23,7 @@
         >
           {{ t('payment.addChannel') }}
         </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">

@@ -611,24 +611,12 @@ onMounted(fetchCreateOptions)
 
 <template>
   <div class="module-page">
-    <div class="page-header">
-      <h2>{{ t('users.memberUsers') }}</h2>
-      <div class="header-actions">
-        <el-button @click="fetchList">
-          {{ t('common.refresh') }}
-        </el-button>
-        <el-button
-          v-perm="'users:user:add'"
-          class="page-create-action"
-          type="primary"
-          @click="openCreate"
-        >
-          {{ t('users.addUser') }}
-        </el-button>
-      </div>
-    </div>
-
-    <CrudQueryCard :model="query" label-width="auto" :show-actions="false">
+    <CrudQueryCard
+      :model="query"
+      label-width="auto"
+      @search="fetchList"
+      @reset="resetQuery"
+    >
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -664,14 +652,11 @@ onMounted(fetchCreateOptions)
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="fetchList">
-          {{ t('common.search') }}
+      <template #actions>
+        <el-button v-perm="'users:user:add'" type="primary" @click="openCreate">
+          {{ t('users.addUser') }}
         </el-button>
-        <el-button @click="resetQuery">
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
+      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
