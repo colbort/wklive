@@ -7,10 +7,10 @@
     <el-form
       :model="model"
       inline
-      :label-width="labelWidth"
+      :label-width="formLabelWidth"
       class="crud-query-form"
       :class="{
-        'crud-query-form--auto-label': labelWidth === 'auto',
+        'crud-query-form--auto-label': props.labelWidth === 'auto',
         'crud-query-form--has-extra-actions': !!$slots.actions,
       }"
     >
@@ -52,10 +52,10 @@
     <el-form
       :model="model"
       inline
-      :label-width="labelWidth"
+      :label-width="formLabelWidth"
       class="crud-query-form"
       :class="{
-        'crud-query-form--auto-label': labelWidth === 'auto',
+        'crud-query-form--auto-label': props.labelWidth === 'auto',
         'crud-query-form--has-extra-actions': !!$slots.actions,
       }"
     >
@@ -89,9 +89,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     model?: Record<string, unknown>
     labelWidth?: string
@@ -120,6 +121,9 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const formLabelWidth = computed(() =>
+  props.labelWidth === 'auto' ? undefined : props.labelWidth,
+)
 </script>
 
 <style scoped>
@@ -198,7 +202,15 @@ const { t } = useI18n()
 }
 
 .crud-query-form--auto-label :deep(.el-form-item__label) {
+  flex: 0 0 auto;
   width: auto !important;
+  min-width: max-content;
+}
+
+.crud-query-form--auto-label :deep(.el-form-item__label-wrap) {
+  flex: 0 0 auto;
+  width: auto !important;
+  margin-left: 0 !important;
 }
 
 /* 内容区域 */
