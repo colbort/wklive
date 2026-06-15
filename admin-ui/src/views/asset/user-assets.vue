@@ -37,7 +37,7 @@
       </el-form-item>
       <template #actions>
         <el-button v-perm="'asset:user-asset:add'" type="primary" @click="openChangeDialog('add')">
-          {{ t('asset.addAsset') }}
+          {{ t('common.add') }}
         </el-button>
         <el-button v-perm="'asset:user-asset:sub'" type="warning" @click="openChangeDialog('sub')">
           {{ t('asset.subAsset') }}

@@ -81,7 +81,7 @@
       </el-form-item>
       <template #actions>
         <el-button v-perm="'asset:config:add'" type="primary" @click="openCreateDialog">
-          {{ t('asset.addCoinConfig') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

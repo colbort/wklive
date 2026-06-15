@@ -33,7 +33,7 @@
       </el-form-item>
       <template #actions>
         <el-button v-perm="'payment:crypto-recharge-tx:add'" type="primary" @click="openDialog()">
-          {{ t('payment.addCryptoRechargeTx') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

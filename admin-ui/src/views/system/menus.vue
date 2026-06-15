@@ -50,7 +50,7 @@
 
       <template #actions>
         <el-button v-perm="'sys:menu:add'" type="primary" @click="handleAdd(0)">
-          {{ t('system.addMenu') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

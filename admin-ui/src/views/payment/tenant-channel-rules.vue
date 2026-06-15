@@ -18,7 +18,7 @@
           type="primary"
           @click="openRuleDialog()"
         >
-          {{ t('payment.addRule') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

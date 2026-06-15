@@ -41,7 +41,7 @@
       <template #actions>
         <el-button v-perm="'trade:symbol:add'" type="primary" @click="openSymbolDialog()">
           <el-icon><Plus /></el-icon>
-          {{ t('trade.addSymbol') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

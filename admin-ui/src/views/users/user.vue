@@ -654,7 +654,7 @@ onMounted(fetchCreateOptions)
       </el-form-item>
       <template #actions>
         <el-button v-perm="'users:user:add'" type="primary" @click="openCreate">
-          {{ t('users.addUser') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

@@ -37,7 +37,7 @@
       </el-form-item>
       <template #actions>
         <el-button v-perm="'option:contract:add'" type="primary" @click="openContractDialog()">
-          {{ t('option.createContract') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

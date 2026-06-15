@@ -17,7 +17,7 @@
       </el-form-item>
       <template #actions>
         <el-button v-perm="'staking:product:add'" type="primary" @click="openProductDialog()">
-          {{ t('staking.addProduct') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

@@ -401,7 +401,7 @@ onMounted(async () => {
 
       <template #actions>
         <el-button v-perm="'sys:role:add'" type="primary" @click="openCreate">
-          {{ t('perms.sys:role:add') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

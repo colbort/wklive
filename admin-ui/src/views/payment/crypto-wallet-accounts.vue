@@ -29,7 +29,7 @@
           type="primary"
           @click="openDialog()"
         >
-          {{ t('payment.addCryptoWalletAccount') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

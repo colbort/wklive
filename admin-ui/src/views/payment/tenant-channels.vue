@@ -21,7 +21,7 @@
           type="primary"
           @click="openChannelDialog()"
         >
-          {{ t('payment.addChannel') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>

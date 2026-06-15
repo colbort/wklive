@@ -25,7 +25,7 @@
       </el-form-item>
       <template #actions>
         <el-button v-perm="'payment:platform:add'" type="primary" @click="openPlatformDialog()">
-          {{ t('payment.addPlatform') }}
+          {{ t('common.add') }}
         </el-button>
       </template>
     </CrudQueryCard>
