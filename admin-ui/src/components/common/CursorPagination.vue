@@ -10,6 +10,7 @@
     <el-select
       v-if="showLimit"
       :model-value="limit"
+      :teleported="selectTeleported"
       style="width: 100px"
       @change="handleLimitChange"
     >
@@ -32,10 +33,12 @@ withDefaults(
     limit: number
     showLimit?: boolean
     disabled?: boolean
+    selectTeleported?: boolean
   }>(),
   {
     showLimit: true,
     disabled: false,
+    selectTeleported: true,
   },
 )
 

@@ -12,6 +12,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
+	"wklive/services/user/internal/constant"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -146,13 +147,16 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	if err != nil {
 		return nil, err
 	}
-
+	nickname, err := constant.RandomNickname()
+	if err != nil {
+		return nil, err
+	}
 	now := utils.NowMillis()
 	tuser = &models.TUser{
 		TenantId:       tenant.Data.Id,
 		UserNo:         fmt.Sprintf("U%d", userNo),
 		Username:       fmt.Sprintf("U%d", userNo),
-		Nickname:       sql.NullString{String: "", Valid: true},
+		Nickname:       sql.NullString{String: nickname, Valid: true},
 		Avatar:         sql.NullString{String: "", Valid: true},
 		PasswordHash:   passwordHash,
 		RegisterType:   int64(in.RegisterType),

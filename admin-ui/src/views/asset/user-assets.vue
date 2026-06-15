@@ -9,7 +9,7 @@
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('asset.userId')">
-        <el-input-number v-model="query.userId" :min="0" :precision="0" />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('asset.walletType')">
         <el-select v-model="query.walletType" clearable style="width: 160px">
@@ -137,7 +137,7 @@
     <el-dialog v-model="changeVisible" :title="changeTitle" width="680px">
       <el-form label-width="100px">
         <el-form-item :label="t('asset.userId')">
-          <el-input-number v-model="changeForm.userId" :min="0" :precision="0" />
+          <UserSelect v-model="changeForm.userId" :tenant-id="changeForm.tenantId || undefined" />
         </el-form-item>
         <el-form-item :label="t('asset.walletType')">
           <el-select v-model="changeForm.walletType" style="width: 100%">
@@ -237,6 +237,7 @@ import { useOptions, usePagination } from '@/composables'
 import { assetService, type AssetUserAsset, type OptionGroup } from '@/services'
 import { formatDate } from '@/utils'
 import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()

@@ -15,6 +15,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
+	"wklive/services/user/internal/constant"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -107,13 +108,17 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 	if err != nil {
 		return nil, err
 	}
+	nickname, err := constant.RandomNickname()
+	if err != nil {
+		return nil, err
+	}
 	deviceId := fmt.Sprintf("%d", userNo)
 	now := utils.NowMillis()
 	guest := &models.TUser{
 		TenantId:       tenant.Data.Id,
 		UserNo:         fmt.Sprintf("G%d", userNo),
 		Username:       fmt.Sprintf("Guest%d", userNo),
-		Nickname:       sql.NullString{String: fmt.Sprintf("Guest%d", userNo), Valid: true},
+		Nickname:       sql.NullString{String: nickname, Valid: true},
 		Avatar:         sql.NullString{},
 		PasswordHash:   "",
 		RegisterType:   int64(user.RegisterType_REGISTER_TYPE_GUEST),
