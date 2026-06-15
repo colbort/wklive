@@ -107,6 +107,7 @@ export default {
     selectRechargeCoinNetwork: '请选择支持充值的币种和网络',
     noRechargeAddress: '暂未获取到充值地址',
     rechargeAddressLoadFailed: '充值地址获取失败，请稍后重试',
+    refreshAddress: '刷新地址',
     copySuccess: '复制成功',
     copyFailed: '复制失败，请手动复制',
     invalidRechargeAmount: '请输入有效充值金额，最多保留 {places} 位小数',

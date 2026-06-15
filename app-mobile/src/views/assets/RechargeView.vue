@@ -66,6 +66,8 @@ const addressCountdownText = computed(() => {
   const remainSeconds = String(seconds % 60).padStart(2, '0')
   return `${minutes}:${remainSeconds}`
 })
+const rechargeAddressExpired = computed(() => step.value === 'detail' && addressSecondsLeft.value <= 0)
+const rechargeAddressHoldSeconds = 180
 
 function isSuccessCode(code: number) {
   return code === 0 || code === 200
@@ -130,28 +132,37 @@ function stopAddressCountdown() {
   addressSecondsLeft.value = 0
 }
 
-function startAddressCountdown() {
+function getAddressSecondsLeft(address: CryptoRechargeAddress) {
+  if (!address.lastUsedTime) return rechargeAddressHoldSeconds
+
+  const expiredAt = address.lastUsedTime + rechargeAddressHoldSeconds * 1000
+  return Math.max(0, Math.ceil((expiredAt - Date.now()) / 1000))
+}
+
+function startAddressCountdown(address: CryptoRechargeAddress) {
   stopAddressCountdown()
-  addressSecondsLeft.value = 180
+  addressSecondsLeft.value = getAddressSecondsLeft(address)
+  if (addressSecondsLeft.value <= 0) {
+    pageError.value = t('assetFlow.expiredAddress')
+    return
+  }
   addressTimer = setInterval(() => {
-    addressSecondsLeft.value -= 1
+    addressSecondsLeft.value = getAddressSecondsLeft(address)
     if (addressSecondsLeft.value > 0) return
 
     stopAddressCountdown()
-    rechargeAddress.value = null
-    qrImageUrl.value = ''
     copyTip.value = ''
     pageError.value = t('assetFlow.expiredAddress')
-    step.value = 'select'
   }, 1000)
 }
 
-async function startRecharge() {
-  pageError.value = ''
+async function refreshRechargeAddress() {
+  if (addressLoading.value) return false
+
   copyTip.value = ''
   if (!selectedCoin.value || !selectedChainCode.value) {
     pageError.value = t('assetFlow.selectRechargeCoinNetwork')
-    return
+    return false
   }
 
   addressLoading.value = true
@@ -164,17 +175,85 @@ async function startRecharge() {
     if (isSuccessCode(resp.code) && resp.data?.address) {
       rechargeAddress.value = resp.data
       qrImageUrl.value = await createQrDataUrl(resp.data.address)
-      startAddressCountdown()
+      startAddressCountdown(resp.data)
       step.value = 'detail'
-    } else {
-      pageError.value = resp.msg || t('assetFlow.noRechargeAddress')
+      pageError.value = ''
+      return true
     }
+
+    rechargeAddress.value = null
+    qrImageUrl.value = ''
+    pageError.value = resp.msg || t('assetFlow.noRechargeAddress')
+    return false
   } catch (error) {
     console.warn('load crypto recharge address failed', error)
+    rechargeAddress.value = null
+    qrImageUrl.value = ''
     pageError.value = t('assetFlow.rechargeAddressLoadFailed')
+    return false
   } finally {
     addressLoading.value = false
   }
+}
+
+async function startRecharge() {
+  pageError.value = ''
+  await refreshRechargeAddress()
+}
+
+async function handleRefreshAddress() {
+  pageError.value = ''
+  await refreshRechargeAddress()
+}
+
+async function handleExpiredAddress() {
+  stopAddressCountdown()
+  rechargeAddress.value = null
+  qrImageUrl.value = ''
+  pageError.value = t('assetFlow.expiredAddress')
+  await refreshRechargeAddress()
+  if (!rechargeAddress.value) {
+    pageError.value = t('assetFlow.expiredAddress')
+  }
+}
+
+async function ensureValidRechargeAddress() {
+  if (!rechargeAddress.value || rechargeAddressExpired.value) {
+    pageError.value = t('assetFlow.expiredAddress')
+    await refreshRechargeAddress()
+    return false
+  }
+  return true
+}
+
+async function createRechargeOrder(voucherImage: string, rechargeAmount: number) {
+  const resp = await apiCreateCryptoRechargeOrder({
+    walletType: walletType.value,
+    coin: selectedCoin.value,
+    chainCode: selectedChainCode.value,
+    rechargeAmount,
+    clientType: 2,
+    voucherImage,
+  })
+
+  if (isSuccessCode(resp.code)) {
+    if (resp.data?.address) {
+      rechargeAddress.value = resp.data.address
+      qrImageUrl.value = await createQrDataUrl(resp.data.address.address)
+    }
+    stopAddressCountdown()
+    copyTip.value = resp.data?.order?.orderNo
+      ? t('assetFlow.submittedWithNo', { orderNo: resp.data.order.orderNo })
+      : t('assetFlow.submittedWaitConfirm')
+    return
+  }
+
+  if (resp.code === 2151) {
+    await handleExpiredAddress()
+    return
+  }
+
+  pageError.value = resp.msg || t('assetFlow.submitFailedLater')
 }
 
 async function createQrDataUrl(text: string) {
@@ -257,30 +336,12 @@ async function completeRecharge() {
     pageError.value = t('assetFlow.selectVoucherImage')
     return
   }
+  if (!(await ensureValidRechargeAddress())) return
 
   submitLoading.value = true
   try {
     const voucherImage = await uploadVoucherImage()
-    const resp = await apiCreateCryptoRechargeOrder({
-      walletType: walletType.value,
-      coin: selectedCoin.value,
-      chainCode: selectedChainCode.value,
-      rechargeAmount,
-      clientType: 2,
-      voucherImage,
-    })
-    if (isSuccessCode(resp.code)) {
-      if (resp.data?.address) {
-        rechargeAddress.value = resp.data.address
-        qrImageUrl.value = await createQrDataUrl(resp.data.address.address)
-      }
-      stopAddressCountdown()
-      copyTip.value = resp.data?.order?.orderNo
-        ? t('assetFlow.submittedWithNo', { orderNo: resp.data.order.orderNo })
-        : t('assetFlow.submittedWaitConfirm')
-    } else {
-      pageError.value = resp.msg || t('assetFlow.submitFailedLater')
-    }
+    await createRechargeOrder(voucherImage, rechargeAmount)
   } catch (error) {
     console.warn('create crypto recharge order failed', error)
     pageError.value = t('assetFlow.submitFailedLater')
@@ -349,6 +410,11 @@ onBeforeUnmount(() => {
         <p v-if="addressSecondsLeft > 0" class="address-countdown">
           {{ t('assetFlow.addressExpires', { time: addressCountdownText }) }}
         </p>
+        <div class="address-tools">
+          <button type="button" :disabled="addressLoading" @click="handleRefreshAddress">
+            {{ addressLoading ? t('assetFlow.getting') : t('assetFlow.refreshAddress') }}
+          </button>
+        </div>
         <div v-if="rechargeAddress?.memo" class="memo-row">
           <span>Memo / Tag</span>
           <strong>{{ rechargeAddress.memo }}</strong>
@@ -559,6 +625,27 @@ h2 {
   font-size: 0.6rem;
   font-weight: 800;
   text-align: center;
+}
+
+.address-tools {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.address-tools button {
+  min-width: 92px;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.address-tools button:disabled {
+  opacity: 0.55;
 }
 
 .memo-row {

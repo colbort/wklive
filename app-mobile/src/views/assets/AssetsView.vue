@@ -10,8 +10,10 @@ import CommonPage from '@/components/common/CommonPage.vue'
 import LoginPrompt from '@/components/common/LoginPrompt.vue'
 import { optionText, useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
+import { useSystemStore } from '@/stores/system'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import { DEFAULT_ASSET_DECIMAL_PLACES, formatAssetMinorAmount } from '@/utils/assetAmount'
+import { resolveSystemAssetUrl } from '@/utils/assetUrl'
 
 type AssetTopTab = 'assets' | 'orders' | 'profile'
 type AssetActionKey =
@@ -30,6 +32,7 @@ const ASSET_OPERATION_TYPES: Partial<Record<AssetActionKey, number>> = {
 
 const router = useRouter()
 const assetOptions = useOptions(apiGetCoreOptions)
+const systemStore = useSystemStore()
 const { t } = useI18n()
 const activeTopTab = ref<AssetTopTab>('assets')
 const activeAssetAccount = ref('cash')
@@ -173,6 +176,10 @@ function coinConfigName(config: AssetCoinConfig) {
 
 function coinConfigIconText(config: AssetCoinConfig) {
   return (config.iconText || config.symbol || config.coin || '?').slice(0, 3).toUpperCase()
+}
+
+function coinConfigIconUrl(config?: AssetCoinConfig | null) {
+  return resolveSystemAssetUrl(systemStore.systemCore.assetUrl, config?.iconUrl)
 }
 
 function selectAssetAction(key: AssetActionKey) {
@@ -362,8 +369,8 @@ onMounted(() => {
                     }"
                   >
                     <img
-                      v-if="item.config.iconUrl"
-                      :src="item.config.iconUrl"
+                      v-if="coinConfigIconUrl(item.config)"
+                      :src="coinConfigIconUrl(item.config)"
                       :alt="coinConfigName(item.config)"
                     >
                     <span v-else>{{ coinConfigIconText(item.config) }}</span>
@@ -400,8 +407,8 @@ onMounted(() => {
               }"
             >
               <img
-                v-if="selectedCoinConfig.iconUrl"
-                :src="selectedCoinConfig.iconUrl"
+                v-if="coinConfigIconUrl(selectedCoinConfig)"
+                :src="coinConfigIconUrl(selectedCoinConfig)"
                 :alt="coinConfigName(selectedCoinConfig)"
               >
               <span v-else>{{ coinConfigIconText(selectedCoinConfig) }}</span>

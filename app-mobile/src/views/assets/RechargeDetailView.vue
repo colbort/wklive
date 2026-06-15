@@ -12,6 +12,7 @@ import { useSystemStore } from '@/stores/system'
 import type { AssetCoinConfig } from '@/types/asset'
 import type { RechargeOrder } from '@/types/payment'
 import { formatAssetMinorAmount } from '@/utils/assetAmount'
+import { resolveSystemAssetUrl } from '@/utils/assetUrl'
 
 const route = useRoute()
 const router = useRouter()
@@ -49,6 +50,9 @@ const rechargeAddress = computed(() => {
   return String(requestSnapshot.value.address || order.value?.qrContent || order.value?.body || '')
 })
 const voucherImageUrl = computed(() => resolveAssetUrl(order.value?.voucherImage))
+const coinIconUrl = computed(() =>
+  resolveSystemAssetUrl(systemStore.systemCore.assetUrl, coinConfig.value?.iconUrl),
+)
 const rechargeAccountLabel = computed(() => walletTypeLabel(order.value?.walletType))
 
 function isSuccessCode(code: number) {
@@ -111,13 +115,7 @@ function coinIconText() {
 }
 
 function resolveAssetUrl(url?: string) {
-  if (!url) return ''
-  if (/^https?:\/\//i.test(url)) return url
-  const assetUrl = systemStore.systemCore.assetUrl || ''
-  if (!assetUrl) return url.startsWith('/') ? url : `/${url}`
-  const base = assetUrl.replace(/\/+$/, '')
-  const path = url.replace(/^\.\//, '').replace(/^\/+/, '')
-  return `${base}/${path}`
+  return resolveSystemAssetUrl(systemStore.systemCore.assetUrl, url)
 }
 
 function formatRechargeAmount() {
@@ -185,7 +183,7 @@ onMounted(() => {
             class="detail-coin-icon"
             :style="{ backgroundColor: coinConfig?.iconBgColor || 'var(--coin-fallback-bg)' }"
           >
-            <img v-if="coinConfig?.iconUrl" :src="coinConfig.iconUrl" :alt="order.currency">
+            <img v-if="coinIconUrl" :src="coinIconUrl" :alt="order.currency">
             <span v-else>{{ coinIconText() }}</span>
           </span>
           <strong>{{ order.currency }}</strong>

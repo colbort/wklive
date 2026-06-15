@@ -107,6 +107,7 @@ export default {
     selectRechargeCoinNetwork: 'Select a supported coin and network',
     noRechargeAddress: 'No deposit address yet',
     rechargeAddressLoadFailed: 'Could not get address. Try again later.',
+    refreshAddress: 'Refresh Address',
     copySuccess: 'Copied',
     copyFailed: 'Copy failed. Copy manually.',
     invalidRechargeAmount: 'Enter a valid deposit amount, up to {places} decimals',

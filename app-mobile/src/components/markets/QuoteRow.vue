@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import { getLocale, useI18n } from '@/i18n'
 import { useSystemStore } from '@/stores/system'
 import type { ItickTenantProduct, QuotePayload } from '@/types/itick'
+import { resolveSystemAssetUrl } from '@/utils/assetUrl'
 
 const props = withDefaults(
   defineProps<{
@@ -60,15 +61,7 @@ function productIconText(product: ItickTenantProduct) {
 }
 
 function resolveIconUrl(icon?: string) {
-  const value = icon?.trim()
-  if (!value) return ''
-  if (/^(https?:)?\/\//i.test(value) || /^(data|blob):/i.test(value)) return value
-
-  const path = value.replace(/^\.\//, '').replace(/^\/+/, '')
-  const assetUrl = systemStore.systemCore.assetUrl?.replace(/\/+$/, '') || ''
-  if (!assetUrl) return `/${path}`
-
-  return `${assetUrl}/${path}`
+  return resolveSystemAssetUrl(systemStore.systemCore.assetUrl, icon)
 }
 
 function displayPrice() {

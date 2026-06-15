@@ -11,9 +11,11 @@ import {
 import CommonPage from '@/components/common/CommonPage.vue'
 import { useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
+import { useSystemStore } from '@/stores/system'
 import type { AssetCoinConfig } from '@/types/asset'
 import type { RechargeOrder, WithdrawOrder } from '@/types/payment'
 import { formatAssetMinorAmount } from '@/utils/assetAmount'
+import { resolveSystemAssetUrl } from '@/utils/assetUrl'
 
 type MainTab = 'recharge' | 'withdraw'
 type WithdrawTab = 'crypto' | 'bank'
@@ -23,6 +25,7 @@ const router = useRouter()
 const { t } = useI18n()
 const assetOptions = useOptions(apiGetCoreOptions)
 const paymentOptions = useOptions(apiGetCoreOptions)
+const systemStore = useSystemStore()
 const activeTab = ref<MainTab>(route.query.tab === 'withdraw' ? 'withdraw' : 'recharge')
 const withdrawTab = ref<WithdrawTab>('crypto')
 const coinConfigs = ref<AssetCoinConfig[]>([])
@@ -160,6 +163,10 @@ function coinIconStyle(coin: string) {
   return { backgroundColor: configForCoin(coin)?.iconBgColor || 'var(--coin-fallback-bg)' }
 }
 
+function coinIconUrl(coin: string) {
+  return resolveSystemAssetUrl(systemStore.systemCore.assetUrl, configForCoin(coin)?.iconUrl)
+}
+
 function formatRecordAmount(value: number, currency: string) {
   return `${formatAssetMinorAmount(value, 2)} ${currency}`
 }
@@ -258,8 +265,8 @@ onMounted(() => {
         >
           <span class="record-coin-icon" :style="coinIconStyle(record.currency)">
             <img
-              v-if="configForCoin(record.currency)?.iconUrl"
-              :src="configForCoin(record.currency)?.iconUrl"
+              v-if="coinIconUrl(record.currency)"
+              :src="coinIconUrl(record.currency)"
               :alt="record.currency"
             >
             <span v-else>{{ coinIconText(record.currency) }}</span>

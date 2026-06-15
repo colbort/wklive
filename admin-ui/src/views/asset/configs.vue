@@ -299,7 +299,29 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('asset.iconUrl')">
-              <el-input v-model="form.iconUrl" />
+              <div class="icon-upload-field">
+                <div v-if="form.iconUrl" class="icon-upload-preview">
+                  <el-image
+                    :src="resolveAssetUrl(form.iconUrl)"
+                    class="icon-preview"
+                    :preview-teleported="true"
+                  />
+                  <div class="icon-url">
+                    {{ form.iconUrl }}
+                  </div>
+                </div>
+                <el-upload
+                  action="#"
+                  :auto-upload="false"
+                  :show-file-list="false"
+                  :on-change="handleIconSelect"
+                  accept="image/*"
+                >
+                  <el-button type="primary" :loading="iconUploading">
+                    {{ t('common.upload') }}
+                  </el-button>
+                </el-upload>
+              </div>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -369,29 +391,141 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" :title="detailTitle" width="760px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
-    </el-dialog>
+    <el-drawer v-model="detailVisible" :title="detailTitle" size="900px">
+      <div v-if="detailData" class="coin-config-detail">
+        <el-descriptions :column="2" border>
+          <el-descriptions-item :label="t('common.id')">
+            {{ detailData.id }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.tenantId')">
+            {{ detailData.tenantId }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.walletType')">
+            {{ formatOption(walletTypeOptions, detailData.walletType) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.coinType')">
+            {{ formatCoinType(detailData.coinType) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.coin')">
+            {{ detailText(detailData.coin) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.symbol')">
+            {{ detailText(detailData.symbol) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.coinName')">
+            {{ detailText(detailData.coinName) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.chainCode')">
+            {{ formatOption(chainCodeOptions, detailData.chainCode) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.decimalPlaces')">
+            {{ detailData.decimalPlaces }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('common.sort')">
+            {{ detailData.sort }}
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <el-descriptions :column="2" border>
+          <el-descriptions-item :label="t('asset.appVisible')">
+            <el-tag :type="detailData.appVisible === 1 ? 'success' : 'info'">
+              {{ detailData.appVisible === 1 ? t('common.visible') : t('common.hidden') }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('common.enabled')">
+            <el-tag :type="detailData.enabled === 1 ? 'success' : 'danger'">
+              {{ formatOption(assetStatusOptions, detailData.enabled) }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.rechargeEnabled')">
+            <el-tag :type="detailData.rechargeEnabled === 1 ? 'success' : 'info'">
+              {{ formatEnabled(detailData.rechargeEnabled) }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.withdrawEnabled')">
+            <el-tag :type="detailData.withdrawEnabled === 1 ? 'success' : 'info'">
+              {{ formatEnabled(detailData.withdrawEnabled) }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.transferEnabled')">
+            <el-tag :type="detailData.transferEnabled === 1 ? 'success' : 'info'">
+              {{ formatEnabled(detailData.transferEnabled) }}
+            </el-tag>
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <el-descriptions :column="2" border>
+          <el-descriptions-item :label="t('asset.iconUrl')" :span="2">
+            <div v-if="detailData.iconUrl" class="icon-detail">
+              <el-image
+                :src="resolveAssetUrl(detailData.iconUrl)"
+                class="icon-preview"
+                :preview-teleported="true"
+              />
+              <el-link :href="resolveAssetUrl(detailData.iconUrl)" target="_blank" type="primary">
+                {{ detailData.iconUrl }}
+              </el-link>
+            </div>
+            <span v-else>--</span>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.iconText')">
+            {{ detailText(detailData.iconText) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('asset.iconBgColor')">
+            <span class="color-value">
+              <span
+                v-if="detailData.iconBgColor"
+                class="color-swatch"
+                :style="{ backgroundColor: detailData.iconBgColor }"
+              />
+              {{ detailText(detailData.iconBgColor) }}
+            </span>
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <el-descriptions :column="2" border>
+          <el-descriptions-item :label="t('common.createTimes')">
+            {{ formatDate(detailData.createTimes) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('common.updateTimes')">
+            {{ formatDate(detailData.updateTimes) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('common.remark')" :span="2">
+            {{ detailText(detailData.remark) }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
-import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
+import {
+  ElMessage,
+  ElMessageBox,
+  type FormInstance,
+  type FormRules,
+  type UploadFile,
+} from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { assetService, type AssetCoinConfig, type OptionGroup, type OptionItem } from '@/services'
+import { apiUploadFile } from '@/api/system/upload'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import { buildSystemAssetUrl, useSystemCore } from '@/composables/useSystemCore'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
   usePagination<number>(20)
+const { systemCore, loadSystemCore } = useSystemCore()
 
 const loading = ref(false)
 const submitLoading = ref(false)
+const iconUploading = ref(false)
 const rows = ref<AssetCoinConfig[]>([])
 const optionGroups = ref<OptionGroup[]>([])
 const dialogVisible = ref(false)
@@ -486,6 +620,14 @@ function formatOption(options: OptionItem[], value: number) {
 
 function formatCoinType(value: number) {
   return coinTypeOptions.value.find((item) => item.value === value)?.label || value
+}
+
+function detailText(value?: string | number) {
+  return value === undefined || value === null || value === '' ? '--' : value
+}
+
+function resolveAssetUrl(url?: string) {
+  return buildSystemAssetUrl(systemCore.value.assetUrl, url)
 }
 
 function resetFormData() {
@@ -594,6 +736,35 @@ async function openEditDialog(row: AssetCoinConfig) {
   dialogVisible.value = true
 }
 
+async function handleIconSelect(uploadFile: UploadFile) {
+  if (!uploadFile.raw) return
+
+  if (!uploadFile.raw.type.startsWith('image/')) {
+    ElMessage.error(t('app.pleaseSelectImageFile'))
+    return
+  }
+
+  if (uploadFile.raw.size > 5 * 1024 * 1024) {
+    ElMessage.error(t('app.avatarSizeLimit'))
+    return
+  }
+
+  iconUploading.value = true
+  try {
+    const res = await apiUploadFile(uploadFile.raw)
+    if (res.code === 200) {
+      form.iconUrl = res.data?.url || ''
+      ElMessage.success(t('common.uploadSuccess'))
+      return
+    }
+    throw new Error(res.msg || t('common.uploadFailed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.uploadFailed'))
+  } finally {
+    iconUploading.value = false
+  }
+}
+
 async function submitForm() {
   if (!formRef.value) return
   await formRef.value.validate()
@@ -665,17 +836,62 @@ function handleNextPage() {
 
 onMounted(loadList)
 onMounted(loadOptions)
+onMounted(loadSystemCore)
 </script>
 
 <style scoped>
-.detail-pre {
-  margin: 0;
-  max-height: 520px;
-  overflow: auto;
-  padding: 12px;
-  border-radius: 6px;
-  background: #f6f8fa;
-  color: #24292f;
-  line-height: 1.6;
+.icon-upload-field,
+.icon-upload-preview,
+.icon-detail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.icon-upload-field {
+  width: 100%;
+}
+
+.icon-upload-preview,
+.icon-detail {
+  flex: 1;
+}
+
+.icon-preview {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  background: var(--el-fill-color-light);
+}
+
+.icon-url {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--el-text-color-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.coin-config-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.color-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-swatch {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 4px;
 }
 </style>
