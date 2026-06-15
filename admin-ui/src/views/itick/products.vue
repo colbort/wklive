@@ -808,14 +808,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.pagination-bar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  margin-top: 16px;
-}
-
 .icon-cell,
 .icon-upload-field,
 .icon-detail {

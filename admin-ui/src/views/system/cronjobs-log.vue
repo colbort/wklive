@@ -159,7 +159,7 @@ onMounted(() => {
           min-width="140"
           show-overflow-tooltip
         />
-        <el-table-column :label="t('common.actions')" width="120" fixed="right">
+        <el-table-column :label="t('common.actions')" width="110" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="showDetail(row)">
               {{ t('system.viewDetail') }}

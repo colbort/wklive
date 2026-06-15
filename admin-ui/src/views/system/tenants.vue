@@ -100,7 +100,7 @@
         </el-table-column>
         <el-table-column
           :label="t('common.actions')"
-          width="180"
+          width="140"
           align="center"
           fixed="right"
         >

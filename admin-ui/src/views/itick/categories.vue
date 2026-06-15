@@ -618,14 +618,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.pagination-bar {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  align-items: center;
-  margin-top: 12px;
-}
-
 .icon-cell,
 .icon-upload-field,
 .icon-detail {

@@ -1227,14 +1227,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.pagination-bar {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  align-items: center;
-  margin-top: 16px;
-}
-
 .product-select-footer {
   display: flex;
   align-items: center;

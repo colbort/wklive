@@ -326,7 +326,7 @@ onMounted(() => {
             <span>{{ formatDate(row.createTimes) }}</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="280" fixed="right">
+        <el-table-column :label="t('common.actions')" width="300" fixed="right">
           <template #default="{ row }">
             <el-button
               v-perm="'sys:job:run'"

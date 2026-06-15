@@ -21,6 +21,7 @@ const detailData = ref<UserDetail>()
 const optionGroups = ref<OptionGroup[]>([])
 const verifyStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'verifyStatus'))
 const kycLevelOptions = computed(() => findOptionGroup(optionGroups.value, 'kycLevel'))
+const hasReviewableIdentity = computed(() => list.value.some((item) => item.verifyStatus === 1))
 
 const query = reactive({
   tenantId: undefined as number | undefined,
@@ -279,12 +280,17 @@ onMounted(fetchOptions)
             {{ formatDate(row.submitTime) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="160" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          :width="hasReviewableIdentity ? 110 : 70"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('common.detail') }}
             </el-button>
             <el-button
+              v-if="row.verifyStatus === 1"
               v-perm="'users:user:identities:review'"
               link
               type="success"
