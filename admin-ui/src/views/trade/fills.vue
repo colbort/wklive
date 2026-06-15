@@ -2,7 +2,6 @@
   <div class="module-page">
     <CrudQueryCard
       :model="currentQuery"
-      label-width="auto"
       @search="loadList"
       @reset="resetQuery"
     >

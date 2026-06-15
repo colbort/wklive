@@ -191,7 +191,6 @@ onMounted(() => {
   <div class="module-page verification-code-page">
     <CrudQueryCard
       :model="queryForm"
-      label-width="auto"
       @search="loadList"
       @reset="resetQuery"
     >

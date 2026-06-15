@@ -2,7 +2,6 @@
   <div class="itick-products module-page">
     <CrudQueryCard
       :model="queryParams"
-      label-width="auto"
       @search="loadList"
       @reset="resetQuery"
     >

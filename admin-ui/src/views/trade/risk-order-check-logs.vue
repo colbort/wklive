@@ -2,7 +2,6 @@
   <div class="module-page">
     <CrudQueryCard
       :model="riskQuery"
-      label-width="auto"
       @search="loadList"
       @reset="resetQuery"
     >

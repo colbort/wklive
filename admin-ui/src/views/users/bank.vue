@@ -402,7 +402,6 @@ onMounted(fetchOptions)
   <div class="module-page">
     <CrudQueryCard
       :model="query"
-      label-width="auto"
       @search="loadList"
       @reset="resetQuery"
     >

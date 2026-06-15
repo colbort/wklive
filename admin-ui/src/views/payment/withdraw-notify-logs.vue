@@ -2,7 +2,6 @@
   <div class="payment-page">
     <CrudQueryCard
       :model="query"
-      label-width="auto"
       @search="loadList"
       @reset="resetQuery"
     >
