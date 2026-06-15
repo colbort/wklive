@@ -3,8 +3,6 @@
   --admin-card-radius: 14px;
   --admin-card-border: var(--el-border-color-light);
   --admin-muted-bg: #f8fafc;
-  --admin-query-control-width: 180px;
-  --admin-query-item-width: 200px;
 }
 
 html,
@@ -30,15 +28,7 @@ body {
   overflow: hidden;
 }
 
-:is(.module-page, .payment-page) .query-card {
-  grid-row: 1;
-  grid-column: 1;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-}
-
-:is(.module-page, .payment-page) .query-card,
 :is(.module-page, .payment-page) .table-card,
-:is(.module-page, .payment-page) > .el-card:not(.query-card),
 :is(.module-page, .payment-page) .el-tab-pane > .el-card {
   border-radius: var(--admin-card-radius);
   border-color: var(--admin-card-border);
@@ -75,109 +65,6 @@ body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-}
-
-:is(.module-page, .payment-page) .query-card .el-form {
-  display: flex;
-  grid-template-columns: repeat(auto-fit, minmax(var(--admin-query-item-width), 1fr));
-  column-gap: 24px;
-  row-gap: 12px;
-  align-items: center;
-}
-
-:is(.module-page, .payment-page) .query-card .el-form-item {
-  margin: 0;
-  width: 100%;
-}
-
-:is(.module-page, .payment-page) .crud-query-card--plain {
-  margin-bottom: 16px;
-}
-
-:is(.module-page, .payment-page) .query-card .el-form-item__label {
-  flex: 0 0 100px;
-  background: transparent;
-}
-
-:is(.module-page, .payment-page) .query-card .crud-query-form--auto-label .el-form-item__label {
-  flex: 0 0 auto;
-  width: auto !important;
-  min-width: max-content;
-  white-space: nowrap;
-}
-
-:is(.module-page, .payment-page)
-  .query-card
-  .crud-query-form--auto-label
-  .el-form-item__label-wrap {
-  flex: 0 0 auto;
-  width: auto !important;
-  margin-left: 0 !important;
-}
-
-:is(.module-page, .payment-page) .query-card .el-form-item__content {
-  flex: 1;
-  min-width: 0;
-}
-
-:is(.module-page, .payment-page)
-  .query-card
-  .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)),
-:is(.module-page, .payment-page) .query-card .crud-query-actions {
-  width: auto;
-  min-width: max-content;
-}
-
-:is(.module-page, .payment-page)
-  .query-card
-  .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor)) {
-  justify-self: start;
-}
-
-:is(.module-page, .payment-page) .query-card .crud-query-actions {
-  justify-self: end;
-}
-
-:is(.module-page, .payment-page)
-  .query-card
-  .el-form:has(.crud-query-extra-actions)
-  .crud-query-actions:not(.crud-query-extra-actions) {
-  justify-self: start;
-}
-
-:is(.module-page, .payment-page) .query-card .crud-query-extra-actions {
-  justify-self: end;
-}
-
-:is(.module-page, .payment-page)
-  .query-card
-  .el-form-item:not(:has(.el-input, .el-input-number, .el-select, .el-date-editor))
-  .el-form-item__content,
-:is(.module-page, .payment-page) .query-card .crud-query-actions .el-form-item__content {
-  width: auto;
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-:is(.module-page, .payment-page) .query-card .el-form-item:has(.el-input) .el-form-item__content,
-:is(.module-page, .payment-page)
-  .query-card
-  .el-form-item:has(.el-input-number)
-  .el-form-item__content,
-:is(.module-page, .payment-page) .query-card .el-form-item:has(.el-select) .el-form-item__content,
-:is(.module-page, .payment-page)
-  .query-card
-  .el-form-item:has(.el-date-editor)
-  .el-form-item__content {
-  width: var(--admin-query-control-width);
-}
-
-:is(.module-page, .payment-page) .query-card .el-input,
-:is(.module-page, .payment-page) .query-card .el-input-number,
-:is(.module-page, .payment-page) .query-card .el-select,
-:is(.module-page, .payment-page) .query-card .el-date-editor {
-  width: 100% !important;
 }
 
 :is(.module-page, .payment-page) .el-tabs {

@@ -104,7 +104,7 @@ withDefaults(
   }>(),
   {
     model: () => ({}),
-    labelWidth: '90px',
+    labelWidth: 'auto',
     showSearch: true,
     showReset: true,
     showActions: true,
@@ -129,14 +129,15 @@ const { t } = useI18n()
 }
 
 .crud-query-card {
-  margin-bottom: 16px;
+  --crud-query-control-width: 160px;
+  margin-bottom: 12px;
   border-radius: 16px;
   border: 1px solid #e5e8ef;
 }
 
 /* el-card body */
 .crud-query-card :deep(.el-card__body) {
-  padding: 24px 28px;
+  padding: 18px 20px;
 }
 
 /* el-card header */
@@ -165,7 +166,7 @@ const { t } = useI18n()
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 20px 32px;
+  gap: 12px 24px;
   width: 100%;
 }
 
@@ -177,7 +178,7 @@ const { t } = useI18n()
 
 /* 普通筛选项 */
 .crud-query-form :deep(.el-form-item:not(.crud-query-actions)) {
-  width: 180px;
+  width: auto;
   display: flex;
   align-items: center;
   flex-shrink: 0;
@@ -201,9 +202,15 @@ const { t } = useI18n()
 }
 
 /* 内容区域 */
-.crud-query-form :deep(.el-form-item__content) {
-  flex: 1;
+.crud-query-form :deep(.el-form-item:not(.crud-query-actions) .el-form-item__content) {
+  flex: 0 0 var(--crud-query-control-width);
+  width: var(--crud-query-control-width);
   min-width: 0;
+  line-height: 36px;
+}
+
+.crud-query-actions :deep(.el-form-item__content) {
+  width: auto;
   line-height: 36px;
 }
 
@@ -229,6 +236,11 @@ const { t } = useI18n()
 /* 搜索、重置跟着筛选项自然流动 */
 .crud-query-search-actions {
   width: auto;
+}
+
+/* 没有额外 actions 时，搜索、重置靠右 */
+.crud-query-form:not(.crud-query-form--has-extra-actions) .crud-query-search-actions {
+  margin-left: auto !important;
 }
 
 /* 有额外 actions 时，额外 actions 靠右 */
