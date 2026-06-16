@@ -148,6 +148,8 @@ func NewSyncKlinesWorker(
 }
 
 type KlineJob struct {
+	ApiUrl   string
+	ApiToken string
 	Category string
 	Market   string
 	Symbol   string
@@ -221,7 +223,7 @@ func (w *SyncKlinesWorker) doSync(in *itick.SyncKlinesReq) error {
 		go func() {
 			defer wg.Done()
 			for job := range jobs {
-				if err := w.syncOneJob(in.ApiUrl, in.ApiToken, job); err != nil {
+				if err := w.syncOneJob(job); err != nil {
 					w.Errorf("sync job failed, category=%s market=%s symbol=%s kType=%d err=%v",
 						job.Category, job.Market, job.Symbol, job.KType, err)
 				}
@@ -264,6 +266,8 @@ func (w *SyncKlinesWorker) doSync(in *itick.SyncKlinesReq) error {
 
 			for _, kType := range utils.DefaultKTypes {
 				jobs <- KlineJob{
+					ApiUrl:   in.ApiUrl,
+					ApiToken: in.ApiToken,
 					Category: category,
 					Market:   market,
 					Symbol:   symbol,
@@ -283,7 +287,7 @@ func (w *SyncKlinesWorker) doSync(in *itick.SyncKlinesReq) error {
 	return nil
 }
 
-func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error {
+func (w *SyncKlinesWorker) syncOneJob(job KlineJob) error {
 	interval := utils.KTypeToIntervalName(job.KType)
 	if interval == "" {
 		return i18n.StatusError(w.ctx, i18n.ParamError)
@@ -317,7 +321,7 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 	fullSynced := progress.FullSynced
 	newCount := 0
 
-	catchup, err := w.syncCatchup(apiURL, token, job, interval, contiguousTs, now)
+	catchup, err := w.syncCatchup(job, interval, contiguousTs, now)
 	if err != nil {
 		_ = w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncFail(w.ctx, progress.Id, mode, cutils.NowMillis(), err.Error())
 		return err
@@ -333,7 +337,7 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 		contiguousTs = catchup.LatestTs
 	}
 
-	recent, err := w.syncRecentCheck(apiURL, token, job, interval, now)
+	recent, err := w.syncRecentCheck(job, interval, now)
 	if err != nil {
 		_ = w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncFail(w.ctx, progress.Id, mode, cutils.NowMillis(), err.Error())
 		return err
@@ -351,7 +355,7 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 	newCount += recent.NewCount
 
 	if fullSynced == 0 {
-		history, err := w.syncHistory(apiURL, token, job, interval, oldestTs, now)
+		history, err := w.syncHistory(job, interval, oldestTs, now)
 		if err != nil {
 			_ = w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncFail(w.ctx, progress.Id, mode, cutils.NowMillis(), err.Error())
 			return err
@@ -383,8 +387,8 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 	)
 }
 
-func (w *SyncKlinesWorker) syncCatchup(apiURL, token string, job KlineJob, interval string, contiguousTs int64, now int64) (klineSyncResult, error) {
-	const limit = 300
+func (w *SyncKlinesWorker) syncCatchup(job KlineJob, interval string, contiguousTs int64, now int64) (klineSyncResult, error) {
+	const limit = 100
 
 	to := utils.LastClosedTs(now, interval)
 	if to <= 0 {
@@ -407,7 +411,7 @@ func (w *SyncKlinesWorker) syncCatchup(apiURL, token string, job KlineJob, inter
 		}
 	}
 
-	result, err := w.syncBackwardRange(apiURL, token, job, interval, to+1, contiguousTs, to, limit, maxPages)
+	result, err := w.syncBackwardRange(job, interval, to+1, contiguousTs, to, limit, maxPages)
 	if err != nil {
 		return klineSyncResult{}, err
 	}
@@ -420,7 +424,7 @@ func (w *SyncKlinesWorker) syncCatchup(apiURL, token string, job KlineJob, inter
 	return result, nil
 }
 
-func (w *SyncKlinesWorker) syncRecentCheck(apiURL, token string, job KlineJob, interval string, now int64) (klineSyncResult, error) {
+func (w *SyncKlinesWorker) syncRecentCheck(job KlineJob, interval string, now int64) (klineSyncResult, error) {
 	limit := utils.RecentCheckBars(interval)
 	if limit <= 0 {
 		limit = 3
@@ -429,10 +433,10 @@ func (w *SyncKlinesWorker) syncRecentCheck(apiURL, token string, job KlineJob, i
 	if to <= 0 {
 		to = now
 	}
-	return w.syncBackwardRange(apiURL, token, job, interval, to+1, 0, to, limit, 1)
+	return w.syncBackwardRange(job, interval, to+1, 0, to, limit, 1)
 }
 
-func (w *SyncKlinesWorker) syncHistory(apiURL, token string, job KlineJob, interval string, oldestTs int64, now int64) (klineSyncResult, error) {
+func (w *SyncKlinesWorker) syncHistory(job KlineJob, interval string, oldestTs int64, now int64) (klineSyncResult, error) {
 	const limit = 300
 
 	et := now
@@ -440,7 +444,7 @@ func (w *SyncKlinesWorker) syncHistory(apiURL, token string, job KlineJob, inter
 		et = oldestTs - 1
 	}
 
-	result, err := w.syncBackwardRange(apiURL, token, job, interval, et, 0, et, limit, 3)
+	result, err := w.syncBackwardRange(job, interval, et, 0, et, limit, 3)
 	if err != nil {
 		return klineSyncResult{}, err
 	}
@@ -450,21 +454,11 @@ func (w *SyncKlinesWorker) syncHistory(apiURL, token string, job KlineJob, inter
 	return result, nil
 }
 
-func (w *SyncKlinesWorker) syncBackwardRange(apiURL, token string, job KlineJob, interval string, et int64, stopAtTs int64, maxAcceptTs int64, limit int, maxPages int) (klineSyncResult, error) {
+func (w *SyncKlinesWorker) syncBackwardRange(job KlineJob, interval string, et int64, stopAtTs int64, maxAcceptTs int64, limit int, maxPages int) (klineSyncResult, error) {
 	var result klineSyncResult
 
 	for page := 0; page < maxPages; page++ {
-		resp, err := w.getKlineFromItick(
-			w.ctx,
-			apiURL,
-			token,
-			job.Category,
-			job.Market,
-			job.Symbol,
-			int(job.KType),
-			et,
-			limit,
-		)
+		resp, err := w.getKlineFromItick(w.ctx, job, et, limit)
 		if err != nil {
 			return result, err
 		}
@@ -571,16 +565,15 @@ type ItickKlineItem struct {
 
 func (w *SyncKlinesWorker) getKlineFromItick(
 	ctx context.Context,
-	apiURL, token, category, market, symbol string,
-	kType int,
+	job KlineJob,
 	et int64,
 	limit int,
 ) (*ItickKlineResponse, error) {
-	apiURL = strings.TrimSpace(apiURL)
-	token = strings.TrimSpace(token)
-	category = strings.ToLower(strings.TrimSpace(category))
-	market = strings.ToUpper(strings.TrimSpace(market))
-	symbol = strings.TrimSpace(symbol)
+	apiURL := strings.TrimSpace(job.ApiUrl)
+	token := strings.TrimSpace(job.ApiToken)
+	category := strings.ToLower(strings.TrimSpace(job.Category))
+	market := strings.ToUpper(strings.TrimSpace(job.Market))
+	symbol := strings.TrimSpace(job.Symbol)
 
 	if apiURL == "" {
 		return nil, i18n.StatusError(ctx, i18n.APIURLIsRequired)
@@ -608,7 +601,7 @@ func (w *SyncKlinesWorker) getKlineFromItick(
 	q := base.Query()
 	q.Set("region", market)
 	q.Set("code", symbol)
-	q.Set("kType", fmt.Sprintf("%d", kType))
+	q.Set("kType", fmt.Sprintf("%d", job.KType))
 	q.Set("limit", fmt.Sprintf("%d", limit))
 	if et > 0 {
 		q.Set("et", fmt.Sprintf("%d", et))
