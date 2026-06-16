@@ -27,3 +27,11 @@ enum KlineType {
   KLINE_TYPE_1W = 9;
   KLINE_TYPE_1MO = 10;
 }
+
+// K线同步优先级
+enum SyncKlinePriority {
+  SYNC_KLINE_PRIORITY_UNKNOWN = 0;
+  SYNC_KLINE_PRIORITY_HIGH = 1;
+  SYNC_KLINE_PRIORITY_NORMAL = 2;
+  SYNC_KLINE_PRIORITY_LOW = 3;
+}

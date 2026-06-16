@@ -1,10 +1,6 @@
 <template>
   <div class="itick-categories module-page">
-    <CrudQueryCard
-      :model="queryParams"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="queryParams" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('itick.categoryType')">
         <el-select
           v-model="queryParams.categoryType"
@@ -87,6 +83,14 @@
           </template>
         </el-table-column>
 
+        <el-table-column :label="t('itick.syncPriority')" width="110">
+          <template #default="{ row }">
+            <el-tag :type="syncPriorityTagType(row.syncPriority)">
+              {{ getSyncPriorityLabel(row.syncPriority) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
         <el-table-column :label="t('common.sort')" prop="sort" width="90" />
         <el-table-column :label="t('common.icon')" min-width="180">
           <template #default="{ row }">
@@ -119,12 +123,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="180"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="180" fixed="right">
           <template #default="{ row }">
             <el-button
               v-perm="'itick:category:detail'"
@@ -170,12 +169,7 @@
       :title="formMode === 'add' ? t('itick.addCategory') : t('itick.editCategory')"
       width="620px"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="100px"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item
           v-if="formMode === 'add'"
           :label="t('itick.categoryType')"
@@ -215,6 +209,14 @@
         <el-form-item :label="t('itick.appVisible')" prop="appVisible">
           <el-radio-group v-model="form.appVisible">
             <el-radio v-for="item in visibleOptions" :key="item.value" :value="item.value">
+              {{ getOptionLabel(t, item.code, item.value) }}
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item :label="t('itick.syncPriority')" prop="syncPriority">
+          <el-radio-group v-model="form.syncPriority">
+            <el-radio v-for="item in syncPriorityOptions" :key="item.value" :value="item.value">
               {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
@@ -303,6 +305,9 @@
         <el-descriptions-item :label="t('itick.appVisible')">
           {{ getOptionValueLabel(optionGroups, 'visible', detail.appVisible, t) || '-' }}
         </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.syncPriority')">
+          {{ getSyncPriorityLabel(detail.syncPriority) }}
+        </el-descriptions-item>
         <el-descriptions-item :label="t('common.sort')">
           {{ detail.sort ?? '-' }}
         </el-descriptions-item>
@@ -364,6 +369,7 @@ type FormData = {
   categoryName: string
   enabled: number
   appVisible: number
+  syncPriority: number
   sort: number
   icon: string
   remark: string
@@ -396,6 +402,7 @@ const {
     categoryName: '',
     enabled: 1,
     appVisible: 1,
+    syncPriority: 2,
     sort: 0,
     icon: '',
     remark: '',
@@ -413,13 +420,24 @@ const formMode = ref<'add' | 'edit'>('add')
 const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'categoryType'))
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
+const syncPriorityOptions = computed(() => findOptionGroup(optionGroups.value, 'syncPriority'))
 const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
+const getSyncPriorityLabel = (value?: number) =>
+  getOptionValueLabel(optionGroups.value, 'syncPriority', Number(value), t) || '-'
+const syncPriorityTagType = (value?: number) => {
+  if (Number(value) === 1) return 'danger'
+  if (Number(value) === 3) return 'info'
+  return 'success'
+}
 
 const rules: FormRules<FormData> = {
   categoryType: [{ required: true, message: t('itick.pleaseInputCategoryType'), trigger: 'blur' }],
   categoryName: [{ required: true, message: t('itick.pleaseInputCategoryName'), trigger: 'blur' }],
   enabled: [{ required: true, message: t('itick.pleaseSelectEnabledStatus'), trigger: 'change' }],
   appVisible: [{ required: true, message: t('itick.pleaseSelectAppVisible'), trigger: 'change' }],
+  syncPriority: [
+    { required: true, message: t('itick.pleaseSelectSyncPriority'), trigger: 'change' },
+  ],
   sort: [{ required: true, message: t('itick.pleaseInputSort'), trigger: 'blur' }],
 }
 
@@ -501,6 +519,7 @@ const handleEdit = async (row: ItickCategory) => {
       categoryName: data.categoryName || '',
       enabled: data.enabled,
       appVisible: data.appVisible,
+      syncPriority: data.syncPriority || 2,
       sort: data.sort || 0,
       icon: data.icon || '',
       remark: data.remark || '',
@@ -571,6 +590,7 @@ const submitForm = async () => {
         categoryName: form.categoryName,
         enabled: form.enabled,
         appVisible: form.appVisible,
+        syncPriority: form.syncPriority,
         sort: form.sort,
         icon: form.icon,
         remark: form.remark,
@@ -581,6 +601,7 @@ const submitForm = async () => {
         categoryName: form.categoryName,
         enabled: form.enabled,
         appVisible: form.appVisible,
+        syncPriority: form.syncPriority,
         sort: form.sort,
         icon: form.icon,
         remark: form.remark,

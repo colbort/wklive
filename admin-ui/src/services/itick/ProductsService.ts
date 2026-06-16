@@ -23,6 +23,7 @@ export type ItickProduct = {
   quoteCoin: string
   enabled: number
   appVisible: number
+  syncPriority: number
   sort: number
   icon: string
   remark: string
@@ -43,6 +44,7 @@ export type CreateProductReq = {
   quoteCoin: string
   enabled: number
   appVisible: number
+  syncPriority: number
   sort: number
   icon: string
   remark: string
@@ -56,6 +58,7 @@ export type UpdateProductReq = {
   quoteCoin?: string
   enabled?: number
   appVisible?: number
+  syncPriority?: number
   sort?: number
   icon?: string
   remark?: string
@@ -64,6 +67,7 @@ export type UpdateProductReq = {
 export type ListProductsReq = {
   categoryType?: number
   market?: string
+  symbol?: string
   keyword?: string
   enabled?: number // 0全部 1启用 2禁用
   appVisible?: number // 0全部 1显示 2隐藏

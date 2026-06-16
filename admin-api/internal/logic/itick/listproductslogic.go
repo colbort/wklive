@@ -5,6 +5,7 @@ package itick
 
 import (
 	"context"
+	"strings"
 
 	"wklive/admin-api/internal/logicutil"
 
@@ -29,5 +30,9 @@ func NewListProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 }
 
 func (l *ListProductsLogic) ListProducts(req *types.ListProductsReq) (resp *types.ListProductsResp, err error) {
+	if strings.TrimSpace(req.Symbol) == "" {
+		req.Symbol = strings.TrimSpace(req.Keyword)
+	}
+
 	return logicutil.Proxy[types.ListProductsResp](l.ctx, req, l.svcCtx.ItickCli.ListProducts)
 }

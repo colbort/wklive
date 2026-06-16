@@ -47,7 +47,7 @@ type (
 		Market          string `db:"market"`            // 市场代码：如 US、HK、CN、BA、GB
 		Symbol          string `db:"symbol"`            // 产品代码/交易代码，如 AAPL、BTCUSDT
 		Interval        string `db:"interval"`          // K线周期：1m、5m、15m、30m、1h、1d、1w、1mo
-		LatestTs        int64  `db:"latest_ts"`         // 最新已同步K线时间戳（毫秒）。历史补齐后，增量同步依赖该值过滤新增数据
+		LatestTs        int64  `db:"latest_ts"`         // 最新已同步K线时间戳（毫秒）。仅表示REST见过的最大时间，不代表中间连续
 		ContiguousTs    int64  `db:"contiguous_ts"`     // 最后连续完整已确认K线时间戳（毫秒）
 		RecentCheckTs   int64  `db:"recent_check_ts"`   // 最近一次REST校准时间（毫秒）
 		OldestTs        int64  `db:"oldest_ts"`         // 最早已同步K线时间戳（毫秒）。当 full_synced=0 时，从该值继续向前回补历史

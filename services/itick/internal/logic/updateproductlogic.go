@@ -65,6 +65,9 @@ func (l *UpdateProductLogic) UpdateProduct(in *itick.UpdateProductReq) (*itick.A
 	if in.Remark != "" {
 		item.Remark = in.Remark
 	}
+	if in.SyncPriority != itick.SyncKlinePriority_SYNC_KLINE_PRIORITY_UNKNOWN {
+		item.SyncPriority = int64(in.SyncPriority)
+	}
 	item.UpdateTimes = cutils.NowMillis()
 
 	if err := l.svcCtx.ItickProductModel.Update(l.ctx, item); err != nil {

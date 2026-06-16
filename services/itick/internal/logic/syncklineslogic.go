@@ -239,7 +239,7 @@ func (w *SyncKlinesWorker) doSync(in *itick.SyncKlinesReq) error {
 			w.ctx,
 			0,
 			"", "", "",
-			0, 0,
+			0, 0, "",
 			cursor,
 			pageSize,
 		)

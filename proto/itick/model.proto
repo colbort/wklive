@@ -15,11 +15,12 @@ message ItickCategory {
   string category_name = 4;
   common.Enable enabled = 5;     // 启用状态 0表示全部，1表示启用，2表示禁用
   common.Switch app_visible = 6; // APP可见开关 0表示全部，1表示显示，2表示隐藏
-  int64 sort = 7;
-  string icon = 8;
-  string remark = 9;
-  int64 create_times = 10;
-  int64 update_times = 11;
+  itick.SyncKlinePriority sync_priority = 7; // K线同步优先级 
+  int64 sort = 8;
+  string icon = 9;
+  string remark = 10;
+  int64 create_times = 11;
+  int64 update_times = 12;
 }
 
 // 产品
@@ -37,11 +38,12 @@ message ItickProduct {
   string quote_coin = 11;
   common.Enable enabled = 12;     // 启用状态 0表示全部，1表示启用，2表示禁用
   common.Switch app_visible = 13; // APP可见开关 0表示全部，1表示显示，2表示隐藏
-  int64 sort = 14;
-  string icon = 15;
-  string remark = 16;
-  int64 create_times = 17;
-  int64 update_times = 18;
+  itick.SyncKlinePriority sync_priority = 14; // K线同步优先级 
+  int64 sort = 15;
+  string icon = 16;
+  string remark = 17;
+  int64 create_times = 18;
+  int64 update_times = 19; 
 }
 
 // K线

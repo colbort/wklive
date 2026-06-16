@@ -145,5 +145,6 @@ func ItickOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
 		EnumGroup("categoryType", "产品类型", itick.CategoryType_CATEGORY_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("klineType", "K线周期", itick.KlineType_KLINE_TYPE_UNKNOWN.Descriptor()),
+		EnumGroup("syncPriority", "K线优先级", itick.SyncKlinePriority_SYNC_KLINE_PRIORITY_UNKNOWN.Descriptor()),
 	}
 }

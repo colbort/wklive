@@ -34,11 +34,12 @@ func (b *PageQueryBuilder) EqString(column string, value string) {
 }
 
 func (b *PageQueryBuilder) LikeString(column string, value string) {
+	value = strings.TrimSpace(value)
 	if value == "" {
 		return
 	}
 	b.parts = append(b.parts, fmt.Sprintf("%s LIKE ?", column))
-	b.args = append(b.args, value)
+	b.args = append(b.args, "%"+value+"%")
 }
 
 func (b *PageQueryBuilder) GteInt64(column string, value int64) {

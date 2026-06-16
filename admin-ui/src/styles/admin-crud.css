@@ -1,5 +1,5 @@
 :root {
-  --admin-page-gap: 16px;
+  --admin-page-gap: 10px;
   --admin-card-radius: 14px;
   --admin-card-border: var(--el-border-color-light);
   --admin-muted-bg: #f8fafc;

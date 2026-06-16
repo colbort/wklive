@@ -6,3 +6,11 @@ UPDATE `t_itick_kline_sync_progress`
 SET `contiguous_ts` = `latest_ts`
 WHERE `contiguous_ts` = 0
   AND `latest_ts` > 0;
+
+
+ALTER TABLE `t_itick_category`
+  ADD COLUMN `sync_priority` tinyint NOT NULL DEFAULT '2' COMMENT 'K线同步优先级: 1-高 2-普通 3-低' AFTER `app_visible`;
+
+
+ALTER TABLE `t_itick_product`
+  ADD COLUMN `sync_priority` tinyint NOT NULL DEFAULT '2' COMMENT 'K线同步优先级: 1-高 2-普通 3-低' AFTER `app_visible`;

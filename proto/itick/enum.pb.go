@@ -151,6 +151,59 @@ func (KlineType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_itick_enum_proto_rawDescGZIP(), []int{1}
 }
 
+// K线同步优先级
+type SyncKlinePriority int32
+
+const (
+	SyncKlinePriority_SYNC_KLINE_PRIORITY_UNKNOWN SyncKlinePriority = 0
+	SyncKlinePriority_SYNC_KLINE_PRIORITY_HIGH    SyncKlinePriority = 1
+	SyncKlinePriority_SYNC_KLINE_PRIORITY_NORMAL  SyncKlinePriority = 2
+	SyncKlinePriority_SYNC_KLINE_PRIORITY_LOW     SyncKlinePriority = 3
+)
+
+// Enum value maps for SyncKlinePriority.
+var (
+	SyncKlinePriority_name = map[int32]string{
+		0: "SYNC_KLINE_PRIORITY_UNKNOWN",
+		1: "SYNC_KLINE_PRIORITY_HIGH",
+		2: "SYNC_KLINE_PRIORITY_NORMAL",
+		3: "SYNC_KLINE_PRIORITY_LOW",
+	}
+	SyncKlinePriority_value = map[string]int32{
+		"SYNC_KLINE_PRIORITY_UNKNOWN": 0,
+		"SYNC_KLINE_PRIORITY_HIGH":    1,
+		"SYNC_KLINE_PRIORITY_NORMAL":  2,
+		"SYNC_KLINE_PRIORITY_LOW":     3,
+	}
+)
+
+func (x SyncKlinePriority) Enum() *SyncKlinePriority {
+	p := new(SyncKlinePriority)
+	*p = x
+	return p
+}
+
+func (x SyncKlinePriority) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SyncKlinePriority) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_itick_enum_proto_enumTypes[2].Descriptor()
+}
+
+func (SyncKlinePriority) Type() protoreflect.EnumType {
+	return &file_proto_itick_enum_proto_enumTypes[2]
+}
+
+func (x SyncKlinePriority) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SyncKlinePriority.Descriptor instead.
+func (SyncKlinePriority) EnumDescriptor() ([]byte, []int) {
+	return file_proto_itick_enum_proto_rawDescGZIP(), []int{2}
+}
+
 var File_proto_itick_enum_proto protoreflect.FileDescriptor
 
 const file_proto_itick_enum_proto_rawDesc = "" +
@@ -174,7 +227,12 @@ const file_proto_itick_enum_proto_rawDesc = "" +
 	"\rKLINE_TYPE_1D\x10\b\x12\x11\n" +
 	"\rKLINE_TYPE_1W\x10\t\x12\x12\n" +
 	"\x0eKLINE_TYPE_1MO\x10\n" +
-	"B\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
+	"*\x8f\x01\n" +
+	"\x11SyncKlinePriority\x12\x1f\n" +
+	"\x1bSYNC_KLINE_PRIORITY_UNKNOWN\x10\x00\x12\x1c\n" +
+	"\x18SYNC_KLINE_PRIORITY_HIGH\x10\x01\x12\x1e\n" +
+	"\x1aSYNC_KLINE_PRIORITY_NORMAL\x10\x02\x12\x1b\n" +
+	"\x17SYNC_KLINE_PRIORITY_LOW\x10\x03B\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
 
 var (
 	file_proto_itick_enum_proto_rawDescOnce sync.Once
@@ -188,10 +246,11 @@ func file_proto_itick_enum_proto_rawDescGZIP() []byte {
 	return file_proto_itick_enum_proto_rawDescData
 }
 
-var file_proto_itick_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_proto_itick_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_proto_itick_enum_proto_goTypes = []any{
-	(CategoryType)(0), // 0: itick.CategoryType
-	(KlineType)(0),    // 1: itick.KlineType
+	(CategoryType)(0),      // 0: itick.CategoryType
+	(KlineType)(0),         // 1: itick.KlineType
+	(SyncKlinePriority)(0), // 2: itick.SyncKlinePriority
 }
 var file_proto_itick_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -211,7 +270,7 @@ func file_proto_itick_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_itick_enum_proto_rawDesc), len(file_proto_itick_enum_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

@@ -1,10 +1,6 @@
 <template>
   <div class="itick-products module-page">
-    <CrudQueryCard
-      :model="queryParams"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="queryParams" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('itick.categoryType')">
         <el-select
           v-model="queryParams.categoryType"
@@ -25,6 +21,16 @@
         <el-input
           v-model="queryParams.market"
           :placeholder="t('itick.pleaseInputMarket')"
+          clearable
+          style="width: 180px"
+          @keyup.enter="loadList"
+        />
+      </el-form-item>
+
+      <el-form-item :label="t('itick.symbol')">
+        <el-input
+          v-model="queryParams.symbol"
+          :placeholder="t('itick.pleaseInputSymbol')"
           clearable
           style="width: 180px"
           @keyup.enter="loadList"
@@ -115,6 +121,14 @@
           </template>
         </el-table-column>
 
+        <el-table-column :label="t('itick.syncPriority')" width="110">
+          <template #default="{ row }">
+            <el-tag :type="syncPriorityTagType(row.syncPriority)">
+              {{ getSyncPriorityLabel(row.syncPriority) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
         <el-table-column prop="sort" :label="t('common.sort')" width="90" />
         <el-table-column :label="t('common.icon')" min-width="180">
           <template #default="{ row }">
@@ -147,12 +161,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="120"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="120" fixed="right">
           <template #default="{ row }">
             <el-button
               v-perm="'itick:product:detail'"
@@ -162,12 +171,7 @@
             >
               {{ t('itick.detail') }}
             </el-button>
-            <el-button
-              v-perm="'itick:product:update'"
-              link
-              type="primary"
-              @click="handleEdit(row)"
-            >
+            <el-button v-perm="'itick:product:update'" link type="primary" @click="handleEdit(row)">
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -190,12 +194,7 @@
       :title="formMode === 'add' ? t('itick.addProduct') : t('itick.editProduct')"
       width="700px"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="120px"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item
@@ -344,6 +343,15 @@
 
         <el-row :gutter="20">
           <el-col :span="12">
+            <el-form-item :label="t('itick.syncPriority')" prop="syncPriority">
+              <el-radio-group v-model="form.syncPriority">
+                <el-radio v-for="item in syncPriorityOptions" :key="item.value" :value="item.value">
+                  {{ getOptionLabel(t, item.code, item.value) }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item :label="t('common.sort')" prop="sort">
               <el-input-number
                 v-model="form.sort"
@@ -354,6 +362,9 @@
               />
             </el-form-item>
           </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="t('common.icon')" prop="icon">
               <div class="icon-upload-field">
@@ -451,6 +462,9 @@
         <el-descriptions-item :label="t('itick.appVisible')">
           {{ getOptionValueLabel(optionGroups, 'visible', detail.appVisible, t) || '-' }}
         </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.syncPriority')">
+          {{ getSyncPriorityLabel(detail.syncPriority) }}
+        </el-descriptions-item>
         <el-descriptions-item :label="t('common.sort')">
           {{ detail.sort ?? '-' }}
         </el-descriptions-item>
@@ -520,6 +534,7 @@ type FormData = {
   quoteCoin: string
   enabled: number
   appVisible: number
+  syncPriority: number
   sort: number
   icon: string
   remark: string
@@ -535,6 +550,7 @@ const { form: queryParams, reset: resetQueryParams } = useForm<ListProductsReq>(
   initialData: {
     categoryType: undefined,
     market: '',
+    symbol: '',
     keyword: '',
     enabled: 0,
     appVisible: 0,
@@ -562,6 +578,7 @@ const {
     quoteCoin: '',
     enabled: 1,
     appVisible: 1,
+    syncPriority: 2,
     sort: 0,
     icon: '',
     remark: '',
@@ -579,7 +596,15 @@ const formMode = ref<'add' | 'edit'>('add')
 const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'categoryType'))
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
+const syncPriorityOptions = computed(() => findOptionGroup(optionGroups.value, 'syncPriority'))
 const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
+const getSyncPriorityLabel = (value?: number) =>
+  getOptionValueLabel(optionGroups.value, 'syncPriority', Number(value), t) || '-'
+const syncPriorityTagType = (value?: number) => {
+  if (Number(value) === 1) return 'danger'
+  if (Number(value) === 3) return 'info'
+  return 'success'
+}
 
 const rules: FormRules<FormData> = {
   categoryType: [{ required: true, message: t('itick.pleaseInputCategoryType'), trigger: 'blur' }],
@@ -594,6 +619,9 @@ const rules: FormRules<FormData> = {
   quoteCoin: [{ required: true, message: t('itick.pleaseInputQuoteCoin'), trigger: 'blur' }],
   enabled: [{ required: true, message: t('itick.pleaseSelectEnabledStatus'), trigger: 'change' }],
   appVisible: [{ required: true, message: t('itick.pleaseSelectAppVisible'), trigger: 'change' }],
+  syncPriority: [
+    { required: true, message: t('itick.pleaseSelectSyncPriority'), trigger: 'change' },
+  ],
   sort: [{ required: true, message: t('itick.pleaseInputSort'), trigger: 'blur' }],
 }
 
@@ -608,6 +636,9 @@ const cleanedQueryParams = computed<ListProductsReq>(() => {
   }
   if (queryParams.market && queryParams.market.trim()) {
     params.market = queryParams.market.trim()
+  }
+  if (queryParams.symbol && queryParams.symbol.trim()) {
+    params.symbol = queryParams.symbol.trim()
   }
   if (queryParams.keyword && queryParams.keyword.trim()) {
     params.keyword = queryParams.keyword.trim()
@@ -689,6 +720,7 @@ const handleEdit = async (row: ItickProduct) => {
       quoteCoin: data.quoteCoin || '',
       enabled: data.enabled,
       appVisible: data.appVisible,
+      syncPriority: data.syncPriority || 2,
       sort: data.sort || 0,
       icon: data.icon || '',
       remark: data.remark || '',
@@ -767,6 +799,7 @@ const submitForm = async () => {
         quoteCoin: form.quoteCoin,
         enabled: form.enabled,
         appVisible: form.appVisible,
+        syncPriority: form.syncPriority,
         sort: form.sort,
         icon: form.icon,
         remark: form.remark,
@@ -780,6 +813,7 @@ const submitForm = async () => {
         quoteCoin: form.quoteCoin,
         enabled: form.enabled,
         appVisible: form.appVisible,
+        syncPriority: form.syncPriority,
         sort: form.sort,
         icon: form.icon,
         remark: form.remark,

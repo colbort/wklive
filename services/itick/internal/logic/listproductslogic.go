@@ -26,7 +26,7 @@ func NewListProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 
 // 产品列表
 func (l *ListProductsLogic) ListProducts(in *itick.ListProductsReq) (*itick.ListProductsResp, error) {
-	items, count, err := l.svcCtx.ItickProductModel.FindPage(l.ctx, int32(in.CategoryType), in.CategoryName, in.Market, in.Keyword, int32(in.Enabled), int32(in.AppVisible), in.Page.Cursor, in.Page.Limit)
+	items, count, err := l.svcCtx.ItickProductModel.FindPage(l.ctx, int32(in.CategoryType), in.CategoryName, in.Market, in.Keyword, int32(in.Enabled), int32(in.AppVisible), in.Symbol, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

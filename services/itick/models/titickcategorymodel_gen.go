@@ -48,6 +48,7 @@ type (
 		CategoryCode string `db:"category_code"` // 产品类型标识, 如 forex/crypto/stock/future/indices/fund
 		Enabled      int64  `db:"enabled"`       // 启用状态: 1-启用 2-禁用
 		AppVisible   int64  `db:"app_visible"`   // APP可见开关: 1-显示 2-隐藏
+		SyncPriority int64  `db:"sync_priority"` // K线同步优先级: 1-高 2-普通 3-低
 		Sort         int64  `db:"sort"`          // 排序值,越小越靠前
 		Icon         string `db:"icon"`          // 图标
 		Remark       string `db:"remark"`        // 备注
@@ -119,8 +120,8 @@ func (m *defaultTItickCategoryModel) Insert(ctx context.Context, data *TItickCat
 	tItickCategoryCategoryTypeKey := fmt.Sprintf("%s%v", cacheTItickCategoryCategoryTypePrefix, data.CategoryType)
 	tItickCategoryIdKey := fmt.Sprintf("%s%v", cacheTItickCategoryIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickCategoryRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.CategoryType, data.CategoryName, data.CategoryCode, data.Enabled, data.AppVisible, data.Sort, data.Icon, data.Remark, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickCategoryRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.CategoryType, data.CategoryName, data.CategoryCode, data.Enabled, data.AppVisible, data.SyncPriority, data.Sort, data.Icon, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tItickCategoryCategoryTypeKey, tItickCategoryIdKey)
 	return ret, err
 }
@@ -135,7 +136,7 @@ func (m *defaultTItickCategoryModel) Update(ctx context.Context, newData *TItick
 	tItickCategoryIdKey := fmt.Sprintf("%s%v", cacheTItickCategoryIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickCategoryRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.CategoryType, newData.CategoryName, newData.CategoryCode, newData.Enabled, newData.AppVisible, newData.Sort, newData.Icon, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.CategoryType, newData.CategoryName, newData.CategoryCode, newData.Enabled, newData.AppVisible, newData.SyncPriority, newData.Sort, newData.Icon, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickCategoryCategoryTypeKey, tItickCategoryIdKey)
 	return err
 }

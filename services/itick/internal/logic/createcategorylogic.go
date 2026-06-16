@@ -47,6 +47,7 @@ func (l *CreateCategoryLogic) CreateCategory(in *itick.CreateCategoryReq) (*itic
 		CategoryCode: categoryTypeCode(in.CategoryType),
 		Enabled:      int64(in.Enabled),
 		AppVisible:   int64(in.AppVisible),
+		SyncPriority: int64(in.SyncPriority),
 		Sort:         in.Sort,
 		Icon:         in.Icon,
 		Remark:       in.Remark,

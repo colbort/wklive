@@ -66,6 +66,7 @@ func (l *CreateProductLogic) CreateProduct(in *itick.CreateProductReq) (*itick.A
 		AppVisible:   int64(in.AppVisible),
 		Sort:         in.Sort,
 		Icon:         in.Icon,
+		SyncPriority: int64(in.SyncPriority),
 		Remark:       in.Remark,
 		CreateTimes:  now,
 		UpdateTimes:  now,

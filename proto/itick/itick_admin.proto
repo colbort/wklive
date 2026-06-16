@@ -19,9 +19,10 @@ message CreateCategoryReq {
   string category_name = 2;
   common.Enable enabled = 3;     // 启用状态 0表示全部，1表示启用，2表示禁用
   common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
-  int64 sort = 5;
-  string icon = 6;
-  string remark = 7;
+  itick.SyncKlinePriority sync_priority = 5; // K线同步优先级  
+  int64 sort = 6;
+  string icon = 7;
+  string remark = 8;
 }
 
 message UpdateCategoryReq {
@@ -29,9 +30,10 @@ message UpdateCategoryReq {
   string category_name = 2;
   common.Enable enabled = 3;     // 启用状态 0表示全部，1表示启用，2表示禁用
   common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
-  int64 sort = 5;
-  string icon = 6;
-  string remark = 7;
+  itick.SyncKlinePriority sync_priority = 5; // K线同步优先级  
+  int64 sort = 6;
+  string icon = 7;
+  string remark = 8;
 }
 
 message GetCategoryReq { int64 id = 1; }
@@ -88,9 +90,10 @@ message CreateProductReq {
   string quote_coin = 8;
   common.Enable enabled = 9;      // 启用状态 0表示全部，1表示启用，2表示禁用
   common.Switch app_visible = 10; // APP可见开关 0表示全部，1表示显示，2表示隐藏
-  int64 sort = 11;
-  string icon = 12;
-  string remark = 13;
+  itick.SyncKlinePriority sync_priority = 11; // K线同步优先级  
+  int64 sort = 12;
+  string icon = 13;
+  string remark = 14;
 }
 
 message UpdateProductReq {
@@ -102,9 +105,10 @@ message UpdateProductReq {
   string quote_coin = 6;
   common.Enable enabled = 7;     // 启用状态 0表示全部，1表示启用，2表示禁用
   common.Switch app_visible = 8; // APP可见开关 0表示全部，1表示显示，2表示隐藏
-  int64 sort = 9;
-  string icon = 10;
-  string remark = 11;
+  itick.SyncKlinePriority sync_priority = 9; // K线同步优先级  
+  int64 sort = 10;
+  string icon = 11;
+  string remark = 12;
 }
 
 message GetProductReq { int64 id = 1; }
@@ -122,6 +126,7 @@ message ListProductsReq {
   string keyword = 5;
   common.Enable enabled = 6;     // 启用状态,0全部 1启用 2禁用
   common.Switch app_visible = 7; // APP可见开关,0全部 1显示 2隐藏
+  string symbol = 8;
 }
 
 message ListProductsResp {

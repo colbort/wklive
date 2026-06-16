@@ -16,6 +16,7 @@ export type ItickCategory = {
   categoryName: string
   enabled: number
   appVisible: number
+  syncPriority: number
   sort: number
   icon: string
   remark: string
@@ -36,6 +37,7 @@ export type CreateCategoryReq = {
   categoryName: string
   enabled: number
   appVisible: number
+  syncPriority: number
   sort: number
   icon: string
   remark: string
@@ -46,6 +48,7 @@ export type UpdateCategoryReq = {
   categoryName?: string
   enabled?: number
   appVisible?: number
+  syncPriority?: number
   sort?: number
   icon?: string
   remark?: string

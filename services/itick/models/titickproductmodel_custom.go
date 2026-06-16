@@ -13,12 +13,12 @@ import (
 
 type ItickProductModel interface {
 	tItickProductModel
-	FindPage(ctx context.Context, categoryType int32, categoryName string, market string, keyword string, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickProduct, int64, error)
+	FindPage(ctx context.Context, categoryType int32, categoryName string, market string, keyword string, enabled int32, appVisible int32, symbol string, cursor int64, limit int64) ([]*TItickProduct, int64, error)
 	FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error)
 	Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error)
 }
 
-func (m *defaultTItickProductModel) FindPage(ctx context.Context, categoryType int32, categoryName string, market string, keyword string, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
+func (m *defaultTItickProductModel) FindPage(ctx context.Context, categoryType int32, categoryName string, market string, keyword string, enabled int32, appVisible int32, symbol string, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -27,6 +27,9 @@ func (m *defaultTItickProductModel) FindPage(ctx context.Context, categoryType i
 	builder.EqString("market", market)
 	builder.EqInt64("enabled", int64(enabled))
 	builder.EqInt64("app_visible", int64(appVisible))
+	if strings.TrimSpace(symbol) != "" {
+		builder.LikeString("symbol", symbol)
+	}
 
 	where := builder.Where()
 	args := builder.Args()

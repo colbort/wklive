@@ -520,9 +520,9 @@
           @keyup.enter="reloadProductOptions"
         />
         <el-input
-          v-model="productOptionKeyword"
+          v-model="productOptionSymbol"
           clearable
-          :placeholder="t('itick.keyword')"
+          :placeholder="t('itick.symbol')"
           style="width: 220px"
           @keyup.enter="reloadProductOptions"
         />
@@ -703,7 +703,7 @@ const list = ref<ItickTenantProduct[]>([])
 const detail = ref<Partial<ItickTenantProduct>>({})
 const productOptions = ref<BaseItickProduct[]>([])
 const productOptionsLoading = ref(false)
-const productOptionKeyword = ref('')
+const productOptionSymbol = ref('')
 const productOptionPagination = reactive({
   cursor: undefined as number | undefined,
   nextCursor: undefined as number | undefined,
@@ -807,7 +807,7 @@ const resetProductOptionPagination = () => {
 }
 
 const loadProductOptions = async (
-  keyword = productOptionKeyword.value,
+  symbol = productOptionSymbol.value,
   cursor: number | undefined = undefined,
   append = false,
 ) => {
@@ -818,13 +818,13 @@ const loadProductOptions = async (
       cursor,
       categoryType: productOptionFilters.categoryType || undefined,
       market: productOptionFilters.market?.trim() || undefined,
-      keyword: keyword.trim() || undefined,
+      symbol: symbol.trim() || undefined,
     })
     const nextOptions = res.data || []
     productOptions.value = append
       ? mergeProductOptions(productOptions.value, nextOptions)
       : nextOptions
-    productOptionKeyword.value = keyword
+    productOptionSymbol.value = symbol
     productOptionPagination.cursor = cursor
     productOptionPagination.total = res.total || 0
     productOptionPagination.hasNext = !!res.hasNext
@@ -840,7 +840,7 @@ const loadProductOptions = async (
 
 const reloadProductOptions = () => {
   resetProductOptionPagination()
-  return loadProductOptions(productOptionKeyword.value, undefined)
+  return loadProductOptions(productOptionSymbol.value, undefined)
 }
 
 const mergeProductOptions = (current: BaseItickProduct[], incoming: BaseItickProduct[]) => {
@@ -859,10 +859,10 @@ const mergeProductOptions = (current: BaseItickProduct[], incoming: BaseItickPro
   return merged
 }
 
-const handleProductRemoteSearch = (keyword: string) => {
-  productOptionKeyword.value = keyword
+const handleProductRemoteSearch = (symbol: string) => {
+  productOptionSymbol.value = symbol
   resetProductOptionPagination()
-  loadProductOptions(keyword, undefined)
+  loadProductOptions(symbol, undefined)
 }
 
 const handleProductSelectVisibleChange = (visible: boolean) => {
@@ -884,14 +884,14 @@ const handleProductOptionsPrev = () => {
   if (!productOptionPagination.hasPrev || productOptionPagination.prevCursor === undefined) {
     return
   }
-  loadProductOptions(productOptionKeyword.value, productOptionPagination.prevCursor)
+  loadProductOptions(productOptionSymbol.value, productOptionPagination.prevCursor)
 }
 
 const handleProductOptionsNext = () => {
   if (!productOptionPagination.hasNext || productOptionPagination.nextCursor === undefined) {
     return
   }
-  loadProductOptions(productOptionKeyword.value, productOptionPagination.nextCursor)
+  loadProductOptions(productOptionSymbol.value, productOptionPagination.nextCursor)
 }
 
 const loadMoreProductOptions = () => {
@@ -903,7 +903,7 @@ const loadMoreProductOptions = () => {
     return
   }
 
-  loadProductOptions(productOptionKeyword.value, productOptionPagination.nextCursor, true)
+  loadProductOptions(productOptionSymbol.value, productOptionPagination.nextCursor, true)
 }
 
 const handleProductOptionsScroll = () => {
@@ -950,7 +950,7 @@ const openProductPicker = async (mode: 'single' | 'batch') => {
   productPickerMode.value = mode
   selectedPickerProductMap.clear()
   productPickerVisible.value = true
-  productOptionKeyword.value = ''
+  productOptionSymbol.value = ''
   productOptionFilters.categoryType = Number(queryParams.categoryType) || 0
   productOptionFilters.market = queryParams.market?.trim() || ''
   await reloadProductOptions()
@@ -959,7 +959,7 @@ const openProductPicker = async (mode: 'single' | 'batch') => {
 }
 
 const resetProductPickerFilters = () => {
-  productOptionKeyword.value = ''
+  productOptionSymbol.value = ''
   productOptionFilters.categoryType = 0
   productOptionFilters.market = ''
   reloadProductOptions()
@@ -1044,7 +1044,7 @@ const handleAdd = async () => {
   formMode.value = 'add'
   resetForm()
   form.tenantId = Number(queryParams.tenantId) || undefined
-  productOptionKeyword.value = ''
+  productOptionSymbol.value = ''
   productOptionFilters.categoryType = Number(queryParams.categoryType) || 0
   productOptionFilters.market = queryParams.market?.trim() || ''
   await reloadProductOptions()
@@ -1128,7 +1128,7 @@ const submitForm = async () => {
 }
 
 const openBatchDialog = () => {
-  productOptionKeyword.value = ''
+  productOptionSymbol.value = ''
   productOptionFilters.categoryType = Number(queryParams.categoryType) || 0
   productOptionFilters.market = queryParams.market?.trim() || ''
   reloadProductOptions()

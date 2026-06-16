@@ -12,7 +12,7 @@ type AddUserBankReq struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   int64  `json:"isDefault"`
+	IsDefault   int64  `json:"isDefault"` // 是否默认：1是，2否
 	Enabled     int64  `json:"enabled"`
 }
 
@@ -166,7 +166,7 @@ type AdminProductCreateReq struct {
 	UserLimitAmount  string `json:"userLimitAmount"`
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
-	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
 	EarlyRedeemRate  string `json:"earlyRedeemRate"`
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
@@ -222,7 +222,7 @@ type AdminProductUpdateReq struct {
 	UserLimitAmount  string `json:"userLimitAmount"`
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
-	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
 	EarlyRedeemRate  string `json:"earlyRedeemRate"`
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
@@ -611,6 +611,7 @@ type CreateCategoryReq struct {
 	CategoryName string `json:"categoryName"`
 	Enabled      int64  `json:"enabled"`
 	AppVisible   int64  `json:"appVisible"`
+	SyncPriority int64  `json:"syncPriority"`
 	Sort         int64  `json:"sort"`
 	Icon         string `json:"icon"`
 	Remark       string `json:"remark"`
@@ -635,7 +636,7 @@ type CreateContractReq struct {
 	ListTime         int64  `json:"listTime"`
 	ExpireTime       int64  `json:"expireTime"`
 	DeliverTime      int64  `json:"deliverTime"`
-	IsAutoExercise   int64  `json:"isAutoExercise"`
+	IsAutoExercise   int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
@@ -688,7 +689,7 @@ type CreateCryptoWalletAccountReq struct {
 	CallbackSecretCipher string `json:"callbackSecretCipher,optional"`
 	ExtConfig            string `json:"extConfig,optional"`
 	Enabled              int64  `json:"enabled"`
-	IsDefault            int64  `json:"isDefault"`
+	IsDefault            int64  `json:"isDefault"` // 是否默认：1是 2否
 }
 
 type CreatePayPlatformReq struct {
@@ -723,6 +724,7 @@ type CreateProductReq struct {
 	QuoteCoin    string `json:"quoteCoin"`
 	Enabled      int64  `json:"enabled"`
 	AppVisible   int64  `json:"appVisible"`
+	SyncPriority int64  `json:"syncPriority"`
 	Sort         int64  `json:"sort"`
 	Icon         string `json:"icon"`
 	Remark       string `json:"remark"`
@@ -779,7 +781,7 @@ type CreateTenantPayAccountReq struct {
 	CertCipher          string `json:"certCipher,optional"`
 	ExtConfig           string `json:"extConfig,optional"`
 	Enabled             int64  `json:"enabled"`
-	IsDefault           int64  `json:"isDefault"`
+	IsDefault           int64  `json:"isDefault"` // 是否默认账号：1是 2否
 	Remark              string `json:"remark,optional"`
 }
 
@@ -821,8 +823,8 @@ type CreateTenantPayChannelRuleReq struct {
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
 	KycLevelMax          int64  `json:"kycLevelMax"`
-	AllowNewUser         int64  `json:"allowNewUser"`
-	AllowOldUser         int64  `json:"allowOldUser"`
+	AllowNewUser         int64  `json:"allowNewUser"` // 是否允许新用户：1是 2否
+	AllowOldUser         int64  `json:"allowOldUser"` // 是否允许老用户：1是 2否
 	AllowTags            string `json:"allowTags,optional"`
 	DenyTags             string `json:"denyTags,optional"`
 	Remark               string `json:"remark,optional"`
@@ -913,7 +915,7 @@ type CryptoWalletAccount struct {
 	CallbackSecretCipher string `json:"callbackSecretCipher"`
 	ExtConfig            string `json:"extConfig"`
 	Enabled              int64  `json:"enabled"`
-	IsDefault            int64  `json:"isDefault"`
+	IsDefault            int64  `json:"isDefault"` // 是否默认账号：1是 2否
 	CreateTimes          int64  `json:"createTimes"`
 	UpdateTimes          int64  `json:"updateTimes"`
 }
@@ -1668,6 +1670,7 @@ type ItickCategory struct {
 	CategoryName string `json:"categoryName"`
 	Enabled      int64  `json:"enabled"`
 	AppVisible   int64  `json:"appVisible"`
+	SyncPriority int64  `json:"syncPriority"`
 	Sort         int64  `json:"sort"`
 	Icon         string `json:"icon"`
 	Remark       string `json:"remark"`
@@ -1689,6 +1692,7 @@ type ItickProduct struct {
 	QuoteCoin    string `json:"quoteCoin"`
 	Enabled      int64  `json:"enabled"`
 	AppVisible   int64  `json:"appVisible"`
+	SyncPriority int64  `json:"syncPriority"`
 	Sort         int64  `json:"sort"`
 	Icon         string `json:"icon"`
 	Remark       string `json:"remark"`
@@ -1848,7 +1852,7 @@ type ListCryptoWalletAccountsReq struct {
 	Keyword   string `form:"keyword,optional"`
 	Provider  string `form:"provider,optional"`
 	Enabled   int64  `form:"enabled,optional"`
-	IsDefault int64  `form:"isDefault,optional"`
+	IsDefault int64  `form:"isDefault,optional"` // 是否默认：1是 2否
 }
 
 type ListCryptoWalletAccountsResp struct {
@@ -1954,6 +1958,7 @@ type ListProductsReq struct {
 	Keyword      string `form:"keyword,optional"`
 	Enabled      int32  `form:"enabled,optional"`    // 0全部 1启用 2禁用
 	AppVisible   int32  `form:"appVisible,optional"` // 0全部 1显示 2隐藏
+	Symbol       string `form:"symbol,optional"`
 }
 
 type ListProductsResp struct {
@@ -2366,7 +2371,7 @@ type OptionContract struct {
 	ListTime         int64  `json:"listTime"`
 	ExpireTime       int64  `json:"expireTime"`
 	DeliverTime      int64  `json:"deliverTime"`
-	IsAutoExercise   int64  `json:"isAutoExercise"`
+	IsAutoExercise   int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark"`
@@ -2476,8 +2481,8 @@ type OptionOrder struct {
 	MarginAmount     string `json:"marginAmount"`
 	Source           int64  `json:"source"`
 	ClientOrderId    string `json:"clientOrderId"`
-	ReduceOnly       int64  `json:"reduceOnly"`
-	Mmp              int64  `json:"mmp"`
+	ReduceOnly       int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
+	Mmp              int64  `json:"mmp"`        // 是否做市商保护单：1是 2否
 	Status           int64  `json:"status"`
 	CancelReason     string `json:"cancelReason"`
 	MatchTime        int64  `json:"matchTime"`
@@ -2533,7 +2538,7 @@ type OptionSettlement struct {
 	DeliveryPrice    string `json:"deliveryPrice"`
 	TheoreticalPrice string `json:"theoreticalPrice"`
 	Iv               string `json:"iv"`
-	IsItm            int64  `json:"isItm"`
+	IsItm            int64  `json:"isItm"` // 是否实值：1是 2否
 	ExerciseResult   int64  `json:"exerciseResult"`
 	Status           int64  `json:"status"`
 	Remark           string `json:"remark"`
@@ -3068,7 +3073,7 @@ type StakeOrder struct {
 	LockDays         int64  `json:"lockDays"`
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
-	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
 	EarlyRedeemRate  string `json:"earlyRedeemRate"`
 	InterestDays     int64  `json:"interestDays"`
 	StartTimes       int64  `json:"startTimes"`
@@ -3111,7 +3116,7 @@ type StakeProduct struct {
 	UserLimitAmount  string `json:"userLimitAmount"`
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
-	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
 	EarlyRedeemRate  string `json:"earlyRedeemRate"`
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
@@ -3593,8 +3598,8 @@ type TenantPayAccount struct {
 	PublicKey           string `json:"publicKey"`
 	CertCipher          string `json:"certCipher"`
 	ExtConfig           string `json:"extConfig"`
-	Enabled             int64  `json:"enabled"` // 0未知 1启用 2禁用
-	IsDefault           int64  `json:"isDefault"`
+	Enabled             int64  `json:"enabled"`   // 0未知 1启用 2禁用
+	IsDefault           int64  `json:"isDefault"` // 是否默认账号：1是 2否
 	Remark              string `json:"remark"`
 	CreateTimes         int64  `json:"createTimes"`
 	UpdateTimes         int64  `json:"updateTimes"`
@@ -3642,8 +3647,8 @@ type TenantPayChannelRule struct {
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
 	KycLevelMax          int64  `json:"kycLevelMax"`
-	AllowNewUser         int64  `json:"allowNewUser"`
-	AllowOldUser         int64  `json:"allowOldUser"`
+	AllowNewUser         int64  `json:"allowNewUser"` // 是否允许新用户：1是 2否
+	AllowOldUser         int64  `json:"allowOldUser"` // 是否允许老用户：1是 2否
 	AllowTags            string `json:"allowTags"`
 	DenyTags             string `json:"denyTags"`
 	Remark               string `json:"remark"`
@@ -3744,8 +3749,8 @@ type TradeOrder struct {
 	Fee           string `json:"fee"`
 	FeeAsset      string `json:"feeAsset"`
 	Source        int64  `json:"source"`
-	IsReduceOnly  int64  `json:"isReduceOnly"`
-	IsCloseOnly   int64  `json:"isCloseOnly"`
+	IsReduceOnly  int64  `json:"isReduceOnly"` // 是否只减仓：1是 2否
+	IsCloseOnly   int64  `json:"isCloseOnly"`  // 是否只允许平仓：1是 2否
 	TriggerPrice  string `json:"triggerPrice"`
 	TriggerType   int64  `json:"triggerType"`
 	TriggerKind   int64  `json:"triggerKind"`
@@ -3879,6 +3884,7 @@ type UpdateCategoryReq struct {
 	CategoryName string `json:"categoryName"`
 	Enabled      int64  `json:"enabled"`
 	AppVisible   int64  `json:"appVisible"`
+	SyncPriority int64  `json:"syncPriority"`
 	Sort         int64  `json:"sort"`
 	Icon         string `json:"icon"`
 	Remark       string `json:"remark"`
@@ -3904,7 +3910,7 @@ type UpdateContractReq struct {
 	ListTime         int64  `json:"listTime"`
 	ExpireTime       int64  `json:"expireTime"`
 	DeliverTime      int64  `json:"deliverTime"`
-	IsAutoExercise   int64  `json:"isAutoExercise"`
+	IsAutoExercise   int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
@@ -3942,7 +3948,7 @@ type UpdateCryptoWalletAccountReq struct {
 	CallbackSecretCipher string `json:"callbackSecretCipher,optional"`
 	ExtConfig            string `json:"extConfig,optional"`
 	Enabled              int64  `json:"enabled"`
-	IsDefault            int64  `json:"isDefault"`
+	IsDefault            int64  `json:"isDefault"` // 是否默认：1是 2否
 }
 
 type UpdateMarketReq struct {
@@ -3988,16 +3994,17 @@ type UpdatePayProductReq struct {
 }
 
 type UpdateProductReq struct {
-	Id          int64  `json:"id"`
-	Name        string `json:"name"`
-	DisplayName string `json:"displayName"`
-	BaseCoin    string `json:"baseCoin"`
-	QuoteCoin   string `json:"quoteCoin"`
-	Enabled     int64  `json:"enabled"`
-	AppVisible  int64  `json:"appVisible"`
-	Sort        int64  `json:"sort"`
-	Icon        string `json:"icon"`
-	Remark      string `json:"remark"`
+	Id           int64  `json:"id"`
+	Name         string `json:"name"`
+	DisplayName  string `json:"displayName"`
+	BaseCoin     string `json:"baseCoin"`
+	QuoteCoin    string `json:"quoteCoin"`
+	Enabled      int64  `json:"enabled"`
+	AppVisible   int64  `json:"appVisible"`
+	SyncPriority int64  `json:"syncPriority"`
+	Sort         int64  `json:"sort"`
+	Icon         string `json:"icon"`
+	Remark       string `json:"remark"`
 }
 
 type UpdateProfileReq struct {
@@ -4056,7 +4063,7 @@ type UpdateTenantPayAccountReq struct {
 	CertCipher       string `json:"certCipher,optional"`
 	ExtConfig        string `json:"extConfig,optional"`
 	Enabled          int64  `json:"enabled"`
-	IsDefault        int64  `json:"isDefault"`
+	IsDefault        int64  `json:"isDefault"` // 是否默认账号：1是 2否
 	Remark           string `json:"remark,optional"`
 }
 
@@ -4095,8 +4102,8 @@ type UpdateTenantPayChannelRuleReq struct {
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
 	KycLevelMax          int64  `json:"kycLevelMax"`
-	AllowNewUser         int64  `json:"allowNewUser"`
-	AllowOldUser         int64  `json:"allowOldUser"`
+	AllowNewUser         int64  `json:"allowNewUser"` // 是否允许新用户：1是 2否
+	AllowOldUser         int64  `json:"allowOldUser"` // 是否允许老用户：1是 2否
 	AllowTags            string `json:"allowTags,optional"`
 	DenyTags             string `json:"denyTags,optional"`
 	Remark               string `json:"remark,optional"`
@@ -4129,7 +4136,7 @@ type UpdateUserBankReq struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   int64  `json:"isDefault"`
+	IsDefault   int64  `json:"isDefault"` // 是否默认：1是，2否
 	Enabled     int64  `json:"enabled"`
 }
 
@@ -4201,7 +4208,7 @@ type UserBankItem struct {
 	AccountNo   string `json:"accountNo"`   // 银行卡号
 	BranchName  string `json:"branchName"`  // 支行名称
 	CountryCode string `json:"countryCode"` // 国家地区
-	IsDefault   int64  `json:"isDefault"`   // 是否默认：1是 2否
+	IsDefault   int64  `json:"isDefault"`   // 是否默认：1是，2否
 	Enabled     int64  `json:"enabled"`     // 启用状态：1启用 2禁用
 	CreateTimes int64  `json:"createTimes"` // 创建时间
 	UpdateTimes int64  `json:"updateTimes"` // 更新时间

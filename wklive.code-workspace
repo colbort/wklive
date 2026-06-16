@@ -42,7 +42,7 @@
     }
   ],
   "settings": {
-    "go.goroot": "~/.gvm/gos/go.1.25.4",
+    "go.goroot": "~/.gvm/gos/go.1.26.4",
     "go.gopath": "~/local/go",
     "go.useLanguageServer": true, // 启用 Go 语言服务器
     "go.formatTool": "goimports", // 使用 goimports 工具格式化代码
