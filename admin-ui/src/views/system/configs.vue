@@ -1,10 +1,6 @@
 <template>
   <div class="sys-config module-page">
-    <CrudQueryCard
-      :model="queryForm"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="queryForm" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect
           v-model="queryForm.tenantId"

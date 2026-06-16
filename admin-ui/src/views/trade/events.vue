@@ -1,10 +1,6 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard
-      :model="query"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="query" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>

@@ -1,10 +1,6 @@
 <template>
   <div class="payment-page module-page">
-    <CrudQueryCard
-      :model="query"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="query" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -217,7 +213,12 @@ async function loadList() {
   }
 }
 function resetQuery() {
-  Object.assign(query, { tenantId: undefined as number | undefined, keyword: '', provider: '', enabled: undefined })
+  Object.assign(query, {
+    tenantId: undefined as number | undefined,
+    keyword: '',
+    provider: '',
+    enabled: undefined,
+  })
   void loadList()
 }
 function openDialog(row?: CryptoWalletAccount) {

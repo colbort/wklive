@@ -467,6 +467,7 @@ export default {
     closePrice: 'Close',
     candleChart: 'Candle chart',
     volumeChart: 'Volume chart',
+    waitingKline: 'Waiting for chart data',
     waitingOrderbook: 'Waiting for book updates',
     waitingTrades: 'Waiting for trades',
   },

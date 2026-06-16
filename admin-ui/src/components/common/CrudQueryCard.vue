@@ -121,9 +121,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const formLabelWidth = computed(() =>
-  props.labelWidth === 'auto' ? undefined : props.labelWidth,
-)
+const formLabelWidth = computed(() => (props.labelWidth === 'auto' ? undefined : props.labelWidth))
 </script>
 
 <style scoped>

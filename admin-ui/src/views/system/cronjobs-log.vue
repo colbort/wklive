@@ -88,11 +88,7 @@ onMounted(() => {
 
 <template>
   <div class="module-page">
-    <CrudQueryCard
-      :model="queryForm"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="queryForm" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('system.jobName')">
         <el-input v-model="queryForm.jobName" :placeholder="t('common.pleaseEnter')" clearable />
       </el-form-item>

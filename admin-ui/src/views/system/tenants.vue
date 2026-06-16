@@ -1,10 +1,6 @@
 <template>
   <div class="sys-tenants module-page">
-    <CrudQueryCard
-      :model="queryForm"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="queryForm" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('system.tenantCode')">
         <el-input
           v-model="queryForm.tenantCode"

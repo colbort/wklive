@@ -1,10 +1,6 @@
 <template>
   <div class="itick-tenant-products module-page">
-    <CrudQueryCard
-      :model="queryParams"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="queryParams" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="queryParams.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -245,7 +241,7 @@
 
         <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
           <el-radio-group v-model="form.enabled">
-            <el-radio v-for="item in enabledOptions" :key="item.value" :value="item.value">
+            <el-radio v-for="item in enabledFormOptions" :key="item.value" :value="item.value">
               {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
@@ -253,7 +249,7 @@
 
         <el-form-item :label="t('itick.appVisible')" prop="appVisible">
           <el-radio-group v-model="form.appVisible">
-            <el-radio v-for="item in visibleOptions" :key="item.value" :value="item.value">
+            <el-radio v-for="item in visibleFormOptions" :key="item.value" :value="item.value">
               {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
@@ -440,7 +436,7 @@
           <template #default="{ row }">
             <el-select v-model="row.enabled" style="width: 100%">
               <el-option
-                v-for="item in enabledOptions"
+                v-for="item in enabledFormOptions"
                 :key="item.value"
                 :label="getOptionLabel(t, item.code, item.value)"
                 :value="item.value"
@@ -452,7 +448,7 @@
           <template #default="{ row }">
             <el-select v-model="row.appVisible" style="width: 100%">
               <el-option
-                v-for="item in visibleOptions"
+                v-for="item in visibleFormOptions"
                 :key="item.value"
                 :label="getOptionLabel(t, item.code, item.value)"
                 :value="item.value"
@@ -736,6 +732,8 @@ const productPickerTableRef = ref()
 const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'categoryType'))
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
+const enabledFormOptions = computed(() => enabledOptions.value.filter((item) => item.value !== 0))
+const visibleFormOptions = computed(() => visibleOptions.value.filter((item) => item.value !== 0))
 const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
 const initForm = reactive({
   tenantId: 0,

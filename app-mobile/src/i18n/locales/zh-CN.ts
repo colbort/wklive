@@ -467,6 +467,7 @@ export default {
     closePrice: '收',
     candleChart: 'K线图',
     volumeChart: '成交量图',
+    waitingKline: '等待K线数据',
     waitingOrderbook: '等待订单簿推送',
     waitingTrades: '等待最新成交推送',
   },

@@ -1,10 +1,6 @@
 <template>
   <div class="payment-page module-page">
-    <CrudQueryCard
-      :model="productQuery"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="productQuery" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('payment.platformId')">
         <el-input-number v-model="productQuery.platformId" :min="0" :precision="0" />
       </el-form-item>

@@ -1,10 +1,6 @@
 <template>
   <div class="payment-page">
-    <CrudQueryCard
-      :model="ruleQuery"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="ruleQuery" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="ruleQuery.tenantId" class="tenant-select-filter" />
       </el-form-item>

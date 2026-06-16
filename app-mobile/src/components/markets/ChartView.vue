@@ -1,5 +1,16 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import {
+  dispose,
+  init,
+  type Chart,
+  type DeepPartial,
+  type KLineData,
+  type Styles,
+  LineType,
+  TooltipShowRule,
+  TooltipShowType,
+} from 'klinecharts'
 
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { getLocale, useI18n } from '@/i18n'
@@ -43,9 +54,12 @@ const timeSheetOpen = ref(false)
 const activeDetailTab = ref<DetailTab>('market')
 const { t } = useI18n()
 const chartViewRef = ref<HTMLElement | null>(null)
+const chartHostRef = ref<HTMLElement | null>(null)
 const detailTabsSentinelRef = ref<HTMLElement | null>(null)
 const detailTabsRef = ref<HTMLElement | null>(null)
 const detailTabsPinned = ref(false)
+let chart: Chart | null = null
+let chartResizeObserver: ResizeObserver | null = null
 let scrollContainer: HTMLElement | null = null
 let pinRaf = 0
 let detailTabsPinStart = 0
@@ -79,70 +93,6 @@ const selectedChangeValue = computed(() => {
   return quote ? quote.lastPrice - quote.open : 0
 })
 
-const chartCandles = computed(() => {
-  const source = [...props.klineSnapshot].sort((left, right) => left.ts - right.ts).slice(-26)
-  const prices = source.flatMap((item) => [item.open, item.close]).filter((item) => item > 0)
-  const rawMax = Math.max(...prices, 1)
-  const rawMin = Math.min(...prices, rawMax * 0.98)
-  const padding = Math.max((rawMax - rawMin) * 0.08, rawMax * 0.00002)
-  const max = rawMax + padding
-  const min = Math.max(0, rawMin - padding)
-  const range = Math.max(max - min, rawMax * 0.00004)
-  const plotTop = 10
-  const plotHeight = 210
-  const toY = (value: number) => {
-    const y = plotTop + ((max - value) / range) * plotHeight
-    return Math.min(plotTop + plotHeight, Math.max(plotTop, y))
-  }
-
-  return source.map((item, index) => {
-    const high = toY(Math.max(item.high, item.open, item.close))
-    const low = toY(Math.min(item.low, item.open, item.close))
-    const open = toY(item.open)
-    const close = toY(item.close)
-    const bodyTop = Math.min(open, close)
-    const bodyHeight = Math.max(Math.abs(close - open), 7)
-
-    return {
-      key: `${item.ts}-${index}`,
-      x: 14 + index * 19,
-      high,
-      low,
-      bodyTop,
-      bodyHeight,
-      up: item.close >= item.open,
-    }
-  })
-})
-
-const chartLinePoints = computed(() => {
-  if (!chartCandles.value.length) return ''
-
-  return chartCandles.value
-    .map((item) => `${item.x},${item.bodyTop + item.bodyHeight / 2}`)
-    .join(' ')
-})
-
-const volumeBars = computed(() => {
-  const source = [...props.klineSnapshot].sort((left, right) => left.ts - right.ts).slice(-26)
-  const maxVolume = Math.max(...source.map((item) => item.volume || 0), 1)
-
-  return source.map((item, index) => ({
-    key: `${item.ts}-${index}`,
-    up: item.close >= item.open,
-    height: 12 + ((item.volume || 0) / maxVolume) * 78,
-  }))
-})
-
-const chartPriceMarks = computed(() => {
-  const quote = props.selectedQuote
-  const high = quote?.high || props.klineSnapshot[0]?.high || 0
-  const low = quote?.low || props.klineSnapshot[0]?.low || 0
-  const last = quote?.lastPrice || props.klineSnapshot[0]?.close || 0
-
-  return [high, last, low].filter((item, index, list) => item > 0 && list.indexOf(item) === index)
-})
-
 const chartStats = computed(() => {
   const quote = props.selectedQuote
   return [
@@ -168,6 +118,21 @@ const tradeRows = computed(() =>
       direction,
     }
   }),
+)
+
+const klineChartData = computed<KLineData[]>(() =>
+  [...props.klineSnapshot]
+    .filter((item) => item.ts && item.open > 0 && item.high > 0 && item.low > 0 && item.close > 0)
+    .sort((left, right) => left.ts - right.ts)
+    .map((item) => ({
+      timestamp: normalizeChartTimestamp(item.ts),
+      open: item.open,
+      high: item.high,
+      low: item.low,
+      close: item.close,
+      volume: item.volume,
+      turnover: item.turnover,
+    })),
 )
 
 function productKey(product: Pick<ItickTenantProduct, 'market' | 'symbol'>) {
@@ -252,6 +217,40 @@ function bindChartScroll() {
   updateDetailTabsPin()
 }
 
+function initKlineChart() {
+  if (!chartHostRef.value || chart) return
+
+  chart = init(chartHostRef.value, {
+    locale: getLocale(),
+    styles: chartStyles,
+  })
+
+  if (!chart) return
+
+  chart.setPriceVolumePrecision(2, 3)
+  chart.setBarSpace(9)
+  chart.setOffsetRightDistance(8)
+  chart.createIndicator('MA', true, { id: 'candle_pane' })
+  chart.createIndicator('VOL', false, { id: 'volume_pane', height: 118, minHeight: 92 })
+  chart.createIndicator('EMA', false, { id: 'ema_pane', height: 126, minHeight: 96 })
+  syncKlineChartData()
+
+  chartResizeObserver = new ResizeObserver(() => chart?.resize())
+  chartResizeObserver.observe(chartHostRef.value)
+}
+
+function syncKlineChartData() {
+  if (!chart) return
+  chart.applyNewData(klineChartData.value)
+  if (klineChartData.value.length) {
+    chart.scrollToRealTime()
+  }
+}
+
+function normalizeChartTimestamp(ts: number) {
+  return ts > 0 && ts < 10_000_000_000 ? ts * 1000 : ts
+}
+
 function getDetailTabsPinStart() {
   const sentinelRect = detailTabsSentinelRef.value?.getBoundingClientRect()
   const scrollRect = scrollContainer?.getBoundingClientRect()
@@ -260,13 +259,164 @@ function getDetailTabsPinStart() {
   return Math.max(0, scrollContainer.scrollTop + sentinelRect.top - scrollRect.top)
 }
 
-onMounted(bindChartScroll)
+onMounted(() => {
+  bindChartScroll()
+  nextTick(initKlineChart)
+})
 
 onBeforeUnmount(() => {
   scrollContainer?.removeEventListener('scroll', requestDetailTabsPinUpdate)
   window.removeEventListener('resize', refreshDetailTabsPin)
   if (pinRaf) window.cancelAnimationFrame(pinRaf)
+  chartResizeObserver?.disconnect()
+  chartResizeObserver = null
+  if (chart) {
+    dispose(chart)
+    chart = null
+  }
 })
+
+watch(klineChartData, syncKlineChartData)
+
+watch(
+  () => getLocale(),
+  (locale) => chart?.setLocale(locale),
+)
+
+const chartStyles: DeepPartial<Styles> = {
+  grid: {
+    horizontal: {
+      color: '#242837',
+      size: 1,
+      style: LineType.Dashed,
+      dashedValue: [4, 4],
+    },
+    vertical: {
+      color: '#242837',
+      size: 1,
+      style: LineType.Dashed,
+      dashedValue: [4, 4],
+    },
+  },
+  candle: {
+    bar: {
+      upColor: '#08d88d',
+      downColor: '#ff4f3f',
+      noChangeColor: '#8b8e99',
+      upBorderColor: '#08d88d',
+      downBorderColor: '#ff4f3f',
+      noChangeBorderColor: '#8b8e99',
+      upWickColor: '#08d88d',
+      downWickColor: '#ff4f3f',
+      noChangeWickColor: '#8b8e99',
+    },
+    priceMark: {
+      high: {
+        color: '#f4f7ff',
+      },
+      low: {
+        color: '#f4f7ff',
+      },
+      last: {
+        upColor: '#08d88d',
+        downColor: '#ff4f3f',
+        noChangeColor: '#8b8e99',
+        line: {
+          show: true,
+          style: LineType.Dashed,
+          dashedValue: [4, 4],
+          size: 1,
+        },
+        text: {
+          show: true,
+          color: '#ffffff',
+          size: 12,
+          paddingLeft: 4,
+          paddingRight: 4,
+          paddingTop: 2,
+          paddingBottom: 2,
+        },
+      },
+    },
+    tooltip: {
+      showRule: TooltipShowRule.FollowCross,
+      showType: TooltipShowType.Standard,
+      text: {
+        color: '#d8dbe6',
+        size: 11,
+      },
+    },
+  },
+  indicator: {
+    tooltip: {
+      showRule: TooltipShowRule.Always,
+      showType: TooltipShowType.Standard,
+      text: {
+        color: '#a0a4af',
+        size: 11,
+      },
+    },
+    lines: [
+      { color: '#ffad16', size: 1 },
+      { color: '#8f5fd0', size: 1 },
+      { color: '#1aa9ff', size: 1 },
+      { color: '#ff1687', size: 1 },
+    ],
+    bars: [
+      {
+        upColor: '#08d88d',
+        downColor: '#ff4f3f',
+        noChangeColor: '#8b8e99',
+      },
+    ],
+  },
+  xAxis: {
+    axisLine: {
+      show: false,
+    },
+    tickText: {
+      color: '#8b8e99',
+      size: 11,
+    },
+  },
+  yAxis: {
+    axisLine: {
+      show: false,
+    },
+    tickText: {
+      color: '#8b8e99',
+      size: 11,
+    },
+  },
+  separator: {
+    color: '#2b2f3f',
+    size: 1,
+  },
+  crosshair: {
+    horizontal: {
+      line: {
+        color: '#7f8491',
+        size: 1,
+        style: LineType.Dashed,
+        dashedValue: [4, 4],
+      },
+      text: {
+        backgroundColor: '#2b3141',
+      },
+    },
+    vertical: {
+      line: {
+        color: '#7f8491',
+        size: 1,
+        style: LineType.Dashed,
+        dashedValue: [4, 4],
+      },
+      text: {
+        backgroundColor: '#2b3141',
+      },
+    },
+  },
+}
 
 function getClientPoint(event: TouchEvent | MouseEvent) {
   if ('changedTouches' in event && event.changedTouches.length > 0) {
@@ -464,13 +614,7 @@ function formatTime(ts: number) {
         </button>
       </div>
 
-      <div
-        class="chart-board"
-        @touchstart.passive="handlePointerStart"
-        @touchend.passive="handlePointerEnd"
-        @mousedown="handlePointerStart"
-        @mouseup="handlePointerEnd"
-      >
+      <div class="chart-board">
         <div class="chart-tools" aria-hidden="true">
           <span class="chart-tool chart-tool--line" />
           <span class="chart-tool chart-tool--trend" />
@@ -480,126 +624,23 @@ function formatTime(ts: number) {
           <span class="chart-tool chart-tool--magnet" />
         </div>
 
-        <div class="ma-legend" aria-hidden="true">
-          <span>MA(5,10,30,60)</span>
-          <button type="button">
-            ◉
-          </button>
-          <button type="button">
-            ⚙
-          </button>
-          <button type="button">
-            ×
-          </button>
-          <strong class="ma-legend__ma5">MA5: 75,900.94</strong>
-          <strong class="ma-legend__ma10">MA10: 75,909.73</strong>
-          <strong class="ma-legend__ma30">MA30: 76,533.68</strong>
-          <strong class="ma-legend__ma60">MA60: 76,869.70</strong>
-        </div>
-
-        <svg
-          class="candle-chart"
-          viewBox="0 0 520 240"
+        <div
+          ref="chartHostRef"
+          class="kline-chart-host"
           role="img"
           :aria-label="t('market.candleChart')"
+          @touchstart.passive="handlePointerStart"
+          @touchend.passive="handlePointerEnd"
+          @mousedown="handlePointerStart"
+          @mouseup="handlePointerEnd"
         >
-          <line
-            x1="0"
-            y1="58"
-            x2="520"
-            y2="58"
-            class="grid-line"
-          />
-          <line
-            x1="0"
-            y1="120"
-            x2="520"
-            y2="120"
-            class="grid-line"
-          />
-          <line
-            x1="0"
-            y1="182"
-            x2="520"
-            y2="182"
-            class="grid-line"
-          />
-          <line
-            x1="170"
-            y1="0"
-            x2="170"
-            y2="240"
-            class="grid-line"
-          />
-          <line
-            x1="340"
-            y1="0"
-            x2="340"
-            y2="240"
-            class="grid-line"
-          />
-
-          <polyline
-            v-if="chartLinePoints"
-            :points="chartLinePoints"
-            class="ma-line ma-line--yellow"
-          />
-          <polyline
-            v-if="chartLinePoints"
-            :points="chartLinePoints"
-            class="ma-line ma-line--blue"
-            transform="translate(0, 12)"
-          />
-          <polyline
-            v-if="chartLinePoints"
-            :points="chartLinePoints"
-            class="ma-line ma-line--pink"
-            transform="translate(0, -20)"
-          />
-
-          <g v-for="candle in chartCandles" :key="candle.key">
-            <line
-              :x1="candle.x"
-              :x2="candle.x"
-              :y1="candle.high"
-              :y2="candle.low"
-              :class="candle.up ? 'candle-up' : 'candle-down'"
-            />
-            <rect
-              :x="candle.x - 5"
-              :y="candle.bodyTop"
-              width="10"
-              :height="candle.bodyHeight"
-              rx="1"
-              :class="candle.up ? 'candle-up' : 'candle-down'"
-            />
-          </g>
-        </svg>
-
-        <div class="price-axis">
-          <span v-for="mark in chartPriceMarks" :key="mark">{{ formatPrice(mark) }}</span>
+          <div v-if="!klineChartData.length && !loadingKline" class="chart-empty">
+            {{ t('market.waitingKline') }}
+          </div>
         </div>
 
         <div v-if="loadingKline" class="chart-loading">
           {{ t('common.loading') }}...
-        </div>
-      </div>
-
-      <div class="volume-board" aria-hidden="true">
-        <div class="volume-tools" />
-        <div class="volume-labels">
-          <span>VOL(5,10,20)</span>
-          <em>MA10: 181.723K</em>
-          <em>MA20: 229.212K</em>
-          <strong>VOLUME</strong>
-        </div>
-        <div class="volume-bars">
-          <span
-            v-for="bar in volumeBars"
-            :key="`volume-${bar.key}`"
-            :class="bar.up ? 'volume-up' : 'volume-down'"
-            :style="{ height: `${bar.height}px` }"
-          />
         </div>
       </div>
     </template>
@@ -1051,8 +1092,8 @@ function formatTime(ts: number) {
 .chart-board {
   position: relative;
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) 86px;
-  min-height: 500px;
+  grid-template-columns: 58px minmax(0, 1fr);
+  min-height: 760px;
   overflow: hidden;
   border-bottom: 1px solid var(--divider);
   user-select: none;
@@ -1153,99 +1194,11 @@ function formatTime(ts: number) {
   content: '';
 }
 
-.ma-legend {
-  position: absolute;
-  top: 16px;
-  left: 82px;
-  right: 92px;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 12px;
-  align-items: center;
-  color: var(--muted);
-  font-size: 0.6rem;
-  font-weight: 400;
-  line-height: 1.2;
-  pointer-events: none;
-}
-
-.ma-legend button {
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font: inherit;
-  padding: 0;
-}
-
-.ma-legend strong {
-  font-weight: 500;
-}
-
-.ma-legend__ma5 {
-  color: #ffad16;
-}
-
-.ma-legend__ma10 {
-  color: #b16adc;
-}
-
-.ma-legend__ma30 {
-  color: #1aa9ff;
-}
-
-.ma-legend__ma60 {
-  color: #ff1687;
-}
-
-.candle-chart {
+.kline-chart-host {
+  position: relative;
   width: 100%;
-  height: 500px;
-  margin-top: 24px;
-}
-
-.grid-line {
-  stroke: #252836;
-  stroke-dasharray: 4 4;
-  stroke-width: 1;
-}
-
-.candle-up {
-  fill: var(--success);
-  stroke: var(--success);
-}
-
-.candle-down {
-  fill: var(--danger-strong);
-  stroke: var(--danger-strong);
-}
-
-.ma-line {
-  fill: none;
-  stroke-width: 2;
-  opacity: 0.96;
-}
-
-.ma-line--yellow {
-  stroke: #ffad16;
-}
-
-.ma-line--blue {
-  stroke: #1aa9ff;
-}
-
-.ma-line--pink {
-  stroke: #ff1687;
-}
-
-.price-axis {
-  display: grid;
-  align-content: start;
-  gap: 82px;
-  padding: 58px 6px 0 8px;
-  color: var(--muted);
-  font-size: 0.6rem;
-  font-weight: 500;
+  min-width: 0;
+  height: 760px;
 }
 
 .chart-loading {
@@ -1261,61 +1214,14 @@ function formatTime(ts: number) {
   font-weight: 500;
 }
 
-.volume-board {
+.chart-empty {
+  position: absolute;
+  inset: 0;
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) 86px;
-  min-height: 150px;
-  padding-bottom: 18px;
-  border-top: 1px solid var(--border-soft);
-}
-
-.volume-tools {
-  grid-row: 1 / 3;
-  border-right: 1px solid var(--border-soft);
-}
-
-.volume-labels {
-  grid-column: 2 / 4;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 18px;
-  padding: 12px 18px 0 16px;
+  place-items: center;
   color: var(--muted);
-  font-size: 0.65rem;
-}
-
-.volume-labels strong {
-  color: var(--danger-strong);
-  font-weight: 500;
-  margin-left: auto;
-}
-
-.volume-labels em {
-  color: #b16adc;
-  font-style: normal;
-}
-
-.volume-bars {
-  grid-column: 2 / 3;
-  display: flex;
-  align-items: end;
-  gap: 5px;
-  min-height: 86px;
-  padding: 8px 8px 12px 16px;
-}
-
-.volume-bars span {
-  flex: 1 1 0;
-  min-width: 4px;
-}
-
-.volume-up {
-  background: var(--success);
-}
-
-.volume-down {
-  background: var(--danger-strong);
+  font-size: 0.72rem;
+  pointer-events: none;
 }
 
 .depth-board,

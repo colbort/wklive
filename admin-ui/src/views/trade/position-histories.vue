@@ -1,10 +1,6 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard
-      :model="currentQuery"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="currentQuery" @search="loadList" @reset="resetQuery">
       <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
         <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
 

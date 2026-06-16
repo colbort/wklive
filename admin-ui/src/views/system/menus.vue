@@ -1,10 +1,6 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard
-      :model="queryForm"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="queryForm" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('common.keyword')">
         <el-input
           v-model="queryForm.keyword"

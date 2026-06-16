@@ -205,7 +205,10 @@
         </el-form-item>
 
         <el-form-item :label="t('trade.userId')">
-          <UserSelect v-model="riskLogQuery.userId" :tenant-id="riskLogQuery.tenantId || undefined" />
+          <UserSelect
+            v-model="riskLogQuery.userId"
+            :tenant-id="riskLogQuery.tenantId || undefined"
+          />
         </el-form-item>
 
         <el-form-item :label="t('trade.symbolId')">

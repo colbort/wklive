@@ -189,11 +189,7 @@ onMounted(() => {
 
 <template>
   <div class="module-page verification-code-page">
-    <CrudQueryCard
-      :model="queryForm"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="queryForm" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="queryForm.tenantId" class="tenant-select-filter" />
       </el-form-item>

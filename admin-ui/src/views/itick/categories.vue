@@ -123,7 +123,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.actions')" align="center" width="180" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="180"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'itick:category:detail'"
@@ -169,7 +174,12 @@
       :title="formMode === 'add' ? t('itick.addCategory') : t('itick.editCategory')"
       width="620px"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="100px"
+      >
         <el-form-item
           v-if="formMode === 'add'"
           :label="t('itick.categoryType')"
@@ -200,7 +210,7 @@
 
         <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
           <el-radio-group v-model="form.enabled">
-            <el-radio v-for="item in enabledOptions" :key="item.value" :value="item.value">
+            <el-radio v-for="item in enabledFormOptions" :key="item.value" :value="item.value">
               {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
@@ -208,7 +218,7 @@
 
         <el-form-item :label="t('itick.appVisible')" prop="appVisible">
           <el-radio-group v-model="form.appVisible">
-            <el-radio v-for="item in visibleOptions" :key="item.value" :value="item.value">
+            <el-radio v-for="item in visibleFormOptions" :key="item.value" :value="item.value">
               {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
@@ -216,7 +226,7 @@
 
         <el-form-item :label="t('itick.syncPriority')" prop="syncPriority">
           <el-radio-group v-model="form.syncPriority">
-            <el-radio v-for="item in syncPriorityOptions" :key="item.value" :value="item.value">
+            <el-radio v-for="item in syncPriorityFormOptions" :key="item.value" :value="item.value">
               {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
@@ -421,6 +431,11 @@ const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, '
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
 const syncPriorityOptions = computed(() => findOptionGroup(optionGroups.value, 'syncPriority'))
+const enabledFormOptions = computed(() => enabledOptions.value.filter((item) => item.value !== 0))
+const visibleFormOptions = computed(() => visibleOptions.value.filter((item) => item.value !== 0))
+const syncPriorityFormOptions = computed(() =>
+  syncPriorityOptions.value.filter((item) => item.value !== 0),
+)
 const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
 const getSyncPriorityLabel = (value?: number) =>
   getOptionValueLabel(optionGroups.value, 'syncPriority', Number(value), t) || '-'
