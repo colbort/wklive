@@ -45,12 +45,17 @@ type CoinKline struct {
 
 func (m *CoinKline) Normalize() {
 	m.CategoryCode = normalizeCategory(m.CategoryCode)
+	m.Market = normalizeMarket(m.Market)
 	m.Symbol = normalizeSymbol(m.Symbol)
 	m.Interval = normalizeInterval(m.Interval)
 }
 
 func normalizeCategory(s string) string {
 	return strings.ToLower(strings.TrimSpace(s))
+}
+
+func normalizeMarket(s string) string {
+	return strings.ToUpper(strings.TrimSpace(s))
 }
 
 func normalizeSymbol(s string) string {

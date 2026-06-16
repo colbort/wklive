@@ -48,6 +48,8 @@ type (
 		Symbol          string `db:"symbol"`            // 产品代码/交易代码，如 AAPL、BTCUSDT
 		Interval        string `db:"interval"`          // K线周期：1m、5m、15m、30m、1h、1d、1w、1mo
 		LatestTs        int64  `db:"latest_ts"`         // 最新已同步K线时间戳（毫秒）。历史补齐后，增量同步依赖该值过滤新增数据
+		ContiguousTs    int64  `db:"contiguous_ts"`     // 最后连续完整已确认K线时间戳（毫秒）
+		RecentCheckTs   int64  `db:"recent_check_ts"`   // 最近一次REST校准时间（毫秒）
 		OldestTs        int64  `db:"oldest_ts"`         // 最早已同步K线时间戳（毫秒）。当 full_synced=0 时，从该值继续向前回补历史
 		FullSynced      int64  `db:"full_synced"`       // 历史是否补齐：0=未补齐，1=已补齐
 		SyncStatus      int64  `db:"sync_status"`       // 同步状态：0=未开始，1=同步中，2=成功，3=失败
@@ -123,8 +125,8 @@ func (m *defaultTItickKlineSyncProgressModel) Insert(ctx context.Context, data *
 	tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTItickKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix, data.CategoryCode, data.Market, data.Symbol, data.Interval)
 	tItickKlineSyncProgressIdKey := fmt.Sprintf("%s%v", cacheTItickKlineSyncProgressIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickKlineSyncProgressRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.CategoryCode, data.Market, data.Symbol, data.Interval, data.LatestTs, data.OldestTs, data.FullSynced, data.SyncStatus, data.LastSyncMode, data.LastSyncMessage, data.LastSuccessTime, data.LastFailTime, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickKlineSyncProgressRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.CategoryCode, data.Market, data.Symbol, data.Interval, data.LatestTs, data.ContiguousTs, data.RecentCheckTs, data.OldestTs, data.FullSynced, data.SyncStatus, data.LastSyncMode, data.LastSyncMessage, data.LastSuccessTime, data.LastFailTime, data.CreateTimes, data.UpdateTimes)
 	}, tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey, tItickKlineSyncProgressIdKey)
 	return ret, err
 }
@@ -139,7 +141,7 @@ func (m *defaultTItickKlineSyncProgressModel) Update(ctx context.Context, newDat
 	tItickKlineSyncProgressIdKey := fmt.Sprintf("%s%v", cacheTItickKlineSyncProgressIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickKlineSyncProgressRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.CategoryCode, newData.Market, newData.Symbol, newData.Interval, newData.LatestTs, newData.OldestTs, newData.FullSynced, newData.SyncStatus, newData.LastSyncMode, newData.LastSyncMessage, newData.LastSuccessTime, newData.LastFailTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.CategoryCode, newData.Market, newData.Symbol, newData.Interval, newData.LatestTs, newData.ContiguousTs, newData.RecentCheckTs, newData.OldestTs, newData.FullSynced, newData.SyncStatus, newData.LastSyncMode, newData.LastSyncMessage, newData.LastSuccessTime, newData.LastFailTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey, tItickKlineSyncProgressIdKey)
 	return err
 }

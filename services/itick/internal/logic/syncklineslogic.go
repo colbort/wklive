@@ -154,6 +154,14 @@ type KlineJob struct {
 	KType    int32
 }
 
+type klineSyncResult struct {
+	LatestTs    int64
+	OldestTs    int64
+	NewCount    int
+	ReachedBase bool
+	FullSynced  bool
+}
+
 func (w *SyncKlinesWorker) Run(taskNo string, in *itick.SyncKlinesReq) {
 	// 自动续期协程
 	renewCtx, renewCancel := context.WithCancel(w.ctx)
@@ -293,32 +301,157 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 	}
 
 	now := cutils.NowMillis()
-
-	mode := "incremental"
-	et := now
-	maxPages := w.getIncrementalPages(job.KType)
-
-	// 历史没补完：从 oldest_ts 往前补
-	if progress.FullSynced == 0 {
-		mode = "history"
-		maxPages = 3
-
-		if progress.OldestTs > 0 {
-			et = progress.OldestTs - 1
-		} else {
-			et = now
-		}
-	}
+	mode := "mixed"
 
 	if err := w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncStart(w.ctx, progress.Id, mode, now); err != nil {
 		w.Errorf("update progress start failed, id=%d err=%v", progress.Id, err)
 	}
 
-	const limit = 300
 	latestTs := progress.LatestTs
+	contiguousTs := progress.ContiguousTs
+	if contiguousTs == 0 && latestTs > 0 {
+		contiguousTs = latestTs
+	}
+	recentCheckTs := progress.RecentCheckTs
 	oldestTs := progress.OldestTs
 	fullSynced := progress.FullSynced
 	newCount := 0
+
+	catchup, err := w.syncCatchup(apiURL, token, job, interval, contiguousTs, now)
+	if err != nil {
+		_ = w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncFail(w.ctx, progress.Id, mode, cutils.NowMillis(), err.Error())
+		return err
+	}
+	if catchup.LatestTs > latestTs {
+		latestTs = catchup.LatestTs
+	}
+	if oldestTs == 0 || (catchup.OldestTs > 0 && catchup.OldestTs < oldestTs) {
+		oldestTs = catchup.OldestTs
+	}
+	newCount += catchup.NewCount
+	if catchup.ReachedBase && catchup.LatestTs > contiguousTs {
+		contiguousTs = catchup.LatestTs
+	}
+
+	recent, err := w.syncRecentCheck(apiURL, token, job, interval, now)
+	if err != nil {
+		_ = w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncFail(w.ctx, progress.Id, mode, cutils.NowMillis(), err.Error())
+		return err
+	}
+	if recent.LatestTs > latestTs {
+		latestTs = recent.LatestTs
+	}
+	if oldestTs == 0 || (recent.OldestTs > 0 && recent.OldestTs < oldestTs) {
+		oldestTs = recent.OldestTs
+	}
+	if contiguousTs == 0 && recent.LatestTs > 0 {
+		contiguousTs = recent.LatestTs
+	}
+	recentCheckTs = now
+	newCount += recent.NewCount
+
+	if fullSynced == 0 {
+		history, err := w.syncHistory(apiURL, token, job, interval, oldestTs, now)
+		if err != nil {
+			_ = w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncFail(w.ctx, progress.Id, mode, cutils.NowMillis(), err.Error())
+			return err
+		}
+		if history.LatestTs > latestTs {
+			latestTs = history.LatestTs
+		}
+		if oldestTs == 0 || (history.OldestTs > 0 && history.OldestTs < oldestTs) {
+			oldestTs = history.OldestTs
+		}
+		if history.FullSynced {
+			fullSynced = 1
+		}
+		newCount += history.NewCount
+	}
+
+	msg := fmt.Sprintf("同步成功，模式=%s，新增=%d", mode, newCount)
+	return w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncSuccess(
+		w.ctx,
+		progress.Id,
+		mode,
+		latestTs,
+		contiguousTs,
+		recentCheckTs,
+		oldestTs,
+		fullSynced,
+		cutils.NowMillis(),
+		msg,
+	)
+}
+
+func (w *SyncKlinesWorker) syncCatchup(apiURL, token string, job KlineJob, interval string, contiguousTs int64, now int64) (klineSyncResult, error) {
+	const limit = 300
+
+	to := utils.LastClosedTs(now, interval)
+	if to <= 0 {
+		return klineSyncResult{}, nil
+	}
+	if contiguousTs >= to {
+		return klineSyncResult{LatestTs: contiguousTs, ReachedBase: true}, nil
+	}
+
+	maxPages := 1
+	intervalMs := utils.IntervalMillis(interval)
+	if contiguousTs > 0 && intervalMs > 0 {
+		gapBars := (to - contiguousTs) / intervalMs
+		maxPages = int(gapBars/int64(limit)) + 2
+		if maxPages < 1 {
+			maxPages = 1
+		}
+		if maxPages > 200 {
+			maxPages = 200
+		}
+	}
+
+	result, err := w.syncBackwardRange(apiURL, token, job, interval, to+1, contiguousTs, to, limit, maxPages)
+	if err != nil {
+		return klineSyncResult{}, err
+	}
+	if contiguousTs == 0 {
+		result.ReachedBase = true
+	}
+	if result.ReachedBase && result.LatestTs < to {
+		result.LatestTs = to
+	}
+	return result, nil
+}
+
+func (w *SyncKlinesWorker) syncRecentCheck(apiURL, token string, job KlineJob, interval string, now int64) (klineSyncResult, error) {
+	limit := utils.RecentCheckBars(interval)
+	if limit <= 0 {
+		limit = 3
+	}
+	to := utils.LastClosedTs(now, interval)
+	if to <= 0 {
+		to = now
+	}
+	return w.syncBackwardRange(apiURL, token, job, interval, to+1, 0, to, limit, 1)
+}
+
+func (w *SyncKlinesWorker) syncHistory(apiURL, token string, job KlineJob, interval string, oldestTs int64, now int64) (klineSyncResult, error) {
+	const limit = 300
+
+	et := now
+	if oldestTs > 0 {
+		et = oldestTs - 1
+	}
+
+	result, err := w.syncBackwardRange(apiURL, token, job, interval, et, 0, et, limit, 3)
+	if err != nil {
+		return klineSyncResult{}, err
+	}
+	if result.NewCount == 0 || result.NewCount < limit {
+		result.FullSynced = true
+	}
+	return result, nil
+}
+
+func (w *SyncKlinesWorker) syncBackwardRange(apiURL, token string, job KlineJob, interval string, et int64, stopAtTs int64, maxAcceptTs int64, limit int, maxPages int) (klineSyncResult, error) {
+	var result klineSyncResult
 
 	for page := 0; page < maxPages; page++ {
 		resp, err := w.getKlineFromItick(
@@ -333,104 +466,80 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 			limit,
 		)
 		if err != nil {
-			_ = w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncFail(
-				w.ctx,
-				progress.Id,
-				mode,
-				cutils.NowMillis(),
-				err.Error(),
-			)
-			return err
+			return result, err
 		}
-
 		if len(resp.Data) == 0 {
-			if mode == "history" {
-				fullSynced = 1
-			}
-			break
+			result.ReachedBase = true
+			return result, nil
 		}
 
+		list := make([]*models.CoinKline, 0, len(resp.Data))
 		minTs := resp.Data[0].T
-		maxTs := resp.Data[0].T
 
 		for _, item := range resp.Data {
 			if item.T < minTs {
 				minTs = item.T
 			}
-			if item.T > maxTs {
-				maxTs = item.T
+			if stopAtTs > 0 && item.T <= stopAtTs {
+				result.ReachedBase = true
+				continue
 			}
-
-			// 增量模式：只处理比 latest_ts 新的数据
-			if mode == "incremental" && item.T <= latestTs {
+			if maxAcceptTs > 0 && item.T > maxAcceptTs {
 				continue
 			}
 
-			data := &models.CoinKline{
-				CategoryCode: job.Category,
-				Market:       job.Market,
-				Symbol:       job.Symbol,
-				Interval:     interval,
-				Ts:           item.T,
-				Open:         item.O,
-				High:         item.H,
-				Low:          item.L,
-				Close:        item.C,
-				Volume:       item.V,
-				Turnover:     item.Tu,
+			list = append(list, w.toCoinKline(job, interval, item))
+			if item.T > result.LatestTs {
+				result.LatestTs = item.T
 			}
-
-			if err := w.svcCtx.Writer.Enqueue(data); err != nil {
-				w.Errorf("enqueue kline error: category=%s market=%s symbol=%s interval=%s ts=%d err=%v",
-					data.CategoryCode, data.Market, data.Symbol, data.Interval, data.Ts, err)
-				continue
-			}
-
-			newCount++
-
-			if latestTs == 0 || item.T > latestTs {
-				latestTs = item.T
-			}
-			if oldestTs == 0 || item.T < oldestTs {
-				oldestTs = item.T
+			if result.OldestTs == 0 || item.T < result.OldestTs {
+				result.OldestTs = item.T
 			}
 		}
 
-		if mode == "incremental" {
-			// 最近几页里，如果已经翻到 latest_ts 之前，就停
-			if minTs <= progress.LatestTs {
-				break
+		if len(list) > 0 {
+			if err := w.bulkUpsertKlines(job.Category, interval, list); err != nil {
+				return result, err
 			}
-			et = minTs - 1
-			if et <= 0 {
-				break
-			}
-			continue
+			result.NewCount += len(list)
 		}
 
-		// history 模式
-		if len(resp.Data) < limit {
-			fullSynced = 1
-			break
+		if result.ReachedBase || len(resp.Data) < limit || minTs <= 0 || minTs >= et {
+			return result, nil
 		}
-		if minTs <= 0 || minTs >= et {
-			break
-		}
-
 		et = minTs - 1
 	}
 
-	msg := fmt.Sprintf("同步成功，模式=%s，新增=%d", mode, newCount)
-	return w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncSuccess(
-		w.ctx,
-		progress.Id,
-		mode,
-		latestTs,
-		oldestTs,
-		fullSynced,
-		cutils.NowMillis(),
-		msg,
-	)
+	return result, nil
+}
+
+func (w *SyncKlinesWorker) toCoinKline(job KlineJob, interval string, item ItickKlineItem) *models.CoinKline {
+	return &models.CoinKline{
+		CategoryCode: job.Category,
+		Market:       job.Market,
+		Symbol:       job.Symbol,
+		Interval:     interval,
+		Ts:           item.T,
+		Open:         item.O,
+		High:         item.H,
+		Low:          item.L,
+		Close:        item.C,
+		Volume:       item.V,
+		Turnover:     item.Tu,
+	}
+}
+
+func (w *SyncKlinesWorker) bulkUpsertKlines(category, interval string, list []*models.CoinKline) error {
+	if len(list) == 0 {
+		return nil
+	}
+
+	model := w.svcCtx.Factory.New(category, interval)
+	if model == nil {
+		return fmt.Errorf("invalid kline model, category=%s interval=%s", category, interval)
+	}
+
+	return model.BulkUpsertBySymbolTs(w.ctx, list)
 }
 
 func (w *SyncKlinesWorker) getIncrementalPages(kType int32) int {

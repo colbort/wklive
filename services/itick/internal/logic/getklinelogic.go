@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"time"
 
 	"wklive/common/helper"
 	"wklive/proto/itick"
@@ -31,7 +32,11 @@ func (l *GetKlineLogic) GetKline(in *itick.GetKlineReq) (*itick.GetKlineResp, er
 	if model == nil {
 		return &itick.GetKlineResp{}, nil
 	}
-	result, err := model.FindBeforeTsBySymbol(l.ctx, in.Symbol, in.EndTs, in.Limit)
+	endTs := in.EndTs
+	if endTs <= 0 {
+		endTs = time.Now().UnixMilli() + 1
+	}
+	result, err := model.FindBeforeTsByMarketSymbol(l.ctx, in.Market, in.Symbol, endTs, in.Limit)
 	if err != nil {
 		return nil, err
 	}

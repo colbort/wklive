@@ -141,7 +141,9 @@ CREATE TABLE `t_itick_kline_sync_progress` (
   `symbol` varchar(64) NOT NULL DEFAULT '' COMMENT '产品代码/交易代码，如 AAPL、BTCUSDT',
   `interval` varchar(16) NOT NULL DEFAULT '' COMMENT 'K线周期：1m、5m、15m、30m、1h、1d、1w、1mo',
 
-  `latest_ts` bigint NOT NULL DEFAULT '0' COMMENT '最新已同步K线时间戳（毫秒）。历史补齐后，增量同步依赖该值过滤新增数据',
+  `latest_ts` bigint NOT NULL DEFAULT '0' COMMENT '最新已同步K线时间戳（毫秒）。仅表示REST见过的最大时间，不代表中间连续',
+  `contiguous_ts` bigint NOT NULL DEFAULT '0' COMMENT '最后连续完整已确认K线时间戳（毫秒）',
+  `recent_check_ts` bigint NOT NULL DEFAULT '0' COMMENT '最近一次REST校准时间（毫秒）',
   `oldest_ts` bigint NOT NULL DEFAULT '0' COMMENT '最早已同步K线时间戳（毫秒）。当 full_synced=0 时，从该值继续向前回补历史',
 
   `full_synced` tinyint NOT NULL DEFAULT '0' COMMENT '历史是否补齐：0=未补齐，1=已补齐',

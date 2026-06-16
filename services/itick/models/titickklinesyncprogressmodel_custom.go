@@ -14,7 +14,7 @@ type ItickKlineSyncProgressModel interface {
 	tItickKlineSyncProgressModel
 	FindOrCreate(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error)
 	UpdateSyncStart(ctx context.Context, id int64, mode string, now int64) error
-	UpdateSyncSuccess(ctx context.Context, id int64, mode string, latestTs, oldestTs, fullSynced, now int64, message string) error
+	UpdateSyncSuccess(ctx context.Context, id int64, mode string, latestTs, contiguousTs, recentCheckTs, oldestTs, fullSynced, now int64, message string) error
 	UpdateSyncFail(ctx context.Context, id int64, mode string, now int64, message string) error
 }
 
@@ -31,8 +31,8 @@ func (m *defaultTItickKlineSyncProgressModel) FindOrCreate(ctx context.Context, 
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, fmt.Sprintf(`
 		insert ignore into %s
-		(category_code, market, symbol, `+"`interval`"+`, latest_ts, oldest_ts, full_synced, sync_status, last_sync_mode, last_sync_message, last_success_time, last_fail_time, create_times, update_times)
-		values (?, ?, ?, ?, 0, 0, 0, 0, '', '', 0, 0, ?, ?)
+		(category_code, market, symbol, `+"`interval`"+`, latest_ts, contiguous_ts, recent_check_ts, oldest_ts, full_synced, sync_status, last_sync_mode, last_sync_message, last_success_time, last_fail_time, create_times, update_times)
+		values (?, ?, ?, ?, 0, 0, 0, 0, 0, 0, '', '', 0, 0, ?, ?)
 	`, m.table), categoryCode, market, symbol, interval, now, now)
 	})
 	if err != nil {
@@ -58,12 +58,14 @@ func (m *defaultTItickKlineSyncProgressModel) UpdateSyncStart(ctx context.Contex
 	return err
 }
 
-func (m *defaultTItickKlineSyncProgressModel) UpdateSyncSuccess(ctx context.Context, id int64, mode string, latestTs, oldestTs, fullSynced, now int64, message string) error {
+func (m *defaultTItickKlineSyncProgressModel) UpdateSyncSuccess(ctx context.Context, id int64, mode string, latestTs, contiguousTs, recentCheckTs, oldestTs, fullSynced, now int64, message string) error {
 	query := fmt.Sprintf(`
 		update %s
 		set sync_status = 2,
 			last_sync_mode = ?,
 			latest_ts = ?,
+			contiguous_ts = ?,
+			recent_check_ts = ?,
 			oldest_ts = ?,
 			full_synced = ?,
 			last_success_time = ?,
@@ -73,7 +75,7 @@ func (m *defaultTItickKlineSyncProgressModel) UpdateSyncSuccess(ctx context.Cont
 	`, m.table)
 
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
-		return conn.ExecCtx(ctx, query, mode, latestTs, oldestTs, fullSynced, now, message, now, id)
+		return conn.ExecCtx(ctx, query, mode, latestTs, contiguousTs, recentCheckTs, oldestTs, fullSynced, now, message, now, id)
 	})
 	return err
 }

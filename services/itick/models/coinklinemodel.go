@@ -25,6 +25,8 @@ type (
 
 		FindLatestBySymbol(ctx context.Context, symbol string, limit int64) ([]*CoinKline, error)
 		FindBeforeTsBySymbol(ctx context.Context, symbol string, beforeTs int64, limit int64) ([]*CoinKline, error)
+		FindLatestByMarketSymbol(ctx context.Context, market string, symbol string, limit int64) ([]*CoinKline, error)
+		FindBeforeTsByMarketSymbol(ctx context.Context, market string, symbol string, beforeTs int64, limit int64) ([]*CoinKline, error)
 		EnsureIndexes(ctx context.Context) ([]string, error)
 	}
 
@@ -125,6 +127,7 @@ func (m *defaultCoinKlineModel) UpsertBySymbolTs(ctx context.Context, data *Coin
 	data.UpdateAt = now
 
 	filter := bson.M{
+		"market": data.Market,
 		"symbol": data.Symbol,
 		"ts":     data.Ts,
 	}
@@ -174,6 +177,7 @@ func (m *defaultCoinKlineModel) BulkUpsertBySymbolTs(ctx context.Context, list [
 		data.UpdateAt = now
 
 		filter := bson.M{
+			"market": data.Market,
 			"symbol": data.Symbol,
 			"ts":     data.Ts,
 		}
@@ -214,12 +218,19 @@ func (m *defaultCoinKlineModel) BulkUpsertBySymbolTs(ctx context.Context, list [
 }
 
 func (m *defaultCoinKlineModel) FindLatestBySymbol(ctx context.Context, symbol string, limit int64) ([]*CoinKline, error) {
+	return m.FindLatestByMarketSymbol(ctx, "", symbol, limit)
+}
+
+func (m *defaultCoinKlineModel) FindLatestByMarketSymbol(ctx context.Context, market string, symbol string, limit int64) ([]*CoinKline, error) {
 	if limit <= 0 {
 		limit = 100
 	}
 
 	filter := bson.M{
 		"symbol": normalizeSymbol(symbol),
+	}
+	if market = normalizeMarket(market); market != "" {
+		filter["market"] = market
 	}
 
 	opts := options.Find().
@@ -236,6 +247,10 @@ func (m *defaultCoinKlineModel) FindLatestBySymbol(ctx context.Context, symbol s
 }
 
 func (m *defaultCoinKlineModel) FindBeforeTsBySymbol(ctx context.Context, symbol string, beforeTs int64, limit int64) ([]*CoinKline, error) {
+	return m.FindBeforeTsByMarketSymbol(ctx, "", symbol, beforeTs, limit)
+}
+
+func (m *defaultCoinKlineModel) FindBeforeTsByMarketSymbol(ctx context.Context, market string, symbol string, beforeTs int64, limit int64) ([]*CoinKline, error) {
 	if limit <= 0 {
 		limit = 100
 	}
@@ -245,6 +260,9 @@ func (m *defaultCoinKlineModel) FindBeforeTsBySymbol(ctx context.Context, symbol
 		"ts": bson.M{
 			"$lt": beforeTs,
 		},
+	}
+	if market = normalizeMarket(market); market != "" {
+		filter["market"] = market
 	}
 
 	opts := options.Find().
@@ -261,20 +279,25 @@ func (m *defaultCoinKlineModel) FindBeforeTsBySymbol(ctx context.Context, symbol
 }
 
 func (m *defaultCoinKlineModel) EnsureIndexes(ctx context.Context) ([]string, error) {
+	_ = m.conn.Collection.Indexes().DropOne(ctx, "uk_symbol_ts")
+	_ = m.conn.Collection.Indexes().DropOne(ctx, "idx_symbol_ts_desc")
+
 	indexes := []mongo.IndexModel{
 		{
 			Keys: bson.D{
+				{Key: "market", Value: 1},
 				{Key: "symbol", Value: 1},
 				{Key: "ts", Value: 1},
 			},
-			Options: options.Index().SetUnique(true).SetName("uk_symbol_ts"),
+			Options: options.Index().SetUnique(true).SetName("uk_market_symbol_ts"),
 		},
 		{
 			Keys: bson.D{
+				{Key: "market", Value: 1},
 				{Key: "symbol", Value: 1},
 				{Key: "ts", Value: -1},
 			},
-			Options: options.Index().SetName("idx_symbol_ts_desc"),
+			Options: options.Index().SetName("idx_market_symbol_ts_desc"),
 		},
 	}
 	return m.conn.Collection.Indexes().CreateMany(ctx, indexes)
