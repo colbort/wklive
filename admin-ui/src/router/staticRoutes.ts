@@ -8,6 +8,12 @@ export const staticRoutes: RouteRecordRaw[] = [
     meta: { public: true, titleKey: 'route.login' },
   },
   {
+    path: '/google2fa-bind',
+    name: 'Google2faBind',
+    component: () => import('@/views/auth/Google2faBind.vue'),
+    meta: { titleKey: 'route.google2faBind', skipGoogle2fa: true },
+  },
+  {
     path: '/',
     name: 'Layout',
     component: () => import('@/layout/index.vue'),

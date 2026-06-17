@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { staticRoutes } from './staticRoutes'
 import { useAuthStore } from '@/stores'
+import { getSystemCore } from '@/stores/core'
 import { buildRoutesFromMenus } from './dynamic'
 
 export const router = createRouter({
@@ -10,6 +11,7 @@ export const router = createRouter({
 
 const dynamicRouteNames = new Set<string>()
 let dynamicAdded = false
+let mustGoogleF2a: number | null = null
 
 function ensureNotFoundRoute() {
   if (router.hasRoute('NotFound')) return
@@ -48,6 +50,19 @@ export function resetDynamicRoutes() {
   dynamicAdded = false
 }
 
+async function isGoogle2faRequired() {
+  if (mustGoogleF2a === null) {
+    try {
+      const res = await getSystemCore()
+      mustGoogleF2a = Number(res.data?.mustGoogleF2a || 0)
+    } catch {
+      mustGoogleF2a = 0
+    }
+  }
+
+  return mustGoogleF2a === 1
+}
+
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
 
@@ -58,6 +73,24 @@ router.beforeEach(async (to) => {
   if (!auth.isProfileLoaded) {
     await auth.fetchProfile()
   }
+
+  const shouldBindGoogle2fa =
+    (await isGoogle2faRequired()) && Number(auth.user?.google2faEnabled || 0) !== 1
+  const isGoogle2faBindPage = to.name === 'Google2faBind'
+
+  if (shouldBindGoogle2fa && !isGoogle2faBindPage) {
+    return {
+      path: '/google2fa-bind',
+      query: { redirect: to.fullPath },
+      replace: true,
+    }
+  }
+
+  if (!shouldBindGoogle2fa && isGoogle2faBindPage) {
+    return { path: '/home', replace: true }
+  }
+
+  if (isGoogle2faBindPage) return true
 
   if (!dynamicAdded) {
     addDynamicRoutes(buildRoutesFromMenus(auth.menus))

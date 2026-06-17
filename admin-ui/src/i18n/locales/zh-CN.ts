@@ -26,6 +26,7 @@ export default {
   route: {
     home: '首页',
     login: '登录',
+    google2faBind: '绑定 Google 2FA',
     notFound: '页面不存在',
   },
   auth: {
@@ -33,6 +34,9 @@ export default {
     password: '密码',
     googleCode: '谷歌验证码',
     submit: '登录',
+    google2faRequiredTitle: '需要绑定 Google 2FA',
+    google2faRequiredDesc: '当前系统已开启强制 Google 2FA，请先完成绑定后继续使用后台。',
+    bindGoogle2fa: '绑定 Google 2FA',
   },
   validation: {
     required: '必填项',

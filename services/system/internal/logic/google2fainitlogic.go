@@ -2,12 +2,13 @@ package logic
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Google2FAInitLogic struct {
@@ -36,7 +37,7 @@ func (l *Google2FAInitLogic) Google2FAInit(in *system.Google2FAInitReq) (*system
 		}, nil
 	}
 
-	secret, otpauthURL, _, err := utils.GenerateGoogle2FA(user.Username, utils.Default2FAIssuer, 256)
+	secret, otpauthURL, qrCode, err := utils.GenerateGoogle2FA(user.Username, utils.Default2FAIssuer, 256)
 	if err != nil {
 		return &system.Google2FAInitResp{
 			Base: helper.GetErrResp(i18n.Generate2FASecretFailed, i18n.Translate(i18n.Generate2FASecretFailed, l.ctx)+": "+err.Error()),
@@ -54,6 +55,7 @@ func (l *Google2FAInitLogic) Google2FAInit(in *system.Google2FAInitReq) (*system
 		Data: &system.Google2FAInitData{
 			Secret:     secret,
 			OtpauthUrl: otpauthURL,
+			QrCode:     qrCode,
 		},
 	}, nil
 }

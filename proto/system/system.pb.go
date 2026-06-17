@@ -1103,6 +1103,7 @@ type Google2FAInitData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Secret        string                 `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
 	OtpauthUrl    string                 `protobuf:"bytes,2,opt,name=otpauth_url,json=otpauthUrl,proto3" json:"otpauth_url,omitempty"`
+	QrCode        string                 `protobuf:"bytes,3,opt,name=qr_code,json=qrCode,proto3" json:"qr_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1147,6 +1148,13 @@ func (x *Google2FAInitData) GetSecret() string {
 func (x *Google2FAInitData) GetOtpauthUrl() string {
 	if x != nil {
 		return x.OtpauthUrl
+	}
+	return ""
+}
+
+func (x *Google2FAInitData) GetQrCode() string {
+	if x != nil {
+		return x.QrCode
 	}
 	return ""
 }
@@ -6669,11 +6677,12 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"h\n" +
 	"\x11Google2FAInitResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.system.Google2FAInitDataR\x04data\"L\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.system.Google2FAInitDataR\x04data\"e\n" +
 	"\x11Google2FAInitData\x12\x16\n" +
 	"\x06secret\x18\x01 \x01(\tR\x06secret\x12\x1f\n" +
 	"\votpauth_url\x18\x02 \x01(\tR\n" +
-	"otpauthUrl\"W\n" +
+	"otpauthUrl\x12\x17\n" +
+	"\aqr_code\x18\x03 \x01(\tR\x06qrCode\"W\n" +
 	"\x10Google2FABindReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x16\n" +
 	"\x06secret\x18\x02 \x01(\tR\x06secret\x12\x12\n" +

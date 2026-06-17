@@ -26,6 +26,7 @@ export default {
   route: {
     home: 'Home',
     login: 'Login',
+    google2faBind: 'Bind Google 2FA',
     notFound: 'Not Found',
   },
   auth: {
@@ -33,6 +34,10 @@ export default {
     password: 'Password',
     googleCode: 'Google Code',
     submit: 'Sign in',
+    google2faRequiredTitle: 'Google 2FA binding required',
+    google2faRequiredDesc:
+      'Google 2FA is required for this system. Please bind it before continuing.',
+    bindGoogle2fa: 'Bind Google 2FA',
   },
   validation: {
     required: 'Required',

@@ -124,6 +124,7 @@ message Google2FAInitResp {
 message Google2FAInitData {
   string secret = 1;
   string otpauth_url = 2;
+  string qr_code = 3;
 }
 
 message Google2FABindReq {
