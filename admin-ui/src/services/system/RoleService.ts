@@ -37,6 +37,7 @@ export type RoleItem = {
 }
 
 export interface CreateRoleRequest {
+  tenantId: number
   name: string
   code: string
   description?: string
@@ -47,6 +48,7 @@ export interface CreateRoleRequest {
 
 export interface UpdateRoleRequest {
   id: number
+  tenantId?: number
   name?: string
   code?: string
   description?: string

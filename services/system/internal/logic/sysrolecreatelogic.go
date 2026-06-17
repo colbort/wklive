@@ -35,10 +35,11 @@ func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system
 		return nil, i18n.StatusError(l.ctx, i18n.RoleCodeAlreadyExists)
 	}
 	_, err = l.svcCtx.RoleModel.Insert(l.ctx, &models.SysRole{
-		Name:    in.Name,
-		Code:    in.Code,
-		Enabled: commonStatusToModel(in.Enabled),
-		Remark:  in.Remark,
+		TenantId: in.TenantId,
+		Name:     in.Name,
+		Code:     in.Code,
+		Enabled:  commonStatusToModel(in.Enabled),
+		Remark:   in.Remark,
 	})
 	if err != nil {
 		return nil, err

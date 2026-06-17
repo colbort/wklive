@@ -118,6 +118,7 @@ type SysRoleListResp {
 }
 
 type SysRoleCreateReq {
+	tenantId int64  `json:"tenantId"`
 	name   string `json:"name"`
 	code   string `json:"code"`
 	enabled int64  `json:"enabled,optional"`
@@ -126,6 +127,7 @@ type SysRoleCreateReq {
 
 type SysRoleUpdateReq {
 	id     int64  `json:"id"`
+	tenantId int64  `json:"tenantId,optional"`
 	name   string `json:"name,optional"`
 	enabled int64  `json:"enabled,optional"`
 	remark string `json:"remark,optional"`

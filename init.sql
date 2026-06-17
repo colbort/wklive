@@ -353,6 +353,8 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 
 -- ITICK数据管理：排除平台产品类型、平台产品，只保留租户相关
 (0, 2, 400),
+(0, 2, 401),
+(0, 2, 404),
 (0, 2, 430),
 (0, 2, 431),
 (0, 2, 432),

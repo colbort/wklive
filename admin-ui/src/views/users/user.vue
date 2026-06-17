@@ -21,10 +21,12 @@ import {
   getOptionLabel,
   getOptionValueLabel,
 } from '@/utils/options'
+import { useAuthStore } from '@/stores'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
+const auth = useAuthStore()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
   usePagination<number>(20)
 const loading = ref(false)
@@ -741,56 +743,62 @@ onMounted(fetchCreateOptions)
 
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-perm="'users:user:detail'" @click="showDetail(row)">
+                  <el-dropdown-item
+                    v-if="auth.hasPerm('users:user:detail')"
+                    @click="showDetail(row)"
+                  >
                     {{ t('common.detail') }}
                   </el-dropdown-item>
-                  <el-dropdown-item v-perm="'users:user:update'" @click="openEdit(row)">
+                  <el-dropdown-item
+                    v-if="auth.hasPerm('users:user:update')"
+                    @click="openEdit(row)"
+                  >
                     {{ t('common.edit') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-perm="'users:user:update:status'"
+                    v-if="auth.hasPerm('users:user:update:status')"
                     @click="updateSimpleValue(row, 'status')"
                   >
                     {{ t('users.modifyStatus') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-perm="'users:user:update:level'"
+                    v-if="auth.hasPerm('users:user:update:level')"
                     @click="updateSimpleValue(row, 'memberLevel')"
                   >
                     {{ t('users.modifyMemberLevel') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-perm="'users:user:update:risklevel'"
+                    v-if="auth.hasPerm('users:user:update:risklevel')"
                     @click="updateSimpleValue(row, 'riskLevel')"
                   >
                     {{ t('users.modifyRiskLevel') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-perm="'users:user:reset:loginpwd'"
+                    v-if="auth.hasPerm('users:user:reset:loginpwd')"
                     @click="openPassword(row, 'login')"
                   >
                     {{ t('users.resetLoginPassword') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-perm="'users:user:reset:paypwd'"
+                    v-if="auth.hasPerm('users:user:reset:paypwd')"
                     @click="openPassword(row, 'pay')"
                   >
                     {{ t('users.resetPayPassword') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-perm="'users:user:unlock'"
+                    v-if="auth.hasPerm('users:user:unlock')"
                     @click="quickAction(row, 'unlock')"
                   >
                     {{ t('users.unlock') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-perm="'users:user:reset:google2fa'"
+                    v-if="auth.hasPerm('users:user:reset:google2fa')"
                     @click="quickAction(row, 'reset2fa')"
                   >
                     {{ t('users.reset2fa') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-perm="'users:user:delete'"
+                    v-if="auth.hasPerm('users:user:delete')"
                     @click="quickAction(row, 'delete')"
                   >
                     <span style="color: var(--el-color-danger)">{{ t('common.delete') }}</span>

@@ -15,6 +15,7 @@ import {
   getOptionValueLabel,
 } from '@/utils/options'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 type RoleMenuNode = MenuNode & {
   parentId?: number
@@ -166,6 +167,7 @@ const editFormRef = ref<FormInstance>()
 const { form: editForm } = useForm({
   initialData: {
     id: 0,
+    tenantId: undefined as number | undefined,
     name: '',
     code: '',
     remark: '',
@@ -177,6 +179,7 @@ const { loading: editLoading, withLoading: withEditLoading } = useLoading()
 
 function openCreate() {
   editForm.id = 0
+  editForm.tenantId = undefined
   editForm.name = ''
   editForm.code = ''
   editForm.remark = ''
@@ -186,6 +189,7 @@ function openCreate() {
 function openUpdate(row: SysRole) {
   if (isSuperRole(row)) return
   editForm.id = row.id
+  editForm.tenantId = row.tenantId
   editForm.name = row.name
   editForm.code = row.code
   editForm.remark = row.remark || ''
@@ -197,7 +201,7 @@ async function submitEdit() {
   await editFormRef.value?.validate?.()
   await withEditLoading(async () => {
     try {
-      const payload = { ...editForm }
+      const payload = { ...editForm, tenantId: Number(editForm.tenantId || 0) }
       const resp = editIsUpdate.value
         ? await roleService.update(editForm.id, payload)
         : await roleService.create(payload)
@@ -282,6 +286,14 @@ function onMenuTreeCheck() {
   checkedPermKeys.value = getCheckedButtonPermKeys()
 }
 
+function getInitialCheckedMenuIds(menuIds: number[]): number[] {
+  const ids = new Set((menuIds || []).map(Number))
+  return Array.from(ids).filter((id) => {
+    const node = menuNodeMap.value.get(id)
+    return node && !node.children?.length
+  })
+}
+
 function openGrant(row: SysRole) {
   currentRole.value = row
   grantVisible.value = true
@@ -313,19 +325,13 @@ async function initGrant(roleId: number, tenantId: number) {
 
       const menuIds = detail?.menuIds || []
       const permKeys = detail?.permKeys || []
-      const permKeyToId = new Map<string, number>()
-      flattenMenuTree(menuTree.value).forEach((node) => {
-        if (node.menuType === 3 && node.perms) {
-          permKeyToId.set(node.perms, node.id)
-        }
-      })
-      const buttonIds = permKeys
-        .map((k: string) => permKeyToId.get(k))
-        .filter((id: number | undefined): id is number => id != null)
 
       await nextTick()
-      menuTreeRef.value?.setCheckedKeys([...menuIds, ...buttonIds])
-      checkedPermKeys.value = permKeys
+      menuTreeRef.value?.setCheckedKeys(getInitialCheckedMenuIds(menuIds))
+      checkedPermKeys.value = getCheckedButtonPermKeys()
+      if (!checkedPermKeys.value.length) {
+        checkedPermKeys.value = permKeys
+      }
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
@@ -498,6 +504,14 @@ onMounted(async () => {
       width="520px"
     >
       <el-form ref="editFormRef" :model="editForm" label-width="110px">
+        <el-form-item
+          :label="t('common.tenantId')"
+          prop="tenantId"
+          :rules="[{ required: true, message: t('common.required') }]"
+        >
+          <TenantSelect v-model="editForm.tenantId" include-system :disabled="editIsUpdate" />
+        </el-form-item>
+
         <el-form-item
           :label="t('system.roleName')"
           prop="name"

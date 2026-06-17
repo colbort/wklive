@@ -3402,10 +3402,11 @@ type SysPermListResp struct {
 }
 
 type SysRoleCreateReq struct {
-	Name    string `json:"name"`
-	Code    string `json:"code"`
-	Enabled int64  `json:"enabled,optional"`
-	Remark  string `json:"remark,optional"`
+	TenantId int64  `json:"tenantId"`
+	Name     string `json:"name"`
+	Code     string `json:"code"`
+	Enabled  int64  `json:"enabled,optional"`
+	Remark   string `json:"remark,optional"`
 }
 
 type SysRoleDeleteReq struct {
@@ -3454,10 +3455,11 @@ type SysRoleListResp struct {
 }
 
 type SysRoleUpdateReq struct {
-	Id      int64  `json:"id"`
-	Name    string `json:"name,optional"`
-	Enabled int64  `json:"enabled,optional"`
-	Remark  string `json:"remark,optional"`
+	Id       int64  `json:"id"`
+	TenantId int64  `json:"tenantId,optional"`
+	Name     string `json:"name,optional"`
+	Enabled  int64  `json:"enabled,optional"`
+	Remark   string `json:"remark,optional"`
 }
 
 type SysTenantCreateReq struct {
