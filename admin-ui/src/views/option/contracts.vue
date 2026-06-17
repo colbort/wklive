@@ -177,7 +177,7 @@
           <el-form-item :label="t('option.optionType')">
             <el-select v-model="contractForm.optionType" style="width: 100%">
               <el-option
-                v-for="item in optionTypeOptions"
+                v-for="item in optionTypeFormOptions"
                 :key="item.value"
                 :label="getOptionLabel(t, item.code, item.value)"
                 :value="item.value"
@@ -187,7 +187,7 @@
           <el-form-item :label="t('option.exerciseStyle')">
             <el-select v-model="contractForm.exerciseStyle" style="width: 100%">
               <el-option
-                v-for="item in exerciseStyleOptions"
+                v-for="item in exerciseStyleFormOptions"
                 :key="item.value"
                 :label="getOptionLabel(t, item.code, item.value)"
                 :value="item.value"
@@ -197,7 +197,7 @@
           <el-form-item :label="t('option.settlementType')">
             <el-select v-model="contractForm.settlementType" style="width: 100%">
               <el-option
-                v-for="item in settlementTypeOptions"
+                v-for="item in settlementTypeFormOptions"
                 :key="item.value"
                 :label="getOptionLabel(t, item.code, item.value)"
                 :value="item.value"
@@ -268,7 +268,7 @@
           <el-form-item :label="t('common.status')">
             <el-select v-model="contractForm.status" style="width: 100%">
               <el-option
-                v-for="item in contractStatusOptions"
+                v-for="item in contractStatusFormOptions"
                 :key="item.value"
                 :label="getOptionLabel(t, item.code, item.value)"
                 :value="item.value"
@@ -537,7 +537,12 @@ import {
   type UpdateMarketReq,
 } from '@/services'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
@@ -616,15 +621,25 @@ const marketForm = reactive<UpdateMarketReq>({
 const optionTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'optionType'))
 const exerciseStyleOptions = computed(() => findOptionGroup(optionGroups.value, 'exerciseStyle'))
 const settlementTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'settlementType'))
+const optionTypeFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'optionType'))
+const exerciseStyleFormOptions = computed(() =>
+  findFormOptionGroup(optionGroups.value, 'exerciseStyle'),
+)
+const settlementTypeFormOptions = computed(() =>
+  findFormOptionGroup(optionGroups.value, 'settlementType'),
+)
 const yesNoFallbackOptions: OptionItem[] = [
   { value: 1, code: 'YES_NO_YES' },
   { value: 2, code: 'YES_NO_NO' },
 ]
 const yesNoOptions = computed(() => {
-  const options = findOptionGroup(optionGroups.value, 'yesNo').filter((item) => item.value !== 0)
+  const options = findFormOptionGroup(optionGroups.value, 'yesNo')
   return options.length ? options : yesNoFallbackOptions
 })
 const contractStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'contractStatus'))
+const contractStatusFormOptions = computed(() =>
+  findFormOptionGroup(optionGroups.value, 'contractStatus'),
+)
 
 const loadOptions = async () => {
   optionGroups.value = (await optionService.getOptions()).data || []

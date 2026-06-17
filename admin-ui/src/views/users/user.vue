@@ -15,7 +15,12 @@ import {
   type UpdateMemberUserBaseReq,
 } from '@/services'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
@@ -37,6 +42,10 @@ const tenantCheckName = ref('')
 const tenantCheckCode = ref('')
 const optionGroups = ref<OptionGroup[]>([])
 const createOptions = reactive({
+  registerTypes: [] as OptionItem[],
+  statuses: [] as OptionItem[],
+})
+const formOptions = reactive({
   registerTypes: [] as OptionItem[],
   statuses: [] as OptionItem[],
 })
@@ -255,6 +264,10 @@ async function fetchCreateOptions() {
     Object.assign(createOptions, {
       registerTypes: findGroupOptions('registerType'),
       statuses: findGroupOptions('userStatus'),
+    })
+    Object.assign(formOptions, {
+      registerTypes: findFormOptionGroup(groups, 'registerType'),
+      statuses: findFormOptionGroup(groups, 'userStatus'),
     })
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.loadOptionsFailed'))
@@ -866,7 +879,7 @@ onMounted(fetchCreateOptions)
             <el-form-item :label="t('users.registerType')">
               <el-select v-model="editForm.registerType" style="width: 100%">
                 <el-option
-                  v-for="item in createOptions.registerTypes"
+                  v-for="item in formOptions.registerTypes"
                   :key="item.value"
                   :label="getOptionLabel(t, item.code, item.value)"
                   :value="item.value"
@@ -878,7 +891,7 @@ onMounted(fetchCreateOptions)
             <el-form-item :label="t('users.status')">
               <el-select v-model="editForm.status" style="width: 100%">
                 <el-option
-                  v-for="item in createOptions.statuses"
+                  v-for="item in formOptions.statuses"
                   :key="item.value"
                   :label="getOptionLabel(t, item.code, item.value)"
                   :value="item.value"

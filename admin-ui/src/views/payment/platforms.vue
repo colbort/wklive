@@ -9,7 +9,6 @@
       </el-form-item>
       <el-form-item :label="t('common.enabled')">
         <el-select v-model="platformQuery.enabled" clearable style="width: 160px">
-          <el-option :label="t('payment.all')" :value="0" />
           <el-option
             v-for="item in enabledOptions"
             :key="item.value"
@@ -134,7 +133,7 @@
         <el-form-item :label="t('payment.platformType')">
           <el-select v-model="platformForm.platformType" style="width: 100%">
             <el-option
-              v-for="item in platformTypeOptions"
+              v-for="item in platformTypeFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -171,7 +170,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="platformForm.enabled" style="width: 100%">
             <el-option
-              v-for="item in enabledOptions"
+              v-for="item in enabledFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -252,7 +251,12 @@ import {
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { apiUploadFile } from '@/api/system/upload'
 import { buildSystemAssetUrl, useSystemCore } from '@/composables/useSystemCore'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
@@ -270,8 +274,11 @@ const detailData = ref<PayPlatform | null>(null)
 const platformDialogVisible = ref(false)
 const selectedPlatformCode = ref('')
 const optionGroups = ref<OptionGroup[]>([])
-const platformTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'platformType'))
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
+const platformTypeFormOptions = computed(() =>
+  findFormOptionGroup(optionGroups.value, 'platformType'),
+)
+const enabledFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'enabled'))
 const detailDisplayData = computed(() => {
   if (!detailData.value) return null
 

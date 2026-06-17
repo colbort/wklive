@@ -240,19 +240,25 @@
         </el-form-item>
 
         <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
-          <el-radio-group v-model="form.enabled">
-            <el-radio v-for="item in enabledFormOptions" :key="item.value" :value="item.value">
-              {{ getOptionLabel(t, item.code, item.value) }}
-            </el-radio>
-          </el-radio-group>
+          <el-select v-model="form.enabled" style="width: 100%">
+            <el-option
+              v-for="item in enabledFormOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
 
         <el-form-item :label="t('itick.appVisible')" prop="appVisible">
-          <el-radio-group v-model="form.appVisible">
-            <el-radio v-for="item in visibleFormOptions" :key="item.value" :value="item.value">
-              {{ getOptionLabel(t, item.code, item.value) }}
-            </el-radio>
-          </el-radio-group>
+          <el-select v-model="form.appVisible" style="width: 100%">
+            <el-option
+              v-for="item in visibleFormOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
 
         <el-form-item :label="t('common.sort')" prop="sort">
@@ -645,7 +651,12 @@ import {
   type TenantProductItem,
 } from '@/services/itick/TenantProductsService'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
@@ -732,8 +743,8 @@ const productPickerTableRef = ref()
 const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'categoryType'))
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
-const enabledFormOptions = computed(() => enabledOptions.value.filter((item) => item.value !== 0))
-const visibleFormOptions = computed(() => visibleOptions.value.filter((item) => item.value !== 0))
+const enabledFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'enabled'))
+const visibleFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'visible'))
 const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
 const initForm = reactive({
   tenantId: 0,

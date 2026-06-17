@@ -21,7 +21,12 @@ import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
@@ -36,6 +41,15 @@ const jobStatusSelectOptions = computed(() =>
         { value: 1, code: 'JOB_STATUS_ENABLED' },
       ],
 )
+const jobStatusFormOptions = computed(() => {
+  const options = findFormOptionGroup(optionGroups.value, 'jobStatus')
+  return options.length
+    ? options
+    : [
+        { value: 0, code: 'JOB_STATUS_DISABLED' },
+        { value: 1, code: 'JOB_STATUS_ENABLED' },
+      ]
+})
 
 // Pagination and main list
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -450,7 +464,7 @@ onMounted(() => {
           <el-form-item :label="t('common.status')">
             <el-select v-model="formData.status" style="width: 100%">
               <el-option
-                v-for="item in jobStatusSelectOptions"
+                v-for="item in jobStatusFormOptions"
                 :key="item.value"
                 :label="jobStatusLabel(item.value, item.code)"
                 :value="item.value"

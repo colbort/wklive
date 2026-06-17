@@ -9,7 +9,6 @@
       </el-form-item>
       <el-form-item :label="t('common.enabled')">
         <el-select v-model="query.enabled" clearable style="width: 160px">
-          <el-option :label="t('payment.all')" :value="0" />
           <el-option
             v-for="item in enabledOptions"
             :key="item.value"
@@ -106,7 +105,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="form.enabled" style="width: 100%">
             <el-option
-              v-for="item in enabledOptions"
+              v-for="item in enabledFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -116,7 +115,7 @@
         <el-form-item :label="t('payment.openStatus')">
           <el-select v-model="form.openStatus" style="width: 100%">
             <el-option
-              v-for="item in openStatusOptions"
+              v-for="item in openStatusFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -152,7 +151,12 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { catalogService, tenantService, type TenantPayPlatform, type OptionGroup } from '@/services'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -186,7 +190,8 @@ const form = reactive({ id: 0, tenantId: 0, platformId: 0, enabled: 1, openStatu
 // option groups fetched from backend
 const optionGroups = ref<OptionGroup[]>([])
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
-const openStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'openStatus'))
+const enabledFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'enabled'))
+const openStatusFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'openStatus'))
 const submitDisabled = computed(
   () =>
     !form.id &&

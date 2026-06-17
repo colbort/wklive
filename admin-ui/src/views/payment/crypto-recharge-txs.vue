@@ -111,7 +111,7 @@
           <el-form-item :label="t('payment.chain')">
             <el-select v-model="form.chainCode" style="width: 100%">
               <el-option
-                v-for="item in chainCodeOptions"
+                v-for="item in chainCodeFormOptions"
                 :key="item.value"
                 :label="getOptionLabel(t, item.code, item.value)"
                 :value="item.value"
@@ -182,7 +182,7 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { catalogService, cryptoService, type CryptoRechargeTx, type OptionGroup } from '@/services'
-import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import { findFormOptionGroup, findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
@@ -198,6 +198,7 @@ const list = ref<CryptoRechargeTx[]>([])
 const detailData = ref<CryptoRechargeTx | null>(null)
 const optionGroups = ref<OptionGroup[]>([])
 const chainCodeOptions = computed(() => findOptionGroup(optionGroups.value, 'chainCode'))
+const chainCodeFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'chainCode'))
 const query = reactive({
   tenantId: undefined as number | undefined,
   userId: undefined as number | undefined,

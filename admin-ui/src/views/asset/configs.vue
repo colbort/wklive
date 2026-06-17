@@ -231,7 +231,7 @@
             <el-form-item :label="t('asset.walletType')" prop="walletType">
               <el-select v-model="form.walletType" style="width: 100%">
                 <el-option
-                  v-for="item in walletTypeOptions"
+                  v-for="item in walletTypeFormOptions"
                   :key="item.value"
                   :label="getOptionLabel(t, item.code, item.value)"
                   :value="item.value"
@@ -270,7 +270,7 @@
             <el-form-item :label="t('asset.chainCode')" prop="chainCode">
               <el-select v-model="form.chainCode" style="width: 100%">
                 <el-option
-                  v-for="item in chainCodeOptions"
+                  v-for="item in chainCodeFormOptions"
                   :key="item.value"
                   :label="getOptionLabel(t, item.code, item.value)"
                   :value="item.value"
@@ -334,7 +334,7 @@
             <el-form-item :label="t('common.enabled')">
               <el-select v-model="form.enabled" style="width: 100%">
                 <el-option
-                  v-for="item in assetStatusOptions"
+                  v-for="item in assetStatusFormOptions"
                   :key="item.value"
                   :label="getOptionLabel(t, item.code, item.value)"
                   :value="item.value"
@@ -509,7 +509,12 @@ import { usePagination } from '@/composables'
 import { assetService, type AssetCoinConfig, type OptionGroup, type OptionItem } from '@/services'
 import { apiUploadFile } from '@/api/system/upload'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  withoutUnknownOptions,
+} from '@/utils/options'
 import { buildSystemAssetUrl, useSystemCore } from '@/composables/useSystemCore'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -579,6 +584,7 @@ const rules = reactive<FormRules>({
 })
 
 const walletTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'walletType'))
+const walletTypeFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'walletType'))
 const fallbackChainCodeOptions: OptionItem[] = [
   { value: 0, code: 'CHAIN_CODE_UNKNOWN' },
   { value: 1, code: 'CHAIN_CODE_BTC' },
@@ -595,7 +601,11 @@ const chainCodeOptions = computed(() => {
   const options = findOptionGroup(optionGroups.value, 'chainCode')
   return options.length ? options : fallbackChainCodeOptions
 })
+const chainCodeFormOptions = computed(() => withoutUnknownOptions(chainCodeOptions.value))
 const assetStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'assetStatus'))
+const assetStatusFormOptions = computed(() =>
+  findFormOptionGroup(optionGroups.value, 'assetStatus'),
+)
 const coinTypeOptions = computed(() => [
   { label: t('asset.fiat'), value: 1 },
   { label: t('asset.crypto'), value: 2 },

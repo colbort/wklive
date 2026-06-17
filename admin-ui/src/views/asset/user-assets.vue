@@ -138,7 +138,7 @@
         <el-form-item :label="t('asset.walletType')">
           <el-select v-model="changeForm.walletType" style="width: 100%">
             <el-option
-              v-for="item in walletTypeOptions"
+              v-for="item in walletTypeFormOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -248,7 +248,7 @@ const detailVisible = ref(false)
 const detailData = ref<AssetUserAsset | null>(null)
 const changeVisible = ref(false)
 const changeMode = ref<'add' | 'sub' | 'freeze' | 'lock'>('add')
-const { optionItems, optionLabel } = useOptions(optionGroups)
+const { formOptionItems, optionItems, optionLabel } = useOptions(optionGroups)
 
 const query = reactive({
   tenantId: undefined as number | undefined,
@@ -271,6 +271,7 @@ const changeForm = reactive({
 })
 
 const walletTypeOptions = optionItems('walletType')
+const walletTypeFormOptions = formOptionItems('walletType')
 const assetStatusOptions = optionItems('assetStatus')
 const detailTitle = computed(() => `${t('asset.userAssets')}${t('asset.detail')}`)
 const changeTitle = computed(

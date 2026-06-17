@@ -5,7 +5,12 @@ import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { memberUserService, type UserIdentityItem, type OptionGroup, UserDetail } from '@/services'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -22,6 +27,9 @@ const detailData = ref<UserDetail>()
 const optionGroups = ref<OptionGroup[]>([])
 const verifyStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'verifyStatus'))
 const kycLevelOptions = computed(() => findOptionGroup(optionGroups.value, 'kycLevel'))
+const verifyStatusFormOptions = computed(() =>
+  findFormOptionGroup(optionGroups.value, 'verifyStatus'),
+)
 const hasReviewableIdentity = computed(() => list.value.some((item) => item.verifyStatus === 1))
 
 const query = reactive({
@@ -315,7 +323,7 @@ onMounted(fetchOptions)
         <el-form-item :label="t('users.verifyStatus')">
           <el-select v-model="reviewForm.verifyStatus" style="width: 100%">
             <el-option
-              v-for="item in verifyStatusOptions"
+              v-for="item in verifyStatusFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"

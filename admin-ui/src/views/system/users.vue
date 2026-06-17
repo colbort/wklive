@@ -11,14 +11,29 @@ import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const optionGroups = ref<OptionGroup[]>([])
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const enabledSelectOptions = computed(() => {
-  const options = enabledOptions.value.filter((item) => item.value !== 0)
+  const options = enabledOptions.value
+  return options.length
+    ? options
+    : [
+        { value: 0, code: 'COMMON_STATUS_UNKNOWN' },
+        { value: 1, code: 'COMMON_STATUS_ENABLED' },
+        { value: 2, code: 'COMMON_STATUS_DISABLED' },
+      ]
+})
+const enabledFormOptions = computed(() => {
+  const options = findFormOptionGroup(optionGroups.value, 'enabled')
   return options.length
     ? options
     : [
@@ -56,7 +71,7 @@ async function fetchList() {
     try {
       const res = await userService.getList({
         keyword: queryForm.keyword || undefined,
-        enabled: queryForm.enabled,
+        enabled: queryForm.enabled === 0 ? undefined : queryForm.enabled,
         cursor: pagination.cursor,
         limit: pagination.limit,
       })
@@ -590,7 +605,7 @@ onMounted(async () => {
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="editForm.enabled" style="width: 100%">
             <el-option
-              v-for="item in enabledSelectOptions"
+              v-for="item in enabledFormOptions"
               :key="item.value"
               :label="enabledOptionLabel(item.value, item.code)"
               :value="item.value"

@@ -153,7 +153,7 @@
           <el-form-item :label="t('payment.walletType')">
             <el-select v-model="form.walletType" style="width: 100%">
               <el-option
-                v-for="item in walletTypeOptions"
+                v-for="item in walletTypeFormOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -166,7 +166,7 @@
           <el-form-item :label="t('payment.chain')">
             <el-select v-model="form.chainCode" style="width: 100%">
               <el-option
-                v-for="item in chainCodeOptions"
+                v-for="item in chainCodeFormOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -183,7 +183,7 @@
         <el-form-item :label="t('payment.source')">
           <el-select v-model="form.addressSource" style="width: 100%">
             <el-option
-              v-for="item in addressSourceOptions"
+              v-for="item in addressSourceFormOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -193,7 +193,7 @@
         <el-form-item :label="t('payment.type')">
           <el-select v-model="form.addressType" style="width: 100%">
             <el-option
-              v-for="item in addressTypeOptions"
+              v-for="item in addressTypeFormOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -203,7 +203,7 @@
         <el-form-item :label="t('common.status')">
           <el-select v-model="form.status" style="width: 100%">
             <el-option
-              v-for="item in addressStatusOptions"
+              v-for="item in addressStatusFormOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -266,12 +266,15 @@ const detailData = ref<CryptoRechargeAddress | null>(null)
 const optionGroups = ref<OptionGroup[]>([])
 const { pagination, updateFromResponse, reset, resetAndLoad, prevAndLoad, nextAndLoad } =
   usePagination<number>(20)
-const { optionItems, optionLabel } = useOptions(optionGroups)
+const { formOptionItems, optionItems, optionLabel } = useOptions(optionGroups)
 const walletTypeOptions = optionItems('walletType')
 const chainCodeOptions = optionItems('chainCode')
-const addressSourceOptions = optionItems('cryptoRechargeAddressSource')
-const addressTypeOptions = optionItems('cryptoRechargeAddressType')
 const addressStatusOptions = optionItems('cryptoRechargeAddressStatus')
+const walletTypeFormOptions = formOptionItems('walletType')
+const chainCodeFormOptions = formOptionItems('chainCode')
+const addressSourceFormOptions = formOptionItems('cryptoRechargeAddressSource')
+const addressTypeFormOptions = formOptionItems('cryptoRechargeAddressType')
+const addressStatusFormOptions = formOptionItems('cryptoRechargeAddressStatus')
 const detailOptionKeys: Record<string, string> = {
   walletType: 'walletType',
   chainCode: 'chainCode',

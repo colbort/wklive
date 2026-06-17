@@ -1,7 +1,12 @@
 import { computed, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { OptionGroup, OptionItem } from '@/services'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 
 export type LabeledOptionItem = OptionItem & {
   label: string | number
@@ -18,11 +23,20 @@ export function useOptions(optionGroups: Ref<OptionGroup[]>) {
       })),
     )
 
+  const formOptionItems = (key: string) =>
+    computed<LabeledOptionItem[]>(() =>
+      findFormOptionGroup(optionGroups.value, key).map((item) => ({
+        ...item,
+        label: getOptionLabel(t, item.code, item.value),
+      })),
+    )
+
   const optionLabel = (key: string, value: number | string | undefined) =>
     getOptionValueLabel(optionGroups.value, key, value, t)
 
   return {
     optionItems,
+    formOptionItems,
     optionLabel,
   }
 }

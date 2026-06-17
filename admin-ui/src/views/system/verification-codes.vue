@@ -86,10 +86,10 @@ async function fetchList() {
     try {
       const res = await verificationCodeService.getList({
         tenantId: queryForm.tenantId,
-        channel: queryForm.channel,
+        channel: queryForm.channel === 0 ? undefined : queryForm.channel,
         target: queryForm.target || undefined,
-        scene: queryForm.scene,
-        status: queryForm.status,
+        scene: queryForm.scene === 0 ? undefined : queryForm.scene,
+        status: queryForm.status === 0 ? undefined : queryForm.status,
         cursor: pagination.cursor,
         limit: pagination.limit,
       })
@@ -196,7 +196,7 @@ onMounted(() => {
       <el-form-item :label="t('system.channel')">
         <el-select v-model="queryForm.channel" clearable style="width: 150px">
           <el-option
-            v-for="item in effectiveChannelOptions"
+            v-for="item in channelOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -206,7 +206,7 @@ onMounted(() => {
       <el-form-item :label="t('system.scene')">
         <el-select v-model="queryForm.scene" clearable style="width: 170px">
           <el-option
-            v-for="item in effectiveSceneOptions"
+            v-for="item in sceneOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value"

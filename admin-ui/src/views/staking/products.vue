@@ -104,7 +104,7 @@
         <el-form-item :label="t('staking.productType')">
           <el-select v-model="productForm.productType" style="width: 100%">
             <el-option
-              v-for="item in productTypeOptions"
+              v-for="item in productTypeFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -147,7 +147,7 @@
         <el-form-item :label="t('staking.interestMode')">
           <el-select v-model="productForm.interestMode" style="width: 100%">
             <el-option
-              v-for="item in interestModeOptions"
+              v-for="item in interestModeFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -157,7 +157,7 @@
         <el-form-item :label="t('staking.rewardMode')">
           <el-select v-model="productForm.rewardMode" style="width: 100%">
             <el-option
-              v-for="item in rewardModeOptions"
+              v-for="item in rewardModeFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -167,7 +167,7 @@
         <el-form-item :label="t('staking.allowEarlyRedeem')">
           <el-select v-model="productForm.allowEarlyRedeem" style="width: 100%">
             <el-option
-              v-for="item in yesNoOptions"
+              v-for="item in yesNoFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -180,7 +180,7 @@
         <el-form-item :label="t('common.status')">
           <el-select v-model="productForm.status" style="width: 100%">
             <el-option
-              v-for="item in productStatusOptions"
+              v-for="item in productStatusFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -229,7 +229,7 @@ import {
   type OptionGroup,
   type StakeProduct,
 } from '@/services'
-import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import { findFormOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
@@ -238,11 +238,17 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
   usePagination<number>(20)
 
 const optionGroups = ref<OptionGroup[]>([])
-const productTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'productType'))
-const productStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'productStatus'))
-const interestModeOptions = computed(() => findOptionGroup(optionGroups.value, 'interestMode'))
-const rewardModeOptions = computed(() => findOptionGroup(optionGroups.value, 'rewardMode'))
-const yesNoOptions = computed(() => findOptionGroup(optionGroups.value, 'yesNo'))
+const productTypeFormOptions = computed(() =>
+  findFormOptionGroup(optionGroups.value, 'productType'),
+)
+const productStatusFormOptions = computed(() =>
+  findFormOptionGroup(optionGroups.value, 'productStatus'),
+)
+const interestModeFormOptions = computed(() =>
+  findFormOptionGroup(optionGroups.value, 'interestMode'),
+)
+const rewardModeFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'rewardMode'))
+const yesNoFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'yesNo'))
 const loading = ref(false)
 const submitLoading = ref(false)
 const rows = ref<StakeProduct[]>([])

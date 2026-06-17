@@ -193,11 +193,14 @@
         </el-form-item>
 
         <el-form-item :label="t('system.menuType')" prop="menuType">
-          <el-radio-group v-model="formData.menuType" @change="handleMenuTypeChange">
-            <el-radio v-for="item in menuTypeOptions" :key="item.value" :label="item.value">
-              {{ getOptionLabel(t, item.code, item.value) }}
-            </el-radio>
-          </el-radio-group>
+          <el-select v-model="formData.menuType" style="width: 100%" @change="handleMenuTypeChange">
+            <el-option
+              v-for="item in menuTypeFormOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
 
         <el-row v-if="formData.menuType !== 3" :gutter="16">
@@ -296,7 +299,7 @@
             <el-form-item :label="t('common.visible')" prop="visible">
               <el-select v-model="formData.visible" style="width: 100%">
                 <el-option
-                  v-for="item in visibleSelectOptions"
+                  v-for="item in visibleFormOptions"
                   :key="item.value"
                   :label="visibleOptionLabel(item.value, item.code)"
                   :value="item.value"
@@ -309,7 +312,7 @@
             <el-form-item :label="t('common.enabled')" prop="enabled">
               <el-select v-model="formData.enabled" style="width: 100%">
                 <el-option
-                  v-for="item in enabledSelectOptions"
+                  v-for="item in enabledFormOptions"
                   :key="item.value"
                   :label="enabledOptionLabel(item.value, item.code)"
                   :value="item.value"
@@ -346,7 +349,12 @@ import { menuService, type OptionGroup } from '@/services'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import type {
   SysMenuCreateReq,
   SysMenuItem,
@@ -384,10 +392,19 @@ const iconMap = ElementPlusIconsVue as Record<string, Component>
 const iconNames = Object.keys(iconMap).sort()
 const optionGroups = ref<OptionGroup[]>([])
 const menuTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'menuType'))
-const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
-const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
+const menuTypeFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'menuType'))
 const enabledSelectOptions = computed(() => {
-  const options = enabledOptions.value.filter((item) => item.value !== 0)
+  const options = findOptionGroup(optionGroups.value, 'enabled')
+  return options.length
+    ? options
+    : [
+        { value: 0, code: 'COMMON_STATUS_UNKNOWN' },
+        { value: 1, code: 'COMMON_STATUS_ENABLED' },
+        { value: 2, code: 'COMMON_STATUS_DISABLED' },
+      ]
+})
+const enabledFormOptions = computed(() => {
+  const options = findFormOptionGroup(optionGroups.value, 'enabled')
   return options.length
     ? options
     : [
@@ -396,7 +413,17 @@ const enabledSelectOptions = computed(() => {
       ]
 })
 const visibleSelectOptions = computed(() => {
-  const options = visibleOptions.value.filter((item) => item.value !== 0)
+  const options = findOptionGroup(optionGroups.value, 'visible')
+  return options.length
+    ? options
+    : [
+        { value: 0, code: 'SWITCH_UNKNOWN' },
+        { value: 1, code: 'SWITCH_ON' },
+        { value: 2, code: 'SWITCH_OFF' },
+      ]
+})
+const visibleFormOptions = computed(() => {
+  const options = findFormOptionGroup(optionGroups.value, 'visible')
   return options.length
     ? options
     : [

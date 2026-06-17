@@ -223,7 +223,7 @@
                 style="width: 100%"
               >
                 <el-option
-                  v-for="item in categoryTypeOptions"
+                  v-for="item in categoryTypeFormOptions"
                   :key="item.value"
                   :label="getOptionLabel(t, item.code, item.value)"
                   :value="item.value"
@@ -338,20 +338,26 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
-              <el-radio-group v-model="form.enabled">
-                <el-radio v-for="item in enabledFormOptions" :key="item.value" :value="item.value">
-                  {{ getOptionLabel(t, item.code, item.value) }}
-                </el-radio>
-              </el-radio-group>
+              <el-select v-model="form.enabled" style="width: 100%">
+                <el-option
+                  v-for="item in enabledFormOptions"
+                  :key="item.value"
+                  :label="getOptionLabel(t, item.code, item.value)"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('itick.appVisible')" prop="appVisible">
-              <el-radio-group v-model="form.appVisible">
-                <el-radio v-for="item in visibleFormOptions" :key="item.value" :value="item.value">
-                  {{ getOptionLabel(t, item.code, item.value) }}
-                </el-radio>
-              </el-radio-group>
+              <el-select v-model="form.appVisible" style="width: 100%">
+                <el-option
+                  v-for="item in visibleFormOptions"
+                  :key="item.value"
+                  :label="getOptionLabel(t, item.code, item.value)"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -359,15 +365,14 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="t('itick.syncPriority')" prop="syncPriority">
-              <el-radio-group v-model="form.syncPriority">
-                <el-radio
+              <el-select v-model="form.syncPriority" style="width: 100%">
+                <el-option
                   v-for="item in syncPriorityFormOptions"
                   :key="item.value"
+                  :label="getOptionLabel(t, item.code, item.value)"
                   :value="item.value"
-                >
-                  {{ getOptionLabel(t, item.code, item.value) }}
-                </el-radio>
-              </el-radio-group>
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -536,7 +541,12 @@ import {
   type ListProductsReq,
 } from '@/services/itick/ProductsService'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 type FormData = {
@@ -615,11 +625,13 @@ const formMode = ref<'add' | 'edit'>('add')
 const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'categoryType'))
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
-const syncPriorityOptions = computed(() => findOptionGroup(optionGroups.value, 'syncPriority'))
-const enabledFormOptions = computed(() => enabledOptions.value.filter((item) => item.value !== 0))
-const visibleFormOptions = computed(() => visibleOptions.value.filter((item) => item.value !== 0))
+const categoryTypeFormOptions = computed(() =>
+  findFormOptionGroup(optionGroups.value, 'categoryType'),
+)
+const enabledFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'enabled'))
+const visibleFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'visible'))
 const syncPriorityFormOptions = computed(() =>
-  syncPriorityOptions.value.filter((item) => item.value !== 0),
+  findFormOptionGroup(optionGroups.value, 'syncPriority'),
 )
 const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
 const getSyncPriorityLabel = (value?: number) =>

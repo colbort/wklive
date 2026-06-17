@@ -153,7 +153,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="form.enabled" style="width: 100%">
             <el-option
-              v-for="item in enabledOptions"
+              v-for="item in enabledFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -163,7 +163,7 @@
         <el-form-item :label="t('common.default')">
           <el-select v-model="form.isDefault" style="width: 100%">
             <el-option
-              v-for="item in yesNoOptions"
+              v-for="item in yesNoFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -202,7 +202,7 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { catalogService, tenantService, type OptionGroup, type TenantPayAccount } from '@/services'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
@@ -218,8 +218,8 @@ const detailVisible = ref(false)
 const detailData = ref<Record<string, unknown>>({})
 
 const optionGroups = ref<OptionGroup[]>([])
-const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
-const yesNoOptions = computed(() => findOptionGroup(optionGroups.value, 'yesNo'))
+const enabledFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'enabled'))
+const yesNoFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'yesNo'))
 
 const tenantPlatformChecking = ref(false)
 const platformChecking = ref(false)

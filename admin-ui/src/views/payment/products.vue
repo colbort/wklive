@@ -111,7 +111,7 @@
         <el-form-item :label="t('payment.sceneType')">
           <el-select v-model="productForm.sceneType" style="width: 100%">
             <el-option
-              v-for="item in sceneTypeOptions"
+              v-for="item in sceneTypeFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -124,7 +124,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="productForm.enabled" style="width: 100%">
             <el-option
-              v-for="item in enabledOptions"
+              v-for="item in enabledFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -164,7 +164,7 @@ import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { catalogService, type OptionGroup, type PayProduct } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
@@ -182,8 +182,8 @@ const platformChecking = ref(false)
 const platformVerified = ref(false)
 const verifiedPlatformId = ref(0)
 const optionGroups = ref<OptionGroup[]>([])
-const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
-const sceneTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'sceneType'))
+const enabledFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'enabled'))
+const sceneTypeFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'sceneType'))
 const isSubmitDisabled = computed(
   () =>
     !productForm.id &&

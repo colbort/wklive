@@ -154,7 +154,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="channelForm.enabled" style="width: 100%">
             <el-option
-              v-for="item in enabledOptions"
+              v-for="item in enabledFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -164,7 +164,7 @@
         <el-form-item :label="t('common.visible')">
           <el-select v-model="channelForm.visible" style="width: 100%">
             <el-option
-              v-for="item in visibleOptions"
+              v-for="item in visibleFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -174,7 +174,7 @@
         <el-form-item :label="t('payment.feeType')">
           <el-select v-model="channelForm.feeType" style="width: 100%">
             <el-option
-              v-for="item in feeTypeOptions"
+              v-for="item in feeTypeFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -221,7 +221,7 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { catalogService, tenantService, type OptionGroup, type TenantPayChannel } from '@/services'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -237,11 +237,15 @@ const detailData = ref<TenantPayChannel | null>(null)
 const channelDialogVisible = ref(false)
 
 const optionGroups = ref<OptionGroup[]>([])
-const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
-const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
-const feeTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'feeType'))
+const enabledFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'enabled'))
+const visibleFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'visible'))
+const feeTypeFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'feeType'))
 
-const channelQuery = reactive({ tenantId: 0, platformId: 0, keyword: '' })
+const channelQuery = reactive({
+  tenantId: undefined as number | undefined,
+  platformId: undefined as number | undefined,
+  keyword: '',
+})
 
 const channelForm = reactive({
   id: 0,

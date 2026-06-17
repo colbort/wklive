@@ -106,7 +106,7 @@
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="ruleForm.enabled" style="width: 100%">
             <el-option
-              v-for="item in enabledOptions"
+              v-for="item in enabledFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -122,7 +122,7 @@
         <el-form-item :label="t('payment.allowNewUser')">
           <el-select v-model="ruleForm.allowNewUser" style="width: 100%">
             <el-option
-              v-for="item in yesNoOptions"
+              v-for="item in yesNoFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -132,7 +132,7 @@
         <el-form-item :label="t('payment.allowOldUser')">
           <el-select v-model="ruleForm.allowOldUser" style="width: 100%">
             <el-option
-              v-for="item in yesNoOptions"
+              v-for="item in yesNoFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -172,7 +172,7 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { tenantService, type OptionGroup, type TenantPayChannelRule } from '@/services'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -188,10 +188,13 @@ const detailData = ref<Record<string, unknown>>({})
 const ruleDialogVisible = ref(false)
 
 const optionGroups = ref<OptionGroup[]>([])
-const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
-const yesNoOptions = computed(() => findOptionGroup(optionGroups.value, 'yesNo'))
+const enabledFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'enabled'))
+const yesNoFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'yesNo'))
 
-const ruleQuery = reactive({ tenantId: 0, channelId: 0 })
+const ruleQuery = reactive({
+  tenantId: undefined as number | undefined,
+  channelId: undefined as number | undefined,
+})
 
 const ruleForm = reactive({
   id: 0,

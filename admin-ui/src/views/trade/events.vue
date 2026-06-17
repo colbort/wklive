@@ -257,6 +257,7 @@ const fallbackOptions: Record<string, OptionItem[]> = {
     { value: 4, code: 'MARKET_TYPE_COIN_CONTRACT' },
   ],
   eventStatus: [
+    { value: 0, code: 'EVENT_STATUS_UNKNOWN' },
     { value: 1, code: 'EVENT_STATUS_PENDING' },
     { value: 2, code: 'EVENT_STATUS_SUCCESS' },
     { value: 3, code: 'EVENT_STATUS_FAILED' },
@@ -286,9 +287,7 @@ const query = reactive<EventQuery>({
 })
 
 const detailTitle = computed(() => detailData.value?.eventNo || t('option.detail'))
-const eventStatusOptions = computed(() =>
-  getOptions('eventStatus').filter((item) => item.value !== 0),
-)
+const eventStatusOptions = computed(() => getOptions('eventStatus'))
 
 function getOptions(key: string) {
   const options = findOptionGroup(optionGroups.value, key)
@@ -353,7 +352,7 @@ const loadList = async () => {
       tenantId: query.tenantId,
       bizType: query.bizType || undefined,
       bizId: query.bizId || undefined,
-      eventStatus: query.eventStatus,
+      eventStatus: query.eventStatus === 0 ? undefined : query.eventStatus,
       timeRange: buildTimeRange(),
       cursor: pagination.cursor,
       limit: pagination.limit,

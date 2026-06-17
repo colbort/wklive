@@ -12,7 +12,12 @@ import {
   type UpdateMemberUserBankReq,
 } from '@/services'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -37,6 +42,7 @@ const userCheckName = ref('')
 const userCheckUserNo = ref('')
 const optionGroups = ref<OptionGroup[]>([])
 const bankStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'bankStatus'))
+const bankStatusFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'bankStatus'))
 
 const query = reactive({
   tenantId: undefined as number | undefined,
@@ -604,7 +610,7 @@ onMounted(fetchOptions)
         <el-form-item :label="t('users.enabled')">
           <el-select v-model="form.enabled" style="width: 100%">
             <el-option
-              v-for="item in bankStatusOptions"
+              v-for="item in bankStatusFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
@@ -633,7 +639,7 @@ onMounted(fetchOptions)
         <el-form-item :label="t('users.enabled')">
           <el-select v-model="enabledForm.enabled" style="width: 100%">
             <el-option
-              v-for="item in bankStatusOptions"
+              v-for="item in bankStatusFormOptions"
               :key="item.value"
               :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"

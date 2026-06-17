@@ -32,7 +32,6 @@
           clearable
           @change="loadList"
         >
-          <el-option :label="t('common.all')" :value="0" />
           <el-option
             v-for="item in enabledSelectOptions"
             :key="item.value"
@@ -219,7 +218,7 @@
             <el-form-item :label="t('system.enabled')" prop="enabled">
               <el-select v-model="formData.enabled" style="width: 100%">
                 <el-option
-                  v-for="item in enabledSelectOptions"
+                  v-for="item in enabledFormOptions"
                   :key="item.value"
                   :label="enabledOptionLabel(item.value, item.code)"
                   :value="item.value"
@@ -281,14 +280,29 @@ import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import {
+  findFormOptionGroup,
+  findOptionGroup,
+  getOptionLabel,
+  getOptionValueLabel,
+} from '@/utils/options'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const optionGroups = ref<OptionGroup[]>([])
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const enabledSelectOptions = computed(() => {
-  const options = enabledOptions.value.filter((item) => item.value !== 0)
+  const options = enabledOptions.value
+  return options.length
+    ? options
+    : [
+        { value: 0, code: 'COMMON_STATUS_UNKNOWN' },
+        { value: 1, code: 'COMMON_STATUS_ENABLED' },
+        { value: 2, code: 'COMMON_STATUS_DISABLED' },
+      ]
+})
+const enabledFormOptions = computed(() => {
+  const options = findFormOptionGroup(optionGroups.value, 'enabled')
   return options.length
     ? options
     : [
