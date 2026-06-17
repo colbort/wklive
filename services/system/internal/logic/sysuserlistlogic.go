@@ -7,6 +7,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,9 +32,11 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 	// 2️⃣ 查询用户分页
 	items, total, err := l.svcCtx.UserModel.FindPage(
 		l.ctx,
-		in.Keyword,
-		tenantId,
-		commonStatusToModel(in.Enabled),
+		models.UserPageFilter{
+			Keyword:  in.Keyword,
+			TenantId: tenantId,
+			Enabled:  commonStatusToModel(in.Enabled),
+		},
 		in.Page.Cursor,
 		in.Page.Limit,
 	)

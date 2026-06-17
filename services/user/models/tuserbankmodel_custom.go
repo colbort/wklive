@@ -6,17 +6,22 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type UserBankModel interface {
-	tUserBankModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, cursor int64, limit int64) ([]*TUserBank, int64, error)
+type UserBankPageFilter struct {
+	TenantId int64
+	UserId   int64
 }
 
-func (m *defaultTUserBankModel) FindPage(ctx context.Context, tenantId int64, userId int64, cursor int64, limit int64) ([]*TUserBank, int64, error) {
+type UserBankModel interface {
+	tUserBankModel
+	FindPage(ctx context.Context, filter UserBankPageFilter, cursor int64, limit int64) ([]*TUserBank, int64, error)
+}
+
+func (m *defaultTUserBankModel) FindPage(ctx context.Context, filter UserBankPageFilter, cursor int64, limit int64) ([]*TUserBank, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("user_id", userId)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
 
 	where := builder.Where()
 	args := builder.Args()

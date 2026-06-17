@@ -50,7 +50,10 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-	userBanks, _, err := l.svcCtx.UserBankModel.FindPage(l.ctx, tuser.TenantId, in.UserId, 0, 100)
+	userBanks, _, err := l.svcCtx.UserBankModel.FindPage(l.ctx, models.UserBankPageFilter{
+		TenantId: tuser.TenantId,
+		UserId:   in.UserId,
+	}, 0, 100)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

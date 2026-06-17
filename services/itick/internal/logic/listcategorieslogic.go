@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
+	"wklive/services/itick/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +27,11 @@ func NewListCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 
 // 产品类型列表
 func (l *ListCategoriesLogic) ListCategories(in *itick.ListCategoriesReq) (*itick.ListCategoriesResp, error) {
-	items, count, err := l.svcCtx.ItickCategoryModel.FindPage(l.ctx, int32(in.CategoryType), int32(in.Enabled), int32(in.AppVisible), in.Page.Cursor, in.Page.Limit)
+	items, count, err := l.svcCtx.ItickCategoryModel.FindPage(l.ctx, models.ItickCategoryPageFilter{
+		CategoryType: int32(in.CategoryType),
+		Enabled:      int32(in.Enabled),
+		AppVisible:   int32(in.AppVisible),
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

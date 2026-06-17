@@ -6,23 +6,28 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type LoginLogPageFilter struct {
+	Username string
+	Success  int64
+}
+
 type LoginLogModel interface {
 	sysLoginLogModel
-	FindPage(ctx context.Context, username string, success int64, cursor, limit int64) ([]*SysLoginLog, int64, error)
+	FindPage(ctx context.Context, filter LoginLogPageFilter, cursor int64, limit int64) ([]*SysLoginLog, int64, error)
 }
 
 func (m *defaultSysLoginLogModel) FindPage(
 	ctx context.Context,
-	username string,
-	success int64,
-	cursor, limit int64,
+	filter LoginLogPageFilter,
+	cursor int64,
+	limit int64,
 ) ([]*SysLoginLog, int64, error) {
 
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.LikeString("username", "%"+username+"%")
-	builder.EqInt64("success", success)
+	builder.LikeString("username", filter.Username)
+	builder.EqInt64("success", filter.Success)
 
 	where := builder.Where()
 	args := builder.Args()

@@ -8,6 +8,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
+	"wklive/services/staking/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -39,9 +40,24 @@ func (l *OrderListLogic) OrderList(in *staking.AdminOrderListReq) (*staking.Admi
 		cursor, limit = page.Cursor, page.Limit
 	}
 	items, total, err := l.svcCtx.StakeOrderModel.FindPage(
-		l.ctx, in.TenantId, cursor, limit, in.UserId, in.ProductId, in.OrderNo, in.ProductName, in.CoinSymbol,
-		int64(in.Status), int64(in.RedeemType), int64(in.Source),
-		in.StartTimesBegin, in.StartTimesEnd, in.EndTimesBegin, in.EndTimesEnd,
+		l.ctx,
+		models.StakeOrderPageFilter{
+			TenantId:    in.TenantId,
+			UserId:      in.UserId,
+			ProductId:   in.ProductId,
+			OrderNo:     in.OrderNo,
+			ProductName: in.ProductName,
+			CoinSymbol:  in.CoinSymbol,
+			Status:      int64(in.Status),
+			RedeemType:  int64(in.RedeemType),
+			Source:      int64(in.Source),
+			StartBegin:  in.StartTimesBegin,
+			StartEnd:    in.StartTimesEnd,
+			EndBegin:    in.EndTimesBegin,
+			EndEnd:      in.EndTimesEnd,
+		},
+		cursor,
+		limit,
 	)
 	if err != nil {
 		return nil, err

@@ -3,29 +3,36 @@ package models
 import (
 	"context"
 	"fmt"
-	"strings"
 	"wklive/common/sqlutil"
 )
 
+type VerificationCodeRecordPageFilter struct {
+	TenantId int64
+	Channel  int64
+	Target   string
+	Scene    int64
+	Status   int64
+}
+
 type VerificationCodeRecordModel interface {
 	sysVerificationCodeRecordModel
-	FindPage(ctx context.Context, tenantId, channel int64, target string, scene, status, cursor, limit int64) ([]*SysVerificationCodeRecord, int64, error)
+	FindPage(ctx context.Context, filter VerificationCodeRecordPageFilter, cursor int64, limit int64) ([]*SysVerificationCodeRecord, int64, error)
 }
 
 func (m *defaultSysVerificationCodeRecordModel) FindPage(
 	ctx context.Context,
-	tenantId, channel int64,
-	target string,
-	scene, status, cursor, limit int64,
+	filter VerificationCodeRecordPageFilter,
+	cursor int64,
+	limit int64,
 ) ([]*SysVerificationCodeRecord, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("channel", channel)
-	builder.LikeString("target", "%"+strings.TrimSpace(target)+"%")
-	builder.EqInt64("scene", scene)
-	builder.EqInt64("status", status)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("channel", filter.Channel)
+	builder.LikeString("target", filter.Target)
+	builder.EqInt64("scene", filter.Scene)
+	builder.EqInt64("status", filter.Status)
 
 	where := builder.Where()
 	args := builder.Args()

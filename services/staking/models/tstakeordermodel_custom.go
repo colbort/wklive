@@ -8,37 +8,53 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type StakeOrderPageFilter struct {
+	TenantId    int64
+	UserId      int64
+	ProductId   int64
+	OrderNo     string
+	ProductName string
+	CoinSymbol  string
+	Status      int64
+	RedeemType  int64
+	Source      int64
+	StartBegin  int64
+	StartEnd    int64
+	EndBegin    int64
+	EndEnd      int64
+}
+
 type StakeOrderModel interface {
 	tStakeOrderModel
-	FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, productID int64, orderNo, productName, coinSymbol string, status, redeemType, source int64, startBegin, startEnd, endBegin, endEnd int64) ([]*TStakeOrder, int64, error)
+	FindPage(ctx context.Context, filter StakeOrderPageFilter, cursor int64, limit int64) ([]*TStakeOrder, int64, error)
 	SumStakeAmountByStatuses(ctx context.Context, tenantID, user_id, productID int64, statuses []int64) (float64, error)
 }
 
-func (m *defaultTStakeOrderModel) FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, productID int64, orderNo, productName, coinSymbol string, status, redeemType, source int64, startBegin, startEnd, endBegin, endEnd int64) ([]*TStakeOrder, int64, error) {
+func (m *defaultTStakeOrderModel) FindPage(ctx context.Context, filter StakeOrderPageFilter, cursor int64, limit int64) ([]*TStakeOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	if tenantID > 0 {
-		builder.And("tenant_id = ?", tenantID)
+	if filter.TenantId > 0 {
+		builder.And("tenant_id = ?", filter.TenantId)
 	}
-	if user_id > 0 {
-		builder.And("user_id = ?", user_id)
+	if filter.UserId > 0 {
+		builder.And("user_id = ?", filter.UserId)
 	}
-	if productID > 0 {
-		builder.And("product_id = ?", productID)
+	if filter.ProductId > 0 {
+		builder.And("product_id = ?", filter.ProductId)
 	}
-	builder.EqString("order_no", orderNo)
-	if productName != "" {
-		builder.LikeString("product_name", "%"+productName+"%")
+	builder.EqString("order_no", filter.OrderNo)
+	if filter.ProductName != "" {
+		builder.LikeString("product_name", filter.ProductName)
 	}
-	builder.EqString("coin_symbol", coinSymbol)
-	builder.EqInt64("status", status)
-	builder.EqInt64("redeem_type", redeemType)
-	builder.EqInt64("source", source)
-	builder.GteInt64("start_times", startBegin)
-	builder.LteInt64("start_times", startEnd)
-	builder.GteInt64("end_times", endBegin)
-	builder.LteInt64("end_times", endEnd)
+	builder.EqString("coin_symbol", filter.CoinSymbol)
+	builder.EqInt64("status", filter.Status)
+	builder.EqInt64("redeem_type", filter.RedeemType)
+	builder.EqInt64("source", filter.Source)
+	builder.GteInt64("start_times", filter.StartBegin)
+	builder.LteInt64("start_times", filter.StartEnd)
+	builder.GteInt64("end_times", filter.EndBegin)
+	builder.LteInt64("end_times", filter.EndEnd)
 
 	where := builder.Where()
 	args := builder.Args()

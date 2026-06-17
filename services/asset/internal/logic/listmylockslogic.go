@@ -7,6 +7,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -35,7 +36,13 @@ func (l *ListMyLocksLogic) ListMyLocks(in *asset.ListMyLocksReq) (*asset.ListMyL
 	if err != nil {
 		return nil, err
 	}
-	items, total, err := l.svcCtx.AssetLockModel.FindPage(l.ctx, tenantId, userId, int64(in.WalletType), in.Coin, "", "", int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.AssetLockModel.FindPage(l.ctx, models.AssetLockPageFilter{
+		TenantId:   tenantId,
+		UserId:     userId,
+		WalletType: int64(in.WalletType),
+		Coin:       in.Coin,
+		Status:     int64(in.Status),
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

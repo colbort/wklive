@@ -36,10 +36,12 @@ func (l *ListTenantPayPlatformsLogic) ListTenantPayPlatforms(in *payment.ListTen
 	}
 	tenantPlatforms, total, err := l.svcCtx.TenantPayPlatformModel.FindPage(
 		l.ctx,
-		in.TenantId,
-		in.PlatformId,
-		int64(in.Enabled),
-		int64(in.OpenStatus),
+		models.TenantPayPlatformPageFilter{
+			TenantId:   in.TenantId,
+			PlatformId: in.PlatformId,
+			Enabled:    int64(in.Enabled),
+			OpenStatus: int64(in.OpenStatus),
+		},
 		in.Page.Cursor,
 		in.Page.Limit,
 	)

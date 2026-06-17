@@ -62,7 +62,12 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 	if contractCfg != nil {
 		resp.Data.Contract = contractSymbolToProto(contractCfg)
 	}
-	configs, _, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, tenantId, in.SymbolId, item.MarketType, 0, 1, 0, 100)
+	configs, _, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
+		TenantId:   tenantId,
+		SymbolId:   in.SymbolId,
+		MarketType: item.MarketType,
+		Enabled:    1,
+	}, 0, 100)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

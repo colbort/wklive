@@ -7,21 +7,29 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type TradeSymbolLeverageConfigModel interface {
-	tTradeSymbolLeverageConfigModel
-	FindPage(ctx context.Context, tenantId int64, symbolId int64, marketType int64, marginMode int64, enabled int64, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error)
+type TradeSymbolLeverageConfigPageFilter struct {
+	TenantId   int64
+	SymbolId   int64
+	MarketType int64
+	MarginMode int64
+	Enabled    int64
 }
 
-func (m *defaultTTradeSymbolLeverageConfigModel) FindPage(ctx context.Context, tenantId int64, symbolId int64, marketType int64, marginMode int64, enabled int64, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error) {
+type TradeSymbolLeverageConfigModel interface {
+	tTradeSymbolLeverageConfigModel
+	FindPage(ctx context.Context, filter TradeSymbolLeverageConfigPageFilter, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error)
+}
+
+func (m *defaultTTradeSymbolLeverageConfigModel) FindPage(ctx context.Context, filter TradeSymbolLeverageConfigPageFilter, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("symbol_id", symbolId)
-	builder.EqInt64("market_type", marketType)
-	builder.EqInt64("margin_mode", marginMode)
-	if enabled > 0 {
-		builder.And("enabled = ?", enabled)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("symbol_id", filter.SymbolId)
+	builder.EqInt64("market_type", filter.MarketType)
+	builder.EqInt64("margin_mode", filter.MarginMode)
+	if filter.Enabled > 0 {
+		builder.And("enabled = ?", filter.Enabled)
 	}
 
 	where := builder.Where()

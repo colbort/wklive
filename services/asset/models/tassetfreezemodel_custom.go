@@ -10,26 +10,36 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
+type AssetFreezePageFilter struct {
+	TenantId   int64
+	UserId     int64
+	WalletType int64
+	Coin       string
+	BizType    string
+	BizNo      string
+	Status     int64
+}
+
 type AssetFreezeModel interface {
 	tAssetFreezeModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, bizNo string, status int64, cursor int64, limit int64) ([]*TAssetFreeze, int64, error)
+	FindPage(ctx context.Context, filter AssetFreezePageFilter, cursor int64, limit int64) ([]*TAssetFreeze, int64, error)
 	// 解冻时更新冻结记录
 	UpdateUnfreeze(ctx context.Context, freezeNo string, amount float64, updateTime int64) (bool, error)
 	// 从冻结里扣减时更新冻结记录
 	UpdateDeduct(ctx context.Context, freezeNo string, amount float64, updateTime int64) (bool, error)
 }
 
-func (m *defaultTAssetFreezeModel) FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, bizNo string, status int64, cursor int64, limit int64) ([]*TAssetFreeze, int64, error) {
+func (m *defaultTAssetFreezeModel) FindPage(ctx context.Context, filter AssetFreezePageFilter, cursor int64, limit int64) ([]*TAssetFreeze, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("user_id", userId)
-	builder.EqInt64("wallet_type", walletType)
-	builder.EqString("coin", coin)
-	builder.EqString("biz_type", bizType)
-	builder.EqString("biz_no", bizNo)
-	builder.EqInt64("status", status)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
+	builder.EqInt64("wallet_type", filter.WalletType)
+	builder.EqString("coin", filter.Coin)
+	builder.EqString("biz_type", filter.BizType)
+	builder.EqString("biz_no", filter.BizNo)
+	builder.EqInt64("status", filter.Status)
 
 	where := builder.Where()
 	args := builder.Args()

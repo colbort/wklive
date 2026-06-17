@@ -7,24 +7,36 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type WithdrawNotifyLogModel interface {
-	tWithdrawNotifyLogModel
-	FindPage(ctx context.Context, tenantId int64, orderNo string, orderId int64, platformId int64, channelId int64, notifyStatus int64, signResult int64, createTimeStart int64, createTimeEnd int64, cursor int64, limit int64) ([]*TWithdrawNotifyLog, int64, error)
+type WithdrawNotifyLogPageFilter struct {
+	TenantId        int64
+	OrderNo         string
+	OrderId         int64
+	PlatformId      int64
+	ChannelId       int64
+	NotifyStatus    int64
+	SignResult      int64
+	CreateTimeStart int64
+	CreateTimeEnd   int64
 }
 
-func (m *defaultTWithdrawNotifyLogModel) FindPage(ctx context.Context, tenantId int64, orderNo string, orderId int64, platformId int64, channelId int64, notifyStatus int64, signResult int64, createTimeStart int64, createTimeEnd int64, cursor int64, limit int64) ([]*TWithdrawNotifyLog, int64, error) {
+type WithdrawNotifyLogModel interface {
+	tWithdrawNotifyLogModel
+	FindPage(ctx context.Context, filter WithdrawNotifyLogPageFilter, cursor int64, limit int64) ([]*TWithdrawNotifyLog, int64, error)
+}
+
+func (m *defaultTWithdrawNotifyLogModel) FindPage(ctx context.Context, filter WithdrawNotifyLogPageFilter, cursor int64, limit int64) ([]*TWithdrawNotifyLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqString("order_no", orderNo)
-	builder.EqInt64("order_id", orderId)
-	builder.EqInt64("platform_id", platformId)
-	builder.EqInt64("channel_id", channelId)
-	builder.EqInt64("notify_status", notifyStatus)
-	builder.EqInt64("sign_result", signResult)
-	builder.GteInt64("create_times", createTimeStart)
-	builder.LteInt64("create_times", createTimeEnd)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqString("order_no", filter.OrderNo)
+	builder.EqInt64("order_id", filter.OrderId)
+	builder.EqInt64("platform_id", filter.PlatformId)
+	builder.EqInt64("channel_id", filter.ChannelId)
+	builder.EqInt64("notify_status", filter.NotifyStatus)
+	builder.EqInt64("sign_result", filter.SignResult)
+	builder.GteInt64("create_times", filter.CreateTimeStart)
+	builder.LteInt64("create_times", filter.CreateTimeEnd)
 
 	where := builder.Where()
 	args := builder.Args()

@@ -36,10 +36,11 @@ func (l *ListWithdrawOrdersLogic) ListWithdrawOrders(in *payment.ListWithdrawOrd
 	}
 	orders, total, err := l.svcCtx.WithdrawOrderModel.FindPage(
 		l.ctx,
-		in.TenantId,
-		in.UserId,
-		in.OrderNo,
-		0,
+		models.WithdrawOrderPageFilter{
+			TenantId: in.TenantId,
+			UserId:   in.UserId,
+			OrderNo:  in.OrderNo,
+		},
 		in.Page.Cursor,
 		in.Page.Limit,
 	)

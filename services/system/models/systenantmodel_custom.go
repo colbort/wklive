@@ -6,25 +6,34 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type TenantPageFilter struct {
+	Keyword      string
+	Status       int64
+	TenantName   string
+	TenantCode   string
+	ContactName  string
+	ContactPhone string
+}
+
 type TenantModel interface {
 	sysTenantModel
-	FindPage(ctx context.Context, keyword string, status int64, tenantName string, tenantCode string, contactName string, contactPhone string, cursor int64, limit int64) ([]*SysTenant, int64, error)
+	FindPage(ctx context.Context, filter TenantPageFilter, cursor int64, limit int64) ([]*SysTenant, int64, error)
 	FindByTenantCode(ctx context.Context, tenantCode string) (*SysTenant, error)
 }
 
-func (m *customSysTenantModel) FindPage(ctx context.Context, keyword string, status int64, tenantName string, tenantCode string, contactName string, contactPhone string, cursor int64, limit int64) ([]*SysTenant, int64, error) {
+func (m *customSysTenantModel) FindPage(ctx context.Context, filter TenantPageFilter, cursor int64, limit int64) ([]*SysTenant, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	if keyword != "" {
-		like := "%" + keyword + "%"
+	if filter.Keyword != "" {
+		like := "%" + filter.Keyword + "%"
 		builder.And("(tenant_name LIKE ? OR tenant_code LIKE ? OR contact_name LIKE ? OR contact_phone LIKE ?)", like, like, like, like)
 	}
-	builder.EqInt64("status", status)
-	builder.LikeString("tenant_name", "%"+tenantName+"%")
-	builder.LikeString("tenant_code", "%"+tenantCode+"%")
-	builder.LikeString("contact_name", "%"+contactName+"%")
-	builder.LikeString("contact_phone", "%"+contactPhone+"%")
+	builder.EqInt64("status", filter.Status)
+	builder.EqString("tenant_name", filter.TenantName)
+	builder.EqString("tenant_code", filter.TenantCode)
+	builder.EqString("contact_name", filter.ContactName)
+	builder.EqString("contact_phone", filter.ContactPhone)
 
 	where := builder.Where()
 	args := builder.Args()

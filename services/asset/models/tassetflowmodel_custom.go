@@ -6,24 +6,36 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type AssetFlowModel interface {
-	tAssetFlowModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, sceneType string, bizNo string, startTime int64, endTime int64, cursor int64, limit int64) ([]*TAssetFlow, int64, error)
+type AssetFlowPageFilter struct {
+	TenantId   int64
+	UserId     int64
+	WalletType int64
+	Coin       string
+	BizType    string
+	SceneType  string
+	BizNo      string
+	StartTime  int64
+	EndTime    int64
 }
 
-func (m *defaultTAssetFlowModel) FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, sceneType string, bizNo string, startTime int64, endTime int64, cursor int64, limit int64) ([]*TAssetFlow, int64, error) {
+type AssetFlowModel interface {
+	tAssetFlowModel
+	FindPage(ctx context.Context, filter AssetFlowPageFilter, cursor int64, limit int64) ([]*TAssetFlow, int64, error)
+}
+
+func (m *defaultTAssetFlowModel) FindPage(ctx context.Context, filter AssetFlowPageFilter, cursor int64, limit int64) ([]*TAssetFlow, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("user_id", userId)
-	builder.EqInt64("wallet_type", walletType)
-	builder.EqString("coin", coin)
-	builder.EqString("biz_type", bizType)
-	builder.EqString("scene_type", sceneType)
-	builder.EqString("biz_no", bizNo)
-	builder.GteInt64("create_times", startTime)
-	builder.LteInt64("create_times", endTime)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
+	builder.EqInt64("wallet_type", filter.WalletType)
+	builder.EqString("coin", filter.Coin)
+	builder.EqString("biz_type", filter.BizType)
+	builder.EqString("scene_type", filter.SceneType)
+	builder.EqString("biz_no", filter.BizNo)
+	builder.GteInt64("create_times", filter.StartTime)
+	builder.LteInt64("create_times", filter.EndTime)
 
 	where := builder.Where()
 	args := builder.Args()

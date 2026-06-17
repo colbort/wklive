@@ -10,10 +10,18 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
+type UserAssetPageFilter struct {
+	TenantId   int64
+	UserId     int64
+	WalletType int64
+	Coin       string
+	Enabled    int64
+}
+
 type UserAssetModel interface {
 	tUserAssetModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, enabled int64, cursor int64, limit int64) ([]*TUserAsset, int64, error)
-	FindAll(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, enabled int64) ([]*TUserAsset, error)
+	FindPage(ctx context.Context, filter UserAssetPageFilter, cursor int64, limit int64) ([]*TUserAsset, int64, error)
+	FindAll(ctx context.Context, filter UserAssetPageFilter) ([]*TUserAsset, error)
 	// 增加已有资产的可用余额，调用方需要先创建不存在的资产记录
 	AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (int64, error)
 	SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
@@ -31,15 +39,15 @@ type UserAssetModel interface {
 	UnlockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
 }
 
-func (m *defaultTUserAssetModel) FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, enabled int64, cursor int64, limit int64) ([]*TUserAsset, int64, error) {
+func (m *defaultTUserAssetModel) FindPage(ctx context.Context, filter UserAssetPageFilter, cursor int64, limit int64) ([]*TUserAsset, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("user_id", userId)
-	builder.EqInt64("wallet_type", walletType)
-	builder.EqString("coin", coin)
-	builder.EqInt64("enabled", enabled)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
+	builder.EqInt64("wallet_type", filter.WalletType)
+	builder.EqString("coin", filter.Coin)
+	builder.EqInt64("enabled", filter.Enabled)
 
 	where := builder.Where()
 	args := builder.Args()
@@ -82,13 +90,13 @@ func (m *defaultTUserAssetModel) FindPage(ctx context.Context, tenantId int64, u
 	return list, total, nil
 }
 
-func (m *defaultTUserAssetModel) FindAll(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, enabled int64) ([]*TUserAsset, error) {
+func (m *defaultTUserAssetModel) FindAll(ctx context.Context, filter UserAssetPageFilter) ([]*TUserAsset, error) {
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("user_id", userId)
-	builder.EqInt64("wallet_type", walletType)
-	builder.EqString("coin", coin)
-	builder.EqInt64("enabled", enabled)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
+	builder.EqInt64("wallet_type", filter.WalletType)
+	builder.EqString("coin", filter.Coin)
+	builder.EqInt64("enabled", filter.Enabled)
 
 	where := builder.Where()
 	args := builder.Args()

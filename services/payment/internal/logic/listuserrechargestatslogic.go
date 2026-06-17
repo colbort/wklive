@@ -36,10 +36,12 @@ func (l *ListUserRechargeStatsLogic) ListUserRechargeStats(in *payment.ListUserR
 	}
 	stats, total, err := l.svcCtx.UserRechargeStatModel.FindPage(
 		l.ctx,
-		in.TenantId,
-		in.UserId,
-		in.SuccessTotalAmountMin,
-		in.SuccessTotalAmountMax,
+		models.UserRechargeStatPageFilter{
+			TenantId:              in.TenantId,
+			UserId:                in.UserId,
+			SuccessTotalAmountMin: in.SuccessTotalAmountMin,
+			SuccessTotalAmountMax: in.SuccessTotalAmountMax,
+		},
 		in.Page.Cursor,
 		in.Page.Limit,
 	)

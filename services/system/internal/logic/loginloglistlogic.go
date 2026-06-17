@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,8 +29,10 @@ func NewLoginLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Logi
 func (l *LoginLogListLogic) LoginLogList(in *system.LoginLogListReq) (*system.LoginLogListResp, error) {
 	items, total, err := l.svcCtx.LoginLogModel.FindPage(
 		l.ctx,
-		in.Username,
-		in.Success,
+		models.LoginLogPageFilter{
+			Username: in.Username,
+			Success:  in.Success,
+		},
 		in.Page.Cursor,
 		in.Page.Limit,
 	)

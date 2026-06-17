@@ -37,7 +37,10 @@ func (l *ListMyWithdrawOrdersLogic) ListMyWithdrawOrders(in *payment.ListMyWithd
 	if err != nil {
 		return nil, err
 	}
-	items, total, err := l.svcCtx.WithdrawOrderModel.FindPage(l.ctx, tenantId, userId, "", 0, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.WithdrawOrderModel.FindPage(l.ctx, models.WithdrawOrderPageFilter{
+		TenantId: tenantId,
+		UserId:   userId,
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

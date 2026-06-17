@@ -12,10 +12,15 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
+type ItickQuotePageFilter struct {
+	Category string
+	Symbol   string
+}
+
 type ItickQuoteModel interface {
 	tItickQuoteModel
 	Upsert(ctx context.Context, data *TItickQuote) (sql.Result, error)
-	FindPage(ctx context.Context, category string, symbol string, cursor int64, limit int64) ([]*TItickQuote, int64, error)
+	FindPage(ctx context.Context, filter ItickQuotePageFilter, cursor int64, limit int64) ([]*TItickQuote, int64, error)
 	FindQuotes(ctx context.Context, data []*itick.MarketSymbol) ([]*TItickQuote, error)
 }
 
@@ -61,12 +66,12 @@ func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote)
 	}, itickQuoteMarketSymbolKey)
 }
 
-func (m *defaultTItickQuoteModel) FindPage(ctx context.Context, category string, symbol string, cursor int64, limit int64) ([]*TItickQuote, int64, error) {
+func (m *defaultTItickQuoteModel) FindPage(ctx context.Context, filter ItickQuotePageFilter, cursor int64, limit int64) ([]*TItickQuote, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqString("category", category)
-	builder.EqString("symbol", symbol)
+	builder.EqString("category", filter.Category)
+	builder.EqString("symbol", filter.Symbol)
 
 	where := builder.Where()
 	args := builder.Args()

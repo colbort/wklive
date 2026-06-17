@@ -8,12 +8,19 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type MenuPageFilter struct {
+	Keyword  string
+	MenuType int64
+	Enabled  int64
+	Visible  int64
+}
+
 type MenuModel interface {
 	sysMenuModel
 	FindByIds(ctx context.Context, ids []int64, visible int64, enabled int64) ([]*SysMenu, error)
 	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
 	ListAll(ctx context.Context) ([]*SysMenu, error)
-	FindPage(ctx context.Context, keyword string, menuType, enabled, visible, cursor, limit int64) ([]*SysMenu, int64, error)
+	FindPage(ctx context.Context, filter MenuPageFilter, cursor int64, limit int64) ([]*SysMenu, int64, error)
 	FindOneByName(ctx context.Context, name string) (*SysMenu, error)
 	FindOneByPath(ctx context.Context, path string) (*SysMenu, error)
 	FindOneByPerms(ctx context.Context, perms string) (*SysMenu, error)
@@ -70,9 +77,9 @@ func (m *defaultSysMenuModel) ListAll(ctx context.Context) ([]*SysMenu, error) {
 
 func (m *defaultSysMenuModel) FindPage(
 	ctx context.Context,
-	keyword string,
-	menuType, enabled, visible int64,
-	cursor, limit int64,
+	filter MenuPageFilter,
+	cursor int64,
+	limit int64,
 ) ([]*SysMenu, int64, error) {
 
 	if limit <= 0 {
@@ -83,13 +90,13 @@ func (m *defaultSysMenuModel) FindPage(
 	}
 
 	builder := sqlutil.NewPageQueryBuilder()
-	if keyword != "" {
-		like := "%" + keyword + "%"
+	if filter.Keyword != "" {
+		like := "%" + filter.Keyword + "%"
 		builder.And("(name LIKE ? OR code LIKE ?)", like, like)
 	}
-	builder.EqInt64("menu_type", menuType)
-	builder.EqInt64("enabled", enabled)
-	builder.EqInt64("visible", visible)
+	builder.EqInt64("menu_type", filter.MenuType)
+	builder.EqInt64("enabled", filter.Enabled)
+	builder.EqInt64("visible", filter.Visible)
 
 	where := builder.Where()
 	args := builder.Args()

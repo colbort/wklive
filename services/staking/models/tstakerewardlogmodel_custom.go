@@ -7,32 +7,44 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type StakeRewardLogModel interface {
-	tStakeRewardLogModel
-	FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, orderID, productID int64, orderNo string, rewardType, rewardStatus int64, rewardBegin, rewardEnd int64) ([]*TStakeRewardLog, int64, error)
+type StakeRewardLogPageFilter struct {
+	TenantId     int64
+	UserId       int64
+	OrderId      int64
+	ProductId    int64
+	OrderNo      string
+	RewardType   int64
+	RewardStatus int64
+	RewardBegin  int64
+	RewardEnd    int64
 }
 
-func (m *defaultTStakeRewardLogModel) FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, orderID, productID int64, orderNo string, rewardType, rewardStatus int64, rewardBegin, rewardEnd int64) ([]*TStakeRewardLog, int64, error) {
+type StakeRewardLogModel interface {
+	tStakeRewardLogModel
+	FindPage(ctx context.Context, filter StakeRewardLogPageFilter, cursor int64, limit int64) ([]*TStakeRewardLog, int64, error)
+}
+
+func (m *defaultTStakeRewardLogModel) FindPage(ctx context.Context, filter StakeRewardLogPageFilter, cursor int64, limit int64) ([]*TStakeRewardLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	if tenantID > 0 {
-		builder.And("tenant_id = ?", tenantID)
+	if filter.TenantId > 0 {
+		builder.And("tenant_id = ?", filter.TenantId)
 	}
-	if user_id > 0 {
-		builder.And("user_id = ?", user_id)
+	if filter.UserId > 0 {
+		builder.And("user_id = ?", filter.UserId)
 	}
-	if orderID > 0 {
-		builder.And("order_id = ?", orderID)
+	if filter.OrderId > 0 {
+		builder.And("order_id = ?", filter.OrderId)
 	}
-	if productID > 0 {
-		builder.And("product_id = ?", productID)
+	if filter.ProductId > 0 {
+		builder.And("product_id = ?", filter.ProductId)
 	}
-	builder.EqString("order_no", orderNo)
-	builder.EqInt64("reward_type", rewardType)
-	builder.EqInt64("reward_status", rewardStatus)
-	builder.GteInt64("reward_times", rewardBegin)
-	builder.LteInt64("reward_times", rewardEnd)
+	builder.EqString("order_no", filter.OrderNo)
+	builder.EqInt64("reward_type", filter.RewardType)
+	builder.EqInt64("reward_status", filter.RewardStatus)
+	builder.GteInt64("reward_times", filter.RewardBegin)
+	builder.LteInt64("reward_times", filter.RewardEnd)
 
 	where := builder.Where()
 	args := builder.Args()

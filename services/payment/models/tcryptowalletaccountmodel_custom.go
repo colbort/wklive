@@ -11,22 +11,30 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type CryptoWalletAccountModel interface {
-	tCryptoWalletAccountModel
-	FindPage(ctx context.Context, tenantId int64, keyword string, provider string, enabled int64, isDefault int64, cursor int64, limit int64) ([]*TCryptoWalletAccount, int64, error)
+type CryptoWalletAccountPageFilter struct {
+	TenantId  int64
+	Keyword   string
+	Provider  string
+	Enabled   int64
+	IsDefault int64
 }
 
-func (m *defaultTCryptoWalletAccountModel) FindPage(ctx context.Context, tenantId int64, keyword string, provider string, enabled int64, isDefault int64, cursor int64, limit int64) ([]*TCryptoWalletAccount, int64, error) {
+type CryptoWalletAccountModel interface {
+	tCryptoWalletAccountModel
+	FindPage(ctx context.Context, filter CryptoWalletAccountPageFilter, cursor int64, limit int64) ([]*TCryptoWalletAccount, int64, error)
+}
+
+func (m *defaultTCryptoWalletAccountModel) FindPage(ctx context.Context, filter CryptoWalletAccountPageFilter, cursor int64, limit int64) ([]*TCryptoWalletAccount, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	if keyword != "" {
-		builder.And("(account_code LIKE ? OR account_name LIKE ?)", "%"+keyword+"%", "%"+keyword+"%")
+	builder.EqInt64("tenant_id", filter.TenantId)
+	if filter.Keyword != "" {
+		builder.And("(account_code LIKE ? OR account_name LIKE ?)", "%"+filter.Keyword+"%", "%"+filter.Keyword+"%")
 	}
-	builder.EqString("provider", provider)
-	appendCryptoWalletStatusFilter(builder, enabled)
-	builder.EqInt64("is_default", isDefault)
+	builder.EqString("provider", filter.Provider)
+	appendCryptoWalletStatusFilter(builder, filter.Enabled)
+	builder.EqInt64("is_default", filter.IsDefault)
 
 	where := builder.Where()
 	args := builder.Args()

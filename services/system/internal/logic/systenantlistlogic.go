@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +27,14 @@ func NewSysTenantListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 
 // 获取租户列表
 func (l *SysTenantListLogic) SysTenantList(in *system.SysTenantListReq) (*system.SysTenantListResp, error) {
-	items, total, err := l.svcCtx.TenantMode.FindPage(l.ctx, in.Keyword, commonStatusToModel(in.Enabled), in.TenantName, in.TenantCode, in.ContactName, in.ContactPhone, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.TenantMode.FindPage(l.ctx, models.TenantPageFilter{
+		Keyword:      in.Keyword,
+		Status:       commonStatusToModel(in.Enabled),
+		TenantName:   in.TenantName,
+		TenantCode:   in.TenantCode,
+		ContactName:  in.ContactName,
+		ContactPhone: in.ContactPhone,
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

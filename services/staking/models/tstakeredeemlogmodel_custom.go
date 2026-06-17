@@ -7,33 +7,46 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type StakeRedeemLogModel interface {
-	tStakeRedeemLogModel
-	FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, orderID, productID int64, orderNo, redeemNo string, redeemType, redeemStatus int64, redeemBegin, redeemEnd int64) ([]*TStakeRedeemLog, int64, error)
+type StakeRedeemLogPageFilter struct {
+	TenantId     int64
+	UserId       int64
+	OrderId      int64
+	ProductId    int64
+	OrderNo      string
+	RedeemNo     string
+	RedeemType   int64
+	RedeemStatus int64
+	RedeemBegin  int64
+	RedeemEnd    int64
 }
 
-func (m *defaultTStakeRedeemLogModel) FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, orderID, productID int64, orderNo, redeemNo string, redeemType, redeemStatus int64, redeemBegin, redeemEnd int64) ([]*TStakeRedeemLog, int64, error) {
+type StakeRedeemLogModel interface {
+	tStakeRedeemLogModel
+	FindPage(ctx context.Context, filter StakeRedeemLogPageFilter, cursor int64, limit int64) ([]*TStakeRedeemLog, int64, error)
+}
+
+func (m *defaultTStakeRedeemLogModel) FindPage(ctx context.Context, filter StakeRedeemLogPageFilter, cursor int64, limit int64) ([]*TStakeRedeemLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	if tenantID > 0 {
-		builder.And("tenant_id = ?", tenantID)
+	if filter.TenantId > 0 {
+		builder.And("tenant_id = ?", filter.TenantId)
 	}
-	if user_id > 0 {
-		builder.And("user_id = ?", user_id)
+	if filter.UserId > 0 {
+		builder.And("user_id = ?", filter.UserId)
 	}
-	if orderID > 0 {
-		builder.And("order_id = ?", orderID)
+	if filter.OrderId > 0 {
+		builder.And("order_id = ?", filter.OrderId)
 	}
-	if productID > 0 {
-		builder.And("product_id = ?", productID)
+	if filter.ProductId > 0 {
+		builder.And("product_id = ?", filter.ProductId)
 	}
-	builder.EqString("order_no", orderNo)
-	builder.EqString("redeem_no", redeemNo)
-	builder.EqInt64("redeem_type", redeemType)
-	builder.EqInt64("redeem_status", redeemStatus)
-	builder.GteInt64("redeem_times", redeemBegin)
-	builder.LteInt64("redeem_times", redeemEnd)
+	builder.EqString("order_no", filter.OrderNo)
+	builder.EqString("redeem_no", filter.RedeemNo)
+	builder.EqInt64("redeem_type", filter.RedeemType)
+	builder.EqInt64("redeem_status", filter.RedeemStatus)
+	builder.GteInt64("redeem_times", filter.RedeemBegin)
+	builder.LteInt64("redeem_times", filter.RedeemEnd)
 
 	where := builder.Where()
 	args := builder.Args()

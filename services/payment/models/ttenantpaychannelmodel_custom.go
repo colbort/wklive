@@ -7,23 +7,32 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type TenantPayChannelModel interface {
-	tTenantPayChannelModel
-	FindPage(ctx context.Context, tenantId int64, platformId int64, productId int64, accountId int64, keyword string, enabled int64, cursor int64, limit int64) ([]*TTenantPayChannel, int64, error)
+type TenantPayChannelPageFilter struct {
+	TenantId   int64
+	PlatformId int64
+	ProductId  int64
+	AccountId  int64
+	Keyword    string
+	Enabled    int64
 }
 
-func (m *defaultTTenantPayChannelModel) FindPage(ctx context.Context, tenantId int64, platformId int64, productId int64, accountId int64, keyword string, enabled int64, cursor int64, limit int64) ([]*TTenantPayChannel, int64, error) {
+type TenantPayChannelModel interface {
+	tTenantPayChannelModel
+	FindPage(ctx context.Context, filter TenantPayChannelPageFilter, cursor int64, limit int64) ([]*TTenantPayChannel, int64, error)
+}
+
+func (m *defaultTTenantPayChannelModel) FindPage(ctx context.Context, filter TenantPayChannelPageFilter, cursor int64, limit int64) ([]*TTenantPayChannel, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("platform_id", platformId)
-	builder.EqInt64("product_id", productId)
-	builder.EqInt64("account_id", accountId)
-	if keyword != "" {
-		builder.And("(channel_code LIKE ? OR channel_name LIKE ? OR display_name LIKE ?)", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("platform_id", filter.PlatformId)
+	builder.EqInt64("product_id", filter.ProductId)
+	builder.EqInt64("account_id", filter.AccountId)
+	if filter.Keyword != "" {
+		builder.And("(channel_code LIKE ? OR channel_name LIKE ? OR display_name LIKE ?)", "%"+filter.Keyword+"%", "%"+filter.Keyword+"%", "%"+filter.Keyword+"%")
 	}
-	builder.EqInt64("enabled", enabled)
+	builder.EqInt64("enabled", filter.Enabled)
 
 	where := builder.Where()
 	args := builder.Args()

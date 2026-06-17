@@ -7,19 +7,26 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type TenantPayPlatformModel interface {
-	tTenantPayPlatformModel
-	FindPage(ctx context.Context, tenantId int64, platformId int64, enabled int64, openStatus int64, cursor int64, limit int64) ([]*TTenantPayPlatform, int64, error)
+type TenantPayPlatformPageFilter struct {
+	TenantId   int64
+	PlatformId int64
+	Enabled    int64
+	OpenStatus int64
 }
 
-func (m *defaultTTenantPayPlatformModel) FindPage(ctx context.Context, tenantId int64, platformId int64, enabled int64, openStatus int64, cursor int64, limit int64) ([]*TTenantPayPlatform, int64, error) {
+type TenantPayPlatformModel interface {
+	tTenantPayPlatformModel
+	FindPage(ctx context.Context, filter TenantPayPlatformPageFilter, cursor int64, limit int64) ([]*TTenantPayPlatform, int64, error)
+}
+
+func (m *defaultTTenantPayPlatformModel) FindPage(ctx context.Context, filter TenantPayPlatformPageFilter, cursor int64, limit int64) ([]*TTenantPayPlatform, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("platform_id", platformId)
-	builder.EqInt64("enabled", enabled)
-	builder.EqInt64("open_status", openStatus)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("platform_id", filter.PlatformId)
+	builder.EqInt64("enabled", filter.Enabled)
+	builder.EqInt64("open_status", filter.OpenStatus)
 
 	where := builder.Where()
 	args := builder.Args()

@@ -7,6 +7,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -35,7 +36,14 @@ func (l *ListMyCryptoRechargeAddressesLogic) ListMyCryptoRechargeAddresses(in *p
 	if err != nil {
 		return nil, err
 	}
-	items, _, err := l.svcCtx.CryptoRechargeAddressModel.FindPage(l.ctx, tenantId, userId, int64(in.WalletType), in.Coin, int64(in.ChainCode), "", int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED), 0, 0, 100)
+	items, _, err := l.svcCtx.CryptoRechargeAddressModel.FindPage(l.ctx, models.CryptoRechargeAddressPageFilter{
+		TenantId:   tenantId,
+		UserId:     userId,
+		WalletType: int64(in.WalletType),
+		Coin:       in.Coin,
+		ChainCode:  int64(in.ChainCode),
+		Status:     int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED),
+	}, 0, 100)
 	if err != nil {
 		return nil, err
 	}

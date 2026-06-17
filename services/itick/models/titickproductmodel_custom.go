@@ -11,24 +11,34 @@ import (
 	"github.com/zeromicro/go-zero/core/stringx"
 )
 
+type ItickProductPageFilter struct {
+	CategoryType int32
+	CategoryName string
+	Market       string
+	Keyword      string
+	Enabled      int32
+	AppVisible   int32
+	Symbol       string
+}
+
 type ItickProductModel interface {
 	tItickProductModel
-	FindPage(ctx context.Context, categoryType int32, categoryName string, market string, keyword string, enabled int32, appVisible int32, symbol string, cursor int64, limit int64) ([]*TItickProduct, int64, error)
+	FindPage(ctx context.Context, filter ItickProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error)
 	FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error)
 	Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error)
 }
 
-func (m *defaultTItickProductModel) FindPage(ctx context.Context, categoryType int32, categoryName string, market string, keyword string, enabled int32, appVisible int32, symbol string, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
+func (m *defaultTItickProductModel) FindPage(ctx context.Context, filter ItickProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("category_type", int64(categoryType))
-	builder.EqString("category_name", categoryName)
-	builder.EqString("market", market)
-	builder.EqInt64("enabled", int64(enabled))
-	builder.EqInt64("app_visible", int64(appVisible))
-	if strings.TrimSpace(symbol) != "" {
-		builder.LikeString("symbol", symbol)
+	builder.EqInt64("category_type", int64(filter.CategoryType))
+	builder.EqString("category_name", filter.CategoryName)
+	builder.EqString("market", filter.Market)
+	builder.EqInt64("enabled", int64(filter.Enabled))
+	builder.EqInt64("app_visible", int64(filter.AppVisible))
+	if strings.TrimSpace(filter.Symbol) != "" {
+		builder.LikeString("symbol", filter.Symbol)
 	}
 
 	where := builder.Where()

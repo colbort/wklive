@@ -7,19 +7,26 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type WithdrawOrderModel interface {
-	tWithdrawOrderModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, orderNo string, status int64, cursor int64, limit int64) ([]*TWithdrawOrder, int64, error)
+type WithdrawOrderPageFilter struct {
+	TenantId int64
+	UserId   int64
+	OrderNo  string
+	Status   int64
 }
 
-func (m *defaultTWithdrawOrderModel) FindPage(ctx context.Context, tenantId int64, userId int64, orderNo string, status int64, cursor int64, limit int64) ([]*TWithdrawOrder, int64, error) {
+type WithdrawOrderModel interface {
+	tWithdrawOrderModel
+	FindPage(ctx context.Context, filter WithdrawOrderPageFilter, cursor int64, limit int64) ([]*TWithdrawOrder, int64, error)
+}
+
+func (m *defaultTWithdrawOrderModel) FindPage(ctx context.Context, filter WithdrawOrderPageFilter, cursor int64, limit int64) ([]*TWithdrawOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("user_id", userId)
-	builder.EqString("order_no", orderNo)
-	builder.EqInt64("status", status)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
+	builder.EqString("order_no", filter.OrderNo)
+	builder.EqInt64("status", filter.Status)
 
 	where := builder.Where()
 	args := builder.Args()

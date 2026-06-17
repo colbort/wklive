@@ -33,7 +33,10 @@ func (l *ListAvailableRechargeChannelsLogic) ListAvailableRechargeChannels(in *p
 	if err != nil {
 		return nil, err
 	}
-	channels, _, err := l.svcCtx.TenantPayChannelModel.FindPage(l.ctx, tenantId, 0, 0, 0, "", 1, 0, 0)
+	channels, _, err := l.svcCtx.TenantPayChannelModel.FindPage(l.ctx, models.TenantPayChannelPageFilter{
+		TenantId: tenantId,
+		Enabled:  1,
+	}, 0, 0)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

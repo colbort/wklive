@@ -11,26 +11,39 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type CryptoRechargeTxPageFilter struct {
+	TenantId        int64
+	UserId          int64
+	OrderNo         string
+	Coin            string
+	ChainCode       int64
+	TxHash          string
+	ToAddress       string
+	Status          int64
+	CreateTimeStart int64
+	CreateTimeEnd   int64
+}
+
 type CryptoRechargeTxModel interface {
 	tCryptoRechargeTxModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, orderNo string, coin string, chainCode int64, txHash string, toAddress string, status int64, createTimeStart int64, createTimeEnd int64, cursor int64, limit int64) ([]*TCryptoRechargeTx, int64, error)
+	FindPage(ctx context.Context, filter CryptoRechargeTxPageFilter, cursor int64, limit int64) ([]*TCryptoRechargeTx, int64, error)
 	FindOneByIdOrHash(ctx context.Context, tenantId int64, id int64, chainCode int64, txHash string) (*TCryptoRechargeTx, error)
 }
 
-func (m *defaultTCryptoRechargeTxModel) FindPage(ctx context.Context, tenantId int64, userId int64, orderNo string, coin string, chainCode int64, txHash string, toAddress string, status int64, createTimeStart int64, createTimeEnd int64, cursor int64, limit int64) ([]*TCryptoRechargeTx, int64, error) {
+func (m *defaultTCryptoRechargeTxModel) FindPage(ctx context.Context, filter CryptoRechargeTxPageFilter, cursor int64, limit int64) ([]*TCryptoRechargeTx, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("user_id", userId)
-	builder.EqString("order_no", orderNo)
-	builder.EqString("coin", coin)
-	builder.EqInt64("chain_code", chainCode)
-	builder.EqString("tx_hash", txHash)
-	builder.EqString("to_address", toAddress)
-	builder.EqInt64("status", status)
-	builder.GteInt64("create_times", createTimeStart)
-	builder.LteInt64("create_times", createTimeEnd)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
+	builder.EqString("order_no", filter.OrderNo)
+	builder.EqString("coin", filter.Coin)
+	builder.EqInt64("chain_code", filter.ChainCode)
+	builder.EqString("tx_hash", filter.TxHash)
+	builder.EqString("to_address", filter.ToAddress)
+	builder.EqInt64("status", filter.Status)
+	builder.GteInt64("create_times", filter.CreateTimeStart)
+	builder.LteInt64("create_times", filter.CreateTimeEnd)
 
 	where := builder.Where()
 	args := builder.Args()

@@ -7,19 +7,26 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type UserRechargeStatModel interface {
-	tUserRechargeStatModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, successTotalAmountMin int64, successTotalAmountMax int64, cursor int64, limit int64) ([]*TUserRechargeStat, int64, error)
+type UserRechargeStatPageFilter struct {
+	TenantId              int64
+	UserId                int64
+	SuccessTotalAmountMin int64
+	SuccessTotalAmountMax int64
 }
 
-func (m *defaultTUserRechargeStatModel) FindPage(ctx context.Context, tenantId int64, userId int64, successTotalAmountMin int64, successTotalAmountMax int64, cursor int64, limit int64) ([]*TUserRechargeStat, int64, error) {
+type UserRechargeStatModel interface {
+	tUserRechargeStatModel
+	FindPage(ctx context.Context, filter UserRechargeStatPageFilter, cursor int64, limit int64) ([]*TUserRechargeStat, int64, error)
+}
+
+func (m *defaultTUserRechargeStatModel) FindPage(ctx context.Context, filter UserRechargeStatPageFilter, cursor int64, limit int64) ([]*TUserRechargeStat, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("user_id", userId)
-	builder.GteInt64("success_total_amount", successTotalAmountMin)
-	builder.LteInt64("success_total_amount", successTotalAmountMax)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
+	builder.GteInt64("success_total_amount", filter.SuccessTotalAmountMin)
+	builder.LteInt64("success_total_amount", filter.SuccessTotalAmountMax)
 
 	where := builder.Where()
 	args := builder.Args()

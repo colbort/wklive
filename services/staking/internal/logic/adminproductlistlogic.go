@@ -8,6 +8,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
+	"wklive/services/staking/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -40,14 +41,16 @@ func (l *AdminProductListLogic) AdminProductList(in *staking.AdminProductListReq
 	}
 	items, total, err := l.svcCtx.StakeProductModel.FindPage(
 		l.ctx,
-		in.TenantId,
+		models.StakeProductPageFilter{
+			TenantId:    in.TenantId,
+			ProductNo:   in.ProductNo,
+			ProductName: in.ProductName,
+			CoinSymbol:  in.CoinSymbol,
+			ProductType: int64(in.ProductType),
+			Status:      int64(in.Status),
+		},
 		cursor,
 		limit,
-		in.ProductNo,
-		in.ProductName,
-		in.CoinSymbol,
-		int64(in.ProductType),
-		int64(in.Status),
 	)
 	if err != nil {
 		return nil, err

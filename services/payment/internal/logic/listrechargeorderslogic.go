@@ -30,11 +30,13 @@ func NewListRechargeOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *ListRechargeOrdersLogic) ListRechargeOrders(in *payment.ListRechargeOrdersReq) (*payment.ListRechargeOrdersResp, error) {
 	orders, total, err := l.svcCtx.RechargeOrderModel.FindPage(
 		l.ctx,
-		in.TenantId,
-		in.UserId,
-		in.OrderNo,
-		int64(in.Status),
-		int64(in.RechargeType),
+		models.RechargeOrderPageFilter{
+			TenantId:     in.TenantId,
+			UserId:       in.UserId,
+			OrderNo:      in.OrderNo,
+			Status:       int64(in.Status),
+			RechargeType: int64(in.RechargeType),
+		},
 		in.Page.Cursor,
 		in.Page.Limit,
 	)

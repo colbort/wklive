@@ -8,6 +8,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
+	"wklive/services/staking/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -39,8 +40,20 @@ func (l *RedeemLogListLogic) RedeemLogList(in *staking.AdminRedeemLogListReq) (*
 		cursor, limit = page.Cursor, page.Limit
 	}
 	items, total, err := l.svcCtx.StakeRedeemLogModel.FindPage(
-		l.ctx, in.TenantId, cursor, limit, in.UserId, 0, in.ProductId, in.OrderNo, in.RedeemNo,
-		int64(in.RedeemType), int64(in.RedeemStatus), in.RedeemTimesBegin, in.RedeemTimesEnd,
+		l.ctx,
+		models.StakeRedeemLogPageFilter{
+			TenantId:     in.TenantId,
+			UserId:       in.UserId,
+			ProductId:    in.ProductId,
+			OrderNo:      in.OrderNo,
+			RedeemNo:     in.RedeemNo,
+			RedeemType:   int64(in.RedeemType),
+			RedeemStatus: int64(in.RedeemStatus),
+			RedeemBegin:  in.RedeemTimesBegin,
+			RedeemEnd:    in.RedeemTimesEnd,
+		},
+		cursor,
+		limit,
 	)
 	if err != nil {
 		return nil, err

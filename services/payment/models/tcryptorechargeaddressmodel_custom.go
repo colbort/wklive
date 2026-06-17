@@ -11,26 +11,37 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type CryptoRechargeAddressPageFilter struct {
+	TenantId    int64
+	UserId      int64
+	WalletType  int64
+	Coin        string
+	ChainCode   int64
+	Address     string
+	Status      int64
+	AddressType int64
+}
+
 type CryptoRechargeAddressModel interface {
 	tCryptoRechargeAddressModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, chainCode int64, address string, status int64, addressType int64, cursor int64, limit int64) ([]*TCryptoRechargeAddress, int64, error)
+	FindPage(ctx context.Context, filter CryptoRechargeAddressPageFilter, cursor int64, limit int64) ([]*TCryptoRechargeAddress, int64, error)
 	FindOneAssignable(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (*TCryptoRechargeAddress, error)
 	FindAssignableCandidates(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64, reusableBefore int64, limit int64) ([]*TCryptoRechargeAddress, error)
 	HasEnabledAddress(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (bool, error)
 }
 
-func (m *defaultTCryptoRechargeAddressModel) FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, chainCode int64, address string, status int64, addressType int64, cursor int64, limit int64) ([]*TCryptoRechargeAddress, int64, error) {
+func (m *defaultTCryptoRechargeAddressModel) FindPage(ctx context.Context, filter CryptoRechargeAddressPageFilter, cursor int64, limit int64) ([]*TCryptoRechargeAddress, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("user_id", userId)
-	builder.EqInt64("wallet_type", walletType)
-	builder.EqString("coin", coin)
-	builder.EqInt64("chain_code", chainCode)
-	builder.EqString("address", address)
-	appendCryptoAddressStatusFilter(builder, status)
-	builder.EqInt64("address_type", addressType)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
+	builder.EqInt64("wallet_type", filter.WalletType)
+	builder.EqString("coin", filter.Coin)
+	builder.EqInt64("chain_code", filter.ChainCode)
+	builder.EqString("address", filter.Address)
+	appendCryptoAddressStatusFilter(builder, filter.Status)
+	builder.EqInt64("address_type", filter.AddressType)
 
 	where := builder.Where()
 	args := builder.Args()

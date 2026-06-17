@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +27,15 @@ func NewPageAssetLocksLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 
 // 分页查询锁仓明细
 func (l *PageAssetLocksLogic) PageAssetLocks(in *asset.PageAssetLocksReq) (*asset.PageAssetLocksResp, error) {
-	locks, total, err := l.svcCtx.AssetLockModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, assetBizType(in.BizType), in.BizNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	locks, total, err := l.svcCtx.AssetLockModel.FindPage(l.ctx, models.AssetLockPageFilter{
+		TenantId:   in.TenantId,
+		UserId:     in.UserId,
+		WalletType: int64(in.WalletType),
+		Coin:       in.Coin,
+		BizType:    assetBizType(in.BizType),
+		BizNo:      in.BizNo,
+		Status:     int64(in.Status),
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

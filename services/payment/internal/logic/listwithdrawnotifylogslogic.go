@@ -36,15 +36,17 @@ func (l *ListWithdrawNotifyLogsLogic) ListWithdrawNotifyLogs(in *payment.ListWit
 	}
 	logs, total, err := l.svcCtx.WithdrawNotifyLogModel.FindPage(
 		l.ctx,
-		in.TenantId,
-		in.OrderNo,
-		in.OrderId,
-		in.PlatformId,
-		in.ChannelId,
-		int64(in.NotifyStatus),
-		int64(in.SignResult),
-		in.CreateTimeStart,
-		in.CreateTimeEnd,
+		models.WithdrawNotifyLogPageFilter{
+			TenantId:        in.TenantId,
+			OrderNo:         in.OrderNo,
+			OrderId:         in.OrderId,
+			PlatformId:      in.PlatformId,
+			ChannelId:       in.ChannelId,
+			NotifyStatus:    int64(in.NotifyStatus),
+			SignResult:      int64(in.SignResult),
+			CreateTimeStart: in.CreateTimeStart,
+			CreateTimeEnd:   in.CreateTimeEnd,
+		},
 		in.Page.Cursor,
 		in.Page.Limit,
 	)

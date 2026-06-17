@@ -237,9 +237,7 @@ func (w *SyncKlinesWorker) doSync(in *itick.SyncKlinesReq) error {
 	for {
 		products, _, err := w.svcCtx.ItickProductModel.FindPage(
 			w.ctx,
-			0,
-			"", "", "",
-			0, 0, "",
+			models.ItickProductPageFilter{},
 			cursor,
 			pageSize,
 		)

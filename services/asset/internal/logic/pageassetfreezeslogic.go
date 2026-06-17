@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +27,15 @@ func NewPageAssetFreezesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 分页查询冻结明细
 func (l *PageAssetFreezesLogic) PageAssetFreezes(in *asset.PageAssetFreezesReq) (*asset.PageAssetFreezesResp, error) {
-	freezes, total, err := l.svcCtx.AssetFreezeModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, assetBizType(in.BizType), in.BizNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	freezes, total, err := l.svcCtx.AssetFreezeModel.FindPage(l.ctx, models.AssetFreezePageFilter{
+		TenantId:   in.TenantId,
+		UserId:     in.UserId,
+		WalletType: int64(in.WalletType),
+		Coin:       in.Coin,
+		BizType:    assetBizType(in.BizType),
+		BizNo:      in.BizNo,
+		Status:     int64(in.Status),
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

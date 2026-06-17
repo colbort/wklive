@@ -7,17 +7,22 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type TenantPayAccountModel interface {
-	tTenantPayAccountModel
-	FindPage(ctx context.Context, tenantId int64, platformId int64, cursor int64, limit int64) ([]*TTenantPayAccount, int64, error)
+type TenantPayAccountPageFilter struct {
+	TenantId   int64
+	PlatformId int64
 }
 
-func (m *defaultTTenantPayAccountModel) FindPage(ctx context.Context, tenantId int64, platformId int64, cursor int64, limit int64) ([]*TTenantPayAccount, int64, error) {
+type TenantPayAccountModel interface {
+	tTenantPayAccountModel
+	FindPage(ctx context.Context, filter TenantPayAccountPageFilter, cursor int64, limit int64) ([]*TTenantPayAccount, int64, error)
+}
+
+func (m *defaultTTenantPayAccountModel) FindPage(ctx context.Context, filter TenantPayAccountPageFilter, cursor int64, limit int64) ([]*TTenantPayAccount, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("platform_id", platformId)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("platform_id", filter.PlatformId)
 
 	where := builder.Where()
 	args := builder.Args()

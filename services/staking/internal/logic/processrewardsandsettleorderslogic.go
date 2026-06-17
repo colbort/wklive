@@ -37,7 +37,10 @@ func (l *ProcessRewardsAndSettleOrdersLogic) ProcessRewardsAndSettleOrders(in *s
 		now := utils.NowMillis()
 		cursor := int64(0)
 		for {
-			orders, _, err := l.svcCtx.StakeOrderModel.FindPage(l.ctx, in.GetTenantId(), cursor, 100, 0, 0, "", "", "", int64(staking.OrderStatus_ORDER_STATUS_STAKING), 0, 0, 0, 0, 0, 0)
+			orders, _, err := l.svcCtx.StakeOrderModel.FindPage(l.ctx, models.StakeOrderPageFilter{
+				TenantId: in.GetTenantId(),
+				Status:   int64(staking.OrderStatus_ORDER_STATUS_STAKING),
+			}, cursor, 100)
 			if err != nil {
 				return nil, err
 			}

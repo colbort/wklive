@@ -7,20 +7,28 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type RechargeOrderModel interface {
-	tRechargeOrderModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, orderNo string, status int64, rechargeType int64, cursor int64, limit int64) ([]*TRechargeOrder, int64, error)
+type RechargeOrderPageFilter struct {
+	TenantId     int64
+	UserId       int64
+	OrderNo      string
+	Status       int64
+	RechargeType int64
 }
 
-func (m *defaultTRechargeOrderModel) FindPage(ctx context.Context, tenantId int64, userId int64, orderNo string, status int64, rechargeType int64, cursor int64, limit int64) ([]*TRechargeOrder, int64, error) {
+type RechargeOrderModel interface {
+	tRechargeOrderModel
+	FindPage(ctx context.Context, filter RechargeOrderPageFilter, cursor int64, limit int64) ([]*TRechargeOrder, int64, error)
+}
+
+func (m *defaultTRechargeOrderModel) FindPage(ctx context.Context, filter RechargeOrderPageFilter, cursor int64, limit int64) ([]*TRechargeOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("user_id", userId)
-	builder.EqString("order_no", orderNo)
-	builder.EqInt64("status", status)
-	builder.EqInt64("recharge_type", rechargeType)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
+	builder.EqString("order_no", filter.OrderNo)
+	builder.EqInt64("status", filter.Status)
+	builder.EqInt64("recharge_type", filter.RechargeType)
 
 	where := builder.Where()
 	args := builder.Args()

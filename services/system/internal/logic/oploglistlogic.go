@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,9 +28,11 @@ func NewOpLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OpLogLi
 func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListResp, error) {
 	items, total, err := l.svcCtx.OpLogModel.FindPage(
 		l.ctx,
-		in.Username,
-		requestMethodToString(in.Method),
-		in.Path,
+		models.OpLogPageFilter{
+			Username: in.Username,
+			Method:   requestMethodToString(in.Method),
+			Path:     in.Path,
+		},
 		in.Page.Cursor,
 		in.Page.Limit,
 	)

@@ -6,31 +6,36 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type RolePageFilter struct {
+	Keyword  string
+	TenantId int64
+	Enabled  int64
+}
+
 type RoleModel interface {
 	sysRoleModel
-	FindPage(ctx context.Context, keyword string, tenantId int64, enabled, cursor, limit int64) ([]*SysRole, int64, error)
+	FindPage(ctx context.Context, filter RolePageFilter, cursor int64, limit int64) ([]*SysRole, int64, error)
 	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
 	FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error)
 }
 
 func (m *defaultSysRoleModel) FindPage(
 	ctx context.Context,
-	keyword string,
-	tenantId int64,
-	enabled int64,
-	cursor, limit int64,
+	filter RolePageFilter,
+	cursor int64,
+	limit int64,
 ) ([]*SysRole, int64, error) {
 
 	limit = sqlutil.NormalizeLimit(limit)
 
 	// ---- WHERE 条件 ----
 	builder := sqlutil.NewPageQueryBuilder()
-	if keyword != "" {
-		like := "%" + keyword + "%"
+	if filter.Keyword != "" {
+		like := "%" + filter.Keyword + "%"
 		builder.And("(name LIKE ? OR code LIKE ?)", like, like)
 	}
-	builder.EqInt64("enabled", enabled)
-	builder.EqInt64("tenant_id", tenantId)
+	builder.EqInt64("enabled", filter.Enabled)
+	builder.EqInt64("tenant_id", filter.TenantId)
 
 	where := builder.Where()
 	args := builder.Args()

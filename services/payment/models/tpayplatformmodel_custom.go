@@ -7,21 +7,28 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type PayPlatformModel interface {
-	tPayPlatformModel
-	FindPage(ctx context.Context, keyword string, platformCode string, platformType int64, enabled int64, cursor int64, limit int64) ([]*TPayPlatform, int64, error)
+type PayPlatformPageFilter struct {
+	Keyword      string
+	PlatformCode string
+	PlatformType int64
+	Enabled      int64
 }
 
-func (m *defaultTPayPlatformModel) FindPage(ctx context.Context, keyword string, platformCode string, platformType int64, enabled int64, cursor int64, limit int64) ([]*TPayPlatform, int64, error) {
+type PayPlatformModel interface {
+	tPayPlatformModel
+	FindPage(ctx context.Context, filter PayPlatformPageFilter, cursor int64, limit int64) ([]*TPayPlatform, int64, error)
+}
+
+func (m *defaultTPayPlatformModel) FindPage(ctx context.Context, filter PayPlatformPageFilter, cursor int64, limit int64) ([]*TPayPlatform, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	if keyword != "" {
-		builder.And("(platform_code LIKE ? OR platform_name LIKE ?)", "%"+keyword+"%", "%"+keyword+"%")
+	if filter.Keyword != "" {
+		builder.And("(platform_code LIKE ? OR platform_name LIKE ?)", "%"+filter.Keyword+"%", "%"+filter.Keyword+"%")
 	}
-	builder.EqString("platform_code", platformCode)
-	builder.EqInt64("platform_type", platformType)
-	builder.EqInt64("enabled", enabled)
+	builder.EqString("platform_code", filter.PlatformCode)
+	builder.EqInt64("platform_type", filter.PlatformType)
+	builder.EqInt64("enabled", filter.Enabled)
 
 	where := builder.Where()
 	args := builder.Args()

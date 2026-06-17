@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,12 @@ func NewSysMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysMe
 // 获取菜单列表
 func (l *SysMenuListLogic) SysMenuList(in *system.SysMenuListReq) (*system.SysMenuListResp, error) {
 	// 2) 查分页
-	items, total, err := l.svcCtx.MenuModel.FindPage(l.ctx, in.Keyword, menuTypeToModel(in.MenuType), commonStatusToModel(in.Enabled), visibleStatusToModel(in.Visible), in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.MenuModel.FindPage(l.ctx, models.MenuPageFilter{
+		Keyword:  in.Keyword,
+		MenuType: menuTypeToModel(in.MenuType),
+		Enabled:  commonStatusToModel(in.Enabled),
+		Visible:  visibleStatusToModel(in.Visible),
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

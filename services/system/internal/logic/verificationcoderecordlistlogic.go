@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -35,11 +36,13 @@ func (l *VerificationCodeRecordListLogic) VerificationCodeRecordList(in *system.
 
 	rows, total, err := l.svcCtx.VerificationCodeRecordModel.FindPage(
 		l.ctx,
-		in.TenantId,
-		int64(in.Channel),
-		in.Target,
-		int64(in.Scene),
-		int64(in.Status),
+		models.VerificationCodeRecordPageFilter{
+			TenantId: in.TenantId,
+			Channel:  int64(in.Channel),
+			Target:   in.Target,
+			Scene:    int64(in.Scene),
+			Status:   int64(in.Status),
+		},
 		cursor,
 		limit,
 	)

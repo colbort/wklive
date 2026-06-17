@@ -8,6 +8,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -36,7 +37,10 @@ func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryRe
 	if err != nil {
 		return nil, err
 	}
-	list, err := l.svcCtx.UserAssetModel.FindAll(l.ctx, tenantId, userId, 0, "", 0)
+	list, err := l.svcCtx.UserAssetModel.FindAll(l.ctx, models.UserAssetPageFilter{
+		TenantId: tenantId,
+		UserId:   userId,
+	})
 	if err != nil {
 		return nil, err
 	}

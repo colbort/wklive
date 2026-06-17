@@ -11,24 +11,29 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type ConfigPageFilter struct {
+	TenantId  int64
+	ConfigKey string
+}
+
 type ConfigModel interface {
 	SysConfigModel
-	FindPage(ctx context.Context, tenantId int64, configKey string, cursor, limit int64) ([]*SysConfig, int64, error)
+	FindPage(ctx context.Context, filter ConfigPageFilter, cursor int64, limit int64) ([]*SysConfig, int64, error)
 	FindByKeys(ctx context.Context, configKeys []string) ([]*SysConfig, error)
 }
 
 func (m *customSysConfigModel) FindPage(
 	ctx context.Context,
-	tenantId int64,
-	configKey string,
-	cursor, limit int64,
+	filter ConfigPageFilter,
+	cursor int64,
+	limit int64,
 ) ([]*SysConfig, int64, error) {
 
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.LikeString("config_key", "%"+configKey+"%")
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.LikeString("config_key", filter.ConfigKey)
 
 	where := builder.Where()
 	args := builder.Args()

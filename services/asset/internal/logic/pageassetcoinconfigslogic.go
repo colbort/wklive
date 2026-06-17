@@ -7,6 +7,7 @@ import (
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -32,7 +33,19 @@ func (l *PageAssetCoinConfigsLogic) PageAssetCoinConfigs(in *asset.PageAssetCoin
 		page = &common.PageReq{}
 	}
 
-	list, total, err := l.svcCtx.AssetCoinConfigModel.FindPage(l.ctx, in.TenantId, int64(in.WalletType), in.Coin, in.Symbol, int64(in.CoinType), int64(in.ChainCode), int64(in.AppVisible), int64(in.RechargeEnabled), int64(in.WithdrawEnabled), int64(in.TransferEnabled), int64(in.Enabled), page.Cursor, page.Limit)
+	list, total, err := l.svcCtx.AssetCoinConfigModel.FindPage(l.ctx, models.AssetCoinConfigPageFilter{
+		TenantId:        in.TenantId,
+		WalletType:      int64(in.WalletType),
+		Coin:            in.Coin,
+		Symbol:          in.Symbol,
+		CoinType:        int64(in.CoinType),
+		ChainCode:       int64(in.ChainCode),
+		AppVisible:      int64(in.AppVisible),
+		RechargeEnabled: int64(in.RechargeEnabled),
+		WithdrawEnabled: int64(in.WithdrawEnabled),
+		TransferEnabled: int64(in.TransferEnabled),
+		Enabled:         int64(in.Enabled),
+	}, page.Cursor, page.Limit)
 	if err != nil {
 		return nil, err
 	}

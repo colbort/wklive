@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +27,12 @@ func NewSysCronJobLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 系统定时任务日志列表
 func (l *SysCronJobLogListLogic) SysCronJobLogList(in *system.SysCronJobLogListReq) (*system.SysCronJobLogListResp, error) {
-	items, total, err := l.svcCtx.JobLogModel.FindPage(l.ctx, in.Page.Cursor, in.Page.Limit, in.JobId, in.JobName, in.InvokeTarget, in.Status)
+	items, total, err := l.svcCtx.JobLogModel.FindPage(l.ctx, models.JobLogPageFilter{
+		JobId:        in.JobId,
+		JobName:      in.JobName,
+		InvokeTarget: in.InvokeTarget,
+		Status:       in.Status,
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

@@ -7,9 +7,23 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type AssetCoinConfigPageFilter struct {
+	TenantId        int64
+	WalletType      int64
+	Coin            string
+	Symbol          string
+	CoinType        int64
+	ChainCode       int64
+	AppVisible      int64
+	RechargeEnabled int64
+	WithdrawEnabled int64
+	TransferEnabled int64
+	Enabled         int64
+}
+
 type AssetCoinConfigModel interface {
 	tAssetCoinConfigModel
-	FindPage(ctx context.Context, tenantId int64, walletType int64, coin string, symbol string, coinType int64, chainCode int64, appVisible int64, rechargeEnabled int64, withdrawEnabled int64, transferEnabled int64, enabled int64, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error)
+	FindPage(ctx context.Context, filter AssetCoinConfigPageFilter, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error)
 	FindVisibleByOperation(ctx context.Context, tenantId int64, walletType int64, operationType int64, coinType int64) ([]*TAssetCoinConfig, error)
 }
 
@@ -19,21 +33,21 @@ const (
 	assetCoinOperationTransfer = int64(3)
 )
 
-func (m *defaultTAssetCoinConfigModel) FindPage(ctx context.Context, tenantId int64, walletType int64, coin string, symbol string, coinType int64, chainCode int64, appVisible int64, rechargeEnabled int64, withdrawEnabled int64, transferEnabled int64, enabled int64, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error) {
+func (m *defaultTAssetCoinConfigModel) FindPage(ctx context.Context, filter AssetCoinConfigPageFilter, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
-	builder.EqInt64("wallet_type", walletType)
-	builder.EqString("coin", coin)
-	builder.EqString("symbol", symbol)
-	builder.EqInt64("coin_type", coinType)
-	builder.EqInt64("chain_code", chainCode)
-	appendSwitchFilter(builder, "app_visible", appVisible)
-	appendSwitchFilter(builder, "recharge_enabled", rechargeEnabled)
-	appendSwitchFilter(builder, "withdraw_enabled", withdrawEnabled)
-	appendSwitchFilter(builder, "transfer_enabled", transferEnabled)
-	appendEnabledFilter(builder, enabled)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("wallet_type", filter.WalletType)
+	builder.EqString("coin", filter.Coin)
+	builder.EqString("symbol", filter.Symbol)
+	builder.EqInt64("coin_type", filter.CoinType)
+	builder.EqInt64("chain_code", filter.ChainCode)
+	appendSwitchFilter(builder, "app_visible", filter.AppVisible)
+	appendSwitchFilter(builder, "recharge_enabled", filter.RechargeEnabled)
+	appendSwitchFilter(builder, "withdraw_enabled", filter.WithdrawEnabled)
+	appendSwitchFilter(builder, "transfer_enabled", filter.TransferEnabled)
+	appendEnabledFilter(builder, filter.Enabled)
 
 	where := builder.Where()
 	args := builder.Args()

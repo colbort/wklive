@@ -43,7 +43,11 @@ func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(in *trade.GetSymbolDeta
 			Data: symbolToProto(item),
 		},
 	}
-	configs, _, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, in.TenantId, in.Id, item.MarketType, 0, 0, 0, 100)
+	configs, _, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
+		TenantId:   in.TenantId,
+		SymbolId:   in.Id,
+		MarketType: item.MarketType,
+	}, 0, 100)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

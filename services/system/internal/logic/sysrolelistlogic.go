@@ -7,6 +7,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,7 +30,11 @@ func NewSysRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRo
 func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRoleListResp, error) {
 	tenantId, _ := utils.GetTenantIdFromMd(l.ctx)
 	// 2) 查分页
-	items, total, err := l.svcCtx.RoleModel.FindPage(l.ctx, in.Keyword, tenantId, commonStatusToModel(in.Enabled), in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.RoleModel.FindPage(l.ctx, models.RolePageFilter{
+		Keyword:  in.Keyword,
+		TenantId: tenantId,
+		Enabled:  commonStatusToModel(in.Enabled),
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

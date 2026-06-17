@@ -10,24 +10,31 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type JobPageFilter struct {
+	Keyword  string
+	JobName  string
+	JobGroup string
+	Status   int64
+}
+
 type JobModel interface {
 	sysJobModel
-	FindPage(ctx context.Context, cursor, limit int64, keyword, jobName, jobGroup string, status int64) ([]*SysJob, int64, error)
+	FindPage(ctx context.Context, filter JobPageFilter, cursor int64, limit int64) ([]*SysJob, int64, error)
 	FindByInvokeTarget(ctx context.Context, invokeTarget string) (*SysJob, error)
 	FindEnabledJobs(ctx context.Context) ([]*SysJob, error)
 }
 
-func (m *customSysJobModel) FindPage(ctx context.Context, cursor, limit int64, keyword, jobName, jobGroup string, status int64) ([]*SysJob, int64, error) {
+func (m *customSysJobModel) FindPage(ctx context.Context, filter JobPageFilter, cursor int64, limit int64) ([]*SysJob, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	if keyword != "" {
-		like := "%" + keyword + "%"
+	if filter.Keyword != "" {
+		like := "%" + filter.Keyword + "%"
 		builder.And("(job_name LIKE ? OR job_group LIKE ?)", like, like)
 	}
-	builder.LikeString("job_name", "%"+jobName+"%")
-	builder.LikeString("job_group", "%"+jobGroup+"%")
-	builder.EqInt64("status", status)
+	builder.LikeString("job_name", filter.JobName)
+	builder.LikeString("job_group", filter.JobGroup)
+	builder.EqInt64("status", filter.Status)
 
 	where := builder.Where()
 	args := builder.Args()

@@ -7,23 +7,32 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type StakeProductModel interface {
-	tStakeProductModel
-	FindPage(ctx context.Context, tenantID int64, cursor, limit int64, productNo, productName, coinSymbol string, productType, status int64) ([]*TStakeProduct, int64, error)
+type StakeProductPageFilter struct {
+	TenantId    int64
+	ProductNo   string
+	ProductName string
+	CoinSymbol  string
+	ProductType int64
+	Status      int64
 }
 
-func (m *defaultTStakeProductModel) FindPage(ctx context.Context, tenantID int64, cursor, limit int64, productNo, productName, coinSymbol string, productType, status int64) ([]*TStakeProduct, int64, error) {
+type StakeProductModel interface {
+	tStakeProductModel
+	FindPage(ctx context.Context, filter StakeProductPageFilter, cursor int64, limit int64) ([]*TStakeProduct, int64, error)
+}
+
+func (m *defaultTStakeProductModel) FindPage(ctx context.Context, filter StakeProductPageFilter, cursor int64, limit int64) ([]*TStakeProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id = ?", tenantID)
-	builder.EqString("product_no", productNo)
-	if productName != "" {
-		builder.LikeString("product_name", "%"+productName+"%")
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqString("product_no", filter.ProductNo)
+	if filter.ProductName != "" {
+		builder.LikeString("product_name", filter.ProductName)
 	}
-	builder.EqString("coin_symbol", coinSymbol)
-	builder.EqInt64("product_type", productType)
-	builder.EqInt64("status", status)
+	builder.EqString("coin_symbol", filter.CoinSymbol)
+	builder.EqInt64("product_type", filter.ProductType)
+	builder.EqInt64("status", filter.Status)
 
 	where := builder.Where()
 	args := builder.Args()

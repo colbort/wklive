@@ -7,6 +7,7 @@ import (
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -32,7 +33,13 @@ func (l *PageUserAssetsLogic) PageUserAssets(in *asset.PageUserAssetsReq) (*asse
 		enabled = assetEnabledFilter(in.Enabled)
 	}
 
-	list, total, err := l.svcCtx.UserAssetModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, enabled, in.Page.Cursor, in.Page.Limit)
+	list, total, err := l.svcCtx.UserAssetModel.FindPage(l.ctx, models.UserAssetPageFilter{
+		TenantId:   in.TenantId,
+		UserId:     in.UserId,
+		WalletType: int64(in.WalletType),
+		Coin:       in.Coin,
+		Enabled:    enabled,
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

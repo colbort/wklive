@@ -5,26 +5,31 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type OpLogPageFilter struct {
+	Username string
+	Method   string
+	Path     string
+}
+
 type OpLogModel interface {
 	sysOpLogModel
-	FindPage(ctx context.Context, username string, method string, path string, cursor, limit int64) ([]*SysOpLog, int64, error)
+	FindPage(ctx context.Context, filter OpLogPageFilter, cursor int64, limit int64) ([]*SysOpLog, int64, error)
 }
 
 func (m *defaultSysOpLogModel) FindPage(
 	ctx context.Context,
-	username string,
-	method string,
-	path string,
-	cursor, limit int64,
+	filter OpLogPageFilter,
+	cursor int64,
+	limit int64,
 ) ([]*SysOpLog, int64, error) {
 
 	limit = sqlutil.NormalizeLimit(limit)
 
 	// ---- WHERE 条件 ----
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.LikeString("username", "%"+username+"%")
-	builder.LikeString("method", "%"+method+"%")
-	builder.LikeString("path", "%"+path+"%")
+	builder.LikeString("username", filter.Username)
+	builder.LikeString("method", filter.Method)
+	builder.LikeString("path", filter.Path)
 
 	where := builder.Where()
 	args := builder.Args()

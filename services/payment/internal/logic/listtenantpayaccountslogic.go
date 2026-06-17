@@ -34,7 +34,10 @@ func (l *ListTenantPayAccountsLogic) ListTenantPayAccounts(in *payment.ListTenan
 			in.TenantId = tenantId
 		}
 	}
-	items, total, err := l.svcCtx.TenantPayAccountModel.FindPage(l.ctx, in.TenantId, in.PlatformId, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.TenantPayAccountModel.FindPage(l.ctx, models.TenantPayAccountPageFilter{
+		TenantId:   in.TenantId,
+		PlatformId: in.PlatformId,
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

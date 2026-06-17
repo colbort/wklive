@@ -35,7 +35,10 @@ func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.Lis
 			in.TenantId = tenantId
 		}
 	}
-	items, total, err := l.svcCtx.UserBankModel.FindPage(l.ctx, in.TenantId, in.UserId, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.UserBankModel.FindPage(l.ctx, models.UserBankPageFilter{
+		TenantId: in.TenantId,
+		UserId:   in.UserId,
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

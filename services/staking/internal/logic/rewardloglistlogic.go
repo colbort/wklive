@@ -8,6 +8,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
+	"wklive/services/staking/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -39,8 +40,19 @@ func (l *RewardLogListLogic) RewardLogList(in *staking.AdminRewardLogListReq) (*
 		cursor, limit = page.Cursor, page.Limit
 	}
 	items, total, err := l.svcCtx.StakeRewardLogModel.FindPage(
-		l.ctx, in.TenantId, cursor, limit, in.UserId, 0, in.ProductId, in.OrderNo,
-		int64(in.RewardType), int64(in.RewardStatus), in.RewardTimesBegin, in.RewardTimesEnd,
+		l.ctx,
+		models.StakeRewardLogPageFilter{
+			TenantId:     in.TenantId,
+			UserId:       in.UserId,
+			ProductId:    in.ProductId,
+			OrderNo:      in.OrderNo,
+			RewardType:   int64(in.RewardType),
+			RewardStatus: int64(in.RewardStatus),
+			RewardBegin:  in.RewardTimesBegin,
+			RewardEnd:    in.RewardTimesEnd,
+		},
+		cursor,
+		limit,
 	)
 	if err != nil {
 		return nil, err

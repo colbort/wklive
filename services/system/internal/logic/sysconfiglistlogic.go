@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,7 +27,9 @@ func NewSysConfigListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 
 // 获取系统配置列表
 func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system.SysConfigListResp, error) {
-	items, total, err := l.svcCtx.ConfigModel.FindPage(l.ctx, in.TenantId, "", in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.ConfigModel.FindPage(l.ctx, models.ConfigPageFilter{
+		TenantId: in.TenantId,
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

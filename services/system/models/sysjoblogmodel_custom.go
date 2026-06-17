@@ -10,19 +10,26 @@ import (
 	"wklive/common/sqlutil"
 )
 
-type JobLogModel interface {
-	sysJobLogModel
-	FindPage(ctx context.Context, cursor, limit int64, jobId int64, jobName, invokeTarget string, status int64) ([]*SysJobLog, int64, error)
+type JobLogPageFilter struct {
+	JobId        int64
+	JobName      string
+	InvokeTarget string
+	Status       int64
 }
 
-func (m *customSysJobLogModel) FindPage(ctx context.Context, cursor, limit int64, jobId int64, jobName, invokeTarget string, status int64) ([]*SysJobLog, int64, error) {
+type JobLogModel interface {
+	sysJobLogModel
+	FindPage(ctx context.Context, filter JobLogPageFilter, cursor int64, limit int64) ([]*SysJobLog, int64, error)
+}
+
+func (m *customSysJobLogModel) FindPage(ctx context.Context, filter JobLogPageFilter, cursor int64, limit int64) ([]*SysJobLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("job_id", jobId)
-	builder.LikeString("job_name", "%"+jobName+"%")
-	builder.LikeString("invoke_target", "%"+invokeTarget+"%")
-	builder.EqInt64("status", status)
+	builder.EqInt64("job_id", filter.JobId)
+	builder.LikeString("job_name", filter.JobName)
+	builder.LikeString("invoke_target", filter.InvokeTarget)
+	builder.EqInt64("status", filter.Status)
 
 	where := builder.Where()
 	args := builder.Args()

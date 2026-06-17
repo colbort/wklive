@@ -6,6 +6,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,7 +34,17 @@ func (l *PageAssetFlowsLogic) PageAssetFlows(in *asset.PageAssetFlowsReq) (*asse
 		endTime = in.TimeRange.EndTime
 	}
 
-	flows, total, err := l.svcCtx.AssetFlowModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizNo, startTime, endTime, in.Page.Cursor, in.Page.Limit)
+	flows, total, err := l.svcCtx.AssetFlowModel.FindPage(l.ctx, models.AssetFlowPageFilter{
+		TenantId:   in.TenantId,
+		UserId:     in.UserId,
+		WalletType: int64(in.WalletType),
+		Coin:       in.Coin,
+		BizType:    assetBizType(in.BizType),
+		SceneType:  assetSceneType(in.SceneType),
+		BizNo:      in.BizNo,
+		StartTime:  startTime,
+		EndTime:    endTime,
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

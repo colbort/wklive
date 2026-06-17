@@ -94,7 +94,16 @@ func getCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, t
 }
 
 func listCryptoRechargeAddresses(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.ListCryptoRechargeAddressesReq) (*payment.ListCryptoRechargeAddressesResp, error) {
-	items, total, err := svcCtx.CryptoRechargeAddressModel.FindPage(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, int64(in.ChainCode), in.Address, int64(in.Status), int64(in.AddressType), in.Page.Cursor, in.Page.Limit)
+	items, total, err := svcCtx.CryptoRechargeAddressModel.FindPage(ctx, models.CryptoRechargeAddressPageFilter{
+		TenantId:    in.TenantId,
+		UserId:      in.UserId,
+		WalletType:  int64(in.WalletType),
+		Coin:        in.Coin,
+		ChainCode:   int64(in.ChainCode),
+		Address:     in.Address,
+		Status:      int64(in.Status),
+		AddressType: int64(in.AddressType),
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +188,13 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 }
 
 func listCryptoWalletAccounts(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.ListCryptoWalletAccountsReq) (*payment.ListCryptoWalletAccountsResp, error) {
-	items, total, err := svcCtx.CryptoWalletAccountModel.FindPage(ctx, in.TenantId, in.Keyword, in.Provider, int64(in.Enabled), int64(in.IsDefault), in.Page.Cursor, in.Page.Limit)
+	items, total, err := svcCtx.CryptoWalletAccountModel.FindPage(ctx, models.CryptoWalletAccountPageFilter{
+		TenantId:  in.TenantId,
+		Keyword:   in.Keyword,
+		Provider:  in.Provider,
+		Enabled:   int64(in.Enabled),
+		IsDefault: int64(in.IsDefault),
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -287,7 +302,18 @@ func creditCryptoRechargeOrder(ctx context.Context, svcCtx *svc.ServiceContext, 
 }
 
 func listCryptoRechargeTxs(ctx context.Context, svcCtx *svc.ServiceContext, req listCryptoTxReq) ([]*models.TCryptoRechargeTx, int64, error) {
-	return svcCtx.CryptoRechargeTxModel.FindPage(ctx, req.tenantId, req.userId, req.orderNo, req.coin, int64(req.chainCode), req.txHash, req.toAddress, int64(req.status), req.createTimeStart, req.createTimeEnd, req.cursor, req.limit)
+	return svcCtx.CryptoRechargeTxModel.FindPage(ctx, models.CryptoRechargeTxPageFilter{
+		TenantId:        req.tenantId,
+		UserId:          req.userId,
+		OrderNo:         req.orderNo,
+		Coin:            req.coin,
+		ChainCode:       int64(req.chainCode),
+		TxHash:          req.txHash,
+		ToAddress:       req.toAddress,
+		Status:          int64(req.status),
+		CreateTimeStart: req.createTimeStart,
+		CreateTimeEnd:   req.createTimeEnd,
+	}, req.cursor, req.limit)
 }
 
 type listCryptoTxReq struct {

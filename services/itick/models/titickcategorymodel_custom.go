@@ -10,10 +10,16 @@ import (
 	"wklive/common/sqlutil"
 )
 
+type ItickCategoryPageFilter struct {
+	CategoryType int32
+	Enabled      int32
+	AppVisible   int32
+}
+
 type ItickCategoryModel interface {
 	tItickCategoryModel
 	FindAll(ctx context.Context) ([]*TItickCategory, error)
-	FindPage(ctx context.Context, categoryType int32, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickCategory, int64, error)
+	FindPage(ctx context.Context, filter ItickCategoryPageFilter, cursor int64, limit int64) ([]*TItickCategory, int64, error)
 }
 
 func (m *defaultTItickCategoryModel) FindAll(ctx context.Context) ([]*TItickCategory, error) {
@@ -23,13 +29,13 @@ func (m *defaultTItickCategoryModel) FindAll(ctx context.Context) ([]*TItickCate
 	return resp, err
 }
 
-func (m *defaultTItickCategoryModel) FindPage(ctx context.Context, categoryType int32, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
+func (m *defaultTItickCategoryModel) FindPage(ctx context.Context, filter ItickCategoryPageFilter, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("category_type", int64(categoryType))
-	builder.EqInt64("enabled", int64(enabled))
-	builder.EqInt64("app_visible", int64(appVisible))
+	builder.EqInt64("category_type", int64(filter.CategoryType))
+	builder.EqInt64("enabled", int64(filter.Enabled))
+	builder.EqInt64("app_visible", int64(filter.AppVisible))
 
 	where := builder.Where()
 	args := builder.Args()
