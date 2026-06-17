@@ -335,15 +335,10 @@ async function initGrant(roleId: number, tenantId: number) {
 function collectCheckedMenuIds(): number[] {
   const tree = menuTreeRef.value
   if (!tree) return []
-  // Element Plus tree：getCheckedKeys + getHalfCheckedKeys
+  // Element Plus tree: persist both fully checked and half-checked menu ids.
   const full = (tree.getCheckedKeys?.() || []) as number[]
   const half = (tree.getHalfCheckedKeys?.() || []) as number[]
-  const allIds = Array.from(new Set([...full, ...half]))
-
-  return allIds.filter((id) => {
-    const node = menuNodeMap.value.get(Number(id))
-    return node && (!node.children || node.children.length === 0)
-  })
+  return Array.from(new Set([...full, ...half])).map(Number)
 }
 
 async function submitGrant() {
