@@ -39,6 +39,10 @@ export type ProfileResp = {
   perms: string[]
 }
 
+export const USER_TYPE_SYSTEM_ADMIN = 1
+export const USER_TYPE_TENANT_OWNER = 2
+export const USER_TYPE_TENANT_ADMIN = 3
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || '',
@@ -51,6 +55,10 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     hasPerm: (s) => (p: string) => s.perms.includes(p),
+    isSystemAdmin: (s) => Number(s.user?.userType || 0) === USER_TYPE_SYSTEM_ADMIN,
+    isTenantUser: (s) =>
+      [USER_TYPE_TENANT_OWNER, USER_TYPE_TENANT_ADMIN].includes(Number(s.user?.userType || 0)),
+    profileTenantId: (s) => Number(s.user?.tenantId || s.tenantId || 0),
   },
   actions: {
     async login(payload: { username: string; password: string; googleCode?: string }) {

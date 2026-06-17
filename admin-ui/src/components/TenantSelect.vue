@@ -1,7 +1,7 @@
 <template>
   <el-select
     v-model="selectedValue"
-    :disabled="disabled"
+    :disabled="effectiveDisabled"
     :placeholder="placeholder || t('common.pleaseSelect')"
     filterable
     remote
@@ -25,6 +25,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { tenantsService, type SysTenantItem } from '@/services'
+import { useAuthStore } from '@/stores/auth'
 
 const props = withDefaults(
   defineProps<{
@@ -47,13 +48,19 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const authStore = useAuthStore()
 const loading = ref(false)
 const tenants = ref<SysTenantItem[]>([])
+const forcedTenantId = computed(() =>
+  authStore.isTenantUser ? authStore.profileTenantId || undefined : undefined,
+)
+const effectiveDisabled = computed(() => props.disabled || Boolean(forcedTenantId.value))
 
 const selectedValue = computed({
-  get: () => props.modelValue,
+  get: () => forcedTenantId.value ?? props.modelValue,
   set: (value) => {
-    const nextValue = value === undefined || value === null ? undefined : Number(value)
+    const nextValue =
+      forcedTenantId.value ?? (value === undefined || value === null ? undefined : Number(value))
     emit('update:modelValue', nextValue)
     emit('change', nextValue)
     emit(
@@ -90,16 +97,25 @@ async function loadTenants(keyword = '') {
 }
 
 async function ensureCurrentTenant() {
-  if (!props.modelValue || props.modelValue === 0) return
-  const existing = tenants.value.find((tenant) => tenant.id === props.modelValue)
+  const tenantId = selectedValue.value
+  if (!tenantId || tenantId === 0) return
+  const existing = tenants.value.find((tenant) => tenant.id === tenantId)
   if (existing) {
     emit('selected', existing)
     return
   }
 
-  const res = await tenantsService.detail({ tenantId: props.modelValue })
+  const res = await tenantsService.detail({ tenantId })
   mergeTenant(res.data)
   emit('selected', res.data || null)
+}
+
+function enforceProfileTenant() {
+  const tenantId = forcedTenantId.value
+  if (!tenantId || props.modelValue === tenantId) return
+  emit('update:modelValue', tenantId)
+  emit('change', tenantId)
+  ensureCurrentTenant()
 }
 
 function handleVisibleChange(visible: boolean) {
@@ -111,11 +127,21 @@ function handleVisibleChange(visible: boolean) {
 watch(
   () => props.modelValue,
   () => {
+    enforceProfileTenant()
     ensureCurrentTenant()
   },
 )
 
+watch(
+  forcedTenantId,
+  () => {
+    enforceProfileTenant()
+  },
+  { immediate: true },
+)
+
 onMounted(() => {
+  enforceProfileTenant()
   loadTenants()
 })
 </script>
