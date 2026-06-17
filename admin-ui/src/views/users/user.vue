@@ -938,7 +938,12 @@ onMounted(fetchCreateOptions)
         <el-form-item :label="t('users.referrerInviteCode')">
           <div class="tenant-check-row">
             <el-input v-model="editForm.referrerInviteCode" @change="resetReferrerCheck" />
-            <el-button plain :loading="referrerChecking" @click="verifyReferrer">
+            <el-button
+              v-perm="'users:user:referrer:check'"
+              plain
+              :loading="referrerChecking"
+              @click="verifyReferrer"
+            >
               {{ t('users.verifyReferrer') }}
             </el-button>
           </div>

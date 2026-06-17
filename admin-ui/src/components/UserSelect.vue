@@ -21,11 +21,7 @@
     <div class="user-select-panel">
       <el-form inline class="user-select-filter" @submit.prevent>
         <el-form-item :label="t('users.nickname')">
-          <el-input
-            v-model="queryNickname"
-            clearable
-            @keyup.enter="searchUsers"
-          />
+          <el-input v-model="queryNickname" clearable @keyup.enter="searchUsers" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="searchUsers">

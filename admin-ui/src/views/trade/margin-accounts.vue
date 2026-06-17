@@ -5,10 +5,7 @@
         <TenantSelect v-model="currentQuery.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('trade.userId')">
-        <UserSelect
-          v-model="currentQuery.userId"
-          :tenant-id="currentQuery.tenantId || undefined"
-        />
+        <UserSelect v-model="currentQuery.userId" :tenant-id="currentQuery.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('trade.marketType')">
         <el-input-number v-model="currentQuery.marketType" :min="0" :precision="0" />

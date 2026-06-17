@@ -5,10 +5,7 @@
         <TenantSelect v-model="currentQuery.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('trade.userId')">
-        <UserSelect
-          v-model="currentQuery.userId"
-          :tenant-id="currentQuery.tenantId || undefined"
-        />
+        <UserSelect v-model="currentQuery.userId" :tenant-id="currentQuery.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('trade.symbolId')">
         <SymbolSelect
@@ -36,7 +33,12 @@
           fixed="right"
         >
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'trade:position:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('option.detail') }}
             </el-button>
           </template>

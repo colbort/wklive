@@ -34,17 +34,6 @@
             {{ getPlatformTypeLabel(row.platformType) }}
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="icon" :label="t('common.icon')" width="100" align="center">
-          <template #default="{ row }">
-            <el-image
-              v-if="row.icon"
-              :src="resolveAssetUrl(row.icon)"
-              class="platform-icon-preview"
-              :preview-teleported="true"
-            />
-            <span v-else>-</span>
-          </template>
-        </el-table-column> -->
         <el-table-column
           prop="notifyUrl"
           :label="t('payment.notifyUrl')"

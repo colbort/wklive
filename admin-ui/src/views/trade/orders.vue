@@ -134,7 +134,12 @@
           fixed="right"
         >
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'trade:order:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               <el-icon><View /></el-icon>
               {{ t('option.detail') }}
             </el-button>

@@ -749,7 +749,7 @@ onMounted(async () => {
                   :placeholder="t('common.enterGoogleCode')"
                   style="flex: 1"
                 />
-                <el-button @click="doG2Bind">
+                <el-button v-perm="'sys:user:2fa:bind'" @click="doG2Bind">
                   {{ t('perms.sys:user:2fa:bind') }}
                 </el-button>
               </div>

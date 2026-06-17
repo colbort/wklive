@@ -143,7 +143,8 @@ async function loadSymbols() {
       })
       const symbol = detail.data?.symbol
       symbols.value = symbol ? [symbol] : []
-      selectedSymbol.value = symbol && symbol.id === props.modelValue ? symbol : selectedSymbol.value
+      selectedSymbol.value =
+        symbol && symbol.id === props.modelValue ? symbol : selectedSymbol.value
       updateFromResponse({ total: symbols.value.length })
       return
     }
@@ -229,5 +230,4 @@ function clearValue() {
   margin-right: 0;
   margin-bottom: 0;
 }
-
 </style>

@@ -416,7 +416,12 @@ onMounted(() => {
         <el-button @click="testVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="testLoading" @click="submitTest">
+        <el-button
+          v-perm="'sys:verification-code:test'"
+          type="primary"
+          :loading="testLoading"
+          @click="submitTest"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

@@ -26,11 +26,6 @@
       <el-form-item label="Hash">
         <el-input v-model="query.txHash" clearable />
       </el-form-item>
-      <template #actions>
-        <el-button v-perm="'payment:crypto-recharge-tx:add'" type="primary" @click="openDialog()">
-          {{ t('common.add') }}
-        </el-button>
-      </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
@@ -69,14 +64,6 @@
             >
               {{ t('common.detail') }}
             </el-button>
-            <el-button
-              v-perm="'payment:crypto-recharge-tx:update'"
-              link
-              type="primary"
-              @click="openDialog(row)"
-            >
-              {{ t('common.edit') }}
-            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -92,84 +79,6 @@
       />
     </el-card>
 
-    <el-dialog
-      v-model="dialogVisible"
-      :title="form.id ? t('payment.editCryptoRechargeTx') : t('payment.addCryptoRechargeTx')"
-      width="720px"
-    >
-      <el-form label-width="130px">
-        <el-form-item :label="t('common.tenantId')">
-          <TenantSelect v-model="form.tenantId" include-system />
-        </el-form-item>
-        <template v-if="!form.id">
-          <el-form-item :label="t('common.userId')">
-            <UserSelect v-model="form.userId" :tenant-id="form.tenantId || undefined" />
-          </el-form-item>
-          <el-form-item :label="t('payment.currency')">
-            <el-input v-model="form.coin" />
-          </el-form-item>
-          <el-form-item :label="t('payment.chain')">
-            <el-select v-model="form.chainCode" style="width: 100%">
-              <el-option
-                v-for="item in chainCodeFormOptions"
-                :key="item.value"
-                :label="getOptionLabel(t, item.code, item.value)"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="TxHash">
-            <el-input v-model="form.txHash" />
-          </el-form-item>
-          <el-form-item :label="t('payment.fromAddress')">
-            <el-input v-model="form.fromAddress" />
-          </el-form-item>
-          <el-form-item :label="t('payment.toAddress')">
-            <el-input v-model="form.toAddress" />
-          </el-form-item>
-          <el-form-item :label="t('payment.cryptoAmount')">
-            <el-input v-model="form.amount" />
-          </el-form-item>
-        </template>
-        <el-form-item :label="t('payment.orderId')">
-          <el-input-number v-model="form.orderId" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('payment.orderNo')">
-          <el-input v-model="form.orderNo" />
-        </el-form-item>
-        <el-form-item :label="t('payment.confirmCount')">
-          <el-input-number v-model="form.confirmCount" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('payment.requiredConfirmCount')">
-          <el-input-number v-model="form.requiredConfirmCount" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('common.status')">
-          <el-select v-model="form.status" style="width: 100%">
-            <el-option :label="t('payment.pendingConfirm')" :value="1" />
-            <el-option :label="t('payment.confirming')" :value="2" />
-            <el-option :label="t('payment.confirmed')" :value="3" />
-            <el-option :label="t('common.failed')" :value="4" />
-            <el-option :label="t('payment.credited')" :value="5" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('payment.rawData')">
-          <el-input v-model="form.rawData" type="textarea" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialogVisible = false">
-          {{ t('common.cancel') }}
-        </el-button>
-        <el-button
-          v-perm="form.id ? 'payment:crypto-recharge-tx:update' : 'payment:crypto-recharge-tx:add'"
-          type="primary"
-          @click="submit"
-        >
-          {{ t('common.confirm') }}
-        </el-button>
-      </template>
-    </el-dialog>
-
     <el-dialog v-model="detailVisible" :title="t('payment.cryptoRechargeTxDetail')" width="780px">
       <PaymentDetailDescriptions :data="detailData" />
     </el-dialog>
@@ -180,9 +89,8 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
-import { ElMessage } from 'element-plus'
 import { catalogService, cryptoService, type CryptoRechargeTx, type OptionGroup } from '@/services'
-import { findFormOptionGroup, findOptionGroup, getOptionLabel } from '@/utils/options'
+import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
@@ -192,13 +100,11 @@ const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
   usePagination<number>(20)
 const loading = ref(false)
-const dialogVisible = ref(false)
 const detailVisible = ref(false)
 const list = ref<CryptoRechargeTx[]>([])
 const detailData = ref<CryptoRechargeTx | null>(null)
 const optionGroups = ref<OptionGroup[]>([])
 const chainCodeOptions = computed(() => findOptionGroup(optionGroups.value, 'chainCode'))
-const chainCodeFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'chainCode'))
 const query = reactive({
   tenantId: undefined as number | undefined,
   userId: undefined as number | undefined,
@@ -206,27 +112,6 @@ const query = reactive({
   coin: '',
   chainCode: undefined as number | undefined,
   txHash: '',
-})
-const form = reactive({
-  id: 0,
-  tenantId: 0,
-  userId: 0,
-  orderId: 0,
-  orderNo: '',
-  coin: 'USDT',
-  chainCode: 20,
-  txHash: '',
-  fromAddress: '',
-  toAddress: '',
-  memo: '',
-  amount: '0',
-  blockHeight: 0,
-  confirmCount: 0,
-  requiredConfirmCount: 0,
-  status: 1,
-  rawData: '',
-  createTimes: 0,
-  updateTimes: 0,
 })
 
 function params() {
@@ -257,33 +142,6 @@ function resetQuery() {
   })
   void loadList()
 }
-function openDialog(row?: CryptoRechargeTx) {
-  Object.assign(
-    form,
-    row || {
-      id: 0,
-      tenantId: 0,
-      userId: 0,
-      orderId: 0,
-      orderNo: '',
-      coin: 'USDT',
-      chainCode: 20,
-      txHash: '',
-      fromAddress: '',
-      toAddress: '',
-      memo: '',
-      amount: '0',
-      blockHeight: 0,
-      confirmCount: 0,
-      requiredConfirmCount: 0,
-      status: 1,
-      rawData: '',
-      createTimes: 0,
-      updateTimes: 0,
-    },
-  )
-  dialogVisible.value = true
-}
 function showDetail(row: CryptoRechargeTx) {
   detailData.value = row
   detailVisible.value = true
@@ -294,16 +152,6 @@ function formatChainCode(value: number) {
 }
 async function loadOptions() {
   optionGroups.value = (await catalogService.getOptions()).data || []
-}
-async function submit() {
-  const res = form.id
-    ? await cryptoService.updateRechargeTx(form)
-    : await cryptoService.createRechargeTx(form)
-  if (res.code === 200) {
-    ElMessage.success(t('common.success'))
-    dialogVisible.value = false
-    await loadList()
-  }
 }
 function handleLimitChange() {
   resetAndLoad(loadList)
