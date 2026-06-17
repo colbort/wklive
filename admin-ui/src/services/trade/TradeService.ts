@@ -543,16 +543,16 @@ export type SetUserSymbolLimitReq = Omit<RiskUserSymbolLimit, 'id' | 'createTime
 
 export type GetUserTradeLimitReq = {
   tenantId?: number
-  userId: number
-  marketType: number
-  symbolId: number
+  userId?: number
+  marketType?: number
+  symbolId?: number
 }
 
 export type GetUserSymbolLimitReq = {
   tenantId?: number
-  userId: number
-  symbolId: number
-  marketType: number
+  userId?: number
+  symbolId?: number
+  marketType?: number
 }
 
 export type SetUserTradeConfigReq = {
@@ -569,8 +569,8 @@ export type SetUserTradeConfigReq = {
 
 export type GetUserTradeConfigReq = {
   tenantId?: number
-  userId: number
-  marketType: number
+  userId?: number
+  marketType?: number
   symbolId?: number
 }
 
@@ -594,10 +594,10 @@ export type SetUserLeverageConfigReq = Omit<
 
 export type GetUserLeverageConfigReq = {
   tenantId?: number
-  userId: number
-  symbolId: number
-  marketType: number
-  marginMode: number
+  userId?: number
+  symbolId?: number
+  marketType?: number
+  marginMode?: number
 }
 
 export type GetTradeEventListReq = {

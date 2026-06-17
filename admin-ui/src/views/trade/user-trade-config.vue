@@ -65,10 +65,10 @@ const { t } = useI18n()
 
 const submitLoading = ref(false)
 const riskQuery = reactive<GetUserTradeConfigReq>({
-  tenantId: 0,
-  userId: 0,
-  symbolId: 0,
-  marketType: 0,
+  tenantId: undefined as number | undefined,
+  userId: undefined as number | undefined,
+  symbolId: undefined as number | undefined,
+  marketType: undefined as number | undefined,
 })
 const tradeConfigForm = reactive<SetUserTradeConfigReq>({
   tenantId: 0,

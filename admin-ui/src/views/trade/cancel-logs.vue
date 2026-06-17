@@ -1,15 +1,17 @@
 <template>
   <div class="module-page">
     <CrudQueryCard :model="currentQuery" @search="loadList" @reset="resetQuery">
-      <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
-        <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
-
-        <el-input-number
-          v-else
-          v-model="currentQuery[field.key]"
-          :min="0"
-          :precision="0"
+      <el-form-item :label="t('trade.tenantId')">
+        <TenantSelect v-model="currentQuery.tenantId" class="tenant-select-filter" />
+      </el-form-item>
+      <el-form-item :label="t('trade.userId')">
+        <UserSelect
+          v-model="currentQuery.userId"
+          :tenant-id="currentQuery.tenantId || undefined"
         />
+      </el-form-item>
+      <el-form-item :label="t('trade.orderNo')">
+        <el-input v-model="currentQuery.orderNo" clearable />
       </el-form-item>
     </CrudQueryCard>
 
@@ -61,6 +63,8 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { tradeService, type TradeCancelLog } from '@/services'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
+import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -72,18 +76,6 @@ interface CurrentQuery {
   orderNo: string
   limit: number
 }
-
-type CurrentField =
-  | {
-      key: 'tenantId' | 'userId'
-      label: string
-      type: 'number'
-    }
-  | {
-      key: 'orderNo'
-      label: string
-      type?: 'text'
-    }
 
 interface CurrentColumn {
   prop: string
@@ -102,12 +94,6 @@ const currentQuery = reactive<CurrentQuery>({
   orderNo: '',
   limit: 20,
 })
-
-const currentFields: CurrentField[] = [
-  { key: 'tenantId', label: t('trade.tenantId'), type: 'number' },
-  { key: 'userId', label: t('trade.userId'), type: 'number' },
-  { key: 'orderNo', label: t('trade.orderNo'), type: 'text' },
-]
 
 const currentColumns: CurrentColumn[] = [
   { prop: 'orderNo', label: t('trade.orderNo'), width: 180 },

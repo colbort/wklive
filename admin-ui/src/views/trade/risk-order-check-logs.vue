@@ -76,20 +76,20 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
 
 const loading = ref(false)
 interface RiskQuery {
-  tenantId: number
-  userId: number
-  symbolId: number
-  marketType: number
+  tenantId?: number
+  userId?: number
+  symbolId?: number
+  marketType?: number
 }
 
 const rows = ref<RiskOrderCheckLog[]>([])
 const detailVisible = ref(false)
 const detailData = ref<RiskOrderCheckLog | null>(null)
 const riskQuery = reactive<RiskQuery>({
-  tenantId: 0,
-  userId: 0,
-  symbolId: 0,
-  marketType: 0,
+  tenantId: undefined as number | undefined,
+  userId: undefined as number | undefined,
+  symbolId: undefined as number | undefined,
+  marketType: undefined as number | undefined,
 })
 const riskLogQuery = reactive<GetRiskOrderCheckLogListReq>({
   tenantId: 0,
