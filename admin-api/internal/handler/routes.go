@@ -824,7 +824,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/menus/tree/:tenantId",
+				Path:    "/menus/tree/:roleId",
 				Handler: system.SysMenuTreeHandler(serverCtx),
 			},
 			{

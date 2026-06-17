@@ -898,7 +898,7 @@ func (x *SysMenuItem) GetPerms() string {
 
 type SysMenuTreeReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	RoleId        int64                  `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -933,9 +933,9 @@ func (*SysMenuTreeReq) Descriptor() ([]byte, []int) {
 	return file_proto_system_system_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *SysMenuTreeReq) GetTenantId() int64 {
+func (x *SysMenuTreeReq) GetRoleId() int64 {
 	if x != nil {
-		return x.TenantId
+		return x.RoleId
 	}
 	return 0
 }
@@ -6650,9 +6650,9 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\avisible\x18\n" +
 	" \x01(\x0e2\x0e.common.SwitchR\avisible\x12(\n" +
 	"\aenabled\x18\v \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x14\n" +
-	"\x05perms\x18\f \x01(\tR\x05perms\"-\n" +
-	"\x0eSysMenuTreeReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"`\n" +
+	"\x05perms\x18\f \x01(\tR\x05perms\")\n" +
+	"\x0eSysMenuTreeReq\x12\x17\n" +
+	"\arole_id\x18\x01 \x01(\x03R\x06roleId\"`\n" +
 	"\x0fSysMenuTreeResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x02 \x03(\v2\x13.system.SysMenuItemR\x04data\"+\n" +

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"wklive/common/helper"
-	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -30,23 +29,27 @@ func (l *GetMenuTreeLogic) GetMenuTree(in *system.SysMenuTreeReq) (*system.SysMe
 	if err != nil {
 		return nil, err
 	}
+
+	role, err := l.svcCtx.RoleModel.FindOne(l.ctx, in.RoleId)
+	if err != nil {
+		return nil, err
+	}
+	roleId := int64(1)
+	if role.TenantId > 0 || role.Code == "tenant_super_admin" || role.Code == "tenant_owner" {
+		roleId = 2
+	}
 	mm := make(map[int64]bool, len(menus))
-	tenantId, _ := utils.GetTenantIdFromMd(l.ctx)
-	filter := false
-	if tenantId > 0 || in.TenantId > 0 {
-		roleMenus, err := l.svcCtx.RoleMenuModel.ListByRoleId(l.ctx, 2)
-		if err != nil {
-			return nil, err
-		}
-		for _, v := range roleMenus {
-			mm[v.MenuId] = true
-		}
-		filter = true
+	roleMenus, err := l.svcCtx.RoleMenuModel.ListByRoleId(l.ctx, roleId)
+	if err != nil {
+		return nil, err
+	}
+	for _, v := range roleMenus {
+		mm[v.MenuId] = true
 	}
 
 	data := make([]*system.SysMenuItem, 0, len(menus))
 	for _, m := range menus {
-		if !mm[m.Id] && filter {
+		if !mm[m.Id] {
 			continue
 		}
 		item := &system.SysMenuItem{

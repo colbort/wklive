@@ -3368,7 +3368,7 @@ type SysMenuListResp struct {
 }
 
 type SysMenuTreeReq struct {
-	TenantId int64 `path:"tenantId"`
+	RoleId int64 `path:"roleId"`
 }
 
 type SysMenuTreeResp struct {

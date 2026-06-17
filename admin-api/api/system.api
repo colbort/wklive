@@ -184,7 +184,7 @@ type SysMenuItem {
 }
 
 type SysMenuTreeReq {
-	tenantId int64 `path:"tenantId"`
+	roleId int64 `path:"roleId"`
 }
 
 type SysMenuTreeResp {
@@ -608,7 +608,7 @@ service admin {
 
 	// --- 菜单 ---
 	@handler SysMenuTree
-	get /menus/tree/:tenantId (SysMenuTreeReq) returns (SysMenuTreeResp)
+	get /menus/tree/:roleId (SysMenuTreeReq) returns (SysMenuTreeResp)
 
 	@handler SysMenuCreate
 	post /menus (SysMenuCreateReq) returns (RespBase)

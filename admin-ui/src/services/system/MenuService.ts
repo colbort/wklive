@@ -87,8 +87,8 @@ export class MenuService implements BaseService {
   /**
    * 获取菜单树
    */
-  async getMenuTree(tenantId: number): Promise<RespBase<MenuNode[]>> {
-    return apiMenuTree(tenantId)
+  async getMenuTree(roleId: number): Promise<RespBase<MenuNode[]>> {
+    return apiMenuTree(roleId)
   }
 
   /**
