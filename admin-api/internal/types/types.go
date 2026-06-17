@@ -2171,6 +2171,7 @@ type ListUsersReq struct {
 	UserId            int64  `form:"userId,optional"`
 	UserNo            string `form:"userNo,optional"`
 	Username          string `form:"username,optional"`
+	Nickname          string `form:"nickname,optional"`
 	Phone             string `form:"phone,optional"`
 	Email             string `form:"email,optional"`
 	Status            int64  `form:"status,optional"`

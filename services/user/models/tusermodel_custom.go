@@ -3,15 +3,34 @@ package models
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 	"wklive/common/sqlutil"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
+type UserPageFilter struct {
+	TenantId          int64
+	UserId            int64
+	UserNo            string
+	Username          string
+	Nickname          string
+	Phone             string
+	Email             string
+	Status            int64
+	MemberLevel       int64
+	VerifyStatus      int64
+	KycLevel          int64
+	InviteCode        string
+	RegisterTimeStart int64
+	RegisterTimeEnd   int64
+	Keyword           string
+}
+
 type UserModel interface {
 	tUserModel
-	FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUser, int64, error)
+	FindPage(ctx context.Context, filter UserPageFilter, cursor int64, limit int64) ([]*TUser, int64, error)
 	FindByInviteCode(ctx context.Context, inviteCode string) (*TUser, error)
 	CountRecentNoRecharge(ctx context.Context, id int64) (int64, error)
 	FindByUsername(ctx context.Context, tenantCode string, username string) (*TUser, error)
@@ -21,11 +40,55 @@ type UserModel interface {
 	FindByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUser, error)
 }
 
-func (m *defaultTUserModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUser, int64, error) {
+func (m *defaultTUserModel) FindPage(ctx context.Context, filter UserPageFilter, cursor int64, limit int64) ([]*TUser, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", tenantId)
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("id", filter.UserId)
+	builder.EqString("user_no", filter.UserNo)
+	builder.EqString("username", filter.Username)
+	builder.LikeString("nickname", filter.Nickname)
+	builder.EqInt64("status", filter.Status)
+	builder.EqInt64("member_level", filter.MemberLevel)
+	builder.EqString("invite_code", filter.InviteCode)
+	builder.GteInt64("register_time", filter.RegisterTimeStart)
+	builder.LteInt64("register_time", filter.RegisterTimeEnd)
+
+	identityExists := func(clause string, args ...any) {
+		builder.And(
+			fmt.Sprintf(
+				"EXISTS (SELECT 1 FROM `t_user_identity` ui WHERE ui.tenant_id = %s.tenant_id AND ui.user_id = %s.id AND %s)",
+				m.table,
+				m.table,
+				clause,
+			),
+			args...,
+		)
+	}
+	if filter.Phone != "" {
+		identityExists("ui.phone = ?", filter.Phone)
+	}
+	if filter.Email != "" {
+		identityExists("ui.email = ?", filter.Email)
+	}
+	if filter.VerifyStatus != 0 {
+		identityExists("ui.verify_status = ?", filter.VerifyStatus)
+	}
+	if filter.KycLevel != 0 {
+		identityExists("ui.kyc_level = ?", filter.KycLevel)
+	}
+	if keyword := strings.TrimSpace(filter.Keyword); keyword != "" {
+		kw := "%" + keyword + "%"
+		builder.And(
+			fmt.Sprintf(
+				"(username LIKE ? OR user_no LIKE ? OR nickname LIKE ? OR EXISTS (SELECT 1 FROM `t_user_identity` ui WHERE ui.tenant_id = %s.tenant_id AND ui.user_id = %s.id AND (ui.phone LIKE ? OR ui.email LIKE ?)))",
+				m.table,
+				m.table,
+			),
+			kw, kw, kw, kw, kw,
+		)
+	}
 
 	where := builder.Where()
 	args := builder.Args()

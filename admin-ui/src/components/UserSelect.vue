@@ -20,12 +20,10 @@
 
     <div class="user-select-panel">
       <el-form inline class="user-select-filter" @submit.prevent>
-        <el-form-item :label="t('users.userId')">
-          <el-input-number
-            v-model="queryUserId"
-            :min="0"
-            :precision="0"
-            controls-position="right"
+        <el-form-item :label="t('users.nickname')">
+          <el-input
+            v-model="queryNickname"
+            clearable
             @keyup.enter="searchUsers"
           />
         </el-form-item>
@@ -73,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CursorPagination from '@/components/common/CursorPagination.vue'
 import { usePagination } from '@/composables/usePagination'
@@ -107,16 +105,9 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
 const visible = ref(false)
 const loading = ref(false)
 const users = ref<MemberUserItem[]>([])
-const queryUserId = ref<number | undefined>(undefined)
+const queryNickname = ref('')
 
 const displayValue = computed(() => (props.modelValue ? String(props.modelValue) : ''))
-
-watch(
-  () => props.modelValue,
-  (value) => {
-    queryUserId.value = value
-  },
-)
 
 async function loadUsers() {
   loading.value = true
@@ -125,7 +116,7 @@ async function loadUsers() {
       cursor: pagination.cursor,
       limit: pagination.limit,
       tenantId: props.tenantId || undefined,
-      userId: queryUserId.value || undefined,
+      nickname: queryNickname.value || undefined,
     })
     users.value = res.data || []
     updateFromResponse(res)
@@ -135,7 +126,6 @@ async function loadUsers() {
 }
 
 function handleShow() {
-  queryUserId.value = props.modelValue
   resetAndLoad(loadUsers)
 }
 
@@ -144,7 +134,7 @@ function searchUsers() {
 }
 
 function resetQuery() {
-  queryUserId.value = undefined
+  queryNickname.value = ''
   resetAndLoad(loadUsers)
 }
 
@@ -199,25 +189,8 @@ function getGuestTagClass(value?: number) {
   margin: 0;
 }
 
-.user-select-filter :deep(.el-input-number) {
+.user-select-filter :deep(.el-input) {
   width: 180px;
-}
-
-:global(.user-select-popover .pagination-bar) {
-  justify-content: flex-start;
-  gap: 8px;
-  margin-top: 0;
-  padding-top: 10px;
-  border-top: 1px solid var(--el-border-color-lighter);
-}
-
-:global(.user-select-popover .pagination-bar .el-button) {
-  min-width: 72px;
-  padding: 8px 14px;
-}
-
-:global(.user-select-popover .pagination-bar .el-select) {
-  width: 96px !important;
 }
 
 .option-tag {

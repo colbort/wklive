@@ -395,15 +395,16 @@ type ListUsersReq struct {
 	UserId            int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	UserNo            string                 `protobuf:"bytes,6,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
 	Username          string                 `protobuf:"bytes,7,opt,name=username,proto3" json:"username,omitempty"`
-	Phone             string                 `protobuf:"bytes,8,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email             string                 `protobuf:"bytes,9,opt,name=email,proto3" json:"email,omitempty"`
-	Status            UserStatus             `protobuf:"varint,10,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
-	MemberLevel       int32                  `protobuf:"varint,11,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
-	VerifyStatus      VerifyStatus           `protobuf:"varint,12,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
-	KycLevel          KycLevel               `protobuf:"varint,13,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`
-	InviteCode        string                 `protobuf:"bytes,14,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
-	RegisterTimeStart int64                  `protobuf:"varint,15,opt,name=register_time_start,json=registerTimeStart,proto3" json:"register_time_start,omitempty"`
-	RegisterTimeEnd   int64                  `protobuf:"varint,16,opt,name=register_time_end,json=registerTimeEnd,proto3" json:"register_time_end,omitempty"`
+	Nickname          string                 `protobuf:"bytes,8,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	Phone             string                 `protobuf:"bytes,9,opt,name=phone,proto3" json:"phone,omitempty"`
+	Email             string                 `protobuf:"bytes,10,opt,name=email,proto3" json:"email,omitempty"`
+	Status            UserStatus             `protobuf:"varint,11,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
+	MemberLevel       int32                  `protobuf:"varint,12,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
+	VerifyStatus      VerifyStatus           `protobuf:"varint,13,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
+	KycLevel          KycLevel               `protobuf:"varint,14,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`
+	InviteCode        string                 `protobuf:"bytes,15,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
+	RegisterTimeStart int64                  `protobuf:"varint,16,opt,name=register_time_start,json=registerTimeStart,proto3" json:"register_time_start,omitempty"`
+	RegisterTimeEnd   int64                  `protobuf:"varint,17,opt,name=register_time_end,json=registerTimeEnd,proto3" json:"register_time_end,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -483,6 +484,13 @@ func (x *ListUsersReq) GetUserNo() string {
 func (x *ListUsersReq) GetUsername() string {
 	if x != nil {
 		return x.Username
+	}
+	return ""
+}
+
+func (x *ListUsersReq) GetNickname() string {
+	if x != nil {
+		return x.Nickname
 	}
 	return ""
 }
@@ -2465,7 +2473,7 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"_\n" +
 	"\x11GetUserDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x01(\v2\x10.user.UserDetailR\x04data\"\xb5\x04\n" +
+	"\x04data\x18\x02 \x01(\v2\x10.user.UserDetailR\x04data\"\xd1\x04\n" +
 	"\fListUsersReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -2474,18 +2482,19 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\akeyword\x18\x04 \x01(\tR\akeyword\x12\x17\n" +
 	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x17\n" +
 	"\auser_no\x18\x06 \x01(\tR\x06userNo\x12\x1a\n" +
-	"\busername\x18\a \x01(\tR\busername\x12\x14\n" +
-	"\x05phone\x18\b \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\t \x01(\tR\x05email\x12(\n" +
-	"\x06status\x18\n" +
-	" \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
-	"\fmember_level\x18\v \x01(\x05R\vmemberLevel\x127\n" +
-	"\rverify_status\x18\f \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12+\n" +
-	"\tkyc_level\x18\r \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x12\x1f\n" +
-	"\vinvite_code\x18\x0e \x01(\tR\n" +
+	"\busername\x18\a \x01(\tR\busername\x12\x1a\n" +
+	"\bnickname\x18\b \x01(\tR\bnickname\x12\x14\n" +
+	"\x05phone\x18\t \x01(\tR\x05phone\x12\x14\n" +
+	"\x05email\x18\n" +
+	" \x01(\tR\x05email\x12(\n" +
+	"\x06status\x18\v \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
+	"\fmember_level\x18\f \x01(\x05R\vmemberLevel\x127\n" +
+	"\rverify_status\x18\r \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12+\n" +
+	"\tkyc_level\x18\x0e \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x12\x1f\n" +
+	"\vinvite_code\x18\x0f \x01(\tR\n" +
 	"inviteCode\x12.\n" +
-	"\x13register_time_start\x18\x0f \x01(\x03R\x11registerTimeStart\x12*\n" +
-	"\x11register_time_end\x18\x10 \x01(\x03R\x0fregisterTimeEnd\"Y\n" +
+	"\x13register_time_start\x18\x10 \x01(\x03R\x11registerTimeStart\x12*\n" +
+	"\x11register_time_end\x18\x11 \x01(\x03R\x0fregisterTimeEnd\"Y\n" +
 	"\rListUsersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
 	"\x04data\x18\x02 \x03(\v2\x0e.user.UserItemR\x04data\"\xf5\x02\n" +

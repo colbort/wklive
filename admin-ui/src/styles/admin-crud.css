@@ -113,6 +113,31 @@ body {
   margin-top: 16px;
 }
 
+.user-select-popover .pagination-bar,
+.symbol-select-popover .pagination-bar,
+.contract-select-popover .pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-top: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--el-border-color-lighter);
+}
+
+.user-select-popover .pagination-bar .el-button,
+.symbol-select-popover .pagination-bar .el-button,
+.contract-select-popover .pagination-bar .el-button {
+  min-width: 72px;
+  padding: 8px 14px;
+}
+
+.user-select-popover .pagination-bar .el-select,
+.symbol-select-popover .pagination-bar .el-select,
+.contract-select-popover .pagination-bar .el-select {
+  width: 96px !important;
+}
+
 :is(.module-page, .payment-page) .risk-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

@@ -229,20 +229,4 @@ function clearValue() {
   margin-bottom: 0;
 }
 
-:global(.contract-select-popover .pagination-bar) {
-  justify-content: flex-start;
-  gap: 8px;
-  margin-top: 0;
-  padding-top: 10px;
-  border-top: 1px solid var(--el-border-color-lighter);
-}
-
-:global(.contract-select-popover .pagination-bar .el-button) {
-  min-width: 72px;
-  padding: 8px 14px;
-}
-
-:global(.contract-select-popover .pagination-bar .el-select) {
-  width: 96px !important;
-}
 </style>

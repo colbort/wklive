@@ -196,6 +196,7 @@ export type ListMemberUsersReq = {
   userId?: number // 用户ID
   userNo?: string // 用户编号
   username?: string // 用户名
+  nickname?: string // 昵称
   phone?: string // 手机号
   email?: string // 邮箱
   status?: number // 用户状态

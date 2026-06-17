@@ -52,15 +52,16 @@ message ListUsersReq {
   int64 user_id = 5;
   string user_no = 6;
   string username = 7;
-  string phone = 8;
-  string email = 9;
-  user.UserStatus status = 10;
-  int32 member_level = 11;
-  user.VerifyStatus verify_status = 12;
-  user.KycLevel kyc_level = 13;
-  string invite_code = 14;
-  int64 register_time_start = 15;
-  int64 register_time_end = 16;
+  string nickname = 8;
+  string phone = 9;
+  string email = 10;
+  user.UserStatus status = 11;
+  int32 member_level = 12;
+  user.VerifyStatus verify_status = 13;
+  user.KycLevel kyc_level = 14;
+  string invite_code = 15;
+  int64 register_time_start = 16;
+  int64 register_time_end = 17;
 }
 
 message ListUsersResp {

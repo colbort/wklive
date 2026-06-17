@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"strings"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -35,7 +34,23 @@ func (l *ListUsersLogic) ListUsers(in *user.ListUsersReq) (*user.ListUsersResp, 
 			in.TenantId = tenantId
 		}
 	}
-	items, total, err := l.svcCtx.UserModel.FindPage(l.ctx, in.TenantId, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.UserModel.FindPage(l.ctx, models.UserPageFilter{
+		TenantId:          in.TenantId,
+		UserId:            in.UserId,
+		UserNo:            in.UserNo,
+		Username:          in.Username,
+		Nickname:          in.Nickname,
+		Phone:             in.Phone,
+		Email:             in.Email,
+		Status:            int64(in.Status),
+		MemberLevel:       int64(in.MemberLevel),
+		VerifyStatus:      int64(in.VerifyStatus),
+		KycLevel:          int64(in.KycLevel),
+		InviteCode:        in.InviteCode,
+		RegisterTimeStart: in.RegisterTimeStart,
+		RegisterTimeEnd:   in.RegisterTimeEnd,
+		Keyword:           in.Keyword,
+	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -54,68 +69,4 @@ func (l *ListUsersLogic) ListUsers(in *user.ListUsersReq) (*user.ListUsersResp, 
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
 		Data: data,
 	}, nil
-}
-
-func matchUserFilters(in *user.ListUsersReq, item *models.TUser, identity *models.TUserIdentity) bool {
-	if in.UserId != 0 && item.Id != in.UserId {
-		return false
-	}
-	if in.UserNo != "" && item.UserNo != in.UserNo {
-		return false
-	}
-	if in.Username != "" && item.Username != in.Username {
-		return false
-	}
-	if in.Status != 0 && item.Status != int64(in.Status) {
-		return false
-	}
-	if in.MemberLevel != 0 && item.MemberLevel != int64(in.MemberLevel) {
-		return false
-	}
-	if in.InviteCode != "" && item.InviteCode.String != in.InviteCode {
-		return false
-	}
-	if in.RegisterTimeStart != 0 && item.RegisterTime < in.RegisterTimeStart {
-		return false
-	}
-	if in.RegisterTimeEnd != 0 && item.RegisterTime > in.RegisterTimeEnd {
-		return false
-	}
-	if in.Phone != "" && identityString(identity, func(i *models.TUserIdentity) string { return i.Phone.String }) != in.Phone {
-		return false
-	}
-	if in.Email != "" && identityString(identity, func(i *models.TUserIdentity) string { return i.Email.String }) != in.Email {
-		return false
-	}
-	if in.VerifyStatus != 0 && identityInt(identity, func(i *models.TUserIdentity) int64 { return i.VerifyStatus }) != int64(in.VerifyStatus) {
-		return false
-	}
-	if in.KycLevel != 0 && identityInt(identity, func(i *models.TUserIdentity) int64 { return i.KycLevel }) != int64(in.KycLevel) {
-		return false
-	}
-	if in.Keyword != "" {
-		keyword := strings.ToLower(in.Keyword)
-		if !strings.Contains(strings.ToLower(item.Username), keyword) &&
-			!strings.Contains(strings.ToLower(item.UserNo), keyword) &&
-			!strings.Contains(strings.ToLower(item.Nickname.String), keyword) &&
-			!strings.Contains(strings.ToLower(identityString(identity, func(i *models.TUserIdentity) string { return i.Phone.String })), keyword) &&
-			!strings.Contains(strings.ToLower(identityString(identity, func(i *models.TUserIdentity) string { return i.Email.String })), keyword) {
-			return false
-		}
-	}
-	return true
-}
-
-func identityString(identity *models.TUserIdentity, getter func(*models.TUserIdentity) string) string {
-	if identity == nil {
-		return ""
-	}
-	return getter(identity)
-}
-
-func identityInt(identity *models.TUserIdentity, getter func(*models.TUserIdentity) int64) int64 {
-	if identity == nil {
-		return 0
-	}
-	return getter(identity)
 }

@@ -228,6 +228,7 @@ type ListUsersReq {
 	userId            int64  `form:"userId,optional"`
 	userNo            string `form:"userNo,optional"`
 	username          string `form:"username,optional"`
+	nickname          string `form:"nickname,optional"`
 	phone             string `form:"phone,optional"`
 	email             string `form:"email,optional"`
 	status            int64  `form:"status,optional"`
