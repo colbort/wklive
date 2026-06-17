@@ -305,7 +305,10 @@
             <TenantSelect v-model="marketForm.tenantId" include-system />
           </el-form-item>
           <el-form-item :label="t('option.contractId')">
-            <el-input-number v-model="marketForm.contractId" :min="0" :precision="0" />
+            <ContractSelect
+              v-model="marketForm.contractId"
+              :tenant-id="marketForm.tenantId || undefined"
+            />
           </el-form-item>
           <el-form-item :label="t('option.snapshotTime')">
             <el-date-picker
@@ -544,6 +547,7 @@ import {
   getOptionValueLabel,
 } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import ContractSelect from '@/components/ContractSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()

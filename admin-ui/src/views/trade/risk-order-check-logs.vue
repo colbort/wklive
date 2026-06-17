@@ -8,7 +8,11 @@
         <UserSelect v-model="riskQuery.userId" :tenant-id="riskQuery.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('trade.symbolId')">
-        <el-input-number v-model="riskQuery.symbolId" :min="0" :precision="0" />
+        <SymbolSelect
+          v-model="riskQuery.symbolId"
+          :tenant-id="riskQuery.tenantId || undefined"
+          :market-type="riskQuery.marketType || undefined"
+        />
       </el-form-item>
       <el-form-item :label="t('trade.marketType')">
         <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
@@ -68,6 +72,7 @@ import { usePagination } from '@/composables'
 import { tradeService, type GetRiskOrderCheckLogListReq, type RiskOrderCheckLog } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
+import SymbolSelect from '@/components/SymbolSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()

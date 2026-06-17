@@ -5,7 +5,7 @@
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('option.contractId')">
-        <el-input-number v-model="query.contractId" :min="0" :precision="0" />
+        <ContractSelect v-model="query.contractId" :tenant-id="query.tenantId || undefined" />
       </el-form-item>
       <template #actions>
         <el-button
@@ -82,7 +82,10 @@
           <TenantSelect v-model="marketForm.tenantId" include-system />
         </el-form-item>
         <el-form-item :label="t('option.contractId')">
-          <el-input-number v-model="marketForm.contractId" :min="0" :precision="0" />
+          <ContractSelect
+            v-model="marketForm.contractId"
+            :tenant-id="marketForm.tenantId || undefined"
+          />
         </el-form-item>
         <el-form-item :label="t('option.underlyingPrice')">
           <el-input v-model="marketForm.underlyingPrice" />
@@ -277,6 +280,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import TenantSelect from '@/components/TenantSelect.vue'
+import ContractSelect from '@/components/ContractSelect.vue'
 import { formatDate } from '@/utils'
 import {
   ListMarketSnapshotsReq,

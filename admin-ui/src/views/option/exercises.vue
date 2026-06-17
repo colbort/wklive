@@ -7,6 +7,9 @@
       <el-form-item :label="t('option.userId')">
         <UserSelect v-model="query.userId" :tenant-id="query.tenantId || undefined" />
       </el-form-item>
+      <el-form-item :label="t('option.contractId')">
+        <ContractSelect v-model="query.contractId" :tenant-id="query.tenantId || undefined" />
+      </el-form-item>
       <el-form-item :label="t('option.exerciseNo')">
         <el-input v-model="query.exerciseNo" clearable />
       </el-form-item>
@@ -77,6 +80,7 @@ import { usePagination } from '@/composables'
 import { optionService, type OptionExercise, type OptionExerciseDetail } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
+import ContractSelect from '@/components/ContractSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()

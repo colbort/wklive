@@ -11,7 +11,10 @@
         />
       </el-form-item>
       <el-form-item :label="t('trade.symbolId')">
-        <el-input-number v-model="currentQuery.symbolId" :min="0" :precision="0" />
+        <SymbolSelect
+          v-model="currentQuery.symbolId"
+          :tenant-id="currentQuery.tenantId || undefined"
+        />
       </el-form-item>
     </CrudQueryCard>
 
@@ -65,6 +68,7 @@ import { tradeService, type ContractPositionHistory } from '@/services'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
+import SymbolSelect from '@/components/SymbolSelect.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =

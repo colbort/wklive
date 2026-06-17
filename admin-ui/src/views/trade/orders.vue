@@ -10,7 +10,11 @@
       </el-form-item>
 
       <el-form-item :label="t('trade.symbolId')">
-        <el-input-number v-model="query.symbolId" :min="0" :precision="0" />
+        <SymbolSelect
+          v-model="query.symbolId"
+          :tenant-id="query.tenantId || undefined"
+          :market-type="query.marketType || undefined"
+        />
       </el-form-item>
 
       <el-form-item :label="t('trade.marketType')">
@@ -287,6 +291,7 @@ import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
+import SymbolSelect from '@/components/SymbolSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
