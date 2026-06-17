@@ -28,7 +28,6 @@ export { MemberUserService, memberUserService } from './member/MemberUserService
 // 类型导出
 export type { RespBase, OptionItem, OptionGroup } from './BaseService'
 export type {
-  User,
   CreateUserRequest,
   UpdateUserRequest,
   UserQueryParams,

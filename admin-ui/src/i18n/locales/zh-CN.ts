@@ -557,6 +557,8 @@ export default {
     isRegisterEnabled: '开启注册',
     isGuestEnabled: '允许游客登录',
     isCryptoEnabled: '接口提交数据加密',
+    adminMustGoogleF2a: '后台强制谷歌2FA',
+    appMustGoogleF2a: '客户端强制谷歌2FA',
     apiUrl: 'API地址',
     apiToken: 'API密钥',
     wsUrl: 'WebSocket地址',

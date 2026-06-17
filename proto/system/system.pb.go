@@ -358,16 +358,17 @@ func (x *AdminLoginData) GetAvatar() string {
 }
 
 type ProfileUser struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Nickname      string                 `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Avatar        string                 `protobuf:"bytes,4,opt,name=avatar,proto3" json:"avatar,omitempty"`
-	TenantId      int64                  `protobuf:"varint,5,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserType      UserType               `protobuf:"varint,6,opt,name=user_type,json=userType,proto3,enum=system.UserType" json:"user_type,omitempty"`
-	IsOwner       common.YesNo           `protobuf:"varint,7,opt,name=is_owner,json=isOwner,proto3,enum=common.YesNo" json:"is_owner,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username         string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Nickname         string                 `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	Avatar           string                 `protobuf:"bytes,4,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	TenantId         int64                  `protobuf:"varint,5,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserType         UserType               `protobuf:"varint,6,opt,name=user_type,json=userType,proto3,enum=system.UserType" json:"user_type,omitempty"`
+	IsOwner          common.YesNo           `protobuf:"varint,7,opt,name=is_owner,json=isOwner,proto3,enum=common.YesNo" json:"is_owner,omitempty"`
+	Google2FaEnabled common.Enable          `protobuf:"varint,8,opt,name=google2fa_enabled,json=google2faEnabled,proto3,enum=common.Enable" json:"google2fa_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ProfileUser) Reset() {
@@ -447,6 +448,13 @@ func (x *ProfileUser) GetIsOwner() common.YesNo {
 		return x.IsOwner
 	}
 	return common.YesNo(0)
+}
+
+func (x *ProfileUser) GetGoogle2FaEnabled() common.Enable {
+	if x != nil {
+		return x.Google2FaEnabled
+	}
+	return common.Enable(0)
 }
 
 type SysMenuNode struct {
@@ -6599,7 +6607,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\tuser_type\x18\t \x01(\x0e2\x10.system.UserTypeR\buserType\x12(\n" +
 	"\bis_owner\x18\n" +
 	" \x01(\x0e2\r.common.YesNoR\aisOwner\x12\x16\n" +
-	"\x06avatar\x18\v \x01(\tR\x06avatar\"\xe3\x01\n" +
+	"\x06avatar\x18\v \x01(\tR\x06avatar\"\xa0\x02\n" +
 	"\vProfileUser\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
@@ -6607,7 +6615,8 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x06avatar\x18\x04 \x01(\tR\x06avatar\x12\x1b\n" +
 	"\ttenant_id\x18\x05 \x01(\x03R\btenantId\x12-\n" +
 	"\tuser_type\x18\x06 \x01(\x0e2\x10.system.UserTypeR\buserType\x12(\n" +
-	"\bis_owner\x18\a \x01(\x0e2\r.common.YesNoR\aisOwner\"\xf2\x02\n" +
+	"\bis_owner\x18\a \x01(\x0e2\r.common.YesNoR\aisOwner\x12;\n" +
+	"\x11google2fa_enabled\x18\b \x01(\x0e2\x0e.common.EnableR\x10google2faEnabled\"\xf2\x02\n" +
 	"\vSysMenuNode\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -7289,232 +7298,233 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	98,  // 5: system.AdminLoginData.is_owner:type_name -> common.YesNo
 	97,  // 6: system.ProfileUser.user_type:type_name -> system.UserType
 	98,  // 7: system.ProfileUser.is_owner:type_name -> common.YesNo
-	99,  // 8: system.SysMenuNode.menu_type:type_name -> system.MenuType
-	100, // 9: system.SysMenuNode.visible:type_name -> common.Switch
-	96,  // 10: system.SysMenuNode.enabled:type_name -> common.Enable
-	6,   // 11: system.SysMenuNode.children:type_name -> system.SysMenuNode
-	5,   // 12: system.ProfileData.user:type_name -> system.ProfileUser
-	6,   // 13: system.ProfileData.menus:type_name -> system.SysMenuNode
-	95,  // 14: system.ProfileResp.base:type_name -> common.RespBase
-	7,   // 15: system.ProfileResp.data:type_name -> system.ProfileData
-	99,  // 16: system.SysMenuItem.menu_type:type_name -> system.MenuType
-	101, // 17: system.SysMenuItem.method:type_name -> system.RequestMethod
-	100, // 18: system.SysMenuItem.visible:type_name -> common.Switch
-	96,  // 19: system.SysMenuItem.enabled:type_name -> common.Enable
-	95,  // 20: system.SysMenuTreeResp.base:type_name -> common.RespBase
-	10,  // 21: system.SysMenuTreeResp.data:type_name -> system.SysMenuItem
-	95,  // 22: system.Google2FAInitResp.base:type_name -> common.RespBase
-	15,  // 23: system.Google2FAInitResp.data:type_name -> system.Google2FAInitData
-	96,  // 24: system.SysUserItem.enabled:type_name -> common.Enable
-	96,  // 25: system.SysUserItem.google2fa_enabled:type_name -> common.Enable
-	97,  // 26: system.SysUserItem.user_type:type_name -> system.UserType
-	98,  // 27: system.SysUserItem.is_owner:type_name -> common.YesNo
-	102, // 28: system.SysUserListReq.page:type_name -> common.PageReq
-	96,  // 29: system.SysUserListReq.enabled:type_name -> common.Enable
-	95,  // 30: system.SysUserListResp.base:type_name -> common.RespBase
-	20,  // 31: system.SysUserListResp.data:type_name -> system.SysUserItem
-	95,  // 32: system.SysUserDetailResp.base:type_name -> common.RespBase
-	20,  // 33: system.SysUserDetailResp.data:type_name -> system.SysUserItem
-	96,  // 34: system.SysUserCreateReq.enabled:type_name -> common.Enable
-	97,  // 35: system.SysUserCreateReq.user_type:type_name -> system.UserType
-	98,  // 36: system.SysUserCreateReq.is_owner:type_name -> common.YesNo
-	96,  // 37: system.SysUserUpdateReq.enabled:type_name -> common.Enable
-	97,  // 38: system.SysUserUpdateReq.user_type:type_name -> system.UserType
-	98,  // 39: system.SysUserUpdateReq.is_owner:type_name -> common.YesNo
-	96,  // 40: system.ChangeUserStatusReq.enabled:type_name -> common.Enable
-	96,  // 41: system.SysRoleItem.enabled:type_name -> common.Enable
-	102, // 42: system.SysRoleListReq.page:type_name -> common.PageReq
-	96,  // 43: system.SysRoleListReq.enabled:type_name -> common.Enable
-	95,  // 44: system.SysRoleListResp.base:type_name -> common.RespBase
-	31,  // 45: system.SysRoleListResp.data:type_name -> system.SysRoleItem
-	96,  // 46: system.SysRoleCreateReq.enabled:type_name -> common.Enable
-	96,  // 47: system.SysRoleUpdateReq.enabled:type_name -> common.Enable
-	95,  // 48: system.SysRoleGrantDetailResp.base:type_name -> common.RespBase
-	40,  // 49: system.SysRoleGrantDetailResp.data:type_name -> system.SysRoleGrantDetailData
-	101, // 50: system.SysPermItem.method:type_name -> system.RequestMethod
-	95,  // 51: system.SysPermListResp.base:type_name -> common.RespBase
-	41,  // 52: system.SysPermListResp.data:type_name -> system.SysPermItem
-	99,  // 53: system.SysMenuCreateReq.menu_type:type_name -> system.MenuType
-	101, // 54: system.SysMenuCreateReq.method:type_name -> system.RequestMethod
-	100, // 55: system.SysMenuCreateReq.visible:type_name -> common.Switch
-	96,  // 56: system.SysMenuCreateReq.enabled:type_name -> common.Enable
-	99,  // 57: system.SysMenuUpdateReq.menu_type:type_name -> system.MenuType
-	101, // 58: system.SysMenuUpdateReq.method:type_name -> system.RequestMethod
-	100, // 59: system.SysMenuUpdateReq.visible:type_name -> common.Switch
-	96,  // 60: system.SysMenuUpdateReq.enabled:type_name -> common.Enable
-	102, // 61: system.SysMenuListReq.page:type_name -> common.PageReq
-	99,  // 62: system.SysMenuListReq.menu_type:type_name -> system.MenuType
-	96,  // 63: system.SysMenuListReq.enabled:type_name -> common.Enable
-	100, // 64: system.SysMenuListReq.visible:type_name -> common.Switch
-	95,  // 65: system.SysMenuListResp.base:type_name -> common.RespBase
-	10,  // 66: system.SysMenuListResp.data:type_name -> system.SysMenuItem
-	102, // 67: system.LoginLogListReq.page:type_name -> common.PageReq
-	95,  // 68: system.LoginLogListResp.base:type_name -> common.RespBase
-	48,  // 69: system.LoginLogListResp.data:type_name -> system.LoginLogItem
-	101, // 70: system.OpLogItem.method:type_name -> system.RequestMethod
-	102, // 71: system.OpLogListReq.page:type_name -> common.PageReq
-	101, // 72: system.OpLogListReq.method:type_name -> system.RequestMethod
-	95,  // 73: system.OpLogListResp.base:type_name -> common.RespBase
-	51,  // 74: system.OpLogListResp.data:type_name -> system.OpLogItem
-	102, // 75: system.SysConfigListReq.page:type_name -> common.PageReq
-	95,  // 76: system.SysConfigListResp.base:type_name -> common.RespBase
-	57,  // 77: system.SysConfigListResp.data:type_name -> system.SysConfigItem
-	103, // 78: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
-	95,  // 79: system.SysConfigDetailResp.base:type_name -> common.RespBase
-	57,  // 80: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
-	95,  // 81: system.SysConfigByKeysResp.base:type_name -> common.RespBase
-	57,  // 82: system.SysConfigByKeysResp.data:type_name -> system.SysConfigItem
-	104, // 83: system.SendVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
-	105, // 84: system.SendVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
-	104, // 85: system.TestVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
-	105, // 86: system.TestVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
-	104, // 87: system.VerificationCodeRecordItem.channel:type_name -> system.VerificationCodeChannel
-	105, // 88: system.VerificationCodeRecordItem.scene:type_name -> system.VerificationCodeScene
-	106, // 89: system.VerificationCodeRecordItem.status:type_name -> system.VerificationCodeStatus
-	102, // 90: system.VerificationCodeRecordListReq.page:type_name -> common.PageReq
-	104, // 91: system.VerificationCodeRecordListReq.channel:type_name -> system.VerificationCodeChannel
-	105, // 92: system.VerificationCodeRecordListReq.scene:type_name -> system.VerificationCodeScene
-	106, // 93: system.VerificationCodeRecordListReq.status:type_name -> system.VerificationCodeStatus
-	95,  // 94: system.VerificationCodeRecordListResp.base:type_name -> common.RespBase
-	66,  // 95: system.VerificationCodeRecordListResp.data:type_name -> system.VerificationCodeRecordItem
-	95,  // 96: system.VerificationCodeRecordDetailResp.base:type_name -> common.RespBase
-	66,  // 97: system.VerificationCodeRecordDetailResp.data:type_name -> system.VerificationCodeRecordItem
-	107, // 98: system.SysCronJobItem.status:type_name -> system.JobStatus
-	102, // 99: system.SysCronJobListReq.page:type_name -> common.PageReq
-	107, // 100: system.SysCronJobListReq.status:type_name -> system.JobStatus
-	95,  // 101: system.SysCronJobListResp.base:type_name -> common.RespBase
-	73,  // 102: system.SysCronJobListResp.data:type_name -> system.SysCronJobItem
-	107, // 103: system.SysCronJobCreateReq.status:type_name -> system.JobStatus
-	107, // 104: system.SysCronJobUpdateReq.status:type_name -> system.JobStatus
-	102, // 105: system.SysCronJobLogListReq.page:type_name -> common.PageReq
-	95,  // 106: system.SysCronJobHandlersResp.base:type_name -> common.RespBase
-	84,  // 107: system.SysCronJobHandlersResp.data:type_name -> system.SysCronJobHander
-	95,  // 108: system.SysCronJobLogListResp.base:type_name -> common.RespBase
-	82,  // 109: system.SysCronJobLogListResp.data:type_name -> system.SysCronJobLogItem
-	96,  // 110: system.SysTenantItem.enabled:type_name -> common.Enable
-	102, // 111: system.SysTenantListReq.page:type_name -> common.PageReq
-	96,  // 112: system.SysTenantListReq.enabled:type_name -> common.Enable
-	95,  // 113: system.SysTenantListResp.base:type_name -> common.RespBase
-	87,  // 114: system.SysTenantListResp.data:type_name -> system.SysTenantItem
-	96,  // 115: system.SysTenantCreateReq.enabled:type_name -> common.Enable
-	96,  // 116: system.SysTenantUpdateReq.enabled:type_name -> common.Enable
-	95,  // 117: system.SysTenantDetailResp.base:type_name -> common.RespBase
-	87,  // 118: system.SysTenantDetailResp.data:type_name -> system.SysTenantItem
-	2,   // 119: system.System.AdminLogin:input_type -> system.AdminLoginReq
-	0,   // 120: system.System.GetProfile:input_type -> system.Empty
-	9,   // 121: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
-	13,  // 122: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
-	16,  // 123: system.System.Google2FABind:input_type -> system.Google2FABindReq
-	17,  // 124: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
-	18,  // 125: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
-	19,  // 126: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
-	21,  // 127: system.System.SysUserList:input_type -> system.SysUserListReq
-	23,  // 128: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
-	25,  // 129: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
-	26,  // 130: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
-	27,  // 131: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
-	28,  // 132: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
-	29,  // 133: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
-	30,  // 134: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
-	32,  // 135: system.System.SysRoleList:input_type -> system.SysRoleListReq
-	34,  // 136: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
-	35,  // 137: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
-	36,  // 138: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
-	37,  // 139: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
-	38,  // 140: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
-	0,   // 141: system.System.SysPermList:input_type -> system.Empty
-	11,  // 142: system.System.GetMenuTree:input_type -> system.SysMenuTreeReq
-	43,  // 143: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
-	44,  // 144: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
-	45,  // 145: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
-	46,  // 146: system.System.SysMenuList:input_type -> system.SysMenuListReq
-	49,  // 147: system.System.LoginLogList:input_type -> system.LoginLogListReq
-	52,  // 148: system.System.OpLogList:input_type -> system.OpLogListReq
-	54,  // 149: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
-	55,  // 150: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
-	56,  // 151: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
-	58,  // 152: system.System.SysConfigList:input_type -> system.SysConfigListReq
-	60,  // 153: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	62,  // 154: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
-	64,  // 155: system.System.SendVerificationCode:input_type -> system.SendVerificationCodeReq
-	65,  // 156: system.System.TestVerificationCode:input_type -> system.TestVerificationCodeReq
-	67,  // 157: system.System.VerificationCodeRecordList:input_type -> system.VerificationCodeRecordListReq
-	69,  // 158: system.System.VerificationCodeRecordDetail:input_type -> system.VerificationCodeRecordDetailReq
-	71,  // 159: system.System.LoginUserPerms:input_type -> system.LoginUserPermsReq
-	74,  // 160: system.System.SysCronJobList:input_type -> system.SysCronJobListReq
-	76,  // 161: system.System.SysCronJobCreate:input_type -> system.SysCronJobCreateReq
-	77,  // 162: system.System.SysCronJobUpdate:input_type -> system.SysCronJobUpdateReq
-	78,  // 163: system.System.SysCronJobDelete:input_type -> system.SysCronJobDeleteReq
-	79,  // 164: system.System.SysCronJobRun:input_type -> system.SysCronJobRunReq
-	80,  // 165: system.System.SysCronJobStart:input_type -> system.SysCronJobStartReq
-	81,  // 166: system.System.SysCronJobStop:input_type -> system.SysCronJobStopReq
-	0,   // 167: system.System.SysCronJobHandlers:input_type -> system.Empty
-	83,  // 168: system.System.SysCronJobLogList:input_type -> system.SysCronJobLogListReq
-	90,  // 169: system.System.SysTenantCreate:input_type -> system.SysTenantCreateReq
-	91,  // 170: system.System.SysTenantUpdate:input_type -> system.SysTenantUpdateReq
-	92,  // 171: system.System.SysTenantDelete:input_type -> system.SysTenantDeleteReq
-	88,  // 172: system.System.SysTenantList:input_type -> system.SysTenantListReq
-	93,  // 173: system.System.SysTenantDetail:input_type -> system.SysTenantDetailReq
-	3,   // 174: system.System.AdminLogin:output_type -> system.AdminLoginResp
-	8,   // 175: system.System.GetProfile:output_type -> system.ProfileResp
-	1,   // 176: system.System.UpdateProfile:output_type -> system.RespBase
-	14,  // 177: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
-	1,   // 178: system.System.Google2FABind:output_type -> system.RespBase
-	1,   // 179: system.System.Google2FAEnable:output_type -> system.RespBase
-	1,   // 180: system.System.Google2FADisable:output_type -> system.RespBase
-	1,   // 181: system.System.Google2FAReset:output_type -> system.RespBase
-	22,  // 182: system.System.SysUserList:output_type -> system.SysUserListResp
-	24,  // 183: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
-	1,   // 184: system.System.SysUserCreate:output_type -> system.RespBase
-	1,   // 185: system.System.SysUserUpdate:output_type -> system.RespBase
-	1,   // 186: system.System.SysUserDelete:output_type -> system.RespBase
-	1,   // 187: system.System.ChangeUserStatus:output_type -> system.RespBase
-	1,   // 188: system.System.ResetUserPwd:output_type -> system.RespBase
-	1,   // 189: system.System.AssignUserRoles:output_type -> system.RespBase
-	33,  // 190: system.System.SysRoleList:output_type -> system.SysRoleListResp
-	1,   // 191: system.System.SysRoleCreate:output_type -> system.RespBase
-	1,   // 192: system.System.SysRoleUpdate:output_type -> system.RespBase
-	1,   // 193: system.System.SysRoleDelete:output_type -> system.RespBase
-	1,   // 194: system.System.SysRoleGrant:output_type -> system.RespBase
-	39,  // 195: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
-	42,  // 196: system.System.SysPermList:output_type -> system.SysPermListResp
-	12,  // 197: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
-	1,   // 198: system.System.SysMenuCreate:output_type -> system.RespBase
-	1,   // 199: system.System.SysMenuUpdate:output_type -> system.RespBase
-	1,   // 200: system.System.SysMenuDelete:output_type -> system.RespBase
-	47,  // 201: system.System.SysMenuList:output_type -> system.SysMenuListResp
-	50,  // 202: system.System.LoginLogList:output_type -> system.LoginLogListResp
-	53,  // 203: system.System.OpLogList:output_type -> system.OpLogListResp
-	1,   // 204: system.System.SysConfigCreate:output_type -> system.RespBase
-	1,   // 205: system.System.SysConfigUpdate:output_type -> system.RespBase
-	1,   // 206: system.System.SysConfigDelete:output_type -> system.RespBase
-	59,  // 207: system.System.SysConfigList:output_type -> system.SysConfigListResp
-	61,  // 208: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	63,  // 209: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
-	1,   // 210: system.System.SendVerificationCode:output_type -> system.RespBase
-	1,   // 211: system.System.TestVerificationCode:output_type -> system.RespBase
-	68,  // 212: system.System.VerificationCodeRecordList:output_type -> system.VerificationCodeRecordListResp
-	70,  // 213: system.System.VerificationCodeRecordDetail:output_type -> system.VerificationCodeRecordDetailResp
-	72,  // 214: system.System.LoginUserPerms:output_type -> system.LoginUserPermsResp
-	75,  // 215: system.System.SysCronJobList:output_type -> system.SysCronJobListResp
-	1,   // 216: system.System.SysCronJobCreate:output_type -> system.RespBase
-	1,   // 217: system.System.SysCronJobUpdate:output_type -> system.RespBase
-	1,   // 218: system.System.SysCronJobDelete:output_type -> system.RespBase
-	1,   // 219: system.System.SysCronJobRun:output_type -> system.RespBase
-	1,   // 220: system.System.SysCronJobStart:output_type -> system.RespBase
-	1,   // 221: system.System.SysCronJobStop:output_type -> system.RespBase
-	85,  // 222: system.System.SysCronJobHandlers:output_type -> system.SysCronJobHandlersResp
-	86,  // 223: system.System.SysCronJobLogList:output_type -> system.SysCronJobLogListResp
-	1,   // 224: system.System.SysTenantCreate:output_type -> system.RespBase
-	1,   // 225: system.System.SysTenantUpdate:output_type -> system.RespBase
-	1,   // 226: system.System.SysTenantDelete:output_type -> system.RespBase
-	89,  // 227: system.System.SysTenantList:output_type -> system.SysTenantListResp
-	94,  // 228: system.System.SysTenantDetail:output_type -> system.SysTenantDetailResp
-	174, // [174:229] is the sub-list for method output_type
-	119, // [119:174] is the sub-list for method input_type
-	119, // [119:119] is the sub-list for extension type_name
-	119, // [119:119] is the sub-list for extension extendee
-	0,   // [0:119] is the sub-list for field type_name
+	96,  // 8: system.ProfileUser.google2fa_enabled:type_name -> common.Enable
+	99,  // 9: system.SysMenuNode.menu_type:type_name -> system.MenuType
+	100, // 10: system.SysMenuNode.visible:type_name -> common.Switch
+	96,  // 11: system.SysMenuNode.enabled:type_name -> common.Enable
+	6,   // 12: system.SysMenuNode.children:type_name -> system.SysMenuNode
+	5,   // 13: system.ProfileData.user:type_name -> system.ProfileUser
+	6,   // 14: system.ProfileData.menus:type_name -> system.SysMenuNode
+	95,  // 15: system.ProfileResp.base:type_name -> common.RespBase
+	7,   // 16: system.ProfileResp.data:type_name -> system.ProfileData
+	99,  // 17: system.SysMenuItem.menu_type:type_name -> system.MenuType
+	101, // 18: system.SysMenuItem.method:type_name -> system.RequestMethod
+	100, // 19: system.SysMenuItem.visible:type_name -> common.Switch
+	96,  // 20: system.SysMenuItem.enabled:type_name -> common.Enable
+	95,  // 21: system.SysMenuTreeResp.base:type_name -> common.RespBase
+	10,  // 22: system.SysMenuTreeResp.data:type_name -> system.SysMenuItem
+	95,  // 23: system.Google2FAInitResp.base:type_name -> common.RespBase
+	15,  // 24: system.Google2FAInitResp.data:type_name -> system.Google2FAInitData
+	96,  // 25: system.SysUserItem.enabled:type_name -> common.Enable
+	96,  // 26: system.SysUserItem.google2fa_enabled:type_name -> common.Enable
+	97,  // 27: system.SysUserItem.user_type:type_name -> system.UserType
+	98,  // 28: system.SysUserItem.is_owner:type_name -> common.YesNo
+	102, // 29: system.SysUserListReq.page:type_name -> common.PageReq
+	96,  // 30: system.SysUserListReq.enabled:type_name -> common.Enable
+	95,  // 31: system.SysUserListResp.base:type_name -> common.RespBase
+	20,  // 32: system.SysUserListResp.data:type_name -> system.SysUserItem
+	95,  // 33: system.SysUserDetailResp.base:type_name -> common.RespBase
+	20,  // 34: system.SysUserDetailResp.data:type_name -> system.SysUserItem
+	96,  // 35: system.SysUserCreateReq.enabled:type_name -> common.Enable
+	97,  // 36: system.SysUserCreateReq.user_type:type_name -> system.UserType
+	98,  // 37: system.SysUserCreateReq.is_owner:type_name -> common.YesNo
+	96,  // 38: system.SysUserUpdateReq.enabled:type_name -> common.Enable
+	97,  // 39: system.SysUserUpdateReq.user_type:type_name -> system.UserType
+	98,  // 40: system.SysUserUpdateReq.is_owner:type_name -> common.YesNo
+	96,  // 41: system.ChangeUserStatusReq.enabled:type_name -> common.Enable
+	96,  // 42: system.SysRoleItem.enabled:type_name -> common.Enable
+	102, // 43: system.SysRoleListReq.page:type_name -> common.PageReq
+	96,  // 44: system.SysRoleListReq.enabled:type_name -> common.Enable
+	95,  // 45: system.SysRoleListResp.base:type_name -> common.RespBase
+	31,  // 46: system.SysRoleListResp.data:type_name -> system.SysRoleItem
+	96,  // 47: system.SysRoleCreateReq.enabled:type_name -> common.Enable
+	96,  // 48: system.SysRoleUpdateReq.enabled:type_name -> common.Enable
+	95,  // 49: system.SysRoleGrantDetailResp.base:type_name -> common.RespBase
+	40,  // 50: system.SysRoleGrantDetailResp.data:type_name -> system.SysRoleGrantDetailData
+	101, // 51: system.SysPermItem.method:type_name -> system.RequestMethod
+	95,  // 52: system.SysPermListResp.base:type_name -> common.RespBase
+	41,  // 53: system.SysPermListResp.data:type_name -> system.SysPermItem
+	99,  // 54: system.SysMenuCreateReq.menu_type:type_name -> system.MenuType
+	101, // 55: system.SysMenuCreateReq.method:type_name -> system.RequestMethod
+	100, // 56: system.SysMenuCreateReq.visible:type_name -> common.Switch
+	96,  // 57: system.SysMenuCreateReq.enabled:type_name -> common.Enable
+	99,  // 58: system.SysMenuUpdateReq.menu_type:type_name -> system.MenuType
+	101, // 59: system.SysMenuUpdateReq.method:type_name -> system.RequestMethod
+	100, // 60: system.SysMenuUpdateReq.visible:type_name -> common.Switch
+	96,  // 61: system.SysMenuUpdateReq.enabled:type_name -> common.Enable
+	102, // 62: system.SysMenuListReq.page:type_name -> common.PageReq
+	99,  // 63: system.SysMenuListReq.menu_type:type_name -> system.MenuType
+	96,  // 64: system.SysMenuListReq.enabled:type_name -> common.Enable
+	100, // 65: system.SysMenuListReq.visible:type_name -> common.Switch
+	95,  // 66: system.SysMenuListResp.base:type_name -> common.RespBase
+	10,  // 67: system.SysMenuListResp.data:type_name -> system.SysMenuItem
+	102, // 68: system.LoginLogListReq.page:type_name -> common.PageReq
+	95,  // 69: system.LoginLogListResp.base:type_name -> common.RespBase
+	48,  // 70: system.LoginLogListResp.data:type_name -> system.LoginLogItem
+	101, // 71: system.OpLogItem.method:type_name -> system.RequestMethod
+	102, // 72: system.OpLogListReq.page:type_name -> common.PageReq
+	101, // 73: system.OpLogListReq.method:type_name -> system.RequestMethod
+	95,  // 74: system.OpLogListResp.base:type_name -> common.RespBase
+	51,  // 75: system.OpLogListResp.data:type_name -> system.OpLogItem
+	102, // 76: system.SysConfigListReq.page:type_name -> common.PageReq
+	95,  // 77: system.SysConfigListResp.base:type_name -> common.RespBase
+	57,  // 78: system.SysConfigListResp.data:type_name -> system.SysConfigItem
+	103, // 79: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
+	95,  // 80: system.SysConfigDetailResp.base:type_name -> common.RespBase
+	57,  // 81: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
+	95,  // 82: system.SysConfigByKeysResp.base:type_name -> common.RespBase
+	57,  // 83: system.SysConfigByKeysResp.data:type_name -> system.SysConfigItem
+	104, // 84: system.SendVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
+	105, // 85: system.SendVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
+	104, // 86: system.TestVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
+	105, // 87: system.TestVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
+	104, // 88: system.VerificationCodeRecordItem.channel:type_name -> system.VerificationCodeChannel
+	105, // 89: system.VerificationCodeRecordItem.scene:type_name -> system.VerificationCodeScene
+	106, // 90: system.VerificationCodeRecordItem.status:type_name -> system.VerificationCodeStatus
+	102, // 91: system.VerificationCodeRecordListReq.page:type_name -> common.PageReq
+	104, // 92: system.VerificationCodeRecordListReq.channel:type_name -> system.VerificationCodeChannel
+	105, // 93: system.VerificationCodeRecordListReq.scene:type_name -> system.VerificationCodeScene
+	106, // 94: system.VerificationCodeRecordListReq.status:type_name -> system.VerificationCodeStatus
+	95,  // 95: system.VerificationCodeRecordListResp.base:type_name -> common.RespBase
+	66,  // 96: system.VerificationCodeRecordListResp.data:type_name -> system.VerificationCodeRecordItem
+	95,  // 97: system.VerificationCodeRecordDetailResp.base:type_name -> common.RespBase
+	66,  // 98: system.VerificationCodeRecordDetailResp.data:type_name -> system.VerificationCodeRecordItem
+	107, // 99: system.SysCronJobItem.status:type_name -> system.JobStatus
+	102, // 100: system.SysCronJobListReq.page:type_name -> common.PageReq
+	107, // 101: system.SysCronJobListReq.status:type_name -> system.JobStatus
+	95,  // 102: system.SysCronJobListResp.base:type_name -> common.RespBase
+	73,  // 103: system.SysCronJobListResp.data:type_name -> system.SysCronJobItem
+	107, // 104: system.SysCronJobCreateReq.status:type_name -> system.JobStatus
+	107, // 105: system.SysCronJobUpdateReq.status:type_name -> system.JobStatus
+	102, // 106: system.SysCronJobLogListReq.page:type_name -> common.PageReq
+	95,  // 107: system.SysCronJobHandlersResp.base:type_name -> common.RespBase
+	84,  // 108: system.SysCronJobHandlersResp.data:type_name -> system.SysCronJobHander
+	95,  // 109: system.SysCronJobLogListResp.base:type_name -> common.RespBase
+	82,  // 110: system.SysCronJobLogListResp.data:type_name -> system.SysCronJobLogItem
+	96,  // 111: system.SysTenantItem.enabled:type_name -> common.Enable
+	102, // 112: system.SysTenantListReq.page:type_name -> common.PageReq
+	96,  // 113: system.SysTenantListReq.enabled:type_name -> common.Enable
+	95,  // 114: system.SysTenantListResp.base:type_name -> common.RespBase
+	87,  // 115: system.SysTenantListResp.data:type_name -> system.SysTenantItem
+	96,  // 116: system.SysTenantCreateReq.enabled:type_name -> common.Enable
+	96,  // 117: system.SysTenantUpdateReq.enabled:type_name -> common.Enable
+	95,  // 118: system.SysTenantDetailResp.base:type_name -> common.RespBase
+	87,  // 119: system.SysTenantDetailResp.data:type_name -> system.SysTenantItem
+	2,   // 120: system.System.AdminLogin:input_type -> system.AdminLoginReq
+	0,   // 121: system.System.GetProfile:input_type -> system.Empty
+	9,   // 122: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
+	13,  // 123: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
+	16,  // 124: system.System.Google2FABind:input_type -> system.Google2FABindReq
+	17,  // 125: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
+	18,  // 126: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
+	19,  // 127: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
+	21,  // 128: system.System.SysUserList:input_type -> system.SysUserListReq
+	23,  // 129: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
+	25,  // 130: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
+	26,  // 131: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
+	27,  // 132: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
+	28,  // 133: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
+	29,  // 134: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
+	30,  // 135: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
+	32,  // 136: system.System.SysRoleList:input_type -> system.SysRoleListReq
+	34,  // 137: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
+	35,  // 138: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
+	36,  // 139: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
+	37,  // 140: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
+	38,  // 141: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
+	0,   // 142: system.System.SysPermList:input_type -> system.Empty
+	11,  // 143: system.System.GetMenuTree:input_type -> system.SysMenuTreeReq
+	43,  // 144: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
+	44,  // 145: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
+	45,  // 146: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
+	46,  // 147: system.System.SysMenuList:input_type -> system.SysMenuListReq
+	49,  // 148: system.System.LoginLogList:input_type -> system.LoginLogListReq
+	52,  // 149: system.System.OpLogList:input_type -> system.OpLogListReq
+	54,  // 150: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
+	55,  // 151: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
+	56,  // 152: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
+	58,  // 153: system.System.SysConfigList:input_type -> system.SysConfigListReq
+	60,  // 154: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	62,  // 155: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
+	64,  // 156: system.System.SendVerificationCode:input_type -> system.SendVerificationCodeReq
+	65,  // 157: system.System.TestVerificationCode:input_type -> system.TestVerificationCodeReq
+	67,  // 158: system.System.VerificationCodeRecordList:input_type -> system.VerificationCodeRecordListReq
+	69,  // 159: system.System.VerificationCodeRecordDetail:input_type -> system.VerificationCodeRecordDetailReq
+	71,  // 160: system.System.LoginUserPerms:input_type -> system.LoginUserPermsReq
+	74,  // 161: system.System.SysCronJobList:input_type -> system.SysCronJobListReq
+	76,  // 162: system.System.SysCronJobCreate:input_type -> system.SysCronJobCreateReq
+	77,  // 163: system.System.SysCronJobUpdate:input_type -> system.SysCronJobUpdateReq
+	78,  // 164: system.System.SysCronJobDelete:input_type -> system.SysCronJobDeleteReq
+	79,  // 165: system.System.SysCronJobRun:input_type -> system.SysCronJobRunReq
+	80,  // 166: system.System.SysCronJobStart:input_type -> system.SysCronJobStartReq
+	81,  // 167: system.System.SysCronJobStop:input_type -> system.SysCronJobStopReq
+	0,   // 168: system.System.SysCronJobHandlers:input_type -> system.Empty
+	83,  // 169: system.System.SysCronJobLogList:input_type -> system.SysCronJobLogListReq
+	90,  // 170: system.System.SysTenantCreate:input_type -> system.SysTenantCreateReq
+	91,  // 171: system.System.SysTenantUpdate:input_type -> system.SysTenantUpdateReq
+	92,  // 172: system.System.SysTenantDelete:input_type -> system.SysTenantDeleteReq
+	88,  // 173: system.System.SysTenantList:input_type -> system.SysTenantListReq
+	93,  // 174: system.System.SysTenantDetail:input_type -> system.SysTenantDetailReq
+	3,   // 175: system.System.AdminLogin:output_type -> system.AdminLoginResp
+	8,   // 176: system.System.GetProfile:output_type -> system.ProfileResp
+	1,   // 177: system.System.UpdateProfile:output_type -> system.RespBase
+	14,  // 178: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
+	1,   // 179: system.System.Google2FABind:output_type -> system.RespBase
+	1,   // 180: system.System.Google2FAEnable:output_type -> system.RespBase
+	1,   // 181: system.System.Google2FADisable:output_type -> system.RespBase
+	1,   // 182: system.System.Google2FAReset:output_type -> system.RespBase
+	22,  // 183: system.System.SysUserList:output_type -> system.SysUserListResp
+	24,  // 184: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
+	1,   // 185: system.System.SysUserCreate:output_type -> system.RespBase
+	1,   // 186: system.System.SysUserUpdate:output_type -> system.RespBase
+	1,   // 187: system.System.SysUserDelete:output_type -> system.RespBase
+	1,   // 188: system.System.ChangeUserStatus:output_type -> system.RespBase
+	1,   // 189: system.System.ResetUserPwd:output_type -> system.RespBase
+	1,   // 190: system.System.AssignUserRoles:output_type -> system.RespBase
+	33,  // 191: system.System.SysRoleList:output_type -> system.SysRoleListResp
+	1,   // 192: system.System.SysRoleCreate:output_type -> system.RespBase
+	1,   // 193: system.System.SysRoleUpdate:output_type -> system.RespBase
+	1,   // 194: system.System.SysRoleDelete:output_type -> system.RespBase
+	1,   // 195: system.System.SysRoleGrant:output_type -> system.RespBase
+	39,  // 196: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
+	42,  // 197: system.System.SysPermList:output_type -> system.SysPermListResp
+	12,  // 198: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
+	1,   // 199: system.System.SysMenuCreate:output_type -> system.RespBase
+	1,   // 200: system.System.SysMenuUpdate:output_type -> system.RespBase
+	1,   // 201: system.System.SysMenuDelete:output_type -> system.RespBase
+	47,  // 202: system.System.SysMenuList:output_type -> system.SysMenuListResp
+	50,  // 203: system.System.LoginLogList:output_type -> system.LoginLogListResp
+	53,  // 204: system.System.OpLogList:output_type -> system.OpLogListResp
+	1,   // 205: system.System.SysConfigCreate:output_type -> system.RespBase
+	1,   // 206: system.System.SysConfigUpdate:output_type -> system.RespBase
+	1,   // 207: system.System.SysConfigDelete:output_type -> system.RespBase
+	59,  // 208: system.System.SysConfigList:output_type -> system.SysConfigListResp
+	61,  // 209: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	63,  // 210: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
+	1,   // 211: system.System.SendVerificationCode:output_type -> system.RespBase
+	1,   // 212: system.System.TestVerificationCode:output_type -> system.RespBase
+	68,  // 213: system.System.VerificationCodeRecordList:output_type -> system.VerificationCodeRecordListResp
+	70,  // 214: system.System.VerificationCodeRecordDetail:output_type -> system.VerificationCodeRecordDetailResp
+	72,  // 215: system.System.LoginUserPerms:output_type -> system.LoginUserPermsResp
+	75,  // 216: system.System.SysCronJobList:output_type -> system.SysCronJobListResp
+	1,   // 217: system.System.SysCronJobCreate:output_type -> system.RespBase
+	1,   // 218: system.System.SysCronJobUpdate:output_type -> system.RespBase
+	1,   // 219: system.System.SysCronJobDelete:output_type -> system.RespBase
+	1,   // 220: system.System.SysCronJobRun:output_type -> system.RespBase
+	1,   // 221: system.System.SysCronJobStart:output_type -> system.RespBase
+	1,   // 222: system.System.SysCronJobStop:output_type -> system.RespBase
+	85,  // 223: system.System.SysCronJobHandlers:output_type -> system.SysCronJobHandlersResp
+	86,  // 224: system.System.SysCronJobLogList:output_type -> system.SysCronJobLogListResp
+	1,   // 225: system.System.SysTenantCreate:output_type -> system.RespBase
+	1,   // 226: system.System.SysTenantUpdate:output_type -> system.RespBase
+	1,   // 227: system.System.SysTenantDelete:output_type -> system.RespBase
+	89,  // 228: system.System.SysTenantList:output_type -> system.SysTenantListResp
+	94,  // 229: system.System.SysTenantDetail:output_type -> system.SysTenantDetailResp
+	175, // [175:230] is the sub-list for method output_type
+	120, // [120:175] is the sub-list for method input_type
+	120, // [120:120] is the sub-list for extension type_name
+	120, // [120:120] is the sub-list for extension extendee
+	0,   // [0:120] is the sub-list for field type_name
 }
 
 func init() { file_proto_system_system_proto_init() }

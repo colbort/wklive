@@ -2742,13 +2742,14 @@ type ProfileResp struct {
 }
 
 type ProfileUser struct {
-	Id       int64  `json:"id"`
-	Username string `json:"username"`
-	Nickname string `json:"nickname,optional"`
-	Avatar   string `json:"avatar,optional"`
-	TenantId int64  `json:"tenantId"` // 所属租户ID：0=系统侧，>0=租户ID
-	UserType int64  `json:"userType"` // 用户类型：1系统管理员 2租户主账号 3租户管理员
-	IsOwner  int64  `json:"isOwner"`  // 是否租户主账号：1是 2否
+	Id               int64  `json:"id"`
+	Username         string `json:"username"`
+	Nickname         string `json:"nickname,optional"`
+	Avatar           string `json:"avatar,optional"`
+	TenantId         int64  `json:"tenantId"` // 所属租户ID：0=系统侧，>0=租户ID
+	UserType         int64  `json:"userType"` // 用户类型：1系统管理员 2租户主账号 3租户管理员
+	IsOwner          int64  `json:"isOwner"`  // 是否租户主账号：1是 2否
+	Google2faEnabled int64  `json:"google2faEnabled"`
 }
 
 type Quote struct {

@@ -305,6 +305,8 @@ const systemCoreForm = ref<SystemCore>({
   is_register_enabled: 2,
   is_guest_enabled: 2,
   is_crypto_enabled: 2,
+  admin_must_google_f2a: 2,
+  app_must_google_f2a: 2,
 })
 
 const activeTab = ref('aliyun')
@@ -445,6 +447,8 @@ function resetTypeForms() {
     is_register_enabled: 2,
     is_guest_enabled: 2,
     is_crypto_enabled: 2,
+    admin_must_google_f2a: 2,
+    app_must_google_f2a: 2,
   }
   objectStorageForm.value = {
     aliyun_oss: {
@@ -521,6 +525,8 @@ function handleConfigKeyChange(value: string) {
       is_register_enabled: 2,
       is_guest_enabled: 2,
       is_crypto_enabled: 2,
+      admin_must_google_f2a: 2,
+      app_must_google_f2a: 2,
     }
     formData.configValue = ''
   } else if (value === 'OBJECT_STORAGE') {
@@ -644,6 +650,8 @@ function handleEdit(row: SysConfigItem) {
         is_register_enabled: enableValue(parsed.is_register_enabled),
         is_guest_enabled: enableValue(parsed.is_guest_enabled),
         is_crypto_enabled: enableValue(parsed.is_crypto_enabled),
+        admin_must_google_f2a: enableValue(parsed.admin_must_google_f2a),
+        app_must_google_f2a: enableValue(parsed.app_must_google_f2a),
       }
     } catch {
       systemCoreForm.value = {
@@ -653,6 +661,8 @@ function handleEdit(row: SysConfigItem) {
         is_register_enabled: 2,
         is_guest_enabled: 2,
         is_crypto_enabled: 2,
+        admin_must_google_f2a: 2,
+        app_must_google_f2a: 2,
       }
     }
   } else if (row.configKey === 'OBJECT_STORAGE') {

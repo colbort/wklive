@@ -74,6 +74,24 @@
         :inactive-text="t('common.disabled')"
       />
     </el-form-item>
+    <el-form-item :label="t('system.adminMustGoogleF2a')" prop="admin_must_google_f2a">
+      <el-switch
+        v-model="form.admin_must_google_f2a"
+        :active-value="1"
+        :inactive-value="2"
+        :active-text="t('common.enabled')"
+        :inactive-text="t('common.disabled')"
+      />
+    </el-form-item>
+    <el-form-item :label="t('system.appMustGoogleF2a')" prop="app_must_google_f2a">
+      <el-switch
+        v-model="form.app_must_google_f2a"
+        :active-value="1"
+        :inactive-value="2"
+        :active-text="t('common.enabled')"
+        :inactive-text="t('common.disabled')"
+      />
+    </el-form-item>
 
     <!-- Image Crop Dialog -->
     <el-dialog

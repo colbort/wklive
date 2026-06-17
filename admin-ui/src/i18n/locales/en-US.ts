@@ -557,6 +557,8 @@ export default {
     isRegisterEnabled: 'Enable Registration',
     isGuestEnabled: 'Allow Guest Login',
     isCryptoEnabled: 'Encrypt API Submission Data',
+    adminMustGoogleF2a: 'Require Admin Google 2FA',
+    appMustGoogleF2a: 'Require App Google 2FA',
     apiUrl: 'API URL',
     apiToken: 'API Token',
     wsUrl: 'WebSocket URL',

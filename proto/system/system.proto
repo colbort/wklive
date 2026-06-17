@@ -49,6 +49,7 @@ message ProfileUser {
   int64 tenant_id = 5;
   system.UserType user_type = 6;
   common.YesNo is_owner = 7;
+  common.Enable google2fa_enabled = 8; // 状态,0表示全部，1表示启用，2表示禁用
 }
 
 message SysMenuNode {
