@@ -14,6 +14,7 @@ import {
   getOptionLabel,
   getOptionValueLabel,
 } from '@/utils/options'
+import { useAuthStore } from '@/stores/auth'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 import TenantSelect from '@/components/TenantSelect.vue'
 
@@ -27,6 +28,7 @@ type RoleMenuNode = MenuNode & {
 
 // ===== i18n =====
 const { t } = useI18n()
+const auth = useAuthStore()
 const optionGroups = ref<OptionGroup[]>([])
 const enabledOptions = computed(() => findOptionGroup(optionGroups.value, 'enabled'))
 const enabledSelectOptions = computed(() => {
@@ -55,6 +57,15 @@ function isSuperRole(r: SysRole | null | undefined) {
   return (
     r.isSuper === true || r.code === 'super_admin' || r.code === 'tenant_super_admin' || r.id === 1
   )
+}
+
+function isTenantOwnerRole(r: SysRole | null | undefined) {
+  return r?.code === 'tenant_owner'
+}
+
+function isReadonlyRole(r: SysRole | null | undefined) {
+  if (isSuperRole(r)) return true
+  return auth.isTenantUser && isTenantOwnerRole(r)
 }
 
 function enabledOptionLabel(value: number | string | undefined, code?: string) {
@@ -247,7 +258,7 @@ const permList = ref<PermItem[]>([])
 const menuTreeRef = ref<TreeInstance>()
 const checkedPermKeys = ref<string[]>([])
 
-const grantReadonly = computed(() => isSuperRole(currentRole.value))
+const grantReadonly = computed(() => isReadonlyRole(currentRole.value))
 const grantDialogTitle = computed(() =>
   t(grantReadonly.value ? 'system.viewGrantTitle' : 'system.grantTitle', {
     role: currentRole.value?.name || '',
@@ -440,16 +451,16 @@ onMounted(async () => {
         >
           <template #default="{ row }">
             <el-button
+              v-if="!isReadonlyRole(row)"
               v-perm="'sys:role:update'"
               size="small"
-              :disabled="isSuperRole(row)"
               @click="openUpdate(row)"
             >
               {{ t('common.edit') }}
             </el-button>
 
             <el-button
-              v-if="isSuperRole(row)"
+              v-if="isReadonlyRole(row)"
               v-perm="'sys:role:grant:detail'"
               size="small"
               @click="openGrant(row)"
@@ -467,10 +478,10 @@ onMounted(async () => {
             </el-button>
 
             <el-button
+              v-if="!isReadonlyRole(row)"
               v-perm="'sys:role:delete'"
               size="small"
               type="danger"
-              :disabled="isSuperRole(row)"
               @click="onDelete(row)"
             >
               {{ t('common.delete') }}

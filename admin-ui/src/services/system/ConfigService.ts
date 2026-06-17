@@ -55,6 +55,8 @@ export type SystemCore = {
   is_register_enabled: number // 是否开启注册：1启用 2禁用
   is_guest_enabled: number // 是否允许游客登录：1启用 2禁用
   is_crypto_enabled: number // 是否加密接口提交数据：1启用 2禁用
+  admin_must_google_f2a: number // 管理后台必须开启google验证码：1启用 2禁用
+  app_must_google_f2a: number // 客户端必须开启google验证码：1启用 2禁用
 }
 
 export type ItickConfig = {

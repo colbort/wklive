@@ -5,6 +5,7 @@ type SystemCore = {
   siteName: string
   siteLogo: string
   assetUrl: string
+  mustGoogleF2a: number
   options?: OptionGroup[]
 }
 

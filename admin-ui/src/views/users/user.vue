@@ -749,10 +749,7 @@ onMounted(fetchCreateOptions)
                   >
                     {{ t('common.detail') }}
                   </el-dropdown-item>
-                  <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:update')"
-                    @click="openEdit(row)"
-                  >
+                  <el-dropdown-item v-if="auth.hasPerm('users:user:update')" @click="openEdit(row)">
                     {{ t('common.edit') }}
                   </el-dropdown-item>
                   <el-dropdown-item

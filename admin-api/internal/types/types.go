@@ -1388,10 +1388,11 @@ type GetSyncTaskStatusResp struct {
 }
 
 type GetSystemCore struct {
-	SiteName string         `json:"siteName"`
-	SiteLogo string         `json:"siteLogo"`
-	AssetUrl string         `json:"assetUrl"`
-	Options  []OptionsGroup `json:"options"`
+	SiteName      string         `json:"siteName"`
+	SiteLogo      string         `json:"siteLogo"`
+	AssetUrl      string         `json:"assetUrl"`
+	MustGoogleF2a int64          `json:"mustGoogleF2a"`
+	Options       []OptionsGroup `json:"options"`
 }
 
 type GetSystemCoreResp struct {
@@ -3551,6 +3552,15 @@ type SysUserItem struct {
 	RoleIds          []int64 `json:"roleIds"`
 	CreateTimes      int64   `json:"createTimes"`
 	Google2faEnabled int64   `json:"google2faEnabled"`
+	TenantId         int64   `json:"tenantId"`
+	UserType         int64   `json:"userType"`
+	IsOwner          int64   `json:"isOwner"`
+	Avatar           string  `json:"avatar"`
+	PermsVer         int64   `json:"permsVer"`
+	LastLoginIp      string  `json:"lastLoginIp"`
+	LastLoginAt      int64   `json:"lastLoginAt"`
+	CreateBy         int64   `json:"createBy"`
+	UpdateTimes      int64   `json:"updateTimes"`
 }
 
 type SysUserListReq struct {

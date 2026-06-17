@@ -26,6 +26,15 @@ export type SysUserItem = {
   roleIds: number[]
   createTimes: number
   google2faEnabled: number // Google 2FA 是否启用：1启用 2禁用
+  tenantId: number
+  userType: number // '用户类型：1系统管理员 2租户主账号 3租户管理员'
+  isOwner: number
+  avatar: string
+  permsVer: number
+  lastLoginIp: string
+  lastLoginAt: number
+  createBy: number
+  updateTimes: number
 }
 
 export type Google2FABindInitResp = {
@@ -33,9 +42,6 @@ export type Google2FABindInitResp = {
   otpauthUrl: string
   qrCode: string
 }
-
-// 用户接口定义（复用现有的类型）
-export interface User extends SysUserItem {}
 
 export interface CreateUserRequest {
   username: string
@@ -126,7 +132,7 @@ export class UserService implements BaseService {
   /**
    * 更新用户启用状态
    */
-  async updateUserEnabled(id: number, enabled: number): Promise<RespBase<User>> {
+  async updateUserEnabled(id: number, enabled: number): Promise<RespBase<SysUserItem>> {
     return apiChangeUserEnabled({ id, enabled })
   }
 

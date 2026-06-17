@@ -19,6 +19,8 @@ message SystemCore {
   common.Enable is_register_enabled = 4; // 是否开启注册,0表示全部，1表示启用，2表示禁用
   common.Enable is_guest_enabled = 5; // 是否允许游客登录,0表示全部，1表示启用，2表示禁用
   common.Enable is_crypto_enabled = 6; // 是否加密接口提交数据,0表示全部，1表示启用，2表示禁用
+  common.Enable admin_must_google_f2a = 7; // 管理后台必须开启google验证码
+  common.Enable app_must_google_f2a = 8; // 客户端必须开启google验证码
 }
 
 // 阿里云 OSS配置

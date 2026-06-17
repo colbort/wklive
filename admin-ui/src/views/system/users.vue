@@ -414,7 +414,7 @@ function isProtectedUser(row: SysUserItem) {
   if (row.id === 1) return true
   return (row.roleIds || []).some((roleId) => {
     const code = roleMap.value.get(roleId)?.code
-    return code === 'super_admin' || code === 'tenant_super_admin'
+    return code === 'super_admin' || code === 'tenant_super_admin' || row.userType === 2
   })
 }
 

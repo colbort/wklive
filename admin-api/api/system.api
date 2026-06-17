@@ -13,6 +13,15 @@ type SysUserItem {
 	roleIds          []int64 `json:"roleIds"`
 	createTimes      int64   `json:"createTimes"`
 	google2faEnabled int64   `json:"google2faEnabled"`
+	tenantId         int64   `json:"tenantId"`
+	userType         int64   `json:"userType"`
+	isOwner          int64   `json:"isOwner"`
+	avatar           string  `json:"avatar"`
+	permsVer         int64   `json:"permsVer"`
+	lastLoginIp      string  `json:"lastLoginIp"`
+	lastLoginAt      int64   `json:"lastLoginAt"`
+	createBy         int64   `json:"createBy"`
+	updateTimes      int64   `json:"updateTimes"`
 }
 
 type SysUserListResp {

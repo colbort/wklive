@@ -90,10 +90,11 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 			Msg:  cd.Base.Msg,
 		},
 		Data: types.GetSystemCore{
-			SiteName: core.SiteName,
-			SiteLogo: core.SiteLogo,
-			AssetUrl: assetUrl,
-			Options:  logicutil.CoreOptions(),
+			SiteName:      core.SiteName,
+			SiteLogo:      core.SiteLogo,
+			AssetUrl:      assetUrl,
+			MustGoogleF2a: int64(core.AdminMustGoogleF2A),
+			Options:       logicutil.CoreOptions(),
 		},
 	}, nil
 }

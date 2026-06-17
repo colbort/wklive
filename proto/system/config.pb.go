@@ -76,15 +76,17 @@ func (x *Interval) GetKType() int32 {
 
 // 系统配置
 type SystemCore struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	SiteName          string                 `protobuf:"bytes,1,opt,name=site_name,json=siteName,proto3" json:"site_name,omitempty"`                                                  // 网站名称
-	SiteLogo          string                 `protobuf:"bytes,2,opt,name=site_logo,json=siteLogo,proto3" json:"site_logo,omitempty"`                                                  // 网站LOGO
-	IsCaptchaEnabled  common.Enable          `protobuf:"varint,3,opt,name=is_captcha_enabled,json=isCaptchaEnabled,proto3,enum=common.Enable" json:"is_captcha_enabled,omitempty"`    // 是否开启验证码,0表示全部，1表示启用，2表示禁用
-	IsRegisterEnabled common.Enable          `protobuf:"varint,4,opt,name=is_register_enabled,json=isRegisterEnabled,proto3,enum=common.Enable" json:"is_register_enabled,omitempty"` // 是否开启注册,0表示全部，1表示启用，2表示禁用
-	IsGuestEnabled    common.Enable          `protobuf:"varint,5,opt,name=is_guest_enabled,json=isGuestEnabled,proto3,enum=common.Enable" json:"is_guest_enabled,omitempty"`          // 是否允许游客登录,0表示全部，1表示启用，2表示禁用
-	IsCryptoEnabled   common.Enable          `protobuf:"varint,6,opt,name=is_crypto_enabled,json=isCryptoEnabled,proto3,enum=common.Enable" json:"is_crypto_enabled,omitempty"`       // 是否加密接口提交数据,0表示全部，1表示启用，2表示禁用
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	SiteName           string                 `protobuf:"bytes,1,opt,name=site_name,json=siteName,proto3" json:"site_name,omitempty"`                                                       // 网站名称
+	SiteLogo           string                 `protobuf:"bytes,2,opt,name=site_logo,json=siteLogo,proto3" json:"site_logo,omitempty"`                                                       // 网站LOGO
+	IsCaptchaEnabled   common.Enable          `protobuf:"varint,3,opt,name=is_captcha_enabled,json=isCaptchaEnabled,proto3,enum=common.Enable" json:"is_captcha_enabled,omitempty"`         // 是否开启验证码,0表示全部，1表示启用，2表示禁用
+	IsRegisterEnabled  common.Enable          `protobuf:"varint,4,opt,name=is_register_enabled,json=isRegisterEnabled,proto3,enum=common.Enable" json:"is_register_enabled,omitempty"`      // 是否开启注册,0表示全部，1表示启用，2表示禁用
+	IsGuestEnabled     common.Enable          `protobuf:"varint,5,opt,name=is_guest_enabled,json=isGuestEnabled,proto3,enum=common.Enable" json:"is_guest_enabled,omitempty"`               // 是否允许游客登录,0表示全部，1表示启用，2表示禁用
+	IsCryptoEnabled    common.Enable          `protobuf:"varint,6,opt,name=is_crypto_enabled,json=isCryptoEnabled,proto3,enum=common.Enable" json:"is_crypto_enabled,omitempty"`            // 是否加密接口提交数据,0表示全部，1表示启用，2表示禁用
+	AdminMustGoogleF2A common.Enable          `protobuf:"varint,7,opt,name=admin_must_google_f2a,json=adminMustGoogleF2a,proto3,enum=common.Enable" json:"admin_must_google_f2a,omitempty"` // 管理后台必须开启google验证码
+	AppMustGoogleF2A   common.Enable          `protobuf:"varint,8,opt,name=app_must_google_f2a,json=appMustGoogleF2a,proto3,enum=common.Enable" json:"app_must_google_f2a,omitempty"`       // 客户端必须开启google验证码
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *SystemCore) Reset() {
@@ -155,6 +157,20 @@ func (x *SystemCore) GetIsGuestEnabled() common.Enable {
 func (x *SystemCore) GetIsCryptoEnabled() common.Enable {
 	if x != nil {
 		return x.IsCryptoEnabled
+	}
+	return common.Enable(0)
+}
+
+func (x *SystemCore) GetAdminMustGoogleF2A() common.Enable {
+	if x != nil {
+		return x.AdminMustGoogleF2A
+	}
+	return common.Enable(0)
+}
+
+func (x *SystemCore) GetAppMustGoogleF2A() common.Enable {
+	if x != nil {
+		return x.AppMustGoogleF2A
 	}
 	return common.Enable(0)
 }
@@ -886,7 +902,7 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\x19proto/system/config.proto\x12\x06system\x1a\x19proto/common/common.proto\"5\n" +
 	"\bInterval\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x15\n" +
-	"\x06k_type\x18\x02 \x01(\x05R\x05kType\"\xba\x02\n" +
+	"\x06k_type\x18\x02 \x01(\x05R\x05kType\"\xbc\x03\n" +
 	"\n" +
 	"SystemCore\x12\x1b\n" +
 	"\tsite_name\x18\x01 \x01(\tR\bsiteName\x12\x1b\n" +
@@ -894,7 +910,9 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\x12is_captcha_enabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\x10isCaptchaEnabled\x12>\n" +
 	"\x13is_register_enabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\x11isRegisterEnabled\x128\n" +
 	"\x10is_guest_enabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\x0eisGuestEnabled\x12:\n" +
-	"\x11is_crypto_enabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\x0fisCryptoEnabled\"\xbd\x01\n" +
+	"\x11is_crypto_enabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\x0fisCryptoEnabled\x12A\n" +
+	"\x15admin_must_google_f2a\x18\a \x01(\x0e2\x0e.common.EnableR\x12adminMustGoogleF2a\x12=\n" +
+	"\x13app_must_google_f2a\x18\b \x01(\x0e2\x0e.common.EnableR\x10appMustGoogleF2a\"\xbd\x01\n" +
 	"\x0fAliyunOssConfig\x12\x1a\n" +
 	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12\"\n" +
 	"\raccess_key_id\x18\x02 \x01(\tR\vaccessKeyId\x12*\n" +
@@ -1001,16 +1019,18 @@ var file_proto_system_config_proto_depIdxs = []int32{
 	11, // 1: system.SystemCore.is_register_enabled:type_name -> common.Enable
 	11, // 2: system.SystemCore.is_guest_enabled:type_name -> common.Enable
 	11, // 3: system.SystemCore.is_crypto_enabled:type_name -> common.Enable
-	2,  // 4: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
-	3,  // 5: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
-	4,  // 6: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
-	11, // 7: system.EmailConfig.enabled:type_name -> common.Enable
-	11, // 8: system.PhoneConfig.enabled:type_name -> common.Enable
-	9,  // [9:9] is the sub-list for method output_type
-	9,  // [9:9] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	11, // 4: system.SystemCore.admin_must_google_f2a:type_name -> common.Enable
+	11, // 5: system.SystemCore.app_must_google_f2a:type_name -> common.Enable
+	2,  // 6: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
+	3,  // 7: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
+	4,  // 8: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
+	11, // 9: system.EmailConfig.enabled:type_name -> common.Enable
+	11, // 10: system.PhoneConfig.enabled:type_name -> common.Enable
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_proto_system_config_proto_init() }

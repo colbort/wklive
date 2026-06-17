@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -79,6 +80,15 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 			RoleIds:          roleMap[u.Id],
 			CreateTimes:      u.CreateTimes,
 			Google2FaEnabled: commonStatusToProto(u.GoogleEnabled),
+			TenantId:         u.TenantId,
+			UserType:         system.UserType(u.UserType),
+			IsOwner:          common.YesNo(u.IsOwner),
+			Avatar:           u.Avatar,
+			PermsVer:         u.PermsVer,
+			LastLoginIp:      u.LastLoginIp,
+			LastLoginAt:      u.LastLoginAt,
+			CreateBy:         u.CreateBy,
+			UpdateTimes:      u.UpdateTimes,
 		})
 	}
 
