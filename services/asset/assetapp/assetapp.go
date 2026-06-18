@@ -28,6 +28,9 @@ type (
 	ListMyFreezesResp        = asset.ListMyFreezesResp
 	ListMyLocksReq           = asset.ListMyLocksReq
 	ListMyLocksResp          = asset.ListMyLocksResp
+	TransferMyAssetData      = asset.TransferMyAssetData
+	TransferMyAssetReq       = asset.TransferMyAssetReq
+	TransferMyAssetResp      = asset.TransferMyAssetResp
 
 	AssetApp interface {
 		// 查询APP资产操作页币种配置
@@ -44,6 +47,8 @@ type (
 		ListMyFreezes(ctx context.Context, in *ListMyFreezesReq, opts ...grpc.CallOption) (*ListMyFreezesResp, error)
 		// 查询我的锁仓明细
 		ListMyLocks(ctx context.Context, in *ListMyLocksReq, opts ...grpc.CallOption) (*ListMyLocksResp, error)
+		// 我的账户划转
+		TransferMyAsset(ctx context.Context, in *TransferMyAssetReq, opts ...grpc.CallOption) (*TransferMyAssetResp, error)
 	}
 
 	defaultAssetApp struct {
@@ -97,4 +102,10 @@ func (m *defaultAssetApp) ListMyFreezes(ctx context.Context, in *ListMyFreezesRe
 func (m *defaultAssetApp) ListMyLocks(ctx context.Context, in *ListMyLocksReq, opts ...grpc.CallOption) (*ListMyLocksResp, error) {
 	client := asset.NewAssetAppClient(m.cli.Conn())
 	return client.ListMyLocks(ctx, in, opts...)
+}
+
+// 我的账户划转
+func (m *defaultAssetApp) TransferMyAsset(ctx context.Context, in *TransferMyAssetReq, opts ...grpc.CallOption) (*TransferMyAssetResp, error) {
+	client := asset.NewAssetAppClient(m.cli.Conn())
+	return client.TransferMyAsset(ctx, in, opts...)
 }

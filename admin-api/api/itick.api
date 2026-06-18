@@ -6,7 +6,7 @@ type ItickCategory {
 	categoryName string `json:"categoryName"`
 	enabled      int64  `json:"enabled"`
 	appVisible   int64  `json:"appVisible"`
-	syncPriority int64 `json:"syncPriority"`
+	syncPriority int64  `json:"syncPriority"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -29,7 +29,7 @@ type ItickProduct {
 	quoteCoin    string `json:"quoteCoin"`
 	enabled      int64  `json:"enabled"`
 	appVisible   int64  `json:"appVisible"`
-	syncPriority int64 `json:"syncPriority"`
+	syncPriority int64  `json:"syncPriority"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -133,7 +133,7 @@ type CreateCategoryReq {
 	categoryName string `json:"categoryName"`
 	enabled      int64  `json:"enabled"`
 	appVisible   int64  `json:"appVisible"`
-	syncPriority int64 `json:"syncPriority"`
+	syncPriority int64  `json:"syncPriority"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -144,7 +144,7 @@ type UpdateCategoryReq {
 	categoryName string `json:"categoryName"`
 	enabled      int64  `json:"enabled"`
 	appVisible   int64  `json:"appVisible"`
-	syncPriority int64 `json:"syncPriority"`
+	syncPriority int64  `json:"syncPriority"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -209,24 +209,24 @@ type CreateProductReq {
 	quoteCoin    string `json:"quoteCoin"`
 	enabled      int64  `json:"enabled"`
 	appVisible   int64  `json:"appVisible"`
-	syncPriority int64 `json:"syncPriority"`
+	syncPriority int64  `json:"syncPriority"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
 }
 
 type UpdateProductReq {
-	id          int64  `json:"id"`
-	name        string `json:"name"`
-	displayName string `json:"displayName"`
-	baseCoin    string `json:"baseCoin"`
-	quoteCoin   string `json:"quoteCoin"`
-	enabled     int64  `json:"enabled"`
-	appVisible  int64  `json:"appVisible"`
-	syncPriority int64 `json:"syncPriority"`
-	sort        int64  `json:"sort"`
-	icon        string `json:"icon"`
-	remark      string `json:"remark"`
+	id           int64  `json:"id"`
+	name         string `json:"name"`
+	displayName  string `json:"displayName"`
+	baseCoin     string `json:"baseCoin"`
+	quoteCoin    string `json:"quoteCoin"`
+	enabled      int64  `json:"enabled"`
+	appVisible   int64  `json:"appVisible"`
+	syncPriority int64  `json:"syncPriority"`
+	sort         int64  `json:"sort"`
+	icon         string `json:"icon"`
+	remark       string `json:"remark"`
 }
 
 type GetProductReq {
@@ -376,12 +376,12 @@ type GetTenantProductResp {
 
 type ListTenantProductsReq {
 	PageReq
-	tenantId      int64  `form:"tenantId,optional"`
-	categoryType  int64  `form:"categoryType,optional"`
-	market        string `form:"market,optional"`
-	keyword       string `form:"keyword,optional"`
-	enabled       int32  `form:"enabled,optional"` // 0全部 1启用 2禁用
-	appVisible    int32  `form:"appVisible,optional"` // 0全部 1显示 2隐藏
+	tenantId     int64  `form:"tenantId,optional"`
+	categoryType int64  `form:"categoryType,optional"`
+	market       string `form:"market,optional"`
+	keyword      string `form:"keyword,optional"`
+	enabled      int32  `form:"enabled,optional"` // 0全部 1启用 2禁用
+	appVisible   int32  `form:"appVisible,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantProductsResp {
@@ -501,3 +501,4 @@ service admin {
 	@handler InitTenantItickDisplay
 	post /tenant-display/init (InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp)
 }
+

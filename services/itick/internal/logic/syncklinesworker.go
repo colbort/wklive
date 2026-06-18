@@ -13,7 +13,6 @@ import (
 	"time"
 	"wklive/common/i18n"
 	cutils "wklive/common/utils"
-	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
@@ -58,7 +57,7 @@ func NewSyncKlinesWorker(
 
 type KlineJob struct {
 	ApiUrl   string
-	ApiToken string
+	Token    string
 	Category string
 	Market   string
 	Symbol   string
@@ -73,7 +72,7 @@ type klineSyncResult struct {
 	FullSynced  bool
 }
 
-func (w *SyncKlinesWorker) Run(taskNo string, in *itick.SyncKlinesReq) {
+func (w *SyncKlinesWorker) Run(taskNo string, apiUrl string, token string) {
 	// 自动续期协程
 	renewCtx, renewCancel := context.WithCancel(w.ctx)
 	defer renewCancel()
@@ -94,7 +93,7 @@ func (w *SyncKlinesWorker) Run(taskNo string, in *itick.SyncKlinesReq) {
 
 	_ = w.updateTaskStatus(taskNo, 1, "同步中")
 
-	if err := w.doSync(in); err != nil {
+	if err := w.doSync(apiUrl, token); err != nil {
 		w.Errorf("sync klines failed, taskNo=%s err=%v", taskNo, err)
 		_ = w.updateTaskStatus(taskNo, 3, err.Error())
 		return
@@ -121,7 +120,7 @@ func (w *SyncKlinesWorker) autoRenewLock(ctx context.Context, interval, ttl time
 	}
 }
 
-func (w *SyncKlinesWorker) doSync(in *itick.SyncKlinesReq) error {
+func (w *SyncKlinesWorker) doSync(apiUrl string, token string) error {
 	const workerCount = 8
 
 	jobs := make(chan KlineJob, 1000)
@@ -173,8 +172,8 @@ func (w *SyncKlinesWorker) doSync(in *itick.SyncKlinesReq) error {
 
 			for _, kType := range utils.DefaultKTypes {
 				jobs <- KlineJob{
-					ApiUrl:   in.ApiUrl,
-					ApiToken: in.ApiToken,
+					ApiUrl:   apiUrl,
+					Token:    token,
 					Category: category,
 					Market:   market,
 					Symbol:   symbol,
@@ -477,7 +476,7 @@ func (w *SyncKlinesWorker) getKlineFromItick(
 	limit int,
 ) (*ItickKlineResponse, error) {
 	apiURL := strings.TrimSpace(job.ApiUrl)
-	token := strings.TrimSpace(job.ApiToken)
+	token := strings.TrimSpace(job.Token)
 	category := strings.ToLower(strings.TrimSpace(job.Category))
 	market := strings.ToUpper(strings.TrimSpace(job.Market))
 	symbol := strings.TrimSpace(job.Symbol)

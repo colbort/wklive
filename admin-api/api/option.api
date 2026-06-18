@@ -519,9 +519,9 @@ type GetSettlementResp {
 
 type ListSettlementsReq {
 	PageReq
-	tenantId        int64     `form:"tenantId,optional"`
-	contractId      int64     `form:"contractId,optional"`
-	status          int64     `form:"status,optional"`
+	tenantId            int64     `form:"tenantId,optional"`
+	contractId          int64     `form:"contractId,optional"`
+	status              int64     `form:"status,optional"`
 	settlementTimeRange TimeRange `form:"settlementTimeRange,optional"`
 }
 
@@ -651,3 +651,4 @@ service admin {
 	@handler AdminListBills
 	get /bills (ListBillsReq) returns (ListBillsResp)
 }
+

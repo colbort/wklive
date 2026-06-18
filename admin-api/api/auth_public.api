@@ -1,10 +1,10 @@
 // System config
 type GetSystemCore {
-	siteName string `json:"siteName"`
-	siteLogo string `json:"siteLogo"`
-	assetUrl string `json:"assetUrl"`
-	mustGoogleF2a int64 `json:"mustGoogleF2a"`
-	options []OptionsGroup `json:"options"`
+	siteName      string         `json:"siteName"`
+	siteLogo      string         `json:"siteLogo"`
+	assetUrl      string         `json:"assetUrl"`
+	mustGoogleF2a int64          `json:"mustGoogleF2a"`
+	options       []OptionsGroup `json:"options"`
 }
 
 type GetSystemCoreResp {

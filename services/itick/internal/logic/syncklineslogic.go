@@ -34,19 +34,19 @@ func NewSyncKlinesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncKl
 
 // 同步K线数据 （定时任务）
 func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlinesResp, error) {
-	if strings.TrimSpace(in.ApiUrl) == "" {
+	if strings.TrimSpace(l.svcCtx.Config.Itick.ApiUrl) == "" {
 		return &itick.SyncKlinesResp{
 			Base: helper.GetErrResp(i18n.ApiURLRequired, i18n.Translate(i18n.ApiURLRequired, l.ctx)),
 		}, nil
 	}
-	if strings.TrimSpace(in.ApiToken) == "" {
+	if strings.TrimSpace(l.svcCtx.Config.Itick.Token) == "" {
 		return &itick.SyncKlinesResp{
 			Base: helper.GetErrResp(i18n.ApiTokenRequired, i18n.Translate(i18n.ApiTokenRequired, l.ctx)),
 		}, nil
 	}
 
 	// 业务维度锁，避免相同源重复同步
-	sum := md5.Sum([]byte(strings.TrimSpace(in.ApiUrl) + "|" + strings.TrimSpace(in.ApiToken)))
+	sum := md5.Sum([]byte(strings.TrimSpace(l.svcCtx.Config.Itick.ApiUrl) + "|" + strings.TrimSpace(l.svcCtx.Config.Itick.Token)))
 	lockKey := fmt.Sprintf("itick:sync_klines:%x", sum)
 	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
 
@@ -87,19 +87,13 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 		}, nil
 	}
 
-	reqCopy := &itick.SyncKlinesReq{
-		ApiUrl:   in.GetApiUrl(),
-		ApiToken: in.GetApiToken(),
-		WsUrl:    in.GetWsUrl(),
-	}
-
-	go func(taskNo string, reqCopy *itick.SyncKlinesReq, lockKey, lockValue string) {
+	go func(taskNo string, apiUrl string, token string, lockKey, lockValue string) {
 		bgCtx, cancel := context.WithTimeout(context.Background(), 12*time.Hour)
 		defer cancel()
 
 		worker := NewSyncKlinesWorker(bgCtx, l.svcCtx, distLock, lockKey, lockValue)
-		worker.Run(taskNo, reqCopy)
-	}(taskNo, reqCopy, lockKey, lockValue)
+		worker.Run(taskNo, apiUrl, token)
+	}(taskNo, l.svcCtx.Config.Itick.ApiUrl, l.svcCtx.Config.Itick.Token, lockKey, lockValue)
 
 	return &itick.SyncKlinesResp{
 		Base: helper.OkResp(),

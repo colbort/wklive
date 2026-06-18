@@ -885,3 +885,4 @@ service admin {
 	@handler RetryTradeEvent
 	post /events/retry (RetryTradeEventReq) returns (AdminCommonResp)
 }
+

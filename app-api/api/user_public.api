@@ -46,8 +46,8 @@ type LoginResp {
 }
 
 type GuestLoginReq {
-	deviceId        string `json:"deviceId"`
-	fingerprint     string `json:"fingerprint"`
+	deviceId    string `json:"deviceId"`
+	fingerprint string `json:"fingerprint"`
 }
 
 type GuestLogin {
@@ -107,3 +107,4 @@ service app {
 	@handler RefreshToken
 	post /refresh-token (RefreshTokenReq) returns (RefreshTokenResp)
 }
+

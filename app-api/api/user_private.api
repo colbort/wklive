@@ -246,3 +246,4 @@ service app {
 	@handler SetDefaultBank
 	put /banks/:id/default (SetDefaultBankReq) returns (RespBase)
 }
+

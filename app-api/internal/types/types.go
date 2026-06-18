@@ -10,7 +10,7 @@ type AddBankReq struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   int64  `json:"isDefault,optional"` // 是否默认：1是 2否
+	IsDefault   int64  `json:"isDefault,optional"` // 是否默认：1是，2否
 }
 
 type AddBankResp struct {
@@ -1868,7 +1868,7 @@ type UpdateBankReq struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   int64  `json:"isDefault,optional"` // 是否默认：1是 2否
+	IsDefault   int64  `json:"isDefault,optional"` // 是否默认：1是，2否
 }
 
 type UpdateBankResp struct {

@@ -16,6 +16,7 @@ import (
 type (
 	AppCommonResp                     = payment.AppCommonResp
 	CancelMyRechargeOrderReq          = payment.CancelMyRechargeOrderReq
+	CreateCryptoRechargeOrderData     = payment.CreateCryptoRechargeOrderData
 	CreateCryptoRechargeOrderReq      = payment.CreateCryptoRechargeOrderReq
 	CreateCryptoRechargeOrderResp     = payment.CreateCryptoRechargeOrderResp
 	CreateRechargeOrderReq            = payment.CreateRechargeOrderReq

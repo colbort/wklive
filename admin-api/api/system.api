@@ -59,7 +59,7 @@ type AssignUserRolesReq {
 }
 
 type ChangeUserStatusReq {
-	id     int64 `json:"id"`
+	id      int64 `json:"id"`
 	enabled int64 `json:"enabled"` // 0未知 1启用 2禁用
 }
 
@@ -128,18 +128,18 @@ type SysRoleListResp {
 
 type SysRoleCreateReq {
 	tenantId int64  `json:"tenantId"`
-	name   string `json:"name"`
-	code   string `json:"code"`
-	enabled int64  `json:"enabled,optional"`
-	remark string `json:"remark,optional"`
+	name     string `json:"name"`
+	code     string `json:"code"`
+	enabled  int64  `json:"enabled,optional"`
+	remark   string `json:"remark,optional"`
 }
 
 type SysRoleUpdateReq {
-	id     int64  `json:"id"`
+	id       int64  `json:"id"`
 	tenantId int64  `json:"tenantId,optional"`
-	name   string `json:"name,optional"`
-	enabled int64  `json:"enabled,optional"`
-	remark string `json:"remark,optional"`
+	name     string `json:"name,optional"`
+	enabled  int64  `json:"enabled,optional"`
+	remark   string `json:"remark,optional"`
 }
 
 type SysRoleDeleteReq {
@@ -713,3 +713,4 @@ service admin {
 	@handler SysTenantDetail
 	get /tenant/detail (SysTenantDetailReq) returns (SysTenantDetailResp)
 }
+

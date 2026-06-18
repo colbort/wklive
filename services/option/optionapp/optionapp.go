@@ -16,6 +16,7 @@ import (
 type (
 	AppCancelOrderReq        = option.AppCancelOrderReq
 	AppCommonResp            = option.AppCommonResp
+	AppExerciseData          = option.AppExerciseData
 	AppExerciseReq           = option.AppExerciseReq
 	AppExerciseResp          = option.AppExerciseResp
 	AppGetContractDetailReq  = option.AppGetContractDetailReq
@@ -40,6 +41,7 @@ type (
 	AppListPositionsResp     = option.AppListPositionsResp
 	AppListTradesReq         = option.AppListTradesReq
 	AppListTradesResp        = option.AppListTradesResp
+	AppPlaceOrderData        = option.AppPlaceOrderData
 	AppPlaceOrderReq         = option.AppPlaceOrderReq
 	AppPlaceOrderResp        = option.AppPlaceOrderResp
 

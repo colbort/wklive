@@ -82,12 +82,12 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 			return nil
 		}
 		rows := make([]*models.SysRoleMenu, 0, len(menuIds))
-			for _, mid := range menuIds {
-				rows = append(rows, &models.SysRoleMenu{
-					TenantId: role.TenantId,
-					RoleId: in.RoleId,
-					MenuId: mid,
-				})
+		for _, mid := range menuIds {
+			rows = append(rows, &models.SysRoleMenu{
+				TenantId: role.TenantId,
+				RoleId:   in.RoleId,
+				MenuId:   mid,
+			})
 		}
 		return l.svcCtx.RoleMenuModel.InsertBatch(ctx, rows)
 	})

@@ -461,3 +461,4 @@ service app {
 	@handler AppExercise
 	post /exercise (AppExerciseReq) returns (AppExerciseResp)
 }
+

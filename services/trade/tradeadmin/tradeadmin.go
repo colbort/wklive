@@ -36,6 +36,7 @@ type (
 	GetPositionListAdminResp        = trade.GetPositionListAdminResp
 	GetRiskOrderCheckLogListReq     = trade.GetRiskOrderCheckLogListReq
 	GetRiskOrderCheckLogListResp    = trade.GetRiskOrderCheckLogListResp
+	GetSymbolDetailAdminData        = trade.GetSymbolDetailAdminData
 	GetSymbolDetailAdminReq         = trade.GetSymbolDetailAdminReq
 	GetSymbolDetailAdminResp        = trade.GetSymbolDetailAdminResp
 	GetSymbolLeverageConfigListReq  = trade.GetSymbolLeverageConfigListReq

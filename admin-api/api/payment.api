@@ -1211,3 +1211,4 @@ service admin {
 	@handler ListCryptoRechargeTxs
 	get /crypto-recharge-txs (ListCryptoRechargeTxsReq) returns (ListCryptoRechargeTxsResp)
 }
+

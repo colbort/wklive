@@ -15,16 +15,20 @@ import (
 
 type (
 	AddAvailableReq             = asset.AddAvailableReq
+	ChangeAssetData             = asset.ChangeAssetData
 	ChangeAssetResp             = asset.ChangeAssetResp
 	DeductFrozenAssetByBizNoReq = asset.DeductFrozenAssetByBizNoReq
 	DeductFrozenAssetReq        = asset.DeductFrozenAssetReq
 	DeductLockedAssetByBizNoReq = asset.DeductLockedAssetByBizNoReq
 	DeductLockedAssetReq        = asset.DeductLockedAssetReq
+	FreezeAssetData             = asset.FreezeAssetData
 	FreezeAssetReq              = asset.FreezeAssetReq
 	FreezeAssetResp             = asset.FreezeAssetResp
+	LockAssetData               = asset.LockAssetData
 	LockAssetReq                = asset.LockAssetReq
 	LockAssetResp               = asset.LockAssetResp
 	SubAvailableReq             = asset.SubAvailableReq
+	TransferAssetData           = asset.TransferAssetData
 	TransferAssetReq            = asset.TransferAssetReq
 	TransferAssetResp           = asset.TransferAssetResp
 	UnfreezeAssetByBizNoReq     = asset.UnfreezeAssetByBizNoReq

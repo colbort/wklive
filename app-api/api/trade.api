@@ -413,3 +413,4 @@ service app {
 	@handler SetLeverage
 	post /leverage (SetLeverageReq) returns (TradeAppCommonResp)
 }
+

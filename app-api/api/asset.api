@@ -258,3 +258,4 @@ service app {
 	@handler TransferMyAsset
 	post /transfer (TransferMyAssetReq) returns (TransferMyAssetResp)
 }
+

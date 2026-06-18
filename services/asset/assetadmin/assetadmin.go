@@ -15,6 +15,7 @@ import (
 
 type (
 	AdminAddAssetReq          = asset.AdminAddAssetReq
+	AdminChangeAssetData      = asset.AdminChangeAssetData
 	AdminChangeAssetResp      = asset.AdminChangeAssetResp
 	AdminFreezeAssetReq       = asset.AdminFreezeAssetReq
 	AdminLockAssetReq         = asset.AdminLockAssetReq

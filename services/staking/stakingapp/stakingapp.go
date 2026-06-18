@@ -14,6 +14,7 @@ import (
 )
 
 type (
+	AppCreateOrderData     = staking.AppCreateOrderData
 	AppCreateOrderReq      = staking.AppCreateOrderReq
 	AppCreateOrderResp     = staking.AppCreateOrderResp
 	AppMyOrderDetailReq    = staking.AppMyOrderDetailReq
@@ -28,6 +29,7 @@ type (
 	AppProductDetailResp   = staking.AppProductDetailResp
 	AppProductListReq      = staking.AppProductListReq
 	AppProductListResp     = staking.AppProductListResp
+	AppRedeemData          = staking.AppRedeemData
 	AppRedeemReq           = staking.AppRedeemReq
 	AppRedeemResp          = staking.AppRedeemResp
 

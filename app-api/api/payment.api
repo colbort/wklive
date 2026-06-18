@@ -396,3 +396,4 @@ service app {
 	@handler GetMyCryptoRechargeTx
 	get /crypto/recharge/txs/:id (GetMyCryptoRechargeTxReq) returns (GetMyCryptoRechargeTxResp)
 }
+

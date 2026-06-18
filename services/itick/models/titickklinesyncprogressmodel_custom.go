@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"wklive/common/utils"
 
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ItickKlineSyncProgressModel interface {
 	tItickKlineSyncProgressModel
 	FindOrCreate(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error)
+	FindOneByCategoryCodeMarketSymbolIntervalNoCache(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error)
 	UpdateSyncStart(ctx context.Context, id int64, mode string, now int64) error
 	UpdateSyncSuccess(ctx context.Context, id int64, mode string, latestTs, contiguousTs, recentCheckTs, oldestTs, fullSynced, now int64, message string) error
 	UpdateSyncFail(ctx context.Context, id int64, mode string, now int64, message string) error
@@ -40,6 +42,20 @@ func (m *defaultTItickKlineSyncProgressModel) FindOrCreate(ctx context.Context, 
 	}
 
 	return m.FindOneByCategoryCodeMarketSymbolInterval(ctx, categoryCode, market, symbol, interval)
+}
+
+func (m *defaultTItickKlineSyncProgressModel) FindOneByCategoryCodeMarketSymbolIntervalNoCache(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error) {
+	var resp TItickKlineSyncProgress
+	query := fmt.Sprintf("select %s from %s where `category_code` = ? and `market` = ? and `symbol` = ? and `interval` = ? limit 1", tItickKlineSyncProgressRows, m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, categoryCode, market, symbol, interval)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }
 
 func (m *defaultTItickKlineSyncProgressModel) UpdateSyncStart(ctx context.Context, id int64, mode string, now int64) error {

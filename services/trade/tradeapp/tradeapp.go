@@ -24,12 +24,14 @@ type (
 	GetLeverageConfigResp    = trade.GetLeverageConfigResp
 	GetMarginAccountListReq  = trade.GetMarginAccountListReq
 	GetMarginAccountListResp = trade.GetMarginAccountListResp
+	GetOrderDetailData       = trade.GetOrderDetailData
 	GetOrderDetailReq        = trade.GetOrderDetailReq
 	GetOrderDetailResp       = trade.GetOrderDetailResp
 	GetOrderListReq          = trade.GetOrderListReq
 	GetOrderListResp         = trade.GetOrderListResp
 	GetPositionListReq       = trade.GetPositionListReq
 	GetPositionListResp      = trade.GetPositionListResp
+	GetSymbolDetailData      = trade.GetSymbolDetailData
 	GetSymbolDetailReq       = trade.GetSymbolDetailReq
 	GetSymbolDetailResp      = trade.GetSymbolDetailResp
 	GetSymbolListReq         = trade.GetSymbolListReq

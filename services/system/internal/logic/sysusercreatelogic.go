@@ -52,7 +52,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	}
 
 	if in.Password == "" {
-		return nil, i18n.StatusError(l.ctx, i18n.ParamError) 
+		return nil, i18n.StatusError(l.ctx, i18n.ParamError)
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)

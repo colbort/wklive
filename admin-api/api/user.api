@@ -287,9 +287,9 @@ type ResetLoginPasswordReq {
 }
 
 type ResetPayPasswordReq {
-	tenantId       int64  `json:"tenantId"`
-	userId         int64  `path:"userId"`
-	newPassword    string `json:"newPassword"`
+	tenantId    int64  `json:"tenantId"`
+	userId      int64  `path:"userId"`
+	newPassword string `json:"newPassword"`
 }
 
 type UnlockUserReq {
@@ -509,3 +509,4 @@ service admin {
 	@handler SetDefaultUserBank
 	put /user-banks/:id/default (SetDefaultUserBankReq) returns (RespBase)
 }
+

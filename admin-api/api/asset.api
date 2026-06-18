@@ -396,3 +396,4 @@ service admin {
 	@handler AdminUnlockAsset
 	post /unlock (AdminUnlockAssetReq) returns (AdminChangeAssetResp)
 }
+
