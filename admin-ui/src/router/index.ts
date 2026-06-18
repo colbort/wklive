@@ -1,13 +1,38 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { createMemoryHistory, createRouter, type RouteRecordRaw } from 'vue-router'
 import { staticRoutes } from './staticRoutes'
 import { useAuthStore } from '@/stores'
 import { getSystemCore } from '@/stores/core'
 import { buildRoutesFromMenus } from './dynamic'
 
+const browserRootPath = '/'
+const memoryRouteStorageKey = 'admin-ui:memory-route'
+
+if (typeof window !== 'undefined') {
+  const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`
+  if (currentUrl !== browserRootPath) {
+    window.history.replaceState(window.history.state, '', browserRootPath)
+  }
+}
+
 export const router = createRouter({
-  history: createWebHistory(),
+  history: createMemoryHistory(),
   routes: staticRoutes,
 })
+
+function getSavedMemoryRoute() {
+  if (typeof window === 'undefined') return ''
+
+  const path = window.sessionStorage.getItem(memoryRouteStorageKey) || ''
+  if (!path || path === '/' || path.startsWith('/login')) return ''
+  return path
+}
+
+function saveMemoryRoute(path: string) {
+  if (typeof window === 'undefined') return
+  if (!path || path === '/' || path.startsWith('/login')) return
+
+  window.sessionStorage.setItem(memoryRouteStorageKey, path)
+}
 
 const dynamicRouteNames = new Set<string>()
 let dynamicAdded = false
@@ -85,7 +110,6 @@ router.beforeEach(async (to) => {
   if (shouldBindGoogle2fa && !isGoogle2faBindPage) {
     return {
       path: '/google2fa-bind',
-      query: { redirect: to.fullPath },
       replace: true,
     }
   }
@@ -96,10 +120,18 @@ router.beforeEach(async (to) => {
 
   if (isGoogle2faBindPage) return true
 
+  if (to.path === '/') {
+    return { path: getSavedMemoryRoute() || '/home', replace: true }
+  }
+
   if (!dynamicAdded) {
     addDynamicRoutes(buildRoutesFromMenus(auth.menus))
     return { ...to, replace: true }
   }
 
   return true
+})
+
+router.afterEach((to) => {
+  saveMemoryRoute(to.fullPath)
 })
