@@ -63,6 +63,10 @@ async function isGoogle2faRequired() {
   return mustGoogleF2a === 1
 }
 
+function isGoogle2faEnabled(value: unknown) {
+  return value === 1 || value === '1' || value === 'ENABLE_ENABLED'
+}
+
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
 
@@ -75,7 +79,7 @@ router.beforeEach(async (to) => {
   }
 
   const shouldBindGoogle2fa =
-    (await isGoogle2faRequired()) && Number(auth.user?.google2faEnabled || 0) !== 1
+    (await isGoogle2faRequired()) && !isGoogle2faEnabled(auth.user?.google2FaEnabled)
   const isGoogle2faBindPage = to.name === 'Google2faBind'
 
   if (shouldBindGoogle2fa && !isGoogle2faBindPage) {

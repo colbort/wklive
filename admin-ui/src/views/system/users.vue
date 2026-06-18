@@ -482,8 +482,8 @@ onMounted(async () => {
 
         <el-table-column :label="t('common.google2fa')" width="110">
           <template #default="{ row }">
-            <el-tag :type="row.google2faEnabled === 1 ? 'success' : 'info'">
-              {{ row.google2faEnabled === 1 ? t('common.enabled') : t('common.disabled') }}
+            <el-tag :type="row.google2FaEnabled === 1 ? 'success' : 'info'">
+              {{ row.google2FaEnabled === 1 ? t('common.enabled') : t('common.disabled') }}
             </el-tag>
           </template>
         </el-table-column>

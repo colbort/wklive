@@ -1194,7 +1194,7 @@ export default {
     payPasswordHash: 'Pay Password Hash',
     googleSecret: 'Google Secret',
     googleEnabled: 'Google Verification Enabled',
-    google2faEnabled: 'Google 2FA Enabled',
+    google2FaEnabled: 'Google 2FA Enabled',
     loginErrorCount: 'Login Error Count',
     payErrorCount: 'Pay Error Count',
     lockUntil: 'Lock Until',

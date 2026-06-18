@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { apiGoogle2faBind, apiGoogle2faInit } from '@/api/system/users'
 import { useAuthStore } from '@/stores'
 
 const { t } = useI18n()
-const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
@@ -21,11 +20,6 @@ const initData = reactive({
   otpauthUrl: '',
   qrCode: '',
 })
-
-const redirect = () => {
-  const target = String(route.query.redirect || '/home')
-  return target === '/google2fa-bind' ? '/home' : target
-}
 
 async function loadGoogle2fa() {
   const userId = Number(auth.user?.id || 0)
@@ -75,7 +69,10 @@ async function submit() {
 
     ElMessage.success(t('common.success'))
     await auth.fetchProfile()
-    router.replace(redirect())
+    if (auth.user) {
+      auth.user.google2FaEnabled = 1
+    }
+    await router.replace('/home')
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   } finally {

@@ -12,7 +12,7 @@ type SysUserItem {
 	enabled          int64   `json:"enabled"`
 	roleIds          []int64 `json:"roleIds"`
 	createTimes      int64   `json:"createTimes"`
-	google2faEnabled int64   `json:"google2faEnabled"`
+	google2FaEnabled int64   `json:"google2FaEnabled"`
 	tenantId         int64   `json:"tenantId"`
 	userType         int64   `json:"userType"`
 	isOwner          int64   `json:"isOwner"`

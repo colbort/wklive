@@ -2749,7 +2749,7 @@ type ProfileUser struct {
 	TenantId         int64  `json:"tenantId"` // 所属租户ID：0=系统侧，>0=租户ID
 	UserType         int64  `json:"userType"` // 用户类型：1系统管理员 2租户主账号 3租户管理员
 	IsOwner          int64  `json:"isOwner"`  // 是否租户主账号：1是 2否
-	Google2faEnabled int64  `json:"google2faEnabled"`
+	Google2FaEnabled int64  `json:"google2FaEnabled"`
 }
 
 type Quote struct {
@@ -3552,7 +3552,7 @@ type SysUserItem struct {
 	Enabled          int64   `json:"enabled"`
 	RoleIds          []int64 `json:"roleIds"`
 	CreateTimes      int64   `json:"createTimes"`
-	Google2faEnabled int64   `json:"google2faEnabled"`
+	Google2FaEnabled int64   `json:"google2FaEnabled"`
 	TenantId         int64   `json:"tenantId"`
 	UserType         int64   `json:"userType"`
 	IsOwner          int64   `json:"isOwner"`

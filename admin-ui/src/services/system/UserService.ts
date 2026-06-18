@@ -25,7 +25,7 @@ export type SysUserItem = {
   enabled: number // 启用状态：1启用 2禁用
   roleIds: number[]
   createTimes: number
-  google2faEnabled: number // Google 2FA 是否启用：1启用 2禁用
+  google2FaEnabled: number // Google 2FA 是否启用：1启用 2禁用
   tenantId: number
   userType: number // '用户类型：1系统管理员 2租户主账号 3租户管理员'
   isOwner: number

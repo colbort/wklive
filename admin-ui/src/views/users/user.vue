@@ -1126,7 +1126,7 @@ onMounted(fetchCreateOptions)
                     </el-button>
                   </span>
                 </el-descriptions-item>
-                <el-descriptions-item :label="t('users.google2faEnabled')">
+                <el-descriptions-item :label="t('users.google2FaEnabled')">
                   {{ getEnabledLabel(detail.security.googleEnabled) }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="t('users.loginErrorCount')">

@@ -1192,7 +1192,7 @@ export default {
     payPasswordHash: '支付密码哈希',
     googleSecret: 'Google密钥',
     googleEnabled: 'Google验证已启用',
-    google2faEnabled: 'Google 2FA已启用',
+    google2FaEnabled: 'Google 2FA已启用',
     loginErrorCount: '登录错误次数',
     payErrorCount: '支付密码错误次数',
     lockUntil: '锁定到期时间',

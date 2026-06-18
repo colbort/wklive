@@ -4,14 +4,14 @@ API_FILE := $(API_DIR)/core.api
 # 被 core.api import 的子文件，只用于检查
 SUB_APIS := auth_public auth_private system user payment
 
-GOCTL ?= goctl
+GOCTL ?= $(shell go env GOPATH)/bin/goctl
 SERVICE_NAME ?= admin
 ENTRY_FILE := $(SERVICE_NAME).go
 
-.PHONY: gen regen check fmt verify clean fmt-api
+.PHONY: gen regen check check-goctl install-goctl fmt verify clean fmt-api
 
 # 一键生成
-gen: check
+gen: check check-goctl
 	@echo "🔧 generating from $(API_FILE) ..."
 	@$(GOCTL) api go -api $(API_FILE) -dir .
 	@echo "✅ generate done"
@@ -46,6 +46,15 @@ check:
 
 	@echo "✅ api files check ok"
 
+check-goctl:
+	@test -x "$(GOCTL)" || \
+		(echo "❌ goctl not found: $(GOCTL)"; echo "   run: make install-goctl"; exit 1)
+	@$(GOCTL) --version | grep "1.9.2" >/dev/null || \
+		(echo "❌ 当前项目要求 goctl v1.9.2"; exit 1)
+
+install-goctl:
+	go install github.com/zeromicro/go-zero/tools/goctl@v1.9.2
+
 # 格式化
 fmt:
 	@echo "🔧 gofmt ..."
@@ -68,4 +77,4 @@ clean:
 	@echo "✅ clean done"
 
 fmt-api:
-	goctl api format --dir ./api
+	$(GOCTL) api format --dir ./api

@@ -2,11 +2,13 @@ package logic
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Google2FAResetLogic struct {
@@ -41,6 +43,7 @@ func (l *Google2FAResetLogic) Google2FAReset(in *system.Google2FAResetReq) (*sys
 		}, nil
 	}
 	user.GoogleSecret = ""
+	user.GoogleEnabled = int64(common.Enable_ENABLE_DISABLED)
 	if err = l.svcCtx.UserModel.Update(l.ctx, user); err != nil {
 		return nil, err
 	}

@@ -16,7 +16,7 @@ export type ProfileUser = {
   tenantId: number // 所属租户ID：0=系统侧，>0=租户ID
   userType: number // 用户类型：1系统管理员 2租户主账号 3租户管理员
   isOwner: number // 是否租户主账号：1是 2否
-  google2faEnabled: number // // 状态,0表示全部，1表示启用，2表示禁用
+  google2FaEnabled: number // // 状态,0表示全部，1表示启用，2表示禁用
 }
 
 export type MenuNode = {
