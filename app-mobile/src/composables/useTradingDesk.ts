@@ -48,6 +48,7 @@ export function useTradingDesk(options: {
   const wsState = ref<ItickWsConnectionState>('closed')
   const wsError = ref('')
   const viewingLatestKlinePage = ref(true)
+  const oldestLoadedKlineTs = ref(0)
   const wsId = ref('')
 
   let socket: WebSocket | null = null
@@ -213,6 +214,7 @@ export function useTradingDesk(options: {
     depthSnapshot.value = readCachedDepthSnapshot(selectedProductKey.value)
     tickSnapshot.value = []
     klineSnapshot.value = []
+    oldestLoadedKlineTs.value = 0
     if (options.detailVisible.value) {
       await loadSelectedKlinePage(Date.now(), true)
     }
@@ -222,6 +224,7 @@ export function useTradingDesk(options: {
   watch(selectedIntervalName, async () => {
     if (!options.detailVisible.value || !selectedProduct.value) return
     klineSnapshot.value = []
+    oldestLoadedKlineTs.value = 0
     await loadSelectedKlinePage(Date.now(), true)
     queueSocketRefresh()
   })
@@ -297,8 +300,12 @@ export function useTradingDesk(options: {
         limit: KLINE_LIMIT,
       })
 
-      klineSnapshot.value = normalizeKlineList(klines)
+      const normalizedKlines = normalizeKlineList(klines, selectedIntervalName.value)
       viewingLatestKlinePage.value = latestPage
+      klineSnapshot.value = latestPage
+        ? normalizedKlines
+        : mergeKlineList(klineSnapshot.value, normalizedKlines)
+      updateOldestLoadedKlineTs(normalizedKlines, latestPage)
     } finally {
       loadingKline.value = false
     }
@@ -306,10 +313,18 @@ export function useTradingDesk(options: {
 
   async function loadPreviousKlinePage() {
     if (loadingKline.value || !klineSnapshot.value.length) return
-    const sortedItems = [...klineSnapshot.value].sort((left, right) => right.ts - left.ts)
-    const lastItem = sortedItems[sortedItems.length - 1]
-    if (!lastItem?.ts) return
-    await loadSelectedKlinePage(lastItem.ts, false)
+    const endTs = oldestLoadedKlineTs.value || getOldestKlineTs(klineSnapshot.value)
+    if (!endTs) return
+    await loadSelectedKlinePage(endTs, false)
+  }
+
+  function updateOldestLoadedKlineTs(items: KlinePayload[], latestPage: boolean) {
+    const oldestTs = getOldestKlineTs(items)
+    if (!oldestTs) return
+
+    if (latestPage || !oldestLoadedKlineTs.value || oldestTs < oldestLoadedKlineTs.value) {
+      oldestLoadedKlineTs.value = oldestTs
+    }
   }
 
   function selectCategory(categoryType: number) {
@@ -571,6 +586,7 @@ export function useTradingDesk(options: {
     depthSnapshot,
     tickSnapshot,
     klineSnapshot,
+    viewingLatestKlinePage,
     wsState,
     wsError,
     categories,
@@ -726,12 +742,20 @@ function normalizeKlinePayload(payload: unknown, interval: string): KlinePayload
 }
 
 function mergeKlines(current: KlinePayload[], latest: KlinePayload) {
+  return mergeKlineList(current, [latest])
+}
+
+function mergeKlineList(current: KlinePayload[], next: KlinePayload[]) {
   const map = new Map<number, KlinePayload>()
-  current.forEach((item) => map.set(item.ts, item))
-  map.set(latest.ts, latest)
+  current.forEach((item) => {
+    if (item.ts) map.set(item.ts, item)
+  })
+  next.forEach((item) => {
+    if (item.ts) map.set(item.ts, item)
+  })
+
   return Array.from(map.values())
     .sort((left, right) => right.ts - left.ts)
-    .slice(0, KLINE_LIMIT)
 }
 
 function normalizeKlineList(
@@ -744,10 +768,11 @@ function normalizeKlineList(
     turnover: number
     ts: number
   }>,
+  interval = DEFAULT_INTERVAL,
 ) {
   return items
     .map((item) => ({
-      interval: DEFAULT_INTERVAL,
+      interval,
       open: item.open,
       high: item.high,
       low: item.low,
@@ -758,6 +783,13 @@ function normalizeKlineList(
     }))
     .sort((left, right) => right.ts - left.ts)
     .slice(0, KLINE_LIMIT)
+}
+
+function getOldestKlineTs(items: KlinePayload[]) {
+  return items.reduce((oldestTs, item) => {
+    if (!item.ts) return oldestTs
+    return oldestTs ? Math.min(oldestTs, item.ts) : item.ts
+  }, 0)
 }
 
 function asRecord(value: unknown): Record<string, unknown> {

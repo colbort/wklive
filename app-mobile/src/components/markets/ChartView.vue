@@ -34,6 +34,7 @@ const props = defineProps<{
   selectedProductKey: string
   selectedQuote: QuotePayload | null
   klineSnapshot: KlinePayload[]
+  viewingLatestKlinePage: boolean
   depthSnapshot: DepthPayload | null
   tickSnapshot: TickPayload[]
   loadingKline: boolean
@@ -241,8 +242,22 @@ function initKlineChart() {
 
 function syncKlineChartData() {
   if (!chart) return
+
+  if (!props.viewingLatestKlinePage) {
+    const currentData = chart.getDataList()
+    const firstTimestamp = currentData[0]?.timestamp ?? 0
+    const previousData = firstTimestamp
+      ? klineChartData.value.filter((item) => item.timestamp < firstTimestamp)
+      : klineChartData.value
+
+    if (previousData.length) {
+      chart.applyMoreData(previousData, true)
+    }
+    return
+  }
+
   chart.applyNewData(klineChartData.value)
-  if (klineChartData.value.length) {
+  if (props.viewingLatestKlinePage && klineChartData.value.length) {
     chart.scrollToRealTime()
   }
 }

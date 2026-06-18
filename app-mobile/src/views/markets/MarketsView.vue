@@ -39,6 +39,7 @@ const {
   depthSnapshot,
   tickSnapshot,
   klineSnapshot,
+  viewingLatestKlinePage,
   wsState,
   wsError,
   categories,
@@ -164,6 +165,7 @@ watch(activeTopTab, () => {
         :selected-product-key="selectedProductKey"
         :selected-quote="selectedQuote"
         :kline-snapshot="klineSnapshot"
+        :viewing-latest-kline-page="viewingLatestKlinePage"
         :depth-snapshot="depthSnapshot"
         :tick-snapshot="tickSnapshot"
         :loading-kline="loadingKline"
