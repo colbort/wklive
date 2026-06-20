@@ -1,0 +1,66 @@
+package chat_ws
+
+import (
+	"context"
+	"crypto/rand"
+	"encoding/hex"
+	"fmt"
+	"strings"
+	"time"
+
+	"chat-admin-api/internal/svc"
+	"wklive/proto/chat"
+
+	"google.golang.org/protobuf/encoding/protojson"
+)
+
+const guestSessionPrefix = "GS"
+
+func isGuestSession(sessionNo string) bool {
+	return strings.HasPrefix(strings.TrimSpace(sessionNo), guestSessionPrefix)
+}
+
+func newTransientAgentMessage(merchantId int64, sessionNo string, userId int64, agentId int64, data sendAgentMessagePayload) *chat.ChatMessage {
+	now := time.Now().UnixMilli()
+	return &chat.ChatMessage{
+		MessageNo:   nextTransientNo("GM"),
+		SessionNo:   sessionNo,
+		MerchantId:  merchantId,
+		UserId:      userId,
+		AgentId:     agentId,
+		SenderType:  chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
+		SenderId:    agentId,
+		MessageType: chat.ChatMessageType(data.MessageType),
+		Content:     strings.TrimSpace(data.Content),
+		MediaUrl:    strings.TrimSpace(data.MediaUrl),
+		MediaName:   strings.TrimSpace(data.MediaName),
+		MediaMime:   strings.TrimSpace(data.MediaMime),
+		MediaSize:   data.MediaSize,
+		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+		CreateTimes: now,
+		UpdateTimes: now,
+	}
+}
+
+func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, msg *chat.ChatMessage) error {
+	if svcCtx.BusRedis == nil {
+		return fmt.Errorf("chat redis is not configured")
+	}
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatMessageEventTypeMessage,
+		Data:      msg,
+		CreatedAt: time.Now().UnixMilli(),
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		return err
+	}
+	_, err = svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload))
+	return err
+}
+
+func nextTransientNo(prefix string) string {
+	b := make([]byte, 4)
+	_, _ = rand.Read(b)
+	return fmt.Sprintf("%s%d%s", prefix, time.Now().UnixMilli(), hex.EncodeToString(b))
+}
