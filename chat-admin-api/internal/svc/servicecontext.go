@@ -12,6 +12,7 @@ import (
 	"wklive/proto/chat"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -21,13 +22,21 @@ type ServiceContext struct {
 	AdminRateLimit rest.Middleware
 	ChatAdminCli   chat.ChatAdminClient
 	ChatMessageHub *ws.Hub
+	BusRedis       *redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	chatCli := zrpc.MustNewClient(c.ChatRpc)
 	chatMessageHub := ws.NewHub()
+	var chatBusRedis *redis.Redis
 	go chatMessageHub.Run()
 	if c.RedisConf.Host != "" {
+		rds, err := redis.NewRedis(c.RedisConf)
+		if err != nil {
+			logx.Errorf("chat admin redis init failed: %v", err)
+		} else {
+			chatBusRedis = rds
+		}
 		go ws.SubscribeRedis(context.Background(), c.RedisConf, chatMessageHub)
 	} else {
 		logx.Info("chat admin redis is not configured, skip message subscription")
@@ -38,5 +47,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AdminRateLimit: middleware.NewAdminRateLimitMiddleware().Handle,
 		ChatAdminCli:   chat.NewChatAdminClient(chatCli.Conn()),
 		ChatMessageHub: chatMessageHub,
+		BusRedis:       chatBusRedis,
 	}
 }

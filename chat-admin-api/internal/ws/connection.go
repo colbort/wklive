@@ -58,7 +58,7 @@ func (c *Connection) Match(message *chat.ChatMessage) bool {
 	if c.SessionNo != "" && message.SessionNo != c.SessionNo {
 		return false
 	}
-	if c.AgentId > 0 && message.AgentId != c.AgentId {
+	if c.AgentId > 0 && message.AgentId != c.AgentId && message.AgentId != 0 {
 		return false
 	}
 	return true

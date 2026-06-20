@@ -519,22 +519,90 @@ func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.Ass
 	return session, nil, nil
 }
 
+func releaseSessionToPool(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, reason string) (*models.TChatSession, *common.RespBase, error) {
+	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+		return nil, badBase("chat session is closed"), nil
+	}
+
+	fromAgentID := session.AgentId
+	if fromAgentID > 0 {
+		if err := changeAgentSessionCount(ctx, svcCtx, fromAgentID, -1); err != nil {
+			return nil, nil, err
+		}
+	}
+
+	now := nowMillis()
+	session.AgentId = 0
+	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT)
+	session.UpdateTimes = now
+	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
+		return nil, nil, err
+	}
+
+	if fromAgentID > 0 {
+		_, err := svcCtx.ChatAssignmentModel.Insert(ctx, &models.TChatAssignment{
+			SessionNo:   session.SessionNo,
+			MerchantId:  session.MerchantId,
+			FromAgentId: fromAgentID,
+			ToAgentId:   0,
+			AssignType:  int64(chat.ChatAssignType_CHAT_ASSIGN_TYPE_TRANSFER),
+			Reason:      strings.TrimSpace(reason),
+			CreateTimes: now,
+			UpdateTimes: now,
+		})
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
+	return session, nil, nil
+}
+
+func routeSessionToAvailableAgent(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, reason string) (*models.TChatSession, *common.RespBase, error) {
+	agents, err := svcCtx.ChatAgentModel.FindAvailable(ctx, session.MerchantId, session.GroupId, 2)
+	if err != nil {
+		return nil, nil, err
+	}
+	if len(agents) == 1 {
+		if session.AgentId == agents[0].Id {
+			return session, nil, nil
+		}
+		return assignSession(ctx, svcCtx, &chat.AssignChatSessionReq{
+			MerchantId: session.MerchantId,
+			SessionNo:  session.SessionNo,
+			ToAgentId:  agents[0].Id,
+			AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_AUTO,
+			OperatorId: agents[0].ChatUserId,
+			Reason:     reason,
+		})
+	}
+	if session.AgentId > 0 {
+		return releaseSessionToPool(ctx, svcCtx, session, reason)
+	}
+	return session, nil, nil
+}
+
+func prepareSessionForUserMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) (*models.TChatSession, *common.RespBase, error) {
+	if session.AgentId == 0 || session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+		return routeSessionToAvailableAgent(ctx, svcCtx, session, "auto assign")
+	}
+
+	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, session.AgentId)
+	if err == nil && agent.MerchantId == session.MerchantId && agent.Status == int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE) {
+		return session, nil, nil
+	}
+	if err != nil && err != models.ErrNotFound {
+		return nil, nil, err
+	}
+
+	return routeSessionToAvailableAgent(ctx, svcCtx, session, "current agent unavailable")
+}
+
 func autoAssignSession(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) error {
 	if session.AgentId != 0 || session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 		return nil
 	}
-	agents, err := svcCtx.ChatAgentModel.FindAvailable(ctx, session.MerchantId, session.GroupId, 1)
-	if err != nil || len(agents) == 0 {
-		return err
-	}
-	_, _, err = assignSession(ctx, svcCtx, &chat.AssignChatSessionReq{
-		MerchantId: session.MerchantId,
-		SessionNo:  session.SessionNo,
-		ToAgentId:  agents[0].Id,
-		AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_AUTO,
-		OperatorId: agents[0].ChatUserId,
-		Reason:     "auto assign",
-	})
+	_, _, err := routeSessionToAvailableAgent(ctx, svcCtx, session, "auto assign")
 	return err
 }
 

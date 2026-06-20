@@ -11,6 +11,11 @@ import (
 
 var _ TChatSessionModel = (*customTChatSessionModel)(nil)
 
+const (
+	chatSessionStatusWaiting      = 1
+	chatSessionStatusPendingAgent = 4
+)
+
 type (
 	ChatSessionPageFilter struct {
 		MerchantId int64
@@ -50,13 +55,15 @@ func (m *customTChatSessionModel) FindPage(ctx context.Context, filter ChatSessi
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("merchant_id", filter.MerchantId)
 	builder.EqInt64("user_id", filter.UserId)
-	builder.EqInt64("agent_id", filter.AgentId)
 	builder.EqInt64("group_id", filter.GroupId)
 	builder.EqInt64("status", filter.Status)
 	builder.EqInt64("priority", filter.Priority)
 	builder.EqString("category", filter.Category)
 	builder.GteInt64("create_times", filter.StartTime)
 	builder.LteInt64("create_times", filter.EndTime)
+	if filter.AgentId > 0 {
+		builder.And("(agent_id = ? OR (agent_id = 0 AND status IN (?, ?)))", filter.AgentId, chatSessionStatusWaiting, chatSessionStatusPendingAgent)
+	}
 
 	where := builder.Where()
 	args := builder.Args()

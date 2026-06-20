@@ -9,6 +9,7 @@ import (
 
 	"chat-admin-api/internal/svc"
 	"chat-admin-api/internal/ws"
+	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/chat"
 
@@ -98,6 +99,15 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 	if req.SessionNo == "" {
 		req.SessionNo = conn.SessionNo
 	}
+	if isGuestSession(req.SessionNo) {
+		msg := newTransientAgentMessage(req.MerchantId, req.SessionNo, data.UserId, req.AgentId, data)
+		if err := publishTransientMessage(ctx, svcCtx, msg); err != nil {
+			conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+			return
+		}
+		conn.SendJSON(eventSendAgentMessageResult, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
+		return
+	}
 
 	resp, err := svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
 	if err != nil {
@@ -110,6 +120,7 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 type sendAgentMessagePayload struct {
 	MerchantId  int64  `json:"merchantId"`
 	AgentId     int64  `json:"agentId"`
+	UserId      int64  `json:"userId"`
 	SessionNo   string `json:"sessionNo"`
 	MessageType int64  `json:"messageType"`
 	Content     string `json:"content"`
