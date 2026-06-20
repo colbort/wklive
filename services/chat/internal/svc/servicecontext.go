@@ -29,8 +29,8 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	var busRedis *redis.Redis
-	if c.BusRedis.Host != "" {
-		rds, err := redis.NewRedis(c.BusRedis)
+	if c.Redis.Host != "" {
+		rds, err := redis.NewRedis(c.Redis.RedisConf)
 		if err != nil {
 			logx.Errorf("chat bus redis init failed: %v", err)
 		} else {

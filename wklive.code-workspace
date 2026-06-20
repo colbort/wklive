@@ -159,6 +159,66 @@
       "zset"
     ]
   },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "start:services:all",
+        "type": "shell",
+        "command": "set -e\ncd \"${workspaceFolder:services}/asset\" && go run asset.go &\nsleep 2\ncd \"${workspaceFolder:services}/trade\" && go run trade.go &\nsleep 2\ncd \"${workspaceFolder:services}/staking\" && go run staking.go &\nsleep 2\ncd \"${workspaceFolder:services}/option\" && go run option.go &\nsleep 2\ncd \"${workspaceFolder:services}/itick\" && go run itick.go &\nsleep 2\ncd \"${workspaceFolder:services}/payment\" && go run payment.go &\nsleep 2\ncd \"${workspaceFolder:services}/user\" && go run user.go &\nsleep 2\ncd \"${workspaceFolder:services}/chat\" && go run chat.go &\nsleep 2\ncd \"${workspaceFolder:services}/system\" && go run system.go &\nwait",
+        "problemMatcher": [],
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated",
+          "group": "services"
+        }
+      },
+      {
+        "label": "start:api:admin-api",
+        "type": "shell",
+        "command": "cd \"${workspaceFolder:admin-api}\" && go run admin.go",
+        "problemMatcher": [],
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated",
+          "group": "api"
+        }
+      },
+      {
+        "label": "start:api:app-api",
+        "type": "shell",
+        "command": "cd \"${workspaceFolder:app-api}\" && go run app.go",
+        "problemMatcher": [],
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated",
+          "group": "api"
+        }
+      },
+      {
+        "label": "start:api:chat-api",
+        "type": "shell",
+        "command": "cd \"${workspaceFolder:chat-api}\" && go run chat.go",
+        "problemMatcher": [],
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated",
+          "group": "api"
+        }
+      },
+      {
+        "label": "start:api:chat-admin-api",
+        "type": "shell",
+        "command": "cd \"${workspaceFolder:chat-admin-api}\" && go run chatadmin.go",
+        "problemMatcher": [],
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated",
+          "group": "api"
+        }
+      }
+    ]
+  },
   "launch": {
     "version": "0.2.0",
     "configurations": [
@@ -187,6 +247,30 @@
         "program": "${workspaceFolder:app-api}/"
       },
       {
+        "name": "chat-api",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:chat-api}/"
+      },
+      {
+        "name": "chat-admin-api",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:chat-admin-api}/"
+      },
+      {
         "name": "system",
         "type": "go",
         "request": "launch",
@@ -197,6 +281,18 @@
           "test": "test"
         },
         "program": "${workspaceFolder:services}/system/"
+      },
+      {
+        "name": "chat",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:services}/chat/"
       },
       {
         "name": "user",

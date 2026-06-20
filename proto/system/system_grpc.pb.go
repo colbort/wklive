@@ -74,6 +74,11 @@ const (
 	System_SysTenantDelete_FullMethodName              = "/system.System/SysTenantDelete"
 	System_SysTenantList_FullMethodName                = "/system.System/SysTenantList"
 	System_SysTenantDetail_FullMethodName              = "/system.System/SysTenantDetail"
+	System_SysChatMerchantCreate_FullMethodName        = "/system.System/SysChatMerchantCreate"
+	System_SysChatMerchantUpdate_FullMethodName        = "/system.System/SysChatMerchantUpdate"
+	System_SysChatMerchantDelete_FullMethodName        = "/system.System/SysChatMerchantDelete"
+	System_SysChatMerchantList_FullMethodName          = "/system.System/SysChatMerchantList"
+	System_SysChatMerchantDetail_FullMethodName        = "/system.System/SysChatMerchantDetail"
 )
 
 // SystemClient is the client API for System service.
@@ -194,6 +199,16 @@ type SystemClient interface {
 	SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
 	// 根据 code 获取租户
 	SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error)
+	// 创建客服商户
+	SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 更新客服商户
+	SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 删除客服商户
+	SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 获取客服商户列表
+	SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error)
+	// 获取客服商户详情
+	SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error)
 }
 
 type systemClient struct {
@@ -754,6 +769,56 @@ func (c *systemClient) SysTenantDetail(ctx context.Context, in *SysTenantDetailR
 	return out, nil
 }
 
+func (c *systemClient) SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysChatMerchantCreate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysChatMerchantUpdate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysChatMerchantDelete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysChatMerchantListResp)
+	err := c.cc.Invoke(ctx, System_SysChatMerchantList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysChatMerchantDetailResp)
+	err := c.cc.Invoke(ctx, System_SysChatMerchantDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SystemServer is the server API for System service.
 // All implementations must embed UnimplementedSystemServer
 // for forward compatibility.
@@ -872,6 +937,16 @@ type SystemServer interface {
 	SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error)
 	// 根据 code 获取租户
 	SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error)
+	// 创建客服商户
+	SysChatMerchantCreate(context.Context, *SysChatMerchantCreateReq) (*RespBase, error)
+	// 更新客服商户
+	SysChatMerchantUpdate(context.Context, *SysChatMerchantUpdateReq) (*RespBase, error)
+	// 删除客服商户
+	SysChatMerchantDelete(context.Context, *SysChatMerchantDeleteReq) (*RespBase, error)
+	// 获取客服商户列表
+	SysChatMerchantList(context.Context, *SysChatMerchantListReq) (*SysChatMerchantListResp, error)
+	// 获取客服商户详情
+	SysChatMerchantDetail(context.Context, *SysChatMerchantDetailReq) (*SysChatMerchantDetailResp, error)
 	mustEmbedUnimplementedSystemServer()
 }
 
@@ -1046,6 +1121,21 @@ func (UnimplementedSystemServer) SysTenantList(context.Context, *SysTenantListRe
 }
 func (UnimplementedSystemServer) SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantDetail not implemented")
+}
+func (UnimplementedSystemServer) SysChatMerchantCreate(context.Context, *SysChatMerchantCreateReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantCreate not implemented")
+}
+func (UnimplementedSystemServer) SysChatMerchantUpdate(context.Context, *SysChatMerchantUpdateReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantUpdate not implemented")
+}
+func (UnimplementedSystemServer) SysChatMerchantDelete(context.Context, *SysChatMerchantDeleteReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantDelete not implemented")
+}
+func (UnimplementedSystemServer) SysChatMerchantList(context.Context, *SysChatMerchantListReq) (*SysChatMerchantListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantList not implemented")
+}
+func (UnimplementedSystemServer) SysChatMerchantDetail(context.Context, *SysChatMerchantDetailReq) (*SysChatMerchantDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantDetail not implemented")
 }
 func (UnimplementedSystemServer) mustEmbedUnimplementedSystemServer() {}
 func (UnimplementedSystemServer) testEmbeddedByValue()                {}
@@ -2058,6 +2148,96 @@ func _System_SysTenantDetail_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _System_SysChatMerchantCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysChatMerchantCreateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysChatMerchantCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysChatMerchantCreate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysChatMerchantCreate(ctx, req.(*SysChatMerchantCreateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysChatMerchantUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysChatMerchantUpdateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysChatMerchantUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysChatMerchantUpdate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysChatMerchantUpdate(ctx, req.(*SysChatMerchantUpdateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysChatMerchantDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysChatMerchantDeleteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysChatMerchantDelete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysChatMerchantDelete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysChatMerchantDelete(ctx, req.(*SysChatMerchantDeleteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysChatMerchantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysChatMerchantListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysChatMerchantList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysChatMerchantList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysChatMerchantList(ctx, req.(*SysChatMerchantListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysChatMerchantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysChatMerchantDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysChatMerchantDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysChatMerchantDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysChatMerchantDetail(ctx, req.(*SysChatMerchantDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // System_ServiceDesc is the grpc.ServiceDesc for System service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2284,6 +2464,26 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysTenantDetail",
 			Handler:    _System_SysTenantDetail_Handler,
+		},
+		{
+			MethodName: "SysChatMerchantCreate",
+			Handler:    _System_SysChatMerchantCreate_Handler,
+		},
+		{
+			MethodName: "SysChatMerchantUpdate",
+			Handler:    _System_SysChatMerchantUpdate_Handler,
+		},
+		{
+			MethodName: "SysChatMerchantDelete",
+			Handler:    _System_SysChatMerchantDelete_Handler,
+		},
+		{
+			MethodName: "SysChatMerchantList",
+			Handler:    _System_SysChatMerchantList_Handler,
+		},
+		{
+			MethodName: "SysChatMerchantDetail",
+			Handler:    _System_SysChatMerchantDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

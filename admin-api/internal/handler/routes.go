@@ -728,6 +728,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				Method:  http.MethodPost,
+				Path:    "/chat-merchant",
+				Handler: system.SysChatMerchantCreateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/chat-merchant",
+				Handler: system.SysChatMerchantUpdateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/chat-merchant/:id",
+				Handler: system.SysChatMerchantDeleteHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/chat-merchant/detail",
+				Handler: system.SysChatMerchantDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/chat-merchants",
+				Handler: system.SysChatMerchantListHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/configs",
 				Handler: system.SysConfigListHandler(serverCtx),

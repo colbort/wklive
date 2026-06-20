@@ -3185,6 +3185,75 @@ type SyncCategoryProductsResp struct {
 	Data string `json:"data"`
 }
 
+type SysChatMerchantCreateReq struct {
+	MerchantCode string `json:"merchantCode"`
+	MerchantName string `json:"merchantName"`
+	Enabled      int64  `json:"enabled"`
+	ExpireTime   int64  `json:"expireTime"`
+	ContactName  string `json:"contactName,optional"`
+	ContactPhone string `json:"contactPhone,optional"`
+	ContactEmail string `json:"contactEmail,optional"`
+	Remark       string `json:"remark,optional"`
+}
+
+type SysChatMerchantDeleteReq struct {
+	Id int64 `path:"id"`
+}
+
+type SysChatMerchantDetailReq struct {
+	Id           *int64  `form:"id,optional"`
+	MerchantCode *string `form:"merchantCode,optional"`
+}
+
+type SysChatMerchantDetailResp struct {
+	RespBase
+	Data SysChatMerchantItem `json:"data"`
+}
+
+type SysChatMerchantItem struct {
+	Id           int64  `json:"id"`
+	MerchantCode string `json:"merchantCode"`
+	MerchantName string `json:"merchantName"`
+	Enabled      int64  `json:"enabled"`
+	ExpireTime   int64  `json:"expireTime"`
+	ContactName  string `json:"contactName,optional"`
+	ContactPhone string `json:"contactPhone,optional"`
+	ContactEmail string `json:"contactEmail,optional"`
+	Remark       string `json:"remark,optional"`
+	CreateBy     string `json:"createBy,optional"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateBy     string `json:"updateBy,optional"`
+	UpdateTimes  int64  `json:"updateTimes"`
+}
+
+type SysChatMerchantListReq struct {
+	PageReq
+	Keyword      string `form:"keyword,optional"` // 按 merchant_code/merchant_name/contact_name/contact_phone/contact_email 模糊
+	Enabled      int64  `form:"enabled,optional"` // 0全部 1启用 2禁用
+	MerchantCode string `form:"merchantCode,optional"`
+	MerchantName string `form:"merchantName,optional"`
+	ContactName  string `form:"contactName,optional"`
+	ContactPhone string `form:"contactPhone,optional"`
+	ContactEmail string `form:"contactEmail,optional"`
+}
+
+type SysChatMerchantListResp struct {
+	RespBase
+	Data []SysChatMerchantItem `json:"data"`
+}
+
+type SysChatMerchantUpdateReq struct {
+	Id           int64  `json:"id"`
+	MerchantCode string `json:"merchantCode,optional"`
+	MerchantName string `json:"merchantName,optional"`
+	Enabled      int64  `json:"enabled,optional"`
+	ExpireTime   int64  `json:"expireTime,optional"`
+	ContactName  string `json:"contactName,optional"`
+	ContactPhone string `json:"contactPhone,optional"`
+	ContactEmail string `json:"contactEmail,optional"`
+	Remark       string `json:"remark,optional"`
+}
+
 type SysConfigCreateReq struct {
 	TenantId    int64  `json:"tenantId,optional"`
 	ConfigKey   string `json:"configKey" validate:"required"`

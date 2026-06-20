@@ -32,6 +32,7 @@ export function buildRoutesFromMenus(menus: MenuNode[]): RouteRecordRaw[] {
             titleKey: `menu.${n.id}`, // ✅ 方便后期做 i18n：有 key 用 key，否则回退 name
             icon: n.icon,
             menuId: n.id,
+            missing: comp ? '' : n.component,
           },
         })
       }

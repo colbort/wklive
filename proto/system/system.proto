@@ -637,6 +637,74 @@ message SysTenantDetailResp {
   SysTenantItem data = 2;
 }
 
+// 客服商户管理
+message SysChatMerchantItem {
+  int64 id = 1;
+  string merchant_code = 2;
+  string merchant_name = 3;
+  common.Enable enabled = 4; // 状态,0表示全部，1表示启用，2表示禁用
+  int64 expire_time = 5;
+  string contact_name = 6;
+  string contact_phone = 7;
+  string contact_email = 8;
+  string remark = 9;
+  string create_by = 10;
+  int64 create_times = 11;
+  string update_by = 12;
+  int64 update_times = 13;
+}
+
+message SysChatMerchantListReq {
+  common.PageReq page = 1;
+  string keyword = 2;
+  common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
+  string merchant_code = 4;
+  string merchant_name = 5;
+  string contact_name = 6;
+  string contact_phone = 7;
+  string contact_email = 8;
+}
+
+message SysChatMerchantListResp {
+  common.RespBase base = 1;
+  repeated SysChatMerchantItem data = 2;
+}
+
+message SysChatMerchantCreateReq {
+  string merchant_code = 1;
+  string merchant_name = 2;
+  common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
+  int64 expire_time = 4;
+  string contact_name = 5;
+  string contact_phone = 6;
+  string contact_email = 7;
+  string remark = 8;
+}
+
+message SysChatMerchantUpdateReq {
+  int64 id = 1;
+  string merchant_code = 2;
+  string merchant_name = 3;
+  common.Enable enabled = 4; // 状态,0表示全部，1表示启用，2表示禁用
+  int64 expire_time = 5;
+  string contact_name = 6;
+  string contact_phone = 7;
+  string contact_email = 8;
+  string remark = 9;
+}
+
+message SysChatMerchantDeleteReq { int64 id = 1; }
+
+message SysChatMerchantDetailReq {
+  optional int64 id = 1;
+  optional string merchant_code = 2;
+}
+
+message SysChatMerchantDetailResp {
+  common.RespBase base = 1;
+  SysChatMerchantItem data = 2;
+}
+
 //////////////////////
 // Service
 //////////////////////
@@ -757,4 +825,16 @@ service System {
   rpc SysTenantList(SysTenantListReq) returns (SysTenantListResp);
   // 根据 code 获取租户
   rpc SysTenantDetail(SysTenantDetailReq) returns (SysTenantDetailResp);
+  // 创建客服商户
+  rpc SysChatMerchantCreate(SysChatMerchantCreateReq) returns (RespBase);
+  // 更新客服商户
+  rpc SysChatMerchantUpdate(SysChatMerchantUpdateReq) returns (RespBase);
+  // 删除客服商户
+  rpc SysChatMerchantDelete(SysChatMerchantDeleteReq) returns (RespBase);
+  // 获取客服商户列表
+  rpc SysChatMerchantList(SysChatMerchantListReq)
+      returns (SysChatMerchantListResp);
+  // 获取客服商户详情
+  rpc SysChatMerchantDetail(SysChatMerchantDetailReq)
+      returns (SysChatMerchantDetailResp);
 }

@@ -41,6 +41,14 @@ type (
 	ResetUserPwdReq                  = system.ResetUserPwdReq
 	RespBase                         = system.RespBase
 	SendVerificationCodeReq          = system.SendVerificationCodeReq
+	SysChatMerchantCreateReq         = system.SysChatMerchantCreateReq
+	SysChatMerchantDeleteReq         = system.SysChatMerchantDeleteReq
+	SysChatMerchantDetailReq         = system.SysChatMerchantDetailReq
+	SysChatMerchantDetailResp        = system.SysChatMerchantDetailResp
+	SysChatMerchantItem              = system.SysChatMerchantItem
+	SysChatMerchantListReq           = system.SysChatMerchantListReq
+	SysChatMerchantListResp          = system.SysChatMerchantListResp
+	SysChatMerchantUpdateReq         = system.SysChatMerchantUpdateReq
 	SysConfigByKeysReq               = system.SysConfigByKeysReq
 	SysConfigByKeysResp              = system.SysConfigByKeysResp
 	SysConfigCreateReq               = system.SysConfigCreateReq
@@ -221,6 +229,16 @@ type (
 		SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
 		// 根据 code 获取租户
 		SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error)
+		// 创建客服商户
+		SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 更新客服商户
+		SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 删除客服商户
+		SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 获取客服商户列表
+		SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error)
+		// 获取客服商户详情
+		SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error)
 	}
 
 	defaultSystem struct {
@@ -562,4 +580,34 @@ func (m *defaultSystem) SysTenantList(ctx context.Context, in *SysTenantListReq,
 func (m *defaultSystem) SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysTenantDetail(ctx, in, opts...)
+}
+
+// 创建客服商户
+func (m *defaultSystem) SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysChatMerchantCreate(ctx, in, opts...)
+}
+
+// 更新客服商户
+func (m *defaultSystem) SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysChatMerchantUpdate(ctx, in, opts...)
+}
+
+// 删除客服商户
+func (m *defaultSystem) SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysChatMerchantDelete(ctx, in, opts...)
+}
+
+// 获取客服商户列表
+func (m *defaultSystem) SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysChatMerchantList(ctx, in, opts...)
+}
+
+// 获取客服商户详情
+func (m *defaultSystem) SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysChatMerchantDetail(ctx, in, opts...)
 }

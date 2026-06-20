@@ -9,6 +9,7 @@ export { UploadService, uploadService } from './system/UploadService'
 export { ConfigService, configService } from './system/ConfigService'
 export { CronJobService, cronJobService } from './system/CronJobService'
 export { TenantsService, tenantsService } from './system/TenantsService'
+export { ChatMerchantsService, chatMerchantsService } from './system/ChatMerchantsService'
 export { VerificationCodeService, verificationCodeService } from './system/VerificationCodeService'
 export { CategoriesService, categoriesService } from './itick/CategoriesService'
 export { ProductsService, productsService } from './itick/ProductsService'
@@ -101,6 +102,13 @@ export type {
   SysTenantUpdateReq,
   SysTenantDetailReq,
 } from './system/TenantsService'
+export type {
+  SysChatMerchantItem,
+  SysChatMerchantListReq,
+  SysChatMerchantCreateReq,
+  SysChatMerchantUpdateReq,
+  SysChatMerchantDetailReq,
+} from './system/ChatMerchantsService'
 export type {
   TestVerificationCodeReq,
   VerificationCodeRecordItem,

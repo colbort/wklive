@@ -5,6 +5,7 @@ import (
 	"wklive/proto/option"
 	"wklive/proto/staking"
 	"wklive/proto/trade"
+	"wklive/services/chat/chatinternal"
 	"wklive/services/system/internal/config"
 	"wklive/services/system/internal/global"
 	"wklive/services/system/internal/plugins/cronx"
@@ -34,6 +35,8 @@ type ServiceContext struct {
 	JobModel                    models.SysJobModel
 	JobLogModel                 models.SysJobLogModel
 	TenantMode                  models.SysTenantModel
+	ChatMerchantModel           models.SysChatMerchantModel
+	ChatInternal                chatinternal.ChatInternal
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -65,5 +68,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		JobModel:                    models.NewSysJobModel(conn, c.CacheRedis),
 		JobLogModel:                 jobLogModel,
 		TenantMode:                  models.NewSysTenantModel(conn, c.CacheRedis),
+		ChatMerchantModel:           models.NewSysChatMerchantModel(conn, c.CacheRedis),
+		ChatInternal:                chatinternal.NewChatInternal(zrpc.MustNewClient(c.ChatInternalRpc)),
 	}
 }

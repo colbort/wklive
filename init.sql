@@ -833,13 +833,13 @@ VALUES
 (11004, 11000, '获取租户详情', 3, 'GET', '/system/tenant/detail', 'sys:tenant:detail', 11004);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (11100, 10000, '客服商户管理', 2, 'GET', '/system/chat_merchants', 'sys:chat_merchant:list', 'system/chat_merchants', 'Team', 11100);
+VALUES (11100, 10000, '客服商户管理', 2, 'GET', '/system/chat-merchants', 'sys:chat-merchant:list', 'system/chat-merchants', 'Team', 11100);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(11101, 11100, '新增客服商户', 3, 'POST', '/system/chat_merchant', 'sys:chat_merchant:add', 11101),
-(11102, 11100, '编辑客服商户', 3, 'PUT', '/system/chat_merchant', 'sys:chat_merchant:update', 11102),
-(11103, 11100, '删除客服商户', 3, 'DELETE', '/system/chat_merchant/{id}', 'sys:chat_merchant:delete', 11103),
-(11104, 11100, '获取客服商户详情', 3, 'GET', '/system/chat_merchant/detail', 'sys:chat_merchant:detail', 11104);
+(11101, 11100, '新增客服商户', 3, 'POST', '/system/chat-merchant', 'sys:chat-merchant:add', 11101),
+(11102, 11100, '编辑客服商户', 3, 'PUT', '/system/chat-merchant', 'sys:chat-merchant:update', 11102),
+(11103, 11100, '删除客服商户', 3, 'DELETE', '/system/chat-merchant/{id}', 'sys:chat-merchant:delete', 11103),
+(11104, 11100, '获取客服商户详情', 3, 'GET', '/system/chat-merchant/detail', 'sys:chat-merchant:detail', 11104);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES (11200, 10000, '验证码记录', 2, 'GET', '/system/verification-codes', 'sys:verification-code:list', 'system/verification-codes', 'Message', 11200);

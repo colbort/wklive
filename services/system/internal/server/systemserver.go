@@ -352,3 +352,33 @@ func (s *SystemServer) SysTenantDetail(ctx context.Context, in *system.SysTenant
 	l := logic.NewSysTenantDetailLogic(ctx, s.svcCtx)
 	return l.SysTenantDetail(in)
 }
+
+// 创建客服商户
+func (s *SystemServer) SysChatMerchantCreate(ctx context.Context, in *system.SysChatMerchantCreateReq) (*system.RespBase, error) {
+	l := logic.NewSysChatMerchantCreateLogic(ctx, s.svcCtx)
+	return l.SysChatMerchantCreate(in)
+}
+
+// 更新客服商户
+func (s *SystemServer) SysChatMerchantUpdate(ctx context.Context, in *system.SysChatMerchantUpdateReq) (*system.RespBase, error) {
+	l := logic.NewSysChatMerchantUpdateLogic(ctx, s.svcCtx)
+	return l.SysChatMerchantUpdate(in)
+}
+
+// 删除客服商户
+func (s *SystemServer) SysChatMerchantDelete(ctx context.Context, in *system.SysChatMerchantDeleteReq) (*system.RespBase, error) {
+	l := logic.NewSysChatMerchantDeleteLogic(ctx, s.svcCtx)
+	return l.SysChatMerchantDelete(in)
+}
+
+// 获取客服商户列表
+func (s *SystemServer) SysChatMerchantList(ctx context.Context, in *system.SysChatMerchantListReq) (*system.SysChatMerchantListResp, error) {
+	l := logic.NewSysChatMerchantListLogic(ctx, s.svcCtx)
+	return l.SysChatMerchantList(in)
+}
+
+// 获取客服商户详情
+func (s *SystemServer) SysChatMerchantDetail(ctx context.Context, in *system.SysChatMerchantDetailReq) (*system.SysChatMerchantDetailResp, error) {
+	l := logic.NewSysChatMerchantDetailLogic(ctx, s.svcCtx)
+	return l.SysChatMerchantDetail(in)
+}
