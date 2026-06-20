@@ -40,7 +40,7 @@ func (l *SysChatMerchantCreateLogic) SysChatMerchantCreate(in *system.SysChatMer
 		}, nil
 	}
 
-	if in.MerchantCode == "" || in.MerchantName == "" {
+	if in.MerchantCode == "" || in.MerchantName == "" || in.Password == "" {
 		return &system.RespBase{
 			Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
 		}, nil
@@ -84,7 +84,7 @@ func (l *SysChatMerchantCreateLogic) SysChatMerchantCreate(in *system.SysChatMer
 		return nil, err
 	}
 	merchant.Id = id
-	if err := syncChatMerchantUser(l.ctx, l.svcCtx, chat.ChatSyncAction_CHAT_SYNC_ACTION_UPSERT, merchant); err != nil {
+	if err := syncChatMerchantUser(l.ctx, l.svcCtx, chat.ChatSyncAction_CHAT_SYNC_ACTION_UPSERT, merchant, in.Password); err != nil {
 		return nil, err
 	}
 

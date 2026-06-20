@@ -40,18 +40,8 @@
     </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
-      <el-table
-        v-loading="loading"
-        :data="list"
-        :empty-text="t('common.noData')"
-        stripe
-      >
-        <el-table-column
-          prop="id"
-          :label="t('common.id')"
-          width="80"
-          align="center"
-        />
+      <el-table v-loading="loading" :data="list" :empty-text="t('common.noData')" stripe>
+        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
         <el-table-column
           prop="merchantCode"
           :label="t('system.chatMerchantCode')"
@@ -83,12 +73,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="remark" :label="t('common.remark')" min-width="150" />
-        <el-table-column
-          :label="t('common.actions')"
-          width="220"
-          align="center"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" width="220" align="center" fixed="right">
           <template #default="{ row }">
             <el-button type="info" size="small" @click="handleDetail(row)">
               {{ t('common.detail') }}
@@ -130,12 +115,7 @@
       width="720px"
       :close-on-click-modal="false"
     >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="130px"
-      >
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="130px">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="t('system.chatMerchantCode')" prop="merchantCode">
@@ -154,6 +134,21 @@
                 :placeholder="t('system.pleaseInputChatMerchantName')"
                 maxlength="128"
                 show-word-limit
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="t('common.password')" prop="password">
+              <el-input
+                v-model="formData.password"
+                type="password"
+                show-password
+                :placeholder="
+                  isEdit
+                    ? t('system.chatMerchantPasswordKeepPlaceholder')
+                    : t('common.pleaseInputNewPassword')
+                "
+                maxlength="64"
               />
             </el-form-item>
           </el-col>
@@ -367,6 +362,7 @@ const { form: formData, reset: resetForm } = useForm({
     contactName: '',
     contactPhone: '',
     contactEmail: '',
+    password: '',
     remark: '',
   },
 })
@@ -377,6 +373,18 @@ const formRules = {
   ],
   merchantName: [
     { required: true, message: t('system.pleaseInputChatMerchantName'), trigger: 'blur' },
+  ],
+  password: [
+    {
+      validator: (_rule: unknown, value: string, callback: (error?: Error) => void) => {
+        if (!isEdit.value && !value) {
+          callback(new Error(t('common.pleaseInputNewPassword')))
+          return
+        }
+        callback()
+      },
+      trigger: 'blur',
+    },
   ],
   enabled: [{ required: true, message: t('system.pleaseSelectStatus'), trigger: 'change' }],
   expireTime: [{ required: true, message: t('validation.required'), trigger: 'change' }],
@@ -464,6 +472,7 @@ function handleEdit(row: SysChatMerchantItem) {
     contactName: row.contactName,
     contactPhone: row.contactPhone,
     contactEmail: row.contactEmail,
+    password: '',
     remark: row.remark || '',
   })
   dialogVisible.value = true
@@ -516,6 +525,7 @@ async function handleSubmit() {
         contactName: formData.contactName,
         contactPhone: formData.contactPhone,
         contactEmail: formData.contactEmail,
+        password: formData.password || undefined,
         remark: formData.remark || '',
       })
       if (res.code !== 200) throw new Error(res.msg || t('common.updateFailed'))
@@ -529,6 +539,7 @@ async function handleSubmit() {
         contactName: formData.contactName,
         contactPhone: formData.contactPhone,
         contactEmail: formData.contactEmail,
+        password: formData.password,
         remark: formData.remark || '',
       }
       const res = await chatMerchantsService.create(data)

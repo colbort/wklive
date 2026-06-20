@@ -23,6 +23,20 @@ CREATE TABLE `t_chat_user` (
   KEY `idx_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客服用户/商户账号';
 
+CREATE TABLE `t_chat_merchant_info` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `merchant_id` bigint NOT NULL DEFAULT '0' COMMENT '客服商户ID',
+  `api_key` varchar(64) NOT NULL DEFAULT '' COMMENT '对接客服API Key',
+  `api_secret` varchar(128) NOT NULL DEFAULT '' COMMENT '对接客服API Secret',
+  `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '启用状态:1启用 2禁用',
+  `expire_time` bigint NOT NULL DEFAULT '0' COMMENT '到期时间戳(毫秒)',
+  `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间戳(毫秒)',
+  `update_times` bigint NOT NULL DEFAULT '0' COMMENT '更新时间戳(毫秒)',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_merchant_id` (`merchant_id`),
+  UNIQUE KEY `uk_api_key` (`api_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客服商户资料/对接配置';
+
 CREATE TABLE `t_chat_agent` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `merchant_id` bigint NOT NULL DEFAULT '0' COMMENT '客服商户ID',

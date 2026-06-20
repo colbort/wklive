@@ -3188,6 +3188,7 @@ type SyncCategoryProductsResp struct {
 type SysChatMerchantCreateReq struct {
 	MerchantCode string `json:"merchantCode"`
 	MerchantName string `json:"merchantName"`
+	Password     string `json:"password"`
 	Enabled      int64  `json:"enabled"`
 	ExpireTime   int64  `json:"expireTime"`
 	ContactName  string `json:"contactName,optional"`
@@ -3246,6 +3247,7 @@ type SysChatMerchantUpdateReq struct {
 	Id           int64  `json:"id"`
 	MerchantCode string `json:"merchantCode,optional"`
 	MerchantName string `json:"merchantName,optional"`
+	Password     string `json:"password,optional"`
 	Enabled      int64  `json:"enabled,optional"`
 	ExpireTime   int64  `json:"expireTime,optional"`
 	ContactName  string `json:"contactName,optional"`

@@ -103,7 +103,7 @@ func (l *SysChatMerchantUpdateLogic) SysChatMerchantUpdate(in *system.SysChatMer
 	if merchant.Enabled == 2 {
 		action = chat.ChatSyncAction_CHAT_SYNC_ACTION_DELETE
 	}
-	if err := syncChatMerchantUser(l.ctx, l.svcCtx, action, merchant); err != nil {
+	if err := syncChatMerchantUser(l.ctx, l.svcCtx, action, merchant, in.Password); err != nil {
 		return nil, err
 	}
 	return &system.RespBase{

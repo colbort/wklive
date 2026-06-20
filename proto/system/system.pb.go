@@ -6888,6 +6888,7 @@ type SysChatMerchantCreateReq struct {
 	ContactPhone  string                 `protobuf:"bytes,6,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
 	ContactEmail  string                 `protobuf:"bytes,7,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
 	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
+	Password      string                 `protobuf:"bytes,9,opt,name=password,proto3" json:"password,omitempty"` // 客服商户主账号登录密码
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6978,6 +6979,13 @@ func (x *SysChatMerchantCreateReq) GetRemark() string {
 	return ""
 }
 
+func (x *SysChatMerchantCreateReq) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
 type SysChatMerchantUpdateReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -6989,6 +6997,7 @@ type SysChatMerchantUpdateReq struct {
 	ContactPhone  string                 `protobuf:"bytes,7,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
 	ContactEmail  string                 `protobuf:"bytes,8,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
 	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
+	Password      string                 `protobuf:"bytes,10,opt,name=password,proto3" json:"password,omitempty"` // 不为空时重置客服商户主账号密码
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -7082,6 +7091,13 @@ func (x *SysChatMerchantUpdateReq) GetContactEmail() string {
 func (x *SysChatMerchantUpdateReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
+	}
+	return ""
+}
+
+func (x *SysChatMerchantUpdateReq) GetPassword() string {
+	if x != nil {
+		return x.Password
 	}
 	return ""
 }
@@ -7792,7 +7808,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\rcontact_email\x18\b \x01(\tR\fcontactEmail\"p\n" +
 	"\x17SysChatMerchantListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12/\n" +
-	"\x04data\x18\x02 \x03(\v2\x1b.system.SysChatMerchantItemR\x04data\"\xb4\x02\n" +
+	"\x04data\x18\x02 \x03(\v2\x1b.system.SysChatMerchantItemR\x04data\"\xd0\x02\n" +
 	"\x18SysChatMerchantCreateReq\x12#\n" +
 	"\rmerchant_code\x18\x01 \x01(\tR\fmerchantCode\x12#\n" +
 	"\rmerchant_name\x18\x02 \x01(\tR\fmerchantName\x12(\n" +
@@ -7802,7 +7818,8 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\fcontact_name\x18\x05 \x01(\tR\vcontactName\x12#\n" +
 	"\rcontact_phone\x18\x06 \x01(\tR\fcontactPhone\x12#\n" +
 	"\rcontact_email\x18\a \x01(\tR\fcontactEmail\x12\x16\n" +
-	"\x06remark\x18\b \x01(\tR\x06remark\"\xc4\x02\n" +
+	"\x06remark\x18\b \x01(\tR\x06remark\x12\x1a\n" +
+	"\bpassword\x18\t \x01(\tR\bpassword\"\xe0\x02\n" +
 	"\x18SysChatMerchantUpdateReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rmerchant_code\x18\x02 \x01(\tR\fmerchantCode\x12#\n" +
@@ -7813,7 +7830,9 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\fcontact_name\x18\x06 \x01(\tR\vcontactName\x12#\n" +
 	"\rcontact_phone\x18\a \x01(\tR\fcontactPhone\x12#\n" +
 	"\rcontact_email\x18\b \x01(\tR\fcontactEmail\x12\x16\n" +
-	"\x06remark\x18\t \x01(\tR\x06remark\"*\n" +
+	"\x06remark\x18\t \x01(\tR\x06remark\x12\x1a\n" +
+	"\bpassword\x18\n" +
+	" \x01(\tR\bpassword\"*\n" +
 	"\x18SysChatMerchantDeleteReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"r\n" +
 	"\x18SysChatMerchantDetailReq\x12\x13\n" +

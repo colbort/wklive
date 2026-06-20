@@ -73,6 +73,7 @@ message SyncChatMerchantUserReq {
   string contact_phone = 8; // 联系电话
   string contact_email = 9; // 联系邮箱
   string remark = 10; // 备注
+  string password = 11; // 明文密码,仅内部同步使用
 }
 
 message SyncChatMerchantUserResp {

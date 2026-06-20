@@ -514,6 +514,7 @@ export default {
     pleaseInputContactName: 'Please input contact name',
     pleaseInputContactPhone: 'Please input contact phone',
     pleaseInputContactEmail: 'Please input contact email',
+    chatMerchantPasswordKeepPlaceholder: 'Leave empty to keep password unchanged',
     tenantCodePlaceholder: 'Please input tenant code',
     tenantNamePlaceholder: 'Please input tenant name',
     chatMerchantCodePlaceholder: 'Please input chat merchant code',

@@ -51,7 +51,7 @@ func (l *SysChatMerchantDeleteLogic) SysChatMerchantDelete(in *system.SysChatMer
 	if err := l.svcCtx.ChatMerchantModel.Delete(l.ctx, in.Id); err != nil {
 		return nil, err
 	}
-	if err := syncChatMerchantUser(l.ctx, l.svcCtx, chat.ChatSyncAction_CHAT_SYNC_ACTION_DELETE, merchant); err != nil {
+	if err := syncChatMerchantUser(l.ctx, l.svcCtx, chat.ChatSyncAction_CHAT_SYNC_ACTION_DELETE, merchant, ""); err != nil {
 		return nil, err
 	}
 	return &system.RespBase{

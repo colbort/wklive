@@ -679,6 +679,7 @@ message SysChatMerchantCreateReq {
   string contact_phone = 6;
   string contact_email = 7;
   string remark = 8;
+  string password = 9; // 客服商户主账号登录密码
 }
 
 message SysChatMerchantUpdateReq {
@@ -691,6 +692,7 @@ message SysChatMerchantUpdateReq {
   string contact_phone = 7;
   string contact_email = 8;
   string remark = 9;
+  string password = 10; // 不为空时重置客服商户主账号密码
 }
 
 message SysChatMerchantDeleteReq { int64 id = 1; }

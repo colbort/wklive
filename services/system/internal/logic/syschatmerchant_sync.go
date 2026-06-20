@@ -9,7 +9,7 @@ import (
 	"wklive/services/system/models"
 )
 
-func syncChatMerchantUser(ctx context.Context, svcCtx *svc.ServiceContext, action chat.ChatSyncAction, merchant *models.SysChatMerchant) error {
+func syncChatMerchantUser(ctx context.Context, svcCtx *svc.ServiceContext, action chat.ChatSyncAction, merchant *models.SysChatMerchant, password string) error {
 	if merchant == nil {
 		return nil
 	}
@@ -24,6 +24,7 @@ func syncChatMerchantUser(ctx context.Context, svcCtx *svc.ServiceContext, actio
 		ContactPhone: merchant.ContactPhone.String,
 		ContactEmail: merchant.ContactEmail.String,
 		Remark:       merchant.Remark.String,
+		Password:     password,
 	})
 	if err != nil {
 		return err

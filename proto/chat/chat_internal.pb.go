@@ -383,6 +383,7 @@ type SyncChatMerchantUserReq struct {
 	ContactPhone  string                 `protobuf:"bytes,8,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"` // 联系电话
 	ContactEmail  string                 `protobuf:"bytes,9,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"` // 联系邮箱
 	Remark        string                 `protobuf:"bytes,10,opt,name=remark,proto3" json:"remark,omitempty"`                                // 备注
+	Password      string                 `protobuf:"bytes,11,opt,name=password,proto3" json:"password,omitempty"`                            // 明文密码,仅内部同步使用
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -487,6 +488,13 @@ func (x *SyncChatMerchantUserReq) GetRemark() string {
 	return ""
 }
 
+func (x *SyncChatMerchantUserReq) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
 type SyncChatMerchantUserResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
@@ -573,7 +581,7 @@ const file_proto_chat_chat_internal_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatSessionR\x04data\"f\n" +
 	"\x17InternalChatMessageResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatMessageR\x04data\"\x82\x03\n" +
+	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatMessageR\x04data\"\x9e\x03\n" +
 	"\x17SyncChatMerchantUserReq\x12,\n" +
 	"\x06action\x18\x01 \x01(\x0e2\x14.chat.ChatSyncActionR\x06action\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
@@ -587,7 +595,8 @@ const file_proto_chat_chat_internal_proto_rawDesc = "" +
 	"\rcontact_phone\x18\b \x01(\tR\fcontactPhone\x12#\n" +
 	"\rcontact_email\x18\t \x01(\tR\fcontactEmail\x12\x16\n" +
 	"\x06remark\x18\n" +
-	" \x01(\tR\x06remark\"d\n" +
+	" \x01(\tR\x06remark\x12\x1a\n" +
+	"\bpassword\x18\v \x01(\tR\bpassword\"d\n" +
 	"\x18SyncChatMerchantUserResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
 	"\x04data\x18\x02 \x01(\v2\x0e.chat.ChatUserR\x04data2\xe3\x02\n" +

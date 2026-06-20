@@ -11,6 +11,7 @@ import {
 export type SysChatMerchantCreateReq = {
   merchantCode: string
   merchantName: string
+  password: string
   enabled: number
   expireTime: number
   contactName: string
@@ -23,6 +24,7 @@ export type SysChatMerchantUpdateReq = {
   id: number
   merchantCode?: string
   merchantName?: string
+  password?: string
   enabled?: number
   expireTime?: number
   contactName?: string

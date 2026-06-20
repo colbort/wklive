@@ -513,6 +513,7 @@ export default {
     pleaseInputContactName: '请输入联系人',
     pleaseInputContactPhone: '请输入联系电话',
     pleaseInputContactEmail: '请输入联系邮箱',
+    chatMerchantPasswordKeepPlaceholder: '不填则不修改密码',
     tenantCodePlaceholder: '请输入租户编码',
     tenantNamePlaceholder: '请输入租户名称',
     chatMerchantCodePlaceholder: '请输入客服商户编码',

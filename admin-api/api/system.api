@@ -549,6 +549,7 @@ type SysTenantDetailResp {
 type SysChatMerchantCreateReq {
 	merchantCode string `json:"merchantCode"`
 	merchantName string `json:"merchantName"`
+	password     string `json:"password"`
 	enabled      int64  `json:"enabled"`
 	expireTime   int64  `json:"expireTime"`
 	contactName  string `json:"contactName,optional"`
@@ -561,6 +562,7 @@ type SysChatMerchantUpdateReq {
 	id           int64  `json:"id"`
 	merchantCode string `json:"merchantCode,optional"`
 	merchantName string `json:"merchantName,optional"`
+	password     string `json:"password,optional"`
 	enabled      int64  `json:"enabled,optional"`
 	expireTime   int64  `json:"expireTime,optional"`
 	contactName  string `json:"contactName,optional"`
