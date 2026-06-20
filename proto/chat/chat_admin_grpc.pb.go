@@ -19,18 +19,44 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ChatAdmin_CreateChatAgent_FullMethodName       = "/chat.ChatAdmin/CreateChatAgent"
-	ChatAdmin_UpdateChatAgent_FullMethodName       = "/chat.ChatAdmin/UpdateChatAgent"
-	ChatAdmin_UpdateChatAgentStatus_FullMethodName = "/chat.ChatAdmin/UpdateChatAgentStatus"
-	ChatAdmin_GetChatAgent_FullMethodName          = "/chat.ChatAdmin/GetChatAgent"
-	ChatAdmin_PageChatAgents_FullMethodName        = "/chat.ChatAdmin/PageChatAgents"
-	ChatAdmin_PageChatSessions_FullMethodName      = "/chat.ChatAdmin/PageChatSessions"
-	ChatAdmin_GetChatSession_FullMethodName        = "/chat.ChatAdmin/GetChatSession"
-	ChatAdmin_AssignChatSession_FullMethodName     = "/chat.ChatAdmin/AssignChatSession"
-	ChatAdmin_SendAgentMessage_FullMethodName      = "/chat.ChatAdmin/SendAgentMessage"
-	ChatAdmin_PageChatMessages_FullMethodName      = "/chat.ChatAdmin/PageChatMessages"
-	ChatAdmin_MarkAgentMessagesRead_FullMethodName = "/chat.ChatAdmin/MarkAgentMessagesRead"
-	ChatAdmin_CloseChatSession_FullMethodName      = "/chat.ChatAdmin/CloseChatSession"
+	ChatAdmin_Login_FullMethodName                       = "/chat.ChatAdmin/Login"
+	ChatAdmin_Logout_FullMethodName                      = "/chat.ChatAdmin/Logout"
+	ChatAdmin_Profile_FullMethodName                     = "/chat.ChatAdmin/Profile"
+	ChatAdmin_CreateChatGroup_FullMethodName             = "/chat.ChatAdmin/CreateChatGroup"
+	ChatAdmin_UpdateChatGroup_FullMethodName             = "/chat.ChatAdmin/UpdateChatGroup"
+	ChatAdmin_GetChatGroup_FullMethodName                = "/chat.ChatAdmin/GetChatGroup"
+	ChatAdmin_PageChatGroups_FullMethodName              = "/chat.ChatAdmin/PageChatGroups"
+	ChatAdmin_DeleteChatGroup_FullMethodName             = "/chat.ChatAdmin/DeleteChatGroup"
+	ChatAdmin_CreateChatAgent_FullMethodName             = "/chat.ChatAdmin/CreateChatAgent"
+	ChatAdmin_UpdateChatAgent_FullMethodName             = "/chat.ChatAdmin/UpdateChatAgent"
+	ChatAdmin_UpdateChatAgentStatus_FullMethodName       = "/chat.ChatAdmin/UpdateChatAgentStatus"
+	ChatAdmin_GetChatAgent_FullMethodName                = "/chat.ChatAdmin/GetChatAgent"
+	ChatAdmin_PageChatAgents_FullMethodName              = "/chat.ChatAdmin/PageChatAgents"
+	ChatAdmin_PageChatSessions_FullMethodName            = "/chat.ChatAdmin/PageChatSessions"
+	ChatAdmin_GetChatSession_FullMethodName              = "/chat.ChatAdmin/GetChatSession"
+	ChatAdmin_AssignChatSession_FullMethodName           = "/chat.ChatAdmin/AssignChatSession"
+	ChatAdmin_SendAgentMessage_FullMethodName            = "/chat.ChatAdmin/SendAgentMessage"
+	ChatAdmin_PageChatMessages_FullMethodName            = "/chat.ChatAdmin/PageChatMessages"
+	ChatAdmin_MarkAgentMessagesRead_FullMethodName       = "/chat.ChatAdmin/MarkAgentMessagesRead"
+	ChatAdmin_CloseChatSession_FullMethodName            = "/chat.ChatAdmin/CloseChatSession"
+	ChatAdmin_CreateChatQuickReply_FullMethodName        = "/chat.ChatAdmin/CreateChatQuickReply"
+	ChatAdmin_UpdateChatQuickReply_FullMethodName        = "/chat.ChatAdmin/UpdateChatQuickReply"
+	ChatAdmin_GetChatQuickReply_FullMethodName           = "/chat.ChatAdmin/GetChatQuickReply"
+	ChatAdmin_PageChatQuickReplies_FullMethodName        = "/chat.ChatAdmin/PageChatQuickReplies"
+	ChatAdmin_ListEnabledChatQuickReplies_FullMethodName = "/chat.ChatAdmin/ListEnabledChatQuickReplies"
+	ChatAdmin_DeleteChatQuickReply_FullMethodName        = "/chat.ChatAdmin/DeleteChatQuickReply"
+	ChatAdmin_CreateChatCategory_FullMethodName          = "/chat.ChatAdmin/CreateChatCategory"
+	ChatAdmin_UpdateChatCategory_FullMethodName          = "/chat.ChatAdmin/UpdateChatCategory"
+	ChatAdmin_GetChatCategory_FullMethodName             = "/chat.ChatAdmin/GetChatCategory"
+	ChatAdmin_PageChatCategories_FullMethodName          = "/chat.ChatAdmin/PageChatCategories"
+	ChatAdmin_ListEnabledChatCategories_FullMethodName   = "/chat.ChatAdmin/ListEnabledChatCategories"
+	ChatAdmin_DeleteChatCategory_FullMethodName          = "/chat.ChatAdmin/DeleteChatCategory"
+	ChatAdmin_CreateChatWorkOrder_FullMethodName         = "/chat.ChatAdmin/CreateChatWorkOrder"
+	ChatAdmin_UpdateChatWorkOrder_FullMethodName         = "/chat.ChatAdmin/UpdateChatWorkOrder"
+	ChatAdmin_HandleChatWorkOrder_FullMethodName         = "/chat.ChatAdmin/HandleChatWorkOrder"
+	ChatAdmin_GetChatWorkOrder_FullMethodName            = "/chat.ChatAdmin/GetChatWorkOrder"
+	ChatAdmin_PageChatWorkOrders_FullMethodName          = "/chat.ChatAdmin/PageChatWorkOrders"
+	ChatAdmin_DeleteChatWorkOrder_FullMethodName         = "/chat.ChatAdmin/DeleteChatWorkOrder"
 )
 
 // ChatAdminClient is the client API for ChatAdmin service.
@@ -39,6 +65,22 @@ const (
 //
 // 后台客服服务
 type ChatAdminClient interface {
+	// 登录
+	Login(ctx context.Context, in *ChatAdminLoginReq, opts ...grpc.CallOption) (*ChatAdminLoginResp, error)
+	// 退出登录
+	Logout(ctx context.Context, in *ChatAdminLogoutReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 当前登录用户资料
+	Profile(ctx context.Context, in *ChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
+	// 创建客服分组
+	CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
+	// 更新客服分组
+	UpdateChatGroup(ctx context.Context, in *UpdateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
+	// 查询客服分组详情
+	GetChatGroup(ctx context.Context, in *GetChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
+	// 分页查询客服分组
+	PageChatGroups(ctx context.Context, in *PageChatGroupsReq, opts ...grpc.CallOption) (*PageChatGroupsResp, error)
+	// 删除客服分组
+	DeleteChatGroup(ctx context.Context, in *DeleteChatGroupReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 创建坐席
 	CreateChatAgent(ctx context.Context, in *CreateChatAgentReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error)
 	// 更新坐席
@@ -63,6 +105,42 @@ type ChatAdminClient interface {
 	MarkAgentMessagesRead(ctx context.Context, in *MarkAgentMessagesReadReq, opts ...grpc.CallOption) (*AdminMarkMessagesReadResp, error)
 	// 关闭会话
 	CloseChatSession(ctx context.Context, in *CloseChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
+	// 创建快捷回复
+	CreateChatQuickReply(ctx context.Context, in *CreateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error)
+	// 更新快捷回复
+	UpdateChatQuickReply(ctx context.Context, in *UpdateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error)
+	// 查询快捷回复详情
+	GetChatQuickReply(ctx context.Context, in *GetChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error)
+	// 分页查询快捷回复
+	PageChatQuickReplies(ctx context.Context, in *PageChatQuickRepliesReq, opts ...grpc.CallOption) (*PageChatQuickRepliesResp, error)
+	// 查询启用快捷回复
+	ListEnabledChatQuickReplies(ctx context.Context, in *ListEnabledChatQuickRepliesReq, opts ...grpc.CallOption) (*ListChatQuickRepliesResp, error)
+	// 删除快捷回复
+	DeleteChatQuickReply(ctx context.Context, in *DeleteChatQuickReplyReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 创建问题分类
+	CreateChatCategory(ctx context.Context, in *CreateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error)
+	// 更新问题分类
+	UpdateChatCategory(ctx context.Context, in *UpdateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error)
+	// 查询问题分类详情
+	GetChatCategory(ctx context.Context, in *GetChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error)
+	// 分页查询问题分类
+	PageChatCategories(ctx context.Context, in *PageChatCategoriesReq, opts ...grpc.CallOption) (*PageChatCategoriesResp, error)
+	// 查询启用问题分类
+	ListEnabledChatCategories(ctx context.Context, in *ListEnabledChatCategoriesReq, opts ...grpc.CallOption) (*ListChatCategoriesResp, error)
+	// 删除问题分类
+	DeleteChatCategory(ctx context.Context, in *DeleteChatCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 创建工单/离线留言
+	CreateChatWorkOrder(ctx context.Context, in *CreateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+	// 更新工单
+	UpdateChatWorkOrder(ctx context.Context, in *UpdateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+	// 处理工单
+	HandleChatWorkOrder(ctx context.Context, in *HandleChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+	// 查询工单详情
+	GetChatWorkOrder(ctx context.Context, in *GetChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+	// 分页查询工单
+	PageChatWorkOrders(ctx context.Context, in *PageChatWorkOrdersReq, opts ...grpc.CallOption) (*PageChatWorkOrdersResp, error)
+	// 删除工单
+	DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 }
 
 type chatAdminClient struct {
@@ -71,6 +149,86 @@ type chatAdminClient struct {
 
 func NewChatAdminClient(cc grpc.ClientConnInterface) ChatAdminClient {
 	return &chatAdminClient{cc}
+}
+
+func (c *chatAdminClient) Login(ctx context.Context, in *ChatAdminLoginReq, opts ...grpc.CallOption) (*ChatAdminLoginResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChatAdminLoginResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_Login_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) Logout(ctx context.Context, in *ChatAdminLogoutReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_Logout_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) Profile(ctx context.Context, in *ChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChatAdminProfileResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_Profile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatGroupResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_CreateChatGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) UpdateChatGroup(ctx context.Context, in *UpdateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatGroupResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_UpdateChatGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) GetChatGroup(ctx context.Context, in *GetChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatGroupResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_GetChatGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) PageChatGroups(ctx context.Context, in *PageChatGroupsReq, opts ...grpc.CallOption) (*PageChatGroupsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PageChatGroupsResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_PageChatGroups_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) DeleteChatGroup(ctx context.Context, in *DeleteChatGroupReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_DeleteChatGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *chatAdminClient) CreateChatAgent(ctx context.Context, in *CreateChatAgentReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error) {
@@ -193,12 +351,208 @@ func (c *chatAdminClient) CloseChatSession(ctx context.Context, in *CloseChatSes
 	return out, nil
 }
 
+func (c *chatAdminClient) CreateChatQuickReply(ctx context.Context, in *CreateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatQuickReplyResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_CreateChatQuickReply_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) UpdateChatQuickReply(ctx context.Context, in *UpdateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatQuickReplyResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_UpdateChatQuickReply_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) GetChatQuickReply(ctx context.Context, in *GetChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatQuickReplyResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_GetChatQuickReply_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) PageChatQuickReplies(ctx context.Context, in *PageChatQuickRepliesReq, opts ...grpc.CallOption) (*PageChatQuickRepliesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PageChatQuickRepliesResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_PageChatQuickReplies_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) ListEnabledChatQuickReplies(ctx context.Context, in *ListEnabledChatQuickRepliesReq, opts ...grpc.CallOption) (*ListChatQuickRepliesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListChatQuickRepliesResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_ListEnabledChatQuickReplies_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) DeleteChatQuickReply(ctx context.Context, in *DeleteChatQuickReplyReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_DeleteChatQuickReply_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) CreateChatCategory(ctx context.Context, in *CreateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatCategoryResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_CreateChatCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) UpdateChatCategory(ctx context.Context, in *UpdateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatCategoryResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_UpdateChatCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) GetChatCategory(ctx context.Context, in *GetChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatCategoryResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_GetChatCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) PageChatCategories(ctx context.Context, in *PageChatCategoriesReq, opts ...grpc.CallOption) (*PageChatCategoriesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PageChatCategoriesResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_PageChatCategories_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) ListEnabledChatCategories(ctx context.Context, in *ListEnabledChatCategoriesReq, opts ...grpc.CallOption) (*ListChatCategoriesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListChatCategoriesResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_ListEnabledChatCategories_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) DeleteChatCategory(ctx context.Context, in *DeleteChatCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_DeleteChatCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) CreateChatWorkOrder(ctx context.Context, in *CreateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatWorkOrderResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_CreateChatWorkOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) UpdateChatWorkOrder(ctx context.Context, in *UpdateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatWorkOrderResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_UpdateChatWorkOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) HandleChatWorkOrder(ctx context.Context, in *HandleChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatWorkOrderResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_HandleChatWorkOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) GetChatWorkOrder(ctx context.Context, in *GetChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatWorkOrderResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_GetChatWorkOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) PageChatWorkOrders(ctx context.Context, in *PageChatWorkOrdersReq, opts ...grpc.CallOption) (*PageChatWorkOrdersResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PageChatWorkOrdersResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_PageChatWorkOrders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_DeleteChatWorkOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatAdminServer is the server API for ChatAdmin service.
 // All implementations must embed UnimplementedChatAdminServer
 // for forward compatibility.
 //
 // 后台客服服务
 type ChatAdminServer interface {
+	// 登录
+	Login(context.Context, *ChatAdminLoginReq) (*ChatAdminLoginResp, error)
+	// 退出登录
+	Logout(context.Context, *ChatAdminLogoutReq) (*AdminCommonResp, error)
+	// 当前登录用户资料
+	Profile(context.Context, *ChatAdminProfileReq) (*ChatAdminProfileResp, error)
+	// 创建客服分组
+	CreateChatGroup(context.Context, *CreateChatGroupReq) (*AdminChatGroupResp, error)
+	// 更新客服分组
+	UpdateChatGroup(context.Context, *UpdateChatGroupReq) (*AdminChatGroupResp, error)
+	// 查询客服分组详情
+	GetChatGroup(context.Context, *GetChatGroupReq) (*AdminChatGroupResp, error)
+	// 分页查询客服分组
+	PageChatGroups(context.Context, *PageChatGroupsReq) (*PageChatGroupsResp, error)
+	// 删除客服分组
+	DeleteChatGroup(context.Context, *DeleteChatGroupReq) (*AdminCommonResp, error)
 	// 创建坐席
 	CreateChatAgent(context.Context, *CreateChatAgentReq) (*AdminChatAgentResp, error)
 	// 更新坐席
@@ -223,6 +577,42 @@ type ChatAdminServer interface {
 	MarkAgentMessagesRead(context.Context, *MarkAgentMessagesReadReq) (*AdminMarkMessagesReadResp, error)
 	// 关闭会话
 	CloseChatSession(context.Context, *CloseChatSessionReq) (*AdminChatSessionResp, error)
+	// 创建快捷回复
+	CreateChatQuickReply(context.Context, *CreateChatQuickReplyReq) (*AdminChatQuickReplyResp, error)
+	// 更新快捷回复
+	UpdateChatQuickReply(context.Context, *UpdateChatQuickReplyReq) (*AdminChatQuickReplyResp, error)
+	// 查询快捷回复详情
+	GetChatQuickReply(context.Context, *GetChatQuickReplyReq) (*AdminChatQuickReplyResp, error)
+	// 分页查询快捷回复
+	PageChatQuickReplies(context.Context, *PageChatQuickRepliesReq) (*PageChatQuickRepliesResp, error)
+	// 查询启用快捷回复
+	ListEnabledChatQuickReplies(context.Context, *ListEnabledChatQuickRepliesReq) (*ListChatQuickRepliesResp, error)
+	// 删除快捷回复
+	DeleteChatQuickReply(context.Context, *DeleteChatQuickReplyReq) (*AdminCommonResp, error)
+	// 创建问题分类
+	CreateChatCategory(context.Context, *CreateChatCategoryReq) (*AdminChatCategoryResp, error)
+	// 更新问题分类
+	UpdateChatCategory(context.Context, *UpdateChatCategoryReq) (*AdminChatCategoryResp, error)
+	// 查询问题分类详情
+	GetChatCategory(context.Context, *GetChatCategoryReq) (*AdminChatCategoryResp, error)
+	// 分页查询问题分类
+	PageChatCategories(context.Context, *PageChatCategoriesReq) (*PageChatCategoriesResp, error)
+	// 查询启用问题分类
+	ListEnabledChatCategories(context.Context, *ListEnabledChatCategoriesReq) (*ListChatCategoriesResp, error)
+	// 删除问题分类
+	DeleteChatCategory(context.Context, *DeleteChatCategoryReq) (*AdminCommonResp, error)
+	// 创建工单/离线留言
+	CreateChatWorkOrder(context.Context, *CreateChatWorkOrderReq) (*AdminChatWorkOrderResp, error)
+	// 更新工单
+	UpdateChatWorkOrder(context.Context, *UpdateChatWorkOrderReq) (*AdminChatWorkOrderResp, error)
+	// 处理工单
+	HandleChatWorkOrder(context.Context, *HandleChatWorkOrderReq) (*AdminChatWorkOrderResp, error)
+	// 查询工单详情
+	GetChatWorkOrder(context.Context, *GetChatWorkOrderReq) (*AdminChatWorkOrderResp, error)
+	// 分页查询工单
+	PageChatWorkOrders(context.Context, *PageChatWorkOrdersReq) (*PageChatWorkOrdersResp, error)
+	// 删除工单
+	DeleteChatWorkOrder(context.Context, *DeleteChatWorkOrderReq) (*AdminCommonResp, error)
 	mustEmbedUnimplementedChatAdminServer()
 }
 
@@ -233,6 +623,30 @@ type ChatAdminServer interface {
 // pointer dereference when methods are called.
 type UnimplementedChatAdminServer struct{}
 
+func (UnimplementedChatAdminServer) Login(context.Context, *ChatAdminLoginReq) (*ChatAdminLoginResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedChatAdminServer) Logout(context.Context, *ChatAdminLogoutReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedChatAdminServer) Profile(context.Context, *ChatAdminProfileReq) (*ChatAdminProfileResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method Profile not implemented")
+}
+func (UnimplementedChatAdminServer) CreateChatGroup(context.Context, *CreateChatGroupReq) (*AdminChatGroupResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateChatGroup not implemented")
+}
+func (UnimplementedChatAdminServer) UpdateChatGroup(context.Context, *UpdateChatGroupReq) (*AdminChatGroupResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateChatGroup not implemented")
+}
+func (UnimplementedChatAdminServer) GetChatGroup(context.Context, *GetChatGroupReq) (*AdminChatGroupResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetChatGroup not implemented")
+}
+func (UnimplementedChatAdminServer) PageChatGroups(context.Context, *PageChatGroupsReq) (*PageChatGroupsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method PageChatGroups not implemented")
+}
+func (UnimplementedChatAdminServer) DeleteChatGroup(context.Context, *DeleteChatGroupReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteChatGroup not implemented")
+}
 func (UnimplementedChatAdminServer) CreateChatAgent(context.Context, *CreateChatAgentReq) (*AdminChatAgentResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateChatAgent not implemented")
 }
@@ -269,6 +683,60 @@ func (UnimplementedChatAdminServer) MarkAgentMessagesRead(context.Context, *Mark
 func (UnimplementedChatAdminServer) CloseChatSession(context.Context, *CloseChatSessionReq) (*AdminChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CloseChatSession not implemented")
 }
+func (UnimplementedChatAdminServer) CreateChatQuickReply(context.Context, *CreateChatQuickReplyReq) (*AdminChatQuickReplyResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateChatQuickReply not implemented")
+}
+func (UnimplementedChatAdminServer) UpdateChatQuickReply(context.Context, *UpdateChatQuickReplyReq) (*AdminChatQuickReplyResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateChatQuickReply not implemented")
+}
+func (UnimplementedChatAdminServer) GetChatQuickReply(context.Context, *GetChatQuickReplyReq) (*AdminChatQuickReplyResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetChatQuickReply not implemented")
+}
+func (UnimplementedChatAdminServer) PageChatQuickReplies(context.Context, *PageChatQuickRepliesReq) (*PageChatQuickRepliesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method PageChatQuickReplies not implemented")
+}
+func (UnimplementedChatAdminServer) ListEnabledChatQuickReplies(context.Context, *ListEnabledChatQuickRepliesReq) (*ListChatQuickRepliesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListEnabledChatQuickReplies not implemented")
+}
+func (UnimplementedChatAdminServer) DeleteChatQuickReply(context.Context, *DeleteChatQuickReplyReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteChatQuickReply not implemented")
+}
+func (UnimplementedChatAdminServer) CreateChatCategory(context.Context, *CreateChatCategoryReq) (*AdminChatCategoryResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateChatCategory not implemented")
+}
+func (UnimplementedChatAdminServer) UpdateChatCategory(context.Context, *UpdateChatCategoryReq) (*AdminChatCategoryResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateChatCategory not implemented")
+}
+func (UnimplementedChatAdminServer) GetChatCategory(context.Context, *GetChatCategoryReq) (*AdminChatCategoryResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetChatCategory not implemented")
+}
+func (UnimplementedChatAdminServer) PageChatCategories(context.Context, *PageChatCategoriesReq) (*PageChatCategoriesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method PageChatCategories not implemented")
+}
+func (UnimplementedChatAdminServer) ListEnabledChatCategories(context.Context, *ListEnabledChatCategoriesReq) (*ListChatCategoriesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListEnabledChatCategories not implemented")
+}
+func (UnimplementedChatAdminServer) DeleteChatCategory(context.Context, *DeleteChatCategoryReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteChatCategory not implemented")
+}
+func (UnimplementedChatAdminServer) CreateChatWorkOrder(context.Context, *CreateChatWorkOrderReq) (*AdminChatWorkOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateChatWorkOrder not implemented")
+}
+func (UnimplementedChatAdminServer) UpdateChatWorkOrder(context.Context, *UpdateChatWorkOrderReq) (*AdminChatWorkOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateChatWorkOrder not implemented")
+}
+func (UnimplementedChatAdminServer) HandleChatWorkOrder(context.Context, *HandleChatWorkOrderReq) (*AdminChatWorkOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method HandleChatWorkOrder not implemented")
+}
+func (UnimplementedChatAdminServer) GetChatWorkOrder(context.Context, *GetChatWorkOrderReq) (*AdminChatWorkOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetChatWorkOrder not implemented")
+}
+func (UnimplementedChatAdminServer) PageChatWorkOrders(context.Context, *PageChatWorkOrdersReq) (*PageChatWorkOrdersResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method PageChatWorkOrders not implemented")
+}
+func (UnimplementedChatAdminServer) DeleteChatWorkOrder(context.Context, *DeleteChatWorkOrderReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteChatWorkOrder not implemented")
+}
 func (UnimplementedChatAdminServer) mustEmbedUnimplementedChatAdminServer() {}
 func (UnimplementedChatAdminServer) testEmbeddedByValue()                   {}
 
@@ -288,6 +756,150 @@ func RegisterChatAdminServer(s grpc.ServiceRegistrar, srv ChatAdminServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&ChatAdmin_ServiceDesc, srv)
+}
+
+func _ChatAdmin_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChatAdminLoginReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_Login_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).Login(ctx, req.(*ChatAdminLoginReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChatAdminLogoutReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_Logout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).Logout(ctx, req.(*ChatAdminLogoutReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_Profile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChatAdminProfileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).Profile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_Profile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).Profile(ctx, req.(*ChatAdminProfileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_CreateChatGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateChatGroupReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).CreateChatGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_CreateChatGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).CreateChatGroup(ctx, req.(*CreateChatGroupReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_UpdateChatGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateChatGroupReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).UpdateChatGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_UpdateChatGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).UpdateChatGroup(ctx, req.(*UpdateChatGroupReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_GetChatGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChatGroupReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).GetChatGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_GetChatGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).GetChatGroup(ctx, req.(*GetChatGroupReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_PageChatGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PageChatGroupsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).PageChatGroups(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_PageChatGroups_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).PageChatGroups(ctx, req.(*PageChatGroupsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_DeleteChatGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteChatGroupReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).DeleteChatGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_DeleteChatGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).DeleteChatGroup(ctx, req.(*DeleteChatGroupReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ChatAdmin_CreateChatAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -506,6 +1118,330 @@ func _ChatAdmin_CloseChatSession_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatAdmin_CreateChatQuickReply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateChatQuickReplyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).CreateChatQuickReply(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_CreateChatQuickReply_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).CreateChatQuickReply(ctx, req.(*CreateChatQuickReplyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_UpdateChatQuickReply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateChatQuickReplyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).UpdateChatQuickReply(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_UpdateChatQuickReply_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).UpdateChatQuickReply(ctx, req.(*UpdateChatQuickReplyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_GetChatQuickReply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChatQuickReplyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).GetChatQuickReply(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_GetChatQuickReply_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).GetChatQuickReply(ctx, req.(*GetChatQuickReplyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_PageChatQuickReplies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PageChatQuickRepliesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).PageChatQuickReplies(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_PageChatQuickReplies_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).PageChatQuickReplies(ctx, req.(*PageChatQuickRepliesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_ListEnabledChatQuickReplies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEnabledChatQuickRepliesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).ListEnabledChatQuickReplies(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_ListEnabledChatQuickReplies_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).ListEnabledChatQuickReplies(ctx, req.(*ListEnabledChatQuickRepliesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_DeleteChatQuickReply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteChatQuickReplyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).DeleteChatQuickReply(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_DeleteChatQuickReply_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).DeleteChatQuickReply(ctx, req.(*DeleteChatQuickReplyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_CreateChatCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateChatCategoryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).CreateChatCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_CreateChatCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).CreateChatCategory(ctx, req.(*CreateChatCategoryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_UpdateChatCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateChatCategoryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).UpdateChatCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_UpdateChatCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).UpdateChatCategory(ctx, req.(*UpdateChatCategoryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_GetChatCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChatCategoryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).GetChatCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_GetChatCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).GetChatCategory(ctx, req.(*GetChatCategoryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_PageChatCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PageChatCategoriesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).PageChatCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_PageChatCategories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).PageChatCategories(ctx, req.(*PageChatCategoriesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_ListEnabledChatCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEnabledChatCategoriesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).ListEnabledChatCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_ListEnabledChatCategories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).ListEnabledChatCategories(ctx, req.(*ListEnabledChatCategoriesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_DeleteChatCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteChatCategoryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).DeleteChatCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_DeleteChatCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).DeleteChatCategory(ctx, req.(*DeleteChatCategoryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_CreateChatWorkOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateChatWorkOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).CreateChatWorkOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_CreateChatWorkOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).CreateChatWorkOrder(ctx, req.(*CreateChatWorkOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_UpdateChatWorkOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateChatWorkOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).UpdateChatWorkOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_UpdateChatWorkOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).UpdateChatWorkOrder(ctx, req.(*UpdateChatWorkOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_HandleChatWorkOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HandleChatWorkOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).HandleChatWorkOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_HandleChatWorkOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).HandleChatWorkOrder(ctx, req.(*HandleChatWorkOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_GetChatWorkOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChatWorkOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).GetChatWorkOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_GetChatWorkOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).GetChatWorkOrder(ctx, req.(*GetChatWorkOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_PageChatWorkOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PageChatWorkOrdersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).PageChatWorkOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_PageChatWorkOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).PageChatWorkOrders(ctx, req.(*PageChatWorkOrdersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_DeleteChatWorkOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteChatWorkOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).DeleteChatWorkOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_DeleteChatWorkOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).DeleteChatWorkOrder(ctx, req.(*DeleteChatWorkOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ChatAdmin_ServiceDesc is the grpc.ServiceDesc for ChatAdmin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -513,6 +1449,38 @@ var ChatAdmin_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.ChatAdmin",
 	HandlerType: (*ChatAdminServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Login",
+			Handler:    _ChatAdmin_Login_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _ChatAdmin_Logout_Handler,
+		},
+		{
+			MethodName: "Profile",
+			Handler:    _ChatAdmin_Profile_Handler,
+		},
+		{
+			MethodName: "CreateChatGroup",
+			Handler:    _ChatAdmin_CreateChatGroup_Handler,
+		},
+		{
+			MethodName: "UpdateChatGroup",
+			Handler:    _ChatAdmin_UpdateChatGroup_Handler,
+		},
+		{
+			MethodName: "GetChatGroup",
+			Handler:    _ChatAdmin_GetChatGroup_Handler,
+		},
+		{
+			MethodName: "PageChatGroups",
+			Handler:    _ChatAdmin_PageChatGroups_Handler,
+		},
+		{
+			MethodName: "DeleteChatGroup",
+			Handler:    _ChatAdmin_DeleteChatGroup_Handler,
+		},
 		{
 			MethodName: "CreateChatAgent",
 			Handler:    _ChatAdmin_CreateChatAgent_Handler,
@@ -560,6 +1528,78 @@ var ChatAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CloseChatSession",
 			Handler:    _ChatAdmin_CloseChatSession_Handler,
+		},
+		{
+			MethodName: "CreateChatQuickReply",
+			Handler:    _ChatAdmin_CreateChatQuickReply_Handler,
+		},
+		{
+			MethodName: "UpdateChatQuickReply",
+			Handler:    _ChatAdmin_UpdateChatQuickReply_Handler,
+		},
+		{
+			MethodName: "GetChatQuickReply",
+			Handler:    _ChatAdmin_GetChatQuickReply_Handler,
+		},
+		{
+			MethodName: "PageChatQuickReplies",
+			Handler:    _ChatAdmin_PageChatQuickReplies_Handler,
+		},
+		{
+			MethodName: "ListEnabledChatQuickReplies",
+			Handler:    _ChatAdmin_ListEnabledChatQuickReplies_Handler,
+		},
+		{
+			MethodName: "DeleteChatQuickReply",
+			Handler:    _ChatAdmin_DeleteChatQuickReply_Handler,
+		},
+		{
+			MethodName: "CreateChatCategory",
+			Handler:    _ChatAdmin_CreateChatCategory_Handler,
+		},
+		{
+			MethodName: "UpdateChatCategory",
+			Handler:    _ChatAdmin_UpdateChatCategory_Handler,
+		},
+		{
+			MethodName: "GetChatCategory",
+			Handler:    _ChatAdmin_GetChatCategory_Handler,
+		},
+		{
+			MethodName: "PageChatCategories",
+			Handler:    _ChatAdmin_PageChatCategories_Handler,
+		},
+		{
+			MethodName: "ListEnabledChatCategories",
+			Handler:    _ChatAdmin_ListEnabledChatCategories_Handler,
+		},
+		{
+			MethodName: "DeleteChatCategory",
+			Handler:    _ChatAdmin_DeleteChatCategory_Handler,
+		},
+		{
+			MethodName: "CreateChatWorkOrder",
+			Handler:    _ChatAdmin_CreateChatWorkOrder_Handler,
+		},
+		{
+			MethodName: "UpdateChatWorkOrder",
+			Handler:    _ChatAdmin_UpdateChatWorkOrder_Handler,
+		},
+		{
+			MethodName: "HandleChatWorkOrder",
+			Handler:    _ChatAdmin_HandleChatWorkOrder_Handler,
+		},
+		{
+			MethodName: "GetChatWorkOrder",
+			Handler:    _ChatAdmin_GetChatWorkOrder_Handler,
+		},
+		{
+			MethodName: "PageChatWorkOrders",
+			Handler:    _ChatAdmin_PageChatWorkOrders_Handler,
+		},
+		{
+			MethodName: "DeleteChatWorkOrder",
+			Handler:    _ChatAdmin_DeleteChatWorkOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

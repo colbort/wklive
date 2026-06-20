@@ -25,7 +25,18 @@ func NewMarkUserMessagesReadLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 标记用户侧已读
 func (l *MarkUserMessagesReadLogic) MarkUserMessagesRead(in *chat.MarkUserMessagesReadReq) (*chat.AppMarkMessagesReadResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.AppMarkMessagesReadResp{}, nil
+	session, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	if err != nil {
+		return &chat.AppMarkMessagesReadResp{Base: errorBase(err)}, nil
+	}
+	if base != nil {
+		return &chat.AppMarkMessagesReadResp{Base: base}, nil
+	}
+	if session.UserId != in.GetUserId() {
+		return &chat.AppMarkMessagesReadResp{Base: notFoundBase("chat session not found")}, nil
+	}
+	if err := markRead(l.ctx, l.svcCtx, session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, in.GetUserId()); err != nil {
+		return &chat.AppMarkMessagesReadResp{Base: errorBase(err)}, nil
+	}
+	return &chat.AppMarkMessagesReadResp{Base: okBase()}, nil
 }

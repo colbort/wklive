@@ -1,0 +1,26 @@
+type RespBase {
+	code       int32  `json:"code"`
+	msg        string `json:"msg"`
+	total      int64  `json:"total,optional"`
+	hasNext    bool   `json:"hasNext,optional"`
+	hasPrev    bool   `json:"hasPrev,optional"`
+	nextCursor int64  `json:"nextCursor,optional"`
+	prevCursor int64  `json:"prevCursor,optional"`
+}
+
+type PageReq {
+	cursor int64 `form:"cursor,optional"`
+	limit  int64 `form:"limit,optional"`
+}
+
+type TimeRange {
+	startTime int64 `form:"startTime,optional"`
+	endTime   int64 `form:"endTime,optional"`
+}
+
+type TokenInfo {
+	accessToken  string `json:"accessToken"`
+	refreshToken string `json:"refreshToken"`
+	expireTime   int64  `json:"expireTime"`
+}
+

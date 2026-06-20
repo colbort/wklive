@@ -23,6 +23,54 @@ func NewChatAdminServer(svcCtx *svc.ServiceContext) *ChatAdminServer {
 	}
 }
 
+// 登录
+func (s *ChatAdminServer) Login(ctx context.Context, in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp, error) {
+	l := logic.NewLoginLogic(ctx, s.svcCtx)
+	return l.Login(in)
+}
+
+// 退出登录
+func (s *ChatAdminServer) Logout(ctx context.Context, in *chat.ChatAdminLogoutReq) (*chat.AdminCommonResp, error) {
+	l := logic.NewLogoutLogic(ctx, s.svcCtx)
+	return l.Logout(in)
+}
+
+// 当前登录用户资料
+func (s *ChatAdminServer) Profile(ctx context.Context, in *chat.ChatAdminProfileReq) (*chat.ChatAdminProfileResp, error) {
+	l := logic.NewProfileLogic(ctx, s.svcCtx)
+	return l.Profile(in)
+}
+
+// 创建客服分组
+func (s *ChatAdminServer) CreateChatGroup(ctx context.Context, in *chat.CreateChatGroupReq) (*chat.AdminChatGroupResp, error) {
+	l := logic.NewCreateChatGroupLogic(ctx, s.svcCtx)
+	return l.CreateChatGroup(in)
+}
+
+// 更新客服分组
+func (s *ChatAdminServer) UpdateChatGroup(ctx context.Context, in *chat.UpdateChatGroupReq) (*chat.AdminChatGroupResp, error) {
+	l := logic.NewUpdateChatGroupLogic(ctx, s.svcCtx)
+	return l.UpdateChatGroup(in)
+}
+
+// 查询客服分组详情
+func (s *ChatAdminServer) GetChatGroup(ctx context.Context, in *chat.GetChatGroupReq) (*chat.AdminChatGroupResp, error) {
+	l := logic.NewGetChatGroupLogic(ctx, s.svcCtx)
+	return l.GetChatGroup(in)
+}
+
+// 分页查询客服分组
+func (s *ChatAdminServer) PageChatGroups(ctx context.Context, in *chat.PageChatGroupsReq) (*chat.PageChatGroupsResp, error) {
+	l := logic.NewPageChatGroupsLogic(ctx, s.svcCtx)
+	return l.PageChatGroups(in)
+}
+
+// 删除客服分组
+func (s *ChatAdminServer) DeleteChatGroup(ctx context.Context, in *chat.DeleteChatGroupReq) (*chat.AdminCommonResp, error) {
+	l := logic.NewDeleteChatGroupLogic(ctx, s.svcCtx)
+	return l.DeleteChatGroup(in)
+}
+
 // 创建坐席
 func (s *ChatAdminServer) CreateChatAgent(ctx context.Context, in *chat.CreateChatAgentReq) (*chat.AdminChatAgentResp, error) {
 	l := logic.NewCreateChatAgentLogic(ctx, s.svcCtx)
@@ -93,4 +141,112 @@ func (s *ChatAdminServer) MarkAgentMessagesRead(ctx context.Context, in *chat.Ma
 func (s *ChatAdminServer) CloseChatSession(ctx context.Context, in *chat.CloseChatSessionReq) (*chat.AdminChatSessionResp, error) {
 	l := logic.NewCloseChatSessionLogic(ctx, s.svcCtx)
 	return l.CloseChatSession(in)
+}
+
+// 创建快捷回复
+func (s *ChatAdminServer) CreateChatQuickReply(ctx context.Context, in *chat.CreateChatQuickReplyReq) (*chat.AdminChatQuickReplyResp, error) {
+	l := logic.NewCreateChatQuickReplyLogic(ctx, s.svcCtx)
+	return l.CreateChatQuickReply(in)
+}
+
+// 更新快捷回复
+func (s *ChatAdminServer) UpdateChatQuickReply(ctx context.Context, in *chat.UpdateChatQuickReplyReq) (*chat.AdminChatQuickReplyResp, error) {
+	l := logic.NewUpdateChatQuickReplyLogic(ctx, s.svcCtx)
+	return l.UpdateChatQuickReply(in)
+}
+
+// 查询快捷回复详情
+func (s *ChatAdminServer) GetChatQuickReply(ctx context.Context, in *chat.GetChatQuickReplyReq) (*chat.AdminChatQuickReplyResp, error) {
+	l := logic.NewGetChatQuickReplyLogic(ctx, s.svcCtx)
+	return l.GetChatQuickReply(in)
+}
+
+// 分页查询快捷回复
+func (s *ChatAdminServer) PageChatQuickReplies(ctx context.Context, in *chat.PageChatQuickRepliesReq) (*chat.PageChatQuickRepliesResp, error) {
+	l := logic.NewPageChatQuickRepliesLogic(ctx, s.svcCtx)
+	return l.PageChatQuickReplies(in)
+}
+
+// 查询启用快捷回复
+func (s *ChatAdminServer) ListEnabledChatQuickReplies(ctx context.Context, in *chat.ListEnabledChatQuickRepliesReq) (*chat.ListChatQuickRepliesResp, error) {
+	l := logic.NewListEnabledChatQuickRepliesLogic(ctx, s.svcCtx)
+	return l.ListEnabledChatQuickReplies(in)
+}
+
+// 删除快捷回复
+func (s *ChatAdminServer) DeleteChatQuickReply(ctx context.Context, in *chat.DeleteChatQuickReplyReq) (*chat.AdminCommonResp, error) {
+	l := logic.NewDeleteChatQuickReplyLogic(ctx, s.svcCtx)
+	return l.DeleteChatQuickReply(in)
+}
+
+// 创建问题分类
+func (s *ChatAdminServer) CreateChatCategory(ctx context.Context, in *chat.CreateChatCategoryReq) (*chat.AdminChatCategoryResp, error) {
+	l := logic.NewCreateChatCategoryLogic(ctx, s.svcCtx)
+	return l.CreateChatCategory(in)
+}
+
+// 更新问题分类
+func (s *ChatAdminServer) UpdateChatCategory(ctx context.Context, in *chat.UpdateChatCategoryReq) (*chat.AdminChatCategoryResp, error) {
+	l := logic.NewUpdateChatCategoryLogic(ctx, s.svcCtx)
+	return l.UpdateChatCategory(in)
+}
+
+// 查询问题分类详情
+func (s *ChatAdminServer) GetChatCategory(ctx context.Context, in *chat.GetChatCategoryReq) (*chat.AdminChatCategoryResp, error) {
+	l := logic.NewGetChatCategoryLogic(ctx, s.svcCtx)
+	return l.GetChatCategory(in)
+}
+
+// 分页查询问题分类
+func (s *ChatAdminServer) PageChatCategories(ctx context.Context, in *chat.PageChatCategoriesReq) (*chat.PageChatCategoriesResp, error) {
+	l := logic.NewPageChatCategoriesLogic(ctx, s.svcCtx)
+	return l.PageChatCategories(in)
+}
+
+// 查询启用问题分类
+func (s *ChatAdminServer) ListEnabledChatCategories(ctx context.Context, in *chat.ListEnabledChatCategoriesReq) (*chat.ListChatCategoriesResp, error) {
+	l := logic.NewListEnabledChatCategoriesLogic(ctx, s.svcCtx)
+	return l.ListEnabledChatCategories(in)
+}
+
+// 删除问题分类
+func (s *ChatAdminServer) DeleteChatCategory(ctx context.Context, in *chat.DeleteChatCategoryReq) (*chat.AdminCommonResp, error) {
+	l := logic.NewDeleteChatCategoryLogic(ctx, s.svcCtx)
+	return l.DeleteChatCategory(in)
+}
+
+// 创建工单/离线留言
+func (s *ChatAdminServer) CreateChatWorkOrder(ctx context.Context, in *chat.CreateChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+	l := logic.NewCreateChatWorkOrderLogic(ctx, s.svcCtx)
+	return l.CreateChatWorkOrder(in)
+}
+
+// 更新工单
+func (s *ChatAdminServer) UpdateChatWorkOrder(ctx context.Context, in *chat.UpdateChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+	l := logic.NewUpdateChatWorkOrderLogic(ctx, s.svcCtx)
+	return l.UpdateChatWorkOrder(in)
+}
+
+// 处理工单
+func (s *ChatAdminServer) HandleChatWorkOrder(ctx context.Context, in *chat.HandleChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+	l := logic.NewHandleChatWorkOrderLogic(ctx, s.svcCtx)
+	return l.HandleChatWorkOrder(in)
+}
+
+// 查询工单详情
+func (s *ChatAdminServer) GetChatWorkOrder(ctx context.Context, in *chat.GetChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+	l := logic.NewGetChatWorkOrderLogic(ctx, s.svcCtx)
+	return l.GetChatWorkOrder(in)
+}
+
+// 分页查询工单
+func (s *ChatAdminServer) PageChatWorkOrders(ctx context.Context, in *chat.PageChatWorkOrdersReq) (*chat.PageChatWorkOrdersResp, error) {
+	l := logic.NewPageChatWorkOrdersLogic(ctx, s.svcCtx)
+	return l.PageChatWorkOrders(in)
+}
+
+// 删除工单
+func (s *ChatAdminServer) DeleteChatWorkOrder(ctx context.Context, in *chat.DeleteChatWorkOrderReq) (*chat.AdminCommonResp, error) {
+	l := logic.NewDeleteChatWorkOrderLogic(ctx, s.svcCtx)
+	return l.DeleteChatWorkOrder(in)
 }

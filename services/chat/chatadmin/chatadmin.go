@@ -14,27 +14,83 @@ import (
 )
 
 type (
-	AdminChatAgentResp        = chat.AdminChatAgentResp
-	AdminChatMessageResp      = chat.AdminChatMessageResp
-	AdminChatSessionResp      = chat.AdminChatSessionResp
-	AdminMarkMessagesReadResp = chat.AdminMarkMessagesReadResp
-	AssignChatSessionReq      = chat.AssignChatSessionReq
-	CloseChatSessionReq       = chat.CloseChatSessionReq
-	CreateChatAgentReq        = chat.CreateChatAgentReq
-	GetChatAgentReq           = chat.GetChatAgentReq
-	GetChatSessionReq         = chat.GetChatSessionReq
-	MarkAgentMessagesReadReq  = chat.MarkAgentMessagesReadReq
-	PageChatAgentsReq         = chat.PageChatAgentsReq
-	PageChatAgentsResp        = chat.PageChatAgentsResp
-	PageChatMessagesReq       = chat.PageChatMessagesReq
-	PageChatMessagesResp      = chat.PageChatMessagesResp
-	PageChatSessionsReq       = chat.PageChatSessionsReq
-	PageChatSessionsResp      = chat.PageChatSessionsResp
-	SendAgentMessageReq       = chat.SendAgentMessageReq
-	UpdateChatAgentReq        = chat.UpdateChatAgentReq
-	UpdateChatAgentStatusReq  = chat.UpdateChatAgentStatusReq
+	AdminChatAgentResp             = chat.AdminChatAgentResp
+	AdminChatCategoryResp          = chat.AdminChatCategoryResp
+	AdminChatGroupResp             = chat.AdminChatGroupResp
+	AdminChatMessageResp           = chat.AdminChatMessageResp
+	AdminChatQuickReplyResp        = chat.AdminChatQuickReplyResp
+	AdminChatSessionResp           = chat.AdminChatSessionResp
+	AdminChatWorkOrderResp         = chat.AdminChatWorkOrderResp
+	AdminCommonResp                = chat.AdminCommonResp
+	AdminMarkMessagesReadResp      = chat.AdminMarkMessagesReadResp
+	AssignChatSessionReq           = chat.AssignChatSessionReq
+	ChatAdminLoginData             = chat.ChatAdminLoginData
+	ChatAdminLoginReq              = chat.ChatAdminLoginReq
+	ChatAdminLoginResp             = chat.ChatAdminLoginResp
+	ChatAdminLogoutReq             = chat.ChatAdminLogoutReq
+	ChatAdminProfileReq            = chat.ChatAdminProfileReq
+	ChatAdminProfileResp           = chat.ChatAdminProfileResp
+	CloseChatSessionReq            = chat.CloseChatSessionReq
+	CreateChatAgentReq             = chat.CreateChatAgentReq
+	CreateChatCategoryReq          = chat.CreateChatCategoryReq
+	CreateChatGroupReq             = chat.CreateChatGroupReq
+	CreateChatQuickReplyReq        = chat.CreateChatQuickReplyReq
+	CreateChatWorkOrderReq         = chat.CreateChatWorkOrderReq
+	DeleteChatCategoryReq          = chat.DeleteChatCategoryReq
+	DeleteChatGroupReq             = chat.DeleteChatGroupReq
+	DeleteChatQuickReplyReq        = chat.DeleteChatQuickReplyReq
+	DeleteChatWorkOrderReq         = chat.DeleteChatWorkOrderReq
+	GetChatAgentReq                = chat.GetChatAgentReq
+	GetChatCategoryReq             = chat.GetChatCategoryReq
+	GetChatGroupReq                = chat.GetChatGroupReq
+	GetChatQuickReplyReq           = chat.GetChatQuickReplyReq
+	GetChatSessionReq              = chat.GetChatSessionReq
+	GetChatWorkOrderReq            = chat.GetChatWorkOrderReq
+	HandleChatWorkOrderReq         = chat.HandleChatWorkOrderReq
+	ListChatCategoriesResp         = chat.ListChatCategoriesResp
+	ListChatQuickRepliesResp       = chat.ListChatQuickRepliesResp
+	ListEnabledChatCategoriesReq   = chat.ListEnabledChatCategoriesReq
+	ListEnabledChatQuickRepliesReq = chat.ListEnabledChatQuickRepliesReq
+	MarkAgentMessagesReadReq       = chat.MarkAgentMessagesReadReq
+	PageChatAgentsReq              = chat.PageChatAgentsReq
+	PageChatAgentsResp             = chat.PageChatAgentsResp
+	PageChatCategoriesReq          = chat.PageChatCategoriesReq
+	PageChatCategoriesResp         = chat.PageChatCategoriesResp
+	PageChatGroupsReq              = chat.PageChatGroupsReq
+	PageChatGroupsResp             = chat.PageChatGroupsResp
+	PageChatMessagesReq            = chat.PageChatMessagesReq
+	PageChatMessagesResp           = chat.PageChatMessagesResp
+	PageChatQuickRepliesReq        = chat.PageChatQuickRepliesReq
+	PageChatQuickRepliesResp       = chat.PageChatQuickRepliesResp
+	PageChatSessionsReq            = chat.PageChatSessionsReq
+	PageChatSessionsResp           = chat.PageChatSessionsResp
+	PageChatWorkOrdersReq          = chat.PageChatWorkOrdersReq
+	PageChatWorkOrdersResp         = chat.PageChatWorkOrdersResp
+	SendAgentMessageReq            = chat.SendAgentMessageReq
+	UpdateChatAgentReq             = chat.UpdateChatAgentReq
+	UpdateChatAgentStatusReq       = chat.UpdateChatAgentStatusReq
+	UpdateChatCategoryReq          = chat.UpdateChatCategoryReq
+	UpdateChatGroupReq             = chat.UpdateChatGroupReq
+	UpdateChatQuickReplyReq        = chat.UpdateChatQuickReplyReq
+	UpdateChatWorkOrderReq         = chat.UpdateChatWorkOrderReq
 
 	ChatAdmin interface {
+		// 登录
+		Login(ctx context.Context, in *ChatAdminLoginReq, opts ...grpc.CallOption) (*ChatAdminLoginResp, error)
+		// 退出登录
+		Logout(ctx context.Context, in *ChatAdminLogoutReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 当前登录用户资料
+		Profile(ctx context.Context, in *ChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
+		// 创建客服分组
+		CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
+		// 更新客服分组
+		UpdateChatGroup(ctx context.Context, in *UpdateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
+		// 查询客服分组详情
+		GetChatGroup(ctx context.Context, in *GetChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
+		// 分页查询客服分组
+		PageChatGroups(ctx context.Context, in *PageChatGroupsReq, opts ...grpc.CallOption) (*PageChatGroupsResp, error)
+		// 删除客服分组
+		DeleteChatGroup(ctx context.Context, in *DeleteChatGroupReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 创建坐席
 		CreateChatAgent(ctx context.Context, in *CreateChatAgentReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error)
 		// 更新坐席
@@ -59,6 +115,42 @@ type (
 		MarkAgentMessagesRead(ctx context.Context, in *MarkAgentMessagesReadReq, opts ...grpc.CallOption) (*AdminMarkMessagesReadResp, error)
 		// 关闭会话
 		CloseChatSession(ctx context.Context, in *CloseChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
+		// 创建快捷回复
+		CreateChatQuickReply(ctx context.Context, in *CreateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error)
+		// 更新快捷回复
+		UpdateChatQuickReply(ctx context.Context, in *UpdateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error)
+		// 查询快捷回复详情
+		GetChatQuickReply(ctx context.Context, in *GetChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error)
+		// 分页查询快捷回复
+		PageChatQuickReplies(ctx context.Context, in *PageChatQuickRepliesReq, opts ...grpc.CallOption) (*PageChatQuickRepliesResp, error)
+		// 查询启用快捷回复
+		ListEnabledChatQuickReplies(ctx context.Context, in *ListEnabledChatQuickRepliesReq, opts ...grpc.CallOption) (*ListChatQuickRepliesResp, error)
+		// 删除快捷回复
+		DeleteChatQuickReply(ctx context.Context, in *DeleteChatQuickReplyReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 创建问题分类
+		CreateChatCategory(ctx context.Context, in *CreateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error)
+		// 更新问题分类
+		UpdateChatCategory(ctx context.Context, in *UpdateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error)
+		// 查询问题分类详情
+		GetChatCategory(ctx context.Context, in *GetChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error)
+		// 分页查询问题分类
+		PageChatCategories(ctx context.Context, in *PageChatCategoriesReq, opts ...grpc.CallOption) (*PageChatCategoriesResp, error)
+		// 查询启用问题分类
+		ListEnabledChatCategories(ctx context.Context, in *ListEnabledChatCategoriesReq, opts ...grpc.CallOption) (*ListChatCategoriesResp, error)
+		// 删除问题分类
+		DeleteChatCategory(ctx context.Context, in *DeleteChatCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 创建工单/离线留言
+		CreateChatWorkOrder(ctx context.Context, in *CreateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+		// 更新工单
+		UpdateChatWorkOrder(ctx context.Context, in *UpdateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+		// 处理工单
+		HandleChatWorkOrder(ctx context.Context, in *HandleChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+		// 查询工单详情
+		GetChatWorkOrder(ctx context.Context, in *GetChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+		// 分页查询工单
+		PageChatWorkOrders(ctx context.Context, in *PageChatWorkOrdersReq, opts ...grpc.CallOption) (*PageChatWorkOrdersResp, error)
+		// 删除工单
+		DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	}
 
 	defaultChatAdmin struct {
@@ -70,6 +162,54 @@ func NewChatAdmin(cli zrpc.Client) ChatAdmin {
 	return &defaultChatAdmin{
 		cli: cli,
 	}
+}
+
+// 登录
+func (m *defaultChatAdmin) Login(ctx context.Context, in *ChatAdminLoginReq, opts ...grpc.CallOption) (*ChatAdminLoginResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.Login(ctx, in, opts...)
+}
+
+// 退出登录
+func (m *defaultChatAdmin) Logout(ctx context.Context, in *ChatAdminLogoutReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.Logout(ctx, in, opts...)
+}
+
+// 当前登录用户资料
+func (m *defaultChatAdmin) Profile(ctx context.Context, in *ChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.Profile(ctx, in, opts...)
+}
+
+// 创建客服分组
+func (m *defaultChatAdmin) CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.CreateChatGroup(ctx, in, opts...)
+}
+
+// 更新客服分组
+func (m *defaultChatAdmin) UpdateChatGroup(ctx context.Context, in *UpdateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.UpdateChatGroup(ctx, in, opts...)
+}
+
+// 查询客服分组详情
+func (m *defaultChatAdmin) GetChatGroup(ctx context.Context, in *GetChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.GetChatGroup(ctx, in, opts...)
+}
+
+// 分页查询客服分组
+func (m *defaultChatAdmin) PageChatGroups(ctx context.Context, in *PageChatGroupsReq, opts ...grpc.CallOption) (*PageChatGroupsResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.PageChatGroups(ctx, in, opts...)
+}
+
+// 删除客服分组
+func (m *defaultChatAdmin) DeleteChatGroup(ctx context.Context, in *DeleteChatGroupReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.DeleteChatGroup(ctx, in, opts...)
 }
 
 // 创建坐席
@@ -142,4 +282,112 @@ func (m *defaultChatAdmin) MarkAgentMessagesRead(ctx context.Context, in *MarkAg
 func (m *defaultChatAdmin) CloseChatSession(ctx context.Context, in *CloseChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.CloseChatSession(ctx, in, opts...)
+}
+
+// 创建快捷回复
+func (m *defaultChatAdmin) CreateChatQuickReply(ctx context.Context, in *CreateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.CreateChatQuickReply(ctx, in, opts...)
+}
+
+// 更新快捷回复
+func (m *defaultChatAdmin) UpdateChatQuickReply(ctx context.Context, in *UpdateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.UpdateChatQuickReply(ctx, in, opts...)
+}
+
+// 查询快捷回复详情
+func (m *defaultChatAdmin) GetChatQuickReply(ctx context.Context, in *GetChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.GetChatQuickReply(ctx, in, opts...)
+}
+
+// 分页查询快捷回复
+func (m *defaultChatAdmin) PageChatQuickReplies(ctx context.Context, in *PageChatQuickRepliesReq, opts ...grpc.CallOption) (*PageChatQuickRepliesResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.PageChatQuickReplies(ctx, in, opts...)
+}
+
+// 查询启用快捷回复
+func (m *defaultChatAdmin) ListEnabledChatQuickReplies(ctx context.Context, in *ListEnabledChatQuickRepliesReq, opts ...grpc.CallOption) (*ListChatQuickRepliesResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.ListEnabledChatQuickReplies(ctx, in, opts...)
+}
+
+// 删除快捷回复
+func (m *defaultChatAdmin) DeleteChatQuickReply(ctx context.Context, in *DeleteChatQuickReplyReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.DeleteChatQuickReply(ctx, in, opts...)
+}
+
+// 创建问题分类
+func (m *defaultChatAdmin) CreateChatCategory(ctx context.Context, in *CreateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.CreateChatCategory(ctx, in, opts...)
+}
+
+// 更新问题分类
+func (m *defaultChatAdmin) UpdateChatCategory(ctx context.Context, in *UpdateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.UpdateChatCategory(ctx, in, opts...)
+}
+
+// 查询问题分类详情
+func (m *defaultChatAdmin) GetChatCategory(ctx context.Context, in *GetChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.GetChatCategory(ctx, in, opts...)
+}
+
+// 分页查询问题分类
+func (m *defaultChatAdmin) PageChatCategories(ctx context.Context, in *PageChatCategoriesReq, opts ...grpc.CallOption) (*PageChatCategoriesResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.PageChatCategories(ctx, in, opts...)
+}
+
+// 查询启用问题分类
+func (m *defaultChatAdmin) ListEnabledChatCategories(ctx context.Context, in *ListEnabledChatCategoriesReq, opts ...grpc.CallOption) (*ListChatCategoriesResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.ListEnabledChatCategories(ctx, in, opts...)
+}
+
+// 删除问题分类
+func (m *defaultChatAdmin) DeleteChatCategory(ctx context.Context, in *DeleteChatCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.DeleteChatCategory(ctx, in, opts...)
+}
+
+// 创建工单/离线留言
+func (m *defaultChatAdmin) CreateChatWorkOrder(ctx context.Context, in *CreateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.CreateChatWorkOrder(ctx, in, opts...)
+}
+
+// 更新工单
+func (m *defaultChatAdmin) UpdateChatWorkOrder(ctx context.Context, in *UpdateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.UpdateChatWorkOrder(ctx, in, opts...)
+}
+
+// 处理工单
+func (m *defaultChatAdmin) HandleChatWorkOrder(ctx context.Context, in *HandleChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.HandleChatWorkOrder(ctx, in, opts...)
+}
+
+// 查询工单详情
+func (m *defaultChatAdmin) GetChatWorkOrder(ctx context.Context, in *GetChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.GetChatWorkOrder(ctx, in, opts...)
+}
+
+// 分页查询工单
+func (m *defaultChatAdmin) PageChatWorkOrders(ctx context.Context, in *PageChatWorkOrdersReq, opts ...grpc.CallOption) (*PageChatWorkOrdersResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.PageChatWorkOrders(ctx, in, opts...)
+}
+
+// 删除工单
+func (m *defaultChatAdmin) DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.DeleteChatWorkOrder(ctx, in, opts...)
 }

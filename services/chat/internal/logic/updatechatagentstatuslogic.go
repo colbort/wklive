@@ -5,6 +5,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
+	"wklive/services/chat/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +26,21 @@ func NewUpdateChatAgentStatusLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 更新坐席在线状态
 func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAgentStatusReq) (*chat.AdminChatAgentResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.AdminChatAgentResp{}, nil
+	if in.GetMerchantId() <= 0 || in.GetAgentId() <= 0 || in.GetStatus() == chat.ChatAgentStatus_CHAT_AGENT_STATUS_UNKNOWN {
+		return &chat.AdminChatAgentResp{Base: badBase("merchant_id, agent_id and status are required")}, nil
+	}
+	data, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetAgentId())
+	if err == models.ErrNotFound || data.MerchantId != in.GetMerchantId() {
+		return &chat.AdminChatAgentResp{Base: notFoundBase("chat agent not found")}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
+	}
+	data.Status = int64(in.GetStatus())
+	data.LastActiveTime = nowMillis()
+	data.UpdateTimes = data.LastActiveTime
+	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, data); err != nil {
+		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
+	}
+	return &chat.AdminChatAgentResp{Base: okBase(), Data: toProtoAgent(data)}, nil
 }

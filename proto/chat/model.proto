@@ -97,6 +97,13 @@ message ChatMessage {
   int64 update_times = 20; // 更新时间戳(毫秒)
 }
 
+// 客服消息事件,用于消息总线/WebSocket推送
+message ChatMessageEvent {
+  string type = 1; // 事件类型,例如 chat.message
+  ChatMessage data = 2; // 消息内容
+  int64 created_at = 3; // 事件创建时间戳(毫秒)
+}
+
 // 会话分配记录
 message ChatAssignment {
   int64 id = 1; // 主键ID

@@ -1,0 +1,11 @@
+syntax = "v1"
+
+info (
+	title:   "chat-api"
+	desc:    "Chat client BFF"
+	author:  "you"
+	version: "1.0"
+)
+
+import "common.api"
+import "chat.api"

@@ -25,7 +25,12 @@ func NewAssignChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 分配会话
 func (l *AssignChatSessionLogic) AssignChatSession(in *chat.AssignChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.AdminChatSessionResp{}, nil
+	data, base, err := assignSession(l.ctx, l.svcCtx, in)
+	if err != nil {
+		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
+	}
+	if base != nil {
+		return &chat.AdminChatSessionResp{Base: base}, nil
+	}
+	return &chat.AdminChatSessionResp{Base: okBase(), Data: toProtoSession(data)}, nil
 }

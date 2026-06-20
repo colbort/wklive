@@ -10,6 +10,30 @@ option go_package = "wklive/proto/chat;chat";
 
 // 后台客服服务
 service ChatAdmin {
+  // 登录
+  rpc Login(ChatAdminLoginReq) returns (ChatAdminLoginResp);
+
+  // 退出登录
+  rpc Logout(ChatAdminLogoutReq) returns (AdminCommonResp);
+
+  // 当前登录用户资料
+  rpc Profile(ChatAdminProfileReq) returns (ChatAdminProfileResp);
+
+  // 创建客服分组
+  rpc CreateChatGroup(CreateChatGroupReq) returns (AdminChatGroupResp);
+
+  // 更新客服分组
+  rpc UpdateChatGroup(UpdateChatGroupReq) returns (AdminChatGroupResp);
+
+  // 查询客服分组详情
+  rpc GetChatGroup(GetChatGroupReq) returns (AdminChatGroupResp);
+
+  // 分页查询客服分组
+  rpc PageChatGroups(PageChatGroupsReq) returns (PageChatGroupsResp);
+
+  // 删除客服分组
+  rpc DeleteChatGroup(DeleteChatGroupReq) returns (AdminCommonResp);
+
   // 创建坐席
   rpc CreateChatAgent(CreateChatAgentReq) returns (AdminChatAgentResp);
 
@@ -45,6 +69,135 @@ service ChatAdmin {
 
   // 关闭会话
   rpc CloseChatSession(CloseChatSessionReq) returns (AdminChatSessionResp);
+
+  // 创建快捷回复
+  rpc CreateChatQuickReply(CreateChatQuickReplyReq) returns (AdminChatQuickReplyResp);
+
+  // 更新快捷回复
+  rpc UpdateChatQuickReply(UpdateChatQuickReplyReq) returns (AdminChatQuickReplyResp);
+
+  // 查询快捷回复详情
+  rpc GetChatQuickReply(GetChatQuickReplyReq) returns (AdminChatQuickReplyResp);
+
+  // 分页查询快捷回复
+  rpc PageChatQuickReplies(PageChatQuickRepliesReq) returns (PageChatQuickRepliesResp);
+
+  // 查询启用快捷回复
+  rpc ListEnabledChatQuickReplies(ListEnabledChatQuickRepliesReq) returns (ListChatQuickRepliesResp);
+
+  // 删除快捷回复
+  rpc DeleteChatQuickReply(DeleteChatQuickReplyReq) returns (AdminCommonResp);
+
+  // 创建问题分类
+  rpc CreateChatCategory(CreateChatCategoryReq) returns (AdminChatCategoryResp);
+
+  // 更新问题分类
+  rpc UpdateChatCategory(UpdateChatCategoryReq) returns (AdminChatCategoryResp);
+
+  // 查询问题分类详情
+  rpc GetChatCategory(GetChatCategoryReq) returns (AdminChatCategoryResp);
+
+  // 分页查询问题分类
+  rpc PageChatCategories(PageChatCategoriesReq) returns (PageChatCategoriesResp);
+
+  // 查询启用问题分类
+  rpc ListEnabledChatCategories(ListEnabledChatCategoriesReq) returns (ListChatCategoriesResp);
+
+  // 删除问题分类
+  rpc DeleteChatCategory(DeleteChatCategoryReq) returns (AdminCommonResp);
+
+  // 创建工单/离线留言
+  rpc CreateChatWorkOrder(CreateChatWorkOrderReq) returns (AdminChatWorkOrderResp);
+
+  // 更新工单
+  rpc UpdateChatWorkOrder(UpdateChatWorkOrderReq) returns (AdminChatWorkOrderResp);
+
+  // 处理工单
+  rpc HandleChatWorkOrder(HandleChatWorkOrderReq) returns (AdminChatWorkOrderResp);
+
+  // 查询工单详情
+  rpc GetChatWorkOrder(GetChatWorkOrderReq) returns (AdminChatWorkOrderResp);
+
+  // 分页查询工单
+  rpc PageChatWorkOrders(PageChatWorkOrdersReq) returns (PageChatWorkOrdersResp);
+
+  // 删除工单
+  rpc DeleteChatWorkOrder(DeleteChatWorkOrderReq) returns (AdminCommonResp);
+}
+
+message AdminCommonResp {
+  common.RespBase base = 1;
+}
+
+message ChatAdminLoginReq {
+  int64 merchant_id = 1; // 客服商户ID
+  string username = 2; // 登录账号
+  string password = 3; // 登录密码
+  string google_code = 4; // Google验证码
+}
+
+message ChatAdminLoginData {
+  common.TokenInfo token = 1;
+  ChatUser user = 2;
+  ChatAgent agent = 3;
+}
+
+message ChatAdminLoginResp {
+  common.RespBase base = 1;
+  ChatAdminLoginData data = 2;
+}
+
+message ChatAdminLogoutReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 chat_user_id = 2; // 客服用户ID
+}
+
+message ChatAdminProfileReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 chat_user_id = 2; // 客服用户ID
+}
+
+message ChatAdminProfileResp {
+  common.RespBase base = 1;
+  ChatUser user = 2;
+  ChatAgent agent = 3;
+}
+
+message CreateChatGroupReq {
+  int64 merchant_id = 1; // 客服商户ID
+  string group_code = 2; // 分组编码
+  string group_name = 3; // 分组名称
+  string description = 4; // 分组描述
+  common.Enable enabled = 5; // 启用状态
+  int32 sort = 6; // 排序
+  string remark = 7; // 备注
+}
+
+message UpdateChatGroupReq {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  string group_name = 3; // 分组名称
+  string description = 4; // 分组描述
+  common.Enable enabled = 5; // 启用状态
+  int32 sort = 6; // 排序
+  string remark = 7; // 备注
+}
+
+message GetChatGroupReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 id = 2; // 主键ID
+}
+
+message PageChatGroupsReq {
+  int64 merchant_id = 1; // 客服商户ID,0表示全部
+  common.Enable enabled = 2; // 启用状态,0表示全部
+  string keyword = 3; // 关键词
+  common.PageReq page = 4; // 分页
+}
+
+message DeleteChatGroupReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 id = 2; // 主键ID
 }
 
 message CreateChatAgentReq {
@@ -145,12 +298,172 @@ message CloseChatSessionReq {
   string close_reason = 4; // 结束原因
 }
 
+message CreateChatQuickReplyReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 agent_id = 2; // 坐席ID,0表示公共快捷回复
+  int64 category_id = 3; // 分类ID
+  string title = 4; // 标题
+  string content = 5; // 内容
+  common.Enable enabled = 6; // 启用状态
+  int32 sort = 7; // 排序
+  string remark = 8; // 备注
+}
+
+message UpdateChatQuickReplyReq {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  int64 agent_id = 3; // 坐席ID,0表示公共快捷回复
+  int64 category_id = 4; // 分类ID
+  string title = 5; // 标题
+  string content = 6; // 内容
+  common.Enable enabled = 7; // 启用状态
+  int32 sort = 8; // 排序
+  string remark = 9; // 备注
+}
+
+message GetChatQuickReplyReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 id = 2; // 主键ID
+}
+
+message PageChatQuickRepliesReq {
+  int64 merchant_id = 1; // 客服商户ID,0表示全部
+  int64 agent_id = 2; // 坐席ID,0表示全部
+  int64 category_id = 3; // 分类ID,0表示全部
+  common.Enable enabled = 4; // 启用状态,0表示全部
+  string keyword = 5; // 关键词
+  common.PageReq page = 6; // 分页
+}
+
+message ListEnabledChatQuickRepliesReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 agent_id = 2; // 坐席ID,0表示公共
+  int64 category_id = 3; // 分类ID,0表示全部
+}
+
+message DeleteChatQuickReplyReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 id = 2; // 主键ID
+}
+
+message CreateChatCategoryReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 parent_id = 2; // 父级分类ID
+  string category_code = 3; // 分类编码
+  string category_name = 4; // 分类名称
+  common.Enable enabled = 5; // 启用状态
+  int32 sort = 6; // 排序
+  string remark = 7; // 备注
+}
+
+message UpdateChatCategoryReq {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  int64 parent_id = 3; // 父级分类ID
+  string category_name = 4; // 分类名称
+  common.Enable enabled = 5; // 启用状态
+  int32 sort = 6; // 排序
+  string remark = 7; // 备注
+}
+
+message GetChatCategoryReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 id = 2; // 主键ID
+}
+
+message PageChatCategoriesReq {
+  int64 merchant_id = 1; // 客服商户ID,0表示全部
+  int64 parent_id = 2; // 父级分类ID,0表示全部
+  string category_code = 3; // 分类编码
+  string category_name = 4; // 分类名称
+  common.Enable enabled = 5; // 启用状态,0表示全部
+  string keyword = 6; // 关键词
+  common.PageReq page = 7; // 分页
+}
+
+message ListEnabledChatCategoriesReq {
+  int64 merchant_id = 1; // 客服商户ID
+}
+
+message DeleteChatCategoryReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 id = 2; // 主键ID
+}
+
+message CreateChatWorkOrderReq {
+  int64 merchant_id = 1; // 客服商户ID
+  string session_no = 2; // 关联会话编号
+  int64 user_id = 3; // 用户ID
+  int64 agent_id = 4; // 坐席ID
+  int64 group_id = 5; // 客服分组ID
+  string title = 6; // 工单标题
+  string content = 7; // 工单内容/离线留言
+  string contact_name = 8; // 联系人
+  string contact_mobile = 9; // 联系电话
+  string contact_email = 10; // 联系邮箱
+  ChatSessionPriority priority = 11; // 优先级
+  string remark = 12; // 备注
+}
+
+message UpdateChatWorkOrderReq {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  int64 agent_id = 3; // 坐席ID
+  int64 group_id = 4; // 客服分组ID
+  string title = 5; // 工单标题
+  string content = 6; // 工单内容/离线留言
+  string contact_name = 7; // 联系人
+  string contact_mobile = 8; // 联系电话
+  string contact_email = 9; // 联系邮箱
+  ChatSessionPriority priority = 10; // 优先级
+  int32 status = 11; // 状态
+  string remark = 12; // 备注
+}
+
+message HandleChatWorkOrderReq {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  int64 handler_id = 3; // 处理人ID
+  int32 status = 4; // 状态:2处理中 3已完成 4已关闭
+  string handle_result = 5; // 处理结果
+  string remark = 6; // 备注
+}
+
+message GetChatWorkOrderReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 id = 2; // 主键ID
+  string work_order_no = 3; // 工单编号
+}
+
+message PageChatWorkOrdersReq {
+  int64 merchant_id = 1; // 客服商户ID,0表示全部
+  string session_no = 2; // 会话编号
+  int64 user_id = 3; // 用户ID,0表示全部
+  int64 agent_id = 4; // 坐席ID,0表示全部
+  int64 group_id = 5; // 分组ID,0表示全部
+  ChatSessionPriority priority = 6; // 优先级,0表示全部
+  int32 status = 7; // 状态,0表示全部
+  int64 handler_id = 8; // 处理人ID,0表示全部
+  string keyword = 9; // 关键词
+  common.TimeRange time_range = 10; // 创建时间范围
+  common.PageReq page = 11; // 分页
+}
+
+message DeleteChatWorkOrderReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 id = 2; // 主键ID
+}
+
 
 message PageChatAgentsResp {
   common.RespBase base = 1;
   repeated ChatAgent data = 2;
 }
 
+message PageChatGroupsResp {
+  common.RespBase base = 1;
+  repeated ChatGroup data = 2;
+}
 
 message PageChatSessionsResp {
   common.RespBase base = 1;
@@ -163,9 +476,39 @@ message PageChatMessagesResp {
   repeated ChatMessage data = 2;
 }
 
+message PageChatQuickRepliesResp {
+  common.RespBase base = 1;
+  repeated ChatQuickReply data = 2;
+}
+
+message ListChatQuickRepliesResp {
+  common.RespBase base = 1;
+  repeated ChatQuickReply data = 2;
+}
+
+message PageChatCategoriesResp {
+  common.RespBase base = 1;
+  repeated ChatCategory data = 2;
+}
+
+message ListChatCategoriesResp {
+  common.RespBase base = 1;
+  repeated ChatCategory data = 2;
+}
+
+message PageChatWorkOrdersResp {
+  common.RespBase base = 1;
+  repeated ChatWorkOrder data = 2;
+}
+
 message AdminChatAgentResp {
   common.RespBase base = 1;
   ChatAgent data = 2;
+}
+
+message AdminChatGroupResp {
+  common.RespBase base = 1;
+  ChatGroup data = 2;
 }
 
 message AdminChatSessionResp {
@@ -180,4 +523,19 @@ message AdminChatMessageResp {
 
 message AdminMarkMessagesReadResp {
   common.RespBase base = 1;
+}
+
+message AdminChatQuickReplyResp {
+  common.RespBase base = 1;
+  ChatQuickReply data = 2;
+}
+
+message AdminChatCategoryResp {
+  common.RespBase base = 1;
+  ChatCategory data = 2;
+}
+
+message AdminChatWorkOrderResp {
+  common.RespBase base = 1;
+  ChatWorkOrder data = 2;
 }

@@ -7,6 +7,8 @@ const (
 	CtxKeyTenantCode string = "x-tenant-code"
 	CtxKeyUserType   string = "x-user-type"
 	CtxKeyClientIp   string = "x-client-ip"
+	CtxKeyMerchantId string = "x-merchant-id"
+	CtxKeyChatUserId string = "x-chat-user-id"
 )
 
 const (

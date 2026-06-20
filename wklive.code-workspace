@@ -29,8 +29,16 @@
       "name": "chat-api"
     },
     {
-      "path": "chat-admin",
-      "name": "chat-admin"
+      "path": "chat-admin-api",
+      "name": "chat-admin-api"
+    },
+    {
+      "path": "chat-admin-ui",
+      "name": "chat-admin-ui"
+    },
+    {
+      "path": "chat-ui",
+      "name": "chat-ui"
     },
     {
       "path": "services",
@@ -82,6 +90,7 @@
       "boxbg",
       "BTCUSDT",
       "casbin",
+      "chatadmin",
       "cobo",
       "configurator",
       "cronx",

@@ -4,6 +4,8 @@ import (
 	"wklive/services/chat/internal/config"
 	"wklive/services/chat/models"
 
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -21,10 +23,21 @@ type ServiceContext struct {
 	ChatGroupModel        models.TChatGroupModel
 	ChatWorkOrderModel    models.TChatWorkOrderModel
 	ChatMessageFactory    *models.ChatMessageModelFactory
+	BusRedis              *redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
+	var busRedis *redis.Redis
+	if c.BusRedis.Host != "" {
+		rds, err := redis.NewRedis(c.BusRedis)
+		if err != nil {
+			logx.Errorf("chat bus redis init failed: %v", err)
+		} else {
+			busRedis = rds
+		}
+	}
+
 	return &ServiceContext{
 		Config:                c,
 		DB:                    conn,
@@ -39,5 +52,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ChatGroupModel:        models.NewTChatGroupModel(conn, c.CacheRedis),
 		ChatWorkOrderModel:    models.NewTChatWorkOrderModel(conn, c.CacheRedis),
 		ChatMessageFactory:    models.NewChatMessageModelFactory(c.Mongo.Url, c.Mongo.Db),
+		BusRedis:              busRedis,
 	}
 }

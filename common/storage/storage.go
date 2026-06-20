@@ -53,7 +53,7 @@ func NewUploader(ctx context.Context, cfg Config) (Uploader, error) {
 	case OssTypeMinio:
 		return impl.NewMinioUploader(cfg.Minio.Endpoint, cfg.Minio.AccessKeyId, cfg.Minio.AccessKeySecret, cfg.Minio.BucketName)
 	default:
-		fmt.Printf("不支持的对象存储类型 %s\n", cfg.OssType)
+		fmt.Printf("不支持的对象存储类型 %d\n", cfg.OssType)
 		return nil, i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 }

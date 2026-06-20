@@ -1,0 +1,713 @@
+import "common.api"
+
+type ChatAgent {
+	id                  int64  `json:"id"`
+	merchantId          int64  `json:"merchantId"`
+	chatUserId          int64  `json:"chatUserId"`
+	agentNo             string `json:"agentNo"`
+	status              int64  `json:"status"` // 1 offline 2 online 3 busy 4 resting
+	maxSessionCount     int64  `json:"maxSessionCount"`
+	currentSessionCount int64  `json:"currentSessionCount"`
+	lastActiveTime      int64  `json:"lastActiveTime"`
+	groupId             int64  `json:"groupId"`
+	remark              string `json:"remark"`
+	createTimes         int64  `json:"createTimes"`
+	updateTimes         int64  `json:"updateTimes"`
+}
+
+type ChatUser {
+	id            int64  `json:"id"`
+	merchantId    int64  `json:"merchantId"`
+	userType      int64  `json:"userType"` // 1 merchant 2 agent
+	isOwner       int64  `json:"isOwner"` // 1 yes 2 no
+	username      string `json:"username"`
+	nickname      string `json:"nickname"`
+	avatarUrl     string `json:"avatarUrl"`
+	mobile        string `json:"mobile"`
+	email         string `json:"email"`
+	enabled       int64  `json:"enabled"` // 1 enabled 2 disabled
+	lastLoginTime int64  `json:"lastLoginTime"`
+	lastLoginIp   string `json:"lastLoginIp"`
+	remark        string `json:"remark"`
+	createTimes   int64  `json:"createTimes"`
+	updateTimes   int64  `json:"updateTimes"`
+}
+
+type ChatGroup {
+	id          int64  `json:"id"`
+	merchantId  int64  `json:"merchantId"`
+	groupCode   string `json:"groupCode"`
+	groupName   string `json:"groupName"`
+	description string `json:"description"`
+	enabled     int64  `json:"enabled"`
+	sort        int64  `json:"sort"`
+	remark      string `json:"remark"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
+}
+
+type ChatSession {
+	id               int64  `json:"id"`
+	sessionNo        string `json:"sessionNo"`
+	merchantId       int64  `json:"merchantId"`
+	userId           int64  `json:"userId"`
+	source           int64  `json:"source"`
+	status           int64  `json:"status"`
+	priority         int64  `json:"priority"`
+	agentId          int64  `json:"agentId"`
+	title            string `json:"title"`
+	category         string `json:"category"`
+	lastMessage      string `json:"lastMessage"`
+	lastSenderType   int64  `json:"lastSenderType"`
+	lastMessageTime  int64  `json:"lastMessageTime"`
+	userUnreadCount  int64  `json:"userUnreadCount"`
+	agentUnreadCount int64  `json:"agentUnreadCount"`
+	closeTime        int64  `json:"closeTime"`
+	closeReason      string `json:"closeReason"`
+	extJson          string `json:"extJson,optional"`
+	groupId          int64  `json:"groupId"`
+	lastMessageNo    string `json:"lastMessageNo"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type ChatMessage {
+	id          int64  `json:"id,optional"`
+	messageNo   string `json:"messageNo"`
+	sessionNo   string `json:"sessionNo"`
+	merchantId  int64  `json:"merchantId"`
+	userId      int64  `json:"userId"`
+	agentId     int64  `json:"agentId"`
+	senderType  int64  `json:"senderType"`
+	senderId    int64  `json:"senderId"`
+	senderName  string `json:"senderName"`
+	messageType int64  `json:"messageType"`
+	content     string `json:"content"`
+	mediaUrl    string `json:"mediaUrl"`
+	mediaName   string `json:"mediaName"`
+	mediaMime   string `json:"mediaMime"`
+	mediaSize   int64  `json:"mediaSize"`
+	status      int64  `json:"status"`
+	payload     string `json:"payload,optional"`
+	readTime    int64  `json:"readTime"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
+}
+
+type ChatQuickReply {
+	id          int64  `json:"id"`
+	merchantId  int64  `json:"merchantId"`
+	agentId     int64  `json:"agentId"`
+	categoryId  int64  `json:"categoryId"`
+	title       string `json:"title"`
+	content     string `json:"content"`
+	enabled     int64  `json:"enabled"`
+	sort        int64  `json:"sort"`
+	remark      string `json:"remark"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
+}
+
+type ChatCategory {
+	id           int64  `json:"id"`
+	merchantId   int64  `json:"merchantId"`
+	parentId     int64  `json:"parentId"`
+	categoryCode string `json:"categoryCode"`
+	categoryName string `json:"categoryName"`
+	enabled      int64  `json:"enabled"`
+	sort         int64  `json:"sort"`
+	remark       string `json:"remark"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
+}
+
+type ChatWorkOrder {
+	id            int64  `json:"id"`
+	merchantId    int64  `json:"merchantId"`
+	workOrderNo   string `json:"workOrderNo"`
+	sessionNo     string `json:"sessionNo"`
+	userId        int64  `json:"userId"`
+	agentId       int64  `json:"agentId"`
+	groupId       int64  `json:"groupId"`
+	title         string `json:"title"`
+	content       string `json:"content"`
+	contactName   string `json:"contactName"`
+	contactMobile string `json:"contactMobile"`
+	contactEmail  string `json:"contactEmail"`
+	priority      int64  `json:"priority"`
+	status        int64  `json:"status"` // 1 pending 2 processing 3 finished 4 closed
+	handlerId     int64  `json:"handlerId"`
+	handleResult  string `json:"handleResult"`
+	finishTime    int64  `json:"finishTime"`
+	remark        string `json:"remark"`
+	createTimes   int64  `json:"createTimes"`
+	updateTimes   int64  `json:"updateTimes"`
+}
+
+type ChatAdminLoginReq {
+	merchantId int64  `json:"merchantId"`
+	username   string `json:"username"`
+	password   string `json:"password"`
+	googleCode string `json:"googleCode,optional"`
+}
+
+type ChatAdminLoginData {
+	token TokenInfo `json:"token"`
+	user  ChatUser  `json:"user"`
+	agent ChatAgent `json:"agent,optional"`
+}
+
+type ChatAdminLoginResp {
+	RespBase
+	data ChatAdminLoginData `json:"data"`
+}
+
+type ChatAdminLogoutReq {
+	merchantId  int64 `json:"merchantId"`
+	chatUserId  int64 `json:"chatUserId"`
+}
+
+type ChatAdminProfileReq {
+	merchantId  int64 `form:"merchantId"`
+	chatUserId  int64 `form:"chatUserId"`
+}
+
+type ChatAdminProfileResp {
+	RespBase
+	user  ChatUser  `json:"user"`
+	agent ChatAgent `json:"agent,optional"`
+}
+
+type CreateChatGroupReq {
+	merchantId  int64  `json:"merchantId"`
+	groupCode   string `json:"groupCode"`
+	groupName   string `json:"groupName"`
+	description string `json:"description,optional"`
+	enabled     int64  `json:"enabled,optional"`
+	sort        int64  `json:"sort,optional"`
+	remark      string `json:"remark,optional"`
+}
+
+type UpdateChatGroupReq {
+	id          int64  `path:"id"`
+	merchantId  int64  `json:"merchantId"`
+	groupName   string `json:"groupName"`
+	description string `json:"description,optional"`
+	enabled     int64  `json:"enabled,optional"`
+	sort        int64  `json:"sort,optional"`
+	remark      string `json:"remark,optional"`
+}
+
+type GetChatGroupReq {
+	id         int64 `path:"id"`
+	merchantId int64 `form:"merchantId"`
+}
+
+type PageChatGroupsReq {
+	PageReq
+	merchantId int64  `form:"merchantId,optional"`
+	enabled    int64  `form:"enabled,optional"`
+	keyword    string `form:"keyword,optional"`
+}
+
+type DeleteChatGroupReq {
+	id         int64 `path:"id"`
+	merchantId int64 `form:"merchantId"`
+}
+
+type ChatGroupResp {
+	RespBase
+	data ChatGroup `json:"data"`
+}
+
+type PageChatGroupsResp {
+	RespBase
+	data []ChatGroup `json:"data"`
+}
+
+type CreateChatAgentReq {
+	merchantId      int64  `json:"merchantId"`
+	chatUserId      int64  `json:"chatUserId"`
+	agentNo         string `json:"agentNo,optional"`
+	maxSessionCount int64  `json:"maxSessionCount,optional"`
+	groupId         int64  `json:"groupId,optional"`
+	remark          string `json:"remark,optional"`
+}
+
+type UpdateChatAgentReq {
+	id              int64  `path:"id"`
+	merchantId      int64  `json:"merchantId"`
+	maxSessionCount int64  `json:"maxSessionCount,optional"`
+	groupId         int64  `json:"groupId,optional"`
+	remark          string `json:"remark,optional"`
+}
+
+type UpdateChatAgentStatusReq {
+	id         int64 `path:"id"`
+	merchantId int64 `json:"merchantId"`
+	status     int64 `json:"status"`
+}
+
+type GetChatAgentReq {
+	id         int64 `path:"id"`
+	merchantId int64 `form:"merchantId"`
+}
+
+type PageChatAgentsReq {
+	PageReq
+	merchantId int64 `form:"merchantId,optional"`
+	chatUserId int64 `form:"chatUserId,optional"`
+	status     int64 `form:"status,optional"`
+	groupId    int64 `form:"groupId,optional"`
+}
+
+type ChatAgentResp {
+	RespBase
+	data ChatAgent `json:"data"`
+}
+
+type PageChatAgentsResp {
+	RespBase
+	data []ChatAgent `json:"data"`
+}
+
+type PageChatSessionsReq {
+	PageReq
+	TimeRange
+	merchantId int64  `form:"merchantId,optional"`
+	userId     int64  `form:"userId,optional"`
+	agentId    int64  `form:"agentId,optional"`
+	status     int64  `form:"status,optional"`
+	priority   int64  `form:"priority,optional"`
+	category   string `form:"category,optional"`
+}
+
+type GetChatSessionReq {
+	merchantId int64  `form:"merchantId"`
+	sessionNo  string `path:"sessionNo"`
+}
+
+type AssignChatSessionReq {
+	merchantId int64  `json:"merchantId"`
+	sessionNo  string `path:"sessionNo"`
+	toAgentId  int64  `json:"toAgentId"`
+	assignType int64  `json:"assignType"` // 1 auto 2 manual 3 transfer
+	reason     string `json:"reason,optional"`
+}
+
+type CloseChatSessionReq {
+	merchantId  int64  `json:"merchantId"`
+	sessionNo   string `path:"sessionNo"`
+	closeReason string `json:"closeReason,optional"`
+}
+
+type ChatSessionResp {
+	RespBase
+	data ChatSession `json:"data"`
+}
+
+type PageChatSessionsResp {
+	RespBase
+	data []ChatSession `json:"data"`
+}
+
+type SendAgentMessageReq {
+	merchantId  int64  `json:"merchantId"`
+	agentId     int64  `json:"agentId"`
+	sessionNo   string `path:"sessionNo"`
+	messageType int64  `json:"messageType"`
+	content     string `json:"content,optional"`
+	mediaUrl    string `json:"mediaUrl,optional"`
+	mediaName   string `json:"mediaName,optional"`
+	mediaMime   string `json:"mediaMime,optional"`
+	mediaSize   int64  `json:"mediaSize,optional"`
+	clientMsgNo string `json:"clientMsgNo,optional"`
+}
+
+type PageChatMessagesReq {
+	PageReq
+	merchantId int64  `form:"merchantId"`
+	sessionNo  string `path:"sessionNo"`
+	senderType int64  `form:"senderType,optional"`
+}
+
+type ChatMessageResp {
+	RespBase
+	data ChatMessage `json:"data"`
+}
+
+type PageChatMessagesResp {
+	RespBase
+	data []ChatMessage `json:"data"`
+}
+
+type MarkAgentMessagesReadReq {
+	merchantId    int64  `json:"merchantId"`
+	agentId       int64  `json:"agentId"`
+	sessionNo     string `path:"sessionNo"`
+	lastMessageId int64  `json:"lastMessageId,optional"`
+	lastMessageNo string `json:"lastMessageNo,optional"`
+}
+
+type CreateChatQuickReplyReq {
+	merchantId int64  `json:"merchantId"`
+	agentId    int64  `json:"agentId,optional"`
+	categoryId int64  `json:"categoryId,optional"`
+	title      string `json:"title"`
+	content    string `json:"content"`
+	enabled    int64  `json:"enabled,optional"`
+	sort       int64  `json:"sort,optional"`
+	remark     string `json:"remark,optional"`
+}
+
+type UpdateChatQuickReplyReq {
+	id         int64  `path:"id"`
+	merchantId int64  `json:"merchantId"`
+	agentId    int64  `json:"agentId,optional"`
+	categoryId int64  `json:"categoryId,optional"`
+	title      string `json:"title"`
+	content    string `json:"content"`
+	enabled    int64  `json:"enabled,optional"`
+	sort       int64  `json:"sort,optional"`
+	remark     string `json:"remark,optional"`
+}
+
+type GetChatQuickReplyReq {
+	id         int64 `path:"id"`
+	merchantId int64 `form:"merchantId"`
+}
+
+type PageChatQuickRepliesReq {
+	PageReq
+	merchantId int64  `form:"merchantId,optional"`
+	agentId    int64  `form:"agentId,optional"`
+	categoryId int64  `form:"categoryId,optional"`
+	enabled    int64  `form:"enabled,optional"`
+	keyword    string `form:"keyword,optional"`
+}
+
+type ListEnabledChatQuickRepliesReq {
+	merchantId int64 `form:"merchantId"`
+	agentId    int64 `form:"agentId,optional"`
+	categoryId int64 `form:"categoryId,optional"`
+}
+
+type DeleteChatQuickReplyReq {
+	id         int64 `path:"id"`
+	merchantId int64 `form:"merchantId"`
+}
+
+type ChatQuickReplyResp {
+	RespBase
+	data ChatQuickReply `json:"data"`
+}
+
+type ListChatQuickRepliesResp {
+	RespBase
+	data []ChatQuickReply `json:"data"`
+}
+
+type CreateChatCategoryReq {
+	merchantId   int64  `json:"merchantId"`
+	parentId     int64  `json:"parentId,optional"`
+	categoryCode string `json:"categoryCode"`
+	categoryName string `json:"categoryName"`
+	enabled      int64  `json:"enabled,optional"`
+	sort         int64  `json:"sort,optional"`
+	remark       string `json:"remark,optional"`
+}
+
+type UpdateChatCategoryReq {
+	id           int64  `path:"id"`
+	merchantId   int64  `json:"merchantId"`
+	parentId     int64  `json:"parentId,optional"`
+	categoryName string `json:"categoryName"`
+	enabled      int64  `json:"enabled,optional"`
+	sort         int64  `json:"sort,optional"`
+	remark       string `json:"remark,optional"`
+}
+
+type GetChatCategoryReq {
+	id         int64 `path:"id"`
+	merchantId int64 `form:"merchantId"`
+}
+
+type PageChatCategoriesReq {
+	PageReq
+	merchantId   int64  `form:"merchantId,optional"`
+	parentId     int64  `form:"parentId,optional"`
+	categoryCode string `form:"categoryCode,optional"`
+	categoryName string `form:"categoryName,optional"`
+	enabled      int64  `form:"enabled,optional"`
+	keyword      string `form:"keyword,optional"`
+}
+
+type ListEnabledChatCategoriesReq {
+	merchantId int64 `form:"merchantId"`
+}
+
+type DeleteChatCategoryReq {
+	id         int64 `path:"id"`
+	merchantId int64 `form:"merchantId"`
+}
+
+type ChatCategoryResp {
+	RespBase
+	data ChatCategory `json:"data"`
+}
+
+type ListChatCategoriesResp {
+	RespBase
+	data []ChatCategory `json:"data"`
+}
+
+type CreateChatWorkOrderReq {
+	merchantId    int64  `json:"merchantId"`
+	sessionNo     string `json:"sessionNo,optional"`
+	userId        int64  `json:"userId,optional"`
+	agentId       int64  `json:"agentId,optional"`
+	groupId       int64  `json:"groupId,optional"`
+	title         string `json:"title"`
+	content       string `json:"content"`
+	contactName   string `json:"contactName,optional"`
+	contactMobile string `json:"contactMobile,optional"`
+	contactEmail  string `json:"contactEmail,optional"`
+	priority      int64  `json:"priority,optional"`
+	remark        string `json:"remark,optional"`
+}
+
+type UpdateChatWorkOrderReq {
+	id            int64  `path:"id"`
+	merchantId    int64  `json:"merchantId"`
+	agentId       int64  `json:"agentId,optional"`
+	groupId       int64  `json:"groupId,optional"`
+	title         string `json:"title"`
+	content       string `json:"content"`
+	contactName   string `json:"contactName,optional"`
+	contactMobile string `json:"contactMobile,optional"`
+	contactEmail  string `json:"contactEmail,optional"`
+	priority      int64  `json:"priority,optional"`
+	status        int64  `json:"status,optional"`
+	remark        string `json:"remark,optional"`
+}
+
+type HandleChatWorkOrderReq {
+	id           int64  `path:"id"`
+	merchantId   int64  `json:"merchantId"`
+	handlerId    int64  `json:"handlerId"`
+	status       int64  `json:"status"`
+	handleResult string `json:"handleResult,optional"`
+	remark       string `json:"remark,optional"`
+}
+
+type GetChatWorkOrderReq {
+	id          int64  `path:"id"`
+	merchantId  int64  `form:"merchantId"`
+	workOrderNo string `form:"workOrderNo,optional"`
+}
+
+type PageChatWorkOrdersReq {
+	PageReq
+	TimeRange
+	merchantId int64  `form:"merchantId,optional"`
+	sessionNo  string `form:"sessionNo,optional"`
+	userId     int64  `form:"userId,optional"`
+	agentId    int64  `form:"agentId,optional"`
+	groupId    int64  `form:"groupId,optional"`
+	priority   int64  `form:"priority,optional"`
+	status     int64  `form:"status,optional"`
+	handlerId  int64  `form:"handlerId,optional"`
+	keyword    string `form:"keyword,optional"`
+}
+
+type DeleteChatWorkOrderReq {
+	id         int64 `path:"id"`
+	merchantId int64 `form:"merchantId"`
+}
+
+type ChatWorkOrderResp {
+	RespBase
+	data ChatWorkOrder `json:"data"`
+}
+
+type PageChatWorkOrdersResp {
+	RespBase
+	data []ChatWorkOrder `json:"data"`
+}
+
+@server (
+	prefix:     /chat/admin
+	group:      chat_auth
+	middleware: AdminRateLimit
+)
+service chatAdmin {
+	@handler Login
+	post /login (ChatAdminLoginReq) returns (ChatAdminLoginResp)
+}
+
+@server (
+	prefix:     /chat/admin
+	group:      chat_auth
+	jwt:        Jwt
+	middleware: AdminRateLimit
+)
+service chatAdmin {
+	@handler Logout
+	post /logout (ChatAdminLogoutReq) returns (RespBase)
+
+	@handler Profile
+	get /profile (ChatAdminProfileReq) returns (ChatAdminProfileResp)
+}
+
+@server (
+	prefix:     /chat/admin
+	group:      chat_group
+	jwt:        Jwt
+	middleware: AdminRateLimit
+)
+service chatAdmin {
+	@handler CreateChatGroup
+	post /groups (CreateChatGroupReq) returns (ChatGroupResp)
+
+	@handler PageChatGroups
+	get /groups (PageChatGroupsReq) returns (PageChatGroupsResp)
+
+	@handler GetChatGroup
+	get /groups/:id (GetChatGroupReq) returns (ChatGroupResp)
+
+	@handler UpdateChatGroup
+	put /groups/:id (UpdateChatGroupReq) returns (ChatGroupResp)
+
+	@handler DeleteChatGroup
+	delete /groups/:id (DeleteChatGroupReq) returns (RespBase)
+}
+
+@server (
+	prefix:     /chat/admin
+	group:      chat_agent
+	jwt:        Jwt
+	middleware: AdminRateLimit
+)
+service chatAdmin {
+	@handler CreateChatAgent
+	post /agents (CreateChatAgentReq) returns (ChatAgentResp)
+
+	@handler PageChatAgents
+	get /agents (PageChatAgentsReq) returns (PageChatAgentsResp)
+
+	@handler GetChatAgent
+	get /agents/:id (GetChatAgentReq) returns (ChatAgentResp)
+
+	@handler UpdateChatAgent
+	put /agents/:id (UpdateChatAgentReq) returns (ChatAgentResp)
+
+	@handler UpdateChatAgentStatus
+	put /agents/:id/status (UpdateChatAgentStatusReq) returns (ChatAgentResp)
+}
+
+@server (
+	prefix:     /chat/admin
+	group:      chat_session
+	jwt:        Jwt
+	middleware: AdminRateLimit
+)
+service chatAdmin {
+	@handler PageChatSessions
+	get /sessions (PageChatSessionsReq) returns (PageChatSessionsResp)
+
+	@handler GetChatSession
+	get /sessions/:sessionNo (GetChatSessionReq) returns (ChatSessionResp)
+
+	@handler AssignChatSession
+	put /sessions/:sessionNo/assign (AssignChatSessionReq) returns (ChatSessionResp)
+
+	@handler CloseChatSession
+	put /sessions/:sessionNo/close (CloseChatSessionReq) returns (ChatSessionResp)
+
+	@handler SendAgentMessage
+	post /sessions/:sessionNo/messages (SendAgentMessageReq) returns (ChatMessageResp)
+
+	@handler PageChatMessages
+	get /sessions/:sessionNo/messages (PageChatMessagesReq) returns (PageChatMessagesResp)
+
+	@handler MarkAgentMessagesRead
+	put /sessions/:sessionNo/read (MarkAgentMessagesReadReq) returns (RespBase)
+}
+
+@server (
+	prefix:     /chat/admin
+	group:      chat_quick_reply
+	jwt:        Jwt
+	middleware: AdminRateLimit
+)
+service chatAdmin {
+	@handler CreateChatQuickReply
+	post /quick-replies (CreateChatQuickReplyReq) returns (ChatQuickReplyResp)
+
+	@handler PageChatQuickReplies
+	get /quick-replies (PageChatQuickRepliesReq) returns (ListChatQuickRepliesResp)
+
+	@handler ListEnabledChatQuickReplies
+	get /quick-replies/enabled (ListEnabledChatQuickRepliesReq) returns (ListChatQuickRepliesResp)
+
+	@handler GetChatQuickReply
+	get /quick-replies/:id (GetChatQuickReplyReq) returns (ChatQuickReplyResp)
+
+	@handler UpdateChatQuickReply
+	put /quick-replies/:id (UpdateChatQuickReplyReq) returns (ChatQuickReplyResp)
+
+	@handler DeleteChatQuickReply
+	delete /quick-replies/:id (DeleteChatQuickReplyReq) returns (RespBase)
+}
+
+@server (
+	prefix:     /chat/admin
+	group:      chat_category
+	jwt:        Jwt
+	middleware: AdminRateLimit
+)
+service chatAdmin {
+	@handler CreateChatCategory
+	post /categories (CreateChatCategoryReq) returns (ChatCategoryResp)
+
+	@handler PageChatCategories
+	get /categories (PageChatCategoriesReq) returns (ListChatCategoriesResp)
+
+	@handler ListEnabledChatCategories
+	get /categories/enabled (ListEnabledChatCategoriesReq) returns (ListChatCategoriesResp)
+
+	@handler GetChatCategory
+	get /categories/:id (GetChatCategoryReq) returns (ChatCategoryResp)
+
+	@handler UpdateChatCategory
+	put /categories/:id (UpdateChatCategoryReq) returns (ChatCategoryResp)
+
+	@handler DeleteChatCategory
+	delete /categories/:id (DeleteChatCategoryReq) returns (RespBase)
+}
+
+@server (
+	prefix:     /chat/admin
+	group:      chat_work_order
+	jwt:        Jwt
+	middleware: AdminRateLimit
+)
+service chatAdmin {
+	@handler CreateChatWorkOrder
+	post /work-orders (CreateChatWorkOrderReq) returns (ChatWorkOrderResp)
+
+	@handler PageChatWorkOrders
+	get /work-orders (PageChatWorkOrdersReq) returns (PageChatWorkOrdersResp)
+
+	@handler GetChatWorkOrder
+	get /work-orders/:id (GetChatWorkOrderReq) returns (ChatWorkOrderResp)
+
+	@handler UpdateChatWorkOrder
+	put /work-orders/:id (UpdateChatWorkOrderReq) returns (ChatWorkOrderResp)
+
+	@handler HandleChatWorkOrder
+	put /work-orders/:id/handle (HandleChatWorkOrderReq) returns (ChatWorkOrderResp)
+
+	@handler DeleteChatWorkOrder
+	delete /work-orders/:id (DeleteChatWorkOrderReq) returns (RespBase)
+}

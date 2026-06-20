@@ -5,6 +5,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
+	"wklive/services/chat/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +26,15 @@ func NewGetChatAgentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetC
 
 // 查询坐席详情
 func (l *GetChatAgentLogic) GetChatAgent(in *chat.GetChatAgentReq) (*chat.AdminChatAgentResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.AdminChatAgentResp{}, nil
+	if in.GetMerchantId() <= 0 || in.GetId() <= 0 {
+		return &chat.AdminChatAgentResp{Base: badBase("merchant_id and id are required")}, nil
+	}
+	data, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetId())
+	if err == models.ErrNotFound || data.MerchantId != in.GetMerchantId() {
+		return &chat.AdminChatAgentResp{Base: notFoundBase("chat agent not found")}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
+	}
+	return &chat.AdminChatAgentResp{Base: okBase(), Data: toProtoAgent(data)}, nil
 }

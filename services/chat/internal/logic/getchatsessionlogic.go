@@ -25,7 +25,12 @@ func NewGetChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 
 // 查询会话详情
 func (l *GetChatSessionLogic) GetChatSession(in *chat.GetChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.AdminChatSessionResp{}, nil
+	data, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	if err != nil {
+		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
+	}
+	if base != nil {
+		return &chat.AdminChatSessionResp{Base: base}, nil
+	}
+	return &chat.AdminChatSessionResp{Base: okBase(), Data: toProtoSession(data)}, nil
 }

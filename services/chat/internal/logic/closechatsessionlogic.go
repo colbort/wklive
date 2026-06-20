@@ -25,7 +25,15 @@ func NewCloseChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 关闭会话
 func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.AdminChatSessionResp{}, nil
+	session, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	if err != nil {
+		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
+	}
+	if base != nil {
+		return &chat.AdminChatSessionResp{Base: base}, nil
+	}
+	if err := closeSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
+		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
+	}
+	return &chat.AdminChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
 }

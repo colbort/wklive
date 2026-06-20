@@ -1,0 +1,149 @@
+import "common.api"
+
+type ChatSession {
+	id               int64  `json:"id"`
+	sessionNo        string `json:"sessionNo"`
+	merchantId       int64  `json:"merchantId"`
+	userId           int64  `json:"userId"`
+	source           int64  `json:"source"` // 1 APP 2 Web/H5 3 Admin 4 System
+	status           int64  `json:"status"` // 1 waiting 2 serving 3 pendingUser 4 pendingAgent 5 closed
+	priority         int64  `json:"priority"` // 1 low 2 normal 3 high 4 urgent
+	agentId          int64  `json:"agentId"`
+	title            string `json:"title"`
+	category         string `json:"category"`
+	lastMessage      string `json:"lastMessage"`
+	lastSenderType   int64  `json:"lastSenderType"` // 1 user 2 agent 3 system
+	lastMessageTime  int64  `json:"lastMessageTime"`
+	userUnreadCount  int64  `json:"userUnreadCount"`
+	agentUnreadCount int64  `json:"agentUnreadCount"`
+	closeTime        int64  `json:"closeTime"`
+	closeReason      string `json:"closeReason"`
+	extJson          string `json:"extJson,optional"`
+	groupId          int64  `json:"groupId"`
+	lastMessageNo    string `json:"lastMessageNo"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type ChatMessage {
+	id          int64  `json:"id,optional"`
+	messageNo   string `json:"messageNo"`
+	sessionNo   string `json:"sessionNo"`
+	merchantId  int64  `json:"merchantId"`
+	userId      int64  `json:"userId"`
+	agentId     int64  `json:"agentId"`
+	senderType  int64  `json:"senderType"` // 1 user 2 agent 3 system
+	senderId    int64  `json:"senderId"`
+	senderName  string `json:"senderName"`
+	messageType int64  `json:"messageType"` // 1 text 2 image 3 file 4 order 5 system
+	content     string `json:"content"`
+	mediaUrl    string `json:"mediaUrl"`
+	mediaName   string `json:"mediaName"`
+	mediaMime   string `json:"mediaMime"`
+	mediaSize   int64  `json:"mediaSize"`
+	status      int64  `json:"status"` // 1 sent 2 read 3 recalled 4 deleted
+	payload     string `json:"payload,optional"`
+	readTime    int64  `json:"readTime"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
+}
+
+type OpenChatSessionReq {
+	merchantId   int64  `json:"merchantId"`
+	source       int64  `json:"source,optional"` // 1 APP 2 Web/H5
+	title        string `json:"title,optional"`
+	category     string `json:"category,optional"`
+	firstMessage string `json:"firstMessage,optional"`
+}
+
+type ChatSessionResp {
+	RespBase
+	data ChatSession `json:"data"`
+}
+
+type ListChatSessionsReq {
+	PageReq
+	merchantId int64 `form:"merchantId"`
+	status     int64 `form:"status,optional"`
+}
+
+type ListChatSessionsResp {
+	RespBase
+	data []ChatSession `json:"data"`
+}
+
+type SessionNoReq {
+	merchantId int64  `form:"merchantId"`
+	sessionNo  string `path:"sessionNo"`
+}
+
+type SendUserMessageReq {
+	merchantId  int64  `json:"merchantId"`
+	sessionNo   string `path:"sessionNo"`
+	messageType int64  `json:"messageType"`
+	content     string `json:"content,optional"`
+	mediaUrl    string `json:"mediaUrl,optional"`
+	mediaName   string `json:"mediaName,optional"`
+	mediaMime   string `json:"mediaMime,optional"`
+	mediaSize   int64  `json:"mediaSize,optional"`
+	clientMsgNo string `json:"clientMsgNo,optional"`
+}
+
+type ChatMessageResp {
+	RespBase
+	data ChatMessage `json:"data"`
+}
+
+type ListChatMessagesReq {
+	PageReq
+	merchantId int64  `form:"merchantId"`
+	sessionNo  string `path:"sessionNo"`
+}
+
+type ListChatMessagesResp {
+	RespBase
+	data []ChatMessage `json:"data"`
+}
+
+type MarkUserMessagesReadReq {
+	merchantId    int64  `json:"merchantId"`
+	sessionNo     string `path:"sessionNo"`
+	lastMessageId int64  `json:"lastMessageId,optional"`
+	lastMessageNo string `json:"lastMessageNo,optional"`
+}
+
+type CloseMyChatSessionReq {
+	merchantId  int64  `json:"merchantId"`
+	sessionNo   string `path:"sessionNo"`
+	closeReason string `json:"closeReason,optional"`
+}
+
+@server (
+	prefix:     /chat
+	group:      chat
+	jwt:        Jwt
+	middleware: UserRateLimit
+)
+service chat {
+	@handler OpenChatSession
+	post /sessions (OpenChatSessionReq) returns (ChatSessionResp)
+
+	@handler ListMyChatSessions
+	get /sessions (ListChatSessionsReq) returns (ListChatSessionsResp)
+
+	@handler GetMyChatSession
+	get /sessions/:sessionNo (SessionNoReq) returns (ChatSessionResp)
+
+	@handler SendUserMessage
+	post /sessions/:sessionNo/messages (SendUserMessageReq) returns (ChatMessageResp)
+
+	@handler ListMyChatMessages
+	get /sessions/:sessionNo/messages (ListChatMessagesReq) returns (ListChatMessagesResp)
+
+	@handler MarkUserMessagesRead
+	put /sessions/:sessionNo/read (MarkUserMessagesReadReq) returns (RespBase)
+
+	@handler CloseMyChatSession
+	put /sessions/:sessionNo/close (CloseMyChatSessionReq) returns (ChatSessionResp)
+}
+

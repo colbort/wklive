@@ -1,0 +1,592 @@
+package logic
+
+import (
+	"context"
+	"database/sql"
+	"encoding/json"
+	"fmt"
+	"strings"
+	"sync/atomic"
+	"time"
+
+	"wklive/common/helper"
+	"wklive/common/pageutil"
+	"wklive/proto/chat"
+	"wklive/proto/common"
+	"wklive/services/chat/internal/svc"
+	"wklive/services/chat/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/structpb"
+)
+
+const (
+	defaultAgentMaxSessionCount = 10
+	defaultDeviceID             = ""
+)
+
+var sequence uint64
+
+func okBase() *common.RespBase {
+	return helper.OkResp()
+}
+
+func badBase(msg string) *common.RespBase {
+	return helper.GetErrResp(400, msg)
+}
+
+func notFoundBase(msg string) *common.RespBase {
+	return helper.GetErrResp(404, msg)
+}
+
+func errorBase(err error) *common.RespBase {
+	if err == nil {
+		return helper.FailResp()
+	}
+	return helper.GetErrResp(500, err.Error())
+}
+
+func nowMillis() int64 {
+	return time.Now().UnixMilli()
+}
+
+func nextNo(prefix string) string {
+	n := atomic.AddUint64(&sequence, 1)
+	return fmt.Sprintf("%s%d%06d", prefix, time.Now().UnixMilli(), n%1000000)
+}
+
+func pageInput(page *common.PageReq) (int64, int64) {
+	return pageutil.Input(page)
+}
+
+func offsetBase(cursor, limit int64, size int, total int64) *common.RespBase {
+	if cursor < 0 {
+		cursor = 0
+	}
+	if limit <= 0 {
+		limit = pageutil.NormalizeLimit(limit)
+	}
+	nextCursor := cursor + int64(size)
+	hasNext := nextCursor < total
+	prevCursor := cursor - limit
+	if prevCursor < 0 {
+		prevCursor = 0
+	}
+	return helper.OkWithOthers(total, hasNext, cursor > 0, nextCursor, prevCursor)
+}
+
+func messageNextCursor(list []*models.ChatMessage) int64 {
+	if len(list) == 0 {
+		return 0
+	}
+	return list[len(list)-1].CreateTimes
+}
+
+func normalizeMessageType(value chat.ChatMessageType) chat.ChatMessageType {
+	if value == chat.ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN {
+		return chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT
+	}
+	return value
+}
+
+func normalizeSource(value chat.ChatSessionSource) chat.ChatSessionSource {
+	if value == chat.ChatSessionSource_CHAT_SESSION_SOURCE_UNKNOWN {
+		return chat.ChatSessionSource_CHAT_SESSION_SOURCE_APP
+	}
+	return value
+}
+
+func normalizePriority(value chat.ChatSessionPriority) chat.ChatSessionPriority {
+	if value == chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_UNKNOWN {
+		return chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL
+	}
+	return value
+}
+
+func normalizeAssignType(value chat.ChatAssignType) chat.ChatAssignType {
+	if value == chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN {
+		return chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL
+	}
+	return value
+}
+
+func validateMerchantUser(merchantID, userID int64) error {
+	if merchantID <= 0 {
+		return fmt.Errorf("merchant_id is required")
+	}
+	if userID <= 0 {
+		return fmt.Errorf("user_id is required")
+	}
+	return nil
+}
+
+func validateSessionKey(merchantID int64, sessionNo string) error {
+	if merchantID <= 0 {
+		return fmt.Errorf("merchant_id is required")
+	}
+	if strings.TrimSpace(sessionNo) == "" {
+		return fmt.Errorf("session_no is required")
+	}
+	return nil
+}
+
+func trimSummary(content, mediaName, mediaURL string) string {
+	summary := strings.TrimSpace(content)
+	if summary == "" {
+		summary = strings.TrimSpace(mediaName)
+	}
+	if summary == "" {
+		summary = strings.TrimSpace(mediaURL)
+	}
+	if len([]rune(summary)) <= 200 {
+		return summary
+	}
+	return string([]rune(summary)[:200])
+}
+
+func structToNullString(st *structpb.Struct) sql.NullString {
+	if st == nil {
+		return sql.NullString{}
+	}
+	bs, err := json.Marshal(st.AsMap())
+	if err != nil {
+		return sql.NullString{}
+	}
+	return sql.NullString{String: string(bs), Valid: true}
+}
+
+func nullStringToStruct(ns sql.NullString) *structpb.Struct {
+	if !ns.Valid || strings.TrimSpace(ns.String) == "" {
+		return nil
+	}
+	var m map[string]any
+	if err := json.Unmarshal([]byte(ns.String), &m); err != nil {
+		return nil
+	}
+	st, err := structpb.NewStruct(m)
+	if err != nil {
+		return nil
+	}
+	return st
+}
+
+func mapToStruct(m map[string]any) *structpb.Struct {
+	if len(m) == 0 {
+		return nil
+	}
+	st, err := structpb.NewStruct(m)
+	if err != nil {
+		return nil
+	}
+	return st
+}
+
+func toProtoAgent(data *models.TChatAgent) *chat.ChatAgent {
+	if data == nil {
+		return nil
+	}
+	return &chat.ChatAgent{
+		Id:                  data.Id,
+		MerchantId:          data.MerchantId,
+		ChatUserId:          data.ChatUserId,
+		AgentNo:             data.AgentNo,
+		Status:              chat.ChatAgentStatus(data.Status),
+		MaxSessionCount:     int32(data.MaxSessionCount),
+		CurrentSessionCount: int32(data.CurrentSessionCount),
+		LastActiveTime:      data.LastActiveTime,
+		Remark:              data.Remark,
+		CreateTimes:         data.CreateTimes,
+		UpdateTimes:         data.UpdateTimes,
+		GroupId:             data.GroupId,
+	}
+}
+
+func toProtoAgents(list []*models.TChatAgent) []*chat.ChatAgent {
+	resp := make([]*chat.ChatAgent, 0, len(list))
+	for _, item := range list {
+		resp = append(resp, toProtoAgent(item))
+	}
+	return resp
+}
+
+func toProtoSession(data *models.TChatSession) *chat.ChatSession {
+	if data == nil {
+		return nil
+	}
+	return &chat.ChatSession{
+		Id:               data.Id,
+		SessionNo:        data.SessionNo,
+		MerchantId:       data.MerchantId,
+		UserId:           data.UserId,
+		Source:           chat.ChatSessionSource(data.Source),
+		Status:           chat.ChatSessionStatus(data.Status),
+		Priority:         chat.ChatSessionPriority(data.Priority),
+		AgentId:          data.AgentId,
+		Title:            data.Title,
+		Category:         data.Category,
+		LastMessage:      data.LastMessage,
+		LastSenderType:   chat.ChatSenderType(data.LastSenderType),
+		LastMessageTime:  data.LastMessageTime,
+		UserUnreadCount:  int32(data.UserUnreadCount),
+		AgentUnreadCount: int32(data.AgentUnreadCount),
+		CloseTime:        data.CloseTime,
+		CloseReason:      data.CloseReason,
+		ExtJson:          nullStringToStruct(data.ExtJson),
+		CreateTimes:      data.CreateTimes,
+		UpdateTimes:      data.UpdateTimes,
+		GroupId:          data.GroupId,
+		LastMessageNo:    data.LastMessageNo,
+	}
+}
+
+func toProtoSessions(list []*models.TChatSession) []*chat.ChatSession {
+	resp := make([]*chat.ChatSession, 0, len(list))
+	for _, item := range list {
+		resp = append(resp, toProtoSession(item))
+	}
+	return resp
+}
+
+func toProtoMessage(data *models.ChatMessage) *chat.ChatMessage {
+	if data == nil {
+		return nil
+	}
+	return &chat.ChatMessage{
+		MessageNo:   data.MessageNo,
+		SessionNo:   data.SessionNo,
+		MerchantId:  data.MerchantId,
+		UserId:      data.UserId,
+		AgentId:     data.AgentId,
+		SenderType:  chat.ChatSenderType(data.SenderType),
+		SenderId:    data.SenderId,
+		SenderName:  data.SenderName,
+		MessageType: chat.ChatMessageType(data.MessageType),
+		Content:     data.Content,
+		MediaUrl:    data.MediaUrl,
+		MediaName:   data.MediaName,
+		MediaMime:   data.MediaMime,
+		MediaSize:   data.MediaSize,
+		Status:      chat.ChatMessageStatus(data.Status),
+		Payload:     mapToStruct(data.Payload),
+		ReadTime:    data.ReadTime,
+		CreateTimes: data.CreateTimes,
+		UpdateTimes: data.UpdateTimes,
+	}
+}
+
+func toProtoMessages(list []*models.ChatMessage) []*chat.ChatMessage {
+	resp := make([]*chat.ChatMessage, 0, len(list))
+	for _, item := range list {
+		resp = append(resp, toProtoMessage(item))
+	}
+	return resp
+}
+
+func toProtoUser(data *models.TChatUser) *chat.ChatUser {
+	if data == nil {
+		return nil
+	}
+	return &chat.ChatUser{
+		Id:            data.Id,
+		MerchantId:    data.MerchantId,
+		UserType:      chat.ChatUserType(data.UserType),
+		IsOwner:       common.YesNo(data.IsOwner),
+		Username:      data.Username,
+		Nickname:      data.Nickname,
+		AvatarUrl:     data.AvatarUrl,
+		Mobile:        data.Mobile,
+		Email:         data.Email,
+		Enabled:       common.Enable(data.Enabled),
+		LastLoginTime: data.LastLoginTime,
+		Remark:        data.Remark,
+		CreateTimes:   data.CreateTimes,
+		UpdateTimes:   data.UpdateTimes,
+		Password:      data.Password,
+		LastLoginIp:   data.LastLoginIp,
+	}
+}
+
+func getSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int64, sessionNo string) (*models.TChatSession, *common.RespBase, error) {
+	if err := validateSessionKey(merchantID, sessionNo); err != nil {
+		return nil, badBase(err.Error()), nil
+	}
+	data, err := svcCtx.ChatSessionModel.FindOneBySessionNo(ctx, sessionNo)
+	if err == models.ErrNotFound {
+		return nil, notFoundBase("chat session not found"), nil
+	}
+	if err != nil {
+		return nil, nil, err
+	}
+	if data.MerchantId != merchantID {
+		return nil, notFoundBase("chat session not found"), nil
+	}
+	return data, nil, nil
+}
+
+func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID, userID int64, source chat.ChatSessionSource, title, category string, priority chat.ChatSessionPriority, ext *structpb.Struct) (*models.TChatSession, bool, error) {
+	if err := validateMerchantUser(merchantID, userID); err != nil {
+		return nil, false, err
+	}
+	data, err := svcCtx.ChatSessionModel.FindOpenByUser(ctx, merchantID, userID)
+	if err == nil {
+		return data, false, nil
+	}
+	if err != models.ErrNotFound {
+		return nil, false, err
+	}
+
+	now := nowMillis()
+	data = &models.TChatSession{
+		SessionNo:       nextNo("CS"),
+		MerchantId:      merchantID,
+		UserId:          userID,
+		Source:          int64(normalizeSource(source)),
+		Status:          int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING),
+		Priority:        int64(normalizePriority(priority)),
+		Title:           strings.TrimSpace(title),
+		Category:        strings.TrimSpace(category),
+		LastMessageTime: now,
+		ExtJson:         structToNullString(ext),
+		CreateTimes:     now,
+		UpdateTimes:     now,
+	}
+	result, err := svcCtx.ChatSessionModel.Insert(ctx, data)
+	if err != nil {
+		return nil, false, err
+	}
+	if id, err := result.LastInsertId(); err == nil {
+		data.Id = id
+	}
+	return data, true, nil
+}
+
+func newMessage(session *models.TChatSession, senderType chat.ChatSenderType, senderID int64, senderName string, messageType chat.ChatMessageType, content, mediaURL, mediaName, mediaMIME string, mediaSize int64, payload *structpb.Struct) *models.ChatMessage {
+	now := nowMillis()
+	msg := &models.ChatMessage{
+		MessageNo:   nextNo("CM"),
+		SessionNo:   session.SessionNo,
+		MerchantId:  session.MerchantId,
+		UserId:      session.UserId,
+		AgentId:     session.AgentId,
+		SenderType:  int64(senderType),
+		SenderId:    senderID,
+		SenderName:  senderName,
+		MessageType: int64(normalizeMessageType(messageType)),
+		Content:     strings.TrimSpace(content),
+		MediaUrl:    strings.TrimSpace(mediaURL),
+		MediaName:   strings.TrimSpace(mediaName),
+		MediaMime:   strings.TrimSpace(mediaMIME),
+		MediaSize:   mediaSize,
+		Status:      int64(chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT),
+		CreateTimes: now,
+		UpdateTimes: now,
+	}
+	if payload != nil {
+		msg.Payload = payload.AsMap()
+	}
+	return msg
+}
+
+func sendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, msg *models.ChatMessage) (*models.ChatMessage, error) {
+	model := svcCtx.ChatMessageFactory.New(session.MerchantId)
+	if model == nil {
+		return nil, fmt.Errorf("invalid merchant_id: %d", session.MerchantId)
+	}
+	if err := model.Insert(ctx, msg); err != nil {
+		return nil, err
+	}
+
+	now := msg.CreateTimes
+	session.LastMessageNo = msg.MessageNo
+	session.LastMessage = trimSummary(msg.Content, msg.MediaName, msg.MediaUrl)
+	session.LastSenderType = msg.SenderType
+	session.LastMessageTime = now
+	session.UpdateTimes = now
+	switch chat.ChatSenderType(msg.SenderType) {
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_USER:
+		session.AgentUnreadCount++
+		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+			session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT)
+		}
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT:
+		session.UserUnreadCount++
+		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+			session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_USER)
+		}
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM:
+		session.UserUnreadCount++
+	}
+	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
+		return nil, err
+	}
+	publishMessageEvent(ctx, svcCtx, msg)
+	return msg, nil
+}
+
+func publishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, msg *models.ChatMessage) {
+	if svcCtx.BusRedis == nil || msg == nil {
+		return
+	}
+
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatMessageEventTypeMessage,
+		CreatedAt: nowMillis(),
+		Data:      toProtoMessage(msg),
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("marshal chat message event failed: %v", err)
+		return
+	}
+	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
+		logx.WithContext(ctx).Errorf("publish chat message event failed: %v", err)
+	}
+}
+
+func changeAgentSessionCount(ctx context.Context, svcCtx *svc.ServiceContext, agentID int64, delta int64) error {
+	if agentID <= 0 || delta == 0 {
+		return nil
+	}
+	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, agentID)
+	if err == models.ErrNotFound {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	agent.CurrentSessionCount += delta
+	if agent.CurrentSessionCount < 0 {
+		agent.CurrentSessionCount = 0
+	}
+	agent.UpdateTimes = nowMillis()
+	return svcCtx.ChatAgentModel.Update(ctx, agent)
+}
+
+func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.AssignChatSessionReq) (*models.TChatSession, *common.RespBase, error) {
+	session, base, err := getSession(ctx, svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	if base != nil || err != nil {
+		return nil, base, err
+	}
+	if in.GetToAgentId() <= 0 {
+		return nil, badBase("to_agent_id is required"), nil
+	}
+	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+		return nil, badBase("chat session is closed"), nil
+	}
+	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, in.GetToAgentId())
+	if err == models.ErrNotFound || agent.MerchantId != in.GetMerchantId() {
+		return nil, notFoundBase("chat agent not found"), nil
+	}
+	if err != nil {
+		return nil, nil, err
+	}
+
+	fromAgentID := session.AgentId
+	if fromAgentID != agent.Id {
+		if err := changeAgentSessionCount(ctx, svcCtx, fromAgentID, -1); err != nil {
+			return nil, nil, err
+		}
+		if err := changeAgentSessionCount(ctx, svcCtx, agent.Id, 1); err != nil {
+			return nil, nil, err
+		}
+	}
+
+	now := nowMillis()
+	session.AgentId = agent.Id
+	session.GroupId = agent.GroupId
+	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING)
+	session.UpdateTimes = now
+	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
+		return nil, nil, err
+	}
+
+	_, err = svcCtx.ChatAssignmentModel.Insert(ctx, &models.TChatAssignment{
+		SessionNo:   session.SessionNo,
+		MerchantId:  session.MerchantId,
+		FromAgentId: fromAgentID,
+		ToAgentId:   agent.Id,
+		AssignType:  int64(normalizeAssignType(in.GetAssignType())),
+		OperatorId:  in.GetOperatorId(),
+		Reason:      strings.TrimSpace(in.GetReason()),
+		CreateTimes: now,
+		UpdateTimes: now,
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return session, nil, nil
+}
+
+func autoAssignSession(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) error {
+	if session.AgentId != 0 || session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+		return nil
+	}
+	agents, err := svcCtx.ChatAgentModel.FindAvailable(ctx, session.MerchantId, session.GroupId, 1)
+	if err != nil || len(agents) == 0 {
+		return err
+	}
+	_, _, err = assignSession(ctx, svcCtx, &chat.AssignChatSessionReq{
+		MerchantId: session.MerchantId,
+		SessionNo:  session.SessionNo,
+		ToAgentId:  agents[0].Id,
+		AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_AUTO,
+		OperatorId: agents[0].ChatUserId,
+		Reason:     "auto assign",
+	})
+	return err
+}
+
+func markRead(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, readerType chat.ChatSenderType, readerID int64) error {
+	now := nowMillis()
+	lastNo := session.LastMessageNo
+	cursor, err := svcCtx.ChatReadCursorModel.FindOneByMerchantIdSessionNoReaderTypeReaderIdDeviceId(ctx, session.MerchantId, session.SessionNo, int64(readerType), readerID, defaultDeviceID)
+	switch err {
+	case models.ErrNotFound:
+		_, err = svcCtx.ChatReadCursorModel.Insert(ctx, &models.TChatReadCursor{
+			MerchantId:        session.MerchantId,
+			SessionNo:         session.SessionNo,
+			ReaderType:        int64(readerType),
+			ReaderId:          readerID,
+			DeviceId:          defaultDeviceID,
+			LastReadMessageNo: lastNo,
+			LastReadTime:      now,
+			CreateTimes:       now,
+			UpdateTimes:       now,
+		})
+	case nil:
+		cursor.LastReadMessageNo = lastNo
+		cursor.LastReadTime = now
+		cursor.UpdateTimes = now
+		err = svcCtx.ChatReadCursorModel.Update(ctx, cursor)
+	}
+	if err != nil {
+		return err
+	}
+
+	switch readerType {
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_USER:
+		session.UserUnreadCount = 0
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT:
+		session.AgentUnreadCount = 0
+	}
+	session.UpdateTimes = now
+	return svcCtx.ChatSessionModel.Update(ctx, session)
+}
+
+func closeSession(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, reason string) error {
+	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+		return nil
+	}
+	now := nowMillis()
+	oldAgentID := session.AgentId
+	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED)
+	session.CloseTime = now
+	session.CloseReason = strings.TrimSpace(reason)
+	session.UpdateTimes = now
+	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
+		return err
+	}
+	return changeAgentSessionCount(ctx, svcCtx, oldAgentID, -1)
+}

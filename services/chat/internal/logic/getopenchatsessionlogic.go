@@ -5,6 +5,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
+	"wklive/services/chat/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +26,15 @@ func NewGetOpenChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 查询用户未关闭会话
 func (l *GetOpenChatSessionLogic) GetOpenChatSession(in *chat.GetOpenChatSessionReq) (*chat.InternalChatSessionResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.InternalChatSessionResp{}, nil
+	if err := validateMerchantUser(in.GetMerchantId(), in.GetUserId()); err != nil {
+		return &chat.InternalChatSessionResp{Base: badBase(err.Error())}, nil
+	}
+	data, err := l.svcCtx.ChatSessionModel.FindOpenByUser(l.ctx, in.GetMerchantId(), in.GetUserId())
+	if err == models.ErrNotFound {
+		return &chat.InternalChatSessionResp{Base: notFoundBase("chat session not found")}, nil
+	}
+	if err != nil {
+		return &chat.InternalChatSessionResp{Base: errorBase(err)}, nil
+	}
+	return &chat.InternalChatSessionResp{Base: okBase(), Data: toProtoSession(data)}, nil
 }
