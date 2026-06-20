@@ -1,0 +1,207 @@
+syntax = "proto3";
+
+package chat;
+
+import "google/protobuf/struct.proto";
+import "proto/common/common.proto";
+import "proto/chat/enum.proto";
+
+option go_package = "wklive/proto/chat;chat";
+
+
+// 客服用户/商户账号
+message ChatUser {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  ChatUserType user_type = 3; // 用户类型
+  common.YesNo is_owner = 4; // 是否商户主账号
+  string username = 5; // 登录账号
+  string nickname = 6; // 昵称
+  string avatar_url = 7; // 头像URL
+  string mobile = 8; // 手机号
+  string email = 9; // 邮箱
+  common.Enable enabled = 10; // 启用状态
+  int64 last_login_time = 11; // 最后登录时间戳(毫秒)
+  string remark = 12; // 备注
+  int64 create_times = 13; // 创建时间戳(毫秒)
+  int64 update_times = 14; // 更新时间戳(毫秒)
+  string password = 15; // bcrypt密码,仅内部使用
+  string last_login_ip = 16; // 最后登录IP
+}
+
+// 客服坐席
+message ChatAgent {
+  reserved 5, 6, 10;
+
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  int64 chat_user_id = 3; // 客服用户ID
+  string agent_no = 4; // 坐席编号
+  ChatAgentStatus status = 7; // 在线状态
+  int32 max_session_count = 8; // 最大同时接待数
+  int32 current_session_count = 9; // 当前接待数
+  int64 last_active_time = 11; // 最后活跃时间戳(毫秒)
+  string remark = 12; // 备注
+  int64 create_times = 13; // 创建时间戳(毫秒)
+  int64 update_times = 14; // 更新时间戳(毫秒)
+  int64 group_id = 15; // 客服分组ID
+}
+
+// 客服会话
+message ChatSession {
+  int64 id = 1; // 主键ID
+  string session_no = 2; // 会话编号
+  int64 merchant_id = 3; // 客服商户ID
+  int64 user_id = 4; // 用户ID
+  ChatSessionSource source = 5; // 来源
+  ChatSessionStatus status = 6; // 状态
+  ChatSessionPriority priority = 7; // 优先级
+  int64 agent_id = 8; // 当前坐席ID
+  string title = 9; // 会话标题
+  string category = 10; // 问题分类
+  string last_message = 11; // 最后一条消息摘要
+  ChatSenderType last_sender_type = 12; // 最后一条消息发送方
+  int64 last_message_time = 13; // 最后一条消息时间戳(毫秒)
+  int32 user_unread_count = 14; // 用户未读数
+  int32 agent_unread_count = 15; // 坐席未读数
+  int64 close_time = 16; // 结束时间戳(毫秒)
+  string close_reason = 17; // 结束原因
+  google.protobuf.Struct ext_json = 18; // 扩展信息
+  int64 create_times = 19; // 创建时间戳(毫秒)
+  int64 update_times = 20; // 更新时间戳(毫秒)
+  int64 group_id = 21; // 目标客服分组ID
+  string last_message_no = 22; // 最后一条消息编号
+}
+
+// 客服消息
+message ChatMessage {
+  int64 id = 1; // 主键ID
+  string message_no = 2; // 消息编号
+  string session_no = 3; // 会话编号
+  int64 merchant_id = 4; // 客服商户ID
+  int64 user_id = 5; // 用户ID
+  int64 agent_id = 6; // 坐席ID
+  ChatSenderType sender_type = 7; // 发送方类型
+  int64 sender_id = 8; // 发送方ID
+  string sender_name = 9; // 发送方名称
+  ChatMessageType message_type = 10; // 消息类型
+  string content = 11; // 文本内容
+  string media_url = 12; // 媒体/文件URL
+  string media_name = 13; // 文件名
+  string media_mime = 14; // MIME类型
+  int64 media_size = 15; // 文件大小(bytes)
+  ChatMessageStatus status = 16; // 消息状态
+  google.protobuf.Struct payload = 17; // 卡片/扩展载荷
+  int64 read_time = 18; // 已读时间戳(毫秒)
+  int64 create_times = 19; // 创建时间戳(毫秒)
+  int64 update_times = 20; // 更新时间戳(毫秒)
+}
+
+// 会话分配记录
+message ChatAssignment {
+  int64 id = 1; // 主键ID
+  string session_no = 2; // 会话编号
+  int64 merchant_id = 3; // 客服商户ID
+  int64 from_agent_id = 4; // 原坐席ID
+  int64 to_agent_id = 5; // 目标坐席ID
+  ChatAssignType assign_type = 6; // 分配方式
+  int64 operator_id = 7; // 操作人ID
+  string reason = 8; // 分配/转接原因
+  int64 create_times = 9; // 创建时间戳(毫秒)
+  int64 update_times = 10; // 更新时间戳(毫秒)
+}
+
+// 客服快捷回复
+message ChatQuickReply {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  int64 agent_id = 3; // 坐席ID,0表示公共快捷回复
+  int64 category_id = 4; // 分类ID
+  string title = 5; // 快捷回复标题
+  string content = 6; // 快捷回复内容
+  common.Enable enabled = 7; // 启用状态
+  int32 sort = 8; // 排序,越小越靠前
+  string remark = 9; // 备注
+  int64 create_times = 10; // 创建时间戳(毫秒)
+  int64 update_times = 11; // 更新时间戳(毫秒)
+}
+
+// 客服问题分类
+message ChatCategory {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  int64 parent_id = 3; // 父级分类ID
+  string category_code = 4; // 分类编码
+  string category_name = 5; // 分类名称
+  common.Enable enabled = 6; // 启用状态
+  int32 sort = 7; // 排序,越小越靠前
+  string remark = 8; // 备注
+  int64 create_times = 9; // 创建时间戳(毫秒)
+  int64 update_times = 10; // 更新时间戳(毫秒)
+}
+
+// 客服会话满意度评价
+message ChatSatisfaction {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  string session_no = 3; // 会话编号
+  int64 user_id = 4; // 用户ID
+  int64 agent_id = 5; // 坐席ID
+  int32 score = 6; // 满意度评分:1-5
+  string content = 7; // 评价内容
+  string tags = 8; // 评价标签,逗号分隔
+  int64 create_times = 9; // 创建时间戳(毫秒)
+  int64 update_times = 10; // 更新时间戳(毫秒)
+}
+
+// 客服消息已读游标
+message ChatReadCursor {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  string session_no = 3; // 会话编号
+  ChatSenderType reader_type = 4; // 读取方类型
+  int64 reader_id = 5; // 读取方ID
+  string device_id = 6; // 设备ID,为空表示默认设备
+  string last_read_message_no = 7; // 最后已读消息编号
+  int64 last_read_time = 8; // 最后已读时间戳(毫秒)
+  int64 create_times = 9; // 创建时间戳(毫秒)
+  int64 update_times = 10; // 更新时间戳(毫秒)
+}
+
+// 客服分组
+message ChatGroup {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  string group_code = 3; // 分组编码
+  string group_name = 4; // 分组名称
+  string description = 5; // 分组描述
+  common.Enable enabled = 6; // 启用状态
+  int32 sort = 7; // 排序,越小越靠前
+  string remark = 8; // 备注
+  int64 create_times = 9; // 创建时间戳(毫秒)
+  int64 update_times = 10; // 更新时间戳(毫秒)
+}
+
+// 客服工单/离线留言
+message ChatWorkOrder {
+  int64 id = 1; // 主键ID
+  int64 merchant_id = 2; // 客服商户ID
+  string work_order_no = 3; // 工单编号
+  string session_no = 4; // 关联会话编号
+  int64 user_id = 5; // 用户ID
+  int64 agent_id = 6; // 坐席ID
+  int64 group_id = 7; // 客服分组ID
+  string title = 8; // 工单标题
+  string content = 9; // 工单内容/离线留言
+  string contact_name = 10; // 联系人
+  string contact_mobile = 11; // 联系电话
+  string contact_email = 12; // 联系邮箱
+  ChatSessionPriority priority = 13; // 优先级
+  int32 status = 14; // 状态:1待处理 2处理中 3已完成 4已关闭
+  int64 handler_id = 15; // 处理人ID
+  string handle_result = 16; // 处理结果
+  int64 finish_time = 17; // 完成时间戳(毫秒)
+  string remark = 18; // 备注
+  int64 create_times = 19; // 创建时间戳(毫秒)
+  int64 update_times = 20; // 更新时间戳(毫秒)
+}

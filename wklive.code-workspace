@@ -25,6 +25,14 @@
       "name": "app-web"
     },
     {
+      "path": "chat-api",
+      "name": "chat-api"
+    },
+    {
+      "path": "chat-admin",
+      "name": "chat-admin"
+    },
+    {
       "path": "services",
       "name": "services"
     },

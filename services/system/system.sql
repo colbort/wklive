@@ -335,3 +335,32 @@ CREATE TABLE sys_tenant (
   KEY idx_enabled (enabled),
   KEY idx_expire_time (expire_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户表';
+
+
+-- =============================
+-- 客服商户表
+-- 说明：
+-- 1. 客服商户不混用 sys_tenant，作为客服业务独立商户主体
+-- 2. services/chat 通过 merchant_id 关联本表 id
+-- 3. 客服商户账号/坐席身份由 services/chat.t_chat_user 管理
+-- =============================
+DROP TABLE IF EXISTS sys_chat_merchant;
+CREATE TABLE sys_chat_merchant (
+  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '客服商户ID',
+  merchant_code VARCHAR(64) NOT NULL DEFAULT '' COMMENT '客服商户编码',
+  merchant_name VARCHAR(128) NOT NULL DEFAULT '' COMMENT '客服商户名称',
+  enabled TINYINT NOT NULL DEFAULT 1 COMMENT '启用开关：1启用 2禁用',
+  expire_time BIGINT DEFAULT 0 COMMENT '到期时间',
+  contact_name VARCHAR(64) DEFAULT NULL COMMENT '联系人',
+  contact_phone VARCHAR(32) DEFAULT NULL COMMENT '联系电话',
+  contact_email VARCHAR(128) DEFAULT NULL COMMENT '联系邮箱',
+  remark VARCHAR(255) DEFAULT NULL COMMENT '备注',
+  create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+  create_times BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
+  update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
+  update_times BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_merchant_code (merchant_code),
+  KEY idx_enabled (enabled),
+  KEY idx_expire_time (expire_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='客服商户表';

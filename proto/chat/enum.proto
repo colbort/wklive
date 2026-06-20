@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "wklive/proto/chat;chat";
+
+// 会话来源
+enum ChatSessionSource {
+  CHAT_SESSION_SOURCE_UNKNOWN = 0;
+  CHAT_SESSION_SOURCE_APP = 1; // APP用户发起
+  CHAT_SESSION_SOURCE_WEB = 2; // Web/H5用户发起
+  CHAT_SESSION_SOURCE_ADMIN = 3; // 后台创建
+  CHAT_SESSION_SOURCE_SYSTEM = 4; // 系统创建
+}
+
+// 会话状态
+enum ChatSessionStatus {
+  CHAT_SESSION_STATUS_UNKNOWN = 0;
+  CHAT_SESSION_STATUS_WAITING = 1; // 等待接入
+  CHAT_SESSION_STATUS_SERVING = 2; // 服务中
+  CHAT_SESSION_STATUS_PENDING_USER = 3; // 等待用户回复
+  CHAT_SESSION_STATUS_PENDING_AGENT = 4; // 等待客服回复
+  CHAT_SESSION_STATUS_CLOSED = 5; // 已结束
+}
+
+// 会话优先级
+enum ChatSessionPriority {
+  CHAT_SESSION_PRIORITY_UNKNOWN = 0;
+  CHAT_SESSION_PRIORITY_LOW = 1; // 低
+  CHAT_SESSION_PRIORITY_NORMAL = 2; // 普通
+  CHAT_SESSION_PRIORITY_HIGH = 3; // 高
+  CHAT_SESSION_PRIORITY_URGENT = 4; // 紧急
+}
+
+// 坐席在线状态
+enum ChatAgentStatus {
+  CHAT_AGENT_STATUS_UNKNOWN = 0;
+  CHAT_AGENT_STATUS_OFFLINE = 1; // 离线
+  CHAT_AGENT_STATUS_ONLINE = 2; // 在线
+  CHAT_AGENT_STATUS_BUSY = 3; // 忙碌
+  CHAT_AGENT_STATUS_RESTING = 4; // 休息
+}
+
+// 消息发送方类型
+enum ChatSenderType {
+  CHAT_SENDER_TYPE_UNKNOWN = 0;
+  CHAT_SENDER_TYPE_USER = 1; // 用户
+  CHAT_SENDER_TYPE_AGENT = 2; // 客服
+  CHAT_SENDER_TYPE_SYSTEM = 3; // 系统
+}
+
+// 消息类型
+enum ChatMessageType {
+  CHAT_MESSAGE_TYPE_UNKNOWN = 0;
+  CHAT_MESSAGE_TYPE_TEXT = 1; // 文本
+  CHAT_MESSAGE_TYPE_IMAGE = 2; // 图片
+  CHAT_MESSAGE_TYPE_FILE = 3; // 文件
+  CHAT_MESSAGE_TYPE_ORDER = 4; // 订单/业务卡片
+  CHAT_MESSAGE_TYPE_SYSTEM = 5; // 系统提示
+}
+
+// 消息发送状态
+enum ChatMessageStatus {
+  CHAT_MESSAGE_STATUS_UNKNOWN = 0;
+  CHAT_MESSAGE_STATUS_SENT = 1; // 已发送
+  CHAT_MESSAGE_STATUS_READ = 2; // 已读
+  CHAT_MESSAGE_STATUS_RECALLED = 3; // 已撤回
+  CHAT_MESSAGE_STATUS_DELETED = 4; // 已删除
+}
+
+// 分配方式
+enum ChatAssignType {
+  CHAT_ASSIGN_TYPE_UNKNOWN = 0;
+  CHAT_ASSIGN_TYPE_AUTO = 1; // 自动分配
+  CHAT_ASSIGN_TYPE_MANUAL = 2; // 手动分配
+  CHAT_ASSIGN_TYPE_TRANSFER = 3; // 转接
+}
+
+
+// 客服用户类型
+enum ChatUserType {
+  reserved 3;
+
+  CHAT_USER_TYPE_UNKNOWN = 0;
+  CHAT_USER_TYPE_MERCHANT = 1; // 客服商户
+  CHAT_USER_TYPE_AGENT = 2; // 客服坐席
+}
+
+// 同步动作
+enum ChatSyncAction {
+  CHAT_SYNC_ACTION_UNKNOWN = 0;
+  CHAT_SYNC_ACTION_UPSERT = 1; // 创建或更新
+  CHAT_SYNC_ACTION_DELETE = 2; // 删除/禁用
+}

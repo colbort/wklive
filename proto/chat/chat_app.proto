@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package chat;
+
+import "proto/common/common.proto";
+import "proto/chat/enum.proto";
+import "proto/chat/model.proto";
+
+option go_package = "wklive/proto/chat;chat";
+
+// 用户端客服服务
+service ChatApp {
+  // 创建或获取当前会话
+  rpc OpenChatSession(OpenChatSessionReq) returns (AppChatSessionResp);
+
+  // 查询我的会话列表
+  rpc ListMyChatSessions(ListMyChatSessionsReq) returns (ListChatSessionsResp);
+
+  // 查询会话详情
+  rpc GetMyChatSession(GetMyChatSessionReq) returns (AppChatSessionResp);
+
+  // 发送用户消息
+  rpc SendUserMessage(SendUserMessageReq) returns (AppChatMessageResp);
+
+  // 查询会话消息
+  rpc ListMyChatMessages(ListMyChatMessagesReq) returns (ListChatMessagesResp);
+
+  // 标记用户侧已读
+  rpc MarkUserMessagesRead(MarkUserMessagesReadReq) returns (AppMarkMessagesReadResp);
+
+  // 关闭我的会话
+  rpc CloseMyChatSession(CloseMyChatSessionReq) returns (AppChatSessionResp);
+}
+
+message OpenChatSessionReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 user_id = 2; // 用户ID
+  ChatSessionSource source = 3; // 来源
+  string title = 4; // 会话标题
+  string category = 5; // 问题分类
+  string first_message = 6; // 首条消息内容
+}
+
+message ListMyChatSessionsReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 user_id = 2; // 用户ID
+  ChatSessionStatus status = 3; // 状态,0表示全部
+  common.PageReq page = 4; // 分页
+}
+
+message GetMyChatSessionReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 user_id = 2; // 用户ID
+  string session_no = 3; // 会话编号
+}
+
+message SendUserMessageReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 user_id = 2; // 用户ID
+  string session_no = 3; // 会话编号
+  ChatMessageType message_type = 4; // 消息类型
+  string content = 5; // 文本内容
+  string media_url = 6; // 媒体/文件URL
+  string media_name = 7; // 文件名
+  string media_mime = 8; // MIME类型
+  int64 media_size = 9; // 文件大小(bytes)
+}
+
+message ListMyChatMessagesReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 user_id = 2; // 用户ID
+  string session_no = 3; // 会话编号
+  common.PageReq page = 4; // 分页
+}
+
+message MarkUserMessagesReadReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 user_id = 2; // 用户ID
+  string session_no = 3; // 会话编号
+  int64 last_message_id = 4; // 最后已读消息ID,0表示全部
+}
+
+message CloseMyChatSessionReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 user_id = 2; // 用户ID
+  string session_no = 3; // 会话编号
+  string close_reason = 4; // 结束原因
+}
+
+
+message ListChatSessionsResp {
+  common.RespBase base = 1;
+  repeated ChatSession data = 2;
+}
+
+
+message ListChatMessagesResp {
+  common.RespBase base = 1;
+  repeated ChatMessage data = 2;
+}
+
+message AppChatSessionResp {
+  common.RespBase base = 1;
+  ChatSession data = 2;
+}
+
+message AppChatMessageResp {
+  common.RespBase base = 1;
+  ChatMessage data = 2;
+}
+
+message AppMarkMessagesReadResp {
+  common.RespBase base = 1;
+}
+

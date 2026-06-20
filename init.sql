@@ -273,7 +273,12 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 11004),
 (0, 1, 11100),
 (0, 1, 11101),
-(0, 1, 11102);
+(0, 1, 11102),
+(0, 1, 11103),
+(0, 1, 11104),
+(0, 1, 11200),
+(0, 1, 11201),
+(0, 1, 11202);
 
 INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 -- 用户管理
@@ -828,8 +833,17 @@ VALUES
 (11004, 11000, '获取租户详情', 3, 'GET', '/system/tenant/detail', 'sys:tenant:detail', 11004);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (11100, 10000, '验证码记录', 2, 'GET', '/system/verification-codes', 'sys:verification-code:list', 'system/verification-codes', 'Message', 11100);
+VALUES (11100, 10000, '客服商户管理', 2, 'GET', '/system/chat_merchants', 'sys:chat_merchant:list', 'system/chat_merchants', 'Team', 11100);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(11101, 11100, '验证码详情', 3, 'GET', '/system/verification-codes/{id}', 'sys:verification-code:detail', 11101),
-(11102, 11100, '测试发送验证码', 3, 'POST', '/system/verification-codes/test', 'sys:verification-code:test', 11102);
+(11101, 11100, '新增客服商户', 3, 'POST', '/system/chat_merchant', 'sys:chat_merchant:add', 11101),
+(11102, 11100, '编辑客服商户', 3, 'PUT', '/system/chat_merchant', 'sys:chat_merchant:update', 11102),
+(11103, 11100, '删除客服商户', 3, 'DELETE', '/system/chat_merchant/{id}', 'sys:chat_merchant:delete', 11103),
+(11104, 11100, '获取客服商户详情', 3, 'GET', '/system/chat_merchant/detail', 'sys:chat_merchant:detail', 11104);
+
+INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
+VALUES (11200, 10000, '验证码记录', 2, 'GET', '/system/verification-codes', 'sys:verification-code:list', 'system/verification-codes', 'Message', 11200);
+INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
+VALUES
+(11201, 11200, '验证码详情', 3, 'GET', '/system/verification-codes/{id}', 'sys:verification-code:detail', 11201),
+(11202, 11200, '测试发送验证码', 3, 'POST', '/system/verification-codes/test', 'sys:verification-code:test', 11202);
