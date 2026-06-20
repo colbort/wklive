@@ -201,8 +201,8 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 	matchedOrderIDs := make(map[int64]struct{})
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeFillModel)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
+		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
+		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 
 		buy, err := orderModel.FindOneForUpdate(ctx, plan.BuyOrder.Id)
 		if err != nil {
@@ -261,7 +261,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 	return matched, nil
 }
 
-func (l *ProcessOrderMatchingLogic) normalizeLockedMatchPlans(ctx context.Context, orderModel models.TradeOrderModel, key models.TradeOrderMatchKey, buy, sell *models.TTradeOrder) ([]*orderMatchPlan, bool, error) {
+func (l *ProcessOrderMatchingLogic) normalizeLockedMatchPlans(ctx context.Context, orderModel models.TTradeOrderModel, key models.TradeOrderMatchKey, buy, sell *models.TTradeOrder) ([]*orderMatchPlan, bool, error) {
 	lockedPlan, ok := normalizeLockedMatchPlan(buy, sell)
 	if !ok {
 		return nil, false, nil
@@ -317,7 +317,7 @@ func buildOrderMatchPlan(buy, sell *models.TTradeOrder) *orderMatchPlan {
 	}
 }
 
-func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orderModel models.TradeOrderModel, key models.TradeOrderMatchKey, focal *models.TTradeOrder) ([]*orderMatchPlan, bool, error) {
+func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orderModel models.TTradeOrderModel, key models.TradeOrderMatchKey, focal *models.TTradeOrder) ([]*orderMatchPlan, bool, error) {
 	if focal == nil || !isMatchableOrderStatus(focal.Status) {
 		return nil, false, nil
 	}
@@ -656,7 +656,7 @@ func (l *ProcessOrderMatchingLogic) expireOpenOrderNow(orderID int64, reason str
 	var expiredOrder *models.TTradeOrder
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
+		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)
 		if err != nil {
 			return err

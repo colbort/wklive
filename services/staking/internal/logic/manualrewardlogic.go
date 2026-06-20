@@ -87,8 +87,8 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 	order.UpdateTimes = now
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		rewardLogModel := models.NewTStakeRewardLogModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeRewardLogModel)
-		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeOrderModel)
+		rewardLogModel := models.NewTStakeRewardLogModel(conn, l.svcCtx.Config.CacheRedis)
+		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 
 		if _, err := rewardLogModel.Insert(ctx, &models.TStakeRewardLog{
 			TenantId:         order.TenantId,

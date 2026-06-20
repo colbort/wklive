@@ -165,8 +165,8 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 	var id int64
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		productModel := models.NewTStakeProductModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeProductModel)
-		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeOrderModel)
+		productModel := models.NewTStakeProductModel(conn, l.svcCtx.Config.CacheRedis)
+		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 
 		if err := productModel.Update(ctx, product); err != nil {
 			return err

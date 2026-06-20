@@ -64,7 +64,7 @@ func (l *AuditWithdrawOrderLogic) AuditWithdrawOrder(in *payment.AuditWithdrawOr
 	now := utils.NowMillis()
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		withdrawOrderModel := models.NewTWithdrawOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.WithdrawOrderModel)
+		withdrawOrderModel := models.NewTWithdrawOrderModel(conn, l.svcCtx.Config.CacheRedis)
 
 		current, err := withdrawOrderModel.FindOne(ctx, order.Id)
 		if err != nil {

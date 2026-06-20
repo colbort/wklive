@@ -66,7 +66,7 @@ func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceC
 
 	return svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		rechargeOrderModel := models.NewTRechargeOrderModel(conn, svcCtx.Config.CacheRedis).(models.RechargeOrderModel)
+		rechargeOrderModel := models.NewTRechargeOrderModel(conn, svcCtx.Config.CacheRedis)
 
 		current, err := rechargeOrderModel.FindOne(txCtx, order.Id)
 		if err != nil {

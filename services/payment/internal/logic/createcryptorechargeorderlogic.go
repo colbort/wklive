@@ -106,8 +106,8 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		rechargeOrderModel := models.NewTRechargeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.RechargeOrderModel)
-		userRechargeStatModel := models.NewTUserRechargeStatModel(conn, l.svcCtx.Config.CacheRedis).(models.UserRechargeStatModel)
+		rechargeOrderModel := models.NewTRechargeOrderModel(conn, l.svcCtx.Config.CacheRedis)
+		userRechargeStatModel := models.NewTUserRechargeStatModel(conn, l.svcCtx.Config.CacheRedis)
 
 		result, err := rechargeOrderModel.Insert(ctx, rechargeOrder)
 		if err != nil {

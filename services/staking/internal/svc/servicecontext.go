@@ -17,10 +17,10 @@ type ServiceContext struct {
 	Config              config.Config
 	DB                  sqlx.SqlConn
 	Redis               *redis.Redis
-	StakeOrderModel     models.StakeOrderModel
-	StakeProductModel   models.StakeProductModel
-	StakeRedeemLogModel models.StakeRedeemLogModel
-	StakeRewardLogModel models.StakeRewardLogModel
+	StakeOrderModel     models.TStakeOrderModel
+	StakeProductModel   models.TStakeProductModel
+	StakeRedeemLogModel models.TStakeRedeemLogModel
+	StakeRewardLogModel models.TStakeRewardLogModel
 	AssetClient         asset.AssetInternalClient
 }
 
@@ -31,10 +31,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:              c,
 		DB:                  conn,
 		Redis:               redis.MustNewRedis(c.Redis.RedisConf),
-		StakeOrderModel:     models.NewTStakeOrderModel(conn, c.CacheRedis).(models.StakeOrderModel),
-		StakeProductModel:   models.NewTStakeProductModel(conn, c.CacheRedis).(models.StakeProductModel),
-		StakeRedeemLogModel: models.NewTStakeRedeemLogModel(conn, c.CacheRedis).(models.StakeRedeemLogModel),
-		StakeRewardLogModel: models.NewTStakeRewardLogModel(conn, c.CacheRedis).(models.StakeRewardLogModel),
+		StakeOrderModel:     models.NewTStakeOrderModel(conn, c.CacheRedis),
+		StakeProductModel:   models.NewTStakeProductModel(conn, c.CacheRedis),
+		StakeRedeemLogModel: models.NewTStakeRedeemLogModel(conn, c.CacheRedis),
+		StakeRewardLogModel: models.NewTStakeRewardLogModel(conn, c.CacheRedis),
 		AssetClient:         asset.NewAssetInternalClient(assetCli.Conn()),
 	}
 }

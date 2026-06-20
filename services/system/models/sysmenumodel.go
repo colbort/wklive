@@ -1,17 +1,36 @@
 package models
 
 import (
+	"context"
+	"fmt"
+
+	jmosqlx "github.com/jmoiron/sqlx"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"wklive/common/sqlutil"
 )
 
 var _ SysMenuModel = (*customSysMenuModel)(nil)
 
 type (
+	MenuPageFilter struct {
+		Keyword  string
+		MenuType int64
+		Enabled  int64
+		Visible  int64
+	}
+
 	// SysMenuModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customSysMenuModel.
 	SysMenuModel interface {
 		sysMenuModel
+		FindByIds(ctx context.Context, ids []int64, visible int64, enabled int64) ([]*SysMenu, error)
+		FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
+		ListAll(ctx context.Context) ([]*SysMenu, error)
+		FindPage(ctx context.Context, filter MenuPageFilter, cursor int64, limit int64) ([]*SysMenu, int64, error)
+		FindOneByName(ctx context.Context, name string) (*SysMenu, error)
+		FindOneByPath(ctx context.Context, path string) (*SysMenu, error)
+		FindOneByPerms(ctx context.Context, perms string) (*SysMenu, error)
 	}
 
 	customSysMenuModel struct {
@@ -24,4 +43,161 @@ func NewSysMenuModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option)
 	return &customSysMenuModel{
 		defaultSysMenuModel: newSysMenuModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64, visible int64, enabled int64) ([]*SysMenu, error) {
+	if len(ids) == 0 {
+		return []*SysMenu{}, nil
+	}
+
+	var menus []*SysMenu
+	query := "select " + sysMenuRows + " from " + m.table + " where id in (?)"
+
+	args := []interface{}{ids}
+
+	if visible != 0 {
+		query += " AND visible = ?"
+		args = append(args, visible)
+	}
+	if enabled != 0 {
+		query += " AND enabled = ?"
+		args = append(args, enabled)
+	}
+
+	query += " order by `sort` asc"
+
+	var err error
+	query, args, err = jmosqlx.In(query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	err = m.QueryRowsNoCacheCtx(ctx, &menus, query, args...)
+	return menus, err
+}
+
+func (m *defaultSysMenuModel) FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error) {
+	var existIds []int64
+	query := "select id from " + m.table + " where id in (?)"
+	query, args, err := jmosqlx.In(query, ids)
+	if err != nil {
+		return nil, err
+	}
+	err = m.QueryRowsNoCacheCtx(ctx, &existIds, query, args...)
+	return existIds, err
+}
+
+func (m *defaultSysMenuModel) ListAll(ctx context.Context) ([]*SysMenu, error) {
+	var menus []*SysMenu
+	query := "select " + sysMenuRows + " from " + m.table + " order by `sort` asc"
+	err := m.QueryRowsNoCacheCtx(ctx, &menus, query)
+	return menus, err
+}
+
+func (m *defaultSysMenuModel) FindPage(
+	ctx context.Context,
+	filter MenuPageFilter,
+	cursor int64,
+	limit int64,
+) ([]*SysMenu, int64, error) {
+
+	if limit <= 0 {
+		limit = 100
+	}
+	if limit > 10000 {
+		limit = 10000
+	}
+
+	builder := sqlutil.NewPageQueryBuilder()
+	if filter.Keyword != "" {
+		like := "%" + filter.Keyword + "%"
+		builder.And("(name LIKE ? OR code LIKE ?)", like, like)
+	}
+	builder.EqInt64("menu_type", filter.MenuType)
+	builder.EqInt64("enabled", filter.Enabled)
+	builder.EqInt64("visible", filter.Visible)
+
+	where := builder.Where()
+	args := builder.Args()
+
+	// total
+	var total int64
+	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
+		return nil, 0, err
+	}
+
+	// list
+	listArgs := append([]any{}, args...)
+	var listSql string
+
+	if cursor <= 0 {
+		// 第一页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s
+			ORDER BY id DESC
+			LIMIT ?`,
+			sysMenuRows, m.table, where,
+		)
+		listArgs = append(listArgs, limit)
+	} else {
+		// 后续页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s AND id < ?
+			ORDER BY id DESC
+			LIMIT ?`,
+			sysMenuRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, limit)
+	}
+
+	var list []*SysMenu
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
+		return nil, 0, err
+	}
+
+	return list, total, nil
+}
+
+func (m *defaultSysMenuModel) FindOneByName(ctx context.Context, name string) (*SysMenu, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("name = ?", name)
+
+	var menu SysMenu
+	query := fmt.Sprintf("select %s from %s where %s limit 1", sysMenuRows, m.table, builder.Where())
+	err := m.QueryRowNoCacheCtx(ctx, &menu, query, builder.Args()...)
+	if err != nil {
+		return nil, err
+	}
+	return &menu, nil
+}
+
+func (m *defaultSysMenuModel) FindOneByPath(ctx context.Context, path string) (*SysMenu, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("path = ?", path)
+
+	var menu SysMenu
+	query := fmt.Sprintf("select %s from %s where %s limit 1", sysMenuRows, m.table, builder.Where())
+	err := m.QueryRowNoCacheCtx(ctx, &menu, query, builder.Args()...)
+	if err != nil {
+		return nil, err
+	}
+	return &menu, nil
+}
+
+func (m *defaultSysMenuModel) FindOneByPerms(ctx context.Context, perms string) (*SysMenu, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("perms = ?", perms)
+
+	var menu SysMenu
+	query := fmt.Sprintf("select %s from %s where %s limit 1", sysMenuRows, m.table, builder.Where())
+	err := m.QueryRowNoCacheCtx(ctx, &menu, query, builder.Args()...)
+	if err != nil {
+		return nil, err
+	}
+	return &menu, nil
 }

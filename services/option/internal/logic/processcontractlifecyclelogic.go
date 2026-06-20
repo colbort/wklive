@@ -151,8 +151,8 @@ func (l *ProcessContractLifecycleLogic) expireContractOrders(contract *models.TO
 			order.UpdateTimes = now
 			err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 				conn := sqlx.NewSqlConnFromSession(session)
-				orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionOrderModel)
-				positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionPositionModel)
+				orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
+				positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
 				if err := releaseClosePositionFrozenQty(ctx, positionModel, order, order.UnfilledQty, now); err != nil {
 					return err
 				}
@@ -296,12 +296,12 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 	contract.UpdateTimes = now
 	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		settlementModel := models.NewTOptionSettlementModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionSettlementModel)
-		snapshotModel := models.NewTOptionMarketSnapshotModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionMarketSnapshotModel)
-		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionContractModel)
-		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionPositionModel)
-		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionAccountModel)
-		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionBillModel)
+		settlementModel := models.NewTOptionSettlementModel(conn, l.svcCtx.Config.CacheRedis)
+		snapshotModel := models.NewTOptionMarketSnapshotModel(conn, l.svcCtx.Config.CacheRedis)
+		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
+		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
+		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis)
+		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis)
 
 		result, err := settlementModel.Insert(ctx, &models.TOptionSettlement{
 			TenantId:         contract.TenantId,
@@ -337,7 +337,7 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 	})
 }
 
-func settleContractPositions(ctx context.Context, positionModel models.OptionPositionModel, accountModel models.OptionAccountModel, billModel models.OptionBillModel, contract *models.TOptionContract, settlementNo string, settlementId int64, deliveryPrice float64, now int64) error {
+func settleContractPositions(ctx context.Context, positionModel models.TOptionPositionModel, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, contract *models.TOptionContract, settlementNo string, settlementId int64, deliveryPrice float64, now int64) error {
 	cursor := int64(0)
 	for {
 		positions, _, err := positionModel.FindPage(ctx, models.OptionPositionPageFilter{

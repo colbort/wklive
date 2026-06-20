@@ -122,10 +122,10 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 	var id int64
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		exerciseModel := models.NewTOptionExerciseModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionExerciseModel)
-		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionPositionModel)
-		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionAccountModel)
-		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionBillModel)
+		exerciseModel := models.NewTOptionExerciseModel(conn, l.svcCtx.Config.CacheRedis)
+		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
+		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis)
+		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis)
 
 		result, err := exerciseModel.Insert(ctx, item)
 		if err != nil {

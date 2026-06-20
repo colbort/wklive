@@ -597,7 +597,7 @@ func ensureLeverage(symbol *models.TTradeSymbol, leverage int64) int64 {
 	return leverage
 }
 
-func ensureConfiguredLeverage(ctx context.Context, model models.TradeSymbolLeverageConfigModel, tenantId int64, symbol *models.TTradeSymbol, marginMode trade.MarginMode, leverage int64) (int64, bool, error) {
+func ensureConfiguredLeverage(ctx context.Context, model models.TTradeSymbolLeverageConfigModel, tenantId int64, symbol *models.TTradeSymbol, marginMode trade.MarginMode, leverage int64) (int64, bool, error) {
 	if symbol == nil || model == nil || marginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN || !isContractMarket(trade.MarketType(symbol.MarketType)) {
 		return ensureLeverage(symbol, leverage), true, nil
 	}

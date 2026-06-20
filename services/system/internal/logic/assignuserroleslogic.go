@@ -2,12 +2,13 @@ package logic
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -94,7 +95,7 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 	// 4. 插入缺少的角色
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		userRoleModel := models.NewSysUserRoleModel(conn, l.svcCtx.Config.CacheRedis).(models.UserRoleModel)
+		userRoleModel := models.NewSysUserRoleModel(conn, l.svcCtx.Config.CacheRedis)
 
 		for _, roleId := range roleIds {
 			if _, ok := currentMap[roleId]; ok {

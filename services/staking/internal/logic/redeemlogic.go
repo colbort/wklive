@@ -195,9 +195,9 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 	order.UpdateTimes = now
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		redeemLogModel := models.NewTStakeRedeemLogModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeRedeemLogModel)
-		productModel := models.NewTStakeProductModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeProductModel)
-		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeOrderModel)
+		redeemLogModel := models.NewTStakeRedeemLogModel(conn, l.svcCtx.Config.CacheRedis)
+		productModel := models.NewTStakeProductModel(conn, l.svcCtx.Config.CacheRedis)
+		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 
 		if _, err := redeemLogModel.Insert(ctx, &models.TStakeRedeemLog{
 			TenantId:     order.TenantId,

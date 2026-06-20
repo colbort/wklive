@@ -17,16 +17,16 @@ type ServiceContext struct {
 	Config                    config.Config
 	DB                        sqlx.SqlConn
 	Redis                     *redis.Redis
-	OptionContractModel       models.OptionContractModel
-	OptionMarketModel         models.OptionMarketModel
-	OptionMarketSnapshotModel models.OptionMarketSnapshotModel
-	OptionOrderModel          models.OptionOrderModel
-	OptionTradeModel          models.OptionTradeModel
-	OptionPositionModel       models.OptionPositionModel
-	OptionExerciseModel       models.OptionExerciseModel
-	OptionSettlementModel     models.OptionSettlementModel
-	OptionAccountModel        models.OptionAccountModel
-	OptionBillModel           models.OptionBillModel
+	OptionContractModel       models.TOptionContractModel
+	OptionMarketModel         models.TOptionMarketModel
+	OptionMarketSnapshotModel models.TOptionMarketSnapshotModel
+	OptionOrderModel          models.TOptionOrderModel
+	OptionTradeModel          models.TOptionTradeModel
+	OptionPositionModel       models.TOptionPositionModel
+	OptionExerciseModel       models.TOptionExerciseModel
+	OptionSettlementModel     models.TOptionSettlementModel
+	OptionAccountModel        models.TOptionAccountModel
+	OptionBillModel           models.TOptionBillModel
 	AssetClient               asset.AssetInternalClient
 }
 
@@ -37,16 +37,16 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:                    c,
 		DB:                        conn,
 		Redis:                     redis.MustNewRedis(c.Redis.RedisConf),
-		OptionContractModel:       models.NewTOptionContractModel(conn, c.CacheRedis).(models.OptionContractModel),
-		OptionMarketModel:         models.NewTOptionMarketModel(conn, c.CacheRedis).(models.OptionMarketModel),
-		OptionMarketSnapshotModel: models.NewTOptionMarketSnapshotModel(conn, c.CacheRedis).(models.OptionMarketSnapshotModel),
-		OptionOrderModel:          models.NewTOptionOrderModel(conn, c.CacheRedis).(models.OptionOrderModel),
-		OptionTradeModel:          models.NewTOptionTradeModel(conn, c.CacheRedis).(models.OptionTradeModel),
-		OptionPositionModel:       models.NewTOptionPositionModel(conn, c.CacheRedis).(models.OptionPositionModel),
-		OptionExerciseModel:       models.NewTOptionExerciseModel(conn, c.CacheRedis).(models.OptionExerciseModel),
-		OptionSettlementModel:     models.NewTOptionSettlementModel(conn, c.CacheRedis).(models.OptionSettlementModel),
-		OptionAccountModel:        models.NewTOptionAccountModel(conn, c.CacheRedis).(models.OptionAccountModel),
-		OptionBillModel:           models.NewTOptionBillModel(conn, c.CacheRedis).(models.OptionBillModel),
+		OptionContractModel:       models.NewTOptionContractModel(conn, c.CacheRedis),
+		OptionMarketModel:         models.NewTOptionMarketModel(conn, c.CacheRedis),
+		OptionMarketSnapshotModel: models.NewTOptionMarketSnapshotModel(conn, c.CacheRedis),
+		OptionOrderModel:          models.NewTOptionOrderModel(conn, c.CacheRedis),
+		OptionTradeModel:          models.NewTOptionTradeModel(conn, c.CacheRedis),
+		OptionPositionModel:       models.NewTOptionPositionModel(conn, c.CacheRedis),
+		OptionExerciseModel:       models.NewTOptionExerciseModel(conn, c.CacheRedis),
+		OptionSettlementModel:     models.NewTOptionSettlementModel(conn, c.CacheRedis),
+		OptionAccountModel:        models.NewTOptionAccountModel(conn, c.CacheRedis),
+		OptionBillModel:           models.NewTOptionBillModel(conn, c.CacheRedis),
 		AssetClient:               asset.NewAssetInternalClient(assetCli.Conn()),
 	}
 }

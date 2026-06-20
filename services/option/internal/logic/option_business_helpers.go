@@ -99,7 +99,7 @@ func applyTradeToOrder(order *models.TOptionOrder, contract *models.TOptionContr
 	order.Status = int64(option.OrderStatus_ORDER_STATUS_PART_FILLED)
 }
 
-func updateOpenPosition(ctx context.Context, model models.OptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
+func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
 	side := openPositionSide(order.Side)
 	if side == 0 {
 		return i18n.StatusError(ctx, i18n.ParamError)
@@ -158,7 +158,7 @@ func updateOpenPosition(ctx context.Context, model models.OptionPositionModel, c
 	return model.Update(ctx, pos)
 }
 
-func updateClosePosition(ctx context.Context, model models.OptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
+func updateClosePosition(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
 	side := closePositionSide(order.Side)
 	if side == 0 {
 		return i18n.StatusError(ctx, i18n.ParamError)
@@ -205,14 +205,14 @@ func updateClosePosition(ctx context.Context, model models.OptionPositionModel, 
 	return model.Update(ctx, pos)
 }
 
-func updatePositionByFilledOrder(ctx context.Context, model models.OptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
+func updatePositionByFilledOrder(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
 	if order.PositionEffect == int64(option.PositionEffect_POSITION_EFFECT_CLOSE) {
 		return updateClosePosition(ctx, model, contract, order, price, qty, now)
 	}
 	return updateOpenPosition(ctx, model, contract, order, price, qty, now)
 }
 
-func freezeClosePosition(ctx context.Context, model models.OptionPositionModel, order *models.TOptionOrder, now int64) error {
+func freezeClosePosition(ctx context.Context, model models.TOptionPositionModel, order *models.TOptionOrder, now int64) error {
 	if order.PositionEffect != int64(option.PositionEffect_POSITION_EFFECT_CLOSE) {
 		return nil
 	}
@@ -235,7 +235,7 @@ func freezeClosePosition(ctx context.Context, model models.OptionPositionModel, 
 	return model.Update(ctx, pos)
 }
 
-func releaseClosePositionFrozenQty(ctx context.Context, model models.OptionPositionModel, order *models.TOptionOrder, qty float64, now int64) error {
+func releaseClosePositionFrozenQty(ctx context.Context, model models.TOptionPositionModel, order *models.TOptionOrder, qty float64, now int64) error {
 	if order.PositionEffect != int64(option.PositionEffect_POSITION_EFFECT_CLOSE) || qty <= optionFloatEpsilon {
 		return nil
 	}
@@ -273,7 +273,7 @@ func optionExerciseAmount(contract *models.TOptionContract, qty float64) float64
 	return contract.StrikePrice * qty * optionMultiplier(contract)
 }
 
-func applyOptionAccountDelta(ctx context.Context, accountModel models.OptionAccountModel, billModel models.OptionBillModel, tenantId, userId, accountId int64, coin string, amount float64, refType, refId int64, bizNo, remark string, realized bool, now int64) error {
+func applyOptionAccountDelta(ctx context.Context, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, tenantId, userId, accountId int64, coin string, amount float64, refType, refId int64, bizNo, remark string, realized bool, now int64) error {
 	if math.Abs(amount) <= optionFloatEpsilon {
 		return nil
 	}

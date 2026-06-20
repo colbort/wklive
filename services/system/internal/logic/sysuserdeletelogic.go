@@ -59,8 +59,8 @@ func (l *SysUserDeleteLogic) SysUserDelete(in *system.SysUserDeleteReq) (*system
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		userModel := models.NewSysUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
-		userRoleModel := models.NewSysUserRoleModel(conn, l.svcCtx.Config.CacheRedis).(models.UserRoleModel)
+		userModel := models.NewSysUserModel(conn, l.svcCtx.Config.CacheRedis)
+		userRoleModel := models.NewSysUserRoleModel(conn, l.svcCtx.Config.CacheRedis)
 
 		roleIds, err := userRoleModel.FindRoleIdsByUserId(ctx, in.Id)
 		if err != nil {

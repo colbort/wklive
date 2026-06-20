@@ -22,12 +22,12 @@ func (l *AppPlaceOrderLogic) matchOrder(contract *models.TOptionContract, order 
 
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionOrderModel)
-		tradeModel := models.NewTOptionTradeModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionTradeModel)
-		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionPositionModel)
-		marketModel := models.NewTOptionMarketModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionMarketModel)
-		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionAccountModel)
-		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionBillModel)
+		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
+		tradeModel := models.NewTOptionTradeModel(conn, l.svcCtx.Config.CacheRedis)
+		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
+		marketModel := models.NewTOptionMarketModel(conn, l.svcCtx.Config.CacheRedis)
+		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis)
+		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis)
 
 		incoming, err := orderModel.FindOne(ctx, order.Id)
 		if err != nil {
@@ -149,7 +149,7 @@ func makerSide(side int64) int64 {
 	return int64(common.Side_SIDE_UNKNOWN)
 }
 
-func updateMarketLastTrade(ctx context.Context, model models.OptionMarketModel, contract *models.TOptionContract, price float64, now int64) error {
+func updateMarketLastTrade(ctx context.Context, model models.TOptionMarketModel, contract *models.TOptionContract, price float64, now int64) error {
 	market, err := model.FindOneByTenantIdContractId(ctx, contract.TenantId, contract.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return err
@@ -181,7 +181,7 @@ func updateMarketLastTrade(ctx context.Context, model models.OptionMarketModel, 
 	return model.Update(ctx, market)
 }
 
-func applyTradeAccountBills(ctx context.Context, accountModel models.OptionAccountModel, billModel models.OptionBillModel, trade *models.TOptionTrade, now int64) error {
+func applyTradeAccountBills(ctx context.Context, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, trade *models.TOptionTrade, now int64) error {
 	if err := applyOptionAccountDelta(ctx, accountModel, billModel, trade.TenantId, trade.BuyUserId, trade.BuyAccountId, trade.FeeCoin, -trade.Turnover, int64(option.BillRefType_BILL_REF_TYPE_TRADE), trade.Id, trade.TradeNo+"-BUY", "option trade premium paid", false, now); err != nil {
 		return err
 	}

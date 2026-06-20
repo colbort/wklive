@@ -54,8 +54,8 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 	bizType := assetBizType(in.BizType)
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis).(models.UserAssetModel)
-		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetFlowModel)
+		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis)
+		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis)
 
 		beforeFrom, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin)
 		if err != nil {

@@ -83,8 +83,8 @@ func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContra
 
 	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		marketModel := models.NewTOptionMarketModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionMarketModel)
-		snapshotModel := models.NewTOptionMarketSnapshotModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionMarketSnapshotModel)
+		marketModel := models.NewTOptionMarketModel(conn, l.svcCtx.Config.CacheRedis)
+		snapshotModel := models.NewTOptionMarketSnapshotModel(conn, l.svcCtx.Config.CacheRedis)
 
 		market, err := marketModel.FindOneByTenantIdContractId(ctx, contract.TenantId, contract.Id)
 		if err != nil && !errors.Is(err, models.ErrNotFound) {

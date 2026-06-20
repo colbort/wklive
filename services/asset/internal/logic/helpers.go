@@ -27,7 +27,7 @@ func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAl
 	return nil, nil
 }
 
-func prepareAssetIdempotent(ctx context.Context, model models.AssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo, remark string, ts int64) (bool, error) {
+func prepareAssetIdempotent(ctx context.Context, model models.TAssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo, remark string, ts int64) (bool, error) {
 	record, err := model.FindOneByTenantIdBizTypeSceneTypeBizNo(ctx, tenantId, bizType, sceneType, bizNo)
 	if err != nil && err != models.ErrNotFound {
 		return false, err
@@ -57,7 +57,7 @@ func prepareAssetIdempotent(ctx context.Context, model models.AssetIdempotentMod
 	return false, err
 }
 
-func completeAssetIdempotent(ctx context.Context, model models.AssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo string, ts int64) error {
+func completeAssetIdempotent(ctx context.Context, model models.TAssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo string, ts int64) error {
 	record, err := model.FindOneByTenantIdBizTypeSceneTypeBizNo(ctx, tenantId, bizType, sceneType, bizNo)
 	if err != nil {
 		return err

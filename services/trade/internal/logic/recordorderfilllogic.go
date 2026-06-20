@@ -39,8 +39,8 @@ func (l *RecordOrderFillLogic) RecordOrderFill(in *trade.RecordOrderFillReq) (*t
 	now := utils.NowMillis()
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeFillModel)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
+		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
+		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		return recordOrderFillWithModels(ctx, fillModel, orderModel, in.Fill, now)
 	})
 	if i18n.IsStatusError(err, i18n.ParamError) {
@@ -58,7 +58,7 @@ func (l *RecordOrderFillLogic) RecordOrderFill(in *trade.RecordOrderFillReq) (*t
 	return &trade.InternalCommonResp{Base: helper.OkResp()}, nil
 }
 
-func recordOrderFillWithModels(ctx context.Context, fillModel models.TradeFillModel, orderModel models.TradeOrderModel, in *trade.TradeFill, now int64) error {
+func recordOrderFillWithModels(ctx context.Context, fillModel models.TTradeFillModel, orderModel models.TTradeOrderModel, in *trade.TradeFill, now int64) error {
 	fill, err := tradeFillFromProto(in, now)
 	if err != nil {
 		return err
@@ -210,7 +210,7 @@ func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, e
 	}, nil
 }
 
-func findOrderForFill(ctx context.Context, orderModel models.TradeOrderModel, fill *trade.TradeFill) (*models.TTradeOrder, error) {
+func findOrderForFill(ctx context.Context, orderModel models.TTradeOrderModel, fill *trade.TradeFill) (*models.TTradeOrder, error) {
 	if fill == nil {
 		return nil, models.ErrNotFound
 	}

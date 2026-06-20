@@ -49,9 +49,9 @@ func (l *DeleteUserLogic) DeleteUser(in *user.DeleteUserReq) (*user.AdminCommonR
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserIdentityModel)
-		userSecurityModel := models.NewTUserSecurityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserSecurityModel)
-		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
+		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis)
+		userSecurityModel := models.NewTUserSecurityModel(conn, l.svcCtx.Config.CacheRedis)
+		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis)
 
 		if err := userIdentityModel.DeleteByUserId(ctx, tuser.Id); err != nil {
 			return err

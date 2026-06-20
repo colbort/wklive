@@ -98,8 +98,8 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		userModel := models.NewSysUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
-		userRoleModel := models.NewSysUserRoleModel(conn, l.svcCtx.Config.CacheRedis).(models.UserRoleModel)
+		userModel := models.NewSysUserModel(conn, l.svcCtx.Config.CacheRedis)
+		userRoleModel := models.NewSysUserRoleModel(conn, l.svcCtx.Config.CacheRedis)
 
 		res, err := userModel.InsertCtx(ctx, session, &data)
 		if err != nil {

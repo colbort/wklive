@@ -42,8 +42,8 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(in *system.SysTenantUpdateReq) (*
 	var tenantNotFound bool
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		tenantModel := models.NewSysTenantModel(conn, l.svcCtx.Config.CacheRedis).(models.TenantModel)
-		userModel := models.NewSysUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
+		tenantModel := models.NewSysTenantModel(conn, l.svcCtx.Config.CacheRedis)
+		userModel := models.NewSysUserModel(conn, l.svcCtx.Config.CacheRedis)
 
 		tenant, err := tenantModel.FindOne(ctx, in.Id)
 		if err != nil {

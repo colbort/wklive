@@ -21,24 +21,24 @@ type ServiceContext struct {
 	Config                    config.Config
 	DB                        sqlx.SqlConn
 	Redis                     *redis.Redis
-	TradeSymbolModel          models.TradeSymbolModel
-	TradeSymbolSpotModel      models.TradeSymbolSpotModel
-	TradeSymbolContractModel  models.TradeSymbolContractModel
-	TradeUserConfigModel      models.TradeUserConfigModel
-	TradeOrderModel           models.TradeOrderModel
-	TradeOrderSpotModel       models.TradeOrderSpotModel
-	TradeOrderContractModel   models.TradeOrderContractModel
-	TradeFillModel            models.TradeFillModel
-	TradeCancelLogModel       models.TradeCancelLogModel
-	ContractPositionModel     models.ContractPositionModel
-	ContractPositionHistModel models.ContractPositionHistoryModel
-	ContractMarginAcctModel   models.ContractMarginAccountModel
-	ContractLeverageCfgModel  models.ContractLeverageConfigModel
-	SymbolLeverageCfgModel    models.TradeSymbolLeverageConfigModel
-	RiskUserTradeLimitModel   models.RiskUserTradeLimitModel
-	RiskUserSymbolLimitModel  models.RiskUserSymbolLimitModel
-	RiskOrderCheckLogModel    models.RiskOrderCheckLogModel
-	BizTradeEventModel        models.BizTradeEventModel
+	TradeSymbolModel          models.TTradeSymbolModel
+	TradeSymbolSpotModel      models.TTradeSymbolSpotModel
+	TradeSymbolContractModel  models.TTradeSymbolContractModel
+	TradeUserConfigModel      models.TTradeUserConfigModel
+	TradeOrderModel           models.TTradeOrderModel
+	TradeOrderSpotModel       models.TTradeOrderSpotModel
+	TradeOrderContractModel   models.TTradeOrderContractModel
+	TradeFillModel            models.TTradeFillModel
+	TradeCancelLogModel       models.TTradeCancelLogModel
+	ContractPositionModel     models.TContractPositionModel
+	ContractPositionHistModel models.TContractPositionHistoryModel
+	ContractMarginAcctModel   models.TContractMarginAccountModel
+	ContractLeverageCfgModel  models.TContractLeverageConfigModel
+	SymbolLeverageCfgModel    models.TTradeSymbolLeverageConfigModel
+	RiskUserTradeLimitModel   models.TRiskUserTradeLimitModel
+	RiskUserSymbolLimitModel  models.TRiskUserSymbolLimitModel
+	RiskOrderCheckLogModel    models.TRiskOrderCheckLogModel
+	BizTradeEventModel        models.TBizTradeEventModel
 	AssetClient               asset.AssetInternalClient
 }
 
@@ -49,24 +49,24 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:                    c,
 		DB:                        conn,
 		Redis:                     redis.MustNewRedis(c.Redis.RedisConf),
-		TradeSymbolModel:          models.NewTTradeSymbolModel(conn, c.CacheRedis).(models.TradeSymbolModel),
-		TradeSymbolSpotModel:      models.NewTTradeSymbolSpotModel(conn, c.CacheRedis).(models.TradeSymbolSpotModel),
-		TradeSymbolContractModel:  models.NewTTradeSymbolContractModel(conn, c.CacheRedis).(models.TradeSymbolContractModel),
-		TradeUserConfigModel:      models.NewTTradeUserConfigModel(conn, c.CacheRedis).(models.TradeUserConfigModel),
-		TradeOrderModel:           models.NewTTradeOrderModel(conn, c.CacheRedis).(models.TradeOrderModel),
-		TradeOrderSpotModel:       models.NewTTradeOrderSpotModel(conn, c.CacheRedis).(models.TradeOrderSpotModel),
-		TradeOrderContractModel:   models.NewTTradeOrderContractModel(conn, c.CacheRedis).(models.TradeOrderContractModel),
-		TradeFillModel:            models.NewTTradeFillModel(conn, c.CacheRedis).(models.TradeFillModel),
-		TradeCancelLogModel:       models.NewTTradeCancelLogModel(conn, c.CacheRedis).(models.TradeCancelLogModel),
-		ContractPositionModel:     models.NewTContractPositionModel(conn, c.CacheRedis).(models.ContractPositionModel),
-		ContractPositionHistModel: models.NewTContractPositionHistoryModel(conn, c.CacheRedis).(models.ContractPositionHistoryModel),
-		ContractMarginAcctModel:   models.NewTContractMarginAccountModel(conn, c.CacheRedis).(models.ContractMarginAccountModel),
-		ContractLeverageCfgModel:  models.NewTContractLeverageConfigModel(conn, c.CacheRedis).(models.ContractLeverageConfigModel),
-		SymbolLeverageCfgModel:    models.NewTTradeSymbolLeverageConfigModel(conn, c.CacheRedis).(models.TradeSymbolLeverageConfigModel),
-		RiskUserTradeLimitModel:   models.NewTRiskUserTradeLimitModel(conn, c.CacheRedis).(models.RiskUserTradeLimitModel),
-		RiskUserSymbolLimitModel:  models.NewTRiskUserSymbolLimitModel(conn, c.CacheRedis).(models.RiskUserSymbolLimitModel),
-		RiskOrderCheckLogModel:    models.NewTRiskOrderCheckLogModel(conn, c.CacheRedis).(models.RiskOrderCheckLogModel),
-		BizTradeEventModel:        models.NewTBizTradeEventModel(conn, c.CacheRedis).(models.BizTradeEventModel),
+		TradeSymbolModel:          models.NewTTradeSymbolModel(conn, c.CacheRedis),
+		TradeSymbolSpotModel:      models.NewTTradeSymbolSpotModel(conn, c.CacheRedis),
+		TradeSymbolContractModel:  models.NewTTradeSymbolContractModel(conn, c.CacheRedis),
+		TradeUserConfigModel:      models.NewTTradeUserConfigModel(conn, c.CacheRedis),
+		TradeOrderModel:           models.NewTTradeOrderModel(conn, c.CacheRedis),
+		TradeOrderSpotModel:       models.NewTTradeOrderSpotModel(conn, c.CacheRedis),
+		TradeOrderContractModel:   models.NewTTradeOrderContractModel(conn, c.CacheRedis),
+		TradeFillModel:            models.NewTTradeFillModel(conn, c.CacheRedis),
+		TradeCancelLogModel:       models.NewTTradeCancelLogModel(conn, c.CacheRedis),
+		ContractPositionModel:     models.NewTContractPositionModel(conn, c.CacheRedis),
+		ContractPositionHistModel: models.NewTContractPositionHistoryModel(conn, c.CacheRedis),
+		ContractMarginAcctModel:   models.NewTContractMarginAccountModel(conn, c.CacheRedis),
+		ContractLeverageCfgModel:  models.NewTContractLeverageConfigModel(conn, c.CacheRedis),
+		SymbolLeverageCfgModel:    models.NewTTradeSymbolLeverageConfigModel(conn, c.CacheRedis),
+		RiskUserTradeLimitModel:   models.NewTRiskUserTradeLimitModel(conn, c.CacheRedis),
+		RiskUserSymbolLimitModel:  models.NewTRiskUserSymbolLimitModel(conn, c.CacheRedis),
+		RiskOrderCheckLogModel:    models.NewTRiskOrderCheckLogModel(conn, c.CacheRedis),
+		BizTradeEventModel:        models.NewTBizTradeEventModel(conn, c.CacheRedis),
 		AssetClient:               asset.NewAssetInternalClient(assetCli.Conn()),
 	}
 }

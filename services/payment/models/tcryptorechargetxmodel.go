@@ -1,17 +1,35 @@
 package models
 
 import (
+	"context"
+	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"wklive/common/sqlutil"
 )
 
 var _ TCryptoRechargeTxModel = (*customTCryptoRechargeTxModel)(nil)
 
 type (
+	CryptoRechargeTxPageFilter struct {
+		TenantId        int64
+		UserId          int64
+		OrderNo         string
+		Coin            string
+		ChainCode       int64
+		TxHash          string
+		ToAddress       string
+		Status          int64
+		CreateTimeStart int64
+		CreateTimeEnd   int64
+	}
+
 	// TCryptoRechargeTxModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTCryptoRechargeTxModel.
 	TCryptoRechargeTxModel interface {
 		tCryptoRechargeTxModel
+		FindPage(ctx context.Context, filter CryptoRechargeTxPageFilter, cursor int64, limit int64) ([]*TCryptoRechargeTx, int64, error)
+		FindOneByIdOrHash(ctx context.Context, tenantId int64, id int64, chainCode int64, txHash string) (*TCryptoRechargeTx, error)
 	}
 
 	customTCryptoRechargeTxModel struct {
@@ -24,4 +42,76 @@ func NewTCryptoRechargeTxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cac
 	return &customTCryptoRechargeTxModel{
 		defaultTCryptoRechargeTxModel: newTCryptoRechargeTxModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTCryptoRechargeTxModel) FindPage(ctx context.Context, filter CryptoRechargeTxPageFilter, cursor int64, limit int64) ([]*TCryptoRechargeTx, int64, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("user_id", filter.UserId)
+	builder.EqString("order_no", filter.OrderNo)
+	builder.EqString("coin", filter.Coin)
+	builder.EqInt64("chain_code", filter.ChainCode)
+	builder.EqString("tx_hash", filter.TxHash)
+	builder.EqString("to_address", filter.ToAddress)
+	builder.EqInt64("status", filter.Status)
+	builder.GteInt64("create_times", filter.CreateTimeStart)
+	builder.LteInt64("create_times", filter.CreateTimeEnd)
+
+	where := builder.Where()
+	args := builder.Args()
+
+	var total int64
+	countSQL := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSQL, args...); err != nil {
+		return nil, 0, err
+	}
+
+	listArgs := append([]any{}, args...)
+	listSQL := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tCryptoRechargeTxRows, m.table, where)
+	if cursor > 0 {
+		listSQL += " AND id < ?"
+		listArgs = append(listArgs, cursor)
+	}
+	listSQL += " ORDER BY id DESC LIMIT ?"
+	listArgs = append(listArgs, limit)
+
+	var list []*TCryptoRechargeTx
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSQL, listArgs...); err != nil {
+		return nil, 0, err
+	}
+
+	return list, total, nil
+}
+
+func (m *defaultTCryptoRechargeTxModel) FindOneByIdOrHash(ctx context.Context, tenantId int64, id int64, chainCode int64, txHash string) (*TCryptoRechargeTx, error) {
+	var item *TCryptoRechargeTx
+	var err error
+	if id > 0 {
+		item, err = m.FindOne(ctx, id)
+	} else if chainCode != 0 && txHash != "" {
+		item, err = m.FindOneByChainCodeTxHash(ctx, chainCode, txHash)
+	} else if txHash != "" {
+		builder := sqlutil.NewPageQueryBuilder()
+		builder.EqInt64("tenant_id", tenantId)
+		builder.EqString("tx_hash", txHash)
+		where := builder.Where()
+		args := builder.Args()
+		query := fmt.Sprintf("SELECT %s FROM %s WHERE %s ORDER BY id DESC LIMIT 1", tCryptoRechargeTxRows, m.table, where)
+		var resp TCryptoRechargeTx
+		if err := m.QueryRowNoCacheCtx(ctx, &resp, query, args...); err != nil {
+			return nil, err
+		}
+		item = &resp
+	} else {
+		return nil, ErrNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	if tenantId > 0 && item.TenantId != tenantId {
+		return nil, ErrNotFound
+	}
+	return item, nil
 }

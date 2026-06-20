@@ -195,7 +195,7 @@ func toMarketSnapshotProto(item *models.TOptionMarketSnapshot) *option.OptionMar
 	}
 }
 
-func insertMarketSnapshot(ctx context.Context, model models.OptionMarketSnapshotModel, market *models.TOptionMarket, now int64) error {
+func insertMarketSnapshot(ctx context.Context, model models.TOptionMarketSnapshotModel, market *models.TOptionMarket, now int64) error {
 	if market == nil {
 		return nil
 	}

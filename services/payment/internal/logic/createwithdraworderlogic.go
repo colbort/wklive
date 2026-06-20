@@ -80,7 +80,7 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 	var id int64
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		withdrawOrderModel := models.NewTWithdrawOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.WithdrawOrderModel)
+		withdrawOrderModel := models.NewTWithdrawOrderModel(conn, l.svcCtx.Config.CacheRedis)
 
 		res, err := withdrawOrderModel.Insert(ctx, withdrawOrder)
 		if err != nil {

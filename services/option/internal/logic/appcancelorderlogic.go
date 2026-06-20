@@ -85,8 +85,8 @@ func (l *AppCancelOrderLogic) AppCancelOrder(in *option.AppCancelOrderReq) (*opt
 	item.UpdateTimes = now
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionOrderModel)
-		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionPositionModel)
+		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
+		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		if err := releaseClosePositionFrozenQty(ctx, positionModel, item, item.UnfilledQty, now); err != nil {
 			return err
 		}

@@ -18,12 +18,12 @@ type ServiceContext struct {
 	Config               config.Config
 	DB                   sqlx.SqlConn
 	Redis                *redis.Redis
-	UserAssetModel       models.UserAssetModel
-	AssetLockModel       models.AssetLockModel
-	AssetFlowModel       models.AssetFlowModel
-	AssetFreezeModel     models.AssetFreezeModel
-	AssetIdempotentModel models.AssetIdempotentModel
-	AssetCoinConfigModel models.AssetCoinConfigModel
+	UserAssetModel       models.TUserAssetModel
+	AssetLockModel       models.TAssetLockModel
+	AssetFlowModel       models.TAssetFlowModel
+	AssetFreezeModel     models.TAssetFreezeModel
+	AssetIdempotentModel models.TAssetIdempotentModel
+	AssetCoinConfigModel models.TAssetCoinConfigModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -32,12 +32,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:               c,
 		DB:                   conn,
 		Redis:                redis.MustNewRedis(c.Redis.RedisConf),
-		UserAssetModel:       models.NewTUserAssetModel(conn, c.CacheRedis).(models.UserAssetModel),
-		AssetLockModel:       models.NewTAssetLockModel(conn, c.CacheRedis).(models.AssetLockModel),
-		AssetFlowModel:       models.NewTAssetFlowModel(conn, c.CacheRedis).(models.AssetFlowModel),
-		AssetFreezeModel:     models.NewTAssetFreezeModel(conn, c.CacheRedis).(models.AssetFreezeModel),
-		AssetIdempotentModel: models.NewTAssetIdempotentModel(conn, c.CacheRedis).(models.AssetIdempotentModel),
-		AssetCoinConfigModel: models.NewTAssetCoinConfigModel(conn, c.CacheRedis).(models.AssetCoinConfigModel),
+		UserAssetModel:       models.NewTUserAssetModel(conn, c.CacheRedis),
+		AssetLockModel:       models.NewTAssetLockModel(conn, c.CacheRedis),
+		AssetFlowModel:       models.NewTAssetFlowModel(conn, c.CacheRedis),
+		AssetFreezeModel:     models.NewTAssetFreezeModel(conn, c.CacheRedis),
+		AssetIdempotentModel: models.NewTAssetIdempotentModel(conn, c.CacheRedis),
+		AssetCoinConfigModel: models.NewTAssetCoinConfigModel(conn, c.CacheRedis),
 	}
 }
 

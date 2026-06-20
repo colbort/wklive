@@ -22,18 +22,18 @@ type ServiceContext struct {
 	DB                          sqlx.SqlConn
 	Cache                       cache.Cache
 	Cron                        *cronx.CronManager
-	UserModel                   models.UserModel
-	RoleModel                   models.RoleModel
-	MenuModel                   models.MenuModel
-	UserRoleModel               models.UserRoleModel
-	RoleMenuModel               models.RoleMenuModel
-	LoginLogModel               models.LoginLogModel
-	OpLogModel                  models.OpLogModel
-	ConfigModel                 models.ConfigModel
-	VerificationCodeRecordModel models.VerificationCodeRecordModel
-	JobModel                    models.JobModel
-	JobLogModel                 models.JobLogModel
-	TenantMode                  models.TenantModel
+	UserModel                   models.SysUserModel
+	RoleModel                   models.SysRoleModel
+	MenuModel                   models.SysMenuModel
+	UserRoleModel               models.SysUserRoleModel
+	RoleMenuModel               models.SysRoleMenuModel
+	LoginLogModel               models.SysLoginLogModel
+	OpLogModel                  models.SysOpLogModel
+	ConfigModel                 models.SysConfigModel
+	VerificationCodeRecordModel models.SysVerificationCodeRecordModel
+	JobModel                    models.SysJobModel
+	JobLogModel                 models.SysJobLogModel
+	TenantMode                  models.SysTenantModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -43,8 +43,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	global.TradeTaskCli = trade.NewTradeTaskClient(zrpc.MustNewClient(c.TradeRpc).Conn())
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
-	jobLogModel := models.NewSysJobLogModel(conn, c.CacheRedis).(models.JobLogModel)
-	global.ConfigModel = models.NewSysConfigModel(conn, c.CacheRedis).(models.ConfigModel)
+	jobLogModel := models.NewSysJobLogModel(conn, c.CacheRedis)
+	global.ConfigModel = models.NewSysConfigModel(conn, c.CacheRedis)
 	cron := cronx.NewCronManager(jobLogModel)
 	cron.LoadRegisteredHandlers()
 	cron.StartScheduler()
@@ -53,17 +53,17 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:                          conn,
 		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat(""), redis.Nil),
 		Cron:                        cron,
-		UserModel:                   models.NewSysUserModel(conn, c.CacheRedis).(models.UserModel),
-		RoleModel:                   models.NewSysRoleModel(conn, c.CacheRedis).(models.RoleModel),
-		MenuModel:                   models.NewSysMenuModel(conn, c.CacheRedis).(models.MenuModel),
-		UserRoleModel:               models.NewSysUserRoleModel(conn, c.CacheRedis).(models.UserRoleModel),
-		RoleMenuModel:               models.NewSysRoleMenuModel(conn, c.CacheRedis).(models.RoleMenuModel),
-		LoginLogModel:               models.NewSysLoginLogModel(conn, c.CacheRedis).(models.LoginLogModel),
-		OpLogModel:                  models.NewSysOpLogModel(conn, c.CacheRedis).(models.OpLogModel),
+		UserModel:                   models.NewSysUserModel(conn, c.CacheRedis),
+		RoleModel:                   models.NewSysRoleModel(conn, c.CacheRedis),
+		MenuModel:                   models.NewSysMenuModel(conn, c.CacheRedis),
+		UserRoleModel:               models.NewSysUserRoleModel(conn, c.CacheRedis),
+		RoleMenuModel:               models.NewSysRoleMenuModel(conn, c.CacheRedis),
+		LoginLogModel:               models.NewSysLoginLogModel(conn, c.CacheRedis),
+		OpLogModel:                  models.NewSysOpLogModel(conn, c.CacheRedis),
 		ConfigModel:                 global.ConfigModel,
-		VerificationCodeRecordModel: models.NewSysVerificationCodeRecordModel(conn, c.CacheRedis).(models.VerificationCodeRecordModel),
-		JobModel:                    models.NewSysJobModel(conn, c.CacheRedis).(models.JobModel),
+		VerificationCodeRecordModel: models.NewSysVerificationCodeRecordModel(conn, c.CacheRedis),
+		JobModel:                    models.NewSysJobModel(conn, c.CacheRedis),
 		JobLogModel:                 jobLogModel,
-		TenantMode:                  models.NewSysTenantModel(conn, c.CacheRedis).(models.TenantModel),
+		TenantMode:                  models.NewSysTenantModel(conn, c.CacheRedis),
 	}
 }

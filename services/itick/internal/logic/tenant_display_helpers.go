@@ -9,7 +9,7 @@ import (
 const batchScanPageSize int64 = 500
 const productLookupBatchSize = 500
 
-func collectProductsByIDs(ctx context.Context, model models.ItickProductModel, ids []int64) (map[int64]*models.TItickProduct, error) {
+func collectProductsByIDs(ctx context.Context, model models.TItickProductModel, ids []int64) (map[int64]*models.TItickProduct, error) {
 	if len(ids) == 0 {
 		return map[int64]*models.TItickProduct{}, nil
 	}

@@ -20,7 +20,7 @@ type ItickManager struct {
 	wsUrl string
 	token string
 
-	model models.ItickCategoryModel
+	model models.TItickCategoryModel
 	hub   *server.Hub
 
 	busRedis  *redis.Client
@@ -45,7 +45,7 @@ func NewItickManager(
 	wsUrl string,
 	token string,
 	hub *server.Hub,
-	model models.ItickCategoryModel,
+	model models.TItickCategoryModel,
 	busRedis *redis.Client,
 	lockRedis *redis.Client,
 ) *ItickManager {

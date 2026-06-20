@@ -115,8 +115,8 @@ func (l *ProcessRewardsAndSettleOrdersLogic) processDailyReward(order *models.TS
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		rewardLogModel := models.NewTStakeRewardLogModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeRewardLogModel)
-		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeOrderModel)
+		rewardLogModel := models.NewTStakeRewardLogModel(conn, l.svcCtx.Config.CacheRedis)
+		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		if _, err := rewardLogModel.Insert(ctx, &models.TStakeRewardLog{
 			TenantId:         order.TenantId,
 			OrderId:          order.Id,
@@ -231,9 +231,9 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		redeemLogModel := models.NewTStakeRedeemLogModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeRedeemLogModel)
-		productModel := models.NewTStakeProductModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeProductModel)
-		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeOrderModel)
+		redeemLogModel := models.NewTStakeRedeemLogModel(conn, l.svcCtx.Config.CacheRedis)
+		productModel := models.NewTStakeProductModel(conn, l.svcCtx.Config.CacheRedis)
+		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		if _, err := redeemLogModel.Insert(ctx, &models.TStakeRedeemLog{
 			TenantId:     order.TenantId,
 			OrderId:      order.Id,

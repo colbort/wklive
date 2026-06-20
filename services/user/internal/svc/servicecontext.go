@@ -22,11 +22,11 @@ type ServiceContext struct {
 	DB                sqlx.SqlConn
 	Redis             *redis.Redis
 	Node              *snowflake.Node
-	UserModel         models.UserModel
-	UserSecurityModel models.UserSecurityModel
-	UserIdentityModel models.UserIdentityModel
-	UserBankModel     models.UserBankModel
-	FingerprintModel  models.UserFingerprintModel
+	UserModel         models.TUserModel
+	UserSecurityModel models.TUserSecurityModel
+	UserIdentityModel models.TUserIdentityModel
+	UserBankModel     models.TUserBankModel
+	FingerprintModel  models.TUserFingerprintModel
 	SystemCli         system.SystemClient
 }
 
@@ -42,11 +42,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:                conn,
 		Redis:             redis.MustNewRedis(c.Redis.RedisConf),
 		Node:              node,
-		UserModel:         models.NewTUserModel(conn, c.CacheRedis).(models.UserModel),
-		UserSecurityModel: models.NewTUserSecurityModel(conn, c.CacheRedis).(models.UserSecurityModel),
-		UserIdentityModel: models.NewTUserIdentityModel(conn, c.CacheRedis).(models.UserIdentityModel),
-		UserBankModel:     models.NewTUserBankModel(conn, c.CacheRedis).(models.UserBankModel),
-		FingerprintModel:  models.NewTUserFingerprintModel(conn, c.CacheRedis).(models.UserFingerprintModel),
+		UserModel:         models.NewTUserModel(conn, c.CacheRedis),
+		UserSecurityModel: models.NewTUserSecurityModel(conn, c.CacheRedis),
+		UserIdentityModel: models.NewTUserIdentityModel(conn, c.CacheRedis),
+		UserBankModel:     models.NewTUserBankModel(conn, c.CacheRedis),
+		FingerprintModel:  models.NewTUserFingerprintModel(conn, c.CacheRedis),
 		SystemCli:         system.NewSystemClient(systemCli.Conn()),
 	}
 }

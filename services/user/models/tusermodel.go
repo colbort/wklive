@@ -1,17 +1,48 @@
 package models
 
 import (
+	"context"
+	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"strings"
+	"time"
+	"wklive/common/sqlutil"
 )
 
 var _ TUserModel = (*customTUserModel)(nil)
 
 type (
+	UserPageFilter struct {
+		TenantId          int64
+		UserId            int64
+		UserNo            string
+		Username          string
+		Nickname          string
+		Phone             string
+		Email             string
+		Status            int64
+		MemberLevel       int64
+		VerifyStatus      int64
+		KycLevel          int64
+		InviteCode        string
+		RegisterTimeStart int64
+		RegisterTimeEnd   int64
+		Keyword           string
+	}
+
 	// TUserModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTUserModel.
 	TUserModel interface {
 		tUserModel
+		FindPage(ctx context.Context, filter UserPageFilter, cursor int64, limit int64) ([]*TUser, int64, error)
+		FindByInviteCode(ctx context.Context, inviteCode string) (*TUser, error)
+		CountRecentNoRecharge(ctx context.Context, id int64) (int64, error)
+		FindByUsername(ctx context.Context, tenantCode string, username string) (*TUser, error)
+		FindByDeviceIdOrFingerprint(ctx context.Context, deviceId string, fingerprint string) (*TUser, error)
+		FindGuestByDeviceId(ctx context.Context, tenantId int64, deviceId string) (*TUser, error)
+		FindGuestFingerprintCandidates(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUser, error)
+		FindByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUser, error)
 	}
 
 	customTUserModel struct {
@@ -24,4 +55,270 @@ func NewTUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) T
 	return &customTUserModel{
 		defaultTUserModel: newTUserModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTUserModel) FindPage(ctx context.Context, filter UserPageFilter, cursor int64, limit int64) ([]*TUser, int64, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("id", filter.UserId)
+	builder.EqString("user_no", filter.UserNo)
+	builder.EqString("username", filter.Username)
+	builder.LikeString("nickname", filter.Nickname)
+	builder.EqInt64("status", filter.Status)
+	builder.EqInt64("member_level", filter.MemberLevel)
+	builder.EqString("invite_code", filter.InviteCode)
+	builder.GteInt64("register_time", filter.RegisterTimeStart)
+	builder.LteInt64("register_time", filter.RegisterTimeEnd)
+
+	identityExists := func(clause string, args ...any) {
+		builder.And(
+			fmt.Sprintf(
+				"EXISTS (SELECT 1 FROM `t_user_identity` ui WHERE ui.tenant_id = %s.tenant_id AND ui.user_id = %s.id AND %s)",
+				m.table,
+				m.table,
+				clause,
+			),
+			args...,
+		)
+	}
+	if filter.Phone != "" {
+		identityExists("ui.phone = ?", filter.Phone)
+	}
+	if filter.Email != "" {
+		identityExists("ui.email = ?", filter.Email)
+	}
+	if filter.VerifyStatus != 0 {
+		identityExists("ui.verify_status = ?", filter.VerifyStatus)
+	}
+	if filter.KycLevel != 0 {
+		identityExists("ui.kyc_level = ?", filter.KycLevel)
+	}
+	if keyword := strings.TrimSpace(filter.Keyword); keyword != "" {
+		kw := "%" + keyword + "%"
+		builder.And(
+			fmt.Sprintf(
+				"(username LIKE ? OR user_no LIKE ? OR nickname LIKE ? OR EXISTS (SELECT 1 FROM `t_user_identity` ui WHERE ui.tenant_id = %s.tenant_id AND ui.user_id = %s.id AND (ui.phone LIKE ? OR ui.email LIKE ?)))",
+				m.table,
+				m.table,
+			),
+			kw, kw, kw, kw, kw,
+		)
+	}
+
+	where := builder.Where()
+	args := builder.Args()
+
+	// ---- total ----
+	var total int64
+	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
+		return nil, 0, err
+	}
+
+	// ---- list ----
+	listArgs := append([]any{}, args...)
+	var listSql string
+
+	if cursor <= 0 {
+		// 第一页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s
+			ORDER BY id DESC
+			LIMIT ?`,
+			tUserRows, m.table, where,
+		)
+		listArgs = append(listArgs, limit)
+	} else {
+		// 后续页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s AND id < ?
+			ORDER BY id DESC
+			LIMIT ?`,
+			tUserRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, limit)
+	}
+
+	var list []*TUser
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
+		return nil, 0, err
+	}
+
+	return list, total, nil
+}
+
+func (m *defaultTUserModel) FindByInviteCode(ctx context.Context, inviteCode string) (*TUser, error) {
+	var resp TUser
+
+	query := fmt.Sprintf(`
+		SELECT %s 
+		FROM %s 
+		WHERE invite_code = ? 
+		LIMIT 1
+	`, tUserRows, m.table)
+
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, inviteCode)
+	if err != nil {
+		if err == sqlx.ErrNotFound {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func (m *defaultTUserModel) CountRecentNoRecharge(ctx context.Context, id int64) (int64, error) {
+	var count int64
+
+	query := fmt.Sprintf(`
+		SELECT COUNT(*) AS cnt
+		FROM %s u
+		WHERE u.create_times >= ?
+		AND is_recharge = 2
+		AND referrer_user_id = ?
+	`, m.table)
+
+	// 7 天前毫秒时间戳
+	sevenDaysAgo := time.Now().AddDate(0, 0, -7).UnixMilli()
+
+	err := m.QueryRowNoCacheCtx(ctx, &count, query, sevenDaysAgo, id)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (m *defaultTUserModel) FindByUsername(ctx context.Context, tenantCode string, username string) (*TUser, error) {
+	var resp TUser
+
+	query := fmt.Sprintf(`
+		SELECT %s 
+		FROM %s 
+		WHERE tenant_code = ? 
+		AND username = ? 
+		LIMIT 1
+	`, tUserRows, m.table)
+
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, tenantCode, username)
+	if err != nil {
+		if err == sqlx.ErrNotFound {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func (m *defaultTUserModel) FindByDeviceIdOrFingerprint(ctx context.Context, deviceId string, fingerprint string) (*TUser, error) {
+	var resp TUser
+
+	query := fmt.Sprintf(`
+		SELECT %s 
+		FROM %s 
+		WHERE device_id = ? 
+		OR fingerprint = ?
+		ORDER BY id DESC
+		LIMIT 1
+	`, tUserRows, m.table)
+
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, deviceId, fingerprint)
+	if err != nil {
+		if err == sqlx.ErrNotFound {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func (m *defaultTUserModel) FindGuestByDeviceId(ctx context.Context, tenantId int64, deviceId string) (*TUser, error) {
+	var resp TUser
+
+	query := fmt.Sprintf(`
+		SELECT %s
+		FROM %s
+		WHERE tenant_id = ?
+		AND is_guest = 2
+		AND device_id = ?
+		AND deleted = 0
+		ORDER BY id DESC
+		LIMIT 1
+	`, tUserRows, m.table)
+
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, tenantId, deviceId)
+	if err != nil {
+		if err == sqlx.ErrNotFound {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func (m *defaultTUserModel) FindGuestFingerprintCandidates(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUser, error) {
+	if limit <= 0 || limit > 500 {
+		limit = 500
+	}
+
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", tenantId)
+	builder.And("is_guest = ?", int64(2))
+	builder.And("fingerprint <> ''")
+	builder.And("deleted = ?", int64(0))
+	if cursor > 0 {
+		builder.And("id < ?", cursor)
+	}
+
+	where := builder.Where()
+	args := builder.Args()
+	args = append(args, limit)
+
+	query := fmt.Sprintf(`
+		SELECT %s
+		FROM %s
+		WHERE %s
+		ORDER BY id DESC
+		LIMIT ?
+	`, tUserRows, m.table, where)
+
+	var list []*TUser
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, args...); err != nil {
+		return nil, err
+	}
+
+	return list, nil
+}
+
+func (m *defaultTUserModel) FindByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUser, error) {
+	var resp TUser
+
+	query := fmt.Sprintf(`
+		SELECT %s 
+		FROM %s 
+		WHERE tenant_id = ? 
+		AND id = ?
+		ORDER BY id DESC
+		LIMIT 1
+	`, tUserRows, m.table)
+
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, tenantId, userId)
+	if err != nil {
+		if err == sqlx.ErrNotFound {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &resp, nil
 }

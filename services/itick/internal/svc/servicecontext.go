@@ -30,13 +30,13 @@ type ServiceContext struct {
 	Cache                       cache.Cache
 	Factory                     *models.CoinKlineModelFactory
 	Writer                      *klinewriter.BatchWriter
-	ItickCategoryModel          models.ItickCategoryModel
-	ItickProductModel           models.ItickProductModel
-	ItickTenantCategoryModel    models.ItickTenantCategoryModel
-	ItickTenantProductModel     models.ItickTenantProductModel
-	ItickSyncTaskModel          models.ItickSyncTaskModel
-	ItickQuoteModel             models.ItickQuoteModel
-	ItickKlineSyncProgressModel models.ItickKlineSyncProgressModel
+	ItickCategoryModel          models.TItickCategoryModel
+	ItickProductModel           models.TItickProductModel
+	ItickTenantCategoryModel    models.TItickTenantCategoryModel
+	ItickTenantProductModel     models.TItickTenantProductModel
+	ItickSyncTaskModel          models.TItickSyncTaskModel
+	ItickQuoteModel             models.TItickQuoteModel
+	ItickKlineSyncProgressModel models.TItickKlineSyncProgressModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -46,13 +46,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 
-	itickCategoryModel := models.NewTItickCategoryModel(conn, c.CacheRedis).(models.ItickCategoryModel)
-	itickProductModel := models.NewTItickProductModel(conn, c.CacheRedis).(models.ItickProductModel)
-	itickTenantCategoryModel := models.NewTItickTenantCategoryModel(conn, c.CacheRedis).(models.ItickTenantCategoryModel)
-	itickTenantProductModel := models.NewTItickTenantProductModel(conn, c.CacheRedis).(models.ItickTenantProductModel)
-	itickSyncTaskModel := models.NewTItickSyncTaskModel(conn, c.CacheRedis).(models.ItickSyncTaskModel)
-	itickQuoteModel := models.NewTItickQuoteModel(conn, c.CacheRedis).(models.ItickQuoteModel)
-	itickKlineSyncProgressModel := models.NewTItickKlineSyncProgressModel(conn, c.CacheRedis).(models.ItickKlineSyncProgressModel)
+	itickCategoryModel := models.NewTItickCategoryModel(conn, c.CacheRedis)
+	itickProductModel := models.NewTItickProductModel(conn, c.CacheRedis)
+	itickTenantCategoryModel := models.NewTItickTenantCategoryModel(conn, c.CacheRedis)
+	itickTenantProductModel := models.NewTItickTenantProductModel(conn, c.CacheRedis)
+	itickSyncTaskModel := models.NewTItickSyncTaskModel(conn, c.CacheRedis)
+	itickQuoteModel := models.NewTItickQuoteModel(conn, c.CacheRedis)
+	itickKlineSyncProgressModel := models.NewTItickKlineSyncProgressModel(conn, c.CacheRedis)
 
 	busRedis := redis.NewClient(&redis.Options{
 		Addr:     c.BusRedis[0].Host,

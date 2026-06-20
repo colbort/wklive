@@ -19,20 +19,20 @@ type ServiceContext struct {
 	DB                         sqlx.SqlConn
 	Redis                      *redis.Redis
 	AssetCli                   asset.AssetInternalClient
-	PayPlatformModel           models.PayPlatformModel
-	PayProductModel            models.PayProductModel
-	UserRechargeStatModel      models.UserRechargeStatModel
-	TenantPayAccountModel      models.TenantPayAccountModel
-	TenantPayChannelModel      models.TenantPayChannelModel
-	TenantPayChannelRuleModel  models.TenantPayChannelRuleModel
-	TenantPayPlatformModel     models.TenantPayPlatformModel
-	RechargeOrderModel         models.RechargeOrderModel
-	RechargeNotifyLogModel     models.RechargeNotifyLogModel
-	WithdrawOrderModel         models.WithdrawOrderModel
-	WithdrawNotifyLogModel     models.WithdrawNotifyLogModel
-	CryptoRechargeAddressModel models.CryptoRechargeAddressModel
-	CryptoWalletAccountModel   models.CryptoWalletAccountModel
-	CryptoRechargeTxModel      models.CryptoRechargeTxModel
+	PayPlatformModel           models.TPayPlatformModel
+	PayProductModel            models.TPayProductModel
+	UserRechargeStatModel      models.TUserRechargeStatModel
+	TenantPayAccountModel      models.TTenantPayAccountModel
+	TenantPayChannelModel      models.TTenantPayChannelModel
+	TenantPayChannelRuleModel  models.TTenantPayChannelRuleModel
+	TenantPayPlatformModel     models.TTenantPayPlatformModel
+	RechargeOrderModel         models.TRechargeOrderModel
+	RechargeNotifyLogModel     models.TRechargeNotifyLogModel
+	WithdrawOrderModel         models.TWithdrawOrderModel
+	WithdrawNotifyLogModel     models.TWithdrawNotifyLogModel
+	CryptoRechargeAddressModel models.TCryptoRechargeAddressModel
+	CryptoWalletAccountModel   models.TCryptoWalletAccountModel
+	CryptoRechargeTxModel      models.TCryptoRechargeTxModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -43,20 +43,20 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:                         conn,
 		Redis:                      redis.MustNewRedis(c.Redis.RedisConf),
 		AssetCli:                   asset.NewAssetInternalClient(assetCli.Conn()),
-		PayPlatformModel:           models.NewTPayPlatformModel(conn, c.CacheRedis).(models.PayPlatformModel),
-		PayProductModel:            models.NewTPayProductModel(conn, c.CacheRedis).(models.PayProductModel),
-		UserRechargeStatModel:      models.NewTUserRechargeStatModel(conn, c.CacheRedis).(models.UserRechargeStatModel),
-		TenantPayAccountModel:      models.NewTTenantPayAccountModel(conn, c.CacheRedis).(models.TenantPayAccountModel),
-		TenantPayChannelModel:      models.NewTTenantPayChannelModel(conn, c.CacheRedis).(models.TenantPayChannelModel),
-		TenantPayChannelRuleModel:  models.NewTTenantPayChannelRuleModel(conn, c.CacheRedis).(models.TenantPayChannelRuleModel),
-		TenantPayPlatformModel:     models.NewTTenantPayPlatformModel(conn, c.CacheRedis).(models.TenantPayPlatformModel),
-		RechargeOrderModel:         models.NewTRechargeOrderModel(conn, c.CacheRedis).(models.RechargeOrderModel),
-		RechargeNotifyLogModel:     models.NewTRechargeNotifyLogModel(conn, c.CacheRedis).(models.RechargeNotifyLogModel),
-		WithdrawOrderModel:         models.NewTWithdrawOrderModel(conn, c.CacheRedis).(models.WithdrawOrderModel),
-		WithdrawNotifyLogModel:     models.NewTWithdrawNotifyLogModel(conn, c.CacheRedis).(models.WithdrawNotifyLogModel),
-		CryptoRechargeAddressModel: models.NewTCryptoRechargeAddressModel(conn, c.CacheRedis).(models.CryptoRechargeAddressModel),
-		CryptoWalletAccountModel:   models.NewTCryptoWalletAccountModel(conn, c.CacheRedis).(models.CryptoWalletAccountModel),
-		CryptoRechargeTxModel:      models.NewTCryptoRechargeTxModel(conn, c.CacheRedis).(models.CryptoRechargeTxModel),
+		PayPlatformModel:           models.NewTPayPlatformModel(conn, c.CacheRedis),
+		PayProductModel:            models.NewTPayProductModel(conn, c.CacheRedis),
+		UserRechargeStatModel:      models.NewTUserRechargeStatModel(conn, c.CacheRedis),
+		TenantPayAccountModel:      models.NewTTenantPayAccountModel(conn, c.CacheRedis),
+		TenantPayChannelModel:      models.NewTTenantPayChannelModel(conn, c.CacheRedis),
+		TenantPayChannelRuleModel:  models.NewTTenantPayChannelRuleModel(conn, c.CacheRedis),
+		TenantPayPlatformModel:     models.NewTTenantPayPlatformModel(conn, c.CacheRedis),
+		RechargeOrderModel:         models.NewTRechargeOrderModel(conn, c.CacheRedis),
+		RechargeNotifyLogModel:     models.NewTRechargeNotifyLogModel(conn, c.CacheRedis),
+		WithdrawOrderModel:         models.NewTWithdrawOrderModel(conn, c.CacheRedis),
+		WithdrawNotifyLogModel:     models.NewTWithdrawNotifyLogModel(conn, c.CacheRedis),
+		CryptoRechargeAddressModel: models.NewTCryptoRechargeAddressModel(conn, c.CacheRedis),
+		CryptoWalletAccountModel:   models.NewTCryptoWalletAccountModel(conn, c.CacheRedis),
+		CryptoRechargeTxModel:      models.NewTCryptoRechargeTxModel(conn, c.CacheRedis),
 	}
 }
 

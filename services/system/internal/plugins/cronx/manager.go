@@ -23,14 +23,14 @@ type CronManager struct {
 	handlerMap  map[string]JobHandler    // invokeTarget -> handler
 	runningMap  sync.Map                 // jobID -> struct{}
 	cancelMap   sync.Map                 // jobID -> context.CancelFunc
-	jobLogModel models.JobLogModel       // job log model
+	jobLogModel models.SysJobLogModel    // job log model
 }
 
 // NewCronManager
 // 支持 5 位和 6 位 cron：
 // 5位：*/5 * * * *
 // 6位：0 */5 * * * *
-func NewCronManager(jobLogModel models.JobLogModel) *CronManager {
+func NewCronManager(jobLogModel models.SysJobLogModel) *CronManager {
 	parser := cron.NewParser(
 		cron.SecondOptional |
 			cron.Minute |

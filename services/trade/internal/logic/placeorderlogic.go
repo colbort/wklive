@@ -164,9 +164,9 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	)
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
-		spotModel := models.NewTTradeOrderSpotModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderSpotModel)
-		contractModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderContractModel)
+		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
+		spotModel := models.NewTTradeOrderSpotModel(conn, l.svcCtx.Config.CacheRedis)
+		contractModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
 
 		res, err := orderModel.Insert(ctx, order)
 		if err != nil {

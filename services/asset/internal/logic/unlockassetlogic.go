@@ -61,10 +61,10 @@ func (l *UnlockAssetLogic) UnlockAsset(in *asset.UnlockAssetReq) (*asset.ChangeA
 	var after *models.TUserAsset
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis).(models.UserAssetModel)
-		assetLockModel := models.NewTAssetLockModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetLockModel)
-		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetFlowModel)
-		idempotentModel := models.NewTAssetIdempotentModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetIdempotentModel)
+		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis)
+		assetLockModel := models.NewTAssetLockModel(conn, l.svcCtx.Config.CacheRedis)
+		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis)
+		idempotentModel := models.NewTAssetIdempotentModel(conn, l.svcCtx.Config.CacheRedis)
 
 		if in.BizNo != "" {
 			done, err := prepareAssetIdempotent(ctx, idempotentModel, in.TenantId, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizNo, in.Remark, ts)

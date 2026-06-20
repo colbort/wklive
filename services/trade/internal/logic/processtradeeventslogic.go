@@ -125,7 +125,7 @@ func (l *ProcessTradeEventsLogic) rejectFreezingOrderIfNeeded(orderID, now int64
 	var rejectedOrder *models.TTradeOrder
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
+		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)
 		if err != nil {
 			return err
@@ -194,7 +194,7 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 	var triggeredOrder *models.TTradeOrder
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
+		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)
 		if err != nil {
 			return err
@@ -272,7 +272,7 @@ func (l *ProcessTradeEventsLogic) expireOrderIfNeeded(orderID, now int64) (*mode
 	var expiredOrder *models.TTradeOrder
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
+		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)
 		if err != nil {
 			return err

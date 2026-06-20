@@ -49,11 +49,11 @@ func (l *SysTenantDeleteLogic) SysTenantDelete(in *system.SysTenantDeleteReq) (*
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		tenantModel := models.NewSysTenantModel(conn, l.svcCtx.Config.CacheRedis).(models.TenantModel)
-		userModel := models.NewSysUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
-		roleModel := models.NewSysRoleModel(conn, l.svcCtx.Config.CacheRedis).(models.RoleModel)
-		userRoleModel := models.NewSysUserRoleModel(conn, l.svcCtx.Config.CacheRedis).(models.UserRoleModel)
-		roleMenuModel := models.NewSysRoleMenuModel(conn, l.svcCtx.Config.CacheRedis).(models.RoleMenuModel)
+		tenantModel := models.NewSysTenantModel(conn, l.svcCtx.Config.CacheRedis)
+		userModel := models.NewSysUserModel(conn, l.svcCtx.Config.CacheRedis)
+		roleModel := models.NewSysRoleModel(conn, l.svcCtx.Config.CacheRedis)
+		userRoleModel := models.NewSysUserRoleModel(conn, l.svcCtx.Config.CacheRedis)
+		roleMenuModel := models.NewSysRoleMenuModel(conn, l.svcCtx.Config.CacheRedis)
 
 		roleMenuIds, err := roleMenuModel.FindIdsByTenantId(ctx, tenant.Id)
 		if err != nil {

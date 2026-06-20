@@ -1,17 +1,30 @@
 package models
 
 import (
+	"context"
+	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"wklive/common/sqlutil"
 )
 
 var _ TStakeProductModel = (*customTStakeProductModel)(nil)
 
 type (
+	StakeProductPageFilter struct {
+		TenantId    int64
+		ProductNo   string
+		ProductName string
+		CoinSymbol  string
+		ProductType int64
+		Status      int64
+	}
+
 	// TStakeProductModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTStakeProductModel.
 	TStakeProductModel interface {
 		tStakeProductModel
+		FindPage(ctx context.Context, filter StakeProductPageFilter, cursor int64, limit int64) ([]*TStakeProduct, int64, error)
 	}
 
 	customTStakeProductModel struct {
@@ -24,4 +37,43 @@ func NewTStakeProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.O
 	return &customTStakeProductModel{
 		defaultTStakeProductModel: newTStakeProductModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTStakeProductModel) FindPage(ctx context.Context, filter StakeProductPageFilter, cursor int64, limit int64) ([]*TStakeProduct, int64, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqString("product_no", filter.ProductNo)
+	if filter.ProductName != "" {
+		builder.LikeString("product_name", filter.ProductName)
+	}
+	builder.EqString("coin_symbol", filter.CoinSymbol)
+	builder.EqInt64("product_type", filter.ProductType)
+	builder.EqInt64("status", filter.Status)
+
+	where := builder.Where()
+	args := builder.Args()
+
+	var total int64
+	countSQL := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSQL, args...); err != nil {
+		return nil, 0, err
+	}
+
+	listArgs := append([]any{}, args...)
+	listSQL := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tStakeProductRows, m.table, where)
+	if cursor > 0 {
+		listSQL += " AND id < ?"
+		listArgs = append(listArgs, cursor)
+	}
+	listSQL += " ORDER BY sort DESC, id DESC LIMIT ?"
+	listArgs = append(listArgs, limit)
+
+	var list []*TStakeProduct
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSQL, listArgs...); err != nil {
+		return nil, 0, err
+	}
+
+	return list, total, nil
 }

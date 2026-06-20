@@ -61,8 +61,8 @@ func (l *CancelAllOrdersLogic) CancelAllOrders(in *trade.CancelAllOrdersReq) (*t
 			var canceledOrder *models.TTradeOrder
 			if err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 				conn := sqlx.NewSqlConnFromSession(session)
-				orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
-				cancelLogModel := models.NewTTradeCancelLogModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeCancelLogModel)
+				orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
+				cancelLogModel := models.NewTTradeCancelLogModel(conn, l.svcCtx.Config.CacheRedis)
 
 				locked, err := orderModel.FindOneForUpdate(ctx, item.Id)
 				if err != nil {
