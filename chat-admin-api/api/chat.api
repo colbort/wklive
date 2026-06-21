@@ -152,7 +152,6 @@ type ChatWorkOrder {
 }
 
 type ChatAdminLoginReq {
-	merchantId int64  `json:"merchantId"`
 	username   string `json:"username"`
 	password   string `json:"password"`
 	googleCode string `json:"googleCode,optional"`
@@ -170,13 +169,9 @@ type ChatAdminLoginResp {
 }
 
 type ChatAdminLogoutReq {
-	merchantId  int64 `json:"merchantId"`
-	chatUserId  int64 `json:"chatUserId"`
 }
 
 type ChatAdminProfileReq {
-	merchantId  int64 `form:"merchantId"`
-	chatUserId  int64 `form:"chatUserId"`
 }
 
 type ChatAdminProfileResp {
@@ -233,12 +228,15 @@ type PageChatGroupsResp {
 }
 
 type CreateChatAgentReq {
-	merchantId      int64  `json:"merchantId"`
-	chatUserId      int64  `json:"chatUserId"`
-	agentNo         string `json:"agentNo,optional"`
 	maxSessionCount int64  `json:"maxSessionCount,optional"`
 	groupId         int64  `json:"groupId,optional"`
 	welcomeMessage  string `json:"welcomeMessage,optional"`
+	username        string `json:"username"`
+	password        string `json:"password"`
+	nickname        string `json:"nickname"`
+	mobile          string `json:"mobile,optional"`
+	email           string `json:"email,optional"`
+	enabled         int64  `json:"enabled,optional"`
 	remark          string `json:"remark,optional"`
 }
 

@@ -1,8 +1,10 @@
 Name: chat.rpc
 ListenOn: 0.0.0.0:8088
 Mode: dev
+Jwt:
+  AccessSecret: "your_access_secret"
+  AccessExpire: 3600
 Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: chat.rpc
-

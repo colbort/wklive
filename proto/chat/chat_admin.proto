@@ -130,7 +130,8 @@ message AdminCommonResp {
 }
 
 message ChatAdminLoginReq {
-  int64 merchant_id = 1; // 客服商户ID
+  reserved 1;
+
   string username = 2; // 登录账号
   string password = 3; // 登录密码
   string google_code = 4; // Google验证码
@@ -148,13 +149,11 @@ message ChatAdminLoginResp {
 }
 
 message ChatAdminLogoutReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 chat_user_id = 2; // 客服用户ID
+  reserved 1, 2;
 }
 
 message ChatAdminProfileReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 chat_user_id = 2; // 客服用户ID
+  reserved 1, 2;
 }
 
 message ChatAdminProfileResp {
@@ -201,15 +200,18 @@ message DeleteChatGroupReq {
 }
 
 message CreateChatAgentReq {
-  reserved 4, 5, 7;
+  reserved 1, 2, 3, 4, 5, 7;
 
-  int64 merchant_id = 1; // 客服商户ID
-  int64 chat_user_id = 2; // 客服用户ID
-  string agent_no = 3; // 坐席编号
   int32 max_session_count = 6; // 最大同时接待数
   string remark = 8; // 备注
   int64 group_id = 9; // 客服分组ID
   string welcome_message = 10; // 欢迎语
+  string username = 11; // 登录账号
+  string password = 12; // 登录密码
+  string nickname = 13; // 昵称
+  string mobile = 14; // 手机号
+  string email = 15; // 邮箱
+  common.Enable enabled = 16; // 启用状态
 }
 
 message UpdateChatAgentReq {

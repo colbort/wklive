@@ -1,13 +1,11 @@
 Name: chatAdmin
 Host: 0.0.0.0
-Port: 8888
+Port: 6666
+Jwt:
+  AccessSecret: "your_access_secret"
+  AccessExpire: 3600
 
 ChatRpc:
   Endpoints:
-    - 127.0.0.1:8080
-  NonBlock: true
-
-Redis:
-  Host: 127.0.0.1:6379
-  Type: node
+    - 127.0.0.1:8088
   NonBlock: true

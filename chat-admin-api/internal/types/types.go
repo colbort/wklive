@@ -18,7 +18,6 @@ type ChatAdminLoginData struct {
 }
 
 type ChatAdminLoginReq struct {
-	MerchantId int64  `json:"merchantId"`
 	Username   string `json:"username"`
 	Password   string `json:"password"`
 	GoogleCode string `json:"googleCode,optional"`
@@ -30,13 +29,9 @@ type ChatAdminLoginResp struct {
 }
 
 type ChatAdminLogoutReq struct {
-	MerchantId int64 `json:"merchantId"`
-	ChatUserId int64 `json:"chatUserId"`
 }
 
 type ChatAdminProfileReq struct {
-	MerchantId int64 `form:"merchantId"`
-	ChatUserId int64 `form:"chatUserId"`
 }
 
 type ChatAdminProfileResp struct {
@@ -238,12 +233,15 @@ type CloseChatSessionReq struct {
 }
 
 type CreateChatAgentReq struct {
-	MerchantId      int64  `json:"merchantId"`
-	ChatUserId      int64  `json:"chatUserId"`
-	AgentNo         string `json:"agentNo,optional"`
 	MaxSessionCount int64  `json:"maxSessionCount,optional"`
 	GroupId         int64  `json:"groupId,optional"`
 	WelcomeMessage  string `json:"welcomeMessage,optional"`
+	Username        string `json:"username"`
+	Password        string `json:"password"`
+	Nickname        string `json:"nickname"`
+	Mobile          string `json:"mobile,optional"`
+	Email           string `json:"email,optional"`
+	Enabled         int64  `json:"enabled,optional"`
 	Remark          string `json:"remark,optional"`
 }
 

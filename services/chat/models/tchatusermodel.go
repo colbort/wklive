@@ -29,6 +29,7 @@ type (
 	TChatUserModel interface {
 		tChatUserModel
 		FindPage(ctx context.Context, filter ChatUserPageFilter, cursor int64, limit int64) ([]*TChatUser, int64, error)
+		FindOneByUsername(ctx context.Context, username string) (*TChatUser, error)
 	}
 
 	customTChatUserModel struct {
@@ -78,4 +79,19 @@ func (m *customTChatUserModel) FindPage(ctx context.Context, filter ChatUserPage
 	}
 
 	return list, total, nil
+}
+
+func (m *customTChatUserModel) FindOneByUsername(ctx context.Context, username string) (*TChatUser, error) {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE username = ? LIMIT 2", tChatUserRows, m.table)
+	var list []*TChatUser
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, username); err != nil {
+		return nil, err
+	}
+	if len(list) == 0 {
+		return nil, ErrNotFound
+	}
+	if len(list) > 1 {
+		return nil, fmt.Errorf("multiple chat users found for username: %s", username)
+	}
+	return list[0], nil
 }

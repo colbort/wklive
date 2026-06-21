@@ -122,10 +122,9 @@ func fillAgentSenderSnapshot(ctx context.Context, svcCtx *svc.ServiceContext, co
 	if data == nil || svcCtx == nil || conn == nil || conn.UserId <= 0 || merchantId <= 0 {
 		return
 	}
-	resp, err := svcCtx.ChatAdminCli.Profile(ctx, &chat.ChatAdminProfileReq{
-		MerchantId: merchantId,
-		ChatUserId: conn.UserId,
-	})
+	profileCtx := context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
+	profileCtx = context.WithValue(profileCtx, utils.CtxKeyUsername, conn.Username)
+	resp, err := svcCtx.ChatAdminCli.Profile(profileCtx, &chat.ChatAdminProfileReq{})
 	if err != nil || resp == nil || resp.User == nil {
 		return
 	}

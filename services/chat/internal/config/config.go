@@ -7,6 +7,10 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
+	Jwt struct {
+		AccessSecret string
+		AccessExpire int64
+	} `json:"Jwt" yaml:"Jwt"`
 	CacheRedis cache.CacheConf
 	Mysql      struct {
 		DataSource string
