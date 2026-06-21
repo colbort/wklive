@@ -191,6 +191,7 @@ func toProtoAgent(data *models.TChatAgent) *chat.ChatAgent {
 		MerchantId:          data.MerchantId,
 		ChatUserId:          data.ChatUserId,
 		AgentNo:             data.AgentNo,
+		WelcomeMessage:      data.WelcomeMessage,
 		Status:              chat.ChatAgentStatus(data.Status),
 		MaxSessionCount:     int32(data.MaxSessionCount),
 		CurrentSessionCount: int32(data.CurrentSessionCount),
@@ -259,8 +260,7 @@ func toProtoMessage(data *models.ChatMessage) *chat.ChatMessage {
 		UserId:      data.UserId,
 		AgentId:     data.AgentId,
 		SenderType:  chat.ChatSenderType(data.SenderType),
-		SenderId:    data.SenderId,
-		SenderName:  data.SenderName,
+		Sender:      toProtoMessageSender(data),
 		MessageType: chat.ChatMessageType(data.MessageType),
 		Content:     data.Content,
 		MediaUrl:    data.MediaUrl,
@@ -281,6 +281,23 @@ func toProtoMessages(list []*models.ChatMessage) []*chat.ChatMessage {
 		resp = append(resp, toProtoMessage(item))
 	}
 	return resp
+}
+
+func toProtoMessageSender(data *models.ChatMessage) *chat.ChatMessageSender {
+	if data == nil {
+		return nil
+	}
+	if data.Sender != nil {
+		return &chat.ChatMessageSender{
+			Id:        data.Sender.Id,
+			Type:      chat.ChatSenderType(data.Sender.Type),
+			Nickname:  data.Sender.Nickname,
+			AvatarUrl: data.Sender.AvatarUrl,
+		}
+	}
+	return &chat.ChatMessageSender{
+		Type: chat.ChatSenderType(data.SenderType),
+	}
 }
 
 func toProtoUser(data *models.TChatUser) *chat.ChatUser {
@@ -361,17 +378,22 @@ func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchant
 	return data, true, nil
 }
 
-func newMessage(session *models.TChatSession, senderType chat.ChatSenderType, senderID int64, senderName string, messageType chat.ChatMessageType, content, mediaURL, mediaName, mediaMIME string, mediaSize int64, payload *structpb.Struct) *models.ChatMessage {
+func newMessage(session *models.TChatSession, senderType chat.ChatSenderType, senderID int64, senderName, senderAvatarURL string, messageType chat.ChatMessageType, content, mediaURL, mediaName, mediaMIME string, mediaSize int64, payload *structpb.Struct) *models.ChatMessage {
 	now := nowMillis()
+	senderName = normalizeSenderName(senderType, senderID, senderName)
 	msg := &models.ChatMessage{
-		MessageNo:   nextNo("CM"),
-		SessionNo:   session.SessionNo,
-		MerchantId:  session.MerchantId,
-		UserId:      session.UserId,
-		AgentId:     session.AgentId,
-		SenderType:  int64(senderType),
-		SenderId:    senderID,
-		SenderName:  senderName,
+		MessageNo:  nextNo("CM"),
+		SessionNo:  session.SessionNo,
+		MerchantId: session.MerchantId,
+		UserId:     session.UserId,
+		AgentId:    session.AgentId,
+		SenderType: int64(senderType),
+		Sender: &models.ChatMessageSender{
+			Id:        senderID,
+			Type:      int64(senderType),
+			Nickname:  senderName,
+			AvatarUrl: strings.TrimSpace(senderAvatarURL),
+		},
 		MessageType: int64(normalizeMessageType(messageType)),
 		Content:     strings.TrimSpace(content),
 		MediaUrl:    strings.TrimSpace(mediaURL),
@@ -388,11 +410,64 @@ func newMessage(session *models.TChatSession, senderType chat.ChatSenderType, se
 	return msg
 }
 
+func normalizeSenderName(senderType chat.ChatSenderType, senderID int64, senderName string) string {
+	senderName = strings.TrimSpace(senderName)
+	if senderName != "" {
+		return senderName
+	}
+	switch senderType {
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_USER:
+		return fmt.Sprintf("用户%d", senderID)
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM:
+		return "system"
+	default:
+		return ""
+	}
+}
+
+func fillMessageSender(ctx context.Context, svcCtx *svc.ServiceContext, msg *models.ChatMessage) {
+	if msg == nil {
+		return
+	}
+	if msg.Sender == nil {
+		msg.Sender = &models.ChatMessageSender{
+			Type: msg.SenderType,
+		}
+	}
+	switch chat.ChatSenderType(msg.SenderType) {
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT:
+		fillAgentSenderSnapshot(ctx, svcCtx, msg)
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM:
+		if msg.Sender.Nickname == "" {
+			msg.Sender.Nickname = "system"
+		}
+	}
+}
+
+func fillAgentSenderSnapshot(ctx context.Context, svcCtx *svc.ServiceContext, msg *models.ChatMessage) {
+	if msg == nil || msg.Sender == nil || msg.Sender.Id <= 0 {
+		return
+	}
+	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, msg.Sender.Id)
+	if err != nil || agent == nil || agent.ChatUserId <= 0 {
+		return
+	}
+	user, err := svcCtx.ChatUserModel.FindOne(ctx, agent.ChatUserId)
+	if err != nil || user == nil {
+		return
+	}
+	msg.Sender.Id = agent.Id
+	msg.Sender.Type = msg.SenderType
+	msg.Sender.Nickname = user.Nickname
+	msg.Sender.AvatarUrl = user.AvatarUrl
+}
+
 func sendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, msg *models.ChatMessage) (*models.ChatMessage, error) {
 	model := svcCtx.ChatMessageFactory.New(session.MerchantId)
 	if model == nil {
 		return nil, fmt.Errorf("invalid merchant_id: %d", session.MerchantId)
 	}
+	fillMessageSender(ctx, svcCtx, msg)
 	if err := model.Insert(ctx, msg); err != nil {
 		return nil, err
 	}

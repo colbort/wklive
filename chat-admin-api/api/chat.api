@@ -5,6 +5,7 @@ type ChatAgent {
 	merchantId          int64  `json:"merchantId"`
 	chatUserId          int64  `json:"chatUserId"`
 	agentNo             string `json:"agentNo"`
+	welcomeMessage      string `json:"welcomeMessage"`
 	status              int64  `json:"status"` // 1 offline 2 online 3 busy 4 resting
 	maxSessionCount     int64  `json:"maxSessionCount"`
 	currentSessionCount int64  `json:"currentSessionCount"`
@@ -71,6 +72,13 @@ type ChatSession {
 	updateTimes      int64  `json:"updateTimes"`
 }
 
+type ChatMessageSender {
+	id         int64  `json:"id"`
+	senderType int64  `json:"type"`
+	nickname   string `json:"nickname"`
+	avatarUrl  string `json:"avatarUrl"`
+}
+
 type ChatMessage {
 	id          int64  `json:"id,optional"`
 	messageNo   string `json:"messageNo"`
@@ -79,8 +87,7 @@ type ChatMessage {
 	userId      int64  `json:"userId"`
 	agentId     int64  `json:"agentId"`
 	senderType  int64  `json:"senderType"`
-	senderId    int64  `json:"senderId"`
-	senderName  string `json:"senderName"`
+	sender      ChatMessageSender `json:"sender"`
 	messageType int64  `json:"messageType"`
 	content     string `json:"content"`
 	mediaUrl    string `json:"mediaUrl"`
@@ -231,6 +238,7 @@ type CreateChatAgentReq {
 	agentNo         string `json:"agentNo,optional"`
 	maxSessionCount int64  `json:"maxSessionCount,optional"`
 	groupId         int64  `json:"groupId,optional"`
+	welcomeMessage  string `json:"welcomeMessage,optional"`
 	remark          string `json:"remark,optional"`
 }
 
@@ -239,6 +247,7 @@ type UpdateChatAgentReq {
 	merchantId      int64  `json:"merchantId"`
 	maxSessionCount int64  `json:"maxSessionCount,optional"`
 	groupId         int64  `json:"groupId,optional"`
+	welcomeMessage  string `json:"welcomeMessage,optional"`
 	remark          string `json:"remark,optional"`
 }
 

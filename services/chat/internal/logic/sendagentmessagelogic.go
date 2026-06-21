@@ -57,7 +57,7 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 			return &chat.AdminChatMessageResp{Base: base}, nil
 		}
 	}
-	msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT, in.GetAgentId(), "", in.GetMessageType(), in.GetContent(), in.GetMediaUrl(), in.GetMediaName(), in.GetMediaMime(), in.GetMediaSize(), nil)
+	msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT, in.GetAgentId(), "", "", in.GetMessageType(), in.GetContent(), in.GetMediaUrl(), in.GetMediaName(), in.GetMediaMime(), in.GetMediaSize(), nil)
 	msg, err = sendMessage(l.ctx, l.svcCtx, session, msg)
 	if err != nil {
 		return &chat.AdminChatMessageResp{Base: errorBase(err)}, nil

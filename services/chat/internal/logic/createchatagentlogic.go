@@ -54,6 +54,7 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 		ChatUserId:      in.GetChatUserId(),
 		GroupId:         in.GetGroupId(),
 		AgentNo:         agentNo,
+		WelcomeMessage:  strings.TrimSpace(in.GetWelcomeMessage()),
 		Status:          int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_OFFLINE),
 		MaxSessionCount: maxCount,
 		Remark:          strings.TrimSpace(in.GetRemark()),

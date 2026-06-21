@@ -24,9 +24,8 @@ type ChatMessage struct {
 	UserId     int64  `bson:"user_id,omitempty" json:"user_id,omitempty"`
 	AgentId    int64  `bson:"agent_id,omitempty" json:"agent_id,omitempty"`
 
-	SenderType int64  `bson:"sender_type,omitempty" json:"sender_type,omitempty"`
-	SenderId   int64  `bson:"sender_id,omitempty" json:"sender_id,omitempty"`
-	SenderName string `bson:"sender_name,omitempty" json:"sender_name,omitempty"`
+	SenderType int64              `bson:"sender_type,omitempty" json:"sender_type,omitempty"`
+	Sender     *ChatMessageSender `bson:"sender,omitempty" json:"sender,omitempty"`
 
 	MessageType int64  `bson:"message_type,omitempty" json:"message_type,omitempty"`
 	Content     string `bson:"content,omitempty" json:"content,omitempty"`
@@ -41,4 +40,11 @@ type ChatMessage struct {
 
 	CreateTimes int64 `bson:"create_times,omitempty" json:"create_times,omitempty"`
 	UpdateTimes int64 `bson:"update_times,omitempty" json:"update_times,omitempty"`
+}
+
+type ChatMessageSender struct {
+	Id        int64  `bson:"id,omitempty" json:"id,omitempty"`
+	Type      int64  `bson:"type,omitempty" json:"type,omitempty"`
+	Nickname  string `bson:"nickname,omitempty" json:"nickname,omitempty"`
+	AvatarUrl string `bson:"avatar_url,omitempty" json:"avatar_url,omitempty"`
 }

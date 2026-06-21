@@ -187,6 +187,9 @@ func copyStruct(dst, src reflect.Value) {
 		if targetName == "Base" {
 			targetName = "RespBase"
 		}
+		if targetName == "Type" {
+			targetName = "SenderType"
+		}
 
 		if dstField, ok := findField(dst, targetName); ok {
 			_ = copyValue(dstField, srcField)

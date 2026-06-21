@@ -93,15 +93,17 @@ func handleSendUserMessage(ctx context.Context, svcCtx *svc.ServiceContext, conn
 		return
 	}
 	req := chat.SendUserMessageReq{
-		MerchantId:  data.MerchantId,
-		UserId:      conn.UserId,
-		SessionNo:   data.SessionNo,
-		MessageType: chat.ChatMessageType(data.MessageType),
-		Content:     data.Content,
-		MediaUrl:    data.MediaUrl,
-		MediaName:   data.MediaName,
-		MediaMime:   data.MediaMime,
-		MediaSize:   data.MediaSize,
+		MerchantId:      data.MerchantId,
+		UserId:          conn.UserId,
+		SessionNo:       data.SessionNo,
+		MessageType:     chat.ChatMessageType(data.MessageType),
+		Content:         data.Content,
+		MediaUrl:        data.MediaUrl,
+		MediaName:       data.MediaName,
+		MediaMime:       data.MediaMime,
+		MediaSize:       data.MediaSize,
+		SenderNickname:  firstNonEmpty(data.SenderNickname, conn.Username),
+		SenderAvatarUrl: data.SenderAvatarUrl,
 	}
 	if req.MerchantId == 0 {
 		req.MerchantId = conn.MerchantId
@@ -180,14 +182,20 @@ func handleSendGuestUserMessage(ctx context.Context, svcCtx *svc.ServiceContext,
 
 func newTransientMessage(merchantId int64, sessionNo string, userId int64, agentId int64, senderType chat.ChatSenderType, senderId int64, data sendUserMessagePayload) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
+	senderNickname := firstNonEmpty(data.SenderNickname, "guest")
 	return &chat.ChatMessage{
-		MessageNo:   nextGuestNo("GM"),
-		SessionNo:   sessionNo,
-		MerchantId:  merchantId,
-		UserId:      userId,
-		AgentId:     agentId,
-		SenderType:  senderType,
-		SenderId:    senderId,
+		MessageNo:  nextGuestNo("GM"),
+		SessionNo:  sessionNo,
+		MerchantId: merchantId,
+		UserId:     userId,
+		AgentId:    agentId,
+		SenderType: senderType,
+		Sender: &chat.ChatMessageSender{
+			Id:        senderId,
+			Type:      senderType,
+			Nickname:  senderNickname,
+			AvatarUrl: strings.TrimSpace(data.SenderAvatarUrl),
+		},
 		MessageType: chat.ChatMessageType(data.MessageType),
 		Content:     strings.TrimSpace(data.Content),
 		MediaUrl:    strings.TrimSpace(data.MediaUrl),
@@ -237,14 +245,25 @@ func isGuestSession(sessionNo string) bool {
 }
 
 type sendUserMessagePayload struct {
-	MerchantId  int64  `json:"merchantId"`
-	SessionNo   string `json:"sessionNo"`
-	MessageType int64  `json:"messageType"`
-	Content     string `json:"content"`
-	MediaUrl    string `json:"mediaUrl"`
-	MediaName   string `json:"mediaName"`
-	MediaMime   string `json:"mediaMime"`
-	MediaSize   int64  `json:"mediaSize"`
+	MerchantId      int64  `json:"merchantId"`
+	SessionNo       string `json:"sessionNo"`
+	MessageType     int64  `json:"messageType"`
+	Content         string `json:"content"`
+	MediaUrl        string `json:"mediaUrl"`
+	MediaName       string `json:"mediaName"`
+	MediaMime       string `json:"mediaMime"`
+	MediaSize       int64  `json:"mediaSize"`
+	SenderNickname  string `json:"senderNickname"`
+	SenderAvatarUrl string `json:"senderAvatarUrl"`
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if v := strings.TrimSpace(value); v != "" {
+			return v
+		}
+	}
+	return ""
 }
 
 func parseToken(r *http.Request, secret string) (*utils.Claims, error) {

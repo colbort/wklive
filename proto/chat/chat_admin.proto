@@ -209,6 +209,7 @@ message CreateChatAgentReq {
   int32 max_session_count = 6; // 最大同时接待数
   string remark = 8; // 备注
   int64 group_id = 9; // 客服分组ID
+  string welcome_message = 10; // 欢迎语
 }
 
 message UpdateChatAgentReq {
@@ -219,6 +220,7 @@ message UpdateChatAgentReq {
   int32 max_session_count = 5; // 最大同时接待数
   string remark = 7; // 备注
   int64 group_id = 8; // 客服分组ID
+  string welcome_message = 9; // 欢迎语
 }
 
 message UpdateChatAgentStatusReq {

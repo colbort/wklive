@@ -41,6 +41,7 @@ func (l *UpdateChatAgentLogic) UpdateChatAgent(in *chat.UpdateChatAgentReq) (*ch
 		data.MaxSessionCount = int64(in.GetMaxSessionCount())
 	}
 	data.GroupId = in.GetGroupId()
+	data.WelcomeMessage = strings.TrimSpace(in.GetWelcomeMessage())
 	data.Remark = strings.TrimSpace(in.GetRemark())
 	data.UpdateTimes = nowMillis()
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, data); err != nil {

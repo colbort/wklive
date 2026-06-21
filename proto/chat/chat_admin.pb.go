@@ -774,6 +774,7 @@ type CreateChatAgentReq struct {
 	MaxSessionCount int32                  `protobuf:"varint,6,opt,name=max_session_count,json=maxSessionCount,proto3" json:"max_session_count,omitempty"` // 最大同时接待数
 	Remark          string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`                                             // 备注
 	GroupId         int64                  `protobuf:"varint,9,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                           // 客服分组ID
+	WelcomeMessage  string                 `protobuf:"bytes,10,opt,name=welcome_message,json=welcomeMessage,proto3" json:"welcome_message,omitempty"`      // 欢迎语
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -850,6 +851,13 @@ func (x *CreateChatAgentReq) GetGroupId() int64 {
 	return 0
 }
 
+func (x *CreateChatAgentReq) GetWelcomeMessage() string {
+	if x != nil {
+		return x.WelcomeMessage
+	}
+	return ""
+}
+
 type UpdateChatAgentReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                    // 主键ID
@@ -857,6 +865,7 @@ type UpdateChatAgentReq struct {
 	MaxSessionCount int32                  `protobuf:"varint,5,opt,name=max_session_count,json=maxSessionCount,proto3" json:"max_session_count,omitempty"` // 最大同时接待数
 	Remark          string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                             // 备注
 	GroupId         int64                  `protobuf:"varint,8,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                           // 客服分组ID
+	WelcomeMessage  string                 `protobuf:"bytes,9,opt,name=welcome_message,json=welcomeMessage,proto3" json:"welcome_message,omitempty"`       // 欢迎语
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -924,6 +933,13 @@ func (x *UpdateChatAgentReq) GetGroupId() int64 {
 		return x.GroupId
 	}
 	return 0
+}
+
+func (x *UpdateChatAgentReq) GetWelcomeMessage() string {
+	if x != nil {
+		return x.WelcomeMessage
+	}
+	return ""
 }
 
 type UpdateChatAgentStatusReq struct {
@@ -4071,7 +4087,7 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\x12DeleteChatGroupReq\x12\x1f\n" +
 	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
 	"merchantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xe3\x01\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"\x8c\x02\n" +
 	"\x12CreateChatAgentReq\x12\x1f\n" +
 	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
 	"merchantId\x12 \n" +
@@ -4080,14 +4096,17 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\bagent_no\x18\x03 \x01(\tR\aagentNo\x12*\n" +
 	"\x11max_session_count\x18\x06 \x01(\x05R\x0fmaxSessionCount\x12\x16\n" +
 	"\x06remark\x18\b \x01(\tR\x06remark\x12\x19\n" +
-	"\bgroup_id\x18\t \x01(\x03R\agroupIdJ\x04\b\x04\x10\x05J\x04\b\x05\x10\x06J\x04\b\a\x10\b\"\xb6\x01\n" +
+	"\bgroup_id\x18\t \x01(\x03R\agroupId\x12'\n" +
+	"\x0fwelcome_message\x18\n" +
+	" \x01(\tR\x0ewelcomeMessageJ\x04\b\x04\x10\x05J\x04\b\x05\x10\x06J\x04\b\a\x10\b\"\xdf\x01\n" +
 	"\x12UpdateChatAgentReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
 	"merchantId\x12*\n" +
 	"\x11max_session_count\x18\x05 \x01(\x05R\x0fmaxSessionCount\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\x12\x19\n" +
-	"\bgroup_id\x18\b \x01(\x03R\agroupIdJ\x04\b\x03\x10\x04J\x04\b\x04\x10\x05J\x04\b\x06\x10\a\"\x85\x01\n" +
+	"\bgroup_id\x18\b \x01(\x03R\agroupId\x12'\n" +
+	"\x0fwelcome_message\x18\t \x01(\tR\x0ewelcomeMessageJ\x04\b\x03\x10\x04J\x04\b\x04\x10\x05J\x04\b\x06\x10\a\"\x85\x01\n" +
 	"\x18UpdateChatAgentStatusReq\x12\x1f\n" +
 	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
 	"merchantId\x12\x19\n" +

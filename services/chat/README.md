@@ -74,8 +74,12 @@ MongoDB 消息集合建议命名为 `chat_message`，字段与 `proto/chat/model
   "user_id": 10001,
   "agent_id": 20001,
   "sender_type": 1,
-  "sender_id": 10001,
-  "sender_name": "用户昵称",
+  "sender": {
+    "id": 10001,
+    "type": 1,
+    "nickname": "用户昵称",
+    "avatar_url": ""
+  },
   "message_type": 1,
   "content": "你好，我想咨询订单",
   "media_url": "",

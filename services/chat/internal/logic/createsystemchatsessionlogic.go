@@ -31,7 +31,7 @@ func (l *CreateSystemChatSessionLogic) CreateSystemChatSession(in *chat.CreateSy
 		return &chat.InternalChatSessionResp{Base: badBase(err.Error())}, nil
 	}
 	if created && strings.TrimSpace(in.GetFirstMessage()) != "" {
-		msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM, 0, "system", chat.ChatMessageType_CHAT_MESSAGE_TYPE_SYSTEM, in.GetFirstMessage(), "", "", "", 0, nil)
+		msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM, 0, "system", "", chat.ChatMessageType_CHAT_MESSAGE_TYPE_SYSTEM, in.GetFirstMessage(), "", "", "", 0, nil)
 		if _, err := sendMessage(l.ctx, l.svcCtx, session, msg); err != nil {
 			return &chat.InternalChatSessionResp{Base: errorBase(err)}, nil
 		}

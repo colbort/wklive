@@ -43,7 +43,7 @@ func (l *SendSystemMessageLogic) SendSystemMessage(in *chat.SendSystemMessageReq
 		return &chat.InternalChatMessageResp{Base: base}, nil
 	}
 
-	msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM, 0, "system", normalizeMessageType(in.GetMessageType()), in.GetContent(), "", "", "", 0, in.GetPayload())
+	msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM, 0, "system", "", normalizeMessageType(in.GetMessageType()), in.GetContent(), "", "", "", 0, in.GetPayload())
 	msg, err = sendMessage(l.ctx, l.svcCtx, session, msg)
 	if err != nil {
 		return &chat.InternalChatMessageResp{Base: errorBase(err)}, nil

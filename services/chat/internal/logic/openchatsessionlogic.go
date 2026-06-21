@@ -38,7 +38,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			session = refreshed
 		}
 		if strings.TrimSpace(in.GetFirstMessage()) != "" {
-			msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, in.GetUserId(), "", chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT, in.GetFirstMessage(), "", "", "", 0, nil)
+			msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, in.GetUserId(), in.GetSenderNickname(), in.GetSenderAvatarUrl(), chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT, in.GetFirstMessage(), "", "", "", 0, nil)
 			if _, err := sendMessage(l.ctx, l.svcCtx, session, msg); err != nil {
 				return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
 			}

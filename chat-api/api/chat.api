@@ -25,6 +25,13 @@ type ChatSession {
 	updateTimes      int64  `json:"updateTimes"`
 }
 
+type ChatMessageSender {
+	id         int64  `json:"id"`
+	senderType int64  `json:"type"`
+	nickname   string `json:"nickname"`
+	avatarUrl  string `json:"avatarUrl"`
+}
+
 type ChatMessage {
 	id          int64  `json:"id,optional"`
 	messageNo   string `json:"messageNo"`
@@ -33,8 +40,7 @@ type ChatMessage {
 	userId      int64  `json:"userId"`
 	agentId     int64  `json:"agentId"`
 	senderType  int64  `json:"senderType"` // 1 user 2 agent 3 system
-	senderId    int64  `json:"senderId"`
-	senderName  string `json:"senderName"`
+	sender      ChatMessageSender `json:"sender"`
 	messageType int64  `json:"messageType"` // 1 text 2 image 3 file 4 order 5 system
 	content     string `json:"content"`
 	mediaUrl    string `json:"mediaUrl"`
@@ -49,11 +55,13 @@ type ChatMessage {
 }
 
 type OpenChatSessionReq {
-	merchantId   int64  `json:"merchantId"`
-	source       int64  `json:"source,optional"` // 1 APP 2 Web/H5
-	title        string `json:"title,optional"`
-	category     string `json:"category,optional"`
-	firstMessage string `json:"firstMessage,optional"`
+	merchantId      int64  `json:"merchantId"`
+	source          int64  `json:"source,optional"` // 1 APP 2 Web/H5
+	title           string `json:"title,optional"`
+	category        string `json:"category,optional"`
+	firstMessage    string `json:"firstMessage,optional"`
+	senderNickname  string `json:"senderNickname,optional"`
+	senderAvatarUrl string `json:"senderAvatarUrl,optional"`
 }
 
 type ChatSessionResp {
@@ -78,15 +86,17 @@ type SessionNoReq {
 }
 
 type SendUserMessageReq {
-	merchantId  int64  `json:"merchantId"`
-	sessionNo   string `path:"sessionNo"`
-	messageType int64  `json:"messageType"`
-	content     string `json:"content,optional"`
-	mediaUrl    string `json:"mediaUrl,optional"`
-	mediaName   string `json:"mediaName,optional"`
-	mediaMime   string `json:"mediaMime,optional"`
-	mediaSize   int64  `json:"mediaSize,optional"`
-	clientMsgNo string `json:"clientMsgNo,optional"`
+	merchantId      int64  `json:"merchantId"`
+	sessionNo       string `path:"sessionNo"`
+	messageType     int64  `json:"messageType"`
+	content         string `json:"content,optional"`
+	mediaUrl        string `json:"mediaUrl,optional"`
+	mediaName       string `json:"mediaName,optional"`
+	mediaMime       string `json:"mediaMime,optional"`
+	mediaSize       int64  `json:"mediaSize,optional"`
+	senderNickname  string `json:"senderNickname,optional"`
+	senderAvatarUrl string `json:"senderAvatarUrl,optional"`
+	clientMsgNo     string `json:"clientMsgNo,optional"`
 }
 
 type ChatMessageResp {
@@ -146,4 +156,3 @@ service chat {
 	@handler CloseMyChatSession
 	put /sessions/:sessionNo/close (CloseMyChatSessionReq) returns (ChatSessionResp)
 }
-

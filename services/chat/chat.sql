@@ -43,6 +43,7 @@ CREATE TABLE `t_chat_agent` (
   `chat_user_id` bigint NOT NULL DEFAULT '0' COMMENT '客服用户ID',
   `group_id` bigint NOT NULL DEFAULT '0' COMMENT '客服分组ID',
   `agent_no` varchar(64) NOT NULL DEFAULT '' COMMENT '坐席编号',
+  `welcome_message` varchar(500) NOT NULL DEFAULT '' COMMENT '欢迎语',
   `status` tinyint NOT NULL DEFAULT '1' COMMENT '在线状态:1离线 2在线 3忙碌 4休息',
   `max_session_count` int NOT NULL DEFAULT '10' COMMENT '最大同时接待数',
   `current_session_count` int NOT NULL DEFAULT '0' COMMENT '当前接待数',

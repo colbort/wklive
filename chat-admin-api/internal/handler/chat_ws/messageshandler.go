@@ -100,7 +100,8 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 		req.SessionNo = conn.SessionNo
 	}
 	if isGuestSession(req.SessionNo) {
-		msg := newTransientAgentMessage(req.MerchantId, req.SessionNo, data.UserId, req.AgentId, data)
+		fillAgentSenderSnapshot(ctx, svcCtx, conn, req.MerchantId, &data)
+		msg := newTransientAgentMessage(req.MerchantId, req.SessionNo, data.UserId, req.AgentId, conn.Username, data)
 		if err := publishTransientMessage(ctx, svcCtx, msg); err != nil {
 			conn.SendJSON(eventError, map[string]string{"message": err.Error()})
 			return
@@ -117,17 +118,38 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 	conn.SendJSON(eventSendAgentMessageResult, resp)
 }
 
+func fillAgentSenderSnapshot(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, merchantId int64, data *sendAgentMessagePayload) {
+	if data == nil || svcCtx == nil || conn == nil || conn.UserId <= 0 || merchantId <= 0 {
+		return
+	}
+	resp, err := svcCtx.ChatAdminCli.Profile(ctx, &chat.ChatAdminProfileReq{
+		MerchantId: merchantId,
+		ChatUserId: conn.UserId,
+	})
+	if err != nil || resp == nil || resp.User == nil {
+		return
+	}
+	if strings.TrimSpace(data.SenderNickname) == "" {
+		data.SenderNickname = resp.User.Nickname
+	}
+	if strings.TrimSpace(data.SenderAvatarUrl) == "" {
+		data.SenderAvatarUrl = resp.User.AvatarUrl
+	}
+}
+
 type sendAgentMessagePayload struct {
-	MerchantId  int64  `json:"merchantId"`
-	AgentId     int64  `json:"agentId"`
-	UserId      int64  `json:"userId"`
-	SessionNo   string `json:"sessionNo"`
-	MessageType int64  `json:"messageType"`
-	Content     string `json:"content"`
-	MediaUrl    string `json:"mediaUrl"`
-	MediaName   string `json:"mediaName"`
-	MediaMime   string `json:"mediaMime"`
-	MediaSize   int64  `json:"mediaSize"`
+	MerchantId      int64  `json:"merchantId"`
+	AgentId         int64  `json:"agentId"`
+	UserId          int64  `json:"userId"`
+	SessionNo       string `json:"sessionNo"`
+	MessageType     int64  `json:"messageType"`
+	Content         string `json:"content"`
+	MediaUrl        string `json:"mediaUrl"`
+	MediaName       string `json:"mediaName"`
+	MediaMime       string `json:"mediaMime"`
+	MediaSize       int64  `json:"mediaSize"`
+	SenderNickname  string `json:"senderNickname"`
+	SenderAvatarUrl string `json:"senderAvatarUrl"`
 }
 
 func parseToken(r *http.Request, secret string) (*utils.Claims, error) {

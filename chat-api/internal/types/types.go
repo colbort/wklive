@@ -4,31 +4,37 @@
 package types
 
 type ChatMessage struct {
-	Id          int64  `json:"id,optional"`
-	MessageNo   string `json:"messageNo"`
-	SessionNo   string `json:"sessionNo"`
-	MerchantId  int64  `json:"merchantId"`
-	UserId      int64  `json:"userId"`
-	AgentId     int64  `json:"agentId"`
-	SenderType  int64  `json:"senderType"` // 1 user 2 agent 3 system
-	SenderId    int64  `json:"senderId"`
-	SenderName  string `json:"senderName"`
-	MessageType int64  `json:"messageType"` // 1 text 2 image 3 file 4 order 5 system
-	Content     string `json:"content"`
-	MediaUrl    string `json:"mediaUrl"`
-	MediaName   string `json:"mediaName"`
-	MediaMime   string `json:"mediaMime"`
-	MediaSize   int64  `json:"mediaSize"`
-	Status      int64  `json:"status"` // 1 sent 2 read 3 recalled 4 deleted
-	Payload     string `json:"payload,optional"`
-	ReadTime    int64  `json:"readTime"`
-	CreateTimes int64  `json:"createTimes"`
-	UpdateTimes int64  `json:"updateTimes"`
+	Id          int64             `json:"id,optional"`
+	MessageNo   string            `json:"messageNo"`
+	SessionNo   string            `json:"sessionNo"`
+	MerchantId  int64             `json:"merchantId"`
+	UserId      int64             `json:"userId"`
+	AgentId     int64             `json:"agentId"`
+	SenderType  int64             `json:"senderType"` // 1 user 2 agent 3 system
+	Sender      ChatMessageSender `json:"sender"`
+	MessageType int64             `json:"messageType"` // 1 text 2 image 3 file 4 order 5 system
+	Content     string            `json:"content"`
+	MediaUrl    string            `json:"mediaUrl"`
+	MediaName   string            `json:"mediaName"`
+	MediaMime   string            `json:"mediaMime"`
+	MediaSize   int64             `json:"mediaSize"`
+	Status      int64             `json:"status"` // 1 sent 2 read 3 recalled 4 deleted
+	Payload     string            `json:"payload,optional"`
+	ReadTime    int64             `json:"readTime"`
+	CreateTimes int64             `json:"createTimes"`
+	UpdateTimes int64             `json:"updateTimes"`
 }
 
 type ChatMessageResp struct {
 	RespBase
 	Data ChatMessage `json:"data"`
+}
+
+type ChatMessageSender struct {
+	Id         int64  `json:"id"`
+	SenderType int64  `json:"type"`
+	Nickname   string `json:"nickname"`
+	AvatarUrl  string `json:"avatarUrl"`
 }
 
 type ChatSession struct {
@@ -101,11 +107,13 @@ type MarkUserMessagesReadReq struct {
 }
 
 type OpenChatSessionReq struct {
-	MerchantId   int64  `json:"merchantId"`
-	Source       int64  `json:"source,optional"` // 1 APP 2 Web/H5
-	Title        string `json:"title,optional"`
-	Category     string `json:"category,optional"`
-	FirstMessage string `json:"firstMessage,optional"`
+	MerchantId      int64  `json:"merchantId"`
+	Source          int64  `json:"source,optional"` // 1 APP 2 Web/H5
+	Title           string `json:"title,optional"`
+	Category        string `json:"category,optional"`
+	FirstMessage    string `json:"firstMessage,optional"`
+	SenderNickname  string `json:"senderNickname,optional"`
+	SenderAvatarUrl string `json:"senderAvatarUrl,optional"`
 }
 
 type PageReq struct {
@@ -124,15 +132,17 @@ type RespBase struct {
 }
 
 type SendUserMessageReq struct {
-	MerchantId  int64  `json:"merchantId"`
-	SessionNo   string `path:"sessionNo"`
-	MessageType int64  `json:"messageType"`
-	Content     string `json:"content,optional"`
-	MediaUrl    string `json:"mediaUrl,optional"`
-	MediaName   string `json:"mediaName,optional"`
-	MediaMime   string `json:"mediaMime,optional"`
-	MediaSize   int64  `json:"mediaSize,optional"`
-	ClientMsgNo string `json:"clientMsgNo,optional"`
+	MerchantId      int64  `json:"merchantId"`
+	SessionNo       string `path:"sessionNo"`
+	MessageType     int64  `json:"messageType"`
+	Content         string `json:"content,optional"`
+	MediaUrl        string `json:"mediaUrl,optional"`
+	MediaName       string `json:"mediaName,optional"`
+	MediaMime       string `json:"mediaMime,optional"`
+	MediaSize       int64  `json:"mediaSize,optional"`
+	SenderNickname  string `json:"senderNickname,optional"`
+	SenderAvatarUrl string `json:"senderAvatarUrl,optional"`
+	ClientMsgNo     string `json:"clientMsgNo,optional"`
 }
 
 type SessionNoReq struct {

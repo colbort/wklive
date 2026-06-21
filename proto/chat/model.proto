@@ -37,6 +37,7 @@ message ChatAgent {
   int64 merchant_id = 2; // 客服商户ID
   int64 chat_user_id = 3; // 客服用户ID
   string agent_no = 4; // 坐席编号
+  string welcome_message = 16; // 欢迎语
   ChatAgentStatus status = 7; // 在线状态
   int32 max_session_count = 8; // 最大同时接待数
   int32 current_session_count = 9; // 当前接待数
@@ -74,7 +75,17 @@ message ChatSession {
 }
 
 // 客服消息
+message ChatMessageSender {
+  int64 id = 1; // 发送方ID
+  ChatSenderType type = 2; // 发送方类型
+  string nickname = 3; // 昵称
+  string avatar_url = 4; // 头像URL
+}
+
 message ChatMessage {
+  reserved 8, 9;
+  reserved "sender_id", "sender_name";
+
   int64 id = 1; // 主键ID
   string message_no = 2; // 消息编号
   string session_no = 3; // 会话编号
@@ -82,8 +93,6 @@ message ChatMessage {
   int64 user_id = 5; // 用户ID
   int64 agent_id = 6; // 坐席ID
   ChatSenderType sender_type = 7; // 发送方类型
-  int64 sender_id = 8; // 发送方ID
-  string sender_name = 9; // 发送方名称
   ChatMessageType message_type = 10; // 消息类型
   string content = 11; // 文本内容
   string media_url = 12; // 媒体/文件URL
@@ -95,6 +104,7 @@ message ChatMessage {
   int64 read_time = 18; // 已读时间戳(毫秒)
   int64 create_times = 19; // 创建时间戳(毫秒)
   int64 update_times = 20; // 更新时间戳(毫秒)
+  ChatMessageSender sender = 21; // 发送方信息快照
 }
 
 // 客服消息事件,用于消息总线/WebSocket推送

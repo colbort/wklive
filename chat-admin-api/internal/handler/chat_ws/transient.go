@@ -20,16 +20,22 @@ func isGuestSession(sessionNo string) bool {
 	return strings.HasPrefix(strings.TrimSpace(sessionNo), guestSessionPrefix)
 }
 
-func newTransientAgentMessage(merchantId int64, sessionNo string, userId int64, agentId int64, data sendAgentMessagePayload) *chat.ChatMessage {
+func newTransientAgentMessage(merchantId int64, sessionNo string, userId int64, agentId int64, senderNickname string, data sendAgentMessagePayload) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
+	senderNickname = firstNonEmpty(data.SenderNickname, senderNickname)
 	return &chat.ChatMessage{
-		MessageNo:   nextTransientNo("GM"),
-		SessionNo:   sessionNo,
-		MerchantId:  merchantId,
-		UserId:      userId,
-		AgentId:     agentId,
-		SenderType:  chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
-		SenderId:    agentId,
+		MessageNo:  nextTransientNo("GM"),
+		SessionNo:  sessionNo,
+		MerchantId: merchantId,
+		UserId:     userId,
+		AgentId:    agentId,
+		SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
+		Sender: &chat.ChatMessageSender{
+			Id:        agentId,
+			Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
+			Nickname:  senderNickname,
+			AvatarUrl: strings.TrimSpace(data.SenderAvatarUrl),
+		},
 		MessageType: chat.ChatMessageType(data.MessageType),
 		Content:     strings.TrimSpace(data.Content),
 		MediaUrl:    strings.TrimSpace(data.MediaUrl),
@@ -40,6 +46,15 @@ func newTransientAgentMessage(merchantId int64, sessionNo string, userId int64, 
 		CreateTimes: now,
 		UpdateTimes: now,
 	}
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if v := strings.TrimSpace(value); v != "" {
+			return v
+		}
+	}
+	return ""
 }
 
 func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, msg *chat.ChatMessage) error {

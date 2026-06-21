@@ -23,15 +23,17 @@ const (
 )
 
 type OpenChatSessionReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`      // 客服商户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                  // 用户ID
-	Source        ChatSessionSource      `protobuf:"varint,3,opt,name=source,proto3,enum=chat.ChatSessionSource" json:"source,omitempty"`    // 来源
-	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`                                   // 会话标题
-	Category      string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`                             // 问题分类
-	FirstMessage  string                 `protobuf:"bytes,6,opt,name=first_message,json=firstMessage,proto3" json:"first_message,omitempty"` // 首条消息内容
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	MerchantId      int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                 // 客服商户ID
+	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                             // 用户ID
+	Source          ChatSessionSource      `protobuf:"varint,3,opt,name=source,proto3,enum=chat.ChatSessionSource" json:"source,omitempty"`               // 来源
+	Title           string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`                                              // 会话标题
+	Category        string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`                                        // 问题分类
+	FirstMessage    string                 `protobuf:"bytes,6,opt,name=first_message,json=firstMessage,proto3" json:"first_message,omitempty"`            // 首条消息内容
+	SenderNickname  string                 `protobuf:"bytes,7,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`      // 用户昵称快照
+	SenderAvatarUrl string                 `protobuf:"bytes,8,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"` // 用户头像快照
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *OpenChatSessionReq) Reset() {
@@ -102,6 +104,20 @@ func (x *OpenChatSessionReq) GetCategory() string {
 func (x *OpenChatSessionReq) GetFirstMessage() string {
 	if x != nil {
 		return x.FirstMessage
+	}
+	return ""
+}
+
+func (x *OpenChatSessionReq) GetSenderNickname() string {
+	if x != nil {
+		return x.SenderNickname
+	}
+	return ""
+}
+
+func (x *OpenChatSessionReq) GetSenderAvatarUrl() string {
+	if x != nil {
+		return x.SenderAvatarUrl
 	}
 	return ""
 }
@@ -235,18 +251,20 @@ func (x *GetMyChatSessionReq) GetSessionNo() string {
 }
 
 type SendUserMessageReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                              // 客服商户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                          // 用户ID
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
-	MessageType   ChatMessageType        `protobuf:"varint,4,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
-	Content       string                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
-	MediaUrl      string                 `protobuf:"bytes,6,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                     // 媒体/文件URL
-	MediaName     string                 `protobuf:"bytes,7,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                  // 文件名
-	MediaMime     string                 `protobuf:"bytes,8,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                  // MIME类型
-	MediaSize     int64                  `protobuf:"varint,9,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                 // 文件大小(bytes)
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	MerchantId      int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                              // 客服商户ID
+	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                          // 用户ID
+	SessionNo       string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
+	MessageType     ChatMessageType        `protobuf:"varint,4,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
+	Content         string                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
+	MediaUrl        string                 `protobuf:"bytes,6,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                     // 媒体/文件URL
+	MediaName       string                 `protobuf:"bytes,7,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                  // 文件名
+	MediaMime       string                 `protobuf:"bytes,8,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                  // MIME类型
+	MediaSize       int64                  `protobuf:"varint,9,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                 // 文件大小(bytes)
+	SenderNickname  string                 `protobuf:"bytes,10,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`                  // 用户昵称快照
+	SenderAvatarUrl string                 `protobuf:"bytes,11,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"`             // 用户头像快照
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *SendUserMessageReq) Reset() {
@@ -340,6 +358,20 @@ func (x *SendUserMessageReq) GetMediaSize() int64 {
 		return x.MediaSize
 	}
 	return 0
+}
+
+func (x *SendUserMessageReq) GetSenderNickname() string {
+	if x != nil {
+		return x.SenderNickname
+	}
+	return ""
+}
+
+func (x *SendUserMessageReq) GetSenderAvatarUrl() string {
+	if x != nil {
+		return x.SenderAvatarUrl
+	}
+	return ""
 }
 
 type ListMyChatMessagesReq struct {
@@ -802,7 +834,7 @@ var File_proto_chat_chat_app_proto protoreflect.FileDescriptor
 
 const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/chat/chat_app.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"\xd6\x01\n" +
+	"\x19proto/chat/chat_app.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"\xab\x02\n" +
 	"\x12OpenChatSessionReq\x12\x1f\n" +
 	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
 	"merchantId\x12\x17\n" +
@@ -810,7 +842,9 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\x06source\x18\x03 \x01(\x0e2\x17.chat.ChatSessionSourceR\x06source\x12\x14\n" +
 	"\x05title\x18\x04 \x01(\tR\x05title\x12\x1a\n" +
 	"\bcategory\x18\x05 \x01(\tR\bcategory\x12#\n" +
-	"\rfirst_message\x18\x06 \x01(\tR\ffirstMessage\"\xa7\x01\n" +
+	"\rfirst_message\x18\x06 \x01(\tR\ffirstMessage\x12'\n" +
+	"\x0fsender_nickname\x18\a \x01(\tR\x0esenderNickname\x12*\n" +
+	"\x11sender_avatar_url\x18\b \x01(\tR\x0fsenderAvatarUrl\"\xa7\x01\n" +
 	"\x15ListMyChatSessionsReq\x12\x1f\n" +
 	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
 	"merchantId\x12\x17\n" +
@@ -822,7 +856,7 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"merchantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x03 \x01(\tR\tsessionNo\"\xbb\x02\n" +
+	"session_no\x18\x03 \x01(\tR\tsessionNo\"\x90\x03\n" +
 	"\x12SendUserMessageReq\x12\x1f\n" +
 	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
 	"merchantId\x12\x17\n" +
@@ -837,7 +871,10 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\n" +
 	"media_mime\x18\b \x01(\tR\tmediaMime\x12\x1d\n" +
 	"\n" +
-	"media_size\x18\t \x01(\x03R\tmediaSize\"\x95\x01\n" +
+	"media_size\x18\t \x01(\x03R\tmediaSize\x12'\n" +
+	"\x0fsender_nickname\x18\n" +
+	" \x01(\tR\x0esenderNickname\x12*\n" +
+	"\x11sender_avatar_url\x18\v \x01(\tR\x0fsenderAvatarUrl\"\x95\x01\n" +
 	"\x15ListMyChatMessagesReq\x12\x1f\n" +
 	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
 	"merchantId\x12\x17\n" +

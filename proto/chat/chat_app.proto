@@ -39,6 +39,8 @@ message OpenChatSessionReq {
   string title = 4; // 会话标题
   string category = 5; // 问题分类
   string first_message = 6; // 首条消息内容
+  string sender_nickname = 7; // 用户昵称快照
+  string sender_avatar_url = 8; // 用户头像快照
 }
 
 message ListMyChatSessionsReq {
@@ -64,6 +66,8 @@ message SendUserMessageReq {
   string media_name = 7; // 文件名
   string media_mime = 8; // MIME类型
   int64 media_size = 9; // 文件大小(bytes)
+  string sender_nickname = 10; // 用户昵称快照
+  string sender_avatar_url = 11; // 用户头像快照
 }
 
 message ListMyChatMessagesReq {
@@ -112,4 +116,3 @@ message AppChatMessageResp {
 message AppMarkMessagesReadResp {
   common.RespBase base = 1;
 }
-

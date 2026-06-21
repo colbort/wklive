@@ -50,6 +50,7 @@ type ChatAgent struct {
 	MerchantId          int64  `json:"merchantId"`
 	ChatUserId          int64  `json:"chatUserId"`
 	AgentNo             string `json:"agentNo"`
+	WelcomeMessage      string `json:"welcomeMessage"`
 	Status              int64  `json:"status"` // 1 offline 2 online 3 busy 4 resting
 	MaxSessionCount     int64  `json:"maxSessionCount"`
 	CurrentSessionCount int64  `json:"currentSessionCount"`
@@ -102,31 +103,37 @@ type ChatGroupResp struct {
 }
 
 type ChatMessage struct {
-	Id          int64  `json:"id,optional"`
-	MessageNo   string `json:"messageNo"`
-	SessionNo   string `json:"sessionNo"`
-	MerchantId  int64  `json:"merchantId"`
-	UserId      int64  `json:"userId"`
-	AgentId     int64  `json:"agentId"`
-	SenderType  int64  `json:"senderType"`
-	SenderId    int64  `json:"senderId"`
-	SenderName  string `json:"senderName"`
-	MessageType int64  `json:"messageType"`
-	Content     string `json:"content"`
-	MediaUrl    string `json:"mediaUrl"`
-	MediaName   string `json:"mediaName"`
-	MediaMime   string `json:"mediaMime"`
-	MediaSize   int64  `json:"mediaSize"`
-	Status      int64  `json:"status"`
-	Payload     string `json:"payload,optional"`
-	ReadTime    int64  `json:"readTime"`
-	CreateTimes int64  `json:"createTimes"`
-	UpdateTimes int64  `json:"updateTimes"`
+	Id          int64             `json:"id,optional"`
+	MessageNo   string            `json:"messageNo"`
+	SessionNo   string            `json:"sessionNo"`
+	MerchantId  int64             `json:"merchantId"`
+	UserId      int64             `json:"userId"`
+	AgentId     int64             `json:"agentId"`
+	SenderType  int64             `json:"senderType"`
+	Sender      ChatMessageSender `json:"sender"`
+	MessageType int64             `json:"messageType"`
+	Content     string            `json:"content"`
+	MediaUrl    string            `json:"mediaUrl"`
+	MediaName   string            `json:"mediaName"`
+	MediaMime   string            `json:"mediaMime"`
+	MediaSize   int64             `json:"mediaSize"`
+	Status      int64             `json:"status"`
+	Payload     string            `json:"payload,optional"`
+	ReadTime    int64             `json:"readTime"`
+	CreateTimes int64             `json:"createTimes"`
+	UpdateTimes int64             `json:"updateTimes"`
 }
 
 type ChatMessageResp struct {
 	RespBase
 	Data ChatMessage `json:"data"`
+}
+
+type ChatMessageSender struct {
+	Id         int64  `json:"id"`
+	SenderType int64  `json:"type"`
+	Nickname   string `json:"nickname"`
+	AvatarUrl  string `json:"avatarUrl"`
 }
 
 type ChatQuickReply struct {
@@ -236,6 +243,7 @@ type CreateChatAgentReq struct {
 	AgentNo         string `json:"agentNo,optional"`
 	MaxSessionCount int64  `json:"maxSessionCount,optional"`
 	GroupId         int64  `json:"groupId,optional"`
+	WelcomeMessage  string `json:"welcomeMessage,optional"`
 	Remark          string `json:"remark,optional"`
 }
 
@@ -508,6 +516,7 @@ type UpdateChatAgentReq struct {
 	MerchantId      int64  `json:"merchantId"`
 	MaxSessionCount int64  `json:"maxSessionCount,optional"`
 	GroupId         int64  `json:"groupId,optional"`
+	WelcomeMessage  string `json:"welcomeMessage,optional"`
 	Remark          string `json:"remark,optional"`
 }
 
