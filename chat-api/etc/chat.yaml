@@ -2,6 +2,10 @@ Name: chat
 Host: 0.0.0.0
 Port: 7777
 
+Jwt:
+  AccessSecret: "your_access_secret"
+  AccessExpire: 86400
+
 ChatRpc:
   Endpoints:
     - 127.0.0.1:8088

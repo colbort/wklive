@@ -15,6 +15,7 @@ import HomeView from '@/views/home/HomeView.vue'
 import MarketsView from '@/views/markets/MarketsView.vue'
 import BindAccountView from '@/views/profile/BindAccountView.vue'
 import ChangeSecurityPasswordView from '@/views/profile/ChangeSecurityPasswordView.vue'
+import CustomerServiceView from '@/views/profile/CustomerServiceView.vue'
 import ProfileView from '@/views/profile/ProfileView.vue'
 import SecuritySettingsView from '@/views/profile/SecuritySettingsView.vue'
 import TradesView from '@/views/trades/TradesView.vue'
@@ -90,6 +91,12 @@ export const router = createRouter({
           meta: { title: '充值详情', hideBottomNav: true },
         },
         { path: 'profile', name: 'profile', component: ProfileView, meta: { title: '我的' } },
+        {
+          path: 'profile/support',
+          name: 'profile-support',
+          component: CustomerServiceView,
+          meta: { title: '客服', hideBottomNav: true },
+        },
         {
           path: 'profile/security',
           name: 'profile-security',

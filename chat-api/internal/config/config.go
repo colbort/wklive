@@ -14,7 +14,7 @@ type Config struct {
 	Jwt struct {
 		AccessSecret string
 		AccessExpire int64
-	}
+	} `json:"Jwt" yaml:"Jwt"`
 	ChatRpc   zrpc.RpcClientConf
 	RedisConf redis.RedisConf `json:"Redis" yaml:"Redis"`
 }

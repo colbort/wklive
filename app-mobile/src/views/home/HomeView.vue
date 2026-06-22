@@ -139,8 +139,7 @@ function changeLanguage() {
 
         <section class="ave-section ave-section--smart">
           <h2>
-            {{ t('home.smartTradingPrefix') }}<span>{{ t('home.smartTradingEmphasis') }}</span
-            >{{ t('home.smartTradingSuffix') }}
+            {{ t('home.smartTradingPrefix') }}<span>{{ t('home.smartTradingEmphasis') }}</span>{{ t('home.smartTradingSuffix') }}
           </h2>
           <p>{{ t('home.alwaysTrading') }}</p>
           <img class="ave-section__phones" :src="smartPhonesImage" alt="" />
@@ -158,8 +157,7 @@ function changeLanguage() {
 
         <section class="ave-section ave-section--strategy">
           <h2>
-            {{ t('home.strategyPrefix') }}<span>{{ t('home.strategyEmphasis') }}</span
-            >{{ t('home.strategySuffix') }}
+            {{ t('home.strategyPrefix') }}<span>{{ t('home.strategyEmphasis') }}</span>{{ t('home.strategySuffix') }}
           </h2>
           <p>{{ t('home.strategySub') }}</p>
 

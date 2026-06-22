@@ -136,6 +136,11 @@ async function handleMenuClick(key: string) {
     return
   }
 
+  if (key === 'service') {
+    router.push('/profile/support')
+    return
+  }
+
   if (key === 'test1') {
     router.push('/test1')
     return

@@ -118,6 +118,11 @@ export function closeChatSession(
 }
 
 export function chatWsUrl(): string {
+  const queryWsUrl = new URLSearchParams(window.location.search).get("wsUrl");
+  if (queryWsUrl) {
+    return queryWsUrl;
+  }
+
   const configured = import.meta.env.VITE_CHAT_WS_URL;
   if (configured) {
     return configured;
