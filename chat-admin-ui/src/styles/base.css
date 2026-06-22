@@ -228,7 +228,7 @@ p {
 
 .workbench {
   display: grid;
-  grid-template-columns: 286px minmax(360px, 1fr) 300px;
+  grid-template-columns: minmax(260px, 320px) minmax(480px, 1fr) minmax(280px, 340px);
   gap: 12px;
 }
 
@@ -240,6 +240,10 @@ p {
   border: 1px solid #e6e9ef;
   border-radius: 8px;
   background: #fff;
+}
+
+.workbench-region {
+  min-height: 0;
 }
 
 .session-panel,
@@ -258,6 +262,12 @@ p {
 .panel-header h2,
 .chat-header h2 {
   font-size: 16px;
+}
+
+.panel-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .session-filter {

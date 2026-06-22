@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { ElMessage, ElMessageBox, type FormInstance } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import {
   createAgent,
   createCategory,
@@ -20,6 +20,10 @@ import {
   type ChatCategoryPayload,
   type ChatGroupPayload,
 } from "@/api/chat";
+import MerchantAgentTable from "@/components/merchant/MerchantAgentTable.vue";
+import MerchantCategoryTable from "@/components/merchant/MerchantCategoryTable.vue";
+import MerchantEditDialog from "@/components/merchant/MerchantEditDialog.vue";
+import MerchantGroupTable from "@/components/merchant/MerchantGroupTable.vue";
 import { useAuthStore } from "@/stores/auth";
 import type { ChatAgent, ChatCategory, ChatGroup } from "@/types/chat";
 
@@ -41,7 +45,7 @@ const agents = ref<ChatAgent[]>([]);
 const categories = ref<ChatCategory[]>([]);
 const groups = ref<ChatGroup[]>([]);
 
-const formRef = ref<FormInstance>();
+const dialogRef = ref<InstanceType<typeof MerchantEditDialog>>();
 const dialogVisible = ref(false);
 const dialogMode = ref<"create" | "edit">("create");
 const editingId = ref(0);
@@ -163,7 +167,7 @@ function resetForms() {
     sort: 0,
     remark: "",
   });
-  nextTick(() => formRef.value?.clearValidate());
+  nextTick(() => dialogRef.value?.clearValidate());
 }
 
 function openCreate() {
@@ -223,7 +227,7 @@ function openGroupEdit(row: ChatGroup) {
 
 async function submitDialog() {
   if (!merchantId.value) return;
-  await formRef.value?.validate();
+  await dialogRef.value?.validate();
 
   if (activeTab.value === "agents") {
     if (dialogMode.value === "create") {
@@ -314,13 +318,6 @@ async function removeGroup(row: ChatGroup) {
   await loadCurrent();
 }
 
-function statusText(status: number) {
-  return statusOptions.find((item) => item.value === status)?.label || "未知";
-}
-
-function groupName(groupId: number) {
-  return groups.value.find((item) => item.id === groupId)?.groupName || "-";
-}
 </script>
 
 <template>
@@ -368,447 +365,45 @@ function groupName(groupId: number) {
     </div>
 
     <div class="table-wrap">
-      <el-table
+      <MerchantAgentTable
         v-if="activeTab === 'agents'"
-        v-loading="loading"
-        :data="agents"
-        height="100%"
-      >
-        <el-table-column
-          prop="agentNo"
-          label="坐席编号"
-          width="130"
-        />
-        <el-table-column
-          prop="chatUserId"
-          label="用户 ID"
-          width="100"
-        />
-        <el-table-column
-          label="状态"
-          width="120"
-        >
-          <template #default="{ row }">
-            <el-tag
-              :type="
-                row.status === 2
-                  ? 'success'
-                  : row.status === 3
-                    ? 'warning'
-                    : 'info'
-              "
-            >
-              {{ statusText(row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="分组"
-          width="140"
-        >
-          <template #default="{ row }">
-            {{ groupName(row.groupId) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="接待量"
-          width="130"
-        >
-          <template #default="{ row }">
-            {{ row.currentSessionCount }} / {{ row.maxSessionCount }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="welcomeMessage"
-          label="欢迎语"
-          min-width="260"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="remark"
-          label="备注"
-          width="160"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          label="操作"
-          width="220"
-          fixed="right"
-        >
-          <template #default="{ row }">
-            <el-button
-              link
-              type="primary"
-              @click="openAgentEdit(row)"
-            >
-              编辑
-            </el-button>
-            <el-dropdown @command="(status: number) => changeAgentStatus(row, status)">
-              <el-button link>
-                状态
-              </el-button>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item
-                    v-for="item in statusOptions"
-                    :key="item.value"
-                    :command="item.value"
-                  >
-                    {{ item.label }}
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
+        :loading="loading"
+        :agents="agents"
+        :groups="groups"
+        :status-options="statusOptions"
+        @edit="openAgentEdit"
+        @status-change="changeAgentStatus"
+      />
 
-      <el-table
+      <MerchantCategoryTable
         v-else-if="activeTab === 'categories'"
-        v-loading="loading"
-        :data="categories"
-        height="100%"
-      >
-        <el-table-column
-          prop="categoryCode"
-          label="分类编码"
-          width="180"
-        />
-        <el-table-column
-          prop="categoryName"
-          label="分类名称"
-          min-width="180"
-        />
-        <el-table-column
-          prop="parentId"
-          label="父级 ID"
-          width="100"
-        />
-        <el-table-column
-          prop="sort"
-          label="排序"
-          width="90"
-        />
-        <el-table-column
-          label="状态"
-          width="110"
-        >
-          <template #default="{ row }">
-            <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{ row.enabled === 1 ? "启用" : "禁用" }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="remark"
-          label="备注"
-          min-width="160"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          label="操作"
-          width="160"
-          fixed="right"
-        >
-          <template #default="{ row }">
-            <el-button
-              link
-              type="primary"
-              @click="openCategoryEdit(row)"
-            >
-              编辑
-            </el-button>
-            <el-button
-              link
-              type="danger"
-              @click="removeCategory(row)"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+        :loading="loading"
+        :categories="categories"
+        @edit="openCategoryEdit"
+        @remove="removeCategory"
+      />
 
-      <el-table
+      <MerchantGroupTable
         v-else
-        v-loading="loading"
-        :data="groups"
-        height="100%"
-      >
-        <el-table-column
-          prop="groupCode"
-          label="分组编码"
-          width="180"
-        />
-        <el-table-column
-          prop="groupName"
-          label="分组名称"
-          width="160"
-        />
-        <el-table-column
-          prop="description"
-          label="描述"
-          min-width="220"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="sort"
-          label="排序"
-          width="90"
-        />
-        <el-table-column
-          label="状态"
-          width="110"
-        >
-          <template #default="{ row }">
-            <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{ row.enabled === 1 ? "启用" : "禁用" }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="remark"
-          label="备注"
-          min-width="160"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          label="操作"
-          width="160"
-          fixed="right"
-        >
-          <template #default="{ row }">
-            <el-button
-              link
-              type="primary"
-              @click="openGroupEdit(row)"
-            >
-              编辑
-            </el-button>
-            <el-button
-              link
-              type="danger"
-              @click="removeGroup(row)"
-            >
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+        :loading="loading"
+        :groups="groups"
+        @edit="openGroupEdit"
+        @remove="removeGroup"
+      />
     </div>
 
-    <el-dialog
-      v-model="dialogVisible"
+    <MerchantEditDialog
+      ref="dialogRef"
+      v-model:visible="dialogVisible"
       :title="dialogTitle"
-      width="560px"
-      destroy-on-close
-    >
-      <el-form
-        ref="formRef"
-        label-width="104px"
-        :model="
-          activeTab === 'agents'
-            ? agentForm
-            : activeTab === 'categories'
-              ? categoryForm
-              : groupForm
-        "
-      >
-        <template v-if="activeTab === 'agents'">
-          <el-form-item
-            v-if="dialogMode === 'create'"
-            label="登录账号"
-            prop="username"
-            :rules="[{ required: true, message: '请输入登录账号' }]"
-          >
-            <el-input v-model="agentForm.username" />
-          </el-form-item>
-          <el-form-item
-            v-if="dialogMode === 'create'"
-            label="登录密码"
-            prop="password"
-            :rules="[{ required: true, message: '请输入登录密码' }]"
-          >
-            <el-input
-              v-model="agentForm.password"
-              show-password
-              type="password"
-            />
-          </el-form-item>
-          <el-form-item
-            v-if="dialogMode === 'create'"
-            label="昵称"
-            prop="nickname"
-            :rules="[{ required: true, message: '请输入昵称' }]"
-          >
-            <el-input v-model="agentForm.nickname" />
-          </el-form-item>
-          <el-form-item
-            v-if="dialogMode === 'create'"
-            label="手机号"
-          >
-            <el-input v-model="agentForm.mobile" />
-          </el-form-item>
-          <el-form-item
-            v-if="dialogMode === 'create'"
-            label="邮箱"
-          >
-            <el-input v-model="agentForm.email" />
-          </el-form-item>
-          <el-form-item
-            v-if="dialogMode === 'create'"
-            label="账号状态"
-          >
-            <el-segmented
-              v-model="agentForm.enabled"
-              :options="enabledOptions"
-            />
-          </el-form-item>
-          <el-form-item label="客服分组">
-            <el-select
-              v-model="agentForm.groupId"
-              clearable
-              class="full-input"
-            >
-              <el-option
-                v-for="item in groups"
-                :key="item.id"
-                :label="item.groupName"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item
-            label="最大接待"
-            prop="maxSessionCount"
-            :rules="[{ required: true, message: '请输入最大接待数' }]"
-          >
-            <el-input-number
-              v-model="agentForm.maxSessionCount"
-              :min="1"
-              :max="999"
-              class="full-input"
-            />
-          </el-form-item>
-          <el-form-item label="欢迎语">
-            <el-input
-              v-model="agentForm.welcomeMessage"
-              type="textarea"
-              :rows="3"
-            />
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input
-              v-model="agentForm.remark"
-              type="textarea"
-              :rows="2"
-            />
-          </el-form-item>
-        </template>
-
-        <template v-else-if="activeTab === 'categories'">
-          <el-form-item
-            v-if="dialogMode === 'create'"
-            label="分类编码"
-            prop="categoryCode"
-            :rules="[{ required: true, message: '请输入分类编码' }]"
-          >
-            <el-input v-model="categoryForm.categoryCode" />
-          </el-form-item>
-          <el-form-item
-            label="分类名称"
-            prop="categoryName"
-            :rules="[{ required: true, message: '请输入分类名称' }]"
-          >
-            <el-input v-model="categoryForm.categoryName" />
-          </el-form-item>
-          <el-form-item label="父级 ID">
-            <el-input-number
-              v-model="categoryForm.parentId"
-              :min="0"
-              :controls="false"
-              class="full-input"
-            />
-          </el-form-item>
-          <el-form-item label="状态">
-            <el-segmented
-              v-model="categoryForm.enabled"
-              :options="enabledOptions"
-            />
-          </el-form-item>
-          <el-form-item label="排序">
-            <el-input-number
-              v-model="categoryForm.sort"
-              :min="0"
-              class="full-input"
-            />
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input
-              v-model="categoryForm.remark"
-              type="textarea"
-              :rows="2"
-            />
-          </el-form-item>
-        </template>
-
-        <template v-else>
-          <el-form-item
-            v-if="dialogMode === 'create'"
-            label="分组编码"
-            prop="groupCode"
-            :rules="[{ required: true, message: '请输入分组编码' }]"
-          >
-            <el-input v-model="groupForm.groupCode" />
-          </el-form-item>
-          <el-form-item
-            label="分组名称"
-            prop="groupName"
-            :rules="[{ required: true, message: '请输入分组名称' }]"
-          >
-            <el-input v-model="groupForm.groupName" />
-          </el-form-item>
-          <el-form-item label="描述">
-            <el-input
-              v-model="groupForm.description"
-              type="textarea"
-              :rows="2"
-            />
-          </el-form-item>
-          <el-form-item label="状态">
-            <el-segmented
-              v-model="groupForm.enabled"
-              :options="enabledOptions"
-            />
-          </el-form-item>
-          <el-form-item label="排序">
-            <el-input-number
-              v-model="groupForm.sort"
-              :min="0"
-              class="full-input"
-            />
-          </el-form-item>
-          <el-form-item label="备注">
-            <el-input
-              v-model="groupForm.remark"
-              type="textarea"
-              :rows="2"
-            />
-          </el-form-item>
-        </template>
-      </el-form>
-
-      <template #footer>
-        <el-button @click="dialogVisible = false">
-          取消
-        </el-button>
-        <el-button
-          type="primary"
-          @click="submitDialog"
-        >
-          保存
-        </el-button>
-      </template>
-    </el-dialog>
+      :active-tab="activeTab"
+      :dialog-mode="dialogMode"
+      :agent-form="agentForm"
+      :category-form="categoryForm"
+      :group-form="groupForm"
+      :groups="groups"
+      :enabled-options="enabledOptions"
+      @submit="submitDialog"
+    />
   </section>
 </template>

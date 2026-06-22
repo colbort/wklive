@@ -7,11 +7,14 @@ import (
 	"time"
 
 	"wklive/proto/chat"
+
+	"google.golang.org/protobuf/proto"
 )
 
 const (
 	guestSessionPrefix     = "GS"
 	transientSessionMaxAge = 24 * time.Hour
+	transientMessageLimit  = 200
 )
 
 type TransientSessionFilter struct {
@@ -24,11 +27,13 @@ type TransientSessionFilter struct {
 type transientSessionStore struct {
 	mu       sync.RWMutex
 	sessions map[string]*chat.ChatSession
+	messages map[string][]*chat.ChatMessage
 }
 
 func newTransientSessionStore() *transientSessionStore {
 	return &transientSessionStore{
 		sessions: make(map[string]*chat.ChatSession),
+		messages: make(map[string][]*chat.ChatMessage),
 	}
 }
 
@@ -60,8 +65,9 @@ func (s *transientSessionStore) ApplyEvent(event *chat.ChatMessageEvent) {
 	if event.GetQueue() != nil {
 		applyTransientQueue(session, event.GetQueue())
 	}
-	if event.GetData() != nil {
+	if event.GetData() != nil && event.GetType() != chat.ChatMessageEventTypeQueueUpdated {
 		applyTransientMessage(session, event.GetType(), event.GetData())
+		s.appendMessageLocked(event.GetData())
 	}
 }
 
@@ -77,8 +83,7 @@ func (s *transientSessionStore) List(filter TransientSessionFilter) []*chat.Chat
 		if !matchTransientSession(session, filter) {
 			continue
 		}
-		cp := *session
-		list = append(list, &cp)
+		list = append(list, cloneTransientSession(session))
 	}
 	sort.SliceStable(list, func(i, j int) bool {
 		if list[i].GetLastMessageTime() == list[j].GetLastMessageTime() {
@@ -89,11 +94,78 @@ func (s *transientSessionStore) List(filter TransientSessionFilter) []*chat.Chat
 	return list
 }
 
+func (s *transientSessionStore) ListMessages(merchantId int64, sessionNo string, senderType int64, limit int64) []*chat.ChatMessage {
+	if s == nil || !isGuestSessionNo(sessionNo) {
+		return nil
+	}
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	session := s.sessions[sessionNo]
+	if session == nil {
+		return nil
+	}
+	if merchantId > 0 && session.GetMerchantId() != merchantId {
+		return nil
+	}
+
+	list := s.messages[sessionNo]
+	if len(list) == 0 {
+		return nil
+	}
+	filtered := make([]*chat.ChatMessage, 0, len(list))
+	for _, item := range list {
+		if item == nil {
+			continue
+		}
+		if senderType > 0 && int64(item.GetSenderType()) != senderType {
+			continue
+		}
+		filtered = append(filtered, cloneTransientMessage(item))
+	}
+	if limit <= 0 || int(limit) >= len(filtered) {
+		return filtered
+	}
+	return filtered[len(filtered)-int(limit):]
+}
+
+func (s *transientSessionStore) appendMessageLocked(msg *chat.ChatMessage) {
+	if msg == nil || !isGuestSessionNo(msg.GetSessionNo()) || msg.GetMessageNo() == "" {
+		return
+	}
+	list := s.messages[msg.GetSessionNo()]
+	for _, item := range list {
+		if item != nil && item.GetMessageNo() == msg.GetMessageNo() {
+			return
+		}
+	}
+	list = append(list, cloneTransientMessage(msg))
+	if len(list) > transientMessageLimit {
+		list = list[len(list)-transientMessageLimit:]
+	}
+	s.messages[msg.GetSessionNo()] = list
+}
+
+func cloneTransientSession(session *chat.ChatSession) *chat.ChatSession {
+	if session == nil {
+		return nil
+	}
+	return proto.Clone(session).(*chat.ChatSession)
+}
+
+func cloneTransientMessage(msg *chat.ChatMessage) *chat.ChatMessage {
+	if msg == nil {
+		return nil
+	}
+	return proto.Clone(msg).(*chat.ChatMessage)
+}
+
 func (s *transientSessionStore) cleanupLocked(now int64) {
 	expiresBefore := now - transientSessionMaxAge.Milliseconds()
 	for sessionNo, session := range s.sessions {
 		if session.GetUpdateTimes() > 0 && session.GetUpdateTimes() < expiresBefore {
 			delete(s.sessions, sessionNo)
+			delete(s.messages, sessionNo)
 		}
 	}
 }

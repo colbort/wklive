@@ -7,6 +7,9 @@ import {
   pageSessions,
   sendAgentMessage,
 } from "@/api/chat";
+import WorkbenchChatPanel from "@/components/workbench/WorkbenchChatPanel.vue";
+import WorkbenchCustomerPanel from "@/components/workbench/WorkbenchCustomerPanel.vue";
+import WorkbenchSessionList from "@/components/workbench/WorkbenchSessionList.vue";
 import { useAuthStore } from "@/stores/auth";
 import type {
   ChatMessage,
@@ -48,6 +51,9 @@ const wsState = ref<"idle" | "open" | "closed">("idle");
 const auth = useAuthStore();
 let socket: WebSocket | null = null;
 let refreshTimer: number | null = null;
+let reconnectTimer: number | null = null;
+let reconnectTimes = 0;
+let destroyed = false;
 
 const sessionStatus = {
   waiting: 1,
@@ -63,13 +69,18 @@ const filteredSessions = computed(() =>
 
 const activeSession = computed(
   () =>
-    filteredSessions.value.find(
+    sessions.value.find(
       (item) => item.sessionNo === activeSessionNo.value,
     ) || filteredSessions.value[0],
 );
 const activeMessages = computed(
   () =>
     activeSession.value ? messages.value[activeSession.value.sessionNo] || [] : [],
+);
+const visibleMessages = computed(() =>
+  activeNeedsAccept.value
+    ? []
+    : activeMessages.value.filter((message) => !isQueueSystemMessage(message)),
 );
 const merchantId = computed(
   () => auth.user?.merchantId || auth.agent?.merchantId || 0,
@@ -85,31 +96,95 @@ const activeNeedsAccept = computed(
 const activeClosed = computed(
   () => activeSession.value?.status === sessionStatus.closed,
 );
+const activeIsGuest = computed(() =>
+  isGuestSession(activeSession.value?.sessionNo),
+);
+const showGuestRefreshNotice = computed(
+  () =>
+    Boolean(activeSession.value) &&
+    activeIsGuest.value &&
+    !visibleMessages.value.length &&
+    Boolean(activeSession.value?.lastMessageNo),
+);
 const canReply = computed(
   () => Boolean(activeSession.value) && !activeNeedsAccept.value && !activeClosed.value,
 );
 
 onMounted(async () => {
+  destroyed = false;
+  restoreWorkbenchState();
   await loadSessions();
   connectWs();
 });
 
 onBeforeUnmount(() => {
+  destroyed = true;
   if (refreshTimer) {
     window.clearTimeout(refreshTimer);
   }
-  socket?.close();
+  clearReconnectTimer();
+  if (socket) {
+    socket.onclose = null;
+    socket.close();
+  }
 });
 
 watch(statusFilter, async () => {
+  persistWorkbenchState();
   syncActiveSession();
 });
 
 watch(activeSessionNo, async (sessionNo) => {
+  persistWorkbenchState();
   if (sessionNo) {
     await loadMessages(sessionNo);
   }
 });
+
+watch(activeNeedsAccept, async (needsAccept) => {
+  if (!needsAccept && activeSessionNo.value) {
+    await loadMessages(activeSessionNo.value);
+  }
+});
+
+function workbenchStorageKey() {
+  return `chat-admin-ui:workbench:${merchantId.value}:${agentId.value}`;
+}
+
+function restoreWorkbenchState() {
+  if (!merchantId.value || !agentId.value) return;
+  try {
+    const raw = window.sessionStorage.getItem(workbenchStorageKey());
+    if (!raw) return;
+    const state = JSON.parse(raw) as {
+      statusFilter?: string;
+      activeSessionNo?: string;
+    };
+    if (
+      state.statusFilter === "waiting" ||
+      state.statusFilter === "serving" ||
+      state.statusFilter === "closed"
+    ) {
+      statusFilter.value = state.statusFilter;
+    }
+    if (typeof state.activeSessionNo === "string") {
+      activeSessionNo.value = state.activeSessionNo;
+    }
+  } catch {
+    window.sessionStorage.removeItem(workbenchStorageKey());
+  }
+}
+
+function persistWorkbenchState() {
+  if (!merchantId.value || !agentId.value) return;
+  window.sessionStorage.setItem(
+    workbenchStorageKey(),
+    JSON.stringify({
+      statusFilter: statusFilter.value,
+      activeSessionNo: activeSessionNo.value,
+    }),
+  );
+}
 
 async function loadSessions() {
   if (!merchantId.value) return;
@@ -119,7 +194,7 @@ async function loadSessions() {
       merchantId: merchantId.value,
       limit: 50,
     });
-    sessions.value = mergeTransientSessions(resp.data);
+    sessions.value = mergeTransientSessions(resp.data.map(normalizeSession));
     syncActiveSession();
   } catch (err) {
     ElMessage.error(err instanceof Error ? err.message : "加载会话失败");
@@ -130,7 +205,8 @@ async function loadSessions() {
 
 async function loadMessages(sessionNo: string) {
   if (!merchantId.value) return;
-  if (isGuestSession(sessionNo)) {
+  const session = sessions.value.find((item) => item.sessionNo === sessionNo);
+  if (sessionNeedsAccept(session)) {
     return;
   }
   loadingMessages.value = true;
@@ -139,7 +215,9 @@ async function loadMessages(sessionNo: string) {
       merchantId: merchantId.value,
       limit: 50,
     });
-    messages.value[sessionNo] = resp.data;
+    messages.value[sessionNo] = resp.data
+      .map(normalizeMessage)
+      .filter((message) => !isQueueSystemMessage(message));
   } catch (err) {
     ElMessage.error(err instanceof Error ? err.message : "加载消息失败");
   } finally {
@@ -149,7 +227,11 @@ async function loadMessages(sessionNo: string) {
 
 function connectWs() {
   if (!auth.token || !merchantId.value) return;
-  socket?.close();
+  clearReconnectTimer();
+  if (socket) {
+    socket.onclose = null;
+    socket.close();
+  }
   socket = new WebSocket(
     chatAdminWsUrl({
       token: auth.token,
@@ -159,9 +241,11 @@ function connectWs() {
   );
   socket.onopen = () => {
     wsState.value = "open";
+    reconnectTimes = 0;
   };
   socket.onclose = () => {
     wsState.value = "closed";
+    scheduleReconnect();
   };
   socket.onerror = () => {
     wsState.value = "closed";
@@ -169,6 +253,23 @@ function connectWs() {
   socket.onmessage = (event) => {
     handleWsMessage(event.data);
   };
+}
+
+function scheduleReconnect() {
+  if (destroyed || !auth.token || !merchantId.value) return;
+  clearReconnectTimer();
+  const delays = [1000, 2000, 5000, 10000, 15000];
+  const delay = delays[Math.min(reconnectTimes, delays.length - 1)];
+  reconnectTimes += 1;
+  reconnectTimer = window.setTimeout(() => {
+    connectWs();
+  }, delay);
+}
+
+function clearReconnectTimer() {
+  if (!reconnectTimer) return;
+  window.clearTimeout(reconnectTimer);
+  reconnectTimer = null;
 }
 
 function handleWsMessage(payload: string) {
@@ -192,9 +293,12 @@ function handleWsMessage(payload: string) {
     }
     upsertSessionFromEvent(event);
     const message = eventMessage(event.data);
+    let messagePushed = false;
     if (message?.sessionNo && message.messageNo) {
       normalizeMessageEnums(message);
-      pushMessage(message);
+      if (!isQueueSystemMessage(message)) {
+        messagePushed = pushMessage(message);
+      }
     }
     if (
       event.type === "chat.session.accepted" ||
@@ -207,8 +311,8 @@ function handleWsMessage(payload: string) {
     ) {
       markSessionClosed(event, message);
     } else {
-      if (message?.sessionNo) {
-        upsertSessionFromMessage(message);
+      if (message?.sessionNo && !isQueueSystemMessage(message)) {
+        upsertSessionFromMessage(message, messagePushed);
       }
     }
     const session = message?.sessionNo
@@ -221,7 +325,9 @@ function handleWsMessage(payload: string) {
     ) {
       statusFilter.value = "waiting";
     }
-    scheduleRefreshSessions();
+    if (event.type === "chat.queue.updated") {
+      scheduleRefreshSessions();
+    }
   } catch {
     // ignore invalid push payload
   }
@@ -230,7 +336,7 @@ function handleWsMessage(payload: string) {
 function upsertSessionFromEvent(event: WsEvent) {
   const session = event.session || sessionEvent(event)?.session;
   if (session?.sessionNo) {
-    upsertSession(session);
+    upsertSession(normalizeSession(session));
   }
   const queue = event.queue || sessionEvent(event)?.queue;
   if (queue?.sessionNo) {
@@ -252,14 +358,14 @@ function scheduleRefreshSessions() {
 }
 
 function pushMessage(message: ChatMessage) {
-  if (!message.messageNo) return false;
+  if (!message.messageNo || isQueueSystemMessage(message)) return false;
   const list = messages.value[message.sessionNo] || [];
   if (list.some((item) => item.messageNo === message.messageNo)) return false;
   messages.value[message.sessionNo] = [...list, message];
   return true;
 }
 
-function upsertSessionFromMessage(message: ChatMessage) {
+function upsertSessionFromMessage(message: ChatMessage, shouldCountUnread = true) {
   const exists = sessions.value.find(
     (item) => item.sessionNo === message.sessionNo,
   );
@@ -267,16 +373,21 @@ function upsertSessionFromMessage(message: ChatMessage) {
     exists.lastMessage = message.content;
     exists.lastMessageNo = message.messageNo;
     exists.lastMessageTime = message.createTimes;
-    exists.lastSenderType = message.senderType;
+    exists.lastSenderType = senderTypeValue(message.senderType);
     exists.updateTimes = message.updateTimes;
-    if (message.senderType === 1 && exists.status !== sessionStatus.closed) {
+    const senderType = senderTypeValue(message.senderType);
+    if (senderType === 1 && sessionStatusValue(exists.status) !== sessionStatus.closed) {
       exists.status = sessionStatus.pendingAgent;
-      exists.agentUnreadCount += 1;
+      if (shouldCountUnread) {
+        exists.agentUnreadCount += 1;
+      }
     }
-    if (message.senderType === 2 && exists.status !== sessionStatus.closed) {
+    if (senderType === 2 && sessionStatusValue(exists.status) !== sessionStatus.closed) {
       exists.status = sessionStatus.pendingUser;
-      exists.userUnreadCount += 1;
-      exists.agentId = message.agentId || agentId.value;
+      if (shouldCountUnread) {
+        exists.userUnreadCount += 1;
+      }
+      exists.agentId = Number(message.agentId || agentId.value);
     }
     return;
   }
@@ -342,10 +453,10 @@ function markSessionClosed(event: WsEvent, message?: ChatMessage) {
 function upsertSession(session: ChatSession) {
   const exists = sessions.value.find((item) => item.sessionNo === session.sessionNo);
   if (!exists) {
-    sessions.value = [session, ...sessions.value];
+    sessions.value = [normalizeSession(session), ...sessions.value];
     return;
   }
-  Object.assign(exists, session);
+  Object.assign(exists, normalizeSession(session));
 }
 
 function transientSessionFromMessage(message: ChatMessage): ChatSession {
@@ -393,27 +504,70 @@ function isGuestSession(sessionNo?: string) {
 }
 
 function matchStatusFilter(session: ChatSession) {
+  const status = sessionStatusValue(session.status);
+  const assignedAgentId = Number(session.agentId || 0);
   if (statusFilter.value === "waiting") {
     return (
-      session.status === sessionStatus.waiting ||
-      (session.status === sessionStatus.pendingAgent && !session.agentId)
+      status === sessionStatus.waiting ||
+      (status === sessionStatus.pendingAgent && !assignedAgentId)
     );
   }
   if (statusFilter.value === "serving") {
     return (
-      session.agentId === agentId.value &&
+      assignedAgentId === agentId.value &&
       ([
         sessionStatus.serving,
         sessionStatus.pendingUser,
         sessionStatus.pendingAgent,
-      ] as number[]).includes(session.status)
+      ] as number[]).includes(status)
     );
   }
-  return session.status === sessionStatus.closed;
+  return status === sessionStatus.closed;
+}
+
+function sessionNeedsAccept(session?: ChatSession) {
+  return (
+    Boolean(session) &&
+    sessionStatusValue(session?.status) === sessionStatus.pendingAgent &&
+    !Number(session?.agentId || 0)
+  );
 }
 
 function normalizeMessageEnums(message: ChatMessage) {
   message.senderType = senderTypeValue(message.senderType);
+}
+
+function normalizeMessage(message: ChatMessage) {
+  normalizeMessageEnums(message);
+  return message;
+}
+
+function isQueueSystemMessage(message?: ChatMessage) {
+  return (
+    senderTypeValue(message?.senderType) === 3 &&
+    typeof message?.content === "string" &&
+    message.content.includes("正在排队")
+  );
+}
+
+function normalizeSession(session: ChatSession) {
+  session.status = sessionStatusValue(session.status);
+  session.agentId = Number(session.agentId || 0);
+  session.userId = Number(session.userId || 0);
+  session.groupId = Number(session.groupId || 0);
+  session.lastSenderType = senderTypeValue(session.lastSenderType);
+  return session;
+}
+
+function sessionStatusValue(value: unknown) {
+  if (typeof value === "number") return value;
+  if (value === "CHAT_SESSION_STATUS_WAITING") return sessionStatus.waiting;
+  if (value === "CHAT_SESSION_STATUS_SERVING") return sessionStatus.serving;
+  if (value === "CHAT_SESSION_STATUS_PENDING_USER") return sessionStatus.pendingUser;
+  if (value === "CHAT_SESSION_STATUS_PENDING_AGENT") return sessionStatus.pendingAgent;
+  if (value === "CHAT_SESSION_STATUS_CLOSED") return sessionStatus.closed;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
 }
 
 function senderTypeValue(value: unknown) {
@@ -455,6 +609,10 @@ function syncActiveSession() {
   }
 }
 
+async function refreshSessions() {
+  await loadSessions();
+}
+
 async function send() {
   const content = input.value.trim();
   if (
@@ -492,9 +650,10 @@ async function send() {
       messageType: 1,
       content,
     });
+    normalizeMessageEnums(resp.data);
     pushMessage(resp.data);
+    upsertSessionFromMessage(resp.data, false);
     input.value = "";
-    await loadSessions();
   } catch (err) {
     ElMessage.error(err instanceof Error ? err.message : "发送失败");
   }
@@ -537,162 +696,32 @@ function acceptSession() {
 
 <template>
   <section class="workbench">
-    <aside class="session-panel">
-      <div class="panel-header">
-        <h2>会话</h2>
-        <el-tag :type="wsOnline ? 'success' : 'info'">
-          {{ wsOnline ? "在线" : "离线" }}
-        </el-tag>
-      </div>
-      <el-segmented
-        v-model="statusFilter"
-        :options="[
-          { label: '待接待', value: 'waiting' },
-          { label: '进行中', value: 'serving' },
-          { label: '已结束', value: 'closed' },
-        ]"
-        class="session-filter"
-      />
-      <div class="session-list">
-        <div
-          v-if="loadingSessions"
-          class="empty-state"
-        >
-          加载中...
-        </div>
-        <div
-          v-else-if="!filteredSessions.length"
-          class="empty-state"
-        >
-          暂无会话
-        </div>
-        <button
-          v-for="session in filteredSessions"
-          :key="session.sessionNo"
-          type="button"
-          class="session-item"
-          :class="{ active: session.sessionNo === activeSession?.sessionNo }"
-          @click="activeSessionNo = session.sessionNo"
-        >
-          <span class="session-title">{{ session.title }}</span>
-          <span class="session-meta">{{ session.category }}</span>
-          <span class="session-last">{{ session.lastMessage }}</span>
-          <span
-            v-if="session.userUnreadCount"
-            class="unread"
-          >{{
-            session.userUnreadCount
-          }}</span>
-        </button>
-      </div>
-    </aside>
+    <WorkbenchSessionList
+      v-model:status-filter="statusFilter"
+      :sessions="filteredSessions"
+      :selected-session-no="activeSession?.sessionNo || ''"
+      :loading="loadingSessions"
+      :ws-online="wsOnline"
+      @select="activeSessionNo = $event"
+      @refresh="refreshSessions"
+    />
 
-    <section class="chat-panel">
-      <header class="chat-header">
-        <div>
-          <h2>{{ activeSession?.title || "请选择会话" }}</h2>
-          <span>{{ activeSession?.sessionNo || "-" }}</span>
-        </div>
-        <div class="chat-actions">
-          <el-button
-            v-if="activeNeedsAccept"
-            type="success"
-            :disabled="!wsOnline || !agentId"
-            @click="acceptSession"
-          >
-            接待
-          </el-button>
-          <el-button>转接</el-button>
-          <el-button
-            type="primary"
-            :disabled="!activeSession || activeClosed"
-            @click="closeSession"
-          >
-            结束会话
-          </el-button>
-        </div>
-      </header>
+    <WorkbenchChatPanel
+      v-model:input-value="input"
+      :session="activeSession"
+      :messages="visibleMessages"
+      :loading="loadingMessages"
+      :active-needs-accept="activeNeedsAccept"
+      :active-closed="activeClosed"
+      :can-reply="canReply"
+      :ws-online="wsOnline"
+      :agent-id="agentId"
+      :show-guest-refresh-notice="showGuestRefreshNotice"
+      @accept="acceptSession"
+      @close="closeSession"
+      @send="send"
+    />
 
-      <div class="message-list">
-        <div
-          v-if="loadingMessages"
-          class="empty-state"
-        >
-          加载消息中...
-        </div>
-        <div
-          v-else-if="!activeSession"
-          class="empty-state"
-        >
-          选择左侧会话后查看消息
-        </div>
-        <div
-          v-for="message in activeMessages"
-          :key="message.messageNo"
-          class="message-row"
-          :class="{ mine: message.senderType === 2 }"
-        >
-          <div class="bubble">
-            {{ message.content }}
-          </div>
-        </div>
-      </div>
-
-      <footer class="composer">
-        <el-input
-          v-model="input"
-          type="textarea"
-          resize="none"
-          :disabled="!canReply"
-          :autosize="{ minRows: 3, maxRows: 4 }"
-          :placeholder="activeClosed ? '会话已结束' : activeNeedsAccept ? '请先接待该会话' : '输入回复内容'"
-          @keydown.ctrl.enter.prevent="send"
-        />
-        <div class="composer-actions">
-          <el-button>快捷回复</el-button>
-          <el-button
-            type="primary"
-            :disabled="!canReply"
-            @click="send"
-          >
-            发送
-          </el-button>
-        </div>
-      </footer>
-    </section>
-
-    <aside class="customer-panel">
-      <div class="panel-header">
-        <h2>客户信息</h2>
-      </div>
-      <dl class="info-list">
-        <div>
-          <dt>用户 ID</dt>
-          <dd>{{ activeSession?.userId || "-" }}</dd>
-        </div>
-        <div>
-          <dt>问题分类</dt>
-          <dd>{{ activeSession?.category || "-" }}</dd>
-        </div>
-        <div>
-          <dt>优先级</dt>
-          <dd>{{ activeSession?.priority === 3 ? "高" : "普通" }}</dd>
-        </div>
-        <div>
-          <dt>分组 ID</dt>
-          <dd>{{ activeSession?.groupId || "-" }}</dd>
-        </div>
-      </dl>
-
-      <div class="note-block">
-        <h3>接待备注</h3>
-        <el-input
-          type="textarea"
-          resize="none"
-          :rows="5"
-          placeholder="记录客户偏好、订单号或处理进展"
-        />
-      </div>
-    </aside>
+    <WorkbenchCustomerPanel :session="activeSession" />
   </section>
 </template>
