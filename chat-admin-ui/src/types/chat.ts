@@ -61,6 +61,7 @@ export interface ChatSession {
   sessionNo: string;
   merchantId: number;
   userId: number;
+  source: number;
   status: number;
   priority: number;
   agentId: number;
@@ -68,15 +69,42 @@ export interface ChatSession {
   title: string;
   category: string;
   lastMessage: string;
+  lastSenderType: number;
   lastMessageTime: number;
   userUnreadCount: number;
+  agentUnreadCount: number;
+  closeTime: number;
+  closeReason: string;
+  extJson?: string;
+  lastMessageNo: string;
+  createTimes: number;
+  updateTimes: number;
+}
+
+export interface ChatMessageSender {
+  id: number;
+  type: number;
+  nickname: string;
+  avatarUrl: string;
 }
 
 export interface ChatMessage {
   id: number;
   messageNo: string;
   sessionNo: string;
+  merchantId: number;
+  userId: number;
+  agentId: number;
   senderType: number;
+  sender?: ChatMessageSender;
+  messageType: number;
   content: string;
+  mediaUrl: string;
+  mediaName: string;
+  mediaMime: string;
+  mediaSize: number;
+  status: number;
+  readTime: number;
   createTimes: number;
+  updateTimes: number;
 }

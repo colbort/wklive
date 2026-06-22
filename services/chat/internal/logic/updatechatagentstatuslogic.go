@@ -29,7 +29,7 @@ func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAg
 	if in.GetAgentId() <= 0 || in.GetStatus() == chat.ChatAgentStatus_CHAT_AGENT_STATUS_UNKNOWN {
 		return &chat.AdminChatAgentResp{Base: badBase("agent_id and status are required")}, nil
 	}
-	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatAgentResp{Base: base}, nil
 	}

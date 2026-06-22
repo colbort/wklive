@@ -55,24 +55,6 @@ func nowMillis() int64 {
 	return time.Now().UnixMilli()
 }
 
-func currentMerchantID(ctx context.Context, svcCtx *svc.ServiceContext) (int64, *common.RespBase, error) {
-	userID, err := utils.GetUserIdFromMd(ctx)
-	if err != nil || userID <= 0 {
-		return 0, badBase("invalid login session"), nil
-	}
-	user, err := svcCtx.ChatUserModel.FindOne(ctx, userID)
-	if err == models.ErrNotFound {
-		return 0, notFoundBase("chat user not found"), nil
-	}
-	if err != nil {
-		return 0, nil, err
-	}
-	if user.UserType != int64(chat.ChatUserType_CHAT_USER_TYPE_MERCHANT) {
-		return 0, badBase("merchant user is required"), nil
-	}
-	return user.MerchantId, nil, nil
-}
-
 func merchantIDFromMetadata(ctx context.Context) (int64, *common.RespBase, error) {
 	merchantID, err := utils.GetMerchantIdFromMd(ctx)
 	if err != nil || merchantID <= 0 {
@@ -610,7 +592,7 @@ func changeAgentSessionCount(ctx context.Context, svcCtx *svc.ServiceContext, ag
 }
 
 func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.AssignChatSessionReq) (*models.TChatSession, *common.RespBase, error) {
-	merchantID, base, err := currentMerchantID(ctx, svcCtx)
+	merchantID, base, err := merchantIDFromMetadata(ctx)
 	if base != nil || err != nil {
 		return nil, base, err
 	}

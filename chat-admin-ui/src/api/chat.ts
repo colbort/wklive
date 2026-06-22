@@ -10,6 +10,7 @@ import type {
   ChatAgent,
   ChatCategory,
   ChatGroup,
+  ChatMessage,
   ChatSession,
   ChatUser,
 } from "@/types/chat";
@@ -80,6 +81,25 @@ export interface UpdateChatAgentPayload {
   remark?: string;
 }
 
+export interface PageChatMessagesParams {
+  merchantId: number;
+  cursor?: number;
+  limit?: number;
+  senderType?: number;
+}
+
+export interface SendAgentMessagePayload {
+  merchantId: number;
+  agentId: number;
+  messageType: number;
+  content?: string;
+  mediaUrl?: string;
+  mediaName?: string;
+  mediaMime?: string;
+  mediaSize?: number;
+  clientMsgNo?: string;
+}
+
 export function login(data: LoginReq) {
   return postData<LoginData>("/login", data);
 }
@@ -145,4 +165,53 @@ export function deleteGroup(id: number, merchantId: number) {
 
 export function pageSessions(params: Record<string, unknown>) {
   return getData<ChatSession[]>("/sessions", params);
+}
+
+export function getSession(sessionNo: string, merchantId: number) {
+  return getData<ChatSession>(`/sessions/${encodeURIComponent(sessionNo)}`, {
+    merchantId,
+  });
+}
+
+export function pageMessages(sessionNo: string, params: PageChatMessagesParams) {
+  return getData<ChatMessage[]>(
+    `/sessions/${encodeURIComponent(sessionNo)}/messages`,
+    params,
+  );
+}
+
+export function sendAgentMessage(
+  sessionNo: string,
+  data: SendAgentMessagePayload,
+) {
+  return postData<ChatMessage>(
+    `/sessions/${encodeURIComponent(sessionNo)}/messages`,
+    data,
+  );
+}
+
+export function chatAdminWsUrl(params: {
+  token: string;
+  merchantId?: number;
+  agentId?: number;
+  sessionNo?: string;
+}) {
+  const baseURL = import.meta.env.VITE_API_BASE_URL || "/chat/admin";
+  const base = String(baseURL).replace(/\/$/, "");
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const url = new URL(
+    `${base}/ws/messages`,
+    `${protocol}//${window.location.host}`,
+  );
+  url.searchParams.set("token", params.token);
+  if (params.merchantId) {
+    url.searchParams.set("merchantId", String(params.merchantId));
+  }
+  if (params.agentId) {
+    url.searchParams.set("agentId", String(params.agentId));
+  }
+  if (params.sessionNo) {
+    url.searchParams.set("sessionNo", params.sessionNo);
+  }
+  return url.toString();
 }

@@ -25,7 +25,7 @@ func NewMarkAgentMessagesReadLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 标记客服侧已读
 func (l *MarkAgentMessagesReadLogic) MarkAgentMessagesRead(in *chat.MarkAgentMessagesReadReq) (*chat.AdminMarkMessagesReadResp, error) {
-	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: base}, nil
 	}

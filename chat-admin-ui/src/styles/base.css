@@ -272,6 +272,17 @@ p {
   max-height: calc(100% - 84px);
 }
 
+.empty-state {
+  display: grid;
+  min-height: 88px;
+  place-items: center;
+  border: 1px dashed #d8dee8;
+  border-radius: 8px;
+  color: #667085;
+  background: #f8fafc;
+  font-size: 13px;
+}
+
 .session-item {
   position: relative;
   display: grid;

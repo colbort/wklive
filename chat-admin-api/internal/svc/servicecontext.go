@@ -46,7 +46,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			pairs = append(pairs, utils.CtxKeyUsername, username)
 		}
 		if merchantId, err := utils.GetMerchantIdFromCtx(ctx); err == nil && merchantId > 0 {
-			pairs = append(pairs, utils.CtxKeyMerchantId, strconv.FormatInt(merchantId, 0))
+			pairs = append(pairs, utils.CtxKeyMerchantId, strconv.FormatInt(merchantId, 10))
 		}
 		if len(pairs) > 0 {
 			ctx = metadata.AppendToOutgoingContext(ctx, pairs...)

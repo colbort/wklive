@@ -1,152 +1,185 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { ElMessage } from "element-plus";
+import {
+  chatAdminWsUrl,
+  pageMessages,
+  pageSessions,
+  sendAgentMessage,
+} from "@/api/chat";
+import { useAuthStore } from "@/stores/auth";
 import type { ChatMessage, ChatSession } from "@/types/chat";
 
 const statusFilter = ref("serving");
 const input = ref("");
-const activeSessionNo = ref("CS20260621001");
+const activeSessionNo = ref("");
+const loadingSessions = ref(false);
+const loadingMessages = ref(false);
+const sessions = ref<ChatSession[]>([]);
+const messages = ref<Record<string, ChatMessage[]>>({});
+const wsState = ref<"idle" | "open" | "closed">("idle");
+const auth = useAuthStore();
+let socket: WebSocket | null = null;
+let refreshTimer: number | null = null;
 
-const sessions: ChatSession[] = [
-  {
-    id: 1,
-    sessionNo: "CS20260621001",
-    merchantId: 10001,
-    userId: 9001,
-    status: 2,
-    priority: 2,
-    agentId: 3001,
-    groupId: 1,
-    title: "订单发货咨询",
-    category: "订单问题",
-    lastMessage: "我的订单什么时候发货？",
-    lastMessageTime: Date.now() - 180000,
-    userUnreadCount: 2,
-  },
-  {
-    id: 2,
-    sessionNo: "CS20260621002",
-    merchantId: 10001,
-    userId: 9002,
-    status: 1,
-    priority: 3,
-    agentId: 0,
-    groupId: 2,
-    title: "退款进度",
-    category: "售后服务",
-    lastMessage: "麻烦帮我看下退款。",
-    lastMessageTime: Date.now() - 600000,
-    userUnreadCount: 1,
-  },
-  {
-    id: 3,
-    sessionNo: "CS20260620009",
-    merchantId: 10001,
-    userId: 9003,
-    status: 5,
-    priority: 2,
-    agentId: 3001,
-    groupId: 1,
-    title: "活动规则",
-    category: "售前咨询",
-    lastMessage: "好的，谢谢。",
-    lastMessageTime: Date.now() - 86400000,
-    userUnreadCount: 0,
-  },
-];
+const statusMap: Record<string, number> = {
+  waiting: 1,
+  serving: 2,
+  closed: 5,
+};
 
-const messages = ref<Record<string, ChatMessage[]>>({
-  CS20260621001: [
-    {
-      id: 1,
-      messageNo: "M1",
-      sessionNo: "CS20260621001",
-      senderType: 1,
-      content: "你好，我的订单什么时候发货？",
-      createTimes: Date.now() - 420000,
-    },
-    {
-      id: 2,
-      messageNo: "M2",
-      sessionNo: "CS20260621001",
-      senderType: 2,
-      content: "您好，我帮您核实一下订单状态。",
-      createTimes: Date.now() - 360000,
-    },
-    {
-      id: 3,
-      messageNo: "M3",
-      sessionNo: "CS20260621001",
-      senderType: 1,
-      content: "订单号是 202606210088。",
-      createTimes: Date.now() - 180000,
-    },
-  ],
-  CS20260621002: [
-    {
-      id: 4,
-      messageNo: "M4",
-      sessionNo: "CS20260621002",
-      senderType: 1,
-      content: "麻烦帮我看下退款。",
-      createTimes: Date.now() - 600000,
-    },
-  ],
-  CS20260620009: [
-    {
-      id: 5,
-      messageNo: "M5",
-      sessionNo: "CS20260620009",
-      senderType: 2,
-      content: "活动规则已经发您了。",
-      createTimes: Date.now() - 86600000,
-    },
-    {
-      id: 6,
-      messageNo: "M6",
-      sessionNo: "CS20260620009",
-      senderType: 1,
-      content: "好的，谢谢。",
-      createTimes: Date.now() - 86400000,
-    },
-  ],
-});
-
-const filteredSessions = computed(() => {
-  const statusMap: Record<string, number[]> = {
-    waiting: [1],
-    serving: [2, 3, 4],
-    closed: [5],
-  };
-  return sessions.filter((item) =>
-    statusMap[statusFilter.value].includes(item.status),
-  );
-});
+const filteredSessions = computed(() => sessions.value);
 
 const activeSession = computed(
   () =>
-    sessions.find((item) => item.sessionNo === activeSessionNo.value) ||
-    sessions[0],
+    sessions.value.find((item) => item.sessionNo === activeSessionNo.value) ||
+    sessions.value[0],
 );
 const activeMessages = computed(
-  () => messages.value[activeSession.value.sessionNo] || [],
+  () =>
+    activeSession.value ? messages.value[activeSession.value.sessionNo] || [] : [],
 );
+const merchantId = computed(() => auth.user?.merchantId || 0);
+const agentId = computed(() => auth.agent?.id || 0);
+const wsOnline = computed(() => wsState.value === "open");
 
-function send() {
+onMounted(async () => {
+  await loadSessions();
+  connectWs();
+});
+
+onBeforeUnmount(() => {
+  if (refreshTimer) {
+    window.clearTimeout(refreshTimer);
+  }
+  socket?.close();
+});
+
+watch(statusFilter, async () => {
+  activeSessionNo.value = "";
+  await loadSessions();
+});
+
+watch(activeSessionNo, async (sessionNo) => {
+  if (sessionNo) {
+    await loadMessages(sessionNo);
+  }
+});
+
+async function loadSessions() {
+  if (!merchantId.value) return;
+  loadingSessions.value = true;
+  try {
+    const resp = await pageSessions({
+      merchantId: merchantId.value,
+      agentId: statusFilter.value === "serving" ? agentId.value : undefined,
+      status: statusMap[statusFilter.value],
+      limit: 50,
+    });
+    sessions.value = resp.data;
+    if (!activeSessionNo.value && resp.data.length) {
+      activeSessionNo.value = resp.data[0].sessionNo;
+    }
+    if (
+      activeSessionNo.value &&
+      !resp.data.some((item) => item.sessionNo === activeSessionNo.value)
+    ) {
+      activeSessionNo.value = resp.data[0]?.sessionNo || "";
+    }
+  } catch (err) {
+    ElMessage.error(err instanceof Error ? err.message : "加载会话失败");
+  } finally {
+    loadingSessions.value = false;
+  }
+}
+
+async function loadMessages(sessionNo: string) {
+  if (!merchantId.value) return;
+  loadingMessages.value = true;
+  try {
+    const resp = await pageMessages(sessionNo, {
+      merchantId: merchantId.value,
+      limit: 50,
+    });
+    messages.value[sessionNo] = resp.data;
+  } catch (err) {
+    ElMessage.error(err instanceof Error ? err.message : "加载消息失败");
+  } finally {
+    loadingMessages.value = false;
+  }
+}
+
+function connectWs() {
+  if (!auth.token || !merchantId.value) return;
+  socket?.close();
+  socket = new WebSocket(
+    chatAdminWsUrl({
+      token: auth.token,
+      merchantId: merchantId.value,
+      agentId: agentId.value,
+    }),
+  );
+  socket.onopen = () => {
+    wsState.value = "open";
+  };
+  socket.onclose = () => {
+    wsState.value = "closed";
+  };
+  socket.onerror = () => {
+    wsState.value = "closed";
+  };
+  socket.onmessage = (event) => {
+    handleWsMessage(event.data);
+  };
+}
+
+function handleWsMessage(payload: string) {
+  try {
+    const event = JSON.parse(payload) as { type: string; data?: ChatMessage };
+    if (event.type !== "chat.message") return;
+    if (event.data?.sessionNo === activeSessionNo.value) {
+      pushMessage(event.data);
+    }
+    scheduleRefreshSessions();
+  } catch {
+    // ignore invalid push payload
+  }
+}
+
+function scheduleRefreshSessions() {
+  if (refreshTimer) {
+    window.clearTimeout(refreshTimer);
+  }
+  refreshTimer = window.setTimeout(() => {
+    void loadSessions();
+  }, 250);
+}
+
+function pushMessage(message: ChatMessage) {
+  const list = messages.value[message.sessionNo] || [];
+  if (list.some((item) => item.messageNo === message.messageNo)) return;
+  messages.value[message.sessionNo] = [...list, message];
+}
+
+async function send() {
   const content = input.value.trim();
-  if (!content) return;
+  if (!content || !activeSession.value || !merchantId.value || !agentId.value) {
+    return;
+  }
   const sessionNo = activeSession.value.sessionNo;
-  messages.value[sessionNo] = [
-    ...(messages.value[sessionNo] || []),
-    {
-      id: Date.now(),
-      messageNo: `M${Date.now()}`,
-      sessionNo,
-      senderType: 2,
+  try {
+    const resp = await sendAgentMessage(sessionNo, {
+      merchantId: merchantId.value,
+      agentId: agentId.value,
+      messageType: 1,
       content,
-      createTimes: Date.now(),
-    },
-  ];
-  input.value = "";
+    });
+    pushMessage(resp.data);
+    input.value = "";
+    await loadSessions();
+  } catch (err) {
+    ElMessage.error(err instanceof Error ? err.message : "发送失败");
+  }
 }
 </script>
 
@@ -155,8 +188,8 @@ function send() {
     <aside class="session-panel">
       <div class="panel-header">
         <h2>会话</h2>
-        <el-tag type="success">
-          在线
+        <el-tag :type="wsOnline ? 'success' : 'info'">
+          {{ wsOnline ? "在线" : "离线" }}
         </el-tag>
       </div>
       <el-segmented
@@ -169,12 +202,24 @@ function send() {
         class="session-filter"
       />
       <div class="session-list">
+        <div
+          v-if="loadingSessions"
+          class="empty-state"
+        >
+          加载中...
+        </div>
+        <div
+          v-else-if="!filteredSessions.length"
+          class="empty-state"
+        >
+          暂无会话
+        </div>
         <button
           v-for="session in filteredSessions"
           :key="session.sessionNo"
           type="button"
           class="session-item"
-          :class="{ active: session.sessionNo === activeSession.sessionNo }"
+          :class="{ active: session.sessionNo === activeSession?.sessionNo }"
           @click="activeSessionNo = session.sessionNo"
         >
           <span class="session-title">{{ session.title }}</span>
@@ -193,8 +238,8 @@ function send() {
     <section class="chat-panel">
       <header class="chat-header">
         <div>
-          <h2>{{ activeSession.title }}</h2>
-          <span>{{ activeSession.sessionNo }}</span>
+          <h2>{{ activeSession?.title || "请选择会话" }}</h2>
+          <span>{{ activeSession?.sessionNo || "-" }}</span>
         </div>
         <div class="chat-actions">
           <el-button>转接</el-button>
@@ -205,6 +250,18 @@ function send() {
       </header>
 
       <div class="message-list">
+        <div
+          v-if="loadingMessages"
+          class="empty-state"
+        >
+          加载消息中...
+        </div>
+        <div
+          v-else-if="!activeSession"
+          class="empty-state"
+        >
+          选择左侧会话后查看消息
+        </div>
         <div
           v-for="message in activeMessages"
           :key="message.messageNo"
@@ -222,6 +279,7 @@ function send() {
           v-model="input"
           type="textarea"
           resize="none"
+          :disabled="!activeSession"
           :autosize="{ minRows: 3, maxRows: 4 }"
           placeholder="输入回复内容"
           @keydown.ctrl.enter.prevent="send"
@@ -230,6 +288,7 @@ function send() {
           <el-button>快捷回复</el-button>
           <el-button
             type="primary"
+            :disabled="!activeSession"
             @click="send"
           >
             发送
@@ -245,19 +304,19 @@ function send() {
       <dl class="info-list">
         <div>
           <dt>用户 ID</dt>
-          <dd>{{ activeSession.userId }}</dd>
+          <dd>{{ activeSession?.userId || "-" }}</dd>
         </div>
         <div>
           <dt>问题分类</dt>
-          <dd>{{ activeSession.category }}</dd>
+          <dd>{{ activeSession?.category || "-" }}</dd>
         </div>
         <div>
           <dt>优先级</dt>
-          <dd>{{ activeSession.priority === 3 ? "高" : "普通" }}</dd>
+          <dd>{{ activeSession?.priority === 3 ? "高" : "普通" }}</dd>
         </div>
         <div>
           <dt>分组 ID</dt>
-          <dd>{{ activeSession.groupId }}</dd>
+          <dd>{{ activeSession?.groupId || "-" }}</dd>
         </div>
       </dl>
 

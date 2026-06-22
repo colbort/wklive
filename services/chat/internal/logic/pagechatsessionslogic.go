@@ -28,7 +28,7 @@ func NewPageChatSessionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 分页查询会话
 func (l *PageChatSessionsLogic) PageChatSessions(in *chat.PageChatSessionsReq) (*chat.PageChatSessionsResp, error) {
-	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.PageChatSessionsResp{Base: base}, nil
 	}

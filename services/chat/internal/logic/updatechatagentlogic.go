@@ -30,7 +30,7 @@ func (l *UpdateChatAgentLogic) UpdateChatAgent(in *chat.UpdateChatAgentReq) (*ch
 	if in.GetId() <= 0 {
 		return &chat.AdminChatAgentResp{Base: badBase("id is required")}, nil
 	}
-	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatAgentResp{Base: base}, nil
 	}

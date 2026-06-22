@@ -34,7 +34,7 @@ func (l *CreateChatGroupLogic) CreateChatGroup(in *chat.CreateChatGroupReq) (*ch
 		return &chat.AdminChatGroupResp{Base: badBase("group_code and group_name are required")}, nil
 	}
 
-	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatGroupResp{Base: base}, nil
 	}

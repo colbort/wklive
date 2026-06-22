@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"wklive/common/utils"
 	"wklive/proto/chat"
 	"wklive/proto/common"
 	"wklive/services/chat/internal/svc"
@@ -39,7 +38,7 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 		return &chat.AdminChatAgentResp{Base: badBase("username, password and nickname are required")}, nil
 	}
 
-	merchantID, base, err := l.currentMerchantID()
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatAgentResp{Base: base}, nil
 	}
@@ -95,24 +94,6 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
 	}
 	return &chat.AdminChatAgentResp{Base: okBase(), Data: toProtoAgent(agent)}, nil
-}
-
-func (l *CreateChatAgentLogic) currentMerchantID() (int64, *common.RespBase, error) {
-	userID, err := utils.GetUserIdFromMd(l.ctx)
-	if err != nil || userID <= 0 {
-		return 0, badBase("invalid login session"), nil
-	}
-	user, err := l.svcCtx.ChatUserModel.FindOne(l.ctx, userID)
-	if err == models.ErrNotFound {
-		return 0, notFoundBase("chat user not found"), nil
-	}
-	if err != nil {
-		return 0, nil, err
-	}
-	if user.UserType != int64(chat.ChatUserType_CHAT_USER_TYPE_MERCHANT) {
-		return 0, badBase("merchant user is required"), nil
-	}
-	return user.MerchantId, nil, nil
 }
 
 func (l *CreateChatAgentLogic) createAgentWithUser(user *models.TChatUser, agent *models.TChatAgent) error {

@@ -25,7 +25,7 @@ func NewGetChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 
 // 查询会话详情
 func (l *GetChatSessionLogic) GetChatSession(in *chat.GetChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
