@@ -6,7 +6,6 @@ import {
 } from "@/api/chat";
 import type {
   ChatMessage,
-  ChatMessageResp,
   ChatWsEvent,
   ConnectedPayload,
   SendUserMessagePayload,
@@ -16,6 +15,33 @@ interface ConnectOptions {
   merchantId: number;
   token: string;
 }
+
+interface WsResp<T> {
+  code?: number;
+  msg?: string;
+  base?: {
+    code?: number;
+    msg?: string;
+  };
+  data: T;
+}
+
+type RawChatMessage = Partial<ChatMessage> & {
+  message_no?: string;
+  session_no?: string;
+  merchant_id?: number;
+  user_id?: number;
+  agent_id?: number;
+  sender_type?: number;
+  message_type?: number;
+  media_url?: string;
+  media_name?: string;
+  media_mime?: string;
+  media_size?: number;
+  create_times?: number;
+  update_times?: number;
+  read_time?: number;
+};
 
 const reconnectDelays = [1000, 2000, 5000, 10000, 15000];
 
@@ -175,16 +201,16 @@ export function useChatSocket() {
       return;
     }
     if (event.type === chatWsEvents.sendUserMessageResult) {
-      const resp = event.data as ChatMessageResp;
-      if (resp.code !== 200) {
-        error.value = resp.msg || "消息发送失败";
+      const resp = event.data as WsResp<RawChatMessage>;
+      if (wsRespCode(resp) !== 200) {
+        error.value = wsRespMsg(resp) || "消息发送失败";
         return;
       }
-      pushMessage(resp.data);
+      pushMessage(normalizeMessage(resp.data));
       return;
     }
     if (event.type === chatWsEvents.message) {
-      pushMessage(event.data as ChatMessage);
+      pushMessage(normalizeMessage(event.data as RawChatMessage));
     }
   }
 
@@ -196,6 +222,37 @@ export function useChatSocket() {
       return;
     }
     messages.value.push(message);
+  }
+
+  function wsRespCode(resp: WsResp<unknown>) {
+    return resp.code ?? resp.base?.code ?? 0;
+  }
+
+  function wsRespMsg(resp: WsResp<unknown>) {
+    return resp.msg ?? resp.base?.msg ?? "";
+  }
+
+  function normalizeMessage(message: RawChatMessage): ChatMessage {
+    return {
+      id: message.id,
+      messageNo: message.messageNo ?? message.message_no ?? "",
+      sessionNo: message.sessionNo ?? message.session_no ?? "",
+      merchantId: message.merchantId ?? message.merchant_id ?? 0,
+      userId: message.userId ?? message.user_id ?? 0,
+      agentId: message.agentId ?? message.agent_id ?? 0,
+      senderType: message.senderType ?? message.sender_type ?? 0,
+      sender: message.sender,
+      messageType: message.messageType ?? message.message_type ?? 0,
+      content: message.content ?? "",
+      mediaUrl: message.mediaUrl ?? message.media_url ?? "",
+      mediaName: message.mediaName ?? message.media_name ?? "",
+      mediaMime: message.mediaMime ?? message.media_mime ?? "",
+      mediaSize: message.mediaSize ?? message.media_size ?? 0,
+      status: message.status ?? 0,
+      readTime: message.readTime ?? message.read_time ?? 0,
+      createTimes: message.createTimes ?? message.create_times ?? 0,
+      updateTimes: message.updateTimes ?? message.update_times ?? 0,
+    };
   }
 
   return {

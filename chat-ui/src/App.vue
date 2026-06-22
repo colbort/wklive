@@ -4,8 +4,8 @@ import { authChatMerchant } from "@/api/chat";
 import { useChatSocket } from "@/composables/useChatSocket";
 import type { ChatMerchant } from "@/types/chat";
 
-const apiKey = ref("");
-const apiSecret = ref("");
+const apiKey = ref("ck_b56f695fef22019e1326354e318ab0c6");
+const apiSecret = ref("cs_cfdea0dd4b4c6b687ba5cb0d4b9c1e1cd0d58e61a6fa56e1faf5575575e1df7a");
 const userToken = ref("");
 const nickname = ref("访客");
 const draft = ref("");
