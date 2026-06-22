@@ -1,13 +1,8 @@
 Name: chat
 Host: 0.0.0.0
-Port: 8888
+Port: 7777
 
 ChatRpc:
   Endpoints:
-    - 127.0.0.1:8080
-  NonBlock: true
-
-Redis:
-  Host: 127.0.0.1:6379
-  Type: node
+    - 127.0.0.1:8088
   NonBlock: true

@@ -32,10 +32,14 @@ const (
 	guestSessionPrefix         = "GS"
 	guestMessagePrefix         = "GM"
 	guestUsername              = "guest"
+	wsProtocol                 = "wklive-chat"
+	wsProtocolBearerPrefix     = "bearer."
+	wsProtocolMerchantPrefix   = "merchant."
 	successCode                = 200
 )
 
 var upgrader = websocket.Upgrader{
+	Subprotocols: []string{wsProtocol},
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
@@ -314,18 +318,23 @@ func firstNonEmpty(values ...string) string {
 
 func tokenFromRequest(r *http.Request) (string, bool, error) {
 	auth := strings.TrimSpace(r.Header.Get("Authorization"))
-	if auth == "" {
-		return "", false, nil
+	if auth != "" {
+		fields := strings.Fields(auth)
+		if len(fields) != 2 || !strings.EqualFold(fields[0], "Bearer") || strings.TrimSpace(fields[1]) == "" {
+			return "", false, fmt.Errorf("invalid Authorization header")
+		}
+		return fields[1], true, nil
 	}
-	fields := strings.Fields(auth)
-	if len(fields) != 2 || !strings.EqualFold(fields[0], "Bearer") || strings.TrimSpace(fields[1]) == "" {
-		return "", false, fmt.Errorf("invalid Authorization header")
-	}
-	return fields[1], true, nil
+
+	token := strings.TrimSpace(wsProtocolValue(r, wsProtocolBearerPrefix))
+	return token, token != "", nil
 }
 
 func merchantIDFromRequest(r *http.Request) (int64, error) {
 	raw := strings.TrimSpace(r.Header.Get(utils.CtxKeyMerchantId))
+	if raw == "" {
+		raw = strings.TrimSpace(wsProtocolValue(r, wsProtocolMerchantPrefix))
+	}
 	if raw == "" {
 		return 0, fmt.Errorf("merchantId is required")
 	}
@@ -334,4 +343,14 @@ func merchantIDFromRequest(r *http.Request) (int64, error) {
 		return 0, fmt.Errorf("invalid merchantId")
 	}
 	return merchantId, nil
+}
+
+func wsProtocolValue(r *http.Request, prefix string) string {
+	for _, part := range strings.Split(r.Header.Get("Sec-WebSocket-Protocol"), ",") {
+		value := strings.TrimSpace(part)
+		if strings.HasPrefix(value, prefix) {
+			return strings.TrimPrefix(value, prefix)
+		}
+	}
+	return ""
 }
