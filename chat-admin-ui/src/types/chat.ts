@@ -108,3 +108,30 @@ export interface ChatMessage {
   createTimes: number;
   updateTimes: number;
 }
+
+export interface ChatQueueInfo {
+  merchantId: number;
+  sessionNo: string;
+  userId: number;
+  groupId: number;
+  position: number;
+  waitingCount: number;
+  estimateWaitSeconds: number;
+  message: string;
+  updateTimes: number;
+}
+
+export interface ChatSessionEvent {
+  sessionNo: string;
+  merchantId: number;
+  userId: number;
+  agentId: number;
+  operatorId: number;
+  status: number;
+  assignType: number;
+  reason: string;
+  message: string;
+  session?: ChatSession;
+  queue?: ChatQueueInfo;
+  createdAt: number;
+}

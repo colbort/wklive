@@ -21,6 +21,7 @@ export const chatWsEvents = {
   error: "error",
   message: "chat.message",
   sessionAccepted: "chat.session.accepted",
+  sessionClosed: "chat.session.closed",
   queueUpdated: "chat.queue.updated",
   sendUserMessage: "send_user_message",
   sendUserMessageResult: "send_user_message.result",

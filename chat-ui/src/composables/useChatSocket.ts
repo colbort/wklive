@@ -6,6 +6,8 @@ import {
 } from "@/api/chat";
 import type {
   ChatMessage,
+  ChatQueueInfo,
+  ChatSessionEvent,
   ChatWsEvent,
   ConnectedPayload,
   SendUserMessagePayload,
@@ -52,6 +54,7 @@ export function useChatSocket() {
   const error = ref("");
   const queueStatus = ref("");
   const agentAccepted = ref(false);
+  const sessionClosed = ref(false);
   const reconnectingIn = ref(0);
   const status = ref<"idle" | "connecting" | "open" | "closed" | "reconnecting">(
     "idle",
@@ -117,7 +120,12 @@ export function useChatSocket() {
 
   function sendText(content: string, nickname: string) {
     const text = content.trim();
-    if (!socket.value || socket.value.readyState !== WebSocket.OPEN || !text) {
+    if (
+      !socket.value ||
+      socket.value.readyState !== WebSocket.OPEN ||
+      !text ||
+      sessionClosed.value
+    ) {
       return;
     }
     const payload: SendUserMessagePayload = {
@@ -196,7 +204,10 @@ export function useChatSocket() {
     if (event.type === chatWsEvents.connected) {
       connected.value = event.data as ConnectedPayload;
       agentAccepted.value = false;
-      queueStatus.value = "请描述您的问题，发送后将进入客服队列。";
+      sessionClosed.value = false;
+      queueStatus.value =
+        queueMessage((event.data as ConnectedPayload).queue) ||
+        "请描述您的问题，发送后将进入客服队列。";
       return;
     }
     if (event.type === chatWsEvents.error) {
@@ -217,25 +228,66 @@ export function useChatSocket() {
       return;
     }
     if (event.type === chatWsEvents.sessionAccepted) {
-      const message = normalizeMessage(event.data as RawChatMessage);
+      const message = eventMessage(event);
       agentAccepted.value = true;
-      queueStatus.value = message.content || "客服已接入。";
-      pushMessage(message);
+      queueStatus.value =
+        sessionEventMessage(event) || message?.content || "客服已接入。";
+      if (message) {
+        pushMessage(message);
+      }
+      return;
+    }
+    if (event.type === chatWsEvents.sessionClosed) {
+      const message = eventMessage(event);
+      sessionClosed.value = true;
+      queueStatus.value =
+        sessionEventMessage(event) || message?.content || "本次会话已结束。";
+      if (message) {
+        pushMessage(message);
+      }
+      closeSocketOnly(true);
+      status.value = "closed";
       return;
     }
     if (event.type === chatWsEvents.queueUpdated) {
-      const message = normalizeMessage(event.data as RawChatMessage);
-      queueStatus.value = message.content || "正在排队，客服会尽快接入。";
+      const message = eventMessage(event);
+      queueStatus.value =
+        queueMessage(event.queue) ||
+        sessionEventMessage(event) ||
+        message?.content ||
+        "正在排队，客服会尽快接入。";
       return;
     }
     if (event.type === chatWsEvents.message) {
-      const message = normalizeMessage(event.data as RawChatMessage);
+      const message = eventMessage(event);
+      if (!message) return;
       if (message.senderType === 2) {
         agentAccepted.value = true;
         queueStatus.value = "";
       }
       pushMessage(message);
     }
+  }
+
+  function eventMessage(event: ChatWsEvent): ChatMessage | undefined {
+    if (!event.data) return undefined;
+    return normalizeMessage(event.data as RawChatMessage);
+  }
+
+  function sessionEvent(event: ChatWsEvent): ChatSessionEvent | undefined {
+    return event.sessionEvent ?? event.session_event;
+  }
+
+  function sessionEventMessage(event: ChatWsEvent) {
+    return sessionEvent(event)?.message || "";
+  }
+
+  function queueMessage(queue?: ChatQueueInfo) {
+    if (!queue) return "";
+    if (queue.message) return queue.message;
+    if (queue.position > 1) return `正在排队，您前面还有 ${queue.position - 1} 人。`;
+    if (queue.position === 1) return "您是当前队列第 1 位，客服即将接入。";
+    return "";
   }
 
   function pushMessage(message: ChatMessage) {
@@ -292,6 +344,7 @@ export function useChatSocket() {
     error,
     queueStatus,
     agentAccepted,
+    sessionClosed,
     isOpen,
     isTemporary,
     messages,

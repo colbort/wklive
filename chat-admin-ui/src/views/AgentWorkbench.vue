@@ -8,7 +8,12 @@ import {
   sendAgentMessage,
 } from "@/api/chat";
 import { useAuthStore } from "@/stores/auth";
-import type { ChatMessage, ChatSession } from "@/types/chat";
+import type {
+  ChatMessage,
+  ChatQueueInfo,
+  ChatSession,
+  ChatSessionEvent,
+} from "@/types/chat";
 
 interface WsBase {
   code: number;
@@ -21,6 +26,16 @@ interface WsResult<T> {
 }
 
 type WsEventData = ChatMessage | WsResult<ChatMessage>;
+
+interface WsEvent {
+  type: string;
+  data?: WsEventData;
+  base?: WsBase;
+  session?: ChatSession;
+  sessionEvent?: ChatSessionEvent;
+  session_event?: ChatSessionEvent;
+  queue?: ChatQueueInfo;
+}
 
 const statusFilter = ref("waiting");
 const input = ref("");
@@ -66,6 +81,12 @@ const activeNeedsAccept = computed(
     Boolean(activeSession.value) &&
     activeSession.value?.status === sessionStatus.pendingAgent &&
     !activeSession.value?.agentId,
+);
+const activeClosed = computed(
+  () => activeSession.value?.status === sessionStatus.closed,
+);
+const canReply = computed(
+  () => Boolean(activeSession.value) && !activeNeedsAccept.value && !activeClosed.value,
 );
 
 onMounted(async () => {
@@ -152,16 +173,15 @@ function connectWs() {
 
 function handleWsMessage(payload: string) {
   try {
-    const event = JSON.parse(payload) as {
-      type: string;
-      data?: WsEventData;
-      base?: WsBase;
-    };
+    const event = JSON.parse(payload) as WsEvent;
     if (
       event.type !== "chat.message" &&
       event.type !== "chat.session.accepted" &&
+      event.type !== "chat.session.closed" &&
+      event.type !== "chat.queue.updated" &&
       event.type !== "accept_chat_session.result" &&
-      event.type !== "send_agent_message.result"
+      event.type !== "send_agent_message.result" &&
+      event.type !== "close_chat_session.result"
     ) {
       return;
     }
@@ -170,27 +190,32 @@ function handleWsMessage(payload: string) {
       ElMessage.error(base.msg || "发送失败");
       return;
     }
+    upsertSessionFromEvent(event);
     const message = eventMessage(event.data);
-    if (!message?.sessionNo || !message.messageNo) {
-      return;
-    }
-    normalizeMessageEnums(message);
-    if (!pushMessage(message)) {
-      return;
+    if (message?.sessionNo && message.messageNo) {
+      normalizeMessageEnums(message);
+      pushMessage(message);
     }
     if (
       event.type === "chat.session.accepted" ||
       event.type === "accept_chat_session.result"
     ) {
-      markSessionAccepted(message);
+      markSessionAccepted(event, message);
+    } else if (
+      event.type === "chat.session.closed" ||
+      event.type === "close_chat_session.result"
+    ) {
+      markSessionClosed(event, message);
     } else {
-      upsertSessionFromMessage(message);
+      if (message?.sessionNo) {
+        upsertSessionFromMessage(message);
+      }
     }
-    const session = sessions.value.find(
-      (item) => item.sessionNo === message.sessionNo,
-    );
+    const session = message?.sessionNo
+      ? sessions.value.find((item) => item.sessionNo === message.sessionNo)
+      : undefined;
     if (
-      message.senderType === 1 &&
+      message?.senderType === 1 &&
       !session?.agentId &&
       statusFilter.value !== "waiting"
     ) {
@@ -199,6 +224,21 @@ function handleWsMessage(payload: string) {
     scheduleRefreshSessions();
   } catch {
     // ignore invalid push payload
+  }
+}
+
+function upsertSessionFromEvent(event: WsEvent) {
+  const session = event.session || sessionEvent(event)?.session;
+  if (session?.sessionNo) {
+    upsertSession(session);
+  }
+  const queue = event.queue || sessionEvent(event)?.queue;
+  if (queue?.sessionNo) {
+    const exists = sessions.value.find((item) => item.sessionNo === queue.sessionNo);
+    if (exists) {
+      exists.groupId = queue.groupId || exists.groupId;
+      exists.updateTimes = queue.updateTimes || exists.updateTimes;
+    }
   }
 }
 
@@ -248,12 +288,17 @@ function upsertSessionFromMessage(message: ChatMessage) {
   syncActiveSession();
 }
 
-function markSessionAccepted(message: ChatMessage) {
+function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
+  const sessionEventData = sessionEvent(event);
+  const sessionNo = sessionEventData?.sessionNo || message?.sessionNo || "";
   const session = sessions.value.find(
-    (item) => item.sessionNo === message.sessionNo,
+    (item) => item.sessionNo === sessionNo,
   );
-  const acceptedAgentId = Number(message.sender?.id || message.agentId || agentId.value);
+  const acceptedAgentId = Number(
+    sessionEventData?.agentId || message?.sender?.id || message?.agentId || agentId.value,
+  );
   if (!session) {
+    if (!message) return;
     const next = transientSessionFromMessage(message);
     next.agentId = acceptedAgentId;
     next.status = sessionStatus.serving;
@@ -261,18 +306,46 @@ function markSessionAccepted(message: ChatMessage) {
   } else {
     session.agentId = acceptedAgentId;
     session.status = sessionStatus.serving;
-    session.lastMessage = message.content || session.lastMessage;
-    session.lastMessageNo = message.messageNo || session.lastMessageNo;
-    session.lastMessageTime = message.createTimes || session.lastMessageTime;
-    session.lastSenderType = message.senderType || session.lastSenderType;
-    session.updateTimes = message.updateTimes || session.updateTimes;
+    session.lastMessage = message?.content || sessionEventData?.message || session.lastMessage;
+    session.lastMessageNo = message?.messageNo || session.lastMessageNo;
+    session.lastMessageTime = message?.createTimes || sessionEventData?.createdAt || session.lastMessageTime;
+    session.lastSenderType = message?.senderType || session.lastSenderType;
+    session.updateTimes = message?.updateTimes || sessionEventData?.createdAt || session.updateTimes;
   }
   if (acceptedAgentId === agentId.value) {
     statusFilter.value = "serving";
-    activeSessionNo.value = message.sessionNo;
+    activeSessionNo.value = sessionNo;
   } else {
     syncActiveSession();
   }
+}
+
+function markSessionClosed(event: WsEvent, message?: ChatMessage) {
+  const sessionEventData = sessionEvent(event);
+  const sessionNo = sessionEventData?.sessionNo || message?.sessionNo || "";
+  if (!sessionNo) return;
+  const session = sessions.value.find((item) => item.sessionNo === sessionNo);
+  if (session) {
+    session.status = sessionStatus.closed;
+    session.closeTime = sessionEventData?.createdAt || message?.createTimes || Date.now();
+    session.closeReason = sessionEventData?.reason || session.closeReason;
+    session.lastMessage = message?.content || sessionEventData?.message || session.lastMessage || "本次会话已结束";
+    session.lastMessageTime = message?.createTimes || session.closeTime;
+    session.updateTimes = message?.updateTimes || session.closeTime;
+  }
+  if (activeSessionNo.value === sessionNo) {
+    statusFilter.value = "closed";
+  }
+  syncActiveSession();
+}
+
+function upsertSession(session: ChatSession) {
+  const exists = sessions.value.find((item) => item.sessionNo === session.sessionNo);
+  if (!exists) {
+    sessions.value = [session, ...sessions.value];
+    return;
+  }
+  Object.assign(exists, session);
 }
 
 function transientSessionFromMessage(message: ChatMessage): ChatSession {
@@ -307,15 +380,16 @@ function transientSessionFromMessage(message: ChatMessage): ChatSession {
 }
 
 function mergeTransientSessions(nextSessions: ChatSession[]) {
-  const nextNos = new Set(nextSessions.map((item) => item.sessionNo));
+  const validNextSessions = nextSessions.filter((item) => Boolean(item.sessionNo));
+  const nextNos = new Set(validNextSessions.map((item) => item.sessionNo));
   const transient = sessions.value.filter(
     (item) => isGuestSession(item.sessionNo) && !nextNos.has(item.sessionNo),
   );
-  return [...transient, ...nextSessions];
+  return [...transient, ...validNextSessions];
 }
 
-function isGuestSession(sessionNo: string) {
-  return sessionNo.startsWith("GS");
+function isGuestSession(sessionNo?: string) {
+  return typeof sessionNo === "string" && sessionNo.startsWith("GS");
 }
 
 function matchStatusFilter(session: ChatSession) {
@@ -358,6 +432,10 @@ function eventMessage(
   return data;
 }
 
+function sessionEvent(event: WsEvent) {
+  return event.sessionEvent || event.session_event;
+}
+
 function eventBase(data?: WsEventData) {
   return data && isWsResult(data) ? data.base : undefined;
 }
@@ -385,6 +463,7 @@ async function send() {
     !merchantId.value ||
     !agentId.value ||
     activeNeedsAccept.value
+    || activeClosed.value
   ) {
     return;
   }
@@ -419,6 +498,23 @@ async function send() {
   } catch (err) {
     ElMessage.error(err instanceof Error ? err.message : "发送失败");
   }
+}
+
+function closeSession() {
+  if (!activeSession.value || !socket || socket.readyState !== WebSocket.OPEN) {
+    return;
+  }
+  socket.send(
+    JSON.stringify({
+      type: "close_chat_session",
+      data: {
+        merchantId: merchantId.value,
+        userId: activeSession.value.userId,
+        sessionNo: activeSession.value.sessionNo,
+        closeReason: "closed by agent",
+      },
+    }),
+  );
 }
 
 function acceptSession() {
@@ -507,7 +603,11 @@ function acceptSession() {
             接待
           </el-button>
           <el-button>转接</el-button>
-          <el-button type="primary">
+          <el-button
+            type="primary"
+            :disabled="!activeSession || activeClosed"
+            @click="closeSession"
+          >
             结束会话
           </el-button>
         </div>
@@ -543,16 +643,16 @@ function acceptSession() {
           v-model="input"
           type="textarea"
           resize="none"
-          :disabled="!activeSession || activeNeedsAccept"
+          :disabled="!canReply"
           :autosize="{ minRows: 3, maxRows: 4 }"
-          :placeholder="activeNeedsAccept ? '请先接待该会话' : '输入回复内容'"
+          :placeholder="activeClosed ? '会话已结束' : activeNeedsAccept ? '请先接待该会话' : '输入回复内容'"
           @keydown.ctrl.enter.prevent="send"
         />
         <div class="composer-actions">
           <el-button>快捷回复</el-button>
           <el-button
             type="primary"
-            :disabled="!activeSession || activeNeedsAccept"
+            :disabled="!canReply"
             @click="send"
           >
             发送

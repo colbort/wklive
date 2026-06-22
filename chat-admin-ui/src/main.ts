@@ -6,6 +6,16 @@ import App from "./App.vue";
 import { router } from "./router";
 import "./styles/base.css";
 
+window.addEventListener("unhandledrejection", (event) => {
+  const reason = event.reason as { code?: number; message?: string } | undefined;
+  if (
+    reason?.code === -32603 &&
+    reason.message === "Internal JSON-RPC error."
+  ) {
+    event.preventDefault();
+  }
+});
+
 const app = createApp(App);
 
 app.use(createPinia());

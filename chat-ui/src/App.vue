@@ -24,6 +24,9 @@ const connectionLabel = computed(() => {
     return chat.reconnectLabel.value || "重连中";
   }
   if (chat.isOpen.value) {
+    if (chat.sessionClosed.value) {
+      return "已结束";
+    }
     return chat.isTemporary.value ? "临时会话" : "登录会话";
   }
   if (chat.status.value === "closed") {
@@ -156,11 +159,15 @@ function sendMessage() {
       <form class="composer" @submit.prevent="sendMessage">
         <textarea
           v-model="draft"
-          :disabled="!chat.isOpen.value"
-          placeholder="输入消息"
+          :disabled="!chat.isOpen.value || chat.sessionClosed.value"
+          :placeholder="chat.sessionClosed.value ? '本次会话已结束' : '输入消息'"
           rows="3"
         />
-        <button class="send-button" :disabled="!chat.isOpen.value || !draft.trim()" type="submit">
+        <button
+          class="send-button"
+          :disabled="!chat.isOpen.value || chat.sessionClosed.value || !draft.trim()"
+          type="submit"
+        >
           发送
         </button>
       </form>
