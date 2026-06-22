@@ -578,7 +578,11 @@ func changeAgentSessionCount(ctx context.Context, svcCtx *svc.ServiceContext, ag
 }
 
 func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.AssignChatSessionReq) (*models.TChatSession, *common.RespBase, error) {
-	session, base, err := getSession(ctx, svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	merchantID, base, err := currentMerchantID(ctx, svcCtx)
+	if base != nil || err != nil {
+		return nil, base, err
+	}
+	session, base, err := getSession(ctx, svcCtx, merchantID, in.GetSessionNo())
 	if base != nil || err != nil {
 		return nil, base, err
 	}
@@ -589,7 +593,7 @@ func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.Ass
 		return nil, badBase("chat session is closed"), nil
 	}
 	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, in.GetToAgentId())
-	if err == models.ErrNotFound || agent.MerchantId != in.GetMerchantId() {
+	if err == models.ErrNotFound || agent.MerchantId != merchantID {
 		return nil, notFoundBase("chat agent not found"), nil
 	}
 	if err != nil {
@@ -682,7 +686,6 @@ func routeSessionToAvailableAgent(ctx context.Context, svcCtx *svc.ServiceContex
 			return session, nil, nil
 		}
 		return assignSession(ctx, svcCtx, &chat.AssignChatSessionReq{
-			MerchantId: session.MerchantId,
 			SessionNo:  session.SessionNo,
 			ToAgentId:  agents[0].Id,
 			AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_AUTO,

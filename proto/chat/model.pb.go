@@ -195,15 +195,15 @@ type ChatAgent struct {
 	MerchantId          int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                              // 客服商户ID
 	ChatUserId          int64                  `protobuf:"varint,3,opt,name=chat_user_id,json=chatUserId,proto3" json:"chat_user_id,omitempty"`                            // 客服用户ID
 	AgentNo             string                 `protobuf:"bytes,4,opt,name=agent_no,json=agentNo,proto3" json:"agent_no,omitempty"`                                        // 坐席编号
-	WelcomeMessage      string                 `protobuf:"bytes,16,opt,name=welcome_message,json=welcomeMessage,proto3" json:"welcome_message,omitempty"`                  // 欢迎语
-	Status              ChatAgentStatus        `protobuf:"varint,7,opt,name=status,proto3,enum=chat.ChatAgentStatus" json:"status,omitempty"`                              // 在线状态
-	MaxSessionCount     int32                  `protobuf:"varint,8,opt,name=max_session_count,json=maxSessionCount,proto3" json:"max_session_count,omitempty"`             // 最大同时接待数
-	CurrentSessionCount int32                  `protobuf:"varint,9,opt,name=current_session_count,json=currentSessionCount,proto3" json:"current_session_count,omitempty"` // 当前接待数
-	LastActiveTime      int64                  `protobuf:"varint,11,opt,name=last_active_time,json=lastActiveTime,proto3" json:"last_active_time,omitempty"`               // 最后活跃时间戳(毫秒)
-	Remark              string                 `protobuf:"bytes,12,opt,name=remark,proto3" json:"remark,omitempty"`                                                        // 备注
-	CreateTimes         int64                  `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                          // 创建时间戳(毫秒)
-	UpdateTimes         int64                  `protobuf:"varint,14,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                          // 更新时间戳(毫秒)
-	GroupId             int64                  `protobuf:"varint,15,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                                      // 客服分组ID
+	WelcomeMessage      string                 `protobuf:"bytes,5,opt,name=welcome_message,json=welcomeMessage,proto3" json:"welcome_message,omitempty"`                   // 欢迎语
+	Status              ChatAgentStatus        `protobuf:"varint,6,opt,name=status,proto3,enum=chat.ChatAgentStatus" json:"status,omitempty"`                              // 在线状态
+	MaxSessionCount     int32                  `protobuf:"varint,7,opt,name=max_session_count,json=maxSessionCount,proto3" json:"max_session_count,omitempty"`             // 最大同时接待数
+	CurrentSessionCount int32                  `protobuf:"varint,8,opt,name=current_session_count,json=currentSessionCount,proto3" json:"current_session_count,omitempty"` // 当前接待数
+	LastActiveTime      int64                  `protobuf:"varint,9,opt,name=last_active_time,json=lastActiveTime,proto3" json:"last_active_time,omitempty"`                // 最后活跃时间戳(毫秒)
+	Remark              string                 `protobuf:"bytes,10,opt,name=remark,proto3" json:"remark,omitempty"`                                                        // 备注
+	CreateTimes         int64                  `protobuf:"varint,11,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                          // 创建时间戳(毫秒)
+	UpdateTimes         int64                  `protobuf:"varint,12,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                          // 更新时间戳(毫秒)
+	GroupId             int64                  `protobuf:"varint,13,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                                      // 客服分组ID
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -613,25 +613,25 @@ func (x *ChatMessageSender) GetAvatarUrl() string {
 
 type ChatMessage struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                 // 主键ID
-	MessageNo     string                 `protobuf:"bytes,2,opt,name=message_no,json=messageNo,proto3" json:"message_no,omitempty"`                                   // 消息编号
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                   // 会话编号
-	MerchantId    int64                  `protobuf:"varint,4,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                               // 客服商户ID
-	UserId        int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                           // 用户ID
-	AgentId       int64                  `protobuf:"varint,6,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                                        // 坐席ID
-	SenderType    ChatSenderType         `protobuf:"varint,7,opt,name=sender_type,json=senderType,proto3,enum=chat.ChatSenderType" json:"sender_type,omitempty"`      // 发送方类型
-	MessageType   ChatMessageType        `protobuf:"varint,10,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
-	Content       string                 `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
-	MediaUrl      string                 `protobuf:"bytes,12,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                     // 媒体/文件URL
-	MediaName     string                 `protobuf:"bytes,13,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                  // 文件名
-	MediaMime     string                 `protobuf:"bytes,14,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                  // MIME类型
-	MediaSize     int64                  `protobuf:"varint,15,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                 // 文件大小(bytes)
-	Status        ChatMessageStatus      `protobuf:"varint,16,opt,name=status,proto3,enum=chat.ChatMessageStatus" json:"status,omitempty"`                            // 消息状态
-	Payload       *structpb.Struct       `protobuf:"bytes,17,opt,name=payload,proto3" json:"payload,omitempty"`                                                       // 卡片/扩展载荷
-	ReadTime      int64                  `protobuf:"varint,18,opt,name=read_time,json=readTime,proto3" json:"read_time,omitempty"`                                    // 已读时间戳(毫秒)
-	CreateTimes   int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                           // 创建时间戳(毫秒)
-	UpdateTimes   int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                           // 更新时间戳(毫秒)
-	Sender        *ChatMessageSender     `protobuf:"bytes,21,opt,name=sender,proto3" json:"sender,omitempty"`                                                         // 发送方信息快照
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                // 主键ID
+	MessageNo     string                 `protobuf:"bytes,2,opt,name=message_no,json=messageNo,proto3" json:"message_no,omitempty"`                                  // 消息编号
+	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
+	MerchantId    int64                  `protobuf:"varint,4,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                              // 客服商户ID
+	UserId        int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                          // 用户ID
+	AgentId       int64                  `protobuf:"varint,6,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                                       // 坐席ID
+	SenderType    ChatSenderType         `protobuf:"varint,7,opt,name=sender_type,json=senderType,proto3,enum=chat.ChatSenderType" json:"sender_type,omitempty"`     // 发送方类型
+	MessageType   ChatMessageType        `protobuf:"varint,8,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
+	Content       string                 `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
+	MediaUrl      string                 `protobuf:"bytes,10,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                    // 媒体/文件URL
+	MediaName     string                 `protobuf:"bytes,11,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                 // 文件名
+	MediaMime     string                 `protobuf:"bytes,12,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                 // MIME类型
+	MediaSize     int64                  `protobuf:"varint,13,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                // 文件大小(bytes)
+	Status        ChatMessageStatus      `protobuf:"varint,14,opt,name=status,proto3,enum=chat.ChatMessageStatus" json:"status,omitempty"`                           // 消息状态
+	Payload       *structpb.Struct       `protobuf:"bytes,15,opt,name=payload,proto3" json:"payload,omitempty"`                                                      // 卡片/扩展载荷
+	ReadTime      int64                  `protobuf:"varint,16,opt,name=read_time,json=readTime,proto3" json:"read_time,omitempty"`                                   // 已读时间戳(毫秒)
+	CreateTimes   int64                  `protobuf:"varint,17,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                          // 创建时间戳(毫秒)
+	UpdateTimes   int64                  `protobuf:"varint,18,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                          // 更新时间戳(毫秒)
+	Sender        *ChatMessageSender     `protobuf:"bytes,19,opt,name=sender,proto3" json:"sender,omitempty"`                                                        // 发送方信息快照
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1791,7 +1791,7 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\x12\x1a\n" +
 	"\bpassword\x18\x0f \x01(\tR\bpassword\x12\"\n" +
-	"\rlast_login_ip\x18\x10 \x01(\tR\vlastLoginIp\"\xe6\x03\n" +
+	"\rlast_login_ip\x18\x10 \x01(\tR\vlastLoginIp\"\xd4\x03\n" +
 	"\tChatAgent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
@@ -1799,16 +1799,16 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\fchat_user_id\x18\x03 \x01(\x03R\n" +
 	"chatUserId\x12\x19\n" +
 	"\bagent_no\x18\x04 \x01(\tR\aagentNo\x12'\n" +
-	"\x0fwelcome_message\x18\x10 \x01(\tR\x0ewelcomeMessage\x12-\n" +
-	"\x06status\x18\a \x01(\x0e2\x15.chat.ChatAgentStatusR\x06status\x12*\n" +
-	"\x11max_session_count\x18\b \x01(\x05R\x0fmaxSessionCount\x122\n" +
-	"\x15current_session_count\x18\t \x01(\x05R\x13currentSessionCount\x12(\n" +
-	"\x10last_active_time\x18\v \x01(\x03R\x0elastActiveTime\x12\x16\n" +
-	"\x06remark\x18\f \x01(\tR\x06remark\x12!\n" +
-	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\x12\x19\n" +
-	"\bgroup_id\x18\x0f \x01(\x03R\agroupIdJ\x04\b\x05\x10\x06J\x04\b\x06\x10\aJ\x04\b\n" +
-	"\x10\v\"\xc4\x06\n" +
+	"\x0fwelcome_message\x18\x05 \x01(\tR\x0ewelcomeMessage\x12-\n" +
+	"\x06status\x18\x06 \x01(\x0e2\x15.chat.ChatAgentStatusR\x06status\x12*\n" +
+	"\x11max_session_count\x18\a \x01(\x05R\x0fmaxSessionCount\x122\n" +
+	"\x15current_session_count\x18\b \x01(\x05R\x13currentSessionCount\x12(\n" +
+	"\x10last_active_time\x18\t \x01(\x03R\x0elastActiveTime\x12\x16\n" +
+	"\x06remark\x18\n" +
+	" \x01(\tR\x06remark\x12!\n" +
+	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\x12\x19\n" +
+	"\bgroup_id\x18\r \x01(\x03R\agroupId\"\xc4\x06\n" +
 	"\vChatSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -1841,7 +1841,7 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\x04type\x18\x02 \x01(\x0e2\x14.chat.ChatSenderTypeR\x04type\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x1d\n" +
 	"\n" +
-	"avatar_url\x18\x04 \x01(\tR\tavatarUrl\"\xd1\x05\n" +
+	"avatar_url\x18\x04 \x01(\tR\tavatarUrl\"\xad\x05\n" +
 	"\vChatMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -1854,23 +1854,22 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\bagent_id\x18\x06 \x01(\x03R\aagentId\x125\n" +
 	"\vsender_type\x18\a \x01(\x0e2\x14.chat.ChatSenderTypeR\n" +
 	"senderType\x128\n" +
-	"\fmessage_type\x18\n" +
-	" \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
-	"\acontent\x18\v \x01(\tR\acontent\x12\x1b\n" +
-	"\tmedia_url\x18\f \x01(\tR\bmediaUrl\x12\x1d\n" +
+	"\fmessage_type\x18\b \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
+	"\acontent\x18\t \x01(\tR\acontent\x12\x1b\n" +
+	"\tmedia_url\x18\n" +
+	" \x01(\tR\bmediaUrl\x12\x1d\n" +
 	"\n" +
-	"media_name\x18\r \x01(\tR\tmediaName\x12\x1d\n" +
+	"media_name\x18\v \x01(\tR\tmediaName\x12\x1d\n" +
 	"\n" +
-	"media_mime\x18\x0e \x01(\tR\tmediaMime\x12\x1d\n" +
+	"media_mime\x18\f \x01(\tR\tmediaMime\x12\x1d\n" +
 	"\n" +
-	"media_size\x18\x0f \x01(\x03R\tmediaSize\x12/\n" +
-	"\x06status\x18\x10 \x01(\x0e2\x17.chat.ChatMessageStatusR\x06status\x121\n" +
-	"\apayload\x18\x11 \x01(\v2\x17.google.protobuf.StructR\apayload\x12\x1b\n" +
-	"\tread_time\x18\x12 \x01(\x03R\breadTime\x12!\n" +
-	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\x12/\n" +
-	"\x06sender\x18\x15 \x01(\v2\x17.chat.ChatMessageSenderR\x06senderJ\x04\b\b\x10\tJ\x04\b\t\x10\n" +
-	"R\tsender_idR\vsender_name\"l\n" +
+	"media_size\x18\r \x01(\x03R\tmediaSize\x12/\n" +
+	"\x06status\x18\x0e \x01(\x0e2\x17.chat.ChatMessageStatusR\x06status\x121\n" +
+	"\apayload\x18\x0f \x01(\v2\x17.google.protobuf.StructR\apayload\x12\x1b\n" +
+	"\tread_time\x18\x10 \x01(\x03R\breadTime\x12!\n" +
+	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x12 \x01(\x03R\vupdateTimes\x12/\n" +
+	"\x06sender\x18\x13 \x01(\v2\x17.chat.ChatMessageSenderR\x06sender\"l\n" +
 	"\x10ChatMessageEvent\x12\x12\n" +
 	"\x04type\x18\x01 \x01(\tR\x04type\x12%\n" +
 	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatMessageR\x04data\x12\x1d\n" +

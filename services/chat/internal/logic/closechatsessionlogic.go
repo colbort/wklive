@@ -25,7 +25,14 @@ func NewCloseChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 关闭会话
 func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	session, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	if base != nil {
+		return &chat.AdminChatSessionResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
+	}
+	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
 		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
 	}

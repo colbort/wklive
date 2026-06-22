@@ -26,11 +26,18 @@ func NewGetChatAgentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetC
 
 // 查询坐席详情
 func (l *GetChatAgentLogic) GetChatAgent(in *chat.GetChatAgentReq) (*chat.AdminChatAgentResp, error) {
-	if in.GetMerchantId() <= 0 || in.GetId() <= 0 {
-		return &chat.AdminChatAgentResp{Base: badBase("merchant_id and id are required")}, nil
+	if in.GetId() <= 0 {
+		return &chat.AdminChatAgentResp{Base: badBase("id is required")}, nil
+	}
+	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	if base != nil {
+		return &chat.AdminChatAgentResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
 	}
 	data, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetId())
-	if err == models.ErrNotFound || data.MerchantId != in.GetMerchantId() {
+	if err == models.ErrNotFound || data.MerchantId != merchantID {
 		return &chat.AdminChatAgentResp{Base: notFoundBase("chat agent not found")}, nil
 	}
 	if err != nil {

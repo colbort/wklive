@@ -25,7 +25,14 @@ func NewMarkAgentMessagesReadLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 标记客服侧已读
 func (l *MarkAgentMessagesReadLogic) MarkAgentMessagesRead(in *chat.MarkAgentMessagesReadReq) (*chat.AdminMarkMessagesReadResp, error) {
-	session, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	if base != nil {
+		return &chat.AdminMarkMessagesReadResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AdminMarkMessagesReadResp{Base: errorBase(err)}, nil
+	}
+	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: errorBase(err)}, nil
 	}

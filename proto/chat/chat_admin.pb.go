@@ -68,9 +68,9 @@ func (x *AdminCommonResp) GetBase() *common.RespBase {
 
 type ChatAdminLoginReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`                       // 登录账号
-	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`                       // 登录密码
-	GoogleCode    string                 `protobuf:"bytes,4,opt,name=google_code,json=googleCode,proto3" json:"google_code,omitempty"` // Google验证码
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`                       // 登录账号
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`                       // 登录密码
+	GoogleCode    string                 `protobuf:"bytes,3,opt,name=google_code,json=googleCode,proto3" json:"google_code,omitempty"` // Google验证码
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -372,12 +372,12 @@ func (x *ChatAdminProfileResp) GetAgent() *ChatAgent {
 
 type CreateChatGroupReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	GroupCode     string                 `protobuf:"bytes,2,opt,name=group_code,json=groupCode,proto3" json:"group_code,omitempty"` // 分组编码
-	GroupName     string                 `protobuf:"bytes,3,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"` // 分组名称
-	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`              // 分组描述
-	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`  // 启用状态
-	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                           // 排序
-	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                        // 备注
+	GroupCode     string                 `protobuf:"bytes,1,opt,name=group_code,json=groupCode,proto3" json:"group_code,omitempty"` // 分组编码
+	GroupName     string                 `protobuf:"bytes,2,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"` // 分组名称
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`              // 分组描述
+	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`  // 启用状态
+	Sort          int32                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`                           // 排序
+	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                        // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -457,11 +457,11 @@ func (x *CreateChatGroupReq) GetRemark() string {
 type UpdateChatGroupReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                               // 主键ID
-	GroupName     string                 `protobuf:"bytes,3,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"` // 分组名称
-	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`              // 分组描述
-	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`  // 启用状态
-	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                           // 排序
-	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                        // 备注
+	GroupName     string                 `protobuf:"bytes,2,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"` // 分组名称
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`              // 分组描述
+	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`  // 启用状态
+	Sort          int32                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`                           // 排序
+	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                        // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -540,7 +540,7 @@ func (x *UpdateChatGroupReq) GetRemark() string {
 
 type GetChatGroupReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -584,9 +584,9 @@ func (x *GetChatGroupReq) GetId() int64 {
 
 type PageChatGroupsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Enabled       common.Enable          `protobuf:"varint,2,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 启用状态,0表示全部
-	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`                     // 关键词
-	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                           // 分页
+	Enabled       common.Enable          `protobuf:"varint,1,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 启用状态,0表示全部
+	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`                     // 关键词
+	Page          *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`                           // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -644,7 +644,7 @@ func (x *PageChatGroupsReq) GetPage() *common.PageReq {
 
 type DeleteChatGroupReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -688,16 +688,16 @@ func (x *DeleteChatGroupReq) GetId() int64 {
 
 type CreateChatAgentReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	MaxSessionCount int32                  `protobuf:"varint,6,opt,name=max_session_count,json=maxSessionCount,proto3" json:"max_session_count,omitempty"` // 最大同时接待数
-	Remark          string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`                                             // 备注
-	GroupId         int64                  `protobuf:"varint,9,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                           // 客服分组ID
-	WelcomeMessage  string                 `protobuf:"bytes,10,opt,name=welcome_message,json=welcomeMessage,proto3" json:"welcome_message,omitempty"`      // 欢迎语
-	Username        string                 `protobuf:"bytes,11,opt,name=username,proto3" json:"username,omitempty"`                                        // 登录账号
-	Password        string                 `protobuf:"bytes,12,opt,name=password,proto3" json:"password,omitempty"`                                        // 登录密码
-	Nickname        string                 `protobuf:"bytes,13,opt,name=nickname,proto3" json:"nickname,omitempty"`                                        // 昵称
-	Mobile          string                 `protobuf:"bytes,14,opt,name=mobile,proto3" json:"mobile,omitempty"`                                            // 手机号
-	Email           string                 `protobuf:"bytes,15,opt,name=email,proto3" json:"email,omitempty"`                                              // 邮箱
-	Enabled         common.Enable          `protobuf:"varint,16,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                      // 启用状态
+	MaxSessionCount int32                  `protobuf:"varint,1,opt,name=max_session_count,json=maxSessionCount,proto3" json:"max_session_count,omitempty"` // 最大同时接待数
+	Remark          string                 `protobuf:"bytes,2,opt,name=remark,proto3" json:"remark,omitempty"`                                             // 备注
+	GroupId         int64                  `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                           // 客服分组ID
+	WelcomeMessage  string                 `protobuf:"bytes,4,opt,name=welcome_message,json=welcomeMessage,proto3" json:"welcome_message,omitempty"`       // 欢迎语
+	Username        string                 `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`                                         // 登录账号
+	Password        string                 `protobuf:"bytes,6,opt,name=password,proto3" json:"password,omitempty"`                                         // 登录密码
+	Nickname        string                 `protobuf:"bytes,7,opt,name=nickname,proto3" json:"nickname,omitempty"`                                         // 昵称
+	Mobile          string                 `protobuf:"bytes,8,opt,name=mobile,proto3" json:"mobile,omitempty"`                                             // 手机号
+	Email           string                 `protobuf:"bytes,9,opt,name=email,proto3" json:"email,omitempty"`                                               // 邮箱
+	Enabled         common.Enable          `protobuf:"varint,10,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                      // 启用状态
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -805,10 +805,10 @@ func (x *CreateChatAgentReq) GetEnabled() common.Enable {
 type UpdateChatAgentReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                    // 主键ID
-	MaxSessionCount int32                  `protobuf:"varint,5,opt,name=max_session_count,json=maxSessionCount,proto3" json:"max_session_count,omitempty"` // 最大同时接待数
-	Remark          string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                             // 备注
-	GroupId         int64                  `protobuf:"varint,8,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                           // 客服分组ID
-	WelcomeMessage  string                 `protobuf:"bytes,9,opt,name=welcome_message,json=welcomeMessage,proto3" json:"welcome_message,omitempty"`       // 欢迎语
+	MaxSessionCount int32                  `protobuf:"varint,2,opt,name=max_session_count,json=maxSessionCount,proto3" json:"max_session_count,omitempty"` // 最大同时接待数
+	Remark          string                 `protobuf:"bytes,3,opt,name=remark,proto3" json:"remark,omitempty"`                                             // 备注
+	GroupId         int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                           // 客服分组ID
+	WelcomeMessage  string                 `protobuf:"bytes,5,opt,name=welcome_message,json=welcomeMessage,proto3" json:"welcome_message,omitempty"`       // 欢迎语
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -880,8 +880,8 @@ func (x *UpdateChatAgentReq) GetWelcomeMessage() string {
 
 type UpdateChatAgentStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID
-	Status        ChatAgentStatus        `protobuf:"varint,3,opt,name=status,proto3,enum=chat.ChatAgentStatus" json:"status,omitempty"` // 在线状态
+	AgentId       int64                  `protobuf:"varint,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID
+	Status        ChatAgentStatus        `protobuf:"varint,2,opt,name=status,proto3,enum=chat.ChatAgentStatus" json:"status,omitempty"` // 在线状态
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -932,7 +932,7 @@ func (x *UpdateChatAgentStatusReq) GetStatus() ChatAgentStatus {
 
 type GetChatAgentReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -976,10 +976,10 @@ func (x *GetChatAgentReq) GetId() int64 {
 
 type PageChatAgentsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ChatUserId    int64                  `protobuf:"varint,2,opt,name=chat_user_id,json=chatUserId,proto3" json:"chat_user_id,omitempty"` // 客服用户ID,0表示全部
-	Status        ChatAgentStatus        `protobuf:"varint,3,opt,name=status,proto3,enum=chat.ChatAgentStatus" json:"status,omitempty"`   // 在线状态,0表示全部
-	GroupId       int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`            // 客服分组ID,0表示全部
-	Page          *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`                                  // 分页
+	ChatUserId    int64                  `protobuf:"varint,1,opt,name=chat_user_id,json=chatUserId,proto3" json:"chat_user_id,omitempty"` // 客服用户ID,0表示全部
+	Status        ChatAgentStatus        `protobuf:"varint,2,opt,name=status,proto3,enum=chat.ChatAgentStatus" json:"status,omitempty"`   // 在线状态,0表示全部
+	GroupId       int64                  `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`            // 客服分组ID,0表示全部
+	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                  // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1044,13 +1044,13 @@ func (x *PageChatAgentsReq) GetPage() *common.PageReq {
 
 type PageChatSessionsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                     // 用户ID,0表示全部
-	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                  // 坐席ID,0表示全部
-	Status        ChatSessionStatus      `protobuf:"varint,4,opt,name=status,proto3,enum=chat.ChatSessionStatus" json:"status,omitempty"`       // 状态,0表示全部
-	Priority      ChatSessionPriority    `protobuf:"varint,5,opt,name=priority,proto3,enum=chat.ChatSessionPriority" json:"priority,omitempty"` // 优先级,0表示全部
-	Category      string                 `protobuf:"bytes,6,opt,name=category,proto3" json:"category,omitempty"`                                // 问题分类,空表示全部
-	TimeRange     *common.TimeRange      `protobuf:"bytes,7,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`             // 创建时间范围
-	Page          *common.PageReq        `protobuf:"bytes,8,opt,name=page,proto3" json:"page,omitempty"`                                        // 分页
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                     // 用户ID,0表示全部
+	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                  // 坐席ID,0表示全部
+	Status        ChatSessionStatus      `protobuf:"varint,3,opt,name=status,proto3,enum=chat.ChatSessionStatus" json:"status,omitempty"`       // 状态,0表示全部
+	Priority      ChatSessionPriority    `protobuf:"varint,4,opt,name=priority,proto3,enum=chat.ChatSessionPriority" json:"priority,omitempty"` // 优先级,0表示全部
+	Category      string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`                                // 问题分类,空表示全部
+	TimeRange     *common.TimeRange      `protobuf:"bytes,6,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`             // 创建时间范围
+	Page          *common.PageReq        `protobuf:"bytes,7,opt,name=page,proto3" json:"page,omitempty"`                                        // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1136,7 +1136,7 @@ func (x *PageChatSessionsReq) GetPage() *common.PageReq {
 
 type GetChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1180,11 +1180,11 @@ func (x *GetChatSessionReq) GetSessionNo() string {
 
 type AssignChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                              // 会话编号
-	ToAgentId     int64                  `protobuf:"varint,3,opt,name=to_agent_id,json=toAgentId,proto3" json:"to_agent_id,omitempty"`                           // 目标坐席ID
-	AssignType    ChatAssignType         `protobuf:"varint,4,opt,name=assign_type,json=assignType,proto3,enum=chat.ChatAssignType" json:"assign_type,omitempty"` // 分配方式
-	OperatorId    int64                  `protobuf:"varint,5,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`                          // 操作人ID
-	Reason        string                 `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`                                                     // 分配/转接原因
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                              // 会话编号
+	ToAgentId     int64                  `protobuf:"varint,2,opt,name=to_agent_id,json=toAgentId,proto3" json:"to_agent_id,omitempty"`                           // 目标坐席ID
+	AssignType    ChatAssignType         `protobuf:"varint,3,opt,name=assign_type,json=assignType,proto3,enum=chat.ChatAssignType" json:"assign_type,omitempty"` // 分配方式
+	OperatorId    int64                  `protobuf:"varint,4,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`                          // 操作人ID
+	Reason        string                 `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`                                                     // 分配/转接原因
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1256,14 +1256,14 @@ func (x *AssignChatSessionReq) GetReason() string {
 
 type SendAgentMessageReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                                       // 坐席ID
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
-	MessageType   ChatMessageType        `protobuf:"varint,4,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
-	Content       string                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
-	MediaUrl      string                 `protobuf:"bytes,6,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                     // 媒体/文件URL
-	MediaName     string                 `protobuf:"bytes,7,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                  // 文件名
-	MediaMime     string                 `protobuf:"bytes,8,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                  // MIME类型
-	MediaSize     int64                  `protobuf:"varint,9,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                 // 文件大小(bytes)
+	AgentId       int64                  `protobuf:"varint,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                                       // 坐席ID
+	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
+	MessageType   ChatMessageType        `protobuf:"varint,3,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
+	Content       string                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
+	MediaUrl      string                 `protobuf:"bytes,5,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                     // 媒体/文件URL
+	MediaName     string                 `protobuf:"bytes,6,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                  // 文件名
+	MediaMime     string                 `protobuf:"bytes,7,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                  // MIME类型
+	MediaSize     int64                  `protobuf:"varint,8,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                 // 文件大小(bytes)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1356,9 +1356,9 @@ func (x *SendAgentMessageReq) GetMediaSize() int64 {
 
 type PageChatMessagesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                              // 会话编号
-	SenderType    ChatSenderType         `protobuf:"varint,3,opt,name=sender_type,json=senderType,proto3,enum=chat.ChatSenderType" json:"sender_type,omitempty"` // 发送方类型,0表示全部
-	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                                         // 分页
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                              // 会话编号
+	SenderType    ChatSenderType         `protobuf:"varint,2,opt,name=sender_type,json=senderType,proto3,enum=chat.ChatSenderType" json:"sender_type,omitempty"` // 发送方类型,0表示全部
+	Page          *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`                                                         // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1416,9 +1416,9 @@ func (x *PageChatMessagesReq) GetPage() *common.PageReq {
 
 type MarkAgentMessagesReadReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                     // 坐席ID
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                // 会话编号
-	LastMessageId int64                  `protobuf:"varint,4,opt,name=last_message_id,json=lastMessageId,proto3" json:"last_message_id,omitempty"` // 最后已读消息ID,0表示全部
+	AgentId       int64                  `protobuf:"varint,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                     // 坐席ID
+	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                // 会话编号
+	LastMessageId int64                  `protobuf:"varint,3,opt,name=last_message_id,json=lastMessageId,proto3" json:"last_message_id,omitempty"` // 最后已读消息ID,0表示全部
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1476,9 +1476,9 @@ func (x *MarkAgentMessagesReadReq) GetLastMessageId() int64 {
 
 type CloseChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`       // 会话编号
-	OperatorId    int64                  `protobuf:"varint,3,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`   // 操作人ID
-	CloseReason   string                 `protobuf:"bytes,4,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"` // 结束原因
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`       // 会话编号
+	OperatorId    int64                  `protobuf:"varint,2,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`   // 操作人ID
+	CloseReason   string                 `protobuf:"bytes,3,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"` // 结束原因
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1536,13 +1536,13 @@ func (x *CloseChatSessionReq) GetCloseReason() string {
 
 type CreateChatQuickReplyReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示公共快捷回复
-	CategoryId    int64                  `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID
-	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`                              // 标题
-	Content       string                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                          // 内容
-	Enabled       common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`      // 启用状态
-	Sort          int32                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`                               // 排序
-	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`                            // 备注
+	AgentId       int64                  `protobuf:"varint,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示公共快捷回复
+	CategoryId    int64                  `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID
+	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`                              // 标题
+	Content       string                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`                          // 内容
+	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`      // 启用状态
+	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                               // 排序
+	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                            // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1629,13 +1629,13 @@ func (x *CreateChatQuickReplyReq) GetRemark() string {
 type UpdateChatQuickReplyReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
-	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示公共快捷回复
-	CategoryId    int64                  `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID
-	Title         string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`                              // 标题
-	Content       string                 `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`                          // 内容
-	Enabled       common.Enable          `protobuf:"varint,7,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`      // 启用状态
-	Sort          int32                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`                               // 排序
-	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`                            // 备注
+	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示公共快捷回复
+	CategoryId    int64                  `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID
+	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`                              // 标题
+	Content       string                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                          // 内容
+	Enabled       common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`      // 启用状态
+	Sort          int32                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`                               // 排序
+	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`                            // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1728,7 +1728,7 @@ func (x *UpdateChatQuickReplyReq) GetRemark() string {
 
 type GetChatQuickReplyReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1772,11 +1772,11 @@ func (x *GetChatQuickReplyReq) GetId() int64 {
 
 type PageChatQuickRepliesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示全部
-	CategoryId    int64                  `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID,0表示全部
-	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`      // 启用状态,0表示全部
-	Keyword       string                 `protobuf:"bytes,5,opt,name=keyword,proto3" json:"keyword,omitempty"`                          // 关键词
-	Page          *common.PageReq        `protobuf:"bytes,6,opt,name=page,proto3" json:"page,omitempty"`                                // 分页
+	AgentId       int64                  `protobuf:"varint,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示全部
+	CategoryId    int64                  `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID,0表示全部
+	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`      // 启用状态,0表示全部
+	Keyword       string                 `protobuf:"bytes,4,opt,name=keyword,proto3" json:"keyword,omitempty"`                          // 关键词
+	Page          *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`                                // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1848,8 +1848,8 @@ func (x *PageChatQuickRepliesReq) GetPage() *common.PageReq {
 
 type ListEnabledChatQuickRepliesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示公共
-	CategoryId    int64                  `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID,0表示全部
+	AgentId       int64                  `protobuf:"varint,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示公共
+	CategoryId    int64                  `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID,0表示全部
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1900,7 +1900,7 @@ func (x *ListEnabledChatQuickRepliesReq) GetCategoryId() int64 {
 
 type DeleteChatQuickReplyReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1944,12 +1944,12 @@ func (x *DeleteChatQuickReplyReq) GetId() int64 {
 
 type CreateChatCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID
-	CategoryCode  string                 `protobuf:"bytes,3,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"` // 分类编码
-	CategoryName  string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
-	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
-	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                                    // 排序
-	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
+	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID
+	CategoryCode  string                 `protobuf:"bytes,2,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"` // 分类编码
+	CategoryName  string                 `protobuf:"bytes,3,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
+	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
+	Sort          int32                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`                                    // 排序
+	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2029,11 +2029,11 @@ func (x *CreateChatCategoryReq) GetRemark() string {
 type UpdateChatCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                        // 主键ID
-	ParentId      int64                  `protobuf:"varint,3,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID
-	CategoryName  string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
-	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
-	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                                    // 排序
-	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
+	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID
+	CategoryName  string                 `protobuf:"bytes,3,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
+	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
+	Sort          int32                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`                                    // 排序
+	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2112,7 +2112,7 @@ func (x *UpdateChatCategoryReq) GetRemark() string {
 
 type GetChatCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2156,12 +2156,12 @@ func (x *GetChatCategoryReq) GetId() int64 {
 
 type PageChatCategoriesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID,0表示全部
-	CategoryCode  string                 `protobuf:"bytes,3,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"` // 分类编码
-	CategoryName  string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
-	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态,0表示全部
-	Keyword       string                 `protobuf:"bytes,6,opt,name=keyword,proto3" json:"keyword,omitempty"`                               // 关键词
-	Page          *common.PageReq        `protobuf:"bytes,7,opt,name=page,proto3" json:"page,omitempty"`                                     // 分页
+	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID,0表示全部
+	CategoryCode  string                 `protobuf:"bytes,2,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"` // 分类编码
+	CategoryName  string                 `protobuf:"bytes,3,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
+	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态,0表示全部
+	Keyword       string                 `protobuf:"bytes,5,opt,name=keyword,proto3" json:"keyword,omitempty"`                               // 关键词
+	Page          *common.PageReq        `protobuf:"bytes,6,opt,name=page,proto3" json:"page,omitempty"`                                     // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2276,7 +2276,7 @@ func (*ListEnabledChatCategoriesReq) Descriptor() ([]byte, []int) {
 
 type DeleteChatCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2320,17 +2320,17 @@ func (x *DeleteChatCategoryReq) GetId() int64 {
 
 type CreateChatWorkOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`              // 关联会话编号
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                      // 用户ID
-	AgentId       int64                  `protobuf:"varint,4,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                   // 坐席ID
-	GroupId       int64                  `protobuf:"varint,5,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                   // 客服分组ID
-	Title         string                 `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty"`                                       // 工单标题
-	Content       string                 `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty"`                                   // 工单内容/离线留言
-	ContactName   string                 `protobuf:"bytes,8,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`        // 联系人
-	ContactMobile string                 `protobuf:"bytes,9,opt,name=contact_mobile,json=contactMobile,proto3" json:"contact_mobile,omitempty"`  // 联系电话
-	ContactEmail  string                 `protobuf:"bytes,10,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`    // 联系邮箱
-	Priority      ChatSessionPriority    `protobuf:"varint,11,opt,name=priority,proto3,enum=chat.ChatSessionPriority" json:"priority,omitempty"` // 优先级
-	Remark        string                 `protobuf:"bytes,12,opt,name=remark,proto3" json:"remark,omitempty"`                                    // 备注
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`              // 关联会话编号
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                      // 用户ID
+	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                   // 坐席ID
+	GroupId       int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                   // 客服分组ID
+	Title         string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`                                       // 工单标题
+	Content       string                 `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`                                   // 工单内容/离线留言
+	ContactName   string                 `protobuf:"bytes,7,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`        // 联系人
+	ContactMobile string                 `protobuf:"bytes,8,opt,name=contact_mobile,json=contactMobile,proto3" json:"contact_mobile,omitempty"`  // 联系电话
+	ContactEmail  string                 `protobuf:"bytes,9,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`     // 联系邮箱
+	Priority      ChatSessionPriority    `protobuf:"varint,10,opt,name=priority,proto3,enum=chat.ChatSessionPriority" json:"priority,omitempty"` // 优先级
+	Remark        string                 `protobuf:"bytes,11,opt,name=remark,proto3" json:"remark,omitempty"`                                    // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2444,17 +2444,17 @@ func (x *CreateChatWorkOrderReq) GetRemark() string {
 
 type UpdateChatWorkOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                            // 主键ID
-	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                   // 坐席ID
-	GroupId       int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                   // 客服分组ID
-	Title         string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`                                       // 工单标题
-	Content       string                 `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`                                   // 工单内容/离线留言
-	ContactName   string                 `protobuf:"bytes,7,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`        // 联系人
-	ContactMobile string                 `protobuf:"bytes,8,opt,name=contact_mobile,json=contactMobile,proto3" json:"contact_mobile,omitempty"`  // 联系电话
-	ContactEmail  string                 `protobuf:"bytes,9,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`     // 联系邮箱
-	Priority      ChatSessionPriority    `protobuf:"varint,10,opt,name=priority,proto3,enum=chat.ChatSessionPriority" json:"priority,omitempty"` // 优先级
-	Status        int32                  `protobuf:"varint,11,opt,name=status,proto3" json:"status,omitempty"`                                   // 状态
-	Remark        string                 `protobuf:"bytes,12,opt,name=remark,proto3" json:"remark,omitempty"`                                    // 备注
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                           // 主键ID
+	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                  // 坐席ID
+	GroupId       int64                  `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                  // 客服分组ID
+	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`                                      // 工单标题
+	Content       string                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                                  // 工单内容/离线留言
+	ContactName   string                 `protobuf:"bytes,6,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`       // 联系人
+	ContactMobile string                 `protobuf:"bytes,7,opt,name=contact_mobile,json=contactMobile,proto3" json:"contact_mobile,omitempty"` // 联系电话
+	ContactEmail  string                 `protobuf:"bytes,8,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`    // 联系邮箱
+	Priority      ChatSessionPriority    `protobuf:"varint,9,opt,name=priority,proto3,enum=chat.ChatSessionPriority" json:"priority,omitempty"` // 优先级
+	Status        int32                  `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`                                  // 状态
+	Remark        string                 `protobuf:"bytes,11,opt,name=remark,proto3" json:"remark,omitempty"`                                   // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2569,10 +2569,10 @@ func (x *UpdateChatWorkOrderReq) GetRemark() string {
 type HandleChatWorkOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                        // 主键ID
-	HandlerId     int64                  `protobuf:"varint,3,opt,name=handler_id,json=handlerId,proto3" json:"handler_id,omitempty"`         // 处理人ID
-	Status        int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`                                // 状态:2处理中 3已完成 4已关闭
-	HandleResult  string                 `protobuf:"bytes,5,opt,name=handle_result,json=handleResult,proto3" json:"handle_result,omitempty"` // 处理结果
-	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
+	HandlerId     int64                  `protobuf:"varint,2,opt,name=handler_id,json=handlerId,proto3" json:"handler_id,omitempty"`         // 处理人ID
+	Status        int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`                                // 状态:2处理中 3已完成 4已关闭
+	HandleResult  string                 `protobuf:"bytes,4,opt,name=handle_result,json=handleResult,proto3" json:"handle_result,omitempty"` // 处理结果
+	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2644,8 +2644,8 @@ func (x *HandleChatWorkOrderReq) GetRemark() string {
 
 type GetChatWorkOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`                                       // 主键ID
-	WorkOrderNo   string                 `protobuf:"bytes,3,opt,name=work_order_no,json=workOrderNo,proto3" json:"work_order_no,omitempty"` // 工单编号
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                       // 主键ID
+	WorkOrderNo   string                 `protobuf:"bytes,2,opt,name=work_order_no,json=workOrderNo,proto3" json:"work_order_no,omitempty"` // 工单编号
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2696,16 +2696,16 @@ func (x *GetChatWorkOrderReq) GetWorkOrderNo() string {
 
 type PageChatWorkOrdersReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`             // 会话编号
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                     // 用户ID,0表示全部
-	AgentId       int64                  `protobuf:"varint,4,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                  // 坐席ID,0表示全部
-	GroupId       int64                  `protobuf:"varint,5,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                  // 分组ID,0表示全部
-	Priority      ChatSessionPriority    `protobuf:"varint,6,opt,name=priority,proto3,enum=chat.ChatSessionPriority" json:"priority,omitempty"` // 优先级,0表示全部
-	Status        int32                  `protobuf:"varint,7,opt,name=status,proto3" json:"status,omitempty"`                                   // 状态,0表示全部
-	HandlerId     int64                  `protobuf:"varint,8,opt,name=handler_id,json=handlerId,proto3" json:"handler_id,omitempty"`            // 处理人ID,0表示全部
-	Keyword       string                 `protobuf:"bytes,9,opt,name=keyword,proto3" json:"keyword,omitempty"`                                  // 关键词
-	TimeRange     *common.TimeRange      `protobuf:"bytes,10,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`            // 创建时间范围
-	Page          *common.PageReq        `protobuf:"bytes,11,opt,name=page,proto3" json:"page,omitempty"`                                       // 分页
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`             // 会话编号
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                     // 用户ID,0表示全部
+	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                  // 坐席ID,0表示全部
+	GroupId       int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                  // 分组ID,0表示全部
+	Priority      ChatSessionPriority    `protobuf:"varint,5,opt,name=priority,proto3,enum=chat.ChatSessionPriority" json:"priority,omitempty"` // 优先级,0表示全部
+	Status        int32                  `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"`                                   // 状态,0表示全部
+	HandlerId     int64                  `protobuf:"varint,7,opt,name=handler_id,json=handlerId,proto3" json:"handler_id,omitempty"`            // 处理人ID,0表示全部
+	Keyword       string                 `protobuf:"bytes,8,opt,name=keyword,proto3" json:"keyword,omitempty"`                                  // 关键词
+	TimeRange     *common.TimeRange      `protobuf:"bytes,9,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`             // 创建时间范围
+	Page          *common.PageReq        `protobuf:"bytes,10,opt,name=page,proto3" json:"page,omitempty"`                                       // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2812,7 +2812,7 @@ func (x *PageChatWorkOrdersReq) GetPage() *common.PageReq {
 
 type DeleteChatWorkOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3736,131 +3736,141 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\n" +
 	"\x1bproto/chat/chat_admin.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"7\n" +
 	"\x0fAdminCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"r\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"l\n" +
 	"\x11ChatAdminLoginReq\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\x1f\n" +
-	"\vgoogle_code\x18\x04 \x01(\tR\n" +
-	"googleCodeJ\x04\b\x01\x10\x02\"\x88\x01\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1f\n" +
+	"\vgoogle_code\x18\x03 \x01(\tR\n" +
+	"googleCode\"\x88\x01\n" +
 	"\x12ChatAdminLoginData\x12'\n" +
 	"\x05token\x18\x01 \x01(\v2\x11.common.TokenInfoR\x05token\x12\"\n" +
 	"\x04user\x18\x02 \x01(\v2\x0e.chat.ChatUserR\x04user\x12%\n" +
 	"\x05agent\x18\x03 \x01(\v2\x0f.chat.ChatAgentR\x05agent\"h\n" +
 	"\x12ChatAdminLoginResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
-	"\x04data\x18\x02 \x01(\v2\x18.chat.ChatAdminLoginDataR\x04data\" \n" +
-	"\x12ChatAdminLogoutReqJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03\"!\n" +
-	"\x13ChatAdminProfileReqJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03\"\x87\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x18.chat.ChatAdminLoginDataR\x04data\"\x14\n" +
+	"\x12ChatAdminLogoutReq\"\x15\n" +
+	"\x13ChatAdminProfileReq\"\x87\x01\n" +
 	"\x14ChatAdminProfileResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
 	"\x04user\x18\x02 \x01(\v2\x0e.chat.ChatUserR\x04user\x12%\n" +
-	"\x05agent\x18\x03 \x01(\v2\x0f.chat.ChatAgentR\x05agent\"\xd0\x01\n" +
+	"\x05agent\x18\x03 \x01(\v2\x0f.chat.ChatAgentR\x05agent\"\xca\x01\n" +
 	"\x12CreateChatGroupReq\x12\x1d\n" +
 	"\n" +
-	"group_code\x18\x02 \x01(\tR\tgroupCode\x12\x1d\n" +
+	"group_code\x18\x01 \x01(\tR\tgroupCode\x12\x1d\n" +
 	"\n" +
-	"group_name\x18\x03 \x01(\tR\tgroupName\x12 \n" +
-	"\vdescription\x18\x04 \x01(\tR\vdescription\x12(\n" +
-	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
-	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remarkJ\x04\b\x01\x10\x02\"\xc1\x01\n" +
+	"group_name\x18\x02 \x01(\tR\tgroupName\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
+	"\x04sort\x18\x05 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remark\"\xbb\x01\n" +
 	"\x12UpdateChatGroupReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
-	"group_name\x18\x03 \x01(\tR\tgroupName\x12 \n" +
-	"\vdescription\x18\x04 \x01(\tR\vdescription\x12(\n" +
-	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
-	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remarkJ\x04\b\x02\x10\x03\"!\n" +
+	"group_name\x18\x02 \x01(\tR\tgroupName\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
+	"\x04sort\x18\x05 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remark\"!\n" +
 	"\x0fGetChatGroupReq\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"|\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"|\n" +
 	"\x11PageChatGroupsReq\x12(\n" +
-	"\aenabled\x18\x02 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x18\n" +
-	"\akeyword\x18\x03 \x01(\tR\akeyword\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"$\n" +
+	"\aenabled\x18\x01 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x18\n" +
+	"\akeyword\x18\x02 \x01(\tR\akeyword\x12#\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"$\n" +
 	"\x12DeleteChatGroupReq\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xec\x02\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xc8\x02\n" +
 	"\x12CreateChatAgentReq\x12*\n" +
-	"\x11max_session_count\x18\x06 \x01(\x05R\x0fmaxSessionCount\x12\x16\n" +
-	"\x06remark\x18\b \x01(\tR\x06remark\x12\x19\n" +
-	"\bgroup_id\x18\t \x01(\x03R\agroupId\x12'\n" +
-	"\x0fwelcome_message\x18\n" +
-	" \x01(\tR\x0ewelcomeMessage\x12\x1a\n" +
-	"\busername\x18\v \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\f \x01(\tR\bpassword\x12\x1a\n" +
-	"\bnickname\x18\r \x01(\tR\bnickname\x12\x16\n" +
-	"\x06mobile\x18\x0e \x01(\tR\x06mobile\x12\x14\n" +
-	"\x05email\x18\x0f \x01(\tR\x05email\x12(\n" +
-	"\aenabled\x18\x10 \x01(\x0e2\x0e.common.EnableR\aenabledJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03J\x04\b\x03\x10\x04J\x04\b\x04\x10\x05J\x04\b\x05\x10\x06J\x04\b\a\x10\b\"\xc4\x01\n" +
+	"\x11max_session_count\x18\x01 \x01(\x05R\x0fmaxSessionCount\x12\x16\n" +
+	"\x06remark\x18\x02 \x01(\tR\x06remark\x12\x19\n" +
+	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12'\n" +
+	"\x0fwelcome_message\x18\x04 \x01(\tR\x0ewelcomeMessage\x12\x1a\n" +
+	"\busername\x18\x05 \x01(\tR\busername\x12\x1a\n" +
+	"\bpassword\x18\x06 \x01(\tR\bpassword\x12\x1a\n" +
+	"\bnickname\x18\a \x01(\tR\bnickname\x12\x16\n" +
+	"\x06mobile\x18\b \x01(\tR\x06mobile\x12\x14\n" +
+	"\x05email\x18\t \x01(\tR\x05email\x12(\n" +
+	"\aenabled\x18\n" +
+	" \x01(\x0e2\x0e.common.EnableR\aenabled\"\xac\x01\n" +
 	"\x12UpdateChatAgentReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
-	"\x11max_session_count\x18\x05 \x01(\x05R\x0fmaxSessionCount\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remark\x12\x19\n" +
-	"\bgroup_id\x18\b \x01(\x03R\agroupId\x12'\n" +
-	"\x0fwelcome_message\x18\t \x01(\tR\x0ewelcomeMessageJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04J\x04\b\x04\x10\x05J\x04\b\x06\x10\a\"j\n" +
+	"\x11max_session_count\x18\x02 \x01(\x05R\x0fmaxSessionCount\x12\x16\n" +
+	"\x06remark\x18\x03 \x01(\tR\x06remark\x12\x19\n" +
+	"\bgroup_id\x18\x04 \x01(\x03R\agroupId\x12'\n" +
+	"\x0fwelcome_message\x18\x05 \x01(\tR\x0ewelcomeMessage\"d\n" +
 	"\x18UpdateChatAgentStatusReq\x12\x19\n" +
-	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12-\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x15.chat.ChatAgentStatusR\x06statusJ\x04\b\x01\x10\x02\"!\n" +
+	"\bagent_id\x18\x01 \x01(\x03R\aagentId\x12-\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x15.chat.ChatAgentStatusR\x06status\"!\n" +
 	"\x0fGetChatAgentReq\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xa4\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xa4\x01\n" +
 	"\x11PageChatAgentsReq\x12 \n" +
-	"\fchat_user_id\x18\x02 \x01(\x03R\n" +
+	"\fchat_user_id\x18\x01 \x01(\x03R\n" +
 	"chatUserId\x12-\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x15.chat.ChatAgentStatusR\x06status\x12\x19\n" +
-	"\bgroup_id\x18\x04 \x01(\x03R\agroupId\x12#\n" +
-	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"\xa4\x02\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x15.chat.ChatAgentStatusR\x06status\x12\x19\n" +
+	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12#\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"\xa4\x02\n" +
 	"\x13PageChatSessionsReq\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
-	"\bagent_id\x18\x03 \x01(\x03R\aagentId\x12/\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x125\n" +
-	"\bpriority\x18\x05 \x01(\x0e2\x19.chat.ChatSessionPriorityR\bpriority\x12\x1a\n" +
-	"\bcategory\x18\x06 \x01(\tR\bcategory\x120\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12/\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x125\n" +
+	"\bpriority\x18\x04 \x01(\x0e2\x19.chat.ChatSessionPriorityR\bpriority\x12\x1a\n" +
+	"\bcategory\x18\x05 \x01(\tR\bcategory\x120\n" +
 	"\n" +
-	"time_range\x18\a \x01(\v2\x11.common.TimeRangeR\ttimeRange\x12#\n" +
-	"\x04page\x18\b \x01(\v2\x0f.common.PageReqR\x04page\"2\n" +
+	"time_range\x18\x06 \x01(\v2\x11.common.TimeRangeR\ttimeRange\x12#\n" +
+	"\x04page\x18\a \x01(\v2\x0f.common.PageReqR\x04page\"2\n" +
 	"\x11GetChatSessionReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x02 \x01(\tR\tsessionNo\"\xc5\x01\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\"\xc5\x01\n" +
 	"\x14AssignChatSessionReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x02 \x01(\tR\tsessionNo\x12\x1e\n" +
-	"\vto_agent_id\x18\x03 \x01(\x03R\ttoAgentId\x125\n" +
-	"\vassign_type\x18\x04 \x01(\x0e2\x14.chat.ChatAssignTypeR\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x1e\n" +
+	"\vto_agent_id\x18\x02 \x01(\x03R\ttoAgentId\x125\n" +
+	"\vassign_type\x18\x03 \x01(\x0e2\x14.chat.ChatAssignTypeR\n" +
 	"assignType\x12\x1f\n" +
-	"\voperator_id\x18\x05 \x01(\x03R\n" +
+	"\voperator_id\x18\x04 \x01(\x03R\n" +
 	"operatorId\x12\x16\n" +
-	"\x06reason\x18\x06 \x01(\tR\x06reason\"\x9d\x02\n" +
+	"\x06reason\x18\x05 \x01(\tR\x06reason\"\x9d\x02\n" +
 	"\x13SendAgentMessageReq\x12\x19\n" +
-	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1d\n" +
+	"\bagent_id\x18\x01 \x01(\x03R\aagentId\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x03 \x01(\tR\tsessionNo\x128\n" +
-	"\fmessage_type\x18\x04 \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
-	"\acontent\x18\x05 \x01(\tR\acontent\x12\x1b\n" +
-	"\tmedia_url\x18\x06 \x01(\tR\bmediaUrl\x12\x1d\n" +
+	"session_no\x18\x02 \x01(\tR\tsessionNo\x128\n" +
+	"\fmessage_type\x18\x03 \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
+	"\acontent\x18\x04 \x01(\tR\acontent\x12\x1b\n" +
+	"\tmedia_url\x18\x05 \x01(\tR\bmediaUrl\x12\x1d\n" +
 	"\n" +
-	"media_name\x18\a \x01(\tR\tmediaName\x12\x1d\n" +
+	"media_name\x18\x06 \x01(\tR\tmediaName\x12\x1d\n" +
 	"\n" +
-	"media_mime\x18\b \x01(\tR\tmediaMime\x12\x1d\n" +
+	"media_mime\x18\a \x01(\tR\tmediaMime\x12\x1d\n" +
 	"\n" +
-	"media_size\x18\t \x01(\x03R\tmediaSize\"\x90\x01\n" +
+	"media_size\x18\b \x01(\x03R\tmediaSize\"\x90\x01\n" +
 	"\x13PageChatMessagesReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x02 \x01(\tR\tsessionNo\x125\n" +
-	"\vsender_type\x18\x03 \x01(\x0e2\x14.chat.ChatSenderTypeR\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x125\n" +
+	"\vsender_type\x18\x02 \x01(\x0e2\x14.chat.ChatSenderTypeR\n" +
 	"senderType\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"|\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"|\n" +
 	"\x18MarkAgentMessagesReadReq\x12\x19\n" +
-	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1d\n" +
+	"\bagent_id\x18\x01 \x01(\x03R\aagentId\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x03 \x01(\tR\tsessionNo\x12&\n" +
-	"\x0flast_message_id\x18\x04 \x01(\x03R\rlastMessageId\"x\n" +
+	"session_no\x18\x02 \x01(\tR\tsessionNo\x12&\n" +
+	"\x0flast_message_id\x18\x03 \x01(\x03R\rlastMessageId\"x\n" +
 	"\x13CloseChatSessionReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x02 \x01(\tR\tsessionNo\x12\x1f\n" +
-	"\voperator_id\x18\x03 \x01(\x03R\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x1f\n" +
+	"\voperator_id\x18\x02 \x01(\x03R\n" +
 	"operatorId\x12!\n" +
-	"\fclose_reason\x18\x04 \x01(\tR\vcloseReason\"\xdb\x01\n" +
+	"\fclose_reason\x18\x03 \x01(\tR\vcloseReason\"\xdb\x01\n" +
 	"\x17CreateChatQuickReplyReq\x12\x19\n" +
+	"\bagent_id\x18\x01 \x01(\x03R\aagentId\x12\x1f\n" +
+	"\vcategory_id\x18\x02 \x01(\x03R\n" +
+	"categoryId\x12\x14\n" +
+	"\x05title\x18\x03 \x01(\tR\x05title\x12\x18\n" +
+	"\acontent\x18\x04 \x01(\tR\acontent\x12(\n" +
+	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
+	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\a \x01(\tR\x06remark\"\xeb\x01\n" +
+	"\x17UpdateChatQuickReplyReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1f\n" +
 	"\vcategory_id\x18\x03 \x01(\x03R\n" +
 	"categoryId\x12\x14\n" +
@@ -3868,74 +3878,52 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\acontent\x18\x05 \x01(\tR\acontent\x12(\n" +
 	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\a \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\b \x01(\tR\x06remark\"\xf1\x01\n" +
-	"\x17UpdateChatQuickReplyReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
-	"\bagent_id\x18\x03 \x01(\x03R\aagentId\x12\x1f\n" +
-	"\vcategory_id\x18\x04 \x01(\x03R\n" +
-	"categoryId\x12\x14\n" +
-	"\x05title\x18\x05 \x01(\tR\x05title\x12\x18\n" +
-	"\acontent\x18\x06 \x01(\tR\acontent\x12(\n" +
-	"\aenabled\x18\a \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
-	"\x04sort\x18\b \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\t \x01(\tR\x06remarkJ\x04\b\x02\x10\x03\"&\n" +
+	"\x06remark\x18\b \x01(\tR\x06remark\"&\n" +
 	"\x14GetChatQuickReplyReq\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xbe\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xbe\x01\n" +
 	"\x17PageChatQuickRepliesReq\x12\x19\n" +
-	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1f\n" +
-	"\vcategory_id\x18\x03 \x01(\x03R\n" +
+	"\bagent_id\x18\x01 \x01(\x03R\aagentId\x12\x1f\n" +
+	"\vcategory_id\x18\x02 \x01(\x03R\n" +
 	"categoryId\x12(\n" +
-	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x18\n" +
-	"\akeyword\x18\x05 \x01(\tR\akeyword\x12#\n" +
-	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"\\\n" +
+	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x18\n" +
+	"\akeyword\x18\x04 \x01(\tR\akeyword\x12#\n" +
+	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"\\\n" +
 	"\x1eListEnabledChatQuickRepliesReq\x12\x19\n" +
-	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1f\n" +
-	"\vcategory_id\x18\x03 \x01(\x03R\n" +
-	"categoryId\"/\n" +
+	"\bagent_id\x18\x01 \x01(\x03R\aagentId\x12\x1f\n" +
+	"\vcategory_id\x18\x02 \x01(\x03R\n" +
+	"categoryId\")\n" +
 	"\x17DeleteChatQuickReplyReq\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02idJ\x04\b\x01\x10\x02\"\xda\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xd4\x01\n" +
 	"\x15CreateChatCategoryReq\x12\x1b\n" +
-	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12#\n" +
-	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\x12#\n" +
-	"\rcategory_name\x18\x04 \x01(\tR\fcategoryName\x12(\n" +
-	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
-	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remarkJ\x04\b\x01\x10\x02\"\xc5\x01\n" +
+	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12#\n" +
+	"\rcategory_code\x18\x02 \x01(\tR\fcategoryCode\x12#\n" +
+	"\rcategory_name\x18\x03 \x01(\tR\fcategoryName\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
+	"\x04sort\x18\x05 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remark\"\xbf\x01\n" +
 	"\x15UpdateChatCategoryReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\tparent_id\x18\x03 \x01(\x03R\bparentId\x12#\n" +
-	"\rcategory_name\x18\x04 \x01(\tR\fcategoryName\x12(\n" +
-	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
-	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remarkJ\x04\b\x02\x10\x03\"$\n" +
-	"\x12GetChatCategoryReq\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xe7\x01\n" +
-	"\x15PageChatCategoriesReq\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12#\n" +
-	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\x12#\n" +
-	"\rcategory_name\x18\x04 \x01(\tR\fcategoryName\x12(\n" +
-	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x18\n" +
-	"\akeyword\x18\x06 \x01(\tR\akeyword\x12#\n" +
-	"\x04page\x18\a \x01(\v2\x0f.common.PageReqR\x04page\"\x1e\n" +
-	"\x1cListEnabledChatCategoriesReq\"-\n" +
+	"\rcategory_name\x18\x03 \x01(\tR\fcategoryName\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
+	"\x04sort\x18\x05 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remark\"$\n" +
+	"\x12GetChatCategoryReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xe7\x01\n" +
+	"\x15PageChatCategoriesReq\x12\x1b\n" +
+	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12#\n" +
+	"\rcategory_code\x18\x02 \x01(\tR\fcategoryCode\x12#\n" +
+	"\rcategory_name\x18\x03 \x01(\tR\fcategoryName\x12(\n" +
+	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x18\n" +
+	"\akeyword\x18\x05 \x01(\tR\akeyword\x12#\n" +
+	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"\x1e\n" +
+	"\x1cListEnabledChatCategoriesReq\"'\n" +
 	"\x15DeleteChatCategoryReq\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02idJ\x04\b\x01\x10\x02\"\xfa\x02\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xf4\x02\n" +
 	"\x16CreateChatWorkOrderReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x02 \x01(\tR\tsessionNo\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
-	"\bagent_id\x18\x04 \x01(\x03R\aagentId\x12\x19\n" +
-	"\bgroup_id\x18\x05 \x01(\x03R\agroupId\x12\x14\n" +
-	"\x05title\x18\x06 \x01(\tR\x05title\x12\x18\n" +
-	"\acontent\x18\a \x01(\tR\acontent\x12!\n" +
-	"\fcontact_name\x18\b \x01(\tR\vcontactName\x12%\n" +
-	"\x0econtact_mobile\x18\t \x01(\tR\rcontactMobile\x12#\n" +
-	"\rcontact_email\x18\n" +
-	" \x01(\tR\fcontactEmail\x125\n" +
-	"\bpriority\x18\v \x01(\x0e2\x19.chat.ChatSessionPriorityR\bpriority\x12\x16\n" +
-	"\x06remark\x18\f \x01(\tR\x06remarkJ\x04\b\x01\x10\x02\"\xea\x02\n" +
-	"\x16UpdateChatWorkOrderReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
 	"\bagent_id\x18\x03 \x01(\x03R\aagentId\x12\x19\n" +
 	"\bgroup_id\x18\x04 \x01(\x03R\agroupId\x12\x14\n" +
 	"\x05title\x18\x05 \x01(\tR\x05title\x12\x18\n" +
@@ -3945,35 +3933,47 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\rcontact_email\x18\t \x01(\tR\fcontactEmail\x125\n" +
 	"\bpriority\x18\n" +
 	" \x01(\x0e2\x19.chat.ChatSessionPriorityR\bpriority\x12\x16\n" +
-	"\x06status\x18\v \x01(\x05R\x06status\x12\x16\n" +
-	"\x06remark\x18\f \x01(\tR\x06remarkJ\x04\b\x02\x10\x03\"\xa2\x01\n" +
+	"\x06remark\x18\v \x01(\tR\x06remark\"\xe4\x02\n" +
+	"\x16UpdateChatWorkOrderReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x19\n" +
+	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12\x14\n" +
+	"\x05title\x18\x04 \x01(\tR\x05title\x12\x18\n" +
+	"\acontent\x18\x05 \x01(\tR\acontent\x12!\n" +
+	"\fcontact_name\x18\x06 \x01(\tR\vcontactName\x12%\n" +
+	"\x0econtact_mobile\x18\a \x01(\tR\rcontactMobile\x12#\n" +
+	"\rcontact_email\x18\b \x01(\tR\fcontactEmail\x125\n" +
+	"\bpriority\x18\t \x01(\x0e2\x19.chat.ChatSessionPriorityR\bpriority\x12\x16\n" +
+	"\x06status\x18\n" +
+	" \x01(\x05R\x06status\x12\x16\n" +
+	"\x06remark\x18\v \x01(\tR\x06remark\"\x9c\x01\n" +
 	"\x16HandleChatWorkOrderReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
-	"handler_id\x18\x03 \x01(\x03R\thandlerId\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\x05R\x06status\x12#\n" +
-	"\rhandle_result\x18\x05 \x01(\tR\fhandleResult\x12\x16\n" +
-	"\x06remark\x18\x06 \x01(\tR\x06remarkJ\x04\b\x02\x10\x03\"I\n" +
+	"handler_id\x18\x02 \x01(\x03R\thandlerId\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\x05R\x06status\x12#\n" +
+	"\rhandle_result\x18\x04 \x01(\tR\fhandleResult\x12\x16\n" +
+	"\x06remark\x18\x05 \x01(\tR\x06remark\"I\n" +
 	"\x13GetChatWorkOrderReq\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\x12\"\n" +
-	"\rwork_order_no\x18\x03 \x01(\tR\vworkOrderNo\"\xe4\x02\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\"\n" +
+	"\rwork_order_no\x18\x02 \x01(\tR\vworkOrderNo\"\xe4\x02\n" +
 	"\x15PageChatWorkOrdersReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x02 \x01(\tR\tsessionNo\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
-	"\bagent_id\x18\x04 \x01(\x03R\aagentId\x12\x19\n" +
-	"\bgroup_id\x18\x05 \x01(\x03R\agroupId\x125\n" +
-	"\bpriority\x18\x06 \x01(\x0e2\x19.chat.ChatSessionPriorityR\bpriority\x12\x16\n" +
-	"\x06status\x18\a \x01(\x05R\x06status\x12\x1d\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bagent_id\x18\x03 \x01(\x03R\aagentId\x12\x19\n" +
+	"\bgroup_id\x18\x04 \x01(\x03R\agroupId\x125\n" +
+	"\bpriority\x18\x05 \x01(\x0e2\x19.chat.ChatSessionPriorityR\bpriority\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\x05R\x06status\x12\x1d\n" +
 	"\n" +
-	"handler_id\x18\b \x01(\x03R\thandlerId\x12\x18\n" +
-	"\akeyword\x18\t \x01(\tR\akeyword\x120\n" +
+	"handler_id\x18\a \x01(\x03R\thandlerId\x12\x18\n" +
+	"\akeyword\x18\b \x01(\tR\akeyword\x120\n" +
 	"\n" +
-	"time_range\x18\n" +
-	" \x01(\v2\x11.common.TimeRangeR\ttimeRange\x12#\n" +
-	"\x04page\x18\v \x01(\v2\x0f.common.PageReqR\x04page\".\n" +
+	"time_range\x18\t \x01(\v2\x11.common.TimeRangeR\ttimeRange\x12#\n" +
+	"\x04page\x18\n" +
+	" \x01(\v2\x0f.common.PageReqR\x04page\"(\n" +
 	"\x16DeleteChatWorkOrderReq\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02idJ\x04\b\x01\x10\x02\"_\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"_\n" +
 	"\x12PageChatAgentsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12#\n" +
 	"\x04data\x18\x02 \x03(\v2\x0f.chat.ChatAgentR\x04data\"_\n" +

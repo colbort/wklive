@@ -26,75 +26,62 @@ service ChatApp {
   rpc ListMyChatMessages(ListMyChatMessagesReq) returns (ListChatMessagesResp);
 
   // 标记用户侧已读
-  rpc MarkUserMessagesRead(MarkUserMessagesReadReq) returns (AppMarkMessagesReadResp);
+  rpc MarkUserMessagesRead(MarkUserMessagesReadReq)
+      returns (AppMarkMessagesReadResp);
 
   // 关闭我的会话
   rpc CloseMyChatSession(CloseMyChatSessionReq) returns (AppChatSessionResp);
 }
 
 message OpenChatSessionReq {
-  reserved 1;
-  ChatSessionSource source = 3; // 来源
-  string title = 4; // 会话标题
-  string category = 5; // 问题分类
-  string first_message = 6; // 首条消息内容
-  string sender_nickname = 7; // 用户昵称快照
-  string sender_avatar_url = 8; // 用户头像快照
+  ChatSessionSource source = 1; // 来源
+  string title = 2;             // 会话标题
+  string category = 3;          // 问题分类
+  string first_message = 4;     // 首条消息内容
+  string sender_nickname = 5;   // 用户昵称快照
+  string sender_avatar_url = 6; // 用户头像快照
 }
 
 message ListMyChatSessionsReq {
-  reserved 1;
-  ChatSessionStatus status = 3; // 状态,0表示全部
-  common.PageReq page = 4; // 分页
+  ChatSessionStatus status = 1; // 状态,0表示全部
+  common.PageReq page = 2;      // 分页
 }
 
 message GetMyChatSessionReq {
-  reserved 1;
-
-  string session_no = 3; // 会话编号
+  string session_no = 1; // 会话编号
 }
 
 message SendUserMessageReq {
-  reserved 1;
-
-  string session_no = 3; // 会话编号
-  ChatMessageType message_type = 4; // 消息类型
-  string content = 5; // 文本内容
-  string media_url = 6; // 媒体/文件URL
-  string media_name = 7; // 文件名
-  string media_mime = 8; // MIME类型
-  int64 media_size = 9; // 文件大小(bytes)
-  string sender_nickname = 10; // 用户昵称快照
-  string sender_avatar_url = 11; // 用户头像快照
+  string session_no = 1;            // 会话编号
+  ChatMessageType message_type = 2; // 消息类型
+  string content = 3;               // 文本内容
+  string media_url = 4;             // 媒体/文件URL
+  string media_name = 5;            // 文件名
+  string media_mime = 6;            // MIME类型
+  int64 media_size = 7;             // 文件大小(bytes)
+  string sender_nickname = 8;       // 用户昵称快照
+  string sender_avatar_url = 9;     // 用户头像快照
 }
 
 message ListMyChatMessagesReq {
-  reserved 1;
-
-  string session_no = 3; // 会话编号
-  common.PageReq page = 4; // 分页
+  string session_no = 1;   // 会话编号
+  common.PageReq page = 2; // 分页
 }
 
 message MarkUserMessagesReadReq {
-  reserved 1;
-
-  string session_no = 3; // 会话编号
-  int64 last_message_id = 4; // 最后已读消息ID,0表示全部
+  string session_no = 1;     // 会话编号
+  int64 last_message_id = 2; // 最后已读消息ID,0表示全部
 }
 
 message CloseMyChatSessionReq {
-  reserved 1;
-
-  string session_no = 3; // 会话编号
-  string close_reason = 4; // 结束原因
+  string session_no = 1;   // 会话编号
+  string close_reason = 2; // 结束原因
 }
-
 
 message ListChatSessionsResp {
   common.RespBase base = 1;
   repeated ChatSession data = 2;
 }
-
 
 message ListChatMessagesResp {
   common.RespBase base = 1;
@@ -111,6 +98,4 @@ message AppChatMessageResp {
   ChatMessage data = 2;
 }
 
-message AppMarkMessagesReadResp {
-  common.RespBase base = 1;
-}
+message AppMarkMessagesReadResp { common.RespBase base = 1; }

@@ -24,12 +24,12 @@ const (
 
 type OpenChatSessionReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Source          ChatSessionSource      `protobuf:"varint,3,opt,name=source,proto3,enum=chat.ChatSessionSource" json:"source,omitempty"`               // 来源
-	Title           string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`                                              // 会话标题
-	Category        string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`                                        // 问题分类
-	FirstMessage    string                 `protobuf:"bytes,6,opt,name=first_message,json=firstMessage,proto3" json:"first_message,omitempty"`            // 首条消息内容
-	SenderNickname  string                 `protobuf:"bytes,7,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`      // 用户昵称快照
-	SenderAvatarUrl string                 `protobuf:"bytes,8,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"` // 用户头像快照
+	Source          ChatSessionSource      `protobuf:"varint,1,opt,name=source,proto3,enum=chat.ChatSessionSource" json:"source,omitempty"`               // 来源
+	Title           string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`                                              // 会话标题
+	Category        string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`                                        // 问题分类
+	FirstMessage    string                 `protobuf:"bytes,4,opt,name=first_message,json=firstMessage,proto3" json:"first_message,omitempty"`            // 首条消息内容
+	SenderNickname  string                 `protobuf:"bytes,5,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`      // 用户昵称快照
+	SenderAvatarUrl string                 `protobuf:"bytes,6,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"` // 用户头像快照
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -108,8 +108,8 @@ func (x *OpenChatSessionReq) GetSenderAvatarUrl() string {
 
 type ListMyChatSessionsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Status        ChatSessionStatus      `protobuf:"varint,3,opt,name=status,proto3,enum=chat.ChatSessionStatus" json:"status,omitempty"` // 状态,0表示全部
-	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                  // 分页
+	Status        ChatSessionStatus      `protobuf:"varint,1,opt,name=status,proto3,enum=chat.ChatSessionStatus" json:"status,omitempty"` // 状态,0表示全部
+	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`                                  // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -160,7 +160,7 @@ func (x *ListMyChatSessionsReq) GetPage() *common.PageReq {
 
 type GetMyChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -204,15 +204,15 @@ func (x *GetMyChatSessionReq) GetSessionNo() string {
 
 type SendUserMessageReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo       string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
-	MessageType     ChatMessageType        `protobuf:"varint,4,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
-	Content         string                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
-	MediaUrl        string                 `protobuf:"bytes,6,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                     // 媒体/文件URL
-	MediaName       string                 `protobuf:"bytes,7,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                  // 文件名
-	MediaMime       string                 `protobuf:"bytes,8,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                  // MIME类型
-	MediaSize       int64                  `protobuf:"varint,9,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                 // 文件大小(bytes)
-	SenderNickname  string                 `protobuf:"bytes,10,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`                  // 用户昵称快照
-	SenderAvatarUrl string                 `protobuf:"bytes,11,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"`             // 用户头像快照
+	SessionNo       string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
+	MessageType     ChatMessageType        `protobuf:"varint,2,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
+	Content         string                 `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
+	MediaUrl        string                 `protobuf:"bytes,4,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                     // 媒体/文件URL
+	MediaName       string                 `protobuf:"bytes,5,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                  // 文件名
+	MediaMime       string                 `protobuf:"bytes,6,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                  // MIME类型
+	MediaSize       int64                  `protobuf:"varint,7,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                 // 文件大小(bytes)
+	SenderNickname  string                 `protobuf:"bytes,8,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`                   // 用户昵称快照
+	SenderAvatarUrl string                 `protobuf:"bytes,9,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"`              // 用户头像快照
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -312,8 +312,8 @@ func (x *SendUserMessageReq) GetSenderAvatarUrl() string {
 
 type ListMyChatMessagesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
-	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                            // 分页
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
+	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`                            // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -364,8 +364,8 @@ func (x *ListMyChatMessagesReq) GetPage() *common.PageReq {
 
 type MarkUserMessagesReadReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                // 会话编号
-	LastMessageId int64                  `protobuf:"varint,4,opt,name=last_message_id,json=lastMessageId,proto3" json:"last_message_id,omitempty"` // 最后已读消息ID,0表示全部
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                // 会话编号
+	LastMessageId int64                  `protobuf:"varint,2,opt,name=last_message_id,json=lastMessageId,proto3" json:"last_message_id,omitempty"` // 最后已读消息ID,0表示全部
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -416,8 +416,8 @@ func (x *MarkUserMessagesReadReq) GetLastMessageId() int64 {
 
 type CloseMyChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`       // 会话编号
-	CloseReason   string                 `protobuf:"bytes,4,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"` // 结束原因
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`       // 会话编号
+	CloseReason   string                 `protobuf:"bytes,2,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"` // 结束原因
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -722,47 +722,46 @@ var File_proto_chat_chat_app_proto protoreflect.FileDescriptor
 
 const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/chat/chat_app.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"\xf7\x01\n" +
+	"\x19proto/chat/chat_app.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"\xf1\x01\n" +
 	"\x12OpenChatSessionReq\x12/\n" +
-	"\x06source\x18\x03 \x01(\x0e2\x17.chat.ChatSessionSourceR\x06source\x12\x14\n" +
-	"\x05title\x18\x04 \x01(\tR\x05title\x12\x1a\n" +
-	"\bcategory\x18\x05 \x01(\tR\bcategory\x12#\n" +
-	"\rfirst_message\x18\x06 \x01(\tR\ffirstMessage\x12'\n" +
-	"\x0fsender_nickname\x18\a \x01(\tR\x0esenderNickname\x12*\n" +
-	"\x11sender_avatar_url\x18\b \x01(\tR\x0fsenderAvatarUrlJ\x04\b\x01\x10\x02\"s\n" +
+	"\x06source\x18\x01 \x01(\x0e2\x17.chat.ChatSessionSourceR\x06source\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x1a\n" +
+	"\bcategory\x18\x03 \x01(\tR\bcategory\x12#\n" +
+	"\rfirst_message\x18\x04 \x01(\tR\ffirstMessage\x12'\n" +
+	"\x0fsender_nickname\x18\x05 \x01(\tR\x0esenderNickname\x12*\n" +
+	"\x11sender_avatar_url\x18\x06 \x01(\tR\x0fsenderAvatarUrl\"m\n" +
 	"\x15ListMyChatSessionsReq\x12/\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04pageJ\x04\b\x01\x10\x02\":\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x12#\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"4\n" +
 	"\x13GetMyChatSessionReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x03 \x01(\tR\tsessionNoJ\x04\b\x01\x10\x02\"\xdc\x02\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\"\xd6\x02\n" +
 	"\x12SendUserMessageReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x03 \x01(\tR\tsessionNo\x128\n" +
-	"\fmessage_type\x18\x04 \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
-	"\acontent\x18\x05 \x01(\tR\acontent\x12\x1b\n" +
-	"\tmedia_url\x18\x06 \x01(\tR\bmediaUrl\x12\x1d\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x128\n" +
+	"\fmessage_type\x18\x02 \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
+	"\acontent\x18\x03 \x01(\tR\acontent\x12\x1b\n" +
+	"\tmedia_url\x18\x04 \x01(\tR\bmediaUrl\x12\x1d\n" +
 	"\n" +
-	"media_name\x18\a \x01(\tR\tmediaName\x12\x1d\n" +
+	"media_name\x18\x05 \x01(\tR\tmediaName\x12\x1d\n" +
 	"\n" +
-	"media_mime\x18\b \x01(\tR\tmediaMime\x12\x1d\n" +
+	"media_mime\x18\x06 \x01(\tR\tmediaMime\x12\x1d\n" +
 	"\n" +
-	"media_size\x18\t \x01(\x03R\tmediaSize\x12'\n" +
-	"\x0fsender_nickname\x18\n" +
-	" \x01(\tR\x0esenderNickname\x12*\n" +
-	"\x11sender_avatar_url\x18\v \x01(\tR\x0fsenderAvatarUrlJ\x04\b\x01\x10\x02\"a\n" +
+	"media_size\x18\a \x01(\x03R\tmediaSize\x12'\n" +
+	"\x0fsender_nickname\x18\b \x01(\tR\x0esenderNickname\x12*\n" +
+	"\x11sender_avatar_url\x18\t \x01(\tR\x0fsenderAvatarUrl\"[\n" +
 	"\x15ListMyChatMessagesReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x03 \x01(\tR\tsessionNo\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04pageJ\x04\b\x01\x10\x02\"f\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12#\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"`\n" +
 	"\x17MarkUserMessagesReadReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x03 \x01(\tR\tsessionNo\x12&\n" +
-	"\x0flast_message_id\x18\x04 \x01(\x03R\rlastMessageIdJ\x04\b\x01\x10\x02\"_\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12&\n" +
+	"\x0flast_message_id\x18\x02 \x01(\x03R\rlastMessageId\"Y\n" +
 	"\x15CloseMyChatSessionReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x03 \x01(\tR\tsessionNo\x12!\n" +
-	"\fclose_reason\x18\x04 \x01(\tR\vcloseReasonJ\x04\b\x01\x10\x02\"c\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12!\n" +
+	"\fclose_reason\x18\x02 \x01(\tR\vcloseReason\"c\n" +
 	"\x14ListChatSessionsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
 	"\x04data\x18\x02 \x03(\v2\x11.chat.ChatSessionR\x04data\"c\n" +

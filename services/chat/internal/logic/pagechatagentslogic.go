@@ -26,9 +26,16 @@ func NewPageChatAgentsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 
 // 分页查询坐席
 func (l *PageChatAgentsLogic) PageChatAgents(in *chat.PageChatAgentsReq) (*chat.PageChatAgentsResp, error) {
+	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	if base != nil {
+		return &chat.PageChatAgentsResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.PageChatAgentsResp{Base: errorBase(err)}, nil
+	}
 	cursor, limit := pageInput(in.GetPage())
 	list, total, err := l.svcCtx.ChatAgentModel.FindPage(l.ctx, models.ChatAgentPageFilter{
-		MerchantId: in.GetMerchantId(),
+		MerchantId: merchantID,
 		ChatUserId: in.GetChatUserId(),
 		GroupId:    in.GetGroupId(),
 		Status:     int64(in.GetStatus()),

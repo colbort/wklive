@@ -12,42 +12,45 @@ option go_package = "wklive/proto/chat;chat";
 // 内部客服服务
 service ChatInternal {
   // 创建系统会话
-  rpc CreateSystemChatSession(CreateSystemChatSessionReq) returns (InternalChatSessionResp);
+  rpc CreateSystemChatSession(CreateSystemChatSessionReq)
+      returns (InternalChatSessionResp);
 
   // 发送系统消息
   rpc SendSystemMessage(SendSystemMessageReq) returns (InternalChatMessageResp);
 
   // 查询用户未关闭会话
-  rpc GetOpenChatSession(GetOpenChatSessionReq) returns (InternalChatSessionResp);
+  rpc GetOpenChatSession(GetOpenChatSessionReq)
+      returns (InternalChatSessionResp);
 
   // 同步客服商户用户
-  rpc SyncChatMerchantUser(SyncChatMerchantUserReq) returns (SyncChatMerchantUserResp);
+  rpc SyncChatMerchantUser(SyncChatMerchantUserReq)
+      returns (SyncChatMerchantUserResp);
 }
 
 message CreateSystemChatSessionReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2; // 用户ID
-  string title = 3; // 会话标题
-  string category = 4; // 问题分类
-  ChatSessionPriority priority = 5; // 优先级
-  string first_message = 6; // 首条系统消息
+  int64 merchant_id = 1;               // 客服商户ID
+  int64 user_id = 2;                   // 用户ID
+  string title = 3;                    // 会话标题
+  string category = 4;                 // 问题分类
+  ChatSessionPriority priority = 5;    // 优先级
+  string first_message = 6;            // 首条系统消息
   google.protobuf.Struct ext_json = 7; // 扩展信息
 }
 
 message SendSystemMessageReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2; // 用户ID
-  string session_no = 3; // 会话编号,为空时按用户创建/复用会话
-  string title = 4; // 自动创建会话标题
-  string category = 5; // 自动创建会话分类
-  ChatMessageType message_type = 6; // 消息类型
-  string content = 7; // 文本内容
+  int64 merchant_id = 1;              // 客服商户ID
+  int64 user_id = 2;                  // 用户ID
+  string session_no = 3;              // 会话编号,为空时按用户创建/复用会话
+  string title = 4;                   // 自动创建会话标题
+  string category = 5;                // 自动创建会话分类
+  ChatMessageType message_type = 6;   // 消息类型
+  string content = 7;                 // 文本内容
   google.protobuf.Struct payload = 8; // 卡片/扩展载荷
 }
 
 message GetOpenChatSessionReq {
   int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2; // 用户ID
+  int64 user_id = 2;     // 用户ID
 }
 
 message InternalChatSessionResp {
@@ -60,20 +63,18 @@ message InternalChatMessageResp {
   ChatMessage data = 2;
 }
 
-
-
 message SyncChatMerchantUserReq {
   ChatSyncAction action = 1; // 同步动作
-  int64 merchant_id = 2; // 客服商户ID
-  string merchant_code = 3; // 客服商户编码
-  string merchant_name = 4; // 客服商户名称
+  int64 merchant_id = 2;     // 客服商户ID
+  string merchant_code = 3;  // 客服商户编码
+  string merchant_name = 4;  // 客服商户名称
   common.Enable enabled = 5; // 启用状态
-  int64 expire_time = 6; // 到期时间
-  string contact_name = 7; // 联系人
-  string contact_phone = 8; // 联系电话
-  string contact_email = 9; // 联系邮箱
-  string remark = 10; // 备注
-  string password = 11; // 明文密码,仅内部同步使用
+  int64 expire_time = 6;     // 到期时间
+  string contact_name = 7;   // 联系人
+  string contact_phone = 8;  // 联系电话
+  string contact_email = 9;  // 联系邮箱
+  string remark = 10;        // 备注
+  string password = 11;      // 明文密码,仅内部同步使用
 }
 
 message SyncChatMerchantUserResp {

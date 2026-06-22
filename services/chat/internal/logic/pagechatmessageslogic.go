@@ -27,7 +27,14 @@ func NewPageChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 查询会话消息
 func (l *PageChatMessagesLogic) PageChatMessages(in *chat.PageChatMessagesReq) (*chat.PageChatMessagesResp, error) {
-	session, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	if base != nil {
+		return &chat.PageChatMessagesResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.PageChatMessagesResp{Base: errorBase(err)}, nil
+	}
+	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
 		return &chat.PageChatMessagesResp{Base: errorBase(err)}, nil
 	}
@@ -36,12 +43,12 @@ func (l *PageChatMessagesLogic) PageChatMessages(in *chat.PageChatMessagesReq) (
 	}
 
 	cursor, limit := pageInput(in.GetPage())
-	model := l.svcCtx.ChatMessageFactory.New(in.GetMerchantId())
+	model := l.svcCtx.ChatMessageFactory.New(merchantID)
 	if model == nil {
 		return &chat.PageChatMessagesResp{Base: badBase("invalid merchant_id")}, nil
 	}
 	list, err := model.FindPage(l.ctx, models.ChatMessagePageFilter{
-		MerchantId: in.GetMerchantId(),
+		MerchantId: merchantID,
 		SessionNo:  session.SessionNo,
 		SenderType: int64(in.GetSenderType()),
 		BeforeTime: cursor,

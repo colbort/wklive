@@ -25,7 +25,14 @@ func NewSendAgentMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 发送客服消息
 func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (*chat.AdminChatMessageResp, error) {
-	session, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	if base != nil {
+		return &chat.AdminChatMessageResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatMessageResp{Base: errorBase(err)}, nil
+	}
+	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
 		return &chat.AdminChatMessageResp{Base: errorBase(err)}, nil
 	}
@@ -43,7 +50,6 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 	}
 	if session.AgentId == 0 {
 		session, base, err = assignSession(l.ctx, l.svcCtx, &chat.AssignChatSessionReq{
-			MerchantId: in.GetMerchantId(),
 			SessionNo:  in.GetSessionNo(),
 			ToAgentId:  in.GetAgentId(),
 			AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
