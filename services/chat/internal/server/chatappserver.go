@@ -23,6 +23,12 @@ func NewChatAppServer(svcCtx *svc.ServiceContext) *ChatAppServer {
 	}
 }
 
+// 商户接入鉴权
+func (s *ChatAppServer) AuthChatMerchant(ctx context.Context, in *chat.AuthChatMerchantReq) (*chat.AuthChatMerchantResp, error) {
+	l := logic.NewAuthChatMerchantLogic(ctx, s.svcCtx)
+	return l.AuthChatMerchant(in)
+}
+
 // 创建或获取当前会话
 func (s *ChatAppServer) OpenChatSession(ctx context.Context, in *chat.OpenChatSessionReq) (*chat.AppChatSessionResp, error) {
 	l := logic.NewOpenChatSessionLogic(ctx, s.svcCtx)

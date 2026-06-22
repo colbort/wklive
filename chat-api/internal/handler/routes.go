@@ -7,12 +7,27 @@ import (
 	"net/http"
 
 	chat "chat-api/internal/handler/chat"
+	chat_auth "chat-api/internal/handler/chat_auth"
 	"chat-api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/auth",
+					Handler: chat_auth.AuthChatMerchantHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/chat"),
+	)
+
 	server.AddRoutes(
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.UserRateLimit},

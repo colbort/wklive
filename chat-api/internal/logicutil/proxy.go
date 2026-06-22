@@ -4,6 +4,8 @@ import (
 	"context"
 	"reflect"
 
+	"wklive/common/utils"
+
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -26,6 +28,7 @@ func Proxy[Resp any, PReq any, PResp any](ctx context.Context, req any, call fun
 		return systemErrorResp[Resp](ctx, err)
 	}
 
+	ctx = injectMetadataValues(ctx, reflect.ValueOf(req))
 	protoResp, err := call(ctx, protoReq)
 	if err != nil {
 		resp := new(Resp)
@@ -45,6 +48,57 @@ func Proxy[Resp any, PReq any, PResp any](ctx context.Context, req any, call fun
 	}
 
 	return resp, nil
+}
+
+func injectMetadataValues(ctx context.Context, req reflect.Value) context.Context {
+	if userID, ok := int64Field(req, "UserId"); ok && userID > 0 {
+		ctx = context.WithValue(ctx, utils.CtxKeyUid, userID)
+	}
+	if merchantID, ok := int64Field(req, "MerchantId"); ok && merchantID > 0 {
+		ctx = context.WithValue(ctx, utils.CtxKeyMerchantId, merchantID)
+	}
+	if username, ok := stringField(req, "Username"); ok && username != "" {
+		ctx = context.WithValue(ctx, utils.CtxKeyUsername, username)
+	}
+	return ctx
+}
+
+func int64Field(v reflect.Value, name string) (int64, bool) {
+	field, ok := findField(v, name)
+	if !ok {
+		return 0, false
+	}
+	for field.Kind() == reflect.Pointer {
+		if field.IsNil() {
+			return 0, false
+		}
+		field = field.Elem()
+	}
+	switch field.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return field.Int(), true
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return int64(field.Uint()), true
+	default:
+		return 0, false
+	}
+}
+
+func stringField(v reflect.Value, name string) (string, bool) {
+	field, ok := findField(v, name)
+	if !ok {
+		return "", false
+	}
+	for field.Kind() == reflect.Pointer {
+		if field.IsNil() {
+			return "", false
+		}
+		field = field.Elem()
+	}
+	if field.Kind() != reflect.String {
+		return "", false
+	}
+	return field.String(), true
 }
 
 func systemErrorResp[Resp any](ctx context.Context, err error) (*Resp, error) {

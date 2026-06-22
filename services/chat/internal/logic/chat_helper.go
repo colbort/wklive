@@ -2,7 +2,9 @@ package logic
 
 import (
 	"context"
+	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -25,6 +27,7 @@ import (
 const (
 	defaultAgentMaxSessionCount = 10
 	defaultDeviceID             = ""
+	sessionNoInsertAttempts     = 3
 )
 
 var sequence uint64
@@ -92,7 +95,9 @@ func chatAppIdentityFromMetadata(ctx context.Context) (int64, int64, *common.Res
 
 func nextNo(prefix string) string {
 	n := atomic.AddUint64(&sequence, 1)
-	return fmt.Sprintf("%s%d%06d", prefix, time.Now().UnixMilli(), n%1000000)
+	b := make([]byte, 4)
+	_, _ = rand.Read(b)
+	return fmt.Sprintf("%s%d%06d%s", prefix, time.Now().UnixMilli(), n%1000000, hex.EncodeToString(b))
 }
 
 func pageInput(page *common.PageReq) (int64, int64) {
@@ -250,6 +255,20 @@ func toProtoAgents(list []*models.TChatAgent) []*chat.ChatAgent {
 	return resp
 }
 
+func toProtoMerchant(data *models.TChatMerchantInfo) *chat.ChatMerchant {
+	if data == nil {
+		return nil
+	}
+	return &chat.ChatMerchant{
+		MerchantId:  data.MerchantId,
+		ApiKey:      data.ApiKey,
+		Enabled:     common.Enable(data.Enabled),
+		ExpireTime:  data.ExpireTime,
+		CreateTimes: data.CreateTimes,
+		UpdateTimes: data.UpdateTimes,
+	}
+}
+
 func toProtoSession(data *models.TChatSession) *chat.ChatSession {
 	if data == nil {
 		return nil
@@ -393,28 +412,41 @@ func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchant
 	}
 
 	now := nowMillis()
-	data = &models.TChatSession{
-		SessionNo:       nextNo("CS"),
-		MerchantId:      merchantID,
-		UserId:          userID,
-		Source:          int64(normalizeSource(source)),
-		Status:          int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING),
-		Priority:        int64(normalizePriority(priority)),
-		Title:           strings.TrimSpace(title),
-		Category:        strings.TrimSpace(category),
-		LastMessageTime: now,
-		ExtJson:         structToNullString(ext),
-		CreateTimes:     now,
-		UpdateTimes:     now,
+	for attempt := 0; attempt < sessionNoInsertAttempts; attempt++ {
+		data = &models.TChatSession{
+			SessionNo:       nextNo("CS"),
+			MerchantId:      merchantID,
+			UserId:          userID,
+			Source:          int64(normalizeSource(source)),
+			Status:          int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING),
+			Priority:        int64(normalizePriority(priority)),
+			Title:           strings.TrimSpace(title),
+			Category:        strings.TrimSpace(category),
+			LastMessageTime: now,
+			ExtJson:         structToNullString(ext),
+			CreateTimes:     now,
+			UpdateTimes:     now,
+		}
+		result, err := svcCtx.ChatSessionModel.Insert(ctx, data)
+		if err == nil {
+			if id, err := result.LastInsertId(); err == nil {
+				data.Id = id
+			}
+			return data, true, nil
+		}
+		if !isDuplicateKey(err) {
+			return nil, false, err
+		}
 	}
-	result, err := svcCtx.ChatSessionModel.Insert(ctx, data)
-	if err != nil {
-		return nil, false, err
+	return nil, false, fmt.Errorf("failed to generate unique session_no")
+}
+
+func isDuplicateKey(err error) bool {
+	if err == nil {
+		return false
 	}
-	if id, err := result.LastInsertId(); err == nil {
-		data.Id = id
-	}
-	return data, true, nil
+	msg := strings.ToLower(err.Error())
+	return strings.Contains(msg, "duplicate") || strings.Contains(msg, "1062")
 }
 
 func newMessage(session *models.TChatSession, senderType chat.ChatSenderType, senderID int64, senderName, senderAvatarURL string, messageType chat.ChatMessageType, content, mediaURL, mediaName, mediaMIME string, mediaSize int64, payload *structpb.Struct) *models.ChatMessage {

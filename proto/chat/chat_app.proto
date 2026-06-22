@@ -10,6 +10,9 @@ option go_package = "wklive/proto/chat;chat";
 
 // 用户端客服服务
 service ChatApp {
+  // 商户接入鉴权
+  rpc AuthChatMerchant(AuthChatMerchantReq) returns (AuthChatMerchantResp);
+
   // 创建或获取当前会话
   rpc OpenChatSession(OpenChatSessionReq) returns (AppChatSessionResp);
 
@@ -31,6 +34,11 @@ service ChatApp {
 
   // 关闭我的会话
   rpc CloseMyChatSession(CloseMyChatSessionReq) returns (AppChatSessionResp);
+}
+
+message AuthChatMerchantReq {
+  string api_key = 1;    // 对接客服API Key
+  string api_secret = 2; // 对接客服API Secret
 }
 
 message OpenChatSessionReq {
@@ -99,3 +107,8 @@ message AppChatMessageResp {
 }
 
 message AppMarkMessagesReadResp { common.RespBase base = 1; }
+
+message AuthChatMerchantResp {
+  common.RespBase base = 1;
+  ChatMerchant data = 2;
+}

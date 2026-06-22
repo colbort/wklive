@@ -28,6 +28,16 @@ message ChatUser {
   string last_login_ip = 16;  // 最后登录IP
 }
 
+// 客服商户接入信息
+message ChatMerchant {
+  int64 merchant_id = 1;     // 客服商户ID
+  string api_key = 2;        // 对接客服API Key
+  common.Enable enabled = 3; // 启用状态
+  int64 expire_time = 4;     // 到期时间戳(毫秒)
+  int64 create_times = 5;    // 创建时间戳(毫秒)
+  int64 update_times = 6;    // 更新时间戳(毫秒)
+}
+
 // 客服坐席
 message ChatAgent {
   int64 id = 1;                    // 主键ID

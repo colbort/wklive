@@ -17,6 +17,8 @@ type (
 	AppChatMessageResp      = chat.AppChatMessageResp
 	AppChatSessionResp      = chat.AppChatSessionResp
 	AppMarkMessagesReadResp = chat.AppMarkMessagesReadResp
+	AuthChatMerchantReq     = chat.AuthChatMerchantReq
+	AuthChatMerchantResp    = chat.AuthChatMerchantResp
 	CloseMyChatSessionReq   = chat.CloseMyChatSessionReq
 	GetMyChatSessionReq     = chat.GetMyChatSessionReq
 	ListChatMessagesResp    = chat.ListChatMessagesResp
@@ -28,6 +30,8 @@ type (
 	SendUserMessageReq      = chat.SendUserMessageReq
 
 	ChatApp interface {
+		// 商户接入鉴权
+		AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error)
 		// 创建或获取当前会话
 		OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 		// 查询我的会话列表
@@ -53,6 +57,12 @@ func NewChatApp(cli zrpc.Client) ChatApp {
 	return &defaultChatApp{
 		cli: cli,
 	}
+}
+
+// 商户接入鉴权
+func (m *defaultChatApp) AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.AuthChatMerchant(ctx, in, opts...)
 }
 
 // 创建或获取当前会话

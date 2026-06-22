@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	ChatApp_AuthChatMerchant_FullMethodName     = "/chat.ChatApp/AuthChatMerchant"
 	ChatApp_OpenChatSession_FullMethodName      = "/chat.ChatApp/OpenChatSession"
 	ChatApp_ListMyChatSessions_FullMethodName   = "/chat.ChatApp/ListMyChatSessions"
 	ChatApp_GetMyChatSession_FullMethodName     = "/chat.ChatApp/GetMyChatSession"
@@ -34,6 +35,8 @@ const (
 //
 // 用户端客服服务
 type ChatAppClient interface {
+	// 商户接入鉴权
+	AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error)
 	// 创建或获取当前会话
 	OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 	// 查询我的会话列表
@@ -56,6 +59,16 @@ type chatAppClient struct {
 
 func NewChatAppClient(cc grpc.ClientConnInterface) ChatAppClient {
 	return &chatAppClient{cc}
+}
+
+func (c *chatAppClient) AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AuthChatMerchantResp)
+	err := c.cc.Invoke(ctx, ChatApp_AuthChatMerchant_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *chatAppClient) OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
@@ -134,6 +147,8 @@ func (c *chatAppClient) CloseMyChatSession(ctx context.Context, in *CloseMyChatS
 //
 // 用户端客服服务
 type ChatAppServer interface {
+	// 商户接入鉴权
+	AuthChatMerchant(context.Context, *AuthChatMerchantReq) (*AuthChatMerchantResp, error)
 	// 创建或获取当前会话
 	OpenChatSession(context.Context, *OpenChatSessionReq) (*AppChatSessionResp, error)
 	// 查询我的会话列表
@@ -158,6 +173,9 @@ type ChatAppServer interface {
 // pointer dereference when methods are called.
 type UnimplementedChatAppServer struct{}
 
+func (UnimplementedChatAppServer) AuthChatMerchant(context.Context, *AuthChatMerchantReq) (*AuthChatMerchantResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method AuthChatMerchant not implemented")
+}
 func (UnimplementedChatAppServer) OpenChatSession(context.Context, *OpenChatSessionReq) (*AppChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method OpenChatSession not implemented")
 }
@@ -198,6 +216,24 @@ func RegisterChatAppServer(s grpc.ServiceRegistrar, srv ChatAppServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&ChatApp_ServiceDesc, srv)
+}
+
+func _ChatApp_AuthChatMerchant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthChatMerchantReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAppServer).AuthChatMerchant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatApp_AuthChatMerchant_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAppServer).AuthChatMerchant(ctx, req.(*AuthChatMerchantReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ChatApp_OpenChatSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -333,6 +369,10 @@ var ChatApp_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.ChatApp",
 	HandlerType: (*ChatAppServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AuthChatMerchant",
+			Handler:    _ChatApp_AuthChatMerchant_Handler,
+		},
 		{
 			MethodName: "OpenChatSession",
 			Handler:    _ChatApp_OpenChatSession_Handler,
