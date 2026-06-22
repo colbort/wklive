@@ -33,8 +33,7 @@ service ChatApp {
 }
 
 message OpenChatSessionReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2; // 用户ID
+  reserved 1;
   ChatSessionSource source = 3; // 来源
   string title = 4; // 会话标题
   string category = 5; // 问题分类
@@ -44,21 +43,20 @@ message OpenChatSessionReq {
 }
 
 message ListMyChatSessionsReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2; // 用户ID
+  reserved 1;
   ChatSessionStatus status = 3; // 状态,0表示全部
   common.PageReq page = 4; // 分页
 }
 
 message GetMyChatSessionReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2; // 用户ID
+  reserved 1;
+
   string session_no = 3; // 会话编号
 }
 
 message SendUserMessageReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2; // 用户ID
+  reserved 1;
+
   string session_no = 3; // 会话编号
   ChatMessageType message_type = 4; // 消息类型
   string content = 5; // 文本内容
@@ -71,22 +69,22 @@ message SendUserMessageReq {
 }
 
 message ListMyChatMessagesReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2; // 用户ID
+  reserved 1;
+
   string session_no = 3; // 会话编号
   common.PageReq page = 4; // 分页
 }
 
 message MarkUserMessagesReadReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2; // 用户ID
+  reserved 1;
+
   string session_no = 3; // 会话编号
   int64 last_message_id = 4; // 最后已读消息ID,0表示全部
 }
 
 message CloseMyChatSessionReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2; // 用户ID
+  reserved 1;
+
   string session_no = 3; // 会话编号
   string close_reason = 4; // 结束原因
 }

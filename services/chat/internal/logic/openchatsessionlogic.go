@@ -26,7 +26,14 @@ func NewOpenChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *O
 
 // 创建或获取当前会话
 func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*chat.AppChatSessionResp, error) {
-	session, created, err := ensureOpenSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetUserId(), normalizeSource(in.GetSource()), in.GetTitle(), in.GetCategory(), chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL, nil)
+	merchantID, userID, base, err := chatAppIdentityFromMetadata(l.ctx)
+	if base != nil {
+		return &chat.AppChatSessionResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
+	}
+	session, created, err := ensureOpenSession(l.ctx, l.svcCtx, merchantID, userID, normalizeSource(in.GetSource()), in.GetTitle(), in.GetCategory(), chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL, nil)
 	if err != nil {
 		return &chat.AppChatSessionResp{Base: badBase(err.Error())}, nil
 	}
@@ -38,7 +45,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			session = refreshed
 		}
 		if strings.TrimSpace(in.GetFirstMessage()) != "" {
-			msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, in.GetUserId(), in.GetSenderNickname(), in.GetSenderAvatarUrl(), chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT, in.GetFirstMessage(), "", "", "", 0, nil)
+			msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, userID, in.GetSenderNickname(), in.GetSenderAvatarUrl(), chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT, in.GetFirstMessage(), "", "", "", 0, nil)
 			if _, err := sendMessage(l.ctx, l.svcCtx, session, msg); err != nil {
 				return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
 			}

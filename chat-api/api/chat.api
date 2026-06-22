@@ -55,7 +55,6 @@ type ChatMessage {
 }
 
 type OpenChatSessionReq {
-	merchantId      int64  `json:"merchantId"`
 	source          int64  `json:"source,optional"` // 1 APP 2 Web/H5
 	title           string `json:"title,optional"`
 	category        string `json:"category,optional"`
@@ -81,13 +80,9 @@ type ListChatSessionsResp {
 }
 
 type SessionNoReq {
-	merchantId int64  `form:"merchantId"`
-	sessionNo  string `path:"sessionNo"`
 }
 
 type SendUserMessageReq {
-	merchantId      int64  `json:"merchantId"`
-	sessionNo       string `path:"sessionNo"`
 	messageType     int64  `json:"messageType"`
 	content         string `json:"content,optional"`
 	mediaUrl        string `json:"mediaUrl,optional"`
@@ -106,8 +101,6 @@ type ChatMessageResp {
 
 type ListChatMessagesReq {
 	PageReq
-	merchantId int64  `form:"merchantId"`
-	sessionNo  string `path:"sessionNo"`
 }
 
 type ListChatMessagesResp {
@@ -116,15 +109,11 @@ type ListChatMessagesResp {
 }
 
 type MarkUserMessagesReadReq {
-	merchantId    int64  `json:"merchantId"`
-	sessionNo     string `path:"sessionNo"`
 	lastMessageId int64  `json:"lastMessageId,optional"`
 	lastMessageNo string `json:"lastMessageNo,optional"`
 }
 
 type CloseMyChatSessionReq {
-	merchantId  int64  `json:"merchantId"`
-	sessionNo   string `path:"sessionNo"`
 	closeReason string `json:"closeReason,optional"`
 }
 

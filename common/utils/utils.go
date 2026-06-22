@@ -129,6 +129,24 @@ func GetTenantIdFromMd(ctx context.Context) (int64, error) {
 	return tenantId, nil
 }
 
+func GetMerchantIdFromMd(ctx context.Context) (int64, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return 0, fmt.Errorf("no metadata in context")
+	}
+
+	var merchantId int64
+	if vals := md.Get(CtxKeyMerchantId); len(vals) > 0 && vals[0] != "" {
+		var err error
+		merchantId, err = strconv.ParseInt(vals[0], 10, 64)
+		if err != nil {
+			return 0, fmt.Errorf("invalid x-merchant-id: %w", err)
+		}
+	}
+
+	return merchantId, nil
+}
+
 func GetUserTypeFromMd(ctx context.Context) (int64, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {

@@ -25,14 +25,21 @@ func NewSendUserMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 发送用户消息
 func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*chat.AppChatMessageResp, error) {
-	session, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	merchantID, userID, base, err := chatAppIdentityFromMetadata(l.ctx)
+	if base != nil {
+		return &chat.AppChatMessageResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AppChatMessageResp{Base: errorBase(err)}, nil
+	}
+	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
 		return &chat.AppChatMessageResp{Base: errorBase(err)}, nil
 	}
 	if base != nil {
 		return &chat.AppChatMessageResp{Base: base}, nil
 	}
-	if session.UserId != in.GetUserId() {
+	if session.UserId != userID {
 		return &chat.AppChatMessageResp{Base: notFoundBase("chat session not found")}, nil
 	}
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
@@ -45,7 +52,7 @@ func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*ch
 	if base != nil {
 		return &chat.AppChatMessageResp{Base: base}, nil
 	}
-	msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, in.GetUserId(), in.GetSenderNickname(), in.GetSenderAvatarUrl(), in.GetMessageType(), in.GetContent(), in.GetMediaUrl(), in.GetMediaName(), in.GetMediaMime(), in.GetMediaSize(), nil)
+	msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, userID, in.GetSenderNickname(), in.GetSenderAvatarUrl(), in.GetMessageType(), in.GetContent(), in.GetMediaUrl(), in.GetMediaName(), in.GetMediaMime(), in.GetMediaSize(), nil)
 	msg, err = sendMessage(l.ctx, l.svcCtx, session, msg)
 	if err != nil {
 		return &chat.AppChatMessageResp{Base: errorBase(err)}, nil

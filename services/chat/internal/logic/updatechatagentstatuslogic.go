@@ -26,11 +26,18 @@ func NewUpdateChatAgentStatusLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 更新坐席在线状态
 func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAgentStatusReq) (*chat.AdminChatAgentResp, error) {
-	if in.GetMerchantId() <= 0 || in.GetAgentId() <= 0 || in.GetStatus() == chat.ChatAgentStatus_CHAT_AGENT_STATUS_UNKNOWN {
-		return &chat.AdminChatAgentResp{Base: badBase("merchant_id, agent_id and status are required")}, nil
+	if in.GetAgentId() <= 0 || in.GetStatus() == chat.ChatAgentStatus_CHAT_AGENT_STATUS_UNKNOWN {
+		return &chat.AdminChatAgentResp{Base: badBase("agent_id and status are required")}, nil
+	}
+	merchantID, base, err := currentMerchantID(l.ctx, l.svcCtx)
+	if base != nil {
+		return &chat.AdminChatAgentResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
 	}
 	data, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetAgentId())
-	if err == models.ErrNotFound || data.MerchantId != in.GetMerchantId() {
+	if err == models.ErrNotFound || data.MerchantId != merchantID {
 		return &chat.AdminChatAgentResp{Base: notFoundBase("chat agent not found")}, nil
 	}
 	if err != nil {

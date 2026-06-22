@@ -80,7 +80,6 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 		return
 	}
 	req := chat.SendAgentMessageReq{
-		MerchantId:  data.MerchantId,
 		AgentId:     data.AgentId,
 		SessionNo:   data.SessionNo,
 		MessageType: chat.ChatMessageType(data.MessageType),
@@ -90,9 +89,6 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 		MediaMime:   data.MediaMime,
 		MediaSize:   data.MediaSize,
 	}
-	if req.MerchantId == 0 {
-		req.MerchantId = conn.MerchantId
-	}
 	if req.AgentId == 0 {
 		req.AgentId = conn.AgentId
 	}
@@ -100,8 +96,8 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 		req.SessionNo = conn.SessionNo
 	}
 	if isGuestSession(req.SessionNo) {
-		fillAgentSenderSnapshot(ctx, svcCtx, conn, req.MerchantId, &data)
-		msg := newTransientAgentMessage(req.MerchantId, req.SessionNo, data.UserId, req.AgentId, conn.Username, data)
+		fillAgentSenderSnapshot(ctx, svcCtx, conn, &data)
+		msg := newTransientAgentMessage(req.SessionNo, data.UserId, req.AgentId, conn.Username, data)
 		if err := publishTransientMessage(ctx, svcCtx, msg); err != nil {
 			conn.SendJSON(eventError, map[string]string{"message": err.Error()})
 			return
@@ -118,8 +114,8 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 	conn.SendJSON(eventSendAgentMessageResult, resp)
 }
 
-func fillAgentSenderSnapshot(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, merchantId int64, data *sendAgentMessagePayload) {
-	if data == nil || svcCtx == nil || conn == nil || conn.UserId <= 0 || merchantId <= 0 {
+func fillAgentSenderSnapshot(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, data *sendAgentMessagePayload) {
+	if data == nil || svcCtx == nil || conn == nil || conn.UserId <= 0 {
 		return
 	}
 	profileCtx := context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)

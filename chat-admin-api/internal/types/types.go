@@ -246,7 +246,6 @@ type CreateChatAgentReq struct {
 }
 
 type CreateChatCategoryReq struct {
-	MerchantId   int64  `json:"merchantId"`
 	ParentId     int64  `json:"parentId,optional"`
 	CategoryCode string `json:"categoryCode"`
 	CategoryName string `json:"categoryName"`
@@ -256,7 +255,6 @@ type CreateChatCategoryReq struct {
 }
 
 type CreateChatGroupReq struct {
-	MerchantId  int64  `json:"merchantId"`
 	GroupCode   string `json:"groupCode"`
 	GroupName   string `json:"groupName"`
 	Description string `json:"description,optional"`
@@ -266,7 +264,6 @@ type CreateChatGroupReq struct {
 }
 
 type CreateChatQuickReplyReq struct {
-	MerchantId int64  `json:"merchantId"`
 	AgentId    int64  `json:"agentId,optional"`
 	CategoryId int64  `json:"categoryId,optional"`
 	Title      string `json:"title"`
@@ -277,7 +274,6 @@ type CreateChatQuickReplyReq struct {
 }
 
 type CreateChatWorkOrderReq struct {
-	MerchantId    int64  `json:"merchantId"`
 	SessionNo     string `json:"sessionNo,optional"`
 	UserId        int64  `json:"userId,optional"`
 	AgentId       int64  `json:"agentId,optional"`
@@ -292,23 +288,19 @@ type CreateChatWorkOrderReq struct {
 }
 
 type DeleteChatCategoryReq struct {
-	Id         int64 `path:"id"`
-	MerchantId int64 `form:"merchantId"`
+	Id int64 `path:"id"`
 }
 
 type DeleteChatGroupReq struct {
-	Id         int64 `path:"id"`
-	MerchantId int64 `form:"merchantId"`
+	Id int64 `path:"id"`
 }
 
 type DeleteChatQuickReplyReq struct {
-	Id         int64 `path:"id"`
-	MerchantId int64 `form:"merchantId"`
+	Id int64 `path:"id"`
 }
 
 type DeleteChatWorkOrderReq struct {
-	Id         int64 `path:"id"`
-	MerchantId int64 `form:"merchantId"`
+	Id int64 `path:"id"`
 }
 
 type GetChatAgentReq struct {
@@ -344,7 +336,6 @@ type GetChatWorkOrderReq struct {
 
 type HandleChatWorkOrderReq struct {
 	Id           int64  `path:"id"`
-	MerchantId   int64  `json:"merchantId"`
 	HandlerId    int64  `json:"handlerId"`
 	Status       int64  `json:"status"`
 	HandleResult string `json:"handleResult,optional"`
@@ -511,7 +502,6 @@ type TokenInfo struct {
 
 type UpdateChatAgentReq struct {
 	Id              int64  `path:"id"`
-	MerchantId      int64  `json:"merchantId"`
 	MaxSessionCount int64  `json:"maxSessionCount,optional"`
 	GroupId         int64  `json:"groupId,optional"`
 	WelcomeMessage  string `json:"welcomeMessage,optional"`
@@ -519,14 +509,12 @@ type UpdateChatAgentReq struct {
 }
 
 type UpdateChatAgentStatusReq struct {
-	Id         int64 `path:"id"`
-	MerchantId int64 `json:"merchantId"`
-	Status     int64 `json:"status"`
+	Id     int64 `path:"id"`
+	Status int64 `json:"status"`
 }
 
 type UpdateChatCategoryReq struct {
 	Id           int64  `path:"id"`
-	MerchantId   int64  `json:"merchantId"`
 	ParentId     int64  `json:"parentId,optional"`
 	CategoryName string `json:"categoryName"`
 	Enabled      int64  `json:"enabled,optional"`
@@ -536,7 +524,6 @@ type UpdateChatCategoryReq struct {
 
 type UpdateChatGroupReq struct {
 	Id          int64  `path:"id"`
-	MerchantId  int64  `json:"merchantId"`
 	GroupName   string `json:"groupName"`
 	Description string `json:"description,optional"`
 	Enabled     int64  `json:"enabled,optional"`
@@ -546,7 +533,6 @@ type UpdateChatGroupReq struct {
 
 type UpdateChatQuickReplyReq struct {
 	Id         int64  `path:"id"`
-	MerchantId int64  `json:"merchantId"`
 	AgentId    int64  `json:"agentId,optional"`
 	CategoryId int64  `json:"categoryId,optional"`
 	Title      string `json:"title"`
@@ -558,7 +544,6 @@ type UpdateChatQuickReplyReq struct {
 
 type UpdateChatWorkOrderReq struct {
 	Id            int64  `path:"id"`
-	MerchantId    int64  `json:"merchantId"`
 	AgentId       int64  `json:"agentId,optional"`
 	GroupId       int64  `json:"groupId,optional"`
 	Title         string `json:"title"`

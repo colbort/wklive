@@ -163,7 +163,7 @@ message ChatAdminProfileResp {
 }
 
 message CreateChatGroupReq {
-  int64 merchant_id = 1; // 客服商户ID
+  reserved 1;
   string group_code = 2; // 分组编码
   string group_name = 3; // 分组名称
   string description = 4; // 分组描述
@@ -173,8 +173,9 @@ message CreateChatGroupReq {
 }
 
 message UpdateChatGroupReq {
+  reserved 2;
+
   int64 id = 1; // 主键ID
-  int64 merchant_id = 2; // 客服商户ID
   string group_name = 3; // 分组名称
   string description = 4; // 分组描述
   common.Enable enabled = 5; // 启用状态
@@ -183,19 +184,16 @@ message UpdateChatGroupReq {
 }
 
 message GetChatGroupReq {
-  int64 merchant_id = 1; // 客服商户ID
   int64 id = 2; // 主键ID
 }
 
 message PageChatGroupsReq {
-  int64 merchant_id = 1; // 客服商户ID,0表示全部
   common.Enable enabled = 2; // 启用状态,0表示全部
   string keyword = 3; // 关键词
   common.PageReq page = 4; // 分页
 }
 
 message DeleteChatGroupReq {
-  int64 merchant_id = 1; // 客服商户ID
   int64 id = 2; // 主键ID
 }
 
@@ -215,10 +213,9 @@ message CreateChatAgentReq {
 }
 
 message UpdateChatAgentReq {
-  reserved 3, 4, 6;
+  reserved 2, 3, 4, 6;
 
   int64 id = 1; // 主键ID
-  int64 merchant_id = 2; // 客服商户ID
   int32 max_session_count = 5; // 最大同时接待数
   string remark = 7; // 备注
   int64 group_id = 8; // 客服分组ID
@@ -226,18 +223,17 @@ message UpdateChatAgentReq {
 }
 
 message UpdateChatAgentStatusReq {
-  int64 merchant_id = 1; // 客服商户ID
+  reserved 1;
+
   int64 agent_id = 2; // 坐席ID
   ChatAgentStatus status = 3; // 在线状态
 }
 
 message GetChatAgentReq {
-  int64 merchant_id = 1; // 客服商户ID
   int64 id = 2; // 主键ID
 }
 
 message PageChatAgentsReq {
-  int64 merchant_id = 1; // 客服商户ID,0表示全部
   int64 chat_user_id = 2; // 客服用户ID,0表示全部
   ChatAgentStatus status = 3; // 在线状态,0表示全部
   int64 group_id = 4; // 客服分组ID,0表示全部
@@ -245,7 +241,6 @@ message PageChatAgentsReq {
 }
 
 message PageChatSessionsReq {
-  int64 merchant_id = 1; // 客服商户ID,0表示全部
   int64 user_id = 2; // 用户ID,0表示全部
   int64 agent_id = 3; // 坐席ID,0表示全部
   ChatSessionStatus status = 4; // 状态,0表示全部
@@ -256,12 +251,10 @@ message PageChatSessionsReq {
 }
 
 message GetChatSessionReq {
-  int64 merchant_id = 1; // 客服商户ID
   string session_no = 2; // 会话编号
 }
 
 message AssignChatSessionReq {
-  int64 merchant_id = 1; // 客服商户ID
   string session_no = 2; // 会话编号
   int64 to_agent_id = 3; // 目标坐席ID
   ChatAssignType assign_type = 4; // 分配方式
@@ -270,7 +263,6 @@ message AssignChatSessionReq {
 }
 
 message SendAgentMessageReq {
-  int64 merchant_id = 1; // 客服商户ID
   int64 agent_id = 2; // 坐席ID
   string session_no = 3; // 会话编号
   ChatMessageType message_type = 4; // 消息类型
@@ -282,28 +274,24 @@ message SendAgentMessageReq {
 }
 
 message PageChatMessagesReq {
-  int64 merchant_id = 1; // 客服商户ID
   string session_no = 2; // 会话编号
   ChatSenderType sender_type = 3; // 发送方类型,0表示全部
   common.PageReq page = 4; // 分页
 }
 
 message MarkAgentMessagesReadReq {
-  int64 merchant_id = 1; // 客服商户ID
   int64 agent_id = 2; // 坐席ID
   string session_no = 3; // 会话编号
   int64 last_message_id = 4; // 最后已读消息ID,0表示全部
 }
 
 message CloseChatSessionReq {
-  int64 merchant_id = 1; // 客服商户ID
   string session_no = 2; // 会话编号
   int64 operator_id = 3; // 操作人ID
   string close_reason = 4; // 结束原因
 }
 
 message CreateChatQuickReplyReq {
-  int64 merchant_id = 1; // 客服商户ID
   int64 agent_id = 2; // 坐席ID,0表示公共快捷回复
   int64 category_id = 3; // 分类ID
   string title = 4; // 标题
@@ -314,8 +302,9 @@ message CreateChatQuickReplyReq {
 }
 
 message UpdateChatQuickReplyReq {
+  reserved 2;
+
   int64 id = 1; // 主键ID
-  int64 merchant_id = 2; // 客服商户ID
   int64 agent_id = 3; // 坐席ID,0表示公共快捷回复
   int64 category_id = 4; // 分类ID
   string title = 5; // 标题
@@ -326,12 +315,10 @@ message UpdateChatQuickReplyReq {
 }
 
 message GetChatQuickReplyReq {
-  int64 merchant_id = 1; // 客服商户ID
   int64 id = 2; // 主键ID
 }
 
 message PageChatQuickRepliesReq {
-  int64 merchant_id = 1; // 客服商户ID,0表示全部
   int64 agent_id = 2; // 坐席ID,0表示全部
   int64 category_id = 3; // 分类ID,0表示全部
   common.Enable enabled = 4; // 启用状态,0表示全部
@@ -340,18 +327,19 @@ message PageChatQuickRepliesReq {
 }
 
 message ListEnabledChatQuickRepliesReq {
-  int64 merchant_id = 1; // 客服商户ID
   int64 agent_id = 2; // 坐席ID,0表示公共
   int64 category_id = 3; // 分类ID,0表示全部
 }
 
 message DeleteChatQuickReplyReq {
-  int64 merchant_id = 1; // 客服商户ID
+  reserved 1;
+
   int64 id = 2; // 主键ID
 }
 
 message CreateChatCategoryReq {
-  int64 merchant_id = 1; // 客服商户ID
+  reserved 1;
+
   int64 parent_id = 2; // 父级分类ID
   string category_code = 3; // 分类编码
   string category_name = 4; // 分类名称
@@ -361,8 +349,9 @@ message CreateChatCategoryReq {
 }
 
 message UpdateChatCategoryReq {
+  reserved 2;
+
   int64 id = 1; // 主键ID
-  int64 merchant_id = 2; // 客服商户ID
   int64 parent_id = 3; // 父级分类ID
   string category_name = 4; // 分类名称
   common.Enable enabled = 5; // 启用状态
@@ -371,12 +360,10 @@ message UpdateChatCategoryReq {
 }
 
 message GetChatCategoryReq {
-  int64 merchant_id = 1; // 客服商户ID
   int64 id = 2; // 主键ID
 }
 
 message PageChatCategoriesReq {
-  int64 merchant_id = 1; // 客服商户ID,0表示全部
   int64 parent_id = 2; // 父级分类ID,0表示全部
   string category_code = 3; // 分类编码
   string category_name = 4; // 分类名称
@@ -386,16 +373,17 @@ message PageChatCategoriesReq {
 }
 
 message ListEnabledChatCategoriesReq {
-  int64 merchant_id = 1; // 客服商户ID
 }
 
 message DeleteChatCategoryReq {
-  int64 merchant_id = 1; // 客服商户ID
+  reserved 1;
+
   int64 id = 2; // 主键ID
 }
 
 message CreateChatWorkOrderReq {
-  int64 merchant_id = 1; // 客服商户ID
+  reserved 1;
+
   string session_no = 2; // 关联会话编号
   int64 user_id = 3; // 用户ID
   int64 agent_id = 4; // 坐席ID
@@ -410,8 +398,9 @@ message CreateChatWorkOrderReq {
 }
 
 message UpdateChatWorkOrderReq {
+  reserved 2;
+
   int64 id = 1; // 主键ID
-  int64 merchant_id = 2; // 客服商户ID
   int64 agent_id = 3; // 坐席ID
   int64 group_id = 4; // 客服分组ID
   string title = 5; // 工单标题
@@ -425,8 +414,9 @@ message UpdateChatWorkOrderReq {
 }
 
 message HandleChatWorkOrderReq {
+  reserved 2;
+
   int64 id = 1; // 主键ID
-  int64 merchant_id = 2; // 客服商户ID
   int64 handler_id = 3; // 处理人ID
   int32 status = 4; // 状态:2处理中 3已完成 4已关闭
   string handle_result = 5; // 处理结果
@@ -434,13 +424,11 @@ message HandleChatWorkOrderReq {
 }
 
 message GetChatWorkOrderReq {
-  int64 merchant_id = 1; // 客服商户ID
   int64 id = 2; // 主键ID
   string work_order_no = 3; // 工单编号
 }
 
 message PageChatWorkOrdersReq {
-  int64 merchant_id = 1; // 客服商户ID,0表示全部
   string session_no = 2; // 会话编号
   int64 user_id = 3; // 用户ID,0表示全部
   int64 agent_id = 4; // 坐席ID,0表示全部
@@ -454,7 +442,8 @@ message PageChatWorkOrdersReq {
 }
 
 message DeleteChatWorkOrderReq {
-  int64 merchant_id = 1; // 客服商户ID
+  reserved 1;
+
   int64 id = 2; // 主键ID
 }
 

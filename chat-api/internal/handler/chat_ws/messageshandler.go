@@ -93,8 +93,6 @@ func handleSendUserMessage(ctx context.Context, svcCtx *svc.ServiceContext, conn
 		return
 	}
 	req := chat.SendUserMessageReq{
-		MerchantId:      data.MerchantId,
-		UserId:          conn.UserId,
 		SessionNo:       data.SessionNo,
 		MessageType:     chat.ChatMessageType(data.MessageType),
 		Content:         data.Content,
@@ -105,13 +103,9 @@ func handleSendUserMessage(ctx context.Context, svcCtx *svc.ServiceContext, conn
 		SenderNickname:  firstNonEmpty(data.SenderNickname, conn.Username),
 		SenderAvatarUrl: data.SenderAvatarUrl,
 	}
-	if req.MerchantId == 0 {
-		req.MerchantId = conn.MerchantId
-	}
 	if req.SessionNo == "" {
 		req.SessionNo = conn.SessionNo
 	}
-
 	resp, err := svcCtx.ChatAppCli.SendUserMessage(ctx, &req)
 	if err != nil {
 		conn.SendJSON(eventError, map[string]string{"message": err.Error()})

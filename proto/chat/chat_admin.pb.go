@@ -372,13 +372,12 @@ func (x *ChatAdminProfileResp) GetAgent() *ChatAgent {
 
 type CreateChatGroupReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	GroupCode     string                 `protobuf:"bytes,2,opt,name=group_code,json=groupCode,proto3" json:"group_code,omitempty"`     // 分组编码
-	GroupName     string                 `protobuf:"bytes,3,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`     // 分组名称
-	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`                  // 分组描述
-	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`      // 启用状态
-	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                               // 排序
-	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                            // 备注
+	GroupCode     string                 `protobuf:"bytes,2,opt,name=group_code,json=groupCode,proto3" json:"group_code,omitempty"` // 分组编码
+	GroupName     string                 `protobuf:"bytes,3,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"` // 分组名称
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`              // 分组描述
+	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`  // 启用状态
+	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                           // 排序
+	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                        // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -411,13 +410,6 @@ func (x *CreateChatGroupReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateChatGroupReq.ProtoReflect.Descriptor instead.
 func (*CreateChatGroupReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *CreateChatGroupReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
 }
 
 func (x *CreateChatGroupReq) GetGroupCode() string {
@@ -464,13 +456,12 @@ func (x *CreateChatGroupReq) GetRemark() string {
 
 type UpdateChatGroupReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
-	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	GroupName     string                 `protobuf:"bytes,3,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`     // 分组名称
-	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`                  // 分组描述
-	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`      // 启用状态
-	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                               // 排序
-	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                            // 备注
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                               // 主键ID
+	GroupName     string                 `protobuf:"bytes,3,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"` // 分组名称
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`              // 分组描述
+	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`  // 启用状态
+	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                           // 排序
+	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                        // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -512,13 +503,6 @@ func (x *UpdateChatGroupReq) GetId() int64 {
 	return 0
 }
 
-func (x *UpdateChatGroupReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *UpdateChatGroupReq) GetGroupName() string {
 	if x != nil {
 		return x.GroupName
@@ -556,8 +540,7 @@ func (x *UpdateChatGroupReq) GetRemark() string {
 
 type GetChatGroupReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -592,13 +575,6 @@ func (*GetChatGroupReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *GetChatGroupReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *GetChatGroupReq) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -608,10 +584,9 @@ func (x *GetChatGroupReq) GetId() int64 {
 
 type PageChatGroupsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID,0表示全部
-	Enabled       common.Enable          `protobuf:"varint,2,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`      // 启用状态,0表示全部
-	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`                          // 关键词
-	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                // 分页
+	Enabled       common.Enable          `protobuf:"varint,2,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 启用状态,0表示全部
+	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`                     // 关键词
+	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                           // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -646,13 +621,6 @@ func (*PageChatGroupsReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *PageChatGroupsReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *PageChatGroupsReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
@@ -676,8 +644,7 @@ func (x *PageChatGroupsReq) GetPage() *common.PageReq {
 
 type DeleteChatGroupReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -710,13 +677,6 @@ func (x *DeleteChatGroupReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DeleteChatGroupReq.ProtoReflect.Descriptor instead.
 func (*DeleteChatGroupReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *DeleteChatGroupReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
 }
 
 func (x *DeleteChatGroupReq) GetId() int64 {
@@ -845,7 +805,6 @@ func (x *CreateChatAgentReq) GetEnabled() common.Enable {
 type UpdateChatAgentReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                    // 主键ID
-	MerchantId      int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                  // 客服商户ID
 	MaxSessionCount int32                  `protobuf:"varint,5,opt,name=max_session_count,json=maxSessionCount,proto3" json:"max_session_count,omitempty"` // 最大同时接待数
 	Remark          string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                             // 备注
 	GroupId         int64                  `protobuf:"varint,8,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                           // 客服分组ID
@@ -891,13 +850,6 @@ func (x *UpdateChatAgentReq) GetId() int64 {
 	return 0
 }
 
-func (x *UpdateChatAgentReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *UpdateChatAgentReq) GetMaxSessionCount() int32 {
 	if x != nil {
 		return x.MaxSessionCount
@@ -928,7 +880,6 @@ func (x *UpdateChatAgentReq) GetWelcomeMessage() string {
 
 type UpdateChatAgentStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
 	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID
 	Status        ChatAgentStatus        `protobuf:"varint,3,opt,name=status,proto3,enum=chat.ChatAgentStatus" json:"status,omitempty"` // 在线状态
 	unknownFields protoimpl.UnknownFields
@@ -965,13 +916,6 @@ func (*UpdateChatAgentStatusReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *UpdateChatAgentStatusReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *UpdateChatAgentStatusReq) GetAgentId() int64 {
 	if x != nil {
 		return x.AgentId
@@ -988,8 +932,7 @@ func (x *UpdateChatAgentStatusReq) GetStatus() ChatAgentStatus {
 
 type GetChatAgentReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1024,13 +967,6 @@ func (*GetChatAgentReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *GetChatAgentReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *GetChatAgentReq) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -1040,7 +976,6 @@ func (x *GetChatAgentReq) GetId() int64 {
 
 type PageChatAgentsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`   // 客服商户ID,0表示全部
 	ChatUserId    int64                  `protobuf:"varint,2,opt,name=chat_user_id,json=chatUserId,proto3" json:"chat_user_id,omitempty"` // 客服用户ID,0表示全部
 	Status        ChatAgentStatus        `protobuf:"varint,3,opt,name=status,proto3,enum=chat.ChatAgentStatus" json:"status,omitempty"`   // 在线状态,0表示全部
 	GroupId       int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`            // 客服分组ID,0表示全部
@@ -1079,13 +1014,6 @@ func (*PageChatAgentsReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *PageChatAgentsReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *PageChatAgentsReq) GetChatUserId() int64 {
 	if x != nil {
 		return x.ChatUserId
@@ -1116,7 +1044,6 @@ func (x *PageChatAgentsReq) GetPage() *common.PageReq {
 
 type PageChatSessionsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`         // 客服商户ID,0表示全部
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                     // 用户ID,0表示全部
 	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                  // 坐席ID,0表示全部
 	Status        ChatSessionStatus      `protobuf:"varint,4,opt,name=status,proto3,enum=chat.ChatSessionStatus" json:"status,omitempty"`       // 状态,0表示全部
@@ -1156,13 +1083,6 @@ func (x *PageChatSessionsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use PageChatSessionsReq.ProtoReflect.Descriptor instead.
 func (*PageChatSessionsReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{17}
-}
-
-func (x *PageChatSessionsReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
 }
 
 func (x *PageChatSessionsReq) GetUserId() int64 {
@@ -1216,8 +1136,7 @@ func (x *PageChatSessionsReq) GetPage() *common.PageReq {
 
 type GetChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`     // 会话编号
+	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1252,13 +1171,6 @@ func (*GetChatSessionReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *GetChatSessionReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *GetChatSessionReq) GetSessionNo() string {
 	if x != nil {
 		return x.SessionNo
@@ -1268,7 +1180,6 @@ func (x *GetChatSessionReq) GetSessionNo() string {
 
 type AssignChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                          // 客服商户ID
 	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                              // 会话编号
 	ToAgentId     int64                  `protobuf:"varint,3,opt,name=to_agent_id,json=toAgentId,proto3" json:"to_agent_id,omitempty"`                           // 目标坐席ID
 	AssignType    ChatAssignType         `protobuf:"varint,4,opt,name=assign_type,json=assignType,proto3,enum=chat.ChatAssignType" json:"assign_type,omitempty"` // 分配方式
@@ -1308,13 +1219,6 @@ func (*AssignChatSessionReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *AssignChatSessionReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *AssignChatSessionReq) GetSessionNo() string {
 	if x != nil {
 		return x.SessionNo
@@ -1352,7 +1256,6 @@ func (x *AssignChatSessionReq) GetReason() string {
 
 type SendAgentMessageReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                              // 客服商户ID
 	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                                       // 坐席ID
 	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
 	MessageType   ChatMessageType        `protobuf:"varint,4,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
@@ -1393,13 +1296,6 @@ func (x *SendAgentMessageReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use SendAgentMessageReq.ProtoReflect.Descriptor instead.
 func (*SendAgentMessageReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{20}
-}
-
-func (x *SendAgentMessageReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
 }
 
 func (x *SendAgentMessageReq) GetAgentId() int64 {
@@ -1460,7 +1356,6 @@ func (x *SendAgentMessageReq) GetMediaSize() int64 {
 
 type PageChatMessagesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                          // 客服商户ID
 	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                              // 会话编号
 	SenderType    ChatSenderType         `protobuf:"varint,3,opt,name=sender_type,json=senderType,proto3,enum=chat.ChatSenderType" json:"sender_type,omitempty"` // 发送方类型,0表示全部
 	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                                         // 分页
@@ -1498,13 +1393,6 @@ func (*PageChatMessagesReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *PageChatMessagesReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *PageChatMessagesReq) GetSessionNo() string {
 	if x != nil {
 		return x.SessionNo
@@ -1528,7 +1416,6 @@ func (x *PageChatMessagesReq) GetPage() *common.PageReq {
 
 type MarkAgentMessagesReadReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`            // 客服商户ID
 	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                     // 坐席ID
 	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                // 会话编号
 	LastMessageId int64                  `protobuf:"varint,4,opt,name=last_message_id,json=lastMessageId,proto3" json:"last_message_id,omitempty"` // 最后已读消息ID,0表示全部
@@ -1566,13 +1453,6 @@ func (*MarkAgentMessagesReadReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *MarkAgentMessagesReadReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *MarkAgentMessagesReadReq) GetAgentId() int64 {
 	if x != nil {
 		return x.AgentId
@@ -1596,7 +1476,6 @@ func (x *MarkAgentMessagesReadReq) GetLastMessageId() int64 {
 
 type CloseChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`   // 客服商户ID
 	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`       // 会话编号
 	OperatorId    int64                  `protobuf:"varint,3,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`   // 操作人ID
 	CloseReason   string                 `protobuf:"bytes,4,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"` // 结束原因
@@ -1634,13 +1513,6 @@ func (*CloseChatSessionReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *CloseChatSessionReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *CloseChatSessionReq) GetSessionNo() string {
 	if x != nil {
 		return x.SessionNo
@@ -1664,7 +1536,6 @@ func (x *CloseChatSessionReq) GetCloseReason() string {
 
 type CreateChatQuickReplyReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
 	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示公共快捷回复
 	CategoryId    int64                  `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID
 	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`                              // 标题
@@ -1704,13 +1575,6 @@ func (x *CreateChatQuickReplyReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateChatQuickReplyReq.ProtoReflect.Descriptor instead.
 func (*CreateChatQuickReplyReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{24}
-}
-
-func (x *CreateChatQuickReplyReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
 }
 
 func (x *CreateChatQuickReplyReq) GetAgentId() int64 {
@@ -1765,7 +1629,6 @@ func (x *CreateChatQuickReplyReq) GetRemark() string {
 type UpdateChatQuickReplyReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
-	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
 	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示公共快捷回复
 	CategoryId    int64                  `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID
 	Title         string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`                              // 标题
@@ -1810,13 +1673,6 @@ func (*UpdateChatQuickReplyReq) Descriptor() ([]byte, []int) {
 func (x *UpdateChatQuickReplyReq) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *UpdateChatQuickReplyReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
 	}
 	return 0
 }
@@ -1872,8 +1728,7 @@ func (x *UpdateChatQuickReplyReq) GetRemark() string {
 
 type GetChatQuickReplyReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1908,13 +1763,6 @@ func (*GetChatQuickReplyReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *GetChatQuickReplyReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *GetChatQuickReplyReq) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -1924,7 +1772,6 @@ func (x *GetChatQuickReplyReq) GetId() int64 {
 
 type PageChatQuickRepliesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID,0表示全部
 	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示全部
 	CategoryId    int64                  `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID,0表示全部
 	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`      // 启用状态,0表示全部
@@ -1964,13 +1811,6 @@ func (*PageChatQuickRepliesReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{27}
 }
 
-func (x *PageChatQuickRepliesReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *PageChatQuickRepliesReq) GetAgentId() int64 {
 	if x != nil {
 		return x.AgentId
@@ -2008,7 +1848,6 @@ func (x *PageChatQuickRepliesReq) GetPage() *common.PageReq {
 
 type ListEnabledChatQuickRepliesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
 	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID,0表示公共
 	CategoryId    int64                  `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"` // 分类ID,0表示全部
 	unknownFields protoimpl.UnknownFields
@@ -2045,13 +1884,6 @@ func (*ListEnabledChatQuickRepliesReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{28}
 }
 
-func (x *ListEnabledChatQuickRepliesReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *ListEnabledChatQuickRepliesReq) GetAgentId() int64 {
 	if x != nil {
 		return x.AgentId
@@ -2068,8 +1900,7 @@ func (x *ListEnabledChatQuickRepliesReq) GetCategoryId() int64 {
 
 type DeleteChatQuickReplyReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2104,13 +1935,6 @@ func (*DeleteChatQuickReplyReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *DeleteChatQuickReplyReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *DeleteChatQuickReplyReq) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -2120,7 +1944,6 @@ func (x *DeleteChatQuickReplyReq) GetId() int64 {
 
 type CreateChatCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`      // 客服商户ID
 	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID
 	CategoryCode  string                 `protobuf:"bytes,3,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"` // 分类编码
 	CategoryName  string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
@@ -2159,13 +1982,6 @@ func (x *CreateChatCategoryReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateChatCategoryReq.ProtoReflect.Descriptor instead.
 func (*CreateChatCategoryReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{30}
-}
-
-func (x *CreateChatCategoryReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
 }
 
 func (x *CreateChatCategoryReq) GetParentId() int64 {
@@ -2213,7 +2029,6 @@ func (x *CreateChatCategoryReq) GetRemark() string {
 type UpdateChatCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                        // 主键ID
-	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`      // 客服商户ID
 	ParentId      int64                  `protobuf:"varint,3,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID
 	CategoryName  string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
 	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
@@ -2260,13 +2075,6 @@ func (x *UpdateChatCategoryReq) GetId() int64 {
 	return 0
 }
 
-func (x *UpdateChatCategoryReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *UpdateChatCategoryReq) GetParentId() int64 {
 	if x != nil {
 		return x.ParentId
@@ -2304,8 +2112,7 @@ func (x *UpdateChatCategoryReq) GetRemark() string {
 
 type GetChatCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2340,13 +2147,6 @@ func (*GetChatCategoryReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{32}
 }
 
-func (x *GetChatCategoryReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *GetChatCategoryReq) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -2356,7 +2156,6 @@ func (x *GetChatCategoryReq) GetId() int64 {
 
 type PageChatCategoriesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`      // 客服商户ID,0表示全部
 	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID,0表示全部
 	CategoryCode  string                 `protobuf:"bytes,3,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"` // 分类编码
 	CategoryName  string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
@@ -2395,13 +2194,6 @@ func (x *PageChatCategoriesReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use PageChatCategoriesReq.ProtoReflect.Descriptor instead.
 func (*PageChatCategoriesReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{33}
-}
-
-func (x *PageChatCategoriesReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
 }
 
 func (x *PageChatCategoriesReq) GetParentId() int64 {
@@ -2448,7 +2240,6 @@ func (x *PageChatCategoriesReq) GetPage() *common.PageReq {
 
 type ListEnabledChatCategoriesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2483,17 +2274,9 @@ func (*ListEnabledChatCategoriesReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{34}
 }
 
-func (x *ListEnabledChatCategoriesReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 type DeleteChatCategoryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2528,13 +2311,6 @@ func (*DeleteChatCategoryReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{35}
 }
 
-func (x *DeleteChatCategoryReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *DeleteChatCategoryReq) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -2544,7 +2320,6 @@ func (x *DeleteChatCategoryReq) GetId() int64 {
 
 type CreateChatWorkOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`          // 客服商户ID
 	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`              // 关联会话编号
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                      // 用户ID
 	AgentId       int64                  `protobuf:"varint,4,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                   // 坐席ID
@@ -2588,13 +2363,6 @@ func (x *CreateChatWorkOrderReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateChatWorkOrderReq.ProtoReflect.Descriptor instead.
 func (*CreateChatWorkOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{36}
-}
-
-func (x *CreateChatWorkOrderReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
 }
 
 func (x *CreateChatWorkOrderReq) GetSessionNo() string {
@@ -2677,7 +2445,6 @@ func (x *CreateChatWorkOrderReq) GetRemark() string {
 type UpdateChatWorkOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                            // 主键ID
-	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`          // 客服商户ID
 	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                   // 坐席ID
 	GroupId       int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                   // 客服分组ID
 	Title         string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`                                       // 工单标题
@@ -2725,13 +2492,6 @@ func (*UpdateChatWorkOrderReq) Descriptor() ([]byte, []int) {
 func (x *UpdateChatWorkOrderReq) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *UpdateChatWorkOrderReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
 	}
 	return 0
 }
@@ -2809,7 +2569,6 @@ func (x *UpdateChatWorkOrderReq) GetRemark() string {
 type HandleChatWorkOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                        // 主键ID
-	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`      // 客服商户ID
 	HandlerId     int64                  `protobuf:"varint,3,opt,name=handler_id,json=handlerId,proto3" json:"handler_id,omitempty"`         // 处理人ID
 	Status        int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`                                // 状态:2处理中 3已完成 4已关闭
 	HandleResult  string                 `protobuf:"bytes,5,opt,name=handle_result,json=handleResult,proto3" json:"handle_result,omitempty"` // 处理结果
@@ -2855,13 +2614,6 @@ func (x *HandleChatWorkOrderReq) GetId() int64 {
 	return 0
 }
 
-func (x *HandleChatWorkOrderReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *HandleChatWorkOrderReq) GetHandlerId() int64 {
 	if x != nil {
 		return x.HandlerId
@@ -2892,7 +2644,6 @@ func (x *HandleChatWorkOrderReq) GetRemark() string {
 
 type GetChatWorkOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`     // 客服商户ID
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`                                       // 主键ID
 	WorkOrderNo   string                 `protobuf:"bytes,3,opt,name=work_order_no,json=workOrderNo,proto3" json:"work_order_no,omitempty"` // 工单编号
 	unknownFields protoimpl.UnknownFields
@@ -2929,13 +2680,6 @@ func (*GetChatWorkOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{39}
 }
 
-func (x *GetChatWorkOrderReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
 func (x *GetChatWorkOrderReq) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -2952,7 +2696,6 @@ func (x *GetChatWorkOrderReq) GetWorkOrderNo() string {
 
 type PageChatWorkOrdersReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`         // 客服商户ID,0表示全部
 	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`             // 会话编号
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                     // 用户ID,0表示全部
 	AgentId       int64                  `protobuf:"varint,4,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                  // 坐席ID,0表示全部
@@ -2995,13 +2738,6 @@ func (x *PageChatWorkOrdersReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use PageChatWorkOrdersReq.ProtoReflect.Descriptor instead.
 func (*PageChatWorkOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{40}
-}
-
-func (x *PageChatWorkOrdersReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
 }
 
 func (x *PageChatWorkOrdersReq) GetSessionNo() string {
@@ -3076,8 +2812,7 @@ func (x *PageChatWorkOrdersReq) GetPage() *common.PageReq {
 
 type DeleteChatWorkOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`                                   // 主键ID
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"` // 主键ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3110,13 +2845,6 @@ func (x *DeleteChatWorkOrderReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DeleteChatWorkOrderReq.ProtoReflect.Descriptor instead.
 func (*DeleteChatWorkOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{41}
-}
-
-func (x *DeleteChatWorkOrderReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
 }
 
 func (x *DeleteChatWorkOrderReq) GetId() int64 {
@@ -4026,10 +3754,8 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\x14ChatAdminProfileResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
 	"\x04user\x18\x02 \x01(\v2\x0e.chat.ChatUserR\x04user\x12%\n" +
-	"\x05agent\x18\x03 \x01(\v2\x0f.chat.ChatAgentR\x05agent\"\xeb\x01\n" +
-	"\x12CreateChatGroupReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x1d\n" +
+	"\x05agent\x18\x03 \x01(\v2\x0f.chat.ChatAgentR\x05agent\"\xd0\x01\n" +
+	"\x12CreateChatGroupReq\x12\x1d\n" +
 	"\n" +
 	"group_code\x18\x02 \x01(\tR\tgroupCode\x12\x1d\n" +
 	"\n" +
@@ -4037,30 +3763,22 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12(\n" +
 	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remark\"\xdc\x01\n" +
+	"\x06remark\x18\a \x01(\tR\x06remarkJ\x04\b\x01\x10\x02\"\xc1\x01\n" +
 	"\x12UpdateChatGroupReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
-	"merchantId\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
 	"group_name\x18\x03 \x01(\tR\tgroupName\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12(\n" +
 	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remark\"B\n" +
-	"\x0fGetChatGroupReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\x9d\x01\n" +
-	"\x11PageChatGroupsReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12(\n" +
+	"\x06remark\x18\a \x01(\tR\x06remarkJ\x04\b\x02\x10\x03\"!\n" +
+	"\x0fGetChatGroupReq\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"|\n" +
+	"\x11PageChatGroupsReq\x12(\n" +
 	"\aenabled\x18\x02 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x18\n" +
 	"\akeyword\x18\x03 \x01(\tR\akeyword\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"E\n" +
-	"\x12DeleteChatGroupReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x0e\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"$\n" +
+	"\x12DeleteChatGroupReq\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"\xec\x02\n" +
 	"\x12CreateChatAgentReq\x12*\n" +
 	"\x11max_session_count\x18\x06 \x01(\x05R\x0fmaxSessionCount\x12\x16\n" +
@@ -4073,35 +3791,25 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\bnickname\x18\r \x01(\tR\bnickname\x12\x16\n" +
 	"\x06mobile\x18\x0e \x01(\tR\x06mobile\x12\x14\n" +
 	"\x05email\x18\x0f \x01(\tR\x05email\x12(\n" +
-	"\aenabled\x18\x10 \x01(\x0e2\x0e.common.EnableR\aenabledJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03J\x04\b\x03\x10\x04J\x04\b\x04\x10\x05J\x04\b\x05\x10\x06J\x04\b\a\x10\b\"\xdf\x01\n" +
+	"\aenabled\x18\x10 \x01(\x0e2\x0e.common.EnableR\aenabledJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03J\x04\b\x03\x10\x04J\x04\b\x04\x10\x05J\x04\b\x05\x10\x06J\x04\b\a\x10\b\"\xc4\x01\n" +
 	"\x12UpdateChatAgentReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
-	"merchantId\x12*\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12*\n" +
 	"\x11max_session_count\x18\x05 \x01(\x05R\x0fmaxSessionCount\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\x12\x19\n" +
 	"\bgroup_id\x18\b \x01(\x03R\agroupId\x12'\n" +
-	"\x0fwelcome_message\x18\t \x01(\tR\x0ewelcomeMessageJ\x04\b\x03\x10\x04J\x04\b\x04\x10\x05J\x04\b\x06\x10\a\"\x85\x01\n" +
-	"\x18UpdateChatAgentStatusReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x19\n" +
+	"\x0fwelcome_message\x18\t \x01(\tR\x0ewelcomeMessageJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04J\x04\b\x04\x10\x05J\x04\b\x06\x10\a\"j\n" +
+	"\x18UpdateChatAgentStatusReq\x12\x19\n" +
 	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12-\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x15.chat.ChatAgentStatusR\x06status\"B\n" +
-	"\x0fGetChatAgentReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xc5\x01\n" +
-	"\x11PageChatAgentsReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12 \n" +
+	"\x06status\x18\x03 \x01(\x0e2\x15.chat.ChatAgentStatusR\x06statusJ\x04\b\x01\x10\x02\"!\n" +
+	"\x0fGetChatAgentReq\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"\xa4\x01\n" +
+	"\x11PageChatAgentsReq\x12 \n" +
 	"\fchat_user_id\x18\x02 \x01(\x03R\n" +
 	"chatUserId\x12-\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x15.chat.ChatAgentStatusR\x06status\x12\x19\n" +
 	"\bgroup_id\x18\x04 \x01(\x03R\agroupId\x12#\n" +
-	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"\xc5\x02\n" +
-	"\x13PageChatSessionsReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
+	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"\xa4\x02\n" +
+	"\x13PageChatSessionsReq\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
 	"\bagent_id\x18\x03 \x01(\x03R\aagentId\x12/\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x125\n" +
@@ -4109,15 +3817,11 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\bcategory\x18\x06 \x01(\tR\bcategory\x120\n" +
 	"\n" +
 	"time_range\x18\a \x01(\v2\x11.common.TimeRangeR\ttimeRange\x12#\n" +
-	"\x04page\x18\b \x01(\v2\x0f.common.PageReqR\x04page\"S\n" +
-	"\x11GetChatSessionReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x1d\n" +
+	"\x04page\x18\b \x01(\v2\x0f.common.PageReqR\x04page\"2\n" +
+	"\x11GetChatSessionReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x02 \x01(\tR\tsessionNo\"\xe6\x01\n" +
-	"\x14AssignChatSessionReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x1d\n" +
+	"session_no\x18\x02 \x01(\tR\tsessionNo\"\xc5\x01\n" +
+	"\x14AssignChatSessionReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x02 \x01(\tR\tsessionNo\x12\x1e\n" +
 	"\vto_agent_id\x18\x03 \x01(\x03R\ttoAgentId\x125\n" +
@@ -4125,10 +3829,8 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"assignType\x12\x1f\n" +
 	"\voperator_id\x18\x05 \x01(\x03R\n" +
 	"operatorId\x12\x16\n" +
-	"\x06reason\x18\x06 \x01(\tR\x06reason\"\xbe\x02\n" +
-	"\x13SendAgentMessageReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x19\n" +
+	"\x06reason\x18\x06 \x01(\tR\x06reason\"\x9d\x02\n" +
+	"\x13SendAgentMessageReq\x12\x19\n" +
 	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x03 \x01(\tR\tsessionNo\x128\n" +
@@ -4140,33 +3842,25 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\n" +
 	"media_mime\x18\b \x01(\tR\tmediaMime\x12\x1d\n" +
 	"\n" +
-	"media_size\x18\t \x01(\x03R\tmediaSize\"\xb1\x01\n" +
-	"\x13PageChatMessagesReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x1d\n" +
+	"media_size\x18\t \x01(\x03R\tmediaSize\"\x90\x01\n" +
+	"\x13PageChatMessagesReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x02 \x01(\tR\tsessionNo\x125\n" +
 	"\vsender_type\x18\x03 \x01(\x0e2\x14.chat.ChatSenderTypeR\n" +
 	"senderType\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"\x9d\x01\n" +
-	"\x18MarkAgentMessagesReadReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x19\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"|\n" +
+	"\x18MarkAgentMessagesReadReq\x12\x19\n" +
 	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x03 \x01(\tR\tsessionNo\x12&\n" +
-	"\x0flast_message_id\x18\x04 \x01(\x03R\rlastMessageId\"\x99\x01\n" +
-	"\x13CloseChatSessionReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x1d\n" +
+	"\x0flast_message_id\x18\x04 \x01(\x03R\rlastMessageId\"x\n" +
+	"\x13CloseChatSessionReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x02 \x01(\tR\tsessionNo\x12\x1f\n" +
 	"\voperator_id\x18\x03 \x01(\x03R\n" +
 	"operatorId\x12!\n" +
-	"\fclose_reason\x18\x04 \x01(\tR\vcloseReason\"\xfc\x01\n" +
-	"\x17CreateChatQuickReplyReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x19\n" +
+	"\fclose_reason\x18\x04 \x01(\tR\vcloseReason\"\xdb\x01\n" +
+	"\x17CreateChatQuickReplyReq\x12\x19\n" +
 	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1f\n" +
 	"\vcategory_id\x18\x03 \x01(\x03R\n" +
 	"categoryId\x12\x14\n" +
@@ -4174,11 +3868,9 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\acontent\x18\x05 \x01(\tR\acontent\x12(\n" +
 	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\a \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\b \x01(\tR\x06remark\"\x8c\x02\n" +
+	"\x06remark\x18\b \x01(\tR\x06remark\"\xf1\x01\n" +
 	"\x17UpdateChatQuickReplyReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
-	"merchantId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bagent_id\x18\x03 \x01(\x03R\aagentId\x12\x1f\n" +
 	"\vcategory_id\x18\x04 \x01(\x03R\n" +
 	"categoryId\x12\x14\n" +
@@ -4186,71 +3878,49 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\acontent\x18\x06 \x01(\tR\acontent\x12(\n" +
 	"\aenabled\x18\a \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\b \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\t \x01(\tR\x06remark\"G\n" +
-	"\x14GetChatQuickReplyReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xdf\x01\n" +
-	"\x17PageChatQuickRepliesReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x19\n" +
+	"\x06remark\x18\t \x01(\tR\x06remarkJ\x04\b\x02\x10\x03\"&\n" +
+	"\x14GetChatQuickReplyReq\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"\xbe\x01\n" +
+	"\x17PageChatQuickRepliesReq\x12\x19\n" +
 	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1f\n" +
 	"\vcategory_id\x18\x03 \x01(\x03R\n" +
 	"categoryId\x12(\n" +
 	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x18\n" +
 	"\akeyword\x18\x05 \x01(\tR\akeyword\x12#\n" +
-	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"}\n" +
-	"\x1eListEnabledChatQuickRepliesReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x19\n" +
+	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"\\\n" +
+	"\x1eListEnabledChatQuickRepliesReq\x12\x19\n" +
 	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1f\n" +
 	"\vcategory_id\x18\x03 \x01(\x03R\n" +
-	"categoryId\"J\n" +
-	"\x17DeleteChatQuickReplyReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xf5\x01\n" +
-	"\x15CreateChatCategoryReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x1b\n" +
+	"categoryId\"/\n" +
+	"\x17DeleteChatQuickReplyReq\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02idJ\x04\b\x01\x10\x02\"\xda\x01\n" +
+	"\x15CreateChatCategoryReq\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12#\n" +
 	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\x12#\n" +
 	"\rcategory_name\x18\x04 \x01(\tR\fcategoryName\x12(\n" +
 	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remark\"\xe0\x01\n" +
+	"\x06remark\x18\a \x01(\tR\x06remarkJ\x04\b\x01\x10\x02\"\xc5\x01\n" +
 	"\x15UpdateChatCategoryReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
-	"merchantId\x12\x1b\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x03 \x01(\x03R\bparentId\x12#\n" +
 	"\rcategory_name\x18\x04 \x01(\tR\fcategoryName\x12(\n" +
 	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remark\"E\n" +
-	"\x12GetChatCategoryReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\x88\x02\n" +
-	"\x15PageChatCategoriesReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x1b\n" +
+	"\x06remark\x18\a \x01(\tR\x06remarkJ\x04\b\x02\x10\x03\"$\n" +
+	"\x12GetChatCategoryReq\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"\xe7\x01\n" +
+	"\x15PageChatCategoriesReq\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12#\n" +
 	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\x12#\n" +
 	"\rcategory_name\x18\x04 \x01(\tR\fcategoryName\x12(\n" +
 	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x18\n" +
 	"\akeyword\x18\x06 \x01(\tR\akeyword\x12#\n" +
-	"\x04page\x18\a \x01(\v2\x0f.common.PageReqR\x04page\"?\n" +
-	"\x1cListEnabledChatCategoriesReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\"H\n" +
-	"\x15DeleteChatCategoryReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\x95\x03\n" +
-	"\x16CreateChatWorkOrderReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x1d\n" +
+	"\x04page\x18\a \x01(\v2\x0f.common.PageReqR\x04page\"\x1e\n" +
+	"\x1cListEnabledChatCategoriesReq\"-\n" +
+	"\x15DeleteChatCategoryReq\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02idJ\x04\b\x01\x10\x02\"\xfa\x02\n" +
+	"\x16CreateChatWorkOrderReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x02 \x01(\tR\tsessionNo\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
@@ -4263,11 +3933,9 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\rcontact_email\x18\n" +
 	" \x01(\tR\fcontactEmail\x125\n" +
 	"\bpriority\x18\v \x01(\x0e2\x19.chat.ChatSessionPriorityR\bpriority\x12\x16\n" +
-	"\x06remark\x18\f \x01(\tR\x06remark\"\x85\x03\n" +
+	"\x06remark\x18\f \x01(\tR\x06remarkJ\x04\b\x01\x10\x02\"\xea\x02\n" +
 	"\x16UpdateChatWorkOrderReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
-	"merchantId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bagent_id\x18\x03 \x01(\x03R\aagentId\x12\x19\n" +
 	"\bgroup_id\x18\x04 \x01(\x03R\agroupId\x12\x14\n" +
 	"\x05title\x18\x05 \x01(\tR\x05title\x12\x18\n" +
@@ -4278,24 +3946,18 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\bpriority\x18\n" +
 	" \x01(\x0e2\x19.chat.ChatSessionPriorityR\bpriority\x12\x16\n" +
 	"\x06status\x18\v \x01(\x05R\x06status\x12\x16\n" +
-	"\x06remark\x18\f \x01(\tR\x06remark\"\xbd\x01\n" +
+	"\x06remark\x18\f \x01(\tR\x06remarkJ\x04\b\x02\x10\x03\"\xa2\x01\n" +
 	"\x16HandleChatWorkOrderReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
-	"merchantId\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
 	"handler_id\x18\x03 \x01(\x03R\thandlerId\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\x05R\x06status\x12#\n" +
 	"\rhandle_result\x18\x05 \x01(\tR\fhandleResult\x12\x16\n" +
-	"\x06remark\x18\x06 \x01(\tR\x06remark\"j\n" +
-	"\x13GetChatWorkOrderReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x0e\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remarkJ\x04\b\x02\x10\x03\"I\n" +
+	"\x13GetChatWorkOrderReq\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\"\n" +
-	"\rwork_order_no\x18\x03 \x01(\tR\vworkOrderNo\"\x85\x03\n" +
-	"\x15PageChatWorkOrdersReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x1d\n" +
+	"\rwork_order_no\x18\x03 \x01(\tR\vworkOrderNo\"\xe4\x02\n" +
+	"\x15PageChatWorkOrdersReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x02 \x01(\tR\tsessionNo\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
@@ -4309,11 +3971,9 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\n" +
 	"time_range\x18\n" +
 	" \x01(\v2\x11.common.TimeRangeR\ttimeRange\x12#\n" +
-	"\x04page\x18\v \x01(\v2\x0f.common.PageReqR\x04page\"I\n" +
-	"\x16DeleteChatWorkOrderReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"_\n" +
+	"\x04page\x18\v \x01(\v2\x0f.common.PageReqR\x04page\".\n" +
+	"\x16DeleteChatWorkOrderReq\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02idJ\x04\b\x01\x10\x02\"_\n" +
 	"\x12PageChatAgentsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12#\n" +
 	"\x04data\x18\x02 \x03(\v2\x0f.chat.ChatAgentR\x04data\"_\n" +

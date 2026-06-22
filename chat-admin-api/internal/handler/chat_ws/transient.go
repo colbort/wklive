@@ -20,13 +20,12 @@ func isGuestSession(sessionNo string) bool {
 	return strings.HasPrefix(strings.TrimSpace(sessionNo), guestSessionPrefix)
 }
 
-func newTransientAgentMessage(merchantId int64, sessionNo string, userId int64, agentId int64, senderNickname string, data sendAgentMessagePayload) *chat.ChatMessage {
+func newTransientAgentMessage(sessionNo string, userId int64, agentId int64, senderNickname string, data sendAgentMessagePayload) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
 	senderNickname = firstNonEmpty(data.SenderNickname, senderNickname)
 	return &chat.ChatMessage{
 		MessageNo:  nextTransientNo("GM"),
 		SessionNo:  sessionNo,
-		MerchantId: merchantId,
 		UserId:     userId,
 		AgentId:    agentId,
 		SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,

@@ -27,24 +27,31 @@ func NewListMyChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 查询会话消息
 func (l *ListMyChatMessagesLogic) ListMyChatMessages(in *chat.ListMyChatMessagesReq) (*chat.ListChatMessagesResp, error) {
-	session, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	merchantID, userID, base, err := chatAppIdentityFromMetadata(l.ctx)
+	if base != nil {
+		return &chat.ListChatMessagesResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.ListChatMessagesResp{Base: errorBase(err)}, nil
+	}
+	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
 		return &chat.ListChatMessagesResp{Base: errorBase(err)}, nil
 	}
 	if base != nil {
 		return &chat.ListChatMessagesResp{Base: base}, nil
 	}
-	if session.UserId != in.GetUserId() {
+	if session.UserId != userID {
 		return &chat.ListChatMessagesResp{Base: notFoundBase("chat session not found")}, nil
 	}
 
 	cursor, limit := pageInput(in.GetPage())
-	model := l.svcCtx.ChatMessageFactory.New(in.GetMerchantId())
+	model := l.svcCtx.ChatMessageFactory.New(merchantID)
 	if model == nil {
 		return &chat.ListChatMessagesResp{Base: badBase("invalid merchant_id")}, nil
 	}
 	list, err := model.FindPage(l.ctx, models.ChatMessagePageFilter{
-		MerchantId: in.GetMerchantId(),
+		MerchantId: merchantID,
 		SessionNo:  session.SessionNo,
 		BeforeTime: cursor,
 	}, limit)

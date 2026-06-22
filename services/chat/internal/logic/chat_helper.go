@@ -11,6 +11,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/chat"
 	"wklive/proto/common"
 	"wklive/services/chat/internal/svc"
@@ -49,6 +50,44 @@ func errorBase(err error) *common.RespBase {
 
 func nowMillis() int64 {
 	return time.Now().UnixMilli()
+}
+
+func currentMerchantID(ctx context.Context, svcCtx *svc.ServiceContext) (int64, *common.RespBase, error) {
+	userID, err := utils.GetUserIdFromMd(ctx)
+	if err != nil || userID <= 0 {
+		return 0, badBase("invalid login session"), nil
+	}
+	user, err := svcCtx.ChatUserModel.FindOne(ctx, userID)
+	if err == models.ErrNotFound {
+		return 0, notFoundBase("chat user not found"), nil
+	}
+	if err != nil {
+		return 0, nil, err
+	}
+	if user.UserType != int64(chat.ChatUserType_CHAT_USER_TYPE_MERCHANT) {
+		return 0, badBase("merchant user is required"), nil
+	}
+	return user.MerchantId, nil, nil
+}
+
+func merchantIDFromMetadata(ctx context.Context) (int64, *common.RespBase, error) {
+	merchantID, err := utils.GetMerchantIdFromMd(ctx)
+	if err != nil || merchantID <= 0 {
+		return 0, badBase("merchant_id is required"), nil
+	}
+	return merchantID, nil, nil
+}
+
+func chatAppIdentityFromMetadata(ctx context.Context) (int64, int64, *common.RespBase, error) {
+	merchantID, base, err := merchantIDFromMetadata(ctx)
+	if base != nil || err != nil {
+		return 0, 0, base, err
+	}
+	userID, err := utils.GetUserIdFromMd(ctx)
+	if err != nil || userID == 0 {
+		return 0, 0, badBase("user_id is required"), nil
+	}
+	return merchantID, userID, nil, nil
 }
 
 func nextNo(prefix string) string {

@@ -105,3 +105,11 @@ func GetTenantCodeFromCtx(ctx context.Context) (string, error) {
 	}
 	return tenantCode, nil
 }
+
+func GetMerchantIdFromCtx(ctx context.Context) (int64, error) {
+	merchantId, ok := ctx.Value(CtxKeyMerchantId).(int64)
+	if !ok {
+		return -1, fmt.Errorf("%s not found in context", CtxKeyMerchantId)
+	}
+	return merchantId, nil
+}

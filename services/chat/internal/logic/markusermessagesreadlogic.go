@@ -25,17 +25,24 @@ func NewMarkUserMessagesReadLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 标记用户侧已读
 func (l *MarkUserMessagesReadLogic) MarkUserMessagesRead(in *chat.MarkUserMessagesReadReq) (*chat.AppMarkMessagesReadResp, error) {
-	session, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	merchantID, userID, base, err := chatAppIdentityFromMetadata(l.ctx)
+	if base != nil {
+		return &chat.AppMarkMessagesReadResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AppMarkMessagesReadResp{Base: errorBase(err)}, nil
+	}
+	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
 		return &chat.AppMarkMessagesReadResp{Base: errorBase(err)}, nil
 	}
 	if base != nil {
 		return &chat.AppMarkMessagesReadResp{Base: base}, nil
 	}
-	if session.UserId != in.GetUserId() {
+	if session.UserId != userID {
 		return &chat.AppMarkMessagesReadResp{Base: notFoundBase("chat session not found")}, nil
 	}
-	if err := markRead(l.ctx, l.svcCtx, session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, in.GetUserId()); err != nil {
+	if err := markRead(l.ctx, l.svcCtx, session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, userID); err != nil {
 		return &chat.AppMarkMessagesReadResp{Base: errorBase(err)}, nil
 	}
 	return &chat.AppMarkMessagesReadResp{Base: okBase()}, nil

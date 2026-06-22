@@ -25,14 +25,21 @@ func NewGetMyChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 查询会话详情
 func (l *GetMyChatSessionLogic) GetMyChatSession(in *chat.GetMyChatSessionReq) (*chat.AppChatSessionResp, error) {
-	session, base, err := getSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetSessionNo())
+	merchantID, userID, base, err := chatAppIdentityFromMetadata(l.ctx)
+	if base != nil {
+		return &chat.AppChatSessionResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
+	}
+	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
 		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
 	}
 	if base != nil {
 		return &chat.AppChatSessionResp{Base: base}, nil
 	}
-	if session.UserId != in.GetUserId() {
+	if session.UserId != userID {
 		return &chat.AppChatSessionResp{Base: notFoundBase("chat session not found")}, nil
 	}
 	return &chat.AppChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil

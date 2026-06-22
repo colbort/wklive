@@ -24,8 +24,6 @@ const (
 
 type OpenChatSessionReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId      int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                 // 客服商户ID
-	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                             // 用户ID
 	Source          ChatSessionSource      `protobuf:"varint,3,opt,name=source,proto3,enum=chat.ChatSessionSource" json:"source,omitempty"`               // 来源
 	Title           string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`                                              // 会话标题
 	Category        string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`                                        // 问题分类
@@ -64,20 +62,6 @@ func (x *OpenChatSessionReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use OpenChatSessionReq.ProtoReflect.Descriptor instead.
 func (*OpenChatSessionReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *OpenChatSessionReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *OpenChatSessionReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *OpenChatSessionReq) GetSource() ChatSessionSource {
@@ -124,8 +108,6 @@ func (x *OpenChatSessionReq) GetSenderAvatarUrl() string {
 
 type ListMyChatSessionsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`   // 客服商户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`               // 用户ID
 	Status        ChatSessionStatus      `protobuf:"varint,3,opt,name=status,proto3,enum=chat.ChatSessionStatus" json:"status,omitempty"` // 状态,0表示全部
 	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                  // 分页
 	unknownFields protoimpl.UnknownFields
@@ -162,20 +144,6 @@ func (*ListMyChatSessionsReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListMyChatSessionsReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *ListMyChatSessionsReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *ListMyChatSessionsReq) GetStatus() ChatSessionStatus {
 	if x != nil {
 		return x.Status
@@ -192,9 +160,7 @@ func (x *ListMyChatSessionsReq) GetPage() *common.PageReq {
 
 type GetMyChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 用户ID
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`     // 会话编号
+	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -229,20 +195,6 @@ func (*GetMyChatSessionReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetMyChatSessionReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *GetMyChatSessionReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *GetMyChatSessionReq) GetSessionNo() string {
 	if x != nil {
 		return x.SessionNo
@@ -252,8 +204,6 @@ func (x *GetMyChatSessionReq) GetSessionNo() string {
 
 type SendUserMessageReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId      int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                              // 客服商户ID
-	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                          // 用户ID
 	SessionNo       string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
 	MessageType     ChatMessageType        `protobuf:"varint,4,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
 	Content         string                 `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
@@ -295,20 +245,6 @@ func (x *SendUserMessageReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use SendUserMessageReq.ProtoReflect.Descriptor instead.
 func (*SendUserMessageReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *SendUserMessageReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *SendUserMessageReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *SendUserMessageReq) GetSessionNo() string {
@@ -376,10 +312,8 @@ func (x *SendUserMessageReq) GetSenderAvatarUrl() string {
 
 type ListMyChatMessagesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 用户ID
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`     // 会话编号
-	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                // 分页
+	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
+	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                            // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -414,20 +348,6 @@ func (*ListMyChatMessagesReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ListMyChatMessagesReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *ListMyChatMessagesReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *ListMyChatMessagesReq) GetSessionNo() string {
 	if x != nil {
 		return x.SessionNo
@@ -444,8 +364,6 @@ func (x *ListMyChatMessagesReq) GetPage() *common.PageReq {
 
 type MarkUserMessagesReadReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`            // 客服商户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                        // 用户ID
 	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                // 会话编号
 	LastMessageId int64                  `protobuf:"varint,4,opt,name=last_message_id,json=lastMessageId,proto3" json:"last_message_id,omitempty"` // 最后已读消息ID,0表示全部
 	unknownFields protoimpl.UnknownFields
@@ -482,20 +400,6 @@ func (*MarkUserMessagesReadReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *MarkUserMessagesReadReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *MarkUserMessagesReadReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 func (x *MarkUserMessagesReadReq) GetSessionNo() string {
 	if x != nil {
 		return x.SessionNo
@@ -512,8 +416,6 @@ func (x *MarkUserMessagesReadReq) GetLastMessageId() int64 {
 
 type CloseMyChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`   // 客服商户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`               // 用户ID
 	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`       // 会话编号
 	CloseReason   string                 `protobuf:"bytes,4,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"` // 结束原因
 	unknownFields protoimpl.UnknownFields
@@ -548,20 +450,6 @@ func (x *CloseMyChatSessionReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CloseMyChatSessionReq.ProtoReflect.Descriptor instead.
 func (*CloseMyChatSessionReq) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *CloseMyChatSessionReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *CloseMyChatSessionReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *CloseMyChatSessionReq) GetSessionNo() string {
@@ -834,33 +722,21 @@ var File_proto_chat_chat_app_proto protoreflect.FileDescriptor
 
 const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/chat/chat_app.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"\xab\x02\n" +
-	"\x12OpenChatSessionReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12/\n" +
+	"\x19proto/chat/chat_app.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"\xf7\x01\n" +
+	"\x12OpenChatSessionReq\x12/\n" +
 	"\x06source\x18\x03 \x01(\x0e2\x17.chat.ChatSessionSourceR\x06source\x12\x14\n" +
 	"\x05title\x18\x04 \x01(\tR\x05title\x12\x1a\n" +
 	"\bcategory\x18\x05 \x01(\tR\bcategory\x12#\n" +
 	"\rfirst_message\x18\x06 \x01(\tR\ffirstMessage\x12'\n" +
 	"\x0fsender_nickname\x18\a \x01(\tR\x0esenderNickname\x12*\n" +
-	"\x11sender_avatar_url\x18\b \x01(\tR\x0fsenderAvatarUrl\"\xa7\x01\n" +
-	"\x15ListMyChatSessionsReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12/\n" +
+	"\x11sender_avatar_url\x18\b \x01(\tR\x0fsenderAvatarUrlJ\x04\b\x01\x10\x02\"s\n" +
+	"\x15ListMyChatSessionsReq\x12/\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"n\n" +
-	"\x13GetMyChatSessionReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04pageJ\x04\b\x01\x10\x02\":\n" +
+	"\x13GetMyChatSessionReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x03 \x01(\tR\tsessionNo\"\x90\x03\n" +
-	"\x12SendUserMessageReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
+	"session_no\x18\x03 \x01(\tR\tsessionNoJ\x04\b\x01\x10\x02\"\xdc\x02\n" +
+	"\x12SendUserMessageReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x03 \x01(\tR\tsessionNo\x128\n" +
 	"\fmessage_type\x18\x04 \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
@@ -874,28 +750,19 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"media_size\x18\t \x01(\x03R\tmediaSize\x12'\n" +
 	"\x0fsender_nickname\x18\n" +
 	" \x01(\tR\x0esenderNickname\x12*\n" +
-	"\x11sender_avatar_url\x18\v \x01(\tR\x0fsenderAvatarUrl\"\x95\x01\n" +
-	"\x15ListMyChatMessagesReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\x11sender_avatar_url\x18\v \x01(\tR\x0fsenderAvatarUrlJ\x04\b\x01\x10\x02\"a\n" +
+	"\x15ListMyChatMessagesReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x03 \x01(\tR\tsessionNo\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"\x9a\x01\n" +
-	"\x17MarkUserMessagesReadReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04pageJ\x04\b\x01\x10\x02\"f\n" +
+	"\x17MarkUserMessagesReadReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x03 \x01(\tR\tsessionNo\x12&\n" +
-	"\x0flast_message_id\x18\x04 \x01(\x03R\rlastMessageId\"\x93\x01\n" +
-	"\x15CloseMyChatSessionReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\x0flast_message_id\x18\x04 \x01(\x03R\rlastMessageIdJ\x04\b\x01\x10\x02\"_\n" +
+	"\x15CloseMyChatSessionReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x03 \x01(\tR\tsessionNo\x12!\n" +
-	"\fclose_reason\x18\x04 \x01(\tR\vcloseReason\"c\n" +
+	"\fclose_reason\x18\x04 \x01(\tR\vcloseReasonJ\x04\b\x01\x10\x02\"c\n" +
 	"\x14ListChatSessionsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
 	"\x04data\x18\x02 \x03(\v2\x11.chat.ChatSessionR\x04data\"c\n" +

@@ -68,8 +68,6 @@ type ChatSessionResp struct {
 }
 
 type CloseMyChatSessionReq struct {
-	MerchantId  int64  `json:"merchantId"`
-	SessionNo   string `path:"sessionNo"`
 	CloseReason string `json:"closeReason,optional"`
 }
 
@@ -79,8 +77,6 @@ type IdReq struct {
 
 type ListChatMessagesReq struct {
 	PageReq
-	MerchantId int64  `form:"merchantId"`
-	SessionNo  string `path:"sessionNo"`
 }
 
 type ListChatMessagesResp struct {
@@ -100,14 +96,11 @@ type ListChatSessionsResp struct {
 }
 
 type MarkUserMessagesReadReq struct {
-	MerchantId    int64  `json:"merchantId"`
-	SessionNo     string `path:"sessionNo"`
 	LastMessageId int64  `json:"lastMessageId,optional"`
 	LastMessageNo string `json:"lastMessageNo,optional"`
 }
 
 type OpenChatSessionReq struct {
-	MerchantId      int64  `json:"merchantId"`
 	Source          int64  `json:"source,optional"` // 1 APP 2 Web/H5
 	Title           string `json:"title,optional"`
 	Category        string `json:"category,optional"`
@@ -132,8 +125,6 @@ type RespBase struct {
 }
 
 type SendUserMessageReq struct {
-	MerchantId      int64  `json:"merchantId"`
-	SessionNo       string `path:"sessionNo"`
 	MessageType     int64  `json:"messageType"`
 	Content         string `json:"content,optional"`
 	MediaUrl        string `json:"mediaUrl,optional"`
@@ -146,6 +137,4 @@ type SendUserMessageReq struct {
 }
 
 type SessionNoReq struct {
-	MerchantId int64  `form:"merchantId"`
-	SessionNo  string `path:"sessionNo"`
 }
