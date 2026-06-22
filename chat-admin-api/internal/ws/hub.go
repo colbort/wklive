@@ -12,6 +12,7 @@ type Hub struct {
 	unregister chan *Connection
 	broadcast  chan *chat.ChatMessageEvent
 	clients    map[*Connection]struct{}
+	transient  *transientSessionStore
 }
 
 func NewHub() *Hub {
@@ -20,6 +21,7 @@ func NewHub() *Hub {
 		unregister: make(chan *Connection),
 		broadcast:  make(chan *chat.ChatMessageEvent, 256),
 		clients:    make(map[*Connection]struct{}),
+		transient:  newTransientSessionStore(),
 	}
 }
 
@@ -34,13 +36,14 @@ func (h *Hub) Run() {
 				close(client.Send)
 			}
 		case event := <-h.broadcast:
+			h.transient.ApplyEvent(event)
 			payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
 			if err != nil {
 				logx.Errorf("marshal chat ws event failed: %v", err)
 				continue
 			}
 			for client := range h.clients {
-				if !client.Match(event.GetData()) {
+				if !client.MatchEvent(event) {
 					continue
 				}
 				select {
@@ -52,6 +55,13 @@ func (h *Hub) Run() {
 			}
 		}
 	}
+}
+
+func (h *Hub) ListTransientSessions(filter TransientSessionFilter) []*chat.ChatSession {
+	if h == nil || h.transient == nil {
+		return nil
+	}
+	return h.transient.List(filter)
 }
 
 func (h *Hub) Broadcast(event *chat.ChatMessageEvent) {

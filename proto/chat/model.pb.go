@@ -884,19 +884,265 @@ func (x *ChatMessage) GetSender() *ChatMessageSender {
 	return nil
 }
 
+// 客服排队信息
+type ChatQueueInfo struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	MerchantId          int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                              // 客服商户ID
+	SessionNo           string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
+	UserId              int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                          // 用户ID
+	GroupId             int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                                       // 客服分组ID
+	Position            int32                  `protobuf:"varint,5,opt,name=position,proto3" json:"position,omitempty"`                                                    // 当前会话排队位置,1表示下一位
+	WaitingCount        int32                  `protobuf:"varint,6,opt,name=waiting_count,json=waitingCount,proto3" json:"waiting_count,omitempty"`                        // 当前等待总数
+	EstimateWaitSeconds int64                  `protobuf:"varint,7,opt,name=estimate_wait_seconds,json=estimateWaitSeconds,proto3" json:"estimate_wait_seconds,omitempty"` // 预计等待秒数
+	Message             string                 `protobuf:"bytes,8,opt,name=message,proto3" json:"message,omitempty"`                                                       // 给用户展示的排队提示
+	UpdateTimes         int64                  `protobuf:"varint,9,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                           // 更新时间戳(毫秒)
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *ChatQueueInfo) Reset() {
+	*x = ChatQueueInfo{}
+	mi := &file_proto_chat_model_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatQueueInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatQueueInfo) ProtoMessage() {}
+
+func (x *ChatQueueInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatQueueInfo.ProtoReflect.Descriptor instead.
+func (*ChatQueueInfo) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ChatQueueInfo) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *ChatQueueInfo) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *ChatQueueInfo) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ChatQueueInfo) GetGroupId() int64 {
+	if x != nil {
+		return x.GroupId
+	}
+	return 0
+}
+
+func (x *ChatQueueInfo) GetPosition() int32 {
+	if x != nil {
+		return x.Position
+	}
+	return 0
+}
+
+func (x *ChatQueueInfo) GetWaitingCount() int32 {
+	if x != nil {
+		return x.WaitingCount
+	}
+	return 0
+}
+
+func (x *ChatQueueInfo) GetEstimateWaitSeconds() int64 {
+	if x != nil {
+		return x.EstimateWaitSeconds
+	}
+	return 0
+}
+
+func (x *ChatQueueInfo) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *ChatQueueInfo) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+// 客服会话事件
+type ChatSessionEvent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                              // 会话编号
+	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                          // 客服商户ID
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                      // 用户ID
+	AgentId       int64                  `protobuf:"varint,4,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                                   // 坐席ID
+	OperatorId    int64                  `protobuf:"varint,5,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`                          // 操作人ID
+	Status        ChatSessionStatus      `protobuf:"varint,6,opt,name=status,proto3,enum=chat.ChatSessionStatus" json:"status,omitempty"`                        // 事件后的会话状态
+	AssignType    ChatAssignType         `protobuf:"varint,7,opt,name=assign_type,json=assignType,proto3,enum=chat.ChatAssignType" json:"assign_type,omitempty"` // 分配方式
+	Reason        string                 `protobuf:"bytes,8,opt,name=reason,proto3" json:"reason,omitempty"`                                                     // 事件原因
+	Message       string                 `protobuf:"bytes,9,opt,name=message,proto3" json:"message,omitempty"`                                                   // 给前端展示的系统提示
+	Session       *ChatSession           `protobuf:"bytes,10,opt,name=session,proto3" json:"session,omitempty"`                                                  // 会话快照
+	Queue         *ChatQueueInfo         `protobuf:"bytes,11,opt,name=queue,proto3" json:"queue,omitempty"`                                                      // 排队信息
+	CreatedAt     int64                  `protobuf:"varint,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`                            // 事件创建时间戳(毫秒)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatSessionEvent) Reset() {
+	*x = ChatSessionEvent{}
+	mi := &file_proto_chat_model_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatSessionEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatSessionEvent) ProtoMessage() {}
+
+func (x *ChatSessionEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatSessionEvent.ProtoReflect.Descriptor instead.
+func (*ChatSessionEvent) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ChatSessionEvent) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *ChatSessionEvent) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *ChatSessionEvent) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ChatSessionEvent) GetAgentId() int64 {
+	if x != nil {
+		return x.AgentId
+	}
+	return 0
+}
+
+func (x *ChatSessionEvent) GetOperatorId() int64 {
+	if x != nil {
+		return x.OperatorId
+	}
+	return 0
+}
+
+func (x *ChatSessionEvent) GetStatus() ChatSessionStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN
+}
+
+func (x *ChatSessionEvent) GetAssignType() ChatAssignType {
+	if x != nil {
+		return x.AssignType
+	}
+	return ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN
+}
+
+func (x *ChatSessionEvent) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *ChatSessionEvent) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *ChatSessionEvent) GetSession() *ChatSession {
+	if x != nil {
+		return x.Session
+	}
+	return nil
+}
+
+func (x *ChatSessionEvent) GetQueue() *ChatQueueInfo {
+	if x != nil {
+		return x.Queue
+	}
+	return nil
+}
+
+func (x *ChatSessionEvent) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
 // 客服消息事件,用于消息总线/WebSocket推送
 type ChatMessageEvent struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`                             // 事件类型,例如 chat.message
-	Data          *ChatMessage           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                             // 消息内容
-	CreatedAt     int64                  `protobuf:"varint,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"` // 事件创建时间戳(毫秒)
+	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`                                     // 事件类型,例如 chat.message
+	Data          *ChatMessage           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`                                     // 消息内容
+	CreatedAt     int64                  `protobuf:"varint,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`         // 事件创建时间戳(毫秒)
+	Session       *ChatSession           `protobuf:"bytes,4,opt,name=session,proto3" json:"session,omitempty"`                               // 会话快照
+	SessionEvent  *ChatSessionEvent      `protobuf:"bytes,5,opt,name=session_event,json=sessionEvent,proto3" json:"session_event,omitempty"` // 会话事件
+	Queue         *ChatQueueInfo         `protobuf:"bytes,6,opt,name=queue,proto3" json:"queue,omitempty"`                                   // 排队信息
+	Base          *common.RespBase       `protobuf:"bytes,7,opt,name=base,proto3" json:"base,omitempty"`                                     // 业务响应
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ChatMessageEvent) Reset() {
 	*x = ChatMessageEvent{}
-	mi := &file_proto_chat_model_proto_msgTypes[6]
+	mi := &file_proto_chat_model_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -908,7 +1154,7 @@ func (x *ChatMessageEvent) String() string {
 func (*ChatMessageEvent) ProtoMessage() {}
 
 func (x *ChatMessageEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[6]
+	mi := &file_proto_chat_model_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -921,7 +1167,7 @@ func (x *ChatMessageEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatMessageEvent.ProtoReflect.Descriptor instead.
 func (*ChatMessageEvent) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{6}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ChatMessageEvent) GetType() string {
@@ -939,6 +1185,688 @@ func (x *ChatMessageEvent) GetData() *ChatMessage {
 }
 
 func (x *ChatMessageEvent) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+func (x *ChatMessageEvent) GetSession() *ChatSession {
+	if x != nil {
+		return x.Session
+	}
+	return nil
+}
+
+func (x *ChatMessageEvent) GetSessionEvent() *ChatSessionEvent {
+	if x != nil {
+		return x.SessionEvent
+	}
+	return nil
+}
+
+func (x *ChatMessageEvent) GetQueue() *ChatQueueInfo {
+	if x != nil {
+		return x.Queue
+	}
+	return nil
+}
+
+func (x *ChatMessageEvent) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+// WebSocket连接成功消息
+type ChatWsConnected struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`                          // 提示文案
+	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 用户ID
+	Username      string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`                        // 用户名
+	SessionNo     string                 `protobuf:"bytes,5,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`     // 会话编号
+	Temporary     bool                   `protobuf:"varint,6,opt,name=temporary,proto3" json:"temporary,omitempty"`                     // 是否临时游客会话
+	Session       *ChatSession           `protobuf:"bytes,7,opt,name=session,proto3" json:"session,omitempty"`                          // 会话快照
+	Queue         *ChatQueueInfo         `protobuf:"bytes,8,opt,name=queue,proto3" json:"queue,omitempty"`                              // 排队信息
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatWsConnected) Reset() {
+	*x = ChatWsConnected{}
+	mi := &file_proto_chat_model_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatWsConnected) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatWsConnected) ProtoMessage() {}
+
+func (x *ChatWsConnected) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatWsConnected.ProtoReflect.Descriptor instead.
+func (*ChatWsConnected) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ChatWsConnected) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *ChatWsConnected) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *ChatWsConnected) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ChatWsConnected) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *ChatWsConnected) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *ChatWsConnected) GetTemporary() bool {
+	if x != nil {
+		return x.Temporary
+	}
+	return false
+}
+
+func (x *ChatWsConnected) GetSession() *ChatSession {
+	if x != nil {
+		return x.Session
+	}
+	return nil
+}
+
+func (x *ChatWsConnected) GetQueue() *ChatQueueInfo {
+	if x != nil {
+		return x.Queue
+	}
+	return nil
+}
+
+// 用户侧WebSocket发送消息
+type ChatWsUserMessageReq struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	SessionNo       string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号,为空时使用当前连接会话
+	MessageType     ChatMessageType        `protobuf:"varint,2,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
+	Content         string                 `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
+	MediaUrl        string                 `protobuf:"bytes,4,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                     // 媒体/文件URL
+	MediaName       string                 `protobuf:"bytes,5,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                  // 文件名
+	MediaMime       string                 `protobuf:"bytes,6,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                  // MIME类型
+	MediaSize       int64                  `protobuf:"varint,7,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                 // 文件大小(bytes)
+	SenderNickname  string                 `protobuf:"bytes,8,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`                   // 用户昵称快照
+	SenderAvatarUrl string                 `protobuf:"bytes,9,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"`              // 用户头像快照
+	ClientMsgNo     string                 `protobuf:"bytes,10,opt,name=client_msg_no,json=clientMsgNo,proto3" json:"client_msg_no,omitempty"`                         // 客户端消息编号,用于幂等
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ChatWsUserMessageReq) Reset() {
+	*x = ChatWsUserMessageReq{}
+	mi := &file_proto_chat_model_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatWsUserMessageReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatWsUserMessageReq) ProtoMessage() {}
+
+func (x *ChatWsUserMessageReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatWsUserMessageReq.ProtoReflect.Descriptor instead.
+func (*ChatWsUserMessageReq) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ChatWsUserMessageReq) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *ChatWsUserMessageReq) GetMessageType() ChatMessageType {
+	if x != nil {
+		return x.MessageType
+	}
+	return ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN
+}
+
+func (x *ChatWsUserMessageReq) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *ChatWsUserMessageReq) GetMediaUrl() string {
+	if x != nil {
+		return x.MediaUrl
+	}
+	return ""
+}
+
+func (x *ChatWsUserMessageReq) GetMediaName() string {
+	if x != nil {
+		return x.MediaName
+	}
+	return ""
+}
+
+func (x *ChatWsUserMessageReq) GetMediaMime() string {
+	if x != nil {
+		return x.MediaMime
+	}
+	return ""
+}
+
+func (x *ChatWsUserMessageReq) GetMediaSize() int64 {
+	if x != nil {
+		return x.MediaSize
+	}
+	return 0
+}
+
+func (x *ChatWsUserMessageReq) GetSenderNickname() string {
+	if x != nil {
+		return x.SenderNickname
+	}
+	return ""
+}
+
+func (x *ChatWsUserMessageReq) GetSenderAvatarUrl() string {
+	if x != nil {
+		return x.SenderAvatarUrl
+	}
+	return ""
+}
+
+func (x *ChatWsUserMessageReq) GetClientMsgNo() string {
+	if x != nil {
+		return x.ClientMsgNo
+	}
+	return ""
+}
+
+// 坐席侧WebSocket发送消息
+type ChatWsAgentMessageReq struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	MerchantId      int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                              // 客服商户ID
+	AgentId         int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                                       // 坐席ID
+	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                          // 用户ID
+	SessionNo       string                 `protobuf:"bytes,4,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
+	MessageType     ChatMessageType        `protobuf:"varint,5,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
+	Content         string                 `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
+	MediaUrl        string                 `protobuf:"bytes,7,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                     // 媒体/文件URL
+	MediaName       string                 `protobuf:"bytes,8,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                  // 文件名
+	MediaMime       string                 `protobuf:"bytes,9,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                  // MIME类型
+	MediaSize       int64                  `protobuf:"varint,10,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                // 文件大小(bytes)
+	SenderNickname  string                 `protobuf:"bytes,11,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`                  // 坐席昵称快照
+	SenderAvatarUrl string                 `protobuf:"bytes,12,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"`             // 坐席头像快照
+	ClientMsgNo     string                 `protobuf:"bytes,13,opt,name=client_msg_no,json=clientMsgNo,proto3" json:"client_msg_no,omitempty"`                         // 客户端消息编号,用于幂等
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ChatWsAgentMessageReq) Reset() {
+	*x = ChatWsAgentMessageReq{}
+	mi := &file_proto_chat_model_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatWsAgentMessageReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatWsAgentMessageReq) ProtoMessage() {}
+
+func (x *ChatWsAgentMessageReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatWsAgentMessageReq.ProtoReflect.Descriptor instead.
+func (*ChatWsAgentMessageReq) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ChatWsAgentMessageReq) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *ChatWsAgentMessageReq) GetAgentId() int64 {
+	if x != nil {
+		return x.AgentId
+	}
+	return 0
+}
+
+func (x *ChatWsAgentMessageReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ChatWsAgentMessageReq) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *ChatWsAgentMessageReq) GetMessageType() ChatMessageType {
+	if x != nil {
+		return x.MessageType
+	}
+	return ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN
+}
+
+func (x *ChatWsAgentMessageReq) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *ChatWsAgentMessageReq) GetMediaUrl() string {
+	if x != nil {
+		return x.MediaUrl
+	}
+	return ""
+}
+
+func (x *ChatWsAgentMessageReq) GetMediaName() string {
+	if x != nil {
+		return x.MediaName
+	}
+	return ""
+}
+
+func (x *ChatWsAgentMessageReq) GetMediaMime() string {
+	if x != nil {
+		return x.MediaMime
+	}
+	return ""
+}
+
+func (x *ChatWsAgentMessageReq) GetMediaSize() int64 {
+	if x != nil {
+		return x.MediaSize
+	}
+	return 0
+}
+
+func (x *ChatWsAgentMessageReq) GetSenderNickname() string {
+	if x != nil {
+		return x.SenderNickname
+	}
+	return ""
+}
+
+func (x *ChatWsAgentMessageReq) GetSenderAvatarUrl() string {
+	if x != nil {
+		return x.SenderAvatarUrl
+	}
+	return ""
+}
+
+func (x *ChatWsAgentMessageReq) GetClientMsgNo() string {
+	if x != nil {
+		return x.ClientMsgNo
+	}
+	return ""
+}
+
+// 坐席侧WebSocket接待会话
+type ChatWsAcceptSessionReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
+	AgentId       int64                  `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 用户ID
+	SessionNo     string                 `protobuf:"bytes,4,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`     // 会话编号
+	Reason        string                 `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`                            // 接待原因
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatWsAcceptSessionReq) Reset() {
+	*x = ChatWsAcceptSessionReq{}
+	mi := &file_proto_chat_model_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatWsAcceptSessionReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatWsAcceptSessionReq) ProtoMessage() {}
+
+func (x *ChatWsAcceptSessionReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatWsAcceptSessionReq.ProtoReflect.Descriptor instead.
+func (*ChatWsAcceptSessionReq) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ChatWsAcceptSessionReq) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *ChatWsAcceptSessionReq) GetAgentId() int64 {
+	if x != nil {
+		return x.AgentId
+	}
+	return 0
+}
+
+func (x *ChatWsAcceptSessionReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ChatWsAcceptSessionReq) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *ChatWsAcceptSessionReq) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+// WebSocket关闭会话
+type ChatWsCloseSessionReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`   // 客服商户ID
+	OperatorId    int64                  `protobuf:"varint,2,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`   // 操作人ID
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`               // 用户ID
+	AgentId       int64                  `protobuf:"varint,4,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`            // 坐席ID
+	SessionNo     string                 `protobuf:"bytes,5,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`       // 会话编号
+	CloseReason   string                 `protobuf:"bytes,6,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"` // 结束原因
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatWsCloseSessionReq) Reset() {
+	*x = ChatWsCloseSessionReq{}
+	mi := &file_proto_chat_model_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatWsCloseSessionReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatWsCloseSessionReq) ProtoMessage() {}
+
+func (x *ChatWsCloseSessionReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatWsCloseSessionReq.ProtoReflect.Descriptor instead.
+func (*ChatWsCloseSessionReq) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ChatWsCloseSessionReq) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *ChatWsCloseSessionReq) GetOperatorId() int64 {
+	if x != nil {
+		return x.OperatorId
+	}
+	return 0
+}
+
+func (x *ChatWsCloseSessionReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ChatWsCloseSessionReq) GetAgentId() int64 {
+	if x != nil {
+		return x.AgentId
+	}
+	return 0
+}
+
+func (x *ChatWsCloseSessionReq) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *ChatWsCloseSessionReq) GetCloseReason() string {
+	if x != nil {
+		return x.CloseReason
+	}
+	return ""
+}
+
+// WebSocket通用消息,用于规范前后端JSON结构
+type ChatWsMessage struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Type          string                  `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`                                        // 事件类型
+	Base          *common.RespBase        `protobuf:"bytes,2,opt,name=base,proto3" json:"base,omitempty"`                                        // 响应状态
+	Connected     *ChatWsConnected        `protobuf:"bytes,3,opt,name=connected,proto3" json:"connected,omitempty"`                              // 连接成功数据
+	UserMessage   *ChatWsUserMessageReq   `protobuf:"bytes,4,opt,name=user_message,json=userMessage,proto3" json:"user_message,omitempty"`       // 用户发送消息请求
+	AgentMessage  *ChatWsAgentMessageReq  `protobuf:"bytes,5,opt,name=agent_message,json=agentMessage,proto3" json:"agent_message,omitempty"`    // 坐席发送消息请求
+	AcceptSession *ChatWsAcceptSessionReq `protobuf:"bytes,6,opt,name=accept_session,json=acceptSession,proto3" json:"accept_session,omitempty"` // 接待请求
+	CloseSession  *ChatWsCloseSessionReq  `protobuf:"bytes,7,opt,name=close_session,json=closeSession,proto3" json:"close_session,omitempty"`    // 关闭会话请求
+	Message       *ChatMessage            `protobuf:"bytes,8,opt,name=message,proto3" json:"message,omitempty"`                                  // 消息数据
+	Session       *ChatSession            `protobuf:"bytes,9,opt,name=session,proto3" json:"session,omitempty"`                                  // 会话数据
+	SessionEvent  *ChatSessionEvent       `protobuf:"bytes,10,opt,name=session_event,json=sessionEvent,proto3" json:"session_event,omitempty"`   // 会话事件
+	Queue         *ChatQueueInfo          `protobuf:"bytes,11,opt,name=queue,proto3" json:"queue,omitempty"`                                     // 排队信息
+	CreatedAt     int64                   `protobuf:"varint,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`           // 事件创建时间戳(毫秒)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatWsMessage) Reset() {
+	*x = ChatWsMessage{}
+	mi := &file_proto_chat_model_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatWsMessage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatWsMessage) ProtoMessage() {}
+
+func (x *ChatWsMessage) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatWsMessage.ProtoReflect.Descriptor instead.
+func (*ChatWsMessage) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ChatWsMessage) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *ChatWsMessage) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *ChatWsMessage) GetConnected() *ChatWsConnected {
+	if x != nil {
+		return x.Connected
+	}
+	return nil
+}
+
+func (x *ChatWsMessage) GetUserMessage() *ChatWsUserMessageReq {
+	if x != nil {
+		return x.UserMessage
+	}
+	return nil
+}
+
+func (x *ChatWsMessage) GetAgentMessage() *ChatWsAgentMessageReq {
+	if x != nil {
+		return x.AgentMessage
+	}
+	return nil
+}
+
+func (x *ChatWsMessage) GetAcceptSession() *ChatWsAcceptSessionReq {
+	if x != nil {
+		return x.AcceptSession
+	}
+	return nil
+}
+
+func (x *ChatWsMessage) GetCloseSession() *ChatWsCloseSessionReq {
+	if x != nil {
+		return x.CloseSession
+	}
+	return nil
+}
+
+func (x *ChatWsMessage) GetMessage() *ChatMessage {
+	if x != nil {
+		return x.Message
+	}
+	return nil
+}
+
+func (x *ChatWsMessage) GetSession() *ChatSession {
+	if x != nil {
+		return x.Session
+	}
+	return nil
+}
+
+func (x *ChatWsMessage) GetSessionEvent() *ChatSessionEvent {
+	if x != nil {
+		return x.SessionEvent
+	}
+	return nil
+}
+
+func (x *ChatWsMessage) GetQueue() *ChatQueueInfo {
+	if x != nil {
+		return x.Queue
+	}
+	return nil
+}
+
+func (x *ChatWsMessage) GetCreatedAt() int64 {
 	if x != nil {
 		return x.CreatedAt
 	}
@@ -964,7 +1892,7 @@ type ChatAssignment struct {
 
 func (x *ChatAssignment) Reset() {
 	*x = ChatAssignment{}
-	mi := &file_proto_chat_model_proto_msgTypes[7]
+	mi := &file_proto_chat_model_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -976,7 +1904,7 @@ func (x *ChatAssignment) String() string {
 func (*ChatAssignment) ProtoMessage() {}
 
 func (x *ChatAssignment) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[7]
+	mi := &file_proto_chat_model_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -989,7 +1917,7 @@ func (x *ChatAssignment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatAssignment.ProtoReflect.Descriptor instead.
 func (*ChatAssignment) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{7}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ChatAssignment) GetId() int64 {
@@ -1082,7 +2010,7 @@ type ChatQuickReply struct {
 
 func (x *ChatQuickReply) Reset() {
 	*x = ChatQuickReply{}
-	mi := &file_proto_chat_model_proto_msgTypes[8]
+	mi := &file_proto_chat_model_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1094,7 +2022,7 @@ func (x *ChatQuickReply) String() string {
 func (*ChatQuickReply) ProtoMessage() {}
 
 func (x *ChatQuickReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[8]
+	mi := &file_proto_chat_model_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1107,7 +2035,7 @@ func (x *ChatQuickReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatQuickReply.ProtoReflect.Descriptor instead.
 func (*ChatQuickReply) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{8}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ChatQuickReply) GetId() int64 {
@@ -1206,7 +2134,7 @@ type ChatCategory struct {
 
 func (x *ChatCategory) Reset() {
 	*x = ChatCategory{}
-	mi := &file_proto_chat_model_proto_msgTypes[9]
+	mi := &file_proto_chat_model_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1218,7 +2146,7 @@ func (x *ChatCategory) String() string {
 func (*ChatCategory) ProtoMessage() {}
 
 func (x *ChatCategory) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[9]
+	mi := &file_proto_chat_model_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1231,7 +2159,7 @@ func (x *ChatCategory) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatCategory.ProtoReflect.Descriptor instead.
 func (*ChatCategory) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{9}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ChatCategory) GetId() int64 {
@@ -1323,7 +2251,7 @@ type ChatSatisfaction struct {
 
 func (x *ChatSatisfaction) Reset() {
 	*x = ChatSatisfaction{}
-	mi := &file_proto_chat_model_proto_msgTypes[10]
+	mi := &file_proto_chat_model_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1335,7 +2263,7 @@ func (x *ChatSatisfaction) String() string {
 func (*ChatSatisfaction) ProtoMessage() {}
 
 func (x *ChatSatisfaction) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[10]
+	mi := &file_proto_chat_model_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1348,7 +2276,7 @@ func (x *ChatSatisfaction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatSatisfaction.ProtoReflect.Descriptor instead.
 func (*ChatSatisfaction) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{10}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ChatSatisfaction) GetId() int64 {
@@ -1440,7 +2368,7 @@ type ChatReadCursor struct {
 
 func (x *ChatReadCursor) Reset() {
 	*x = ChatReadCursor{}
-	mi := &file_proto_chat_model_proto_msgTypes[11]
+	mi := &file_proto_chat_model_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1452,7 +2380,7 @@ func (x *ChatReadCursor) String() string {
 func (*ChatReadCursor) ProtoMessage() {}
 
 func (x *ChatReadCursor) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[11]
+	mi := &file_proto_chat_model_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1465,7 +2393,7 @@ func (x *ChatReadCursor) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatReadCursor.ProtoReflect.Descriptor instead.
 func (*ChatReadCursor) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{11}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ChatReadCursor) GetId() int64 {
@@ -1557,7 +2485,7 @@ type ChatGroup struct {
 
 func (x *ChatGroup) Reset() {
 	*x = ChatGroup{}
-	mi := &file_proto_chat_model_proto_msgTypes[12]
+	mi := &file_proto_chat_model_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1569,7 +2497,7 @@ func (x *ChatGroup) String() string {
 func (*ChatGroup) ProtoMessage() {}
 
 func (x *ChatGroup) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[12]
+	mi := &file_proto_chat_model_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1582,7 +2510,7 @@ func (x *ChatGroup) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatGroup.ProtoReflect.Descriptor instead.
 func (*ChatGroup) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{12}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ChatGroup) GetId() int64 {
@@ -1684,7 +2612,7 @@ type ChatWorkOrder struct {
 
 func (x *ChatWorkOrder) Reset() {
 	*x = ChatWorkOrder{}
-	mi := &file_proto_chat_model_proto_msgTypes[13]
+	mi := &file_proto_chat_model_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1696,7 +2624,7 @@ func (x *ChatWorkOrder) String() string {
 func (*ChatWorkOrder) ProtoMessage() {}
 
 func (x *ChatWorkOrder) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[13]
+	mi := &file_proto_chat_model_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1709,7 +2637,7 @@ func (x *ChatWorkOrder) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatWorkOrder.ProtoReflect.Descriptor instead.
 func (*ChatWorkOrder) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{13}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ChatWorkOrder) GetId() int64 {
@@ -1963,12 +2891,127 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\tread_time\x18\x10 \x01(\x03R\breadTime\x12!\n" +
 	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x12 \x01(\x03R\vupdateTimes\x12/\n" +
-	"\x06sender\x18\x13 \x01(\v2\x17.chat.ChatMessageSenderR\x06sender\"l\n" +
+	"\x06sender\x18\x13 \x01(\v2\x17.chat.ChatMessageSenderR\x06sender\"\xb5\x02\n" +
+	"\rChatQueueInfo\x12\x1f\n" +
+	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
+	"merchantId\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x02 \x01(\tR\tsessionNo\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bgroup_id\x18\x04 \x01(\x03R\agroupId\x12\x1a\n" +
+	"\bposition\x18\x05 \x01(\x05R\bposition\x12#\n" +
+	"\rwaiting_count\x18\x06 \x01(\x05R\fwaitingCount\x122\n" +
+	"\x15estimate_wait_seconds\x18\a \x01(\x03R\x13estimateWaitSeconds\x12\x18\n" +
+	"\amessage\x18\b \x01(\tR\amessage\x12!\n" +
+	"\fupdate_times\x18\t \x01(\x03R\vupdateTimes\"\xb8\x03\n" +
+	"\x10ChatSessionEvent\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x1f\n" +
+	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
+	"merchantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bagent_id\x18\x04 \x01(\x03R\aagentId\x12\x1f\n" +
+	"\voperator_id\x18\x05 \x01(\x03R\n" +
+	"operatorId\x12/\n" +
+	"\x06status\x18\x06 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x125\n" +
+	"\vassign_type\x18\a \x01(\x0e2\x14.chat.ChatAssignTypeR\n" +
+	"assignType\x12\x16\n" +
+	"\x06reason\x18\b \x01(\tR\x06reason\x12\x18\n" +
+	"\amessage\x18\t \x01(\tR\amessage\x12+\n" +
+	"\asession\x18\n" +
+	" \x01(\v2\x11.chat.ChatSessionR\asession\x12)\n" +
+	"\x05queue\x18\v \x01(\v2\x13.chat.ChatQueueInfoR\x05queue\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\f \x01(\x03R\tcreatedAt\"\xa7\x02\n" +
 	"\x10ChatMessageEvent\x12\x12\n" +
 	"\x04type\x18\x01 \x01(\tR\x04type\x12%\n" +
 	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatMessageR\x04data\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x03 \x01(\x03R\tcreatedAt\"\xda\x02\n" +
+	"created_at\x18\x03 \x01(\x03R\tcreatedAt\x12+\n" +
+	"\asession\x18\x04 \x01(\v2\x11.chat.ChatSessionR\asession\x12;\n" +
+	"\rsession_event\x18\x05 \x01(\v2\x16.chat.ChatSessionEventR\fsessionEvent\x12)\n" +
+	"\x05queue\x18\x06 \x01(\v2\x13.chat.ChatQueueInfoR\x05queue\x12$\n" +
+	"\x04base\x18\a \x01(\v2\x10.common.RespBaseR\x04base\"\x96\x02\n" +
+	"\x0fChatWsConnected\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\x12\x1f\n" +
+	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
+	"merchantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1a\n" +
+	"\busername\x18\x04 \x01(\tR\busername\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x05 \x01(\tR\tsessionNo\x12\x1c\n" +
+	"\ttemporary\x18\x06 \x01(\bR\ttemporary\x12+\n" +
+	"\asession\x18\a \x01(\v2\x11.chat.ChatSessionR\asession\x12)\n" +
+	"\x05queue\x18\b \x01(\v2\x13.chat.ChatQueueInfoR\x05queue\"\xfc\x02\n" +
+	"\x14ChatWsUserMessageReq\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x128\n" +
+	"\fmessage_type\x18\x02 \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
+	"\acontent\x18\x03 \x01(\tR\acontent\x12\x1b\n" +
+	"\tmedia_url\x18\x04 \x01(\tR\bmediaUrl\x12\x1d\n" +
+	"\n" +
+	"media_name\x18\x05 \x01(\tR\tmediaName\x12\x1d\n" +
+	"\n" +
+	"media_mime\x18\x06 \x01(\tR\tmediaMime\x12\x1d\n" +
+	"\n" +
+	"media_size\x18\a \x01(\x03R\tmediaSize\x12'\n" +
+	"\x0fsender_nickname\x18\b \x01(\tR\x0esenderNickname\x12*\n" +
+	"\x11sender_avatar_url\x18\t \x01(\tR\x0fsenderAvatarUrl\x12\"\n" +
+	"\rclient_msg_no\x18\n" +
+	" \x01(\tR\vclientMsgNo\"\xd2\x03\n" +
+	"\x15ChatWsAgentMessageReq\x12\x1f\n" +
+	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
+	"merchantId\x12\x19\n" +
+	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x04 \x01(\tR\tsessionNo\x128\n" +
+	"\fmessage_type\x18\x05 \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
+	"\acontent\x18\x06 \x01(\tR\acontent\x12\x1b\n" +
+	"\tmedia_url\x18\a \x01(\tR\bmediaUrl\x12\x1d\n" +
+	"\n" +
+	"media_name\x18\b \x01(\tR\tmediaName\x12\x1d\n" +
+	"\n" +
+	"media_mime\x18\t \x01(\tR\tmediaMime\x12\x1d\n" +
+	"\n" +
+	"media_size\x18\n" +
+	" \x01(\x03R\tmediaSize\x12'\n" +
+	"\x0fsender_nickname\x18\v \x01(\tR\x0esenderNickname\x12*\n" +
+	"\x11sender_avatar_url\x18\f \x01(\tR\x0fsenderAvatarUrl\x12\"\n" +
+	"\rclient_msg_no\x18\r \x01(\tR\vclientMsgNo\"\xa4\x01\n" +
+	"\x16ChatWsAcceptSessionReq\x12\x1f\n" +
+	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
+	"merchantId\x12\x19\n" +
+	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x04 \x01(\tR\tsessionNo\x12\x16\n" +
+	"\x06reason\x18\x05 \x01(\tR\x06reason\"\xcf\x01\n" +
+	"\x15ChatWsCloseSessionReq\x12\x1f\n" +
+	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
+	"merchantId\x12\x1f\n" +
+	"\voperator_id\x18\x02 \x01(\x03R\n" +
+	"operatorId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bagent_id\x18\x04 \x01(\x03R\aagentId\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x05 \x01(\tR\tsessionNo\x12!\n" +
+	"\fclose_reason\x18\x06 \x01(\tR\vcloseReason\"\xe7\x04\n" +
+	"\rChatWsMessage\x12\x12\n" +
+	"\x04type\x18\x01 \x01(\tR\x04type\x12$\n" +
+	"\x04base\x18\x02 \x01(\v2\x10.common.RespBaseR\x04base\x123\n" +
+	"\tconnected\x18\x03 \x01(\v2\x15.chat.ChatWsConnectedR\tconnected\x12=\n" +
+	"\fuser_message\x18\x04 \x01(\v2\x1a.chat.ChatWsUserMessageReqR\vuserMessage\x12@\n" +
+	"\ragent_message\x18\x05 \x01(\v2\x1b.chat.ChatWsAgentMessageReqR\fagentMessage\x12C\n" +
+	"\x0eaccept_session\x18\x06 \x01(\v2\x1c.chat.ChatWsAcceptSessionReqR\racceptSession\x12@\n" +
+	"\rclose_session\x18\a \x01(\v2\x1b.chat.ChatWsCloseSessionReqR\fcloseSession\x12+\n" +
+	"\amessage\x18\b \x01(\v2\x11.chat.ChatMessageR\amessage\x12+\n" +
+	"\asession\x18\t \x01(\v2\x11.chat.ChatSessionR\asession\x12;\n" +
+	"\rsession_event\x18\n" +
+	" \x01(\v2\x16.chat.ChatSessionEventR\fsessionEvent\x12)\n" +
+	"\x05queue\x18\v \x01(\v2\x13.chat.ChatQueueInfoR\x05queue\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\f \x01(\x03R\tcreatedAt\"\xda\x02\n" +
 	"\x0eChatAssignment\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -2096,64 +3139,95 @@ func file_proto_chat_model_proto_rawDescGZIP() []byte {
 	return file_proto_chat_model_proto_rawDescData
 }
 
-var file_proto_chat_model_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_proto_chat_model_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_proto_chat_model_proto_goTypes = []any{
-	(*ChatUser)(nil),          // 0: chat.ChatUser
-	(*ChatMerchant)(nil),      // 1: chat.ChatMerchant
-	(*ChatAgent)(nil),         // 2: chat.ChatAgent
-	(*ChatSession)(nil),       // 3: chat.ChatSession
-	(*ChatMessageSender)(nil), // 4: chat.ChatMessageSender
-	(*ChatMessage)(nil),       // 5: chat.ChatMessage
-	(*ChatMessageEvent)(nil),  // 6: chat.ChatMessageEvent
-	(*ChatAssignment)(nil),    // 7: chat.ChatAssignment
-	(*ChatQuickReply)(nil),    // 8: chat.ChatQuickReply
-	(*ChatCategory)(nil),      // 9: chat.ChatCategory
-	(*ChatSatisfaction)(nil),  // 10: chat.ChatSatisfaction
-	(*ChatReadCursor)(nil),    // 11: chat.ChatReadCursor
-	(*ChatGroup)(nil),         // 12: chat.ChatGroup
-	(*ChatWorkOrder)(nil),     // 13: chat.ChatWorkOrder
-	(ChatUserType)(0),         // 14: chat.ChatUserType
-	(common.YesNo)(0),         // 15: common.YesNo
-	(common.Enable)(0),        // 16: common.Enable
-	(ChatAgentStatus)(0),      // 17: chat.ChatAgentStatus
-	(ChatSessionSource)(0),    // 18: chat.ChatSessionSource
-	(ChatSessionStatus)(0),    // 19: chat.ChatSessionStatus
-	(ChatSessionPriority)(0),  // 20: chat.ChatSessionPriority
-	(ChatSenderType)(0),       // 21: chat.ChatSenderType
-	(*structpb.Struct)(nil),   // 22: google.protobuf.Struct
-	(ChatMessageType)(0),      // 23: chat.ChatMessageType
-	(ChatMessageStatus)(0),    // 24: chat.ChatMessageStatus
-	(ChatAssignType)(0),       // 25: chat.ChatAssignType
+	(*ChatUser)(nil),               // 0: chat.ChatUser
+	(*ChatMerchant)(nil),           // 1: chat.ChatMerchant
+	(*ChatAgent)(nil),              // 2: chat.ChatAgent
+	(*ChatSession)(nil),            // 3: chat.ChatSession
+	(*ChatMessageSender)(nil),      // 4: chat.ChatMessageSender
+	(*ChatMessage)(nil),            // 5: chat.ChatMessage
+	(*ChatQueueInfo)(nil),          // 6: chat.ChatQueueInfo
+	(*ChatSessionEvent)(nil),       // 7: chat.ChatSessionEvent
+	(*ChatMessageEvent)(nil),       // 8: chat.ChatMessageEvent
+	(*ChatWsConnected)(nil),        // 9: chat.ChatWsConnected
+	(*ChatWsUserMessageReq)(nil),   // 10: chat.ChatWsUserMessageReq
+	(*ChatWsAgentMessageReq)(nil),  // 11: chat.ChatWsAgentMessageReq
+	(*ChatWsAcceptSessionReq)(nil), // 12: chat.ChatWsAcceptSessionReq
+	(*ChatWsCloseSessionReq)(nil),  // 13: chat.ChatWsCloseSessionReq
+	(*ChatWsMessage)(nil),          // 14: chat.ChatWsMessage
+	(*ChatAssignment)(nil),         // 15: chat.ChatAssignment
+	(*ChatQuickReply)(nil),         // 16: chat.ChatQuickReply
+	(*ChatCategory)(nil),           // 17: chat.ChatCategory
+	(*ChatSatisfaction)(nil),       // 18: chat.ChatSatisfaction
+	(*ChatReadCursor)(nil),         // 19: chat.ChatReadCursor
+	(*ChatGroup)(nil),              // 20: chat.ChatGroup
+	(*ChatWorkOrder)(nil),          // 21: chat.ChatWorkOrder
+	(ChatUserType)(0),              // 22: chat.ChatUserType
+	(common.YesNo)(0),              // 23: common.YesNo
+	(common.Enable)(0),             // 24: common.Enable
+	(ChatAgentStatus)(0),           // 25: chat.ChatAgentStatus
+	(ChatSessionSource)(0),         // 26: chat.ChatSessionSource
+	(ChatSessionStatus)(0),         // 27: chat.ChatSessionStatus
+	(ChatSessionPriority)(0),       // 28: chat.ChatSessionPriority
+	(ChatSenderType)(0),            // 29: chat.ChatSenderType
+	(*structpb.Struct)(nil),        // 30: google.protobuf.Struct
+	(ChatMessageType)(0),           // 31: chat.ChatMessageType
+	(ChatMessageStatus)(0),         // 32: chat.ChatMessageStatus
+	(ChatAssignType)(0),            // 33: chat.ChatAssignType
+	(*common.RespBase)(nil),        // 34: common.RespBase
 }
 var file_proto_chat_model_proto_depIdxs = []int32{
-	14, // 0: chat.ChatUser.user_type:type_name -> chat.ChatUserType
-	15, // 1: chat.ChatUser.is_owner:type_name -> common.YesNo
-	16, // 2: chat.ChatUser.enabled:type_name -> common.Enable
-	16, // 3: chat.ChatMerchant.enabled:type_name -> common.Enable
-	17, // 4: chat.ChatAgent.status:type_name -> chat.ChatAgentStatus
-	18, // 5: chat.ChatSession.source:type_name -> chat.ChatSessionSource
-	19, // 6: chat.ChatSession.status:type_name -> chat.ChatSessionStatus
-	20, // 7: chat.ChatSession.priority:type_name -> chat.ChatSessionPriority
-	21, // 8: chat.ChatSession.last_sender_type:type_name -> chat.ChatSenderType
-	22, // 9: chat.ChatSession.ext_json:type_name -> google.protobuf.Struct
-	21, // 10: chat.ChatMessageSender.type:type_name -> chat.ChatSenderType
-	21, // 11: chat.ChatMessage.sender_type:type_name -> chat.ChatSenderType
-	23, // 12: chat.ChatMessage.message_type:type_name -> chat.ChatMessageType
-	24, // 13: chat.ChatMessage.status:type_name -> chat.ChatMessageStatus
-	22, // 14: chat.ChatMessage.payload:type_name -> google.protobuf.Struct
+	22, // 0: chat.ChatUser.user_type:type_name -> chat.ChatUserType
+	23, // 1: chat.ChatUser.is_owner:type_name -> common.YesNo
+	24, // 2: chat.ChatUser.enabled:type_name -> common.Enable
+	24, // 3: chat.ChatMerchant.enabled:type_name -> common.Enable
+	25, // 4: chat.ChatAgent.status:type_name -> chat.ChatAgentStatus
+	26, // 5: chat.ChatSession.source:type_name -> chat.ChatSessionSource
+	27, // 6: chat.ChatSession.status:type_name -> chat.ChatSessionStatus
+	28, // 7: chat.ChatSession.priority:type_name -> chat.ChatSessionPriority
+	29, // 8: chat.ChatSession.last_sender_type:type_name -> chat.ChatSenderType
+	30, // 9: chat.ChatSession.ext_json:type_name -> google.protobuf.Struct
+	29, // 10: chat.ChatMessageSender.type:type_name -> chat.ChatSenderType
+	29, // 11: chat.ChatMessage.sender_type:type_name -> chat.ChatSenderType
+	31, // 12: chat.ChatMessage.message_type:type_name -> chat.ChatMessageType
+	32, // 13: chat.ChatMessage.status:type_name -> chat.ChatMessageStatus
+	30, // 14: chat.ChatMessage.payload:type_name -> google.protobuf.Struct
 	4,  // 15: chat.ChatMessage.sender:type_name -> chat.ChatMessageSender
-	5,  // 16: chat.ChatMessageEvent.data:type_name -> chat.ChatMessage
-	25, // 17: chat.ChatAssignment.assign_type:type_name -> chat.ChatAssignType
-	16, // 18: chat.ChatQuickReply.enabled:type_name -> common.Enable
-	16, // 19: chat.ChatCategory.enabled:type_name -> common.Enable
-	21, // 20: chat.ChatReadCursor.reader_type:type_name -> chat.ChatSenderType
-	16, // 21: chat.ChatGroup.enabled:type_name -> common.Enable
-	20, // 22: chat.ChatWorkOrder.priority:type_name -> chat.ChatSessionPriority
-	23, // [23:23] is the sub-list for method output_type
-	23, // [23:23] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	27, // 16: chat.ChatSessionEvent.status:type_name -> chat.ChatSessionStatus
+	33, // 17: chat.ChatSessionEvent.assign_type:type_name -> chat.ChatAssignType
+	3,  // 18: chat.ChatSessionEvent.session:type_name -> chat.ChatSession
+	6,  // 19: chat.ChatSessionEvent.queue:type_name -> chat.ChatQueueInfo
+	5,  // 20: chat.ChatMessageEvent.data:type_name -> chat.ChatMessage
+	3,  // 21: chat.ChatMessageEvent.session:type_name -> chat.ChatSession
+	7,  // 22: chat.ChatMessageEvent.session_event:type_name -> chat.ChatSessionEvent
+	6,  // 23: chat.ChatMessageEvent.queue:type_name -> chat.ChatQueueInfo
+	34, // 24: chat.ChatMessageEvent.base:type_name -> common.RespBase
+	3,  // 25: chat.ChatWsConnected.session:type_name -> chat.ChatSession
+	6,  // 26: chat.ChatWsConnected.queue:type_name -> chat.ChatQueueInfo
+	31, // 27: chat.ChatWsUserMessageReq.message_type:type_name -> chat.ChatMessageType
+	31, // 28: chat.ChatWsAgentMessageReq.message_type:type_name -> chat.ChatMessageType
+	34, // 29: chat.ChatWsMessage.base:type_name -> common.RespBase
+	9,  // 30: chat.ChatWsMessage.connected:type_name -> chat.ChatWsConnected
+	10, // 31: chat.ChatWsMessage.user_message:type_name -> chat.ChatWsUserMessageReq
+	11, // 32: chat.ChatWsMessage.agent_message:type_name -> chat.ChatWsAgentMessageReq
+	12, // 33: chat.ChatWsMessage.accept_session:type_name -> chat.ChatWsAcceptSessionReq
+	13, // 34: chat.ChatWsMessage.close_session:type_name -> chat.ChatWsCloseSessionReq
+	5,  // 35: chat.ChatWsMessage.message:type_name -> chat.ChatMessage
+	3,  // 36: chat.ChatWsMessage.session:type_name -> chat.ChatSession
+	7,  // 37: chat.ChatWsMessage.session_event:type_name -> chat.ChatSessionEvent
+	6,  // 38: chat.ChatWsMessage.queue:type_name -> chat.ChatQueueInfo
+	33, // 39: chat.ChatAssignment.assign_type:type_name -> chat.ChatAssignType
+	24, // 40: chat.ChatQuickReply.enabled:type_name -> common.Enable
+	24, // 41: chat.ChatCategory.enabled:type_name -> common.Enable
+	29, // 42: chat.ChatReadCursor.reader_type:type_name -> chat.ChatSenderType
+	24, // 43: chat.ChatGroup.enabled:type_name -> common.Enable
+	28, // 44: chat.ChatWorkOrder.priority:type_name -> chat.ChatSessionPriority
+	45, // [45:45] is the sub-list for method output_type
+	45, // [45:45] is the sub-list for method input_type
+	45, // [45:45] is the sub-list for extension type_name
+	45, // [45:45] is the sub-list for extension extendee
+	0,  // [0:45] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_model_proto_init() }
@@ -2168,7 +3242,7 @@ func file_proto_chat_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_model_proto_rawDesc), len(file_proto_chat_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -42,5 +42,6 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 	if err := closeSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
 		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
 	}
+	publishSessionEvent(l.ctx, l.svcCtx, chat.ChatMessageEventTypeSessionClosed, session, 0, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, in.GetCloseReason(), "本次会话已结束")
 	return &chat.AdminChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
 }

@@ -131,13 +131,21 @@ function sendMessage() {
           <span>请描述您遇到的问题，客服会在这里接收并回复。</span>
         </div>
 
+        <div v-if="chat.queueStatus.value" class="queue-message">
+          {{ chat.queueStatus.value }}
+        </div>
+
         <article
           v-for="message in chat.messages.value"
           :key="message.messageNo"
-          class="message-row mine"
+          class="message-row"
+          :class="{
+            mine: message.senderType === 1,
+            system: message.senderType === 3,
+          }"
         >
           <div class="bubble">
-            <span>{{ message.sender?.nickname || nickname }}</span>
+            <span>{{ message.sender?.nickname || (message.senderType === 1 ? nickname : "客服") }}</span>
             <p>{{ message.content }}</p>
           </div>
         </article>

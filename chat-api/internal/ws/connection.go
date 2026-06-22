@@ -62,6 +62,73 @@ func (c *Connection) Match(message *chat.ChatMessage) bool {
 	return true
 }
 
+func (c *Connection) MatchEvent(event *chat.ChatMessageEvent) bool {
+	if event == nil {
+		return false
+	}
+	if event.GetData() != nil {
+		return c.Match(event.GetData())
+	}
+	if event.GetSession() != nil {
+		return c.matchSession(event.GetSession())
+	}
+	if event.GetSessionEvent() != nil {
+		return c.matchSessionEvent(event.GetSessionEvent())
+	}
+	if event.GetQueue() != nil {
+		return c.matchQueue(event.GetQueue())
+	}
+	return false
+}
+
+func (c *Connection) matchSession(session *chat.ChatSession) bool {
+	if session == nil {
+		return false
+	}
+	if c.MerchantId > 0 && session.MerchantId != c.MerchantId {
+		return false
+	}
+	if c.UserId > 0 && session.UserId != c.UserId {
+		return false
+	}
+	if c.SessionNo != "" && session.SessionNo != c.SessionNo {
+		return false
+	}
+	return true
+}
+
+func (c *Connection) matchSessionEvent(event *chat.ChatSessionEvent) bool {
+	if event == nil {
+		return false
+	}
+	if c.MerchantId > 0 && event.MerchantId != c.MerchantId {
+		return false
+	}
+	if c.UserId > 0 && event.UserId != c.UserId {
+		return false
+	}
+	if c.SessionNo != "" && event.SessionNo != c.SessionNo {
+		return false
+	}
+	return true
+}
+
+func (c *Connection) matchQueue(queue *chat.ChatQueueInfo) bool {
+	if queue == nil {
+		return false
+	}
+	if c.MerchantId > 0 && queue.MerchantId != c.MerchantId {
+		return false
+	}
+	if c.UserId > 0 && queue.UserId != c.UserId {
+		return false
+	}
+	if c.SessionNo != "" && queue.SessionNo != c.SessionNo {
+		return false
+	}
+	return true
+}
+
 func (c *Connection) ReadPump() {
 	defer func() {
 		c.Hub.Unregister(c)

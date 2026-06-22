@@ -119,6 +119,12 @@ func (s *ChatAdminServer) AssignChatSession(ctx context.Context, in *chat.Assign
 	return l.AssignChatSession(in)
 }
 
+// 接待会话
+func (s *ChatAdminServer) AcceptChatSession(ctx context.Context, in *chat.AcceptChatSessionReq) (*chat.AdminChatSessionResp, error) {
+	l := logic.NewAcceptChatSessionLogic(ctx, s.svcCtx)
+	return l.AcceptChatSession(in)
+}
+
 // 发送客服消息
 func (s *ChatAdminServer) SendAgentMessage(ctx context.Context, in *chat.SendAgentMessageReq) (*chat.AdminChatMessageResp, error) {
 	l := logic.NewSendAgentMessageLogic(ctx, s.svcCtx)

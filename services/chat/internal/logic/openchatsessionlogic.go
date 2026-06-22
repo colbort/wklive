@@ -38,12 +38,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		return &chat.AppChatSessionResp{Base: badBase(err.Error())}, nil
 	}
 	if created {
-		if err := autoAssignSession(l.ctx, l.svcCtx, session); err != nil {
-			return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
-		}
-		if refreshed, err := l.svcCtx.ChatSessionModel.FindOneBySessionNo(l.ctx, session.SessionNo); err == nil {
-			session = refreshed
-		}
+		publishQueueEvent(l.ctx, l.svcCtx, session)
 		if strings.TrimSpace(in.GetFirstMessage()) != "" {
 			msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, userID, in.GetSenderNickname(), in.GetSenderAvatarUrl(), chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT, in.GetFirstMessage(), "", "", "", 0, nil)
 			if _, err := sendMessage(l.ctx, l.svcCtx, session, msg); err != nil {

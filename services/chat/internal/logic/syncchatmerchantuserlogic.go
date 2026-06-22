@@ -93,7 +93,7 @@ func (l *SyncChatMerchantUserLogic) SyncChatMerchantUser(in *chat.SyncChatMercha
 		if id, err := result.LastInsertId(); err == nil {
 			data.Id = id
 		}
-		if err := l.upsertMerchantInfo(in, data.Id, enabled, now); err != nil {
+		if err := l.upsertMerchantInfo(in, enabled, now); err != nil {
 			return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
 		}
 		return &chat.SyncChatMerchantUserResp{Base: okBase(), Data: toProtoUser(data)}, nil
@@ -115,13 +115,13 @@ func (l *SyncChatMerchantUserLogic) SyncChatMerchantUser(in *chat.SyncChatMercha
 	if err := l.svcCtx.ChatUserModel.Update(l.ctx, data); err != nil {
 		return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
 	}
-	if err := l.upsertMerchantInfo(in, data.Id, enabled, now); err != nil {
+	if err := l.upsertMerchantInfo(in, enabled, now); err != nil {
 		return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
 	}
 	return &chat.SyncChatMerchantUserResp{Base: okBase(), Data: toProtoUser(data)}, nil
 }
 
-func (l *SyncChatMerchantUserLogic) upsertMerchantInfo(in *chat.SyncChatMerchantUserReq, ownerUserId, enabled, now int64) error {
+func (l *SyncChatMerchantUserLogic) upsertMerchantInfo(in *chat.SyncChatMerchantUserReq, enabled int64, now int64) error {
 	info, err := l.svcCtx.ChatMerchantInfoModel.FindOneByMerchantId(l.ctx, in.GetMerchantId())
 	if err != nil && err != models.ErrNotFound {
 		return err

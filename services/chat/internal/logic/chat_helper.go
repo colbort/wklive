@@ -137,6 +137,10 @@ func normalizeAssignType(value chat.ChatAssignType) chat.ChatAssignType {
 	return value
 }
 
+func isWorkOrderFinished(status int64) bool {
+	return status == 3 || status == 4
+}
+
 func validateMerchantUser(merchantID, userID int64) error {
 	if merchantID <= 0 {
 		return fmt.Errorf("merchant_id is required")
@@ -237,6 +241,115 @@ func toProtoAgents(list []*models.TChatAgent) []*chat.ChatAgent {
 	return resp
 }
 
+func toProtoChatGroups(list []*models.TChatGroup) []*chat.ChatGroup {
+	resp := make([]*chat.ChatGroup, 0, len(list))
+	for _, item := range list {
+		resp = append(resp, toProtoChatGroup(item))
+	}
+	return resp
+}
+
+func toProtoChatCategory(data *models.TChatCategory) *chat.ChatCategory {
+	if data == nil {
+		return nil
+	}
+	return &chat.ChatCategory{
+		Id:           data.Id,
+		MerchantId:   data.MerchantId,
+		ParentId:     data.ParentId,
+		CategoryCode: data.CategoryCode,
+		CategoryName: data.CategoryName,
+		Enabled:      common.Enable(data.Enabled),
+		Sort:         int32(data.Sort),
+		Remark:       data.Remark,
+		CreateTimes:  data.CreateTimes,
+		UpdateTimes:  data.UpdateTimes,
+	}
+}
+
+func toProtoChatCategories(list []*models.TChatCategory) []*chat.ChatCategory {
+	resp := make([]*chat.ChatCategory, 0, len(list))
+	for _, item := range list {
+		resp = append(resp, toProtoChatCategory(item))
+	}
+	return resp
+}
+
+func nullString(value string) sql.NullString {
+	value = strings.TrimSpace(value)
+	return sql.NullString{String: value, Valid: value != ""}
+}
+
+func stringFromNull(ns sql.NullString) string {
+	if !ns.Valid {
+		return ""
+	}
+	return ns.String
+}
+
+func toProtoChatQuickReply(data *models.TChatQuickReply) *chat.ChatQuickReply {
+	if data == nil {
+		return nil
+	}
+	return &chat.ChatQuickReply{
+		Id:          data.Id,
+		MerchantId:  data.MerchantId,
+		AgentId:     data.AgentId,
+		CategoryId:  data.CategoryId,
+		Title:       data.Title,
+		Content:     stringFromNull(data.Content),
+		Enabled:     common.Enable(data.Enabled),
+		Sort:        int32(data.Sort),
+		Remark:      data.Remark,
+		CreateTimes: data.CreateTimes,
+		UpdateTimes: data.UpdateTimes,
+	}
+}
+
+func toProtoChatQuickReplies(list []*models.TChatQuickReply) []*chat.ChatQuickReply {
+	resp := make([]*chat.ChatQuickReply, 0, len(list))
+	for _, item := range list {
+		resp = append(resp, toProtoChatQuickReply(item))
+	}
+	return resp
+}
+
+func toProtoChatWorkOrder(data *models.TChatWorkOrder) *chat.ChatWorkOrder {
+	if data == nil {
+		return nil
+	}
+	return &chat.ChatWorkOrder{
+		Id:            data.Id,
+		MerchantId:    data.MerchantId,
+		WorkOrderNo:   data.WorkOrderNo,
+		SessionNo:     data.SessionNo,
+		UserId:        data.UserId,
+		AgentId:       data.AgentId,
+		GroupId:       data.GroupId,
+		Title:         data.Title,
+		Content:       stringFromNull(data.Content),
+		ContactName:   data.ContactName,
+		ContactMobile: data.ContactMobile,
+		ContactEmail:  data.ContactEmail,
+		Priority:      chat.ChatSessionPriority(data.Priority),
+		Status:        int32(data.Status),
+		HandlerId:     data.HandlerId,
+		HandleResult:  data.HandleResult,
+		FinishTime:    data.FinishTime,
+		Remark:        data.Remark,
+		CreateTimes:   data.CreateTimes,
+		UpdateTimes:   data.UpdateTimes,
+	}
+}
+
+func toProtoChatWorkOrders(list []*models.TChatWorkOrder) []*chat.ChatWorkOrder {
+	resp := make([]*chat.ChatWorkOrder, 0, len(list))
+	for _, item := range list {
+		resp = append(resp, toProtoChatWorkOrder(item))
+	}
+	return resp
+}
+
 func toProtoMerchant(data *models.TChatMerchantInfo) *chat.ChatMerchant {
 	if data == nil {
 		return nil
@@ -289,6 +402,50 @@ func toProtoSessions(list []*models.TChatSession) []*chat.ChatSession {
 	return resp
 }
 
+func toProtoQueueInfo(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) (*chat.ChatQueueInfo, error) {
+	if session == nil {
+		return nil, nil
+	}
+	position, waitingCount, err := svcCtx.ChatSessionModel.CountWaitingPosition(ctx, session)
+	if err != nil {
+		return nil, err
+	}
+	message := "正在排队，客服会尽快接入。"
+	if position > 0 {
+		if position == 1 {
+			message = "您是当前队列第 1 位，客服即将接入。"
+		} else {
+			message = fmt.Sprintf("正在排队，您前面还有 %d 人。", position-1)
+		}
+	}
+	if session.AgentId > 0 ||
+		session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING) ||
+		session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_USER) {
+		message = "客服已接入。"
+	}
+	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+		message = "本次会话已结束。"
+	}
+	return &chat.ChatQueueInfo{
+		MerchantId:          session.MerchantId,
+		SessionNo:           session.SessionNo,
+		UserId:              session.UserId,
+		GroupId:             session.GroupId,
+		Position:            int32(position),
+		WaitingCount:        int32(waitingCount),
+		EstimateWaitSeconds: estimateWaitSeconds(position),
+		Message:             message,
+		UpdateTimes:         nowMillis(),
+	}, nil
+}
+
+func estimateWaitSeconds(position int64) int64 {
+	if position <= 1 {
+		return 0
+	}
+	return (position - 1) * 60
+}
+
 func toProtoMessage(data *models.ChatMessage) *chat.ChatMessage {
 	if data == nil {
 		return nil
@@ -312,6 +469,31 @@ func toProtoMessage(data *models.ChatMessage) *chat.ChatMessage {
 		ReadTime:    data.ReadTime,
 		CreateTimes: data.CreateTimes,
 		UpdateTimes: data.UpdateTimes,
+	}
+}
+
+func newEventSystemMessage(session *models.TChatSession, content string) *chat.ChatMessage {
+	if session == nil {
+		return nil
+	}
+	now := nowMillis()
+	return &chat.ChatMessage{
+		MessageNo:   nextNo("GM"),
+		SessionNo:   session.SessionNo,
+		MerchantId:  session.MerchantId,
+		UserId:      session.UserId,
+		AgentId:     session.AgentId,
+		SenderType:  chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+		MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
+		Content:     strings.TrimSpace(content),
+		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+		CreateTimes: now,
+		UpdateTimes: now,
+		Sender: &chat.ChatMessageSender{
+			Id:       session.AgentId,
+			Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+			Nickname: "系统",
+		},
 	}
 }
 
@@ -549,6 +731,9 @@ func sendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *model
 		return nil, err
 	}
 	publishMessageEvent(ctx, svcCtx, msg)
+	if chat.ChatSenderType(msg.SenderType) == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
+		publishQueueEvent(ctx, svcCtx, session)
+	}
 	return msg, nil
 }
 
@@ -569,6 +754,72 @@ func publishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, msg *m
 	}
 	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
 		logx.WithContext(ctx).Errorf("publish chat message event failed: %v", err)
+	}
+}
+
+func publishQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) {
+	if svcCtx.BusRedis == nil || session == nil {
+		return
+	}
+	queue, err := toProtoQueueInfo(ctx, svcCtx, session)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("build chat queue event failed: %v", err)
+		return
+	}
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatMessageEventTypeQueueUpdated,
+		CreatedAt: nowMillis(),
+		Data:      newEventSystemMessage(session, queue.GetMessage()),
+		Session:   toProtoSession(session),
+		Queue:     queue,
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("marshal chat queue event failed: %v", err)
+		return
+	}
+	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
+		logx.WithContext(ctx).Errorf("publish chat queue event failed: %v", err)
+	}
+}
+
+func publishSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType string, session *models.TChatSession, operatorID int64, assignType chat.ChatAssignType, reason, message string) {
+	if svcCtx.BusRedis == nil || session == nil {
+		return
+	}
+	queue, err := toProtoQueueInfo(ctx, svcCtx, session)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("build chat session event queue failed: %v", err)
+	}
+	sessionEvent := &chat.ChatSessionEvent{
+		SessionNo:  session.SessionNo,
+		MerchantId: session.MerchantId,
+		UserId:     session.UserId,
+		AgentId:    session.AgentId,
+		OperatorId: operatorID,
+		Status:     chat.ChatSessionStatus(session.Status),
+		AssignType: assignType,
+		Reason:     strings.TrimSpace(reason),
+		Message:    strings.TrimSpace(message),
+		Session:    toProtoSession(session),
+		Queue:      queue,
+		CreatedAt:  nowMillis(),
+	}
+	event := &chat.ChatMessageEvent{
+		Type:         eventType,
+		CreatedAt:    sessionEvent.CreatedAt,
+		Data:         newEventSystemMessage(session, sessionEvent.GetMessage()),
+		Session:      sessionEvent.Session,
+		SessionEvent: sessionEvent,
+		Queue:        queue,
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("marshal chat session event failed: %v", err)
+		return
+	}
+	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
+		logx.WithContext(ctx).Errorf("publish chat session event failed: %v", err)
 	}
 }
 

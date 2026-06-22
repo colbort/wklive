@@ -35,6 +35,7 @@ type (
 		tChatSessionModel
 		FindPage(ctx context.Context, filter ChatSessionPageFilter, cursor int64, limit int64) ([]*TChatSession, int64, error)
 		FindOpenByUser(ctx context.Context, merchantId int64, userId int64) (*TChatSession, error)
+		CountWaitingPosition(ctx context.Context, session *TChatSession) (int64, int64, error)
 	}
 
 	customTChatSessionModel struct {
@@ -96,4 +97,36 @@ func (m *customTChatSessionModel) FindOpenByUser(ctx context.Context, merchantId
 		return nil, err
 	}
 	return &resp, nil
+}
+
+func (m *customTChatSessionModel) CountWaitingPosition(ctx context.Context, session *TChatSession) (int64, int64, error) {
+	if session == nil || session.MerchantId <= 0 || session.SessionNo == "" {
+		return 0, 0, nil
+	}
+
+	const waitingWhere = "merchant_id = ? AND group_id = ? AND agent_id = 0 AND status IN (?, ?)"
+	args := []any{session.MerchantId, session.GroupId, chatSessionStatusWaiting, chatSessionStatusPendingAgent}
+
+	var total int64
+	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, waitingWhere)
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
+		return 0, 0, err
+	}
+
+	if session.AgentId != 0 || (session.Status != chatSessionStatusWaiting && session.Status != chatSessionStatusPendingAgent) {
+		return 0, total, nil
+	}
+
+	var position int64
+	positionSql := fmt.Sprintf(
+		"SELECT COUNT(1) FROM %s WHERE %s AND (priority > ? OR (priority = ? AND (create_times < ? OR (create_times = ? AND id <= ?))))",
+		m.table,
+		waitingWhere,
+	)
+	positionArgs := append(append([]any{}, args...), session.Priority, session.Priority, session.CreateTimes, session.CreateTimes, session.Id)
+	if err := m.QueryRowNoCacheCtx(ctx, &position, positionSql, positionArgs...); err != nil {
+		return 0, 0, err
+	}
+
+	return position, total, nil
 }

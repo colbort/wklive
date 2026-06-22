@@ -40,7 +40,7 @@ func (h *Hub) Run() {
 				continue
 			}
 			for client := range h.clients {
-				if !client.Match(event.GetData()) {
+				if !client.MatchEvent(event) {
 					continue
 				}
 				select {

@@ -50,6 +50,8 @@ export function useChatSocket() {
   const connected = ref<ConnectedPayload | null>(null);
   const messages = ref<ChatMessage[]>([]);
   const error = ref("");
+  const queueStatus = ref("");
+  const agentAccepted = ref(false);
   const reconnectingIn = ref(0);
   const status = ref<"idle" | "connecting" | "open" | "closed" | "reconnecting">(
     "idle",
@@ -193,6 +195,8 @@ export function useChatSocket() {
   function handleEvent(event: ChatWsEvent) {
     if (event.type === chatWsEvents.connected) {
       connected.value = event.data as ConnectedPayload;
+      agentAccepted.value = false;
+      queueStatus.value = "请描述您的问题，发送后将进入客服队列。";
       return;
     }
     if (event.type === chatWsEvents.error) {
@@ -207,10 +211,30 @@ export function useChatSocket() {
         return;
       }
       pushMessage(normalizeMessage(resp.data));
+      if (!agentAccepted.value) {
+        queueStatus.value = "正在排队，客服会尽快接入。";
+      }
+      return;
+    }
+    if (event.type === chatWsEvents.sessionAccepted) {
+      const message = normalizeMessage(event.data as RawChatMessage);
+      agentAccepted.value = true;
+      queueStatus.value = message.content || "客服已接入。";
+      pushMessage(message);
+      return;
+    }
+    if (event.type === chatWsEvents.queueUpdated) {
+      const message = normalizeMessage(event.data as RawChatMessage);
+      queueStatus.value = message.content || "正在排队，客服会尽快接入。";
       return;
     }
     if (event.type === chatWsEvents.message) {
-      pushMessage(normalizeMessage(event.data as RawChatMessage));
+      const message = normalizeMessage(event.data as RawChatMessage);
+      if (message.senderType === 2) {
+        agentAccepted.value = true;
+        queueStatus.value = "";
+      }
+      pushMessage(message);
     }
   }
 
@@ -240,7 +264,7 @@ export function useChatSocket() {
       merchantId: message.merchantId ?? message.merchant_id ?? 0,
       userId: message.userId ?? message.user_id ?? 0,
       agentId: message.agentId ?? message.agent_id ?? 0,
-      senderType: message.senderType ?? message.sender_type ?? 0,
+      senderType: normalizeSenderType(message.senderType ?? message.sender_type),
       sender: message.sender,
       messageType: message.messageType ?? message.message_type ?? 0,
       content: message.content ?? "",
@@ -255,9 +279,19 @@ export function useChatSocket() {
     };
   }
 
+  function normalizeSenderType(value: unknown) {
+    if (typeof value === "number") return value;
+    if (value === "CHAT_SENDER_TYPE_USER") return 1;
+    if (value === "CHAT_SENDER_TYPE_AGENT") return 2;
+    if (value === "CHAT_SENDER_TYPE_SYSTEM") return 3;
+    return 0;
+  }
+
   return {
     connected,
     error,
+    queueStatus,
+    agentAccepted,
     isOpen,
     isTemporary,
     messages,

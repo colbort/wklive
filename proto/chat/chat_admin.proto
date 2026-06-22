@@ -59,6 +59,9 @@ service ChatAdmin {
   // 分配会话
   rpc AssignChatSession(AssignChatSessionReq) returns (AdminChatSessionResp);
 
+  // 接待会话
+  rpc AcceptChatSession(AcceptChatSessionReq) returns (AdminChatSessionResp);
+
   // 发送客服消息
   rpc SendAgentMessage(SendAgentMessageReq) returns (AdminChatMessageResp);
 
@@ -255,6 +258,13 @@ message AssignChatSessionReq {
   ChatAssignType assign_type = 3; // 分配方式
   int64 operator_id = 4;          // 操作人ID
   string reason = 5;              // 分配/转接原因
+}
+
+message AcceptChatSessionReq {
+  string session_no = 1; // 会话编号
+  int64 agent_id = 2;    // 接待坐席ID
+  int64 operator_id = 3; // 操作人ID
+  string reason = 4;     // 接待原因
 }
 
 message SendAgentMessageReq {

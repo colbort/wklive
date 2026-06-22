@@ -25,7 +25,16 @@ func NewListEnabledChatQuickRepliesLogic(ctx context.Context, svcCtx *svc.Servic
 
 // 查询启用快捷回复
 func (l *ListEnabledChatQuickRepliesLogic) ListEnabledChatQuickReplies(in *chat.ListEnabledChatQuickRepliesReq) (*chat.ListChatQuickRepliesResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.ListChatQuickRepliesResp{}, nil
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	if base != nil {
+		return &chat.ListChatQuickRepliesResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.ListChatQuickRepliesResp{Base: errorBase(err)}, nil
+	}
+	list, err := l.svcCtx.ChatQuickReplyModel.ListEnabled(l.ctx, merchantID, in.GetAgentId(), in.GetCategoryId())
+	if err != nil {
+		return &chat.ListChatQuickRepliesResp{Base: errorBase(err)}, nil
+	}
+	return &chat.ListChatQuickRepliesResp{Base: okBase(), Data: toProtoChatQuickReplies(list)}, nil
 }

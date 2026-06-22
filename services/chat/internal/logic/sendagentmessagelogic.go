@@ -49,19 +49,7 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 		return &chat.AdminChatMessageResp{Base: badBase("chat session is closed")}, nil
 	}
 	if session.AgentId == 0 {
-		session, base, err = assignSession(l.ctx, l.svcCtx, &chat.AssignChatSessionReq{
-			SessionNo:  in.GetSessionNo(),
-			ToAgentId:  in.GetAgentId(),
-			AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
-			OperatorId: in.GetAgentId(),
-			Reason:     "agent send message",
-		})
-		if err != nil {
-			return &chat.AdminChatMessageResp{Base: errorBase(err)}, nil
-		}
-		if base != nil {
-			return &chat.AdminChatMessageResp{Base: base}, nil
-		}
+		return &chat.AdminChatMessageResp{Base: badBase("chat session is not accepted")}, nil
 	}
 	msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT, in.GetAgentId(), "", "", in.GetMessageType(), in.GetContent(), in.GetMediaUrl(), in.GetMediaName(), in.GetMediaMime(), in.GetMediaSize(), nil)
 	msg, err = sendMessage(l.ctx, l.svcCtx, session, msg)

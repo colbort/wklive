@@ -35,6 +35,7 @@ const (
 	ChatAdmin_PageChatSessions_FullMethodName            = "/chat.ChatAdmin/PageChatSessions"
 	ChatAdmin_GetChatSession_FullMethodName              = "/chat.ChatAdmin/GetChatSession"
 	ChatAdmin_AssignChatSession_FullMethodName           = "/chat.ChatAdmin/AssignChatSession"
+	ChatAdmin_AcceptChatSession_FullMethodName           = "/chat.ChatAdmin/AcceptChatSession"
 	ChatAdmin_SendAgentMessage_FullMethodName            = "/chat.ChatAdmin/SendAgentMessage"
 	ChatAdmin_PageChatMessages_FullMethodName            = "/chat.ChatAdmin/PageChatMessages"
 	ChatAdmin_MarkAgentMessagesRead_FullMethodName       = "/chat.ChatAdmin/MarkAgentMessagesRead"
@@ -97,6 +98,8 @@ type ChatAdminClient interface {
 	GetChatSession(ctx context.Context, in *GetChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 	// 分配会话
 	AssignChatSession(ctx context.Context, in *AssignChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
+	// 接待会话
+	AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 	// 发送客服消息
 	SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error)
 	// 查询会话消息
@@ -305,6 +308,16 @@ func (c *chatAdminClient) AssignChatSession(ctx context.Context, in *AssignChatS
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminChatSessionResp)
 	err := c.cc.Invoke(ctx, ChatAdmin_AssignChatSession_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatSessionResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_AcceptChatSession_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -569,6 +582,8 @@ type ChatAdminServer interface {
 	GetChatSession(context.Context, *GetChatSessionReq) (*AdminChatSessionResp, error)
 	// 分配会话
 	AssignChatSession(context.Context, *AssignChatSessionReq) (*AdminChatSessionResp, error)
+	// 接待会话
+	AcceptChatSession(context.Context, *AcceptChatSessionReq) (*AdminChatSessionResp, error)
 	// 发送客服消息
 	SendAgentMessage(context.Context, *SendAgentMessageReq) (*AdminChatMessageResp, error)
 	// 查询会话消息
@@ -670,6 +685,9 @@ func (UnimplementedChatAdminServer) GetChatSession(context.Context, *GetChatSess
 }
 func (UnimplementedChatAdminServer) AssignChatSession(context.Context, *AssignChatSessionReq) (*AdminChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AssignChatSession not implemented")
+}
+func (UnimplementedChatAdminServer) AcceptChatSession(context.Context, *AcceptChatSessionReq) (*AdminChatSessionResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method AcceptChatSession not implemented")
 }
 func (UnimplementedChatAdminServer) SendAgentMessage(context.Context, *SendAgentMessageReq) (*AdminChatMessageResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendAgentMessage not implemented")
@@ -1042,6 +1060,24 @@ func _ChatAdmin_AssignChatSession_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAdminServer).AssignChatSession(ctx, req.(*AssignChatSessionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_AcceptChatSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AcceptChatSessionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).AcceptChatSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_AcceptChatSession_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).AcceptChatSession(ctx, req.(*AcceptChatSessionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1512,6 +1548,10 @@ var ChatAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AssignChatSession",
 			Handler:    _ChatAdmin_AssignChatSession_Handler,
+		},
+		{
+			MethodName: "AcceptChatSession",
+			Handler:    _ChatAdmin_AcceptChatSession_Handler,
 		},
 		{
 			MethodName: "SendAgentMessage",

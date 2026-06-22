@@ -18,10 +18,16 @@ import (
 )
 
 const (
-	eventConnected              = "connected"
-	eventError                  = "error"
-	eventSendAgentMessage       = "send_agent_message"
-	eventSendAgentMessageResult = "send_agent_message.result"
+	eventConnected               = chat.ChatWsEventConnected
+	eventError                   = chat.ChatWsEventError
+	eventSendAgentMessage        = chat.ChatWsEventSendAgentMessage
+	eventSendAgentMessageResult  = chat.ChatWsEventSendAgentMessageResult
+	eventAcceptChatSession       = chat.ChatWsEventAcceptChatSession
+	eventAcceptChatSessionResult = chat.ChatWsEventAcceptChatSessionResult
+	eventCloseChatSession        = chat.ChatWsEventCloseChatSession
+	eventCloseChatSessionResult  = chat.ChatWsEventCloseChatSessionResult
+	eventChatSessionAccepted     = chat.ChatMessageEventTypeSessionAccepted
+	eventChatSessionClosed       = chat.ChatMessageEventTypeSessionClosed
 )
 
 var upgrader = websocket.Upgrader{
@@ -67,6 +73,10 @@ func handleInbound(svcCtx *svc.ServiceContext) func(*ws.Connection, ws.InboundEv
 		switch event.Type {
 		case eventSendAgentMessage:
 			handleSendAgentMessage(context.Background(), svcCtx, conn, event.Data)
+		case eventAcceptChatSession:
+			handleAcceptChatSession(context.Background(), svcCtx, conn, event.Data)
+		case eventCloseChatSession:
+			handleCloseChatSession(context.Background(), svcCtx, conn, event.Data)
 		default:
 			conn.SendJSON(eventError, map[string]string{"message": "unsupported event type"})
 		}
@@ -97,7 +107,7 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 	}
 	if isGuestSession(req.SessionNo) {
 		fillAgentSenderSnapshot(ctx, svcCtx, conn, &data)
-		msg := newTransientAgentMessage(req.SessionNo, data.UserId, req.AgentId, conn.Username, data)
+		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, data.UserId, req.AgentId, conn.Username, data)
 		if err := publishTransientMessage(ctx, svcCtx, msg); err != nil {
 			conn.SendJSON(eventError, map[string]string{"message": err.Error()})
 			return
@@ -112,6 +122,90 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 		return
 	}
 	conn.SendJSON(eventSendAgentMessageResult, resp)
+}
+
+func handleAcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, payload json.RawMessage) {
+	var data acceptChatSessionPayload
+	if err := json.Unmarshal(payload, &data); err != nil {
+		conn.SendJSON(eventError, map[string]string{"message": "invalid accept_chat_session payload"})
+		return
+	}
+	sessionNo := strings.TrimSpace(data.SessionNo)
+	if sessionNo == "" {
+		sessionNo = conn.SessionNo
+	}
+	agentId := data.AgentId
+	if agentId == 0 {
+		agentId = conn.AgentId
+	}
+	if sessionNo == "" || agentId == 0 {
+		conn.SendJSON(eventError, map[string]string{"message": "sessionNo and agentId are required"})
+		return
+	}
+	if isGuestSession(sessionNo) {
+		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, "客服已接入")
+		if err := publishTransientEvent(ctx, svcCtx, eventChatSessionAccepted, msg); err != nil {
+			conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+			return
+		}
+		conn.SendJSON(eventAcceptChatSessionResult, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
+		return
+	}
+
+	resp, err := svcCtx.ChatAdminCli.AcceptChatSession(contextWithAdminIdentity(ctx, conn), &chat.AcceptChatSessionReq{
+		SessionNo:  sessionNo,
+		AgentId:    agentId,
+		OperatorId: conn.UserId,
+		Reason:     "accept",
+	})
+	if err != nil {
+		conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+		return
+	}
+	conn.SendJSON(eventAcceptChatSessionResult, resp)
+}
+
+func handleCloseChatSession(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, payload json.RawMessage) {
+	var data closeChatSessionPayload
+	if err := json.Unmarshal(payload, &data); err != nil {
+		conn.SendJSON(eventError, map[string]string{"message": "invalid close_chat_session payload"})
+		return
+	}
+	sessionNo := strings.TrimSpace(data.SessionNo)
+	if sessionNo == "" {
+		sessionNo = conn.SessionNo
+	}
+	if sessionNo == "" {
+		conn.SendJSON(eventError, map[string]string{"message": "sessionNo is required"})
+		return
+	}
+	reason := firstNonEmpty(data.CloseReason, "closed by agent")
+	if isGuestSession(sessionNo) {
+		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, conn.AgentId, "本次会话已结束")
+		if err := publishTransientEvent(ctx, svcCtx, eventChatSessionClosed, msg); err != nil {
+			conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+			return
+		}
+		conn.SendJSON(eventCloseChatSessionResult, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
+		return
+	}
+
+	resp, err := svcCtx.ChatAdminCli.CloseChatSession(contextWithAdminIdentity(ctx, conn), &chat.CloseChatSessionReq{
+		SessionNo:   sessionNo,
+		CloseReason: reason,
+	})
+	if err != nil {
+		conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+		return
+	}
+	conn.SendJSON(eventCloseChatSessionResult, resp)
+}
+
+func contextWithAdminIdentity(ctx context.Context, conn *ws.Connection) context.Context {
+	ctx = context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
+	ctx = context.WithValue(ctx, utils.CtxKeyUsername, conn.Username)
+	ctx = context.WithValue(ctx, utils.CtxKeyMerchantId, conn.MerchantId)
+	return ctx
 }
 
 func fillAgentSenderSnapshot(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, data *sendAgentMessagePayload) {
@@ -145,6 +239,20 @@ type sendAgentMessagePayload struct {
 	MediaSize       int64  `json:"mediaSize"`
 	SenderNickname  string `json:"senderNickname"`
 	SenderAvatarUrl string `json:"senderAvatarUrl"`
+}
+
+type acceptChatSessionPayload struct {
+	MerchantId int64  `json:"merchantId"`
+	AgentId    int64  `json:"agentId"`
+	UserId     int64  `json:"userId"`
+	SessionNo  string `json:"sessionNo"`
+}
+
+type closeChatSessionPayload struct {
+	MerchantId  int64  `json:"merchantId"`
+	UserId      int64  `json:"userId"`
+	SessionNo   string `json:"sessionNo"`
+	CloseReason string `json:"closeReason"`
 }
 
 func parseToken(r *http.Request, secret string) (*utils.Claims, error) {

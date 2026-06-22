@@ -5,6 +5,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
+	"wklive/services/chat/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +26,25 @@ func NewGetChatQuickReplyLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 查询快捷回复详情
 func (l *GetChatQuickReplyLogic) GetChatQuickReply(in *chat.GetChatQuickReplyReq) (*chat.AdminChatQuickReplyResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.AdminChatQuickReplyResp{}, nil
+	if in.GetId() <= 0 {
+		return &chat.AdminChatQuickReplyResp{Base: badBase("id is required")}, nil
+	}
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	if base != nil {
+		return &chat.AdminChatQuickReplyResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatQuickReplyResp{Base: errorBase(err)}, nil
+	}
+	data, err := l.svcCtx.ChatQuickReplyModel.FindOne(l.ctx, in.GetId())
+	if err == models.ErrNotFound {
+		return &chat.AdminChatQuickReplyResp{Base: notFoundBase("chat quick reply not found")}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatQuickReplyResp{Base: errorBase(err)}, nil
+	}
+	if data.MerchantId != merchantID {
+		return &chat.AdminChatQuickReplyResp{Base: notFoundBase("chat quick reply not found")}, nil
+	}
+	return &chat.AdminChatQuickReplyResp{Base: okBase(), Data: toProtoChatQuickReply(data)}, nil
 }

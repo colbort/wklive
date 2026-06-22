@@ -254,6 +254,58 @@ func (x *GetMyChatSessionReq) GetSessionNo() string {
 	return ""
 }
 
+type GetMyChatQueueInfoReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
+	GroupId       int64                  `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`      // 客服分组ID,0表示默认分组
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMyChatQueueInfoReq) Reset() {
+	*x = GetMyChatQueueInfoReq{}
+	mi := &file_proto_chat_chat_app_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMyChatQueueInfoReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMyChatQueueInfoReq) ProtoMessage() {}
+
+func (x *GetMyChatQueueInfoReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_chat_app_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMyChatQueueInfoReq.ProtoReflect.Descriptor instead.
+func (*GetMyChatQueueInfoReq) Descriptor() ([]byte, []int) {
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetMyChatQueueInfoReq) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *GetMyChatQueueInfoReq) GetGroupId() int64 {
+	if x != nil {
+		return x.GroupId
+	}
+	return 0
+}
+
 type SendUserMessageReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	SessionNo       string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
@@ -271,7 +323,7 @@ type SendUserMessageReq struct {
 
 func (x *SendUserMessageReq) Reset() {
 	*x = SendUserMessageReq{}
-	mi := &file_proto_chat_chat_app_proto_msgTypes[4]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -283,7 +335,7 @@ func (x *SendUserMessageReq) String() string {
 func (*SendUserMessageReq) ProtoMessage() {}
 
 func (x *SendUserMessageReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_app_proto_msgTypes[4]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -296,7 +348,7 @@ func (x *SendUserMessageReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendUserMessageReq.ProtoReflect.Descriptor instead.
 func (*SendUserMessageReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{4}
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *SendUserMessageReq) GetSessionNo() string {
@@ -372,7 +424,7 @@ type ListMyChatMessagesReq struct {
 
 func (x *ListMyChatMessagesReq) Reset() {
 	*x = ListMyChatMessagesReq{}
-	mi := &file_proto_chat_chat_app_proto_msgTypes[5]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -384,7 +436,7 @@ func (x *ListMyChatMessagesReq) String() string {
 func (*ListMyChatMessagesReq) ProtoMessage() {}
 
 func (x *ListMyChatMessagesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_app_proto_msgTypes[5]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -397,7 +449,7 @@ func (x *ListMyChatMessagesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMyChatMessagesReq.ProtoReflect.Descriptor instead.
 func (*ListMyChatMessagesReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{5}
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListMyChatMessagesReq) GetSessionNo() string {
@@ -424,7 +476,7 @@ type MarkUserMessagesReadReq struct {
 
 func (x *MarkUserMessagesReadReq) Reset() {
 	*x = MarkUserMessagesReadReq{}
-	mi := &file_proto_chat_chat_app_proto_msgTypes[6]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -436,7 +488,7 @@ func (x *MarkUserMessagesReadReq) String() string {
 func (*MarkUserMessagesReadReq) ProtoMessage() {}
 
 func (x *MarkUserMessagesReadReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_app_proto_msgTypes[6]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -449,7 +501,7 @@ func (x *MarkUserMessagesReadReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkUserMessagesReadReq.ProtoReflect.Descriptor instead.
 func (*MarkUserMessagesReadReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{6}
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *MarkUserMessagesReadReq) GetSessionNo() string {
@@ -476,7 +528,7 @@ type CloseMyChatSessionReq struct {
 
 func (x *CloseMyChatSessionReq) Reset() {
 	*x = CloseMyChatSessionReq{}
-	mi := &file_proto_chat_chat_app_proto_msgTypes[7]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -488,7 +540,7 @@ func (x *CloseMyChatSessionReq) String() string {
 func (*CloseMyChatSessionReq) ProtoMessage() {}
 
 func (x *CloseMyChatSessionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_app_proto_msgTypes[7]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -501,7 +553,7 @@ func (x *CloseMyChatSessionReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CloseMyChatSessionReq.ProtoReflect.Descriptor instead.
 func (*CloseMyChatSessionReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{7}
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CloseMyChatSessionReq) GetSessionNo() string {
@@ -528,7 +580,7 @@ type ListChatSessionsResp struct {
 
 func (x *ListChatSessionsResp) Reset() {
 	*x = ListChatSessionsResp{}
-	mi := &file_proto_chat_chat_app_proto_msgTypes[8]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -540,7 +592,7 @@ func (x *ListChatSessionsResp) String() string {
 func (*ListChatSessionsResp) ProtoMessage() {}
 
 func (x *ListChatSessionsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_app_proto_msgTypes[8]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -553,7 +605,7 @@ func (x *ListChatSessionsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListChatSessionsResp.ProtoReflect.Descriptor instead.
 func (*ListChatSessionsResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{8}
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListChatSessionsResp) GetBase() *common.RespBase {
@@ -580,7 +632,7 @@ type ListChatMessagesResp struct {
 
 func (x *ListChatMessagesResp) Reset() {
 	*x = ListChatMessagesResp{}
-	mi := &file_proto_chat_chat_app_proto_msgTypes[9]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -592,7 +644,7 @@ func (x *ListChatMessagesResp) String() string {
 func (*ListChatMessagesResp) ProtoMessage() {}
 
 func (x *ListChatMessagesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_app_proto_msgTypes[9]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -605,7 +657,7 @@ func (x *ListChatMessagesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListChatMessagesResp.ProtoReflect.Descriptor instead.
 func (*ListChatMessagesResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{9}
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListChatMessagesResp) GetBase() *common.RespBase {
@@ -622,6 +674,58 @@ func (x *ListChatMessagesResp) GetData() []*ChatMessage {
 	return nil
 }
 
+type ChatQueueInfoResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *ChatQueueInfo         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatQueueInfoResp) Reset() {
+	*x = ChatQueueInfoResp{}
+	mi := &file_proto_chat_chat_app_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatQueueInfoResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatQueueInfoResp) ProtoMessage() {}
+
+func (x *ChatQueueInfoResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_chat_app_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatQueueInfoResp.ProtoReflect.Descriptor instead.
+func (*ChatQueueInfoResp) Descriptor() ([]byte, []int) {
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ChatQueueInfoResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *ChatQueueInfoResp) GetData() *ChatQueueInfo {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 type AppChatSessionResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
@@ -632,7 +736,7 @@ type AppChatSessionResp struct {
 
 func (x *AppChatSessionResp) Reset() {
 	*x = AppChatSessionResp{}
-	mi := &file_proto_chat_chat_app_proto_msgTypes[10]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -644,7 +748,7 @@ func (x *AppChatSessionResp) String() string {
 func (*AppChatSessionResp) ProtoMessage() {}
 
 func (x *AppChatSessionResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_app_proto_msgTypes[10]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -657,7 +761,7 @@ func (x *AppChatSessionResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppChatSessionResp.ProtoReflect.Descriptor instead.
 func (*AppChatSessionResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{10}
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *AppChatSessionResp) GetBase() *common.RespBase {
@@ -684,7 +788,7 @@ type AppChatMessageResp struct {
 
 func (x *AppChatMessageResp) Reset() {
 	*x = AppChatMessageResp{}
-	mi := &file_proto_chat_chat_app_proto_msgTypes[11]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -696,7 +800,7 @@ func (x *AppChatMessageResp) String() string {
 func (*AppChatMessageResp) ProtoMessage() {}
 
 func (x *AppChatMessageResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_app_proto_msgTypes[11]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -709,7 +813,7 @@ func (x *AppChatMessageResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppChatMessageResp.ProtoReflect.Descriptor instead.
 func (*AppChatMessageResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{11}
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *AppChatMessageResp) GetBase() *common.RespBase {
@@ -735,7 +839,7 @@ type AppMarkMessagesReadResp struct {
 
 func (x *AppMarkMessagesReadResp) Reset() {
 	*x = AppMarkMessagesReadResp{}
-	mi := &file_proto_chat_chat_app_proto_msgTypes[12]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -747,7 +851,7 @@ func (x *AppMarkMessagesReadResp) String() string {
 func (*AppMarkMessagesReadResp) ProtoMessage() {}
 
 func (x *AppMarkMessagesReadResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_app_proto_msgTypes[12]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -760,7 +864,7 @@ func (x *AppMarkMessagesReadResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppMarkMessagesReadResp.ProtoReflect.Descriptor instead.
 func (*AppMarkMessagesReadResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{12}
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *AppMarkMessagesReadResp) GetBase() *common.RespBase {
@@ -780,7 +884,7 @@ type AuthChatMerchantResp struct {
 
 func (x *AuthChatMerchantResp) Reset() {
 	*x = AuthChatMerchantResp{}
-	mi := &file_proto_chat_chat_app_proto_msgTypes[13]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -792,7 +896,7 @@ func (x *AuthChatMerchantResp) String() string {
 func (*AuthChatMerchantResp) ProtoMessage() {}
 
 func (x *AuthChatMerchantResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_app_proto_msgTypes[13]
+	mi := &file_proto_chat_chat_app_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -805,7 +909,7 @@ func (x *AuthChatMerchantResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthChatMerchantResp.ProtoReflect.Descriptor instead.
 func (*AuthChatMerchantResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{13}
+	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *AuthChatMerchantResp) GetBase() *common.RespBase {
@@ -843,7 +947,11 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"4\n" +
 	"\x13GetMyChatSessionReq\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x01 \x01(\tR\tsessionNo\"\xd6\x02\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\"Q\n" +
+	"\x15GetMyChatQueueInfoReq\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x19\n" +
+	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\"\xd6\x02\n" +
 	"\x12SendUserMessageReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x128\n" +
@@ -875,7 +983,10 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x03(\v2\x11.chat.ChatSessionR\x04data\"c\n" +
 	"\x14ListChatMessagesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x04data\x18\x02 \x03(\v2\x11.chat.ChatMessageR\x04data\"a\n" +
+	"\x04data\x18\x02 \x03(\v2\x11.chat.ChatMessageR\x04data\"b\n" +
+	"\x11ChatQueueInfoResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.chat.ChatQueueInfoR\x04data\"a\n" +
 	"\x12AppChatSessionResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
 	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatSessionR\x04data\"a\n" +
@@ -886,12 +997,13 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"d\n" +
 	"\x14AuthChatMerchantResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04data\x18\x02 \x01(\v2\x12.chat.ChatMerchantR\x04data2\xec\x04\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.chat.ChatMerchantR\x04data2\xb8\x05\n" +
 	"\aChatApp\x12I\n" +
 	"\x10AuthChatMerchant\x12\x19.chat.AuthChatMerchantReq\x1a\x1a.chat.AuthChatMerchantResp\x12E\n" +
 	"\x0fOpenChatSession\x12\x18.chat.OpenChatSessionReq\x1a\x18.chat.AppChatSessionResp\x12M\n" +
 	"\x12ListMyChatSessions\x12\x1b.chat.ListMyChatSessionsReq\x1a\x1a.chat.ListChatSessionsResp\x12G\n" +
-	"\x10GetMyChatSession\x12\x19.chat.GetMyChatSessionReq\x1a\x18.chat.AppChatSessionResp\x12E\n" +
+	"\x10GetMyChatSession\x12\x19.chat.GetMyChatSessionReq\x1a\x18.chat.AppChatSessionResp\x12J\n" +
+	"\x12GetMyChatQueueInfo\x12\x1b.chat.GetMyChatQueueInfoReq\x1a\x17.chat.ChatQueueInfoResp\x12E\n" +
 	"\x0fSendUserMessage\x12\x18.chat.SendUserMessageReq\x1a\x18.chat.AppChatMessageResp\x12M\n" +
 	"\x12ListMyChatMessages\x12\x1b.chat.ListMyChatMessagesReq\x1a\x1a.chat.ListChatMessagesResp\x12T\n" +
 	"\x14MarkUserMessagesRead\x12\x1d.chat.MarkUserMessagesReadReq\x1a\x1d.chat.AppMarkMessagesReadResp\x12K\n" +
@@ -909,69 +1021,76 @@ func file_proto_chat_chat_app_proto_rawDescGZIP() []byte {
 	return file_proto_chat_chat_app_proto_rawDescData
 }
 
-var file_proto_chat_chat_app_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_proto_chat_chat_app_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_proto_chat_chat_app_proto_goTypes = []any{
 	(*AuthChatMerchantReq)(nil),     // 0: chat.AuthChatMerchantReq
 	(*OpenChatSessionReq)(nil),      // 1: chat.OpenChatSessionReq
 	(*ListMyChatSessionsReq)(nil),   // 2: chat.ListMyChatSessionsReq
 	(*GetMyChatSessionReq)(nil),     // 3: chat.GetMyChatSessionReq
-	(*SendUserMessageReq)(nil),      // 4: chat.SendUserMessageReq
-	(*ListMyChatMessagesReq)(nil),   // 5: chat.ListMyChatMessagesReq
-	(*MarkUserMessagesReadReq)(nil), // 6: chat.MarkUserMessagesReadReq
-	(*CloseMyChatSessionReq)(nil),   // 7: chat.CloseMyChatSessionReq
-	(*ListChatSessionsResp)(nil),    // 8: chat.ListChatSessionsResp
-	(*ListChatMessagesResp)(nil),    // 9: chat.ListChatMessagesResp
-	(*AppChatSessionResp)(nil),      // 10: chat.AppChatSessionResp
-	(*AppChatMessageResp)(nil),      // 11: chat.AppChatMessageResp
-	(*AppMarkMessagesReadResp)(nil), // 12: chat.AppMarkMessagesReadResp
-	(*AuthChatMerchantResp)(nil),    // 13: chat.AuthChatMerchantResp
-	(ChatSessionSource)(0),          // 14: chat.ChatSessionSource
-	(ChatSessionStatus)(0),          // 15: chat.ChatSessionStatus
-	(*common.PageReq)(nil),          // 16: common.PageReq
-	(ChatMessageType)(0),            // 17: chat.ChatMessageType
-	(*common.RespBase)(nil),         // 18: common.RespBase
-	(*ChatSession)(nil),             // 19: chat.ChatSession
-	(*ChatMessage)(nil),             // 20: chat.ChatMessage
-	(*ChatMerchant)(nil),            // 21: chat.ChatMerchant
+	(*GetMyChatQueueInfoReq)(nil),   // 4: chat.GetMyChatQueueInfoReq
+	(*SendUserMessageReq)(nil),      // 5: chat.SendUserMessageReq
+	(*ListMyChatMessagesReq)(nil),   // 6: chat.ListMyChatMessagesReq
+	(*MarkUserMessagesReadReq)(nil), // 7: chat.MarkUserMessagesReadReq
+	(*CloseMyChatSessionReq)(nil),   // 8: chat.CloseMyChatSessionReq
+	(*ListChatSessionsResp)(nil),    // 9: chat.ListChatSessionsResp
+	(*ListChatMessagesResp)(nil),    // 10: chat.ListChatMessagesResp
+	(*ChatQueueInfoResp)(nil),       // 11: chat.ChatQueueInfoResp
+	(*AppChatSessionResp)(nil),      // 12: chat.AppChatSessionResp
+	(*AppChatMessageResp)(nil),      // 13: chat.AppChatMessageResp
+	(*AppMarkMessagesReadResp)(nil), // 14: chat.AppMarkMessagesReadResp
+	(*AuthChatMerchantResp)(nil),    // 15: chat.AuthChatMerchantResp
+	(ChatSessionSource)(0),          // 16: chat.ChatSessionSource
+	(ChatSessionStatus)(0),          // 17: chat.ChatSessionStatus
+	(*common.PageReq)(nil),          // 18: common.PageReq
+	(ChatMessageType)(0),            // 19: chat.ChatMessageType
+	(*common.RespBase)(nil),         // 20: common.RespBase
+	(*ChatSession)(nil),             // 21: chat.ChatSession
+	(*ChatMessage)(nil),             // 22: chat.ChatMessage
+	(*ChatQueueInfo)(nil),           // 23: chat.ChatQueueInfo
+	(*ChatMerchant)(nil),            // 24: chat.ChatMerchant
 }
 var file_proto_chat_chat_app_proto_depIdxs = []int32{
-	14, // 0: chat.OpenChatSessionReq.source:type_name -> chat.ChatSessionSource
-	15, // 1: chat.ListMyChatSessionsReq.status:type_name -> chat.ChatSessionStatus
-	16, // 2: chat.ListMyChatSessionsReq.page:type_name -> common.PageReq
-	17, // 3: chat.SendUserMessageReq.message_type:type_name -> chat.ChatMessageType
-	16, // 4: chat.ListMyChatMessagesReq.page:type_name -> common.PageReq
-	18, // 5: chat.ListChatSessionsResp.base:type_name -> common.RespBase
-	19, // 6: chat.ListChatSessionsResp.data:type_name -> chat.ChatSession
-	18, // 7: chat.ListChatMessagesResp.base:type_name -> common.RespBase
-	20, // 8: chat.ListChatMessagesResp.data:type_name -> chat.ChatMessage
-	18, // 9: chat.AppChatSessionResp.base:type_name -> common.RespBase
-	19, // 10: chat.AppChatSessionResp.data:type_name -> chat.ChatSession
-	18, // 11: chat.AppChatMessageResp.base:type_name -> common.RespBase
-	20, // 12: chat.AppChatMessageResp.data:type_name -> chat.ChatMessage
-	18, // 13: chat.AppMarkMessagesReadResp.base:type_name -> common.RespBase
-	18, // 14: chat.AuthChatMerchantResp.base:type_name -> common.RespBase
-	21, // 15: chat.AuthChatMerchantResp.data:type_name -> chat.ChatMerchant
-	0,  // 16: chat.ChatApp.AuthChatMerchant:input_type -> chat.AuthChatMerchantReq
-	1,  // 17: chat.ChatApp.OpenChatSession:input_type -> chat.OpenChatSessionReq
-	2,  // 18: chat.ChatApp.ListMyChatSessions:input_type -> chat.ListMyChatSessionsReq
-	3,  // 19: chat.ChatApp.GetMyChatSession:input_type -> chat.GetMyChatSessionReq
-	4,  // 20: chat.ChatApp.SendUserMessage:input_type -> chat.SendUserMessageReq
-	5,  // 21: chat.ChatApp.ListMyChatMessages:input_type -> chat.ListMyChatMessagesReq
-	6,  // 22: chat.ChatApp.MarkUserMessagesRead:input_type -> chat.MarkUserMessagesReadReq
-	7,  // 23: chat.ChatApp.CloseMyChatSession:input_type -> chat.CloseMyChatSessionReq
-	13, // 24: chat.ChatApp.AuthChatMerchant:output_type -> chat.AuthChatMerchantResp
-	10, // 25: chat.ChatApp.OpenChatSession:output_type -> chat.AppChatSessionResp
-	8,  // 26: chat.ChatApp.ListMyChatSessions:output_type -> chat.ListChatSessionsResp
-	10, // 27: chat.ChatApp.GetMyChatSession:output_type -> chat.AppChatSessionResp
-	11, // 28: chat.ChatApp.SendUserMessage:output_type -> chat.AppChatMessageResp
-	9,  // 29: chat.ChatApp.ListMyChatMessages:output_type -> chat.ListChatMessagesResp
-	12, // 30: chat.ChatApp.MarkUserMessagesRead:output_type -> chat.AppMarkMessagesReadResp
-	10, // 31: chat.ChatApp.CloseMyChatSession:output_type -> chat.AppChatSessionResp
-	24, // [24:32] is the sub-list for method output_type
-	16, // [16:24] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	16, // 0: chat.OpenChatSessionReq.source:type_name -> chat.ChatSessionSource
+	17, // 1: chat.ListMyChatSessionsReq.status:type_name -> chat.ChatSessionStatus
+	18, // 2: chat.ListMyChatSessionsReq.page:type_name -> common.PageReq
+	19, // 3: chat.SendUserMessageReq.message_type:type_name -> chat.ChatMessageType
+	18, // 4: chat.ListMyChatMessagesReq.page:type_name -> common.PageReq
+	20, // 5: chat.ListChatSessionsResp.base:type_name -> common.RespBase
+	21, // 6: chat.ListChatSessionsResp.data:type_name -> chat.ChatSession
+	20, // 7: chat.ListChatMessagesResp.base:type_name -> common.RespBase
+	22, // 8: chat.ListChatMessagesResp.data:type_name -> chat.ChatMessage
+	20, // 9: chat.ChatQueueInfoResp.base:type_name -> common.RespBase
+	23, // 10: chat.ChatQueueInfoResp.data:type_name -> chat.ChatQueueInfo
+	20, // 11: chat.AppChatSessionResp.base:type_name -> common.RespBase
+	21, // 12: chat.AppChatSessionResp.data:type_name -> chat.ChatSession
+	20, // 13: chat.AppChatMessageResp.base:type_name -> common.RespBase
+	22, // 14: chat.AppChatMessageResp.data:type_name -> chat.ChatMessage
+	20, // 15: chat.AppMarkMessagesReadResp.base:type_name -> common.RespBase
+	20, // 16: chat.AuthChatMerchantResp.base:type_name -> common.RespBase
+	24, // 17: chat.AuthChatMerchantResp.data:type_name -> chat.ChatMerchant
+	0,  // 18: chat.ChatApp.AuthChatMerchant:input_type -> chat.AuthChatMerchantReq
+	1,  // 19: chat.ChatApp.OpenChatSession:input_type -> chat.OpenChatSessionReq
+	2,  // 20: chat.ChatApp.ListMyChatSessions:input_type -> chat.ListMyChatSessionsReq
+	3,  // 21: chat.ChatApp.GetMyChatSession:input_type -> chat.GetMyChatSessionReq
+	4,  // 22: chat.ChatApp.GetMyChatQueueInfo:input_type -> chat.GetMyChatQueueInfoReq
+	5,  // 23: chat.ChatApp.SendUserMessage:input_type -> chat.SendUserMessageReq
+	6,  // 24: chat.ChatApp.ListMyChatMessages:input_type -> chat.ListMyChatMessagesReq
+	7,  // 25: chat.ChatApp.MarkUserMessagesRead:input_type -> chat.MarkUserMessagesReadReq
+	8,  // 26: chat.ChatApp.CloseMyChatSession:input_type -> chat.CloseMyChatSessionReq
+	15, // 27: chat.ChatApp.AuthChatMerchant:output_type -> chat.AuthChatMerchantResp
+	12, // 28: chat.ChatApp.OpenChatSession:output_type -> chat.AppChatSessionResp
+	9,  // 29: chat.ChatApp.ListMyChatSessions:output_type -> chat.ListChatSessionsResp
+	12, // 30: chat.ChatApp.GetMyChatSession:output_type -> chat.AppChatSessionResp
+	11, // 31: chat.ChatApp.GetMyChatQueueInfo:output_type -> chat.ChatQueueInfoResp
+	13, // 32: chat.ChatApp.SendUserMessage:output_type -> chat.AppChatMessageResp
+	10, // 33: chat.ChatApp.ListMyChatMessages:output_type -> chat.ListChatMessagesResp
+	14, // 34: chat.ChatApp.MarkUserMessagesRead:output_type -> chat.AppMarkMessagesReadResp
+	12, // 35: chat.ChatApp.CloseMyChatSession:output_type -> chat.AppChatSessionResp
+	27, // [27:36] is the sub-list for method output_type
+	18, // [18:27] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_chat_app_proto_init() }
@@ -987,7 +1106,7 @@ func file_proto_chat_chat_app_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_chat_app_proto_rawDesc), len(file_proto_chat_chat_app_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

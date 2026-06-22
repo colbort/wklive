@@ -25,8 +25,9 @@ request.interceptors.request.use((config) => {
   if (auth.token) {
     config.headers.Authorization = `Bearer ${auth.token}`;
   }
-  if (auth.user?.merchantId) {
-    config.headers["x-merchant-id"] = String(auth.user.merchantId);
+  const merchantId = auth.user?.merchantId || auth.agent?.merchantId || 0;
+  if (merchantId) {
+    config.headers["x-merchant-id"] = String(merchantId);
   }
   return config;
 });

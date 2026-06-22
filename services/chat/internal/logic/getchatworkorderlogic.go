@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
+	"strings"
 
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
+	"wklive/services/chat/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +27,30 @@ func NewGetChatWorkOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 查询工单详情
 func (l *GetChatWorkOrderLogic) GetChatWorkOrder(in *chat.GetChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.AdminChatWorkOrderResp{}, nil
+	if in.GetId() <= 0 && strings.TrimSpace(in.GetWorkOrderNo()) == "" {
+		return &chat.AdminChatWorkOrderResp{Base: badBase("id or work_order_no is required")}, nil
+	}
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	if base != nil {
+		return &chat.AdminChatWorkOrderResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatWorkOrderResp{Base: errorBase(err)}, nil
+	}
+	var data *models.TChatWorkOrder
+	if in.GetId() > 0 {
+		data, err = l.svcCtx.ChatWorkOrderModel.FindOne(l.ctx, in.GetId())
+	} else {
+		data, err = l.svcCtx.ChatWorkOrderModel.FindOneByWorkOrderNo(l.ctx, strings.TrimSpace(in.GetWorkOrderNo()))
+	}
+	if err == models.ErrNotFound {
+		return &chat.AdminChatWorkOrderResp{Base: notFoundBase("chat work order not found")}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatWorkOrderResp{Base: errorBase(err)}, nil
+	}
+	if data.MerchantId != merchantID {
+		return &chat.AdminChatWorkOrderResp{Base: notFoundBase("chat work order not found")}, nil
+	}
+	return &chat.AdminChatWorkOrderResp{Base: okBase(), Data: toProtoChatWorkOrder(data)}, nil
 }

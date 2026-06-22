@@ -25,10 +25,10 @@ import (
 )
 
 const (
-	eventConnected             = "connected"
-	eventError                 = "error"
-	eventSendUserMessage       = "send_user_message"
-	eventSendUserMessageResult = "send_user_message.result"
+	eventConnected             = chat.ChatWsEventConnected
+	eventError                 = chat.ChatWsEventError
+	eventSendUserMessage       = chat.ChatWsEventSendUserMessage
+	eventSendUserMessageResult = chat.ChatWsEventSendUserMessageResult
 	guestSessionPrefix         = "GS"
 	guestMessagePrefix         = "GM"
 	guestUsername              = "guest"
@@ -205,6 +205,7 @@ func sendTransientUserMessage(ctx context.Context, svcCtx *svc.ServiceContext, c
 		sendWSError(conn, err.Error())
 		return
 	}
+	publishTransientQueueEvent(ctx, svcCtx, conn, "正在排队，客服会尽快接入。")
 	conn.SendJSON(eventSendUserMessageResult, &chat.AppChatMessageResp{Base: helper.OkResp(), Data: msg})
 }
 
@@ -279,6 +280,48 @@ func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, ms
 	}
 	_, err = svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload))
 	return err
+}
+
+func publishTransientQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, message string) {
+	if svcCtx.BusRedis == nil || conn == nil {
+		return
+	}
+	now := time.Now().UnixMilli()
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatMessageEventTypeQueueUpdated,
+		CreatedAt: now,
+		Data: &chat.ChatMessage{
+			MessageNo:   nextGuestNo(guestMessagePrefix),
+			SessionNo:   conn.SessionNo,
+			MerchantId:  conn.MerchantId,
+			UserId:      conn.UserId,
+			SenderType:  chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+			MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
+			Content:     message,
+			Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+			CreateTimes: now,
+			UpdateTimes: now,
+			Sender: &chat.ChatMessageSender{
+				Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+				Nickname: "系统",
+			},
+		},
+		Queue: &chat.ChatQueueInfo{
+			MerchantId:  conn.MerchantId,
+			SessionNo:   conn.SessionNo,
+			UserId:      conn.UserId,
+			Message:     message,
+			UpdateTimes: now,
+		},
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		logx.Errorf("marshal guest chat queue event failed: %v", err)
+		return
+	}
+	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
+		logx.Errorf("publish guest chat queue event failed: %v", err)
+	}
 }
 
 func nextGuestNo(prefix string) string {

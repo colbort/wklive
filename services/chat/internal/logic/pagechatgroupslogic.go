@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
+	"strings"
 
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
+	"wklive/services/chat/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +27,24 @@ func NewPageChatGroupsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 
 // 分页查询客服分组
 func (l *PageChatGroupsLogic) PageChatGroups(in *chat.PageChatGroupsReq) (*chat.PageChatGroupsResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.PageChatGroupsResp{}, nil
+	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	if base != nil {
+		return &chat.PageChatGroupsResp{Base: base}, nil
+	}
+	if err != nil {
+		return &chat.PageChatGroupsResp{Base: errorBase(err)}, nil
+	}
+	cursor, limit := pageInput(in.GetPage())
+	list, total, err := l.svcCtx.ChatGroupModel.FindPage(l.ctx, models.ChatGroupPageFilter{
+		MerchantId: merchantID,
+		Keyword:    strings.TrimSpace(in.GetKeyword()),
+		Enabled:    int64(in.GetEnabled()),
+	}, cursor, limit)
+	if err != nil {
+		return &chat.PageChatGroupsResp{Base: errorBase(err)}, nil
+	}
+	return &chat.PageChatGroupsResp{
+		Base: offsetBase(cursor, limit, len(list), total),
+		Data: toProtoChatGroups(list),
+	}, nil
 }

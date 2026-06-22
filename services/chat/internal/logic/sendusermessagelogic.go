@@ -45,13 +45,6 @@ func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*ch
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 		return &chat.AppChatMessageResp{Base: badBase("chat session is closed")}, nil
 	}
-	session, base, err = prepareSessionForUserMessage(l.ctx, l.svcCtx, session)
-	if err != nil {
-		return &chat.AppChatMessageResp{Base: errorBase(err)}, nil
-	}
-	if base != nil {
-		return &chat.AppChatMessageResp{Base: base}, nil
-	}
 	msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, userID, in.GetSenderNickname(), in.GetSenderAvatarUrl(), in.GetMessageType(), in.GetContent(), in.GetMediaUrl(), in.GetMediaName(), in.GetMediaMime(), in.GetMediaSize(), nil)
 	msg, err = sendMessage(l.ctx, l.svcCtx, session, msg)
 	if err != nil {

@@ -20,12 +20,13 @@ func isGuestSession(sessionNo string) bool {
 	return strings.HasPrefix(strings.TrimSpace(sessionNo), guestSessionPrefix)
 }
 
-func newTransientAgentMessage(sessionNo string, userId int64, agentId int64, senderNickname string, data sendAgentMessagePayload) *chat.ChatMessage {
+func newTransientAgentMessage(merchantId int64, sessionNo string, userId int64, agentId int64, senderNickname string, data sendAgentMessagePayload) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
 	senderNickname = firstNonEmpty(data.SenderNickname, senderNickname)
 	return &chat.ChatMessage{
 		MessageNo:  nextTransientNo("GM"),
 		SessionNo:  sessionNo,
+		MerchantId: merchantId,
 		UserId:     userId,
 		AgentId:    agentId,
 		SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
@@ -47,6 +48,28 @@ func newTransientAgentMessage(sessionNo string, userId int64, agentId int64, sen
 	}
 }
 
+func newTransientSystemMessage(merchantId int64, sessionNo string, userId int64, agentId int64, content string) *chat.ChatMessage {
+	now := time.Now().UnixMilli()
+	return &chat.ChatMessage{
+		MessageNo:  nextTransientNo("GM"),
+		SessionNo:  sessionNo,
+		MerchantId: merchantId,
+		UserId:     userId,
+		AgentId:    agentId,
+		SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+		Sender: &chat.ChatMessageSender{
+			Id:       agentId,
+			Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+			Nickname: "系统",
+		},
+		MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
+		Content:     strings.TrimSpace(content),
+		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+		CreateTimes: now,
+		UpdateTimes: now,
+	}
+}
+
 func firstNonEmpty(values ...string) string {
 	for _, value := range values {
 		if v := strings.TrimSpace(value); v != "" {
@@ -57,11 +80,15 @@ func firstNonEmpty(values ...string) string {
 }
 
 func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, msg *chat.ChatMessage) error {
+	return publishTransientEvent(ctx, svcCtx, chat.ChatMessageEventTypeMessage, msg)
+}
+
+func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType string, msg *chat.ChatMessage) error {
 	if svcCtx.BusRedis == nil {
 		return fmt.Errorf("chat redis is not configured")
 	}
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatMessageEventTypeMessage,
+		Type:      eventType,
 		Data:      msg,
 		CreatedAt: time.Now().UnixMilli(),
 	}

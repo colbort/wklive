@@ -111,11 +111,122 @@ message ChatMessage {
   ChatMessageSender sender = 19;       // 发送方信息快照
 }
 
+// 客服排队信息
+message ChatQueueInfo {
+  int64 merchant_id = 1;           // 客服商户ID
+  string session_no = 2;           // 会话编号
+  int64 user_id = 3;               // 用户ID
+  int64 group_id = 4;              // 客服分组ID
+  int32 position = 5;              // 当前会话排队位置,1表示下一位
+  int32 waiting_count = 6;         // 当前等待总数
+  int64 estimate_wait_seconds = 7; // 预计等待秒数
+  string message = 8;              // 给用户展示的排队提示
+  int64 update_times = 9;          // 更新时间戳(毫秒)
+}
+
+// 客服会话事件
+message ChatSessionEvent {
+  string session_no = 1;           // 会话编号
+  int64 merchant_id = 2;           // 客服商户ID
+  int64 user_id = 3;               // 用户ID
+  int64 agent_id = 4;              // 坐席ID
+  int64 operator_id = 5;           // 操作人ID
+  ChatSessionStatus status = 6;    // 事件后的会话状态
+  ChatAssignType assign_type = 7;  // 分配方式
+  string reason = 8;               // 事件原因
+  string message = 9;              // 给前端展示的系统提示
+  ChatSession session = 10;        // 会话快照
+  ChatQueueInfo queue = 11;        // 排队信息
+  int64 created_at = 12;           // 事件创建时间戳(毫秒)
+}
+
 // 客服消息事件,用于消息总线/WebSocket推送
 message ChatMessageEvent {
-  string type = 1;      // 事件类型,例如 chat.message
-  ChatMessage data = 2; // 消息内容
-  int64 created_at = 3; // 事件创建时间戳(毫秒)
+  string type = 1;                  // 事件类型,例如 chat.message
+  ChatMessage data = 2;             // 消息内容
+  int64 created_at = 3;             // 事件创建时间戳(毫秒)
+  ChatSession session = 4;          // 会话快照
+  ChatSessionEvent session_event = 5; // 会话事件
+  ChatQueueInfo queue = 6;          // 排队信息
+  common.RespBase base = 7;         // 业务响应
+}
+
+// WebSocket连接成功消息
+message ChatWsConnected {
+  string message = 1;     // 提示文案
+  int64 merchant_id = 2;  // 客服商户ID
+  int64 user_id = 3;      // 用户ID
+  string username = 4;    // 用户名
+  string session_no = 5;  // 会话编号
+  bool temporary = 6;     // 是否临时游客会话
+  ChatSession session = 7; // 会话快照
+  ChatQueueInfo queue = 8; // 排队信息
+}
+
+// 用户侧WebSocket发送消息
+message ChatWsUserMessageReq {
+  string session_no = 1;            // 会话编号,为空时使用当前连接会话
+  ChatMessageType message_type = 2; // 消息类型
+  string content = 3;               // 文本内容
+  string media_url = 4;             // 媒体/文件URL
+  string media_name = 5;            // 文件名
+  string media_mime = 6;            // MIME类型
+  int64 media_size = 7;             // 文件大小(bytes)
+  string sender_nickname = 8;       // 用户昵称快照
+  string sender_avatar_url = 9;     // 用户头像快照
+  string client_msg_no = 10;        // 客户端消息编号,用于幂等
+}
+
+// 坐席侧WebSocket发送消息
+message ChatWsAgentMessageReq {
+  int64 merchant_id = 1;            // 客服商户ID
+  int64 agent_id = 2;               // 坐席ID
+  int64 user_id = 3;                // 用户ID
+  string session_no = 4;            // 会话编号
+  ChatMessageType message_type = 5; // 消息类型
+  string content = 6;               // 文本内容
+  string media_url = 7;             // 媒体/文件URL
+  string media_name = 8;            // 文件名
+  string media_mime = 9;            // MIME类型
+  int64 media_size = 10;            // 文件大小(bytes)
+  string sender_nickname = 11;      // 坐席昵称快照
+  string sender_avatar_url = 12;    // 坐席头像快照
+  string client_msg_no = 13;        // 客户端消息编号,用于幂等
+}
+
+// 坐席侧WebSocket接待会话
+message ChatWsAcceptSessionReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 agent_id = 2;    // 坐席ID
+  int64 user_id = 3;     // 用户ID
+  string session_no = 4; // 会话编号
+  string reason = 5;     // 接待原因
+}
+
+// WebSocket关闭会话
+message ChatWsCloseSessionReq {
+  int64 merchant_id = 1;  // 客服商户ID
+  int64 operator_id = 2;  // 操作人ID
+  int64 user_id = 3;      // 用户ID
+  int64 agent_id = 4;     // 坐席ID
+  string session_no = 5;  // 会话编号
+  string close_reason = 6; // 结束原因
+}
+
+// WebSocket通用消息,用于规范前后端JSON结构
+message ChatWsMessage {
+  string type = 1;                         // 事件类型
+  common.RespBase base = 2;                // 响应状态
+  ChatWsConnected connected = 3;           // 连接成功数据
+  ChatWsUserMessageReq user_message = 4;   // 用户发送消息请求
+  ChatWsAgentMessageReq agent_message = 5; // 坐席发送消息请求
+  ChatWsAcceptSessionReq accept_session = 6; // 接待请求
+  ChatWsCloseSessionReq close_session = 7; // 关闭会话请求
+  ChatMessage message = 8;                 // 消息数据
+  ChatSession session = 9;                 // 会话数据
+  ChatSessionEvent session_event = 10;     // 会话事件
+  ChatQueueInfo queue = 11;                // 排队信息
+  int64 created_at = 12;                   // 事件创建时间戳(毫秒)
 }
 
 // 会话分配记录

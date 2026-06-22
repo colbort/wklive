@@ -14,6 +14,7 @@ import (
 )
 
 type (
+	AcceptChatSessionReq           = chat.AcceptChatSessionReq
 	AdminChatAgentResp             = chat.AdminChatAgentResp
 	AdminChatCategoryResp          = chat.AdminChatCategoryResp
 	AdminChatGroupResp             = chat.AdminChatGroupResp
@@ -107,6 +108,8 @@ type (
 		GetChatSession(ctx context.Context, in *GetChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 		// 分配会话
 		AssignChatSession(ctx context.Context, in *AssignChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
+		// 接待会话
+		AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 		// 发送客服消息
 		SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error)
 		// 查询会话消息
@@ -258,6 +261,12 @@ func (m *defaultChatAdmin) GetChatSession(ctx context.Context, in *GetChatSessio
 func (m *defaultChatAdmin) AssignChatSession(ctx context.Context, in *AssignChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.AssignChatSession(ctx, in, opts...)
+}
+
+// 接待会话
+func (m *defaultChatAdmin) AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.AcceptChatSession(ctx, in, opts...)
 }
 
 // 发送客服消息

@@ -7,6 +7,8 @@ import (
 	"context"
 
 	"chat-admin-api/internal/logicutil"
+	"chat-admin-api/internal/ws"
+	"wklive/proto/chat"
 
 	"chat-admin-api/internal/svc"
 	"chat-admin-api/internal/types"
@@ -29,5 +31,62 @@ func NewPageChatSessionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *PageChatSessionsLogic) PageChatSessions(req *types.PageChatSessionsReq) (resp *types.PageChatSessionsResp, err error) {
-	return logicutil.Proxy[types.PageChatSessionsResp](l.ctx, req, l.svcCtx.ChatAdminCli.PageChatSessions)
+	resp, err = logicutil.Proxy[types.PageChatSessionsResp](l.ctx, req, l.svcCtx.ChatAdminCli.PageChatSessions)
+	if err != nil || resp == nil || resp.Code != 200 || l.svcCtx.ChatMessageHub == nil {
+		return resp, err
+	}
+
+	transient := l.svcCtx.ChatMessageHub.ListTransientSessions(ws.TransientSessionFilter{
+		MerchantId: req.MerchantId,
+		UserId:     req.UserId,
+		AgentId:    req.AgentId,
+		Status:     req.Status,
+	})
+	if len(transient) == 0 {
+		return resp, nil
+	}
+
+	exists := make(map[string]struct{}, len(resp.Data))
+	for _, item := range resp.Data {
+		exists[item.SessionNo] = struct{}{}
+	}
+	merged := make([]types.ChatSession, 0, len(transient)+len(resp.Data))
+	for _, item := range transient {
+		if _, ok := exists[item.GetSessionNo()]; ok {
+			continue
+		}
+		merged = append(merged, protoSessionToType(item))
+	}
+	resp.Data = append(merged, resp.Data...)
+	resp.Total += int64(len(merged))
+	return resp, nil
+}
+
+func protoSessionToType(item *chat.ChatSession) types.ChatSession {
+	if item == nil {
+		return types.ChatSession{}
+	}
+	return types.ChatSession{
+		Id:               item.GetId(),
+		SessionNo:        item.GetSessionNo(),
+		MerchantId:       item.GetMerchantId(),
+		UserId:           item.GetUserId(),
+		Source:           int64(item.GetSource()),
+		Status:           int64(item.GetStatus()),
+		Priority:         int64(item.GetPriority()),
+		AgentId:          item.GetAgentId(),
+		Title:            item.GetTitle(),
+		Category:         item.GetCategory(),
+		LastMessage:      item.GetLastMessage(),
+		LastSenderType:   int64(item.GetLastSenderType()),
+		LastMessageTime:  item.GetLastMessageTime(),
+		UserUnreadCount:  int64(item.GetUserUnreadCount()),
+		AgentUnreadCount: int64(item.GetAgentUnreadCount()),
+		CloseTime:        item.GetCloseTime(),
+		CloseReason:      item.GetCloseReason(),
+		GroupId:          item.GetGroupId(),
+		LastMessageNo:    item.GetLastMessageNo(),
+		CreateTimes:      item.GetCreateTimes(),
+		UpdateTimes:      item.GetUpdateTimes(),
+	}
 }
