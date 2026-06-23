@@ -5,6 +5,8 @@ package chat_session
 
 import (
 	"context"
+	"encoding/json"
+	"strings"
 
 	"chat-admin-api/internal/logicutil"
 	"chat-admin-api/internal/ws"
@@ -32,6 +34,9 @@ func NewPageChatSessionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *PageChatSessionsLogic) PageChatSessions(req *types.PageChatSessionsReq) (resp *types.PageChatSessionsResp, err error) {
 	resp, err = logicutil.Proxy[types.PageChatSessionsResp](l.ctx, req, l.svcCtx.ChatAdminCli.PageChatSessions)
+	if resp != nil {
+		enrichSessions(resp.Data)
+	}
 	if err != nil || resp == nil || resp.Code != 200 || l.svcCtx.ChatMessageHub == nil {
 		return resp, err
 	}
@@ -71,6 +76,8 @@ func protoSessionToType(item *chat.ChatSession) types.ChatSession {
 		SessionNo:        item.GetSessionNo(),
 		MerchantId:       item.GetMerchantId(),
 		UserId:           item.GetUserId(),
+		UserNickname:     strings.TrimSpace(item.GetTitle()),
+		UserAvatarUrl:    userAvatarFromProtoSession(item),
 		Source:           int64(item.GetSource()),
 		Status:           int64(item.GetStatus()),
 		Priority:         int64(item.GetPriority()),
@@ -89,4 +96,45 @@ func protoSessionToType(item *chat.ChatSession) types.ChatSession {
 		CreateTimes:      item.GetCreateTimes(),
 		UpdateTimes:      item.GetUpdateTimes(),
 	}
+}
+
+func enrichSessions(sessions []types.ChatSession) {
+	for i := range sessions {
+		enrichSession(&sessions[i])
+	}
+}
+
+func enrichSession(session *types.ChatSession) {
+	if session == nil {
+		return
+	}
+	if strings.TrimSpace(session.UserNickname) == "" {
+		session.UserNickname = strings.TrimSpace(session.Title)
+	}
+	if strings.TrimSpace(session.UserAvatarUrl) == "" {
+		session.UserAvatarUrl = userAvatarFromExtJson(session.ExtJson)
+	}
+}
+
+func userAvatarFromProtoSession(session *chat.ChatSession) string {
+	if session == nil || session.GetExtJson() == nil {
+		return ""
+	}
+	if value := session.GetExtJson().GetFields()["userAvatarUrl"].GetStringValue(); strings.TrimSpace(value) != "" {
+		return strings.TrimSpace(value)
+	}
+	return ""
+}
+
+func userAvatarFromExtJson(extJson string) string {
+	extJson = strings.TrimSpace(extJson)
+	if extJson == "" {
+		return ""
+	}
+	var payload map[string]interface{}
+	if err := json.Unmarshal([]byte(extJson), &payload); err != nil {
+		return ""
+	}
+	value, _ := payload["userAvatarUrl"].(string)
+	return strings.TrimSpace(value)
 }

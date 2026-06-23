@@ -9,6 +9,7 @@ import (
 	"wklive/proto/chat"
 
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (
@@ -332,6 +333,9 @@ func applyTransientMessage(session *chat.ChatSession, eventType string, msg *cha
 		if name := strings.TrimSpace(msg.GetSender().GetNickname()); session.GetTitle() == "" && name != "" {
 			session.Title = name
 		}
+		if msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
+			ensureTransientUserExt(session, msg.GetSender().GetAvatarUrl())
+		}
 	}
 	if content := strings.TrimSpace(msg.GetContent()); content != "" {
 		session.LastMessage = content
@@ -358,6 +362,24 @@ func applyTransientMessage(session *chat.ChatSession, eventType string, msg *cha
 	default:
 		applyTransientMessageStatus(session, msg)
 	}
+}
+
+func ensureTransientUserExt(session *chat.ChatSession, avatarUrl string) {
+	if session == nil || strings.TrimSpace(avatarUrl) == "" {
+		return
+	}
+	if session.ExtJson != nil {
+		if value := session.ExtJson.GetFields()["userAvatarUrl"].GetStringValue(); strings.TrimSpace(value) != "" {
+			return
+		}
+	}
+	ext, err := structpb.NewStruct(map[string]interface{}{
+		"userAvatarUrl": strings.TrimSpace(avatarUrl),
+	})
+	if err != nil {
+		return
+	}
+	session.ExtJson = ext
 }
 
 func applyTransientMessageStatus(session *chat.ChatSession, msg *chat.ChatMessage) {

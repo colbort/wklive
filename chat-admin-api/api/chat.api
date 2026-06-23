@@ -52,6 +52,8 @@ type ChatSession {
 	sessionNo        string `json:"sessionNo"`
 	merchantId       int64  `json:"merchantId"`
 	userId           int64  `json:"userId"`
+	userNickname     string `json:"userNickname"`
+	userAvatarUrl    string `json:"userAvatarUrl"`
 	source           int64  `json:"source"`
 	status           int64  `json:"status"`
 	priority         int64  `json:"priority"`

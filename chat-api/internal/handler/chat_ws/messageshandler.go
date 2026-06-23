@@ -81,6 +81,15 @@ func buildWSIdentity(r *http.Request, svcCtx *svc.ServiceContext) (chatWSIdentit
 	if err != nil {
 		return chatWSIdentity{}, err
 	}
+	logx.Infof(
+		"chat ws identity header, merchantId=%d hasUserId=%t userId=%d nickname=%s avatar=%t protocols=%s",
+		merchantId,
+		hasUserId,
+		userId,
+		firstNonEmpty(userNicknameFromRequest(r), guestUsername),
+		userAvatarFromRequest(r) != "",
+		r.Header.Get("Sec-WebSocket-Protocol"),
+	)
 	if !hasUserId {
 		logx.Infof("chat ws identity resolved as guest, merchantId=%d sessionNo=%s nickname=%s", merchantId, sessionNo, firstNonEmpty(userNicknameFromRequest(r), guestUsername))
 		return chatWSIdentity{
@@ -92,16 +101,18 @@ func buildWSIdentity(r *http.Request, svcCtx *svc.ServiceContext) (chatWSIdentit
 			Temporary:  true,
 		}, nil
 	} else {
-		sessionNo, err = openPersistentSession(r.Context(), svcCtx, merchantId, userId)
+		username := firstNonEmpty(userNicknameFromRequest(r), fmt.Sprintf("user-%d", userId))
+		avatarUrl := userAvatarFromRequest(r)
+		sessionNo, err = openPersistentSession(r.Context(), svcCtx, merchantId, userId, username, avatarUrl)
 		if err != nil {
 			return chatWSIdentity{}, err
 		}
-		logx.Infof("chat ws identity resolved as user, merchantId=%d userId=%d sessionNo=%s nickname=%s", merchantId, userId, sessionNo, firstNonEmpty(userNicknameFromRequest(r), fmt.Sprintf("user-%d", userId)))
+		logx.Infof("chat ws identity resolved as user, merchantId=%d userId=%d sessionNo=%s nickname=%s", merchantId, userId, sessionNo, username)
 		return chatWSIdentity{
 			MerchantId: merchantId,
 			UserId:     userId,
-			Username:   firstNonEmpty(userNicknameFromRequest(r), fmt.Sprintf("user-%d", userId)),
-			AvatarUrl:  userAvatarFromRequest(r),
+			Username:   username,
+			AvatarUrl:  avatarUrl,
 			SessionNo:  sessionNo,
 		}, nil
 	}
@@ -217,10 +228,13 @@ func sendWSError(conn *ws.Connection, message string) {
 	conn.SendJSON(eventError, map[string]string{"message": message})
 }
 
-func openPersistentSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantId, userId int64) (string, error) {
+func openPersistentSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantId, userId int64, nickname, avatarUrl string) (string, error) {
 	ctx = contextWithChatIdentity(ctx, merchantId, userId)
 	resp, err := svcCtx.ChatAppCli.OpenChatSession(ctx, &chat.OpenChatSessionReq{
-		Source: chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
+		Source:          chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
+		Title:           strings.TrimSpace(nickname),
+		SenderNickname:  strings.TrimSpace(nickname),
+		SenderAvatarUrl: strings.TrimSpace(avatarUrl),
 	})
 	if err != nil {
 		return "", err
@@ -232,6 +246,7 @@ func openPersistentSession(ctx context.Context, svcCtx *svc.ServiceContext, merc
 	if sessionNo == "" {
 		return "", fmt.Errorf("sessionNo is empty")
 	}
+	logx.Infof("chat ws persistent session opened, merchantId=%d userId=%d sessionNo=%s", merchantId, userId, sessionNo)
 	return sessionNo, nil
 }
 

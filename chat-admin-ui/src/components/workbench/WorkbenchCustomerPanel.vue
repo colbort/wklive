@@ -1,15 +1,32 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import type { ChatSession } from "@/types/chat";
 
-defineProps<{
+const props = defineProps<{
   session?: ChatSession;
 }>();
+
+const displayName = computed(
+  () => props.session?.userNickname || props.session?.title || "访客",
+);
 </script>
 
 <template>
   <aside class="customer-panel workbench-region">
     <div class="panel-header">
       <h2>客户信息</h2>
+    </div>
+    <div class="customer-card">
+      <el-avatar
+        :size="44"
+        :src="session?.userAvatarUrl || undefined"
+      >
+        {{ displayName.slice(0, 1) }}
+      </el-avatar>
+      <div>
+        <strong>{{ displayName }}</strong>
+        <span>ID: {{ session?.userId || "-" }}</span>
+      </div>
     </div>
     <dl class="info-list">
       <div>

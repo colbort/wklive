@@ -90,7 +90,7 @@ const wsOnline = computed(() => wsState.value === "open");
 const activeNeedsAccept = computed(
   () =>
     Boolean(activeSession.value) &&
-    activeSession.value?.status === sessionStatus.pendingAgent &&
+    needsAccept(activeSession.value) &&
     !activeSession.value?.agentId,
 );
 const activeClosed = computed(
@@ -296,7 +296,7 @@ function handleWsMessage(payload: string) {
     let messagePushed = false;
     if (message?.sessionNo && message.messageNo) {
       normalizeMessageEnums(message);
-      if (!isQueueSystemMessage(message)) {
+      if (!isQueueSystemMessage(message) && event.type !== "accept_chat_session.result") {
         messagePushed = pushMessage(message);
       }
     }
@@ -466,6 +466,8 @@ function transientSessionFromMessage(message: ChatMessage): ChatSession {
     sessionNo: message.sessionNo,
     merchantId: Number(message.merchantId || merchantId.value),
     userId: Number(message.userId || 0),
+    userNickname: message.sender?.nickname || "访客",
+    userAvatarUrl: message.sender?.avatarUrl || "",
     source: 2,
     status:
       senderType === 2
@@ -526,9 +528,17 @@ function matchStatusFilter(session: ChatSession) {
 }
 
 function sessionNeedsAccept(session?: ChatSession) {
+  return needsAccept(session);
+}
+
+function needsAccept(session?: ChatSession) {
+  const status = sessionStatusValue(session?.status);
   return (
     Boolean(session) &&
-    sessionStatusValue(session?.status) === sessionStatus.pendingAgent &&
+    (
+      status === sessionStatus.waiting ||
+      status === sessionStatus.pendingAgent
+    ) &&
     !Number(session?.agentId || 0)
   );
 }
@@ -554,6 +564,8 @@ function normalizeSession(session: ChatSession) {
   session.status = sessionStatusValue(session.status);
   session.agentId = Number(session.agentId || 0);
   session.userId = Number(session.userId || 0);
+  session.userNickname = session.userNickname || session.title || "";
+  session.userAvatarUrl = session.userAvatarUrl || "";
   session.groupId = Number(session.groupId || 0);
   session.lastSenderType = senderTypeValue(session.lastSenderType);
   return session;

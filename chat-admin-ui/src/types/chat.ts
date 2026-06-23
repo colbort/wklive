@@ -61,6 +61,8 @@ export interface ChatSession {
   sessionNo: string;
   merchantId: number;
   userId: number;
+  userNickname: string;
+  userAvatarUrl: string;
   source: number;
   status: number;
   priority: number;

@@ -29,5 +29,9 @@ func NewAssignChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *AssignChatSessionLogic) AssignChatSession(req *types.AssignChatSessionReq) (resp *types.ChatSessionResp, err error) {
-	return logicutil.Proxy[types.ChatSessionResp](l.ctx, req, l.svcCtx.ChatAdminCli.AssignChatSession)
+	resp, err = logicutil.Proxy[types.ChatSessionResp](l.ctx, req, l.svcCtx.ChatAdminCli.AssignChatSession)
+	if resp != nil {
+		enrichSession(&resp.Data)
+	}
+	return resp, err
 }

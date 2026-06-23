@@ -8,6 +8,7 @@ import (
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type OpenChatSessionLogic struct {
@@ -33,7 +34,11 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 	if err != nil {
 		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
 	}
-	session, created, err := ensureOpenSession(l.ctx, l.svcCtx, merchantID, userID, normalizeSource(in.GetSource()), in.GetTitle(), in.GetCategory(), chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL, nil)
+	title := strings.TrimSpace(in.GetTitle())
+	if title == "" {
+		title = strings.TrimSpace(in.GetSenderNickname())
+	}
+	session, created, err := ensureOpenSession(l.ctx, l.svcCtx, merchantID, userID, normalizeSource(in.GetSource()), title, in.GetCategory(), chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL, userSnapshotExt(in.GetSenderAvatarUrl()))
 	if err != nil {
 		return &chat.AppChatSessionResp{Base: badBase(err.Error())}, nil
 	}
@@ -47,4 +52,18 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		}
 	}
 	return &chat.AppChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
+}
+
+func userSnapshotExt(avatarUrl string) *structpb.Struct {
+	avatarUrl = strings.TrimSpace(avatarUrl)
+	if avatarUrl == "" {
+		return nil
+	}
+	ext, err := structpb.NewStruct(map[string]interface{}{
+		"userAvatarUrl": avatarUrl,
+	})
+	if err != nil {
+		return nil
+	}
+	return ext
 }

@@ -26,7 +26,7 @@ const emit = defineEmits<{
   <section class="chat-panel workbench-region">
     <header class="chat-header">
       <div>
-        <h2>{{ session?.title || "请选择会话" }}</h2>
+        <h2>{{ session?.userNickname || session?.title || "请选择会话" }}</h2>
         <span>{{ session?.sessionNo || "-" }}</span>
       </div>
       <div class="chat-actions">
