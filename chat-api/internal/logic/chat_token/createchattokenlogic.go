@@ -16,6 +16,11 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+const (
+	defaultChatTokenTTLSeconds = int64(5 * 60)
+	maxChatTokenTTLSeconds     = int64(30 * 60)
+)
+
 type CreateChatTokenLogic struct {
 	logx.Logger
 	ctx    context.Context
