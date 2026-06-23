@@ -5,6 +5,7 @@ package chat_token
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 	"wklive/proto/chat"
@@ -59,6 +60,18 @@ func (l *CreateChatTokenLogic) CreateChatToken(req *types.CreateChatTokenReq) (*
 		}}, nil
 	}
 
+	merchantId := authResp.GetData().GetMerchantId()
+	nickname := firstNonEmpty(req.Nickname, fmt.Sprintf("user-%d", req.UserId))
+	avatarUrl := strings.TrimSpace(req.AvatarUrl)
+	sessionNo := ""
+	if !req.IsGuest {
+		sessionNo, err = l.existingSessionNo(merchantId, req.UserId)
+		if err != nil {
+			l.Errorf("get existing chat session failed: %v", err)
+			return &types.CreateChatTokenResp{RespBase: types.RespBase{Code: 100001, Msg: err.Error()}}, nil
+		}
+	}
+
 	ttl := req.TtlSeconds
 	if ttl <= 0 {
 		ttl = defaultChatTokenTTLSeconds
@@ -68,11 +81,11 @@ func (l *CreateChatTokenLogic) CreateChatToken(req *types.CreateChatTokenReq) (*
 	}
 	expireAt := time.Now().Add(time.Duration(ttl) * time.Second).UnixMilli()
 	token, err := jwt.Sign(l.svcCtx.Config.Jwt.AccessSecret, jwt.Claims{
-		ApiKey:     apiKey,
-		MerchantId: authResp.GetData().GetMerchantId(),
+		MerchantId: merchantId,
 		UserId:     req.UserId,
-		Nickname:   strings.TrimSpace(req.Nickname),
-		AvatarUrl:  strings.TrimSpace(req.AvatarUrl),
+		SessionNo:  sessionNo,
+		Nickname:   nickname,
+		AvatarUrl:  avatarUrl,
 		ExpireAt:   expireAt,
 	})
 	if err != nil {
@@ -85,6 +98,36 @@ func (l *CreateChatTokenLogic) CreateChatToken(req *types.CreateChatTokenReq) (*
 		Data: types.ChatToken{
 			ChatToken: token,
 			ExpireAt:  expireAt,
+			SessionNo: sessionNo,
 		},
 	}, nil
+}
+
+func (l *CreateChatTokenLogic) existingSessionNo(merchantId, userId int64) (string, error) {
+	resp, err := l.svcCtx.ChatAppCli.GetChatSessionByUser(l.ctx, &chat.GetChatSessionByUserReq{
+		MerchantId: merchantId,
+		UserId:     userId,
+	})
+	if err != nil {
+		return "", err
+	}
+	if resp.GetBase().GetCode() == 404 {
+		return "", nil
+	}
+	if resp.GetBase().GetCode() != 200 {
+		return "", fmt.Errorf("%s", resp.GetBase().GetMsg())
+	}
+	if resp.GetData() == nil {
+		return "", nil
+	}
+	return strings.TrimSpace(resp.GetData().GetSessionNo()), nil
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if v := strings.TrimSpace(value); v != "" {
+			return v
+		}
+	}
+	return ""
 }

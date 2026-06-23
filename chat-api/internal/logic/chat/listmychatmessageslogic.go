@@ -5,8 +5,10 @@ package chat
 
 import (
 	"context"
-	"wklive/common/utils"
+	"wklive/proto/chat"
+	"wklive/proto/common"
 
+	"chat-api/internal/jwt"
 	"chat-api/internal/logicutil"
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
@@ -29,23 +31,20 @@ func NewListMyChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *ListMyChatMessagesLogic) ListMyChatMessages(req *types.ListChatMessagesReq) (resp *types.ListChatMessagesResp, err error) {
-	userId, err := utils.GetUserIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	merchantId, err := utils.GetMerchantIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
+	claims, ok := jwt.ClaimsFromContext(l.ctx)
+	if !ok || claims.SessionNo == "" {
+		return &types.ListChatMessagesResp{
+			RespBase: types.RespBase{Code: 200, Msg: "ok"},
+			Data:     []types.ChatMessage{},
+		}, nil
 	}
 
-	proxyReq := struct {
-		*types.ListChatMessagesReq
-		MerchantId int64
-		UserId     int64
-	}{
-		ListChatMessagesReq: req,
-		MerchantId:          merchantId,
-		UserId:              userId,
+	proxyReq := chat.ListMyChatMessagesReq{
+		Page: &common.PageReq{
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
+		},
+		SessionNo: claims.SessionNo,
 	}
 	return logicutil.Proxy[types.ListChatMessagesResp](l.ctx, proxyReq, l.svcCtx.ChatAppCli.ListMyChatMessages)
 }

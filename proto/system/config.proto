@@ -102,3 +102,12 @@ message PhoneConfig {
   string headers_json = 5; // HTTP headers JSON，例如 {"Authorization":"Bearer xxx"}
   string body_template = 6; // 请求体模板，支持 {{phone}} {{code}} {{scene}}
 }
+
+message ChatConfig {
+  common.Enable enabled = 1; // 状态:1表示启用，2表示禁用
+  string api = 2; // 客服API地址
+  string api_key = 3; // 客服API Key
+  string api_secret = 4; // 客服API Secret
+  string chat_ui_url = 5; // 客服前端地址
+  string chat_ws_url = 6; // 客服WebSocket地址，可选
+}

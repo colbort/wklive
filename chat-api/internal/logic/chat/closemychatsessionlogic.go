@@ -8,6 +8,7 @@ import (
 	"strings"
 	"wklive/proto/chat"
 
+	"chat-api/internal/jwt"
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
 
@@ -29,13 +30,13 @@ func NewCloseMyChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *CloseMyChatSessionLogic) CloseMyChatSession(req *types.CloseMyChatSessionReq) (*types.RespBase, error) {
-	sessionNo := strings.TrimSpace(req.SessionNo)
-	if sessionNo == "" {
+	claims, ok := jwt.ClaimsFromContext(l.ctx)
+	if !ok || claims.SessionNo == "" {
 		return &types.RespBase{Code: 400, Msg: "sessionNo is required"}, nil
 	}
 
 	resp, err := l.svcCtx.ChatAppCli.CloseMyChatSession(l.ctx, &chat.CloseMyChatSessionReq{
-		SessionNo:   sessionNo,
+		SessionNo:   claims.SessionNo,
 		CloseReason: strings.TrimSpace(req.CloseReason),
 	})
 	if err != nil {

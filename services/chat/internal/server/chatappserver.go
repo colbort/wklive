@@ -47,6 +47,12 @@ func (s *ChatAppServer) GetMyChatSession(ctx context.Context, in *chat.GetMyChat
 	return l.GetMyChatSession(in)
 }
 
+// 按商户和用户查询会话
+func (s *ChatAppServer) GetChatSessionByUser(ctx context.Context, in *chat.GetChatSessionByUserReq) (*chat.AppChatSessionResp, error) {
+	l := logic.NewGetChatSessionByUserLogic(ctx, s.svcCtx)
+	return l.GetChatSessionByUser(in)
+}
+
 // 查询我的排队信息
 func (s *ChatAppServer) GetMyChatQueueInfo(ctx context.Context, in *chat.GetMyChatQueueInfoReq) (*chat.ChatQueueInfoResp, error) {
 	l := logic.NewGetMyChatQueueInfoLogic(ctx, s.svcCtx)

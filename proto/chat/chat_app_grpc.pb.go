@@ -23,6 +23,7 @@ const (
 	ChatApp_OpenChatSession_FullMethodName      = "/chat.ChatApp/OpenChatSession"
 	ChatApp_ListMyChatSessions_FullMethodName   = "/chat.ChatApp/ListMyChatSessions"
 	ChatApp_GetMyChatSession_FullMethodName     = "/chat.ChatApp/GetMyChatSession"
+	ChatApp_GetChatSessionByUser_FullMethodName = "/chat.ChatApp/GetChatSessionByUser"
 	ChatApp_GetMyChatQueueInfo_FullMethodName   = "/chat.ChatApp/GetMyChatQueueInfo"
 	ChatApp_SendUserMessage_FullMethodName      = "/chat.ChatApp/SendUserMessage"
 	ChatApp_ListMyChatMessages_FullMethodName   = "/chat.ChatApp/ListMyChatMessages"
@@ -44,6 +45,8 @@ type ChatAppClient interface {
 	ListMyChatSessions(ctx context.Context, in *ListMyChatSessionsReq, opts ...grpc.CallOption) (*ListChatSessionsResp, error)
 	// 查询会话详情
 	GetMyChatSession(ctx context.Context, in *GetMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+	// 按商户和用户查询会话
+	GetChatSessionByUser(ctx context.Context, in *GetChatSessionByUserReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 	// 查询我的排队信息
 	GetMyChatQueueInfo(ctx context.Context, in *GetMyChatQueueInfoReq, opts ...grpc.CallOption) (*ChatQueueInfoResp, error)
 	// 发送用户消息
@@ -98,6 +101,16 @@ func (c *chatAppClient) GetMyChatSession(ctx context.Context, in *GetMyChatSessi
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AppChatSessionResp)
 	err := c.cc.Invoke(ctx, ChatApp_GetMyChatSession_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAppClient) GetChatSessionByUser(ctx context.Context, in *GetChatSessionByUserReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AppChatSessionResp)
+	err := c.cc.Invoke(ctx, ChatApp_GetChatSessionByUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -168,6 +181,8 @@ type ChatAppServer interface {
 	ListMyChatSessions(context.Context, *ListMyChatSessionsReq) (*ListChatSessionsResp, error)
 	// 查询会话详情
 	GetMyChatSession(context.Context, *GetMyChatSessionReq) (*AppChatSessionResp, error)
+	// 按商户和用户查询会话
+	GetChatSessionByUser(context.Context, *GetChatSessionByUserReq) (*AppChatSessionResp, error)
 	// 查询我的排队信息
 	GetMyChatQueueInfo(context.Context, *GetMyChatQueueInfoReq) (*ChatQueueInfoResp, error)
 	// 发送用户消息
@@ -199,6 +214,9 @@ func (UnimplementedChatAppServer) ListMyChatSessions(context.Context, *ListMyCha
 }
 func (UnimplementedChatAppServer) GetMyChatSession(context.Context, *GetMyChatSessionReq) (*AppChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyChatSession not implemented")
+}
+func (UnimplementedChatAppServer) GetChatSessionByUser(context.Context, *GetChatSessionByUserReq) (*AppChatSessionResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetChatSessionByUser not implemented")
 }
 func (UnimplementedChatAppServer) GetMyChatQueueInfo(context.Context, *GetMyChatQueueInfoReq) (*ChatQueueInfoResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyChatQueueInfo not implemented")
@@ -304,6 +322,24 @@ func _ChatApp_GetMyChatSession_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAppServer).GetMyChatSession(ctx, req.(*GetMyChatSessionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatApp_GetChatSessionByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChatSessionByUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAppServer).GetChatSessionByUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatApp_GetChatSessionByUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAppServer).GetChatSessionByUser(ctx, req.(*GetChatSessionByUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -420,6 +456,10 @@ var ChatApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMyChatSession",
 			Handler:    _ChatApp_GetMyChatSession_Handler,
+		},
+		{
+			MethodName: "GetChatSessionByUser",
+			Handler:    _ChatApp_GetChatSessionByUser_Handler,
 		},
 		{
 			MethodName: "GetMyChatQueueInfo",

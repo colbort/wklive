@@ -200,6 +200,10 @@
           <PhoneConfigComponent v-model="phoneConfigForm" />
         </template>
 
+        <template v-else-if="formData.configKey === 'CHAT_CONFIG'">
+          <ChatConfigComponent v-model="chatConfigForm" />
+        </template>
+
         <template v-else>
           <el-form-item :label="t('system.configValue')" prop="configValue">
             <el-input
@@ -244,6 +248,7 @@ import type {
   WithdrawConfig,
   EmailConfig,
   PhoneConfig,
+  ChatConfig,
 } from '@/services/system/ConfigService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
@@ -256,6 +261,7 @@ import RechargeConfigComponent from './components/RechargeConfig.vue'
 import WithdrawConfigComponent from './components/WithdrawConfig.vue'
 import EmailConfigComponent from './components/EmailConfig.vue'
 import PhoneConfigComponent from './components/PhoneConfig.vue'
+import ChatConfigComponent from './components/ChatConfig.vue'
 import { getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -379,6 +385,15 @@ const phoneConfigForm = ref<PhoneConfig>({
   method: 'POST',
   headers_json: '{}',
   body_template: '{"phone":"{{phone}}","code":"{{code}}","scene":"{{scene}}"}',
+})
+
+const chatConfigForm = ref<ChatConfig>({
+  enabled: 2,
+  api: '',
+  api_key: '',
+  api_secret: '',
+  chat_ui_url: '',
+  chat_ws_url: '',
 })
 
 const configNumber = (data: Record<string, unknown>, camelKey: string, snakeKey: string) =>
@@ -514,6 +529,14 @@ function resetTypeForms() {
     headers_json: '{}',
     body_template: '{"phone":"{{phone}}","code":"{{code}}","scene":"{{scene}}"}',
   }
+  chatConfigForm.value = {
+    enabled: 2,
+    api: '',
+    api_key: '',
+    api_secret: '',
+    chat_ui_url: '',
+    chat_ws_url: '',
+  }
 }
 
 function handleConfigKeyChange(value: string) {
@@ -603,6 +626,16 @@ function handleConfigKeyChange(value: string) {
       method: 'POST',
       headers_json: '{}',
       body_template: '{"phone":"{{phone}}","code":"{{code}}","scene":"{{scene}}"}',
+    }
+    formData.configValue = ''
+  } else if (value === 'CHAT_CONFIG') {
+    chatConfigForm.value = {
+      enabled: 2,
+      api: '',
+      api_key: '',
+      api_secret: '',
+      chat_ui_url: '',
+      chat_ws_url: '',
     }
     formData.configValue = ''
   }
@@ -780,6 +813,20 @@ function handleEdit(row: SysConfigItem) {
     } catch {
       resetTypeForms()
     }
+  } else if (row.configKey === 'CHAT_CONFIG') {
+    try {
+      const parsed = JSON.parse(row.configValue || '{}')
+      chatConfigForm.value = {
+        enabled: enableValue(parsed.enabled),
+        api: parsed.api || '',
+        api_key: parsed.api_key || '',
+        api_secret: parsed.api_secret || '',
+        chat_ui_url: parsed.chat_ui_url || '',
+        chat_ws_url: parsed.chat_ws_url || '',
+      }
+    } catch {
+      resetTypeForms()
+    }
   } else {
     formData.configValue = row.configValue
   }
@@ -877,6 +924,17 @@ async function handleSubmit() {
         JSON.parse(phoneConfigForm.value.headers_json)
       }
       formData.configValue = JSON.stringify(phoneConfigForm.value)
+    } else if (formData.configKey === 'CHAT_CONFIG') {
+      if (
+        chatConfigForm.value.enabled === 1 &&
+        (!chatConfigForm.value.api ||
+          !chatConfigForm.value.api_key ||
+          !chatConfigForm.value.api_secret ||
+          !chatConfigForm.value.chat_ui_url)
+      ) {
+        throw new Error(t('validation.required'))
+      }
+      formData.configValue = JSON.stringify(chatConfigForm.value)
     }
 
     if (isEdit.value) {

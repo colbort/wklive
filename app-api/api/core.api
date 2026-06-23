@@ -23,12 +23,30 @@ type SystemCore {
 	isCryptoEnabled   bool           `json:"isCryptoEnabled"` // 是否加密接口提交数据
 	assetUrl          string         `json:"assetUrl,optional"` // 对象存储访问地址
 	intervals         []Interval     `json:"intervals"` // kline 支持粒度
-	options           []OptionsGroup `json:"options"`
+	options           []OptionsGroup `json:"options"` //
 }
 
 type GetSystemCoreResp {
 	RespBase
 	data SystemCore `json:"data"`
+}
+
+type CreateChatTokenReq {
+	deviceId    string `json:"deviceId,optional"`
+	fingerprint string `json:"fingerprint,optional"`
+}
+
+type ChatToken {
+	chatToken string `json:"chatToken"`
+	expireAt  int64  `json:"expireAt"`
+	sessionNo string `json:"sessionNo"`
+	chatUiUrl string `json:"chatUiUrl"`
+	chatWsUrl string `json:"chatWsUrl,optional"`
+}
+
+type CreateChatTokenResp {
+	RespBase
+	data ChatToken `json:"data"`
 }
 
 @server (
@@ -40,3 +58,12 @@ service app {
 	get /system/core returns (GetSystemCoreResp)
 }
 
+@server (
+	prefix:     /app
+	group:      chat
+	middleware: GuestSensitiveRateLimit
+)
+service app {
+	@handler CreateChatToken
+	post /chat/token (CreateChatTokenReq) returns (CreateChatTokenResp)
+}

@@ -21,9 +21,9 @@ type contextKey string
 const claimsContextKey contextKey = "chat-token-claims"
 
 type Claims struct {
-	ApiKey     string `json:"apiKey"`
 	MerchantId int64  `json:"merchantId"`
 	UserId     int64  `json:"userId"`
+	SessionNo  string `json:"sessionNo,omitempty"`
 	Nickname   string `json:"nickname,omitempty"`
 	AvatarUrl  string `json:"avatarUrl,omitempty"`
 	ExpireAt   int64  `json:"expireAt"`

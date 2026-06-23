@@ -32,6 +32,7 @@ const (
 	SysConfigType_WITHDRAW_CONFIG SysConfigType = 5 // 提现配置
 	SysConfigType_EMAIL_CONFIG    SysConfigType = 6 // 邮件配置
 	SysConfigType_PHONE_CONFIG    SysConfigType = 7 // 手机短信配置
+	SysConfigType_CHAT_CONFIG     SysConfigType = 8 // 客服配置
 )
 
 // Enum value maps for SysConfigType.
@@ -45,6 +46,7 @@ var (
 		5: "WITHDRAW_CONFIG",
 		6: "EMAIL_CONFIG",
 		7: "PHONE_CONFIG",
+		8: "CHAT_CONFIG",
 	}
 	SysConfigType_value = map[string]int32{
 		"UNKNOWN":         0,
@@ -55,6 +57,7 @@ var (
 		"WITHDRAW_CONFIG": 5,
 		"EMAIL_CONFIG":    6,
 		"PHONE_CONFIG":    7,
+		"CHAT_CONFIG":     8,
 	}
 )
 
@@ -459,7 +462,7 @@ var File_proto_system_enum_proto protoreflect.FileDescriptor
 
 const file_proto_system_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/system/enum.proto\x12\x06system*\xa1\x01\n" +
+	"\x17proto/system/enum.proto\x12\x06system*\xb2\x01\n" +
 	"\rSysConfigType\x12\v\n" +
 	"\aUNKNOWN\x10\x00\x12\x0f\n" +
 	"\vSYSTEM_CORE\x10\x01\x12\x12\n" +
@@ -468,7 +471,8 @@ const file_proto_system_enum_proto_rawDesc = "" +
 	"\x0fRECHARGE_CONFIG\x10\x04\x12\x13\n" +
 	"\x0fWITHDRAW_CONFIG\x10\x05\x12\x10\n" +
 	"\fEMAIL_CONFIG\x10\x06\x12\x10\n" +
-	"\fPHONE_CONFIG\x10\a*^\n" +
+	"\fPHONE_CONFIG\x10\a\x12\x0f\n" +
+	"\vCHAT_CONFIG\x10\b*^\n" +
 	"\bMenuType\x12\x15\n" +
 	"\x11MENU_TYPE_UNKNOWN\x10\x00\x12\x11\n" +
 	"\rMENU_TYPE_DIR\x10\x01\x12\x12\n" +

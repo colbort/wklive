@@ -43,12 +43,11 @@ export function createChatToken(data: CreateChatTokenReq): Promise<ChatTokenResp
 }
 
 export function listChatMessagesWithMeta(
-  sessionNo: string,
   params: ListChatMessagesParams,
   chatToken: string,
 ) {
   return request<ApiResp<ChatMessage[]>>(
-    `/sessions/${encodeURIComponent(sessionNo)}/messages`,
+    "/session/messages",
     {
       method: "GET",
       params,
@@ -58,12 +57,11 @@ export function listChatMessagesWithMeta(
 }
 
 export function closeMyChatSession(
-  sessionNo: string,
   chatToken: string,
   closeReason = "",
   keepalive = false,
 ): Promise<RespBase> {
-  return requestBase(`/sessions/${encodeURIComponent(sessionNo)}/close`, {
+  return requestBase("/session/close", {
     method: "POST",
     token: chatToken,
     body: { closeReason },

@@ -2,24 +2,23 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { getAccessToken } from '@/api/http'
-import { apiGetProfile } from '@/api/userPrivate'
+import { apiCreateChatToken } from '@/api/chat'
 import CommonPage from '@/components/common/CommonPage.vue'
 import { useI18n } from '@/i18n'
-import type { UserProfile } from '@/types/user'
 
 const router = useRouter()
 const { t } = useI18n()
-const profile = ref<UserProfile | null>(null)
-const profileLoaded = ref(false)
+const chatToken = ref('')
+const chatUiUrl = ref('')
+const chatWsUrl = ref('')
+const loading = ref(false)
+const loadError = ref('')
 
 const chatFrameUrl = computed(() => {
-  const baseUrl = import.meta.env.VITE_CHAT_UI_URL?.trim()
-  const chatToken = import.meta.env.VITE_CHAT_TOKEN?.trim()
-  const wsUrl = import.meta.env.VITE_CHAT_WS_URL?.trim()
+  const baseUrl = chatUiUrl.value.trim()
+  const wsUrl = chatWsUrl.value.trim()
 
-  if (!baseUrl || !chatToken) return ''
-  if (getAccessToken() && (!profileLoaded.value || !profile.value?.user?.id)) return ''
+  if (!baseUrl || !chatToken.value) return ''
 
   const url = new URL(baseUrl, window.location.origin)
   if (url.pathname.replace(/\/$/, '').endsWith('/chat')) {
@@ -27,7 +26,7 @@ const chatFrameUrl = computed(() => {
   }
   url.searchParams.set('page', 'chat')
   url.searchParams.set('mode', 'mobile')
-  url.searchParams.set('chatToken', chatToken)
+  url.searchParams.set('chatToken', chatToken.value)
   if (wsUrl) {
     url.searchParams.set('wsUrl', wsUrl)
   }
@@ -36,21 +35,26 @@ const chatFrameUrl = computed(() => {
 })
 
 onMounted(() => {
-  if (getAccessToken()) {
-    void loadProfile()
-  }
+  void loadChatToken()
 })
 
-async function loadProfile() {
+async function loadChatToken() {
+  loading.value = true
+  loadError.value = ''
   try {
-    const res = await apiGetProfile()
+    const res = await apiCreateChatToken()
     if (res.code === 200) {
-      profile.value = res.data
+      chatToken.value = res.data.chatToken
+      chatUiUrl.value = res.data.chatUiUrl
+      chatWsUrl.value = res.data.chatWsUrl || ''
+    } else {
+      loadError.value = res.msg || '客服配置未完成'
     }
   } catch (error) {
-    console.warn('load chat profile failed', error)
+    console.warn('load chat token failed', error)
+    loadError.value = '客服配置未完成'
   } finally {
-    profileLoaded.value = true
+    loading.value = false
   }
 }
 </script>
@@ -72,7 +76,7 @@ async function loadProfile() {
         v-else
         class="customer-service-page__empty"
       >
-        客服配置未完成
+        {{ loading ? '客服加载中' : loadError || '客服配置未完成' }}
       </div>
     </section>
   </CommonPage>

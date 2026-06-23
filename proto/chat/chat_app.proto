@@ -22,6 +22,10 @@ service ChatApp {
   // 查询会话详情
   rpc GetMyChatSession(GetMyChatSessionReq) returns (AppChatSessionResp);
 
+  // 按商户和用户查询会话
+  rpc GetChatSessionByUser(GetChatSessionByUserReq)
+      returns (AppChatSessionResp);
+
   // 查询我的排队信息
   rpc GetMyChatQueueInfo(GetMyChatQueueInfoReq) returns (ChatQueueInfoResp);
 
@@ -60,6 +64,11 @@ message ListMyChatSessionsReq {
 
 message GetMyChatSessionReq {
   string session_no = 1; // 会话编号
+}
+
+message GetChatSessionByUserReq {
+  int64 merchant_id = 1; // 客服商户ID
+  int64 user_id = 2;     // 用户ID
 }
 
 message GetMyChatQueueInfoReq {

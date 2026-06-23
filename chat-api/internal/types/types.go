@@ -35,10 +35,10 @@ type ChatMessageSender struct {
 type ChatToken struct {
 	ChatToken string `json:"chatToken"`
 	ExpireAt  int64  `json:"expireAt"`
+	SessionNo string `json:"sessionNo"`
 }
 
 type CloseMyChatSessionReq struct {
-	SessionNo   string `path:"sessionNo"`
 	CloseReason string `json:"closeReason,optional"`
 }
 
@@ -48,6 +48,7 @@ type CreateChatTokenReq struct {
 	UserId     int64  `json:"userId"`
 	Nickname   string `json:"nickname,optional"`
 	AvatarUrl  string `json:"avatarUrl,optional"`
+	IsGuest    bool   `json:"isGuest,optional"`
 	TtlSeconds int64  `json:"ttlSeconds,optional"`
 }
 
@@ -62,7 +63,6 @@ type IdReq struct {
 
 type ListChatMessagesReq struct {
 	PageReq
-	SessionNo string `path:"sessionNo"`
 }
 
 type ListChatMessagesResp struct {

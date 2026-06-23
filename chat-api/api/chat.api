@@ -31,7 +31,6 @@ type ChatMessage {
 
 type ListChatMessagesReq {
 	PageReq
-	sessionNo string `path:"sessionNo"`
 }
 
 type ListChatMessagesResp {
@@ -40,7 +39,6 @@ type ListChatMessagesResp {
 }
 
 type CloseMyChatSessionReq {
-	sessionNo   string `path:"sessionNo"`
 	closeReason string `json:"closeReason,optional"`
 }
 
@@ -50,12 +48,14 @@ type CreateChatTokenReq {
 	userId     int64  `json:"userId"`
 	nickname   string `json:"nickname,optional"`
 	avatarUrl  string `json:"avatarUrl,optional"`
+	isGuest    bool   `json:"isGuest,optional"`
 	ttlSeconds int64  `json:"ttlSeconds,optional"`
 }
 
 type ChatToken {
 	chatToken string `json:"chatToken"`
 	expireAt  int64  `json:"expireAt"`
+	sessionNo string `json:"sessionNo"`
 }
 
 type CreateChatTokenResp {
@@ -83,9 +83,9 @@ service chat-api {
 service chat-api {
 	// 获取历史消息
 	@handler ListMyChatMessages
-	get /sessions/:sessionNo/messages (ListChatMessagesReq) returns (ListChatMessagesResp)
+	get /session/messages (ListChatMessagesReq) returns (ListChatMessagesResp)
 
 	// 关闭当前会话
 	@handler CloseMyChatSession
-	post /sessions/:sessionNo/close (CloseMyChatSessionReq) returns (RespBase)
+	post /session/close (CloseMyChatSessionReq) returns (RespBase)
 }

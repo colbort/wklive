@@ -11,8 +11,8 @@ import (
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
 	"wklive/proto/common"
-	itickpb "wklive/proto/itick"
-	systempb "wklive/proto/system"
+	"wklive/proto/itick"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,33 +33,33 @@ func NewGetSystemCoreLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err error) {
 	tenantId := int64(0)
-	key := systempb.SysConfigType_SYSTEM_CORE
-	cd, err := l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &systempb.SysConfigDetailReq{
+	key := system.SysConfigType_SYSTEM_CORE
+	cd, err := l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
 		TenantId:  &tenantId,
 		ConfigKey: &key,
 	})
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
-	var config systempb.SystemCore
+	var config system.SystemCore
 	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &config)
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
-	key = systempb.SysConfigType_OBJECT_STORAGE
-	cd, err = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &systempb.SysConfigDetailReq{
+	key = system.SysConfigType_OBJECT_STORAGE
+	cd, err = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
 		TenantId:  &tenantId,
 		ConfigKey: &key,
 	})
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
-	var storage systempb.ObjectStorageConfig
+	var storage system.ObjectStorageConfig
 	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &storage)
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
-	result, err := l.svcCtx.ItickCli.GetKlineIntervals(l.ctx, &itickpb.AppEmpty{})
+	result, err := l.svcCtx.ItickCli.GetKlineIntervals(l.ctx, &itick.AppEmpty{})
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
@@ -92,7 +92,7 @@ func enableToBool(value common.Enable) bool {
 	return value == common.Enable_ENABLE_ENABLED
 }
 
-func objectStorageAssetUrl(storage *systempb.ObjectStorageConfig) string {
+func objectStorageAssetUrl(storage *system.ObjectStorageConfig) string {
 	if storage == nil {
 		return ""
 	}

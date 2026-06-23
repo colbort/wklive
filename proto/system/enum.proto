@@ -13,6 +13,7 @@ enum SysConfigType {
   WITHDRAW_CONFIG = 5; // 提现配置
   EMAIL_CONFIG = 6; // 邮件配置
   PHONE_CONFIG = 7; // 手机短信配置
+  CHAT_CONFIG = 8; // 客服配置
 }
 
 enum MenuType {

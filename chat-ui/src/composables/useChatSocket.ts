@@ -168,7 +168,7 @@ export function useChatSocket() {
 
     if (canCloseSession) {
       try {
-        await closeMyChatSession(current!.sessionNo, token, closeReason, keepalive);
+        await closeMyChatSession(token, closeReason, keepalive);
       } catch (err) {
         if (!keepalive) {
           error.value = err instanceof Error ? err.message : "结束会话失败";
@@ -201,7 +201,6 @@ export function useChatSocket() {
     historyLoading.value = true;
     try {
       const resp = await listChatMessagesWithMeta(
-        current.sessionNo,
         {
           cursor: initial ? 0 : historyNextCursor.value,
           limit: 20,

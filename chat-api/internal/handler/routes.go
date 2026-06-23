@@ -20,12 +20,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
-					Path:    "/sessions/:sessionNo/close",
+					Path:    "/session/close",
 					Handler: chat.CloseMyChatSessionHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/sessions/:sessionNo/messages",
+					Path:    "/session/messages",
 					Handler: chat.ListMyChatMessagesHandler(serverCtx),
 				},
 			}...,

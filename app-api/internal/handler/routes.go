@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	asset "wklive/app-api/internal/handler/asset"
+	chat "wklive/app-api/internal/handler/chat"
 	core "wklive/app-api/internal/handler/core"
 	itick "wklive/app-api/internal/handler/itick"
 	option "wklive/app-api/internal/handler/option"
@@ -76,6 +77,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/app/asset"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.GuestSensitiveRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/chat/token",
+					Handler: chat.CreateChatTokenHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/app"),
 	)
 
 	server.AddRoutes(

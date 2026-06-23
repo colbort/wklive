@@ -462,6 +462,14 @@ type ChangePayPasswordReq struct {
 	ConfirmPassword string `json:"confirmPassword"`
 }
 
+type ChatToken struct {
+	ChatToken string `json:"chatToken"`
+	ExpireAt  int64  `json:"expireAt"`
+	SessionNo string `json:"sessionNo"`
+	ChatUiUrl string `json:"chatUiUrl"`
+	ChatWsUrl string `json:"chatWsUrl,optional"`
+}
+
 type ContractLeverageConfig struct {
 	Id            int64  `json:"id"`
 	TenantId      int64  `json:"tenantId"`
@@ -523,6 +531,16 @@ type ContractPosition struct {
 	Version          int64  `json:"version"`
 	CreateTimes      int64  `json:"createTimes"`
 	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type CreateChatTokenReq struct {
+	DeviceId    string `json:"deviceId,optional"`
+	Fingerprint string `json:"fingerprint,optional"`
+}
+
+type CreateChatTokenResp struct {
+	RespBase
+	Data ChatToken `json:"data"`
 }
 
 type CreateCryptoRechargeOrderData struct {
@@ -1683,7 +1701,7 @@ type SystemCore struct {
 	IsCryptoEnabled   bool           `json:"isCryptoEnabled"`   // 是否加密接口提交数据
 	AssetUrl          string         `json:"assetUrl,optional"` // 对象存储访问地址
 	Intervals         []Interval     `json:"intervals"`         // kline 支持粒度
-	Options           []OptionsGroup `json:"options"`
+	Options           []OptionsGroup `json:"options"`           //
 }
 
 type TenantInfo struct {

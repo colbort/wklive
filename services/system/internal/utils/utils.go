@@ -28,6 +28,9 @@ func CheckConfig(key string, value string) error {
 	case system.SysConfigType_PHONE_CONFIG.String():
 		var phoneConfig system.PhoneConfig
 		return json.Unmarshal([]byte(value), &phoneConfig)
+	case system.SysConfigType_CHAT_CONFIG.String():
+		var chatConfig system.ChatConfig
+		return json.Unmarshal([]byte(value), &chatConfig)
 	default:
 		return nil
 	}

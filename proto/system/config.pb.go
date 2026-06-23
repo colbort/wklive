@@ -895,6 +895,90 @@ func (x *PhoneConfig) GetBodyTemplate() string {
 	return ""
 }
 
+type ChatConfig struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Enabled       common.Enable          `protobuf:"varint,1,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`    // 状态:1表示启用，2表示禁用
+	Api           string                 `protobuf:"bytes,2,opt,name=api,proto3" json:"api,omitempty"`                                // 客服API地址
+	ApiKey        string                 `protobuf:"bytes,3,opt,name=api_key,json=apiKey,proto3" json:"api_key,omitempty"`            // 客服API Key
+	ApiSecret     string                 `protobuf:"bytes,4,opt,name=api_secret,json=apiSecret,proto3" json:"api_secret,omitempty"`   // 客服API Secret
+	ChatUiUrl     string                 `protobuf:"bytes,5,opt,name=chat_ui_url,json=chatUiUrl,proto3" json:"chat_ui_url,omitempty"` // 客服前端地址
+	ChatWsUrl     string                 `protobuf:"bytes,6,opt,name=chat_ws_url,json=chatWsUrl,proto3" json:"chat_ws_url,omitempty"` // 客服WebSocket地址，可选
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatConfig) Reset() {
+	*x = ChatConfig{}
+	mi := &file_proto_system_config_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatConfig) ProtoMessage() {}
+
+func (x *ChatConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_config_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatConfig.ProtoReflect.Descriptor instead.
+func (*ChatConfig) Descriptor() ([]byte, []int) {
+	return file_proto_system_config_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ChatConfig) GetEnabled() common.Enable {
+	if x != nil {
+		return x.Enabled
+	}
+	return common.Enable(0)
+}
+
+func (x *ChatConfig) GetApi() string {
+	if x != nil {
+		return x.Api
+	}
+	return ""
+}
+
+func (x *ChatConfig) GetApiKey() string {
+	if x != nil {
+		return x.ApiKey
+	}
+	return ""
+}
+
+func (x *ChatConfig) GetApiSecret() string {
+	if x != nil {
+		return x.ApiSecret
+	}
+	return ""
+}
+
+func (x *ChatConfig) GetChatUiUrl() string {
+	if x != nil {
+		return x.ChatUiUrl
+	}
+	return ""
+}
+
+func (x *ChatConfig) GetChatWsUrl() string {
+	if x != nil {
+		return x.ChatWsUrl
+	}
+	return ""
+}
+
 var File_proto_system_config_proto protoreflect.FileDescriptor
 
 const file_proto_system_config_proto_rawDesc = "" +
@@ -985,7 +1069,16 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\bendpoint\x18\x03 \x01(\tR\bendpoint\x12\x16\n" +
 	"\x06method\x18\x04 \x01(\tR\x06method\x12!\n" +
 	"\fheaders_json\x18\x05 \x01(\tR\vheadersJson\x12#\n" +
-	"\rbody_template\x18\x06 \x01(\tR\fbodyTemplateB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\rbody_template\x18\x06 \x01(\tR\fbodyTemplate\"\xc0\x01\n" +
+	"\n" +
+	"ChatConfig\x12(\n" +
+	"\aenabled\x18\x01 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x10\n" +
+	"\x03api\x18\x02 \x01(\tR\x03api\x12\x17\n" +
+	"\aapi_key\x18\x03 \x01(\tR\x06apiKey\x12\x1d\n" +
+	"\n" +
+	"api_secret\x18\x04 \x01(\tR\tapiSecret\x12\x1e\n" +
+	"\vchat_ui_url\x18\x05 \x01(\tR\tchatUiUrl\x12\x1e\n" +
+	"\vchat_ws_url\x18\x06 \x01(\tR\tchatWsUrlB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_config_proto_rawDescOnce sync.Once
@@ -999,7 +1092,7 @@ func file_proto_system_config_proto_rawDescGZIP() []byte {
 	return file_proto_system_config_proto_rawDescData
 }
 
-var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_proto_system_config_proto_goTypes = []any{
 	(*Interval)(nil),            // 0: system.Interval
 	(*SystemCore)(nil),          // 1: system.SystemCore
@@ -1012,25 +1105,27 @@ var file_proto_system_config_proto_goTypes = []any{
 	(*WithdrawConfig)(nil),      // 8: system.WithdrawConfig
 	(*EmailConfig)(nil),         // 9: system.EmailConfig
 	(*PhoneConfig)(nil),         // 10: system.PhoneConfig
-	(common.Enable)(0),          // 11: common.Enable
+	(*ChatConfig)(nil),          // 11: system.ChatConfig
+	(common.Enable)(0),          // 12: common.Enable
 }
 var file_proto_system_config_proto_depIdxs = []int32{
-	11, // 0: system.SystemCore.is_captcha_enabled:type_name -> common.Enable
-	11, // 1: system.SystemCore.is_register_enabled:type_name -> common.Enable
-	11, // 2: system.SystemCore.is_guest_enabled:type_name -> common.Enable
-	11, // 3: system.SystemCore.is_crypto_enabled:type_name -> common.Enable
-	11, // 4: system.SystemCore.admin_must_google_f2a:type_name -> common.Enable
-	11, // 5: system.SystemCore.app_must_google_f2a:type_name -> common.Enable
+	12, // 0: system.SystemCore.is_captcha_enabled:type_name -> common.Enable
+	12, // 1: system.SystemCore.is_register_enabled:type_name -> common.Enable
+	12, // 2: system.SystemCore.is_guest_enabled:type_name -> common.Enable
+	12, // 3: system.SystemCore.is_crypto_enabled:type_name -> common.Enable
+	12, // 4: system.SystemCore.admin_must_google_f2a:type_name -> common.Enable
+	12, // 5: system.SystemCore.app_must_google_f2a:type_name -> common.Enable
 	2,  // 6: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
 	3,  // 7: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
 	4,  // 8: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
-	11, // 9: system.EmailConfig.enabled:type_name -> common.Enable
-	11, // 10: system.PhoneConfig.enabled:type_name -> common.Enable
-	11, // [11:11] is the sub-list for method output_type
-	11, // [11:11] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	12, // 9: system.EmailConfig.enabled:type_name -> common.Enable
+	12, // 10: system.PhoneConfig.enabled:type_name -> common.Enable
+	12, // 11: system.ChatConfig.enabled:type_name -> common.Enable
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_proto_system_config_proto_init() }
@@ -1044,7 +1139,7 @@ func file_proto_system_config_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_config_proto_rawDesc), len(file_proto_system_config_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

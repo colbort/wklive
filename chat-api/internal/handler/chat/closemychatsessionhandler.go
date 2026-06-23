@@ -6,6 +6,7 @@ package chat
 import (
 	"net/http"
 
+	"chat-api/internal/jwt"
 	"chat-api/internal/logic/chat"
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
@@ -20,7 +21,15 @@ func CloseMyChatSessionHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := chat.NewCloseMyChatSessionLogic(r.Context(), svcCtx)
+		claims, err := jwt.Verify(svcCtx.Config.Jwt.AccessSecret, jwt.TokenFromRequest(r))
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			return
+		}
+		ctx := jwt.ContextWithClaims(r.Context(), claims)
+		ctx = contextWithChatIdentity(ctx, claims.MerchantId, claims.UserId)
+
+		l := chat.NewCloseMyChatSessionLogic(ctx, svcCtx)
 		resp, err := l.CloseMyChatSession(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)

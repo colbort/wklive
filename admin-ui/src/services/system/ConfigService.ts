@@ -141,6 +141,15 @@ export type PhoneConfig = {
   body_template: string
 }
 
+export type ChatConfig = {
+  enabled: number // 状态:1表示启用，2表示禁用
+  api: string // 客服API地址
+  api_key: string // 客服API Key
+  api_secret: string // 客服API Secret
+  chat_ui_url: string // 客服前端地址
+  chat_ws_url: string // 客服WebSocket地址，可选
+}
+
 // ===== 系统配置服务 =====
 
 export class ConfigService implements BaseService {
