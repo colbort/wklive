@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { getAccessToken } from '@/api/http'
+import { apiGetProfile } from '@/api/userPrivate'
 import CommonPage from '@/components/common/CommonPage.vue'
 import { useI18n } from '@/i18n'
+import type { UserProfile } from '@/types/user'
 
 const router = useRouter()
 const { t } = useI18n()
+const profile = ref<UserProfile | null>(null)
+const profileLoaded = ref(false)
 
 const chatFrameUrl = computed(() => {
   const baseUrl = import.meta.env.VITE_CHAT_UI_URL?.trim()
@@ -16,6 +20,7 @@ const chatFrameUrl = computed(() => {
   const wsUrl = import.meta.env.VITE_CHAT_WS_URL?.trim()
 
   if (!baseUrl || !apiKey || !apiSecret) return ''
+  if (getAccessToken() && (!profileLoaded.value || !profile.value?.user?.id)) return ''
 
   const url = new URL(baseUrl, window.location.origin)
   if (url.pathname.replace(/\/$/, '').endsWith('/chat')) {
@@ -29,13 +34,39 @@ const chatFrameUrl = computed(() => {
     url.searchParams.set('wsUrl', wsUrl)
   }
 
-  const token = getAccessToken()
-  if (token) {
-    url.searchParams.set('token', token)
+  const user = profile.value?.user
+  if (user?.id) {
+    url.searchParams.set('userId', String(user.id))
+  }
+  const nickname = user?.nickname || user?.username
+  if (nickname) {
+    url.searchParams.set('nickname', nickname)
+  }
+  if (user?.avatar) {
+    url.searchParams.set('avatarUrl', user.avatar)
   }
 
   return url.toString()
 })
+
+onMounted(() => {
+  if (getAccessToken()) {
+    void loadProfile()
+  }
+})
+
+async function loadProfile() {
+  try {
+    const res = await apiGetProfile()
+    if (res.code === 200) {
+      profile.value = res.data
+    }
+  } catch (error) {
+    console.warn('load chat profile failed', error)
+  } finally {
+    profileLoaded.value = true
+  }
+}
 </script>
 
 <template>

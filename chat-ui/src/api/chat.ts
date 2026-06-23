@@ -15,6 +15,9 @@ import type {
 
 const apiBaseUrl = import.meta.env.VITE_CHAT_API_BASE_URL || "/chat";
 const chatWsProtocol = "wklive-chat";
+const wsProtocolUserPrefix = "user.";
+const wsProtocolNicknamePrefix = "nickname.";
+const wsProtocolAvatarPrefix = "avatar.";
 
 export const chatWsEvents = {
   connected: "connected",
@@ -135,7 +138,9 @@ export function chatWsUrl(): string {
 
 export interface CreateChatSocketOptions {
   merchantId: number;
-  token?: string;
+  userId?: number | string;
+  nickname?: string;
+  avatarUrl?: string;
   onOpen?: (event: Event) => void;
   onEvent?: (event: MessageEvent<string>) => void;
   onError?: (event: Event) => void;
@@ -144,9 +149,15 @@ export interface CreateChatSocketOptions {
 
 export function createChatSocket(options: CreateChatSocketOptions): WebSocket {
   const protocols = [chatWsProtocol, `merchant.${options.merchantId}`];
-  const token = options.token?.trim();
-  if (token) {
-    protocols.push(`bearer.${token}`);
+  const userId = String(options.userId || "").trim();
+  if (userId) {
+    protocols.push(`${wsProtocolUserPrefix}${userId}`);
+  }
+  if (options.nickname?.trim()) {
+    protocols.push(`${wsProtocolNicknamePrefix}${encodeProtocolValue(options.nickname.trim())}`);
+  }
+  if (options.avatarUrl?.trim()) {
+    protocols.push(`${wsProtocolAvatarPrefix}${encodeProtocolValue(options.avatarUrl.trim())}`);
   }
 
   const socket = new WebSocket(chatWsUrl(), protocols);
@@ -163,6 +174,15 @@ export function createChatSocket(options: CreateChatSocketOptions): WebSocket {
     socket.addEventListener("close", options.onClose);
   }
   return socket;
+}
+
+function encodeProtocolValue(value: string): string {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return window.btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
 export function sendChatSocketEvent(

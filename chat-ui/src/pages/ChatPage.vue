@@ -12,8 +12,9 @@ const defaultApiSecret =
 
 const apiKey = ref(defaultApiKey);
 const apiSecret = ref(defaultApiSecret);
-const userToken = ref("");
+const userId = ref("");
 const nickname = ref("访客");
+const avatarUrl = ref("");
 const draft = ref("");
 const resourceInput = ref<HTMLInputElement>();
 const selectedResourceName = ref("");
@@ -42,14 +43,16 @@ function hydrateFromQuery() {
   const params = new URLSearchParams(window.location.search);
   const queryApiKey = params.get("apiKey");
   const queryApiSecret = params.get("apiSecret");
-  const queryToken = params.get("token");
+  const queryUserId = params.get("userId");
   const queryNickname = params.get("nickname");
+  const queryAvatarUrl = params.get("avatarUrl");
   const queryMode = params.get("mode");
 
   if (queryApiKey) apiKey.value = queryApiKey;
   if (queryApiSecret) apiSecret.value = queryApiSecret;
-  if (queryToken) userToken.value = queryToken;
+  if (queryUserId) userId.value = queryUserId;
   if (queryNickname) nickname.value = queryNickname;
+  if (queryAvatarUrl) avatarUrl.value = queryAvatarUrl;
   activeMode.value = queryMode === "desktop" ? "desktop" : "mobile";
 }
 
@@ -79,7 +82,11 @@ async function ensureMerchant() {
 async function connectChat() {
   const nextMerchant = await ensureMerchant();
   if (!nextMerchant) return;
-  chat.connect(nextMerchant.merchantId, userToken.value);
+  chat.connect(nextMerchant.merchantId, {
+    userId: userId.value,
+    nickname: nickname.value,
+    avatarUrl: avatarUrl.value,
+  });
 }
 
 function closeChatPage() {
@@ -92,7 +99,7 @@ function closeChatPage() {
 }
 
 function sendMessage() {
-  chat.sendText(draft.value, nickname.value);
+  chat.sendText(draft.value, nickname.value, avatarUrl.value);
   draft.value = "";
 }
 

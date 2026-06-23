@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
@@ -33,8 +34,10 @@ const (
 	guestMessagePrefix         = "GM"
 	guestUsername              = "guest"
 	wsProtocol                 = "wklive-chat"
-	wsProtocolBearerPrefix     = "bearer."
 	wsProtocolMerchantPrefix   = "merchant."
+	wsProtocolUserPrefix       = "user."
+	wsProtocolNicknamePrefix   = "nickname."
+	wsProtocolAvatarPrefix     = "avatar."
 	successCode                = 200
 )
 
@@ -61,6 +64,7 @@ type chatWSIdentity struct {
 	MerchantId int64
 	UserId     int64
 	Username   string
+	AvatarUrl  string
 	SessionNo  string
 	Temporary  bool
 }
@@ -73,37 +77,34 @@ func buildWSIdentity(r *http.Request, svcCtx *svc.ServiceContext) (chatWSIdentit
 
 	sessionNo := nextGuestNo(guestSessionPrefix)
 
-	token, hasToken, err := tokenFromRequest(r)
-	if err != nil {
-		return chatWSIdentity{
-			MerchantId: merchantId,
-			SessionNo:  sessionNo,
-		}, err
-	}
-	if !hasToken {
-		return chatWSIdentity{
-			MerchantId: merchantId,
-			UserId:     guestUserID(sessionNo),
-			Username:   guestUsername,
-			SessionNo:  sessionNo,
-			Temporary:  true,
-		}, nil
-	}
-
-	claims, err := utils.ParseToken(svcCtx.Config.Jwt.AccessSecret, token)
-	if err != nil {
-		return chatWSIdentity{}, fmt.Errorf("Unauthorized")
-	}
-	sessionNo, err = openPersistentSession(r.Context(), svcCtx, merchantId, claims.UserId)
+	userId, hasUserId, err := userIDFromRequest(r)
 	if err != nil {
 		return chatWSIdentity{}, err
 	}
-	return chatWSIdentity{
-		MerchantId: merchantId,
-		UserId:     claims.UserId,
-		Username:   claims.Username,
-		SessionNo:  sessionNo,
-	}, nil
+	if !hasUserId {
+		logx.Infof("chat ws identity resolved as guest, merchantId=%d sessionNo=%s nickname=%s", merchantId, sessionNo, firstNonEmpty(userNicknameFromRequest(r), guestUsername))
+		return chatWSIdentity{
+			MerchantId: merchantId,
+			UserId:     guestUserID(sessionNo),
+			Username:   firstNonEmpty(userNicknameFromRequest(r), guestUsername),
+			AvatarUrl:  userAvatarFromRequest(r),
+			SessionNo:  sessionNo,
+			Temporary:  true,
+		}, nil
+	} else {
+		sessionNo, err = openPersistentSession(r.Context(), svcCtx, merchantId, userId)
+		if err != nil {
+			return chatWSIdentity{}, err
+		}
+		logx.Infof("chat ws identity resolved as user, merchantId=%d userId=%d sessionNo=%s nickname=%s", merchantId, userId, sessionNo, firstNonEmpty(userNicknameFromRequest(r), fmt.Sprintf("user-%d", userId)))
+		return chatWSIdentity{
+			MerchantId: merchantId,
+			UserId:     userId,
+			Username:   firstNonEmpty(userNicknameFromRequest(r), fmt.Sprintf("user-%d", userId)),
+			AvatarUrl:  userAvatarFromRequest(r),
+			SessionNo:  sessionNo,
+		}, nil
+	}
 }
 
 func serveWSConnection(w http.ResponseWriter, r *http.Request, svcCtx *svc.ServiceContext, identity chatWSIdentity) {
@@ -118,6 +119,7 @@ func serveWSConnection(w http.ResponseWriter, r *http.Request, svcCtx *svc.Servi
 		conn,
 		identity.UserId,
 		identity.Username,
+		identity.AvatarUrl,
 		identity.MerchantId,
 		identity.SessionNo,
 		handleInbound(svcCtx, identity.Temporary),
@@ -134,6 +136,8 @@ func connectedPayload(identity chatWSIdentity) map[string]interface{} {
 		"message":    "chat websocket connected",
 		"merchantId": identity.MerchantId,
 		"userId":     identity.UserId,
+		"nickname":   identity.Username,
+		"avatarUrl":  identity.AvatarUrl,
 		"sessionNo":  identity.SessionNo,
 	}
 	if identity.Temporary {
@@ -188,8 +192,8 @@ func sendPersistentUserMessage(ctx context.Context, svcCtx *svc.ServiceContext, 
 		MediaName:       strings.TrimSpace(data.MediaName),
 		MediaMime:       strings.TrimSpace(data.MediaMime),
 		MediaSize:       data.MediaSize,
-		SenderNickname:  firstNonEmpty(data.SenderNickname, conn.Username),
-		SenderAvatarUrl: strings.TrimSpace(data.SenderAvatarUrl),
+		SenderNickname:  firstNonEmpty(conn.Username, data.SenderNickname),
+		SenderAvatarUrl: firstNonEmpty(conn.AvatarUrl, data.SenderAvatarUrl),
 	}
 	resp, err := svcCtx.ChatAppCli.SendUserMessage(contextWithChatIdentity(ctx, conn.MerchantId, conn.UserId), &req)
 	if err != nil {
@@ -251,7 +255,7 @@ func newTransientMessage(conn *ws.Connection, senderType chat.ChatSenderType, se
 			Id:        senderId,
 			Type:      senderType,
 			Nickname:  senderNickname,
-			AvatarUrl: strings.TrimSpace(data.SenderAvatarUrl),
+			AvatarUrl: firstNonEmpty(data.SenderAvatarUrl, conn.AvatarUrl),
 		},
 		MessageType: chat.ChatMessageType(data.MessageType),
 		Content:     strings.TrimSpace(data.Content),
@@ -359,20 +363,6 @@ func firstNonEmpty(values ...string) string {
 	return ""
 }
 
-func tokenFromRequest(r *http.Request) (string, bool, error) {
-	auth := strings.TrimSpace(r.Header.Get("Authorization"))
-	if auth != "" {
-		fields := strings.Fields(auth)
-		if len(fields) != 2 || !strings.EqualFold(fields[0], "Bearer") || strings.TrimSpace(fields[1]) == "" {
-			return "", false, fmt.Errorf("invalid Authorization header")
-		}
-		return fields[1], true, nil
-	}
-
-	token := strings.TrimSpace(wsProtocolValue(r, wsProtocolBearerPrefix))
-	return token, token != "", nil
-}
-
 func merchantIDFromRequest(r *http.Request) (int64, error) {
 	raw := strings.TrimSpace(r.Header.Get(utils.CtxKeyMerchantId))
 	if raw == "" {
@@ -386,6 +376,47 @@ func merchantIDFromRequest(r *http.Request) (int64, error) {
 		return 0, fmt.Errorf("invalid merchantId")
 	}
 	return merchantId, nil
+}
+
+func userIDFromRequest(r *http.Request) (int64, bool, error) {
+	raw := strings.TrimSpace(r.Header.Get(utils.CtxKeyUid))
+	if raw == "" {
+		raw = strings.TrimSpace(wsProtocolValue(r, wsProtocolUserPrefix))
+	}
+	if raw == "" {
+		return 0, false, nil
+	}
+	userId, err := strconv.ParseInt(raw, 10, 64)
+	if err != nil || userId <= 0 {
+		return 0, false, fmt.Errorf("invalid userId")
+	}
+	return userId, true, nil
+}
+
+func userNicknameFromRequest(r *http.Request) string {
+	return firstNonEmpty(
+		r.Header.Get("x-user-nickname"),
+		decodeWSProtocolValue(wsProtocolValue(r, wsProtocolNicknamePrefix)),
+	)
+}
+
+func userAvatarFromRequest(r *http.Request) string {
+	return firstNonEmpty(
+		r.Header.Get("x-user-avatar-url"),
+		decodeWSProtocolValue(wsProtocolValue(r, wsProtocolAvatarPrefix)),
+	)
+}
+
+func decodeWSProtocolValue(value string) string {
+	raw := strings.TrimSpace(value)
+	if raw == "" {
+		return ""
+	}
+	decoded, err := base64.RawURLEncoding.DecodeString(raw)
+	if err != nil {
+		return ""
+	}
+	return string(decoded)
 }
 
 func wsProtocolValue(r *http.Request, prefix string) string {

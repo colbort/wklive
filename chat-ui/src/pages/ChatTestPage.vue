@@ -11,8 +11,9 @@ const defaultApiSecret =
 
 const apiKey = ref(defaultApiKey);
 const apiSecret = ref(defaultApiSecret);
-const userToken = ref("");
+const userId = ref("");
 const nickname = ref("访客");
+const avatarUrl = ref("");
 const merchant = ref<ChatMerchant | null>(null);
 const authError = ref("");
 const authing = ref(false);
@@ -41,8 +42,9 @@ function openChat(mode: ChatMode) {
   params.set("mode", mode);
   params.set("apiKey", apiKey.value.trim());
   params.set("apiSecret", apiSecret.value.trim());
-  if (userToken.value.trim()) params.set("token", userToken.value.trim());
+  if (userId.value.trim()) params.set("userId", userId.value.trim());
   if (nickname.value.trim()) params.set("nickname", nickname.value.trim());
+  if (avatarUrl.value.trim()) params.set("avatarUrl", avatarUrl.value.trim());
 
   const wsUrl = new URLSearchParams(window.location.search).get("wsUrl");
   if (wsUrl) params.set("wsUrl", wsUrl);
@@ -141,11 +143,19 @@ function openChat(mode: ChatMode) {
           >
         </label>
         <label>
-          <span>用户 Token</span>
+          <span>用户 ID</span>
           <input
-            v-model="userToken"
+            v-model="userId"
             autocomplete="off"
             placeholder="留空则以访客进入"
+          >
+        </label>
+        <label>
+          <span>头像 URL</span>
+          <input
+            v-model="avatarUrl"
+            autocomplete="off"
+            placeholder="可选"
           >
         </label>
       </div>

@@ -15,7 +15,9 @@ import type {
 
 interface ConnectOptions {
   merchantId: number;
-  token: string;
+  userId?: string;
+  nickname: string;
+  avatarUrl: string;
 }
 
 interface WsResp<T> {
@@ -76,9 +78,17 @@ export function useChatSocket() {
     return `${reconnectingIn.value}s 后重连`;
   });
 
-  function connect(merchantId: number, token = "") {
+  function connect(
+    merchantId: number,
+    user: { userId?: string; nickname?: string; avatarUrl?: string } = {},
+  ) {
     manualClose = false;
-    lastOptions = { merchantId, token };
+    lastOptions = {
+      merchantId,
+      userId: user.userId,
+      nickname: user.nickname || "",
+      avatarUrl: user.avatarUrl || "",
+    };
     reconnectAttempts = 0;
     clearReconnectTimer();
     openSocket(lastOptions);
@@ -91,7 +101,9 @@ export function useChatSocket() {
     status.value = reconnectAttempts > 0 ? "reconnecting" : "connecting";
     const ws = createChatSocket({
       merchantId: options.merchantId,
-      token: options.token,
+      userId: options.userId,
+      nickname: options.nickname,
+      avatarUrl: options.avatarUrl,
       onOpen: () => {
         reconnectAttempts = 0;
         reconnectingIn.value = 0;
@@ -118,7 +130,7 @@ export function useChatSocket() {
     socket.value = ws;
   }
 
-  function sendText(content: string, nickname: string) {
+  function sendText(content: string, nickname: string, avatarUrl = "") {
     const text = content.trim();
     if (
       !socket.value ||
@@ -132,6 +144,7 @@ export function useChatSocket() {
       messageType: 1,
       content: text,
       senderNickname: nickname.trim(),
+      senderAvatarUrl: avatarUrl.trim(),
     };
     sendChatSocketUserMessage(socket.value, payload);
   }
