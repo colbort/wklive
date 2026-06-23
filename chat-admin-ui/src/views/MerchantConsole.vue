@@ -110,7 +110,6 @@ const dialogTitle = computed(() => {
         : "客服分组";
   return `${action}${resource}`;
 });
-
 const enabledOptions = [
   { label: "启用", value: 1 },
   { label: "禁用", value: 2 },
@@ -445,20 +444,6 @@ async function removeGroup(row: ChatGroup) {
 <template>
   <section class="console-page">
     <div class="toolbar">
-      <el-tabs v-model="activeTab">
-        <el-tab-pane
-          label="坐席管理"
-          name="agents"
-        />
-        <el-tab-pane
-          label="问题分类"
-          name="categories"
-        />
-        <el-tab-pane
-          label="客服分组"
-          name="groups"
-        />
-      </el-tabs>
       <div class="toolbar-actions">
         <el-input
           v-model="keyword"
@@ -471,6 +456,8 @@ async function removeGroup(row: ChatGroup) {
         <el-button @click="loadCurrent">
           查询
         </el-button>
+      </div>
+      <div class="toolbar-actions">
         <el-button
           type="primary"
           @click="openCreate"

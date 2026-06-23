@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
 const auth = useAuthStore();
 const route = useRoute();
 const router = useRouter();
+const merchantDrawerVisible = ref(false);
 
 const merchantMenu = [
   { path: "/merchant/agents", label: "坐席管理" },
@@ -13,21 +14,145 @@ const merchantMenu = [
   { path: "/merchant/categories", label: "问题分类" },
 ];
 
-const agentMenu = [{ path: "/agent/workbench", label: "接待工作台" }];
-
-const menu = computed(() => (auth.isMerchant ? merchantMenu : agentMenu));
-const showTopbar = computed(() => auth.isMerchant);
-const showSidebarNav = computed(() => auth.isMerchant || menu.value.length > 1);
+const currentMenuLabel = computed(
+  () => merchantMenu.find((item) => item.path === route.path)?.label || "客服管理",
+);
 
 async function logout() {
   await auth.logout();
   router.replace("/login");
 }
+
+function openMerchantMenu() {
+  merchantDrawerVisible.value = true;
+}
+
+function goMerchant(path: string) {
+  merchantDrawerVisible.value = false;
+  router.push(path);
+}
 </script>
 
 <template>
-  <div class="app-shell">
-    <aside class="sidebar">
+  <div
+    v-if="auth.isMerchant"
+    class="merchant-shell"
+  >
+    <aside class="merchant-sidebar">
+      <div class="brand">
+        <button
+          class="brand-mark brand-button"
+          type="button"
+          @click="openMerchantMenu"
+        >
+          CS
+        </button>
+        <div>
+          <div class="brand-title">
+            客服工作台
+          </div>
+          <div class="brand-subtitle">
+            商户后台
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button
+          v-for="item in merchantMenu"
+          :key="item.path"
+          class="nav-item"
+          :class="{ active: route.path === item.path }"
+          type="button"
+          @click="goMerchant(item.path)"
+        >
+          {{ item.label }}
+        </button>
+      </nav>
+
+      <div class="sidebar-settings">
+        <el-dropdown
+          trigger="click"
+          @command="(command: string) => command === 'logout' && logout()"
+        >
+          <button
+            class="nav-item settings-trigger"
+            type="button"
+          >
+            设置
+          </button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="logout">
+                退出登录
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+    </aside>
+
+    <section class="merchant-main">
+      <header class="merchant-topbar">
+        <h1>{{ currentMenuLabel }}</h1>
+        <div class="merchant-profile">
+          <div class="profile-text">
+            <strong>{{ auth.user?.nickname }}</strong>
+          </div>
+          <el-avatar
+            :size="36"
+            :src="auth.user?.avatarUrl"
+          >
+            {{ auth.user?.nickname?.slice(0, 1) || "商" }}
+          </el-avatar>
+        </div>
+      </header>
+
+      <main class="merchant-content">
+        <RouterView />
+      </main>
+    </section>
+
+    <el-drawer
+      v-model="merchantDrawerVisible"
+      class="merchant-menu-drawer"
+      direction="ltr"
+      size="260px"
+      :with-header="false"
+    >
+      <div class="drawer-brand">
+        <div class="brand-mark">
+          CS
+        </div>
+        <div>
+          <div class="brand-title">
+            客服工作台
+          </div>
+          <div class="brand-subtitle">
+            商户后台
+          </div>
+        </div>
+      </div>
+      <nav class="nav drawer-nav">
+        <button
+          v-for="item in merchantMenu"
+          :key="item.path"
+          class="nav-item"
+          :class="{ active: route.path === item.path }"
+          type="button"
+          @click="goMerchant(item.path)"
+        >
+          {{ item.label }}
+        </button>
+      </nav>
+    </el-drawer>
+  </div>
+
+  <div
+    v-else
+    class="agent-shell"
+  >
+    <header class="agent-topbar">
       <div class="brand">
         <div class="brand-mark">
           CS
@@ -37,31 +162,11 @@ async function logout() {
             客服工作台
           </div>
           <div class="brand-subtitle">
-            {{ auth.isMerchant ? "商户后台" : "坐席端" }}
+            坐席端
           </div>
         </div>
       </div>
-
-      <nav
-        v-if="showSidebarNav"
-        class="nav"
-      >
-        <button
-          v-for="item in menu"
-          :key="item.path"
-          class="nav-item"
-          :class="{ active: route.path === item.path }"
-          type="button"
-          @click="router.push(item.path)"
-        >
-          {{ item.label }}
-        </button>
-      </nav>
-
-      <div
-        v-if="auth.isAgent"
-        class="sidebar-profile"
-      >
+      <div class="profile">
         <div class="profile-text">
           <strong>{{ auth.user?.nickname }}</strong>
           <span>{{ auth.agent?.agentNo }}</span>
@@ -70,29 +175,9 @@ async function logout() {
           退出
         </el-button>
       </div>
-    </aside>
+    </header>
 
-    <main class="main">
-      <header
-        v-if="showTopbar"
-        class="topbar"
-      >
-        <div>
-          <h1>{{ route.meta.role === 2 ? "接待工作台" : "客服管理" }}</h1>
-        </div>
-        <div class="profile">
-          <div class="profile-text">
-            <strong>{{ auth.user?.nickname }}</strong>
-            <span>{{
-              auth.isMerchant ? "客服商户" : auth.agent?.agentNo
-            }}</span>
-          </div>
-          <el-button @click="logout">
-            退出
-          </el-button>
-        </div>
-      </header>
-
+    <main class="agent-content">
       <RouterView />
     </main>
   </div>
