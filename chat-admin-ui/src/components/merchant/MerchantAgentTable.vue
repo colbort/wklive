@@ -101,7 +101,7 @@ function groupName(groupId: number) {
     />
     <el-table-column
       label="操作"
-      width="130"
+      width="100"
       fixed="right"
     >
       <template #default="{ row }">
