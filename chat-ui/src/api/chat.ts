@@ -163,6 +163,7 @@ async function request<T extends RespBase>(
     headers: buildHeaders(options),
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
     keepalive: options.keepalive,
+    referrerPolicy: "no-referrer",
   });
   if (!res.ok) {
     throw new Error(`HTTP ${res.status}`);

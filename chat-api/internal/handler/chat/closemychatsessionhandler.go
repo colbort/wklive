@@ -10,6 +10,7 @@ import (
 	"chat-api/internal/logic/chat"
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
+
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
