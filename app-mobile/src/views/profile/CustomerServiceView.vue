@@ -18,8 +18,11 @@ const chatFrameUrl = computed(() => {
   if (!baseUrl || !apiKey || !apiSecret) return ''
 
   const url = new URL(baseUrl, window.location.origin)
+  if (url.pathname.replace(/\/$/, '').endsWith('/chat')) {
+    url.pathname = url.pathname.replace(/\/chat\/?$/, '') || '/'
+  }
+  url.searchParams.set('page', 'chat')
   url.searchParams.set('mode', 'mobile')
-  url.searchParams.set('auto', '1')
   url.searchParams.set('apiKey', apiKey)
   url.searchParams.set('apiSecret', apiSecret)
   if (wsUrl) {
