@@ -51,6 +51,7 @@ type (
 		AgentNo             string `db:"agent_no"`              // 坐席编号
 		WelcomeMessage      string `db:"welcome_message"`       // 欢迎语
 		Status              int64  `db:"status"`                // 在线状态:1离线 2在线 3忙碌 4休息
+		AutoOnline          int64  `db:"auto_online"`           // 登录是否自动上线:1是 2否
 		MaxSessionCount     int64  `db:"max_session_count"`     // 最大同时接待数
 		CurrentSessionCount int64  `db:"current_session_count"` // 当前接待数
 		LastActiveTime      int64  `db:"last_active_time"`      // 最后活跃时间戳(毫秒)
@@ -145,8 +146,8 @@ func (m *defaultTChatAgentModel) Insert(ctx context.Context, data *TChatAgent) (
 	tChatAgentMerchantIdAgentNoKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdAgentNoPrefix, data.MerchantId, data.AgentNo)
 	tChatAgentMerchantIdChatUserIdKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdChatUserIdPrefix, data.MerchantId, data.ChatUserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tChatAgentRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.MerchantId, data.ChatUserId, data.GroupId, data.AgentNo, data.WelcomeMessage, data.Status, data.MaxSessionCount, data.CurrentSessionCount, data.LastActiveTime, data.Remark, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tChatAgentRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.MerchantId, data.ChatUserId, data.GroupId, data.AgentNo, data.WelcomeMessage, data.Status, data.AutoOnline, data.MaxSessionCount, data.CurrentSessionCount, data.LastActiveTime, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tChatAgentIdKey, tChatAgentMerchantIdAgentNoKey, tChatAgentMerchantIdChatUserIdKey)
 	return ret, err
 }
@@ -162,7 +163,7 @@ func (m *defaultTChatAgentModel) Update(ctx context.Context, newData *TChatAgent
 	tChatAgentMerchantIdChatUserIdKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdChatUserIdPrefix, data.MerchantId, data.ChatUserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tChatAgentRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.MerchantId, newData.ChatUserId, newData.GroupId, newData.AgentNo, newData.WelcomeMessage, newData.Status, newData.MaxSessionCount, newData.CurrentSessionCount, newData.LastActiveTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.MerchantId, newData.ChatUserId, newData.GroupId, newData.AgentNo, newData.WelcomeMessage, newData.Status, newData.AutoOnline, newData.MaxSessionCount, newData.CurrentSessionCount, newData.LastActiveTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tChatAgentIdKey, tChatAgentMerchantIdAgentNoKey, tChatAgentMerchantIdChatUserIdKey)
 	return err
 }

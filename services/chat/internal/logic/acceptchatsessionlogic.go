@@ -5,6 +5,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
+	"wklive/services/chat/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,6 +32,16 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	operatorID := in.GetOperatorId()
 	if operatorID <= 0 {
 		operatorID = in.GetAgentId()
+	}
+	agent, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetAgentId())
+	if err == models.ErrNotFound {
+		return &chat.AdminChatSessionResp{Base: notFoundBase("chat agent not found")}, nil
+	}
+	if err != nil {
+		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
+	}
+	if agent.Status != int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE) {
+		return &chat.AdminChatSessionResp{Base: badBase("chat agent is not online")}, nil
 	}
 	session, base, err := assignSession(l.ctx, l.svcCtx, &chat.AssignChatSessionReq{
 		SessionNo:  in.GetSessionNo(),

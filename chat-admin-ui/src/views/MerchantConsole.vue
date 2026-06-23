@@ -1,13 +1,23 @@
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
+  chatAdminWsUrl,
   createAgent,
   createCategory,
   createGroup,
   deleteCategory,
   deleteGroup,
+  options as loadOptions,
   pageAgents,
   pageCategories,
   pageGroups,
@@ -26,6 +36,10 @@ import MerchantEditDialog from "@/components/merchant/MerchantEditDialog.vue";
 import MerchantGroupTable from "@/components/merchant/MerchantGroupTable.vue";
 import { useAuthStore } from "@/stores/auth";
 import type { ChatAgent, ChatCategory, ChatGroup } from "@/types/chat";
+import {
+  withOptionLabels,
+  type DisplayOptionItem,
+} from "@/utils/options";
 
 type TabName = "agents" | "categories" | "groups";
 
@@ -44,6 +58,10 @@ const keyword = ref("");
 const agents = ref<ChatAgent[]>([]);
 const categories = ref<ChatCategory[]>([]);
 const groups = ref<ChatGroup[]>([]);
+let socket: WebSocket | null = null;
+let reconnectTimer: number | null = null;
+let reconnectTimes = 0;
+let destroyed = false;
 
 const dialogRef = ref<InstanceType<typeof MerchantEditDialog>>();
 const dialogVisible = ref(false);
@@ -57,6 +75,7 @@ const agentForm = reactive({
   mobile: "",
   email: "",
   enabled: 1,
+  autoOnline: false,
   maxSessionCount: 10,
   groupId: undefined as number | undefined,
   welcomeMessage: "",
@@ -97,12 +116,13 @@ const enabledOptions = [
   { label: "禁用", value: 2 },
 ];
 
-const statusOptions = [
-  { label: "离线", value: 1 },
-  { label: "在线", value: 2 },
-  { label: "忙碌", value: 3 },
-  { label: "休息", value: 4 },
+const defaultAgentStatusOptions: DisplayOptionItem[] = [
+  { key: "chat.agent.status.offline", label: "离线", value: 1 },
+  { key: "chat.agent.status.online", label: "在线", value: 2 },
+  { key: "chat.agent.status.busy", label: "忙碌", value: 3 },
+  { key: "chat.agent.status.resting", label: "休息", value: 4 },
 ];
+const statusOptions = ref<DisplayOptionItem[]>(defaultAgentStatusOptions);
 
 watch(
   () => activeTab.value,
@@ -112,6 +132,33 @@ watch(
   },
   { immediate: true },
 );
+
+void loadAdminOptions();
+
+onMounted(() => {
+  destroyed = false;
+  connectWs();
+});
+
+onBeforeUnmount(() => {
+  destroyed = true;
+  clearReconnectTimer();
+  if (socket) {
+    socket.onclose = null;
+    socket.close();
+  }
+});
+
+async function loadAdminOptions() {
+  try {
+    const resp = await loadOptions();
+    if (resp.data.agentStatuses?.length) {
+      statusOptions.value = withOptionLabels(resp.data.agentStatuses);
+    }
+  } catch {
+    statusOptions.value = defaultAgentStatusOptions;
+  }
+}
 
 async function loadCurrent() {
   if (!merchantId.value) return;
@@ -137,6 +184,78 @@ async function loadCurrent() {
   }
 }
 
+function connectWs() {
+  if (!auth.token || !merchantId.value) return;
+  clearReconnectTimer();
+  if (socket) {
+    socket.onclose = null;
+    socket.close();
+  }
+  socket = new WebSocket(
+    chatAdminWsUrl({
+      token: auth.token,
+      merchantId: merchantId.value,
+    }),
+  );
+  socket.onopen = () => {
+    reconnectTimes = 0;
+  };
+  socket.onclose = () => {
+    scheduleReconnect();
+  };
+  socket.onmessage = (event) => {
+    handleWsMessage(event.data);
+  };
+}
+
+function scheduleReconnect() {
+  if (destroyed || !auth.token || !merchantId.value) return;
+  clearReconnectTimer();
+  const delays = [1000, 2000, 5000, 10000, 15000];
+  const delay = delays[Math.min(reconnectTimes, delays.length - 1)];
+  reconnectTimes += 1;
+  reconnectTimer = window.setTimeout(() => {
+    connectWs();
+  }, delay);
+}
+
+function clearReconnectTimer() {
+  if (!reconnectTimer) return;
+  window.clearTimeout(reconnectTimer);
+  reconnectTimer = null;
+}
+
+function handleWsMessage(payload: string) {
+  try {
+    const event = JSON.parse(payload) as {
+      type?: string;
+      agent?: ChatAgent;
+    };
+    if (event.type !== "chat.agent.status.updated" || !event.agent) return;
+    upsertAgent(event.agent);
+  } catch {
+    // ignore invalid push payload
+  }
+}
+
+function upsertAgent(agent: ChatAgent) {
+  const index = agents.value.findIndex((item) => item.id === agent.id);
+  if (index >= 0) {
+    agents.value[index] = {
+      ...agents.value[index],
+      ...agent,
+    };
+  } else if (activeTab.value === "agents") {
+    void loadCurrent();
+  }
+  if (auth.agent?.id === agent.id) {
+    auth.agent = {
+      ...auth.agent,
+      ...agent,
+    };
+  }
+}
+
 function resetForms() {
   editingId.value = 0;
   Object.assign(agentForm, {
@@ -146,6 +265,7 @@ function resetForms() {
     mobile: "",
     email: "",
     enabled: 1,
+    autoOnline: false,
     maxSessionCount: 10,
     groupId: undefined,
     welcomeMessage: "",
@@ -187,6 +307,7 @@ function openAgentEdit(row: ChatAgent) {
     mobile: "",
     email: "",
     enabled: 1,
+    autoOnline: row.autoOnline === 1,
     maxSessionCount: row.maxSessionCount || 10,
     groupId: row.groupId || undefined,
     welcomeMessage: row.welcomeMessage,
@@ -242,6 +363,7 @@ async function submitDialog() {
         mobile: agentForm.mobile,
         email: agentForm.email,
         enabled: agentForm.enabled,
+        autoOnline: agentForm.autoOnline ? 1 : 2,
       };
       await createAgent(payload);
     } else {
@@ -250,6 +372,7 @@ async function submitDialog() {
         maxSessionCount: agentForm.maxSessionCount,
         groupId: agentForm.groupId,
         welcomeMessage: agentForm.welcomeMessage,
+        autoOnline: agentForm.autoOnline ? 1 : 2,
         remark: agentForm.remark,
       };
       await updateAgent(editingId.value, payload);
@@ -293,7 +416,6 @@ async function submitDialog() {
 
 async function changeAgentStatus(row: ChatAgent, status: number) {
   await updateAgentStatus(row.id, {
-    merchantId: merchantId.value,
     status,
   });
   ElMessage.success("状态已更新");

@@ -73,6 +73,14 @@ func (l *LoginLogic) Login(in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp
 	user.LastLoginTime = now
 	user.UpdateTimes = now
 	_ = l.svcCtx.ChatUserModel.Update(l.ctx, user)
+	if agent != nil && agent.AutoOnline == int64(common.YesNo_YES_NO_YES) {
+		agent.Status = int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE)
+		agent.LastActiveTime = now
+		agent.UpdateTimes = now
+		if err := l.svcCtx.ChatAgentModel.Update(l.ctx, agent); err == nil {
+			publishAgentStatusEvent(l.ctx, l.svcCtx, agent)
+		}
+	}
 
 	return &chat.ChatAdminLoginResp{
 		Base: okBase(),

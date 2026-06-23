@@ -3,20 +3,27 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import {
   chatAdminWsUrl,
+  options as loadOptions,
   pageMessages,
   pageSessions,
   sendAgentMessage,
+  updateAgentStatus,
 } from "@/api/chat";
 import WorkbenchChatPanel from "@/components/workbench/WorkbenchChatPanel.vue";
 import WorkbenchCustomerPanel from "@/components/workbench/WorkbenchCustomerPanel.vue";
 import WorkbenchSessionList from "@/components/workbench/WorkbenchSessionList.vue";
 import { useAuthStore } from "@/stores/auth";
 import type {
+  ChatAgent,
   ChatMessage,
   ChatQueueInfo,
   ChatSession,
   ChatSessionEvent,
 } from "@/types/chat";
+import {
+  withOptionLabels,
+  type DisplayOptionItem,
+} from "@/utils/options";
 
 interface WsBase {
   code: number;
@@ -34,6 +41,7 @@ interface WsEvent {
   type: string;
   data?: WsEventData;
   base?: WsBase;
+  agent?: ChatAgent;
   session?: ChatSession;
   sessionEvent?: ChatSessionEvent;
   session_event?: ChatSessionEvent;
@@ -48,6 +56,14 @@ const loadingMessages = ref(false);
 const sessions = ref<ChatSession[]>([]);
 const messages = ref<Record<string, ChatMessage[]>>({});
 const wsState = ref<"idle" | "open" | "closed">("idle");
+const changingAgentStatus = ref(false);
+const defaultAgentStatusOptions: DisplayOptionItem[] = [
+  { key: "chat.agent.status.offline", label: "离线", value: 1, tagType: "info" },
+  { key: "chat.agent.status.online", label: "在线", value: 2, tagType: "success" },
+  { key: "chat.agent.status.busy", label: "忙碌", value: 3, tagType: "warning" },
+  { key: "chat.agent.status.resting", label: "休息", value: 4, tagType: "info" },
+];
+const agentStatusOptions = ref<DisplayOptionItem[]>(defaultAgentStatusOptions);
 const auth = useAuthStore();
 let socket: WebSocket | null = null;
 let refreshTimer: number | null = null;
@@ -61,6 +77,13 @@ const sessionStatus = {
   pendingUser: 3,
   pendingAgent: 4,
   closed: 5,
+} as const;
+
+const agentStatus = {
+  offline: 1,
+  online: 2,
+  busy: 3,
+  resting: 4,
 } as const;
 
 const filteredSessions = computed(() =>
@@ -86,6 +109,11 @@ const merchantId = computed(
   () => auth.user?.merchantId || auth.agent?.merchantId || 0,
 );
 const agentId = computed(() => auth.agent?.id || 0);
+const agentStatusOption = computed(
+  () =>
+    agentStatusOptions.value.find((item) => item.value === auth.agent?.status) ||
+    defaultAgentStatusOptions[0],
+);
 const wsOnline = computed(() => wsState.value === "open");
 const activeNeedsAccept = computed(
   () =>
@@ -109,10 +137,23 @@ const showGuestRefreshNotice = computed(
 const canReply = computed(
   () => Boolean(activeSession.value) && !activeNeedsAccept.value && !activeClosed.value,
 );
+const agentCanAccept = computed(
+  () =>
+    wsOnline.value &&
+    Boolean(agentId.value) &&
+    auth.agent?.status === agentStatus.online,
+);
+const acceptDisabledReason = computed(() => {
+  if (!wsOnline.value) return "连接断开，暂时不能接待";
+  if (!agentId.value) return "当前账号不是坐席，不能接待";
+  if (auth.agent?.status !== agentStatus.online) return "坐席在线后才能接待会话";
+  return "";
+});
 
 onMounted(async () => {
   destroyed = false;
   restoreWorkbenchState();
+  void loadAdminOptions();
   await loadSessions();
   connectWs();
 });
@@ -184,6 +225,29 @@ function persistWorkbenchState() {
       activeSessionNo: activeSessionNo.value,
     }),
   );
+}
+
+async function loadAdminOptions() {
+  try {
+    const resp = await loadOptions();
+    if (resp.data.agentStatuses?.length) {
+      agentStatusOptions.value = withOptionLabels(resp.data.agentStatuses);
+    }
+  } catch {
+    agentStatusOptions.value = defaultAgentStatusOptions;
+  }
+}
+
+async function changeAgentStatus(status: number) {
+  if (!auth.agent || auth.agent.status === status) return;
+  changingAgentStatus.value = true;
+  try {
+    const resp = await updateAgentStatus(auth.agent.id, { status });
+    auth.agent = resp.data;
+    ElMessage.success("状态已更新");
+  } finally {
+    changingAgentStatus.value = false;
+  }
 }
 
 async function loadSessions() {
@@ -280,6 +344,7 @@ function handleWsMessage(payload: string) {
       event.type !== "chat.session.accepted" &&
       event.type !== "chat.session.closed" &&
       event.type !== "chat.queue.updated" &&
+      event.type !== "chat.agent.status.updated" &&
       event.type !== "accept_chat_session.result" &&
       event.type !== "send_agent_message.result" &&
       event.type !== "close_chat_session.result"
@@ -289,6 +354,10 @@ function handleWsMessage(payload: string) {
     const base = event.base || eventBase(event.data);
     if (base && base.code !== 200) {
       ElMessage.error(base.msg || "发送失败");
+      return;
+    }
+    if (event.type === "chat.agent.status.updated") {
+      updateAgentFromEvent(event.agent);
       return;
     }
     upsertSessionFromEvent(event);
@@ -331,6 +400,14 @@ function handleWsMessage(payload: string) {
   } catch {
     // ignore invalid push payload
   }
+}
+
+function updateAgentFromEvent(agent?: ChatAgent) {
+  if (!agent || agent.id !== agentId.value) return;
+  auth.agent = {
+    ...(auth.agent || agent),
+    ...agent,
+  };
 }
 
 function upsertSessionFromEvent(event: WsEvent) {
@@ -692,6 +769,10 @@ function acceptSession() {
   if (!activeSession.value || !socket || socket.readyState !== WebSocket.OPEN) {
     return;
   }
+  if (auth.agent?.status !== agentStatus.online) {
+    ElMessage.warning("坐席在线后才能接待会话");
+    return;
+  }
   socket.send(
     JSON.stringify({
       type: "accept_chat_session",
@@ -713,9 +794,12 @@ function acceptSession() {
       :sessions="filteredSessions"
       :selected-session-no="activeSession?.sessionNo || ''"
       :loading="loadingSessions"
-      :ws-online="wsOnline"
+      :agent-status-option="agentStatusOption"
+      :agent-status-options="agentStatusOptions"
+      :status-changing="changingAgentStatus"
       @select="activeSessionNo = $event"
       @refresh="refreshSessions"
+      @status-change="changeAgentStatus"
     />
 
     <WorkbenchChatPanel
@@ -726,6 +810,8 @@ function acceptSession() {
       :active-needs-accept="activeNeedsAccept"
       :active-closed="activeClosed"
       :can-reply="canReply"
+      :can-accept="agentCanAccept"
+      :accept-disabled-reason="acceptDisabledReason"
       :ws-online="wsOnline"
       :agent-id="agentId"
       :show-guest-refresh-notice="showGuestRefreshNotice"

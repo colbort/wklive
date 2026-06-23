@@ -26,7 +26,7 @@ func NewUpdateChatAgentStatusLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 更新坐席在线状态
 func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAgentStatusReq) (*chat.AdminChatAgentResp, error) {
-	if in.GetAgentId() <= 0 || in.GetStatus() == chat.ChatAgentStatus_CHAT_AGENT_STATUS_UNKNOWN {
+	if in.Id <= 0 || in.GetStatus() == chat.ChatAgentStatus_CHAT_AGENT_STATUS_UNKNOWN {
 		return &chat.AdminChatAgentResp{Base: badBase("agent_id and status are required")}, nil
 	}
 	merchantID, base, err := merchantIDFromMetadata(l.ctx)
@@ -36,7 +36,7 @@ func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAg
 	if err != nil {
 		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
 	}
-	data, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetAgentId())
+	data, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetId())
 	if err == models.ErrNotFound || data.MerchantId != merchantID {
 		return &chat.AdminChatAgentResp{Base: notFoundBase("chat agent not found")}, nil
 	}
@@ -45,9 +45,10 @@ func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAg
 	}
 	data.Status = int64(in.GetStatus())
 	data.LastActiveTime = nowMillis()
-	data.UpdateTimes = data.LastActiveTime
+	data.UpdateTimes = nowMillis()
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, data); err != nil {
 		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
 	}
+	publishAgentStatusEvent(l.ctx, l.svcCtx, data)
 	return &chat.AdminChatAgentResp{Base: okBase(), Data: toProtoAgent(data)}, nil
 }

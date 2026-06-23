@@ -53,6 +53,7 @@ message ChatAgent {
   int64 create_times = 11;         // 创建时间戳(毫秒)
   int64 update_times = 12;         // 更新时间戳(毫秒)
   int64 group_id = 13;             // 客服分组ID
+  common.YesNo auto_online = 14;    // 登录是否自动上线
 }
 
 // 客服会话
@@ -149,6 +150,7 @@ message ChatMessageEvent {
   ChatSessionEvent session_event = 5; // 会话事件
   ChatQueueInfo queue = 6;          // 排队信息
   common.RespBase base = 7;         // 业务响应
+  ChatAgent agent = 8;              // 坐席快照
 }
 
 // WebSocket连接成功消息

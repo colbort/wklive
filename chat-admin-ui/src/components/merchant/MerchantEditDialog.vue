@@ -18,6 +18,7 @@ interface AgentForm {
   mobile: string;
   email: string;
   enabled: number;
+  autoOnline: boolean;
   maxSessionCount: number;
   groupId?: number;
   welcomeMessage: string;
@@ -167,6 +168,13 @@ defineExpose({
             :min="1"
             :max="999"
             class="full-input"
+          />
+        </el-form-item>
+        <el-form-item label="登录上线">
+          <el-switch
+            v-model="agentForm.autoOnline"
+            active-text="自动上线"
+            inactive-text="手动上线"
           />
         </el-form-item>
         <el-form-item label="欢迎语">

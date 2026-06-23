@@ -2,8 +2,10 @@
 import type { ChatAgent, ChatGroup } from "@/types/chat";
 
 interface StatusOption {
+  key?: string;
   label: string;
   value: number;
+  tagType?: "success" | "info" | "warning" | "danger" | "primary";
 }
 
 const props = defineProps<{
@@ -20,6 +22,10 @@ const emit = defineEmits<{
 
 function statusText(status: number) {
   return props.statusOptions.find((item) => item.value === status)?.label || "未知";
+}
+
+function statusTagType(status: number) {
+  return props.statusOptions.find((item) => item.value === status)?.tagType || "info";
 }
 
 function groupName(groupId: number) {
@@ -49,13 +55,7 @@ function groupName(groupId: number) {
     >
       <template #default="{ row }">
         <el-tag
-          :type="
-            row.status === 2
-              ? 'success'
-              : row.status === 3
-                ? 'warning'
-                : 'info'
-          "
+          :type="statusTagType(row.status)"
         >
           {{ statusText(row.status) }}
         </el-tag>
@@ -75,6 +75,16 @@ function groupName(groupId: number) {
     >
       <template #default="{ row }">
         {{ row.currentSessionCount }} / {{ row.maxSessionCount }}
+      </template>
+    </el-table-column>
+    <el-table-column
+      label="登录上线"
+      width="110"
+    >
+      <template #default="{ row }">
+        <el-tag :type="row.autoOnline === 1 ? 'success' : 'info'">
+          {{ row.autoOnline === 1 ? "自动" : "手动" }}
+        </el-tag>
       </template>
     </el-table-column>
     <el-table-column

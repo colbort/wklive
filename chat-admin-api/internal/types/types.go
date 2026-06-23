@@ -31,6 +31,15 @@ type ChatAdminLoginResp struct {
 type ChatAdminLogoutReq struct {
 }
 
+type ChatAdminOptions struct {
+	AgentStatuses []OptionItem `json:"agentStatuses"`
+}
+
+type ChatAdminOptionsResp struct {
+	RespBase
+	Data ChatAdminOptions `json:"data"`
+}
+
 type ChatAdminProfileReq struct {
 }
 
@@ -46,7 +55,8 @@ type ChatAgent struct {
 	ChatUserId          int64  `json:"chatUserId"`
 	AgentNo             string `json:"agentNo"`
 	WelcomeMessage      string `json:"welcomeMessage"`
-	Status              int64  `json:"status"` // 1 offline 2 online 3 busy 4 resting
+	Status              int64  `json:"status"`     // 1 offline 2 online 3 busy 4 resting
+	AutoOnline          int64  `json:"autoOnline"` // 1 yes 2 no
 	MaxSessionCount     int64  `json:"maxSessionCount"`
 	CurrentSessionCount int64  `json:"currentSessionCount"`
 	LastActiveTime      int64  `json:"lastActiveTime"`
@@ -244,6 +254,7 @@ type CreateChatAgentReq struct {
 	Mobile          string `json:"mobile,optional"`
 	Email           string `json:"email,optional"`
 	Enabled         int64  `json:"enabled,optional"`
+	AutoOnline      int64  `json:"autoOnline,optional"`
 	Remark          string `json:"remark,optional"`
 }
 
@@ -370,6 +381,12 @@ type MarkAgentMessagesReadReq struct {
 	SessionNo     string `path:"sessionNo"`
 	LastMessageId int64  `json:"lastMessageId,optional"`
 	LastMessageNo string `json:"lastMessageNo,optional"`
+}
+
+type OptionItem struct {
+	Key     string `json:"key"`
+	Value   int64  `json:"value"`
+	TagType string `json:"tagType,optional"`
 }
 
 type PageChatAgentsReq struct {
@@ -507,6 +524,7 @@ type UpdateChatAgentReq struct {
 	MaxSessionCount int64  `json:"maxSessionCount,optional"`
 	GroupId         int64  `json:"groupId,optional"`
 	WelcomeMessage  string `json:"welcomeMessage,optional"`
+	AutoOnline      int64  `json:"autoOnline,optional"`
 	Remark          string `json:"remark,optional"`
 }
 

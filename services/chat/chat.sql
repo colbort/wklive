@@ -45,6 +45,7 @@ CREATE TABLE `t_chat_agent` (
   `agent_no` varchar(64) NOT NULL DEFAULT '' COMMENT '坐席编号',
   `welcome_message` varchar(500) NOT NULL DEFAULT '' COMMENT '欢迎语',
   `status` tinyint NOT NULL DEFAULT '1' COMMENT '在线状态:1离线 2在线 3忙碌 4休息',
+  `auto_online` tinyint NOT NULL DEFAULT '2' COMMENT '登录是否自动上线:1是 2否',
   `max_session_count` int NOT NULL DEFAULT '10' COMMENT '最大同时接待数',
   `current_session_count` int NOT NULL DEFAULT '0' COMMENT '当前接待数',
   `last_active_time` bigint NOT NULL DEFAULT '0' COMMENT '最后活跃时间戳(毫秒)',

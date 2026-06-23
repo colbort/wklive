@@ -79,6 +79,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
+					Path:    "/options",
+					Handler: chat_auth.OptionsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
 					Path:    "/profile",
 					Handler: chat_auth.ProfileHandler(serverCtx),
 				},

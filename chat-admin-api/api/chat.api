@@ -7,6 +7,7 @@ type ChatAgent {
 	agentNo             string `json:"agentNo"`
 	welcomeMessage      string `json:"welcomeMessage"`
 	status              int64  `json:"status"` // 1 offline 2 online 3 busy 4 resting
+	autoOnline          int64  `json:"autoOnline"` // 1 yes 2 no
 	maxSessionCount     int64  `json:"maxSessionCount"`
 	currentSessionCount int64  `json:"currentSessionCount"`
 	lastActiveTime      int64  `json:"lastActiveTime"`
@@ -14,6 +15,21 @@ type ChatAgent {
 	remark              string `json:"remark"`
 	createTimes         int64  `json:"createTimes"`
 	updateTimes         int64  `json:"updateTimes"`
+}
+
+type OptionItem {
+	key     string `json:"key"`
+	value   int64  `json:"value"`
+	tagType string `json:"tagType,optional"`
+}
+
+type ChatAdminOptions {
+	agentStatuses []OptionItem `json:"agentStatuses"`
+}
+
+type ChatAdminOptionsResp {
+	RespBase
+	data ChatAdminOptions `json:"data"`
 }
 
 type ChatUser {
@@ -236,6 +252,7 @@ type CreateChatAgentReq {
 	mobile          string `json:"mobile,optional"`
 	email           string `json:"email,optional"`
 	enabled         int64  `json:"enabled,optional"`
+	autoOnline      int64  `json:"autoOnline,optional"`
 	remark          string `json:"remark,optional"`
 }
 
@@ -244,6 +261,7 @@ type UpdateChatAgentReq {
 	maxSessionCount int64  `json:"maxSessionCount,optional"`
 	groupId         int64  `json:"groupId,optional"`
 	welcomeMessage  string `json:"welcomeMessage,optional"`
+	autoOnline      int64  `json:"autoOnline,optional"`
 	remark          string `json:"remark,optional"`
 }
 
@@ -551,6 +569,9 @@ service chatAdmin {
 
 	@handler Profile
 	get /profile (ChatAdminProfileReq) returns (ChatAdminProfileResp)
+
+	@handler Options
+	get /options returns (ChatAdminOptionsResp)
 }
 
 @server (

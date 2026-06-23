@@ -63,6 +63,10 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 	if enabled == 0 {
 		enabled = int64(common.Enable_ENABLE_ENABLED)
 	}
+	autoOnline := int64(in.GetAutoOnline())
+	if autoOnline == 0 {
+		autoOnline = int64(common.YesNo_YES_NO_NO)
+	}
 
 	now := nowMillis()
 	user := &models.TChatUser{
@@ -84,6 +88,7 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 		GroupId:         in.GetGroupId(),
 		WelcomeMessage:  strings.TrimSpace(in.GetWelcomeMessage()),
 		Status:          int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_OFFLINE),
+		AutoOnline:      autoOnline,
 		MaxSessionCount: maxCount,
 		Remark:          strings.TrimSpace(in.GetRemark()),
 		CreateTimes:     now,
@@ -132,12 +137,13 @@ func (l *CreateChatAgentLogic) createAgentWithUser(user *models.TChatUser, agent
 		agent.ChatUserId = userID
 		agentResult, err := session.ExecCtx(
 			ctx,
-			"INSERT INTO t_chat_agent (merchant_id,chat_user_id,agent_no,welcome_message,status,max_session_count,current_session_count,last_active_time,group_id,remark,create_times,update_times) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+			"INSERT INTO t_chat_agent (merchant_id,chat_user_id,agent_no,welcome_message,status,auto_online,max_session_count,current_session_count,last_active_time,group_id,remark,create_times,update_times) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
 			agent.MerchantId,
 			agent.ChatUserId,
 			agent.AgentNo,
 			agent.WelcomeMessage,
 			agent.Status,
+			agent.AutoOnline,
 			agent.MaxSessionCount,
 			agent.CurrentSessionCount,
 			agent.LastActiveTime,

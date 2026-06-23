@@ -21,6 +21,7 @@ export interface ChatAgent {
   agentNo: string;
   welcomeMessage: string;
   status: number;
+  autoOnline: number;
   maxSessionCount: number;
   currentSessionCount: number;
   lastActiveTime: number;

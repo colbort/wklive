@@ -47,9 +47,19 @@ func (l *UpdateChatAgentLogic) UpdateChatAgent(in *chat.UpdateChatAgentReq) (*ch
 	if in.GetMaxSessionCount() > 0 {
 		data.MaxSessionCount = int64(in.GetMaxSessionCount())
 	}
-	data.GroupId = in.GetGroupId()
-	data.WelcomeMessage = strings.TrimSpace(in.GetWelcomeMessage())
-	data.Remark = strings.TrimSpace(in.GetRemark())
+	if in.GetAutoOnline() != 0 {
+		data.AutoOnline = int64(in.GetAutoOnline())
+	}
+	if in.WelcomeMessage != "" {
+		data.WelcomeMessage = strings.TrimSpace(in.GetWelcomeMessage())
+	}
+	if in.GroupId > 0 {
+		data.GroupId = in.GetGroupId()
+	}
+	if strings.TrimSpace(in.GetRemark()) != "" {
+		data.Remark = strings.TrimSpace(in.GetRemark())
+	}
+
 	data.UpdateTimes = nowMillis()
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, data); err != nil {
 		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil

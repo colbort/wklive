@@ -80,6 +80,9 @@ func (c *Connection) MatchEvent(event *chat.ChatMessageEvent) bool {
 	if event.GetQueue() != nil {
 		return c.matchQueue(event.GetQueue())
 	}
+	if event.GetAgent() != nil {
+		return c.matchAgent(event.GetAgent())
+	}
 	return false
 }
 
@@ -123,6 +126,19 @@ func (c *Connection) matchQueue(queue *chat.ChatQueueInfo) bool {
 		return false
 	}
 	if c.SessionNo != "" && queue.SessionNo != c.SessionNo {
+		return false
+	}
+	return true
+}
+
+func (c *Connection) matchAgent(agent *chat.ChatAgent) bool {
+	if agent == nil {
+		return false
+	}
+	if c.MerchantId > 0 && agent.MerchantId != c.MerchantId {
+		return false
+	}
+	if c.AgentId > 0 && agent.Id != c.AgentId {
 		return false
 	}
 	return true

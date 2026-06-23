@@ -223,6 +223,7 @@ func toProtoAgent(data *models.TChatAgent) *chat.ChatAgent {
 		AgentNo:             data.AgentNo,
 		WelcomeMessage:      data.WelcomeMessage,
 		Status:              chat.ChatAgentStatus(data.Status),
+		AutoOnline:          common.YesNo(data.AutoOnline),
 		MaxSessionCount:     int32(data.MaxSessionCount),
 		CurrentSessionCount: int32(data.CurrentSessionCount),
 		LastActiveTime:      data.LastActiveTime,
@@ -851,6 +852,25 @@ func publishSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventT
 	}
 	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
 		logx.WithContext(ctx).Errorf("publish chat session event failed: %v", err)
+	}
+}
+
+func publishAgentStatusEvent(ctx context.Context, svcCtx *svc.ServiceContext, agent *models.TChatAgent) {
+	if svcCtx.BusRedis == nil || agent == nil {
+		return
+	}
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatMessageEventTypeAgentStatus,
+		CreatedAt: nowMillis(),
+		Agent:     toProtoAgent(agent),
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("marshal chat agent status event failed: %v", err)
+		return
+	}
+	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
+		logx.WithContext(ctx).Errorf("publish chat agent status event failed: %v", err)
 	}
 }
 

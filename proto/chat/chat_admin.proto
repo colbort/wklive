@@ -212,6 +212,7 @@ message CreateChatAgentReq {
   string mobile = 8;           // 手机号
   string email = 9;            // 邮箱
   common.Enable enabled = 10;  // 启用状态
+  common.YesNo auto_online = 11; // 登录是否自动上线
 }
 
 message UpdateChatAgentReq {
@@ -220,10 +221,11 @@ message UpdateChatAgentReq {
   string remark = 3;           // 备注
   int64 group_id = 4;          // 客服分组ID
   string welcome_message = 5;  // 欢迎语
+  common.YesNo auto_online = 6; // 登录是否自动上线
 }
 
 message UpdateChatAgentStatusReq {
-  int64 agent_id = 1;         // 坐席ID
+  int64 id = 1;         // 坐席ID
   ChatAgentStatus status = 2; // 在线状态
 }
 

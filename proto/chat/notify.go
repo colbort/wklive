@@ -6,6 +6,7 @@ const (
 	ChatMessageEventTypeSessionAccepted = "chat.session.accepted"
 	ChatMessageEventTypeSessionClosed   = "chat.session.closed"
 	ChatMessageEventTypeQueueUpdated    = "chat.queue.updated"
+	ChatMessageEventTypeAgentStatus     = "chat.agent.status.updated"
 	ChatWsEventConnected                = "connected"
 	ChatWsEventError                    = "error"
 	ChatWsEventSendUserMessage          = "send_user_message"

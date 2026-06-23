@@ -9,6 +9,8 @@ defineProps<{
   activeNeedsAccept: boolean;
   activeClosed: boolean;
   canReply: boolean;
+  canAccept: boolean;
+  acceptDisabledReason: string;
   wsOnline: boolean;
   agentId: number;
   showGuestRefreshNotice: boolean;
@@ -30,14 +32,22 @@ const emit = defineEmits<{
         <span>{{ session?.sessionNo || "-" }}</span>
       </div>
       <div class="chat-actions">
-        <el-button
+        <el-tooltip
           v-if="activeNeedsAccept"
-          type="success"
-          :disabled="!wsOnline || !agentId"
-          @click="emit('accept')"
+          :content="acceptDisabledReason"
+          :disabled="canAccept || !acceptDisabledReason"
+          placement="top"
         >
-          接待
-        </el-button>
+          <span>
+            <el-button
+              type="success"
+              :disabled="!canAccept"
+              @click="emit('accept')"
+            >
+              接待
+            </el-button>
+          </span>
+        </el-tooltip>
         <el-button>转接</el-button>
         <el-button
           type="primary"

@@ -40,6 +40,17 @@ export interface ProfileResp {
   agent?: ChatAgent;
 }
 
+export interface OptionItem {
+  key: string;
+  label?: string;
+  value: number;
+  tagType?: "success" | "info" | "warning" | "danger" | "primary";
+}
+
+export interface ChatAdminOptions {
+  agentStatuses: OptionItem[];
+}
+
 export interface ChatGroupPayload {
   merchantId: number;
   groupCode?: string;
@@ -70,6 +81,7 @@ export interface CreateChatAgentPayload {
   mobile?: string;
   email?: string;
   enabled?: number;
+  autoOnline?: number;
   remark?: string;
 }
 
@@ -78,6 +90,7 @@ export interface UpdateChatAgentPayload {
   maxSessionCount?: number;
   groupId?: number;
   welcomeMessage?: string;
+  autoOnline?: number;
   remark?: string;
 }
 
@@ -112,6 +125,10 @@ export function profile() {
   return getRaw<ProfileResp>("/profile");
 }
 
+export function options() {
+  return getData<ChatAdminOptions>("/options");
+}
+
 export function pageAgents(params: Record<string, unknown>) {
   return getData<ChatAgent[]>("/agents", params);
 }
@@ -125,7 +142,6 @@ export function updateAgent(id: number, data: UpdateChatAgentPayload) {
 }
 
 export function updateAgentStatus(id: number, data: {
-  merchantId: number;
   status: number;
 }) {
   return putData<ChatAgent>(`/agents/${id}/status`, data);

@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import type { ChatSession } from "@/types/chat";
+import type { DisplayOptionItem } from "@/utils/options";
 
 defineProps<{
   sessions: ChatSession[];
   selectedSessionNo: string;
   loading: boolean;
-  wsOnline: boolean;
+  agentStatusOption: DisplayOptionItem;
+  agentStatusOptions: DisplayOptionItem[];
+  statusChanging: boolean;
   statusFilter: string;
 }>();
 
 const emit = defineEmits<{
   refresh: [];
   select: [sessionNo: string];
+  "status-change": [status: number];
   "update:statusFilter": [value: string];
 }>();
 
@@ -34,9 +38,30 @@ const statusOptions = [
         >
           刷新
         </el-button>
-        <el-tag :type="wsOnline ? 'success' : 'info'">
-          {{ wsOnline ? "在线" : "离线" }}
-        </el-tag>
+        <el-dropdown
+          trigger="click"
+          :disabled="statusChanging"
+          @command="(status: string | number) => emit('status-change', Number(status))"
+        >
+          <el-tag
+            class="agent-status-tag"
+            :type="agentStatusOption.tagType || 'info'"
+          >
+            {{ agentStatusOption.label }}
+          </el-tag>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="item in agentStatusOptions"
+                :key="item.value"
+                :command="item.value"
+                :disabled="item.value === agentStatusOption.value"
+              >
+                {{ item.label }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </div>
     </div>
     <el-segmented
