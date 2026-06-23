@@ -157,9 +157,7 @@ export interface ListChatSessionsParams extends PageReq {
   status?: number;
 }
 
-export interface ListChatMessagesParams extends PageReq {
-  merchantId: number;
-}
+export interface ListChatMessagesParams extends PageReq {}
 
 export interface MarkUserMessagesReadPayload {
   merchantId: number;

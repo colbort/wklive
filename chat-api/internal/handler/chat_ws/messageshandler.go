@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"chat-api/internal/jwt"
 	"chat-api/internal/svc"
 	"chat-api/internal/ws"
 	"wklive/common/helper"
@@ -70,52 +71,23 @@ type chatWSIdentity struct {
 }
 
 func buildWSIdentity(r *http.Request, svcCtx *svc.ServiceContext) (chatWSIdentity, error) {
-	merchantId, err := merchantIDFromRequest(r)
+	claims, err := jwt.Verify(svcCtx.Config.Jwt.AccessSecret, jwt.TokenFromRequest(r))
 	if err != nil {
 		return chatWSIdentity{}, err
 	}
-
-	sessionNo := nextGuestNo(guestSessionPrefix)
-
-	userId, hasUserId, err := userIDFromRequest(r)
+	username := firstNonEmpty(claims.Nickname, fmt.Sprintf("user-%d", claims.UserId))
+	sessionNo, err := openPersistentSession(r.Context(), svcCtx, claims.MerchantId, claims.UserId, username, claims.AvatarUrl)
 	if err != nil {
 		return chatWSIdentity{}, err
 	}
-	logx.Infof(
-		"chat ws identity header, merchantId=%d hasUserId=%t userId=%d nickname=%s avatar=%t protocols=%s",
-		merchantId,
-		hasUserId,
-		userId,
-		firstNonEmpty(userNicknameFromRequest(r), guestUsername),
-		userAvatarFromRequest(r) != "",
-		r.Header.Get("Sec-WebSocket-Protocol"),
-	)
-	if !hasUserId {
-		logx.Infof("chat ws identity resolved as guest, merchantId=%d sessionNo=%s nickname=%s", merchantId, sessionNo, firstNonEmpty(userNicknameFromRequest(r), guestUsername))
-		return chatWSIdentity{
-			MerchantId: merchantId,
-			UserId:     guestUserID(sessionNo),
-			Username:   firstNonEmpty(userNicknameFromRequest(r), guestUsername),
-			AvatarUrl:  userAvatarFromRequest(r),
-			SessionNo:  sessionNo,
-			Temporary:  true,
-		}, nil
-	} else {
-		username := firstNonEmpty(userNicknameFromRequest(r), fmt.Sprintf("user-%d", userId))
-		avatarUrl := userAvatarFromRequest(r)
-		sessionNo, err = openPersistentSession(r.Context(), svcCtx, merchantId, userId, username, avatarUrl)
-		if err != nil {
-			return chatWSIdentity{}, err
-		}
-		logx.Infof("chat ws identity resolved as user, merchantId=%d userId=%d sessionNo=%s nickname=%s", merchantId, userId, sessionNo, username)
-		return chatWSIdentity{
-			MerchantId: merchantId,
-			UserId:     userId,
-			Username:   username,
-			AvatarUrl:  avatarUrl,
-			SessionNo:  sessionNo,
-		}, nil
-	}
+	logx.Infof("chat ws identity resolved by chatToken, merchantId=%d userId=%d sessionNo=%s nickname=%s", claims.MerchantId, claims.UserId, sessionNo, username)
+	return chatWSIdentity{
+		MerchantId: claims.MerchantId,
+		UserId:     claims.UserId,
+		Username:   username,
+		AvatarUrl:  claims.AvatarUrl,
+		SessionNo:  sessionNo,
+	}, nil
 }
 
 func serveWSConnection(w http.ResponseWriter, r *http.Request, svcCtx *svc.ServiceContext, identity chatWSIdentity) {

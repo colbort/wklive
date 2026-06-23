@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_TENANT_CODE?: string
   readonly VITE_CHAT_UI_URL?: string
   readonly VITE_CHAT_WS_URL?: string
+  readonly VITE_CHAT_TOKEN?: string
   readonly VITE_CHAT_API_KEY?: string
   readonly VITE_CHAT_API_SECRET?: string
 }

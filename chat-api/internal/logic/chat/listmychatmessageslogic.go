@@ -5,10 +5,9 @@ package chat
 
 import (
 	"context"
-
-	"chat-api/internal/logicutil"
 	"wklive/common/utils"
 
+	"chat-api/internal/logicutil"
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
 
@@ -34,12 +33,18 @@ func (l *ListMyChatMessagesLogic) ListMyChatMessages(req *types.ListChatMessages
 	if err != nil {
 		return nil, err
 	}
+	merchantId, err := utils.GetMerchantIdFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	proxyReq := struct {
 		*types.ListChatMessagesReq
-		UserId int64
+		MerchantId int64
+		UserId     int64
 	}{
 		ListChatMessagesReq: req,
+		MerchantId:          merchantId,
 		UserId:              userId,
 	}
 	return logicutil.Proxy[types.ListChatMessagesResp](l.ctx, proxyReq, l.svcCtx.ChatAppCli.ListMyChatMessages)

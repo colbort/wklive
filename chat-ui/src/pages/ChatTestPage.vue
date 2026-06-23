@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { authChatMerchant } from "@/api/chat";
-import type { ChatMerchant } from "@/types/chat";
+import { createChatToken } from "@/api/chat";
 
 type ChatMode = "mobile" | "desktop";
 
@@ -14,22 +13,27 @@ const apiSecret = ref(defaultApiSecret);
 const userId = ref("");
 const nickname = ref("访客");
 const avatarUrl = ref("");
-const merchant = ref<ChatMerchant | null>(null);
+const chatToken = ref("");
 const authError = ref("");
 const authing = ref(false);
 
-const canOpen = computed(() => Boolean(apiKey.value.trim() && apiSecret.value.trim()));
+const canCreateToken = computed(() => Boolean(apiKey.value.trim() && apiSecret.value.trim() && userId.value.trim()));
+const canOpen = computed(() => Boolean(chatToken.value.trim()));
 
-async function authorize() {
+async function generateToken() {
   authError.value = "";
   authing.value = true;
   try {
-    merchant.value = await authChatMerchant({
+    const resp = await createChatToken({
       apiKey: apiKey.value.trim(),
       apiSecret: apiSecret.value.trim(),
+      userId: Number(userId.value.trim()),
+      nickname: nickname.value.trim(),
+      avatarUrl: avatarUrl.value.trim(),
     });
+    chatToken.value = resp.chatToken;
   } catch (err) {
-    merchant.value = null;
+    chatToken.value = "";
     authError.value = err instanceof Error ? err.message : "认证失败";
   } finally {
     authing.value = false;
@@ -40,11 +44,7 @@ function openChat(mode: ChatMode) {
   const params = new URLSearchParams();
   params.set("page", "chat");
   params.set("mode", mode);
-  params.set("apiKey", apiKey.value.trim());
-  params.set("apiSecret", apiSecret.value.trim());
-  if (userId.value.trim()) params.set("userId", userId.value.trim());
-  if (nickname.value.trim()) params.set("nickname", nickname.value.trim());
-  if (avatarUrl.value.trim()) params.set("avatarUrl", avatarUrl.value.trim());
+  params.set("chatToken", chatToken.value.trim());
 
   const wsUrl = new URLSearchParams(window.location.search).get("wsUrl");
   if (wsUrl) params.set("wsUrl", wsUrl);
@@ -92,7 +92,7 @@ function openChat(mode: ChatMode) {
     >
       <form
         class="setup-form"
-        @submit.prevent="authorize"
+        @submit.prevent="generateToken"
       >
         <label>
           <span>API Key</span>
@@ -114,18 +114,18 @@ function openChat(mode: ChatMode) {
         <button
           class="primary-button"
           type="submit"
-          :disabled="authing"
+          :disabled="authing || !canCreateToken"
         >
-          {{ authing ? "验证中" : "验证商户" }}
+          {{ authing ? "生成中" : "生成 ChatToken" }}
         </button>
       </form>
 
       <div
-        v-if="merchant"
+        v-if="chatToken"
         class="merchant-box"
       >
-        <span>Merchant</span>
-        <strong>{{ merchant.merchantId }}</strong>
+        <span>ChatToken</span>
+        <strong>已生成</strong>
       </div>
       <p
         v-if="authError"
@@ -147,7 +147,7 @@ function openChat(mode: ChatMode) {
           <input
             v-model="userId"
             autocomplete="off"
-            placeholder="留空则以访客进入"
+            placeholder="输入登录用户 ID"
           >
         </label>
         <label>

@@ -15,11 +15,10 @@ const profileLoaded = ref(false)
 
 const chatFrameUrl = computed(() => {
   const baseUrl = import.meta.env.VITE_CHAT_UI_URL?.trim()
-  const apiKey = import.meta.env.VITE_CHAT_API_KEY?.trim()
-  const apiSecret = import.meta.env.VITE_CHAT_API_SECRET?.trim()
+  const chatToken = import.meta.env.VITE_CHAT_TOKEN?.trim()
   const wsUrl = import.meta.env.VITE_CHAT_WS_URL?.trim()
 
-  if (!baseUrl || !apiKey || !apiSecret) return ''
+  if (!baseUrl || !chatToken) return ''
   if (getAccessToken() && (!profileLoaded.value || !profile.value?.user?.id)) return ''
 
   const url = new URL(baseUrl, window.location.origin)
@@ -28,22 +27,9 @@ const chatFrameUrl = computed(() => {
   }
   url.searchParams.set('page', 'chat')
   url.searchParams.set('mode', 'mobile')
-  url.searchParams.set('apiKey', apiKey)
-  url.searchParams.set('apiSecret', apiSecret)
+  url.searchParams.set('chatToken', chatToken)
   if (wsUrl) {
     url.searchParams.set('wsUrl', wsUrl)
-  }
-
-  const user = profile.value?.user
-  if (user?.id) {
-    url.searchParams.set('userId', String(user.id))
-  }
-  const nickname = user?.nickname || user?.username
-  if (nickname) {
-    url.searchParams.set('nickname', nickname)
-  }
-  if (user?.avatar) {
-    url.searchParams.set('avatarUrl', user.avatar)
   }
 
   return url.toString()

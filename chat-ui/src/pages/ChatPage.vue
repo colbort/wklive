@@ -1,26 +1,16 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { authChatMerchant } from "@/api/chat";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useChatSocket } from "@/composables/useChatSocket";
-import type { ChatMerchant } from "@/types/chat";
 
 type ChatMode = "mobile" | "desktop";
 
-const defaultApiKey = "ck_b56f695fef22019e1326354e318ab0c6";
-const defaultApiSecret =
-  "cs_cfdea0dd4b4c6b687ba5cb0d4b9c1e1cd0d58e61a6fa56e1faf5575575e1df7a";
-
-const apiKey = ref(defaultApiKey);
-const apiSecret = ref(defaultApiSecret);
-const userId = ref("");
-const nickname = ref("访客");
-const avatarUrl = ref("");
+const chatToken = ref("");
 const draft = ref("");
 const resourceInput = ref<HTMLInputElement>();
+const messageInput = ref<HTMLTextAreaElement>();
+const messageList = ref<HTMLDivElement>();
 const selectedResourceName = ref("");
-const merchant = ref<ChatMerchant | null>(null);
 const authError = ref("");
-const authing = ref(false);
 const activeMode = ref<ChatMode>("mobile");
 
 const chat = useChatSocket();
@@ -31,61 +21,31 @@ const composerActionLabel = computed(() => (hasDraft.value ? "发送" : "结束"
 
 function hydrateFromQuery() {
   const params = new URLSearchParams(window.location.search);
-  const queryApiKey = params.get("apiKey");
-  const queryApiSecret = params.get("apiSecret");
-  const queryUserId = params.get("userId");
-  const queryNickname = params.get("nickname");
-  const queryAvatarUrl = params.get("avatarUrl");
+  const queryChatToken = params.get("chatToken");
   const queryMode = params.get("mode");
 
-  if (queryApiKey) apiKey.value = queryApiKey;
-  if (queryApiSecret) apiSecret.value = queryApiSecret;
-  if (queryUserId) userId.value = queryUserId;
-  if (queryNickname) nickname.value = queryNickname;
-  if (queryAvatarUrl) avatarUrl.value = queryAvatarUrl;
+  if (queryChatToken) chatToken.value = queryChatToken;
   activeMode.value = queryMode === "desktop" ? "desktop" : "mobile";
 }
 
-async function authorize() {
-  authError.value = "";
-  authing.value = true;
-  try {
-    merchant.value = await authChatMerchant({
-      apiKey: apiKey.value.trim(),
-      apiSecret: apiSecret.value.trim(),
-    });
-    chat.resetMessages();
-  } catch (err) {
-    merchant.value = null;
-    authError.value = err instanceof Error ? err.message : "认证失败";
-  } finally {
-    authing.value = false;
-  }
-}
-
-async function ensureMerchant() {
-  if (merchant.value?.merchantId) return merchant.value;
-  await authorize();
-  return merchant.value;
-}
-
 async function connectChat() {
-  const nextMerchant = await ensureMerchant();
-  if (!nextMerchant) return;
-  chat.connect(nextMerchant.merchantId, {
-    userId: userId.value,
-    nickname: nickname.value,
-    avatarUrl: avatarUrl.value,
-  });
+  const token = chatToken.value.trim();
+  if (!token) {
+    authError.value = "缺少客服访问凭证";
+    return;
+  }
+  chat.resetMessages();
+  chat.connect(token);
 }
 
 function sendMessage() {
-  chat.sendText(draft.value, nickname.value, avatarUrl.value);
+  chat.sendText(draft.value, "", "");
   draft.value = "";
+  void nextTick(resizeMessageInput);
 }
 
-function endChat() {
-  chat.close();
+async function endChat() {
+  await chat.endSession("user_closed");
 }
 
 function handleComposerAction() {
@@ -93,7 +53,7 @@ function handleComposerAction() {
     sendMessage();
     return;
   }
-  endChat();
+  void endChat();
 }
 
 function openResourcePicker() {
@@ -106,13 +66,55 @@ function handleResourceSelected(event: Event) {
   selectedResourceName.value = input.files?.[0]?.name || "";
 }
 
+function resizeMessageInput() {
+  const input = messageInput.value;
+  if (!input) return;
+  const maxHeight = 120;
+  input.style.height = "auto";
+  input.style.height = `${Math.min(input.scrollHeight, maxHeight)}px`;
+}
+
+async function handleMessageScroll() {
+  const list = messageList.value;
+  if (!list || list.scrollTop > 24 || chat.historyLoading.value || !chat.historyHasMore.value) {
+    return;
+  }
+  const previousHeight = list.scrollHeight;
+  const loaded = await chat.loadHistory(false);
+  if (!loaded) return;
+  await nextTick();
+  list.scrollTop = list.scrollHeight - previousHeight;
+}
+
+async function scrollMessagesToBottom() {
+  await nextTick();
+  const list = messageList.value;
+  if (!list) return;
+  list.scrollTop = list.scrollHeight;
+}
+
 onMounted(() => {
   hydrateFromQuery();
   void connectChat();
+  window.addEventListener("pagehide", handlePageHide);
 });
 
+watch(
+  () => chat.messages.value.length,
+  (length, previousLength) => {
+    if (previousLength === 0 && length > 0) {
+      void scrollMessagesToBottom();
+    }
+  },
+);
+
+function handlePageHide() {
+  void chat.endSession("page_leave", true);
+}
+
 onBeforeUnmount(() => {
-  chat.close();
+  window.removeEventListener("pagehide", handlePageHide);
+  void chat.endSession("page_leave", true);
 });
 </script>
 
@@ -132,7 +134,11 @@ onBeforeUnmount(() => {
       class="chat-shell"
       aria-label="chat conversation"
     >
-      <div class="message-list">
+      <div
+        ref="messageList"
+        class="message-list"
+        @scroll="handleMessageScroll"
+      >
         <div class="welcome-message">
           <strong>您好</strong>
           <span>请描述您遇到的问题，客服会在这里接收并回复。</span>
@@ -155,7 +161,7 @@ onBeforeUnmount(() => {
           }"
         >
           <div class="bubble">
-            <span>{{ message.sender?.nickname || (message.senderType === 1 ? nickname : "客服") }}</span>
+            <span>{{ message.sender?.nickname || (message.senderType === 1 ? "我" : "客服") }}</span>
             <p>{{ message.content }}</p>
           </div>
         </article>
@@ -182,10 +188,12 @@ onBeforeUnmount(() => {
         </button>
         <div class="composer-input">
           <textarea
+            ref="messageInput"
             v-model="draft"
             :disabled="!chat.isOpen.value || chat.sessionClosed.value"
             :placeholder="chat.sessionClosed.value ? '本次会话已结束' : '输入消息'"
-            rows="2"
+            rows="1"
+            @input="resizeMessageInput"
           />
           <span
             v-if="selectedResourceName"

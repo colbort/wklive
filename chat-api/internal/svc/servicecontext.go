@@ -10,6 +10,7 @@ import (
 	"chat-api/internal/config"
 	"chat-api/internal/middleware"
 	"chat-api/internal/ws"
+	common "wklive/common/middleware"
 	"wklive/common/utils"
 	"wklive/proto/chat"
 
@@ -24,6 +25,7 @@ import (
 type ServiceContext struct {
 	Config         config.Config
 	UserRateLimit  rest.Middleware
+	HeaderIdentity rest.Middleware
 	ChatAppCli     chat.ChatAppClient
 	ChatMessageHub *ws.Hub
 	BusRedis       *redis.Redis
@@ -72,6 +74,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:         c,
 		UserRateLimit:  middleware.NewUserRateLimitMiddleware().Handle,
+		HeaderIdentity: common.NewHeaderMiddleware().Handle,
 		ChatAppCli:     chat.NewChatAppClient(chatCli.Conn()),
 		ChatMessageHub: chatMessageHub,
 		BusRedis:       chatBusRedis,

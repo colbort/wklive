@@ -25,11 +25,6 @@ type ChatMessage struct {
 	UpdateTimes int64             `json:"updateTimes"`
 }
 
-type ChatMessageResp struct {
-	RespBase
-	Data ChatMessage `json:"data"`
-}
-
 type ChatMessageSender struct {
 	Id         int64  `json:"id"`
 	SenderType int64  `json:"type"`
@@ -37,59 +32,28 @@ type ChatMessageSender struct {
 	AvatarUrl  string `json:"avatarUrl"`
 }
 
-type ChatAuthReq struct {
-	ApiKey    string `json:"apiKey"`
-	ApiSecret string `json:"apiSecret"`
-}
-
-type ChatAuthResp struct {
-	RespBase
-	Data ChatMerchant `json:"data"`
-}
-
-type ChatMerchant struct {
-	MerchantId  int64  `json:"merchantId"`
-	ApiKey      string `json:"apiKey"`
-	Enabled     int64  `json:"enabled"`
-	ExpireTime  int64  `json:"expireTime"`
-	CreateTimes int64  `json:"createTimes"`
-	UpdateTimes int64  `json:"updateTimes"`
-}
-
-type ChatSession struct {
-	Id               int64  `json:"id"`
-	SessionNo        string `json:"sessionNo"`
-	MerchantId       int64  `json:"merchantId"`
-	UserId           int64  `json:"userId"`
-	Source           int64  `json:"source"`   // 1 APP 2 Web/H5 3 Admin 4 System
-	Status           int64  `json:"status"`   // 1 waiting 2 serving 3 pendingUser 4 pendingAgent 5 closed
-	Priority         int64  `json:"priority"` // 1 low 2 normal 3 high 4 urgent
-	AgentId          int64  `json:"agentId"`
-	Title            string `json:"title"`
-	Category         string `json:"category"`
-	LastMessage      string `json:"lastMessage"`
-	LastSenderType   int64  `json:"lastSenderType"` // 1 user 2 agent 3 system
-	LastMessageTime  int64  `json:"lastMessageTime"`
-	UserUnreadCount  int64  `json:"userUnreadCount"`
-	AgentUnreadCount int64  `json:"agentUnreadCount"`
-	CloseTime        int64  `json:"closeTime"`
-	CloseReason      string `json:"closeReason"`
-	ExtJson          string `json:"extJson,optional"`
-	GroupId          int64  `json:"groupId"`
-	LastMessageNo    string `json:"lastMessageNo"`
-	CreateTimes      int64  `json:"createTimes"`
-	UpdateTimes      int64  `json:"updateTimes"`
-}
-
-type ChatSessionResp struct {
-	RespBase
-	Data ChatSession `json:"data"`
+type ChatToken struct {
+	ChatToken string `json:"chatToken"`
+	ExpireAt  int64  `json:"expireAt"`
 }
 
 type CloseMyChatSessionReq struct {
-	MerchantId  int64  `json:"merchantId"`
 	SessionNo   string `path:"sessionNo"`
 	CloseReason string `json:"closeReason,optional"`
+}
+
+type CreateChatTokenReq struct {
+	ApiKey     string `json:"apiKey"`
+	ApiSecret  string `json:"apiSecret"`
+	UserId     int64  `json:"userId"`
+	Nickname   string `json:"nickname,optional"`
+	AvatarUrl  string `json:"avatarUrl,optional"`
+	TtlSeconds int64  `json:"ttlSeconds,optional"`
+}
+
+type CreateChatTokenResp struct {
+	RespBase
+	Data ChatToken `json:"data"`
 }
 
 type IdReq struct {
@@ -98,41 +62,12 @@ type IdReq struct {
 
 type ListChatMessagesReq struct {
 	PageReq
-	MerchantId int64  `form:"merchantId"`
-	SessionNo  string `path:"sessionNo"`
+	SessionNo string `path:"sessionNo"`
 }
 
 type ListChatMessagesResp struct {
 	RespBase
 	Data []ChatMessage `json:"data"`
-}
-
-type ListChatSessionsReq struct {
-	PageReq
-	MerchantId int64 `form:"merchantId"`
-	Status     int64 `form:"status,optional"`
-}
-
-type ListChatSessionsResp struct {
-	RespBase
-	Data []ChatSession `json:"data"`
-}
-
-type MarkUserMessagesReadReq struct {
-	MerchantId    int64  `json:"merchantId"`
-	SessionNo     string `path:"sessionNo"`
-	LastMessageId int64  `json:"lastMessageId,optional"`
-	LastMessageNo string `json:"lastMessageNo,optional"`
-}
-
-type OpenChatSessionReq struct {
-	MerchantId      int64  `json:"merchantId"`
-	Source          int64  `json:"source,optional"` // 1 APP 2 Web/H5
-	Title           string `json:"title,optional"`
-	Category        string `json:"category,optional"`
-	FirstMessage    string `json:"firstMessage,optional"`
-	SenderNickname  string `json:"senderNickname,optional"`
-	SenderAvatarUrl string `json:"senderAvatarUrl,optional"`
 }
 
 type PageReq struct {
@@ -148,23 +83,4 @@ type RespBase struct {
 	HasPrev    bool   `json:"hasPrev,optional"`
 	NextCursor int64  `json:"nextCursor,optional"`
 	PrevCursor int64  `json:"prevCursor,optional"`
-}
-
-type SendUserMessageReq struct {
-	MerchantId      int64  `json:"merchantId"`
-	SessionNo       string `path:"sessionNo"`
-	MessageType     int64  `json:"messageType"`
-	Content         string `json:"content,optional"`
-	MediaUrl        string `json:"mediaUrl,optional"`
-	MediaName       string `json:"mediaName,optional"`
-	MediaMime       string `json:"mediaMime,optional"`
-	MediaSize       int64  `json:"mediaSize,optional"`
-	SenderNickname  string `json:"senderNickname,optional"`
-	SenderAvatarUrl string `json:"senderAvatarUrl,optional"`
-	ClientMsgNo     string `json:"clientMsgNo,optional"`
-}
-
-type SessionNoReq struct {
-	MerchantId int64  `form:"merchantId"`
-	SessionNo  string `path:"sessionNo"`
 }

@@ -341,15 +341,15 @@ textarea:focus {
 .composer {
   display: grid;
   grid-template-columns: 56px minmax(0, 1fr) 76px;
-  align-items: stretch;
+  align-items: end;
   gap: 10px;
-  padding: 14px 18px 18px;
+  padding: 10px 18px;
   border-top: 1px solid #e2e8f0;
 }
 
 .resource-button,
 .send-button {
-  min-height: 54px;
+  min-height: 44px;
 }
 
 .composer-input {
@@ -359,7 +359,10 @@ textarea:focus {
 }
 
 .composer-input textarea {
-  min-height: 54px;
+  max-height: 120px;
+  min-height: 44px;
+  overflow-y: auto;
+  line-height: 24px;
 }
 
 .resource-name {
@@ -378,7 +381,7 @@ textarea:focus {
 
   .resource-button,
   .send-button {
-    min-height: 48px;
+    min-height: 44px;
   }
 
   .composer {
@@ -388,6 +391,7 @@ textarea:focus {
   }
 
   .composer-input textarea {
-    min-height: 48px;
+    max-height: 120px;
+    min-height: 44px;
   }
 }

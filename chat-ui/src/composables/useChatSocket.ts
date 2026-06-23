@@ -1,7 +1,9 @@
 import { computed, ref } from "vue";
 import {
   chatWsEvents,
+  closeMyChatSession,
   createChatSocket,
+  listChatMessagesWithMeta,
   sendChatSocketUserMessage,
 } from "@/api/chat";
 import type {
@@ -14,18 +16,19 @@ import type {
 } from "@/types/chat";
 
 interface ConnectOptions {
-  merchantId: number;
-  userId?: string;
-  nickname: string;
-  avatarUrl: string;
+  chatToken: string;
 }
 
 interface WsResp<T> {
   code?: number;
   msg?: string;
+  hasNext?: boolean;
+  nextCursor?: number;
   base?: {
     code?: number;
     msg?: string;
+    hasNext?: boolean;
+    nextCursor?: number;
   };
   data: T;
 }
@@ -57,6 +60,9 @@ export function useChatSocket() {
   const queueStatus = ref("");
   const agentAccepted = ref(false);
   const sessionClosed = ref(false);
+  const historyLoading = ref(false);
+  const historyHasMore = ref(false);
+  const historyNextCursor = ref(0);
   const reconnectingIn = ref(0);
   const status = ref<"idle" | "connecting" | "open" | "closed" | "reconnecting">(
     "idle",
@@ -78,16 +84,10 @@ export function useChatSocket() {
     return `${reconnectingIn.value}s 后重连`;
   });
 
-  function connect(
-    merchantId: number,
-    user: { userId?: string; nickname?: string; avatarUrl?: string } = {},
-  ) {
+  function connect(chatToken: string) {
     manualClose = false;
     lastOptions = {
-      merchantId,
-      userId: user.userId,
-      nickname: user.nickname || "",
-      avatarUrl: user.avatarUrl || "",
+      chatToken,
     };
     reconnectAttempts = 0;
     clearReconnectTimer();
@@ -100,10 +100,7 @@ export function useChatSocket() {
     reconnectingIn.value = 0;
     status.value = reconnectAttempts > 0 ? "reconnecting" : "connecting";
     const ws = createChatSocket({
-      merchantId: options.merchantId,
-      userId: options.userId,
-      nickname: options.nickname,
-      avatarUrl: options.avatarUrl,
+      chatToken: options.chatToken,
       onOpen: () => {
         reconnectAttempts = 0;
         reconnectingIn.value = 0;
@@ -155,11 +152,73 @@ export function useChatSocket() {
     clearReconnectTimer();
     closeSocketOnly(false);
     connected.value = null;
+    resetHistoryState();
     status.value = "idle";
+  }
+
+  async function endSession(closeReason = "user_closed", keepalive = false) {
+    const current = connected.value;
+    const token = lastOptions?.chatToken || "";
+    const canCloseSession = Boolean(
+      current?.sessionNo &&
+        token &&
+        !current.temporary &&
+        !sessionClosed.value,
+    );
+
+    if (canCloseSession) {
+      try {
+        await closeMyChatSession(current!.sessionNo, token, closeReason, keepalive);
+      } catch (err) {
+        if (!keepalive) {
+          error.value = err instanceof Error ? err.message : "结束会话失败";
+          return false;
+        }
+      }
+    }
+
+    sessionClosed.value = true;
+    close();
+    return true;
   }
 
   function resetMessages() {
     messages.value = [];
+    resetHistoryState();
+  }
+
+  async function loadHistory(initial = false) {
+    const current = connected.value;
+    if (
+      !current?.sessionNo ||
+      current.temporary ||
+      historyLoading.value ||
+      (!initial && !historyHasMore.value)
+    ) {
+      return false;
+    }
+
+    historyLoading.value = true;
+    try {
+      const resp = await listChatMessagesWithMeta(
+        current.sessionNo,
+        {
+          cursor: initial ? 0 : historyNextCursor.value,
+          limit: 20,
+        },
+        lastOptions?.chatToken || "",
+      );
+      const list = Array.isArray(resp.data) ? resp.data : [];
+      prependMessages(list.map(normalizeMessage).reverse());
+      historyHasMore.value = Boolean(resp.hasNext);
+      historyNextCursor.value = Number(resp.nextCursor || 0);
+      return list.length > 0;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : "历史消息加载失败";
+      return false;
+    } finally {
+      historyLoading.value = false;
+    }
   }
 
   function closeSocketOnly(suppressReconnect: boolean) {
@@ -218,9 +277,13 @@ export function useChatSocket() {
       connected.value = event.data as ConnectedPayload;
       agentAccepted.value = false;
       sessionClosed.value = false;
+      resetHistoryState();
       queueStatus.value =
         queueMessage((event.data as ConnectedPayload).queue) ||
         "请描述您的问题，发送后将进入客服队列。";
+      if (!(event.data as ConnectedPayload).temporary) {
+        void loadHistory(true);
+      }
       return;
     }
     if (event.type === chatWsEvents.error) {
@@ -313,6 +376,21 @@ export function useChatSocket() {
     messages.value.push(message);
   }
 
+  function prependMessages(list: ChatMessage[]) {
+    const seen = new Set(messages.value.map((item) => item.messageNo));
+    const next = list.filter((item) => item.messageNo && !seen.has(item.messageNo));
+    if (!next.length) {
+      return;
+    }
+    messages.value = [...next, ...messages.value];
+  }
+
+  function resetHistoryState() {
+    historyLoading.value = false;
+    historyHasMore.value = false;
+    historyNextCursor.value = 0;
+  }
+
   function wsRespCode(resp: WsResp<unknown>) {
     return resp.code ?? resp.base?.code ?? 0;
   }
@@ -358,6 +436,8 @@ export function useChatSocket() {
     queueStatus,
     agentAccepted,
     sessionClosed,
+    historyHasMore,
+    historyLoading,
     isOpen,
     isTemporary,
     messages,
@@ -366,6 +446,8 @@ export function useChatSocket() {
     status,
     close,
     connect,
+    endSession,
+    loadHistory,
     resetMessages,
     sendText,
   };

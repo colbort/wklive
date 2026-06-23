@@ -1,23 +1,14 @@
 import type {
   ApiResp,
-  ChatMerchant,
   ChatMessage,
-  ChatSession,
-  CloseChatSessionPayload,
   ListChatMessagesParams,
-  ListChatSessionsParams,
-  MarkUserMessagesReadPayload,
-  OpenChatSessionPayload,
   RespBase,
-  SendChatMessagePayload,
   SendUserMessagePayload,
 } from "@/types/chat";
 
 const apiBaseUrl = import.meta.env.VITE_CHAT_API_BASE_URL || "/chat";
 const chatWsProtocol = "wklive-chat";
-const wsProtocolUserPrefix = "user.";
-const wsProtocolNicknamePrefix = "nickname.";
-const wsProtocolAvatarPrefix = "avatar.";
+const wsProtocolTokenPrefix = "token.";
 
 export const chatWsEvents = {
   connected: "connected",
@@ -30,93 +21,53 @@ export const chatWsEvents = {
   sendUserMessageResult: "send_user_message.result",
 } as const;
 
-export interface ChatAuthReq {
+export interface CreateChatTokenReq {
   apiKey: string;
   apiSecret: string;
+  userId: number;
+  nickname?: string;
+  avatarUrl?: string;
+  ttlSeconds?: number;
 }
 
-export async function authChatMerchant(data: ChatAuthReq): Promise<ChatMerchant> {
-  return requestData<ChatMerchant>("/auth", {
+export interface ChatTokenResp {
+  chatToken: string;
+  expireAt: number;
+}
+
+export function createChatToken(data: CreateChatTokenReq): Promise<ChatTokenResp> {
+  return requestData<ChatTokenResp>("/internal/tokens", {
     method: "POST",
     body: data,
   });
 }
 
-export function openChatSession(token: string, data: OpenChatSessionPayload) {
-  return requestData<ChatSession>("/sessions", {
-    method: "POST",
-    token,
-    body: data,
-  });
-}
-
-export function listChatSessions(token: string, params: ListChatSessionsParams) {
-  return requestData<ChatSession[]>("/sessions", {
-    method: "GET",
-    token,
-    params,
-  });
-}
-
-export function getChatSession(token: string, sessionNo: string, merchantId: number) {
-  return requestData<ChatSession>(`/sessions/${encodeURIComponent(sessionNo)}`, {
-    method: "GET",
-    token,
-    params: { merchantId },
-  });
-}
-
-export function sendUserMessage(
-  token: string,
-  sessionNo: string,
-  data: SendChatMessagePayload,
-) {
-  return requestData<ChatMessage>(
-    `/sessions/${encodeURIComponent(sessionNo)}/messages`,
-    {
-      method: "POST",
-      token,
-      body: data,
-    },
-  );
-}
-
-export function listChatMessages(
-  token: string,
+export function listChatMessagesWithMeta(
   sessionNo: string,
   params: ListChatMessagesParams,
+  chatToken: string,
 ) {
-  return requestData<ChatMessage[]>(
+  return request<ApiResp<ChatMessage[]>>(
     `/sessions/${encodeURIComponent(sessionNo)}/messages`,
     {
       method: "GET",
-      token,
       params,
+      token: chatToken,
     },
   );
 }
 
-export function markUserMessagesRead(
-  token: string,
+export function closeMyChatSession(
   sessionNo: string,
-  data: MarkUserMessagesReadPayload,
-) {
-  return requestBase(`/sessions/${encodeURIComponent(sessionNo)}/read`, {
-    method: "PUT",
-    token,
-    body: data,
-  });
-}
-
-export function closeChatSession(
-  token: string,
-  sessionNo: string,
-  data: CloseChatSessionPayload,
-) {
-  return requestData<ChatSession>(`/sessions/${encodeURIComponent(sessionNo)}/close`, {
-    method: "PUT",
-    token,
-    body: data,
+  chatToken: string,
+  closeReason = "",
+  keepalive = false,
+): Promise<RespBase> {
+  return requestBase(`/sessions/${encodeURIComponent(sessionNo)}/close`, {
+    method: "POST",
+    token: chatToken,
+    body: { closeReason },
+    keepalive,
   });
 }
 
@@ -137,10 +88,7 @@ export function chatWsUrl(): string {
 }
 
 export interface CreateChatSocketOptions {
-  merchantId: number;
-  userId?: number | string;
-  nickname?: string;
-  avatarUrl?: string;
+  chatToken: string;
   onOpen?: (event: Event) => void;
   onEvent?: (event: MessageEvent<string>) => void;
   onError?: (event: Event) => void;
@@ -148,17 +96,7 @@ export interface CreateChatSocketOptions {
 }
 
 export function createChatSocket(options: CreateChatSocketOptions): WebSocket {
-  const protocols = [chatWsProtocol, `merchant.${options.merchantId}`];
-  const userId = String(options.userId || "").trim();
-  if (userId) {
-    protocols.push(`${wsProtocolUserPrefix}${userId}`);
-  }
-  if (options.nickname?.trim()) {
-    protocols.push(`${wsProtocolNicknamePrefix}${encodeProtocolValue(options.nickname.trim())}`);
-  }
-  if (options.avatarUrl?.trim()) {
-    protocols.push(`${wsProtocolAvatarPrefix}${encodeProtocolValue(options.avatarUrl.trim())}`);
-  }
+  const protocols = [chatWsProtocol, `${wsProtocolTokenPrefix}${encodeProtocolValue(options.chatToken)}`];
 
   const socket = new WebSocket(chatWsUrl(), protocols);
   if (options.onOpen) {
@@ -205,6 +143,8 @@ interface RequestOptions {
   token?: string;
   params?: object;
   body?: unknown;
+  headers?: Record<string, string>;
+  keepalive?: boolean;
 }
 
 async function requestData<T>(path: string, options: RequestOptions): Promise<T> {
@@ -224,6 +164,7 @@ async function request<T extends RespBase>(
     method: options.method,
     headers: buildHeaders(options),
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
+    keepalive: options.keepalive,
   });
   if (!res.ok) {
     throw new Error(`HTTP ${res.status}`);
@@ -259,5 +200,10 @@ function buildHeaders(options: RequestOptions) {
   if (options.token?.trim()) {
     headers.Authorization = `Bearer ${options.token.trim()}`;
   }
+  Object.entries(options.headers || {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== "") {
+      headers[key] = value;
+    }
+  });
   return headers;
 }

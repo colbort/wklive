@@ -5,9 +5,8 @@ package chat
 
 import (
 	"context"
-
-	"chat-api/internal/logicutil"
-	"wklive/common/utils"
+	"strings"
+	"wklive/proto/chat"
 
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
@@ -29,18 +28,24 @@ func NewCloseMyChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *CloseMyChatSessionLogic) CloseMyChatSession(req *types.CloseMyChatSessionReq) (resp *types.ChatSessionResp, err error) {
-	userId, err := utils.GetUserIdFromCtx(l.ctx)
+func (l *CloseMyChatSessionLogic) CloseMyChatSession(req *types.CloseMyChatSessionReq) (*types.RespBase, error) {
+	sessionNo := strings.TrimSpace(req.SessionNo)
+	if sessionNo == "" {
+		return &types.RespBase{Code: 400, Msg: "sessionNo is required"}, nil
+	}
+
+	resp, err := l.svcCtx.ChatAppCli.CloseMyChatSession(l.ctx, &chat.CloseMyChatSessionReq{
+		SessionNo:   sessionNo,
+		CloseReason: strings.TrimSpace(req.CloseReason),
+	})
 	if err != nil {
 		return nil, err
 	}
-
-	proxyReq := struct {
-		*types.CloseMyChatSessionReq
-		UserId int64
-	}{
-		CloseMyChatSessionReq: req,
-		UserId:                userId,
+	if resp.GetBase() == nil {
+		return &types.RespBase{Code: 100001, Msg: "empty response"}, nil
 	}
-	return logicutil.Proxy[types.ChatSessionResp](l.ctx, proxyReq, l.svcCtx.ChatAppCli.CloseMyChatSession)
+	return &types.RespBase{
+		Code: resp.GetBase().GetCode(),
+		Msg:  resp.GetBase().GetMsg(),
+	}, nil
 }
