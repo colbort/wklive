@@ -567,8 +567,39 @@ func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchant
 	if err := validateMerchantUser(merchantID, userID); err != nil {
 		return nil, false, err
 	}
-	data, err := svcCtx.ChatSessionModel.FindOpenByUser(ctx, merchantID, userID)
+	data, err := svcCtx.ChatSessionModel.FindLatestByUser(ctx, merchantID, userID)
 	if err == nil {
+		now := nowMillis()
+		changed := false
+		if data.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+			data.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
+			data.AgentId = 0
+			data.CloseTime = 0
+			data.CloseReason = ""
+			changed = true
+		}
+		if data.Source == 0 {
+			data.Source = int64(normalizeSource(source))
+			changed = true
+		}
+		if strings.TrimSpace(data.Title) == "" && strings.TrimSpace(title) != "" {
+			data.Title = strings.TrimSpace(title)
+			changed = true
+		}
+		if strings.TrimSpace(data.Category) == "" && strings.TrimSpace(category) != "" {
+			data.Category = strings.TrimSpace(category)
+			changed = true
+		}
+		if ext != nil {
+			data.ExtJson = structToNullString(ext)
+			changed = true
+		}
+		if changed {
+			data.UpdateTimes = now
+			if err := svcCtx.ChatSessionModel.Update(ctx, data); err != nil {
+				return nil, false, err
+			}
+		}
 		return data, false, nil
 	}
 	if err != models.ErrNotFound {
@@ -731,7 +762,7 @@ func sendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *model
 		return nil, err
 	}
 	publishMessageEvent(ctx, svcCtx, msg)
-	if chat.ChatSenderType(msg.SenderType) == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
+	if chat.ChatSenderType(msg.SenderType) == chat.ChatSenderType_CHAT_SENDER_TYPE_USER && session.AgentId == 0 {
 		publishQueueEvent(ctx, svcCtx, session)
 	}
 	return msg, nil

@@ -35,6 +35,7 @@ type (
 		tChatSessionModel
 		FindPage(ctx context.Context, filter ChatSessionPageFilter, cursor int64, limit int64) ([]*TChatSession, int64, error)
 		FindOpenByUser(ctx context.Context, merchantId int64, userId int64) (*TChatSession, error)
+		FindLatestByUser(ctx context.Context, merchantId int64, userId int64) (*TChatSession, error)
 		CountWaitingPosition(ctx context.Context, session *TChatSession) (int64, int64, error)
 	}
 
@@ -94,6 +95,19 @@ func (m *customTChatSessionModel) FindOpenByUser(ctx context.Context, merchantId
 	)
 	var resp TChatSession
 	if err := m.QueryRowNoCacheCtx(ctx, &resp, query, merchantId, userId, 5); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
+func (m *customTChatSessionModel) FindLatestByUser(ctx context.Context, merchantId int64, userId int64) (*TChatSession, error) {
+	query := fmt.Sprintf(
+		"SELECT %s FROM %s WHERE merchant_id = ? AND user_id = ? ORDER BY id DESC LIMIT 1",
+		tChatSessionRows,
+		m.table,
+	)
+	var resp TChatSession
+	if err := m.QueryRowNoCacheCtx(ctx, &resp, query, merchantId, userId); err != nil {
 		return nil, err
 	}
 	return &resp, nil

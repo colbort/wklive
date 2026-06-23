@@ -26,18 +26,8 @@ const activeMode = ref<ChatMode>("mobile");
 const chat = useChatSocket();
 
 const showDesktopFrame = computed(() => activeMode.value === "desktop");
-const connectionLabel = computed(() => {
-  if (chat.status.value === "connecting") return "连接中";
-  if (chat.status.value === "reconnecting") {
-    return chat.reconnectLabel.value || "重连中";
-  }
-  if (chat.isOpen.value) {
-    if (chat.sessionClosed.value) return "已结束";
-    return chat.isTemporary.value ? "临时会话" : "登录会话";
-  }
-  if (chat.status.value === "closed") return "已断开";
-  return "未连接";
-});
+const hasDraft = computed(() => draft.value.trim().length > 0);
+const composerActionLabel = computed(() => (hasDraft.value ? "发送" : "结束"));
 
 function hydrateFromQuery() {
   const params = new URLSearchParams(window.location.search);
@@ -89,18 +79,21 @@ async function connectChat() {
   });
 }
 
-function closeChatPage() {
-  chat.close();
-  if (window.history.length > 1) {
-    window.history.back();
-    return;
-  }
-  window.location.assign("/");
-}
-
 function sendMessage() {
   chat.sendText(draft.value, nickname.value, avatarUrl.value);
   draft.value = "";
+}
+
+function endChat() {
+  chat.close();
+}
+
+function handleComposerAction() {
+  if (hasDraft.value) {
+    sendMessage();
+    return;
+  }
+  endChat();
 }
 
 function openResourcePicker() {
@@ -139,30 +132,6 @@ onBeforeUnmount(() => {
       class="chat-shell"
       aria-label="chat conversation"
     >
-      <header class="chat-header">
-        <button
-          class="back-button"
-          type="button"
-          @click="closeChatPage"
-        >
-          {{ activeMode === "desktop" ? "关闭" : "返回" }}
-        </button>
-        <div>
-          <p>WkLive Support</p>
-          <strong>{{ connectionLabel }}</strong>
-        </div>
-        <div class="session-meta">
-          <span>{{ chat.connected.value?.sessionNo || "等待连接" }}</span>
-          <button
-            type="button"
-            :disabled="!chat.isOpen.value"
-            @click="chat.close"
-          >
-            断开
-          </button>
-        </div>
-      </header>
-
       <div class="message-list">
         <div class="welcome-message">
           <strong>您好</strong>
@@ -201,7 +170,7 @@ onBeforeUnmount(() => {
 
       <form
         class="composer"
-        @submit.prevent="sendMessage"
+        @submit.prevent="handleComposerAction"
       >
         <button
           class="resource-button"
@@ -227,10 +196,10 @@ onBeforeUnmount(() => {
         </div>
         <button
           class="send-button"
-          :disabled="!chat.isOpen.value || chat.sessionClosed.value || !draft.trim()"
+          :disabled="!chat.isOpen.value || chat.sessionClosed.value"
           type="submit"
         >
-          发送
+          {{ composerActionLabel }}
         </button>
       </form>
     </section>

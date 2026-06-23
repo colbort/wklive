@@ -16,6 +16,8 @@ const merchantMenu = [
 const agentMenu = [{ path: "/agent/workbench", label: "接待工作台" }];
 
 const menu = computed(() => (auth.isMerchant ? merchantMenu : agentMenu));
+const showTopbar = computed(() => auth.isMerchant);
+const showSidebarNav = computed(() => auth.isMerchant || menu.value.length > 1);
 
 async function logout() {
   await auth.logout();
@@ -40,7 +42,10 @@ async function logout() {
         </div>
       </div>
 
-      <nav class="nav">
+      <nav
+        v-if="showSidebarNav"
+        class="nav"
+      >
         <button
           v-for="item in menu"
           :key="item.path"
@@ -52,10 +57,26 @@ async function logout() {
           {{ item.label }}
         </button>
       </nav>
+
+      <div
+        v-if="auth.isAgent"
+        class="sidebar-profile"
+      >
+        <div class="profile-text">
+          <strong>{{ auth.user?.nickname }}</strong>
+          <span>{{ auth.agent?.agentNo }}</span>
+        </div>
+        <el-button @click="logout">
+          退出
+        </el-button>
+      </div>
     </aside>
 
     <main class="main">
-      <header class="topbar">
+      <header
+        v-if="showTopbar"
+        class="topbar"
+      >
         <div>
           <h1>{{ route.meta.role === 2 ? "接待工作台" : "客服管理" }}</h1>
         </div>
