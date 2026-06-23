@@ -141,9 +141,12 @@ export function updateAgent(id: number, data: UpdateChatAgentPayload) {
   return putData<ChatAgent>(`/agents/${id}`, data);
 }
 
-export function updateAgentStatus(id: number, data: {
-  status: number;
-}) {
+export function updateAgentStatus(
+  id: number,
+  data: {
+    status: number;
+  },
+) {
   return putData<ChatAgent>(`/agents/${id}/status`, data);
 }
 
@@ -189,7 +192,10 @@ export function getSession(sessionNo: string, merchantId: number) {
   });
 }
 
-export function pageMessages(sessionNo: string, params: PageChatMessagesParams) {
+export function pageMessages(
+  sessionNo: string,
+  params: PageChatMessagesParams,
+) {
   return getData<ChatMessage[]>(
     `/sessions/${encodeURIComponent(sessionNo)}/messages`,
     params,

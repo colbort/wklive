@@ -36,10 +36,7 @@ import MerchantEditDialog from "@/components/merchant/MerchantEditDialog.vue";
 import MerchantGroupTable from "@/components/merchant/MerchantGroupTable.vue";
 import { useAuthStore } from "@/stores/auth";
 import type { ChatAgent, ChatCategory, ChatGroup } from "@/types/chat";
-import {
-  withOptionLabels,
-  type DisplayOptionItem,
-} from "@/utils/options";
+import { withOptionLabels, type DisplayOptionItem } from "@/utils/options";
 
 type TabName = "agents" | "categories" | "groups";
 
@@ -54,7 +51,6 @@ const activeTab = computed<TabName>({
 
 const merchantId = computed(() => auth.user?.merchantId || 0);
 const loading = ref(false);
-const keyword = ref("");
 const agents = ref<ChatAgent[]>([]);
 const categories = ref<ChatCategory[]>([]);
 const groups = ref<ChatGroup[]>([]);
@@ -126,7 +122,6 @@ const statusOptions = ref<DisplayOptionItem[]>(defaultAgentStatusOptions);
 watch(
   () => activeTab.value,
   () => {
-    keyword.value = "";
     loadCurrent();
   },
   { immediate: true },
@@ -159,19 +154,21 @@ async function loadAdminOptions() {
   }
 }
 
-async function loadCurrent() {
+async function loadCurrent(keyword?: string) {
   if (!merchantId.value) return;
   loading.value = true;
   try {
     const params = {
       merchantId: merchantId.value,
       limit: 100,
-      keyword: keyword.value || undefined,
+      keyword: keyword || undefined,
     };
     if (activeTab.value === "agents") {
       agents.value = (await pageAgents(params)).data;
       if (!groups.value.length) {
-        groups.value = (await pageGroups({ merchantId: merchantId.value, limit: 100 })).data;
+        groups.value = (
+          await pageGroups({ merchantId: merchantId.value, limit: 100 })
+        ).data;
       }
     } else if (activeTab.value === "categories") {
       categories.value = (await pageCategories(params)).data;
@@ -422,9 +419,13 @@ async function changeAgentStatus(row: ChatAgent, status: number) {
 }
 
 async function removeCategory(row: ChatCategory) {
-  await ElMessageBox.confirm(`确认删除分类「${row.categoryName}」？`, "删除确认", {
-    type: "warning",
-  });
+  await ElMessageBox.confirm(
+    `确认删除分类「${row.categoryName}」？`,
+    "删除确认",
+    {
+      type: "warning",
+    },
+  );
   await deleteCategory(row.id, merchantId.value);
   ElMessage.success("删除成功");
   await loadCurrent();
@@ -438,41 +439,10 @@ async function removeGroup(row: ChatGroup) {
   ElMessage.success("删除成功");
   await loadCurrent();
 }
-
 </script>
 
 <template>
   <section class="console-page">
-    <div class="toolbar">
-      <div class="toolbar-actions">
-        <el-input
-          v-model="keyword"
-          clearable
-          class="search-input"
-          placeholder="搜索"
-          @keyup.enter="loadCurrent"
-          @clear="loadCurrent"
-        />
-        <el-button @click="loadCurrent">
-          查询
-        </el-button>
-      </div>
-      <div class="toolbar-actions">
-        <el-button
-          type="primary"
-          @click="openCreate"
-        >
-          新增{{
-            activeTab === "agents"
-              ? "坐席"
-              : activeTab === "categories"
-                ? "分类"
-                : "分组"
-          }}
-        </el-button>
-      </div>
-    </div>
-
     <div class="table-wrap">
       <MerchantAgentTable
         v-if="activeTab === 'agents'"
@@ -482,6 +452,8 @@ async function removeGroup(row: ChatGroup) {
         :status-options="statusOptions"
         @edit="openAgentEdit"
         @status-change="changeAgentStatus"
+        @search="loadCurrent"
+        @create="openCreate"
       />
 
       <MerchantCategoryTable
@@ -490,6 +462,8 @@ async function removeGroup(row: ChatGroup) {
         :categories="categories"
         @edit="openCategoryEdit"
         @remove="removeCategory"
+        @search="loadCurrent"
+        @create="openCreate"
       />
 
       <MerchantGroupTable
@@ -498,6 +472,8 @@ async function removeGroup(row: ChatGroup) {
         :groups="groups"
         @edit="openGroupEdit"
         @remove="removeGroup"
+        @search="loadCurrent"
+        @create="openCreate"
       />
     </div>
 

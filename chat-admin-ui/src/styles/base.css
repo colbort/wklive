@@ -1,4 +1,4 @@
-/* :root {
+:root {
   color: #1b1f24;
   background: #f3f5f8;
   font-family:
@@ -328,7 +328,10 @@ p {
 
 .workbench {
   display: grid;
-  grid-template-columns: minmax(260px, 320px) minmax(480px, 1fr) minmax(280px, 340px);
+  grid-template-columns: minmax(260px, 320px) minmax(480px, 1fr) minmax(
+      280px,
+      340px
+    );
   flex: 1 1 auto;
   gap: 12px;
   height: 100%;
@@ -804,4 +807,4 @@ p {
   .chat-panel {
     min-height: 420px;
   }
-} */
+}

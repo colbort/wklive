@@ -15,7 +15,8 @@ const merchantMenu = [
 ];
 
 const currentMenuLabel = computed(
-  () => merchantMenu.find((item) => item.path === route.path)?.label || "客服管理",
+  () =>
+    merchantMenu.find((item) => item.path === route.path)?.label || "客服管理",
 );
 
 async function logout() {

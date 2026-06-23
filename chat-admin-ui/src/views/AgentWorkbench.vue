@@ -20,10 +20,7 @@ import type {
   ChatSession,
   ChatSessionEvent,
 } from "@/types/chat";
-import {
-  withOptionLabels,
-  type DisplayOptionItem,
-} from "@/utils/options";
+import { withOptionLabels, type DisplayOptionItem } from "@/utils/options";
 
 interface WsBase {
   code: number;
@@ -58,10 +55,30 @@ const messages = ref<Record<string, ChatMessage[]>>({});
 const wsState = ref<"idle" | "open" | "closed">("idle");
 const changingAgentStatus = ref(false);
 const defaultAgentStatusOptions: DisplayOptionItem[] = [
-  { key: "chat.agent.status.offline", label: "离线", value: 1, tagType: "info" },
-  { key: "chat.agent.status.online", label: "在线", value: 2, tagType: "success" },
-  { key: "chat.agent.status.busy", label: "忙碌", value: 3, tagType: "warning" },
-  { key: "chat.agent.status.resting", label: "休息", value: 4, tagType: "info" },
+  {
+    key: "chat.agent.status.offline",
+    label: "离线",
+    value: 1,
+    tagType: "info",
+  },
+  {
+    key: "chat.agent.status.online",
+    label: "在线",
+    value: 2,
+    tagType: "success",
+  },
+  {
+    key: "chat.agent.status.busy",
+    label: "忙碌",
+    value: 3,
+    tagType: "warning",
+  },
+  {
+    key: "chat.agent.status.resting",
+    label: "休息",
+    value: 4,
+    tagType: "info",
+  },
 ];
 const agentStatusOptions = ref<DisplayOptionItem[]>(defaultAgentStatusOptions);
 const auth = useAuthStore();
@@ -92,13 +109,13 @@ const filteredSessions = computed(() =>
 
 const activeSession = computed(
   () =>
-    sessions.value.find(
-      (item) => item.sessionNo === activeSessionNo.value,
-    ) || filteredSessions.value[0],
+    sessions.value.find((item) => item.sessionNo === activeSessionNo.value) ||
+    filteredSessions.value[0],
 );
-const activeMessages = computed(
-  () =>
-    activeSession.value ? messages.value[activeSession.value.sessionNo] || [] : [],
+const activeMessages = computed(() =>
+  activeSession.value
+    ? messages.value[activeSession.value.sessionNo] || []
+    : [],
 );
 const visibleMessages = computed(() =>
   activeNeedsAccept.value
@@ -111,8 +128,9 @@ const merchantId = computed(
 const agentId = computed(() => auth.agent?.id || 0);
 const agentStatusOption = computed(
   () =>
-    agentStatusOptions.value.find((item) => item.value === auth.agent?.status) ||
-    defaultAgentStatusOptions[0],
+    agentStatusOptions.value.find(
+      (item) => item.value === auth.agent?.status,
+    ) || defaultAgentStatusOptions[0],
 );
 const wsOnline = computed(() => wsState.value === "open");
 const activeNeedsAccept = computed(
@@ -135,7 +153,10 @@ const showGuestRefreshNotice = computed(
     Boolean(activeSession.value?.lastMessageNo),
 );
 const canReply = computed(
-  () => Boolean(activeSession.value) && !activeNeedsAccept.value && !activeClosed.value,
+  () =>
+    Boolean(activeSession.value) &&
+    !activeNeedsAccept.value &&
+    !activeClosed.value,
 );
 const agentCanAccept = computed(
   () =>
@@ -146,7 +167,8 @@ const agentCanAccept = computed(
 const acceptDisabledReason = computed(() => {
   if (!wsOnline.value) return "连接断开，暂时不能接待";
   if (!agentId.value) return "当前账号不是坐席，不能接待";
-  if (auth.agent?.status !== agentStatus.online) return "坐席在线后才能接待会话";
+  if (auth.agent?.status !== agentStatus.online)
+    return "坐席在线后才能接待会话";
   return "";
 });
 
@@ -365,7 +387,10 @@ function handleWsMessage(payload: string) {
     let messagePushed = false;
     if (message?.sessionNo && message.messageNo) {
       normalizeMessageEnums(message);
-      if (!isQueueSystemMessage(message) && event.type !== "accept_chat_session.result") {
+      if (
+        !isQueueSystemMessage(message) &&
+        event.type !== "accept_chat_session.result"
+      ) {
         messagePushed = pushMessage(message);
       }
     }
@@ -417,7 +442,9 @@ function upsertSessionFromEvent(event: WsEvent) {
   }
   const queue = event.queue || sessionEvent(event)?.queue;
   if (queue?.sessionNo) {
-    const exists = sessions.value.find((item) => item.sessionNo === queue.sessionNo);
+    const exists = sessions.value.find(
+      (item) => item.sessionNo === queue.sessionNo,
+    );
     if (exists) {
       exists.groupId = queue.groupId || exists.groupId;
       exists.updateTimes = queue.updateTimes || exists.updateTimes;
@@ -442,7 +469,10 @@ function pushMessage(message: ChatMessage) {
   return true;
 }
 
-function upsertSessionFromMessage(message: ChatMessage, shouldCountUnread = true) {
+function upsertSessionFromMessage(
+  message: ChatMessage,
+  shouldCountUnread = true,
+) {
   const exists = sessions.value.find(
     (item) => item.sessionNo === message.sessionNo,
   );
@@ -453,13 +483,19 @@ function upsertSessionFromMessage(message: ChatMessage, shouldCountUnread = true
     exists.lastSenderType = senderTypeValue(message.senderType);
     exists.updateTimes = message.updateTimes;
     const senderType = senderTypeValue(message.senderType);
-    if (senderType === 1 && sessionStatusValue(exists.status) !== sessionStatus.closed) {
+    if (
+      senderType === 1 &&
+      sessionStatusValue(exists.status) !== sessionStatus.closed
+    ) {
       exists.status = sessionStatus.pendingAgent;
       if (shouldCountUnread) {
         exists.agentUnreadCount += 1;
       }
     }
-    if (senderType === 2 && sessionStatusValue(exists.status) !== sessionStatus.closed) {
+    if (
+      senderType === 2 &&
+      sessionStatusValue(exists.status) !== sessionStatus.closed
+    ) {
       exists.status = sessionStatus.pendingUser;
       if (shouldCountUnread) {
         exists.userUnreadCount += 1;
@@ -469,21 +505,19 @@ function upsertSessionFromMessage(message: ChatMessage, shouldCountUnread = true
     return;
   }
 
-  sessions.value = [
-    transientSessionFromMessage(message),
-    ...sessions.value,
-  ];
+  sessions.value = [transientSessionFromMessage(message), ...sessions.value];
   syncActiveSession();
 }
 
 function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
   const sessionEventData = sessionEvent(event);
   const sessionNo = sessionEventData?.sessionNo || message?.sessionNo || "";
-  const session = sessions.value.find(
-    (item) => item.sessionNo === sessionNo,
-  );
+  const session = sessions.value.find((item) => item.sessionNo === sessionNo);
   const acceptedAgentId = Number(
-    sessionEventData?.agentId || message?.sender?.id || message?.agentId || agentId.value,
+    sessionEventData?.agentId ||
+      message?.sender?.id ||
+      message?.agentId ||
+      agentId.value,
   );
   if (!session) {
     if (!message) return;
@@ -494,11 +528,18 @@ function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
   } else {
     session.agentId = acceptedAgentId;
     session.status = sessionStatus.serving;
-    session.lastMessage = message?.content || sessionEventData?.message || session.lastMessage;
+    session.lastMessage =
+      message?.content || sessionEventData?.message || session.lastMessage;
     session.lastMessageNo = message?.messageNo || session.lastMessageNo;
-    session.lastMessageTime = message?.createTimes || sessionEventData?.createdAt || session.lastMessageTime;
+    session.lastMessageTime =
+      message?.createTimes ||
+      sessionEventData?.createdAt ||
+      session.lastMessageTime;
     session.lastSenderType = message?.senderType || session.lastSenderType;
-    session.updateTimes = message?.updateTimes || sessionEventData?.createdAt || session.updateTimes;
+    session.updateTimes =
+      message?.updateTimes ||
+      sessionEventData?.createdAt ||
+      session.updateTimes;
   }
   if (acceptedAgentId === agentId.value) {
     statusFilter.value = "serving";
@@ -515,9 +556,14 @@ function markSessionClosed(event: WsEvent, message?: ChatMessage) {
   const session = sessions.value.find((item) => item.sessionNo === sessionNo);
   if (session) {
     session.status = sessionStatus.closed;
-    session.closeTime = sessionEventData?.createdAt || message?.createTimes || Date.now();
+    session.closeTime =
+      sessionEventData?.createdAt || message?.createTimes || Date.now();
     session.closeReason = sessionEventData?.reason || session.closeReason;
-    session.lastMessage = message?.content || sessionEventData?.message || session.lastMessage || "本次会话已结束";
+    session.lastMessage =
+      message?.content ||
+      sessionEventData?.message ||
+      session.lastMessage ||
+      "本次会话已结束";
     session.lastMessageTime = message?.createTimes || session.closeTime;
     session.updateTimes = message?.updateTimes || session.closeTime;
   }
@@ -528,7 +574,9 @@ function markSessionClosed(event: WsEvent, message?: ChatMessage) {
 }
 
 function upsertSession(session: ChatSession) {
-  const exists = sessions.value.find((item) => item.sessionNo === session.sessionNo);
+  const exists = sessions.value.find(
+    (item) => item.sessionNo === session.sessionNo,
+  );
   if (!exists) {
     sessions.value = [normalizeSession(session), ...sessions.value];
     return;
@@ -547,9 +595,7 @@ function transientSessionFromMessage(message: ChatMessage): ChatSession {
     userAvatarUrl: message.sender?.avatarUrl || "",
     source: 2,
     status:
-      senderType === 2
-        ? sessionStatus.pendingUser
-        : sessionStatus.pendingAgent,
+      senderType === 2 ? sessionStatus.pendingUser : sessionStatus.pendingAgent,
     priority: 1,
     agentId: Number(message.agentId || 0),
     groupId: 0,
@@ -570,7 +616,9 @@ function transientSessionFromMessage(message: ChatMessage): ChatSession {
 }
 
 function mergeTransientSessions(nextSessions: ChatSession[]) {
-  const validNextSessions = nextSessions.filter((item) => Boolean(item.sessionNo));
+  const validNextSessions = nextSessions.filter((item) =>
+    Boolean(item.sessionNo),
+  );
   const nextNos = new Set(validNextSessions.map((item) => item.sessionNo));
   const transient = sessions.value.filter(
     (item) => isGuestSession(item.sessionNo) && !nextNos.has(item.sessionNo),
@@ -594,11 +642,13 @@ function matchStatusFilter(session: ChatSession) {
   if (statusFilter.value === "serving") {
     return (
       assignedAgentId === agentId.value &&
-      ([
-        sessionStatus.serving,
-        sessionStatus.pendingUser,
-        sessionStatus.pendingAgent,
-      ] as number[]).includes(status)
+      (
+        [
+          sessionStatus.serving,
+          sessionStatus.pendingUser,
+          sessionStatus.pendingAgent,
+        ] as number[]
+      ).includes(status)
     );
   }
   return status === sessionStatus.closed;
@@ -612,10 +662,8 @@ function needsAccept(session?: ChatSession) {
   const status = sessionStatusValue(session?.status);
   return (
     Boolean(session) &&
-    (
-      status === sessionStatus.waiting ||
-      status === sessionStatus.pendingAgent
-    ) &&
+    (status === sessionStatus.waiting ||
+      status === sessionStatus.pendingAgent) &&
     !Number(session?.agentId || 0)
   );
 }
@@ -652,8 +700,10 @@ function sessionStatusValue(value: unknown) {
   if (typeof value === "number") return value;
   if (value === "CHAT_SESSION_STATUS_WAITING") return sessionStatus.waiting;
   if (value === "CHAT_SESSION_STATUS_SERVING") return sessionStatus.serving;
-  if (value === "CHAT_SESSION_STATUS_PENDING_USER") return sessionStatus.pendingUser;
-  if (value === "CHAT_SESSION_STATUS_PENDING_AGENT") return sessionStatus.pendingAgent;
+  if (value === "CHAT_SESSION_STATUS_PENDING_USER")
+    return sessionStatus.pendingUser;
+  if (value === "CHAT_SESSION_STATUS_PENDING_AGENT")
+    return sessionStatus.pendingAgent;
   if (value === "CHAT_SESSION_STATUS_CLOSED") return sessionStatus.closed;
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric : 0;
@@ -667,9 +717,7 @@ function senderTypeValue(value: unknown) {
   return 0;
 }
 
-function eventMessage(
-  data?: WsEventData,
-) {
+function eventMessage(data?: WsEventData) {
   if (!data) return undefined;
   if (isWsResult(data)) return data.data;
   return data;
@@ -709,8 +757,8 @@ async function send() {
     !activeSession.value ||
     !merchantId.value ||
     !agentId.value ||
-    activeNeedsAccept.value
-    || activeClosed.value
+    activeNeedsAccept.value ||
+    activeClosed.value
   ) {
     return;
   }

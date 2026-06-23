@@ -68,7 +68,10 @@ export async function deleteBase(url: string, params?: unknown) {
   return res.data;
 }
 
-export async function getRaw<T extends RespBase>(url: string, params?: unknown) {
+export async function getRaw<T extends RespBase>(
+  url: string,
+  params?: unknown,
+) {
   const res = await request.get<T>(url, { params });
   assertOk(res.data);
   return res.data;
