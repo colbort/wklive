@@ -39,12 +39,11 @@ func (l *ListMyChatMessagesLogic) ListMyChatMessages(req *types.ListChatMessages
 		}, nil
 	}
 
-	proxyReq := chat.ListMyChatMessagesReq{
+	return logicutil.Proxy[types.ListChatMessagesResp](l.ctx, &chat.ListMyChatMessagesReq{
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},
 		SessionNo: claims.SessionNo,
-	}
-	return logicutil.Proxy[types.ListChatMessagesResp](l.ctx, proxyReq, l.svcCtx.ChatAppCli.ListMyChatMessages)
+	}, l.svcCtx.ChatAppCli.ListMyChatMessages)
 }
