@@ -19,16 +19,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ChatApp_AuthChatMerchant_FullMethodName     = "/chat.ChatApp/AuthChatMerchant"
-	ChatApp_OpenChatSession_FullMethodName      = "/chat.ChatApp/OpenChatSession"
-	ChatApp_ListMyChatSessions_FullMethodName   = "/chat.ChatApp/ListMyChatSessions"
-	ChatApp_GetMyChatSession_FullMethodName     = "/chat.ChatApp/GetMyChatSession"
-	ChatApp_GetChatSessionByUser_FullMethodName = "/chat.ChatApp/GetChatSessionByUser"
-	ChatApp_GetMyChatQueueInfo_FullMethodName   = "/chat.ChatApp/GetMyChatQueueInfo"
-	ChatApp_SendUserMessage_FullMethodName      = "/chat.ChatApp/SendUserMessage"
-	ChatApp_ListMyChatMessages_FullMethodName   = "/chat.ChatApp/ListMyChatMessages"
-	ChatApp_MarkUserMessagesRead_FullMethodName = "/chat.ChatApp/MarkUserMessagesRead"
-	ChatApp_CloseMyChatSession_FullMethodName   = "/chat.ChatApp/CloseMyChatSession"
+	ChatApp_AuthChatMerchant_FullMethodName      = "/chat.ChatApp/AuthChatMerchant"
+	ChatApp_OpenChatSession_FullMethodName       = "/chat.ChatApp/OpenChatSession"
+	ChatApp_GenerateChatSessionNo_FullMethodName = "/chat.ChatApp/GenerateChatSessionNo"
+	ChatApp_ListMyChatSessions_FullMethodName    = "/chat.ChatApp/ListMyChatSessions"
+	ChatApp_GetMyChatSession_FullMethodName      = "/chat.ChatApp/GetMyChatSession"
+	ChatApp_GetChatSessionByUser_FullMethodName  = "/chat.ChatApp/GetChatSessionByUser"
+	ChatApp_GetMyChatQueueInfo_FullMethodName    = "/chat.ChatApp/GetMyChatQueueInfo"
+	ChatApp_SendUserMessage_FullMethodName       = "/chat.ChatApp/SendUserMessage"
+	ChatApp_ListMyChatMessages_FullMethodName    = "/chat.ChatApp/ListMyChatMessages"
+	ChatApp_MarkUserMessagesRead_FullMethodName  = "/chat.ChatApp/MarkUserMessagesRead"
+	ChatApp_CloseMyChatSession_FullMethodName    = "/chat.ChatApp/CloseMyChatSession"
 )
 
 // ChatAppClient is the client API for ChatApp service.
@@ -41,6 +42,8 @@ type ChatAppClient interface {
 	AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error)
 	// 创建或获取当前会话
 	OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+	// 生成会话编号
+	GenerateChatSessionNo(ctx context.Context, in *GenerateChatSessionNoReq, opts ...grpc.CallOption) (*GenerateChatSessionNoResp, error)
 	// 查询我的会话列表
 	ListMyChatSessions(ctx context.Context, in *ListMyChatSessionsReq, opts ...grpc.CallOption) (*ListChatSessionsResp, error)
 	// 查询会话详情
@@ -81,6 +84,16 @@ func (c *chatAppClient) OpenChatSession(ctx context.Context, in *OpenChatSession
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AppChatSessionResp)
 	err := c.cc.Invoke(ctx, ChatApp_OpenChatSession_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAppClient) GenerateChatSessionNo(ctx context.Context, in *GenerateChatSessionNoReq, opts ...grpc.CallOption) (*GenerateChatSessionNoResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GenerateChatSessionNoResp)
+	err := c.cc.Invoke(ctx, ChatApp_GenerateChatSessionNo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -177,6 +190,8 @@ type ChatAppServer interface {
 	AuthChatMerchant(context.Context, *AuthChatMerchantReq) (*AuthChatMerchantResp, error)
 	// 创建或获取当前会话
 	OpenChatSession(context.Context, *OpenChatSessionReq) (*AppChatSessionResp, error)
+	// 生成会话编号
+	GenerateChatSessionNo(context.Context, *GenerateChatSessionNoReq) (*GenerateChatSessionNoResp, error)
 	// 查询我的会话列表
 	ListMyChatSessions(context.Context, *ListMyChatSessionsReq) (*ListChatSessionsResp, error)
 	// 查询会话详情
@@ -208,6 +223,9 @@ func (UnimplementedChatAppServer) AuthChatMerchant(context.Context, *AuthChatMer
 }
 func (UnimplementedChatAppServer) OpenChatSession(context.Context, *OpenChatSessionReq) (*AppChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method OpenChatSession not implemented")
+}
+func (UnimplementedChatAppServer) GenerateChatSessionNo(context.Context, *GenerateChatSessionNoReq) (*GenerateChatSessionNoResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GenerateChatSessionNo not implemented")
 }
 func (UnimplementedChatAppServer) ListMyChatSessions(context.Context, *ListMyChatSessionsReq) (*ListChatSessionsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyChatSessions not implemented")
@@ -286,6 +304,24 @@ func _ChatApp_OpenChatSession_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAppServer).OpenChatSession(ctx, req.(*OpenChatSessionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatApp_GenerateChatSessionNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateChatSessionNoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAppServer).GenerateChatSessionNo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatApp_GenerateChatSessionNo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAppServer).GenerateChatSessionNo(ctx, req.(*GenerateChatSessionNoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -448,6 +484,10 @@ var ChatApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OpenChatSession",
 			Handler:    _ChatApp_OpenChatSession_Handler,
+		},
+		{
+			MethodName: "GenerateChatSessionNo",
+			Handler:    _ChatApp_GenerateChatSessionNo_Handler,
 		},
 		{
 			MethodName: "ListMyChatSessions",

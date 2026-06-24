@@ -16,6 +16,10 @@ service ChatApp {
   // 创建或获取当前会话
   rpc OpenChatSession(OpenChatSessionReq) returns (AppChatSessionResp);
 
+  // 生成会话编号
+  rpc GenerateChatSessionNo(GenerateChatSessionNoReq)
+      returns (GenerateChatSessionNoResp);
+
   // 查询我的会话列表
   rpc ListMyChatSessions(ListMyChatSessionsReq) returns (ListChatSessionsResp);
 
@@ -55,6 +59,13 @@ message OpenChatSessionReq {
   string first_message = 4;     // 首条消息内容
   string sender_nickname = 5;   // 用户昵称快照
   string sender_avatar_url = 6; // 用户头像快照
+}
+
+message GenerateChatSessionNoReq {}
+
+message GenerateChatSessionNoResp {
+  common.RespBase base = 1;
+  string session_no = 2; // 会话编号
 }
 
 message ListMyChatSessionsReq {

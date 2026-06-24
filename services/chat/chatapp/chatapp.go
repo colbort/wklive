@@ -14,29 +14,33 @@ import (
 )
 
 type (
-	AppChatMessageResp      = chat.AppChatMessageResp
-	AppChatSessionResp      = chat.AppChatSessionResp
-	AppMarkMessagesReadResp = chat.AppMarkMessagesReadResp
-	AuthChatMerchantReq     = chat.AuthChatMerchantReq
-	AuthChatMerchantResp    = chat.AuthChatMerchantResp
-	ChatQueueInfoResp       = chat.ChatQueueInfoResp
-	CloseMyChatSessionReq   = chat.CloseMyChatSessionReq
-	GetChatSessionByUserReq = chat.GetChatSessionByUserReq
-	GetMyChatQueueInfoReq   = chat.GetMyChatQueueInfoReq
-	GetMyChatSessionReq     = chat.GetMyChatSessionReq
-	ListChatMessagesResp    = chat.ListChatMessagesResp
-	ListChatSessionsResp    = chat.ListChatSessionsResp
-	ListMyChatMessagesReq   = chat.ListMyChatMessagesReq
-	ListMyChatSessionsReq   = chat.ListMyChatSessionsReq
-	MarkUserMessagesReadReq = chat.MarkUserMessagesReadReq
-	OpenChatSessionReq      = chat.OpenChatSessionReq
-	SendUserMessageReq      = chat.SendUserMessageReq
+	AppChatMessageResp        = chat.AppChatMessageResp
+	AppChatSessionResp        = chat.AppChatSessionResp
+	AppMarkMessagesReadResp   = chat.AppMarkMessagesReadResp
+	AuthChatMerchantReq       = chat.AuthChatMerchantReq
+	AuthChatMerchantResp      = chat.AuthChatMerchantResp
+	ChatQueueInfoResp         = chat.ChatQueueInfoResp
+	CloseMyChatSessionReq     = chat.CloseMyChatSessionReq
+	GenerateChatSessionNoReq  = chat.GenerateChatSessionNoReq
+	GenerateChatSessionNoResp = chat.GenerateChatSessionNoResp
+	GetChatSessionByUserReq   = chat.GetChatSessionByUserReq
+	GetMyChatQueueInfoReq     = chat.GetMyChatQueueInfoReq
+	GetMyChatSessionReq       = chat.GetMyChatSessionReq
+	ListChatMessagesResp      = chat.ListChatMessagesResp
+	ListChatSessionsResp      = chat.ListChatSessionsResp
+	ListMyChatMessagesReq     = chat.ListMyChatMessagesReq
+	ListMyChatSessionsReq     = chat.ListMyChatSessionsReq
+	MarkUserMessagesReadReq   = chat.MarkUserMessagesReadReq
+	OpenChatSessionReq        = chat.OpenChatSessionReq
+	SendUserMessageReq        = chat.SendUserMessageReq
 
 	ChatApp interface {
 		// 商户接入鉴权
 		AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error)
 		// 创建或获取当前会话
 		OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+		// 生成会话编号
+		GenerateChatSessionNo(ctx context.Context, in *GenerateChatSessionNoReq, opts ...grpc.CallOption) (*GenerateChatSessionNoResp, error)
 		// 查询我的会话列表
 		ListMyChatSessions(ctx context.Context, in *ListMyChatSessionsReq, opts ...grpc.CallOption) (*ListChatSessionsResp, error)
 		// 查询会话详情
@@ -76,6 +80,12 @@ func (m *defaultChatApp) AuthChatMerchant(ctx context.Context, in *AuthChatMerch
 func (m *defaultChatApp) OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.OpenChatSession(ctx, in, opts...)
+}
+
+// 生成会话编号
+func (m *defaultChatApp) GenerateChatSessionNo(ctx context.Context, in *GenerateChatSessionNoReq, opts ...grpc.CallOption) (*GenerateChatSessionNoResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.GenerateChatSessionNo(ctx, in, opts...)
 }
 
 // 查询我的会话列表

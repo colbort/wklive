@@ -35,6 +35,12 @@ func (s *ChatAppServer) OpenChatSession(ctx context.Context, in *chat.OpenChatSe
 	return l.OpenChatSession(in)
 }
 
+// 生成会话编号
+func (s *ChatAppServer) GenerateChatSessionNo(ctx context.Context, in *chat.GenerateChatSessionNoReq) (*chat.GenerateChatSessionNoResp, error) {
+	l := logic.NewGenerateChatSessionNoLogic(ctx, s.svcCtx)
+	return l.GenerateChatSessionNo(in)
+}
+
 // 查询我的会话列表
 func (s *ChatAppServer) ListMyChatSessions(ctx context.Context, in *chat.ListMyChatSessionsReq) (*chat.ListChatSessionsResp, error) {
 	l := logic.NewListMyChatSessionsLogic(ctx, s.svcCtx)

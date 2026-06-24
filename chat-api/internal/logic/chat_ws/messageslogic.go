@@ -24,7 +24,6 @@ import (
 )
 
 const (
-	guestSessionPrefix = "GS"
 	guestMessagePrefix = "GM"
 	guestUsername      = "guest"
 	successCode        = 200

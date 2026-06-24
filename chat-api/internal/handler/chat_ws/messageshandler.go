@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"wklive/proto/chat"
 
 	"chat-api/internal/jwt"
 	"chat-api/internal/logic/chat_ws"
@@ -43,8 +44,17 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		} else {
 			logx.Infof("chat ws identity resolved by chatToken, merchantId=%d userId=%d nickname=%s", claims.MerchantId, claims.UserId, nickname)
 		}
+		sessionNo := strings.TrimSpace(claims.SessionNo)
+		if sessionNo == "" {
+			resp, err := svcCtx.ChatAppCli.GenerateChatSessionNo(r.Context(), &chat.GenerateChatSessionNoReq{})
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			sessionNo = resp.SessionNo
+		}
 		req := types.ChatWSMessagesReq{
-			SessionNo:  claims.SessionNo,
+			SessionNo:  sessionNo,
 			MerchantId: claims.MerchantId,
 			UserId:     claims.UserId,
 			Nickname:   nickname,
