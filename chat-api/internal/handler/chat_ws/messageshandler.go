@@ -38,10 +38,10 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 		nickname := firstNonEmpty(claims.Nickname, fmt.Sprintf("user-%d", claims.UserId))
 		if claims.IsGuest {
-			logx.Infof("chat ws guest identity resolved by chatToken, merchantId=%d userId=%d sessionNo=%s nickname=%s", claims.MerchantId, claims.UserId, nickname)
+			logx.Infof("chat ws guest identity resolved by chatToken, merchantId=%d userId=%d nickname=%s", claims.MerchantId, claims.UserId, nickname)
 
 		} else {
-			logx.Infof("chat ws identity resolved by chatToken, merchantId=%d userId=%d sessionNo=%s nickname=%s", claims.MerchantId, claims.UserId, nickname)
+			logx.Infof("chat ws identity resolved by chatToken, merchantId=%d userId=%d nickname=%s", claims.MerchantId, claims.UserId, nickname)
 		}
 		req := types.ChatWSMessagesReq{
 			SessionNo:  claims.SessionNo,
