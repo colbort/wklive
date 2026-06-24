@@ -70,15 +70,6 @@ func newTransientSystemMessage(merchantId int64, sessionNo string, userId int64,
 	}
 }
 
-func firstNonEmpty(values ...string) string {
-	for _, value := range values {
-		if v := strings.TrimSpace(value); v != "" {
-			return v
-		}
-	}
-	return ""
-}
-
 func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, msg *chat.ChatMessage) error {
 	return publishTransientEvent(ctx, svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, msg)
 }

@@ -1,27 +1,15 @@
 package chat_ws
 
 import (
-	"context"
-	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
 
+	"chat-admin-api/internal/logic/chat_ws"
 	"chat-admin-api/internal/svc"
-	"chat-admin-api/internal/ws"
-	"wklive/common/helper"
+	"chat-admin-api/internal/types"
 	"wklive/common/utils"
-	"wklive/proto/chat"
-
-	"github.com/gorilla/websocket"
-	"github.com/zeromicro/go-zero/core/logx"
 )
-
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
 
 func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -31,251 +19,15 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		merchantId := parseInt64(r.URL.Query().Get("merchantId"))
-		agentId := parseInt64(r.URL.Query().Get("agentId"))
-		sessionNo := strings.TrimSpace(r.URL.Query().Get("sessionNo"))
-
-		conn, err := upgrader.Upgrade(w, r, nil)
-		if err != nil {
-			logx.Errorf("upgrade chat admin ws failed, userId=%d err=%v", claims.UserId, err)
-			return
-		}
-
-		client := ws.NewConnection(svcCtx.ChatMessageHub, conn, claims.UserId, claims.Username, merchantId, agentId, sessionNo, handleInbound(svcCtx))
-		svcCtx.ChatMessageHub.Register(client)
-		client.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]interface{}{
-			"message":    "chat admin websocket connected",
-			"merchantId": merchantId,
-			"agentId":    agentId,
-			"sessionNo":  sessionNo,
+		l := chat_ws.NewMessagesLogic(r.Context(), svcCtx)
+		l.Messages(w, r, types.ChatAdminWSMessagesReq{
+			UserId:     claims.UserId,
+			Username:   claims.Username,
+			MerchantId: parseInt64(r.URL.Query().Get("merchantId")),
+			AgentId:    parseInt64(r.URL.Query().Get("agentId")),
+			SessionNo:  strings.TrimSpace(r.URL.Query().Get("sessionNo")),
 		})
-
-		go client.WritePump()
-		client.ReadPump()
 	}
-}
-
-func handleInbound(svcCtx *svc.ServiceContext) func(*ws.Connection, ws.InboundEvent) {
-	return func(conn *ws.Connection, event ws.InboundEvent) {
-		switch event.Type {
-		case chat.ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE:
-			handleSendAgentMessage(context.Background(), svcCtx, conn, event.Data)
-		case chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION:
-			handleAcceptChatSession(context.Background(), svcCtx, conn, event.Data)
-		case chat.ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION:
-			handleCloseChatSession(context.Background(), svcCtx, conn, event.Data)
-		default:
-			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "unsupported event type"})
-		}
-	}
-}
-
-func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, payload json.RawMessage) {
-	var data sendAgentMessagePayload
-	if err := json.Unmarshal(payload, &data); err != nil {
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "invalid send_agent_message payload"})
-		return
-	}
-	req := chat.SendAgentMessageReq{
-		AgentId:     data.AgentId,
-		SessionNo:   data.SessionNo,
-		MessageType: chat.ChatMessageType(data.MessageType),
-		Content:     data.Content,
-		MediaUrl:    data.MediaUrl,
-		MediaName:   data.MediaName,
-		MediaMime:   data.MediaMime,
-		MediaSize:   data.MediaSize,
-	}
-	if req.AgentId == 0 {
-		req.AgentId = conn.AgentId
-	}
-	if req.SessionNo == "" {
-		req.SessionNo = conn.SessionNo
-	}
-	if isGuestSession(req.SessionNo) {
-		fillTransientUserId(svcCtx, conn.MerchantId, req.SessionNo, &data)
-		fillAgentSenderSnapshot(ctx, svcCtx, conn, &data)
-		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, data.UserId, req.AgentId, conn.Username, data)
-		if err := publishTransientMessage(ctx, svcCtx, msg); err != nil {
-			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
-			return
-		}
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
-		return
-	}
-
-	resp, err := svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
-	if err != nil {
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
-		return
-	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT, resp)
-}
-
-func handleAcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, payload json.RawMessage) {
-	var data acceptChatSessionPayload
-	if err := json.Unmarshal(payload, &data); err != nil {
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "invalid accept_chat_session payload"})
-		return
-	}
-	sessionNo := strings.TrimSpace(data.SessionNo)
-	if sessionNo == "" {
-		sessionNo = conn.SessionNo
-	}
-	agentId := data.AgentId
-	if agentId == 0 {
-		agentId = conn.AgentId
-	}
-	if sessionNo == "" || agentId == 0 {
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "sessionNo and agentId are required"})
-		return
-	}
-	if isGuestSession(sessionNo) {
-		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, agentServiceMessage(ctx, svcCtx, conn))
-		if err := publishTransientEvent(ctx, svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_ACCEPTED, msg); err != nil {
-			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
-			return
-		}
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
-		return
-	}
-
-	resp, err := svcCtx.ChatAdminCli.AcceptChatSession(contextWithAdminIdentity(ctx, conn), &chat.AcceptChatSessionReq{
-		SessionNo:  sessionNo,
-		AgentId:    agentId,
-		OperatorId: conn.UserId,
-		Reason:     "accept",
-	})
-	if err != nil {
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
-		return
-	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT, resp)
-}
-
-func handleCloseChatSession(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, payload json.RawMessage) {
-	var data closeChatSessionPayload
-	if err := json.Unmarshal(payload, &data); err != nil {
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "invalid close_chat_session payload"})
-		return
-	}
-	sessionNo := strings.TrimSpace(data.SessionNo)
-	if sessionNo == "" {
-		sessionNo = conn.SessionNo
-	}
-	if sessionNo == "" {
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "sessionNo is required"})
-		return
-	}
-	reason := firstNonEmpty(data.CloseReason, "closed by agent")
-	if isGuestSession(sessionNo) {
-		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, conn.AgentId, "本次会话已结束")
-		if err := publishTransientEvent(ctx, svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED, msg); err != nil {
-			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
-			return
-		}
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
-		return
-	}
-
-	resp, err := svcCtx.ChatAdminCli.CloseChatSession(contextWithAdminIdentity(ctx, conn), &chat.CloseChatSessionReq{
-		SessionNo:   sessionNo,
-		CloseReason: reason,
-	})
-	if err != nil {
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
-		return
-	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT, resp)
-}
-
-func contextWithAdminIdentity(ctx context.Context, conn *ws.Connection) context.Context {
-	ctx = context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
-	ctx = context.WithValue(ctx, utils.CtxKeyUsername, conn.Username)
-	ctx = context.WithValue(ctx, utils.CtxKeyMerchantId, conn.MerchantId)
-	return ctx
-}
-
-func agentServiceMessage(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection) string {
-	name := ""
-	if svcCtx != nil && conn != nil && conn.UserId > 0 {
-		profileCtx := context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
-		profileCtx = context.WithValue(profileCtx, utils.CtxKeyUsername, conn.Username)
-		resp, err := svcCtx.ChatAdminCli.Profile(profileCtx, &chat.ChatAdminProfileReq{})
-		if err == nil && resp != nil && resp.User != nil {
-			name = strings.TrimSpace(resp.User.Nickname)
-		}
-	}
-	if name == "" && conn != nil {
-		name = strings.TrimSpace(conn.Username)
-	}
-	if name == "" {
-		return "客服正在为你服务"
-	}
-	return name + " 客服正在为你服务"
-}
-
-func fillTransientUserId(svcCtx *svc.ServiceContext, merchantId int64, sessionNo string, data *sendAgentMessagePayload) {
-	if svcCtx == nil || svcCtx.ChatMessageHub == nil || data == nil || data.UserId != 0 || strings.TrimSpace(sessionNo) == "" {
-		return
-	}
-	sessions := svcCtx.ChatMessageHub.ListTransientSessions(ws.TransientSessionFilter{
-		MerchantId: merchantId,
-	})
-	for _, session := range sessions {
-		if session == nil || session.GetSessionNo() != sessionNo {
-			continue
-		}
-		data.UserId = session.GetUserId()
-		return
-	}
-}
-
-func fillAgentSenderSnapshot(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, data *sendAgentMessagePayload) {
-	if data == nil || svcCtx == nil || conn == nil || conn.UserId <= 0 {
-		return
-	}
-	profileCtx := context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
-	profileCtx = context.WithValue(profileCtx, utils.CtxKeyUsername, conn.Username)
-	resp, err := svcCtx.ChatAdminCli.Profile(profileCtx, &chat.ChatAdminProfileReq{})
-	if err != nil || resp == nil || resp.User == nil {
-		return
-	}
-	if strings.TrimSpace(data.SenderNickname) == "" {
-		data.SenderNickname = resp.User.Nickname
-	}
-	if strings.TrimSpace(data.SenderAvatarUrl) == "" {
-		data.SenderAvatarUrl = resp.User.AvatarUrl
-	}
-}
-
-type sendAgentMessagePayload struct {
-	MerchantId      int64  `json:"merchantId"`
-	AgentId         int64  `json:"agentId"`
-	UserId          int64  `json:"userId"`
-	SessionNo       string `json:"sessionNo"`
-	MessageType     int64  `json:"messageType"`
-	Content         string `json:"content"`
-	MediaUrl        string `json:"mediaUrl"`
-	MediaName       string `json:"mediaName"`
-	MediaMime       string `json:"mediaMime"`
-	MediaSize       int64  `json:"mediaSize"`
-	SenderNickname  string `json:"senderNickname"`
-	SenderAvatarUrl string `json:"senderAvatarUrl"`
-}
-
-type acceptChatSessionPayload struct {
-	MerchantId int64  `json:"merchantId"`
-	AgentId    int64  `json:"agentId"`
-	UserId     int64  `json:"userId"`
-	SessionNo  string `json:"sessionNo"`
-}
-
-type closeChatSessionPayload struct {
-	MerchantId  int64  `json:"merchantId"`
-	UserId      int64  `json:"userId"`
-	SessionNo   string `json:"sessionNo"`
-	CloseReason string `json:"closeReason"`
 }
 
 func parseToken(r *http.Request, secret string) (*utils.Claims, error) {
