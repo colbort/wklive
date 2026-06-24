@@ -591,33 +591,67 @@ onMounted(() => {
     class="agent-shell"
   >
     <header class="agent-topbar">
-      <div class="brand">
-        <div class="brand-mark">
-          CS
-        </div>
+      <div class="brand agent-brand">
+        <el-avatar
+          class="agent-brand-avatar"
+          :size="42"
+          :src="auth.user?.avatarUrl"
+        >
+          {{ auth.user?.nickname?.slice(0, 1) || "坐" }}
+        </el-avatar>
         <div>
           <div class="brand-title">
-            客服工作台
+            {{ auth.user?.nickname || auth.user?.username || "坐席" }}
           </div>
           <div class="brand-subtitle">
-            坐席端
+            {{ auth.agent?.agentNo || "-" }}
           </div>
         </div>
       </div>
       <div class="profile">
-        <div class="profile-text">
-          <strong>{{ auth.user?.nickname }}</strong>
-          <span>{{ auth.agent?.agentNo }}</span>
-        </div>
-        <el-button @click="openPasswordDialog">
+        <el-button
+          class="agent-profile-action"
+          @click="openPasswordDialog"
+        >
           修改密码
         </el-button>
-        <el-button @click="openAvatarDialog">
+        <el-button
+          class="agent-profile-action"
+          @click="openAvatarDialog"
+        >
           修改头像
         </el-button>
-        <el-button @click="logout">
+        <el-button
+          class="agent-profile-action"
+          @click="logout"
+        >
           退出
         </el-button>
+        <el-dropdown
+          class="agent-mobile-settings"
+          trigger="click"
+          @command="handleSettingsCommand"
+        >
+          <button
+            class="agent-settings-trigger"
+            type="button"
+          >
+            设置
+          </button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="password">
+                修改密码
+              </el-dropdown-item>
+              <el-dropdown-item command="avatar">
+                修改头像
+              </el-dropdown-item>
+              <el-dropdown-item command="logout">
+                退出登录
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </div>
     </header>
 

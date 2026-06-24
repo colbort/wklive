@@ -14,10 +14,12 @@ defineProps<{
   wsOnline: boolean;
   agentId: number;
   showGuestRefreshNotice: boolean;
+  showMobileBack?: boolean;
 }>();
 
 const emit = defineEmits<{
   accept: [];
+  back: [];
   close: [];
   send: [];
   "update:inputValue": [value: string];
@@ -27,9 +29,17 @@ const emit = defineEmits<{
 <template>
   <section class="chat-panel workbench-region">
     <header class="chat-header">
+      <button
+        v-if="showMobileBack"
+        class="mobile-chat-back"
+        type="button"
+        @click="emit('back')"
+      >
+        &lt; 会话
+      </button>
       <div>
         <h2>{{ session?.userNickname || session?.title || "请选择会话" }}</h2>
-        <span>{{ session?.sessionNo || "-" }}</span>
+        <span class="chat-session-no">{{ session?.sessionNo || "-" }}</span>
       </div>
       <div class="chat-actions">
         <el-tooltip
@@ -48,10 +58,12 @@ const emit = defineEmits<{
             </el-button>
           </span>
         </el-tooltip>
-        <el-button>转接</el-button>
+        <el-button v-if="session && !activeClosed">
+          转接
+        </el-button>
         <el-button
+          v-if="session && !activeClosed"
           type="primary"
-          :disabled="!session || activeClosed"
           @click="emit('close')"
         >
           结束会话

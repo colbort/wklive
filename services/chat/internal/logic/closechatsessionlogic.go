@@ -39,6 +39,9 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
+	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+		return &chat.AdminChatSessionResp{Base: badBase("chat session is closed")}, nil
+	}
 	if err := closeSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
 		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
 	}

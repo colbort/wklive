@@ -50,6 +50,7 @@ const input = ref("");
 const activeSessionNo = ref("");
 const loadingSessions = ref(false);
 const loadingMessages = ref(false);
+const mobileChatOpen = ref(false);
 const sessions = ref<ChatSession[]>([]);
 const messages = ref<Record<string, ChatMessage[]>>({});
 const wsState = ref<"idle" | "open" | "closed">("idle");
@@ -750,6 +751,15 @@ async function refreshSessions() {
   await loadSessions();
 }
 
+function selectSession(sessionNo: string) {
+  activeSessionNo.value = sessionNo;
+  mobileChatOpen.value = true;
+}
+
+function backToSessions() {
+  mobileChatOpen.value = false;
+}
+
 async function send() {
   const content = input.value.trim();
   if (
@@ -836,7 +846,10 @@ function acceptSession() {
 </script>
 
 <template>
-  <section class="workbench">
+  <section
+    class="workbench"
+    :class="{ 'mobile-chat-open': mobileChatOpen }"
+  >
     <WorkbenchSessionList
       v-model:status-filter="statusFilter"
       :sessions="filteredSessions"
@@ -845,7 +858,7 @@ function acceptSession() {
       :agent-status-option="agentStatusOption"
       :agent-status-options="agentStatusOptions"
       :status-changing="changingAgentStatus"
-      @select="activeSessionNo = $event"
+      @select="selectSession"
       @refresh="refreshSessions"
       @status-change="changeAgentStatus"
     />
@@ -863,7 +876,9 @@ function acceptSession() {
       :ws-online="wsOnline"
       :agent-id="agentId"
       :show-guest-refresh-notice="showGuestRefreshNotice"
+      :show-mobile-back="mobileChatOpen"
       @accept="acceptSession"
+      @back="backToSessions"
       @close="closeSession"
       @send="send"
     />

@@ -906,8 +906,12 @@ func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.Ass
 	if in.GetToAgentId() <= 0 {
 		return nil, badBase("to_agent_id is required"), nil
 	}
+	assignType := normalizeAssignType(in.GetAssignType())
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 		return nil, badBase("chat session is closed"), nil
+	}
+	if base := validateAssignableSession(session, assignType); base != nil {
+		return nil, base, nil
 	}
 	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, in.GetToAgentId())
 	if err == models.ErrNotFound || agent.MerchantId != merchantID {
@@ -941,7 +945,7 @@ func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.Ass
 		MerchantId:  session.MerchantId,
 		FromAgentId: fromAgentID,
 		ToAgentId:   agent.Id,
-		AssignType:  int64(normalizeAssignType(in.GetAssignType())),
+		AssignType:  int64(assignType),
 		OperatorId:  in.GetOperatorId(),
 		Reason:      strings.TrimSpace(in.GetReason()),
 		CreateTimes: now,
@@ -952,6 +956,36 @@ func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.Ass
 	}
 
 	return session, nil, nil
+}
+
+func validateAssignableSession(session *models.TChatSession, assignType chat.ChatAssignType) *common.RespBase {
+	switch assignType {
+	case chat.ChatAssignType_CHAT_ASSIGN_TYPE_AUTO:
+		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING) &&
+			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING) &&
+			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_USER) &&
+			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT) {
+			return badBase("chat session cannot be assigned")
+		}
+	case chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL:
+		if session.AgentId != 0 {
+			return badBase("chat session is already accepted")
+		}
+		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING) &&
+			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT) {
+			return badBase("chat session cannot be accepted")
+		}
+	case chat.ChatAssignType_CHAT_ASSIGN_TYPE_TRANSFER:
+		if session.AgentId == 0 {
+			return badBase("chat session is not accepted")
+		}
+		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING) &&
+			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_USER) &&
+			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT) {
+			return badBase("chat session cannot be transferred")
+		}
+	}
+	return nil
 }
 
 func releaseSessionToPool(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, reason string) (*models.TChatSession, *common.RespBase, error) {
