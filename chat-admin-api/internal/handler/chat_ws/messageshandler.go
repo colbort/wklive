@@ -106,6 +106,7 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 		req.SessionNo = conn.SessionNo
 	}
 	if isGuestSession(req.SessionNo) {
+		fillTransientUserId(svcCtx, conn.MerchantId, req.SessionNo, &data)
 		fillAgentSenderSnapshot(ctx, svcCtx, conn, &data)
 		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, data.UserId, req.AgentId, conn.Username, data)
 		if err := publishTransientMessage(ctx, svcCtx, msg); err != nil {
@@ -206,6 +207,22 @@ func contextWithAdminIdentity(ctx context.Context, conn *ws.Connection) context.
 	ctx = context.WithValue(ctx, utils.CtxKeyUsername, conn.Username)
 	ctx = context.WithValue(ctx, utils.CtxKeyMerchantId, conn.MerchantId)
 	return ctx
+}
+
+func fillTransientUserId(svcCtx *svc.ServiceContext, merchantId int64, sessionNo string, data *sendAgentMessagePayload) {
+	if svcCtx == nil || svcCtx.ChatMessageHub == nil || data == nil || data.UserId != 0 || strings.TrimSpace(sessionNo) == "" {
+		return
+	}
+	sessions := svcCtx.ChatMessageHub.ListTransientSessions(ws.TransientSessionFilter{
+		MerchantId: merchantId,
+	})
+	for _, session := range sessions {
+		if session == nil || session.GetSessionNo() != sessionNo {
+			continue
+		}
+		data.UserId = session.GetUserId()
+		return
+	}
 }
 
 func fillAgentSenderSnapshot(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, data *sendAgentMessagePayload) {

@@ -421,8 +421,11 @@ function handleWsMessage(payload: string) {
       statusFilter.value = "waiting";
     }
     if (event.type === "chat.queue.updated") {
-      statusFilter.value = "waiting";
-      mobileChatOpen.value = false;
+      const queueSessionNo = event.queue?.sessionNo || event.session?.sessionNo || "";
+      if (!mobileChatOpen.value || queueSessionNo !== activeSessionNo.value) {
+        statusFilter.value = "waiting";
+        mobileChatOpen.value = false;
+      }
       scheduleRefreshSessions();
     }
   } catch {

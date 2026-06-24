@@ -57,10 +57,10 @@ func (c *Connection) Match(message *chat.ChatMessage) bool {
 	if c.MerchantId > 0 && message.MerchantId != c.MerchantId {
 		return false
 	}
-	if c.UserId > 0 && message.UserId != c.UserId {
+	if c.SessionNo != "" && message.SessionNo != c.SessionNo {
 		return false
 	}
-	if c.SessionNo != "" && message.SessionNo != c.SessionNo {
+	if c.SessionNo == "" && c.UserId > 0 && message.UserId != c.UserId {
 		return false
 	}
 	return true
@@ -92,10 +92,10 @@ func (c *Connection) matchSession(session *chat.ChatSession) bool {
 	if c.MerchantId > 0 && session.MerchantId != c.MerchantId {
 		return false
 	}
-	if c.UserId > 0 && session.UserId != c.UserId {
+	if c.SessionNo != "" && session.SessionNo != c.SessionNo {
 		return false
 	}
-	if c.SessionNo != "" && session.SessionNo != c.SessionNo {
+	if c.SessionNo == "" && c.UserId > 0 && session.UserId != c.UserId {
 		return false
 	}
 	return true
@@ -108,10 +108,10 @@ func (c *Connection) matchSessionEvent(event *chat.ChatSessionEvent) bool {
 	if c.MerchantId > 0 && event.MerchantId != c.MerchantId {
 		return false
 	}
-	if c.UserId > 0 && event.UserId != c.UserId {
+	if c.SessionNo != "" && event.SessionNo != c.SessionNo {
 		return false
 	}
-	if c.SessionNo != "" && event.SessionNo != c.SessionNo {
+	if c.SessionNo == "" && c.UserId > 0 && event.UserId != c.UserId {
 		return false
 	}
 	return true
@@ -124,10 +124,10 @@ func (c *Connection) matchQueue(queue *chat.ChatQueueInfo) bool {
 	if c.MerchantId > 0 && queue.MerchantId != c.MerchantId {
 		return false
 	}
-	if c.UserId > 0 && queue.UserId != c.UserId {
+	if c.SessionNo != "" && queue.SessionNo != c.SessionNo {
 		return false
 	}
-	if c.SessionNo != "" && queue.SessionNo != c.SessionNo {
+	if c.SessionNo == "" && c.UserId > 0 && queue.UserId != c.UserId {
 		return false
 	}
 	return true
