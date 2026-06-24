@@ -4,7 +4,9 @@ import {
   getRaw,
   postBase,
   postData,
+  postRaw,
   putData,
+  putRaw,
 } from "./request";
 import type {
   ChatAgent,
@@ -38,6 +40,12 @@ export interface ProfileResp {
   msg: string;
   user: ChatUser;
   agent?: ChatAgent;
+}
+
+export interface UpdateProfilePayload {
+  oldPassword?: string;
+  newPassword?: string;
+  avatarUrl?: string;
 }
 
 export interface OptionItem {
@@ -124,6 +132,16 @@ export function logout() {
 
 export function profile() {
   return getRaw<ProfileResp>("/profile");
+}
+
+export function updateProfile(data: UpdateProfilePayload) {
+  return putRaw<ProfileResp>("/profile", data);
+}
+
+export function uploadProfileAvatar(file: Blob) {
+  const data = new FormData();
+  data.append("avatar", file, "avatar.jpg");
+  return postRaw<ProfileResp>("/profile/avatar", data);
 }
 
 export function options() {

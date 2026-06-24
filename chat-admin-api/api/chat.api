@@ -193,6 +193,12 @@ type ChatAdminLogoutReq {
 type ChatAdminProfileReq {
 }
 
+type UpdateChatAdminProfileReq {
+	oldPassword string `json:"oldPassword,optional"`
+	newPassword string `json:"newPassword,optional"`
+	avatarUrl   string `json:"avatarUrl,optional"`
+}
+
 type ChatAdminProfileResp {
 	RespBase
 	user  ChatUser  `json:"user"`
@@ -572,6 +578,12 @@ service chatAdmin {
 
 	@handler Profile
 	get /profile (ChatAdminProfileReq) returns (ChatAdminProfileResp)
+
+	@handler UpdateProfile
+	put /profile (UpdateChatAdminProfileReq) returns (ChatAdminProfileResp)
+
+	@handler UploadProfileAvatar
+	post /profile/avatar returns (ChatAdminProfileResp)
 
 	@handler Options
 	get /options returns (ChatAdminOptionsResp)

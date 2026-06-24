@@ -41,6 +41,12 @@ func (s *ChatAdminServer) Profile(ctx context.Context, in *chat.ChatAdminProfile
 	return l.Profile(in)
 }
 
+// 更新当前登录用户资料
+func (s *ChatAdminServer) UpdateProfile(ctx context.Context, in *chat.UpdateChatAdminProfileReq) (*chat.ChatAdminProfileResp, error) {
+	l := logic.NewUpdateProfileLogic(ctx, s.svcCtx)
+	return l.UpdateProfile(in)
+}
+
 // 创建客服分组
 func (s *ChatAdminServer) CreateChatGroup(ctx context.Context, in *chat.CreateChatGroupReq) (*chat.AdminChatGroupResp, error) {
 	l := logic.NewCreateChatGroupLogic(ctx, s.svcCtx)

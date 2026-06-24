@@ -43,6 +43,12 @@ type ChatAdminOptionsResp struct {
 type ChatAdminProfileReq struct {
 }
 
+type UpdateChatAdminProfileReq struct {
+	OldPassword string `json:"oldPassword,optional"`
+	NewPassword string `json:"newPassword,optional"`
+	AvatarUrl   string `json:"avatarUrl,optional"`
+}
+
 type ChatAdminProfileResp struct {
 	RespBase
 	User  ChatUser  `json:"user"`

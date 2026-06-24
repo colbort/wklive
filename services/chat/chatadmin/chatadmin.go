@@ -68,6 +68,7 @@ type (
 	PageChatWorkOrdersReq          = chat.PageChatWorkOrdersReq
 	PageChatWorkOrdersResp         = chat.PageChatWorkOrdersResp
 	SendAgentMessageReq            = chat.SendAgentMessageReq
+	UpdateChatAdminProfileReq      = chat.UpdateChatAdminProfileReq
 	UpdateChatAgentReq             = chat.UpdateChatAgentReq
 	UpdateChatAgentStatusReq       = chat.UpdateChatAgentStatusReq
 	UpdateChatCategoryReq          = chat.UpdateChatCategoryReq
@@ -82,6 +83,8 @@ type (
 		Logout(ctx context.Context, in *ChatAdminLogoutReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 当前登录用户资料
 		Profile(ctx context.Context, in *ChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
+		// 更新当前登录用户资料
+		UpdateProfile(ctx context.Context, in *UpdateChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
 		// 创建客服分组
 		CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
 		// 更新客服分组
@@ -183,6 +186,12 @@ func (m *defaultChatAdmin) Logout(ctx context.Context, in *ChatAdminLogoutReq, o
 func (m *defaultChatAdmin) Profile(ctx context.Context, in *ChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.Profile(ctx, in, opts...)
+}
+
+// 更新当前登录用户资料
+func (m *defaultChatAdmin) UpdateProfile(ctx context.Context, in *UpdateChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.UpdateProfile(ctx, in, opts...)
 }
 
 // 创建客服分组

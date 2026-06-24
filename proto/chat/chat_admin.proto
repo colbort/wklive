@@ -19,6 +19,9 @@ service ChatAdmin {
   // 当前登录用户资料
   rpc Profile(ChatAdminProfileReq) returns (ChatAdminProfileResp);
 
+  // 更新当前登录用户资料
+  rpc UpdateProfile(UpdateChatAdminProfileReq) returns (ChatAdminProfileResp);
+
   // 创建客服分组
   rpc CreateChatGroup(CreateChatGroupReq) returns (AdminChatGroupResp);
 
@@ -162,6 +165,12 @@ message ChatAdminLoginResp {
 message ChatAdminLogoutReq {}
 
 message ChatAdminProfileReq {}
+
+message UpdateChatAdminProfileReq {
+  string old_password = 1; // 原密码
+  string new_password = 2; // 新密码
+  string avatar_url = 3;   // 头像URL
+}
 
 message ChatAdminProfileResp {
   common.RespBase base = 1;

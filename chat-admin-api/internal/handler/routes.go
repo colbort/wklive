@@ -87,6 +87,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/profile",
 					Handler: chat_auth.ProfileHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/profile",
+					Handler: chat_auth.UpdateProfileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/profile/avatar",
+					Handler: chat_auth.UploadProfileAvatarHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),

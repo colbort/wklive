@@ -44,6 +44,12 @@ export async function postData<T>(url: string, data?: unknown) {
   return res.data;
 }
 
+export async function postRaw<T extends RespBase>(url: string, data?: unknown) {
+  const res = await request.post<T>(url, data);
+  assertOk(res.data);
+  return res.data;
+}
+
 export async function putData<T>(url: string, data?: unknown) {
   const res = await request.put<ApiResp<T>>(url, data);
   assertOk(res.data);
@@ -58,6 +64,12 @@ export async function postBase(url: string, data?: unknown) {
 
 export async function putBase(url: string, data?: unknown) {
   const res = await request.put<RespBase>(url, data);
+  assertOk(res.data);
+  return res.data;
+}
+
+export async function putRaw<T extends RespBase>(url: string, data?: unknown) {
+  const res = await request.put<T>(url, data);
   assertOk(res.data);
   return res.data;
 }
