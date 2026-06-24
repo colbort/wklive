@@ -76,6 +76,26 @@ enum ChatAssignType {
   CHAT_ASSIGN_TYPE_TRANSFER = 3; // 转接
 }
 
+// 聊天事件类型
+enum ChatEventType {
+  CHAT_EVENT_TYPE_UNKNOWN = 0;
+  CHAT_EVENT_TYPE_MESSAGE = 1;                     // chat.message
+  CHAT_EVENT_TYPE_SESSION_ACCEPTED = 2;            // chat.session.accepted
+  CHAT_EVENT_TYPE_SESSION_CLOSED = 3;              // chat.session.closed
+  CHAT_EVENT_TYPE_QUEUE_UPDATED = 4;               // chat.queue.updated
+  CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED = 5;        // chat.agent.status.updated
+  CHAT_EVENT_TYPE_CONNECTED = 6;                   // connected
+  CHAT_EVENT_TYPE_ERROR = 7;                       // error
+  CHAT_EVENT_TYPE_SEND_USER_MESSAGE = 8;           // send_user_message
+  CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT = 9;    // send_user_message.result
+  CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE = 10;         // send_agent_message
+  CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT = 11;  // send_agent_message.result
+  CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION = 12;        // accept_chat_session
+  CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT = 13; // accept_chat_session.result
+  CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION = 14;         // close_chat_session
+  CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT = 15;  // close_chat_session.result
+}
+
 // 客服用户类型
 enum ChatUserType {
   reserved 3;
@@ -91,3 +111,4 @@ enum ChatSyncAction {
   CHAT_SYNC_ACTION_UPSERT = 1; // 创建或更新
   CHAT_SYNC_ACTION_DELETE = 2; // 删除/禁用
 }
+

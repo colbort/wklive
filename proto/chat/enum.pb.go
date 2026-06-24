@@ -469,6 +469,95 @@ func (ChatAssignType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{7}
 }
 
+// 聊天事件类型
+type ChatEventType int32
+
+const (
+	ChatEventType_CHAT_EVENT_TYPE_UNKNOWN                    ChatEventType = 0
+	ChatEventType_CHAT_EVENT_TYPE_MESSAGE                    ChatEventType = 1  // chat.message
+	ChatEventType_CHAT_EVENT_TYPE_SESSION_ACCEPTED           ChatEventType = 2  // chat.session.accepted
+	ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED             ChatEventType = 3  // chat.session.closed
+	ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATED              ChatEventType = 4  // chat.queue.updated
+	ChatEventType_CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED       ChatEventType = 5  // chat.agent.status.updated
+	ChatEventType_CHAT_EVENT_TYPE_CONNECTED                  ChatEventType = 6  // connected
+	ChatEventType_CHAT_EVENT_TYPE_ERROR                      ChatEventType = 7  // error
+	ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE          ChatEventType = 8  // send_user_message
+	ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT   ChatEventType = 9  // send_user_message.result
+	ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE         ChatEventType = 10 // send_agent_message
+	ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT  ChatEventType = 11 // send_agent_message.result
+	ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION        ChatEventType = 12 // accept_chat_session
+	ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT ChatEventType = 13 // accept_chat_session.result
+	ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION         ChatEventType = 14 // close_chat_session
+	ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT  ChatEventType = 15 // close_chat_session.result
+)
+
+// Enum value maps for ChatEventType.
+var (
+	ChatEventType_name = map[int32]string{
+		0:  "CHAT_EVENT_TYPE_UNKNOWN",
+		1:  "CHAT_EVENT_TYPE_MESSAGE",
+		2:  "CHAT_EVENT_TYPE_SESSION_ACCEPTED",
+		3:  "CHAT_EVENT_TYPE_SESSION_CLOSED",
+		4:  "CHAT_EVENT_TYPE_QUEUE_UPDATED",
+		5:  "CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED",
+		6:  "CHAT_EVENT_TYPE_CONNECTED",
+		7:  "CHAT_EVENT_TYPE_ERROR",
+		8:  "CHAT_EVENT_TYPE_SEND_USER_MESSAGE",
+		9:  "CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT",
+		10: "CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE",
+		11: "CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT",
+		12: "CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION",
+		13: "CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT",
+		14: "CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION",
+		15: "CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT",
+	}
+	ChatEventType_value = map[string]int32{
+		"CHAT_EVENT_TYPE_UNKNOWN":                    0,
+		"CHAT_EVENT_TYPE_MESSAGE":                    1,
+		"CHAT_EVENT_TYPE_SESSION_ACCEPTED":           2,
+		"CHAT_EVENT_TYPE_SESSION_CLOSED":             3,
+		"CHAT_EVENT_TYPE_QUEUE_UPDATED":              4,
+		"CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED":       5,
+		"CHAT_EVENT_TYPE_CONNECTED":                  6,
+		"CHAT_EVENT_TYPE_ERROR":                      7,
+		"CHAT_EVENT_TYPE_SEND_USER_MESSAGE":          8,
+		"CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT":   9,
+		"CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE":         10,
+		"CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT":  11,
+		"CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION":        12,
+		"CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT": 13,
+		"CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION":         14,
+		"CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT":  15,
+	}
+)
+
+func (x ChatEventType) Enum() *ChatEventType {
+	p := new(ChatEventType)
+	*p = x
+	return p
+}
+
+func (x ChatEventType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ChatEventType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_chat_enum_proto_enumTypes[8].Descriptor()
+}
+
+func (ChatEventType) Type() protoreflect.EnumType {
+	return &file_proto_chat_enum_proto_enumTypes[8]
+}
+
+func (x ChatEventType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ChatEventType.Descriptor instead.
+func (ChatEventType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{8}
+}
+
 // 客服用户类型
 type ChatUserType int32
 
@@ -503,11 +592,11 @@ func (x ChatUserType) String() string {
 }
 
 func (ChatUserType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[8].Descriptor()
+	return file_proto_chat_enum_proto_enumTypes[9].Descriptor()
 }
 
 func (ChatUserType) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[8]
+	return &file_proto_chat_enum_proto_enumTypes[9]
 }
 
 func (x ChatUserType) Number() protoreflect.EnumNumber {
@@ -516,7 +605,7 @@ func (x ChatUserType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ChatUserType.Descriptor instead.
 func (ChatUserType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{8}
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{9}
 }
 
 // 同步动作
@@ -553,11 +642,11 @@ func (x ChatSyncAction) String() string {
 }
 
 func (ChatSyncAction) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[9].Descriptor()
+	return file_proto_chat_enum_proto_enumTypes[10].Descriptor()
 }
 
 func (ChatSyncAction) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[9]
+	return &file_proto_chat_enum_proto_enumTypes[10]
 }
 
 func (x ChatSyncAction) Number() protoreflect.EnumNumber {
@@ -566,7 +655,7 @@ func (x ChatSyncAction) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ChatSyncAction.Descriptor instead.
 func (ChatSyncAction) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{9}
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{10}
 }
 
 var File_proto_chat_enum_proto protoreflect.FileDescriptor
@@ -621,7 +710,25 @@ const file_proto_chat_enum_proto_rawDesc = "" +
 	"\x18CHAT_ASSIGN_TYPE_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15CHAT_ASSIGN_TYPE_AUTO\x10\x01\x12\x1b\n" +
 	"\x17CHAT_ASSIGN_TYPE_MANUAL\x10\x02\x12\x1d\n" +
-	"\x19CHAT_ASSIGN_TYPE_TRANSFER\x10\x03*g\n" +
+	"\x19CHAT_ASSIGN_TYPE_TRANSFER\x10\x03*\xf6\x04\n" +
+	"\rChatEventType\x12\x1b\n" +
+	"\x17CHAT_EVENT_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
+	"\x17CHAT_EVENT_TYPE_MESSAGE\x10\x01\x12$\n" +
+	" CHAT_EVENT_TYPE_SESSION_ACCEPTED\x10\x02\x12\"\n" +
+	"\x1eCHAT_EVENT_TYPE_SESSION_CLOSED\x10\x03\x12!\n" +
+	"\x1dCHAT_EVENT_TYPE_QUEUE_UPDATED\x10\x04\x12(\n" +
+	"$CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED\x10\x05\x12\x1d\n" +
+	"\x19CHAT_EVENT_TYPE_CONNECTED\x10\x06\x12\x19\n" +
+	"\x15CHAT_EVENT_TYPE_ERROR\x10\a\x12%\n" +
+	"!CHAT_EVENT_TYPE_SEND_USER_MESSAGE\x10\b\x12,\n" +
+	"(CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT\x10\t\x12&\n" +
+	"\"CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE\x10\n" +
+	"\x12-\n" +
+	")CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT\x10\v\x12'\n" +
+	"#CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION\x10\f\x12.\n" +
+	"*CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT\x10\r\x12&\n" +
+	"\"CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION\x10\x0e\x12-\n" +
+	")CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT\x10\x0f*g\n" +
 	"\fChatUserType\x12\x1a\n" +
 	"\x16CHAT_USER_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
 	"\x17CHAT_USER_TYPE_MERCHANT\x10\x01\x12\x18\n" +
@@ -643,7 +750,7 @@ func file_proto_chat_enum_proto_rawDescGZIP() []byte {
 	return file_proto_chat_enum_proto_rawDescData
 }
 
-var file_proto_chat_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
+var file_proto_chat_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 11)
 var file_proto_chat_enum_proto_goTypes = []any{
 	(ChatSessionSource)(0),   // 0: chat.ChatSessionSource
 	(ChatSessionStatus)(0),   // 1: chat.ChatSessionStatus
@@ -653,8 +760,9 @@ var file_proto_chat_enum_proto_goTypes = []any{
 	(ChatMessageType)(0),     // 5: chat.ChatMessageType
 	(ChatMessageStatus)(0),   // 6: chat.ChatMessageStatus
 	(ChatAssignType)(0),      // 7: chat.ChatAssignType
-	(ChatUserType)(0),        // 8: chat.ChatUserType
-	(ChatSyncAction)(0),      // 9: chat.ChatSyncAction
+	(ChatEventType)(0),       // 8: chat.ChatEventType
+	(ChatUserType)(0),        // 9: chat.ChatUserType
+	(ChatSyncAction)(0),      // 10: chat.ChatSyncAction
 }
 var file_proto_chat_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -674,7 +782,7 @@ func file_proto_chat_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_enum_proto_rawDesc), len(file_proto_chat_enum_proto_rawDesc)),
-			NumEnums:      10,
+			NumEnums:      11,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

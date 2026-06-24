@@ -162,11 +162,22 @@ function handleWsMessage(payload: string) {
       type?: string;
       agent?: ChatAgent;
     };
-    if (event.type !== "chat.agent.status.updated" || !event.agent) return;
+    if (
+      normalizeWsEventType(event.type) !== "chat.agent.status.updated" ||
+      !event.agent
+    )
+      return;
     upsertAgent(event.agent);
   } catch {
     // ignore invalid push payload
   }
+}
+
+function normalizeWsEventType(type?: string) {
+  if (type === "CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED") {
+    return "chat.agent.status.updated";
+  }
+  return type || "";
 }
 
 function upsertAgent(agent: ChatAgent) {

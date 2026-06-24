@@ -58,7 +58,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
-	publishSessionEvent(l.ctx, l.svcCtx, chat.ChatMessageEventTypeSessionAccepted, session, operatorID, chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL, in.GetReason(), agentServiceMessage(l.ctx, l.svcCtx, agent))
+	publishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_ACCEPTED, session, operatorID, chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL, in.GetReason(), agentServiceMessage(l.ctx, l.svcCtx, agent))
 	publishQueueEvent(l.ctx, l.svcCtx, session)
 	return &chat.AdminChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
 }

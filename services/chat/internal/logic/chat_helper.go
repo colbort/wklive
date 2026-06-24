@@ -779,7 +779,7 @@ func publishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, msg *m
 	}
 
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatMessageEventTypeMessage,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
 		CreatedAt: nowMillis(),
 		Data:      toProtoMessage(msg),
 	}
@@ -803,7 +803,7 @@ func publishQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext, session 
 		return
 	}
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatMessageEventTypeQueueUpdated,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATED,
 		CreatedAt: nowMillis(),
 		Data:      newEventSystemMessage(session, queue.GetMessage()),
 		Session:   toProtoSession(session),
@@ -819,7 +819,7 @@ func publishQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext, session 
 	}
 }
 
-func publishSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType string, session *models.TChatSession, operatorID int64, assignType chat.ChatAssignType, reason, message string) {
+func publishSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType chat.ChatEventType, session *models.TChatSession, operatorID int64, assignType chat.ChatAssignType, reason, message string) {
 	if svcCtx.BusRedis == nil || session == nil {
 		return
 	}
@@ -864,7 +864,7 @@ func publishAgentStatusEvent(ctx context.Context, svcCtx *svc.ServiceContext, ag
 		return
 	}
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatMessageEventTypeAgentStatus,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED,
 		CreatedAt: nowMillis(),
 		Agent:     toProtoAgent(agent),
 	}

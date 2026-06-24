@@ -80,10 +80,10 @@ func firstNonEmpty(values ...string) string {
 }
 
 func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, msg *chat.ChatMessage) error {
-	return publishTransientEvent(ctx, svcCtx, chat.ChatMessageEventTypeMessage, msg)
+	return publishTransientEvent(ctx, svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, msg)
 }
 
-func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType string, msg *chat.ChatMessage) error {
+func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType chat.ChatEventType, msg *chat.ChatMessage) error {
 	if svcCtx.BusRedis == nil {
 		return fmt.Errorf("chat redis is not configured")
 	}

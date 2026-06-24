@@ -497,6 +497,19 @@ p {
   background: #f8fafc;
 }
 
+.chat-status-line {
+  align-self: center;
+  max-width: min(86%, 560px);
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 7px 14px;
+  color: #2563eb;
+  background: #eff6ff;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+}
+
 .message-row {
   display: flex;
 }
@@ -901,6 +914,10 @@ p {
 
   .message-list {
     padding: 12px;
+  }
+
+  .chat-status-line {
+    max-width: 100%;
   }
 
   .bubble {

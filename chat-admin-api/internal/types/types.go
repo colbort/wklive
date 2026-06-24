@@ -32,7 +32,7 @@ type ChatAdminLogoutReq struct {
 }
 
 type ChatAdminOptions struct {
-	AgentStatuses []OptionItem `json:"agentStatuses"`
+	Options []OptionsGroup `json:"options"`
 }
 
 type ChatAdminOptionsResp struct {
@@ -41,12 +41,6 @@ type ChatAdminOptionsResp struct {
 }
 
 type ChatAdminProfileReq struct {
-}
-
-type UpdateChatAdminProfileReq struct {
-	OldPassword string `json:"oldPassword,optional"`
-	NewPassword string `json:"newPassword,optional"`
-	AvatarUrl   string `json:"avatarUrl,optional"`
 }
 
 type ChatAdminProfileResp struct {
@@ -391,10 +385,15 @@ type MarkAgentMessagesReadReq struct {
 	LastMessageNo string `json:"lastMessageNo,optional"`
 }
 
-type OptionItem struct {
-	Key     string `json:"key"`
-	Value   int64  `json:"value"`
-	TagType string `json:"tagType,optional"`
+type OptionsGroup struct {
+	Key     string        `json:"key"`
+	Label   string        `json:"label"`
+	Options []OptionsItem `json:"options"`
+}
+
+type OptionsItem struct {
+	Value int32  `json:"value"`
+	Code  string `json:"code"`
 }
 
 type PageChatAgentsReq struct {
@@ -525,6 +524,12 @@ type TokenInfo struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 	ExpireTime   int64  `json:"expireTime"`
+}
+
+type UpdateChatAdminProfileReq struct {
+	OldPassword string `json:"oldPassword,optional"`
+	NewPassword string `json:"newPassword,optional"`
+	AvatarUrl   string `json:"avatarUrl,optional"`
 }
 
 type UpdateChatAgentReq struct {

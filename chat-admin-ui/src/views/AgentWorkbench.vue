@@ -53,6 +53,7 @@ const loadingMessages = ref(false);
 const mobileChatOpen = ref(false);
 const sessions = ref<ChatSession[]>([]);
 const messages = ref<Record<string, ChatMessage[]>>({});
+const sessionStatusMessages = ref<Record<string, string>>({});
 const wsState = ref<"idle" | "open" | "closed">("idle");
 const changingAgentStatus = ref(false);
 const defaultAgentStatusOptions: DisplayOptionItem[] = [
@@ -123,6 +124,14 @@ const visibleMessages = computed(() =>
     ? []
     : activeMessages.value.filter((message) => !isQueueSystemMessage(message)),
 );
+const activeStatusMessage = computed(() => {
+  const session = activeSession.value;
+  if (!session?.sessionNo) return "";
+  return (
+    sessionStatusMessages.value[session.sessionNo] ||
+    defaultSessionStatusMessage(session)
+  );
+});
 const merchantId = computed(
   () => auth.user?.merchantId || auth.agent?.merchantId || 0,
 );
@@ -362,15 +371,16 @@ function clearReconnectTimer() {
 function handleWsMessage(payload: string) {
   try {
     const event = JSON.parse(payload) as WsEvent;
+    const eventType = normalizeWsEventType(event.type);
     if (
-      event.type !== "chat.message" &&
-      event.type !== "chat.session.accepted" &&
-      event.type !== "chat.session.closed" &&
-      event.type !== "chat.queue.updated" &&
-      event.type !== "chat.agent.status.updated" &&
-      event.type !== "accept_chat_session.result" &&
-      event.type !== "send_agent_message.result" &&
-      event.type !== "close_chat_session.result"
+      eventType !== "chat.message" &&
+      eventType !== "chat.session.accepted" &&
+      eventType !== "chat.session.closed" &&
+      eventType !== "chat.queue.updated" &&
+      eventType !== "chat.agent.status.updated" &&
+      eventType !== "accept_chat_session.result" &&
+      eventType !== "send_agent_message.result" &&
+      eventType !== "close_chat_session.result"
     ) {
       return;
     }
@@ -379,7 +389,7 @@ function handleWsMessage(payload: string) {
       ElMessage.error(base.msg || "发送失败");
       return;
     }
-    if (event.type === "chat.agent.status.updated") {
+    if (eventType === "chat.agent.status.updated") {
       updateAgentFromEvent(event.agent);
       return;
     }
@@ -388,25 +398,22 @@ function handleWsMessage(payload: string) {
     let messagePushed = false;
     if (message?.sessionNo && message.messageNo) {
       normalizeMessageEnums(message);
-      if (
-        !isQueueSystemMessage(message) &&
-        event.type !== "accept_chat_session.result"
-      ) {
+      if (shouldAppendWsMessage(eventType, message)) {
         messagePushed = pushMessage(message);
       }
     }
     if (
-      event.type === "chat.session.accepted" ||
-      event.type === "accept_chat_session.result"
+      eventType === "chat.session.accepted" ||
+      eventType === "accept_chat_session.result"
     ) {
       markSessionAccepted(event, message);
     } else if (
-      event.type === "chat.session.closed" ||
-      event.type === "close_chat_session.result"
+      eventType === "chat.session.closed" ||
+      eventType === "close_chat_session.result"
     ) {
       markSessionClosed(event, message);
     } else {
-      if (message?.sessionNo && !isQueueSystemMessage(message)) {
+      if (message?.sessionNo && shouldAppendWsMessage(eventType, message)) {
         upsertSessionFromMessage(message, messagePushed);
       }
     }
@@ -420,7 +427,7 @@ function handleWsMessage(payload: string) {
     ) {
       statusFilter.value = "waiting";
     }
-    if (event.type === "chat.queue.updated") {
+    if (eventType === "chat.queue.updated") {
       const queueSessionNo = event.queue?.sessionNo || event.session?.sessionNo || "";
       if (!mobileChatOpen.value || queueSessionNo !== activeSessionNo.value) {
         statusFilter.value = "waiting";
@@ -431,6 +438,20 @@ function handleWsMessage(payload: string) {
   } catch {
     // ignore invalid push payload
   }
+}
+
+function normalizeWsEventType(type?: string) {
+  const eventMap: Record<string, string> = {
+    CHAT_EVENT_TYPE_MESSAGE: "chat.message",
+    CHAT_EVENT_TYPE_SESSION_ACCEPTED: "chat.session.accepted",
+    CHAT_EVENT_TYPE_SESSION_CLOSED: "chat.session.closed",
+    CHAT_EVENT_TYPE_QUEUE_UPDATED: "chat.queue.updated",
+    CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED: "chat.agent.status.updated",
+    CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT: "send_agent_message.result",
+    CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT: "accept_chat_session.result",
+    CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT: "close_chat_session.result",
+  };
+  return type ? eventMap[type] || type : "";
 }
 
 function updateAgentFromEvent(agent?: ChatAgent) {
@@ -448,6 +469,7 @@ function upsertSessionFromEvent(event: WsEvent) {
   }
   const queue = event.queue || sessionEvent(event)?.queue;
   if (queue?.sessionNo) {
+    setSessionStatusMessage(queue.sessionNo, queue.message);
     const exists = sessions.value.find(
       (item) => item.sessionNo === queue.sessionNo,
     );
@@ -518,6 +540,10 @@ function upsertSessionFromMessage(
 function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
   const sessionEventData = sessionEvent(event);
   const sessionNo = sessionEventData?.sessionNo || message?.sessionNo || "";
+  setSessionStatusMessage(
+    sessionNo,
+    sessionEventData?.message || message?.content || "",
+  );
   const session = sessions.value.find((item) => item.sessionNo === sessionNo);
   const acceptedAgentId = Number(
     sessionEventData?.agentId ||
@@ -559,6 +585,10 @@ function markSessionClosed(event: WsEvent, message?: ChatMessage) {
   const sessionEventData = sessionEvent(event);
   const sessionNo = sessionEventData?.sessionNo || message?.sessionNo || "";
   if (!sessionNo) return;
+  setSessionStatusMessage(
+    sessionNo,
+    sessionEventData?.message || message?.content || "本次会话已结束",
+  );
   const session = sessions.value.find((item) => item.sessionNo === sessionNo);
   if (session) {
     session.status = sessionStatus.closed;
@@ -636,6 +666,36 @@ function isGuestSession(sessionNo?: string) {
   return typeof sessionNo === "string" && sessionNo.startsWith("GS");
 }
 
+function setSessionStatusMessage(sessionNo: string, message?: string) {
+  const text = message?.trim();
+  if (!sessionNo || !text) return;
+  sessionStatusMessages.value = {
+    ...sessionStatusMessages.value,
+    [sessionNo]: text,
+  };
+}
+
+function defaultSessionStatusMessage(session?: ChatSession) {
+  if (!session) return "";
+  const status = sessionStatusValue(session.status);
+  if (status === sessionStatus.closed) return "本次会话已结束";
+  if (needsAccept(session)) return "正在排队，等待坐席接待";
+  if (
+    ([
+      sessionStatus.serving,
+      sessionStatus.pendingUser,
+      sessionStatus.pendingAgent,
+    ] as number[]).includes(status)
+  ) {
+    const name =
+      Number(session.agentId || 0) === agentId.value
+        ? auth.user?.nickname || auth.user?.username || ""
+        : "";
+    return name ? `${name} 客服正在为你服务` : "客服正在为你服务";
+  }
+  return "";
+}
+
 function matchStatusFilter(session: ChatSession) {
   const status = sessionStatusValue(session.status);
   const assignedAgentId = Number(session.agentId || 0);
@@ -689,6 +749,11 @@ function isQueueSystemMessage(message?: ChatMessage) {
     typeof message?.content === "string" &&
     message.content.includes("正在排队")
   );
+}
+
+function shouldAppendWsMessage(eventType: string, message?: ChatMessage) {
+  if (!message || isQueueSystemMessage(message)) return false;
+  return eventType === "chat.message" || eventType === "send_agent_message.result";
 }
 
 function normalizeSession(session: ChatSession) {
@@ -872,6 +937,7 @@ function acceptSession() {
       v-model:input-value="input"
       :session="activeSession"
       :messages="visibleMessages"
+      :status-message="activeStatusMessage"
       :loading="loadingMessages"
       :active-needs-accept="activeNeedsAccept"
       :active-closed="activeClosed"

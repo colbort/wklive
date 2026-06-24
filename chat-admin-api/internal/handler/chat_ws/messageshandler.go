@@ -26,8 +26,8 @@ const (
 	eventAcceptChatSessionResult = chat.ChatWsEventAcceptChatSessionResult
 	eventCloseChatSession        = chat.ChatWsEventCloseChatSession
 	eventCloseChatSessionResult  = chat.ChatWsEventCloseChatSessionResult
-	eventChatSessionAccepted     = chat.ChatMessageEventTypeSessionAccepted
-	eventChatSessionClosed       = chat.ChatMessageEventTypeSessionClosed
+	eventChatSessionAccepted     = chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_ACCEPTED
+	eventChatSessionClosed       = chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED
 )
 
 var upgrader = websocket.Upgrader{

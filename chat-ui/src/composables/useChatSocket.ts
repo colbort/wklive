@@ -273,7 +273,8 @@ export function useChatSocket() {
   }
 
   function handleEvent(event: ChatWsEvent) {
-    if (event.type === chatWsEvents.connected) {
+    const eventType = normalizeWsEventType(event.type);
+    if (eventType === chatWsEvents.connected) {
       connected.value = event.data as ConnectedPayload;
       agentAccepted.value = false;
       activeAgentName.value = "";
@@ -287,12 +288,12 @@ export function useChatSocket() {
       }
       return;
     }
-    if (event.type === chatWsEvents.error) {
+    if (eventType === chatWsEvents.error) {
       const data = event.data as { message?: string };
       error.value = data.message || "消息发送失败";
       return;
     }
-    if (event.type === chatWsEvents.sendUserMessageResult) {
+    if (eventType === chatWsEvents.sendUserMessageResult) {
       const resp = event.data as WsResp<RawChatMessage>;
       if (wsRespCode(resp) !== 200) {
         error.value = wsRespMsg(resp) || "消息发送失败";
@@ -304,7 +305,7 @@ export function useChatSocket() {
       }
       return;
     }
-    if (event.type === chatWsEvents.sessionAccepted) {
+    if (eventType === chatWsEvents.sessionAccepted) {
       const message = eventMessage(event);
       agentAccepted.value = true;
       activeAgentName.value = agentNameFromMessage(message) || activeAgentName.value;
@@ -312,24 +313,18 @@ export function useChatSocket() {
         activeAgentName.value,
         sessionEventMessage(event) || message?.content || "",
       );
-      if (message) {
-        pushMessage(message);
-      }
       return;
     }
-    if (event.type === chatWsEvents.sessionClosed) {
+    if (eventType === chatWsEvents.sessionClosed) {
       const message = eventMessage(event);
       sessionClosed.value = true;
       queueStatus.value =
         sessionEventMessage(event) || message?.content || "本次会话已结束。";
-      if (message) {
-        pushMessage(message);
-      }
       closeSocketOnly(true);
       status.value = "closed";
       return;
     }
-    if (event.type === chatWsEvents.queueUpdated) {
+    if (eventType === chatWsEvents.queueUpdated) {
       const message = eventMessage(event);
       if (agentAccepted.value) {
         queueStatus.value = serviceStatusMessage(activeAgentName.value);
@@ -342,7 +337,7 @@ export function useChatSocket() {
         "正在排队，客服会尽快接入。";
       return;
     }
-    if (event.type === chatWsEvents.message) {
+    if (eventType === chatWsEvents.message) {
       const message = eventMessage(event);
       if (!message) return;
       if (message.senderType === 2) {
@@ -357,6 +352,19 @@ export function useChatSocket() {
   function eventMessage(event: ChatWsEvent): ChatMessage | undefined {
     if (!event.data) return undefined;
     return normalizeMessage(event.data as RawChatMessage);
+  }
+
+  function normalizeWsEventType(type: string) {
+    const eventMap: Record<string, string> = {
+      CHAT_EVENT_TYPE_MESSAGE: chatWsEvents.message,
+      CHAT_EVENT_TYPE_SESSION_ACCEPTED: chatWsEvents.sessionAccepted,
+      CHAT_EVENT_TYPE_SESSION_CLOSED: chatWsEvents.sessionClosed,
+      CHAT_EVENT_TYPE_QUEUE_UPDATED: chatWsEvents.queueUpdated,
+      CHAT_EVENT_TYPE_CONNECTED: chatWsEvents.connected,
+      CHAT_EVENT_TYPE_ERROR: chatWsEvents.error,
+      CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT: chatWsEvents.sendUserMessageResult,
+    };
+    return eventMap[type] || type;
   }
 
   function sessionEvent(event: ChatWsEvent): ChatSessionEvent | undefined {

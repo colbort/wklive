@@ -309,7 +309,7 @@ func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, ms
 		return fmt.Errorf("chat redis is not configured")
 	}
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatMessageEventTypeMessage,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
 		Data:      msg,
 		CreatedAt: time.Now().UnixMilli(),
 	}
@@ -327,7 +327,7 @@ func publishTransientQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext,
 	}
 	now := time.Now().UnixMilli()
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatMessageEventTypeQueueUpdated,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATED,
 		CreatedAt: now,
 		Data: &chat.ChatMessage{
 			MessageNo:   nextGuestNo(guestMessagePrefix),
@@ -370,7 +370,7 @@ func publishUserLeftEvent(ctx context.Context, svcCtx *svc.ServiceContext, conn 
 	now := time.Now().UnixMilli()
 	message := "用户已离开客服页面"
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatMessageEventTypeSessionClosed,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED,
 		CreatedAt: now,
 		Data: &chat.ChatMessage{
 			MessageNo:   nextGuestNo(guestMessagePrefix),

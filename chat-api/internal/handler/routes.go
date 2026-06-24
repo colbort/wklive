@@ -43,6 +43,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/internal/tokens",
 					Handler: chat_token.CreateChatTokenHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/options",
+					Handler: chat_token.GetOptionsHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/chat"),

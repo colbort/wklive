@@ -143,7 +143,7 @@ message ChatSessionEvent {
 
 // 客服消息事件,用于消息总线/WebSocket推送
 message ChatMessageEvent {
-  string type = 1;                  // 事件类型,例如 chat.message
+  ChatEventType type = 1;           // 事件类型
   ChatMessage data = 2;             // 消息内容
   int64 created_at = 3;             // 事件创建时间戳(毫秒)
   ChatSession session = 4;          // 会话快照

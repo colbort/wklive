@@ -51,7 +51,7 @@ func (s *transientSessionStore) ApplyEvent(event *chat.ChatMessageEvent) {
 	defer s.mu.Unlock()
 	s.cleanupLocked(time.Now().UnixMilli())
 
-	if event.GetType() == chat.ChatMessageEventTypeSessionClosed {
+	if event.GetType() == chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED {
 		delete(s.sessions, sessionNo)
 		delete(s.messages, sessionNo)
 		return
@@ -72,9 +72,11 @@ func (s *transientSessionStore) ApplyEvent(event *chat.ChatMessageEvent) {
 	if event.GetQueue() != nil {
 		applyTransientQueue(session, event.GetQueue())
 	}
-	if event.GetData() != nil && event.GetType() != chat.ChatMessageEventTypeQueueUpdated {
+	if event.GetData() != nil && event.GetType() != chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATED {
 		applyTransientMessage(session, event.GetType(), event.GetData())
-		s.appendMessageLocked(event.GetData())
+		if event.GetType() == chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE {
+			s.appendMessageLocked(event.GetData())
+		}
 	}
 }
 
@@ -319,7 +321,7 @@ func applyTransientQueue(session *chat.ChatSession, queue *chat.ChatQueueInfo) {
 	}
 }
 
-func applyTransientMessage(session *chat.ChatSession, eventType string, msg *chat.ChatMessage) {
+func applyTransientMessage(session *chat.ChatSession, eventType chat.ChatEventType, msg *chat.ChatMessage) {
 	if session == nil || msg == nil {
 		return
 	}
@@ -360,9 +362,9 @@ func applyTransientMessage(session *chat.ChatSession, eventType string, msg *cha
 	}
 
 	switch eventType {
-	case chat.ChatMessageEventTypeSessionAccepted:
+	case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_ACCEPTED:
 		session.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING
-	case chat.ChatMessageEventTypeSessionClosed:
+	case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED:
 		session.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED
 		session.CloseTime = msg.GetCreateTimes()
 	default:

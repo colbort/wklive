@@ -4,6 +4,7 @@ import type { ChatMessage, ChatSession } from "@/types/chat";
 defineProps<{
   session?: ChatSession;
   messages: ChatMessage[];
+  statusMessage: string;
   loading: boolean;
   inputValue: string;
   activeNeedsAccept: boolean;
@@ -73,6 +74,12 @@ const emit = defineEmits<{
 
     <div class="message-list">
       <div
+        v-if="statusMessage && session"
+        class="chat-status-line"
+      >
+        {{ statusMessage }}
+      </div>
+      <div
         v-if="loading"
         class="empty-state"
       >
@@ -97,7 +104,7 @@ const emit = defineEmits<{
         临时会话刷新后只恢复会话摘要，后续新消息会继续显示
       </div>
       <div
-        v-else-if="!messages.length"
+        v-else-if="!messages.length && !statusMessage"
         class="empty-state"
       >
         暂无消息

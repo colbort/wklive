@@ -70,6 +70,29 @@ type ListChatMessagesResp struct {
 	Data []ChatMessage `json:"data"`
 }
 
+type Options struct {
+	Options []OptionsGroup `json:"options"`
+}
+
+type OptionsGroup struct {
+	Key     string        `json:"key"`
+	Label   string        `json:"label"`
+	Options []OptionsItem `json:"options"`
+}
+
+type OptionsItem struct {
+	Value int32  `json:"value"`
+	Code  string `json:"code"`
+}
+
+type OptionsReq struct {
+}
+
+type OptionsResp struct {
+	RespBase
+	Data Options
+}
+
 type PageReq struct {
 	Cursor int64 `form:"cursor,optional"`
 	Limit  int64 `form:"limit,optional"`

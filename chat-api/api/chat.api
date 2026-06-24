@@ -63,6 +63,17 @@ type CreateChatTokenResp {
 	data ChatToken `json:"data"`
 }
 
+type OptionsReq {}
+
+type Options {
+	options  []OptionsGroup `json:"options"`
+}
+
+type OptionsResp {
+	RespBase
+	data Options
+}
+
 @server (
 	prefix:     /chat
 	group:      chat_token
@@ -72,6 +83,9 @@ service chat-api {
 	// 对接客服生成token
 	@handler CreateChatToken
 	post /internal/tokens (CreateChatTokenReq) returns (CreateChatTokenResp)
+	// options
+	@handler GetOptions
+	get /options (OptionsReq) returns (OptionsResp)
 }
 
 @server (

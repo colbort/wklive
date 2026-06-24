@@ -17,14 +17,8 @@ type ChatAgent {
 	updateTimes         int64  `json:"updateTimes"`
 }
 
-type OptionItem {
-	key     string `json:"key"`
-	value   int64  `json:"value"`
-	tagType string `json:"tagType,optional"`
-}
-
 type ChatAdminOptions {
-	agentStatuses []OptionItem `json:"agentStatuses"`
+	options  []OptionsGroup `json:"options"`
 }
 
 type ChatAdminOptionsResp {
