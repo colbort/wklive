@@ -47,31 +47,33 @@ const handleStatusChange = (row: ChatAgent) => {
 </script>
 
 <template>
+  <div
+    class="table-actions"
+    style="width: 100%; margin-bottom: 10px;"
+  >
+    <el-input
+      v-model="keyword"
+      clearable
+      placeholder="搜索坐席"
+      size="small"
+      @keyup.enter="emit('search', keyword)"
+      @clear="emit('search')"
+    />
+    <el-button
+      size="small"
+      @click="emit('search', keyword)"
+    >
+      搜索
+    </el-button>
+    <el-button
+      type="primary"
+      size="small"
+      @click="emit('create')"
+    >
+      新增坐席
+    </el-button>
+  </div>
   <div class="table-panel">
-    <div class="table-actions">
-      <el-input
-        v-model="keyword"
-        clearable
-        placeholder="搜索坐席"
-        size="small"
-        @keyup.enter="emit('search', keyword)"
-        @clear="emit('search')"
-      />
-      <el-button
-        size="small"
-        @click="emit('search', keyword)"
-      >
-        搜索
-      </el-button>
-      <el-button
-        type="primary"
-        size="small"
-        @click="emit('create')"
-      >
-        新增坐席
-      </el-button>
-    </div>
-
     <el-table
       v-loading="loading"
       :data="agents"
@@ -181,6 +183,15 @@ const handleStatusChange = (row: ChatAgent) => {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+}
+
+.table-actions :deep(.el-input) {
+  flex: 1;
+  min-width: 0;
+}
+
+.table-actions :deep(.el-button) {
+  flex: none;
 }
 </style>

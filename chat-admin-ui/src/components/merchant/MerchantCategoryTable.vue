@@ -18,30 +18,33 @@ const keyword = ref("");
 </script>
 
 <template>
+  <div
+    class="table-actions"
+    style="width: 100%;"
+  >
+    <el-input
+      v-model="keyword"
+      clearable
+      placeholder="搜索坐席"
+      size="small"
+      @keyup.enter="emit('search', keyword)"
+      @clear="emit('search')"
+    />
+    <el-button
+      size="small"
+      @click="emit('search', keyword)"
+    >
+      搜索
+    </el-button>
+    <el-button
+      type="primary"
+      size="small"
+      @click="emit('create')"
+    >
+      新增坐席
+    </el-button>
+  </div>
   <div class="table-panel">
-    <div class="table-actions">
-      <el-input
-        v-model="keyword"
-        clearable
-        placeholder="搜索分类"
-        size="small"
-        @keyup.enter="emit('search', keyword)"
-        @clear="emit('search')"
-      />
-      <el-button
-        size="small"
-        @click="emit('search', keyword)"
-      >
-        搜索
-      </el-button>
-      <el-button
-        type="primary"
-        size="small"
-        @click="emit('create')"
-      >
-        新增分类
-      </el-button>
-    </div>
     <el-table
       v-loading="loading"
       :data="categories"
@@ -120,6 +123,15 @@ const keyword = ref("");
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+}
+
+.table-actions :deep(.el-input) {
+  flex: 1;
+  min-width: 0;
+}
+
+.table-actions :deep(.el-button) {
+  flex: none;
 }
 </style>
