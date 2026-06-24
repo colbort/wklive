@@ -73,9 +73,21 @@ type chatWSIdentity struct {
 func buildWSIdentity(r *http.Request, svcCtx *svc.ServiceContext) (chatWSIdentity, error) {
 	claims, err := jwt.Verify(svcCtx.Config.Jwt.AccessSecret, jwt.TokenFromRequest(r))
 	if err != nil {
-		return chatWSIdentity{}, err
+		return buildGuestWSIdentity(r)
 	}
 	username := firstNonEmpty(claims.Nickname, fmt.Sprintf("user-%d", claims.UserId))
+	if claims.IsGuest {
+		sessionNo := firstNonEmpty(claims.SessionNo, nextGuestNo(guestSessionPrefix))
+		logx.Infof("chat ws guest identity resolved by chatToken, merchantId=%d userId=%d sessionNo=%s nickname=%s", claims.MerchantId, claims.UserId, sessionNo, username)
+		return chatWSIdentity{
+			MerchantId: claims.MerchantId,
+			UserId:     claims.UserId,
+			Username:   username,
+			AvatarUrl:  claims.AvatarUrl,
+			SessionNo:  sessionNo,
+			Temporary:  true,
+		}, nil
+	}
 	sessionNo, err := openPersistentSession(r.Context(), svcCtx, claims.MerchantId, claims.UserId, username, claims.AvatarUrl)
 	if err != nil {
 		return chatWSIdentity{}, err
@@ -87,6 +99,32 @@ func buildWSIdentity(r *http.Request, svcCtx *svc.ServiceContext) (chatWSIdentit
 		Username:   username,
 		AvatarUrl:  claims.AvatarUrl,
 		SessionNo:  sessionNo,
+	}, nil
+}
+
+func buildGuestWSIdentity(r *http.Request) (chatWSIdentity, error) {
+	merchantId, err := merchantIDFromRequest(r)
+	if err != nil {
+		return chatWSIdentity{}, err
+	}
+	sessionNo := nextGuestNo(guestSessionPrefix)
+	userId, ok, err := userIDFromRequest(r)
+	if err != nil {
+		return chatWSIdentity{}, err
+	}
+	if !ok {
+		userId = guestUserID(sessionNo)
+	}
+	username := firstNonEmpty(userNicknameFromRequest(r), guestUsername)
+	avatarUrl := userAvatarFromRequest(r)
+	logx.Infof("chat ws anonymous guest identity resolved, merchantId=%d userId=%d sessionNo=%s nickname=%s", merchantId, userId, sessionNo, username)
+	return chatWSIdentity{
+		MerchantId: merchantId,
+		UserId:     userId,
+		Username:   username,
+		AvatarUrl:  avatarUrl,
+		SessionNo:  sessionNo,
+		Temporary:  true,
 	}, nil
 }
 

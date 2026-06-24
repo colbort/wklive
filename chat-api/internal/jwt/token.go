@@ -26,6 +26,7 @@ type Claims struct {
 	SessionNo  string `json:"sessionNo,omitempty"`
 	Nickname   string `json:"nickname,omitempty"`
 	AvatarUrl  string `json:"avatarUrl,omitempty"`
+	IsGuest    bool   `json:"isGuest,omitempty"`
 	ExpireAt   int64  `json:"expireAt"`
 	jwt.RegisteredClaims
 }

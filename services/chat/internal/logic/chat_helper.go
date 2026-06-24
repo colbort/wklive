@@ -569,7 +569,8 @@ func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchant
 	if err := validateMerchantUser(merchantID, userID); err != nil {
 		return nil, false, err
 	}
-	data, err := svcCtx.ChatSessionModel.FindLatestByUser(ctx, merchantID, userID)
+	sessionSource := normalizeSource(source)
+	data, err := svcCtx.ChatSessionModel.FindLatestByUserSource(ctx, merchantID, userID, int64(sessionSource))
 	if err == nil {
 		now := nowMillis()
 		changed := false
@@ -583,7 +584,7 @@ func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchant
 			shouldNotifyQueue = true
 		}
 		if data.Source == 0 {
-			data.Source = int64(normalizeSource(source))
+			data.Source = int64(sessionSource)
 			changed = true
 		}
 		if strings.TrimSpace(data.Title) == "" && strings.TrimSpace(title) != "" {
@@ -616,7 +617,7 @@ func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchant
 			SessionNo:       nextNo("CS"),
 			MerchantId:      merchantID,
 			UserId:          userID,
-			Source:          int64(normalizeSource(source)),
+			Source:          int64(sessionSource),
 			Status:          int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING),
 			Priority:        int64(normalizePriority(priority)),
 			Title:           strings.TrimSpace(title),

@@ -86,6 +86,7 @@ func (l *CreateChatTokenLogic) CreateChatToken(req *types.CreateChatTokenReq) (*
 		SessionNo:  sessionNo,
 		Nickname:   nickname,
 		AvatarUrl:  avatarUrl,
+		IsGuest:    req.IsGuest,
 		ExpireAt:   expireAt,
 	})
 	if err != nil {
