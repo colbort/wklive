@@ -8,7 +8,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
@@ -28,16 +27,8 @@ const (
 	guestSessionPrefix = "GS"
 	guestMessagePrefix = "GM"
 	guestUsername      = "guest"
-	wsProtocol         = "wklive-chat"
 	successCode        = 200
 )
-
-var upgrader = websocket.Upgrader{
-	Subprotocols: []string{wsProtocol},
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
 
 type MessagesLogic struct {
 	logx.Logger
@@ -53,13 +44,7 @@ func NewMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Messages
 	}
 }
 
-func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req types.ChatWSMessagesReq) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		logx.Errorf("upgrade chat user ws failed, userId=%d merchantId=%d temporary=%t err=%v", req.UserId, req.MerchantId, req.IsGuest, err)
-		return
-	}
-
+func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesReq) {
 	client := ws.NewConnection(
 		l.svcCtx.ChatMessageHub,
 		conn,
@@ -74,7 +59,7 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 	l.svcCtx.ChatMessageHub.Register(client)
 	client.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, connectedPayload(req))
 	if req.IsGuest {
-		l.publishTransientQueueEvent(r.Context(), client, "正在排队，客服会尽快接入。")
+		l.publishTransientQueueEvent(l.ctx, client, "正在排队，客服会尽快接入。")
 	}
 
 	go client.WritePump()
