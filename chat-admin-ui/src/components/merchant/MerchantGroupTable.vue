@@ -1,47 +1,129 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import type { FormInstance } from "element-plus";
+import { computed, nextTick, onMounted, reactive, ref } from "vue";
+import { ElMessage, ElMessageBox, type FormInstance } from "element-plus";
+import {
+  createGroup,
+  deleteGroup,
+  pageGroups,
+  updateGroup,
+  type ChatGroupPayload,
+} from "@/api/chat";
+import { useAuthStore } from "@/stores/auth";
 import type { ChatGroup } from "@/types/chat";
 
-interface EnabledOption {
-  label: string;
-  value: number;
-}
+const auth = useAuthStore();
+const merchantId = computed(() => auth.user?.merchantId || 0);
 
-interface GroupForm {
-  groupCode: string;
-  groupName: string;
-  description: string;
-  enabled: number;
-  sort: number;
-  remark: string;
-}
-
-defineProps<{
-  loading: boolean;
-  groups: ChatGroup[];
-  visible: boolean;
-  title: string;
-  dialogMode: "create" | "edit";
-  groupForm: GroupForm;
-  enabledOptions: EnabledOption[];
-}>();
-
-const emit = defineEmits<{
-  edit: [row: ChatGroup];
-  remove: [row: ChatGroup];
-  search: [keyword?: string];
-  create: [];
-  submit: [];
-  "update:visible": [visible: boolean];
-}>();
-
+const enabledOptions = [
+  { label: "启用", value: 1 },
+  { label: "禁用", value: 2 },
+];
+const loading = ref(false);
+const groups = ref<ChatGroup[]>([]);
 const keyword = ref("");
 const formRef = ref<FormInstance>();
+const dialogVisible = ref(false);
+const dialogMode = ref<"create" | "edit">("create");
+const editingId = ref(0);
+
+const groupForm = reactive({
+  groupCode: "",
+  groupName: "",
+  description: "",
+  enabled: 1,
+  sort: 0,
+  remark: "",
+});
+
+const dialogTitle = computed(
+  () => `${dialogMode.value === "create" ? "新增" : "编辑"}客服分组`,
+);
+
+onMounted(() => {
+  void loadCurrent();
+});
+
+async function loadCurrent(searchKeyword = keyword.value) {
+  if (!merchantId.value) return;
+  loading.value = true;
+  try {
+    groups.value = (
+      await pageGroups({
+        merchantId: merchantId.value,
+        limit: 100,
+        keyword: searchKeyword || undefined,
+      })
+    ).data;
+  } finally {
+    loading.value = false;
+  }
+}
+
+function resetForm() {
+  editingId.value = 0;
+  Object.assign(groupForm, {
+    groupCode: "",
+    groupName: "",
+    description: "",
+    enabled: 1,
+    sort: 0,
+    remark: "",
+  });
+  nextTick(() => formRef.value?.clearValidate());
+}
+
+function openCreate() {
+  dialogMode.value = "create";
+  resetForm();
+  dialogVisible.value = true;
+}
+
+function openEdit(row: ChatGroup) {
+  dialogMode.value = "edit";
+  resetForm();
+  editingId.value = row.id;
+  Object.assign(groupForm, {
+    groupCode: row.groupCode,
+    groupName: row.groupName,
+    description: row.description,
+    enabled: row.enabled,
+    sort: row.sort,
+    remark: row.remark,
+  });
+  dialogVisible.value = true;
+}
 
 async function submitDialog() {
+  if (!merchantId.value) return;
   await formRef.value?.validate();
-  emit("submit");
+
+  const payload: ChatGroupPayload = {
+    merchantId: merchantId.value,
+    groupCode: groupForm.groupCode || undefined,
+    groupName: groupForm.groupName,
+    description: groupForm.description,
+    enabled: groupForm.enabled,
+    sort: groupForm.sort,
+    remark: groupForm.remark,
+  };
+  if (dialogMode.value === "create") {
+    await createGroup(payload);
+  } else {
+    await updateGroup(editingId.value, payload);
+  }
+
+  dialogVisible.value = false;
+  ElMessage.success("保存成功");
+  await loadCurrent();
+}
+
+async function removeGroup(row: ChatGroup) {
+  await ElMessageBox.confirm(`确认删除分组「${row.groupName}」？`, "删除确认", {
+    type: "warning",
+  });
+  await deleteGroup(row.id, merchantId.value);
+  ElMessage.success("删除成功");
+  await loadCurrent();
 }
 </script>
 
@@ -55,19 +137,19 @@ async function submitDialog() {
       clearable
       placeholder="搜索坐席"
       size="small"
-      @keyup.enter="emit('search', keyword)"
-      @clear="emit('search')"
+      @keyup.enter="loadCurrent(keyword)"
+      @clear="loadCurrent('')"
     />
     <el-button
       size="small"
-      @click="emit('search', keyword)"
+      @click="loadCurrent(keyword)"
     >
       搜索
     </el-button>
     <el-button
       type="primary"
       size="small"
-      @click="emit('create')"
+      @click="openCreate"
     >
       新增坐席
     </el-button>
@@ -124,14 +206,14 @@ async function submitDialog() {
           <el-button
             link
             type="primary"
-            @click="emit('edit', row)"
+            @click="openEdit(row)"
           >
             编辑
           </el-button>
           <el-button
             link
             type="danger"
-            @click="emit('remove', row)"
+            @click="removeGroup(row)"
           >
             删除
           </el-button>
@@ -142,11 +224,10 @@ async function submitDialog() {
 
   <el-dialog
     class="merchant-group-edit-dialog"
-    :model-value="visible"
-    :title="title"
+    v-model="dialogVisible"
+    :title="dialogTitle"
     width="560px"
     destroy-on-close
-    @update:model-value="emit('update:visible', $event)"
   >
     <el-form
       ref="formRef"
@@ -198,7 +279,7 @@ async function submitDialog() {
     </el-form>
 
     <template #footer>
-      <el-button @click="emit('update:visible', false)">
+      <el-button @click="dialogVisible = false">
         取消
       </el-button>
       <el-button

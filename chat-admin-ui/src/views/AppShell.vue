@@ -98,6 +98,12 @@ function goMerchant(path: string) {
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="logout">
+                修改密码
+              </el-dropdown-item>
+              <el-dropdown-item command="logout">
+                修改头像
+              </el-dropdown-item>
+              <el-dropdown-item command="logout">
                 退出登录
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -185,6 +191,12 @@ function goMerchant(path: string) {
           <strong>{{ auth.user?.nickname }}</strong>
           <span>{{ auth.agent?.agentNo }}</span>
         </div>
+        <el-button @click="logout">
+          修改密码
+        </el-button>
+        <el-button @click="logout">
+          修改头像
+        </el-button>
         <el-button @click="logout">
           退出
         </el-button>

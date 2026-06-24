@@ -1,82 +1,293 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import type { FormInstance } from "element-plus";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+} from "vue";
+import { ElMessage, type FormInstance } from "element-plus";
+import {
+  chatAdminWsUrl,
+  createAgent,
+  options as loadOptions,
+  pageAgents,
+  pageGroups,
+  updateAgent,
+  updateAgentStatus,
+  type CreateChatAgentPayload,
+  type UpdateChatAgentPayload,
+} from "@/api/chat";
+import { useAuthStore } from "@/stores/auth";
 import type { ChatAgent, ChatGroup } from "@/types/chat";
+import { withOptionLabels, type DisplayOptionItem } from "@/utils/options";
 
-interface StatusOption {
-  key?: string;
-  label: string;
-  value: number;
-  tagType?: "success" | "info" | "warning" | "danger" | "primary";
-}
+const auth = useAuthStore();
+const merchantId = computed(() => auth.user?.merchantId || 0);
 
-interface EnabledOption {
-  label: string;
-  value: number;
-}
+const enabledOptions = [
+  { label: "启用", value: 1 },
+  { label: "禁用", value: 2 },
+];
+const defaultAgentStatusOptions: DisplayOptionItem[] = [
+  { key: "chat.agent.status.offline", label: "离线", value: 1 },
+  { key: "chat.agent.status.online", label: "在线", value: 2 },
+  { key: "chat.agent.status.busy", label: "忙碌", value: 3 },
+  { key: "chat.agent.status.resting", label: "休息", value: 4 },
+];
 
-interface AgentForm {
-  username: string;
-  password: string;
-  nickname: string;
-  mobile: string;
-  email: string;
-  enabled: number;
-  autoOnline: boolean;
-  maxSessionCount: number;
-  groupId?: number;
-  welcomeMessage: string;
-  remark: string;
-}
-
-const props = defineProps<{
-  loading: boolean;
-  agents: ChatAgent[];
-  groups: ChatGroup[];
-  statusOptions: StatusOption[];
-  visible: boolean;
-  title: string;
-  dialogMode: "create" | "edit";
-  agentForm: AgentForm;
-  enabledOptions: EnabledOption[];
-}>();
-
-const emit = defineEmits<{
-  edit: [row: ChatAgent];
-  "status-change": [row: ChatAgent, status: number];
-  search: [keyword?: string];
-  create: [];
-  submit: [];
-  "update:visible": [visible: boolean];
-}>();
-
+const loading = ref(false);
+const agents = ref<ChatAgent[]>([]);
+const groups = ref<ChatGroup[]>([]);
+const statusOptions = ref<DisplayOptionItem[]>(defaultAgentStatusOptions);
 const keyword = ref("");
 const formRef = ref<FormInstance>();
+const dialogVisible = ref(false);
+const dialogMode = ref<"create" | "edit">("create");
+const editingId = ref(0);
+let socket: WebSocket | null = null;
+let reconnectTimer: number | null = null;
+let reconnectTimes = 0;
+let destroyed = false;
+
+const agentForm = reactive({
+  username: "",
+  password: "",
+  nickname: "",
+  mobile: "",
+  email: "",
+  enabled: 1,
+  autoOnline: false,
+  maxSessionCount: 10,
+  groupId: undefined as number | undefined,
+  welcomeMessage: "",
+  remark: "",
+});
+
+const dialogTitle = computed(
+  () => `${dialogMode.value === "create" ? "新增" : "编辑"}坐席`,
+);
+
+onMounted(() => {
+  destroyed = false;
+  void loadAdminOptions();
+  void loadCurrent();
+  connectWs();
+});
+
+onBeforeUnmount(() => {
+  destroyed = true;
+  clearReconnectTimer();
+  if (socket) {
+    socket.onclose = null;
+    socket.close();
+  }
+});
+
+async function loadAdminOptions() {
+  try {
+    const resp = await loadOptions();
+    if (resp.data.agentStatuses?.length) {
+      statusOptions.value = withOptionLabels(resp.data.agentStatuses);
+    }
+  } catch {
+    statusOptions.value = defaultAgentStatusOptions;
+  }
+}
+
+async function loadCurrent(searchKeyword = keyword.value) {
+  if (!merchantId.value) return;
+  loading.value = true;
+  try {
+    agents.value = (
+      await pageAgents({
+        merchantId: merchantId.value,
+        limit: 100,
+        keyword: searchKeyword || undefined,
+      })
+    ).data;
+    groups.value = (
+      await pageGroups({ merchantId: merchantId.value, limit: 100 })
+    ).data;
+  } finally {
+    loading.value = false;
+  }
+}
+
+function connectWs() {
+  if (!auth.token || !merchantId.value) return;
+  clearReconnectTimer();
+  if (socket) {
+    socket.onclose = null;
+    socket.close();
+  }
+  socket = new WebSocket(
+    chatAdminWsUrl({
+      token: auth.token,
+      merchantId: merchantId.value,
+    }),
+  );
+  socket.onopen = () => {
+    reconnectTimes = 0;
+  };
+  socket.onclose = () => {
+    scheduleReconnect();
+  };
+  socket.onmessage = (event) => {
+    handleWsMessage(event.data);
+  };
+}
+
+function scheduleReconnect() {
+  if (destroyed || !auth.token || !merchantId.value) return;
+  clearReconnectTimer();
+  const delays = [1000, 2000, 5000, 10000, 15000];
+  const delay = delays[Math.min(reconnectTimes, delays.length - 1)];
+  reconnectTimes += 1;
+  reconnectTimer = window.setTimeout(() => {
+    connectWs();
+  }, delay);
+}
+
+function clearReconnectTimer() {
+  if (!reconnectTimer) return;
+  window.clearTimeout(reconnectTimer);
+  reconnectTimer = null;
+}
+
+function handleWsMessage(payload: string) {
+  try {
+    const event = JSON.parse(payload) as {
+      type?: string;
+      agent?: ChatAgent;
+    };
+    if (event.type !== "chat.agent.status.updated" || !event.agent) return;
+    upsertAgent(event.agent);
+  } catch {
+    // ignore invalid push payload
+  }
+}
+
+function upsertAgent(agent: ChatAgent) {
+  const index = agents.value.findIndex((item) => item.id === agent.id);
+  if (index >= 0) {
+    agents.value[index] = {
+      ...agents.value[index],
+      ...agent,
+    };
+  } else {
+    void loadCurrent();
+  }
+  if (auth.agent?.id === agent.id) {
+    auth.agent = {
+      ...auth.agent,
+      ...agent,
+    };
+  }
+}
+
+function resetForm() {
+  editingId.value = 0;
+  Object.assign(agentForm, {
+    username: "",
+    password: "",
+    nickname: "",
+    mobile: "",
+    email: "",
+    enabled: 1,
+    autoOnline: false,
+    maxSessionCount: 10,
+    groupId: undefined,
+    welcomeMessage: "",
+    remark: "",
+  });
+  nextTick(() => formRef.value?.clearValidate());
+}
+
+function openCreate() {
+  dialogMode.value = "create";
+  resetForm();
+  dialogVisible.value = true;
+}
+
+function openEdit(row: ChatAgent) {
+  dialogMode.value = "edit";
+  resetForm();
+  editingId.value = row.id;
+  Object.assign(agentForm, {
+    username: "",
+    password: "",
+    nickname: "",
+    mobile: "",
+    email: "",
+    enabled: 1,
+    autoOnline: row.autoOnline === 1,
+    maxSessionCount: row.maxSessionCount || 10,
+    groupId: row.groupId || undefined,
+    welcomeMessage: row.welcomeMessage,
+    remark: row.remark,
+  });
+  dialogVisible.value = true;
+}
+
+async function submitDialog() {
+  if (!merchantId.value) return;
+  await formRef.value?.validate();
+
+  if (dialogMode.value === "create") {
+    const payload: CreateChatAgentPayload = {
+      maxSessionCount: agentForm.maxSessionCount,
+      groupId: agentForm.groupId,
+      welcomeMessage: agentForm.welcomeMessage,
+      remark: agentForm.remark,
+      username: agentForm.username,
+      password: agentForm.password,
+      nickname: agentForm.nickname,
+      mobile: agentForm.mobile,
+      email: agentForm.email,
+      enabled: agentForm.enabled,
+      autoOnline: agentForm.autoOnline ? 1 : 2,
+    };
+    await createAgent(payload);
+  } else {
+    const payload: UpdateChatAgentPayload = {
+      merchantId: merchantId.value,
+      maxSessionCount: agentForm.maxSessionCount,
+      groupId: agentForm.groupId,
+      welcomeMessage: agentForm.welcomeMessage,
+      autoOnline: agentForm.autoOnline ? 1 : 2,
+      remark: agentForm.remark,
+    };
+    await updateAgent(editingId.value, payload);
+  }
+
+  dialogVisible.value = false;
+  ElMessage.success("保存成功");
+  await loadCurrent();
+}
+
+async function changeStatus(row: ChatAgent, status: number) {
+  await updateAgentStatus(row.id, { status });
+  ElMessage.success("状态已更新");
+  await loadCurrent();
+}
 
 function statusText(status: number) {
-  return props.statusOptions.find((item) => item.value === status)?.label || "未知";
+  return statusOptions.value.find((item) => item.value === status)?.label || "未知";
 }
 
 function statusTagType(status: number) {
-  return props.statusOptions.find((item) => item.value === status)?.tagType || "info";
+  return statusOptions.value.find((item) => item.value === status)?.tagType || "info";
 }
 
 function groupName(groupId: number) {
-  return props.groups.find((item) => item.id === groupId)?.groupName || "-";
-}
-
-function onStatusChange(row: ChatAgent, status: string | number) {
-  emit("status-change", row, Number(status));
+  return groups.value.find((item) => item.id === groupId)?.groupName || "-";
 }
 
 const handleStatusChange = (row: ChatAgent) => {
-  return (status: string | number) => onStatusChange(row, status);
+  return (status: string | number) => changeStatus(row, Number(status));
 };
-
-async function submitDialog() {
-  await formRef.value?.validate();
-  emit("submit");
-}
 </script>
 
 <template>
@@ -89,19 +300,19 @@ async function submitDialog() {
       clearable
       placeholder="搜索坐席"
       size="small"
-      @keyup.enter="emit('search', keyword)"
-      @clear="emit('search')"
+      @keyup.enter="loadCurrent(keyword)"
+      @clear="loadCurrent('')"
     />
     <el-button
       size="small"
-      @click="emit('search', keyword)"
+      @click="loadCurrent(keyword)"
     >
       搜索
     </el-button>
     <el-button
       type="primary"
       size="small"
-      @click="emit('create')"
+      @click="openCreate"
     >
       新增坐席
     </el-button>
@@ -182,7 +393,7 @@ async function submitDialog() {
           <el-button
             link
             type="primary"
-            @click="emit('edit', row)"
+            @click="openEdit(row)"
           >
             编辑
           </el-button>
@@ -209,11 +420,10 @@ async function submitDialog() {
 
   <el-dialog
     class="merchant-agent-edit-dialog"
-    :model-value="visible"
-    :title="title"
+    v-model="dialogVisible"
+    :title="dialogTitle"
     width="560px"
     destroy-on-close
-    @update:model-value="emit('update:visible', $event)"
   >
     <el-form
       ref="formRef"
@@ -319,7 +529,7 @@ async function submitDialog() {
     </el-form>
 
     <template #footer>
-      <el-button @click="emit('update:visible', false)">
+      <el-button @click="dialogVisible = false">
         取消
       </el-button>
       <el-button

@@ -1,47 +1,133 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import type { FormInstance } from "element-plus";
+import { computed, nextTick, onMounted, reactive, ref } from "vue";
+import { ElMessage, ElMessageBox, type FormInstance } from "element-plus";
+import {
+  createCategory,
+  deleteCategory,
+  pageCategories,
+  updateCategory,
+  type ChatCategoryPayload,
+} from "@/api/chat";
+import { useAuthStore } from "@/stores/auth";
 import type { ChatCategory } from "@/types/chat";
 
-interface EnabledOption {
-  label: string;
-  value: number;
-}
+const auth = useAuthStore();
+const merchantId = computed(() => auth.user?.merchantId || 0);
 
-interface CategoryForm {
-  parentId: number;
-  categoryCode: string;
-  categoryName: string;
-  enabled: number;
-  sort: number;
-  remark: string;
-}
-
-defineProps<{
-  loading: boolean;
-  categories: ChatCategory[];
-  visible: boolean;
-  title: string;
-  dialogMode: "create" | "edit";
-  categoryForm: CategoryForm;
-  enabledOptions: EnabledOption[];
-}>();
-
-const emit = defineEmits<{
-  edit: [row: ChatCategory];
-  remove: [row: ChatCategory];
-  search: [keyword?: string];
-  create: [];
-  submit: [];
-  "update:visible": [visible: boolean];
-}>();
-
+const enabledOptions = [
+  { label: "启用", value: 1 },
+  { label: "禁用", value: 2 },
+];
+const loading = ref(false);
+const categories = ref<ChatCategory[]>([]);
 const keyword = ref("");
 const formRef = ref<FormInstance>();
+const dialogVisible = ref(false);
+const dialogMode = ref<"create" | "edit">("create");
+const editingId = ref(0);
+
+const categoryForm = reactive({
+  parentId: 0,
+  categoryCode: "",
+  categoryName: "",
+  enabled: 1,
+  sort: 0,
+  remark: "",
+});
+
+const dialogTitle = computed(
+  () => `${dialogMode.value === "create" ? "新增" : "编辑"}问题分类`,
+);
+
+onMounted(() => {
+  void loadCurrent();
+});
+
+async function loadCurrent(searchKeyword = keyword.value) {
+  if (!merchantId.value) return;
+  loading.value = true;
+  try {
+    categories.value = (
+      await pageCategories({
+        merchantId: merchantId.value,
+        limit: 100,
+        keyword: searchKeyword || undefined,
+      })
+    ).data;
+  } finally {
+    loading.value = false;
+  }
+}
+
+function resetForm() {
+  editingId.value = 0;
+  Object.assign(categoryForm, {
+    parentId: 0,
+    categoryCode: "",
+    categoryName: "",
+    enabled: 1,
+    sort: 0,
+    remark: "",
+  });
+  nextTick(() => formRef.value?.clearValidate());
+}
+
+function openCreate() {
+  dialogMode.value = "create";
+  resetForm();
+  dialogVisible.value = true;
+}
+
+function openEdit(row: ChatCategory) {
+  dialogMode.value = "edit";
+  resetForm();
+  editingId.value = row.id;
+  Object.assign(categoryForm, {
+    parentId: row.parentId,
+    categoryCode: row.categoryCode,
+    categoryName: row.categoryName,
+    enabled: row.enabled,
+    sort: row.sort,
+    remark: row.remark,
+  });
+  dialogVisible.value = true;
+}
 
 async function submitDialog() {
+  if (!merchantId.value) return;
   await formRef.value?.validate();
-  emit("submit");
+
+  const payload: ChatCategoryPayload = {
+    merchantId: merchantId.value,
+    parentId: categoryForm.parentId,
+    categoryCode: categoryForm.categoryCode || undefined,
+    categoryName: categoryForm.categoryName,
+    enabled: categoryForm.enabled,
+    sort: categoryForm.sort,
+    remark: categoryForm.remark,
+  };
+  if (dialogMode.value === "create") {
+    await createCategory(payload);
+  } else {
+    await updateCategory(editingId.value, payload);
+  }
+
+  dialogVisible.value = false;
+  ElMessage.success("保存成功");
+  await loadCurrent();
+}
+
+async function removeCategory(row: ChatCategory) {
+  await ElMessageBox.confirm(
+    `确认删除分类「${row.categoryName}」？`,
+    "删除确认",
+    {
+      type: "warning",
+    },
+  );
+  await deleteCategory(row.id, merchantId.value);
+  ElMessage.success("删除成功");
+  await loadCurrent();
 }
 </script>
 
@@ -55,19 +141,19 @@ async function submitDialog() {
       clearable
       placeholder="搜索坐席"
       size="small"
-      @keyup.enter="emit('search', keyword)"
-      @clear="emit('search')"
+      @keyup.enter="loadCurrent(keyword)"
+      @clear="loadCurrent('')"
     />
     <el-button
       size="small"
-      @click="emit('search', keyword)"
+      @click="loadCurrent(keyword)"
     >
       搜索
     </el-button>
     <el-button
       type="primary"
       size="small"
-      @click="emit('create')"
+      @click="openCreate"
     >
       新增坐席
     </el-button>
@@ -123,14 +209,14 @@ async function submitDialog() {
           <el-button
             link
             type="primary"
-            @click="emit('edit', row)"
+            @click="openEdit(row)"
           >
             编辑
           </el-button>
           <el-button
             link
             type="danger"
-            @click="emit('remove', row)"
+            @click="removeCategory(row)"
           >
             删除
           </el-button>
@@ -141,11 +227,10 @@ async function submitDialog() {
 
   <el-dialog
     class="merchant-category-edit-dialog"
-    :model-value="visible"
-    :title="title"
+    v-model="dialogVisible"
+    :title="dialogTitle"
     width="560px"
     destroy-on-close
-    @update:model-value="emit('update:visible', $event)"
   >
     <el-form
       ref="formRef"
@@ -198,7 +283,7 @@ async function submitDialog() {
     </el-form>
 
     <template #footer>
-      <el-button @click="emit('update:visible', false)">
+      <el-button @click="dialogVisible = false">
         取消
       </el-button>
       <el-button
