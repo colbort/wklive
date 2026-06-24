@@ -151,7 +151,7 @@ async function removeGroup(row: ChatGroup) {
       size="small"
       @click="openCreate"
     >
-      新增坐席
+      新增分组
     </el-button>
   </div>
   <div class="table-panel merchant-group-table-panel">
@@ -163,7 +163,7 @@ async function removeGroup(row: ChatGroup) {
       <el-table-column
         prop="groupCode"
         label="分组编码"
-        width="180"
+        width="80"
       />
       <el-table-column
         prop="groupName"
@@ -199,7 +199,7 @@ async function removeGroup(row: ChatGroup) {
       />
       <el-table-column
         label="操作"
-        width="160"
+        width="110"
         fixed="right"
       >
         <template #default="{ row }">
@@ -223,8 +223,8 @@ async function removeGroup(row: ChatGroup) {
   </div>
 
   <el-dialog
-    class="merchant-group-edit-dialog"
     v-model="dialogVisible"
+    class="merchant-group-edit-dialog"
     :title="dialogTitle"
     width="560px"
     destroy-on-close

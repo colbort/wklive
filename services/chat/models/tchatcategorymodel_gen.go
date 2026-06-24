@@ -47,6 +47,7 @@ type (
 		ParentId     int64  `db:"parent_id"`     // 父级分类ID
 		CategoryCode string `db:"category_code"` // 分类编码
 		CategoryName string `db:"category_name"` // 分类名称
+		GroupId      int64  `db:"group_id"`      // 客服分组ID
 		Enabled      int64  `db:"enabled"`       // 启用状态:1启用 2禁用
 		Sort         int64  `db:"sort"`          // 排序,越小越靠前
 		Remark       string `db:"remark"`        // 备注
@@ -118,8 +119,8 @@ func (m *defaultTChatCategoryModel) Insert(ctx context.Context, data *TChatCateg
 	tChatCategoryIdKey := fmt.Sprintf("%s%v", cacheTChatCategoryIdPrefix, data.Id)
 	tChatCategoryMerchantIdCategoryCodeKey := fmt.Sprintf("%s%v:%v", cacheTChatCategoryMerchantIdCategoryCodePrefix, data.MerchantId, data.CategoryCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tChatCategoryRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.MerchantId, data.ParentId, data.CategoryCode, data.CategoryName, data.Enabled, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tChatCategoryRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.MerchantId, data.ParentId, data.CategoryCode, data.CategoryName, data.GroupId, data.Enabled, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tChatCategoryIdKey, tChatCategoryMerchantIdCategoryCodeKey)
 	return ret, err
 }
@@ -134,7 +135,7 @@ func (m *defaultTChatCategoryModel) Update(ctx context.Context, newData *TChatCa
 	tChatCategoryMerchantIdCategoryCodeKey := fmt.Sprintf("%s%v:%v", cacheTChatCategoryMerchantIdCategoryCodePrefix, data.MerchantId, data.CategoryCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tChatCategoryRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.MerchantId, newData.ParentId, newData.CategoryCode, newData.CategoryName, newData.Enabled, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.MerchantId, newData.ParentId, newData.CategoryCode, newData.CategoryName, newData.GroupId, newData.Enabled, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tChatCategoryIdKey, tChatCategoryMerchantIdCategoryCodeKey)
 	return err
 }

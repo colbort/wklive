@@ -133,6 +133,7 @@ CREATE TABLE `t_chat_category` (
   `parent_id` bigint NOT NULL DEFAULT '0' COMMENT '父级分类ID',
   `category_code` varchar(64) NOT NULL DEFAULT '' COMMENT '分类编码',
   `category_name` varchar(128) NOT NULL DEFAULT '' COMMENT '分类名称',
+  `group_id` bigint NOT NULL DEFAULT '0' COMMENT '客服分组ID',
   `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '启用状态:1启用 2禁用',
   `sort` int NOT NULL DEFAULT '0' COMMENT '排序,越小越靠前',
   `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',

@@ -7,15 +7,15 @@ import {
   reactive,
   ref,
 } from "vue";
-import { ElMessage, type FormInstance } from "element-plus";
+import { ElMessage, ElMessageBox, type FormInstance } from "element-plus";
 import {
   chatAdminWsUrl,
   createAgent,
+  deleteAgent,
   options as loadOptions,
   pageAgents,
   pageGroups,
   updateAgent,
-  updateAgentStatus,
   type CreateChatAgentPayload,
   type UpdateChatAgentPayload,
 } from "@/api/chat";
@@ -267,9 +267,12 @@ async function submitDialog() {
   await loadCurrent();
 }
 
-async function changeStatus(row: ChatAgent, status: number) {
-  await updateAgentStatus(row.id, { status });
-  ElMessage.success("状态已更新");
+async function removeAgent(row: ChatAgent) {
+  await ElMessageBox.confirm(`确认删除坐席「${row.agentNo}」？`, "删除确认", {
+    type: "warning",
+  });
+  await deleteAgent(row.id, merchantId.value);
+  ElMessage.success("删除成功");
   await loadCurrent();
 }
 
@@ -285,9 +288,6 @@ function groupName(groupId: number) {
   return groups.value.find((item) => item.id === groupId)?.groupName || "-";
 }
 
-const handleStatusChange = (row: ChatAgent) => {
-  return (status: string | number) => changeStatus(row, Number(status));
-};
 </script>
 
 <template>
@@ -325,20 +325,16 @@ const handleStatusChange = (row: ChatAgent) => {
       v-loading="loading"
       :data="agents"
       height="100%"
+      style="text-align: center;"
     >
       <el-table-column
         prop="agentNo"
         label="坐席编号"
-        width="130"
-      />
-      <el-table-column
-        prop="chatUserId"
-        label="用户 ID"
-        width="100"
+        width="80"
       />
       <el-table-column
         label="状态"
-        width="120"
+        width="80"
       >
         <template #default="{ row }">
           <el-tag :type="statusTagType(row.status)">
@@ -348,7 +344,7 @@ const handleStatusChange = (row: ChatAgent) => {
       </el-table-column>
       <el-table-column
         label="分组"
-        width="140"
+        width="100"
       >
         <template #default="{ row }">
           {{ groupName(row.groupId) }}
@@ -386,7 +382,7 @@ const handleStatusChange = (row: ChatAgent) => {
       />
       <el-table-column
         label="操作"
-        width="100"
+        width="110"
         fixed="right"
       >
         <template #default="{ row }">
@@ -397,30 +393,21 @@ const handleStatusChange = (row: ChatAgent) => {
           >
             编辑
           </el-button>
-          <el-dropdown @command="handleStatusChange(row)">
-            <el-button link>
-              状态
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item
-                  v-for="item in statusOptions"
-                  :key="item.value"
-                  :command="item.value"
-                >
-                  {{ item.label }}
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <el-button
+            link
+            type="danger"
+            @click="removeAgent(row)"
+          >
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
   </div>
 
   <el-dialog
-    class="merchant-agent-edit-dialog"
     v-model="dialogVisible"
+    class="merchant-agent-edit-dialog"
     :title="dialogTitle"
     width="560px"
     destroy-on-close

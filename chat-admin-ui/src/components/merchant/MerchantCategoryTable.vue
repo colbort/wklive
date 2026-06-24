@@ -155,7 +155,7 @@ async function removeCategory(row: ChatCategory) {
       size="small"
       @click="openCreate"
     >
-      新增坐席
+      新增分类
     </el-button>
   </div>
   <div class="table-panel merchant-category-table-panel">
@@ -167,7 +167,7 @@ async function removeCategory(row: ChatCategory) {
       <el-table-column
         prop="categoryCode"
         label="分类编码"
-        width="180"
+        width="80"
       />
       <el-table-column
         prop="categoryName"
@@ -202,7 +202,7 @@ async function removeCategory(row: ChatCategory) {
       />
       <el-table-column
         label="操作"
-        width="160"
+        width="110"
         fixed="right"
       >
         <template #default="{ row }">
@@ -226,8 +226,8 @@ async function removeCategory(row: ChatCategory) {
   </div>
 
   <el-dialog
-    class="merchant-category-edit-dialog"
     v-model="dialogVisible"
+    class="merchant-category-edit-dialog"
     :title="dialogTitle"
     width="560px"
     destroy-on-close

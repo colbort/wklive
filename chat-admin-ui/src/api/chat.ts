@@ -141,6 +141,10 @@ export function updateAgent(id: number, data: UpdateChatAgentPayload) {
   return putData<ChatAgent>(`/agents/${id}`, data);
 }
 
+export function deleteAgent(id: number, merchantId: number) {
+  return deleteBase(`/agents/${id}`, { merchantId });
+}
+
 export function updateAgentStatus(
   id: number,
   data: {
