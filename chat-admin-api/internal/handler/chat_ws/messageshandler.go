@@ -144,7 +144,7 @@ func handleAcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, co
 		return
 	}
 	if isGuestSession(sessionNo) {
-		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, "客服已接入")
+		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, agentServiceMessage(ctx, svcCtx, conn))
 		if err := publishTransientEvent(ctx, svcCtx, eventChatSessionAccepted, msg); err != nil {
 			conn.SendJSON(eventError, map[string]string{"message": err.Error()})
 			return
@@ -207,6 +207,25 @@ func contextWithAdminIdentity(ctx context.Context, conn *ws.Connection) context.
 	ctx = context.WithValue(ctx, utils.CtxKeyUsername, conn.Username)
 	ctx = context.WithValue(ctx, utils.CtxKeyMerchantId, conn.MerchantId)
 	return ctx
+}
+
+func agentServiceMessage(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection) string {
+	name := ""
+	if svcCtx != nil && conn != nil && conn.UserId > 0 {
+		profileCtx := context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
+		profileCtx = context.WithValue(profileCtx, utils.CtxKeyUsername, conn.Username)
+		resp, err := svcCtx.ChatAdminCli.Profile(profileCtx, &chat.ChatAdminProfileReq{})
+		if err == nil && resp != nil && resp.User != nil {
+			name = strings.TrimSpace(resp.User.Nickname)
+		}
+	}
+	if name == "" && conn != nil {
+		name = strings.TrimSpace(conn.Username)
+	}
+	if name == "" {
+		return "客服正在为你服务"
+	}
+	return name + " 客服正在为你服务"
 }
 
 func fillTransientUserId(svcCtx *svc.ServiceContext, merchantId int64, sessionNo string, data *sendAgentMessagePayload) {

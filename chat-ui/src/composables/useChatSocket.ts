@@ -59,6 +59,7 @@ export function useChatSocket() {
   const error = ref("");
   const queueStatus = ref("");
   const agentAccepted = ref(false);
+  const activeAgentName = ref("");
   const sessionClosed = ref(false);
   const historyLoading = ref(false);
   const historyHasMore = ref(false);
@@ -275,6 +276,7 @@ export function useChatSocket() {
     if (event.type === chatWsEvents.connected) {
       connected.value = event.data as ConnectedPayload;
       agentAccepted.value = false;
+      activeAgentName.value = "";
       sessionClosed.value = false;
       resetHistoryState();
       queueStatus.value =
@@ -305,8 +307,11 @@ export function useChatSocket() {
     if (event.type === chatWsEvents.sessionAccepted) {
       const message = eventMessage(event);
       agentAccepted.value = true;
-      queueStatus.value =
-        sessionEventMessage(event) || message?.content || "客服已接入。";
+      activeAgentName.value = agentNameFromMessage(message) || activeAgentName.value;
+      queueStatus.value = serviceStatusMessage(
+        activeAgentName.value,
+        sessionEventMessage(event) || message?.content || "",
+      );
       if (message) {
         pushMessage(message);
       }
@@ -326,6 +331,10 @@ export function useChatSocket() {
     }
     if (event.type === chatWsEvents.queueUpdated) {
       const message = eventMessage(event);
+      if (agentAccepted.value) {
+        queueStatus.value = serviceStatusMessage(activeAgentName.value);
+        return;
+      }
       queueStatus.value =
         queueMessage(event.queue) ||
         sessionEventMessage(event) ||
@@ -338,7 +347,8 @@ export function useChatSocket() {
       if (!message) return;
       if (message.senderType === 2) {
         agentAccepted.value = true;
-        queueStatus.value = "";
+        activeAgentName.value = agentNameFromMessage(message) || activeAgentName.value;
+        queueStatus.value = serviceStatusMessage(activeAgentName.value);
       }
       pushMessage(message);
     }
@@ -355,6 +365,18 @@ export function useChatSocket() {
 
   function sessionEventMessage(event: ChatWsEvent) {
     return sessionEvent(event)?.message || "";
+  }
+
+  function agentNameFromMessage(message?: ChatMessage) {
+    if (!message || message.senderType !== 2) return "";
+    return (message.sender?.nickname || "").trim();
+  }
+
+  function serviceStatusMessage(agentName = "", preferred = "") {
+    const text = preferred.trim();
+    if (text.includes("客服正在为你服务")) return text;
+    const name = agentName.trim();
+    return name ? `${name} 客服正在为你服务` : "客服正在为你服务";
   }
 
   function queueMessage(queue?: ChatQueueInfo) {
