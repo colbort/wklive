@@ -164,7 +164,7 @@ function clearReconnectTimer() {
 function handleWsMessage(payload: string) {
   try {
     const event = JSON.parse(payload) as {
-      type?: string;
+      type?: string | number;
       agent?: ChatAgent;
     };
     if (
@@ -178,7 +178,10 @@ function handleWsMessage(payload: string) {
   }
 }
 
-function normalizeWsEventType(type?: string) {
+function normalizeWsEventType(type?: string | number) {
+  if (type === 5) {
+    return "chat.agent.status.updated";
+  }
   if (type === "CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED") {
     return "chat.agent.status.updated";
   }

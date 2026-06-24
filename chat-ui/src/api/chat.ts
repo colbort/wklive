@@ -22,6 +22,10 @@ export const chatWsEvents = {
   sendUserMessageResult: "send_user_message.result",
 } as const;
 
+export const chatEventTypes = {
+  sendUserMessage: 8,
+} as const;
+
 export interface CreateChatTokenReq {
   apiKey: string;
   apiSecret: string;
@@ -130,7 +134,7 @@ function encodeProtocolValue(value: string): string {
 
 export function sendChatSocketEvent(
   socket: WebSocket,
-  type: string,
+  type: string | number,
   data: unknown,
 ) {
   socket.send(JSON.stringify({ type, data }));
@@ -140,7 +144,7 @@ export function sendChatSocketUserMessage(
   socket: WebSocket,
   data: SendUserMessagePayload,
 ) {
-  sendChatSocketEvent(socket, chatWsEvents.sendUserMessage, data);
+  sendChatSocketEvent(socket, chatEventTypes.sendUserMessage, data);
 }
 
 interface RequestOptions {

@@ -27,10 +27,6 @@ import (
 )
 
 const (
-	eventConnected             = chat.ChatWsEventConnected
-	eventError                 = chat.ChatWsEventError
-	eventSendUserMessage       = chat.ChatWsEventSendUserMessage
-	eventSendUserMessageResult = chat.ChatWsEventSendUserMessageResult
 	guestSessionPrefix         = "GS"
 	guestMessagePrefix         = "GM"
 	guestUsername              = "guest"
@@ -147,7 +143,7 @@ func serveWSConnection(w http.ResponseWriter, r *http.Request, svcCtx *svc.Servi
 		handleClose(svcCtx),
 	)
 	svcCtx.ChatMessageHub.Register(client)
-	client.SendJSON(eventConnected, connectedPayload(identity))
+	client.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, connectedPayload(identity))
 	if identity.Temporary {
 		publishTransientQueueEvent(r.Context(), svcCtx, client, "正在排队，客服会尽快接入。")
 	}
@@ -175,7 +171,7 @@ func connectedPayload(identity chatWSIdentity) map[string]interface{} {
 func handleInbound(svcCtx *svc.ServiceContext, temporary bool) func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
 		switch event.Type {
-		case eventSendUserMessage:
+		case chat.ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE:
 			handleSendUserMessage(context.Background(), svcCtx, conn, event.Data, temporary)
 		default:
 			sendWSError(conn, "unsupported event type")
@@ -231,7 +227,7 @@ func sendPersistentUserMessage(ctx context.Context, svcCtx *svc.ServiceContext, 
 		sendWSError(conn, err.Error())
 		return
 	}
-	conn.SendJSON(eventSendUserMessageResult, resp)
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT, resp)
 }
 
 func sendTransientUserMessage(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, data sendUserMessagePayload) {
@@ -241,11 +237,11 @@ func sendTransientUserMessage(ctx context.Context, svcCtx *svc.ServiceContext, c
 		return
 	}
 	publishTransientQueueEvent(ctx, svcCtx, conn, "正在排队，客服会尽快接入。")
-	conn.SendJSON(eventSendUserMessageResult, &chat.AppChatMessageResp{Base: helper.OkResp(), Data: msg})
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT, &chat.AppChatMessageResp{Base: helper.OkResp(), Data: msg})
 }
 
 func sendWSError(conn *ws.Connection, message string) {
-	conn.SendJSON(eventError, map[string]string{"message": message})
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": message})
 }
 
 func openPersistentSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantId, userId int64, nickname, avatarUrl string) (string, error) {

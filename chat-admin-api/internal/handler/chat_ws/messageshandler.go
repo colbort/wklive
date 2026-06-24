@@ -17,19 +17,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-const (
-	eventConnected               = chat.ChatWsEventConnected
-	eventError                   = chat.ChatWsEventError
-	eventSendAgentMessage        = chat.ChatWsEventSendAgentMessage
-	eventSendAgentMessageResult  = chat.ChatWsEventSendAgentMessageResult
-	eventAcceptChatSession       = chat.ChatWsEventAcceptChatSession
-	eventAcceptChatSessionResult = chat.ChatWsEventAcceptChatSessionResult
-	eventCloseChatSession        = chat.ChatWsEventCloseChatSession
-	eventCloseChatSessionResult  = chat.ChatWsEventCloseChatSessionResult
-	eventChatSessionAccepted     = chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_ACCEPTED
-	eventChatSessionClosed       = chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED
-)
-
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -56,7 +43,7 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 
 		client := ws.NewConnection(svcCtx.ChatMessageHub, conn, claims.UserId, claims.Username, merchantId, agentId, sessionNo, handleInbound(svcCtx))
 		svcCtx.ChatMessageHub.Register(client)
-		client.SendJSON(eventConnected, map[string]interface{}{
+		client.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]interface{}{
 			"message":    "chat admin websocket connected",
 			"merchantId": merchantId,
 			"agentId":    agentId,
@@ -71,14 +58,14 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 func handleInbound(svcCtx *svc.ServiceContext) func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
 		switch event.Type {
-		case eventSendAgentMessage:
+		case chat.ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE:
 			handleSendAgentMessage(context.Background(), svcCtx, conn, event.Data)
-		case eventAcceptChatSession:
+		case chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION:
 			handleAcceptChatSession(context.Background(), svcCtx, conn, event.Data)
-		case eventCloseChatSession:
+		case chat.ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION:
 			handleCloseChatSession(context.Background(), svcCtx, conn, event.Data)
 		default:
-			conn.SendJSON(eventError, map[string]string{"message": "unsupported event type"})
+			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "unsupported event type"})
 		}
 	}
 }
@@ -86,7 +73,7 @@ func handleInbound(svcCtx *svc.ServiceContext) func(*ws.Connection, ws.InboundEv
 func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, payload json.RawMessage) {
 	var data sendAgentMessagePayload
 	if err := json.Unmarshal(payload, &data); err != nil {
-		conn.SendJSON(eventError, map[string]string{"message": "invalid send_agent_message payload"})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "invalid send_agent_message payload"})
 		return
 	}
 	req := chat.SendAgentMessageReq{
@@ -110,25 +97,25 @@ func handleSendAgentMessage(ctx context.Context, svcCtx *svc.ServiceContext, con
 		fillAgentSenderSnapshot(ctx, svcCtx, conn, &data)
 		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, data.UserId, req.AgentId, conn.Username, data)
 		if err := publishTransientMessage(ctx, svcCtx, msg); err != nil {
-			conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
 			return
 		}
-		conn.SendJSON(eventSendAgentMessageResult, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
 		return
 	}
 
 	resp, err := svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
 	if err != nil {
-		conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
 		return
 	}
-	conn.SendJSON(eventSendAgentMessageResult, resp)
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT, resp)
 }
 
 func handleAcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, payload json.RawMessage) {
 	var data acceptChatSessionPayload
 	if err := json.Unmarshal(payload, &data); err != nil {
-		conn.SendJSON(eventError, map[string]string{"message": "invalid accept_chat_session payload"})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "invalid accept_chat_session payload"})
 		return
 	}
 	sessionNo := strings.TrimSpace(data.SessionNo)
@@ -140,16 +127,16 @@ func handleAcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, co
 		agentId = conn.AgentId
 	}
 	if sessionNo == "" || agentId == 0 {
-		conn.SendJSON(eventError, map[string]string{"message": "sessionNo and agentId are required"})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "sessionNo and agentId are required"})
 		return
 	}
 	if isGuestSession(sessionNo) {
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, agentServiceMessage(ctx, svcCtx, conn))
-		if err := publishTransientEvent(ctx, svcCtx, eventChatSessionAccepted, msg); err != nil {
-			conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+		if err := publishTransientEvent(ctx, svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_ACCEPTED, msg); err != nil {
+			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
 			return
 		}
-		conn.SendJSON(eventAcceptChatSessionResult, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
 		return
 	}
 
@@ -160,16 +147,16 @@ func handleAcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, co
 		Reason:     "accept",
 	})
 	if err != nil {
-		conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
 		return
 	}
-	conn.SendJSON(eventAcceptChatSessionResult, resp)
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT, resp)
 }
 
 func handleCloseChatSession(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection, payload json.RawMessage) {
 	var data closeChatSessionPayload
 	if err := json.Unmarshal(payload, &data); err != nil {
-		conn.SendJSON(eventError, map[string]string{"message": "invalid close_chat_session payload"})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "invalid close_chat_session payload"})
 		return
 	}
 	sessionNo := strings.TrimSpace(data.SessionNo)
@@ -177,17 +164,17 @@ func handleCloseChatSession(ctx context.Context, svcCtx *svc.ServiceContext, con
 		sessionNo = conn.SessionNo
 	}
 	if sessionNo == "" {
-		conn.SendJSON(eventError, map[string]string{"message": "sessionNo is required"})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": "sessionNo is required"})
 		return
 	}
 	reason := firstNonEmpty(data.CloseReason, "closed by agent")
 	if isGuestSession(sessionNo) {
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, conn.AgentId, "本次会话已结束")
-		if err := publishTransientEvent(ctx, svcCtx, eventChatSessionClosed, msg); err != nil {
-			conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+		if err := publishTransientEvent(ctx, svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED, msg); err != nil {
+			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
 			return
 		}
-		conn.SendJSON(eventCloseChatSessionResult, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
 		return
 	}
 
@@ -196,10 +183,10 @@ func handleCloseChatSession(ctx context.Context, svcCtx *svc.ServiceContext, con
 		CloseReason: reason,
 	})
 	if err != nil {
-		conn.SendJSON(eventError, map[string]string{"message": err.Error()})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": err.Error()})
 		return
 	}
-	conn.SendJSON(eventCloseChatSessionResult, resp)
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT, resp)
 }
 
 func contextWithAdminIdentity(ctx context.Context, conn *ws.Connection) context.Context {

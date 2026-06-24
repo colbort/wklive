@@ -358,7 +358,7 @@ export function useChatSocket() {
     return normalizeMessage(event.data as RawChatMessage);
   }
 
-  function normalizeWsEventType(type: string) {
+  function normalizeWsEventType(type: string | number) {
     const eventMap = optionCodeMap("chatEventType", {
       CHAT_EVENT_TYPE_MESSAGE: chatWsEvents.message,
       CHAT_EVENT_TYPE_SESSION_ACCEPTED: chatWsEvents.sessionAccepted,
@@ -368,7 +368,26 @@ export function useChatSocket() {
       CHAT_EVENT_TYPE_ERROR: chatWsEvents.error,
       CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT: chatWsEvents.sendUserMessageResult,
     });
+    if (typeof type === "number") {
+      return eventMap[chatEventTypeCode(type)] || String(type);
+    }
     return eventMap[type] || type;
+  }
+
+  function chatEventTypeCode(value: number) {
+    const group = optionGroups.value.find((item) => item.key === "chatEventType");
+    const option = group?.options.find((item) => item.value === value);
+    if (option?.code) return option.code;
+    const fallback: Record<number, string> = {
+      1: "CHAT_EVENT_TYPE_MESSAGE",
+      2: "CHAT_EVENT_TYPE_SESSION_ACCEPTED",
+      3: "CHAT_EVENT_TYPE_SESSION_CLOSED",
+      4: "CHAT_EVENT_TYPE_QUEUE_UPDATED",
+      6: "CHAT_EVENT_TYPE_CONNECTED",
+      7: "CHAT_EVENT_TYPE_ERROR",
+      9: "CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT",
+    };
+    return fallback[value] || "";
   }
 
   async function loadChatOptions() {

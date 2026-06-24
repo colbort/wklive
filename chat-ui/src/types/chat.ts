@@ -95,7 +95,7 @@ export interface ChatMessage {
 }
 
 export interface ChatWsEvent<T = unknown> {
-  type: string;
+  type: string | number;
   data: T;
   session?: ChatSession;
   sessionEvent?: ChatSessionEvent;

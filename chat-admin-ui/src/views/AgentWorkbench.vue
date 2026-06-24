@@ -39,7 +39,7 @@ interface WsResult<T> {
 type WsEventData = ChatMessage | WsResult<ChatMessage>;
 
 interface WsEvent {
-  type: string;
+  type: string | number;
   data?: WsEventData;
   base?: WsBase;
   agent?: ChatAgent;
@@ -107,6 +107,12 @@ const agentStatus = {
   online: 2,
   busy: 3,
   resting: 4,
+} as const;
+
+const chatEventType = {
+  sendAgentMessage: 10,
+  acceptChatSession: 12,
+  closeChatSession: 14,
 } as const;
 
 const filteredSessions = computed(() =>
@@ -437,7 +443,7 @@ function handleWsMessage(payload: string) {
   }
 }
 
-function normalizeWsEventType(type?: string) {
+function normalizeWsEventType(type?: string | number) {
   const eventMap: Record<string, string> = {
     CHAT_EVENT_TYPE_MESSAGE: "chat.message",
     CHAT_EVENT_TYPE_SESSION_ACCEPTED: "chat.session.accepted",
@@ -448,7 +454,24 @@ function normalizeWsEventType(type?: string) {
     CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT: "accept_chat_session.result",
     CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT: "close_chat_session.result",
   };
+  if (typeof type === "number") {
+    return eventMap[chatEventTypeCode(type)] || String(type);
+  }
   return type ? eventMap[type] || type : "";
+}
+
+function chatEventTypeCode(value: number) {
+  const fallback: Record<number, string> = {
+    1: "CHAT_EVENT_TYPE_MESSAGE",
+    2: "CHAT_EVENT_TYPE_SESSION_ACCEPTED",
+    3: "CHAT_EVENT_TYPE_SESSION_CLOSED",
+    4: "CHAT_EVENT_TYPE_QUEUE_UPDATED",
+    5: "CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED",
+    11: "CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT",
+    13: "CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT",
+    15: "CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT",
+  };
+  return fallback[value] || "";
 }
 
 function updateAgentFromEvent(agent?: ChatAgent) {
@@ -822,7 +845,7 @@ async function send() {
   if (isGuestSession(sessionNo)) {
     socket?.send(
       JSON.stringify({
-        type: "send_agent_message",
+        type: chatEventType.sendAgentMessage,
         data: {
           merchantId: merchantId.value,
           agentId: agentId.value,
@@ -858,7 +881,7 @@ function closeSession() {
   }
   socket.send(
     JSON.stringify({
-      type: "close_chat_session",
+      type: chatEventType.closeChatSession,
       data: {
         merchantId: merchantId.value,
         userId: activeSession.value.userId,
@@ -879,7 +902,7 @@ function acceptSession() {
   }
   socket.send(
     JSON.stringify({
-      type: "accept_chat_session",
+      type: chatEventType.acceptChatSession,
       data: {
         merchantId: merchantId.value,
         agentId: agentId.value,

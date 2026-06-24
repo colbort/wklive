@@ -18,8 +18,8 @@ const (
 )
 
 type InboundEvent struct {
-	Type string          `json:"type"`
-	Data json.RawMessage `json:"data"`
+	Type chat.ChatEventType `json:"type"`
+	Data json.RawMessage    `json:"data"`
 }
 
 type Connection struct {
@@ -161,7 +161,7 @@ func (c *Connection) ReadPump() {
 		}
 		var event InboundEvent
 		if err := json.Unmarshal(payload, &event); err != nil {
-			c.SendJSON("error", map[string]string{"message": "invalid json"})
+			c.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": "invalid json"})
 			continue
 		}
 		c.OnMessage(c, event)
@@ -195,7 +195,7 @@ func (c *Connection) WritePump() {
 	}
 }
 
-func (c *Connection) SendJSON(eventType string, data interface{}) {
+func (c *Connection) SendJSON(eventType chat.ChatEventType, data interface{}) {
 	payload, err := json.Marshal(map[string]interface{}{
 		"type": eventType,
 		"data": data,
