@@ -270,13 +270,10 @@ textarea:focus {
 }
 
 .queue-message {
-  align-self: center;
-  width: fit-content;
-  max-width: min(520px, 90%);
-  margin: 12px auto 0;
-  padding: 0 12px;
+  width: 100%;
+  padding: 2px 0;
   color: #1d4ed8;
-  background: transparent;
+  background: red;
   text-align: center;
   z-index: 1;
 }

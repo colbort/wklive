@@ -128,15 +128,6 @@ const visibleMessages = computed(() =>
     ? []
     : activeMessages.value.filter((message) => !isQueueSystemMessage(message)),
 );
-const activeStatusMessage = computed(() => {
-  const session = activeSession.value;
-  if (!session?.sessionNo) return "";
-  if (activeNeedsAccept.value) return "";
-  return (
-    sessionStatusMessages.value[session.sessionNo] ||
-    defaultSessionStatusMessage(session)
-  );
-});
 const merchantId = computed(
   () => auth.user?.merchantId || auth.agent?.merchantId || 0,
 );
@@ -943,7 +934,6 @@ function acceptSession() {
       v-model:input-value="input"
       :session="activeSession"
       :messages="visibleMessages"
-      :status-message="activeStatusMessage"
       :loading="loadingMessages"
       :active-needs-accept="activeNeedsAccept"
       :active-closed="activeClosed"
