@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   computed,
-  nextTick,
   onBeforeUnmount,
   onMounted,
   reactive,
@@ -32,7 +31,6 @@ import {
 } from "@/api/chat";
 import MerchantAgentTable from "@/components/merchant/MerchantAgentTable.vue";
 import MerchantCategoryTable from "@/components/merchant/MerchantCategoryTable.vue";
-import MerchantEditDialog from "@/components/merchant/MerchantEditDialog.vue";
 import MerchantGroupTable from "@/components/merchant/MerchantGroupTable.vue";
 import { useAuthStore } from "@/stores/auth";
 import type { ChatAgent, ChatCategory, ChatGroup } from "@/types/chat";
@@ -59,7 +57,6 @@ let reconnectTimer: number | null = null;
 let reconnectTimes = 0;
 let destroyed = false;
 
-const dialogRef = ref<InstanceType<typeof MerchantEditDialog>>();
 const dialogVisible = ref(false);
 const dialogMode = ref<"create" | "edit">("create");
 const editingId = ref(0);
@@ -283,7 +280,6 @@ function resetForms() {
     sort: 0,
     remark: "",
   });
-  nextTick(() => dialogRef.value?.clearValidate());
 }
 
 function openCreate() {
@@ -344,7 +340,6 @@ function openGroupEdit(row: ChatGroup) {
 
 async function submitDialog() {
   if (!merchantId.value) return;
-  await dialogRef.value?.validate();
 
   if (activeTab.value === "agents") {
     if (dialogMode.value === "create") {
@@ -450,45 +445,52 @@ async function removeGroup(row: ChatGroup) {
         :agents="agents"
         :groups="groups"
         :status-options="statusOptions"
+        :visible="dialogVisible"
+        :title="dialogTitle"
+        :dialog-mode="dialogMode"
+        :agent-form="agentForm"
+        :enabled-options="enabledOptions"
         @edit="openAgentEdit"
         @status-change="changeAgentStatus"
         @search="loadCurrent"
         @create="openCreate"
+        @update:visible="dialogVisible = $event"
+        @submit="submitDialog"
       />
 
       <MerchantCategoryTable
         v-else-if="activeTab === 'categories'"
         :loading="loading"
         :categories="categories"
+        :visible="dialogVisible"
+        :title="dialogTitle"
+        :dialog-mode="dialogMode"
+        :category-form="categoryForm"
+        :enabled-options="enabledOptions"
         @edit="openCategoryEdit"
         @remove="removeCategory"
         @search="loadCurrent"
         @create="openCreate"
+        @update:visible="dialogVisible = $event"
+        @submit="submitDialog"
       />
 
       <MerchantGroupTable
         v-else
         :loading="loading"
         :groups="groups"
+        :visible="dialogVisible"
+        :title="dialogTitle"
+        :dialog-mode="dialogMode"
+        :group-form="groupForm"
+        :enabled-options="enabledOptions"
         @edit="openGroupEdit"
         @remove="removeGroup"
         @search="loadCurrent"
         @create="openCreate"
+        @update:visible="dialogVisible = $event"
+        @submit="submitDialog"
       />
     </div>
-
-    <MerchantEditDialog
-      ref="dialogRef"
-      v-model:visible="dialogVisible"
-      :title="dialogTitle"
-      :active-tab="activeTab"
-      :dialog-mode="dialogMode"
-      :agent-form="agentForm"
-      :category-form="categoryForm"
-      :group-form="groupForm"
-      :groups="groups"
-      :enabled-options="enabledOptions"
-      @submit="submitDialog"
-    />
   </section>
 </template>

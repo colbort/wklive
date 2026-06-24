@@ -297,24 +297,6 @@ p {
   min-height: 0;
 }
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  height: 54px;
-}
-
-.toolbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.search-input {
-  width: clamp(120px, 18vw, 220px);
-}
-
 .table-wrap {
   display: flex;
   flex-direction: column;
@@ -724,42 +706,6 @@ p {
   .console-page {
     height: 100%;
     min-height: 0;
-  }
-
-  .toolbar {
-    height: auto;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .toolbar-actions {
-    min-width: 0;
-  }
-
-  .toolbar-actions:first-child {
-    flex: 1 1 0;
-  }
-
-  .toolbar-actions:last-child {
-    flex: 0 0 auto;
-  }
-
-  .search-input {
-    width: 100%;
-    min-width: 0;
-    max-width: 180px;
-  }
-
-  .table-wrap {
-    width: 100%;
-    min-width: 0;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .table-wrap .el-table {
-    width: 720px;
-    min-width: 720px;
   }
 
   .agent-shell {
