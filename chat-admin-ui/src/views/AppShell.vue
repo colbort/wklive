@@ -18,6 +18,10 @@ const currentMenuLabel = computed(
   () =>
     merchantMenu.find((item) => item.path === route.path)?.label || "客服管理",
 );
+const merchantName = computed(
+  () => auth.user?.nickname || auth.user?.username || "商户",
+);
+const merchantAvatarText = computed(() => merchantName.value.slice(0, 1));
 
 async function logout() {
   await auth.logout();
@@ -46,14 +50,23 @@ function goMerchant(path: string) {
           type="button"
           @click="openMerchantMenu"
         >
-          CS
+          <span class="brand-initials">CS</span>
+          <el-avatar
+            class="brand-avatar"
+            :size="38"
+            :src="auth.user?.avatarUrl"
+          >
+            {{ merchantAvatarText }}
+          </el-avatar>
         </button>
         <div>
           <div class="brand-title">
-            客服工作台
+            <span class="desktop-brand-text">客服工作台</span>
+            <span class="mobile-brand-text">{{ currentMenuLabel }}</span>
           </div>
           <div class="brand-subtitle">
-            商户后台
+            <span class="desktop-brand-text">商户后台</span>
+            <span class="mobile-brand-text">{{ merchantName }}</span>
           </div>
         </div>
       </div>

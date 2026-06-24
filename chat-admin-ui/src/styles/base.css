@@ -85,6 +85,11 @@ p {
   cursor: default;
 }
 
+.brand-avatar,
+.mobile-brand-text {
+  display: none;
+}
+
 .drawer-brand {
   display: flex;
   align-items: center;
@@ -311,12 +316,12 @@ p {
 }
 
 .table-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  border: 1px solid #e6e9ef;
-  border-radius: 8px;
-  background: #fff;
 }
 
 .console-page {
@@ -650,6 +655,23 @@ p {
     height: 38px;
   }
 
+  .merchant-sidebar .brand-button {
+    overflow: hidden;
+    padding: 0;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .merchant-sidebar .brand-initials,
+  .merchant-sidebar .desktop-brand-text {
+    display: none;
+  }
+
+  .merchant-sidebar .brand-avatar,
+  .merchant-sidebar .mobile-brand-text {
+    display: flex;
+  }
+
   .merchant-sidebar .brand-title,
   .merchant-sidebar .brand-subtitle {
     overflow: hidden;
@@ -687,41 +709,7 @@ p {
   }
 
   .merchant-topbar {
-    flex: 0 0 56px;
-    width: 100%;
-    min-width: 0;
-    height: 56px;
-    flex-wrap: nowrap;
-    gap: 8px;
-    overflow: hidden;
-    padding: 0 12px;
-  }
-
-  .merchant-topbar h1 {
-    overflow: hidden;
-    min-width: 0;
-    flex: 1 1 auto;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .merchant-profile {
-    min-width: 0;
-    flex: 0 1 auto;
-    gap: 8px;
-    margin-left: auto;
-  }
-
-  .merchant-profile .profile-text {
-    min-width: 0;
-  }
-
-  .merchant-profile strong {
-    display: block;
-    overflow: hidden;
-    max-width: 96px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display: none;
   }
 
   .merchant-content {

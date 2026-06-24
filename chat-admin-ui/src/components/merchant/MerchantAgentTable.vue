@@ -49,7 +49,7 @@ const handleStatusChange = (row: ChatAgent) => {
 <template>
   <div
     class="table-actions"
-    style="width: 100%; margin-bottom: 10px;"
+    style="width: 100%;"
   >
     <el-input
       v-model="keyword"
@@ -73,7 +73,10 @@ const handleStatusChange = (row: ChatAgent) => {
       新增坐席
     </el-button>
   </div>
-  <div class="table-panel">
+  <div
+    class="table-panel merchant-agent-table-panel"
+    style="width: 100%;"
+  >
     <el-table
       v-loading="loading"
       :data="agents"
@@ -175,8 +178,13 @@ const handleStatusChange = (row: ChatAgent) => {
 <style scoped>
 .table-panel {
   display: grid;
+  flex: 1 1 auto;
   gap: 12px;
   min-height: 0;
+  overflow: hidden;
+  border: 1px solid #e6e9ef;
+  border-radius: 8px;
+  background: #fff;
 }
 
 .table-actions {
@@ -193,5 +201,24 @@ const handleStatusChange = (row: ChatAgent) => {
 
 .table-actions :deep(.el-button) {
   flex: none;
+}
+
+@media (max-width: 760px) {
+  .merchant-agent-table-panel {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .merchant-agent-table-panel :deep(.el-table) {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .merchant-agent-table-panel :deep(.el-table__inner-wrapper),
+  .merchant-agent-table-panel :deep(.el-table__body-wrapper),
+  .merchant-agent-table-panel :deep(.el-scrollbar) {
+    min-width: 0;
+  }
 }
 </style>
