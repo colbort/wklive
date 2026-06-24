@@ -26,14 +26,17 @@ func NewCreateSystemChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceCon
 
 // 创建系统会话
 func (l *CreateSystemChatSessionLogic) CreateSystemChatSession(in *chat.CreateSystemChatSessionReq) (*chat.InternalChatSessionResp, error) {
-	session, created, err := ensureOpenSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetUserId(), chat.ChatSessionSource_CHAT_SESSION_SOURCE_SYSTEM, in.GetTitle(), in.GetCategory(), normalizePriority(in.GetPriority()), in.GetExtJson())
+	session, shouldNotifyQueue, err := ensureOpenSession(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetUserId(), chat.ChatSessionSource_CHAT_SESSION_SOURCE_SYSTEM, in.GetTitle(), in.GetCategory(), normalizePriority(in.GetPriority()), in.GetExtJson())
 	if err != nil {
 		return &chat.InternalChatSessionResp{Base: badBase(err.Error())}, nil
 	}
-	if created && strings.TrimSpace(in.GetFirstMessage()) != "" {
-		msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM, 0, "system", "", chat.ChatMessageType_CHAT_MESSAGE_TYPE_SYSTEM, in.GetFirstMessage(), "", "", "", 0, nil)
-		if _, err := sendMessage(l.ctx, l.svcCtx, session, msg); err != nil {
-			return &chat.InternalChatSessionResp{Base: errorBase(err)}, nil
+	if shouldNotifyQueue {
+		publishQueueEvent(l.ctx, l.svcCtx, session)
+		if strings.TrimSpace(in.GetFirstMessage()) != "" {
+			msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM, 0, "system", "", chat.ChatMessageType_CHAT_MESSAGE_TYPE_SYSTEM, in.GetFirstMessage(), "", "", "", 0, nil)
+			if _, err := sendMessage(l.ctx, l.svcCtx, session, msg); err != nil {
+				return &chat.InternalChatSessionResp{Base: errorBase(err)}, nil
+			}
 		}
 	}
 	return &chat.InternalChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil

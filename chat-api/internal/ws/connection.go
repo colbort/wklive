@@ -12,7 +12,7 @@ import (
 
 const (
 	writeWait      = 10 * time.Second
-	pongWait       = 60 * time.Second
+	pongWait       = 20 * time.Second
 	pingPeriod     = (pongWait * 9) / 10
 	maxMessageSize = 8192
 )
@@ -32,9 +32,10 @@ type Connection struct {
 	MerchantId int64
 	SessionNo  string
 	OnMessage  func(*Connection, InboundEvent)
+	OnClose    func(*Connection)
 }
 
-func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, username string, avatarUrl string, merchantId int64, sessionNo string, onMessage func(*Connection, InboundEvent)) *Connection {
+func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, username string, avatarUrl string, merchantId int64, sessionNo string, onMessage func(*Connection, InboundEvent), onClose func(*Connection)) *Connection {
 	return &Connection{
 		Hub:        hub,
 		Conn:       conn,
@@ -45,6 +46,7 @@ func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, username string
 		MerchantId: merchantId,
 		SessionNo:  sessionNo,
 		OnMessage:  onMessage,
+		OnClose:    onClose,
 	}
 }
 
@@ -134,6 +136,9 @@ func (c *Connection) matchQueue(queue *chat.ChatQueueInfo) bool {
 func (c *Connection) ReadPump() {
 	defer func() {
 		c.Hub.Unregister(c)
+		if c.OnClose != nil {
+			c.OnClose(c)
+		}
 		_ = c.Conn.Close()
 	}()
 

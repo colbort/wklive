@@ -573,12 +573,14 @@ func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchant
 	if err == nil {
 		now := nowMillis()
 		changed := false
+		shouldNotifyQueue := false
 		if data.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 			data.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
 			data.AgentId = 0
 			data.CloseTime = 0
 			data.CloseReason = ""
 			changed = true
+			shouldNotifyQueue = true
 		}
 		if data.Source == 0 {
 			data.Source = int64(normalizeSource(source))
@@ -602,7 +604,7 @@ func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchant
 				return nil, false, err
 			}
 		}
-		return data, false, nil
+		return data, shouldNotifyQueue, nil
 	}
 	if err != models.ErrNotFound {
 		return nil, false, err

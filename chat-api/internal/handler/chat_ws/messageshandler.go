@@ -106,6 +106,7 @@ func serveWSConnection(w http.ResponseWriter, r *http.Request, svcCtx *svc.Servi
 		identity.MerchantId,
 		identity.SessionNo,
 		handleInbound(svcCtx, identity.Temporary),
+		handleClose(svcCtx),
 	)
 	svcCtx.ChatMessageHub.Register(client)
 	client.SendJSON(eventConnected, connectedPayload(identity))
@@ -138,6 +139,12 @@ func handleInbound(svcCtx *svc.ServiceContext, temporary bool) func(*ws.Connecti
 		default:
 			sendWSError(conn, "unsupported event type")
 		}
+	}
+}
+
+func handleClose(svcCtx *svc.ServiceContext) func(*ws.Connection) {
+	return func(conn *ws.Connection) {
+		publishUserLeftEvent(context.Background(), svcCtx, conn)
 	}
 }
 
@@ -312,6 +319,42 @@ func publishTransientQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext,
 	}
 	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
 		logx.Errorf("publish guest chat queue event failed: %v", err)
+	}
+}
+
+func publishUserLeftEvent(ctx context.Context, svcCtx *svc.ServiceContext, conn *ws.Connection) {
+	if svcCtx.BusRedis == nil || conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
+		return
+	}
+	now := time.Now().UnixMilli()
+	message := "用户已离开客服页面"
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatMessageEventTypeSessionClosed,
+		CreatedAt: now,
+		Data: &chat.ChatMessage{
+			MessageNo:   nextGuestNo(guestMessagePrefix),
+			SessionNo:   conn.SessionNo,
+			MerchantId:  conn.MerchantId,
+			UserId:      conn.UserId,
+			SenderType:  chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+			MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
+			Content:     message,
+			Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+			CreateTimes: now,
+			UpdateTimes: now,
+			Sender: &chat.ChatMessageSender{
+				Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+				Nickname: "系统",
+			},
+		},
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		logx.Errorf("marshal chat user left event failed: %v", err)
+		return
+	}
+	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
+		logx.Errorf("publish chat user left event failed: %v", err)
 	}
 }
 

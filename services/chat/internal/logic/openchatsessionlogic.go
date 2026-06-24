@@ -38,11 +38,11 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 	if title == "" {
 		title = strings.TrimSpace(in.GetSenderNickname())
 	}
-	session, created, err := ensureOpenSession(l.ctx, l.svcCtx, merchantID, userID, normalizeSource(in.GetSource()), title, in.GetCategory(), chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL, userSnapshotExt(in.GetSenderAvatarUrl()))
+	session, shouldNotifyQueue, err := ensureOpenSession(l.ctx, l.svcCtx, merchantID, userID, normalizeSource(in.GetSource()), title, in.GetCategory(), chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL, userSnapshotExt(in.GetSenderAvatarUrl()))
 	if err != nil {
 		return &chat.AppChatSessionResp{Base: badBase(err.Error())}, nil
 	}
-	if created {
+	if shouldNotifyQueue {
 		publishQueueEvent(l.ctx, l.svcCtx, session)
 		if strings.TrimSpace(in.GetFirstMessage()) != "" {
 			msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, userID, in.GetSenderNickname(), in.GetSenderAvatarUrl(), chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT, in.GetFirstMessage(), "", "", "", 0, nil)

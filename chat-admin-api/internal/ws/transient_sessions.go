@@ -51,6 +51,12 @@ func (s *transientSessionStore) ApplyEvent(event *chat.ChatMessageEvent) {
 	defer s.mu.Unlock()
 	s.cleanupLocked(time.Now().UnixMilli())
 
+	if event.GetType() == chat.ChatMessageEventTypeSessionClosed {
+		delete(s.sessions, sessionNo)
+		delete(s.messages, sessionNo)
+		return
+	}
+
 	session := s.sessions[sessionNo]
 	if session == nil {
 		session = newTransientSession(sessionNo)
