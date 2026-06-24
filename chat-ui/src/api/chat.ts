@@ -12,18 +12,21 @@ const chatWsProtocol = "wklive-chat";
 const wsProtocolTokenPrefix = "token.";
 
 export const chatWsEvents = {
-  connected: "connected",
-  error: "error",
-  message: "chat.message",
-  sessionAccepted: "chat.session.accepted",
-  sessionClosed: "chat.session.closed",
-  queueUpdated: "chat.queue.updated",
-  sendUserMessage: "send_user_message",
-  sendUserMessageResult: "send_user_message.result",
-} as const;
-
-export const chatEventTypes = {
+  message: 1,
+  sessionAccepted: 2,
+  sessionClosed: 3,
+  queueUpdated: 4,
+  agentStatusUpdated: 5,
+  connected: 6,
+  error: 7,
   sendUserMessage: 8,
+  sendUserMessageResult: 9,
+  sendAgentMessage: 10,
+  sendAgentMessageResult: 11,
+  acceptChatSession: 12,
+  acceptChatSessionResult: 13,
+  closeChatSession: 14,
+  closeChatSessionResult: 15,
 } as const;
 
 export interface CreateChatTokenReq {
@@ -144,7 +147,7 @@ export function sendChatSocketUserMessage(
   socket: WebSocket,
   data: SendUserMessagePayload,
 ) {
-  sendChatSocketEvent(socket, chatEventTypes.sendUserMessage, data);
+  sendChatSocketEvent(socket, chatWsEvents.sendUserMessage, data);
 }
 
 interface RequestOptions {

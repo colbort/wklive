@@ -1,15 +1,17 @@
 package chat_ws
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
-	"wklive/proto/chat"
 
 	"chat-api/internal/jwt"
 	"chat-api/internal/logic/chat_ws"
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
+	"wklive/common/utils"
+	"wklive/proto/chat"
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -45,13 +47,18 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			logx.Infof("chat ws identity resolved by chatToken, merchantId=%d userId=%d nickname=%s", claims.MerchantId, claims.UserId, nickname)
 		}
 		sessionNo := strings.TrimSpace(claims.SessionNo)
-		if sessionNo == "" {
-			resp, err := svcCtx.ChatAppCli.GenerateChatSessionNo(r.Context(), &chat.GenerateChatSessionNoReq{})
+		if claims.IsGuest && sessionNo == "" {
+			ctx := contextWithChatIdentity(r.Context(), claims.MerchantId, claims.UserId)
+			resp, err := svcCtx.ChatAppCli.GenerateChatSessionNo(ctx, &chat.GenerateChatSessionNoReq{})
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
-			sessionNo = resp.SessionNo
+			if resp.GetBase().GetCode() != 200 {
+				http.Error(w, resp.GetBase().GetMsg(), http.StatusBadRequest)
+				return
+			}
+			sessionNo = strings.TrimSpace(resp.GetSessionNo())
 		}
 		req := types.ChatWSMessagesReq{
 			SessionNo:  sessionNo,
@@ -69,6 +76,12 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := chat_ws.NewMessagesLogic(r.Context(), svcCtx)
 		l.Messages(conn, req)
 	}
+}
+
+func contextWithChatIdentity(ctx context.Context, merchantId, userId int64) context.Context {
+	ctx = context.WithValue(ctx, utils.CtxKeyMerchantId, merchantId)
+	ctx = context.WithValue(ctx, utils.CtxKeyUid, userId)
+	return ctx
 }
 
 func firstNonEmpty(values ...string) string {

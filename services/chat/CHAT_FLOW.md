@@ -1,108 +1,101 @@
 # 客服会话流程
 
-本文描述从客户打开客服页面到本次会话结束的完整链路，并区分游客会话和登录用户会话。
+本文按当前代码描述客户进入客服页、进入队列、坐席接待、双方聊天和结束会话的完整链路。当前链路通过 `chatToken` 区分游客和登录用户，而不是通过 WebSocket 是否带 token 区分。
 
 ## 关键约定
 
-- 第一个接口是 `[REST] chat-api /auth`，请求只包含 `apiKey` 和 `apiSecret`，返回客服商户信息，例如 `merchantId`、`apiKey`、启用状态等。
-- 第二步不是 REST 接口，而是用户侧建立 `[WS] chat-api /ws/messages` 连接；`chat-api` 根据 WS 建连时是否携带“用户登录 token”区分游客和登录用户。
-- `/auth` 只认证商户接入资格，不认证业务用户身份；业务用户身份由 `/ws/messages` 连接时可选携带的用户 token 决定。
-- `sessionNo` 由 `chat-api` 在 WS 建连阶段统一拿到: 游客由 `chat-api` 直接生成 `GS...`，登录用户由 `chat-api` 调用 `[RPC] ChatApp.OpenChatSession` 创建或复用 `CS...`。
-- 拿到 `sessionNo` 后，用户发送消息、进入待接待、坐席确认接待、双方聊天的主流程保持一致；区别只是游客会话/消息不落库，登录用户会话/消息落库。
-- 游客会话使用 `GS` 前缀，例如 `GS178...`，只存在于 WebSocket 临时链路，不落库。
-- 登录用户会话使用 `CS` 前缀，例如 `CS178...`，由 `services/chat` 写入 `t_chat_session`。
-- 游客消息使用 `GM` 前缀，登录用户消息走 MongoDB `chat_message`。
-- 用户消息进入队列后，客服工作台必须点击“接待”，会话才进入进行中。
-- 用户侧在接待前显示排队提示，收到 `chat.queue.updated` 更新排队信息，收到 `chat.session.accepted` 后显示客服已接入。
-- 实时事件统一使用 `ChatMessageEvent` 承载，新增的结构包括 `ChatQueueInfo`、`ChatSessionEvent` 和 WS 契约 `ChatWsMessage`。
+- 用户侧入口先调用 `[REST] chat-api /chat/internal/tokens`，入参为 `apiKey`、`apiSecret`、`userId`、`nickname`、`avatarUrl`、`isGuest`。
+- `CreateChatToken` 内部先调用 `[RPC] ChatApp.AuthChatMerchant` 校验商户，再签发 `chatToken`。
+- WebSocket 用户端必须带 `chatToken` 连接 `[WS] chat-api /chat/ws/messages`；`merchantId` 不再单独传，`chat-api` 从 token 中解析 `merchantId`、`userId`、`nickname`、`avatarUrl`、`isGuest`、`sessionNo`。
+- `IsGuest=true` 表示临时游客链路。若 token 中没有 `sessionNo`，`chat-api` 调用 `[RPC] ChatApp.GenerateChatSessionNo` 获取唯一 `CS...` 编号。该编号只作为临时会话 key，不写入 `t_chat_session`。
+- `IsGuest=false` 表示登录用户链路。登录用户第一次打开客服时通常也没有 `sessionNo`；若 token 中没有 `sessionNo`，`chat-api` 在 WS logic 中调用 `[RPC] ChatApp.OpenChatSession` 创建或复用真实会话，并写入 `t_chat_session`。
+- 当前游客和登录用户的 `sessionNo` 都是 `CS...` 形式；是否临时会话以 `chatToken.isGuest` / WS 连接上下文判断，不再依赖 `GS...` 前缀。
+- 游客消息使用 `GM...` 临时消息号，通过 Redis Pub/Sub 推送，不写 MySQL/MongoDB。
+- 登录用户消息调用 `[RPC] ChatApp.SendUserMessage`，由 `services/chat` 写消息、更新会话状态并发布事件。
+- 用户侧接待前显示排队提示；坐席必须点击“接待”后，会话才进入进行中。
+- 实时事件统一使用 `ChatMessageEvent`，事件类型为 `ChatEventType` enum，不再使用字符串事件名解析。
 
-## 用户身份判断
+## 用户身份和 SessionNo
 
 ```text
-1. chat-ui 先调用 [REST] chat-api /auth
-   - 入参: apiKey, apiSecret
-   - 出参: merchant 信息
-   - 作用: 确认这个页面可以接入哪个客服商户
+1. chat-ui 调用 [REST] chat-api /chat/internal/tokens
+   - 入参: apiKey, apiSecret, userId, nickname, avatarUrl, isGuest
+   - 出参: chatToken, expireAt, sessionNo
+   - 非游客会尝试查询已有会话；第一次打开没有历史会话时，token 中的 sessionNo 为空
+   - 游客 token 通常不带 sessionNo
 
-2. chat-ui 再建立 [WS] chat-api /ws/messages
-   - 必传: merchantId
-   - 可选: 用户登录 token
-   - 不带用户 token: 游客，chat-api 生成临时 userId 和 GS sessionNo
-   - 带用户 token: 登录用户，chat-api 解析 userId，并调用 ChatApp.OpenChatSession 创建/复用 CS sessionNo
+2. chat-ui 建立 [WS] chat-api /chat/ws/messages
+   - chatToken 必传，缺失或校验失败会直接拒绝连接
+   - token 来源: query chatToken、Authorization Bearer、x-chat-token 或 Sec-WebSocket-Protocol token.*
+   - merchantId 不作为 WS 入参传递，由 chatToken 承载
+   - chat-api 校验 token，组装 ChatWSMessagesReq
 
-3. chat-api 拿到 sessionNo 后，后续用户侧都通过同一个 WS 事件发送消息
-   - 事件: send_user_message
-   - 游客: chat-api 生成临时消息并广播，不写 MySQL/MongoDB
-   - 登录用户: chat-api 调用 ChatApp.SendUserMessage，services/chat 写 Mongo 消息并更新 MySQL 会话
-   - 排队信息: 登录用户可通过 ChatApp.GetMyChatQueueInfo 查询，状态变化通过 chat.queue.updated 推送
+3. chat-api 根据 IsGuest 处理 sessionNo
+   - IsGuest=true 且 sessionNo 为空: 调 ChatApp.GenerateChatSessionNo，生成临时 CS...
+   - IsGuest=false 且 sessionNo 为空: 调 ChatApp.OpenChatSession，创建/复用落库 CS...
+   - IsGuest=false 且 sessionNo 不为空: 直接使用 token 中已有会话
 ```
 
 ## 总流程
 
-图中标记说明:
-
-- `[REST]`: HTTP REST 接口。
-- `[WS]`: WebSocket 连接或 WebSocket 事件。
-- `[RPC]`: gRPC 调用 `services/chat`。
-- `[Redis Pub/Sub]`: 通过 Redis channel 广播实时事件。
-- `[DB]`: MySQL/MongoDB 状态或消息落库。
-
 ```mermaid
 flowchart TD
-    A[客户打开客服页面] --> B["[REST] chat-ui 调用 chat-api /auth<br/>校验 apiKey/apiSecret"]
-    B --> B1["返回 merchant 信息<br/>例如 merchantId"]
-    B1 --> B2["[WS] chat-ui 连接 chat-api /ws/messages<br/>必传 merchantId, 可选用户 token"]
-    B2 --> C{chat-api 判断 WS 是否携带用户 token}
+    A[客户打开客服页面] --> B["[REST] chat-ui 调用<br/>chat-api /chat/internal/tokens"]
+    B --> B1["[RPC] ChatApp.AuthChatMerchant<br/>校验 apiKey/apiSecret"]
+    B1 --> B2["返回 chatToken<br/>包含 merchantId/userId/isGuest"]
+    B2 --> C["[WS] chat-ui 连接<br/>chat-api /chat/ws/messages<br/>chatToken 必传"]
+    C --> D{chatToken.IsGuest}
 
-    C -- 否: 游客 --> G1["[WS] chat-api 生成临时 userId<br/>和 GS sessionNo"]
+    D -- true 游客 --> G1{token 是否已有 sessionNo}
+    G1 -- 否 --> G2["[RPC] ChatApp.GenerateChatSessionNo<br/>生成唯一 CS..."]
+    G1 -- 是 --> G3["使用 token.sessionNo"]
+    G2 --> G4["临时会话上下文<br/>不写 t_chat_session"]
+    G3 --> G4
 
-    C -- 是: 登录用户 --> L1["[WS] chat-api 解析 token<br/>获取 userId"]
-    L1 --> L2["[RPC] 调用 ChatApp.OpenChatSession"]
-    L2 --> L3["[DB] services/chat 创建或复用<br/>CS 会话并落库"]
+    D -- false 登录用户 --> L1{token 是否已有 sessionNo<br/>首次打开通常为空}
+    L1 -- 否: 首次打开/无历史会话 --> L2["[RPC] ChatApp.OpenChatSession<br/>创建/复用真实会话"]
+    L2 --> L3["[DB] 写入/更新 t_chat_session"]
+    L1 -- 是 --> L4["使用 token.sessionNo"]
+    L3 --> L5["真实会话上下文"]
+    L4 --> L5
 
-    G1 --> U0["[WS] chat-api 返回 connected<br/>携带 sessionNo"]
-    L3 --> U0
-    U0 --> U1["[WS] 用户发送 send_user_message"]
-    U1 --> U2{会话类型}
-    U2 -- GS 游客 --> U3["[WS] chat-api 生成 GM 临时消息<br/>不落库"]
-    U2 -- CS 登录用户 --> U4["[RPC + DB] ChatApp.SendUserMessage<br/>写消息并更新会话为 PENDING_AGENT"]
-    U3 --> U5["[Redis Pub/Sub] 广播 chat.message"]
+    G4 --> W0["[WS] connected<br/>temporary=true, sessionNo=CS..."]
+    L5 --> W1["[WS] connected<br/>sessionNo=CS..."]
+
+    W0 --> U1["[WS] 用户 send_user_message"]
+    W1 --> U1
+    U1 --> U2{IsGuest}
+    U2 -- true --> U3["chat-api 生成 GM 临时消息<br/>不落库"]
+    U2 -- false --> U4["[RPC] ChatApp.SendUserMessage<br/>写消息并更新会话状态"]
+    U3 --> U5["[Redis Pub/Sub] CHAT_EVENT_TYPE_MESSAGE"]
+    U3 --> U6["[Redis Pub/Sub] CHAT_EVENT_TYPE_QUEUE_UPDATED<br/>临时排队提示"]
     U4 --> U5
-    U5 --> U51["[Redis Pub/Sub] 广播 chat.queue.updated<br/>携带 ChatQueueInfo"]
-    U51 --> U6["[WS + REST] chat-admin-ui 收到通知<br/>展示待接待"]
-    U51 --> U7[用户侧显示排队位置/等待人数]
+    U4 --> U6
 
-    U7 --> Q[坐席工作台展示待接待]
-    Q --> R["[WS] 坐席点击接待<br/>发送 accept_chat_session"]
-    R --> S{会话类型}
+    U5 --> AUI["chat-admin-ui 收到通知<br/>展示待接待"]
+    U6 --> CUI["chat-ui 顶部显示排队/服务提示"]
+    AUI --> AC["[WS] 坐席 accept_chat_session"]
+    AC --> AC1{session 是否临时}
 
-    S -- GS 游客 --> T1["[Redis Pub/Sub] chat-admin-api 广播<br/>chat.session.accepted 临时事件<br/>携带 ChatSessionEvent"]
-    T1 --> T2[admin-ui 将会话移到进行中]
-    T1 --> T3[chat-ui 显示客服已接入]
+    AC1 -- IsGuest --> TA["chat-admin-api 发布<br/>CHAT_EVENT_TYPE_SESSION_ACCEPTED"]
+    AC1 -- 持久会话 --> PA["[RPC] ChatAdmin.AcceptChatSession"]
+    PA --> PA1["[DB] 绑定 agentId<br/>状态置为 SERVING"]
+    PA1 --> PA2["[Redis Pub/Sub] SESSION_ACCEPTED<br/>QUEUE_UPDATED"]
+    TA --> CHAT[双方聊天]
+    PA2 --> CHAT
 
-    S -- CS 登录用户 --> A1["[RPC] chat-admin-api 调用<br/>ChatAdmin.AcceptChatSession"]
-    A1 --> A2["[DB] services/chat 绑定 agentId<br/>并置为 SERVING"]
-    A2 --> A3["[Redis Pub/Sub] services/chat 广播<br/>chat.session.accepted + chat.queue.updated"]
-    A3 --> A4[admin-ui 将会话移到进行中]
-    A3 --> A5[chat-ui 显示客服已接入]
+    CHAT --> M{消息方向}
+    M -- 用户 --> MU["用户消息<br/>游客临时广播 / 登录用户 SendUserMessage"]
+    M -- 坐席 --> MA["坐席消息<br/>游客临时广播 / 登录用户 SendAgentMessage"]
+    MU --> CHAT
+    MA --> CHAT
 
-    T2 --> M[双方开始消息往返]
-    T3 --> M
-    A4 --> M
-    A5 --> M
-    M --> N{谁发送消息}
-    N -- 用户 --> N1[状态更新为 PENDING_AGENT]
-    N -- 坐席 --> N2[状态更新为 PENDING_USER]
-    N1 --> M
-    N2 --> M
-
-    M --> E[坐席结束会话或用户关闭会话]
-    E --> F{会话类型}
-    F -- GS 游客 --> F1["[WS] close_chat_session<br/>广播 chat.session.closed 临时事件"]
-    F -- CS 登录用户 --> F2["[REST/RPC/DB] 调用 CloseChatSession<br/>或 CloseMyChatSession 更新 CLOSED"]
-    F2 --> F3["[Redis Pub/Sub] 广播 chat.session.closed"]
-    F1 --> Z[本次会话结束]
-    F3 --> Z
+    CHAT --> CLOSE["坐席 close_chat_session<br/>或用户 CloseMyChatSession/断开 WS"]
+    CLOSE --> C1{会话类型}
+    C1 -- 游客临时 --> C2["chat-admin-api/chat-api 发布<br/>SESSION_CLOSED 临时事件"]
+    C1 -- 登录用户 --> C3["[RPC] CloseChatSession/CloseMyChatSession<br/>更新 CLOSED 并广播"]
+    C2 --> Z[本次会话结束]
+    C3 --> Z
 ```
 
 ## 游客流程
@@ -111,37 +104,42 @@ flowchart TD
 sequenceDiagram
     participant U as chat-ui 游客
     participant CA as chat-api
+    participant RPC as services/chat
     participant BUS as Redis Channel
     participant AA as chat-admin-api
     participant AU as chat-admin-ui
 
-    U->>CA: [REST] /auth, apiKey + apiSecret
-    CA-->>U: [REST] merchant 信息, merchantId
-    U->>CA: [WS] /ws/messages, merchantId, 不带用户 token
-    CA->>CA: [WS] 判断无用户 token, 生成临时 userId 和 GS sessionNo
-    CA-->>U: [WS] connected, temporary=true, sessionNo=GS...
-    U-->>U: 显示发送后进入客服队列
-    U->>CA: [WS] send_user_message
-    CA->>CA: [WS] 生成 GM 临时消息, 不落库
-    CA->>BUS: [Redis Pub/Sub] publish chat.message, data=GM..., sessionNo=GS...
-    CA->>BUS: [Redis Pub/Sub] publish chat.queue.updated, queue=ChatQueueInfo
-    BUS-->>AU: [WS] chat.message
-    BUS-->>U: [WS] chat.queue.updated
-    AU-->>AU: 创建待接待临时会话
-    U-->>U: 显示正在排队
-    AU->>AA: [WS] accept_chat_session, sessionNo=GS...
-    AA->>BUS: [Redis Pub/Sub] publish chat.session.accepted, session_event=ChatSessionEvent
-    BUS-->>U: [WS] chat.session.accepted
-    BUS-->>AU: [WS] chat.session.accepted
-    U-->>U: 显示客服已接入
-    AU-->>AU: 会话移动到进行中
-    AU->>AA: [WS] send_agent_message
-    AA->>BUS: [Redis Pub/Sub] publish chat.message, senderType=AGENT
-    BUS-->>U: [WS] 客服消息
-    AU->>AA: [WS] close_chat_session
-    AA->>BUS: [Redis Pub/Sub] publish chat.session.closed
-    BUS-->>U: [WS] chat.session.closed
-    BUS-->>AU: [WS] chat.session.closed
+    U->>CA: [REST] /chat/internal/tokens, isGuest=true
+    CA->>RPC: [RPC] AuthChatMerchant
+    RPC-->>CA: merchant
+    CA-->>U: chatToken(isGuest=true, sessionNo 可为空)
+    U->>CA: [WS] /chat/ws/messages, chatToken 必传
+    CA->>CA: Verify token, IsGuest=true
+    alt token.sessionNo 为空
+        CA->>RPC: [RPC] GenerateChatSessionNo
+        RPC-->>CA: sessionNo=CS...
+    else token.sessionNo 已有
+        CA->>CA: 使用 token.sessionNo
+    end
+    CA-->>U: [WS] connected, temporary=true, sessionNo=CS...
+    CA->>BUS: [Redis Pub/Sub] QUEUE_UPDATED, 临时排队提示
+    U->>CA: [WS] SEND_USER_MESSAGE
+    CA->>CA: 生成 GM 临时消息, 不落库
+    CA->>BUS: [Redis Pub/Sub] MESSAGE
+    CA->>BUS: [Redis Pub/Sub] QUEUE_UPDATED
+    BUS-->>AU: 待接待会话/消息
+    BUS-->>U: 排队提示
+    AU->>AA: [WS] ACCEPT_CHAT_SESSION
+    AA->>BUS: [Redis Pub/Sub] SESSION_ACCEPTED
+    BUS-->>U: 客服已接入
+    BUS-->>AU: 会话进入进行中
+    AU->>AA: [WS] SEND_AGENT_MESSAGE
+    AA->>BUS: [Redis Pub/Sub] MESSAGE, senderType=AGENT
+    BUS-->>U: 坐席消息
+    AU->>AA: [WS] CLOSE_CHAT_SESSION
+    AA->>BUS: [Redis Pub/Sub] SESSION_CLOSED
+    BUS-->>U: 会话结束
+    BUS-->>AU: 会话结束
 ```
 
 ## 登录用户流程
@@ -155,64 +153,63 @@ sequenceDiagram
     participant AA as chat-admin-api
     participant AU as chat-admin-ui
 
-    U->>CA: [REST] /auth, apiKey + apiSecret
-    CA-->>U: [REST] merchant 信息, merchantId
-    U->>CA: [WS] /ws/messages, merchantId + 用户 token
-    CA->>CA: [WS] 判断有用户 token, 解析 userId
-    CA->>RPC: [RPC] ChatApp.OpenChatSession
-    RPC->>RPC: [DB] 创建或复用 t_chat_session
-    RPC-->>CA: [RPC] sessionNo=CS...
+    U->>CA: [REST] /chat/internal/tokens, isGuest=false
+    CA->>RPC: [RPC] AuthChatMerchant
+    CA->>RPC: [RPC] GetChatSessionByUser
+    RPC-->>CA: 已有 sessionNo 或 404
+    CA-->>U: chatToken(isGuest=false, sessionNo 可为空；首次打开通常为空)
+    U->>CA: [WS] /chat/ws/messages, chatToken 必传
+    CA->>CA: Verify token, IsGuest=false
+    alt token.sessionNo 为空（首次打开/无历史会话）
+        CA->>RPC: [RPC] OpenChatSession
+        RPC->>RPC: [DB] 创建/复用 t_chat_session
+        RPC-->>CA: sessionNo=CS...
+    else token.sessionNo 已有
+        CA->>CA: 使用 token.sessionNo
+    end
     CA-->>U: [WS] connected, sessionNo=CS...
-    U-->>U: 显示发送后进入客服队列
-    U->>CA: [WS] send_user_message
-    CA->>RPC: [RPC] ChatApp.SendUserMessage
-    RPC->>RPC: [DB] 写 Mongo 消息, 更新 t_chat_session 为 PENDING_AGENT
-    RPC->>BUS: [Redis Pub/Sub] publish chat.message
-    RPC->>BUS: [Redis Pub/Sub] publish chat.queue.updated, queue=ChatQueueInfo
-    BUS-->>AU: [WS] chat.message
-    BUS-->>U: [WS] chat.queue.updated
-    AU->>AA: [REST] PageChatSessions
-    AA->>RPC: [RPC] ChatAdmin.PageChatSessions
-    RPC-->>AA: [RPC] 待接待 CS 会话
-    AA-->>AU: [REST] 待接待列表
-    U->>CA: [WS/可选] 或 REST 封装查询排队信息
-    CA->>RPC: [RPC] ChatApp.GetMyChatQueueInfo
-    RPC-->>CA: [RPC] ChatQueueInfo
-    U-->>U: 显示正在排队/前面人数
-    AU->>AA: [WS] accept_chat_session, sessionNo=CS...
+    U->>CA: [WS] SEND_USER_MESSAGE
+    CA->>RPC: [RPC] SendUserMessage
+    RPC->>RPC: [DB] 写消息并更新会话状态
+    RPC->>BUS: [Redis Pub/Sub] MESSAGE
+    RPC->>BUS: [Redis Pub/Sub] QUEUE_UPDATED
+    BUS-->>AU: 待接待/消息通知
+    BUS-->>U: 排队提示
+    AU->>AA: [WS] ACCEPT_CHAT_SESSION
     AA->>RPC: [RPC] ChatAdmin.AcceptChatSession
-    RPC->>RPC: [DB] agentId 绑定, 状态置为 SERVING
-    RPC-->>AA: [RPC] ChatSession
-    RPC->>BUS: [Redis Pub/Sub] publish chat.session.accepted, session_event=ChatSessionEvent
-    RPC->>BUS: [Redis Pub/Sub] publish chat.queue.updated
-    BUS-->>U: [WS] chat.session.accepted
-    BUS-->>AU: [WS] chat.session.accepted
-    U-->>U: 显示客服已接入
-    AU-->>AU: 会话移动到进行中
-    AU->>AA: [WS/REST] close_chat_session 或 CloseChatSession
+    RPC->>RPC: [DB] 绑定 agentId, 状态 SERVING
+    RPC->>BUS: [Redis Pub/Sub] SESSION_ACCEPTED
+    RPC->>BUS: [Redis Pub/Sub] QUEUE_UPDATED
+    BUS-->>U: XX客服正在为你服务
+    BUS-->>AU: 会话进入进行中
+    AU->>AA: [WS] SEND_AGENT_MESSAGE
+    AA->>RPC: [RPC] ChatAdmin.SendAgentMessage
+    RPC->>BUS: [Redis Pub/Sub] MESSAGE
+    BUS-->>U: 坐席消息
+    AU->>AA: [WS] CLOSE_CHAT_SESSION
     AA->>RPC: [RPC] ChatAdmin.CloseChatSession
-    RPC->>BUS: [Redis Pub/Sub] publish chat.session.closed
-    BUS-->>U: [WS] chat.session.closed
-    BUS-->>AU: [WS] chat.session.closed
+    RPC->>BUS: [Redis Pub/Sub] SESSION_CLOSED
+    BUS-->>U: 会话结束
+    BUS-->>AU: 会话结束
 ```
 
 ## 会话状态流转
 
-状态名与 `proto/chat/enum.proto` 的 `ChatSessionStatus` 对齐:
+状态名与 `proto/chat/enum.proto` 的 `ChatSessionStatus` 对齐。
 
-| 流程图状态 | enum | 值 | 含义 |
-| --- | --- | --- | --- |
-| `WAITING` | `CHAT_SESSION_STATUS_WAITING` | 1 | 等待接入，已创建但还没有用户消息 |
-| `SERVING` | `CHAT_SESSION_STATUS_SERVING` | 2 | 服务中，坐席已确认接待 |
-| `PENDING_USER` | `CHAT_SESSION_STATUS_PENDING_USER` | 3 | 等待用户回复，最后一条消息来自坐席 |
-| `PENDING_AGENT` | `CHAT_SESSION_STATUS_PENDING_AGENT` | 4 | 等待客服回复，最后一条消息来自用户，也是待接待列表的主要状态 |
-| `CLOSED` | `CHAT_SESSION_STATUS_CLOSED` | 5 | 已结束 |
+| 状态 | 值 | 含义 |
+| --- | --- | --- |
+| `CHAT_SESSION_STATUS_WAITING` | 1 | 已创建，等待用户消息或等待进入队列 |
+| `CHAT_SESSION_STATUS_SERVING` | 2 | 服务中，坐席已确认接待 |
+| `CHAT_SESSION_STATUS_PENDING_USER` | 3 | 等待用户回复，最后一条消息来自坐席 |
+| `CHAT_SESSION_STATUS_PENDING_AGENT` | 4 | 等待客服回复，待接待列表主要状态 |
+| `CHAT_SESSION_STATUS_CLOSED` | 5 | 已结束 |
 
 ```mermaid
 stateDiagram-v2
-    [*] --> WAITING: 创建会话
+    [*] --> WAITING: OpenChatSession
     WAITING --> PENDING_AGENT: 用户发送消息
-    PENDING_AGENT --> SERVING: 坐席点击接待
+    PENDING_AGENT --> SERVING: 坐席接待
     SERVING --> PENDING_AGENT: 用户发送消息
     SERVING --> PENDING_USER: 坐席发送消息
     PENDING_USER --> PENDING_AGENT: 用户回复
@@ -223,79 +220,60 @@ stateDiagram-v2
     CLOSED --> [*]
 ```
 
+说明: 游客临时会话不写 `t_chat_session`，没有数据库状态流转；admin-ui 根据 Redis/WS 临时事件维护待接待、进行中、已结束视图。
+
 ## 主要接口和事件
 
-| 场景 | 游客 | 登录用户 |
+| 场景 | 游客 `IsGuest=true` | 登录用户 `IsGuest=false` |
 | --- | --- | --- |
-| 商户认证 | `[REST] chat-api /auth`，入参 `apiKey/apiSecret`，返回商户信息 | 同游客 |
-| 获取 sessionNo | `[WS] chat-api /ws/messages` 不带用户 token，`chat-api` 生成 `GS...` | `[WS] chat-api /ws/messages` 带用户 token，`chat-api` 调用 `ChatApp.OpenChatSession` 得到 `CS...` |
-| 发送用户消息 | 统一走 `[WS] send_user_message`，`chat-api` 生成临时 `GM...` 并广播，不落库 | 统一走 `[WS] send_user_message`，`chat-api` 调用 `ChatApp.SendUserMessage`，写消息并广播 |
-| 排队信息 | `chat-api` 广播临时 `chat.queue.updated`，携带 `ChatQueueInfo` | `services/chat` 计算队列位置，`ChatApp.GetMyChatQueueInfo` 可查询，状态变化广播 `chat.queue.updated` |
-| 进入待接待 | admin-api transient registry 从 WS 事件维护 `GS...` 临时会话，REST 列表合并返回 | admin-ui 通过 WS 通知 + REST 列表获取 |
-| 坐席接待 | `[WS] accept_chat_session` 广播 `chat.session.accepted` | `[WS] accept_chat_session` 调用 `ChatAdmin.AcceptChatSession`，成功后广播 `chat.session.accepted` |
-| 坐席回复 | admin WS `send_agent_message` 临时广播 | `ChatAdmin.SendAgentMessage` 写消息并广播 |
-| 结束会话 | `[WS] close_chat_session` 广播临时 `chat.session.closed` | `CloseChatSession` 或 `CloseMyChatSession`，并广播 `chat.session.closed` |
+| 获取 chatToken | `/chat/internal/tokens`，返回 `chatToken` | 同游客，且会尝试 `GetChatSessionByUser` 带回已有 `sessionNo` |
+| WS 建连 | `/chat/ws/messages` 必须携带 `chatToken`，不单独传 `merchantId` | 同游客 |
+| 获取 sessionNo | `GenerateChatSessionNo` 生成临时 `CS...`，不落库 | `OpenChatSession` 创建/复用 `CS...`，落库 |
+| 用户发送消息 | `SEND_USER_MESSAGE`，chat-api 生成 `GM...` 临时消息并广播 | `SEND_USER_MESSAGE`，chat-api 调 `ChatApp.SendUserMessage` |
+| 排队信息 | chat-api 发布临时 `QUEUE_UPDATED` | services/chat 发布 `QUEUE_UPDATED`，也可 `GetMyChatQueueInfo` 查询 |
+| 坐席接待 | chat-admin-api 临时发布 `SESSION_ACCEPTED` | chat-admin-api 调 `ChatAdmin.AcceptChatSession` |
+| 坐席回复 | chat-admin-api 临时发布 `MESSAGE` | chat-admin-api 调 `ChatAdmin.SendAgentMessage` |
+| 结束会话 | 临时发布 `SESSION_CLOSED`；用户 WS 断开也会发布用户离开事件 | `CloseChatSession` 或 `CloseMyChatSession` 更新数据库并广播 |
 
-## 新增 Proto 契约
+事件类型使用 `ChatEventType`:
 
-| 类型 | 位置 | 用途 |
+| enum | 值 | 方向 |
 | --- | --- | --- |
-| `ChatQueueInfo` | `proto/chat/model.proto` | 描述排队信息，包括 `position`、`waiting_count`、`estimate_wait_seconds` 和展示文案 |
-| `ChatSessionEvent` | `proto/chat/model.proto` | 描述会话事件，包括接待、关闭后的会话快照、坐席、操作者和排队信息 |
-| `ChatMessageEvent.session/session_event/queue/base` | `proto/chat/model.proto` | 扩展 Redis/WS 推送载荷，避免所有事件都只能塞进 `data` 消息 |
-| `ChatWsConnected` | `proto/chat/model.proto` | WS connected 事件结构，包含 `session_no`、`temporary`、`session` 和 `queue` |
-| `ChatWsUserMessageReq` | `proto/chat/model.proto` | 用户侧 `send_user_message` 请求结构 |
-| `ChatWsAgentMessageReq` | `proto/chat/model.proto` | 坐席侧 `send_agent_message` 请求结构 |
-| `ChatWsAcceptSessionReq` | `proto/chat/model.proto` | 坐席侧 `accept_chat_session` 请求结构 |
-| `ChatWsCloseSessionReq` | `proto/chat/model.proto` | 坐席侧 `close_chat_session` 请求结构 |
-| `ChatWsMessage` | `proto/chat/model.proto` | WS 统一 envelope，使用 `type` 区分事件，按事件填充 `connected/user_message/agent_message/accept_session/close_session/message/session/session_event/queue` |
-| `ChatApp.GetMyChatQueueInfo` | `proto/chat/chat_app.proto` | 登录用户查询自己的排队信息 |
-| `ChatAdmin.AcceptChatSession` | `proto/chat/chat_admin.proto` | 坐席确认接待持久化会话 |
-| `chat.queue.updated` | `proto/chat/notify.go` | 排队信息变化事件 |
-| `chat.session.accepted` | `proto/chat/notify.go` | 会话被坐席接待事件 |
-| `chat.session.closed` | `proto/chat/notify.go` | 会话关闭事件 |
+| `CHAT_EVENT_TYPE_MESSAGE` | 1 | Redis/WS 消息事件 |
+| `CHAT_EVENT_TYPE_SESSION_ACCEPTED` | 2 | 会话被接待 |
+| `CHAT_EVENT_TYPE_SESSION_CLOSED` | 3 | 会话关闭/用户离开 |
+| `CHAT_EVENT_TYPE_QUEUE_UPDATED` | 4 | 排队信息更新 |
+| `CHAT_EVENT_TYPE_CONNECTED` | 6 | WS connected |
+| `CHAT_EVENT_TYPE_SEND_USER_MESSAGE` | 8 | 用户发消息请求 |
+| `CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT` | 9 | 用户发消息结果 |
+| `CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE` | 10 | 坐席发消息请求 |
+| `CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT` | 11 | 坐席发消息结果 |
+| `CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION` | 12 | 坐席接待请求 |
+| `CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT` | 13 | 坐席接待结果 |
+| `CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION` | 14 | 坐席关闭请求 |
+| `CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT` | 15 | 坐席关闭结果 |
+
+## Proto 契约
+
+| 类型/RPC | 位置 | 用途 |
+| --- | --- | --- |
+| `ChatEventType` | `proto/chat/enum.proto` | WS/Redis 统一事件枚举 |
+| `ChatMessageEvent` | `proto/chat/model.proto` | Redis/WS 推送 envelope，包含 `type`、`data`、`session`、`queue` 等 |
+| `ChatQueueInfo` | `proto/chat/model.proto` | 排队信息 |
+| `ChatWsConnected` | `proto/chat/model.proto` | WS connected 结构 |
+| `ChatWsUserMessageReq` | `proto/chat/model.proto` | 用户侧消息请求结构 |
+| `ChatWsAgentMessageReq` | `proto/chat/model.proto` | 坐席侧消息请求结构 |
+| `ChatWsAcceptSessionReq` | `proto/chat/model.proto` | 坐席接待请求结构 |
+| `ChatWsCloseSessionReq` | `proto/chat/model.proto` | 坐席关闭请求结构 |
+| `ChatApp.GenerateChatSessionNo` | `proto/chat/chat_app.proto` | 为游客临时会话生成唯一 `sessionNo` |
+| `ChatApp.OpenChatSession` | `proto/chat/chat_app.proto` | 登录用户创建/复用持久会话 |
+| `ChatApp.SendUserMessage` | `proto/chat/chat_app.proto` | 登录用户发送消息 |
+| `ChatAdmin.AcceptChatSession` | `proto/chat/chat_admin.proto` | 坐席接待持久会话 |
 
 ## 当前实现注意点
 
-- `GS...` 不落库，chat-admin-api 通过 transient registry 维护临时会话快照；REST 查询待接待/进行中/已结束列表时会合并这些临时会话。
-- `CS...` 落库，因此刷新页面后仍可以通过 REST 恢复待接待/进行中/已结束列表。
-- `chat.session.accepted`、`chat.session.closed`、`chat.queue.updated` 都复用 `ChatMessageEvent` envelope，并通过 `session_event`、`queue`、`session` 字段携带结构化信息；`data` 可兼容系统消息形态。
-- 登录用户排队位置由 `services/chat` 基于待接待会话计算；游客排队信息目前是临时提示，跨实例精确排队仍需要 Redis 持久队列。
-
-## 完整性检查和整改项
-
-当前流程主链路已经覆盖:
-
-- 商户认证: `[REST] chat-api /auth`。
-- 用户身份判断: `[WS] chat-api /ws/messages` 是否携带用户 token。
-- sessionNo 获取: 游客 `GS...` 由 `chat-api` 生成，登录用户 `CS...` 由 `ChatApp.OpenChatSession` 返回。
-- 统一用户发消息: `[WS] send_user_message`。
-- 待接待通知: `chat.message` 通过 Redis Pub/Sub 推送到 admin-ui。
-- 坐席确认接待: `[WS] accept_chat_session`。
-- 接待成功通知: `chat.session.accepted` 推送到用户侧和坐席侧。
-- 排队更新通知: `chat.queue.updated` 推送到用户侧和坐席侧。
-- 结束会话通知: `chat.session.closed` 推送到用户侧和坐席侧。
-
-仍需要整改或补齐:
-
-1. admin-ui 的“结束会话”按钮还没有完全绑定接口。
-   - 现状: 页面上有按钮，但没有调用 `CloseChatSession` 或临时关闭逻辑。
-   - 建议: `CS...` 调 `[REST] chat-admin-api /sessions/:sessionNo/close`；`GS...` 发 WS 临时关闭事件并移除临时会话。
-
-2. chat-ui 的“断开”只关闭 WebSocket，不等于结束会话。
-   - 现状: 登录用户 `CS...` 断开后，会话仍然是未关闭状态。
-   - 建议: UI 区分“断开连接”和“结束会话”；结束会话时调用 `CloseMyChatSession`。
-
-3. 游客 `GS...` 会话缺少跨实例接待锁。
-   - 现状: `GS...` 不落库，chat-admin-api 只在本进程内维护 transient registry。
-   - 影响: 可能出现多个坐席抢同一个游客会话。
-   - 建议: 为 `GS...` 在 Redis 维护短期会话状态和 `agentId`，`accept_chat_session` 使用 SETNX/事务保证只能一个坐席接待。
-
-4. 游客 `GS...` 会话跨实例/重启恢复能力有限。
-   - 现状: chat-admin-api 内存 registry 可覆盖当前进程的 REST 列表合并，但进程重启后丢失。
-   - 建议: 如果游客会话也要可恢复，应在 Redis 存短期会话和消息摘要。
-
-5. 登录用户 token 的来源需要明确。
-   - 现状: `chat-api` 用自己的 JWT secret 解析用户 token。
-   - 影响: 如果接入方是 `app-mobile`，它传来的 token 必须和 `chat-api` 可解析的规则一致。
-   - 建议: 明确 token 契约；要么共享 JWT 规则，要么增加一个用户 token 校验/换取接口。
+- 当前游客临时会话也使用 `CS...`，因此不能再通过前缀判断游客；用户侧以 `chatToken.isGuest` 进入临时链路，坐席侧临时逻辑目前仍有 `GS` 前缀判断历史代码，后续需要统一成显式临时标记或 Redis 临时会话状态。
+- `chat-api` 的 `handleClose` 会在用户 WS 断开时发布 `SESSION_CLOSED` 风格的“用户已离开客服页面”事件；这和用户主动结束持久会话不是同一个语义，UI 需要区分。
+- `chat-admin-api` 对临时会话主要依赖进程内 transient registry 和 Redis Pub/Sub 事件；跨实例接待锁、重启恢复仍需要 Redis 状态补齐。
+- `CreateChatToken` 的 token TTL 默认 5 分钟，最大 30 分钟；WS 建连后是否继续存活由 WebSocket 心跳控制。
+- `QUEUE_UPDATED`、`SESSION_ACCEPTED` 这类状态提示在 chat-ui 中展示为顶部状态条，不作为普通聊天消息插入消息流。

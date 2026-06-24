@@ -367,27 +367,18 @@ export function useChatSocket() {
       CHAT_EVENT_TYPE_CONNECTED: chatWsEvents.connected,
       CHAT_EVENT_TYPE_ERROR: chatWsEvents.error,
       CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT: chatWsEvents.sendUserMessageResult,
+      "chat.message": chatWsEvents.message,
+      "chat.session.accepted": chatWsEvents.sessionAccepted,
+      "chat.session.closed": chatWsEvents.sessionClosed,
+      "chat.queue.updated": chatWsEvents.queueUpdated,
+      connected: chatWsEvents.connected,
+      error: chatWsEvents.error,
+      "send_user_message.result": chatWsEvents.sendUserMessageResult,
     });
     if (typeof type === "number") {
-      return eventMap[chatEventTypeCode(type)] || String(type);
+      return type;
     }
-    return eventMap[type] || type;
-  }
-
-  function chatEventTypeCode(value: number) {
-    const group = optionGroups.value.find((item) => item.key === "chatEventType");
-    const option = group?.options.find((item) => item.value === value);
-    if (option?.code) return option.code;
-    const fallback: Record<number, string> = {
-      1: "CHAT_EVENT_TYPE_MESSAGE",
-      2: "CHAT_EVENT_TYPE_SESSION_ACCEPTED",
-      3: "CHAT_EVENT_TYPE_SESSION_CLOSED",
-      4: "CHAT_EVENT_TYPE_QUEUE_UPDATED",
-      6: "CHAT_EVENT_TYPE_CONNECTED",
-      7: "CHAT_EVENT_TYPE_ERROR",
-      9: "CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT",
-    };
-    return fallback[value] || "";
+    return eventMap[type] || 0;
   }
 
   async function loadChatOptions() {
@@ -400,11 +391,15 @@ export function useChatSocket() {
     }
   }
 
-  function optionCodeMap(groupKey: string, fallback: Record<string, string>) {
+  function optionCodeMap(groupKey: string, fallback: Record<string, number>) {
     const group = optionGroups.value.find((item) => item.key === groupKey);
     if (!group?.options.length) return fallback;
-    return group.options.reduce<Record<string, string>>((map, item) => {
-      map[item.code] = fallback[item.code] || item.code;
+    return group.options.reduce<Record<string, number>>((map, item) => {
+      if (fallback[item.code] !== undefined) {
+        map[item.code] = fallback[item.code];
+      } else {
+        map[item.code] = item.value;
+      }
       return map;
     }, { ...fallback });
   }

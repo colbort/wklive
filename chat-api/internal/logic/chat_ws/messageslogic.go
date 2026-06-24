@@ -44,6 +44,21 @@ func NewMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Messages
 }
 
 func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesReq) {
+	if strings.TrimSpace(req.SessionNo) == "" {
+		if req.IsGuest {
+			logx.Errorf("chat guest ws sessionNo is empty, merchantId=%d userId=%d", req.MerchantId, req.UserId)
+			_ = conn.Close()
+			return
+		}
+		sessionNo, err := l.openPersistentSession(l.ctx, req.MerchantId, req.UserId, req.Nickname, req.AvatarUrl)
+		if err != nil {
+			logx.Errorf("open chat ws persistent session failed, merchantId=%d userId=%d err=%v", req.MerchantId, req.UserId, err)
+			_ = conn.Close()
+			return
+		}
+		req.SessionNo = sessionNo
+	}
+
 	client := ws.NewConnection(
 		l.svcCtx.ChatMessageHub,
 		conn,
