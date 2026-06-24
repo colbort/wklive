@@ -21,7 +21,11 @@ import {
 } from "@/api/chat";
 import { useAuthStore } from "@/stores/auth";
 import type { ChatAgent, ChatGroup } from "@/types/chat";
-import { withOptionLabels, type DisplayOptionItem } from "@/utils/options";
+import {
+  optionGroup,
+  withOptionLabels,
+  type DisplayOptionItem,
+} from "@/utils/options";
 
 const auth = useAuthStore();
 const merchantId = computed(() => auth.user?.merchantId || 0);
@@ -31,10 +35,10 @@ const enabledOptions = [
   { label: "禁用", value: 2 },
 ];
 const defaultAgentStatusOptions: DisplayOptionItem[] = [
-  { key: "chat.agent.status.offline", label: "离线", value: 1 },
-  { key: "chat.agent.status.online", label: "在线", value: 2 },
-  { key: "chat.agent.status.busy", label: "忙碌", value: 3 },
-  { key: "chat.agent.status.resting", label: "休息", value: 4 },
+  { code: "CHAT_AGENT_STATUS_OFFLINE", label: "离线", value: 1, tagType: "info" },
+  { code: "CHAT_AGENT_STATUS_ONLINE", label: "在线", value: 2, tagType: "success" },
+  { code: "CHAT_AGENT_STATUS_BUSY", label: "忙碌", value: 3, tagType: "warning" },
+  { code: "CHAT_AGENT_STATUS_RESTING", label: "休息", value: 4, tagType: "info" },
 ];
 
 const loading = ref(false);
@@ -88,8 +92,9 @@ onBeforeUnmount(() => {
 async function loadAdminOptions() {
   try {
     const resp = await loadOptions();
-    if (resp.data.agentStatuses?.length) {
-      statusOptions.value = withOptionLabels(resp.data.agentStatuses);
+    const agentStatuses = optionGroup(resp.data.options, "chatAgentStatus");
+    if (agentStatuses.length) {
+      statusOptions.value = withOptionLabels(agentStatuses);
     }
   } catch {
     statusOptions.value = defaultAgentStatusOptions;

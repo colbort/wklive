@@ -20,7 +20,11 @@ import type {
   ChatSession,
   ChatSessionEvent,
 } from "@/types/chat";
-import { withOptionLabels, type DisplayOptionItem } from "@/utils/options";
+import {
+  optionGroup,
+  withOptionLabels,
+  type DisplayOptionItem,
+} from "@/utils/options";
 
 interface WsBase {
   code: number;
@@ -58,25 +62,25 @@ const wsState = ref<"idle" | "open" | "closed">("idle");
 const changingAgentStatus = ref(false);
 const defaultAgentStatusOptions: DisplayOptionItem[] = [
   {
-    key: "chat.agent.status.offline",
+    code: "CHAT_AGENT_STATUS_OFFLINE",
     label: "离线",
     value: 1,
     tagType: "info",
   },
   {
-    key: "chat.agent.status.online",
+    code: "CHAT_AGENT_STATUS_ONLINE",
     label: "在线",
     value: 2,
     tagType: "success",
   },
   {
-    key: "chat.agent.status.busy",
+    code: "CHAT_AGENT_STATUS_BUSY",
     label: "忙碌",
     value: 3,
     tagType: "warning",
   },
   {
-    key: "chat.agent.status.resting",
+    code: "CHAT_AGENT_STATUS_RESTING",
     label: "休息",
     value: 4,
     tagType: "info",
@@ -127,6 +131,7 @@ const visibleMessages = computed(() =>
 const activeStatusMessage = computed(() => {
   const session = activeSession.value;
   if (!session?.sessionNo) return "";
+  if (activeNeedsAccept.value) return "";
   return (
     sessionStatusMessages.value[session.sessionNo] ||
     defaultSessionStatusMessage(session)
@@ -262,8 +267,9 @@ function persistWorkbenchState() {
 async function loadAdminOptions() {
   try {
     const resp = await loadOptions();
-    if (resp.data.agentStatuses?.length) {
-      agentStatusOptions.value = withOptionLabels(resp.data.agentStatuses);
+    const agentStatuses = optionGroup(resp.data.options, "chatAgentStatus");
+    if (agentStatuses.length) {
+      agentStatusOptions.value = withOptionLabels(agentStatuses);
     }
   } catch {
     agentStatusOptions.value = defaultAgentStatusOptions;

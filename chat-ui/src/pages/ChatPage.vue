@@ -135,6 +135,13 @@ onBeforeUnmount(() => {
       aria-label="chat conversation"
     >
       <div
+        v-if="chat.queueStatus.value"
+        class="queue-message"
+      >
+        {{ chat.queueStatus.value }}
+      </div>
+
+      <div
         ref="messageList"
         class="message-list"
         @scroll="handleMessageScroll"
@@ -142,13 +149,6 @@ onBeforeUnmount(() => {
         <div class="welcome-message">
           <strong>您好</strong>
           <span>请描述您遇到的问题，客服会在这里接收并回复。</span>
-        </div>
-
-        <div
-          v-if="chat.queueStatus.value"
-          class="queue-message"
-        >
-          {{ chat.queueStatus.value }}
         </div>
 
         <article

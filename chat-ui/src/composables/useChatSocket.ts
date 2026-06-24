@@ -4,10 +4,12 @@ import {
   closeMyChatSession,
   createChatSocket,
   listChatMessagesWithMeta,
+  options as loadOptions,
   sendChatSocketUserMessage,
 } from "@/api/chat";
 import type {
   ChatMessage,
+  OptionGroup,
   ChatQueueInfo,
   ChatSessionEvent,
   ChatWsEvent,
@@ -58,6 +60,7 @@ export function useChatSocket() {
   const messages = ref<ChatMessage[]>([]);
   const error = ref("");
   const queueStatus = ref("");
+  const optionGroups = ref<OptionGroup[]>([]);
   const agentAccepted = ref(false);
   const activeAgentName = ref("");
   const sessionClosed = ref(false);
@@ -87,6 +90,7 @@ export function useChatSocket() {
 
   function connect(chatToken: string) {
     manualClose = false;
+    void loadChatOptions();
     lastOptions = {
       chatToken,
     };
@@ -355,7 +359,7 @@ export function useChatSocket() {
   }
 
   function normalizeWsEventType(type: string) {
-    const eventMap: Record<string, string> = {
+    const eventMap = optionCodeMap("chatEventType", {
       CHAT_EVENT_TYPE_MESSAGE: chatWsEvents.message,
       CHAT_EVENT_TYPE_SESSION_ACCEPTED: chatWsEvents.sessionAccepted,
       CHAT_EVENT_TYPE_SESSION_CLOSED: chatWsEvents.sessionClosed,
@@ -363,8 +367,36 @@ export function useChatSocket() {
       CHAT_EVENT_TYPE_CONNECTED: chatWsEvents.connected,
       CHAT_EVENT_TYPE_ERROR: chatWsEvents.error,
       CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT: chatWsEvents.sendUserMessageResult,
-    };
+    });
     return eventMap[type] || type;
+  }
+
+  async function loadChatOptions() {
+    if (optionGroups.value.length) return;
+    try {
+      const resp = await loadOptions();
+      optionGroups.value = resp.options || [];
+    } catch {
+      optionGroups.value = [];
+    }
+  }
+
+  function optionCodeMap(groupKey: string, fallback: Record<string, string>) {
+    const group = optionGroups.value.find((item) => item.key === groupKey);
+    if (!group?.options.length) return fallback;
+    return group.options.reduce<Record<string, string>>((map, item) => {
+      map[item.code] = fallback[item.code] || item.code;
+      return map;
+    }, { ...fallback });
+  }
+
+  function optionValueMap(groupKey: string, fallback: Record<string, number>) {
+    const group = optionGroups.value.find((item) => item.key === groupKey);
+    if (!group?.options.length) return fallback;
+    return group.options.reduce<Record<string, number>>((map, item) => {
+      map[item.code] = item.value;
+      return map;
+    }, { ...fallback });
   }
 
   function sessionEvent(event: ChatWsEvent): ChatSessionEvent | undefined {
@@ -453,9 +485,14 @@ export function useChatSocket() {
 
   function normalizeSenderType(value: unknown) {
     if (typeof value === "number") return value;
-    if (value === "CHAT_SENDER_TYPE_USER") return 1;
-    if (value === "CHAT_SENDER_TYPE_AGENT") return 2;
-    if (value === "CHAT_SENDER_TYPE_SYSTEM") return 3;
+    const senderTypes = optionValueMap("chatSenderType", {
+      CHAT_SENDER_TYPE_USER: 1,
+      CHAT_SENDER_TYPE_AGENT: 2,
+      CHAT_SENDER_TYPE_SYSTEM: 3,
+    });
+    if (typeof value === "string" && senderTypes[value] !== undefined) {
+      return senderTypes[value];
+    }
     return 0;
   }
 

@@ -1,5 +1,6 @@
 import type {
   ApiResp,
+  ChatOptions,
   ChatMessage,
   ListChatMessagesParams,
   RespBase,
@@ -39,6 +40,12 @@ export function createChatToken(data: CreateChatTokenReq): Promise<ChatTokenResp
   return requestData<ChatTokenResp>("/internal/tokens", {
     method: "POST",
     body: data,
+  });
+}
+
+export function options(): Promise<ChatOptions> {
+  return requestData<ChatOptions>("/options", {
+    method: "GET",
   });
 }
 

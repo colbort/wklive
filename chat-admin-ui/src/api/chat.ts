@@ -49,14 +49,20 @@ export interface UpdateProfilePayload {
 }
 
 export interface OptionItem {
-  key: string;
-  label?: string;
+  code: string;
   value: number;
+  label?: string;
   tagType?: "success" | "info" | "warning" | "danger" | "primary";
 }
 
+export interface OptionGroup {
+  key: string;
+  label: string;
+  options: OptionItem[];
+}
+
 export interface ChatAdminOptions {
-  agentStatuses: OptionItem[];
+  options: OptionGroup[];
 }
 
 export interface ChatGroupPayload {
