@@ -672,27 +672,6 @@ function setSessionStatusMessage(sessionNo: string, message?: string) {
   };
 }
 
-function defaultSessionStatusMessage(session?: ChatSession) {
-  if (!session) return "";
-  const status = sessionStatusValue(session.status);
-  if (status === sessionStatus.closed) return "本次会话已结束";
-  if (needsAccept(session)) return "正在排队，等待坐席接待";
-  if (
-    ([
-      sessionStatus.serving,
-      sessionStatus.pendingUser,
-      sessionStatus.pendingAgent,
-    ] as number[]).includes(status)
-  ) {
-    const name =
-      Number(session.agentId || 0) === agentId.value
-        ? auth.user?.nickname || auth.user?.username || ""
-        : "";
-    return name ? `${name} 客服正在为你服务` : "客服正在为你服务";
-  }
-  return "";
-}
-
 function matchStatusFilter(session: ChatSession) {
   const status = sessionStatusValue(session.status);
   const assignedAgentId = Number(session.agentId || 0);
