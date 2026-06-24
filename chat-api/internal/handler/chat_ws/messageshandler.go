@@ -148,6 +148,9 @@ func serveWSConnection(w http.ResponseWriter, r *http.Request, svcCtx *svc.Servi
 	)
 	svcCtx.ChatMessageHub.Register(client)
 	client.SendJSON(eventConnected, connectedPayload(identity))
+	if identity.Temporary {
+		publishTransientQueueEvent(r.Context(), svcCtx, client, "正在排队，客服会尽快接入。")
+	}
 
 	go client.WritePump()
 	client.ReadPump()
