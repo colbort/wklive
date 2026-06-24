@@ -22,6 +22,10 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           ws: true,
         },
+        '/avatars': {
+          target: proxyTarget,
+          changeOrigin: true,
+        },
       },
     },
   }
