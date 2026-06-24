@@ -5,11 +5,12 @@ import {
   createCategory,
   deleteCategory,
   pageCategories,
+  pageGroups,
   updateCategory,
   type ChatCategoryPayload,
 } from "@/api/chat";
 import { useAuthStore } from "@/stores/auth";
-import type { ChatCategory } from "@/types/chat";
+import type { ChatCategory, ChatGroup } from "@/types/chat";
 
 const auth = useAuthStore();
 const merchantId = computed(() => auth.user?.merchantId || 0);
@@ -20,6 +21,7 @@ const enabledOptions = [
 ];
 const loading = ref(false);
 const categories = ref<ChatCategory[]>([]);
+const groups = ref<ChatGroup[]>([]);
 const keyword = ref("");
 const formRef = ref<FormInstance>();
 const dialogVisible = ref(false);
@@ -30,6 +32,7 @@ const categoryForm = reactive({
   parentId: 0,
   categoryCode: "",
   categoryName: "",
+  groupId: undefined as number | undefined,
   enabled: 1,
   sort: 0,
   remark: "",
@@ -54,9 +57,16 @@ async function loadCurrent(searchKeyword = keyword.value) {
         keyword: searchKeyword || undefined,
       })
     ).data;
+    groups.value = (
+      await pageGroups({ merchantId: merchantId.value, limit: 100 })
+    ).data;
   } finally {
     loading.value = false;
   }
+}
+
+function groupName(groupId: number) {
+  return groups.value.find((item) => item.id === groupId)?.groupName || "-";
 }
 
 function resetForm() {
@@ -65,6 +75,7 @@ function resetForm() {
     parentId: 0,
     categoryCode: "",
     categoryName: "",
+    groupId: undefined,
     enabled: 1,
     sort: 0,
     remark: "",
@@ -86,6 +97,7 @@ function openEdit(row: ChatCategory) {
     parentId: row.parentId,
     categoryCode: row.categoryCode,
     categoryName: row.categoryName,
+    groupId: row.groupId || undefined,
     enabled: row.enabled,
     sort: row.sort,
     remark: row.remark,
@@ -102,6 +114,7 @@ async function submitDialog() {
     parentId: categoryForm.parentId,
     categoryCode: categoryForm.categoryCode || undefined,
     categoryName: categoryForm.categoryName,
+    groupId: categoryForm.groupId,
     enabled: categoryForm.enabled,
     sort: categoryForm.sort,
     remark: categoryForm.remark,
@@ -174,6 +187,14 @@ async function removeCategory(row: ChatCategory) {
         label="分类名称"
         min-width="180"
       />
+      <el-table-column
+        label="客服分组"
+        width="140"
+      >
+        <template #default="{ row }">
+          {{ groupName(row.groupId) }}
+        </template>
+      </el-table-column>
       <el-table-column
         prop="parentId"
         label="父级 ID"
@@ -259,6 +280,20 @@ async function removeCategory(row: ChatCategory) {
           :controls="false"
           class="full-input"
         />
+      </el-form-item>
+      <el-form-item label="客服分组">
+        <el-select
+          v-model="categoryForm.groupId"
+          clearable
+          class="full-input"
+        >
+          <el-option
+            v-for="item in groups"
+            :key="item.id"
+            :label="item.groupName"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="状态">
         <el-segmented
@@ -392,6 +427,7 @@ async function removeCategory(row: ChatCategory) {
   }
 
   .merchant-category-edit-dialog .el-input-number,
+  .merchant-category-edit-dialog .el-select,
   .merchant-category-edit-dialog .el-segmented {
     width: 100%;
   }

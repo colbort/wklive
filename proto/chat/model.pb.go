@@ -2139,11 +2139,12 @@ type ChatCategory struct {
 	ParentId      int64                  `protobuf:"varint,3,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID
 	CategoryCode  string                 `protobuf:"bytes,4,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"` // 分类编码
 	CategoryName  string                 `protobuf:"bytes,5,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
-	Enabled       common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
-	Sort          int32                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`                                    // 排序,越小越靠前
-	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
-	CreateTimes   int64                  `protobuf:"varint,9,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`   // 创建时间戳(毫秒)
-	UpdateTimes   int64                  `protobuf:"varint,10,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`  // 更新时间戳(毫秒)
+	GroupId       int64                  `protobuf:"varint,6,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`               // 客服分组ID
+	Enabled       common.Enable          `protobuf:"varint,7,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
+	Sort          int32                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`                                    // 排序,越小越靠前
+	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
+	CreateTimes   int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`  // 创建时间戳(毫秒)
+	UpdateTimes   int64                  `protobuf:"varint,11,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`  // 更新时间戳(毫秒)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2211,6 +2212,13 @@ func (x *ChatCategory) GetCategoryName() string {
 		return x.CategoryName
 	}
 	return ""
+}
+
+func (x *ChatCategory) GetGroupId() int64 {
+	if x != nil {
+		return x.GroupId
+	}
+	return 0
 }
 
 func (x *ChatCategory) GetEnabled() common.Enable {
@@ -3061,20 +3069,21 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\x06remark\x18\t \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\n" +
 	" \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xc2\x02\n" +
+	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xdd\x02\n" +
 	"\fChatCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
 	"merchantId\x12\x1b\n" +
 	"\tparent_id\x18\x03 \x01(\x03R\bparentId\x12#\n" +
 	"\rcategory_code\x18\x04 \x01(\tR\fcategoryCode\x12#\n" +
-	"\rcategory_name\x18\x05 \x01(\tR\fcategoryName\x12(\n" +
-	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
-	"\x04sort\x18\a \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\b \x01(\tR\x06remark\x12!\n" +
-	"\fcreate_times\x18\t \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\n" +
-	" \x01(\x03R\vupdateTimes\"\xa0\x02\n" +
+	"\rcategory_name\x18\x05 \x01(\tR\fcategoryName\x12\x19\n" +
+	"\bgroup_id\x18\x06 \x01(\x03R\agroupId\x12(\n" +
+	"\aenabled\x18\a \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
+	"\x04sort\x18\b \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\t \x01(\tR\x06remark\x12!\n" +
+	"\fcreate_times\x18\n" +
+	" \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xa0\x02\n" +
 	"\x10ChatSatisfaction\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +

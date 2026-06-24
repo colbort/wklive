@@ -55,6 +55,7 @@ func (l *CreateChatCategoryLogic) CreateChatCategory(in *chat.CreateChatCategory
 		ParentId:     in.GetParentId(),
 		CategoryCode: categoryCode,
 		CategoryName: categoryName,
+		GroupId:      in.GetGroupId(),
 		Enabled:      enabled,
 		Sort:         int64(in.GetSort()),
 		Remark:       strings.TrimSpace(in.GetRemark()),

@@ -66,6 +66,7 @@ export interface ChatCategoryPayload {
   parentId?: number;
   categoryCode?: string;
   categoryName: string;
+  groupId?: number;
   enabled?: number;
   sort?: number;
   remark?: string;

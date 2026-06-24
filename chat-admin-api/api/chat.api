@@ -139,6 +139,7 @@ type ChatCategory {
 	parentId     int64  `json:"parentId"`
 	categoryCode string `json:"categoryCode"`
 	categoryName string `json:"categoryName"`
+	groupId      int64  `json:"groupId"`
 	enabled      int64  `json:"enabled"`
 	sort         int64  `json:"sort"`
 	remark       string `json:"remark"`
@@ -430,6 +431,7 @@ type CreateChatCategoryReq {
 	parentId     int64  `json:"parentId,optional"`
 	categoryCode string `json:"categoryCode"`
 	categoryName string `json:"categoryName"`
+	groupId      int64  `json:"groupId,optional"`
 	enabled      int64  `json:"enabled,optional"`
 	sort         int64  `json:"sort,optional"`
 	remark       string `json:"remark,optional"`
@@ -439,6 +441,7 @@ type UpdateChatCategoryReq {
 	id           int64  `path:"id"`
 	parentId     int64  `json:"parentId,optional"`
 	categoryName string `json:"categoryName"`
+	groupId      int64  `json:"groupId,optional"`
 	enabled      int64  `json:"enabled,optional"`
 	sort         int64  `json:"sort,optional"`
 	remark       string `json:"remark,optional"`

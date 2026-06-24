@@ -260,6 +260,7 @@ func toProtoChatCategory(data *models.TChatCategory) *chat.ChatCategory {
 		ParentId:     data.ParentId,
 		CategoryCode: data.CategoryCode,
 		CategoryName: data.CategoryName,
+		GroupId:      data.GroupId,
 		Enabled:      common.Enable(data.Enabled),
 		Sort:         int32(data.Sort),
 		Remark:       data.Remark,

@@ -2031,9 +2031,10 @@ type CreateChatCategoryReq struct {
 	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID
 	CategoryCode  string                 `protobuf:"bytes,2,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"` // 分类编码
 	CategoryName  string                 `protobuf:"bytes,3,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
-	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
-	Sort          int32                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`                                    // 排序
-	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
+	GroupId       int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`               // 客服分组ID
+	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
+	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                                    // 排序
+	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2089,6 +2090,13 @@ func (x *CreateChatCategoryReq) GetCategoryName() string {
 	return ""
 }
 
+func (x *CreateChatCategoryReq) GetGroupId() int64 {
+	if x != nil {
+		return x.GroupId
+	}
+	return 0
+}
+
 func (x *CreateChatCategoryReq) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
@@ -2115,9 +2123,10 @@ type UpdateChatCategoryReq struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                        // 主键ID
 	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`            // 父级分类ID
 	CategoryName  string                 `protobuf:"bytes,3,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"` // 分类名称
-	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
-	Sort          int32                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`                                    // 排序
-	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
+	GroupId       int64                  `protobuf:"varint,4,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`               // 客服分组ID
+	Enabled       common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`           // 启用状态
+	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                                    // 排序
+	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                 // 备注
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2171,6 +2180,13 @@ func (x *UpdateChatCategoryReq) GetCategoryName() string {
 		return x.CategoryName
 	}
 	return ""
+}
+
+func (x *UpdateChatCategoryReq) GetGroupId() int64 {
+	if x != nil {
+		return x.GroupId
+	}
+	return 0
 }
 
 func (x *UpdateChatCategoryReq) GetEnabled() common.Enable {
@@ -3988,21 +4004,23 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\vcategory_id\x18\x02 \x01(\x03R\n" +
 	"categoryId\")\n" +
 	"\x17DeleteChatQuickReplyReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xd4\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xef\x01\n" +
 	"\x15CreateChatCategoryReq\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12#\n" +
 	"\rcategory_code\x18\x02 \x01(\tR\fcategoryCode\x12#\n" +
-	"\rcategory_name\x18\x03 \x01(\tR\fcategoryName\x12(\n" +
-	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
-	"\x04sort\x18\x05 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\x06 \x01(\tR\x06remark\"\xbf\x01\n" +
+	"\rcategory_name\x18\x03 \x01(\tR\fcategoryName\x12\x19\n" +
+	"\bgroup_id\x18\x04 \x01(\x03R\agroupId\x12(\n" +
+	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
+	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\a \x01(\tR\x06remark\"\xda\x01\n" +
 	"\x15UpdateChatCategoryReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12#\n" +
-	"\rcategory_name\x18\x03 \x01(\tR\fcategoryName\x12(\n" +
-	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
-	"\x04sort\x18\x05 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\x06 \x01(\tR\x06remark\"$\n" +
+	"\rcategory_name\x18\x03 \x01(\tR\fcategoryName\x12\x19\n" +
+	"\bgroup_id\x18\x04 \x01(\x03R\agroupId\x12(\n" +
+	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
+	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\a \x01(\tR\x06remark\"$\n" +
 	"\x12GetChatCategoryReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\xe7\x01\n" +
 	"\x15PageChatCategoriesReq\x12\x1b\n" +

@@ -58,6 +58,7 @@ func (l *UpdateChatCategoryLogic) UpdateChatCategory(in *chat.UpdateChatCategory
 	}
 	data.ParentId = in.GetParentId()
 	data.CategoryName = categoryName
+	data.GroupId = in.GetGroupId()
 	data.Enabled = enabled
 	data.Sort = int64(in.GetSort())
 	data.Remark = strings.TrimSpace(in.GetRemark())

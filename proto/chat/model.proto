@@ -267,11 +267,12 @@ message ChatCategory {
   int64 parent_id = 3;       // 父级分类ID
   string category_code = 4;  // 分类编码
   string category_name = 5;  // 分类名称
-  common.Enable enabled = 6; // 启用状态
-  int32 sort = 7;            // 排序,越小越靠前
-  string remark = 8;         // 备注
-  int64 create_times = 9;    // 创建时间戳(毫秒)
-  int64 update_times = 10;   // 更新时间戳(毫秒)
+  int64 group_id = 6;        // 客服分组ID
+  common.Enable enabled = 7; // 启用状态
+  int32 sort = 8;            // 排序,越小越靠前
+  string remark = 9;         // 备注
+  int64 create_times = 10;   // 创建时间戳(毫秒)
+  int64 update_times = 11;   // 更新时间戳(毫秒)
 }
 
 // 客服会话满意度评价

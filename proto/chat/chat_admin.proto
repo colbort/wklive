@@ -344,18 +344,20 @@ message CreateChatCategoryReq {
   int64 parent_id = 1;       // 父级分类ID
   string category_code = 2;  // 分类编码
   string category_name = 3;  // 分类名称
-  common.Enable enabled = 4; // 启用状态
-  int32 sort = 5;            // 排序
-  string remark = 6;         // 备注
+  int64 group_id = 4;        // 客服分组ID
+  common.Enable enabled = 5; // 启用状态
+  int32 sort = 6;            // 排序
+  string remark = 7;         // 备注
 }
 
 message UpdateChatCategoryReq {
   int64 id = 1;              // 主键ID
   int64 parent_id = 2;       // 父级分类ID
   string category_name = 3;  // 分类名称
-  common.Enable enabled = 4; // 启用状态
-  int32 sort = 5;            // 排序
-  string remark = 6;         // 备注
+  int64 group_id = 4;        // 客服分组ID
+  common.Enable enabled = 5; // 启用状态
+  int32 sort = 6;            // 排序
+  string remark = 7;         // 备注
 }
 
 message GetChatCategoryReq {

@@ -77,6 +77,7 @@ type ChatCategory struct {
 	ParentId     int64  `json:"parentId"`
 	CategoryCode string `json:"categoryCode"`
 	CategoryName string `json:"categoryName"`
+	GroupId      int64  `json:"groupId"`
 	Enabled      int64  `json:"enabled"`
 	Sort         int64  `json:"sort"`
 	Remark       string `json:"remark"`
@@ -262,6 +263,7 @@ type CreateChatCategoryReq struct {
 	ParentId     int64  `json:"parentId,optional"`
 	CategoryCode string `json:"categoryCode"`
 	CategoryName string `json:"categoryName"`
+	GroupId      int64  `json:"groupId,optional"`
 	Enabled      int64  `json:"enabled,optional"`
 	Sort         int64  `json:"sort,optional"`
 	Remark       string `json:"remark,optional"`
@@ -537,6 +539,7 @@ type UpdateChatCategoryReq struct {
 	Id           int64  `path:"id"`
 	ParentId     int64  `json:"parentId,optional"`
 	CategoryName string `json:"categoryName"`
+	GroupId      int64  `json:"groupId,optional"`
 	Enabled      int64  `json:"enabled,optional"`
 	Sort         int64  `json:"sort,optional"`
 	Remark       string `json:"remark,optional"`
