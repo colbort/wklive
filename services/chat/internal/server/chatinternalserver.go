@@ -23,13 +23,7 @@ func NewChatInternalServer(svcCtx *svc.ServiceContext) *ChatInternalServer {
 	}
 }
 
-// 创建系统会话
-func (s *ChatInternalServer) CreateSystemChatSession(ctx context.Context, in *chat.CreateSystemChatSessionReq) (*chat.InternalChatSessionResp, error) {
-	l := logic.NewCreateSystemChatSessionLogic(ctx, s.svcCtx)
-	return l.CreateSystemChatSession(in)
-}
-
-// 发送系统消息
+// 发送系统消息；session_no 为空时按 merchant_id + user_id 创建/复用未关闭会话
 func (s *ChatInternalServer) SendSystemMessage(ctx context.Context, in *chat.SendSystemMessageReq) (*chat.InternalChatMessageResp, error) {
 	l := logic.NewSendSystemMessageLogic(ctx, s.svcCtx)
 	return l.SendSystemMessage(in)
@@ -41,7 +35,7 @@ func (s *ChatInternalServer) GetOpenChatSession(ctx context.Context, in *chat.Ge
 	return l.GetOpenChatSession(in)
 }
 
-// 同步客服商户用户
+// 同步客服商户主账号
 func (s *ChatInternalServer) SyncChatMerchantUser(ctx context.Context, in *chat.SyncChatMerchantUserReq) (*chat.SyncChatMerchantUserResp, error) {
 	l := logic.NewSyncChatMerchantUserLogic(ctx, s.svcCtx)
 	return l.SyncChatMerchantUser(in)

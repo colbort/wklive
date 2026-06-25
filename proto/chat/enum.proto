@@ -320,3 +320,43 @@ enum ChatSyncAction {
   // 删除 / 禁用
   CHAT_SYNC_ACTION_DELETE = 2;
 }
+
+enum ChatAdminEventType {
+  CHAT_ADMIN_EVENT_TYPE_UNKNOWN = 0;
+
+  // 坐席上线
+  CHAT_ADMIN_EVENT_TYPE_AGENT_ONLINE = 1;
+
+  // 坐席下线
+  CHAT_ADMIN_EVENT_TYPE_AGENT_OFFLINE = 2;
+
+  // 坐席状态变化
+  CHAT_ADMIN_EVENT_TYPE_AGENT_STATUS_CHANGE = 3;
+
+  // 新用户进入待接待
+  CHAT_ADMIN_EVENT_TYPE_USER_JOIN = 4;
+
+  // 用户离开
+  CHAT_ADMIN_EVENT_TYPE_USER_LEAVE = 5;
+
+  // 会话被接待
+  CHAT_ADMIN_EVENT_TYPE_SESSION_ACCEPTED = 6;
+
+  // 会话关闭
+  CHAT_ADMIN_EVENT_TYPE_SESSION_CLOSE = 7;
+
+  // 用户消息，推送给坐席端
+  CHAT_ADMIN_EVENT_TYPE_USER_MESSAGE = 8;
+
+  // 客服消息，推送给其他后台端同步状态
+  CHAT_ADMIN_EVENT_TYPE_AGENT_MESSAGE = 9;
+
+  // 排队信息变化
+  CHAT_ADMIN_EVENT_TYPE_QUEUE_UPDATE = 10;
+
+  // 会话转接
+  CHAT_ADMIN_EVENT_TYPE_SESSION_TRANSFER = 11;
+
+  // 错误事件
+  CHAT_ADMIN_EVENT_TYPE_ERROR = 12;
+}

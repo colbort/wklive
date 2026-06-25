@@ -19,10 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ChatInternal_CreateSystemChatSession_FullMethodName = "/chat.ChatInternal/CreateSystemChatSession"
-	ChatInternal_SendSystemMessage_FullMethodName       = "/chat.ChatInternal/SendSystemMessage"
-	ChatInternal_GetOpenChatSession_FullMethodName      = "/chat.ChatInternal/GetOpenChatSession"
-	ChatInternal_SyncChatMerchantUser_FullMethodName    = "/chat.ChatInternal/SyncChatMerchantUser"
+	ChatInternal_SendSystemMessage_FullMethodName    = "/chat.ChatInternal/SendSystemMessage"
+	ChatInternal_GetOpenChatSession_FullMethodName   = "/chat.ChatInternal/GetOpenChatSession"
+	ChatInternal_SyncChatMerchantUser_FullMethodName = "/chat.ChatInternal/SyncChatMerchantUser"
 )
 
 // ChatInternalClient is the client API for ChatInternal service.
@@ -30,14 +29,13 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 内部客服服务
+// 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
 type ChatInternalClient interface {
-	// 创建系统会话
-	CreateSystemChatSession(ctx context.Context, in *CreateSystemChatSessionReq, opts ...grpc.CallOption) (*InternalChatSessionResp, error)
-	// 发送系统消息
+	// 发送系统消息；session_no 为空时按 merchant_id + user_id 创建/复用未关闭会话
 	SendSystemMessage(ctx context.Context, in *SendSystemMessageReq, opts ...grpc.CallOption) (*InternalChatMessageResp, error)
 	// 查询用户未关闭会话
 	GetOpenChatSession(ctx context.Context, in *GetOpenChatSessionReq, opts ...grpc.CallOption) (*InternalChatSessionResp, error)
-	// 同步客服商户用户
+	// 同步客服商户主账号
 	SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error)
 }
 
@@ -47,16 +45,6 @@ type chatInternalClient struct {
 
 func NewChatInternalClient(cc grpc.ClientConnInterface) ChatInternalClient {
 	return &chatInternalClient{cc}
-}
-
-func (c *chatInternalClient) CreateSystemChatSession(ctx context.Context, in *CreateSystemChatSessionReq, opts ...grpc.CallOption) (*InternalChatSessionResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(InternalChatSessionResp)
-	err := c.cc.Invoke(ctx, ChatInternal_CreateSystemChatSession_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *chatInternalClient) SendSystemMessage(ctx context.Context, in *SendSystemMessageReq, opts ...grpc.CallOption) (*InternalChatMessageResp, error) {
@@ -94,14 +82,13 @@ func (c *chatInternalClient) SyncChatMerchantUser(ctx context.Context, in *SyncC
 // for forward compatibility.
 //
 // 内部客服服务
+// 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
 type ChatInternalServer interface {
-	// 创建系统会话
-	CreateSystemChatSession(context.Context, *CreateSystemChatSessionReq) (*InternalChatSessionResp, error)
-	// 发送系统消息
+	// 发送系统消息；session_no 为空时按 merchant_id + user_id 创建/复用未关闭会话
 	SendSystemMessage(context.Context, *SendSystemMessageReq) (*InternalChatMessageResp, error)
 	// 查询用户未关闭会话
 	GetOpenChatSession(context.Context, *GetOpenChatSessionReq) (*InternalChatSessionResp, error)
-	// 同步客服商户用户
+	// 同步客服商户主账号
 	SyncChatMerchantUser(context.Context, *SyncChatMerchantUserReq) (*SyncChatMerchantUserResp, error)
 	mustEmbedUnimplementedChatInternalServer()
 }
@@ -113,9 +100,6 @@ type ChatInternalServer interface {
 // pointer dereference when methods are called.
 type UnimplementedChatInternalServer struct{}
 
-func (UnimplementedChatInternalServer) CreateSystemChatSession(context.Context, *CreateSystemChatSessionReq) (*InternalChatSessionResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method CreateSystemChatSession not implemented")
-}
 func (UnimplementedChatInternalServer) SendSystemMessage(context.Context, *SendSystemMessageReq) (*InternalChatMessageResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendSystemMessage not implemented")
 }
@@ -144,24 +128,6 @@ func RegisterChatInternalServer(s grpc.ServiceRegistrar, srv ChatInternalServer)
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&ChatInternal_ServiceDesc, srv)
-}
-
-func _ChatInternal_CreateSystemChatSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateSystemChatSessionReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatInternalServer).CreateSystemChatSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatInternal_CreateSystemChatSession_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatInternalServer).CreateSystemChatSession(ctx, req.(*CreateSystemChatSessionReq))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _ChatInternal_SendSystemMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -225,10 +191,6 @@ var ChatInternal_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.ChatInternal",
 	HandlerType: (*ChatInternalServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "CreateSystemChatSession",
-			Handler:    _ChatInternal_CreateSystemChatSession_Handler,
-		},
 		{
 			MethodName: "SendSystemMessage",
 			Handler:    _ChatInternal_SendSystemMessage_Handler,

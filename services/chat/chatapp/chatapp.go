@@ -15,8 +15,10 @@ import (
 
 type (
 	AppChatMessageResp        = chat.AppChatMessageResp
+	AppChatSatisfactionResp   = chat.AppChatSatisfactionResp
 	AppChatSessionResp        = chat.AppChatSessionResp
 	AppMarkMessagesReadResp   = chat.AppMarkMessagesReadResp
+	AuthChatMerchantData      = chat.AuthChatMerchantData
 	AuthChatMerchantReq       = chat.AuthChatMerchantReq
 	AuthChatMerchantResp      = chat.AuthChatMerchantResp
 	ChatQueueInfoResp         = chat.ChatQueueInfoResp
@@ -33,18 +35,15 @@ type (
 	MarkUserMessagesReadReq   = chat.MarkUserMessagesReadReq
 	OpenChatSessionReq        = chat.OpenChatSessionReq
 	SendUserMessageReq        = chat.SendUserMessageReq
+	SubmitChatSatisfactionReq = chat.SubmitChatSatisfactionReq
 
 	ChatApp interface {
 		// 商户接入鉴权
 		AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error)
-		// 创建或获取当前会话
+		// 创建或获取当前未关闭会话；服务端负责生成 session_no
 		OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 		// 生成会话编号
 		GenerateChatSessionNo(ctx context.Context, in *GenerateChatSessionNoReq, opts ...grpc.CallOption) (*GenerateChatSessionNoResp, error)
-		// 查询我的会话列表
-		ListMyChatSessions(ctx context.Context, in *ListMyChatSessionsReq, opts ...grpc.CallOption) (*ListChatSessionsResp, error)
-		// 查询会话详情
-		GetMyChatSession(ctx context.Context, in *GetMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 		// 按商户和用户查询会话
 		GetChatSessionByUser(ctx context.Context, in *GetChatSessionByUserReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 		// 查询我的排队信息
@@ -57,6 +56,8 @@ type (
 		MarkUserMessagesRead(ctx context.Context, in *MarkUserMessagesReadReq, opts ...grpc.CallOption) (*AppMarkMessagesReadResp, error)
 		// 关闭我的会话
 		CloseMyChatSession(ctx context.Context, in *CloseMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+		// 提交会话评价
+		SubmitChatSatisfaction(ctx context.Context, in *SubmitChatSatisfactionReq, opts ...grpc.CallOption) (*AppChatSatisfactionResp, error)
 	}
 
 	defaultChatApp struct {
@@ -76,7 +77,7 @@ func (m *defaultChatApp) AuthChatMerchant(ctx context.Context, in *AuthChatMerch
 	return client.AuthChatMerchant(ctx, in, opts...)
 }
 
-// 创建或获取当前会话
+// 创建或获取当前未关闭会话；服务端负责生成 session_no
 func (m *defaultChatApp) OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.OpenChatSession(ctx, in, opts...)
@@ -86,18 +87,6 @@ func (m *defaultChatApp) OpenChatSession(ctx context.Context, in *OpenChatSessio
 func (m *defaultChatApp) GenerateChatSessionNo(ctx context.Context, in *GenerateChatSessionNoReq, opts ...grpc.CallOption) (*GenerateChatSessionNoResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.GenerateChatSessionNo(ctx, in, opts...)
-}
-
-// 查询我的会话列表
-func (m *defaultChatApp) ListMyChatSessions(ctx context.Context, in *ListMyChatSessionsReq, opts ...grpc.CallOption) (*ListChatSessionsResp, error) {
-	client := chat.NewChatAppClient(m.cli.Conn())
-	return client.ListMyChatSessions(ctx, in, opts...)
-}
-
-// 查询会话详情
-func (m *defaultChatApp) GetMyChatSession(ctx context.Context, in *GetMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
-	client := chat.NewChatAppClient(m.cli.Conn())
-	return client.GetMyChatSession(ctx, in, opts...)
 }
 
 // 按商户和用户查询会话
@@ -134,4 +123,10 @@ func (m *defaultChatApp) MarkUserMessagesRead(ctx context.Context, in *MarkUserM
 func (m *defaultChatApp) CloseMyChatSession(ctx context.Context, in *CloseMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.CloseMyChatSession(ctx, in, opts...)
+}
+
+// 提交会话评价
+func (m *defaultChatApp) SubmitChatSatisfaction(ctx context.Context, in *SubmitChatSatisfactionReq, opts ...grpc.CallOption) (*AppChatSatisfactionResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.SubmitChatSatisfaction(ctx, in, opts...)
 }

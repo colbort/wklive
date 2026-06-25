@@ -29,7 +29,7 @@ func (s *ChatAppServer) AuthChatMerchant(ctx context.Context, in *chat.AuthChatM
 	return l.AuthChatMerchant(in)
 }
 
-// 创建或获取当前会话
+// 创建或获取当前未关闭会话；服务端负责生成 session_no
 func (s *ChatAppServer) OpenChatSession(ctx context.Context, in *chat.OpenChatSessionReq) (*chat.AppChatSessionResp, error) {
 	l := logic.NewOpenChatSessionLogic(ctx, s.svcCtx)
 	return l.OpenChatSession(in)
@@ -39,18 +39,6 @@ func (s *ChatAppServer) OpenChatSession(ctx context.Context, in *chat.OpenChatSe
 func (s *ChatAppServer) GenerateChatSessionNo(ctx context.Context, in *chat.GenerateChatSessionNoReq) (*chat.GenerateChatSessionNoResp, error) {
 	l := logic.NewGenerateChatSessionNoLogic(ctx, s.svcCtx)
 	return l.GenerateChatSessionNo(in)
-}
-
-// 查询我的会话列表
-func (s *ChatAppServer) ListMyChatSessions(ctx context.Context, in *chat.ListMyChatSessionsReq) (*chat.ListChatSessionsResp, error) {
-	l := logic.NewListMyChatSessionsLogic(ctx, s.svcCtx)
-	return l.ListMyChatSessions(in)
-}
-
-// 查询会话详情
-func (s *ChatAppServer) GetMyChatSession(ctx context.Context, in *chat.GetMyChatSessionReq) (*chat.AppChatSessionResp, error) {
-	l := logic.NewGetMyChatSessionLogic(ctx, s.svcCtx)
-	return l.GetMyChatSession(in)
 }
 
 // 按商户和用户查询会话
@@ -87,4 +75,10 @@ func (s *ChatAppServer) MarkUserMessagesRead(ctx context.Context, in *chat.MarkU
 func (s *ChatAppServer) CloseMyChatSession(ctx context.Context, in *chat.CloseMyChatSessionReq) (*chat.AppChatSessionResp, error) {
 	l := logic.NewCloseMyChatSessionLogic(ctx, s.svcCtx)
 	return l.CloseMyChatSession(in)
+}
+
+// 提交会话评价
+func (s *ChatAppServer) SubmitChatSatisfaction(ctx context.Context, in *chat.SubmitChatSatisfactionReq) (*chat.AppChatSatisfactionResp, error) {
+	l := logic.NewSubmitChatSatisfactionLogic(ctx, s.svcCtx)
+	return l.SubmitChatSatisfaction(in)
 }

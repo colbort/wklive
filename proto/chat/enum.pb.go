@@ -878,6 +878,97 @@ func (ChatSyncAction) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{11}
 }
 
+type ChatAdminEventType int32
+
+const (
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_UNKNOWN ChatAdminEventType = 0
+	// 坐席上线
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_AGENT_ONLINE ChatAdminEventType = 1
+	// 坐席下线
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_AGENT_OFFLINE ChatAdminEventType = 2
+	// 坐席状态变化
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_AGENT_STATUS_CHANGE ChatAdminEventType = 3
+	// 新用户进入待接待
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_USER_JOIN ChatAdminEventType = 4
+	// 用户离开
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_USER_LEAVE ChatAdminEventType = 5
+	// 会话被接待
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_SESSION_ACCEPTED ChatAdminEventType = 6
+	// 会话关闭
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_SESSION_CLOSE ChatAdminEventType = 7
+	// 用户消息，推送给坐席端
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_USER_MESSAGE ChatAdminEventType = 8
+	// 客服消息，推送给其他后台端同步状态
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_AGENT_MESSAGE ChatAdminEventType = 9
+	// 排队信息变化
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_QUEUE_UPDATE ChatAdminEventType = 10
+	// 会话转接
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_SESSION_TRANSFER ChatAdminEventType = 11
+	// 错误事件
+	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_ERROR ChatAdminEventType = 12
+)
+
+// Enum value maps for ChatAdminEventType.
+var (
+	ChatAdminEventType_name = map[int32]string{
+		0:  "CHAT_ADMIN_EVENT_TYPE_UNKNOWN",
+		1:  "CHAT_ADMIN_EVENT_TYPE_AGENT_ONLINE",
+		2:  "CHAT_ADMIN_EVENT_TYPE_AGENT_OFFLINE",
+		3:  "CHAT_ADMIN_EVENT_TYPE_AGENT_STATUS_CHANGE",
+		4:  "CHAT_ADMIN_EVENT_TYPE_USER_JOIN",
+		5:  "CHAT_ADMIN_EVENT_TYPE_USER_LEAVE",
+		6:  "CHAT_ADMIN_EVENT_TYPE_SESSION_ACCEPTED",
+		7:  "CHAT_ADMIN_EVENT_TYPE_SESSION_CLOSE",
+		8:  "CHAT_ADMIN_EVENT_TYPE_USER_MESSAGE",
+		9:  "CHAT_ADMIN_EVENT_TYPE_AGENT_MESSAGE",
+		10: "CHAT_ADMIN_EVENT_TYPE_QUEUE_UPDATE",
+		11: "CHAT_ADMIN_EVENT_TYPE_SESSION_TRANSFER",
+		12: "CHAT_ADMIN_EVENT_TYPE_ERROR",
+	}
+	ChatAdminEventType_value = map[string]int32{
+		"CHAT_ADMIN_EVENT_TYPE_UNKNOWN":             0,
+		"CHAT_ADMIN_EVENT_TYPE_AGENT_ONLINE":        1,
+		"CHAT_ADMIN_EVENT_TYPE_AGENT_OFFLINE":       2,
+		"CHAT_ADMIN_EVENT_TYPE_AGENT_STATUS_CHANGE": 3,
+		"CHAT_ADMIN_EVENT_TYPE_USER_JOIN":           4,
+		"CHAT_ADMIN_EVENT_TYPE_USER_LEAVE":          5,
+		"CHAT_ADMIN_EVENT_TYPE_SESSION_ACCEPTED":    6,
+		"CHAT_ADMIN_EVENT_TYPE_SESSION_CLOSE":       7,
+		"CHAT_ADMIN_EVENT_TYPE_USER_MESSAGE":        8,
+		"CHAT_ADMIN_EVENT_TYPE_AGENT_MESSAGE":       9,
+		"CHAT_ADMIN_EVENT_TYPE_QUEUE_UPDATE":        10,
+		"CHAT_ADMIN_EVENT_TYPE_SESSION_TRANSFER":    11,
+		"CHAT_ADMIN_EVENT_TYPE_ERROR":               12,
+	}
+)
+
+func (x ChatAdminEventType) Enum() *ChatAdminEventType {
+	p := new(ChatAdminEventType)
+	*p = x
+	return p
+}
+
+func (x ChatAdminEventType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ChatAdminEventType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_chat_enum_proto_enumTypes[12].Descriptor()
+}
+
+func (ChatAdminEventType) Type() protoreflect.EnumType {
+	return &file_proto_chat_enum_proto_enumTypes[12]
+}
+
+func (x ChatAdminEventType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ChatAdminEventType.Descriptor instead.
+func (ChatAdminEventType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{12}
+}
+
 var File_proto_chat_enum_proto protoreflect.FileDescriptor
 
 const file_proto_chat_enum_proto_rawDesc = "" +
@@ -986,7 +1077,22 @@ const file_proto_chat_enum_proto_rawDesc = "" +
 	"\x0eChatSyncAction\x12\x1c\n" +
 	"\x18CHAT_SYNC_ACTION_UNKNOWN\x10\x00\x12\x1b\n" +
 	"\x17CHAT_SYNC_ACTION_UPSERT\x10\x01\x12\x1b\n" +
-	"\x17CHAT_SYNC_ACTION_DELETE\x10\x02B\x18Z\x16wklive/proto/chat;chatb\x06proto3"
+	"\x17CHAT_SYNC_ACTION_DELETE\x10\x02*\x9d\x04\n" +
+	"\x12ChatAdminEventType\x12!\n" +
+	"\x1dCHAT_ADMIN_EVENT_TYPE_UNKNOWN\x10\x00\x12&\n" +
+	"\"CHAT_ADMIN_EVENT_TYPE_AGENT_ONLINE\x10\x01\x12'\n" +
+	"#CHAT_ADMIN_EVENT_TYPE_AGENT_OFFLINE\x10\x02\x12-\n" +
+	")CHAT_ADMIN_EVENT_TYPE_AGENT_STATUS_CHANGE\x10\x03\x12#\n" +
+	"\x1fCHAT_ADMIN_EVENT_TYPE_USER_JOIN\x10\x04\x12$\n" +
+	" CHAT_ADMIN_EVENT_TYPE_USER_LEAVE\x10\x05\x12*\n" +
+	"&CHAT_ADMIN_EVENT_TYPE_SESSION_ACCEPTED\x10\x06\x12'\n" +
+	"#CHAT_ADMIN_EVENT_TYPE_SESSION_CLOSE\x10\a\x12&\n" +
+	"\"CHAT_ADMIN_EVENT_TYPE_USER_MESSAGE\x10\b\x12'\n" +
+	"#CHAT_ADMIN_EVENT_TYPE_AGENT_MESSAGE\x10\t\x12&\n" +
+	"\"CHAT_ADMIN_EVENT_TYPE_QUEUE_UPDATE\x10\n" +
+	"\x12*\n" +
+	"&CHAT_ADMIN_EVENT_TYPE_SESSION_TRANSFER\x10\v\x12\x1f\n" +
+	"\x1bCHAT_ADMIN_EVENT_TYPE_ERROR\x10\fB\x18Z\x16wklive/proto/chat;chatb\x06proto3"
 
 var (
 	file_proto_chat_enum_proto_rawDescOnce sync.Once
@@ -1000,7 +1106,7 @@ func file_proto_chat_enum_proto_rawDescGZIP() []byte {
 	return file_proto_chat_enum_proto_rawDescData
 }
 
-var file_proto_chat_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 12)
+var file_proto_chat_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 13)
 var file_proto_chat_enum_proto_goTypes = []any{
 	(ChatSessionSource)(0),      // 0: chat.ChatSessionSource
 	(ChatSessionStatus)(0),      // 1: chat.ChatSessionStatus
@@ -1014,6 +1120,7 @@ var file_proto_chat_enum_proto_goTypes = []any{
 	(ChatMessageStatus)(0),      // 9: chat.ChatMessageStatus
 	(ChatUserType)(0),           // 10: chat.ChatUserType
 	(ChatSyncAction)(0),         // 11: chat.ChatSyncAction
+	(ChatAdminEventType)(0),     // 12: chat.ChatAdminEventType
 }
 var file_proto_chat_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -1033,7 +1140,7 @@ func file_proto_chat_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_enum_proto_rawDesc), len(file_proto_chat_enum_proto_rawDesc)),
-			NumEnums:      12,
+			NumEnums:      13,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

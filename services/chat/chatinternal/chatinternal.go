@@ -14,22 +14,19 @@ import (
 )
 
 type (
-	CreateSystemChatSessionReq = chat.CreateSystemChatSessionReq
-	GetOpenChatSessionReq      = chat.GetOpenChatSessionReq
-	InternalChatMessageResp    = chat.InternalChatMessageResp
-	InternalChatSessionResp    = chat.InternalChatSessionResp
-	SendSystemMessageReq       = chat.SendSystemMessageReq
-	SyncChatMerchantUserReq    = chat.SyncChatMerchantUserReq
-	SyncChatMerchantUserResp   = chat.SyncChatMerchantUserResp
+	GetOpenChatSessionReq    = chat.GetOpenChatSessionReq
+	InternalChatMessageResp  = chat.InternalChatMessageResp
+	InternalChatSessionResp  = chat.InternalChatSessionResp
+	SendSystemMessageReq     = chat.SendSystemMessageReq
+	SyncChatMerchantUserReq  = chat.SyncChatMerchantUserReq
+	SyncChatMerchantUserResp = chat.SyncChatMerchantUserResp
 
 	ChatInternal interface {
-		// 创建系统会话
-		CreateSystemChatSession(ctx context.Context, in *CreateSystemChatSessionReq, opts ...grpc.CallOption) (*InternalChatSessionResp, error)
-		// 发送系统消息
+		// 发送系统消息；session_no 为空时按 merchant_id + user_id 创建/复用未关闭会话
 		SendSystemMessage(ctx context.Context, in *SendSystemMessageReq, opts ...grpc.CallOption) (*InternalChatMessageResp, error)
 		// 查询用户未关闭会话
 		GetOpenChatSession(ctx context.Context, in *GetOpenChatSessionReq, opts ...grpc.CallOption) (*InternalChatSessionResp, error)
-		// 同步客服商户用户
+		// 同步客服商户主账号
 		SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error)
 	}
 
@@ -44,13 +41,7 @@ func NewChatInternal(cli zrpc.Client) ChatInternal {
 	}
 }
 
-// 创建系统会话
-func (m *defaultChatInternal) CreateSystemChatSession(ctx context.Context, in *CreateSystemChatSessionReq, opts ...grpc.CallOption) (*InternalChatSessionResp, error) {
-	client := chat.NewChatInternalClient(m.cli.Conn())
-	return client.CreateSystemChatSession(ctx, in, opts...)
-}
-
-// 发送系统消息
+// 发送系统消息；session_no 为空时按 merchant_id + user_id 创建/复用未关闭会话
 func (m *defaultChatInternal) SendSystemMessage(ctx context.Context, in *SendSystemMessageReq, opts ...grpc.CallOption) (*InternalChatMessageResp, error) {
 	client := chat.NewChatInternalClient(m.cli.Conn())
 	return client.SendSystemMessage(ctx, in, opts...)
@@ -62,7 +53,7 @@ func (m *defaultChatInternal) GetOpenChatSession(ctx context.Context, in *GetOpe
 	return client.GetOpenChatSession(ctx, in, opts...)
 }
 
-// 同步客服商户用户
+// 同步客服商户主账号
 func (m *defaultChatInternal) SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error) {
 	client := chat.NewChatInternalClient(m.cli.Conn())
 	return client.SyncChatMerchantUser(ctx, in, opts...)

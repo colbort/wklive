@@ -338,67 +338,66 @@ message ChatWsConnected {
 // 用户侧WebSocket发送消息
 message ChatWsUserMessageReq {
   string session_no = 1;            // 会话编号,为空时使用当前连接会话
-  ChatMessageType message_type = 2; // 消息类型
-  string content = 3;               // 文本内容
-  string media_url = 4;             // 媒体/文件URL
-  string media_name = 5;            // 文件名
-  string media_mime = 6;            // MIME类型
-  int64 media_size = 7;             // 文件大小(bytes)
-  string sender_nickname = 8;       // 用户昵称快照
-  string sender_avatar_url = 9;     // 用户头像快照
-  string client_msg_no = 10;        // 客户端消息编号,用于幂等
+  string client_message_id = 2;     // 客户端消息ID,用于幂等/回执
+  ChatMessageType message_type = 3; // 消息类型
+  string content = 4;               // 文本内容
+  string url = 5;                   // 资源URL
+  string file_name = 6;             // 文件名
+  int64 file_size = 7;              // 文件大小(byte)
+  string mime_type = 8;             // MIME类型
+  int32 width = 9;                  // 图片/视频宽度
+  int32 height = 10;                // 图片/视频高度
+  int32 duration = 11;              // 音频/视频时长(秒)
+  string sender_nickname = 12;      // 用户昵称快照
+  string sender_avatar_url = 13;    // 用户头像快照
+  string extra = 14;                // 扩展JSON
 }
 
 // 坐席侧WebSocket发送消息
 message ChatWsAgentMessageReq {
-  int64 merchant_id = 1;            // 客服商户ID
-  int64 agent_id = 2;               // 坐席ID
-  int64 user_id = 3;                // 用户ID
-  string session_no = 4;            // 会话编号
-  ChatMessageType message_type = 5; // 消息类型
-  string content = 6;               // 文本内容
-  string media_url = 7;             // 媒体/文件URL
-  string media_name = 8;            // 文件名
-  string media_mime = 9;            // MIME类型
-  int64 media_size = 10;            // 文件大小(bytes)
-  string sender_nickname = 11;      // 坐席昵称快照
-  string sender_avatar_url = 12;    // 坐席头像快照
-  string client_msg_no = 13;        // 客户端消息编号,用于幂等
+  string session_no = 1;            // 会话编号
+  string client_message_id = 2;     // 客户端消息ID,用于幂等/回执
+  ChatMessageType message_type = 3; // 消息类型
+  string content = 4;               // 文本内容
+  string url = 5;                   // 资源URL
+  string file_name = 6;             // 文件名
+  int64 file_size = 7;              // 文件大小(byte)
+  string mime_type = 8;             // MIME类型
+  int32 width = 9;                  // 图片/视频宽度
+  int32 height = 10;                // 图片/视频高度
+  int32 duration = 11;              // 音频/视频时长(秒)
+  string sender_nickname = 12;      // 坐席昵称快照
+  string sender_avatar_url = 13;    // 坐席头像快照
+  string extra = 14;                // 扩展JSON
 }
 
 // 坐席侧WebSocket接待会话
 message ChatWsAcceptSessionReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 agent_id = 2;    // 坐席ID
-  int64 user_id = 3;     // 用户ID
-  string session_no = 4; // 会话编号
-  string reason = 5;     // 接待原因
+  string session_no = 1; // 会话编号
+  string reason = 2;     // 接待原因
 }
 
 // WebSocket关闭会话
 message ChatWsCloseSessionReq {
-  int64 merchant_id = 1;  // 客服商户ID
-  int64 operator_id = 2;  // 操作人ID
-  int64 user_id = 3;      // 用户ID
-  int64 agent_id = 4;     // 坐席ID
-  string session_no = 5;  // 会话编号
-  string close_reason = 6; // 结束原因
+  string session_no = 1;                        // 会话编号
+  ChatSessionCloseReason close_reason_type = 2; // 结束原因类型
+  string close_reason = 3;                      // 结束原因描述
 }
 
 // WebSocket通用消息,用于规范前后端JSON结构
 message ChatWsMessage {
-  string type = 1;                         // 事件类型
-  common.RespBase base = 2;                // 响应状态
-  ChatWsConnected connected = 3;           // 连接成功数据
-  ChatWsUserMessageReq user_message = 4;   // 用户发送消息请求
-  ChatWsAgentMessageReq agent_message = 5; // 坐席发送消息请求
+  ChatEventType type = 1;                   // 事件类型
+  common.RespBase base = 2;                 // 响应状态
+  ChatWsConnected connected = 3;            // 连接成功数据
+  ChatWsUserMessageReq user_message = 4;    // 用户发送消息请求
+  ChatWsAgentMessageReq agent_message = 5;  // 坐席发送消息请求
   ChatWsAcceptSessionReq accept_session = 6; // 接待请求
-  ChatWsCloseSessionReq close_session = 7; // 关闭会话请求
-  ChatMessage message = 8;                 // 消息数据
-  ChatSession session = 9;                 // 会话数据
-  ChatSessionEvent session_event = 10;     // 会话事件
-  ChatQueueInfo queue = 11;                // 排队信息
-  int64 created_at = 12;                   // 事件创建时间戳(毫秒)
+  ChatWsCloseSessionReq close_session = 7;  // 关闭会话请求
+  ChatMessage message = 8;                  // 消息数据
+  ChatSession session = 9;                  // 会话数据
+  ChatSessionEvent session_event = 10;      // 会话事件
+  ChatQueueInfo queue = 11;                 // 排队信息
+  int64 created_at = 12;                    // 事件创建时间戳(毫秒)
 }
 
 // 会话分配记录
@@ -509,4 +508,19 @@ message ChatWorkOrder {
   string remark = 18;                // 备注
   int64 create_times = 19;           // 创建时间戳(毫秒)
   int64 update_times = 20;           // 更新时间戳(毫秒)
+}
+
+message ChatAdminEvent {
+  ChatAdminEventType type = 1;      // 后台事件类型
+  int64 merchant_id = 2;            // 商户ID
+  int64 created_at = 3;             // 事件创建时间戳(毫秒)
+  common.RespBase base = 4;         // 业务响应
+
+  ChatAgent agent = 10;             // 坐席快照
+  ChatAgentStatus agent_status = 11; // 坐席状态
+  ChatSession session = 12;         // 会话快照
+  ChatSessionEvent session_event = 13; // 会话事件
+  ChatQueueInfo queue = 14;         // 排队信息
+  ChatMessage message = 15;         // 聊天消息
+  string reason = 16;               // 原因/提示
 }
