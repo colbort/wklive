@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
@@ -28,14 +30,15 @@ func NewAcceptChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 接待会话
 func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	if in.GetAgentId() <= 0 {
-		return &chat.AdminChatSessionResp{Base: badBase("agent_id is required")}, nil
+	merchantId, err := utils.GetMerchantIdFromMd(l.ctx)
+	if err != nil {
+		return &chat.AdminChatSessionResp{Base: helper.FailResp()}, nil
 	}
-	operatorID := in.GetOperatorId()
-	if operatorID <= 0 {
-		operatorID = in.GetAgentId()
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return &chat.AdminChatSessionResp{Base: helper.FailResp()}, nil
 	}
-	agent, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetAgentId())
+	agent, err := l.svcCtx.ChatAgentModel.FindOneByMerchantIdChatUserId(l.ctx, merchantId, userId)
 	if err == models.ErrNotFound {
 		return &chat.AdminChatSessionResp{Base: notFoundBase("chat agent not found")}, nil
 	}
@@ -45,11 +48,10 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if agent.Status != int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE) {
 		return &chat.AdminChatSessionResp{Base: badBase("chat agent is not online")}, nil
 	}
-	session, base, err := assignSession(l.ctx, l.svcCtx, &chat.AssignChatSessionReq{
+	session, base, err := assignSession(l.ctx, l.svcCtx, assignSessionOptions{
 		SessionNo:  in.GetSessionNo(),
-		ToAgentId:  in.GetAgentId(),
+		ToAgentId:  agent.Id,
 		AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
-		OperatorId: operatorID,
 		Reason:     firstNonEmpty(in.GetReason(), "accept"),
 	})
 	if err != nil {
@@ -58,7 +60,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
-	publishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_INFO, session, operatorID, chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL, in.GetReason(), agentServiceMessage(l.ctx, l.svcCtx, agent))
+	publishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, session, userId, chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL, in.GetReason(), agentServiceMessage(l.ctx, l.svcCtx, agent))
 	publishQueueEvent(l.ctx, l.svcCtx, session)
 	return &chat.AdminChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
 }

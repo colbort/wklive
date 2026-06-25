@@ -24,7 +24,6 @@ type (
 	AdminChatWorkOrderResp         = chat.AdminChatWorkOrderResp
 	AdminCommonResp                = chat.AdminCommonResp
 	AdminMarkMessagesReadResp      = chat.AdminMarkMessagesReadResp
-	AssignChatSessionReq           = chat.AssignChatSessionReq
 	ChatAdminLoginData             = chat.ChatAdminLoginData
 	ChatAdminLoginReq              = chat.ChatAdminLoginReq
 	ChatAdminLoginResp             = chat.ChatAdminLoginResp
@@ -109,8 +108,6 @@ type (
 		PageChatSessions(ctx context.Context, in *PageChatSessionsReq, opts ...grpc.CallOption) (*PageChatSessionsResp, error)
 		// 查询会话详情
 		GetChatSession(ctx context.Context, in *GetChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
-		// 分配会话
-		AssignChatSession(ctx context.Context, in *AssignChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 		// 接待会话
 		AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 		// 发送客服消息
@@ -264,12 +261,6 @@ func (m *defaultChatAdmin) PageChatSessions(ctx context.Context, in *PageChatSes
 func (m *defaultChatAdmin) GetChatSession(ctx context.Context, in *GetChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.GetChatSession(ctx, in, opts...)
-}
-
-// 分配会话
-func (m *defaultChatAdmin) AssignChatSession(ctx context.Context, in *AssignChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
-	client := chat.NewChatAdminClient(m.cli.Conn())
-	return client.AssignChatSession(ctx, in, opts...)
 }
 
 // 接待会话

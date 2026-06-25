@@ -310,14 +310,6 @@ type GetChatSessionReq {
 	sessionNo  string `path:"sessionNo"`
 }
 
-type AssignChatSessionReq {
-	merchantId int64  `json:"merchantId"`
-	sessionNo  string `path:"sessionNo"`
-	toAgentId  int64  `json:"toAgentId"`
-	assignType int64  `json:"assignType"` // 1 auto 2 manual 3 transfer
-	reason     string `json:"reason,optional"`
-}
-
 type CloseChatSessionReq {
 	merchantId  int64  `json:"merchantId"`
 	sessionNo   string `path:"sessionNo"`
@@ -641,9 +633,6 @@ service chatAdmin {
 
 	@handler GetChatSession
 	get /sessions/:sessionNo (GetChatSessionReq) returns (ChatSessionResp)
-
-	@handler AssignChatSession
-	put /sessions/:sessionNo/assign (AssignChatSessionReq) returns (ChatSessionResp)
 
 	@handler CloseChatSession
 	put /sessions/:sessionNo/close (CloseChatSessionReq) returns (ChatSessionResp)

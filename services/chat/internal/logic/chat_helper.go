@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -455,22 +456,19 @@ func toProtoMessage(data *models.ChatMessage) *chat.ChatMessage {
 	return &chat.ChatMessage{
 		MessageNo:   data.MessageNo,
 		SessionNo:   data.SessionNo,
-		MerchantId:  data.MerchantId,
-		UserId:      data.UserId,
-		AgentId:     data.AgentId,
-		SenderType:  chat.ChatSenderType(data.SenderType),
-		Sender:      toProtoMessageSender(data),
+		EventType:   chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
 		MessageType: chat.ChatMessageType(data.MessageType),
+		Sender:      toProtoMessageSender(data),
 		Content:     data.Content,
-		MediaUrl:    data.MediaUrl,
-		MediaName:   data.MediaName,
-		MediaMime:   data.MediaMime,
-		MediaSize:   data.MediaSize,
+		Url:         data.MediaUrl,
+		FileName:    data.MediaName,
+		FileSize:    data.MediaSize,
+		MimeType:    data.MediaMime,
 		Status:      chat.ChatMessageStatus(data.Status),
-		Payload:     mapToStruct(data.Payload),
-		ReadTime:    data.ReadTime,
-		CreateTimes: data.CreateTimes,
-		UpdateTimes: data.UpdateTimes,
+		AgentId:     strconv.FormatInt(data.AgentId, 10),
+		Extra:       messagePayloadJSON(data.Payload),
+		CreateTime:  data.CreateTimes,
+		UpdateTime:  data.UpdateTimes,
 	}
 }
 
@@ -482,16 +480,14 @@ func newEventSystemMessage(session *models.TChatSession, content string) *chat.C
 	return &chat.ChatMessage{
 		MessageNo:   nextNo("GM"),
 		SessionNo:   session.SessionNo,
-		MerchantId:  session.MerchantId,
-		UserId:      session.UserId,
-		AgentId:     session.AgentId,
-		SenderType:  chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+		EventType:   chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM,
 		MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
 		Content:     strings.TrimSpace(content),
 		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-		CreateTimes: now,
-		UpdateTimes: now,
-		Sender: &chat.ChatMessageSender{
+		AgentId:     strconv.FormatInt(session.AgentId, 10),
+		CreateTime:  now,
+		UpdateTime:  now,
+		Sender: &chat.ChatMessageUser{
 			Id:       session.AgentId,
 			Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
 			Nickname: "系统",
@@ -507,21 +503,32 @@ func toProtoMessages(list []*models.ChatMessage) []*chat.ChatMessage {
 	return resp
 }
 
-func toProtoMessageSender(data *models.ChatMessage) *chat.ChatMessageSender {
+func toProtoMessageSender(data *models.ChatMessage) *chat.ChatMessageUser {
 	if data == nil {
 		return nil
 	}
 	if data.Sender != nil {
-		return &chat.ChatMessageSender{
+		return &chat.ChatMessageUser{
 			Id:        data.Sender.Id,
 			Type:      chat.ChatSenderType(data.Sender.Type),
 			Nickname:  data.Sender.Nickname,
 			AvatarUrl: data.Sender.AvatarUrl,
 		}
 	}
-	return &chat.ChatMessageSender{
+	return &chat.ChatMessageUser{
 		Type: chat.ChatSenderType(data.SenderType),
 	}
+}
+
+func messagePayloadJSON(payload map[string]interface{}) string {
+	if len(payload) == 0 {
+		return ""
+	}
+	bs, err := json.Marshal(payload)
+	if err != nil {
+		return ""
+	}
+	return string(bs)
 }
 
 func toProtoUser(data *models.TChatUser) *chat.ChatUser {
@@ -766,14 +773,14 @@ func sendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *model
 	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
 		return nil, err
 	}
-	publishMessageEvent(ctx, svcCtx, msg)
+	publishMessageEvent(ctx, svcCtx, session, msg)
 	if chat.ChatSenderType(msg.SenderType) == chat.ChatSenderType_CHAT_SENDER_TYPE_USER && session.AgentId == 0 {
 		publishQueueEvent(ctx, svcCtx, session)
 	}
 	return msg, nil
 }
 
-func publishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, msg *models.ChatMessage) {
+func publishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, msg *models.ChatMessage) {
 	if svcCtx.BusRedis == nil || msg == nil {
 		return
 	}
@@ -782,6 +789,7 @@ func publishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, msg *m
 		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
 		CreatedAt: nowMillis(),
 		Data:      toProtoMessage(msg),
+		Session:   toProtoSession(session),
 	}
 	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
 	if err != nil {
@@ -803,7 +811,7 @@ func publishQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext, session 
 		return
 	}
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_INFO,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
 		CreatedAt: nowMillis(),
 		Data:      newEventSystemMessage(session, queue.GetMessage()),
 		Session:   toProtoSession(session),
@@ -864,7 +872,7 @@ func publishAgentStatusEvent(ctx context.Context, svcCtx *svc.ServiceContext, ag
 		return
 	}
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_JOIN,
 		CreatedAt: nowMillis(),
 		Agent:     toProtoAgent(agent),
 	}
@@ -897,26 +905,33 @@ func changeAgentSessionCount(ctx context.Context, svcCtx *svc.ServiceContext, ag
 	return svcCtx.ChatAgentModel.Update(ctx, agent)
 }
 
-func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.AssignChatSessionReq) (*models.TChatSession, *common.RespBase, error) {
+type assignSessionOptions struct {
+	SessionNo  string
+	ToAgentId  int64
+	AssignType chat.ChatAssignType
+	Reason     string
+}
+
+func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in assignSessionOptions) (*models.TChatSession, *common.RespBase, error) {
 	merchantID, base, err := merchantIDFromMetadata(ctx)
 	if base != nil || err != nil {
 		return nil, base, err
 	}
-	session, base, err := getSession(ctx, svcCtx, merchantID, in.GetSessionNo())
+	session, base, err := getSession(ctx, svcCtx, merchantID, in.SessionNo)
 	if base != nil || err != nil {
 		return nil, base, err
 	}
-	if in.GetToAgentId() <= 0 {
+	if in.ToAgentId <= 0 {
 		return nil, badBase("to_agent_id is required"), nil
 	}
-	assignType := normalizeAssignType(in.GetAssignType())
+	assignType := normalizeAssignType(in.AssignType)
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 		return nil, badBase("chat session is closed"), nil
 	}
 	if base := validateAssignableSession(session, assignType); base != nil {
 		return nil, base, nil
 	}
-	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, in.GetToAgentId())
+	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, in.ToAgentId)
 	if err == models.ErrNotFound || agent.MerchantId != merchantID {
 		return nil, notFoundBase("chat agent not found"), nil
 	}
@@ -949,8 +964,7 @@ func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.Ass
 		FromAgentId: fromAgentID,
 		ToAgentId:   agent.Id,
 		AssignType:  int64(assignType),
-		OperatorId:  in.GetOperatorId(),
-		Reason:      strings.TrimSpace(in.GetReason()),
+		Reason:      strings.TrimSpace(in.Reason),
 		CreateTimes: now,
 		UpdateTimes: now,
 	})
@@ -1039,11 +1053,10 @@ func routeSessionToAvailableAgent(ctx context.Context, svcCtx *svc.ServiceContex
 		if session.AgentId == agents[0].Id {
 			return session, nil, nil
 		}
-		return assignSession(ctx, svcCtx, &chat.AssignChatSessionReq{
+		return assignSession(ctx, svcCtx, assignSessionOptions{
 			SessionNo:  session.SessionNo,
 			ToAgentId:  agents[0].Id,
 			AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_AUTO,
-			OperatorId: agents[0].ChatUserId,
 			Reason:     reason,
 		})
 	}

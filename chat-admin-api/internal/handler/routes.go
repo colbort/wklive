@@ -234,11 +234,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPut,
-					Path:    "/sessions/:sessionNo/assign",
-					Handler: chat_session.AssignChatSessionHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPut,
 					Path:    "/sessions/:sessionNo/close",
 					Handler: chat_session.CloseChatSessionHandler(serverCtx),
 				},

@@ -2,6 +2,8 @@ package ws
 
 import (
 	"encoding/json"
+	"strconv"
+	"strings"
 	"time"
 
 	"wklive/proto/chat"
@@ -52,13 +54,11 @@ func (c *Connection) Match(message *chat.ChatMessage) bool {
 	if message == nil {
 		return false
 	}
-	if c.MerchantId > 0 && message.MerchantId != c.MerchantId {
-		return false
-	}
 	if c.SessionNo != "" && message.SessionNo != c.SessionNo {
 		return false
 	}
-	if c.AgentId > 0 && message.AgentId != c.AgentId && message.AgentId != 0 {
+	agentId := int64FromString(message.GetAgentId())
+	if c.AgentId > 0 && agentId != c.AgentId && agentId != 0 {
 		return false
 	}
 	return true
@@ -68,20 +68,20 @@ func (c *Connection) MatchEvent(event *chat.ChatMessageEvent) bool {
 	if event == nil {
 		return false
 	}
-	if event.GetData() != nil {
-		return c.Match(event.GetData())
+	if event.GetSessionEvent() != nil {
+		return c.matchSessionEvent(event.GetSessionEvent())
 	}
 	if event.GetSession() != nil {
 		return c.matchSession(event.GetSession())
-	}
-	if event.GetSessionEvent() != nil {
-		return c.matchSessionEvent(event.GetSessionEvent())
 	}
 	if event.GetQueue() != nil {
 		return c.matchQueue(event.GetQueue())
 	}
 	if event.GetAgent() != nil {
 		return c.matchAgent(event.GetAgent())
+	}
+	if event.GetData() != nil {
+		return c.Match(event.GetData())
 	}
 	return false
 }
@@ -217,4 +217,9 @@ func (c *Connection) SendJSON(eventType chat.ChatEventType, data interface{}) {
 	default:
 		logx.Errorf("chat ws send queue is full, userId=%d", c.UserId)
 	}
+}
+
+func int64FromString(value string) int64 {
+	id, _ := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
+	return id
 }

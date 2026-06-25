@@ -51,5 +51,8 @@ func (l *AuthChatMerchantLogic) AuthChatMerchant(in *chat.AuthChatMerchantReq) (
 		return &chat.AuthChatMerchantResp{Base: badBase("chat merchant is expired")}, nil
 	}
 
-	return &chat.AuthChatMerchantResp{Base: okBase(), Data: toProtoMerchant(merchant)}, nil
+	return &chat.AuthChatMerchantResp{Base: okBase(), Data: &chat.AuthChatMerchantData{
+		MerchantId: merchant.MerchantId,
+		Merchant:   toProtoMerchant(merchant),
+	}}, nil
 }

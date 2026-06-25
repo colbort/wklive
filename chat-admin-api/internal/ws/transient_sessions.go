@@ -51,7 +51,7 @@ func (s *transientSessionStore) ApplyEvent(event *chat.ChatMessageEvent) {
 	defer s.mu.Unlock()
 	s.cleanupLocked(time.Now().UnixMilli())
 
-	if event.GetType() == chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED {
+	if event.GetType() == chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE {
 		delete(s.sessions, sessionNo)
 		delete(s.messages, sessionNo)
 		return
@@ -72,7 +72,7 @@ func (s *transientSessionStore) ApplyEvent(event *chat.ChatMessageEvent) {
 	if event.GetQueue() != nil {
 		applyTransientQueue(session, event.GetQueue())
 	}
-	if event.GetData() != nil && event.GetType() != chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_INFO {
+	if event.GetData() != nil && event.GetType() != chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE {
 		applyTransientMessage(session, event.GetType(), event.GetData())
 		if event.GetType() == chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE {
 			s.appendMessageLocked(event.GetData())
@@ -127,7 +127,7 @@ func (s *transientSessionStore) ListMessages(merchantId int64, sessionNo string,
 		if item == nil {
 			continue
 		}
-		if senderType > 0 && int64(item.GetSenderType()) != senderType {
+		if senderType > 0 && int64(messageSenderType(item)) != senderType {
 			continue
 		}
 		filtered = append(filtered, cloneTransientMessage(item))
@@ -325,14 +325,11 @@ func applyTransientMessage(session *chat.ChatSession, eventType chat.ChatEventTy
 	if session == nil || msg == nil {
 		return
 	}
-	if msg.GetMerchantId() > 0 {
-		session.MerchantId = msg.GetMerchantId()
+	if msg.GetSender() != nil && msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_USER && msg.GetSender().GetId() != 0 {
+		session.UserId = msg.GetSender().GetId()
 	}
-	if msg.GetUserId() != 0 {
-		session.UserId = msg.GetUserId()
-	}
-	if msg.GetAgentId() > 0 {
-		session.AgentId = msg.GetAgentId()
+	if agentId := int64FromString(msg.GetAgentId()); agentId > 0 {
+		session.AgentId = agentId
 	}
 	if msg.GetSender() != nil && msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT && msg.GetSender().GetId() > 0 {
 		session.AgentId = msg.GetSender().GetId()
@@ -351,22 +348,22 @@ func applyTransientMessage(session *chat.ChatSession, eventType chat.ChatEventTy
 	if msg.GetMessageNo() != "" {
 		session.LastMessageNo = msg.GetMessageNo()
 	}
-	if msg.GetSenderType() != chat.ChatSenderType_CHAT_SENDER_TYPE_UNKNOWN {
-		session.LastSenderType = msg.GetSenderType()
+	if senderType := messageSenderType(msg); senderType != chat.ChatSenderType_CHAT_SENDER_TYPE_UNKNOWN {
+		session.LastSenderType = senderType
 	}
-	if msg.GetCreateTimes() > 0 {
-		session.LastMessageTime = msg.GetCreateTimes()
+	if msg.GetCreateTime() > 0 {
+		session.LastMessageTime = msg.GetCreateTime()
 	}
-	if msg.GetUpdateTimes() > 0 {
-		session.UpdateTimes = msg.GetUpdateTimes()
+	if msg.GetUpdateTime() > 0 {
+		session.UpdateTimes = msg.GetUpdateTime()
 	}
 
 	switch eventType {
-	case chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_INFO:
+	case chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_START:
 		session.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING
-	case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED:
+	case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE:
 		session.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED
-		session.CloseTime = msg.GetCreateTimes()
+		session.CloseTime = msg.GetCreateTime()
 	default:
 		applyTransientMessageStatus(session, msg)
 	}
@@ -391,7 +388,7 @@ func ensureTransientUserExt(session *chat.ChatSession, avatarUrl string) {
 }
 
 func applyTransientMessageStatus(session *chat.ChatSession, msg *chat.ChatMessage) {
-	switch msg.GetSenderType() {
+	switch messageSenderType(msg) {
 	case chat.ChatSenderType_CHAT_SENDER_TYPE_USER:
 		if session.GetAgentId() > 0 {
 			session.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT
@@ -403,6 +400,13 @@ func applyTransientMessageStatus(session *chat.ChatSession, msg *chat.ChatMessag
 		session.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_USER
 		session.UserUnreadCount++
 	}
+}
+
+func messageSenderType(msg *chat.ChatMessage) chat.ChatSenderType {
+	if msg == nil || msg.GetSender() == nil {
+		return chat.ChatSenderType_CHAT_SENDER_TYPE_UNKNOWN
+	}
+	return msg.GetSender().GetType()
 }
 
 func matchTransientSession(session *chat.ChatSession, filter TransientSessionFilter) bool {

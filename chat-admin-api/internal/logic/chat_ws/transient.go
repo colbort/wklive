@@ -5,10 +5,12 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
 	"chat-admin-api/internal/svc"
+	"chat-admin-api/internal/ws"
 	"wklive/proto/chat"
 
 	"google.golang.org/protobuf/encoding/protojson"
@@ -24,40 +26,36 @@ func newTransientAgentMessage(merchantId int64, sessionNo string, userId int64, 
 	now := time.Now().UnixMilli()
 	senderNickname = firstNonEmpty(data.SenderNickname, senderNickname)
 	return &chat.ChatMessage{
-		MessageNo:  nextTransientNo("GM"),
-		SessionNo:  sessionNo,
-		MerchantId: merchantId,
-		UserId:     userId,
-		AgentId:    agentId,
-		SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
-		Sender: &chat.ChatMessageSender{
+		MessageNo:   nextTransientNo("GM"),
+		SessionNo:   sessionNo,
+		EventType:   chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
+		AgentId:     strconv.FormatInt(agentId, 10),
+		MessageType: chat.ChatMessageType(data.MessageType),
+		Sender: &chat.ChatMessageUser{
 			Id:        agentId,
 			Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
 			Nickname:  senderNickname,
 			AvatarUrl: strings.TrimSpace(data.SenderAvatarUrl),
 		},
-		MessageType: chat.ChatMessageType(data.MessageType),
-		Content:     strings.TrimSpace(data.Content),
-		MediaUrl:    strings.TrimSpace(data.MediaUrl),
-		MediaName:   strings.TrimSpace(data.MediaName),
-		MediaMime:   strings.TrimSpace(data.MediaMime),
-		MediaSize:   data.MediaSize,
-		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-		CreateTimes: now,
-		UpdateTimes: now,
+		Content:    strings.TrimSpace(data.Content),
+		Url:        strings.TrimSpace(data.MediaUrl),
+		FileName:   strings.TrimSpace(data.MediaName),
+		MimeType:   strings.TrimSpace(data.MediaMime),
+		FileSize:   data.MediaSize,
+		Status:     chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+		CreateTime: now,
+		UpdateTime: now,
 	}
 }
 
 func newTransientSystemMessage(merchantId int64, sessionNo string, userId int64, agentId int64, content string) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
 	return &chat.ChatMessage{
-		MessageNo:  nextTransientNo("GM"),
-		SessionNo:  sessionNo,
-		MerchantId: merchantId,
-		UserId:     userId,
-		AgentId:    agentId,
-		SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
-		Sender: &chat.ChatMessageSender{
+		MessageNo: nextTransientNo("GM"),
+		SessionNo: sessionNo,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM,
+		AgentId:   strconv.FormatInt(agentId, 10),
+		Sender: &chat.ChatMessageUser{
 			Id:       agentId,
 			Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
 			Nickname: "系统",
@@ -65,8 +63,8 @@ func newTransientSystemMessage(merchantId int64, sessionNo string, userId int64,
 		MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
 		Content:     strings.TrimSpace(content),
 		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-		CreateTimes: now,
-		UpdateTimes: now,
+		CreateTime:  now,
+		UpdateTime:  now,
 	}
 }
 
@@ -83,12 +81,42 @@ func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, even
 		Data:      msg,
 		CreatedAt: time.Now().UnixMilli(),
 	}
+	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED {
+		merchantId, userId := transientMessageSessionIdentity(msg, svcCtx)
+		event.SessionEvent = &chat.ChatSessionEvent{
+			SessionNo:  msg.GetSessionNo(),
+			MerchantId: merchantId,
+			UserId:     userId,
+			AgentId:    int64FromString(msg.GetAgentId()),
+			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING,
+			Message:    msg.GetContent(),
+			CreatedAt:  event.CreatedAt,
+		}
+	}
 	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
 	if err != nil {
 		return err
 	}
 	_, err = svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload))
 	return err
+}
+
+func transientMessageSessionIdentity(msg *chat.ChatMessage, svcCtx *svc.ServiceContext) (int64, int64) {
+	if svcCtx == nil || svcCtx.ChatMessageHub == nil || msg == nil {
+		return 0, 0
+	}
+	sessions := svcCtx.ChatMessageHub.ListTransientSessions(ws.TransientSessionFilter{})
+	for _, session := range sessions {
+		if session.GetSessionNo() == msg.GetSessionNo() {
+			return session.GetMerchantId(), session.GetUserId()
+		}
+	}
+	return 0, 0
+}
+
+func int64FromString(value string) int64 {
+	id, _ := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
+	return id
 }
 
 func nextTransientNo(prefix string) string {

@@ -3,14 +3,6 @@
 
 package types
 
-type AssignChatSessionReq struct {
-	MerchantId int64  `json:"merchantId"`
-	SessionNo  string `path:"sessionNo"`
-	ToAgentId  int64  `json:"toAgentId"`
-	AssignType int64  `json:"assignType"` // 1 auto 2 manual 3 transfer
-	Reason     string `json:"reason,optional"`
-}
-
 type ChatAdminLoginData struct {
 	Token TokenInfo `json:"token"`
 	User  ChatUser  `json:"user"`

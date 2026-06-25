@@ -5,6 +5,7 @@ package chat_session
 
 import (
 	"context"
+	"strconv"
 	"strings"
 
 	"chat-admin-api/internal/logicutil"
@@ -67,28 +68,24 @@ func protoMessageToType(item *chat.ChatMessage) types.ChatMessage {
 		return types.ChatMessage{}
 	}
 	return types.ChatMessage{
-		Id:          item.GetId(),
 		MessageNo:   item.GetMessageNo(),
 		SessionNo:   item.GetSessionNo(),
-		MerchantId:  item.GetMerchantId(),
-		UserId:      item.GetUserId(),
-		AgentId:     item.GetAgentId(),
-		SenderType:  int64(item.GetSenderType()),
+		AgentId:     int64FromString(item.GetAgentId()),
+		SenderType:  int64(protoMessageSenderType(item)),
 		Sender:      protoMessageSenderToType(item.GetSender()),
 		MessageType: int64(item.GetMessageType()),
 		Content:     item.GetContent(),
-		MediaUrl:    item.GetMediaUrl(),
-		MediaName:   item.GetMediaName(),
-		MediaMime:   item.GetMediaMime(),
-		MediaSize:   item.GetMediaSize(),
+		MediaUrl:    item.GetUrl(),
+		MediaName:   item.GetFileName(),
+		MediaMime:   item.GetMimeType(),
+		MediaSize:   item.GetFileSize(),
 		Status:      int64(item.GetStatus()),
-		ReadTime:    item.GetReadTime(),
-		CreateTimes: item.GetCreateTimes(),
-		UpdateTimes: item.GetUpdateTimes(),
+		CreateTimes: item.GetCreateTime(),
+		UpdateTimes: item.GetUpdateTime(),
 	}
 }
 
-func protoMessageSenderToType(item *chat.ChatMessageSender) types.ChatMessageSender {
+func protoMessageSenderToType(item *chat.ChatMessageUser) types.ChatMessageSender {
 	if item == nil {
 		return types.ChatMessageSender{}
 	}
@@ -98,4 +95,16 @@ func protoMessageSenderToType(item *chat.ChatMessageSender) types.ChatMessageSen
 		Nickname:   item.GetNickname(),
 		AvatarUrl:  item.GetAvatarUrl(),
 	}
+}
+
+func protoMessageSenderType(item *chat.ChatMessage) chat.ChatSenderType {
+	if item == nil || item.GetSender() == nil {
+		return chat.ChatSenderType_CHAT_SENDER_TYPE_UNKNOWN
+	}
+	return item.GetSender().GetType()
+}
+
+func int64FromString(value string) int64 {
+	id, _ := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
+	return id
 }
