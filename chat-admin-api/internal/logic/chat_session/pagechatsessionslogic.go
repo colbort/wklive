@@ -91,6 +91,7 @@ func protoSessionToType(item *chat.ChatSession) types.ChatSession {
 		AgentUnreadCount: int64(item.GetAgentUnreadCount()),
 		CloseTime:        item.GetCloseTime(),
 		CloseReason:      item.GetCloseReason(),
+		ExtJson:          protoSessionExtJson(item),
 		GroupId:          item.GetGroupId(),
 		LastMessageNo:    item.GetLastMessageNo(),
 		CreateTimes:      item.GetCreateTimes(),
@@ -117,13 +118,33 @@ func enrichSession(session *types.ChatSession) {
 }
 
 func userAvatarFromProtoSession(session *chat.ChatSession) string {
-	if session == nil || session.GetExtJson() == nil {
+	if session == nil {
+		return ""
+	}
+	if strings.TrimSpace(session.GetAvatarUrl()) != "" {
+		return strings.TrimSpace(session.GetAvatarUrl())
+	}
+	if session.GetExtJson() == nil {
 		return ""
 	}
 	if value := session.GetExtJson().GetFields()["userAvatarUrl"].GetStringValue(); strings.TrimSpace(value) != "" {
 		return strings.TrimSpace(value)
 	}
+	if value := session.GetExtJson().GetFields()["avatar_url"].GetStringValue(); strings.TrimSpace(value) != "" {
+		return strings.TrimSpace(value)
+	}
 	return ""
+}
+
+func protoSessionExtJson(session *chat.ChatSession) string {
+	if session == nil || session.GetExtJson() == nil {
+		return ""
+	}
+	bs, err := json.Marshal(session.GetExtJson().AsMap())
+	if err != nil {
+		return ""
+	}
+	return string(bs)
 }
 
 func userAvatarFromExtJson(extJson string) string {
@@ -136,5 +157,9 @@ func userAvatarFromExtJson(extJson string) string {
 		return ""
 	}
 	value, _ := payload["userAvatarUrl"].(string)
+	if strings.TrimSpace(value) != "" {
+		return strings.TrimSpace(value)
+	}
+	value, _ = payload["avatar_url"].(string)
 	return strings.TrimSpace(value)
 }

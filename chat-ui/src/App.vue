@@ -6,7 +6,9 @@ import ChatTestPage from "@/pages/ChatTestPage.vue";
 const routePath = ref(window.location.pathname);
 const routeParams = ref(new URLSearchParams(window.location.search));
 const isChatRoute = computed(
-  () => routeParams.value.get("page") === "chat" || routePath.value.replace(/\/$/, "").endsWith("/chat"),
+  () =>
+    routeParams.value.get("page") === "chat" ||
+    routePath.value.replace(/\/$/, "").endsWith("/chat"),
 );
 </script>
 

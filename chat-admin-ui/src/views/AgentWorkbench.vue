@@ -8,6 +8,7 @@ import {
   pageSessions,
   updateAgentStatus,
 } from "@/api/chat";
+import { chatAdminWsEventTypes, chatEventType } from "@/api/constant";
 import WorkbenchChatPanel from "@/components/workbench/WorkbenchChatPanel.vue";
 import WorkbenchCustomerPanel from "@/components/workbench/WorkbenchCustomerPanel.vue";
 import WorkbenchSessionList from "@/components/workbench/WorkbenchSessionList.vue";
@@ -38,7 +39,7 @@ interface WsResult<T> {
 type WsEventData = ChatMessage | WsResult<ChatMessage>;
 
 interface WsEvent {
-  type: string | number;
+  type: string;
   data?: WsEventData;
   base?: WsBase;
   agent?: ChatAgent;
@@ -108,12 +109,6 @@ const agentStatus = {
   resting: 4,
 } as const;
 
-const chatEventType = {
-  message: 1,
-  agentAssigned: 8,
-  sessionClose: 13,
-} as const;
-
 const filteredSessions = computed(() =>
   sessions.value.filter((session) => matchStatusFilter(session)),
 );
@@ -153,9 +148,7 @@ const activeNeedsAccept = computed(
 const activeClosed = computed(
   () => activeSession.value?.status === sessionStatus.closed,
 );
-const activeIsGuest = computed(() =>
-  isGuestSession(activeSession.value),
-);
+const activeIsGuest = computed(() => isGuestSession(activeSession.value));
 const showGuestRefreshNotice = computed(
   () =>
     Boolean(activeSession.value) &&
@@ -210,6 +203,7 @@ watch(statusFilter, async () => {
 
 watch(activeSessionNo, async (sessionNo) => {
   persistWorkbenchState();
+  console.info("============.  1. ", sessionNo)
   if (sessionNo) {
     await loadMessages(sessionNo);
   }
@@ -217,6 +211,7 @@ watch(activeSessionNo, async (sessionNo) => {
 
 watch(activeNeedsAccept, async (needsAccept) => {
   if (!needsAccept && activeSessionNo.value) {
+    console.info("============.  2. ", activeSessionNo.value)
     await loadMessages(activeSessionNo.value);
   }
 });
@@ -348,8 +343,13 @@ function connectWs() {
   socket.onerror = () => {
     wsState.value = "closed";
   };
-  socket.onmessage = (event) => {
-    handleWsMessage(event.data);
+  socket.onmessage = (message: MessageEvent) => {
+    try {
+      const event = JSON.parse(message.data) as WsEvent;
+      handleWsMessage(event);
+    } catch {
+      // ignore invalid push payload
+    }
   };
 }
 
@@ -370,128 +370,151 @@ function clearReconnectTimer() {
   reconnectTimer = null;
 }
 
-function handleWsMessage(payload: string) {
-  try {
-    const event = JSON.parse(payload) as WsEvent;
-    const eventType = normalizeWsEventType(event.type);
-    if (
-      eventType !== "chat.message" &&
-      eventType !== "chat.session.accepted" &&
-      eventType !== "chat.session.closed" &&
-      eventType !== "chat.queue.updated" &&
-      eventType !== "chat.agent.status.updated" &&
-      eventType !== "chat.user.online" &&
-      eventType !== "chat.typing" &&
-      eventType !== "chat.stop_typing" &&
-      eventType !== "chat.evaluation.invite" &&
-      eventType !== "chat.evaluation.submit" &&
-      eventType !== "chat.system"
-    ) {
-      return;
-    }
-    const base = event.base || eventBase(event.data);
-    if (base && base.code !== 200) {
-      ElMessage.error(base.msg || "发送失败");
-      return;
-    }
-    if (eventType === "chat.agent.status.updated") {
+function handleWsMessage(event: WsEvent) {
+  const eventType = event.type || "";
+  if (!chatAdminWsEventTypes.has(eventType)) {
+    return;
+  }
+  const base = event.base || eventBase(event.data);
+  if (base && base.code !== 200) {
+    ElMessage.error(base.msg || "发送失败");
+    return;
+  }
+
+  switch (eventType) {
+    case chatEventType.AGENT_JOIN:
+    case chatEventType.AGENT_LEAVE:
       updateAgentFromEvent(event.agent);
       return;
-    }
-    upsertSessionFromEvent(event);
-    const message = eventMessage(event.data);
-    let messagePushed = false;
-    if (message?.sessionNo && message.messageNo) {
-      normalizeMessageEnums(message);
-      if (shouldAppendWsMessage(eventType, message)) {
-        messagePushed = pushMessage(message);
-      }
-    }
-    if (eventType === "chat.session.accepted") {
+
+    case chatEventType.AGENT_ASSIGNED: {
+      const message = applyWsSessionMessage(event, eventType);
       markSessionAccepted(event, message);
-    } else if (eventType === "chat.session.closed") {
+      return;
+    }
+
+    case chatEventType.SESSION_CLOSE: {
+      const message = applyWsSessionMessage(event, eventType);
       markSessionClosed(event, message);
-    } else {
-      if (message?.sessionNo && shouldAppendWsMessage(eventType, message)) {
-        upsertSessionFromMessage(message, messagePushed);
-      }
+      return;
     }
-    const session = message?.sessionNo
-      ? sessions.value.find((item) => item.sessionNo === message.sessionNo)
-      : undefined;
-    if (
-      message?.senderType === 1 &&
-      !session?.agentId &&
-      statusFilter.value !== "waiting"
-    ) {
-      statusFilter.value = "waiting";
+
+    case chatEventType.QUEUE_JOIN:
+    case chatEventType.QUEUE_UPDATE:
+    case chatEventType.QUEUE_LEAVE:
+      applyWsSessionMessage(event, eventType);
+      focusWaitingSession(event);
+      scheduleRefreshSessions();
+      return;
+
+    case chatEventType.USER_JOIN:
+      focusWaitingSession(event);
+      void loadSessions();
+      return;
+
+    case chatEventType.USER_LEAVE:
+      handleUserLeave(event);
+      return;
+
+    default:
+      applyWsSessionMessage(event, eventType);
+  }
+}
+
+function applyWsSessionMessage(event: WsEvent, eventType: string) {
+  upsertSessionFromEvent(event);
+  const message = eventMessage(event.data);
+  let messagePushed = false;
+  if (message?.sessionNo && message.messageNo) {
+    normalizeMessageEnums(message);
+    if (shouldAppendWsMessage(eventType, message)) {
+      messagePushed = pushMessage(message);
     }
-    if (eventType === "chat.queue.updated" || eventType === "chat.user.online") {
-      const queueSessionNo = event.queue?.sessionNo || event.session?.sessionNo || "";
-      if (!mobileChatOpen.value || queueSessionNo !== activeSessionNo.value) {
-        statusFilter.value = "waiting";
-        mobileChatOpen.value = false;
-      }
+  }
+  if (message?.sessionNo && shouldAppendWsMessage(eventType, message)) {
+    upsertSessionFromMessage(message, messagePushed);
+  }
+  const session = message?.sessionNo
+    ? sessions.value.find((item) => item.sessionNo === message.sessionNo)
+    : undefined;
+  if (
+    message?.senderType === 1 &&
+    !session?.agentId &&
+    statusFilter.value !== "waiting"
+  ) {
+    statusFilter.value = "waiting";
+  }
+  return message;
+}
+
+function focusWaitingSession(event: WsEvent) {
+  const queueSessionNo =
+    event.queue?.sessionNo || event.session?.sessionNo || "";
+  if (!mobileChatOpen.value || queueSessionNo !== activeSessionNo.value) {
+    statusFilter.value = "waiting";
+    mobileChatOpen.value = false;
+  }
+}
+
+function handleUserLeave(event: WsEvent) {
+  const sessionNo = eventSessionNo(event);
+  if (!sessionNo) {
+    scheduleRefreshSessions();
+    return;
+  }
+  const index = sessions.value.findIndex(
+    (item) => item.sessionNo === sessionNo,
+  );
+  if (index < 0) {
+    scheduleRefreshSessions();
+    return;
+  }
+  const session = sessions.value[index];
+  const status = sessionStatusValue(session.status);
+  if (status === sessionStatus.waiting || needsAccept(session)) {
+    removeSession(sessionNo);
+    if (activeSessionNo.value === sessionNo) {
+      syncActiveSession();
+      mobileChatOpen.value = false;
+    }
+    if (statusFilter.value === "waiting") {
       scheduleRefreshSessions();
     }
-  } catch {
-    // ignore invalid push payload
+    return;
   }
+  if (status === sessionStatus.closed) {
+    if (statusFilter.value === "closed") {
+      scheduleRefreshSessions();
+    }
+    return;
+  }
+  const message =
+    sessionEvent(event)?.message || eventMessage(event.data)?.content || "用户已离开";
+  setSessionStatusMessage(sessionNo, message);
+  session.lastMessage = message;
+  session.lastMessageTime = Number(sessionEvent(event)?.createdAt || Date.now());
+  session.updateTimes = session.lastMessageTime;
+  ElMessage.info(message);
 }
 
-function normalizeWsEventType(type?: string | number) {
-  const eventMap: Record<string, string> = {
-    CHAT_EVENT_TYPE_MESSAGE: "chat.message",
-    CHAT_EVENT_TYPE_SYSTEM: "chat.system",
-    CHAT_EVENT_TYPE_USER_JOIN: "chat.user.online",
-    CHAT_EVENT_TYPE_USER_LEAVE: "chat.user.offline",
-    CHAT_EVENT_TYPE_QUEUE_JOIN: "chat.queue.updated",
-    CHAT_EVENT_TYPE_QUEUE_UPDATE: "chat.queue.updated",
-    CHAT_EVENT_TYPE_QUEUE_LEAVE: "chat.queue.updated",
-    CHAT_EVENT_TYPE_AGENT_ASSIGNED: "chat.session.accepted",
-    CHAT_EVENT_TYPE_AGENT_JOIN: "chat.agent.status.updated",
-    CHAT_EVENT_TYPE_AGENT_LEAVE: "chat.agent.status.updated",
-    CHAT_EVENT_TYPE_TRANSFER: "chat.transfer",
-    CHAT_EVENT_TYPE_SESSION_START: "chat.session.started",
-    CHAT_EVENT_TYPE_SESSION_CLOSE: "chat.session.closed",
-    CHAT_EVENT_TYPE_EVALUATION_INVITE: "chat.evaluation.invite",
-    CHAT_EVENT_TYPE_EVALUATION_SUBMIT: "chat.evaluation.submit",
-    CHAT_EVENT_TYPE_TYPING: "chat.typing",
-    CHAT_EVENT_TYPE_STOP_TYPING: "chat.stop_typing",
-    CHAT_EVENT_TYPE_DELIVERED: "chat.delivered",
-    CHAT_EVENT_TYPE_READ: "chat.read",
-    CHAT_EVENT_TYPE_ERROR: "chat.error",
-  };
-  if (typeof type === "number") {
-    return eventMap[chatEventTypeCode(type)] || String(type);
-  }
-  return type ? eventMap[type] || type : "";
+function eventSessionNo(event: WsEvent) {
+  return (
+    event.session?.sessionNo ||
+    event.queue?.sessionNo ||
+    sessionEvent(event)?.sessionNo ||
+    sessionEvent(event)?.session?.sessionNo ||
+    eventMessage(event.data)?.sessionNo ||
+    ""
+  );
 }
 
-function chatEventTypeCode(value: number) {
-  const fallback: Record<number, string> = {
-    1: "CHAT_EVENT_TYPE_MESSAGE",
-    2: "CHAT_EVENT_TYPE_SYSTEM",
-    3: "CHAT_EVENT_TYPE_USER_JOIN",
-    4: "CHAT_EVENT_TYPE_USER_LEAVE",
-    5: "CHAT_EVENT_TYPE_QUEUE_JOIN",
-    6: "CHAT_EVENT_TYPE_QUEUE_UPDATE",
-    7: "CHAT_EVENT_TYPE_QUEUE_LEAVE",
-    8: "CHAT_EVENT_TYPE_AGENT_ASSIGNED",
-    9: "CHAT_EVENT_TYPE_AGENT_JOIN",
-    10: "CHAT_EVENT_TYPE_AGENT_LEAVE",
-    11: "CHAT_EVENT_TYPE_TRANSFER",
-    12: "CHAT_EVENT_TYPE_SESSION_START",
-    13: "CHAT_EVENT_TYPE_SESSION_CLOSE",
-    14: "CHAT_EVENT_TYPE_EVALUATION_INVITE",
-    15: "CHAT_EVENT_TYPE_EVALUATION_SUBMIT",
-    16: "CHAT_EVENT_TYPE_TYPING",
-    17: "CHAT_EVENT_TYPE_STOP_TYPING",
-    18: "CHAT_EVENT_TYPE_DELIVERED",
-    19: "CHAT_EVENT_TYPE_READ",
-    22: "CHAT_EVENT_TYPE_ERROR",
-  };
-  return fallback[value] || "";
+function removeSession(sessionNo: string) {
+  sessions.value = sessions.value.filter((item) => item.sessionNo !== sessionNo);
+  const { [sessionNo]: _removedMessage, ...nextStatusMessages } =
+    sessionStatusMessages.value;
+  sessionStatusMessages.value = nextStatusMessages;
+  const { [sessionNo]: _removedMessages, ...nextMessages } = messages.value;
+  messages.value = nextMessages;
 }
 
 function updateAgentFromEvent(agent?: ChatAgent) {
@@ -711,7 +734,9 @@ function isGuestSession(session?: ChatSession) {
     return Boolean(session.extJson.isGuest);
   }
   try {
-    return Boolean((JSON.parse(session.extJson) as { isGuest?: boolean }).isGuest);
+    return Boolean(
+      (JSON.parse(session.extJson) as { isGuest?: boolean }).isGuest,
+    );
   } catch {
     return false;
   }
@@ -783,7 +808,7 @@ function isQueueSystemMessage(message?: ChatMessage) {
 
 function shouldAppendWsMessage(eventType: string, message?: ChatMessage) {
   if (!message || isQueueSystemMessage(message)) return false;
-  return eventType === "chat.message";
+  return eventType === chatEventType.MESSAGE;
 }
 
 function normalizeSession(session: ChatSession) {
@@ -884,7 +909,7 @@ function send() {
   }
   socket?.send(
     JSON.stringify({
-      type: chatEventType.message,
+      type: chatEventType.MESSAGE,
       data: {
         merchantId: merchantId.value,
         agentId: agentId.value,
@@ -904,7 +929,7 @@ function closeSession() {
   }
   socket.send(
     JSON.stringify({
-      type: chatEventType.sessionClose,
+      type: chatEventType.SESSION_CLOSE,
       data: {
         merchantId: merchantId.value,
         userId: activeSession.value.userId,
@@ -925,7 +950,7 @@ function acceptSession() {
   }
   socket.send(
     JSON.stringify({
-      type: chatEventType.agentAssigned,
+      type: chatEventType.AGENT_ASSIGNED,
       data: {
         merchantId: merchantId.value,
         agentId: agentId.value,

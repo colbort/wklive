@@ -447,6 +447,8 @@ type ChatSession struct {
 	UpdateTimes      int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                     // 更新时间戳(毫秒)
 	GroupId          int64                  `protobuf:"varint,21,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                                                 // 目标客服分组ID
 	LastMessageNo    string                 `protobuf:"bytes,22,opt,name=last_message_no,json=lastMessageNo,proto3" json:"last_message_no,omitempty"`                              // 最后一条消息编号
+	IsGuest          bool                   `protobuf:"varint,23,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                                 //
+	AvatarUrl        string                 `protobuf:"bytes,24,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`                                            //
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -631,6 +633,20 @@ func (x *ChatSession) GetGroupId() int64 {
 func (x *ChatSession) GetLastMessageNo() string {
 	if x != nil {
 		return x.LastMessageNo
+	}
+	return ""
+}
+
+func (x *ChatSession) GetIsGuest() bool {
+	if x != nil {
+		return x.IsGuest
+	}
+	return false
+}
+
+func (x *ChatSession) GetAvatarUrl() string {
+	if x != nil {
+		return x.AvatarUrl
 	}
 	return ""
 }
@@ -3184,7 +3200,7 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\x12\x19\n" +
 	"\bgroup_id\x18\r \x01(\x03R\agroupId\x12.\n" +
 	"\vauto_online\x18\x0e \x01(\x0e2\r.common.YesNoR\n" +
-	"autoOnline\"\xc4\x06\n" +
+	"autoOnline\"\xfe\x06\n" +
 	"\vChatSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -3211,7 +3227,10 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\x12\x19\n" +
 	"\bgroup_id\x18\x15 \x01(\x03R\agroupId\x12&\n" +
-	"\x0flast_message_no\x18\x16 \x01(\tR\rlastMessageNo\"\x86\x01\n" +
+	"\x0flast_message_no\x18\x16 \x01(\tR\rlastMessageNo\x12\x19\n" +
+	"\bis_guest\x18\x17 \x01(\bR\aisGuest\x12\x1d\n" +
+	"\n" +
+	"avatar_url\x18\x18 \x01(\tR\tavatarUrl\"\x86\x01\n" +
 	"\x0fChatMessageUser\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12(\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x14.chat.ChatSenderTypeR\x04type\x12\x1a\n" +

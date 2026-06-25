@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import { useChatSocket } from "@/composables/useChatSocket";
 
 type ChatMode = "mobile" | "desktop";
@@ -76,7 +83,12 @@ function resizeMessageInput() {
 
 async function handleMessageScroll() {
   const list = messageList.value;
-  if (!list || list.scrollTop > 24 || chat.historyLoading.value || !chat.historyHasMore.value) {
+  if (
+    !list ||
+    list.scrollTop > 24 ||
+    chat.historyLoading.value ||
+    !chat.historyHasMore.value
+  ) {
     return;
   }
   const previousHeight = list.scrollHeight;
@@ -124,28 +136,15 @@ onBeforeUnmount(() => {
     class="resource-input"
     type="file"
     @change="handleResourceSelected"
-  >
+  />
 
-  <main
-    class="chat-page"
-    :class="{ 'chat-page--desktop': showDesktopFrame }"
-  >
-    <section
-      class="chat-shell"
-      aria-label="chat conversation"
-    >
-      <div
-        v-if="chat.queueStatus.value"
-        class="queue-message"
-      >
+  <main class="chat-page" :class="{ 'chat-page--desktop': showDesktopFrame }">
+    <section class="chat-shell" aria-label="chat conversation">
+      <div v-if="chat.queueStatus.value" class="queue-message">
         {{ chat.queueStatus.value }}
       </div>
 
-      <div
-        ref="messageList"
-        class="message-list"
-        @scroll="handleMessageScroll"
-      >
+      <div ref="messageList" class="message-list" @scroll="handleMessageScroll">
         <div class="welcome-message">
           <strong>您好</strong>
           <span>请描述您遇到的问题，客服会在这里接收并回复。</span>
@@ -161,23 +160,20 @@ onBeforeUnmount(() => {
           }"
         >
           <div class="bubble">
-            <span>{{ message.sender?.nickname || (message.senderType === 1 ? "我" : "客服") }}</span>
+            <span>{{
+              message.sender?.nickname ||
+              (message.senderType === 1 ? "我" : "客服")
+            }}</span>
             <p>{{ message.content }}</p>
           </div>
         </article>
       </div>
 
-      <p
-        v-if="chat.error.value || authError"
-        class="error-line"
-      >
+      <p v-if="chat.error.value || authError" class="error-line">
         {{ chat.error.value || authError }}
       </p>
 
-      <form
-        class="composer"
-        @submit.prevent="handleComposerAction"
-      >
+      <form class="composer" @submit.prevent="handleComposerAction">
         <button
           class="resource-button"
           type="button"
@@ -191,14 +187,13 @@ onBeforeUnmount(() => {
             ref="messageInput"
             v-model="draft"
             :disabled="!chat.isOpen.value || chat.sessionClosed.value"
-            :placeholder="chat.sessionClosed.value ? '本次会话已结束' : '输入消息'"
+            :placeholder="
+              chat.sessionClosed.value ? '本次会话已结束' : '输入消息'
+            "
             rows="1"
             @input="resizeMessageInput"
           />
-          <span
-            v-if="selectedResourceName"
-            class="resource-name"
-          >
+          <span v-if="selectedResourceName" class="resource-name">
             {{ selectedResourceName }}
           </span>
         </div>

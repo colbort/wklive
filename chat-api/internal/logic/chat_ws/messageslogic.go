@@ -19,7 +19,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (
@@ -470,8 +469,10 @@ func (l *MessagesLogic) sendQueueEvent(conn *ws.Connection, eventType chat.ChatE
 
 func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Connection, isGuest bool) {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
+		logx.Errorf("")
 		return
 	}
+
 	now := time.Now().UnixMilli()
 	session := &chat.ChatSession{
 		SessionNo:       conn.SessionNo,
@@ -484,7 +485,8 @@ func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Con
 		LastMessageTime: now,
 		CreateTimes:     now,
 		UpdateTimes:     now,
-		ExtJson:         userSnapshotExt(conn.AvatarUrl, isGuest),
+		IsGuest:         isGuest,
+		AvatarUrl:       conn.AvatarUrl,
 	}
 	event := &chat.ChatMessageEvent{
 		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
@@ -621,24 +623,6 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
-}
-
-func userSnapshotExt(avatarUrl string, isGuest bool) *structpb.Struct {
-	avatarUrl = strings.TrimSpace(avatarUrl)
-	if avatarUrl == "" && !isGuest {
-		return nil
-	}
-	payload := map[string]interface{}{
-		"isGuest": isGuest,
-	}
-	if avatarUrl != "" {
-		payload["userAvatarUrl"] = avatarUrl
-	}
-	ext, err := structpb.NewStruct(payload)
-	if err != nil {
-		return nil
-	}
-	return ext
 }
 
 func stringFromMap(payload map[string]interface{}) string {

@@ -44,7 +44,16 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 		return
 	}
 
-	client := ws.NewConnection(l.svcCtx.ChatMessageHub, conn, req.UserId, req.Username, req.MerchantId, req.AgentId, req.SessionNo, l.handleInbound())
+	client := ws.NewConnection(
+		l.svcCtx.ChatMessageHub,
+		conn,
+		req.UserId,
+		req.Username,
+		req.MerchantId,
+		req.AgentId,
+		req.SessionNo,
+		l.onMessage(),
+	)
 	l.svcCtx.ChatMessageHub.Register(client)
 	client.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM, map[string]interface{}{
 		"message":    "chat admin websocket connected",
@@ -57,7 +66,7 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 	client.ReadPump()
 }
 
-func (l *MessagesLogic) handleInbound() func(*ws.Connection, ws.InboundEvent) {
+func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
 		switch event.Type {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE:

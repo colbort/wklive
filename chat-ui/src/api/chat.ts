@@ -6,36 +6,11 @@ import type {
   RespBase,
   SendUserMessagePayload,
 } from "@/types/chat";
+import { chatEventType } from "./constant";
 
 const apiBaseUrl = import.meta.env.VITE_CHAT_API_BASE_URL || "/chat";
 const chatWsProtocol = "wklive-chat";
 const wsProtocolTokenPrefix = "token.";
-
-export const chatWsEvents = {
-  message: "CHAT_EVENT_TYPE_MESSAGE",
-  system: "CHAT_EVENT_TYPE_SYSTEM",
-  queueJoin: "CHAT_EVENT_TYPE_QUEUE_JOIN",
-  queueUpdated: "CHAT_EVENT_TYPE_QUEUE_UPDATE",
-  queueLeave: "CHAT_EVENT_TYPE_QUEUE_LEAVE",
-  agentAssigned: "CHAT_EVENT_TYPE_AGENT_ASSIGNED",
-  agentJoin: "CHAT_EVENT_TYPE_AGENT_JOIN",
-  agentLeave: "CHAT_EVENT_TYPE_AGENT_LEAVE",
-  transfer: "CHAT_EVENT_TYPE_TRANSFER",
-  sessionStart: "CHAT_EVENT_TYPE_SESSION_START",
-  sessionClosed: "CHAT_EVENT_TYPE_SESSION_CLOSE",
-  evaluationInvite: "CHAT_EVENT_TYPE_EVALUATION_INVITE",
-  evaluationSubmit: "CHAT_EVENT_TYPE_EVALUATION_SUBMIT",
-  typing: "CHAT_EVENT_TYPE_TYPING",
-  stopTyping: "CHAT_EVENT_TYPE_STOP_TYPING",
-  delivered: "CHAT_EVENT_TYPE_DELIVERED",
-  read: "CHAT_EVENT_TYPE_READ",
-  recall: "CHAT_EVENT_TYPE_RECALL",
-  heartbeat: "CHAT_EVENT_TYPE_HEARTBEAT",
-  error: "CHAT_EVENT_TYPE_ERROR",
-  noAgentOnline: "CHAT_EVENT_TYPE_NO_AGENT_ONLINE",
-  sessionTimeout: "CHAT_EVENT_TYPE_SESSION_TIMEOUT",
-  delete: "CHAT_EVENT_TYPE_DELETE",
-} as const;
 
 export interface CreateChatTokenReq {
   apiKey: string;
@@ -51,7 +26,9 @@ export interface ChatTokenResp {
   expireAt: number;
 }
 
-export function createChatToken(data: CreateChatTokenReq): Promise<ChatTokenResp> {
+export function createChatToken(
+  data: CreateChatTokenReq,
+): Promise<ChatTokenResp> {
   return requestData<ChatTokenResp>("/internal/tokens", {
     method: "POST",
     body: data,
@@ -68,14 +45,11 @@ export function listChatMessagesWithMeta(
   params: ListChatMessagesParams,
   chatToken: string,
 ) {
-  return request<ApiResp<ChatMessage[]>>(
-    "/session/messages",
-    {
-      method: "GET",
-      params,
-      token: chatToken,
-    },
-  );
+  return request<ApiResp<ChatMessage[]>>("/session/messages", {
+    method: "GET",
+    params,
+    token: chatToken,
+  });
 }
 
 export function closeMyChatSession(
@@ -116,7 +90,10 @@ export interface CreateChatSocketOptions {
 }
 
 export function createChatSocket(options: CreateChatSocketOptions): WebSocket {
-  const protocols = [chatWsProtocol, `${wsProtocolTokenPrefix}${encodeProtocolValue(options.chatToken)}`];
+  const protocols = [
+    chatWsProtocol,
+    `${wsProtocolTokenPrefix}${encodeProtocolValue(options.chatToken)}`,
+  ];
 
   const socket = new WebSocket(chatWsUrl(), protocols);
   if (options.onOpen) {
@@ -140,7 +117,11 @@ function encodeProtocolValue(value: string): string {
   bytes.forEach((byte) => {
     binary += String.fromCharCode(byte);
   });
-  return window.btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+  return window
+    .btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
 }
 
 export function sendChatSocketEvent(
@@ -155,7 +136,7 @@ export function sendChatSocketUserMessage(
   socket: WebSocket,
   data: SendUserMessagePayload,
 ) {
-  sendChatSocketEvent(socket, chatWsEvents.message, data);
+  sendChatSocketEvent(socket, chatEventType.MESSAGE, data);
 }
 
 interface RequestOptions {
@@ -167,12 +148,18 @@ interface RequestOptions {
   keepalive?: boolean;
 }
 
-async function requestData<T>(path: string, options: RequestOptions): Promise<T> {
+async function requestData<T>(
+  path: string,
+  options: RequestOptions,
+): Promise<T> {
   const payload = await request<ApiResp<T>>(path, options);
   return payload.data;
 }
 
-async function requestBase(path: string, options: RequestOptions): Promise<RespBase> {
+async function requestBase(
+  path: string,
+  options: RequestOptions,
+): Promise<RespBase> {
   return request<RespBase>(path, options);
 }
 
@@ -198,10 +185,7 @@ async function request<T extends RespBase>(
   return payload;
 }
 
-function buildUrl(
-  path: string,
-  params?: object,
-) {
+function buildUrl(path: string, params?: object) {
   const url = new URL(`${apiBaseUrl}${path}`, window.location.origin);
   Object.entries(params || {}).forEach(([key, value]) => {
     if (value !== undefined && value !== "") {

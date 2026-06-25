@@ -199,10 +199,7 @@ function selectionChanged(
   b: CropperSelectionChange,
 ) {
   return (
-    a.x !== b.x ||
-    a.y !== b.y ||
-    a.width !== b.width ||
-    a.height !== b.height
+    a.x !== b.x || a.y !== b.y || a.width !== b.width || a.height !== b.height
   );
 }
 
@@ -246,7 +243,12 @@ function createAvatarCanvasFromVisibleSelection(
   const naturalWidth = imageSource.naturalWidth;
   const naturalHeight = imageSource.naturalHeight;
 
-  if (!imageRect.width || !imageRect.height || !naturalWidth || !naturalHeight) {
+  if (
+    !imageRect.width ||
+    !imageRect.height ||
+    !naturalWidth ||
+    !naturalHeight
+  ) {
     return null;
   }
 
@@ -255,7 +257,8 @@ function createAvatarCanvasFromVisibleSelection(
   const sourceY =
     ((selectionRect.top - imageRect.top) / imageRect.height) * naturalHeight;
   const sourceWidth = (selectionRect.width / imageRect.width) * naturalWidth;
-  const sourceHeight = (selectionRect.height / imageRect.height) * naturalHeight;
+  const sourceHeight =
+    (selectionRect.height / imageRect.height) * naturalHeight;
 
   const avatarCanvas = document.createElement("canvas");
   avatarCanvas.width = 200;
@@ -881,11 +884,11 @@ onMounted(() => {
   color: rgba(255, 59, 48, 0.28);
 }
 
-:deep(cropper-handle[action='move']) {
+:deep(cropper-handle[action="move"]) {
   background: transparent;
 }
 
-:deep(cropper-handle[action$='resize']) {
+:deep(cropper-handle[action$="resize"]) {
   width: 12px;
   height: 12px;
   border: 2px solid #fff;

@@ -161,7 +161,7 @@ func (c *Connection) ReadPump() {
 	for {
 		_, payload, err := c.Conn.ReadMessage()
 		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			if isUnexpectedReadClose(err) {
 				logx.Errorf("chat user ws read failed, userId=%d merchantId=%d err=%v", c.UserId, c.MerchantId, err)
 			}
 			return
@@ -176,6 +176,15 @@ func (c *Connection) ReadPump() {
 		}
 		c.OnMessage(c, event)
 	}
+}
+
+func isUnexpectedReadClose(err error) bool {
+	return websocket.IsUnexpectedCloseError(
+		err,
+		websocket.CloseNormalClosure,
+		websocket.CloseGoingAway,
+		websocket.CloseNoStatusReceived,
+	)
 }
 
 func (c *Connection) WritePump() {
@@ -208,7 +217,7 @@ func (c *Connection) WritePump() {
 // SendJSON 用于兼容前端简单事件格式：{"type": 数字, "typeName": "枚举名", "data": {...}}。
 func (c *Connection) SendJSON(eventType chat.ChatEventType, data interface{}) {
 	payload, err := json.Marshal(map[string]interface{}{
-		"type":     eventType,
+		"type":     eventType.String(),
 		"typeName": eventType.String(),
 		"data":     data,
 	})

@@ -19,6 +19,7 @@ import {
   type CreateChatAgentPayload,
   type UpdateChatAgentPayload,
 } from "@/api/chat";
+import { chatEventType } from "@/api/constant";
 import { useAuthStore } from "@/stores/auth";
 import type { ChatAgent, ChatGroup } from "@/types/chat";
 import {
@@ -164,11 +165,12 @@ function clearReconnectTimer() {
 function handleWsMessage(payload: string) {
   try {
     const event = JSON.parse(payload) as {
-      type?: string | number;
+      type?: string;
       agent?: ChatAgent;
     };
     if (
-      normalizeWsEventType(event.type) !== "chat.agent.status.updated" ||
+      (event.type !== chatEventType.AGENT_JOIN &&
+        event.type !== chatEventType.AGENT_LEAVE) ||
       !event.agent
     )
       return;
@@ -176,19 +178,6 @@ function handleWsMessage(payload: string) {
   } catch {
     // ignore invalid push payload
   }
-}
-
-function normalizeWsEventType(type?: string | number) {
-  if (type === 5) {
-    return "chat.agent.status.updated";
-  }
-  if (type === "CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED") {
-    return "chat.agent.status.updated";
-  }
-  if (type === "CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED") {
-    return "chat.agent.status.updated";
-  }
-  return type || "";
 }
 
 function upsertAgent(agent: ChatAgent) {

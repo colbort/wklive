@@ -80,6 +80,8 @@ message ChatSession {
   int64 update_times = 20;              // 更新时间戳(毫秒)
   int64 group_id = 21;                  // 目标客服分组ID
   string last_message_no = 22;          // 最后一条消息编号
+  bool is_guest = 23;                   // 
+  string avatar_url = 24;               // 
 }
 
 // 客服消息
