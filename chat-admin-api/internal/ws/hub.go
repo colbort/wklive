@@ -71,6 +71,13 @@ func (h *Hub) ListTransientMessages(merchantId int64, sessionNo string, senderTy
 	return h.transient.ListMessages(merchantId, sessionNo, senderType, limit)
 }
 
+func (h *Hub) IsTransientSession(sessionNo string) bool {
+	if h == nil || h.transient == nil {
+		return false
+	}
+	return h.transient.IsTransientSession(sessionNo)
+}
+
 func (h *Hub) Broadcast(event *chat.ChatMessageEvent) {
 	if event == nil {
 		return

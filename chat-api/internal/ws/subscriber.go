@@ -65,8 +65,23 @@ func subscribeRedis(ctx context.Context, conf redis.RedisConf, hub *Hub) error {
 				logx.Errorf("decode chat user message event failed: %v", err)
 				continue
 			}
+			if !shouldBroadcastToUser(&event) {
+				continue
+			}
 			hub.Broadcast(&event)
 		}
+	}
+}
+
+func shouldBroadcastToUser(event *chat.ChatMessageEvent) bool {
+	if event == nil {
+		return false
+	}
+	switch event.GetType() {
+	case chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN:
+		return false
+	default:
+		return true
 	}
 }
 

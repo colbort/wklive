@@ -23,16 +23,6 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-const (
-	chatWSEventConnected               chat.ChatEventType = 1001
-	chatWSEventSendAgentMessage        chat.ChatEventType = 1002
-	chatWSEventSendAgentMessageResult  chat.ChatEventType = 1003
-	chatWSEventAcceptChatSession       chat.ChatEventType = 1004
-	chatWSEventAcceptChatSessionResult chat.ChatEventType = 1005
-	chatWSEventCloseChatSession        chat.ChatEventType = 1006
-	chatWSEventCloseChatSessionResult  chat.ChatEventType = 1007
-)
-
 type MessagesLogic struct {
 	logx.Logger
 	ctx    context.Context
@@ -56,7 +46,7 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 
 	client := ws.NewConnection(l.svcCtx.ChatMessageHub, conn, req.UserId, req.Username, req.MerchantId, req.AgentId, req.SessionNo, l.handleInbound())
 	l.svcCtx.ChatMessageHub.Register(client)
-	client.SendJSON(chatWSEventConnected, map[string]interface{}{
+	client.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM, map[string]interface{}{
 		"message":    "chat admin websocket connected",
 		"merchantId": req.MerchantId,
 		"agentId":    req.AgentId,
@@ -70,12 +60,16 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 func (l *MessagesLogic) handleInbound() func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
 		switch event.Type {
-		case chatWSEventSendAgentMessage:
+		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE:
 			l.handleSendAgentMessage(context.Background(), conn, event.Data)
-		case chatWSEventAcceptChatSession:
+		case chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED:
 			l.handleAcceptChatSession(context.Background(), conn, event.Data)
-		case chatWSEventCloseChatSession:
+		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
 			l.handleCloseChatSession(context.Background(), conn, event.Data)
+		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING, chat.ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING:
+			l.handleAgentTyping(context.Background(), conn, event.Type, event.Data)
+		case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE:
+			l.handleEvaluationInvite(context.Background(), conn, event.Data)
 		default:
 			sendWSError(conn, "unsupported event type")
 		}
@@ -98,7 +92,7 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		MimeType:    data.MediaMime,
 		FileSize:    data.MediaSize,
 	}
-	if isGuestSession(req.SessionNo) {
+	if l.isTransientSession(req.SessionNo) {
 		l.fillTransientUserId(conn.MerchantId, req.SessionNo, &data)
 		l.fillAgentSenderSnapshot(ctx, conn, &data)
 		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, data.UserId, conn.AgentId, conn.Username, data)
@@ -106,7 +100,7 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 			sendWSError(conn, err.Error())
 			return
 		}
-		conn.SendJSON(chatWSEventSendAgentMessageResult, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
 		return
 	}
 
@@ -115,7 +109,7 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		sendWSError(conn, err.Error())
 		return
 	}
-	conn.SendJSON(chatWSEventSendAgentMessageResult, resp)
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, resp)
 }
 
 func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
@@ -129,14 +123,14 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 		sendWSError(conn, "sessionNo and agentId are required")
 		return
 	}
-	if isGuestSession(sessionNo) {
+	if l.isTransientSession(sessionNo) {
 		data.UserId = l.transientUserId(conn.MerchantId, sessionNo, data.UserId)
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, l.agentServiceMessage(ctx, conn))
 		if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, msg); err != nil {
 			sendWSError(conn, err.Error())
 			return
 		}
-		conn.SendJSON(chatWSEventAcceptChatSessionResult, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
 		return
 	}
 
@@ -148,7 +142,7 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 		sendWSError(conn, err.Error())
 		return
 	}
-	conn.SendJSON(chatWSEventAcceptChatSessionResult, resp)
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, resp)
 }
 
 func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
@@ -166,14 +160,14 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 		return
 	}
 	reason := firstNonEmpty(data.CloseReason, "closed by agent")
-	if isGuestSession(sessionNo) {
+	if l.isTransientSession(sessionNo) {
 		data.UserId = l.transientUserId(conn.MerchantId, sessionNo, data.UserId)
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, conn.AgentId, "本次会话已结束")
 		if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, msg); err != nil {
 			sendWSError(conn, err.Error())
 			return
 		}
-		conn.SendJSON(chatWSEventCloseChatSessionResult, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
 		return
 	}
 
@@ -185,7 +179,80 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 		sendWSError(conn, err.Error())
 		return
 	}
-	conn.SendJSON(chatWSEventCloseChatSessionResult, resp)
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, resp)
+}
+
+func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, payload json.RawMessage) {
+	sessionNo := conn.SessionNo
+	userId := int64(0)
+	message := "客服正在输入"
+	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING {
+		message = "客服停止输入"
+	}
+	if len(payload) > 0 {
+		var data struct {
+			SessionNo string `json:"sessionNo"`
+			UserId    int64  `json:"userId"`
+			Message   string `json:"message"`
+		}
+		if err := json.Unmarshal(payload, &data); err == nil {
+			if strings.TrimSpace(data.SessionNo) != "" {
+				sessionNo = strings.TrimSpace(data.SessionNo)
+			}
+			userId = data.UserId
+			if strings.TrimSpace(data.Message) != "" {
+				message = strings.TrimSpace(data.Message)
+			}
+		}
+	}
+	if strings.TrimSpace(sessionNo) == "" {
+		sendWSError(conn, "sessionNo is required")
+		return
+	}
+	if userId == 0 {
+		userId = l.transientUserId(conn.MerchantId, sessionNo, 0)
+	}
+	msg := newTransientSystemMessageWithType(conn.MerchantId, sessionNo, userId, conn.AgentId, eventType, chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT, message, "")
+	if err := publishTransientEvent(ctx, l.svcCtx, eventType, msg); err != nil {
+		sendWSError(conn, err.Error())
+		return
+	}
+	conn.SendJSON(eventType, map[string]string{"message": "ok"})
+}
+
+func (l *MessagesLogic) handleEvaluationInvite(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
+	sessionNo := conn.SessionNo
+	userId := int64(0)
+	content := "请对本次服务进行评价"
+	if len(payload) > 0 {
+		var data struct {
+			SessionNo string `json:"sessionNo"`
+			UserId    int64  `json:"userId"`
+			Content   string `json:"content"`
+		}
+		if err := json.Unmarshal(payload, &data); err == nil {
+			if strings.TrimSpace(data.SessionNo) != "" {
+				sessionNo = strings.TrimSpace(data.SessionNo)
+			}
+			userId = data.UserId
+			if strings.TrimSpace(data.Content) != "" {
+				content = strings.TrimSpace(data.Content)
+			}
+		}
+	}
+	if strings.TrimSpace(sessionNo) == "" {
+		sendWSError(conn, "sessionNo is required")
+		return
+	}
+	if userId == 0 {
+		userId = l.transientUserId(conn.MerchantId, sessionNo, 0)
+	}
+	msg := newTransientSystemMessageWithType(conn.MerchantId, sessionNo, userId, conn.AgentId, chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE, chat.ChatMessageType_CHAT_MESSAGE_TYPE_EVALUATION, content, transientExtra(map[string]interface{}{"action": "invite"}))
+	if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE, msg); err != nil {
+		sendWSError(conn, err.Error())
+		return
+	}
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE, map[string]string{"message": "ok"})
 }
 
 func applyAgentMessageDefaults(conn *ws.Connection, data *sendAgentMessagePayload) {
@@ -195,6 +262,10 @@ func applyAgentMessageDefaults(conn *ws.Connection, data *sendAgentMessagePayloa
 	if strings.TrimSpace(data.SessionNo) == "" {
 		data.SessionNo = conn.SessionNo
 	}
+}
+
+func (l *MessagesLogic) isTransientSession(sessionNo string) bool {
+	return l.svcCtx != nil && l.svcCtx.ChatMessageHub != nil && l.svcCtx.ChatMessageHub.IsTransientSession(strings.TrimSpace(sessionNo))
 }
 
 func sessionAgentFromPayload(conn *ws.Connection, sessionNo string, agentId int64) (string, int64) {
@@ -294,6 +365,7 @@ type sendAgentMessagePayload struct {
 	MediaSize       int64  `json:"mediaSize"`
 	SenderNickname  string `json:"senderNickname"`
 	SenderAvatarUrl string `json:"senderAvatarUrl"`
+	Extra           string `json:"extra"`
 }
 
 type acceptChatSessionPayload struct {

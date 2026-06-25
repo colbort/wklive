@@ -59,7 +59,7 @@ export interface ChatSession {
   agentUnreadCount: number;
   closeTime: number;
   closeReason: string;
-  extJson?: string;
+  extJson?: string | Record<string, unknown>;
   groupId: number;
   lastMessageNo: string;
   createTimes: number;
@@ -89,6 +89,7 @@ export interface ChatMessage {
   mediaMime: string;
   mediaSize: number;
   status: number;
+  extra?: string;
   readTime: number;
   createTimes: number;
   updateTimes: number;
@@ -96,7 +97,7 @@ export interface ChatMessage {
 
 export interface ChatWsEvent<T = unknown> {
   type: string | number;
-  data: T;
+  data?: T;
   session?: ChatSession;
   sessionEvent?: ChatSessionEvent;
   session_event?: ChatSessionEvent;

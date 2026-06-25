@@ -13,7 +13,6 @@ import (
 )
 
 const (
-	guestSessionPrefix     = "GS"
 	transientSessionMaxAge = 24 * time.Hour
 	transientMessageLimit  = 200
 )
@@ -43,12 +42,12 @@ func (s *transientSessionStore) ApplyEvent(event *chat.ChatMessageEvent) {
 		return
 	}
 	sessionNo := eventSessionNo(event)
-	if !isGuestSessionNo(sessionNo) {
-		return
-	}
 
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if !s.isTransientEventLocked(sessionNo, event) {
+		return
+	}
 	s.cleanupLocked(time.Now().UnixMilli())
 
 	if event.GetType() == chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE {
@@ -104,7 +103,7 @@ func (s *transientSessionStore) List(filter TransientSessionFilter) []*chat.Chat
 }
 
 func (s *transientSessionStore) ListMessages(merchantId int64, sessionNo string, senderType int64, limit int64) []*chat.ChatMessage {
-	if s == nil || !isGuestSessionNo(sessionNo) {
+	if s == nil || sessionNo == "" {
 		return nil
 	}
 	s.mu.RLock()
@@ -139,7 +138,7 @@ func (s *transientSessionStore) ListMessages(merchantId int64, sessionNo string,
 }
 
 func (s *transientSessionStore) appendMessageLocked(msg *chat.ChatMessage) {
-	if msg == nil || !isGuestSessionNo(msg.GetSessionNo()) || msg.GetMessageNo() == "" {
+	if msg == nil || msg.GetSessionNo() == "" || msg.GetMessageNo() == "" {
 		return
 	}
 	list := s.messages[msg.GetSessionNo()]
@@ -195,8 +194,38 @@ func eventSessionNo(event *chat.ChatMessageEvent) string {
 	return ""
 }
 
-func isGuestSessionNo(sessionNo string) bool {
-	return strings.HasPrefix(strings.TrimSpace(sessionNo), guestSessionPrefix)
+func (s *transientSessionStore) IsTransientSession(sessionNo string) bool {
+	if s == nil || sessionNo == "" {
+		return false
+	}
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	_, ok := s.sessions[sessionNo]
+	return ok
+}
+
+func (s *transientSessionStore) isTransientEventLocked(sessionNo string, event *chat.ChatMessageEvent) bool {
+	if event == nil || sessionNo == "" {
+		return false
+	}
+	if _, ok := s.sessions[sessionNo]; ok {
+		return true
+	}
+	if sessionIsGuest(event.GetSession()) {
+		return true
+	}
+	if event.GetSessionEvent() != nil && sessionIsGuest(event.GetSessionEvent().GetSession()) {
+		return true
+	}
+	return false
+}
+
+func sessionIsGuest(session *chat.ChatSession) bool {
+	if session == nil || session.GetExtJson() == nil {
+		return false
+	}
+	value := session.GetExtJson().GetFields()["isGuest"]
+	return value != nil && value.GetBoolValue()
 }
 
 func newTransientSession(sessionNo string) *chat.ChatSession {

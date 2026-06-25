@@ -83,7 +83,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 	l.sendQueueEvent(client, chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN, "正在排队，客服会尽快接入。")
 
 	// 再通知后台：用户上线，进入待接待列表。
-	l.publishUserOnlineEvent(l.ctx, client)
+	l.publishUserOnlineEvent(l.ctx, client, req.IsGuest)
 
 	go client.WritePump()
 	client.ReadPump()
@@ -97,6 +97,10 @@ func (l *MessagesLogic) onMessage(isGuest bool) func(*ws.Connection, ws.InboundE
 			l.handleSendUserMessage(context.Background(), conn, event.Data, isGuest)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
 			l.handleCloseUserSession(context.Background(), conn, event.Data, isGuest)
+		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING, chat.ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING:
+			l.handleUserTyping(context.Background(), conn, event.Type, event.Data)
+		case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT:
+			l.handleSubmitEvaluation(context.Background(), conn, event.Data, isGuest)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT:
 			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT, map[string]int64{"time": time.Now().UnixMilli()})
 		default:
@@ -162,6 +166,102 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 		return
 	}
 	l.sendMessageAckEvent(conn, msg)
+}
+
+func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, payload json.RawMessage) {
+	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
+		return
+	}
+	message := "用户正在输入"
+	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING {
+		message = "用户停止输入"
+	}
+	event := &chat.ChatMessageEvent{
+		Type:      eventType,
+		CreatedAt: time.Now().UnixMilli(),
+		Data:      buildSystemChatMessage(conn, eventType, message),
+		SessionEvent: &chat.ChatSessionEvent{
+			SessionNo:  conn.SessionNo,
+			MerchantId: conn.MerchantId,
+			UserId:     conn.UserId,
+			Message:    message,
+			CreatedAt:  time.Now().UnixMilli(),
+		},
+	}
+	if len(payload) > 0 {
+		var data struct {
+			Message string `json:"message"`
+		}
+		if err := json.Unmarshal(payload, &data); err == nil && strings.TrimSpace(data.Message) != "" {
+			event.SessionEvent.Message = strings.TrimSpace(data.Message)
+			event.Data.Content = event.SessionEvent.Message
+		}
+	}
+	if err := l.publishChatEvent(ctx, event); err != nil {
+		sendWSError(conn, err.Error())
+	}
+}
+
+func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
+	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
+		sendWSError(conn, "sessionNo is required")
+		return
+	}
+	var data struct {
+		Score   int32  `json:"score"`
+		Content string `json:"content"`
+		Tags    string `json:"tags"`
+	}
+	if err := json.Unmarshal(payload, &data); err != nil {
+		sendWSError(conn, "invalid evaluation payload")
+		return
+	}
+	if data.Score < 1 || data.Score > 5 {
+		sendWSError(conn, "score must be between 1 and 5")
+		return
+	}
+	if !isGuest {
+		resp, err := l.svcCtx.ChatAppCli.SubmitChatSatisfaction(contextWithChatIdentity(ctx, conn.MerchantId, conn.UserId), &chat.SubmitChatSatisfactionReq{
+			SessionNo: conn.SessionNo,
+			Score:     data.Score,
+			Content:   strings.TrimSpace(data.Content),
+			Tags:      strings.TrimSpace(data.Tags),
+		})
+		if err != nil {
+			sendWSError(conn, err.Error())
+			return
+		}
+		if resp.GetBase().GetCode() != successCode {
+			sendWSError(conn, resp.GetBase().GetMsg())
+			return
+		}
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, resp)
+		return
+	}
+	msg := buildSystemChatMessage(conn, chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, "用户已提交评价")
+	msg.MessageType = chat.ChatMessageType_CHAT_MESSAGE_TYPE_EVALUATION
+	msg.Extra = stringFromMap(map[string]interface{}{
+		"score":   data.Score,
+		"content": strings.TrimSpace(data.Content),
+		"tags":    strings.TrimSpace(data.Tags),
+	})
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
+		CreatedAt: time.Now().UnixMilli(),
+		Data:      msg,
+		SessionEvent: &chat.ChatSessionEvent{
+			SessionNo:  conn.SessionNo,
+			MerchantId: conn.MerchantId,
+			UserId:     conn.UserId,
+			Message:    "用户已提交评价",
+			CreatedAt:  time.Now().UnixMilli(),
+		},
+	}
+	if err := l.publishChatEvent(ctx, event); err != nil {
+		sendWSError(conn, err.Error())
+		return
+	}
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, map[string]string{"message": "ok"})
 }
 
 func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
@@ -264,6 +364,7 @@ func buildChatMessage(conn *ws.Connection, senderType chat.ChatSenderType, sende
 		Height:          int32(data.Height),
 		Duration:        int32(data.Duration),
 		ReplyMessageId:  strings.TrimSpace(data.ReplyMessageId),
+		Extra:           strings.TrimSpace(data.Extra),
 		Status:          chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
 		Self:            false,
 		NeedAck:         true,
@@ -367,7 +468,7 @@ func (l *MessagesLogic) sendQueueEvent(conn *ws.Connection, eventType chat.ChatE
 	conn.SendEvent(event)
 }
 
-func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Connection) {
+func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Connection, isGuest bool) {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		return
 	}
@@ -383,7 +484,7 @@ func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Con
 		LastMessageTime: now,
 		CreateTimes:     now,
 		UpdateTimes:     now,
-		ExtJson:         userSnapshotExt(conn.AvatarUrl),
+		ExtJson:         userSnapshotExt(conn.AvatarUrl, isGuest),
 	}
 	event := &chat.ChatMessageEvent{
 		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
@@ -502,6 +603,7 @@ type UserMessagePayload struct {
 	ReplyMessageId  string           `json:"replyMessageId"`
 	SenderNickname  string           `json:"senderNickname"`
 	SenderAvatarUrl string           `json:"senderAvatarUrl"`
+	Extra           string           `json:"extra"`
 }
 
 func normalizeMessageType(messageType int64) chat.ChatMessageType {
@@ -521,16 +623,28 @@ func firstNonEmpty(values ...string) string {
 	return ""
 }
 
-func userSnapshotExt(avatarUrl string) *structpb.Struct {
+func userSnapshotExt(avatarUrl string, isGuest bool) *structpb.Struct {
 	avatarUrl = strings.TrimSpace(avatarUrl)
-	if avatarUrl == "" {
+	if avatarUrl == "" && !isGuest {
 		return nil
 	}
-	ext, err := structpb.NewStruct(map[string]interface{}{
-		"userAvatarUrl": avatarUrl,
-	})
+	payload := map[string]interface{}{
+		"isGuest": isGuest,
+	}
+	if avatarUrl != "" {
+		payload["userAvatarUrl"] = avatarUrl
+	}
+	ext, err := structpb.NewStruct(payload)
 	if err != nil {
 		return nil
 	}
 	return ext
+}
+
+func stringFromMap(payload map[string]interface{}) string {
+	bs, err := json.Marshal(payload)
+	if err != nil {
+		return ""
+	}
+	return string(bs)
 }

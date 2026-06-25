@@ -13,22 +13,30 @@ const wsProtocolTokenPrefix = "token.";
 
 export const chatWsEvents = {
   message: 1,
-  sessionAccepted: 2,
-  sessionClosed: 3,
-  queueUpdated: 4,
-  agentStatusUpdated: 5,
-  connected: 6,
-  error: 7,
-  sendUserMessage: 8,
-  sendUserMessageResult: 9,
-  sendAgentMessage: 10,
-  sendAgentMessageResult: 11,
-  acceptChatSession: 12,
-  acceptChatSessionResult: 13,
-  closeChatSession: 14,
-  closeChatSessionResult: 15,
-  userOnline: 16,
-  userOffline: 17,
+  system: 2,
+  userJoin: 3,
+  userLeave: 4,
+  queueJoin: 5,
+  queueUpdated: 6,
+  queueLeave: 7,
+  agentAssigned: 8,
+  agentJoin: 9,
+  agentLeave: 10,
+  transfer: 11,
+  sessionStart: 12,
+  sessionClosed: 13,
+  evaluationInvite: 14,
+  evaluationSubmit: 15,
+  typing: 16,
+  stopTyping: 17,
+  delivered: 18,
+  read: 19,
+  recall: 20,
+  heartbeat: 21,
+  error: 22,
+  noAgentOnline: 23,
+  sessionTimeout: 24,
+  delete: 25,
 } as const;
 
 export interface CreateChatTokenReq {
@@ -149,7 +157,7 @@ export function sendChatSocketUserMessage(
   socket: WebSocket,
   data: SendUserMessagePayload,
 ) {
-  sendChatSocketEvent(socket, chatWsEvents.sendUserMessage, data);
+  sendChatSocketEvent(socket, chatWsEvents.message, data);
 }
 
 interface RequestOptions {

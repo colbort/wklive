@@ -32,7 +32,7 @@ func NewPageChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *PageChatMessagesLogic) PageChatMessages(req *types.PageChatMessagesReq) (resp *types.PageChatMessagesResp, err error) {
-	if isGuestSession(req.SessionNo) && l.svcCtx.ChatMessageHub != nil {
+	if l.svcCtx.ChatMessageHub != nil && l.svcCtx.ChatMessageHub.IsTransientSession(strings.TrimSpace(req.SessionNo)) {
 		return &types.PageChatMessagesResp{
 			RespBase: types.RespBase{Code: 200, Msg: "OK"},
 			Data: protoMessagesToTypes(
@@ -46,10 +46,6 @@ func (l *PageChatMessagesLogic) PageChatMessages(req *types.PageChatMessagesReq)
 		}, nil
 	}
 	return logicutil.Proxy[types.PageChatMessagesResp](l.ctx, req, l.svcCtx.ChatAdminCli.PageChatMessages)
-}
-
-func isGuestSession(sessionNo string) bool {
-	return strings.HasPrefix(strings.TrimSpace(sessionNo), "GS")
 }
 
 func protoMessagesToTypes(list []*chat.ChatMessage) []types.ChatMessage {

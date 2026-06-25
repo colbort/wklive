@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -16,13 +17,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-const guestSessionPrefix = "GS"
-
-func isGuestSession(sessionNo string) bool {
-	return strings.HasPrefix(strings.TrimSpace(sessionNo), guestSessionPrefix)
-}
-
-func newTransientAgentMessage(merchantId int64, sessionNo string, userId int64, agentId int64, senderNickname string, data sendAgentMessagePayload) *chat.ChatMessage {
+func newTransientAgentMessage(_ int64, sessionNo string, _ int64, agentId int64, senderNickname string, data sendAgentMessagePayload) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
 	senderNickname = firstNonEmpty(data.SenderNickname, senderNickname)
 	return &chat.ChatMessage{
@@ -42,13 +37,14 @@ func newTransientAgentMessage(merchantId int64, sessionNo string, userId int64, 
 		FileName:   strings.TrimSpace(data.MediaName),
 		MimeType:   strings.TrimSpace(data.MediaMime),
 		FileSize:   data.MediaSize,
+		Extra:      strings.TrimSpace(data.Extra),
 		Status:     chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
 		CreateTime: now,
 		UpdateTime: now,
 	}
 }
 
-func newTransientSystemMessage(merchantId int64, sessionNo string, userId int64, agentId int64, content string) *chat.ChatMessage {
+func newTransientSystemMessage(_ int64, sessionNo string, _ int64, agentId int64, content string) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
 	return &chat.ChatMessage{
 		MessageNo: nextTransientNo("GM"),
@@ -66,6 +62,14 @@ func newTransientSystemMessage(merchantId int64, sessionNo string, userId int64,
 		CreateTime:  now,
 		UpdateTime:  now,
 	}
+}
+
+func newTransientSystemMessageWithType(merchantId int64, sessionNo string, userId int64, agentId int64, eventType chat.ChatEventType, messageType chat.ChatMessageType, content string, extra string) *chat.ChatMessage {
+	msg := newTransientSystemMessage(merchantId, sessionNo, userId, agentId, content)
+	msg.EventType = eventType
+	msg.MessageType = messageType
+	msg.Extra = strings.TrimSpace(extra)
+	return msg
 }
 
 func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, msg *chat.ChatMessage) error {
@@ -99,6 +103,14 @@ func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, even
 	}
 	_, err = svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload))
 	return err
+}
+
+func transientExtra(payload map[string]interface{}) string {
+	bs, err := json.Marshal(payload)
+	if err != nil {
+		return ""
+	}
+	return string(bs)
 }
 
 func transientMessageSessionIdentity(msg *chat.ChatMessage, svcCtx *svc.ServiceContext) (int64, int64) {

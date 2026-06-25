@@ -6,7 +6,6 @@ import {
   options as loadOptions,
   pageMessages,
   pageSessions,
-  sendAgentMessage,
   updateAgentStatus,
 } from "@/api/chat";
 import WorkbenchChatPanel from "@/components/workbench/WorkbenchChatPanel.vue";
@@ -110,9 +109,9 @@ const agentStatus = {
 } as const;
 
 const chatEventType = {
-  sendAgentMessage: 10,
-  acceptChatSession: 12,
-  closeChatSession: 14,
+  message: 1,
+  agentAssigned: 8,
+  sessionClose: 13,
 } as const;
 
 const filteredSessions = computed(() =>
@@ -155,7 +154,7 @@ const activeClosed = computed(
   () => activeSession.value?.status === sessionStatus.closed,
 );
 const activeIsGuest = computed(() =>
-  isGuestSession(activeSession.value?.sessionNo),
+  isGuestSession(activeSession.value),
 );
 const showGuestRefreshNotice = computed(
   () =>
@@ -293,7 +292,7 @@ async function loadSessions() {
       merchantId: merchantId.value,
       limit: 50,
     });
-    sessions.value = mergeTransientSessions(resp.data.map(normalizeSession));
+    sessions.value = mergeLiveSessions(resp.data.map(normalizeSession));
     syncActiveSession();
   } catch (err) {
     ElMessage.error(err instanceof Error ? err.message : "加载会话失败");
@@ -382,9 +381,11 @@ function handleWsMessage(payload: string) {
       eventType !== "chat.queue.updated" &&
       eventType !== "chat.agent.status.updated" &&
       eventType !== "chat.user.online" &&
-      eventType !== "accept_chat_session.result" &&
-      eventType !== "send_agent_message.result" &&
-      eventType !== "close_chat_session.result"
+      eventType !== "chat.typing" &&
+      eventType !== "chat.stop_typing" &&
+      eventType !== "chat.evaluation.invite" &&
+      eventType !== "chat.evaluation.submit" &&
+      eventType !== "chat.system"
     ) {
       return;
     }
@@ -406,15 +407,9 @@ function handleWsMessage(payload: string) {
         messagePushed = pushMessage(message);
       }
     }
-    if (
-      eventType === "chat.session.accepted" ||
-      eventType === "accept_chat_session.result"
-    ) {
+    if (eventType === "chat.session.accepted") {
       markSessionAccepted(event, message);
-    } else if (
-      eventType === "chat.session.closed" ||
-      eventType === "close_chat_session.result"
-    ) {
+    } else if (eventType === "chat.session.closed") {
       markSessionClosed(event, message);
     } else {
       if (message?.sessionNo && shouldAppendWsMessage(eventType, message)) {
@@ -447,17 +442,25 @@ function handleWsMessage(payload: string) {
 function normalizeWsEventType(type?: string | number) {
   const eventMap: Record<string, string> = {
     CHAT_EVENT_TYPE_MESSAGE: "chat.message",
-    CHAT_EVENT_TYPE_ACCEPT_INFO: "chat.session.accepted",
-    CHAT_EVENT_TYPE_SESSION_ACCEPTED: "chat.session.accepted",
-    CHAT_EVENT_TYPE_SESSION_CLOSED: "chat.session.closed",
-    CHAT_EVENT_TYPE_QUEUE_INFO: "chat.queue.updated",
-    CHAT_EVENT_TYPE_QUEUE_UPDATED: "chat.queue.updated",
-    CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED: "chat.agent.status.updated",
-    CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED: "chat.agent.status.updated",
-    CHAT_EVENT_TYPE_USER_ONLINE: "chat.user.online",
-    CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT: "send_agent_message.result",
-    CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT: "accept_chat_session.result",
-    CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT: "close_chat_session.result",
+    CHAT_EVENT_TYPE_SYSTEM: "chat.system",
+    CHAT_EVENT_TYPE_USER_JOIN: "chat.user.online",
+    CHAT_EVENT_TYPE_USER_LEAVE: "chat.user.offline",
+    CHAT_EVENT_TYPE_QUEUE_JOIN: "chat.queue.updated",
+    CHAT_EVENT_TYPE_QUEUE_UPDATE: "chat.queue.updated",
+    CHAT_EVENT_TYPE_QUEUE_LEAVE: "chat.queue.updated",
+    CHAT_EVENT_TYPE_AGENT_ASSIGNED: "chat.session.accepted",
+    CHAT_EVENT_TYPE_AGENT_JOIN: "chat.agent.status.updated",
+    CHAT_EVENT_TYPE_AGENT_LEAVE: "chat.agent.status.updated",
+    CHAT_EVENT_TYPE_TRANSFER: "chat.transfer",
+    CHAT_EVENT_TYPE_SESSION_START: "chat.session.started",
+    CHAT_EVENT_TYPE_SESSION_CLOSE: "chat.session.closed",
+    CHAT_EVENT_TYPE_EVALUATION_INVITE: "chat.evaluation.invite",
+    CHAT_EVENT_TYPE_EVALUATION_SUBMIT: "chat.evaluation.submit",
+    CHAT_EVENT_TYPE_TYPING: "chat.typing",
+    CHAT_EVENT_TYPE_STOP_TYPING: "chat.stop_typing",
+    CHAT_EVENT_TYPE_DELIVERED: "chat.delivered",
+    CHAT_EVENT_TYPE_READ: "chat.read",
+    CHAT_EVENT_TYPE_ERROR: "chat.error",
   };
   if (typeof type === "number") {
     return eventMap[chatEventTypeCode(type)] || String(type);
@@ -468,14 +471,25 @@ function normalizeWsEventType(type?: string | number) {
 function chatEventTypeCode(value: number) {
   const fallback: Record<number, string> = {
     1: "CHAT_EVENT_TYPE_MESSAGE",
-    2: "CHAT_EVENT_TYPE_ACCEPT_INFO",
-    3: "CHAT_EVENT_TYPE_SESSION_CLOSED",
-    4: "CHAT_EVENT_TYPE_QUEUE_INFO",
-    5: "CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED",
-    11: "CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT",
-    13: "CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT",
-    15: "CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT",
-    16: "CHAT_EVENT_TYPE_USER_ONLINE",
+    2: "CHAT_EVENT_TYPE_SYSTEM",
+    3: "CHAT_EVENT_TYPE_USER_JOIN",
+    4: "CHAT_EVENT_TYPE_USER_LEAVE",
+    5: "CHAT_EVENT_TYPE_QUEUE_JOIN",
+    6: "CHAT_EVENT_TYPE_QUEUE_UPDATE",
+    7: "CHAT_EVENT_TYPE_QUEUE_LEAVE",
+    8: "CHAT_EVENT_TYPE_AGENT_ASSIGNED",
+    9: "CHAT_EVENT_TYPE_AGENT_JOIN",
+    10: "CHAT_EVENT_TYPE_AGENT_LEAVE",
+    11: "CHAT_EVENT_TYPE_TRANSFER",
+    12: "CHAT_EVENT_TYPE_SESSION_START",
+    13: "CHAT_EVENT_TYPE_SESSION_CLOSE",
+    14: "CHAT_EVENT_TYPE_EVALUATION_INVITE",
+    15: "CHAT_EVENT_TYPE_EVALUATION_SUBMIT",
+    16: "CHAT_EVENT_TYPE_TYPING",
+    17: "CHAT_EVENT_TYPE_STOP_TYPING",
+    18: "CHAT_EVENT_TYPE_DELIVERED",
+    19: "CHAT_EVENT_TYPE_READ",
+    22: "CHAT_EVENT_TYPE_ERROR",
   };
   return fallback[value] || "";
 }
@@ -677,19 +691,30 @@ function transientSessionFromMessage(message: ChatMessage): ChatSession {
   };
 }
 
-function mergeTransientSessions(nextSessions: ChatSession[]) {
+function mergeLiveSessions(nextSessions: ChatSession[]) {
   const validNextSessions = nextSessions.filter((item) =>
     Boolean(item.sessionNo),
   );
   const nextNos = new Set(validNextSessions.map((item) => item.sessionNo));
-  const transient = sessions.value.filter(
-    (item) => isGuestSession(item.sessionNo) && !nextNos.has(item.sessionNo),
+  const localLiveSessions = sessions.value.filter(
+    (item) =>
+      Boolean(item.sessionNo) &&
+      !nextNos.has(item.sessionNo) &&
+      sessionStatusValue(item.status) !== sessionStatus.closed,
   );
-  return [...transient, ...validNextSessions];
+  return [...localLiveSessions, ...validNextSessions];
 }
 
-function isGuestSession(sessionNo?: string) {
-  return typeof sessionNo === "string" && sessionNo.startsWith("GS");
+function isGuestSession(session?: ChatSession) {
+  if (!session?.extJson) return false;
+  if (typeof session.extJson === "object") {
+    return Boolean(session.extJson.isGuest);
+  }
+  try {
+    return Boolean((JSON.parse(session.extJson) as { isGuest?: boolean }).isGuest);
+  } catch {
+    return false;
+  }
 }
 
 function setSessionStatusMessage(sessionNo: string, message?: string) {
@@ -758,17 +783,27 @@ function isQueueSystemMessage(message?: ChatMessage) {
 
 function shouldAppendWsMessage(eventType: string, message?: ChatMessage) {
   if (!message || isQueueSystemMessage(message)) return false;
-  return eventType === "chat.message" || eventType === "send_agent_message.result";
+  return eventType === "chat.message";
 }
 
 function normalizeSession(session: ChatSession) {
+  session.id = Number(session.id || 0);
+  session.merchantId = Number(session.merchantId || 0);
   session.status = sessionStatusValue(session.status);
+  session.source = Number(session.source || 0);
+  session.priority = Number(session.priority || 0);
   session.agentId = Number(session.agentId || 0);
   session.userId = Number(session.userId || 0);
   session.userNickname = session.userNickname || session.title || "";
   session.userAvatarUrl = session.userAvatarUrl || "";
   session.groupId = Number(session.groupId || 0);
   session.lastSenderType = senderTypeValue(session.lastSenderType);
+  session.lastMessageTime = Number(session.lastMessageTime || 0);
+  session.userUnreadCount = Number(session.userUnreadCount || 0);
+  session.agentUnreadCount = Number(session.agentUnreadCount || 0);
+  session.closeTime = Number(session.closeTime || 0);
+  session.createTimes = Number(session.createTimes || 0);
+  session.updateTimes = Number(session.updateTimes || 0);
   return session;
 }
 
@@ -835,7 +870,7 @@ function backToSessions() {
   mobileChatOpen.value = false;
 }
 
-async function send() {
+function send() {
   const content = input.value.trim();
   if (
     !content ||
@@ -847,38 +882,20 @@ async function send() {
   ) {
     return;
   }
-  const sessionNo = activeSession.value.sessionNo;
-  if (isGuestSession(sessionNo)) {
-    socket?.send(
-      JSON.stringify({
-        type: chatEventType.sendAgentMessage,
-        data: {
-          merchantId: merchantId.value,
-          agentId: agentId.value,
-          userId: activeSession.value.userId,
-          sessionNo,
-          messageType: 1,
-          content,
-        },
-      }),
-    );
-    input.value = "";
-    return;
-  }
-  try {
-    const resp = await sendAgentMessage(sessionNo, {
-      merchantId: merchantId.value,
-      agentId: agentId.value,
-      messageType: 1,
-      content,
-    });
-    normalizeMessageEnums(resp.data);
-    pushMessage(resp.data);
-    upsertSessionFromMessage(resp.data, false);
-    input.value = "";
-  } catch (err) {
-    ElMessage.error(err instanceof Error ? err.message : "发送失败");
-  }
+  socket?.send(
+    JSON.stringify({
+      type: chatEventType.message,
+      data: {
+        merchantId: merchantId.value,
+        agentId: agentId.value,
+        userId: activeSession.value.userId,
+        sessionNo: activeSession.value.sessionNo,
+        messageType: 1,
+        content,
+      },
+    }),
+  );
+  input.value = "";
 }
 
 function closeSession() {
@@ -887,7 +904,7 @@ function closeSession() {
   }
   socket.send(
     JSON.stringify({
-      type: chatEventType.closeChatSession,
+      type: chatEventType.sessionClose,
       data: {
         merchantId: merchantId.value,
         userId: activeSession.value.userId,
@@ -908,7 +925,7 @@ function acceptSession() {
   }
   socket.send(
     JSON.stringify({
-      type: chatEventType.acceptChatSession,
+      type: chatEventType.agentAssigned,
       data: {
         merchantId: merchantId.value,
         agentId: agentId.value,

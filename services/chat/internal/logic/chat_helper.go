@@ -353,6 +353,24 @@ func toProtoChatWorkOrders(list []*models.TChatWorkOrder) []*chat.ChatWorkOrder 
 	return resp
 }
 
+func toProtoSatisfaction(data *models.TChatSatisfaction) *chat.ChatSatisfaction {
+	if data == nil {
+		return nil
+	}
+	return &chat.ChatSatisfaction{
+		Id:          data.Id,
+		MerchantId:  data.MerchantId,
+		SessionNo:   data.SessionNo,
+		UserId:      data.UserId,
+		AgentId:     data.AgentId,
+		Score:       int32(data.Score),
+		Content:     data.Content,
+		Tags:        data.Tags,
+		CreateTimes: data.CreateTimes,
+		UpdateTimes: data.UpdateTimes,
+	}
+}
+
 func toProtoMerchant(data *models.TChatMerchantInfo) *chat.ChatMerchant {
 	if data == nil {
 		return nil
@@ -884,6 +902,68 @@ func publishAgentStatusEvent(ctx context.Context, svcCtx *svc.ServiceContext, ag
 	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
 		logx.WithContext(ctx).Errorf("publish chat agent status event failed: %v", err)
 	}
+}
+
+func publishEvaluationEvent(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, satisfaction *models.TChatSatisfaction) {
+	if svcCtx.BusRedis == nil || session == nil || satisfaction == nil {
+		return
+	}
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
+		CreatedAt: nowMillis(),
+		Data: &chat.ChatMessage{
+			MessageNo:   nextNo("GM"),
+			SessionNo:   session.SessionNo,
+			EventType:   chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
+			MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_EVALUATION,
+			Content:     "用户已提交评价",
+			Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+			AgentId:     strconv.FormatInt(session.AgentId, 10),
+			Extra:       satisfactionPayloadJSON(satisfaction),
+			CreateTime:  nowMillis(),
+			UpdateTime:  nowMillis(),
+			Sender: &chat.ChatMessageUser{
+				Id:       session.UserId,
+				Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+				Nickname: session.Title,
+			},
+		},
+		Session: toProtoSession(session),
+		SessionEvent: &chat.ChatSessionEvent{
+			SessionNo:  session.SessionNo,
+			MerchantId: session.MerchantId,
+			UserId:     session.UserId,
+			AgentId:    session.AgentId,
+			Status:     chat.ChatSessionStatus(session.Status),
+			Message:    "用户已提交评价",
+			Session:    toProtoSession(session),
+			CreatedAt:  nowMillis(),
+		},
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("marshal chat evaluation event failed: %v", err)
+		return
+	}
+	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
+		logx.WithContext(ctx).Errorf("publish chat evaluation event failed: %v", err)
+	}
+}
+
+func satisfactionPayloadJSON(data *models.TChatSatisfaction) string {
+	if data == nil {
+		return ""
+	}
+	payload := map[string]interface{}{
+		"score":   data.Score,
+		"content": data.Content,
+		"tags":    data.Tags,
+	}
+	bs, err := json.Marshal(payload)
+	if err != nil {
+		return ""
+	}
+	return string(bs)
 }
 
 func changeAgentSessionCount(ctx context.Context, svcCtx *svc.ServiceContext, agentID int64, delta int64) error {
