@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 const (
@@ -202,6 +203,22 @@ func (c *Connection) SendJSON(eventType chat.ChatEventType, data interface{}) {
 	})
 	if err != nil {
 		logx.Errorf("marshal chat user ws response failed: %v", err)
+		return
+	}
+	select {
+	case c.Send <- payload:
+	default:
+		logx.Errorf("chat user ws send queue is full, userId=%d", c.UserId)
+	}
+}
+
+func (c *Connection) SendEvent(event *chat.ChatMessageEvent) {
+	if event == nil {
+		return
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		logx.Errorf("marshal chat user ws event failed: %v", err)
 		return
 	}
 	select {

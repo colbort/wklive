@@ -19,6 +19,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (
@@ -71,11 +72,8 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 	l.svcCtx.ChatMessageHub.Register(client)
 	// 告诉自己链接成功
 	client.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, connectedPayload(req))
-	// TODO 推送（给所有当前商户的坐席）用户进入客服 CHAT_EVENT_TYPE_USER_ONLINE
-	// TODO 发送消息给用户（自己）排队信息 CHAT_EVENT_TYPE_QUEUE_INFO
-	// if req.IsGuest {
-	// 	l.publishTransientQueueEvent(l.ctx, client, "正在排队，客服会尽快接入。")
-	// }
+	l.publishUserOnlineEvent(l.ctx, client)
+	l.sendQueueEvent(client, "正在排队，客服会尽快接入。")
 
 	go client.WritePump()
 	client.ReadPump()
@@ -143,59 +141,41 @@ func (l *MessagesLogic) onClose() func(*ws.Connection) {
 	}
 }
 
+// 消息转发处理；游客只转发，登录用户转发+消息入库（mongodb）
 func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
-	data, ok := parseSendUserMessagePayload(conn, payload)
-	if !ok {
+	var data UserMessagePayload
+	if err := json.Unmarshal(payload, &data); err != nil {
+		sendWSError(conn, "invalid send_user_message payload")
 		return
 	}
 	if strings.TrimSpace(conn.SessionNo) == "" {
 		sendWSError(conn, "sessionNo is required")
 		return
 	}
+	message := chat.AppChatMessageResp{Base: helper.OkResp()}
 	if isGuest {
-		l.sendTransientUserMessage(ctx, conn, data)
-		return
+		message.Data = buildChatMessage(conn, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, conn.UserId, data)
+	} else {
+		req := chat.SendUserMessageReq{
+			SessionNo:       conn.SessionNo,
+			MessageType:     chat.ChatMessageType(data.MessageType),
+			Content:         strings.TrimSpace(data.Content),
+			MediaUrl:        strings.TrimSpace(data.MediaUrl),
+			MediaName:       strings.TrimSpace(data.MediaName),
+			MediaMime:       strings.TrimSpace(data.MediaMime),
+			MediaSize:       data.MediaSize,
+			SenderNickname:  firstNonEmpty(conn.Username, data.SenderNickname),
+			SenderAvatarUrl: firstNonEmpty(conn.AvatarUrl, data.SenderAvatarUrl),
+		}
+		// 消息入库
+		resp, err := l.svcCtx.ChatAppCli.SendUserMessage(contextWithChatIdentity(ctx, conn.MerchantId, conn.UserId), &req)
+		if err != nil {
+			sendWSError(conn, err.Error())
+			return
+		}
+		message.Data = resp.Data
 	}
-	l.sendPersistentUserMessage(ctx, conn, data)
-}
-
-func parseSendUserMessagePayload(conn *ws.Connection, payload json.RawMessage) (UserMessagePayload, bool) {
-	var data UserMessagePayload
-	if err := json.Unmarshal(payload, &data); err != nil {
-		sendWSError(conn, "invalid send_user_message payload")
-		return data, false
-	}
-	return data, true
-}
-
-func (l *MessagesLogic) sendPersistentUserMessage(ctx context.Context, conn *ws.Connection, data UserMessagePayload) {
-	req := chat.SendUserMessageReq{
-		SessionNo:       conn.SessionNo,
-		MessageType:     chat.ChatMessageType(data.MessageType),
-		Content:         strings.TrimSpace(data.Content),
-		MediaUrl:        strings.TrimSpace(data.MediaUrl),
-		MediaName:       strings.TrimSpace(data.MediaName),
-		MediaMime:       strings.TrimSpace(data.MediaMime),
-		MediaSize:       data.MediaSize,
-		SenderNickname:  firstNonEmpty(conn.Username, data.SenderNickname),
-		SenderAvatarUrl: firstNonEmpty(conn.AvatarUrl, data.SenderAvatarUrl),
-	}
-	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(contextWithChatIdentity(ctx, conn.MerchantId, conn.UserId), &req)
-	if err != nil {
-		sendWSError(conn, err.Error())
-		return
-	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT, resp)
-}
-
-func (l *MessagesLogic) sendTransientUserMessage(ctx context.Context, conn *ws.Connection, data UserMessagePayload) {
-	msg := newTransientMessage(conn, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, conn.UserId, data)
-	if err := l.publishTransientMessage(ctx, msg); err != nil {
-		sendWSError(conn, err.Error())
-		return
-	}
-	l.publishTransientQueueEvent(ctx, conn, "正在排队，客服会尽快接入。")
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT, &chat.AppChatMessageResp{Base: helper.OkResp(), Data: msg})
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT, &message)
 }
 
 func sendWSError(conn *ws.Connection, message string) {
@@ -230,7 +210,7 @@ func contextWithChatIdentity(ctx context.Context, merchantId, userId int64) cont
 	return ctx
 }
 
-func newTransientMessage(conn *ws.Connection, senderType chat.ChatSenderType, senderId int64, data UserMessagePayload) *chat.ChatMessage {
+func buildChatMessage(conn *ws.Connection, senderType chat.ChatSenderType, senderId int64, data UserMessagePayload) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
 	senderNickname := firstNonEmpty(data.SenderNickname, conn.Username, guestUsername)
 	return &chat.ChatMessage{
@@ -258,16 +238,7 @@ func newTransientMessage(conn *ws.Connection, senderType chat.ChatSenderType, se
 	}
 }
 
-func (l *MessagesLogic) publishTransientMessage(ctx context.Context, msg *chat.ChatMessage) error {
-	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
-		Data:      msg,
-		CreatedAt: time.Now().UnixMilli(),
-	}
-	return l.publishChatEvent(ctx, event)
-}
-
-func (l *MessagesLogic) publishTransientQueueEvent(ctx context.Context, conn *ws.Connection, message string) {
+func (l *MessagesLogic) sendQueueEvent(conn *ws.Connection, message string) {
 	if conn == nil {
 		return
 	}
@@ -299,8 +270,43 @@ func (l *MessagesLogic) publishTransientQueueEvent(ctx context.Context, conn *ws
 			UpdateTimes: now,
 		},
 	}
+	conn.SendEvent(event)
+}
+
+func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Connection) {
+	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
+		return
+	}
+	now := time.Now().UnixMilli()
+	session := &chat.ChatSession{
+		SessionNo:       conn.SessionNo,
+		MerchantId:      conn.MerchantId,
+		UserId:          conn.UserId,
+		Source:          chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
+		Status:          chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT,
+		Priority:        chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL,
+		Title:           firstNonEmpty(conn.Username, guestUsername),
+		LastMessageTime: now,
+		CreateTimes:     now,
+		UpdateTimes:     now,
+		ExtJson:         userSnapshotExt(conn.AvatarUrl),
+	}
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_USER_ONLINE,
+		CreatedAt: now,
+		Session:   session,
+		SessionEvent: &chat.ChatSessionEvent{
+			SessionNo:  conn.SessionNo,
+			MerchantId: conn.MerchantId,
+			UserId:     conn.UserId,
+			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT,
+			Message:    "用户进入客服",
+			Session:    session,
+			CreatedAt:  now,
+		},
+	}
 	if err := l.publishChatEvent(ctx, event); err != nil {
-		logx.Errorf("publish guest chat queue event failed: %v", err)
+		logx.Errorf("publish chat user online event failed: %v", err)
 	}
 }
 
@@ -340,4 +346,18 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
+}
+
+func userSnapshotExt(avatarUrl string) *structpb.Struct {
+	avatarUrl = strings.TrimSpace(avatarUrl)
+	if avatarUrl == "" {
+		return nil
+	}
+	ext, err := structpb.NewStruct(map[string]interface{}{
+		"userAvatarUrl": avatarUrl,
+	})
+	if err != nil {
+		return nil
+	}
+	return ext
 }
