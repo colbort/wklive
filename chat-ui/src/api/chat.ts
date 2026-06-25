@@ -27,6 +27,8 @@ export const chatWsEvents = {
   acceptChatSessionResult: 13,
   closeChatSession: 14,
   closeChatSessionResult: 15,
+  userOnline: 16,
+  userOffline: 17,
 } as const;
 
 export interface CreateChatTokenReq {

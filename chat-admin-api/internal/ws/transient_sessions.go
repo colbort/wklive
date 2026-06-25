@@ -72,7 +72,7 @@ func (s *transientSessionStore) ApplyEvent(event *chat.ChatMessageEvent) {
 	if event.GetQueue() != nil {
 		applyTransientQueue(session, event.GetQueue())
 	}
-	if event.GetData() != nil && event.GetType() != chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATED {
+	if event.GetData() != nil && event.GetType() != chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_INFO {
 		applyTransientMessage(session, event.GetType(), event.GetData())
 		if event.GetType() == chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE {
 			s.appendMessageLocked(event.GetData())
@@ -362,7 +362,7 @@ func applyTransientMessage(session *chat.ChatSession, eventType chat.ChatEventTy
 	}
 
 	switch eventType {
-	case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_ACCEPTED:
+	case chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_INFO:
 		session.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING
 	case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED:
 		session.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED

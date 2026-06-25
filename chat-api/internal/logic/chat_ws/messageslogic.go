@@ -3,8 +3,6 @@ package chat_ws
 import (
 	"context"
 	"crypto/rand"
-	"crypto/sha256"
-	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -67,14 +65,17 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		req.AvatarUrl,
 		req.MerchantId,
 		req.SessionNo,
-		l.handleInbound(req.IsGuest),
-		l.handleClose(),
+		l.onMessage(req.IsGuest),
+		l.onClose(),
 	)
 	l.svcCtx.ChatMessageHub.Register(client)
+	// 告诉自己链接成功
 	client.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, connectedPayload(req))
-	if req.IsGuest {
-		l.publishTransientQueueEvent(l.ctx, client, "正在排队，客服会尽快接入。")
-	}
+	// TODO 推送（给所有当前商户的坐席）用户进入客服 CHAT_EVENT_TYPE_USER_ONLINE
+	// TODO 发送消息给用户（自己）排队信息 CHAT_EVENT_TYPE_QUEUE_INFO
+	// if req.IsGuest {
+	// 	l.publishTransientQueueEvent(l.ctx, client, "正在排队，客服会尽快接入。")
+	// }
 
 	go client.WritePump()
 	client.ReadPump()
@@ -91,29 +92,58 @@ func connectedPayload(req types.ChatWSMessagesReq) map[string]interface{} {
 	}
 	if req.IsGuest {
 		payload["message"] = "guest chat websocket connected"
-		payload["temporary"] = true
+		payload["isGuest"] = true
 	}
 	return payload
 }
 
-func (l *MessagesLogic) handleInbound(temporary bool) func(*ws.Connection, ws.InboundEvent) {
+// 处理用户通过 ws 发送的消息
+func (l *MessagesLogic) onMessage(isGuest bool) func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
 		switch event.Type {
-		case chat.ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE:
-			l.handleSendUserMessage(context.Background(), conn, event.Data, temporary)
+		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE:
+			l.handleSendUserMessage(context.Background(), conn, event.Data, isGuest)
 		default:
 			sendWSError(conn, "unsupported event type")
 		}
 	}
 }
 
-func (l *MessagesLogic) handleClose() func(*ws.Connection) {
+// 处理用户离开
+func (l *MessagesLogic) onClose() func(*ws.Connection) {
 	return func(conn *ws.Connection) {
-		l.publishUserLeftEvent(context.Background(), conn)
+		if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
+			return
+		}
+		now := time.Now().UnixMilli()
+		message := "用户已离开客服页面"
+		event := &chat.ChatMessageEvent{
+			Type:      chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED,
+			CreatedAt: now,
+			Data: &chat.ChatMessage{
+				MessageNo:   nextGuestNo(guestMessagePrefix),
+				SessionNo:   conn.SessionNo,
+				MerchantId:  conn.MerchantId,
+				UserId:      conn.UserId,
+				SenderType:  chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+				MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
+				Content:     message,
+				Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+				CreateTimes: now,
+				UpdateTimes: now,
+				Sender: &chat.ChatMessageSender{
+					Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+					Nickname: "系统",
+				},
+			},
+		}
+		if err := l.publishChatEvent(context.Background(), event); err != nil {
+			logx.Errorf("publish chat user left event failed: %v", err)
+		}
 	}
 }
 
-func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage, temporary bool) {
+func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
 	data, ok := parseSendUserMessagePayload(conn, payload)
 	if !ok {
 		return
@@ -122,15 +152,15 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 		sendWSError(conn, "sessionNo is required")
 		return
 	}
-	if temporary {
+	if isGuest {
 		l.sendTransientUserMessage(ctx, conn, data)
 		return
 	}
 	l.sendPersistentUserMessage(ctx, conn, data)
 }
 
-func parseSendUserMessagePayload(conn *ws.Connection, payload json.RawMessage) (sendUserMessagePayload, bool) {
-	var data sendUserMessagePayload
+func parseSendUserMessagePayload(conn *ws.Connection, payload json.RawMessage) (UserMessagePayload, bool) {
+	var data UserMessagePayload
 	if err := json.Unmarshal(payload, &data); err != nil {
 		sendWSError(conn, "invalid send_user_message payload")
 		return data, false
@@ -138,7 +168,7 @@ func parseSendUserMessagePayload(conn *ws.Connection, payload json.RawMessage) (
 	return data, true
 }
 
-func (l *MessagesLogic) sendPersistentUserMessage(ctx context.Context, conn *ws.Connection, data sendUserMessagePayload) {
+func (l *MessagesLogic) sendPersistentUserMessage(ctx context.Context, conn *ws.Connection, data UserMessagePayload) {
 	req := chat.SendUserMessageReq{
 		SessionNo:       conn.SessionNo,
 		MessageType:     chat.ChatMessageType(data.MessageType),
@@ -158,7 +188,7 @@ func (l *MessagesLogic) sendPersistentUserMessage(ctx context.Context, conn *ws.
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT, resp)
 }
 
-func (l *MessagesLogic) sendTransientUserMessage(ctx context.Context, conn *ws.Connection, data sendUserMessagePayload) {
+func (l *MessagesLogic) sendTransientUserMessage(ctx context.Context, conn *ws.Connection, data UserMessagePayload) {
 	msg := newTransientMessage(conn, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, conn.UserId, data)
 	if err := l.publishTransientMessage(ctx, msg); err != nil {
 		sendWSError(conn, err.Error())
@@ -169,7 +199,7 @@ func (l *MessagesLogic) sendTransientUserMessage(ctx context.Context, conn *ws.C
 }
 
 func sendWSError(conn *ws.Connection, message string) {
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, map[string]string{"message": message})
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": message})
 }
 
 func (l *MessagesLogic) openPersistentSession(ctx context.Context, merchantId, userId int64, nickname, avatarUrl string) (string, error) {
@@ -200,7 +230,7 @@ func contextWithChatIdentity(ctx context.Context, merchantId, userId int64) cont
 	return ctx
 }
 
-func newTransientMessage(conn *ws.Connection, senderType chat.ChatSenderType, senderId int64, data sendUserMessagePayload) *chat.ChatMessage {
+func newTransientMessage(conn *ws.Connection, senderType chat.ChatSenderType, senderId int64, data UserMessagePayload) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
 	senderNickname := firstNonEmpty(data.SenderNickname, conn.Username, guestUsername)
 	return &chat.ChatMessage{
@@ -243,7 +273,7 @@ func (l *MessagesLogic) publishTransientQueueEvent(ctx context.Context, conn *ws
 	}
 	now := time.Now().UnixMilli()
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATED,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_INFO,
 		CreatedAt: now,
 		Data: &chat.ChatMessage{
 			MessageNo:   nextGuestNo(guestMessagePrefix),
@@ -274,37 +304,6 @@ func (l *MessagesLogic) publishTransientQueueEvent(ctx context.Context, conn *ws
 	}
 }
 
-func (l *MessagesLogic) publishUserLeftEvent(ctx context.Context, conn *ws.Connection) {
-	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
-		return
-	}
-	now := time.Now().UnixMilli()
-	message := "用户已离开客服页面"
-	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED,
-		CreatedAt: now,
-		Data: &chat.ChatMessage{
-			MessageNo:   nextGuestNo(guestMessagePrefix),
-			SessionNo:   conn.SessionNo,
-			MerchantId:  conn.MerchantId,
-			UserId:      conn.UserId,
-			SenderType:  chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
-			MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
-			Content:     message,
-			Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-			CreateTimes: now,
-			UpdateTimes: now,
-			Sender: &chat.ChatMessageSender{
-				Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
-				Nickname: "系统",
-			},
-		},
-	}
-	if err := l.publishChatEvent(ctx, event); err != nil {
-		logx.Errorf("publish chat user left event failed: %v", err)
-	}
-}
-
 func (l *MessagesLogic) publishChatEvent(ctx context.Context, event *chat.ChatMessageEvent) error {
 	if l.svcCtx.BusRedis == nil {
 		return fmt.Errorf("chat redis is not configured")
@@ -323,16 +322,7 @@ func nextGuestNo(prefix string) string {
 	return fmt.Sprintf("%s%d%s", prefix, time.Now().UnixMilli(), hex.EncodeToString(b))
 }
 
-func guestUserID(sessionNo string) int64 {
-	sum := sha256.Sum256([]byte(sessionNo))
-	n := int64(binary.BigEndian.Uint64(sum[:8]) & 0x3fffffffffffffff)
-	if n == 0 {
-		return -1
-	}
-	return -n
-}
-
-type sendUserMessagePayload struct {
+type UserMessagePayload struct {
 	MessageType     int64  `json:"messageType"`
 	Content         string `json:"content"`
 	MediaUrl        string `json:"mediaUrl"`

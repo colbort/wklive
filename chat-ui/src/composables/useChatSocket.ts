@@ -361,8 +361,10 @@ export function useChatSocket() {
   function normalizeWsEventType(type: string | number) {
     const eventMap = optionCodeMap("chatEventType", {
       CHAT_EVENT_TYPE_MESSAGE: chatWsEvents.message,
+      CHAT_EVENT_TYPE_ACCEPT_INFO: chatWsEvents.sessionAccepted,
       CHAT_EVENT_TYPE_SESSION_ACCEPTED: chatWsEvents.sessionAccepted,
       CHAT_EVENT_TYPE_SESSION_CLOSED: chatWsEvents.sessionClosed,
+      CHAT_EVENT_TYPE_QUEUE_INFO: chatWsEvents.queueUpdated,
       CHAT_EVENT_TYPE_QUEUE_UPDATED: chatWsEvents.queueUpdated,
       CHAT_EVENT_TYPE_CONNECTED: chatWsEvents.connected,
       CHAT_EVENT_TYPE_ERROR: chatWsEvents.error,

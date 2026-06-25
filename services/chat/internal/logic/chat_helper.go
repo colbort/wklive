@@ -803,7 +803,7 @@ func publishQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext, session 
 		return
 	}
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATED,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_INFO,
 		CreatedAt: nowMillis(),
 		Data:      newEventSystemMessage(session, queue.GetMessage()),
 		Session:   toProtoSession(session),
@@ -864,7 +864,7 @@ func publishAgentStatusEvent(ctx context.Context, svcCtx *svc.ServiceContext, ag
 		return
 	}
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED,
 		CreatedAt: nowMillis(),
 		Agent:     toProtoAgent(agent),
 	}

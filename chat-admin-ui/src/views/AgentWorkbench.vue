@@ -446,9 +446,12 @@ function handleWsMessage(payload: string) {
 function normalizeWsEventType(type?: string | number) {
   const eventMap: Record<string, string> = {
     CHAT_EVENT_TYPE_MESSAGE: "chat.message",
+    CHAT_EVENT_TYPE_ACCEPT_INFO: "chat.session.accepted",
     CHAT_EVENT_TYPE_SESSION_ACCEPTED: "chat.session.accepted",
     CHAT_EVENT_TYPE_SESSION_CLOSED: "chat.session.closed",
+    CHAT_EVENT_TYPE_QUEUE_INFO: "chat.queue.updated",
     CHAT_EVENT_TYPE_QUEUE_UPDATED: "chat.queue.updated",
+    CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED: "chat.agent.status.updated",
     CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED: "chat.agent.status.updated",
     CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT: "send_agent_message.result",
     CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT: "accept_chat_session.result",
@@ -463,10 +466,10 @@ function normalizeWsEventType(type?: string | number) {
 function chatEventTypeCode(value: number) {
   const fallback: Record<number, string> = {
     1: "CHAT_EVENT_TYPE_MESSAGE",
-    2: "CHAT_EVENT_TYPE_SESSION_ACCEPTED",
+    2: "CHAT_EVENT_TYPE_ACCEPT_INFO",
     3: "CHAT_EVENT_TYPE_SESSION_CLOSED",
-    4: "CHAT_EVENT_TYPE_QUEUE_UPDATED",
-    5: "CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED",
+    4: "CHAT_EVENT_TYPE_QUEUE_INFO",
+    5: "CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED",
     11: "CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT",
     13: "CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT",
     15: "CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT",

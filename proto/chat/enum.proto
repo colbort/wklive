@@ -79,21 +79,23 @@ enum ChatAssignType {
 // 聊天事件类型
 enum ChatEventType {
   CHAT_EVENT_TYPE_UNKNOWN = 0;
-  CHAT_EVENT_TYPE_MESSAGE = 1;                     // chat.message
-  CHAT_EVENT_TYPE_SESSION_ACCEPTED = 2;            // chat.session.accepted
-  CHAT_EVENT_TYPE_SESSION_CLOSED = 3;              // chat.session.closed
-  CHAT_EVENT_TYPE_QUEUE_UPDATED = 4;               // chat.queue.updated
-  CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED = 5;        // chat.agent.status.updated
-  CHAT_EVENT_TYPE_CONNECTED = 6;                   // connected
-  CHAT_EVENT_TYPE_ERROR = 7;                       // error
-  CHAT_EVENT_TYPE_SEND_USER_MESSAGE = 8;           // send_user_message
-  CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT = 9;    // send_user_message.result
-  CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE = 10;         // send_agent_message
-  CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT = 11;  // send_agent_message.result
-  CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION = 12;        // accept_chat_session
-  CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT = 13; // accept_chat_session.result
-  CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION = 14;         // close_chat_session
-  CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT = 15;  // close_chat_session.result
+  CHAT_EVENT_TYPE_MESSAGE = 1;                    // 消息推送
+  CHAT_EVENT_TYPE_ACCEPT_INFO = 2;                // 接待信息,通知用户XX客服正在为你服务
+  CHAT_EVENT_TYPE_SESSION_CLOSED = 3;             // 会话结束
+  CHAT_EVENT_TYPE_QUEUE_INFO = 4;                 // 排队信息,通知用户排队信息变化
+  CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED = 5;       // 客服状态变化,通知商户更新坐席列表/状态
+  CHAT_EVENT_TYPE_CONNECTED = 6;                  // WS连接成功
+  CHAT_EVENT_TYPE_ERROR = 7;                      // WS错误
+  CHAT_EVENT_TYPE_SEND_USER_MESSAGE = 8;          // 用户发送消息
+  CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT = 9;   // 用户发送消息结果
+  CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE = 10;        // 坐席发送消息
+  CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT = 11; // 坐席发送消息结果
+  CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION = 12;       // 坐席接待
+  CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT = 13; // 坐席接待结果
+  CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION = 14;        // 坐席结束会话
+  CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT = 15; // 坐席结束会话结果
+  CHAT_EVENT_TYPE_USER_ONLINE = 16;               // 用户上线,通知坐席
+  CHAT_EVENT_TYPE_USER_OFFLINE = 17;              // 用户下线,通知坐席
 }
 
 // 客服用户类型
@@ -111,4 +113,3 @@ enum ChatSyncAction {
   CHAT_SYNC_ACTION_UPSERT = 1; // 创建或更新
   CHAT_SYNC_ACTION_DELETE = 2; // 删除/禁用
 }
-

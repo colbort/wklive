@@ -474,21 +474,23 @@ type ChatEventType int32
 
 const (
 	ChatEventType_CHAT_EVENT_TYPE_UNKNOWN                    ChatEventType = 0
-	ChatEventType_CHAT_EVENT_TYPE_MESSAGE                    ChatEventType = 1  // chat.message
-	ChatEventType_CHAT_EVENT_TYPE_SESSION_ACCEPTED           ChatEventType = 2  // chat.session.accepted
-	ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED             ChatEventType = 3  // chat.session.closed
-	ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATED              ChatEventType = 4  // chat.queue.updated
-	ChatEventType_CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED       ChatEventType = 5  // chat.agent.status.updated
-	ChatEventType_CHAT_EVENT_TYPE_CONNECTED                  ChatEventType = 6  // connected
-	ChatEventType_CHAT_EVENT_TYPE_ERROR                      ChatEventType = 7  // error
-	ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE          ChatEventType = 8  // send_user_message
-	ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT   ChatEventType = 9  // send_user_message.result
-	ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE         ChatEventType = 10 // send_agent_message
-	ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT  ChatEventType = 11 // send_agent_message.result
-	ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION        ChatEventType = 12 // accept_chat_session
-	ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT ChatEventType = 13 // accept_chat_session.result
-	ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION         ChatEventType = 14 // close_chat_session
-	ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT  ChatEventType = 15 // close_chat_session.result
+	ChatEventType_CHAT_EVENT_TYPE_MESSAGE                    ChatEventType = 1  // 消息推送
+	ChatEventType_CHAT_EVENT_TYPE_ACCEPT_INFO                ChatEventType = 2  // 接待信息,通知用户XX客服正在为你服务
+	ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED             ChatEventType = 3  // 会话结束
+	ChatEventType_CHAT_EVENT_TYPE_QUEUE_INFO                 ChatEventType = 4  // 排队信息,通知用户排队信息变化
+	ChatEventType_CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED       ChatEventType = 5  // 客服状态变化,通知商户更新坐席列表/状态
+	ChatEventType_CHAT_EVENT_TYPE_CONNECTED                  ChatEventType = 6  // WS连接成功
+	ChatEventType_CHAT_EVENT_TYPE_ERROR                      ChatEventType = 7  // WS错误
+	ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE          ChatEventType = 8  // 用户发送消息
+	ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT   ChatEventType = 9  // 用户发送消息结果
+	ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE         ChatEventType = 10 // 坐席发送消息
+	ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT  ChatEventType = 11 // 坐席发送消息结果
+	ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION        ChatEventType = 12 // 坐席接待
+	ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT ChatEventType = 13 // 坐席接待结果
+	ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION         ChatEventType = 14 // 坐席结束会话
+	ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT  ChatEventType = 15 // 坐席结束会话结果
+	ChatEventType_CHAT_EVENT_TYPE_USER_ONLINE                ChatEventType = 16 // 用户上线,通知坐席
+	ChatEventType_CHAT_EVENT_TYPE_USER_OFFLINE               ChatEventType = 17 // 用户下线,通知坐席
 )
 
 // Enum value maps for ChatEventType.
@@ -496,10 +498,10 @@ var (
 	ChatEventType_name = map[int32]string{
 		0:  "CHAT_EVENT_TYPE_UNKNOWN",
 		1:  "CHAT_EVENT_TYPE_MESSAGE",
-		2:  "CHAT_EVENT_TYPE_SESSION_ACCEPTED",
+		2:  "CHAT_EVENT_TYPE_ACCEPT_INFO",
 		3:  "CHAT_EVENT_TYPE_SESSION_CLOSED",
-		4:  "CHAT_EVENT_TYPE_QUEUE_UPDATED",
-		5:  "CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED",
+		4:  "CHAT_EVENT_TYPE_QUEUE_INFO",
+		5:  "CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED",
 		6:  "CHAT_EVENT_TYPE_CONNECTED",
 		7:  "CHAT_EVENT_TYPE_ERROR",
 		8:  "CHAT_EVENT_TYPE_SEND_USER_MESSAGE",
@@ -510,14 +512,16 @@ var (
 		13: "CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT",
 		14: "CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION",
 		15: "CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT",
+		16: "CHAT_EVENT_TYPE_USER_ONLINE",
+		17: "CHAT_EVENT_TYPE_USER_OFFLINE",
 	}
 	ChatEventType_value = map[string]int32{
 		"CHAT_EVENT_TYPE_UNKNOWN":                    0,
 		"CHAT_EVENT_TYPE_MESSAGE":                    1,
-		"CHAT_EVENT_TYPE_SESSION_ACCEPTED":           2,
+		"CHAT_EVENT_TYPE_ACCEPT_INFO":                2,
 		"CHAT_EVENT_TYPE_SESSION_CLOSED":             3,
-		"CHAT_EVENT_TYPE_QUEUE_UPDATED":              4,
-		"CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED":       5,
+		"CHAT_EVENT_TYPE_QUEUE_INFO":                 4,
+		"CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED":       5,
 		"CHAT_EVENT_TYPE_CONNECTED":                  6,
 		"CHAT_EVENT_TYPE_ERROR":                      7,
 		"CHAT_EVENT_TYPE_SEND_USER_MESSAGE":          8,
@@ -528,6 +532,8 @@ var (
 		"CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT": 13,
 		"CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION":         14,
 		"CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT":  15,
+		"CHAT_EVENT_TYPE_USER_ONLINE":                16,
+		"CHAT_EVENT_TYPE_USER_OFFLINE":               17,
 	}
 )
 
@@ -710,14 +716,14 @@ const file_proto_chat_enum_proto_rawDesc = "" +
 	"\x18CHAT_ASSIGN_TYPE_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15CHAT_ASSIGN_TYPE_AUTO\x10\x01\x12\x1b\n" +
 	"\x17CHAT_ASSIGN_TYPE_MANUAL\x10\x02\x12\x1d\n" +
-	"\x19CHAT_ASSIGN_TYPE_TRANSFER\x10\x03*\xf6\x04\n" +
+	"\x19CHAT_ASSIGN_TYPE_TRANSFER\x10\x03*\xb1\x05\n" +
 	"\rChatEventType\x12\x1b\n" +
 	"\x17CHAT_EVENT_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
-	"\x17CHAT_EVENT_TYPE_MESSAGE\x10\x01\x12$\n" +
-	" CHAT_EVENT_TYPE_SESSION_ACCEPTED\x10\x02\x12\"\n" +
-	"\x1eCHAT_EVENT_TYPE_SESSION_CLOSED\x10\x03\x12!\n" +
-	"\x1dCHAT_EVENT_TYPE_QUEUE_UPDATED\x10\x04\x12(\n" +
-	"$CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED\x10\x05\x12\x1d\n" +
+	"\x17CHAT_EVENT_TYPE_MESSAGE\x10\x01\x12\x1f\n" +
+	"\x1bCHAT_EVENT_TYPE_ACCEPT_INFO\x10\x02\x12\"\n" +
+	"\x1eCHAT_EVENT_TYPE_SESSION_CLOSED\x10\x03\x12\x1e\n" +
+	"\x1aCHAT_EVENT_TYPE_QUEUE_INFO\x10\x04\x12(\n" +
+	"$CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED\x10\x05\x12\x1d\n" +
 	"\x19CHAT_EVENT_TYPE_CONNECTED\x10\x06\x12\x19\n" +
 	"\x15CHAT_EVENT_TYPE_ERROR\x10\a\x12%\n" +
 	"!CHAT_EVENT_TYPE_SEND_USER_MESSAGE\x10\b\x12,\n" +
@@ -728,7 +734,9 @@ const file_proto_chat_enum_proto_rawDesc = "" +
 	"#CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION\x10\f\x12.\n" +
 	"*CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT\x10\r\x12&\n" +
 	"\"CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION\x10\x0e\x12-\n" +
-	")CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT\x10\x0f*g\n" +
+	")CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT\x10\x0f\x12\x1f\n" +
+	"\x1bCHAT_EVENT_TYPE_USER_ONLINE\x10\x10\x12 \n" +
+	"\x1cCHAT_EVENT_TYPE_USER_OFFLINE\x10\x11*g\n" +
 	"\fChatUserType\x12\x1a\n" +
 	"\x16CHAT_USER_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
 	"\x17CHAT_USER_TYPE_MERCHANT\x10\x01\x12\x18\n" +

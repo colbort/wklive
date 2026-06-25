@@ -182,6 +182,9 @@ function normalizeWsEventType(type?: string | number) {
   if (type === 5) {
     return "chat.agent.status.updated";
   }
+  if (type === "CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED") {
+    return "chat.agent.status.updated";
+  }
   if (type === "CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED") {
     return "chat.agent.status.updated";
   }

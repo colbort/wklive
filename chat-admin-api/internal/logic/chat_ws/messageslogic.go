@@ -122,7 +122,7 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 	}
 	if isGuestSession(sessionNo) {
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, l.agentServiceMessage(ctx, conn))
-		if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_ACCEPTED, msg); err != nil {
+		if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_INFO, msg); err != nil {
 			sendWSError(conn, err.Error())
 			return
 		}
