@@ -381,6 +381,7 @@ function handleWsMessage(payload: string) {
       eventType !== "chat.session.closed" &&
       eventType !== "chat.queue.updated" &&
       eventType !== "chat.agent.status.updated" &&
+      eventType !== "chat.user.online" &&
       eventType !== "accept_chat_session.result" &&
       eventType !== "send_agent_message.result" &&
       eventType !== "close_chat_session.result"
@@ -430,7 +431,7 @@ function handleWsMessage(payload: string) {
     ) {
       statusFilter.value = "waiting";
     }
-    if (eventType === "chat.queue.updated") {
+    if (eventType === "chat.queue.updated" || eventType === "chat.user.online") {
       const queueSessionNo = event.queue?.sessionNo || event.session?.sessionNo || "";
       if (!mobileChatOpen.value || queueSessionNo !== activeSessionNo.value) {
         statusFilter.value = "waiting";
@@ -453,6 +454,7 @@ function normalizeWsEventType(type?: string | number) {
     CHAT_EVENT_TYPE_QUEUE_UPDATED: "chat.queue.updated",
     CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED: "chat.agent.status.updated",
     CHAT_EVENT_TYPE_AGENT_STATUS_UPDATED: "chat.agent.status.updated",
+    CHAT_EVENT_TYPE_USER_ONLINE: "chat.user.online",
     CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT: "send_agent_message.result",
     CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT: "accept_chat_session.result",
     CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT: "close_chat_session.result",
@@ -473,6 +475,7 @@ function chatEventTypeCode(value: number) {
     11: "CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT",
     13: "CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT",
     15: "CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT",
+    16: "CHAT_EVENT_TYPE_USER_ONLINE",
   };
   return fallback[value] || "";
 }

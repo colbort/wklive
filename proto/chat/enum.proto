@@ -7,109 +7,316 @@ option go_package = "wklive/proto/chat;chat";
 // 会话来源
 enum ChatSessionSource {
   CHAT_SESSION_SOURCE_UNKNOWN = 0;
-  CHAT_SESSION_SOURCE_APP = 1;    // APP用户发起
-  CHAT_SESSION_SOURCE_WEB = 2;    // Web/H5用户发起
-  CHAT_SESSION_SOURCE_ADMIN = 3;  // 后台创建
-  CHAT_SESSION_SOURCE_SYSTEM = 4; // 系统创建
+
+  // APP 用户发起
+  CHAT_SESSION_SOURCE_APP = 1;
+
+  // Web/H5 用户发起
+  CHAT_SESSION_SOURCE_WEB = 2;
+
+  // 后台创建
+  CHAT_SESSION_SOURCE_ADMIN = 3;
+
+  // 系统创建
+  CHAT_SESSION_SOURCE_SYSTEM = 4;
 }
 
 // 会话状态
 enum ChatSessionStatus {
   CHAT_SESSION_STATUS_UNKNOWN = 0;
-  CHAT_SESSION_STATUS_WAITING = 1;       // 等待接入
-  CHAT_SESSION_STATUS_SERVING = 2;       // 服务中
-  CHAT_SESSION_STATUS_PENDING_USER = 3;  // 等待用户回复
-  CHAT_SESSION_STATUS_PENDING_AGENT = 4; // 等待客服回复
-  CHAT_SESSION_STATUS_CLOSED = 5;        // 已结束
+
+  // 等待接入 / 排队中 / 未分配客服
+  CHAT_SESSION_STATUS_WAITING = 1;
+
+  // 服务中
+  CHAT_SESSION_STATUS_SERVING = 2;
+
+  // 等待用户回复
+  CHAT_SESSION_STATUS_PENDING_USER = 3;
+
+  // 等待客服回复
+  CHAT_SESSION_STATUS_PENDING_AGENT = 4;
+
+  // 已结束
+  CHAT_SESSION_STATUS_CLOSED = 5;
+
+  // 转接中
+  CHAT_SESSION_STATUS_TRANSFERRING = 6;
 }
 
 // 会话优先级
 enum ChatSessionPriority {
   CHAT_SESSION_PRIORITY_UNKNOWN = 0;
-  CHAT_SESSION_PRIORITY_LOW = 1;    // 低
-  CHAT_SESSION_PRIORITY_NORMAL = 2; // 普通
-  CHAT_SESSION_PRIORITY_HIGH = 3;   // 高
-  CHAT_SESSION_PRIORITY_URGENT = 4; // 紧急
+
+  // 低
+  CHAT_SESSION_PRIORITY_LOW = 1;
+
+  // 普通
+  CHAT_SESSION_PRIORITY_NORMAL = 2;
+
+  // 高
+  CHAT_SESSION_PRIORITY_HIGH = 3;
+
+  // 紧急
+  CHAT_SESSION_PRIORITY_URGENT = 4;
+}
+
+// 会话关闭原因
+enum ChatSessionCloseReason {
+  CHAT_SESSION_CLOSE_REASON_UNKNOWN = 0;
+
+  // 用户主动关闭
+  CHAT_SESSION_CLOSE_REASON_USER = 1;
+
+  // 客服主动关闭
+  CHAT_SESSION_CLOSE_REASON_AGENT = 2;
+
+  // 系统自动关闭
+  CHAT_SESSION_CLOSE_REASON_SYSTEM = 3;
+
+  // 超时关闭
+  CHAT_SESSION_CLOSE_REASON_TIMEOUT = 4;
+
+  // 暂无客服在线关闭
+  CHAT_SESSION_CLOSE_REASON_NO_AGENT = 5;
+
+  // 转接失败关闭
+  CHAT_SESSION_CLOSE_REASON_TRANSFER_FAILED = 6;
 }
 
 // 坐席在线状态
 enum ChatAgentStatus {
   CHAT_AGENT_STATUS_UNKNOWN = 0;
-  CHAT_AGENT_STATUS_OFFLINE = 1; // 离线
-  CHAT_AGENT_STATUS_ONLINE = 2;  // 在线
-  CHAT_AGENT_STATUS_BUSY = 3;    // 忙碌
-  CHAT_AGENT_STATUS_RESTING = 4; // 休息
-}
 
-// 消息发送方类型
-enum ChatSenderType {
-  CHAT_SENDER_TYPE_UNKNOWN = 0;
-  CHAT_SENDER_TYPE_USER = 1;   // 用户
-  CHAT_SENDER_TYPE_AGENT = 2;  // 客服
-  CHAT_SENDER_TYPE_SYSTEM = 3; // 系统
-}
+  // 离线
+  CHAT_AGENT_STATUS_OFFLINE = 1;
 
-// 消息类型
-enum ChatMessageType {
-  CHAT_MESSAGE_TYPE_UNKNOWN = 0;
-  CHAT_MESSAGE_TYPE_TEXT = 1;   // 文本
-  CHAT_MESSAGE_TYPE_IMAGE = 2;  // 图片
-  CHAT_MESSAGE_TYPE_FILE = 3;   // 文件
-  CHAT_MESSAGE_TYPE_ORDER = 4;  // 订单/业务卡片
-  CHAT_MESSAGE_TYPE_SYSTEM = 5; // 系统提示
-}
+  // 在线，可接待
+  CHAT_AGENT_STATUS_ONLINE = 2;
 
-// 消息发送状态
-enum ChatMessageStatus {
-  CHAT_MESSAGE_STATUS_UNKNOWN = 0;
-  CHAT_MESSAGE_STATUS_SENT = 1;     // 已发送
-  CHAT_MESSAGE_STATUS_READ = 2;     // 已读
-  CHAT_MESSAGE_STATUS_RECALLED = 3; // 已撤回
-  CHAT_MESSAGE_STATUS_DELETED = 4;  // 已删除
+  // 忙碌，不接新会话
+  CHAT_AGENT_STATUS_BUSY = 3;
+
+  // 休息
+  CHAT_AGENT_STATUS_RESTING = 4;
+
+  // 暂离
+  CHAT_AGENT_STATUS_AWAY = 5;
 }
 
 // 分配方式
 enum ChatAssignType {
   CHAT_ASSIGN_TYPE_UNKNOWN = 0;
-  CHAT_ASSIGN_TYPE_AUTO = 1;     // 自动分配
-  CHAT_ASSIGN_TYPE_MANUAL = 2;   // 手动分配
-  CHAT_ASSIGN_TYPE_TRANSFER = 3; // 转接
+
+  // 自动分配
+  CHAT_ASSIGN_TYPE_AUTO = 1;
+
+  // 手动分配
+  CHAT_ASSIGN_TYPE_MANUAL = 2;
+
+  // 转接分配
+  CHAT_ASSIGN_TYPE_TRANSFER = 3;
 }
 
-// 聊天事件类型
+/**
+ * 聊天事件类型
+ * 表示：这条消息/推送是什么事件
+ */
 enum ChatEventType {
+  // 未知事件
   CHAT_EVENT_TYPE_UNKNOWN = 0;
-  CHAT_EVENT_TYPE_MESSAGE = 1;                    // 消息推送
-  CHAT_EVENT_TYPE_ACCEPT_INFO = 2;                // 接待信息,通知用户XX客服正在为你服务
-  CHAT_EVENT_TYPE_SESSION_CLOSED = 3;             // 会话结束
-  CHAT_EVENT_TYPE_QUEUE_INFO = 4;                 // 排队信息,通知用户排队信息变化
-  CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED = 5;       // 客服状态变化,通知商户更新坐席列表/状态
-  CHAT_EVENT_TYPE_CONNECTED = 6;                  // WS连接成功
-  CHAT_EVENT_TYPE_ERROR = 7;                      // WS错误
-  CHAT_EVENT_TYPE_SEND_USER_MESSAGE = 8;          // 用户发送消息
-  CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT = 9;   // 用户发送消息结果
-  CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE = 10;        // 坐席发送消息
-  CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT = 11; // 坐席发送消息结果
-  CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION = 12;       // 坐席接待
-  CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT = 13; // 坐席接待结果
-  CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION = 14;        // 坐席结束会话
-  CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT = 15; // 坐席结束会话结果
-  CHAT_EVENT_TYPE_USER_ONLINE = 16;               // 用户上线,通知坐席
-  CHAT_EVENT_TYPE_USER_OFFLINE = 17;              // 用户下线,通知坐席
+
+  // 普通聊天消息
+  CHAT_EVENT_TYPE_MESSAGE = 1;
+
+  // 系统通知
+  // 例如：当前暂无客服在线，请留言
+  CHAT_EVENT_TYPE_SYSTEM = 2;
+
+  // 用户进入会话
+  CHAT_EVENT_TYPE_USER_JOIN = 3;
+
+  // 用户离开会话
+  CHAT_EVENT_TYPE_USER_LEAVE = 4;
+
+  // 用户进入排队
+  // 例如：正在为您分配客服，请稍候
+  CHAT_EVENT_TYPE_QUEUE_JOIN = 5;
+
+  // 排队信息更新
+  // 例如：您前面还有 3 人，预计等待 2 分钟
+  CHAT_EVENT_TYPE_QUEUE_UPDATE = 6;
+
+  // 用户取消排队 / 离开排队
+  CHAT_EVENT_TYPE_QUEUE_LEAVE = 7;
+
+  // 客服已分配
+  // 例如：客服 小王 为您服务
+  CHAT_EVENT_TYPE_AGENT_ASSIGNED = 8;
+
+  // 客服接入会话
+  CHAT_EVENT_TYPE_AGENT_JOIN = 9;
+
+  // 客服离开会话
+  CHAT_EVENT_TYPE_AGENT_LEAVE = 10;
+
+  // 会话转接
+  // 例如：客服 小王 将您转接给客服 小李
+  CHAT_EVENT_TYPE_TRANSFER = 11;
+
+  // 会话开始
+  CHAT_EVENT_TYPE_SESSION_START = 12;
+
+  // 会话关闭 / 会话结束
+  CHAT_EVENT_TYPE_SESSION_CLOSE = 13;
+
+  // 邀请用户评价
+  CHAT_EVENT_TYPE_EVALUATION_INVITE = 14;
+
+  // 用户提交评价
+  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 15;
+
+  // 正在输入
+  CHAT_EVENT_TYPE_TYPING = 16;
+
+  // 停止输入
+  CHAT_EVENT_TYPE_STOP_TYPING = 17;
+
+  // 消息已送达
+  CHAT_EVENT_TYPE_DELIVERED = 18;
+
+  // 消息已读
+  CHAT_EVENT_TYPE_READ = 19;
+
+  // 消息撤回
+  CHAT_EVENT_TYPE_RECALL = 20;
+
+  // 心跳
+  CHAT_EVENT_TYPE_HEARTBEAT = 21;
+
+  // 错误事件
+  // 例如：发送失败、会话不存在、权限不足
+  CHAT_EVENT_TYPE_ERROR = 22;
+
+  // 暂无客服在线
+  CHAT_EVENT_TYPE_NO_AGENT_ONLINE = 23;
+
+  // 会话超时关闭
+  CHAT_EVENT_TYPE_SESSION_TIMEOUT = 24;
+
+  // 消息删除
+  CHAT_EVENT_TYPE_DELETE = 25;
 }
 
-// 客服用户类型
+/**
+ * 消息内容类型
+ * 表示：MESSAGE 事件里的消息内容是什么类型
+ */
+enum ChatMessageType {
+  // 未知消息类型
+  CHAT_MESSAGE_TYPE_UNKNOWN = 0;
+
+  // 文本消息
+  CHAT_MESSAGE_TYPE_TEXT = 1;
+
+  // 图片消息
+  CHAT_MESSAGE_TYPE_IMAGE = 2;
+
+  // 文件消息
+  CHAT_MESSAGE_TYPE_FILE = 3;
+
+  // 视频消息
+  CHAT_MESSAGE_TYPE_VIDEO = 4;
+
+  // 音频消息
+  CHAT_MESSAGE_TYPE_AUDIO = 5;
+
+  // 表情消息
+  CHAT_MESSAGE_TYPE_EMOJI = 6;
+
+  // 卡片消息
+  // 例如：商品卡片、订单卡片、用户信息卡片
+  CHAT_MESSAGE_TYPE_CARD = 7;
+
+  // 富文本消息
+  CHAT_MESSAGE_TYPE_RICH_TEXT = 8;
+
+  // 位置消息
+  CHAT_MESSAGE_TYPE_LOCATION = 9;
+
+  // 评价消息
+  CHAT_MESSAGE_TYPE_EVALUATION = 10;
+}
+
+/**
+ * 发送方类型
+ */
+enum ChatSenderType {
+  // 未知发送方
+  CHAT_SENDER_TYPE_UNKNOWN = 0;
+
+  // 用户 / 访客 / 客户
+  CHAT_SENDER_TYPE_USER = 1;
+
+  // 客服坐席
+  CHAT_SENDER_TYPE_AGENT = 2;
+
+  // 系统
+  CHAT_SENDER_TYPE_SYSTEM = 3;
+
+  // 机器人
+  CHAT_SENDER_TYPE_BOT = 4;
+}
+
+/**
+ * 消息发送状态
+ */
+enum ChatMessageStatus {
+  // 未知状态
+  CHAT_MESSAGE_STATUS_UNKNOWN = 0;
+
+  // 发送中，一般用于前端本地状态
+  CHAT_MESSAGE_STATUS_SENDING = 1;
+
+  // 已发送到服务端
+  CHAT_MESSAGE_STATUS_SENT = 2;
+
+  // 已送达到接收方客户端
+  CHAT_MESSAGE_STATUS_DELIVERED = 3;
+
+  // 已读
+  CHAT_MESSAGE_STATUS_READ = 4;
+
+  // 发送失败
+  CHAT_MESSAGE_STATUS_FAILED = 5;
+
+  // 已撤回
+  CHAT_MESSAGE_STATUS_RECALLED = 6;
+
+  // 已删除
+  CHAT_MESSAGE_STATUS_DELETED = 7;
+}
+
+// 客服后台用户类型
 enum ChatUserType {
   reserved 3;
 
   CHAT_USER_TYPE_UNKNOWN = 0;
-  CHAT_USER_TYPE_MERCHANT = 1; // 客服商户
-  CHAT_USER_TYPE_AGENT = 2;    // 客服坐席
+
+  // 客服商户
+  CHAT_USER_TYPE_MERCHANT = 1;
+
+  // 客服坐席
+  CHAT_USER_TYPE_AGENT = 2;
 }
 
 // 同步动作
 enum ChatSyncAction {
   CHAT_SYNC_ACTION_UNKNOWN = 0;
-  CHAT_SYNC_ACTION_UPSERT = 1; // 创建或更新
-  CHAT_SYNC_ACTION_DELETE = 2; // 删除/禁用
+
+  // 创建或更新
+  CHAT_SYNC_ACTION_UPSERT = 1;
+
+  // 删除 / 禁用
+  CHAT_SYNC_ACTION_DELETE = 2;
 }

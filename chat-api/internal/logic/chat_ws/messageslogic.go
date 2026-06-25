@@ -6,13 +6,13 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
 	"chat-api/internal/ws"
-	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/chat"
 
@@ -25,6 +25,7 @@ import (
 const (
 	guestMessagePrefix = "GM"
 	guestUsername      = "guest"
+	systemNickname     = "系统"
 	successCode        = 200
 )
 
@@ -42,6 +43,12 @@ func NewMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Messages
 	}
 }
 
+// Messages 是 chat-api 用户侧 websocket 入口。
+// 流程：
+// 1. chat-ui 建立 ws 连接并携带 token；
+// 2. chat-api 返回连接成功和当前排队信息；
+// 3. chat-api 发布 USER_JOIN 给 chat-admin-api，由 chat-admin-api 转发给所有坐席；
+// 4. 后续 chat-admin-api 发布 AGENT_ASSIGNED / MESSAGE / SESSION_CLOSE 等事件时，由 subscriber -> hub 转发给匹配的 chat-ui。
 func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesReq) {
 	if strings.TrimSpace(req.SessionNo) == "" {
 		if req.IsGuest {
@@ -67,118 +74,141 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		req.MerchantId,
 		req.SessionNo,
 		l.onMessage(req.IsGuest),
-		l.onClose(),
+		l.onClose(req.IsGuest),
 	)
 	l.svcCtx.ChatMessageHub.Register(client)
-	// 告诉自己链接成功
-	client.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_CONNECTED, connectedPayload(req))
+
+	// 先给 chat-ui 返回连接成功和排队信息。
+	l.sendConnectedEvent(client)
+	l.sendQueueEvent(client, chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN, "正在排队，客服会尽快接入。")
+
+	// 再通知后台：用户上线，进入待接待列表。
 	l.publishUserOnlineEvent(l.ctx, client)
-	l.sendQueueEvent(client, "正在排队，客服会尽快接入。")
 
 	go client.WritePump()
 	client.ReadPump()
 }
 
-func connectedPayload(req types.ChatWSMessagesReq) map[string]interface{} {
-	payload := map[string]interface{}{
-		"message":    "chat websocket connected",
-		"merchantId": req.MerchantId,
-		"userId":     req.UserId,
-		"nickname":   req.Nickname,
-		"avatarUrl":  req.AvatarUrl,
-		"sessionNo":  req.SessionNo,
-	}
-	if req.IsGuest {
-		payload["message"] = "guest chat websocket connected"
-		payload["isGuest"] = true
-	}
-	return payload
-}
-
-// 处理用户通过 ws 发送的消息
+// 处理用户通过 ws 发送的事件。
 func (l *MessagesLogic) onMessage(isGuest bool) func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
 		switch event.Type {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE:
 			l.handleSendUserMessage(context.Background(), conn, event.Data, isGuest)
+		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
+			l.handleCloseUserSession(context.Background(), conn, event.Data, isGuest)
+		case chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT:
+			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT, map[string]int64{"time": time.Now().UnixMilli()})
 		default:
 			sendWSError(conn, "unsupported event type")
 		}
 	}
 }
 
-// 处理用户离开
-func (l *MessagesLogic) onClose() func(*ws.Connection) {
+// 处理用户断开连接。
+func (l *MessagesLogic) onClose(isGuest bool) func(*ws.Connection) {
 	return func(conn *ws.Connection) {
 		if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 			return
 		}
-		now := time.Now().UnixMilli()
-		message := "用户已离开客服页面"
-		event := &chat.ChatMessageEvent{
-			Type:      chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED,
-			CreatedAt: now,
-			Data: &chat.ChatMessage{
-				MessageNo:   nextGuestNo(guestMessagePrefix),
-				SessionNo:   conn.SessionNo,
-				MerchantId:  conn.MerchantId,
-				UserId:      conn.UserId,
-				SenderType:  chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
-				MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
-				Content:     message,
-				Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-				CreateTimes: now,
-				UpdateTimes: now,
-				Sender: &chat.ChatMessageSender{
-					Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
-					Nickname: "系统",
-				},
-			},
-		}
-		if err := l.publishChatEvent(context.Background(), event); err != nil {
-			logx.Errorf("publish chat user left event failed: %v", err)
-		}
+		l.closeUserSession(context.Background(), conn, isGuest, "用户已离开客服页面")
 	}
 }
 
-// 消息转发处理；游客只转发，登录用户转发+消息入库（mongodb）
+// 处理用户发消息：
+// 游客：chat-api 构造消息并转发；
+// 登录用户：先调用内部服务入库，再把返回的消息转发给后台和用户侧。
 func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
 	var data UserMessagePayload
 	if err := json.Unmarshal(payload, &data); err != nil {
-		sendWSError(conn, "invalid send_user_message payload")
+		sendWSError(conn, "invalid message payload")
 		return
 	}
 	if strings.TrimSpace(conn.SessionNo) == "" {
 		sendWSError(conn, "sessionNo is required")
 		return
 	}
-	message := chat.AppChatMessageResp{Base: helper.OkResp()}
+
+	var msg *chat.ChatMessage
 	if isGuest {
-		message.Data = buildChatMessage(conn, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, conn.UserId, data)
+		msg = buildChatMessage(conn, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, conn.UserId, data)
 	} else {
 		req := chat.SendUserMessageReq{
 			SessionNo:       conn.SessionNo,
-			MessageType:     chat.ChatMessageType(data.MessageType),
+			MessageType:     normalizeMessageType(int64(data.MessageType)),
 			Content:         strings.TrimSpace(data.Content),
-			MediaUrl:        strings.TrimSpace(data.MediaUrl),
-			MediaName:       strings.TrimSpace(data.MediaName),
-			MediaMime:       strings.TrimSpace(data.MediaMime),
-			MediaSize:       data.MediaSize,
+			Url:             data.Url,
+			FileName:        data.FileName,
+			FileSize:        data.FileSize,
+			MimeType:        data.MimeType,
 			SenderNickname:  firstNonEmpty(conn.Username, data.SenderNickname),
 			SenderAvatarUrl: firstNonEmpty(conn.AvatarUrl, data.SenderAvatarUrl),
 		}
-		// 消息入库
 		resp, err := l.svcCtx.ChatAppCli.SendUserMessage(contextWithChatIdentity(ctx, conn.MerchantId, conn.UserId), &req)
 		if err != nil {
 			sendWSError(conn, err.Error())
 			return
 		}
-		message.Data = resp.Data
+		msg = resp.GetData()
 	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT, &message)
+
+	if msg == nil {
+		sendWSError(conn, "message data is empty")
+		return
+	}
+	normalizeOutgoingMessage(conn, msg, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE)
+	if err := l.publishMessageEvent(ctx, msg); err != nil {
+		sendWSError(conn, err.Error())
+		return
+	}
+	l.sendMessageAckEvent(conn, msg)
+}
+
+func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
+	closeReason := "用户主动结束会话"
+	if len(payload) > 0 {
+		var data struct {
+			CloseReason string `json:"closeReason"`
+		}
+		if err := json.Unmarshal(payload, &data); err != nil {
+			sendWSError(conn, "invalid session close payload")
+			return
+		}
+		closeReason = firstNonEmpty(data.CloseReason, closeReason)
+	}
+	l.closeUserSession(ctx, conn, isGuest, closeReason)
+}
+
+func (l *MessagesLogic) closeUserSession(ctx context.Context, conn *ws.Connection, isGuest bool, reason string) {
+	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
+		return
+	}
+	reason = strings.TrimSpace(reason)
+	if reason == "" {
+		reason = "用户已离开客服页面"
+	}
+
+	// 游客：只转发关闭事件。
+	// 登录用户：先更新会话状态，再转发关闭事件给后台和用户侧。
+	if !isGuest {
+		_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(contextWithChatIdentity(ctx, conn.MerchantId, conn.UserId), &chat.CloseMyChatSessionReq{
+			SessionNo:   conn.SessionNo,
+			CloseReason: reason,
+		})
+		if err != nil {
+			logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
+		}
+	}
+
+	if err := l.publishSessionCloseEvent(ctx, conn, reason); err != nil {
+		logx.Errorf("publish chat session close event failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
+	}
 }
 
 func sendWSError(conn *ws.Connection, message string) {
+	if conn == nil {
+		return
+	}
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": message})
 }
 
@@ -214,54 +244,118 @@ func buildChatMessage(conn *ws.Connection, senderType chat.ChatSenderType, sende
 	now := time.Now().UnixMilli()
 	senderNickname := firstNonEmpty(data.SenderNickname, conn.Username, guestUsername)
 	return &chat.ChatMessage{
-		MessageNo:  nextGuestNo(guestMessagePrefix),
-		SessionNo:  conn.SessionNo,
-		MerchantId: conn.MerchantId,
-		UserId:     conn.UserId,
-		AgentId:    0,
-		SenderType: senderType,
-		Sender: &chat.ChatMessageSender{
+		MessageNo:   nextGuestNo(guestMessagePrefix),
+		SessionNo:   conn.SessionNo,
+		EventType:   chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
+		MessageType: normalizeMessageType(int64(data.MessageType)),
+		Sender: &chat.ChatMessageUser{
 			Id:        senderId,
 			Type:      senderType,
 			Nickname:  senderNickname,
 			AvatarUrl: firstNonEmpty(data.SenderAvatarUrl, conn.AvatarUrl),
 		},
-		MessageType: chat.ChatMessageType(data.MessageType),
-		Content:     strings.TrimSpace(data.Content),
-		MediaUrl:    strings.TrimSpace(data.MediaUrl),
-		MediaName:   strings.TrimSpace(data.MediaName),
-		MediaMime:   strings.TrimSpace(data.MediaMime),
-		MediaSize:   data.MediaSize,
-		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-		CreateTimes: now,
-		UpdateTimes: now,
+		ClientMessageId: strings.TrimSpace(data.ClientMessageId),
+		Content:         strings.TrimSpace(data.Content),
+		Url:             data.Url,
+		FileName:        data.FileName,
+		FileSize:        data.FileSize,
+		MimeType:        data.MimeType,
+		Width:           int32(data.Width),
+		Height:          int32(data.Height),
+		Duration:        int32(data.Duration),
+		ReplyMessageId:  strings.TrimSpace(data.ReplyMessageId),
+		Status:          chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+		Self:            false,
+		NeedAck:         true,
+		CreateTime:      now,
+		UpdateTime:      now,
 	}
 }
 
-func (l *MessagesLogic) sendQueueEvent(conn *ws.Connection, message string) {
+func buildSystemChatMessage(conn *ws.Connection, eventType chat.ChatEventType, content string) *chat.ChatMessage {
+	now := time.Now().UnixMilli()
+	return &chat.ChatMessage{
+		MessageNo:   nextGuestNo(guestMessagePrefix),
+		SessionNo:   conn.SessionNo,
+		EventType:   eventType,
+		MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
+		Sender: &chat.ChatMessageUser{
+			Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+			Nickname: systemNickname,
+		},
+		Content:    strings.TrimSpace(content),
+		Status:     chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+		CreateTime: now,
+		UpdateTime: now,
+	}
+}
+
+func (l *MessagesLogic) sendConnectedEvent(conn *ws.Connection) {
+	if conn == nil {
+		return
+	}
+	now := time.Now().UnixMilli()
+	conn.SendEvent(&chat.ChatMessageEvent{
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM,
+		CreatedAt: now,
+		Data:      buildSystemChatMessage(conn, chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM, "连接建立成功"),
+	})
+}
+
+func (l *MessagesLogic) sendMessageAckEvent(conn *ws.Connection, msg *chat.ChatMessage) {
+	if conn == nil || msg == nil {
+		return
+	}
+	conn.SendEvent(&chat.ChatMessageEvent{
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_DELIVERED,
+		CreatedAt: time.Now().UnixMilli(),
+		Data:      msg,
+	})
+}
+
+func (l *MessagesLogic) publishMessageEvent(ctx context.Context, msg *chat.ChatMessage) error {
+	if msg == nil {
+		return fmt.Errorf("message data is empty")
+	}
+	if msg.EventType == chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN {
+		msg.EventType = chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE
+	}
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
+		Data:      msg,
+		CreatedAt: time.Now().UnixMilli(),
+	}
+	return l.publishChatEvent(ctx, event)
+}
+
+func (l *MessagesLogic) publishSessionCloseEvent(ctx context.Context, conn *ws.Connection, message string) error {
+	now := time.Now().UnixMilli()
+	systemMessage := buildSystemChatMessage(conn, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, message)
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
+		CreatedAt: now,
+		Data:      systemMessage,
+		SessionEvent: &chat.ChatSessionEvent{
+			SessionNo:  conn.SessionNo,
+			MerchantId: conn.MerchantId,
+			UserId:     conn.UserId,
+			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED,
+			Message:    strings.TrimSpace(message),
+			CreatedAt:  now,
+		},
+	}
+	return l.publishChatEvent(ctx, event)
+}
+
+func (l *MessagesLogic) sendQueueEvent(conn *ws.Connection, eventType chat.ChatEventType, message string) {
 	if conn == nil {
 		return
 	}
 	now := time.Now().UnixMilli()
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_INFO,
+		Type:      eventType,
 		CreatedAt: now,
-		Data: &chat.ChatMessage{
-			MessageNo:   nextGuestNo(guestMessagePrefix),
-			SessionNo:   conn.SessionNo,
-			MerchantId:  conn.MerchantId,
-			UserId:      conn.UserId,
-			SenderType:  chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
-			MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
-			Content:     message,
-			Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-			CreateTimes: now,
-			UpdateTimes: now,
-			Sender: &chat.ChatMessageSender{
-				Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
-				Nickname: "系统",
-			},
-		},
+		Data:      buildSystemChatMessage(conn, eventType, message),
 		Queue: &chat.ChatQueueInfo{
 			MerchantId:  conn.MerchantId,
 			SessionNo:   conn.SessionNo,
@@ -283,7 +377,7 @@ func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Con
 		MerchantId:      conn.MerchantId,
 		UserId:          conn.UserId,
 		Source:          chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
-		Status:          chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT,
+		Status:          chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
 		Priority:        chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL,
 		Title:           firstNonEmpty(conn.Username, guestUsername),
 		LastMessageTime: now,
@@ -292,21 +386,21 @@ func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Con
 		ExtJson:         userSnapshotExt(conn.AvatarUrl),
 	}
 	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_USER_ONLINE,
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
 		CreatedAt: now,
 		Session:   session,
 		SessionEvent: &chat.ChatSessionEvent{
 			SessionNo:  conn.SessionNo,
 			MerchantId: conn.MerchantId,
 			UserId:     conn.UserId,
-			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT,
-			Message:    "用户进入客服",
+			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
+			Message:    "用户进入客服，等待接待",
 			Session:    session,
 			CreatedAt:  now,
 		},
 	}
 	if err := l.publishChatEvent(ctx, event); err != nil {
-		logx.Errorf("publish chat user online event failed: %v", err)
+		logx.Errorf("publish chat user join event failed: %v", err)
 	}
 }
 
@@ -328,15 +422,94 @@ func nextGuestNo(prefix string) string {
 	return fmt.Sprintf("%s%d%s", prefix, time.Now().UnixMilli(), hex.EncodeToString(b))
 }
 
+func normalizeOutgoingMessage(conn *ws.Connection, msg *chat.ChatMessage, eventType chat.ChatEventType) {
+	if msg == nil {
+		return
+	}
+	now := time.Now().UnixMilli()
+	if msg.MessageNo == "" {
+		msg.MessageNo = nextGuestNo(guestMessagePrefix)
+	}
+	if msg.SessionNo == "" && conn != nil {
+		msg.SessionNo = conn.SessionNo
+	}
+	if msg.EventType == chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN {
+		msg.EventType = eventType
+	}
+	if msg.MessageType == chat.ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN {
+		msg.MessageType = chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT
+	}
+	if msg.Status == chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_UNKNOWN {
+		msg.Status = chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT
+	}
+	if msg.Sender == nil && conn != nil {
+		msg.Sender = &chat.ChatMessageUser{
+			Id:        conn.UserId,
+			Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+			Nickname:  firstNonEmpty(conn.Username, guestUsername),
+			AvatarUrl: conn.AvatarUrl,
+		}
+	}
+	if msg.CreateTime == 0 {
+		msg.CreateTime = now
+	}
+	if msg.UpdateTime == 0 {
+		msg.UpdateTime = now
+	}
+}
+
+type MessageTypeValue int64
+
+func (m *MessageTypeValue) UnmarshalJSON(raw []byte) error {
+	value := strings.TrimSpace(string(raw))
+	if value == "" || value == "null" {
+		*m = MessageTypeValue(chat.ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN)
+		return nil
+	}
+	if value[0] == '"' {
+		var name string
+		if err := json.Unmarshal(raw, &name); err != nil {
+			return err
+		}
+		name = strings.TrimSpace(strings.ToUpper(name))
+		name = strings.TrimPrefix(name, "CHAT_MESSAGE_TYPE_")
+		fullName := "CHAT_MESSAGE_TYPE_" + name
+		if n, ok := chat.ChatMessageType_value[fullName]; ok {
+			*m = MessageTypeValue(n)
+			return nil
+		}
+		return fmt.Errorf("unsupported message type: %s", name)
+	}
+	n, err := strconv.ParseInt(value, 10, 32)
+	if err != nil {
+		return fmt.Errorf("invalid message type")
+	}
+	*m = MessageTypeValue(n)
+	return nil
+}
+
 type UserMessagePayload struct {
-	MessageType     int64  `json:"messageType"`
-	Content         string `json:"content"`
-	MediaUrl        string `json:"mediaUrl"`
-	MediaName       string `json:"mediaName"`
-	MediaMime       string `json:"mediaMime"`
-	MediaSize       int64  `json:"mediaSize"`
-	SenderNickname  string `json:"senderNickname"`
-	SenderAvatarUrl string `json:"senderAvatarUrl"`
+	MessageType     MessageTypeValue `json:"messageType"`
+	ClientMessageId string           `json:"clientMessageId"`
+	Content         string           `json:"content"`
+	Url             string           `json:"url"`
+	FileName        string           `json:"fileName"`
+	FileSize        int64            `json:"fileSize"`
+	MimeType        string           `json:"mimeType"`
+	Width           int64            `json:"width"`
+	Height          int64            `json:"height"`
+	Duration        int64            `json:"duration"`
+	ReplyMessageId  string           `json:"replyMessageId"`
+	SenderNickname  string           `json:"senderNickname"`
+	SenderAvatarUrl string           `json:"senderAvatarUrl"`
+}
+
+func normalizeMessageType(messageType int64) chat.ChatMessageType {
+	mt := chat.ChatMessageType(messageType)
+	if mt == chat.ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN {
+		return chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT
+	}
+	return mt
 }
 
 func firstNonEmpty(values ...string) string {

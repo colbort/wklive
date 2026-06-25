@@ -26,10 +26,14 @@ type ChatSessionSource int32
 
 const (
 	ChatSessionSource_CHAT_SESSION_SOURCE_UNKNOWN ChatSessionSource = 0
-	ChatSessionSource_CHAT_SESSION_SOURCE_APP     ChatSessionSource = 1 // APP用户发起
-	ChatSessionSource_CHAT_SESSION_SOURCE_WEB     ChatSessionSource = 2 // Web/H5用户发起
-	ChatSessionSource_CHAT_SESSION_SOURCE_ADMIN   ChatSessionSource = 3 // 后台创建
-	ChatSessionSource_CHAT_SESSION_SOURCE_SYSTEM  ChatSessionSource = 4 // 系统创建
+	// APP 用户发起
+	ChatSessionSource_CHAT_SESSION_SOURCE_APP ChatSessionSource = 1
+	// Web/H5 用户发起
+	ChatSessionSource_CHAT_SESSION_SOURCE_WEB ChatSessionSource = 2
+	// 后台创建
+	ChatSessionSource_CHAT_SESSION_SOURCE_ADMIN ChatSessionSource = 3
+	// 系统创建
+	ChatSessionSource_CHAT_SESSION_SOURCE_SYSTEM ChatSessionSource = 4
 )
 
 // Enum value maps for ChatSessionSource.
@@ -81,12 +85,19 @@ func (ChatSessionSource) EnumDescriptor() ([]byte, []int) {
 type ChatSessionStatus int32
 
 const (
-	ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN       ChatSessionStatus = 0
-	ChatSessionStatus_CHAT_SESSION_STATUS_WAITING       ChatSessionStatus = 1 // 等待接入
-	ChatSessionStatus_CHAT_SESSION_STATUS_SERVING       ChatSessionStatus = 2 // 服务中
-	ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_USER  ChatSessionStatus = 3 // 等待用户回复
-	ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT ChatSessionStatus = 4 // 等待客服回复
-	ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED        ChatSessionStatus = 5 // 已结束
+	ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN ChatSessionStatus = 0
+	// 等待接入 / 排队中 / 未分配客服
+	ChatSessionStatus_CHAT_SESSION_STATUS_WAITING ChatSessionStatus = 1
+	// 服务中
+	ChatSessionStatus_CHAT_SESSION_STATUS_SERVING ChatSessionStatus = 2
+	// 等待用户回复
+	ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_USER ChatSessionStatus = 3
+	// 等待客服回复
+	ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT ChatSessionStatus = 4
+	// 已结束
+	ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED ChatSessionStatus = 5
+	// 转接中
+	ChatSessionStatus_CHAT_SESSION_STATUS_TRANSFERRING ChatSessionStatus = 6
 )
 
 // Enum value maps for ChatSessionStatus.
@@ -98,6 +109,7 @@ var (
 		3: "CHAT_SESSION_STATUS_PENDING_USER",
 		4: "CHAT_SESSION_STATUS_PENDING_AGENT",
 		5: "CHAT_SESSION_STATUS_CLOSED",
+		6: "CHAT_SESSION_STATUS_TRANSFERRING",
 	}
 	ChatSessionStatus_value = map[string]int32{
 		"CHAT_SESSION_STATUS_UNKNOWN":       0,
@@ -106,6 +118,7 @@ var (
 		"CHAT_SESSION_STATUS_PENDING_USER":  3,
 		"CHAT_SESSION_STATUS_PENDING_AGENT": 4,
 		"CHAT_SESSION_STATUS_CLOSED":        5,
+		"CHAT_SESSION_STATUS_TRANSFERRING":  6,
 	}
 )
 
@@ -141,10 +154,14 @@ type ChatSessionPriority int32
 
 const (
 	ChatSessionPriority_CHAT_SESSION_PRIORITY_UNKNOWN ChatSessionPriority = 0
-	ChatSessionPriority_CHAT_SESSION_PRIORITY_LOW     ChatSessionPriority = 1 // 低
-	ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL  ChatSessionPriority = 2 // 普通
-	ChatSessionPriority_CHAT_SESSION_PRIORITY_HIGH    ChatSessionPriority = 3 // 高
-	ChatSessionPriority_CHAT_SESSION_PRIORITY_URGENT  ChatSessionPriority = 4 // 紧急
+	// 低
+	ChatSessionPriority_CHAT_SESSION_PRIORITY_LOW ChatSessionPriority = 1
+	// 普通
+	ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL ChatSessionPriority = 2
+	// 高
+	ChatSessionPriority_CHAT_SESSION_PRIORITY_HIGH ChatSessionPriority = 3
+	// 紧急
+	ChatSessionPriority_CHAT_SESSION_PRIORITY_URGENT ChatSessionPriority = 4
 )
 
 // Enum value maps for ChatSessionPriority.
@@ -192,15 +209,89 @@ func (ChatSessionPriority) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{2}
 }
 
+// 会话关闭原因
+type ChatSessionCloseReason int32
+
+const (
+	ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_UNKNOWN ChatSessionCloseReason = 0
+	// 用户主动关闭
+	ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_USER ChatSessionCloseReason = 1
+	// 客服主动关闭
+	ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_AGENT ChatSessionCloseReason = 2
+	// 系统自动关闭
+	ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_SYSTEM ChatSessionCloseReason = 3
+	// 超时关闭
+	ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_TIMEOUT ChatSessionCloseReason = 4
+	// 暂无客服在线关闭
+	ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_NO_AGENT ChatSessionCloseReason = 5
+	// 转接失败关闭
+	ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_TRANSFER_FAILED ChatSessionCloseReason = 6
+)
+
+// Enum value maps for ChatSessionCloseReason.
+var (
+	ChatSessionCloseReason_name = map[int32]string{
+		0: "CHAT_SESSION_CLOSE_REASON_UNKNOWN",
+		1: "CHAT_SESSION_CLOSE_REASON_USER",
+		2: "CHAT_SESSION_CLOSE_REASON_AGENT",
+		3: "CHAT_SESSION_CLOSE_REASON_SYSTEM",
+		4: "CHAT_SESSION_CLOSE_REASON_TIMEOUT",
+		5: "CHAT_SESSION_CLOSE_REASON_NO_AGENT",
+		6: "CHAT_SESSION_CLOSE_REASON_TRANSFER_FAILED",
+	}
+	ChatSessionCloseReason_value = map[string]int32{
+		"CHAT_SESSION_CLOSE_REASON_UNKNOWN":         0,
+		"CHAT_SESSION_CLOSE_REASON_USER":            1,
+		"CHAT_SESSION_CLOSE_REASON_AGENT":           2,
+		"CHAT_SESSION_CLOSE_REASON_SYSTEM":          3,
+		"CHAT_SESSION_CLOSE_REASON_TIMEOUT":         4,
+		"CHAT_SESSION_CLOSE_REASON_NO_AGENT":        5,
+		"CHAT_SESSION_CLOSE_REASON_TRANSFER_FAILED": 6,
+	}
+)
+
+func (x ChatSessionCloseReason) Enum() *ChatSessionCloseReason {
+	p := new(ChatSessionCloseReason)
+	*p = x
+	return p
+}
+
+func (x ChatSessionCloseReason) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ChatSessionCloseReason) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_chat_enum_proto_enumTypes[3].Descriptor()
+}
+
+func (ChatSessionCloseReason) Type() protoreflect.EnumType {
+	return &file_proto_chat_enum_proto_enumTypes[3]
+}
+
+func (x ChatSessionCloseReason) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ChatSessionCloseReason.Descriptor instead.
+func (ChatSessionCloseReason) EnumDescriptor() ([]byte, []int) {
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{3}
+}
+
 // 坐席在线状态
 type ChatAgentStatus int32
 
 const (
 	ChatAgentStatus_CHAT_AGENT_STATUS_UNKNOWN ChatAgentStatus = 0
-	ChatAgentStatus_CHAT_AGENT_STATUS_OFFLINE ChatAgentStatus = 1 // 离线
-	ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE  ChatAgentStatus = 2 // 在线
-	ChatAgentStatus_CHAT_AGENT_STATUS_BUSY    ChatAgentStatus = 3 // 忙碌
-	ChatAgentStatus_CHAT_AGENT_STATUS_RESTING ChatAgentStatus = 4 // 休息
+	// 离线
+	ChatAgentStatus_CHAT_AGENT_STATUS_OFFLINE ChatAgentStatus = 1
+	// 在线，可接待
+	ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE ChatAgentStatus = 2
+	// 忙碌，不接新会话
+	ChatAgentStatus_CHAT_AGENT_STATUS_BUSY ChatAgentStatus = 3
+	// 休息
+	ChatAgentStatus_CHAT_AGENT_STATUS_RESTING ChatAgentStatus = 4
+	// 暂离
+	ChatAgentStatus_CHAT_AGENT_STATUS_AWAY ChatAgentStatus = 5
 )
 
 // Enum value maps for ChatAgentStatus.
@@ -211,6 +302,7 @@ var (
 		2: "CHAT_AGENT_STATUS_ONLINE",
 		3: "CHAT_AGENT_STATUS_BUSY",
 		4: "CHAT_AGENT_STATUS_RESTING",
+		5: "CHAT_AGENT_STATUS_AWAY",
 	}
 	ChatAgentStatus_value = map[string]int32{
 		"CHAT_AGENT_STATUS_UNKNOWN": 0,
@@ -218,6 +310,7 @@ var (
 		"CHAT_AGENT_STATUS_ONLINE":  2,
 		"CHAT_AGENT_STATUS_BUSY":    3,
 		"CHAT_AGENT_STATUS_RESTING": 4,
+		"CHAT_AGENT_STATUS_AWAY":    5,
 	}
 )
 
@@ -232,11 +325,11 @@ func (x ChatAgentStatus) String() string {
 }
 
 func (ChatAgentStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[3].Descriptor()
+	return file_proto_chat_enum_proto_enumTypes[4].Descriptor()
 }
 
 func (ChatAgentStatus) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[3]
+	return &file_proto_chat_enum_proto_enumTypes[4]
 }
 
 func (x ChatAgentStatus) Number() protoreflect.EnumNumber {
@@ -245,185 +338,20 @@ func (x ChatAgentStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ChatAgentStatus.Descriptor instead.
 func (ChatAgentStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{3}
-}
-
-// 消息发送方类型
-type ChatSenderType int32
-
-const (
-	ChatSenderType_CHAT_SENDER_TYPE_UNKNOWN ChatSenderType = 0
-	ChatSenderType_CHAT_SENDER_TYPE_USER    ChatSenderType = 1 // 用户
-	ChatSenderType_CHAT_SENDER_TYPE_AGENT   ChatSenderType = 2 // 客服
-	ChatSenderType_CHAT_SENDER_TYPE_SYSTEM  ChatSenderType = 3 // 系统
-)
-
-// Enum value maps for ChatSenderType.
-var (
-	ChatSenderType_name = map[int32]string{
-		0: "CHAT_SENDER_TYPE_UNKNOWN",
-		1: "CHAT_SENDER_TYPE_USER",
-		2: "CHAT_SENDER_TYPE_AGENT",
-		3: "CHAT_SENDER_TYPE_SYSTEM",
-	}
-	ChatSenderType_value = map[string]int32{
-		"CHAT_SENDER_TYPE_UNKNOWN": 0,
-		"CHAT_SENDER_TYPE_USER":    1,
-		"CHAT_SENDER_TYPE_AGENT":   2,
-		"CHAT_SENDER_TYPE_SYSTEM":  3,
-	}
-)
-
-func (x ChatSenderType) Enum() *ChatSenderType {
-	p := new(ChatSenderType)
-	*p = x
-	return p
-}
-
-func (x ChatSenderType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ChatSenderType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[4].Descriptor()
-}
-
-func (ChatSenderType) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[4]
-}
-
-func (x ChatSenderType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ChatSenderType.Descriptor instead.
-func (ChatSenderType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{4}
-}
-
-// 消息类型
-type ChatMessageType int32
-
-const (
-	ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN ChatMessageType = 0
-	ChatMessageType_CHAT_MESSAGE_TYPE_TEXT    ChatMessageType = 1 // 文本
-	ChatMessageType_CHAT_MESSAGE_TYPE_IMAGE   ChatMessageType = 2 // 图片
-	ChatMessageType_CHAT_MESSAGE_TYPE_FILE    ChatMessageType = 3 // 文件
-	ChatMessageType_CHAT_MESSAGE_TYPE_ORDER   ChatMessageType = 4 // 订单/业务卡片
-	ChatMessageType_CHAT_MESSAGE_TYPE_SYSTEM  ChatMessageType = 5 // 系统提示
-)
-
-// Enum value maps for ChatMessageType.
-var (
-	ChatMessageType_name = map[int32]string{
-		0: "CHAT_MESSAGE_TYPE_UNKNOWN",
-		1: "CHAT_MESSAGE_TYPE_TEXT",
-		2: "CHAT_MESSAGE_TYPE_IMAGE",
-		3: "CHAT_MESSAGE_TYPE_FILE",
-		4: "CHAT_MESSAGE_TYPE_ORDER",
-		5: "CHAT_MESSAGE_TYPE_SYSTEM",
-	}
-	ChatMessageType_value = map[string]int32{
-		"CHAT_MESSAGE_TYPE_UNKNOWN": 0,
-		"CHAT_MESSAGE_TYPE_TEXT":    1,
-		"CHAT_MESSAGE_TYPE_IMAGE":   2,
-		"CHAT_MESSAGE_TYPE_FILE":    3,
-		"CHAT_MESSAGE_TYPE_ORDER":   4,
-		"CHAT_MESSAGE_TYPE_SYSTEM":  5,
-	}
-)
-
-func (x ChatMessageType) Enum() *ChatMessageType {
-	p := new(ChatMessageType)
-	*p = x
-	return p
-}
-
-func (x ChatMessageType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ChatMessageType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[5].Descriptor()
-}
-
-func (ChatMessageType) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[5]
-}
-
-func (x ChatMessageType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ChatMessageType.Descriptor instead.
-func (ChatMessageType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{5}
-}
-
-// 消息发送状态
-type ChatMessageStatus int32
-
-const (
-	ChatMessageStatus_CHAT_MESSAGE_STATUS_UNKNOWN  ChatMessageStatus = 0
-	ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT     ChatMessageStatus = 1 // 已发送
-	ChatMessageStatus_CHAT_MESSAGE_STATUS_READ     ChatMessageStatus = 2 // 已读
-	ChatMessageStatus_CHAT_MESSAGE_STATUS_RECALLED ChatMessageStatus = 3 // 已撤回
-	ChatMessageStatus_CHAT_MESSAGE_STATUS_DELETED  ChatMessageStatus = 4 // 已删除
-)
-
-// Enum value maps for ChatMessageStatus.
-var (
-	ChatMessageStatus_name = map[int32]string{
-		0: "CHAT_MESSAGE_STATUS_UNKNOWN",
-		1: "CHAT_MESSAGE_STATUS_SENT",
-		2: "CHAT_MESSAGE_STATUS_READ",
-		3: "CHAT_MESSAGE_STATUS_RECALLED",
-		4: "CHAT_MESSAGE_STATUS_DELETED",
-	}
-	ChatMessageStatus_value = map[string]int32{
-		"CHAT_MESSAGE_STATUS_UNKNOWN":  0,
-		"CHAT_MESSAGE_STATUS_SENT":     1,
-		"CHAT_MESSAGE_STATUS_READ":     2,
-		"CHAT_MESSAGE_STATUS_RECALLED": 3,
-		"CHAT_MESSAGE_STATUS_DELETED":  4,
-	}
-)
-
-func (x ChatMessageStatus) Enum() *ChatMessageStatus {
-	p := new(ChatMessageStatus)
-	*p = x
-	return p
-}
-
-func (x ChatMessageStatus) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ChatMessageStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[6].Descriptor()
-}
-
-func (ChatMessageStatus) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[6]
-}
-
-func (x ChatMessageStatus) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ChatMessageStatus.Descriptor instead.
-func (ChatMessageStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{6}
 }
 
 // 分配方式
 type ChatAssignType int32
 
 const (
-	ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN  ChatAssignType = 0
-	ChatAssignType_CHAT_ASSIGN_TYPE_AUTO     ChatAssignType = 1 // 自动分配
-	ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL   ChatAssignType = 2 // 手动分配
-	ChatAssignType_CHAT_ASSIGN_TYPE_TRANSFER ChatAssignType = 3 // 转接
+	ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN ChatAssignType = 0
+	// 自动分配
+	ChatAssignType_CHAT_ASSIGN_TYPE_AUTO ChatAssignType = 1
+	// 手动分配
+	ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL ChatAssignType = 2
+	// 转接分配
+	ChatAssignType_CHAT_ASSIGN_TYPE_TRANSFER ChatAssignType = 3
 )
 
 // Enum value maps for ChatAssignType.
@@ -453,11 +381,11 @@ func (x ChatAssignType) String() string {
 }
 
 func (ChatAssignType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[7].Descriptor()
+	return file_proto_chat_enum_proto_enumTypes[5].Descriptor()
 }
 
 func (ChatAssignType) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[7]
+	return &file_proto_chat_enum_proto_enumTypes[5]
 }
 
 func (x ChatAssignType) Number() protoreflect.EnumNumber {
@@ -466,31 +394,73 @@ func (x ChatAssignType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ChatAssignType.Descriptor instead.
 func (ChatAssignType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{7}
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{5}
 }
 
+// *
 // 聊天事件类型
+// 表示：这条消息/推送是什么事件
 type ChatEventType int32
 
 const (
-	ChatEventType_CHAT_EVENT_TYPE_UNKNOWN                    ChatEventType = 0
-	ChatEventType_CHAT_EVENT_TYPE_MESSAGE                    ChatEventType = 1  // 消息推送
-	ChatEventType_CHAT_EVENT_TYPE_ACCEPT_INFO                ChatEventType = 2  // 接待信息,通知用户XX客服正在为你服务
-	ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED             ChatEventType = 3  // 会话结束
-	ChatEventType_CHAT_EVENT_TYPE_QUEUE_INFO                 ChatEventType = 4  // 排队信息,通知用户排队信息变化
-	ChatEventType_CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED       ChatEventType = 5  // 客服状态变化,通知商户更新坐席列表/状态
-	ChatEventType_CHAT_EVENT_TYPE_CONNECTED                  ChatEventType = 6  // WS连接成功
-	ChatEventType_CHAT_EVENT_TYPE_ERROR                      ChatEventType = 7  // WS错误
-	ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE          ChatEventType = 8  // 用户发送消息
-	ChatEventType_CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT   ChatEventType = 9  // 用户发送消息结果
-	ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE         ChatEventType = 10 // 坐席发送消息
-	ChatEventType_CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT  ChatEventType = 11 // 坐席发送消息结果
-	ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION        ChatEventType = 12 // 坐席接待
-	ChatEventType_CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT ChatEventType = 13 // 坐席接待结果
-	ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION         ChatEventType = 14 // 坐席结束会话
-	ChatEventType_CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT  ChatEventType = 15 // 坐席结束会话结果
-	ChatEventType_CHAT_EVENT_TYPE_USER_ONLINE                ChatEventType = 16 // 用户上线,通知坐席
-	ChatEventType_CHAT_EVENT_TYPE_USER_OFFLINE               ChatEventType = 17 // 用户下线,通知坐席
+	// 未知事件
+	ChatEventType_CHAT_EVENT_TYPE_UNKNOWN ChatEventType = 0
+	// 普通聊天消息
+	ChatEventType_CHAT_EVENT_TYPE_MESSAGE ChatEventType = 1
+	// 系统通知
+	// 例如：当前暂无客服在线，请留言
+	ChatEventType_CHAT_EVENT_TYPE_SYSTEM ChatEventType = 2
+	// 用户进入会话
+	ChatEventType_CHAT_EVENT_TYPE_USER_JOIN ChatEventType = 3
+	// 用户离开会话
+	ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE ChatEventType = 4
+	// 用户进入排队
+	// 例如：正在为您分配客服，请稍候
+	ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN ChatEventType = 5
+	// 排队信息更新
+	// 例如：您前面还有 3 人，预计等待 2 分钟
+	ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE ChatEventType = 6
+	// 用户取消排队 / 离开排队
+	ChatEventType_CHAT_EVENT_TYPE_QUEUE_LEAVE ChatEventType = 7
+	// 客服已分配
+	// 例如：客服 小王 为您服务
+	ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED ChatEventType = 8
+	// 客服接入会话
+	ChatEventType_CHAT_EVENT_TYPE_AGENT_JOIN ChatEventType = 9
+	// 客服离开会话
+	ChatEventType_CHAT_EVENT_TYPE_AGENT_LEAVE ChatEventType = 10
+	// 会话转接
+	// 例如：客服 小王 将您转接给客服 小李
+	ChatEventType_CHAT_EVENT_TYPE_TRANSFER ChatEventType = 11
+	// 会话开始
+	ChatEventType_CHAT_EVENT_TYPE_SESSION_START ChatEventType = 12
+	// 会话关闭 / 会话结束
+	ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE ChatEventType = 13
+	// 邀请用户评价
+	ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE ChatEventType = 14
+	// 用户提交评价
+	ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT ChatEventType = 15
+	// 正在输入
+	ChatEventType_CHAT_EVENT_TYPE_TYPING ChatEventType = 16
+	// 停止输入
+	ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING ChatEventType = 17
+	// 消息已送达
+	ChatEventType_CHAT_EVENT_TYPE_DELIVERED ChatEventType = 18
+	// 消息已读
+	ChatEventType_CHAT_EVENT_TYPE_READ ChatEventType = 19
+	// 消息撤回
+	ChatEventType_CHAT_EVENT_TYPE_RECALL ChatEventType = 20
+	// 心跳
+	ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT ChatEventType = 21
+	// 错误事件
+	// 例如：发送失败、会话不存在、权限不足
+	ChatEventType_CHAT_EVENT_TYPE_ERROR ChatEventType = 22
+	// 暂无客服在线
+	ChatEventType_CHAT_EVENT_TYPE_NO_AGENT_ONLINE ChatEventType = 23
+	// 会话超时关闭
+	ChatEventType_CHAT_EVENT_TYPE_SESSION_TIMEOUT ChatEventType = 24
+	// 消息删除
+	ChatEventType_CHAT_EVENT_TYPE_DELETE ChatEventType = 25
 )
 
 // Enum value maps for ChatEventType.
@@ -498,42 +468,58 @@ var (
 	ChatEventType_name = map[int32]string{
 		0:  "CHAT_EVENT_TYPE_UNKNOWN",
 		1:  "CHAT_EVENT_TYPE_MESSAGE",
-		2:  "CHAT_EVENT_TYPE_ACCEPT_INFO",
-		3:  "CHAT_EVENT_TYPE_SESSION_CLOSED",
-		4:  "CHAT_EVENT_TYPE_QUEUE_INFO",
-		5:  "CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED",
-		6:  "CHAT_EVENT_TYPE_CONNECTED",
-		7:  "CHAT_EVENT_TYPE_ERROR",
-		8:  "CHAT_EVENT_TYPE_SEND_USER_MESSAGE",
-		9:  "CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT",
-		10: "CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE",
-		11: "CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT",
-		12: "CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION",
-		13: "CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT",
-		14: "CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION",
-		15: "CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT",
-		16: "CHAT_EVENT_TYPE_USER_ONLINE",
-		17: "CHAT_EVENT_TYPE_USER_OFFLINE",
+		2:  "CHAT_EVENT_TYPE_SYSTEM",
+		3:  "CHAT_EVENT_TYPE_USER_JOIN",
+		4:  "CHAT_EVENT_TYPE_USER_LEAVE",
+		5:  "CHAT_EVENT_TYPE_QUEUE_JOIN",
+		6:  "CHAT_EVENT_TYPE_QUEUE_UPDATE",
+		7:  "CHAT_EVENT_TYPE_QUEUE_LEAVE",
+		8:  "CHAT_EVENT_TYPE_AGENT_ASSIGNED",
+		9:  "CHAT_EVENT_TYPE_AGENT_JOIN",
+		10: "CHAT_EVENT_TYPE_AGENT_LEAVE",
+		11: "CHAT_EVENT_TYPE_TRANSFER",
+		12: "CHAT_EVENT_TYPE_SESSION_START",
+		13: "CHAT_EVENT_TYPE_SESSION_CLOSE",
+		14: "CHAT_EVENT_TYPE_EVALUATION_INVITE",
+		15: "CHAT_EVENT_TYPE_EVALUATION_SUBMIT",
+		16: "CHAT_EVENT_TYPE_TYPING",
+		17: "CHAT_EVENT_TYPE_STOP_TYPING",
+		18: "CHAT_EVENT_TYPE_DELIVERED",
+		19: "CHAT_EVENT_TYPE_READ",
+		20: "CHAT_EVENT_TYPE_RECALL",
+		21: "CHAT_EVENT_TYPE_HEARTBEAT",
+		22: "CHAT_EVENT_TYPE_ERROR",
+		23: "CHAT_EVENT_TYPE_NO_AGENT_ONLINE",
+		24: "CHAT_EVENT_TYPE_SESSION_TIMEOUT",
+		25: "CHAT_EVENT_TYPE_DELETE",
 	}
 	ChatEventType_value = map[string]int32{
-		"CHAT_EVENT_TYPE_UNKNOWN":                    0,
-		"CHAT_EVENT_TYPE_MESSAGE":                    1,
-		"CHAT_EVENT_TYPE_ACCEPT_INFO":                2,
-		"CHAT_EVENT_TYPE_SESSION_CLOSED":             3,
-		"CHAT_EVENT_TYPE_QUEUE_INFO":                 4,
-		"CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED":       5,
-		"CHAT_EVENT_TYPE_CONNECTED":                  6,
-		"CHAT_EVENT_TYPE_ERROR":                      7,
-		"CHAT_EVENT_TYPE_SEND_USER_MESSAGE":          8,
-		"CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT":   9,
-		"CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE":         10,
-		"CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT":  11,
-		"CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION":        12,
-		"CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT": 13,
-		"CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION":         14,
-		"CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT":  15,
-		"CHAT_EVENT_TYPE_USER_ONLINE":                16,
-		"CHAT_EVENT_TYPE_USER_OFFLINE":               17,
+		"CHAT_EVENT_TYPE_UNKNOWN":           0,
+		"CHAT_EVENT_TYPE_MESSAGE":           1,
+		"CHAT_EVENT_TYPE_SYSTEM":            2,
+		"CHAT_EVENT_TYPE_USER_JOIN":         3,
+		"CHAT_EVENT_TYPE_USER_LEAVE":        4,
+		"CHAT_EVENT_TYPE_QUEUE_JOIN":        5,
+		"CHAT_EVENT_TYPE_QUEUE_UPDATE":      6,
+		"CHAT_EVENT_TYPE_QUEUE_LEAVE":       7,
+		"CHAT_EVENT_TYPE_AGENT_ASSIGNED":    8,
+		"CHAT_EVENT_TYPE_AGENT_JOIN":        9,
+		"CHAT_EVENT_TYPE_AGENT_LEAVE":       10,
+		"CHAT_EVENT_TYPE_TRANSFER":          11,
+		"CHAT_EVENT_TYPE_SESSION_START":     12,
+		"CHAT_EVENT_TYPE_SESSION_CLOSE":     13,
+		"CHAT_EVENT_TYPE_EVALUATION_INVITE": 14,
+		"CHAT_EVENT_TYPE_EVALUATION_SUBMIT": 15,
+		"CHAT_EVENT_TYPE_TYPING":            16,
+		"CHAT_EVENT_TYPE_STOP_TYPING":       17,
+		"CHAT_EVENT_TYPE_DELIVERED":         18,
+		"CHAT_EVENT_TYPE_READ":              19,
+		"CHAT_EVENT_TYPE_RECALL":            20,
+		"CHAT_EVENT_TYPE_HEARTBEAT":         21,
+		"CHAT_EVENT_TYPE_ERROR":             22,
+		"CHAT_EVENT_TYPE_NO_AGENT_ONLINE":   23,
+		"CHAT_EVENT_TYPE_SESSION_TIMEOUT":   24,
+		"CHAT_EVENT_TYPE_DELETE":            25,
 	}
 )
 
@@ -548,11 +534,11 @@ func (x ChatEventType) String() string {
 }
 
 func (ChatEventType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[8].Descriptor()
+	return file_proto_chat_enum_proto_enumTypes[6].Descriptor()
 }
 
 func (ChatEventType) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[8]
+	return &file_proto_chat_enum_proto_enumTypes[6]
 }
 
 func (x ChatEventType) Number() protoreflect.EnumNumber {
@@ -561,16 +547,242 @@ func (x ChatEventType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ChatEventType.Descriptor instead.
 func (ChatEventType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{6}
+}
+
+// *
+// 消息内容类型
+// 表示：MESSAGE 事件里的消息内容是什么类型
+type ChatMessageType int32
+
+const (
+	// 未知消息类型
+	ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN ChatMessageType = 0
+	// 文本消息
+	ChatMessageType_CHAT_MESSAGE_TYPE_TEXT ChatMessageType = 1
+	// 图片消息
+	ChatMessageType_CHAT_MESSAGE_TYPE_IMAGE ChatMessageType = 2
+	// 文件消息
+	ChatMessageType_CHAT_MESSAGE_TYPE_FILE ChatMessageType = 3
+	// 视频消息
+	ChatMessageType_CHAT_MESSAGE_TYPE_VIDEO ChatMessageType = 4
+	// 音频消息
+	ChatMessageType_CHAT_MESSAGE_TYPE_AUDIO ChatMessageType = 5
+	// 表情消息
+	ChatMessageType_CHAT_MESSAGE_TYPE_EMOJI ChatMessageType = 6
+	// 卡片消息
+	// 例如：商品卡片、订单卡片、用户信息卡片
+	ChatMessageType_CHAT_MESSAGE_TYPE_CARD ChatMessageType = 7
+	// 富文本消息
+	ChatMessageType_CHAT_MESSAGE_TYPE_RICH_TEXT ChatMessageType = 8
+	// 位置消息
+	ChatMessageType_CHAT_MESSAGE_TYPE_LOCATION ChatMessageType = 9
+	// 评价消息
+	ChatMessageType_CHAT_MESSAGE_TYPE_EVALUATION ChatMessageType = 10
+)
+
+// Enum value maps for ChatMessageType.
+var (
+	ChatMessageType_name = map[int32]string{
+		0:  "CHAT_MESSAGE_TYPE_UNKNOWN",
+		1:  "CHAT_MESSAGE_TYPE_TEXT",
+		2:  "CHAT_MESSAGE_TYPE_IMAGE",
+		3:  "CHAT_MESSAGE_TYPE_FILE",
+		4:  "CHAT_MESSAGE_TYPE_VIDEO",
+		5:  "CHAT_MESSAGE_TYPE_AUDIO",
+		6:  "CHAT_MESSAGE_TYPE_EMOJI",
+		7:  "CHAT_MESSAGE_TYPE_CARD",
+		8:  "CHAT_MESSAGE_TYPE_RICH_TEXT",
+		9:  "CHAT_MESSAGE_TYPE_LOCATION",
+		10: "CHAT_MESSAGE_TYPE_EVALUATION",
+	}
+	ChatMessageType_value = map[string]int32{
+		"CHAT_MESSAGE_TYPE_UNKNOWN":    0,
+		"CHAT_MESSAGE_TYPE_TEXT":       1,
+		"CHAT_MESSAGE_TYPE_IMAGE":      2,
+		"CHAT_MESSAGE_TYPE_FILE":       3,
+		"CHAT_MESSAGE_TYPE_VIDEO":      4,
+		"CHAT_MESSAGE_TYPE_AUDIO":      5,
+		"CHAT_MESSAGE_TYPE_EMOJI":      6,
+		"CHAT_MESSAGE_TYPE_CARD":       7,
+		"CHAT_MESSAGE_TYPE_RICH_TEXT":  8,
+		"CHAT_MESSAGE_TYPE_LOCATION":   9,
+		"CHAT_MESSAGE_TYPE_EVALUATION": 10,
+	}
+)
+
+func (x ChatMessageType) Enum() *ChatMessageType {
+	p := new(ChatMessageType)
+	*p = x
+	return p
+}
+
+func (x ChatMessageType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ChatMessageType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_chat_enum_proto_enumTypes[7].Descriptor()
+}
+
+func (ChatMessageType) Type() protoreflect.EnumType {
+	return &file_proto_chat_enum_proto_enumTypes[7]
+}
+
+func (x ChatMessageType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ChatMessageType.Descriptor instead.
+func (ChatMessageType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{7}
+}
+
+// *
+// 发送方类型
+type ChatSenderType int32
+
+const (
+	// 未知发送方
+	ChatSenderType_CHAT_SENDER_TYPE_UNKNOWN ChatSenderType = 0
+	// 用户 / 访客 / 客户
+	ChatSenderType_CHAT_SENDER_TYPE_USER ChatSenderType = 1
+	// 客服坐席
+	ChatSenderType_CHAT_SENDER_TYPE_AGENT ChatSenderType = 2
+	// 系统
+	ChatSenderType_CHAT_SENDER_TYPE_SYSTEM ChatSenderType = 3
+	// 机器人
+	ChatSenderType_CHAT_SENDER_TYPE_BOT ChatSenderType = 4
+)
+
+// Enum value maps for ChatSenderType.
+var (
+	ChatSenderType_name = map[int32]string{
+		0: "CHAT_SENDER_TYPE_UNKNOWN",
+		1: "CHAT_SENDER_TYPE_USER",
+		2: "CHAT_SENDER_TYPE_AGENT",
+		3: "CHAT_SENDER_TYPE_SYSTEM",
+		4: "CHAT_SENDER_TYPE_BOT",
+	}
+	ChatSenderType_value = map[string]int32{
+		"CHAT_SENDER_TYPE_UNKNOWN": 0,
+		"CHAT_SENDER_TYPE_USER":    1,
+		"CHAT_SENDER_TYPE_AGENT":   2,
+		"CHAT_SENDER_TYPE_SYSTEM":  3,
+		"CHAT_SENDER_TYPE_BOT":     4,
+	}
+)
+
+func (x ChatSenderType) Enum() *ChatSenderType {
+	p := new(ChatSenderType)
+	*p = x
+	return p
+}
+
+func (x ChatSenderType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ChatSenderType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_chat_enum_proto_enumTypes[8].Descriptor()
+}
+
+func (ChatSenderType) Type() protoreflect.EnumType {
+	return &file_proto_chat_enum_proto_enumTypes[8]
+}
+
+func (x ChatSenderType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ChatSenderType.Descriptor instead.
+func (ChatSenderType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{8}
 }
 
-// 客服用户类型
+// *
+// 消息发送状态
+type ChatMessageStatus int32
+
+const (
+	// 未知状态
+	ChatMessageStatus_CHAT_MESSAGE_STATUS_UNKNOWN ChatMessageStatus = 0
+	// 发送中，一般用于前端本地状态
+	ChatMessageStatus_CHAT_MESSAGE_STATUS_SENDING ChatMessageStatus = 1
+	// 已发送到服务端
+	ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT ChatMessageStatus = 2
+	// 已送达到接收方客户端
+	ChatMessageStatus_CHAT_MESSAGE_STATUS_DELIVERED ChatMessageStatus = 3
+	// 已读
+	ChatMessageStatus_CHAT_MESSAGE_STATUS_READ ChatMessageStatus = 4
+	// 发送失败
+	ChatMessageStatus_CHAT_MESSAGE_STATUS_FAILED ChatMessageStatus = 5
+	// 已撤回
+	ChatMessageStatus_CHAT_MESSAGE_STATUS_RECALLED ChatMessageStatus = 6
+	// 已删除
+	ChatMessageStatus_CHAT_MESSAGE_STATUS_DELETED ChatMessageStatus = 7
+)
+
+// Enum value maps for ChatMessageStatus.
+var (
+	ChatMessageStatus_name = map[int32]string{
+		0: "CHAT_MESSAGE_STATUS_UNKNOWN",
+		1: "CHAT_MESSAGE_STATUS_SENDING",
+		2: "CHAT_MESSAGE_STATUS_SENT",
+		3: "CHAT_MESSAGE_STATUS_DELIVERED",
+		4: "CHAT_MESSAGE_STATUS_READ",
+		5: "CHAT_MESSAGE_STATUS_FAILED",
+		6: "CHAT_MESSAGE_STATUS_RECALLED",
+		7: "CHAT_MESSAGE_STATUS_DELETED",
+	}
+	ChatMessageStatus_value = map[string]int32{
+		"CHAT_MESSAGE_STATUS_UNKNOWN":   0,
+		"CHAT_MESSAGE_STATUS_SENDING":   1,
+		"CHAT_MESSAGE_STATUS_SENT":      2,
+		"CHAT_MESSAGE_STATUS_DELIVERED": 3,
+		"CHAT_MESSAGE_STATUS_READ":      4,
+		"CHAT_MESSAGE_STATUS_FAILED":    5,
+		"CHAT_MESSAGE_STATUS_RECALLED":  6,
+		"CHAT_MESSAGE_STATUS_DELETED":   7,
+	}
+)
+
+func (x ChatMessageStatus) Enum() *ChatMessageStatus {
+	p := new(ChatMessageStatus)
+	*p = x
+	return p
+}
+
+func (x ChatMessageStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ChatMessageStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_chat_enum_proto_enumTypes[9].Descriptor()
+}
+
+func (ChatMessageStatus) Type() protoreflect.EnumType {
+	return &file_proto_chat_enum_proto_enumTypes[9]
+}
+
+func (x ChatMessageStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ChatMessageStatus.Descriptor instead.
+func (ChatMessageStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{9}
+}
+
+// 客服后台用户类型
 type ChatUserType int32
 
 const (
-	ChatUserType_CHAT_USER_TYPE_UNKNOWN  ChatUserType = 0
-	ChatUserType_CHAT_USER_TYPE_MERCHANT ChatUserType = 1 // 客服商户
-	ChatUserType_CHAT_USER_TYPE_AGENT    ChatUserType = 2 // 客服坐席
+	ChatUserType_CHAT_USER_TYPE_UNKNOWN ChatUserType = 0
+	// 客服商户
+	ChatUserType_CHAT_USER_TYPE_MERCHANT ChatUserType = 1
+	// 客服坐席
+	ChatUserType_CHAT_USER_TYPE_AGENT ChatUserType = 2
 )
 
 // Enum value maps for ChatUserType.
@@ -598,11 +810,11 @@ func (x ChatUserType) String() string {
 }
 
 func (ChatUserType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[9].Descriptor()
+	return file_proto_chat_enum_proto_enumTypes[10].Descriptor()
 }
 
 func (ChatUserType) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[9]
+	return &file_proto_chat_enum_proto_enumTypes[10]
 }
 
 func (x ChatUserType) Number() protoreflect.EnumNumber {
@@ -611,7 +823,7 @@ func (x ChatUserType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ChatUserType.Descriptor instead.
 func (ChatUserType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{9}
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{10}
 }
 
 // 同步动作
@@ -619,8 +831,10 @@ type ChatSyncAction int32
 
 const (
 	ChatSyncAction_CHAT_SYNC_ACTION_UNKNOWN ChatSyncAction = 0
-	ChatSyncAction_CHAT_SYNC_ACTION_UPSERT  ChatSyncAction = 1 // 创建或更新
-	ChatSyncAction_CHAT_SYNC_ACTION_DELETE  ChatSyncAction = 2 // 删除/禁用
+	// 创建或更新
+	ChatSyncAction_CHAT_SYNC_ACTION_UPSERT ChatSyncAction = 1
+	// 删除 / 禁用
+	ChatSyncAction_CHAT_SYNC_ACTION_DELETE ChatSyncAction = 2
 )
 
 // Enum value maps for ChatSyncAction.
@@ -648,11 +862,11 @@ func (x ChatSyncAction) String() string {
 }
 
 func (ChatSyncAction) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[10].Descriptor()
+	return file_proto_chat_enum_proto_enumTypes[11].Descriptor()
 }
 
 func (ChatSyncAction) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[10]
+	return &file_proto_chat_enum_proto_enumTypes[11]
 }
 
 func (x ChatSyncAction) Number() protoreflect.EnumNumber {
@@ -661,7 +875,7 @@ func (x ChatSyncAction) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ChatSyncAction.Descriptor instead.
 func (ChatSyncAction) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{10}
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{11}
 }
 
 var File_proto_chat_enum_proto protoreflect.FileDescriptor
@@ -674,69 +888,97 @@ const file_proto_chat_enum_proto_rawDesc = "" +
 	"\x17CHAT_SESSION_SOURCE_APP\x10\x01\x12\x1b\n" +
 	"\x17CHAT_SESSION_SOURCE_WEB\x10\x02\x12\x1d\n" +
 	"\x19CHAT_SESSION_SOURCE_ADMIN\x10\x03\x12\x1e\n" +
-	"\x1aCHAT_SESSION_SOURCE_SYSTEM\x10\x04*\xe3\x01\n" +
+	"\x1aCHAT_SESSION_SOURCE_SYSTEM\x10\x04*\x89\x02\n" +
 	"\x11ChatSessionStatus\x12\x1f\n" +
 	"\x1bCHAT_SESSION_STATUS_UNKNOWN\x10\x00\x12\x1f\n" +
 	"\x1bCHAT_SESSION_STATUS_WAITING\x10\x01\x12\x1f\n" +
 	"\x1bCHAT_SESSION_STATUS_SERVING\x10\x02\x12$\n" +
 	" CHAT_SESSION_STATUS_PENDING_USER\x10\x03\x12%\n" +
 	"!CHAT_SESSION_STATUS_PENDING_AGENT\x10\x04\x12\x1e\n" +
-	"\x1aCHAT_SESSION_STATUS_CLOSED\x10\x05*\xbb\x01\n" +
+	"\x1aCHAT_SESSION_STATUS_CLOSED\x10\x05\x12$\n" +
+	" CHAT_SESSION_STATUS_TRANSFERRING\x10\x06*\xbb\x01\n" +
 	"\x13ChatSessionPriority\x12!\n" +
 	"\x1dCHAT_SESSION_PRIORITY_UNKNOWN\x10\x00\x12\x1d\n" +
 	"\x19CHAT_SESSION_PRIORITY_LOW\x10\x01\x12 \n" +
 	"\x1cCHAT_SESSION_PRIORITY_NORMAL\x10\x02\x12\x1e\n" +
 	"\x1aCHAT_SESSION_PRIORITY_HIGH\x10\x03\x12 \n" +
-	"\x1cCHAT_SESSION_PRIORITY_URGENT\x10\x04*\xa8\x01\n" +
+	"\x1cCHAT_SESSION_PRIORITY_URGENT\x10\x04*\xac\x02\n" +
+	"\x16ChatSessionCloseReason\x12%\n" +
+	"!CHAT_SESSION_CLOSE_REASON_UNKNOWN\x10\x00\x12\"\n" +
+	"\x1eCHAT_SESSION_CLOSE_REASON_USER\x10\x01\x12#\n" +
+	"\x1fCHAT_SESSION_CLOSE_REASON_AGENT\x10\x02\x12$\n" +
+	" CHAT_SESSION_CLOSE_REASON_SYSTEM\x10\x03\x12%\n" +
+	"!CHAT_SESSION_CLOSE_REASON_TIMEOUT\x10\x04\x12&\n" +
+	"\"CHAT_SESSION_CLOSE_REASON_NO_AGENT\x10\x05\x12-\n" +
+	")CHAT_SESSION_CLOSE_REASON_TRANSFER_FAILED\x10\x06*\xc4\x01\n" +
 	"\x0fChatAgentStatus\x12\x1d\n" +
 	"\x19CHAT_AGENT_STATUS_UNKNOWN\x10\x00\x12\x1d\n" +
 	"\x19CHAT_AGENT_STATUS_OFFLINE\x10\x01\x12\x1c\n" +
 	"\x18CHAT_AGENT_STATUS_ONLINE\x10\x02\x12\x1a\n" +
 	"\x16CHAT_AGENT_STATUS_BUSY\x10\x03\x12\x1d\n" +
-	"\x19CHAT_AGENT_STATUS_RESTING\x10\x04*\x82\x01\n" +
-	"\x0eChatSenderType\x12\x1c\n" +
-	"\x18CHAT_SENDER_TYPE_UNKNOWN\x10\x00\x12\x19\n" +
-	"\x15CHAT_SENDER_TYPE_USER\x10\x01\x12\x1a\n" +
-	"\x16CHAT_SENDER_TYPE_AGENT\x10\x02\x12\x1b\n" +
-	"\x17CHAT_SENDER_TYPE_SYSTEM\x10\x03*\xc0\x01\n" +
+	"\x19CHAT_AGENT_STATUS_RESTING\x10\x04\x12\x1a\n" +
+	"\x16CHAT_AGENT_STATUS_AWAY\x10\x05*\x85\x01\n" +
+	"\x0eChatAssignType\x12\x1c\n" +
+	"\x18CHAT_ASSIGN_TYPE_UNKNOWN\x10\x00\x12\x19\n" +
+	"\x15CHAT_ASSIGN_TYPE_AUTO\x10\x01\x12\x1b\n" +
+	"\x17CHAT_ASSIGN_TYPE_MANUAL\x10\x02\x12\x1d\n" +
+	"\x19CHAT_ASSIGN_TYPE_TRANSFER\x10\x03*\xd0\x06\n" +
+	"\rChatEventType\x12\x1b\n" +
+	"\x17CHAT_EVENT_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
+	"\x17CHAT_EVENT_TYPE_MESSAGE\x10\x01\x12\x1a\n" +
+	"\x16CHAT_EVENT_TYPE_SYSTEM\x10\x02\x12\x1d\n" +
+	"\x19CHAT_EVENT_TYPE_USER_JOIN\x10\x03\x12\x1e\n" +
+	"\x1aCHAT_EVENT_TYPE_USER_LEAVE\x10\x04\x12\x1e\n" +
+	"\x1aCHAT_EVENT_TYPE_QUEUE_JOIN\x10\x05\x12 \n" +
+	"\x1cCHAT_EVENT_TYPE_QUEUE_UPDATE\x10\x06\x12\x1f\n" +
+	"\x1bCHAT_EVENT_TYPE_QUEUE_LEAVE\x10\a\x12\"\n" +
+	"\x1eCHAT_EVENT_TYPE_AGENT_ASSIGNED\x10\b\x12\x1e\n" +
+	"\x1aCHAT_EVENT_TYPE_AGENT_JOIN\x10\t\x12\x1f\n" +
+	"\x1bCHAT_EVENT_TYPE_AGENT_LEAVE\x10\n" +
+	"\x12\x1c\n" +
+	"\x18CHAT_EVENT_TYPE_TRANSFER\x10\v\x12!\n" +
+	"\x1dCHAT_EVENT_TYPE_SESSION_START\x10\f\x12!\n" +
+	"\x1dCHAT_EVENT_TYPE_SESSION_CLOSE\x10\r\x12%\n" +
+	"!CHAT_EVENT_TYPE_EVALUATION_INVITE\x10\x0e\x12%\n" +
+	"!CHAT_EVENT_TYPE_EVALUATION_SUBMIT\x10\x0f\x12\x1a\n" +
+	"\x16CHAT_EVENT_TYPE_TYPING\x10\x10\x12\x1f\n" +
+	"\x1bCHAT_EVENT_TYPE_STOP_TYPING\x10\x11\x12\x1d\n" +
+	"\x19CHAT_EVENT_TYPE_DELIVERED\x10\x12\x12\x18\n" +
+	"\x14CHAT_EVENT_TYPE_READ\x10\x13\x12\x1a\n" +
+	"\x16CHAT_EVENT_TYPE_RECALL\x10\x14\x12\x1d\n" +
+	"\x19CHAT_EVENT_TYPE_HEARTBEAT\x10\x15\x12\x19\n" +
+	"\x15CHAT_EVENT_TYPE_ERROR\x10\x16\x12#\n" +
+	"\x1fCHAT_EVENT_TYPE_NO_AGENT_ONLINE\x10\x17\x12#\n" +
+	"\x1fCHAT_EVENT_TYPE_SESSION_TIMEOUT\x10\x18\x12\x1a\n" +
+	"\x16CHAT_EVENT_TYPE_DELETE\x10\x19*\xdb\x02\n" +
 	"\x0fChatMessageType\x12\x1d\n" +
 	"\x19CHAT_MESSAGE_TYPE_UNKNOWN\x10\x00\x12\x1a\n" +
 	"\x16CHAT_MESSAGE_TYPE_TEXT\x10\x01\x12\x1b\n" +
 	"\x17CHAT_MESSAGE_TYPE_IMAGE\x10\x02\x12\x1a\n" +
 	"\x16CHAT_MESSAGE_TYPE_FILE\x10\x03\x12\x1b\n" +
-	"\x17CHAT_MESSAGE_TYPE_ORDER\x10\x04\x12\x1c\n" +
-	"\x18CHAT_MESSAGE_TYPE_SYSTEM\x10\x05*\xb3\x01\n" +
+	"\x17CHAT_MESSAGE_TYPE_VIDEO\x10\x04\x12\x1b\n" +
+	"\x17CHAT_MESSAGE_TYPE_AUDIO\x10\x05\x12\x1b\n" +
+	"\x17CHAT_MESSAGE_TYPE_EMOJI\x10\x06\x12\x1a\n" +
+	"\x16CHAT_MESSAGE_TYPE_CARD\x10\a\x12\x1f\n" +
+	"\x1bCHAT_MESSAGE_TYPE_RICH_TEXT\x10\b\x12\x1e\n" +
+	"\x1aCHAT_MESSAGE_TYPE_LOCATION\x10\t\x12 \n" +
+	"\x1cCHAT_MESSAGE_TYPE_EVALUATION\x10\n" +
+	"*\x9c\x01\n" +
+	"\x0eChatSenderType\x12\x1c\n" +
+	"\x18CHAT_SENDER_TYPE_UNKNOWN\x10\x00\x12\x19\n" +
+	"\x15CHAT_SENDER_TYPE_USER\x10\x01\x12\x1a\n" +
+	"\x16CHAT_SENDER_TYPE_AGENT\x10\x02\x12\x1b\n" +
+	"\x17CHAT_SENDER_TYPE_SYSTEM\x10\x03\x12\x18\n" +
+	"\x14CHAT_SENDER_TYPE_BOT\x10\x04*\x97\x02\n" +
 	"\x11ChatMessageStatus\x12\x1f\n" +
-	"\x1bCHAT_MESSAGE_STATUS_UNKNOWN\x10\x00\x12\x1c\n" +
-	"\x18CHAT_MESSAGE_STATUS_SENT\x10\x01\x12\x1c\n" +
-	"\x18CHAT_MESSAGE_STATUS_READ\x10\x02\x12 \n" +
-	"\x1cCHAT_MESSAGE_STATUS_RECALLED\x10\x03\x12\x1f\n" +
-	"\x1bCHAT_MESSAGE_STATUS_DELETED\x10\x04*\x85\x01\n" +
-	"\x0eChatAssignType\x12\x1c\n" +
-	"\x18CHAT_ASSIGN_TYPE_UNKNOWN\x10\x00\x12\x19\n" +
-	"\x15CHAT_ASSIGN_TYPE_AUTO\x10\x01\x12\x1b\n" +
-	"\x17CHAT_ASSIGN_TYPE_MANUAL\x10\x02\x12\x1d\n" +
-	"\x19CHAT_ASSIGN_TYPE_TRANSFER\x10\x03*\xb1\x05\n" +
-	"\rChatEventType\x12\x1b\n" +
-	"\x17CHAT_EVENT_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
-	"\x17CHAT_EVENT_TYPE_MESSAGE\x10\x01\x12\x1f\n" +
-	"\x1bCHAT_EVENT_TYPE_ACCEPT_INFO\x10\x02\x12\"\n" +
-	"\x1eCHAT_EVENT_TYPE_SESSION_CLOSED\x10\x03\x12\x1e\n" +
-	"\x1aCHAT_EVENT_TYPE_QUEUE_INFO\x10\x04\x12(\n" +
-	"$CHAT_EVENT_TYPE_AGENT_STATUS_CHANGED\x10\x05\x12\x1d\n" +
-	"\x19CHAT_EVENT_TYPE_CONNECTED\x10\x06\x12\x19\n" +
-	"\x15CHAT_EVENT_TYPE_ERROR\x10\a\x12%\n" +
-	"!CHAT_EVENT_TYPE_SEND_USER_MESSAGE\x10\b\x12,\n" +
-	"(CHAT_EVENT_TYPE_SEND_USER_MESSAGE_RESULT\x10\t\x12&\n" +
-	"\"CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE\x10\n" +
-	"\x12-\n" +
-	")CHAT_EVENT_TYPE_SEND_AGENT_MESSAGE_RESULT\x10\v\x12'\n" +
-	"#CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION\x10\f\x12.\n" +
-	"*CHAT_EVENT_TYPE_ACCEPT_CHAT_SESSION_RESULT\x10\r\x12&\n" +
-	"\"CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION\x10\x0e\x12-\n" +
-	")CHAT_EVENT_TYPE_CLOSE_CHAT_SESSION_RESULT\x10\x0f\x12\x1f\n" +
-	"\x1bCHAT_EVENT_TYPE_USER_ONLINE\x10\x10\x12 \n" +
-	"\x1cCHAT_EVENT_TYPE_USER_OFFLINE\x10\x11*g\n" +
+	"\x1bCHAT_MESSAGE_STATUS_UNKNOWN\x10\x00\x12\x1f\n" +
+	"\x1bCHAT_MESSAGE_STATUS_SENDING\x10\x01\x12\x1c\n" +
+	"\x18CHAT_MESSAGE_STATUS_SENT\x10\x02\x12!\n" +
+	"\x1dCHAT_MESSAGE_STATUS_DELIVERED\x10\x03\x12\x1c\n" +
+	"\x18CHAT_MESSAGE_STATUS_READ\x10\x04\x12\x1e\n" +
+	"\x1aCHAT_MESSAGE_STATUS_FAILED\x10\x05\x12 \n" +
+	"\x1cCHAT_MESSAGE_STATUS_RECALLED\x10\x06\x12\x1f\n" +
+	"\x1bCHAT_MESSAGE_STATUS_DELETED\x10\a*g\n" +
 	"\fChatUserType\x12\x1a\n" +
 	"\x16CHAT_USER_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
 	"\x17CHAT_USER_TYPE_MERCHANT\x10\x01\x12\x18\n" +
@@ -758,19 +1000,20 @@ func file_proto_chat_enum_proto_rawDescGZIP() []byte {
 	return file_proto_chat_enum_proto_rawDescData
 }
 
-var file_proto_chat_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 11)
+var file_proto_chat_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 12)
 var file_proto_chat_enum_proto_goTypes = []any{
-	(ChatSessionSource)(0),   // 0: chat.ChatSessionSource
-	(ChatSessionStatus)(0),   // 1: chat.ChatSessionStatus
-	(ChatSessionPriority)(0), // 2: chat.ChatSessionPriority
-	(ChatAgentStatus)(0),     // 3: chat.ChatAgentStatus
-	(ChatSenderType)(0),      // 4: chat.ChatSenderType
-	(ChatMessageType)(0),     // 5: chat.ChatMessageType
-	(ChatMessageStatus)(0),   // 6: chat.ChatMessageStatus
-	(ChatAssignType)(0),      // 7: chat.ChatAssignType
-	(ChatEventType)(0),       // 8: chat.ChatEventType
-	(ChatUserType)(0),        // 9: chat.ChatUserType
-	(ChatSyncAction)(0),      // 10: chat.ChatSyncAction
+	(ChatSessionSource)(0),      // 0: chat.ChatSessionSource
+	(ChatSessionStatus)(0),      // 1: chat.ChatSessionStatus
+	(ChatSessionPriority)(0),    // 2: chat.ChatSessionPriority
+	(ChatSessionCloseReason)(0), // 3: chat.ChatSessionCloseReason
+	(ChatAgentStatus)(0),        // 4: chat.ChatAgentStatus
+	(ChatAssignType)(0),         // 5: chat.ChatAssignType
+	(ChatEventType)(0),          // 6: chat.ChatEventType
+	(ChatMessageType)(0),        // 7: chat.ChatMessageType
+	(ChatSenderType)(0),         // 8: chat.ChatSenderType
+	(ChatMessageStatus)(0),      // 9: chat.ChatMessageStatus
+	(ChatUserType)(0),           // 10: chat.ChatUserType
+	(ChatSyncAction)(0),         // 11: chat.ChatSyncAction
 }
 var file_proto_chat_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -790,7 +1033,7 @@ func file_proto_chat_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_enum_proto_rawDesc), len(file_proto_chat_enum_proto_rawDesc)),
-			NumEnums:      11,
+			NumEnums:      12,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

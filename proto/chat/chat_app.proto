@@ -91,10 +91,27 @@ message SendUserMessageReq {
   string session_no = 1;            // 会话编号
   ChatMessageType message_type = 2; // 消息类型
   string content = 3;               // 文本内容
-  string media_url = 4;             // 媒体/文件URL
-  string media_name = 5;            // 文件名
-  string media_mime = 6;            // MIME类型
-  int64 media_size = 7;             // 文件大小(bytes)
+    /**
+   * 资源URL
+   * 图片、文件、视频、音频等使用
+   */
+  string url = 4;
+
+  /**
+   * 文件名
+   */
+  string file_name = 5;
+
+  /**
+   * 文件大小，单位 byte
+   */
+  int64 file_size = 6;
+
+  /**
+   * 文件类型 / MIME
+   * 例如 image/png、application/pdf
+   */
+  string mime_type = 7;
   string sender_nickname = 8;       // 用户昵称快照
   string sender_avatar_url = 9;     // 用户头像快照
 }

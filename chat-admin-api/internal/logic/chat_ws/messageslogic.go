@@ -121,6 +121,7 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 		return
 	}
 	if isGuestSession(sessionNo) {
+		data.UserId = l.transientUserId(conn.MerchantId, sessionNo, data.UserId)
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, l.agentServiceMessage(ctx, conn))
 		if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_ACCEPT_INFO, msg); err != nil {
 			sendWSError(conn, err.Error())
@@ -159,6 +160,7 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 	}
 	reason := firstNonEmpty(data.CloseReason, "closed by agent")
 	if isGuestSession(sessionNo) {
+		data.UserId = l.transientUserId(conn.MerchantId, sessionNo, data.UserId)
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, conn.AgentId, "本次会话已结束")
 		if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSED, msg); err != nil {
 			sendWSError(conn, err.Error())
@@ -243,6 +245,15 @@ func (l *MessagesLogic) fillTransientUserId(merchantId int64, sessionNo string, 
 		data.UserId = session.GetUserId()
 		return
 	}
+}
+
+func (l *MessagesLogic) transientUserId(merchantId int64, sessionNo string, userId int64) int64 {
+	if userId != 0 {
+		return userId
+	}
+	payload := sendAgentMessagePayload{}
+	l.fillTransientUserId(merchantId, sessionNo, &payload)
+	return payload.UserId
 }
 
 func (l *MessagesLogic) fillAgentSenderSnapshot(ctx context.Context, conn *ws.Connection, data *sendAgentMessagePayload) {

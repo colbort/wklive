@@ -447,16 +447,26 @@ func (x *GetMyChatQueueInfoReq) GetGroupId() int64 {
 }
 
 type SendUserMessageReq struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	SessionNo       string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
-	MessageType     ChatMessageType        `protobuf:"varint,2,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
-	Content         string                 `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
-	MediaUrl        string                 `protobuf:"bytes,4,opt,name=media_url,json=mediaUrl,proto3" json:"media_url,omitempty"`                                     // 媒体/文件URL
-	MediaName       string                 `protobuf:"bytes,5,opt,name=media_name,json=mediaName,proto3" json:"media_name,omitempty"`                                  // 文件名
-	MediaMime       string                 `protobuf:"bytes,6,opt,name=media_mime,json=mediaMime,proto3" json:"media_mime,omitempty"`                                  // MIME类型
-	MediaSize       int64                  `protobuf:"varint,7,opt,name=media_size,json=mediaSize,proto3" json:"media_size,omitempty"`                                 // 文件大小(bytes)
-	SenderNickname  string                 `protobuf:"bytes,8,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`                   // 用户昵称快照
-	SenderAvatarUrl string                 `protobuf:"bytes,9,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"`              // 用户头像快照
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	SessionNo   string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
+	MessageType ChatMessageType        `protobuf:"varint,2,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
+	Content     string                 `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
+	// *
+	// 资源URL
+	// 图片、文件、视频、音频等使用
+	Url string `protobuf:"bytes,4,opt,name=url,proto3" json:"url,omitempty"`
+	// *
+	// 文件名
+	FileName string `protobuf:"bytes,5,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
+	// *
+	// 文件大小，单位 byte
+	FileSize int64 `protobuf:"varint,6,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`
+	// *
+	// 文件类型 / MIME
+	// 例如 image/png、application/pdf
+	MimeType        string `protobuf:"bytes,7,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
+	SenderNickname  string `protobuf:"bytes,8,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`      // 用户昵称快照
+	SenderAvatarUrl string `protobuf:"bytes,9,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"` // 用户头像快照
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -512,32 +522,32 @@ func (x *SendUserMessageReq) GetContent() string {
 	return ""
 }
 
-func (x *SendUserMessageReq) GetMediaUrl() string {
+func (x *SendUserMessageReq) GetUrl() string {
 	if x != nil {
-		return x.MediaUrl
+		return x.Url
 	}
 	return ""
 }
 
-func (x *SendUserMessageReq) GetMediaName() string {
+func (x *SendUserMessageReq) GetFileName() string {
 	if x != nil {
-		return x.MediaName
+		return x.FileName
 	}
 	return ""
 }
 
-func (x *SendUserMessageReq) GetMediaMime() string {
+func (x *SendUserMessageReq) GetFileSize() int64 {
 	if x != nil {
-		return x.MediaMime
-	}
-	return ""
-}
-
-func (x *SendUserMessageReq) GetMediaSize() int64 {
-	if x != nil {
-		return x.MediaSize
+		return x.FileSize
 	}
 	return 0
+}
+
+func (x *SendUserMessageReq) GetMimeType() string {
+	if x != nil {
+		return x.MimeType
+	}
+	return ""
 }
 
 func (x *SendUserMessageReq) GetSenderNickname() string {
@@ -1100,19 +1110,16 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\x15GetMyChatQueueInfoReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x19\n" +
-	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\"\xd6\x02\n" +
+	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\"\xc5\x02\n" +
 	"\x12SendUserMessageReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x128\n" +
 	"\fmessage_type\x18\x02 \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
-	"\acontent\x18\x03 \x01(\tR\acontent\x12\x1b\n" +
-	"\tmedia_url\x18\x04 \x01(\tR\bmediaUrl\x12\x1d\n" +
-	"\n" +
-	"media_name\x18\x05 \x01(\tR\tmediaName\x12\x1d\n" +
-	"\n" +
-	"media_mime\x18\x06 \x01(\tR\tmediaMime\x12\x1d\n" +
-	"\n" +
-	"media_size\x18\a \x01(\x03R\tmediaSize\x12'\n" +
+	"\acontent\x18\x03 \x01(\tR\acontent\x12\x10\n" +
+	"\x03url\x18\x04 \x01(\tR\x03url\x12\x1b\n" +
+	"\tfile_name\x18\x05 \x01(\tR\bfileName\x12\x1b\n" +
+	"\tfile_size\x18\x06 \x01(\x03R\bfileSize\x12\x1b\n" +
+	"\tmime_type\x18\a \x01(\tR\bmimeType\x12'\n" +
 	"\x0fsender_nickname\x18\b \x01(\tR\x0esenderNickname\x12*\n" +
 	"\x11sender_avatar_url\x18\t \x01(\tR\x0fsenderAvatarUrl\"[\n" +
 	"\x15ListMyChatMessagesReq\x12\x1d\n" +

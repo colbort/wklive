@@ -2,6 +2,9 @@ package ws
 
 import (
 	"encoding/json"
+	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"wklive/proto/chat"
@@ -55,33 +58,39 @@ func (c *Connection) Match(message *chat.ChatMessage) bool {
 	if message == nil {
 		return false
 	}
-	if c.MerchantId > 0 && message.MerchantId != c.MerchantId {
-		return false
+
+	// 新版 ChatMessage 不再直接携带 merchant_id/user_id，用户侧 WS 主要按 session_no 精准匹配。
+	if c.SessionNo != "" {
+		return message.GetSessionNo() == c.SessionNo
 	}
-	if c.SessionNo != "" && message.SessionNo != c.SessionNo {
-		return false
+
+	// 兜底：没有 session_no 时，按 sender / receiver 的用户 ID 匹配。
+	if c.UserId > 0 {
+		if message.GetSender() != nil && message.GetSender().GetId() == c.UserId {
+			return true
+		}
+		if message.GetReceiver() != nil && message.GetReceiver().GetId() == c.UserId {
+			return true
+		}
 	}
-	if c.SessionNo == "" && c.UserId > 0 && message.UserId != c.UserId {
-		return false
-	}
-	return true
+	return false
 }
 
 func (c *Connection) MatchEvent(event *chat.ChatMessageEvent) bool {
 	if event == nil {
 		return false
 	}
-	if event.GetData() != nil {
-		return c.Match(event.GetData())
+	if event.GetData() != nil && c.Match(event.GetData()) {
+		return true
 	}
-	if event.GetSession() != nil {
-		return c.matchSession(event.GetSession())
+	if event.GetSession() != nil && c.matchSession(event.GetSession()) {
+		return true
 	}
-	if event.GetSessionEvent() != nil {
-		return c.matchSessionEvent(event.GetSessionEvent())
+	if event.GetSessionEvent() != nil && c.matchSessionEvent(event.GetSessionEvent()) {
+		return true
 	}
-	if event.GetQueue() != nil {
-		return c.matchQueue(event.GetQueue())
+	if event.GetQueue() != nil && c.matchQueue(event.GetQueue()) {
+		return true
 	}
 	return false
 }
@@ -160,9 +169,9 @@ func (c *Connection) ReadPump() {
 		if len(payload) == 0 || c.OnMessage == nil {
 			continue
 		}
-		var event InboundEvent
-		if err := json.Unmarshal(payload, &event); err != nil {
-			c.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": "invalid json"})
+		event, err := DecodeInboundEvent(payload)
+		if err != nil {
+			c.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": err.Error()})
 			continue
 		}
 		c.OnMessage(c, event)
@@ -196,10 +205,12 @@ func (c *Connection) WritePump() {
 	}
 }
 
+// SendJSON 用于兼容前端简单事件格式：{"type": 数字, "typeName": "枚举名", "data": {...}}。
 func (c *Connection) SendJSON(eventType chat.ChatEventType, data interface{}) {
 	payload, err := json.Marshal(map[string]interface{}{
-		"type": eventType,
-		"data": data,
+		"type":     eventType,
+		"typeName": eventType.String(),
+		"data":     data,
 	})
 	if err != nil {
 		logx.Errorf("marshal chat user ws response failed: %v", err)
@@ -226,4 +237,84 @@ func (c *Connection) SendEvent(event *chat.ChatMessageEvent) {
 	default:
 		logx.Errorf("chat user ws send queue is full, userId=%d", c.UserId)
 	}
+}
+
+// DecodeInboundEvent 支持前端用数字或枚举字符串发送事件：
+// {"type":1,"data":{...}}
+// {"type":"CHAT_EVENT_TYPE_MESSAGE","data":{...}}
+// {"eventType":"CHAT_EVENT_TYPE_SESSION_CLOSE","data":{...}}
+func DecodeInboundEvent(payload []byte) (InboundEvent, error) {
+	var raw struct {
+		Type      json.RawMessage `json:"type"`
+		EventType json.RawMessage `json:"eventType"`
+		Data      json.RawMessage `json:"data"`
+	}
+	if err := json.Unmarshal(payload, &raw); err != nil {
+		return InboundEvent{}, fmt.Errorf("invalid json")
+	}
+
+	typeRaw := raw.Type
+	if len(typeRaw) == 0 {
+		typeRaw = raw.EventType
+	}
+	if len(typeRaw) == 0 {
+		return InboundEvent{}, fmt.Errorf("event type is required")
+	}
+
+	eventType, err := parseChatEventType(typeRaw)
+	if err != nil {
+		return InboundEvent{}, err
+	}
+	data := raw.Data
+	if len(data) == 0 || string(data) == "null" {
+		// 兼容前端直接发送 ChatMessage JSON：{"eventType":"CHAT_EVENT_TYPE_MESSAGE","content":"..."}
+		data = payload
+	}
+	return InboundEvent{Type: eventType, Data: data}, nil
+}
+
+func parseChatEventType(raw json.RawMessage) (chat.ChatEventType, error) {
+	value := strings.TrimSpace(string(raw))
+	if value == "" || value == "null" {
+		return chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN, fmt.Errorf("event type is required")
+	}
+
+	if value[0] == '"' {
+		var name string
+		if err := json.Unmarshal(raw, &name); err != nil {
+			return chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN, fmt.Errorf("invalid event type")
+		}
+		return chatEventTypeByName(name)
+	}
+
+	n, err := strconv.ParseInt(value, 10, 32)
+	if err != nil {
+		return chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN, fmt.Errorf("invalid event type")
+	}
+	return chat.ChatEventType(n), nil
+}
+
+func chatEventTypeByName(name string) (chat.ChatEventType, error) {
+	name = strings.TrimSpace(strings.ToUpper(name))
+	name = strings.TrimPrefix(name, "CHAT_EVENT_TYPE_")
+
+	// 兼容老前端/老接口事件名，统一映射到现有 ChatEventType。
+	aliases := map[string]chat.ChatEventType{
+		"CLOSE_CHAT_SESSION":       chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
+		"SESSION_CLOSED":           chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
+		"QUEUE_INFO":               chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
+		"USER_ONLINE":              chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
+		"SEND_USER_MESSAGE":        chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
+		"SEND_USER_MESSAGE_RESULT": chat.ChatEventType_CHAT_EVENT_TYPE_DELIVERED,
+		"CONNECTED":                chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM,
+	}
+	if eventType, ok := aliases[name]; ok {
+		return eventType, nil
+	}
+
+	fullName := "CHAT_EVENT_TYPE_" + name
+	if n, ok := chat.ChatEventType_value[fullName]; ok {
+		return chat.ChatEventType(n), nil
+	}
+	return chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN, fmt.Errorf("unsupported event type: %s", name)
 }
