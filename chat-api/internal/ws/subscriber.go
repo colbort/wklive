@@ -78,7 +78,8 @@ func shouldBroadcastToUser(event *chat.ChatMessageEvent) bool {
 		return false
 	}
 	switch event.GetType() {
-	case chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN:
+	case chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
+		chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE:
 		return false
 	default:
 		return true

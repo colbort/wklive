@@ -385,7 +385,7 @@ export function useChatSocket() {
       pushMessage(message);
       return;
     }
-    if (eventType === 0 && event.data && isConnectedPayload(event.data)) {
+    if (!eventType && event.data && isConnectedPayload(event.data)) {
       connected.value = event.data;
       agentAccepted.value = false;
       activeAgentName.value = "";
@@ -406,8 +406,8 @@ export function useChatSocket() {
     return normalizeMessage(event.data as RawChatMessage);
   }
 
-  function normalizeWsEventType(type: string | number) {
-    const eventMap = optionCodeMap("chatEventType", {
+  function normalizeWsEventType(type?: string | number) {
+    const eventMap: Record<string, string> = {
       CHAT_EVENT_TYPE_MESSAGE: chatWsEvents.message,
       CHAT_EVENT_TYPE_SYSTEM: chatWsEvents.system,
       CHAT_EVENT_TYPE_USER_JOIN: chatWsEvents.userJoin,
@@ -439,11 +439,42 @@ export function useChatSocket() {
       "chat.queue.updated": chatWsEvents.queueUpdated,
       connected: chatWsEvents.system,
       error: chatWsEvents.error,
-    });
+    };
     if (typeof type === "number") {
-      return type;
+      return chatEventTypeFromNumber(type);
     }
-    return eventMap[type] || 0;
+    return type ? eventMap[type] || "" : "";
+  }
+
+  function chatEventTypeFromNumber(type: number) {
+    const fallback: Record<number, string> = {
+      1: chatWsEvents.message,
+      2: chatWsEvents.system,
+      3: chatWsEvents.userJoin,
+      4: chatWsEvents.userLeave,
+      5: chatWsEvents.queueJoin,
+      6: chatWsEvents.queueUpdated,
+      7: chatWsEvents.queueLeave,
+      8: chatWsEvents.agentAssigned,
+      9: chatWsEvents.agentJoin,
+      10: chatWsEvents.agentLeave,
+      11: chatWsEvents.transfer,
+      12: chatWsEvents.sessionStart,
+      13: chatWsEvents.sessionClosed,
+      14: chatWsEvents.evaluationInvite,
+      15: chatWsEvents.evaluationSubmit,
+      16: chatWsEvents.typing,
+      17: chatWsEvents.stopTyping,
+      18: chatWsEvents.delivered,
+      19: chatWsEvents.read,
+      20: chatWsEvents.recall,
+      21: chatWsEvents.heartbeat,
+      22: chatWsEvents.error,
+      23: chatWsEvents.noAgentOnline,
+      24: chatWsEvents.sessionTimeout,
+      25: chatWsEvents.delete,
+    };
+    return fallback[type] || "";
   }
 
   async function loadChatOptions() {
