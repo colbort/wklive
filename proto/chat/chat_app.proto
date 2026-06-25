@@ -25,9 +25,6 @@ service ChatApp {
   rpc GetChatSessionByUser(GetChatSessionByUserReq)
       returns (AppChatSessionResp);
 
-  // 查询我的排队信息
-  rpc GetMyChatQueueInfo(GetMyChatQueueInfoReq) returns (ChatQueueInfoResp);
-
   // 发送用户消息
   rpc SendUserMessage(SendUserMessageReq) returns (AppChatMessageResp);
 
@@ -112,10 +109,6 @@ message GetMyChatSessionReq {
   string session_no = 1; // 会话编号
 }
 
-message GetMyChatQueueInfoReq {
-  string session_no = 1; // 会话编号
-}
-
 message SendUserMessageReq {
   string session_no = 1;            // 会话编号
   string client_message_id = 2;     // 客户端消息ID,用于幂等/回执
@@ -164,11 +157,6 @@ message ListChatSessionsResp {
 message ListChatMessagesResp {
   common.RespBase base = 1;
   repeated ChatMessage data = 2;
-}
-
-message ChatQueueInfoResp {
-  common.RespBase base = 1;
-  ChatQueueInfo data = 2;
 }
 
 message AppChatSessionResp {

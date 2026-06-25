@@ -21,12 +21,10 @@ type (
 	AuthChatMerchantData      = chat.AuthChatMerchantData
 	AuthChatMerchantReq       = chat.AuthChatMerchantReq
 	AuthChatMerchantResp      = chat.AuthChatMerchantResp
-	ChatQueueInfoResp         = chat.ChatQueueInfoResp
 	CloseMyChatSessionReq     = chat.CloseMyChatSessionReq
 	GenerateChatSessionNoReq  = chat.GenerateChatSessionNoReq
 	GenerateChatSessionNoResp = chat.GenerateChatSessionNoResp
 	GetChatSessionByUserReq   = chat.GetChatSessionByUserReq
-	GetMyChatQueueInfoReq     = chat.GetMyChatQueueInfoReq
 	GetMyChatSessionReq       = chat.GetMyChatSessionReq
 	ListChatMessagesResp      = chat.ListChatMessagesResp
 	ListChatSessionsResp      = chat.ListChatSessionsResp
@@ -46,8 +44,6 @@ type (
 		GenerateChatSessionNo(ctx context.Context, in *GenerateChatSessionNoReq, opts ...grpc.CallOption) (*GenerateChatSessionNoResp, error)
 		// 按商户和用户查询会话
 		GetChatSessionByUser(ctx context.Context, in *GetChatSessionByUserReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
-		// 查询我的排队信息
-		GetMyChatQueueInfo(ctx context.Context, in *GetMyChatQueueInfoReq, opts ...grpc.CallOption) (*ChatQueueInfoResp, error)
 		// 发送用户消息
 		SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error)
 		// 查询会话消息
@@ -93,12 +89,6 @@ func (m *defaultChatApp) GenerateChatSessionNo(ctx context.Context, in *Generate
 func (m *defaultChatApp) GetChatSessionByUser(ctx context.Context, in *GetChatSessionByUserReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.GetChatSessionByUser(ctx, in, opts...)
-}
-
-// 查询我的排队信息
-func (m *defaultChatApp) GetMyChatQueueInfo(ctx context.Context, in *GetMyChatQueueInfoReq, opts ...grpc.CallOption) (*ChatQueueInfoResp, error) {
-	client := chat.NewChatAppClient(m.cli.Conn())
-	return client.GetMyChatQueueInfo(ctx, in, opts...)
 }
 
 // 发送用户消息
