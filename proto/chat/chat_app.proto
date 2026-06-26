@@ -92,12 +92,8 @@ message GetChatSessionByUserReq {
 
 message OpenChatSessionReq {
   ChatSessionSource source = 1; // 来源
-  string title = 2;             // 会话标题
-  string category = 3;          // 问题分类
-  string first_message = 4;     // 首条文本消息，可为空
-  string sender_nickname = 5;   // 用户昵称快照
-  string sender_avatar_url = 6; // 用户头像快照
-  int64 group_id = 7;           // 目标客服分组ID,0表示默认分组
+  int64 merchant_id = 2;        // 客服商户ID
+  int64 user_id = 3;            // 用户ID
 }
 
 message ListMyChatSessionsReq {

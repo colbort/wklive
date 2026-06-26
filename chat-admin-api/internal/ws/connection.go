@@ -30,20 +30,22 @@ type Connection struct {
 	Conn       *websocket.Conn
 	Send       chan []byte
 	UserId     int64
-	Username   string
+	Nickname   string
+	AvatarUrl  string
 	MerchantId int64
 	AgentId    int64
 	SessionNo  string
 	OnMessage  func(*Connection, InboundEvent)
 }
 
-func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, username string, merchantId, agentId int64, sessionNo string, onMessage func(*Connection, InboundEvent)) *Connection {
+func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, nickname string, avatarUrl string, merchantId, agentId int64, sessionNo string, onMessage func(*Connection, InboundEvent)) *Connection {
 	return &Connection{
 		Hub:        hub,
 		Conn:       conn,
 		Send:       make(chan []byte, 32),
 		UserId:     userId,
-		Username:   username,
+		Nickname:   nickname,
+		AvatarUrl:  avatarUrl,
 		MerchantId: merchantId,
 		AgentId:    agentId,
 		SessionNo:  sessionNo,

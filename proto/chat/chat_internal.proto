@@ -11,9 +11,6 @@ option go_package = "wklive/proto/chat;chat";
 // 内部客服服务
 // 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
 service ChatInternal {
-  // 发送系统消息；session_no 为空时按 merchant_id + user_id 创建/复用未关闭会话
-  rpc SendSystemMessage(SendSystemMessageReq) returns (InternalChatMessageResp);
-
   // 查询用户未关闭会话
   rpc GetOpenChatSession(GetOpenChatSessionReq)
       returns (InternalChatSessionResp);
@@ -21,25 +18,6 @@ service ChatInternal {
   // 同步客服商户主账号
   rpc SyncChatMerchantUser(SyncChatMerchantUserReq)
       returns (SyncChatMerchantUserResp);
-}
-
-message SendSystemMessageReq {
-  int64 merchant_id = 1;            // 客服商户ID
-  int64 user_id = 2;                // 用户ID
-  string session_no = 3;            // 会话编号,为空时按用户创建/复用会话
-  string title = 4;                 // 自动创建会话标题
-  string category = 5;              // 自动创建会话分类
-  int64 group_id = 6;               // 目标客服分组ID,0表示默认分组
-  ChatMessageType message_type = 7; // 消息类型
-  string content = 8;               // 文本内容
-  string url = 9;                   // 资源URL
-  string file_name = 10;            // 文件名
-  int64 file_size = 11;             // 文件大小(byte)
-  string mime_type = 12;            // MIME类型
-  int32 width = 13;                 // 图片/视频宽度
-  int32 height = 14;                // 图片/视频高度
-  int32 duration = 15;              // 音频/视频时长(秒)
-  string extra = 16;                // 扩展JSON
 }
 
 message GetOpenChatSessionReq {
@@ -50,11 +28,6 @@ message GetOpenChatSessionReq {
 message InternalChatSessionResp {
   common.RespBase base = 1;
   ChatSession data = 2;
-}
-
-message InternalChatMessageResp {
-  common.RespBase base = 1;
-  ChatMessage data = 2;
 }
 
 message SyncChatMerchantUserReq {

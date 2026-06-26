@@ -57,7 +57,7 @@ func (l *HandleChatWorkOrderLogic) HandleChatWorkOrder(in *chat.HandleChatWorkOr
 	data.HandleResult = strings.TrimSpace(in.GetHandleResult())
 	data.Remark = strings.TrimSpace(in.GetRemark())
 	data.UpdateTimes = now
-	if isWorkOrderFinished(status) {
+	if in.Status == 3 || in.Status == 4 {
 		data.FinishTime = now
 	}
 	if err := l.svcCtx.ChatWorkOrderModel.Update(l.ctx, data); err != nil {

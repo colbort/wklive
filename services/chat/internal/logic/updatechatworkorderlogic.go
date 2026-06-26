@@ -63,11 +63,11 @@ func (l *UpdateChatWorkOrderLogic) UpdateChatWorkOrder(in *chat.UpdateChatWorkOr
 	data.ContactName = strings.TrimSpace(in.GetContactName())
 	data.ContactMobile = strings.TrimSpace(in.GetContactMobile())
 	data.ContactEmail = strings.TrimSpace(in.GetContactEmail())
-	data.Priority = int64(normalizePriority(in.GetPriority()))
+	data.Priority = int64(in.GetPriority())
 	data.Status = status
 	data.Remark = strings.TrimSpace(in.GetRemark())
 	data.UpdateTimes = nowMillis()
-	if isWorkOrderFinished(status) && data.FinishTime == 0 {
+	if (in.Status == 3 || in.Status == 4) && data.FinishTime == 0 {
 		data.FinishTime = data.UpdateTimes
 	}
 	if err := l.svcCtx.ChatWorkOrderModel.Update(l.ctx, data); err != nil {

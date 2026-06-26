@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"wklive/common/helper"
-	"wklive/common/utils"
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
@@ -30,15 +28,7 @@ func NewAcceptChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 接待会话
 func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	merchantId, err := utils.GetMerchantIdFromMd(l.ctx)
-	if err != nil {
-		return &chat.AdminChatSessionResp{Base: helper.FailResp()}, nil
-	}
-	userId, err := utils.GetUserIdFromMd(l.ctx)
-	if err != nil {
-		return &chat.AdminChatSessionResp{Base: helper.FailResp()}, nil
-	}
-	agent, err := l.svcCtx.ChatAgentModel.FindOneByMerchantIdChatUserId(l.ctx, merchantId, userId)
+	agent, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.AgentId)
 	if err == models.ErrNotFound {
 		return &chat.AdminChatSessionResp{Base: notFoundBase("chat agent not found")}, nil
 	}
@@ -49,7 +39,8 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		return &chat.AdminChatSessionResp{Base: badBase("chat agent is not online")}, nil
 	}
 	session, base, err := assignSession(l.ctx, l.svcCtx, assignSessionOptions{
-		SessionNo:  in.GetSessionNo(),
+		SessionNo:  in.SessionNo,
+		MerchantId: in.MerchantId,
 		ToAgentId:  agent.Id,
 		AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
 		Reason:     firstNonEmpty(in.GetReason(), "accept"),
@@ -60,7 +51,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
-	publishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, session, userId, chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL, in.GetReason(), agentServiceMessage(l.ctx, l.svcCtx, agent))
+	publishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL, in.GetReason(), agentServiceMessage(l.ctx, l.svcCtx, agent))
 	publishQueueEvent(l.ctx, l.svcCtx, session)
 	return &chat.AdminChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
 }

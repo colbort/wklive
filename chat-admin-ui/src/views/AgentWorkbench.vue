@@ -132,6 +132,7 @@ const merchantId = computed(
   () => auth.user?.merchantId || auth.agent?.merchantId || 0,
 );
 const agentId = computed(() => auth.agent?.id || 0);
+const userId = computed(() => auth.user?.id || 0)
 const agentStatusOption = computed(
   () =>
     agentStatusOptions.value.find(
@@ -1007,6 +1008,7 @@ function acceptSession() {
       :accept-disabled-reason="acceptDisabledReason"
       :ws-online="wsOnline"
       :agent-id="agentId"
+      :user-id="userId"
       :show-guest-refresh-notice="showGuestRefreshNotice"
       :show-mobile-back="mobileChatOpen"
       @accept="acceptSession"

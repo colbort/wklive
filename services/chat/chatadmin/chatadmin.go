@@ -45,6 +45,8 @@ type (
 	GetChatGroupReq                = chat.GetChatGroupReq
 	GetChatQuickReplyReq           = chat.GetChatQuickReplyReq
 	GetChatSessionReq              = chat.GetChatSessionReq
+	GetChatUserByIdReq             = chat.GetChatUserByIdReq
+	GetChatUserByIdResp            = chat.GetChatUserByIdResp
 	GetChatWorkOrderReq            = chat.GetChatWorkOrderReq
 	HandleChatWorkOrderReq         = chat.HandleChatWorkOrderReq
 	ListChatCategoriesResp         = chat.ListChatCategoriesResp
@@ -84,6 +86,8 @@ type (
 		Profile(ctx context.Context, in *ChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
 		// 更新当前登录用户资料
 		UpdateProfile(ctx context.Context, in *UpdateChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
+		// 获取用户
+		GetChatUserById(ctx context.Context, in *GetChatUserByIdReq, opts ...grpc.CallOption) (*GetChatUserByIdResp, error)
 		// 创建客服分组
 		CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
 		// 更新客服分组
@@ -189,6 +193,12 @@ func (m *defaultChatAdmin) Profile(ctx context.Context, in *ChatAdminProfileReq,
 func (m *defaultChatAdmin) UpdateProfile(ctx context.Context, in *UpdateChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.UpdateProfile(ctx, in, opts...)
+}
+
+// 获取用户
+func (m *defaultChatAdmin) GetChatUserById(ctx context.Context, in *GetChatUserByIdReq, opts ...grpc.CallOption) (*GetChatUserByIdResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.GetChatUserById(ctx, in, opts...)
 }
 
 // 创建客服分组

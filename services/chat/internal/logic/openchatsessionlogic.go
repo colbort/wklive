@@ -2,10 +2,13 @@ package logic
 
 import (
 	"context"
+	"database/sql"
 	"strings"
 
+	"wklive/common/helper"
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
+	"wklive/services/chat/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -27,31 +30,66 @@ func NewOpenChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *O
 
 // 创建或获取当前会话
 func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*chat.AppChatSessionResp, error) {
-	merchantID, userID, base, err := chatAppIdentityFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AppChatSessionResp{Base: base}, nil
-	}
-	if err != nil {
-		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
-	}
-	title := strings.TrimSpace(in.GetTitle())
-	if title == "" {
-		title = strings.TrimSpace(in.GetSenderNickname())
-	}
-	session, shouldNotifyQueue, err := ensureOpenSession(l.ctx, l.svcCtx, merchantID, userID, normalizeSource(in.GetSource()), title, in.GetCategory(), chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL, userSnapshotExt(in.GetSenderAvatarUrl()))
-	if err != nil {
-		return &chat.AppChatSessionResp{Base: badBase(err.Error())}, nil
-	}
-	if shouldNotifyQueue {
-		publishQueueEvent(l.ctx, l.svcCtx, session)
-		if strings.TrimSpace(in.GetFirstMessage()) != "" {
-			msg := newMessage(session, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, userID, in.GetSenderNickname(), in.GetSenderAvatarUrl(), chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT, in.GetFirstMessage(), "", "", "", 0, nil)
-			if _, err := sendMessage(l.ctx, l.svcCtx, session, msg); err != nil {
+	session, err := l.svcCtx.ChatSessionModel.FindByUser(l.ctx, in.MerchantId, in.UserId)
+	if err == nil {
+		now := nowMillis()
+		changed := false
+		if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+			session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
+			session.AgentId = 0
+			session.CloseTime = 0
+			session.CloseReason = ""
+			changed = true
+		}
+		if changed {
+			session.UpdateTimes = now
+			if err := l.svcCtx.ChatSessionModel.Update(l.ctx, session); err != nil {
 				return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
 			}
 		}
+		return &chat.AppChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
+	} else if err != models.ErrNotFound {
+		sessionNo := ""
+		exists := true
+		for attempt := 0; attempt < sessionNoInsertAttempts; attempt++ {
+			sessionNo = nextNo("CS")
+			_, err := l.svcCtx.ChatSessionModel.FindOneBySessionNo(l.ctx, sessionNo)
+			if err == models.ErrNotFound {
+				exists = false
+				break
+			}
+		}
+		if sessionNo == "" || exists {
+			return &chat.AppChatSessionResp{Base: helper.FailResp()}, nil
+		}
+		now := nowMillis()
+		data := models.TChatSession{
+			SessionNo:       sessionNo,
+			MerchantId:      in.MerchantId,
+			UserId:          in.UserId,
+			Source:          int64(in.Source),
+			Status:          int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING),
+			Priority:        int64(chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL),
+			Title:           "",
+			Category:        "",
+			LastMessageTime: now,
+			ExtJson:         sql.NullString{String: "", Valid: true},
+			CreateTimes:     now,
+			UpdateTimes:     now,
+		}
+		result, err := l.svcCtx.ChatSessionModel.Insert(l.ctx, &data)
+		if err == nil {
+			if id, err := result.LastInsertId(); err == nil {
+				data.Id = id
+			}
+			return &chat.AppChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
+		} else {
+			return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
+		}
+
+	} else {
+		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
 	}
-	return &chat.AppChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
 }
 
 func userSnapshotExt(avatarUrl string) *structpb.Struct {

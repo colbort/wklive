@@ -56,7 +56,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		}
 		req.SessionNo = resp.SessionNo
 	} else {
-		sessionNo, err := l.openPersistentSession(l.ctx, req.MerchantId, req.UserId, req.Nickname, req.AvatarUrl)
+		sessionNo, err := l.openPersistentSession(l.ctx, req.MerchantId, req.UserId)
 		if err != nil {
 			logx.Errorf("open chat ws persistent session failed, merchantId=%d userId=%d err=%v", req.MerchantId, req.UserId, err)
 			_ = conn.Close()
@@ -321,13 +321,12 @@ func sendWSError(conn *ws.Connection, message string) {
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": message})
 }
 
-func (l *MessagesLogic) openPersistentSession(ctx context.Context, merchantId, userId int64, nickname, avatarUrl string) (string, error) {
+func (l *MessagesLogic) openPersistentSession(ctx context.Context, merchantId, userId int64) (string, error) {
 	ctx = contextWithChatIdentity(ctx, merchantId, userId)
 	resp, err := l.svcCtx.ChatAppCli.OpenChatSession(ctx, &chat.OpenChatSessionReq{
-		Source:          chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
-		Title:           strings.TrimSpace(nickname),
-		SenderNickname:  strings.TrimSpace(nickname),
-		SenderAvatarUrl: strings.TrimSpace(avatarUrl),
+		Source:     chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
+		MerchantId: merchantId,
+		UserId:     userId,
 	})
 	if err != nil {
 		return "", err

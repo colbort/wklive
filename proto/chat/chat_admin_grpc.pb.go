@@ -23,6 +23,7 @@ const (
 	ChatAdmin_Logout_FullMethodName                      = "/chat.ChatAdmin/Logout"
 	ChatAdmin_Profile_FullMethodName                     = "/chat.ChatAdmin/Profile"
 	ChatAdmin_UpdateProfile_FullMethodName               = "/chat.ChatAdmin/UpdateProfile"
+	ChatAdmin_GetChatUserById_FullMethodName             = "/chat.ChatAdmin/GetChatUserById"
 	ChatAdmin_CreateChatGroup_FullMethodName             = "/chat.ChatAdmin/CreateChatGroup"
 	ChatAdmin_UpdateChatGroup_FullMethodName             = "/chat.ChatAdmin/UpdateChatGroup"
 	ChatAdmin_GetChatGroup_FullMethodName                = "/chat.ChatAdmin/GetChatGroup"
@@ -74,6 +75,8 @@ type ChatAdminClient interface {
 	Profile(ctx context.Context, in *ChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
 	// 更新当前登录用户资料
 	UpdateProfile(ctx context.Context, in *UpdateChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
+	// 获取用户
+	GetChatUserById(ctx context.Context, in *GetChatUserByIdReq, opts ...grpc.CallOption) (*GetChatUserByIdResp, error)
 	// 创建客服分组
 	CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
 	// 更新客服分组
@@ -188,6 +191,16 @@ func (c *chatAdminClient) UpdateProfile(ctx context.Context, in *UpdateChatAdmin
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChatAdminProfileResp)
 	err := c.cc.Invoke(ctx, ChatAdmin_UpdateProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) GetChatUserById(ctx context.Context, in *GetChatUserByIdReq, opts ...grpc.CallOption) (*GetChatUserByIdResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetChatUserByIdResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_GetChatUserById_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -558,6 +571,8 @@ type ChatAdminServer interface {
 	Profile(context.Context, *ChatAdminProfileReq) (*ChatAdminProfileResp, error)
 	// 更新当前登录用户资料
 	UpdateProfile(context.Context, *UpdateChatAdminProfileReq) (*ChatAdminProfileResp, error)
+	// 获取用户
+	GetChatUserById(context.Context, *GetChatUserByIdReq) (*GetChatUserByIdResp, error)
 	// 创建客服分组
 	CreateChatGroup(context.Context, *CreateChatGroupReq) (*AdminChatGroupResp, error)
 	// 更新客服分组
@@ -649,6 +664,9 @@ func (UnimplementedChatAdminServer) Profile(context.Context, *ChatAdminProfileRe
 }
 func (UnimplementedChatAdminServer) UpdateProfile(context.Context, *UpdateChatAdminProfileReq) (*ChatAdminProfileResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateProfile not implemented")
+}
+func (UnimplementedChatAdminServer) GetChatUserById(context.Context, *GetChatUserByIdReq) (*GetChatUserByIdResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetChatUserById not implemented")
 }
 func (UnimplementedChatAdminServer) CreateChatGroup(context.Context, *CreateChatGroupReq) (*AdminChatGroupResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateChatGroup not implemented")
@@ -844,6 +862,24 @@ func _ChatAdmin_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAdminServer).UpdateProfile(ctx, req.(*UpdateChatAdminProfileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_GetChatUserById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChatUserByIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).GetChatUserById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_GetChatUserById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).GetChatUserById(ctx, req.(*GetChatUserByIdReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1500,6 +1536,10 @@ var ChatAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateProfile",
 			Handler:    _ChatAdmin_UpdateProfile_Handler,
+		},
+		{
+			MethodName: "GetChatUserById",
+			Handler:    _ChatAdmin_GetChatUserById_Handler,
 		},
 		{
 			MethodName: "CreateChatGroup",

@@ -2,9 +2,9 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
+	"wklive/common/helper"
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
@@ -40,38 +40,46 @@ func (l *CreateChatWorkOrderLogic) CreateChatWorkOrder(in *chat.CreateChatWorkOr
 	if err != nil {
 		return &chat.AdminChatWorkOrderResp{Base: errorBase(err)}, nil
 	}
-	priority := int64(normalizePriority(in.GetPriority()))
-	now := nowMillis()
-	var data *models.TChatWorkOrder
+
+	workOrderNo := ""
+	exists := true
 	for attempt := 0; attempt < sessionNoInsertAttempts; attempt++ {
-		data = &models.TChatWorkOrder{
-			MerchantId:    merchantID,
-			WorkOrderNo:   nextNo("WO"),
-			SessionNo:     strings.TrimSpace(in.GetSessionNo()),
-			UserId:        in.GetUserId(),
-			AgentId:       in.GetAgentId(),
-			GroupId:       in.GetGroupId(),
-			Title:         title,
-			Content:       nullString(content),
-			ContactName:   strings.TrimSpace(in.GetContactName()),
-			ContactMobile: strings.TrimSpace(in.GetContactMobile()),
-			ContactEmail:  strings.TrimSpace(in.GetContactEmail()),
-			Priority:      priority,
-			Status:        1,
-			Remark:        strings.TrimSpace(in.GetRemark()),
-			CreateTimes:   now,
-			UpdateTimes:   now,
-		}
-		result, err := l.svcCtx.ChatWorkOrderModel.Insert(l.ctx, data)
-		if err == nil {
-			if id, err := result.LastInsertId(); err == nil {
-				data.Id = id
-			}
-			return &chat.AdminChatWorkOrderResp{Base: okBase(), Data: toProtoChatWorkOrder(data)}, nil
-		}
-		if !isDuplicateKey(err) {
-			return &chat.AdminChatWorkOrderResp{Base: errorBase(err)}, nil
+		workOrderNo = nextNo("WO")
+		_, err := l.svcCtx.ChatWorkOrderModel.FindOneByWorkOrderNo(l.ctx, workOrderNo)
+		if err == models.ErrNotFound {
+			exists = false
+			break
 		}
 	}
-	return &chat.AdminChatWorkOrderResp{Base: errorBase(fmt.Errorf("failed to generate unique work_order_no"))}, nil
+	if workOrderNo == "" || exists {
+		return &chat.AdminChatWorkOrderResp{Base: helper.FailResp()}, nil
+	}
+	now := nowMillis()
+	data := &models.TChatWorkOrder{
+		MerchantId:    merchantID,
+		WorkOrderNo:   nextNo("WO"),
+		SessionNo:     strings.TrimSpace(in.GetSessionNo()),
+		UserId:        in.GetUserId(),
+		AgentId:       in.GetAgentId(),
+		GroupId:       in.GetGroupId(),
+		Title:         title,
+		Content:       nullString(content),
+		ContactName:   strings.TrimSpace(in.GetContactName()),
+		ContactMobile: strings.TrimSpace(in.GetContactMobile()),
+		ContactEmail:  strings.TrimSpace(in.GetContactEmail()),
+		Priority:      int64(in.Priority),
+		Status:        1,
+		Remark:        strings.TrimSpace(in.GetRemark()),
+		CreateTimes:   now,
+		UpdateTimes:   now,
+	}
+	result, err := l.svcCtx.ChatWorkOrderModel.Insert(l.ctx, data)
+	if err == nil {
+		if id, err := result.LastInsertId(); err == nil {
+			data.Id = id
+		}
+		return &chat.AdminChatWorkOrderResp{Base: okBase(), Data: toProtoChatWorkOrder(data)}, nil
+	} else {
+		return &chat.AdminChatWorkOrderResp{Base: errorBase(err)}, nil
+	}
 }

@@ -324,33 +324,11 @@ type PageChatSessionsResp {
 	data []ChatSession `json:"data"`
 }
 
-type SendAgentMessageReq {
-	merchantId  int64  `json:"merchantId"`
-	agentId     int64  `json:"agentId"`
-	sessionNo   string `path:"sessionNo"`
-	messageType int64  `json:"messageType"`
-	content     string `json:"content,optional"`
-	url         string `json:"url,optional"`
-	fileName    string `json:"fileName,optional"`
-	mimeType    string `json:"mimeType,optional"`
-	fileSize    int64  `json:"fileSize,optional"`
-	width       int64  `json:"width,optional"`
-	height      int64  `json:"height,optional"`
-	duration    int64  `json:"duration,optional"`
-	extra       string `json:"extra,optional"`
-	clientMsgNo string `json:"clientMsgNo,optional"`
-}
-
 type PageChatMessagesReq {
 	PageReq
 	merchantId int64  `form:"merchantId"`
 	sessionNo  string `path:"sessionNo"`
 	senderType int64  `form:"senderType,optional"`
-}
-
-type ChatMessageResp {
-	RespBase
-	data ChatMessage `json:"data"`
 }
 
 type PageChatMessagesResp {
@@ -638,9 +616,6 @@ service chatAdmin {
 
 	@handler CloseChatSession
 	put /sessions/:sessionNo/close (CloseChatSessionReq) returns (ChatSessionResp)
-
-	@handler SendAgentMessage
-	post /sessions/:sessionNo/messages (SendAgentMessageReq) returns (ChatMessageResp)
 
 	@handler PageChatMessages
 	get /sessions/:sessionNo/messages (PageChatMessagesReq) returns (PageChatMessagesResp)

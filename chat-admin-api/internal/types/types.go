@@ -122,11 +122,6 @@ type ChatMessage struct {
 	UpdateTime  int64             `json:"updateTime"`
 }
 
-type ChatMessageResp struct {
-	RespBase
-	Data ChatMessage `json:"data"`
-}
-
 type ChatMessageSender struct {
 	Id         int64  `json:"id"`
 	SenderType int64  `json:"type"`
@@ -492,23 +487,6 @@ type RespBase struct {
 	HasPrev    bool   `json:"hasPrev,optional"`
 	NextCursor int64  `json:"nextCursor,optional"`
 	PrevCursor int64  `json:"prevCursor,optional"`
-}
-
-type SendAgentMessageReq struct {
-	MerchantId  int64  `json:"merchantId"`
-	AgentId     int64  `json:"agentId"`
-	SessionNo   string `path:"sessionNo"`
-	MessageType int64  `json:"messageType"`
-	Content     string `json:"content,optional"`
-	Url         string `json:"url,optional"`
-	FileName    string `json:"fileName,optional"`
-	MimeType    string `json:"mimeType,optional"`
-	FileSize    int64  `json:"fileSize,optional"`
-	Width       int64  `json:"width,optional"`
-	Height      int64  `json:"height,optional"`
-	Duration    int64  `json:"duration,optional"`
-	Extra       string `json:"extra,optional"`
-	ClientMsgNo string `json:"clientMsgNo,optional"`
 }
 
 type TimeRange struct {

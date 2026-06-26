@@ -23,12 +23,6 @@ func NewChatInternalServer(svcCtx *svc.ServiceContext) *ChatInternalServer {
 	}
 }
 
-// 发送系统消息；session_no 为空时按 merchant_id + user_id 创建/复用未关闭会话
-func (s *ChatInternalServer) SendSystemMessage(ctx context.Context, in *chat.SendSystemMessageReq) (*chat.InternalChatMessageResp, error) {
-	l := logic.NewSendSystemMessageLogic(ctx, s.svcCtx)
-	return l.SendSystemMessage(in)
-}
-
 // 查询用户未关闭会话
 func (s *ChatInternalServer) GetOpenChatSession(ctx context.Context, in *chat.GetOpenChatSessionReq) (*chat.InternalChatSessionResp, error) {
 	l := logic.NewGetOpenChatSessionLogic(ctx, s.svcCtx)

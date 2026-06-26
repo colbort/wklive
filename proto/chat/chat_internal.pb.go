@@ -22,170 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type SendSystemMessageReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                              // 客服商户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                          // 用户ID
-	SessionNo     string                 `protobuf:"bytes,3,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号,为空时按用户创建/复用会话
-	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`                                                           // 自动创建会话标题
-	Category      string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`                                                     // 自动创建会话分类
-	GroupId       int64                  `protobuf:"varint,6,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                                       // 目标客服分组ID,0表示默认分组
-	MessageType   ChatMessageType        `protobuf:"varint,7,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
-	Content       string                 `protobuf:"bytes,8,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
-	Url           string                 `protobuf:"bytes,9,opt,name=url,proto3" json:"url,omitempty"`                                                               // 资源URL
-	FileName      string                 `protobuf:"bytes,10,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`                                    // 文件名
-	FileSize      int64                  `protobuf:"varint,11,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`                                   // 文件大小(byte)
-	MimeType      string                 `protobuf:"bytes,12,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`                                    // MIME类型
-	Width         int32                  `protobuf:"varint,13,opt,name=width,proto3" json:"width,omitempty"`                                                         // 图片/视频宽度
-	Height        int32                  `protobuf:"varint,14,opt,name=height,proto3" json:"height,omitempty"`                                                       // 图片/视频高度
-	Duration      int32                  `protobuf:"varint,15,opt,name=duration,proto3" json:"duration,omitempty"`                                                   // 音频/视频时长(秒)
-	Extra         string                 `protobuf:"bytes,16,opt,name=extra,proto3" json:"extra,omitempty"`                                                          // 扩展JSON
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SendSystemMessageReq) Reset() {
-	*x = SendSystemMessageReq{}
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SendSystemMessageReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SendSystemMessageReq) ProtoMessage() {}
-
-func (x *SendSystemMessageReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SendSystemMessageReq.ProtoReflect.Descriptor instead.
-func (*SendSystemMessageReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *SendSystemMessageReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *SendSystemMessageReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *SendSystemMessageReq) GetSessionNo() string {
-	if x != nil {
-		return x.SessionNo
-	}
-	return ""
-}
-
-func (x *SendSystemMessageReq) GetTitle() string {
-	if x != nil {
-		return x.Title
-	}
-	return ""
-}
-
-func (x *SendSystemMessageReq) GetCategory() string {
-	if x != nil {
-		return x.Category
-	}
-	return ""
-}
-
-func (x *SendSystemMessageReq) GetGroupId() int64 {
-	if x != nil {
-		return x.GroupId
-	}
-	return 0
-}
-
-func (x *SendSystemMessageReq) GetMessageType() ChatMessageType {
-	if x != nil {
-		return x.MessageType
-	}
-	return ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN
-}
-
-func (x *SendSystemMessageReq) GetContent() string {
-	if x != nil {
-		return x.Content
-	}
-	return ""
-}
-
-func (x *SendSystemMessageReq) GetUrl() string {
-	if x != nil {
-		return x.Url
-	}
-	return ""
-}
-
-func (x *SendSystemMessageReq) GetFileName() string {
-	if x != nil {
-		return x.FileName
-	}
-	return ""
-}
-
-func (x *SendSystemMessageReq) GetFileSize() int64 {
-	if x != nil {
-		return x.FileSize
-	}
-	return 0
-}
-
-func (x *SendSystemMessageReq) GetMimeType() string {
-	if x != nil {
-		return x.MimeType
-	}
-	return ""
-}
-
-func (x *SendSystemMessageReq) GetWidth() int32 {
-	if x != nil {
-		return x.Width
-	}
-	return 0
-}
-
-func (x *SendSystemMessageReq) GetHeight() int32 {
-	if x != nil {
-		return x.Height
-	}
-	return 0
-}
-
-func (x *SendSystemMessageReq) GetDuration() int32 {
-	if x != nil {
-		return x.Duration
-	}
-	return 0
-}
-
-func (x *SendSystemMessageReq) GetExtra() string {
-	if x != nil {
-		return x.Extra
-	}
-	return ""
-}
-
 type GetOpenChatSessionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
@@ -196,7 +32,7 @@ type GetOpenChatSessionReq struct {
 
 func (x *GetOpenChatSessionReq) Reset() {
 	*x = GetOpenChatSessionReq{}
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[1]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -208,7 +44,7 @@ func (x *GetOpenChatSessionReq) String() string {
 func (*GetOpenChatSessionReq) ProtoMessage() {}
 
 func (x *GetOpenChatSessionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[1]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -221,7 +57,7 @@ func (x *GetOpenChatSessionReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOpenChatSessionReq.ProtoReflect.Descriptor instead.
 func (*GetOpenChatSessionReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{1}
+	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *GetOpenChatSessionReq) GetMerchantId() int64 {
@@ -248,7 +84,7 @@ type InternalChatSessionResp struct {
 
 func (x *InternalChatSessionResp) Reset() {
 	*x = InternalChatSessionResp{}
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[2]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -260,7 +96,7 @@ func (x *InternalChatSessionResp) String() string {
 func (*InternalChatSessionResp) ProtoMessage() {}
 
 func (x *InternalChatSessionResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[2]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -273,7 +109,7 @@ func (x *InternalChatSessionResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InternalChatSessionResp.ProtoReflect.Descriptor instead.
 func (*InternalChatSessionResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{2}
+	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *InternalChatSessionResp) GetBase() *common.RespBase {
@@ -284,58 +120,6 @@ func (x *InternalChatSessionResp) GetBase() *common.RespBase {
 }
 
 func (x *InternalChatSessionResp) GetData() *ChatSession {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type InternalChatMessageResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *ChatMessage           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *InternalChatMessageResp) Reset() {
-	*x = InternalChatMessageResp{}
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *InternalChatMessageResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*InternalChatMessageResp) ProtoMessage() {}
-
-func (x *InternalChatMessageResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use InternalChatMessageResp.ProtoReflect.Descriptor instead.
-func (*InternalChatMessageResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *InternalChatMessageResp) GetBase() *common.RespBase {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
-func (x *InternalChatMessageResp) GetData() *ChatMessage {
 	if x != nil {
 		return x.Data
 	}
@@ -361,7 +145,7 @@ type SyncChatMerchantUserReq struct {
 
 func (x *SyncChatMerchantUserReq) Reset() {
 	*x = SyncChatMerchantUserReq{}
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[4]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -373,7 +157,7 @@ func (x *SyncChatMerchantUserReq) String() string {
 func (*SyncChatMerchantUserReq) ProtoMessage() {}
 
 func (x *SyncChatMerchantUserReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[4]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -386,7 +170,7 @@ func (x *SyncChatMerchantUserReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncChatMerchantUserReq.ProtoReflect.Descriptor instead.
 func (*SyncChatMerchantUserReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{4}
+	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *SyncChatMerchantUserReq) GetAction() ChatSyncAction {
@@ -476,7 +260,7 @@ type SyncChatMerchantUserResp struct {
 
 func (x *SyncChatMerchantUserResp) Reset() {
 	*x = SyncChatMerchantUserResp{}
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[5]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -488,7 +272,7 @@ func (x *SyncChatMerchantUserResp) String() string {
 func (*SyncChatMerchantUserResp) ProtoMessage() {}
 
 func (x *SyncChatMerchantUserResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[5]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -501,7 +285,7 @@ func (x *SyncChatMerchantUserResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncChatMerchantUserResp.ProtoReflect.Descriptor instead.
 func (*SyncChatMerchantUserResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{5}
+	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SyncChatMerchantUserResp) GetBase() *common.RespBase {
@@ -522,37 +306,14 @@ var File_proto_chat_chat_internal_proto protoreflect.FileDescriptor
 
 const file_proto_chat_chat_internal_proto_rawDesc = "" +
 	"\n" +
-	"\x1eproto/chat/chat_internal.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"\xd9\x03\n" +
-	"\x14SendSystemMessageReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
-	"\n" +
-	"session_no\x18\x03 \x01(\tR\tsessionNo\x12\x14\n" +
-	"\x05title\x18\x04 \x01(\tR\x05title\x12\x1a\n" +
-	"\bcategory\x18\x05 \x01(\tR\bcategory\x12\x19\n" +
-	"\bgroup_id\x18\x06 \x01(\x03R\agroupId\x128\n" +
-	"\fmessage_type\x18\a \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
-	"\acontent\x18\b \x01(\tR\acontent\x12\x10\n" +
-	"\x03url\x18\t \x01(\tR\x03url\x12\x1b\n" +
-	"\tfile_name\x18\n" +
-	" \x01(\tR\bfileName\x12\x1b\n" +
-	"\tfile_size\x18\v \x01(\x03R\bfileSize\x12\x1b\n" +
-	"\tmime_type\x18\f \x01(\tR\bmimeType\x12\x14\n" +
-	"\x05width\x18\r \x01(\x05R\x05width\x12\x16\n" +
-	"\x06height\x18\x0e \x01(\x05R\x06height\x12\x1a\n" +
-	"\bduration\x18\x0f \x01(\x05R\bduration\x12\x14\n" +
-	"\x05extra\x18\x10 \x01(\tR\x05extra\"Q\n" +
+	"\x1eproto/chat/chat_internal.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"Q\n" +
 	"\x15GetOpenChatSessionReq\x12\x1f\n" +
 	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
 	"merchantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"f\n" +
 	"\x17InternalChatSessionResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatSessionR\x04data\"f\n" +
-	"\x17InternalChatMessageResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatMessageR\x04data\"\x9e\x03\n" +
+	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatSessionR\x04data\"\x9e\x03\n" +
 	"\x17SyncChatMerchantUserReq\x12,\n" +
 	"\x06action\x18\x01 \x01(\x0e2\x14.chat.ChatSyncActionR\x06action\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
@@ -570,9 +331,8 @@ const file_proto_chat_chat_internal_proto_rawDesc = "" +
 	"\bpassword\x18\v \x01(\tR\bpassword\"d\n" +
 	"\x18SyncChatMerchantUserResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
-	"\x04data\x18\x02 \x01(\v2\x0e.chat.ChatUserR\x04data2\x87\x02\n" +
-	"\fChatInternal\x12N\n" +
-	"\x11SendSystemMessage\x12\x1a.chat.SendSystemMessageReq\x1a\x1d.chat.InternalChatMessageResp\x12P\n" +
+	"\x04data\x18\x02 \x01(\v2\x0e.chat.ChatUserR\x04data2\xb7\x01\n" +
+	"\fChatInternal\x12P\n" +
 	"\x12GetOpenChatSession\x12\x1b.chat.GetOpenChatSessionReq\x1a\x1d.chat.InternalChatSessionResp\x12U\n" +
 	"\x14SyncChatMerchantUser\x12\x1d.chat.SyncChatMerchantUserReq\x1a\x1e.chat.SyncChatMerchantUserRespB\x18Z\x16wklive/proto/chat;chatb\x06proto3"
 
@@ -588,43 +348,34 @@ func file_proto_chat_chat_internal_proto_rawDescGZIP() []byte {
 	return file_proto_chat_chat_internal_proto_rawDescData
 }
 
-var file_proto_chat_chat_internal_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_proto_chat_chat_internal_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_proto_chat_chat_internal_proto_goTypes = []any{
-	(*SendSystemMessageReq)(nil),     // 0: chat.SendSystemMessageReq
-	(*GetOpenChatSessionReq)(nil),    // 1: chat.GetOpenChatSessionReq
-	(*InternalChatSessionResp)(nil),  // 2: chat.InternalChatSessionResp
-	(*InternalChatMessageResp)(nil),  // 3: chat.InternalChatMessageResp
-	(*SyncChatMerchantUserReq)(nil),  // 4: chat.SyncChatMerchantUserReq
-	(*SyncChatMerchantUserResp)(nil), // 5: chat.SyncChatMerchantUserResp
-	(ChatMessageType)(0),             // 6: chat.ChatMessageType
-	(*common.RespBase)(nil),          // 7: common.RespBase
-	(*ChatSession)(nil),              // 8: chat.ChatSession
-	(*ChatMessage)(nil),              // 9: chat.ChatMessage
-	(ChatSyncAction)(0),              // 10: chat.ChatSyncAction
-	(common.Enable)(0),               // 11: common.Enable
-	(*ChatUser)(nil),                 // 12: chat.ChatUser
+	(*GetOpenChatSessionReq)(nil),    // 0: chat.GetOpenChatSessionReq
+	(*InternalChatSessionResp)(nil),  // 1: chat.InternalChatSessionResp
+	(*SyncChatMerchantUserReq)(nil),  // 2: chat.SyncChatMerchantUserReq
+	(*SyncChatMerchantUserResp)(nil), // 3: chat.SyncChatMerchantUserResp
+	(*common.RespBase)(nil),          // 4: common.RespBase
+	(*ChatSession)(nil),              // 5: chat.ChatSession
+	(ChatSyncAction)(0),              // 6: chat.ChatSyncAction
+	(common.Enable)(0),               // 7: common.Enable
+	(*ChatUser)(nil),                 // 8: chat.ChatUser
 }
 var file_proto_chat_chat_internal_proto_depIdxs = []int32{
-	6,  // 0: chat.SendSystemMessageReq.message_type:type_name -> chat.ChatMessageType
-	7,  // 1: chat.InternalChatSessionResp.base:type_name -> common.RespBase
-	8,  // 2: chat.InternalChatSessionResp.data:type_name -> chat.ChatSession
-	7,  // 3: chat.InternalChatMessageResp.base:type_name -> common.RespBase
-	9,  // 4: chat.InternalChatMessageResp.data:type_name -> chat.ChatMessage
-	10, // 5: chat.SyncChatMerchantUserReq.action:type_name -> chat.ChatSyncAction
-	11, // 6: chat.SyncChatMerchantUserReq.enabled:type_name -> common.Enable
-	7,  // 7: chat.SyncChatMerchantUserResp.base:type_name -> common.RespBase
-	12, // 8: chat.SyncChatMerchantUserResp.data:type_name -> chat.ChatUser
-	0,  // 9: chat.ChatInternal.SendSystemMessage:input_type -> chat.SendSystemMessageReq
-	1,  // 10: chat.ChatInternal.GetOpenChatSession:input_type -> chat.GetOpenChatSessionReq
-	4,  // 11: chat.ChatInternal.SyncChatMerchantUser:input_type -> chat.SyncChatMerchantUserReq
-	3,  // 12: chat.ChatInternal.SendSystemMessage:output_type -> chat.InternalChatMessageResp
-	2,  // 13: chat.ChatInternal.GetOpenChatSession:output_type -> chat.InternalChatSessionResp
-	5,  // 14: chat.ChatInternal.SyncChatMerchantUser:output_type -> chat.SyncChatMerchantUserResp
-	12, // [12:15] is the sub-list for method output_type
-	9,  // [9:12] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	4, // 0: chat.InternalChatSessionResp.base:type_name -> common.RespBase
+	5, // 1: chat.InternalChatSessionResp.data:type_name -> chat.ChatSession
+	6, // 2: chat.SyncChatMerchantUserReq.action:type_name -> chat.ChatSyncAction
+	7, // 3: chat.SyncChatMerchantUserReq.enabled:type_name -> common.Enable
+	4, // 4: chat.SyncChatMerchantUserResp.base:type_name -> common.RespBase
+	8, // 5: chat.SyncChatMerchantUserResp.data:type_name -> chat.ChatUser
+	0, // 6: chat.ChatInternal.GetOpenChatSession:input_type -> chat.GetOpenChatSessionReq
+	2, // 7: chat.ChatInternal.SyncChatMerchantUser:input_type -> chat.SyncChatMerchantUserReq
+	1, // 8: chat.ChatInternal.GetOpenChatSession:output_type -> chat.InternalChatSessionResp
+	3, // 9: chat.ChatInternal.SyncChatMerchantUser:output_type -> chat.SyncChatMerchantUserResp
+	8, // [8:10] is the sub-list for method output_type
+	6, // [6:8] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_chat_internal_proto_init() }
@@ -640,7 +391,7 @@ func file_proto_chat_chat_internal_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_chat_internal_proto_rawDesc), len(file_proto_chat_chat_internal_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

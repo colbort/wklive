@@ -44,11 +44,18 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 		return
 	}
 
+	user, err := l.svcCtx.ChatAdminCli.GetChatUserById(l.ctx, &chat.GetChatUserByIdReq{Id: req.UserId})
+	if err != nil {
+		logx.Errorf("upgrade chat admin ws failed, userId=%d err=%v", req.UserId, err)
+		return
+	}
+
 	client := ws.NewConnection(
 		l.svcCtx.ChatMessageHub,
 		conn,
 		req.UserId,
-		req.Username,
+		user.Data.Nickname,
+		user.Data.AvatarUrl,
 		req.MerchantId,
 		req.AgentId,
 		req.SessionNo,
@@ -102,13 +109,20 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		FileSize:    data.FileSize,
 		Width:       int32(data.Width),
 		Height:      int32(data.Height),
-		Duration:    int32(data.Duration),
+		Duration:    data.Duration,
 		Extra:       data.Extra,
+		Sender: &chat.ChatMessageUser{
+			Id:        conn.UserId,
+			Nickname:  conn.Nickname,
+			AvatarUrl: conn.AvatarUrl,
+			Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
+		},
+		MerchantId: conn.MerchantId,
 	}
 	if l.isTransientSession(req.SessionNo) {
 		l.fillTransientUserId(conn.MerchantId, req.SessionNo, &data)
 		l.fillAgentSenderSnapshot(ctx, conn, &data)
-		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, data.UserId, conn.AgentId, conn.Username, data)
+		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, data.UserId, conn.AgentId, conn.Nickname, data)
 		if err := publishTransientMessage(ctx, l.svcCtx, msg); err != nil {
 			sendWSError(conn, err.Error())
 			return
@@ -117,7 +131,7 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		return
 	}
 
-	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(contextWithAdminIdentity(ctx, conn), &req)
+	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
 	if err != nil {
 		sendWSError(conn, err.Error())
 		return
@@ -147,9 +161,11 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 		return
 	}
 
-	resp, err := l.svcCtx.ChatAdminCli.AcceptChatSession(contextWithAdminIdentity(ctx, conn), &chat.AcceptChatSessionReq{
-		SessionNo: sessionNo,
-		Reason:    "accept",
+	resp, err := l.svcCtx.ChatAdminCli.AcceptChatSession(ctx, &chat.AcceptChatSessionReq{
+		SessionNo:  sessionNo,
+		Reason:     "accept",
+		MerchantId: conn.MerchantId,
+		AgentId:    conn.AgentId,
 	})
 	if err != nil {
 		sendWSError(conn, err.Error())
@@ -184,7 +200,7 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 		return
 	}
 
-	resp, err := l.svcCtx.ChatAdminCli.CloseChatSession(contextWithAdminIdentity(ctx, conn), &chat.CloseChatSessionReq{
+	resp, err := l.svcCtx.ChatAdminCli.CloseChatSession(ctx, &chat.CloseChatSessionReq{
 		SessionNo:   sessionNo,
 		CloseReason: reason,
 	})
@@ -296,25 +312,18 @@ func sendWSError(conn *ws.Connection, message string) {
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": message})
 }
 
-func contextWithAdminIdentity(ctx context.Context, conn *ws.Connection) context.Context {
-	ctx = context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
-	ctx = context.WithValue(ctx, utils.CtxKeyUsername, conn.Username)
-	ctx = context.WithValue(ctx, utils.CtxKeyMerchantId, conn.MerchantId)
-	return ctx
-}
-
 func (l *MessagesLogic) agentServiceMessage(ctx context.Context, conn *ws.Connection) string {
 	name := ""
 	if l.svcCtx != nil && conn != nil && conn.UserId > 0 {
 		profileCtx := context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
-		profileCtx = context.WithValue(profileCtx, utils.CtxKeyUsername, conn.Username)
+		profileCtx = context.WithValue(profileCtx, utils.CtxKeyUsername, conn.Nickname)
 		resp, err := l.svcCtx.ChatAdminCli.Profile(profileCtx, &chat.ChatAdminProfileReq{})
 		if err == nil && resp != nil && resp.User != nil {
 			name = strings.TrimSpace(resp.User.Nickname)
 		}
 	}
 	if name == "" && conn != nil {
-		name = strings.TrimSpace(conn.Username)
+		name = strings.TrimSpace(conn.Nickname)
 	}
 	if name == "" {
 		return "客服正在为你服务"
@@ -352,7 +361,7 @@ func (l *MessagesLogic) fillAgentSenderSnapshot(ctx context.Context, conn *ws.Co
 		return
 	}
 	profileCtx := context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
-	profileCtx = context.WithValue(profileCtx, utils.CtxKeyUsername, conn.Username)
+	profileCtx = context.WithValue(profileCtx, utils.CtxKeyUsername, conn.Nickname)
 	resp, err := l.svcCtx.ChatAdminCli.Profile(profileCtx, &chat.ChatAdminProfileReq{})
 	if err != nil || resp == nil || resp.User == nil {
 		return
@@ -376,8 +385,8 @@ type sendAgentMessagePayload struct {
 	FileName        string `json:"fileName"`
 	MimeType        string `json:"mimeType"`
 	FileSize        int64  `json:"fileSize"`
-	Width           int64  `json:"width"`
-	Height          int64  `json:"height"`
+	Width           int32  `json:"width"`
+	Height          int32  `json:"height"`
 	Duration        int64  `json:"duration"`
 	SenderNickname  string `json:"senderNickname"`
 	SenderAvatarUrl string `json:"senderAvatarUrl"`

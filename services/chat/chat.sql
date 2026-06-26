@@ -85,10 +85,7 @@ CREATE TABLE `t_chat_session` (
   `update_times` bigint NOT NULL DEFAULT '0' COMMENT '更新时间戳(毫秒)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_session_no` (`session_no`),
-  KEY `idx_merchant_user_status` (`merchant_id`,`user_id`,`status`),
-  KEY `idx_merchant_agent_status` (`merchant_id`,`agent_id`,`status`),
-  KEY `idx_merchant_group_status` (`merchant_id`,`group_id`,`status`),
-  KEY `idx_merchant_status_priority` (`merchant_id`,`status`,`priority`),
+  KEY `idx_merchant_user` (`merchant_id`,`user_id`),
   KEY `idx_last_message_no` (`last_message_no`),
   KEY `idx_last_message_time` (`last_message_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客服会话';

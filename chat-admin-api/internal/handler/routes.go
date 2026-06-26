@@ -238,11 +238,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: chat_session.CloseChatSessionHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodPost,
-					Path:    "/sessions/:sessionNo/messages",
-					Handler: chat_session.SendAgentMessageHandler(serverCtx),
-				},
-				{
 					Method:  http.MethodGet,
 					Path:    "/sessions/:sessionNo/messages",
 					Handler: chat_session.PageChatMessagesHandler(serverCtx),

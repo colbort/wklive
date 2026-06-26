@@ -13,6 +13,7 @@ const props = defineProps<{
   acceptDisabledReason: string;
   wsOnline: boolean;
   agentId: number;
+  userId: number;
   showGuestRefreshNotice: boolean;
   showMobileBack?: boolean;
 }>();
@@ -27,15 +28,18 @@ const emit = defineEmits<{
 
 function messageDirection(message: ChatMessage) {
   if (message.senderType === 3) return "system";
-  if (props.agentId > 0 && message.sender?.id === props.agentId) {
+  if (props.userId > 0 && message.sender?.id === props.userId) {
+    console.log(message.sender?.id + "  =======.  11. " + props.userId + " ====. " + message.content)
     return "sent";
   }
+  console.log("==================")
   return "received";
 }
 
 function messageSenderName(message: ChatMessage) {
+  console.log(message.sender?.id + "  =======.  22. " + props.userId + " ====. " + message.content)
   if (message.senderType === 3) return "系统";
-  if (props.agentId > 0 && message.sender?.id === props.agentId) return "我";
+  if (props.userId > 0 && message.sender?.id === props.userId) return "我";
   return message.sender?.nickname || "用户";
 }
 </script>

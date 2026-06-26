@@ -15,15 +15,11 @@ import (
 
 type (
 	GetOpenChatSessionReq    = chat.GetOpenChatSessionReq
-	InternalChatMessageResp  = chat.InternalChatMessageResp
 	InternalChatSessionResp  = chat.InternalChatSessionResp
-	SendSystemMessageReq     = chat.SendSystemMessageReq
 	SyncChatMerchantUserReq  = chat.SyncChatMerchantUserReq
 	SyncChatMerchantUserResp = chat.SyncChatMerchantUserResp
 
 	ChatInternal interface {
-		// 发送系统消息；session_no 为空时按 merchant_id + user_id 创建/复用未关闭会话
-		SendSystemMessage(ctx context.Context, in *SendSystemMessageReq, opts ...grpc.CallOption) (*InternalChatMessageResp, error)
 		// 查询用户未关闭会话
 		GetOpenChatSession(ctx context.Context, in *GetOpenChatSessionReq, opts ...grpc.CallOption) (*InternalChatSessionResp, error)
 		// 同步客服商户主账号
@@ -39,12 +35,6 @@ func NewChatInternal(cli zrpc.Client) ChatInternal {
 	return &defaultChatInternal{
 		cli: cli,
 	}
-}
-
-// 发送系统消息；session_no 为空时按 merchant_id + user_id 创建/复用未关闭会话
-func (m *defaultChatInternal) SendSystemMessage(ctx context.Context, in *SendSystemMessageReq, opts ...grpc.CallOption) (*InternalChatMessageResp, error) {
-	client := chat.NewChatInternalClient(m.cli.Conn())
-	return client.SendSystemMessage(ctx, in, opts...)
 }
 
 // 查询用户未关闭会话

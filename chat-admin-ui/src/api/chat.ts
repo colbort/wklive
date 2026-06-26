@@ -235,16 +235,6 @@ export function pageMessages(
   );
 }
 
-export function sendAgentMessage(
-  sessionNo: string,
-  data: SendAgentMessagePayload,
-) {
-  return postData<ChatMessage>(
-    `/sessions/${encodeURIComponent(sessionNo)}/messages`,
-    data,
-  );
-}
-
 export function chatAdminWsUrl(params: {
   token: string;
   merchantId?: number;

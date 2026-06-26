@@ -22,6 +22,9 @@ service ChatAdmin {
   // 更新当前登录用户资料
   rpc UpdateProfile(UpdateChatAdminProfileReq) returns (ChatAdminProfileResp);
 
+  // 获取用户
+  rpc GetChatUserById(GetChatUserByIdReq) returns (GetChatUserByIdResp);
+
   // 创建客服分组
   rpc CreateChatGroup(CreateChatGroupReq) returns (AdminChatGroupResp);
 
@@ -169,6 +172,15 @@ message UpdateChatAdminProfileReq {
   string avatar_url = 3;   // 头像URL
 }
 
+message GetChatUserByIdReq {
+  int64 id = 1;
+}
+
+message GetChatUserByIdResp {
+  common.RespBase base = 1;
+  ChatUser data = 2;
+}
+
 message ChatAdminProfileResp {
   common.RespBase base = 1;
   ChatUser user = 2;
@@ -273,6 +285,8 @@ message GetChatSessionReq {
 message AcceptChatSessionReq {
   string session_no = 1; // 会话编号
   string reason = 2;     // 接待原因
+  int64 merchant_id = 3;
+  int64 agent_id = 4;
 }
 
 message SendAgentMessageReq {
@@ -286,8 +300,10 @@ message SendAgentMessageReq {
   string mime_type = 8;             // MIME类型
   int32 width = 9;                  // 图片/视频宽度
   int32 height = 10;                // 图片/视频高度
-  int32 duration = 11;              // 音频/视频时长(秒)
+  int64 duration = 11;              // 音频/视频时长(秒)
   string extra = 12;                // 扩展JSON
+  ChatMessageUser sender = 13;      // 坐席端
+  int64 merchant_id = 14;           // 
 }
 
 message PageChatMessagesReq {

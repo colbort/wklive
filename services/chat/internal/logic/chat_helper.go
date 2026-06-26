@@ -111,36 +111,11 @@ func messageNextCursor(list []*models.ChatMessage) int64 {
 	return list[len(list)-1].CreateTimes
 }
 
-func normalizeMessageType(value chat.ChatMessageType) chat.ChatMessageType {
-	if value == chat.ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN {
-		return chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT
-	}
-	return value
-}
-
-func normalizeSource(value chat.ChatSessionSource) chat.ChatSessionSource {
-	if value == chat.ChatSessionSource_CHAT_SESSION_SOURCE_UNKNOWN {
-		return chat.ChatSessionSource_CHAT_SESSION_SOURCE_APP
-	}
-	return value
-}
-
-func normalizePriority(value chat.ChatSessionPriority) chat.ChatSessionPriority {
-	if value == chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_UNKNOWN {
-		return chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL
-	}
-	return value
-}
-
 func normalizeAssignType(value chat.ChatAssignType) chat.ChatAssignType {
 	if value == chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN {
 		return chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL
 	}
 	return value
-}
-
-func isWorkOrderFinished(status int64) bool {
-	return status == 3 || status == 4
 }
 
 func validateSessionKey(merchantID int64, sessionNo string) error {
@@ -585,132 +560,6 @@ func getSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int6
 	return data, nil, nil
 }
 
-func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID, userID int64, source chat.ChatSessionSource, title, category string, priority chat.ChatSessionPriority, ext *structpb.Struct) (*models.TChatSession, bool, error) {
-	sessionSource := normalizeSource(source)
-	data, err := svcCtx.ChatSessionModel.FindLatestByUserSource(ctx, merchantID, userID, int64(sessionSource))
-	if err == nil {
-		now := nowMillis()
-		changed := false
-		shouldNotifyQueue := false
-		if data.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-			data.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
-			data.AgentId = 0
-			data.CloseTime = 0
-			data.CloseReason = ""
-			changed = true
-			shouldNotifyQueue = true
-		}
-		if data.Source == 0 {
-			data.Source = int64(sessionSource)
-			changed = true
-		}
-		if strings.TrimSpace(data.Title) == "" && strings.TrimSpace(title) != "" {
-			data.Title = strings.TrimSpace(title)
-			changed = true
-		}
-		if strings.TrimSpace(data.Category) == "" && strings.TrimSpace(category) != "" {
-			data.Category = strings.TrimSpace(category)
-			changed = true
-		}
-		if ext != nil {
-			data.ExtJson = structToNullString(ext)
-			changed = true
-		}
-		if changed {
-			data.UpdateTimes = now
-			if err := svcCtx.ChatSessionModel.Update(ctx, data); err != nil {
-				return nil, false, err
-			}
-		}
-		return data, shouldNotifyQueue, nil
-	}
-	if err != models.ErrNotFound {
-		return nil, false, err
-	}
-
-	now := nowMillis()
-	for attempt := 0; attempt < sessionNoInsertAttempts; attempt++ {
-		data = &models.TChatSession{
-			SessionNo:       nextNo("CS"),
-			MerchantId:      merchantID,
-			UserId:          userID,
-			Source:          int64(sessionSource),
-			Status:          int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING),
-			Priority:        int64(normalizePriority(priority)),
-			Title:           strings.TrimSpace(title),
-			Category:        strings.TrimSpace(category),
-			LastMessageTime: now,
-			ExtJson:         structToNullString(ext),
-			CreateTimes:     now,
-			UpdateTimes:     now,
-		}
-		result, err := svcCtx.ChatSessionModel.Insert(ctx, data)
-		if err == nil {
-			if id, err := result.LastInsertId(); err == nil {
-				data.Id = id
-			}
-			return data, true, nil
-		}
-		if !isDuplicateKey(err) {
-			return nil, false, err
-		}
-	}
-	return nil, false, fmt.Errorf("failed to generate unique session_no")
-}
-
-func isDuplicateKey(err error) bool {
-	if err == nil {
-		return false
-	}
-	msg := strings.ToLower(err.Error())
-	return strings.Contains(msg, "duplicate") || strings.Contains(msg, "1062")
-}
-
-func newMessage(session *models.TChatSession, senderType chat.ChatSenderType, senderID int64, senderName, senderAvatarURL string, messageType chat.ChatMessageType, content, mediaURL, mediaName, mediaMIME string, mediaSize int64, payload *structpb.Struct) *models.ChatMessage {
-	now := nowMillis()
-	senderName = normalizeSenderName(senderType, senderID, senderName)
-	msg := &models.ChatMessage{
-		MessageNo:  nextNo("CM"),
-		SessionNo:  session.SessionNo,
-		MerchantId: session.MerchantId,
-		Sender: &models.ChatMessageUser{
-			Id:        senderID,
-			Type:      int64(senderType),
-			Nickname:  senderName,
-			AvatarUrl: strings.TrimSpace(senderAvatarURL),
-		},
-		Receiver:    messageReceiver(session, senderType),
-		MessageType: int64(normalizeMessageType(messageType)),
-		Content:     strings.TrimSpace(content),
-		Url:         strings.TrimSpace(mediaURL),
-		FileName:    strings.TrimSpace(mediaName),
-		MimeType:    strings.TrimSpace(mediaMIME),
-		FileSize:    mediaSize,
-		Status:      int64(chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT),
-		CreateTimes: now,
-		UpdateTimes: now,
-	}
-	if payload != nil {
-		msg.Payload = payload.AsMap()
-	}
-	return msg
-}
-
-func normalizeSenderName(senderType chat.ChatSenderType, senderID int64, senderName string) string {
-	senderName = strings.TrimSpace(senderName)
-	if senderName != "" {
-		return senderName
-	}
-	switch senderType {
-	case chat.ChatSenderType_CHAT_SENDER_TYPE_USER:
-		return fmt.Sprintf("用户%d", senderID)
-	case chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM:
-		return "system"
-	default:
-		return ""
-	}
-}
-
 func messageSenderType(msg *models.ChatMessage) chat.ChatSenderType {
 	if msg == nil || msg.Sender == nil {
 		return chat.ChatSenderType_CHAT_SENDER_TYPE_UNKNOWN
@@ -882,7 +731,7 @@ func publishQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext, session 
 	}
 }
 
-func publishSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType chat.ChatEventType, session *models.TChatSession, operatorID int64, assignType chat.ChatAssignType, reason, message string) {
+func publishSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType chat.ChatEventType, session *models.TChatSession, assignType chat.ChatAssignType, reason, message string) {
 	if svcCtx.BusRedis == nil || session == nil {
 		return
 	}
@@ -895,7 +744,7 @@ func publishSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventT
 		MerchantId: session.MerchantId,
 		UserId:     session.UserId,
 		AgentId:    session.AgentId,
-		OperatorId: operatorID,
+		OperatorId: session.UserId,
 		Status:     chat.ChatSessionStatus(session.Status),
 		AssignType: assignType,
 		Reason:     strings.TrimSpace(reason),
@@ -1024,17 +873,14 @@ func changeAgentSessionCount(ctx context.Context, svcCtx *svc.ServiceContext, ag
 
 type assignSessionOptions struct {
 	SessionNo  string
+	MerchantId int64
 	ToAgentId  int64
 	AssignType chat.ChatAssignType
 	Reason     string
 }
 
 func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in assignSessionOptions) (*models.TChatSession, *common.RespBase, error) {
-	merchantID, base, err := merchantIDFromMetadata(ctx)
-	if base != nil || err != nil {
-		return nil, base, err
-	}
-	session, base, err := getSession(ctx, svcCtx, merchantID, in.SessionNo)
+	session, base, err := getSession(ctx, svcCtx, in.MerchantId, in.SessionNo)
 	if base != nil || err != nil {
 		return nil, base, err
 	}
@@ -1049,7 +895,7 @@ func assignSession(ctx context.Context, svcCtx *svc.ServiceContext, in assignSes
 		return nil, base, nil
 	}
 	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, in.ToAgentId)
-	if err == models.ErrNotFound || agent.MerchantId != merchantID {
+	if err == models.ErrNotFound || agent.MerchantId != in.MerchantId {
 		return nil, notFoundBase("chat agent not found"), nil
 	}
 	if err != nil {
@@ -1172,6 +1018,7 @@ func routeSessionToAvailableAgent(ctx context.Context, svcCtx *svc.ServiceContex
 		}
 		return assignSession(ctx, svcCtx, assignSessionOptions{
 			SessionNo:  session.SessionNo,
+			MerchantId: session.MerchantId,
 			ToAgentId:  agents[0].Id,
 			AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_AUTO,
 			Reason:     reason,

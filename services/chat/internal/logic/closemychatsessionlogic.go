@@ -48,6 +48,6 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 	if err := closeSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
 		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
 	}
-	publishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, session, 0, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, in.GetCloseReason(), "本次会话已结束")
+	publishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, in.GetCloseReason(), "本次会话已结束")
 	return &chat.AppChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
 }

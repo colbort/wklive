@@ -471,16 +471,12 @@ func (x *GetChatSessionByUserReq) GetIncludeClosed() bool {
 }
 
 type OpenChatSessionReq struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Source          ChatSessionSource      `protobuf:"varint,1,opt,name=source,proto3,enum=chat.ChatSessionSource" json:"source,omitempty"`               // 来源
-	Title           string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`                                              // 会话标题
-	Category        string                 `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty"`                                        // 问题分类
-	FirstMessage    string                 `protobuf:"bytes,4,opt,name=first_message,json=firstMessage,proto3" json:"first_message,omitempty"`            // 首条文本消息，可为空
-	SenderNickname  string                 `protobuf:"bytes,5,opt,name=sender_nickname,json=senderNickname,proto3" json:"sender_nickname,omitempty"`      // 用户昵称快照
-	SenderAvatarUrl string                 `protobuf:"bytes,6,opt,name=sender_avatar_url,json=senderAvatarUrl,proto3" json:"sender_avatar_url,omitempty"` // 用户头像快照
-	GroupId         int64                  `protobuf:"varint,7,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                          // 目标客服分组ID,0表示默认分组
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Source        ChatSessionSource      `protobuf:"varint,1,opt,name=source,proto3,enum=chat.ChatSessionSource" json:"source,omitempty"` // 来源
+	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`   // 客服商户ID
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`               // 用户ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *OpenChatSessionReq) Reset() {
@@ -520,44 +516,16 @@ func (x *OpenChatSessionReq) GetSource() ChatSessionSource {
 	return ChatSessionSource_CHAT_SESSION_SOURCE_UNKNOWN
 }
 
-func (x *OpenChatSessionReq) GetTitle() string {
+func (x *OpenChatSessionReq) GetMerchantId() int64 {
 	if x != nil {
-		return x.Title
+		return x.MerchantId
 	}
-	return ""
+	return 0
 }
 
-func (x *OpenChatSessionReq) GetCategory() string {
+func (x *OpenChatSessionReq) GetUserId() int64 {
 	if x != nil {
-		return x.Category
-	}
-	return ""
-}
-
-func (x *OpenChatSessionReq) GetFirstMessage() string {
-	if x != nil {
-		return x.FirstMessage
-	}
-	return ""
-}
-
-func (x *OpenChatSessionReq) GetSenderNickname() string {
-	if x != nil {
-		return x.SenderNickname
-	}
-	return ""
-}
-
-func (x *OpenChatSessionReq) GetSenderAvatarUrl() string {
-	if x != nil {
-		return x.SenderAvatarUrl
-	}
-	return ""
-}
-
-func (x *OpenChatSessionReq) GetGroupId() int64 {
-	if x != nil {
-		return x.GroupId
+		return x.UserId
 	}
 	return 0
 }
@@ -1390,15 +1358,12 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12(\n" +
 	"\x10external_user_id\x18\x03 \x01(\tR\x0eexternalUserId\x12/\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x12%\n" +
-	"\x0einclude_closed\x18\x05 \x01(\bR\rincludeClosed\"\x8c\x02\n" +
+	"\x0einclude_closed\x18\x05 \x01(\bR\rincludeClosed\"\x7f\n" +
 	"\x12OpenChatSessionReq\x12/\n" +
-	"\x06source\x18\x01 \x01(\x0e2\x17.chat.ChatSessionSourceR\x06source\x12\x14\n" +
-	"\x05title\x18\x02 \x01(\tR\x05title\x12\x1a\n" +
-	"\bcategory\x18\x03 \x01(\tR\bcategory\x12#\n" +
-	"\rfirst_message\x18\x04 \x01(\tR\ffirstMessage\x12'\n" +
-	"\x0fsender_nickname\x18\x05 \x01(\tR\x0esenderNickname\x12*\n" +
-	"\x11sender_avatar_url\x18\x06 \x01(\tR\x0fsenderAvatarUrl\x12\x19\n" +
-	"\bgroup_id\x18\a \x01(\x03R\agroupId\"m\n" +
+	"\x06source\x18\x01 \x01(\x0e2\x17.chat.ChatSessionSourceR\x06source\x12\x1f\n" +
+	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
+	"merchantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\"m\n" +
 	"\x15ListMyChatSessionsReq\x12/\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"4\n" +
