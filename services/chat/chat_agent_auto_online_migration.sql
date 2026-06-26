@@ -6,3 +6,8 @@ ALTER TABLE `t_chat_agent`
 ALTER TABLE `t_chat_category`
   ADD COLUMN `group_id` bigint NOT NULL DEFAULT '0' COMMENT '客服分组ID'
   AFTER `category_name`;
+
+
+ALTER TABLE `t_chat_session`
+  ADD COLUMN `agent_user_id` bigint NOT NULL DEFAULT '0' COMMENT '当前坐席的用户ID'
+  AFTER `agent_id`;

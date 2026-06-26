@@ -18,7 +18,7 @@ type ChatAgent {
 }
 
 type ChatAdminOptions {
-	options  []OptionsGroup `json:"options"`
+	options []OptionsGroup `json:"options"`
 }
 
 type ChatAdminOptionsResp {
@@ -92,25 +92,25 @@ type ChatMessageSender {
 }
 
 type ChatMessage {
-	id          int64  `json:"id,optional"`
-	messageNo   string `json:"messageNo"`
-	sessionNo   string `json:"sessionNo"`
-	merchantId  int64  `json:"merchantId"`
-	userId      int64  `json:"userId"`
-	agentId     int64  `json:"agentId"`
-	senderType  int64  `json:"senderType"`
+	messageNo   string            `json:"messageNo"`
+	sessionNo   string            `json:"sessionNo"`
+	merchantId  int64             `json:"merchantId"`
 	sender      ChatMessageSender `json:"sender"`
-	messageType int64  `json:"messageType"`
-	content     string `json:"content"`
-	mediaUrl    string `json:"mediaUrl"`
-	mediaName   string `json:"mediaName"`
-	mediaMime   string `json:"mediaMime"`
-	mediaSize   int64  `json:"mediaSize"`
-	status      int64  `json:"status"`
-	payload     string `json:"payload,optional"`
-	readTime    int64  `json:"readTime"`
-	createTimes int64  `json:"createTimes"`
-	updateTimes int64  `json:"updateTimes"`
+	receiver    ChatMessageSender `json:"receiver,optional"`
+	messageType int64             `json:"messageType"`
+	content     string            `json:"content"`
+	url         string            `json:"url"`
+	fileName    string            `json:"fileName"`
+	fileSize    int64             `json:"fileSize"`
+	mimeType    string            `json:"mimeType"`
+	width       int64             `json:"width"`
+	height      int64             `json:"height"`
+	duration    int64             `json:"duration"`
+	status      int64             `json:"status"`
+	extra       string            `json:"extra,optional"`
+	readTime    int64             `json:"readTime"`
+	createTime  int64             `json:"createTime"`
+	updateTime  int64             `json:"updateTime"`
 }
 
 type ChatQuickReply {
@@ -181,11 +181,9 @@ type ChatAdminLoginResp {
 	data ChatAdminLoginData `json:"data"`
 }
 
-type ChatAdminLogoutReq {
-}
+type ChatAdminLogoutReq {}
 
-type ChatAdminProfileReq {
-}
+type ChatAdminProfileReq {}
 
 type UpdateChatAdminProfileReq {
 	oldPassword string `json:"oldPassword,optional"`
@@ -332,10 +330,14 @@ type SendAgentMessageReq {
 	sessionNo   string `path:"sessionNo"`
 	messageType int64  `json:"messageType"`
 	content     string `json:"content,optional"`
-	mediaUrl    string `json:"mediaUrl,optional"`
-	mediaName   string `json:"mediaName,optional"`
-	mediaMime   string `json:"mediaMime,optional"`
-	mediaSize   int64  `json:"mediaSize,optional"`
+	url         string `json:"url,optional"`
+	fileName    string `json:"fileName,optional"`
+	mimeType    string `json:"mimeType,optional"`
+	fileSize    int64  `json:"fileSize,optional"`
+	width       int64  `json:"width,optional"`
+	height      int64  `json:"height,optional"`
+	duration    int64  `json:"duration,optional"`
+	extra       string `json:"extra,optional"`
 	clientMsgNo string `json:"clientMsgNo,optional"`
 }
 
@@ -724,3 +726,4 @@ service chatAdmin {
 	@handler DeleteChatWorkOrder
 	delete /work-orders/:id (DeleteChatWorkOrderReq) returns (RespBase)
 }
+

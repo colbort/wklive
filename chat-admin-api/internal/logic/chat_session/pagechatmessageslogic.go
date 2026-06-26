@@ -5,14 +5,12 @@ package chat_session
 
 import (
 	"context"
-	"strconv"
 	"strings"
-
-	"chat-admin-api/internal/logicutil"
 
 	"chat-admin-api/internal/svc"
 	"chat-admin-api/internal/types"
 	"wklive/proto/chat"
+	"wklive/proto/common"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -36,6 +34,7 @@ func (l *PageChatMessagesLogic) PageChatMessages(req *types.PageChatMessagesReq)
 		return &types.PageChatMessagesResp{
 			RespBase: types.RespBase{Code: 200, Msg: "OK"},
 			Data: protoMessagesToTypes(
+				req.MerchantId,
 				l.svcCtx.ChatMessageHub.ListTransientMessages(
 					req.MerchantId,
 					req.SessionNo,
@@ -45,39 +44,72 @@ func (l *PageChatMessagesLogic) PageChatMessages(req *types.PageChatMessagesReq)
 			),
 		}, nil
 	}
-	return logicutil.Proxy[types.PageChatMessagesResp](l.ctx, req, l.svcCtx.ChatAdminCli.PageChatMessages)
+	rpcResp, err := l.svcCtx.ChatAdminCli.PageChatMessages(l.ctx, &chat.PageChatMessagesReq{
+		SessionNo:  req.SessionNo,
+		SenderType: chat.ChatSenderType(req.SenderType),
+		Page: &common.PageReq{
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.PageChatMessagesResp{
+		RespBase: respBaseToType(rpcResp.GetBase()),
+		Data:     protoMessagesToTypes(req.MerchantId, rpcResp.GetData()),
+	}, nil
 }
 
-func protoMessagesToTypes(list []*chat.ChatMessage) []types.ChatMessage {
+func respBaseToType(base *common.RespBase) types.RespBase {
+	if base == nil {
+		return types.RespBase{}
+	}
+	return types.RespBase{
+		Code:       base.GetCode(),
+		Msg:        base.GetMsg(),
+		Total:      base.GetTotal(),
+		HasNext:    base.GetHasNext(),
+		HasPrev:    base.GetHasPrev(),
+		NextCursor: base.GetNextCursor(),
+		PrevCursor: base.GetPrevCursor(),
+	}
+}
+
+func protoMessagesToTypes(merchantId int64, list []*chat.ChatMessage) []types.ChatMessage {
 	if len(list) == 0 {
 		return []types.ChatMessage{}
 	}
 	resp := make([]types.ChatMessage, 0, len(list))
 	for _, item := range list {
-		resp = append(resp, protoMessageToType(item))
+		resp = append(resp, protoMessageToType(merchantId, item))
 	}
 	return resp
 }
 
-func protoMessageToType(item *chat.ChatMessage) types.ChatMessage {
+func protoMessageToType(merchantId int64, item *chat.ChatMessage) types.ChatMessage {
 	if item == nil {
 		return types.ChatMessage{}
 	}
 	return types.ChatMessage{
 		MessageNo:   item.GetMessageNo(),
 		SessionNo:   item.GetSessionNo(),
-		AgentId:     int64FromString(item.GetAgentId()),
-		SenderType:  int64(protoMessageSenderType(item)),
+		MerchantId:  merchantId,
 		Sender:      protoMessageSenderToType(item.GetSender()),
+		Receiver:    protoMessageSenderToType(item.GetReceiver()),
 		MessageType: int64(item.GetMessageType()),
 		Content:     item.GetContent(),
-		MediaUrl:    item.GetUrl(),
-		MediaName:   item.GetFileName(),
-		MediaMime:   item.GetMimeType(),
-		MediaSize:   item.GetFileSize(),
+		Url:         item.GetUrl(),
+		FileName:    item.GetFileName(),
+		FileSize:    item.GetFileSize(),
+		MimeType:    item.GetMimeType(),
+		Width:       int64(item.GetWidth()),
+		Height:      int64(item.GetHeight()),
+		Duration:    int64(item.GetDuration()),
 		Status:      int64(item.GetStatus()),
-		CreateTimes: item.GetCreateTime(),
-		UpdateTimes: item.GetUpdateTime(),
+		Extra:       item.GetExtra(),
+		CreateTime:  item.GetCreateTime(),
+		UpdateTime:  item.GetUpdateTime(),
 	}
 }
 
@@ -91,16 +123,4 @@ func protoMessageSenderToType(item *chat.ChatMessageUser) types.ChatMessageSende
 		Nickname:   item.GetNickname(),
 		AvatarUrl:  item.GetAvatarUrl(),
 	}
-}
-
-func protoMessageSenderType(item *chat.ChatMessage) chat.ChatSenderType {
-	if item == nil || item.GetSender() == nil {
-		return chat.ChatSenderType_CHAT_SENDER_TYPE_UNKNOWN
-	}
-	return item.GetSender().GetType()
-}
-
-func int64FromString(value string) int64 {
-	id, _ := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
-	return id
 }

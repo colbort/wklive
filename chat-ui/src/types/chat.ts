@@ -78,21 +78,23 @@ export interface ChatMessage {
   messageNo: string;
   sessionNo: string;
   merchantId: number;
-  userId: number;
-  agentId: number;
   senderType: number;
   sender?: ChatMessageSender;
+  receiver?: ChatMessageSender;
   messageType: number;
   content: string;
-  mediaUrl: string;
-  mediaName: string;
-  mediaMime: string;
-  mediaSize: number;
+  url: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+  width: number;
+  height: number;
+  duration: number;
   status: number;
   extra?: string;
   readTime: number;
-  createTimes: number;
-  updateTimes: number;
+  createTime: number;
+  updateTime: number;
 }
 
 export interface ChatWsEvent<T = unknown> {
@@ -145,10 +147,10 @@ export interface ChatSessionEvent {
 export interface SendUserMessagePayload {
   messageType: number;
   content?: string;
-  mediaUrl?: string;
-  mediaName?: string;
-  mediaMime?: string;
-  mediaSize?: number;
+  url?: string;
+  fileName?: string;
+  mimeType?: string;
+  fileSize?: number;
   senderNickname?: string;
   senderAvatarUrl?: string;
 }

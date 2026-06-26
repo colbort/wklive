@@ -121,10 +121,14 @@ export interface SendAgentMessagePayload {
   agentId: number;
   messageType: number;
   content?: string;
-  mediaUrl?: string;
-  mediaName?: string;
-  mediaMime?: string;
-  mediaSize?: number;
+  url?: string;
+  fileName?: string;
+  mimeType?: string;
+  fileSize?: number;
+  width?: number;
+  height?: number;
+  duration?: number;
+  extra?: string;
   clientMsgNo?: string;
 }
 

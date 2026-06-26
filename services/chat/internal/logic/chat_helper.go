@@ -469,13 +469,17 @@ func toProtoMessage(data *models.ChatMessage) *chat.ChatMessage {
 		EventType:   chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
 		MessageType: chat.ChatMessageType(data.MessageType),
 		Sender:      toProtoMessageSender(data),
+		Receiver:    toProtoMessageUser(data.Receiver),
 		Content:     data.Content,
-		Url:         data.MediaUrl,
-		FileName:    data.MediaName,
-		FileSize:    data.MediaSize,
-		MimeType:    data.MediaMime,
+		Url:         data.Url,
+		FileName:    data.FileName,
+		FileSize:    data.FileSize,
+		MimeType:    data.MimeType,
+		Width:       data.Width,
+		Height:      data.Height,
+		Duration:    int32(data.Duration),
 		Status:      chat.ChatMessageStatus(data.Status),
-		AgentId:     strconv.FormatInt(data.AgentId, 10),
+		AgentId:     strconv.FormatInt(messageAgentID(data), 10),
 		Extra:       messagePayloadJSON(data.Payload),
 		CreateTime:  data.CreateTimes,
 		UpdateTime:  data.UpdateTimes,
@@ -517,16 +521,18 @@ func toProtoMessageSender(data *models.ChatMessage) *chat.ChatMessageUser {
 	if data == nil {
 		return nil
 	}
-	if data.Sender != nil {
-		return &chat.ChatMessageUser{
-			Id:        data.Sender.Id,
-			Type:      chat.ChatSenderType(data.Sender.Type),
-			Nickname:  data.Sender.Nickname,
-			AvatarUrl: data.Sender.AvatarUrl,
-		}
+	return toProtoMessageUser(data.Sender)
+}
+
+func toProtoMessageUser(data *models.ChatMessageUser) *chat.ChatMessageUser {
+	if data == nil {
+		return nil
 	}
 	return &chat.ChatMessageUser{
-		Type: chat.ChatSenderType(data.SenderType),
+		Id:        data.Id,
+		Type:      chat.ChatSenderType(data.Type),
+		Nickname:  data.Nickname,
+		AvatarUrl: data.AvatarUrl,
 	}
 }
 
@@ -566,9 +572,6 @@ func toProtoUser(data *models.TChatUser) *chat.ChatUser {
 }
 
 func getSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int64, sessionNo string) (*models.TChatSession, *common.RespBase, error) {
-	if err := validateSessionKey(merchantID, sessionNo); err != nil {
-		return nil, badBase(err.Error()), nil
-	}
 	data, err := svcCtx.ChatSessionModel.FindOneBySessionNo(ctx, sessionNo)
 	if err == models.ErrNotFound {
 		return nil, notFoundBase("chat session not found"), nil
@@ -670,21 +673,19 @@ func newMessage(session *models.TChatSession, senderType chat.ChatSenderType, se
 		MessageNo:  nextNo("CM"),
 		SessionNo:  session.SessionNo,
 		MerchantId: session.MerchantId,
-		UserId:     session.UserId,
-		AgentId:    session.AgentId,
-		SenderType: int64(senderType),
-		Sender: &models.ChatMessageSender{
+		Sender: &models.ChatMessageUser{
 			Id:        senderID,
 			Type:      int64(senderType),
 			Nickname:  senderName,
 			AvatarUrl: strings.TrimSpace(senderAvatarURL),
 		},
+		Receiver:    messageReceiver(session, senderType),
 		MessageType: int64(normalizeMessageType(messageType)),
 		Content:     strings.TrimSpace(content),
-		MediaUrl:    strings.TrimSpace(mediaURL),
-		MediaName:   strings.TrimSpace(mediaName),
-		MediaMime:   strings.TrimSpace(mediaMIME),
-		MediaSize:   mediaSize,
+		Url:         strings.TrimSpace(mediaURL),
+		FileName:    strings.TrimSpace(mediaName),
+		MimeType:    strings.TrimSpace(mediaMIME),
+		FileSize:    mediaSize,
 		Status:      int64(chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT),
 		CreateTimes: now,
 		UpdateTimes: now,
@@ -710,16 +711,62 @@ func normalizeSenderName(senderType chat.ChatSenderType, senderID int64, senderN
 	}
 }
 
+func messageSenderType(msg *models.ChatMessage) chat.ChatSenderType {
+	if msg == nil || msg.Sender == nil {
+		return chat.ChatSenderType_CHAT_SENDER_TYPE_UNKNOWN
+	}
+	return chat.ChatSenderType(msg.Sender.Type)
+}
+
+func messageAgentID(msg *models.ChatMessage) int64 {
+	if msg == nil {
+		return 0
+	}
+	if msg.Sender != nil && chat.ChatSenderType(msg.Sender.Type) == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
+		return msg.Sender.Id
+	}
+	if msg.Receiver != nil && chat.ChatSenderType(msg.Receiver.Type) == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
+		return msg.Receiver.Id
+	}
+	return 0
+}
+
+func messageReceiver(session *models.TChatSession, senderType chat.ChatSenderType) *models.ChatMessageUser {
+	if session == nil {
+		return nil
+	}
+	switch senderType {
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_USER:
+		if session.AgentId <= 0 {
+			return nil
+		}
+		return &models.ChatMessageUser{
+			Id:   session.AgentId,
+			Type: int64(chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT),
+		}
+	case chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT, chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM:
+		if session.UserId <= 0 {
+			return nil
+		}
+		return &models.ChatMessageUser{
+			Id:   session.UserId,
+			Type: int64(chat.ChatSenderType_CHAT_SENDER_TYPE_USER),
+		}
+	default:
+		return nil
+	}
+}
+
 func fillMessageSender(ctx context.Context, svcCtx *svc.ServiceContext, msg *models.ChatMessage) {
 	if msg == nil {
 		return
 	}
 	if msg.Sender == nil {
-		msg.Sender = &models.ChatMessageSender{
-			Type: msg.SenderType,
+		msg.Sender = &models.ChatMessageUser{
+			Type: int64(messageSenderType(msg)),
 		}
 	}
-	switch chat.ChatSenderType(msg.SenderType) {
+	switch messageSenderType(msg) {
 	case chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT:
 		fillAgentSenderSnapshot(ctx, svcCtx, msg)
 	case chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM:
@@ -742,7 +789,7 @@ func fillAgentSenderSnapshot(ctx context.Context, svcCtx *svc.ServiceContext, ms
 		return
 	}
 	msg.Sender.Id = agent.Id
-	msg.Sender.Type = msg.SenderType
+	msg.Sender.Type = int64(messageSenderType(msg))
 	msg.Sender.Nickname = user.Nickname
 	msg.Sender.AvatarUrl = user.AvatarUrl
 }
@@ -759,11 +806,12 @@ func sendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *model
 
 	now := msg.CreateTimes
 	session.LastMessageNo = msg.MessageNo
-	session.LastMessage = trimSummary(msg.Content, msg.MediaName, msg.MediaUrl)
-	session.LastSenderType = msg.SenderType
+	session.LastMessage = trimSummary(msg.Content, msg.FileName, msg.Url)
+	senderType := messageSenderType(msg)
+	session.LastSenderType = int64(senderType)
 	session.LastMessageTime = now
 	session.UpdateTimes = now
-	switch chat.ChatSenderType(msg.SenderType) {
+	switch senderType {
 	case chat.ChatSenderType_CHAT_SENDER_TYPE_USER:
 		session.AgentUnreadCount++
 		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
@@ -781,7 +829,7 @@ func sendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *model
 		return nil, err
 	}
 	publishMessageEvent(ctx, svcCtx, session, msg)
-	if chat.ChatSenderType(msg.SenderType) == chat.ChatSenderType_CHAT_SENDER_TYPE_USER && session.AgentId == 0 {
+	if senderType == chat.ChatSenderType_CHAT_SENDER_TYPE_USER && session.AgentId == 0 {
 		publishQueueEvent(ctx, svcCtx, session)
 	}
 	return msg, nil

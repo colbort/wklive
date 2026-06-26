@@ -138,16 +138,17 @@ func (m *defaultChatMessageModel) UpsertByMessageNo(ctx context.Context, data *C
 		"$set": bson.M{
 			"session_no":   data.SessionNo,
 			"merchant_id":  data.MerchantId,
-			"user_id":      data.UserId,
-			"agent_id":     data.AgentId,
-			"sender_type":  data.SenderType,
 			"sender":       data.Sender,
+			"receiver":     data.Receiver,
 			"message_type": data.MessageType,
 			"content":      data.Content,
-			"media_url":    data.MediaUrl,
-			"media_name":   data.MediaName,
-			"media_mime":   data.MediaMime,
-			"media_size":   data.MediaSize,
+			"url":          data.Url,
+			"file_name":    data.FileName,
+			"mime_type":    data.MimeType,
+			"file_size":    data.FileSize,
+			"width":        data.Width,
+			"height":       data.Height,
+			"duration":     data.Duration,
 			"status":       data.Status,
 			"payload":      data.Payload,
 			"read_time":    data.ReadTime,
@@ -185,6 +186,7 @@ func (m *defaultChatMessageModel) FindPage(ctx context.Context, filter ChatMessa
 	}
 
 	query := bson.M{}
+	clauses := make([]bson.M, 0, 2)
 	if filter.MerchantId != 0 {
 		query["merchant_id"] = filter.MerchantId
 	}
@@ -192,13 +194,19 @@ func (m *defaultChatMessageModel) FindPage(ctx context.Context, filter ChatMessa
 		query["session_no"] = filter.SessionNo
 	}
 	if filter.UserId != 0 {
-		query["user_id"] = filter.UserId
+		clauses = append(clauses, bson.M{"$or": []bson.M{
+			{"sender.type": 1, "sender.id": filter.UserId},
+			{"receiver.type": 1, "receiver.id": filter.UserId},
+		}})
 	}
 	if filter.AgentId != 0 {
-		query["agent_id"] = filter.AgentId
+		clauses = append(clauses, bson.M{"$or": []bson.M{
+			{"sender.type": 2, "sender.id": filter.AgentId},
+			{"receiver.type": 2, "receiver.id": filter.AgentId},
+		}})
 	}
 	if filter.SenderType != 0 {
-		query["sender_type"] = filter.SenderType
+		query["sender.type"] = filter.SenderType
 	}
 	if filter.MessageType != 0 {
 		query["message_type"] = filter.MessageType
@@ -213,6 +221,9 @@ func (m *defaultChatMessageModel) FindPage(ctx context.Context, filter ChatMessa
 	}
 	if len(timeRange) > 0 {
 		query["create_times"] = timeRange
+	}
+	if len(clauses) > 0 {
+		query["$and"] = clauses
 	}
 
 	opts := options.Find().
@@ -270,11 +281,11 @@ func (m *defaultChatMessageModel) EnsureIndexes(ctx context.Context) ([]string, 
 			Options: options.Index().SetName("idx_session_time"),
 		},
 		{
-			Keys:    bson.D{{Key: "merchant_id", Value: 1}, {Key: "user_id", Value: 1}, {Key: "create_times", Value: -1}},
+			Keys:    bson.D{{Key: "merchant_id", Value: 1}, {Key: "sender.type", Value: 1}, {Key: "sender.id", Value: 1}, {Key: "create_times", Value: -1}},
 			Options: options.Index().SetName("idx_merchant_user_time"),
 		},
 		{
-			Keys:    bson.D{{Key: "merchant_id", Value: 1}, {Key: "agent_id", Value: 1}, {Key: "create_times", Value: -1}},
+			Keys:    bson.D{{Key: "merchant_id", Value: 1}, {Key: "receiver.type", Value: 1}, {Key: "receiver.id", Value: 1}, {Key: "create_times", Value: -1}},
 			Options: options.Index().SetName("idx_merchant_agent_time"),
 		},
 	}

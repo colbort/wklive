@@ -68,6 +68,7 @@ CREATE TABLE `t_chat_session` (
   `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态:1等待接入 2服务中 3等待用户 4等待客服 5已结束',
   `priority` tinyint NOT NULL DEFAULT '2' COMMENT '优先级:1低 2普通 3高 4紧急',
   `agent_id` bigint NOT NULL DEFAULT '0' COMMENT '当前坐席ID',
+  `agent_user_id` bigint NOT NULL DEFAULT '0' COMMENT '当前坐席的用户ID',
   `group_id` bigint NOT NULL DEFAULT '0' COMMENT '目标客服分组ID',
   `title` varchar(128) NOT NULL DEFAULT '' COMMENT '会话标题',
   `category` varchar(64) NOT NULL DEFAULT '' COMMENT '问题分类',

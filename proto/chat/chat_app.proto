@@ -121,9 +121,9 @@ message SendUserMessageReq {
   int32 width = 9;                  // 图片/视频宽度
   int32 height = 10;                // 图片/视频高度
   int32 duration = 11;              // 音频/视频时长(秒)
-  string sender_nickname = 12;      // 用户昵称快照
-  string sender_avatar_url = 13;    // 用户头像快照
-  string extra = 14;                // 扩展JSON
+  string extra = 12;                // 扩展JSON
+  ChatMessageUser sender = 13;      // 用户端
+  int64 merchant_id = 14;           // 
 }
 
 message ListMyChatMessagesReq {

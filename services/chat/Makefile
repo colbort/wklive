@@ -83,5 +83,5 @@ clean-main:
 
 .PHONY: gen-model
 gen-model:
-	# goctl model mongo --type CoinKline --dir ./models
+	# goctl model mongo --type ChatMessage --dir ./models
 	goctl model mysql ddl --src chat.sql --dir ./models -c

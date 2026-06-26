@@ -283,7 +283,7 @@ textarea:focus {
   margin: 10px 0;
 }
 
-.message-row.mine {
+.message-row.sent {
   justify-content: flex-end;
 }
 
@@ -302,13 +302,13 @@ textarea:focus {
   box-shadow: 0 10px 24px rgba(15, 118, 110, 0.18);
 }
 
-.message-row:not(.mine):not(.system) .bubble {
+.message-row.received .bubble {
   color: #1e293b;
   background: #fff;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
-.message-row:not(.mine):not(.system) .bubble span {
+.message-row.received .bubble span {
   color: #64748b;
 }
 

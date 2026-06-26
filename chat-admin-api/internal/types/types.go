@@ -101,25 +101,25 @@ type ChatGroupResp struct {
 }
 
 type ChatMessage struct {
-	Id          int64             `json:"id,optional"`
 	MessageNo   string            `json:"messageNo"`
 	SessionNo   string            `json:"sessionNo"`
 	MerchantId  int64             `json:"merchantId"`
-	UserId      int64             `json:"userId"`
-	AgentId     int64             `json:"agentId"`
-	SenderType  int64             `json:"senderType"`
 	Sender      ChatMessageSender `json:"sender"`
+	Receiver    ChatMessageSender `json:"receiver,optional"`
 	MessageType int64             `json:"messageType"`
 	Content     string            `json:"content"`
-	MediaUrl    string            `json:"mediaUrl"`
-	MediaName   string            `json:"mediaName"`
-	MediaMime   string            `json:"mediaMime"`
-	MediaSize   int64             `json:"mediaSize"`
+	Url         string            `json:"url"`
+	FileName    string            `json:"fileName"`
+	FileSize    int64             `json:"fileSize"`
+	MimeType    string            `json:"mimeType"`
+	Width       int64             `json:"width"`
+	Height      int64             `json:"height"`
+	Duration    int64             `json:"duration"`
 	Status      int64             `json:"status"`
-	Payload     string            `json:"payload,optional"`
+	Extra       string            `json:"extra,optional"`
 	ReadTime    int64             `json:"readTime"`
-	CreateTimes int64             `json:"createTimes"`
-	UpdateTimes int64             `json:"updateTimes"`
+	CreateTime  int64             `json:"createTime"`
+	UpdateTime  int64             `json:"updateTime"`
 }
 
 type ChatMessageResp struct {
@@ -500,10 +500,14 @@ type SendAgentMessageReq struct {
 	SessionNo   string `path:"sessionNo"`
 	MessageType int64  `json:"messageType"`
 	Content     string `json:"content,optional"`
-	MediaUrl    string `json:"mediaUrl,optional"`
-	MediaName   string `json:"mediaName,optional"`
-	MediaMime   string `json:"mediaMime,optional"`
-	MediaSize   int64  `json:"mediaSize,optional"`
+	Url         string `json:"url,optional"`
+	FileName    string `json:"fileName,optional"`
+	MimeType    string `json:"mimeType,optional"`
+	FileSize    int64  `json:"fileSize,optional"`
+	Width       int64  `json:"width,optional"`
+	Height      int64  `json:"height,optional"`
+	Duration    int64  `json:"duration,optional"`
+	Extra       string `json:"extra,optional"`
 	ClientMsgNo string `json:"clientMsgNo,optional"`
 }
 

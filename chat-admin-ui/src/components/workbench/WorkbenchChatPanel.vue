@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ChatMessage, ChatSession } from "@/types/chat";
 
-defineProps<{
+const props = defineProps<{
   session?: ChatSession;
   messages: ChatMessage[];
   loading: boolean;
@@ -24,6 +24,20 @@ const emit = defineEmits<{
   send: [];
   "update:inputValue": [value: string];
 }>();
+
+function messageDirection(message: ChatMessage) {
+  if (message.senderType === 3) return "system";
+  if (props.agentId > 0 && message.sender?.id === props.agentId) {
+    return "sent";
+  }
+  return "received";
+}
+
+function messageSenderName(message: ChatMessage) {
+  if (message.senderType === 3) return "系统";
+  if (props.agentId > 0 && message.sender?.id === props.agentId) return "我";
+  return message.sender?.nickname || "用户";
+}
 </script>
 
 <template>
@@ -106,10 +120,15 @@ const emit = defineEmits<{
         v-for="message in messages"
         :key="message.messageNo"
         class="message-row"
-        :class="{ mine: message.senderType === 2 }"
+        :class="{
+          sent: messageDirection(message) === 'sent',
+          received: messageDirection(message) === 'received',
+          system: messageDirection(message) === 'system',
+        }"
       >
         <div class="bubble">
-          {{ message.content }}
+          <span>{{ messageSenderName(message) }}</span>
+          <p>{{ message.content }}</p>
         </div>
       </div>
     </div>

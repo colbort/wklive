@@ -26,6 +26,26 @@ const showDesktopFrame = computed(() => activeMode.value === "desktop");
 const hasDraft = computed(() => draft.value.trim().length > 0);
 const composerActionLabel = computed(() => (hasDraft.value ? "发送" : "结束"));
 
+function messageDirection(message: {
+  senderType: number;
+  sender?: { id?: number };
+}) {
+  if (message.senderType === 3) return "system";
+  const userId = chat.connected.value?.userId || 0;
+  if (userId > 0 && message.sender?.id === userId) return "sent";
+  return "received";
+}
+
+function messageSenderName(message: {
+  senderType: number;
+  sender?: { id?: number; nickname?: string };
+}) {
+  if (message.senderType === 3) return "系统";
+  const userId = chat.connected.value?.userId || 0;
+  if (userId > 0 && message.sender?.id === userId) return "我";
+  return message.sender?.nickname || "客服";
+}
+
 function hydrateFromQuery() {
   const params = new URLSearchParams(window.location.search);
   const queryChatToken = params.get("chatToken");
@@ -155,15 +175,13 @@ onBeforeUnmount(() => {
           :key="message.messageNo"
           class="message-row"
           :class="{
-            mine: message.senderType === 1,
-            system: message.senderType === 3,
+            sent: messageDirection(message) === 'sent',
+            received: messageDirection(message) === 'received',
+            system: messageDirection(message) === 'system',
           }"
         >
           <div class="bubble">
-            <span>{{
-              message.sender?.nickname ||
-              (message.senderType === 1 ? "我" : "客服")
-            }}</span>
+            <span>{{ messageSenderName(message) }}</span>
             <p>{{ message.content }}</p>
           </div>
         </article>

@@ -214,7 +214,7 @@ func (c *Connection) WritePump() {
 	}
 }
 
-// SendJSON 用于兼容前端简单事件格式：{"type": 数字, "typeName": "枚举名", "data": {...}}。
+// SendJSON writes a chat event envelope to the websocket.
 func (c *Connection) SendJSON(eventType chat.ChatEventType, data interface{}) {
 	payload, err := json.Marshal(map[string]interface{}{
 		"type":     eventType.String(),
@@ -276,8 +276,7 @@ func DecodeInboundEvent(payload []byte) (InboundEvent, error) {
 	}
 	data := raw.Data
 	if len(data) == 0 || string(data) == "null" {
-		// 兼容前端直接发送 ChatMessage JSON：{"eventType":"CHAT_EVENT_TYPE_MESSAGE","content":"..."}
-		data = payload
+		return InboundEvent{}, fmt.Errorf("event data is required")
 	}
 	return InboundEvent{Type: eventType, Data: data}, nil
 }
@@ -306,20 +305,6 @@ func parseChatEventType(raw json.RawMessage) (chat.ChatEventType, error) {
 func chatEventTypeByName(name string) (chat.ChatEventType, error) {
 	name = strings.TrimSpace(strings.ToUpper(name))
 	name = strings.TrimPrefix(name, "CHAT_EVENT_TYPE_")
-
-	// 兼容老前端/老接口事件名，统一映射到现有 ChatEventType。
-	aliases := map[string]chat.ChatEventType{
-		"CLOSE_CHAT_SESSION":       chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
-		"SESSION_CLOSED":           chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
-		"QUEUE_INFO":               chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
-		"USER_ONLINE":              chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
-		"SEND_USER_MESSAGE":        chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
-		"SEND_USER_MESSAGE_RESULT": chat.ChatEventType_CHAT_EVENT_TYPE_DELIVERED,
-		"CONNECTED":                chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM,
-	}
-	if eventType, ok := aliases[name]; ok {
-		return eventType, nil
-	}
 
 	fullName := "CHAT_EVENT_TYPE_" + name
 	if n, ok := chat.ChatEventType_value[fullName]; ok {

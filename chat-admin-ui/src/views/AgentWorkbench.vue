@@ -570,9 +570,9 @@ function upsertSessionFromMessage(
   if (exists) {
     exists.lastMessage = message.content;
     exists.lastMessageNo = message.messageNo;
-    exists.lastMessageTime = message.createTimes;
+    exists.lastMessageTime = message.createTime;
     exists.lastSenderType = senderTypeValue(message.senderType);
-    exists.updateTimes = message.updateTimes;
+    exists.updateTimes = message.updateTime;
     const senderType = senderTypeValue(message.senderType);
     if (
       senderType === 1 &&
@@ -591,7 +591,7 @@ function upsertSessionFromMessage(
       if (shouldCountUnread) {
         exists.userUnreadCount += 1;
       }
-      exists.agentId = Number(message.agentId || agentId.value);
+      exists.agentId = Number(messageAgentId(message) || agentId.value);
     }
     return;
   }
@@ -610,8 +610,7 @@ function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
   const session = sessions.value.find((item) => item.sessionNo === sessionNo);
   const acceptedAgentId = Number(
     sessionEventData?.agentId ||
-      message?.sender?.id ||
-      message?.agentId ||
+      (message ? messageAgentId(message) : 0) ||
       agentId.value,
   );
   if (!session) {
@@ -627,12 +626,12 @@ function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
       message?.content || sessionEventData?.message || session.lastMessage;
     session.lastMessageNo = message?.messageNo || session.lastMessageNo;
     session.lastMessageTime =
-      message?.createTimes ||
+      message?.createTime ||
       sessionEventData?.createdAt ||
       session.lastMessageTime;
     session.lastSenderType = message?.senderType || session.lastSenderType;
     session.updateTimes =
-      message?.updateTimes ||
+      message?.updateTime ||
       sessionEventData?.createdAt ||
       session.updateTimes;
   }
@@ -656,15 +655,15 @@ function markSessionClosed(event: WsEvent, message?: ChatMessage) {
   if (session) {
     session.status = sessionStatus.closed;
     session.closeTime =
-      sessionEventData?.createdAt || message?.createTimes || Date.now();
+      sessionEventData?.createdAt || message?.createTime || Date.now();
     session.closeReason = sessionEventData?.reason || session.closeReason;
     session.lastMessage =
       message?.content ||
       sessionEventData?.message ||
       session.lastMessage ||
       "本次会话已结束";
-    session.lastMessageTime = message?.createTimes || session.closeTime;
-    session.updateTimes = message?.updateTimes || session.closeTime;
+    session.lastMessageTime = message?.createTime || session.closeTime;
+    session.updateTimes = message?.updateTime || session.closeTime;
   }
   if (activeSessionNo.value === sessionNo) {
     statusFilter.value = "closed";
@@ -689,29 +688,45 @@ function transientSessionFromMessage(message: ChatMessage): ChatSession {
     id: 0,
     sessionNo: message.sessionNo,
     merchantId: Number(message.merchantId || merchantId.value),
-    userId: Number(message.userId || 0),
+    userId: Number(messageUserId(message)),
     userNickname: message.sender?.nickname || "访客",
     userAvatarUrl: message.sender?.avatarUrl || "",
     source: 2,
     status:
       senderType === 2 ? sessionStatus.pendingUser : sessionStatus.pendingAgent,
     priority: 1,
-    agentId: Number(message.agentId || 0),
+    agentId: Number(messageAgentId(message)),
     groupId: 0,
     title: message.sender?.nickname || "访客",
     category: "",
     lastMessage: message.content,
     lastSenderType: message.senderType,
-    lastMessageTime: message.createTimes,
+    lastMessageTime: message.createTime,
     userUnreadCount: senderType === 2 ? 1 : 0,
     agentUnreadCount: senderType === 1 ? 1 : 0,
     closeTime: 0,
     closeReason: "",
     extJson: "",
     lastMessageNo: message.messageNo,
-    createTimes: message.createTimes,
-    updateTimes: message.updateTimes || message.createTimes,
+    createTimes: message.createTime,
+    updateTimes: message.updateTime || message.createTime,
   };
+}
+
+function messageAgentId(message?: ChatMessage) {
+  if (!message) return 0;
+  if (senderTypeValue(message.sender?.type) === 2) return message.sender?.id || 0;
+  if (senderTypeValue(message.receiver?.type) === 2)
+    return message.receiver?.id || 0;
+  return 0;
+}
+
+function messageUserId(message?: ChatMessage) {
+  if (!message) return 0;
+  if (senderTypeValue(message.sender?.type) === 1) return message.sender?.id || 0;
+  if (senderTypeValue(message.receiver?.type) === 1)
+    return message.receiver?.id || 0;
+  return 0;
 }
 
 function mergeLiveSessions(nextSessions: ChatSession[]) {
@@ -790,7 +805,7 @@ function needsAccept(session?: ChatSession) {
 }
 
 function normalizeMessageEnums(message: ChatMessage) {
-  message.senderType = senderTypeValue(message.senderType);
+  message.senderType = senderTypeValue(message.sender?.type);
 }
 
 function normalizeMessage(message: ChatMessage) {

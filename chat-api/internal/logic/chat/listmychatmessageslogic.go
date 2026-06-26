@@ -9,7 +9,6 @@ import (
 	"wklive/proto/common"
 
 	"chat-api/internal/jwt"
-	"chat-api/internal/logicutil"
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
 
@@ -39,11 +38,82 @@ func (l *ListMyChatMessagesLogic) ListMyChatMessages(req *types.ListChatMessages
 		}, nil
 	}
 
-	return logicutil.Proxy[types.ListChatMessagesResp](l.ctx, &chat.ListMyChatMessagesReq{
+	rpcResp, err := l.svcCtx.ChatAppCli.ListMyChatMessages(l.ctx, &chat.ListMyChatMessagesReq{
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},
 		SessionNo: claims.SessionNo,
-	}, l.svcCtx.ChatAppCli.ListMyChatMessages)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.ListChatMessagesResp{
+		RespBase: respBaseToType(rpcResp.GetBase()),
+		Data:     protoMessagesToTypes(claims.MerchantId, rpcResp.GetData()),
+	}, nil
+}
+
+func respBaseToType(base *common.RespBase) types.RespBase {
+	if base == nil {
+		return types.RespBase{}
+	}
+	return types.RespBase{
+		Code:       base.GetCode(),
+		Msg:        base.GetMsg(),
+		Total:      base.GetTotal(),
+		HasNext:    base.GetHasNext(),
+		HasPrev:    base.GetHasPrev(),
+		NextCursor: base.GetNextCursor(),
+		PrevCursor: base.GetPrevCursor(),
+	}
+}
+
+func protoMessagesToTypes(merchantId int64, list []*chat.ChatMessage) []types.ChatMessage {
+	if len(list) == 0 {
+		return []types.ChatMessage{}
+	}
+	resp := make([]types.ChatMessage, 0, len(list))
+	for _, item := range list {
+		resp = append(resp, protoMessageToType(merchantId, item))
+	}
+	return resp
+}
+
+func protoMessageToType(merchantId int64, item *chat.ChatMessage) types.ChatMessage {
+	if item == nil {
+		return types.ChatMessage{}
+	}
+	return types.ChatMessage{
+		MessageNo:   item.GetMessageNo(),
+		SessionNo:   item.GetSessionNo(),
+		MerchantId:  merchantId,
+		Sender:      protoMessageSenderToType(item.GetSender()),
+		Receiver:    protoMessageSenderToType(item.GetReceiver()),
+		MessageType: int64(item.GetMessageType()),
+		Content:     item.GetContent(),
+		Url:         item.GetUrl(),
+		FileName:    item.GetFileName(),
+		FileSize:    item.GetFileSize(),
+		MimeType:    item.GetMimeType(),
+		Width:       int64(item.GetWidth()),
+		Height:      int64(item.GetHeight()),
+		Duration:    int64(item.GetDuration()),
+		Status:      int64(item.GetStatus()),
+		Extra:       item.GetExtra(),
+		CreateTime:  item.GetCreateTime(),
+		UpdateTime:  item.GetUpdateTime(),
+	}
+}
+
+func protoMessageSenderToType(item *chat.ChatMessageUser) types.ChatMessageSender {
+	if item == nil {
+		return types.ChatMessageSender{}
+	}
+	return types.ChatMessageSender{
+		Id:         item.GetId(),
+		SenderType: int64(item.GetType()),
+		Nickname:   item.GetNickname(),
+		AvatarUrl:  item.GetAvatarUrl(),
+	}
 }

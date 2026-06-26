@@ -39,14 +39,14 @@ type RawChatMessage = Partial<ChatMessage> & {
   message_no?: string;
   session_no?: string;
   merchant_id?: number;
-  user_id?: number;
-  agent_id?: number;
-  sender_type?: number;
   message_type?: number;
-  media_url?: string;
-  media_name?: string;
-  media_mime?: string;
-  media_size?: number;
+  url?: string;
+  fileName?: string;
+  file_name?: string;
+  mimeType?: string;
+  mime_type?: string;
+  fileSize?: number;
+  file_size?: number;
   create_times?: number;
   update_times?: number;
   read_time?: number;
@@ -600,23 +600,23 @@ export function useChatSocket() {
       messageNo: message.messageNo ?? message.message_no ?? "",
       sessionNo: message.sessionNo ?? message.session_no ?? "",
       merchantId: message.merchantId ?? message.merchant_id ?? 0,
-      userId: message.userId ?? message.user_id ?? 0,
-      agentId: message.agentId ?? message.agent_id ?? 0,
-      senderType: normalizeSenderType(
-        message.senderType ?? message.sender_type,
-      ),
+      senderType: normalizeSenderType(message.sender?.type),
       sender: message.sender,
+      receiver: message.receiver,
       messageType: message.messageType ?? message.message_type ?? 0,
       content: message.content ?? "",
-      mediaUrl: message.mediaUrl ?? message.media_url ?? "",
-      mediaName: message.mediaName ?? message.media_name ?? "",
-      mediaMime: message.mediaMime ?? message.media_mime ?? "",
-      mediaSize: message.mediaSize ?? message.media_size ?? 0,
+      url: message.url ?? "",
+      fileName: message.fileName ?? message.file_name ?? "",
+      fileSize: message.fileSize ?? message.file_size ?? 0,
+      mimeType: message.mimeType ?? message.mime_type ?? "",
+      width: message.width ?? 0,
+      height: message.height ?? 0,
+      duration: message.duration ?? 0,
       status: message.status ?? 0,
       extra: message.extra ?? "",
       readTime: message.readTime ?? message.read_time ?? 0,
-      createTimes: message.createTimes ?? message.create_times ?? 0,
-      updateTimes: message.updateTimes ?? message.update_times ?? 0,
+      createTime: message.createTime ?? message.create_times ?? 0,
+      updateTime: message.updateTime ?? message.update_times ?? 0,
     };
   }
 

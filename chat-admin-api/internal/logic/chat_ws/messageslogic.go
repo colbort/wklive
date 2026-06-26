@@ -96,10 +96,14 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		SessionNo:   data.SessionNo,
 		MessageType: chat.ChatMessageType(data.MessageType),
 		Content:     data.Content,
-		Url:         data.MediaUrl,
-		FileName:    data.MediaName,
-		MimeType:    data.MediaMime,
-		FileSize:    data.MediaSize,
+		Url:         data.Url,
+		FileName:    data.FileName,
+		MimeType:    data.MimeType,
+		FileSize:    data.FileSize,
+		Width:       int32(data.Width),
+		Height:      int32(data.Height),
+		Duration:    int32(data.Duration),
+		Extra:       data.Extra,
 	}
 	if l.isTransientSession(req.SessionNo) {
 		l.fillTransientUserId(conn.MerchantId, req.SessionNo, &data)
@@ -368,10 +372,13 @@ type sendAgentMessagePayload struct {
 	SessionNo       string `json:"sessionNo"`
 	MessageType     int64  `json:"messageType"`
 	Content         string `json:"content"`
-	MediaUrl        string `json:"mediaUrl"`
-	MediaName       string `json:"mediaName"`
-	MediaMime       string `json:"mediaMime"`
-	MediaSize       int64  `json:"mediaSize"`
+	Url             string `json:"url"`
+	FileName        string `json:"fileName"`
+	MimeType        string `json:"mimeType"`
+	FileSize        int64  `json:"fileSize"`
+	Width           int64  `json:"width"`
+	Height          int64  `json:"height"`
+	Duration        int64  `json:"duration"`
 	SenderNickname  string `json:"senderNickname"`
 	SenderAvatarUrl string `json:"senderAvatarUrl"`
 	Extra           string `json:"extra"`

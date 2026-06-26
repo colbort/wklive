@@ -138,17 +138,26 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 		msg = buildChatMessage(conn, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, conn.UserId, data)
 	} else {
 		req := chat.SendUserMessageReq{
-			SessionNo:       conn.SessionNo,
-			MessageType:     normalizeMessageType(int64(data.MessageType)),
-			Content:         strings.TrimSpace(data.Content),
-			Url:             data.Url,
-			FileName:        data.FileName,
-			FileSize:        data.FileSize,
-			MimeType:        data.MimeType,
-			SenderNickname:  firstNonEmpty(conn.Username, data.SenderNickname),
-			SenderAvatarUrl: firstNonEmpty(conn.AvatarUrl, data.SenderAvatarUrl),
+			SessionNo:   conn.SessionNo,
+			MessageType: normalizeMessageType(int64(data.MessageType)),
+			Content:     strings.TrimSpace(data.Content),
+			Url:         data.Url,
+			FileName:    data.FileName,
+			FileSize:    data.FileSize,
+			MimeType:    data.MimeType,
+			Width:       int32(data.Width),
+			Height:      int32(data.Height),
+			Duration:    int32(data.Duration),
+			Extra:       data.Extra,
+			Sender: &chat.ChatMessageUser{
+				Id:        conn.UserId,
+				Nickname:  conn.Username,
+				AvatarUrl: conn.AvatarUrl,
+				Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+			},
+			MerchantId: conn.MerchantId,
 		}
-		resp, err := l.svcCtx.ChatAppCli.SendUserMessage(contextWithChatIdentity(ctx, conn.MerchantId, conn.UserId), &req)
+		resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &req)
 		if err != nil {
 			sendWSError(conn, err.Error())
 			return
@@ -342,7 +351,6 @@ func contextWithChatIdentity(ctx context.Context, merchantId, userId int64) cont
 
 func buildChatMessage(conn *ws.Connection, senderType chat.ChatSenderType, senderId int64, data UserMessagePayload) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
-	senderNickname := firstNonEmpty(data.SenderNickname, conn.Username, guestUsername)
 	return &chat.ChatMessage{
 		MessageNo:   nextGuestNo(guestMessagePrefix),
 		SessionNo:   conn.SessionNo,
@@ -351,8 +359,8 @@ func buildChatMessage(conn *ws.Connection, senderType chat.ChatSenderType, sende
 		Sender: &chat.ChatMessageUser{
 			Id:        senderId,
 			Type:      senderType,
-			Nickname:  senderNickname,
-			AvatarUrl: firstNonEmpty(data.SenderAvatarUrl, conn.AvatarUrl),
+			Nickname:  conn.Username,
+			AvatarUrl: conn.AvatarUrl,
 		},
 		ClientMessageId: strings.TrimSpace(data.ClientMessageId),
 		Content:         strings.TrimSpace(data.Content),
@@ -604,8 +612,6 @@ type UserMessagePayload struct {
 	Height          int64            `json:"height"`
 	Duration        int64            `json:"duration"`
 	ReplyMessageId  string           `json:"replyMessageId"`
-	SenderNickname  string           `json:"senderNickname"`
-	SenderAvatarUrl string           `json:"senderAvatarUrl"`
 	Extra           string           `json:"extra"`
 }
 

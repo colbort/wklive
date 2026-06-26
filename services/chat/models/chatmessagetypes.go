@@ -21,18 +21,19 @@ type ChatMessage struct {
 	MessageNo  string `bson:"message_no,omitempty" json:"message_no,omitempty"`
 	SessionNo  string `bson:"session_no,omitempty" json:"session_no,omitempty"`
 	MerchantId int64  `bson:"merchant_id,omitempty" json:"merchant_id,omitempty"`
-	UserId     int64  `bson:"user_id,omitempty" json:"user_id,omitempty"`
-	AgentId    int64  `bson:"agent_id,omitempty" json:"agent_id,omitempty"`
 
-	SenderType int64              `bson:"sender_type,omitempty" json:"sender_type,omitempty"`
-	Sender     *ChatMessageSender `bson:"sender,omitempty" json:"sender,omitempty"`
+	Sender   *ChatMessageUser `bson:"sender,omitempty" json:"sender,omitempty"`
+	Receiver *ChatMessageUser `bson:"receiver,omitempty" json:"receiver,omitempty"`
 
 	MessageType int64  `bson:"message_type,omitempty" json:"message_type,omitempty"`
 	Content     string `bson:"content,omitempty" json:"content,omitempty"`
-	MediaUrl    string `bson:"media_url,omitempty" json:"media_url,omitempty"`
-	MediaName   string `bson:"media_name,omitempty" json:"media_name,omitempty"`
-	MediaMime   string `bson:"media_mime,omitempty" json:"media_mime,omitempty"`
-	MediaSize   int64  `bson:"media_size,omitempty" json:"media_size,omitempty"`
+	Url         string `bson:"url,omitempty" json:"url,omitempty"`
+	FileName    string `bson:"file_name,omitempty" json:"file_name,omitempty"`
+	MimeType    string `bson:"mime_type,omitempty" json:"mime_type,omitempty"`
+	FileSize    int64  `bson:"file_size,omitempty" json:"file_size,omitempty"`
+	Width       int32  `bson:"width,omitempty" json:"width,omitempty"`
+	Height      int32  `bson:"height,omitempty" json:"height,omitempty"`
+	Duration    int64  `bson:"duration,omitempty" json:"duration,omitempty"`
 
 	Status   int64          `bson:"status,omitempty" json:"status,omitempty"`
 	Payload  map[string]any `bson:"payload,omitempty" json:"payload,omitempty"`
@@ -42,7 +43,7 @@ type ChatMessage struct {
 	UpdateTimes int64 `bson:"update_times,omitempty" json:"update_times,omitempty"`
 }
 
-type ChatMessageSender struct {
+type ChatMessageUser struct {
 	Id        int64  `bson:"id,omitempty" json:"id,omitempty"`
 	Type      int64  `bson:"type,omitempty" json:"type,omitempty"`
 	Nickname  string `bson:"nickname,omitempty" json:"nickname,omitempty"`
