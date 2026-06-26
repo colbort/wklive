@@ -50,7 +50,6 @@ interface WsEvent {
 }
 
 const statusFilter = ref("waiting");
-const input = ref("");
 const activeSessionNo = ref("");
 const loadingSessions = ref(false);
 const loadingMessages = ref(false);
@@ -204,7 +203,6 @@ watch(statusFilter, async () => {
 
 watch(activeSessionNo, async (sessionNo) => {
   persistWorkbenchState();
-  console.info("============.  1. ", sessionNo)
   if (sessionNo) {
     await loadMessages(sessionNo);
   }
@@ -212,7 +210,6 @@ watch(activeSessionNo, async (sessionNo) => {
 
 watch(activeNeedsAccept, async (needsAccept) => {
   if (!needsAccept && activeSessionNo.value) {
-    console.info("============.  2. ", activeSessionNo.value)
     await loadMessages(activeSessionNo.value);
   }
 });
@@ -929,8 +926,8 @@ function backToSessions() {
   mobileChatOpen.value = false;
 }
 
-function send() {
-  const content = input.value.trim();
+function send(value: string) {
+  const content = value.trim();
   if (
     !content ||
     !activeSession.value ||
@@ -954,7 +951,6 @@ function send() {
       },
     }),
   );
-  input.value = "";
 }
 
 function closeSession() {
@@ -1015,7 +1011,6 @@ function acceptSession() {
     />
 
     <WorkbenchChatPanel
-      v-model:input-value="input"
       :session="activeSession"
       :messages="visibleMessages"
       :loading="loadingMessages"

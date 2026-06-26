@@ -17,7 +17,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func newTransientAgentMessage(_ int64, sessionNo string, _ int64, agentId int64, senderNickname string, data sendAgentMessagePayload) *chat.ChatMessage {
+func newTransientAgentMessage(_ int64, sessionNo string, userId int64, agentId int64, senderNickname string, data sendAgentMessagePayload) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
 	senderNickname = firstNonEmpty(data.SenderNickname, senderNickname)
 	return &chat.ChatMessage{
@@ -27,7 +27,7 @@ func newTransientAgentMessage(_ int64, sessionNo string, _ int64, agentId int64,
 		AgentId:     strconv.FormatInt(agentId, 10),
 		MessageType: chat.ChatMessageType(data.MessageType),
 		Sender: &chat.ChatMessageUser{
-			Id:        agentId,
+			Id:        userId,
 			Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
 			Nickname:  senderNickname,
 			AvatarUrl: strings.TrimSpace(data.SenderAvatarUrl),

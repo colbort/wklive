@@ -3,7 +3,6 @@ package chat_ws
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -120,9 +119,8 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		MerchantId: conn.MerchantId,
 	}
 	if l.isTransientSession(req.SessionNo) {
-		fmt.Printf("下行 ChatEventType_CHAT_EVENT_TYPE_MESSAGE 11  %s\n", req.Sender.Nickname)
 		l.fillTransientUserId(conn.MerchantId, req.SessionNo, &data)
-		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, data.UserId, conn.AgentId, conn.Nickname, data)
+		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, conn.UserId, conn.AgentId, conn.Nickname, data)
 		if err := publishTransientMessage(ctx, l.svcCtx, msg); err != nil {
 			sendWSError(conn, err.Error())
 			return
@@ -135,7 +133,6 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 			sendWSError(conn, err.Error())
 			return
 		}
-		fmt.Printf("下行 ChatSenderType_CHAT_SENDER_TYPE_AGENT  22 %s\n", resp.Data.Sender.Nickname)
 		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, resp)
 	}
 }

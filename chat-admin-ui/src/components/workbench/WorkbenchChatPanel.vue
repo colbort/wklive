@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import type { ChatMessage, ChatSession } from "@/types/chat";
 
 const props = defineProps<{
   session?: ChatSession;
   messages: ChatMessage[];
   loading: boolean;
-  inputValue: string;
   activeNeedsAccept: boolean;
   activeClosed: boolean;
   canReply: boolean;
@@ -22,9 +22,17 @@ const emit = defineEmits<{
   accept: [];
   back: [];
   close: [];
-  send: [];
-  "update:inputValue": [value: string];
+  send: [content: string];
 }>();
+
+const draft = ref("");
+
+watch(
+  () => props.session?.sessionNo,
+  () => {
+    draft.value = "";
+  },
+);
 
 function isOwnAgentMessage(message: ChatMessage) {
   return (
@@ -43,10 +51,16 @@ function messageDirection(message: ChatMessage) {
 }
 
 function messageSenderName(message: ChatMessage) {
-  console.log(message.sender?.id + " === " + props.userId + " === " + message.content + " === " + message.sender?.nickname)
   if (message.senderType === 3) return "系统";
   if (isOwnAgentMessage(message)) return "我";
   return message.sender?.nickname || "用户";
+}
+
+function submit() {
+  const content = draft.value.trim();
+  if (!content || !props.canReply) return;
+  emit("send", content);
+  draft.value = "";
 }
 </script>
 
@@ -145,21 +159,20 @@ function messageSenderName(message: ChatMessage) {
 
     <footer class="composer">
       <el-input
-        :model-value="inputValue"
+        v-model="draft"
         type="textarea"
         resize="none"
         :disabled="!canReply"
         :autosize="{ minRows: 3, maxRows: 4 }"
         :placeholder="activeClosed ? '会话已结束' : activeNeedsAccept ? '请先接待该会话' : '输入回复内容'"
-        @update:model-value="emit('update:inputValue', String($event))"
-        @keydown.ctrl.enter.prevent="emit('send')"
+        @keydown.ctrl.enter.prevent="submit"
       />
       <div class="composer-actions">
         <el-button>快捷回复</el-button>
         <el-button
           type="primary"
           :disabled="!canReply"
-          @click="emit('send')"
+          @click="submit"
         >
           发送
         </el-button>

@@ -5,8 +5,6 @@ import (
 	"time"
 
 	"wklive/proto/chat"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const (
@@ -45,7 +43,6 @@ func (s *transientSessionStore) ApplyEvent(event *chat.ChatMessageEvent) {
 	s.cleanupLocked(time.Now().UnixMilli())
 
 	if !s.shouldTrackEventLocked(sessionNo, event) {
-		logx.Error("shouldTrackEventLocked ============ false")
 		return
 	}
 
