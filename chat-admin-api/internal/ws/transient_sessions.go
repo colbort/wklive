@@ -1,10 +1,13 @@
 package ws
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
 	"wklive/proto/chat"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const (
@@ -43,6 +46,7 @@ func (s *transientSessionStore) ApplyEvent(event *chat.ChatMessageEvent) {
 	s.cleanupLocked(time.Now().UnixMilli())
 
 	if !s.shouldTrackEventLocked(sessionNo, event) {
+		logx.Error("shouldTrackEventLocked ============ false")
 		return
 	}
 
@@ -213,10 +217,12 @@ func (s *transientSessionStore) IsTransientSession(sessionNo string) bool {
 
 func (s *transientSessionStore) shouldTrackEventLocked(sessionNo string, event *chat.ChatMessageEvent) bool {
 	if event == nil || sessionNo == "" {
+		fmt.Println("========================. 11")
 		return false
 	}
 	if _, ok := s.sessions[sessionNo]; ok {
 		return true
 	}
+	fmt.Println("========================. 22")
 	return eventHasGuestSession(event)
 }

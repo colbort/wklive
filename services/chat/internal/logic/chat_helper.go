@@ -142,16 +142,6 @@ func isWorkOrderFinished(status int64) bool {
 	return status == 3 || status == 4
 }
 
-func validateMerchantUser(merchantID, userID int64) error {
-	if merchantID <= 0 {
-		return fmt.Errorf("merchant_id is required")
-	}
-	if userID <= 0 {
-		return fmt.Errorf("user_id is required")
-	}
-	return nil
-}
-
 func validateSessionKey(merchantID int64, sessionNo string) error {
 	if merchantID <= 0 {
 		return fmt.Errorf("merchant_id is required")
@@ -591,9 +581,6 @@ func getSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int6
 }
 
 func ensureOpenSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID, userID int64, source chat.ChatSessionSource, title, category string, priority chat.ChatSessionPriority, ext *structpb.Struct) (*models.TChatSession, bool, error) {
-	if err := validateMerchantUser(merchantID, userID); err != nil {
-		return nil, false, err
-	}
 	sessionSource := normalizeSource(source)
 	data, err := svcCtx.ChatSessionModel.FindLatestByUserSource(ctx, merchantID, userID, int64(sessionSource))
 	if err == nil {

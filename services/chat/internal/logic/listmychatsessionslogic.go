@@ -33,9 +33,6 @@ func (l *ListMyChatSessionsLogic) ListMyChatSessions(in *chat.ListMyChatSessions
 	if err != nil {
 		return &chat.ListChatSessionsResp{Base: errorBase(err)}, nil
 	}
-	if err := validateMerchantUser(merchantID, userID); err != nil {
-		return &chat.ListChatSessionsResp{Base: badBase(err.Error())}, nil
-	}
 	cursor, limit := pageInput(in.GetPage())
 	list, total, err := l.svcCtx.ChatSessionModel.FindPage(l.ctx, models.ChatSessionPageFilter{
 		MerchantId: merchantID,
