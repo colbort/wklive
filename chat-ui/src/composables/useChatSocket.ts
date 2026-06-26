@@ -395,6 +395,7 @@ export function useChatSocket() {
 
       default:
         if (!event.type && event.data && isConnectedPayload(event.data)) {
+          console.log("==================== " + event.data)
           connected.value = event.data;
           agentAccepted.value = false;
           activeAgentName.value = "";

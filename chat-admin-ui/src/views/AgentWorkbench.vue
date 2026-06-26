@@ -309,9 +309,11 @@ async function loadMessages(sessionNo: string) {
       merchantId: merchantId.value,
       limit: 50,
     });
-    messages.value[sessionNo] = resp.data
-      .map(normalizeMessage)
-      .filter((message) => !isQueueSystemMessage(message));
+    messages.value[sessionNo] = sortMessages(
+      resp.data
+        .map(normalizeMessage)
+        .filter((message) => !isQueueSystemMessage(message)),
+    );
   } catch (err) {
     ElMessage.error(err instanceof Error ? err.message : "加载消息失败");
   } finally {
@@ -557,7 +559,7 @@ function pushMessage(message: ChatMessage) {
   if (!message.messageNo || isQueueSystemMessage(message)) return false;
   const list = messages.value[message.sessionNo] || [];
   if (list.some((item) => item.messageNo === message.messageNo)) return false;
-  messages.value[message.sessionNo] = [...list, message];
+  messages.value[message.sessionNo] = sortMessages([...list, message]);
   return true;
 }
 
@@ -812,6 +814,22 @@ function normalizeMessageEnums(message: ChatMessage) {
 function normalizeMessage(message: ChatMessage) {
   normalizeMessageEnums(message);
   return message;
+}
+
+function sortMessages(list: ChatMessage[]) {
+  return [...list].sort(compareMessages);
+}
+
+function compareMessages(left: ChatMessage, right: ChatMessage) {
+  const leftTime = Number(left.createTime || 0);
+  const rightTime = Number(right.createTime || 0);
+  if (leftTime !== rightTime) return leftTime - rightTime;
+
+  const leftId = Number(left.id || 0);
+  const rightId = Number(right.id || 0);
+  if (leftId !== rightId) return leftId - rightId;
+
+  return String(left.messageNo || "").localeCompare(String(right.messageNo || ""));
 }
 
 function isQueueSystemMessage(message?: ChatMessage) {

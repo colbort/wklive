@@ -29,15 +29,12 @@ const emit = defineEmits<{
 function messageDirection(message: ChatMessage) {
   if (message.senderType === 3) return "system";
   if (props.userId > 0 && message.sender?.id === props.userId) {
-    console.log(message.sender?.id + "  =======.  11. " + props.userId + " ====. " + message.content)
     return "sent";
   }
-  console.log("==================")
   return "received";
 }
 
 function messageSenderName(message: ChatMessage) {
-  console.log(message.sender?.id + "  =======.  22. " + props.userId + " ====. " + message.content)
   if (message.senderType === 3) return "系统";
   if (props.userId > 0 && message.sender?.id === props.userId) return "我";
   return message.sender?.nickname || "用户";
