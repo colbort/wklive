@@ -22,110 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type GetOpenChatSessionReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 用户ID
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetOpenChatSessionReq) Reset() {
-	*x = GetOpenChatSessionReq{}
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetOpenChatSessionReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetOpenChatSessionReq) ProtoMessage() {}
-
-func (x *GetOpenChatSessionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetOpenChatSessionReq.ProtoReflect.Descriptor instead.
-func (*GetOpenChatSessionReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *GetOpenChatSessionReq) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *GetOpenChatSessionReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-type InternalChatSessionResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *ChatSession           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *InternalChatSessionResp) Reset() {
-	*x = InternalChatSessionResp{}
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *InternalChatSessionResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*InternalChatSessionResp) ProtoMessage() {}
-
-func (x *InternalChatSessionResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use InternalChatSessionResp.ProtoReflect.Descriptor instead.
-func (*InternalChatSessionResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *InternalChatSessionResp) GetBase() *common.RespBase {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
-func (x *InternalChatSessionResp) GetData() *ChatSession {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
 type SyncChatMerchantUserReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Action        ChatSyncAction         `protobuf:"varint,1,opt,name=action,proto3,enum=chat.ChatSyncAction" json:"action,omitempty"`       // 同步动作
@@ -145,7 +41,7 @@ type SyncChatMerchantUserReq struct {
 
 func (x *SyncChatMerchantUserReq) Reset() {
 	*x = SyncChatMerchantUserReq{}
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[2]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -157,7 +53,7 @@ func (x *SyncChatMerchantUserReq) String() string {
 func (*SyncChatMerchantUserReq) ProtoMessage() {}
 
 func (x *SyncChatMerchantUserReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[2]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -170,7 +66,7 @@ func (x *SyncChatMerchantUserReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncChatMerchantUserReq.ProtoReflect.Descriptor instead.
 func (*SyncChatMerchantUserReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{2}
+	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *SyncChatMerchantUserReq) GetAction() ChatSyncAction {
@@ -260,7 +156,7 @@ type SyncChatMerchantUserResp struct {
 
 func (x *SyncChatMerchantUserResp) Reset() {
 	*x = SyncChatMerchantUserResp{}
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[3]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -272,7 +168,7 @@ func (x *SyncChatMerchantUserResp) String() string {
 func (*SyncChatMerchantUserResp) ProtoMessage() {}
 
 func (x *SyncChatMerchantUserResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_internal_proto_msgTypes[3]
+	mi := &file_proto_chat_chat_internal_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -285,7 +181,7 @@ func (x *SyncChatMerchantUserResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncChatMerchantUserResp.ProtoReflect.Descriptor instead.
 func (*SyncChatMerchantUserResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{3}
+	return file_proto_chat_chat_internal_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SyncChatMerchantUserResp) GetBase() *common.RespBase {
@@ -306,14 +202,7 @@ var File_proto_chat_chat_internal_proto protoreflect.FileDescriptor
 
 const file_proto_chat_chat_internal_proto_rawDesc = "" +
 	"\n" +
-	"\x1eproto/chat/chat_internal.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"Q\n" +
-	"\x15GetOpenChatSessionReq\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"f\n" +
-	"\x17InternalChatSessionResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatSessionR\x04data\"\x9e\x03\n" +
+	"\x1eproto/chat/chat_internal.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"\x9e\x03\n" +
 	"\x17SyncChatMerchantUserReq\x12,\n" +
 	"\x06action\x18\x01 \x01(\x0e2\x14.chat.ChatSyncActionR\x06action\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
@@ -331,9 +220,8 @@ const file_proto_chat_chat_internal_proto_rawDesc = "" +
 	"\bpassword\x18\v \x01(\tR\bpassword\"d\n" +
 	"\x18SyncChatMerchantUserResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
-	"\x04data\x18\x02 \x01(\v2\x0e.chat.ChatUserR\x04data2\xb7\x01\n" +
-	"\fChatInternal\x12P\n" +
-	"\x12GetOpenChatSession\x12\x1b.chat.GetOpenChatSessionReq\x1a\x1d.chat.InternalChatSessionResp\x12U\n" +
+	"\x04data\x18\x02 \x01(\v2\x0e.chat.ChatUserR\x04data2e\n" +
+	"\fChatInternal\x12U\n" +
 	"\x14SyncChatMerchantUser\x12\x1d.chat.SyncChatMerchantUserReq\x1a\x1e.chat.SyncChatMerchantUserRespB\x18Z\x16wklive/proto/chat;chatb\x06proto3"
 
 var (
@@ -348,34 +236,27 @@ func file_proto_chat_chat_internal_proto_rawDescGZIP() []byte {
 	return file_proto_chat_chat_internal_proto_rawDescData
 }
 
-var file_proto_chat_chat_internal_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_proto_chat_chat_internal_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_proto_chat_chat_internal_proto_goTypes = []any{
-	(*GetOpenChatSessionReq)(nil),    // 0: chat.GetOpenChatSessionReq
-	(*InternalChatSessionResp)(nil),  // 1: chat.InternalChatSessionResp
-	(*SyncChatMerchantUserReq)(nil),  // 2: chat.SyncChatMerchantUserReq
-	(*SyncChatMerchantUserResp)(nil), // 3: chat.SyncChatMerchantUserResp
+	(*SyncChatMerchantUserReq)(nil),  // 0: chat.SyncChatMerchantUserReq
+	(*SyncChatMerchantUserResp)(nil), // 1: chat.SyncChatMerchantUserResp
+	(ChatSyncAction)(0),              // 2: chat.ChatSyncAction
+	(common.Enable)(0),               // 3: common.Enable
 	(*common.RespBase)(nil),          // 4: common.RespBase
-	(*ChatSession)(nil),              // 5: chat.ChatSession
-	(ChatSyncAction)(0),              // 6: chat.ChatSyncAction
-	(common.Enable)(0),               // 7: common.Enable
-	(*ChatUser)(nil),                 // 8: chat.ChatUser
+	(*ChatUser)(nil),                 // 5: chat.ChatUser
 }
 var file_proto_chat_chat_internal_proto_depIdxs = []int32{
-	4, // 0: chat.InternalChatSessionResp.base:type_name -> common.RespBase
-	5, // 1: chat.InternalChatSessionResp.data:type_name -> chat.ChatSession
-	6, // 2: chat.SyncChatMerchantUserReq.action:type_name -> chat.ChatSyncAction
-	7, // 3: chat.SyncChatMerchantUserReq.enabled:type_name -> common.Enable
-	4, // 4: chat.SyncChatMerchantUserResp.base:type_name -> common.RespBase
-	8, // 5: chat.SyncChatMerchantUserResp.data:type_name -> chat.ChatUser
-	0, // 6: chat.ChatInternal.GetOpenChatSession:input_type -> chat.GetOpenChatSessionReq
-	2, // 7: chat.ChatInternal.SyncChatMerchantUser:input_type -> chat.SyncChatMerchantUserReq
-	1, // 8: chat.ChatInternal.GetOpenChatSession:output_type -> chat.InternalChatSessionResp
-	3, // 9: chat.ChatInternal.SyncChatMerchantUser:output_type -> chat.SyncChatMerchantUserResp
-	8, // [8:10] is the sub-list for method output_type
-	6, // [6:8] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	2, // 0: chat.SyncChatMerchantUserReq.action:type_name -> chat.ChatSyncAction
+	3, // 1: chat.SyncChatMerchantUserReq.enabled:type_name -> common.Enable
+	4, // 2: chat.SyncChatMerchantUserResp.base:type_name -> common.RespBase
+	5, // 3: chat.SyncChatMerchantUserResp.data:type_name -> chat.ChatUser
+	0, // 4: chat.ChatInternal.SyncChatMerchantUser:input_type -> chat.SyncChatMerchantUserReq
+	1, // 5: chat.ChatInternal.SyncChatMerchantUser:output_type -> chat.SyncChatMerchantUserResp
+	5, // [5:6] is the sub-list for method output_type
+	4, // [4:5] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_chat_internal_proto_init() }
@@ -391,7 +272,7 @@ func file_proto_chat_chat_internal_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_chat_internal_proto_rawDesc), len(file_proto_chat_chat_internal_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

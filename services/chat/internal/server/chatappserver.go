@@ -59,12 +59,6 @@ func (s *ChatAppServer) ListMyChatMessages(ctx context.Context, in *chat.ListMyC
 	return l.ListMyChatMessages(in)
 }
 
-// 标记用户侧已读
-func (s *ChatAppServer) MarkUserMessagesRead(ctx context.Context, in *chat.MarkUserMessagesReadReq) (*chat.AppMarkMessagesReadResp, error) {
-	l := logic.NewMarkUserMessagesReadLogic(ctx, s.svcCtx)
-	return l.MarkUserMessagesRead(in)
-}
-
 // 关闭我的会话
 func (s *ChatAppServer) CloseMyChatSession(ctx context.Context, in *chat.CloseMyChatSessionReq) (*chat.AppChatSessionResp, error) {
 	l := logic.NewCloseMyChatSessionLogic(ctx, s.svcCtx)

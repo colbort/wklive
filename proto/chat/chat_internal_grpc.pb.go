@@ -19,7 +19,6 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ChatInternal_GetOpenChatSession_FullMethodName   = "/chat.ChatInternal/GetOpenChatSession"
 	ChatInternal_SyncChatMerchantUser_FullMethodName = "/chat.ChatInternal/SyncChatMerchantUser"
 )
 
@@ -30,8 +29,6 @@ const (
 // 内部客服服务
 // 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
 type ChatInternalClient interface {
-	// 查询用户未关闭会话
-	GetOpenChatSession(ctx context.Context, in *GetOpenChatSessionReq, opts ...grpc.CallOption) (*InternalChatSessionResp, error)
 	// 同步客服商户主账号
 	SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error)
 }
@@ -42,16 +39,6 @@ type chatInternalClient struct {
 
 func NewChatInternalClient(cc grpc.ClientConnInterface) ChatInternalClient {
 	return &chatInternalClient{cc}
-}
-
-func (c *chatInternalClient) GetOpenChatSession(ctx context.Context, in *GetOpenChatSessionReq, opts ...grpc.CallOption) (*InternalChatSessionResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(InternalChatSessionResp)
-	err := c.cc.Invoke(ctx, ChatInternal_GetOpenChatSession_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *chatInternalClient) SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error) {
@@ -71,8 +58,6 @@ func (c *chatInternalClient) SyncChatMerchantUser(ctx context.Context, in *SyncC
 // 内部客服服务
 // 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
 type ChatInternalServer interface {
-	// 查询用户未关闭会话
-	GetOpenChatSession(context.Context, *GetOpenChatSessionReq) (*InternalChatSessionResp, error)
 	// 同步客服商户主账号
 	SyncChatMerchantUser(context.Context, *SyncChatMerchantUserReq) (*SyncChatMerchantUserResp, error)
 	mustEmbedUnimplementedChatInternalServer()
@@ -85,9 +70,6 @@ type ChatInternalServer interface {
 // pointer dereference when methods are called.
 type UnimplementedChatInternalServer struct{}
 
-func (UnimplementedChatInternalServer) GetOpenChatSession(context.Context, *GetOpenChatSessionReq) (*InternalChatSessionResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetOpenChatSession not implemented")
-}
 func (UnimplementedChatInternalServer) SyncChatMerchantUser(context.Context, *SyncChatMerchantUserReq) (*SyncChatMerchantUserResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncChatMerchantUser not implemented")
 }
@@ -110,24 +92,6 @@ func RegisterChatInternalServer(s grpc.ServiceRegistrar, srv ChatInternalServer)
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&ChatInternal_ServiceDesc, srv)
-}
-
-func _ChatInternal_GetOpenChatSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetOpenChatSessionReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatInternalServer).GetOpenChatSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatInternal_GetOpenChatSession_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatInternalServer).GetOpenChatSession(ctx, req.(*GetOpenChatSessionReq))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _ChatInternal_SyncChatMerchantUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -155,10 +119,6 @@ var ChatInternal_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.ChatInternal",
 	HandlerType: (*ChatInternalServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GetOpenChatSession",
-			Handler:    _ChatInternal_GetOpenChatSession_Handler,
-		},
 		{
 			MethodName: "SyncChatMerchantUser",
 			Handler:    _ChatInternal_SyncChatMerchantUser_Handler,

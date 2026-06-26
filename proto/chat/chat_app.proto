@@ -31,10 +31,6 @@ service ChatApp {
   // 查询会话消息
   rpc ListMyChatMessages(ListMyChatMessagesReq) returns (ListChatMessagesResp);
 
-  // 标记用户侧已读
-  rpc MarkUserMessagesRead(MarkUserMessagesReadReq)
-      returns (AppMarkMessagesReadResp);
-
   // 关闭我的会话
   rpc CloseMyChatSession(CloseMyChatSessionReq) returns (AppChatSessionResp);
 
@@ -96,15 +92,6 @@ message OpenChatSessionReq {
   int64 user_id = 3;            // 用户ID
 }
 
-message ListMyChatSessionsReq {
-  ChatSessionStatus status = 1; // 状态,0表示全部
-  common.PageReq page = 2;      // 分页
-}
-
-message GetMyChatSessionReq {
-  string session_no = 1; // 会话编号
-}
-
 message SendUserMessageReq {
   string session_no = 1;            // 会话编号
   string client_message_id = 2;     // 客户端消息ID,用于幂等/回执
@@ -127,11 +114,6 @@ message ListMyChatMessagesReq {
   common.PageReq page = 2; // 分页
 }
 
-message MarkUserMessagesReadReq {
-  string session_no = 1;              // 会话编号
-  string last_read_message_no = 2;    // 最后已读消息编号,空表示全部
-}
-
 message CloseMyChatSessionReq {
   string session_no = 1;                         // 会话编号
   ChatSessionCloseReason close_reason_type = 2;  // 结束原因类型
@@ -143,11 +125,6 @@ message SubmitChatSatisfactionReq {
   int32 score = 2;       // 满意度评分:1-5
   string content = 3;    // 评价内容
   string tags = 4;       // 评价标签,逗号分隔
-}
-
-message ListChatSessionsResp {
-  common.RespBase base = 1;
-  repeated ChatSession data = 2;
 }
 
 message ListChatMessagesResp {
@@ -164,8 +141,6 @@ message AppChatMessageResp {
   common.RespBase base = 1;
   ChatMessage data = 2;
 }
-
-message AppMarkMessagesReadResp { common.RespBase base = 1; }
 
 message AppChatSatisfactionResp {
   common.RespBase base = 1;

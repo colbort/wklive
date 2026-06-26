@@ -11,23 +11,9 @@ option go_package = "wklive/proto/chat;chat";
 // 内部客服服务
 // 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
 service ChatInternal {
-  // 查询用户未关闭会话
-  rpc GetOpenChatSession(GetOpenChatSessionReq)
-      returns (InternalChatSessionResp);
-
   // 同步客服商户主账号
   rpc SyncChatMerchantUser(SyncChatMerchantUserReq)
       returns (SyncChatMerchantUserResp);
-}
-
-message GetOpenChatSessionReq {
-  int64 merchant_id = 1; // 客服商户ID
-  int64 user_id = 2;     // 用户ID
-}
-
-message InternalChatSessionResp {
-  common.RespBase base = 1;
-  ChatSession data = 2;
 }
 
 message SyncChatMerchantUserReq {

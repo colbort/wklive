@@ -17,7 +17,6 @@ type (
 	AppChatMessageResp        = chat.AppChatMessageResp
 	AppChatSatisfactionResp   = chat.AppChatSatisfactionResp
 	AppChatSessionResp        = chat.AppChatSessionResp
-	AppMarkMessagesReadResp   = chat.AppMarkMessagesReadResp
 	AuthChatMerchantData      = chat.AuthChatMerchantData
 	AuthChatMerchantReq       = chat.AuthChatMerchantReq
 	AuthChatMerchantResp      = chat.AuthChatMerchantResp
@@ -25,12 +24,8 @@ type (
 	GenerateChatSessionNoReq  = chat.GenerateChatSessionNoReq
 	GenerateChatSessionNoResp = chat.GenerateChatSessionNoResp
 	GetChatSessionByUserReq   = chat.GetChatSessionByUserReq
-	GetMyChatSessionReq       = chat.GetMyChatSessionReq
 	ListChatMessagesResp      = chat.ListChatMessagesResp
-	ListChatSessionsResp      = chat.ListChatSessionsResp
 	ListMyChatMessagesReq     = chat.ListMyChatMessagesReq
-	ListMyChatSessionsReq     = chat.ListMyChatSessionsReq
-	MarkUserMessagesReadReq   = chat.MarkUserMessagesReadReq
 	OpenChatSessionReq        = chat.OpenChatSessionReq
 	SendUserMessageReq        = chat.SendUserMessageReq
 	SubmitChatSatisfactionReq = chat.SubmitChatSatisfactionReq
@@ -48,8 +43,6 @@ type (
 		SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error)
 		// 查询会话消息
 		ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*ListChatMessagesResp, error)
-		// 标记用户侧已读
-		MarkUserMessagesRead(ctx context.Context, in *MarkUserMessagesReadReq, opts ...grpc.CallOption) (*AppMarkMessagesReadResp, error)
 		// 关闭我的会话
 		CloseMyChatSession(ctx context.Context, in *CloseMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 		// 提交会话评价
@@ -101,12 +94,6 @@ func (m *defaultChatApp) SendUserMessage(ctx context.Context, in *SendUserMessag
 func (m *defaultChatApp) ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*ListChatMessagesResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.ListMyChatMessages(ctx, in, opts...)
-}
-
-// 标记用户侧已读
-func (m *defaultChatApp) MarkUserMessagesRead(ctx context.Context, in *MarkUserMessagesReadReq, opts ...grpc.CallOption) (*AppMarkMessagesReadResp, error) {
-	client := chat.NewChatAppClient(m.cli.Conn())
-	return client.MarkUserMessagesRead(ctx, in, opts...)
 }
 
 // 关闭我的会话

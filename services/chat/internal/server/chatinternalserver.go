@@ -23,12 +23,6 @@ func NewChatInternalServer(svcCtx *svc.ServiceContext) *ChatInternalServer {
 	}
 }
 
-// 查询用户未关闭会话
-func (s *ChatInternalServer) GetOpenChatSession(ctx context.Context, in *chat.GetOpenChatSessionReq) (*chat.InternalChatSessionResp, error) {
-	l := logic.NewGetOpenChatSessionLogic(ctx, s.svcCtx)
-	return l.GetOpenChatSession(in)
-}
-
 // 同步客服商户主账号
 func (s *ChatInternalServer) SyncChatMerchantUser(ctx context.Context, in *chat.SyncChatMerchantUserReq) (*chat.SyncChatMerchantUserResp, error) {
 	l := logic.NewSyncChatMerchantUserLogic(ctx, s.svcCtx)

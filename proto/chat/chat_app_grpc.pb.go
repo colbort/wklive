@@ -25,7 +25,6 @@ const (
 	ChatApp_GetChatSessionByUser_FullMethodName   = "/chat.ChatApp/GetChatSessionByUser"
 	ChatApp_SendUserMessage_FullMethodName        = "/chat.ChatApp/SendUserMessage"
 	ChatApp_ListMyChatMessages_FullMethodName     = "/chat.ChatApp/ListMyChatMessages"
-	ChatApp_MarkUserMessagesRead_FullMethodName   = "/chat.ChatApp/MarkUserMessagesRead"
 	ChatApp_CloseMyChatSession_FullMethodName     = "/chat.ChatApp/CloseMyChatSession"
 	ChatApp_SubmitChatSatisfaction_FullMethodName = "/chat.ChatApp/SubmitChatSatisfaction"
 )
@@ -49,8 +48,6 @@ type ChatAppClient interface {
 	SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error)
 	// 查询会话消息
 	ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*ListChatMessagesResp, error)
-	// 标记用户侧已读
-	MarkUserMessagesRead(ctx context.Context, in *MarkUserMessagesReadReq, opts ...grpc.CallOption) (*AppMarkMessagesReadResp, error)
 	// 关闭我的会话
 	CloseMyChatSession(ctx context.Context, in *CloseMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 	// 提交会话评价
@@ -125,16 +122,6 @@ func (c *chatAppClient) ListMyChatMessages(ctx context.Context, in *ListMyChatMe
 	return out, nil
 }
 
-func (c *chatAppClient) MarkUserMessagesRead(ctx context.Context, in *MarkUserMessagesReadReq, opts ...grpc.CallOption) (*AppMarkMessagesReadResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppMarkMessagesReadResp)
-	err := c.cc.Invoke(ctx, ChatApp_MarkUserMessagesRead_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *chatAppClient) CloseMyChatSession(ctx context.Context, in *CloseMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AppChatSessionResp)
@@ -174,8 +161,6 @@ type ChatAppServer interface {
 	SendUserMessage(context.Context, *SendUserMessageReq) (*AppChatMessageResp, error)
 	// 查询会话消息
 	ListMyChatMessages(context.Context, *ListMyChatMessagesReq) (*ListChatMessagesResp, error)
-	// 标记用户侧已读
-	MarkUserMessagesRead(context.Context, *MarkUserMessagesReadReq) (*AppMarkMessagesReadResp, error)
 	// 关闭我的会话
 	CloseMyChatSession(context.Context, *CloseMyChatSessionReq) (*AppChatSessionResp, error)
 	// 提交会话评价
@@ -207,9 +192,6 @@ func (UnimplementedChatAppServer) SendUserMessage(context.Context, *SendUserMess
 }
 func (UnimplementedChatAppServer) ListMyChatMessages(context.Context, *ListMyChatMessagesReq) (*ListChatMessagesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyChatMessages not implemented")
-}
-func (UnimplementedChatAppServer) MarkUserMessagesRead(context.Context, *MarkUserMessagesReadReq) (*AppMarkMessagesReadResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method MarkUserMessagesRead not implemented")
 }
 func (UnimplementedChatAppServer) CloseMyChatSession(context.Context, *CloseMyChatSessionReq) (*AppChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CloseMyChatSession not implemented")
@@ -346,24 +328,6 @@ func _ChatApp_ListMyChatMessages_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ChatApp_MarkUserMessagesRead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MarkUserMessagesReadReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAppServer).MarkUserMessagesRead(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatApp_MarkUserMessagesRead_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAppServer).MarkUserMessagesRead(ctx, req.(*MarkUserMessagesReadReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ChatApp_CloseMyChatSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CloseMyChatSessionReq)
 	if err := dec(in); err != nil {
@@ -430,10 +394,6 @@ var ChatApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMyChatMessages",
 			Handler:    _ChatApp_ListMyChatMessages_Handler,
-		},
-		{
-			MethodName: "MarkUserMessagesRead",
-			Handler:    _ChatApp_MarkUserMessagesRead_Handler,
 		},
 		{
 			MethodName: "CloseMyChatSession",
