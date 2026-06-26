@@ -3,6 +3,7 @@ package chat_ws
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -10,7 +11,6 @@ import (
 	"chat-admin-api/internal/types"
 	"chat-admin-api/internal/ws"
 	"wklive/common/helper"
-	"wklive/common/utils"
 	"wklive/proto/chat"
 
 	"github.com/gorilla/websocket"
@@ -50,6 +50,7 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 		return
 	}
 
+	fmt.Printf("ws conn UserId=%d Username=%s\n", user.Data.Id, user.Data.Nickname)
 	client := ws.NewConnection(
 		l.svcCtx.ChatMessageHub,
 		conn,
@@ -120,8 +121,8 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		MerchantId: conn.MerchantId,
 	}
 	if l.isTransientSession(req.SessionNo) {
+		fmt.Printf("下行 ChatEventType_CHAT_EVENT_TYPE_MESSAGE 11  %s\n", req.Sender.Nickname)
 		l.fillTransientUserId(conn.MerchantId, req.SessionNo, &data)
-		l.fillAgentSenderSnapshot(ctx, conn, &data)
 		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, data.UserId, conn.AgentId, conn.Nickname, data)
 		if err := publishTransientMessage(ctx, l.svcCtx, msg); err != nil {
 			sendWSError(conn, err.Error())
@@ -129,14 +130,15 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		}
 		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
 		return
+	} else {
+		resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
+		if err != nil {
+			sendWSError(conn, err.Error())
+			return
+		}
+		fmt.Printf("下行 ChatSenderType_CHAT_SENDER_TYPE_AGENT  22 %s\n", resp.Data.Sender.Nickname)
+		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, resp)
 	}
-
-	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
-	if err != nil {
-		sendWSError(conn, err.Error())
-		return
-	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, resp)
 }
 
 func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
@@ -152,7 +154,7 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 	}
 	if l.isTransientSession(sessionNo) {
 		data.UserId = l.transientUserId(conn.MerchantId, sessionNo, data.UserId)
-		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, l.agentServiceMessage(ctx, conn))
+		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, conn.Nickname+"为您服务")
 		if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, msg); err != nil {
 			sendWSError(conn, err.Error())
 			return
@@ -312,25 +314,6 @@ func sendWSError(conn *ws.Connection, message string) {
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": message})
 }
 
-func (l *MessagesLogic) agentServiceMessage(ctx context.Context, conn *ws.Connection) string {
-	name := ""
-	if l.svcCtx != nil && conn != nil && conn.UserId > 0 {
-		profileCtx := context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
-		profileCtx = context.WithValue(profileCtx, utils.CtxKeyUsername, conn.Nickname)
-		resp, err := l.svcCtx.ChatAdminCli.Profile(profileCtx, &chat.ChatAdminProfileReq{})
-		if err == nil && resp != nil && resp.User != nil {
-			name = strings.TrimSpace(resp.User.Nickname)
-		}
-	}
-	if name == "" && conn != nil {
-		name = strings.TrimSpace(conn.Nickname)
-	}
-	if name == "" {
-		return "客服正在为你服务"
-	}
-	return name + " 客服正在为你服务"
-}
-
 func (l *MessagesLogic) fillTransientUserId(merchantId int64, sessionNo string, data *sendAgentMessagePayload) {
 	if l.svcCtx == nil || l.svcCtx.ChatMessageHub == nil || data == nil || data.UserId != 0 || strings.TrimSpace(sessionNo) == "" {
 		return
@@ -354,24 +337,6 @@ func (l *MessagesLogic) transientUserId(merchantId int64, sessionNo string, user
 	payload := sendAgentMessagePayload{}
 	l.fillTransientUserId(merchantId, sessionNo, &payload)
 	return payload.UserId
-}
-
-func (l *MessagesLogic) fillAgentSenderSnapshot(ctx context.Context, conn *ws.Connection, data *sendAgentMessagePayload) {
-	if data == nil || l.svcCtx == nil || conn == nil || conn.UserId <= 0 {
-		return
-	}
-	profileCtx := context.WithValue(ctx, utils.CtxKeyUid, conn.UserId)
-	profileCtx = context.WithValue(profileCtx, utils.CtxKeyUsername, conn.Nickname)
-	resp, err := l.svcCtx.ChatAdminCli.Profile(profileCtx, &chat.ChatAdminProfileReq{})
-	if err != nil || resp == nil || resp.User == nil {
-		return
-	}
-	if strings.TrimSpace(data.SenderNickname) == "" {
-		data.SenderNickname = resp.User.Nickname
-	}
-	if strings.TrimSpace(data.SenderAvatarUrl) == "" {
-		data.SenderAvatarUrl = resp.User.AvatarUrl
-	}
 }
 
 type sendAgentMessagePayload struct {

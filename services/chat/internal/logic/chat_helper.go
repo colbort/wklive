@@ -606,49 +606,11 @@ func messageReceiver(session *models.TChatSession, senderType chat.ChatSenderTyp
 	}
 }
 
-func fillMessageSender(ctx context.Context, svcCtx *svc.ServiceContext, msg *models.ChatMessage) {
-	if msg == nil {
-		return
-	}
-	if msg.Sender == nil {
-		msg.Sender = &models.ChatMessageUser{
-			Type: int64(messageSenderType(msg)),
-		}
-	}
-	switch messageSenderType(msg) {
-	case chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT:
-		fillAgentSenderSnapshot(ctx, svcCtx, msg)
-	case chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM:
-		if msg.Sender.Nickname == "" {
-			msg.Sender.Nickname = "system"
-		}
-	}
-}
-
-func fillAgentSenderSnapshot(ctx context.Context, svcCtx *svc.ServiceContext, msg *models.ChatMessage) {
-	if msg == nil || msg.Sender == nil || msg.Sender.Id <= 0 {
-		return
-	}
-	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, msg.Sender.Id)
-	if err != nil || agent == nil || agent.ChatUserId <= 0 {
-		return
-	}
-	user, err := svcCtx.ChatUserModel.FindOne(ctx, agent.ChatUserId)
-	if err != nil || user == nil {
-		return
-	}
-	msg.Sender.Id = agent.Id
-	msg.Sender.Type = int64(messageSenderType(msg))
-	msg.Sender.Nickname = user.Nickname
-	msg.Sender.AvatarUrl = user.AvatarUrl
-}
-
 func sendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, msg *models.ChatMessage) (*models.ChatMessage, error) {
 	model := svcCtx.ChatMessageFactory.New(session.MerchantId)
 	if model == nil {
 		return nil, fmt.Errorf("invalid merchant_id: %d", session.MerchantId)
 	}
-	fillMessageSender(ctx, svcCtx, msg)
 	if err := model.Insert(ctx, msg); err != nil {
 		return nil, err
 	}

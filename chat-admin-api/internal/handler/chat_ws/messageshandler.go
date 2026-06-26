@@ -1,6 +1,7 @@
 package chat_ws
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -19,10 +20,10 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
+		fmt.Printf("ws conn UserId=%d Username=%s\n", claims.UserId, claims.Username)
 		l := chat_ws.NewMessagesLogic(r.Context(), svcCtx)
 		l.Messages(w, r, types.ChatAdminWSMessagesReq{
 			UserId:     claims.UserId,
-			Username:   claims.Username,
 			MerchantId: parseInt64(r.URL.Query().Get("merchantId")),
 			AgentId:    parseInt64(r.URL.Query().Get("agentId")),
 			SessionNo:  strings.TrimSpace(r.URL.Query().Get("sessionNo")),

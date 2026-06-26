@@ -26,17 +26,26 @@ const emit = defineEmits<{
   "update:inputValue": [value: string];
 }>();
 
+function isOwnAgentMessage(message: ChatMessage) {
+  return (
+    props.userId > 0 &&
+    Number(message.senderType || message.sender?.type || 0) === 2 &&
+    Number(message.sender?.id || 0) === props.userId
+  );
+}
+
 function messageDirection(message: ChatMessage) {
   if (message.senderType === 3) return "system";
-  if (props.userId > 0 && message.sender?.id === props.userId) {
+  if (isOwnAgentMessage(message)) {
     return "sent";
   }
   return "received";
 }
 
 function messageSenderName(message: ChatMessage) {
+  console.log(message.sender?.id + " === " + props.userId + " === " + message.content + " === " + message.sender?.nickname)
   if (message.senderType === 3) return "系统";
-  if (props.userId > 0 && message.sender?.id === props.userId) return "我";
+  if (isOwnAgentMessage(message)) return "我";
   return message.sender?.nickname || "用户";
 }
 </script>
