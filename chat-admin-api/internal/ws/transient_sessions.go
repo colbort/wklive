@@ -1,7 +1,6 @@
 package ws
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -217,12 +216,10 @@ func (s *transientSessionStore) IsTransientSession(sessionNo string) bool {
 
 func (s *transientSessionStore) shouldTrackEventLocked(sessionNo string, event *chat.ChatMessageEvent) bool {
 	if event == nil || sessionNo == "" {
-		fmt.Println("========================. 11")
 		return false
 	}
 	if _, ok := s.sessions[sessionNo]; ok {
 		return true
 	}
-	fmt.Println("========================. 22")
 	return eventHasGuestSession(event)
 }

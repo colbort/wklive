@@ -50,7 +50,6 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 		return
 	}
 
-	fmt.Printf("ws conn UserId=%d Username=%s\n", user.Data.Id, user.Data.Nickname)
 	client := ws.NewConnection(
 		l.svcCtx.ChatMessageHub,
 		conn,

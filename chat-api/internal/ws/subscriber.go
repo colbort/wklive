@@ -68,7 +68,6 @@ func subscribeRedis(ctx context.Context, conf redis.RedisConf, hub *Hub) error {
 			if !shouldBroadcastToUser(&event) {
 				continue
 			}
-			fmt.Printf("chat-api  ===========  %s\n", event.Type)
 			hub.Broadcast(&event)
 		}
 	}

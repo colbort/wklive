@@ -1,7 +1,6 @@
 package ws
 
 import (
-	"fmt"
 	"wklive/proto/chat"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,7 +36,6 @@ func (h *Hub) Run() {
 				close(client.Send)
 			}
 		case event := <-h.broadcast:
-			fmt.Printf("chat-admin-api  ======= %s\n", event.Type)
 			h.transient.ApplyEvent(event)
 			payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
 			if err != nil {

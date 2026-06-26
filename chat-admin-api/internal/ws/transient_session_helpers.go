@@ -1,7 +1,6 @@
 package ws
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 	"time"
@@ -74,22 +73,18 @@ func eventSessionNo(event *chat.ChatMessageEvent) string {
 
 func eventHasGuestSession(event *chat.ChatMessageEvent) bool {
 	if event == nil {
-		fmt.Println("========================. 33")
 		return false
 	}
 	if sessionIsGuest(event.GetSession()) {
 		return true
 	}
-	fmt.Println("========================. 44")
 	return event.GetSessionEvent() != nil && sessionIsGuest(event.GetSessionEvent().GetSession())
 }
 
 func sessionIsGuest(session *chat.ChatSession) bool {
 	if session == nil {
-		fmt.Println("========================. 55")
 		return false
 	}
-	fmt.Println("========================. 66")
 	return session.GetIsGuest()
 }
 
