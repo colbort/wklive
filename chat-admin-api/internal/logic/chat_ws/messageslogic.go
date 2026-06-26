@@ -113,7 +113,7 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		return
 	}
 
-	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
+	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(contextWithAdminIdentity(ctx, conn), &req)
 	if err != nil {
 		sendWSError(conn, err.Error())
 		return

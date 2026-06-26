@@ -59,6 +59,7 @@ func nowMillis() int64 {
 func merchantIDFromMetadata(ctx context.Context) (int64, *common.RespBase, error) {
 	merchantID, err := utils.GetMerchantIdFromMd(ctx)
 	if err != nil || merchantID <= 0 {
+		fmt.Println("========================.  aa")
 		return 0, badBase("merchant_id is required"), nil
 	}
 	return merchantID, nil, nil
@@ -144,6 +145,7 @@ func isWorkOrderFinished(status int64) bool {
 
 func validateSessionKey(merchantID int64, sessionNo string) error {
 	if merchantID <= 0 {
+		fmt.Println("========================.  bb")
 		return fmt.Errorf("merchant_id is required")
 	}
 	if strings.TrimSpace(sessionNo) == "" {

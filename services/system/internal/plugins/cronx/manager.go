@@ -11,6 +11,7 @@ import (
 	"wklive/services/system/models"
 
 	"github.com/robfig/cron/v3"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type JobHandler func(ctx context.Context, job *models.SysJob) error
@@ -231,7 +232,7 @@ func (m *CronManager) ListStartedJobIDs() []int64 {
 func (m *CronManager) execute(job *models.SysJob, handler JobHandler) error {
 	startTime := utils.NowMillis()
 	if _, loaded := m.runningMap.LoadOrStore(job.Id, struct{}{}); loaded {
-		log.Printf("job[%d-%s] is already running, skip this time", job.Id, job.JobName)
+		logx.Info("job[%d-%s] is already running, skip this time", job.Id, job.JobName)
 		return nil
 	}
 	defer m.runningMap.Delete(job.Id)
@@ -243,19 +244,19 @@ func (m *CronManager) execute(job *models.SysJob, handler JobHandler) error {
 		m.cancelMap.Delete(job.Id)
 	}()
 
-	log.Printf("job start: id=%d, name=%s, target=%s", job.Id, job.JobName, job.InvokeTarget)
+	logx.Info("job start: id=%d, name=%s, target=%s", job.Id, job.JobName, job.InvokeTarget)
 	err := handler(ctx, job)
 	endTime := utils.NowMillis()
 	status := int64(1)
 	message := "success"
 	exceptionInfo := ""
 	if err != nil {
-		log.Printf("job failed: id=%d, name=%s, err=%v", job.Id, job.JobName, err)
+		logx.Info("job failed: id=%d, name=%s, err=%v", job.Id, job.JobName, err)
 		status = 0
 		message = "failed"
 		exceptionInfo = err.Error()
 	} else {
-		log.Printf("job success: id=%d, name=%s", job.Id, job.JobName)
+		logx.Info("job success: id=%d, name=%s", job.Id, job.JobName)
 	}
 	_, err = m.jobLogModel.Insert(context.Background(), &models.SysJobLog{
 		JobId:          job.Id,
