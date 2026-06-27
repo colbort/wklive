@@ -85,7 +85,7 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 		Status:      int64(chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT),
 		CreateTimes: now,
 		UpdateTimes: now,
-	})
+	}, chat.ChatAppMessageChannel)
 	if err != nil {
 		return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

@@ -86,9 +86,6 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		},
 	)
 
-	// 先给 chat-ui 返回连接成功。排队和用户上线事件由 OpenChatSession RPC 发布。
-	l.sendConnectedEvent(client)
-
 	// 读 RPC 消息
 	go l.subscribeStream(streamCtx, client, req.IsGuest)
 	// 读客户端消息
@@ -429,18 +426,6 @@ func buildSystemChatMessage(conn *ws.Connection, eventType chat.ChatEventType, c
 		CreateTime: now,
 		UpdateTime: now,
 	}
-}
-
-func (l *MessagesLogic) sendConnectedEvent(conn *ws.Connection) {
-	if conn == nil {
-		return
-	}
-	now := time.Now().UnixMilli()
-	conn.SendEvent(&chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM,
-		CreatedAt: now,
-		Data:      buildSystemChatMessage(conn, chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM, "连接建立成功"),
-	})
 }
 
 func (l *MessagesLogic) sendMessageAckEvent(conn *ws.Connection, msg *chat.ChatMessage) {

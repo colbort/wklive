@@ -27,7 +27,7 @@ func NewAppPublishChatEventLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 发布客服消息事件
 func (l *AppPublishChatEventLogic) AppPublishChatEvent(in *chat.AppPublishChatEventReq) (*chat.AppPublishChatEventResp, error) {
-	if err := internal.PublishChatEvent(l.ctx, l.svcCtx, in.GetEvent()); err != nil {
+	if err := internal.PublishChatEvent(l.ctx, l.svcCtx, in.GetEvent(), chat.ChatAppMessageChannel); err != nil {
 		return &chat.AppPublishChatEventResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	return &chat.AppPublishChatEventResp{Base: helper.OkResp()}, nil

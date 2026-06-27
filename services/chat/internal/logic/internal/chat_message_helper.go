@@ -62,7 +62,7 @@ func MessageReceiver(session *models.TChatSession, senderType chat.ChatSenderTyp
 	}
 }
 
-func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, msg *models.ChatMessage) (*models.ChatMessage, error) {
+func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, msg *models.ChatMessage, channel string) (*models.ChatMessage, error) {
 	model := svcCtx.ChatMessageFactory.New(session.MerchantId)
 	if model == nil {
 		return nil, fmt.Errorf("invalid merchant_id: %d", session.MerchantId)
@@ -95,9 +95,9 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *model
 	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
 		return nil, err
 	}
-	PublishMessageEvent(ctx, svcCtx, session, msg)
+	PublishMessageEvent(ctx, svcCtx, session, msg, channel)
 	if senderType == chat.ChatSenderType_CHAT_SENDER_TYPE_USER && session.AgentId == 0 {
-		PublishQueueEvent(ctx, svcCtx, session)
+		PublishQueueEvent(ctx, svcCtx, session, chat.ChatAppMessageChannel)
 	}
 	return msg, nil
 }

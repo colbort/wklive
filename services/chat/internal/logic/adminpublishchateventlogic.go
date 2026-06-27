@@ -3,7 +3,9 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -25,7 +27,8 @@ func NewAdminPublishChatEventLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 发布客服消息事件
 func (l *AdminPublishChatEventLogic) AdminPublishChatEvent(in *chat.AdminPublishChatEventReq) (*chat.AdminPublishChatEventResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &chat.AdminPublishChatEventResp{}, nil
+	if err := internal.PublishChatEvent(l.ctx, l.svcCtx, in.GetEvent(), chat.ChatAdminEventChannel); err != nil {
+		return &chat.AdminPublishChatEventResp{Base: helper.ErrResp(500, err.Error())}, nil
+	}
+	return &chat.AdminPublishChatEventResp{Base: helper.OkResp()}, nil
 }

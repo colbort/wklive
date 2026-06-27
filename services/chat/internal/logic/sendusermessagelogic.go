@@ -80,7 +80,7 @@ func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*ch
 		Status:      int64(chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT),
 		CreateTimes: now,
 		UpdateTimes: now,
-	})
+	}, chat.ChatAdminEventChannel)
 	if err != nil {
 		return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

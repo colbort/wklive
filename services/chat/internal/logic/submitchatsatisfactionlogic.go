@@ -82,6 +82,6 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		}
 	}
 
-	internal.PublishEvaluationEvent(l.ctx, l.svcCtx, session, satisfaction)
+	internal.PublishEvaluationEvent(l.ctx, l.svcCtx, session, satisfaction, chat.ChatAdminEventChannel)
 	return &chat.AppChatSatisfactionResp{Base: helper.OkResp(), Data: internal.ToProtoSatisfaction(satisfaction)}, nil
 }
