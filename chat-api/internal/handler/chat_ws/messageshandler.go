@@ -47,7 +47,7 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			logx.Infof("chat ws identity resolved by chatToken, merchantId=%d userId=%d nickname=%s", claims.MerchantId, claims.UserId, nickname)
 		}
 		req := types.ChatWSMessagesReq{
-			SessionNo:  "",
+			SessionNo:  claims.SessionNo,
 			MerchantId: claims.MerchantId,
 			UserId:     claims.UserId,
 			Nickname:   nickname,

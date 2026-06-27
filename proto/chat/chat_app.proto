@@ -120,6 +120,8 @@ message OpenChatSessionReq {
   ChatSessionSource source = 1; // 来源
   int64 merchant_id = 2;        // 客服商户ID
   int64 user_id = 3;            // 用户ID
+  bool is_guest = 4;            // 是否游客
+  string session_no = 5;        // 会话
 }
 
 message SendUserMessageReq {

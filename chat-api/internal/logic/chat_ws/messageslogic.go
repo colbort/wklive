@@ -48,34 +48,23 @@ func NewMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Messages
 // 3. chat-api 发布 USER_JOIN 给 chat-admin-api，由 chat-admin-api 转发给所有坐席；
 // 4. 后续 chat-admin-api 发布 AGENT_ASSIGNED / MESSAGE / SESSION_CLOSE 等事件时，由 subscriber -> hub 转发给匹配的 chat-ui。
 func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesReq) {
-	if req.IsGuest {
-		if req.SessionNo == "" {
-			sessionNo, err := l.svcCtx.GuestSessionNo(l.ctx, req.MerchantId, req.UserId, guestSessionTTL)
-			if err != nil {
-				return
-			}
-			req.SessionNo = sessionNo
-		}
-	} else {
-		resp, err := l.svcCtx.ChatAppCli.OpenChatSession(l.ctx, &chat.OpenChatSessionReq{
-			Source:     chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
-			MerchantId: req.MerchantId,
-			UserId:     req.UserId,
-		})
-		if err != nil {
-			logx.Errorf("open chat ws persistent session failed, merchantId=%d userId=%d err=%v", req.MerchantId, req.UserId, err)
-			_ = conn.Close()
-			return
-		}
-		sessionNo := strings.TrimSpace(resp.GetData().GetSessionNo())
-		if sessionNo == "" {
-			logx.Errorf("session is empty, merchantId=%d userId=%d err=%v", req.MerchantId, req.UserId, err)
-			_ = conn.Close()
-			return
-		}
-
-		logx.Infof("chat ws persistent session opened, merchantId=%d userId=%d sessionNo=%s", req.MerchantId, req.UserId, sessionNo)
-		req.SessionNo = sessionNo
+	resp, err := l.svcCtx.ChatAppCli.OpenChatSession(l.ctx, &chat.OpenChatSessionReq{
+		Source:     chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
+		MerchantId: req.MerchantId,
+		UserId:     req.UserId,
+		IsGuest:    req.IsGuest,
+		SessionNo:  req.SessionNo,
+	})
+	if err != nil {
+		logx.Errorf("open chat ws persistent session failed, merchantId=%d userId=%d err=%v", req.MerchantId, req.UserId, err)
+		_ = conn.Close()
+		return
+	}
+	sessionNo := resp.GetData().GetSessionNo()
+	if sessionNo == "" {
+		logx.Errorf("session is empty, merchantId=%d userId=%d err=%v", req.MerchantId, req.UserId, err)
+		_ = conn.Close()
+		return
 	}
 
 	streamCtx, streamCancel := context.WithCancel(l.ctx)
@@ -85,7 +74,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		req.Nickname,
 		req.AvatarUrl,
 		req.MerchantId,
-		req.SessionNo,
+		sessionNo,
 		l.onMessage(req.IsGuest),
 		func(conn *ws.Connection) {
 			streamCancel()
@@ -100,8 +89,11 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 	// 再通知后台：用户上线，进入待接待列表。
 	l.publishUserOnlineEvent(l.ctx, client, req.IsGuest)
 
+	// 读 RPC 消息
 	go l.subscribeStream(streamCtx, client, req.IsGuest)
+	// 读客户端消息
 	go client.WritePump()
+	// 先客户端写消息
 	client.ReadPump()
 }
 

@@ -475,6 +475,8 @@ type OpenChatSessionReq struct {
 	Source        ChatSessionSource      `protobuf:"varint,1,opt,name=source,proto3,enum=chat.ChatSessionSource" json:"source,omitempty"` // 来源
 	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`   // 客服商户ID
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`               // 用户ID
+	IsGuest       bool                   `protobuf:"varint,4,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`            // 是否游客
+	SessionNo     string                 `protobuf:"bytes,5,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`       // 会话
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -528,6 +530,20 @@ func (x *OpenChatSessionReq) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+func (x *OpenChatSessionReq) GetIsGuest() bool {
+	if x != nil {
+		return x.IsGuest
+	}
+	return false
+}
+
+func (x *OpenChatSessionReq) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
 }
 
 type SendUserMessageReq struct {
@@ -1782,12 +1798,15 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12(\n" +
 	"\x10external_user_id\x18\x03 \x01(\tR\x0eexternalUserId\x12/\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x12%\n" +
-	"\x0einclude_closed\x18\x05 \x01(\bR\rincludeClosed\"\x7f\n" +
+	"\x0einclude_closed\x18\x05 \x01(\bR\rincludeClosed\"\xb9\x01\n" +
 	"\x12OpenChatSessionReq\x12/\n" +
 	"\x06source\x18\x01 \x01(\x0e2\x17.chat.ChatSessionSourceR\x06source\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
 	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\"\xcc\x03\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bis_guest\x18\x04 \x01(\bR\aisGuest\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x05 \x01(\tR\tsessionNo\"\xcc\x03\n" +
 	"\x12SendUserMessageReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12*\n" +
