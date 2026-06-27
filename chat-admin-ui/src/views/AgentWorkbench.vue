@@ -478,16 +478,11 @@ function handleUserLeave(event: WsEvent) {
   const session = sessions.value[index];
   const status = sessionStatusValue(session.status);
   if (isGuestSession(session)) {
-    const message =
-      sessionEvent(event)?.message ||
-      eventMessage(event.data)?.content ||
-      "用户已离开客服页面";
-    setSessionStatusMessage(sessionNo, message);
-    session.lastMessage = message;
-    session.lastMessageTime = Number(
-      sessionEvent(event)?.createdAt || Date.now(),
-    );
-    session.updateTimes = session.lastMessageTime;
+    removeSession(sessionNo);
+    if (activeSessionNo.value === sessionNo) {
+      syncActiveSession();
+      mobileChatOpen.value = false;
+    }
     return;
   }
   if (status === sessionStatus.waiting || needsAccept(session)) {
@@ -666,11 +661,19 @@ function markSessionClosed(event: WsEvent, message?: ChatMessage) {
   const sessionEventData = sessionEvent(event);
   const sessionNo = sessionEventData?.sessionNo || message?.sessionNo || "";
   if (!sessionNo) return;
+  const session = sessions.value.find((item) => item.sessionNo === sessionNo);
+  if (isGuestSession(session)) {
+    removeSession(sessionNo);
+    if (activeSessionNo.value === sessionNo) {
+      syncActiveSession();
+      mobileChatOpen.value = false;
+    }
+    return;
+  }
   setSessionStatusMessage(
     sessionNo,
     sessionEventData?.message || message?.content || "本次会话已结束",
   );
-  const session = sessions.value.find((item) => item.sessionNo === sessionNo);
   if (session) {
     session.status = sessionStatus.closed;
     session.closeTime =

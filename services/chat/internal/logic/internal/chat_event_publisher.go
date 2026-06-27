@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -34,6 +35,24 @@ func PublishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, sessio
 	if _, err := svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload)); err != nil {
 		logx.WithContext(ctx).Errorf("publish chat message event failed: %v", err)
 	}
+}
+
+func PublishChatEvent(ctx context.Context, svcCtx *svc.ServiceContext, event *chat.ChatMessageEvent) error {
+	if svcCtx.BusRedis == nil {
+		return fmt.Errorf("chat redis is not configured")
+	}
+	if event == nil {
+		return fmt.Errorf("chat event is empty")
+	}
+	if event.GetCreatedAt() == 0 {
+		event.CreatedAt = utils.NowMillis()
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		return err
+	}
+	_, err = svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload))
+	return err
 }
 
 func PublishQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) {

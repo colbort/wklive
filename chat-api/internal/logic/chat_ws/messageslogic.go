@@ -17,7 +17,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 const (
@@ -79,8 +78,8 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		req.SessionNo = sessionNo
 	}
 
+	streamCtx, streamCancel := context.WithCancel(l.ctx)
 	client := ws.NewConnection(
-		l.svcCtx.ChatMessageHub,
 		conn,
 		req.UserId,
 		req.Nickname,
@@ -88,9 +87,11 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		req.MerchantId,
 		req.SessionNo,
 		l.onMessage(req.IsGuest),
-		l.onClose(req.IsGuest),
+		func(conn *ws.Connection) {
+			streamCancel()
+			l.onClose(req.IsGuest)(conn)
+		},
 	)
-	l.svcCtx.ChatMessageHub.Register(client)
 
 	// 先给 chat-ui 返回连接成功和排队信息。
 	l.sendConnectedEvent(client)
@@ -99,6 +100,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 	// 再通知后台：用户上线，进入待接待列表。
 	l.publishUserOnlineEvent(l.ctx, client, req.IsGuest)
 
+	go l.subscribeStream(streamCtx, client, req.IsGuest)
 	go client.WritePump()
 	client.ReadPump()
 }
@@ -130,12 +132,41 @@ func (l *MessagesLogic) onClose(isGuest bool) func(*ws.Connection) {
 			return
 		}
 		if isGuest {
+			if err := l.deleteTransientSession(context.Background(), conn); err != nil {
+				logx.Errorf("delete transient chat session after user leave failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
+			}
 			if err := l.publishUserLeaveEvent(context.Background(), conn, "用户已离开客服页面"); err != nil {
 				logx.Errorf("publish chat user leave event failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 			}
 			return
 		}
 		l.closeUserSession(context.Background(), conn, isGuest, "用户已离开客服页面")
+	}
+}
+
+func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection, isGuest bool) {
+	if conn == nil || l.svcCtx == nil || l.svcCtx.ChatAppCli == nil {
+		return
+	}
+	stream, err := l.svcCtx.ChatAppCli.SubscribeStream(ctx, &chat.ChatSubscribeRequest{
+		MerchantId: conn.MerchantId,
+		UserId:     conn.UserId,
+		SessionNo:  conn.SessionNo,
+		IsGuest:    isGuest,
+	})
+	if err != nil {
+		logx.Errorf("subscribe chat app stream failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
+		return
+	}
+	for {
+		event, err := stream.Recv()
+		if err != nil {
+			if ctx.Err() == nil {
+				logx.Errorf("receive chat app stream failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
+			}
+			return
+		}
+		conn.SendEvent(event)
 	}
 }
 
@@ -156,6 +187,10 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 	var msg *chat.ChatMessage
 	if isGuest {
 		msg = buildChatMessage(conn, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, conn.UserId, data)
+		if err := l.appendTransientMessage(ctx, conn, msg, nil); err != nil {
+			sendWSError(conn, err.Error())
+			return
+		}
 	} else {
 		req := chat.SendUserMessageReq{
 			SessionNo:   conn.SessionNo,
@@ -276,6 +311,10 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		"content": strings.TrimSpace(data.Content),
 		"tags":    strings.TrimSpace(data.Tags),
 	})
+	if err := l.appendTransientMessage(ctx, conn, msg, nil); err != nil {
+		sendWSError(conn, err.Error())
+		return
+	}
 	event := &chat.ChatMessageEvent{
 		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
 		CreatedAt: time.Now().UnixMilli(),
@@ -335,6 +374,11 @@ func (l *MessagesLogic) closeUserSession(ctx context.Context, conn *ws.Connectio
 
 	if err := l.publishSessionCloseEvent(ctx, conn, reason); err != nil {
 		logx.Errorf("publish chat session close event failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
+	}
+	if isGuest {
+		if err := l.deleteTransientSession(ctx, conn); err != nil {
+			logx.Errorf("delete transient chat session after close failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
+		}
 	}
 }
 
@@ -511,6 +555,11 @@ func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Con
 		IsGuest:         isGuest,
 		AvatarUrl:       conn.AvatarUrl,
 	}
+	if isGuest {
+		if _, err := l.svcCtx.ChatAppCli.UpsertTransientChatSession(ctx, &chat.UpsertTransientChatSessionReq{Session: session}); err != nil {
+			logx.Errorf("upsert transient chat session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
+		}
+	}
 	event := &chat.ChatMessageEvent{
 		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
 		CreatedAt: now,
@@ -531,15 +580,70 @@ func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Con
 }
 
 func (l *MessagesLogic) publishChatEvent(ctx context.Context, event *chat.ChatMessageEvent) error {
-	if l.svcCtx.BusRedis == nil {
-		return fmt.Errorf("chat redis is not configured")
-	}
-	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	resp, err := l.svcCtx.ChatAppCli.PublishChatEvent(ctx, &chat.PublishChatEventReq{Event: event})
 	if err != nil {
 		return err
 	}
-	_, err = l.svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload))
-	return err
+	if resp.GetBase().GetCode() != successCode {
+		return fmt.Errorf("%s", resp.GetBase().GetMsg())
+	}
+	return nil
+}
+
+func (l *MessagesLogic) appendTransientMessage(ctx context.Context, conn *ws.Connection, msg *chat.ChatMessage, session *chat.ChatSession) error {
+	if conn == nil || msg == nil {
+		return fmt.Errorf("message data is empty")
+	}
+	if session == nil {
+		session = transientSessionFromConnection(conn)
+	}
+	resp, err := l.svcCtx.ChatAppCli.AppendTransientChatMessage(ctx, &chat.AppendTransientChatMessageReq{
+		MerchantId: conn.MerchantId,
+		Message:    msg,
+		Session:    session,
+	})
+	if err != nil {
+		return err
+	}
+	if resp.GetBase().GetCode() != successCode {
+		return fmt.Errorf("%s", resp.GetBase().GetMsg())
+	}
+	return nil
+}
+
+func (l *MessagesLogic) deleteTransientSession(ctx context.Context, conn *ws.Connection) error {
+	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
+		return nil
+	}
+	resp, err := l.svcCtx.ChatAppCli.DeleteTransientChatSession(ctx, &chat.DeleteTransientChatSessionReq{
+		MerchantId: conn.MerchantId,
+		SessionNo:  conn.SessionNo,
+	})
+	if err != nil {
+		return err
+	}
+	if resp.GetBase().GetCode() != successCode {
+		return fmt.Errorf("%s", resp.GetBase().GetMsg())
+	}
+	return nil
+}
+
+func transientSessionFromConnection(conn *ws.Connection) *chat.ChatSession {
+	now := time.Now().UnixMilli()
+	return &chat.ChatSession{
+		SessionNo:       conn.SessionNo,
+		MerchantId:      conn.MerchantId,
+		UserId:          conn.UserId,
+		Source:          chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
+		Status:          chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
+		Priority:        chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL,
+		Title:           firstNonEmpty(conn.Username, guestUsername),
+		LastMessageTime: now,
+		CreateTimes:     now,
+		UpdateTimes:     now,
+		IsGuest:         true,
+		AvatarUrl:       conn.AvatarUrl,
+	}
 }
 
 func nextGuestNo(prefix string) string {

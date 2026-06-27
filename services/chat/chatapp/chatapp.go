@@ -14,21 +14,32 @@ import (
 )
 
 type (
-	AppChatMessageResp        = chat.AppChatMessageResp
-	AppChatSatisfactionResp   = chat.AppChatSatisfactionResp
-	AppChatSessionResp        = chat.AppChatSessionResp
-	AuthChatMerchantData      = chat.AuthChatMerchantData
-	AuthChatMerchantReq       = chat.AuthChatMerchantReq
-	AuthChatMerchantResp      = chat.AuthChatMerchantResp
-	CloseMyChatSessionReq     = chat.CloseMyChatSessionReq
-	GenerateChatSessionNoReq  = chat.GenerateChatSessionNoReq
-	GenerateChatSessionNoResp = chat.GenerateChatSessionNoResp
-	GetChatSessionByUserReq   = chat.GetChatSessionByUserReq
-	ListChatMessagesResp      = chat.ListChatMessagesResp
-	ListMyChatMessagesReq     = chat.ListMyChatMessagesReq
-	OpenChatSessionReq        = chat.OpenChatSessionReq
-	SendUserMessageReq        = chat.SendUserMessageReq
-	SubmitChatSatisfactionReq = chat.SubmitChatSatisfactionReq
+	AppChatMessageResp             = chat.AppChatMessageResp
+	AppChatSatisfactionResp        = chat.AppChatSatisfactionResp
+	AppChatSessionResp             = chat.AppChatSessionResp
+	AppendTransientChatMessageReq  = chat.AppendTransientChatMessageReq
+	AuthChatMerchantData           = chat.AuthChatMerchantData
+	AuthChatMerchantReq            = chat.AuthChatMerchantReq
+	AuthChatMerchantResp           = chat.AuthChatMerchantResp
+	ChatSubscribeRequest           = chat.ChatSubscribeRequest
+	CloseMyChatSessionReq          = chat.CloseMyChatSessionReq
+	DeleteTransientChatSessionReq  = chat.DeleteTransientChatSessionReq
+	DeleteTransientChatSessionResp = chat.DeleteTransientChatSessionResp
+	GenerateChatSessionNoReq       = chat.GenerateChatSessionNoReq
+	GenerateChatSessionNoResp      = chat.GenerateChatSessionNoResp
+	GetChatSessionByUserReq        = chat.GetChatSessionByUserReq
+	GetTransientChatSessionReq     = chat.GetTransientChatSessionReq
+	ListChatMessagesResp           = chat.ListChatMessagesResp
+	ListMyChatMessagesReq          = chat.ListMyChatMessagesReq
+	ListTransientChatMessagesReq   = chat.ListTransientChatMessagesReq
+	OpenChatSessionReq             = chat.OpenChatSessionReq
+	PageTransientChatSessionsReq   = chat.PageTransientChatSessionsReq
+	PageTransientChatSessionsResp  = chat.PageTransientChatSessionsResp
+	PublishChatEventReq            = chat.PublishChatEventReq
+	PublishChatEventResp           = chat.PublishChatEventResp
+	SendUserMessageReq             = chat.SendUserMessageReq
+	SubmitChatSatisfactionReq      = chat.SubmitChatSatisfactionReq
+	UpsertTransientChatSessionReq  = chat.UpsertTransientChatSessionReq
 
 	ChatApp interface {
 		// 商户接入鉴权
@@ -47,6 +58,22 @@ type (
 		CloseMyChatSession(ctx context.Context, in *CloseMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 		// 提交会话评价
 		SubmitChatSatisfaction(ctx context.Context, in *SubmitChatSatisfactionReq, opts ...grpc.CallOption) (*AppChatSatisfactionResp, error)
+		// 订阅客服消息事件流
+		SubscribeStream(ctx context.Context, in *ChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatApp_SubscribeStreamClient, error)
+		// 发布客服消息事件
+		PublishChatEvent(ctx context.Context, in *PublishChatEventReq, opts ...grpc.CallOption) (*PublishChatEventResp, error)
+		// 创建或更新游客临时会话
+		UpsertTransientChatSession(ctx context.Context, in *UpsertTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+		// 删除游客临时会话和消息
+		DeleteTransientChatSession(ctx context.Context, in *DeleteTransientChatSessionReq, opts ...grpc.CallOption) (*DeleteTransientChatSessionResp, error)
+		// 查询游客临时会话
+		GetTransientChatSession(ctx context.Context, in *GetTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+		// 分页查询游客临时会话
+		PageTransientChatSessions(ctx context.Context, in *PageTransientChatSessionsReq, opts ...grpc.CallOption) (*PageTransientChatSessionsResp, error)
+		// 追加游客临时消息并更新会话摘要
+		AppendTransientChatMessage(ctx context.Context, in *AppendTransientChatMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error)
+		// 查询游客临时消息
+		ListTransientChatMessages(ctx context.Context, in *ListTransientChatMessagesReq, opts ...grpc.CallOption) (*ListChatMessagesResp, error)
 	}
 
 	defaultChatApp struct {
@@ -106,4 +133,52 @@ func (m *defaultChatApp) CloseMyChatSession(ctx context.Context, in *CloseMyChat
 func (m *defaultChatApp) SubmitChatSatisfaction(ctx context.Context, in *SubmitChatSatisfactionReq, opts ...grpc.CallOption) (*AppChatSatisfactionResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.SubmitChatSatisfaction(ctx, in, opts...)
+}
+
+// 订阅客服消息事件流
+func (m *defaultChatApp) SubscribeStream(ctx context.Context, in *ChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatApp_SubscribeStreamClient, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.SubscribeStream(ctx, in, opts...)
+}
+
+// 发布客服消息事件
+func (m *defaultChatApp) PublishChatEvent(ctx context.Context, in *PublishChatEventReq, opts ...grpc.CallOption) (*PublishChatEventResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.PublishChatEvent(ctx, in, opts...)
+}
+
+// 创建或更新游客临时会话
+func (m *defaultChatApp) UpsertTransientChatSession(ctx context.Context, in *UpsertTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.UpsertTransientChatSession(ctx, in, opts...)
+}
+
+// 删除游客临时会话和消息
+func (m *defaultChatApp) DeleteTransientChatSession(ctx context.Context, in *DeleteTransientChatSessionReq, opts ...grpc.CallOption) (*DeleteTransientChatSessionResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.DeleteTransientChatSession(ctx, in, opts...)
+}
+
+// 查询游客临时会话
+func (m *defaultChatApp) GetTransientChatSession(ctx context.Context, in *GetTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.GetTransientChatSession(ctx, in, opts...)
+}
+
+// 分页查询游客临时会话
+func (m *defaultChatApp) PageTransientChatSessions(ctx context.Context, in *PageTransientChatSessionsReq, opts ...grpc.CallOption) (*PageTransientChatSessionsResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.PageTransientChatSessions(ctx, in, opts...)
+}
+
+// 追加游客临时消息并更新会话摘要
+func (m *defaultChatApp) AppendTransientChatMessage(ctx context.Context, in *AppendTransientChatMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.AppendTransientChatMessage(ctx, in, opts...)
+}
+
+// 查询游客临时消息
+func (m *defaultChatApp) ListTransientChatMessages(ctx context.Context, in *ListTransientChatMessagesReq, opts ...grpc.CallOption) (*ListChatMessagesResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.ListTransientChatMessages(ctx, in, opts...)
 }

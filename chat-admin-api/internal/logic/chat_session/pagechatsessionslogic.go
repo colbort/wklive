@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"chat-admin-api/internal/logicutil"
-	"chat-admin-api/internal/ws"
 	"wklive/proto/chat"
+	"wklive/proto/common"
 
 	"chat-admin-api/internal/svc"
 	"chat-admin-api/internal/types"
@@ -37,16 +37,21 @@ func (l *PageChatSessionsLogic) PageChatSessions(req *types.PageChatSessionsReq)
 	if resp != nil {
 		enrichSessions(resp.Data)
 	}
-	if err != nil || resp == nil || resp.Code != 200 || l.svcCtx.ChatMessageHub == nil {
+	if err != nil || resp == nil || resp.Code != 200 || l.svcCtx.ChatAdminCli == nil {
 		return resp, err
 	}
 
-	transient := l.svcCtx.ChatMessageHub.ListTransientSessions(ws.TransientSessionFilter{
+	transientResp, err := l.svcCtx.ChatAdminCli.PageTransientChatSessions(l.ctx, &chat.PageTransientChatSessionsReq{
 		MerchantId: req.MerchantId,
 		UserId:     req.UserId,
 		AgentId:    req.AgentId,
-		Status:     req.Status,
+		Status:     chat.ChatSessionStatus(req.Status),
+		Page:       &common.PageReq{Limit: req.Limit},
 	})
+	if err != nil || transientResp.GetBase().GetCode() != 200 {
+		return resp, nil
+	}
+	transient := transientResp.GetData()
 	if len(transient) == 0 {
 		return resp, nil
 	}

@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 const (
@@ -26,7 +27,6 @@ type InboundEvent struct {
 }
 
 type Connection struct {
-	Hub        *Hub
 	Conn       *websocket.Conn
 	Send       chan []byte
 	UserId     int64
@@ -36,11 +36,11 @@ type Connection struct {
 	AgentId    int64
 	SessionNo  string
 	OnMessage  func(*Connection, InboundEvent)
+	OnClose    func(*Connection)
 }
 
-func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, nickname string, avatarUrl string, merchantId, agentId int64, sessionNo string, onMessage func(*Connection, InboundEvent)) *Connection {
+func NewConnection(conn *websocket.Conn, userId int64, nickname string, avatarUrl string, merchantId, agentId int64, sessionNo string, onMessage func(*Connection, InboundEvent), onClose func(*Connection)) *Connection {
 	return &Connection{
-		Hub:        hub,
 		Conn:       conn,
 		Send:       make(chan []byte, 32),
 		UserId:     userId,
@@ -50,106 +50,15 @@ func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, nickname string
 		AgentId:    agentId,
 		SessionNo:  sessionNo,
 		OnMessage:  onMessage,
+		OnClose:    onClose,
 	}
-}
-
-func (c *Connection) Match(message *chat.ChatMessage) bool {
-	if message == nil {
-		return false
-	}
-	if c.SessionNo != "" && message.SessionNo != c.SessionNo {
-		return false
-	}
-	agentId := int64FromString(message.GetAgentId())
-	if c.AgentId > 0 && agentId != c.AgentId && agentId != 0 {
-		return false
-	}
-	return true
-}
-
-func (c *Connection) MatchEvent(event *chat.ChatMessageEvent) bool {
-	if event == nil {
-		return false
-	}
-	if event.GetSessionEvent() != nil {
-		return c.matchSessionEvent(event.GetSessionEvent())
-	}
-	if event.GetSession() != nil {
-		return c.matchSession(event.GetSession())
-	}
-	if event.GetQueue() != nil {
-		return c.matchQueue(event.GetQueue())
-	}
-	if event.GetAgent() != nil {
-		return c.matchAgent(event.GetAgent())
-	}
-	if event.GetData() != nil {
-		return c.Match(event.GetData())
-	}
-	return false
-}
-
-func (c *Connection) matchSession(session *chat.ChatSession) bool {
-	if session == nil {
-		return false
-	}
-	if c.MerchantId > 0 && session.MerchantId != c.MerchantId {
-		return false
-	}
-	if c.SessionNo != "" && session.SessionNo != c.SessionNo {
-		return false
-	}
-	if c.AgentId > 0 && session.AgentId != c.AgentId && session.AgentId != 0 {
-		return false
-	}
-	return true
-}
-
-func (c *Connection) matchSessionEvent(event *chat.ChatSessionEvent) bool {
-	if event == nil {
-		return false
-	}
-	if c.MerchantId > 0 && event.MerchantId != c.MerchantId {
-		return false
-	}
-	if c.SessionNo != "" && event.SessionNo != c.SessionNo {
-		return false
-	}
-	if c.AgentId > 0 && event.AgentId != c.AgentId && event.AgentId != 0 {
-		return false
-	}
-	return true
-}
-
-func (c *Connection) matchQueue(queue *chat.ChatQueueInfo) bool {
-	if queue == nil {
-		return false
-	}
-	if c.MerchantId > 0 && queue.MerchantId != c.MerchantId {
-		return false
-	}
-	if c.SessionNo != "" && queue.SessionNo != c.SessionNo {
-		return false
-	}
-	return true
-}
-
-func (c *Connection) matchAgent(agent *chat.ChatAgent) bool {
-	if agent == nil {
-		return false
-	}
-	if c.MerchantId > 0 && agent.MerchantId != c.MerchantId {
-		return false
-	}
-	if c.AgentId > 0 && agent.Id != c.AgentId {
-		return false
-	}
-	return true
 }
 
 func (c *Connection) ReadPump() {
 	defer func() {
-		c.Hub.Unregister(c)
+		if c.OnClose != nil {
+			c.OnClose(c)
+		}
 		_ = c.Conn.Close()
 	}()
 
@@ -231,6 +140,22 @@ func (c *Connection) SendJSON(eventType chat.ChatEventType, data interface{}) {
 	}
 }
 
+func (c *Connection) SendEvent(event *chat.ChatMessageEvent) {
+	if event == nil {
+		return
+	}
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	if err != nil {
+		logx.Errorf("marshal chat admin ws event failed: %v", err)
+		return
+	}
+	select {
+	case c.Send <- payload:
+	default:
+		logx.Errorf("chat admin ws send queue is full, userId=%d", c.UserId)
+	}
+}
+
 func DecodeInboundEvent(payload []byte) (InboundEvent, error) {
 	var raw struct {
 		Type      json.RawMessage `json:"type"`
@@ -289,9 +214,4 @@ func chatEventTypeByName(name string) (chat.ChatEventType, error) {
 		return chat.ChatEventType(n), nil
 	}
 	return chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN, fmt.Errorf("unsupported event type: %s", name)
-}
-
-func int64FromString(value string) int64 {
-	id, _ := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
-	return id
 }

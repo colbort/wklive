@@ -30,22 +30,33 @@ func NewPageChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *PageChatMessagesLogic) PageChatMessages(req *types.PageChatMessagesReq) (resp *types.PageChatMessagesResp, err error) {
-	if l.svcCtx.ChatMessageHub != nil && l.svcCtx.ChatMessageHub.IsTransientSession(strings.TrimSpace(req.SessionNo)) {
-		return &types.PageChatMessagesResp{
-			RespBase: types.RespBase{Code: 200, Msg: "OK"},
-			Data: protoMessagesToTypes(
-				req.MerchantId,
-				l.svcCtx.ChatMessageHub.ListTransientMessages(
-					req.MerchantId,
-					req.SessionNo,
-					req.SenderType,
-					req.Limit,
-				),
-			),
-		}, nil
+	sessionNo := strings.TrimSpace(req.SessionNo)
+	if l.svcCtx.ChatAdminCli != nil {
+		transientSession, err := l.svcCtx.ChatAdminCli.GetTransientChatSession(l.ctx, &chat.GetTransientChatSessionReq{
+			MerchantId: req.MerchantId,
+			SessionNo:  sessionNo,
+		})
+		if err == nil && transientSession.GetBase().GetCode() == 200 {
+			rpcResp, err := l.svcCtx.ChatAdminCli.ListTransientChatMessages(l.ctx, &chat.ListTransientChatMessagesReq{
+				MerchantId: req.MerchantId,
+				SessionNo:  sessionNo,
+				SenderType: chat.ChatSenderType(req.SenderType),
+				Page: &common.PageReq{
+					Cursor: req.Cursor,
+					Limit:  req.Limit,
+				},
+			})
+			if err != nil {
+				return nil, err
+			}
+			return &types.PageChatMessagesResp{
+				RespBase: respBaseToType(rpcResp.GetBase()),
+				Data:     protoMessagesToTypes(req.MerchantId, rpcResp.GetData()),
+			}, nil
+		}
 	}
 	rpcResp, err := l.svcCtx.ChatAdminCli.PageChatMessages(l.ctx, &chat.PageChatMessagesReq{
-		SessionNo:  req.SessionNo,
+		SessionNo:  sessionNo,
 		SenderType: chat.ChatSenderType(req.SenderType),
 		Page: &common.PageReq{
 			Cursor: req.Cursor,

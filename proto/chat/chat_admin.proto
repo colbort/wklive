@@ -3,6 +3,7 @@ syntax = "proto3";
 package chat;
 
 import "proto/common/common.proto";
+import "proto/chat/chat_app.proto";
 import "proto/chat/enum.proto";
 import "proto/chat/model.proto";
 
@@ -141,6 +142,36 @@ service ChatAdmin {
 
   // 删除工单
   rpc DeleteChatWorkOrder(DeleteChatWorkOrderReq) returns (AdminCommonResp);
+
+  // 订阅客服消息事件流
+  rpc SubscribeStream(ChatSubscribeRequest) returns (stream ChatMessageEvent);
+
+  // 发布客服消息事件
+  rpc PublishChatEvent(PublishChatEventReq) returns (PublishChatEventResp);
+
+  // 创建或更新游客临时会话
+  rpc UpsertTransientChatSession(UpsertTransientChatSessionReq)
+      returns (AppChatSessionResp);
+
+  // 删除游客临时会话和消息
+  rpc DeleteTransientChatSession(DeleteTransientChatSessionReq)
+      returns (DeleteTransientChatSessionResp);
+
+  // 查询游客临时会话
+  rpc GetTransientChatSession(GetTransientChatSessionReq)
+      returns (AppChatSessionResp);
+
+  // 分页查询游客临时会话
+  rpc PageTransientChatSessions(PageTransientChatSessionsReq)
+      returns (PageTransientChatSessionsResp);
+
+  // 追加游客临时消息并更新会话摘要
+  rpc AppendTransientChatMessage(AppendTransientChatMessageReq)
+      returns (AppChatMessageResp);
+
+  // 查询游客临时消息
+  rpc ListTransientChatMessages(ListTransientChatMessagesReq)
+      returns (ListChatMessagesResp);
 }
 
 message AdminCommonResp { common.RespBase base = 1; }

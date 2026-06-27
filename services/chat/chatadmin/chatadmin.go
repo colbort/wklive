@@ -158,6 +158,22 @@ type (
 		PageChatWorkOrders(ctx context.Context, in *PageChatWorkOrdersReq, opts ...grpc.CallOption) (*PageChatWorkOrdersResp, error)
 		// 删除工单
 		DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 订阅客服消息事件流
+		SubscribeStream(ctx context.Context, in *ChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatAdmin_SubscribeStreamClient, error)
+		// 发布客服消息事件
+		PublishChatEvent(ctx context.Context, in *PublishChatEventReq, opts ...grpc.CallOption) (*PublishChatEventResp, error)
+		// 创建或更新游客临时会话
+		UpsertTransientChatSession(ctx context.Context, in *UpsertTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+		// 删除游客临时会话和消息
+		DeleteTransientChatSession(ctx context.Context, in *DeleteTransientChatSessionReq, opts ...grpc.CallOption) (*DeleteTransientChatSessionResp, error)
+		// 查询游客临时会话
+		GetTransientChatSession(ctx context.Context, in *GetTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+		// 分页查询游客临时会话
+		PageTransientChatSessions(ctx context.Context, in *PageTransientChatSessionsReq, opts ...grpc.CallOption) (*PageTransientChatSessionsResp, error)
+		// 追加游客临时消息并更新会话摘要
+		AppendTransientChatMessage(ctx context.Context, in *AppendTransientChatMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error)
+		// 查询游客临时消息
+		ListTransientChatMessages(ctx context.Context, in *ListTransientChatMessagesReq, opts ...grpc.CallOption) (*ListChatMessagesResp, error)
 	}
 
 	defaultChatAdmin struct {
@@ -409,4 +425,52 @@ func (m *defaultChatAdmin) PageChatWorkOrders(ctx context.Context, in *PageChatW
 func (m *defaultChatAdmin) DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.DeleteChatWorkOrder(ctx, in, opts...)
+}
+
+// 订阅客服消息事件流
+func (m *defaultChatAdmin) SubscribeStream(ctx context.Context, in *ChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatAdmin_SubscribeStreamClient, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.SubscribeStream(ctx, in, opts...)
+}
+
+// 发布客服消息事件
+func (m *defaultChatAdmin) PublishChatEvent(ctx context.Context, in *PublishChatEventReq, opts ...grpc.CallOption) (*PublishChatEventResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.PublishChatEvent(ctx, in, opts...)
+}
+
+// 创建或更新游客临时会话
+func (m *defaultChatAdmin) UpsertTransientChatSession(ctx context.Context, in *UpsertTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.UpsertTransientChatSession(ctx, in, opts...)
+}
+
+// 删除游客临时会话和消息
+func (m *defaultChatAdmin) DeleteTransientChatSession(ctx context.Context, in *DeleteTransientChatSessionReq, opts ...grpc.CallOption) (*DeleteTransientChatSessionResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.DeleteTransientChatSession(ctx, in, opts...)
+}
+
+// 查询游客临时会话
+func (m *defaultChatAdmin) GetTransientChatSession(ctx context.Context, in *GetTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.GetTransientChatSession(ctx, in, opts...)
+}
+
+// 分页查询游客临时会话
+func (m *defaultChatAdmin) PageTransientChatSessions(ctx context.Context, in *PageTransientChatSessionsReq, opts ...grpc.CallOption) (*PageTransientChatSessionsResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.PageTransientChatSessions(ctx, in, opts...)
+}
+
+// 追加游客临时消息并更新会话摘要
+func (m *defaultChatAdmin) AppendTransientChatMessage(ctx context.Context, in *AppendTransientChatMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.AppendTransientChatMessage(ctx, in, opts...)
+}
+
+// 查询游客临时消息
+func (m *defaultChatAdmin) ListTransientChatMessages(ctx context.Context, in *ListTransientChatMessagesReq, opts ...grpc.CallOption) (*ListChatMessagesResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.ListTransientChatMessages(ctx, in, opts...)
 }

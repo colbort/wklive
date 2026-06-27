@@ -27,7 +27,6 @@ type InboundEvent struct {
 }
 
 type Connection struct {
-	Hub        *Hub
 	Conn       *websocket.Conn
 	Send       chan []byte
 	UserId     int64
@@ -39,9 +38,8 @@ type Connection struct {
 	OnClose    func(*Connection)
 }
 
-func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, username string, avatarUrl string, merchantId int64, sessionNo string, onMessage func(*Connection, InboundEvent), onClose func(*Connection)) *Connection {
+func NewConnection(conn *websocket.Conn, userId int64, username string, avatarUrl string, merchantId int64, sessionNo string, onMessage func(*Connection, InboundEvent), onClose func(*Connection)) *Connection {
 	return &Connection{
-		Hub:        hub,
 		Conn:       conn,
 		Send:       make(chan []byte, 32),
 		UserId:     userId,
@@ -54,98 +52,8 @@ func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, username string
 	}
 }
 
-func (c *Connection) Match(message *chat.ChatMessage) bool {
-	if message == nil {
-		return false
-	}
-
-	// 新版 ChatMessage 不再直接携带 merchant_id/user_id，用户侧 WS 主要按 session_no 精准匹配。
-	if c.SessionNo != "" {
-		return message.GetSessionNo() == c.SessionNo
-	}
-
-	// 兜底：没有 session_no 时，按 sender / receiver 的用户 ID 匹配。
-	if c.UserId > 0 {
-		if message.GetSender() != nil && message.GetSender().GetId() == c.UserId {
-			return true
-		}
-		if message.GetReceiver() != nil && message.GetReceiver().GetId() == c.UserId {
-			return true
-		}
-	}
-	return false
-}
-
-func (c *Connection) MatchEvent(event *chat.ChatMessageEvent) bool {
-	if event == nil {
-		return false
-	}
-	if event.GetData() != nil && c.Match(event.GetData()) {
-		return true
-	}
-	if event.GetSession() != nil && c.matchSession(event.GetSession()) {
-		return true
-	}
-	if event.GetSessionEvent() != nil && c.matchSessionEvent(event.GetSessionEvent()) {
-		return true
-	}
-	if event.GetQueue() != nil && c.matchQueue(event.GetQueue()) {
-		return true
-	}
-	return false
-}
-
-func (c *Connection) matchSession(session *chat.ChatSession) bool {
-	if session == nil {
-		return false
-	}
-	if c.MerchantId > 0 && session.MerchantId != c.MerchantId {
-		return false
-	}
-	if c.SessionNo != "" && session.SessionNo != c.SessionNo {
-		return false
-	}
-	if c.SessionNo == "" && c.UserId > 0 && session.UserId != c.UserId {
-		return false
-	}
-	return true
-}
-
-func (c *Connection) matchSessionEvent(event *chat.ChatSessionEvent) bool {
-	if event == nil {
-		return false
-	}
-	if c.MerchantId > 0 && event.MerchantId != c.MerchantId {
-		return false
-	}
-	if c.SessionNo != "" && event.SessionNo != c.SessionNo {
-		return false
-	}
-	if c.SessionNo == "" && c.UserId > 0 && event.UserId != c.UserId {
-		return false
-	}
-	return true
-}
-
-func (c *Connection) matchQueue(queue *chat.ChatQueueInfo) bool {
-	if queue == nil {
-		return false
-	}
-	if c.MerchantId > 0 && queue.MerchantId != c.MerchantId {
-		return false
-	}
-	if c.SessionNo != "" && queue.SessionNo != c.SessionNo {
-		return false
-	}
-	if c.SessionNo == "" && c.UserId > 0 && queue.UserId != c.UserId {
-		return false
-	}
-	return true
-}
-
 func (c *Connection) ReadPump() {
 	defer func() {
-		c.Hub.Unregister(c)
 		if c.OnClose != nil {
 			c.OnClose(c)
 		}

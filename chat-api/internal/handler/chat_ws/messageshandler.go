@@ -46,17 +46,8 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		} else {
 			logx.Infof("chat ws identity resolved by chatToken, merchantId=%d userId=%d nickname=%s", claims.MerchantId, claims.UserId, nickname)
 		}
-		sessionNo := strings.TrimSpace(claims.SessionNo)
-		if claims.IsGuest && sessionNo == "" {
-			ctx := contextWithChatIdentity(r.Context(), claims.MerchantId, claims.UserId)
-			sessionNo, err = svcCtx.GuestSessionNo(ctx, claims.MerchantId, claims.UserId, legacyGuestSessionTTL)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-		}
 		req := types.ChatWSMessagesReq{
-			SessionNo:  sessionNo,
+			SessionNo:  "",
 			MerchantId: claims.MerchantId,
 			UserId:     claims.UserId,
 			Nickname:   nickname,

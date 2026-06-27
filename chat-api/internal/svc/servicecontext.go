@@ -11,13 +11,10 @@ import (
 
 	"chat-api/internal/config"
 	"chat-api/internal/middleware"
-	"chat-api/internal/ws"
 	common "wklive/common/middleware"
 	"wklive/common/utils"
 	"wklive/proto/chat"
 
-	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
@@ -29,8 +26,6 @@ type ServiceContext struct {
 	UserRateLimit  rest.Middleware
 	HeaderIdentity rest.Middleware
 	ChatAppCli     chat.ChatAppClient
-	ChatMessageHub *ws.Hub
-	BusRedis       *redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -58,37 +53,25 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		return invoker(ctx, method, req, reply, cc, opts...)
 	})
 	chatCli := zrpc.MustNewClient(c.ChatRpc, options)
-	chatMessageHub := ws.NewHub()
-	var chatBusRedis *redis.Redis
-	go chatMessageHub.Run()
-	if c.RedisConf.Host != "" {
-		rds, err := redis.NewRedis(c.RedisConf)
-		if err != nil {
-			logx.Errorf("chat api redis init failed: %v", err)
-		} else {
-			chatBusRedis = rds
-		}
-		go ws.SubscribeRedis(context.Background(), c.RedisConf, chatMessageHub)
-	} else {
-		logx.Info("chat api redis is not configured, skip message subscription")
-	}
 
 	return &ServiceContext{
 		Config:         c,
 		UserRateLimit:  middleware.NewUserRateLimitMiddleware().Handle,
 		HeaderIdentity: common.NewHeaderMiddleware().Handle,
 		ChatAppCli:     chat.NewChatAppClient(chatCli.Conn()),
-		ChatMessageHub: chatMessageHub,
-		BusRedis:       chatBusRedis,
 	}
 }
 
 func (s *ServiceContext) GuestSessionNo(ctx context.Context, merchantId, userId, ttlSeconds int64) (string, error) {
-	key := fmt.Sprintf("chat:guest:session:%d:%d", merchantId, userId)
-	if s.BusRedis != nil {
-		sessionNo, err := s.BusRedis.GetCtx(ctx, key)
-		if err == nil && strings.TrimSpace(sessionNo) != "" {
-			return strings.TrimSpace(sessionNo), nil
+	pageResp, err := s.ChatAppCli.PageTransientChatSessions(ctx, &chat.PageTransientChatSessionsReq{
+		MerchantId: merchantId,
+		UserId:     userId,
+	})
+	if err == nil && pageResp.GetBase().GetCode() == 200 {
+		for _, session := range pageResp.GetData() {
+			if strings.TrimSpace(session.GetSessionNo()) != "" {
+				return strings.TrimSpace(session.GetSessionNo()), nil
+			}
 		}
 	}
 
@@ -103,10 +86,23 @@ func (s *ServiceContext) GuestSessionNo(ctx context.Context, merchantId, userId,
 	if sessionNo == "" {
 		return "", fmt.Errorf("sessionNo is empty")
 	}
-	if s.BusRedis != nil && ttlSeconds > 0 {
-		if err := s.BusRedis.SetexCtx(ctx, key, sessionNo, int(ttlSeconds)); err != nil {
-			logx.Errorf("cache guest chat session failed, merchantId=%d userId=%d sessionNo=%s err=%v", merchantId, userId, sessionNo, err)
-		}
+	upsertResp, err := s.ChatAppCli.UpsertTransientChatSession(ctx, &chat.UpsertTransientChatSessionReq{
+		Session: &chat.ChatSession{
+			SessionNo:  sessionNo,
+			MerchantId: merchantId,
+			UserId:     userId,
+			Source:     chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
+			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
+			Priority:   chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL,
+			IsGuest:    true,
+		},
+		TtlSeconds: ttlSeconds,
+	})
+	if err != nil {
+		return "", err
+	}
+	if upsertResp.GetBase().GetCode() != 200 {
+		return "", fmt.Errorf("%s", upsertResp.GetBase().GetMsg())
 	}
 	return sessionNo, nil
 }

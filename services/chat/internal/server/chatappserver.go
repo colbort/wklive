@@ -70,3 +70,51 @@ func (s *ChatAppServer) SubmitChatSatisfaction(ctx context.Context, in *chat.Sub
 	l := logic.NewSubmitChatSatisfactionLogic(ctx, s.svcCtx)
 	return l.SubmitChatSatisfaction(in)
 }
+
+// 订阅客服消息事件流
+func (s *ChatAppServer) SubscribeStream(in *chat.ChatSubscribeRequest, stream chat.ChatApp_SubscribeStreamServer) error {
+	l := logic.NewSubscribeStreamLogic(stream.Context(), s.svcCtx)
+	return l.SubscribeStream(in, stream)
+}
+
+// 发布客服消息事件
+func (s *ChatAppServer) PublishChatEvent(ctx context.Context, in *chat.PublishChatEventReq) (*chat.PublishChatEventResp, error) {
+	l := logic.NewPublishChatEventLogic(ctx, s.svcCtx)
+	return l.PublishChatEvent(in)
+}
+
+// 创建或更新游客临时会话
+func (s *ChatAppServer) UpsertTransientChatSession(ctx context.Context, in *chat.UpsertTransientChatSessionReq) (*chat.AppChatSessionResp, error) {
+	l := logic.NewUpsertTransientChatSessionLogic(ctx, s.svcCtx)
+	return l.UpsertTransientChatSession(in)
+}
+
+// 删除游客临时会话和消息
+func (s *ChatAppServer) DeleteTransientChatSession(ctx context.Context, in *chat.DeleteTransientChatSessionReq) (*chat.DeleteTransientChatSessionResp, error) {
+	l := logic.NewDeleteTransientChatSessionLogic(ctx, s.svcCtx)
+	return l.DeleteTransientChatSession(in)
+}
+
+// 查询游客临时会话
+func (s *ChatAppServer) GetTransientChatSession(ctx context.Context, in *chat.GetTransientChatSessionReq) (*chat.AppChatSessionResp, error) {
+	l := logic.NewGetTransientChatSessionLogic(ctx, s.svcCtx)
+	return l.GetTransientChatSession(in)
+}
+
+// 分页查询游客临时会话
+func (s *ChatAppServer) PageTransientChatSessions(ctx context.Context, in *chat.PageTransientChatSessionsReq) (*chat.PageTransientChatSessionsResp, error) {
+	l := logic.NewPageTransientChatSessionsLogic(ctx, s.svcCtx)
+	return l.PageTransientChatSessions(in)
+}
+
+// 追加游客临时消息并更新会话摘要
+func (s *ChatAppServer) AppendTransientChatMessage(ctx context.Context, in *chat.AppendTransientChatMessageReq) (*chat.AppChatMessageResp, error) {
+	l := logic.NewAppendTransientChatMessageLogic(ctx, s.svcCtx)
+	return l.AppendTransientChatMessage(in)
+}
+
+// 查询游客临时消息
+func (s *ChatAppServer) ListTransientChatMessages(ctx context.Context, in *chat.ListTransientChatMessagesReq) (*chat.ListChatMessagesResp, error) {
+	l := logic.NewListTransientChatMessagesLogic(ctx, s.svcCtx)
+	return l.ListTransientChatMessages(in)
+}

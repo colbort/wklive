@@ -4050,7 +4050,7 @@ var File_proto_chat_chat_admin_proto protoreflect.FileDescriptor
 
 const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\n" +
-	"\x1bproto/chat/chat_admin.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"7\n" +
+	"\x1bproto/chat/chat_admin.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x19proto/chat/chat_app.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"7\n" +
 	"\x0fAdminCommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"l\n" +
 	"\x11ChatAdminLoginReq\x12\x1a\n" +
@@ -4371,7 +4371,7 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x01(\v2\x12.chat.ChatCategoryR\x04data\"g\n" +
 	"\x16AdminChatWorkOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x01(\v2\x13.chat.ChatWorkOrderR\x04data2\x80\x18\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.chat.ChatWorkOrderR\x04data2\xd1\x1d\n" +
 	"\tChatAdmin\x12:\n" +
 	"\x05Login\x12\x17.chat.ChatAdminLoginReq\x1a\x18.chat.ChatAdminLoginResp\x129\n" +
 	"\x06Logout\x12\x18.chat.ChatAdminLogoutReq\x1a\x15.chat.AdminCommonResp\x12@\n" +
@@ -4412,7 +4412,15 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\x13HandleChatWorkOrder\x12\x1c.chat.HandleChatWorkOrderReq\x1a\x1c.chat.AdminChatWorkOrderResp\x12K\n" +
 	"\x10GetChatWorkOrder\x12\x19.chat.GetChatWorkOrderReq\x1a\x1c.chat.AdminChatWorkOrderResp\x12O\n" +
 	"\x12PageChatWorkOrders\x12\x1b.chat.PageChatWorkOrdersReq\x1a\x1c.chat.PageChatWorkOrdersResp\x12J\n" +
-	"\x13DeleteChatWorkOrder\x12\x1c.chat.DeleteChatWorkOrderReq\x1a\x15.chat.AdminCommonRespB\x18Z\x16wklive/proto/chat;chatb\x06proto3"
+	"\x13DeleteChatWorkOrder\x12\x1c.chat.DeleteChatWorkOrderReq\x1a\x15.chat.AdminCommonResp\x12G\n" +
+	"\x0fSubscribeStream\x12\x1a.chat.ChatSubscribeRequest\x1a\x16.chat.ChatMessageEvent0\x01\x12I\n" +
+	"\x10PublishChatEvent\x12\x19.chat.PublishChatEventReq\x1a\x1a.chat.PublishChatEventResp\x12[\n" +
+	"\x1aUpsertTransientChatSession\x12#.chat.UpsertTransientChatSessionReq\x1a\x18.chat.AppChatSessionResp\x12g\n" +
+	"\x1aDeleteTransientChatSession\x12#.chat.DeleteTransientChatSessionReq\x1a$.chat.DeleteTransientChatSessionResp\x12U\n" +
+	"\x17GetTransientChatSession\x12 .chat.GetTransientChatSessionReq\x1a\x18.chat.AppChatSessionResp\x12d\n" +
+	"\x19PageTransientChatSessions\x12\".chat.PageTransientChatSessionsReq\x1a#.chat.PageTransientChatSessionsResp\x12[\n" +
+	"\x1aAppendTransientChatMessage\x12#.chat.AppendTransientChatMessageReq\x1a\x18.chat.AppChatMessageResp\x12[\n" +
+	"\x19ListTransientChatMessages\x12\".chat.ListTransientChatMessagesReq\x1a\x1a.chat.ListChatMessagesRespB\x18Z\x16wklive/proto/chat;chatb\x06proto3"
 
 var (
 	file_proto_chat_chat_admin_proto_rawDescOnce sync.Once
@@ -4511,6 +4519,21 @@ var file_proto_chat_chat_admin_proto_goTypes = []any{
 	(*ChatQuickReply)(nil),                 // 80: chat.ChatQuickReply
 	(*ChatCategory)(nil),                   // 81: chat.ChatCategory
 	(*ChatWorkOrder)(nil),                  // 82: chat.ChatWorkOrder
+	(*ChatSubscribeRequest)(nil),           // 83: chat.ChatSubscribeRequest
+	(*PublishChatEventReq)(nil),            // 84: chat.PublishChatEventReq
+	(*UpsertTransientChatSessionReq)(nil),  // 85: chat.UpsertTransientChatSessionReq
+	(*DeleteTransientChatSessionReq)(nil),  // 86: chat.DeleteTransientChatSessionReq
+	(*GetTransientChatSessionReq)(nil),     // 87: chat.GetTransientChatSessionReq
+	(*PageTransientChatSessionsReq)(nil),   // 88: chat.PageTransientChatSessionsReq
+	(*AppendTransientChatMessageReq)(nil),  // 89: chat.AppendTransientChatMessageReq
+	(*ListTransientChatMessagesReq)(nil),   // 90: chat.ListTransientChatMessagesReq
+	(*ChatMessageEvent)(nil),               // 91: chat.ChatMessageEvent
+	(*PublishChatEventResp)(nil),           // 92: chat.PublishChatEventResp
+	(*AppChatSessionResp)(nil),             // 93: chat.AppChatSessionResp
+	(*DeleteTransientChatSessionResp)(nil), // 94: chat.DeleteTransientChatSessionResp
+	(*PageTransientChatSessionsResp)(nil),  // 95: chat.PageTransientChatSessionsResp
+	(*AppChatMessageResp)(nil),             // 96: chat.AppChatMessageResp
+	(*ListChatMessagesResp)(nil),           // 97: chat.ListChatMessagesResp
 }
 var file_proto_chat_chat_admin_proto_depIdxs = []int32{
 	62,  // 0: chat.AdminCommonResp.base:type_name -> common.RespBase
@@ -4630,48 +4653,64 @@ var file_proto_chat_chat_admin_proto_depIdxs = []int32{
 	42,  // 114: chat.ChatAdmin.GetChatWorkOrder:input_type -> chat.GetChatWorkOrderReq
 	43,  // 115: chat.ChatAdmin.PageChatWorkOrders:input_type -> chat.PageChatWorkOrdersReq
 	44,  // 116: chat.ChatAdmin.DeleteChatWorkOrder:input_type -> chat.DeleteChatWorkOrderReq
-	3,   // 117: chat.ChatAdmin.Login:output_type -> chat.ChatAdminLoginResp
-	0,   // 118: chat.ChatAdmin.Logout:output_type -> chat.AdminCommonResp
-	9,   // 119: chat.ChatAdmin.Profile:output_type -> chat.ChatAdminProfileResp
-	9,   // 120: chat.ChatAdmin.UpdateProfile:output_type -> chat.ChatAdminProfileResp
-	8,   // 121: chat.ChatAdmin.GetChatUserById:output_type -> chat.GetChatUserByIdResp
-	55,  // 122: chat.ChatAdmin.CreateChatGroup:output_type -> chat.AdminChatGroupResp
-	55,  // 123: chat.ChatAdmin.UpdateChatGroup:output_type -> chat.AdminChatGroupResp
-	55,  // 124: chat.ChatAdmin.GetChatGroup:output_type -> chat.AdminChatGroupResp
-	46,  // 125: chat.ChatAdmin.PageChatGroups:output_type -> chat.PageChatGroupsResp
-	0,   // 126: chat.ChatAdmin.DeleteChatGroup:output_type -> chat.AdminCommonResp
-	54,  // 127: chat.ChatAdmin.CreateChatAgent:output_type -> chat.AdminChatAgentResp
-	54,  // 128: chat.ChatAdmin.UpdateChatAgent:output_type -> chat.AdminChatAgentResp
-	54,  // 129: chat.ChatAdmin.UpdateChatAgentStatus:output_type -> chat.AdminChatAgentResp
-	54,  // 130: chat.ChatAdmin.GetChatAgent:output_type -> chat.AdminChatAgentResp
-	45,  // 131: chat.ChatAdmin.PageChatAgents:output_type -> chat.PageChatAgentsResp
-	47,  // 132: chat.ChatAdmin.PageChatSessions:output_type -> chat.PageChatSessionsResp
-	56,  // 133: chat.ChatAdmin.GetChatSession:output_type -> chat.AdminChatSessionResp
-	56,  // 134: chat.ChatAdmin.AcceptChatSession:output_type -> chat.AdminChatSessionResp
-	57,  // 135: chat.ChatAdmin.SendAgentMessage:output_type -> chat.AdminChatMessageResp
-	48,  // 136: chat.ChatAdmin.PageChatMessages:output_type -> chat.PageChatMessagesResp
-	58,  // 137: chat.ChatAdmin.MarkAgentMessagesRead:output_type -> chat.AdminMarkMessagesReadResp
-	56,  // 138: chat.ChatAdmin.CloseChatSession:output_type -> chat.AdminChatSessionResp
-	59,  // 139: chat.ChatAdmin.CreateChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
-	59,  // 140: chat.ChatAdmin.UpdateChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
-	59,  // 141: chat.ChatAdmin.GetChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
-	49,  // 142: chat.ChatAdmin.PageChatQuickReplies:output_type -> chat.PageChatQuickRepliesResp
-	50,  // 143: chat.ChatAdmin.ListEnabledChatQuickReplies:output_type -> chat.ListChatQuickRepliesResp
-	0,   // 144: chat.ChatAdmin.DeleteChatQuickReply:output_type -> chat.AdminCommonResp
-	60,  // 145: chat.ChatAdmin.CreateChatCategory:output_type -> chat.AdminChatCategoryResp
-	60,  // 146: chat.ChatAdmin.UpdateChatCategory:output_type -> chat.AdminChatCategoryResp
-	60,  // 147: chat.ChatAdmin.GetChatCategory:output_type -> chat.AdminChatCategoryResp
-	51,  // 148: chat.ChatAdmin.PageChatCategories:output_type -> chat.PageChatCategoriesResp
-	52,  // 149: chat.ChatAdmin.ListEnabledChatCategories:output_type -> chat.ListChatCategoriesResp
-	0,   // 150: chat.ChatAdmin.DeleteChatCategory:output_type -> chat.AdminCommonResp
-	61,  // 151: chat.ChatAdmin.CreateChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
-	61,  // 152: chat.ChatAdmin.UpdateChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
-	61,  // 153: chat.ChatAdmin.HandleChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
-	61,  // 154: chat.ChatAdmin.GetChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
-	53,  // 155: chat.ChatAdmin.PageChatWorkOrders:output_type -> chat.PageChatWorkOrdersResp
-	0,   // 156: chat.ChatAdmin.DeleteChatWorkOrder:output_type -> chat.AdminCommonResp
-	117, // [117:157] is the sub-list for method output_type
-	77,  // [77:117] is the sub-list for method input_type
+	83,  // 117: chat.ChatAdmin.SubscribeStream:input_type -> chat.ChatSubscribeRequest
+	84,  // 118: chat.ChatAdmin.PublishChatEvent:input_type -> chat.PublishChatEventReq
+	85,  // 119: chat.ChatAdmin.UpsertTransientChatSession:input_type -> chat.UpsertTransientChatSessionReq
+	86,  // 120: chat.ChatAdmin.DeleteTransientChatSession:input_type -> chat.DeleteTransientChatSessionReq
+	87,  // 121: chat.ChatAdmin.GetTransientChatSession:input_type -> chat.GetTransientChatSessionReq
+	88,  // 122: chat.ChatAdmin.PageTransientChatSessions:input_type -> chat.PageTransientChatSessionsReq
+	89,  // 123: chat.ChatAdmin.AppendTransientChatMessage:input_type -> chat.AppendTransientChatMessageReq
+	90,  // 124: chat.ChatAdmin.ListTransientChatMessages:input_type -> chat.ListTransientChatMessagesReq
+	3,   // 125: chat.ChatAdmin.Login:output_type -> chat.ChatAdminLoginResp
+	0,   // 126: chat.ChatAdmin.Logout:output_type -> chat.AdminCommonResp
+	9,   // 127: chat.ChatAdmin.Profile:output_type -> chat.ChatAdminProfileResp
+	9,   // 128: chat.ChatAdmin.UpdateProfile:output_type -> chat.ChatAdminProfileResp
+	8,   // 129: chat.ChatAdmin.GetChatUserById:output_type -> chat.GetChatUserByIdResp
+	55,  // 130: chat.ChatAdmin.CreateChatGroup:output_type -> chat.AdminChatGroupResp
+	55,  // 131: chat.ChatAdmin.UpdateChatGroup:output_type -> chat.AdminChatGroupResp
+	55,  // 132: chat.ChatAdmin.GetChatGroup:output_type -> chat.AdminChatGroupResp
+	46,  // 133: chat.ChatAdmin.PageChatGroups:output_type -> chat.PageChatGroupsResp
+	0,   // 134: chat.ChatAdmin.DeleteChatGroup:output_type -> chat.AdminCommonResp
+	54,  // 135: chat.ChatAdmin.CreateChatAgent:output_type -> chat.AdminChatAgentResp
+	54,  // 136: chat.ChatAdmin.UpdateChatAgent:output_type -> chat.AdminChatAgentResp
+	54,  // 137: chat.ChatAdmin.UpdateChatAgentStatus:output_type -> chat.AdminChatAgentResp
+	54,  // 138: chat.ChatAdmin.GetChatAgent:output_type -> chat.AdminChatAgentResp
+	45,  // 139: chat.ChatAdmin.PageChatAgents:output_type -> chat.PageChatAgentsResp
+	47,  // 140: chat.ChatAdmin.PageChatSessions:output_type -> chat.PageChatSessionsResp
+	56,  // 141: chat.ChatAdmin.GetChatSession:output_type -> chat.AdminChatSessionResp
+	56,  // 142: chat.ChatAdmin.AcceptChatSession:output_type -> chat.AdminChatSessionResp
+	57,  // 143: chat.ChatAdmin.SendAgentMessage:output_type -> chat.AdminChatMessageResp
+	48,  // 144: chat.ChatAdmin.PageChatMessages:output_type -> chat.PageChatMessagesResp
+	58,  // 145: chat.ChatAdmin.MarkAgentMessagesRead:output_type -> chat.AdminMarkMessagesReadResp
+	56,  // 146: chat.ChatAdmin.CloseChatSession:output_type -> chat.AdminChatSessionResp
+	59,  // 147: chat.ChatAdmin.CreateChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
+	59,  // 148: chat.ChatAdmin.UpdateChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
+	59,  // 149: chat.ChatAdmin.GetChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
+	49,  // 150: chat.ChatAdmin.PageChatQuickReplies:output_type -> chat.PageChatQuickRepliesResp
+	50,  // 151: chat.ChatAdmin.ListEnabledChatQuickReplies:output_type -> chat.ListChatQuickRepliesResp
+	0,   // 152: chat.ChatAdmin.DeleteChatQuickReply:output_type -> chat.AdminCommonResp
+	60,  // 153: chat.ChatAdmin.CreateChatCategory:output_type -> chat.AdminChatCategoryResp
+	60,  // 154: chat.ChatAdmin.UpdateChatCategory:output_type -> chat.AdminChatCategoryResp
+	60,  // 155: chat.ChatAdmin.GetChatCategory:output_type -> chat.AdminChatCategoryResp
+	51,  // 156: chat.ChatAdmin.PageChatCategories:output_type -> chat.PageChatCategoriesResp
+	52,  // 157: chat.ChatAdmin.ListEnabledChatCategories:output_type -> chat.ListChatCategoriesResp
+	0,   // 158: chat.ChatAdmin.DeleteChatCategory:output_type -> chat.AdminCommonResp
+	61,  // 159: chat.ChatAdmin.CreateChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
+	61,  // 160: chat.ChatAdmin.UpdateChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
+	61,  // 161: chat.ChatAdmin.HandleChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
+	61,  // 162: chat.ChatAdmin.GetChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
+	53,  // 163: chat.ChatAdmin.PageChatWorkOrders:output_type -> chat.PageChatWorkOrdersResp
+	0,   // 164: chat.ChatAdmin.DeleteChatWorkOrder:output_type -> chat.AdminCommonResp
+	91,  // 165: chat.ChatAdmin.SubscribeStream:output_type -> chat.ChatMessageEvent
+	92,  // 166: chat.ChatAdmin.PublishChatEvent:output_type -> chat.PublishChatEventResp
+	93,  // 167: chat.ChatAdmin.UpsertTransientChatSession:output_type -> chat.AppChatSessionResp
+	94,  // 168: chat.ChatAdmin.DeleteTransientChatSession:output_type -> chat.DeleteTransientChatSessionResp
+	93,  // 169: chat.ChatAdmin.GetTransientChatSession:output_type -> chat.AppChatSessionResp
+	95,  // 170: chat.ChatAdmin.PageTransientChatSessions:output_type -> chat.PageTransientChatSessionsResp
+	96,  // 171: chat.ChatAdmin.AppendTransientChatMessage:output_type -> chat.AppChatMessageResp
+	97,  // 172: chat.ChatAdmin.ListTransientChatMessages:output_type -> chat.ListChatMessagesResp
+	125, // [125:173] is the sub-list for method output_type
+	77,  // [77:125] is the sub-list for method input_type
 	77,  // [77:77] is the sub-list for extension type_name
 	77,  // [77:77] is the sub-list for extension extendee
 	0,   // [0:77] is the sub-list for field type_name
@@ -4682,6 +4721,7 @@ func file_proto_chat_chat_admin_proto_init() {
 	if File_proto_chat_chat_admin_proto != nil {
 		return
 	}
+	file_proto_chat_chat_app_proto_init()
 	file_proto_chat_enum_proto_init()
 	file_proto_chat_model_proto_init()
 	type x struct{}

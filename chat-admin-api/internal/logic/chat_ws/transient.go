@@ -11,10 +11,7 @@ import (
 	"time"
 
 	"chat-admin-api/internal/svc"
-	"chat-admin-api/internal/ws"
 	"wklive/proto/chat"
-
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func newTransientAgentMessage(_ int64, sessionNo string, userId int64, agentId int64, senderNickname string, data sendAgentMessagePayload) *chat.ChatMessage {
@@ -75,13 +72,13 @@ func newTransientSystemMessageWithType(merchantId int64, sessionNo string, userI
 	return msg
 }
 
-func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, msg *chat.ChatMessage) error {
-	return publishTransientEvent(ctx, svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, msg)
+func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, merchantId int64, msg *chat.ChatMessage) error {
+	return publishTransientEvent(ctx, svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, merchantId, msg)
 }
 
-func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType chat.ChatEventType, msg *chat.ChatMessage) error {
-	if svcCtx.BusRedis == nil {
-		return fmt.Errorf("chat redis is not configured")
+func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType chat.ChatEventType, merchantId int64, msg *chat.ChatMessage) error {
+	if svcCtx == nil || svcCtx.ChatAdminCli == nil {
+		return fmt.Errorf("chat admin client is not configured")
 	}
 	event := &chat.ChatMessageEvent{
 		Type:      eventType,
@@ -89,7 +86,7 @@ func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, even
 		CreatedAt: time.Now().UnixMilli(),
 	}
 	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED {
-		merchantId, userId := transientMessageSessionIdentity(msg, svcCtx)
+		userId := transientMessageSessionUserId(ctx, msg, merchantId, svcCtx)
 		event.SessionEvent = &chat.ChatSessionEvent{
 			SessionNo:  msg.GetSessionNo(),
 			MerchantId: merchantId,
@@ -100,12 +97,14 @@ func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, even
 			CreatedAt:  event.CreatedAt,
 		}
 	}
-	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	resp, err := svcCtx.ChatAdminCli.PublishChatEvent(ctx, &chat.PublishChatEventReq{Event: event})
 	if err != nil {
 		return err
 	}
-	_, err = svcCtx.BusRedis.PublishCtx(ctx, chat.ChatMessageChannel, string(payload))
-	return err
+	if resp.GetBase().GetCode() != 200 {
+		return fmt.Errorf("%s", resp.GetBase().GetMsg())
+	}
+	return nil
 }
 
 func transientExtra(payload map[string]interface{}) string {
@@ -116,17 +115,18 @@ func transientExtra(payload map[string]interface{}) string {
 	return string(bs)
 }
 
-func transientMessageSessionIdentity(msg *chat.ChatMessage, svcCtx *svc.ServiceContext) (int64, int64) {
-	if svcCtx == nil || svcCtx.ChatMessageHub == nil || msg == nil {
-		return 0, 0
+func transientMessageSessionUserId(ctx context.Context, msg *chat.ChatMessage, merchantId int64, svcCtx *svc.ServiceContext) int64 {
+	if svcCtx == nil || svcCtx.ChatAdminCli == nil || msg == nil || merchantId <= 0 {
+		return 0
 	}
-	sessions := svcCtx.ChatMessageHub.ListTransientSessions(ws.TransientSessionFilter{})
-	for _, session := range sessions {
-		if session.GetSessionNo() == msg.GetSessionNo() {
-			return session.GetMerchantId(), session.GetUserId()
-		}
+	resp, err := svcCtx.ChatAdminCli.GetTransientChatSession(ctx, &chat.GetTransientChatSessionReq{
+		MerchantId: merchantId,
+		SessionNo:  msg.GetSessionNo(),
+	})
+	if err != nil || resp.GetBase().GetCode() != 200 || resp.GetData() == nil {
+		return 0
 	}
-	return 0, 0
+	return resp.GetData().GetUserId()
 }
 
 func int64FromString(value string) int64 {
