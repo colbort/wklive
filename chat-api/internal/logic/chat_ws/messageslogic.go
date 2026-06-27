@@ -24,7 +24,6 @@ const (
 	guestUsername      = "guest"
 	systemNickname     = "系统"
 	successCode        = 200
-	guestSessionTTL    = int64(24 * 60 * 60)
 )
 
 type MessagesLogic struct {
@@ -56,13 +55,18 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		SessionNo:  req.SessionNo,
 	})
 	if err != nil {
-		logx.Errorf("open chat ws persistent session failed, merchantId=%d userId=%d err=%v", req.MerchantId, req.UserId, err)
+		logx.Errorf("open chat ws session failed, merchantId=%d userId=%d guest=%t err=%v", req.MerchantId, req.UserId, req.IsGuest, err)
 		_ = conn.Close()
 		return
 	}
-	sessionNo := resp.GetData().GetSessionNo()
+	if resp.GetBase().GetCode() != successCode {
+		logx.Errorf("open chat ws session rejected, merchantId=%d userId=%d guest=%t code=%d msg=%s", req.MerchantId, req.UserId, req.IsGuest, resp.GetBase().GetCode(), resp.GetBase().GetMsg())
+		_ = conn.Close()
+		return
+	}
+	sessionNo := strings.TrimSpace(resp.GetData().GetSessionNo())
 	if sessionNo == "" {
-		logx.Errorf("session is empty, merchantId=%d userId=%d err=%v", req.MerchantId, req.UserId, err)
+		logx.Errorf("session is empty, merchantId=%d userId=%d guest=%t", req.MerchantId, req.UserId, req.IsGuest)
 		_ = conn.Close()
 		return
 	}
@@ -82,12 +86,8 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		},
 	)
 
-	// 先给 chat-ui 返回连接成功和排队信息。
+	// 先给 chat-ui 返回连接成功。排队和用户上线事件由 OpenChatSession RPC 发布。
 	l.sendConnectedEvent(client)
-	l.sendQueueEvent(client, chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN, "正在排队，客服会尽快接入。")
-
-	// 再通知后台：用户上线，进入待接待列表。
-	l.publishUserOnlineEvent(l.ctx, client, req.IsGuest)
 
 	// 读 RPC 消息
 	go l.subscribeStream(streamCtx, client, req.IsGuest)
@@ -140,7 +140,7 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 	if conn == nil || l.svcCtx == nil || l.svcCtx.ChatAppCli == nil {
 		return
 	}
-	stream, err := l.svcCtx.ChatAppCli.SubscribeStream(ctx, &chat.ChatSubscribeRequest{
+	stream, err := l.svcCtx.ChatAppCli.AppSubscribeStream(ctx, &chat.AppChatSubscribeRequest{
 		MerchantId: conn.MerchantId,
 		UserId:     conn.UserId,
 		SessionNo:  conn.SessionNo,
@@ -506,73 +506,8 @@ func (l *MessagesLogic) publishUserLeaveEvent(ctx context.Context, conn *ws.Conn
 	return l.publishChatEvent(ctx, event)
 }
 
-func (l *MessagesLogic) sendQueueEvent(conn *ws.Connection, eventType chat.ChatEventType, message string) {
-	if conn == nil {
-		return
-	}
-	now := time.Now().UnixMilli()
-	event := &chat.ChatMessageEvent{
-		Type:      eventType,
-		CreatedAt: now,
-		Data:      buildSystemChatMessage(conn, eventType, message),
-		Queue: &chat.ChatQueueInfo{
-			MerchantId:  conn.MerchantId,
-			SessionNo:   conn.SessionNo,
-			UserId:      conn.UserId,
-			Message:     message,
-			UpdateTimes: now,
-		},
-	}
-	conn.SendEvent(event)
-}
-
-func (l *MessagesLogic) publishUserOnlineEvent(ctx context.Context, conn *ws.Connection, isGuest bool) {
-	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
-		logx.Errorf("")
-		return
-	}
-
-	now := time.Now().UnixMilli()
-	session := &chat.ChatSession{
-		SessionNo:       conn.SessionNo,
-		MerchantId:      conn.MerchantId,
-		UserId:          conn.UserId,
-		Source:          chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
-		Status:          chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
-		Priority:        chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL,
-		Title:           firstNonEmpty(conn.Username, guestUsername),
-		LastMessageTime: now,
-		CreateTimes:     now,
-		UpdateTimes:     now,
-		IsGuest:         isGuest,
-		AvatarUrl:       conn.AvatarUrl,
-	}
-	if isGuest {
-		if _, err := l.svcCtx.ChatAppCli.UpsertTransientChatSession(ctx, &chat.UpsertTransientChatSessionReq{Session: session}); err != nil {
-			logx.Errorf("upsert transient chat session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
-		}
-	}
-	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
-		CreatedAt: now,
-		Session:   session,
-		SessionEvent: &chat.ChatSessionEvent{
-			SessionNo:  conn.SessionNo,
-			MerchantId: conn.MerchantId,
-			UserId:     conn.UserId,
-			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
-			Message:    "用户进入客服，等待接待",
-			Session:    session,
-			CreatedAt:  now,
-		},
-	}
-	if err := l.publishChatEvent(ctx, event); err != nil {
-		logx.Errorf("publish chat user join event failed: %v", err)
-	}
-}
-
 func (l *MessagesLogic) publishChatEvent(ctx context.Context, event *chat.ChatMessageEvent) error {
-	resp, err := l.svcCtx.ChatAppCli.PublishChatEvent(ctx, &chat.PublishChatEventReq{Event: event})
+	resp, err := l.svcCtx.ChatAppCli.AppPublishChatEvent(ctx, &chat.AppPublishChatEventReq{Event: event})
 	if err != nil {
 		return err
 	}
@@ -589,7 +524,7 @@ func (l *MessagesLogic) appendTransientMessage(ctx context.Context, conn *ws.Con
 	if session == nil {
 		session = transientSessionFromConnection(conn)
 	}
-	resp, err := l.svcCtx.ChatAppCli.AppendTransientChatMessage(ctx, &chat.AppendTransientChatMessageReq{
+	resp, err := l.svcCtx.ChatAppCli.AppAppendTransientChatMessage(ctx, &chat.AppAppendTransientChatMessageReq{
 		MerchantId: conn.MerchantId,
 		Message:    msg,
 		Session:    session,
@@ -607,7 +542,7 @@ func (l *MessagesLogic) deleteTransientSession(ctx context.Context, conn *ws.Con
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		return nil
 	}
-	resp, err := l.svcCtx.ChatAppCli.DeleteTransientChatSession(ctx, &chat.DeleteTransientChatSessionReq{
+	resp, err := l.svcCtx.ChatAppCli.AppDeleteTransientChatSession(ctx, &chat.AppDeleteTransientChatSessionReq{
 		MerchantId: conn.MerchantId,
 		SessionNo:  conn.SessionNo,
 	})

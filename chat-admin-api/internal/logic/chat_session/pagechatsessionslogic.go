@@ -41,7 +41,7 @@ func (l *PageChatSessionsLogic) PageChatSessions(req *types.PageChatSessionsReq)
 		return resp, err
 	}
 
-	transientResp, err := l.svcCtx.ChatAdminCli.PageTransientChatSessions(l.ctx, &chat.PageTransientChatSessionsReq{
+	transientResp, err := l.svcCtx.ChatAdminCli.AdminPageTransientChatSessions(l.ctx, &chat.AdminPageTransientChatSessionsReq{
 		MerchantId: req.MerchantId,
 		UserId:     req.UserId,
 		AgentId:    req.AgentId,

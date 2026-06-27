@@ -99,7 +99,7 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 	if conn == nil || l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
 		return
 	}
-	stream, err := l.svcCtx.ChatAdminCli.SubscribeStream(ctx, &chat.ChatSubscribeRequest{
+	stream, err := l.svcCtx.ChatAdminCli.AdminSubscribeStream(ctx, &chat.AdminChatSubscribeRequest{
 		MerchantId: conn.MerchantId,
 		UserId:     conn.UserId,
 		AgentId:    conn.AgentId,
@@ -363,7 +363,7 @@ func (l *MessagesLogic) getTransientSession(ctx context.Context, merchantId int6
 	if l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil || merchantId <= 0 || strings.TrimSpace(sessionNo) == "" {
 		return nil, false
 	}
-	resp, err := l.svcCtx.ChatAdminCli.GetTransientChatSession(ctx, &chat.GetTransientChatSessionReq{
+	resp, err := l.svcCtx.ChatAdminCli.AdminGetTransientChatSession(ctx, &chat.AdminGetTransientChatSessionReq{
 		MerchantId: merchantId,
 		SessionNo:  strings.TrimSpace(sessionNo),
 	})
@@ -377,7 +377,7 @@ func (l *MessagesLogic) appendTransientMessage(ctx context.Context, merchantId i
 	if l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
 		return nil
 	}
-	resp, err := l.svcCtx.ChatAdminCli.AppendTransientChatMessage(ctx, &chat.AppendTransientChatMessageReq{
+	resp, err := l.svcCtx.ChatAdminCli.AdminAppendTransientChatMessage(ctx, &chat.AdminAppendTransientChatMessageReq{
 		MerchantId: merchantId,
 		Message:    msg,
 		Session:    session,
@@ -395,7 +395,7 @@ func (l *MessagesLogic) deleteTransientSession(ctx context.Context, merchantId i
 	if l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
 		return nil
 	}
-	resp, err := l.svcCtx.ChatAdminCli.DeleteTransientChatSession(ctx, &chat.DeleteTransientChatSessionReq{
+	resp, err := l.svcCtx.ChatAdminCli.AdminDeleteTransientChatSession(ctx, &chat.AdminDeleteTransientChatSessionReq{
 		MerchantId: merchantId,
 		SessionNo:  strings.TrimSpace(sessionNo),
 	})

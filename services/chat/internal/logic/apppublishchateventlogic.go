@@ -11,14 +11,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PublishChatEventLogic struct {
+type AppPublishChatEventLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPublishChatEventLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PublishChatEventLogic {
-	return &PublishChatEventLogic{
+func NewAppPublishChatEventLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AppPublishChatEventLogic {
+	return &AppPublishChatEventLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
@@ -26,9 +26,9 @@ func NewPublishChatEventLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 发布客服消息事件
-func (l *PublishChatEventLogic) PublishChatEvent(in *chat.PublishChatEventReq) (*chat.PublishChatEventResp, error) {
+func (l *AppPublishChatEventLogic) AppPublishChatEvent(in *chat.AppPublishChatEventReq) (*chat.AppPublishChatEventResp, error) {
 	if err := internal.PublishChatEvent(l.ctx, l.svcCtx, in.GetEvent()); err != nil {
-		return &chat.PublishChatEventResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.AppPublishChatEventResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.PublishChatEventResp{Base: helper.OkResp()}, nil
+	return &chat.AppPublishChatEventResp{Base: helper.OkResp()}, nil
 }

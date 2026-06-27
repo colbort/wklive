@@ -11,14 +11,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type AppendTransientChatMessageLogic struct {
+type AppAppendTransientChatMessageLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewAppendTransientChatMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AppendTransientChatMessageLogic {
-	return &AppendTransientChatMessageLogic{
+func NewAppAppendTransientChatMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AppAppendTransientChatMessageLogic {
+	return &AppAppendTransientChatMessageLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
@@ -26,7 +26,7 @@ func NewAppendTransientChatMessageLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 // 追加游客临时消息并更新会话摘要
-func (l *AppendTransientChatMessageLogic) AppendTransientChatMessage(in *chat.AppendTransientChatMessageReq) (*chat.AppChatMessageResp, error) {
+func (l *AppAppendTransientChatMessageLogic) AppAppendTransientChatMessage(in *chat.AppAppendTransientChatMessageReq) (*chat.AppChatMessageResp, error) {
 	msg, err := internal.AppendTransientMessage(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), in.GetMessage(), in.GetSession(), in.GetTtlSeconds())
 	if err != nil {
 		return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil

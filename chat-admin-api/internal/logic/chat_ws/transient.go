@@ -97,7 +97,7 @@ func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, even
 			CreatedAt:  event.CreatedAt,
 		}
 	}
-	resp, err := svcCtx.ChatAdminCli.PublishChatEvent(ctx, &chat.PublishChatEventReq{Event: event})
+	resp, err := svcCtx.ChatAdminCli.AdminPublishChatEvent(ctx, &chat.AdminPublishChatEventReq{Event: event})
 	if err != nil {
 		return err
 	}
@@ -119,7 +119,7 @@ func transientMessageSessionUserId(ctx context.Context, msg *chat.ChatMessage, m
 	if svcCtx == nil || svcCtx.ChatAdminCli == nil || msg == nil || merchantId <= 0 {
 		return 0
 	}
-	resp, err := svcCtx.ChatAdminCli.GetTransientChatSession(ctx, &chat.GetTransientChatSessionReq{
+	resp, err := svcCtx.ChatAdminCli.AdminGetTransientChatSession(ctx, &chat.AdminGetTransientChatSessionReq{
 		MerchantId: merchantId,
 		SessionNo:  msg.GetSessionNo(),
 	})

@@ -29,7 +29,7 @@ service ChatApp {
   rpc SendUserMessage(SendUserMessageReq) returns (AppChatMessageResp);
 
   // 查询会话消息
-  rpc ListMyChatMessages(ListMyChatMessagesReq) returns (ListChatMessagesResp);
+  rpc ListMyChatMessages(ListMyChatMessagesReq) returns (AppListChatMessagesResp);
 
   // 关闭我的会话
   rpc CloseMyChatSession(CloseMyChatSessionReq) returns (AppChatSessionResp);
@@ -39,34 +39,34 @@ service ChatApp {
       returns (AppChatSatisfactionResp);
 
   // 订阅客服消息事件流
-  rpc SubscribeStream(ChatSubscribeRequest) returns (stream ChatMessageEvent);
+  rpc AppSubscribeStream(AppChatSubscribeRequest) returns (stream ChatMessageEvent);
 
   // 发布客服消息事件
-  rpc PublishChatEvent(PublishChatEventReq) returns (PublishChatEventResp);
+  rpc AppPublishChatEvent(AppPublishChatEventReq) returns (AppPublishChatEventResp);
 
   // 创建或更新游客临时会话
-  rpc UpsertTransientChatSession(UpsertTransientChatSessionReq)
+  rpc AppUpsertTransientChatSession(AppUpsertTransientChatSessionReq)
       returns (AppChatSessionResp);
 
   // 删除游客临时会话和消息
-  rpc DeleteTransientChatSession(DeleteTransientChatSessionReq)
-      returns (DeleteTransientChatSessionResp);
+  rpc AppDeleteTransientChatSession(AppDeleteTransientChatSessionReq)
+      returns (AppDeleteTransientChatSessionResp);
 
   // 查询游客临时会话
-  rpc GetTransientChatSession(GetTransientChatSessionReq)
+  rpc AppGetTransientChatSession(AppGetTransientChatSessionReq)
       returns (AppChatSessionResp);
 
   // 分页查询游客临时会话
-  rpc PageTransientChatSessions(PageTransientChatSessionsReq)
-      returns (PageTransientChatSessionsResp);
+  rpc AppPageTransientChatSessions(AppPageTransientChatSessionsReq)
+      returns (AppPageTransientChatSessionsResp);
 
   // 追加游客临时消息并更新会话摘要
-  rpc AppendTransientChatMessage(AppendTransientChatMessageReq)
+  rpc AppAppendTransientChatMessage(AppAppendTransientChatMessageReq)
       returns (AppChatMessageResp);
 
   // 查询游客临时消息
-  rpc ListTransientChatMessages(ListTransientChatMessagesReq)
-      returns (ListChatMessagesResp);
+  rpc AppListTransientChatMessages(AppListTransientChatMessagesReq)
+      returns (AppListChatMessagesResp);
 }
 
 message AuthChatMerchantReq {
@@ -163,7 +163,7 @@ message SubmitChatSatisfactionReq {
   int64 user_id = 6;
 }
 
-message ChatSubscribeRequest {
+message AppChatSubscribeRequest {
   int64 merchant_id = 1;
   int64 user_id = 2;
   int64 agent_id = 3;
@@ -172,30 +172,30 @@ message ChatSubscribeRequest {
   bool admin = 6;
 }
 
-message PublishChatEventReq { ChatMessageEvent event = 1; }
+message AppPublishChatEventReq { ChatMessageEvent event = 1; }
 
-message PublishChatEventResp { common.RespBase base = 1; }
+message AppPublishChatEventResp { common.RespBase base = 1; }
 
-message UpsertTransientChatSessionReq {
+message AppUpsertTransientChatSessionReq {
   ChatSession session = 1;
   int64 ttl_seconds = 2; // 0 使用默认 TTL
 }
 
-message DeleteTransientChatSessionReq {
+message AppDeleteTransientChatSessionReq {
   int64 merchant_id = 1;
   string session_no = 2;
 }
 
-message DeleteTransientChatSessionResp {
+message AppDeleteTransientChatSessionResp {
   common.RespBase base = 1;
 }
 
-message GetTransientChatSessionReq {
+message AppGetTransientChatSessionReq {
   int64 merchant_id = 1;
   string session_no = 2;
 }
 
-message PageTransientChatSessionsReq {
+message AppPageTransientChatSessionsReq {
   int64 merchant_id = 1;
   int64 user_id = 2;
   int64 agent_id = 3;
@@ -203,26 +203,26 @@ message PageTransientChatSessionsReq {
   common.PageReq page = 5;
 }
 
-message PageTransientChatSessionsResp {
+message AppPageTransientChatSessionsResp {
   common.RespBase base = 1;
   repeated ChatSession data = 2;
 }
 
-message AppendTransientChatMessageReq {
+message AppAppendTransientChatMessageReq {
   int64 merchant_id = 1;
   ChatMessage message = 2;
   ChatSession session = 3; // 可选；用于补充/更新会话快照
   int64 ttl_seconds = 4;   // 0 使用默认 TTL
 }
 
-message ListTransientChatMessagesReq {
+message AppListTransientChatMessagesReq {
   int64 merchant_id = 1;
   string session_no = 2;
   ChatSenderType sender_type = 3;
   common.PageReq page = 4;
 }
 
-message ListChatMessagesResp {
+message AppListChatMessagesResp {
   common.RespBase base = 1;
   repeated ChatMessage data = 2;
 }

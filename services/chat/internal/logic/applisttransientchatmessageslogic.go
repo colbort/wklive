@@ -11,41 +11,40 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type PageTransientChatSessionsLogic struct {
+type AppListTransientChatMessagesLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewPageTransientChatSessionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PageTransientChatSessionsLogic {
-	return &PageTransientChatSessionsLogic{
+func NewAppListTransientChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AppListTransientChatMessagesLogic {
+	return &AppListTransientChatMessagesLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-// 分页查询游客临时会话
-func (l *PageTransientChatSessionsLogic) PageTransientChatSessions(in *chat.PageTransientChatSessionsReq) (*chat.PageTransientChatSessionsResp, error) {
+// 查询游客临时消息
+func (l *AppListTransientChatMessagesLogic) AppListTransientChatMessages(in *chat.AppListTransientChatMessagesReq) (*chat.AppListChatMessagesResp, error) {
 	var cursor, limit int64
 	if in.GetPage() != nil {
 		cursor = in.GetPage().GetCursor()
 		limit = in.GetPage().GetLimit()
 	}
-	list, hasNext, nextCursor, err := internal.PageTransientSessions(
+	list, hasNext, nextCursor, err := internal.ListTransientMessages(
 		l.ctx,
 		l.svcCtx.BusRedis,
 		in.GetMerchantId(),
-		in.GetUserId(),
-		in.GetAgentId(),
-		int64(in.GetStatus()),
+		in.GetSessionNo(),
+		int64(in.GetSenderType()),
 		cursor,
 		limit,
 	)
 	if err != nil {
-		return &chat.PageTransientChatSessionsResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.AppListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.PageTransientChatSessionsResp{
+	return &chat.AppListChatMessagesResp{
 		Base: helper.OkWithOthers(0, hasNext, cursor > 0, nextCursor, cursor),
 		Data: list,
 	}, nil

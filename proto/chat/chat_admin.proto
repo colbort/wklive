@@ -3,7 +3,6 @@ syntax = "proto3";
 package chat;
 
 import "proto/common/common.proto";
-import "proto/chat/chat_app.proto";
 import "proto/chat/enum.proto";
 import "proto/chat/model.proto";
 
@@ -144,37 +143,99 @@ service ChatAdmin {
   rpc DeleteChatWorkOrder(DeleteChatWorkOrderReq) returns (AdminCommonResp);
 
   // 订阅客服消息事件流
-  rpc SubscribeStream(ChatSubscribeRequest) returns (stream ChatMessageEvent);
+  rpc AdminSubscribeStream(AdminChatSubscribeRequest) returns (stream ChatMessageEvent);
 
   // 发布客服消息事件
-  rpc PublishChatEvent(PublishChatEventReq) returns (PublishChatEventResp);
+  rpc AdminPublishChatEvent(AdminPublishChatEventReq) returns (AdminPublishChatEventResp);
 
   // 创建或更新游客临时会话
-  rpc UpsertTransientChatSession(UpsertTransientChatSessionReq)
-      returns (AppChatSessionResp);
+  rpc AdminUpsertTransientChatSession(AdminUpsertTransientChatSessionReq)
+      returns (AdminChatSessionResp);
 
   // 删除游客临时会话和消息
-  rpc DeleteTransientChatSession(DeleteTransientChatSessionReq)
-      returns (DeleteTransientChatSessionResp);
+  rpc AdminDeleteTransientChatSession(AdminDeleteTransientChatSessionReq)
+      returns (AdminDeleteTransientChatSessionResp);
 
   // 查询游客临时会话
-  rpc GetTransientChatSession(GetTransientChatSessionReq)
-      returns (AppChatSessionResp);
+  rpc AdminGetTransientChatSession(AdminGetTransientChatSessionReq)
+      returns (AdminChatSessionResp);
 
   // 分页查询游客临时会话
-  rpc PageTransientChatSessions(PageTransientChatSessionsReq)
-      returns (PageTransientChatSessionsResp);
+  rpc AdminPageTransientChatSessions(AdminPageTransientChatSessionsReq)
+      returns (AdminPageTransientChatSessionsResp);
 
   // 追加游客临时消息并更新会话摘要
-  rpc AppendTransientChatMessage(AppendTransientChatMessageReq)
-      returns (AppChatMessageResp);
+  rpc AdminAppendTransientChatMessage(AdminAppendTransientChatMessageReq)
+      returns (AdminChatMessageResp);
 
   // 查询游客临时消息
-  rpc ListTransientChatMessages(ListTransientChatMessagesReq)
-      returns (ListChatMessagesResp);
+  rpc AdminListTransientChatMessages(AdminListTransientChatMessagesReq)
+      returns (AdminListChatMessagesResp);
 }
 
 message AdminCommonResp { common.RespBase base = 1; }
+
+message AdminChatSubscribeRequest {
+  int64 merchant_id = 1;
+  int64 user_id = 2;
+  int64 agent_id = 3;
+  string session_no = 4;
+  bool is_guest = 5;
+  bool admin = 6;
+}
+
+message AdminPublishChatEventReq { ChatMessageEvent event = 1; }
+
+message AdminPublishChatEventResp { common.RespBase base = 1; }
+
+message AdminUpsertTransientChatSessionReq {
+  ChatSession session = 1;
+  int64 ttl_seconds = 2;
+}
+
+message AdminDeleteTransientChatSessionReq {
+  int64 merchant_id = 1;
+  string session_no = 2;
+}
+
+message AdminDeleteTransientChatSessionResp { common.RespBase base = 1; }
+
+message AdminGetTransientChatSessionReq {
+  int64 merchant_id = 1;
+  string session_no = 2;
+}
+
+message AdminPageTransientChatSessionsReq {
+  int64 merchant_id = 1;
+  int64 user_id = 2;
+  int64 agent_id = 3;
+  ChatSessionStatus status = 4;
+  common.PageReq page = 5;
+}
+
+message AdminPageTransientChatSessionsResp {
+  common.RespBase base = 1;
+  repeated ChatSession data = 2;
+}
+
+message AdminAppendTransientChatMessageReq {
+  int64 merchant_id = 1;
+  ChatMessage message = 2;
+  ChatSession session = 3;
+  int64 ttl_seconds = 4;
+}
+
+message AdminListTransientChatMessagesReq {
+  int64 merchant_id = 1;
+  string session_no = 2;
+  ChatSenderType sender_type = 3;
+  common.PageReq page = 4;
+}
+
+message AdminListChatMessagesResp {
+  common.RespBase base = 1;
+  repeated ChatMessage data = 2;
+}
 
 message ChatAdminLoginReq {
   string username = 1;    // 登录账号

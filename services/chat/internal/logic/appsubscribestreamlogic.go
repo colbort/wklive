@@ -15,14 +15,14 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type SubscribeStreamLogic struct {
+type AppSubscribeStreamLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewSubscribeStreamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SubscribeStreamLogic {
-	return &SubscribeStreamLogic{
+func NewAppSubscribeStreamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AppSubscribeStreamLogic {
+	return &AppSubscribeStreamLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
@@ -30,14 +30,14 @@ func NewSubscribeStreamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 // 订阅客服消息事件流
-func (l *SubscribeStreamLogic) SubscribeStream(in *chat.ChatSubscribeRequest, stream chatEventStream) error {
+func (l *AppSubscribeStreamLogic) AppSubscribeStream(in *chat.AppChatSubscribeRequest, stream chat.ChatApp_AppSubscribeStreamServer) error {
 	if l.svcCtx == nil || l.svcCtx.BusRedis == nil {
 		return fmt.Errorf("chat redis is not configured")
 	}
 	return l.subscribeRedis(in, stream)
 }
 
-func (l *SubscribeStreamLogic) subscribeRedis(in *chat.ChatSubscribeRequest, stream chatEventStream) error {
+func (l *AppSubscribeStreamLogic) subscribeRedis(in *chat.AppChatSubscribeRequest, stream chatEventStream) error {
 	rds, err := redis.NewRedis(l.svcCtx.Config.Redis.RedisConf)
 	if err != nil {
 		return err
@@ -86,7 +86,7 @@ func (l *SubscribeStreamLogic) subscribeRedis(in *chat.ChatSubscribeRequest, str
 	}
 }
 
-func matchSubscribeEvent(req *chat.ChatSubscribeRequest, event *chat.ChatMessageEvent) bool {
+func matchSubscribeEvent(req *chat.AppChatSubscribeRequest, event *chat.ChatMessageEvent) bool {
 	if req == nil || event == nil {
 		return false
 	}
@@ -121,7 +121,7 @@ func shouldBroadcastToUser(event *chat.ChatMessageEvent) bool {
 	}
 }
 
-func matchSubscribeMessage(req *chat.ChatSubscribeRequest, msg *chat.ChatMessage) bool {
+func matchSubscribeMessage(req *chat.AppChatSubscribeRequest, msg *chat.ChatMessage) bool {
 	if msg == nil {
 		return false
 	}
@@ -154,7 +154,7 @@ func matchMessageUser(userId int64, msg *chat.ChatMessage) bool {
 	return false
 }
 
-func matchSubscribeSession(req *chat.ChatSubscribeRequest, session *chat.ChatSession) bool {
+func matchSubscribeSession(req *chat.AppChatSubscribeRequest, session *chat.ChatSession) bool {
 	if session == nil {
 		return false
 	}
@@ -176,7 +176,7 @@ func matchSubscribeSession(req *chat.ChatSubscribeRequest, session *chat.ChatSes
 	return true
 }
 
-func matchSubscribeSessionEvent(req *chat.ChatSubscribeRequest, event *chat.ChatSessionEvent) bool {
+func matchSubscribeSessionEvent(req *chat.AppChatSubscribeRequest, event *chat.ChatSessionEvent) bool {
 	if event == nil {
 		return false
 	}
@@ -198,7 +198,7 @@ func matchSubscribeSessionEvent(req *chat.ChatSubscribeRequest, event *chat.Chat
 	return true
 }
 
-func matchSubscribeQueue(req *chat.ChatSubscribeRequest, queue *chat.ChatQueueInfo) bool {
+func matchSubscribeQueue(req *chat.AppChatSubscribeRequest, queue *chat.ChatQueueInfo) bool {
 	if queue == nil {
 		return false
 	}
@@ -214,7 +214,7 @@ func matchSubscribeQueue(req *chat.ChatSubscribeRequest, queue *chat.ChatQueueIn
 	return true
 }
 
-func matchSubscribeAgent(req *chat.ChatSubscribeRequest, agent *chat.ChatAgent) bool {
+func matchSubscribeAgent(req *chat.AppChatSubscribeRequest, agent *chat.ChatAgent) bool {
 	if agent == nil {
 		return false
 	}

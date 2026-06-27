@@ -32,12 +32,12 @@ func NewPageChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *PageChatMessagesLogic) PageChatMessages(req *types.PageChatMessagesReq) (resp *types.PageChatMessagesResp, err error) {
 	sessionNo := strings.TrimSpace(req.SessionNo)
 	if l.svcCtx.ChatAdminCli != nil {
-		transientSession, err := l.svcCtx.ChatAdminCli.GetTransientChatSession(l.ctx, &chat.GetTransientChatSessionReq{
+		transientSession, err := l.svcCtx.ChatAdminCli.AdminGetTransientChatSession(l.ctx, &chat.AdminGetTransientChatSessionReq{
 			MerchantId: req.MerchantId,
 			SessionNo:  sessionNo,
 		})
 		if err == nil && transientSession.GetBase().GetCode() == 200 {
-			rpcResp, err := l.svcCtx.ChatAdminCli.ListTransientChatMessages(l.ctx, &chat.ListTransientChatMessagesReq{
+			rpcResp, err := l.svcCtx.ChatAdminCli.AdminListTransientChatMessages(l.ctx, &chat.AdminListTransientChatMessagesReq{
 				MerchantId: req.MerchantId,
 				SessionNo:  sessionNo,
 				SenderType: chat.ChatSenderType(req.SenderType),

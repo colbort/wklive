@@ -11,14 +11,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetTransientChatSessionLogic struct {
+type AppGetTransientChatSessionLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetTransientChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTransientChatSessionLogic {
-	return &GetTransientChatSessionLogic{
+func NewAppGetTransientChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AppGetTransientChatSessionLogic {
+	return &AppGetTransientChatSessionLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
@@ -26,7 +26,7 @@ func NewGetTransientChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 // 查询游客临时会话
-func (l *GetTransientChatSessionLogic) GetTransientChatSession(in *chat.GetTransientChatSessionReq) (*chat.AppChatSessionResp, error) {
+func (l *AppGetTransientChatSessionLogic) AppGetTransientChatSession(in *chat.AppGetTransientChatSessionReq) (*chat.AppChatSessionResp, error) {
 	session, err := internal.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), in.GetSessionNo())
 	if err != nil {
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(404, "transient chat session not found")}, nil

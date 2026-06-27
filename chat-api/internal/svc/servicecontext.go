@@ -63,7 +63,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 }
 
 func (s *ServiceContext) GuestSessionNo(ctx context.Context, merchantId, userId, ttlSeconds int64) (string, error) {
-	pageResp, err := s.ChatAppCli.PageTransientChatSessions(ctx, &chat.PageTransientChatSessionsReq{
+	pageResp, err := s.ChatAppCli.AppPageTransientChatSessions(ctx, &chat.AppPageTransientChatSessionsReq{
 		MerchantId: merchantId,
 		UserId:     userId,
 	})
@@ -86,7 +86,7 @@ func (s *ServiceContext) GuestSessionNo(ctx context.Context, merchantId, userId,
 	if sessionNo == "" {
 		return "", fmt.Errorf("sessionNo is empty")
 	}
-	upsertResp, err := s.ChatAppCli.UpsertTransientChatSession(ctx, &chat.UpsertTransientChatSessionReq{
+	upsertResp, err := s.ChatAppCli.AppUpsertTransientChatSession(ctx, &chat.AppUpsertTransientChatSessionReq{
 		Session: &chat.ChatSession{
 			SessionNo:  sessionNo,
 			MerchantId: merchantId,
