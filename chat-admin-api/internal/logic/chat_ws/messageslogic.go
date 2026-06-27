@@ -124,8 +124,8 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 			}
 			return
 		}
-		if event.GetEventType() == chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN && event.GetSessionEvent().GetSession() != nil {
-			conn.SetChatSession(event.GetSessionEvent().GetSession())
+		if event.GetEventType() == chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN && event.GetSession() != nil {
+			conn.SetChatSession(event.GetSession())
 		}
 		conn.SendEvent(event)
 	}

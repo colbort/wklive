@@ -99,13 +99,13 @@ func matchSubscribeEvent(req ChatSubscribeRequest, event *chat.ChatMessageEvent,
 	if event.GetMessage() != nil && matchSubscribeMessage(req, event.GetMessage(), admin) {
 		return true
 	}
-	if event.GetSessionEvent() != nil && matchSubscribeSessionEvent(req, event.GetSessionEvent(), admin) {
-		return true
-	}
 	if event.GetSession() != nil && matchSubscribeSession(req, event.GetSession(), admin) {
 		return true
 	}
 	if event.GetQueue() != nil && matchSubscribeQueue(req, event.GetQueue(), admin) {
+		return true
+	}
+	if event.GetSatisfaction() != nil && matchSubscribeSatisfaction(req, event.GetSatisfaction(), admin) {
 		return true
 	}
 	if admin && event.GetAgent() != nil && matchSubscribeAgent(req, event.GetAgent()) {
@@ -179,28 +179,6 @@ func matchSubscribeSession(req ChatSubscribeRequest, session *chat.ChatSession, 
 	return true
 }
 
-func matchSubscribeSessionEvent(req ChatSubscribeRequest, event *chat.ChatSessionEvent, admin bool) bool {
-	if event == nil {
-		return false
-	}
-	if req.GetMerchantId() > 0 && event.GetMerchantId() != req.GetMerchantId() {
-		return false
-	}
-	if strings.TrimSpace(req.GetSessionNo()) != "" && event.GetSessionNo() != strings.TrimSpace(req.GetSessionNo()) {
-		return false
-	}
-	if !admin {
-		if strings.TrimSpace(req.GetSessionNo()) == "" && req.GetUserId() > 0 && event.GetUserId() != req.GetUserId() {
-			return false
-		}
-		return true
-	}
-	if req.GetAgentId() > 0 && event.GetAgentId() != req.GetAgentId() && event.GetAgentId() != 0 {
-		return false
-	}
-	return true
-}
-
 func matchSubscribeQueue(req ChatSubscribeRequest, queue *chat.ChatQueueInfo, admin bool) bool {
 	if queue == nil {
 		return false
@@ -212,6 +190,25 @@ func matchSubscribeQueue(req ChatSubscribeRequest, queue *chat.ChatQueueInfo, ad
 		return false
 	}
 	if !admin && strings.TrimSpace(req.GetSessionNo()) == "" && req.GetUserId() > 0 && queue.GetUserId() != req.GetUserId() {
+		return false
+	}
+	return true
+}
+
+func matchSubscribeSatisfaction(req ChatSubscribeRequest, satisfaction *chat.ChatSatisfaction, admin bool) bool {
+	if satisfaction == nil {
+		return false
+	}
+	if req.GetMerchantId() > 0 && satisfaction.GetMerchantId() != req.GetMerchantId() {
+		return false
+	}
+	if strings.TrimSpace(req.GetSessionNo()) != "" && satisfaction.GetSessionNo() != strings.TrimSpace(req.GetSessionNo()) {
+		return false
+	}
+	if !admin && strings.TrimSpace(req.GetSessionNo()) == "" && req.GetUserId() > 0 && satisfaction.GetUserId() != req.GetUserId() {
+		return false
+	}
+	if admin && req.GetAgentId() > 0 && satisfaction.GetAgentId() != req.GetAgentId() && satisfaction.GetAgentId() != 0 {
 		return false
 	}
 	return true

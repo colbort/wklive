@@ -133,8 +133,10 @@ message ChatQueueInfo {
 
 // 客服消息事件,用于消息总线/WebSocket推送
 message ChatMessageEvent {
-  ChatEventType event_type = 1; // 事件类型
-  int64 created_at = 2;         // 事件创建时间戳(毫秒)
+  int32 code = 1;
+  string msg = 2;
+  ChatEventType event_type = 3; // 事件类型
+  int64 created_at = 4;         // 事件创建时间戳(毫秒)
   oneof payload {
     ChatMessage message = 10;              // 聊天消息 / 系统消息 CHAT_EVENT_TYPE_MESSAGE，CHAT_EVENT_TYPE_SYSTEM
     ChatSession session = 11;              // 会话快照 CHAT_EVENT_TYPE_USER_JOIN，CHAT_EVENT_TYPE_USER_LEAVE
@@ -142,7 +144,6 @@ message ChatMessageEvent {
     ChatAgent agent = 14;                  // 坐席事件 CHAT_EVENT_TYPE_AGENT_JOIN，CHAT_EVENT_TYPE_AGENT_LEAVE
     ChatSatisfaction satisfaction = 15;    // 评价事件 
     ChatWsConnected connected = 16;        // WebSocket 连接成功
-    common.RespBase base = 17;             // 业务响应 / 错误信息
   }
 }
 

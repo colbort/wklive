@@ -263,9 +263,9 @@ func sessionWithEventMeta(session *chat.ChatSession, eventType chat.ChatEventTyp
 		return nil
 	}
 	payload := map[string]interface{}{
-		"eventType":      int64(eventType),
-		"eventMessage":   strings.TrimSpace(message),
-		"eventReason":    strings.TrimSpace(reason),
+		"eventType":       int64(eventType),
+		"eventMessage":    strings.TrimSpace(message),
+		"eventReason":     strings.TrimSpace(reason),
 		"eventAssignType": int64(assignType),
 		"eventCreatedAt":  createdAt,
 	}
@@ -281,25 +281,6 @@ func sessionWithEventMeta(session *chat.ChatSession, eventType chat.ChatEventTyp
 func isQueueEvent(eventType chat.ChatEventType) bool {
 	return eventType == chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN ||
 		eventType == chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE
-}
-
-func _legacySessionEventShape() {
-	_ = struct {
-		SessionNo:  msg.GetSessionNo(),
-		MerchantId: merchantId,
-		UserId:     userId,
-		AgentId:    transientMessageAgentID(msg, session),
-		Message:    strings.TrimSpace(msg.GetContent()),
-		Session:    session,
-		CreatedAt:  createdAt,
-	}
-	if session != nil {
-		event.Status = session.GetStatus()
-		if event.AgentId <= 0 {
-			event.AgentId = session.GetAgentId()
-		}
-	}
-	return event
 }
 
 func transientMessageAgentID(msg *chat.ChatMessage, session *chat.ChatSession) int64 {

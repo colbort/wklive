@@ -1030,8 +1030,10 @@ func (x *ChatQueueInfo) GetUpdateTimes() int64 {
 // 客服消息事件,用于消息总线/WebSocket推送
 type ChatMessageEvent struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	EventType ChatEventType          `protobuf:"varint,1,opt,name=event_type,json=eventType,proto3,enum=chat.ChatEventType" json:"event_type,omitempty"` // 事件类型
-	CreatedAt int64                  `protobuf:"varint,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`                         // 事件创建时间戳(毫秒)
+	Code      int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Msg       string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	EventType ChatEventType          `protobuf:"varint,3,opt,name=event_type,json=eventType,proto3,enum=chat.ChatEventType" json:"event_type,omitempty"` // 事件类型
+	CreatedAt int64                  `protobuf:"varint,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`                         // 事件创建时间戳(毫秒)
 	// Types that are valid to be assigned to Payload:
 	//
 	//	*ChatMessageEvent_Message
@@ -1040,7 +1042,6 @@ type ChatMessageEvent struct {
 	//	*ChatMessageEvent_Agent
 	//	*ChatMessageEvent_Satisfaction
 	//	*ChatMessageEvent_Connected
-	//	*ChatMessageEvent_Base
 	Payload       isChatMessageEvent_Payload `protobuf_oneof:"payload"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1074,6 +1075,20 @@ func (x *ChatMessageEvent) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ChatMessageEvent.ProtoReflect.Descriptor instead.
 func (*ChatMessageEvent) Descriptor() ([]byte, []int) {
 	return file_proto_chat_model_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ChatMessageEvent) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *ChatMessageEvent) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
 }
 
 func (x *ChatMessageEvent) GetEventType() ChatEventType {
@@ -1151,15 +1166,6 @@ func (x *ChatMessageEvent) GetConnected() *ChatWsConnected {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetBase() *common.RespBase {
-	if x != nil {
-		if x, ok := x.Payload.(*ChatMessageEvent_Base); ok {
-			return x.Base
-		}
-	}
-	return nil
-}
-
 type isChatMessageEvent_Payload interface {
 	isChatMessageEvent_Payload()
 }
@@ -1188,10 +1194,6 @@ type ChatMessageEvent_Connected struct {
 	Connected *ChatWsConnected `protobuf:"bytes,16,opt,name=connected,proto3,oneof"` // WebSocket 连接成功
 }
 
-type ChatMessageEvent_Base struct {
-	Base *common.RespBase `protobuf:"bytes,17,opt,name=base,proto3,oneof"` // 业务响应 / 错误信息
-}
-
 func (*ChatMessageEvent_Message) isChatMessageEvent_Payload() {}
 
 func (*ChatMessageEvent_Session) isChatMessageEvent_Payload() {}
@@ -1203,8 +1205,6 @@ func (*ChatMessageEvent_Agent) isChatMessageEvent_Payload() {}
 func (*ChatMessageEvent_Satisfaction) isChatMessageEvent_Payload() {}
 
 func (*ChatMessageEvent_Connected) isChatMessageEvent_Payload() {}
-
-func (*ChatMessageEvent_Base) isChatMessageEvent_Payload() {}
 
 // WebSocket连接成功消息
 type ChatWsConnected struct {
@@ -3000,20 +3000,21 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\rwaiting_count\x18\x06 \x01(\x05R\fwaitingCount\x122\n" +
 	"\x15estimate_wait_seconds\x18\a \x01(\x03R\x13estimateWaitSeconds\x12\x18\n" +
 	"\amessage\x18\b \x01(\tR\amessage\x12!\n" +
-	"\fupdate_times\x18\t \x01(\x03R\vupdateTimes\"\xc1\x03\n" +
-	"\x10ChatMessageEvent\x122\n" +
+	"\fupdate_times\x18\t \x01(\x03R\vupdateTimes\"\xbf\x03\n" +
+	"\x10ChatMessageEvent\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
+	"\x03msg\x18\x02 \x01(\tR\x03msg\x122\n" +
 	"\n" +
-	"event_type\x18\x01 \x01(\x0e2\x13.chat.ChatEventTypeR\teventType\x12\x1d\n" +
+	"event_type\x18\x03 \x01(\x0e2\x13.chat.ChatEventTypeR\teventType\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\x03R\tcreatedAt\x12-\n" +
+	"created_at\x18\x04 \x01(\x03R\tcreatedAt\x12-\n" +
 	"\amessage\x18\n" +
 	" \x01(\v2\x11.chat.ChatMessageH\x00R\amessage\x12-\n" +
 	"\asession\x18\v \x01(\v2\x11.chat.ChatSessionH\x00R\asession\x12+\n" +
 	"\x05queue\x18\r \x01(\v2\x13.chat.ChatQueueInfoH\x00R\x05queue\x12'\n" +
 	"\x05agent\x18\x0e \x01(\v2\x0f.chat.ChatAgentH\x00R\x05agent\x12<\n" +
 	"\fsatisfaction\x18\x0f \x01(\v2\x16.chat.ChatSatisfactionH\x00R\fsatisfaction\x125\n" +
-	"\tconnected\x18\x10 \x01(\v2\x15.chat.ChatWsConnectedH\x00R\tconnected\x12&\n" +
-	"\x04base\x18\x11 \x01(\v2\x10.common.RespBaseH\x00R\x04baseB\t\n" +
+	"\tconnected\x18\x10 \x01(\v2\x15.chat.ChatWsConnectedH\x00R\tconnectedB\t\n" +
 	"\apayload\"\x96\x02\n" +
 	"\x0fChatWsConnected\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\x12\x1f\n" +
@@ -3260,8 +3261,8 @@ var file_proto_chat_model_proto_goTypes = []any{
 	(ChatMessageType)(0),           // 31: chat.ChatMessageType
 	(ChatMessageStatus)(0),         // 32: chat.ChatMessageStatus
 	(ChatEventType)(0),             // 33: chat.ChatEventType
-	(*common.RespBase)(nil),        // 34: common.RespBase
-	(ChatSessionCloseReason)(0),    // 35: chat.ChatSessionCloseReason
+	(ChatSessionCloseReason)(0),    // 34: chat.ChatSessionCloseReason
+	(*common.RespBase)(nil),        // 35: common.RespBase
 	(ChatAssignType)(0),            // 36: chat.ChatAssignType
 	(ChatAdminEventType)(0),        // 37: chat.ChatAdminEventType
 }
@@ -3290,40 +3291,39 @@ var file_proto_chat_model_proto_depIdxs = []int32{
 	2,  // 21: chat.ChatMessageEvent.agent:type_name -> chat.ChatAgent
 	17, // 22: chat.ChatMessageEvent.satisfaction:type_name -> chat.ChatSatisfaction
 	8,  // 23: chat.ChatMessageEvent.connected:type_name -> chat.ChatWsConnected
-	34, // 24: chat.ChatMessageEvent.base:type_name -> common.RespBase
-	3,  // 25: chat.ChatWsConnected.session:type_name -> chat.ChatSession
-	6,  // 26: chat.ChatWsConnected.queue:type_name -> chat.ChatQueueInfo
-	31, // 27: chat.ChatWsUserMessageReq.message_type:type_name -> chat.ChatMessageType
-	31, // 28: chat.ChatWsAgentMessageReq.message_type:type_name -> chat.ChatMessageType
-	35, // 29: chat.ChatWsCloseSessionReq.close_reason_type:type_name -> chat.ChatSessionCloseReason
-	33, // 30: chat.ChatWsMessage.type:type_name -> chat.ChatEventType
-	34, // 31: chat.ChatWsMessage.base:type_name -> common.RespBase
-	8,  // 32: chat.ChatWsMessage.connected:type_name -> chat.ChatWsConnected
-	9,  // 33: chat.ChatWsMessage.user_message:type_name -> chat.ChatWsUserMessageReq
-	10, // 34: chat.ChatWsMessage.agent_message:type_name -> chat.ChatWsAgentMessageReq
-	11, // 35: chat.ChatWsMessage.accept_session:type_name -> chat.ChatWsAcceptSessionReq
-	12, // 36: chat.ChatWsMessage.close_session:type_name -> chat.ChatWsCloseSessionReq
-	5,  // 37: chat.ChatWsMessage.message:type_name -> chat.ChatMessage
-	3,  // 38: chat.ChatWsMessage.session:type_name -> chat.ChatSession
-	6,  // 39: chat.ChatWsMessage.queue:type_name -> chat.ChatQueueInfo
-	36, // 40: chat.ChatAssignment.assign_type:type_name -> chat.ChatAssignType
-	24, // 41: chat.ChatQuickReply.enabled:type_name -> common.Enable
-	24, // 42: chat.ChatCategory.enabled:type_name -> common.Enable
-	29, // 43: chat.ChatReadCursor.reader_type:type_name -> chat.ChatSenderType
-	24, // 44: chat.ChatGroup.enabled:type_name -> common.Enable
-	28, // 45: chat.ChatWorkOrder.priority:type_name -> chat.ChatSessionPriority
-	37, // 46: chat.ChatAdminEvent.type:type_name -> chat.ChatAdminEventType
-	34, // 47: chat.ChatAdminEvent.base:type_name -> common.RespBase
-	2,  // 48: chat.ChatAdminEvent.agent:type_name -> chat.ChatAgent
-	25, // 49: chat.ChatAdminEvent.agent_status:type_name -> chat.ChatAgentStatus
-	3,  // 50: chat.ChatAdminEvent.session:type_name -> chat.ChatSession
-	6,  // 51: chat.ChatAdminEvent.queue:type_name -> chat.ChatQueueInfo
-	5,  // 52: chat.ChatAdminEvent.message:type_name -> chat.ChatMessage
-	53, // [53:53] is the sub-list for method output_type
-	53, // [53:53] is the sub-list for method input_type
-	53, // [53:53] is the sub-list for extension type_name
-	53, // [53:53] is the sub-list for extension extendee
-	0,  // [0:53] is the sub-list for field type_name
+	3,  // 24: chat.ChatWsConnected.session:type_name -> chat.ChatSession
+	6,  // 25: chat.ChatWsConnected.queue:type_name -> chat.ChatQueueInfo
+	31, // 26: chat.ChatWsUserMessageReq.message_type:type_name -> chat.ChatMessageType
+	31, // 27: chat.ChatWsAgentMessageReq.message_type:type_name -> chat.ChatMessageType
+	34, // 28: chat.ChatWsCloseSessionReq.close_reason_type:type_name -> chat.ChatSessionCloseReason
+	33, // 29: chat.ChatWsMessage.type:type_name -> chat.ChatEventType
+	35, // 30: chat.ChatWsMessage.base:type_name -> common.RespBase
+	8,  // 31: chat.ChatWsMessage.connected:type_name -> chat.ChatWsConnected
+	9,  // 32: chat.ChatWsMessage.user_message:type_name -> chat.ChatWsUserMessageReq
+	10, // 33: chat.ChatWsMessage.agent_message:type_name -> chat.ChatWsAgentMessageReq
+	11, // 34: chat.ChatWsMessage.accept_session:type_name -> chat.ChatWsAcceptSessionReq
+	12, // 35: chat.ChatWsMessage.close_session:type_name -> chat.ChatWsCloseSessionReq
+	5,  // 36: chat.ChatWsMessage.message:type_name -> chat.ChatMessage
+	3,  // 37: chat.ChatWsMessage.session:type_name -> chat.ChatSession
+	6,  // 38: chat.ChatWsMessage.queue:type_name -> chat.ChatQueueInfo
+	36, // 39: chat.ChatAssignment.assign_type:type_name -> chat.ChatAssignType
+	24, // 40: chat.ChatQuickReply.enabled:type_name -> common.Enable
+	24, // 41: chat.ChatCategory.enabled:type_name -> common.Enable
+	29, // 42: chat.ChatReadCursor.reader_type:type_name -> chat.ChatSenderType
+	24, // 43: chat.ChatGroup.enabled:type_name -> common.Enable
+	28, // 44: chat.ChatWorkOrder.priority:type_name -> chat.ChatSessionPriority
+	37, // 45: chat.ChatAdminEvent.type:type_name -> chat.ChatAdminEventType
+	35, // 46: chat.ChatAdminEvent.base:type_name -> common.RespBase
+	2,  // 47: chat.ChatAdminEvent.agent:type_name -> chat.ChatAgent
+	25, // 48: chat.ChatAdminEvent.agent_status:type_name -> chat.ChatAgentStatus
+	3,  // 49: chat.ChatAdminEvent.session:type_name -> chat.ChatSession
+	6,  // 50: chat.ChatAdminEvent.queue:type_name -> chat.ChatQueueInfo
+	5,  // 51: chat.ChatAdminEvent.message:type_name -> chat.ChatMessage
+	52, // [52:52] is the sub-list for method output_type
+	52, // [52:52] is the sub-list for method input_type
+	52, // [52:52] is the sub-list for extension type_name
+	52, // [52:52] is the sub-list for extension extendee
+	0,  // [0:52] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_model_proto_init() }
@@ -3339,7 +3339,6 @@ func file_proto_chat_model_proto_init() {
 		(*ChatMessageEvent_Agent)(nil),
 		(*ChatMessageEvent_Satisfaction)(nil),
 		(*ChatMessageEvent_Connected)(nil),
-		(*ChatMessageEvent_Base)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
