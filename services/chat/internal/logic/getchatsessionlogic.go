@@ -41,5 +41,5 @@ func (l *GetChatSessionLogic) GetChatSession(in *chat.GetChatSessionReq) (*chat.
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
-	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(data)}, nil
+	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(data, false)}, nil
 }

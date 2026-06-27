@@ -121,11 +121,8 @@ func (l *MessagesLogic) onClose(isGuest bool) func(*ws.Connection) {
 			return
 		}
 		if isGuest {
-			if err := l.deleteTransientSession(context.Background(), conn); err != nil {
+			if err := l.deleteTransientSession(context.Background(), conn, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, "用户已离开客服页面"); err != nil {
 				logx.Errorf("delete transient chat session after user leave failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
-			}
-			if err := l.publishUserLeaveEvent(context.Background(), conn, "用户已离开客服页面"); err != nil {
-				logx.Errorf("publish chat user leave event failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 			}
 			return
 		}
@@ -214,10 +211,6 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 		return
 	}
 	normalizeOutgoingMessage(conn, msg, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE)
-	if err := l.publishMessageEvent(ctx, msg); err != nil {
-		sendWSError(conn, err.Error())
-		return
-	}
 	l.sendMessageAckEvent(conn, msg)
 }
 
@@ -229,28 +222,16 @@ func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connectio
 	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING {
 		message = "用户停止输入"
 	}
-	event := &chat.ChatMessageEvent{
-		Type:      eventType,
-		CreatedAt: time.Now().UnixMilli(),
-		Data:      buildSystemChatMessage(conn, eventType, message),
-		SessionEvent: &chat.ChatSessionEvent{
-			SessionNo:  conn.SessionNo,
-			MerchantId: conn.MerchantId,
-			UserId:     conn.UserId,
-			Message:    message,
-			CreatedAt:  time.Now().UnixMilli(),
-		},
-	}
+	msg := buildSystemChatMessage(conn, eventType, message)
 	if len(payload) > 0 {
 		var data struct {
 			Message string `json:"message"`
 		}
 		if err := json.Unmarshal(payload, &data); err == nil && strings.TrimSpace(data.Message) != "" {
-			event.SessionEvent.Message = strings.TrimSpace(data.Message)
-			event.Data.Content = event.SessionEvent.Message
+			msg.Content = strings.TrimSpace(data.Message)
 		}
 	}
-	if err := l.publishChatEvent(ctx, event); err != nil {
+	if err := l.publishOnlyTransientMessage(ctx, conn, msg); err != nil {
 		sendWSError(conn, err.Error())
 	}
 }
@@ -304,22 +285,6 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		sendWSError(conn, err.Error())
 		return
 	}
-	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
-		CreatedAt: time.Now().UnixMilli(),
-		Data:      msg,
-		SessionEvent: &chat.ChatSessionEvent{
-			SessionNo:  conn.SessionNo,
-			MerchantId: conn.MerchantId,
-			UserId:     conn.UserId,
-			Message:    "用户已提交评价",
-			CreatedAt:  time.Now().UnixMilli(),
-		},
-	}
-	if err := l.publishChatEvent(ctx, event); err != nil {
-		sendWSError(conn, err.Error())
-		return
-	}
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, map[string]string{"message": "ok"})
 }
 
@@ -361,11 +326,8 @@ func (l *MessagesLogic) closeUserSession(ctx context.Context, conn *ws.Connectio
 		}
 	}
 
-	if err := l.publishSessionCloseEvent(ctx, conn, reason); err != nil {
-		logx.Errorf("publish chat session close event failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
-	}
 	if isGuest {
-		if err := l.deleteTransientSession(ctx, conn); err != nil {
+		if err := l.deleteTransientSession(ctx, conn, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, reason); err != nil {
 			logx.Errorf("delete transient chat session after close failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 		}
 	}
@@ -439,69 +401,6 @@ func (l *MessagesLogic) sendMessageAckEvent(conn *ws.Connection, msg *chat.ChatM
 	})
 }
 
-func (l *MessagesLogic) publishMessageEvent(ctx context.Context, msg *chat.ChatMessage) error {
-	if msg == nil {
-		return fmt.Errorf("message data is empty")
-	}
-	if msg.EventType == chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN {
-		msg.EventType = chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE
-	}
-	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
-		Data:      msg,
-		CreatedAt: time.Now().UnixMilli(),
-	}
-	return l.publishChatEvent(ctx, event)
-}
-
-func (l *MessagesLogic) publishSessionCloseEvent(ctx context.Context, conn *ws.Connection, message string) error {
-	now := time.Now().UnixMilli()
-	systemMessage := buildSystemChatMessage(conn, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, message)
-	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
-		CreatedAt: now,
-		Data:      systemMessage,
-		SessionEvent: &chat.ChatSessionEvent{
-			SessionNo:  conn.SessionNo,
-			MerchantId: conn.MerchantId,
-			UserId:     conn.UserId,
-			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED,
-			Message:    strings.TrimSpace(message),
-			CreatedAt:  now,
-		},
-	}
-	return l.publishChatEvent(ctx, event)
-}
-
-func (l *MessagesLogic) publishUserLeaveEvent(ctx context.Context, conn *ws.Connection, message string) error {
-	now := time.Now().UnixMilli()
-	systemMessage := buildSystemChatMessage(conn, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, message)
-	event := &chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
-		CreatedAt: now,
-		Data:      systemMessage,
-		SessionEvent: &chat.ChatSessionEvent{
-			SessionNo:  conn.SessionNo,
-			MerchantId: conn.MerchantId,
-			UserId:     conn.UserId,
-			Message:    strings.TrimSpace(message),
-			CreatedAt:  now,
-		},
-	}
-	return l.publishChatEvent(ctx, event)
-}
-
-func (l *MessagesLogic) publishChatEvent(ctx context.Context, event *chat.ChatMessageEvent) error {
-	resp, err := l.svcCtx.ChatAppCli.AppPublishChatEvent(ctx, &chat.AppPublishChatEventReq{Event: event})
-	if err != nil {
-		return err
-	}
-	if resp.GetBase().GetCode() != successCode {
-		return fmt.Errorf("%s", resp.GetBase().GetMsg())
-	}
-	return nil
-}
-
 func (l *MessagesLogic) appendTransientMessage(ctx context.Context, conn *ws.Connection, msg *chat.ChatMessage, session *chat.ChatSession) error {
 	if conn == nil || msg == nil {
 		return fmt.Errorf("message data is empty")
@@ -509,10 +408,11 @@ func (l *MessagesLogic) appendTransientMessage(ctx context.Context, conn *ws.Con
 	if session == nil {
 		session = transientSessionFromConnection(conn)
 	}
-	resp, err := l.svcCtx.ChatAppCli.AppAppendTransientChatMessage(ctx, &chat.AppAppendTransientChatMessageReq{
+	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &chat.SendUserMessageReq{
 		MerchantId: conn.MerchantId,
 		Message:    msg,
 		Session:    session,
+		IsGuest:    true,
 	})
 	if err != nil {
 		return err
@@ -523,13 +423,36 @@ func (l *MessagesLogic) appendTransientMessage(ctx context.Context, conn *ws.Con
 	return nil
 }
 
-func (l *MessagesLogic) deleteTransientSession(ctx context.Context, conn *ws.Connection) error {
+func (l *MessagesLogic) publishOnlyTransientMessage(ctx context.Context, conn *ws.Connection, msg *chat.ChatMessage) error {
+	if conn == nil || msg == nil {
+		return fmt.Errorf("message data is empty")
+	}
+	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &chat.SendUserMessageReq{
+		MerchantId:  conn.MerchantId,
+		Message:     msg,
+		Session:     transientSessionFromConnection(conn),
+		PublishOnly: true,
+		IsGuest:     true,
+	})
+	if err != nil {
+		return err
+	}
+	if resp.GetBase().GetCode() != successCode {
+		return fmt.Errorf("%s", resp.GetBase().GetMsg())
+	}
+	return nil
+}
+
+func (l *MessagesLogic) deleteTransientSession(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, message string) error {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		return nil
 	}
 	resp, err := l.svcCtx.ChatAppCli.AppDeleteTransientChatSession(ctx, &chat.AppDeleteTransientChatSessionReq{
-		MerchantId: conn.MerchantId,
-		SessionNo:  conn.SessionNo,
+		MerchantId:   conn.MerchantId,
+		SessionNo:    conn.SessionNo,
+		EventType:    eventType,
+		EventMessage: strings.TrimSpace(message),
+		UserId:       conn.UserId,
 	})
 	if err != nil {
 		return err

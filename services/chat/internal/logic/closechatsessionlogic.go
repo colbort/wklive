@@ -37,6 +37,6 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 	if err := internal.CloseSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, in.GetCloseReason(), "本次会话已结束", chat.ChatAppMessageChannel)
-	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session)}, nil
+	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, false, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, in.GetCloseReason(), "本次会话已结束", chat.ChatAppMessageChannel)
+	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, false)}, nil
 }

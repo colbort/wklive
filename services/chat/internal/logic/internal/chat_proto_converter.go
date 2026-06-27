@@ -187,7 +187,7 @@ func ToProtoMerchant(data *models.TChatMerchantInfo) *chat.ChatMerchant {
 	}
 }
 
-func ToProtoSession(data *models.TChatSession) *chat.ChatSession {
+func ToProtoSession(data *models.TChatSession, isGuest bool) *chat.ChatSession {
 	if data == nil {
 		return nil
 	}
@@ -214,13 +214,14 @@ func ToProtoSession(data *models.TChatSession) *chat.ChatSession {
 		UpdateTimes:      data.UpdateTimes,
 		GroupId:          data.GroupId,
 		LastMessageNo:    data.LastMessageNo,
+		IsGuest:          isGuest,
 	}
 }
 
 func ToProtoSessions(list []*models.TChatSession) []*chat.ChatSession {
 	resp := make([]*chat.ChatSession, 0, len(list))
 	for _, item := range list {
-		resp = append(resp, ToProtoSession(item))
+		resp = append(resp, ToProtoSession(item, false))
 	}
 	return resp
 }

@@ -30,6 +30,21 @@ func NewSendAgentMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 发送客服消息
 func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (*chat.AdminChatMessageResp, error) {
+	if in.GetIsGuest() || in.GetMessage() != nil || in.GetPublishOnly() {
+		msg := in.GetMessage()
+		var err error
+		if !in.GetPublishOnly() {
+			msg, err = internal.AppendTransientMessage(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), msg, in.GetSession(), in.GetTtlSeconds())
+			if err != nil {
+				return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
+			}
+		}
+		if err := internal.PublishTransientMessageEvent(l.ctx, l.svcCtx, in.GetMerchantId(), msg, in.GetSession(), chat.ChatAppMessageChannel); err != nil {
+			return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
+		}
+		return &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg}, nil
+	}
+
 	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.SessionNo)
 	if err != nil {
 		return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil

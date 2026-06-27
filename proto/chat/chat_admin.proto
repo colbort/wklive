@@ -145,13 +145,6 @@ service ChatAdmin {
   // 订阅客服消息事件流
   rpc AdminSubscribeStream(AdminChatSubscribeRequest) returns (stream ChatMessageEvent);
 
-  // 发布客服消息事件
-  rpc AdminPublishChatEvent(AdminPublishChatEventReq) returns (AdminPublishChatEventResp);
-
-  // 创建或更新游客临时会话
-  rpc AdminUpsertTransientChatSession(AdminUpsertTransientChatSessionReq)
-      returns (AdminChatSessionResp);
-
   // 删除游客临时会话和消息
   rpc AdminDeleteTransientChatSession(AdminDeleteTransientChatSessionReq)
       returns (AdminDeleteTransientChatSessionResp);
@@ -164,13 +157,6 @@ service ChatAdmin {
   rpc AdminPageTransientChatSessions(AdminPageTransientChatSessionsReq)
       returns (AdminPageTransientChatSessionsResp);
 
-  // 追加游客临时消息并更新会话摘要
-  rpc AdminAppendTransientChatMessage(AdminAppendTransientChatMessageReq)
-      returns (AdminChatMessageResp);
-
-  // 查询游客临时消息
-  rpc AdminListTransientChatMessages(AdminListTransientChatMessagesReq)
-      returns (AdminListChatMessagesResp);
 }
 
 message AdminCommonResp { common.RespBase base = 1; }
@@ -184,18 +170,13 @@ message AdminChatSubscribeRequest {
   bool admin = 6;
 }
 
-message AdminPublishChatEventReq { ChatMessageEvent event = 1; }
-
-message AdminPublishChatEventResp { common.RespBase base = 1; }
-
-message AdminUpsertTransientChatSessionReq {
-  ChatSession session = 1;
-  int64 ttl_seconds = 2;
-}
-
 message AdminDeleteTransientChatSessionReq {
   int64 merchant_id = 1;
   string session_no = 2;
+  ChatEventType event_type = 3;
+  string event_message = 4;
+  int64 user_id = 5;
+  int64 agent_id = 6;
 }
 
 message AdminDeleteTransientChatSessionResp { common.RespBase base = 1; }
@@ -216,25 +197,6 @@ message AdminPageTransientChatSessionsReq {
 message AdminPageTransientChatSessionsResp {
   common.RespBase base = 1;
   repeated ChatSession data = 2;
-}
-
-message AdminAppendTransientChatMessageReq {
-  int64 merchant_id = 1;
-  ChatMessage message = 2;
-  ChatSession session = 3;
-  int64 ttl_seconds = 4;
-}
-
-message AdminListTransientChatMessagesReq {
-  int64 merchant_id = 1;
-  string session_no = 2;
-  ChatSenderType sender_type = 3;
-  common.PageReq page = 4;
-}
-
-message AdminListChatMessagesResp {
-  common.RespBase base = 1;
-  repeated ChatMessage data = 2;
 }
 
 message ChatAdminLoginReq {
@@ -396,12 +358,19 @@ message SendAgentMessageReq {
   string extra = 12;                // 扩展JSON
   ChatMessageUser sender = 13;      // 坐席端
   int64 merchant_id = 14;           // 
+  ChatMessage message = 15;         // 游客/临时消息，可选
+  ChatSession session = 16;         // 游客/临时会话快照，可选
+  int64 ttl_seconds = 17;           // 游客临时消息 TTL，0 使用默认 TTL
+  bool publish_only = 18;           // 仅发布事件，不写入临时消息
+  bool is_guest = 19;               // 是否游客/临时会话
 }
 
 message PageChatMessagesReq {
   string session_no = 1;          // 会话编号
   ChatSenderType sender_type = 2; // 发送方类型,0表示全部
   common.PageReq page = 3;        // 分页
+  int64 merchant_id = 4;          // 游客临时会话商户ID
+  bool is_guest = 5;              // 是否游客/临时会话
 }
 
 message MarkAgentMessagesReadReq {

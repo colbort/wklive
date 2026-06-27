@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"wklive/proto/chat"
@@ -12,6 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -37,6 +39,9 @@ type Connection struct {
 	SessionNo  string
 	OnMessage  func(*Connection, InboundEvent)
 	OnClose    func(*Connection)
+	IsGuest    bool
+	mu         sync.RWMutex
+	session    *chat.ChatSession
 }
 
 func NewConnection(conn *websocket.Conn, userId int64, nickname string, avatarUrl string, merchantId, agentId int64, sessionNo string, onMessage func(*Connection, InboundEvent), onClose func(*Connection)) *Connection {
@@ -52,6 +57,48 @@ func NewConnection(conn *websocket.Conn, userId int64, nickname string, avatarUr
 		OnMessage:  onMessage,
 		OnClose:    onClose,
 	}
+}
+
+func (c *Connection) SetChatSession(session *chat.ChatSession) {
+	if c == nil || session == nil {
+		return
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.IsGuest = session.GetIsGuest()
+	c.session = proto.Clone(session).(*chat.ChatSession)
+}
+
+func (c *Connection) ChatSession() *chat.ChatSession {
+	if c == nil {
+		return nil
+	}
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	if c.session == nil {
+		return nil
+	}
+	return proto.Clone(c.session).(*chat.ChatSession)
+}
+
+func (c *Connection) IsGuestSession() bool {
+	if c == nil {
+		return false
+	}
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.IsGuest
+}
+
+func (c *Connection) ChatSessionUserId(userId int64) int64 {
+	if userId != 0 {
+		return userId
+	}
+	session := c.ChatSession()
+	if session == nil {
+		return 0
+	}
+	return session.GetUserId()
 }
 
 func (c *Connection) ReadPump() {

@@ -60,13 +60,9 @@ const (
 	ChatAdmin_PageChatWorkOrders_FullMethodName              = "/chat.ChatAdmin/PageChatWorkOrders"
 	ChatAdmin_DeleteChatWorkOrder_FullMethodName             = "/chat.ChatAdmin/DeleteChatWorkOrder"
 	ChatAdmin_AdminSubscribeStream_FullMethodName            = "/chat.ChatAdmin/AdminSubscribeStream"
-	ChatAdmin_AdminPublishChatEvent_FullMethodName           = "/chat.ChatAdmin/AdminPublishChatEvent"
-	ChatAdmin_AdminUpsertTransientChatSession_FullMethodName = "/chat.ChatAdmin/AdminUpsertTransientChatSession"
 	ChatAdmin_AdminDeleteTransientChatSession_FullMethodName = "/chat.ChatAdmin/AdminDeleteTransientChatSession"
 	ChatAdmin_AdminGetTransientChatSession_FullMethodName    = "/chat.ChatAdmin/AdminGetTransientChatSession"
 	ChatAdmin_AdminPageTransientChatSessions_FullMethodName  = "/chat.ChatAdmin/AdminPageTransientChatSessions"
-	ChatAdmin_AdminAppendTransientChatMessage_FullMethodName = "/chat.ChatAdmin/AdminAppendTransientChatMessage"
-	ChatAdmin_AdminListTransientChatMessages_FullMethodName  = "/chat.ChatAdmin/AdminListTransientChatMessages"
 )
 
 // ChatAdminClient is the client API for ChatAdmin service.
@@ -157,20 +153,12 @@ type ChatAdminClient interface {
 	DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 订阅客服消息事件流
 	AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatMessageEvent], error)
-	// 发布客服消息事件
-	AdminPublishChatEvent(ctx context.Context, in *AdminPublishChatEventReq, opts ...grpc.CallOption) (*AdminPublishChatEventResp, error)
-	// 创建或更新游客临时会话
-	AdminUpsertTransientChatSession(ctx context.Context, in *AdminUpsertTransientChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 	// 删除游客临时会话和消息
 	AdminDeleteTransientChatSession(ctx context.Context, in *AdminDeleteTransientChatSessionReq, opts ...grpc.CallOption) (*AdminDeleteTransientChatSessionResp, error)
 	// 查询游客临时会话
 	AdminGetTransientChatSession(ctx context.Context, in *AdminGetTransientChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 	// 分页查询游客临时会话
 	AdminPageTransientChatSessions(ctx context.Context, in *AdminPageTransientChatSessionsReq, opts ...grpc.CallOption) (*AdminPageTransientChatSessionsResp, error)
-	// 追加游客临时消息并更新会话摘要
-	AdminAppendTransientChatMessage(ctx context.Context, in *AdminAppendTransientChatMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error)
-	// 查询游客临时消息
-	AdminListTransientChatMessages(ctx context.Context, in *AdminListTransientChatMessagesReq, opts ...grpc.CallOption) (*AdminListChatMessagesResp, error)
 }
 
 type chatAdminClient struct {
@@ -600,26 +588,6 @@ func (c *chatAdminClient) AdminSubscribeStream(ctx context.Context, in *AdminCha
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ChatAdmin_AdminSubscribeStreamClient = grpc.ServerStreamingClient[ChatMessageEvent]
 
-func (c *chatAdminClient) AdminPublishChatEvent(ctx context.Context, in *AdminPublishChatEventReq, opts ...grpc.CallOption) (*AdminPublishChatEventResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminPublishChatEventResp)
-	err := c.cc.Invoke(ctx, ChatAdmin_AdminPublishChatEvent_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *chatAdminClient) AdminUpsertTransientChatSession(ctx context.Context, in *AdminUpsertTransientChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminChatSessionResp)
-	err := c.cc.Invoke(ctx, ChatAdmin_AdminUpsertTransientChatSession_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *chatAdminClient) AdminDeleteTransientChatSession(ctx context.Context, in *AdminDeleteTransientChatSessionReq, opts ...grpc.CallOption) (*AdminDeleteTransientChatSessionResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminDeleteTransientChatSessionResp)
@@ -644,26 +612,6 @@ func (c *chatAdminClient) AdminPageTransientChatSessions(ctx context.Context, in
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminPageTransientChatSessionsResp)
 	err := c.cc.Invoke(ctx, ChatAdmin_AdminPageTransientChatSessions_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *chatAdminClient) AdminAppendTransientChatMessage(ctx context.Context, in *AdminAppendTransientChatMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminChatMessageResp)
-	err := c.cc.Invoke(ctx, ChatAdmin_AdminAppendTransientChatMessage_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *chatAdminClient) AdminListTransientChatMessages(ctx context.Context, in *AdminListTransientChatMessagesReq, opts ...grpc.CallOption) (*AdminListChatMessagesResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminListChatMessagesResp)
-	err := c.cc.Invoke(ctx, ChatAdmin_AdminListTransientChatMessages_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -758,20 +706,12 @@ type ChatAdminServer interface {
 	DeleteChatWorkOrder(context.Context, *DeleteChatWorkOrderReq) (*AdminCommonResp, error)
 	// 订阅客服消息事件流
 	AdminSubscribeStream(*AdminChatSubscribeRequest, grpc.ServerStreamingServer[ChatMessageEvent]) error
-	// 发布客服消息事件
-	AdminPublishChatEvent(context.Context, *AdminPublishChatEventReq) (*AdminPublishChatEventResp, error)
-	// 创建或更新游客临时会话
-	AdminUpsertTransientChatSession(context.Context, *AdminUpsertTransientChatSessionReq) (*AdminChatSessionResp, error)
 	// 删除游客临时会话和消息
 	AdminDeleteTransientChatSession(context.Context, *AdminDeleteTransientChatSessionReq) (*AdminDeleteTransientChatSessionResp, error)
 	// 查询游客临时会话
 	AdminGetTransientChatSession(context.Context, *AdminGetTransientChatSessionReq) (*AdminChatSessionResp, error)
 	// 分页查询游客临时会话
 	AdminPageTransientChatSessions(context.Context, *AdminPageTransientChatSessionsReq) (*AdminPageTransientChatSessionsResp, error)
-	// 追加游客临时消息并更新会话摘要
-	AdminAppendTransientChatMessage(context.Context, *AdminAppendTransientChatMessageReq) (*AdminChatMessageResp, error)
-	// 查询游客临时消息
-	AdminListTransientChatMessages(context.Context, *AdminListTransientChatMessagesReq) (*AdminListChatMessagesResp, error)
 	mustEmbedUnimplementedChatAdminServer()
 }
 
@@ -905,12 +845,6 @@ func (UnimplementedChatAdminServer) DeleteChatWorkOrder(context.Context, *Delete
 func (UnimplementedChatAdminServer) AdminSubscribeStream(*AdminChatSubscribeRequest, grpc.ServerStreamingServer[ChatMessageEvent]) error {
 	return status.Error(codes.Unimplemented, "method AdminSubscribeStream not implemented")
 }
-func (UnimplementedChatAdminServer) AdminPublishChatEvent(context.Context, *AdminPublishChatEventReq) (*AdminPublishChatEventResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminPublishChatEvent not implemented")
-}
-func (UnimplementedChatAdminServer) AdminUpsertTransientChatSession(context.Context, *AdminUpsertTransientChatSessionReq) (*AdminChatSessionResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminUpsertTransientChatSession not implemented")
-}
 func (UnimplementedChatAdminServer) AdminDeleteTransientChatSession(context.Context, *AdminDeleteTransientChatSessionReq) (*AdminDeleteTransientChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AdminDeleteTransientChatSession not implemented")
 }
@@ -919,12 +853,6 @@ func (UnimplementedChatAdminServer) AdminGetTransientChatSession(context.Context
 }
 func (UnimplementedChatAdminServer) AdminPageTransientChatSessions(context.Context, *AdminPageTransientChatSessionsReq) (*AdminPageTransientChatSessionsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AdminPageTransientChatSessions not implemented")
-}
-func (UnimplementedChatAdminServer) AdminAppendTransientChatMessage(context.Context, *AdminAppendTransientChatMessageReq) (*AdminChatMessageResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminAppendTransientChatMessage not implemented")
-}
-func (UnimplementedChatAdminServer) AdminListTransientChatMessages(context.Context, *AdminListTransientChatMessagesReq) (*AdminListChatMessagesResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminListTransientChatMessages not implemented")
 }
 func (UnimplementedChatAdminServer) mustEmbedUnimplementedChatAdminServer() {}
 func (UnimplementedChatAdminServer) testEmbeddedByValue()                   {}
@@ -1678,42 +1606,6 @@ func _ChatAdmin_AdminSubscribeStream_Handler(srv interface{}, stream grpc.Server
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ChatAdmin_AdminSubscribeStreamServer = grpc.ServerStreamingServer[ChatMessageEvent]
 
-func _ChatAdmin_AdminPublishChatEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminPublishChatEventReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAdminServer).AdminPublishChatEvent(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatAdmin_AdminPublishChatEvent_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAdminServer).AdminPublishChatEvent(ctx, req.(*AdminPublishChatEventReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ChatAdmin_AdminUpsertTransientChatSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminUpsertTransientChatSessionReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAdminServer).AdminUpsertTransientChatSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatAdmin_AdminUpsertTransientChatSession_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAdminServer).AdminUpsertTransientChatSession(ctx, req.(*AdminUpsertTransientChatSessionReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ChatAdmin_AdminDeleteTransientChatSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AdminDeleteTransientChatSessionReq)
 	if err := dec(in); err != nil {
@@ -1764,42 +1656,6 @@ func _ChatAdmin_AdminPageTransientChatSessions_Handler(srv interface{}, ctx cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAdminServer).AdminPageTransientChatSessions(ctx, req.(*AdminPageTransientChatSessionsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ChatAdmin_AdminAppendTransientChatMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminAppendTransientChatMessageReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAdminServer).AdminAppendTransientChatMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatAdmin_AdminAppendTransientChatMessage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAdminServer).AdminAppendTransientChatMessage(ctx, req.(*AdminAppendTransientChatMessageReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ChatAdmin_AdminListTransientChatMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminListTransientChatMessagesReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAdminServer).AdminListTransientChatMessages(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatAdmin_AdminListTransientChatMessages_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAdminServer).AdminListTransientChatMessages(ctx, req.(*AdminListTransientChatMessagesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1972,14 +1828,6 @@ var ChatAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ChatAdmin_DeleteChatWorkOrder_Handler,
 		},
 		{
-			MethodName: "AdminPublishChatEvent",
-			Handler:    _ChatAdmin_AdminPublishChatEvent_Handler,
-		},
-		{
-			MethodName: "AdminUpsertTransientChatSession",
-			Handler:    _ChatAdmin_AdminUpsertTransientChatSession_Handler,
-		},
-		{
 			MethodName: "AdminDeleteTransientChatSession",
 			Handler:    _ChatAdmin_AdminDeleteTransientChatSession_Handler,
 		},
@@ -1990,14 +1838,6 @@ var ChatAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdminPageTransientChatSessions",
 			Handler:    _ChatAdmin_AdminPageTransientChatSessions_Handler,
-		},
-		{
-			MethodName: "AdminAppendTransientChatMessage",
-			Handler:    _ChatAdmin_AdminAppendTransientChatMessage_Handler,
-		},
-		{
-			MethodName: "AdminListTransientChatMessages",
-			Handler:    _ChatAdmin_AdminListTransientChatMessages_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

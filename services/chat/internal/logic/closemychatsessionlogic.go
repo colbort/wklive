@@ -38,11 +38,11 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(404, "chat session not found")}, nil
 	}
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session)}, nil
+		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, false)}, nil
 	}
 	if err := internal.CloseSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, in.GetCloseReason(), "本次会话已结束", chat.ChatAdminEventChannel)
-	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session)}, nil
+	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, false, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, in.GetCloseReason(), "本次会话已结束", chat.ChatAdminEventChannel)
+	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, false)}, nil
 }

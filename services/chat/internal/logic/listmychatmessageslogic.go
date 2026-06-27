@@ -29,6 +29,30 @@ func NewListMyChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 查询会话消息
 func (l *ListMyChatMessagesLogic) ListMyChatMessages(in *chat.ListMyChatMessagesReq) (*chat.AppListChatMessagesResp, error) {
+	if in.GetIsGuest() || in.GetMerchantId() > 0 {
+		var cursor, limit int64
+		if in.GetPage() != nil {
+			cursor = in.GetPage().GetCursor()
+			limit = in.GetPage().GetLimit()
+		}
+		list, hasNext, nextCursor, err := internal.ListTransientMessages(
+			l.ctx,
+			l.svcCtx.BusRedis,
+			in.GetMerchantId(),
+			in.GetSessionNo(),
+			int64(in.GetSenderType()),
+			cursor,
+			limit,
+		)
+		if err != nil {
+			return &chat.AppListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
+		}
+		return &chat.AppListChatMessagesResp{
+			Base: helper.OkWithOthers(0, hasNext, cursor > 0, nextCursor, cursor),
+			Data: list,
+		}, nil
+	}
+
 	merchantID, userID, base, err := internal.ChatAppIdentityFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AppListChatMessagesResp{Base: base}, nil

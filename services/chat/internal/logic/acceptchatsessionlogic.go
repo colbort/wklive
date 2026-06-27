@@ -53,9 +53,9 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
-	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL, in.GetReason(), agentServiceMessage(l.ctx, l.svcCtx, agent), chat.ChatAdminEventChannel)
+	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, false, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL, in.GetReason(), agentServiceMessage(l.ctx, l.svcCtx, agent), chat.ChatAdminEventChannel)
 	internal.PublishQueueEvent(l.ctx, l.svcCtx, session, chat.ChatAppMessageChannel)
-	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session)}, nil
+	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, false)}, nil
 }
 
 func agentServiceMessage(ctx context.Context, svcCtx *svc.ServiceContext, agent *models.TChatAgent) string {

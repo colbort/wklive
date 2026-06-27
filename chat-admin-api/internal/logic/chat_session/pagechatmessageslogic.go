@@ -37,10 +37,11 @@ func (l *PageChatMessagesLogic) PageChatMessages(req *types.PageChatMessagesReq)
 			SessionNo:  sessionNo,
 		})
 		if err == nil && transientSession.GetBase().GetCode() == 200 {
-			rpcResp, err := l.svcCtx.ChatAdminCli.AdminListTransientChatMessages(l.ctx, &chat.AdminListTransientChatMessagesReq{
+			rpcResp, err := l.svcCtx.ChatAdminCli.PageChatMessages(l.ctx, &chat.PageChatMessagesReq{
 				MerchantId: req.MerchantId,
 				SessionNo:  sessionNo,
 				SenderType: chat.ChatSenderType(req.SenderType),
+				IsGuest:    true,
 				Page: &common.PageReq{
 					Cursor: req.Cursor,
 					Limit:  req.Limit,

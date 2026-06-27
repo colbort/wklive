@@ -1,7 +1,6 @@
 package chat_ws
 
 import (
-	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
@@ -10,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"chat-admin-api/internal/svc"
 	"wklive/proto/chat"
 )
 
@@ -72,66 +70,12 @@ func newTransientSystemMessageWithType(merchantId int64, sessionNo string, userI
 	return msg
 }
 
-func publishTransientMessage(ctx context.Context, svcCtx *svc.ServiceContext, merchantId int64, msg *chat.ChatMessage) error {
-	return publishTransientEvent(ctx, svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, merchantId, msg)
-}
-
-func publishTransientEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType chat.ChatEventType, merchantId int64, msg *chat.ChatMessage) error {
-	if svcCtx == nil || svcCtx.ChatAdminCli == nil {
-		return fmt.Errorf("chat admin client is not configured")
-	}
-	event := &chat.ChatMessageEvent{
-		Type:      eventType,
-		Data:      msg,
-		CreatedAt: time.Now().UnixMilli(),
-	}
-	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED {
-		userId := transientMessageSessionUserId(ctx, msg, merchantId, svcCtx)
-		event.SessionEvent = &chat.ChatSessionEvent{
-			SessionNo:  msg.GetSessionNo(),
-			MerchantId: merchantId,
-			UserId:     userId,
-			AgentId:    int64FromString(msg.GetAgentId()),
-			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING,
-			Message:    msg.GetContent(),
-			CreatedAt:  event.CreatedAt,
-		}
-	}
-	resp, err := svcCtx.ChatAdminCli.AdminPublishChatEvent(ctx, &chat.AdminPublishChatEventReq{Event: event})
-	if err != nil {
-		return err
-	}
-	if resp.GetBase().GetCode() != 200 {
-		return fmt.Errorf("%s", resp.GetBase().GetMsg())
-	}
-	return nil
-}
-
 func transientExtra(payload map[string]interface{}) string {
 	bs, err := json.Marshal(payload)
 	if err != nil {
 		return ""
 	}
 	return string(bs)
-}
-
-func transientMessageSessionUserId(ctx context.Context, msg *chat.ChatMessage, merchantId int64, svcCtx *svc.ServiceContext) int64 {
-	if svcCtx == nil || svcCtx.ChatAdminCli == nil || msg == nil || merchantId <= 0 {
-		return 0
-	}
-	resp, err := svcCtx.ChatAdminCli.AdminGetTransientChatSession(ctx, &chat.AdminGetTransientChatSessionReq{
-		MerchantId: merchantId,
-		SessionNo:  msg.GetSessionNo(),
-	})
-	if err != nil || resp.GetBase().GetCode() != 200 || resp.GetData() == nil {
-		return 0
-	}
-	return resp.GetData().GetUserId()
-}
-
-func int64FromString(value string) int64 {
-	id, _ := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
-	return id
 }
 
 func nextTransientNo(prefix string) string {

@@ -45,9 +45,9 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-		l.publishUserJoinEvent(session)
-		l.publishQueueJoinEvent(session)
-		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session)}, nil
+		l.publishUserJoinEvent(session, in.IsGuest)
+		l.publishQueueJoinEvent(session, in.IsGuest)
+		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, in.IsGuest)}, nil
 	}
 	if err != models.ErrNotFound {
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
@@ -80,23 +80,23 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 	if id, err := result.LastInsertId(); err == nil {
 		session.Id = id
 	}
-	l.publishUserJoinEvent(session)
-	l.publishQueueJoinEvent(session)
-	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session)}, nil
+	l.publishUserJoinEvent(session, in.IsGuest)
+	l.publishQueueJoinEvent(session, in.IsGuest)
+	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, in.IsGuest)}, nil
 }
 
-func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession) {
+func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession, isGuest bool) {
 	if session == nil {
 		return
 	}
-	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, "", "用户进入会话", chat.ChatAppMessageChannel)
+	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN, isGuest, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, "", "用户进入会话", chat.ChatAppMessageChannel)
 }
 
-func (l *OpenChatSessionLogic) publishQueueJoinEvent(session *models.TChatSession) {
+func (l *OpenChatSessionLogic) publishQueueJoinEvent(session *models.TChatSession, isGuest bool) {
 	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING) {
 		return
 	}
-	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, "", "正在排队，客服会尽快接入。", chat.ChatAppMessageChannel)
+	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN, isGuest, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, "", "正在排队，客服会尽快接入。", chat.ChatAppMessageChannel)
 }
 
 func userSnapshotExt(avatarUrl string) *structpb.Struct {

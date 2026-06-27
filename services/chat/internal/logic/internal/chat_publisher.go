@@ -54,7 +54,7 @@ func PublishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, sessio
 		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
 		CreatedAt: utils.NowMillis(),
 		Data:      ToProtoMessage(msg),
-		Session:   ToProtoSession(session),
+		Session:   ToProtoSession(session, false),
 	}
 	publishChatEvent(ctx, svcCtx, event, "publish chat message event failed", channel)
 }
@@ -67,6 +67,87 @@ func PublishChatEvent(ctx context.Context, svcCtx *svc.ServiceContext, event *ch
 		return fmt.Errorf("chat event is empty")
 	}
 	return publishChatEventToChannels(ctx, svcCtx, event, channel)
+}
+
+func PublishTransientMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, merchantId int64, msg *chat.ChatMessage, session *chat.ChatSession, channel string) error {
+	if msg == nil {
+		return fmt.Errorf("message data is empty")
+	}
+	if session == nil && svcCtx != nil && svcCtx.BusRedis != nil {
+		session, _ = GetTransientSession(ctx, svcCtx.BusRedis, merchantId, msg.GetSessionNo())
+	}
+	eventType := msg.GetEventType()
+	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN {
+		eventType = chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE
+		msg.EventType = eventType
+	}
+	event := &chat.ChatMessageEvent{
+		Type:      eventType,
+		CreatedAt: utils.NowMillis(),
+		Data:      msg,
+		Session:   session,
+	}
+	if eventType != chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE {
+		event.SessionEvent = transientSessionEventFromMessage(merchantId, msg, session, event.CreatedAt)
+	}
+	return PublishChatEvent(ctx, svcCtx, event, channel)
+}
+
+func PublishTransientSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType chat.ChatEventType, merchantId int64, session *chat.ChatSession, sessionNo string, userId, agentId int64, message, channel string) error {
+	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN {
+		return nil
+	}
+	if session != nil {
+		sessionNo = firstNonEmptyString(sessionNo, session.GetSessionNo())
+		if merchantId <= 0 {
+			merchantId = session.GetMerchantId()
+		}
+		if userId <= 0 {
+			userId = session.GetUserId()
+		}
+		if agentId <= 0 {
+			agentId = session.GetAgentId()
+		}
+	}
+	if strings.TrimSpace(sessionNo) == "" {
+		return fmt.Errorf("session_no is required")
+	}
+	now := utils.NowMillis()
+	msg := &chat.ChatMessage{
+		MessageNo:   fmt.Sprintf("GM%d", now),
+		SessionNo:   sessionNo,
+		EventType:   eventType,
+		MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
+		Content:     strings.TrimSpace(message),
+		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+		AgentId:     strconv.FormatInt(agentId, 10),
+		CreateTime:  now,
+		UpdateTime:  now,
+		Sender: &chat.ChatMessageUser{
+			Id:       userId,
+			Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
+			Nickname: "系统",
+		},
+	}
+	event := &chat.ChatMessageEvent{
+		Type:      eventType,
+		CreatedAt: now,
+		Data:      msg,
+		Session:   session,
+		SessionEvent: &chat.ChatSessionEvent{
+			SessionNo:  sessionNo,
+			MerchantId: merchantId,
+			UserId:     userId,
+			AgentId:    agentId,
+			Message:    strings.TrimSpace(message),
+			Session:    session,
+			CreatedAt:  now,
+		},
+	}
+	if session != nil {
+		event.SessionEvent.Status = session.GetStatus()
+	}
+	return PublishChatEvent(ctx, svcCtx, event, channel)
 }
 
 func PublishQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, channel string) {
@@ -87,13 +168,13 @@ func PublishQueueEvent(ctx context.Context, svcCtx *svc.ServiceContext, session 
 		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
 		CreatedAt: utils.NowMillis(),
 		Data:      NewEventSystemMessage(messageNo, session, queue.GetMessage()),
-		Session:   ToProtoSession(session),
+		Session:   ToProtoSession(session, false),
 		Queue:     queue,
 	}
 	publishChatEvent(ctx, svcCtx, event, "publish chat queue event failed", channel)
 }
 
-func PublishSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType chat.ChatEventType, session *models.TChatSession, assignType chat.ChatAssignType, reason, message string, channel string) {
+func PublishSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventType chat.ChatEventType, isGuest bool, session *models.TChatSession, assignType chat.ChatAssignType, reason, message string, channel string) {
 	if svcCtx.BusRedis == nil || session == nil {
 		return
 	}
@@ -111,7 +192,7 @@ func PublishSessionEvent(ctx context.Context, svcCtx *svc.ServiceContext, eventT
 		AssignType: assignType,
 		Reason:     strings.TrimSpace(reason),
 		Message:    strings.TrimSpace(message),
-		Session:    ToProtoSession(session),
+		Session:    ToProtoSession(session, isGuest),
 		Queue:      queue,
 		CreatedAt:  utils.NowMillis(),
 	}
@@ -172,7 +253,7 @@ func PublishEvaluationEvent(ctx context.Context, svcCtx *svc.ServiceContext, ses
 				Nickname: session.Title,
 			},
 		},
-		Session: ToProtoSession(session),
+		Session: ToProtoSession(session, false),
 		SessionEvent: &chat.ChatSessionEvent{
 			SessionNo:  session.SessionNo,
 			MerchantId: session.MerchantId,
@@ -180,7 +261,7 @@ func PublishEvaluationEvent(ctx context.Context, svcCtx *svc.ServiceContext, ses
 			AgentId:    session.AgentId,
 			Status:     chat.ChatSessionStatus(session.Status),
 			Message:    "用户已提交评价",
-			Session:    ToProtoSession(session),
+			Session:    ToProtoSession(session, false),
 			CreatedAt:  utils.NowMillis(),
 		},
 	}
@@ -224,4 +305,47 @@ func SatisfactionPayloadJSON(data *models.TChatSatisfaction) string {
 		return ""
 	}
 	return string(bs)
+}
+
+func transientSessionEventFromMessage(merchantId int64, msg *chat.ChatMessage, session *chat.ChatSession, createdAt int64) *chat.ChatSessionEvent {
+	if msg == nil {
+		return nil
+	}
+	if session != nil && merchantId <= 0 {
+		merchantId = session.GetMerchantId()
+	}
+	userId := msg.GetSender().GetId()
+	if session != nil && userId <= 0 {
+		userId = session.GetUserId()
+	}
+	event := &chat.ChatSessionEvent{
+		SessionNo:  msg.GetSessionNo(),
+		MerchantId: merchantId,
+		UserId:     userId,
+		AgentId:    int64FromProtoString(msg.GetAgentId()),
+		Message:    strings.TrimSpace(msg.GetContent()),
+		Session:    session,
+		CreatedAt:  createdAt,
+	}
+	if session != nil {
+		event.Status = session.GetStatus()
+		if event.AgentId <= 0 {
+			event.AgentId = session.GetAgentId()
+		}
+	}
+	return event
+}
+
+func int64FromProtoString(value string) int64 {
+	id, _ := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
+	return id
+}
+
+func firstNonEmptyString(values ...string) string {
+	for _, value := range values {
+		if strings.TrimSpace(value) != "" {
+			return strings.TrimSpace(value)
+		}
+	}
+	return ""
 }

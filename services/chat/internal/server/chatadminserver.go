@@ -269,18 +269,6 @@ func (s *ChatAdminServer) AdminSubscribeStream(in *chat.AdminChatSubscribeReques
 	return l.AdminSubscribeStream(in, stream)
 }
 
-// 发布客服消息事件
-func (s *ChatAdminServer) AdminPublishChatEvent(ctx context.Context, in *chat.AdminPublishChatEventReq) (*chat.AdminPublishChatEventResp, error) {
-	l := logic.NewAdminPublishChatEventLogic(ctx, s.svcCtx)
-	return l.AdminPublishChatEvent(in)
-}
-
-// 创建或更新游客临时会话
-func (s *ChatAdminServer) AdminUpsertTransientChatSession(ctx context.Context, in *chat.AdminUpsertTransientChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	l := logic.NewAdminUpsertTransientChatSessionLogic(ctx, s.svcCtx)
-	return l.AdminUpsertTransientChatSession(in)
-}
-
 // 删除游客临时会话和消息
 func (s *ChatAdminServer) AdminDeleteTransientChatSession(ctx context.Context, in *chat.AdminDeleteTransientChatSessionReq) (*chat.AdminDeleteTransientChatSessionResp, error) {
 	l := logic.NewAdminDeleteTransientChatSessionLogic(ctx, s.svcCtx)
@@ -297,16 +285,4 @@ func (s *ChatAdminServer) AdminGetTransientChatSession(ctx context.Context, in *
 func (s *ChatAdminServer) AdminPageTransientChatSessions(ctx context.Context, in *chat.AdminPageTransientChatSessionsReq) (*chat.AdminPageTransientChatSessionsResp, error) {
 	l := logic.NewAdminPageTransientChatSessionsLogic(ctx, s.svcCtx)
 	return l.AdminPageTransientChatSessions(in)
-}
-
-// 追加游客临时消息并更新会话摘要
-func (s *ChatAdminServer) AdminAppendTransientChatMessage(ctx context.Context, in *chat.AdminAppendTransientChatMessageReq) (*chat.AdminChatMessageResp, error) {
-	l := logic.NewAdminAppendTransientChatMessageLogic(ctx, s.svcCtx)
-	return l.AdminAppendTransientChatMessage(in)
-}
-
-// 查询游客临时消息
-func (s *ChatAdminServer) AdminListTransientChatMessages(ctx context.Context, in *chat.AdminListTransientChatMessagesReq) (*chat.AdminListChatMessagesResp, error) {
-	l := logic.NewAdminListTransientChatMessagesLogic(ctx, s.svcCtx)
-	return l.AdminListTransientChatMessages(in)
 }

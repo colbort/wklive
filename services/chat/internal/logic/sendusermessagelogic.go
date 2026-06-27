@@ -29,6 +29,21 @@ func NewSendUserMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 发送用户消息
 func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*chat.AppChatMessageResp, error) {
+	if in.GetIsGuest() || in.GetMessage() != nil || in.GetPublishOnly() {
+		msg := in.GetMessage()
+		var err error
+		if !in.GetPublishOnly() {
+			msg, err = internal.AppendTransientMessage(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), msg, in.GetSession(), in.GetTtlSeconds())
+			if err != nil {
+				return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
+			}
+		}
+		if err := internal.PublishTransientMessageEvent(l.ctx, l.svcCtx, in.GetMerchantId(), msg, in.GetSession(), chat.ChatAdminEventChannel); err != nil {
+			return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
+		}
+		return &chat.AppChatMessageResp{Base: helper.OkResp(), Data: msg}, nil
+	}
+
 	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.SessionNo)
 	if err != nil {
 		return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil

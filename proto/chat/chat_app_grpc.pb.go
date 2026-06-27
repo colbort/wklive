@@ -28,13 +28,10 @@ const (
 	ChatApp_CloseMyChatSession_FullMethodName            = "/chat.ChatApp/CloseMyChatSession"
 	ChatApp_SubmitChatSatisfaction_FullMethodName        = "/chat.ChatApp/SubmitChatSatisfaction"
 	ChatApp_AppSubscribeStream_FullMethodName            = "/chat.ChatApp/AppSubscribeStream"
-	ChatApp_AppPublishChatEvent_FullMethodName           = "/chat.ChatApp/AppPublishChatEvent"
 	ChatApp_AppUpsertTransientChatSession_FullMethodName = "/chat.ChatApp/AppUpsertTransientChatSession"
 	ChatApp_AppDeleteTransientChatSession_FullMethodName = "/chat.ChatApp/AppDeleteTransientChatSession"
 	ChatApp_AppGetTransientChatSession_FullMethodName    = "/chat.ChatApp/AppGetTransientChatSession"
 	ChatApp_AppPageTransientChatSessions_FullMethodName  = "/chat.ChatApp/AppPageTransientChatSessions"
-	ChatApp_AppAppendTransientChatMessage_FullMethodName = "/chat.ChatApp/AppAppendTransientChatMessage"
-	ChatApp_AppListTransientChatMessages_FullMethodName  = "/chat.ChatApp/AppListTransientChatMessages"
 )
 
 // ChatAppClient is the client API for ChatApp service.
@@ -62,8 +59,6 @@ type ChatAppClient interface {
 	SubmitChatSatisfaction(ctx context.Context, in *SubmitChatSatisfactionReq, opts ...grpc.CallOption) (*AppChatSatisfactionResp, error)
 	// 订阅客服消息事件流
 	AppSubscribeStream(ctx context.Context, in *AppChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatMessageEvent], error)
-	// 发布客服消息事件
-	AppPublishChatEvent(ctx context.Context, in *AppPublishChatEventReq, opts ...grpc.CallOption) (*AppPublishChatEventResp, error)
 	// 创建或更新游客临时会话
 	AppUpsertTransientChatSession(ctx context.Context, in *AppUpsertTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 	// 删除游客临时会话和消息
@@ -72,10 +67,6 @@ type ChatAppClient interface {
 	AppGetTransientChatSession(ctx context.Context, in *AppGetTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 	// 分页查询游客临时会话
 	AppPageTransientChatSessions(ctx context.Context, in *AppPageTransientChatSessionsReq, opts ...grpc.CallOption) (*AppPageTransientChatSessionsResp, error)
-	// 追加游客临时消息并更新会话摘要
-	AppAppendTransientChatMessage(ctx context.Context, in *AppAppendTransientChatMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error)
-	// 查询游客临时消息
-	AppListTransientChatMessages(ctx context.Context, in *AppListTransientChatMessagesReq, opts ...grpc.CallOption) (*AppListChatMessagesResp, error)
 }
 
 type chatAppClient struct {
@@ -185,16 +176,6 @@ func (c *chatAppClient) AppSubscribeStream(ctx context.Context, in *AppChatSubsc
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ChatApp_AppSubscribeStreamClient = grpc.ServerStreamingClient[ChatMessageEvent]
 
-func (c *chatAppClient) AppPublishChatEvent(ctx context.Context, in *AppPublishChatEventReq, opts ...grpc.CallOption) (*AppPublishChatEventResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppPublishChatEventResp)
-	err := c.cc.Invoke(ctx, ChatApp_AppPublishChatEvent_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *chatAppClient) AppUpsertTransientChatSession(ctx context.Context, in *AppUpsertTransientChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AppChatSessionResp)
@@ -235,26 +216,6 @@ func (c *chatAppClient) AppPageTransientChatSessions(ctx context.Context, in *Ap
 	return out, nil
 }
 
-func (c *chatAppClient) AppAppendTransientChatMessage(ctx context.Context, in *AppAppendTransientChatMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppChatMessageResp)
-	err := c.cc.Invoke(ctx, ChatApp_AppAppendTransientChatMessage_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *chatAppClient) AppListTransientChatMessages(ctx context.Context, in *AppListTransientChatMessagesReq, opts ...grpc.CallOption) (*AppListChatMessagesResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppListChatMessagesResp)
-	err := c.cc.Invoke(ctx, ChatApp_AppListTransientChatMessages_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ChatAppServer is the server API for ChatApp service.
 // All implementations must embed UnimplementedChatAppServer
 // for forward compatibility.
@@ -280,8 +241,6 @@ type ChatAppServer interface {
 	SubmitChatSatisfaction(context.Context, *SubmitChatSatisfactionReq) (*AppChatSatisfactionResp, error)
 	// 订阅客服消息事件流
 	AppSubscribeStream(*AppChatSubscribeRequest, grpc.ServerStreamingServer[ChatMessageEvent]) error
-	// 发布客服消息事件
-	AppPublishChatEvent(context.Context, *AppPublishChatEventReq) (*AppPublishChatEventResp, error)
 	// 创建或更新游客临时会话
 	AppUpsertTransientChatSession(context.Context, *AppUpsertTransientChatSessionReq) (*AppChatSessionResp, error)
 	// 删除游客临时会话和消息
@@ -290,10 +249,6 @@ type ChatAppServer interface {
 	AppGetTransientChatSession(context.Context, *AppGetTransientChatSessionReq) (*AppChatSessionResp, error)
 	// 分页查询游客临时会话
 	AppPageTransientChatSessions(context.Context, *AppPageTransientChatSessionsReq) (*AppPageTransientChatSessionsResp, error)
-	// 追加游客临时消息并更新会话摘要
-	AppAppendTransientChatMessage(context.Context, *AppAppendTransientChatMessageReq) (*AppChatMessageResp, error)
-	// 查询游客临时消息
-	AppListTransientChatMessages(context.Context, *AppListTransientChatMessagesReq) (*AppListChatMessagesResp, error)
 	mustEmbedUnimplementedChatAppServer()
 }
 
@@ -331,9 +286,6 @@ func (UnimplementedChatAppServer) SubmitChatSatisfaction(context.Context, *Submi
 func (UnimplementedChatAppServer) AppSubscribeStream(*AppChatSubscribeRequest, grpc.ServerStreamingServer[ChatMessageEvent]) error {
 	return status.Error(codes.Unimplemented, "method AppSubscribeStream not implemented")
 }
-func (UnimplementedChatAppServer) AppPublishChatEvent(context.Context, *AppPublishChatEventReq) (*AppPublishChatEventResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AppPublishChatEvent not implemented")
-}
 func (UnimplementedChatAppServer) AppUpsertTransientChatSession(context.Context, *AppUpsertTransientChatSessionReq) (*AppChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AppUpsertTransientChatSession not implemented")
 }
@@ -345,12 +297,6 @@ func (UnimplementedChatAppServer) AppGetTransientChatSession(context.Context, *A
 }
 func (UnimplementedChatAppServer) AppPageTransientChatSessions(context.Context, *AppPageTransientChatSessionsReq) (*AppPageTransientChatSessionsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AppPageTransientChatSessions not implemented")
-}
-func (UnimplementedChatAppServer) AppAppendTransientChatMessage(context.Context, *AppAppendTransientChatMessageReq) (*AppChatMessageResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AppAppendTransientChatMessage not implemented")
-}
-func (UnimplementedChatAppServer) AppListTransientChatMessages(context.Context, *AppListTransientChatMessagesReq) (*AppListChatMessagesResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AppListTransientChatMessages not implemented")
 }
 func (UnimplementedChatAppServer) mustEmbedUnimplementedChatAppServer() {}
 func (UnimplementedChatAppServer) testEmbeddedByValue()                 {}
@@ -528,24 +474,6 @@ func _ChatApp_AppSubscribeStream_Handler(srv interface{}, stream grpc.ServerStre
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ChatApp_AppSubscribeStreamServer = grpc.ServerStreamingServer[ChatMessageEvent]
 
-func _ChatApp_AppPublishChatEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppPublishChatEventReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAppServer).AppPublishChatEvent(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatApp_AppPublishChatEvent_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAppServer).AppPublishChatEvent(ctx, req.(*AppPublishChatEventReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ChatApp_AppUpsertTransientChatSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AppUpsertTransientChatSessionReq)
 	if err := dec(in); err != nil {
@@ -618,42 +546,6 @@ func _ChatApp_AppPageTransientChatSessions_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ChatApp_AppAppendTransientChatMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppAppendTransientChatMessageReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAppServer).AppAppendTransientChatMessage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatApp_AppAppendTransientChatMessage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAppServer).AppAppendTransientChatMessage(ctx, req.(*AppAppendTransientChatMessageReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ChatApp_AppListTransientChatMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppListTransientChatMessagesReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAppServer).AppListTransientChatMessages(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatApp_AppListTransientChatMessages_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAppServer).AppListTransientChatMessages(ctx, req.(*AppListTransientChatMessagesReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ChatApp_ServiceDesc is the grpc.ServiceDesc for ChatApp service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -694,10 +586,6 @@ var ChatApp_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ChatApp_SubmitChatSatisfaction_Handler,
 		},
 		{
-			MethodName: "AppPublishChatEvent",
-			Handler:    _ChatApp_AppPublishChatEvent_Handler,
-		},
-		{
 			MethodName: "AppUpsertTransientChatSession",
 			Handler:    _ChatApp_AppUpsertTransientChatSession_Handler,
 		},
@@ -712,14 +600,6 @@ var ChatApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AppPageTransientChatSessions",
 			Handler:    _ChatApp_AppPageTransientChatSessions_Handler,
-		},
-		{
-			MethodName: "AppAppendTransientChatMessage",
-			Handler:    _ChatApp_AppAppendTransientChatMessage_Handler,
-		},
-		{
-			MethodName: "AppListTransientChatMessages",
-			Handler:    _ChatApp_AppListTransientChatMessages_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

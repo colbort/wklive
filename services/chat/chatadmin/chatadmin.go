@@ -15,7 +15,6 @@ import (
 
 type (
 	AcceptChatSessionReq                = chat.AcceptChatSessionReq
-	AdminAppendTransientChatMessageReq  = chat.AdminAppendTransientChatMessageReq
 	AdminChatAgentResp                  = chat.AdminChatAgentResp
 	AdminChatCategoryResp               = chat.AdminChatCategoryResp
 	AdminChatGroupResp                  = chat.AdminChatGroupResp
@@ -28,14 +27,9 @@ type (
 	AdminDeleteTransientChatSessionReq  = chat.AdminDeleteTransientChatSessionReq
 	AdminDeleteTransientChatSessionResp = chat.AdminDeleteTransientChatSessionResp
 	AdminGetTransientChatSessionReq     = chat.AdminGetTransientChatSessionReq
-	AdminListChatMessagesResp           = chat.AdminListChatMessagesResp
-	AdminListTransientChatMessagesReq   = chat.AdminListTransientChatMessagesReq
 	AdminMarkMessagesReadResp           = chat.AdminMarkMessagesReadResp
 	AdminPageTransientChatSessionsReq   = chat.AdminPageTransientChatSessionsReq
 	AdminPageTransientChatSessionsResp  = chat.AdminPageTransientChatSessionsResp
-	AdminPublishChatEventReq            = chat.AdminPublishChatEventReq
-	AdminPublishChatEventResp           = chat.AdminPublishChatEventResp
-	AdminUpsertTransientChatSessionReq  = chat.AdminUpsertTransientChatSessionReq
 	ChatAdminLoginData                  = chat.ChatAdminLoginData
 	ChatAdminLoginReq                   = chat.ChatAdminLoginReq
 	ChatAdminLoginResp                  = chat.ChatAdminLoginResp
@@ -172,20 +166,12 @@ type (
 		DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 订阅客服消息事件流
 		AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatAdmin_AdminSubscribeStreamClient, error)
-		// 发布客服消息事件
-		AdminPublishChatEvent(ctx context.Context, in *AdminPublishChatEventReq, opts ...grpc.CallOption) (*AdminPublishChatEventResp, error)
-		// 创建或更新游客临时会话
-		AdminUpsertTransientChatSession(ctx context.Context, in *AdminUpsertTransientChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 		// 删除游客临时会话和消息
 		AdminDeleteTransientChatSession(ctx context.Context, in *AdminDeleteTransientChatSessionReq, opts ...grpc.CallOption) (*AdminDeleteTransientChatSessionResp, error)
 		// 查询游客临时会话
 		AdminGetTransientChatSession(ctx context.Context, in *AdminGetTransientChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 		// 分页查询游客临时会话
 		AdminPageTransientChatSessions(ctx context.Context, in *AdminPageTransientChatSessionsReq, opts ...grpc.CallOption) (*AdminPageTransientChatSessionsResp, error)
-		// 追加游客临时消息并更新会话摘要
-		AdminAppendTransientChatMessage(ctx context.Context, in *AdminAppendTransientChatMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error)
-		// 查询游客临时消息
-		AdminListTransientChatMessages(ctx context.Context, in *AdminListTransientChatMessagesReq, opts ...grpc.CallOption) (*AdminListChatMessagesResp, error)
 	}
 
 	defaultChatAdmin struct {
@@ -445,18 +431,6 @@ func (m *defaultChatAdmin) AdminSubscribeStream(ctx context.Context, in *AdminCh
 	return client.AdminSubscribeStream(ctx, in, opts...)
 }
 
-// 发布客服消息事件
-func (m *defaultChatAdmin) AdminPublishChatEvent(ctx context.Context, in *AdminPublishChatEventReq, opts ...grpc.CallOption) (*AdminPublishChatEventResp, error) {
-	client := chat.NewChatAdminClient(m.cli.Conn())
-	return client.AdminPublishChatEvent(ctx, in, opts...)
-}
-
-// 创建或更新游客临时会话
-func (m *defaultChatAdmin) AdminUpsertTransientChatSession(ctx context.Context, in *AdminUpsertTransientChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
-	client := chat.NewChatAdminClient(m.cli.Conn())
-	return client.AdminUpsertTransientChatSession(ctx, in, opts...)
-}
-
 // 删除游客临时会话和消息
 func (m *defaultChatAdmin) AdminDeleteTransientChatSession(ctx context.Context, in *AdminDeleteTransientChatSessionReq, opts ...grpc.CallOption) (*AdminDeleteTransientChatSessionResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
@@ -473,16 +447,4 @@ func (m *defaultChatAdmin) AdminGetTransientChatSession(ctx context.Context, in 
 func (m *defaultChatAdmin) AdminPageTransientChatSessions(ctx context.Context, in *AdminPageTransientChatSessionsReq, opts ...grpc.CallOption) (*AdminPageTransientChatSessionsResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.AdminPageTransientChatSessions(ctx, in, opts...)
-}
-
-// 追加游客临时消息并更新会话摘要
-func (m *defaultChatAdmin) AdminAppendTransientChatMessage(ctx context.Context, in *AdminAppendTransientChatMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error) {
-	client := chat.NewChatAdminClient(m.cli.Conn())
-	return client.AdminAppendTransientChatMessage(ctx, in, opts...)
-}
-
-// 查询游客临时消息
-func (m *defaultChatAdmin) AdminListTransientChatMessages(ctx context.Context, in *AdminListTransientChatMessagesReq, opts ...grpc.CallOption) (*AdminListChatMessagesResp, error) {
-	client := chat.NewChatAdminClient(m.cli.Conn())
-	return client.AdminListTransientChatMessages(ctx, in, opts...)
 }

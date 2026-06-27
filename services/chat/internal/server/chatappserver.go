@@ -77,12 +77,6 @@ func (s *ChatAppServer) AppSubscribeStream(in *chat.AppChatSubscribeRequest, str
 	return l.AppSubscribeStream(in, stream)
 }
 
-// 发布客服消息事件
-func (s *ChatAppServer) AppPublishChatEvent(ctx context.Context, in *chat.AppPublishChatEventReq) (*chat.AppPublishChatEventResp, error) {
-	l := logic.NewAppPublishChatEventLogic(ctx, s.svcCtx)
-	return l.AppPublishChatEvent(in)
-}
-
 // 创建或更新游客临时会话
 func (s *ChatAppServer) AppUpsertTransientChatSession(ctx context.Context, in *chat.AppUpsertTransientChatSessionReq) (*chat.AppChatSessionResp, error) {
 	l := logic.NewAppUpsertTransientChatSessionLogic(ctx, s.svcCtx)
@@ -105,16 +99,4 @@ func (s *ChatAppServer) AppGetTransientChatSession(ctx context.Context, in *chat
 func (s *ChatAppServer) AppPageTransientChatSessions(ctx context.Context, in *chat.AppPageTransientChatSessionsReq) (*chat.AppPageTransientChatSessionsResp, error) {
 	l := logic.NewAppPageTransientChatSessionsLogic(ctx, s.svcCtx)
 	return l.AppPageTransientChatSessions(in)
-}
-
-// 追加游客临时消息并更新会话摘要
-func (s *ChatAppServer) AppAppendTransientChatMessage(ctx context.Context, in *chat.AppAppendTransientChatMessageReq) (*chat.AppChatMessageResp, error) {
-	l := logic.NewAppAppendTransientChatMessageLogic(ctx, s.svcCtx)
-	return l.AppAppendTransientChatMessage(in)
-}
-
-// 查询游客临时消息
-func (s *ChatAppServer) AppListTransientChatMessages(ctx context.Context, in *chat.AppListTransientChatMessagesReq) (*chat.AppListChatMessagesResp, error) {
-	l := logic.NewAppListTransientChatMessagesLogic(ctx, s.svcCtx)
-	return l.AppListTransientChatMessages(in)
 }

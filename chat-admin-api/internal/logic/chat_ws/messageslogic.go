@@ -118,6 +118,9 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 			}
 			return
 		}
+		if event.GetType() == chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN && event.GetSession() != nil {
+			conn.SetChatSession(event.GetSession())
+		}
 		conn.SendEvent(event)
 	}
 }
@@ -149,14 +152,10 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		},
 		MerchantId: conn.MerchantId,
 	}
-	if transientSession, ok := l.getTransientSession(ctx, conn.MerchantId, req.SessionNo); ok {
-		l.fillTransientUserId(transientSession, &data)
+	if conn.IsGuestSession() {
+		data.UserId = conn.ChatSessionUserId(data.UserId)
 		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, conn.UserId, conn.AgentId, conn.Nickname, data)
-		if err := l.appendTransientMessage(ctx, conn.MerchantId, msg, transientSession); err != nil {
-			sendWSError(conn, err.Error())
-			return
-		}
-		if err := publishTransientMessage(ctx, l.svcCtx, conn.MerchantId, msg); err != nil {
+		if err := l.appendTransientMessage(ctx, conn.MerchantId, msg, conn.ChatSession()); err != nil {
 			sendWSError(conn, err.Error())
 			return
 		}
@@ -183,19 +182,18 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 		sendWSError(conn, "sessionNo and agentId are required")
 		return
 	}
-	if transientSession, ok := l.getTransientSession(ctx, conn.MerchantId, sessionNo); ok {
-		data.UserId = l.transientUserId(transientSession, data.UserId)
+	if conn.IsGuestSession() {
+		data.UserId = conn.ChatSessionUserId(data.UserId)
+		transientSession := conn.ChatSession()
 		transientSession.AgentId = agentId
 		transientSession.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, conn.Nickname+"为您服务")
+		msg.EventType = chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED
 		if err := l.appendTransientMessage(ctx, conn.MerchantId, msg, transientSession); err != nil {
 			sendWSError(conn, err.Error())
 			return
 		}
-		if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, conn.MerchantId, msg); err != nil {
-			sendWSError(conn, err.Error())
-			return
-		}
+		conn.SetChatSession(transientSession)
 		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
 		return
 	}
@@ -228,17 +226,14 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 		return
 	}
 	reason := firstNonEmpty(data.CloseReason, "closed by agent")
-	if transientSession, ok := l.getTransientSession(ctx, conn.MerchantId, sessionNo); ok {
-		data.UserId = l.transientUserId(transientSession, data.UserId)
+	if conn.IsGuestSession() {
+		data.UserId = conn.ChatSessionUserId(data.UserId)
+		if err := l.deleteTransientSession(ctx, conn.MerchantId, sessionNo, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, "本次会话已结束", data.UserId, conn.AgentId); err != nil {
+			sendWSError(conn, err.Error())
+			return
+		}
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, conn.AgentId, "本次会话已结束")
-		if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, conn.MerchantId, msg); err != nil {
-			sendWSError(conn, err.Error())
-			return
-		}
-		if err := l.deleteTransientSession(ctx, conn.MerchantId, sessionNo); err != nil {
-			sendWSError(conn, err.Error())
-			return
-		}
+		msg.EventType = chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE
 		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
 		return
 	}
@@ -282,12 +277,10 @@ func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connecti
 		return
 	}
 	if userId == 0 {
-		if transientSession, ok := l.getTransientSession(ctx, conn.MerchantId, sessionNo); ok {
-			userId = l.transientUserId(transientSession, 0)
-		}
+		userId = conn.ChatSessionUserId(0)
 	}
 	msg := newTransientSystemMessageWithType(conn.MerchantId, sessionNo, userId, conn.AgentId, eventType, chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT, message, "")
-	if err := publishTransientEvent(ctx, l.svcCtx, eventType, conn.MerchantId, msg); err != nil {
+	if err := l.publishOnlyTransientMessage(ctx, conn.MerchantId, msg); err != nil {
 		sendWSError(conn, err.Error())
 		return
 	}
@@ -319,16 +312,10 @@ func (l *MessagesLogic) handleEvaluationInvite(ctx context.Context, conn *ws.Con
 		return
 	}
 	if userId == 0 {
-		if transientSession, ok := l.getTransientSession(ctx, conn.MerchantId, sessionNo); ok {
-			userId = l.transientUserId(transientSession, 0)
-		}
+		userId = conn.ChatSessionUserId(0)
 	}
 	msg := newTransientSystemMessageWithType(conn.MerchantId, sessionNo, userId, conn.AgentId, chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE, chat.ChatMessageType_CHAT_MESSAGE_TYPE_EVALUATION, content, transientExtra(map[string]interface{}{"action": "invite"}))
 	if err := l.appendTransientMessage(ctx, conn.MerchantId, msg, nil); err != nil {
-		sendWSError(conn, err.Error())
-		return
-	}
-	if err := publishTransientEvent(ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE, conn.MerchantId, msg); err != nil {
 		sendWSError(conn, err.Error())
 		return
 	}
@@ -359,28 +346,15 @@ func sendWSError(conn *ws.Connection, message string) {
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": message})
 }
 
-func (l *MessagesLogic) getTransientSession(ctx context.Context, merchantId int64, sessionNo string) (*chat.ChatSession, bool) {
-	if l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil || merchantId <= 0 || strings.TrimSpace(sessionNo) == "" {
-		return nil, false
-	}
-	resp, err := l.svcCtx.ChatAdminCli.AdminGetTransientChatSession(ctx, &chat.AdminGetTransientChatSessionReq{
-		MerchantId: merchantId,
-		SessionNo:  strings.TrimSpace(sessionNo),
-	})
-	if err != nil || resp.GetBase().GetCode() != 200 || resp.GetData() == nil {
-		return nil, false
-	}
-	return resp.GetData(), true
-}
-
 func (l *MessagesLogic) appendTransientMessage(ctx context.Context, merchantId int64, msg *chat.ChatMessage, session *chat.ChatSession) error {
 	if l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
 		return nil
 	}
-	resp, err := l.svcCtx.ChatAdminCli.AdminAppendTransientChatMessage(ctx, &chat.AdminAppendTransientChatMessageReq{
+	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &chat.SendAgentMessageReq{
 		MerchantId: merchantId,
 		Message:    msg,
 		Session:    session,
+		IsGuest:    true,
 	})
 	if err != nil {
 		return err
@@ -391,13 +365,36 @@ func (l *MessagesLogic) appendTransientMessage(ctx context.Context, merchantId i
 	return nil
 }
 
-func (l *MessagesLogic) deleteTransientSession(ctx context.Context, merchantId int64, sessionNo string) error {
+func (l *MessagesLogic) publishOnlyTransientMessage(ctx context.Context, merchantId int64, msg *chat.ChatMessage) error {
+	if l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
+		return nil
+	}
+	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &chat.SendAgentMessageReq{
+		MerchantId:  merchantId,
+		Message:     msg,
+		PublishOnly: true,
+		IsGuest:     true,
+	})
+	if err != nil {
+		return err
+	}
+	if resp.GetBase().GetCode() != 200 {
+		return errors.New(resp.GetBase().GetMsg())
+	}
+	return nil
+}
+
+func (l *MessagesLogic) deleteTransientSession(ctx context.Context, merchantId int64, sessionNo string, eventType chat.ChatEventType, eventMessage string, userId, agentId int64) error {
 	if l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
 		return nil
 	}
 	resp, err := l.svcCtx.ChatAdminCli.AdminDeleteTransientChatSession(ctx, &chat.AdminDeleteTransientChatSessionReq{
-		MerchantId: merchantId,
-		SessionNo:  strings.TrimSpace(sessionNo),
+		MerchantId:   merchantId,
+		SessionNo:    strings.TrimSpace(sessionNo),
+		EventType:    eventType,
+		EventMessage: strings.TrimSpace(eventMessage),
+		UserId:       userId,
+		AgentId:      agentId,
 	})
 	if err != nil {
 		return err
@@ -406,23 +403,6 @@ func (l *MessagesLogic) deleteTransientSession(ctx context.Context, merchantId i
 		return errors.New(resp.GetBase().GetMsg())
 	}
 	return nil
-}
-
-func (l *MessagesLogic) fillTransientUserId(session *chat.ChatSession, data *sendAgentMessagePayload) {
-	if session == nil || data == nil || data.UserId != 0 {
-		return
-	}
-	data.UserId = session.GetUserId()
-}
-
-func (l *MessagesLogic) transientUserId(session *chat.ChatSession, userId int64) int64 {
-	if userId != 0 {
-		return userId
-	}
-	if session == nil {
-		return 0
-	}
-	return session.GetUserId()
 }
 
 type sendAgentMessagePayload struct {

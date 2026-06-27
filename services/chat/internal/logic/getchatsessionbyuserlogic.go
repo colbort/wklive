@@ -35,5 +35,5 @@ func (l *GetChatSessionByUserLogic) GetChatSessionByUser(in *chat.GetChatSession
 	if err != nil {
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(data)}, nil
+	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(data, false)}, nil
 }
