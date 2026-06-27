@@ -2,8 +2,10 @@ package logic
 
 import (
 	"context"
+	"wklive/common/helper"
 
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -25,19 +27,19 @@ func NewGetChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 
 // 查询会话详情
 func (l *GetChatSessionLogic) GetChatSession(in *chat.GetChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	data, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
+	data, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
-		return &chat.AdminChatSessionResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
-	return &chat.AdminChatSessionResp{Base: okBase(), Data: toProtoSession(data)}, nil
+	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(data)}, nil
 }

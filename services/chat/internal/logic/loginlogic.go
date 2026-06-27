@@ -4,9 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"strings"
+	"wklive/common/helper"
+	"wklive/common/utils"
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -32,31 +35,31 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 func (l *LoginLogic) Login(in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp, error) {
 	username := strings.TrimSpace(in.GetUsername())
 	if username == "" || strings.TrimSpace(in.GetPassword()) == "" {
-		return &chat.ChatAdminLoginResp{Base: badBase("username and password are required")}, nil
+		return &chat.ChatAdminLoginResp{Base: helper.ErrResp(400, "username and password are required")}, nil
 	}
 
 	user, err := l.svcCtx.ChatUserModel.FindOneByUsername(l.ctx, username)
 	if err == models.ErrNotFound {
-		return &chat.ChatAdminLoginResp{Base: badBase("username or password is incorrect")}, nil
+		return &chat.ChatAdminLoginResp{Base: helper.ErrResp(400, "username or password is incorrect")}, nil
 	}
 	if err != nil {
-		return &chat.ChatAdminLoginResp{Base: errorBase(err)}, nil
+		return &chat.ChatAdminLoginResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if user.Enabled != int64(common.Enable_ENABLE_ENABLED) {
-		return &chat.ChatAdminLoginResp{Base: badBase("chat user is disabled")}, nil
+		return &chat.ChatAdminLoginResp{Base: helper.ErrResp(400, "chat user is disabled")}, nil
 	}
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.GetPassword())) != nil {
-		return &chat.ChatAdminLoginResp{Base: badBase("username or password is incorrect")}, nil
+		return &chat.ChatAdminLoginResp{Base: helper.ErrResp(400, "username or password is incorrect")}, nil
 	}
 
 	agent, err := l.findAgent(user)
 	if err != nil {
-		return &chat.ChatAdminLoginResp{Base: errorBase(err)}, nil
+		return &chat.ChatAdminLoginResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 
 	expand, err := buildChatTokenExpand(user, agent)
 	if err != nil {
-		return &chat.ChatAdminLoginResp{Base: errorBase(err)}, nil
+		return &chat.ChatAdminLoginResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	token, err := buildTokenInfo(
 		l.svcCtx.Config.Jwt.AccessSecret,
@@ -66,10 +69,10 @@ func (l *LoginLogic) Login(in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp
 		expand,
 	)
 	if err != nil {
-		return &chat.ChatAdminLoginResp{Base: errorBase(err)}, nil
+		return &chat.ChatAdminLoginResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 
-	now := nowMillis()
+	now := utils.NowMillis()
 	user.LastLoginTime = now
 	user.UpdateTimes = now
 	_ = l.svcCtx.ChatUserModel.Update(l.ctx, user)
@@ -78,16 +81,16 @@ func (l *LoginLogic) Login(in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp
 		agent.LastActiveTime = now
 		agent.UpdateTimes = now
 		if err := l.svcCtx.ChatAgentModel.Update(l.ctx, agent); err == nil {
-			publishAgentStatusEvent(l.ctx, l.svcCtx, agent)
+			internal.PublishAgentStatusEvent(l.ctx, l.svcCtx, agent)
 		}
 	}
 
 	return &chat.ChatAdminLoginResp{
-		Base: okBase(),
+		Base: helper.OkResp(),
 		Data: &chat.ChatAdminLoginData{
 			Token: token,
-			User:  toProtoUser(user),
-			Agent: toProtoAgent(agent),
+			User:  internal.ToProtoUser(user),
+			Agent: internal.ToProtoAgent(agent),
 		},
 	}, nil
 }

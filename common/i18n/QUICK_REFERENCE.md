@@ -40,7 +40,7 @@ return i18n.BuildPermissionDeniedErrorResponse(ctx, "")
 
 // 自定义错误
 msg := i18n.Translate(code, ctx)
-return helper.GetErrResp(code, msg)
+return helper.ErrResp(code, msg)
 ```
 
 ## 📦 核心 API

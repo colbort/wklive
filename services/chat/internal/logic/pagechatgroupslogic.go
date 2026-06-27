@@ -3,8 +3,11 @@ package logic
 import (
 	"context"
 	"strings"
+	"wklive/common/helper"
+	"wklive/common/pageutil"
 
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -27,24 +30,24 @@ func NewPageChatGroupsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 
 // 分页查询客服分组
 func (l *PageChatGroupsLogic) PageChatGroups(in *chat.PageChatGroupsReq) (*chat.PageChatGroupsResp, error) {
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.PageChatGroupsResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.PageChatGroupsResp{Base: errorBase(err)}, nil
+		return &chat.PageChatGroupsResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	cursor, limit := pageInput(in.GetPage())
+	cursor, limit := pageutil.Input(in.GetPage())
 	list, total, err := l.svcCtx.ChatGroupModel.FindPage(l.ctx, models.ChatGroupPageFilter{
 		MerchantId: merchantID,
 		Keyword:    strings.TrimSpace(in.GetKeyword()),
 		Enabled:    int64(in.GetEnabled()),
 	}, cursor, limit)
 	if err != nil {
-		return &chat.PageChatGroupsResp{Base: errorBase(err)}, nil
+		return &chat.PageChatGroupsResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	return &chat.PageChatGroupsResp{
-		Base: offsetBase(cursor, limit, len(list), total),
-		Data: toProtoChatGroups(list),
+		Base: internal.OffsetBase(cursor, limit, len(list), total),
+		Data: internal.ToProtoChatGroups(list),
 	}, nil
 }

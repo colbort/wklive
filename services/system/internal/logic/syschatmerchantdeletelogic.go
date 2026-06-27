@@ -41,7 +41,7 @@ func (l *SysChatMerchantDeleteLogic) SysChatMerchantDelete(in *system.SysChatMer
 	merchant, err := l.svcCtx.ChatMerchantModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || merchant == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
+			Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
 		}, nil
 	}
 	if err != nil {

@@ -200,8 +200,8 @@ wklive/common/i18n/
 
 #### 之前
 ```go
-resp := helper.GetErrResp(400, "参数错误")  // 硬编码
-resp := helper.GetErrResp(400, "Parameter error")  // 硬编码
+resp := helper.ErrResp(400, "参数错误")  // 硬编码
+resp := helper.ErrResp(400, "Parameter error")  // 硬编码
 // 无多语言支持
 // 错误消息不一致
 ```
@@ -209,7 +209,7 @@ resp := helper.GetErrResp(400, "Parameter error")  // 硬编码
 #### 之后
 ```go
 msg := i18n.Translate(i18n.CodeBadRequest, ctx)
-resp := helper.GetErrResp(i18n.CodeBadRequest, msg)
+resp := helper.ErrResp(i18n.CodeBadRequest, msg)
 
 // 或更简单
 resp := i18n.BuildValidationErrorResponse(ctx, "")

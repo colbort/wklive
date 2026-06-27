@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"strings"
-
 	"wklive/common/helper"
+
+	"wklive/common/utils"
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -32,7 +34,7 @@ func NewOpenChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *O
 func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*chat.AppChatSessionResp, error) {
 	session, err := l.svcCtx.ChatSessionModel.FindByUser(l.ctx, in.MerchantId, in.UserId)
 	if err == nil {
-		now := nowMillis()
+		now := utils.NowMillis()
 		changed := false
 		if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 			session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
@@ -44,25 +46,17 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		if changed {
 			session.UpdateTimes = now
 			if err := l.svcCtx.ChatSessionModel.Update(l.ctx, session); err != nil {
-				return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
+				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-		return &chat.AppChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
+		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session)}, nil
 	} else if err != models.ErrNotFound {
-		sessionNo := ""
-		exists := true
-		for attempt := 0; attempt < sessionNoInsertAttempts; attempt++ {
-			sessionNo = nextNo("CS")
-			_, err := l.svcCtx.ChatSessionModel.FindOneBySessionNo(l.ctx, sessionNo)
-			if err == models.ErrNotFound {
-				exists = false
-				break
-			}
+		sessionNo, err := l.svcCtx.GenerateNo(l.ctx, "CS")
+		if err != nil {
+			logx.Errorf("generate session no error: %v", err)
+			return &chat.AppChatSessionResp{Base: helper.ErrResp(400, "generate message no error")}, nil
 		}
-		if sessionNo == "" || exists {
-			return &chat.AppChatSessionResp{Base: helper.FailResp()}, nil
-		}
-		now := nowMillis()
+		now := utils.NowMillis()
 		data := models.TChatSession{
 			SessionNo:       sessionNo,
 			MerchantId:      in.MerchantId,
@@ -82,13 +76,13 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			if id, err := result.LastInsertId(); err == nil {
 				data.Id = id
 			}
-			return &chat.AppChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
+			return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session)}, nil
 		} else {
-			return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
+			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 
 	} else {
-		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
+		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 }
 

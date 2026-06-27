@@ -3,9 +3,12 @@ package logic
 import (
 	"context"
 	"strings"
+	"wklive/common/helper"
+	"wklive/common/utils"
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -31,28 +34,28 @@ func (l *AuthChatMerchantLogic) AuthChatMerchant(in *chat.AuthChatMerchantReq) (
 	apiKey := strings.TrimSpace(in.GetApiKey())
 	apiSecret := strings.TrimSpace(in.GetApiSecret())
 	if apiKey == "" || apiSecret == "" {
-		return &chat.AuthChatMerchantResp{Base: badBase("api_key and api_secret are required")}, nil
+		return &chat.AuthChatMerchantResp{Base: helper.ErrResp(400, "api_key and api_secret are required")}, nil
 	}
 
 	merchant, err := l.svcCtx.ChatMerchantInfoModel.FindOneByApiKey(l.ctx, apiKey)
 	if err == models.ErrNotFound {
-		return &chat.AuthChatMerchantResp{Base: notFoundBase("chat merchant not found")}, nil
+		return &chat.AuthChatMerchantResp{Base: helper.ErrResp(404, "chat merchant not found")}, nil
 	}
 	if err != nil {
-		return &chat.AuthChatMerchantResp{Base: errorBase(err)}, nil
+		return &chat.AuthChatMerchantResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if strings.TrimSpace(merchant.ApiSecret) != apiSecret {
-		return &chat.AuthChatMerchantResp{Base: badBase("invalid api_secret")}, nil
+		return &chat.AuthChatMerchantResp{Base: helper.ErrResp(400, "invalid api_secret")}, nil
 	}
 	if merchant.Enabled != int64(common.Enable_ENABLE_ENABLED) {
-		return &chat.AuthChatMerchantResp{Base: badBase("chat merchant is disabled")}, nil
+		return &chat.AuthChatMerchantResp{Base: helper.ErrResp(400, "chat merchant is disabled")}, nil
 	}
-	if merchant.ExpireTime > 0 && merchant.ExpireTime <= nowMillis() {
-		return &chat.AuthChatMerchantResp{Base: badBase("chat merchant is expired")}, nil
+	if merchant.ExpireTime > 0 && merchant.ExpireTime <= utils.NowMillis() {
+		return &chat.AuthChatMerchantResp{Base: helper.ErrResp(400, "chat merchant is expired")}, nil
 	}
 
-	return &chat.AuthChatMerchantResp{Base: okBase(), Data: &chat.AuthChatMerchantData{
+	return &chat.AuthChatMerchantResp{Base: helper.OkResp(), Data: &chat.AuthChatMerchantData{
 		MerchantId: merchant.MerchantId,
-		Merchant:   toProtoMerchant(merchant),
+		Merchant:   internal.ToProtoMerchant(merchant),
 	}}, nil
 }

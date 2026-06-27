@@ -177,7 +177,7 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 	if err != nil {
 		if err.Error() == "tenant_owner_role_template_not_found" {
 			return &system.RespBase{
-				Base: helper.GetErrResp(i18n.TenantOwnerRoleTemplateNotFound, i18n.Translate(i18n.TenantOwnerRoleTemplateNotFound, l.ctx)),
+				Base: helper.ErrResp(i18n.TenantOwnerRoleTemplateNotFound, i18n.Translate(i18n.TenantOwnerRoleTemplateNotFound, l.ctx)),
 			}, nil
 		}
 		return nil, err

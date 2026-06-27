@@ -39,7 +39,7 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 
 	if bank == nil {
 		return &user.UpdateUserBankResp{
-			Base: helper.GetErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, bank.TenantId, i18n.NoPermissionModifyThisBankCard); err != nil {
@@ -53,7 +53,7 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 	// 验证银行卡是否属于该用户
 	if bank.UserId != in.UserId {
 		return &user.UpdateUserBankResp{
-			Base: helper.GetErrResp(i18n.NoPermissionModifyThisBankCard, i18n.Translate(i18n.NoPermissionModifyThisBankCard, l.ctx)),
+			Base: helper.ErrResp(i18n.NoPermissionModifyThisBankCard, i18n.Translate(i18n.NoPermissionModifyThisBankCard, l.ctx)),
 		}, nil
 	}
 

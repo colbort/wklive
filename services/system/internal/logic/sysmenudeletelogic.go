@@ -2,11 +2,12 @@ package logic
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysMenuDeleteLogic struct {
@@ -39,7 +40,7 @@ func (l *SysMenuDeleteLogic) SysMenuDelete(in *system.SysMenuDeleteReq) (*system
 	}
 	if menu == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.MenuNotFoundEN, i18n.Translate(i18n.MenuNotFoundEN, l.ctx)),
+			Base: helper.ErrResp(i18n.MenuNotFoundEN, i18n.Translate(i18n.MenuNotFoundEN, l.ctx)),
 		}, nil
 	}
 	err = l.svcCtx.MenuModel.Delete(l.ctx, in.Id)

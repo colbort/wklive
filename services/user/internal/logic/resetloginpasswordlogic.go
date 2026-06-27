@@ -38,7 +38,7 @@ func (l *ResetLoginPasswordLogic) ResetLoginPassword(in *user.ResetLoginPassword
 
 	if tuser == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
@@ -51,7 +51,7 @@ func (l *ResetLoginPasswordLogic) ResetLoginPassword(in *user.ResetLoginPassword
 
 	if in.NewPassword == "" {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
+			Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
 		}, nil
 	}
 

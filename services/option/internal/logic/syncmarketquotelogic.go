@@ -34,14 +34,14 @@ func NewSyncMarketQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 // 同步标的行情，更新对应期权合约行情和快照。
 func (l *SyncMarketQuoteLogic) SyncMarketQuote(in *option.SyncMarketQuoteReq) (*option.InternalCommonResp, error) {
 	if in == nil {
-		return &option.InternalCommonResp{Base: helper.GetErrResp(i18n.RequestRequired, i18n.Translate(i18n.RequestRequired, l.ctx))}, nil
+		return &option.InternalCommonResp{Base: helper.ErrResp(i18n.RequestRequired, i18n.Translate(i18n.RequestRequired, l.ctx))}, nil
 	}
 	symbol := strings.ToUpper(strings.TrimSpace(in.GetSymbol()))
 	if symbol == "" {
-		return &option.InternalCommonResp{Base: helper.GetErrResp(i18n.SymbolRequired, i18n.Translate(i18n.SymbolRequired, l.ctx))}, nil
+		return &option.InternalCommonResp{Base: helper.ErrResp(i18n.SymbolRequired, i18n.Translate(i18n.SymbolRequired, l.ctx))}, nil
 	}
 	if in.GetUnderlyingPrice() <= 0 {
-		return &option.InternalCommonResp{Base: helper.GetErrResp(i18n.UnderlyingPriceMustBePositive, i18n.Translate(i18n.UnderlyingPriceMustBePositive, l.ctx))}, nil
+		return &option.InternalCommonResp{Base: helper.ErrResp(i18n.UnderlyingPriceMustBePositive, i18n.Translate(i18n.UnderlyingPriceMustBePositive, l.ctx))}, nil
 	}
 
 	now := time.Now().Unix()

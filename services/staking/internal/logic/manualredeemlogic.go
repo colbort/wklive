@@ -39,7 +39,7 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		return nil, err
 	}
 	if order == nil || order.TenantId != in.TenantId {
-		return &staking.AdminManualRedeemResp{Page: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
 		return nil, err
@@ -47,27 +47,27 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		return &staking.AdminManualRedeemResp{Page: base}, nil
 	}
 	if order.Status == int64(staking.OrderStatus_ORDER_STATUS_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_EARLY_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_CANCELLED) {
-		return &staking.AdminManualRedeemResp{Page: helper.GetErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
+		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
 	}
 	if in.RedeemType == staking.RedeemType_REDEEM_TYPE_EARLY && order.AllowEarlyRedeem != int64(common.YesNo_YES_NO_YES) {
-		return &staking.AdminManualRedeemResp{Page: helper.GetErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
+		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
 	}
 
 	redeemAmount, err := conv.ParseFloatField(in.RedeemAmount)
 	if err != nil || redeemAmount <= 0 || redeemAmount > order.StakeAmount {
-		return &staking.AdminManualRedeemResp{Page: helper.GetErrResp(i18n.RedeemAmountInvalid, i18n.Translate(i18n.RedeemAmountInvalid, l.ctx))}, nil
+		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.RedeemAmountInvalid, i18n.Translate(i18n.RedeemAmountInvalid, l.ctx))}, nil
 	}
 	rewardAmount, err := conv.ParseFloatField(in.RewardAmount)
 	if err != nil || rewardAmount < 0 {
-		return &staking.AdminManualRedeemResp{Page: helper.GetErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
+		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
 	}
 	feeRate, err := conv.ParseFloatField(in.FeeRate)
 	if err != nil || feeRate < 0 {
-		return &staking.AdminManualRedeemResp{Page: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	feeAmount, err := conv.ParseFloatField(in.FeeAmount)
 	if err != nil || feeAmount < 0 {
-		return &staking.AdminManualRedeemResp{Page: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
 	redeemNo, err := l.svcCtx.GenerateBizNo(l.ctx, "SKR")

@@ -30,12 +30,12 @@ func (l *GetCryptoRechargeAddressLogic) GetCryptoRechargeAddress(in *payment.Get
 	item, err := getCryptoRechargeAddress(l.ctx, l.svcCtx, in.TenantId, in.Id)
 	if err != nil {
 		if isNotFound(err) {
-			return &payment.GetCryptoRechargeAddressResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressNotFound, i18n.Translate(i18n.CryptoRechargeAddressNotFound, l.ctx))}, nil
+			return &payment.GetCryptoRechargeAddressResp{Base: helper.ErrResp(i18n.CryptoRechargeAddressNotFound, i18n.Translate(i18n.CryptoRechargeAddressNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item == nil {
-		return &payment.GetCryptoRechargeAddressResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressNotFound, i18n.Translate(i18n.CryptoRechargeAddressNotFound, l.ctx))}, nil
+		return &payment.GetCryptoRechargeAddressResp{Base: helper.ErrResp(i18n.CryptoRechargeAddressNotFound, i18n.Translate(i18n.CryptoRechargeAddressNotFound, l.ctx))}, nil
 	}
 	return &payment.GetCryptoRechargeAddressResp{Base: helper.OkResp(), Data: toCryptoRechargeAddressProto(item)}, nil
 }

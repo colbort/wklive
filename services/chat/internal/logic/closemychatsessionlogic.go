@@ -2,8 +2,10 @@ package logic
 
 import (
 	"context"
+	"wklive/common/helper"
 
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -25,29 +27,29 @@ func NewCloseMyChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 关闭我的会话
 func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSessionReq) (*chat.AppChatSessionResp, error) {
-	merchantID, userID, base, err := chatAppIdentityFromMetadata(l.ctx)
+	merchantID, userID, base, err := internal.ChatAppIdentityFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AppChatSessionResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
+		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
-		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
+		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if base != nil {
 		return &chat.AppChatSessionResp{Base: base}, nil
 	}
 	if session.UserId != userID {
-		return &chat.AppChatSessionResp{Base: notFoundBase("chat session not found")}, nil
+		return &chat.AppChatSessionResp{Base: helper.ErrResp(404, "chat session not found")}, nil
 	}
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-		return &chat.AppChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
+		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session)}, nil
 	}
-	if err := closeSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
-		return &chat.AppChatSessionResp{Base: errorBase(err)}, nil
+	if err := internal.CloseSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
+		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	publishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, in.GetCloseReason(), "本次会话已结束")
-	return &chat.AppChatSessionResp{Base: okBase(), Data: toProtoSession(session)}, nil
+	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, in.GetCloseReason(), "本次会话已结束")
+	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session)}, nil
 }

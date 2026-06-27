@@ -36,7 +36,7 @@ func (l *ReviewUserIdentityLogic) ReviewUserIdentity(in *user.ReviewUserIdentity
 	}
 	if tuser == nil {
 		return &user.ReviewUserIdentityResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
@@ -55,7 +55,7 @@ func (l *ReviewUserIdentityLogic) ReviewUserIdentity(in *user.ReviewUserIdentity
 
 	if identity == nil {
 		return &user.ReviewUserIdentityResp{
-			Base: helper.GetErrResp(i18n.UserIdentityInfoNotFound, i18n.Translate(i18n.UserIdentityInfoNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserIdentityInfoNotFound, i18n.Translate(i18n.UserIdentityInfoNotFound, l.ctx)),
 		}, nil
 	}
 

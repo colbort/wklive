@@ -40,7 +40,7 @@ func (l *GetRechargeNotifyLogLogic) GetRechargeNotifyLog(in *payment.GetRecharge
 
 	if notifyLog == nil {
 		return &payment.GetRechargeNotifyLogResp{
-			Base: helper.GetErrResp(i18n.NotifyLogNotFound, i18n.Translate(i18n.NotifyLogNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.NotifyLogNotFound, i18n.Translate(i18n.NotifyLogNotFound, l.ctx)),
 		}, nil
 	}
 

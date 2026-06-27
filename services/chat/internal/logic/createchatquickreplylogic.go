@@ -2,10 +2,14 @@ package logic
 
 import (
 	"context"
+	"database/sql"
 	"strings"
+	"wklive/common/helper"
+	"wklive/common/utils"
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -31,26 +35,26 @@ func (l *CreateChatQuickReplyLogic) CreateChatQuickReply(in *chat.CreateChatQuic
 	title := strings.TrimSpace(in.GetTitle())
 	content := strings.TrimSpace(in.GetContent())
 	if title == "" || content == "" {
-		return &chat.AdminChatQuickReplyResp{Base: badBase("title and content are required")}, nil
+		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(400, "title and content are required")}, nil
 	}
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatQuickReplyResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatQuickReplyResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	enabled := int64(in.GetEnabled())
 	if enabled == 0 {
 		enabled = int64(common.Enable_ENABLE_ENABLED)
 	}
-	now := nowMillis()
+	now := utils.NowMillis()
 	data := &models.TChatQuickReply{
 		MerchantId:  merchantID,
 		AgentId:     in.GetAgentId(),
 		CategoryId:  in.GetCategoryId(),
 		Title:       title,
-		Content:     nullString(content),
+		Content:     sql.NullString{String: content, Valid: true},
 		Enabled:     enabled,
 		Sort:        int64(in.GetSort()),
 		Remark:      strings.TrimSpace(in.GetRemark()),
@@ -59,10 +63,10 @@ func (l *CreateChatQuickReplyLogic) CreateChatQuickReply(in *chat.CreateChatQuic
 	}
 	result, err := l.svcCtx.ChatQuickReplyModel.Insert(l.ctx, data)
 	if err != nil {
-		return &chat.AdminChatQuickReplyResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if id, err := result.LastInsertId(); err == nil {
 		data.Id = id
 	}
-	return &chat.AdminChatQuickReplyResp{Base: okBase(), Data: toProtoChatQuickReply(data)}, nil
+	return &chat.AdminChatQuickReplyResp{Base: helper.OkResp(), Data: internal.ToProtoChatQuickReply(data)}, nil
 }

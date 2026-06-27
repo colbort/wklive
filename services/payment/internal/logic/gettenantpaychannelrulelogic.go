@@ -40,7 +40,7 @@ func (l *GetTenantPayChannelRuleLogic) GetTenantPayChannelRule(in *payment.GetTe
 
 	if rule == nil {
 		return &payment.GetTenantPayChannelRuleResp{
-			Base: helper.GetErrResp(i18n.NotifyChannelRuleNotFound, i18n.Translate(i18n.NotifyChannelRuleNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.NotifyChannelRuleNotFound, i18n.Translate(i18n.NotifyChannelRuleNotFound, l.ctx)),
 		}, nil
 	}
 

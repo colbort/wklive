@@ -40,7 +40,7 @@ func (l *GetTenantPayAccountLogic) GetTenantPayAccount(in *payment.GetTenantPayA
 
 	if account == nil {
 		return &payment.GetTenantPayAccountResp{
-			Base: helper.GetErrResp(i18n.TenantPayAccountNotFound, i18n.Translate(i18n.TenantPayAccountNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.TenantPayAccountNotFound, i18n.Translate(i18n.TenantPayAccountNotFound, l.ctx)),
 		}, nil
 	}
 

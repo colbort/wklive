@@ -28,6 +28,6 @@ func FailWithCode(code int32) *common.RespBase {
 	return &common.RespBase{Code: code, Msg: "FAIL"}
 }
 
-func GetErrResp(code int32, msg string) *common.RespBase {
+func ErrResp(code int32, msg string) *common.RespBase {
 	return &common.RespBase{Code: code, Msg: msg}
 }

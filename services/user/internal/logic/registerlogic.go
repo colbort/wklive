@@ -41,7 +41,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
 	if err != nil || tenantCode == "" {
 		return &user.RegisterResp{
-			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+			Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
 		}, nil
 	}
 	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
@@ -52,22 +52,22 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 	if tenant == nil {
 		return &user.RegisterResp{
-			Base: helper.GetErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
 		}, nil
 	}
 	if tenant.Base.Code != 200 {
 		return &user.RegisterResp{
-			Base: helper.GetErrResp(tenant.Base.Code, tenant.Base.Msg),
+			Base: helper.ErrResp(tenant.Base.Code, tenant.Base.Msg),
 		}, nil
 	}
 	if tenant.Data.Enabled != 1 {
 		return &user.RegisterResp{
-			Base: helper.GetErrResp(i18n.TenantDisabled, i18n.Translate(i18n.TenantDisabled, l.ctx)),
+			Base: helper.ErrResp(i18n.TenantDisabled, i18n.Translate(i18n.TenantDisabled, l.ctx)),
 		}, nil
 	}
 	if tenant.Data.ExpireTime < utils.NowMillis() {
 		return &user.RegisterResp{
-			Base: helper.GetErrResp(i18n.TenantExpired, i18n.Translate(i18n.TenantExpired, l.ctx)),
+			Base: helper.ErrResp(i18n.TenantExpired, i18n.Translate(i18n.TenantExpired, l.ctx)),
 		}, nil
 	}
 
@@ -81,7 +81,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	case user.RegisterType_REGISTER_TYPE_USERNAME:
 		if in.InviteCode == "" {
 			return &user.RegisterResp{
-				Base: helper.GetErrResp(i18n.InviteCodeRequired, i18n.Translate(i18n.InviteCodeRequired, l.ctx)),
+				Base: helper.ErrResp(i18n.InviteCodeRequired, i18n.Translate(i18n.InviteCodeRequired, l.ctx)),
 			}, nil
 		}
 		parent, err := l.svcCtx.UserModel.FindByInviteCode(l.ctx, in.InviteCode)
@@ -90,7 +90,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		}
 		if parent == nil {
 			return &user.RegisterResp{
-				Base: helper.GetErrResp(i18n.InviterNotFound, i18n.Translate(i18n.InviterNotFound, l.ctx)),
+				Base: helper.ErrResp(i18n.InviterNotFound, i18n.Translate(i18n.InviterNotFound, l.ctx)),
 			}, nil
 		}
 		count, err := l.svcCtx.UserModel.CountRecentNoRecharge(l.ctx, parent.Id)
@@ -103,14 +103,14 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		}
 		if count > limit {
 			return &user.RegisterResp{
-				Base: helper.GetErrResp(i18n.RegistrationTooFrequent, i18n.Translate(i18n.RegistrationTooFrequent, l.ctx)),
+				Base: helper.ErrResp(i18n.RegistrationTooFrequent, i18n.Translate(i18n.RegistrationTooFrequent, l.ctx)),
 			}, nil
 		}
 		tuser, err = l.svcCtx.UserModel.FindByUsername(l.ctx, tenantCode, in.Username)
 		// 如果是用户名密码注册的 必须要邀请码，同一个 邀请码 的最近 一周内超过7个注册的用户如果没有一个充值的不给注册，直到 有用户充值
 	case user.RegisterType_REGISTER_TYPE_GUEST:
 		return &user.RegisterResp{
-			Base: helper.GetErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx)),
+			Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx)),
 		}, nil
 	}
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -118,7 +118,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 	if tuser != nil || userIdentify != nil {
 		return &user.RegisterResp{
-			Base: helper.GetErrResp(i18n.UserAlreadyExists, i18n.Translate(i18n.UserAlreadyExists, l.ctx)),
+			Base: helper.ErrResp(i18n.UserAlreadyExists, i18n.Translate(i18n.UserAlreadyExists, l.ctx)),
 		}, nil
 	}
 	referrerUserId := int64(-1)
@@ -129,7 +129,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		}
 		if parent == nil {
 			return &user.RegisterResp{
-				Base: helper.GetErrResp(i18n.InviterNotFound, i18n.Translate(i18n.InviterNotFound, l.ctx)),
+				Base: helper.ErrResp(i18n.InviterNotFound, i18n.Translate(i18n.InviterNotFound, l.ctx)),
 			}, nil
 		}
 		referrerUserId = parent.Id

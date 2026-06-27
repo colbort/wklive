@@ -36,7 +36,7 @@ func (l *ResetUserGoogle2FALogic) ResetUserGoogle2FA(in *user.ResetUserGoogle2FA
 	}
 	if tuser == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
@@ -55,7 +55,7 @@ func (l *ResetUserGoogle2FALogic) ResetUserGoogle2FA(in *user.ResetUserGoogle2FA
 
 	if userSecurity == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.UserSecurityInfoNotFound, i18n.Translate(i18n.UserSecurityInfoNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserSecurityInfoNotFound, i18n.Translate(i18n.UserSecurityInfoNotFound, l.ctx)),
 		}, nil
 	}
 

@@ -33,7 +33,7 @@ func NewSetSymbolLeverageConfigLogic(ctx context.Context, svcCtx *svc.ServiceCon
 func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymbolLeverageConfigReq) (*trade.AdminCommonResp, error) {
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 	if errors.Is(err, models.ErrNotFound) {
-		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymb
 		return &trade.AdminCommonResp{Base: base}, nil
 	}
 	if !isContractMarket(in.MarketType) || symbol.MarketType != int64(in.MarketType) || in.MarginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN {
-		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
 	now := utils.NowMillis()

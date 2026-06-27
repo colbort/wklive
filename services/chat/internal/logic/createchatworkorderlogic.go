@@ -2,10 +2,13 @@ package logic
 
 import (
 	"context"
+	"database/sql"
 	"strings"
-
 	"wklive/common/helper"
+
+	"wklive/common/utils"
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -31,39 +34,30 @@ func (l *CreateChatWorkOrderLogic) CreateChatWorkOrder(in *chat.CreateChatWorkOr
 	title := strings.TrimSpace(in.GetTitle())
 	content := strings.TrimSpace(in.GetContent())
 	if title == "" || content == "" {
-		return &chat.AdminChatWorkOrderResp{Base: badBase("title and content are required")}, nil
+		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "title and content are required")}, nil
 	}
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatWorkOrderResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatWorkOrderResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-
-	workOrderNo := ""
-	exists := true
-	for attempt := 0; attempt < sessionNoInsertAttempts; attempt++ {
-		workOrderNo = nextNo("WO")
-		_, err := l.svcCtx.ChatWorkOrderModel.FindOneByWorkOrderNo(l.ctx, workOrderNo)
-		if err == models.ErrNotFound {
-			exists = false
-			break
-		}
+	workOrderNo, err := l.svcCtx.GenerateNo(l.ctx, "WO")
+	if err != nil {
+		logx.Errorf("generate work order no error: %v", err)
+		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "generate message no error")}, nil
 	}
-	if workOrderNo == "" || exists {
-		return &chat.AdminChatWorkOrderResp{Base: helper.FailResp()}, nil
-	}
-	now := nowMillis()
+	now := utils.NowMillis()
 	data := &models.TChatWorkOrder{
 		MerchantId:    merchantID,
-		WorkOrderNo:   nextNo("WO"),
+		WorkOrderNo:   workOrderNo,
 		SessionNo:     strings.TrimSpace(in.GetSessionNo()),
 		UserId:        in.GetUserId(),
 		AgentId:       in.GetAgentId(),
 		GroupId:       in.GetGroupId(),
 		Title:         title,
-		Content:       nullString(content),
+		Content:       sql.NullString{String: content, Valid: true},
 		ContactName:   strings.TrimSpace(in.GetContactName()),
 		ContactMobile: strings.TrimSpace(in.GetContactMobile()),
 		ContactEmail:  strings.TrimSpace(in.GetContactEmail()),
@@ -78,8 +72,8 @@ func (l *CreateChatWorkOrderLogic) CreateChatWorkOrder(in *chat.CreateChatWorkOr
 		if id, err := result.LastInsertId(); err == nil {
 			data.Id = id
 		}
-		return &chat.AdminChatWorkOrderResp{Base: okBase(), Data: toProtoChatWorkOrder(data)}, nil
+		return &chat.AdminChatWorkOrderResp{Base: helper.OkResp(), Data: internal.ToProtoChatWorkOrder(data)}, nil
 	} else {
-		return &chat.AdminChatWorkOrderResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 }

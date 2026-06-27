@@ -51,10 +51,10 @@ func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.AppComm
 	case in.ClientOrderId != "":
 		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, in.ClientOrderId)
 	default:
-		return &trade.AppCommonResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.AppCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if errors.Is(err, models.ErrNotFound) || (err == nil && (item.TenantId != tenantId || item.UserId != userId)) {
-		return &trade.AppCommonResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &trade.AppCommonResp{Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err

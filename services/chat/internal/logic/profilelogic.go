@@ -2,10 +2,12 @@ package logic
 
 import (
 	"context"
+	"wklive/common/helper"
 
 	"wklive/common/utils"
 	"wklive/proto/chat"
 	"wklive/proto/common"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -30,18 +32,18 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 func (l *ProfileLogic) Profile(in *chat.ChatAdminProfileReq) (*chat.ChatAdminProfileResp, error) {
 	userID, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil || userID <= 0 {
-		return &chat.ChatAdminProfileResp{Base: badBase("invalid login session")}, nil
+		return &chat.ChatAdminProfileResp{Base: helper.ErrResp(400, "invalid login session")}, nil
 	}
 
 	user, err := l.svcCtx.ChatUserModel.FindOne(l.ctx, userID)
 	if err == models.ErrNotFound {
-		return &chat.ChatAdminProfileResp{Base: badBase("invalid login session")}, nil
+		return &chat.ChatAdminProfileResp{Base: helper.ErrResp(400, "invalid login session")}, nil
 	}
 	if err != nil {
-		return &chat.ChatAdminProfileResp{Base: errorBase(err)}, nil
+		return &chat.ChatAdminProfileResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if user.Enabled != int64(common.Enable_ENABLE_ENABLED) {
-		return &chat.ChatAdminProfileResp{Base: badBase("chat user is disabled")}, nil
+		return &chat.ChatAdminProfileResp{Base: helper.ErrResp(400, "chat user is disabled")}, nil
 	}
 
 	var agent *models.TChatAgent
@@ -50,13 +52,13 @@ func (l *ProfileLogic) Profile(in *chat.ChatAdminProfileReq) (*chat.ChatAdminPro
 		if err == models.ErrNotFound {
 			agent = nil
 		} else if err != nil {
-			return &chat.ChatAdminProfileResp{Base: errorBase(err)}, nil
+			return &chat.ChatAdminProfileResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	}
 
 	return &chat.ChatAdminProfileResp{
-		Base:  okBase(),
-		User:  toProtoUser(user),
-		Agent: toProtoAgent(agent),
+		Base:  helper.OkResp(),
+		User:  internal.ToProtoUser(user),
+		Agent: internal.ToProtoAgent(agent),
 	}, nil
 }

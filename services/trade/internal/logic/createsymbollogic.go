@@ -35,7 +35,7 @@ func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.Admi
 		return nil, err
 	}
 	if exists != nil {
-		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	now := utils.NowMillis()
 	data := &models.TTradeSymbol{

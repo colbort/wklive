@@ -40,7 +40,7 @@ func (l *GetTenantPayChannelLogic) GetTenantPayChannel(in *payment.GetTenantPayC
 
 	if channel == nil {
 		return &payment.GetTenantPayChannelResp{
-			Base: helper.GetErrResp(i18n.ChannelNotFound, i18n.Translate(i18n.ChannelNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.ChannelNotFound, i18n.Translate(i18n.ChannelNotFound, l.ctx)),
 		}, nil
 	}
 

@@ -42,7 +42,7 @@ func (l *EnableGoogle2FALogic) EnableGoogle2FA(in *user.EnableGoogle2FAReq) (*us
 
 	if tuser == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -54,20 +54,20 @@ func (l *EnableGoogle2FALogic) EnableGoogle2FA(in *user.EnableGoogle2FAReq) (*us
 
 	if userSecurity == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(i18n.SecuritySettingsNotFound, i18n.Translate(i18n.SecuritySettingsNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.SecuritySettingsNotFound, i18n.Translate(i18n.SecuritySettingsNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证Google 2FA code
 	if userSecurity.GoogleSecret.String == "" {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(i18n.PleaseInitializeGoogle2FA, i18n.Translate(i18n.PleaseInitializeGoogle2FA, l.ctx)),
+			Base: helper.ErrResp(i18n.PleaseInitializeGoogle2FA, i18n.Translate(i18n.PleaseInitializeGoogle2FA, l.ctx)),
 		}, nil
 	}
 
 	if !utils.VerifyGoogle2FACode(userSecurity.GoogleSecret.String, in.GoogleCode) {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(i18n.VerificationCodeInvalid, i18n.Translate(i18n.VerificationCodeInvalid, l.ctx)),
+			Base: helper.ErrResp(i18n.VerificationCodeInvalid, i18n.Translate(i18n.VerificationCodeInvalid, l.ctx)),
 		}, nil
 	}
 

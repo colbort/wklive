@@ -32,12 +32,12 @@ func (l *AdminProductDetailLogic) AdminProductDetail(in *staking.AdminProductDet
 	item, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &staking.AdminProductDetailResp{Page: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+			return &staking.AdminProductDetailResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.TenantId != in.TenantId {
-		return &staking.AdminProductDetailResp{Page: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+		return &staking.AdminProductDetailResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 
 	return &staking.AdminProductDetailResp{Page: helper.OkResp(), Data: productToProto(item)}, nil

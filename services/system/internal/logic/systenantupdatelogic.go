@@ -96,7 +96,7 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(in *system.SysTenantUpdateReq) (*
 	}
 	if tenantNotFound {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
 		}, nil
 	}
 

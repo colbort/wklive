@@ -31,7 +31,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 	claims, err := utils.ParseToken(l.svcCtx.Config.Jwt.AccessSecret, in.RefreshToken)
 	if err != nil {
 		return &user.RefreshTokenResp{
-			Base: helper.GetErrResp(i18n.TokenExpiredOrInvalid, i18n.Translate(i18n.TokenExpiredOrInvalid, l.ctx)),
+			Base: helper.ErrResp(i18n.TokenExpiredOrInvalid, i18n.Translate(i18n.TokenExpiredOrInvalid, l.ctx)),
 		}, nil
 	}
 
@@ -43,13 +43,13 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 
 	if tuser == nil {
 		return &user.RefreshTokenResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
 	if tuser.Status != 1 {
 		return &user.RefreshTokenResp{
-			Base: helper.GetErrResp(i18n.AccountDisabled, i18n.Translate(i18n.AccountDisabled, l.ctx)),
+			Base: helper.ErrResp(i18n.AccountDisabled, i18n.Translate(i18n.AccountDisabled, l.ctx)),
 		}, nil
 	}
 

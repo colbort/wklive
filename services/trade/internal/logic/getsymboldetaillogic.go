@@ -36,7 +36,7 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 	}
 	item, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != tenantId) {
-		return &trade.GetSymbolDetailResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.GetSymbolDetailResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err

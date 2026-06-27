@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AdminGetTradeLogic struct {
@@ -30,7 +31,7 @@ func (l *AdminGetTradeLogic) AdminGetTrade(in *option.GetTradeReq) (*option.GetT
 	item, err := findTradeByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.TradeNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.GetTradeResp{Base: helper.GetErrResp(i18n.TradeNotFound, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
+			return &option.GetTradeResp{Base: helper.ErrResp(i18n.TradeNotFound, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

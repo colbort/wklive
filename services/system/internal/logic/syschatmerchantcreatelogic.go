@@ -42,7 +42,7 @@ func (l *SysChatMerchantCreateLogic) SysChatMerchantCreate(in *system.SysChatMer
 
 	if in.MerchantCode == "" || in.MerchantName == "" || in.Password == "" {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
+			Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
 		}, nil
 	}
 
@@ -52,7 +52,7 @@ func (l *SysChatMerchantCreateLogic) SysChatMerchantCreate(in *system.SysChatMer
 	}
 	if exists != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
+			Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
 		}, nil
 	}
 

@@ -31,7 +31,7 @@ func NewGetPositionDetailAdminLogic(ctx context.Context, svcCtx *svc.ServiceCont
 func (l *GetPositionDetailAdminLogic) GetPositionDetailAdmin(in *trade.GetPositionDetailAdminReq) (*trade.GetPositionDetailAdminResp, error) {
 	item, err := l.svcCtx.ContractPositionModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != in.TenantId) {
-		return &trade.GetPositionDetailAdminResp{Base: helper.GetErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
+		return &trade.GetPositionDetailAdminResp{Base: helper.ErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err

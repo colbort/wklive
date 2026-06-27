@@ -36,10 +36,10 @@ func NewCreateCryptoRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceC
 // 创建链上充值订单
 func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.CreateCryptoRechargeOrderReq) (*payment.CreateCryptoRechargeOrderResp, error) {
 	if in.RechargeAmount <= 0 {
-		return &payment.CreateCryptoRechargeOrderResp{Base: helper.GetErrResp(i18n.AmountMustBePositive, i18n.Translate(i18n.AmountMustBePositive, l.ctx))}, nil
+		return &payment.CreateCryptoRechargeOrderResp{Base: helper.ErrResp(i18n.AmountMustBePositive, i18n.Translate(i18n.AmountMustBePositive, l.ctx))}, nil
 	}
 	if in.WalletType <= 0 || in.Coin == "" || in.ChainCode == 0 {
-		return &payment.CreateCryptoRechargeOrderResp{Base: helper.GetErrResp(i18n.InvalidCryptoRechargeParams, i18n.Translate(i18n.InvalidCryptoRechargeParams, l.ctx))}, nil
+		return &payment.CreateCryptoRechargeOrderResp{Base: helper.ErrResp(i18n.InvalidCryptoRechargeParams, i18n.Translate(i18n.InvalidCryptoRechargeParams, l.ctx))}, nil
 	}
 
 	userId, err := utils.GetUserIdFromMd(l.ctx)
@@ -55,7 +55,7 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 	addressItem, err := l.svcCtx.CryptoRechargeAddressModel.FindOneByTenantIdUserIdWalletTypeCoinChainCode(l.ctx, tenantId, userId, int64(in.WalletType), in.Coin, int64(in.ChainCode))
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &payment.CreateCryptoRechargeOrderResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressExpired, i18n.Translate(i18n.CryptoRechargeAddressExpired, l.ctx))}, nil
+			return &payment.CreateCryptoRechargeOrderResp{Base: helper.ErrResp(i18n.CryptoRechargeAddressExpired, i18n.Translate(i18n.CryptoRechargeAddressExpired, l.ctx))}, nil
 		}
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 		return nil, err
 	}
 	if !reservedByMe {
-		return &payment.CreateCryptoRechargeOrderResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressExpired, i18n.Translate(i18n.CryptoRechargeAddressExpired, l.ctx))}, nil
+		return &payment.CreateCryptoRechargeOrderResp{Base: helper.ErrResp(i18n.CryptoRechargeAddressExpired, i18n.Translate(i18n.CryptoRechargeAddressExpired, l.ctx))}, nil
 	}
 
 	now := utils.NowMillis()

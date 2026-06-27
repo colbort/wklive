@@ -33,21 +33,21 @@ func (l *Google2FAInitLogic) Google2FAInit(in *system.Google2FAInitReq) (*system
 	}
 	if user == nil {
 		return &system.Google2FAInitResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
 	secret, otpauthURL, qrCode, err := utils.GenerateGoogle2FA(user.Username, utils.Default2FAIssuer, 256)
 	if err != nil {
 		return &system.Google2FAInitResp{
-			Base: helper.GetErrResp(i18n.Generate2FASecretFailed, i18n.Translate(i18n.Generate2FASecretFailed, l.ctx)+": "+err.Error()),
+			Base: helper.ErrResp(i18n.Generate2FASecretFailed, i18n.Translate(i18n.Generate2FASecretFailed, l.ctx)+": "+err.Error()),
 		}, err
 	}
 
 	// 将 secret 存储到 redis，设置过期时间，例如 10 分钟
 	if err := l.svcCtx.UserModel.InsertGoogle2FASecret(l.ctx, in.UserId, secret); err != nil {
 		return &system.Google2FAInitResp{
-			Base: helper.GetErrResp(i18n.Store2FASecretFailed, i18n.Translate(i18n.Store2FASecretFailed, l.ctx)+": "+err.Error()),
+			Base: helper.ErrResp(i18n.Store2FASecretFailed, i18n.Translate(i18n.Store2FASecretFailed, l.ctx)+": "+err.Error()),
 		}, err
 	}
 	return &system.Google2FAInitResp{

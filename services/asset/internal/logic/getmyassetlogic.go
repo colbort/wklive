@@ -40,7 +40,7 @@ func (l *GetMyAssetLogic) GetMyAsset(in *asset.GetMyAssetReq) (*asset.GetMyAsset
 	item, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, tenantId, userId, int64(in.WalletType), in.Coin)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &asset.GetMyAssetResp{Base: helper.GetErrResp(i18n.AssetNotFound, i18n.Translate(i18n.AssetNotFound, l.ctx))}, nil
+			return &asset.GetMyAssetResp{Base: helper.ErrResp(i18n.AssetNotFound, i18n.Translate(i18n.AssetNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

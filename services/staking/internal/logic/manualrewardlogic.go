@@ -38,7 +38,7 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 		return nil, err
 	}
 	if order == nil || order.TenantId != in.TenantId {
-		return &staking.AdminManualRewardResp{Page: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &staking.AdminManualRewardResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 
 	rewardAmount, err := conv.ParseFloatField(in.RewardAmount)
 	if err != nil || rewardAmount <= 0 {
-		return &staking.AdminManualRewardResp{Page: helper.GetErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
+		return &staking.AdminManualRewardResp{Page: helper.ErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
 	}
 
 	now := utils.NowMillis()

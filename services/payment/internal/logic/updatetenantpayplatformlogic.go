@@ -41,7 +41,7 @@ func (l *UpdateTenantPayPlatformLogic) UpdateTenantPayPlatform(in *payment.Updat
 
 	if tenantPlatform == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.TenantPlatformNotFound, i18n.Translate(i18n.TenantPlatformNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.TenantPlatformNotFound, i18n.Translate(i18n.TenantPlatformNotFound, l.ctx)),
 		}, nil
 	}
 

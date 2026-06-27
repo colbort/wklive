@@ -30,7 +30,7 @@ func NewVerificationCodeRecordDetailLogic(ctx context.Context, svcCtx *svc.Servi
 func (l *VerificationCodeRecordDetailLogic) VerificationCodeRecordDetail(in *system.VerificationCodeRecordDetailReq) (*system.VerificationCodeRecordDetailResp, error) {
 	if in.Id <= 0 {
 		return &system.VerificationCodeRecordDetailResp{
-			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+			Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
 		}, nil
 	}
 
@@ -38,7 +38,7 @@ func (l *VerificationCodeRecordDetailLogic) VerificationCodeRecordDetail(in *sys
 	if err != nil {
 		if err == models.ErrNotFound {
 			return &system.VerificationCodeRecordDetailResp{
-				Base: helper.GetErrResp(i18n.CodeNotFound, i18n.Translate(i18n.CodeNotFound, l.ctx)),
+				Base: helper.ErrResp(i18n.CodeNotFound, i18n.Translate(i18n.CodeNotFound, l.ctx)),
 			}, nil
 		}
 		return nil, err

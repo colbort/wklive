@@ -34,7 +34,7 @@ func (l *GetTenantCategoryLogic) GetTenantCategory(in *itick.GetTenantCategoryRe
 	}
 	if item == nil || item.TenantId != in.TenantId {
 		return &itick.GetTenantCategoryResp{
-			Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
 

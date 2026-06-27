@@ -342,12 +342,12 @@ func applyAdminTenantUpdateScope(
 	}
 	if forbidden {
 		return false, &payment.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)),
+			Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)),
 		}, nil
 	}
 	if !allowed {
 		return false, &payment.AdminCommonResp{
-			Base: helper.GetErrResp(notFoundCode, i18n.Translate(notFoundCode, ctx)),
+			Base: helper.ErrResp(notFoundCode, i18n.Translate(notFoundCode, ctx)),
 		}, nil
 	}
 	return allowTenantUpdate, nil, nil
@@ -379,7 +379,7 @@ func lastCryptoTxID(items []*models.TCryptoRechargeTx) int64 {
 }
 
 func cryptoNotFoundResp() *payment.AdminCommonResp {
-	return &payment.AdminCommonResp{Base: helper.GetErrResp(i18n.NotFound, i18n.Translate(i18n.NotFound, context.Background()))}
+	return &payment.AdminCommonResp{Base: helper.ErrResp(i18n.NotFound, i18n.Translate(i18n.NotFound, context.Background()))}
 }
 
 func isNotFound(err error) bool {

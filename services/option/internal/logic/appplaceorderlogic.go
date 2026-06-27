@@ -46,24 +46,24 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 	contract, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, in.ContractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
+			return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if contract.TenantId != tenantId {
-		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
+		return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 	}
 	if contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) {
-		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.ContractNotTradable, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
+		return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotTradable, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
 	}
 
 	price, err := conv.ParseFloatField(in.Price)
 	if err != nil {
-		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.PriceFormatError, i18n.Translate(i18n.PriceFormatError, l.ctx))}, nil
+		return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.PriceFormatError, i18n.Translate(i18n.PriceFormatError, l.ctx))}, nil
 	}
 	qty, err := conv.ParseFloatField(in.Qty)
 	if err != nil || qty <= 0 {
-		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.QuantityFormatError, i18n.Translate(i18n.QuantityFormatError, l.ctx))}, nil
+		return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.QuantityFormatError, i18n.Translate(i18n.QuantityFormatError, l.ctx))}, nil
 	}
 
 	marginAmount := 0.0
@@ -84,7 +84,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 			return nil, err
 		}
 		if exists != nil {
-			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.ClientOrderIDAlreadyExists, i18n.Translate(i18n.ClientOrderIDAlreadyExists, l.ctx)), Data: &option.AppPlaceOrderData{OrderNo: exists.OrderNo, OrderId: exists.Id}}, nil
+			return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.ClientOrderIDAlreadyExists, i18n.Translate(i18n.ClientOrderIDAlreadyExists, l.ctx)), Data: &option.AppPlaceOrderData{OrderNo: exists.OrderNo, OrderId: exists.Id}}, nil
 		}
 	}
 
@@ -142,10 +142,10 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 	})
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx)), Data: &option.AppPlaceOrderData{OrderNo: order.OrderNo, OrderId: id}}, nil
+			return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx)), Data: &option.AppPlaceOrderData{OrderNo: order.OrderNo, OrderId: id}}, nil
 		}
 		if i18n.IsStatusError(err, i18n.QuantityFormatError) {
-			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.QuantityFormatError, i18n.Translate(i18n.QuantityFormatError, l.ctx)), Data: &option.AppPlaceOrderData{OrderNo: order.OrderNo, OrderId: id}}, nil
+			return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.QuantityFormatError, i18n.Translate(i18n.QuantityFormatError, l.ctx)), Data: &option.AppPlaceOrderData{OrderNo: order.OrderNo, OrderId: id}}, nil
 		}
 		return nil, err
 	}

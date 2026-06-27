@@ -32,7 +32,7 @@ func NewUpdateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.AdminCommonResp, error) {
 	item, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) {
-		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -42,10 +42,10 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Admi
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
 	if !allowed {
-		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if allowTenantUpdate {
 		item.TenantId = in.TenantId

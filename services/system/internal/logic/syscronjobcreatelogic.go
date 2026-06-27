@@ -33,24 +33,24 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 	_, err := cron.ParseStandard(in.CronExpression)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InvalidCronExpression, i18n.Translate(i18n.InvalidCronExpression, l.ctx)),
+			Base: helper.ErrResp(i18n.InvalidCronExpression, i18n.Translate(i18n.InvalidCronExpression, l.ctx)),
 		}, nil
 	}
 	job, err := l.svcCtx.JobModel.FindByInvokeTarget(l.ctx, in.InvokeTarget)
 	if err != nil && err != models.ErrNotFound {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
+			Base: helper.ErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 	if job != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.CronJobAlreadyExists, i18n.Translate(i18n.CronJobAlreadyExists, l.ctx)),
+			Base: helper.ErrResp(i18n.CronJobAlreadyExists, i18n.Translate(i18n.CronJobAlreadyExists, l.ctx)),
 		}, nil
 	}
 	userName, err := utils.GetUsernameFromMd(l.ctx)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
+			Base: helper.ErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 	_, err = l.svcCtx.JobModel.Insert(l.ctx, &models.SysJob{
@@ -65,7 +65,7 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 	})
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
+			Base: helper.ErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 

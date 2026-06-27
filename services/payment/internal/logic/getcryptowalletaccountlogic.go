@@ -30,12 +30,12 @@ func (l *GetCryptoWalletAccountLogic) GetCryptoWalletAccount(in *payment.GetCryp
 	item, err := l.svcCtx.CryptoWalletAccountModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if isNotFound(err) {
-			return &payment.GetCryptoWalletAccountResp{Base: helper.GetErrResp(i18n.CryptoWalletAccountNotFound, i18n.Translate(i18n.CryptoWalletAccountNotFound, l.ctx))}, nil
+			return &payment.GetCryptoWalletAccountResp{Base: helper.ErrResp(i18n.CryptoWalletAccountNotFound, i18n.Translate(i18n.CryptoWalletAccountNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if in.TenantId > 0 && item.TenantId != in.TenantId {
-		return &payment.GetCryptoWalletAccountResp{Base: helper.GetErrResp(i18n.CryptoWalletAccountNotFound, i18n.Translate(i18n.CryptoWalletAccountNotFound, l.ctx))}, nil
+		return &payment.GetCryptoWalletAccountResp{Base: helper.ErrResp(i18n.CryptoWalletAccountNotFound, i18n.Translate(i18n.CryptoWalletAccountNotFound, l.ctx))}, nil
 	}
 	return &payment.GetCryptoWalletAccountResp{Base: helper.OkResp(), Data: toCryptoWalletAccountProto(item)}, nil
 }

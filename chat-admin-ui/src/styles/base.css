@@ -220,6 +220,16 @@ p {
 }
 
 .agent-mobile-settings {
+  display: block;
+}
+
+.agent-topbar .profile {
+  flex: 0 0 auto;
+  min-width: 0;
+  justify-content: flex-end;
+}
+
+.agent-profile-action {
   display: none;
 }
 
@@ -566,14 +576,6 @@ p {
   .agent-topbar .profile {
     gap: 10px;
   }
-
-  .agent-profile-action {
-    display: none;
-  }
-
-  .agent-mobile-settings {
-    display: block;
-  }
 }
 
 .info-list {
@@ -833,14 +835,6 @@ p {
 
   .agent-topbar .profile-text {
     max-width: 86px;
-  }
-
-  .agent-profile-action {
-    display: none;
-  }
-
-  .agent-mobile-settings {
-    display: block;
   }
 
   .login-panel {

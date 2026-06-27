@@ -38,7 +38,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
 	if err != nil || tenantCode == "" {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+			Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
 		}, nil
 	}
 	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
@@ -49,7 +49,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	}
 	if tenant == nil || tenant.Base.Code != 200 {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -86,19 +86,19 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 
 	if tuser == nil {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(i18n.UserNotFoundOrPasswordIncorrect, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFoundOrPasswordIncorrect, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
 		}, nil
 	}
 
 	if tuser.Status != 1 {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(i18n.AccountDisabled, i18n.Translate(i18n.AccountDisabled, l.ctx)),
+			Base: helper.ErrResp(i18n.AccountDisabled, i18n.Translate(i18n.AccountDisabled, l.ctx)),
 		}, nil
 	}
 
 	if bcrypt.CompareHashAndPassword([]byte(tuser.PasswordHash), []byte(in.Password)) != nil {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(i18n.UserNotFoundOrPasswordIncorrect, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFoundOrPasswordIncorrect, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
 		}, nil
 	}
 
@@ -109,12 +109,12 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	if userSecurity != nil && userSecurity.GoogleEnabled == int64(common.Enable_ENABLE_ENABLED) {
 		if in.GoogleCode == "" {
 			return &user.LoginResp{
-				Base: helper.GetErrResp(i18n.Google2FACodeRequired, i18n.Translate(i18n.Google2FACodeRequired, l.ctx)),
+				Base: helper.ErrResp(i18n.Google2FACodeRequired, i18n.Translate(i18n.Google2FACodeRequired, l.ctx)),
 			}, nil
 		}
 		if !utils.VerifyGoogle2FACode(userSecurity.GoogleSecret.String, in.GoogleCode) {
 			return &user.LoginResp{
-				Base: helper.GetErrResp(i18n.Google2FACodeInvalid, i18n.Translate(i18n.Google2FACodeInvalid, l.ctx)),
+				Base: helper.ErrResp(i18n.Google2FACodeInvalid, i18n.Translate(i18n.Google2FACodeInvalid, l.ctx)),
 			}, nil
 		}
 	}

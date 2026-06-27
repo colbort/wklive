@@ -40,7 +40,7 @@ func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.AppComm
 	}
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.TenantId != tenantId) {
-		return &trade.AppCommonResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.AppCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -50,14 +50,14 @@ func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.AppComm
 		return nil, err
 	}
 	if !ok {
-		return &trade.AppCommonResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.AppCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	shortLeverage, ok, err := ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, tenantId, symbol, in.MarginMode, in.ShortLeverage)
 	if err != nil {
 		return nil, err
 	}
 	if !ok {
-		return &trade.AppCommonResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.AppCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	now := utils.NowMillis()
 	cfg, err := l.svcCtx.ContractLeverageCfgModel.FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(

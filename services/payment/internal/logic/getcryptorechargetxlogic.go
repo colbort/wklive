@@ -30,7 +30,7 @@ func (l *GetCryptoRechargeTxLogic) GetCryptoRechargeTx(in *payment.GetCryptoRech
 	item, err := l.svcCtx.CryptoRechargeTxModel.FindOneByIdOrHash(l.ctx, in.TenantId, in.Id, int64(in.ChainCode), in.TxHash)
 	if err != nil {
 		if isNotFound(err) {
-			return &payment.GetCryptoRechargeTxResp{Base: helper.GetErrResp(i18n.CryptoRechargeTxNotFound, i18n.Translate(i18n.CryptoRechargeTxNotFound, l.ctx))}, nil
+			return &payment.GetCryptoRechargeTxResp{Base: helper.ErrResp(i18n.CryptoRechargeTxNotFound, i18n.Translate(i18n.CryptoRechargeTxNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

@@ -2,8 +2,11 @@ package logic
 
 import (
 	"context"
+	"wklive/common/helper"
+	"wklive/common/utils"
 
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -27,28 +30,28 @@ func NewUpdateChatAgentStatusLogic(ctx context.Context, svcCtx *svc.ServiceConte
 // 更新坐席在线状态
 func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAgentStatusReq) (*chat.AdminChatAgentResp, error) {
 	if in.Id <= 0 || in.GetStatus() == chat.ChatAgentStatus_CHAT_AGENT_STATUS_UNKNOWN {
-		return &chat.AdminChatAgentResp{Base: badBase("agent_id and status are required")}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "agent_id and status are required")}, nil
 	}
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatAgentResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetId())
 	if err == models.ErrNotFound || data.MerchantId != merchantID {
-		return &chat.AdminChatAgentResp{Base: notFoundBase("chat agent not found")}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(404, "chat agent not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data.Status = int64(in.GetStatus())
-	data.LastActiveTime = nowMillis()
-	data.UpdateTimes = nowMillis()
+	data.LastActiveTime = utils.NowMillis()
+	data.UpdateTimes = utils.NowMillis()
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, data); err != nil {
-		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	publishAgentStatusEvent(l.ctx, l.svcCtx, data)
-	return &chat.AdminChatAgentResp{Base: okBase(), Data: toProtoAgent(data)}, nil
+	internal.PublishAgentStatusEvent(l.ctx, l.svcCtx, data)
+	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: internal.ToProtoAgent(data)}, nil
 }

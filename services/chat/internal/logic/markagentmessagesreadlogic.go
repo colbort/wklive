@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
+	"wklive/common/helper"
 
 	"wklive/common/utils"
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -27,33 +29,33 @@ func NewMarkAgentMessagesReadLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 标记客服侧已读
 func (l *MarkAgentMessagesReadLogic) MarkAgentMessagesRead(in *chat.MarkAgentMessagesReadReq) (*chat.AdminMarkMessagesReadResp, error) {
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.AdminMarkMessagesReadResp{Base: errorBase(err)}, nil
+		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
-		return &chat.AdminMarkMessagesReadResp{Base: errorBase(err)}, nil
+		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if base != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: base}, nil
 	}
 	operatorID, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil || operatorID <= 0 {
-		return &chat.AdminMarkMessagesReadResp{Base: badBase("operator_id is required")}, nil
+		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(400, "operator_id is required")}, nil
 	}
 	agent, err := l.svcCtx.ChatAgentModel.FindOneByMerchantIdChatUserId(l.ctx, merchantID, operatorID)
 	if err == models.ErrNotFound {
-		return &chat.AdminMarkMessagesReadResp{Base: notFoundBase("chat agent not found")}, nil
+		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(404, "chat agent not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminMarkMessagesReadResp{Base: errorBase(err)}, nil
+		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	if err := markRead(l.ctx, l.svcCtx, session, chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT, agent.Id); err != nil {
-		return &chat.AdminMarkMessagesReadResp{Base: errorBase(err)}, nil
+	if err := internal.MarkRead(l.ctx, l.svcCtx, session, chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT, agent.Id); err != nil {
+		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminMarkMessagesReadResp{Base: okBase()}, nil
+	return &chat.AdminMarkMessagesReadResp{Base: helper.OkResp()}, nil
 }

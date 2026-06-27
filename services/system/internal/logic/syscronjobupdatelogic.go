@@ -45,19 +45,19 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 		_, err := parser.Parse(in.CronExpression)
 		if err != nil {
 			return &system.RespBase{
-				Base: helper.GetErrResp(i18n.InvalidCronExpression, i18n.Translate(i18n.InvalidCronExpression, l.ctx)),
+				Base: helper.ErrResp(i18n.InvalidCronExpression, i18n.Translate(i18n.InvalidCronExpression, l.ctx)),
 			}, nil
 		}
 	}
 	job, err := l.svcCtx.JobModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
+			Base: helper.ErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 	if job == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.CronJobNotFound, i18n.Translate(i18n.CronJobNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.CronJobNotFound, i18n.Translate(i18n.CronJobNotFound, l.ctx)),
 		}, nil
 	}
 	if in.JobName != "" {
@@ -81,7 +81,7 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 	userName, err := utils.GetUsernameFromMd(l.ctx)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
+			Base: helper.ErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 	job.UpdateBy = sql.NullString{String: userName, Valid: true}
@@ -90,14 +90,14 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 	err = l.svcCtx.JobModel.Update(l.ctx, job)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
+			Base: helper.ErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 
 	err = l.svcCtx.Cron.ReloadJob(job)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
+			Base: helper.ErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 

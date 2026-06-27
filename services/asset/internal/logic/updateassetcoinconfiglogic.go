@@ -34,7 +34,7 @@ func (l *UpdateAssetCoinConfigLogic) UpdateAssetCoinConfig(in *asset.UpdateAsset
 	old, err := l.svcCtx.AssetCoinConfigModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
+			return &asset.AssetCoinConfigResp{Base: helper.ErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
@@ -43,10 +43,10 @@ func (l *UpdateAssetCoinConfigLogic) UpdateAssetCoinConfig(in *asset.UpdateAsset
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+		return &asset.AssetCoinConfigResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
 	if !allowed {
-		return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
+		return &asset.AssetCoinConfigResp{Base: helper.ErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 	}
 
 	if allowTenantUpdate {

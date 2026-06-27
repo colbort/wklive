@@ -44,7 +44,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	}
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.TenantId != tenantId) {
-		return &trade.PlaceOrderResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -69,13 +69,13 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	triggerPrice := mustParseFloat(in.TriggerPrice)
 	orderType, triggerKind = normalizeOrderTypeAndTriggerKind(orderType, triggerKind, price)
 	if !isSupportedOrderType(orderType) || !isSupportedTriggerKind(triggerKind) {
-		return &trade.PlaceOrderResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if hasNegativeOrderInput(price, qty, amount, triggerPrice) {
-		return &trade.PlaceOrderResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if !isValidOrderPrice(orderType, price) || !isValidOrderTimeInForce(orderType, triggerKind, timeInForce) {
-		return &trade.PlaceOrderResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	timeInForce = normalizeOrderTimeInForce(orderType, timeInForce)
 	if amount == 0 {
@@ -86,27 +86,27 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			return nil, err
 		}
 		if amountPrice <= 0 || qty <= 0 {
-			return &trade.PlaceOrderResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		amount = tradeMinorAmountAtPrice(amountPrice, qty)
 	}
 
 	if qty <= 0 && amount <= 0 {
-		return &trade.PlaceOrderResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if isTriggerKind(triggerKind) && triggerPrice <= 0 {
-		return &trade.PlaceOrderResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
 		if orderType != trade.OrderType_ORDER_TYPE_LIMIT || price <= 0 {
-			return &trade.PlaceOrderResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		wouldTake, err := l.postOnlyWouldTake(tenantId, in.SymbolId, int64(in.MarketType), int64(in.Side), price)
 		if err != nil {
 			return nil, err
 		}
 		if wouldTake {
-			return &trade.PlaceOrderResp{Base: helper.GetErrResp(i18n.PostOnlyOrderWouldMatchImmediately, i18n.Translate(i18n.PostOnlyOrderWouldMatchImmediately, l.ctx))}, nil
+			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.PostOnlyOrderWouldMatchImmediately, i18n.Translate(i18n.PostOnlyOrderWouldMatchImmediately, l.ctx))}, nil
 		}
 	}
 	leverage := int64(1)
@@ -117,7 +117,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			return nil, err
 		}
 		if !ok {
-			return &trade.PlaceOrderResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 	}
 

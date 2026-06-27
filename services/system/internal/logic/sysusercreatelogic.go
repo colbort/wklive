@@ -47,7 +47,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	}
 	if one != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.UsernameAlreadyExists, i18n.Translate(i18n.UsernameAlreadyExists, l.ctx)),
+			Base: helper.ErrResp(i18n.UsernameAlreadyExists, i18n.Translate(i18n.UsernameAlreadyExists, l.ctx)),
 		}, nil
 	}
 

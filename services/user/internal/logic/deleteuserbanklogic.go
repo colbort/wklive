@@ -35,7 +35,7 @@ func (l *DeleteUserBankLogic) DeleteUserBank(in *user.DeleteUserBankReq) (*user.
 	}
 	if bank == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, bank.TenantId, i18n.NoPermissionDeleteThisBankCard); err != nil {

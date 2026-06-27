@@ -34,7 +34,7 @@ func (l *UpdateTenantCategoryLogic) UpdateTenantCategory(in *itick.UpdateTenantC
 	}
 	if item == nil {
 		return &itick.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
 	_, allowed, forbidden, err := cutils.ResolveAdminTenantWriteScopeFromMd(l.ctx, item.TenantId)
@@ -43,12 +43,12 @@ func (l *UpdateTenantCategoryLogic) UpdateTenantCategory(in *itick.UpdateTenantC
 	}
 	if forbidden {
 		return &itick.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx)),
+			Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx)),
 		}, nil
 	}
 	if !allowed {
 		return &itick.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
 

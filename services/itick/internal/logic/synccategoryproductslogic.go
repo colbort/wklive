@@ -40,12 +40,12 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	if err != nil {
 		logx.Errorf("find category failed, err=%v", err)
 		return &itick.SyncCategoryProductsResp{
-			Base: helper.GetErrResp(i18n.CategoryNotFound, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.CategoryNotFound, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
 		}, nil
 	}
 	if result == nil {
 		return &itick.SyncCategoryProductsResp{
-			Base: helper.GetErrResp(i18n.CategoryNotFound, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.CategoryNotFound, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -65,7 +65,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	if err != nil {
 		logx.Errorf("create sync task failed, err=%v", err)
 		return &itick.SyncCategoryProductsResp{
-			Base: helper.GetErrResp(i18n.SyncTaskCreateFailed, i18n.Translate(i18n.SyncTaskCreateFailed, l.ctx)),
+			Base: helper.ErrResp(i18n.SyncTaskCreateFailed, i18n.Translate(i18n.SyncTaskCreateFailed, l.ctx)),
 		}, nil
 	}
 

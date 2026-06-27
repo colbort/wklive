@@ -15,10 +15,10 @@ func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAl
 		return nil, i18n.StatusError(ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)), nil
+		return helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)), nil
 	}
 	if !allowed {
-		return helper.GetErrResp(notAllowedCode, i18n.Translate(notAllowedCode, ctx)), nil
+		return helper.ErrResp(notAllowedCode, i18n.Translate(notAllowedCode, ctx)), nil
 	}
 	return nil, nil
 }

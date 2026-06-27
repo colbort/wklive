@@ -41,14 +41,14 @@ func (l *DeleteBankLogic) DeleteBank(in *user.DeleteBankReq) (*user.AppCommonRes
 
 	if bank == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证银行卡是否属于该用户
 	if bank.UserId != userId {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(i18n.NoPermissionDeleteThisBankCard, i18n.Translate(i18n.NoPermissionDeleteThisBankCard, l.ctx)),
+			Base: helper.ErrResp(i18n.NoPermissionDeleteThisBankCard, i18n.Translate(i18n.NoPermissionDeleteThisBankCard, l.ctx)),
 		}, nil
 	}
 

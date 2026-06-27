@@ -41,12 +41,12 @@ func runTradeTaskWithLock(
 	if err := acquireTradeTaskLock(ctx, svcCtx.Redis, lockKey, lockValue); err != nil {
 		if i18n.IsStatusError(err, i18n.SyncTaskAlreadyRunning) {
 			return &trade.TradeTaskResp{
-				Base: helper.GetErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
+				Base: helper.ErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
 			}, nil
 		}
 		logx.Errorf("acquire trade task lock failed, key=%s err=%v", lockKey, err)
 		return &trade.TradeTaskResp{
-			Base: helper.GetErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, ctx)),
+			Base: helper.ErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, ctx)),
 		}, nil
 	}
 

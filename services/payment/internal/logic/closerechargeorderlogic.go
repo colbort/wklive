@@ -42,14 +42,14 @@ func (l *CloseRechargeOrderLogic) CloseRechargeOrder(in *payment.CloseRechargeOr
 
 	if order == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 仅有pending状态的订单才能关闭
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.OnlyUnpaidOrdersCanClose, i18n.Translate(i18n.OnlyUnpaidOrdersCanClose, l.ctx)),
+			Base: helper.ErrResp(i18n.OnlyUnpaidOrdersCanClose, i18n.Translate(i18n.OnlyUnpaidOrdersCanClose, l.ctx)),
 		}, nil
 	}
 

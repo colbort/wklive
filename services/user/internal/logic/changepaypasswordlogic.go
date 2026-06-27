@@ -43,14 +43,14 @@ func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq
 
 	if tuser == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证密码是否一致
 	if in.NewPassword != in.ConfirmPassword {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(i18n.PasswordsDoNotMatch, i18n.Translate(i18n.PasswordsDoNotMatch, l.ctx)),
+			Base: helper.ErrResp(i18n.PasswordsDoNotMatch, i18n.Translate(i18n.PasswordsDoNotMatch, l.ctx)),
 		}, nil
 	}
 
@@ -62,7 +62,7 @@ func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq
 
 	if userSecurity == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(i18n.PayPasswordNotSet, i18n.Translate(i18n.PayPasswordNotSet, l.ctx)),
+			Base: helper.ErrResp(i18n.PayPasswordNotSet, i18n.Translate(i18n.PayPasswordNotSet, l.ctx)),
 		}, nil
 	}
 

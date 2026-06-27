@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -12,6 +11,8 @@ import (
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AdminUpdateContractLogic struct {
@@ -33,7 +34,7 @@ func (l *AdminUpdateContractLogic) AdminUpdateContract(in *option.UpdateContract
 	item, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
+			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
@@ -42,10 +43,10 @@ func (l *AdminUpdateContractLogic) AdminUpdateContract(in *option.UpdateContract
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+		return &option.AdminCommonResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
 	if !allowed {
-		return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
+		return &option.AdminCommonResp{Base: helper.ErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 	}
 	targetTenantId := item.TenantId
 	if allowTenantUpdate {
@@ -62,7 +63,7 @@ func (l *AdminUpdateContractLogic) AdminUpdateContract(in *option.UpdateContract
 			return nil, err
 		}
 		if dup != nil && dup.Id != item.Id {
-			return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.ContractCodeAlreadyExists, i18n.Translate(i18n.ContractCodeAlreadyExists, l.ctx))}, nil
+			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.ContractCodeAlreadyExists, i18n.Translate(i18n.ContractCodeAlreadyExists, l.ctx))}, nil
 		}
 		item.ContractCode = contractCode
 	}
@@ -90,49 +91,49 @@ func (l *AdminUpdateContractLogic) AdminUpdateContract(in *option.UpdateContract
 	if in.StrikePrice != "" {
 		value, err := conv.ParseFloatField(in.StrikePrice)
 		if err != nil {
-			return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.StrikePriceFormatError, i18n.Translate(i18n.StrikePriceFormatError, l.ctx))}, nil
+			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.StrikePriceFormatError, i18n.Translate(i18n.StrikePriceFormatError, l.ctx))}, nil
 		}
 		item.StrikePrice = value
 	}
 	if in.ContractUnit != "" {
 		value, err := conv.ParseFloatField(in.ContractUnit)
 		if err != nil {
-			return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.ContractUnitFormatError, i18n.Translate(i18n.ContractUnitFormatError, l.ctx))}, nil
+			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.ContractUnitFormatError, i18n.Translate(i18n.ContractUnitFormatError, l.ctx))}, nil
 		}
 		item.ContractUnit = value
 	}
 	if in.MinOrderQty != "" {
 		value, err := conv.ParseFloatField(in.MinOrderQty)
 		if err != nil {
-			return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.MinOrderQuantityFormatError, i18n.Translate(i18n.MinOrderQuantityFormatError, l.ctx))}, nil
+			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.MinOrderQuantityFormatError, i18n.Translate(i18n.MinOrderQuantityFormatError, l.ctx))}, nil
 		}
 		item.MinOrderQty = value
 	}
 	if in.MaxOrderQty != "" {
 		value, err := conv.ParseFloatField(in.MaxOrderQty)
 		if err != nil {
-			return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.MaxOrderQuantityFormatError, i18n.Translate(i18n.MaxOrderQuantityFormatError, l.ctx))}, nil
+			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.MaxOrderQuantityFormatError, i18n.Translate(i18n.MaxOrderQuantityFormatError, l.ctx))}, nil
 		}
 		item.MaxOrderQty = value
 	}
 	if in.PriceTick != "" {
 		value, err := conv.ParseFloatField(in.PriceTick)
 		if err != nil {
-			return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.PriceTickFormatError, i18n.Translate(i18n.PriceTickFormatError, l.ctx))}, nil
+			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.PriceTickFormatError, i18n.Translate(i18n.PriceTickFormatError, l.ctx))}, nil
 		}
 		item.PriceTick = value
 	}
 	if in.QtyStep != "" {
 		value, err := conv.ParseFloatField(in.QtyStep)
 		if err != nil {
-			return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.QuantityStepFormatError, i18n.Translate(i18n.QuantityStepFormatError, l.ctx))}, nil
+			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.QuantityStepFormatError, i18n.Translate(i18n.QuantityStepFormatError, l.ctx))}, nil
 		}
 		item.QtyStep = value
 	}
 	if in.Multiplier != "" {
 		value, err := conv.ParseFloatField(in.Multiplier)
 		if err != nil {
-			return &option.AdminCommonResp{Base: helper.GetErrResp(i18n.MultiplierFormatError, i18n.Translate(i18n.MultiplierFormatError, l.ctx))}, nil
+			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.MultiplierFormatError, i18n.Translate(i18n.MultiplierFormatError, l.ctx))}, nil
 		}
 		item.Multiplier = value
 	}

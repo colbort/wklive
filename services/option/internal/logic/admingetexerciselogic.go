@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AdminGetExerciseLogic struct {
@@ -30,7 +31,7 @@ func (l *AdminGetExerciseLogic) AdminGetExercise(in *option.GetExerciseReq) (*op
 	item, err := findExerciseByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.ExerciseNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.GetExerciseResp{Base: helper.GetErrResp(i18n.ExerciseRecordNotFound, i18n.Translate(i18n.ExerciseRecordNotFound, l.ctx))}, nil
+			return &option.GetExerciseResp{Base: helper.ErrResp(i18n.ExerciseRecordNotFound, i18n.Translate(i18n.ExerciseRecordNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

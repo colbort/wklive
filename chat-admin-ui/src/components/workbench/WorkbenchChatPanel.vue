@@ -62,6 +62,11 @@ function submit() {
   emit("send", content);
   draft.value = "";
 }
+
+function formatNickname(nickname: string) {
+  if (nickname.length <=5) return nickname
+  return nickname.slice(0, 5)
+}
 </script>
 
 <template>
@@ -76,7 +81,7 @@ function submit() {
         &lt; 会话
       </button>
       <div>
-        <h2>{{ session?.userNickname || session?.title || "请选择会话" }}</h2>
+        <h2>{{ formatNickname(session?.userNickname || session?.title || "请选择会话") }}</h2>
         <span class="chat-session-no">{{ session?.sessionNo || "-" }}</span>
       </div>
       <div class="chat-actions">

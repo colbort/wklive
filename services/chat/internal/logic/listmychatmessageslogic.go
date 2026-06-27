@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
-
 	"wklive/common/helper"
+	"wklive/common/pageutil"
+
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -27,28 +29,28 @@ func NewListMyChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 查询会话消息
 func (l *ListMyChatMessagesLogic) ListMyChatMessages(in *chat.ListMyChatMessagesReq) (*chat.ListChatMessagesResp, error) {
-	merchantID, userID, base, err := chatAppIdentityFromMetadata(l.ctx)
+	merchantID, userID, base, err := internal.ChatAppIdentityFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.ListChatMessagesResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.ListChatMessagesResp{Base: errorBase(err)}, nil
+		return &chat.ListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
-		return &chat.ListChatMessagesResp{Base: errorBase(err)}, nil
+		return &chat.ListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if base != nil {
 		return &chat.ListChatMessagesResp{Base: base}, nil
 	}
 	if session.UserId != userID {
-		return &chat.ListChatMessagesResp{Base: notFoundBase("chat session not found")}, nil
+		return &chat.ListChatMessagesResp{Base: helper.ErrResp(404, "chat session not found")}, nil
 	}
 
-	cursor, limit := pageInput(in.GetPage())
+	cursor, limit := pageutil.Input(in.GetPage())
 	model := l.svcCtx.ChatMessageFactory.New(merchantID)
 	if model == nil {
-		return &chat.ListChatMessagesResp{Base: badBase("invalid merchant_id")}, nil
+		return &chat.ListChatMessagesResp{Base: helper.ErrResp(400, "invalid merchant_id")}, nil
 	}
 	list, err := model.FindPage(l.ctx, models.ChatMessagePageFilter{
 		MerchantId: merchantID,
@@ -56,9 +58,9 @@ func (l *ListMyChatMessagesLogic) ListMyChatMessages(in *chat.ListMyChatMessages
 		BeforeTime: cursor,
 	}, limit)
 	if err != nil {
-		return &chat.ListChatMessagesResp{Base: errorBase(err)}, nil
+		return &chat.ListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	nextCursor := messageNextCursor(list)
+	nextCursor := internal.MessageNextCursor(list)
 	base = helper.OkWithOthers(0, int64(len(list)) == limit && nextCursor > 0, cursor > 0, nextCursor, cursor)
-	return &chat.ListChatMessagesResp{Base: base, Data: toProtoMessages(list)}, nil
+	return &chat.ListChatMessagesResp{Base: base, Data: internal.ToProtoMessages(list)}, nil
 }

@@ -3,9 +3,11 @@ package logic
 import (
 	"context"
 	"strings"
+	"wklive/common/helper"
 
 	"wklive/common/pageutil"
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -28,14 +30,14 @@ func NewPageChatSessionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 分页查询会话
 func (l *PageChatSessionsLogic) PageChatSessions(in *chat.PageChatSessionsReq) (*chat.PageChatSessionsResp, error) {
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.PageChatSessionsResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.PageChatSessionsResp{Base: errorBase(err)}, nil
+		return &chat.PageChatSessionsResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	cursor, limit := pageInput(in.GetPage())
+	cursor, limit := pageutil.Input(in.GetPage())
 	list, total, err := l.svcCtx.ChatSessionModel.FindPage(l.ctx, models.ChatSessionPageFilter{
 		MerchantId: merchantID,
 		UserId:     in.GetUserId(),
@@ -47,10 +49,10 @@ func (l *PageChatSessionsLogic) PageChatSessions(in *chat.PageChatSessionsReq) (
 		EndTime:    pageutil.TimeRangeEnd(in.GetTimeRange()),
 	}, cursor, limit)
 	if err != nil {
-		return &chat.PageChatSessionsResp{Base: errorBase(err)}, nil
+		return &chat.PageChatSessionsResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	return &chat.PageChatSessionsResp{
-		Base: offsetBase(cursor, limit, len(list), total),
-		Data: toProtoSessions(list),
+		Base: internal.OffsetBase(cursor, limit, len(list), total),
+		Data: internal.ToProtoSessions(list),
 	}, nil
 }

@@ -41,7 +41,7 @@ func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.Adm
 
 	if order == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 	if _, base, err := applyAdminTenantUpdateScope(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
@@ -53,7 +53,7 @@ func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.Adm
 	// 只有已支付的订单才需要重试回调
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS) {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.OnlyPaidOrdersCanRetryNotify, i18n.Translate(i18n.OnlyPaidOrdersCanRetryNotify, l.ctx)),
+			Base: helper.ErrResp(i18n.OnlyPaidOrdersCanRetryNotify, i18n.Translate(i18n.OnlyPaidOrdersCanRetryNotify, l.ctx)),
 		}, nil
 	}
 
@@ -66,7 +66,7 @@ func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.Adm
 
 	if notifyLog == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.NotifyRecordNotFound, i18n.Translate(i18n.NotifyRecordNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.NotifyRecordNotFound, i18n.Translate(i18n.NotifyRecordNotFound, l.ctx)),
 		}, nil
 	}
 

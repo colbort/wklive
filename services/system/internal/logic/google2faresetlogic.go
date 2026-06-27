@@ -32,7 +32,7 @@ func (l *Google2FAResetLogic) Google2FAReset(in *system.Google2FAResetReq) (*sys
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, user.TenantId, i18n.NoPermissionOperateThisUser); err != nil {

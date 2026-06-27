@@ -44,7 +44,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 
 	if channel == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.PaymentChannelNotFound, i18n.Translate(i18n.PaymentChannelNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.PaymentChannelNotFound, i18n.Translate(i18n.PaymentChannelNotFound, l.ctx)),
 		}, nil
 	}
 

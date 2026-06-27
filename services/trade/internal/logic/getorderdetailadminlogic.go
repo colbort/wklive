@@ -31,7 +31,7 @@ func NewGetOrderDetailAdminLogic(ctx context.Context, svcCtx *svc.ServiceContext
 func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailAdminReq) (*trade.GetOrderDetailAdminResp, error) {
 	item, err := l.svcCtx.TradeOrderModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != in.TenantId) {
-		return &trade.GetOrderDetailAdminResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &trade.GetOrderDetailAdminResp{Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err

@@ -32,12 +32,12 @@ func (l *OrderDetailLogic) OrderDetail(in *staking.AdminOrderDetailReq) (*stakin
 	item, err := l.svcCtx.StakeOrderModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &staking.AdminOrderDetailResp{Page: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+			return &staking.AdminOrderDetailResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.TenantId != in.TenantId {
-		return &staking.AdminOrderDetailResp{Page: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &staking.AdminOrderDetailResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 
 	return &staking.AdminOrderDetailResp{Page: helper.OkResp(), Data: orderToProto(item)}, nil

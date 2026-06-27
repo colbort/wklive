@@ -3,8 +3,11 @@ package logic
 import (
 	"context"
 	"fmt"
+	"wklive/common/helper"
+	"wklive/common/utils"
 
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -27,32 +30,37 @@ func NewSendAgentMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 发送客服消息
 func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (*chat.AdminChatMessageResp, error) {
-	session, base, err := getSession(l.ctx, l.svcCtx, in.MerchantId, in.SessionNo)
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.SessionNo)
 	if err != nil {
-		return &chat.AdminChatMessageResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if base != nil {
 		return &chat.AdminChatMessageResp{Base: base}, nil
 	}
 	agent, err := l.svcCtx.ChatAgentModel.FindOneByMerchantIdChatUserId(l.ctx, in.MerchantId, in.Sender.Id)
 	if err == models.ErrNotFound {
-		return &chat.AdminChatMessageResp{Base: notFoundBase("chat agent not found")}, nil
+		return &chat.AdminChatMessageResp{Base: helper.ErrResp(404, "chat agent not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatMessageResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if session.AgentId != 0 && session.AgentId != agent.Id {
-		return &chat.AdminChatMessageResp{Base: badBase("agent does not own this session")}, nil
+		return &chat.AdminChatMessageResp{Base: helper.ErrResp(400, "agent does not own this session")}, nil
 	}
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-		return &chat.AdminChatMessageResp{Base: badBase("chat session is closed")}, nil
+		return &chat.AdminChatMessageResp{Base: helper.ErrResp(400, "chat session is closed")}, nil
 	}
 	if session.AgentId == 0 {
-		return &chat.AdminChatMessageResp{Base: badBase("chat session is not accepted")}, nil
+		return &chat.AdminChatMessageResp{Base: helper.ErrResp(400, "chat session is not accepted")}, nil
 	}
-	now := nowMillis()
-	msg, err := sendMessage(l.ctx, l.svcCtx, session, &models.ChatMessage{
-		MessageNo:  nextNo("CM"),
+	messageNo, err := l.svcCtx.GenerateNo(l.ctx, "CM")
+	if err != nil {
+		logx.Errorf("generate message no error: %v", err)
+		return &chat.AdminChatMessageResp{Base: helper.ErrResp(400, "generate message no error")}, nil
+	}
+	now := utils.NowMillis()
+	msg, err := internal.SendMessage(l.ctx, l.svcCtx, session, &models.ChatMessage{
+		MessageNo:  messageNo,
 		SessionNo:  session.SessionNo,
 		MerchantId: session.MerchantId,
 		Sender: &models.ChatMessageUser{
@@ -79,7 +87,7 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 		UpdateTimes: now,
 	})
 	if err != nil {
-		return &chat.AdminChatMessageResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatMessageResp{Base: okBase(), Data: toProtoMessage(msg)}, nil
+	return &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: internal.ToProtoMessage(msg)}, nil
 }

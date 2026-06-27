@@ -36,12 +36,12 @@ func NewSyncKlinesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncKl
 func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlinesResp, error) {
 	if strings.TrimSpace(l.svcCtx.Config.Itick.ApiUrl) == "" {
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(i18n.ApiURLRequired, i18n.Translate(i18n.ApiURLRequired, l.ctx)),
+			Base: helper.ErrResp(i18n.ApiURLRequired, i18n.Translate(i18n.ApiURLRequired, l.ctx)),
 		}, nil
 	}
 	if strings.TrimSpace(l.svcCtx.Config.Itick.Token) == "" {
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(i18n.ApiTokenRequired, i18n.Translate(i18n.ApiTokenRequired, l.ctx)),
+			Base: helper.ErrResp(i18n.ApiTokenRequired, i18n.Translate(i18n.ApiTokenRequired, l.ctx)),
 		}, nil
 	}
 
@@ -56,13 +56,13 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 	if err := distLock.Acquire(l.ctx, lockKey, lockValue, 30*time.Second); err != nil {
 		if errors.Is(err, utils.ErrLockNotAcquired) {
 			return &itick.SyncKlinesResp{
-				Base: helper.GetErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, l.ctx)),
+				Base: helper.ErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, l.ctx)),
 			}, nil
 		}
 
 		logx.Errorf("acquire lock failed, key=%s err=%v", lockKey, err)
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, l.ctx)),
+			Base: helper.ErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, l.ctx)),
 		}, nil
 	}
 
@@ -83,7 +83,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 
 		logx.Errorf("create sync task failed, err=%v", err)
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(i18n.SyncTaskCreateFailed, i18n.Translate(i18n.SyncTaskCreateFailed, l.ctx)),
+			Base: helper.ErrResp(i18n.SyncTaskCreateFailed, i18n.Translate(i18n.SyncTaskCreateFailed, l.ctx)),
 		}, nil
 	}
 

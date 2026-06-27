@@ -33,7 +33,7 @@ func (l *ProductChangeStatusLogic) ProductChangeStatus(in *staking.AdminProductC
 	item, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &staking.AdminProductChangeStatusResp{Page: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+			return &staking.AdminProductChangeStatusResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
@@ -42,10 +42,10 @@ func (l *ProductChangeStatusLogic) ProductChangeStatus(in *staking.AdminProductC
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return &staking.AdminProductChangeStatusResp{Page: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+		return &staking.AdminProductChangeStatusResp{Page: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
 	if !allowed {
-		return &staking.AdminProductChangeStatusResp{Page: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+		return &staking.AdminProductChangeStatusResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 
 	item.Status = int64(in.Status)

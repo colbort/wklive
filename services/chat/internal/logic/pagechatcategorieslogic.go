@@ -3,8 +3,11 @@ package logic
 import (
 	"context"
 	"strings"
+	"wklive/common/helper"
+	"wklive/common/pageutil"
 
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -27,14 +30,14 @@ func NewPageChatCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 分页查询问题分类
 func (l *PageChatCategoriesLogic) PageChatCategories(in *chat.PageChatCategoriesReq) (*chat.PageChatCategoriesResp, error) {
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.PageChatCategoriesResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.PageChatCategoriesResp{Base: errorBase(err)}, nil
+		return &chat.PageChatCategoriesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	cursor, limit := pageInput(in.GetPage())
+	cursor, limit := pageutil.Input(in.GetPage())
 	list, total, err := l.svcCtx.ChatCategoryModel.FindPage(l.ctx, models.ChatCategoryPageFilter{
 		MerchantId:   merchantID,
 		ParentId:     in.GetParentId(),
@@ -44,10 +47,10 @@ func (l *PageChatCategoriesLogic) PageChatCategories(in *chat.PageChatCategories
 		Keyword:      strings.TrimSpace(in.GetKeyword()),
 	}, cursor, limit)
 	if err != nil {
-		return &chat.PageChatCategoriesResp{Base: errorBase(err)}, nil
+		return &chat.PageChatCategoriesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	return &chat.PageChatCategoriesResp{
-		Base: offsetBase(cursor, limit, len(list), total),
-		Data: toProtoChatCategories(list),
+		Base: internal.OffsetBase(cursor, limit, len(list), total),
+		Data: internal.ToProtoChatCategories(list),
 	}, nil
 }

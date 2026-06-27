@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AdminGetContractLogic struct {
@@ -30,7 +31,7 @@ func (l *AdminGetContractLogic) AdminGetContract(in *option.GetContractReq) (*op
 	item, err := findContractByCodeOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.ContractCode)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.GetContractResp{Base: helper.GetErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
+			return &option.GetContractResp{Base: helper.ErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

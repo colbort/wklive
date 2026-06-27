@@ -46,10 +46,10 @@ func (l *GetMyCryptoRechargeAddressLogic) GetMyCryptoRechargeAddress(in *payment
 		item, err = l.reserveAssignableAddress(tenantId, userId, in)
 		if err != nil {
 			if i18n.IsStatusError(err, i18n.CryptoRechargeAddressNotConfigured) {
-				return &payment.GetMyCryptoRechargeAddressResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressNotConfigured, i18n.Translate(i18n.CryptoRechargeAddressNotConfigured, l.ctx))}, nil
+				return &payment.GetMyCryptoRechargeAddressResp{Base: helper.ErrResp(i18n.CryptoRechargeAddressNotConfigured, i18n.Translate(i18n.CryptoRechargeAddressNotConfigured, l.ctx))}, nil
 			}
 			if errors.Is(err, models.ErrNotFound) {
-				return &payment.GetMyCryptoRechargeAddressResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressInUse, i18n.Translate(i18n.CryptoRechargeAddressInUse, l.ctx))}, nil
+				return &payment.GetMyCryptoRechargeAddressResp{Base: helper.ErrResp(i18n.CryptoRechargeAddressInUse, i18n.Translate(i18n.CryptoRechargeAddressInUse, l.ctx))}, nil
 			}
 			return nil, err
 		}
@@ -66,7 +66,7 @@ func (l *GetMyCryptoRechargeAddressLogic) GetMyCryptoRechargeAddress(in *payment
 			return nil, err
 		}
 		if !reservedByMe {
-			return &payment.GetMyCryptoRechargeAddressResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressInUse, i18n.Translate(i18n.CryptoRechargeAddressInUse, l.ctx))}, nil
+			return &payment.GetMyCryptoRechargeAddressResp{Base: helper.ErrResp(i18n.CryptoRechargeAddressInUse, i18n.Translate(i18n.CryptoRechargeAddressInUse, l.ctx))}, nil
 		}
 		refreshCryptoRechargeAddressReservation(l.ctx, l.svcCtx, item.Id)
 	}

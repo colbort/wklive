@@ -42,14 +42,14 @@ func (l *SysChatMerchantUpdateLogic) SysChatMerchantUpdate(in *system.SysChatMer
 
 	if in.Id <= 0 {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
+			Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
 		}, nil
 	}
 
 	merchant, err := l.svcCtx.ChatMerchantModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || merchant == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
+			Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
 		}, nil
 	}
 	if err != nil {
@@ -63,7 +63,7 @@ func (l *SysChatMerchantUpdateLogic) SysChatMerchantUpdate(in *system.SysChatMer
 		}
 		if exists != nil && exists.Id != in.Id {
 			return &system.RespBase{
-				Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
+				Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
 			}, nil
 		}
 		merchant.MerchantCode = in.MerchantCode

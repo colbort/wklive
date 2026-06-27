@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"wklive/common/helper"
+	"wklive/common/utils"
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -35,29 +38,29 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 	password := strings.TrimSpace(in.GetPassword())
 	nickname := strings.TrimSpace(in.GetNickname())
 	if username == "" || password == "" || nickname == "" {
-		return &chat.AdminChatAgentResp{Base: badBase("username, password and nickname are required")}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "username, password and nickname are required")}, nil
 	}
 
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatAgentResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if _, err := l.svcCtx.ChatUserModel.FindOneByMerchantIdUsername(l.ctx, merchantID, username); err == nil {
-		return &chat.AdminChatAgentResp{Base: badBase("username already exists")}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "username already exists")}, nil
 	} else if err != models.ErrNotFound {
-		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 
 	maxCount := int64(in.GetMaxSessionCount())
 	if maxCount <= 0 {
-		maxCount = defaultAgentMaxSessionCount
+		maxCount = internal.DefaultAgentMaxSessionCount
 	}
 	enabled := int64(in.GetEnabled())
 	if enabled == 0 {
@@ -68,7 +71,7 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 		autoOnline = int64(common.YesNo_YES_NO_NO)
 	}
 
-	now := nowMillis()
+	now := utils.NowMillis()
 	user := &models.TChatUser{
 		MerchantId:  merchantID,
 		UserType:    int64(chat.ChatUserType_CHAT_USER_TYPE_AGENT),
@@ -96,9 +99,9 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 	}
 
 	if err := l.createAgentWithUser(user, agent); err != nil {
-		return &chat.AdminChatAgentResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatAgentResp{Base: okBase(), Data: toProtoAgent(agent)}, nil
+	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: internal.ToProtoAgent(agent)}, nil
 }
 
 func (l *CreateChatAgentLogic) createAgentWithUser(user *models.TChatUser, agent *models.TChatAgent) error {

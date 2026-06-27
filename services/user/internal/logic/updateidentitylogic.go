@@ -43,7 +43,7 @@ func (l *UpdateIdentityLogic) UpdateIdentity(in *user.UpdateIdentityReq) (*user.
 
 	if tuser == nil {
 		return &user.UpdateIdentityResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 

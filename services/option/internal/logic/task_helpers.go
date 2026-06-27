@@ -35,12 +35,12 @@ func runOptionTaskWithLock(
 	if err := acquireOptionTaskLock(ctx, svcCtx.Redis, lockKey, lockValue); err != nil {
 		if i18n.IsStatusError(err, i18n.SyncTaskAlreadyRunning) {
 			return &option.OptionTaskResp{
-				Base: helper.GetErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
+				Base: helper.ErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
 			}, nil
 		}
 		logx.Errorf("acquire option task lock failed, key=%s err=%v", lockKey, err)
 		return &option.OptionTaskResp{
-			Base: helper.GetErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, ctx)),
+			Base: helper.ErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, ctx)),
 		}, nil
 	}
 

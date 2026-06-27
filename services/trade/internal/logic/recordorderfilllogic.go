@@ -44,13 +44,13 @@ func (l *RecordOrderFillLogic) RecordOrderFill(in *trade.RecordOrderFillReq) (*t
 		return recordOrderFillWithModels(ctx, fillModel, orderModel, in.Fill, now)
 	})
 	if i18n.IsStatusError(err, i18n.ParamError) {
-		return &trade.InternalCommonResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.InternalCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if errors.Is(err, models.ErrNotFound) {
-		return &trade.InternalCommonResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &trade.InternalCommonResp{Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if i18n.IsStatusError(err, i18n.OperationNotAllowed) {
-		return &trade.InternalCommonResp{Base: helper.GetErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
+		return &trade.InternalCommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err

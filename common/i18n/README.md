@@ -24,7 +24,7 @@ msg := i18n.Translate(i18n.ParamError, ctx)
 // 输出: "Parameter error"
 ```
 
-### 2. 在 helper.GetErrResp 中使用
+### 2. 在 helper.ErrResp 中使用
 
 在 `wklive/common/helper/response.go` 中修改使用示例：
 
@@ -38,7 +38,7 @@ import (
 // 翻译错误码并返回错误响应
 ctx := context.Background() // 从请求中获取
 msg := i18n.Translate(i18n.ParamError, ctx)
-resp := helper.GetErrResp(i18n.ParamError, msg)
+resp := helper.ErrResp(i18n.ParamError, msg)
 ```
 
 ### 3. 自定义消息
@@ -152,7 +152,7 @@ func (l *MyLogic) MyMethod(ctx context.Context, in *Request) (*Response, error) 
 	
 	// 返回翻译后的消息
 	return &Response{
-		Base: helper.GetErrResp(i18n.ParamError, msg),
+		Base: helper.ErrResp(i18n.ParamError, msg),
 	}, nil
 }
 ```
@@ -213,7 +213,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 		code := i18n.CodeParamError
 		msg := i18n.Translate(code, l.ctx)
 		return &user.LoginResp{
-			Base: helper.GetErrResp(int32(code), msg),
+			Base: helper.ErrResp(int32(code), msg),
 		}, nil
 	}
 
@@ -223,7 +223,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 		code := i18n.CodeUserNotFound
 		msg := i18n.TranslateError(code, "用户不存在", l.ctx)
 		return &user.LoginResp{
-			Base: helper.GetErrResp(int32(code), msg),
+			Base: helper.ErrResp(int32(code), msg),
 		}, nil
 	}
 
@@ -232,7 +232,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 		code := i18n.CodeInvalidCredentials
 		msg := i18n.Translate(code, l.ctx)
 		return &user.LoginResp{
-			Base: helper.GetErrResp(int32(code), msg),
+			Base: helper.ErrResp(int32(code), msg),
 		}, nil
 	}
 

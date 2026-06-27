@@ -3,8 +3,11 @@ package logic
 import (
 	"context"
 	"strings"
+	"wklive/common/helper"
+	"wklive/common/utils"
 
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -27,32 +30,32 @@ func NewSubmitChatSatisfactionLogic(ctx context.Context, svcCtx *svc.ServiceCont
 
 // 提交会话评价
 func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChatSatisfactionReq) (*chat.AppChatSatisfactionResp, error) {
-	merchantID, userID, base, err := chatAppIdentityFromMetadata(l.ctx)
+	merchantID, userID, base, err := internal.ChatAppIdentityFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AppChatSatisfactionResp{Base: errorBase(err)}, nil
+		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if base != nil {
 		return &chat.AppChatSatisfactionResp{Base: base}, nil
 	}
 	if strings.TrimSpace(in.GetSessionNo()) == "" {
-		return &chat.AppChatSatisfactionResp{Base: badBase("session_no is required")}, nil
+		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "session_no is required")}, nil
 	}
 	if in.GetScore() < 1 || in.GetScore() > 5 {
-		return &chat.AppChatSatisfactionResp{Base: badBase("score must be between 1 and 5")}, nil
+		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "score must be between 1 and 5")}, nil
 	}
 
-	session, base, err := getSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
 	if err != nil {
-		return &chat.AppChatSatisfactionResp{Base: errorBase(err)}, nil
+		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if base != nil {
 		return &chat.AppChatSatisfactionResp{Base: base}, nil
 	}
 	if session.UserId != userID {
-		return &chat.AppChatSatisfactionResp{Base: badBase("permission denied")}, nil
+		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "permission denied")}, nil
 	}
 
-	now := nowMillis()
+	now := utils.NowMillis()
 	satisfaction, err := l.svcCtx.ChatSatisfactionModel.FindOneBySessionNo(l.ctx, session.SessionNo)
 	if err == models.ErrNotFound {
 		satisfaction = &models.TChatSatisfaction{
@@ -68,13 +71,13 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		}
 		result, err := l.svcCtx.ChatSatisfactionModel.Insert(l.ctx, satisfaction)
 		if err != nil {
-			return &chat.AppChatSatisfactionResp{Base: errorBase(err)}, nil
+			return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		if id, err := result.LastInsertId(); err == nil {
 			satisfaction.Id = id
 		}
 	} else if err != nil {
-		return &chat.AppChatSatisfactionResp{Base: errorBase(err)}, nil
+		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	} else {
 		satisfaction.Score = int64(in.GetScore())
 		satisfaction.Content = strings.TrimSpace(in.GetContent())
@@ -82,10 +85,10 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		satisfaction.AgentId = session.AgentId
 		satisfaction.UpdateTimes = now
 		if err := l.svcCtx.ChatSatisfactionModel.Update(l.ctx, satisfaction); err != nil {
-			return &chat.AppChatSatisfactionResp{Base: errorBase(err)}, nil
+			return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	}
 
-	publishEvaluationEvent(l.ctx, l.svcCtx, session, satisfaction)
-	return &chat.AppChatSatisfactionResp{Base: okBase(), Data: toProtoSatisfaction(satisfaction)}, nil
+	internal.PublishEvaluationEvent(l.ctx, l.svcCtx, session, satisfaction)
+	return &chat.AppChatSatisfactionResp{Base: helper.OkResp(), Data: internal.ToProtoSatisfaction(satisfaction)}, nil
 }

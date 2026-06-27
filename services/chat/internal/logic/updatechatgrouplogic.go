@@ -3,9 +3,12 @@ package logic
 import (
 	"context"
 	"strings"
+	"wklive/common/helper"
+	"wklive/common/utils"
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -29,25 +32,25 @@ func NewUpdateChatGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 // 更新客服分组
 func (l *UpdateChatGroupLogic) UpdateChatGroup(in *chat.UpdateChatGroupReq) (*chat.AdminChatGroupResp, error) {
 	if in.GetId() <= 0 {
-		return &chat.AdminChatGroupResp{Base: badBase("id is required")}, nil
+		return &chat.AdminChatGroupResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
 	groupName := strings.TrimSpace(in.GetGroupName())
 	if groupName == "" {
-		return &chat.AdminChatGroupResp{Base: badBase("group_name is required")}, nil
+		return &chat.AdminChatGroupResp{Base: helper.ErrResp(400, "group_name is required")}, nil
 	}
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatGroupResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatGroupResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatGroupModel.FindOne(l.ctx, in.GetId())
 	if err == models.ErrNotFound || data.MerchantId != merchantID {
-		return &chat.AdminChatGroupResp{Base: notFoundBase("chat group not found")}, nil
+		return &chat.AdminChatGroupResp{Base: helper.ErrResp(404, "chat group not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatGroupResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	enabled := int64(in.GetEnabled())
 	if enabled == 0 {
@@ -58,9 +61,9 @@ func (l *UpdateChatGroupLogic) UpdateChatGroup(in *chat.UpdateChatGroupReq) (*ch
 	data.Enabled = enabled
 	data.Sort = int64(in.GetSort())
 	data.Remark = strings.TrimSpace(in.GetRemark())
-	data.UpdateTimes = nowMillis()
+	data.UpdateTimes = utils.NowMillis()
 	if err := l.svcCtx.ChatGroupModel.Update(l.ctx, data); err != nil {
-		return &chat.AdminChatGroupResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatGroupResp{Base: okBase(), Data: toProtoChatGroup(data)}, nil
+	return &chat.AdminChatGroupResp{Base: helper.OkResp(), Data: internal.ToProtoChatGroup(data)}, nil
 }

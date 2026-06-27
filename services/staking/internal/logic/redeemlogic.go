@@ -47,13 +47,13 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		return nil, err
 	}
 	if order == nil || order.TenantId != tenantId {
-		return &staking.AppRedeemResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &staking.AppRedeemResp{Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if order.UserId != userId {
-		return &staking.AppRedeemResp{Base: helper.GetErrResp(i18n.NoPermissionAccessOrder, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
+		return &staking.AppRedeemResp{Base: helper.ErrResp(i18n.NoPermissionAccessOrder, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
 	}
 	if order.Status == int64(staking.OrderStatus_ORDER_STATUS_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_EARLY_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_CANCELLED) {
-		return &staking.AppRedeemResp{Base: helper.GetErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
+		return &staking.AppRedeemResp{Base: helper.ErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
 	}
 
 	redeemType := in.RedeemType
@@ -65,7 +65,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		}
 	}
 	if redeemType == staking.RedeemType_REDEEM_TYPE_EARLY && order.AllowEarlyRedeem != int64(common.YesNo_YES_NO_YES) {
-		return &staking.AppRedeemResp{Base: helper.GetErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
+		return &staking.AppRedeemResp{Base: helper.ErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
 	}
 
 	redeemAmount := order.StakeAmount

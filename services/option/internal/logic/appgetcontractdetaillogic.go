@@ -36,12 +36,12 @@ func (l *AppGetContractDetailLogic) AppGetContractDetail(in *option.AppGetContra
 	item, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, in.ContractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppGetContractDetailResp{Base: helper.GetErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
+			return &option.AppGetContractDetailResp{Base: helper.ErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.TenantId != tenantId {
-		return &option.AppGetContractDetailResp{Base: helper.GetErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
+		return &option.AppGetContractDetailResp{Base: helper.ErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 	}
 	data, err := buildContractDetail(l.ctx, l.svcCtx, item)
 	if err != nil {

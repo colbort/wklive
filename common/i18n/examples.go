@@ -386,7 +386,7 @@ func (l *PaymentLogic) ProcessPayment(ctx context.Context, req *PaymentRequest) 
 func Example_ResponseBuilder() *common.RespBase {
 	ctx := context.Background()
 	builder := NewResponseBuilder(ctx)
-	
+
 	// 直接构建错误响应
 	return builder.ValidationError("示例错误消息")
 }
@@ -394,14 +394,14 @@ func Example_ResponseBuilder() *common.RespBase {
 // Example_DirectFunctions 展示直接使用便利函数
 func Example_DirectFunctions() *common.RespBase {
 	ctx := context.Background()
-	
+
 	// 方式1: 使用便利函数
 	resp := BuildValidationErrorResponse(ctx, "参数验证失败")
-	
+
 	// 方式2: 直接使用转换和GetErrResp
 	msg := Translate(CodeDataValidationError, ctx)
-	resp = helper.GetErrResp(CodeDataValidationError, msg)
-	
+	resp = helper.ErrResp(CodeDataValidationError, msg)
+
 	return resp
 }
 
@@ -410,26 +410,26 @@ func Example_LanguageSelection() {
 	// 中文context
 	ctxZH := ContextWithLanguage(context.Background(), ZH)
 	msgZH := Translate(CodeParamError, ctxZH) // "参数错误"
-	
+
 	// 英文context
 	ctxEN := ContextWithLanguage(context.Background(), EN)
 	msgEN := Translate(CodeParamError, ctxEN) // "Parameter error"
-	
+
 	// 系统默认（初始为中文）
 	msgDefault := Translate(CodeParamError, context.Background()) // "参数错误"
-	
+
 	_, _, _ = msgZH, msgEN, msgDefault
 }
 
 // Example_CustomMessage 展示使用自定义消息
 func Example_CustomMessage() *common.RespBase {
 	ctx := context.Background()
-	
+
 	// 使用自定义消息覆盖翻译
 	msg := TranslateError(CodeParamError, "用户输入的特定参数无效", ctx)
 	// 返回: "用户输入的特定参数无效" (自定义消息优先)
-	
-	resp := helper.GetErrResp(CodeParamError, msg)
-	
+
+	resp := helper.ErrResp(CodeParamError, msg)
+
 	return resp
 }

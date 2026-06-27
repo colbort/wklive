@@ -41,7 +41,7 @@ func (l *GetProfileLogic) GetProfile(in *user.GetProfileReq) (*user.GetProfileRe
 
 	if tuser == nil {
 		return &user.GetProfileResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 

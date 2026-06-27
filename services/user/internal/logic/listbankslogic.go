@@ -42,7 +42,7 @@ func (l *ListBanksLogic) ListBanks(in *user.ListBanksReq) (*user.ListBanksResp, 
 
 	if tuser == nil {
 		return &user.ListBanksResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	items, total, err := l.svcCtx.UserBankModel.FindPage(l.ctx, models.UserBankPageFilter{

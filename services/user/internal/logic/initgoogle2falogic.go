@@ -43,7 +43,7 @@ func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.Ini
 
 	if tuser == nil {
 		return &user.InitGoogle2FAResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -54,7 +54,7 @@ func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.Ini
 	}
 	if secret == "" {
 		return &user.InitGoogle2FAResp{
-			Base: helper.GetErrResp(i18n.SecretGenerationFailed, i18n.Translate(i18n.SecretGenerationFailed, l.ctx)),
+			Base: helper.ErrResp(i18n.SecretGenerationFailed, i18n.Translate(i18n.SecretGenerationFailed, l.ctx)),
 		}, nil
 	}
 

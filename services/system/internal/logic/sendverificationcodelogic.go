@@ -47,12 +47,12 @@ func (l *SendVerificationCodeLogic) SendVerificationCode(in *system.SendVerifica
 	}
 	if target == "" || in.Channel == system.VerificationCodeChannel_VERIFICATION_CODE_CHANNEL_UNKNOWN {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+			Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
 		}, nil
 	}
 	if in.Scene == system.VerificationCodeScene_VERIFICATION_CODE_SCENE_UNKNOWN {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+			Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
 		}, nil
 	}
 
@@ -75,7 +75,7 @@ func (l *SendVerificationCodeLogic) SendVerificationCode(in *system.SendVerifica
 
 	if sendErr != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.InternalServerError, sendErr.Error()),
+			Base: helper.ErrResp(i18n.InternalServerError, sendErr.Error()),
 		}, nil
 	}
 

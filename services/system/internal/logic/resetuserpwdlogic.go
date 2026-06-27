@@ -31,14 +31,14 @@ func NewResetUserPwdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Rese
 func (l *ResetUserPwdLogic) ResetUserPwd(in *system.ResetUserPwdReq) (*system.RespBase, error) {
 	if in.Password == "" {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
+			Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
 		}, nil
 	}
 
 	user, err := l.svcCtx.UserModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || user == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if err != nil {

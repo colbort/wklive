@@ -39,13 +39,13 @@ func (l *SyncProductsLogic) SyncProducts(in *itick.SyncProductsReq) (*itick.Sync
 	if err := distLock.Acquire(l.ctx, syncProductsLockKey, lockValue, 30*time.Second); err != nil {
 		if errors.Is(err, utils.ErrLockNotAcquired) {
 			return &itick.SyncProductsResp{
-				Base: helper.GetErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, l.ctx)),
+				Base: helper.ErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, l.ctx)),
 			}, nil
 		}
 
 		logx.Errorf("acquire lock failed, key=%s err=%v", syncProductsLockKey, err)
 		return &itick.SyncProductsResp{
-			Base: helper.GetErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, l.ctx)),
+			Base: helper.ErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, l.ctx)),
 		}, nil
 	}
 
@@ -74,7 +74,7 @@ func (l *SyncProductsLogic) SyncProducts(in *itick.SyncProductsReq) (*itick.Sync
 		if err := worker.doSync(&itick.SyncCategoryProductsReq{Id: category.Id}); err != nil {
 			logx.Errorf("sync products failed, categoryId=%d err=%v", category.Id, err)
 			return &itick.SyncProductsResp{
-				Base: helper.GetErrResp(i18n.SyncTaskFailed, i18n.Translate(i18n.SyncTaskFailed, l.ctx)),
+				Base: helper.ErrResp(i18n.SyncTaskFailed, i18n.Translate(i18n.SyncTaskFailed, l.ctx)),
 			}, nil
 		}
 	}

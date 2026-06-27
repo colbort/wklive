@@ -4,9 +4,11 @@ import (
 	"context"
 	"strings"
 
+	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/chat"
 	"wklive/proto/common"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -32,32 +34,32 @@ func NewUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 func (l *UpdateProfileLogic) UpdateProfile(in *chat.UpdateChatAdminProfileReq) (*chat.ChatAdminProfileResp, error) {
 	userID, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil || userID <= 0 {
-		return &chat.ChatAdminProfileResp{Base: badBase("invalid login session")}, nil
+		return &chat.ChatAdminProfileResp{Base: helper.ErrResp(400, "invalid login session")}, nil
 	}
 
 	user, err := l.svcCtx.ChatUserModel.FindOne(l.ctx, userID)
 	if err == models.ErrNotFound {
-		return &chat.ChatAdminProfileResp{Base: badBase("invalid login session")}, nil
+		return &chat.ChatAdminProfileResp{Base: helper.ErrResp(400, "invalid login session")}, nil
 	}
 	if err != nil {
-		return &chat.ChatAdminProfileResp{Base: errorBase(err)}, nil
+		return &chat.ChatAdminProfileResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if user.Enabled != int64(common.Enable_ENABLE_ENABLED) {
-		return &chat.ChatAdminProfileResp{Base: badBase("chat user is disabled")}, nil
+		return &chat.ChatAdminProfileResp{Base: helper.ErrResp(400, "chat user is disabled")}, nil
 	}
 
 	newPassword := strings.TrimSpace(in.GetNewPassword())
 	if newPassword != "" {
 		oldPassword := strings.TrimSpace(in.GetOldPassword())
 		if oldPassword == "" {
-			return &chat.ChatAdminProfileResp{Base: badBase("old_password is required")}, nil
+			return &chat.ChatAdminProfileResp{Base: helper.ErrResp(400, "old_password is required")}, nil
 		}
 		if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(oldPassword)) != nil {
-			return &chat.ChatAdminProfileResp{Base: badBase("old_password is incorrect")}, nil
+			return &chat.ChatAdminProfileResp{Base: helper.ErrResp(400, "old_password is incorrect")}, nil
 		}
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
 		if err != nil {
-			return &chat.ChatAdminProfileResp{Base: errorBase(err)}, nil
+			return &chat.ChatAdminProfileResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		user.Password = string(hashedPassword)
 	}
@@ -66,9 +68,9 @@ func (l *UpdateProfileLogic) UpdateProfile(in *chat.UpdateChatAdminProfileReq) (
 		user.AvatarUrl = avatarURL
 	}
 
-	user.UpdateTimes = nowMillis()
+	user.UpdateTimes = utils.NowMillis()
 	if err := l.svcCtx.ChatUserModel.Update(l.ctx, user); err != nil {
-		return &chat.ChatAdminProfileResp{Base: errorBase(err)}, nil
+		return &chat.ChatAdminProfileResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 
 	var agent *models.TChatAgent
@@ -77,13 +79,13 @@ func (l *UpdateProfileLogic) UpdateProfile(in *chat.UpdateChatAdminProfileReq) (
 		if err == models.ErrNotFound {
 			agent = nil
 		} else if err != nil {
-			return &chat.ChatAdminProfileResp{Base: errorBase(err)}, nil
+			return &chat.ChatAdminProfileResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	}
 
 	return &chat.ChatAdminProfileResp{
-		Base:  okBase(),
-		User:  toProtoUser(user),
-		Agent: toProtoAgent(agent),
+		Base:  helper.OkResp(),
+		User:  internal.ToProtoUser(user),
+		Agent: internal.ToProtoAgent(agent),
 	}, nil
 }

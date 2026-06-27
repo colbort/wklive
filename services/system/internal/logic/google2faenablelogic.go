@@ -2,13 +2,14 @@ package logic
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Google2FAEnableLogic struct {
@@ -32,17 +33,17 @@ func (l *Google2FAEnableLogic) Google2FAEnable(in *system.Google2FAEnableReq) (*
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if user.GoogleSecret == "" {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.Google2FANotInitialized, i18n.Translate(i18n.Google2FANotInitialized, l.ctx)),
+			Base: helper.ErrResp(i18n.Google2FANotInitialized, i18n.Translate(i18n.Google2FANotInitialized, l.ctx)),
 		}, nil
 	}
 	if !utils.VerifyGoogle2FACode(user.GoogleSecret, in.Code) {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.VerificationCodeInvalid, i18n.Translate(i18n.VerificationCodeInvalid, l.ctx)),
+			Base: helper.ErrResp(i18n.VerificationCodeInvalid, i18n.Translate(i18n.VerificationCodeInvalid, l.ctx)),
 		}, nil
 	}
 

@@ -41,7 +41,7 @@ func (l *GetSecurityLogic) GetSecurity(in *user.GetSecurityReq) (*user.GetSecuri
 
 	if tuser == nil {
 		return &user.GetSecurityResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -53,7 +53,7 @@ func (l *GetSecurityLogic) GetSecurity(in *user.GetSecurityReq) (*user.GetSecuri
 
 	if security == nil {
 		return &user.GetSecurityResp{
-			Base: helper.GetErrResp(i18n.SecuritySettingsNotFound, i18n.Translate(i18n.SecuritySettingsNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.SecuritySettingsNotFound, i18n.Translate(i18n.SecuritySettingsNotFound, l.ctx)),
 		}, nil
 	}
 

@@ -42,7 +42,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
 	if err != nil || tenantCode == "" {
 		return &user.GuestLoginResp{
-			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+			Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
 		}, nil
 	}
 	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
@@ -53,13 +53,13 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 	}
 	if tenant == nil || tenant.Data == nil {
 		return &user.GuestLoginResp{
-			Base: helper.GetErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
 		}, nil
 	}
 
 	if in.DeviceId == "" && in.Fingerprint == "" {
 		return &user.GuestLoginResp{
-			Base: helper.GetErrResp(i18n.PleaseSwitchDeviceToLogin, i18n.Translate(i18n.PleaseSwitchDeviceToLogin, l.ctx)),
+			Base: helper.ErrResp(i18n.PleaseSwitchDeviceToLogin, i18n.Translate(i18n.PleaseSwitchDeviceToLogin, l.ctx)),
 		}, nil
 	}
 

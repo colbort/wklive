@@ -45,7 +45,7 @@ func (l *AuditWithdrawOrderLogic) AuditWithdrawOrder(in *payment.AuditWithdrawOr
 
 	if order == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 	if _, base, err := applyAdminTenantUpdateScope(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
@@ -57,7 +57,7 @@ func (l *AuditWithdrawOrderLogic) AuditWithdrawOrder(in *payment.AuditWithdrawOr
 	// 只有待审核状态的订单才能审核
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.OnlyPendingReviewOrdersCanAudit, i18n.Translate(i18n.OnlyPendingReviewOrdersCanAudit, l.ctx)),
+			Base: helper.ErrResp(i18n.OnlyPendingReviewOrdersCanAudit, i18n.Translate(i18n.OnlyPendingReviewOrdersCanAudit, l.ctx)),
 		}, nil
 	}
 

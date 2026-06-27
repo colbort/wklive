@@ -2,8 +2,10 @@ package logic
 
 import (
 	"context"
+	"wklive/common/helper"
 
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -27,24 +29,24 @@ func NewGetChatCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 // 查询问题分类详情
 func (l *GetChatCategoryLogic) GetChatCategory(in *chat.GetChatCategoryReq) (*chat.AdminChatCategoryResp, error) {
 	if in.GetId() <= 0 {
-		return &chat.AdminChatCategoryResp{Base: badBase("id is required")}, nil
+		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatCategoryResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatCategoryResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatCategoryModel.FindOne(l.ctx, in.GetId())
 	if err == models.ErrNotFound {
-		return &chat.AdminChatCategoryResp{Base: notFoundBase("chat category not found")}, nil
+		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(404, "chat category not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatCategoryResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if data.MerchantId != merchantID {
-		return &chat.AdminChatCategoryResp{Base: notFoundBase("chat category not found")}, nil
+		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(404, "chat category not found")}, nil
 	}
-	return &chat.AdminChatCategoryResp{Base: okBase(), Data: toProtoChatCategory(data)}, nil
+	return &chat.AdminChatCategoryResp{Base: helper.OkResp(), Data: internal.ToProtoChatCategory(data)}, nil
 }

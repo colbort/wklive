@@ -37,7 +37,7 @@ func (l *UpdateUserBankStatusLogic) UpdateUserBankStatus(in *user.UpdateUserBank
 
 	if userBank == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, userBank.TenantId, i18n.NoPermissionOperateThisBankCard); err != nil {

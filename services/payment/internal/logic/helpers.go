@@ -25,7 +25,7 @@ func systemAdminWriteScopeResp(ctx context.Context) (*common.RespBase, error) {
 		return nil, i18n.StatusError(ctx, i18n.UserNotFound)
 	}
 	if userType != utils.SysUserTypeSystemAdmin {
-		return helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)), nil
+		return helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)), nil
 	}
 	return nil, nil
 }

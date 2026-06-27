@@ -33,7 +33,7 @@ func (l *DeleteAssetCoinConfigLogic) DeleteAssetCoinConfig(in *asset.DeleteAsset
 	old, err := l.svcCtx.AssetCoinConfigModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &asset.DeleteAssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
+			return &asset.DeleteAssetCoinConfigResp{Base: helper.ErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
@@ -42,10 +42,10 @@ func (l *DeleteAssetCoinConfigLogic) DeleteAssetCoinConfig(in *asset.DeleteAsset
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return &asset.DeleteAssetCoinConfigResp{Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+		return &asset.DeleteAssetCoinConfigResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
 	if !allowed {
-		return &asset.DeleteAssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
+		return &asset.DeleteAssetCoinConfigResp{Base: helper.ErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 	}
 
 	if err := l.svcCtx.AssetCoinConfigModel.Delete(l.ctx, in.Id); err != nil {

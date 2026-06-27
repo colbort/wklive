@@ -36,7 +36,7 @@ func (l *GetUserBankLogic) GetUserBank(in *user.GetUserBankReq) (*user.GetUserBa
 
 	if bank == nil {
 		return &user.GetUserBankResp{
-			Base: helper.GetErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 

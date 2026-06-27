@@ -40,14 +40,14 @@ func (l *GetMyWithdrawOrderLogic) GetMyWithdrawOrder(in *payment.GetMyWithdrawOr
 
 	if order == nil {
 		return &payment.GetMyWithdrawOrderResp{
-			Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// Check permission
 	if order.UserId != userId {
 		return &payment.GetMyWithdrawOrderResp{
-			Base: helper.GetErrResp(i18n.NoPermissionAccessOrder, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx)),
+			Base: helper.ErrResp(i18n.NoPermissionAccessOrder, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx)),
 		}, nil
 	}
 

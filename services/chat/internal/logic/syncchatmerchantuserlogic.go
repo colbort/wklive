@@ -6,9 +6,12 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strings"
+	"wklive/common/helper"
+	"wklive/common/utils"
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -33,7 +36,7 @@ func NewSyncChatMerchantUserLogic(ctx context.Context, svcCtx *svc.ServiceContex
 // 同步客服商户用户
 func (l *SyncChatMerchantUserLogic) SyncChatMerchantUser(in *chat.SyncChatMerchantUserReq) (*chat.SyncChatMerchantUserResp, error) {
 	if in.GetMerchantId() <= 0 {
-		return &chat.SyncChatMerchantUserResp{Base: badBase("merchant_id is required")}, nil
+		return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(400, "merchant_id is required")}, nil
 	}
 	username := strings.TrimSpace(in.GetMerchantCode())
 	if username == "" {
@@ -44,33 +47,33 @@ func (l *SyncChatMerchantUserLogic) SyncChatMerchantUser(in *chat.SyncChatMercha
 		enabled = int64(common.Enable_ENABLE_ENABLED)
 	}
 
-	now := nowMillis()
+	now := utils.NowMillis()
 	data, err := l.svcCtx.ChatUserModel.FindOneByMerchantIdUsername(l.ctx, in.GetMerchantId(), username)
 	if err != nil && err != models.ErrNotFound {
-		return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
+		return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if in.GetAction() == chat.ChatSyncAction_CHAT_SYNC_ACTION_DELETE {
 		if err != models.ErrNotFound {
 			data.Enabled = int64(common.Enable_ENABLE_DISABLED)
 			data.UpdateTimes = now
 			if err := l.svcCtx.ChatUserModel.Update(l.ctx, data); err != nil {
-				return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
+				return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
 		if err := l.disableMerchantInfo(in.GetMerchantId(), now); err != nil {
-			return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
+			return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		return &chat.SyncChatMerchantUserResp{Base: okBase(), Data: toProtoUser(data)}, nil
+		return &chat.SyncChatMerchantUserResp{Base: helper.OkResp(), Data: internal.ToProtoUser(data)}, nil
 	}
 
 	password := strings.TrimSpace(in.Password)
 	if err == models.ErrNotFound {
 		if password == "" {
-			return &chat.SyncChatMerchantUserResp{Base: badBase("password is required")}, nil
+			return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(400, "password is required")}, nil
 		}
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
-			return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
+			return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		data = &models.TChatUser{
 			MerchantId:  in.GetMerchantId(),
@@ -88,15 +91,15 @@ func (l *SyncChatMerchantUserLogic) SyncChatMerchantUser(in *chat.SyncChatMercha
 		}
 		result, err := l.svcCtx.ChatUserModel.Insert(l.ctx, data)
 		if err != nil {
-			return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
+			return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		if id, err := result.LastInsertId(); err == nil {
 			data.Id = id
 		}
 		if err := l.upsertMerchantInfo(in, enabled, now); err != nil {
-			return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
+			return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		return &chat.SyncChatMerchantUserResp{Base: okBase(), Data: toProtoUser(data)}, nil
+		return &chat.SyncChatMerchantUserResp{Base: helper.OkResp(), Data: internal.ToProtoUser(data)}, nil
 	}
 
 	data.Nickname = strings.TrimSpace(in.GetMerchantName())
@@ -107,18 +110,18 @@ func (l *SyncChatMerchantUserLogic) SyncChatMerchantUser(in *chat.SyncChatMercha
 	if password != "" {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
-			return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
+			return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		data.Password = string(hashedPassword)
 	}
 	data.UpdateTimes = now
 	if err := l.svcCtx.ChatUserModel.Update(l.ctx, data); err != nil {
-		return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
+		return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if err := l.upsertMerchantInfo(in, enabled, now); err != nil {
-		return &chat.SyncChatMerchantUserResp{Base: errorBase(err)}, nil
+		return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.SyncChatMerchantUserResp{Base: okBase(), Data: toProtoUser(data)}, nil
+	return &chat.SyncChatMerchantUserResp{Base: helper.OkResp(), Data: internal.ToProtoUser(data)}, nil
 }
 
 func (l *SyncChatMerchantUserLogic) upsertMerchantInfo(in *chat.SyncChatMerchantUserReq, enabled int64, now int64) error {

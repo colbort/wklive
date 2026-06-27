@@ -188,7 +188,7 @@ i18n.SetDefaultLanguage(i18n.ZH)
 
 // 2. 使用
 msg := i18n.Translate(i18n.CodeParamError, ctx)
-resp := helper.GetErrResp(i18n.CodeParamError, msg)
+resp := helper.ErrResp(i18n.CodeParamError, msg)
 ```
 
 #### 推荐做法
@@ -248,7 +248,7 @@ return i18n.BuildNotFoundErrorResponse(ctx, "资源不存在")
 
 ### 前置条件
 - ✅ pageutil 模块已存在
-- ✅ helper.GetErrResp() 已实现
+- ✅ helper.ErrResp() 已实现
 - ✅ proto/common 包已定义
 
 ### 实施步骤

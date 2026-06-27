@@ -31,7 +31,7 @@ func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq)
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, user.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
@@ -44,7 +44,7 @@ func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq)
 
 	if user.Enabled == commonStatusToModel(in.Enabled) {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.UserStatusUnchanged, i18n.Translate(i18n.UserStatusUnchanged, l.ctx)),
+			Base: helper.ErrResp(i18n.UserStatusUnchanged, i18n.Translate(i18n.UserStatusUnchanged, l.ctx)),
 		}, nil
 	}
 	user.Enabled = commonStatusToModel(in.Enabled)

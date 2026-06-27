@@ -44,7 +44,7 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 
 	if tuser == nil {
 		return &user.UpdateProfileResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 

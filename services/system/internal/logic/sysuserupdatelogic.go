@@ -28,7 +28,7 @@ func NewSysUserUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system.RespBase, error) {
 	if in.Id == 1 {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.SuperAdminCannotBeDeleted, i18n.Translate(i18n.SuperAdminCannotBeDeleted, l.ctx)),
+			Base: helper.ErrResp(i18n.SuperAdminCannotBeDeleted, i18n.Translate(i18n.SuperAdminCannotBeDeleted, l.ctx)),
 		}, nil
 	}
 	one, err := l.svcCtx.UserModel.FindOne(l.ctx, in.Id)
@@ -37,7 +37,7 @@ func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system
 	}
 	if one == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	allowTenantUpdate, base, err := adminTenantWriteScope(l.ctx, one.TenantId, i18n.NoPermissionOperateThisUser)

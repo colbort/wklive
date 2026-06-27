@@ -35,7 +35,7 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProd
 	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
 	if err != nil || tenantCode == "" {
 		return &itick.ListVisibleProductsResp{
-			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+			Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
 		}, nil
 	}
 	detail, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{

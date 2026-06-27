@@ -84,6 +84,12 @@ const defaultAgentStatusOptions: DisplayOptionItem[] = [
     value: 4,
     tagType: "info",
   },
+  {
+    code: "CHAT_AGENT_STATUS_AWAY",
+    label: "暂离",
+    value: 5,
+    tagType: "info",
+  },
 ];
 const agentStatusOptions = ref<DisplayOptionItem[]>(defaultAgentStatusOptions);
 const auth = useAuthStore();

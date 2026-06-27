@@ -32,13 +32,13 @@ func NewSysUserDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 func (l *SysUserDeleteLogic) SysUserDelete(in *system.SysUserDeleteReq) (*system.RespBase, error) {
 	if in.Id == 1 {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.SuperAdminCannotBeDeleted, i18n.Translate(i18n.SuperAdminCannotBeDeleted, l.ctx)),
+			Base: helper.ErrResp(i18n.SuperAdminCannotBeDeleted, i18n.Translate(i18n.SuperAdminCannotBeDeleted, l.ctx)),
 		}, nil
 	}
 	one, err := l.svcCtx.UserModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if err != nil {
@@ -46,7 +46,7 @@ func (l *SysUserDeleteLogic) SysUserDelete(in *system.SysUserDeleteReq) (*system
 	}
 	if one.IsOwner == int64(common.YesNo_YES_NO_YES) {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.TenantOwnerCannotBeDeleted, i18n.Translate(i18n.TenantOwnerCannotBeDeleted, l.ctx)),
+			Base: helper.ErrResp(i18n.TenantOwnerCannotBeDeleted, i18n.Translate(i18n.TenantOwnerCannotBeDeleted, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, one.TenantId, i18n.NoPermissionOperateThisUser); err != nil {

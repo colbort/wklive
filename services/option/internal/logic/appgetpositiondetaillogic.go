@@ -40,12 +40,12 @@ func (l *AppGetPositionDetailLogic) AppGetPositionDetail(in *option.AppGetPositi
 	item, err := l.svcCtx.OptionPositionModel.FindOne(l.ctx, in.PositionId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppGetPositionDetailResp{Base: helper.GetErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
+			return &option.AppGetPositionDetailResp{Base: helper.ErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.TenantId != tenantId || item.UserId != userId || item.AccountId != in.AccountId {
-		return &option.AppGetPositionDetailResp{Base: helper.GetErrResp(i18n.NoPermissionViewPosition, i18n.Translate(i18n.NoPermissionViewPosition, l.ctx))}, nil
+		return &option.AppGetPositionDetailResp{Base: helper.ErrResp(i18n.NoPermissionViewPosition, i18n.Translate(i18n.NoPermissionViewPosition, l.ctx))}, nil
 	}
 	data, err := buildPositionDetail(l.ctx, l.svcCtx, item)
 	if err != nil {

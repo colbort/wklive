@@ -3,8 +3,10 @@ package logic
 import (
 	"context"
 	"strings"
+	"wklive/common/helper"
 
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -28,14 +30,14 @@ func NewGetChatWorkOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 // 查询工单详情
 func (l *GetChatWorkOrderLogic) GetChatWorkOrder(in *chat.GetChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
 	if in.GetId() <= 0 && strings.TrimSpace(in.GetWorkOrderNo()) == "" {
-		return &chat.AdminChatWorkOrderResp{Base: badBase("id or work_order_no is required")}, nil
+		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "id or work_order_no is required")}, nil
 	}
-	merchantID, base, err := merchantIDFromMetadata(l.ctx)
+	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatWorkOrderResp{Base: base}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatWorkOrderResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	var data *models.TChatWorkOrder
 	if in.GetId() > 0 {
@@ -44,13 +46,13 @@ func (l *GetChatWorkOrderLogic) GetChatWorkOrder(in *chat.GetChatWorkOrderReq) (
 		data, err = l.svcCtx.ChatWorkOrderModel.FindOneByWorkOrderNo(l.ctx, strings.TrimSpace(in.GetWorkOrderNo()))
 	}
 	if err == models.ErrNotFound {
-		return &chat.AdminChatWorkOrderResp{Base: notFoundBase("chat work order not found")}, nil
+		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(404, "chat work order not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatWorkOrderResp{Base: errorBase(err)}, nil
+		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if data.MerchantId != merchantID {
-		return &chat.AdminChatWorkOrderResp{Base: notFoundBase("chat work order not found")}, nil
+		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(404, "chat work order not found")}, nil
 	}
-	return &chat.AdminChatWorkOrderResp{Base: okBase(), Data: toProtoChatWorkOrder(data)}, nil
+	return &chat.AdminChatWorkOrderResp{Base: helper.OkResp(), Data: internal.ToProtoChatWorkOrder(data)}, nil
 }

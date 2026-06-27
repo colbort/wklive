@@ -39,7 +39,7 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(in *user.UpdateUserBaseReq) (*user.
 
 	if tuser == nil {
 		return &user.UpdateUserBaseResp{
-			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {

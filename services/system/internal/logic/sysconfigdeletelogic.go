@@ -32,7 +32,7 @@ func (l *SysConfigDeleteLogic) SysConfigDelete(in *system.SysConfigDeleteReq) (*
 	config, err := l.svcCtx.ConfigModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || config == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
+			Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
 	if err != nil {
