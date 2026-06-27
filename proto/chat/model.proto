@@ -131,6 +131,33 @@ message ChatQueueInfo {
   int64 update_times = 9;          // 更新时间戳(毫秒)
 }
 
+// 输入状态事件
+message ChatTyping {
+  string session_no = 1;           // 会话编号
+  int64 merchant_id = 2;           // 客服商户ID
+  int64 user_id = 3;               // 用户ID
+  int64 agent_id = 4;              // 坐席ID
+  ChatSenderType sender_type = 5;  // 发送方类型
+  string message = 6;              // 提示文案
+  int64 created_at = 7;            // 事件创建时间戳(毫秒)
+}
+
+// 消息回执 / 消息操作事件
+message ChatMessageReceipt {
+  string session_no = 1;           // 会话编号
+  string message_no = 2;           // 消息编号
+  int64 merchant_id = 3;           // 客服商户ID
+  int64 user_id = 4;               // 用户ID
+  int64 agent_id = 5;              // 坐席ID
+  ChatSenderType sender_type = 6;  // 操作方类型
+  int64 created_at = 7;            // 事件创建时间戳(毫秒)
+}
+
+// 心跳事件
+message ChatHeartbeat {
+  int64 time = 1;                  // 服务端时间戳(毫秒)
+}
+
 // 客服消息事件,用于消息总线/WebSocket推送
 message ChatMessageEvent {
   int32 code = 1;
@@ -138,12 +165,15 @@ message ChatMessageEvent {
   ChatEventType event_type = 3; // 事件类型
   int64 created_at = 4;         // 事件创建时间戳(毫秒)
   oneof payload {
-    ChatMessage message = 10;              // 聊天消息 / 系统消息 CHAT_EVENT_TYPE_MESSAGE，CHAT_EVENT_TYPE_SYSTEM
-    ChatSession session = 11;              // 会话快照 CHAT_EVENT_TYPE_USER_JOIN，CHAT_EVENT_TYPE_USER_LEAVE
-    ChatQueueInfo queue = 13;              // 排队信息 CHAT_EVENT_TYPE_QUEUE_JOIN，CHAT_EVENT_TYPE_QUEUE_UPDATE，
-    ChatAgent agent = 14;                  // 坐席事件 CHAT_EVENT_TYPE_AGENT_JOIN，CHAT_EVENT_TYPE_AGENT_LEAVE
-    ChatSatisfaction satisfaction = 15;    // 评价事件 
+    ChatMessage message = 10;              // CHAT_EVENT_TYPE_MESSAGE，CHAT_EVENT_TYPE_SYSTEM，CHAT_EVENT_TYPE_EVALUATION_INVITE
+    ChatSession session = 11;              // CHAT_EVENT_TYPE_USER_JOIN，CHAT_EVENT_TYPE_USER_LEAVE，CHAT_EVENT_TYPE_AGENT_ASSIGNED，CHAT_EVENT_TYPE_TRANSFER_REQUEST，CHAT_EVENT_TYPE_TRANSFER_ACCEPT，CHAT_EVENT_TYPE_TRANSFER_REJECT，CHAT_EVENT_TYPE_SESSION_START，CHAT_EVENT_TYPE_SESSION_CLOSE，CHAT_EVENT_TYPE_NO_AGENT_ONLINE，CHAT_EVENT_TYPE_SESSION_TIMEOUT
+    ChatQueueInfo queue = 13;              // CHAT_EVENT_TYPE_QUEUE_JOIN，CHAT_EVENT_TYPE_QUEUE_UPDATE
+    ChatAgent agent = 14;                  // CHAT_EVENT_TYPE_AGENT_JOIN，CHAT_EVENT_TYPE_AGENT_LEAVE
+    ChatSatisfaction satisfaction = 15;    // CHAT_EVENT_TYPE_EVALUATION_SUBMIT
     ChatWsConnected connected = 16;        // WebSocket 连接成功
+    ChatTyping typing = 17;                // CHAT_EVENT_TYPE_TYPING，CHAT_EVENT_TYPE_STOP_TYPING
+    ChatMessageReceipt receipt = 18;       // CHAT_EVENT_TYPE_DELIVERED，CHAT_EVENT_TYPE_READ，CHAT_EVENT_TYPE_RECALL，CHAT_EVENT_TYPE_DELETE
+    ChatHeartbeat heartbeat = 19;          // CHAT_EVENT_TYPE_HEARTBEAT
   }
 }
 
@@ -201,27 +231,6 @@ message ChatWsAcceptSessionReq {
   string reason = 2;     // 接待原因
 }
 
-// WebSocket关闭会话
-message ChatWsCloseSessionReq {
-  string session_no = 1;                        // 会话编号
-  ChatSessionCloseReason close_reason_type = 2; // 结束原因类型
-  string close_reason = 3;                      // 结束原因描述
-}
-
-// WebSocket通用消息,用于规范前后端JSON结构
-message ChatWsMessage {
-  ChatEventType type = 1;                   // 事件类型
-  common.RespBase base = 2;                 // 响应状态
-  ChatWsConnected connected = 3;            // 连接成功数据
-  ChatWsUserMessageReq user_message = 4;    // 用户发送消息请求
-  ChatWsAgentMessageReq agent_message = 5;  // 坐席发送消息请求
-  ChatWsAcceptSessionReq accept_session = 6; // 接待请求
-  ChatWsCloseSessionReq close_session = 7;  // 关闭会话请求
-  ChatMessage message = 8;                  // 消息数据
-  ChatSession session = 9;                  // 会话数据
-  ChatQueueInfo queue = 11;                 // 排队信息
-  int64 created_at = 12;                    // 事件创建时间戳(毫秒)
-}
 
 // 会话分配记录
 message ChatAssignment {
@@ -331,18 +340,4 @@ message ChatWorkOrder {
   string remark = 18;                // 备注
   int64 create_times = 19;           // 创建时间戳(毫秒)
   int64 update_times = 20;           // 更新时间戳(毫秒)
-}
-
-message ChatAdminEvent {
-  ChatAdminEventType type = 1;      // 后台事件类型
-  int64 merchant_id = 2;            // 商户ID
-  int64 created_at = 3;             // 事件创建时间戳(毫秒)
-  common.RespBase base = 4;         // 业务响应
-
-  ChatAgent agent = 10;             // 坐席快照
-  ChatAgentStatus agent_status = 11; // 坐席状态
-  ChatSession session = 12;         // 会话快照
-  ChatQueueInfo queue = 14;         // 排队信息
-  ChatMessage message = 15;         // 聊天消息
-  string reason = 16;               // 原因/提示
 }

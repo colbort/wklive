@@ -394,7 +394,14 @@ func (l *MessagesLogic) sendMessageAckEvent(conn *ws.Connection, msg *chat.ChatM
 	conn.SendEvent(&chat.ChatMessageEvent{
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_DELIVERED,
 		CreatedAt: time.Now().UnixMilli(),
-		Payload:   &chat.ChatMessageEvent_Message{Message: msg},
+		Payload: &chat.ChatMessageEvent_Receipt{Receipt: &chat.ChatMessageReceipt{
+			SessionNo:  msg.GetSessionNo(),
+			MessageNo:  msg.GetMessageNo(),
+			MerchantId: conn.MerchantId,
+			UserId:     conn.UserId,
+			SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+			CreatedAt:  time.Now().UnixMilli(),
+		}},
 	})
 }
 

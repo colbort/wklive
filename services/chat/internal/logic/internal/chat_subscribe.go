@@ -108,6 +108,15 @@ func matchSubscribeEvent(req ChatSubscribeRequest, event *chat.ChatMessageEvent,
 	if event.GetSatisfaction() != nil && matchSubscribeSatisfaction(req, event.GetSatisfaction(), admin) {
 		return true
 	}
+	if event.GetTyping() != nil && matchSubscribeTyping(req, event.GetTyping(), admin) {
+		return true
+	}
+	if event.GetReceipt() != nil && matchSubscribeReceipt(req, event.GetReceipt(), admin) {
+		return true
+	}
+	if event.GetHeartbeat() != nil {
+		return true
+	}
 	if admin && event.GetAgent() != nil && matchSubscribeAgent(req, event.GetAgent()) {
 		return true
 	}
@@ -222,6 +231,44 @@ func matchSubscribeAgent(req ChatSubscribeRequest, agent *chat.ChatAgent) bool {
 		return false
 	}
 	if req.GetAgentId() > 0 && agent.GetId() != req.GetAgentId() {
+		return false
+	}
+	return true
+}
+
+func matchSubscribeTyping(req ChatSubscribeRequest, typing *chat.ChatTyping, admin bool) bool {
+	if typing == nil {
+		return false
+	}
+	if req.GetMerchantId() > 0 && typing.GetMerchantId() != req.GetMerchantId() {
+		return false
+	}
+	if strings.TrimSpace(req.GetSessionNo()) != "" && typing.GetSessionNo() != strings.TrimSpace(req.GetSessionNo()) {
+		return false
+	}
+	if !admin && strings.TrimSpace(req.GetSessionNo()) == "" && req.GetUserId() > 0 && typing.GetUserId() != req.GetUserId() {
+		return false
+	}
+	if admin && req.GetAgentId() > 0 && typing.GetAgentId() != req.GetAgentId() && typing.GetAgentId() != 0 {
+		return false
+	}
+	return true
+}
+
+func matchSubscribeReceipt(req ChatSubscribeRequest, receipt *chat.ChatMessageReceipt, admin bool) bool {
+	if receipt == nil {
+		return false
+	}
+	if req.GetMerchantId() > 0 && receipt.GetMerchantId() != req.GetMerchantId() {
+		return false
+	}
+	if strings.TrimSpace(req.GetSessionNo()) != "" && receipt.GetSessionNo() != strings.TrimSpace(req.GetSessionNo()) {
+		return false
+	}
+	if !admin && strings.TrimSpace(req.GetSessionNo()) == "" && req.GetUserId() > 0 && receipt.GetUserId() != req.GetUserId() {
+		return false
+	}
+	if admin && req.GetAgentId() > 0 && receipt.GetAgentId() != req.GetAgentId() && receipt.GetAgentId() != 0 {
 		return false
 	}
 	return true

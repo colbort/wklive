@@ -78,9 +78,14 @@ func PublishTransientMessageEvent(ctx context.Context, svcCtx *svc.ServiceContex
 		eventType = chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE
 	}
 	event := &chat.ChatMessageEvent{EventType: eventType, CreatedAt: utils.NowMillis()}
-	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE || eventType == chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM {
+	switch {
+	case isMessageEvent(eventType):
 		event.Payload = &chat.ChatMessageEvent_Message{Message: msg}
-	} else {
+	case isTypingEvent(eventType):
+		event.Payload = &chat.ChatMessageEvent_Typing{Typing: typingFromMessage(merchantId, msg, session, event.CreatedAt)}
+	case isReceiptEvent(eventType):
+		event.Payload = &chat.ChatMessageEvent_Receipt{Receipt: receiptFromMessage(merchantId, msg, session, event.CreatedAt)}
+	default:
 		event.Payload = &chat.ChatMessageEvent_Session{Session: transientSessionFromMessage(merchantId, eventType, msg, session, event.CreatedAt)}
 	}
 	return PublishChatEvent(ctx, svcCtx, event, channel)
@@ -281,6 +286,83 @@ func sessionWithEventMeta(session *chat.ChatSession, eventType chat.ChatEventTyp
 func isQueueEvent(eventType chat.ChatEventType) bool {
 	return eventType == chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN ||
 		eventType == chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE
+}
+
+func isMessageEvent(eventType chat.ChatEventType) bool {
+	return eventType == chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE ||
+		eventType == chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM ||
+		eventType == chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE
+}
+
+func isTypingEvent(eventType chat.ChatEventType) bool {
+	return eventType == chat.ChatEventType_CHAT_EVENT_TYPE_TYPING ||
+		eventType == chat.ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING
+}
+
+func isReceiptEvent(eventType chat.ChatEventType) bool {
+	return eventType == chat.ChatEventType_CHAT_EVENT_TYPE_DELIVERED ||
+		eventType == chat.ChatEventType_CHAT_EVENT_TYPE_READ ||
+		eventType == chat.ChatEventType_CHAT_EVENT_TYPE_RECALL ||
+		eventType == chat.ChatEventType_CHAT_EVENT_TYPE_DELETE
+}
+
+func typingFromMessage(merchantId int64, msg *chat.ChatMessage, session *chat.ChatSession, createdAt int64) *chat.ChatTyping {
+	if msg == nil {
+		return nil
+	}
+	if session != nil && merchantId <= 0 {
+		merchantId = session.GetMerchantId()
+	}
+	userId := int64(0)
+	agentId := int64(0)
+	if session != nil {
+		userId = session.GetUserId()
+		agentId = session.GetAgentId()
+	}
+	if msg.GetSender() != nil {
+		if msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
+			userId = msg.GetSender().GetId()
+		}
+		if msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
+			agentId = msg.GetSender().GetId()
+		}
+	}
+	return &chat.ChatTyping{
+		SessionNo:  msg.GetSessionNo(),
+		MerchantId: merchantId,
+		UserId:     userId,
+		AgentId:    agentId,
+		SenderType: msg.GetSender().GetType(),
+		Message:    strings.TrimSpace(msg.GetContent()),
+		CreatedAt:  createdAt,
+	}
+}
+
+func receiptFromMessage(merchantId int64, msg *chat.ChatMessage, session *chat.ChatSession, createdAt int64) *chat.ChatMessageReceipt {
+	if msg == nil {
+		return nil
+	}
+	if session != nil && merchantId <= 0 {
+		merchantId = session.GetMerchantId()
+	}
+	receipt := &chat.ChatMessageReceipt{
+		SessionNo:  msg.GetSessionNo(),
+		MessageNo:  msg.GetMessageNo(),
+		MerchantId: merchantId,
+		SenderType: msg.GetSender().GetType(),
+		CreatedAt:  createdAt,
+	}
+	if session != nil {
+		receipt.UserId = session.GetUserId()
+		receipt.AgentId = session.GetAgentId()
+	}
+	if msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
+		receipt.UserId = msg.GetSender().GetId()
+	}
+	if msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
+		receipt.AgentId = msg.GetSender().GetId()
+	}
+	return receipt
 }
 
 func transientMessageAgentID(msg *chat.ChatMessage, session *chat.ChatSession) int64 {
