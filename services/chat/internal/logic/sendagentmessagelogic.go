@@ -39,7 +39,7 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 				return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-		if err := internal.PublishTransientMessageEvent(l.ctx, l.svcCtx, in.GetMerchantId(), msg, in.GetSession(), chat.ChatAppMessageChannel); err != nil {
+		if err := internal.PublishTransientMessageEvent(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetEventType(), msg, in.GetSession(), chat.ChatAppMessageChannel); err != nil {
 			return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		return &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg}, nil

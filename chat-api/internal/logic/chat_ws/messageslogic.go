@@ -17,6 +17,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (
@@ -173,7 +174,7 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 	var msg *chat.ChatMessage
 	if isGuest {
 		msg = buildChatMessage(conn, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, conn.UserId, data)
-		if err := l.appendTransientMessage(ctx, conn, msg, nil); err != nil {
+		if err := l.appendTransientMessage(ctx, conn, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, msg, nil); err != nil {
 			sendWSError(conn, err.Error())
 			return
 		}
@@ -222,7 +223,7 @@ func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connectio
 	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING {
 		message = "用户停止输入"
 	}
-	msg := buildSystemChatMessage(conn, eventType, message)
+	msg := buildSystemChatMessage(conn, message)
 	if len(payload) > 0 {
 		var data struct {
 			Message string `json:"message"`
@@ -231,7 +232,7 @@ func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connectio
 			msg.Content = strings.TrimSpace(data.Message)
 		}
 	}
-	if err := l.publishOnlyTransientMessage(ctx, conn, msg); err != nil {
+	if err := l.publishOnlyTransientMessage(ctx, conn, eventType, msg); err != nil {
 		sendWSError(conn, err.Error())
 	}
 }
@@ -274,14 +275,14 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, resp)
 		return
 	}
-	msg := buildSystemChatMessage(conn, chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, "用户已提交评价")
+	msg := buildSystemChatMessage(conn, "用户已提交评价")
 	msg.MessageType = chat.ChatMessageType_CHAT_MESSAGE_TYPE_EVALUATION
-	msg.Extra = stringFromMap(map[string]interface{}{
+	msg.Payload = structFromMap(map[string]interface{}{
 		"score":   data.Score,
 		"content": strings.TrimSpace(data.Content),
 		"tags":    strings.TrimSpace(data.Tags),
 	})
-	if err := l.appendTransientMessage(ctx, conn, msg, nil); err != nil {
+	if err := l.appendTransientMessage(ctx, conn, chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, msg, nil); err != nil {
 		sendWSError(conn, err.Error())
 		return
 	}
@@ -345,7 +346,7 @@ func buildChatMessage(conn *ws.Connection, senderType chat.ChatSenderType, sende
 	return &chat.ChatMessage{
 		MessageNo:   nextGuestNo(guestMessagePrefix),
 		SessionNo:   conn.SessionNo,
-		EventType:   chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
+		MerchantId:  conn.MerchantId,
 		MessageType: normalizeMessageType(int64(data.MessageType)),
 		Sender: &chat.ChatMessageUser{
 			Id:        senderId,
@@ -353,40 +354,36 @@ func buildChatMessage(conn *ws.Connection, senderType chat.ChatSenderType, sende
 			Nickname:  conn.Username,
 			AvatarUrl: conn.AvatarUrl,
 		},
-		ClientMessageId: strings.TrimSpace(data.ClientMessageId),
-		Content:         strings.TrimSpace(data.Content),
-		Url:             data.Url,
-		FileName:        data.FileName,
-		FileSize:        data.FileSize,
-		MimeType:        data.MimeType,
-		Width:           int32(data.Width),
-		Height:          int32(data.Height),
-		Duration:        int32(data.Duration),
-		ReplyMessageId:  strings.TrimSpace(data.ReplyMessageId),
-		Extra:           strings.TrimSpace(data.Extra),
-		Status:          chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-		Self:            false,
-		NeedAck:         true,
-		CreateTime:      now,
-		UpdateTime:      now,
+		Content:     strings.TrimSpace(data.Content),
+		Url:         data.Url,
+		FileName:    data.FileName,
+		FileSize:    data.FileSize,
+		MimeType:    data.MimeType,
+		Width:       int32(data.Width),
+		Height:      int32(data.Height),
+		Duration:    data.Duration,
+		Payload:     messagePayload(data),
+		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+		CreateTimes: now,
+		UpdateTimes: now,
 	}
 }
 
-func buildSystemChatMessage(conn *ws.Connection, eventType chat.ChatEventType, content string) *chat.ChatMessage {
+func buildSystemChatMessage(conn *ws.Connection, content string) *chat.ChatMessage {
 	now := time.Now().UnixMilli()
 	return &chat.ChatMessage{
 		MessageNo:   nextGuestNo(guestMessagePrefix),
 		SessionNo:   conn.SessionNo,
-		EventType:   eventType,
+		MerchantId:  conn.MerchantId,
 		MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
 		Sender: &chat.ChatMessageUser{
 			Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
 			Nickname: systemNickname,
 		},
-		Content:    strings.TrimSpace(content),
-		Status:     chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-		CreateTime: now,
-		UpdateTime: now,
+		Content:     strings.TrimSpace(content),
+		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
+		CreateTimes: now,
+		UpdateTimes: now,
 	}
 }
 
@@ -395,13 +392,13 @@ func (l *MessagesLogic) sendMessageAckEvent(conn *ws.Connection, msg *chat.ChatM
 		return
 	}
 	conn.SendEvent(&chat.ChatMessageEvent{
-		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_DELIVERED,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_DELIVERED,
 		CreatedAt: time.Now().UnixMilli(),
-		Data:      msg,
+		Payload:   &chat.ChatMessageEvent_Message{Message: msg},
 	})
 }
 
-func (l *MessagesLogic) appendTransientMessage(ctx context.Context, conn *ws.Connection, msg *chat.ChatMessage, session *chat.ChatSession) error {
+func (l *MessagesLogic) appendTransientMessage(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, msg *chat.ChatMessage, session *chat.ChatSession) error {
 	if conn == nil || msg == nil {
 		return fmt.Errorf("message data is empty")
 	}
@@ -410,6 +407,7 @@ func (l *MessagesLogic) appendTransientMessage(ctx context.Context, conn *ws.Con
 	}
 	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &chat.SendUserMessageReq{
 		MerchantId: conn.MerchantId,
+		EventType:  eventType,
 		Message:    msg,
 		Session:    session,
 		IsGuest:    true,
@@ -423,12 +421,13 @@ func (l *MessagesLogic) appendTransientMessage(ctx context.Context, conn *ws.Con
 	return nil
 }
 
-func (l *MessagesLogic) publishOnlyTransientMessage(ctx context.Context, conn *ws.Connection, msg *chat.ChatMessage) error {
+func (l *MessagesLogic) publishOnlyTransientMessage(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, msg *chat.ChatMessage) error {
 	if conn == nil || msg == nil {
 		return fmt.Errorf("message data is empty")
 	}
 	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &chat.SendUserMessageReq{
 		MerchantId:  conn.MerchantId,
+		EventType:   eventType,
 		Message:     msg,
 		Session:     transientSessionFromConnection(conn),
 		PublishOnly: true,
@@ -487,7 +486,7 @@ func nextGuestNo(prefix string) string {
 	return fmt.Sprintf("%s%d%s", prefix, time.Now().UnixMilli(), hex.EncodeToString(b))
 }
 
-func normalizeOutgoingMessage(conn *ws.Connection, msg *chat.ChatMessage, eventType chat.ChatEventType) {
+func normalizeOutgoingMessage(conn *ws.Connection, msg *chat.ChatMessage, _ chat.ChatEventType) {
 	if msg == nil {
 		return
 	}
@@ -497,9 +496,6 @@ func normalizeOutgoingMessage(conn *ws.Connection, msg *chat.ChatMessage, eventT
 	}
 	if msg.SessionNo == "" && conn != nil {
 		msg.SessionNo = conn.SessionNo
-	}
-	if msg.EventType == chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN {
-		msg.EventType = eventType
 	}
 	if msg.MessageType == chat.ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN {
 		msg.MessageType = chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT
@@ -515,11 +511,11 @@ func normalizeOutgoingMessage(conn *ws.Connection, msg *chat.ChatMessage, eventT
 			AvatarUrl: conn.AvatarUrl,
 		}
 	}
-	if msg.CreateTime == 0 {
-		msg.CreateTime = now
+	if msg.CreateTimes == 0 {
+		msg.CreateTimes = now
 	}
-	if msg.UpdateTime == 0 {
-		msg.UpdateTime = now
+	if msg.UpdateTimes == 0 {
+		msg.UpdateTimes = now
 	}
 }
 
@@ -585,10 +581,27 @@ func firstNonEmpty(values ...string) string {
 	return ""
 }
 
-func stringFromMap(payload map[string]interface{}) string {
-	bs, err := json.Marshal(payload)
-	if err != nil {
-		return ""
+func messagePayload(data UserMessagePayload) *structpb.Struct {
+	payload := map[string]interface{}{}
+	if strings.TrimSpace(data.Extra) != "" {
+		_ = json.Unmarshal([]byte(data.Extra), &payload)
 	}
-	return string(bs)
+	if strings.TrimSpace(data.ClientMessageId) != "" {
+		payload["clientMessageId"] = strings.TrimSpace(data.ClientMessageId)
+	}
+	if strings.TrimSpace(data.ReplyMessageId) != "" {
+		payload["replyMessageId"] = strings.TrimSpace(data.ReplyMessageId)
+	}
+	return structFromMap(payload)
+}
+
+func structFromMap(payload map[string]interface{}) *structpb.Struct {
+	if len(payload) == 0 {
+		return nil
+	}
+	st, err := structpb.NewStruct(payload)
+	if err != nil {
+		return nil
+	}
+	return st
 }

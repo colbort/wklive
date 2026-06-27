@@ -5,6 +5,7 @@ package chat
 
 import (
 	"context"
+	"encoding/json"
 	"wklive/proto/chat"
 	"wklive/proto/common"
 
@@ -100,10 +101,21 @@ func protoMessageToType(merchantId int64, item *chat.ChatMessage) types.ChatMess
 		Height:      int64(item.GetHeight()),
 		Duration:    int64(item.GetDuration()),
 		Status:      int64(item.GetStatus()),
-		Extra:       item.GetExtra(),
-		CreateTime:  item.GetCreateTime(),
-		UpdateTime:  item.GetUpdateTime(),
+		Extra:       protoPayloadToJSONString(item),
+		CreateTime:  item.GetCreateTimes(),
+		UpdateTime:  item.GetUpdateTimes(),
 	}
+}
+
+func protoPayloadToJSONString(item *chat.ChatMessage) string {
+	if item == nil || item.GetPayload() == nil {
+		return ""
+	}
+	bs, err := json.Marshal(item.GetPayload().AsMap())
+	if err != nil {
+		return ""
+	}
+	return string(bs)
 }
 
 func protoMessageSenderToType(item *chat.ChatMessageUser) types.ChatMessageSender {

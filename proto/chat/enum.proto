@@ -147,9 +147,6 @@ enum ChatEventType {
   // 例如：您前面还有 3 人，预计等待 2 分钟
   CHAT_EVENT_TYPE_QUEUE_UPDATE = 6;
 
-  // 用户取消排队 / 离开排队
-  CHAT_EVENT_TYPE_QUEUE_LEAVE = 7;
-
   // 客服已分配
   // 例如：客服 小王 为您服务
   CHAT_EVENT_TYPE_AGENT_ASSIGNED = 8;
@@ -160,52 +157,60 @@ enum ChatEventType {
   // 客服离开会话
   CHAT_EVENT_TYPE_AGENT_LEAVE = 10;
 
-  // 会话转接
-  // 例如：客服 小王 将您转接给客服 小李
-  CHAT_EVENT_TYPE_TRANSFER = 11;
+  // 会话转接发起
+  // 例如：客服 小王 发起转接给客服 小李
+  CHAT_EVENT_TYPE_TRANSFER_REQUEST = 11;
+
+  // 会话转接接受
+  // 例如：客服 小李 接受转接
+  CHAT_EVENT_TYPE_TRANSFER_ACCEPT = 12;
+
+  // 会话转接拒绝
+  // 例如：客服 小李 拒绝转接
+  CHAT_EVENT_TYPE_TRANSFER_REJECT = 13;
 
   // 会话开始
-  CHAT_EVENT_TYPE_SESSION_START = 12;
+  CHAT_EVENT_TYPE_SESSION_START = 14;
 
   // 会话关闭 / 会话结束
-  CHAT_EVENT_TYPE_SESSION_CLOSE = 13;
+  CHAT_EVENT_TYPE_SESSION_CLOSE = 15;
 
   // 邀请用户评价
-  CHAT_EVENT_TYPE_EVALUATION_INVITE = 14;
+  CHAT_EVENT_TYPE_EVALUATION_INVITE = 16;
 
   // 用户提交评价
-  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 15;
+  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 17;
 
   // 正在输入
-  CHAT_EVENT_TYPE_TYPING = 16;
+  CHAT_EVENT_TYPE_TYPING = 18;
 
   // 停止输入
-  CHAT_EVENT_TYPE_STOP_TYPING = 17;
+  CHAT_EVENT_TYPE_STOP_TYPING = 19;
 
   // 消息已送达
-  CHAT_EVENT_TYPE_DELIVERED = 18;
+  CHAT_EVENT_TYPE_DELIVERED = 20;
 
   // 消息已读
-  CHAT_EVENT_TYPE_READ = 19;
+  CHAT_EVENT_TYPE_READ = 21;
 
   // 消息撤回
-  CHAT_EVENT_TYPE_RECALL = 20;
+  CHAT_EVENT_TYPE_RECALL = 22;
 
   // 心跳
-  CHAT_EVENT_TYPE_HEARTBEAT = 21;
+  CHAT_EVENT_TYPE_HEARTBEAT = 23;
 
   // 错误事件
   // 例如：发送失败、会话不存在、权限不足
-  CHAT_EVENT_TYPE_ERROR = 22;
+  CHAT_EVENT_TYPE_ERROR = 24;
 
   // 暂无客服在线
-  CHAT_EVENT_TYPE_NO_AGENT_ONLINE = 23;
+  CHAT_EVENT_TYPE_NO_AGENT_ONLINE = 25;
 
   // 会话超时关闭
-  CHAT_EVENT_TYPE_SESSION_TIMEOUT = 24;
+  CHAT_EVENT_TYPE_SESSION_TIMEOUT = 26;
 
   // 消息删除
-  CHAT_EVENT_TYPE_DELETE = 25;
+  CHAT_EVENT_TYPE_DELETE = 27;
 }
 
 /**

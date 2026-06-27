@@ -79,14 +79,20 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
 		switch event.Type {
-		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE:
-			l.handleSendAgentMessage(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED:
 			l.handleAcceptChatSession(context.Background(), conn, event.Data)
-		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
-			l.handleCloseChatSession(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING, chat.ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING:
 			l.handleAgentTyping(context.Background(), conn, event.Type, event.Data)
+		case chat.ChatEventType_CHAT_EVENT_TYPE_TRANSFER_REQUEST:
+		// TODO 会话转接请求
+		case chat.ChatEventType_CHAT_EVENT_TYPE_TRANSFER_ACCEPT:
+		// TODO 会话转接接受
+		case chat.ChatEventType_CHAT_EVENT_TYPE_TRANSFER_REJECT:
+		// TODO 会话转接拒绝
+		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE:
+			l.handleSendAgentMessage(context.Background(), conn, event.Data)
+		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
+			l.handleCloseChatSession(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE:
 			l.handleEvaluationInvite(context.Background(), conn, event.Data)
 		default:
@@ -118,8 +124,8 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 			}
 			return
 		}
-		if event.GetType() == chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN && event.GetSession() != nil {
-			conn.SetChatSession(event.GetSession())
+		if event.GetEventType() == chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN && event.GetSessionEvent().GetSession() != nil {
+			conn.SetChatSession(event.GetSessionEvent().GetSession())
 		}
 		conn.SendEvent(event)
 	}
@@ -155,7 +161,7 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 	if conn.IsGuestSession() {
 		data.UserId = conn.ChatSessionUserId(data.UserId)
 		msg := newTransientAgentMessage(conn.MerchantId, req.SessionNo, conn.UserId, conn.AgentId, conn.Nickname, data)
-		if err := l.appendTransientMessage(ctx, conn.MerchantId, msg, conn.ChatSession()); err != nil {
+		if err := l.appendTransientMessage(ctx, conn.MerchantId, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, msg, conn.ChatSession()); err != nil {
 			sendWSError(conn, err.Error())
 			return
 		}
@@ -188,8 +194,7 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 		transientSession.AgentId = agentId
 		transientSession.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, agentId, conn.Nickname+"为您服务")
-		msg.EventType = chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED
-		if err := l.appendTransientMessage(ctx, conn.MerchantId, msg, transientSession); err != nil {
+		if err := l.appendTransientMessage(ctx, conn.MerchantId, chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED, msg, transientSession); err != nil {
 			sendWSError(conn, err.Error())
 			return
 		}
@@ -233,7 +238,6 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 			return
 		}
 		msg := newTransientSystemMessage(conn.MerchantId, sessionNo, data.UserId, conn.AgentId, "本次会话已结束")
-		msg.EventType = chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE
 		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg})
 		return
 	}
@@ -280,7 +284,7 @@ func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connecti
 		userId = conn.ChatSessionUserId(0)
 	}
 	msg := newTransientSystemMessageWithType(conn.MerchantId, sessionNo, userId, conn.AgentId, eventType, chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT, message, "")
-	if err := l.publishOnlyTransientMessage(ctx, conn.MerchantId, msg); err != nil {
+	if err := l.publishOnlyTransientMessage(ctx, conn.MerchantId, eventType, msg); err != nil {
 		sendWSError(conn, err.Error())
 		return
 	}
@@ -315,7 +319,7 @@ func (l *MessagesLogic) handleEvaluationInvite(ctx context.Context, conn *ws.Con
 		userId = conn.ChatSessionUserId(0)
 	}
 	msg := newTransientSystemMessageWithType(conn.MerchantId, sessionNo, userId, conn.AgentId, chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE, chat.ChatMessageType_CHAT_MESSAGE_TYPE_EVALUATION, content, transientExtra(map[string]interface{}{"action": "invite"}))
-	if err := l.appendTransientMessage(ctx, conn.MerchantId, msg, nil); err != nil {
+	if err := l.appendTransientMessage(ctx, conn.MerchantId, chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE, msg, nil); err != nil {
 		sendWSError(conn, err.Error())
 		return
 	}
@@ -346,12 +350,13 @@ func sendWSError(conn *ws.Connection, message string) {
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": message})
 }
 
-func (l *MessagesLogic) appendTransientMessage(ctx context.Context, merchantId int64, msg *chat.ChatMessage, session *chat.ChatSession) error {
+func (l *MessagesLogic) appendTransientMessage(ctx context.Context, merchantId int64, eventType chat.ChatEventType, msg *chat.ChatMessage, session *chat.ChatSession) error {
 	if l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
 		return nil
 	}
 	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &chat.SendAgentMessageReq{
 		MerchantId: merchantId,
+		EventType:  eventType,
 		Message:    msg,
 		Session:    session,
 		IsGuest:    true,
@@ -365,12 +370,13 @@ func (l *MessagesLogic) appendTransientMessage(ctx context.Context, merchantId i
 	return nil
 }
 
-func (l *MessagesLogic) publishOnlyTransientMessage(ctx context.Context, merchantId int64, msg *chat.ChatMessage) error {
+func (l *MessagesLogic) publishOnlyTransientMessage(ctx context.Context, merchantId int64, eventType chat.ChatEventType, msg *chat.ChatMessage) error {
 	if l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
 		return nil
 	}
 	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &chat.SendAgentMessageReq{
 		MerchantId:  merchantId,
+		EventType:   eventType,
 		Message:     msg,
 		PublishOnly: true,
 		IsGuest:     true,

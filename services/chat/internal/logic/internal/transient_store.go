@@ -140,11 +140,11 @@ func AppendTransientMessage(ctx context.Context, rds *redis.Redis, merchantId in
 		return nil, fmt.Errorf("merchant_id is required")
 	}
 	now := time.Now().UnixMilli()
-	if msg.GetCreateTime() == 0 {
-		msg.CreateTime = now
+	if msg.GetCreateTimes() == 0 {
+		msg.CreateTimes = now
 	}
-	if msg.GetUpdateTime() == 0 {
-		msg.UpdateTime = msg.GetCreateTime()
+	if msg.GetUpdateTimes() == 0 {
+		msg.UpdateTimes = msg.GetCreateTimes()
 	}
 	if msg.GetStatus() == chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_UNKNOWN {
 		msg.Status = chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT
@@ -243,8 +243,8 @@ func applyTransientMessageToSession(session *chat.ChatSession, msg *chat.ChatMes
 	session.LastMessage = msg.GetContent()
 	session.LastMessageNo = msg.GetMessageNo()
 	session.LastSenderType = msg.GetSender().GetType()
-	session.LastMessageTime = msg.GetCreateTime()
-	session.UpdateTimes = msg.GetUpdateTime()
+	session.LastMessageTime = msg.GetCreateTimes()
+	session.UpdateTimes = msg.GetUpdateTimes()
 	if session.GetUserId() == 0 && msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
 		session.UserId = msg.GetSender().GetId()
 	}

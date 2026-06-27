@@ -1,9 +1,6 @@
 package internal
 
 import (
-	"encoding/json"
-	"strconv"
-
 	"wklive/proto/chat"
 	"wklive/proto/common"
 	"wklive/services/chat/models"
@@ -230,10 +227,10 @@ func ToProtoMessage(data *models.ChatMessage) *chat.ChatMessage {
 	if data == nil {
 		return nil
 	}
-	return &chat.ChatMessage{
+	msg := &chat.ChatMessage{
 		MessageNo:   data.MessageNo,
 		SessionNo:   data.SessionNo,
-		EventType:   chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
+		MerchantId:  data.MerchantId,
 		MessageType: chat.ChatMessageType(data.MessageType),
 		Sender:      ToProtoMessageSender(data),
 		Receiver:    ToProtoMessageUser(data.Receiver),
@@ -244,13 +241,17 @@ func ToProtoMessage(data *models.ChatMessage) *chat.ChatMessage {
 		MimeType:    data.MimeType,
 		Width:       data.Width,
 		Height:      data.Height,
-		Duration:    int32(data.Duration),
+		Duration:    data.Duration,
 		Status:      chat.ChatMessageStatus(data.Status),
-		AgentId:     strconv.FormatInt(MessageAgentID(data), 10),
-		Extra:       MessagePayloadJSON(data.Payload),
-		CreateTime:  data.CreateTimes,
-		UpdateTime:  data.UpdateTimes,
+		Payload:     MapToStruct(data.Payload),
+		ReadTime:    data.ReadTime,
+		CreateTimes: data.CreateTimes,
+		UpdateTimes: data.UpdateTimes,
 	}
+	if !data.ID.IsZero() {
+		msg.Id = data.ID.Hex()
+	}
+	return msg
 }
 
 func ToProtoMessages(list []*models.ChatMessage) []*chat.ChatMessage {
@@ -278,17 +279,6 @@ func ToProtoMessageUser(data *models.ChatMessageUser) *chat.ChatMessageUser {
 		Nickname:  data.Nickname,
 		AvatarUrl: data.AvatarUrl,
 	}
-}
-
-func MessagePayloadJSON(payload map[string]interface{}) string {
-	if len(payload) == 0 {
-		return ""
-	}
-	bs, err := json.Marshal(payload)
-	if err != nil {
-		return ""
-	}
-	return string(bs)
 }
 
 func ToProtoUser(data *models.TChatUser) *chat.ChatUser {

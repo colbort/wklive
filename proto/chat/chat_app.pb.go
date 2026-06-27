@@ -567,6 +567,7 @@ type SendUserMessageReq struct {
 	TtlSeconds      int64                  `protobuf:"varint,17,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`                             // 游客临时消息 TTL，0 使用默认 TTL
 	PublishOnly     bool                   `protobuf:"varint,18,opt,name=publish_only,json=publishOnly,proto3" json:"publish_only,omitempty"`                          // 仅发布事件，不写入临时消息
 	IsGuest         bool                   `protobuf:"varint,19,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客/临时会话
+	EventType       ChatEventType          `protobuf:"varint,20,opt,name=event_type,json=eventType,proto3,enum=chat.ChatEventType" json:"event_type,omitempty"`        // 游客/临时消息事件类型
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -732,6 +733,13 @@ func (x *SendUserMessageReq) GetIsGuest() bool {
 		return x.IsGuest
 	}
 	return false
+}
+
+func (x *SendUserMessageReq) GetEventType() ChatEventType {
+	if x != nil {
+		return x.EventType
+	}
+	return ChatEventType_CHAT_EVENT_TYPE_UNKNOWN
 }
 
 type ListMyChatMessagesReq struct {
@@ -1678,7 +1686,7 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
 	"\bis_guest\x18\x04 \x01(\bR\aisGuest\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x05 \x01(\tR\tsessionNo\"\x85\x05\n" +
+	"session_no\x18\x05 \x01(\tR\tsessionNo\"\xb9\x05\n" +
 	"\x12SendUserMessageReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12*\n" +
@@ -1702,7 +1710,9 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\vttl_seconds\x18\x11 \x01(\x03R\n" +
 	"ttlSeconds\x12!\n" +
 	"\fpublish_only\x18\x12 \x01(\bR\vpublishOnly\x12\x19\n" +
-	"\bis_guest\x18\x13 \x01(\bR\aisGuest\"\xce\x01\n" +
+	"\bis_guest\x18\x13 \x01(\bR\aisGuest\x122\n" +
+	"\n" +
+	"event_type\x18\x14 \x01(\x0e2\x13.chat.ChatEventTypeR\teventType\"\xce\x01\n" +
 	"\x15ListMyChatMessagesReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12#\n" +
@@ -1840,10 +1850,10 @@ var file_proto_chat_chat_app_proto_goTypes = []any{
 	(*ChatMessageUser)(nil),                   // 27: chat.ChatMessageUser
 	(*ChatMessage)(nil),                       // 28: chat.ChatMessage
 	(*ChatSession)(nil),                       // 29: chat.ChatSession
-	(*common.PageReq)(nil),                    // 30: common.PageReq
-	(ChatSenderType)(0),                       // 31: chat.ChatSenderType
-	(ChatSessionCloseReason)(0),               // 32: chat.ChatSessionCloseReason
-	(ChatEventType)(0),                        // 33: chat.ChatEventType
+	(ChatEventType)(0),                        // 30: chat.ChatEventType
+	(*common.PageReq)(nil),                    // 31: common.PageReq
+	(ChatSenderType)(0),                       // 32: chat.ChatSenderType
+	(ChatSessionCloseReason)(0),               // 33: chat.ChatSessionCloseReason
 	(*ChatSatisfaction)(nil),                  // 34: chat.ChatSatisfaction
 	(*ChatMessageEvent)(nil),                  // 35: chat.ChatMessageEvent
 }
@@ -1860,55 +1870,56 @@ var file_proto_chat_chat_app_proto_depIdxs = []int32{
 	27, // 9: chat.SendUserMessageReq.sender:type_name -> chat.ChatMessageUser
 	28, // 10: chat.SendUserMessageReq.message:type_name -> chat.ChatMessage
 	29, // 11: chat.SendUserMessageReq.session:type_name -> chat.ChatSession
-	30, // 12: chat.ListMyChatMessagesReq.page:type_name -> common.PageReq
-	31, // 13: chat.ListMyChatMessagesReq.sender_type:type_name -> chat.ChatSenderType
-	32, // 14: chat.CloseMyChatSessionReq.close_reason_type:type_name -> chat.ChatSessionCloseReason
-	29, // 15: chat.AppUpsertTransientChatSessionReq.session:type_name -> chat.ChatSession
-	33, // 16: chat.AppDeleteTransientChatSessionReq.event_type:type_name -> chat.ChatEventType
-	24, // 17: chat.AppDeleteTransientChatSessionResp.base:type_name -> common.RespBase
-	25, // 18: chat.AppPageTransientChatSessionsReq.status:type_name -> chat.ChatSessionStatus
-	30, // 19: chat.AppPageTransientChatSessionsReq.page:type_name -> common.PageReq
-	24, // 20: chat.AppPageTransientChatSessionsResp.base:type_name -> common.RespBase
-	29, // 21: chat.AppPageTransientChatSessionsResp.data:type_name -> chat.ChatSession
-	24, // 22: chat.AppListChatMessagesResp.base:type_name -> common.RespBase
-	28, // 23: chat.AppListChatMessagesResp.data:type_name -> chat.ChatMessage
-	24, // 24: chat.AppChatSessionResp.base:type_name -> common.RespBase
-	29, // 25: chat.AppChatSessionResp.data:type_name -> chat.ChatSession
-	24, // 26: chat.AppChatMessageResp.base:type_name -> common.RespBase
-	28, // 27: chat.AppChatMessageResp.data:type_name -> chat.ChatMessage
-	24, // 28: chat.AppChatSatisfactionResp.base:type_name -> common.RespBase
-	34, // 29: chat.AppChatSatisfactionResp.data:type_name -> chat.ChatSatisfaction
-	0,  // 30: chat.ChatApp.AuthChatMerchant:input_type -> chat.AuthChatMerchantReq
-	6,  // 31: chat.ChatApp.OpenChatSession:input_type -> chat.OpenChatSessionReq
-	3,  // 32: chat.ChatApp.GenerateChatSessionNo:input_type -> chat.GenerateChatSessionNoReq
-	5,  // 33: chat.ChatApp.GetChatSessionByUser:input_type -> chat.GetChatSessionByUserReq
-	7,  // 34: chat.ChatApp.SendUserMessage:input_type -> chat.SendUserMessageReq
-	8,  // 35: chat.ChatApp.ListMyChatMessages:input_type -> chat.ListMyChatMessagesReq
-	9,  // 36: chat.ChatApp.CloseMyChatSession:input_type -> chat.CloseMyChatSessionReq
-	10, // 37: chat.ChatApp.SubmitChatSatisfaction:input_type -> chat.SubmitChatSatisfactionReq
-	11, // 38: chat.ChatApp.AppSubscribeStream:input_type -> chat.AppChatSubscribeRequest
-	12, // 39: chat.ChatApp.AppUpsertTransientChatSession:input_type -> chat.AppUpsertTransientChatSessionReq
-	13, // 40: chat.ChatApp.AppDeleteTransientChatSession:input_type -> chat.AppDeleteTransientChatSessionReq
-	15, // 41: chat.ChatApp.AppGetTransientChatSession:input_type -> chat.AppGetTransientChatSessionReq
-	16, // 42: chat.ChatApp.AppPageTransientChatSessions:input_type -> chat.AppPageTransientChatSessionsReq
-	2,  // 43: chat.ChatApp.AuthChatMerchant:output_type -> chat.AuthChatMerchantResp
-	19, // 44: chat.ChatApp.OpenChatSession:output_type -> chat.AppChatSessionResp
-	4,  // 45: chat.ChatApp.GenerateChatSessionNo:output_type -> chat.GenerateChatSessionNoResp
-	19, // 46: chat.ChatApp.GetChatSessionByUser:output_type -> chat.AppChatSessionResp
-	20, // 47: chat.ChatApp.SendUserMessage:output_type -> chat.AppChatMessageResp
-	18, // 48: chat.ChatApp.ListMyChatMessages:output_type -> chat.AppListChatMessagesResp
-	19, // 49: chat.ChatApp.CloseMyChatSession:output_type -> chat.AppChatSessionResp
-	21, // 50: chat.ChatApp.SubmitChatSatisfaction:output_type -> chat.AppChatSatisfactionResp
-	35, // 51: chat.ChatApp.AppSubscribeStream:output_type -> chat.ChatMessageEvent
-	19, // 52: chat.ChatApp.AppUpsertTransientChatSession:output_type -> chat.AppChatSessionResp
-	14, // 53: chat.ChatApp.AppDeleteTransientChatSession:output_type -> chat.AppDeleteTransientChatSessionResp
-	19, // 54: chat.ChatApp.AppGetTransientChatSession:output_type -> chat.AppChatSessionResp
-	17, // 55: chat.ChatApp.AppPageTransientChatSessions:output_type -> chat.AppPageTransientChatSessionsResp
-	43, // [43:56] is the sub-list for method output_type
-	30, // [30:43] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	30, // 12: chat.SendUserMessageReq.event_type:type_name -> chat.ChatEventType
+	31, // 13: chat.ListMyChatMessagesReq.page:type_name -> common.PageReq
+	32, // 14: chat.ListMyChatMessagesReq.sender_type:type_name -> chat.ChatSenderType
+	33, // 15: chat.CloseMyChatSessionReq.close_reason_type:type_name -> chat.ChatSessionCloseReason
+	29, // 16: chat.AppUpsertTransientChatSessionReq.session:type_name -> chat.ChatSession
+	30, // 17: chat.AppDeleteTransientChatSessionReq.event_type:type_name -> chat.ChatEventType
+	24, // 18: chat.AppDeleteTransientChatSessionResp.base:type_name -> common.RespBase
+	25, // 19: chat.AppPageTransientChatSessionsReq.status:type_name -> chat.ChatSessionStatus
+	31, // 20: chat.AppPageTransientChatSessionsReq.page:type_name -> common.PageReq
+	24, // 21: chat.AppPageTransientChatSessionsResp.base:type_name -> common.RespBase
+	29, // 22: chat.AppPageTransientChatSessionsResp.data:type_name -> chat.ChatSession
+	24, // 23: chat.AppListChatMessagesResp.base:type_name -> common.RespBase
+	28, // 24: chat.AppListChatMessagesResp.data:type_name -> chat.ChatMessage
+	24, // 25: chat.AppChatSessionResp.base:type_name -> common.RespBase
+	29, // 26: chat.AppChatSessionResp.data:type_name -> chat.ChatSession
+	24, // 27: chat.AppChatMessageResp.base:type_name -> common.RespBase
+	28, // 28: chat.AppChatMessageResp.data:type_name -> chat.ChatMessage
+	24, // 29: chat.AppChatSatisfactionResp.base:type_name -> common.RespBase
+	34, // 30: chat.AppChatSatisfactionResp.data:type_name -> chat.ChatSatisfaction
+	0,  // 31: chat.ChatApp.AuthChatMerchant:input_type -> chat.AuthChatMerchantReq
+	6,  // 32: chat.ChatApp.OpenChatSession:input_type -> chat.OpenChatSessionReq
+	3,  // 33: chat.ChatApp.GenerateChatSessionNo:input_type -> chat.GenerateChatSessionNoReq
+	5,  // 34: chat.ChatApp.GetChatSessionByUser:input_type -> chat.GetChatSessionByUserReq
+	7,  // 35: chat.ChatApp.SendUserMessage:input_type -> chat.SendUserMessageReq
+	8,  // 36: chat.ChatApp.ListMyChatMessages:input_type -> chat.ListMyChatMessagesReq
+	9,  // 37: chat.ChatApp.CloseMyChatSession:input_type -> chat.CloseMyChatSessionReq
+	10, // 38: chat.ChatApp.SubmitChatSatisfaction:input_type -> chat.SubmitChatSatisfactionReq
+	11, // 39: chat.ChatApp.AppSubscribeStream:input_type -> chat.AppChatSubscribeRequest
+	12, // 40: chat.ChatApp.AppUpsertTransientChatSession:input_type -> chat.AppUpsertTransientChatSessionReq
+	13, // 41: chat.ChatApp.AppDeleteTransientChatSession:input_type -> chat.AppDeleteTransientChatSessionReq
+	15, // 42: chat.ChatApp.AppGetTransientChatSession:input_type -> chat.AppGetTransientChatSessionReq
+	16, // 43: chat.ChatApp.AppPageTransientChatSessions:input_type -> chat.AppPageTransientChatSessionsReq
+	2,  // 44: chat.ChatApp.AuthChatMerchant:output_type -> chat.AuthChatMerchantResp
+	19, // 45: chat.ChatApp.OpenChatSession:output_type -> chat.AppChatSessionResp
+	4,  // 46: chat.ChatApp.GenerateChatSessionNo:output_type -> chat.GenerateChatSessionNoResp
+	19, // 47: chat.ChatApp.GetChatSessionByUser:output_type -> chat.AppChatSessionResp
+	20, // 48: chat.ChatApp.SendUserMessage:output_type -> chat.AppChatMessageResp
+	18, // 49: chat.ChatApp.ListMyChatMessages:output_type -> chat.AppListChatMessagesResp
+	19, // 50: chat.ChatApp.CloseMyChatSession:output_type -> chat.AppChatSessionResp
+	21, // 51: chat.ChatApp.SubmitChatSatisfaction:output_type -> chat.AppChatSatisfactionResp
+	35, // 52: chat.ChatApp.AppSubscribeStream:output_type -> chat.ChatMessageEvent
+	19, // 53: chat.ChatApp.AppUpsertTransientChatSession:output_type -> chat.AppChatSessionResp
+	14, // 54: chat.ChatApp.AppDeleteTransientChatSession:output_type -> chat.AppDeleteTransientChatSessionResp
+	19, // 55: chat.ChatApp.AppGetTransientChatSession:output_type -> chat.AppChatSessionResp
+	17, // 56: chat.ChatApp.AppPageTransientChatSessions:output_type -> chat.AppPageTransientChatSessionsResp
+	44, // [44:57] is the sub-list for method output_type
+	31, // [31:44] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_chat_app_proto_init() }

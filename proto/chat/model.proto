@@ -96,192 +96,26 @@ message ChatMessageUser {
  * 聊天消息主体
  */
 message ChatMessage {
-  /**
-   * 消息ID，建议服务端生成
-   */
-  string message_no = 1;
-
-  /**
-   * 客户端消息ID
-   * 前端发送时生成，用于防重复、回执匹配
-   */
-  string client_message_id = 2;
-
-  /**
-   * 会话ID
-   */
-  string session_no = 3;
-
-  /**
-   * 事件类型
-   */
-  ChatEventType event_type = 4;
-
-  /**
-   * 消息内容类型
-   * 只有 event_type = CHAT_EVENT_TYPE_MESSAGE 时主要使用
-   */
-  ChatMessageType message_type = 5;
-
-  /**
-   * 发送方
-   */
-  ChatMessageUser sender = 6;
-
-  /**
-   * 接收方
-   * 可以是用户ID、客服ID，也可以为空
-   */
-  ChatMessageUser receiver = 10;
-
-  /**
-   * 消息文本内容
-   * 文本消息、系统提示、排队提示都可以放这里
-   */
-  string content = 11;
-
-  /**
-   * 资源URL
-   * 图片、文件、视频、音频等使用
-   */
-  string url = 12;
-
-  /**
-   * 文件名
-   */
-  string file_name = 13;
-
-  /**
-   * 文件大小，单位 byte
-   */
-  int64 file_size = 14;
-
-  /**
-   * 文件类型 / MIME
-   * 例如 image/png、application/pdf
-   */
-  string mime_type = 15;
-
-  /**
-   * 图片宽度 / 视频宽度
-   */
-  int32 width = 16;
-
-  /**
-   * 图片高度 / 视频高度
-   */
-  int32 height = 17;
-
-  /**
-   * 音频/视频时长，单位秒
-   */
-  int32 duration = 18;
-
-  /**
-   * 消息状态
-   */
-  ChatMessageStatus status = 19;
-
-  /**
-   * 是否是自己发送的
-   * 前端展示时可以用
-   */
-  bool self = 20;
-
-  /**
-   * 是否需要回执
-   */
-  bool need_ack = 21;
-
-  /**
-   * 被回复的消息ID
-   */
-  string reply_message_id = 22;
-
-  /**
-   * 被撤回的消息ID
-   * event_type = CHAT_EVENT_TYPE_RECALL 时使用
-   */
-  string recall_message_id = 23;
-
-  /**
-   * 转接前客服ID
-   * event_type = CHAT_EVENT_TYPE_TRANSFER 时使用
-   */
-  string from_agent_id = 24;
-
-  /**
-   * 转接前客服名称
-   */
-  string from_agent_name = 25;
-
-  /**
-   * 转接后客服ID
-   */
-  string to_agent_id = 26;
-
-  /**
-   * 转接后客服名称
-   */
-  string to_agent_name = 27;
-
-  /**
-   * 当前客服ID
-   * AGENT_ASSIGNED / AGENT_JOIN 时使用
-   */
-  string agent_id = 28;
-
-  /**
-   * 当前客服名称
-   */
-  string agent_name = 29;
-
-  /**
-   * 当前客服头像
-   */
-  string agent_avatar = 30;
-
-  /**
-   * 排队号码
-   */
-  int32 queue_no = 31;
-
-  /**
-   * 前面等待人数
-   */
-  int32 wait_count = 32;
-
-  /**
-   * 预计等待时间，单位秒
-   */
-  int32 estimated_wait_seconds = 33;
-
-  /**
-   * 错误码
-   * event_type = CHAT_EVENT_TYPE_ERROR 时使用
-   */
-  int32 error_code = 34;
-
-  /**
-   * 错误信息
-   */
-  string error_message = 35;
-
-  /**
-   * 扩展数据，JSON字符串
-   * 例如订单卡片、商品卡片、评价信息等
-   */
-  string extra = 36;
-
-  /**
-   * 创建时间，毫秒时间戳
-   */
-  int64 create_time = 37;
-
-  /**
-   * 更新时间，毫秒时间戳
-   */
-  int64 update_time = 38;
+  string id = 1;                         // Mongo ObjectID
+  string message_no = 2;                 // 消息编号
+  string session_no = 3;                 // 会话编号
+  int64 merchant_id = 4;                 // 客服商户ID
+  ChatMessageUser sender = 5;            // 发送方
+  ChatMessageUser receiver = 6;          // 接收方
+  ChatMessageType message_type = 7;      // 消息内容类型
+  string content = 8;                    // 文本内容
+  string url = 9;                        // 资源URL
+  string file_name = 10;                 // 文件名
+  string mime_type = 11;                 // MIME类型
+  int64 file_size = 12;                  // 文件大小(byte)
+  int32 width = 13;                      // 图片/视频宽度
+  int32 height = 14;                     // 图片/视频高度
+  int64 duration = 15;                   // 音频/视频时长(秒)
+  ChatMessageStatus status = 16;         // 消息状态
+  google.protobuf.Struct payload = 17;   // 扩展 payload
+  int64 read_time = 18;                  // 已读时间戳(毫秒)
+  int64 create_times = 19;               // 创建时间戳(毫秒)
+  int64 update_times = 20;               // 更新时间戳(毫秒)
 }
 
 // 客服排队信息
@@ -297,32 +131,19 @@ message ChatQueueInfo {
   int64 update_times = 9;          // 更新时间戳(毫秒)
 }
 
-// 客服会话事件
-message ChatSessionEvent {
-  string session_no = 1;           // 会话编号
-  int64 merchant_id = 2;           // 客服商户ID
-  int64 user_id = 3;               // 用户ID
-  int64 agent_id = 4;              // 坐席ID
-  int64 operator_id = 5;           // 操作人ID
-  ChatSessionStatus status = 6;    // 事件后的会话状态
-  ChatAssignType assign_type = 7;  // 分配方式
-  string reason = 8;               // 事件原因
-  string message = 9;              // 给前端展示的系统提示
-  ChatSession session = 10;        // 会话快照
-  ChatQueueInfo queue = 11;        // 排队信息
-  int64 created_at = 12;           // 事件创建时间戳(毫秒)
-}
-
 // 客服消息事件,用于消息总线/WebSocket推送
 message ChatMessageEvent {
-  ChatEventType type = 1;           // 事件类型
-  ChatMessage data = 2;             // 消息内容
-  int64 created_at = 3;             // 事件创建时间戳(毫秒)
-  ChatSession session = 4;          // 会话快照
-  ChatSessionEvent session_event = 5; // 会话事件
-  ChatQueueInfo queue = 6;          // 排队信息
-  common.RespBase base = 7;         // 业务响应
-  ChatAgent agent = 8;              // 坐席快照
+  ChatEventType event_type = 1; // 事件类型
+  int64 created_at = 2;         // 事件创建时间戳(毫秒)
+  oneof payload {
+    ChatMessage message = 10;              // 聊天消息 / 系统消息 CHAT_EVENT_TYPE_MESSAGE，CHAT_EVENT_TYPE_SYSTEM
+    ChatSession session = 11;              // 会话快照 CHAT_EVENT_TYPE_USER_JOIN，CHAT_EVENT_TYPE_USER_LEAVE
+    ChatQueueInfo queue = 13;              // 排队信息 CHAT_EVENT_TYPE_QUEUE_JOIN，CHAT_EVENT_TYPE_QUEUE_UPDATE，
+    ChatAgent agent = 14;                  // 坐席事件 CHAT_EVENT_TYPE_AGENT_JOIN，CHAT_EVENT_TYPE_AGENT_LEAVE
+    ChatSatisfaction satisfaction = 15;    // 评价事件 
+    ChatWsConnected connected = 16;        // WebSocket 连接成功
+    common.RespBase base = 17;             // 业务响应 / 错误信息
+  }
 }
 
 // WebSocket连接成功消息
@@ -397,7 +218,6 @@ message ChatWsMessage {
   ChatWsCloseSessionReq close_session = 7;  // 关闭会话请求
   ChatMessage message = 8;                  // 消息数据
   ChatSession session = 9;                  // 会话数据
-  ChatSessionEvent session_event = 10;      // 会话事件
   ChatQueueInfo queue = 11;                 // 排队信息
   int64 created_at = 12;                    // 事件创建时间戳(毫秒)
 }
@@ -521,7 +341,6 @@ message ChatAdminEvent {
   ChatAgent agent = 10;             // 坐席快照
   ChatAgentStatus agent_status = 11; // 坐席状态
   ChatSession session = 12;         // 会话快照
-  ChatSessionEvent session_event = 13; // 会话事件
   ChatQueueInfo queue = 14;         // 排队信息
   ChatMessage message = 15;         // 聊天消息
   string reason = 16;               // 原因/提示

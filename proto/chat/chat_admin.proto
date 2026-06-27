@@ -363,6 +363,7 @@ message SendAgentMessageReq {
   int64 ttl_seconds = 17;           // 游客临时消息 TTL，0 使用默认 TTL
   bool publish_only = 18;           // 仅发布事件，不写入临时消息
   bool is_guest = 19;               // 是否游客/临时会话
+  ChatEventType event_type = 20;    // 游客/临时消息事件类型
 }
 
 message PageChatMessagesReq {

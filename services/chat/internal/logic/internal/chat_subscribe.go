@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 
 	v9 "github.com/redis/go-redis/v9"
@@ -97,7 +96,7 @@ func matchSubscribeEvent(req ChatSubscribeRequest, event *chat.ChatMessageEvent,
 	if !admin && !shouldBroadcastToUser(event) {
 		return false
 	}
-	if event.GetData() != nil && matchSubscribeMessage(req, event.GetData(), admin) {
+	if event.GetMessage() != nil && matchSubscribeMessage(req, event.GetMessage(), admin) {
 		return true
 	}
 	if event.GetSessionEvent() != nil && matchSubscribeSessionEvent(req, event.GetSessionEvent(), admin) {
@@ -116,7 +115,7 @@ func matchSubscribeEvent(req ChatSubscribeRequest, event *chat.ChatMessageEvent,
 }
 
 func shouldBroadcastToUser(event *chat.ChatMessageEvent) bool {
-	switch event.GetType() {
+	switch event.GetEventType() {
 	case chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
 		chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE:
 		return false
@@ -138,7 +137,7 @@ func matchSubscribeMessage(req ChatSubscribeRequest, msg *chat.ChatMessage, admi
 	if strings.TrimSpace(req.GetSessionNo()) != "" && msg.GetSessionNo() != strings.TrimSpace(req.GetSessionNo()) {
 		return false
 	}
-	agentId := int64FromString(msg.GetAgentId())
+	agentId := messageAgentID(msg)
 	if req.GetAgentId() > 0 && agentId != req.GetAgentId() && agentId != 0 {
 		return false
 	}
@@ -231,7 +230,12 @@ func matchSubscribeAgent(req ChatSubscribeRequest, agent *chat.ChatAgent) bool {
 	return true
 }
 
-func int64FromString(value string) int64 {
-	id, _ := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
-	return id
+func messageAgentID(msg *chat.ChatMessage) int64 {
+	if msg == nil || msg.GetSender() == nil {
+		return 0
+	}
+	if msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
+		return msg.GetSender().GetId()
+	}
+	return 0
 }
