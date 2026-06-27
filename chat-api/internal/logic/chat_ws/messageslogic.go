@@ -64,7 +64,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		_ = conn.Close()
 		return
 	}
-	sessionNo := strings.TrimSpace(resp.GetData().GetSessionNo())
+	sessionNo := resp.Data.SessionNo
 	if sessionNo == "" {
 		logx.Errorf("session is empty, merchantId=%d userId=%d guest=%t", req.MerchantId, req.UserId, req.IsGuest)
 		_ = conn.Close()
