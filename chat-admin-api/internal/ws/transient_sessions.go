@@ -92,10 +92,6 @@ func (s *transientSessionStore) applyUserLeaveLocked(sessionNo string, event *ch
 	if session == nil {
 		return
 	}
-	if isWaitingTransientSession(session) {
-		s.deleteSessionLocked(sessionNo)
-		return
-	}
 	applyTransientEventSnapshot(session, event)
 	applyTransientEventMessage(session, event, "用户已离开")
 }

@@ -477,6 +477,19 @@ function handleUserLeave(event: WsEvent) {
   }
   const session = sessions.value[index];
   const status = sessionStatusValue(session.status);
+  if (isGuestSession(session)) {
+    const message =
+      sessionEvent(event)?.message ||
+      eventMessage(event.data)?.content ||
+      "用户已离开客服页面";
+    setSessionStatusMessage(sessionNo, message);
+    session.lastMessage = message;
+    session.lastMessageTime = Number(
+      sessionEvent(event)?.createdAt || Date.now(),
+    );
+    session.updateTimes = session.lastMessageTime;
+    return;
+  }
   if (status === sessionStatus.waiting || needsAccept(session)) {
     removeSession(sessionNo);
     if (activeSessionNo.value === sessionNo) {
@@ -811,16 +824,11 @@ function setSessionStatusMessage(sessionNo: string, message?: string) {
 
 function matchStatusFilter(session: ChatSession) {
   const status = sessionStatusValue(session.status);
-  const assignedAgentId = Number(session.agentId || 0);
   if (statusFilter.value === "waiting") {
-    return (
-      status === sessionStatus.waiting ||
-      (status === sessionStatus.pendingAgent && !assignedAgentId)
-    );
+    return status === sessionStatus.waiting;
   }
   if (statusFilter.value === "serving") {
     return (
-      assignedAgentId === agentId.value &&
       (
         [
           sessionStatus.serving,

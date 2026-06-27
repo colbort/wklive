@@ -129,6 +129,12 @@ func (l *MessagesLogic) onClose(isGuest bool) func(*ws.Connection) {
 		if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 			return
 		}
+		if isGuest {
+			if err := l.publishUserLeaveEvent(context.Background(), conn, "用户已离开客服页面"); err != nil {
+				logx.Errorf("publish chat user leave event failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
+			}
+			return
+		}
 		l.closeUserSession(context.Background(), conn, isGuest, "用户已离开客服页面")
 	}
 }
@@ -439,6 +445,24 @@ func (l *MessagesLogic) publishSessionCloseEvent(ctx context.Context, conn *ws.C
 			MerchantId: conn.MerchantId,
 			UserId:     conn.UserId,
 			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED,
+			Message:    strings.TrimSpace(message),
+			CreatedAt:  now,
+		},
+	}
+	return l.publishChatEvent(ctx, event)
+}
+
+func (l *MessagesLogic) publishUserLeaveEvent(ctx context.Context, conn *ws.Connection, message string) error {
+	now := time.Now().UnixMilli()
+	systemMessage := buildSystemChatMessage(conn, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, message)
+	event := &chat.ChatMessageEvent{
+		Type:      chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
+		CreatedAt: now,
+		Data:      systemMessage,
+		SessionEvent: &chat.ChatSessionEvent{
+			SessionNo:  conn.SessionNo,
+			MerchantId: conn.MerchantId,
+			UserId:     conn.UserId,
 			Message:    strings.TrimSpace(message),
 			CreatedAt:  now,
 		},
