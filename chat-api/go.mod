@@ -5,7 +5,6 @@ go 1.26.4
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
-	github.com/redis/go-redis/v9 v9.20.1
 	github.com/zeromicro/go-zero v1.10.2
 	wklive/proto/common v0.0.0-00010101000000-000000000000
 )
@@ -32,6 +31,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/pquerna/otp v1.5.0 // indirect
+	github.com/redis/go-redis/v9 v9.20.1 // indirect
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.etcd.io/etcd/api/v3 v3.6.12 // indirect
