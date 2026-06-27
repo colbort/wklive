@@ -20,6 +20,7 @@ import (
 const (
 	defaultChatTokenTTLSeconds = int64(5 * 60)
 	maxChatTokenTTLSeconds     = int64(30 * 60)
+	guestSessionCacheTTL       = int64(24 * 60 * 60)
 )
 
 type CreateChatTokenLogic struct {
@@ -63,15 +64,6 @@ func (l *CreateChatTokenLogic) CreateChatToken(req *types.CreateChatTokenReq) (*
 	merchantId := authResp.GetData().GetMerchantId()
 	nickname := firstNonEmpty(req.Nickname, fmt.Sprintf("user-%d", req.UserId))
 	avatarUrl := strings.TrimSpace(req.AvatarUrl)
-	sessionNo := ""
-	if !req.IsGuest {
-		sessionNo, err = l.existingSessionNo(merchantId, req.UserId)
-		if err != nil {
-			l.Errorf("get existing chat session failed: %v", err)
-			return &types.CreateChatTokenResp{RespBase: types.RespBase{Code: 100001, Msg: err.Error()}}, nil
-		}
-	}
-
 	ttl := req.TtlSeconds
 	if ttl <= 0 {
 		ttl = defaultChatTokenTTLSeconds
@@ -79,6 +71,22 @@ func (l *CreateChatTokenLogic) CreateChatToken(req *types.CreateChatTokenReq) (*
 	if ttl > maxChatTokenTTLSeconds {
 		ttl = maxChatTokenTTLSeconds
 	}
+
+	sessionNo := ""
+	if req.IsGuest {
+		sessionNo, err = l.svcCtx.GuestSessionNo(l.ctx, merchantId, req.UserId, guestSessionCacheTTL)
+		if err != nil {
+			l.Errorf("get guest chat session failed: %v", err)
+			return &types.CreateChatTokenResp{RespBase: types.RespBase{Code: 100001, Msg: err.Error()}}, nil
+		}
+	} else {
+		sessionNo, err = l.existingSessionNo(merchantId, req.UserId)
+		if err != nil {
+			l.Errorf("get existing chat session failed: %v", err)
+			return &types.CreateChatTokenResp{RespBase: types.RespBase{Code: 100001, Msg: err.Error()}}, nil
+		}
+	}
+
 	expireAt := time.Now().Add(time.Duration(ttl) * time.Second).UnixMilli()
 	token, err := jwt.Sign(l.svcCtx.Config.Jwt.AccessSecret, jwt.Claims{
 		MerchantId: merchantId,

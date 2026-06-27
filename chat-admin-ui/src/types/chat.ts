@@ -80,6 +80,8 @@ export interface ChatSession {
   closeTime: number;
   closeReason: string;
   extJson?: string | Record<string, unknown>;
+  isGuest?: boolean;
+  avatarUrl?: string;
   lastMessageNo: string;
   createTimes: number;
   updateTimes: number;

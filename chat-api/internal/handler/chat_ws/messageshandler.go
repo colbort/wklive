@@ -11,7 +11,6 @@ import (
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
 	"wklive/common/utils"
-	"wklive/proto/chat"
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -23,6 +22,7 @@ const (
 	wsProtocolNicknamePrefix = "nickname."
 	wsProtocolAvatarPrefix   = "avatar."
 	wsProtocol               = "wklive-chat"
+	legacyGuestSessionTTL    = int64(24 * 60 * 60)
 )
 
 var upgrader = websocket.Upgrader{
@@ -49,16 +49,11 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		sessionNo := strings.TrimSpace(claims.SessionNo)
 		if claims.IsGuest && sessionNo == "" {
 			ctx := contextWithChatIdentity(r.Context(), claims.MerchantId, claims.UserId)
-			resp, err := svcCtx.ChatAppCli.GenerateChatSessionNo(ctx, &chat.GenerateChatSessionNoReq{})
+			sessionNo, err = svcCtx.GuestSessionNo(ctx, claims.MerchantId, claims.UserId, legacyGuestSessionTTL)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
-			if resp.GetBase().GetCode() != 200 {
-				http.Error(w, resp.GetBase().GetMsg(), http.StatusBadRequest)
-				return
-			}
-			sessionNo = strings.TrimSpace(resp.GetSessionNo())
 		}
 		req := types.ChatWSMessagesReq{
 			SessionNo:  sessionNo,

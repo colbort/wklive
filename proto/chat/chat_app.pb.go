@@ -735,6 +735,8 @@ type CloseMyChatSessionReq struct {
 	SessionNo       string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                                       // 会话编号
 	CloseReasonType ChatSessionCloseReason `protobuf:"varint,2,opt,name=close_reason_type,json=closeReasonType,proto3,enum=chat.ChatSessionCloseReason" json:"close_reason_type,omitempty"` // 结束原因类型
 	CloseReason     string                 `protobuf:"bytes,3,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`                                                 // 结束原因描述
+	MerchantId      int64                  `protobuf:"varint,4,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`
+	UserId          int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -790,12 +792,28 @@ func (x *CloseMyChatSessionReq) GetCloseReason() string {
 	return ""
 }
 
+func (x *CloseMyChatSessionReq) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *CloseMyChatSessionReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
 type SubmitChatSatisfactionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"` // 会话编号
 	Score         int32                  `protobuf:"varint,2,opt,name=score,proto3" json:"score,omitempty"`                         // 满意度评分:1-5
 	Content       string                 `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`                      // 评价内容
 	Tags          string                 `protobuf:"bytes,4,opt,name=tags,proto3" json:"tags,omitempty"`                            // 评价标签,逗号分隔
+	MerchantId    int64                  `protobuf:"varint,5,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -856,6 +874,20 @@ func (x *SubmitChatSatisfactionReq) GetTags() string {
 		return x.Tags
 	}
 	return ""
+}
+
+func (x *SubmitChatSatisfactionReq) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *SubmitChatSatisfactionReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
 }
 
 type ListChatMessagesResp struct {
@@ -1141,18 +1173,24 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\x15ListMyChatMessagesReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12#\n" +
-	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"\xa3\x01\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"\xdd\x01\n" +
 	"\x15CloseMyChatSessionReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12H\n" +
 	"\x11close_reason_type\x18\x02 \x01(\x0e2\x1c.chat.ChatSessionCloseReasonR\x0fcloseReasonType\x12!\n" +
-	"\fclose_reason\x18\x03 \x01(\tR\vcloseReason\"~\n" +
+	"\fclose_reason\x18\x03 \x01(\tR\vcloseReason\x12\x1f\n" +
+	"\vmerchant_id\x18\x04 \x01(\x03R\n" +
+	"merchantId\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\"\xb8\x01\n" +
 	"\x19SubmitChatSatisfactionReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x14\n" +
 	"\x05score\x18\x02 \x01(\x05R\x05score\x12\x18\n" +
 	"\acontent\x18\x03 \x01(\tR\acontent\x12\x12\n" +
-	"\x04tags\x18\x04 \x01(\tR\x04tags\"c\n" +
+	"\x04tags\x18\x04 \x01(\tR\x04tags\x12\x1f\n" +
+	"\vmerchant_id\x18\x05 \x01(\x03R\n" +
+	"merchantId\x12\x17\n" +
+	"\auser_id\x18\x06 \x01(\x03R\x06userId\"c\n" +
 	"\x14ListChatMessagesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
 	"\x04data\x18\x02 \x03(\v2\x11.chat.ChatMessageR\x04data\"a\n" +

@@ -30,13 +30,6 @@ func NewSubmitChatSatisfactionLogic(ctx context.Context, svcCtx *svc.ServiceCont
 
 // 提交会话评价
 func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChatSatisfactionReq) (*chat.AppChatSatisfactionResp, error) {
-	merchantID, userID, base, err := internal.ChatAppIdentityFromMetadata(l.ctx)
-	if err != nil {
-		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
-	}
-	if base != nil {
-		return &chat.AppChatSatisfactionResp{Base: base}, nil
-	}
 	if strings.TrimSpace(in.GetSessionNo()) == "" {
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "session_no is required")}, nil
 	}
@@ -44,14 +37,14 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "score must be between 1 and 5")}, nil
 	}
 
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo())
 	if err != nil {
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if base != nil {
 		return &chat.AppChatSatisfactionResp{Base: base}, nil
 	}
-	if session.UserId != userID {
+	if session.UserId != in.UserId {
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "permission denied")}, nil
 	}
 

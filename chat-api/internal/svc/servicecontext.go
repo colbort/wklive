@@ -5,7 +5,9 @@ package svc
 
 import (
 	"context"
+	"fmt"
 	"strconv"
+	"strings"
 
 	"chat-api/internal/config"
 	"chat-api/internal/middleware"
@@ -79,4 +81,32 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ChatMessageHub: chatMessageHub,
 		BusRedis:       chatBusRedis,
 	}
+}
+
+func (s *ServiceContext) GuestSessionNo(ctx context.Context, merchantId, userId, ttlSeconds int64) (string, error) {
+	key := fmt.Sprintf("chat:guest:session:%d:%d", merchantId, userId)
+	if s.BusRedis != nil {
+		sessionNo, err := s.BusRedis.GetCtx(ctx, key)
+		if err == nil && strings.TrimSpace(sessionNo) != "" {
+			return strings.TrimSpace(sessionNo), nil
+		}
+	}
+
+	resp, err := s.ChatAppCli.GenerateChatSessionNo(ctx, &chat.GenerateChatSessionNoReq{})
+	if err != nil {
+		return "", err
+	}
+	if resp.GetBase().GetCode() != 200 {
+		return "", fmt.Errorf("%s", resp.GetBase().GetMsg())
+	}
+	sessionNo := strings.TrimSpace(resp.GetSessionNo())
+	if sessionNo == "" {
+		return "", fmt.Errorf("sessionNo is empty")
+	}
+	if s.BusRedis != nil && ttlSeconds > 0 {
+		if err := s.BusRedis.SetexCtx(ctx, key, sessionNo, int(ttlSeconds)); err != nil {
+			logx.Errorf("cache guest chat session failed, merchantId=%d userId=%d sessionNo=%s err=%v", merchantId, userId, sessionNo, err)
+		}
+	}
+	return sessionNo, nil
 }

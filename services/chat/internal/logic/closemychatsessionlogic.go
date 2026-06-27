@@ -27,21 +27,14 @@ func NewCloseMyChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 关闭我的会话
 func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSessionReq) (*chat.AppChatSessionResp, error) {
-	merchantID, userID, base, err := internal.ChatAppIdentityFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AppChatSessionResp{Base: base}, nil
-	}
-	if err != nil {
-		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
-	}
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo())
 	if err != nil {
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if base != nil {
 		return &chat.AppChatSessionResp{Base: base}, nil
 	}
-	if session.UserId != userID {
+	if session.UserId != in.UserId {
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(404, "chat session not found")}, nil
 	}
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {

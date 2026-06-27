@@ -678,14 +678,20 @@ function markSessionClosed(event: WsEvent, message?: ChatMessage) {
 }
 
 function upsertSession(session: ChatSession) {
+  const normalized = normalizeSession(session);
   const exists = sessions.value.find(
-    (item) => item.sessionNo === session.sessionNo,
+    (item) => item.sessionNo === normalized.sessionNo,
   );
   if (!exists) {
-    sessions.value = [normalizeSession(session), ...sessions.value];
+    const guestKey = guestSessionKey(normalized);
+    const rest = guestKey
+      ? sessions.value.filter((item) => guestSessionKey(item) !== guestKey)
+      : sessions.value;
+    sessions.value = [normalized, ...rest];
     return;
   }
-  Object.assign(exists, normalizeSession(session));
+  Object.assign(exists, normalized);
+  sessions.value = collapseGuestSessions(sessions.value);
 }
 
 function transientSessionFromMessage(message: ChatMessage): ChatSession {
@@ -746,10 +752,11 @@ function mergeLiveSessions(nextSessions: ChatSession[]) {
       !nextNos.has(item.sessionNo) &&
       sessionStatusValue(item.status) !== sessionStatus.closed,
   );
-  return [...localLiveSessions, ...validNextSessions];
+  return collapseGuestSessions([...localLiveSessions, ...validNextSessions]);
 }
 
 function isGuestSession(session?: ChatSession) {
+  if (session?.isGuest) return true;
   if (!session?.extJson) return false;
   if (typeof session.extJson === "object") {
     return Boolean(session.extJson.isGuest);
@@ -761,6 +768,36 @@ function isGuestSession(session?: ChatSession) {
   } catch {
     return false;
   }
+}
+
+function collapseGuestSessions(list: ChatSession[]) {
+  const selected = new Map<string, ChatSession>();
+  for (const session of list) {
+    const key = guestSessionKey(session);
+    if (!key) continue;
+    const exists = selected.get(key);
+    if (!exists || sessionSortTime(session) >= sessionSortTime(exists)) {
+      selected.set(key, session);
+    }
+  }
+  if (!selected.size) return list;
+  return list.filter((session) => {
+    const key = guestSessionKey(session);
+    return !key || selected.get(key)?.sessionNo === session.sessionNo;
+  });
+}
+
+function guestSessionKey(session?: ChatSession) {
+  if (!session || !isGuestSession(session) || !session.userId) return "";
+  return `${session.merchantId || merchantId.value}:${session.userId}`;
+}
+
+function sessionSortTime(session: ChatSession) {
+  return Math.max(
+    Number(session.lastMessageTime || 0),
+    Number(session.updateTimes || 0),
+    Number(session.createTimes || 0),
+  );
 }
 
 function setSessionStatusMessage(sessionNo: string, message?: string) {
@@ -857,7 +894,7 @@ function normalizeSession(session: ChatSession) {
   session.agentId = Number(session.agentId || 0);
   session.userId = Number(session.userId || 0);
   session.userNickname = session.userNickname || session.title || "";
-  session.userAvatarUrl = session.userAvatarUrl || "";
+  session.userAvatarUrl = session.userAvatarUrl || session.avatarUrl || "";
   session.groupId = Number(session.groupId || 0);
   session.lastSenderType = senderTypeValue(session.lastSenderType);
   session.lastMessageTime = Number(session.lastMessageTime || 0);

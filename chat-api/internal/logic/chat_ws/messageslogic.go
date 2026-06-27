@@ -13,7 +13,6 @@ import (
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
 	"chat-api/internal/ws"
-	"wklive/common/utils"
 	"wklive/proto/chat"
 
 	"github.com/gorilla/websocket"
@@ -26,6 +25,7 @@ const (
 	guestUsername      = "guest"
 	systemNickname     = "系统"
 	successCode        = 200
+	guestSessionTTL    = int64(24 * 60 * 60)
 )
 
 type MessagesLogic struct {
@@ -51,19 +51,31 @@ func NewMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Messages
 func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesReq) {
 	if req.IsGuest {
 		if req.SessionNo == "" {
-			resp, err := l.svcCtx.ChatAppCli.GenerateChatSessionNo(l.ctx, &chat.GenerateChatSessionNoReq{})
+			sessionNo, err := l.svcCtx.GuestSessionNo(l.ctx, req.MerchantId, req.UserId, guestSessionTTL)
 			if err != nil {
 				return
 			}
-			req.SessionNo = resp.SessionNo
+			req.SessionNo = sessionNo
 		}
 	} else {
-		sessionNo, err := l.openPersistentSession(l.ctx, req.MerchantId, req.UserId)
+		resp, err := l.svcCtx.ChatAppCli.OpenChatSession(l.ctx, &chat.OpenChatSessionReq{
+			Source:     chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
+			MerchantId: req.MerchantId,
+			UserId:     req.UserId,
+		})
 		if err != nil {
 			logx.Errorf("open chat ws persistent session failed, merchantId=%d userId=%d err=%v", req.MerchantId, req.UserId, err)
 			_ = conn.Close()
 			return
 		}
+		sessionNo := strings.TrimSpace(resp.GetData().GetSessionNo())
+		if sessionNo == "" {
+			logx.Errorf("session is empty, merchantId=%d userId=%d err=%v", req.MerchantId, req.UserId, err)
+			_ = conn.Close()
+			return
+		}
+
+		logx.Infof("chat ws persistent session opened, merchantId=%d userId=%d sessionNo=%s", req.MerchantId, req.UserId, sessionNo)
 		req.SessionNo = sessionNo
 	}
 
@@ -232,11 +244,13 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		return
 	}
 	if !isGuest {
-		resp, err := l.svcCtx.ChatAppCli.SubmitChatSatisfaction(contextWithChatIdentity(ctx, conn.MerchantId, conn.UserId), &chat.SubmitChatSatisfactionReq{
-			SessionNo: conn.SessionNo,
-			Score:     data.Score,
-			Content:   strings.TrimSpace(data.Content),
-			Tags:      strings.TrimSpace(data.Tags),
+		resp, err := l.svcCtx.ChatAppCli.SubmitChatSatisfaction(ctx, &chat.SubmitChatSatisfactionReq{
+			SessionNo:  conn.SessionNo,
+			MerchantId: conn.MerchantId,
+			UserId:     conn.UserId,
+			Score:      data.Score,
+			Content:    strings.TrimSpace(data.Content),
+			Tags:       strings.TrimSpace(data.Tags),
 		})
 		if err != nil {
 			sendWSError(conn, err.Error())
@@ -302,8 +316,10 @@ func (l *MessagesLogic) closeUserSession(ctx context.Context, conn *ws.Connectio
 	// 游客：只转发关闭事件。
 	// 登录用户：先更新会话状态，再转发关闭事件给后台和用户侧。
 	if !isGuest {
-		_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(contextWithChatIdentity(ctx, conn.MerchantId, conn.UserId), &chat.CloseMyChatSessionReq{
+		_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(ctx, &chat.CloseMyChatSessionReq{
 			SessionNo:   conn.SessionNo,
+			MerchantId:  conn.MerchantId,
+			UserId:      conn.UserId,
 			CloseReason: reason,
 		})
 		if err != nil {
@@ -321,33 +337,6 @@ func sendWSError(conn *ws.Connection, message string) {
 		return
 	}
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": message})
-}
-
-func (l *MessagesLogic) openPersistentSession(ctx context.Context, merchantId, userId int64) (string, error) {
-	ctx = contextWithChatIdentity(ctx, merchantId, userId)
-	resp, err := l.svcCtx.ChatAppCli.OpenChatSession(ctx, &chat.OpenChatSessionReq{
-		Source:     chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
-		MerchantId: merchantId,
-		UserId:     userId,
-	})
-	if err != nil {
-		return "", err
-	}
-	if resp.GetBase().GetCode() != successCode {
-		return "", fmt.Errorf("%s", resp.GetBase().GetMsg())
-	}
-	sessionNo := strings.TrimSpace(resp.GetData().GetSessionNo())
-	if sessionNo == "" {
-		return "", fmt.Errorf("sessionNo is empty")
-	}
-	logx.Infof("chat ws persistent session opened, merchantId=%d userId=%d sessionNo=%s", merchantId, userId, sessionNo)
-	return sessionNo, nil
-}
-
-func contextWithChatIdentity(ctx context.Context, merchantId, userId int64) context.Context {
-	ctx = context.WithValue(ctx, utils.CtxKeyMerchantId, merchantId)
-	ctx = context.WithValue(ctx, utils.CtxKeyUid, userId)
-	return ctx
 }
 
 func buildChatMessage(conn *ws.Connection, senderType chat.ChatSenderType, senderId int64, data UserMessagePayload) *chat.ChatMessage {

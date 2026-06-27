@@ -118,6 +118,8 @@ message CloseMyChatSessionReq {
   string session_no = 1;                         // 会话编号
   ChatSessionCloseReason close_reason_type = 2;  // 结束原因类型
   string close_reason = 3;                       // 结束原因描述
+  int64 merchant_id = 4;
+  int64 user_id = 5;
 }
 
 message SubmitChatSatisfactionReq {
@@ -125,6 +127,8 @@ message SubmitChatSatisfactionReq {
   int32 score = 2;       // 满意度评分:1-5
   string content = 3;    // 评价内容
   string tags = 4;       // 评价标签,逗号分隔
+  int64 merchant_id = 5;
+  int64 user_id = 6;
 }
 
 message ListChatMessagesResp {
