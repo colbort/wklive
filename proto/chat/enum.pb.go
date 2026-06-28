@@ -403,8 +403,8 @@ func (ChatAssignType) EnumDescriptor() ([]byte, []int) {
 type ChatEventType int32
 
 const (
-	// 未知事件
-	ChatEventType_CHAT_EVENT_TYPE_UNKNOWN ChatEventType = 0
+	// proto 默认占位，不作为业务事件使用
+	ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED ChatEventType = 0
 	// 普通聊天消息
 	ChatEventType_CHAT_EVENT_TYPE_MESSAGE ChatEventType = 1
 	// 系统通知
@@ -470,7 +470,7 @@ const (
 // Enum value maps for ChatEventType.
 var (
 	ChatEventType_name = map[int32]string{
-		0:  "CHAT_EVENT_TYPE_UNKNOWN",
+		0:  "CHAT_EVENT_TYPE_UNSPECIFIED",
 		1:  "CHAT_EVENT_TYPE_MESSAGE",
 		2:  "CHAT_EVENT_TYPE_SYSTEM",
 		3:  "CHAT_EVENT_TYPE_USER_JOIN",
@@ -499,7 +499,7 @@ var (
 		27: "CHAT_EVENT_TYPE_DELETE",
 	}
 	ChatEventType_value = map[string]int32{
-		"CHAT_EVENT_TYPE_UNKNOWN":           0,
+		"CHAT_EVENT_TYPE_UNSPECIFIED":       0,
 		"CHAT_EVENT_TYPE_MESSAGE":           1,
 		"CHAT_EVENT_TYPE_SYSTEM":            2,
 		"CHAT_EVENT_TYPE_USER_JOIN":         3,
@@ -1019,9 +1019,9 @@ const file_proto_chat_enum_proto_rawDesc = "" +
 	"\x18CHAT_ASSIGN_TYPE_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15CHAT_ASSIGN_TYPE_AUTO\x10\x01\x12\x1b\n" +
 	"\x17CHAT_ASSIGN_TYPE_MANUAL\x10\x02\x12\x1d\n" +
-	"\x19CHAT_ASSIGN_TYPE_TRANSFER\x10\x03*\x81\a\n" +
-	"\rChatEventType\x12\x1b\n" +
-	"\x17CHAT_EVENT_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
+	"\x19CHAT_ASSIGN_TYPE_TRANSFER\x10\x03*\x85\a\n" +
+	"\rChatEventType\x12\x1f\n" +
+	"\x1bCHAT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17CHAT_EVENT_TYPE_MESSAGE\x10\x01\x12\x1a\n" +
 	"\x16CHAT_EVENT_TYPE_SYSTEM\x10\x02\x12\x1d\n" +
 	"\x19CHAT_EVENT_TYPE_USER_JOIN\x10\x03\x12\x1e\n" +

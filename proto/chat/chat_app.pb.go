@@ -739,7 +739,7 @@ func (x *SendUserMessageReq) GetEventType() ChatEventType {
 	if x != nil {
 		return x.EventType
 	}
-	return ChatEventType_CHAT_EVENT_TYPE_UNKNOWN
+	return ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED
 }
 
 type ListMyChatMessagesReq struct {
@@ -1174,7 +1174,7 @@ func (x *AppDeleteTransientChatSessionReq) GetEventType() ChatEventType {
 	if x != nil {
 		return x.EventType
 	}
-	return ChatEventType_CHAT_EVENT_TYPE_UNKNOWN
+	return ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED
 }
 
 func (x *AppDeleteTransientChatSessionReq) GetEventMessage() string {

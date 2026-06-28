@@ -172,12 +172,26 @@ func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession
 	if session == nil {
 		return
 	}
-	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN, isGuest, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, "", "用户进入会话", chat.ChatAppMessageChannel)
+	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
+		Channel:      chat.ChatAppMessageChannel,
+		IsGuest:      isGuest,
+		Session:      session,
+		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
+		EventMessage: "用户进入会话",
+	})
 }
 
 func (l *OpenChatSessionLogic) publishQueueJoinEvent(session *models.TChatSession, isGuest bool) {
 	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING) {
 		return
 	}
-	internal.PublishSessionEvent(l.ctx, l.svcCtx, chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN, isGuest, session, chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN, "", "正在排队，客服会尽快接入。", chat.ChatAppMessageChannel)
+	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN,
+		Channel:      chat.ChatAppMessageChannel,
+		IsGuest:      isGuest,
+		Session:      session,
+		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
+		EventMessage: "正在排队，客服会尽快接入。",
+	})
 }

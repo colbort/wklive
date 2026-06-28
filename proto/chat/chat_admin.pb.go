@@ -210,7 +210,7 @@ func (x *AdminDeleteTransientChatSessionReq) GetEventType() ChatEventType {
 	if x != nil {
 		return x.EventType
 	}
-	return ChatEventType_CHAT_EVENT_TYPE_UNKNOWN
+	return ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED
 }
 
 func (x *AdminDeleteTransientChatSessionReq) GetEventMessage() string {
@@ -2083,7 +2083,7 @@ func (x *SendAgentMessageReq) GetEventType() ChatEventType {
 	if x != nil {
 		return x.EventType
 	}
-	return ChatEventType_CHAT_EVENT_TYPE_UNKNOWN
+	return ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED
 }
 
 type PageChatMessagesReq struct {

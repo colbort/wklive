@@ -158,6 +158,25 @@ message ChatHeartbeat {
   int64 time = 1;                  // 服务端时间戳(毫秒)
 }
 
+// 错误事件
+message ChatEventError {
+  int32 code = 1;                  // 错误码
+  string msg = 2;                  // 错误信息
+  string session_no = 3;           // 会话编号
+  int64 merchant_id = 4;           // 客服商户ID
+  int64 created_at = 5;            // 事件创建时间戳(毫秒)
+}
+
+// 评价邀请事件
+message ChatEvaluationInvite {
+  string session_no = 1;           // 会话编号
+  int64 merchant_id = 2;           // 客服商户ID
+  int64 user_id = 3;               // 用户ID
+  int64 agent_id = 4;              // 坐席ID
+  string content = 5;              // 邀请文案
+  int64 created_at = 6;            // 事件创建时间戳(毫秒)
+}
+
 // 客服消息事件,用于消息总线/WebSocket推送
 message ChatMessageEvent {
   int32 code = 1;
@@ -165,7 +184,7 @@ message ChatMessageEvent {
   ChatEventType event_type = 3; // 事件类型
   int64 created_at = 4;         // 事件创建时间戳(毫秒)
   oneof payload {
-    ChatMessage message = 10;              // CHAT_EVENT_TYPE_MESSAGE，CHAT_EVENT_TYPE_SYSTEM，CHAT_EVENT_TYPE_EVALUATION_INVITE
+    ChatMessage message = 10;              // CHAT_EVENT_TYPE_MESSAGE，CHAT_EVENT_TYPE_SYSTEM
     ChatSession session = 11;              // CHAT_EVENT_TYPE_USER_JOIN，CHAT_EVENT_TYPE_USER_LEAVE，CHAT_EVENT_TYPE_AGENT_ASSIGNED，CHAT_EVENT_TYPE_TRANSFER_REQUEST，CHAT_EVENT_TYPE_TRANSFER_ACCEPT，CHAT_EVENT_TYPE_TRANSFER_REJECT，CHAT_EVENT_TYPE_SESSION_START，CHAT_EVENT_TYPE_SESSION_CLOSE，CHAT_EVENT_TYPE_NO_AGENT_ONLINE，CHAT_EVENT_TYPE_SESSION_TIMEOUT
     ChatQueueInfo queue = 13;              // CHAT_EVENT_TYPE_QUEUE_JOIN，CHAT_EVENT_TYPE_QUEUE_UPDATE
     ChatAgent agent = 14;                  // CHAT_EVENT_TYPE_AGENT_JOIN，CHAT_EVENT_TYPE_AGENT_LEAVE
@@ -174,6 +193,8 @@ message ChatMessageEvent {
     ChatTyping typing = 17;                // CHAT_EVENT_TYPE_TYPING，CHAT_EVENT_TYPE_STOP_TYPING
     ChatMessageReceipt receipt = 18;       // CHAT_EVENT_TYPE_DELIVERED，CHAT_EVENT_TYPE_READ，CHAT_EVENT_TYPE_RECALL，CHAT_EVENT_TYPE_DELETE
     ChatHeartbeat heartbeat = 19;          // CHAT_EVENT_TYPE_HEARTBEAT
+    ChatEventError error = 20;             // CHAT_EVENT_TYPE_ERROR
+    ChatEvaluationInvite evaluation_invite = 21; // CHAT_EVENT_TYPE_EVALUATION_INVITE
   }
 }
 

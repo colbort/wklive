@@ -52,6 +52,10 @@ func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAg
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, data); err != nil {
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	internal.PublishAgentStatusEvent(l.ctx, l.svcCtx, data)
+	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_JOIN,
+		Channel:   chat.ChatAdminEventChannel,
+		Agent:     data,
+	})
 	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: internal.ToProtoAgent(data)}, nil
 }

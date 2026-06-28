@@ -28,7 +28,16 @@ func NewAdminDeleteTransientChatSessionLogic(ctx context.Context, svcCtx *svc.Se
 // 删除游客临时会话和消息
 func (l *AdminDeleteTransientChatSessionLogic) AdminDeleteTransientChatSession(in *chat.AdminDeleteTransientChatSessionReq) (*chat.AdminDeleteTransientChatSessionResp, error) {
 	session, _ := internal.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), in.GetSessionNo())
-	if err := internal.PublishTransientSessionEvent(l.ctx, l.svcCtx, in.GetEventType(), in.GetMerchantId(), session, in.GetSessionNo(), in.GetUserId(), in.GetAgentId(), in.GetEventMessage(), chat.ChatAppMessageChannel); err != nil {
+	if err := internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+		EventType:        in.GetEventType(),
+		Channel:          chat.ChatAppMessageChannel,
+		MerchantId:       in.GetMerchantId(),
+		SessionNo:        in.GetSessionNo(),
+		UserId:           in.GetUserId(),
+		AgentId:          in.GetAgentId(),
+		EventMessage:     in.GetEventMessage(),
+		TransientSession: session,
+	}); err != nil {
 		return &chat.AdminDeleteTransientChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if err := internal.DeleteTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), in.GetSessionNo()); err != nil {

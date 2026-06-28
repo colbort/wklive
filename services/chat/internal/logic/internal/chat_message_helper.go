@@ -95,9 +95,11 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *model
 	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
 		return nil, err
 	}
-	PublishMessageEvent(ctx, svcCtx, session, msg, channel)
-	if senderType == chat.ChatSenderType_CHAT_SENDER_TYPE_USER && session.AgentId == 0 {
-		PublishQueueEvent(ctx, svcCtx, session, chat.ChatAppMessageChannel)
-	}
+	_ = PublishMessageEvent(ctx, svcCtx, PublishMessageEventReq{
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
+		Channel:   channel,
+		Message:   msg,
+		Session:   session,
+	})
 	return msg, nil
 }

@@ -81,7 +81,11 @@ func (l *LoginLogic) Login(in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp
 		agent.LastActiveTime = now
 		agent.UpdateTimes = now
 		if err := l.svcCtx.ChatAgentModel.Update(l.ctx, agent); err == nil {
-			internal.PublishAgentStatusEvent(l.ctx, l.svcCtx, agent)
+			_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_JOIN,
+				Channel:   chat.ChatAdminEventChannel,
+				Agent:     agent,
+			})
 		}
 	}
 

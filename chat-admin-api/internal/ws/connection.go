@@ -235,20 +235,20 @@ func DecodeInboundEvent(payload []byte) (InboundEvent, error) {
 func parseChatEventType(raw json.RawMessage) (chat.ChatEventType, error) {
 	value := strings.TrimSpace(string(raw))
 	if value == "" || value == "null" {
-		return chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN, fmt.Errorf("event type is required")
+		return chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED, fmt.Errorf("event type is required")
 	}
 
 	if value[0] == '"' {
 		var name string
 		if err := json.Unmarshal(raw, &name); err != nil {
-			return chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN, fmt.Errorf("invalid event type")
+			return chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED, fmt.Errorf("invalid event type")
 		}
 		return chatEventTypeByName(name)
 	}
 
 	n, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
-		return chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN, fmt.Errorf("invalid event type")
+		return chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED, fmt.Errorf("invalid event type")
 	}
 	return chat.ChatEventType(n), nil
 }
@@ -260,5 +260,5 @@ func chatEventTypeByName(name string) (chat.ChatEventType, error) {
 	if n, ok := chat.ChatEventType_value[fullName]; ok {
 		return chat.ChatEventType(n), nil
 	}
-	return chat.ChatEventType_CHAT_EVENT_TYPE_UNKNOWN, fmt.Errorf("unsupported event type: %s", name)
+	return chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED, fmt.Errorf("unsupported event type: %s", name)
 }

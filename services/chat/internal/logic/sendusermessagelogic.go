@@ -38,7 +38,13 @@ func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*ch
 				return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-		if err := internal.PublishTransientMessageEvent(l.ctx, l.svcCtx, in.GetMerchantId(), in.GetEventType(), msg, in.GetSession(), chat.ChatAdminEventChannel); err != nil {
+		if err := internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+			EventType:        in.GetEventType(),
+			Channel:          chat.ChatAdminEventChannel,
+			MerchantId:       in.GetMerchantId(),
+			TransientMessage: msg,
+			TransientSession: in.GetSession(),
+		}); err != nil {
 			return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		return &chat.AppChatMessageResp{Base: helper.OkResp(), Data: msg}, nil

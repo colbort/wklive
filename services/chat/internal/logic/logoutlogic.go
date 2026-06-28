@@ -67,6 +67,10 @@ func (l *LogoutLogic) autoOfflineAgent(user *models.TChatUser) error {
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, agent); err != nil {
 		return err
 	}
-	internal.PublishAgentStatusEvent(l.ctx, l.svcCtx, agent)
+	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_LEAVE,
+		Channel:   chat.ChatAdminEventChannel,
+		Agent:     agent,
+	})
 	return nil
 }

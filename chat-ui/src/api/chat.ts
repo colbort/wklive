@@ -90,10 +90,7 @@ export interface CreateChatSocketOptions {
 }
 
 export function createChatSocket(options: CreateChatSocketOptions): WebSocket {
-  const protocols = [
-    chatWsProtocol,
-    `${wsProtocolTokenPrefix}${encodeProtocolValue(options.chatToken)}`,
-  ];
+  const protocols = [chatWsProtocol];
 
   const socket = new WebSocket(chatWsUrl(), protocols);
   if (options.onOpen) {
