@@ -10,7 +10,6 @@ import { chatEventType } from "./constant";
 
 const apiBaseUrl = import.meta.env.VITE_CHAT_API_BASE_URL || "/chat";
 const chatWsProtocol = "wklive-chat";
-const wsProtocolTokenPrefix = "token.";
 
 export interface CreateChatTokenReq {
   apiKey: string;
@@ -35,6 +34,13 @@ export function createChatToken(
   });
 }
 
+export function setChatTokenCookie(chatToken: string): Promise<RespBase> {
+  return requestBase("/internal/token-cookie", {
+    method: "POST",
+    body: { chatToken },
+  });
+}
+
 export function options(): Promise<ChatOptions> {
   return requestData<ChatOptions>("/options", {
     method: "GET",
@@ -43,7 +49,7 @@ export function options(): Promise<ChatOptions> {
 
 export function listChatMessagesWithMeta(
   params: ListChatMessagesParams,
-  chatToken: string,
+  chatToken = "",
 ) {
   return request<ApiResp<ChatMessage[]>>("/session/messages", {
     method: "GET",
@@ -53,13 +59,11 @@ export function listChatMessagesWithMeta(
 }
 
 export function closeMyChatSession(
-  chatToken: string,
   closeReason = "",
   keepalive = false,
 ): Promise<RespBase> {
   return requestBase("/session/close", {
     method: "POST",
-    token: chatToken,
     body: { closeReason },
     keepalive,
   });
@@ -82,7 +86,6 @@ export function chatWsUrl(): string {
 }
 
 export interface CreateChatSocketOptions {
-  chatToken: string;
   onOpen?: (event: Event) => void;
   onEvent?: (event: MessageEvent<string>) => void;
   onError?: (event: Event) => void;
@@ -106,19 +109,6 @@ export function createChatSocket(options: CreateChatSocketOptions): WebSocket {
     socket.addEventListener("close", options.onClose);
   }
   return socket;
-}
-
-function encodeProtocolValue(value: string): string {
-  const bytes = new TextEncoder().encode(value);
-  let binary = "";
-  bytes.forEach((byte) => {
-    binary += String.fromCharCode(byte);
-  });
-  return window
-    .btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/g, "");
 }
 
 export function sendChatSocketEvent(
@@ -169,6 +159,7 @@ async function request<T extends RespBase>(
     headers: buildHeaders(options),
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
     keepalive: options.keepalive,
+    credentials: "include",
     referrerPolicy: "no-referrer",
   });
   if (!res.ok) {

@@ -10,7 +10,8 @@ import (
 
 type Config struct {
 	rest.RestConf
-	Jwt struct {
+	Cors []string `json:",optional"`
+	Jwt  struct {
 		AccessSecret string
 		AccessExpire int64
 	} `json:"Jwt" yaml:"Jwt"`

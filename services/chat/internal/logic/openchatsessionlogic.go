@@ -33,8 +33,8 @@ func NewOpenChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *O
 // 用户进入客服页面 建立 WS ；创建/复用会话
 // 游客创建/复用（本次会话未结束）临时会话，会话不保存；登录用户创建（首次打开）/复用（之后进来）会话，会话保存数据库
 func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*chat.AppChatSessionResp, error) {
-	var session *models.TChatSession
-	var respSession *chat.ChatSession
+	var ms *models.TChatSession
+	var rs *chat.ChatSession
 	if in.IsGuest {
 		sessionNo := strings.TrimSpace(in.GetSessionNo())
 		if sessionNo == "" {
@@ -46,10 +46,10 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			}
 		}
 
-		respSession, _ = internal.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), sessionNo)
+		rs, _ = internal.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), sessionNo)
 		now := utils.NowMillis()
-		if respSession == nil {
-			respSession = &chat.ChatSession{
+		if rs == nil {
+			rs = &chat.ChatSession{
 				SessionNo:       sessionNo,
 				MerchantId:      in.GetMerchantId(),
 				UserId:          in.GetUserId(),
@@ -61,23 +61,23 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 				UpdateTimes:     now,
 				IsGuest:         true,
 			}
-		} else if respSession.GetStatus() == chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED {
-			respSession.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING
-			respSession.AgentId = 0
-			respSession.CloseTime = 0
-			respSession.CloseReason = ""
-			respSession.UpdateTimes = now
+		} else if rs.GetStatus() == chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED {
+			rs.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING
+			rs.AgentId = 0
+			rs.CloseTime = 0
+			rs.CloseReason = ""
+			rs.UpdateTimes = now
 		}
-		respSession.MerchantId = in.GetMerchantId()
-		respSession.UserId = in.GetUserId()
-		respSession.IsGuest = true
+		rs.MerchantId = in.GetMerchantId()
+		rs.UserId = in.GetUserId()
+		rs.IsGuest = true
 
 		var err error
-		respSession, err = internal.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, respSession, 0)
+		rs, err = internal.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, rs, 0)
 		if err != nil {
 			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		session = transientSessionToModel(respSession)
+		ms = transientSessionToModel(rs)
 	} else {
 		// 登录用户
 		session, err := l.svcCtx.ChatSessionModel.FindByUser(l.ctx, in.MerchantId, in.UserId)
@@ -96,6 +96,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 					return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 				}
 			}
+			ms = session
 		} else {
 			sessionNo, err := l.svcCtx.GenerateNo(l.ctx, "CS")
 			if err != nil {
@@ -103,7 +104,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 				return &chat.AppChatSessionResp{Base: helper.ErrResp(400, "generate message no error")}, nil
 			}
 			now := utils.NowMillis()
-			session = &models.TChatSession{
+			ms = &models.TChatSession{
 				SessionNo:       sessionNo,
 				MerchantId:      in.MerchantId,
 				UserId:          in.UserId,
@@ -127,15 +128,15 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		}
 
 	}
-	if respSession == nil {
-		respSession = internal.ToProtoSession(session, in.IsGuest)
+	if rs == nil {
+		rs = internal.ToProtoSession(ms, in.IsGuest)
 	}
 
 	// 向坐席 chat-admin-api 推送 用户上线通知
-	l.publishUserJoinEvent(session, in.IsGuest)
+	l.publishUserJoinEvent(ms, in.IsGuest)
 	// 向用户同送排队信息
-	l.publishQueueJoinEvent(session, in.IsGuest)
-	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: respSession}, nil
+	l.publishQueueJoinEvent(ms, in.IsGuest)
+	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: rs}, nil
 }
 
 func transientSessionToModel(session *chat.ChatSession) *models.TChatSession {

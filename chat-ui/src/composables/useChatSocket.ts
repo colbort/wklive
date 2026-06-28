@@ -17,9 +17,7 @@ import type {
 } from "@/types/chat";
 import { chatEventType } from "@/api/constant";
 
-interface ConnectOptions {
-  chatToken: string;
-}
+type ConnectOptions = Record<string, never>;
 
 interface WsResp<T> {
   code?: number;
@@ -89,12 +87,10 @@ export function useChatSocket() {
     return `${reconnectingIn.value}s 后重连`;
   });
 
-  function connect(chatToken: string) {
+  function connect() {
     manualClose = false;
     void loadChatOptions();
-    lastOptions = {
-      chatToken,
-    };
+    lastOptions = {};
     reconnectAttempts = 0;
     clearReconnectTimer();
     openSocket(lastOptions);
@@ -106,7 +102,6 @@ export function useChatSocket() {
     reconnectingIn.value = 0;
     status.value = reconnectAttempts > 0 ? "reconnecting" : "connecting";
     const ws = createChatSocket({
-      chatToken: options.chatToken,
       onOpen: () => {
         reconnectAttempts = 0;
         reconnectingIn.value = 0;
@@ -164,14 +159,13 @@ export function useChatSocket() {
 
   async function endSession(closeReason = "user_closed", keepalive = false) {
     const current = connected.value;
-    const token = lastOptions?.chatToken || "";
     const canCloseSession = Boolean(
-      current?.sessionNo && token && !current.temporary && !sessionClosed.value,
+      current?.sessionNo && !current.temporary && !sessionClosed.value,
     );
 
     if (canCloseSession) {
       try {
-        await closeMyChatSession(token, closeReason, keepalive);
+        await closeMyChatSession(closeReason, keepalive);
       } catch (err) {
         if (!keepalive) {
           error.value = err instanceof Error ? err.message : "结束会话失败";
@@ -208,7 +202,6 @@ export function useChatSocket() {
           cursor: initial ? 0 : historyNextCursor.value,
           limit: 20,
         },
-        lastOptions?.chatToken || "",
       );
       const list = Array.isArray(resp.data) ? resp.data : [];
       prependMessages(list.map(normalizeMessage).reverse());

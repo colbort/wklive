@@ -30,7 +30,11 @@ func main() {
 		panic(err)
 	}
 
-	server := rest.MustNewServer(c.RestConf)
+	var opts []rest.RunOption
+	if len(c.Cors) > 0 {
+		opts = append(opts, rest.WithCors(c.Cors...))
+	}
+	server := rest.MustNewServer(c.RestConf, opts...)
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)

@@ -46,7 +46,6 @@ function openChat(mode: ChatMode) {
   const params = new URLSearchParams();
   params.set("page", "chat");
   params.set("mode", mode);
-  params.set("chatToken", chatToken.value.trim());
 
   const wsUrl = new URLSearchParams(window.location.search).get("wsUrl");
   if (wsUrl) params.set("wsUrl", wsUrl);

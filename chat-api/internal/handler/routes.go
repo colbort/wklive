@@ -30,7 +30,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 			}...,
 		),
-		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/chat"),
 	)
 
@@ -42,6 +41,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/internal/tokens",
 					Handler: chat_token.CreateChatTokenHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/internal/token-cookie",
+					Handler: chat_token.SetChatTokenCookieHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,

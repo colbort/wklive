@@ -14,6 +14,7 @@ import (
 
 const (
 	wsProtocolTokenPrefix = "token."
+	ChatTokenCookieName   = "chat_token"
 )
 
 type contextKey string
@@ -102,6 +103,11 @@ func ClaimsFromContext(ctx context.Context) (Claims, bool) {
 func TokenFromRequest(r *http.Request) string {
 	if r == nil {
 		return ""
+	}
+	if cookie, err := r.Cookie(ChatTokenCookieName); err == nil {
+		if token := strings.TrimSpace(cookie.Value); token != "" {
+			return token
+		}
 	}
 	if token := strings.TrimSpace(r.URL.Query().Get("chatToken")); token != "" {
 		return token

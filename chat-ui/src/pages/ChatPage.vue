@@ -7,11 +7,11 @@ import {
   ref,
   watch,
 } from "vue";
+import { setChatTokenCookie } from "@/api/chat";
 import { useChatSocket } from "@/composables/useChatSocket";
 
 type ChatMode = "mobile" | "desktop";
 
-const chatToken = ref("");
 const draft = ref("");
 const resourceInput = ref<HTMLInputElement>();
 const messageInput = ref<HTMLTextAreaElement>();
@@ -50,19 +50,30 @@ function hydrateFromQuery() {
   const params = new URLSearchParams(window.location.search);
   const queryChatToken = params.get("chatToken");
   const queryMode = params.get("mode");
-
-  if (queryChatToken) chatToken.value = queryChatToken;
   activeMode.value = queryMode === "desktop" ? "desktop" : "mobile";
+  return queryChatToken?.trim() || "";
 }
 
 async function connectChat() {
-  const token = chatToken.value.trim();
-  if (!token) {
-    authError.value = "缺少客服访问凭证";
-    return;
+  authError.value = "";
+  const token = hydrateFromQuery();
+  if (token) {
+    try {
+      await setChatTokenCookie(token);
+      removeChatTokenFromUrl();
+    } catch (err) {
+      authError.value = err instanceof Error ? err.message : "认证失败";
+      return;
+    }
   }
   chat.resetMessages();
-  chat.connect(token);
+  chat.connect();
+}
+
+function removeChatTokenFromUrl() {
+  const url = new URL(window.location.href);
+  url.searchParams.delete("chatToken");
+  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
 }
 
 function sendMessage() {
@@ -126,7 +137,6 @@ async function scrollMessagesToBottom() {
 }
 
 onMounted(() => {
-  hydrateFromQuery();
   void connectChat();
   window.addEventListener("pagehide", handlePageHide);
 });
