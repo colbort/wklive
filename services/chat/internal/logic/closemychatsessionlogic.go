@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
@@ -43,6 +44,7 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 	if err := internal.CloseSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
+	fmt.Println("=========================  11")
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
 		Channel:      chat.ChatAdminEventChannel,

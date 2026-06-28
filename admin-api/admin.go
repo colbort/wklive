@@ -35,6 +35,7 @@ func main() {
 	if err := etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c); err != nil {
 		panic(err)
 	}
+	c.Middlewares.Log = false
 
 	server := rest.MustNewServer(
 		c.RestConf,
@@ -48,6 +49,8 @@ func main() {
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
+	requestLogMiddleware := um.NewRequestLogMiddleware("ADMIN-API")
+	server.Use(requestLogMiddleware.Handle)
 	headerMiddleware := um.NewHeaderMiddleware()
 	server.Use(headerMiddleware.Handle)
 	rbacMiddleware := middleware.NewRbacMiddleware(ctx)

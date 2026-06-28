@@ -31,6 +31,7 @@ func main() {
 	if err := etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c); err != nil {
 		panic(err)
 	}
+	c.Middlewares.Log = false
 
 	server := rest.MustNewServer(
 		c.RestConf,
@@ -39,6 +40,8 @@ func main() {
 	)
 	defer server.Stop()
 
+	requestLogMiddleware := middleware.NewRequestLogMiddleware("APP-API")
+	server.Use(requestLogMiddleware.Handle)
 	headerMiddleware := middleware.NewHeaderMiddleware()
 	server.Use(headerMiddleware.Handle)
 

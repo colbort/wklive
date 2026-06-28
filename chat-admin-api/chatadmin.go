@@ -13,6 +13,7 @@ import (
 	"chat-admin-api/internal/handler"
 	"chat-admin-api/internal/svc"
 	"wklive/common/etcd"
+	"wklive/common/middleware"
 	"wklive/common/utils"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -31,6 +32,7 @@ func main() {
 	if err := etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c); err != nil {
 		panic(err)
 	}
+	c.Middlewares.Log = false
 
 	server := rest.MustNewServer(
 		c.RestConf,
@@ -43,6 +45,9 @@ func main() {
 		),
 	)
 	defer server.Stop()
+
+	requestLogMiddleware := middleware.NewRequestLogMiddleware("CHAT-ADMIN-API")
+	server.Use(requestLogMiddleware.Handle)
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)

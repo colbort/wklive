@@ -175,7 +175,7 @@ func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession
 	}
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
-		Channel:      chat.ChatAppMessageChannel,
+		Channel:      chat.ChatAdminEventChannel,
 		IsGuest:      isGuest,
 		Session:      session,
 		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
@@ -189,7 +189,7 @@ func (l *OpenChatSessionLogic) publishQueueJoinEvent(session *models.TChatSessio
 	}
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN,
-		Channel:      chat.ChatAppMessageChannel,
+		Channel:      chat.ChatAppEventChannel,
 		IsGuest:      isGuest,
 		Session:      session,
 		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,

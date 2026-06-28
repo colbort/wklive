@@ -39,7 +39,7 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 	}
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
-		Channel:      chat.ChatAppMessageChannel,
+		Channel:      chat.ChatAppEventChannel,
 		Session:      session,
 		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
 		Reason:       in.GetCloseReason(),

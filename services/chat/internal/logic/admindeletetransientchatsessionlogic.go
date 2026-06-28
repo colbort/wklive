@@ -30,7 +30,7 @@ func (l *AdminDeleteTransientChatSessionLogic) AdminDeleteTransientChatSession(i
 	session, _ := internal.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), in.GetSessionNo())
 	if err := internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
 		EventType:        in.GetEventType(),
-		Channel:          chat.ChatAppMessageChannel,
+		Channel:          chat.ChatAppEventChannel,
 		MerchantId:       in.GetMerchantId(),
 		SessionNo:        in.GetSessionNo(),
 		UserId:           in.GetUserId(),

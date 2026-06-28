@@ -121,6 +121,7 @@ func (l *MessagesLogic) onClose(isGuest bool) func(*ws.Connection) {
 		if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 			return
 		}
+		fmt.Println("=========================  22")
 		if isGuest {
 			if err := l.deleteTransientSession(context.Background(), conn, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, "用户已离开客服页面"); err != nil {
 				logx.Errorf("delete transient chat session after user leave failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
@@ -308,11 +309,6 @@ func (l *MessagesLogic) closeUserSession(ctx context.Context, conn *ws.Connectio
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		return
 	}
-	reason = strings.TrimSpace(reason)
-	if reason == "" {
-		reason = "用户已离开客服页面"
-	}
-
 	// 游客：只转发关闭事件。
 	// 登录用户：先更新会话状态，再转发关闭事件给后台和用户侧。
 	if !isGuest {

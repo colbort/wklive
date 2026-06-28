@@ -41,7 +41,7 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 		}
 		if err := internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
 			EventType:        in.GetEventType(),
-			Channel:          chat.ChatAppMessageChannel,
+			Channel:          chat.ChatAppEventChannel,
 			MerchantId:       in.GetMerchantId(),
 			TransientMessage: msg,
 			TransientSession: in.GetSession(),
@@ -106,7 +106,7 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 		Status:      int64(chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT),
 		CreateTimes: now,
 		UpdateTimes: now,
-	}, chat.ChatAppMessageChannel)
+	}, chat.ChatAppEventChannel)
 	if err != nil {
 		return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

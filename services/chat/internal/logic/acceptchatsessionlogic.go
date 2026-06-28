@@ -55,16 +55,19 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	}
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED,
-		Channel:      chat.ChatAdminEventChannel,
+		Channel:      chat.ChatAppEventChannel,
 		Session:      session,
 		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
 		Reason:       in.GetReason(),
 		EventMessage: agentServiceMessage(l.ctx, l.svcCtx, agent),
 	})
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
-		Channel:   chat.ChatAppMessageChannel,
-		Session:   session,
+		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
+		Channel:      chat.ChatAppEventChannel,
+		Session:      session,
+		SessionNo:    in.SessionNo,
+		EventMessage: "坐席接待用户",
+		MerchantId:   in.MerchantId,
 	})
 	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, false)}, nil
 }
