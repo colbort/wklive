@@ -81,7 +81,7 @@ function formatNickname(nickname: string) {
         &lt; 会话
       </button>
       <div>
-        <h2>{{ formatNickname(session?.userNickname || session?.title || "请选择会话") }}</h2>
+        <h2>{{ formatNickname(session?.extJson?.nickname || "请选择会话") }}</h2>
         <span class="chat-session-no">{{ session?.sessionNo || "-" }}</span>
       </div>
       <div class="chat-actions">

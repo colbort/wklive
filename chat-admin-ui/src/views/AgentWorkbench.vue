@@ -719,8 +719,6 @@ function transientSessionFromMessage(message: ChatMessage): ChatSession {
     sessionNo: message.sessionNo,
     merchantId: Number(message.merchantId || merchantId.value),
     userId: Number(messageUserId(message)),
-    userNickname: message.sender?.nickname || "访客",
-    userAvatarUrl: message.sender?.avatarUrl || "",
     source: 2,
     status:
       senderType === 2 ? sessionStatus.pendingUser : sessionStatus.pendingAgent,
@@ -736,7 +734,10 @@ function transientSessionFromMessage(message: ChatMessage): ChatSession {
     agentUnreadCount: senderType === 1 ? 1 : 0,
     closeTime: 0,
     closeReason: "",
-    extJson: "",
+    extJson: {
+      nickname: message.sender?.nickname || "访客",
+      avatarUrl: message.sender?.avatarUrl || "",
+    },
     lastMessageNo: message.messageNo,
     createTimes: message.createTime,
     updateTimes: message.updateTime || message.createTime,
@@ -906,8 +907,6 @@ function normalizeSession(session: ChatSession) {
   session.priority = Number(session.priority || 0);
   session.agentId = Number(session.agentId || 0);
   session.userId = Number(session.userId || 0);
-  session.userNickname = session.userNickname || session.title || "";
-  session.userAvatarUrl = session.userAvatarUrl || session.avatarUrl || "";
   session.groupId = Number(session.groupId || 0);
   session.lastSenderType = senderTypeValue(session.lastSenderType);
   session.lastMessageTime = Number(session.lastMessageTime || 0);

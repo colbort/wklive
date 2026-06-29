@@ -44,12 +44,23 @@ func NewMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Messages
 // 3. chat-api 发布 USER_JOIN 给 chat-admin-api，由 chat-admin-api 转发给所有坐席；
 // 4. 后续 chat-admin-api 发布 AGENT_ASSIGNED / MESSAGE / SESSION_CLOSE 等事件时，由 subscriber -> hub 转发给匹配的 chat-ui。
 func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesReq) {
+	ext := map[string]string{
+		"Nickname":  req.Nickname,
+		"AvatarUrl": req.AvatarUrl,
+	}
+	extJson, err := json.Marshal(ext)
+	if err != nil {
+		logx.Errorf("json marshal err, merchantId=%d userId=%d guest=%t", req.MerchantId, req.UserId, req.IsGuest)
+		_ = conn.Close()
+		return
+	}
 	resp, err := l.svcCtx.ChatAppCli.OpenChatSession(l.ctx, &chat.OpenChatSessionReq{
 		Source:     chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
 		MerchantId: req.MerchantId,
 		UserId:     req.UserId,
 		IsGuest:    req.IsGuest,
 		SessionNo:  req.SessionNo,
+		ExtJson:    string(extJson),
 	})
 	if err != nil {
 		logx.Errorf("open chat ws session failed, merchantId=%d userId=%d guest=%t err=%v", req.MerchantId, req.UserId, req.IsGuest, err)

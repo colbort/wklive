@@ -57,6 +57,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 				Status:          chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
 				Priority:        chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL,
 				LastMessageTime: now,
+				ExtJson:         internal.NullStringToStruct(sql.NullString{String: in.ExtJson, Valid: true}),
 				CreateTimes:     now,
 				UpdateTimes:     now,
 				IsGuest:         true,
@@ -112,7 +113,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 				Title:           "",
 				Category:        "",
 				LastMessageTime: now,
-				ExtJson:         sql.NullString{String: "", Valid: true},
+				ExtJson:         sql.NullString{String: in.ExtJson, Valid: true},
 				CreateTimes:     now,
 				UpdateTimes:     now,
 			}

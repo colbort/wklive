@@ -7,7 +7,7 @@ const props = defineProps<{
 }>();
 
 const displayName = computed(
-  () => props.session?.userNickname || props.session?.title || "访客",
+  () => props.session?.extJson.nickname || props.session?.title || "访客",
 );
 </script>
 
@@ -19,7 +19,7 @@ const displayName = computed(
     <div class="customer-card">
       <el-avatar
         :size="44"
-        :src="session?.userAvatarUrl || undefined"
+        :src="session?.extJson.avatarUrl || undefined"
       >
         {{ displayName.slice(0, 1) }}
       </el-avatar>

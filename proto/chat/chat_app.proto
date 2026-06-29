@@ -101,6 +101,7 @@ message OpenChatSessionReq {
   int64 user_id = 3;            // 用户ID
   bool is_guest = 4;            // 是否游客
   string session_no = 5;        // 会话
+  string ext_json = 6;
 }
 
 message SendUserMessageReq {

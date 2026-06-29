@@ -70,6 +70,7 @@ func (l *PageChatSessionsLogic) PageChatSessions(in *chat.PageChatSessionsReq) (
 func (l *PageChatSessionsLogic) listTransientSessions(merchantID int64, filter models.ChatSessionPageFilter) ([]*chat.ChatSession, error) {
 	var cursor int64
 	resp := make([]*chat.ChatSession, 0)
+	seenUserIDs := make(map[int64]struct{})
 	for {
 		sessions, hasNext, nextCursor, err := internal.PageTransientSessions(
 			l.ctx,
@@ -85,9 +86,16 @@ func (l *PageChatSessionsLogic) listTransientSessions(merchantID int64, filter m
 			return nil, err
 		}
 		for _, session := range sessions {
-			if transientSessionMatchesFilter(session, filter) {
-				resp = append(resp, session)
+			if !transientSessionMatchesFilter(session, filter) {
+				continue
 			}
+			if session.GetUserId() > 0 {
+				if _, ok := seenUserIDs[session.GetUserId()]; ok {
+					continue
+				}
+				seenUserIDs[session.GetUserId()] = struct{}{}
+			}
+			resp = append(resp, session)
 		}
 		if !hasNext {
 			return resp, nil

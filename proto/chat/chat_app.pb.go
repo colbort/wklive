@@ -513,6 +513,7 @@ type OpenChatSessionReq struct {
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`               // 用户ID
 	IsGuest       bool                   `protobuf:"varint,4,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`            // 是否游客
 	SessionNo     string                 `protobuf:"bytes,5,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`       // 会话
+	ExtJson       string                 `protobuf:"bytes,6,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -578,6 +579,13 @@ func (x *OpenChatSessionReq) GetIsGuest() bool {
 func (x *OpenChatSessionReq) GetSessionNo() string {
 	if x != nil {
 		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *OpenChatSessionReq) GetExtJson() string {
+	if x != nil {
+		return x.ExtJson
 	}
 	return ""
 }
@@ -1799,7 +1807,7 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12(\n" +
 	"\x10external_user_id\x18\x03 \x01(\tR\x0eexternalUserId\x12/\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x17.chat.ChatSessionStatusR\x06status\x12%\n" +
-	"\x0einclude_closed\x18\x05 \x01(\bR\rincludeClosed\"\xb9\x01\n" +
+	"\x0einclude_closed\x18\x05 \x01(\bR\rincludeClosed\"\xd4\x01\n" +
 	"\x12OpenChatSessionReq\x12/\n" +
 	"\x06source\x18\x01 \x01(\x0e2\x17.chat.ChatSessionSourceR\x06source\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
@@ -1807,7 +1815,8 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
 	"\bis_guest\x18\x04 \x01(\bR\aisGuest\x12\x1d\n" +
 	"\n" +
-	"session_no\x18\x05 \x01(\tR\tsessionNo\"\xb9\x05\n" +
+	"session_no\x18\x05 \x01(\tR\tsessionNo\x12\x19\n" +
+	"\bext_json\x18\x06 \x01(\tR\aextJson\"\xb9\x05\n" +
 	"\x12SendUserMessageReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12*\n" +

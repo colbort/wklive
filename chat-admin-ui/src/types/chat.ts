@@ -63,8 +63,6 @@ export interface ChatSession {
   sessionNo: string;
   merchantId: number;
   userId: number;
-  userNickname: string;
-  userAvatarUrl: string;
   source: number;
   status: number;
   priority: number;
@@ -79,7 +77,7 @@ export interface ChatSession {
   agentUnreadCount: number;
   closeTime: number;
   closeReason: string;
-  extJson?: string | Record<string, unknown>;
+  extJson: Record<string, unknown>;
   isGuest?: boolean;
   avatarUrl?: string;
   lastMessageNo: string;

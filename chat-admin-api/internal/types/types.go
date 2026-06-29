@@ -153,8 +153,6 @@ type ChatSession struct {
 	SessionNo        string `json:"sessionNo"`
 	MerchantId       int64  `json:"merchantId"`
 	UserId           int64  `json:"userId"`
-	UserNickname     string `json:"userNickname"`
-	UserAvatarUrl    string `json:"userAvatarUrl"`
 	Source           int64  `json:"source"`
 	Status           int64  `json:"status"`
 	Priority         int64  `json:"priority"`
