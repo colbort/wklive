@@ -2,6 +2,7 @@ import type {
   ApiResp,
   ChatOptions,
   ChatMessage,
+  ChatUiWsReq,
   ListChatMessagesParams,
   RespBase,
   SendUserMessagePayload,
@@ -111,19 +112,25 @@ export function createChatSocket(options: CreateChatSocketOptions): WebSocket {
   return socket;
 }
 
+export function sendChatSocketTypedEvent(
+  socket: WebSocket,
+  request: ChatUiWsReq,
+) {
+  socket.send(JSON.stringify(request));
+}
+
 export function sendChatSocketEvent(
   socket: WebSocket,
-  type: string | number,
-  data: unknown,
+  request: ChatUiWsReq,
 ) {
-  socket.send(JSON.stringify({ type, data }));
+  sendChatSocketTypedEvent(socket, request);
 }
 
 export function sendChatSocketUserMessage(
   socket: WebSocket,
   data: SendUserMessagePayload,
 ) {
-  sendChatSocketEvent(socket, chatEventType.MESSAGE, data);
+  sendChatSocketEvent(socket, { type: chatEventType.MESSAGE, data });
 }
 
 interface RequestOptions {

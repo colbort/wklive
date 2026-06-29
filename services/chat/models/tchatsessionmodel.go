@@ -25,6 +25,7 @@ type (
 		Status     int64
 		Priority   int64
 		Category   string
+		Keyword    string
 		StartTime  int64
 		EndTime    int64
 	}
@@ -65,6 +66,14 @@ func (m *customTChatSessionModel) FindPage(ctx context.Context, filter ChatSessi
 	builder.EqString("category", filter.Category)
 	builder.GteInt64("create_times", filter.StartTime)
 	builder.LteInt64("create_times", filter.EndTime)
+	if filter.Keyword != "" {
+		builder.Or(
+			[]string{"session_no LIKE ?", "title LIKE ?", "last_message LIKE ?"},
+			"%"+filter.Keyword+"%",
+			"%"+filter.Keyword+"%",
+			"%"+filter.Keyword+"%",
+		)
+	}
 	if filter.AgentId > 0 {
 		builder.And("(agent_id = ? OR (agent_id = 0 AND status IN (?, ?)))", filter.AgentId, chatSessionStatusWaiting, chatSessionStatusPendingAgent)
 	}

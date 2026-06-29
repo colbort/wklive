@@ -291,6 +291,7 @@ message PageChatSessionsReq {
   common.PageReq page = 7;          // 分页
   int64 group_id = 8;               // 客服分组ID,0表示全部
   string keyword = 9;               // 关键词:会话号/标题/最后消息
+  int64 merchant_id = 10;           // 客服商户ID
 }
 
 message GetChatSessionReq {

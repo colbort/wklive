@@ -169,7 +169,7 @@ function handleWsMessage(payload: string) {
       agent?: ChatAgent;
     };
     if (
-      (event.type !== chatEventType.AGENT_JOIN &&
+      (event.type !== chatEventType.SYSTEM_NOTICE &&
         event.type !== chatEventType.AGENT_LEAVE) ||
       !event.agent
     )

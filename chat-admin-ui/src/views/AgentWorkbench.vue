@@ -14,11 +14,15 @@ import WorkbenchCustomerPanel from "@/components/workbench/WorkbenchCustomerPane
 import WorkbenchSessionList from "@/components/workbench/WorkbenchSessionList.vue";
 import { useAuthStore } from "@/stores/auth";
 import type {
+  AcceptChatSessionPayload,
+  ChatAdminUiWsReq,
   ChatAgent,
   ChatMessage,
   ChatQueueInfo,
   ChatSession,
   ChatSessionEvent,
+  CloseAgentChatSessionPayload,
+  SendAgentMessagePayload,
 } from "@/types/chat";
 import {
   optionGroup,
@@ -388,12 +392,12 @@ function handleWsMessage(event: WsEvent) {
   }
 
   switch (eventType) {
-    case chatEventType.AGENT_JOIN:
+    case chatEventType.SYSTEM_NOTICE:
     case chatEventType.AGENT_LEAVE:
       updateAgentFromEvent(event.agent);
       return;
 
-    case chatEventType.AGENT_ASSIGNED: {
+    case chatEventType.AGENT_ACCEPTED: {
       const message = applyWsSessionMessage(event, eventType);
       markSessionAccepted(event, message);
       return;
@@ -405,9 +409,7 @@ function handleWsMessage(event: WsEvent) {
       return;
     }
 
-    case chatEventType.QUEUE_JOIN:
     case chatEventType.QUEUE_UPDATE:
-    case chatEventType.QUEUE_LEAVE:
       applyWsSessionMessage(event, eventType);
       focusWaitingSession(event);
       scheduleRefreshSessions();
@@ -980,6 +982,14 @@ function backToSessions() {
   mobileChatOpen.value = false;
 }
 
+function sendWsEvent(request: ChatAdminUiWsReq) {
+  if (!socket || socket.readyState !== WebSocket.OPEN) {
+    return false;
+  }
+  socket.send(JSON.stringify(request));
+  return true;
+}
+
 function send(value: string) {
   const content = value.trim();
   if (
@@ -992,57 +1002,45 @@ function send(value: string) {
   ) {
     return;
   }
-  socket?.send(
-    JSON.stringify({
-      type: chatEventType.MESSAGE,
-      data: {
-        merchantId: merchantId.value,
-        agentId: agentId.value,
-        userId: activeSession.value.userId,
-        sessionNo: activeSession.value.sessionNo,
-        messageType: 1,
-        content,
-      },
-    }),
-  );
+  const data: SendAgentMessagePayload = {
+    merchantId: merchantId.value,
+    agentId: agentId.value,
+    userId: activeSession.value.userId,
+    sessionNo: activeSession.value.sessionNo,
+    messageType: 1,
+    content,
+  };
+  sendWsEvent({ type: chatEventType.MESSAGE, data });
 }
 
 function closeSession() {
-  if (!activeSession.value || !socket || socket.readyState !== WebSocket.OPEN) {
+  if (!activeSession.value) {
     return;
   }
-  socket.send(
-    JSON.stringify({
-      type: chatEventType.SESSION_CLOSE,
-      data: {
-        merchantId: merchantId.value,
-        userId: activeSession.value.userId,
-        sessionNo: activeSession.value.sessionNo,
-        closeReason: "closed by agent",
-      },
-    }),
-  );
+  const data: CloseAgentChatSessionPayload = {
+    merchantId: merchantId.value,
+    userId: activeSession.value.userId,
+    sessionNo: activeSession.value.sessionNo,
+    closeReason: "closed by agent",
+  };
+  sendWsEvent({ type: chatEventType.SESSION_CLOSE, data });
 }
 
 function acceptSession() {
-  if (!activeSession.value || !socket || socket.readyState !== WebSocket.OPEN) {
+  if (!activeSession.value) {
     return;
   }
   if (auth.agent?.status !== agentStatus.online) {
     ElMessage.warning("坐席在线后才能接待会话");
     return;
   }
-  socket.send(
-    JSON.stringify({
-      type: chatEventType.AGENT_ASSIGNED,
-      data: {
-        merchantId: merchantId.value,
-        agentId: agentId.value,
-        userId: activeSession.value.userId,
-        sessionNo: activeSession.value.sessionNo,
-      },
-    }),
-  );
+  const data: AcceptChatSessionPayload = {
+    merchantId: merchantId.value,
+    agentId: agentId.value,
+    userId: activeSession.value.userId,
+    sessionNo: activeSession.value.sessionNo,
+  };
+  sendWsEvent({ type: chatEventType.AGENT_ACCEPTED, data });
 }
 </script>
 

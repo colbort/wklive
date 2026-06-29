@@ -86,15 +86,13 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		}
 		if err == nil {
 			now := utils.NowMillis()
-			if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-				session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
-				session.AgentId = 0
-				session.CloseTime = 0
-				session.CloseReason = ""
-				session.UpdateTimes = now
-				if err := l.svcCtx.ChatSessionModel.Update(l.ctx, session); err != nil {
-					return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
-				}
+			session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
+			session.AgentId = 0
+			session.CloseTime = 0
+			session.CloseReason = ""
+			session.UpdateTimes = now
+			if err := l.svcCtx.ChatSessionModel.Update(l.ctx, session); err != nil {
+				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 			ms = session
 		} else {

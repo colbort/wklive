@@ -5,6 +5,7 @@ import {
   listChatMessagesWithMeta,
   options as loadOptions,
   sendChatSocketUserMessage,
+  // sendChatSocketUserMessage,
 } from "@/api/chat";
 import type {
   ChatMessage,
@@ -269,23 +270,8 @@ export function useChatSocket() {
 
   function handleEvent(event: ChatWsEvent) {
     switch (event.type) {
-      case chatEventType.SYSTEM:
-      case chatEventType.USER_JOIN: {
+      case chatEventType.SYSTEM_NOTICE: {
         ensureConnectedFromEvent(event);
-        break;
-      }
-      case chatEventType.QUEUE_JOIN: {
-        ensureConnectedFromEvent(event);
-        if (agentAccepted.value) {
-          queueStatus.value = serviceStatusMessage(activeAgentName.value);
-          return;
-        } else {
-          queueStatus.value =
-            queueMessage(event.queue) ||
-            sessionEventMessage(event) ||
-            eventMessage(event)?.content ||
-            "正在排队，客服会尽快接入。";
-        }
         break;
       }
       case chatEventType.ERROR: {
@@ -293,7 +279,7 @@ export function useChatSocket() {
         error.value = data?.message || "消息发送失败";
         break;
       }
-      case chatEventType.DELIVERED: {
+      case chatEventType.MESSAGE_DELIVERED: {
         const message = eventMessage(event);
         if (message) pushMessage(message);
         break;
@@ -326,13 +312,6 @@ export function useChatSocket() {
         break;
       }
 
-      case chatEventType.STOP_TYPING: {
-        if (agentAccepted.value) {
-          queueStatus.value = serviceStatusMessage(activeAgentName.value);
-        }
-        break;
-      }
-
       case chatEventType.QUEUE_UPDATE: {
         ensureConnectedFromEvent(event);
         const message = eventMessage(event);
@@ -348,7 +327,7 @@ export function useChatSocket() {
         break;
       }
 
-      case chatEventType.AGENT_ASSIGNED: {
+      case chatEventType.AGENT_ACCEPTED: {
         ensureConnectedFromEvent(event);
         const message = eventMessage(event);
         agentAccepted.value = true;

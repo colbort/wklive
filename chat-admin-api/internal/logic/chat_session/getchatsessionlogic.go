@@ -30,8 +30,8 @@ func NewGetChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 
 func (l *GetChatSessionLogic) GetChatSession(req *types.GetChatSessionReq) (resp *types.ChatSessionResp, err error) {
 	resp, err = logicutil.Proxy[types.ChatSessionResp](l.ctx, req, l.svcCtx.ChatAdminCli.GetChatSession)
-	if resp != nil {
-		enrichSession(&resp.Data)
+	if err != nil {
+		return nil, err
 	}
 	return resp, err
 }

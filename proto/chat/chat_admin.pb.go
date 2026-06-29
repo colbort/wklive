@@ -1373,6 +1373,7 @@ type PageChatSessionsReq struct {
 	Page          *common.PageReq        `protobuf:"bytes,7,opt,name=page,proto3" json:"page,omitempty"`                                        // 分页
 	GroupId       int64                  `protobuf:"varint,8,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                  // 客服分组ID,0表示全部
 	Keyword       string                 `protobuf:"bytes,9,opt,name=keyword,proto3" json:"keyword,omitempty"`                                  // 关键词:会话号/标题/最后消息
+	MerchantId    int64                  `protobuf:"varint,10,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`        // 客服商户ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1468,6 +1469,13 @@ func (x *PageChatSessionsReq) GetKeyword() string {
 		return x.Keyword
 	}
 	return ""
+}
+
+func (x *PageChatSessionsReq) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
 }
 
 type GetChatSessionReq struct {
@@ -4390,7 +4398,7 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"chatUserId\x12-\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x15.chat.ChatAgentStatusR\x06status\x12\x19\n" +
 	"\bgroup_id\x18\x03 \x01(\x03R\agroupId\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"\xd9\x02\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"\xfa\x02\n" +
 	"\x13PageChatSessionsReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x19\n" +
 	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12/\n" +
@@ -4401,7 +4409,10 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"time_range\x18\x06 \x01(\v2\x11.common.TimeRangeR\ttimeRange\x12#\n" +
 	"\x04page\x18\a \x01(\v2\x0f.common.PageReqR\x04page\x12\x19\n" +
 	"\bgroup_id\x18\b \x01(\x03R\agroupId\x12\x18\n" +
-	"\akeyword\x18\t \x01(\tR\akeyword\"2\n" +
+	"\akeyword\x18\t \x01(\tR\akeyword\x12\x1f\n" +
+	"\vmerchant_id\x18\n" +
+	" \x01(\x03R\n" +
+	"merchantId\"2\n" +
 	"\x11GetChatSessionReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\"\xa4\x01\n" +

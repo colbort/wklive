@@ -30,8 +30,8 @@ func NewCloseChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *CloseChatSessionLogic) CloseChatSession(req *types.CloseChatSessionReq) (resp *types.ChatSessionResp, err error) {
 	resp, err = logicutil.Proxy[types.ChatSessionResp](l.ctx, req, l.svcCtx.ChatAdminCli.CloseChatSession)
-	if resp != nil {
-		enrichSession(&resp.Data)
+	if err != nil {
+		return nil, err
 	}
 	return resp, err
 }
