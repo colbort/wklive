@@ -49,7 +49,11 @@ func PublishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, req Pu
 	case chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE:
 		event.Payload = &chat.ChatMessageEvent_SystemNotice{SystemNotice: systemNoticePayload(req)}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE:
-		event.Payload = &chat.ChatMessageEvent_Queue{Queue: queuePayload(req, createdAt)}
+		queue, err := queuePayload(ctx, svcCtx, req, createdAt)
+		if err != nil {
+			return err
+		}
+		event.Payload = &chat.ChatMessageEvent_Queue{Queue: queue}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
 		chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_LEAVE:
 		event.Payload = &chat.ChatMessageEvent_Agent{Agent: agentPayload(req, createdAt)}
@@ -204,10 +208,20 @@ func systemNoticePayload(req PublishMessageEventReq) *chat.ChatSystemNoticePaylo
 	}
 }
 
-func queuePayload(req PublishMessageEventReq, createdAt int64) *chat.ChatQueuePayload {
+func queuePayload(ctx context.Context, svcCtx *svc.ServiceContext, req PublishMessageEventReq, createdAt int64) (*chat.ChatQueuePayload, error) {
 	session := req.TransientSession
 	if session == nil && req.Session != nil {
 		session = ToProtoSession(req.Session, req.IsGuest)
+	}
+	if req.Session != nil {
+		queue, err := ToProtoQueueInfo(ctx, svcCtx, req.Session)
+		if err != nil {
+			return nil, err
+		}
+		if queue != nil {
+			queue.ActionTime = createdAt
+			return queue, nil
+		}
 	}
 	sessionNo := strings.TrimSpace(req.SessionNo)
 	userId := req.UserId
@@ -227,7 +241,7 @@ func queuePayload(req PublishMessageEventReq, createdAt int64) *chat.ChatQueuePa
 		QueueAction:   chat.ChatQueueAction_CHAT_QUEUE_ACTION_UPDATE,
 		SessionStatus: status,
 		ActionTime:    createdAt,
-	}
+	}, nil
 }
 
 func agentPayload(req PublishMessageEventReq, createdAt int64) *chat.ChatAgentPayload {

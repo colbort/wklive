@@ -2023,11 +2023,11 @@ type ChatQueuePayload struct {
 	// 排队动作
 	QueueAction ChatQueueAction `protobuf:"varint,4,opt,name=queue_action,json=queueAction,proto3,enum=chat.ChatQueueAction" json:"queue_action,omitempty"`
 	// 当前排队位置
-	QueuePosition int32 `protobuf:"varint,5,opt,name=queue_position,json=queuePosition,proto3" json:"queue_position,omitempty"`
+	QueuePosition int64 `protobuf:"varint,5,opt,name=queue_position,json=queuePosition,proto3" json:"queue_position,omitempty"`
 	// 当前等待人数
-	WaitingCount int32 `protobuf:"varint,6,opt,name=waiting_count,json=waitingCount,proto3" json:"waiting_count,omitempty"`
+	WaitingCount int64 `protobuf:"varint,6,opt,name=waiting_count,json=waitingCount,proto3" json:"waiting_count,omitempty"`
 	// 预计等待秒数
-	EstimatedWaitSeconds int32 `protobuf:"varint,7,opt,name=estimated_wait_seconds,json=estimatedWaitSeconds,proto3" json:"estimated_wait_seconds,omitempty"`
+	EstimatedWaitSeconds int64 `protobuf:"varint,7,opt,name=estimated_wait_seconds,json=estimatedWaitSeconds,proto3" json:"estimated_wait_seconds,omitempty"`
 	// 会话状态
 	SessionStatus ChatSessionStatus `protobuf:"varint,8,opt,name=session_status,json=sessionStatus,proto3,enum=chat.ChatSessionStatus" json:"session_status,omitempty"`
 	// 触发时间，毫秒
@@ -2094,21 +2094,21 @@ func (x *ChatQueuePayload) GetQueueAction() ChatQueueAction {
 	return ChatQueueAction_CHAT_QUEUE_ACTION_UNKNOWN
 }
 
-func (x *ChatQueuePayload) GetQueuePosition() int32 {
+func (x *ChatQueuePayload) GetQueuePosition() int64 {
 	if x != nil {
 		return x.QueuePosition
 	}
 	return 0
 }
 
-func (x *ChatQueuePayload) GetWaitingCount() int32 {
+func (x *ChatQueuePayload) GetWaitingCount() int64 {
 	if x != nil {
 		return x.WaitingCount
 	}
 	return 0
 }
 
-func (x *ChatQueuePayload) GetEstimatedWaitSeconds() int32 {
+func (x *ChatQueuePayload) GetEstimatedWaitSeconds() int64 {
 	if x != nil {
 		return x.EstimatedWaitSeconds
 	}
@@ -4117,9 +4117,9 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x128\n" +
 	"\fqueue_action\x18\x04 \x01(\x0e2\x15.chat.ChatQueueActionR\vqueueAction\x12%\n" +
-	"\x0equeue_position\x18\x05 \x01(\x05R\rqueuePosition\x12#\n" +
-	"\rwaiting_count\x18\x06 \x01(\x05R\fwaitingCount\x124\n" +
-	"\x16estimated_wait_seconds\x18\a \x01(\x05R\x14estimatedWaitSeconds\x12>\n" +
+	"\x0equeue_position\x18\x05 \x01(\x03R\rqueuePosition\x12#\n" +
+	"\rwaiting_count\x18\x06 \x01(\x03R\fwaitingCount\x124\n" +
+	"\x16estimated_wait_seconds\x18\a \x01(\x03R\x14estimatedWaitSeconds\x12>\n" +
 	"\x0esession_status\x18\b \x01(\x0e2\x17.chat.ChatSessionStatusR\rsessionStatus\x12\x1f\n" +
 	"\vaction_time\x18\t \x01(\x03R\n" +
 	"actionTime\"\xf8\x02\n" +

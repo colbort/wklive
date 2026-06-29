@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 	"wklive/common/helper"
 
@@ -39,12 +40,14 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		sessionNo := strings.TrimSpace(in.GetSessionNo())
 		if sessionNo == "" {
 			var err error
+			fmt.Println("========================= aa")
 			sessionNo, err = l.svcCtx.GenerateNo(l.ctx, "CS")
 			if err != nil {
 				logx.Errorf("generate guest session no error: %v", err)
 				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate session no error")}, nil
 			}
 		}
+		fmt.Println("========================= bb")
 
 		rs, _ = internal.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), sessionNo)
 		now := utils.NowMillis()
@@ -133,17 +136,19 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 
 	// 向坐席 chat-admin-api 推送 用户上线通知
 	l.publishUserJoinEvent(ms, in.IsGuest)
-	// 向用户同送排队信息
-	l.publishQueueJoinEvent(ms, in.IsGuest)
-	return &chat.OpenChatSessionResp{Base: helper.OkResp(), Data: &chat.ChatQueuePayload{
-		SessionNo:     rs.SessionNo,
-		UserId:        rs.UserId,
-		Nickname:      "",
-		QueueAction:   chat.ChatQueueAction_CHAT_QUEUE_ACTION_JOIN,
-		QueuePosition: 0,
-		WaitingCount:  0,
-		ActionTime:    utils.NowMillis(),
-	}}, nil
+	queue, err := internal.ToProtoQueueInfo(l.ctx, l.svcCtx, ms)
+	if err != nil {
+		return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+	}
+	if queue == nil {
+		queue = &chat.ChatQueuePayload{
+			SessionNo:  rs.GetSessionNo(),
+			UserId:     rs.GetUserId(),
+			ActionTime: utils.NowMillis(),
+		}
+	}
+	queue.QueueAction = chat.ChatQueueAction_CHAT_QUEUE_ACTION_JOIN
+	return &chat.OpenChatSessionResp{Base: helper.OkResp(), Data: queue}, nil
 }
 
 func (l *OpenChatSessionLogic) transientSessionToModel(session *chat.ChatSession) *models.TChatSession {
@@ -189,20 +194,5 @@ func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession
 		Session:      session,
 		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
 		EventMessage: "用户进入会话",
-	})
-}
-
-func (l *OpenChatSessionLogic) publishQueueJoinEvent(session *models.TChatSession, isGuest bool) {
-	if session == nil {
-		l.Logger.Info("push event to app err: session is nil")
-		return
-	}
-	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
-		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
-		Channel:      chat.ChatAppEventChannel,
-		IsGuest:      isGuest,
-		Session:      session,
-		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
-		EventMessage: "正在排队，客服会尽快接入。",
 	})
 }

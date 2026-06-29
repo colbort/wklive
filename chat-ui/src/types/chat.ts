@@ -98,7 +98,7 @@ export interface ChatMessage {
 }
 
 export interface ChatWsEvent<T = unknown> {
-  type: string | number;
+  eventType?: string | number;
   data?: T;
   session?: ChatSession;
   sessionEvent?: ChatSessionEvent;
@@ -118,15 +118,17 @@ export interface ConnectedPayload {
 }
 
 export interface ChatQueueInfo {
-  merchantId: number;
+  merchantId?: number;
   sessionNo: string;
-  userId: number;
-  groupId: number;
-  position: number;
-  waitingCount: number;
-  estimateWaitSeconds: number;
-  message: string;
-  updateTimes: number;
+  userId: number | string;
+  groupId?: number;
+  position?: number;
+  queuePosition?: number;
+  waitingCount?: number;
+  estimateWaitSeconds?: number;
+  estimatedWaitSeconds?: number;
+  message?: string;
+  updateTimes?: number;
 }
 
 export interface ChatSessionEvent {
@@ -252,7 +254,7 @@ export interface ChatUserStatePayload {
 
 export interface ChatQueuePayload {
   sessionNo: string;
-  userId: string;
+  userId: number | string;
   userName?: string;
   queueAction: ChatQueueAction;
   queuePosition?: number;

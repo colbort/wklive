@@ -72,21 +72,6 @@ func (l *CreateChatTokenLogic) CreateChatToken(req *types.CreateChatTokenReq) (*
 		ttl = maxChatTokenTTLSeconds
 	}
 
-	// sessionNo := ""
-	// if req.IsGuest {
-	// 	sessionNo, err = l.GuestSessionNo(l.ctx, merchantId, req.UserId, guestSessionCacheTTL)
-	// 	if err != nil {
-	// 		l.Errorf("get guest chat session failed: %v", err)
-	// 		return &types.CreateChatTokenResp{RespBase: types.RespBase{Code: 100001, Msg: err.Error()}}, nil
-	// 	}
-	// } else {
-	// 	sessionNo, err = l.existingSessionNo(merchantId, req.UserId)
-	// 	if err != nil {
-	// 		l.Errorf("get existing chat session failed: %v", err)
-	// 		return &types.CreateChatTokenResp{RespBase: types.RespBase{Code: 100001, Msg: err.Error()}}, nil
-	// 	}
-	// }
-
 	resp, err := l.svcCtx.ChatAppCli.GenerateChatSessionNo(l.ctx, &chat.GenerateChatSessionNoReq{
 		MerchantId: merchantId,
 		UserId:     req.UserId,
@@ -120,75 +105,6 @@ func (l *CreateChatTokenLogic) CreateChatToken(req *types.CreateChatTokenReq) (*
 		},
 	}, nil
 }
-
-// func (l *CreateChatTokenLogic) GuestSessionNo(ctx context.Context, merchantId, userId, ttlSeconds int64) (string, error) {
-// 	pageResp, err := l.svcCtx.ChatAppCli.AppPageTransientChatSessions(ctx, &chat.AppPageTransientChatSessionsReq{
-// 		MerchantId: merchantId,
-// 		UserId:     userId,
-// 	})
-// 	if err == nil && pageResp.GetBase().GetCode() == 200 {
-// 		for _, session := range pageResp.GetData() {
-// 			if strings.TrimSpace(session.GetSessionNo()) != "" {
-// 				return strings.TrimSpace(session.GetSessionNo()), nil
-// 			}
-// 		}
-// 	}
-
-// 	resp, err := l.svcCtx.ChatAppCli.GenerateChatSessionNo(ctx, &chat.GenerateChatSessionNoReq{
-// 		MerchantId: merchantId,
-// 		UserId:     userId,
-// 		IsGuest:    IsGuest,
-// 	})
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	if resp.GetBase().GetCode() != 200 {
-// 		return "", fmt.Errorf("%s", resp.GetBase().GetMsg())
-// 	}
-// 	sessionNo := strings.TrimSpace(resp.GetSessionNo())
-// 	if sessionNo == "" {
-// 		return "", fmt.Errorf("sessionNo is empty")
-// 	}
-// 	upsertResp, err := l.svcCtx.ChatAppCli.AppUpsertTransientChatSession(ctx, &chat.AppUpsertTransientChatSessionReq{
-// 		Session: &chat.ChatSession{
-// 			SessionNo:  sessionNo,
-// 			MerchantId: merchantId,
-// 			UserId:     userId,
-// 			Source:     chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
-// 			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
-// 			Priority:   chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL,
-// 			IsGuest:    true,
-// 		},
-// 		TtlSeconds: ttlSeconds,
-// 	})
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	if upsertResp.GetBase().GetCode() != 200 {
-// 		return "", fmt.Errorf("%s", upsertResp.GetBase().GetMsg())
-// 	}
-// 	return sessionNo, nil
-// }
-
-// func (l *CreateChatTokenLogic) existingSessionNo(merchantId, userId int64) (string, error) {
-// 	resp, err := l.svcCtx.ChatAppCli.GetChatSessionByUser(l.ctx, &chat.GetChatSessionByUserReq{
-// 		MerchantId: merchantId,
-// 		UserId:     userId,
-// 	})
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	if resp.GetBase().GetCode() == 404 {
-// 		return "", nil
-// 	}
-// 	if resp.GetBase().GetCode() != 200 {
-// 		return "", fmt.Errorf("%s", resp.GetBase().GetMsg())
-// 	}
-// 	if resp.GetData() == nil {
-// 		return "", nil
-// 	}
-// 	return strings.TrimSpace(resp.GetData().GetSessionNo()), nil
-// }
 
 func firstNonEmpty(values ...string) string {
 	for _, value := range values {

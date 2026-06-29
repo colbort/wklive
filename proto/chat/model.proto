@@ -359,13 +359,13 @@ message ChatQueuePayload {
   ChatQueueAction queue_action = 4;
 
   // 当前排队位置
-  int32 queue_position = 5;
+  int64 queue_position = 5;
 
   // 当前等待人数
-  int32 waiting_count = 6;
+  int64 waiting_count = 6;
 
   // 预计等待秒数
-  int32 estimated_wait_seconds = 7;
+  int64 estimated_wait_seconds = 7;
 
   // 会话状态
   ChatSessionStatus session_status = 8;

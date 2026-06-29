@@ -269,7 +269,7 @@ export function useChatSocket() {
   }
 
   function handleEvent(event: ChatWsEvent) {
-    switch (event.type) {
+    switch (event.eventType) {
       case chatEventType.SYSTEM_NOTICE: {
         ensureConnectedFromEvent(event);
         break;
@@ -366,7 +366,7 @@ export function useChatSocket() {
       }
 
       default:
-        if (!event.type && event.data && isConnectedPayload(event.data)) {
+        if (!event.eventType && event.data && isConnectedPayload(event.data)) {
           console.log("==================== " + event.data)
           connected.value = event.data;
           agentAccepted.value = false;
@@ -444,6 +444,9 @@ export function useChatSocket() {
       "";
     if (!sessionNo) return;
     const temporary = session ? sessionIsGuest(session) : true;
+    const queueMerchantId =
+      typeof queue?.merchantId === "number" ? queue.merchantId : 0;
+    const queueUserId = Number(queue?.userId || 0);
     if (connected.value?.sessionNo) {
       connected.value = {
         ...connected.value,
@@ -453,9 +456,9 @@ export function useChatSocket() {
           connected.value.message,
         merchantId:
           session?.merchantId ||
-          queue?.merchantId ||
+          queueMerchantId ||
           connected.value.merchantId,
-        userId: session?.userId || queue?.userId || connected.value.userId,
+        userId: session?.userId || queueUserId || connected.value.userId,
         temporary: session ? temporary : connected.value.temporary,
         session: session || connected.value.session,
         queue: queue || connected.value.queue,
@@ -472,8 +475,8 @@ export function useChatSocket() {
     }
     connected.value = {
       message: queueMessage(queue) || sessionEventMessage(event) || "",
-      merchantId: session?.merchantId || queue?.merchantId || 0,
-      userId: session?.userId || queue?.userId || 0,
+      merchantId: session?.merchantId || queueMerchantId || 0,
+      userId: session?.userId || queueUserId || 0,
       sessionNo,
       temporary,
       session,
@@ -525,10 +528,14 @@ export function useChatSocket() {
 
   function queueMessage(queue?: ChatQueueInfo) {
     if (!queue) return "";
-    if (queue.message) return queue.message;
-    if (queue.position > 1)
-      return `正在排队，您前面还有 ${queue.position - 1} 人。`;
-    if (queue.position === 1) return "您是当前队列第 1 位，客服即将接入。";
+    if ("message" in queue && queue.message) return queue.message;
+    const position =
+      "queuePosition" in queue
+        ? Number(queue.queuePosition || 0)
+        : Number(queue.position || 0);
+    if (position > 1)
+      return `正在排队，您前面还有 ${position - 1} 人。`;
+    if (position === 1) return "您是当前队列第 1 位，客服即将接入。";
     return "";
   }
 
