@@ -80,8 +80,6 @@
     "i18n-ally.localesPaths": [
       "./app-mobile/src/i18n/locales",
     ],
-    "deepseek.apiKey": "sk-cee964113b8a4461ae44aba3d4c8107d",
-    "deepseek.provider": "deepseek",
     "cSpell.words": [
       "Aliyun",
       "APIURLIs",
@@ -176,50 +174,6 @@
           "group": "services"
         }
       },
-      {
-        "label": "start:api:admin-api",
-        "type": "shell",
-        "command": "cd \"${workspaceFolder:admin-api}\" && go run admin.go",
-        "problemMatcher": [],
-        "presentation": {
-          "reveal": "always",
-          "panel": "dedicated",
-          "group": "api"
-        }
-      },
-      {
-        "label": "start:api:app-api",
-        "type": "shell",
-        "command": "cd \"${workspaceFolder:app-api}\" && go run app.go",
-        "problemMatcher": [],
-        "presentation": {
-          "reveal": "always",
-          "panel": "dedicated",
-          "group": "api"
-        }
-      },
-      {
-        "label": "start:api:chat-api",
-        "type": "shell",
-        "command": "cd \"${workspaceFolder:chat-api}\" && go run chat.go",
-        "problemMatcher": [],
-        "presentation": {
-          "reveal": "always",
-          "panel": "dedicated",
-          "group": "api"
-        }
-      },
-      {
-        "label": "start:api:chat-admin-api",
-        "type": "shell",
-        "command": "cd \"${workspaceFolder:chat-admin-api}\" && go run chatadmin.go",
-        "problemMatcher": [],
-        "presentation": {
-          "reveal": "always",
-          "panel": "dedicated",
-          "group": "api"
-        }
-      }
     ]
   },
   "launch": {
@@ -382,6 +336,22 @@
         "program": "${workspaceFolder:services}/trade/"
       }
     ],
-    "compounds": []
+    "compounds": [
+      {
+        "name": "debug:services:all",
+        "configurations": [
+          "asset",
+          "trade",
+          "staking",
+          "option",
+          "itick",
+          "payment",
+          "user",
+          "chat",
+          "system"
+        ],
+        "stopAll": true
+      },
+    ]
   },
 }

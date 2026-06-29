@@ -77,12 +77,18 @@ export interface ChatSession {
   agentUnreadCount: number;
   closeTime: number;
   closeReason: string;
-  extJson: Record<string, unknown>;
+  extJson: ChatSessionExtJson;
   isGuest?: boolean;
   avatarUrl?: string;
   lastMessageNo: string;
   createTimes: number;
   updateTimes: number;
+}
+
+export interface ChatSessionExtJson {
+  nickname?: string;
+  avatarUrl?: string;
+  [key: string]: unknown;
 }
 
 export interface ChatMessageSender {

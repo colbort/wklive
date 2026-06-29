@@ -20,6 +20,7 @@ import type {
   ChatMessage,
   ChatQueueInfo,
   ChatSession,
+  ChatSessionExtJson,
   ChatSessionEvent,
   CloseAgentChatSessionPayload,
   SendAgentMessagePayload,
@@ -776,17 +777,7 @@ function mergeLiveSessions(nextSessions: ChatSession[]) {
 
 function isGuestSession(session?: ChatSession) {
   if (session?.isGuest) return true;
-  if (!session?.extJson) return false;
-  if (typeof session.extJson === "object") {
-    return Boolean(session.extJson.isGuest);
-  }
-  try {
-    return Boolean(
-      (JSON.parse(session.extJson) as { isGuest?: boolean }).isGuest,
-    );
-  } catch {
-    return false;
-  }
+  return Boolean(session?.extJson?.isGuest);
 }
 
 function collapseGuestSessions(list: ChatSession[]) {
@@ -915,7 +906,50 @@ function normalizeSession(session: ChatSession) {
   session.closeTime = Number(session.closeTime || 0);
   session.createTimes = Number(session.createTimes || 0);
   session.updateTimes = Number(session.updateTimes || 0);
+  session.extJson = normalizeSessionExtJson(session);
+  session.isGuest = Boolean(session.isGuest || session.extJson.isGuest);
   return session;
+}
+
+function normalizeSessionExtJson(session: ChatSession): ChatSessionExtJson {
+  const ext = parseSessionExtJson(session.extJson);
+  const nickname = firstString(
+    ext.nickname,
+  );
+  const avatarUrl = firstString(
+    ext.avatarUrl,
+  );
+  return {
+    ...ext,
+    nickname,
+    avatarUrl,
+  };
+}
+
+function parseSessionExtJson(value: unknown): ChatSessionExtJson {
+  if (!value) return {};
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return value as ChatSessionExtJson;
+  }
+  if (typeof value !== "string") return {};
+  try {
+    const parsed = JSON.parse(value);
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return parsed as ChatSessionExtJson;
+    }
+  } catch {
+    // ignore invalid ext_json
+  }
+  return {};
+}
+
+function firstString(...values: unknown[]) {
+  for (const value of values) {
+    if (typeof value !== "string") continue;
+    const trimmed = value.trim();
+    if (trimmed) return trimmed;
+  }
+  return "";
 }
 
 function sessionStatusValue(value: unknown) {

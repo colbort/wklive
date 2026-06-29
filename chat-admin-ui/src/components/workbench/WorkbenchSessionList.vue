@@ -24,6 +24,10 @@ const statusOptions = [
   { label: "进行中", value: "serving" },
   { label: "已结束", value: "closed" },
 ];
+function formatNickname(nickname: string) {
+  if (nickname.length <=5) return nickname
+  return nickname.slice(0, 5)
+}
 </script>
 
 <template>
@@ -91,7 +95,7 @@ const statusOptions = [
         :class="{ active: session.sessionNo === selectedSessionNo }"
         @click="emit('select', session.sessionNo)"
       >
-        <span class="session-title">{{ session.userNickname || session.title || session.userId || "访客" }}</span>
+        <span class="session-title">{{ formatNickname(session.extJson.nickname || "访客") }}</span>
         <span class="session-meta">{{ session.category }}</span>
         <span class="session-last">{{ session.lastMessage }}</span>
         <span

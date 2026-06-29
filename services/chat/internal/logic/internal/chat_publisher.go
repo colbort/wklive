@@ -104,11 +104,14 @@ func PublishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, req Pu
 	}
 	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
 	if err != nil {
+		fmt.Printf("=========== 11  %v  %v\n", req.Channel, req.EventType)
 		return err
 	}
 	if _, err := svcCtx.BusRedis.PublishCtx(ctx, req.Channel, string(payload)); err != nil {
+		fmt.Printf("=========== 22  %v  %v\n", req.Channel, req.EventType)
 		return err
 	}
+	fmt.Printf("=========== 33  %v  %v\n", req.Channel, req.EventType)
 	return nil
 }
 

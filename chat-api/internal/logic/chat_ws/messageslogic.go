@@ -3,6 +3,7 @@ package chat_ws
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -45,8 +46,8 @@ func NewMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Messages
 // 4. 后续 chat-admin-api 发布 AGENT_ASSIGNED / MESSAGE / SESSION_CLOSE 等事件时，由 subscriber -> hub 转发给匹配的 chat-ui。
 func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesReq) {
 	ext := map[string]string{
-		"Nickname":  req.Nickname,
-		"AvatarUrl": req.AvatarUrl,
+		"nickname":  req.Nickname,
+		"avatarUrl": req.AvatarUrl,
 	}
 	extJson, err := json.Marshal(ext)
 	if err != nil {
@@ -149,6 +150,7 @@ func (l *MessagesLogic) onClose(isGuest bool) func(*ws.Connection) {
 
 func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection, isGuest bool) {
 	if conn == nil || l.svcCtx == nil || l.svcCtx.ChatAppCli == nil {
+		logx.Error("app subscribe err")
 		return
 	}
 	stream, err := l.svcCtx.ChatAppCli.AppSubscribeStream(ctx, &chat.AppChatSubscribeRequest{
@@ -157,10 +159,12 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 		SessionNo:  conn.SessionNo,
 		IsGuest:    isGuest,
 	})
+	fmt.Println("============================= 77")
 	if err != nil {
 		logx.Errorf("subscribe chat app stream failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 		return
 	}
+	fmt.Println("============================= 88")
 	for {
 		event, err := stream.Recv()
 		if err != nil {
@@ -169,6 +173,7 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 			}
 			return
 		}
+		fmt.Println("============================= 99")
 		conn.SendEvent(event)
 	}
 }

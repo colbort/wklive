@@ -78,7 +78,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		if err != nil {
 			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		ms = transientSessionToModel(rs)
+		ms = l.transientSessionToModel(rs)
 	} else {
 		// 登录用户
 		session, err := l.svcCtx.ChatSessionModel.FindByUser(l.ctx, in.MerchantId, in.UserId)
@@ -138,8 +138,9 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: rs}, nil
 }
 
-func transientSessionToModel(session *chat.ChatSession) *models.TChatSession {
+func (l *OpenChatSessionLogic) transientSessionToModel(session *chat.ChatSession) *models.TChatSession {
 	if session == nil {
+		l.Logger.Info("transfer model err: session is nil")
 		return nil
 	}
 	return &models.TChatSession{
@@ -170,6 +171,7 @@ func transientSessionToModel(session *chat.ChatSession) *models.TChatSession {
 
 func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession, isGuest bool) {
 	if session == nil {
+		l.Logger.Info("push event to admin err: session is nil")
 		return
 	}
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
@@ -183,7 +185,8 @@ func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession
 }
 
 func (l *OpenChatSessionLogic) publishQueueJoinEvent(session *models.TChatSession, isGuest bool) {
-	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING) {
+	if session == nil {
+		l.Logger.Info("push event to app err: session is nil")
 		return
 	}
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{

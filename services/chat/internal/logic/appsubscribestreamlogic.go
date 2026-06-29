@@ -26,7 +26,7 @@ func NewAppSubscribeStreamLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 订阅客服消息事件流
 func (l *AppSubscribeStreamLogic) AppSubscribeStream(in *chat.AppChatSubscribeRequest, stream chat.ChatApp_AppSubscribeStreamServer) error {
-	return internal.SubscribeChatEventStream(l.svcCtx, in, stream, internal.SubscribeOptions{
+	return internal.SubscribeChatEventStream(l.svcCtx, stream, internal.SubscribeOptions{
 		Channel: chat.ChatAppEventChannel,
 		Admin:   false,
 	})
