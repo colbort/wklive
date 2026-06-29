@@ -269,12 +269,6 @@ func (s *ChatAdminServer) AdminSubscribeStream(in *chat.AdminChatSubscribeReques
 	return l.AdminSubscribeStream(in, stream)
 }
 
-// 删除游客临时会话和消息
-func (s *ChatAdminServer) AdminDeleteTransientChatSession(ctx context.Context, in *chat.AdminDeleteTransientChatSessionReq) (*chat.AdminDeleteTransientChatSessionResp, error) {
-	l := logic.NewAdminDeleteTransientChatSessionLogic(ctx, s.svcCtx)
-	return l.AdminDeleteTransientChatSession(in)
-}
-
 // 查询游客临时会话
 func (s *ChatAdminServer) AdminGetTransientChatSession(ctx context.Context, in *chat.AdminGetTransientChatSessionReq) (*chat.AdminChatSessionResp, error) {
 	l := logic.NewAdminGetTransientChatSessionLogic(ctx, s.svcCtx)

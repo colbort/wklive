@@ -19,50 +19,47 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ChatAdmin_Login_FullMethodName                           = "/chat.ChatAdmin/Login"
-	ChatAdmin_Logout_FullMethodName                          = "/chat.ChatAdmin/Logout"
-	ChatAdmin_Profile_FullMethodName                         = "/chat.ChatAdmin/Profile"
-	ChatAdmin_UpdateProfile_FullMethodName                   = "/chat.ChatAdmin/UpdateProfile"
-	ChatAdmin_GetChatUserById_FullMethodName                 = "/chat.ChatAdmin/GetChatUserById"
-	ChatAdmin_CreateChatGroup_FullMethodName                 = "/chat.ChatAdmin/CreateChatGroup"
-	ChatAdmin_UpdateChatGroup_FullMethodName                 = "/chat.ChatAdmin/UpdateChatGroup"
-	ChatAdmin_GetChatGroup_FullMethodName                    = "/chat.ChatAdmin/GetChatGroup"
-	ChatAdmin_PageChatGroups_FullMethodName                  = "/chat.ChatAdmin/PageChatGroups"
-	ChatAdmin_DeleteChatGroup_FullMethodName                 = "/chat.ChatAdmin/DeleteChatGroup"
-	ChatAdmin_CreateChatAgent_FullMethodName                 = "/chat.ChatAdmin/CreateChatAgent"
-	ChatAdmin_UpdateChatAgent_FullMethodName                 = "/chat.ChatAdmin/UpdateChatAgent"
-	ChatAdmin_UpdateChatAgentStatus_FullMethodName           = "/chat.ChatAdmin/UpdateChatAgentStatus"
-	ChatAdmin_GetChatAgent_FullMethodName                    = "/chat.ChatAdmin/GetChatAgent"
-	ChatAdmin_PageChatAgents_FullMethodName                  = "/chat.ChatAdmin/PageChatAgents"
-	ChatAdmin_PageChatSessions_FullMethodName                = "/chat.ChatAdmin/PageChatSessions"
-	ChatAdmin_GetChatSession_FullMethodName                  = "/chat.ChatAdmin/GetChatSession"
-	ChatAdmin_AcceptChatSession_FullMethodName               = "/chat.ChatAdmin/AcceptChatSession"
-	ChatAdmin_SendAgentMessage_FullMethodName                = "/chat.ChatAdmin/SendAgentMessage"
-	ChatAdmin_PageChatMessages_FullMethodName                = "/chat.ChatAdmin/PageChatMessages"
-	ChatAdmin_MarkAgentMessagesRead_FullMethodName           = "/chat.ChatAdmin/MarkAgentMessagesRead"
-	ChatAdmin_CloseChatSession_FullMethodName                = "/chat.ChatAdmin/CloseChatSession"
-	ChatAdmin_CreateChatQuickReply_FullMethodName            = "/chat.ChatAdmin/CreateChatQuickReply"
-	ChatAdmin_UpdateChatQuickReply_FullMethodName            = "/chat.ChatAdmin/UpdateChatQuickReply"
-	ChatAdmin_GetChatQuickReply_FullMethodName               = "/chat.ChatAdmin/GetChatQuickReply"
-	ChatAdmin_PageChatQuickReplies_FullMethodName            = "/chat.ChatAdmin/PageChatQuickReplies"
-	ChatAdmin_ListEnabledChatQuickReplies_FullMethodName     = "/chat.ChatAdmin/ListEnabledChatQuickReplies"
-	ChatAdmin_DeleteChatQuickReply_FullMethodName            = "/chat.ChatAdmin/DeleteChatQuickReply"
-	ChatAdmin_CreateChatCategory_FullMethodName              = "/chat.ChatAdmin/CreateChatCategory"
-	ChatAdmin_UpdateChatCategory_FullMethodName              = "/chat.ChatAdmin/UpdateChatCategory"
-	ChatAdmin_GetChatCategory_FullMethodName                 = "/chat.ChatAdmin/GetChatCategory"
-	ChatAdmin_PageChatCategories_FullMethodName              = "/chat.ChatAdmin/PageChatCategories"
-	ChatAdmin_ListEnabledChatCategories_FullMethodName       = "/chat.ChatAdmin/ListEnabledChatCategories"
-	ChatAdmin_DeleteChatCategory_FullMethodName              = "/chat.ChatAdmin/DeleteChatCategory"
-	ChatAdmin_CreateChatWorkOrder_FullMethodName             = "/chat.ChatAdmin/CreateChatWorkOrder"
-	ChatAdmin_UpdateChatWorkOrder_FullMethodName             = "/chat.ChatAdmin/UpdateChatWorkOrder"
-	ChatAdmin_HandleChatWorkOrder_FullMethodName             = "/chat.ChatAdmin/HandleChatWorkOrder"
-	ChatAdmin_GetChatWorkOrder_FullMethodName                = "/chat.ChatAdmin/GetChatWorkOrder"
-	ChatAdmin_PageChatWorkOrders_FullMethodName              = "/chat.ChatAdmin/PageChatWorkOrders"
-	ChatAdmin_DeleteChatWorkOrder_FullMethodName             = "/chat.ChatAdmin/DeleteChatWorkOrder"
-	ChatAdmin_AdminSubscribeStream_FullMethodName            = "/chat.ChatAdmin/AdminSubscribeStream"
-	ChatAdmin_AdminDeleteTransientChatSession_FullMethodName = "/chat.ChatAdmin/AdminDeleteTransientChatSession"
-	ChatAdmin_AdminGetTransientChatSession_FullMethodName    = "/chat.ChatAdmin/AdminGetTransientChatSession"
-	ChatAdmin_AdminPageTransientChatSessions_FullMethodName  = "/chat.ChatAdmin/AdminPageTransientChatSessions"
+	ChatAdmin_Login_FullMethodName                       = "/chat.ChatAdmin/Login"
+	ChatAdmin_Logout_FullMethodName                      = "/chat.ChatAdmin/Logout"
+	ChatAdmin_Profile_FullMethodName                     = "/chat.ChatAdmin/Profile"
+	ChatAdmin_UpdateProfile_FullMethodName               = "/chat.ChatAdmin/UpdateProfile"
+	ChatAdmin_GetChatUserById_FullMethodName             = "/chat.ChatAdmin/GetChatUserById"
+	ChatAdmin_CreateChatGroup_FullMethodName             = "/chat.ChatAdmin/CreateChatGroup"
+	ChatAdmin_UpdateChatGroup_FullMethodName             = "/chat.ChatAdmin/UpdateChatGroup"
+	ChatAdmin_GetChatGroup_FullMethodName                = "/chat.ChatAdmin/GetChatGroup"
+	ChatAdmin_PageChatGroups_FullMethodName              = "/chat.ChatAdmin/PageChatGroups"
+	ChatAdmin_DeleteChatGroup_FullMethodName             = "/chat.ChatAdmin/DeleteChatGroup"
+	ChatAdmin_CreateChatAgent_FullMethodName             = "/chat.ChatAdmin/CreateChatAgent"
+	ChatAdmin_UpdateChatAgent_FullMethodName             = "/chat.ChatAdmin/UpdateChatAgent"
+	ChatAdmin_UpdateChatAgentStatus_FullMethodName       = "/chat.ChatAdmin/UpdateChatAgentStatus"
+	ChatAdmin_GetChatAgent_FullMethodName                = "/chat.ChatAdmin/GetChatAgent"
+	ChatAdmin_PageChatAgents_FullMethodName              = "/chat.ChatAdmin/PageChatAgents"
+	ChatAdmin_PageChatSessions_FullMethodName            = "/chat.ChatAdmin/PageChatSessions"
+	ChatAdmin_GetChatSession_FullMethodName              = "/chat.ChatAdmin/GetChatSession"
+	ChatAdmin_AcceptChatSession_FullMethodName           = "/chat.ChatAdmin/AcceptChatSession"
+	ChatAdmin_SendAgentMessage_FullMethodName            = "/chat.ChatAdmin/SendAgentMessage"
+	ChatAdmin_PageChatMessages_FullMethodName            = "/chat.ChatAdmin/PageChatMessages"
+	ChatAdmin_MarkAgentMessagesRead_FullMethodName       = "/chat.ChatAdmin/MarkAgentMessagesRead"
+	ChatAdmin_CloseChatSession_FullMethodName            = "/chat.ChatAdmin/CloseChatSession"
+	ChatAdmin_CreateChatQuickReply_FullMethodName        = "/chat.ChatAdmin/CreateChatQuickReply"
+	ChatAdmin_UpdateChatQuickReply_FullMethodName        = "/chat.ChatAdmin/UpdateChatQuickReply"
+	ChatAdmin_GetChatQuickReply_FullMethodName           = "/chat.ChatAdmin/GetChatQuickReply"
+	ChatAdmin_PageChatQuickReplies_FullMethodName        = "/chat.ChatAdmin/PageChatQuickReplies"
+	ChatAdmin_ListEnabledChatQuickReplies_FullMethodName = "/chat.ChatAdmin/ListEnabledChatQuickReplies"
+	ChatAdmin_DeleteChatQuickReply_FullMethodName        = "/chat.ChatAdmin/DeleteChatQuickReply"
+	ChatAdmin_CreateChatCategory_FullMethodName          = "/chat.ChatAdmin/CreateChatCategory"
+	ChatAdmin_UpdateChatCategory_FullMethodName          = "/chat.ChatAdmin/UpdateChatCategory"
+	ChatAdmin_GetChatCategory_FullMethodName             = "/chat.ChatAdmin/GetChatCategory"
+	ChatAdmin_PageChatCategories_FullMethodName          = "/chat.ChatAdmin/PageChatCategories"
+	ChatAdmin_ListEnabledChatCategories_FullMethodName   = "/chat.ChatAdmin/ListEnabledChatCategories"
+	ChatAdmin_DeleteChatCategory_FullMethodName          = "/chat.ChatAdmin/DeleteChatCategory"
+	ChatAdmin_CreateChatWorkOrder_FullMethodName         = "/chat.ChatAdmin/CreateChatWorkOrder"
+	ChatAdmin_UpdateChatWorkOrder_FullMethodName         = "/chat.ChatAdmin/UpdateChatWorkOrder"
+	ChatAdmin_HandleChatWorkOrder_FullMethodName         = "/chat.ChatAdmin/HandleChatWorkOrder"
+	ChatAdmin_GetChatWorkOrder_FullMethodName            = "/chat.ChatAdmin/GetChatWorkOrder"
+	ChatAdmin_PageChatWorkOrders_FullMethodName          = "/chat.ChatAdmin/PageChatWorkOrders"
+	ChatAdmin_DeleteChatWorkOrder_FullMethodName         = "/chat.ChatAdmin/DeleteChatWorkOrder"
+	ChatAdmin_AdminSubscribeStream_FullMethodName        = "/chat.ChatAdmin/AdminSubscribeStream"
 )
 
 // ChatAdminClient is the client API for ChatAdmin service.
@@ -153,12 +150,6 @@ type ChatAdminClient interface {
 	DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 订阅客服消息事件流
 	AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatMessageEvent], error)
-	// 删除游客临时会话和消息
-	AdminDeleteTransientChatSession(ctx context.Context, in *AdminDeleteTransientChatSessionReq, opts ...grpc.CallOption) (*AdminDeleteTransientChatSessionResp, error)
-	// 查询游客临时会话
-	AdminGetTransientChatSession(ctx context.Context, in *AdminGetTransientChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
-	// 分页查询游客临时会话
-	AdminPageTransientChatSessions(ctx context.Context, in *AdminPageTransientChatSessionsReq, opts ...grpc.CallOption) (*AdminPageTransientChatSessionsResp, error)
 }
 
 type chatAdminClient struct {
@@ -588,36 +579,6 @@ func (c *chatAdminClient) AdminSubscribeStream(ctx context.Context, in *AdminCha
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ChatAdmin_AdminSubscribeStreamClient = grpc.ServerStreamingClient[ChatMessageEvent]
 
-func (c *chatAdminClient) AdminDeleteTransientChatSession(ctx context.Context, in *AdminDeleteTransientChatSessionReq, opts ...grpc.CallOption) (*AdminDeleteTransientChatSessionResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminDeleteTransientChatSessionResp)
-	err := c.cc.Invoke(ctx, ChatAdmin_AdminDeleteTransientChatSession_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *chatAdminClient) AdminGetTransientChatSession(ctx context.Context, in *AdminGetTransientChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminChatSessionResp)
-	err := c.cc.Invoke(ctx, ChatAdmin_AdminGetTransientChatSession_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *chatAdminClient) AdminPageTransientChatSessions(ctx context.Context, in *AdminPageTransientChatSessionsReq, opts ...grpc.CallOption) (*AdminPageTransientChatSessionsResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminPageTransientChatSessionsResp)
-	err := c.cc.Invoke(ctx, ChatAdmin_AdminPageTransientChatSessions_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ChatAdminServer is the server API for ChatAdmin service.
 // All implementations must embed UnimplementedChatAdminServer
 // for forward compatibility.
@@ -706,12 +667,6 @@ type ChatAdminServer interface {
 	DeleteChatWorkOrder(context.Context, *DeleteChatWorkOrderReq) (*AdminCommonResp, error)
 	// 订阅客服消息事件流
 	AdminSubscribeStream(*AdminChatSubscribeRequest, grpc.ServerStreamingServer[ChatMessageEvent]) error
-	// 删除游客临时会话和消息
-	AdminDeleteTransientChatSession(context.Context, *AdminDeleteTransientChatSessionReq) (*AdminDeleteTransientChatSessionResp, error)
-	// 查询游客临时会话
-	AdminGetTransientChatSession(context.Context, *AdminGetTransientChatSessionReq) (*AdminChatSessionResp, error)
-	// 分页查询游客临时会话
-	AdminPageTransientChatSessions(context.Context, *AdminPageTransientChatSessionsReq) (*AdminPageTransientChatSessionsResp, error)
 	mustEmbedUnimplementedChatAdminServer()
 }
 
@@ -844,15 +799,6 @@ func (UnimplementedChatAdminServer) DeleteChatWorkOrder(context.Context, *Delete
 }
 func (UnimplementedChatAdminServer) AdminSubscribeStream(*AdminChatSubscribeRequest, grpc.ServerStreamingServer[ChatMessageEvent]) error {
 	return status.Error(codes.Unimplemented, "method AdminSubscribeStream not implemented")
-}
-func (UnimplementedChatAdminServer) AdminDeleteTransientChatSession(context.Context, *AdminDeleteTransientChatSessionReq) (*AdminDeleteTransientChatSessionResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminDeleteTransientChatSession not implemented")
-}
-func (UnimplementedChatAdminServer) AdminGetTransientChatSession(context.Context, *AdminGetTransientChatSessionReq) (*AdminChatSessionResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminGetTransientChatSession not implemented")
-}
-func (UnimplementedChatAdminServer) AdminPageTransientChatSessions(context.Context, *AdminPageTransientChatSessionsReq) (*AdminPageTransientChatSessionsResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminPageTransientChatSessions not implemented")
 }
 func (UnimplementedChatAdminServer) mustEmbedUnimplementedChatAdminServer() {}
 func (UnimplementedChatAdminServer) testEmbeddedByValue()                   {}
@@ -1606,60 +1552,6 @@ func _ChatAdmin_AdminSubscribeStream_Handler(srv interface{}, stream grpc.Server
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ChatAdmin_AdminSubscribeStreamServer = grpc.ServerStreamingServer[ChatMessageEvent]
 
-func _ChatAdmin_AdminDeleteTransientChatSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminDeleteTransientChatSessionReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAdminServer).AdminDeleteTransientChatSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatAdmin_AdminDeleteTransientChatSession_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAdminServer).AdminDeleteTransientChatSession(ctx, req.(*AdminDeleteTransientChatSessionReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ChatAdmin_AdminGetTransientChatSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminGetTransientChatSessionReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAdminServer).AdminGetTransientChatSession(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatAdmin_AdminGetTransientChatSession_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAdminServer).AdminGetTransientChatSession(ctx, req.(*AdminGetTransientChatSessionReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ChatAdmin_AdminPageTransientChatSessions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminPageTransientChatSessionsReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatAdminServer).AdminPageTransientChatSessions(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ChatAdmin_AdminPageTransientChatSessions_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAdminServer).AdminPageTransientChatSessions(ctx, req.(*AdminPageTransientChatSessionsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ChatAdmin_ServiceDesc is the grpc.ServiceDesc for ChatAdmin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1826,18 +1718,6 @@ var ChatAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteChatWorkOrder",
 			Handler:    _ChatAdmin_DeleteChatWorkOrder_Handler,
-		},
-		{
-			MethodName: "AdminDeleteTransientChatSession",
-			Handler:    _ChatAdmin_AdminDeleteTransientChatSession_Handler,
-		},
-		{
-			MethodName: "AdminGetTransientChatSession",
-			Handler:    _ChatAdmin_AdminGetTransientChatSession_Handler,
-		},
-		{
-			MethodName: "AdminPageTransientChatSessions",
-			Handler:    _ChatAdmin_AdminPageTransientChatSessions_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

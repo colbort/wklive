@@ -5,6 +5,7 @@ import (
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
+	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -26,9 +27,33 @@ func NewGenerateChatSessionNoLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 生成会话编号
 func (l *GenerateChatSessionNoLogic) GenerateChatSessionNo(in *chat.GenerateChatSessionNoReq) (*chat.GenerateChatSessionNoResp, error) {
-	sessionNo, err := l.svcCtx.GenerateNo(l.ctx, "CS")
-	if err != nil {
-		return &chat.GenerateChatSessionNoResp{Base: helper.ErrResp(500, err.Error())}, nil
+	sessionNo := ""
+	// TODO
+	if in.IsGuest {
+		list, hasNext, nextCursor, err := internal.PageTransientSessions(
+			l.ctx,
+			l.svcCtx.BusRedis,
+			in.GetMerchantId(),
+			in.GetUserId(),
+			in.GetAgentId(),
+			int64(in.GetStatus()),
+			cursor,
+			limit,
+		)
+	} else {
+		session, err := l.svcCtx.ChatSessionModel.FindByUser(l.ctx, in.MerchantId, in.UserId)
+		if err == nil {
+			sessionNo = session.SessionNo
+		} else {
+			sn, err := l.svcCtx.GenerateNo(l.ctx, "CS")
+			if err != nil {
+				return nil, err
+			}
+			sessionNo = sn
+		}
+	}
+	if sessionNo == "" {
+		return &chat.GenerateChatSessionNoResp{Base: helper.ErrResp(500, "session no is empty")}, nil
 	} else {
 		return &chat.GenerateChatSessionNoResp{Base: helper.OkResp(), SessionNo: sessionNo}, nil
 	}

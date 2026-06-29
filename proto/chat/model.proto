@@ -177,80 +177,451 @@ message ChatEvaluationInvite {
   int64 created_at = 6;            // 事件创建时间戳(毫秒)
 }
 
-// 客服消息事件,用于消息总线/WebSocket推送
+/**
+ * WebSocket / 推送统一事件
+ */
 message ChatMessageEvent {
+  // 业务状态码
+  // 例如：0 成功，非 0 表示错误
   int32 code = 1;
+
+  // 提示信息
   string msg = 2;
-  ChatEventType event_type = 3; // 事件类型
-  int64 created_at = 4;         // 事件创建时间戳(毫秒)
+
+  // 事件类型
+  ChatEventType event_type = 3;
+
+  // 事件创建时间戳，毫秒
+  int64 created_at = 4;
+
   oneof payload {
-    ChatMessage message = 10;              // CHAT_EVENT_TYPE_MESSAGE，CHAT_EVENT_TYPE_SYSTEM
-    ChatSession session = 11;              // CHAT_EVENT_TYPE_USER_JOIN，CHAT_EVENT_TYPE_USER_LEAVE，CHAT_EVENT_TYPE_AGENT_ASSIGNED，CHAT_EVENT_TYPE_TRANSFER_REQUEST，CHAT_EVENT_TYPE_TRANSFER_ACCEPT，CHAT_EVENT_TYPE_TRANSFER_REJECT，CHAT_EVENT_TYPE_SESSION_START，CHAT_EVENT_TYPE_SESSION_CLOSE，CHAT_EVENT_TYPE_NO_AGENT_ONLINE，CHAT_EVENT_TYPE_SESSION_TIMEOUT
-    ChatQueueInfo queue = 13;              // CHAT_EVENT_TYPE_QUEUE_JOIN，CHAT_EVENT_TYPE_QUEUE_UPDATE
-    ChatAgent agent = 14;                  // CHAT_EVENT_TYPE_AGENT_JOIN，CHAT_EVENT_TYPE_AGENT_LEAVE
-    ChatSatisfaction satisfaction = 15;    // CHAT_EVENT_TYPE_EVALUATION_SUBMIT
-    ChatWsConnected connected = 16;        // WebSocket 连接成功
-    ChatTyping typing = 17;                // CHAT_EVENT_TYPE_TYPING，CHAT_EVENT_TYPE_STOP_TYPING
-    ChatMessageReceipt receipt = 18;       // CHAT_EVENT_TYPE_DELIVERED，CHAT_EVENT_TYPE_READ，CHAT_EVENT_TYPE_RECALL，CHAT_EVENT_TYPE_DELETE
-    ChatHeartbeat heartbeat = 19;          // CHAT_EVENT_TYPE_HEARTBEAT
-    ChatEventError error = 20;             // CHAT_EVENT_TYPE_ERROR
-    ChatEvaluationInvite evaluation_invite = 21; // CHAT_EVENT_TYPE_EVALUATION_INVITE
+    // 普通聊天消息
+    // 对应：
+    // CHAT_EVENT_TYPE_MESSAGE
+    ChatMessage message = 10;
+
+    // 会话信息
+    // 对应：
+    // CHAT_EVENT_TYPE_SESSION_CLOSE
+    ChatSession session = 11;
+
+    // 系统通知
+    // 对应：
+    // CHAT_EVENT_TYPE_SYSTEM_NOTICE
+    ChatSystemNoticePayload system_notice = 12;
+
+    // 用户进入 / 离开
+    // 对应：
+    // CHAT_EVENT_TYPE_USER_JOIN
+    // CHAT_EVENT_TYPE_USER_LEAVE
+    ChatUserStatePayload user_state = 13;
+
+    // 排队 / 等待服务列表变化
+    // 对应：
+    // CHAT_EVENT_TYPE_QUEUE_UPDATE
+    ChatQueuePayload queue = 14;
+
+    // 坐席接待 / 坐席离开
+    // 对应：
+    // CHAT_EVENT_TYPE_AGENT_ACCEPTED
+    // CHAT_EVENT_TYPE_AGENT_LEAVE
+    ChatAgentPayload agent = 15;
+
+    // 会话转接
+    // 对应：
+    // CHAT_EVENT_TYPE_TRANSFER_REQUEST
+    // CHAT_EVENT_TYPE_TRANSFER_ACCEPT
+    // CHAT_EVENT_TYPE_TRANSFER_REJECT
+    ChatTransferPayload transfer = 16;
+
+    // 评价
+    // 对应：
+    // CHAT_EVENT_TYPE_EVALUATION_INVITE
+    // CHAT_EVENT_TYPE_EVALUATION_SUBMIT
+    ChatEvaluationPayload evaluation = 17;
+
+    // 正在输入
+    // 对应：
+    // CHAT_EVENT_TYPE_TYPING
+    ChatTypingPayload typing = 18;
+
+    // 消息状态回执
+    // 对应：
+    // CHAT_EVENT_TYPE_MESSAGE_DELIVERED
+    // CHAT_EVENT_TYPE_MESSAGE_READ
+    ChatMessageReceiptPayload receipt = 19;
+
+    // 消息操作
+    // 对应：
+    // CHAT_EVENT_TYPE_MESSAGE_RECALL
+    // CHAT_EVENT_TYPE_MESSAGE_DELETE
+    ChatMessageOperatePayload message_operate = 20;
+
+    // 心跳
+    // 对应：
+    // CHAT_EVENT_TYPE_HEARTBEAT
+    ChatHeartbeatPayload heartbeat = 21;
+
+    // 错误事件
+    // 对应：
+    // CHAT_EVENT_TYPE_ERROR
+    ChatErrorPayload error = 22;
   }
 }
 
-// WebSocket连接成功消息
-message ChatWsConnected {
-  string message = 1;     // 提示文案
-  int64 merchant_id = 2;  // 客服商户ID
-  int64 user_id = 3;      // 用户ID
-  string username = 4;    // 用户名
-  string session_no = 5;  // 会话编号
-  bool temporary = 6;     // 是否临时游客会话
-  ChatSession session = 7; // 会话快照
-  ChatQueueInfo queue = 8; // 排队信息
+/**
+ * 系统通知 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_SYSTEM_NOTICE
+ */
+message ChatSystemNoticePayload {
+  // 会话 ID
+  string session_no = 1;
+
+  // 通知标题，可选
+  string title = 2;
+
+  // 通知内容
+  string content = 3;
+
+  // 通知等级
+  // 例如：info、warning、error
+  string level = 4;
+
+  // 是否需要展示在聊天记录中
+  bool show_in_chat = 5;
 }
 
-// 用户侧WebSocket发送消息
-message ChatWsUserMessageReq {
-  string session_no = 1;            // 会话编号,为空时使用当前连接会话
-  string client_message_id = 2;     // 客户端消息ID,用于幂等/回执
-  ChatMessageType message_type = 3; // 消息类型
-  string content = 4;               // 文本内容
-  string url = 5;                   // 资源URL
-  string file_name = 6;             // 文件名
-  int64 file_size = 7;              // 文件大小(byte)
-  string mime_type = 8;             // MIME类型
-  int32 width = 9;                  // 图片/视频宽度
-  int32 height = 10;                // 图片/视频高度
-  int32 duration = 11;              // 音频/视频时长(秒)
-  string sender_nickname = 12;      // 用户昵称快照
-  string sender_avatar_url = 13;    // 用户头像快照
-  string extra = 14;                // 扩展JSON
+/**
+ * 用户状态 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_USER_JOIN
+ * CHAT_EVENT_TYPE_USER_LEAVE
+ */
+message ChatUserStatePayload {
+  // 会话 ID
+  string session_no = 1;
+
+  // 用户 ID
+  string user_id = 2;
+
+  // 用户昵称
+  string user_name = 3;
+
+  // 用户头像
+  string avatar = 4;
+
+  // 是否在线
+  bool online = 5;
+
+  // 来源
+  ChatSessionSource source = 6;
 }
 
-// 坐席侧WebSocket发送消息
-message ChatWsAgentMessageReq {
-  string session_no = 1;            // 会话编号
-  string client_message_id = 2;     // 客户端消息ID,用于幂等/回执
-  ChatMessageType message_type = 3; // 消息类型
-  string content = 4;               // 文本内容
-  string url = 5;                   // 资源URL
-  string file_name = 6;             // 文件名
-  int64 file_size = 7;              // 文件大小(byte)
-  string mime_type = 8;             // MIME类型
-  int32 width = 9;                  // 图片/视频宽度
-  int32 height = 10;                // 图片/视频高度
-  int32 duration = 11;              // 音频/视频时长(秒)
-  string sender_nickname = 12;      // 坐席昵称快照
-  string sender_avatar_url = 13;    // 坐席头像快照
-  string extra = 14;                // 扩展JSON
+/**
+ * 排队动作
+ */
+enum ChatQueueAction {
+  CHAT_QUEUE_ACTION_UNKNOWN = 0;
+
+  // 进入等待列表
+  CHAT_QUEUE_ACTION_JOIN = 1;
+
+  // 等待信息更新
+  CHAT_QUEUE_ACTION_UPDATE = 2;
+
+  // 用户取消等待
+  CHAT_QUEUE_ACTION_CANCEL = 3;
+
+  // 已被坐席接待，从等待列表移除
+  CHAT_QUEUE_ACTION_ACCEPTED = 4;
 }
 
-// 坐席侧WebSocket接待会话
-message ChatWsAcceptSessionReq {
-  string session_no = 1; // 会话编号
-  string reason = 2;     // 接待原因
+/**
+ * 排队 / 等待服务列表 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_QUEUE_UPDATE
+ */
+message ChatQueuePayload {
+  // 会话 ID
+  string session_no = 1;
+
+  // 用户 ID
+  string user_id = 2;
+
+  // 用户昵称
+  string user_name = 3;
+
+  // 排队动作
+  ChatQueueAction queue_action = 4;
+
+  // 当前排队位置
+  int32 queue_position = 5;
+
+  // 当前等待人数
+  int32 waiting_count = 6;
+
+  // 预计等待秒数
+  int32 estimated_wait_seconds = 7;
+
+  // 会话状态
+  ChatSessionStatus session_status = 8;
+
+  // 触发时间，毫秒
+  int64 action_time = 9;
 }
+
+/**
+ * 坐席相关 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_AGENT_ACCEPTED
+ * CHAT_EVENT_TYPE_AGENT_LEAVE
+ */
+message ChatAgentPayload {
+  // 会话 ID
+  string session_no = 1;
+
+  // 坐席 ID
+  string agent_id = 2;
+
+  // 坐席名称
+  string agent_name = 3;
+
+  // 坐席头像
+  string agent_avatar = 4;
+
+  // 坐席状态
+  ChatAgentStatus agent_status = 5;
+
+  // 分配 / 接待方式
+  // 你的业务里主要是 MANUAL
+  ChatAssignType assign_type = 6;
+
+  // 会话状态
+  ChatSessionStatus session_status = 7;
+
+  // 备注
+  string remark = 8;
+
+  // 操作时间，毫秒
+  int64 action_time = 9;
+}
+
+/**
+ * 转接 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_TRANSFER_REQUEST
+ * CHAT_EVENT_TYPE_TRANSFER_ACCEPT
+ * CHAT_EVENT_TYPE_TRANSFER_REJECT
+ */
+message ChatTransferPayload {
+  // 会话 ID
+  string session_no = 1;
+
+  // 发起转接的坐席 ID
+  string from_agent_id = 2;
+
+  // 发起转接的坐席名称
+  string from_agent_name = 3;
+
+  // 目标坐席 ID
+  string to_agent_id = 4;
+
+  // 目标坐席名称
+  string to_agent_name = 5;
+
+  // 转接原因
+  string reason = 6;
+
+  // 拒绝原因
+  // TRANSFER_REJECT 时使用
+  string reject_reason = 7;
+
+  // 转接时间，毫秒
+  int64 action_time = 8;
+}
+
+/**
+ * 评价 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_EVALUATION_INVITE
+ * CHAT_EVENT_TYPE_EVALUATION_SUBMIT
+ */
+message ChatEvaluationPayload {
+  // 会话 ID
+  string session_no = 1;
+
+  // 用户 ID
+  string user_id = 2;
+
+  // 坐席 ID
+  string agent_id = 3;
+
+  // 评价 ID
+  string evaluation_id = 4;
+
+  // 评分
+  // 例如：1 - 5
+  int32 rating = 5;
+
+  // 评价标签
+  repeated string tags = 6;
+
+  // 评价内容
+  string comment = 7;
+
+  // 是否已提交
+  bool submitted = 8;
+
+  // 评价时间，毫秒
+  int64 evaluated_at = 9;
+}
+
+/**
+ * 正在输入 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_TYPING
+ */
+message ChatTypingPayload {
+  // 会话 ID
+  string session_no = 1;
+
+  // 正在输入的人
+  string sender_id = 2;
+
+  // 发送方类型
+  ChatSenderType sender_type = 3;
+
+  // 显示文案
+  // 例如：对方正在输入...
+  string text = 4;
+
+  // 触发时间，毫秒
+  int64 action_time = 5;
+}
+
+/**
+ * 消息回执 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_MESSAGE_DELIVERED
+ * CHAT_EVENT_TYPE_MESSAGE_READ
+ */
+message ChatMessageReceiptPayload {
+  // 会话 ID
+  string session_no = 1;
+
+  // 消息 ID
+  string message_no = 2;
+
+  // 消息发送方 ID
+  int64 sender_id = 3;
+
+  // 回执触发方 ID
+  // 例如：谁收到了、谁读了
+  int64 operator_id = 4;
+
+  // 回执触发方类型
+  ChatSenderType operator_type = 5;
+
+  // 消息状态
+  ChatMessageStatus message_status = 6;
+
+  // 回执时间，毫秒
+  int64 receipt_time = 7;
+}
+
+/**
+ * 消息操作 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_MESSAGE_RECALL
+ * CHAT_EVENT_TYPE_MESSAGE_DELETE
+ */
+message ChatMessageOperatePayload {
+  // 会话 ID
+  string session_no = 1;
+
+  // 消息 ID
+  string message_no = 2;
+
+  // 操作类型
+  ChatMessageOperateType operate_type = 3;
+
+  // 操作人 ID
+  string operator_id = 4;
+
+  // 操作人类型
+  ChatSenderType operator_type = 5;
+
+  // 删除范围
+  // MESSAGE_DELETE 时使用
+  ChatMessageDeleteScope delete_scope = 6;
+
+  // 操作原因
+  string reason = 7;
+
+  // 操作时间，毫秒
+  int64 operated_at = 8;
+}
+
+/**
+ * 心跳 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_HEARTBEAT
+ */
+message ChatHeartbeatPayload {
+  // 当前连接 ID，可选
+  string connection_id = 1;
+
+  // 用户 ID / 坐席 ID
+  string uid = 2;
+
+  // 发送方类型
+  ChatSenderType sender_type = 3;
+
+  // 客户端时间戳，毫秒
+  int64 client_time = 4;
+
+  // 服务端时间戳，毫秒
+  int64 server_time = 5;
+}
+
+/**
+ * 错误 payload
+ *
+ * 对应事件：
+ * CHAT_EVENT_TYPE_ERROR
+ */
+message ChatErrorPayload {
+  // 会话 ID，可选
+  string session_no = 1;
+
+  // 消息 ID，可选
+  string message_no = 2;
+
+  // 错误码
+  int32 error_code = 3;
+
+  // 错误信息
+  string error_message = 4;
+
+  // 错误详情，调试用
+  string detail = 5;
+
+  // 是否可以重试
+  bool retryable = 6;
+}
+
+
 
 
 // 会话分配记录

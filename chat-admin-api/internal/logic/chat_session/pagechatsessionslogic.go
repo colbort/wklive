@@ -10,7 +10,6 @@ import (
 
 	"chat-admin-api/internal/logicutil"
 	"wklive/proto/chat"
-	"wklive/proto/common"
 
 	"chat-admin-api/internal/svc"
 	"chat-admin-api/internal/types"
@@ -41,34 +40,34 @@ func (l *PageChatSessionsLogic) PageChatSessions(req *types.PageChatSessionsReq)
 		return resp, err
 	}
 
-	transientResp, err := l.svcCtx.ChatAdminCli.AdminPageTransientChatSessions(l.ctx, &chat.AdminPageTransientChatSessionsReq{
-		MerchantId: req.MerchantId,
-		UserId:     req.UserId,
-		AgentId:    req.AgentId,
-		Status:     chat.ChatSessionStatus(req.Status),
-		Page:       &common.PageReq{Limit: req.Limit},
-	})
-	if err != nil || transientResp.GetBase().GetCode() != 200 {
-		return resp, nil
-	}
-	transient := transientResp.GetData()
-	if len(transient) == 0 {
-		return resp, nil
-	}
+	// transientResp, err := l.svcCtx.ChatAdminCli.AdminPageTransientChatSessions(l.ctx, &chat.AdminPageTransientChatSessionsReq{
+	// 	MerchantId: req.MerchantId,
+	// 	UserId:     req.UserId,
+	// 	AgentId:    req.AgentId,
+	// 	Status:     chat.ChatSessionStatus(req.Status),
+	// 	Page:       &common.PageReq{Limit: req.Limit},
+	// })
+	// if err != nil || transientResp.GetBase().GetCode() != 200 {
+	// 	return resp, nil
+	// }
+	// transient := transientResp.GetData()
+	// if len(transient) == 0 {
+	// 	return resp, nil
+	// }
 
-	exists := make(map[string]struct{}, len(resp.Data))
-	for _, item := range resp.Data {
-		exists[item.SessionNo] = struct{}{}
-	}
-	merged := make([]types.ChatSession, 0, len(transient)+len(resp.Data))
-	for _, item := range transient {
-		if _, ok := exists[item.GetSessionNo()]; ok {
-			continue
-		}
-		merged = append(merged, protoSessionToType(item))
-	}
-	resp.Data = append(merged, resp.Data...)
-	resp.Total += int64(len(merged))
+	// exists := make(map[string]struct{}, len(resp.Data))
+	// for _, item := range resp.Data {
+	// 	exists[item.SessionNo] = struct{}{}
+	// }
+	// merged := make([]types.ChatSession, 0, len(transient)+len(resp.Data))
+	// for _, item := range transient {
+	// 	if _, ok := exists[item.GetSessionNo()]; ok {
+	// 		continue
+	// 	}
+	// 	merged = append(merged, protoSessionToType(item))
+	// }
+	// resp.Data = append(merged, resp.Data...)
+	// resp.Total += int64(len(merged))
 	return resp, nil
 }
 

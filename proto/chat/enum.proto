@@ -4,14 +4,17 @@ package chat;
 
 option go_package = "wklive/proto/chat;chat";
 
-// 会话来源
+/**
+ * 会话来源
+ * 表示：会话是从哪里创建/发起的
+ */
 enum ChatSessionSource {
   CHAT_SESSION_SOURCE_UNKNOWN = 0;
 
   // APP 用户发起
   CHAT_SESSION_SOURCE_APP = 1;
 
-  // Web/H5 用户发起
+  // Web / H5 用户发起
   CHAT_SESSION_SOURCE_WEB = 2;
 
   // 后台创建
@@ -21,7 +24,10 @@ enum ChatSessionSource {
   CHAT_SESSION_SOURCE_SYSTEM = 4;
 }
 
-// 会话状态
+/**
+ * 会话状态
+ * 表示：当前会话处于什么状态
+ */
 enum ChatSessionStatus {
   CHAT_SESSION_STATUS_UNKNOWN = 0;
 
@@ -44,7 +50,9 @@ enum ChatSessionStatus {
   CHAT_SESSION_STATUS_TRANSFERRING = 6;
 }
 
-// 会话优先级
+/**
+ * 会话优先级
+ */
 enum ChatSessionPriority {
   CHAT_SESSION_PRIORITY_UNKNOWN = 0;
 
@@ -61,7 +69,9 @@ enum ChatSessionPriority {
   CHAT_SESSION_PRIORITY_URGENT = 4;
 }
 
-// 会话关闭原因
+/**
+ * 会话关闭原因
+ */
 enum ChatSessionCloseReason {
   CHAT_SESSION_CLOSE_REASON_UNKNOWN = 0;
 
@@ -84,7 +94,10 @@ enum ChatSessionCloseReason {
   CHAT_SESSION_CLOSE_REASON_TRANSFER_FAILED = 6;
 }
 
-// 坐席在线状态
+/**
+ * 坐席在线状态
+ * 表示：客服当前是否可以接待新会话
+ */
 enum ChatAgentStatus {
   CHAT_AGENT_STATUS_UNKNOWN = 0;
 
@@ -104,7 +117,10 @@ enum ChatAgentStatus {
   CHAT_AGENT_STATUS_AWAY = 5;
 }
 
-// 分配方式
+/**
+ * 分配方式
+ * 表示：客服是如何被分配到会话的
+ */
 enum ChatAssignType {
   CHAT_ASSIGN_TYPE_UNKNOWN = 0;
 
@@ -120,7 +136,13 @@ enum ChatAssignType {
 
 /**
  * 聊天事件类型
- * 表示：这条消息/推送是什么事件
+ * 表示：这条消息 / 推送 / WebSocket 数据是什么事件
+ *
+ * 注意：
+ * 1. MESSAGE 表示普通聊天消息。
+ * 2. MESSAGE 里的内容类型用 ChatMessageType 表示。
+ * 3. TYPING、HEARTBEAT 一般只做实时推送，不建议入库为聊天记录。
+ * 4. 会话开始不单独使用 SESSION_START，使用 QUEUE_UPDATE + AGENT_ACCEPTED 表示流程。
  */
 enum ChatEventType {
   // proto 默认占位，不作为业务事件使用
@@ -129,88 +151,72 @@ enum ChatEventType {
   // 普通聊天消息
   CHAT_EVENT_TYPE_MESSAGE = 1;
 
-  // 系统通知
-  // 例如：当前暂无客服在线，请留言
-  CHAT_EVENT_TYPE_SYSTEM = 2;
+  // 通用系统通知
+  // 例如：系统维护、风险提示、暂无客服在线、普通提示
+  CHAT_EVENT_TYPE_SYSTEM_NOTICE = 2;
 
-  // 用户进入会话
+  // 用户进入客服页面 / 建立 WebSocket 连接
   CHAT_EVENT_TYPE_USER_JOIN = 3;
 
-  // 用户离开会话
+  // 用户离开客服页面 / 断开 WebSocket 连接
   CHAT_EVENT_TYPE_USER_LEAVE = 4;
 
-  // 用户进入排队
-  // 例如：正在为您分配客服，请稍候
-  CHAT_EVENT_TYPE_QUEUE_JOIN = 5;
+  // 等待服务列表信息更新
+  // 例如：进入等待列表、取消等待、等待人数变化、预计等待时间变化
+  CHAT_EVENT_TYPE_QUEUE_UPDATE = 5;
 
-  // 排队信息更新
-  // 例如：您前面还有 3 人，预计等待 2 分钟
-  CHAT_EVENT_TYPE_QUEUE_UPDATE = 6;
+  // 坐席主动接待会话
+  // 例如：坐席 小王 已接待本次会话
+  CHAT_EVENT_TYPE_AGENT_ACCEPTED = 6;
 
-  // 客服已分配
-  // 例如：客服 小王 为您服务
-  CHAT_EVENT_TYPE_AGENT_ASSIGNED = 8;
-
-  // 客服接入会话
-  CHAT_EVENT_TYPE_AGENT_JOIN = 9;
-
-  // 客服离开会话
-  CHAT_EVENT_TYPE_AGENT_LEAVE = 10;
+  // 坐席离开会话
+  CHAT_EVENT_TYPE_AGENT_LEAVE = 7;
 
   // 会话转接发起
-  // 例如：客服 小王 发起转接给客服 小李
-  CHAT_EVENT_TYPE_TRANSFER_REQUEST = 11;
+  // 例如：坐席 小王 发起转接给坐席 小李
+  CHAT_EVENT_TYPE_TRANSFER_REQUEST = 8;
 
   // 会话转接接受
-  // 例如：客服 小李 接受转接
-  CHAT_EVENT_TYPE_TRANSFER_ACCEPT = 12;
+  // 例如：坐席 小李 接受转接
+  CHAT_EVENT_TYPE_TRANSFER_ACCEPT = 9;
 
   // 会话转接拒绝
-  // 例如：客服 小李 拒绝转接
-  CHAT_EVENT_TYPE_TRANSFER_REJECT = 13;
-
-  // 会话开始
-  CHAT_EVENT_TYPE_SESSION_START = 14;
+  // 例如：坐席 小李 拒绝转接
+  CHAT_EVENT_TYPE_TRANSFER_REJECT = 10;
 
   // 会话关闭 / 会话结束
-  CHAT_EVENT_TYPE_SESSION_CLOSE = 15;
+  // 具体关闭原因用 ChatSessionCloseReason 表示
+  CHAT_EVENT_TYPE_SESSION_CLOSE = 11;
 
   // 邀请用户评价
-  CHAT_EVENT_TYPE_EVALUATION_INVITE = 16;
+  CHAT_EVENT_TYPE_EVALUATION_INVITE = 12;
 
   // 用户提交评价
-  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 17;
+  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 13;
 
   // 正在输入
-  CHAT_EVENT_TYPE_TYPING = 18;
-
-  // 停止输入
-  CHAT_EVENT_TYPE_STOP_TYPING = 19;
+  // 建议发送方每隔 1~2 秒节流发送一次
+  // 接收方 3~5 秒内没有继续收到 TYPING，则自动隐藏“正在输入”
+  CHAT_EVENT_TYPE_TYPING = 14;
 
   // 消息已送达
-  CHAT_EVENT_TYPE_DELIVERED = 20;
+  CHAT_EVENT_TYPE_MESSAGE_DELIVERED = 15;
 
   // 消息已读
-  CHAT_EVENT_TYPE_READ = 21;
+  CHAT_EVENT_TYPE_MESSAGE_READ = 16;
 
   // 消息撤回
-  CHAT_EVENT_TYPE_RECALL = 22;
+  CHAT_EVENT_TYPE_MESSAGE_RECALL = 17;
+
+  // 消息删除
+  CHAT_EVENT_TYPE_MESSAGE_DELETE = 18;
 
   // 心跳
-  CHAT_EVENT_TYPE_HEARTBEAT = 23;
+  CHAT_EVENT_TYPE_HEARTBEAT = 19;
 
   // 错误事件
   // 例如：发送失败、会话不存在、权限不足
-  CHAT_EVENT_TYPE_ERROR = 24;
-
-  // 暂无客服在线
-  CHAT_EVENT_TYPE_NO_AGENT_ONLINE = 25;
-
-  // 会话超时关闭
-  CHAT_EVENT_TYPE_SESSION_TIMEOUT = 26;
-
-  // 消息删除
-  CHAT_EVENT_TYPE_DELETE = 27;
+  CHAT_EVENT_TYPE_ERROR = 20;
 }
 
 /**
@@ -275,6 +281,7 @@ enum ChatSenderType {
 
 /**
  * 消息发送状态
+ * 表示：一条聊天消息当前的状态
  */
 enum ChatMessageStatus {
   // 未知状态
@@ -302,7 +309,9 @@ enum ChatMessageStatus {
   CHAT_MESSAGE_STATUS_DELETED = 7;
 }
 
-// 客服后台用户类型
+/**
+ * 客服后台用户类型
+ */
 enum ChatUserType {
   reserved 3;
 
@@ -315,7 +324,10 @@ enum ChatUserType {
   CHAT_USER_TYPE_AGENT = 2;
 }
 
-// 同步动作
+/**
+ * 同步动作
+ * 用于后台用户、客服、商户、配置等数据同步
+ */
 enum ChatSyncAction {
   CHAT_SYNC_ACTION_UNKNOWN = 0;
 
@@ -326,42 +338,30 @@ enum ChatSyncAction {
   CHAT_SYNC_ACTION_DELETE = 2;
 }
 
-enum ChatAdminEventType {
-  CHAT_ADMIN_EVENT_TYPE_UNKNOWN = 0;
 
-  // 坐席上线
-  CHAT_ADMIN_EVENT_TYPE_AGENT_ONLINE = 1;
+/**
+ * 消息操作类型
+ */
+enum ChatMessageOperateType {
+  CHAT_MESSAGE_OPERATE_TYPE_UNKNOWN = 0;
 
-  // 坐席下线
-  CHAT_ADMIN_EVENT_TYPE_AGENT_OFFLINE = 2;
+  // 撤回
+  CHAT_MESSAGE_OPERATE_TYPE_RECALL = 1;
 
-  // 坐席状态变化
-  CHAT_ADMIN_EVENT_TYPE_AGENT_STATUS_CHANGE = 3;
-
-  // 新用户进入待接待
-  CHAT_ADMIN_EVENT_TYPE_USER_JOIN = 4;
-
-  // 用户离开
-  CHAT_ADMIN_EVENT_TYPE_USER_LEAVE = 5;
-
-  // 会话被接待
-  CHAT_ADMIN_EVENT_TYPE_SESSION_ACCEPTED = 6;
-
-  // 会话关闭
-  CHAT_ADMIN_EVENT_TYPE_SESSION_CLOSE = 7;
-
-  // 用户消息，推送给坐席端
-  CHAT_ADMIN_EVENT_TYPE_USER_MESSAGE = 8;
-
-  // 客服消息，推送给其他后台端同步状态
-  CHAT_ADMIN_EVENT_TYPE_AGENT_MESSAGE = 9;
-
-  // 排队信息变化
-  CHAT_ADMIN_EVENT_TYPE_QUEUE_UPDATE = 10;
-
-  // 会话转接
-  CHAT_ADMIN_EVENT_TYPE_SESSION_TRANSFER = 11;
-
-  // 错误事件
-  CHAT_ADMIN_EVENT_TYPE_ERROR = 12;
+  // 删除
+  CHAT_MESSAGE_OPERATE_TYPE_DELETE = 2;
 }
+
+/**
+ * 消息删除范围
+ */
+enum ChatMessageDeleteScope {
+  CHAT_MESSAGE_DELETE_SCOPE_UNKNOWN = 0;
+
+  // 只删除自己这边
+  CHAT_MESSAGE_DELETE_SCOPE_SELF = 1;
+
+  // 双方删除
+  CHAT_MESSAGE_DELETE_SCOPE_BOTH = 2;
+}
+

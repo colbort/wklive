@@ -76,27 +76,3 @@ func (s *ChatAppServer) AppSubscribeStream(in *chat.AppChatSubscribeRequest, str
 	l := logic.NewAppSubscribeStreamLogic(stream.Context(), s.svcCtx)
 	return l.AppSubscribeStream(in, stream)
 }
-
-// 创建或更新游客临时会话
-func (s *ChatAppServer) AppUpsertTransientChatSession(ctx context.Context, in *chat.AppUpsertTransientChatSessionReq) (*chat.AppChatSessionResp, error) {
-	l := logic.NewAppUpsertTransientChatSessionLogic(ctx, s.svcCtx)
-	return l.AppUpsertTransientChatSession(in)
-}
-
-// 删除游客临时会话和消息
-func (s *ChatAppServer) AppDeleteTransientChatSession(ctx context.Context, in *chat.AppDeleteTransientChatSessionReq) (*chat.AppDeleteTransientChatSessionResp, error) {
-	l := logic.NewAppDeleteTransientChatSessionLogic(ctx, s.svcCtx)
-	return l.AppDeleteTransientChatSession(in)
-}
-
-// 查询游客临时会话
-func (s *ChatAppServer) AppGetTransientChatSession(ctx context.Context, in *chat.AppGetTransientChatSessionReq) (*chat.AppChatSessionResp, error) {
-	l := logic.NewAppGetTransientChatSessionLogic(ctx, s.svcCtx)
-	return l.AppGetTransientChatSession(in)
-}
-
-// 分页查询游客临时会话
-func (s *ChatAppServer) AppPageTransientChatSessions(ctx context.Context, in *chat.AppPageTransientChatSessionsReq) (*chat.AppPageTransientChatSessionsResp, error) {
-	l := logic.NewAppPageTransientChatSessionsLogic(ctx, s.svcCtx)
-	return l.AppPageTransientChatSessions(in)
-}

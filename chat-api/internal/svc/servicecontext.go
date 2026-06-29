@@ -5,9 +5,7 @@ package svc
 
 import (
 	"context"
-	"fmt"
 	"strconv"
-	"strings"
 
 	"chat-api/internal/config"
 	"chat-api/internal/middleware"
@@ -60,49 +58,4 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		HeaderIdentity: common.NewHeaderMiddleware().Handle,
 		ChatAppCli:     chat.NewChatAppClient(chatCli.Conn()),
 	}
-}
-
-func (s *ServiceContext) GuestSessionNo(ctx context.Context, merchantId, userId, ttlSeconds int64) (string, error) {
-	pageResp, err := s.ChatAppCli.AppPageTransientChatSessions(ctx, &chat.AppPageTransientChatSessionsReq{
-		MerchantId: merchantId,
-		UserId:     userId,
-	})
-	if err == nil && pageResp.GetBase().GetCode() == 200 {
-		for _, session := range pageResp.GetData() {
-			if strings.TrimSpace(session.GetSessionNo()) != "" {
-				return strings.TrimSpace(session.GetSessionNo()), nil
-			}
-		}
-	}
-
-	resp, err := s.ChatAppCli.GenerateChatSessionNo(ctx, &chat.GenerateChatSessionNoReq{})
-	if err != nil {
-		return "", err
-	}
-	if resp.GetBase().GetCode() != 200 {
-		return "", fmt.Errorf("%s", resp.GetBase().GetMsg())
-	}
-	sessionNo := strings.TrimSpace(resp.GetSessionNo())
-	if sessionNo == "" {
-		return "", fmt.Errorf("sessionNo is empty")
-	}
-	upsertResp, err := s.ChatAppCli.AppUpsertTransientChatSession(ctx, &chat.AppUpsertTransientChatSessionReq{
-		Session: &chat.ChatSession{
-			SessionNo:  sessionNo,
-			MerchantId: merchantId,
-			UserId:     userId,
-			Source:     chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
-			Status:     chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
-			Priority:   chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL,
-			IsGuest:    true,
-		},
-		TtlSeconds: ttlSeconds,
-	})
-	if err != nil {
-		return "", err
-	}
-	if upsertResp.GetBase().GetCode() != 200 {
-		return "", fmt.Errorf("%s", upsertResp.GetBase().GetMsg())
-	}
-	return sessionNo, nil
 }

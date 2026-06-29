@@ -6,7 +6,6 @@ package chat_session
 import (
 	"context"
 	"encoding/json"
-	"strings"
 
 	"chat-admin-api/internal/svc"
 	"chat-admin-api/internal/types"
@@ -31,35 +30,36 @@ func NewPageChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *PageChatMessagesLogic) PageChatMessages(req *types.PageChatMessagesReq) (resp *types.PageChatMessagesResp, err error) {
-	sessionNo := strings.TrimSpace(req.SessionNo)
-	if l.svcCtx.ChatAdminCli != nil {
-		transientSession, err := l.svcCtx.ChatAdminCli.AdminGetTransientChatSession(l.ctx, &chat.AdminGetTransientChatSessionReq{
-			MerchantId: req.MerchantId,
-			SessionNo:  sessionNo,
-		})
-		if err == nil && transientSession.GetBase().GetCode() == 200 {
-			rpcResp, err := l.svcCtx.ChatAdminCli.PageChatMessages(l.ctx, &chat.PageChatMessagesReq{
-				MerchantId: req.MerchantId,
-				SessionNo:  sessionNo,
-				SenderType: chat.ChatSenderType(req.SenderType),
-				IsGuest:    true,
-				Page: &common.PageReq{
-					Cursor: req.Cursor,
-					Limit:  req.Limit,
-				},
-			})
-			if err != nil {
-				return nil, err
-			}
-			return &types.PageChatMessagesResp{
-				RespBase: respBaseToType(rpcResp.GetBase()),
-				Data:     protoMessagesToTypes(req.MerchantId, rpcResp.GetData()),
-			}, nil
-		}
-	}
+	// sessionNo := strings.TrimSpace(req.SessionNo)
+	// if l.svcCtx.ChatAdminCli != nil {
+	// 	transientSession, err := l.svcCtx.ChatAdminCli.AdminGetTransientChatSession(l.ctx, &chat.AdminGetTransientChatSessionReq{
+	// 		MerchantId: req.MerchantId,
+	// 		SessionNo:  sessionNo,
+	// 	})
+	// 	if err == nil && transientSession.GetBase().GetCode() == 200 {
+	// 		rpcResp, err := l.svcCtx.ChatAdminCli.PageChatMessages(l.ctx, &chat.PageChatMessagesReq{
+	// 			MerchantId: req.MerchantId,
+	// 			SessionNo:  sessionNo,
+	// 			SenderType: chat.ChatSenderType(req.SenderType),
+	// 			IsGuest:    true,
+	// 			Page: &common.PageReq{
+	// 				Cursor: req.Cursor,
+	// 				Limit:  req.Limit,
+	// 			},
+	// 		})
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		return &types.PageChatMessagesResp{
+	// 			RespBase: respBaseToType(rpcResp.GetBase()),
+	// 			Data:     protoMessagesToTypes(req.MerchantId, rpcResp.GetData()),
+	// 		}, nil
+	// 	}
+	// }
 	rpcResp, err := l.svcCtx.ChatAdminCli.PageChatMessages(l.ctx, &chat.PageChatMessagesReq{
-		SessionNo:  sessionNo,
+		SessionNo:  req.SessionNo,
 		SenderType: chat.ChatSenderType(req.SenderType),
+		MerchantId: req.MerchantId,
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,

@@ -21,14 +21,16 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// *
 // 会话来源
+// 表示：会话是从哪里创建/发起的
 type ChatSessionSource int32
 
 const (
 	ChatSessionSource_CHAT_SESSION_SOURCE_UNKNOWN ChatSessionSource = 0
 	// APP 用户发起
 	ChatSessionSource_CHAT_SESSION_SOURCE_APP ChatSessionSource = 1
-	// Web/H5 用户发起
+	// Web / H5 用户发起
 	ChatSessionSource_CHAT_SESSION_SOURCE_WEB ChatSessionSource = 2
 	// 后台创建
 	ChatSessionSource_CHAT_SESSION_SOURCE_ADMIN ChatSessionSource = 3
@@ -81,7 +83,9 @@ func (ChatSessionSource) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{0}
 }
 
+// *
 // 会话状态
+// 表示：当前会话处于什么状态
 type ChatSessionStatus int32
 
 const (
@@ -149,6 +153,7 @@ func (ChatSessionStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{1}
 }
 
+// *
 // 会话优先级
 type ChatSessionPriority int32
 
@@ -209,6 +214,7 @@ func (ChatSessionPriority) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{2}
 }
 
+// *
 // 会话关闭原因
 type ChatSessionCloseReason int32
 
@@ -277,7 +283,9 @@ func (ChatSessionCloseReason) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{3}
 }
 
+// *
 // 坐席在线状态
+// 表示：客服当前是否可以接待新会话
 type ChatAgentStatus int32
 
 const (
@@ -341,7 +349,9 @@ func (ChatAgentStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{4}
 }
 
+// *
 // 分配方式
+// 表示：客服是如何被分配到会话的
 type ChatAssignType int32
 
 const (
@@ -399,7 +409,13 @@ func (ChatAssignType) EnumDescriptor() ([]byte, []int) {
 
 // *
 // 聊天事件类型
-// 表示：这条消息/推送是什么事件
+// 表示：这条消息 / 推送 / WebSocket 数据是什么事件
+//
+// 注意：
+// 1. MESSAGE 表示普通聊天消息。
+// 2. MESSAGE 里的内容类型用 ChatMessageType 表示。
+// 3. TYPING、HEARTBEAT 一般只做实时推送，不建议入库为聊天记录。
+// 4. 会话开始不单独使用 SESSION_START，使用 QUEUE_UPDATE + AGENT_ACCEPTED 表示流程。
 type ChatEventType int32
 
 const (
@@ -407,64 +423,54 @@ const (
 	ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED ChatEventType = 0
 	// 普通聊天消息
 	ChatEventType_CHAT_EVENT_TYPE_MESSAGE ChatEventType = 1
-	// 系统通知
-	// 例如：当前暂无客服在线，请留言
-	ChatEventType_CHAT_EVENT_TYPE_SYSTEM ChatEventType = 2
-	// 用户进入会话
+	// 通用系统通知
+	// 例如：系统维护、风险提示、暂无客服在线、普通提示
+	ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE ChatEventType = 2
+	// 用户进入客服页面 / 建立 WebSocket 连接
 	ChatEventType_CHAT_EVENT_TYPE_USER_JOIN ChatEventType = 3
-	// 用户离开会话
+	// 用户离开客服页面 / 断开 WebSocket 连接
 	ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE ChatEventType = 4
-	// 用户进入排队
-	// 例如：正在为您分配客服，请稍候
-	ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN ChatEventType = 5
-	// 排队信息更新
-	// 例如：您前面还有 3 人，预计等待 2 分钟
-	ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE ChatEventType = 6
-	// 客服已分配
-	// 例如：客服 小王 为您服务
-	ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED ChatEventType = 8
-	// 客服接入会话
-	ChatEventType_CHAT_EVENT_TYPE_AGENT_JOIN ChatEventType = 9
-	// 客服离开会话
-	ChatEventType_CHAT_EVENT_TYPE_AGENT_LEAVE ChatEventType = 10
+	// 等待服务列表信息更新
+	// 例如：进入等待列表、取消等待、等待人数变化、预计等待时间变化
+	ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE ChatEventType = 5
+	// 坐席主动接待会话
+	// 例如：坐席 小王 已接待本次会话
+	ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED ChatEventType = 6
+	// 坐席离开会话
+	ChatEventType_CHAT_EVENT_TYPE_AGENT_LEAVE ChatEventType = 7
 	// 会话转接发起
-	// 例如：客服 小王 发起转接给客服 小李
-	ChatEventType_CHAT_EVENT_TYPE_TRANSFER_REQUEST ChatEventType = 11
+	// 例如：坐席 小王 发起转接给坐席 小李
+	ChatEventType_CHAT_EVENT_TYPE_TRANSFER_REQUEST ChatEventType = 8
 	// 会话转接接受
-	// 例如：客服 小李 接受转接
-	ChatEventType_CHAT_EVENT_TYPE_TRANSFER_ACCEPT ChatEventType = 12
+	// 例如：坐席 小李 接受转接
+	ChatEventType_CHAT_EVENT_TYPE_TRANSFER_ACCEPT ChatEventType = 9
 	// 会话转接拒绝
-	// 例如：客服 小李 拒绝转接
-	ChatEventType_CHAT_EVENT_TYPE_TRANSFER_REJECT ChatEventType = 13
-	// 会话开始
-	ChatEventType_CHAT_EVENT_TYPE_SESSION_START ChatEventType = 14
+	// 例如：坐席 小李 拒绝转接
+	ChatEventType_CHAT_EVENT_TYPE_TRANSFER_REJECT ChatEventType = 10
 	// 会话关闭 / 会话结束
-	ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE ChatEventType = 15
+	// 具体关闭原因用 ChatSessionCloseReason 表示
+	ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE ChatEventType = 11
 	// 邀请用户评价
-	ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE ChatEventType = 16
+	ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE ChatEventType = 12
 	// 用户提交评价
-	ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT ChatEventType = 17
+	ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT ChatEventType = 13
 	// 正在输入
-	ChatEventType_CHAT_EVENT_TYPE_TYPING ChatEventType = 18
-	// 停止输入
-	ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING ChatEventType = 19
+	// 建议发送方每隔 1~2 秒节流发送一次
+	// 接收方 3~5 秒内没有继续收到 TYPING，则自动隐藏“正在输入”
+	ChatEventType_CHAT_EVENT_TYPE_TYPING ChatEventType = 14
 	// 消息已送达
-	ChatEventType_CHAT_EVENT_TYPE_DELIVERED ChatEventType = 20
+	ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED ChatEventType = 15
 	// 消息已读
-	ChatEventType_CHAT_EVENT_TYPE_READ ChatEventType = 21
+	ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ ChatEventType = 16
 	// 消息撤回
-	ChatEventType_CHAT_EVENT_TYPE_RECALL ChatEventType = 22
+	ChatEventType_CHAT_EVENT_TYPE_MESSAGE_RECALL ChatEventType = 17
+	// 消息删除
+	ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELETE ChatEventType = 18
 	// 心跳
-	ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT ChatEventType = 23
+	ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT ChatEventType = 19
 	// 错误事件
 	// 例如：发送失败、会话不存在、权限不足
-	ChatEventType_CHAT_EVENT_TYPE_ERROR ChatEventType = 24
-	// 暂无客服在线
-	ChatEventType_CHAT_EVENT_TYPE_NO_AGENT_ONLINE ChatEventType = 25
-	// 会话超时关闭
-	ChatEventType_CHAT_EVENT_TYPE_SESSION_TIMEOUT ChatEventType = 26
-	// 消息删除
-	ChatEventType_CHAT_EVENT_TYPE_DELETE ChatEventType = 27
+	ChatEventType_CHAT_EVENT_TYPE_ERROR ChatEventType = 20
 )
 
 // Enum value maps for ChatEventType.
@@ -472,60 +478,48 @@ var (
 	ChatEventType_name = map[int32]string{
 		0:  "CHAT_EVENT_TYPE_UNSPECIFIED",
 		1:  "CHAT_EVENT_TYPE_MESSAGE",
-		2:  "CHAT_EVENT_TYPE_SYSTEM",
+		2:  "CHAT_EVENT_TYPE_SYSTEM_NOTICE",
 		3:  "CHAT_EVENT_TYPE_USER_JOIN",
 		4:  "CHAT_EVENT_TYPE_USER_LEAVE",
-		5:  "CHAT_EVENT_TYPE_QUEUE_JOIN",
-		6:  "CHAT_EVENT_TYPE_QUEUE_UPDATE",
-		8:  "CHAT_EVENT_TYPE_AGENT_ASSIGNED",
-		9:  "CHAT_EVENT_TYPE_AGENT_JOIN",
-		10: "CHAT_EVENT_TYPE_AGENT_LEAVE",
-		11: "CHAT_EVENT_TYPE_TRANSFER_REQUEST",
-		12: "CHAT_EVENT_TYPE_TRANSFER_ACCEPT",
-		13: "CHAT_EVENT_TYPE_TRANSFER_REJECT",
-		14: "CHAT_EVENT_TYPE_SESSION_START",
-		15: "CHAT_EVENT_TYPE_SESSION_CLOSE",
-		16: "CHAT_EVENT_TYPE_EVALUATION_INVITE",
-		17: "CHAT_EVENT_TYPE_EVALUATION_SUBMIT",
-		18: "CHAT_EVENT_TYPE_TYPING",
-		19: "CHAT_EVENT_TYPE_STOP_TYPING",
-		20: "CHAT_EVENT_TYPE_DELIVERED",
-		21: "CHAT_EVENT_TYPE_READ",
-		22: "CHAT_EVENT_TYPE_RECALL",
-		23: "CHAT_EVENT_TYPE_HEARTBEAT",
-		24: "CHAT_EVENT_TYPE_ERROR",
-		25: "CHAT_EVENT_TYPE_NO_AGENT_ONLINE",
-		26: "CHAT_EVENT_TYPE_SESSION_TIMEOUT",
-		27: "CHAT_EVENT_TYPE_DELETE",
+		5:  "CHAT_EVENT_TYPE_QUEUE_UPDATE",
+		6:  "CHAT_EVENT_TYPE_AGENT_ACCEPTED",
+		7:  "CHAT_EVENT_TYPE_AGENT_LEAVE",
+		8:  "CHAT_EVENT_TYPE_TRANSFER_REQUEST",
+		9:  "CHAT_EVENT_TYPE_TRANSFER_ACCEPT",
+		10: "CHAT_EVENT_TYPE_TRANSFER_REJECT",
+		11: "CHAT_EVENT_TYPE_SESSION_CLOSE",
+		12: "CHAT_EVENT_TYPE_EVALUATION_INVITE",
+		13: "CHAT_EVENT_TYPE_EVALUATION_SUBMIT",
+		14: "CHAT_EVENT_TYPE_TYPING",
+		15: "CHAT_EVENT_TYPE_MESSAGE_DELIVERED",
+		16: "CHAT_EVENT_TYPE_MESSAGE_READ",
+		17: "CHAT_EVENT_TYPE_MESSAGE_RECALL",
+		18: "CHAT_EVENT_TYPE_MESSAGE_DELETE",
+		19: "CHAT_EVENT_TYPE_HEARTBEAT",
+		20: "CHAT_EVENT_TYPE_ERROR",
 	}
 	ChatEventType_value = map[string]int32{
 		"CHAT_EVENT_TYPE_UNSPECIFIED":       0,
 		"CHAT_EVENT_TYPE_MESSAGE":           1,
-		"CHAT_EVENT_TYPE_SYSTEM":            2,
+		"CHAT_EVENT_TYPE_SYSTEM_NOTICE":     2,
 		"CHAT_EVENT_TYPE_USER_JOIN":         3,
 		"CHAT_EVENT_TYPE_USER_LEAVE":        4,
-		"CHAT_EVENT_TYPE_QUEUE_JOIN":        5,
-		"CHAT_EVENT_TYPE_QUEUE_UPDATE":      6,
-		"CHAT_EVENT_TYPE_AGENT_ASSIGNED":    8,
-		"CHAT_EVENT_TYPE_AGENT_JOIN":        9,
-		"CHAT_EVENT_TYPE_AGENT_LEAVE":       10,
-		"CHAT_EVENT_TYPE_TRANSFER_REQUEST":  11,
-		"CHAT_EVENT_TYPE_TRANSFER_ACCEPT":   12,
-		"CHAT_EVENT_TYPE_TRANSFER_REJECT":   13,
-		"CHAT_EVENT_TYPE_SESSION_START":     14,
-		"CHAT_EVENT_TYPE_SESSION_CLOSE":     15,
-		"CHAT_EVENT_TYPE_EVALUATION_INVITE": 16,
-		"CHAT_EVENT_TYPE_EVALUATION_SUBMIT": 17,
-		"CHAT_EVENT_TYPE_TYPING":            18,
-		"CHAT_EVENT_TYPE_STOP_TYPING":       19,
-		"CHAT_EVENT_TYPE_DELIVERED":         20,
-		"CHAT_EVENT_TYPE_READ":              21,
-		"CHAT_EVENT_TYPE_RECALL":            22,
-		"CHAT_EVENT_TYPE_HEARTBEAT":         23,
-		"CHAT_EVENT_TYPE_ERROR":             24,
-		"CHAT_EVENT_TYPE_NO_AGENT_ONLINE":   25,
-		"CHAT_EVENT_TYPE_SESSION_TIMEOUT":   26,
-		"CHAT_EVENT_TYPE_DELETE":            27,
+		"CHAT_EVENT_TYPE_QUEUE_UPDATE":      5,
+		"CHAT_EVENT_TYPE_AGENT_ACCEPTED":    6,
+		"CHAT_EVENT_TYPE_AGENT_LEAVE":       7,
+		"CHAT_EVENT_TYPE_TRANSFER_REQUEST":  8,
+		"CHAT_EVENT_TYPE_TRANSFER_ACCEPT":   9,
+		"CHAT_EVENT_TYPE_TRANSFER_REJECT":   10,
+		"CHAT_EVENT_TYPE_SESSION_CLOSE":     11,
+		"CHAT_EVENT_TYPE_EVALUATION_INVITE": 12,
+		"CHAT_EVENT_TYPE_EVALUATION_SUBMIT": 13,
+		"CHAT_EVENT_TYPE_TYPING":            14,
+		"CHAT_EVENT_TYPE_MESSAGE_DELIVERED": 15,
+		"CHAT_EVENT_TYPE_MESSAGE_READ":      16,
+		"CHAT_EVENT_TYPE_MESSAGE_RECALL":    17,
+		"CHAT_EVENT_TYPE_MESSAGE_DELETE":    18,
+		"CHAT_EVENT_TYPE_HEARTBEAT":         19,
+		"CHAT_EVENT_TYPE_ERROR":             20,
 	}
 )
 
@@ -708,6 +702,7 @@ func (ChatSenderType) EnumDescriptor() ([]byte, []int) {
 
 // *
 // 消息发送状态
+// 表示：一条聊天消息当前的状态
 type ChatMessageStatus int32
 
 const (
@@ -780,6 +775,7 @@ func (ChatMessageStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{9}
 }
 
+// *
 // 客服后台用户类型
 type ChatUserType int32
 
@@ -832,7 +828,9 @@ func (ChatUserType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{10}
 }
 
+// *
 // 同步动作
+// 用于后台用户、客服、商户、配置等数据同步
 type ChatSyncAction int32
 
 const (
@@ -884,95 +882,110 @@ func (ChatSyncAction) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{11}
 }
 
-type ChatAdminEventType int32
+// *
+// 消息操作类型
+type ChatMessageOperateType int32
 
 const (
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_UNKNOWN ChatAdminEventType = 0
-	// 坐席上线
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_AGENT_ONLINE ChatAdminEventType = 1
-	// 坐席下线
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_AGENT_OFFLINE ChatAdminEventType = 2
-	// 坐席状态变化
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_AGENT_STATUS_CHANGE ChatAdminEventType = 3
-	// 新用户进入待接待
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_USER_JOIN ChatAdminEventType = 4
-	// 用户离开
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_USER_LEAVE ChatAdminEventType = 5
-	// 会话被接待
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_SESSION_ACCEPTED ChatAdminEventType = 6
-	// 会话关闭
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_SESSION_CLOSE ChatAdminEventType = 7
-	// 用户消息，推送给坐席端
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_USER_MESSAGE ChatAdminEventType = 8
-	// 客服消息，推送给其他后台端同步状态
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_AGENT_MESSAGE ChatAdminEventType = 9
-	// 排队信息变化
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_QUEUE_UPDATE ChatAdminEventType = 10
-	// 会话转接
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_SESSION_TRANSFER ChatAdminEventType = 11
-	// 错误事件
-	ChatAdminEventType_CHAT_ADMIN_EVENT_TYPE_ERROR ChatAdminEventType = 12
+	ChatMessageOperateType_CHAT_MESSAGE_OPERATE_TYPE_UNKNOWN ChatMessageOperateType = 0
+	// 撤回
+	ChatMessageOperateType_CHAT_MESSAGE_OPERATE_TYPE_RECALL ChatMessageOperateType = 1
+	// 删除
+	ChatMessageOperateType_CHAT_MESSAGE_OPERATE_TYPE_DELETE ChatMessageOperateType = 2
 )
 
-// Enum value maps for ChatAdminEventType.
+// Enum value maps for ChatMessageOperateType.
 var (
-	ChatAdminEventType_name = map[int32]string{
-		0:  "CHAT_ADMIN_EVENT_TYPE_UNKNOWN",
-		1:  "CHAT_ADMIN_EVENT_TYPE_AGENT_ONLINE",
-		2:  "CHAT_ADMIN_EVENT_TYPE_AGENT_OFFLINE",
-		3:  "CHAT_ADMIN_EVENT_TYPE_AGENT_STATUS_CHANGE",
-		4:  "CHAT_ADMIN_EVENT_TYPE_USER_JOIN",
-		5:  "CHAT_ADMIN_EVENT_TYPE_USER_LEAVE",
-		6:  "CHAT_ADMIN_EVENT_TYPE_SESSION_ACCEPTED",
-		7:  "CHAT_ADMIN_EVENT_TYPE_SESSION_CLOSE",
-		8:  "CHAT_ADMIN_EVENT_TYPE_USER_MESSAGE",
-		9:  "CHAT_ADMIN_EVENT_TYPE_AGENT_MESSAGE",
-		10: "CHAT_ADMIN_EVENT_TYPE_QUEUE_UPDATE",
-		11: "CHAT_ADMIN_EVENT_TYPE_SESSION_TRANSFER",
-		12: "CHAT_ADMIN_EVENT_TYPE_ERROR",
+	ChatMessageOperateType_name = map[int32]string{
+		0: "CHAT_MESSAGE_OPERATE_TYPE_UNKNOWN",
+		1: "CHAT_MESSAGE_OPERATE_TYPE_RECALL",
+		2: "CHAT_MESSAGE_OPERATE_TYPE_DELETE",
 	}
-	ChatAdminEventType_value = map[string]int32{
-		"CHAT_ADMIN_EVENT_TYPE_UNKNOWN":             0,
-		"CHAT_ADMIN_EVENT_TYPE_AGENT_ONLINE":        1,
-		"CHAT_ADMIN_EVENT_TYPE_AGENT_OFFLINE":       2,
-		"CHAT_ADMIN_EVENT_TYPE_AGENT_STATUS_CHANGE": 3,
-		"CHAT_ADMIN_EVENT_TYPE_USER_JOIN":           4,
-		"CHAT_ADMIN_EVENT_TYPE_USER_LEAVE":          5,
-		"CHAT_ADMIN_EVENT_TYPE_SESSION_ACCEPTED":    6,
-		"CHAT_ADMIN_EVENT_TYPE_SESSION_CLOSE":       7,
-		"CHAT_ADMIN_EVENT_TYPE_USER_MESSAGE":        8,
-		"CHAT_ADMIN_EVENT_TYPE_AGENT_MESSAGE":       9,
-		"CHAT_ADMIN_EVENT_TYPE_QUEUE_UPDATE":        10,
-		"CHAT_ADMIN_EVENT_TYPE_SESSION_TRANSFER":    11,
-		"CHAT_ADMIN_EVENT_TYPE_ERROR":               12,
+	ChatMessageOperateType_value = map[string]int32{
+		"CHAT_MESSAGE_OPERATE_TYPE_UNKNOWN": 0,
+		"CHAT_MESSAGE_OPERATE_TYPE_RECALL":  1,
+		"CHAT_MESSAGE_OPERATE_TYPE_DELETE":  2,
 	}
 )
 
-func (x ChatAdminEventType) Enum() *ChatAdminEventType {
-	p := new(ChatAdminEventType)
+func (x ChatMessageOperateType) Enum() *ChatMessageOperateType {
+	p := new(ChatMessageOperateType)
 	*p = x
 	return p
 }
 
-func (x ChatAdminEventType) String() string {
+func (x ChatMessageOperateType) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (ChatAdminEventType) Descriptor() protoreflect.EnumDescriptor {
+func (ChatMessageOperateType) Descriptor() protoreflect.EnumDescriptor {
 	return file_proto_chat_enum_proto_enumTypes[12].Descriptor()
 }
 
-func (ChatAdminEventType) Type() protoreflect.EnumType {
+func (ChatMessageOperateType) Type() protoreflect.EnumType {
 	return &file_proto_chat_enum_proto_enumTypes[12]
 }
 
-func (x ChatAdminEventType) Number() protoreflect.EnumNumber {
+func (x ChatMessageOperateType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ChatAdminEventType.Descriptor instead.
-func (ChatAdminEventType) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use ChatMessageOperateType.Descriptor instead.
+func (ChatMessageOperateType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_chat_enum_proto_rawDescGZIP(), []int{12}
+}
+
+// *
+// 消息删除范围
+type ChatMessageDeleteScope int32
+
+const (
+	ChatMessageDeleteScope_CHAT_MESSAGE_DELETE_SCOPE_UNKNOWN ChatMessageDeleteScope = 0
+	// 只删除自己这边
+	ChatMessageDeleteScope_CHAT_MESSAGE_DELETE_SCOPE_SELF ChatMessageDeleteScope = 1
+	// 双方删除
+	ChatMessageDeleteScope_CHAT_MESSAGE_DELETE_SCOPE_BOTH ChatMessageDeleteScope = 2
+)
+
+// Enum value maps for ChatMessageDeleteScope.
+var (
+	ChatMessageDeleteScope_name = map[int32]string{
+		0: "CHAT_MESSAGE_DELETE_SCOPE_UNKNOWN",
+		1: "CHAT_MESSAGE_DELETE_SCOPE_SELF",
+		2: "CHAT_MESSAGE_DELETE_SCOPE_BOTH",
+	}
+	ChatMessageDeleteScope_value = map[string]int32{
+		"CHAT_MESSAGE_DELETE_SCOPE_UNKNOWN": 0,
+		"CHAT_MESSAGE_DELETE_SCOPE_SELF":    1,
+		"CHAT_MESSAGE_DELETE_SCOPE_BOTH":    2,
+	}
+)
+
+func (x ChatMessageDeleteScope) Enum() *ChatMessageDeleteScope {
+	p := new(ChatMessageDeleteScope)
+	*p = x
+	return p
+}
+
+func (x ChatMessageDeleteScope) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ChatMessageDeleteScope) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_chat_enum_proto_enumTypes[13].Descriptor()
+}
+
+func (ChatMessageDeleteScope) Type() protoreflect.EnumType {
+	return &file_proto_chat_enum_proto_enumTypes[13]
+}
+
+func (x ChatMessageDeleteScope) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ChatMessageDeleteScope.Descriptor instead.
+func (ChatMessageDeleteScope) EnumDescriptor() ([]byte, []int) {
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{13}
 }
 
 var File_proto_chat_enum_proto protoreflect.FileDescriptor
@@ -1019,36 +1032,30 @@ const file_proto_chat_enum_proto_rawDesc = "" +
 	"\x18CHAT_ASSIGN_TYPE_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15CHAT_ASSIGN_TYPE_AUTO\x10\x01\x12\x1b\n" +
 	"\x17CHAT_ASSIGN_TYPE_MANUAL\x10\x02\x12\x1d\n" +
-	"\x19CHAT_ASSIGN_TYPE_TRANSFER\x10\x03*\x85\a\n" +
+	"\x19CHAT_ASSIGN_TYPE_TRANSFER\x10\x03*\xde\x05\n" +
 	"\rChatEventType\x12\x1f\n" +
 	"\x1bCHAT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
-	"\x17CHAT_EVENT_TYPE_MESSAGE\x10\x01\x12\x1a\n" +
-	"\x16CHAT_EVENT_TYPE_SYSTEM\x10\x02\x12\x1d\n" +
+	"\x17CHAT_EVENT_TYPE_MESSAGE\x10\x01\x12!\n" +
+	"\x1dCHAT_EVENT_TYPE_SYSTEM_NOTICE\x10\x02\x12\x1d\n" +
 	"\x19CHAT_EVENT_TYPE_USER_JOIN\x10\x03\x12\x1e\n" +
-	"\x1aCHAT_EVENT_TYPE_USER_LEAVE\x10\x04\x12\x1e\n" +
-	"\x1aCHAT_EVENT_TYPE_QUEUE_JOIN\x10\x05\x12 \n" +
-	"\x1cCHAT_EVENT_TYPE_QUEUE_UPDATE\x10\x06\x12\"\n" +
-	"\x1eCHAT_EVENT_TYPE_AGENT_ASSIGNED\x10\b\x12\x1e\n" +
-	"\x1aCHAT_EVENT_TYPE_AGENT_JOIN\x10\t\x12\x1f\n" +
-	"\x1bCHAT_EVENT_TYPE_AGENT_LEAVE\x10\n" +
-	"\x12$\n" +
-	" CHAT_EVENT_TYPE_TRANSFER_REQUEST\x10\v\x12#\n" +
-	"\x1fCHAT_EVENT_TYPE_TRANSFER_ACCEPT\x10\f\x12#\n" +
-	"\x1fCHAT_EVENT_TYPE_TRANSFER_REJECT\x10\r\x12!\n" +
-	"\x1dCHAT_EVENT_TYPE_SESSION_START\x10\x0e\x12!\n" +
-	"\x1dCHAT_EVENT_TYPE_SESSION_CLOSE\x10\x0f\x12%\n" +
-	"!CHAT_EVENT_TYPE_EVALUATION_INVITE\x10\x10\x12%\n" +
-	"!CHAT_EVENT_TYPE_EVALUATION_SUBMIT\x10\x11\x12\x1a\n" +
-	"\x16CHAT_EVENT_TYPE_TYPING\x10\x12\x12\x1f\n" +
-	"\x1bCHAT_EVENT_TYPE_STOP_TYPING\x10\x13\x12\x1d\n" +
-	"\x19CHAT_EVENT_TYPE_DELIVERED\x10\x14\x12\x18\n" +
-	"\x14CHAT_EVENT_TYPE_READ\x10\x15\x12\x1a\n" +
-	"\x16CHAT_EVENT_TYPE_RECALL\x10\x16\x12\x1d\n" +
-	"\x19CHAT_EVENT_TYPE_HEARTBEAT\x10\x17\x12\x19\n" +
-	"\x15CHAT_EVENT_TYPE_ERROR\x10\x18\x12#\n" +
-	"\x1fCHAT_EVENT_TYPE_NO_AGENT_ONLINE\x10\x19\x12#\n" +
-	"\x1fCHAT_EVENT_TYPE_SESSION_TIMEOUT\x10\x1a\x12\x1a\n" +
-	"\x16CHAT_EVENT_TYPE_DELETE\x10\x1b*\xdb\x02\n" +
+	"\x1aCHAT_EVENT_TYPE_USER_LEAVE\x10\x04\x12 \n" +
+	"\x1cCHAT_EVENT_TYPE_QUEUE_UPDATE\x10\x05\x12\"\n" +
+	"\x1eCHAT_EVENT_TYPE_AGENT_ACCEPTED\x10\x06\x12\x1f\n" +
+	"\x1bCHAT_EVENT_TYPE_AGENT_LEAVE\x10\a\x12$\n" +
+	" CHAT_EVENT_TYPE_TRANSFER_REQUEST\x10\b\x12#\n" +
+	"\x1fCHAT_EVENT_TYPE_TRANSFER_ACCEPT\x10\t\x12#\n" +
+	"\x1fCHAT_EVENT_TYPE_TRANSFER_REJECT\x10\n" +
+	"\x12!\n" +
+	"\x1dCHAT_EVENT_TYPE_SESSION_CLOSE\x10\v\x12%\n" +
+	"!CHAT_EVENT_TYPE_EVALUATION_INVITE\x10\f\x12%\n" +
+	"!CHAT_EVENT_TYPE_EVALUATION_SUBMIT\x10\r\x12\x1a\n" +
+	"\x16CHAT_EVENT_TYPE_TYPING\x10\x0e\x12%\n" +
+	"!CHAT_EVENT_TYPE_MESSAGE_DELIVERED\x10\x0f\x12 \n" +
+	"\x1cCHAT_EVENT_TYPE_MESSAGE_READ\x10\x10\x12\"\n" +
+	"\x1eCHAT_EVENT_TYPE_MESSAGE_RECALL\x10\x11\x12\"\n" +
+	"\x1eCHAT_EVENT_TYPE_MESSAGE_DELETE\x10\x12\x12\x1d\n" +
+	"\x19CHAT_EVENT_TYPE_HEARTBEAT\x10\x13\x12\x19\n" +
+	"\x15CHAT_EVENT_TYPE_ERROR\x10\x14*\xdb\x02\n" +
 	"\x0fChatMessageType\x12\x1d\n" +
 	"\x19CHAT_MESSAGE_TYPE_UNKNOWN\x10\x00\x12\x1a\n" +
 	"\x16CHAT_MESSAGE_TYPE_TEXT\x10\x01\x12\x1b\n" +
@@ -1084,22 +1091,15 @@ const file_proto_chat_enum_proto_rawDesc = "" +
 	"\x0eChatSyncAction\x12\x1c\n" +
 	"\x18CHAT_SYNC_ACTION_UNKNOWN\x10\x00\x12\x1b\n" +
 	"\x17CHAT_SYNC_ACTION_UPSERT\x10\x01\x12\x1b\n" +
-	"\x17CHAT_SYNC_ACTION_DELETE\x10\x02*\x9d\x04\n" +
-	"\x12ChatAdminEventType\x12!\n" +
-	"\x1dCHAT_ADMIN_EVENT_TYPE_UNKNOWN\x10\x00\x12&\n" +
-	"\"CHAT_ADMIN_EVENT_TYPE_AGENT_ONLINE\x10\x01\x12'\n" +
-	"#CHAT_ADMIN_EVENT_TYPE_AGENT_OFFLINE\x10\x02\x12-\n" +
-	")CHAT_ADMIN_EVENT_TYPE_AGENT_STATUS_CHANGE\x10\x03\x12#\n" +
-	"\x1fCHAT_ADMIN_EVENT_TYPE_USER_JOIN\x10\x04\x12$\n" +
-	" CHAT_ADMIN_EVENT_TYPE_USER_LEAVE\x10\x05\x12*\n" +
-	"&CHAT_ADMIN_EVENT_TYPE_SESSION_ACCEPTED\x10\x06\x12'\n" +
-	"#CHAT_ADMIN_EVENT_TYPE_SESSION_CLOSE\x10\a\x12&\n" +
-	"\"CHAT_ADMIN_EVENT_TYPE_USER_MESSAGE\x10\b\x12'\n" +
-	"#CHAT_ADMIN_EVENT_TYPE_AGENT_MESSAGE\x10\t\x12&\n" +
-	"\"CHAT_ADMIN_EVENT_TYPE_QUEUE_UPDATE\x10\n" +
-	"\x12*\n" +
-	"&CHAT_ADMIN_EVENT_TYPE_SESSION_TRANSFER\x10\v\x12\x1f\n" +
-	"\x1bCHAT_ADMIN_EVENT_TYPE_ERROR\x10\fB\x18Z\x16wklive/proto/chat;chatb\x06proto3"
+	"\x17CHAT_SYNC_ACTION_DELETE\x10\x02*\x8b\x01\n" +
+	"\x16ChatMessageOperateType\x12%\n" +
+	"!CHAT_MESSAGE_OPERATE_TYPE_UNKNOWN\x10\x00\x12$\n" +
+	" CHAT_MESSAGE_OPERATE_TYPE_RECALL\x10\x01\x12$\n" +
+	" CHAT_MESSAGE_OPERATE_TYPE_DELETE\x10\x02*\x87\x01\n" +
+	"\x16ChatMessageDeleteScope\x12%\n" +
+	"!CHAT_MESSAGE_DELETE_SCOPE_UNKNOWN\x10\x00\x12\"\n" +
+	"\x1eCHAT_MESSAGE_DELETE_SCOPE_SELF\x10\x01\x12\"\n" +
+	"\x1eCHAT_MESSAGE_DELETE_SCOPE_BOTH\x10\x02B\x18Z\x16wklive/proto/chat;chatb\x06proto3"
 
 var (
 	file_proto_chat_enum_proto_rawDescOnce sync.Once
@@ -1113,7 +1113,7 @@ func file_proto_chat_enum_proto_rawDescGZIP() []byte {
 	return file_proto_chat_enum_proto_rawDescData
 }
 
-var file_proto_chat_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 13)
+var file_proto_chat_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 14)
 var file_proto_chat_enum_proto_goTypes = []any{
 	(ChatSessionSource)(0),      // 0: chat.ChatSessionSource
 	(ChatSessionStatus)(0),      // 1: chat.ChatSessionStatus
@@ -1127,7 +1127,8 @@ var file_proto_chat_enum_proto_goTypes = []any{
 	(ChatMessageStatus)(0),      // 9: chat.ChatMessageStatus
 	(ChatUserType)(0),           // 10: chat.ChatUserType
 	(ChatSyncAction)(0),         // 11: chat.ChatSyncAction
-	(ChatAdminEventType)(0),     // 12: chat.ChatAdminEventType
+	(ChatMessageOperateType)(0), // 12: chat.ChatMessageOperateType
+	(ChatMessageDeleteScope)(0), // 13: chat.ChatMessageDeleteScope
 }
 var file_proto_chat_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -1147,7 +1148,7 @@ func file_proto_chat_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_enum_proto_rawDesc), len(file_proto_chat_enum_proto_rawDesc)),
-			NumEnums:      13,
+			NumEnums:      14,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

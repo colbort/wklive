@@ -2,11 +2,7 @@ package chat_ws
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
-	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -17,7 +13,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (
@@ -103,10 +98,18 @@ func (l *MessagesLogic) onMessage(isGuest bool) func(*ws.Connection, ws.InboundE
 			l.handleSendUserMessage(context.Background(), conn, event.Data, isGuest)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
 			l.handleCloseUserSession(context.Background(), conn, event.Data, isGuest)
-		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING, chat.ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING:
+		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING:
 			l.handleUserTyping(context.Background(), conn, event.Type, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT:
 			l.handleSubmitEvaluation(context.Background(), conn, event.Data, isGuest)
+		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED:
+			// TODO handle message delivered
+		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ:
+			// TODO handle message read
+		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_RECALL:
+			// TODO handle message recall
+		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELETE:
+			// TODO handle message delete
 		case chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT:
 			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT, map[string]int64{"time": time.Now().UnixMilli()})
 		default:
@@ -121,14 +124,16 @@ func (l *MessagesLogic) onClose(isGuest bool) func(*ws.Connection) {
 		if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 			return
 		}
-		fmt.Println("=========================  22")
-		if isGuest {
-			if err := l.deleteTransientSession(context.Background(), conn, chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE, "用户已离开客服页面"); err != nil {
-				logx.Errorf("delete transient chat session after user leave failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
-			}
-			return
+		_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(context.Background(), &chat.CloseMyChatSessionReq{
+			SessionNo:   conn.SessionNo,
+			MerchantId:  conn.MerchantId,
+			UserId:      conn.UserId,
+			CloseReason: "用户已离开客服页面",
+			IsGuest:     isGuest,
+		})
+		if err != nil {
+			logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 		}
-		l.closeUserSession(context.Background(), conn, isGuest, "用户已离开客服页面")
 	}
 }
 
@@ -162,8 +167,8 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 // 游客：chat-api 构造消息并转发；
 // 登录用户：先调用内部服务入库，再把返回的消息转发给后台和用户侧。
 func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
-	var data UserMessagePayload
-	if err := json.Unmarshal(payload, &data); err != nil {
+	var req chat.SendUserMessageReq
+	if err := json.Unmarshal(payload, &req); err != nil {
 		sendWSError(conn, "invalid message payload")
 		return
 	}
@@ -171,71 +176,33 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 		sendWSError(conn, "sessionNo is required")
 		return
 	}
-
-	var msg *chat.ChatMessage
-	if isGuest {
-		msg = buildChatMessage(conn, chat.ChatSenderType_CHAT_SENDER_TYPE_USER, conn.UserId, data)
-		if err := l.appendTransientMessage(ctx, conn, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, msg, nil); err != nil {
-			sendWSError(conn, err.Error())
-			return
-		}
-	} else {
-		req := chat.SendUserMessageReq{
-			SessionNo:   conn.SessionNo,
-			MessageType: normalizeMessageType(int64(data.MessageType)),
-			Content:     strings.TrimSpace(data.Content),
-			Url:         data.Url,
-			FileName:    data.FileName,
-			FileSize:    data.FileSize,
-			MimeType:    data.MimeType,
-			Width:       int32(data.Width),
-			Height:      int32(data.Height),
-			Duration:    int32(data.Duration),
-			Extra:       data.Extra,
-			Sender: &chat.ChatMessageUser{
-				Id:        conn.UserId,
-				Nickname:  conn.Username,
-				AvatarUrl: conn.AvatarUrl,
-				Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
-			},
-			MerchantId: conn.MerchantId,
-		}
-		resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &req)
-		if err != nil {
-			sendWSError(conn, err.Error())
-			return
-		}
-		msg = resp.GetData()
+	req.Sender = &chat.ChatMessageUser{
+		Id:        conn.UserId,
+		Nickname:  conn.Username,
+		AvatarUrl: conn.AvatarUrl,
+		Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
 	}
+	req.MerchantId = conn.MerchantId
+	req.IsGuest = isGuest
+	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &req)
+	if err != nil {
+		sendWSError(conn, err.Error())
+		return
+	}
+	msg := resp.GetData()
 
 	if msg == nil {
 		sendWSError(conn, "message data is empty")
 		return
 	}
-	normalizeOutgoingMessage(conn, msg, chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE)
-	l.sendMessageAckEvent(conn, msg)
+	// TODO 消息送达事件
 }
 
 func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, payload json.RawMessage) {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		return
 	}
-	message := "用户正在输入"
-	if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_STOP_TYPING {
-		message = "用户停止输入"
-	}
-	msg := buildSystemChatMessage(conn, message)
-	if len(payload) > 0 {
-		var data struct {
-			Message string `json:"message"`
-		}
-		if err := json.Unmarshal(payload, &data); err == nil && strings.TrimSpace(data.Message) != "" {
-			msg.Content = strings.TrimSpace(data.Message)
-		}
-	}
-	if err := l.publishOnlyTransientMessage(ctx, conn, eventType, msg); err != nil {
-		sendWSError(conn, err.Error())
-	}
+	// message := "用户正在输入"
 }
 
 func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
@@ -256,77 +223,36 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		sendWSError(conn, "score must be between 1 and 5")
 		return
 	}
-	if !isGuest {
-		resp, err := l.svcCtx.ChatAppCli.SubmitChatSatisfaction(ctx, &chat.SubmitChatSatisfactionReq{
-			SessionNo:  conn.SessionNo,
-			MerchantId: conn.MerchantId,
-			UserId:     conn.UserId,
-			Score:      data.Score,
-			Content:    strings.TrimSpace(data.Content),
-			Tags:       strings.TrimSpace(data.Tags),
-		})
-		if err != nil {
-			sendWSError(conn, err.Error())
-			return
-		}
-		if resp.GetBase().GetCode() != successCode {
-			sendWSError(conn, resp.GetBase().GetMsg())
-			return
-		}
-		conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, resp)
-		return
-	}
-	msg := buildSystemChatMessage(conn, "用户已提交评价")
-	msg.MessageType = chat.ChatMessageType_CHAT_MESSAGE_TYPE_EVALUATION
-	msg.Payload = structFromMap(map[string]interface{}{
-		"score":   data.Score,
-		"content": strings.TrimSpace(data.Content),
-		"tags":    strings.TrimSpace(data.Tags),
+	resp, err := l.svcCtx.ChatAppCli.SubmitChatSatisfaction(ctx, &chat.SubmitChatSatisfactionReq{
+		SessionNo:  conn.SessionNo,
+		MerchantId: conn.MerchantId,
+		UserId:     conn.UserId,
+		Score:      data.Score,
+		Content:    strings.TrimSpace(data.Content),
+		Tags:       strings.TrimSpace(data.Tags),
+		IsGuest:    isGuest,
 	})
-	if err := l.appendTransientMessage(ctx, conn, chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, msg, nil); err != nil {
+	if err != nil {
 		sendWSError(conn, err.Error())
 		return
 	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, map[string]string{"message": "ok"})
+	if resp.GetBase().GetCode() != successCode {
+		sendWSError(conn, resp.GetBase().GetMsg())
+		return
+	}
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, resp)
 }
 
 func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
-	closeReason := "用户主动结束会话"
-	if len(payload) > 0 {
-		var data struct {
-			CloseReason string `json:"closeReason"`
-		}
-		if err := json.Unmarshal(payload, &data); err != nil {
-			sendWSError(conn, "invalid session close payload")
-			return
-		}
-		closeReason = firstNonEmpty(data.CloseReason, closeReason)
-	}
-	l.closeUserSession(ctx, conn, isGuest, closeReason)
-}
-
-func (l *MessagesLogic) closeUserSession(ctx context.Context, conn *ws.Connection, isGuest bool, reason string) {
-	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
-		return
-	}
-	// 游客：只转发关闭事件。
-	// 登录用户：先更新会话状态，再转发关闭事件给后台和用户侧。
-	if !isGuest {
-		_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(ctx, &chat.CloseMyChatSessionReq{
-			SessionNo:   conn.SessionNo,
-			MerchantId:  conn.MerchantId,
-			UserId:      conn.UserId,
-			CloseReason: reason,
-		})
-		if err != nil {
-			logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
-		}
-	}
-
-	if isGuest {
-		if err := l.deleteTransientSession(ctx, conn, chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, reason); err != nil {
-			logx.Errorf("delete transient chat session after close failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
-		}
+	_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(context.Background(), &chat.CloseMyChatSessionReq{
+		SessionNo:   conn.SessionNo,
+		MerchantId:  conn.MerchantId,
+		UserId:      conn.UserId,
+		CloseReason: "用户主动结束会话",
+		IsGuest:     isGuest,
+	})
+	if err != nil {
+		logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 	}
 }
 
@@ -334,277 +260,16 @@ func sendWSError(conn *ws.Connection, message string) {
 	if conn == nil {
 		return
 	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": message})
-}
-
-func buildChatMessage(conn *ws.Connection, senderType chat.ChatSenderType, senderId int64, data UserMessagePayload) *chat.ChatMessage {
-	now := time.Now().UnixMilli()
-	return &chat.ChatMessage{
-		MessageNo:   nextGuestNo(guestMessagePrefix),
-		SessionNo:   conn.SessionNo,
-		MerchantId:  conn.MerchantId,
-		MessageType: normalizeMessageType(int64(data.MessageType)),
-		Sender: &chat.ChatMessageUser{
-			Id:        senderId,
-			Type:      senderType,
-			Nickname:  conn.Username,
-			AvatarUrl: conn.AvatarUrl,
-		},
-		Content:     strings.TrimSpace(data.Content),
-		Url:         data.Url,
-		FileName:    data.FileName,
-		FileSize:    data.FileSize,
-		MimeType:    data.MimeType,
-		Width:       int32(data.Width),
-		Height:      int32(data.Height),
-		Duration:    data.Duration,
-		Payload:     messagePayload(data),
-		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-		CreateTimes: now,
-		UpdateTimes: now,
-	}
-}
-
-func buildSystemChatMessage(conn *ws.Connection, content string) *chat.ChatMessage {
-	now := time.Now().UnixMilli()
-	return &chat.ChatMessage{
-		MessageNo:   nextGuestNo(guestMessagePrefix),
-		SessionNo:   conn.SessionNo,
-		MerchantId:  conn.MerchantId,
-		MessageType: chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT,
-		Sender: &chat.ChatMessageUser{
-			Type:     chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM,
-			Nickname: systemNickname,
-		},
-		Content:     strings.TrimSpace(content),
-		Status:      chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT,
-		CreateTimes: now,
-		UpdateTimes: now,
-	}
-}
-
-func (l *MessagesLogic) sendMessageAckEvent(conn *ws.Connection, msg *chat.ChatMessage) {
-	if conn == nil || msg == nil {
-		return
-	}
 	conn.SendEvent(&chat.ChatMessageEvent{
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_DELIVERED,
+		Code:      1,
+		Msg:       message,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,
 		CreatedAt: time.Now().UnixMilli(),
-		Payload: &chat.ChatMessageEvent_Receipt{Receipt: &chat.ChatMessageReceipt{
-			SessionNo:  msg.GetSessionNo(),
-			MessageNo:  msg.GetMessageNo(),
-			MerchantId: conn.MerchantId,
-			UserId:     conn.UserId,
-			SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
-			CreatedAt:  time.Now().UnixMilli(),
+		Payload: &chat.ChatMessageEvent_Error{Error: &chat.ChatErrorPayload{
+			SessionNo:    conn.SessionNo,
+			ErrorCode:    1,
+			ErrorMessage: message,
+			Retryable:    false,
 		}},
 	})
-}
-
-func (l *MessagesLogic) appendTransientMessage(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, msg *chat.ChatMessage, session *chat.ChatSession) error {
-	if conn == nil || msg == nil {
-		return fmt.Errorf("message data is empty")
-	}
-	if session == nil {
-		session = transientSessionFromConnection(conn)
-	}
-	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &chat.SendUserMessageReq{
-		MerchantId: conn.MerchantId,
-		EventType:  eventType,
-		Message:    msg,
-		Session:    session,
-		IsGuest:    true,
-	})
-	if err != nil {
-		return err
-	}
-	if resp.GetBase().GetCode() != successCode {
-		return fmt.Errorf("%s", resp.GetBase().GetMsg())
-	}
-	return nil
-}
-
-func (l *MessagesLogic) publishOnlyTransientMessage(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, msg *chat.ChatMessage) error {
-	if conn == nil || msg == nil {
-		return fmt.Errorf("message data is empty")
-	}
-	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &chat.SendUserMessageReq{
-		MerchantId:  conn.MerchantId,
-		EventType:   eventType,
-		Message:     msg,
-		Session:     transientSessionFromConnection(conn),
-		PublishOnly: true,
-		IsGuest:     true,
-	})
-	if err != nil {
-		return err
-	}
-	if resp.GetBase().GetCode() != successCode {
-		return fmt.Errorf("%s", resp.GetBase().GetMsg())
-	}
-	return nil
-}
-
-func (l *MessagesLogic) deleteTransientSession(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, message string) error {
-	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
-		return nil
-	}
-	resp, err := l.svcCtx.ChatAppCli.AppDeleteTransientChatSession(ctx, &chat.AppDeleteTransientChatSessionReq{
-		MerchantId:   conn.MerchantId,
-		SessionNo:    conn.SessionNo,
-		EventType:    eventType,
-		EventMessage: strings.TrimSpace(message),
-		UserId:       conn.UserId,
-	})
-	if err != nil {
-		return err
-	}
-	if resp.GetBase().GetCode() != successCode {
-		return fmt.Errorf("%s", resp.GetBase().GetMsg())
-	}
-	return nil
-}
-
-func transientSessionFromConnection(conn *ws.Connection) *chat.ChatSession {
-	now := time.Now().UnixMilli()
-	return &chat.ChatSession{
-		SessionNo:       conn.SessionNo,
-		MerchantId:      conn.MerchantId,
-		UserId:          conn.UserId,
-		Source:          chat.ChatSessionSource_CHAT_SESSION_SOURCE_WEB,
-		Status:          chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
-		Priority:        chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL,
-		Title:           firstNonEmpty(conn.Username, guestUsername),
-		LastMessageTime: now,
-		CreateTimes:     now,
-		UpdateTimes:     now,
-		IsGuest:         true,
-		AvatarUrl:       conn.AvatarUrl,
-	}
-}
-
-func nextGuestNo(prefix string) string {
-	b := make([]byte, 16)
-	_, _ = rand.Read(b)
-	return fmt.Sprintf("%s%d%s", prefix, time.Now().UnixMilli(), hex.EncodeToString(b))
-}
-
-func normalizeOutgoingMessage(conn *ws.Connection, msg *chat.ChatMessage, _ chat.ChatEventType) {
-	if msg == nil {
-		return
-	}
-	now := time.Now().UnixMilli()
-	if msg.MessageNo == "" {
-		msg.MessageNo = nextGuestNo(guestMessagePrefix)
-	}
-	if msg.SessionNo == "" && conn != nil {
-		msg.SessionNo = conn.SessionNo
-	}
-	if msg.MessageType == chat.ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN {
-		msg.MessageType = chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT
-	}
-	if msg.Status == chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_UNKNOWN {
-		msg.Status = chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT
-	}
-	if msg.Sender == nil && conn != nil {
-		msg.Sender = &chat.ChatMessageUser{
-			Id:        conn.UserId,
-			Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
-			Nickname:  firstNonEmpty(conn.Username, guestUsername),
-			AvatarUrl: conn.AvatarUrl,
-		}
-	}
-	if msg.CreateTimes == 0 {
-		msg.CreateTimes = now
-	}
-	if msg.UpdateTimes == 0 {
-		msg.UpdateTimes = now
-	}
-}
-
-type MessageTypeValue int64
-
-func (m *MessageTypeValue) UnmarshalJSON(raw []byte) error {
-	value := strings.TrimSpace(string(raw))
-	if value == "" || value == "null" {
-		*m = MessageTypeValue(chat.ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN)
-		return nil
-	}
-	if value[0] == '"' {
-		var name string
-		if err := json.Unmarshal(raw, &name); err != nil {
-			return err
-		}
-		name = strings.TrimSpace(strings.ToUpper(name))
-		name = strings.TrimPrefix(name, "CHAT_MESSAGE_TYPE_")
-		fullName := "CHAT_MESSAGE_TYPE_" + name
-		if n, ok := chat.ChatMessageType_value[fullName]; ok {
-			*m = MessageTypeValue(n)
-			return nil
-		}
-		return fmt.Errorf("unsupported message type: %s", name)
-	}
-	n, err := strconv.ParseInt(value, 10, 32)
-	if err != nil {
-		return fmt.Errorf("invalid message type")
-	}
-	*m = MessageTypeValue(n)
-	return nil
-}
-
-type UserMessagePayload struct {
-	MessageType     MessageTypeValue `json:"messageType"`
-	ClientMessageId string           `json:"clientMessageId"`
-	Content         string           `json:"content"`
-	Url             string           `json:"url"`
-	FileName        string           `json:"fileName"`
-	FileSize        int64            `json:"fileSize"`
-	MimeType        string           `json:"mimeType"`
-	Width           int64            `json:"width"`
-	Height          int64            `json:"height"`
-	Duration        int64            `json:"duration"`
-	ReplyMessageId  string           `json:"replyMessageId"`
-	Extra           string           `json:"extra"`
-}
-
-func normalizeMessageType(messageType int64) chat.ChatMessageType {
-	mt := chat.ChatMessageType(messageType)
-	if mt == chat.ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN {
-		return chat.ChatMessageType_CHAT_MESSAGE_TYPE_TEXT
-	}
-	return mt
-}
-
-func firstNonEmpty(values ...string) string {
-	for _, value := range values {
-		if v := strings.TrimSpace(value); v != "" {
-			return v
-		}
-	}
-	return ""
-}
-
-func messagePayload(data UserMessagePayload) *structpb.Struct {
-	payload := map[string]interface{}{}
-	if strings.TrimSpace(data.Extra) != "" {
-		_ = json.Unmarshal([]byte(data.Extra), &payload)
-	}
-	if strings.TrimSpace(data.ClientMessageId) != "" {
-		payload["clientMessageId"] = strings.TrimSpace(data.ClientMessageId)
-	}
-	if strings.TrimSpace(data.ReplyMessageId) != "" {
-		payload["replyMessageId"] = strings.TrimSpace(data.ReplyMessageId)
-	}
-	return structFromMap(payload)
-}
-
-func structFromMap(payload map[string]interface{}) *structpb.Struct {
-	if len(payload) == 0 {
-		return nil
-	}
-	st, err := structpb.NewStruct(payload)
-	if err != nil {
-		return nil
-	}
-	return st
 }

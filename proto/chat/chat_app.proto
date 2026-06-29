@@ -40,22 +40,6 @@ service ChatApp {
 
   // 订阅客服消息事件流
   rpc AppSubscribeStream(AppChatSubscribeRequest) returns (stream ChatMessageEvent);
-
-  // 创建或更新游客临时会话
-  rpc AppUpsertTransientChatSession(AppUpsertTransientChatSessionReq)
-      returns (AppChatSessionResp);
-
-  // 删除游客临时会话和消息
-  rpc AppDeleteTransientChatSession(AppDeleteTransientChatSessionReq)
-      returns (AppDeleteTransientChatSessionResp);
-
-  // 查询游客临时会话
-  rpc AppGetTransientChatSession(AppGetTransientChatSessionReq)
-      returns (AppChatSessionResp);
-
-  // 分页查询游客临时会话
-  rpc AppPageTransientChatSessions(AppPageTransientChatSessionsReq)
-      returns (AppPageTransientChatSessionsResp);
 }
 
 message AuthChatMerchantReq {
@@ -87,8 +71,7 @@ message GenerateChatSessionNoReq {
   ChatSessionSource source = 1; // 来源，可为空
   int64 merchant_id = 2;        // 商户ID；一般可从 chatToken/context 获取
   int64 user_id = 3;            // 客服系统内部用户ID；一般可从 chatToken/context 获取
-  string external_user_id = 4;  // 外部业务系统用户ID/访客ID，可选
-  string prefix = 5;            // 会话编号前缀，可选；为空使用服务端默认规则
+  bool is_guest = 4;            // 是否游客
 }
 
 message GenerateChatSessionNoResp {
@@ -150,6 +133,7 @@ message CloseMyChatSessionReq {
   string close_reason = 3;                       // 结束原因描述
   int64 merchant_id = 4;
   int64 user_id = 5;
+  bool is_guest = 6;                // 是否游客/临时会话
 }
 
 message SubmitChatSatisfactionReq {
@@ -159,6 +143,7 @@ message SubmitChatSatisfactionReq {
   string tags = 4;       // 评价标签,逗号分隔
   int64 merchant_id = 5;
   int64 user_id = 6;
+  bool is_guest = 7;     // 是否游客/临时会话
 }
 
 message AppChatSubscribeRequest {
@@ -168,42 +153,6 @@ message AppChatSubscribeRequest {
   string session_no = 4;
   bool is_guest = 5;
   bool admin = 6;
-}
-
-message AppUpsertTransientChatSessionReq {
-  ChatSession session = 1;
-  int64 ttl_seconds = 2; // 0 使用默认 TTL
-}
-
-message AppDeleteTransientChatSessionReq {
-  int64 merchant_id = 1;
-  string session_no = 2;
-  ChatEventType event_type = 3; // 可选；删除前发布事件
-  string event_message = 4;     // 可选；事件文案
-  int64 user_id = 5;            // 可选；事件用户
-  int64 agent_id = 6;           // 可选；事件坐席
-}
-
-message AppDeleteTransientChatSessionResp {
-  common.RespBase base = 1;
-}
-
-message AppGetTransientChatSessionReq {
-  int64 merchant_id = 1;
-  string session_no = 2;
-}
-
-message AppPageTransientChatSessionsReq {
-  int64 merchant_id = 1;
-  int64 user_id = 2;
-  int64 agent_id = 3;
-  ChatSessionStatus status = 4;
-  common.PageReq page = 5;
-}
-
-message AppPageTransientChatSessionsResp {
-  common.RespBase base = 1;
-  repeated ChatSession data = 2;
 }
 
 message AppListChatMessagesResp {
