@@ -99,11 +99,9 @@ func (l *MessagesLogic) onMessage(isGuest bool) func(*ws.Connection, ws.InboundE
 		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
 			l.handleCloseUserSession(context.Background(), conn, event.Data, isGuest)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING:
-			l.handleUserTyping(context.Background(), conn, event.Type, event.Data)
+			l.handleUserTyping(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT:
 			l.handleSubmitEvaluation(context.Background(), conn, event.Data, isGuest)
-		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED:
-			// TODO handle message delivered
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ:
 			// TODO handle message read
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_RECALL:
@@ -195,10 +193,24 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 		sendWSError(conn, "message data is empty")
 		return
 	}
-	// TODO 消息送达事件
+
+	now := time.Now().UnixMilli()
+	conn.SendEvent(&chat.ChatMessageEvent{
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED,
+		CreatedAt: now,
+		Payload: &chat.ChatMessageEvent_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
+			SessionNo:     conn.SessionNo,
+			MessageNo:     msg.MessageNo,
+			SenderId:      msg.Sender.Id,
+			OperatorId:    conn.UserId,
+			OperatorType:  chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+			MessageStatus: chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_DELIVERED,
+			ReceiptTime:   now,
+		}},
+	})
 }
 
-func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, payload json.RawMessage) {
+func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		return
 	}
@@ -272,4 +284,13 @@ func sendWSError(conn *ws.Connection, message string) {
 			Retryable:    false,
 		}},
 	})
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if v := strings.TrimSpace(value); v != "" {
+			return v
+		}
+	}
+	return ""
 }
