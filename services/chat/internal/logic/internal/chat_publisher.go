@@ -223,7 +223,7 @@ func queuePayload(req PublishMessageEventReq, createdAt int64) *chat.ChatQueuePa
 	}
 	return &chat.ChatQueuePayload{
 		SessionNo:     sessionNo,
-		UserId:        strconv.FormatInt(userId, 10),
+		UserId:        userId,
 		QueueAction:   chat.ChatQueueAction_CHAT_QUEUE_ACTION_UPDATE,
 		SessionStatus: status,
 		ActionTime:    createdAt,

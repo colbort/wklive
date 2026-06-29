@@ -350,10 +350,10 @@ message ChatQueuePayload {
   string session_no = 1;
 
   // 用户 ID
-  string user_id = 2;
+  int64 user_id = 2;
 
   // 用户昵称
-  string user_name = 3;
+  string nickname = 3;
 
   // 排队动作
   ChatQueueAction queue_action = 4;

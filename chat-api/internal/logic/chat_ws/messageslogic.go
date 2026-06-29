@@ -3,7 +3,6 @@ package chat_ws
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -11,6 +10,7 @@ import (
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
 	"chat-api/internal/ws"
+	"wklive/common/utils"
 	"wklive/proto/chat"
 
 	"github.com/gorilla/websocket"
@@ -73,7 +73,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		_ = conn.Close()
 		return
 	}
-	sessionNo := resp.Data.SessionNo
+	sessionNo := resp.GetData().GetSessionNo()
 	if sessionNo == "" {
 		logx.Errorf("session is empty, merchantId=%d userId=%d guest=%t", req.MerchantId, req.UserId, req.IsGuest)
 		_ = conn.Close()
@@ -94,6 +94,12 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 			l.onClose(req.IsGuest)(conn)
 		},
 	)
+
+	client.SendEvent(&chat.ChatMessageEvent{
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
+		CreatedAt: utils.NowMillis(),
+		Payload:   &chat.ChatMessageEvent_Queue{Queue: resp.Data},
+	})
 
 	// 读 RPC 消息
 	go l.subscribeStream(streamCtx, client, req.IsGuest)
@@ -159,12 +165,10 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 		SessionNo:  conn.SessionNo,
 		IsGuest:    isGuest,
 	})
-	fmt.Println("============================= 77")
 	if err != nil {
 		logx.Errorf("subscribe chat app stream failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 		return
 	}
-	fmt.Println("============================= 88")
 	for {
 		event, err := stream.Recv()
 		if err != nil {
@@ -173,7 +177,6 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 			}
 			return
 		}
-		fmt.Println("============================= 99")
 		conn.SendEvent(event)
 	}
 }

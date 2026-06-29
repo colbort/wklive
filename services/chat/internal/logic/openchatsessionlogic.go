@@ -32,7 +32,7 @@ func NewOpenChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *O
 // 创建或获取当前会话;
 // 用户进入客服页面 建立 WS ；创建/复用会话
 // 游客创建/复用（本次会话未结束）临时会话，会话不保存；登录用户创建（首次打开）/复用（之后进来）会话，会话保存数据库
-func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*chat.AppChatSessionResp, error) {
+func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*chat.OpenChatSessionResp, error) {
 	var ms *models.TChatSession
 	var rs *chat.ChatSession
 	if in.IsGuest {
@@ -42,7 +42,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			sessionNo, err = l.svcCtx.GenerateNo(l.ctx, "CS")
 			if err != nil {
 				logx.Errorf("generate guest session no error: %v", err)
-				return &chat.AppChatSessionResp{Base: helper.ErrResp(400, "generate session no error")}, nil
+				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate session no error")}, nil
 			}
 		}
 
@@ -76,14 +76,14 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		var err error
 		rs, err = internal.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, rs, 0)
 		if err != nil {
-			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		ms = l.transientSessionToModel(rs)
 	} else {
 		// 登录用户
 		session, err := l.svcCtx.ChatSessionModel.FindByUser(l.ctx, in.MerchantId, in.UserId)
 		if err != nil && err != models.ErrNotFound {
-			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		if err == nil {
 			now := utils.NowMillis()
@@ -93,14 +93,14 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			session.CloseReason = ""
 			session.UpdateTimes = now
 			if err := l.svcCtx.ChatSessionModel.Update(l.ctx, session); err != nil {
-				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 			ms = session
 		} else {
 			sessionNo, err := l.svcCtx.GenerateNo(l.ctx, "CS")
 			if err != nil {
 				logx.Errorf("generate session no error: %v", err)
-				return &chat.AppChatSessionResp{Base: helper.ErrResp(400, "generate message no error")}, nil
+				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate message no error")}, nil
 			}
 			now := utils.NowMillis()
 			ms = &models.TChatSession{
@@ -119,7 +119,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			}
 			result, err := l.svcCtx.ChatSessionModel.Insert(l.ctx, session)
 			if err != nil {
-				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 			if id, err := result.LastInsertId(); err == nil {
 				session.Id = id
@@ -135,7 +135,15 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 	l.publishUserJoinEvent(ms, in.IsGuest)
 	// 向用户同送排队信息
 	l.publishQueueJoinEvent(ms, in.IsGuest)
-	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: rs}, nil
+	return &chat.OpenChatSessionResp{Base: helper.OkResp(), Data: &chat.ChatQueuePayload{
+		SessionNo:     rs.SessionNo,
+		UserId:        rs.UserId,
+		Nickname:      "",
+		QueueAction:   chat.ChatQueueAction_CHAT_QUEUE_ACTION_JOIN,
+		QueuePosition: 0,
+		WaitingCount:  0,
+		ActionTime:    utils.NowMillis(),
+	}}, nil
 }
 
 func (l *OpenChatSessionLogic) transientSessionToModel(session *chat.ChatSession) *models.TChatSession {

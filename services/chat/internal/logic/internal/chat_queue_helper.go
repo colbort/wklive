@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"strconv"
 
 	"wklive/common/utils"
 	"wklive/proto/chat"
@@ -20,7 +19,7 @@ func ToProtoQueueInfo(ctx context.Context, svcCtx *svc.ServiceContext, session *
 	}
 	return &chat.ChatQueuePayload{
 		SessionNo:            session.SessionNo,
-		UserId:               strconv.FormatInt(session.UserId, 10),
+		UserId:               session.UserId,
 		QueueAction:          chat.ChatQueueAction_CHAT_QUEUE_ACTION_UPDATE,
 		QueuePosition:        int32(position),
 		WaitingCount:         int32(waitingCount),

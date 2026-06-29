@@ -30,7 +30,7 @@ func (s *ChatAppServer) AuthChatMerchant(ctx context.Context, in *chat.AuthChatM
 }
 
 // 创建或获取当前未关闭会话；服务端负责生成 session_no
-func (s *ChatAppServer) OpenChatSession(ctx context.Context, in *chat.OpenChatSessionReq) (*chat.AppChatSessionResp, error) {
+func (s *ChatAppServer) OpenChatSession(ctx context.Context, in *chat.OpenChatSessionReq) (*chat.OpenChatSessionResp, error) {
 	l := logic.NewOpenChatSessionLogic(ctx, s.svcCtx)
 	return l.OpenChatSession(in)
 }

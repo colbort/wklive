@@ -41,7 +41,7 @@ type ChatAppClient interface {
 	// 商户接入鉴权
 	AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error)
 	// 创建或获取当前未关闭会话；服务端负责生成 session_no
-	OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+	OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*OpenChatSessionResp, error)
 	// 生成会话编号
 	GenerateChatSessionNo(ctx context.Context, in *GenerateChatSessionNoReq, opts ...grpc.CallOption) (*GenerateChatSessionNoResp, error)
 	// 按商户和用户查询会话
@@ -78,9 +78,9 @@ func (c *chatAppClient) AuthChatMerchant(ctx context.Context, in *AuthChatMercha
 	return out, nil
 }
 
-func (c *chatAppClient) OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
+func (c *chatAppClient) OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*OpenChatSessionResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppChatSessionResp)
+	out := new(OpenChatSessionResp)
 	err := c.cc.Invoke(ctx, ChatApp_OpenChatSession_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -187,7 +187,7 @@ type ChatAppServer interface {
 	// 商户接入鉴权
 	AuthChatMerchant(context.Context, *AuthChatMerchantReq) (*AuthChatMerchantResp, error)
 	// 创建或获取当前未关闭会话；服务端负责生成 session_no
-	OpenChatSession(context.Context, *OpenChatSessionReq) (*AppChatSessionResp, error)
+	OpenChatSession(context.Context, *OpenChatSessionReq) (*OpenChatSessionResp, error)
 	// 生成会话编号
 	GenerateChatSessionNo(context.Context, *GenerateChatSessionNoReq) (*GenerateChatSessionNoResp, error)
 	// 按商户和用户查询会话
@@ -217,7 +217,7 @@ type UnimplementedChatAppServer struct{}
 func (UnimplementedChatAppServer) AuthChatMerchant(context.Context, *AuthChatMerchantReq) (*AuthChatMerchantResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AuthChatMerchant not implemented")
 }
-func (UnimplementedChatAppServer) OpenChatSession(context.Context, *OpenChatSessionReq) (*AppChatSessionResp, error) {
+func (UnimplementedChatAppServer) OpenChatSession(context.Context, *OpenChatSessionReq) (*OpenChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method OpenChatSession not implemented")
 }
 func (UnimplementedChatAppServer) GenerateChatSessionNo(context.Context, *GenerateChatSessionNoReq) (*GenerateChatSessionNoResp, error) {

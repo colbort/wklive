@@ -15,7 +15,7 @@ service ChatApp {
   rpc AuthChatMerchant(AuthChatMerchantReq) returns (AuthChatMerchantResp);
 
   // 创建或获取当前未关闭会话；服务端负责生成 session_no
-  rpc OpenChatSession(OpenChatSessionReq) returns (AppChatSessionResp);
+  rpc OpenChatSession(OpenChatSessionReq) returns (OpenChatSessionResp);
 
   // 生成会话编号
   rpc GenerateChatSessionNo(GenerateChatSessionNoReq)
@@ -102,6 +102,11 @@ message OpenChatSessionReq {
   bool is_guest = 4;            // 是否游客
   string session_no = 5;        // 会话
   string ext_json = 6;
+}
+
+message OpenChatSessionResp {
+  common.RespBase base = 1;
+  ChatQueuePayload data = 2;
 }
 
 message SendUserMessageReq {

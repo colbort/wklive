@@ -35,6 +35,7 @@ type (
 	GetChatSessionByUserReq           = chat.GetChatSessionByUserReq
 	ListMyChatMessagesReq             = chat.ListMyChatMessagesReq
 	OpenChatSessionReq                = chat.OpenChatSessionReq
+	OpenChatSessionResp               = chat.OpenChatSessionResp
 	SendUserMessageReq                = chat.SendUserMessageReq
 	SendUserTypingReq                 = chat.SendUserTypingReq
 	SubmitChatSatisfactionReq         = chat.SubmitChatSatisfactionReq
@@ -43,7 +44,7 @@ type (
 		// 商户接入鉴权
 		AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error)
 		// 创建或获取当前未关闭会话；服务端负责生成 session_no
-		OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+		OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*OpenChatSessionResp, error)
 		// 生成会话编号
 		GenerateChatSessionNo(ctx context.Context, in *GenerateChatSessionNoReq, opts ...grpc.CallOption) (*GenerateChatSessionNoResp, error)
 		// 按商户和用户查询会话
@@ -80,7 +81,7 @@ func (m *defaultChatApp) AuthChatMerchant(ctx context.Context, in *AuthChatMerch
 }
 
 // 创建或获取当前未关闭会话；服务端负责生成 session_no
-func (m *defaultChatApp) OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
+func (m *defaultChatApp) OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*OpenChatSessionResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.OpenChatSession(ctx, in, opts...)
 }

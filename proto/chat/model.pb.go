@@ -2017,9 +2017,9 @@ type ChatQueuePayload struct {
 	// 会话 ID
 	SessionNo string `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`
 	// 用户 ID
-	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// 用户昵称
-	UserName string `protobuf:"bytes,3,opt,name=user_name,json=userName,proto3" json:"user_name,omitempty"`
+	Nickname string `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
 	// 排队动作
 	QueueAction ChatQueueAction `protobuf:"varint,4,opt,name=queue_action,json=queueAction,proto3,enum=chat.ChatQueueAction" json:"queue_action,omitempty"`
 	// 当前排队位置
@@ -2073,16 +2073,16 @@ func (x *ChatQueuePayload) GetSessionNo() string {
 	return ""
 }
 
-func (x *ChatQueuePayload) GetUserId() string {
+func (x *ChatQueuePayload) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
-	return ""
+	return 0
 }
 
-func (x *ChatQueuePayload) GetUserName() string {
+func (x *ChatQueuePayload) GetNickname() string {
 	if x != nil {
-		return x.UserName
+		return x.Nickname
 	}
 	return ""
 }
@@ -4110,12 +4110,12 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\tuser_name\x18\x03 \x01(\tR\buserName\x12\x16\n" +
 	"\x06avatar\x18\x04 \x01(\tR\x06avatar\x12\x16\n" +
 	"\x06online\x18\x05 \x01(\bR\x06online\x12/\n" +
-	"\x06source\x18\x06 \x01(\x0e2\x17.chat.ChatSessionSourceR\x06source\"\x84\x03\n" +
+	"\x06source\x18\x06 \x01(\x0e2\x17.chat.ChatSessionSourceR\x06source\"\x83\x03\n" +
 	"\x10ChatQueuePayload\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x1b\n" +
-	"\tuser_name\x18\x03 \x01(\tR\buserName\x128\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1a\n" +
+	"\bnickname\x18\x03 \x01(\tR\bnickname\x128\n" +
 	"\fqueue_action\x18\x04 \x01(\x0e2\x15.chat.ChatQueueActionR\vqueueAction\x12%\n" +
 	"\x0equeue_position\x18\x05 \x01(\x05R\rqueuePosition\x12#\n" +
 	"\rwaiting_count\x18\x06 \x01(\x05R\fwaitingCount\x124\n" +
