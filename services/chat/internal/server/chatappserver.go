@@ -53,6 +53,12 @@ func (s *ChatAppServer) SendUserMessage(ctx context.Context, in *chat.SendUserMe
 	return l.SendUserMessage(in)
 }
 
+// 发送用户输入状态
+func (s *ChatAppServer) SendUserTyping(ctx context.Context, in *chat.SendUserTypingReq) (*chat.AppCommonResp, error) {
+	l := logic.NewSendUserTypingLogic(ctx, s.svcCtx)
+	return l.SendUserTyping(in)
+}
+
 // 查询会话消息
 func (s *ChatAppServer) ListMyChatMessages(ctx context.Context, in *chat.ListMyChatMessagesReq) (*chat.AppListChatMessagesResp, error) {
 	l := logic.NewListMyChatMessagesLogic(ctx, s.svcCtx)

@@ -3,6 +3,7 @@ package chat_ws
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 	"strings"
 	"time"
 
@@ -99,7 +100,7 @@ func (l *MessagesLogic) onMessage(isGuest bool) func(*ws.Connection, ws.InboundE
 		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
 			l.handleCloseUserSession(context.Background(), conn, event.Data, isGuest)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING:
-			l.handleUserTyping(context.Background(), conn, event.Data)
+			l.handleUserTyping(context.Background(), conn, event.Data, isGuest)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT:
 			l.handleSubmitEvaluation(context.Background(), conn, event.Data, isGuest)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ:
@@ -187,8 +188,11 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 		sendWSError(conn, err.Error())
 		return
 	}
+	if resp.GetBase().GetCode() != successCode {
+		sendWSError(conn, resp.GetBase().GetMsg())
+		return
+	}
 	msg := resp.GetData()
-
 	if msg == nil {
 		sendWSError(conn, "message data is empty")
 		return
@@ -201,7 +205,7 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 		Payload: &chat.ChatMessageEvent_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
 			SessionNo:     conn.SessionNo,
 			MessageNo:     msg.MessageNo,
-			SenderId:      msg.Sender.Id,
+			SenderId:      req.Sender.Id,
 			OperatorId:    conn.UserId,
 			OperatorType:  chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
 			MessageStatus: chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_DELIVERED,
@@ -210,11 +214,38 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 	})
 }
 
-func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
+func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		return
 	}
-	// message := "用户正在输入"
+	now := time.Now().UnixMilli()
+	typing := chat.ChatTypingPayload{
+		SessionNo:  conn.SessionNo,
+		SenderId:   strconv.FormatInt(conn.UserId, 10),
+		SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+		Text:       "用户正在输入",
+		ActionTime: now,
+	}
+	if len(payload) > 0 {
+		if err := json.Unmarshal(payload, &typing); err != nil {
+			sendWSError(conn, "invalid typing payload")
+			return
+		}
+	}
+	resp, err := l.svcCtx.ChatAppCli.SendUserTyping(ctx, &chat.SendUserTypingReq{
+		MerchantId: conn.MerchantId,
+		UserId:     conn.UserId,
+		IsGuest:    isGuest,
+		Typing:     &typing,
+	})
+	if err != nil {
+		sendWSError(conn, err.Error())
+		return
+	}
+	if resp.GetBase().GetCode() != successCode {
+		sendWSError(conn, resp.GetBase().GetMsg())
+		return
+	}
 }
 
 func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {

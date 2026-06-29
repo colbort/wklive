@@ -68,6 +68,9 @@ service ChatAdmin {
   // 发送客服消息
   rpc SendAgentMessage(SendAgentMessageReq) returns (AdminChatMessageResp);
 
+    // 发送用户输入状态
+  rpc SendAgentTyping(SendAgentTypingReq) returns (AdminCommonResp);
+
   // 查询会话消息
   rpc PageChatMessages(PageChatMessagesReq) returns (PageChatMessagesResp);
 
@@ -144,19 +147,6 @@ service ChatAdmin {
 
   // 订阅客服消息事件流
   rpc AdminSubscribeStream(AdminChatSubscribeRequest) returns (stream ChatMessageEvent);
-
-  // 删除游客临时会话和消息
-  // rpc AdminDeleteTransientChatSession(AdminDeleteTransientChatSessionReq)
-  //     returns (AdminDeleteTransientChatSessionResp);
-
-  // // 查询游客临时会话
-  // rpc AdminGetTransientChatSession(AdminGetTransientChatSessionReq)
-  //     returns (AdminChatSessionResp);
-
-  // // 分页查询游客临时会话
-  // rpc AdminPageTransientChatSessions(AdminPageTransientChatSessionsReq)
-  //     returns (AdminPageTransientChatSessionsResp);
-
 }
 
 message AdminCommonResp { common.RespBase base = 1; }
@@ -169,35 +159,6 @@ message AdminChatSubscribeRequest {
   bool is_guest = 5;
   bool admin = 6;
 }
-
-// message AdminDeleteTransientChatSessionReq {
-//   int64 merchant_id = 1;
-//   string session_no = 2;
-//   ChatEventType event_type = 3;
-//   string event_message = 4;
-//   int64 user_id = 5;
-//   int64 agent_id = 6;
-// }
-
-// message AdminDeleteTransientChatSessionResp { common.RespBase base = 1; }
-
-// message AdminGetTransientChatSessionReq {
-//   int64 merchant_id = 1;
-//   string session_no = 2;
-// }
-
-// message AdminPageTransientChatSessionsReq {
-//   int64 merchant_id = 1;
-//   int64 user_id = 2;
-//   int64 agent_id = 3;
-//   ChatSessionStatus status = 4;
-//   common.PageReq page = 5;
-// }
-
-// message AdminPageTransientChatSessionsResp {
-//   common.RespBase base = 1;
-//   repeated ChatSession data = 2;
-// }
 
 message ChatAdminLoginReq {
   string username = 1;    // 登录账号
@@ -365,6 +326,13 @@ message SendAgentMessageReq {
   bool publish_only = 18;           // 仅发布事件，不写入临时消息
   bool is_guest = 19;               // 是否游客/临时会话
   ChatEventType event_type = 20;    // 游客/临时消息事件类型
+}
+
+message SendAgentTypingReq {
+  int64 merchant_id = 1;        // 客服商户ID
+  int64 user_id = 2;            // 用户ID
+  bool is_guest = 3;            // 是否游客/临时会话
+  ChatTypingPayload typing = 4; // 输入状态 payload
 }
 
 message PageChatMessagesReq {

@@ -28,6 +28,9 @@ service ChatApp {
   // 发送用户消息
   rpc SendUserMessage(SendUserMessageReq) returns (AppChatMessageResp);
 
+  // 发送用户输入状态
+  rpc SendUserTyping(SendUserTypingReq) returns (AppCommonResp);
+
   // 查询会话消息
   rpc ListMyChatMessages(ListMyChatMessagesReq) returns (AppListChatMessagesResp);
 
@@ -40,6 +43,10 @@ service ChatApp {
 
   // 订阅客服消息事件流
   rpc AppSubscribeStream(AppChatSubscribeRequest) returns (stream ChatMessageEvent);
+}
+
+message AppCommonResp {
+  common.RespBase base = 1;
 }
 
 message AuthChatMerchantReq {
@@ -119,6 +126,42 @@ message SendUserMessageReq {
   ChatEventType event_type = 20;    // 游客/临时消息事件类型
 }
 
+message SendUserTypingReq {
+  int64 merchant_id = 1;        // 客服商户ID
+  int64 user_id = 2;            // 用户ID
+  bool is_guest = 3;            // 是否游客/临时会话
+  ChatTypingPayload typing = 4; // 输入状态 payload
+}
+
+message AppUpsertTransientChatSessionReq {
+  ChatSession session = 1;
+  int64 ttl_seconds = 2;
+}
+
+message AppGetTransientChatSessionReq {
+  int64 merchant_id = 1;
+  string session_no = 2;
+}
+
+message AppPageTransientChatSessionsReq {
+  int64 merchant_id = 1;
+  int64 user_id = 2;
+  int64 agent_id = 3;
+  ChatSessionStatus status = 4;
+  common.PageReq page = 5;
+}
+
+message AppDeleteTransientChatSessionReq {
+  int64 merchant_id = 1;
+  string session_no = 2;
+  ChatEventType event_type = 3;
+  string event_message = 4;
+  int64 user_id = 5;
+  int64 agent_id = 6;
+}
+
+message AppDeleteTransientChatSessionResp { common.RespBase base = 1; }
+
 message ListMyChatMessagesReq {
   string session_no = 1;            // 会话编号
   common.PageReq page = 2;          // 分页
@@ -168,6 +211,11 @@ message AppChatSessionResp {
 message AppChatMessageResp {
   common.RespBase base = 1;
   ChatMessage data = 2;
+}
+
+message AppPageTransientChatSessionsResp {
+  common.RespBase base = 1;
+  repeated ChatSession data = 2;
 }
 
 message AppChatSatisfactionResp {

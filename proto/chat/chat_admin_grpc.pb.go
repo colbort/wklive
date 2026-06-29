@@ -38,6 +38,7 @@ const (
 	ChatAdmin_GetChatSession_FullMethodName              = "/chat.ChatAdmin/GetChatSession"
 	ChatAdmin_AcceptChatSession_FullMethodName           = "/chat.ChatAdmin/AcceptChatSession"
 	ChatAdmin_SendAgentMessage_FullMethodName            = "/chat.ChatAdmin/SendAgentMessage"
+	ChatAdmin_SendAgentTyping_FullMethodName             = "/chat.ChatAdmin/SendAgentTyping"
 	ChatAdmin_PageChatMessages_FullMethodName            = "/chat.ChatAdmin/PageChatMessages"
 	ChatAdmin_MarkAgentMessagesRead_FullMethodName       = "/chat.ChatAdmin/MarkAgentMessagesRead"
 	ChatAdmin_CloseChatSession_FullMethodName            = "/chat.ChatAdmin/CloseChatSession"
@@ -106,6 +107,8 @@ type ChatAdminClient interface {
 	AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 	// 发送客服消息
 	SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error)
+	// 发送用户输入状态
+	SendAgentTyping(ctx context.Context, in *SendAgentTypingReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 查询会话消息
 	PageChatMessages(ctx context.Context, in *PageChatMessagesReq, opts ...grpc.CallOption) (*PageChatMessagesResp, error)
 	// 标记客服侧已读
@@ -344,6 +347,16 @@ func (c *chatAdminClient) SendAgentMessage(ctx context.Context, in *SendAgentMes
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminChatMessageResp)
 	err := c.cc.Invoke(ctx, ChatAdmin_SendAgentMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) SendAgentTyping(ctx context.Context, in *SendAgentTypingReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_SendAgentTyping_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -623,6 +636,8 @@ type ChatAdminServer interface {
 	AcceptChatSession(context.Context, *AcceptChatSessionReq) (*AdminChatSessionResp, error)
 	// 发送客服消息
 	SendAgentMessage(context.Context, *SendAgentMessageReq) (*AdminChatMessageResp, error)
+	// 发送用户输入状态
+	SendAgentTyping(context.Context, *SendAgentTypingReq) (*AdminCommonResp, error)
 	// 查询会话消息
 	PageChatMessages(context.Context, *PageChatMessagesReq) (*PageChatMessagesResp, error)
 	// 标记客服侧已读
@@ -733,6 +748,9 @@ func (UnimplementedChatAdminServer) AcceptChatSession(context.Context, *AcceptCh
 }
 func (UnimplementedChatAdminServer) SendAgentMessage(context.Context, *SendAgentMessageReq) (*AdminChatMessageResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendAgentMessage not implemented")
+}
+func (UnimplementedChatAdminServer) SendAgentTyping(context.Context, *SendAgentTypingReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SendAgentTyping not implemented")
 }
 func (UnimplementedChatAdminServer) PageChatMessages(context.Context, *PageChatMessagesReq) (*PageChatMessagesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PageChatMessages not implemented")
@@ -1159,6 +1177,24 @@ func _ChatAdmin_SendAgentMessage_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAdminServer).SendAgentMessage(ctx, req.(*SendAgentMessageReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_SendAgentTyping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendAgentTypingReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).SendAgentTyping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_SendAgentTyping_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).SendAgentTyping(ctx, req.(*SendAgentTypingReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1634,6 +1670,10 @@ var ChatAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendAgentMessage",
 			Handler:    _ChatAdmin_SendAgentMessage_Handler,
+		},
+		{
+			MethodName: "SendAgentTyping",
+			Handler:    _ChatAdmin_SendAgentTyping_Handler,
 		},
 		{
 			MethodName: "PageChatMessages",

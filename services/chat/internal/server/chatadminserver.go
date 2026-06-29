@@ -137,6 +137,12 @@ func (s *ChatAdminServer) SendAgentMessage(ctx context.Context, in *chat.SendAge
 	return l.SendAgentMessage(in)
 }
 
+// 发送用户输入状态
+func (s *ChatAdminServer) SendAgentTyping(ctx context.Context, in *chat.SendAgentTypingReq) (*chat.AdminCommonResp, error) {
+	l := logic.NewSendAgentTypingLogic(ctx, s.svcCtx)
+	return l.SendAgentTyping(in)
+}
+
 // 查询会话消息
 func (s *ChatAdminServer) PageChatMessages(ctx context.Context, in *chat.PageChatMessagesReq) (*chat.PageChatMessagesResp, error) {
 	l := logic.NewPageChatMessagesLogic(ctx, s.svcCtx)
@@ -267,16 +273,4 @@ func (s *ChatAdminServer) DeleteChatWorkOrder(ctx context.Context, in *chat.Dele
 func (s *ChatAdminServer) AdminSubscribeStream(in *chat.AdminChatSubscribeRequest, stream chat.ChatAdmin_AdminSubscribeStreamServer) error {
 	l := logic.NewAdminSubscribeStreamLogic(stream.Context(), s.svcCtx)
 	return l.AdminSubscribeStream(in, stream)
-}
-
-// 查询游客临时会话
-func (s *ChatAdminServer) AdminGetTransientChatSession(ctx context.Context, in *chat.AdminGetTransientChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	l := logic.NewAdminGetTransientChatSessionLogic(ctx, s.svcCtx)
-	return l.AdminGetTransientChatSession(in)
-}
-
-// 分页查询游客临时会话
-func (s *ChatAdminServer) AdminPageTransientChatSessions(ctx context.Context, in *chat.AdminPageTransientChatSessionsReq) (*chat.AdminPageTransientChatSessionsResp, error) {
-	l := logic.NewAdminPageTransientChatSessionsLogic(ctx, s.svcCtx)
-	return l.AdminPageTransientChatSessions(in)
 }

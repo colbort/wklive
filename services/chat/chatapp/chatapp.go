@@ -14,22 +14,30 @@ import (
 )
 
 type (
-	AppChatMessageResp        = chat.AppChatMessageResp
-	AppChatSatisfactionResp   = chat.AppChatSatisfactionResp
-	AppChatSessionResp        = chat.AppChatSessionResp
-	AppChatSubscribeRequest   = chat.AppChatSubscribeRequest
-	AppListChatMessagesResp   = chat.AppListChatMessagesResp
-	AuthChatMerchantData      = chat.AuthChatMerchantData
-	AuthChatMerchantReq       = chat.AuthChatMerchantReq
-	AuthChatMerchantResp      = chat.AuthChatMerchantResp
-	CloseMyChatSessionReq     = chat.CloseMyChatSessionReq
-	GenerateChatSessionNoReq  = chat.GenerateChatSessionNoReq
-	GenerateChatSessionNoResp = chat.GenerateChatSessionNoResp
-	GetChatSessionByUserReq   = chat.GetChatSessionByUserReq
-	ListMyChatMessagesReq     = chat.ListMyChatMessagesReq
-	OpenChatSessionReq        = chat.OpenChatSessionReq
-	SendUserMessageReq        = chat.SendUserMessageReq
-	SubmitChatSatisfactionReq = chat.SubmitChatSatisfactionReq
+	AppChatMessageResp                = chat.AppChatMessageResp
+	AppChatSatisfactionResp           = chat.AppChatSatisfactionResp
+	AppChatSessionResp                = chat.AppChatSessionResp
+	AppChatSubscribeRequest           = chat.AppChatSubscribeRequest
+	AppCommonResp                     = chat.AppCommonResp
+	AppDeleteTransientChatSessionReq  = chat.AppDeleteTransientChatSessionReq
+	AppDeleteTransientChatSessionResp = chat.AppDeleteTransientChatSessionResp
+	AppGetTransientChatSessionReq     = chat.AppGetTransientChatSessionReq
+	AppListChatMessagesResp           = chat.AppListChatMessagesResp
+	AppPageTransientChatSessionsReq   = chat.AppPageTransientChatSessionsReq
+	AppPageTransientChatSessionsResp  = chat.AppPageTransientChatSessionsResp
+	AppUpsertTransientChatSessionReq  = chat.AppUpsertTransientChatSessionReq
+	AuthChatMerchantData              = chat.AuthChatMerchantData
+	AuthChatMerchantReq               = chat.AuthChatMerchantReq
+	AuthChatMerchantResp              = chat.AuthChatMerchantResp
+	CloseMyChatSessionReq             = chat.CloseMyChatSessionReq
+	GenerateChatSessionNoReq          = chat.GenerateChatSessionNoReq
+	GenerateChatSessionNoResp         = chat.GenerateChatSessionNoResp
+	GetChatSessionByUserReq           = chat.GetChatSessionByUserReq
+	ListMyChatMessagesReq             = chat.ListMyChatMessagesReq
+	OpenChatSessionReq                = chat.OpenChatSessionReq
+	SendUserMessageReq                = chat.SendUserMessageReq
+	SendUserTypingReq                 = chat.SendUserTypingReq
+	SubmitChatSatisfactionReq         = chat.SubmitChatSatisfactionReq
 
 	ChatApp interface {
 		// 商户接入鉴权
@@ -42,6 +50,8 @@ type (
 		GetChatSessionByUser(ctx context.Context, in *GetChatSessionByUserReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
 		// 发送用户消息
 		SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error)
+		// 发送用户输入状态
+		SendUserTyping(ctx context.Context, in *SendUserTypingReq, opts ...grpc.CallOption) (*AppCommonResp, error)
 		// 查询会话消息
 		ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*AppListChatMessagesResp, error)
 		// 关闭我的会话
@@ -91,6 +101,12 @@ func (m *defaultChatApp) GetChatSessionByUser(ctx context.Context, in *GetChatSe
 func (m *defaultChatApp) SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.SendUserMessage(ctx, in, opts...)
+}
+
+// 发送用户输入状态
+func (m *defaultChatApp) SendUserTyping(ctx context.Context, in *SendUserTypingReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.SendUserTyping(ctx, in, opts...)
 }
 
 // 查询会话消息

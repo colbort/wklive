@@ -5,7 +5,6 @@ import (
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,18 +27,12 @@ func NewGenerateChatSessionNoLogic(ctx context.Context, svcCtx *svc.ServiceConte
 // 生成会话编号
 func (l *GenerateChatSessionNoLogic) GenerateChatSessionNo(in *chat.GenerateChatSessionNoReq) (*chat.GenerateChatSessionNoResp, error) {
 	sessionNo := ""
-	// TODO
 	if in.IsGuest {
-		list, hasNext, nextCursor, err := internal.PageTransientSessions(
-			l.ctx,
-			l.svcCtx.BusRedis,
-			in.GetMerchantId(),
-			in.GetUserId(),
-			in.GetAgentId(),
-			int64(in.GetStatus()),
-			cursor,
-			limit,
-		)
+		sn, err := l.svcCtx.GenerateNo(l.ctx, "GCS")
+		if err != nil {
+			return nil, err
+		}
+		sessionNo = sn
 	} else {
 		session, err := l.svcCtx.ChatSessionModel.FindByUser(l.ctx, in.MerchantId, in.UserId)
 		if err == nil {

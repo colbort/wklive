@@ -54,7 +54,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
-		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ASSIGNED,
+		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
 		Channel:      chat.ChatAppEventChannel,
 		Session:      session,
 		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,

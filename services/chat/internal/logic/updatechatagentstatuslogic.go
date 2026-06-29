@@ -53,9 +53,10 @@ func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAg
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_JOIN,
-		Channel:   chat.ChatAdminEventChannel,
-		Agent:     data,
+		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE,
+		Channel:      chat.ChatAdminEventChannel,
+		Agent:        data,
+		EventMessage: "坐席状态已更新",
 	})
 	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: internal.ToProtoAgent(data)}, nil
 }

@@ -14,72 +14,70 @@ import (
 )
 
 type (
-	AcceptChatSessionReq               = chat.AcceptChatSessionReq
-	AdminChatAgentResp                 = chat.AdminChatAgentResp
-	AdminChatCategoryResp              = chat.AdminChatCategoryResp
-	AdminChatGroupResp                 = chat.AdminChatGroupResp
-	AdminChatMessageResp               = chat.AdminChatMessageResp
-	AdminChatQuickReplyResp            = chat.AdminChatQuickReplyResp
-	AdminChatSessionResp               = chat.AdminChatSessionResp
-	AdminChatSubscribeRequest          = chat.AdminChatSubscribeRequest
-	AdminChatWorkOrderResp             = chat.AdminChatWorkOrderResp
-	AdminCommonResp                    = chat.AdminCommonResp
-	AdminGetTransientChatSessionReq    = chat.AdminGetTransientChatSessionReq
-	AdminMarkMessagesReadResp          = chat.AdminMarkMessagesReadResp
-	AdminPageTransientChatSessionsReq  = chat.AdminPageTransientChatSessionsReq
-	AdminPageTransientChatSessionsResp = chat.AdminPageTransientChatSessionsResp
-	ChatAdminLoginData                 = chat.ChatAdminLoginData
-	ChatAdminLoginReq                  = chat.ChatAdminLoginReq
-	ChatAdminLoginResp                 = chat.ChatAdminLoginResp
-	ChatAdminLogoutReq                 = chat.ChatAdminLogoutReq
-	ChatAdminProfileReq                = chat.ChatAdminProfileReq
-	ChatAdminProfileResp               = chat.ChatAdminProfileResp
-	CloseChatSessionReq                = chat.CloseChatSessionReq
-	CreateChatAgentReq                 = chat.CreateChatAgentReq
-	CreateChatCategoryReq              = chat.CreateChatCategoryReq
-	CreateChatGroupReq                 = chat.CreateChatGroupReq
-	CreateChatQuickReplyReq            = chat.CreateChatQuickReplyReq
-	CreateChatWorkOrderReq             = chat.CreateChatWorkOrderReq
-	DeleteChatCategoryReq              = chat.DeleteChatCategoryReq
-	DeleteChatGroupReq                 = chat.DeleteChatGroupReq
-	DeleteChatQuickReplyReq            = chat.DeleteChatQuickReplyReq
-	DeleteChatWorkOrderReq             = chat.DeleteChatWorkOrderReq
-	GetChatAgentReq                    = chat.GetChatAgentReq
-	GetChatCategoryReq                 = chat.GetChatCategoryReq
-	GetChatGroupReq                    = chat.GetChatGroupReq
-	GetChatQuickReplyReq               = chat.GetChatQuickReplyReq
-	GetChatSessionReq                  = chat.GetChatSessionReq
-	GetChatUserByIdReq                 = chat.GetChatUserByIdReq
-	GetChatUserByIdResp                = chat.GetChatUserByIdResp
-	GetChatWorkOrderReq                = chat.GetChatWorkOrderReq
-	HandleChatWorkOrderReq             = chat.HandleChatWorkOrderReq
-	ListChatCategoriesResp             = chat.ListChatCategoriesResp
-	ListChatQuickRepliesResp           = chat.ListChatQuickRepliesResp
-	ListEnabledChatCategoriesReq       = chat.ListEnabledChatCategoriesReq
-	ListEnabledChatQuickRepliesReq     = chat.ListEnabledChatQuickRepliesReq
-	MarkAgentMessagesReadReq           = chat.MarkAgentMessagesReadReq
-	PageChatAgentsReq                  = chat.PageChatAgentsReq
-	PageChatAgentsResp                 = chat.PageChatAgentsResp
-	PageChatCategoriesReq              = chat.PageChatCategoriesReq
-	PageChatCategoriesResp             = chat.PageChatCategoriesResp
-	PageChatGroupsReq                  = chat.PageChatGroupsReq
-	PageChatGroupsResp                 = chat.PageChatGroupsResp
-	PageChatMessagesReq                = chat.PageChatMessagesReq
-	PageChatMessagesResp               = chat.PageChatMessagesResp
-	PageChatQuickRepliesReq            = chat.PageChatQuickRepliesReq
-	PageChatQuickRepliesResp           = chat.PageChatQuickRepliesResp
-	PageChatSessionsReq                = chat.PageChatSessionsReq
-	PageChatSessionsResp               = chat.PageChatSessionsResp
-	PageChatWorkOrdersReq              = chat.PageChatWorkOrdersReq
-	PageChatWorkOrdersResp             = chat.PageChatWorkOrdersResp
-	SendAgentMessageReq                = chat.SendAgentMessageReq
-	UpdateChatAdminProfileReq          = chat.UpdateChatAdminProfileReq
-	UpdateChatAgentReq                 = chat.UpdateChatAgentReq
-	UpdateChatAgentStatusReq           = chat.UpdateChatAgentStatusReq
-	UpdateChatCategoryReq              = chat.UpdateChatCategoryReq
-	UpdateChatGroupReq                 = chat.UpdateChatGroupReq
-	UpdateChatQuickReplyReq            = chat.UpdateChatQuickReplyReq
-	UpdateChatWorkOrderReq             = chat.UpdateChatWorkOrderReq
+	AcceptChatSessionReq           = chat.AcceptChatSessionReq
+	AdminChatAgentResp             = chat.AdminChatAgentResp
+	AdminChatCategoryResp          = chat.AdminChatCategoryResp
+	AdminChatGroupResp             = chat.AdminChatGroupResp
+	AdminChatMessageResp           = chat.AdminChatMessageResp
+	AdminChatQuickReplyResp        = chat.AdminChatQuickReplyResp
+	AdminChatSessionResp           = chat.AdminChatSessionResp
+	AdminChatSubscribeRequest      = chat.AdminChatSubscribeRequest
+	AdminChatWorkOrderResp         = chat.AdminChatWorkOrderResp
+	AdminCommonResp                = chat.AdminCommonResp
+	AdminMarkMessagesReadResp      = chat.AdminMarkMessagesReadResp
+	ChatAdminLoginData             = chat.ChatAdminLoginData
+	ChatAdminLoginReq              = chat.ChatAdminLoginReq
+	ChatAdminLoginResp             = chat.ChatAdminLoginResp
+	ChatAdminLogoutReq             = chat.ChatAdminLogoutReq
+	ChatAdminProfileReq            = chat.ChatAdminProfileReq
+	ChatAdminProfileResp           = chat.ChatAdminProfileResp
+	CloseChatSessionReq            = chat.CloseChatSessionReq
+	CreateChatAgentReq             = chat.CreateChatAgentReq
+	CreateChatCategoryReq          = chat.CreateChatCategoryReq
+	CreateChatGroupReq             = chat.CreateChatGroupReq
+	CreateChatQuickReplyReq        = chat.CreateChatQuickReplyReq
+	CreateChatWorkOrderReq         = chat.CreateChatWorkOrderReq
+	DeleteChatCategoryReq          = chat.DeleteChatCategoryReq
+	DeleteChatGroupReq             = chat.DeleteChatGroupReq
+	DeleteChatQuickReplyReq        = chat.DeleteChatQuickReplyReq
+	DeleteChatWorkOrderReq         = chat.DeleteChatWorkOrderReq
+	GetChatAgentReq                = chat.GetChatAgentReq
+	GetChatCategoryReq             = chat.GetChatCategoryReq
+	GetChatGroupReq                = chat.GetChatGroupReq
+	GetChatQuickReplyReq           = chat.GetChatQuickReplyReq
+	GetChatSessionReq              = chat.GetChatSessionReq
+	GetChatUserByIdReq             = chat.GetChatUserByIdReq
+	GetChatUserByIdResp            = chat.GetChatUserByIdResp
+	GetChatWorkOrderReq            = chat.GetChatWorkOrderReq
+	HandleChatWorkOrderReq         = chat.HandleChatWorkOrderReq
+	ListChatCategoriesResp         = chat.ListChatCategoriesResp
+	ListChatQuickRepliesResp       = chat.ListChatQuickRepliesResp
+	ListEnabledChatCategoriesReq   = chat.ListEnabledChatCategoriesReq
+	ListEnabledChatQuickRepliesReq = chat.ListEnabledChatQuickRepliesReq
+	MarkAgentMessagesReadReq       = chat.MarkAgentMessagesReadReq
+	PageChatAgentsReq              = chat.PageChatAgentsReq
+	PageChatAgentsResp             = chat.PageChatAgentsResp
+	PageChatCategoriesReq          = chat.PageChatCategoriesReq
+	PageChatCategoriesResp         = chat.PageChatCategoriesResp
+	PageChatGroupsReq              = chat.PageChatGroupsReq
+	PageChatGroupsResp             = chat.PageChatGroupsResp
+	PageChatMessagesReq            = chat.PageChatMessagesReq
+	PageChatMessagesResp           = chat.PageChatMessagesResp
+	PageChatQuickRepliesReq        = chat.PageChatQuickRepliesReq
+	PageChatQuickRepliesResp       = chat.PageChatQuickRepliesResp
+	PageChatSessionsReq            = chat.PageChatSessionsReq
+	PageChatSessionsResp           = chat.PageChatSessionsResp
+	PageChatWorkOrdersReq          = chat.PageChatWorkOrdersReq
+	PageChatWorkOrdersResp         = chat.PageChatWorkOrdersResp
+	SendAgentMessageReq            = chat.SendAgentMessageReq
+	SendAgentTypingReq             = chat.SendAgentTypingReq
+	UpdateChatAdminProfileReq      = chat.UpdateChatAdminProfileReq
+	UpdateChatAgentReq             = chat.UpdateChatAgentReq
+	UpdateChatAgentStatusReq       = chat.UpdateChatAgentStatusReq
+	UpdateChatCategoryReq          = chat.UpdateChatCategoryReq
+	UpdateChatGroupReq             = chat.UpdateChatGroupReq
+	UpdateChatQuickReplyReq        = chat.UpdateChatQuickReplyReq
+	UpdateChatWorkOrderReq         = chat.UpdateChatWorkOrderReq
 
 	ChatAdmin interface {
 		// 登录
@@ -120,6 +118,8 @@ type (
 		AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 		// 发送客服消息
 		SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error)
+		// 发送用户输入状态
+		SendAgentTyping(ctx context.Context, in *SendAgentTypingReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 查询会话消息
 		PageChatMessages(ctx context.Context, in *PageChatMessagesReq, opts ...grpc.CallOption) (*PageChatMessagesResp, error)
 		// 标记客服侧已读
@@ -164,10 +164,6 @@ type (
 		DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 订阅客服消息事件流
 		AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatAdmin_AdminSubscribeStreamClient, error)
-		// 查询游客临时会话
-		AdminGetTransientChatSession(ctx context.Context, in *AdminGetTransientChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
-		// 分页查询游客临时会话
-		AdminPageTransientChatSessions(ctx context.Context, in *AdminPageTransientChatSessionsReq, opts ...grpc.CallOption) (*AdminPageTransientChatSessionsResp, error)
 	}
 
 	defaultChatAdmin struct {
@@ -293,6 +289,12 @@ func (m *defaultChatAdmin) AcceptChatSession(ctx context.Context, in *AcceptChat
 func (m *defaultChatAdmin) SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.SendAgentMessage(ctx, in, opts...)
+}
+
+// 发送用户输入状态
+func (m *defaultChatAdmin) SendAgentTyping(ctx context.Context, in *SendAgentTypingReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.SendAgentTyping(ctx, in, opts...)
 }
 
 // 查询会话消息
@@ -425,16 +427,4 @@ func (m *defaultChatAdmin) DeleteChatWorkOrder(ctx context.Context, in *DeleteCh
 func (m *defaultChatAdmin) AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatAdmin_AdminSubscribeStreamClient, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.AdminSubscribeStream(ctx, in, opts...)
-}
-
-// 查询游客临时会话
-func (m *defaultChatAdmin) AdminGetTransientChatSession(ctx context.Context, in *AdminGetTransientChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
-	client := chat.NewChatAdminClient(m.cli.Conn())
-	return client.AdminGetTransientChatSession(ctx, in, opts...)
-}
-
-// 分页查询游客临时会话
-func (m *defaultChatAdmin) AdminPageTransientChatSessions(ctx context.Context, in *AdminPageTransientChatSessionsReq, opts ...grpc.CallOption) (*AdminPageTransientChatSessionsResp, error) {
-	client := chat.NewChatAdminClient(m.cli.Conn())
-	return client.AdminPageTransientChatSessions(ctx, in, opts...)
 }

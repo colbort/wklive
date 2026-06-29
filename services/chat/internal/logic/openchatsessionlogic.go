@@ -188,7 +188,7 @@ func (l *OpenChatSessionLogic) publishQueueJoinEvent(session *models.TChatSessio
 		return
 	}
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
-		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_JOIN,
+		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
 		Channel:      chat.ChatAppEventChannel,
 		IsGuest:      isGuest,
 		Session:      session,
