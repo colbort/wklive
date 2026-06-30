@@ -33,7 +33,7 @@ type ChatMessage struct {
 	FileSize    int64  `bson:"file_size,omitempty" json:"file_size,omitempty"`
 	Width       int32  `bson:"width,omitempty" json:"width,omitempty"`
 	Height      int32  `bson:"height,omitempty" json:"height,omitempty"`
-	Duration    int64  `bson:"duration,omitempty" json:"duration,omitempty"`
+	Duration    int32  `bson:"duration,omitempty" json:"duration,omitempty"`
 
 	Status   int64          `bson:"status,omitempty" json:"status,omitempty"`
 	Payload  map[string]any `bson:"payload,omitempty" json:"payload,omitempty"`

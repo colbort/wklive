@@ -101,9 +101,9 @@ type ChatMessage {
 	fileName    string            `json:"fileName"`
 	fileSize    int64             `json:"fileSize"`
 	mimeType    string            `json:"mimeType"`
-	width       int64             `json:"width"`
-	height      int64             `json:"height"`
-	duration    int64             `json:"duration"`
+	width       int32             `json:"width"`
+	height      int32             `json:"height"`
+	duration    int32             `json:"duration"`
 	status      int64             `json:"status"`
 	extra       string            `json:"extra,optional"`
 	readTime    int64             `json:"readTime"`

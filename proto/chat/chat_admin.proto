@@ -317,7 +317,7 @@ message SendAgentMessageReq {
   string mime_type = 8;             // MIME类型
   int32 width = 9;                  // 图片/视频宽度
   int32 height = 10;                // 图片/视频高度
-  int64 duration = 11;              // 音频/视频时长(秒)
+  int32 duration = 11;              // 音频/视频时长(秒)
   string extra = 12;                // 扩展JSON
   ChatMessageUser sender = 13;      // 坐席端
   int64 merchant_id = 14;           // 

@@ -1610,7 +1610,7 @@ type SendAgentMessageReq struct {
 	MimeType        string                 `protobuf:"bytes,8,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`                                     // MIME类型
 	Width           int32                  `protobuf:"varint,9,opt,name=width,proto3" json:"width,omitempty"`                                                          // 图片/视频宽度
 	Height          int32                  `protobuf:"varint,10,opt,name=height,proto3" json:"height,omitempty"`                                                       // 图片/视频高度
-	Duration        int64                  `protobuf:"varint,11,opt,name=duration,proto3" json:"duration,omitempty"`                                                   // 音频/视频时长(秒)
+	Duration        int32                  `protobuf:"varint,11,opt,name=duration,proto3" json:"duration,omitempty"`                                                   // 音频/视频时长(秒)
 	Extra           string                 `protobuf:"bytes,12,opt,name=extra,proto3" json:"extra,omitempty"`                                                          // 扩展JSON
 	Sender          *ChatMessageUser       `protobuf:"bytes,13,opt,name=sender,proto3" json:"sender,omitempty"`                                                        // 坐席端
 	MerchantId      int64                  `protobuf:"varint,14,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                             //
@@ -1724,7 +1724,7 @@ func (x *SendAgentMessageReq) GetHeight() int32 {
 	return 0
 }
 
-func (x *SendAgentMessageReq) GetDuration() int64 {
+func (x *SendAgentMessageReq) GetDuration() int32 {
 	if x != nil {
 		return x.Duration
 	}
@@ -4437,7 +4437,7 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\x05width\x18\t \x01(\x05R\x05width\x12\x16\n" +
 	"\x06height\x18\n" +
 	" \x01(\x05R\x06height\x12\x1a\n" +
-	"\bduration\x18\v \x01(\x03R\bduration\x12\x14\n" +
+	"\bduration\x18\v \x01(\x05R\bduration\x12\x14\n" +
 	"\x05extra\x18\f \x01(\tR\x05extra\x12-\n" +
 	"\x06sender\x18\r \x01(\v2\x15.chat.ChatMessageUserR\x06sender\x12\x1f\n" +
 	"\vmerchant_id\x18\x0e \x01(\x03R\n" +

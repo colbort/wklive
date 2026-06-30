@@ -799,7 +799,7 @@ type ChatMessage struct {
 	FileSize      int64                  `protobuf:"varint,12,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`                                   // 文件大小(byte)
 	Width         int32                  `protobuf:"varint,13,opt,name=width,proto3" json:"width,omitempty"`                                                         // 图片/视频宽度
 	Height        int32                  `protobuf:"varint,14,opt,name=height,proto3" json:"height,omitempty"`                                                       // 图片/视频高度
-	Duration      int64                  `protobuf:"varint,15,opt,name=duration,proto3" json:"duration,omitempty"`                                                   // 音频/视频时长(秒)
+	Duration      int32                  `protobuf:"varint,15,opt,name=duration,proto3" json:"duration,omitempty"`                                                   // 音频/视频时长(秒)
 	Status        ChatMessageStatus      `protobuf:"varint,16,opt,name=status,proto3,enum=chat.ChatMessageStatus" json:"status,omitempty"`                           // 消息状态
 	Payload       *structpb.Struct       `protobuf:"bytes,17,opt,name=payload,proto3" json:"payload,omitempty"`                                                      // 扩展 payload
 	ReadTime      int64                  `protobuf:"varint,18,opt,name=read_time,json=readTime,proto3" json:"read_time,omitempty"`                                   // 已读时间戳(毫秒)
@@ -937,7 +937,7 @@ func (x *ChatMessage) GetHeight() int32 {
 	return 0
 }
 
-func (x *ChatMessage) GetDuration() int64 {
+func (x *ChatMessage) GetDuration() int32 {
 	if x != nil {
 		return x.Duration
 	}
@@ -4005,7 +4005,7 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\tfile_size\x18\f \x01(\x03R\bfileSize\x12\x14\n" +
 	"\x05width\x18\r \x01(\x05R\x05width\x12\x16\n" +
 	"\x06height\x18\x0e \x01(\x05R\x06height\x12\x1a\n" +
-	"\bduration\x18\x0f \x01(\x03R\bduration\x12/\n" +
+	"\bduration\x18\x0f \x01(\x05R\bduration\x12/\n" +
 	"\x06status\x18\x10 \x01(\x0e2\x17.chat.ChatMessageStatusR\x06status\x121\n" +
 	"\apayload\x18\x11 \x01(\v2\x17.google.protobuf.StructR\apayload\x12\x1b\n" +
 	"\tread_time\x18\x12 \x01(\x03R\breadTime\x12!\n" +

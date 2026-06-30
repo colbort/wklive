@@ -112,9 +112,9 @@ type ChatMessage struct {
 	FileName    string            `json:"fileName"`
 	FileSize    int64             `json:"fileSize"`
 	MimeType    string            `json:"mimeType"`
-	Width       int64             `json:"width"`
-	Height      int64             `json:"height"`
-	Duration    int64             `json:"duration"`
+	Width       int32             `json:"width"`
+	Height      int32             `json:"height"`
+	Duration    int32             `json:"duration"`
 	Status      int64             `json:"status"`
 	Extra       string            `json:"extra,optional"`
 	ReadTime    int64             `json:"readTime"`
