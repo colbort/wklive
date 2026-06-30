@@ -80,12 +80,15 @@ CREATE TABLE `t_chat_session` (
   `agent_unread_count` int NOT NULL DEFAULT '0' COMMENT '坐席未读数',
   `close_time` bigint NOT NULL DEFAULT '0' COMMENT '结束时间戳(毫秒)',
   `close_reason` varchar(255) NOT NULL DEFAULT '' COMMENT '结束原因',
+  `disconnect_time` bigint NOT NULL DEFAULT '0' COMMENT '网络异常断开时间戳(毫秒)',
+  `before_disconnect_status` tinyint NOT NULL DEFAULT '0' COMMENT '网络异常断开前状态',
   `ext_json` json DEFAULT NULL COMMENT '扩展信息',
   `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间戳(毫秒)',
   `update_times` bigint NOT NULL DEFAULT '0' COMMENT '更新时间戳(毫秒)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_session_no` (`session_no`),
   KEY `idx_merchant_user` (`merchant_id`,`user_id`),
+  KEY `idx_status_disconnect_time` (`status`,`disconnect_time`),
   KEY `idx_last_message_no` (`last_message_no`),
   KEY `idx_last_message_time` (`last_message_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客服会话';

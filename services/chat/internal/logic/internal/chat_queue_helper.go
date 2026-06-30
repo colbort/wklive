@@ -67,13 +67,13 @@ func countTransientWaitingPosition(ctx context.Context, svcCtx *svc.ServiceConte
 			return 0, 0, err
 		}
 		for _, item := range list {
-			if item.GetAgentId() != 0 ||
-				item.GetGroupId() != session.GroupId ||
-				!queuedSessionStatus(int64(item.GetStatus())) {
+			if item.AgentId != 0 ||
+				item.GroupId != session.GroupId ||
+				!queuedSessionStatus(item.Status) {
 				continue
 			}
 			waitingCount++
-			if item.GetSessionNo() == session.SessionNo {
+			if item.SessionNo == session.SessionNo {
 				continue
 			}
 			if transientBeforeSession(item, session) {
@@ -87,19 +87,19 @@ func countTransientWaitingPosition(ctx context.Context, svcCtx *svc.ServiceConte
 	}
 }
 
-func transientBeforeSession(item *chat.ChatSession, session *models.TChatSession) bool {
+func transientBeforeSession(item *models.TChatSession, session *models.TChatSession) bool {
 	if item == nil || session == nil {
 		return false
 	}
-	itemPriority := int64(item.GetPriority())
+	itemPriority := item.Priority
 	if itemPriority != session.Priority {
 		return itemPriority > session.Priority
 	}
-	itemCreatedAt := item.GetCreateTimes()
+	itemCreatedAt := item.CreateTimes
 	if itemCreatedAt != session.CreateTimes {
 		return itemCreatedAt < session.CreateTimes
 	}
-	return item.GetSessionNo() <= session.SessionNo
+	return item.SessionNo <= session.SessionNo
 }
 
 func queuedSessionStatus(status int64) bool {

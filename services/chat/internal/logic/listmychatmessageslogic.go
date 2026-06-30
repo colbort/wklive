@@ -60,7 +60,7 @@ func (l *ListMyChatMessagesLogic) ListMyChatMessages(in *chat.ListMyChatMessages
 	if err != nil {
 		return &chat.AppListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
 	if err != nil {
 		return &chat.AppListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

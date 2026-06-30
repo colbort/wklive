@@ -12,8 +12,9 @@ import (
 var _ TChatSessionModel = (*customTChatSessionModel)(nil)
 
 const (
-	chatSessionStatusWaiting      = 1
-	chatSessionStatusPendingAgent = 4
+	chatSessionStatusWaiting       = 1
+	chatSessionStatusPendingAgent  = 4
+	chatSessionStatusInternetError = 7
 )
 
 type (
@@ -39,6 +40,7 @@ type (
 		FindOpenByUser(ctx context.Context, merchantId int64, userId int64) (*TChatSession, error)
 		FindLatestByUser(ctx context.Context, merchantId int64, userId int64) (*TChatSession, error)
 		FindLatestByUserSource(ctx context.Context, merchantId int64, userId int64, source int64) (*TChatSession, error)
+		FindExpiredInternetError(ctx context.Context, beforeMillis int64, limit int64) ([]*TChatSession, error)
 		CountWaitingPosition(ctx context.Context, session *TChatSession) (int64, int64, error)
 	}
 
@@ -148,6 +150,22 @@ func (m *customTChatSessionModel) FindLatestByUserSource(ctx context.Context, me
 		return nil, err
 	}
 	return &resp, nil
+}
+
+func (m *customTChatSessionModel) FindExpiredInternetError(ctx context.Context, beforeMillis int64, limit int64) ([]*TChatSession, error) {
+	if limit <= 0 || limit > 500 {
+		limit = 100
+	}
+	query := fmt.Sprintf(
+		"SELECT %s FROM %s WHERE status = ? AND disconnect_time > 0 AND disconnect_time <= ? ORDER BY disconnect_time ASC LIMIT ?",
+		tChatSessionRows,
+		m.table,
+	)
+	var list []*TChatSession
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, chatSessionStatusInternetError, beforeMillis, limit); err != nil {
+		return nil, err
+	}
+	return list, nil
 }
 
 func (m *customTChatSessionModel) CountWaitingPosition(ctx context.Context, session *TChatSession) (int64, int64, error) {

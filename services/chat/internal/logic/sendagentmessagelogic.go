@@ -30,28 +30,25 @@ func NewSendAgentMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 发送客服消息
 func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (*chat.AdminChatMessageResp, error) {
-	if in.GetIsGuest() || in.GetMessage() != nil || in.GetPublishOnly() {
+	if in.GetIsGuest() || in.GetMessage() != nil {
 		msg := in.GetMessage()
-		var err error
-		if !in.GetPublishOnly() {
-			msg, err = internal.AppendTransientMessage(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), msg, in.GetSession(), in.GetTtlSeconds())
-			if err != nil {
-				return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
-			}
+		msg, err := internal.AppendTransientMessage(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), msg, nil)
+		if err != nil {
+			return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		if err := internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
-			EventType:        in.GetEventType(),
-			Channel:          chat.ChatAppEventChannel,
-			MerchantId:       in.GetMerchantId(),
-			TransientMessage: msg,
-			TransientSession: in.GetSession(),
+			EventType:  in.GetEventType(),
+			Channel:    chat.ChatAppEventChannel,
+			MerchantId: in.GetMerchantId(),
+			Message:    internal.ToModelsMessage(msg),
+			Session:    internal.ToModelsSession(in.GetSession()),
 		}); err != nil {
 			return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		return &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg}, nil
 	}
 
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.SessionNo)
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.SessionNo, false)
 	if err != nil {
 		return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

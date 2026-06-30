@@ -48,6 +48,9 @@ enum ChatSessionStatus {
 
   // 转接中
   CHAT_SESSION_STATUS_TRANSFERRING = 6;
+
+  // 网络异常
+  CHAT_SESSION_STATUS_INTERNET_ERROR = 7;
 }
 
 /**
@@ -92,6 +95,9 @@ enum ChatSessionCloseReason {
 
   // 转接失败关闭
   CHAT_SESSION_CLOSE_REASON_TRANSFER_FAILED = 6;
+
+  // 网络异常
+  CHAT_SESSION_CLOSE_REASON_INTERNET_ERROR = 7;
 }
 
 /**
@@ -364,4 +370,3 @@ enum ChatMessageDeleteScope {
   // 双方删除
   CHAT_MESSAGE_DELETE_SCOPE_BOTH = 2;
 }
-

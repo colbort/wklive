@@ -35,6 +35,7 @@ func main() {
 	}
 
 	svcCtx := svc.NewServiceContext(c)
+	defer svcCtx.Close()
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		chat.RegisterChatAdminServer(grpcServer, server.NewChatAdminServer(svcCtx))

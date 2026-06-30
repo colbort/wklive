@@ -87,7 +87,12 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 
 func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
-		switch event.EventType {
+		eventType, ok := chat.ChatEventType_value[event.EventType]
+		if !ok {
+			sendWSError(conn, "event type parse err: "+event.EventType)
+			return
+		}
+		switch chat.ChatEventType(eventType) {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED: // 接待客户服务
 			l.handleAcceptChatSession(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE: //
@@ -208,8 +213,8 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 		return
 	}
 	conn.SendEvent(&chat.ChatMessageEvent{
-		Code:      200,
-		Msg:       "",
+		Code:      resp.Base.Code,
+		Msg:       resp.Base.Msg,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
 		CreatedAt: utils.NowMillis(),
 		Payload: &chat.ChatMessageEvent_Session{

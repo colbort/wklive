@@ -119,6 +119,9 @@
       "logicutil",
       "loginpwd",
       "logx",
+      "Lpush",
+      "Lrange",
+      "Ltrim",
       "omitempty",
       "otpauth",
       "pageutil",
@@ -135,6 +138,7 @@
       "robfig",
       "Scholes",
       "Segs",
+      "Setex",
       "Setnx",
       "Solana",
       "sqlc",
@@ -156,6 +160,7 @@
       "zeromicro",
       "Zrange",
       "Zrem",
+      "Zrevrange",
       "zrpc",
       "zset"
     ]

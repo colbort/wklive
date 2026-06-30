@@ -60,16 +60,16 @@ func (l *PageChatSessionsLogic) PageChatSessions(in *chat.PageChatSessionsReq) (
 	if err != nil {
 		return &chat.PageChatSessionsResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	data := mergeTransientAndStoredSessions(transient, internal.ToProtoSessions(list), cursor, limit)
+	data := mergeTransientAndStoredSessions(transient, list, cursor, limit)
 	return &chat.PageChatSessionsResp{
 		Base: internal.OffsetBase(cursor, limit, len(data), total+int64(len(transient))),
-		Data: data,
+		Data: internal.ToProtoSessions(data),
 	}, nil
 }
 
-func (l *PageChatSessionsLogic) listTransientSessions(merchantID int64, filter models.ChatSessionPageFilter) ([]*chat.ChatSession, error) {
+func (l *PageChatSessionsLogic) listTransientSessions(merchantID int64, filter models.ChatSessionPageFilter) ([]*models.TChatSession, error) {
 	var cursor int64
-	resp := make([]*chat.ChatSession, 0)
+	resp := make([]*models.TChatSession, 0)
 	seenUserIDs := make(map[int64]struct{})
 	for {
 		sessions, hasNext, nextCursor, err := internal.PageTransientSessions(
@@ -89,11 +89,11 @@ func (l *PageChatSessionsLogic) listTransientSessions(merchantID int64, filter m
 			if !transientSessionMatchesFilter(session, filter) {
 				continue
 			}
-			if session.GetUserId() > 0 {
-				if _, ok := seenUserIDs[session.GetUserId()]; ok {
+			if session.UserId > 0 {
+				if _, ok := seenUserIDs[session.UserId]; ok {
 					continue
 				}
-				seenUserIDs[session.GetUserId()] = struct{}{}
+				seenUserIDs[session.UserId] = struct{}{}
 			}
 			resp = append(resp, session)
 		}
@@ -104,39 +104,39 @@ func (l *PageChatSessionsLogic) listTransientSessions(merchantID int64, filter m
 	}
 }
 
-func transientSessionMatchesFilter(session *chat.ChatSession, filter models.ChatSessionPageFilter) bool {
+func transientSessionMatchesFilter(session *models.TChatSession, filter models.ChatSessionPageFilter) bool {
 	if session == nil {
 		return false
 	}
-	if filter.GroupId > 0 && session.GetGroupId() != filter.GroupId {
+	if filter.GroupId > 0 && session.GroupId != filter.GroupId {
 		return false
 	}
-	if filter.Priority > 0 && int64(session.GetPriority()) != filter.Priority {
+	if filter.Priority > 0 && int64(session.Priority) != filter.Priority {
 		return false
 	}
-	if filter.Category != "" && session.GetCategory() != filter.Category {
+	if filter.Category != "" && session.Category != filter.Category {
 		return false
 	}
-	if filter.StartTime > 0 && session.GetCreateTimes() < filter.StartTime {
+	if filter.StartTime > 0 && session.CreateTimes < filter.StartTime {
 		return false
 	}
-	if filter.EndTime > 0 && session.GetCreateTimes() > filter.EndTime {
+	if filter.EndTime > 0 && session.CreateTimes > filter.EndTime {
 		return false
 	}
 	if filter.Keyword != "" &&
-		!strings.Contains(session.GetSessionNo(), filter.Keyword) &&
-		!strings.Contains(session.GetTitle(), filter.Keyword) &&
-		!strings.Contains(session.GetLastMessage(), filter.Keyword) {
+		!strings.Contains(session.SessionNo, filter.Keyword) &&
+		!strings.Contains(session.Title, filter.Keyword) &&
+		!strings.Contains(session.LastMessage, filter.Keyword) {
 		return false
 	}
 	return true
 }
 
-func mergeTransientAndStoredSessions(transient, stored []*chat.ChatSession, cursor, limit int64) []*chat.ChatSession {
+func mergeTransientAndStoredSessions(transient, stored []*models.TChatSession, cursor, limit int64) []*models.TChatSession {
 	if limit <= 0 {
 		limit = pageutil.NormalizeLimit(limit)
 	}
-	resp := make([]*chat.ChatSession, 0, limit)
+	resp := make([]*models.TChatSession, 0, limit)
 	transientTotal := int64(len(transient))
 	if cursor < transientTotal {
 		end := cursor + limit

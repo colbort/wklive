@@ -82,6 +82,8 @@ message ChatSession {
   string last_message_no = 22;          // 最后一条消息编号
   bool is_guest = 23;                   // 
   string avatar_url = 24;               // 
+  int64 disconnect_time = 25;           // 网络异常断开时间戳(毫秒)
+  ChatSessionStatus before_disconnect_status = 26; // 网络异常断开前状态
 }
 
 // 客服消息
@@ -386,7 +388,7 @@ message ChatAgentPayload {
   string session_no = 1;
 
   // 坐席 ID
-  string agent_id = 2;
+  int64 agent_id = 2;
 
   // 坐席名称
   string agent_name = 3;
@@ -458,13 +460,13 @@ message ChatEvaluationPayload {
   string session_no = 1;
 
   // 用户 ID
-  string user_id = 2;
+  int64 user_id = 2;
 
   // 坐席 ID
-  string agent_id = 3;
+  int64 agent_id = 3;
 
   // 评价 ID
-  string evaluation_id = 4;
+  int64 evaluation_id = 4;
 
   // 评分
   // 例如：1 - 5
@@ -494,7 +496,7 @@ message ChatTypingPayload {
   string session_no = 1;
 
   // 正在输入的人
-  string sender_id = 2;
+  int64 sender_id = 2;
 
   // 发送方类型
   ChatSenderType sender_type = 3;
@@ -556,7 +558,7 @@ message ChatMessageOperatePayload {
   ChatMessageOperateType operate_type = 3;
 
   // 操作人 ID
-  string operator_id = 4;
+  int64 operator_id = 4;
 
   // 操作人类型
   ChatSenderType operator_type = 5;

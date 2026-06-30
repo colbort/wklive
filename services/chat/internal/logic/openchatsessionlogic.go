@@ -34,11 +34,11 @@ func NewOpenChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *O
 // 游客创建/复用（本次会话未结束）临时会话，会话不保存；登录用户创建（首次打开）/复用（之后进来）会话，会话保存数据库
 func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*chat.OpenChatSessionResp, error) {
 	var ms *models.TChatSession
-	var rs *chat.ChatSession
+	var rs *models.TChatSession
 	if in.IsGuest {
 		sessionNo := strings.TrimSpace(in.GetSessionNo())
+		var err error
 		if sessionNo == "" {
-			var err error
 			sessionNo, err = l.svcCtx.GenerateNo(l.ctx, "CS")
 			if err != nil {
 				logx.Errorf("generate guest session no error: %v", err)
@@ -48,55 +48,80 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 
 		rs, _ = internal.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), sessionNo)
 		now := utils.NowMillis()
+		if rs != nil && rs.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+			var restored bool
+			var err error
+			rs, restored, err = internal.RestoreTransientSessionInternetError(l.ctx, l.svcCtx, rs)
+			if err != nil {
+				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+			}
+			if restored {
+				now = utils.NowMillis()
+			}
+		}
+		if rs != nil && rs.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+			sessionNo, err = l.svcCtx.GenerateNo(l.ctx, "CS")
+			if err != nil {
+				logx.Errorf("generate guest session no error: %v", err)
+				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate session no error")}, nil
+			}
+			rs = nil
+		}
 		if rs == nil {
-			rs = &chat.ChatSession{
+			rs = &models.TChatSession{
 				SessionNo:       sessionNo,
 				MerchantId:      in.GetMerchantId(),
 				UserId:          in.GetUserId(),
-				Source:          in.GetSource(),
-				Status:          chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING,
-				Priority:        chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL,
+				Source:          int64(in.GetSource()),
+				Status:          int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING),
+				Priority:        int64(chat.ChatSessionPriority_CHAT_SESSION_PRIORITY_NORMAL),
 				LastMessageTime: now,
-				ExtJson:         internal.NullStringToStruct(sql.NullString{String: in.ExtJson, Valid: true}),
+				ExtJson:         sql.NullString{String: in.ExtJson, Valid: true},
 				CreateTimes:     now,
 				UpdateTimes:     now,
-				IsGuest:         true,
 			}
-		} else if rs.GetStatus() == chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED {
-			rs.Status = chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING
-			rs.AgentId = 0
-			rs.CloseTime = 0
-			rs.CloseReason = ""
-			rs.UpdateTimes = now
 		}
 		rs.MerchantId = in.GetMerchantId()
 		rs.UserId = in.GetUserId()
-		rs.IsGuest = true
 
-		var err error
-		rs, err = internal.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, rs, 0)
+		rs, err = internal.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, rs)
 		if err != nil {
 			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		ms = l.transientSessionToModel(rs)
+		ms = rs
 	} else {
 		// 登录用户
 		session, err := l.svcCtx.ChatSessionModel.FindByUser(l.ctx, in.MerchantId, in.UserId)
 		if err != nil && err != models.ErrNotFound {
 			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		if err == nil {
+		restoredInternetError := false
+		if err == nil && session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+			var restored bool
+			var err error
+			restored, err = internal.RestoreSessionInternetError(l.ctx, l.svcCtx, session)
+			if err != nil {
+				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+			}
+			restoredInternetError = restored
+		}
+		if err == nil && session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 			now := utils.NowMillis()
-			session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
-			session.AgentId = 0
+			if !restoredInternetError {
+				session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
+				session.AgentId = 0
+			}
 			session.CloseTime = 0
 			session.CloseReason = ""
+			session.DisconnectTime = 0
+			session.BeforeDisconnectStatus = 0
 			session.UpdateTimes = now
 			if err := l.svcCtx.ChatSessionModel.Update(l.ctx, session); err != nil {
 				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 			ms = session
-		} else {
+		}
+		if ms == nil {
 			sessionNo, err := l.svcCtx.GenerateNo(l.ctx, "CS")
 			if err != nil {
 				logx.Errorf("generate session no error: %v", err)
@@ -117,20 +142,16 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 				CreateTimes:     now,
 				UpdateTimes:     now,
 			}
-			result, err := l.svcCtx.ChatSessionModel.Insert(l.ctx, session)
+			result, err := l.svcCtx.ChatSessionModel.Insert(l.ctx, ms)
 			if err != nil {
 				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 			if id, err := result.LastInsertId(); err == nil {
-				session.Id = id
+				ms.Id = id
 			}
 		}
 
 	}
-	if rs == nil {
-		rs = internal.ToProtoSession(ms, in.IsGuest)
-	}
-
 	// 向坐席 chat-admin-api 推送 用户上线通知
 	l.publishUserJoinEvent(ms, in.IsGuest)
 	queue, err := internal.ToProtoQueueInfo(l.ctx, l.svcCtx, ms)
@@ -139,44 +160,13 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 	}
 	if queue == nil {
 		queue = &chat.ChatQueuePayload{
-			SessionNo:  rs.GetSessionNo(),
-			UserId:     rs.GetUserId(),
+			SessionNo:  ms.SessionNo,
+			UserId:     ms.UserId,
 			ActionTime: utils.NowMillis(),
 		}
 	}
 	queue.QueueAction = chat.ChatQueueAction_CHAT_QUEUE_ACTION_JOIN
 	return &chat.OpenChatSessionResp{Base: helper.OkResp(), Data: queue}, nil
-}
-
-func (l *OpenChatSessionLogic) transientSessionToModel(session *chat.ChatSession) *models.TChatSession {
-	if session == nil {
-		l.Logger.Info("transfer model err: session is nil")
-		return nil
-	}
-	return &models.TChatSession{
-		Id:               session.GetId(),
-		SessionNo:        session.GetSessionNo(),
-		MerchantId:       session.GetMerchantId(),
-		UserId:           session.GetUserId(),
-		Source:           int64(session.GetSource()),
-		Status:           int64(session.GetStatus()),
-		Priority:         int64(session.GetPriority()),
-		AgentId:          session.GetAgentId(),
-		GroupId:          session.GetGroupId(),
-		Title:            session.GetTitle(),
-		Category:         session.GetCategory(),
-		LastMessageNo:    session.GetLastMessageNo(),
-		LastMessage:      session.GetLastMessage(),
-		LastSenderType:   int64(session.GetLastSenderType()),
-		LastMessageTime:  session.GetLastMessageTime(),
-		UserUnreadCount:  int64(session.GetUserUnreadCount()),
-		AgentUnreadCount: int64(session.GetAgentUnreadCount()),
-		CloseTime:        session.GetCloseTime(),
-		CloseReason:      session.GetCloseReason(),
-		ExtJson:          internal.StructToNullString(session.GetExtJson()),
-		CreateTimes:      session.GetCreateTimes(),
-		UpdateTimes:      session.GetUpdateTimes(),
-	}
 }
 
 func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession, isGuest bool) {

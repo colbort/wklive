@@ -84,8 +84,8 @@ func (l *GenerateChatSessionNoLogic) findGuestTransientSession(merchantID, userI
 			return nil, err
 		}
 		for _, session := range list {
-			if session.GetStatus() != chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED {
-				return session, nil
+			if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+				return internal.ToProtoSession(session, true), nil
 			}
 		}
 		if !hasNext {

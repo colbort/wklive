@@ -3,7 +3,6 @@ package chat_ws
 import (
 	"context"
 	"encoding/json"
-	"strconv"
 	"strings"
 	"time"
 
@@ -88,10 +87,11 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		req.AvatarUrl,
 		req.MerchantId,
 		sessionNo,
-		l.onMessage(req.IsGuest),
+		req.IsGuest,
+		l.onMessage(),
 		func(conn *ws.Connection) {
 			streamCancel()
-			l.onClose(req.IsGuest)(conn)
+			l.onClose()(conn)
 		},
 	)
 
@@ -102,7 +102,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 	})
 
 	// 读 RPC 消息
-	go l.subscribeStream(streamCtx, client, req.IsGuest)
+	go l.subscribeStream(streamCtx, client)
 	// 读客户端消息
 	go client.WritePump()
 	// 先客户端写消息
@@ -110,17 +110,22 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 }
 
 // 处理用户通过 ws 发送的事件。
-func (l *MessagesLogic) onMessage(isGuest bool) func(*ws.Connection, ws.InboundEvent) {
+func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
-		switch event.EventType {
+		eventType, ok := chat.ChatEventType_value[event.EventType]
+		if !ok {
+			sendWSError(conn, "event type parse err: "+event.EventType)
+			return
+		}
+		switch chat.ChatEventType(eventType) {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE:
-			l.handleSendUserMessage(context.Background(), conn, event.Data, isGuest)
+			l.handleSendUserMessage(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
-			l.handleCloseUserSession(context.Background(), conn, event.Data, isGuest)
+			l.handleCloseUserSession(context.Background(), conn)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING:
-			l.handleUserTyping(context.Background(), conn, event.Data, isGuest)
+			l.handleUserTyping(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT:
-			l.handleSubmitEvaluation(context.Background(), conn, event.Data, isGuest)
+			l.handleSubmitEvaluation(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ:
 			// TODO handle message read
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_RECALL:
@@ -142,17 +147,18 @@ func (l *MessagesLogic) onMessage(isGuest bool) func(*ws.Connection, ws.InboundE
 }
 
 // 处理用户断开连接。
-func (l *MessagesLogic) onClose(isGuest bool) func(*ws.Connection) {
+func (l *MessagesLogic) onClose() func(*ws.Connection) {
 	return func(conn *ws.Connection) {
 		if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 			return
 		}
 		_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(context.Background(), &chat.CloseMyChatSessionReq{
-			SessionNo:   conn.SessionNo,
-			MerchantId:  conn.MerchantId,
-			UserId:      conn.UserId,
-			CloseReason: "用户已离开客服页面",
-			IsGuest:     isGuest,
+			SessionNo:       conn.SessionNo,
+			MerchantId:      conn.MerchantId,
+			UserId:          conn.UserId,
+			CloseReasonType: chat.ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_INTERNET_ERROR,
+			CloseReason:     "用户网络异常断开",
+			IsGuest:         conn.IsGuest,
 		})
 		if err != nil {
 			logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
@@ -160,7 +166,7 @@ func (l *MessagesLogic) onClose(isGuest bool) func(*ws.Connection) {
 	}
 }
 
-func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection, isGuest bool) {
+func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection) {
 	if conn == nil || l.svcCtx == nil || l.svcCtx.ChatAppCli == nil {
 		logx.Error("app subscribe err")
 		return
@@ -169,7 +175,7 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 		MerchantId: conn.MerchantId,
 		UserId:     conn.UserId,
 		SessionNo:  conn.SessionNo,
-		IsGuest:    isGuest,
+		IsGuest:    conn.IsGuest,
 	})
 	if err != nil {
 		logx.Errorf("subscribe chat app stream failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
@@ -190,7 +196,7 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 // 处理用户发消息：
 // 游客：chat-api 构造消息并转发；
 // 登录用户：先调用内部服务入库，再把返回的消息转发给后台和用户侧。
-func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
+func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
 	var req chat.SendUserMessageReq
 	if err := json.Unmarshal(payload, &req); err != nil {
 		sendWSError(conn, "invalid message payload")
@@ -207,7 +213,7 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 		Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
 	}
 	req.MerchantId = conn.MerchantId
-	req.IsGuest = isGuest
+	req.IsGuest = conn.IsGuest
 	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &req)
 	if err != nil {
 		sendWSError(conn, err.Error())
@@ -239,14 +245,14 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 	})
 }
 
-func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
+func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		return
 	}
 	now := time.Now().UnixMilli()
 	typing := chat.ChatTypingPayload{
 		SessionNo:  conn.SessionNo,
-		SenderId:   strconv.FormatInt(conn.UserId, 10),
+		SenderId:   conn.UserId,
 		SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
 		Text:       "用户正在输入",
 		ActionTime: now,
@@ -260,7 +266,7 @@ func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connectio
 	resp, err := l.svcCtx.ChatAppCli.SendUserTyping(ctx, &chat.SendUserTypingReq{
 		MerchantId: conn.MerchantId,
 		UserId:     conn.UserId,
-		IsGuest:    isGuest,
+		IsGuest:    conn.IsGuest,
 		Typing:     &typing,
 	})
 	if err != nil {
@@ -273,7 +279,7 @@ func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connectio
 	}
 }
 
-func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
+func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		sendWSError(conn, "sessionNo is required")
 		return
@@ -298,7 +304,7 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		Score:      data.Score,
 		Content:    strings.TrimSpace(data.Content),
 		Tags:       strings.TrimSpace(data.Tags),
-		IsGuest:    isGuest,
+		IsGuest:    conn.IsGuest,
 	})
 	if err != nil {
 		sendWSError(conn, err.Error())
@@ -319,13 +325,14 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 	})
 }
 
-func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
-	_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(context.Background(), &chat.CloseMyChatSessionReq{
-		SessionNo:   conn.SessionNo,
-		MerchantId:  conn.MerchantId,
-		UserId:      conn.UserId,
-		CloseReason: "用户主动结束会话",
-		IsGuest:     isGuest,
+func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Connection) {
+	_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(ctx, &chat.CloseMyChatSessionReq{
+		SessionNo:       conn.SessionNo,
+		CloseReasonType: chat.ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_USER,
+		CloseReason:     "用户主动结束会话",
+		MerchantId:      conn.MerchantId,
+		UserId:          conn.UserId,
+		IsGuest:         conn.IsGuest,
 	})
 	if err != nil {
 		logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)

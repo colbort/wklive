@@ -14,31 +14,25 @@ import (
 )
 
 type (
-	AppChatMessageResp                = chat.AppChatMessageResp
-	AppChatSatisfactionResp           = chat.AppChatSatisfactionResp
-	AppChatSessionResp                = chat.AppChatSessionResp
-	AppChatSubscribeRequest           = chat.AppChatSubscribeRequest
-	AppCommonResp                     = chat.AppCommonResp
-	AppDeleteTransientChatSessionReq  = chat.AppDeleteTransientChatSessionReq
-	AppDeleteTransientChatSessionResp = chat.AppDeleteTransientChatSessionResp
-	AppGetTransientChatSessionReq     = chat.AppGetTransientChatSessionReq
-	AppListChatMessagesResp           = chat.AppListChatMessagesResp
-	AppPageTransientChatSessionsReq   = chat.AppPageTransientChatSessionsReq
-	AppPageTransientChatSessionsResp  = chat.AppPageTransientChatSessionsResp
-	AppUpsertTransientChatSessionReq  = chat.AppUpsertTransientChatSessionReq
-	AuthChatMerchantData              = chat.AuthChatMerchantData
-	AuthChatMerchantReq               = chat.AuthChatMerchantReq
-	AuthChatMerchantResp              = chat.AuthChatMerchantResp
-	CloseMyChatSessionReq             = chat.CloseMyChatSessionReq
-	GenerateChatSessionNoReq          = chat.GenerateChatSessionNoReq
-	GenerateChatSessionNoResp         = chat.GenerateChatSessionNoResp
-	GetChatSessionByUserReq           = chat.GetChatSessionByUserReq
-	ListMyChatMessagesReq             = chat.ListMyChatMessagesReq
-	OpenChatSessionReq                = chat.OpenChatSessionReq
-	OpenChatSessionResp               = chat.OpenChatSessionResp
-	SendUserMessageReq                = chat.SendUserMessageReq
-	SendUserTypingReq                 = chat.SendUserTypingReq
-	SubmitChatSatisfactionReq         = chat.SubmitChatSatisfactionReq
+	AppChatMessageResp        = chat.AppChatMessageResp
+	AppChatSatisfactionResp   = chat.AppChatSatisfactionResp
+	AppChatSessionResp        = chat.AppChatSessionResp
+	AppChatSubscribeRequest   = chat.AppChatSubscribeRequest
+	AppCommonResp             = chat.AppCommonResp
+	AppListChatMessagesResp   = chat.AppListChatMessagesResp
+	AuthChatMerchantData      = chat.AuthChatMerchantData
+	AuthChatMerchantReq       = chat.AuthChatMerchantReq
+	AuthChatMerchantResp      = chat.AuthChatMerchantResp
+	CloseMyChatSessionReq     = chat.CloseMyChatSessionReq
+	GenerateChatSessionNoReq  = chat.GenerateChatSessionNoReq
+	GenerateChatSessionNoResp = chat.GenerateChatSessionNoResp
+	GetChatSessionByUserReq   = chat.GetChatSessionByUserReq
+	ListMyChatMessagesReq     = chat.ListMyChatMessagesReq
+	OpenChatSessionReq        = chat.OpenChatSessionReq
+	OpenChatSessionResp       = chat.OpenChatSessionResp
+	SendUserMessageReq        = chat.SendUserMessageReq
+	SendUserTypingReq         = chat.SendUserTypingReq
+	SubmitChatSatisfactionReq = chat.SubmitChatSatisfactionReq
 
 	ChatApp interface {
 		// 商户接入鉴权

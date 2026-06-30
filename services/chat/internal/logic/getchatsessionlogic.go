@@ -34,12 +34,12 @@ func (l *GetChatSessionLogic) GetChatSession(in *chat.GetChatSessionReq) (*chat.
 	if err != nil {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	data, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
 	if err != nil {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
-	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(data, false)}, nil
+	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, false)}, nil
 }

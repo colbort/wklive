@@ -107,3 +107,7 @@ type RespBase struct {
 	NextCursor int64  `json:"nextCursor,optional"`
 	PrevCursor int64  `json:"prevCursor,optional"`
 }
+
+type SetChatTokenCookieReq struct {
+	ChatToken string `json:"chatToken"`
+}

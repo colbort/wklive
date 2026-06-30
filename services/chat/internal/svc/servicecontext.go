@@ -28,6 +28,7 @@ type ServiceContext struct {
 	ChatWorkOrderModel    models.TChatWorkOrderModel
 	ChatMessageFactory    *models.ChatMessageModelFactory
 	BusRedis              *redis.Redis
+	sweepCancel           context.CancelFunc
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -42,7 +43,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		}
 	}
 
-	return &ServiceContext{
+	svcCtx := &ServiceContext{
 		Config:                c,
 		DB:                    conn,
 		ChatMerchantInfoModel: models.NewTChatMerchantInfoModel(conn, c.CacheRedis),
@@ -58,6 +59,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ChatWorkOrderModel:    models.NewTChatWorkOrderModel(conn, c.CacheRedis),
 		ChatMessageFactory:    models.NewChatMessageModelFactory(c.Mongo.Url, c.Mongo.Db),
 		BusRedis:              busRedis,
+	}
+	svcCtx.startInternetErrorSessionSweeper()
+	return svcCtx
+}
+
+func (s *ServiceContext) Close() {
+	if s.sweepCancel != nil {
+		s.sweepCancel()
 	}
 }
 

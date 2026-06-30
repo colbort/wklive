@@ -2,7 +2,9 @@ package internal
 
 import (
 	"context"
+	"fmt"
 	"strings"
+	"time"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -12,18 +14,39 @@ import (
 	"wklive/services/chat/models"
 )
 
-func GetSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int64, sessionNo string) (*models.TChatSession, *common.RespBase, error) {
-	data, err := svcCtx.ChatSessionModel.FindOneBySessionNo(ctx, sessionNo)
-	if err == models.ErrNotFound {
-		return nil, helper.ErrResp(404, "chat session not found"), nil
+const (
+	InternetErrorCloseDelay = 3 * time.Minute
+	UserInternetErrorReason = "用户网络异常断开"
+
+	transientInternetErrorKey = "chat:session:internet_error_timeout"
+)
+
+func GetSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int64, sessionNo string, isGuest bool) (*models.TChatSession, *common.RespBase, error) {
+	if merchantID <= 0 || strings.TrimSpace(sessionNo) == "" {
+		return nil, helper.ErrResp(500, "params err, merchant id is invalid or session no is empty"), nil
 	}
-	if err != nil {
-		return nil, nil, err
+	if isGuest {
+		session, err := GetTransientSession(ctx, svcCtx.BusRedis, merchantID, sessionNo)
+		if err != nil {
+			return nil, helper.ErrResp(404, "chat session not found"), nil
+		}
+		if session.MerchantId != merchantID {
+			return nil, helper.ErrResp(404, "chat session not found"), nil
+		}
+		return session, nil, nil
+	} else {
+		data, err := svcCtx.ChatSessionModel.FindOneBySessionNo(ctx, sessionNo)
+		if err == models.ErrNotFound {
+			return nil, helper.ErrResp(404, "chat session not found"), nil
+		}
+		if err != nil {
+			return nil, nil, err
+		}
+		if data.MerchantId != merchantID {
+			return nil, helper.ErrResp(404, "chat session not found"), nil
+		}
+		return data, nil, nil
 	}
-	if data.MerchantId != merchantID {
-		return nil, helper.ErrResp(404, "chat session not found"), nil
-	}
-	return data, nil, nil
 }
 
 func NormalizeAssignType(value chat.ChatAssignType) chat.ChatAssignType {
@@ -60,8 +83,8 @@ type AssignSessionOptions struct {
 	Reason     string
 }
 
-func AssignSession(ctx context.Context, svcCtx *svc.ServiceContext, in AssignSessionOptions) (*models.TChatSession, *common.RespBase, error) {
-	session, base, err := GetSession(ctx, svcCtx, in.MerchantId, in.SessionNo)
+func AcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, in AssignSessionOptions) (*models.TChatSession, *common.RespBase, error) {
+	session, base, err := GetSession(ctx, svcCtx, in.MerchantId, in.SessionNo, false)
 	if base != nil || err != nil {
 		return nil, base, err
 	}
@@ -149,92 +172,6 @@ func ValidateAssignableSession(session *models.TChatSession, assignType chat.Cha
 	return nil
 }
 
-func ReleaseSessionToPool(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, reason string) (*models.TChatSession, *common.RespBase, error) {
-	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-		return nil, helper.ErrResp(400, "chat session is closed"), nil
-	}
-
-	fromAgentID := session.AgentId
-	if fromAgentID > 0 {
-		if err := ChangeAgentSessionCount(ctx, svcCtx, fromAgentID, -1); err != nil {
-			return nil, nil, err
-		}
-	}
-
-	now := utils.NowMillis()
-	session.AgentId = 0
-	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT)
-	session.UpdateTimes = now
-	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
-		return nil, nil, err
-	}
-
-	if fromAgentID > 0 {
-		_, err := svcCtx.ChatAssignmentModel.Insert(ctx, &models.TChatAssignment{
-			SessionNo:   session.SessionNo,
-			MerchantId:  session.MerchantId,
-			FromAgentId: fromAgentID,
-			ToAgentId:   0,
-			AssignType:  int64(chat.ChatAssignType_CHAT_ASSIGN_TYPE_TRANSFER),
-			Reason:      strings.TrimSpace(reason),
-			CreateTimes: now,
-			UpdateTimes: now,
-		})
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-
-	return session, nil, nil
-}
-
-func RouteSessionToAvailableAgent(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, reason string) (*models.TChatSession, *common.RespBase, error) {
-	agents, err := svcCtx.ChatAgentModel.FindAvailable(ctx, session.MerchantId, session.GroupId, 2)
-	if err != nil {
-		return nil, nil, err
-	}
-	if len(agents) == 1 {
-		if session.AgentId == agents[0].Id {
-			return session, nil, nil
-		}
-		return AssignSession(ctx, svcCtx, AssignSessionOptions{
-			SessionNo:  session.SessionNo,
-			MerchantId: session.MerchantId,
-			ToAgentId:  agents[0].Id,
-			AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_AUTO,
-			Reason:     reason,
-		})
-	}
-	if session.AgentId > 0 {
-		return ReleaseSessionToPool(ctx, svcCtx, session, reason)
-	}
-	return session, nil, nil
-}
-
-func PrepareSessionForUserMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) (*models.TChatSession, *common.RespBase, error) {
-	if session.AgentId == 0 || session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-		return RouteSessionToAvailableAgent(ctx, svcCtx, session, "auto assign")
-	}
-
-	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, session.AgentId)
-	if err == nil && agent.MerchantId == session.MerchantId && agent.Status == int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE) {
-		return session, nil, nil
-	}
-	if err != nil && err != models.ErrNotFound {
-		return nil, nil, err
-	}
-
-	return RouteSessionToAvailableAgent(ctx, svcCtx, session, "current agent unavailable")
-}
-
-func AutoAssignSession(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) error {
-	if session.AgentId != 0 || session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-		return nil
-	}
-	_, _, err := RouteSessionToAvailableAgent(ctx, svcCtx, session, "auto assign")
-	return err
-}
-
 func MarkRead(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, readerType chat.ChatSenderType, readerID int64) error {
 	now := utils.NowMillis()
 	lastNo := session.LastMessageNo
@@ -281,9 +218,144 @@ func CloseSession(ctx context.Context, svcCtx *svc.ServiceContext, session *mode
 	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED)
 	session.CloseTime = now
 	session.CloseReason = strings.TrimSpace(reason)
+	session.DisconnectTime = 0
+	session.BeforeDisconnectStatus = 0
 	session.UpdateTimes = now
 	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
 		return err
 	}
 	return ChangeAgentSessionCount(ctx, svcCtx, oldAgentID, -1)
+}
+
+func MarkSessionInternetError(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) error {
+	if session == nil || session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+		return nil
+	}
+	now := utils.NowMillis()
+	if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+		session.BeforeDisconnectStatus = session.Status
+	}
+	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR)
+	session.DisconnectTime = now
+	session.UpdateTimes = now
+	return svcCtx.ChatSessionModel.Update(ctx, session)
+}
+
+func RestoreSessionInternetError(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) (bool, error) {
+	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+		return false, nil
+	}
+	now := utils.NowMillis()
+	if IsSessionInternetErrorExpired(session, now) {
+		return false, CloseSession(ctx, svcCtx, session, "用户网络异常超时关闭")
+	}
+	status := session.BeforeDisconnectStatus
+	if status == 0 || status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) ||
+		status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+		status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
+		if session.AgentId > 0 {
+			status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING)
+		}
+	}
+	session.Status = status
+	session.DisconnectTime = 0
+	session.BeforeDisconnectStatus = 0
+	session.UpdateTimes = now
+	return true, svcCtx.ChatSessionModel.Update(ctx, session)
+}
+
+func IsSessionInternetErrorExpired(session *models.TChatSession, now int64) bool {
+	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+		return false
+	}
+	return session.DisconnectTime > 0 && now-session.DisconnectTime >= int64(InternetErrorCloseDelay/time.Millisecond)
+}
+
+func MarkTransientSessionInternetError(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) (*models.TChatSession, error) {
+	if session == nil || session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+		return session, nil
+	}
+	now := utils.NowMillis()
+	if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+		session.BeforeDisconnectStatus = session.Status
+	}
+	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR)
+	session.DisconnectTime = now
+	session.UpdateTimes = now
+	next, err := UpsertTransientSession(ctx, svcCtx.BusRedis, session)
+	if err != nil {
+		return nil, err
+	}
+	if err := addTransientInternetErrorTimeout(ctx, svcCtx, next); err != nil {
+		return nil, err
+	}
+	return next, nil
+}
+
+func RestoreTransientSessionInternetError(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) (*models.TChatSession, bool, error) {
+	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+		return session, false, nil
+	}
+	now := utils.NowMillis()
+	if IsTransientSessionInternetErrorExpired(session, now) {
+		session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED)
+		session.CloseTime = now
+		session.CloseReason = "用户网络异常超时关闭"
+		session.DisconnectTime = 0
+		session.BeforeDisconnectStatus = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN)
+		session.UpdateTimes = now
+		next, err := UpsertTransientSession(ctx, svcCtx.BusRedis, session)
+		_ = RemoveTransientInternetErrorTimeout(ctx, svcCtx, session.MerchantId, session.SessionNo)
+		return next, false, err
+	}
+	status := session.BeforeDisconnectStatus
+	if status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN) ||
+		status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) ||
+		status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+		status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
+		if session.AgentId > 0 {
+			status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING)
+		}
+	}
+	session.Status = status
+	session.DisconnectTime = 0
+	session.BeforeDisconnectStatus = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN)
+	session.UpdateTimes = now
+	next, err := UpsertTransientSession(ctx, svcCtx.BusRedis, session)
+	_ = RemoveTransientInternetErrorTimeout(ctx, svcCtx, session.MerchantId, session.SessionNo)
+	return next, true, err
+}
+
+func IsTransientSessionInternetErrorExpired(session *models.TChatSession, now int64) bool {
+	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+		return false
+	}
+	return session.DisconnectTime > 0 && now-session.DisconnectTime >= int64(InternetErrorCloseDelay/time.Millisecond)
+}
+
+func IsInternetErrorCloseReason(reasonType chat.ChatSessionCloseReason, reason string) bool {
+	return reasonType == chat.ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_INTERNET_ERROR ||
+		strings.TrimSpace(reason) == UserInternetErrorReason
+}
+
+func addTransientInternetErrorTimeout(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) error {
+	if svcCtx.BusRedis == nil || session == nil {
+		return nil
+	}
+	score := session.DisconnectTime + int64(InternetErrorCloseDelay/time.Millisecond)
+	member := transientInternetErrorMember(session.MerchantId, session.SessionNo)
+	_, err := svcCtx.BusRedis.ZaddCtx(ctx, transientInternetErrorKey, score, member)
+	return err
+}
+
+func RemoveTransientInternetErrorTimeout(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int64, sessionNo string) error {
+	if svcCtx.BusRedis == nil {
+		return nil
+	}
+	_, err := svcCtx.BusRedis.ZremCtx(ctx, transientInternetErrorKey, transientInternetErrorMember(merchantID, sessionNo))
+	return err
+}
+
+func transientInternetErrorMember(merchantID int64, sessionNo string) string {
+	return fmt.Sprintf("%d:%s", merchantID, strings.TrimSpace(sessionNo))
 }

@@ -1616,10 +1616,8 @@ type SendAgentMessageReq struct {
 	MerchantId      int64                  `protobuf:"varint,14,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                             //
 	Message         *ChatMessage           `protobuf:"bytes,15,opt,name=message,proto3" json:"message,omitempty"`                                                      // 游客/临时消息，可选
 	Session         *ChatSession           `protobuf:"bytes,16,opt,name=session,proto3" json:"session,omitempty"`                                                      // 游客/临时会话快照，可选
-	TtlSeconds      int64                  `protobuf:"varint,17,opt,name=ttl_seconds,json=ttlSeconds,proto3" json:"ttl_seconds,omitempty"`                             // 游客临时消息 TTL，0 使用默认 TTL
-	PublishOnly     bool                   `protobuf:"varint,18,opt,name=publish_only,json=publishOnly,proto3" json:"publish_only,omitempty"`                          // 仅发布事件，不写入临时消息
-	IsGuest         bool                   `protobuf:"varint,19,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客/临时会话
-	EventType       ChatEventType          `protobuf:"varint,20,opt,name=event_type,json=eventType,proto3,enum=chat.ChatEventType" json:"event_type,omitempty"`        // 游客/临时消息事件类型
+	IsGuest         bool                   `protobuf:"varint,17,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客/临时会话
+	EventType       ChatEventType          `protobuf:"varint,18,opt,name=event_type,json=eventType,proto3,enum=chat.ChatEventType" json:"event_type,omitempty"`        // 游客/临时消息事件类型
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1764,20 +1762,6 @@ func (x *SendAgentMessageReq) GetSession() *ChatSession {
 		return x.Session
 	}
 	return nil
-}
-
-func (x *SendAgentMessageReq) GetTtlSeconds() int64 {
-	if x != nil {
-		return x.TtlSeconds
-	}
-	return 0
-}
-
-func (x *SendAgentMessageReq) GetPublishOnly() bool {
-	if x != nil {
-		return x.PublishOnly
-	}
-	return false
 }
 
 func (x *SendAgentMessageReq) GetIsGuest() bool {
@@ -4423,7 +4407,7 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\vmerchant_id\x18\x03 \x01(\x03R\n" +
 	"merchantId\x12\x19\n" +
 	"\bagent_id\x18\x04 \x01(\x03R\aagentId\x12\x19\n" +
-	"\bis_guest\x18\x05 \x01(\bR\aisGuest\"\xba\x05\n" +
+	"\bis_guest\x18\x05 \x01(\bR\aisGuest\"\xf6\x04\n" +
 	"\x13SendAgentMessageReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12*\n" +
@@ -4443,13 +4427,10 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\vmerchant_id\x18\x0e \x01(\x03R\n" +
 	"merchantId\x12+\n" +
 	"\amessage\x18\x0f \x01(\v2\x11.chat.ChatMessageR\amessage\x12+\n" +
-	"\asession\x18\x10 \x01(\v2\x11.chat.ChatSessionR\asession\x12\x1f\n" +
-	"\vttl_seconds\x18\x11 \x01(\x03R\n" +
-	"ttlSeconds\x12!\n" +
-	"\fpublish_only\x18\x12 \x01(\bR\vpublishOnly\x12\x19\n" +
-	"\bis_guest\x18\x13 \x01(\bR\aisGuest\x122\n" +
+	"\asession\x18\x10 \x01(\v2\x11.chat.ChatSessionR\asession\x12\x19\n" +
+	"\bis_guest\x18\x11 \x01(\bR\aisGuest\x122\n" +
 	"\n" +
-	"event_type\x18\x14 \x01(\x0e2\x13.chat.ChatEventTypeR\teventType\"\x9a\x01\n" +
+	"event_type\x18\x12 \x01(\x0e2\x13.chat.ChatEventTypeR\teventType\"\x9a\x01\n" +
 	"\x12SendAgentTypingReq\x12\x1f\n" +
 	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
 	"merchantId\x12\x17\n" +

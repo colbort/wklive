@@ -63,6 +63,10 @@ type CreateChatTokenResp {
 	data ChatToken `json:"data"`
 }
 
+type SetChatTokenCookieReq {
+	chatToken string `json:"chatToken"`
+}
+
 type OptionsReq {}
 
 type Options {
@@ -84,6 +88,10 @@ service chat-api {
 	@handler CreateChatToken
 	post /internal/tokens (CreateChatTokenReq) returns (CreateChatTokenResp)
 
+	// 设置 chat token cookie
+	@handler SetChatTokenCookie
+	post /internal/token-cookie (SetChatTokenCookieReq) returns (RespBase)
+
 	// options
 	@handler GetOptions
 	get /options (OptionsReq) returns (OptionsResp)
@@ -104,4 +112,3 @@ service chat-api {
 	@handler CloseMyChatSession
 	post /session/close (CloseMyChatSessionReq) returns (RespBase)
 }
-

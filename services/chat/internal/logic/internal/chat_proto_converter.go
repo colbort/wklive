@@ -4,6 +4,9 @@ import (
 	"wklive/proto/chat"
 	"wklive/proto/common"
 	"wklive/services/chat/models"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 func ToProtoAgent(data *models.TChatAgent) *chat.ChatAgent {
@@ -189,29 +192,63 @@ func ToProtoSession(data *models.TChatSession, isGuest bool) *chat.ChatSession {
 		return nil
 	}
 	return &chat.ChatSession{
-		Id:               data.Id,
-		SessionNo:        data.SessionNo,
-		MerchantId:       data.MerchantId,
-		UserId:           data.UserId,
-		Source:           chat.ChatSessionSource(data.Source),
-		Status:           chat.ChatSessionStatus(data.Status),
-		Priority:         chat.ChatSessionPriority(data.Priority),
-		AgentId:          data.AgentId,
-		Title:            data.Title,
-		Category:         data.Category,
-		LastMessage:      data.LastMessage,
-		LastSenderType:   chat.ChatSenderType(data.LastSenderType),
-		LastMessageTime:  data.LastMessageTime,
-		UserUnreadCount:  int32(data.UserUnreadCount),
-		AgentUnreadCount: int32(data.AgentUnreadCount),
-		CloseTime:        data.CloseTime,
-		CloseReason:      data.CloseReason,
-		ExtJson:          NullStringToStruct(data.ExtJson),
-		CreateTimes:      data.CreateTimes,
-		UpdateTimes:      data.UpdateTimes,
-		GroupId:          data.GroupId,
-		LastMessageNo:    data.LastMessageNo,
-		IsGuest:          isGuest,
+		Id:                     data.Id,
+		SessionNo:              data.SessionNo,
+		MerchantId:             data.MerchantId,
+		UserId:                 data.UserId,
+		Source:                 chat.ChatSessionSource(data.Source),
+		Status:                 chat.ChatSessionStatus(data.Status),
+		Priority:               chat.ChatSessionPriority(data.Priority),
+		AgentId:                data.AgentId,
+		Title:                  data.Title,
+		Category:               data.Category,
+		LastMessage:            data.LastMessage,
+		LastSenderType:         chat.ChatSenderType(data.LastSenderType),
+		LastMessageTime:        data.LastMessageTime,
+		UserUnreadCount:        int32(data.UserUnreadCount),
+		AgentUnreadCount:       int32(data.AgentUnreadCount),
+		CloseTime:              data.CloseTime,
+		CloseReason:            data.CloseReason,
+		DisconnectTime:         data.DisconnectTime,
+		BeforeDisconnectStatus: chat.ChatSessionStatus(data.BeforeDisconnectStatus),
+		ExtJson:                NullStringToStruct(data.ExtJson),
+		CreateTimes:            data.CreateTimes,
+		UpdateTimes:            data.UpdateTimes,
+		GroupId:                data.GroupId,
+		LastMessageNo:          data.LastMessageNo,
+		IsGuest:                isGuest,
+	}
+}
+
+func ToModelsSession(data *chat.ChatSession) *models.TChatSession {
+	if data == nil {
+		return nil
+	}
+	return &models.TChatSession{
+		Id:                     data.Id,
+		SessionNo:              data.SessionNo,
+		MerchantId:             data.MerchantId,
+		UserId:                 data.UserId,
+		Source:                 int64(data.Source),
+		Status:                 int64(data.Status),
+		Priority:               int64(data.Priority),
+		AgentId:                data.AgentId,
+		Title:                  data.Title,
+		Category:               data.Category,
+		LastMessage:            data.LastMessage,
+		LastSenderType:         int64(data.LastSenderType),
+		LastMessageTime:        data.LastMessageTime,
+		UserUnreadCount:        int64(data.UserUnreadCount),
+		AgentUnreadCount:       int64(data.AgentUnreadCount),
+		CloseTime:              data.CloseTime,
+		CloseReason:            data.CloseReason,
+		DisconnectTime:         data.DisconnectTime,
+		BeforeDisconnectStatus: int64(data.BeforeDisconnectStatus),
+		ExtJson:                StructToNullString(data.ExtJson),
+		CreateTimes:            data.CreateTimes,
+		UpdateTimes:            data.UpdateTimes,
+		GroupId:                data.GroupId,
+		LastMessageNo:          data.LastMessageNo,
 	}
 }
 
@@ -254,6 +291,39 @@ func ToProtoMessage(data *models.ChatMessage) *chat.ChatMessage {
 	return msg
 }
 
+func ToModelsMessage(data *chat.ChatMessage) *models.ChatMessage {
+	if data == nil {
+		return nil
+	}
+	msg := &models.ChatMessage{
+		MessageNo:   data.MessageNo,
+		SessionNo:   data.SessionNo,
+		MerchantId:  data.MerchantId,
+		MessageType: int64(data.MessageType),
+		Sender:      ToModelsMessageUser(data.Sender),
+		Receiver:    ToModelsMessageUser(data.Receiver),
+		Content:     data.Content,
+		Url:         data.Url,
+		FileName:    data.FileName,
+		FileSize:    data.FileSize,
+		MimeType:    data.MimeType,
+		Width:       data.Width,
+		Height:      data.Height,
+		Duration:    data.Duration,
+		Status:      int64(data.Status),
+		Payload:     StructToMap(data.Payload),
+		ReadTime:    data.ReadTime,
+		CreateTimes: data.CreateTimes,
+		UpdateTimes: data.UpdateTimes,
+	}
+	if data.Id != "" {
+		if oid, err := bson.ObjectIDFromHex(data.Id); err == nil {
+			msg.ID = oid
+		}
+	}
+	return msg
+}
+
 func ToProtoMessages(list []*models.ChatMessage) []*chat.ChatMessage {
 	resp := make([]*chat.ChatMessage, 0, len(list))
 	for _, item := range list {
@@ -279,6 +349,25 @@ func ToProtoMessageUser(data *models.ChatMessageUser) *chat.ChatMessageUser {
 		Nickname:  data.Nickname,
 		AvatarUrl: data.AvatarUrl,
 	}
+}
+
+func ToModelsMessageUser(data *chat.ChatMessageUser) *models.ChatMessageUser {
+	if data == nil {
+		return nil
+	}
+	return &models.ChatMessageUser{
+		Id:        data.Id,
+		Type:      int64(data.Type),
+		Nickname:  data.Nickname,
+		AvatarUrl: data.AvatarUrl,
+	}
+}
+
+func StructToMap(st *structpb.Struct) map[string]any {
+	if st == nil {
+		return nil
+	}
+	return st.AsMap()
 }
 
 func ToProtoUser(data *models.TChatUser) *chat.ChatUser {

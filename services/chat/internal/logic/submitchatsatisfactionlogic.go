@@ -37,7 +37,7 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "score must be between 1 and 5")}, nil
 	}
 
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo())
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.IsGuest)
 	if err != nil {
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

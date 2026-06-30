@@ -485,33 +485,35 @@ func (x *ChatAgent) GetAutoOnline() common.YesNo {
 
 // 客服会话
 type ChatSession struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                           // 主键ID
-	SessionNo        string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                             // 会话编号
-	MerchantId       int64                  `protobuf:"varint,3,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                                         // 客服商户ID
-	UserId           int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                                     // 用户ID
-	Source           ChatSessionSource      `protobuf:"varint,5,opt,name=source,proto3,enum=chat.ChatSessionSource" json:"source,omitempty"`                                       // 来源
-	Status           ChatSessionStatus      `protobuf:"varint,6,opt,name=status,proto3,enum=chat.ChatSessionStatus" json:"status,omitempty"`                                       // 状态
-	Priority         ChatSessionPriority    `protobuf:"varint,7,opt,name=priority,proto3,enum=chat.ChatSessionPriority" json:"priority,omitempty"`                                 // 优先级
-	AgentId          int64                  `protobuf:"varint,8,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                                                  // 当前坐席ID
-	Title            string                 `protobuf:"bytes,9,opt,name=title,proto3" json:"title,omitempty"`                                                                      // 会话标题
-	Category         string                 `protobuf:"bytes,10,opt,name=category,proto3" json:"category,omitempty"`                                                               // 问题分类
-	LastMessage      string                 `protobuf:"bytes,11,opt,name=last_message,json=lastMessage,proto3" json:"last_message,omitempty"`                                      // 最后一条消息摘要
-	LastSenderType   ChatSenderType         `protobuf:"varint,12,opt,name=last_sender_type,json=lastSenderType,proto3,enum=chat.ChatSenderType" json:"last_sender_type,omitempty"` // 最后一条消息发送方
-	LastMessageTime  int64                  `protobuf:"varint,13,opt,name=last_message_time,json=lastMessageTime,proto3" json:"last_message_time,omitempty"`                       // 最后一条消息时间戳(毫秒)
-	UserUnreadCount  int32                  `protobuf:"varint,14,opt,name=user_unread_count,json=userUnreadCount,proto3" json:"user_unread_count,omitempty"`                       // 用户未读数
-	AgentUnreadCount int32                  `protobuf:"varint,15,opt,name=agent_unread_count,json=agentUnreadCount,proto3" json:"agent_unread_count,omitempty"`                    // 坐席未读数
-	CloseTime        int64                  `protobuf:"varint,16,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`                                           // 结束时间戳(毫秒)
-	CloseReason      string                 `protobuf:"bytes,17,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`                                      // 结束原因
-	ExtJson          *structpb.Struct       `protobuf:"bytes,18,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`                                                  // 扩展信息
-	CreateTimes      int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                     // 创建时间戳(毫秒)
-	UpdateTimes      int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                     // 更新时间戳(毫秒)
-	GroupId          int64                  `protobuf:"varint,21,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                                                 // 目标客服分组ID
-	LastMessageNo    string                 `protobuf:"bytes,22,opt,name=last_message_no,json=lastMessageNo,proto3" json:"last_message_no,omitempty"`                              // 最后一条消息编号
-	IsGuest          bool                   `protobuf:"varint,23,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                                 //
-	AvatarUrl        string                 `protobuf:"bytes,24,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`                                            //
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"open.v1"`
+	Id                     int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                                                      // 主键ID
+	SessionNo              string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                                                        // 会话编号
+	MerchantId             int64                  `protobuf:"varint,3,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                                                                    // 客服商户ID
+	UserId                 int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                                                                // 用户ID
+	Source                 ChatSessionSource      `protobuf:"varint,5,opt,name=source,proto3,enum=chat.ChatSessionSource" json:"source,omitempty"`                                                                  // 来源
+	Status                 ChatSessionStatus      `protobuf:"varint,6,opt,name=status,proto3,enum=chat.ChatSessionStatus" json:"status,omitempty"`                                                                  // 状态
+	Priority               ChatSessionPriority    `protobuf:"varint,7,opt,name=priority,proto3,enum=chat.ChatSessionPriority" json:"priority,omitempty"`                                                            // 优先级
+	AgentId                int64                  `protobuf:"varint,8,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`                                                                             // 当前坐席ID
+	Title                  string                 `protobuf:"bytes,9,opt,name=title,proto3" json:"title,omitempty"`                                                                                                 // 会话标题
+	Category               string                 `protobuf:"bytes,10,opt,name=category,proto3" json:"category,omitempty"`                                                                                          // 问题分类
+	LastMessage            string                 `protobuf:"bytes,11,opt,name=last_message,json=lastMessage,proto3" json:"last_message,omitempty"`                                                                 // 最后一条消息摘要
+	LastSenderType         ChatSenderType         `protobuf:"varint,12,opt,name=last_sender_type,json=lastSenderType,proto3,enum=chat.ChatSenderType" json:"last_sender_type,omitempty"`                            // 最后一条消息发送方
+	LastMessageTime        int64                  `protobuf:"varint,13,opt,name=last_message_time,json=lastMessageTime,proto3" json:"last_message_time,omitempty"`                                                  // 最后一条消息时间戳(毫秒)
+	UserUnreadCount        int32                  `protobuf:"varint,14,opt,name=user_unread_count,json=userUnreadCount,proto3" json:"user_unread_count,omitempty"`                                                  // 用户未读数
+	AgentUnreadCount       int32                  `protobuf:"varint,15,opt,name=agent_unread_count,json=agentUnreadCount,proto3" json:"agent_unread_count,omitempty"`                                               // 坐席未读数
+	CloseTime              int64                  `protobuf:"varint,16,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`                                                                      // 结束时间戳(毫秒)
+	CloseReason            string                 `protobuf:"bytes,17,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`                                                                 // 结束原因
+	ExtJson                *structpb.Struct       `protobuf:"bytes,18,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`                                                                             // 扩展信息
+	CreateTimes            int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                                                // 创建时间戳(毫秒)
+	UpdateTimes            int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                                                // 更新时间戳(毫秒)
+	GroupId                int64                  `protobuf:"varint,21,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`                                                                            // 目标客服分组ID
+	LastMessageNo          string                 `protobuf:"bytes,22,opt,name=last_message_no,json=lastMessageNo,proto3" json:"last_message_no,omitempty"`                                                         // 最后一条消息编号
+	IsGuest                bool                   `protobuf:"varint,23,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                                                            //
+	AvatarUrl              string                 `protobuf:"bytes,24,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`                                                                       //
+	DisconnectTime         int64                  `protobuf:"varint,25,opt,name=disconnect_time,json=disconnectTime,proto3" json:"disconnect_time,omitempty"`                                                       // 网络异常断开时间戳(毫秒)
+	BeforeDisconnectStatus ChatSessionStatus      `protobuf:"varint,26,opt,name=before_disconnect_status,json=beforeDisconnectStatus,proto3,enum=chat.ChatSessionStatus" json:"before_disconnect_status,omitempty"` // 网络异常断开前状态
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *ChatSession) Reset() {
@@ -710,6 +712,20 @@ func (x *ChatSession) GetAvatarUrl() string {
 		return x.AvatarUrl
 	}
 	return ""
+}
+
+func (x *ChatSession) GetDisconnectTime() int64 {
+	if x != nil {
+		return x.DisconnectTime
+	}
+	return 0
+}
+
+func (x *ChatSession) GetBeforeDisconnectStatus() ChatSessionStatus {
+	if x != nil {
+		return x.BeforeDisconnectStatus
+	}
+	return ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN
 }
 
 // 客服消息
@@ -2140,7 +2156,7 @@ type ChatAgentPayload struct {
 	// 会话 ID
 	SessionNo string `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`
 	// 坐席 ID
-	AgentId string `protobuf:"bytes,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
+	AgentId int64 `protobuf:"varint,2,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
 	// 坐席名称
 	AgentName string `protobuf:"bytes,3,opt,name=agent_name,json=agentName,proto3" json:"agent_name,omitempty"`
 	// 坐席头像
@@ -2197,11 +2213,11 @@ func (x *ChatAgentPayload) GetSessionNo() string {
 	return ""
 }
 
-func (x *ChatAgentPayload) GetAgentId() string {
+func (x *ChatAgentPayload) GetAgentId() int64 {
 	if x != nil {
 		return x.AgentId
 	}
-	return ""
+	return 0
 }
 
 func (x *ChatAgentPayload) GetAgentName() string {
@@ -2380,11 +2396,11 @@ type ChatEvaluationPayload struct {
 	// 会话 ID
 	SessionNo string `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`
 	// 用户 ID
-	UserId string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId int64 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// 坐席 ID
-	AgentId string `protobuf:"bytes,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
+	AgentId int64 `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
 	// 评价 ID
-	EvaluationId string `protobuf:"bytes,4,opt,name=evaluation_id,json=evaluationId,proto3" json:"evaluation_id,omitempty"`
+	EvaluationId int64 `protobuf:"varint,4,opt,name=evaluation_id,json=evaluationId,proto3" json:"evaluation_id,omitempty"`
 	// 评分
 	// 例如：1 - 5
 	Rating int32 `protobuf:"varint,5,opt,name=rating,proto3" json:"rating,omitempty"`
@@ -2437,25 +2453,25 @@ func (x *ChatEvaluationPayload) GetSessionNo() string {
 	return ""
 }
 
-func (x *ChatEvaluationPayload) GetUserId() string {
+func (x *ChatEvaluationPayload) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
-	return ""
+	return 0
 }
 
-func (x *ChatEvaluationPayload) GetAgentId() string {
+func (x *ChatEvaluationPayload) GetAgentId() int64 {
 	if x != nil {
 		return x.AgentId
 	}
-	return ""
+	return 0
 }
 
-func (x *ChatEvaluationPayload) GetEvaluationId() string {
+func (x *ChatEvaluationPayload) GetEvaluationId() int64 {
 	if x != nil {
 		return x.EvaluationId
 	}
-	return ""
+	return 0
 }
 
 func (x *ChatEvaluationPayload) GetRating() int32 {
@@ -2503,7 +2519,7 @@ type ChatTypingPayload struct {
 	// 会话 ID
 	SessionNo string `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`
 	// 正在输入的人
-	SenderId string `protobuf:"bytes,2,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
+	SenderId int64 `protobuf:"varint,2,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
 	// 发送方类型
 	SenderType ChatSenderType `protobuf:"varint,3,opt,name=sender_type,json=senderType,proto3,enum=chat.ChatSenderType" json:"sender_type,omitempty"`
 	// 显示文案
@@ -2552,11 +2568,11 @@ func (x *ChatTypingPayload) GetSessionNo() string {
 	return ""
 }
 
-func (x *ChatTypingPayload) GetSenderId() string {
+func (x *ChatTypingPayload) GetSenderId() int64 {
 	if x != nil {
 		return x.SenderId
 	}
-	return ""
+	return 0
 }
 
 func (x *ChatTypingPayload) GetSenderType() ChatSenderType {
@@ -2701,7 +2717,7 @@ type ChatMessageOperatePayload struct {
 	// 操作类型
 	OperateType ChatMessageOperateType `protobuf:"varint,3,opt,name=operate_type,json=operateType,proto3,enum=chat.ChatMessageOperateType" json:"operate_type,omitempty"`
 	// 操作人 ID
-	OperatorId string `protobuf:"bytes,4,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
+	OperatorId int64 `protobuf:"varint,4,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	// 操作人类型
 	OperatorType ChatSenderType `protobuf:"varint,5,opt,name=operator_type,json=operatorType,proto3,enum=chat.ChatSenderType" json:"operator_type,omitempty"`
 	// 删除范围
@@ -2766,11 +2782,11 @@ func (x *ChatMessageOperatePayload) GetOperateType() ChatMessageOperateType {
 	return ChatMessageOperateType_CHAT_MESSAGE_OPERATE_TYPE_UNKNOWN
 }
 
-func (x *ChatMessageOperatePayload) GetOperatorId() string {
+func (x *ChatMessageOperatePayload) GetOperatorId() int64 {
 	if x != nil {
 		return x.OperatorId
 	}
-	return ""
+	return 0
 }
 
 func (x *ChatMessageOperatePayload) GetOperatorType() ChatSenderType {
@@ -3949,7 +3965,7 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\x12\x19\n" +
 	"\bgroup_id\x18\r \x01(\x03R\agroupId\x12.\n" +
 	"\vauto_online\x18\x0e \x01(\x0e2\r.common.YesNoR\n" +
-	"autoOnline\"\xfe\x06\n" +
+	"autoOnline\"\xfa\a\n" +
 	"\vChatSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -3979,7 +3995,9 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\x0flast_message_no\x18\x16 \x01(\tR\rlastMessageNo\x12\x19\n" +
 	"\bis_guest\x18\x17 \x01(\bR\aisGuest\x12\x1d\n" +
 	"\n" +
-	"avatar_url\x18\x18 \x01(\tR\tavatarUrl\"\x86\x01\n" +
+	"avatar_url\x18\x18 \x01(\tR\tavatarUrl\x12'\n" +
+	"\x0fdisconnect_time\x18\x19 \x01(\x03R\x0edisconnectTime\x12Q\n" +
+	"\x18before_disconnect_status\x18\x1a \x01(\x0e2\x17.chat.ChatSessionStatusR\x16beforeDisconnectStatus\"\x86\x01\n" +
 	"\x0fChatMessageUser\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12(\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x14.chat.ChatSenderTypeR\x04type\x12\x1a\n" +
@@ -4126,7 +4144,7 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\x10ChatAgentPayload\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x19\n" +
-	"\bagent_id\x18\x02 \x01(\tR\aagentId\x12\x1d\n" +
+	"\bagent_id\x18\x02 \x01(\x03R\aagentId\x12\x1d\n" +
 	"\n" +
 	"agent_name\x18\x03 \x01(\tR\tagentName\x12!\n" +
 	"\fagent_avatar\x18\x04 \x01(\tR\vagentAvatar\x128\n" +
@@ -4151,9 +4169,9 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\x15ChatEvaluationPayload\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x19\n" +
-	"\bagent_id\x18\x03 \x01(\tR\aagentId\x12#\n" +
-	"\revaluation_id\x18\x04 \x01(\tR\fevaluationId\x12\x16\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bagent_id\x18\x03 \x01(\x03R\aagentId\x12#\n" +
+	"\revaluation_id\x18\x04 \x01(\x03R\fevaluationId\x12\x16\n" +
 	"\x06rating\x18\x05 \x01(\x05R\x06rating\x12\x12\n" +
 	"\x04tags\x18\x06 \x03(\tR\x04tags\x12\x18\n" +
 	"\acomment\x18\a \x01(\tR\acomment\x12\x1c\n" +
@@ -4162,7 +4180,7 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\x11ChatTypingPayload\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x1b\n" +
-	"\tsender_id\x18\x02 \x01(\tR\bsenderId\x125\n" +
+	"\tsender_id\x18\x02 \x01(\x03R\bsenderId\x125\n" +
 	"\vsender_type\x18\x03 \x01(\x0e2\x14.chat.ChatSenderTypeR\n" +
 	"senderType\x12\x12\n" +
 	"\x04text\x18\x04 \x01(\tR\x04text\x12\x1f\n" +
@@ -4185,7 +4203,7 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\n" +
 	"message_no\x18\x02 \x01(\tR\tmessageNo\x12?\n" +
 	"\foperate_type\x18\x03 \x01(\x0e2\x1c.chat.ChatMessageOperateTypeR\voperateType\x12\x1f\n" +
-	"\voperator_id\x18\x04 \x01(\tR\n" +
+	"\voperator_id\x18\x04 \x01(\x03R\n" +
 	"operatorId\x129\n" +
 	"\roperator_type\x18\x05 \x01(\x0e2\x14.chat.ChatSenderTypeR\foperatorType\x12?\n" +
 	"\fdelete_scope\x18\x06 \x01(\x0e2\x1c.chat.ChatMessageDeleteScopeR\vdeleteScope\x12\x16\n" +
@@ -4408,52 +4426,53 @@ var file_proto_chat_model_proto_depIdxs = []int32{
 	38, // 8: chat.ChatSession.priority:type_name -> chat.ChatSessionPriority
 	39, // 9: chat.ChatSession.last_sender_type:type_name -> chat.ChatSenderType
 	40, // 10: chat.ChatSession.ext_json:type_name -> google.protobuf.Struct
-	39, // 11: chat.ChatMessageUser.type:type_name -> chat.ChatSenderType
-	5,  // 12: chat.ChatMessage.sender:type_name -> chat.ChatMessageUser
-	5,  // 13: chat.ChatMessage.receiver:type_name -> chat.ChatMessageUser
-	41, // 14: chat.ChatMessage.message_type:type_name -> chat.ChatMessageType
-	42, // 15: chat.ChatMessage.status:type_name -> chat.ChatMessageStatus
-	40, // 16: chat.ChatMessage.payload:type_name -> google.protobuf.Struct
-	39, // 17: chat.ChatTyping.sender_type:type_name -> chat.ChatSenderType
-	39, // 18: chat.ChatMessageReceipt.sender_type:type_name -> chat.ChatSenderType
-	43, // 19: chat.ChatMessageEvent.event_type:type_name -> chat.ChatEventType
-	6,  // 20: chat.ChatMessageEvent.message:type_name -> chat.ChatMessage
-	4,  // 21: chat.ChatMessageEvent.session:type_name -> chat.ChatSession
-	14, // 22: chat.ChatMessageEvent.system_notice:type_name -> chat.ChatSystemNoticePayload
-	15, // 23: chat.ChatMessageEvent.user_state:type_name -> chat.ChatUserStatePayload
-	16, // 24: chat.ChatMessageEvent.queue:type_name -> chat.ChatQueuePayload
-	17, // 25: chat.ChatMessageEvent.agent:type_name -> chat.ChatAgentPayload
-	18, // 26: chat.ChatMessageEvent.transfer:type_name -> chat.ChatTransferPayload
-	19, // 27: chat.ChatMessageEvent.evaluation:type_name -> chat.ChatEvaluationPayload
-	20, // 28: chat.ChatMessageEvent.typing:type_name -> chat.ChatTypingPayload
-	21, // 29: chat.ChatMessageEvent.receipt:type_name -> chat.ChatMessageReceiptPayload
-	22, // 30: chat.ChatMessageEvent.message_operate:type_name -> chat.ChatMessageOperatePayload
-	23, // 31: chat.ChatMessageEvent.heartbeat:type_name -> chat.ChatHeartbeatPayload
-	24, // 32: chat.ChatMessageEvent.error:type_name -> chat.ChatErrorPayload
-	36, // 33: chat.ChatUserStatePayload.source:type_name -> chat.ChatSessionSource
-	0,  // 34: chat.ChatQueuePayload.queue_action:type_name -> chat.ChatQueueAction
-	37, // 35: chat.ChatQueuePayload.session_status:type_name -> chat.ChatSessionStatus
-	35, // 36: chat.ChatAgentPayload.agent_status:type_name -> chat.ChatAgentStatus
-	44, // 37: chat.ChatAgentPayload.assign_type:type_name -> chat.ChatAssignType
-	37, // 38: chat.ChatAgentPayload.session_status:type_name -> chat.ChatSessionStatus
-	39, // 39: chat.ChatTypingPayload.sender_type:type_name -> chat.ChatSenderType
-	39, // 40: chat.ChatMessageReceiptPayload.operator_type:type_name -> chat.ChatSenderType
-	42, // 41: chat.ChatMessageReceiptPayload.message_status:type_name -> chat.ChatMessageStatus
-	45, // 42: chat.ChatMessageOperatePayload.operate_type:type_name -> chat.ChatMessageOperateType
-	39, // 43: chat.ChatMessageOperatePayload.operator_type:type_name -> chat.ChatSenderType
-	46, // 44: chat.ChatMessageOperatePayload.delete_scope:type_name -> chat.ChatMessageDeleteScope
-	39, // 45: chat.ChatHeartbeatPayload.sender_type:type_name -> chat.ChatSenderType
-	44, // 46: chat.ChatAssignment.assign_type:type_name -> chat.ChatAssignType
-	34, // 47: chat.ChatQuickReply.enabled:type_name -> common.Enable
-	34, // 48: chat.ChatCategory.enabled:type_name -> common.Enable
-	39, // 49: chat.ChatReadCursor.reader_type:type_name -> chat.ChatSenderType
-	34, // 50: chat.ChatGroup.enabled:type_name -> common.Enable
-	38, // 51: chat.ChatWorkOrder.priority:type_name -> chat.ChatSessionPriority
-	52, // [52:52] is the sub-list for method output_type
-	52, // [52:52] is the sub-list for method input_type
-	52, // [52:52] is the sub-list for extension type_name
-	52, // [52:52] is the sub-list for extension extendee
-	0,  // [0:52] is the sub-list for field type_name
+	37, // 11: chat.ChatSession.before_disconnect_status:type_name -> chat.ChatSessionStatus
+	39, // 12: chat.ChatMessageUser.type:type_name -> chat.ChatSenderType
+	5,  // 13: chat.ChatMessage.sender:type_name -> chat.ChatMessageUser
+	5,  // 14: chat.ChatMessage.receiver:type_name -> chat.ChatMessageUser
+	41, // 15: chat.ChatMessage.message_type:type_name -> chat.ChatMessageType
+	42, // 16: chat.ChatMessage.status:type_name -> chat.ChatMessageStatus
+	40, // 17: chat.ChatMessage.payload:type_name -> google.protobuf.Struct
+	39, // 18: chat.ChatTyping.sender_type:type_name -> chat.ChatSenderType
+	39, // 19: chat.ChatMessageReceipt.sender_type:type_name -> chat.ChatSenderType
+	43, // 20: chat.ChatMessageEvent.event_type:type_name -> chat.ChatEventType
+	6,  // 21: chat.ChatMessageEvent.message:type_name -> chat.ChatMessage
+	4,  // 22: chat.ChatMessageEvent.session:type_name -> chat.ChatSession
+	14, // 23: chat.ChatMessageEvent.system_notice:type_name -> chat.ChatSystemNoticePayload
+	15, // 24: chat.ChatMessageEvent.user_state:type_name -> chat.ChatUserStatePayload
+	16, // 25: chat.ChatMessageEvent.queue:type_name -> chat.ChatQueuePayload
+	17, // 26: chat.ChatMessageEvent.agent:type_name -> chat.ChatAgentPayload
+	18, // 27: chat.ChatMessageEvent.transfer:type_name -> chat.ChatTransferPayload
+	19, // 28: chat.ChatMessageEvent.evaluation:type_name -> chat.ChatEvaluationPayload
+	20, // 29: chat.ChatMessageEvent.typing:type_name -> chat.ChatTypingPayload
+	21, // 30: chat.ChatMessageEvent.receipt:type_name -> chat.ChatMessageReceiptPayload
+	22, // 31: chat.ChatMessageEvent.message_operate:type_name -> chat.ChatMessageOperatePayload
+	23, // 32: chat.ChatMessageEvent.heartbeat:type_name -> chat.ChatHeartbeatPayload
+	24, // 33: chat.ChatMessageEvent.error:type_name -> chat.ChatErrorPayload
+	36, // 34: chat.ChatUserStatePayload.source:type_name -> chat.ChatSessionSource
+	0,  // 35: chat.ChatQueuePayload.queue_action:type_name -> chat.ChatQueueAction
+	37, // 36: chat.ChatQueuePayload.session_status:type_name -> chat.ChatSessionStatus
+	35, // 37: chat.ChatAgentPayload.agent_status:type_name -> chat.ChatAgentStatus
+	44, // 38: chat.ChatAgentPayload.assign_type:type_name -> chat.ChatAssignType
+	37, // 39: chat.ChatAgentPayload.session_status:type_name -> chat.ChatSessionStatus
+	39, // 40: chat.ChatTypingPayload.sender_type:type_name -> chat.ChatSenderType
+	39, // 41: chat.ChatMessageReceiptPayload.operator_type:type_name -> chat.ChatSenderType
+	42, // 42: chat.ChatMessageReceiptPayload.message_status:type_name -> chat.ChatMessageStatus
+	45, // 43: chat.ChatMessageOperatePayload.operate_type:type_name -> chat.ChatMessageOperateType
+	39, // 44: chat.ChatMessageOperatePayload.operator_type:type_name -> chat.ChatSenderType
+	46, // 45: chat.ChatMessageOperatePayload.delete_scope:type_name -> chat.ChatMessageDeleteScope
+	39, // 46: chat.ChatHeartbeatPayload.sender_type:type_name -> chat.ChatSenderType
+	44, // 47: chat.ChatAssignment.assign_type:type_name -> chat.ChatAssignType
+	34, // 48: chat.ChatQuickReply.enabled:type_name -> common.Enable
+	34, // 49: chat.ChatCategory.enabled:type_name -> common.Enable
+	39, // 50: chat.ChatReadCursor.reader_type:type_name -> chat.ChatSenderType
+	34, // 51: chat.ChatGroup.enabled:type_name -> common.Enable
+	38, // 52: chat.ChatWorkOrder.priority:type_name -> chat.ChatSessionPriority
+	53, // [53:53] is the sub-list for method output_type
+	53, // [53:53] is the sub-list for method input_type
+	53, // [53:53] is the sub-list for extension type_name
+	53, // [53:53] is the sub-list for extension extendee
+	0,  // [0:53] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_model_proto_init() }

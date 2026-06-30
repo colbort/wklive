@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"wklive/common/utils"
@@ -15,22 +14,20 @@ import (
 )
 
 type PublishMessageEventReq struct {
-	EventType        chat.ChatEventType
-	Channel          string
-	MerchantId       int64
-	SessionNo        string
-	UserId           int64
-	AgentId          int64
-	IsGuest          bool
-	AssignType       chat.ChatAssignType
-	Reason           string
-	EventMessage     string
-	Message          *models.ChatMessage
-	TransientMessage *chat.ChatMessage
-	Session          *models.TChatSession
-	TransientSession *chat.ChatSession
-	Agent            *models.TChatAgent
-	Satisfaction     *models.TChatSatisfaction
+	EventType    chat.ChatEventType
+	Channel      string
+	MerchantId   int64
+	SessionNo    string
+	UserId       int64
+	AgentId      int64
+	IsGuest      bool
+	AssignType   chat.ChatAssignType
+	Reason       string
+	EventMessage string
+	Message      *models.ChatMessage
+	Session      *models.TChatSession
+	Agent        *models.TChatAgent
+	Satisfaction *models.TChatSatisfaction
 }
 
 func PublishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, req PublishMessageEventReq) error {
@@ -38,60 +35,67 @@ func PublishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, req Pu
 		return fmt.Errorf("event_type is required")
 	}
 	createdAt := utils.NowMillis()
-	event := &chat.ChatMessageEvent{EventType: req.EventType, CreatedAt: createdAt}
+	event := &chat.ChatMessageEvent{
+		Code:      200,
+		Msg:       "",
+		EventType: req.EventType,
+		CreatedAt: createdAt,
+	}
 	switch req.EventType {
 	case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE:
-		msg := eventMessage(req)
-		if msg == nil {
-			return fmt.Errorf("message data is empty")
-		}
-		event.Payload = &chat.ChatMessageEvent_Message{Message: msg}
+		event.Payload = &chat.ChatMessageEvent_Message{Message: &chat.ChatMessage{}}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE:
-		event.Payload = &chat.ChatMessageEvent_SystemNotice{SystemNotice: systemNoticePayload(req)}
+		event.Payload = &chat.ChatMessageEvent_SystemNotice{SystemNotice: &chat.ChatSystemNoticePayload{
+			SessionNo:  req.SessionNo,
+			Title:      "",
+			Content:    strings.TrimSpace(req.EventMessage),
+			Level:      "info",
+			ShowInChat: false,
+		}}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE:
-		queue, err := queuePayload(ctx, svcCtx, req, createdAt)
-		if err != nil {
-			return err
-		}
-		event.Payload = &chat.ChatMessageEvent_Queue{Queue: queue}
+		event.Payload = &chat.ChatMessageEvent_Queue{Queue: &chat.ChatQueuePayload{
+			SessionNo:            req.SessionNo,
+			UserId:               req.UserId,
+			Nickname:             "",
+			QueueAction:          chat.ChatQueueAction_CHAT_QUEUE_ACTION_JOIN,
+			QueuePosition:        0,
+			WaitingCount:         0,
+			EstimatedWaitSeconds: 0,
+			SessionStatus:        chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT,
+			ActionTime:           utils.NowMillis(),
+		}}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
 		chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_LEAVE:
-		event.Payload = &chat.ChatMessageEvent_Agent{Agent: agentPayload(req, createdAt)}
+		event.Payload = &chat.ChatMessageEvent_Agent{Agent: &chat.ChatAgentPayload{
+			SessionNo:     req.SessionNo,
+			AgentId:       req.AgentId,
+			AgentName:     "",
+			AgentAvatar:   "",
+			AgentStatus:   chat.ChatAgentStatus(req.Agent.Status),
+			AssignType:    req.AssignType,
+			SessionStatus: chat.ChatSessionStatus(req.Session.Status),
+			Remark:        strings.TrimSpace(req.EventMessage),
+			ActionTime:    createdAt,
+		}}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE:
-		msg := eventMessage(req)
-		if msg == nil {
-			return fmt.Errorf("message data is empty")
-		}
-		event.Payload = &chat.ChatMessageEvent_Evaluation{Evaluation: evaluationInviteFromMessage(req.MerchantId, msg, eventSession(ctx, svcCtx, req), createdAt)}
+		event.Payload = &chat.ChatMessageEvent_Evaluation{Evaluation: evaluationInviteFromMessage(req.MerchantId, req.Message, req.Session, createdAt)}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT:
 		if req.Satisfaction == nil {
 			return fmt.Errorf("satisfaction data is empty")
 		}
 		event.Payload = &chat.ChatMessageEvent_Evaluation{Evaluation: evaluationSubmitPayload(req.Satisfaction)}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING:
-		msg := eventMessage(req)
-		if msg == nil {
-			return fmt.Errorf("message data is empty")
-		}
-		event.Payload = &chat.ChatMessageEvent_Typing{Typing: typingFromMessage(req.MerchantId, msg, eventSession(ctx, svcCtx, req), createdAt)}
+		event.Payload = &chat.ChatMessageEvent_Typing{Typing: typingFromMessage(req.MerchantId, req.Message, req.Session, createdAt)}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED,
 		chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ:
-		msg := eventMessage(req)
-		if msg == nil {
-			return fmt.Errorf("message data is empty")
-		}
-		event.Payload = &chat.ChatMessageEvent_Receipt{Receipt: receiptFromMessage(req.MerchantId, msg, eventSession(ctx, svcCtx, req), createdAt)}
+		event.Payload = &chat.ChatMessageEvent_Receipt{Receipt: receiptFromMessage(req.MerchantId, req.Message, req.Session, createdAt)}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_RECALL,
 		chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELETE:
 		event.Payload = &chat.ChatMessageEvent_MessageOperate{MessageOperate: messageOperatePayload(req, createdAt)}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT:
 		event.Payload = &chat.ChatMessageEvent_Heartbeat{Heartbeat: &chat.ChatHeartbeatPayload{ServerTime: createdAt}}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_ERROR:
-		msg := eventMessage(req)
-		if msg == nil {
-			return fmt.Errorf("message data is empty")
-		}
-		event.Payload = &chat.ChatMessageEvent_Error{Error: chatEventErrorFromMessage(req.MerchantId, msg, eventSession(ctx, svcCtx, req), createdAt)}
+		event.Payload = &chat.ChatMessageEvent_Error{Error: chatEventErrorFromMessage(req.MerchantId, req.Message, req.Session, createdAt)}
 	case chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
 		chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
 		chat.ChatEventType_CHAT_EVENT_TYPE_TRANSFER_REQUEST,
@@ -108,27 +112,6 @@ func PublishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, req Pu
 	}
 	if _, err := svcCtx.BusRedis.PublishCtx(ctx, req.Channel, string(payload)); err != nil {
 		return err
-	}
-	return nil
-}
-
-func eventMessage(req PublishMessageEventReq) *chat.ChatMessage {
-	if req.TransientMessage != nil {
-		return req.TransientMessage
-	}
-	return ToProtoMessage(req.Message)
-}
-
-func eventSession(ctx context.Context, svcCtx *svc.ServiceContext, req PublishMessageEventReq) *chat.ChatSession {
-	if req.TransientSession != nil {
-		return req.TransientSession
-	}
-	if req.TransientMessage != nil && svcCtx != nil && svcCtx.BusRedis != nil {
-		session, _ := GetTransientSession(ctx, svcCtx.BusRedis, req.MerchantId, req.TransientMessage.GetSessionNo())
-		return session
-	}
-	if req.Session != nil {
-		return ToProtoSession(req.Session, req.IsGuest)
 	}
 	return nil
 }
@@ -153,127 +136,43 @@ func sessionWithEventMeta(session *chat.ChatSession, eventType chat.ChatEventTyp
 	return session
 }
 
-func systemNoticePayload(req PublishMessageEventReq) *chat.ChatSystemNoticePayload {
-	sessionNo := strings.TrimSpace(req.SessionNo)
-	if req.TransientSession != nil && sessionNo == "" {
-		sessionNo = req.TransientSession.GetSessionNo()
-	}
-	if req.Session != nil && sessionNo == "" {
-		sessionNo = req.Session.SessionNo
-	}
-	return &chat.ChatSystemNoticePayload{
-		SessionNo:  sessionNo,
-		Content:    strings.TrimSpace(req.EventMessage),
-		Level:      "info",
-		ShowInChat: false,
-	}
-}
-
-func queuePayload(ctx context.Context, svcCtx *svc.ServiceContext, req PublishMessageEventReq, createdAt int64) (*chat.ChatQueuePayload, error) {
-	session := req.TransientSession
-	if session == nil && req.Session != nil {
-		session = ToProtoSession(req.Session, req.IsGuest)
-	}
-	if req.Session != nil {
-		queue, err := ToProtoQueueInfo(ctx, svcCtx, req.Session)
-		if err != nil {
-			return nil, err
-		}
-		if queue != nil {
-			queue.ActionTime = createdAt
-			return queue, nil
-		}
-	}
-	sessionNo := strings.TrimSpace(req.SessionNo)
-	userId := req.UserId
-	status := chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING
-	if session != nil {
-		if sessionNo == "" {
-			sessionNo = session.GetSessionNo()
-		}
-		if userId <= 0 {
-			userId = session.GetUserId()
-		}
-		status = session.GetStatus()
-	}
-	return &chat.ChatQueuePayload{
-		SessionNo:     sessionNo,
-		UserId:        userId,
-		QueueAction:   chat.ChatQueueAction_CHAT_QUEUE_ACTION_UPDATE,
-		SessionStatus: status,
-		ActionTime:    createdAt,
-	}, nil
-}
-
-func agentPayload(req PublishMessageEventReq, createdAt int64) *chat.ChatAgentPayload {
-	session := req.TransientSession
-	if session == nil && req.Session != nil {
-		session = ToProtoSession(req.Session, req.IsGuest)
-	}
-	sessionNo := strings.TrimSpace(req.SessionNo)
-	agentId := req.AgentId
-	status := chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN
-	if session != nil {
-		if sessionNo == "" {
-			sessionNo = session.GetSessionNo()
-		}
-		if agentId <= 0 {
-			agentId = session.GetAgentId()
-		}
-		status = session.GetStatus()
-	}
-	payload := &chat.ChatAgentPayload{
-		SessionNo:     sessionNo,
-		AgentId:       strconv.FormatInt(agentId, 10),
-		AssignType:    req.AssignType,
-		SessionStatus: status,
-		Remark:        strings.TrimSpace(req.EventMessage),
-		ActionTime:    createdAt,
-	}
-	if req.Agent != nil {
-		payload.AgentId = strconv.FormatInt(req.Agent.Id, 10)
-		payload.AgentStatus = chat.ChatAgentStatus(req.Agent.Status)
-	}
-	return payload
-}
-
-func chatEventErrorFromMessage(merchantId int64, msg *chat.ChatMessage, session *chat.ChatSession, createdAt int64) *chat.ChatErrorPayload {
+func chatEventErrorFromMessage(merchantId int64, msg *models.ChatMessage, session *models.TChatSession, createdAt int64) *chat.ChatErrorPayload {
 	if session != nil && merchantId <= 0 {
-		merchantId = session.GetMerchantId()
+		merchantId = session.MerchantId
 	}
 	_ = merchantId
 	_ = createdAt
 	return &chat.ChatErrorPayload{
-		SessionNo:    msg.GetSessionNo(),
+		SessionNo:    msg.SessionNo,
 		ErrorCode:    500,
-		ErrorMessage: strings.TrimSpace(msg.GetContent()),
+		ErrorMessage: strings.TrimSpace(msg.Content),
 		Retryable:    false,
 	}
 }
 
-func evaluationInviteFromMessage(merchantId int64, msg *chat.ChatMessage, session *chat.ChatSession, createdAt int64) *chat.ChatEvaluationPayload {
+func evaluationInviteFromMessage(merchantId int64, msg *models.ChatMessage, session *models.TChatSession, createdAt int64) *chat.ChatEvaluationPayload {
 	if msg == nil {
 		return nil
 	}
 	if session != nil && merchantId <= 0 {
-		merchantId = session.GetMerchantId()
+		merchantId = session.MerchantId
 	}
 	invite := &chat.ChatEvaluationPayload{
-		SessionNo:   msg.GetSessionNo(),
-		Comment:     strings.TrimSpace(msg.GetContent()),
+		SessionNo:   msg.SessionNo,
+		Comment:     strings.TrimSpace(msg.Content),
 		Submitted:   false,
 		EvaluatedAt: createdAt,
 	}
 	_ = merchantId
 	if session != nil {
-		invite.UserId = strconv.FormatInt(session.GetUserId(), 10)
-		invite.AgentId = strconv.FormatInt(session.GetAgentId(), 10)
+		invite.UserId = session.UserId
+		invite.AgentId = session.AgentId
 	}
-	if sender := msg.GetSender(); sender != nil && sender.GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
-		invite.AgentId = strconv.FormatInt(sender.GetId(), 10)
+	if sender := msg.Sender; sender != nil && chat.ChatSenderType(sender.Type) == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
+		invite.AgentId = sender.Id
 	}
-	if receiver := msg.GetReceiver(); receiver != nil && receiver.GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
-		invite.UserId = strconv.FormatInt(receiver.GetId(), 10)
+	if receiver := msg.Receiver; receiver != nil && chat.ChatSenderType(receiver.Type) == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
+		invite.UserId = receiver.Id
 	}
 	return invite
 }
@@ -290,9 +189,9 @@ func evaluationSubmitPayload(data *models.TChatSatisfaction) *chat.ChatEvaluatio
 	}
 	return &chat.ChatEvaluationPayload{
 		SessionNo:    data.SessionNo,
-		UserId:       strconv.FormatInt(data.UserId, 10),
-		AgentId:      strconv.FormatInt(data.AgentId, 10),
-		EvaluationId: strconv.FormatInt(data.Id, 10),
+		UserId:       data.UserId,
+		AgentId:      data.AgentId,
+		EvaluationId: data.Id,
 		Rating:       int32(data.Score),
 		Tags:         tags,
 		Comment:      data.Content,
@@ -301,81 +200,81 @@ func evaluationSubmitPayload(data *models.TChatSatisfaction) *chat.ChatEvaluatio
 	}
 }
 
-func typingFromMessage(merchantId int64, msg *chat.ChatMessage, session *chat.ChatSession, createdAt int64) *chat.ChatTypingPayload {
+func typingFromMessage(merchantId int64, msg *models.ChatMessage, session *models.TChatSession, createdAt int64) *chat.ChatTypingPayload {
 	if msg == nil {
 		return nil
 	}
 	if session != nil && merchantId <= 0 {
-		merchantId = session.GetMerchantId()
+		merchantId = session.MerchantId
 	}
 	userId := int64(0)
 	agentId := int64(0)
 	if session != nil {
-		userId = session.GetUserId()
-		agentId = session.GetAgentId()
+		userId = session.UserId
+		agentId = session.AgentId
 	}
-	if msg.GetSender() != nil {
-		if msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
-			userId = msg.GetSender().GetId()
+	if msg.Sender != nil {
+		if chat.ChatSenderType(msg.Sender.Type) == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
+			userId = msg.Sender.Id
 		}
-		if msg.GetSender().GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
-			agentId = msg.GetSender().GetId()
+		if chat.ChatSenderType(msg.Sender.Type) == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
+			agentId = msg.Sender.Id
 		}
 	}
 	typing := &chat.ChatTypingPayload{
-		SessionNo:  msg.GetSessionNo(),
-		SenderId:   strconv.FormatInt(userId, 10),
-		Text:       strings.TrimSpace(msg.GetContent()),
+		SessionNo:  msg.SessionNo,
+		SenderId:   userId,
+		Text:       strings.TrimSpace(msg.Content),
 		ActionTime: createdAt,
 	}
 	_ = merchantId
 	_ = agentId
-	if msg.GetSender() != nil {
-		typing.SenderType = msg.GetSender().GetType()
+	if msg.Sender != nil {
+		typing.SenderType = chat.ChatSenderType(msg.Sender.Type)
 	}
 	return typing
 }
 
-func receiptFromMessage(merchantId int64, msg *chat.ChatMessage, session *chat.ChatSession, createdAt int64) *chat.ChatMessageReceiptPayload {
+func receiptFromMessage(merchantId int64, msg *models.ChatMessage, session *models.TChatSession, createdAt int64) *chat.ChatMessageReceiptPayload {
 	if msg == nil {
 		return nil
 	}
 	if session != nil && merchantId <= 0 {
-		merchantId = session.GetMerchantId()
+		merchantId = session.MerchantId
 	}
 	receipt := &chat.ChatMessageReceiptPayload{
-		SessionNo:   msg.GetSessionNo(),
-		MessageNo:   msg.GetMessageNo(),
+		SessionNo:   msg.SessionNo,
+		MessageNo:   msg.MessageNo,
 		ReceiptTime: createdAt,
 	}
-	if msg.GetSender() != nil {
-		receipt.OperatorType = msg.GetSender().GetType()
-		receipt.OperatorId = msg.GetSender().GetId()
+	if msg.Sender != nil {
+		receipt.OperatorType = chat.ChatSenderType(msg.Sender.Type)
+		receipt.OperatorId = msg.Sender.Id
 	}
 	_ = merchantId
 	if session != nil {
-		receipt.SenderId = session.GetUserId()
+		receipt.SenderId = session.UserId
 	}
-	if sender := msg.GetSender(); sender != nil {
-		receipt.SenderId = sender.GetId()
+	if sender := msg.Sender; sender != nil {
+		receipt.SenderId = sender.Id
 	}
 	return receipt
 }
 
 func messageOperatePayload(req PublishMessageEventReq, createdAt int64) *chat.ChatMessageOperatePayload {
-	msg := eventMessage(req)
+	// msg := eventMessage(req)
 	payload := &chat.ChatMessageOperatePayload{
-		SessionNo:    strings.TrimSpace(req.SessionNo),
-		OperatorId:   strconv.FormatInt(req.UserId, 10),
+		SessionNo:    req.SessionNo,
+		OperatorId:   req.UserId,
 		OperatorType: chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
 		OperatedAt:   createdAt,
 	}
-	if msg != nil {
-		payload.SessionNo = msg.GetSessionNo()
-		payload.MessageNo = msg.GetMessageNo()
-		if sender := msg.GetSender(); sender != nil {
-			payload.OperatorId = strconv.FormatInt(sender.GetId(), 10)
-			payload.OperatorType = sender.GetType()
+	if req.Message != nil {
+		payload.MessageNo = req.Message.MessageNo
+		sender := req.Message.Sender
+		if sender != nil {
+			payload.OperatorId = sender.Id
+			payload.OperatorType = chat.ChatSenderType(sender.Type)
 		}
 	}
 	if req.EventType == chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_RECALL {

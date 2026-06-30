@@ -42,29 +42,31 @@ type (
 	}
 
 	TChatSession struct {
-		Id               int64          `db:"id"`                 // 主键ID
-		SessionNo        string         `db:"session_no"`         // 会话编号
-		MerchantId       int64          `db:"merchant_id"`        // 客服商户ID
-		UserId           int64          `db:"user_id"`            // 用户ID
-		Source           int64          `db:"source"`             // 来源:1APP 2WEB 3后台 4系统
-		Status           int64          `db:"status"`             // 状态:1等待接入 2服务中 3等待用户 4等待客服 5已结束
-		Priority         int64          `db:"priority"`           // 优先级:1低 2普通 3高 4紧急
-		AgentId          int64          `db:"agent_id"`           // 当前坐席ID
-		AgentUserId      int64          `db:"agent_user_id"`      // 当前坐席的用户ID
-		GroupId          int64          `db:"group_id"`           // 目标客服分组ID
-		Title            string         `db:"title"`              // 会话标题
-		Category         string         `db:"category"`           // 问题分类
-		LastMessageNo    string         `db:"last_message_no"`    // 最后一条消息编号
-		LastMessage      string         `db:"last_message"`       // 最后一条消息摘要
-		LastSenderType   int64          `db:"last_sender_type"`   // 最后一条消息发送方:1用户 2客服 3系统
-		LastMessageTime  int64          `db:"last_message_time"`  // 最后一条消息时间戳(毫秒)
-		UserUnreadCount  int64          `db:"user_unread_count"`  // 用户未读数
-		AgentUnreadCount int64          `db:"agent_unread_count"` // 坐席未读数
-		CloseTime        int64          `db:"close_time"`         // 结束时间戳(毫秒)
-		CloseReason      string         `db:"close_reason"`       // 结束原因
-		ExtJson          sql.NullString `db:"ext_json"`           // 扩展信息
-		CreateTimes      int64          `db:"create_times"`       // 创建时间戳(毫秒)
-		UpdateTimes      int64          `db:"update_times"`       // 更新时间戳(毫秒)
+		Id                     int64          `db:"id"`                       // 主键ID
+		SessionNo              string         `db:"session_no"`               // 会话编号
+		MerchantId             int64          `db:"merchant_id"`              // 客服商户ID
+		UserId                 int64          `db:"user_id"`                  // 用户ID
+		Source                 int64          `db:"source"`                   // 来源:1APP 2WEB 3后台 4系统
+		Status                 int64          `db:"status"`                   // 状态:1等待接入 2服务中 3等待用户 4等待客服 5已结束
+		Priority               int64          `db:"priority"`                 // 优先级:1低 2普通 3高 4紧急
+		AgentId                int64          `db:"agent_id"`                 // 当前坐席ID
+		AgentUserId            int64          `db:"agent_user_id"`            // 当前坐席的用户ID
+		GroupId                int64          `db:"group_id"`                 // 目标客服分组ID
+		Title                  string         `db:"title"`                    // 会话标题
+		Category               string         `db:"category"`                 // 问题分类
+		LastMessageNo          string         `db:"last_message_no"`          // 最后一条消息编号
+		LastMessage            string         `db:"last_message"`             // 最后一条消息摘要
+		LastSenderType         int64          `db:"last_sender_type"`         // 最后一条消息发送方:1用户 2客服 3系统
+		LastMessageTime        int64          `db:"last_message_time"`        // 最后一条消息时间戳(毫秒)
+		UserUnreadCount        int64          `db:"user_unread_count"`        // 用户未读数
+		AgentUnreadCount       int64          `db:"agent_unread_count"`       // 坐席未读数
+		CloseTime              int64          `db:"close_time"`               // 结束时间戳(毫秒)
+		CloseReason            string         `db:"close_reason"`             // 结束原因
+		DisconnectTime         int64          `db:"disconnect_time"`          // 网络异常断开时间戳(毫秒)
+		BeforeDisconnectStatus int64          `db:"before_disconnect_status"` // 网络异常断开前状态
+		ExtJson                sql.NullString `db:"ext_json"`                 // 扩展信息
+		CreateTimes            int64          `db:"create_times"`             // 创建时间戳(毫秒)
+		UpdateTimes            int64          `db:"update_times"`             // 更新时间戳(毫秒)
 	}
 )
 
@@ -131,8 +133,8 @@ func (m *defaultTChatSessionModel) Insert(ctx context.Context, data *TChatSessio
 	tChatSessionIdKey := fmt.Sprintf("%s%v", cacheTChatSessionIdPrefix, data.Id)
 	tChatSessionSessionNoKey := fmt.Sprintf("%s%v", cacheTChatSessionSessionNoPrefix, data.SessionNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tChatSessionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.SessionNo, data.MerchantId, data.UserId, data.Source, data.Status, data.Priority, data.AgentId, data.AgentUserId, data.GroupId, data.Title, data.Category, data.LastMessageNo, data.LastMessage, data.LastSenderType, data.LastMessageTime, data.UserUnreadCount, data.AgentUnreadCount, data.CloseTime, data.CloseReason, data.ExtJson, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tChatSessionRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.SessionNo, data.MerchantId, data.UserId, data.Source, data.Status, data.Priority, data.AgentId, data.AgentUserId, data.GroupId, data.Title, data.Category, data.LastMessageNo, data.LastMessage, data.LastSenderType, data.LastMessageTime, data.UserUnreadCount, data.AgentUnreadCount, data.CloseTime, data.CloseReason, data.DisconnectTime, data.BeforeDisconnectStatus, data.ExtJson, data.CreateTimes, data.UpdateTimes)
 	}, tChatSessionIdKey, tChatSessionSessionNoKey)
 	return ret, err
 }
@@ -147,7 +149,7 @@ func (m *defaultTChatSessionModel) Update(ctx context.Context, newData *TChatSes
 	tChatSessionSessionNoKey := fmt.Sprintf("%s%v", cacheTChatSessionSessionNoPrefix, data.SessionNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tChatSessionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.SessionNo, newData.MerchantId, newData.UserId, newData.Source, newData.Status, newData.Priority, newData.AgentId, newData.AgentUserId, newData.GroupId, newData.Title, newData.Category, newData.LastMessageNo, newData.LastMessage, newData.LastSenderType, newData.LastMessageTime, newData.UserUnreadCount, newData.AgentUnreadCount, newData.CloseTime, newData.CloseReason, newData.ExtJson, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.SessionNo, newData.MerchantId, newData.UserId, newData.Source, newData.Status, newData.Priority, newData.AgentId, newData.AgentUserId, newData.GroupId, newData.Title, newData.Category, newData.LastMessageNo, newData.LastMessage, newData.LastSenderType, newData.LastMessageTime, newData.UserUnreadCount, newData.AgentUnreadCount, newData.CloseTime, newData.CloseReason, newData.DisconnectTime, newData.BeforeDisconnectStatus, newData.ExtJson, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tChatSessionIdKey, tChatSessionSessionNoKey)
 	return err
 }

@@ -20,8 +20,8 @@ const (
 )
 
 type InboundEvent struct {
-	EventType chat.ChatEventType `json:"eventType"`
-	Data      json.RawMessage    `json:"data"`
+	EventType string          `json:"eventType"`
+	Data      json.RawMessage `json:"data"`
 }
 
 type Connection struct {

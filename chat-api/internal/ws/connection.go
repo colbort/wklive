@@ -20,8 +20,8 @@ const (
 )
 
 type InboundEvent struct {
-	EventType chat.ChatEventType `json:"eventType"`
-	Data      json.RawMessage    `json:"data"`
+	EventType string          `json:"eventType"`
+	Data      json.RawMessage `json:"data"`
 }
 
 type Connection struct {
@@ -32,11 +32,12 @@ type Connection struct {
 	AvatarUrl  string
 	MerchantId int64
 	SessionNo  string
+	IsGuest    bool
 	OnMessage  func(*Connection, InboundEvent)
 	OnClose    func(*Connection)
 }
 
-func NewConnection(conn *websocket.Conn, userId int64, username string, avatarUrl string, merchantId int64, sessionNo string, onMessage func(*Connection, InboundEvent), onClose func(*Connection)) *Connection {
+func NewConnection(conn *websocket.Conn, userId int64, username string, avatarUrl string, merchantId int64, sessionNo string, isGuest bool, onMessage func(*Connection, InboundEvent), onClose func(*Connection)) *Connection {
 	return &Connection{
 		Conn:       conn,
 		Send:       make(chan []byte, 32),
@@ -45,6 +46,7 @@ func NewConnection(conn *websocket.Conn, userId int64, username string, avatarUr
 		AvatarUrl:  avatarUrl,
 		MerchantId: merchantId,
 		SessionNo:  sessionNo,
+		IsGuest:    isGuest,
 		OnMessage:  onMessage,
 		OnClose:    onClose,
 	}

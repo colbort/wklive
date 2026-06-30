@@ -60,7 +60,7 @@ func (l *PageChatMessagesLogic) PageChatMessages(in *chat.PageChatMessagesReq) (
 	if err != nil {
 		return &chat.PageChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo())
+	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
 	if err != nil {
 		return &chat.PageChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

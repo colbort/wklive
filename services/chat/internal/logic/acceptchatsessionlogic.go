@@ -40,7 +40,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if agent.Status != int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE) {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(400, "chat agent is not online")}, nil
 	}
-	session, base, err := internal.AssignSession(l.ctx, l.svcCtx, internal.AssignSessionOptions{
+	session, base, err := internal.AcceptChatSession(l.ctx, l.svcCtx, internal.AssignSessionOptions{
 		SessionNo:  in.SessionNo,
 		MerchantId: in.MerchantId,
 		ToAgentId:  agent.Id,
