@@ -6,11 +6,11 @@ import (
 	"errors"
 	"net/http"
 	"strings"
-	"time"
 
 	"chat-admin-api/internal/svc"
 	"chat-admin-api/internal/types"
 	"chat-admin-api/internal/ws"
+	"wklive/common/utils"
 	"wklive/proto/chat"
 
 	"github.com/gorilla/websocket"
@@ -64,11 +64,20 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 			streamCancel()
 		},
 	)
-	client.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE, map[string]interface{}{
-		"message":    "chat admin websocket connected",
-		"merchantId": req.MerchantId,
-		"agentId":    req.AgentId,
-		"sessionNo":  req.SessionNo,
+	client.SendEvent(&chat.ChatMessageEvent{
+		Code:      200,
+		Msg:       "",
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE,
+		CreatedAt: utils.NowMillis(),
+		Payload: &chat.ChatMessageEvent_SystemNotice{
+			SystemNotice: &chat.ChatSystemNoticePayload{
+				SessionNo:  req.SessionNo,
+				Title:      "connection",
+				Content:    "chat admin websocket connected",
+				Level:      "info",
+				ShowInChat: false,
+			},
+		},
 	})
 
 	go l.subscribeStream(streamCtx, client)
@@ -108,7 +117,15 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELETE:
 			// TODO handle message delete
 		case chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT:
-			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT, map[string]int64{"time": time.Now().UnixMilli()})
+			conn.SendEvent(&chat.ChatMessageEvent{
+				Code:      200,
+				Msg:       "",
+				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT,
+				CreatedAt: utils.NowMillis(),
+				Payload: &chat.ChatMessageEvent_Heartbeat{
+					Heartbeat: &chat.ChatHeartbeatPayload{},
+				},
+			})
 		default:
 			sendWSError(conn, "unsupported event type")
 		}
@@ -165,12 +182,11 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 	req.SessionNo = conn.SessionNo
 	req.MerchantId = conn.MerchantId
 	req.IsGuest = conn.IsGuest
-	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
+	_, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
 	if err != nil {
 		sendWSError(conn, err.Error())
 		return
 	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE, resp)
 }
 
 func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
@@ -191,7 +207,15 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 		sendWSError(conn, err.Error())
 		return
 	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED, resp)
+	conn.SendEvent(&chat.ChatMessageEvent{
+		Code:      200,
+		Msg:       "",
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
+		CreatedAt: utils.NowMillis(),
+		Payload: &chat.ChatMessageEvent_Session{
+			Session: resp.Data,
+		},
+	})
 }
 
 func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
@@ -209,15 +233,39 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 		sendWSError(conn, err.Error())
 		return
 	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, resp)
+	conn.SendEvent(&chat.ChatMessageEvent{
+		Code:      200,
+		Msg:       "",
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
+		CreatedAt: utils.NowMillis(),
+		Payload: &chat.ChatMessageEvent_Session{
+			Session: resp.Data,
+		},
+	})
 }
 
 func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_TYPING, map[string]string{"message": "ok"})
+	conn.SendEvent(&chat.ChatMessageEvent{
+		Code:      200,
+		Msg:       "",
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_TYPING,
+		CreatedAt: utils.NowMillis(),
+		Payload: &chat.ChatMessageEvent_Typing{
+			Typing: &chat.ChatTypingPayload{},
+		},
+	})
 }
 
 func (l *MessagesLogic) handleEvaluationInvite(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE, map[string]string{"message": "ok"})
+	conn.SendEvent(&chat.ChatMessageEvent{
+		Code:      200,
+		Msg:       "",
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE,
+		CreatedAt: utils.NowMillis(),
+		Payload: &chat.ChatMessageEvent_Evaluation{
+			Evaluation: &chat.ChatEvaluationPayload{},
+		},
+	})
 }
 
 func sessionAgentFromPayload(conn *ws.Connection, sessionNo string, agentId int64) (string, int64) {
@@ -232,7 +280,22 @@ func sessionAgentFromPayload(conn *ws.Connection, sessionNo string, agentId int6
 }
 
 func sendWSError(conn *ws.Connection, message string) {
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": message})
+	conn.SendEvent(&chat.ChatMessageEvent{
+		Code:      200,
+		Msg:       "",
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,
+		CreatedAt: utils.NowMillis(),
+		Payload: &chat.ChatMessageEvent_Error{
+			Error: &chat.ChatErrorPayload{
+				SessionNo:    conn.SessionNo,
+				MessageNo:    "",
+				ErrorCode:    0,
+				ErrorMessage: message,
+				Detail:       message,
+				Retryable:    false,
+			},
+		},
+	})
 }
 
 func (l *MessagesLogic) appendTransientMessage(ctx context.Context, merchantId int64, eventType chat.ChatEventType, msg *chat.ChatMessage, session *chat.ChatSession) error {

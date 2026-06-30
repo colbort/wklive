@@ -128,7 +128,13 @@ func (l *MessagesLogic) onMessage(isGuest bool) func(*ws.Connection, ws.InboundE
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELETE:
 			// TODO handle message delete
 		case chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT:
-			conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT, map[string]int64{"time": time.Now().UnixMilli()})
+			conn.SendEvent(&chat.ChatMessageEvent{
+				Code:      200,
+				Msg:       "",
+				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT,
+				CreatedAt: utils.NowMillis(),
+				Payload:   &chat.ChatMessageEvent_Agent{},
+			})
 		default:
 			sendWSError(conn, "unsupported event type")
 		}
@@ -302,7 +308,15 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		sendWSError(conn, resp.GetBase().GetMsg())
 		return
 	}
-	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT, resp)
+	conn.SendEvent(&chat.ChatMessageEvent{
+		Code:      200,
+		Msg:       "",
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
+		CreatedAt: utils.NowMillis(),
+		Payload: &chat.ChatMessageEvent_Evaluation{
+			Evaluation: &chat.ChatEvaluationPayload{},
+		},
+	})
 }
 
 func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage, isGuest bool) {
@@ -334,13 +348,4 @@ func sendWSError(conn *ws.Connection, message string) {
 			Retryable:    false,
 		}},
 	})
-}
-
-func firstNonEmpty(values ...string) string {
-	for _, value := range values {
-		if v := strings.TrimSpace(value); v != "" {
-			return v
-		}
-	}
-	return ""
 }

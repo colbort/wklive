@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"wklive/common/utils"
 	"wklive/proto/chat"
 
 	"github.com/gorilla/websocket"
@@ -76,7 +77,22 @@ func (c *Connection) ReadPump() {
 		}
 		var event InboundEvent
 		if err := json.Unmarshal(payload, &event); err != nil {
-			c.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": err.Error()})
+			c.SendEvent(&chat.ChatMessageEvent{
+				Code:      200,
+				Msg:       "",
+				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,
+				CreatedAt: utils.NowMillis(),
+				Payload: &chat.ChatMessageEvent_Error{
+					Error: &chat.ChatErrorPayload{
+						SessionNo:    c.SessionNo,
+						MessageNo:    "",
+						ErrorCode:    0,
+						ErrorMessage: "invalid json",
+						Detail:       err.Error(),
+						Retryable:    false,
+					},
+				},
+			})
 			continue
 		}
 		c.OnMessage(c, event)
@@ -116,23 +132,6 @@ func (c *Connection) WritePump() {
 				return
 			}
 		}
-	}
-}
-
-// SendJSON writes a chat event envelope to the websocket.
-func (c *Connection) SendJSON(eventType chat.ChatEventType, data interface{}) {
-	payload, err := json.Marshal(map[string]interface{}{
-		"eventType": eventType.String(),
-		"data":      data,
-	})
-	if err != nil {
-		logx.Errorf("marshal chat user ws response failed: %v", err)
-		return
-	}
-	select {
-	case c.Send <- payload:
-	default:
-		logx.Errorf("chat user ws send queue is full, userId=%d", c.UserId)
 	}
 }
 
