@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"strings"
 	"wklive/common/helper"
 
@@ -40,14 +39,12 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		sessionNo := strings.TrimSpace(in.GetSessionNo())
 		if sessionNo == "" {
 			var err error
-			fmt.Println("========================= aa")
 			sessionNo, err = l.svcCtx.GenerateNo(l.ctx, "CS")
 			if err != nil {
 				logx.Errorf("generate guest session no error: %v", err)
 				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate session no error")}, nil
 			}
 		}
-		fmt.Println("========================= bb")
 
 		rs, _ = internal.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), sessionNo)
 		now := utils.NowMillis()

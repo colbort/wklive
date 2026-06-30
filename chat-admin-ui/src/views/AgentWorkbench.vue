@@ -44,7 +44,7 @@ interface WsResult<T> {
 type WsEventData = ChatMessage | WsResult<ChatMessage>;
 
 interface WsEvent {
-  type: string;
+  eventType?: string;
   data?: WsEventData;
   base?: WsBase;
   agent?: ChatAgent;
@@ -382,7 +382,7 @@ function clearReconnectTimer() {
 }
 
 function handleWsMessage(event: WsEvent) {
-  const eventType = event.type || "";
+  const eventType = event.eventType || "";
   if (!chatAdminWsEventTypes.has(eventType)) {
     return;
   }
@@ -407,6 +407,7 @@ function handleWsMessage(event: WsEvent) {
     case chatEventType.SESSION_CLOSE: {
       const message = applyWsSessionMessage(event, eventType);
       markSessionClosed(event, message);
+      scheduleRefreshSessions();
       return;
     }
 
@@ -1043,7 +1044,7 @@ function send(value: string) {
     messageType: 1,
     content,
   };
-  sendWsEvent({ type: chatEventType.MESSAGE, data });
+  sendWsEvent({ eventType: chatEventType.MESSAGE, data });
 }
 
 function closeSession() {
@@ -1056,7 +1057,7 @@ function closeSession() {
     sessionNo: activeSession.value.sessionNo,
     closeReason: "closed by agent",
   };
-  sendWsEvent({ type: chatEventType.SESSION_CLOSE, data });
+  sendWsEvent({ eventType: chatEventType.SESSION_CLOSE, data });
 }
 
 function acceptSession() {
@@ -1073,7 +1074,7 @@ function acceptSession() {
     userId: activeSession.value.userId,
     sessionNo: activeSession.value.sessionNo,
   };
-  sendWsEvent({ type: chatEventType.AGENT_ACCEPTED, data });
+  sendWsEvent({ eventType: chatEventType.AGENT_ACCEPTED, data });
 }
 </script>
 

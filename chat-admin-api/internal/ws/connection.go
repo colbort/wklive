@@ -2,10 +2,6 @@ package ws
 
 import (
 	"encoding/json"
-	"fmt"
-	"strconv"
-	"strings"
-	"sync"
 	"time"
 
 	"wklive/proto/chat"
@@ -13,7 +9,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -24,81 +19,39 @@ const (
 )
 
 type InboundEvent struct {
-	Type chat.ChatEventType `json:"type"`
-	Data json.RawMessage    `json:"data"`
+	EventType chat.ChatEventType `json:"eventType"`
+	Data      json.RawMessage    `json:"data"`
 }
 
 type Connection struct {
-	Conn       *websocket.Conn
-	Send       chan []byte
-	UserId     int64
-	Nickname   string
-	AvatarUrl  string
-	MerchantId int64
-	AgentId    int64
-	SessionNo  string
-	OnMessage  func(*Connection, InboundEvent)
-	OnClose    func(*Connection)
-	IsGuest    bool
-	mu         sync.RWMutex
-	session    *chat.ChatSession
+	Conn        *websocket.Conn
+	Send        chan []byte
+	UserId      int64
+	Nickname    string
+	AvatarUrl   string
+	MerchantId  int64
+	AgentId     int64
+	AgentUserId int64
+	SessionNo   string
+	OnMessage   func(*Connection, InboundEvent)
+	OnClose     func(*Connection)
+	IsGuest     bool
 }
 
-func NewConnection(conn *websocket.Conn, userId int64, nickname string, avatarUrl string, merchantId, agentId int64, sessionNo string, onMessage func(*Connection, InboundEvent), onClose func(*Connection)) *Connection {
+func NewConnection(conn *websocket.Conn, nickname string, avatarUrl string, merchantId int64, agentId int64, agentUserId int64, sessionNo string, onMessage func(*Connection, InboundEvent), onClose func(*Connection)) *Connection {
 	return &Connection{
-		Conn:       conn,
-		Send:       make(chan []byte, 32),
-		UserId:     userId,
-		Nickname:   nickname,
-		AvatarUrl:  avatarUrl,
-		MerchantId: merchantId,
-		AgentId:    agentId,
-		SessionNo:  sessionNo,
-		OnMessage:  onMessage,
-		OnClose:    onClose,
+		Conn:        conn,
+		Send:        make(chan []byte, 32),
+		UserId:      -1,
+		Nickname:    nickname,
+		AvatarUrl:   avatarUrl,
+		MerchantId:  merchantId,
+		AgentId:     agentId,
+		AgentUserId: agentUserId,
+		SessionNo:   sessionNo,
+		OnMessage:   onMessage,
+		OnClose:     onClose,
 	}
-}
-
-func (c *Connection) SetChatSession(session *chat.ChatSession) {
-	if c == nil || session == nil {
-		return
-	}
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	c.IsGuest = session.GetIsGuest()
-	c.session = proto.Clone(session).(*chat.ChatSession)
-}
-
-func (c *Connection) ChatSession() *chat.ChatSession {
-	if c == nil {
-		return nil
-	}
-	c.mu.RLock()
-	defer c.mu.RUnlock()
-	if c.session == nil {
-		return nil
-	}
-	return proto.Clone(c.session).(*chat.ChatSession)
-}
-
-func (c *Connection) IsGuestSession() bool {
-	if c == nil {
-		return false
-	}
-	c.mu.RLock()
-	defer c.mu.RUnlock()
-	return c.IsGuest
-}
-
-func (c *Connection) ChatSessionUserId(userId int64) int64 {
-	if userId != 0 {
-		return userId
-	}
-	session := c.ChatSession()
-	if session == nil {
-		return 0
-	}
-	return session.GetUserId()
 }
 
 func (c *Connection) ReadPump() {
@@ -126,8 +79,8 @@ func (c *Connection) ReadPump() {
 		if len(payload) == 0 || c.OnMessage == nil {
 			continue
 		}
-		event, err := DecodeInboundEvent(payload)
-		if err != nil {
+		var event InboundEvent
+		if err := json.Unmarshal(payload, &event); err != nil {
 			c.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_ERROR, map[string]string{"message": "invalid json"})
 			continue
 		}
@@ -201,64 +154,4 @@ func (c *Connection) SendEvent(event *chat.ChatMessageEvent) {
 	default:
 		logx.Errorf("chat admin ws send queue is full, userId=%d", c.UserId)
 	}
-}
-
-func DecodeInboundEvent(payload []byte) (InboundEvent, error) {
-	var raw struct {
-		Type      json.RawMessage `json:"type"`
-		EventType json.RawMessage `json:"eventType"`
-		Data      json.RawMessage `json:"data"`
-	}
-	if err := json.Unmarshal(payload, &raw); err != nil {
-		return InboundEvent{}, fmt.Errorf("invalid json")
-	}
-
-	typeRaw := raw.Type
-	if len(typeRaw) == 0 {
-		typeRaw = raw.EventType
-	}
-	if len(typeRaw) == 0 {
-		return InboundEvent{}, fmt.Errorf("event type is required")
-	}
-
-	eventType, err := parseChatEventType(typeRaw)
-	if err != nil {
-		return InboundEvent{}, err
-	}
-	data := raw.Data
-	if len(data) == 0 || string(data) == "null" {
-		data = payload
-	}
-	return InboundEvent{Type: eventType, Data: data}, nil
-}
-
-func parseChatEventType(raw json.RawMessage) (chat.ChatEventType, error) {
-	value := strings.TrimSpace(string(raw))
-	if value == "" || value == "null" {
-		return chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED, fmt.Errorf("event type is required")
-	}
-
-	if value[0] == '"' {
-		var name string
-		if err := json.Unmarshal(raw, &name); err != nil {
-			return chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED, fmt.Errorf("invalid event type")
-		}
-		return chatEventTypeByName(name)
-	}
-
-	n, err := strconv.ParseInt(value, 10, 32)
-	if err != nil {
-		return chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED, fmt.Errorf("invalid event type")
-	}
-	return chat.ChatEventType(n), nil
-}
-
-func chatEventTypeByName(name string) (chat.ChatEventType, error) {
-	name = strings.TrimSpace(strings.ToUpper(name))
-	name = strings.TrimPrefix(name, "CHAT_EVENT_TYPE_")
-	fullName := "CHAT_EVENT_TYPE_" + name
-	if n, ok := chat.ChatEventType_value[fullName]; ok {
-		return chat.ChatEventType(n), nil
-	}
-	return chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED, fmt.Errorf("unsupported event type: %s", name)
 }

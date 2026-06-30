@@ -112,7 +112,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 // 处理用户通过 ws 发送的事件。
 func (l *MessagesLogic) onMessage(isGuest bool) func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
-		switch event.Type {
+		switch event.EventType {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE:
 			l.handleSendUserMessage(context.Background(), conn, event.Data, isGuest)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:

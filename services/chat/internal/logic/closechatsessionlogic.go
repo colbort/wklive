@@ -34,9 +34,6 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(400, "chat session is closed")}, nil
 	}
-	if err := internal.CloseSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
-		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
-	}
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
 		Channel:      chat.ChatAppEventChannel,

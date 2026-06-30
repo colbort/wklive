@@ -130,7 +130,7 @@ export function sendChatSocketUserMessage(
   socket: WebSocket,
   data: SendUserMessagePayload,
 ) {
-  sendChatSocketEvent(socket, { type: chatEventType.MESSAGE, data });
+  sendChatSocketEvent(socket, { eventType: chatEventType.MESSAGE, data });
 }
 
 interface RequestOptions {

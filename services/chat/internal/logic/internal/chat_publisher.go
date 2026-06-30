@@ -98,24 +98,17 @@ func PublishMessageEvent(ctx context.Context, svcCtx *svc.ServiceContext, req Pu
 		chat.ChatEventType_CHAT_EVENT_TYPE_TRANSFER_ACCEPT,
 		chat.ChatEventType_CHAT_EVENT_TYPE_TRANSFER_REJECT,
 		chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
-		session, err := eventSessionPayload(req, createdAt)
-		if err != nil {
-			return err
-		}
-		event.Payload = &chat.ChatMessageEvent_Session{Session: session}
+		event.Payload = &chat.ChatMessageEvent_Session{Session: ToProtoSession(req.Session, req.IsGuest)}
 	default:
 		return fmt.Errorf("unsupported chat event type: %s", req.EventType.String())
 	}
 	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
 	if err != nil {
-		fmt.Printf("=========== 11  %v  %v\n", req.Channel, req.EventType)
 		return err
 	}
 	if _, err := svcCtx.BusRedis.PublishCtx(ctx, req.Channel, string(payload)); err != nil {
-		fmt.Printf("=========== 22  %v  %v\n", req.Channel, req.EventType)
 		return err
 	}
-	fmt.Printf("=========== 33  %v  %v\n", req.Channel, req.EventType)
 	return nil
 }
 
@@ -138,38 +131,6 @@ func eventSession(ctx context.Context, svcCtx *svc.ServiceContext, req PublishMe
 		return ToProtoSession(req.Session, req.IsGuest)
 	}
 	return nil
-}
-
-func eventSessionPayload(req PublishMessageEventReq, createdAt int64) (*chat.ChatSession, error) {
-	if req.Session != nil {
-		return sessionWithEventMeta(ToProtoSession(req.Session, req.IsGuest), req.EventType, strings.TrimSpace(req.EventMessage), strings.TrimSpace(req.Reason), req.AssignType, createdAt), nil
-	}
-	session := req.TransientSession
-	sessionNo := strings.TrimSpace(req.SessionNo)
-	if session != nil && sessionNo == "" {
-		sessionNo = session.GetSessionNo()
-	}
-	if strings.TrimSpace(sessionNo) == "" {
-		return nil, fmt.Errorf("session_no is required")
-	}
-	merchantId := req.MerchantId
-	userId := req.UserId
-	agentId := req.AgentId
-	if session != nil {
-		if merchantId <= 0 {
-			merchantId = session.GetMerchantId()
-		}
-		if userId <= 0 {
-			userId = session.GetUserId()
-		}
-		if agentId <= 0 {
-			agentId = session.GetAgentId()
-		}
-	}
-	if session == nil {
-		session = &chat.ChatSession{SessionNo: sessionNo, MerchantId: merchantId, UserId: userId, AgentId: agentId}
-	}
-	return sessionWithEventMeta(session, req.EventType, strings.TrimSpace(req.EventMessage), strings.TrimSpace(req.Reason), req.AssignType, createdAt), nil
 }
 
 func sessionWithEventMeta(session *chat.ChatSession, eventType chat.ChatEventType, message, reason string, assignType chat.ChatAssignType, createdAt int64) *chat.ChatSession {

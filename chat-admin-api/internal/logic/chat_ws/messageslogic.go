@@ -53,11 +53,11 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 	streamCtx, streamCancel := context.WithCancel(l.ctx)
 	client := ws.NewConnection(
 		conn,
-		req.UserId,
 		user.Data.Nickname,
 		user.Data.AvatarUrl,
 		req.MerchantId,
 		req.AgentId,
+		req.UserId,
 		req.SessionNo,
 		l.onMessage(),
 		func(*ws.Connection) {
@@ -78,7 +78,7 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 
 func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
-		switch event.Type {
+		switch event.EventType {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED: // 接待客户服务
 			l.handleAcceptChatSession(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE: //
@@ -98,7 +98,7 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE:
 			l.handleEvaluationInvite(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING:
-			l.handleAgentTyping(context.Background(), conn, event.Type, event.Data)
+			l.handleAgentTyping(context.Background(), conn, event.Data)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED:
 			// TODO handle message delivered
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ:
@@ -121,7 +121,7 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 	}
 	stream, err := l.svcCtx.ChatAdminCli.AdminSubscribeStream(ctx, &chat.AdminChatSubscribeRequest{
 		MerchantId: conn.MerchantId,
-		UserId:     conn.UserId,
+		UserId:     conn.AgentUserId,
 		AgentId:    conn.AgentId,
 		SessionNo:  conn.SessionNo,
 		Admin:      true,
@@ -138,8 +138,13 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 			}
 			return
 		}
-		if event.GetEventType() == chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN && event.GetSession() != nil {
-			conn.SetChatSession(event.GetSession())
+		if event.GetEventType() == chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN {
+			session := event.GetSession()
+			if session != nil {
+				conn.SessionNo = session.SessionNo
+				conn.IsGuest = session.IsGuest
+				conn.UserId = session.UserId
+			}
 		}
 		conn.SendEvent(event)
 	}
@@ -207,63 +212,11 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE, resp)
 }
 
-func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connection, eventType chat.ChatEventType, payload json.RawMessage) {
-	sessionNo := conn.SessionNo
-	userId := int64(0)
-	// message := "客服正在输入"
-	if len(payload) > 0 {
-		var data struct {
-			SessionNo string `json:"sessionNo"`
-			UserId    int64  `json:"userId"`
-			Message   string `json:"message"`
-		}
-		if err := json.Unmarshal(payload, &data); err == nil {
-			if strings.TrimSpace(data.SessionNo) != "" {
-				sessionNo = strings.TrimSpace(data.SessionNo)
-			}
-			userId = data.UserId
-			if strings.TrimSpace(data.Message) != "" {
-				// message = strings.TrimSpace(data.Message)
-			}
-		}
-	}
-	if strings.TrimSpace(sessionNo) == "" {
-		sendWSError(conn, "sessionNo is required")
-		return
-	}
-	if userId == 0 {
-		userId = conn.ChatSessionUserId(0)
-	}
-	conn.SendJSON(eventType, map[string]string{"message": "ok"})
+func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
+	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_TYPING, map[string]string{"message": "ok"})
 }
 
 func (l *MessagesLogic) handleEvaluationInvite(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
-	sessionNo := conn.SessionNo
-	userId := int64(0)
-	// content := "请对本次服务进行评价"
-	if len(payload) > 0 {
-		var data struct {
-			SessionNo string `json:"sessionNo"`
-			UserId    int64  `json:"userId"`
-			Content   string `json:"content"`
-		}
-		if err := json.Unmarshal(payload, &data); err == nil {
-			if strings.TrimSpace(data.SessionNo) != "" {
-				sessionNo = strings.TrimSpace(data.SessionNo)
-			}
-			userId = data.UserId
-			if strings.TrimSpace(data.Content) != "" {
-				// content = strings.TrimSpace(data.Content)
-			}
-		}
-	}
-	if strings.TrimSpace(sessionNo) == "" {
-		sendWSError(conn, "sessionNo is required")
-		return
-	}
-	if userId == 0 {
-		userId = conn.ChatSessionUserId(0)
-	}
 	conn.SendJSON(chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE, map[string]string{"message": "ok"})
 }
 

@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -51,9 +50,7 @@ func SubscribeChatEventStream(svcCtx *svc.ServiceContext, stream ChatEventStream
 				logx.WithContext(ctx).Errorf("decode chat stream event failed: %v", err)
 				continue
 			}
-			fmt.Printf("=========== 55  %v  %v\n", opts.Channel, event.EventType)
 			if err := stream.Send(&event); err != nil {
-				fmt.Printf("=========== 66  %v  %v\n", opts.Channel, event.EventType)
 				return err
 			}
 		}

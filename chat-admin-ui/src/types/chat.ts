@@ -310,7 +310,6 @@ export interface ChatMessageEvent {
 
 export interface ChatWsRequest<TPayload = unknown> {
   eventType?: ChatEventType;
-  type?: ChatEventType | number;
   data: TPayload;
 }
 
