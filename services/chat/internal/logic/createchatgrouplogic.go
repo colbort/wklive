@@ -8,7 +8,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -37,7 +37,7 @@ func (l *CreateChatGroupLogic) CreateChatGroup(in *chat.CreateChatGroupReq) (*ch
 		return &chat.AdminChatGroupResp{Base: helper.ErrResp(400, "group_code and group_name are required")}, nil
 	}
 
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatGroupResp{Base: base}, nil
 	}
@@ -76,5 +76,5 @@ func (l *CreateChatGroupLogic) CreateChatGroup(in *chat.CreateChatGroupReq) (*ch
 		data.Id = id
 	}
 
-	return &chat.AdminChatGroupResp{Base: helper.OkResp(), Data: internal.ToProtoChatGroup(data)}, nil
+	return &chat.AdminChatGroupResp{Base: helper.OkResp(), Data: ih.ToProtoChatGroup(data)}, nil
 }

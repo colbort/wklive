@@ -7,7 +7,7 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -62,8 +62,8 @@ func (l *PageChatSessionsLogic) PageChatSessions(in *chat.PageChatSessionsReq) (
 	}
 	data := mergeTransientAndStoredSessions(transient, list, cursor, limit)
 	return &chat.PageChatSessionsResp{
-		Base: internal.OffsetBase(cursor, limit, len(data), total+int64(len(transient))),
-		Data: internal.ToProtoSessions(data),
+		Base: ih.OffsetBase(cursor, limit, len(data), total+int64(len(transient))),
+		Data: ih.ToProtoSessions(data),
 	}, nil
 }
 
@@ -72,7 +72,7 @@ func (l *PageChatSessionsLogic) listTransientSessions(merchantID int64, filter m
 	resp := make([]*models.TChatSession, 0)
 	seenUserIDs := make(map[int64]struct{})
 	for {
-		sessions, hasNext, nextCursor, err := internal.PageTransientSessions(
+		sessions, hasNext, nextCursor, err := ih.PageTransientSessions(
 			l.ctx,
 			l.svcCtx.BusRedis,
 			merchantID,

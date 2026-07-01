@@ -1,4 +1,4 @@
-package internal
+package helper
 
 import (
 	"context"
@@ -16,7 +16,6 @@ import (
 
 const (
 	InternetErrorCloseDelay = 3 * time.Minute
-	UserInternetErrorReason = "用户网络异常断开"
 
 	transientInternetErrorKey = "chat:session:internet_error_timeout"
 )
@@ -232,39 +231,11 @@ func MarkSessionInternetError(ctx context.Context, svcCtx *svc.ServiceContext, s
 		return nil
 	}
 	now := utils.NowMillis()
-	if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
-		session.BeforeDisconnectStatus = session.Status
-	}
-	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR)
-	session.DisconnectTime = now
-	session.UpdateTimes = now
+	markInternetErrorSessionFields(session, now)
 	return svcCtx.ChatSessionModel.Update(ctx, session)
 }
 
-func RestoreSessionInternetError(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) (bool, error) {
-	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
-		return false, nil
-	}
-	now := utils.NowMillis()
-	if IsSessionInternetErrorExpired(session, now) {
-		return false, CloseSession(ctx, svcCtx, session, "用户网络异常超时关闭")
-	}
-	status := session.BeforeDisconnectStatus
-	if status == 0 || status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) ||
-		status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
-		status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
-		if session.AgentId > 0 {
-			status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING)
-		}
-	}
-	session.Status = status
-	session.DisconnectTime = 0
-	session.BeforeDisconnectStatus = 0
-	session.UpdateTimes = now
-	return true, svcCtx.ChatSessionModel.Update(ctx, session)
-}
-
-func IsSessionInternetErrorExpired(session *models.TChatSession, now int64) bool {
+func IsInternetErrorExpired(session *models.TChatSession, now int64) bool {
 	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
 		return false
 	}
@@ -276,12 +247,7 @@ func MarkTransientSessionInternetError(ctx context.Context, svcCtx *svc.ServiceC
 		return session, nil
 	}
 	now := utils.NowMillis()
-	if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
-		session.BeforeDisconnectStatus = session.Status
-	}
-	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR)
-	session.DisconnectTime = now
-	session.UpdateTimes = now
+	markInternetErrorSessionFields(session, now)
 	next, err := UpsertTransientSession(ctx, svcCtx.BusRedis, session)
 	if err != nil {
 		return nil, err
@@ -292,21 +258,51 @@ func MarkTransientSessionInternetError(ctx context.Context, svcCtx *svc.ServiceC
 	return next, nil
 }
 
+func RestoreSessionInternetError(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) (bool, error) {
+	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+		return false, nil
+	}
+	now := utils.NowMillis()
+	if IsInternetErrorExpired(session, now) {
+		return false, CloseSession(ctx, svcCtx, session, "用户网络异常超时关闭")
+	}
+	restoreInternetErrorSessionFields(session, now)
+	return true, svcCtx.ChatSessionModel.Update(ctx, session)
+}
+
 func RestoreTransientSessionInternetError(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) (*models.TChatSession, bool, error) {
 	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
 		return session, false, nil
 	}
 	now := utils.NowMillis()
-	if IsTransientSessionInternetErrorExpired(session, now) {
+	if IsInternetErrorExpired(session, now) {
 		session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED)
 		session.CloseTime = now
 		session.CloseReason = "用户网络异常超时关闭"
 		session.DisconnectTime = 0
 		session.BeforeDisconnectStatus = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN)
 		session.UpdateTimes = now
-		next, err := UpsertTransientSession(ctx, svcCtx.BusRedis, session)
-		_ = RemoveTransientInternetErrorTimeout(ctx, svcCtx, session.MerchantId, session.SessionNo)
-		return next, false, err
+		return upsertTransientSessionAndRemoveInternetErrorTimeout(ctx, svcCtx, session, false)
+	}
+	restoreInternetErrorSessionFields(session, now)
+	return upsertTransientSessionAndRemoveInternetErrorTimeout(ctx, svcCtx, session, true)
+}
+
+func markInternetErrorSessionFields(session *models.TChatSession, now int64) {
+	if session == nil {
+		return
+	}
+	if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+		session.BeforeDisconnectStatus = session.Status
+	}
+	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR)
+	session.DisconnectTime = now
+	session.UpdateTimes = now
+}
+
+func restoreInternetErrorSessionFields(session *models.TChatSession, now int64) {
+	if session == nil {
+		return
 	}
 	status := session.BeforeDisconnectStatus
 	if status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN) ||
@@ -321,21 +317,16 @@ func RestoreTransientSessionInternetError(ctx context.Context, svcCtx *svc.Servi
 	session.DisconnectTime = 0
 	session.BeforeDisconnectStatus = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN)
 	session.UpdateTimes = now
-	next, err := UpsertTransientSession(ctx, svcCtx.BusRedis, session)
-	_ = RemoveTransientInternetErrorTimeout(ctx, svcCtx, session.MerchantId, session.SessionNo)
-	return next, true, err
 }
 
-func IsTransientSessionInternetErrorExpired(session *models.TChatSession, now int64) bool {
-	if session == nil || session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
-		return false
-	}
-	return session.DisconnectTime > 0 && now-session.DisconnectTime >= int64(InternetErrorCloseDelay/time.Millisecond)
+func upsertTransientSessionAndRemoveInternetErrorTimeout(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, restored bool) (*models.TChatSession, bool, error) {
+	next, err := UpsertTransientSession(ctx, svcCtx.BusRedis, session)
+	_ = RemoveTransientInternetErrorTimeout(ctx, svcCtx, session.MerchantId, session.SessionNo)
+	return next, restored, err
 }
 
 func IsInternetErrorCloseReason(reasonType chat.ChatSessionCloseReason, reason string) bool {
-	return reasonType == chat.ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_INTERNET_ERROR ||
-		strings.TrimSpace(reason) == UserInternetErrorReason
+	return reasonType == chat.ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_INTERNET_ERROR
 }
 
 func addTransientInternetErrorTimeout(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) error {

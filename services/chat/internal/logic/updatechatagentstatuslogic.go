@@ -6,7 +6,7 @@ import (
 	"wklive/common/utils"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -32,7 +32,7 @@ func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAg
 	if in.Id <= 0 || in.GetStatus() == chat.ChatAgentStatus_CHAT_AGENT_STATUS_UNKNOWN {
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "agent_id and status are required")}, nil
 	}
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatAgentResp{Base: base}, nil
 	}
@@ -52,11 +52,11 @@ func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAg
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, data); err != nil {
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE,
 		Channel:      chat.ChatAdminEventChannel,
 		Agent:        data,
 		EventMessage: "坐席状态已更新",
 	})
-	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: internal.ToProtoAgent(data)}, nil
+	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: ih.ToProtoAgent(data)}, nil
 }

@@ -9,7 +9,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -81,7 +81,7 @@ func (l *LoginLogic) Login(in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp
 		agent.LastActiveTime = now
 		agent.UpdateTimes = now
 		if err := l.svcCtx.ChatAgentModel.Update(l.ctx, agent); err == nil {
-			_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+			_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
 				EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE,
 				Channel:      chat.ChatAdminEventChannel,
 				Agent:        agent,
@@ -94,8 +94,8 @@ func (l *LoginLogic) Login(in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp
 		Base: helper.OkResp(),
 		Data: &chat.ChatAdminLoginData{
 			Token: token,
-			User:  internal.ToProtoUser(user),
-			Agent: internal.ToProtoAgent(agent),
+			User:  ih.ToProtoUser(user),
+			Agent: ih.ToProtoAgent(agent),
 		},
 	}, nil
 }

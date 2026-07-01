@@ -7,7 +7,7 @@ import (
 	"wklive/common/pageutil"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -30,7 +30,7 @@ func NewPageChatCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 分页查询问题分类
 func (l *PageChatCategoriesLogic) PageChatCategories(in *chat.PageChatCategoriesReq) (*chat.PageChatCategoriesResp, error) {
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.PageChatCategoriesResp{Base: base}, nil
 	}
@@ -50,7 +50,7 @@ func (l *PageChatCategoriesLogic) PageChatCategories(in *chat.PageChatCategories
 		return &chat.PageChatCategoriesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	return &chat.PageChatCategoriesResp{
-		Base: internal.OffsetBase(cursor, limit, len(list), total),
-		Data: internal.ToProtoChatCategories(list),
+		Base: ih.OffsetBase(cursor, limit, len(list), total),
+		Data: ih.ToProtoChatCategories(list),
 	}, nil
 }

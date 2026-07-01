@@ -8,7 +8,7 @@ import (
 	"wklive/common/utils"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -39,7 +39,7 @@ func (l *UpdateChatWorkOrderLogic) UpdateChatWorkOrder(in *chat.UpdateChatWorkOr
 	if title == "" || content == "" {
 		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "title and content are required")}, nil
 	}
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatWorkOrderResp{Base: base}, nil
 	}
@@ -77,5 +77,5 @@ func (l *UpdateChatWorkOrderLogic) UpdateChatWorkOrder(in *chat.UpdateChatWorkOr
 	if err := l.svcCtx.ChatWorkOrderModel.Update(l.ctx, data); err != nil {
 		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatWorkOrderResp{Base: helper.OkResp(), Data: internal.ToProtoChatWorkOrder(data)}, nil
+	return &chat.AdminChatWorkOrderResp{Base: helper.OkResp(), Data: ih.ToProtoChatWorkOrder(data)}, nil
 }

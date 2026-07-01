@@ -8,7 +8,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -56,6 +56,6 @@ func (l *AuthChatMerchantLogic) AuthChatMerchant(in *chat.AuthChatMerchantReq) (
 
 	return &chat.AuthChatMerchantResp{Base: helper.OkResp(), Data: &chat.AuthChatMerchantData{
 		MerchantId: merchant.MerchantId,
-		Merchant:   internal.ToProtoMerchant(merchant),
+		Merchant:   ih.ToProtoMerchant(merchant),
 	}}, nil
 }

@@ -6,7 +6,7 @@ import (
 	"wklive/common/utils"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -31,23 +31,23 @@ func NewSendUserMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*chat.AppChatMessageResp, error) {
 	if in.GetIsGuest() || in.GetMessage() != nil {
 		msg := in.GetMessage()
-		msg, err := internal.AppendTransientMessage(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), msg, nil)
+		msg, err := ih.AppendTransientMessage(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), msg, nil)
 		if err != nil {
 			return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		if err := internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+		if err := ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
 			EventType:  in.GetEventType(),
 			Channel:    chat.ChatAdminEventChannel,
 			MerchantId: in.GetMerchantId(),
-			Message:    internal.ToModelsMessage(msg),
-			Session:    internal.ToModelsSession(in.GetSession()),
+			Message:    ih.ToModelsMessage(msg),
+			Session:    ih.ToModelsSession(in.GetSession()),
 		}); err != nil {
 			return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		return &chat.AppChatMessageResp{Base: helper.OkResp(), Data: msg}, nil
 	}
 
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.SessionNo, false)
+	session, base, err := ih.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.SessionNo, false)
 	if err != nil {
 		return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
@@ -73,7 +73,7 @@ func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*ch
 		return &chat.AppChatMessageResp{Base: helper.ErrResp(400, "generate message no error")}, nil
 	}
 	now := utils.NowMillis()
-	msg, err := internal.SendMessage(l.ctx, l.svcCtx, session, &models.ChatMessage{
+	msg, err := ih.SendMessage(l.ctx, l.svcCtx, session, &models.ChatMessage{
 		MessageNo:  messageNo,
 		SessionNo:  session.SessionNo,
 		MerchantId: session.MerchantId,
@@ -102,5 +102,5 @@ func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*ch
 	if err != nil {
 		return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AppChatMessageResp{Base: helper.OkResp(), Data: internal.ToProtoMessage(msg)}, nil
+	return &chat.AppChatMessageResp{Base: helper.OkResp(), Data: ih.ToProtoMessage(msg)}, nil
 }

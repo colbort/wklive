@@ -11,7 +11,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -63,7 +63,7 @@ func (l *SyncChatMerchantUserLogic) SyncChatMerchantUser(in *chat.SyncChatMercha
 		if err := l.disableMerchantInfo(in.GetMerchantId(), now); err != nil {
 			return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		return &chat.SyncChatMerchantUserResp{Base: helper.OkResp(), Data: internal.ToProtoUser(data)}, nil
+		return &chat.SyncChatMerchantUserResp{Base: helper.OkResp(), Data: ih.ToProtoUser(data)}, nil
 	}
 
 	password := strings.TrimSpace(in.Password)
@@ -99,7 +99,7 @@ func (l *SyncChatMerchantUserLogic) SyncChatMerchantUser(in *chat.SyncChatMercha
 		if err := l.upsertMerchantInfo(in, enabled, now); err != nil {
 			return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		return &chat.SyncChatMerchantUserResp{Base: helper.OkResp(), Data: internal.ToProtoUser(data)}, nil
+		return &chat.SyncChatMerchantUserResp{Base: helper.OkResp(), Data: ih.ToProtoUser(data)}, nil
 	}
 
 	data.Nickname = strings.TrimSpace(in.GetMerchantName())
@@ -121,7 +121,7 @@ func (l *SyncChatMerchantUserLogic) SyncChatMerchantUser(in *chat.SyncChatMercha
 	if err := l.upsertMerchantInfo(in, enabled, now); err != nil {
 		return &chat.SyncChatMerchantUserResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.SyncChatMerchantUserResp{Base: helper.OkResp(), Data: internal.ToProtoUser(data)}, nil
+	return &chat.SyncChatMerchantUserResp{Base: helper.OkResp(), Data: ih.ToProtoUser(data)}, nil
 }
 
 func (l *SyncChatMerchantUserLogic) upsertMerchantInfo(in *chat.SyncChatMerchantUserReq, enabled int64, now int64) error {

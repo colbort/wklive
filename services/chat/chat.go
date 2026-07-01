@@ -7,6 +7,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/config"
+	"wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/server"
 	"wklive/services/chat/internal/svc"
 
@@ -35,7 +36,8 @@ func main() {
 	}
 
 	svcCtx := svc.NewServiceContext(c)
-	defer svcCtx.Close()
+	stopSweeper := helper.StartInternetErrorSessionSweeper(svcCtx)
+	defer stopSweeper()
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		chat.RegisterChatAdminServer(grpcServer, server.NewChatAdminServer(svcCtx))

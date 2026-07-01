@@ -7,7 +7,7 @@ import (
 	"wklive/common/utils"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -37,7 +37,7 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "score must be between 1 and 5")}, nil
 	}
 
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.IsGuest)
+	session, base, err := ih.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.IsGuest)
 	if err != nil {
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
@@ -82,12 +82,12 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		}
 	}
 
-	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
 		Channel:      chat.ChatAdminEventChannel,
 		Session:      session,
 		Satisfaction: satisfaction,
 		EventMessage: "用户已提交评价",
 	})
-	return &chat.AppChatSatisfactionResp{Base: helper.OkResp(), Data: internal.ToProtoSatisfaction(satisfaction)}, nil
+	return &chat.AppChatSatisfactionResp{Base: helper.OkResp(), Data: ih.ToProtoSatisfaction(satisfaction)}, nil
 }

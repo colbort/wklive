@@ -5,7 +5,7 @@ import (
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -33,7 +33,7 @@ func (l *GetChatUserByIdLogic) GetChatUserById(in *chat.GetChatUserByIdReq) (*ch
 	} else {
 		return &chat.GetChatUserByIdResp{
 			Base: helper.OkResp(),
-			Data: internal.ToProtoUser(user),
+			Data: ih.ToProtoUser(user),
 		}, nil
 	}
 }

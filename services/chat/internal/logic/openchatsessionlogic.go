@@ -3,16 +3,18 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"strings"
 	"wklive/common/helper"
 
 	"wklive/common/utils"
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 type OpenChatSessionLogic struct {
@@ -32,7 +34,7 @@ func NewOpenChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *O
 // 创建或获取当前会话;
 // 用户进入客服页面建立 WS，创建/复用会话。
 // 游客会话保存在 Redis：无会话时创建临时会话，未过期会话复用；已关闭但未过期的会话会重新打开。
-// 登录用户会话保存在数据库：无会话时创建会话，已有会话按用户最新会话复用。
+// 登录用户会话保存在数据库：无会话时创建会话，已有会话按用户最新会话复用；已关闭会话会重新打开。
 func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*chat.OpenChatSessionResp, error) {
 	var ms *models.TChatSession
 	if in.IsGuest {
@@ -46,7 +48,10 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			}
 		}
 
-		ms, _ = internal.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), sessionNo)
+		ms, err = ih.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), sessionNo)
+		if err != nil && !errors.Is(err, redis.Nil) {
+			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		}
 		now := utils.NowMillis()
 		if ms == nil {
 			ms = &models.TChatSession{
@@ -66,16 +71,20 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 				// 会话断线重连，恢复会话状态
 				var restored bool
 				var err error
-				ms, restored, err = internal.RestoreTransientSessionInternetError(l.ctx, l.svcCtx, ms)
+				ms, restored, err = ih.RestoreTransientSessionInternetError(l.ctx, l.svcCtx, ms)
 				if err != nil {
 					return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 				}
 				if restored {
 					now = utils.NowMillis()
 				}
-			} else if ms.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+			}
+			if ms.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 				// 游客会话已关闭，但是会话未过期，重新打开会话
+				now = utils.NowMillis()
 				ms.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
+				ms.AgentId = 0
+				ms.AgentUserId = 0
 				ms.CloseTime = 0
 				ms.CloseReason = ""
 				ms.DisconnectTime = 0
@@ -86,7 +95,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		ms.MerchantId = in.GetMerchantId()
 		ms.UserId = in.GetUserId()
 
-		ms, err = internal.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, ms)
+		ms, err = ih.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, ms)
 		if err != nil {
 			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
@@ -100,7 +109,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			sessionNo, err := l.svcCtx.GenerateNo(l.ctx, "CS")
 			if err != nil {
 				logx.Errorf("generate session no error: %v", err)
-				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate message no error")}, nil
+				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate session no error")}, nil
 			}
 			now := utils.NowMillis()
 			session = &models.TChatSession{
@@ -129,19 +138,20 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			if err == nil && session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
 				var restored bool
 				var err error
-				restored, err = internal.RestoreSessionInternetError(l.ctx, l.svcCtx, session)
+				restored, err = ih.RestoreSessionInternetError(l.ctx, l.svcCtx, session)
 				if err != nil {
 					return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 				}
 				restoredInternetError = restored
 			}
 			now := utils.NowMillis()
-			if !restoredInternetError {
+			if !restoredInternetError && session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 				session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
 				session.AgentId = 0
+				session.AgentUserId = 0
+				session.CloseTime = 0
+				session.CloseReason = ""
 			}
-			session.CloseTime = 0
-			session.CloseReason = ""
 			session.DisconnectTime = 0
 			session.BeforeDisconnectStatus = 0
 			session.UpdateTimes = now
@@ -153,7 +163,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 	}
 	// 向坐席 chat-admin-api 推送 用户上线通知
 	l.publishUserJoinEvent(ms, in.IsGuest)
-	queue, err := internal.ToProtoQueueInfo(l.ctx, l.svcCtx, ms)
+	queue, err := ih.ToProtoQueueInfo(l.ctx, l.svcCtx, ms)
 	if err != nil {
 		return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
@@ -173,7 +183,7 @@ func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession
 		l.Logger.Info("push event to admin err: session is nil")
 		return
 	}
-	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
 		Channel:      chat.ChatAdminEventChannel,
 		IsGuest:      isGuest,

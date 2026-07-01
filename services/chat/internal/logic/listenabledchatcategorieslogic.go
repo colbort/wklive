@@ -5,7 +5,7 @@ import (
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,7 +27,7 @@ func NewListEnabledChatCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceC
 
 // 查询启用问题分类
 func (l *ListEnabledChatCategoriesLogic) ListEnabledChatCategories(in *chat.ListEnabledChatCategoriesReq) (*chat.ListChatCategoriesResp, error) {
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.ListChatCategoriesResp{Base: base}, nil
 	}
@@ -38,5 +38,5 @@ func (l *ListEnabledChatCategoriesLogic) ListEnabledChatCategories(in *chat.List
 	if err != nil {
 		return &chat.ListChatCategoriesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.ListChatCategoriesResp{Base: helper.OkResp(), Data: internal.ToProtoChatCategories(list)}, nil
+	return &chat.ListChatCategoriesResp{Base: helper.OkResp(), Data: ih.ToProtoChatCategories(list)}, nil
 }

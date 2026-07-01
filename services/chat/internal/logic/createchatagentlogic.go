@@ -9,7 +9,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -41,7 +41,7 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "username, password and nickname are required")}, nil
 	}
 
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatAgentResp{Base: base}, nil
 	}
@@ -60,7 +60,7 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 
 	maxCount := int64(in.GetMaxSessionCount())
 	if maxCount <= 0 {
-		maxCount = internal.DefaultAgentMaxSessionCount
+		maxCount = ih.DefaultAgentMaxSessionCount
 	}
 	enabled := int64(in.GetEnabled())
 	if enabled == 0 {
@@ -101,7 +101,7 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 	if err := l.createAgentWithUser(user, agent); err != nil {
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: internal.ToProtoAgent(agent)}, nil
+	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: ih.ToProtoAgent(agent)}, nil
 }
 
 func (l *CreateChatAgentLogic) createAgentWithUser(user *models.TChatUser, agent *models.TChatAgent) error {

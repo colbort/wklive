@@ -7,7 +7,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -40,7 +40,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if agent.Status != int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE) {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(400, "chat agent is not online")}, nil
 	}
-	session, base, err := internal.AcceptChatSession(l.ctx, l.svcCtx, internal.AssignSessionOptions{
+	session, base, err := ih.AcceptChatSession(l.ctx, l.svcCtx, ih.AssignSessionOptions{
 		SessionNo:  in.SessionNo,
 		MerchantId: in.MerchantId,
 		ToAgentId:  agent.Id,
@@ -53,7 +53,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
-	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
 		Channel:      chat.ChatAppEventChannel,
 		Session:      session,
@@ -62,7 +62,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		EventMessage: agentServiceMessage(l.ctx, l.svcCtx, agent),
 		Agent:        agent,
 	})
-	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
 		Channel:      chat.ChatAppEventChannel,
 		Session:      session,
@@ -70,7 +70,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		EventMessage: "坐席接待用户",
 		MerchantId:   in.MerchantId,
 	})
-	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, false)}, nil
+	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, false)}, nil
 }
 
 func agentServiceMessage(ctx context.Context, svcCtx *svc.ServiceContext, agent *models.TChatAgent) string {

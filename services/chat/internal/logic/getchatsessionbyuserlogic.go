@@ -5,7 +5,7 @@ import (
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -35,5 +35,5 @@ func (l *GetChatSessionByUserLogic) GetChatSessionByUser(in *chat.GetChatSession
 	if err != nil {
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(data, false)}, nil
+	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(data, false)}, nil
 }

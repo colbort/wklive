@@ -159,6 +159,7 @@
       "Zadd",
       "zeromicro",
       "Zrange",
+      "Zrangebyscore",
       "Zrem",
       "Zrevrange",
       "zrpc",

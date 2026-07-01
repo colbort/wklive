@@ -7,7 +7,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/chat"
 	"wklive/proto/common"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -67,7 +67,7 @@ func (l *LogoutLogic) autoOfflineAgent(user *models.TChatUser) error {
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, agent); err != nil {
 		return err
 	}
-	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_LEAVE,
 		Channel:   chat.ChatAdminEventChannel,
 		Agent:     agent,

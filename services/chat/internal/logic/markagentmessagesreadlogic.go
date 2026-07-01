@@ -6,7 +6,7 @@ import (
 
 	"wklive/common/utils"
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -29,14 +29,14 @@ func NewMarkAgentMessagesReadLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 标记客服侧已读
 func (l *MarkAgentMessagesReadLogic) MarkAgentMessagesRead(in *chat.MarkAgentMessagesReadReq) (*chat.AdminMarkMessagesReadResp, error) {
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: base}, nil
 	}
 	if err != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
+	session, base, err := ih.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
 	if err != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
@@ -54,7 +54,7 @@ func (l *MarkAgentMessagesReadLogic) MarkAgentMessagesRead(in *chat.MarkAgentMes
 	if err != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	if err := internal.MarkRead(l.ctx, l.svcCtx, session, chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT, agent.Id); err != nil {
+	if err := ih.MarkRead(l.ctx, l.svcCtx, session, chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT, agent.Id); err != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	return &chat.AdminMarkMessagesReadResp{Base: helper.OkResp()}, nil

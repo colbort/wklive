@@ -5,7 +5,7 @@ import (
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -31,7 +31,7 @@ func (l *DeleteChatWorkOrderLogic) DeleteChatWorkOrder(in *chat.DeleteChatWorkOr
 	if in.GetId() <= 0 {
 		return &chat.AdminCommonResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminCommonResp{Base: base}, nil
 	}

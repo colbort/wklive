@@ -8,7 +8,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -38,7 +38,7 @@ func (l *UpdateChatCategoryLogic) UpdateChatCategory(in *chat.UpdateChatCategory
 	if categoryName == "" {
 		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(400, "category_name is required")}, nil
 	}
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatCategoryResp{Base: base}, nil
 	}
@@ -69,5 +69,5 @@ func (l *UpdateChatCategoryLogic) UpdateChatCategory(in *chat.UpdateChatCategory
 	if err := l.svcCtx.ChatCategoryModel.Update(l.ctx, data); err != nil {
 		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatCategoryResp{Base: helper.OkResp(), Data: internal.ToProtoChatCategory(data)}, nil
+	return &chat.AdminChatCategoryResp{Base: helper.OkResp(), Data: ih.ToProtoChatCategory(data)}, nil
 }

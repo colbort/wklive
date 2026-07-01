@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -26,7 +26,7 @@ func NewAdminSubscribeStreamLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 订阅客服消息事件流
 func (l *AdminSubscribeStreamLogic) AdminSubscribeStream(in *chat.AdminChatSubscribeRequest, stream chat.ChatAdmin_AdminSubscribeStreamServer) error {
-	return internal.SubscribeChatEventStream(l.svcCtx, stream, internal.SubscribeOptions{
+	return ih.SubscribeChatEventStream(l.svcCtx, stream, ih.SubscribeOptions{
 		Channel: chat.ChatAdminEventChannel,
 		Admin:   true,
 	})

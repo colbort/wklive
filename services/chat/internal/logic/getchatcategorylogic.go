@@ -5,7 +5,7 @@ import (
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -31,7 +31,7 @@ func (l *GetChatCategoryLogic) GetChatCategory(in *chat.GetChatCategoryReq) (*ch
 	if in.GetId() <= 0 {
 		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatCategoryResp{Base: base}, nil
 	}
@@ -48,5 +48,5 @@ func (l *GetChatCategoryLogic) GetChatCategory(in *chat.GetChatCategoryReq) (*ch
 	if data.MerchantId != merchantID {
 		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(404, "chat category not found")}, nil
 	}
-	return &chat.AdminChatCategoryResp{Base: helper.OkResp(), Data: internal.ToProtoChatCategory(data)}, nil
+	return &chat.AdminChatCategoryResp{Base: helper.OkResp(), Data: ih.ToProtoChatCategory(data)}, nil
 }

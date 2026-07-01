@@ -7,7 +7,7 @@ import (
 	"wklive/common/pageutil"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -30,7 +30,7 @@ func NewPageChatQuickRepliesLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 分页查询快捷回复
 func (l *PageChatQuickRepliesLogic) PageChatQuickReplies(in *chat.PageChatQuickRepliesReq) (*chat.PageChatQuickRepliesResp, error) {
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.PageChatQuickRepliesResp{Base: base}, nil
 	}
@@ -49,7 +49,7 @@ func (l *PageChatQuickRepliesLogic) PageChatQuickReplies(in *chat.PageChatQuickR
 		return &chat.PageChatQuickRepliesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	return &chat.PageChatQuickRepliesResp{
-		Base: internal.OffsetBase(cursor, limit, len(list), total),
-		Data: internal.ToProtoChatQuickReplies(list),
+		Base: ih.OffsetBase(cursor, limit, len(list), total),
+		Data: ih.ToProtoChatQuickReplies(list),
 	}, nil
 }

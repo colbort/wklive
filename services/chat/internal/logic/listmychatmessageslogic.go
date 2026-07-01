@@ -6,7 +6,7 @@ import (
 	"wklive/common/pageutil"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -35,7 +35,7 @@ func (l *ListMyChatMessagesLogic) ListMyChatMessages(in *chat.ListMyChatMessages
 			cursor = in.GetPage().GetCursor()
 			limit = in.GetPage().GetLimit()
 		}
-		list, hasNext, nextCursor, err := internal.ListTransientMessages(
+		list, hasNext, nextCursor, err := ih.ListTransientMessages(
 			l.ctx,
 			l.svcCtx.BusRedis,
 			in.GetMerchantId(),
@@ -53,14 +53,14 @@ func (l *ListMyChatMessagesLogic) ListMyChatMessages(in *chat.ListMyChatMessages
 		}, nil
 	}
 
-	merchantID, userID, base, err := internal.ChatAppIdentityFromMetadata(l.ctx)
+	merchantID, userID, base, err := ih.ChatAppIdentityFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AppListChatMessagesResp{Base: base}, nil
 	}
 	if err != nil {
 		return &chat.AppListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
+	session, base, err := ih.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
 	if err != nil {
 		return &chat.AppListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
@@ -84,7 +84,7 @@ func (l *ListMyChatMessagesLogic) ListMyChatMessages(in *chat.ListMyChatMessages
 	if err != nil {
 		return &chat.AppListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	nextCursor := internal.MessageNextCursor(list)
+	nextCursor := ih.MessageNextCursor(list)
 	base = helper.OkWithOthers(0, int64(len(list)) == limit && nextCursor > 0, cursor > 0, nextCursor, cursor)
-	return &chat.AppListChatMessagesResp{Base: base, Data: internal.ToProtoMessages(list)}, nil
+	return &chat.AppListChatMessagesResp{Base: base, Data: ih.ToProtoMessages(list)}, nil
 }

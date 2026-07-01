@@ -5,7 +5,7 @@ import (
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -70,7 +70,7 @@ func (l *GenerateChatSessionNoLogic) findGuestTransientSession(merchantID, userI
 	}
 	var cursor int64
 	for {
-		list, hasNext, nextCursor, err := internal.PageTransientSessions(
+		list, hasNext, nextCursor, err := ih.PageTransientSessions(
 			l.ctx,
 			l.svcCtx.BusRedis,
 			merchantID,
@@ -85,7 +85,7 @@ func (l *GenerateChatSessionNoLogic) findGuestTransientSession(merchantID, userI
 		}
 		for _, session := range list {
 			if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-				return internal.ToProtoSession(session, true), nil
+				return ih.ToProtoSession(session, true), nil
 			}
 		}
 		if !hasNext {

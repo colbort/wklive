@@ -5,7 +5,7 @@ import (
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,7 +27,7 @@ func NewListEnabledChatQuickRepliesLogic(ctx context.Context, svcCtx *svc.Servic
 
 // 查询启用快捷回复
 func (l *ListEnabledChatQuickRepliesLogic) ListEnabledChatQuickReplies(in *chat.ListEnabledChatQuickRepliesReq) (*chat.ListChatQuickRepliesResp, error) {
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.ListChatQuickRepliesResp{Base: base}, nil
 	}
@@ -38,5 +38,5 @@ func (l *ListEnabledChatQuickRepliesLogic) ListEnabledChatQuickReplies(in *chat.
 	if err != nil {
 		return &chat.ListChatQuickRepliesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.ListChatQuickRepliesResp{Base: helper.OkResp(), Data: internal.ToProtoChatQuickReplies(list)}, nil
+	return &chat.ListChatQuickRepliesResp{Base: helper.OkResp(), Data: ih.ToProtoChatQuickReplies(list)}, nil
 }

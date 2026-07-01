@@ -6,7 +6,7 @@ import (
 	"wklive/common/pageutil"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -29,7 +29,7 @@ func NewPageChatAgentsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 
 // 分页查询坐席
 func (l *PageChatAgentsLogic) PageChatAgents(in *chat.PageChatAgentsReq) (*chat.PageChatAgentsResp, error) {
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.PageChatAgentsResp{Base: base}, nil
 	}
@@ -47,7 +47,7 @@ func (l *PageChatAgentsLogic) PageChatAgents(in *chat.PageChatAgentsReq) (*chat.
 		return &chat.PageChatAgentsResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	return &chat.PageChatAgentsResp{
-		Base: internal.OffsetBase(cursor, limit, len(list), total),
-		Data: internal.ToProtoAgents(list),
+		Base: ih.OffsetBase(cursor, limit, len(list), total),
+		Data: ih.ToProtoAgents(list),
 	}, nil
 }

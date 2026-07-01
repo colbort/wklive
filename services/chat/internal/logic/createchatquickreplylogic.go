@@ -9,7 +9,7 @@ import (
 
 	"wklive/proto/chat"
 	"wklive/proto/common"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -37,7 +37,7 @@ func (l *CreateChatQuickReplyLogic) CreateChatQuickReply(in *chat.CreateChatQuic
 	if title == "" || content == "" {
 		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(400, "title and content are required")}, nil
 	}
-	merchantID, base, err := internal.MerchantIDFromMetadata(l.ctx)
+	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
 	if base != nil {
 		return &chat.AdminChatQuickReplyResp{Base: base}, nil
 	}
@@ -68,5 +68,5 @@ func (l *CreateChatQuickReplyLogic) CreateChatQuickReply(in *chat.CreateChatQuic
 	if id, err := result.LastInsertId(); err == nil {
 		data.Id = id
 	}
-	return &chat.AdminChatQuickReplyResp{Base: helper.OkResp(), Data: internal.ToProtoChatQuickReply(data)}, nil
+	return &chat.AdminChatQuickReplyResp{Base: helper.OkResp(), Data: ih.ToProtoChatQuickReply(data)}, nil
 }

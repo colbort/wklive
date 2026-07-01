@@ -7,7 +7,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/chat"
 	"wklive/proto/common"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 
@@ -58,7 +58,7 @@ func (l *ProfileLogic) Profile(in *chat.ChatAdminProfileReq) (*chat.ChatAdminPro
 
 	return &chat.ChatAdminProfileResp{
 		Base:  helper.OkResp(),
-		User:  internal.ToProtoUser(user),
-		Agent: internal.ToProtoAgent(agent),
+		User:  ih.ToProtoUser(user),
+		Agent: ih.ToProtoAgent(agent),
 	}, nil
 }

@@ -6,7 +6,7 @@ import (
 	"wklive/common/utils"
 
 	"wklive/proto/chat"
-	"wklive/services/chat/internal/logic/internal"
+	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,7 +28,7 @@ func NewCloseMyChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 关闭我的会话
 func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSessionReq) (*chat.AppChatSessionResp, error) {
-	session, base, err := internal.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.GetIsGuest())
+	session, base, err := ih.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.GetIsGuest())
 	if err != nil {
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
@@ -39,16 +39,16 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 		return &chat.AppChatSessionResp{Base: helper.ErrResp(404, "chat session not found")}, nil
 	}
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, true)}, nil
+		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, true)}, nil
 	}
-	if internal.IsInternetErrorCloseReason(in.GetCloseReasonType(), in.GetCloseReason()) {
+	if ih.IsInternetErrorCloseReason(in.GetCloseReasonType(), in.GetCloseReason()) {
 		if in.IsGuest {
-			session, err = internal.MarkTransientSessionInternetError(l.ctx, l.svcCtx, session)
+			session, err = ih.MarkTransientSessionInternetError(l.ctx, l.svcCtx, session)
 			if err != nil {
 				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-		_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+		_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
 			EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
 			Channel:      chat.ChatAdminEventChannel,
 			IsGuest:      true,
@@ -66,17 +66,17 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 		session.DisconnectTime = 0
 		session.BeforeDisconnectStatus = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN)
 		session.UpdateTimes = now
-		_ = internal.RemoveTransientInternetErrorTimeout(l.ctx, l.svcCtx, session.MerchantId, session.SessionNo)
-		session, err = internal.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, session)
+		_ = ih.RemoveTransientInternetErrorTimeout(l.ctx, l.svcCtx, session.MerchantId, session.SessionNo)
+		session, err = ih.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, session)
 		if err != nil {
 			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	} else {
-		if err := internal.CloseSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
+		if err := ih.CloseSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
 			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	}
-	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
 		Channel:      chat.ChatAdminEventChannel,
 		Session:      session,
@@ -84,5 +84,5 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 		Reason:       in.GetCloseReason(),
 		EventMessage: "本次会话已结束",
 	})
-	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, in.IsGuest)}, nil
+	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 }
