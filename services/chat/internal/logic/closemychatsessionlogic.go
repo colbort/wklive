@@ -42,9 +42,11 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, true)}, nil
 	}
 	if internal.IsInternetErrorCloseReason(in.GetCloseReasonType(), in.GetCloseReason()) {
-		session, err = internal.MarkTransientSessionInternetError(l.ctx, l.svcCtx, session)
-		if err != nil {
-			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		if in.IsGuest {
+			session, err = internal.MarkTransientSessionInternetError(l.ctx, l.svcCtx, session)
+			if err != nil {
+				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+			}
 		}
 		_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
 			EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
@@ -55,7 +57,6 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 			Reason:       in.GetCloseReason(),
 			EventMessage: "用户网络异常断开",
 		})
-		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, true)}, nil
 	}
 	if in.GetIsGuest() {
 		now := utils.NowMillis()
@@ -83,5 +84,5 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 		Reason:       in.GetCloseReason(),
 		EventMessage: "本次会话已结束",
 	})
-	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, false)}, nil
+	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: internal.ToProtoSession(session, in.IsGuest)}, nil
 }

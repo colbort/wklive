@@ -60,6 +60,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
 		Reason:       in.GetReason(),
 		EventMessage: agentServiceMessage(l.ctx, l.svcCtx, agent),
+		Agent:        agent,
 	})
 	_ = internal.PublishMessageEvent(l.ctx, l.svcCtx, internal.PublishMessageEventReq{
 		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
