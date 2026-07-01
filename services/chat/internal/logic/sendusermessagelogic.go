@@ -35,12 +35,12 @@ func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*ch
 		if err != nil {
 			return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		if err := ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
-			EventType:  in.GetEventType(),
-			Channel:    chat.ChatAdminEventChannel,
-			MerchantId: in.GetMerchantId(),
-			Message:    ih.ToModelsMessage(msg),
-			Session:    ih.ToModelsSession(in.GetSession()),
+		if err := ih.PublishMessageEvent(ih.PublishMessageEventReq{
+			Ctx:       l.ctx,
+			BusRedis:  l.svcCtx.BusRedis,
+			Channel:   chat.ChatAdminEventChannel,
+			EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
+			Payload:   chat.ChatMessageEvent_Message{Message: msg},
 		}); err != nil {
 			return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}

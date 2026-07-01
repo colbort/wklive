@@ -36,12 +36,12 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 		if err != nil {
 			return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		if err := ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
-			EventType:  in.GetEventType(),
-			Channel:    chat.ChatAppEventChannel,
-			MerchantId: in.GetMerchantId(),
-			Message:    ih.ToModelsMessage(msg),
-			Session:    ih.ToModelsSession(in.GetSession()),
+		if err := ih.PublishMessageEvent(ih.PublishMessageEventReq{
+			Ctx:       l.ctx,
+			BusRedis:  l.svcCtx.BusRedis,
+			Channel:   chat.ChatAppEventChannel,
+			EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
+			Payload:   chat.ChatMessageEvent_Message{Message: msg},
 		}); err != nil {
 			return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}

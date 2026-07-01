@@ -183,12 +183,11 @@ func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession
 		l.Logger.Info("push event to admin err: session is nil")
 		return
 	}
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
-		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
-		Channel:      chat.ChatAdminEventChannel,
-		IsGuest:      isGuest,
-		Session:      session,
-		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
-		EventMessage: "用户进入会话",
+	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
+		Ctx:       l.ctx,
+		BusRedis:  l.svcCtx.BusRedis,
+		Channel:   chat.ChatAdminEventChannel,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
+		Payload:   chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, isGuest)},
 	})
 }

@@ -48,14 +48,12 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-		_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
-			EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
-			Channel:      chat.ChatAdminEventChannel,
-			IsGuest:      true,
-			Session:      session,
-			AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
-			Reason:       in.GetCloseReason(),
-			EventMessage: "用户网络异常断开",
+		_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
+			Ctx:       l.ctx,
+			BusRedis:  l.svcCtx.BusRedis,
+			Channel:   chat.ChatAdminEventChannel,
+			EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
+			Payload:   chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, true)},
 		})
 	}
 	if in.GetIsGuest() {
@@ -76,13 +74,12 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	}
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
-		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
-		Channel:      chat.ChatAdminEventChannel,
-		Session:      session,
-		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
-		Reason:       in.GetCloseReason(),
-		EventMessage: "本次会话已结束",
+	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
+		Ctx:       l.ctx,
+		BusRedis:  l.svcCtx.BusRedis,
+		Channel:   chat.ChatAdminEventChannel,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
+		Payload:   chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, true)},
 	})
 	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 }

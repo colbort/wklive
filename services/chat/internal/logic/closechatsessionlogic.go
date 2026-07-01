@@ -34,13 +34,12 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(400, "chat session is closed")}, nil
 	}
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
-		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
+	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
+		Ctx:          l.ctx,
+		BusRedis:  l.svcCtx.BusRedis,
 		Channel:      chat.ChatAppEventChannel,
-		Session:      session,
-		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
-		Reason:       in.GetCloseReason(),
-		EventMessage: "本次会话已结束",
+		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
+		Payload:      chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, false)},
 	})
 	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, false)}, nil
 }

@@ -82,12 +82,22 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		}
 	}
 
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
-		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
-		Channel:      chat.ChatAdminEventChannel,
-		Session:      session,
-		Satisfaction: satisfaction,
-		EventMessage: "用户已提交评价",
+	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
+		Ctx:       l.ctx,
+		BusRedis:  l.svcCtx.BusRedis,
+		Channel:   chat.ChatAdminEventChannel,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
+		Payload: chat.ChatMessageEvent_Evaluation{Evaluation: &chat.ChatEvaluationPayload{
+			SessionNo:    session.SessionNo,
+			UserId:       session.UserId,
+			AgentId:      session.AgentId,
+			EvaluationId: satisfaction.Id,
+			Rating:       int32(in.Score),
+			Tags:         []string{in.Tags},
+			Comment:      in.Content,
+			Submitted:    true,
+			EvaluatedAt:  now,
+		}},
 	})
 	return &chat.AppChatSatisfactionResp{Base: helper.OkResp(), Data: ih.ToProtoSatisfaction(satisfaction)}, nil
 }

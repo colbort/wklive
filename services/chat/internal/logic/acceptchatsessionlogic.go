@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/chat"
 	ih "wklive/services/chat/internal/helper"
 	"wklive/services/chat/internal/svc"
@@ -53,22 +54,33 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
-		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
-		Channel:      chat.ChatAppEventChannel,
-		Session:      session,
-		AssignType:   chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
-		Reason:       in.GetReason(),
-		EventMessage: agentServiceMessage(l.ctx, l.svcCtx, agent),
-		Agent:        agent,
+	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
+		Ctx:       l.ctx,
+		BusRedis:  l.svcCtx.BusRedis,
+		Channel:   chat.ChatAppEventChannel,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
+		Payload: chat.ChatMessageEvent_Agent{Agent: &chat.ChatAgentPayload{
+			SessionNo:     in.SessionNo,
+			AgentId:       agent.Id,
+			AgentName:     "",
+			AgentAvatar:   "",
+			AgentStatus:   chat.ChatAgentStatus(agent.Status),
+			AssignType:    chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
+			SessionStatus: chat.ChatSessionStatus(session.Status),
+			Remark:        firstNonEmpty(in.GetReason(), "accept"),
+			ActionTime:    utils.NowMillis(),
+		}},
 	})
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
-		EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
-		Channel:      chat.ChatAppEventChannel,
-		Session:      session,
-		SessionNo:    in.SessionNo,
-		EventMessage: "坐席接待用户",
-		MerchantId:   in.MerchantId,
+	queue, err := ih.ToProtoQueueInfo(l.ctx, l.svcCtx, session)
+	if err != nil {
+		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+	}
+	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
+		Ctx:       l.ctx,
+		BusRedis:  l.svcCtx.BusRedis,
+		Channel:   chat.ChatAppEventChannel,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
+		Payload:   chat.ChatMessageEvent_Queue{Queue: queue},
 	})
 	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, false)}, nil
 }

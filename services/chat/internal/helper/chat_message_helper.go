@@ -95,11 +95,12 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *model
 	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
 		return nil, err
 	}
-	_ = PublishMessageEvent(ctx, svcCtx, PublishMessageEventReq{
+	_ = PublishMessageEvent(PublishMessageEventReq{
+		Ctx:       ctx,
+		BusRedis:  svcCtx.BusRedis,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
 		Channel:   channel,
-		Message:   msg,
-		Session:   session,
+		Payload:   chat.ChatMessageEvent_Message{Message: ToProtoMessage(msg)},
 	})
 	return msg, nil
 }

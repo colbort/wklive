@@ -81,11 +81,22 @@ func (l *LoginLogic) Login(in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp
 		agent.LastActiveTime = now
 		agent.UpdateTimes = now
 		if err := l.svcCtx.ChatAgentModel.Update(l.ctx, agent); err == nil {
-			_ = ih.PublishMessageEvent(l.ctx, l.svcCtx, ih.PublishMessageEventReq{
-				EventType:    chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE,
-				Channel:      chat.ChatAdminEventChannel,
-				Agent:        agent,
-				EventMessage: "坐席已上线",
+			_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
+				Ctx:       l.ctx,
+				BusRedis:  l.svcCtx.BusRedis,
+				Channel:   chat.ChatAdminEventChannel,
+				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE,
+				Payload: chat.ChatMessageEvent_Agent{Agent: &chat.ChatAgentPayload{
+					SessionNo:     "",
+					AgentId:       agent.Id,
+					AgentName:     user.Nickname,
+					AgentAvatar:   user.AvatarUrl,
+					AgentStatus:   chat.ChatAgentStatus(agent.Status),
+					AssignType:    chat.ChatAssignType_CHAT_ASSIGN_TYPE_UNKNOWN,
+					SessionStatus: chat.ChatSessionStatus(chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN),
+					Remark:        "auto online",
+					ActionTime:    now,
+				}},
 			})
 		}
 	}
