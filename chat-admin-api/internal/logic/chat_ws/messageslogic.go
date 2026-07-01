@@ -230,7 +230,10 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 		return
 	}
 	req.SessionNo = conn.SessionNo
+	req.CloseReasonType = chat.ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_AGENT
 	req.CloseReason = firstNonEmpty(req.CloseReason, "closed by agent")
+	req.MerchantId = conn.MerchantId
+	req.UserId = conn.UserId
 	req.IsGuest = conn.IsGuest
 
 	resp, err := l.svcCtx.ChatAdminCli.CloseChatSession(ctx, &req)

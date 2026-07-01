@@ -1979,7 +1979,9 @@ type CloseChatSessionReq struct {
 	SessionNo       string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                                       // 会话编号
 	CloseReasonType ChatSessionCloseReason `protobuf:"varint,2,opt,name=close_reason_type,json=closeReasonType,proto3,enum=chat.ChatSessionCloseReason" json:"close_reason_type,omitempty"` // 结束原因类型
 	CloseReason     string                 `protobuf:"bytes,3,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"`                                                 // 结束原因描述
-	IsGuest         bool                   `protobuf:"varint,4,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                                            // 是否游客/临时会话
+	MerchantId      int64                  `protobuf:"varint,4,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`
+	UserId          int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	IsGuest         bool                   `protobuf:"varint,6,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"` // 是否游客/临时会话
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -2033,6 +2035,20 @@ func (x *CloseChatSessionReq) GetCloseReason() string {
 		return x.CloseReason
 	}
 	return ""
+}
+
+func (x *CloseChatSessionReq) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *CloseChatSessionReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
 }
 
 func (x *CloseChatSessionReq) GetIsGuest() bool {
@@ -4449,13 +4465,16 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\x18MarkAgentMessagesReadReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12/\n" +
-	"\x14last_read_message_no\x18\x02 \x01(\tR\x11lastReadMessageNo\"\xbc\x01\n" +
+	"\x14last_read_message_no\x18\x02 \x01(\tR\x11lastReadMessageNo\"\xf6\x01\n" +
 	"\x13CloseChatSessionReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12H\n" +
 	"\x11close_reason_type\x18\x02 \x01(\x0e2\x1c.chat.ChatSessionCloseReasonR\x0fcloseReasonType\x12!\n" +
-	"\fclose_reason\x18\x03 \x01(\tR\vcloseReason\x12\x19\n" +
-	"\bis_guest\x18\x04 \x01(\bR\aisGuest\"\xdb\x01\n" +
+	"\fclose_reason\x18\x03 \x01(\tR\vcloseReason\x12\x1f\n" +
+	"\vmerchant_id\x18\x04 \x01(\x03R\n" +
+	"merchantId\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bis_guest\x18\x06 \x01(\bR\aisGuest\"\xdb\x01\n" +
 	"\x17CreateChatQuickReplyReq\x12\x19\n" +
 	"\bagent_id\x18\x01 \x01(\x03R\aagentId\x12\x1f\n" +
 	"\vcategory_id\x18\x02 \x01(\x03R\n" +

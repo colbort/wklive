@@ -351,7 +351,9 @@ message CloseChatSessionReq {
   string session_no = 1;                         // 会话编号
   ChatSessionCloseReason close_reason_type = 2;  // 结束原因类型
   string close_reason = 3;                       // 结束原因描述
-  bool is_guest = 4;                             // 是否游客/临时会话
+  int64 merchant_id = 4;
+  int64 user_id = 5;
+  bool is_guest = 6;                             // 是否游客/临时会话
 }
 
 message CreateChatQuickReplyReq {
