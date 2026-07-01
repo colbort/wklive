@@ -74,12 +74,20 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	}
+	sessionPayload := chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, in.IsGuest)}
+	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
+		Ctx:       l.ctx,
+		BusRedis:  l.svcCtx.BusRedis,
+		Channel:   chat.ChatAppEventChannel,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
+		Payload:   sessionPayload,
+	})
 	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
 		Ctx:       l.ctx,
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAdminEventChannel,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
-		Payload:   chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, true)},
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
+		Payload:   sessionPayload,
 	})
 	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 }
