@@ -11,7 +11,6 @@ import type {
   ChatMessage,
   OptionGroup,
   ChatQueueInfo,
-  ChatSessionEvent,
   ChatWsEvent,
   ConnectedPayload,
   SendUserMessagePayload,
@@ -292,10 +291,7 @@ export function useChatSocket() {
       }
 
       case chatEventType.EVALUATION_INVITE: {
-        queueStatus.value =
-          sessionEventMessage(event) ||
-          eventMessage(event)?.content ||
-          "请对本次服务进行评价";
+        queueStatus.value = eventMessage(event)?.content || "请对本次服务进行评价";
         break;
       }
 
@@ -311,10 +307,7 @@ export function useChatSocket() {
 
       case chatEventType.TYPING: {
         if (eventMessage(event)?.senderType === 3) return;
-        queueStatus.value =
-          sessionEventMessage(event) ||
-          eventMessage(event)?.content ||
-          "客服正在输入";
+        queueStatus.value = eventMessage(event)?.content || "客服正在输入";
         break;
       }
 
@@ -327,7 +320,6 @@ export function useChatSocket() {
         }
         queueStatus.value =
           queueMessage(event.queue) ||
-          sessionEventMessage(event) ||
           message?.content ||
           "正在排队，客服会尽快接入。";
         break;
@@ -341,7 +333,7 @@ export function useChatSocket() {
           agentNameFromMessage(message) || activeAgentName.value;
         queueStatus.value = serviceStatusMessage(
           activeAgentName.value,
-          sessionEventMessage(event) || message?.content || "",
+          message?.content || "",
         );
         break;
       }
@@ -350,8 +342,7 @@ export function useChatSocket() {
         ensureConnectedFromEvent(event);
         const message = eventMessage(event);
         sessionClosed.value = true;
-        queueStatus.value =
-          sessionEventMessage(event) || message?.content || "本次会话已结束。";
+        queueStatus.value = message?.content || "本次会话已结束。";
         closeSocketOnly(true);
         status.value = "closed";
         break;
@@ -431,17 +422,17 @@ export function useChatSocket() {
     );
   }
 
-  function sessionEvent(event: ChatWsEvent): ChatSessionEvent | undefined {
-    return event.sessionEvent ?? event.session_event;
-  }
+  // function sessionEvent(event: ChatWsEvent): ChatSessionEvent | undefined {
+  //   return event.sessionEvent ?? event.session_event;
+  // }
 
-  function sessionEventMessage(event: ChatWsEvent) {
-    return sessionEvent(event)?.message || "";
-  }
+  // function sessionEventMessage(event: ChatWsEvent) {
+  //   return sessionEvent(event)?.message || "";
+  // }
 
   function ensureConnectedFromEvent(event: ChatWsEvent) {
-    const session = event.session || sessionEvent(event)?.session;
-    const queue = event.queue || sessionEvent(event)?.queue;
+    const session = event.session;
+    const queue = event.queue;
     const sessionNo =
       session?.sessionNo ||
       queue?.sessionNo ||
@@ -457,7 +448,6 @@ export function useChatSocket() {
         ...connected.value,
         message:
           queueMessage(queue) ||
-          sessionEventMessage(event) ||
           connected.value.message,
         merchantId:
           session?.merchantId ||
@@ -479,7 +469,7 @@ export function useChatSocket() {
       return;
     }
     connected.value = {
-      message: queueMessage(queue) || sessionEventMessage(event) || "",
+      message: queueMessage(queue) || "",
       merchantId: session?.merchantId || queueMerchantId || 0,
       userId: session?.userId || queueUserId || 0,
       sessionNo,

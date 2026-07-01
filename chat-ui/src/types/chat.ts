@@ -101,8 +101,6 @@ export interface ChatWsEvent<T = unknown> {
   eventType?: string | number;
   data?: T;
   session?: ChatSession;
-  sessionEvent?: ChatSessionEvent;
-  session_event?: ChatSessionEvent;
   queue?: ChatQueueInfo;
   base?: RespBase;
 }
@@ -129,21 +127,6 @@ export interface ChatQueueInfo {
   estimatedWaitSeconds?: number;
   message?: string;
   updateTimes?: number;
-}
-
-export interface ChatSessionEvent {
-  sessionNo: string;
-  merchantId: number;
-  userId: number;
-  agentId: number;
-  operatorId: number;
-  status: number;
-  assignType: number;
-  reason: string;
-  message: string;
-  session?: ChatSession;
-  queue?: ChatQueueInfo;
-  createdAt: number;
 }
 
 export interface SendUserMessagePayload {

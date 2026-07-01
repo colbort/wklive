@@ -21,7 +21,6 @@ import type {
   ChatQueueInfo,
   ChatSession,
   ChatSessionExtJson,
-  ChatSessionEvent,
   CloseAgentChatSessionPayload,
   SendAgentMessagePayload,
 } from "@/types/chat";
@@ -49,8 +48,6 @@ interface WsEvent {
   base?: WsBase;
   agent?: ChatAgent;
   session?: ChatSession;
-  sessionEvent?: ChatSessionEvent;
-  session_event?: ChatSessionEvent;
   queue?: ChatQueueInfo;
 }
 
@@ -506,11 +503,10 @@ function handleUserLeave(event: WsEvent) {
     }
     return;
   }
-  const message =
-    sessionEvent(event)?.message || eventMessage(event.data)?.content || "用户已离开";
+  const message = eventMessage(event.data)?.content || "用户已离开";
   setSessionStatusMessage(sessionNo, message);
   session.lastMessage = message;
-  session.lastMessageTime = Number(sessionEvent(event)?.createdAt || Date.now());
+  session.lastMessageTime = Number(Date.now());
   session.updateTimes = session.lastMessageTime;
   ElMessage.info(message);
 }
@@ -519,8 +515,6 @@ function eventSessionNo(event: WsEvent) {
   return (
     event.session?.sessionNo ||
     event.queue?.sessionNo ||
-    sessionEvent(event)?.sessionNo ||
-    sessionEvent(event)?.session?.sessionNo ||
     eventMessage(event.data)?.sessionNo ||
     ""
   );
@@ -544,11 +538,11 @@ function updateAgentFromEvent(agent?: ChatAgent) {
 }
 
 function upsertSessionFromEvent(event: WsEvent) {
-  const session = event.session || sessionEvent(event)?.session;
+  const session = event.session;
   if (session?.sessionNo) {
     upsertSession(normalizeSession(session));
   }
-  const queue = event.queue || sessionEvent(event)?.queue;
+  const queue = event.queue;
   if (queue?.sessionNo) {
     setSessionStatusMessage(queue.sessionNo, queue.message);
     const exists = sessions.value.find(
@@ -619,16 +613,14 @@ function upsertSessionFromMessage(
 }
 
 function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
-  const sessionEventData = sessionEvent(event);
-  const sessionNo = sessionEventData?.sessionNo || message?.sessionNo || "";
+  const sessionNo = message?.sessionNo || "";
   setSessionStatusMessage(
     sessionNo,
-    sessionEventData?.message || message?.content || "",
+    message?.content || "",
   );
   const session = sessions.value.find((item) => item.sessionNo === sessionNo);
   const acceptedAgentId = Number(
-    sessionEventData?.agentId ||
-      (message ? messageAgentId(message) : 0) ||
+   (message ? messageAgentId(message) : 0) ||
       agentId.value,
   );
   if (!session) {
@@ -641,16 +633,14 @@ function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
     session.agentId = acceptedAgentId;
     session.status = sessionStatus.serving;
     session.lastMessage =
-      message?.content || sessionEventData?.message || session.lastMessage;
+      message?.content || session.lastMessage;
     session.lastMessageNo = message?.messageNo || session.lastMessageNo;
     session.lastMessageTime =
       message?.createTime ||
-      sessionEventData?.createdAt ||
       session.lastMessageTime;
     session.lastSenderType = message?.senderType || session.lastSenderType;
     session.updateTimes =
       message?.updateTime ||
-      sessionEventData?.createdAt ||
       session.updateTimes;
   }
   if (acceptedAgentId === agentId.value) {
@@ -662,8 +652,7 @@ function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
 }
 
 function markSessionClosed(event: WsEvent, message?: ChatMessage) {
-  const sessionEventData = sessionEvent(event);
-  const sessionNo = sessionEventData?.sessionNo || message?.sessionNo || "";
+  const sessionNo = message?.sessionNo || "";
   if (!sessionNo) return;
   const session = sessions.value.find((item) => item.sessionNo === sessionNo);
   if (isGuestSession(session)) {
@@ -676,16 +665,14 @@ function markSessionClosed(event: WsEvent, message?: ChatMessage) {
   }
   setSessionStatusMessage(
     sessionNo,
-    sessionEventData?.message || message?.content || "本次会话已结束",
+    message?.content || "本次会话已结束",
   );
   if (session) {
     session.status = sessionStatus.closed;
-    session.closeTime =
-      sessionEventData?.createdAt || message?.createTime || Date.now();
-    session.closeReason = sessionEventData?.reason || session.closeReason;
+    session.closeTime = message?.createTime || Date.now();
+    session.closeReason = session.closeReason || '';
     session.lastMessage =
       message?.content ||
-      sessionEventData?.message ||
       session.lastMessage ||
       "本次会话已结束";
     session.lastMessageTime = message?.createTime || session.closeTime;
@@ -980,9 +967,9 @@ function eventMessage(data?: WsEventData) {
   return data;
 }
 
-function sessionEvent(event: WsEvent) {
-  return event.sessionEvent || event.session_event;
-}
+// function sessionEvent(event: WsEvent) {
+//   return event.sessionEvent;
+// }
 
 function eventBase(data?: WsEventData) {
   return data && isWsResult(data) ? data.base : undefined;
