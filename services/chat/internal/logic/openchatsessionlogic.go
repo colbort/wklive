@@ -30,8 +30,9 @@ func NewOpenChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *O
 }
 
 // 创建或获取当前会话;
-// 用户进入客服页面 建立 WS ；创建/复用会话
-// 游客创建/复用（本次会话未结束）临时会话，会话不保存；登录用户创建（首次打开）/复用（之后进来）会话，会话保存数据库
+// 用户进入客服页面建立 WS，创建/复用会话。
+// 游客会话保存在 Redis：无会话时创建临时会话，未过期会话复用；已关闭但未过期的会话会重新打开。
+// 登录用户会话保存在数据库：无会话时创建会话，已有会话按用户最新会话复用。
 func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*chat.OpenChatSessionResp, error) {
 	var ms *models.TChatSession
 	if in.IsGuest {
@@ -47,24 +48,6 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 
 		ms, _ = internal.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), sessionNo)
 		now := utils.NowMillis()
-		if ms != nil && ms.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
-			var restored bool
-			var err error
-			ms, restored, err = internal.RestoreTransientSessionInternetError(l.ctx, l.svcCtx, ms)
-			if err != nil {
-				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
-			}
-			if restored {
-				now = utils.NowMillis()
-			}
-		}
-		if ms != nil && ms.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-			sessionNo, err = l.svcCtx.GenerateNo(l.ctx, "CS")
-			if err != nil {
-				logx.Errorf("generate guest session no error: %v", err)
-				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate session no error")}, nil
-			}
-		}
 		if ms == nil {
 			ms = &models.TChatSession{
 				SessionNo:       sessionNo,
@@ -77,6 +60,27 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 				ExtJson:         sql.NullString{String: in.ExtJson, Valid: true},
 				CreateTimes:     now,
 				UpdateTimes:     now,
+			}
+		} else {
+			if ms.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+				// 会话断线重连，恢复会话状态
+				var restored bool
+				var err error
+				ms, restored, err = internal.RestoreTransientSessionInternetError(l.ctx, l.svcCtx, ms)
+				if err != nil {
+					return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+				}
+				if restored {
+					now = utils.NowMillis()
+				}
+			} else if ms.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+				// 游客会话已关闭，但是会话未过期，重新打开会话
+				ms.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
+				ms.CloseTime = 0
+				ms.CloseReason = ""
+				ms.DisconnectTime = 0
+				ms.BeforeDisconnectStatus = 0
+				ms.UpdateTimes = now
 			}
 		}
 		ms.MerchantId = in.GetMerchantId()
@@ -92,38 +96,14 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		if err != nil && err != models.ErrNotFound {
 			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
-		restoredInternetError := false
-		if err == nil && session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
-			var restored bool
-			var err error
-			restored, err = internal.RestoreSessionInternetError(l.ctx, l.svcCtx, session)
-			if err != nil {
-				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
-			}
-			restoredInternetError = restored
-		}
-		now := utils.NowMillis()
-		if !restoredInternetError {
-			session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
-			session.AgentId = 0
-		}
-		session.CloseTime = 0
-		session.CloseReason = ""
-		session.DisconnectTime = 0
-		session.BeforeDisconnectStatus = 0
-		session.UpdateTimes = now
-		if err := l.svcCtx.ChatSessionModel.Update(l.ctx, session); err != nil {
-			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
-		}
-		ms = session
-		if ms == nil {
+		if session == nil {
 			sessionNo, err := l.svcCtx.GenerateNo(l.ctx, "CS")
 			if err != nil {
 				logx.Errorf("generate session no error: %v", err)
 				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate message no error")}, nil
 			}
 			now := utils.NowMillis()
-			ms = &models.TChatSession{
+			session = &models.TChatSession{
 				SessionNo:       sessionNo,
 				MerchantId:      in.MerchantId,
 				UserId:          in.UserId,
@@ -137,15 +117,39 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 				CreateTimes:     now,
 				UpdateTimes:     now,
 			}
-			result, err := l.svcCtx.ChatSessionModel.Insert(l.ctx, ms)
+			result, err := l.svcCtx.ChatSessionModel.Insert(l.ctx, session)
 			if err != nil {
 				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 			if id, err := result.LastInsertId(); err == nil {
-				ms.Id = id
+				session.Id = id
+			}
+		} else {
+			restoredInternetError := false
+			if err == nil && session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
+				var restored bool
+				var err error
+				restored, err = internal.RestoreSessionInternetError(l.ctx, l.svcCtx, session)
+				if err != nil {
+					return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+				}
+				restoredInternetError = restored
+			}
+			now := utils.NowMillis()
+			if !restoredInternetError {
+				session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING)
+				session.AgentId = 0
+			}
+			session.CloseTime = 0
+			session.CloseReason = ""
+			session.DisconnectTime = 0
+			session.BeforeDisconnectStatus = 0
+			session.UpdateTimes = now
+			if err := l.svcCtx.ChatSessionModel.Update(l.ctx, session); err != nil {
+				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-
+		ms = session
 	}
 	// 向坐席 chat-admin-api 推送 用户上线通知
 	l.publishUserJoinEvent(ms, in.IsGuest)
