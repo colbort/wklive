@@ -17,7 +17,7 @@ export interface ChatUser {
 export interface ChatAgent {
   id: number;
   merchantId: number;
-  chatUserId: number;
+  userId: number;
   agentNo: string;
   welcomeMessage: string;
   status: number;

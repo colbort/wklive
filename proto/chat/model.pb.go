@@ -339,7 +339,7 @@ type ChatAgent struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
 	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                // 主键ID
 	MerchantId          int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                              // 客服商户ID
-	ChatUserId          int64                  `protobuf:"varint,3,opt,name=chat_user_id,json=chatUserId,proto3" json:"chat_user_id,omitempty"`                            // 客服用户ID
+	UserId              int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                          // 客服用户ID
 	AgentNo             string                 `protobuf:"bytes,4,opt,name=agent_no,json=agentNo,proto3" json:"agent_no,omitempty"`                                        // 坐席编号
 	WelcomeMessage      string                 `protobuf:"bytes,5,opt,name=welcome_message,json=welcomeMessage,proto3" json:"welcome_message,omitempty"`                   // 欢迎语
 	Status              ChatAgentStatus        `protobuf:"varint,6,opt,name=status,proto3,enum=chat.ChatAgentStatus" json:"status,omitempty"`                              // 在线状态
@@ -399,9 +399,9 @@ func (x *ChatAgent) GetMerchantId() int64 {
 	return 0
 }
 
-func (x *ChatAgent) GetChatUserId() int64 {
+func (x *ChatAgent) GetUserId() int64 {
 	if x != nil {
-		return x.ChatUserId
+		return x.UserId
 	}
 	return 0
 }
@@ -3946,13 +3946,12 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\vexpire_time\x18\x04 \x01(\x03R\n" +
 	"expireTime\x12!\n" +
 	"\fcreate_times\x18\x05 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x06 \x01(\x03R\vupdateTimes\"\x84\x04\n" +
+	"\fupdate_times\x18\x06 \x01(\x03R\vupdateTimes\"\xfb\x03\n" +
 	"\tChatAgent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
-	"merchantId\x12 \n" +
-	"\fchat_user_id\x18\x03 \x01(\x03R\n" +
-	"chatUserId\x12\x19\n" +
+	"merchantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
 	"\bagent_no\x18\x04 \x01(\tR\aagentNo\x12'\n" +
 	"\x0fwelcome_message\x18\x05 \x01(\tR\x0ewelcomeMessage\x12-\n" +
 	"\x06status\x18\x06 \x01(\x0e2\x15.chat.ChatAgentStatusR\x06status\x12*\n" +

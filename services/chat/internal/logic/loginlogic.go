@@ -115,7 +115,7 @@ func (l *LoginLogic) findAgent(user *models.TChatUser) (*models.TChatAgent, erro
 	if user == nil || user.UserType != int64(chat.ChatUserType_CHAT_USER_TYPE_AGENT) {
 		return nil, nil
 	}
-	agent, err := l.svcCtx.ChatAgentModel.FindOneByMerchantIdChatUserId(l.ctx, user.MerchantId, user.Id)
+	agent, err := l.svcCtx.ChatAgentModel.FindOneByMerchantIdUserId(l.ctx, user.MerchantId, user.Id)
 	if err == models.ErrNotFound {
 		return nil, nil
 	}

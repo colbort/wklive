@@ -47,7 +47,7 @@ func (l *MarkAgentMessagesReadLogic) MarkAgentMessagesRead(in *chat.MarkAgentMes
 	if err != nil || operatorID <= 0 {
 		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(400, "operator_id is required")}, nil
 	}
-	agent, err := l.svcCtx.ChatAgentModel.FindOneByMerchantIdChatUserId(l.ctx, merchantID, operatorID)
+	agent, err := l.svcCtx.ChatAgentModel.FindOneByMerchantIdUserId(l.ctx, merchantID, operatorID)
 	if err == models.ErrNotFound {
 		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(404, "chat agent not found")}, nil
 	}

@@ -16,7 +16,7 @@ func ToProtoAgent(data *models.TChatAgent) *chat.ChatAgent {
 	return &chat.ChatAgent{
 		Id:                  data.Id,
 		MerchantId:          data.MerchantId,
-		ChatUserId:          data.ChatUserId,
+		UserId:              data.UserId,
 		AgentNo:             data.AgentNo,
 		WelcomeMessage:      data.WelcomeMessage,
 		Status:              chat.ChatAgentStatus(data.Status),

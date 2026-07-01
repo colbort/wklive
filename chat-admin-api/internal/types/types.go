@@ -44,7 +44,7 @@ type ChatAdminProfileResp struct {
 type ChatAgent struct {
 	Id                  int64  `json:"id"`
 	MerchantId          int64  `json:"merchantId"`
-	ChatUserId          int64  `json:"chatUserId"`
+	UserId              int64  `json:"userId"`
 	AgentNo             string `json:"agentNo"`
 	WelcomeMessage      string `json:"welcomeMessage"`
 	Status              int64  `json:"status"`     // 1 offline 2 online 3 busy 4 resting

@@ -42,7 +42,7 @@ message ChatMerchant {
 message ChatAgent {
   int64 id = 1;                    // 主键ID
   int64 merchant_id = 2;           // 客服商户ID
-  int64 chat_user_id = 3;          // 客服用户ID
+  int64 user_id = 3;               // 客服用户ID
   string agent_no = 4;             // 坐席编号
   string welcome_message = 5;      // 欢迎语
   ChatAgentStatus status = 6;      // 在线状态

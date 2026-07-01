@@ -40,7 +40,7 @@ CREATE TABLE `t_chat_merchant_info` (
 CREATE TABLE `t_chat_agent` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `merchant_id` bigint NOT NULL DEFAULT '0' COMMENT '客服商户ID',
-  `chat_user_id` bigint NOT NULL DEFAULT '0' COMMENT '客服用户ID',
+  `user_id` bigint NOT NULL DEFAULT '0' COMMENT '客服用户ID',
   `group_id` bigint NOT NULL DEFAULT '0' COMMENT '客服分组ID',
   `agent_no` varchar(64) NOT NULL DEFAULT '' COMMENT '坐席编号',
   `welcome_message` varchar(500) NOT NULL DEFAULT '' COMMENT '欢迎语',
@@ -53,7 +53,7 @@ CREATE TABLE `t_chat_agent` (
   `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间戳(毫秒)',
   `update_times` bigint NOT NULL DEFAULT '0' COMMENT '更新时间戳(毫秒)',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_merchant_chat_user` (`merchant_id`,`chat_user_id`),
+  UNIQUE KEY `uk_merchant_user` (`merchant_id`,`user_id`),
   UNIQUE KEY `uk_merchant_agent_no` (`merchant_id`,`agent_no`),
   KEY `idx_merchant_group` (`merchant_id`,`group_id`),
   KEY `idx_merchant_status` (`merchant_id`,`status`)

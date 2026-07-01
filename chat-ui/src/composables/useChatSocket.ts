@@ -80,7 +80,7 @@ export function useChatSocket() {
   let reconnectTicker: ReturnType<typeof window.setInterval> | null = null;
 
   const isOpen = computed(() => status.value === "open");
-  const isTemporary = computed(() => Boolean(connected.value?.temporary));
+  const isGuest = computed(() => Boolean(connected.value?.isGuest));
   const reconnectLabel = computed(() => {
     if (status.value !== "reconnecting" || reconnectingIn.value <= 0) {
       return "";
@@ -140,10 +140,16 @@ export function useChatSocket() {
       return;
     }
     const payload: SendUserMessagePayload = {
+      sessionNo: connected.value?.sessionNo || "",
+      merchantId: connected.value?.merchantId || 0,
       messageType: 1,
       content: text,
-      senderNickname: nickname.trim(),
-      senderAvatarUrl: avatarUrl.trim(),
+      sender: {
+        type: 1,
+        id: connected.value?.userId || 0,
+        nickname,
+        avatarUrl: avatarUrl.trim(),
+      }
     };
     sendChatSocketUserMessage(socket.value, payload);
   }
@@ -161,7 +167,7 @@ export function useChatSocket() {
   async function endSession(closeReason = "user_closed", keepalive = false) {
     const current = connected.value;
     const canCloseSession = Boolean(
-      current?.sessionNo && !current.temporary && !sessionClosed.value,
+      current?.sessionNo && !current.isGuest && !sessionClosed.value,
     );
 
     if (canCloseSession) {
@@ -189,7 +195,7 @@ export function useChatSocket() {
     const current = connected.value;
     if (
       !current?.sessionNo ||
-      current.temporary ||
+      current.isGuest ||
       historyLoading.value ||
       (!initial && !historyHasMore.value)
     ) {
@@ -375,7 +381,7 @@ export function useChatSocket() {
           queueStatus.value =
             queueMessage(event.data.queue) ||
             "请描述您的问题，发送后将进入客服队列。";
-          if (!event.data.temporary) {
+          if (!event.data.isGuest) {
             void loadHistory(true);
           }
         }
@@ -442,7 +448,7 @@ export function useChatSocket() {
       eventMessage(event)?.sessionNo ||
       "";
     if (!sessionNo) return;
-    const temporary = session ? sessionIsGuest(session) : true;
+    const isGuest = session ? sessionIsGuest(session) : true;
     const queueMerchantId =
       typeof queue?.merchantId === "number" ? queue.merchantId : 0;
     const queueUserId = Number(queue?.userId || 0);
@@ -458,13 +464,13 @@ export function useChatSocket() {
           queueMerchantId ||
           connected.value.merchantId,
         userId: session?.userId || queueUserId || connected.value.userId,
-        temporary: session ? temporary : connected.value.temporary,
+        isGuest: session ? isGuest : connected.value.isGuest,
         session: session || connected.value.session,
         queue: queue || connected.value.queue,
       };
       if (
         session &&
-        !temporary &&
+        !isGuest &&
         !historyLoading.value &&
         !messages.value.length
       ) {
@@ -477,13 +483,13 @@ export function useChatSocket() {
       merchantId: session?.merchantId || queueMerchantId || 0,
       userId: session?.userId || queueUserId || 0,
       sessionNo,
-      temporary,
+      isGuest,
       session,
       queue,
     };
     sessionClosed.value = false;
     resetHistoryState();
-    if (session && !temporary) {
+    if (session && !isGuest) {
       void loadHistory(true);
     }
   }
@@ -621,7 +627,7 @@ export function useChatSocket() {
     historyHasMore,
     historyLoading,
     isOpen,
-    isTemporary,
+    isGuest,
     messages,
     reconnectLabel,
     reconnectingIn,

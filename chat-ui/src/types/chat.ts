@@ -66,7 +66,7 @@ export interface ChatSession {
   updateTimes: number;
 }
 
-export interface ChatMessageSender {
+export interface ChatMessageUser {
   id: number;
   type: number;
   nickname: string;
@@ -79,8 +79,8 @@ export interface ChatMessage {
   sessionNo: string;
   merchantId: number;
   senderType: number;
-  sender?: ChatMessageSender;
-  receiver?: ChatMessageSender;
+  sender?: ChatMessageUser;
+  receiver?: ChatMessageUser;
   messageType: number;
   content: string;
   url: string;
@@ -112,7 +112,7 @@ export interface ConnectedPayload {
   merchantId: number;
   userId: number;
   sessionNo: string;
-  temporary?: boolean;
+  isGuest?: boolean;
   session?: ChatSession;
   queue?: ChatQueueInfo;
 }
@@ -147,14 +147,22 @@ export interface ChatSessionEvent {
 }
 
 export interface SendUserMessagePayload {
+  sessionNo?: string;
+  clientMessageId?: string;
   messageType: number;
   content?: string;
   url?: string;
   fileName?: string;
-  mimeType?: string;
   fileSize?: number;
-  senderNickname?: string;
-  senderAvatarUrl?: string;
+  mimeType?: string;
+  width?: number;
+  height?: number;
+  duration?: number;
+  extra?: string;
+  sender: ChatMessageUser;
+  receiver?: ChatMessageUser;
+  merchantId?: number;
+  isGuest?: boolean;   
 }
 
 export interface OpenChatSessionPayload {

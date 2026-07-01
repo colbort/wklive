@@ -75,7 +75,7 @@ func (l *UpdateProfileLogic) UpdateProfile(in *chat.UpdateChatAdminProfileReq) (
 
 	var agent *models.TChatAgent
 	if user.UserType == int64(chat.ChatUserType_CHAT_USER_TYPE_AGENT) {
-		agent, err = l.svcCtx.ChatAgentModel.FindOneByMerchantIdChatUserId(l.ctx, user.MerchantId, user.Id)
+		agent, err = l.svcCtx.ChatAgentModel.FindOneByMerchantIdUserId(l.ctx, user.MerchantId, user.Id)
 		if err == models.ErrNotFound {
 			agent = nil
 		} else if err != nil {

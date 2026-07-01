@@ -3,7 +3,7 @@ import "common.api"
 type ChatAgent {
 	id                  int64  `json:"id"`
 	merchantId          int64  `json:"merchantId"`
-	chatUserId          int64  `json:"chatUserId"`
+	userId              int64  `json:"userId"`
 	agentNo             string `json:"agentNo"`
 	welcomeMessage      string `json:"welcomeMessage"`
 	status              int64  `json:"status"` // 1 offline 2 online 3 busy 4 resting

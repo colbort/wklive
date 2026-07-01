@@ -50,7 +50,7 @@ func (l *LogoutLogic) Logout(in *chat.ChatAdminLogoutReq) (*chat.AdminCommonResp
 }
 
 func (l *LogoutLogic) autoOfflineAgent(user *models.TChatUser) error {
-	agent, err := l.svcCtx.ChatAgentModel.FindOneByMerchantIdChatUserId(l.ctx, user.MerchantId, user.Id)
+	agent, err := l.svcCtx.ChatAgentModel.FindOneByMerchantIdUserId(l.ctx, user.MerchantId, user.Id)
 	if err == models.ErrNotFound {
 		return nil
 	}

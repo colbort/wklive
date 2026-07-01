@@ -137,12 +137,12 @@ func (l *CreateChatAgentLogic) createAgentWithUser(user *models.TChatUser, agent
 		if agent.AgentNo == "" {
 			agent.AgentNo = fmt.Sprintf("AG%d", userID)
 		}
-		agent.ChatUserId = userID
+		agent.UserId = userID
 		agentResult, err := session.ExecCtx(
 			ctx,
-			"INSERT INTO t_chat_agent (merchant_id,chat_user_id,agent_no,welcome_message,status,auto_online,max_session_count,current_session_count,last_active_time,group_id,remark,create_times,update_times) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+			"INSERT INTO t_chat_agent (merchant_id,user_id,agent_no,welcome_message,status,auto_online,max_session_count,current_session_count,last_active_time,group_id,remark,create_times,update_times) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
 			agent.MerchantId,
-			agent.ChatUserId,
+			agent.UserId,
 			agent.AgentNo,
 			agent.WelcomeMessage,
 			agent.Status,

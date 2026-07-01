@@ -110,7 +110,7 @@ func AcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, in Assig
 
 	now := utils.NowMillis()
 	session.AgentId = in.Agent.Id
-	session.AgentUserId = in.Agent.ChatUserId
+	session.AgentUserId = in.Agent.UserId
 	session.GroupId = in.Agent.GroupId
 	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING)
 	session.UpdateTimes = now

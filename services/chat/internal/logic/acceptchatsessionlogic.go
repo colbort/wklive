@@ -87,8 +87,8 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 
 func agentServiceMessage(ctx context.Context, svcCtx *svc.ServiceContext, agent *models.TChatAgent) string {
 	name := ""
-	if svcCtx != nil && agent != nil && agent.ChatUserId > 0 {
-		user, err := svcCtx.ChatUserModel.FindOne(ctx, agent.ChatUserId)
+	if svcCtx != nil && agent != nil && agent.UserId > 0 {
+		user, err := svcCtx.ChatUserModel.FindOne(ctx, agent.UserId)
 		if err == nil && user != nil && user.MerchantId == agent.MerchantId {
 			name = strings.TrimSpace(user.Nickname)
 		}

@@ -23,9 +23,9 @@ var (
 	tChatAgentRowsExpectAutoSet   = strings.Join(stringx.Remove(tChatAgentFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tChatAgentRowsWithPlaceHolder = strings.Join(stringx.Remove(tChatAgentFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTChatAgentIdPrefix                   = "cache:tChatAgent:id:"
-	cacheTChatAgentMerchantIdAgentNoPrefix    = "cache:tChatAgent:merchantId:agentNo:"
-	cacheTChatAgentMerchantIdChatUserIdPrefix = "cache:tChatAgent:merchantId:chatUserId:"
+	cacheTChatAgentIdPrefix                = "cache:tChatAgent:id:"
+	cacheTChatAgentMerchantIdAgentNoPrefix = "cache:tChatAgent:merchantId:agentNo:"
+	cacheTChatAgentMerchantIdUserIdPrefix  = "cache:tChatAgent:merchantId:userId:"
 )
 
 type (
@@ -33,7 +33,7 @@ type (
 		Insert(ctx context.Context, data *TChatAgent) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TChatAgent, error)
 		FindOneByMerchantIdAgentNo(ctx context.Context, merchantId int64, agentNo string) (*TChatAgent, error)
-		FindOneByMerchantIdChatUserId(ctx context.Context, merchantId int64, chatUserId int64) (*TChatAgent, error)
+		FindOneByMerchantIdUserId(ctx context.Context, merchantId int64, userId int64) (*TChatAgent, error)
 		Update(ctx context.Context, data *TChatAgent) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -46,7 +46,7 @@ type (
 	TChatAgent struct {
 		Id                  int64  `db:"id"`                    // 主键ID
 		MerchantId          int64  `db:"merchant_id"`           // 客服商户ID
-		ChatUserId          int64  `db:"chat_user_id"`          // 客服用户ID
+		UserId              int64  `db:"user_id"`               // 客服用户ID
 		GroupId             int64  `db:"group_id"`              // 客服分组ID
 		AgentNo             string `db:"agent_no"`              // 坐席编号
 		WelcomeMessage      string `db:"welcome_message"`       // 欢迎语
@@ -76,11 +76,11 @@ func (m *defaultTChatAgentModel) Delete(ctx context.Context, id int64) error {
 
 	tChatAgentIdKey := fmt.Sprintf("%s%v", cacheTChatAgentIdPrefix, id)
 	tChatAgentMerchantIdAgentNoKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdAgentNoPrefix, data.MerchantId, data.AgentNo)
-	tChatAgentMerchantIdChatUserIdKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdChatUserIdPrefix, data.MerchantId, data.ChatUserId)
+	tChatAgentMerchantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdUserIdPrefix, data.MerchantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tChatAgentIdKey, tChatAgentMerchantIdAgentNoKey, tChatAgentMerchantIdChatUserIdKey)
+	}, tChatAgentIdKey, tChatAgentMerchantIdAgentNoKey, tChatAgentMerchantIdUserIdKey)
 	return err
 }
 
@@ -121,12 +121,12 @@ func (m *defaultTChatAgentModel) FindOneByMerchantIdAgentNo(ctx context.Context,
 	}
 }
 
-func (m *defaultTChatAgentModel) FindOneByMerchantIdChatUserId(ctx context.Context, merchantId int64, chatUserId int64) (*TChatAgent, error) {
-	tChatAgentMerchantIdChatUserIdKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdChatUserIdPrefix, merchantId, chatUserId)
+func (m *defaultTChatAgentModel) FindOneByMerchantIdUserId(ctx context.Context, merchantId int64, userId int64) (*TChatAgent, error) {
+	tChatAgentMerchantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdUserIdPrefix, merchantId, userId)
 	var resp TChatAgent
-	err := m.QueryRowIndexCtx(ctx, &resp, tChatAgentMerchantIdChatUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `merchant_id` = ? and `chat_user_id` = ? limit 1", tChatAgentRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, merchantId, chatUserId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tChatAgentMerchantIdUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `merchant_id` = ? and `user_id` = ? limit 1", tChatAgentRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, merchantId, userId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -144,11 +144,11 @@ func (m *defaultTChatAgentModel) FindOneByMerchantIdChatUserId(ctx context.Conte
 func (m *defaultTChatAgentModel) Insert(ctx context.Context, data *TChatAgent) (sql.Result, error) {
 	tChatAgentIdKey := fmt.Sprintf("%s%v", cacheTChatAgentIdPrefix, data.Id)
 	tChatAgentMerchantIdAgentNoKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdAgentNoPrefix, data.MerchantId, data.AgentNo)
-	tChatAgentMerchantIdChatUserIdKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdChatUserIdPrefix, data.MerchantId, data.ChatUserId)
+	tChatAgentMerchantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdUserIdPrefix, data.MerchantId, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tChatAgentRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.MerchantId, data.ChatUserId, data.GroupId, data.AgentNo, data.WelcomeMessage, data.Status, data.AutoOnline, data.MaxSessionCount, data.CurrentSessionCount, data.LastActiveTime, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, tChatAgentIdKey, tChatAgentMerchantIdAgentNoKey, tChatAgentMerchantIdChatUserIdKey)
+		return conn.ExecCtx(ctx, query, data.MerchantId, data.UserId, data.GroupId, data.AgentNo, data.WelcomeMessage, data.Status, data.AutoOnline, data.MaxSessionCount, data.CurrentSessionCount, data.LastActiveTime, data.Remark, data.CreateTimes, data.UpdateTimes)
+	}, tChatAgentIdKey, tChatAgentMerchantIdAgentNoKey, tChatAgentMerchantIdUserIdKey)
 	return ret, err
 }
 
@@ -160,11 +160,11 @@ func (m *defaultTChatAgentModel) Update(ctx context.Context, newData *TChatAgent
 
 	tChatAgentIdKey := fmt.Sprintf("%s%v", cacheTChatAgentIdPrefix, data.Id)
 	tChatAgentMerchantIdAgentNoKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdAgentNoPrefix, data.MerchantId, data.AgentNo)
-	tChatAgentMerchantIdChatUserIdKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdChatUserIdPrefix, data.MerchantId, data.ChatUserId)
+	tChatAgentMerchantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTChatAgentMerchantIdUserIdPrefix, data.MerchantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tChatAgentRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.MerchantId, newData.ChatUserId, newData.GroupId, newData.AgentNo, newData.WelcomeMessage, newData.Status, newData.AutoOnline, newData.MaxSessionCount, newData.CurrentSessionCount, newData.LastActiveTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tChatAgentIdKey, tChatAgentMerchantIdAgentNoKey, tChatAgentMerchantIdChatUserIdKey)
+		return conn.ExecCtx(ctx, query, newData.MerchantId, newData.UserId, newData.GroupId, newData.AgentNo, newData.WelcomeMessage, newData.Status, newData.AutoOnline, newData.MaxSessionCount, newData.CurrentSessionCount, newData.LastActiveTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tChatAgentIdKey, tChatAgentMerchantIdAgentNoKey, tChatAgentMerchantIdUserIdKey)
 	return err
 }
 

@@ -109,21 +109,9 @@ func buildMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *mode
 
 	now := utils.NowMillis()
 	message := models.ChatMessage{
-		MessageNo:  messageNo,
-		SessionNo:  session.SessionNo,
-		MerchantId: session.MerchantId,
-		Sender: &models.ChatMessageUser{
-			Id:        opts.Sender.GetId(),
-			Type:      int64(opts.Sender.Type),
-			Nickname:  opts.Sender.GetNickname(),
-			AvatarUrl: opts.Sender.GetAvatarUrl(),
-		},
-		Receiver: &models.ChatMessageUser{
-			Id:        opts.Receiver.GetId(),
-			Type:      int64(opts.Receiver.Type),
-			Nickname:  opts.Receiver.GetNickname(),
-			AvatarUrl: opts.Receiver.GetAvatarUrl(),
-		},
+		MessageNo:   messageNo,
+		SessionNo:   session.SessionNo,
+		MerchantId:  session.MerchantId,
 		MessageType: int64(opts.MessageType),
 		Content:     opts.Content,
 		Url:         opts.Url,
@@ -134,6 +122,22 @@ func buildMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *mode
 		Status:      int64(chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT),
 		CreateTimes: now,
 		UpdateTimes: now,
+	}
+	if opts.Sender != nil {
+		message.Sender = &models.ChatMessageUser{
+			Id:        opts.Sender.GetId(),
+			Type:      int64(opts.Sender.Type),
+			Nickname:  opts.Sender.GetNickname(),
+			AvatarUrl: opts.Sender.GetAvatarUrl(),
+		}
+	}
+	if opts.Receiver != nil {
+		message.Receiver = &models.ChatMessageUser{
+			Id:        opts.Receiver.GetId(),
+			Type:      int64(opts.Receiver.Type),
+			Nickname:  opts.Receiver.GetNickname(),
+			AvatarUrl: opts.Receiver.GetAvatarUrl(),
+		}
 	}
 	// 用户端发送的消息，接收方是坐席端；Receiver 在这里赋值
 	if message.Sender.Type == int64(chat.ChatSenderType_CHAT_SENDER_TYPE_USER) {
