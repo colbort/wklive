@@ -4,10 +4,30 @@ import (
 	"context"
 	"fmt"
 
+	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/chat"
+	"wklive/proto/common"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 )
+
+type SendMessageOptions struct {
+	MerchantId     int64
+	SessionNo      string
+	IsGuest        bool
+	Sender         *chat.ChatMessageUser
+	Receiver       *chat.ChatMessageUser
+	MessageType    chat.ChatMessageType
+	Content        string
+	Url            string
+	FileName       string
+	MimeType       string
+	FileSize       int64
+	Duration       int32
+	MessageChannel string
+	ReceiptChannel string
+}
 
 func MessageNextCursor(list []*models.ChatMessage) int64 {
 	if len(list) == 0 {
@@ -16,53 +36,124 @@ func MessageNextCursor(list []*models.ChatMessage) int64 {
 	return list[len(list)-1].CreateTimes
 }
 
-func MessageSenderType(msg *models.ChatMessage) chat.ChatSenderType {
-	if msg == nil || msg.Sender == nil {
-		return chat.ChatSenderType_CHAT_SENDER_TYPE_UNKNOWN
+func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessageOptions) (*chat.ChatMessage, *common.RespBase, error) {
+	var session *models.TChatSession
+	var base *common.RespBase
+	var err error
+	session, base, err = GetSession(ctx, svcCtx, opts.MerchantId, opts.SessionNo, opts.IsGuest)
+	if err != nil || base != nil {
+		return nil, base, err
 	}
-	return chat.ChatSenderType(msg.Sender.Type)
+	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
+		return nil, helper.ErrResp(400, "chat session is closed"), nil
+	}
+	mmg, base, err := buildMessage(ctx, svcCtx, session, opts)
+	if err != nil || base != nil {
+		return nil, base, err
+	}
+	var msg *chat.ChatMessage
+	if opts.IsGuest {
+		// 游客/临时会话
+		msg, err = AppendTransientMessage(ctx, svcCtx.BusRedis, opts.MerchantId, ToProtoMessage(mmg), session)
+		if err != nil {
+			return nil, nil, err
+		}
+	} else {
+		// 非游客
+		if opts.Sender == nil {
+			return nil, helper.ErrResp(400, "sender is required"), nil
+		}
+		mmg, err = sendPersistedMessage(ctx, svcCtx, session, mmg)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
+	_ = PublishMessageEvent(PublishMessageEventReq{
+		Ctx:       ctx,
+		BusRedis:  svcCtx.BusRedis,
+		Channel:   opts.MessageChannel,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
+		Payload:   chat.ChatMessageEvent_Message{Message: msg},
+	})
+	_ = PublishMessageEvent(PublishMessageEventReq{
+		Ctx:       ctx,
+		BusRedis:  svcCtx.BusRedis,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED,
+		Channel:   opts.ReceiptChannel,
+		Payload: chat.ChatMessageEvent_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
+			SessionNo:     msg.SessionNo,
+			MessageNo:     msg.MessageNo,
+			SenderId:      msg.Sender.Id,
+			OperatorId:    msg.Receiver.Id,
+			OperatorType:  chat.ChatSenderType(msg.Receiver.Type),
+			MessageStatus: chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_DELIVERED,
+			ReceiptTime:   utils.NowMillis(),
+		}},
+	})
+	return nil, helper.ErrResp(400, "sender type is invalid"), nil
 }
 
-func MessageAgentID(msg *models.ChatMessage) int64 {
-	if msg == nil {
-		return 0
+func buildMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, opts SendMessageOptions) (*models.ChatMessage, *common.RespBase, error) {
+	messageNo, err := svcCtx.GenerateNo(ctx, "CM")
+	if err != nil {
+		return nil, helper.ErrResp(400, "generate message no error"), nil
 	}
-	if msg.Sender != nil && chat.ChatSenderType(msg.Sender.Type) == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
-		return msg.Sender.Id
+	chatUser, err := svcCtx.ChatUserModel.FindOne(ctx, session.AgentUserId)
+	if err != nil {
+		return nil, helper.ErrResp(400, "chat user err"), nil
 	}
-	if msg.Receiver != nil && chat.ChatSenderType(msg.Receiver.Type) == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
-		return msg.Receiver.Id
+	if chatUser == nil {
+		return nil, helper.ErrResp(400, "chat user not found"), nil
 	}
-	return 0
+
+	now := utils.NowMillis()
+	message := models.ChatMessage{
+		MessageNo:  messageNo,
+		SessionNo:  session.SessionNo,
+		MerchantId: session.MerchantId,
+		Sender: &models.ChatMessageUser{
+			Id:        opts.Sender.GetId(),
+			Type:      int64(opts.Sender.Type),
+			Nickname:  opts.Sender.GetNickname(),
+			AvatarUrl: opts.Sender.GetAvatarUrl(),
+		},
+		Receiver: &models.ChatMessageUser{
+			Id:        opts.Receiver.GetId(),
+			Type:      int64(opts.Receiver.Type),
+			Nickname:  opts.Receiver.GetNickname(),
+			AvatarUrl: opts.Receiver.GetAvatarUrl(),
+		},
+		MessageType: int64(opts.MessageType),
+		Content:     opts.Content,
+		Url:         opts.Url,
+		FileName:    opts.FileName,
+		MimeType:    opts.MimeType,
+		FileSize:    opts.FileSize,
+		Duration:    opts.Duration,
+		Status:      int64(chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_SENT),
+		CreateTimes: now,
+		UpdateTimes: now,
+	}
+	// 用户端发送的消息，接收方是坐席端；Receiver 在这里赋值
+	if message.Sender.Type == int64(chat.ChatSenderType_CHAT_SENDER_TYPE_USER) {
+		message.Receiver = &models.ChatMessageUser{
+			Id:        chatUser.Id,
+			Type:      int64(chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT),
+			Nickname:  chatUser.Nickname,
+			AvatarUrl: chatUser.AvatarUrl,
+		}
+	} else {
+		// 坐席端发送的消息，接收方是用户端；Receiver 信息在发送新的时候已经赋值；
+		message.Sender = &models.ChatMessageUser{
+			Nickname:  chatUser.Nickname,
+			AvatarUrl: chatUser.AvatarUrl,
+		}
+	}
+	return &message, nil, nil
 }
 
-func MessageReceiver(session *models.TChatSession, senderType chat.ChatSenderType) *models.ChatMessageUser {
-	if session == nil {
-		return nil
-	}
-	switch senderType {
-	case chat.ChatSenderType_CHAT_SENDER_TYPE_USER:
-		if session.AgentId <= 0 {
-			return nil
-		}
-		return &models.ChatMessageUser{
-			Id:   session.AgentId,
-			Type: int64(chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT),
-		}
-	case chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT, chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM:
-		if session.UserId <= 0 {
-			return nil
-		}
-		return &models.ChatMessageUser{
-			Id:   session.UserId,
-			Type: int64(chat.ChatSenderType_CHAT_SENDER_TYPE_USER),
-		}
-	default:
-		return nil
-	}
-}
-
-func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, msg *models.ChatMessage, channel string) (*models.ChatMessage, error) {
+func sendPersistedMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, msg *models.ChatMessage) (*models.ChatMessage, error) {
 	model := svcCtx.ChatMessageFactory.New(session.MerchantId)
 	if model == nil {
 		return nil, fmt.Errorf("invalid merchant_id: %d", session.MerchantId)
@@ -74,11 +165,10 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *model
 	now := msg.CreateTimes
 	session.LastMessageNo = msg.MessageNo
 	session.LastMessage = TrimSummary(msg.Content, msg.FileName, msg.Url)
-	senderType := MessageSenderType(msg)
-	session.LastSenderType = int64(senderType)
+	session.LastSenderType = int64(msg.Sender.Type)
 	session.LastMessageTime = now
 	session.UpdateTimes = now
-	switch senderType {
+	switch chat.ChatSenderType(msg.Sender.Type) {
 	case chat.ChatSenderType_CHAT_SENDER_TYPE_USER:
 		session.AgentUnreadCount++
 		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
@@ -95,12 +185,6 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *model
 	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
 		return nil, err
 	}
-	_ = PublishMessageEvent(PublishMessageEventReq{
-		Ctx:       ctx,
-		BusRedis:  svcCtx.BusRedis,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
-		Channel:   channel,
-		Payload:   chat.ChatMessageEvent_Message{Message: ToProtoMessage(msg)},
-	})
+
 	return msg, nil
 }

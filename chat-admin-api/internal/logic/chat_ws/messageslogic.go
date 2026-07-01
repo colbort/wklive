@@ -3,7 +3,6 @@ package chat_ws
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"strings"
 
@@ -179,11 +178,16 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		return
 	}
 	req.Sender = &chat.ChatMessageUser{
+		Id:   conn.AgentUserId,
+		Type: chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
+	}
+	req.Receiver = &chat.ChatMessageUser{
 		Id:        conn.UserId,
 		Nickname:  conn.Nickname,
 		AvatarUrl: conn.AvatarUrl,
-		Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
+		Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
 	}
+	req.MerchantId = conn.MerchantId
 	req.SessionNo = conn.SessionNo
 	req.MerchantId = conn.MerchantId
 	req.IsGuest = conn.IsGuest
@@ -304,26 +308,6 @@ func sendWSError(conn *ws.Connection, message string) {
 			},
 		},
 	})
-}
-
-func (l *MessagesLogic) appendTransientMessage(ctx context.Context, merchantId int64, eventType chat.ChatEventType, msg *chat.ChatMessage, session *chat.ChatSession) error {
-	if l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
-		return nil
-	}
-	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &chat.SendAgentMessageReq{
-		MerchantId: merchantId,
-		EventType:  eventType,
-		Message:    msg,
-		Session:    session,
-		IsGuest:    true,
-	})
-	if err != nil {
-		return err
-	}
-	if resp.GetBase().GetCode() != 200 {
-		return errors.New(resp.GetBase().GetMsg())
-	}
-	return nil
 }
 
 func firstNonEmpty(values ...string) string {

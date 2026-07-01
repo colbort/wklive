@@ -76,19 +76,19 @@ func ChangeAgentSessionCount(ctx context.Context, svcCtx *svc.ServiceContext, ag
 
 type AssignSessionOptions struct {
 	SessionNo  string
-	MerchantId int64
-	ToAgentId  int64
+	Agent      *models.TChatAgent
 	AssignType chat.ChatAssignType
 	Reason     string
+	IsGuest    bool
 }
 
 func AcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, in AssignSessionOptions) (*models.TChatSession, *common.RespBase, error) {
-	session, base, err := GetSession(ctx, svcCtx, in.MerchantId, in.SessionNo, false)
+	session, base, err := GetSession(ctx, svcCtx, in.Agent.MerchantId, in.SessionNo, in.IsGuest)
 	if base != nil || err != nil {
 		return nil, base, err
 	}
-	if in.ToAgentId <= 0 {
-		return nil, helper.ErrResp(400, "to_agent_id is required"), nil
+	if in.Agent == nil || in.Agent.Id <= 0 {
+		return nil, helper.ErrResp(400, "invalid agent"), nil
 	}
 	assignType := NormalizeAssignType(in.AssignType)
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
@@ -97,38 +97,39 @@ func AcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, in Assig
 	if base := ValidateAssignableSession(session, assignType); base != nil {
 		return nil, base, nil
 	}
-	agent, err := svcCtx.ChatAgentModel.FindOne(ctx, in.ToAgentId)
-	if err == models.ErrNotFound || agent.MerchantId != in.MerchantId {
-		return nil, helper.ErrResp(404, "chat agent not found"), nil
-	}
-	if err != nil {
-		return nil, nil, err
-	}
 
 	fromAgentID := session.AgentId
-	if fromAgentID != agent.Id {
+	if fromAgentID != in.Agent.Id {
 		if err := ChangeAgentSessionCount(ctx, svcCtx, fromAgentID, -1); err != nil {
 			return nil, nil, err
 		}
-		if err := ChangeAgentSessionCount(ctx, svcCtx, agent.Id, 1); err != nil {
+		if err := ChangeAgentSessionCount(ctx, svcCtx, in.Agent.Id, 1); err != nil {
 			return nil, nil, err
 		}
 	}
 
 	now := utils.NowMillis()
-	session.AgentId = agent.Id
-	session.GroupId = agent.GroupId
+	session.AgentId = in.Agent.Id
+	session.AgentUserId = in.Agent.ChatUserId
+	session.GroupId = in.Agent.GroupId
 	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING)
 	session.UpdateTimes = now
-	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
-		return nil, nil, err
+	if in.IsGuest {
+		session, err = UpsertTransientSession(ctx, svcCtx.BusRedis, session)
+		if err != nil {
+			return nil, nil, err
+		}
+	} else {
+		if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
+			return nil, nil, err
+		}
 	}
 
 	_, err = svcCtx.ChatAssignmentModel.Insert(ctx, &models.TChatAssignment{
 		SessionNo:   session.SessionNo,
 		MerchantId:  session.MerchantId,
 		FromAgentId: fromAgentID,
-		ToAgentId:   agent.Id,
+		ToAgentId:   in.Agent.Id,
 		AssignType:  int64(assignType),
 		Reason:      strings.TrimSpace(in.Reason),
 		CreateTimes: now,

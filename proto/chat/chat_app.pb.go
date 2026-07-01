@@ -657,11 +657,9 @@ type SendUserMessageReq struct {
 	Duration        int32                  `protobuf:"varint,11,opt,name=duration,proto3" json:"duration,omitempty"`                                                   // 音频/视频时长(秒)
 	Extra           string                 `protobuf:"bytes,12,opt,name=extra,proto3" json:"extra,omitempty"`                                                          // 扩展JSON
 	Sender          *ChatMessageUser       `protobuf:"bytes,13,opt,name=sender,proto3" json:"sender,omitempty"`                                                        // 用户端
-	MerchantId      int64                  `protobuf:"varint,14,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                             //
-	Message         *ChatMessage           `protobuf:"bytes,15,opt,name=message,proto3" json:"message,omitempty"`                                                      // 游客/临时消息，可选
-	Session         *ChatSession           `protobuf:"bytes,16,opt,name=session,proto3" json:"session,omitempty"`                                                      // 游客/临时会话快照，可选
-	IsGuest         bool                   `protobuf:"varint,17,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客/临时会话
-	EventType       ChatEventType          `protobuf:"varint,18,opt,name=event_type,json=eventType,proto3,enum=chat.ChatEventType" json:"event_type,omitempty"`        // 游客/临时消息事件类型
+	Receiver        *ChatMessageUser       `protobuf:"bytes,14,opt,name=receiver,proto3" json:"receiver,omitempty"`                                                    // 用户端
+	MerchantId      int64                  `protobuf:"varint,15,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                             //
+	IsGuest         bool                   `protobuf:"varint,16,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客/临时会话
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -787,6 +785,13 @@ func (x *SendUserMessageReq) GetSender() *ChatMessageUser {
 	return nil
 }
 
+func (x *SendUserMessageReq) GetReceiver() *ChatMessageUser {
+	if x != nil {
+		return x.Receiver
+	}
+	return nil
+}
+
 func (x *SendUserMessageReq) GetMerchantId() int64 {
 	if x != nil {
 		return x.MerchantId
@@ -794,32 +799,11 @@ func (x *SendUserMessageReq) GetMerchantId() int64 {
 	return 0
 }
 
-func (x *SendUserMessageReq) GetMessage() *ChatMessage {
-	if x != nil {
-		return x.Message
-	}
-	return nil
-}
-
-func (x *SendUserMessageReq) GetSession() *ChatSession {
-	if x != nil {
-		return x.Session
-	}
-	return nil
-}
-
 func (x *SendUserMessageReq) GetIsGuest() bool {
 	if x != nil {
 		return x.IsGuest
 	}
 	return false
-}
-
-func (x *SendUserMessageReq) GetEventType() ChatEventType {
-	if x != nil {
-		return x.EventType
-	}
-	return ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED
 }
 
 type SendUserTypingReq struct {
@@ -1495,7 +1479,7 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\bext_json\x18\x06 \x01(\tR\aextJson\"g\n" +
 	"\x13OpenChatSessionResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.chat.ChatQueuePayloadR\x04data\"\xf5\x04\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.chat.ChatQueuePayloadR\x04data\"\x9a\x04\n" +
 	"\x12SendUserMessageReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12*\n" +
@@ -1511,14 +1495,11 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	" \x01(\x05R\x06height\x12\x1a\n" +
 	"\bduration\x18\v \x01(\x05R\bduration\x12\x14\n" +
 	"\x05extra\x18\f \x01(\tR\x05extra\x12-\n" +
-	"\x06sender\x18\r \x01(\v2\x15.chat.ChatMessageUserR\x06sender\x12\x1f\n" +
-	"\vmerchant_id\x18\x0e \x01(\x03R\n" +
-	"merchantId\x12+\n" +
-	"\amessage\x18\x0f \x01(\v2\x11.chat.ChatMessageR\amessage\x12+\n" +
-	"\asession\x18\x10 \x01(\v2\x11.chat.ChatSessionR\asession\x12\x19\n" +
-	"\bis_guest\x18\x11 \x01(\bR\aisGuest\x122\n" +
-	"\n" +
-	"event_type\x18\x12 \x01(\x0e2\x13.chat.ChatEventTypeR\teventType\"\x99\x01\n" +
+	"\x06sender\x18\r \x01(\v2\x15.chat.ChatMessageUserR\x06sender\x121\n" +
+	"\breceiver\x18\x0e \x01(\v2\x15.chat.ChatMessageUserR\breceiver\x12\x1f\n" +
+	"\vmerchant_id\x18\x0f \x01(\x03R\n" +
+	"merchantId\x12\x19\n" +
+	"\bis_guest\x18\x10 \x01(\bR\aisGuest\"\x99\x01\n" +
 	"\x11SendUserTypingReq\x12\x1f\n" +
 	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
 	"merchantId\x12\x17\n" +
@@ -1626,15 +1607,14 @@ var file_proto_chat_chat_app_proto_goTypes = []any{
 	(*ChatQueuePayload)(nil),          // 23: chat.ChatQueuePayload
 	(ChatMessageType)(0),              // 24: chat.ChatMessageType
 	(*ChatMessageUser)(nil),           // 25: chat.ChatMessageUser
-	(*ChatMessage)(nil),               // 26: chat.ChatMessage
-	(*ChatSession)(nil),               // 27: chat.ChatSession
-	(ChatEventType)(0),                // 28: chat.ChatEventType
-	(*ChatTypingPayload)(nil),         // 29: chat.ChatTypingPayload
-	(*common.PageReq)(nil),            // 30: common.PageReq
-	(ChatSenderType)(0),               // 31: chat.ChatSenderType
-	(ChatSessionCloseReason)(0),       // 32: chat.ChatSessionCloseReason
-	(*ChatSatisfaction)(nil),          // 33: chat.ChatSatisfaction
-	(*ChatMessageEvent)(nil),          // 34: chat.ChatMessageEvent
+	(*ChatTypingPayload)(nil),         // 26: chat.ChatTypingPayload
+	(*common.PageReq)(nil),            // 27: common.PageReq
+	(ChatSenderType)(0),               // 28: chat.ChatSenderType
+	(ChatSessionCloseReason)(0),       // 29: chat.ChatSessionCloseReason
+	(*ChatMessage)(nil),               // 30: chat.ChatMessage
+	(*ChatSession)(nil),               // 31: chat.ChatSession
+	(*ChatSatisfaction)(nil),          // 32: chat.ChatSatisfaction
+	(*ChatMessageEvent)(nil),          // 33: chat.ChatMessageEvent
 }
 var file_proto_chat_chat_app_proto_depIdxs = []int32{
 	19, // 0: chat.AppCommonResp.base:type_name -> common.RespBase
@@ -1650,46 +1630,44 @@ var file_proto_chat_chat_app_proto_depIdxs = []int32{
 	23, // 10: chat.OpenChatSessionResp.data:type_name -> chat.ChatQueuePayload
 	24, // 11: chat.SendUserMessageReq.message_type:type_name -> chat.ChatMessageType
 	25, // 12: chat.SendUserMessageReq.sender:type_name -> chat.ChatMessageUser
-	26, // 13: chat.SendUserMessageReq.message:type_name -> chat.ChatMessage
-	27, // 14: chat.SendUserMessageReq.session:type_name -> chat.ChatSession
-	28, // 15: chat.SendUserMessageReq.event_type:type_name -> chat.ChatEventType
-	29, // 16: chat.SendUserTypingReq.typing:type_name -> chat.ChatTypingPayload
-	30, // 17: chat.ListMyChatMessagesReq.page:type_name -> common.PageReq
-	31, // 18: chat.ListMyChatMessagesReq.sender_type:type_name -> chat.ChatSenderType
-	32, // 19: chat.CloseMyChatSessionReq.close_reason_type:type_name -> chat.ChatSessionCloseReason
-	19, // 20: chat.AppListChatMessagesResp.base:type_name -> common.RespBase
-	26, // 21: chat.AppListChatMessagesResp.data:type_name -> chat.ChatMessage
-	19, // 22: chat.AppChatSessionResp.base:type_name -> common.RespBase
-	27, // 23: chat.AppChatSessionResp.data:type_name -> chat.ChatSession
-	19, // 24: chat.AppChatMessageResp.base:type_name -> common.RespBase
-	26, // 25: chat.AppChatMessageResp.data:type_name -> chat.ChatMessage
-	19, // 26: chat.AppChatSatisfactionResp.base:type_name -> common.RespBase
-	33, // 27: chat.AppChatSatisfactionResp.data:type_name -> chat.ChatSatisfaction
-	1,  // 28: chat.ChatApp.AuthChatMerchant:input_type -> chat.AuthChatMerchantReq
-	7,  // 29: chat.ChatApp.OpenChatSession:input_type -> chat.OpenChatSessionReq
-	4,  // 30: chat.ChatApp.GenerateChatSessionNo:input_type -> chat.GenerateChatSessionNoReq
-	6,  // 31: chat.ChatApp.GetChatSessionByUser:input_type -> chat.GetChatSessionByUserReq
-	9,  // 32: chat.ChatApp.SendUserMessage:input_type -> chat.SendUserMessageReq
-	10, // 33: chat.ChatApp.SendUserTyping:input_type -> chat.SendUserTypingReq
-	11, // 34: chat.ChatApp.ListMyChatMessages:input_type -> chat.ListMyChatMessagesReq
-	12, // 35: chat.ChatApp.CloseMyChatSession:input_type -> chat.CloseMyChatSessionReq
-	13, // 36: chat.ChatApp.SubmitChatSatisfaction:input_type -> chat.SubmitChatSatisfactionReq
-	14, // 37: chat.ChatApp.AppSubscribeStream:input_type -> chat.AppChatSubscribeRequest
-	3,  // 38: chat.ChatApp.AuthChatMerchant:output_type -> chat.AuthChatMerchantResp
-	8,  // 39: chat.ChatApp.OpenChatSession:output_type -> chat.OpenChatSessionResp
-	5,  // 40: chat.ChatApp.GenerateChatSessionNo:output_type -> chat.GenerateChatSessionNoResp
-	16, // 41: chat.ChatApp.GetChatSessionByUser:output_type -> chat.AppChatSessionResp
-	17, // 42: chat.ChatApp.SendUserMessage:output_type -> chat.AppChatMessageResp
-	0,  // 43: chat.ChatApp.SendUserTyping:output_type -> chat.AppCommonResp
-	15, // 44: chat.ChatApp.ListMyChatMessages:output_type -> chat.AppListChatMessagesResp
-	16, // 45: chat.ChatApp.CloseMyChatSession:output_type -> chat.AppChatSessionResp
-	18, // 46: chat.ChatApp.SubmitChatSatisfaction:output_type -> chat.AppChatSatisfactionResp
-	34, // 47: chat.ChatApp.AppSubscribeStream:output_type -> chat.ChatMessageEvent
-	38, // [38:48] is the sub-list for method output_type
-	28, // [28:38] is the sub-list for method input_type
-	28, // [28:28] is the sub-list for extension type_name
-	28, // [28:28] is the sub-list for extension extendee
-	0,  // [0:28] is the sub-list for field type_name
+	25, // 13: chat.SendUserMessageReq.receiver:type_name -> chat.ChatMessageUser
+	26, // 14: chat.SendUserTypingReq.typing:type_name -> chat.ChatTypingPayload
+	27, // 15: chat.ListMyChatMessagesReq.page:type_name -> common.PageReq
+	28, // 16: chat.ListMyChatMessagesReq.sender_type:type_name -> chat.ChatSenderType
+	29, // 17: chat.CloseMyChatSessionReq.close_reason_type:type_name -> chat.ChatSessionCloseReason
+	19, // 18: chat.AppListChatMessagesResp.base:type_name -> common.RespBase
+	30, // 19: chat.AppListChatMessagesResp.data:type_name -> chat.ChatMessage
+	19, // 20: chat.AppChatSessionResp.base:type_name -> common.RespBase
+	31, // 21: chat.AppChatSessionResp.data:type_name -> chat.ChatSession
+	19, // 22: chat.AppChatMessageResp.base:type_name -> common.RespBase
+	30, // 23: chat.AppChatMessageResp.data:type_name -> chat.ChatMessage
+	19, // 24: chat.AppChatSatisfactionResp.base:type_name -> common.RespBase
+	32, // 25: chat.AppChatSatisfactionResp.data:type_name -> chat.ChatSatisfaction
+	1,  // 26: chat.ChatApp.AuthChatMerchant:input_type -> chat.AuthChatMerchantReq
+	7,  // 27: chat.ChatApp.OpenChatSession:input_type -> chat.OpenChatSessionReq
+	4,  // 28: chat.ChatApp.GenerateChatSessionNo:input_type -> chat.GenerateChatSessionNoReq
+	6,  // 29: chat.ChatApp.GetChatSessionByUser:input_type -> chat.GetChatSessionByUserReq
+	9,  // 30: chat.ChatApp.SendUserMessage:input_type -> chat.SendUserMessageReq
+	10, // 31: chat.ChatApp.SendUserTyping:input_type -> chat.SendUserTypingReq
+	11, // 32: chat.ChatApp.ListMyChatMessages:input_type -> chat.ListMyChatMessagesReq
+	12, // 33: chat.ChatApp.CloseMyChatSession:input_type -> chat.CloseMyChatSessionReq
+	13, // 34: chat.ChatApp.SubmitChatSatisfaction:input_type -> chat.SubmitChatSatisfactionReq
+	14, // 35: chat.ChatApp.AppSubscribeStream:input_type -> chat.AppChatSubscribeRequest
+	3,  // 36: chat.ChatApp.AuthChatMerchant:output_type -> chat.AuthChatMerchantResp
+	8,  // 37: chat.ChatApp.OpenChatSession:output_type -> chat.OpenChatSessionResp
+	5,  // 38: chat.ChatApp.GenerateChatSessionNo:output_type -> chat.GenerateChatSessionNoResp
+	16, // 39: chat.ChatApp.GetChatSessionByUser:output_type -> chat.AppChatSessionResp
+	17, // 40: chat.ChatApp.SendUserMessage:output_type -> chat.AppChatMessageResp
+	0,  // 41: chat.ChatApp.SendUserTyping:output_type -> chat.AppCommonResp
+	15, // 42: chat.ChatApp.ListMyChatMessages:output_type -> chat.AppListChatMessagesResp
+	16, // 43: chat.ChatApp.CloseMyChatSession:output_type -> chat.AppChatSessionResp
+	18, // 44: chat.ChatApp.SubmitChatSatisfaction:output_type -> chat.AppChatSatisfactionResp
+	33, // 45: chat.ChatApp.AppSubscribeStream:output_type -> chat.ChatMessageEvent
+	36, // [36:46] is the sub-list for method output_type
+	26, // [26:36] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_chat_app_proto_init() }

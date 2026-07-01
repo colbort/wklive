@@ -43,10 +43,10 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	}
 	session, base, err := ih.AcceptChatSession(l.ctx, l.svcCtx, ih.AssignSessionOptions{
 		SessionNo:  in.SessionNo,
-		MerchantId: in.MerchantId,
-		ToAgentId:  agent.Id,
+		Agent:      agent,
 		AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
 		Reason:     firstNonEmpty(in.GetReason(), "accept"),
+		IsGuest:    in.GetIsGuest(),
 	})
 	if err != nil {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil

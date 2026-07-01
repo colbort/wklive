@@ -123,11 +123,9 @@ message SendUserMessageReq {
   int32 duration = 11;              // 音频/视频时长(秒)
   string extra = 12;                // 扩展JSON
   ChatMessageUser sender = 13;      // 用户端
-  int64 merchant_id = 14;           // 
-  ChatMessage message = 15;         // 游客/临时消息，可选
-  ChatSession session = 16;         // 游客/临时会话快照，可选
-  bool is_guest = 17;               // 是否游客/临时会话
-  ChatEventType event_type = 18;    // 游客/临时消息事件类型
+  ChatMessageUser receiver = 14;    // 用户端
+  int64 merchant_id = 15;           // 
+  bool is_guest = 16;               // 是否游客/临时会话
 }
 
 message SendUserTypingReq {
