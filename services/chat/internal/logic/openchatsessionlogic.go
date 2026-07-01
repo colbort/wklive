@@ -162,7 +162,17 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		ms = session
 	}
 	// 向坐席 chat-admin-api 推送 用户上线通知
-	l.publishUserJoinEvent(ms, in.IsGuest)
+	// l.publishUserJoinEvent(ms, in.IsGuest)
+	err := ih.PublishMessageEvent(ih.PublishMessageEventReq{
+		Ctx:       l.ctx,
+		BusRedis:  l.svcCtx.BusRedis,
+		Channel:   chat.ChatAdminEventChannel,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
+		Payload:   &chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(ms, in.IsGuest)},
+	})
+	if err != nil {
+		logx.Errorf("publish user join event error: %v", err)
+	}
 	queue, err := ih.ToProtoQueueInfo(l.ctx, l.svcCtx, ms)
 	if err != nil {
 		return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
@@ -176,18 +186,4 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 	}
 	queue.QueueAction = chat.ChatQueueAction_CHAT_QUEUE_ACTION_JOIN
 	return &chat.OpenChatSessionResp{Base: helper.OkResp(), Data: queue}, nil
-}
-
-func (l *OpenChatSessionLogic) publishUserJoinEvent(session *models.TChatSession, isGuest bool) {
-	if session == nil {
-		l.Logger.Info("push event to admin err: session is nil")
-		return
-	}
-	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
-		Ctx:       l.ctx,
-		BusRedis:  l.svcCtx.BusRedis,
-		Channel:   chat.ChatAdminEventChannel,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
-		Payload:   chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, isGuest)},
-	})
 }

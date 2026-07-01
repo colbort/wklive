@@ -573,6 +573,9 @@ enum ChatSessionCloseReason {
 
   // 转接失败关闭
   CHAT_SESSION_CLOSE_REASON_TRANSFER_FAILED = 6;
+
+  // 网络异常断开
+  CHAT_SESSION_CLOSE_REASON_INTERNET_ERROR = 7;
 }
 ```
 
@@ -754,6 +757,14 @@ sequenceDiagram
     U->>S: EVALUATION_SUBMIT
     S-->>A: EVALUATION_SUBMIT
 
+    opt 用户网络异常断开
+        U-x S: WebSocket 断开 / HEARTBEAT 超时
+        S-->>A: USER_LEAVE，session_status=INTERNET_ERROR
+        Note over S: 不发送 SESSION_CLOSE，保留会话等待重连
+        U->>S: 重新建立 WebSocket
+        S-->>A: USER_JOIN，恢复原会话状态
+    end
+
     A->>S: SESSION_CLOSE
     S-->>U: SESSION_CLOSE
     S-->>A: SESSION_CLOSE
@@ -910,6 +921,48 @@ SESSION_CLOSE，close_reason = TIMEOUT
 |---|---|
 | `SYSTEM_NOTICE` | 用户端 + 坐席端可选 |
 | `SESSION_CLOSE` | 双方 |
+
+---
+
+### 7.7 用户网络异常断开与恢复
+
+用户 WebSocket 异常断开或心跳超时时，只表示连接离线，不等同于会话关闭。
+
+```text
+会话服务中
+↓
+用户网络异常断开 / HEARTBEAT 超时
+↓
+USER_LEAVE，session_status = INTERNET_ERROR
+↓
+会话保留，等待用户重连
+↓
+用户重新建立 WebSocket
+↓
+USER_JOIN，恢复断线前会话状态
+```
+
+如果超过业务允许的等待时间仍未重连，服务端再关闭会话：
+
+```text
+INTERNET_ERROR 超时
+↓
+SESSION_CLOSE，close_reason = INTERNET_ERROR
+```
+
+事件目标：
+
+| 事件 | 推送目标 |
+|---|---|
+| `USER_LEAVE` | 坐席端 / 管理端可选 |
+| `USER_JOIN` | 坐席端 / 管理端可选 |
+| `SESSION_CLOSE` | 用户端 + 坐席端 |
+
+关键规则：
+
+- 网络异常断开时不直接推 `SESSION_CLOSE`。
+- `USER_LEAVE` 表示在线状态变化，`SESSION_CLOSE` 才表示会话生命周期结束。
+- 重连成功后应恢复断线前状态，例如 `WAITING`、`SERVING`、`PENDING_USER` 或 `PENDING_AGENT`。
 
 ---
 
@@ -1098,6 +1151,18 @@ message ChatTransferInfo {
 
 ---
 
+### 10.6 网络异常断开
+
+服务端应该：
+
+1. 检测到用户 WebSocket 断开或心跳超时时，设置会话状态为 `INTERNET_ERROR`。
+2. 推送 `USER_LEAVE` 给坐席端或管理端，表示用户离线。
+3. 不立即推送 `SESSION_CLOSE`，保留会话等待用户重连。
+4. 用户重连时恢复断线前会话状态，并推送 `USER_JOIN`。
+5. 如果超过允许等待时间仍未重连，再设置会话为 `CLOSED`，并推送 `SESSION_CLOSE close_reason = INTERNET_ERROR` 给双方。
+
+---
+
 ## 11. 总结
 
 当前事件设计的核心流程是：
@@ -1115,9 +1180,9 @@ TRANSFER_REQUEST / TRANSFER_ACCEPT / TRANSFER_REJECT，可选
 ↓
 EVALUATION_INVITE / EVALUATION_SUBMIT
 ↓
-SESSION_CLOSE
+USER_LEAVE，可选，表示在线状态变化
 ↓
-USER_LEAVE
+SESSION_CLOSE
 ```
 
 最重要的几个事件：

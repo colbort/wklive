@@ -47,14 +47,19 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 			if err != nil {
 				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
+		} else {
+			if err := ih.MarkSessionInternetError(l.ctx, l.svcCtx, session); err != nil {
+				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+			}
 		}
 		_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
 			Ctx:       l.ctx,
 			BusRedis:  l.svcCtx.BusRedis,
 			Channel:   chat.ChatAdminEventChannel,
 			EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
-			Payload:   chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, true)},
+			Payload:   &chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, in.IsGuest)},
 		})
+		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 	}
 	if in.GetIsGuest() {
 		now := utils.NowMillis()
@@ -80,14 +85,14 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAppEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
-		Payload:   sessionPayload,
+		Payload:   &sessionPayload,
 	})
 	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
 		Ctx:       l.ctx,
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAdminEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
-		Payload:   sessionPayload,
+		Payload:   &sessionPayload,
 	})
 	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 }

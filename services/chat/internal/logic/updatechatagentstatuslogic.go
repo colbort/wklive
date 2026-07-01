@@ -57,7 +57,7 @@ func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAg
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAdminEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE,
-		Payload: chat.ChatMessageEvent_SystemNotice{SystemNotice: &chat.ChatSystemNoticePayload{
+		Payload: &chat.ChatMessageEvent_SystemNotice{SystemNotice: &chat.ChatSystemNoticePayload{
 			SessionNo:  "",
 			Title:      "坐席状态变更",
 			Content:    "坐席状态已变更为 " + in.GetStatus().String(),

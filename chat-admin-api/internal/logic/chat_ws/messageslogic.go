@@ -3,6 +3,7 @@ package chat_ws
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -14,6 +15,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var upgrader = websocket.Upgrader{
@@ -88,7 +90,7 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 	return func(conn *ws.Connection, event ws.InboundEvent) {
 		eventType, ok := chat.ChatEventType_value[event.EventType]
 		if !ok {
-			sendWSError(conn, "event type parse err: "+event.EventType)
+			sendWSError(conn, "invalid event type", fmt.Errorf("invalid event type: %s", event.EventType))
 			return
 		}
 		switch chat.ChatEventType(eventType) {
@@ -131,7 +133,7 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 				},
 			})
 		default:
-			sendWSError(conn, "unsupported event type")
+			sendWSError(conn, "unsupported event type", fmt.Errorf("unsupported event type: %s", event.EventType))
 		}
 	}
 }
@@ -173,8 +175,8 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 
 func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
 	var req chat.SendAgentMessageReq
-	if err := json.Unmarshal(payload, &req); err != nil {
-		sendWSError(conn, "invalid send_agent_message payload")
+	if err := protojson.Unmarshal(payload, &req); err != nil {
+		sendWSError(conn, "invalid send_agent_message payload", err)
 		return
 	}
 	req.Sender = &chat.ChatMessageUser{
@@ -193,27 +195,27 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 	req.IsGuest = conn.IsGuest
 	_, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
 	if err != nil {
-		sendWSError(conn, err.Error())
+		sendWSError(conn, "failed to send agent message", err)
 		return
 	}
 }
 
 func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
 	var data chat.AcceptChatSessionReq
-	if err := json.Unmarshal(payload, &data); err != nil {
-		sendWSError(conn, "invalid accept_chat_session payload")
+	if err := protojson.Unmarshal(payload, &data); err != nil {
+		sendWSError(conn, "invalid accept_chat_session payload", err)
 		return
 	}
 
 	resp, err := l.svcCtx.ChatAdminCli.AcceptChatSession(ctx, &chat.AcceptChatSessionReq{
 		SessionNo:  conn.SessionNo,
-		Reason:     "accept",
+		Reason:     data.Reason,
 		MerchantId: conn.MerchantId,
 		AgentId:    conn.AgentId,
 		IsGuest:    conn.IsGuest,
 	})
 	if err != nil {
-		sendWSError(conn, err.Error())
+		sendWSError(conn, "failed to accept chat session", err)
 		return
 	}
 	conn.SendEvent(&chat.ChatMessageEvent{
@@ -229,25 +231,33 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 
 func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
 	var req chat.CloseChatSessionReq
-	if err := json.Unmarshal(payload, &req); err != nil {
-		sendWSError(conn, "invalid close_chat_session payload")
+	if err := protojson.Unmarshal(payload, &req); err != nil {
+		sendWSError(conn, "invalid close_chat_session payload", err)
 		return
 	}
-	req.SessionNo = conn.SessionNo
+	if req.SessionNo == "" {
+		req.SessionNo = conn.SessionNo
+	}
+	if req.MerchantId == 0 {
+		req.MerchantId = conn.MerchantId
+	}
+	if req.UserId == 0 {
+		req.UserId = conn.UserId
+	}
+	if !req.IsGuest {
+		req.IsGuest = conn.IsGuest
+	}
 	req.CloseReasonType = chat.ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_AGENT
 	req.CloseReason = firstNonEmpty(req.CloseReason, "closed by agent")
-	req.MerchantId = conn.MerchantId
-	req.UserId = conn.UserId
-	req.IsGuest = conn.IsGuest
 
 	resp, err := l.svcCtx.ChatAdminCli.CloseChatSession(ctx, &req)
 	if err != nil {
-		sendWSError(conn, err.Error())
+		sendWSError(conn, "failed to close chat session", err)
 		return
 	}
 	conn.SendEvent(&chat.ChatMessageEvent{
-		Code:      200,
-		Msg:       "",
+		Code:      resp.Base.Code,
+		Msg:       resp.Base.Msg,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
 		CreatedAt: utils.NowMillis(),
 		Payload: &chat.ChatMessageEvent_Session{
@@ -291,7 +301,7 @@ func sessionAgentFromPayload(conn *ws.Connection, sessionNo string, agentId int6
 	return sessionNo, agentId
 }
 
-func sendWSError(conn *ws.Connection, message string) {
+func sendWSError(conn *ws.Connection, message string, err error) {
 	conn.SendEvent(&chat.ChatMessageEvent{
 		Code:      200,
 		Msg:       "",
@@ -303,7 +313,7 @@ func sendWSError(conn *ws.Connection, message string) {
 				MessageNo:    "",
 				ErrorCode:    0,
 				ErrorMessage: message,
-				Detail:       message,
+				Detail:       err.Error(),
 				Retryable:    false,
 			},
 		},

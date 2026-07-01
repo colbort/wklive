@@ -91,7 +91,7 @@ export interface ChatSessionExtJson {
   [key: string]: unknown;
 }
 
-export interface ChatMessageSender {
+export interface ChatMessageUser {
   id: number;
   type: number;
   nickname: string;
@@ -104,8 +104,8 @@ export interface ChatMessage {
   sessionNo: string;
   merchantId: number;
   senderType: number;
-  sender?: ChatMessageSender;
-  receiver?: ChatMessageSender;
+  sender?: ChatMessageUser;
+  receiver?: ChatMessageUser;
   messageType: number;
   content: string;
   url: string;
@@ -314,28 +314,30 @@ export interface ChatWsRequest<TPayload = unknown> {
 }
 
 export interface SendAgentMessagePayload {
-  merchantId?: number;
-  agentId?: number;
-  userId?: number;
   sessionNo?: string;
+  clientMessageId?: string;
   messageType: number;
   content?: string;
   url?: string;
   fileName?: string;
-  mimeType?: string;
   fileSize?: number;
+  mimeType?: string;
   width?: number;
   height?: number;
   duration?: number;
   extra?: string;
+  sender: ChatMessageUser;
+  receiver?: ChatMessageUser;
+  merchantId?: number;
+  isGuest?: boolean;          
 }
 
 export interface AcceptChatSessionPayload {
   merchantId?: number;
   agentId?: number;
-  userId?: number;
   sessionNo: string;
   reason?: string;
+  isGuest?: boolean;
 }
 
 export interface CloseAgentChatSessionPayload {
@@ -343,6 +345,7 @@ export interface CloseAgentChatSessionPayload {
   userId?: number;
   sessionNo: string;
   closeReason?: string;
+  isGuest?: boolean;
 }
 
 export type ChatAdminUiWsReq =

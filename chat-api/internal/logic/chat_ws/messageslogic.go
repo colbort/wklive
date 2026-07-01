@@ -14,6 +14,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 const (
@@ -198,7 +199,7 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 // 登录用户：先调用内部服务入库，再把返回的消息转发给后台和用户侧。
 func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
 	var req chat.SendUserMessageReq
-	if err := json.Unmarshal(payload, &req); err != nil {
+	if err := protojson.Unmarshal(payload, &req); err != nil {
 		sendWSError(conn, "invalid message payload")
 		return
 	}
@@ -258,7 +259,7 @@ func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connectio
 		ActionTime: now,
 	}
 	if len(payload) > 0 {
-		if err := json.Unmarshal(payload, &typing); err != nil {
+		if err := protojson.Unmarshal(payload, &typing); err != nil {
 			sendWSError(conn, "invalid typing payload")
 			return
 		}

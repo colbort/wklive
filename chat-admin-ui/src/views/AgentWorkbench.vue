@@ -1036,13 +1036,18 @@ function send(value: string) {
   ) {
     return;
   }
+
   const data: SendAgentMessagePayload = {
     merchantId: merchantId.value,
-    agentId: agentId.value,
-    userId: activeSession.value.userId,
     sessionNo: activeSession.value.sessionNo,
     messageType: 1,
-    content,
+    content: content,
+    sender: {
+      type: 2,
+      id: auth.user?.id || 0,
+      nickname: auth.user?.nickname || "",
+      avatarUrl: auth.user?.avatarUrl || "",
+    },
   };
   sendWsEvent({ eventType: chatEventType.MESSAGE, data });
 }
@@ -1056,6 +1061,7 @@ function closeSession() {
     userId: activeSession.value.userId,
     sessionNo: activeSession.value.sessionNo,
     closeReason: "closed by agent",
+    isGuest: activeSession.value.isGuest || false,
   };
   sendWsEvent({ eventType: chatEventType.SESSION_CLOSE, data });
 }
@@ -1071,8 +1077,9 @@ function acceptSession() {
   const data: AcceptChatSessionPayload = {
     merchantId: merchantId.value,
     agentId: agentId.value,
-    userId: activeSession.value.userId,
     sessionNo: activeSession.value.sessionNo,
+    isGuest: activeSession.value.isGuest,
+    reason: "accepted by agent",
   };
   sendWsEvent({ eventType: chatEventType.AGENT_ACCEPTED, data });
 }

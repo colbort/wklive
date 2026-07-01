@@ -59,7 +59,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAppEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
-		Payload: chat.ChatMessageEvent_Agent{Agent: &chat.ChatAgentPayload{
+		Payload: &chat.ChatMessageEvent_Agent{Agent: &chat.ChatAgentPayload{
 			SessionNo:     in.SessionNo,
 			AgentId:       agent.Id,
 			AgentName:     "",
@@ -80,7 +80,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAppEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
-		Payload:   chat.ChatMessageEvent_Queue{Queue: queue},
+		Payload:   &chat.ChatMessageEvent_Queue{Queue: queue},
 	})
 	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, false)}, nil
 }
