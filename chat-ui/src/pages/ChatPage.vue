@@ -77,7 +77,7 @@ function removeChatTokenFromUrl() {
 }
 
 function sendMessage() {
-  chat.sendText(draft.value, "", "");
+  chat.sendText(draft.value);
   draft.value = "";
   void nextTick(resizeMessageInput);
 }

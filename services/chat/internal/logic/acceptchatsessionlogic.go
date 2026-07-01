@@ -54,6 +54,10 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if base != nil {
 		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
+	user, err := l.svcCtx.ChatUserModel.FindOne(l.ctx, agent.UserId)
+	if err != nil {
+		return &chat.AdminChatSessionResp{Base: helper.ErrResp(404, "chat user not found")}, nil
+	}
 	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
 		Ctx:       l.ctx,
 		BusRedis:  l.svcCtx.BusRedis,
@@ -62,8 +66,9 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		Payload: &chat.ChatMessageEvent_Agent{Agent: &chat.ChatAgentPayload{
 			SessionNo:     in.SessionNo,
 			AgentId:       agent.Id,
-			AgentName:     "",
-			AgentAvatar:   "",
+			AgentUserId:   user.Id,
+			AgentName:     user.Nickname,
+			AgentAvatar:   user.AvatarUrl,
 			AgentStatus:   chat.ChatAgentStatus(agent.Status),
 			AssignType:    chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
 			SessionStatus: chat.ChatSessionStatus(session.Status),

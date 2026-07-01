@@ -97,6 +97,24 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 	)
 
 	client.SendEvent(&chat.ChatMessageEvent{
+		Code:      200,
+		Msg:       "",
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_WS_CONNECTED,
+		CreatedAt: utils.NowMillis(),
+		Payload: &chat.ChatMessageEvent_Connected{
+			Connected: &chat.WsConnectedPayload{
+				Message:    "chat app websocket connected",
+				MerchantId: req.MerchantId,
+				UserId:     req.UserId,
+				SessionNo:  req.SessionNo,
+				Nickname:   req.Nickname,
+				AvatarUrl:  req.AvatarUrl,
+				IsGuest:    req.IsGuest,
+			},
+		},
+	})
+
+	client.SendEvent(&chat.ChatMessageEvent{
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
 		CreatedAt: utils.NowMillis(),
 		Payload:   &chat.ChatMessageEvent_Queue{Queue: resp.Data},

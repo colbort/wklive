@@ -94,6 +94,17 @@ message ChatMessageUser {
   string avatar_url = 4;   // 头像URL
 }
 
+// 链接确认
+message WsConnectedPayload {
+  string message = 1;      // 连接成功提示信息
+  int64 merchant_id = 2;   // 客服商户ID
+  int64 user_id = 3;       // 用户ID
+  string session_no = 4;   // 会话编号
+  string nickname = 5;     // 昵称
+  string avatar_url = 6;   // 头像URL
+  bool is_guest = 7;       // 是否游客
+}
+
 /**
  * 聊天消息主体
  */
@@ -197,77 +208,81 @@ message ChatMessageEvent {
   int64 created_at = 4;
 
   oneof payload {
+    // 链接确认
+    // 对应：CHAT_EVENT_TYPE_WS_CONNECTED
+    WsConnectedPayload connected = 10;
+
     // 普通聊天消息
     // 对应：
     // CHAT_EVENT_TYPE_MESSAGE
-    ChatMessage message = 10;
+    ChatMessage message = 11;
 
     // 会话信息
     // 对应：
     // CHAT_EVENT_TYPE_SESSION_CLOSE
-    ChatSession session = 11;
+    ChatSession session = 12;
 
     // 系统通知
     // 对应：
     // CHAT_EVENT_TYPE_SYSTEM_NOTICE
-    ChatSystemNoticePayload system_notice = 12;
+    ChatSystemNoticePayload system_notice = 13;
 
     // 用户进入 / 离开
     // 对应：
     // CHAT_EVENT_TYPE_USER_JOIN
     // CHAT_EVENT_TYPE_USER_LEAVE
-    ChatUserStatePayload user_state = 13;
+    ChatUserStatePayload user_state = 14;
 
     // 排队 / 等待服务列表变化
     // 对应：
     // CHAT_EVENT_TYPE_QUEUE_UPDATE
-    ChatQueuePayload queue = 14;
+    ChatQueuePayload queue = 15;
 
     // 坐席接待 / 坐席离开
     // 对应：
     // CHAT_EVENT_TYPE_AGENT_ACCEPTED
     // CHAT_EVENT_TYPE_AGENT_LEAVE
-    ChatAgentPayload agent = 15;
+    ChatAgentPayload agent = 16;
 
     // 会话转接
     // 对应：
     // CHAT_EVENT_TYPE_TRANSFER_REQUEST
     // CHAT_EVENT_TYPE_TRANSFER_ACCEPT
     // CHAT_EVENT_TYPE_TRANSFER_REJECT
-    ChatTransferPayload transfer = 16;
+    ChatTransferPayload transfer = 17;
 
     // 评价
     // 对应：
     // CHAT_EVENT_TYPE_EVALUATION_INVITE
     // CHAT_EVENT_TYPE_EVALUATION_SUBMIT
-    ChatEvaluationPayload evaluation = 17;
+    ChatEvaluationPayload evaluation = 18;
 
     // 正在输入
     // 对应：
     // CHAT_EVENT_TYPE_TYPING
-    ChatTypingPayload typing = 18;
+    ChatTypingPayload typing = 19;
 
     // 消息状态回执
     // 对应：
     // CHAT_EVENT_TYPE_MESSAGE_DELIVERED
     // CHAT_EVENT_TYPE_MESSAGE_READ
-    ChatMessageReceiptPayload receipt = 19;
+    ChatMessageReceiptPayload receipt = 20;
 
     // 消息操作
     // 对应：
     // CHAT_EVENT_TYPE_MESSAGE_RECALL
     // CHAT_EVENT_TYPE_MESSAGE_DELETE
-    ChatMessageOperatePayload message_operate = 20;
+    ChatMessageOperatePayload message_operate = 21;
 
     // 心跳
     // 对应：
     // CHAT_EVENT_TYPE_HEARTBEAT
-    ChatHeartbeatPayload heartbeat = 21;
+    ChatHeartbeatPayload heartbeat = 22;
 
     // 错误事件
     // 对应：
     // CHAT_EVENT_TYPE_ERROR
-    ChatErrorPayload error = 22;
+    ChatErrorPayload error = 23;
   }
 }
 
@@ -390,27 +405,30 @@ message ChatAgentPayload {
   // 坐席 ID
   int64 agent_id = 2;
 
+  // 坐席用户ID
+  int64 agent_user_id = 3;
+
   // 坐席名称
-  string agent_name = 3;
+  string agent_name = 4;
 
   // 坐席头像
-  string agent_avatar = 4;
+  string agent_avatar = 5;
 
   // 坐席状态
-  ChatAgentStatus agent_status = 5;
+  ChatAgentStatus agent_status = 6;
 
   // 分配 / 接待方式
   // 你的业务里主要是 MANUAL
-  ChatAssignType assign_type = 6;
+  ChatAssignType assign_type = 7;
 
   // 会话状态
-  ChatSessionStatus session_status = 7;
+  ChatSessionStatus session_status = 8;
 
   // 备注
-  string remark = 8;
+  string remark = 9;
 
   // 操作时间，毫秒
-  int64 action_time = 9;
+  int64 action_time = 10;
 }
 
 /**

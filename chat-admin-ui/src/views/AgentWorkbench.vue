@@ -8,7 +8,7 @@ import {
   pageSessions,
   updateAgentStatus,
 } from "@/api/chat";
-import { chatAdminWsEventTypes, chatEventType } from "@/api/constant";
+import { chatEventType, type ChatEventType } from "@/api/constant";
 import WorkbenchChatPanel from "@/components/workbench/WorkbenchChatPanel.vue";
 import WorkbenchCustomerPanel from "@/components/workbench/WorkbenchCustomerPanel.vue";
 import WorkbenchSessionList from "@/components/workbench/WorkbenchSessionList.vue";
@@ -16,13 +16,15 @@ import { useAuthStore } from "@/stores/auth";
 import type {
   AcceptChatSessionPayload,
   ChatAdminUiWsReq,
+  ChatAgentPayload,
+  ChatWsEvent,
   ChatAgent,
   ChatMessage,
-  ChatQueueInfo,
   ChatSession,
   ChatSessionExtJson,
   CloseAgentChatSessionPayload,
   SendAgentMessagePayload,
+  WsConnectedPayload,
 } from "@/types/chat";
 import {
   optionGroup,
@@ -30,28 +32,8 @@ import {
   type DisplayOptionItem,
 } from "@/utils/options";
 
-interface WsBase {
-  code: number;
-  msg: string;
-}
-
-interface WsResult<T> {
-  base?: WsBase;
-  data?: T;
-}
-
-type WsEventData = ChatMessage | WsResult<ChatMessage>;
-
-interface WsEvent {
-  eventType?: string;
-  data?: WsEventData;
-  base?: WsBase;
-  agent?: ChatAgent;
-  session?: ChatSession;
-  queue?: ChatQueueInfo;
-}
-
 const statusFilter = ref("waiting");
+const connected = ref<WsConnectedPayload | null>(null);
 const activeSessionNo = ref("");
 const loadingSessions = ref(false);
 const loadingMessages = ref(false);
@@ -183,6 +165,20 @@ const acceptDisabledReason = computed(() => {
     return "坐席在线后才能接待会话";
   return "";
 });
+
+const incomingWsHandlers: Partial<
+  Record<ChatEventType, (event: ChatWsEvent) => void>
+> = {
+  [chatEventType.WS_CONNECTED]: handleWsConnectedWsEvent,
+  [chatEventType.MESSAGE]: handleMessageWsEvent,
+  [chatEventType.SYSTEM_NOTICE]: handleAgentStateWsEvent,
+  [chatEventType.USER_JOIN]: handleUserJoinWsEvent,
+  [chatEventType.USER_LEAVE]: handleUserLeaveWsEvent,
+  [chatEventType.QUEUE_UPDATE]: handleQueueUpdateWsEvent,
+  [chatEventType.AGENT_ACCEPTED]: handleAgentAcceptedWsEvent,
+  [chatEventType.AGENT_LEAVE]: handleAgentStateWsEvent,
+  [chatEventType.SESSION_CLOSE]: handleSessionCloseWsEvent,
+};
 
 onMounted(async () => {
   destroyed = false;
@@ -352,12 +348,7 @@ function connectWs() {
     wsState.value = "closed";
   };
   socket.onmessage = (message: MessageEvent) => {
-    try {
-      const event = JSON.parse(message.data) as WsEvent;
-      handleWsMessage(event);
-    } catch {
-      // ignore invalid push payload
-    }
+    handleWsMessage(message.data);
   };
 }
 
@@ -378,67 +369,81 @@ function clearReconnectTimer() {
   reconnectTimer = null;
 }
 
-function handleWsMessage(event: WsEvent) {
-  const eventType = event.eventType || "";
-  if (!chatAdminWsEventTypes.has(eventType)) {
-    return;
-  }
-  const base = event.base || eventBase(event.data);
-  if (base && base.code !== 200) {
-    ElMessage.error(base.msg || "发送失败");
-    return;
-  }
+function handleWsMessage(payload: string) {
+  const event = parseWsEvent(payload);
+  if (!event) return;
+  dispatchWsEvent(event);
+}
 
-  switch (eventType) {
-    case chatEventType.SYSTEM_NOTICE:
-    case chatEventType.AGENT_LEAVE:
-      updateAgentFromEvent(event.agent);
-      return;
-
-    case chatEventType.AGENT_ACCEPTED: {
-      const message = applyWsSessionMessage(event, eventType);
-      markSessionAccepted(event, message);
-      return;
-    }
-
-    case chatEventType.SESSION_CLOSE: {
-      const message = applyWsSessionMessage(event, eventType);
-      markSessionClosed(event, message);
-      scheduleRefreshSessions();
-      return;
-    }
-
-    case chatEventType.QUEUE_UPDATE:
-      applyWsSessionMessage(event, eventType);
-      focusWaitingSession(event);
-      scheduleRefreshSessions();
-      return;
-
-    case chatEventType.USER_JOIN:
-      focusWaitingSession(event);
-      void loadSessions();
-      return;
-
-    case chatEventType.USER_LEAVE:
-      handleUserLeave(event);
-      return;
-
-    default:
-      applyWsSessionMessage(event, eventType);
+function parseWsEvent(payload: string): ChatWsEvent | null {
+  try {
+    return JSON.parse(payload) as ChatWsEvent;
+  } catch {
+    return null;
   }
 }
 
-function applyWsSessionMessage(event: WsEvent, eventType: string) {
+function dispatchWsEvent(event: ChatWsEvent) {
+  if (event.code && event.code !== 200) {
+    ElMessage.error(event.msg || event.error?.errorMessage || "发送失败");
+    return;
+  }
+  incomingWsHandlers[event.eventType]?.(event);
+}
+
+function handleAgentStateWsEvent(event: ChatWsEvent) {
+  updateAgentFromEvent(event.agent);
+}
+
+function handleAgentAcceptedWsEvent(event: ChatWsEvent) {
+  const message = applyWsSessionMessage(event);
+  markSessionAccepted(event, message);
+}
+
+function handleSessionCloseWsEvent(event: ChatWsEvent) {
+  const message = applyWsSessionMessage(event);
+  markSessionClosed(event, message);
+  scheduleRefreshSessions();
+}
+
+function handleQueueUpdateWsEvent(event: ChatWsEvent) {
+  applyWsSessionMessage(event);
+  focusWaitingSession(event);
+  scheduleRefreshSessions();
+}
+
+function handleUserJoinWsEvent(event: ChatWsEvent) {
+  focusWaitingSession(event);
+  void loadSessions();
+}
+
+function handleUserLeaveWsEvent(event: ChatWsEvent) {
+  handleUserLeave(event);
+}
+
+function handleMessageWsEvent(event: ChatWsEvent) {
+  applyWsSessionMessage(event);
+}
+
+function handleWsConnectedWsEvent(event: ChatWsEvent) {
+  const payload = event.connected as ChatWsEvent["connected"] & {
+    connected?: WsConnectedPayload;
+  };
+  if (!payload.connected) return;
+  connected.value = payload
+}
+
+function applyWsSessionMessage(event: ChatWsEvent) {
   upsertSessionFromEvent(event);
-  const message = eventMessage(event.data);
+  const message = eventMessage(event);
   let messagePushed = false;
   if (message?.sessionNo && message.messageNo) {
     normalizeMessageEnums(message);
-    if (shouldAppendWsMessage(eventType, message)) {
+    if (shouldAppendWsMessage(event, message)) {
       messagePushed = pushMessage(message);
     }
   }
-  if (message?.sessionNo && shouldAppendWsMessage(eventType, message)) {
+  if (message?.sessionNo && shouldAppendWsMessage(event, message)) {
     upsertSessionFromMessage(message, messagePushed);
   }
   const session = message?.sessionNo
@@ -454,7 +459,7 @@ function applyWsSessionMessage(event: WsEvent, eventType: string) {
   return message;
 }
 
-function focusWaitingSession(event: WsEvent) {
+function focusWaitingSession(event: ChatWsEvent) {
   const queueSessionNo =
     event.queue?.sessionNo || event.session?.sessionNo || "";
   if (!mobileChatOpen.value || queueSessionNo !== activeSessionNo.value) {
@@ -463,7 +468,7 @@ function focusWaitingSession(event: WsEvent) {
   }
 }
 
-function handleUserLeave(event: WsEvent) {
+function handleUserLeave(event: ChatWsEvent) {
   const sessionNo = eventSessionNo(event);
   if (!sessionNo) {
     scheduleRefreshSessions();
@@ -503,7 +508,7 @@ function handleUserLeave(event: WsEvent) {
     }
     return;
   }
-  const message = eventMessage(event.data)?.content || "用户已离开";
+  const message = event.msg || event.userState?.userName || "用户已离开";
   setSessionStatusMessage(sessionNo, message);
   session.lastMessage = message;
   session.lastMessageTime = Number(Date.now());
@@ -511,11 +516,12 @@ function handleUserLeave(event: WsEvent) {
   ElMessage.info(message);
 }
 
-function eventSessionNo(event: WsEvent) {
+function eventSessionNo(event: ChatWsEvent) {
   return (
     event.session?.sessionNo ||
     event.queue?.sessionNo ||
-    eventMessage(event.data)?.sessionNo ||
+    event.userState?.sessionNo ||
+    eventMessage(event)?.sessionNo ||
     ""
   );
 }
@@ -529,28 +535,32 @@ function removeSession(sessionNo: string) {
   messages.value = nextMessages;
 }
 
-function updateAgentFromEvent(agent?: ChatAgent) {
-  if (!agent || agent.id !== agentId.value) return;
+function updateAgentFromEvent(agent?: ChatAgentPayload) {
+  if (!agent || agent.agentId !== agentId.value) return;
+  const nextStatus = Number(agent.agentStatus || 0);
   auth.agent = {
-    ...(auth.agent || agent),
-    ...agent,
+    ...(auth.agent || ({} as ChatAgent)),
+    id: agent.agentId,
+    status: nextStatus || auth.agent?.status || 0,
+    welcomeMessage: agent.remark || auth.agent?.welcomeMessage || "",
+    updateTimes: agent.actionTime || auth.agent?.updateTimes || 0,
   };
 }
 
-function upsertSessionFromEvent(event: WsEvent) {
+function upsertSessionFromEvent(event: ChatWsEvent) {
   const session = event.session;
   if (session?.sessionNo) {
     upsertSession(normalizeSession(session));
   }
   const queue = event.queue;
   if (queue?.sessionNo) {
-    setSessionStatusMessage(queue.sessionNo, queue.message);
+    setSessionStatusMessage(queue.sessionNo, queueStatusMessage(queue));
     const exists = sessions.value.find(
       (item) => item.sessionNo === queue.sessionNo,
     );
     if (exists) {
-      exists.groupId = queue.groupId || exists.groupId;
-      exists.updateTimes = queue.updateTimes || exists.updateTimes;
+      exists.status = Number(queue.sessionStatus || exists.status);
+      exists.updateTimes = Number(queue.actionTime || exists.updateTimes);
     }
   }
 }
@@ -612,15 +622,17 @@ function upsertSessionFromMessage(
   syncActiveSession();
 }
 
-function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
-  const sessionNo = message?.sessionNo || "";
+function markSessionAccepted(event: ChatWsEvent, message?: ChatMessage) {
+  const sessionNo =
+    event.agent?.sessionNo || event.session?.sessionNo || message?.sessionNo || "";
   setSessionStatusMessage(
     sessionNo,
-    message?.content || "",
+    event.agent?.remark || message?.content || "",
   );
   const session = sessions.value.find((item) => item.sessionNo === sessionNo);
   const acceptedAgentId = Number(
-   (message ? messageAgentId(message) : 0) ||
+    event.agent?.agentId ||
+      (message ? messageAgentId(message) : 0) ||
       agentId.value,
   );
   if (!session) {
@@ -651,8 +663,8 @@ function markSessionAccepted(event: WsEvent, message?: ChatMessage) {
   }
 }
 
-function markSessionClosed(event: WsEvent, message?: ChatMessage) {
-  const sessionNo = message?.sessionNo || "";
+function markSessionClosed(event: ChatWsEvent, message?: ChatMessage) {
+  const sessionNo = event.session?.sessionNo || message?.sessionNo || "";
   if (!sessionNo) return;
   const session = sessions.value.find((item) => item.sessionNo === sessionNo);
   if (isGuestSession(session)) {
@@ -665,13 +677,14 @@ function markSessionClosed(event: WsEvent, message?: ChatMessage) {
   }
   setSessionStatusMessage(
     sessionNo,
-    message?.content || "本次会话已结束",
+    event.msg || message?.content || "本次会话已结束",
   );
   if (session) {
     session.status = sessionStatus.closed;
-    session.closeTime = message?.createTime || Date.now();
-    session.closeReason = session.closeReason || '';
+    session.closeTime = event.session?.closeTime || message?.createTime || Date.now();
+    session.closeReason = event.session?.closeReason || session.closeReason || "";
     session.lastMessage =
+      event.msg ||
       message?.content ||
       session.lastMessage ||
       "本次会话已结束";
@@ -807,6 +820,15 @@ function setSessionStatusMessage(sessionNo: string, message?: string) {
   };
 }
 
+function queueStatusMessage(queue?: { queuePosition?: number; waitingCount?: number }) {
+  if (!queue) return "";
+  const position = Number(queue.queuePosition || 0);
+  if (position > 1) return `正在排队，前面还有 ${position - 1} 人`;
+  if (position === 1) return "当前队列第 1 位";
+  const waitingCount = Number(queue.waitingCount || 0);
+  return waitingCount > 0 ? `当前等待 ${waitingCount} 人` : "";
+}
+
 function matchStatusFilter(session: ChatSession) {
   const status = sessionStatusValue(session.status);
   if (statusFilter.value === "waiting") {
@@ -873,9 +895,9 @@ function isQueueSystemMessage(message?: ChatMessage) {
   );
 }
 
-function shouldAppendWsMessage(eventType: string, message?: ChatMessage) {
+function shouldAppendWsMessage(event: ChatWsEvent, message?: ChatMessage) {
   if (!message || isQueueSystemMessage(message)) return false;
-  return eventType === chatEventType.MESSAGE;
+  return event.eventType === chatEventType.MESSAGE;
 }
 
 function normalizeSession(session: ChatSession) {
@@ -961,22 +983,8 @@ function senderTypeValue(value: unknown) {
   return 0;
 }
 
-function eventMessage(data?: WsEventData) {
-  if (!data) return undefined;
-  if (isWsResult(data)) return data.data;
-  return data;
-}
-
-// function sessionEvent(event: WsEvent) {
-//   return event.sessionEvent;
-// }
-
-function eventBase(data?: WsEventData) {
-  return data && isWsResult(data) ? data.base : undefined;
-}
-
-function isWsResult(data: WsEventData): data is WsResult<ChatMessage> {
-  return "data" in data || "base" in data;
+function eventMessage(event: ChatWsEvent) {
+  return event.message;
 }
 
 function syncActiveSession() {
@@ -1013,22 +1021,32 @@ function sendWsEvent(request: ChatAdminUiWsReq) {
 
 function send(value: string) {
   const content = value.trim();
-  if (
-    !content ||
-    !activeSession.value ||
-    !merchantId.value ||
-    !agentId.value ||
-    activeNeedsAccept.value ||
-    activeClosed.value
-  ) {
+  if (!canSendMessage(content)) {
     return;
   }
+  sendWsEvent({
+    eventType: chatEventType.MESSAGE,
+    data: buildAgentMessagePayload(content),
+  });
+}
 
-  const data: SendAgentMessagePayload = {
+function canSendMessage(content: string) {
+  return Boolean(
+    content &&
+      activeSession.value &&
+      merchantId.value &&
+      agentId.value &&
+      !activeNeedsAccept.value &&
+      !activeClosed.value,
+  );
+}
+
+function buildAgentMessagePayload(content: string): SendAgentMessagePayload {
+  return {
     merchantId: merchantId.value,
-    sessionNo: activeSession.value.sessionNo,
+    sessionNo: activeSession.value?.sessionNo || "",
     messageType: 1,
-    content: content,
+    content,
     sender: {
       type: 2,
       id: auth.user?.id || 0,
@@ -1036,21 +1054,28 @@ function send(value: string) {
       avatarUrl: auth.user?.avatarUrl || "",
     },
   };
-  sendWsEvent({ eventType: chatEventType.MESSAGE, data });
 }
 
 function closeSession() {
   if (!activeSession.value) {
     return;
   }
-  const data: CloseAgentChatSessionPayload = {
+  sendWsEvent({
+    eventType: chatEventType.SESSION_CLOSE,
+    data: buildCloseSessionPayload(activeSession.value),
+  });
+}
+
+function buildCloseSessionPayload(
+  session: ChatSession,
+): CloseAgentChatSessionPayload {
+  return {
     merchantId: merchantId.value,
-    userId: activeSession.value.userId,
-    sessionNo: activeSession.value.sessionNo,
+    userId: session.userId,
+    sessionNo: session.sessionNo,
     closeReason: "closed by agent",
-    isGuest: activeSession.value.isGuest || false,
+    isGuest: session.isGuest || false,
   };
-  sendWsEvent({ eventType: chatEventType.SESSION_CLOSE, data });
 }
 
 function acceptSession() {
@@ -1061,14 +1086,22 @@ function acceptSession() {
     ElMessage.warning("坐席在线后才能接待会话");
     return;
   }
-  const data: AcceptChatSessionPayload = {
+  sendWsEvent({
+    eventType: chatEventType.AGENT_ACCEPTED,
+    data: buildAcceptSessionPayload(activeSession.value),
+  });
+}
+
+function buildAcceptSessionPayload(
+  session: ChatSession,
+): AcceptChatSessionPayload {
+  return {
     merchantId: merchantId.value,
     agentId: agentId.value,
-    sessionNo: activeSession.value.sessionNo,
-    isGuest: activeSession.value.isGuest,
+    sessionNo: session.sessionNo,
+    isGuest: session.isGuest,
     reason: "accepted by agent",
   };
-  sendWsEvent({ eventType: chatEventType.AGENT_ACCEPTED, data });
 }
 </script>
 

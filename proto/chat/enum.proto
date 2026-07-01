@@ -154,75 +154,79 @@ enum ChatEventType {
   // proto 默认占位，不作为业务事件使用
   CHAT_EVENT_TYPE_UNSPECIFIED = 0;
 
+  // ws 连接确认
+  // 例如：客户端连接成功后，推送确认信息
+  CHAT_EVENT_TYPE_WS_CONNECTED = 1;
+
   // 普通聊天消息
-  CHAT_EVENT_TYPE_MESSAGE = 1;
+  CHAT_EVENT_TYPE_MESSAGE = 2;
 
   // 通用系统通知
   // 例如：系统维护、风险提示、暂无客服在线、普通提示
-  CHAT_EVENT_TYPE_SYSTEM_NOTICE = 2;
+  CHAT_EVENT_TYPE_SYSTEM_NOTICE = 3;
 
   // 用户进入客服页面 / 建立 WebSocket 连接
-  CHAT_EVENT_TYPE_USER_JOIN = 3;
+  CHAT_EVENT_TYPE_USER_JOIN = 4;
 
   // 用户离开客服页面 / 断开 WebSocket 连接
-  CHAT_EVENT_TYPE_USER_LEAVE = 4;
+  CHAT_EVENT_TYPE_USER_LEAVE = 5;
 
   // 等待服务列表信息更新
   // 例如：进入等待列表、取消等待、等待人数变化、预计等待时间变化
-  CHAT_EVENT_TYPE_QUEUE_UPDATE = 5;
+  CHAT_EVENT_TYPE_QUEUE_UPDATE = 6;
 
   // 坐席主动接待会话
   // 例如：坐席 小王 已接待本次会话
-  CHAT_EVENT_TYPE_AGENT_ACCEPTED = 6;
+  CHAT_EVENT_TYPE_AGENT_ACCEPTED = 7;
 
   // 坐席离开会话
-  CHAT_EVENT_TYPE_AGENT_LEAVE = 7;
+  CHAT_EVENT_TYPE_AGENT_LEAVE = 8;
 
   // 会话转接发起
   // 例如：坐席 小王 发起转接给坐席 小李
-  CHAT_EVENT_TYPE_TRANSFER_REQUEST = 8;
+  CHAT_EVENT_TYPE_TRANSFER_REQUEST = 9;
 
   // 会话转接接受
   // 例如：坐席 小李 接受转接
-  CHAT_EVENT_TYPE_TRANSFER_ACCEPT = 9;
+  CHAT_EVENT_TYPE_TRANSFER_ACCEPT = 10;
 
   // 会话转接拒绝
   // 例如：坐席 小李 拒绝转接
-  CHAT_EVENT_TYPE_TRANSFER_REJECT = 10;
+  CHAT_EVENT_TYPE_TRANSFER_REJECT = 11;
 
   // 会话关闭 / 会话结束
   // 具体关闭原因用 ChatSessionCloseReason 表示
-  CHAT_EVENT_TYPE_SESSION_CLOSE = 11;
+  CHAT_EVENT_TYPE_SESSION_CLOSE = 12;
 
   // 邀请用户评价
-  CHAT_EVENT_TYPE_EVALUATION_INVITE = 12;
+  CHAT_EVENT_TYPE_EVALUATION_INVITE = 13;
 
   // 用户提交评价
-  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 13;
+  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 14;
 
   // 正在输入
   // 建议发送方每隔 1~2 秒节流发送一次
   // 接收方 3~5 秒内没有继续收到 TYPING，则自动隐藏“正在输入”
-  CHAT_EVENT_TYPE_TYPING = 14;
+  CHAT_EVENT_TYPE_TYPING = 15;
 
   // 消息已送达
-  CHAT_EVENT_TYPE_MESSAGE_DELIVERED = 15;
+  CHAT_EVENT_TYPE_MESSAGE_DELIVERED = 16;
 
   // 消息已读
-  CHAT_EVENT_TYPE_MESSAGE_READ = 16;
+  CHAT_EVENT_TYPE_MESSAGE_READ = 17;
 
   // 消息撤回
-  CHAT_EVENT_TYPE_MESSAGE_RECALL = 17;
+  CHAT_EVENT_TYPE_MESSAGE_RECALL = 18;
 
   // 消息删除
-  CHAT_EVENT_TYPE_MESSAGE_DELETE = 18;
+  CHAT_EVENT_TYPE_MESSAGE_DELETE = 19;
 
   // 心跳
-  CHAT_EVENT_TYPE_HEARTBEAT = 19;
+  CHAT_EVENT_TYPE_HEARTBEAT = 20;
 
   // 错误事件
   // 例如：发送失败、会话不存在、权限不足
-  CHAT_EVENT_TYPE_ERROR = 20;
+  CHAT_EVENT_TYPE_ERROR = 21;
 }
 
 /**

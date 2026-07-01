@@ -5,63 +5,30 @@ import {
   listChatMessagesWithMeta,
   options as loadOptions,
   sendChatSocketUserMessage,
-  // sendChatSocketUserMessage,
 } from "@/api/chat";
 import type {
   ChatMessage,
   OptionGroup,
-  ChatQueueInfo,
+  ChatQueuePayload,
   ChatWsEvent,
-  ConnectedPayload,
+  WsConnectedPayload,
   SendUserMessagePayload,
+  ChatAgentPayload,
 } from "@/types/chat";
-import { chatEventType } from "@/api/constant";
+import { chatEventType, type ChatEventType } from "@/api/constant";
 
 type ConnectOptions = Record<string, never>;
-
-interface WsResp<T> {
-  code?: number;
-  msg?: string;
-  hasNext?: boolean;
-  nextCursor?: number;
-  base?: {
-    code?: number;
-    msg?: string;
-    hasNext?: boolean;
-    nextCursor?: number;
-  };
-  data?: T;
-}
-
-type RawChatMessage = Partial<ChatMessage> & {
-  message_no?: string;
-  session_no?: string;
-  merchant_id?: number;
-  message_type?: number;
-  url?: string;
-  fileName?: string;
-  file_name?: string;
-  mimeType?: string;
-  mime_type?: string;
-  fileSize?: number;
-  file_size?: number;
-  create_times?: number;
-  update_times?: number;
-  read_time?: number;
-  extra?: string;
-};
 
 const reconnectDelays = [1000, 2000, 5000, 10000, 15000];
 
 export function useChatSocket() {
   const socket = ref<WebSocket | null>(null);
-  const connected = ref<ConnectedPayload | null>(null);
+  const connected = ref<WsConnectedPayload | null>(null);
   const messages = ref<ChatMessage[]>([]);
   const error = ref("");
   const queueStatus = ref("");
   const optionGroups = ref<OptionGroup[]>([]);
-  const agentAccepted = ref(false);
-  const activeAgentName = ref("");
+  const agent = ref<ChatAgentPayload | null>(null);
   const sessionClosed = ref(false);
   const historyLoading = ref(false);
   const historyHasMore = ref(false);
@@ -87,6 +54,22 @@ export function useChatSocket() {
     return `${reconnectingIn.value}s 后重连`;
   });
 
+  const incomingEventHandlers: Partial<
+    Record<ChatEventType, (event: ChatWsEvent) => void>
+  > = {
+    [chatEventType.WS_CONNECTED]: handleWsConnectedEvent,
+    [chatEventType.SYSTEM_NOTICE]: handleSystemNoticeEvent,
+    [chatEventType.ERROR]: handleErrorEvent,
+    [chatEventType.EVALUATION_INVITE]: handleEvaluationInviteEvent,
+    [chatEventType.EVALUATION_SUBMIT]: handleEvaluationSubmitEvent,
+    [chatEventType.TYPING]: handleTypingEvent,
+    [chatEventType.QUEUE_UPDATE]: handleQueueUpdateEvent,
+    [chatEventType.AGENT_ACCEPTED]: handleAgentAcceptedEvent,
+    [chatEventType.SESSION_CLOSE]: handleSessionCloseEvent,
+    [chatEventType.MESSAGE]: handleMessageEvent,
+  };
+
+  // Connection lifecycle
   function connect() {
     manualClose = false;
     void loadChatOptions();
@@ -128,31 +111,6 @@ export function useChatSocket() {
     socket.value = ws;
   }
 
-  function sendText(content: string, nickname: string, avatarUrl = "") {
-    const text = content.trim();
-    if (
-      !socket.value ||
-      socket.value.readyState !== WebSocket.OPEN ||
-      !text ||
-      sessionClosed.value
-    ) {
-      return;
-    }
-    const payload: SendUserMessagePayload = {
-      sessionNo: connected.value?.sessionNo || "",
-      merchantId: connected.value?.merchantId || 0,
-      messageType: 1,
-      content: text,
-      sender: {
-        type: 1,
-        id: connected.value?.userId || 0,
-        nickname,
-        avatarUrl: avatarUrl.trim(),
-      }
-    };
-    sendChatSocketUserMessage(socket.value, payload);
-  }
-
   function close() {
     manualClose = true;
     lastOptions = null;
@@ -161,65 +119,6 @@ export function useChatSocket() {
     connected.value = null;
     resetHistoryState();
     status.value = "idle";
-  }
-
-  async function endSession(closeReason = "user_closed", keepalive = false) {
-    const current = connected.value;
-    const canCloseSession = Boolean(
-      current?.sessionNo && !current.isGuest && !sessionClosed.value,
-    );
-
-    if (canCloseSession) {
-      try {
-        await closeMyChatSession(closeReason, keepalive);
-      } catch (err) {
-        if (!keepalive) {
-          error.value = err instanceof Error ? err.message : "结束会话失败";
-          return false;
-        }
-      }
-    }
-
-    sessionClosed.value = true;
-    close();
-    return true;
-  }
-
-  function resetMessages() {
-    messages.value = [];
-    resetHistoryState();
-  }
-
-  async function loadHistory(initial = false) {
-    const current = connected.value;
-    if (
-      !current?.sessionNo ||
-      current.isGuest ||
-      historyLoading.value ||
-      (!initial && !historyHasMore.value)
-    ) {
-      return false;
-    }
-
-    historyLoading.value = true;
-    try {
-      const resp = await listChatMessagesWithMeta(
-        {
-          cursor: initial ? 0 : historyNextCursor.value,
-          limit: 20,
-        },
-      );
-      const list = Array.isArray(resp.data) ? resp.data : [];
-      prependMessages(list.map(normalizeMessage).reverse());
-      historyHasMore.value = Boolean(resp.hasNext);
-      historyNextCursor.value = Number(resp.nextCursor || 0);
-      return list.length > 0;
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : "历史消息加载失败";
-      return false;
-    } finally {
-      historyLoading.value = false;
-    }
   }
 
   function closeSocketOnly(suppressReconnect: boolean) {
@@ -265,123 +164,172 @@ export function useChatSocket() {
     reconnectingIn.value = 0;
   }
 
+  // Outbound events
+  function sendText(content: string) {
+    const text = content.trim();
+    if (!canSendMessage(text)) {
+      return;
+    }
+    sendUserMessageEvent(buildTextMessagePayload(text));
+  }
+
+  function canSendMessage(content: string) {
+    return Boolean(
+      socket.value &&
+        socket.value.readyState === WebSocket.OPEN &&
+        content &&
+        !sessionClosed.value,
+    );
+  }
+
+  function buildTextMessagePayload(
+    content: string,
+  ): SendUserMessagePayload {
+    return {
+      sessionNo: connected.value?.sessionNo || "",
+      merchantId: connected.value?.merchantId || 0,
+      messageType: 1,
+      content,
+      sender: {
+        type: 1,
+        id: connected.value?.userId || 0,
+        nickname: connected.value?.nickname || "",
+        avatarUrl: connected.value?.avatarUrl?.trim() || "",
+      },
+      receiver: {
+        type: 2,
+        id: agent.value?.agentUserId || 0,
+        nickname: agent.value?.agentName || "",
+        avatarUrl: agent.value?.agentAvatar?.trim() || "",
+      }
+    };
+  }
+
+  function sendUserMessageEvent(payload: SendUserMessagePayload) {
+    if (!socket.value) return;
+    sendChatSocketUserMessage(socket.value, payload);
+  }
+
+  async function endSession(closeReason = "user_closed", keepalive = false) {
+    const current = connected.value;
+    const canCloseSession = Boolean(
+      current?.sessionNo && !current.isGuest && !sessionClosed.value,
+    );
+
+    if (canCloseSession) {
+      try {
+        await closeMyChatSession(closeReason, keepalive);
+      } catch (err) {
+        if (!keepalive) {
+          error.value = err instanceof Error ? err.message : "结束会话失败";
+          return false;
+        }
+      }
+    }
+
+    sessionClosed.value = true;
+    close();
+    return true;
+  }
+
+  function resetMessages() {
+    messages.value = [];
+    resetHistoryState();
+  }
+
+  // Incoming events
   function handleSocketMessage(payload: string) {
+    const event = parseSocketEvent(payload);
+    if (!event) return;
+    dispatchIncomingEvent(event);
+  }
+
+  function parseSocketEvent(payload: string): ChatWsEvent | null {
     try {
-      handleEvent(JSON.parse(payload) as ChatWsEvent);
+      return JSON.parse(payload) as ChatWsEvent;
     } catch {
       error.value = "无效的消息格式";
+      return null;
     }
   }
 
-  function handleEvent(event: ChatWsEvent) {
-    switch (event.eventType) {
-      case chatEventType.SYSTEM_NOTICE: {
-        ensureConnectedFromEvent(event);
-        break;
-      }
-      case chatEventType.ERROR: {
-        const data = event.data as { message?: string };
-        error.value = data?.message || "消息发送失败";
-        break;
-      }
-      case chatEventType.MESSAGE_DELIVERED: {
-        const message = eventMessage(event);
-        if (message) pushMessage(message);
-        break;
-      }
+  function dispatchIncomingEvent(event: ChatWsEvent) {
+    incomingEventHandlers[event.eventType]?.(event);
+  }
 
-      case chatEventType.EVALUATION_INVITE: {
-        queueStatus.value = eventMessage(event)?.content || "请对本次服务进行评价";
-        break;
-      }
+  function handleWsConnectedEvent(event: ChatWsEvent) {
+    const payload = event.connected as ChatWsEvent["connected"] & {
+      connected?: WsConnectedPayload;
+    };
+    if (!payload.connected) return;
+    connected.value = payload.connected;
+  }
 
-      case chatEventType.EVALUATION_SUBMIT: {
-        const resp = event.data as WsResp<RawChatMessage> | undefined;
-        if (resp && wsRespCode(resp) && wsRespCode(resp) !== 200) {
-          error.value = wsRespMsg(resp) || "评价提交失败";
-          return;
-        }
-        queueStatus.value = "评价已提交";
-        break;
-      }
+  function handleSystemNoticeEvent() {}
 
-      case chatEventType.TYPING: {
-        if (eventMessage(event)?.senderType === 3) return;
-        queueStatus.value = eventMessage(event)?.content || "客服正在输入";
-        break;
-      }
+  function handleErrorEvent(event: ChatWsEvent) {
+    error.value = event.error?.errorMessage || event.msg || "消息发送失败";
+  }
 
-      case chatEventType.QUEUE_UPDATE: {
-        ensureConnectedFromEvent(event);
-        const message = eventMessage(event);
-        if (agentAccepted.value) {
-          queueStatus.value = serviceStatusMessage(activeAgentName.value);
-          return;
-        }
-        queueStatus.value =
-          queueMessage(event.queue) ||
-          message?.content ||
-          "正在排队，客服会尽快接入。";
-        break;
-      }
+  function handleEvaluationInviteEvent(event: ChatWsEvent) {
+    queueStatus.value =
+      event.evaluation?.comment || event.msg || "请对本次服务进行评价";
+  }
 
-      case chatEventType.AGENT_ACCEPTED: {
-        ensureConnectedFromEvent(event);
-        const message = eventMessage(event);
-        agentAccepted.value = true;
-        activeAgentName.value =
-          agentNameFromMessage(message) || activeAgentName.value;
-        queueStatus.value = serviceStatusMessage(
-          activeAgentName.value,
-          message?.content || "",
-        );
-        break;
-      }
-
-      case chatEventType.SESSION_CLOSE: {
-        ensureConnectedFromEvent(event);
-        const message = eventMessage(event);
-        sessionClosed.value = true;
-        queueStatus.value = message?.content || "本次会话已结束。";
-        closeSocketOnly(true);
-        status.value = "closed";
-        break;
-      }
-
-      case chatEventType.MESSAGE: {
-        ensureConnectedFromEvent(event);
-        const message = eventMessage(event);
-        if (!message) return;
-        if (message.senderType === 2) {
-          agentAccepted.value = true;
-          activeAgentName.value =
-            agentNameFromMessage(message) || activeAgentName.value;
-          queueStatus.value = serviceStatusMessage(activeAgentName.value);
-        }
-        pushMessage(message);
-        break;
-      }
-
-      default:
-        if (!event.eventType && event.data && isConnectedPayload(event.data)) {
-          connected.value = event.data;
-          agentAccepted.value = false;
-          activeAgentName.value = "";
-          sessionClosed.value = false;
-          resetHistoryState();
-          queueStatus.value =
-            queueMessage(event.data.queue) ||
-            "请描述您的问题，发送后将进入客服队列。";
-          if (!event.data.isGuest) {
-            void loadHistory(true);
-          }
-        }
+  function handleEvaluationSubmitEvent(event: ChatWsEvent) {
+    if (event.code && event.code !== 200) {
+      error.value = event.msg || "评价提交失败";
+      return;
     }
+    queueStatus.value = "评价已提交";
+  }
+
+  function handleTypingEvent(event: ChatWsEvent) {
+    if (event.typing?.senderType === 3) return;
+    queueStatus.value = event.typing?.text || "客服正在输入";
+  }
+
+  function handleQueueUpdateEvent(event: ChatWsEvent) {
+    const message = eventMessage(event);
+    if (agent.value?.accept) {
+      queueStatus.value = serviceStatusMessage(agent.value.agentName);
+      return;
+    }
+    queueStatus.value =
+      queueMessage(event.queue) || message?.content || "正在排队，客服会尽快接入。";
+  }
+
+  function handleAgentAcceptedEvent(event: ChatWsEvent) {
+    const payload = event.agent as ChatWsEvent["agent"] & {
+      agent?: ChatAgentPayload;
+    };
+    agent.value = payload
+    agent.value.accept = true
+  }
+
+  function handleSessionCloseEvent(event: ChatWsEvent) {
+    const message = eventMessage(event);
+    sessionClosed.value = true;
+    queueStatus.value = event.msg || message?.content || "本次会话已结束。";
+    closeSocketOnly(true);
+    status.value = "closed";
+  }
+
+  function handleMessageEvent(event: ChatWsEvent) {
+    const message = eventMessage(event);
+    if (!message) return;
+    if (message.senderType === 2) {
+      agentAccepted.value = true;
+      activeAgentName.value =
+        agentNameFromMessage(message) || activeAgentName.value;
+      queueStatus.value = serviceStatusMessage(activeAgentName.value);
+    }
+    pushMessage(message);
   }
 
   function eventMessage(event: ChatWsEvent): ChatMessage | undefined {
-    if (!event.data) return undefined;
-    return normalizeMessage(event.data as RawChatMessage);
+    if (!event.message) return undefined;
+    return normalizeMessage(event.message);
   }
 
   async function loadChatOptions() {
@@ -394,20 +342,34 @@ export function useChatSocket() {
     }
   }
 
-  function optionCodeMap(groupKey: string, fallback: Record<string, number>) {
-    const group = optionGroups.value.find((item) => item.key === groupKey);
-    if (!group?.options.length) return fallback;
-    return group.options.reduce<Record<string, number>>(
-      (map, item) => {
-        if (fallback[item.code] !== undefined) {
-          map[item.code] = fallback[item.code];
-        } else {
-          map[item.code] = item.value;
-        }
-        return map;
-      },
-      { ...fallback },
-    );
+  async function loadHistory(initial = false) {
+    const current = connected.value;
+    if (
+      !current?.sessionNo ||
+      current.isGuest ||
+      historyLoading.value ||
+      (!initial && !historyHasMore.value)
+    ) {
+      return false;
+    }
+
+    historyLoading.value = true;
+    try {
+      const resp = await listChatMessagesWithMeta({
+        cursor: initial ? 0 : historyNextCursor.value,
+        limit: 20,
+      });
+      const list = Array.isArray(resp.data) ? resp.data : [];
+      prependMessages(list.map(normalizeMessage).reverse());
+      historyHasMore.value = Boolean(resp.hasNext);
+      historyNextCursor.value = Number(resp.nextCursor || 0);
+      return list.length > 0;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : "历史消息加载失败";
+      return false;
+    } finally {
+      historyLoading.value = false;
+    }
   }
 
   function optionValueMap(groupKey: string, fallback: Record<string, number>) {
@@ -419,93 +381,6 @@ export function useChatSocket() {
         return map;
       },
       { ...fallback },
-    );
-  }
-
-  // function sessionEvent(event: ChatWsEvent): ChatSessionEvent | undefined {
-  //   return event.sessionEvent ?? event.session_event;
-  // }
-
-  // function sessionEventMessage(event: ChatWsEvent) {
-  //   return sessionEvent(event)?.message || "";
-  // }
-
-  function ensureConnectedFromEvent(event: ChatWsEvent) {
-    const session = event.session;
-    const queue = event.queue;
-    const sessionNo =
-      session?.sessionNo ||
-      queue?.sessionNo ||
-      eventMessage(event)?.sessionNo ||
-      "";
-    if (!sessionNo) return;
-    const isGuest = session ? sessionIsGuest(session) : true;
-    const queueMerchantId =
-      typeof queue?.merchantId === "number" ? queue.merchantId : 0;
-    const queueUserId = Number(queue?.userId || 0);
-    if (connected.value?.sessionNo) {
-      connected.value = {
-        ...connected.value,
-        message:
-          queueMessage(queue) ||
-          connected.value.message,
-        merchantId:
-          session?.merchantId ||
-          queueMerchantId ||
-          connected.value.merchantId,
-        userId: session?.userId || queueUserId || connected.value.userId,
-        isGuest: session ? isGuest : connected.value.isGuest,
-        session: session || connected.value.session,
-        queue: queue || connected.value.queue,
-      };
-      if (
-        session &&
-        !isGuest &&
-        !historyLoading.value &&
-        !messages.value.length
-      ) {
-        void loadHistory(true);
-      }
-      return;
-    }
-    connected.value = {
-      message: queueMessage(queue) || "",
-      merchantId: session?.merchantId || queueMerchantId || 0,
-      userId: session?.userId || queueUserId || 0,
-      sessionNo,
-      isGuest,
-      session,
-      queue,
-    };
-    sessionClosed.value = false;
-    resetHistoryState();
-    if (session && !isGuest) {
-      void loadHistory(true);
-    }
-  }
-
-  function sessionIsGuest(session?: {
-    extJson?: string | Record<string, unknown>;
-  }) {
-    if (!session?.extJson) return false;
-    if (typeof session.extJson === "object") {
-      return Boolean(session.extJson.isGuest);
-    }
-    try {
-      return Boolean(
-        (JSON.parse(session.extJson) as { isGuest?: boolean }).isGuest,
-      );
-    } catch {
-      return false;
-    }
-  }
-
-  function isConnectedPayload(data: unknown): data is ConnectedPayload {
-    return Boolean(
-      data &&
-      typeof data === "object" &&
-      "sessionNo" in data &&
-      typeof (data as ConnectedPayload).sessionNo === "string",
     );
   }
 
@@ -521,15 +396,12 @@ export function useChatSocket() {
     return name ? `${name} 客服正在为你服务` : "客服正在为你服务";
   }
 
-  function queueMessage(queue?: ChatQueueInfo) {
+  function queueMessage(queue?: ChatQueuePayload) {
     if (!queue) return "";
-    if ("message" in queue && queue.message) return queue.message;
-    const position =
-      "queuePosition" in queue
-        ? Number(queue.queuePosition || 0)
-        : Number(queue.position || 0);
-    if (position > 1)
+    const position = Number(queue.queuePosition || 0);
+    if (position > 1) {
       return `正在排队，您前面还有 ${position - 1} 人。`;
+    }
     if (position === 1) return "您是当前队列第 1 位，客服即将接入。";
     return "";
   }
@@ -561,37 +433,29 @@ export function useChatSocket() {
     historyNextCursor.value = 0;
   }
 
-  function wsRespCode(resp: WsResp<unknown>) {
-    return resp.code ?? resp.base?.code ?? 0;
-  }
-
-  function wsRespMsg(resp: WsResp<unknown>) {
-    return resp.msg ?? resp.base?.msg ?? "";
-  }
-
-  function normalizeMessage(message: RawChatMessage): ChatMessage {
+  function normalizeMessage(message: Partial<ChatMessage>): ChatMessage {
     return {
       id: message.id,
-      messageNo: message.messageNo ?? message.message_no ?? "",
-      sessionNo: message.sessionNo ?? message.session_no ?? "",
-      merchantId: message.merchantId ?? message.merchant_id ?? 0,
+      messageNo: message.messageNo ?? "",
+      sessionNo: message.sessionNo ?? "",
+      merchantId: message.merchantId ?? 0,
       senderType: normalizeSenderType(message.sender?.type),
       sender: message.sender,
       receiver: message.receiver,
-      messageType: message.messageType ?? message.message_type ?? 0,
+      messageType: message.messageType ?? 0,
       content: message.content ?? "",
       url: message.url ?? "",
-      fileName: message.fileName ?? message.file_name ?? "",
-      fileSize: message.fileSize ?? message.file_size ?? 0,
-      mimeType: message.mimeType ?? message.mime_type ?? "",
+      fileName: message.fileName ?? "",
+      fileSize: message.fileSize ?? 0,
+      mimeType: message.mimeType ?? "",
       width: message.width ?? 0,
       height: message.height ?? 0,
       duration: message.duration ?? 0,
       status: message.status ?? 0,
       extra: message.extra ?? "",
-      readTime: message.readTime ?? message.read_time ?? 0,
-      createTime: message.createTime ?? message.create_times ?? 0,
-      updateTime: message.updateTime ?? message.update_times ?? 0,
+      readTime: message.readTime ?? 0,
+      createTime: message.createTime ?? 0,
+      updateTime: message.updateTime ?? 0,
     };
   }
 

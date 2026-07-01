@@ -68,15 +68,16 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 	client.SendEvent(&chat.ChatMessageEvent{
 		Code:      200,
 		Msg:       "",
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE,
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_WS_CONNECTED,
 		CreatedAt: utils.NowMillis(),
-		Payload: &chat.ChatMessageEvent_SystemNotice{
-			SystemNotice: &chat.ChatSystemNoticePayload{
+		Payload: &chat.ChatMessageEvent_Connected{
+			Connected: &chat.WsConnectedPayload{
+				Message:    "chat admin websocket connected",
+				MerchantId: req.MerchantId,
+				UserId:     req.UserId,
 				SessionNo:  req.SessionNo,
-				Title:      "connection",
-				Content:    "chat admin websocket connected",
-				Level:      "info",
-				ShowInChat: false,
+				Nickname:   user.Data.Nickname,
+				AvatarUrl:  user.Data.AvatarUrl,
 			},
 		},
 	})

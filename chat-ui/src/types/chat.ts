@@ -1,3 +1,5 @@
+import type { ChatEventType } from "@/api/constant";
+
 export interface RespBase {
   code: number;
   msg: string;
@@ -30,15 +32,6 @@ export interface ChatOptions {
 export interface PageReq {
   cursor?: number;
   limit?: number;
-}
-
-export interface ChatMerchant {
-  merchantId: number;
-  apiKey: string;
-  enabled: number;
-  expireTime: number;
-  createTimes: number;
-  updateTimes: number;
 }
 
 export interface ChatSession {
@@ -97,36 +90,14 @@ export interface ChatMessage {
   updateTime: number;
 }
 
-export interface ChatWsEvent<T = unknown> {
-  eventType?: string | number;
-  data?: T;
-  session?: ChatSession;
-  queue?: ChatQueueInfo;
-  base?: RespBase;
-}
-
-export interface ConnectedPayload {
+export interface WsConnectedPayload {
   message: string;
   merchantId: number;
   userId: number;
   sessionNo: string;
+  nickname?: string;
+  avatarUrl?: string;
   isGuest?: boolean;
-  session?: ChatSession;
-  queue?: ChatQueueInfo;
-}
-
-export interface ChatQueueInfo {
-  merchantId?: number;
-  sessionNo: string;
-  userId: number | string;
-  groupId?: number;
-  position?: number;
-  queuePosition?: number;
-  waitingCount?: number;
-  estimateWaitSeconds?: number;
-  estimatedWaitSeconds?: number;
-  message?: string;
-  updateTimes?: number;
 }
 
 export interface SendUserMessagePayload {
@@ -148,77 +119,12 @@ export interface SendUserMessagePayload {
   isGuest?: boolean;   
 }
 
-export interface OpenChatSessionPayload {
-  merchantId: number;
-  source?: number;
-  title?: string;
-  category?: string;
-  firstMessage?: string;
-  senderNickname?: string;
-  senderAvatarUrl?: string;
-}
-
-export interface SendChatMessagePayload extends SendUserMessagePayload {
-  merchantId: number;
-  clientMsgNo?: string;
-}
-
-export interface ListChatSessionsParams extends PageReq {
-  merchantId: number;
-  status?: number;
-}
-
 export interface ListChatMessagesParams extends PageReq {}
-
-export interface MarkUserMessagesReadPayload {
-  merchantId: number;
-  lastMessageId?: number;
-  lastMessageNo?: string;
-}
 
 export interface CloseChatSessionPayload {
   merchantId: number;
   closeReason?: string;
 }
-
-export interface ChatSessionResp extends RespBase {
-  data: ChatSession;
-}
-
-export interface ListChatSessionsResp extends RespBase {
-  data: ChatSession[];
-}
-
-export interface ListChatMessagesResp extends RespBase {
-  data: ChatMessage[];
-}
-
-export interface ChatMessageResp extends RespBase {
-  data: ChatMessage;
-}
-
-export type ChatEventType =
-  | "CHAT_EVENT_TYPE_UNSPECIFIED"
-  | "CHAT_EVENT_TYPE_MESSAGE"
-  | "CHAT_EVENT_TYPE_SYSTEM_NOTICE"
-  | "CHAT_EVENT_TYPE_USER_JOIN"
-  | "CHAT_EVENT_TYPE_USER_LEAVE"
-  | "CHAT_EVENT_TYPE_QUEUE_UPDATE"
-  | "CHAT_EVENT_TYPE_AGENT_ACCEPTED"
-  | "CHAT_EVENT_TYPE_AGENT_LEAVE"
-  | "CHAT_EVENT_TYPE_TRANSFER_REQUEST"
-  | "CHAT_EVENT_TYPE_TRANSFER_ACCEPT"
-  | "CHAT_EVENT_TYPE_TRANSFER_REJECT"
-  | "CHAT_EVENT_TYPE_SESSION_CLOSE"
-  | "CHAT_EVENT_TYPE_EVALUATION_INVITE"
-  | "CHAT_EVENT_TYPE_EVALUATION_SUBMIT"
-  | "CHAT_EVENT_TYPE_TYPING"
-  | "CHAT_EVENT_TYPE_MESSAGE_DELIVERED"
-  | "CHAT_EVENT_TYPE_MESSAGE_READ"
-  | "CHAT_EVENT_TYPE_MESSAGE_RECALL"
-  | "CHAT_EVENT_TYPE_MESSAGE_DELETE"
-  | "CHAT_EVENT_TYPE_HEARTBEAT"
-  | "CHAT_EVENT_TYPE_ERROR";
 
 export type ChatSenderType = number;
 export type ChatQueueAction = number;
@@ -245,8 +151,8 @@ export interface ChatUserStatePayload {
 
 export interface ChatQueuePayload {
   sessionNo: string;
-  userId: number | string;
-  userName?: string;
+  userId: number;
+  nickname?: string;
   queueAction: ChatQueueAction;
   queuePosition?: number;
   waitingCount?: number;
@@ -257,7 +163,8 @@ export interface ChatQueuePayload {
 
 export interface ChatAgentPayload {
   sessionNo: string;
-  agentId: string;
+  agentId: number;
+  agentUserId: number;
   agentName?: string;
   agentAvatar?: string;
   agentStatus?: number;
@@ -265,6 +172,7 @@ export interface ChatAgentPayload {
   sessionStatus?: number;
   remark?: string;
   actionTime: number;
+  accept?: boolean
 }
 
 export interface ChatTransferPayload {
@@ -280,9 +188,9 @@ export interface ChatTransferPayload {
 
 export interface ChatEvaluationPayload {
   sessionNo: string;
-  userId?: string;
-  agentId?: string;
-  evaluationId?: string;
+  userId?: number;
+  agentId?: number;
+  evaluationId?: number;
   rating?: number;
   tags?: string[];
   comment?: string;
@@ -292,7 +200,7 @@ export interface ChatEvaluationPayload {
 
 export interface ChatTypingPayload {
   sessionNo: string;
-  senderId: string;
+  senderId: number;
   senderType: ChatSenderType;
   text?: string;
   actionTime: number;
@@ -312,7 +220,7 @@ export interface ChatMessageOperatePayload {
   sessionNo: string;
   messageNo: string;
   operateType: ChatMessageOperateType;
-  operatorId: string;
+  operatorId: number;
   operatorType: ChatSenderType;
   deleteScope?: ChatMessageDeleteScope;
   reason?: string;
@@ -341,6 +249,7 @@ export interface ChatMessageEvent {
   msg?: string;
   eventType: ChatEventType;
   createdAt: number;
+  connected?: WsConnectedPayload;
   message?: ChatMessage;
   session?: ChatSession;
   systemNotice?: ChatSystemNoticePayload;
@@ -356,34 +265,12 @@ export interface ChatMessageEvent {
   error?: ChatErrorPayload;
 }
 
+export type ChatWsEvent = ChatMessageEvent;
+
 export interface ChatWsRequest<TPayload = unknown> {
   eventType?: ChatEventType;
   data: TPayload;
 }
 
 export type ChatUiWsReq =
-  | ChatWsRequest<SendUserMessagePayload>
-  | ChatWsRequest<ChatMessageReceiptPayload>
-  | ChatWsRequest<ChatTypingPayload>
-  | ChatWsRequest<ChatEvaluationPayload>
-  | ChatWsRequest<CloseChatSessionPayload>
-  | ChatWsRequest<ChatMessageOperatePayload>
-  | ChatWsRequest<ChatHeartbeatPayload>;
-
-export type ChatUiWsResp = ChatMessageEvent & {
-  eventType:
-    | "CHAT_EVENT_TYPE_SYSTEM_NOTICE"
-    | "CHAT_EVENT_TYPE_QUEUE_UPDATE"
-    | "CHAT_EVENT_TYPE_AGENT_ACCEPTED"
-    | "CHAT_EVENT_TYPE_AGENT_LEAVE"
-    | "CHAT_EVENT_TYPE_MESSAGE"
-    | "CHAT_EVENT_TYPE_MESSAGE_DELIVERED"
-    | "CHAT_EVENT_TYPE_MESSAGE_READ"
-    | "CHAT_EVENT_TYPE_TYPING"
-    | "CHAT_EVENT_TYPE_EVALUATION_INVITE"
-    | "CHAT_EVENT_TYPE_SESSION_CLOSE"
-    | "CHAT_EVENT_TYPE_MESSAGE_RECALL"
-    | "CHAT_EVENT_TYPE_MESSAGE_DELETE"
-    | "CHAT_EVENT_TYPE_HEARTBEAT"
-    | "CHAT_EVENT_TYPE_ERROR";
-};
+  ChatWsRequest<SendUserMessagePayload>;
