@@ -96,6 +96,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		}
 		ms.MerchantId = in.GetMerchantId()
 		ms.UserId = in.GetUserId()
+		ms.ExtJson = sql.NullString{String: in.GetExtJson(), Valid: strings.TrimSpace(in.GetExtJson()) != ""}
 
 		ms, err = ih.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, ms)
 		if err != nil {
@@ -159,6 +160,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			session.DisconnectTime = 0
 			session.BeforeDisconnectStatus = 0
 			session.UpdateTimes = now
+			session.ExtJson = sql.NullString{String: in.ExtJson, Valid: true}
 			if err := l.svcCtx.ChatSessionModel.Update(l.ctx, session); err != nil {
 				return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}

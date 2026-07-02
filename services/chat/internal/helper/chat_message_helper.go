@@ -2,8 +2,10 @@ package helper
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"wklive/common/utils"
 	"wklive/proto/chat"
@@ -126,6 +128,9 @@ func buildMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *mode
 			AvatarUrl: opts.Sender.GetAvatarUrl(),
 		}
 	}
+	if opts.Receiver == nil && opts.Sender.GetType() == chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT {
+		opts.Receiver = SessionMessageUser(session)
+	}
 	if opts.Receiver != nil {
 		message.Receiver = &models.ChatMessageUser{
 			Id:        opts.Receiver.GetId(),
@@ -135,6 +140,27 @@ func buildMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *mode
 		}
 	}
 	return &message, nil
+}
+
+func SessionMessageUser(session *models.TChatSession) *chat.ChatMessageUser {
+	if session == nil {
+		return nil
+	}
+	user := &chat.ChatMessageUser{
+		Id:   session.UserId,
+		Type: chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+	}
+	var ext map[string]string
+	if session.ExtJson.Valid && strings.TrimSpace(session.ExtJson.String) != "" {
+		if err := json.Unmarshal([]byte(session.ExtJson.String), &ext); err == nil {
+			user.Nickname = strings.TrimSpace(ext["nickname"])
+			user.AvatarUrl = strings.TrimSpace(ext["avatarUrl"])
+		}
+	}
+	if user.Nickname == "" {
+		user.Nickname = strings.TrimSpace(session.Title)
+	}
+	return user
 }
 
 func sendPersistedMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, msg *models.ChatMessage) (*models.ChatMessage, error) {

@@ -53,6 +53,7 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 		conn,
 		&chat.ChatMessageUser{
 			Id:        req.UserId,
+			Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
 			Nickname:  user.Data.Nickname,
 			AvatarUrl: user.Data.AvatarUrl,
 		},
@@ -188,7 +189,7 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		Height:          payload.GetHeight(),
 		Duration:        payload.GetDuration(),
 		Extra:           payload.GetExtra(),
-		Sender:          payload.Sender,
+		Sender:          firstNonNilMessageUser(conn.Sender, payload.Sender),
 		MerchantId:      conn.MerchantId,
 		IsGuest:         conn.IsGuest,
 	}
@@ -204,7 +205,14 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 	if resp.Base.Code != 200 {
 		logx.Errorf("chat admin send message fail, error message is : %s", resp.Base.Msg)
 	} else {
-		logx.Errorf("chat admin send message success, message no is : %s", resp.Data.MessageNo)
+		messageNo := ""
+		if resp.Data != nil && resp.Data.Receiver != nil {
+			conn.Receivers.Store(resp.Data.SessionNo, resp.Data.Receiver)
+		}
+		if resp.Data != nil {
+			messageNo = resp.Data.MessageNo
+		}
+		logx.Errorf("chat admin send message success, message no is : %s", messageNo)
 	}
 }
 
@@ -312,4 +320,13 @@ func firstNonZero(values ...int64) int64 {
 		}
 	}
 	return 0
+}
+
+func firstNonNilMessageUser(values ...*chat.ChatMessageUser) *chat.ChatMessageUser {
+	for _, value := range values {
+		if value != nil {
+			return value
+		}
+	}
+	return nil
 }

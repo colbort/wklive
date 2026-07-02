@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -77,20 +76,10 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if err != nil {
 		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	var ext map[string]string
-	err = json.Unmarshal([]byte(session.ExtJson.String), &ext)
-	if err != nil {
-		return nil, err
-	}
 	return &chat.AcceptChatSessionResp{Base: helper.OkResp(), Data: &chat.AcceptChatSessionUser{
 		SessionNo: in.SessionNo,
-		User: &chat.ChatMessageUser{
-			Id:        session.UserId,
-			Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
-			Nickname:  ext["nickname"],
-			AvatarUrl: ext["avatarUrl"],
-		},
-		Agent: payload,
+		User:      ih.SessionMessageUser(session),
+		Agent:     payload,
 	}}, nil
 }
 
