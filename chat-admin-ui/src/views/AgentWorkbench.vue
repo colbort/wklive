@@ -520,6 +520,7 @@ function handleWsConnectedWsEvent(payload: WsConnectedPayload) {
 function applyWsSessionMessage(message: ChatMessage) {
   if (message.sessionNo && message.messageNo) {
     normalizeMessageEnums(message);
+    upsertSessionFromMessage(message);
     if (shouldAppendWsMessage(message)) {
       pushMessage(message);
     }
@@ -533,6 +534,9 @@ function applyWsSessionMessage(message: ChatMessage) {
     statusFilter.value !== "waiting"
   ) {
     statusFilter.value = "waiting";
+  }
+  if (message.senderType === 1 && message.sessionNo) {
+    activeSessionNo.value = message.sessionNo;
   }
   scheduleRefreshSessions();
   return message;
@@ -688,7 +692,13 @@ function needsAccept(session?: ChatSession) {
 }
 
 function normalizeMessageEnums(message: ChatMessage) {
+  const raw = message as ChatMessage & {
+    createTimes?: number;
+    updateTimes?: number;
+  };
   message.senderType = senderTypeValue(message.senderType || message.sender?.type);
+  message.createTime = Number(message.createTime || raw.createTimes || 0);
+  message.updateTime = Number(message.updateTime || raw.updateTimes || 0);
 }
 
 function normalizeMessage(message: ChatMessage) {
@@ -723,6 +733,54 @@ function isQueueSystemMessage(message?: ChatMessage) {
 function shouldAppendWsMessage(message?: ChatMessage) {
   if (!message || isQueueSystemMessage(message)) return false;
   return true;
+}
+
+function upsertSessionFromMessage(message: ChatMessage) {
+  if (!message.sessionNo) return;
+  const index = sessions.value.findIndex(
+    (item) => item.sessionNo === message.sessionNo,
+  );
+  const current = index >= 0 ? sessions.value[index] : undefined;
+  const now = Number(message.createTime || message.updateTime || Date.now());
+  const user = message.senderType === 1 ? message.sender : message.receiver;
+  const next: ChatSession = normalizeSession({
+    id: current?.id || 0,
+    sessionNo: message.sessionNo,
+    merchantId: current?.merchantId || message.merchantId || merchantId.value,
+    userId: current?.userId || Number(user?.id || 0),
+    source: current?.source || 0,
+    status: current?.status || sessionStatus.waiting,
+    priority: current?.priority || 0,
+    agentId: current?.agentId || 0,
+    groupId: current?.groupId || 0,
+    title: current?.title || "",
+    category: current?.category || "",
+    lastMessage: message.content || message.fileName || "[图片]",
+    lastSenderType: message.senderType,
+    lastMessageTime: now,
+    userUnreadCount:
+      current?.userUnreadCount ||
+      (activeSessionNo.value === message.sessionNo ? 0 : 1),
+    agentUnreadCount: current?.agentUnreadCount || 0,
+    closeTime: current?.closeTime || 0,
+    closeReason: current?.closeReason || "",
+    extJson: {
+      ...(current?.extJson || {}),
+      nickname: current?.extJson?.nickname || user?.nickname || "",
+      avatarUrl: current?.extJson?.avatarUrl || user?.avatarUrl || "",
+    },
+    isGuest: current?.isGuest || false,
+    avatarUrl: current?.avatarUrl || user?.avatarUrl || "",
+    lastMessageNo: message.messageNo,
+    createTimes: current?.createTimes || now,
+    updateTimes: now,
+  });
+
+  if (index >= 0) {
+    sessions.value[index] = next;
+  } else {
+    sessions.value = [next, ...sessions.value];
+  }
 }
 
 function normalizeSession(session: ChatSession) {
