@@ -143,7 +143,7 @@ function clearObjectUrl() {
   >
     <div class="bubble">
       <span>{{ senderName }}</span>
-      <p v-if="message.status === deletedStatus">该消息删除</p>
+      <p v-if="message.status === deletedStatus">消息已删除</p>
       <img
         v-else-if="message.messageType === 2 && imageSrc"
         class="bubble-image"

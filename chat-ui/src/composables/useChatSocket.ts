@@ -262,25 +262,23 @@ export function useChatSocket() {
   function canSendMessage(content: string) {
     return Boolean(
       socket.value &&
-        socket.value.readyState === WebSocket.OPEN &&
-        content &&
-        agentAccepted.value &&
-        !sessionClosed.value,
+      socket.value.readyState === WebSocket.OPEN &&
+      content &&
+      agentAccepted.value &&
+      !sessionClosed.value,
     );
   }
 
   function canSendResourceMessage() {
     return Boolean(
       socket.value &&
-        socket.value.readyState === WebSocket.OPEN &&
-        agentAccepted.value &&
-        !sessionClosed.value,
+      socket.value.readyState === WebSocket.OPEN &&
+      agentAccepted.value &&
+      !sessionClosed.value,
     );
   }
 
-  function buildTextMessagePayload(
-    content: string,
-  ): SendUserMessagePayload {
+  function buildTextMessagePayload(content: string): SendUserMessagePayload {
     return {
       sessionNo: connected.value?.sessionNo || "",
       merchantId: connected.value?.merchantId || 0,
@@ -346,7 +344,8 @@ export function useChatSocket() {
     operateType: number,
     deleteScope = 0,
   ) {
-    if (!socket.value || socket.value.readyState !== WebSocket.OPEN) return false;
+    if (!socket.value || socket.value.readyState !== WebSocket.OPEN)
+      return false;
     if (!message.sessionNo || !message.messageNo) return false;
     const eventType =
       operateType === messageOperateType.RECALL
@@ -371,14 +370,10 @@ export function useChatSocket() {
     if (!sessionClosed.value && socket.value?.readyState === WebSocket.OPEN) {
       sendChatSocketEvent(
         socket.value,
-        createChatWsRequest(
-          chatEventType.SESSION_CLOSE,
-          "session",
-          {
-            merchantId: connected.value?.merchantId || 0,
-            closeReason,
-          },
-        ),
+        createChatWsRequest(chatEventType.SESSION_CLOSE, "session", {
+          merchantId: connected.value?.merchantId || 0,
+          closeReason,
+        }),
       );
     }
 
@@ -409,21 +404,17 @@ export function useChatSocket() {
     try {
       sendChatSocketEvent(
         socket.value,
-        createChatWsRequest(
-          chatEventType.EVALUATION_SUBMIT,
-          "evaluation",
-          {
-            sessionNo: connected.value?.sessionNo || "",
-            userId: connected.value?.userId || 0,
-            agentId: agent.value?.agentId || evaluationInvite.value?.agentId || 0,
-            evaluationId: evaluationInvite.value?.evaluationId || 0,
-            rating,
-            tags,
-            comment: comment.trim(),
-            submitted: true,
-            evaluatedAt: Date.now(),
-          },
-        ),
+        createChatWsRequest(chatEventType.EVALUATION_SUBMIT, "evaluation", {
+          sessionNo: connected.value?.sessionNo || "",
+          userId: connected.value?.userId || 0,
+          agentId: agent.value?.agentId || evaluationInvite.value?.agentId || 0,
+          evaluationId: evaluationInvite.value?.evaluationId || 0,
+          rating,
+          tags,
+          comment: comment.trim(),
+          submitted: true,
+          evaluatedAt: Date.now(),
+        }),
       );
       return true;
     } catch (err) {
@@ -478,7 +469,8 @@ export function useChatSocket() {
 
   function handleEvaluationSubmitEvent(payload: ChatEvaluationPayload) {
     evaluationSubmitted.value = payload.submitted !== false;
-    queueStatus.value = payload.submitted === false ? "评价提交失败" : "评价已提交";
+    queueStatus.value =
+      payload.submitted === false ? "评价提交失败" : "评价已提交";
   }
 
   function handleTypingEvent(payload: ChatTypingPayload) {
@@ -499,7 +491,7 @@ export function useChatSocket() {
 
   function handleAgentAcceptedEvent(payload: ChatAgentPayload) {
     agent.value = payload;
-    let name = payload.agentName
+    let name = payload.agentName;
     queueStatus.value = name ? `${name} 正在为你服务` : "客服正在为你服务";
   }
 
@@ -575,10 +567,13 @@ export function useChatSocket() {
 
     historyLoading.value = true;
     try {
-      const resp = await listChatMessagesWithMeta({
-        cursor: initial ? 0 : historyNextCursor.value,
-        limit: 20,
-      }, chatToken.value);
+      const resp = await listChatMessagesWithMeta(
+        {
+          cursor: initial ? 0 : historyNextCursor.value,
+          limit: 20,
+        },
+        chatToken.value,
+      );
       const list = Array.isArray(resp.data) ? resp.data : [];
       prependMessages(list.map(normalizeMessage).reverse());
       historyHasMore.value = Boolean(resp.hasNext);
@@ -731,8 +726,14 @@ export function useChatSocket() {
       status: message.status ?? 0,
       extra: message.extra ?? "",
       readTime: message.readTime ?? 0,
-      createTime: message.createTime ?? (message as { createTimes?: number }).createTimes ?? 0,
-      updateTime: message.updateTime ?? (message as { updateTimes?: number }).updateTimes ?? 0,
+      createTime:
+        message.createTime ??
+        (message as { createTimes?: number }).createTimes ??
+        0,
+      updateTime:
+        message.updateTime ??
+        (message as { updateTimes?: number }).updateTimes ??
+        0,
     };
   }
 

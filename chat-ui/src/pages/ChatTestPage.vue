@@ -58,7 +58,9 @@ function openChat(mode: ChatMode) {
   <main class="test-page">
     <section class="test-hero">
       <div class="brand">
-        <div class="brand-mark">WK</div>
+        <div class="brand-mark">
+          WK
+        </div>
         <div>
           <h1>客户客服测试页</h1>
           <p>选择手机或电脑形态打开客服页面</p>
@@ -85,15 +87,21 @@ function openChat(mode: ChatMode) {
       </div>
     </section>
 
-    <section class="setup-panel" aria-label="chat setup">
-      <form class="setup-form" @submit.prevent="generateToken">
+    <section
+      class="setup-panel"
+      aria-label="chat setup"
+    >
+      <form
+        class="setup-form"
+        @submit.prevent="generateToken"
+      >
         <label>
           <span>API Key</span>
           <input
             v-model="apiKey"
             autocomplete="off"
             placeholder="输入商户 API Key"
-          />
+          >
         </label>
         <label>
           <span>API Secret</span>
@@ -102,7 +110,7 @@ function openChat(mode: ChatMode) {
             autocomplete="off"
             placeholder="输入商户 API Secret"
             type="password"
-          />
+          >
         </label>
         <button
           class="primary-button"
@@ -113,18 +121,27 @@ function openChat(mode: ChatMode) {
         </button>
       </form>
 
-      <div v-if="chatToken" class="merchant-box">
+      <div
+        v-if="chatToken"
+        class="merchant-box"
+      >
         <span>ChatToken</span>
         <strong>已生成</strong>
       </div>
-      <p v-if="authError" class="error-text">
+      <p
+        v-if="authError"
+        class="error-text"
+      >
         {{ authError }}
       </p>
 
       <div class="connect-box">
         <label>
           <span>昵称</span>
-          <input v-model="nickname" autocomplete="off" />
+          <input
+            v-model="nickname"
+            autocomplete="off"
+          >
         </label>
         <label>
           <span>用户 ID</span>
@@ -132,11 +149,15 @@ function openChat(mode: ChatMode) {
             v-model="userId"
             autocomplete="off"
             placeholder="输入登录用户 ID"
-          />
+          >
         </label>
         <label>
           <span>头像 URL</span>
-          <input v-model="avatarUrl" autocomplete="off" placeholder="可选" />
+          <input
+            v-model="avatarUrl"
+            autocomplete="off"
+            placeholder="可选"
+          >
         </label>
       </div>
     </section>

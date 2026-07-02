@@ -143,10 +143,7 @@ export function sendChatSocketTypedEvent(
   socket.send(JSON.stringify(request));
 }
 
-export function sendChatSocketEvent(
-  socket: WebSocket,
-  request: ChatWsRequest,
-) {
+export function sendChatSocketEvent(socket: WebSocket, request: ChatWsRequest) {
   sendChatSocketTypedEvent(socket, request);
 }
 

@@ -35,8 +35,12 @@ function canDelete() {
 }
 
 function canRecall() {
-  const createTime = Number(props.message.createTime || props.message.updateTime || 0);
-  return canDelete() && createTime > 0 && Date.now() - createTime <= recallWindowMs;
+  const createTime = Number(
+    props.message.createTime || props.message.updateTime || 0,
+  );
+  return (
+    canDelete() && createTime > 0 && Date.now() - createTime <= recallWindowMs
+  );
 }
 
 function hasMenu() {
@@ -44,7 +48,8 @@ function hasMenu() {
 }
 
 watch(
-  () => [props.message.messageType, props.message.url, props.resolveUrl] as const,
+  () =>
+    [props.message.messageType, props.message.url, props.resolveUrl] as const,
   () => {
     void loadImageSrc();
   },
@@ -100,7 +105,6 @@ function emitDelete() {
   closeMenu();
 }
 
-
 function fileSizeText(size = 0) {
   if (!size) return "";
   if (size < 1024) return `${size} B`;
@@ -143,13 +147,15 @@ function clearObjectUrl() {
   >
     <div class="bubble">
       <span>{{ senderName }}</span>
-      <p v-if="message.status === deletedStatus">该消息删除</p>
+      <p v-if="message.status === deletedStatus">
+        消息已删除
+      </p>
       <img
         v-else-if="message.messageType === 2 && imageSrc"
         class="bubble-image"
         :src="imageSrc"
         :alt="message.fileName || message.content || 'image'"
-      />
+      >
       <video
         v-else-if="message.messageType === 4 && message.url"
         class="bubble-video"
@@ -173,7 +179,9 @@ function clearObjectUrl() {
         <strong>{{ message.fileName || message.content || "文件" }}</strong>
         <small>{{ message.mimeType }} {{ fileSizeText(message.fileSize) }}</small>
       </a>
-      <p v-else>{{ message.content }}</p>
+      <p v-else>
+        {{ message.content }}
+      </p>
     </div>
     <div
       v-if="menuOpen && hasMenu()"

@@ -273,7 +273,7 @@ export interface SendAgentMessagePayload {
   sender: ChatMessageUser;
   receiver?: ChatMessageUser;
   merchantId?: number;
-  isGuest?: boolean;          
+  isGuest?: boolean;
 }
 
 export interface AcceptChatSessionPayload {

@@ -115,7 +115,7 @@ export interface PageChatMessagesParams {
   merchantId: number;
   cursor?: number;
   limit?: number;
-  isGuest: boolean
+  isGuest: boolean;
   senderType?: number;
 }
 

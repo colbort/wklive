@@ -92,7 +92,7 @@ export interface ChatMessage {
 
 export interface WsConnectedPayload {
   message: string;
-  sessionNo: string
+  sessionNo: string;
   merchantId: number;
   userId: number;
   nickname?: string;
@@ -116,7 +116,7 @@ export interface SendUserMessagePayload {
   sender: ChatMessageUser;
   receiver?: ChatMessageUser;
   merchantId?: number;
-  isGuest?: boolean;   
+  isGuest?: boolean;
 }
 
 export interface ListChatMessagesParams extends PageReq {}

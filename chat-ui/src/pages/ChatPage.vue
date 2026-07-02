@@ -30,7 +30,8 @@ const showDesktopFrame = computed(() => activeMode.value === "desktop");
 const hasDraft = computed(() => draft.value.trim().length > 0);
 const composerActionLabel = computed(() => (hasDraft.value ? "发送" : "结束"));
 const canComposeMessage = computed(
-  () => chat.isOpen.value && !chat.sessionClosed.value && chat.agentAccepted.value,
+  () =>
+    chat.isOpen.value && !chat.sessionClosed.value && chat.agentAccepted.value,
 );
 const canSubmitEvaluation = computed(
   () =>
@@ -94,7 +95,11 @@ async function connectChat() {
 function removeChatTokenFromUrl() {
   const url = new URL(window.location.href);
   url.searchParams.delete("chatToken");
-  window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  window.history.replaceState(
+    {},
+    "",
+    `${url.pathname}${url.search}${url.hash}`,
+  );
 }
 
 function sendMessage() {
@@ -220,15 +225,28 @@ onBeforeUnmount(() => {
     type="file"
     accept="image/*"
     @change="handleResourceSelected"
-  />
+  >
 
-  <main class="chat-page" :class="{ 'chat-page--desktop': showDesktopFrame }">
-    <section class="chat-shell" aria-label="chat conversation">
-      <div v-if="chat.queueStatus.value" class="queue-message">
+  <main
+    class="chat-page"
+    :class="{ 'chat-page--desktop': showDesktopFrame }"
+  >
+    <section
+      class="chat-shell"
+      aria-label="chat conversation"
+    >
+      <div
+        v-if="chat.queueStatus.value"
+        class="queue-message"
+      >
         {{ chat.queueStatus.value }}
       </div>
 
-      <div ref="messageList" class="message-list" @scroll="handleMessageScroll">
+      <div
+        ref="messageList"
+        class="message-list"
+        @scroll="handleMessageScroll"
+      >
         <div class="welcome-message">
           <strong>您好</strong>
           <span>请描述您遇到的问题，客服会在这里接收并回复。</span>
@@ -246,11 +264,17 @@ onBeforeUnmount(() => {
         />
       </div>
 
-      <p v-if="chat.error.value || authError" class="error-line">
+      <p
+        v-if="chat.error.value || authError"
+        class="error-line"
+      >
         {{ chat.error.value || authError }}
       </p>
 
-      <form class="composer" @submit.prevent="handleComposerAction">
+      <form
+        class="composer"
+        @submit.prevent="handleComposerAction"
+      >
         <button
           class="resource-button"
           type="button"
@@ -274,7 +298,10 @@ onBeforeUnmount(() => {
             rows="1"
             @input="resizeMessageInput"
           />
-          <span v-if="selectedResourceName" class="resource-name">
+          <span
+            v-if="selectedResourceName"
+            class="resource-name"
+          >
             {{ selectedResourceName }}
           </span>
         </div>
@@ -282,8 +309,8 @@ onBeforeUnmount(() => {
           class="send-button"
           :disabled="
             !chat.isOpen.value ||
-            chat.sessionClosed.value ||
-            (hasDraft && !chat.agentAccepted.value)
+              chat.sessionClosed.value ||
+              (hasDraft && !chat.agentAccepted.value)
           "
           type="submit"
         >
@@ -301,7 +328,9 @@ onBeforeUnmount(() => {
     >
       <section class="evaluation-dialog">
         <header class="evaluation-header">
-          <h2 id="evaluation-title">服务评价</h2>
+          <h2 id="evaluation-title">
+            服务评价
+          </h2>
           <button
             class="evaluation-close"
             type="button"

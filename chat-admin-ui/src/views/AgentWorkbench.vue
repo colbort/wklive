@@ -142,7 +142,7 @@ const merchantId = computed(
   () => auth.user?.merchantId || auth.agent?.merchantId || 0,
 );
 const agentId = computed(() => auth.agent?.id || 0);
-const userId = computed(() => auth.user?.id || 0)
+const userId = computed(() => auth.user?.id || 0);
 const agentStatusOption = computed(
   () =>
     agentStatusOptions.value.find(
@@ -359,7 +359,7 @@ async function loadMessages(sessionNo: string) {
   try {
     const resp = await pageMessages(sessionNo, {
       merchantId: merchantId.value,
-      isGuest: session?.isGuest||false,
+      isGuest: session?.isGuest || false,
       limit: 50,
     });
     messages.value[sessionNo] = sortMessages(
@@ -485,7 +485,8 @@ function handleQueueUpdateWsEvent(payload: ChatQueuePayload) {
 }
 
 function handleUserJoinWsEvent(event: ChatWsEvent) {
-  const sessionNo = event.session?.sessionNo || event.userState?.sessionNo || "";
+  const sessionNo =
+    event.session?.sessionNo || event.userState?.sessionNo || "";
   if (!sessionNo) {
     scheduleRefreshSessions();
     return;
@@ -496,13 +497,16 @@ function handleUserJoinWsEvent(event: ChatWsEvent) {
 
 function handleUserLeaveWsEvent(payload: ChatUserStatePayload) {
   if (payload.sessionNo) {
-    setSessionStatusMessage(payload.sessionNo, payload.userName || "用户已离开");
+    setSessionStatusMessage(
+      payload.sessionNo,
+      payload.userName || "用户已离开",
+    );
   }
   scheduleRefreshSessions();
 }
 
 function handleMessageWsEvent(payload: ChatMessage) {
-  console.log("收到消息，消息编号：" + payload.messageNo)
+  console.log("收到消息，消息编号：" + payload.messageNo);
   applyWsSessionMessage(payload);
 }
 
@@ -526,7 +530,10 @@ function handleMessageReceiptWsEvent(payload: ChatMessageReceiptPayload) {
 
 function handleEvaluationSubmitWsEvent(payload: ChatEvaluationPayload) {
   if (!payload.sessionNo) return;
-  setSessionStatusMessage(payload.sessionNo, payload.submitted === false ? "评价提交失败" : "用户已提交评价");
+  setSessionStatusMessage(
+    payload.sessionNo,
+    payload.submitted === false ? "评价提交失败" : "用户已提交评价",
+  );
 }
 
 function handleTypingWsEvent(payload: ChatTypingPayload) {
@@ -689,7 +696,10 @@ function setSessionStatusMessage(sessionNo: string, message?: string) {
   };
 }
 
-function queueStatusMessage(queue?: { queuePosition?: number; waitingCount?: number }) {
+function queueStatusMessage(queue?: {
+  queuePosition?: number;
+  waitingCount?: number;
+}) {
   if (!queue) return "";
   const position = Number(queue.queuePosition || 0);
   if (position > 1) return `正在排队，前面还有 ${position - 1} 人`;
@@ -705,14 +715,12 @@ function matchStatusFilter(session: ChatSession) {
   }
   if (statusFilter.value === "serving") {
     return (
-      (
-        [
-          sessionStatus.serving,
-          sessionStatus.pendingUser,
-          sessionStatus.pendingAgent,
-        ] as number[]
-      ).includes(status)
-    );
+      [
+        sessionStatus.serving,
+        sessionStatus.pendingUser,
+        sessionStatus.pendingAgent,
+      ] as number[]
+    ).includes(status);
   }
   return status === sessionStatus.closed;
 }
@@ -736,7 +744,9 @@ function normalizeMessageEnums(message: ChatMessage) {
     createTimes?: number;
     updateTimes?: number;
   };
-  message.senderType = senderTypeValue(message.senderType || message.sender?.type);
+  message.senderType = senderTypeValue(
+    message.senderType || message.sender?.type,
+  );
   message.createTime = Number(message.createTime || raw.createTimes || 0);
   message.updateTime = Number(message.updateTime || raw.updateTimes || 0);
 }
@@ -780,7 +790,9 @@ function compareMessages(left: ChatMessage, right: ChatMessage) {
   const rightId = Number(right.id || 0);
   if (leftId !== rightId) return leftId - rightId;
 
-  return String(left.messageNo || "").localeCompare(String(right.messageNo || ""));
+  return String(left.messageNo || "").localeCompare(
+    String(right.messageNo || ""),
+  );
 }
 
 function isQueueSystemMessage(message?: ChatMessage) {
@@ -867,12 +879,8 @@ function normalizeSession(session: ChatSession) {
 
 function normalizeSessionExtJson(session: ChatSession): ChatSessionExtJson {
   const ext = parseSessionExtJson(session.extJson);
-  const nickname = firstString(
-    ext.nickname,
-  );
-  const avatarUrl = firstString(
-    ext.avatarUrl,
-  );
+  const nickname = firstString(ext.nickname);
+  const avatarUrl = firstString(ext.avatarUrl);
   return {
     ...ext,
     nickname,
@@ -1112,21 +1120,18 @@ function buildOptimisticAgentMessage(
 }
 
 function canSendMessage(content: string) {
-  return Boolean(
-    content &&
-      canSendResourceMessage(),
-  );
+  return Boolean(content && canSendResourceMessage());
 }
 
 function canSendResourceMessage() {
   return Boolean(
-      socket &&
-      socket.readyState === WebSocket.OPEN &&
-      activeSession.value &&
-      merchantId.value &&
-      agentId.value &&
-      !activeNeedsAccept.value &&
-      !activeClosed.value,
+    socket &&
+    socket.readyState === WebSocket.OPEN &&
+    activeSession.value &&
+    merchantId.value &&
+    agentId.value &&
+    !activeNeedsAccept.value &&
+    !activeClosed.value,
   );
 }
 
