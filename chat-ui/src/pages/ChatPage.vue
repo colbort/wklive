@@ -168,9 +168,9 @@ onMounted(() => {
 });
 
 watch(
-  () => chat.messages.value.length,
-  (length, previousLength) => {
-    if (previousLength === 0 && length > 0) {
+  () => chat.messages.value[chat.messages.value.length - 1]?.messageNo,
+  (messageNo, previousMessageNo) => {
+    if (messageNo && messageNo !== previousMessageNo) {
       void scrollMessagesToBottom();
     }
   },

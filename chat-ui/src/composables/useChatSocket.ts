@@ -26,6 +26,9 @@ import { chatEventType, type ChatEventType } from "@/api/constant";
 type ConnectOptions = Record<string, never>;
 
 const reconnectDelays = [1000, 2000, 5000, 10000, 15000];
+const messageStatus = {
+  SENDING: 1,
+};
 
 export function useChatSocket() {
   const socket = ref<WebSocket | null>(null);
@@ -55,6 +58,7 @@ export function useChatSocket() {
   let reconnectAttempts = 0;
   let reconnectTimer: ReturnType<typeof window.setTimeout> | null = null;
   let reconnectTicker: ReturnType<typeof window.setInterval> | null = null;
+  const pendingUserMessageNos: Record<string, string[]> = {};
 
   const isOpen = computed(() => status.value === "open");
   const isGuest = computed(() => Boolean(connected.value?.isGuest));
@@ -195,7 +199,12 @@ export function useChatSocket() {
     if (!canSendMessage(text)) {
       return;
     }
-    sendUserMessageEvent(buildTextMessagePayload(text));
+    const payload = buildTextMessagePayload(text);
+    const clientMessageId = `user-msg-${Date.now()}`;
+    payload.clientMessageId = clientMessageId;
+    sendUserMessageEvent(payload);
+    pushMessage(buildOptimisticUserMessage(payload, clientMessageId));
+    trackPendingUserMessage(payload.sessionNo || "", clientMessageId);
   }
 
   function canSendMessage(content: string) {
@@ -398,7 +407,21 @@ export function useChatSocket() {
     const message = messages.value.find(
       (item) => item.messageNo === payload.messageNo,
     );
-    if (!message) return;
+    if (!message) {
+      const pendingNo = shiftPendingUserMessage(payload.sessionNo);
+      const pendingMessage = messages.value.find(
+        (item) => item.messageNo === pendingNo,
+      );
+      if (!pendingMessage) return;
+      pendingMessage.messageNo = payload.messageNo;
+      pendingMessage.status = Number(
+        payload.messageStatus || pendingMessage.status,
+      );
+      pendingMessage.updateTime = Number(
+        payload.receiptTime || pendingMessage.updateTime,
+      );
+      return;
+    }
     message.status = Number(payload.messageStatus || message.status);
     message.updateTime = Number(payload.receiptTime || message.updateTime);
   }
@@ -475,6 +498,50 @@ export function useChatSocket() {
       return;
     }
     messages.value.push(message);
+  }
+
+  function buildOptimisticUserMessage(
+    payload: SendUserMessagePayload,
+    messageNo: string,
+  ): ChatMessage {
+    const now = Date.now();
+    return {
+      messageNo,
+      sessionNo: payload.sessionNo || "",
+      merchantId: payload.merchantId || 0,
+      senderType: 1,
+      sender: payload.sender,
+      receiver: payload.receiver,
+      messageType: payload.messageType,
+      content: payload.content || "",
+      url: payload.url || "",
+      fileName: payload.fileName || "",
+      fileSize: payload.fileSize || 0,
+      mimeType: payload.mimeType || "",
+      width: payload.width || 0,
+      height: payload.height || 0,
+      duration: payload.duration || 0,
+      status: messageStatus.SENDING,
+      extra: payload.extra || "",
+      readTime: 0,
+      createTime: now,
+      updateTime: now,
+    };
+  }
+
+  function trackPendingUserMessage(sessionNo: string, messageNo: string) {
+    if (!sessionNo || !messageNo) return;
+    if (!pendingUserMessageNos[sessionNo]) {
+      pendingUserMessageNos[sessionNo] = [];
+    }
+    pendingUserMessageNos[sessionNo].push(messageNo);
+  }
+
+  function shiftPendingUserMessage(sessionNo: string) {
+    if (!sessionNo) return "";
+    const pending = pendingUserMessageNos[sessionNo];
+    if (!pending?.length) return "";
+    return pending.shift() || "";
   }
 
   function prependMessages(list: ChatMessage[]) {
