@@ -26,7 +26,6 @@ import type {
 } from "@/types/chat";
 import { chatEventType, type ChatEventType } from "@/api/constant";
 
-type ConnectOptions = Record<string, never>;
 
 const reconnectDelays = [1000, 2000, 5000, 10000, 15000];
 const messageStatus = {
@@ -65,7 +64,6 @@ export function useChatSocket() {
     "idle" | "connecting" | "open" | "closed" | "reconnecting"
   >("idle");
 
-  let lastOptions: ConnectOptions | null = null;
   let manualClose = false;
   let suppressNextCloseReconnect = false;
   let reconnectAttempts = 0;
@@ -118,13 +116,12 @@ export function useChatSocket() {
     manualClose = false;
     chatToken.value = token.trim();
     void loadChatOptions();
-    lastOptions = {};
     reconnectAttempts = 0;
     clearReconnectTimer();
-    openSocket(lastOptions);
+    openSocket();
   }
 
-  function openSocket(options: ConnectOptions) {
+  function openSocket() {
     closeSocketOnly(true);
     error.value = "";
     reconnectingIn.value = 0;
@@ -158,7 +155,6 @@ export function useChatSocket() {
 
   function close() {
     manualClose = true;
-    lastOptions = null;
     clearReconnectTimer();
     closeSocketOnly(false);
     connected.value = null;
@@ -176,7 +172,7 @@ export function useChatSocket() {
   }
 
   function scheduleReconnect() {
-    if (manualClose || !lastOptions) {
+    if (manualClose) {
       return;
     }
     clearReconnectTimer();
@@ -192,8 +188,8 @@ export function useChatSocket() {
     }, 1000);
     reconnectTimer = window.setTimeout(() => {
       clearReconnectTimer();
-      if (lastOptions && !manualClose) {
-        openSocket(lastOptions);
+      if (!manualClose) {
+        openSocket();
       }
     }, delay);
   }
@@ -595,11 +591,6 @@ export function useChatSocket() {
       },
       { ...fallback },
     );
-  }
-
-  function agentNameFromMessage(message?: ChatMessage) {
-    if (!message || message.senderType !== 2) return "";
-    return (message.sender?.nickname || "").trim();
   }
 
   function pushMessage(message: ChatMessage) {
