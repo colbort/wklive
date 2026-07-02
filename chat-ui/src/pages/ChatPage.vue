@@ -27,6 +27,9 @@ const chat = useChatSocket();
 const showDesktopFrame = computed(() => activeMode.value === "desktop");
 const hasDraft = computed(() => draft.value.trim().length > 0);
 const composerActionLabel = computed(() => (hasDraft.value ? "发送" : "结束"));
+const canComposeMessage = computed(
+  () => chat.isOpen.value && !chat.sessionClosed.value && chat.agentAccepted.value,
+);
 const canSubmitEvaluation = computed(
   () =>
     chat.isOpen.value &&
@@ -121,7 +124,7 @@ function handleComposerAction() {
 }
 
 function openResourcePicker() {
-  if (!chat.isOpen.value || chat.sessionClosed.value) return;
+  if (!canComposeMessage.value) return;
   resourceInput.value?.click();
 }
 
@@ -270,7 +273,7 @@ onBeforeUnmount(() => {
         <button
           class="resource-button"
           type="button"
-          :disabled="!chat.isOpen.value || chat.sessionClosed.value"
+          :disabled="!canComposeMessage"
           @click="openResourcePicker"
         >
           资源
@@ -279,9 +282,13 @@ onBeforeUnmount(() => {
           <textarea
             ref="messageInput"
             v-model="draft"
-            :disabled="!chat.isOpen.value || chat.sessionClosed.value"
+            :disabled="!canComposeMessage"
             :placeholder="
-              chat.sessionClosed.value ? '本次会话已结束' : '输入消息'
+              chat.sessionClosed.value
+                ? '本次会话已结束'
+                : chat.agentAccepted.value
+                  ? '输入消息'
+                  : '等待客服接入'
             "
             rows="1"
             @input="resizeMessageInput"
@@ -292,7 +299,11 @@ onBeforeUnmount(() => {
         </div>
         <button
           class="send-button"
-          :disabled="!chat.isOpen.value || chat.sessionClosed.value"
+          :disabled="
+            !chat.isOpen.value ||
+            chat.sessionClosed.value ||
+            (hasDraft && !chat.agentAccepted.value)
+          "
           type="submit"
         >
           {{ composerActionLabel }}

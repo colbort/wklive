@@ -212,6 +212,7 @@ export function useChatSocket() {
       socket.value &&
         socket.value.readyState === WebSocket.OPEN &&
         content &&
+        agentAccepted.value &&
         !sessionClosed.value,
     );
   }
@@ -605,6 +606,7 @@ export function useChatSocket() {
     error,
     queueStatus,
     agent,
+    agentAccepted,
     evaluationInvite,
     evaluationSubmitted,
     evaluationSubmitting,
