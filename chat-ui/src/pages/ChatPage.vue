@@ -83,7 +83,7 @@ async function connectChat() {
     }
   }
   chat.resetMessages();
-  chat.connect();
+  chat.connect(token);
 }
 
 function removeChatTokenFromUrl() {

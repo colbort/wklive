@@ -44,6 +44,7 @@ export function useChatSocket() {
   const historyLoading = ref(false);
   const historyHasMore = ref(false);
   const historyNextCursor = ref(0);
+  const chatToken = ref("");
   const reconnectingIn = ref(0);
   const status = ref<
     "idle" | "connecting" | "open" | "closed" | "reconnecting"
@@ -93,8 +94,9 @@ export function useChatSocket() {
   };
 
   // Connection lifecycle
-  function connect() {
+  function connect(token = "") {
     manualClose = false;
+    chatToken.value = token.trim();
     void loadChatOptions();
     lastOptions = {};
     reconnectAttempts = 0;
@@ -141,6 +143,7 @@ export function useChatSocket() {
     closeSocketOnly(false);
     connected.value = null;
     resetHistoryState();
+    chatToken.value = "";
     status.value = "idle";
   }
 
@@ -328,6 +331,7 @@ export function useChatSocket() {
 
   function handleWsConnectedEvent(payload: WsConnectedPayload) {
     connected.value = payload;
+    void loadHistory(true);
   }
 
   function handleSystemNoticeEvent(payload: ChatSystemNoticePayload) {
@@ -426,7 +430,7 @@ export function useChatSocket() {
       const resp = await listChatMessagesWithMeta({
         cursor: initial ? 0 : historyNextCursor.value,
         limit: 20,
-      });
+      }, chatToken.value);
       const list = Array.isArray(resp.data) ? resp.data : [];
       prependMessages(list.map(normalizeMessage).reverse());
       historyHasMore.value = Boolean(resp.hasNext);

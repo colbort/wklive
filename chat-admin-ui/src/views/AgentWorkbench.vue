@@ -196,7 +196,7 @@ onMounted(async () => {
   destroyed = false;
   restoreWorkbenchState();
   void loadAdminOptions();
-  await loadSessions();
+  await loadSessions(true);
   connectWs();
 });
 
@@ -293,7 +293,7 @@ async function changeAgentStatus(status: number) {
   }
 }
 
-async function loadSessions() {
+async function loadSessions(loadActiveMessages = false) {
   if (!merchantId.value) return;
   loadingSessions.value = true;
   try {
@@ -301,8 +301,16 @@ async function loadSessions() {
       merchantId: merchantId.value,
       limit: 50,
     });
+    const previousActiveSessionNo = activeSessionNo.value;
     sessions.value = mergeLiveSessions(resp.data.map(normalizeSession));
     syncActiveSession();
+    if (
+      loadActiveMessages &&
+      activeSessionNo.value &&
+      activeSessionNo.value === previousActiveSessionNo
+    ) {
+      await loadMessages(activeSessionNo.value);
+    }
   } catch (err) {
     ElMessage.error(err instanceof Error ? err.message : "加载会话失败");
   } finally {
