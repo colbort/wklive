@@ -86,7 +86,7 @@ func (l *LoginLogic) Login(in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp
 				BusRedis:  l.svcCtx.BusRedis,
 				Channel:   chat.ChatAdminEventChannel,
 				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE,
-				Payload: &chat.ChatMessageEvent_Agent{Agent: &chat.ChatAgentPayload{
+				Payload: &chat.ChatWsResponse_Agent{Agent: &chat.ChatAgentPayload{
 					SessionNo:     "",
 					AgentId:       agent.Id,
 					AgentName:     user.Nickname,

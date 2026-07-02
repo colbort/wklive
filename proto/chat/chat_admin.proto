@@ -63,7 +63,7 @@ service ChatAdmin {
   rpc GetChatSession(GetChatSessionReq) returns (AdminChatSessionResp);
 
   // 接待会话
-  rpc AcceptChatSession(AcceptChatSessionReq) returns (AdminChatSessionResp);
+  rpc AcceptChatSession(AcceptChatSessionReq) returns (AcceptChatSessionResp);
 
   // 发送客服消息
   rpc SendAgentMessage(SendAgentMessageReq) returns (AdminChatMessageResp);
@@ -151,14 +151,7 @@ service ChatAdmin {
 
 message AdminCommonResp { common.RespBase base = 1; }
 
-message AdminChatSubscribeRequest {
-  int64 merchant_id = 1;
-  int64 user_id = 2;
-  int64 agent_id = 3;
-  string session_no = 4;
-  bool is_guest = 5;
-  bool admin = 6;
-}
+message AdminChatSubscribeRequest {}
 
 message ChatAdminLoginReq {
   string username = 1;    // 登录账号
@@ -304,6 +297,17 @@ message AcceptChatSessionReq {
   int64 merchant_id = 3;
   int64 agent_id = 4;
   bool is_guest = 5;
+}
+
+message AcceptChatSessionUser {
+  string session_no = 1;
+  ChatMessageUser user = 2;
+  ChatAgentPayload agent = 3;
+}
+
+message AcceptChatSessionResp {
+  common.RespBase base = 1;
+  AcceptChatSessionUser data = 2;
 }
 
 message SendAgentMessageReq {

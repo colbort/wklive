@@ -126,7 +126,7 @@ func (s *ChatAdminServer) GetChatSession(ctx context.Context, in *chat.GetChatSe
 }
 
 // 接待会话
-func (s *ChatAdminServer) AcceptChatSession(ctx context.Context, in *chat.AcceptChatSessionReq) (*chat.AdminChatSessionResp, error) {
+func (s *ChatAdminServer) AcceptChatSession(ctx context.Context, in *chat.AcceptChatSessionReq) (*chat.AcceptChatSessionResp, error) {
 	l := logic.NewAcceptChatSessionLogic(ctx, s.svcCtx)
 	return l.AcceptChatSession(in)
 }

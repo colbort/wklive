@@ -30,31 +30,31 @@ func PublishMessageEvent(req PublishMessageEventReq) error {
 	}
 
 	switch p := req.Payload.(type) {
-	case *chat.ChatMessageEvent_Message:
+	case *chat.ChatWsResponse_Message:
 		event.Payload = p
-	case *chat.ChatMessageEvent_Session:
+	case *chat.ChatWsResponse_Session:
 		event.Payload = p
-	case *chat.ChatMessageEvent_SystemNotice:
+	case *chat.ChatWsResponse_SystemNotice:
 		event.Payload = p
-	case *chat.ChatMessageEvent_UserState:
+	case *chat.ChatWsResponse_UserState:
 		event.Payload = p
-	case *chat.ChatMessageEvent_Queue:
+	case *chat.ChatWsResponse_Queue:
 		event.Payload = p
-	case *chat.ChatMessageEvent_Agent:
+	case *chat.ChatWsResponse_Agent:
 		event.Payload = p
-	case *chat.ChatMessageEvent_Transfer:
+	case *chat.ChatWsResponse_Transfer:
 		event.Payload = p
-	case *chat.ChatMessageEvent_Evaluation:
+	case *chat.ChatWsResponse_Evaluation:
 		event.Payload = p
-	case *chat.ChatMessageEvent_Typing:
+	case *chat.ChatWsResponse_Typing:
 		event.Payload = p
-	case *chat.ChatMessageEvent_Receipt:
+	case *chat.ChatWsResponse_Receipt:
 		event.Payload = p
-	case *chat.ChatMessageEvent_MessageOperate:
+	case *chat.ChatWsResponse_MessageOperate:
 		event.Payload = p
-	case *chat.ChatMessageEvent_Heartbeat:
+	case *chat.ChatWsResponse_Heartbeat:
 		event.Payload = p
-	case *chat.ChatMessageEvent_Error:
+	case *chat.ChatWsResponse_Error:
 		event.Payload = p
 
 	default:

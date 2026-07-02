@@ -75,7 +75,7 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessa
 		BusRedis:  svcCtx.BusRedis,
 		Channel:   opts.ReceiveChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
-		Payload:   &chat.ChatMessageEvent_Message{Message: msg},
+		Payload:   &chat.ChatWsResponse_Message{Message: msg},
 	})
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessa
 		BusRedis:  svcCtx.BusRedis,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED,
 		Channel:   opts.ReceiptChannel,
-		Payload: &chat.ChatMessageEvent_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
+		Payload: &chat.ChatWsResponse_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
 			SessionNo:     msg.SessionNo,
 			MessageNo:     msg.MessageNo,
 			SenderId:      msg.Sender.Id,
@@ -146,8 +146,9 @@ func buildMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *mode
 			AvatarUrl: opts.Receiver.GetAvatarUrl(),
 		}
 	}
-	// 用户端发送的消息，接收方是坐席端；Receiver 在这里赋值
-	if message.Sender.Type == int64(chat.ChatSenderType_CHAT_SENDER_TYPE_USER) {
+	// 用户端发送的消息；Sender，Receiver 在发送消息的时候已经赋值
+	// 坐席端发送的消息；Sender 在发送消息的时候已经赋值；
+	if message.Sender.Type == int64(chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT) {
 		message.Receiver = &models.ChatMessageUser{
 			Id:        chatUser.Id,
 			Type:      int64(chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT),

@@ -162,14 +162,7 @@ message SubmitChatSatisfactionReq {
   bool is_guest = 7;     // 是否游客/临时会话
 }
 
-message AppChatSubscribeRequest {
-  int64 merchant_id = 1;
-  int64 user_id = 2;
-  int64 agent_id = 3;
-  string session_no = 4;
-  bool is_guest = 5;
-  bool admin = 6;
-}
+message AppChatSubscribeRequest {}
 
 message AppListChatMessagesResp {
   common.RespBase base = 1;

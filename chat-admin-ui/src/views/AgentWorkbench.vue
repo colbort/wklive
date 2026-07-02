@@ -432,8 +432,8 @@ function handleQueueUpdateWsEvent(payload: ChatQueuePayload) {
 }
 
 function handleUserJoinWsEvent(event: ChatWsEvent) {
-  const session = event.session ? normalizeSession(event.session) : undefined;
-  const sessionNo = session?.sessionNo || event.userState?.sessionNo || "";
+  const userState = event.userState
+  const sessionNo = userState?.sessionNo || "";
   if (!sessionNo) {
     scheduleRefreshSessions();
     return;

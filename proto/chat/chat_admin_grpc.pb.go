@@ -8,7 +8,6 @@ package chat
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -105,7 +104,7 @@ type ChatAdminClient interface {
 	// 查询会话详情
 	GetChatSession(ctx context.Context, in *GetChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
 	// 接待会话
-	AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
+	AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AcceptChatSessionResp, error)
 	// 发送客服消息
 	SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error)
 	// 发送用户输入状态
@@ -334,9 +333,9 @@ func (c *chatAdminClient) GetChatSession(ctx context.Context, in *GetChatSession
 	return out, nil
 }
 
-func (c *chatAdminClient) AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
+func (c *chatAdminClient) AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AcceptChatSessionResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminChatSessionResp)
+	out := new(AcceptChatSessionResp)
 	err := c.cc.Invoke(ctx, ChatAdmin_AcceptChatSession_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -634,7 +633,7 @@ type ChatAdminServer interface {
 	// 查询会话详情
 	GetChatSession(context.Context, *GetChatSessionReq) (*AdminChatSessionResp, error)
 	// 接待会话
-	AcceptChatSession(context.Context, *AcceptChatSessionReq) (*AdminChatSessionResp, error)
+	AcceptChatSession(context.Context, *AcceptChatSessionReq) (*AcceptChatSessionResp, error)
 	// 发送客服消息
 	SendAgentMessage(context.Context, *SendAgentMessageReq) (*AdminChatMessageResp, error)
 	// 发送用户输入状态
@@ -744,7 +743,7 @@ func (UnimplementedChatAdminServer) PageChatSessions(context.Context, *PageChatS
 func (UnimplementedChatAdminServer) GetChatSession(context.Context, *GetChatSessionReq) (*AdminChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetChatSession not implemented")
 }
-func (UnimplementedChatAdminServer) AcceptChatSession(context.Context, *AcceptChatSessionReq) (*AdminChatSessionResp, error) {
+func (UnimplementedChatAdminServer) AcceptChatSession(context.Context, *AcceptChatSessionReq) (*AcceptChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AcceptChatSession not implemented")
 }
 func (UnimplementedChatAdminServer) SendAgentMessage(context.Context, *SendAgentMessageReq) (*AdminChatMessageResp, error) {

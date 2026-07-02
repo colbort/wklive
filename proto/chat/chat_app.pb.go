@@ -7,13 +7,12 @@
 package chat
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
 	common "wklive/proto/common"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -1129,12 +1128,6 @@ func (x *SubmitChatSatisfactionReq) GetIsGuest() bool {
 
 type AppChatSubscribeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
-	SessionNo     string                 `protobuf:"bytes,4,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`
-	IsGuest       bool                   `protobuf:"varint,5,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`
-	Admin         bool                   `protobuf:"varint,6,opt,name=admin,proto3" json:"admin,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1167,48 +1160,6 @@ func (x *AppChatSubscribeRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppChatSubscribeRequest.ProtoReflect.Descriptor instead.
 func (*AppChatSubscribeRequest) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_app_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *AppChatSubscribeRequest) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *AppChatSubscribeRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *AppChatSubscribeRequest) GetAgentId() int64 {
-	if x != nil {
-		return x.AgentId
-	}
-	return 0
-}
-
-func (x *AppChatSubscribeRequest) GetSessionNo() string {
-	if x != nil {
-		return x.SessionNo
-	}
-	return ""
-}
-
-func (x *AppChatSubscribeRequest) GetIsGuest() bool {
-	if x != nil {
-		return x.IsGuest
-	}
-	return false
-}
-
-func (x *AppChatSubscribeRequest) GetAdmin() bool {
-	if x != nil {
-		return x.Admin
-	}
-	return false
 }
 
 type AppListChatMessagesResp struct {
@@ -1534,16 +1485,8 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\vmerchant_id\x18\x05 \x01(\x03R\n" +
 	"merchantId\x12\x17\n" +
 	"\auser_id\x18\x06 \x01(\x03R\x06userId\x12\x19\n" +
-	"\bis_guest\x18\a \x01(\bR\aisGuest\"\xbe\x01\n" +
-	"\x17AppChatSubscribeRequest\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
-	"\bagent_id\x18\x03 \x01(\x03R\aagentId\x12\x1d\n" +
-	"\n" +
-	"session_no\x18\x04 \x01(\tR\tsessionNo\x12\x19\n" +
-	"\bis_guest\x18\x05 \x01(\bR\aisGuest\x12\x14\n" +
-	"\x05admin\x18\x06 \x01(\bR\x05admin\"f\n" +
+	"\bis_guest\x18\a \x01(\bR\aisGuest\"\x19\n" +
+	"\x17AppChatSubscribeRequest\"f\n" +
 	"\x17AppListChatMessagesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
 	"\x04data\x18\x02 \x03(\v2\x11.chat.ChatMessageR\x04data\"a\n" +
@@ -1555,7 +1498,7 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x01(\v2\x11.chat.ChatMessageR\x04data\"k\n" +
 	"\x17AppChatSatisfactionResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.chat.ChatSatisfactionR\x04data2\x96\x06\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.chat.ChatSatisfactionR\x04data2\x94\x06\n" +
 	"\aChatApp\x12I\n" +
 	"\x10AuthChatMerchant\x12\x19.chat.AuthChatMerchantReq\x1a\x1a.chat.AuthChatMerchantResp\x12F\n" +
 	"\x0fOpenChatSession\x12\x18.chat.OpenChatSessionReq\x1a\x19.chat.OpenChatSessionResp\x12X\n" +
@@ -1565,8 +1508,8 @@ const file_proto_chat_chat_app_proto_rawDesc = "" +
 	"\x0eSendUserTyping\x12\x17.chat.SendUserTypingReq\x1a\x13.chat.AppCommonResp\x12P\n" +
 	"\x12ListMyChatMessages\x12\x1b.chat.ListMyChatMessagesReq\x1a\x1d.chat.AppListChatMessagesResp\x12K\n" +
 	"\x12CloseMyChatSession\x12\x1b.chat.CloseMyChatSessionReq\x1a\x18.chat.AppChatSessionResp\x12X\n" +
-	"\x16SubmitChatSatisfaction\x12\x1f.chat.SubmitChatSatisfactionReq\x1a\x1d.chat.AppChatSatisfactionResp\x12M\n" +
-	"\x12AppSubscribeStream\x12\x1d.chat.AppChatSubscribeRequest\x1a\x16.chat.ChatMessageEvent0\x01B\x18Z\x16wklive/proto/chat;chatb\x06proto3"
+	"\x16SubmitChatSatisfaction\x12\x1f.chat.SubmitChatSatisfactionReq\x1a\x1d.chat.AppChatSatisfactionResp\x12K\n" +
+	"\x12AppSubscribeStream\x12\x1d.chat.AppChatSubscribeRequest\x1a\x14.chat.ChatWsResponse0\x01B\x18Z\x16wklive/proto/chat;chatb\x06proto3"
 
 var (
 	file_proto_chat_chat_app_proto_rawDescOnce sync.Once
@@ -1615,7 +1558,7 @@ var file_proto_chat_chat_app_proto_goTypes = []any{
 	(*ChatMessage)(nil),               // 30: chat.ChatMessage
 	(*ChatSession)(nil),               // 31: chat.ChatSession
 	(*ChatSatisfaction)(nil),          // 32: chat.ChatSatisfaction
-	(*ChatWsResponse)(nil),          // 33: chat.ChatWsResponse
+	(*ChatWsResponse)(nil),            // 33: chat.ChatWsResponse
 }
 var file_proto_chat_chat_app_proto_depIdxs = []int32{
 	19, // 0: chat.AppCommonResp.base:type_name -> common.RespBase

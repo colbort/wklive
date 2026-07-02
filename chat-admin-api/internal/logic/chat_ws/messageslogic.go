@@ -52,12 +52,13 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 	streamCtx, streamCancel := context.WithCancel(l.ctx)
 	client := ws.NewConnection(
 		conn,
-		user.Data.Nickname,
-		user.Data.AvatarUrl,
+		&chat.ChatMessageUser{
+			Id:        req.UserId,
+			Nickname:  user.Data.Nickname,
+			AvatarUrl: user.Data.AvatarUrl,
+		},
 		req.MerchantId,
 		req.AgentId,
-		req.UserId,
-		req.SessionNo,
 		l.onMessage(),
 		func(*ws.Connection) {
 			streamCancel()
@@ -68,12 +69,11 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_WS_CONNECTED,
 		CreatedAt: utils.NowMillis(),
-		Payload: &chat.ChatMessageEvent_Connected{
+		Payload: &chat.ChatWsResponse_Connected{
 			Connected: &chat.WsConnectedPayload{
 				Message:    "chat admin websocket connected",
 				MerchantId: req.MerchantId,
 				UserId:     req.UserId,
-				SessionNo:  req.SessionNo,
 				Nickname:   user.Data.Nickname,
 				AvatarUrl:  user.Data.AvatarUrl,
 			},
@@ -88,12 +88,12 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 func (l *MessagesLogic) onMessage() func(*ws.Connection, *chat.ChatWsRequest) {
 	return func(conn *ws.Connection, event *chat.ChatWsRequest) {
 		if event == nil {
-			sendWSError(conn, "invalid request", fmt.Errorf("invalid request"))
+			conn.SendError("invalid request", "invalid request")
 			return
 		}
 		eventType := event.GetEventType()
 		if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED {
-			sendWSError(conn, "event type is required", fmt.Errorf("event type is required"))
+			conn.SendError("event type is required", "event type is required")
 			return
 		}
 		switch eventType {
@@ -131,12 +131,12 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, *chat.ChatWsRequest) {
 				Msg:       "",
 				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT,
 				CreatedAt: utils.NowMillis(),
-				Payload: &chat.ChatMessageEvent_Heartbeat{
+				Payload: &chat.ChatWsResponse_Heartbeat{
 					Heartbeat: &chat.ChatHeartbeatPayload{},
 				},
 			})
 		default:
-			sendWSError(conn, "unsupported event type", fmt.Errorf("unsupported event type: %s", event.EventType))
+			conn.SendError("unsupported event type", "unsupported event type: "+event.EventType.String())
 		}
 	}
 }
@@ -145,32 +145,22 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 	if conn == nil || l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
 		return
 	}
-	stream, err := l.svcCtx.ChatAdminCli.AdminSubscribeStream(ctx, &chat.AdminChatSubscribeRequest{
-		MerchantId: conn.MerchantId,
-		UserId:     conn.AgentUserId,
-		AgentId:    conn.AgentId,
-		SessionNo:  conn.SessionNo,
-		Admin:      true,
-	})
+	stream, err := l.svcCtx.ChatAdminCli.AdminSubscribeStream(ctx, &chat.AdminChatSubscribeRequest{})
 	if err != nil {
-		logx.Errorf("subscribe chat admin stream failed, merchantId=%d userId=%d agentId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.AgentId, conn.SessionNo, err)
+		logx.Errorf("subscribe chat admin stream failed, merchantId=%d agentId=%d err=%v", conn.MerchantId, conn.AgentId, err)
 		return
 	}
 	for {
 		event, err := stream.Recv()
 		if err != nil {
 			if ctx.Err() == nil {
-				logx.Errorf("receive chat admin stream failed, merchantId=%d userId=%d agentId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.AgentId, conn.SessionNo, err)
+				logx.Errorf("receive chat admin stream failed, merchantId=%d agentId=%d err=%v", conn.MerchantId, conn.AgentId, err)
 			}
 			return
 		}
-		if event.GetEventType() == chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN {
-			session := event.GetSession()
-			if session != nil {
-				conn.SessionNo = session.SessionNo
-				conn.IsGuest = session.IsGuest
-				conn.UserId = session.UserId
-			}
+		if event.EventType == chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE {
+			fmt.Println("==================== 11")
+			// 移除 坐席接待中的 用户信息
 		}
 		conn.SendEvent(event)
 	}
@@ -178,11 +168,11 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 
 func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Connection, payload *chat.ChatWsMessagePayload) {
 	if payload == nil {
-		sendWSError(conn, "invalid send_agent_message payload", fmt.Errorf("invalid send_agent_message payload"))
+		conn.SendError("invalid send_agent_message payload", "invalid send_agent_message payload")
 		return
 	}
 	req := chat.SendAgentMessageReq{
-		SessionNo:       firstNonEmpty(payload.GetSessionNo(), conn.SessionNo),
+		SessionNo:       payload.GetSessionNo(),
 		ClientMessageId: payload.GetClientMessageId(),
 		MessageType:     payload.GetMessageType(),
 		Content:         payload.GetContent(),
@@ -198,15 +188,13 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		MerchantId:      conn.MerchantId,
 		IsGuest:         conn.IsGuest,
 	}
-	req.Receiver = &chat.ChatMessageUser{
-		Id:        conn.UserId,
-		Nickname:  conn.Nickname,
-		AvatarUrl: conn.AvatarUrl,
-		Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+	receiver, ok := conn.Receivers.Load(payload.SessionNo)
+	if ok {
+		req.Receiver = receiver.(*chat.ChatMessageUser)
 	}
 	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
 	if err != nil {
-		sendWSError(conn, "failed to send agent message", err)
+		conn.SendError("failed to send agent message", err.Error())
 		return
 	}
 	if resp.Base.Code != 200 {
@@ -218,35 +206,39 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 
 func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Connection, payload *chat.ChatWsAgentPayload) {
 	if payload == nil {
-		sendWSError(conn, "invalid accept_chat_session payload", fmt.Errorf("invalid accept_chat_session payload"))
+		conn.SendError("invalid accept_chat_session payload", "invalid accept_chat_session payload")
 		return
 	}
 
 	resp, err := l.svcCtx.ChatAdminCli.AcceptChatSession(ctx, &chat.AcceptChatSessionReq{
-		SessionNo:  firstNonEmpty(payload.GetSessionNo(), conn.SessionNo),
+		SessionNo:  payload.GetSessionNo(),
 		Reason:     payload.GetReason(),
 		MerchantId: conn.MerchantId,
 		AgentId:    firstNonZero(payload.GetAgentId(), conn.AgentId),
 		IsGuest:    conn.IsGuest,
 	})
 	if err != nil {
-		sendWSError(conn, "failed to accept chat session", err)
+		conn.SendError("failed to accept chat session", err.Error())
 		return
+	}
+	// 加入接待用户
+	if resp.Data != nil {
+		conn.Receivers.Store(resp.Data.SessionNo, resp.Data.User)
 	}
 	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      resp.Base.Code,
 		Msg:       resp.Base.Msg,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
 		CreatedAt: utils.NowMillis(),
-		Payload: &chat.ChatMessageEvent_Session{
-			Session: resp.Data,
+		Payload: &chat.ChatWsResponse_Agent{
+			Agent: resp.Data.Agent,
 		},
 	})
 }
 
 func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Connection, payload *chat.ChatWsSessionPayload) {
 	if payload == nil {
-		sendWSError(conn, "invalid close_chat_session payload", fmt.Errorf("invalid close_chat_session payload"))
+		conn.SendError("invalid close_chat_session payload", "invalid close_chat_session payload")
 		return
 	}
 	req := chat.CloseChatSessionReq{
@@ -256,24 +248,12 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 		CloseReason: payload.GetCloseReason(),
 		IsGuest:     payload.GetIsGuest(),
 	}
-	if req.SessionNo == "" {
-		req.SessionNo = conn.SessionNo
-	}
-	if req.MerchantId == 0 {
-		req.MerchantId = conn.MerchantId
-	}
-	if req.UserId == 0 {
-		req.UserId = conn.UserId
-	}
-	if !req.IsGuest {
-		req.IsGuest = conn.IsGuest
-	}
 	req.CloseReasonType = chat.ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_AGENT
 	req.CloseReason = firstNonEmpty(req.CloseReason, "closed by agent")
 
 	resp, err := l.svcCtx.ChatAdminCli.CloseChatSession(ctx, &req)
 	if err != nil {
-		sendWSError(conn, "failed to close chat session", err)
+		conn.SendError("failed to close chat session", err.Error())
 		return
 	}
 	conn.SendEvent(&chat.ChatWsResponse{
@@ -281,7 +261,7 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 		Msg:       resp.Base.Msg,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
 		CreatedAt: utils.NowMillis(),
-		Payload: &chat.ChatMessageEvent_Session{
+		Payload: &chat.ChatWsResponse_Session{
 			Session: resp.Data,
 		},
 	})
@@ -293,7 +273,7 @@ func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connecti
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_TYPING,
 		CreatedAt: utils.NowMillis(),
-		Payload: &chat.ChatMessageEvent_Typing{
+		Payload: &chat.ChatWsResponse_Typing{
 			Typing: &chat.ChatTypingPayload{},
 		},
 	})
@@ -305,38 +285,8 @@ func (l *MessagesLogic) handleEvaluationInvite(ctx context.Context, conn *ws.Con
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE,
 		CreatedAt: utils.NowMillis(),
-		Payload: &chat.ChatMessageEvent_Evaluation{
+		Payload: &chat.ChatWsResponse_Evaluation{
 			Evaluation: &chat.ChatEvaluationPayload{},
-		},
-	})
-}
-
-func sessionAgentFromPayload(conn *ws.Connection, sessionNo string, agentId int64) (string, int64) {
-	sessionNo = strings.TrimSpace(sessionNo)
-	if sessionNo == "" {
-		sessionNo = conn.SessionNo
-	}
-	if agentId == 0 {
-		agentId = conn.AgentId
-	}
-	return sessionNo, agentId
-}
-
-func sendWSError(conn *ws.Connection, message string, err error) {
-	conn.SendEvent(&chat.ChatWsResponse{
-		Code:      200,
-		Msg:       "",
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,
-		CreatedAt: utils.NowMillis(),
-		Payload: &chat.ChatMessageEvent_Error{
-			Error: &chat.ChatErrorPayload{
-				SessionNo:    conn.SessionNo,
-				MessageNo:    "",
-				ErrorCode:    0,
-				ErrorMessage: message,
-				Detail:       err.Error(),
-				Retryable:    false,
-			},
 		},
 	})
 }

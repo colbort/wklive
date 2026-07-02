@@ -72,7 +72,7 @@ func (l *LogoutLogic) autoOfflineAgent(user *models.TChatUser) error {
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAdminEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_LEAVE,
-		Payload: &chat.ChatMessageEvent_Agent{Agent: &chat.ChatAgentPayload{
+		Payload: &chat.ChatWsResponse_Agent{Agent: &chat.ChatAgentPayload{
 			SessionNo:     "",
 			AgentId:       agent.Id,
 			AgentName:     user.Nickname,

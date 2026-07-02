@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -30,16 +31,16 @@ func NewAcceptChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 // 接待会话
-func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq) (*chat.AdminChatSessionResp, error) {
+func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq) (*chat.AcceptChatSessionResp, error) {
 	agent, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.AgentId)
 	if err == models.ErrNotFound {
-		return &chat.AdminChatSessionResp{Base: helper.ErrResp(404, "chat agent not found")}, nil
+		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(404, "chat agent not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if agent.Status != int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE) {
-		return &chat.AdminChatSessionResp{Base: helper.ErrResp(400, "chat agent is not online")}, nil
+		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(400, "chat agent is not online")}, nil
 	}
 	session, err := ih.AcceptChatSession(l.ctx, l.svcCtx, ih.AssignSessionOptions{
 		SessionNo:  in.SessionNo,
@@ -49,45 +50,60 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		IsGuest:    in.GetIsGuest(),
 	})
 	if err != nil {
-		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	user, err := l.svcCtx.ChatUserModel.FindOne(l.ctx, agent.UserId)
 	if err != nil {
-		return &chat.AdminChatSessionResp{Base: helper.ErrResp(404, "chat user not found")}, nil
+		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(404, "chat user not found")}, nil
+	}
+	payload := &chat.ChatAgentPayload{
+		SessionNo:     in.SessionNo,
+		AgentId:       agent.Id,
+		AgentUserId:   user.Id,
+		AgentName:     user.Nickname,
+		AgentAvatar:   user.AvatarUrl,
+		AgentStatus:   chat.ChatAgentStatus(agent.Status),
+		AssignType:    chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
+		SessionStatus: chat.ChatSessionStatus(session.Status),
+		Remark:        firstNonEmpty(in.GetReason(), "accept"),
+		ActionTime:    utils.NowMillis(),
 	}
 	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
 		Ctx:       l.ctx,
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAppEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
-		Payload: &chat.ChatMessageEvent_Agent{Agent: &chat.ChatAgentPayload{
-			SessionNo:     in.SessionNo,
-			AgentId:       agent.Id,
-			AgentUserId:   user.Id,
-			AgentName:     user.Nickname,
-			AgentAvatar:   user.AvatarUrl,
-			AgentStatus:   chat.ChatAgentStatus(agent.Status),
-			AssignType:    chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
-			SessionStatus: chat.ChatSessionStatus(session.Status),
-			Remark:        firstNonEmpty(in.GetReason(), "accept"),
-			ActionTime:    utils.NowMillis(),
-		}},
+		Payload:   &chat.ChatWsResponse_Agent{Agent: payload},
 	})
 	queue, err := ih.ToProtoQueueInfo(l.ctx, l.svcCtx, session)
 	if err != nil {
-		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	err = ih.PublishMessageEvent(ih.PublishMessageEventReq{
 		Ctx:       l.ctx,
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAppEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
-		Payload:   &chat.ChatMessageEvent_Queue{Queue: queue},
+		Payload:   &chat.ChatWsResponse_Queue{Queue: queue},
 	})
 	if err != nil {
-		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, false)}, nil
+	var ext map[string]string
+	err = json.Unmarshal([]byte(session.ExtJson.String), &ext)
+	if err != nil {
+		return nil, err
+	}
+	return &chat.AcceptChatSessionResp{Base: helper.OkResp(), Data: &chat.AcceptChatSessionUser{
+		SessionNo: in.SessionNo,
+		User: &chat.ChatMessageUser{
+			Id:        session.UserId,
+			Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+			Nickname:  ext["nickname"],
+			AvatarUrl: ext["avatarUrl"],
+		},
+		Agent: payload,
+	}}, nil
 }
 
 func agentServiceMessage(ctx context.Context, svcCtx *svc.ServiceContext, agent *models.TChatAgent) string {

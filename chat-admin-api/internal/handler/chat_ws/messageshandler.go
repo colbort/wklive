@@ -24,7 +24,6 @@ func MessagesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			UserId:     claims.UserId,
 			MerchantId: parseInt64(r.URL.Query().Get("merchantId")),
 			AgentId:    parseInt64(r.URL.Query().Get("agentId")),
-			SessionNo:  strings.TrimSpace(r.URL.Query().Get("sessionNo")),
 		})
 	}
 }

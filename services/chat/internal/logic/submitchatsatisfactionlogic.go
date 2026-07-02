@@ -84,7 +84,7 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAdminEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
-		Payload: &chat.ChatMessageEvent_Evaluation{Evaluation: &chat.ChatEvaluationPayload{
+		Payload: &chat.ChatWsResponse_Evaluation{Evaluation: &chat.ChatEvaluationPayload{
 			SessionNo:    session.SessionNo,
 			UserId:       session.UserId,
 			AgentId:      session.AgentId,

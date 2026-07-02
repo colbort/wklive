@@ -7,13 +7,12 @@
 package chat
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
 	common "wklive/proto/common"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -69,12 +68,6 @@ func (x *AdminCommonResp) GetBase() *common.RespBase {
 
 type AdminChatSubscribeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantId    int64                  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	AgentId       int64                  `protobuf:"varint,3,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
-	SessionNo     string                 `protobuf:"bytes,4,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`
-	IsGuest       bool                   `protobuf:"varint,5,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`
-	Admin         bool                   `protobuf:"varint,6,opt,name=admin,proto3" json:"admin,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -107,48 +100,6 @@ func (x *AdminChatSubscribeRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AdminChatSubscribeRequest.ProtoReflect.Descriptor instead.
 func (*AdminChatSubscribeRequest) Descriptor() ([]byte, []int) {
 	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *AdminChatSubscribeRequest) GetMerchantId() int64 {
-	if x != nil {
-		return x.MerchantId
-	}
-	return 0
-}
-
-func (x *AdminChatSubscribeRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *AdminChatSubscribeRequest) GetAgentId() int64 {
-	if x != nil {
-		return x.AgentId
-	}
-	return 0
-}
-
-func (x *AdminChatSubscribeRequest) GetSessionNo() string {
-	if x != nil {
-		return x.SessionNo
-	}
-	return ""
-}
-
-func (x *AdminChatSubscribeRequest) GetIsGuest() bool {
-	if x != nil {
-		return x.IsGuest
-	}
-	return false
-}
-
-func (x *AdminChatSubscribeRequest) GetAdmin() bool {
-	if x != nil {
-		return x.Admin
-	}
-	return false
 }
 
 type ChatAdminLoginReq struct {
@@ -1599,6 +1550,118 @@ func (x *AcceptChatSessionReq) GetIsGuest() bool {
 	return false
 }
 
+type AcceptChatSessionUser struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`
+	User          *ChatMessageUser       `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
+	Agent         *ChatAgentPayload      `protobuf:"bytes,3,opt,name=agent,proto3" json:"agent,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AcceptChatSessionUser) Reset() {
+	*x = AcceptChatSessionUser{}
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AcceptChatSessionUser) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AcceptChatSessionUser) ProtoMessage() {}
+
+func (x *AcceptChatSessionUser) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AcceptChatSessionUser.ProtoReflect.Descriptor instead.
+func (*AcceptChatSessionUser) Descriptor() ([]byte, []int) {
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *AcceptChatSessionUser) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *AcceptChatSessionUser) GetUser() *ChatMessageUser {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *AcceptChatSessionUser) GetAgent() *ChatAgentPayload {
+	if x != nil {
+		return x.Agent
+	}
+	return nil
+}
+
+type AcceptChatSessionResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *AcceptChatSessionUser `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AcceptChatSessionResp) Reset() {
+	*x = AcceptChatSessionResp{}
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AcceptChatSessionResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AcceptChatSessionResp) ProtoMessage() {}
+
+func (x *AcceptChatSessionResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AcceptChatSessionResp.ProtoReflect.Descriptor instead.
+func (*AcceptChatSessionResp) Descriptor() ([]byte, []int) {
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *AcceptChatSessionResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *AcceptChatSessionResp) GetData() *AcceptChatSessionUser {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 type SendAgentMessageReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	SessionNo       string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
@@ -1623,7 +1686,7 @@ type SendAgentMessageReq struct {
 
 func (x *SendAgentMessageReq) Reset() {
 	*x = SendAgentMessageReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[24]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1635,7 +1698,7 @@ func (x *SendAgentMessageReq) String() string {
 func (*SendAgentMessageReq) ProtoMessage() {}
 
 func (x *SendAgentMessageReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[24]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1648,7 +1711,7 @@ func (x *SendAgentMessageReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendAgentMessageReq.ProtoReflect.Descriptor instead.
 func (*SendAgentMessageReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{24}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *SendAgentMessageReq) GetSessionNo() string {
@@ -1775,7 +1838,7 @@ type SendAgentTypingReq struct {
 
 func (x *SendAgentTypingReq) Reset() {
 	*x = SendAgentTypingReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[25]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1787,7 +1850,7 @@ func (x *SendAgentTypingReq) String() string {
 func (*SendAgentTypingReq) ProtoMessage() {}
 
 func (x *SendAgentTypingReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[25]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1800,7 +1863,7 @@ func (x *SendAgentTypingReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendAgentTypingReq.ProtoReflect.Descriptor instead.
 func (*SendAgentTypingReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{25}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *SendAgentTypingReq) GetMerchantId() int64 {
@@ -1844,7 +1907,7 @@ type PageChatMessagesReq struct {
 
 func (x *PageChatMessagesReq) Reset() {
 	*x = PageChatMessagesReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[26]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1856,7 +1919,7 @@ func (x *PageChatMessagesReq) String() string {
 func (*PageChatMessagesReq) ProtoMessage() {}
 
 func (x *PageChatMessagesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[26]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1869,7 +1932,7 @@ func (x *PageChatMessagesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatMessagesReq.ProtoReflect.Descriptor instead.
 func (*PageChatMessagesReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{26}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *PageChatMessagesReq) GetSessionNo() string {
@@ -1917,7 +1980,7 @@ type MarkAgentMessagesReadReq struct {
 
 func (x *MarkAgentMessagesReadReq) Reset() {
 	*x = MarkAgentMessagesReadReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[27]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1929,7 +1992,7 @@ func (x *MarkAgentMessagesReadReq) String() string {
 func (*MarkAgentMessagesReadReq) ProtoMessage() {}
 
 func (x *MarkAgentMessagesReadReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[27]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1942,7 +2005,7 @@ func (x *MarkAgentMessagesReadReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkAgentMessagesReadReq.ProtoReflect.Descriptor instead.
 func (*MarkAgentMessagesReadReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{27}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *MarkAgentMessagesReadReq) GetSessionNo() string {
@@ -1973,7 +2036,7 @@ type CloseChatSessionReq struct {
 
 func (x *CloseChatSessionReq) Reset() {
 	*x = CloseChatSessionReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[28]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1985,7 +2048,7 @@ func (x *CloseChatSessionReq) String() string {
 func (*CloseChatSessionReq) ProtoMessage() {}
 
 func (x *CloseChatSessionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[28]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1998,7 +2061,7 @@ func (x *CloseChatSessionReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CloseChatSessionReq.ProtoReflect.Descriptor instead.
 func (*CloseChatSessionReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{28}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *CloseChatSessionReq) GetSessionNo() string {
@@ -2058,7 +2121,7 @@ type CreateChatQuickReplyReq struct {
 
 func (x *CreateChatQuickReplyReq) Reset() {
 	*x = CreateChatQuickReplyReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[29]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2070,7 +2133,7 @@ func (x *CreateChatQuickReplyReq) String() string {
 func (*CreateChatQuickReplyReq) ProtoMessage() {}
 
 func (x *CreateChatQuickReplyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[29]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2083,7 +2146,7 @@ func (x *CreateChatQuickReplyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateChatQuickReplyReq.ProtoReflect.Descriptor instead.
 func (*CreateChatQuickReplyReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{29}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *CreateChatQuickReplyReq) GetAgentId() int64 {
@@ -2151,7 +2214,7 @@ type UpdateChatQuickReplyReq struct {
 
 func (x *UpdateChatQuickReplyReq) Reset() {
 	*x = UpdateChatQuickReplyReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[30]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2163,7 +2226,7 @@ func (x *UpdateChatQuickReplyReq) String() string {
 func (*UpdateChatQuickReplyReq) ProtoMessage() {}
 
 func (x *UpdateChatQuickReplyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[30]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2176,7 +2239,7 @@ func (x *UpdateChatQuickReplyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateChatQuickReplyReq.ProtoReflect.Descriptor instead.
 func (*UpdateChatQuickReplyReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{30}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *UpdateChatQuickReplyReq) GetId() int64 {
@@ -2244,7 +2307,7 @@ type GetChatQuickReplyReq struct {
 
 func (x *GetChatQuickReplyReq) Reset() {
 	*x = GetChatQuickReplyReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[31]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2256,7 +2319,7 @@ func (x *GetChatQuickReplyReq) String() string {
 func (*GetChatQuickReplyReq) ProtoMessage() {}
 
 func (x *GetChatQuickReplyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[31]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2269,7 +2332,7 @@ func (x *GetChatQuickReplyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetChatQuickReplyReq.ProtoReflect.Descriptor instead.
 func (*GetChatQuickReplyReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{31}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *GetChatQuickReplyReq) GetId() int64 {
@@ -2292,7 +2355,7 @@ type PageChatQuickRepliesReq struct {
 
 func (x *PageChatQuickRepliesReq) Reset() {
 	*x = PageChatQuickRepliesReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[32]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2304,7 +2367,7 @@ func (x *PageChatQuickRepliesReq) String() string {
 func (*PageChatQuickRepliesReq) ProtoMessage() {}
 
 func (x *PageChatQuickRepliesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[32]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2317,7 +2380,7 @@ func (x *PageChatQuickRepliesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatQuickRepliesReq.ProtoReflect.Descriptor instead.
 func (*PageChatQuickRepliesReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{32}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *PageChatQuickRepliesReq) GetAgentId() int64 {
@@ -2365,7 +2428,7 @@ type ListEnabledChatQuickRepliesReq struct {
 
 func (x *ListEnabledChatQuickRepliesReq) Reset() {
 	*x = ListEnabledChatQuickRepliesReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[33]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2377,7 +2440,7 @@ func (x *ListEnabledChatQuickRepliesReq) String() string {
 func (*ListEnabledChatQuickRepliesReq) ProtoMessage() {}
 
 func (x *ListEnabledChatQuickRepliesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[33]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2390,7 +2453,7 @@ func (x *ListEnabledChatQuickRepliesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEnabledChatQuickRepliesReq.ProtoReflect.Descriptor instead.
 func (*ListEnabledChatQuickRepliesReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{33}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ListEnabledChatQuickRepliesReq) GetAgentId() int64 {
@@ -2416,7 +2479,7 @@ type DeleteChatQuickReplyReq struct {
 
 func (x *DeleteChatQuickReplyReq) Reset() {
 	*x = DeleteChatQuickReplyReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[34]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2428,7 +2491,7 @@ func (x *DeleteChatQuickReplyReq) String() string {
 func (*DeleteChatQuickReplyReq) ProtoMessage() {}
 
 func (x *DeleteChatQuickReplyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[34]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2441,7 +2504,7 @@ func (x *DeleteChatQuickReplyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteChatQuickReplyReq.ProtoReflect.Descriptor instead.
 func (*DeleteChatQuickReplyReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{34}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *DeleteChatQuickReplyReq) GetId() int64 {
@@ -2466,7 +2529,7 @@ type CreateChatCategoryReq struct {
 
 func (x *CreateChatCategoryReq) Reset() {
 	*x = CreateChatCategoryReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[35]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2478,7 +2541,7 @@ func (x *CreateChatCategoryReq) String() string {
 func (*CreateChatCategoryReq) ProtoMessage() {}
 
 func (x *CreateChatCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[35]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2491,7 +2554,7 @@ func (x *CreateChatCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateChatCategoryReq.ProtoReflect.Descriptor instead.
 func (*CreateChatCategoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{35}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *CreateChatCategoryReq) GetParentId() int64 {
@@ -2558,7 +2621,7 @@ type UpdateChatCategoryReq struct {
 
 func (x *UpdateChatCategoryReq) Reset() {
 	*x = UpdateChatCategoryReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[36]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2570,7 +2633,7 @@ func (x *UpdateChatCategoryReq) String() string {
 func (*UpdateChatCategoryReq) ProtoMessage() {}
 
 func (x *UpdateChatCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[36]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2583,7 +2646,7 @@ func (x *UpdateChatCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateChatCategoryReq.ProtoReflect.Descriptor instead.
 func (*UpdateChatCategoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{36}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *UpdateChatCategoryReq) GetId() int64 {
@@ -2644,7 +2707,7 @@ type GetChatCategoryReq struct {
 
 func (x *GetChatCategoryReq) Reset() {
 	*x = GetChatCategoryReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[37]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2656,7 +2719,7 @@ func (x *GetChatCategoryReq) String() string {
 func (*GetChatCategoryReq) ProtoMessage() {}
 
 func (x *GetChatCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[37]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2669,7 +2732,7 @@ func (x *GetChatCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetChatCategoryReq.ProtoReflect.Descriptor instead.
 func (*GetChatCategoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{37}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *GetChatCategoryReq) GetId() int64 {
@@ -2693,7 +2756,7 @@ type PageChatCategoriesReq struct {
 
 func (x *PageChatCategoriesReq) Reset() {
 	*x = PageChatCategoriesReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[38]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2705,7 +2768,7 @@ func (x *PageChatCategoriesReq) String() string {
 func (*PageChatCategoriesReq) ProtoMessage() {}
 
 func (x *PageChatCategoriesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[38]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2718,7 +2781,7 @@ func (x *PageChatCategoriesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatCategoriesReq.ProtoReflect.Descriptor instead.
 func (*PageChatCategoriesReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{38}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *PageChatCategoriesReq) GetParentId() int64 {
@@ -2773,7 +2836,7 @@ type ListEnabledChatCategoriesReq struct {
 
 func (x *ListEnabledChatCategoriesReq) Reset() {
 	*x = ListEnabledChatCategoriesReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[39]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2785,7 +2848,7 @@ func (x *ListEnabledChatCategoriesReq) String() string {
 func (*ListEnabledChatCategoriesReq) ProtoMessage() {}
 
 func (x *ListEnabledChatCategoriesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[39]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2798,7 +2861,7 @@ func (x *ListEnabledChatCategoriesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEnabledChatCategoriesReq.ProtoReflect.Descriptor instead.
 func (*ListEnabledChatCategoriesReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{39}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *ListEnabledChatCategoriesReq) GetGroupId() int64 {
@@ -2824,7 +2887,7 @@ type DeleteChatCategoryReq struct {
 
 func (x *DeleteChatCategoryReq) Reset() {
 	*x = DeleteChatCategoryReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[40]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2836,7 +2899,7 @@ func (x *DeleteChatCategoryReq) String() string {
 func (*DeleteChatCategoryReq) ProtoMessage() {}
 
 func (x *DeleteChatCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[40]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2849,7 +2912,7 @@ func (x *DeleteChatCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteChatCategoryReq.ProtoReflect.Descriptor instead.
 func (*DeleteChatCategoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{40}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *DeleteChatCategoryReq) GetId() int64 {
@@ -2878,7 +2941,7 @@ type CreateChatWorkOrderReq struct {
 
 func (x *CreateChatWorkOrderReq) Reset() {
 	*x = CreateChatWorkOrderReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[41]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2890,7 +2953,7 @@ func (x *CreateChatWorkOrderReq) String() string {
 func (*CreateChatWorkOrderReq) ProtoMessage() {}
 
 func (x *CreateChatWorkOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[41]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2903,7 +2966,7 @@ func (x *CreateChatWorkOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateChatWorkOrderReq.ProtoReflect.Descriptor instead.
 func (*CreateChatWorkOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{41}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *CreateChatWorkOrderReq) GetSessionNo() string {
@@ -3002,7 +3065,7 @@ type UpdateChatWorkOrderReq struct {
 
 func (x *UpdateChatWorkOrderReq) Reset() {
 	*x = UpdateChatWorkOrderReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[42]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3014,7 +3077,7 @@ func (x *UpdateChatWorkOrderReq) String() string {
 func (*UpdateChatWorkOrderReq) ProtoMessage() {}
 
 func (x *UpdateChatWorkOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[42]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3027,7 +3090,7 @@ func (x *UpdateChatWorkOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateChatWorkOrderReq.ProtoReflect.Descriptor instead.
 func (*UpdateChatWorkOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{42}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *UpdateChatWorkOrderReq) GetId() int64 {
@@ -3120,7 +3183,7 @@ type HandleChatWorkOrderReq struct {
 
 func (x *HandleChatWorkOrderReq) Reset() {
 	*x = HandleChatWorkOrderReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[43]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3132,7 +3195,7 @@ func (x *HandleChatWorkOrderReq) String() string {
 func (*HandleChatWorkOrderReq) ProtoMessage() {}
 
 func (x *HandleChatWorkOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[43]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3145,7 +3208,7 @@ func (x *HandleChatWorkOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HandleChatWorkOrderReq.ProtoReflect.Descriptor instead.
 func (*HandleChatWorkOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{43}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *HandleChatWorkOrderReq) GetId() int64 {
@@ -3193,7 +3256,7 @@ type GetChatWorkOrderReq struct {
 
 func (x *GetChatWorkOrderReq) Reset() {
 	*x = GetChatWorkOrderReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[44]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3205,7 +3268,7 @@ func (x *GetChatWorkOrderReq) String() string {
 func (*GetChatWorkOrderReq) ProtoMessage() {}
 
 func (x *GetChatWorkOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[44]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3218,7 +3281,7 @@ func (x *GetChatWorkOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetChatWorkOrderReq.ProtoReflect.Descriptor instead.
 func (*GetChatWorkOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{44}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *GetChatWorkOrderReq) GetId() int64 {
@@ -3253,7 +3316,7 @@ type PageChatWorkOrdersReq struct {
 
 func (x *PageChatWorkOrdersReq) Reset() {
 	*x = PageChatWorkOrdersReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[45]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3265,7 +3328,7 @@ func (x *PageChatWorkOrdersReq) String() string {
 func (*PageChatWorkOrdersReq) ProtoMessage() {}
 
 func (x *PageChatWorkOrdersReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[45]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3278,7 +3341,7 @@ func (x *PageChatWorkOrdersReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatWorkOrdersReq.ProtoReflect.Descriptor instead.
 func (*PageChatWorkOrdersReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{45}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *PageChatWorkOrdersReq) GetSessionNo() string {
@@ -3360,7 +3423,7 @@ type DeleteChatWorkOrderReq struct {
 
 func (x *DeleteChatWorkOrderReq) Reset() {
 	*x = DeleteChatWorkOrderReq{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[46]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3372,7 +3435,7 @@ func (x *DeleteChatWorkOrderReq) String() string {
 func (*DeleteChatWorkOrderReq) ProtoMessage() {}
 
 func (x *DeleteChatWorkOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[46]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3385,7 +3448,7 @@ func (x *DeleteChatWorkOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteChatWorkOrderReq.ProtoReflect.Descriptor instead.
 func (*DeleteChatWorkOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{46}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *DeleteChatWorkOrderReq) GetId() int64 {
@@ -3405,7 +3468,7 @@ type PageChatAgentsResp struct {
 
 func (x *PageChatAgentsResp) Reset() {
 	*x = PageChatAgentsResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[47]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3417,7 +3480,7 @@ func (x *PageChatAgentsResp) String() string {
 func (*PageChatAgentsResp) ProtoMessage() {}
 
 func (x *PageChatAgentsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[47]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3430,7 +3493,7 @@ func (x *PageChatAgentsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatAgentsResp.ProtoReflect.Descriptor instead.
 func (*PageChatAgentsResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{47}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *PageChatAgentsResp) GetBase() *common.RespBase {
@@ -3457,7 +3520,7 @@ type PageChatGroupsResp struct {
 
 func (x *PageChatGroupsResp) Reset() {
 	*x = PageChatGroupsResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[48]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3469,7 +3532,7 @@ func (x *PageChatGroupsResp) String() string {
 func (*PageChatGroupsResp) ProtoMessage() {}
 
 func (x *PageChatGroupsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[48]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3482,7 +3545,7 @@ func (x *PageChatGroupsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatGroupsResp.ProtoReflect.Descriptor instead.
 func (*PageChatGroupsResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{48}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *PageChatGroupsResp) GetBase() *common.RespBase {
@@ -3509,7 +3572,7 @@ type PageChatSessionsResp struct {
 
 func (x *PageChatSessionsResp) Reset() {
 	*x = PageChatSessionsResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[49]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3521,7 +3584,7 @@ func (x *PageChatSessionsResp) String() string {
 func (*PageChatSessionsResp) ProtoMessage() {}
 
 func (x *PageChatSessionsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[49]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3534,7 +3597,7 @@ func (x *PageChatSessionsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatSessionsResp.ProtoReflect.Descriptor instead.
 func (*PageChatSessionsResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{49}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *PageChatSessionsResp) GetBase() *common.RespBase {
@@ -3561,7 +3624,7 @@ type PageChatMessagesResp struct {
 
 func (x *PageChatMessagesResp) Reset() {
 	*x = PageChatMessagesResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[50]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3573,7 +3636,7 @@ func (x *PageChatMessagesResp) String() string {
 func (*PageChatMessagesResp) ProtoMessage() {}
 
 func (x *PageChatMessagesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[50]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3586,7 +3649,7 @@ func (x *PageChatMessagesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatMessagesResp.ProtoReflect.Descriptor instead.
 func (*PageChatMessagesResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{50}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *PageChatMessagesResp) GetBase() *common.RespBase {
@@ -3613,7 +3676,7 @@ type PageChatQuickRepliesResp struct {
 
 func (x *PageChatQuickRepliesResp) Reset() {
 	*x = PageChatQuickRepliesResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[51]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3625,7 +3688,7 @@ func (x *PageChatQuickRepliesResp) String() string {
 func (*PageChatQuickRepliesResp) ProtoMessage() {}
 
 func (x *PageChatQuickRepliesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[51]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3638,7 +3701,7 @@ func (x *PageChatQuickRepliesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatQuickRepliesResp.ProtoReflect.Descriptor instead.
 func (*PageChatQuickRepliesResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{51}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *PageChatQuickRepliesResp) GetBase() *common.RespBase {
@@ -3665,7 +3728,7 @@ type ListChatQuickRepliesResp struct {
 
 func (x *ListChatQuickRepliesResp) Reset() {
 	*x = ListChatQuickRepliesResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[52]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3677,7 +3740,7 @@ func (x *ListChatQuickRepliesResp) String() string {
 func (*ListChatQuickRepliesResp) ProtoMessage() {}
 
 func (x *ListChatQuickRepliesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[52]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3690,7 +3753,7 @@ func (x *ListChatQuickRepliesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListChatQuickRepliesResp.ProtoReflect.Descriptor instead.
 func (*ListChatQuickRepliesResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{52}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *ListChatQuickRepliesResp) GetBase() *common.RespBase {
@@ -3717,7 +3780,7 @@ type PageChatCategoriesResp struct {
 
 func (x *PageChatCategoriesResp) Reset() {
 	*x = PageChatCategoriesResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[53]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3729,7 +3792,7 @@ func (x *PageChatCategoriesResp) String() string {
 func (*PageChatCategoriesResp) ProtoMessage() {}
 
 func (x *PageChatCategoriesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[53]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3742,7 +3805,7 @@ func (x *PageChatCategoriesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatCategoriesResp.ProtoReflect.Descriptor instead.
 func (*PageChatCategoriesResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{53}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *PageChatCategoriesResp) GetBase() *common.RespBase {
@@ -3769,7 +3832,7 @@ type ListChatCategoriesResp struct {
 
 func (x *ListChatCategoriesResp) Reset() {
 	*x = ListChatCategoriesResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[54]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3781,7 +3844,7 @@ func (x *ListChatCategoriesResp) String() string {
 func (*ListChatCategoriesResp) ProtoMessage() {}
 
 func (x *ListChatCategoriesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[54]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3794,7 +3857,7 @@ func (x *ListChatCategoriesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListChatCategoriesResp.ProtoReflect.Descriptor instead.
 func (*ListChatCategoriesResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{54}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *ListChatCategoriesResp) GetBase() *common.RespBase {
@@ -3821,7 +3884,7 @@ type PageChatWorkOrdersResp struct {
 
 func (x *PageChatWorkOrdersResp) Reset() {
 	*x = PageChatWorkOrdersResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[55]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3833,7 +3896,7 @@ func (x *PageChatWorkOrdersResp) String() string {
 func (*PageChatWorkOrdersResp) ProtoMessage() {}
 
 func (x *PageChatWorkOrdersResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[55]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3846,7 +3909,7 @@ func (x *PageChatWorkOrdersResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageChatWorkOrdersResp.ProtoReflect.Descriptor instead.
 func (*PageChatWorkOrdersResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{55}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *PageChatWorkOrdersResp) GetBase() *common.RespBase {
@@ -3873,7 +3936,7 @@ type AdminChatAgentResp struct {
 
 func (x *AdminChatAgentResp) Reset() {
 	*x = AdminChatAgentResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[56]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3885,7 +3948,7 @@ func (x *AdminChatAgentResp) String() string {
 func (*AdminChatAgentResp) ProtoMessage() {}
 
 func (x *AdminChatAgentResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[56]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3898,7 +3961,7 @@ func (x *AdminChatAgentResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminChatAgentResp.ProtoReflect.Descriptor instead.
 func (*AdminChatAgentResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{56}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *AdminChatAgentResp) GetBase() *common.RespBase {
@@ -3925,7 +3988,7 @@ type AdminChatGroupResp struct {
 
 func (x *AdminChatGroupResp) Reset() {
 	*x = AdminChatGroupResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[57]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3937,7 +4000,7 @@ func (x *AdminChatGroupResp) String() string {
 func (*AdminChatGroupResp) ProtoMessage() {}
 
 func (x *AdminChatGroupResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[57]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3950,7 +4013,7 @@ func (x *AdminChatGroupResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminChatGroupResp.ProtoReflect.Descriptor instead.
 func (*AdminChatGroupResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{57}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *AdminChatGroupResp) GetBase() *common.RespBase {
@@ -3977,7 +4040,7 @@ type AdminChatSessionResp struct {
 
 func (x *AdminChatSessionResp) Reset() {
 	*x = AdminChatSessionResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[58]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3989,7 +4052,7 @@ func (x *AdminChatSessionResp) String() string {
 func (*AdminChatSessionResp) ProtoMessage() {}
 
 func (x *AdminChatSessionResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[58]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4002,7 +4065,7 @@ func (x *AdminChatSessionResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminChatSessionResp.ProtoReflect.Descriptor instead.
 func (*AdminChatSessionResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{58}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *AdminChatSessionResp) GetBase() *common.RespBase {
@@ -4029,7 +4092,7 @@ type AdminChatMessageResp struct {
 
 func (x *AdminChatMessageResp) Reset() {
 	*x = AdminChatMessageResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[59]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4041,7 +4104,7 @@ func (x *AdminChatMessageResp) String() string {
 func (*AdminChatMessageResp) ProtoMessage() {}
 
 func (x *AdminChatMessageResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[59]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4054,7 +4117,7 @@ func (x *AdminChatMessageResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminChatMessageResp.ProtoReflect.Descriptor instead.
 func (*AdminChatMessageResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{59}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *AdminChatMessageResp) GetBase() *common.RespBase {
@@ -4080,7 +4143,7 @@ type AdminMarkMessagesReadResp struct {
 
 func (x *AdminMarkMessagesReadResp) Reset() {
 	*x = AdminMarkMessagesReadResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[60]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4092,7 +4155,7 @@ func (x *AdminMarkMessagesReadResp) String() string {
 func (*AdminMarkMessagesReadResp) ProtoMessage() {}
 
 func (x *AdminMarkMessagesReadResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[60]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4105,7 +4168,7 @@ func (x *AdminMarkMessagesReadResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminMarkMessagesReadResp.ProtoReflect.Descriptor instead.
 func (*AdminMarkMessagesReadResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{60}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *AdminMarkMessagesReadResp) GetBase() *common.RespBase {
@@ -4125,7 +4188,7 @@ type AdminChatQuickReplyResp struct {
 
 func (x *AdminChatQuickReplyResp) Reset() {
 	*x = AdminChatQuickReplyResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[61]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4137,7 +4200,7 @@ func (x *AdminChatQuickReplyResp) String() string {
 func (*AdminChatQuickReplyResp) ProtoMessage() {}
 
 func (x *AdminChatQuickReplyResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[61]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4150,7 +4213,7 @@ func (x *AdminChatQuickReplyResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminChatQuickReplyResp.ProtoReflect.Descriptor instead.
 func (*AdminChatQuickReplyResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{61}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *AdminChatQuickReplyResp) GetBase() *common.RespBase {
@@ -4177,7 +4240,7 @@ type AdminChatCategoryResp struct {
 
 func (x *AdminChatCategoryResp) Reset() {
 	*x = AdminChatCategoryResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[62]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4189,7 +4252,7 @@ func (x *AdminChatCategoryResp) String() string {
 func (*AdminChatCategoryResp) ProtoMessage() {}
 
 func (x *AdminChatCategoryResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[62]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4202,7 +4265,7 @@ func (x *AdminChatCategoryResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminChatCategoryResp.ProtoReflect.Descriptor instead.
 func (*AdminChatCategoryResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{62}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *AdminChatCategoryResp) GetBase() *common.RespBase {
@@ -4229,7 +4292,7 @@ type AdminChatWorkOrderResp struct {
 
 func (x *AdminChatWorkOrderResp) Reset() {
 	*x = AdminChatWorkOrderResp{}
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[63]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4241,7 +4304,7 @@ func (x *AdminChatWorkOrderResp) String() string {
 func (*AdminChatWorkOrderResp) ProtoMessage() {}
 
 func (x *AdminChatWorkOrderResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_chat_admin_proto_msgTypes[63]
+	mi := &file_proto_chat_chat_admin_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4254,7 +4317,7 @@ func (x *AdminChatWorkOrderResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminChatWorkOrderResp.ProtoReflect.Descriptor instead.
 func (*AdminChatWorkOrderResp) Descriptor() ([]byte, []int) {
-	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{63}
+	return file_proto_chat_chat_admin_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *AdminChatWorkOrderResp) GetBase() *common.RespBase {
@@ -4277,16 +4340,8 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\n" +
 	"\x1bproto/chat/chat_admin.proto\x12\x04chat\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\x1a\x16proto/chat/model.proto\"7\n" +
 	"\x0fAdminCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xc0\x01\n" +
-	"\x19AdminChatSubscribeRequest\x12\x1f\n" +
-	"\vmerchant_id\x18\x01 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
-	"\bagent_id\x18\x03 \x01(\x03R\aagentId\x12\x1d\n" +
-	"\n" +
-	"session_no\x18\x04 \x01(\tR\tsessionNo\x12\x19\n" +
-	"\bis_guest\x18\x05 \x01(\bR\aisGuest\x12\x14\n" +
-	"\x05admin\x18\x06 \x01(\bR\x05admin\"l\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x1b\n" +
+	"\x19AdminChatSubscribeRequest\"l\n" +
 	"\x11ChatAdminLoginReq\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1f\n" +
@@ -4408,7 +4463,15 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\vmerchant_id\x18\x03 \x01(\x03R\n" +
 	"merchantId\x12\x19\n" +
 	"\bagent_id\x18\x04 \x01(\x03R\aagentId\x12\x19\n" +
-	"\bis_guest\x18\x05 \x01(\bR\aisGuest\"\x9b\x04\n" +
+	"\bis_guest\x18\x05 \x01(\bR\aisGuest\"\x8f\x01\n" +
+	"\x15AcceptChatSessionUser\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12)\n" +
+	"\x04user\x18\x02 \x01(\v2\x15.chat.ChatMessageUserR\x04user\x12,\n" +
+	"\x05agent\x18\x03 \x01(\v2\x16.chat.ChatAgentPayloadR\x05agent\"n\n" +
+	"\x15AcceptChatSessionResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12/\n" +
+	"\x04data\x18\x02 \x01(\v2\x1b.chat.AcceptChatSessionUserR\x04data\"\x9b\x04\n" +
 	"\x13SendAgentMessageReq\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12*\n" +
@@ -4624,7 +4687,7 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x01(\v2\x12.chat.ChatCategoryR\x04data\"g\n" +
 	"\x16AdminChatWorkOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x01(\v2\x13.chat.ChatWorkOrderR\x04data2\x97\x19\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.chat.ChatWorkOrderR\x04data2\x96\x19\n" +
 	"\tChatAdmin\x12:\n" +
 	"\x05Login\x12\x17.chat.ChatAdminLoginReq\x1a\x18.chat.ChatAdminLoginResp\x129\n" +
 	"\x06Logout\x12\x18.chat.ChatAdminLogoutReq\x1a\x15.chat.AdminCommonResp\x12@\n" +
@@ -4642,8 +4705,8 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\fGetChatAgent\x12\x15.chat.GetChatAgentReq\x1a\x18.chat.AdminChatAgentResp\x12C\n" +
 	"\x0ePageChatAgents\x12\x17.chat.PageChatAgentsReq\x1a\x18.chat.PageChatAgentsResp\x12I\n" +
 	"\x10PageChatSessions\x12\x19.chat.PageChatSessionsReq\x1a\x1a.chat.PageChatSessionsResp\x12E\n" +
-	"\x0eGetChatSession\x12\x17.chat.GetChatSessionReq\x1a\x1a.chat.AdminChatSessionResp\x12K\n" +
-	"\x11AcceptChatSession\x12\x1a.chat.AcceptChatSessionReq\x1a\x1a.chat.AdminChatSessionResp\x12I\n" +
+	"\x0eGetChatSession\x12\x17.chat.GetChatSessionReq\x1a\x1a.chat.AdminChatSessionResp\x12L\n" +
+	"\x11AcceptChatSession\x12\x1a.chat.AcceptChatSessionReq\x1a\x1b.chat.AcceptChatSessionResp\x12I\n" +
 	"\x10SendAgentMessage\x12\x19.chat.SendAgentMessageReq\x1a\x1a.chat.AdminChatMessageResp\x12B\n" +
 	"\x0fSendAgentTyping\x12\x18.chat.SendAgentTypingReq\x1a\x15.chat.AdminCommonResp\x12I\n" +
 	"\x10PageChatMessages\x12\x19.chat.PageChatMessagesReq\x1a\x1a.chat.PageChatMessagesResp\x12X\n" +
@@ -4666,8 +4729,8 @@ const file_proto_chat_chat_admin_proto_rawDesc = "" +
 	"\x13HandleChatWorkOrder\x12\x1c.chat.HandleChatWorkOrderReq\x1a\x1c.chat.AdminChatWorkOrderResp\x12K\n" +
 	"\x10GetChatWorkOrder\x12\x19.chat.GetChatWorkOrderReq\x1a\x1c.chat.AdminChatWorkOrderResp\x12O\n" +
 	"\x12PageChatWorkOrders\x12\x1b.chat.PageChatWorkOrdersReq\x1a\x1c.chat.PageChatWorkOrdersResp\x12J\n" +
-	"\x13DeleteChatWorkOrder\x12\x1c.chat.DeleteChatWorkOrderReq\x1a\x15.chat.AdminCommonResp\x12Q\n" +
-	"\x14AdminSubscribeStream\x12\x1f.chat.AdminChatSubscribeRequest\x1a\x16.chat.ChatMessageEvent0\x01B\x18Z\x16wklive/proto/chat;chatb\x06proto3"
+	"\x13DeleteChatWorkOrder\x12\x1c.chat.DeleteChatWorkOrderReq\x1a\x15.chat.AdminCommonResp\x12O\n" +
+	"\x14AdminSubscribeStream\x12\x1f.chat.AdminChatSubscribeRequest\x1a\x14.chat.ChatWsResponse0\x01B\x18Z\x16wklive/proto/chat;chatb\x06proto3"
 
 var (
 	file_proto_chat_chat_admin_proto_rawDescOnce sync.Once
@@ -4681,7 +4744,7 @@ func file_proto_chat_chat_admin_proto_rawDescGZIP() []byte {
 	return file_proto_chat_chat_admin_proto_rawDescData
 }
 
-var file_proto_chat_chat_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 64)
+var file_proto_chat_chat_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 66)
 var file_proto_chat_chat_admin_proto_goTypes = []any{
 	(*AdminCommonResp)(nil),                // 0: chat.AdminCommonResp
 	(*AdminChatSubscribeRequest)(nil),      // 1: chat.AdminChatSubscribeRequest
@@ -4707,239 +4770,246 @@ var file_proto_chat_chat_admin_proto_goTypes = []any{
 	(*PageChatSessionsReq)(nil),            // 21: chat.PageChatSessionsReq
 	(*GetChatSessionReq)(nil),              // 22: chat.GetChatSessionReq
 	(*AcceptChatSessionReq)(nil),           // 23: chat.AcceptChatSessionReq
-	(*SendAgentMessageReq)(nil),            // 24: chat.SendAgentMessageReq
-	(*SendAgentTypingReq)(nil),             // 25: chat.SendAgentTypingReq
-	(*PageChatMessagesReq)(nil),            // 26: chat.PageChatMessagesReq
-	(*MarkAgentMessagesReadReq)(nil),       // 27: chat.MarkAgentMessagesReadReq
-	(*CloseChatSessionReq)(nil),            // 28: chat.CloseChatSessionReq
-	(*CreateChatQuickReplyReq)(nil),        // 29: chat.CreateChatQuickReplyReq
-	(*UpdateChatQuickReplyReq)(nil),        // 30: chat.UpdateChatQuickReplyReq
-	(*GetChatQuickReplyReq)(nil),           // 31: chat.GetChatQuickReplyReq
-	(*PageChatQuickRepliesReq)(nil),        // 32: chat.PageChatQuickRepliesReq
-	(*ListEnabledChatQuickRepliesReq)(nil), // 33: chat.ListEnabledChatQuickRepliesReq
-	(*DeleteChatQuickReplyReq)(nil),        // 34: chat.DeleteChatQuickReplyReq
-	(*CreateChatCategoryReq)(nil),          // 35: chat.CreateChatCategoryReq
-	(*UpdateChatCategoryReq)(nil),          // 36: chat.UpdateChatCategoryReq
-	(*GetChatCategoryReq)(nil),             // 37: chat.GetChatCategoryReq
-	(*PageChatCategoriesReq)(nil),          // 38: chat.PageChatCategoriesReq
-	(*ListEnabledChatCategoriesReq)(nil),   // 39: chat.ListEnabledChatCategoriesReq
-	(*DeleteChatCategoryReq)(nil),          // 40: chat.DeleteChatCategoryReq
-	(*CreateChatWorkOrderReq)(nil),         // 41: chat.CreateChatWorkOrderReq
-	(*UpdateChatWorkOrderReq)(nil),         // 42: chat.UpdateChatWorkOrderReq
-	(*HandleChatWorkOrderReq)(nil),         // 43: chat.HandleChatWorkOrderReq
-	(*GetChatWorkOrderReq)(nil),            // 44: chat.GetChatWorkOrderReq
-	(*PageChatWorkOrdersReq)(nil),          // 45: chat.PageChatWorkOrdersReq
-	(*DeleteChatWorkOrderReq)(nil),         // 46: chat.DeleteChatWorkOrderReq
-	(*PageChatAgentsResp)(nil),             // 47: chat.PageChatAgentsResp
-	(*PageChatGroupsResp)(nil),             // 48: chat.PageChatGroupsResp
-	(*PageChatSessionsResp)(nil),           // 49: chat.PageChatSessionsResp
-	(*PageChatMessagesResp)(nil),           // 50: chat.PageChatMessagesResp
-	(*PageChatQuickRepliesResp)(nil),       // 51: chat.PageChatQuickRepliesResp
-	(*ListChatQuickRepliesResp)(nil),       // 52: chat.ListChatQuickRepliesResp
-	(*PageChatCategoriesResp)(nil),         // 53: chat.PageChatCategoriesResp
-	(*ListChatCategoriesResp)(nil),         // 54: chat.ListChatCategoriesResp
-	(*PageChatWorkOrdersResp)(nil),         // 55: chat.PageChatWorkOrdersResp
-	(*AdminChatAgentResp)(nil),             // 56: chat.AdminChatAgentResp
-	(*AdminChatGroupResp)(nil),             // 57: chat.AdminChatGroupResp
-	(*AdminChatSessionResp)(nil),           // 58: chat.AdminChatSessionResp
-	(*AdminChatMessageResp)(nil),           // 59: chat.AdminChatMessageResp
-	(*AdminMarkMessagesReadResp)(nil),      // 60: chat.AdminMarkMessagesReadResp
-	(*AdminChatQuickReplyResp)(nil),        // 61: chat.AdminChatQuickReplyResp
-	(*AdminChatCategoryResp)(nil),          // 62: chat.AdminChatCategoryResp
-	(*AdminChatWorkOrderResp)(nil),         // 63: chat.AdminChatWorkOrderResp
-	(*common.RespBase)(nil),                // 64: common.RespBase
-	(*common.TokenInfo)(nil),               // 65: common.TokenInfo
-	(*ChatUser)(nil),                       // 66: chat.ChatUser
-	(*ChatAgent)(nil),                      // 67: chat.ChatAgent
-	(common.Enable)(0),                     // 68: common.Enable
-	(*common.PageReq)(nil),                 // 69: common.PageReq
-	(common.YesNo)(0),                      // 70: common.YesNo
-	(ChatAgentStatus)(0),                   // 71: chat.ChatAgentStatus
-	(ChatSessionStatus)(0),                 // 72: chat.ChatSessionStatus
-	(ChatSessionPriority)(0),               // 73: chat.ChatSessionPriority
-	(*common.TimeRange)(nil),               // 74: common.TimeRange
-	(ChatMessageType)(0),                   // 75: chat.ChatMessageType
-	(*ChatMessageUser)(nil),                // 76: chat.ChatMessageUser
-	(*ChatTypingPayload)(nil),              // 77: chat.ChatTypingPayload
-	(ChatSenderType)(0),                    // 78: chat.ChatSenderType
-	(ChatSessionCloseReason)(0),            // 79: chat.ChatSessionCloseReason
-	(*ChatGroup)(nil),                      // 80: chat.ChatGroup
-	(*ChatSession)(nil),                    // 81: chat.ChatSession
-	(*ChatMessage)(nil),                    // 82: chat.ChatMessage
-	(*ChatQuickReply)(nil),                 // 83: chat.ChatQuickReply
-	(*ChatCategory)(nil),                   // 84: chat.ChatCategory
-	(*ChatWorkOrder)(nil),                  // 85: chat.ChatWorkOrder
-	(*ChatWsResponse)(nil),               // 86: chat.ChatWsResponse
+	(*AcceptChatSessionUser)(nil),          // 24: chat.AcceptChatSessionUser
+	(*AcceptChatSessionResp)(nil),          // 25: chat.AcceptChatSessionResp
+	(*SendAgentMessageReq)(nil),            // 26: chat.SendAgentMessageReq
+	(*SendAgentTypingReq)(nil),             // 27: chat.SendAgentTypingReq
+	(*PageChatMessagesReq)(nil),            // 28: chat.PageChatMessagesReq
+	(*MarkAgentMessagesReadReq)(nil),       // 29: chat.MarkAgentMessagesReadReq
+	(*CloseChatSessionReq)(nil),            // 30: chat.CloseChatSessionReq
+	(*CreateChatQuickReplyReq)(nil),        // 31: chat.CreateChatQuickReplyReq
+	(*UpdateChatQuickReplyReq)(nil),        // 32: chat.UpdateChatQuickReplyReq
+	(*GetChatQuickReplyReq)(nil),           // 33: chat.GetChatQuickReplyReq
+	(*PageChatQuickRepliesReq)(nil),        // 34: chat.PageChatQuickRepliesReq
+	(*ListEnabledChatQuickRepliesReq)(nil), // 35: chat.ListEnabledChatQuickRepliesReq
+	(*DeleteChatQuickReplyReq)(nil),        // 36: chat.DeleteChatQuickReplyReq
+	(*CreateChatCategoryReq)(nil),          // 37: chat.CreateChatCategoryReq
+	(*UpdateChatCategoryReq)(nil),          // 38: chat.UpdateChatCategoryReq
+	(*GetChatCategoryReq)(nil),             // 39: chat.GetChatCategoryReq
+	(*PageChatCategoriesReq)(nil),          // 40: chat.PageChatCategoriesReq
+	(*ListEnabledChatCategoriesReq)(nil),   // 41: chat.ListEnabledChatCategoriesReq
+	(*DeleteChatCategoryReq)(nil),          // 42: chat.DeleteChatCategoryReq
+	(*CreateChatWorkOrderReq)(nil),         // 43: chat.CreateChatWorkOrderReq
+	(*UpdateChatWorkOrderReq)(nil),         // 44: chat.UpdateChatWorkOrderReq
+	(*HandleChatWorkOrderReq)(nil),         // 45: chat.HandleChatWorkOrderReq
+	(*GetChatWorkOrderReq)(nil),            // 46: chat.GetChatWorkOrderReq
+	(*PageChatWorkOrdersReq)(nil),          // 47: chat.PageChatWorkOrdersReq
+	(*DeleteChatWorkOrderReq)(nil),         // 48: chat.DeleteChatWorkOrderReq
+	(*PageChatAgentsResp)(nil),             // 49: chat.PageChatAgentsResp
+	(*PageChatGroupsResp)(nil),             // 50: chat.PageChatGroupsResp
+	(*PageChatSessionsResp)(nil),           // 51: chat.PageChatSessionsResp
+	(*PageChatMessagesResp)(nil),           // 52: chat.PageChatMessagesResp
+	(*PageChatQuickRepliesResp)(nil),       // 53: chat.PageChatQuickRepliesResp
+	(*ListChatQuickRepliesResp)(nil),       // 54: chat.ListChatQuickRepliesResp
+	(*PageChatCategoriesResp)(nil),         // 55: chat.PageChatCategoriesResp
+	(*ListChatCategoriesResp)(nil),         // 56: chat.ListChatCategoriesResp
+	(*PageChatWorkOrdersResp)(nil),         // 57: chat.PageChatWorkOrdersResp
+	(*AdminChatAgentResp)(nil),             // 58: chat.AdminChatAgentResp
+	(*AdminChatGroupResp)(nil),             // 59: chat.AdminChatGroupResp
+	(*AdminChatSessionResp)(nil),           // 60: chat.AdminChatSessionResp
+	(*AdminChatMessageResp)(nil),           // 61: chat.AdminChatMessageResp
+	(*AdminMarkMessagesReadResp)(nil),      // 62: chat.AdminMarkMessagesReadResp
+	(*AdminChatQuickReplyResp)(nil),        // 63: chat.AdminChatQuickReplyResp
+	(*AdminChatCategoryResp)(nil),          // 64: chat.AdminChatCategoryResp
+	(*AdminChatWorkOrderResp)(nil),         // 65: chat.AdminChatWorkOrderResp
+	(*common.RespBase)(nil),                // 66: common.RespBase
+	(*common.TokenInfo)(nil),               // 67: common.TokenInfo
+	(*ChatUser)(nil),                       // 68: chat.ChatUser
+	(*ChatAgent)(nil),                      // 69: chat.ChatAgent
+	(common.Enable)(0),                     // 70: common.Enable
+	(*common.PageReq)(nil),                 // 71: common.PageReq
+	(common.YesNo)(0),                      // 72: common.YesNo
+	(ChatAgentStatus)(0),                   // 73: chat.ChatAgentStatus
+	(ChatSessionStatus)(0),                 // 74: chat.ChatSessionStatus
+	(ChatSessionPriority)(0),               // 75: chat.ChatSessionPriority
+	(*common.TimeRange)(nil),               // 76: common.TimeRange
+	(*ChatMessageUser)(nil),                // 77: chat.ChatMessageUser
+	(*ChatAgentPayload)(nil),               // 78: chat.ChatAgentPayload
+	(ChatMessageType)(0),                   // 79: chat.ChatMessageType
+	(*ChatTypingPayload)(nil),              // 80: chat.ChatTypingPayload
+	(ChatSenderType)(0),                    // 81: chat.ChatSenderType
+	(ChatSessionCloseReason)(0),            // 82: chat.ChatSessionCloseReason
+	(*ChatGroup)(nil),                      // 83: chat.ChatGroup
+	(*ChatSession)(nil),                    // 84: chat.ChatSession
+	(*ChatMessage)(nil),                    // 85: chat.ChatMessage
+	(*ChatQuickReply)(nil),                 // 86: chat.ChatQuickReply
+	(*ChatCategory)(nil),                   // 87: chat.ChatCategory
+	(*ChatWorkOrder)(nil),                  // 88: chat.ChatWorkOrder
+	(*ChatWsResponse)(nil),                 // 89: chat.ChatWsResponse
 }
 var file_proto_chat_chat_admin_proto_depIdxs = []int32{
-	64,  // 0: chat.AdminCommonResp.base:type_name -> common.RespBase
-	65,  // 1: chat.ChatAdminLoginData.token:type_name -> common.TokenInfo
-	66,  // 2: chat.ChatAdminLoginData.user:type_name -> chat.ChatUser
-	67,  // 3: chat.ChatAdminLoginData.agent:type_name -> chat.ChatAgent
-	64,  // 4: chat.ChatAdminLoginResp.base:type_name -> common.RespBase
+	66,  // 0: chat.AdminCommonResp.base:type_name -> common.RespBase
+	67,  // 1: chat.ChatAdminLoginData.token:type_name -> common.TokenInfo
+	68,  // 2: chat.ChatAdminLoginData.user:type_name -> chat.ChatUser
+	69,  // 3: chat.ChatAdminLoginData.agent:type_name -> chat.ChatAgent
+	66,  // 4: chat.ChatAdminLoginResp.base:type_name -> common.RespBase
 	3,   // 5: chat.ChatAdminLoginResp.data:type_name -> chat.ChatAdminLoginData
-	64,  // 6: chat.GetChatUserByIdResp.base:type_name -> common.RespBase
-	66,  // 7: chat.GetChatUserByIdResp.data:type_name -> chat.ChatUser
-	64,  // 8: chat.ChatAdminProfileResp.base:type_name -> common.RespBase
-	66,  // 9: chat.ChatAdminProfileResp.user:type_name -> chat.ChatUser
-	67,  // 10: chat.ChatAdminProfileResp.agent:type_name -> chat.ChatAgent
-	68,  // 11: chat.CreateChatGroupReq.enabled:type_name -> common.Enable
-	68,  // 12: chat.UpdateChatGroupReq.enabled:type_name -> common.Enable
-	68,  // 13: chat.PageChatGroupsReq.enabled:type_name -> common.Enable
-	69,  // 14: chat.PageChatGroupsReq.page:type_name -> common.PageReq
-	68,  // 15: chat.CreateChatAgentReq.enabled:type_name -> common.Enable
-	70,  // 16: chat.CreateChatAgentReq.auto_online:type_name -> common.YesNo
-	70,  // 17: chat.UpdateChatAgentReq.auto_online:type_name -> common.YesNo
-	68,  // 18: chat.UpdateChatAgentReq.enabled:type_name -> common.Enable
-	71,  // 19: chat.UpdateChatAgentStatusReq.status:type_name -> chat.ChatAgentStatus
-	71,  // 20: chat.PageChatAgentsReq.status:type_name -> chat.ChatAgentStatus
-	69,  // 21: chat.PageChatAgentsReq.page:type_name -> common.PageReq
-	72,  // 22: chat.PageChatSessionsReq.status:type_name -> chat.ChatSessionStatus
-	73,  // 23: chat.PageChatSessionsReq.priority:type_name -> chat.ChatSessionPriority
-	74,  // 24: chat.PageChatSessionsReq.time_range:type_name -> common.TimeRange
-	69,  // 25: chat.PageChatSessionsReq.page:type_name -> common.PageReq
-	75,  // 26: chat.SendAgentMessageReq.message_type:type_name -> chat.ChatMessageType
-	76,  // 27: chat.SendAgentMessageReq.sender:type_name -> chat.ChatMessageUser
-	76,  // 28: chat.SendAgentMessageReq.receiver:type_name -> chat.ChatMessageUser
-	77,  // 29: chat.SendAgentTypingReq.typing:type_name -> chat.ChatTypingPayload
-	78,  // 30: chat.PageChatMessagesReq.sender_type:type_name -> chat.ChatSenderType
-	69,  // 31: chat.PageChatMessagesReq.page:type_name -> common.PageReq
-	79,  // 32: chat.CloseChatSessionReq.close_reason_type:type_name -> chat.ChatSessionCloseReason
-	68,  // 33: chat.CreateChatQuickReplyReq.enabled:type_name -> common.Enable
-	68,  // 34: chat.UpdateChatQuickReplyReq.enabled:type_name -> common.Enable
-	68,  // 35: chat.PageChatQuickRepliesReq.enabled:type_name -> common.Enable
-	69,  // 36: chat.PageChatQuickRepliesReq.page:type_name -> common.PageReq
-	68,  // 37: chat.CreateChatCategoryReq.enabled:type_name -> common.Enable
-	68,  // 38: chat.UpdateChatCategoryReq.enabled:type_name -> common.Enable
-	68,  // 39: chat.PageChatCategoriesReq.enabled:type_name -> common.Enable
-	69,  // 40: chat.PageChatCategoriesReq.page:type_name -> common.PageReq
-	73,  // 41: chat.CreateChatWorkOrderReq.priority:type_name -> chat.ChatSessionPriority
-	73,  // 42: chat.UpdateChatWorkOrderReq.priority:type_name -> chat.ChatSessionPriority
-	73,  // 43: chat.PageChatWorkOrdersReq.priority:type_name -> chat.ChatSessionPriority
-	74,  // 44: chat.PageChatWorkOrdersReq.time_range:type_name -> common.TimeRange
-	69,  // 45: chat.PageChatWorkOrdersReq.page:type_name -> common.PageReq
-	64,  // 46: chat.PageChatAgentsResp.base:type_name -> common.RespBase
-	67,  // 47: chat.PageChatAgentsResp.data:type_name -> chat.ChatAgent
-	64,  // 48: chat.PageChatGroupsResp.base:type_name -> common.RespBase
-	80,  // 49: chat.PageChatGroupsResp.data:type_name -> chat.ChatGroup
-	64,  // 50: chat.PageChatSessionsResp.base:type_name -> common.RespBase
-	81,  // 51: chat.PageChatSessionsResp.data:type_name -> chat.ChatSession
-	64,  // 52: chat.PageChatMessagesResp.base:type_name -> common.RespBase
-	82,  // 53: chat.PageChatMessagesResp.data:type_name -> chat.ChatMessage
-	64,  // 54: chat.PageChatQuickRepliesResp.base:type_name -> common.RespBase
-	83,  // 55: chat.PageChatQuickRepliesResp.data:type_name -> chat.ChatQuickReply
-	64,  // 56: chat.ListChatQuickRepliesResp.base:type_name -> common.RespBase
-	83,  // 57: chat.ListChatQuickRepliesResp.data:type_name -> chat.ChatQuickReply
-	64,  // 58: chat.PageChatCategoriesResp.base:type_name -> common.RespBase
-	84,  // 59: chat.PageChatCategoriesResp.data:type_name -> chat.ChatCategory
-	64,  // 60: chat.ListChatCategoriesResp.base:type_name -> common.RespBase
-	84,  // 61: chat.ListChatCategoriesResp.data:type_name -> chat.ChatCategory
-	64,  // 62: chat.PageChatWorkOrdersResp.base:type_name -> common.RespBase
-	85,  // 63: chat.PageChatWorkOrdersResp.data:type_name -> chat.ChatWorkOrder
-	64,  // 64: chat.AdminChatAgentResp.base:type_name -> common.RespBase
-	67,  // 65: chat.AdminChatAgentResp.data:type_name -> chat.ChatAgent
-	64,  // 66: chat.AdminChatGroupResp.base:type_name -> common.RespBase
-	80,  // 67: chat.AdminChatGroupResp.data:type_name -> chat.ChatGroup
-	64,  // 68: chat.AdminChatSessionResp.base:type_name -> common.RespBase
-	81,  // 69: chat.AdminChatSessionResp.data:type_name -> chat.ChatSession
-	64,  // 70: chat.AdminChatMessageResp.base:type_name -> common.RespBase
-	82,  // 71: chat.AdminChatMessageResp.data:type_name -> chat.ChatMessage
-	64,  // 72: chat.AdminMarkMessagesReadResp.base:type_name -> common.RespBase
-	64,  // 73: chat.AdminChatQuickReplyResp.base:type_name -> common.RespBase
-	83,  // 74: chat.AdminChatQuickReplyResp.data:type_name -> chat.ChatQuickReply
-	64,  // 75: chat.AdminChatCategoryResp.base:type_name -> common.RespBase
-	84,  // 76: chat.AdminChatCategoryResp.data:type_name -> chat.ChatCategory
-	64,  // 77: chat.AdminChatWorkOrderResp.base:type_name -> common.RespBase
-	85,  // 78: chat.AdminChatWorkOrderResp.data:type_name -> chat.ChatWorkOrder
-	2,   // 79: chat.ChatAdmin.Login:input_type -> chat.ChatAdminLoginReq
-	5,   // 80: chat.ChatAdmin.Logout:input_type -> chat.ChatAdminLogoutReq
-	6,   // 81: chat.ChatAdmin.Profile:input_type -> chat.ChatAdminProfileReq
-	7,   // 82: chat.ChatAdmin.UpdateProfile:input_type -> chat.UpdateChatAdminProfileReq
-	8,   // 83: chat.ChatAdmin.GetChatUserById:input_type -> chat.GetChatUserByIdReq
-	11,  // 84: chat.ChatAdmin.CreateChatGroup:input_type -> chat.CreateChatGroupReq
-	12,  // 85: chat.ChatAdmin.UpdateChatGroup:input_type -> chat.UpdateChatGroupReq
-	13,  // 86: chat.ChatAdmin.GetChatGroup:input_type -> chat.GetChatGroupReq
-	14,  // 87: chat.ChatAdmin.PageChatGroups:input_type -> chat.PageChatGroupsReq
-	15,  // 88: chat.ChatAdmin.DeleteChatGroup:input_type -> chat.DeleteChatGroupReq
-	16,  // 89: chat.ChatAdmin.CreateChatAgent:input_type -> chat.CreateChatAgentReq
-	17,  // 90: chat.ChatAdmin.UpdateChatAgent:input_type -> chat.UpdateChatAgentReq
-	18,  // 91: chat.ChatAdmin.UpdateChatAgentStatus:input_type -> chat.UpdateChatAgentStatusReq
-	19,  // 92: chat.ChatAdmin.GetChatAgent:input_type -> chat.GetChatAgentReq
-	20,  // 93: chat.ChatAdmin.PageChatAgents:input_type -> chat.PageChatAgentsReq
-	21,  // 94: chat.ChatAdmin.PageChatSessions:input_type -> chat.PageChatSessionsReq
-	22,  // 95: chat.ChatAdmin.GetChatSession:input_type -> chat.GetChatSessionReq
-	23,  // 96: chat.ChatAdmin.AcceptChatSession:input_type -> chat.AcceptChatSessionReq
-	24,  // 97: chat.ChatAdmin.SendAgentMessage:input_type -> chat.SendAgentMessageReq
-	25,  // 98: chat.ChatAdmin.SendAgentTyping:input_type -> chat.SendAgentTypingReq
-	26,  // 99: chat.ChatAdmin.PageChatMessages:input_type -> chat.PageChatMessagesReq
-	27,  // 100: chat.ChatAdmin.MarkAgentMessagesRead:input_type -> chat.MarkAgentMessagesReadReq
-	28,  // 101: chat.ChatAdmin.CloseChatSession:input_type -> chat.CloseChatSessionReq
-	29,  // 102: chat.ChatAdmin.CreateChatQuickReply:input_type -> chat.CreateChatQuickReplyReq
-	30,  // 103: chat.ChatAdmin.UpdateChatQuickReply:input_type -> chat.UpdateChatQuickReplyReq
-	31,  // 104: chat.ChatAdmin.GetChatQuickReply:input_type -> chat.GetChatQuickReplyReq
-	32,  // 105: chat.ChatAdmin.PageChatQuickReplies:input_type -> chat.PageChatQuickRepliesReq
-	33,  // 106: chat.ChatAdmin.ListEnabledChatQuickReplies:input_type -> chat.ListEnabledChatQuickRepliesReq
-	34,  // 107: chat.ChatAdmin.DeleteChatQuickReply:input_type -> chat.DeleteChatQuickReplyReq
-	35,  // 108: chat.ChatAdmin.CreateChatCategory:input_type -> chat.CreateChatCategoryReq
-	36,  // 109: chat.ChatAdmin.UpdateChatCategory:input_type -> chat.UpdateChatCategoryReq
-	37,  // 110: chat.ChatAdmin.GetChatCategory:input_type -> chat.GetChatCategoryReq
-	38,  // 111: chat.ChatAdmin.PageChatCategories:input_type -> chat.PageChatCategoriesReq
-	39,  // 112: chat.ChatAdmin.ListEnabledChatCategories:input_type -> chat.ListEnabledChatCategoriesReq
-	40,  // 113: chat.ChatAdmin.DeleteChatCategory:input_type -> chat.DeleteChatCategoryReq
-	41,  // 114: chat.ChatAdmin.CreateChatWorkOrder:input_type -> chat.CreateChatWorkOrderReq
-	42,  // 115: chat.ChatAdmin.UpdateChatWorkOrder:input_type -> chat.UpdateChatWorkOrderReq
-	43,  // 116: chat.ChatAdmin.HandleChatWorkOrder:input_type -> chat.HandleChatWorkOrderReq
-	44,  // 117: chat.ChatAdmin.GetChatWorkOrder:input_type -> chat.GetChatWorkOrderReq
-	45,  // 118: chat.ChatAdmin.PageChatWorkOrders:input_type -> chat.PageChatWorkOrdersReq
-	46,  // 119: chat.ChatAdmin.DeleteChatWorkOrder:input_type -> chat.DeleteChatWorkOrderReq
-	1,   // 120: chat.ChatAdmin.AdminSubscribeStream:input_type -> chat.AdminChatSubscribeRequest
-	4,   // 121: chat.ChatAdmin.Login:output_type -> chat.ChatAdminLoginResp
-	0,   // 122: chat.ChatAdmin.Logout:output_type -> chat.AdminCommonResp
-	10,  // 123: chat.ChatAdmin.Profile:output_type -> chat.ChatAdminProfileResp
-	10,  // 124: chat.ChatAdmin.UpdateProfile:output_type -> chat.ChatAdminProfileResp
-	9,   // 125: chat.ChatAdmin.GetChatUserById:output_type -> chat.GetChatUserByIdResp
-	57,  // 126: chat.ChatAdmin.CreateChatGroup:output_type -> chat.AdminChatGroupResp
-	57,  // 127: chat.ChatAdmin.UpdateChatGroup:output_type -> chat.AdminChatGroupResp
-	57,  // 128: chat.ChatAdmin.GetChatGroup:output_type -> chat.AdminChatGroupResp
-	48,  // 129: chat.ChatAdmin.PageChatGroups:output_type -> chat.PageChatGroupsResp
-	0,   // 130: chat.ChatAdmin.DeleteChatGroup:output_type -> chat.AdminCommonResp
-	56,  // 131: chat.ChatAdmin.CreateChatAgent:output_type -> chat.AdminChatAgentResp
-	56,  // 132: chat.ChatAdmin.UpdateChatAgent:output_type -> chat.AdminChatAgentResp
-	56,  // 133: chat.ChatAdmin.UpdateChatAgentStatus:output_type -> chat.AdminChatAgentResp
-	56,  // 134: chat.ChatAdmin.GetChatAgent:output_type -> chat.AdminChatAgentResp
-	47,  // 135: chat.ChatAdmin.PageChatAgents:output_type -> chat.PageChatAgentsResp
-	49,  // 136: chat.ChatAdmin.PageChatSessions:output_type -> chat.PageChatSessionsResp
-	58,  // 137: chat.ChatAdmin.GetChatSession:output_type -> chat.AdminChatSessionResp
-	58,  // 138: chat.ChatAdmin.AcceptChatSession:output_type -> chat.AdminChatSessionResp
-	59,  // 139: chat.ChatAdmin.SendAgentMessage:output_type -> chat.AdminChatMessageResp
-	0,   // 140: chat.ChatAdmin.SendAgentTyping:output_type -> chat.AdminCommonResp
-	50,  // 141: chat.ChatAdmin.PageChatMessages:output_type -> chat.PageChatMessagesResp
-	60,  // 142: chat.ChatAdmin.MarkAgentMessagesRead:output_type -> chat.AdminMarkMessagesReadResp
-	58,  // 143: chat.ChatAdmin.CloseChatSession:output_type -> chat.AdminChatSessionResp
-	61,  // 144: chat.ChatAdmin.CreateChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
-	61,  // 145: chat.ChatAdmin.UpdateChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
-	61,  // 146: chat.ChatAdmin.GetChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
-	51,  // 147: chat.ChatAdmin.PageChatQuickReplies:output_type -> chat.PageChatQuickRepliesResp
-	52,  // 148: chat.ChatAdmin.ListEnabledChatQuickReplies:output_type -> chat.ListChatQuickRepliesResp
-	0,   // 149: chat.ChatAdmin.DeleteChatQuickReply:output_type -> chat.AdminCommonResp
-	62,  // 150: chat.ChatAdmin.CreateChatCategory:output_type -> chat.AdminChatCategoryResp
-	62,  // 151: chat.ChatAdmin.UpdateChatCategory:output_type -> chat.AdminChatCategoryResp
-	62,  // 152: chat.ChatAdmin.GetChatCategory:output_type -> chat.AdminChatCategoryResp
-	53,  // 153: chat.ChatAdmin.PageChatCategories:output_type -> chat.PageChatCategoriesResp
-	54,  // 154: chat.ChatAdmin.ListEnabledChatCategories:output_type -> chat.ListChatCategoriesResp
-	0,   // 155: chat.ChatAdmin.DeleteChatCategory:output_type -> chat.AdminCommonResp
-	63,  // 156: chat.ChatAdmin.CreateChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
-	63,  // 157: chat.ChatAdmin.UpdateChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
-	63,  // 158: chat.ChatAdmin.HandleChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
-	63,  // 159: chat.ChatAdmin.GetChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
-	55,  // 160: chat.ChatAdmin.PageChatWorkOrders:output_type -> chat.PageChatWorkOrdersResp
-	0,   // 161: chat.ChatAdmin.DeleteChatWorkOrder:output_type -> chat.AdminCommonResp
-	86,  // 162: chat.ChatAdmin.AdminSubscribeStream:output_type -> chat.ChatWsResponse
-	121, // [121:163] is the sub-list for method output_type
-	79,  // [79:121] is the sub-list for method input_type
-	79,  // [79:79] is the sub-list for extension type_name
-	79,  // [79:79] is the sub-list for extension extendee
-	0,   // [0:79] is the sub-list for field type_name
+	66,  // 6: chat.GetChatUserByIdResp.base:type_name -> common.RespBase
+	68,  // 7: chat.GetChatUserByIdResp.data:type_name -> chat.ChatUser
+	66,  // 8: chat.ChatAdminProfileResp.base:type_name -> common.RespBase
+	68,  // 9: chat.ChatAdminProfileResp.user:type_name -> chat.ChatUser
+	69,  // 10: chat.ChatAdminProfileResp.agent:type_name -> chat.ChatAgent
+	70,  // 11: chat.CreateChatGroupReq.enabled:type_name -> common.Enable
+	70,  // 12: chat.UpdateChatGroupReq.enabled:type_name -> common.Enable
+	70,  // 13: chat.PageChatGroupsReq.enabled:type_name -> common.Enable
+	71,  // 14: chat.PageChatGroupsReq.page:type_name -> common.PageReq
+	70,  // 15: chat.CreateChatAgentReq.enabled:type_name -> common.Enable
+	72,  // 16: chat.CreateChatAgentReq.auto_online:type_name -> common.YesNo
+	72,  // 17: chat.UpdateChatAgentReq.auto_online:type_name -> common.YesNo
+	70,  // 18: chat.UpdateChatAgentReq.enabled:type_name -> common.Enable
+	73,  // 19: chat.UpdateChatAgentStatusReq.status:type_name -> chat.ChatAgentStatus
+	73,  // 20: chat.PageChatAgentsReq.status:type_name -> chat.ChatAgentStatus
+	71,  // 21: chat.PageChatAgentsReq.page:type_name -> common.PageReq
+	74,  // 22: chat.PageChatSessionsReq.status:type_name -> chat.ChatSessionStatus
+	75,  // 23: chat.PageChatSessionsReq.priority:type_name -> chat.ChatSessionPriority
+	76,  // 24: chat.PageChatSessionsReq.time_range:type_name -> common.TimeRange
+	71,  // 25: chat.PageChatSessionsReq.page:type_name -> common.PageReq
+	77,  // 26: chat.AcceptChatSessionUser.user:type_name -> chat.ChatMessageUser
+	78,  // 27: chat.AcceptChatSessionUser.agent:type_name -> chat.ChatAgentPayload
+	66,  // 28: chat.AcceptChatSessionResp.base:type_name -> common.RespBase
+	24,  // 29: chat.AcceptChatSessionResp.data:type_name -> chat.AcceptChatSessionUser
+	79,  // 30: chat.SendAgentMessageReq.message_type:type_name -> chat.ChatMessageType
+	77,  // 31: chat.SendAgentMessageReq.sender:type_name -> chat.ChatMessageUser
+	77,  // 32: chat.SendAgentMessageReq.receiver:type_name -> chat.ChatMessageUser
+	80,  // 33: chat.SendAgentTypingReq.typing:type_name -> chat.ChatTypingPayload
+	81,  // 34: chat.PageChatMessagesReq.sender_type:type_name -> chat.ChatSenderType
+	71,  // 35: chat.PageChatMessagesReq.page:type_name -> common.PageReq
+	82,  // 36: chat.CloseChatSessionReq.close_reason_type:type_name -> chat.ChatSessionCloseReason
+	70,  // 37: chat.CreateChatQuickReplyReq.enabled:type_name -> common.Enable
+	70,  // 38: chat.UpdateChatQuickReplyReq.enabled:type_name -> common.Enable
+	70,  // 39: chat.PageChatQuickRepliesReq.enabled:type_name -> common.Enable
+	71,  // 40: chat.PageChatQuickRepliesReq.page:type_name -> common.PageReq
+	70,  // 41: chat.CreateChatCategoryReq.enabled:type_name -> common.Enable
+	70,  // 42: chat.UpdateChatCategoryReq.enabled:type_name -> common.Enable
+	70,  // 43: chat.PageChatCategoriesReq.enabled:type_name -> common.Enable
+	71,  // 44: chat.PageChatCategoriesReq.page:type_name -> common.PageReq
+	75,  // 45: chat.CreateChatWorkOrderReq.priority:type_name -> chat.ChatSessionPriority
+	75,  // 46: chat.UpdateChatWorkOrderReq.priority:type_name -> chat.ChatSessionPriority
+	75,  // 47: chat.PageChatWorkOrdersReq.priority:type_name -> chat.ChatSessionPriority
+	76,  // 48: chat.PageChatWorkOrdersReq.time_range:type_name -> common.TimeRange
+	71,  // 49: chat.PageChatWorkOrdersReq.page:type_name -> common.PageReq
+	66,  // 50: chat.PageChatAgentsResp.base:type_name -> common.RespBase
+	69,  // 51: chat.PageChatAgentsResp.data:type_name -> chat.ChatAgent
+	66,  // 52: chat.PageChatGroupsResp.base:type_name -> common.RespBase
+	83,  // 53: chat.PageChatGroupsResp.data:type_name -> chat.ChatGroup
+	66,  // 54: chat.PageChatSessionsResp.base:type_name -> common.RespBase
+	84,  // 55: chat.PageChatSessionsResp.data:type_name -> chat.ChatSession
+	66,  // 56: chat.PageChatMessagesResp.base:type_name -> common.RespBase
+	85,  // 57: chat.PageChatMessagesResp.data:type_name -> chat.ChatMessage
+	66,  // 58: chat.PageChatQuickRepliesResp.base:type_name -> common.RespBase
+	86,  // 59: chat.PageChatQuickRepliesResp.data:type_name -> chat.ChatQuickReply
+	66,  // 60: chat.ListChatQuickRepliesResp.base:type_name -> common.RespBase
+	86,  // 61: chat.ListChatQuickRepliesResp.data:type_name -> chat.ChatQuickReply
+	66,  // 62: chat.PageChatCategoriesResp.base:type_name -> common.RespBase
+	87,  // 63: chat.PageChatCategoriesResp.data:type_name -> chat.ChatCategory
+	66,  // 64: chat.ListChatCategoriesResp.base:type_name -> common.RespBase
+	87,  // 65: chat.ListChatCategoriesResp.data:type_name -> chat.ChatCategory
+	66,  // 66: chat.PageChatWorkOrdersResp.base:type_name -> common.RespBase
+	88,  // 67: chat.PageChatWorkOrdersResp.data:type_name -> chat.ChatWorkOrder
+	66,  // 68: chat.AdminChatAgentResp.base:type_name -> common.RespBase
+	69,  // 69: chat.AdminChatAgentResp.data:type_name -> chat.ChatAgent
+	66,  // 70: chat.AdminChatGroupResp.base:type_name -> common.RespBase
+	83,  // 71: chat.AdminChatGroupResp.data:type_name -> chat.ChatGroup
+	66,  // 72: chat.AdminChatSessionResp.base:type_name -> common.RespBase
+	84,  // 73: chat.AdminChatSessionResp.data:type_name -> chat.ChatSession
+	66,  // 74: chat.AdminChatMessageResp.base:type_name -> common.RespBase
+	85,  // 75: chat.AdminChatMessageResp.data:type_name -> chat.ChatMessage
+	66,  // 76: chat.AdminMarkMessagesReadResp.base:type_name -> common.RespBase
+	66,  // 77: chat.AdminChatQuickReplyResp.base:type_name -> common.RespBase
+	86,  // 78: chat.AdminChatQuickReplyResp.data:type_name -> chat.ChatQuickReply
+	66,  // 79: chat.AdminChatCategoryResp.base:type_name -> common.RespBase
+	87,  // 80: chat.AdminChatCategoryResp.data:type_name -> chat.ChatCategory
+	66,  // 81: chat.AdminChatWorkOrderResp.base:type_name -> common.RespBase
+	88,  // 82: chat.AdminChatWorkOrderResp.data:type_name -> chat.ChatWorkOrder
+	2,   // 83: chat.ChatAdmin.Login:input_type -> chat.ChatAdminLoginReq
+	5,   // 84: chat.ChatAdmin.Logout:input_type -> chat.ChatAdminLogoutReq
+	6,   // 85: chat.ChatAdmin.Profile:input_type -> chat.ChatAdminProfileReq
+	7,   // 86: chat.ChatAdmin.UpdateProfile:input_type -> chat.UpdateChatAdminProfileReq
+	8,   // 87: chat.ChatAdmin.GetChatUserById:input_type -> chat.GetChatUserByIdReq
+	11,  // 88: chat.ChatAdmin.CreateChatGroup:input_type -> chat.CreateChatGroupReq
+	12,  // 89: chat.ChatAdmin.UpdateChatGroup:input_type -> chat.UpdateChatGroupReq
+	13,  // 90: chat.ChatAdmin.GetChatGroup:input_type -> chat.GetChatGroupReq
+	14,  // 91: chat.ChatAdmin.PageChatGroups:input_type -> chat.PageChatGroupsReq
+	15,  // 92: chat.ChatAdmin.DeleteChatGroup:input_type -> chat.DeleteChatGroupReq
+	16,  // 93: chat.ChatAdmin.CreateChatAgent:input_type -> chat.CreateChatAgentReq
+	17,  // 94: chat.ChatAdmin.UpdateChatAgent:input_type -> chat.UpdateChatAgentReq
+	18,  // 95: chat.ChatAdmin.UpdateChatAgentStatus:input_type -> chat.UpdateChatAgentStatusReq
+	19,  // 96: chat.ChatAdmin.GetChatAgent:input_type -> chat.GetChatAgentReq
+	20,  // 97: chat.ChatAdmin.PageChatAgents:input_type -> chat.PageChatAgentsReq
+	21,  // 98: chat.ChatAdmin.PageChatSessions:input_type -> chat.PageChatSessionsReq
+	22,  // 99: chat.ChatAdmin.GetChatSession:input_type -> chat.GetChatSessionReq
+	23,  // 100: chat.ChatAdmin.AcceptChatSession:input_type -> chat.AcceptChatSessionReq
+	26,  // 101: chat.ChatAdmin.SendAgentMessage:input_type -> chat.SendAgentMessageReq
+	27,  // 102: chat.ChatAdmin.SendAgentTyping:input_type -> chat.SendAgentTypingReq
+	28,  // 103: chat.ChatAdmin.PageChatMessages:input_type -> chat.PageChatMessagesReq
+	29,  // 104: chat.ChatAdmin.MarkAgentMessagesRead:input_type -> chat.MarkAgentMessagesReadReq
+	30,  // 105: chat.ChatAdmin.CloseChatSession:input_type -> chat.CloseChatSessionReq
+	31,  // 106: chat.ChatAdmin.CreateChatQuickReply:input_type -> chat.CreateChatQuickReplyReq
+	32,  // 107: chat.ChatAdmin.UpdateChatQuickReply:input_type -> chat.UpdateChatQuickReplyReq
+	33,  // 108: chat.ChatAdmin.GetChatQuickReply:input_type -> chat.GetChatQuickReplyReq
+	34,  // 109: chat.ChatAdmin.PageChatQuickReplies:input_type -> chat.PageChatQuickRepliesReq
+	35,  // 110: chat.ChatAdmin.ListEnabledChatQuickReplies:input_type -> chat.ListEnabledChatQuickRepliesReq
+	36,  // 111: chat.ChatAdmin.DeleteChatQuickReply:input_type -> chat.DeleteChatQuickReplyReq
+	37,  // 112: chat.ChatAdmin.CreateChatCategory:input_type -> chat.CreateChatCategoryReq
+	38,  // 113: chat.ChatAdmin.UpdateChatCategory:input_type -> chat.UpdateChatCategoryReq
+	39,  // 114: chat.ChatAdmin.GetChatCategory:input_type -> chat.GetChatCategoryReq
+	40,  // 115: chat.ChatAdmin.PageChatCategories:input_type -> chat.PageChatCategoriesReq
+	41,  // 116: chat.ChatAdmin.ListEnabledChatCategories:input_type -> chat.ListEnabledChatCategoriesReq
+	42,  // 117: chat.ChatAdmin.DeleteChatCategory:input_type -> chat.DeleteChatCategoryReq
+	43,  // 118: chat.ChatAdmin.CreateChatWorkOrder:input_type -> chat.CreateChatWorkOrderReq
+	44,  // 119: chat.ChatAdmin.UpdateChatWorkOrder:input_type -> chat.UpdateChatWorkOrderReq
+	45,  // 120: chat.ChatAdmin.HandleChatWorkOrder:input_type -> chat.HandleChatWorkOrderReq
+	46,  // 121: chat.ChatAdmin.GetChatWorkOrder:input_type -> chat.GetChatWorkOrderReq
+	47,  // 122: chat.ChatAdmin.PageChatWorkOrders:input_type -> chat.PageChatWorkOrdersReq
+	48,  // 123: chat.ChatAdmin.DeleteChatWorkOrder:input_type -> chat.DeleteChatWorkOrderReq
+	1,   // 124: chat.ChatAdmin.AdminSubscribeStream:input_type -> chat.AdminChatSubscribeRequest
+	4,   // 125: chat.ChatAdmin.Login:output_type -> chat.ChatAdminLoginResp
+	0,   // 126: chat.ChatAdmin.Logout:output_type -> chat.AdminCommonResp
+	10,  // 127: chat.ChatAdmin.Profile:output_type -> chat.ChatAdminProfileResp
+	10,  // 128: chat.ChatAdmin.UpdateProfile:output_type -> chat.ChatAdminProfileResp
+	9,   // 129: chat.ChatAdmin.GetChatUserById:output_type -> chat.GetChatUserByIdResp
+	59,  // 130: chat.ChatAdmin.CreateChatGroup:output_type -> chat.AdminChatGroupResp
+	59,  // 131: chat.ChatAdmin.UpdateChatGroup:output_type -> chat.AdminChatGroupResp
+	59,  // 132: chat.ChatAdmin.GetChatGroup:output_type -> chat.AdminChatGroupResp
+	50,  // 133: chat.ChatAdmin.PageChatGroups:output_type -> chat.PageChatGroupsResp
+	0,   // 134: chat.ChatAdmin.DeleteChatGroup:output_type -> chat.AdminCommonResp
+	58,  // 135: chat.ChatAdmin.CreateChatAgent:output_type -> chat.AdminChatAgentResp
+	58,  // 136: chat.ChatAdmin.UpdateChatAgent:output_type -> chat.AdminChatAgentResp
+	58,  // 137: chat.ChatAdmin.UpdateChatAgentStatus:output_type -> chat.AdminChatAgentResp
+	58,  // 138: chat.ChatAdmin.GetChatAgent:output_type -> chat.AdminChatAgentResp
+	49,  // 139: chat.ChatAdmin.PageChatAgents:output_type -> chat.PageChatAgentsResp
+	51,  // 140: chat.ChatAdmin.PageChatSessions:output_type -> chat.PageChatSessionsResp
+	60,  // 141: chat.ChatAdmin.GetChatSession:output_type -> chat.AdminChatSessionResp
+	25,  // 142: chat.ChatAdmin.AcceptChatSession:output_type -> chat.AcceptChatSessionResp
+	61,  // 143: chat.ChatAdmin.SendAgentMessage:output_type -> chat.AdminChatMessageResp
+	0,   // 144: chat.ChatAdmin.SendAgentTyping:output_type -> chat.AdminCommonResp
+	52,  // 145: chat.ChatAdmin.PageChatMessages:output_type -> chat.PageChatMessagesResp
+	62,  // 146: chat.ChatAdmin.MarkAgentMessagesRead:output_type -> chat.AdminMarkMessagesReadResp
+	60,  // 147: chat.ChatAdmin.CloseChatSession:output_type -> chat.AdminChatSessionResp
+	63,  // 148: chat.ChatAdmin.CreateChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
+	63,  // 149: chat.ChatAdmin.UpdateChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
+	63,  // 150: chat.ChatAdmin.GetChatQuickReply:output_type -> chat.AdminChatQuickReplyResp
+	53,  // 151: chat.ChatAdmin.PageChatQuickReplies:output_type -> chat.PageChatQuickRepliesResp
+	54,  // 152: chat.ChatAdmin.ListEnabledChatQuickReplies:output_type -> chat.ListChatQuickRepliesResp
+	0,   // 153: chat.ChatAdmin.DeleteChatQuickReply:output_type -> chat.AdminCommonResp
+	64,  // 154: chat.ChatAdmin.CreateChatCategory:output_type -> chat.AdminChatCategoryResp
+	64,  // 155: chat.ChatAdmin.UpdateChatCategory:output_type -> chat.AdminChatCategoryResp
+	64,  // 156: chat.ChatAdmin.GetChatCategory:output_type -> chat.AdminChatCategoryResp
+	55,  // 157: chat.ChatAdmin.PageChatCategories:output_type -> chat.PageChatCategoriesResp
+	56,  // 158: chat.ChatAdmin.ListEnabledChatCategories:output_type -> chat.ListChatCategoriesResp
+	0,   // 159: chat.ChatAdmin.DeleteChatCategory:output_type -> chat.AdminCommonResp
+	65,  // 160: chat.ChatAdmin.CreateChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
+	65,  // 161: chat.ChatAdmin.UpdateChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
+	65,  // 162: chat.ChatAdmin.HandleChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
+	65,  // 163: chat.ChatAdmin.GetChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
+	57,  // 164: chat.ChatAdmin.PageChatWorkOrders:output_type -> chat.PageChatWorkOrdersResp
+	0,   // 165: chat.ChatAdmin.DeleteChatWorkOrder:output_type -> chat.AdminCommonResp
+	89,  // 166: chat.ChatAdmin.AdminSubscribeStream:output_type -> chat.ChatWsResponse
+	125, // [125:167] is the sub-list for method output_type
+	83,  // [83:125] is the sub-list for method input_type
+	83,  // [83:83] is the sub-list for extension type_name
+	83,  // [83:83] is the sub-list for extension extendee
+	0,   // [0:83] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_chat_admin_proto_init() }
@@ -4955,7 +5025,7 @@ func file_proto_chat_chat_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_chat_admin_proto_rawDesc), len(file_proto_chat_chat_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   64,
+			NumMessages:   66,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

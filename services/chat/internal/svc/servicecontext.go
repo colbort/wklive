@@ -59,7 +59,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ChatMessageFactory:    models.NewChatMessageModelFactory(c.Mongo.Url, c.Mongo.Db),
 		BusRedis:              busRedis,
 	}
-	
+
 	return svcCtx
 }
 

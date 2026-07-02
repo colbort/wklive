@@ -54,7 +54,14 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 			BusRedis:  l.svcCtx.BusRedis,
 			Channel:   chat.ChatAdminEventChannel,
 			EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
-			Payload:   &chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, in.IsGuest)},
+			Payload: &chat.ChatWsResponse_UserState{UserState: &chat.ChatUserStatePayload{
+				SessionNo: in.SessionNo,
+				UserId:    session.UserId,
+				UserName:  "",
+				Avatar:    "",
+				Online:    true,
+				Source:    chat.ChatSessionSource_CHAT_SESSION_SOURCE_APP,
+			}},
 		})
 		return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 	}
@@ -81,7 +88,7 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAppEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
-		Payload:   &chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(session, false)},
+		Payload:   &chat.ChatWsResponse_Session{Session: ih.ToProtoSession(session, false)},
 	})
 	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, false)}, nil
 }

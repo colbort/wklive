@@ -100,12 +100,11 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_WS_CONNECTED,
 		CreatedAt: utils.NowMillis(),
-		Payload: &chat.ChatMessageEvent_Connected{
+		Payload: &chat.ChatWsResponse_Connected{
 			Connected: &chat.WsConnectedPayload{
 				Message:    "chat app websocket connected",
 				MerchantId: req.MerchantId,
 				UserId:     req.UserId,
-				SessionNo:  req.SessionNo,
 				Nickname:   req.Nickname,
 				AvatarUrl:  req.AvatarUrl,
 				IsGuest:    req.IsGuest,
@@ -116,7 +115,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 	client.SendEvent(&chat.ChatWsResponse{
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
 		CreatedAt: utils.NowMillis(),
-		Payload:   &chat.ChatMessageEvent_Queue{Queue: resp.Data},
+		Payload:   &chat.ChatWsResponse_Queue{Queue: resp.Data},
 	})
 
 	// 读 RPC 消息
@@ -131,12 +130,12 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 func (l *MessagesLogic) onMessage() func(*ws.Connection, *chat.ChatWsRequest) {
 	return func(conn *ws.Connection, event *chat.ChatWsRequest) {
 		if event == nil {
-			sendWSError(conn, "invalid request")
+			conn.SendError("invalid request", "event is nil")
 			return
 		}
 		eventType := event.GetEventType()
 		if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED {
-			sendWSError(conn, "event type is required")
+			conn.SendError("event type is required", "event type unsupported")
 			return
 		}
 		switch eventType {
@@ -160,10 +159,10 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, *chat.ChatWsRequest) {
 				Msg:       "",
 				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT,
 				CreatedAt: utils.NowMillis(),
-				Payload:   &chat.ChatMessageEvent_Agent{},
+				Payload:   &chat.ChatWsResponse_Agent{},
 			})
 		default:
-			sendWSError(conn, "unsupported event type")
+			conn.SendError("unsupported event type", "unsupported event type: "+eventType.String())
 		}
 	}
 }
@@ -193,12 +192,7 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 		logx.Error("app subscribe err")
 		return
 	}
-	stream, err := l.svcCtx.ChatAppCli.AppSubscribeStream(ctx, &chat.AppChatSubscribeRequest{
-		MerchantId: conn.MerchantId,
-		UserId:     conn.UserId,
-		SessionNo:  conn.SessionNo,
-		IsGuest:    conn.IsGuest,
-	})
+	stream, err := l.svcCtx.ChatAppCli.AppSubscribeStream(ctx, &chat.AppChatSubscribeRequest{})
 	if err != nil {
 		logx.Errorf("subscribe chat app stream failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 		return
@@ -220,11 +214,11 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 // 登录用户：先调用内部服务入库，再把返回的消息转发给后台和用户侧。
 func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload *chat.ChatWsMessagePayload) {
 	if payload == nil {
-		sendWSError(conn, "invalid message payload")
+		conn.SendError("invalid message payload", "message is nil")
 		return
 	}
 	if strings.TrimSpace(conn.SessionNo) == "" {
-		sendWSError(conn, "sessionNo is required")
+		conn.SendError("session no is required", "session no is empty")
 		return
 	}
 	req := chat.SendUserMessageReq{
@@ -252,16 +246,16 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 	}
 	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &req)
 	if err != nil {
-		sendWSError(conn, err.Error())
+		conn.SendError("send message err", err.Error())
 		return
 	}
 	if resp.GetBase().GetCode() != successCode {
-		sendWSError(conn, resp.GetBase().GetMsg())
+		conn.SendError("send message err", resp.GetBase().GetMsg())
 		return
 	}
 	msg := resp.GetData()
 	if msg == nil {
-		sendWSError(conn, "message data is empty")
+		conn.SendError("message data is empty", "rpc not return message")
 		return
 	}
 
@@ -269,7 +263,7 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 	conn.SendEvent(&chat.ChatWsResponse{
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED,
 		CreatedAt: now,
-		Payload: &chat.ChatMessageEvent_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
+		Payload: &chat.ChatWsResponse_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
 			SessionNo:     conn.SessionNo,
 			MessageNo:     msg.MessageNo,
 			SenderId:      req.Sender.Id,
@@ -309,26 +303,22 @@ func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connectio
 		Typing:     typing,
 	})
 	if err != nil {
-		sendWSError(conn, err.Error())
+		conn.SendError("call rpc err", err.Error())
 		return
 	}
 	if resp.GetBase().GetCode() != successCode {
-		sendWSError(conn, resp.GetBase().GetMsg())
+		conn.SendError("call rpc fail", resp.GetBase().GetMsg())
 		return
 	}
 }
 
 func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Connection, payload *chat.ChatEvaluationPayload) {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
-		sendWSError(conn, "sessionNo is required")
-		return
-	}
-	if payload == nil {
-		sendWSError(conn, "invalid evaluation payload")
+		conn.SendError("session no is empty", "session no is required")
 		return
 	}
 	if payload.GetRating() < 1 || payload.GetRating() > 5 {
-		sendWSError(conn, "score must be between 1 and 5")
+		conn.SendError("score err", "score must be between 1 and 5")
 		return
 	}
 	resp, err := l.svcCtx.ChatAppCli.SubmitChatSatisfaction(ctx, &chat.SubmitChatSatisfactionReq{
@@ -341,11 +331,11 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		IsGuest:    conn.IsGuest,
 	})
 	if err != nil {
-		sendWSError(conn, err.Error())
+		conn.SendError("call rpc fail", err.Error())
 		return
 	}
 	if resp.GetBase().GetCode() != successCode {
-		sendWSError(conn, resp.GetBase().GetMsg())
+		conn.SendError("submit satisfaction err", resp.GetBase().GetMsg())
 		return
 	}
 	conn.SendEvent(&chat.ChatWsResponse{
@@ -353,7 +343,7 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
 		CreatedAt: utils.NowMillis(),
-		Payload: &chat.ChatMessageEvent_Evaluation{
+		Payload: &chat.ChatWsResponse_Evaluation{
 			Evaluation: &chat.ChatEvaluationPayload{},
 		},
 	})
@@ -375,24 +365,6 @@ func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Con
 	if err != nil {
 		logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 	}
-}
-
-func sendWSError(conn *ws.Connection, message string) {
-	if conn == nil {
-		return
-	}
-	conn.SendEvent(&chat.ChatWsResponse{
-		Code:      1,
-		Msg:       message,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,
-		CreatedAt: time.Now().UnixMilli(),
-		Payload: &chat.ChatMessageEvent_Error{Error: &chat.ChatErrorPayload{
-			SessionNo:    conn.SessionNo,
-			ErrorCode:    1,
-			ErrorMessage: message,
-			Retryable:    false,
-		}},
-	})
 }
 
 func firstNonEmpty(values ...string) string {

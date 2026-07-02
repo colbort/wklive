@@ -31,7 +31,7 @@ func (l *SendAgentTypingLogic) SendAgentTyping(in *chat.SendAgentTypingReq) (*ch
 	event := &chat.ChatWsResponse{
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_TYPING,
 		CreatedAt: utils.NowMillis(),
-		Payload:   &chat.ChatMessageEvent_Typing{Typing: in.Typing},
+		Payload:   &chat.ChatWsResponse_Typing{Typing: in.Typing},
 	}
 	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
 	if err != nil {

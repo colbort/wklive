@@ -132,7 +132,6 @@ export interface WsConnectedPayload {
   message: string;
   merchantId: number;
   userId: number;
-  sessionNo: string;
   nickname?: string;
   avatarUrl?: string;
   isGuest?: boolean;
@@ -140,7 +139,7 @@ export interface WsConnectedPayload {
 
 export interface ChatUserStatePayload {
   sessionNo: string;
-  userId: string;
+  userId: number;
   userName?: string;
   avatar?: string;
   online: boolean;
@@ -172,7 +171,6 @@ export interface ChatAgentPayload {
 }
 
 export interface ChatErrorPayload {
-  sessionNo?: string;
   messageNo?: string;
   errorCode: number;
   errorMessage: string;

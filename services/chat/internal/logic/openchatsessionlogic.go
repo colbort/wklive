@@ -172,7 +172,14 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAdminEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
-		Payload:   &chat.ChatMessageEvent_Session{Session: ih.ToProtoSession(ms, in.IsGuest)},
+		Payload: &chat.ChatWsResponse_UserState{UserState: &chat.ChatUserStatePayload{
+			SessionNo: in.SessionNo,
+			UserId:    in.UserId,
+			UserName:  "",
+			Avatar:    "",
+			Online:    true,
+			Source:    chat.ChatSessionSource_CHAT_SESSION_SOURCE_APP,
+		}},
 	})
 	if err != nil {
 		logx.Errorf("publish user join event error: %v", err)

@@ -29,7 +29,7 @@ func NewPageChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 查询会话消息
 func (l *PageChatMessagesLogic) PageChatMessages(in *chat.PageChatMessagesReq) (*chat.PageChatMessagesResp, error) {
-	if in.GetIsGuest() || in.GetMerchantId() > 0 {
+	if in.GetIsGuest() {
 		var cursor, limit int64
 		if in.GetPage() != nil {
 			cursor = in.GetPage().GetCursor()

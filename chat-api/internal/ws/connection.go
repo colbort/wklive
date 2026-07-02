@@ -73,22 +73,7 @@ func (c *Connection) ReadPump() {
 		}
 		var event chat.ChatWsRequest
 		if err := protojson.Unmarshal(payload, &event); err != nil {
-			c.SendEvent(&chat.ChatWsResponse{
-				Code:      200,
-				Msg:       "",
-				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,
-				CreatedAt: utils.NowMillis(),
-				Payload: &chat.ChatMessageEvent_Error{
-					Error: &chat.ChatErrorPayload{
-						SessionNo:    c.SessionNo,
-						MessageNo:    "",
-						ErrorCode:    0,
-						ErrorMessage: "invalid json",
-						Detail:       err.Error(),
-						Retryable:    false,
-					},
-				},
-			})
+			c.SendError("invalid json", err.Error())
 			continue
 		}
 		c.OnMessage(c, &event)
@@ -135,7 +120,7 @@ func (c *Connection) SendEvent(event *chat.ChatWsResponse) {
 	if event == nil {
 		return
 	}
-	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	payload, err := marshalProtoJSON(event.ProtoReflect())
 	if err != nil {
 		logx.Errorf("marshal chat user ws event failed: %v", err)
 		return
@@ -145,4 +130,22 @@ func (c *Connection) SendEvent(event *chat.ChatWsResponse) {
 	default:
 		logx.Errorf("chat user ws send queue is full, userId=%d", c.UserId)
 	}
+}
+
+func (c *Connection) SendError(message string, detail string) {
+	c.SendEvent(&chat.ChatWsResponse{
+		Code:      200,
+		Msg:       "",
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,
+		CreatedAt: utils.NowMillis(),
+		Payload: &chat.ChatWsResponse_Error{
+			Error: &chat.ChatErrorPayload{
+				MessageNo:    "",
+				ErrorCode:    0,
+				ErrorMessage: message,
+				Detail:       detail,
+				Retryable:    false,
+			},
+		},
+	})
 }

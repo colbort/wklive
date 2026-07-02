@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"sync"
 	"time"
 
 	"wklive/common/utils"
@@ -19,33 +20,26 @@ const (
 )
 
 type Connection struct {
-	Conn        *websocket.Conn
-	Send        chan []byte
-	UserId      int64
-	Nickname    string
-	AvatarUrl   string
-	MerchantId  int64
-	AgentId     int64
-	AgentUserId int64
-	SessionNo   string
-	OnMessage   func(*Connection, *chat.ChatWsRequest)
-	OnClose     func(*Connection)
-	IsGuest     bool
+	Conn       *websocket.Conn
+	Send       chan []byte
+	Sender     *chat.ChatMessageUser // 坐席信息
+	MerchantId int64                 // 坐席所属商户ID
+	AgentId    int64                 // 坐席ID
+	Receivers  sync.Map              // 坐席接待中的用户
+	OnMessage  func(*Connection, *chat.ChatWsRequest)
+	OnClose    func(*Connection)
+	IsGuest    bool
 }
 
-func NewConnection(conn *websocket.Conn, nickname string, avatarUrl string, merchantId int64, agentId int64, agentUserId int64, sessionNo string, onMessage func(*Connection, *chat.ChatWsRequest), onClose func(*Connection)) *Connection {
+func NewConnection(conn *websocket.Conn, sender *chat.ChatMessageUser, merchantId int64, agentId int64, onMessage func(*Connection, *chat.ChatWsRequest), onClose func(*Connection)) *Connection {
 	return &Connection{
-		Conn:        conn,
-		Send:        make(chan []byte, 32),
-		UserId:      -1,
-		Nickname:    nickname,
-		AvatarUrl:   avatarUrl,
-		MerchantId:  merchantId,
-		AgentId:     agentId,
-		AgentUserId: agentUserId,
-		SessionNo:   sessionNo,
-		OnMessage:   onMessage,
-		OnClose:     onClose,
+		Conn:       conn,
+		Send:       make(chan []byte, 32),
+		Sender:     sender,
+		MerchantId: merchantId,
+		AgentId:    agentId,
+		OnMessage:  onMessage,
+		OnClose:    onClose,
 	}
 }
 
@@ -67,7 +61,7 @@ func (c *Connection) ReadPump() {
 		_, payload, err := c.Conn.ReadMessage()
 		if err != nil {
 			if isUnexpectedReadClose(err) {
-				logx.Errorf("chat admin ws read failed, userId=%d merchantId=%d agentId=%d err=%v", c.UserId, c.MerchantId, c.AgentId, err)
+				logx.Errorf("chat admin ws read failed, merchantId=%d agentId=%d err=%v", c.MerchantId, c.AgentId, err)
 			}
 			return
 		}
@@ -76,22 +70,7 @@ func (c *Connection) ReadPump() {
 		}
 		var event chat.ChatWsRequest
 		if err := protojson.Unmarshal(payload, &event); err != nil {
-			c.SendEvent(&chat.ChatWsResponse{
-				Code:      200,
-				Msg:       "",
-				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,
-				CreatedAt: utils.NowMillis(),
-				Payload: &chat.ChatMessageEvent_Error{
-					Error: &chat.ChatErrorPayload{
-						SessionNo:    c.SessionNo,
-						MessageNo:    "",
-						ErrorCode:    0,
-						ErrorMessage: "invalid json",
-						Detail:       err.Error(),
-						Retryable:    false,
-					},
-				},
-			})
+			c.SendError("invalid json", err.Error())
 			continue
 		}
 		c.OnMessage(c, &event)
@@ -138,7 +117,7 @@ func (c *Connection) SendEvent(event *chat.ChatWsResponse) {
 	if event == nil {
 		return
 	}
-	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	payload, err := marshalProtoJSON(event.ProtoReflect())
 	if err != nil {
 		logx.Errorf("marshal chat admin ws event failed: %v", err)
 		return
@@ -146,6 +125,24 @@ func (c *Connection) SendEvent(event *chat.ChatWsResponse) {
 	select {
 	case c.Send <- payload:
 	default:
-		logx.Errorf("chat admin ws send queue is full, userId=%d", c.UserId)
+		logx.Errorf("chat admin ws send queue is full, agentId=%d", c.AgentId)
 	}
+}
+
+func (c *Connection) SendError(message string, detail string) {
+	c.SendEvent(&chat.ChatWsResponse{
+		Code:      200,
+		Msg:       "",
+		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,
+		CreatedAt: utils.NowMillis(),
+		Payload: &chat.ChatWsResponse_Error{
+			Error: &chat.ChatErrorPayload{
+				MessageNo:    "",
+				ErrorCode:    0,
+				ErrorMessage: message,
+				Detail:       detail,
+				Retryable:    false,
+			},
+		},
+	})
 }
