@@ -103,6 +103,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		Payload: &chat.ChatWsResponse_Connected{
 			Connected: &chat.WsConnectedPayload{
 				Message:    "chat app websocket connected",
+				SessionNo:  req.SessionNo,
 				MerchantId: req.MerchantId,
 				UserId:     req.UserId,
 				Nickname:   req.Nickname,

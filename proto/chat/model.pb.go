@@ -801,11 +801,12 @@ func (x *ChatMessageUser) GetAvatarUrl() string {
 type WsConnectedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`                          // 连接成功提示信息
-	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 用户ID
-	Nickname      string                 `protobuf:"bytes,4,opt,name=nickname,proto3" json:"nickname,omitempty"`                        // 昵称
-	AvatarUrl     string                 `protobuf:"bytes,5,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`     // 头像URL
-	IsGuest       bool                   `protobuf:"varint,6,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`          // 是否游客
+	SessionNo     string                 `protobuf:"bytes,2,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`     // 会话编号
+	MerchantId    int64                  `protobuf:"varint,3,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID
+	UserId        int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`             // 用户ID
+	Nickname      string                 `protobuf:"bytes,5,opt,name=nickname,proto3" json:"nickname,omitempty"`                        // 昵称
+	AvatarUrl     string                 `protobuf:"bytes,6,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`     // 头像URL
+	IsGuest       bool                   `protobuf:"varint,7,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`          // 是否游客
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -843,6 +844,13 @@ func (*WsConnectedPayload) Descriptor() ([]byte, []int) {
 func (x *WsConnectedPayload) GetMessage() string {
 	if x != nil {
 		return x.Message
+	}
+	return ""
+}
+
+func (x *WsConnectedPayload) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
 	}
 	return ""
 }
@@ -2180,6 +2188,7 @@ type ChatWsRequest_Queue struct {
 type ChatWsRequest_Agent struct {
 	// 坐席接待 / 坐席离开
 	// 对应：
+	// CHAT_EVENT_TYPE_AGENT_JOIN
 	// CHAT_EVENT_TYPE_AGENT_ACCEPTED
 	// CHAT_EVENT_TYPE_AGENT_LEAVE
 	Agent *ChatWsAgentPayload `protobuf:"bytes,15,opt,name=agent,proto3,oneof"`
@@ -4753,16 +4762,18 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\x04type\x18\x02 \x01(\x0e2\x14.chat.ChatSenderTypeR\x04type\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x1d\n" +
 	"\n" +
-	"avatar_url\x18\x04 \x01(\tR\tavatarUrl\"\xbe\x01\n" +
+	"avatar_url\x18\x04 \x01(\tR\tavatarUrl\"\xdd\x01\n" +
 	"\x12WsConnectedPayload\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage\x12\x1f\n" +
-	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
-	"merchantId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1a\n" +
-	"\bnickname\x18\x04 \x01(\tR\bnickname\x12\x1d\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\x12\x1d\n" +
 	"\n" +
-	"avatar_url\x18\x05 \x01(\tR\tavatarUrl\x12\x19\n" +
-	"\bis_guest\x18\x06 \x01(\bR\aisGuest\"\xac\x05\n" +
+	"session_no\x18\x02 \x01(\tR\tsessionNo\x12\x1f\n" +
+	"\vmerchant_id\x18\x03 \x01(\x03R\n" +
+	"merchantId\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1a\n" +
+	"\bnickname\x18\x05 \x01(\tR\bnickname\x12\x1d\n" +
+	"\n" +
+	"avatar_url\x18\x06 \x01(\tR\tavatarUrl\x12\x19\n" +
+	"\bis_guest\x18\a \x01(\bR\aisGuest\"\xac\x05\n" +
 	"\vChatMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +

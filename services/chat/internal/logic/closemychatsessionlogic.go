@@ -49,20 +49,14 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-		_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
-			Ctx:       l.ctx,
-			BusRedis:  l.svcCtx.BusRedis,
-			Channel:   chat.ChatAdminEventChannel,
-			EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE,
-			Payload: &chat.ChatWsResponse_UserState{UserState: &chat.ChatUserStatePayload{
-				SessionNo: in.SessionNo,
-				UserId:    session.UserId,
-				UserName:  "",
-				Avatar:    "",
-				Online:    true,
-				Source:    chat.ChatSessionSource_CHAT_SESSION_SOURCE_APP,
-			}},
-		})
+		_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventUserLeave, &chat.ChatWsResponse_UserState{UserState: &chat.ChatUserStatePayload{
+			SessionNo: in.SessionNo,
+			UserId:    session.UserId,
+			UserName:  "",
+			Avatar:    "",
+			Online:    true,
+			Source:    chat.ChatSessionSource_CHAT_SESSION_SOURCE_APP,
+		}})
 		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 	}
 	if in.GetIsGuest() {
@@ -84,19 +78,7 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 		}
 	}
 	sessionPayload := chat.ChatWsResponse_Session{Session: ih.ToProtoSession(session, in.IsGuest)}
-	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
-		Ctx:       l.ctx,
-		BusRedis:  l.svcCtx.BusRedis,
-		Channel:   chat.ChatAppEventChannel,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
-		Payload:   &sessionPayload,
-	})
-	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
-		Ctx:       l.ctx,
-		BusRedis:  l.svcCtx.BusRedis,
-		Channel:   chat.ChatAdminEventChannel,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
-		Payload:   &sessionPayload,
-	})
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAppEventChannel, ih.PublishEventSessionClose, &sessionPayload)
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventSessionClose, &sessionPayload)
 	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 }

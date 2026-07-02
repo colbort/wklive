@@ -68,24 +68,12 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		Remark:        firstNonEmpty(in.GetReason(), "accept"),
 		ActionTime:    utils.NowMillis(),
 	}
-	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
-		Ctx:       l.ctx,
-		BusRedis:  l.svcCtx.BusRedis,
-		Channel:   chat.ChatAppEventChannel,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
-		Payload:   &chat.ChatWsResponse_Agent{Agent: payload},
-	})
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAppEventChannel, ih.PublishEventAgentAccepted, &chat.ChatWsResponse_Agent{Agent: payload})
 	queue, err := ih.ToProtoQueueInfo(l.ctx, l.svcCtx, session)
 	if err != nil {
 		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	err = ih.PublishMessageEvent(ih.PublishMessageEventReq{
-		Ctx:       l.ctx,
-		BusRedis:  l.svcCtx.BusRedis,
-		Channel:   chat.ChatAppEventChannel,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
-		Payload:   &chat.ChatWsResponse_Queue{Queue: queue},
-	})
+	err = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAppEventChannel, ih.PublishEventQueueUpdate, &chat.ChatWsResponse_Queue{Queue: queue})
 	if err != nil {
 		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

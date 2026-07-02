@@ -167,20 +167,14 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 	}
 	// 向坐席 chat-admin-api 推送 用户上线通知
 	// l.publishUserJoinEvent(ms, in.IsGuest)
-	err := ih.PublishMessageEvent(ih.PublishMessageEventReq{
-		Ctx:       l.ctx,
-		BusRedis:  l.svcCtx.BusRedis,
-		Channel:   chat.ChatAdminEventChannel,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_USER_JOIN,
-		Payload: &chat.ChatWsResponse_UserState{UserState: &chat.ChatUserStatePayload{
-			SessionNo: in.SessionNo,
-			UserId:    in.UserId,
-			UserName:  "",
-			Avatar:    "",
-			Online:    true,
-			Source:    chat.ChatSessionSource_CHAT_SESSION_SOURCE_APP,
-		}},
-	})
+	err := ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventUserJoin, &chat.ChatWsResponse_UserState{UserState: &chat.ChatUserStatePayload{
+		SessionNo: in.SessionNo,
+		UserId:    in.UserId,
+		UserName:  "",
+		Avatar:    "",
+		Online:    true,
+		Source:    chat.ChatSessionSource_CHAT_SESSION_SOURCE_APP,
+	}})
 	if err != nil {
 		logx.Errorf("publish user join event error: %v", err)
 	}

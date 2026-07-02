@@ -72,6 +72,7 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 		Payload: &chat.ChatWsResponse_Connected{
 			Connected: &chat.WsConnectedPayload{
 				Message:    "chat admin websocket connected",
+				SessionNo:  "",
 				MerchantId: req.MerchantId,
 				UserId:     req.UserId,
 				Nickname:   user.Data.Nickname,
@@ -159,6 +160,10 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 			return
 		}
 		if event.EventType == chat.ChatEventType_CHAT_EVENT_TYPE_USER_LEAVE {
+			userState := event.GetUserState()
+			if userState != nil {
+				conn.Receivers.Delete(userState.SessionNo)
+			}
 			fmt.Println("==================== 11")
 			// 移除 坐席接待中的 用户信息
 		}

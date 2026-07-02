@@ -97,11 +97,12 @@ message ChatMessageUser {
 // 链接确认
 message WsConnectedPayload {
   string message = 1;      // 连接成功提示信息
-  int64 merchant_id = 2;   // 客服商户ID
-  int64 user_id = 3;       // 用户ID
-  string nickname = 4;     // 昵称
-  string avatar_url = 5;   // 头像URL
-  bool is_guest = 6;       // 是否游客
+  string session_no = 2;   // 会话编号
+  int64 merchant_id = 3;   // 客服商户ID
+  int64 user_id = 4;       // 用户ID
+  string nickname = 5;     // 昵称
+  string avatar_url = 6;   // 头像URL
+  bool is_guest = 7;       // 是否游客
 }
 
 /**
@@ -326,6 +327,7 @@ message ChatWsRequest {
 
     // 坐席接待 / 坐席离开
     // 对应：
+    // CHAT_EVENT_TYPE_AGENT_JOIN
     // CHAT_EVENT_TYPE_AGENT_ACCEPTED
     // CHAT_EVENT_TYPE_AGENT_LEAVE
     ChatWsAgentPayload agent = 15;

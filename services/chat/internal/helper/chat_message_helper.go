@@ -70,31 +70,19 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessa
 		msg = ToProtoMessage(mmg)
 	}
 
-	err = PublishMessageEvent(PublishMessageEventReq{
-		Ctx:       ctx,
-		BusRedis:  svcCtx.BusRedis,
-		Channel:   opts.ReceiveChannel,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE,
-		Payload:   &chat.ChatWsResponse_Message{Message: msg},
-	})
+	err = PublishMessageEvent(ctx, svcCtx.BusRedis, opts.ReceiveChannel, PublishEventMessage, &chat.ChatWsResponse_Message{Message: msg})
 	if err != nil {
 		return nil, err
 	}
-	err = PublishMessageEvent(PublishMessageEventReq{
-		Ctx:       ctx,
-		BusRedis:  svcCtx.BusRedis,
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED,
-		Channel:   opts.ReceiptChannel,
-		Payload: &chat.ChatWsResponse_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
-			SessionNo:     msg.SessionNo,
-			MessageNo:     msg.MessageNo,
-			SenderId:      msg.Sender.Id,
-			OperatorId:    msg.Receiver.Id,
-			OperatorType:  chat.ChatSenderType(msg.Receiver.Type),
-			MessageStatus: chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_DELIVERED,
-			ReceiptTime:   utils.NowMillis(),
-		}},
-	})
+	err = PublishMessageEvent(ctx, svcCtx.BusRedis, opts.ReceiptChannel, PublishEventMessageDelivered, &chat.ChatWsResponse_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
+		SessionNo:     msg.SessionNo,
+		MessageNo:     msg.MessageNo,
+		SenderId:      msg.Sender.Id,
+		OperatorId:    msg.Receiver.Id,
+		OperatorType:  chat.ChatSenderType(msg.Receiver.Type),
+		MessageStatus: chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_DELIVERED,
+		ReceiptTime:   utils.NowMillis(),
+	}})
 	if err != nil {
 		return nil, err
 	}

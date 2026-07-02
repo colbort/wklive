@@ -175,58 +175,61 @@ enum ChatEventType {
   // 例如：进入等待列表、取消等待、等待人数变化、预计等待时间变化
   CHAT_EVENT_TYPE_QUEUE_UPDATE = 6;
 
+  // 坐席上线；给商户后台使用，刷新坐席状态
+  CHAT_EVENT_TYPE_AGENT_JOIN = 7;
+
   // 坐席主动接待会话
   // 例如：坐席 小王 已接待本次会话
-  CHAT_EVENT_TYPE_AGENT_ACCEPTED = 7;
+  CHAT_EVENT_TYPE_AGENT_ACCEPTED = 8;
 
   // 坐席离开会话
-  CHAT_EVENT_TYPE_AGENT_LEAVE = 8;
+  CHAT_EVENT_TYPE_AGENT_LEAVE = 9;
 
   // 会话转接发起
   // 例如：坐席 小王 发起转接给坐席 小李
-  CHAT_EVENT_TYPE_TRANSFER_REQUEST = 9;
+  CHAT_EVENT_TYPE_TRANSFER_REQUEST = 10;
 
   // 会话转接接受
   // 例如：坐席 小李 接受转接
-  CHAT_EVENT_TYPE_TRANSFER_ACCEPT = 10;
+  CHAT_EVENT_TYPE_TRANSFER_ACCEPT = 11;
 
   // 会话转接拒绝
   // 例如：坐席 小李 拒绝转接
-  CHAT_EVENT_TYPE_TRANSFER_REJECT = 11;
+  CHAT_EVENT_TYPE_TRANSFER_REJECT = 12;
 
   // 会话关闭 / 会话结束
   // 具体关闭原因用 ChatSessionCloseReason 表示
-  CHAT_EVENT_TYPE_SESSION_CLOSE = 12;
+  CHAT_EVENT_TYPE_SESSION_CLOSE = 13;
 
   // 邀请用户评价
-  CHAT_EVENT_TYPE_EVALUATION_INVITE = 13;
+  CHAT_EVENT_TYPE_EVALUATION_INVITE = 14;
 
   // 用户提交评价
-  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 14;
+  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 15;
 
   // 正在输入
   // 建议发送方每隔 1~2 秒节流发送一次
   // 接收方 3~5 秒内没有继续收到 TYPING，则自动隐藏“正在输入”
-  CHAT_EVENT_TYPE_TYPING = 15;
+  CHAT_EVENT_TYPE_TYPING = 16;
 
   // 消息已送达
-  CHAT_EVENT_TYPE_MESSAGE_DELIVERED = 16;
+  CHAT_EVENT_TYPE_MESSAGE_DELIVERED = 17;
 
   // 消息已读
-  CHAT_EVENT_TYPE_MESSAGE_READ = 17;
+  CHAT_EVENT_TYPE_MESSAGE_READ = 18;
 
   // 消息撤回
-  CHAT_EVENT_TYPE_MESSAGE_RECALL = 18;
+  CHAT_EVENT_TYPE_MESSAGE_RECALL = 19;
 
   // 消息删除
-  CHAT_EVENT_TYPE_MESSAGE_DELETE = 19;
+  CHAT_EVENT_TYPE_MESSAGE_DELETE = 20;
 
   // 心跳
-  CHAT_EVENT_TYPE_HEARTBEAT = 20;
+  CHAT_EVENT_TYPE_HEARTBEAT = 21;
 
   // 错误事件
   // 例如：发送失败、会话不存在、权限不足
-  CHAT_EVENT_TYPE_ERROR = 21;
+  CHAT_EVENT_TYPE_ERROR = 22;
 }
 
 /**

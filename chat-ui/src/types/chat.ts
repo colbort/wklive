@@ -92,6 +92,7 @@ export interface ChatMessage {
 
 export interface WsConnectedPayload {
   message: string;
+  sessionNo: string
   merchantId: number;
   userId: number;
   nickname?: string;

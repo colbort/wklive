@@ -12,7 +12,6 @@ import type {
   ChatEvaluationPayload,
   ChatMessageReceiptPayload,
   ChatMessage,
-  CloseChatSessionPayload,
   OptionGroup,
   ChatQueuePayload,
   ChatSession,
