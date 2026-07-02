@@ -13,7 +13,7 @@ import (
 
 type ChatEventStream interface {
 	Context() context.Context
-	Send(*chat.ChatMessageEvent) error
+	Send(*chat.ChatWsResponse) error
 }
 
 type SubscribeOptions struct {
@@ -45,7 +45,7 @@ func SubscribeChatEventStream(svcCtx *svc.ServiceContext, stream ChatEventStream
 			if !ok {
 				return nil
 			}
-			var event chat.ChatMessageEvent
+			var event chat.ChatWsResponse
 			if err := protojson.Unmarshal([]byte(msg.Payload), &event); err != nil {
 				logx.WithContext(ctx).Errorf("decode chat stream event failed: %v", err)
 				continue

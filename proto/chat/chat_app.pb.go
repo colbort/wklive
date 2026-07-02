@@ -7,12 +7,13 @@
 package chat
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
 	common "wklive/proto/common"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -1614,7 +1615,7 @@ var file_proto_chat_chat_app_proto_goTypes = []any{
 	(*ChatMessage)(nil),               // 30: chat.ChatMessage
 	(*ChatSession)(nil),               // 31: chat.ChatSession
 	(*ChatSatisfaction)(nil),          // 32: chat.ChatSatisfaction
-	(*ChatMessageEvent)(nil),          // 33: chat.ChatMessageEvent
+	(*ChatWsResponse)(nil),          // 33: chat.ChatWsResponse
 }
 var file_proto_chat_chat_app_proto_depIdxs = []int32{
 	19, // 0: chat.AppCommonResp.base:type_name -> common.RespBase
@@ -1662,7 +1663,7 @@ var file_proto_chat_chat_app_proto_depIdxs = []int32{
 	15, // 42: chat.ChatApp.ListMyChatMessages:output_type -> chat.AppListChatMessagesResp
 	16, // 43: chat.ChatApp.CloseMyChatSession:output_type -> chat.AppChatSessionResp
 	18, // 44: chat.ChatApp.SubmitChatSatisfaction:output_type -> chat.AppChatSatisfactionResp
-	33, // 45: chat.ChatApp.AppSubscribeStream:output_type -> chat.ChatMessageEvent
+	33, // 45: chat.ChatApp.AppSubscribeStream:output_type -> chat.ChatWsResponse
 	36, // [36:46] is the sub-list for method output_type
 	26, // [26:36] is the sub-list for method input_type
 	26, // [26:26] is the sub-list for extension type_name

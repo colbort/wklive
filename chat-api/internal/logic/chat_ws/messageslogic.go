@@ -96,7 +96,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		},
 	)
 
-	client.SendEvent(&chat.ChatMessageEvent{
+	client.SendEvent(&chat.ChatWsResponse{
 		Code:      200,
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_WS_CONNECTED,
@@ -114,7 +114,7 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 		},
 	})
 
-	client.SendEvent(&chat.ChatMessageEvent{
+	client.SendEvent(&chat.ChatWsResponse{
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
 		CreatedAt: utils.NowMillis(),
 		Payload:   &chat.ChatMessageEvent_Queue{Queue: resp.Data},
@@ -152,7 +152,7 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELETE:
 			// TODO handle message delete
 		case chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT:
-			conn.SendEvent(&chat.ChatMessageEvent{
+			conn.SendEvent(&chat.ChatWsResponse{
 				Code:      200,
 				Msg:       "",
 				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT,
@@ -249,7 +249,7 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 	}
 
 	now := time.Now().UnixMilli()
-	conn.SendEvent(&chat.ChatMessageEvent{
+	conn.SendEvent(&chat.ChatWsResponse{
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED,
 		CreatedAt: now,
 		Payload: &chat.ChatMessageEvent_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
@@ -333,7 +333,7 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		sendWSError(conn, resp.GetBase().GetMsg())
 		return
 	}
-	conn.SendEvent(&chat.ChatMessageEvent{
+	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      200,
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT,
@@ -362,7 +362,7 @@ func sendWSError(conn *ws.Connection, message string) {
 	if conn == nil {
 		return
 	}
-	conn.SendEvent(&chat.ChatMessageEvent{
+	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      1,
 		Msg:       message,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,

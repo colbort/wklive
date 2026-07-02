@@ -7,13 +7,14 @@
 package chat
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	structpb "google.golang.org/protobuf/types/known/structpb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
 	common "wklive/proto/common"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	structpb "google.golang.org/protobuf/types/known/structpb"
 )
 
 const (
@@ -1592,7 +1593,7 @@ func (x *ChatEvaluationInvite) GetCreatedAt() int64 {
 
 // *
 // WebSocket / 推送统一事件
-type ChatMessageEvent struct {
+type ChatWsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// 业务状态码
 	// 例如：0 成功，非 0 表示错误
@@ -1624,20 +1625,20 @@ type ChatMessageEvent struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ChatMessageEvent) Reset() {
-	*x = ChatMessageEvent{}
+func (x *ChatWsResponse) Reset() {
+	*x = ChatWsResponse{}
 	mi := &file_proto_chat_model_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ChatMessageEvent) String() string {
+func (x *ChatWsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ChatMessageEvent) ProtoMessage() {}
+func (*ChatWsResponse) ProtoMessage() {}
 
-func (x *ChatMessageEvent) ProtoReflect() protoreflect.Message {
+func (x *ChatWsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_chat_model_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1649,47 +1650,47 @@ func (x *ChatMessageEvent) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ChatMessageEvent.ProtoReflect.Descriptor instead.
-func (*ChatMessageEvent) Descriptor() ([]byte, []int) {
+// Deprecated: Use ChatWsResponse.ProtoReflect.Descriptor instead.
+func (*ChatWsResponse) Descriptor() ([]byte, []int) {
 	return file_proto_chat_model_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *ChatMessageEvent) GetCode() int32 {
+func (x *ChatWsResponse) GetCode() int32 {
 	if x != nil {
 		return x.Code
 	}
 	return 0
 }
 
-func (x *ChatMessageEvent) GetMsg() string {
+func (x *ChatWsResponse) GetMsg() string {
 	if x != nil {
 		return x.Msg
 	}
 	return ""
 }
 
-func (x *ChatMessageEvent) GetEventType() ChatEventType {
+func (x *ChatWsResponse) GetEventType() ChatEventType {
 	if x != nil {
 		return x.EventType
 	}
 	return ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED
 }
 
-func (x *ChatMessageEvent) GetCreatedAt() int64 {
+func (x *ChatWsResponse) GetCreatedAt() int64 {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return 0
 }
 
-func (x *ChatMessageEvent) GetPayload() isChatMessageEvent_Payload {
+func (x *ChatWsResponse) GetPayload() isChatMessageEvent_Payload {
 	if x != nil {
 		return x.Payload
 	}
 	return nil
 }
 
-func (x *ChatMessageEvent) GetConnected() *WsConnectedPayload {
+func (x *ChatWsResponse) GetConnected() *WsConnectedPayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Connected); ok {
 			return x.Connected
@@ -1698,7 +1699,7 @@ func (x *ChatMessageEvent) GetConnected() *WsConnectedPayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetMessage() *ChatMessage {
+func (x *ChatWsResponse) GetMessage() *ChatMessage {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Message); ok {
 			return x.Message
@@ -1707,7 +1708,7 @@ func (x *ChatMessageEvent) GetMessage() *ChatMessage {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetSession() *ChatSession {
+func (x *ChatWsResponse) GetSession() *ChatSession {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Session); ok {
 			return x.Session
@@ -1716,7 +1717,7 @@ func (x *ChatMessageEvent) GetSession() *ChatSession {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetSystemNotice() *ChatSystemNoticePayload {
+func (x *ChatWsResponse) GetSystemNotice() *ChatSystemNoticePayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_SystemNotice); ok {
 			return x.SystemNotice
@@ -1725,7 +1726,7 @@ func (x *ChatMessageEvent) GetSystemNotice() *ChatSystemNoticePayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetUserState() *ChatUserStatePayload {
+func (x *ChatWsResponse) GetUserState() *ChatUserStatePayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_UserState); ok {
 			return x.UserState
@@ -1734,7 +1735,7 @@ func (x *ChatMessageEvent) GetUserState() *ChatUserStatePayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetQueue() *ChatQueuePayload {
+func (x *ChatWsResponse) GetQueue() *ChatQueuePayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Queue); ok {
 			return x.Queue
@@ -1743,7 +1744,7 @@ func (x *ChatMessageEvent) GetQueue() *ChatQueuePayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetAgent() *ChatAgentPayload {
+func (x *ChatWsResponse) GetAgent() *ChatAgentPayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Agent); ok {
 			return x.Agent
@@ -1752,7 +1753,7 @@ func (x *ChatMessageEvent) GetAgent() *ChatAgentPayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetTransfer() *ChatTransferPayload {
+func (x *ChatWsResponse) GetTransfer() *ChatTransferPayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Transfer); ok {
 			return x.Transfer
@@ -1761,7 +1762,7 @@ func (x *ChatMessageEvent) GetTransfer() *ChatTransferPayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetEvaluation() *ChatEvaluationPayload {
+func (x *ChatWsResponse) GetEvaluation() *ChatEvaluationPayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Evaluation); ok {
 			return x.Evaluation
@@ -1770,7 +1771,7 @@ func (x *ChatMessageEvent) GetEvaluation() *ChatEvaluationPayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetTyping() *ChatTypingPayload {
+func (x *ChatWsResponse) GetTyping() *ChatTypingPayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Typing); ok {
 			return x.Typing
@@ -1779,7 +1780,7 @@ func (x *ChatMessageEvent) GetTyping() *ChatTypingPayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetReceipt() *ChatMessageReceiptPayload {
+func (x *ChatWsResponse) GetReceipt() *ChatMessageReceiptPayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Receipt); ok {
 			return x.Receipt
@@ -1788,7 +1789,7 @@ func (x *ChatMessageEvent) GetReceipt() *ChatMessageReceiptPayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetMessageOperate() *ChatMessageOperatePayload {
+func (x *ChatWsResponse) GetMessageOperate() *ChatMessageOperatePayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_MessageOperate); ok {
 			return x.MessageOperate
@@ -1797,7 +1798,7 @@ func (x *ChatMessageEvent) GetMessageOperate() *ChatMessageOperatePayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetHeartbeat() *ChatHeartbeatPayload {
+func (x *ChatWsResponse) GetHeartbeat() *ChatHeartbeatPayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Heartbeat); ok {
 			return x.Heartbeat
@@ -1806,7 +1807,7 @@ func (x *ChatMessageEvent) GetHeartbeat() *ChatHeartbeatPayload {
 	return nil
 }
 
-func (x *ChatMessageEvent) GetError() *ChatErrorPayload {
+func (x *ChatWsResponse) GetError() *ChatErrorPayload {
 	if x != nil {
 		if x, ok := x.Payload.(*ChatMessageEvent_Error); ok {
 			return x.Error
@@ -1952,6 +1953,654 @@ func (*ChatMessageEvent_Heartbeat) isChatMessageEvent_Payload() {}
 func (*ChatMessageEvent_Error) isChatMessageEvent_Payload() {}
 
 // *
+// WebSocket 客户端请求统一 envelope
+//
+// JS 客户端发送给 chat-api / chat-admin-api 的 WS 请求统一使用该结构。
+// event_type 表示本次请求动作，payload 使用 oneof，字段名与事件语义保持一致。
+type ChatWsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 事件类型 / 请求动作
+	EventType ChatEventType `protobuf:"varint,1,opt,name=event_type,json=eventType,proto3,enum=chat.ChatEventType" json:"event_type,omitempty"`
+	// 客户端请求 ID，用于幂等、排查或回执关联
+	RequestId string `protobuf:"bytes,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// 客户端时间戳，毫秒
+	ClientTime int64 `protobuf:"varint,3,opt,name=client_time,json=clientTime,proto3" json:"client_time,omitempty"`
+	// Types that are valid to be assigned to Payload:
+	//
+	//	*ChatWsRequest_Message
+	//	*ChatWsRequest_Session
+	//	*ChatWsRequest_SystemNotice
+	//	*ChatWsRequest_UserState
+	//	*ChatWsRequest_Queue
+	//	*ChatWsRequest_Agent
+	//	*ChatWsRequest_Transfer
+	//	*ChatWsRequest_Evaluation
+	//	*ChatWsRequest_Typing
+	//	*ChatWsRequest_Receipt
+	//	*ChatWsRequest_MessageOperate
+	//	*ChatWsRequest_Heartbeat
+	Payload       isChatWsRequest_Payload `protobuf_oneof:"payload"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatWsRequest) Reset() {
+	*x = ChatWsRequest{}
+	mi := &file_proto_chat_model_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatWsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatWsRequest) ProtoMessage() {}
+
+func (x *ChatWsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatWsRequest.ProtoReflect.Descriptor instead.
+func (*ChatWsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ChatWsRequest) GetEventType() ChatEventType {
+	if x != nil {
+		return x.EventType
+	}
+	return ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED
+}
+
+func (x *ChatWsRequest) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *ChatWsRequest) GetClientTime() int64 {
+	if x != nil {
+		return x.ClientTime
+	}
+	return 0
+}
+
+func (x *ChatWsRequest) GetPayload() isChatWsRequest_Payload {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetMessage() *ChatWsMessagePayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_Message); ok {
+			return x.Message
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetSession() *ChatWsSessionPayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_Session); ok {
+			return x.Session
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetSystemNotice() *ChatSystemNoticePayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_SystemNotice); ok {
+			return x.SystemNotice
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetUserState() *ChatUserStatePayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_UserState); ok {
+			return x.UserState
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetQueue() *ChatQueuePayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_Queue); ok {
+			return x.Queue
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetAgent() *ChatWsAgentPayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_Agent); ok {
+			return x.Agent
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetTransfer() *ChatTransferPayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_Transfer); ok {
+			return x.Transfer
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetEvaluation() *ChatEvaluationPayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_Evaluation); ok {
+			return x.Evaluation
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetTyping() *ChatTypingPayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_Typing); ok {
+			return x.Typing
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetReceipt() *ChatMessageReceiptPayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_Receipt); ok {
+			return x.Receipt
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetMessageOperate() *ChatMessageOperatePayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_MessageOperate); ok {
+			return x.MessageOperate
+		}
+	}
+	return nil
+}
+
+func (x *ChatWsRequest) GetHeartbeat() *ChatHeartbeatPayload {
+	if x != nil {
+		if x, ok := x.Payload.(*ChatWsRequest_Heartbeat); ok {
+			return x.Heartbeat
+		}
+	}
+	return nil
+}
+
+type isChatWsRequest_Payload interface {
+	isChatWsRequest_Payload()
+}
+
+type ChatWsRequest_Message struct {
+	// 发送普通聊天消息
+	// 对应：CHAT_EVENT_TYPE_MESSAGE
+	Message *ChatWsMessagePayload `protobuf:"bytes,10,opt,name=message,proto3,oneof"`
+}
+
+type ChatWsRequest_Session struct {
+	// 会话关闭
+	// 对应：CHAT_EVENT_TYPE_SESSION_CLOSE
+	Session *ChatWsSessionPayload `protobuf:"bytes,11,opt,name=session,proto3,oneof"`
+}
+
+type ChatWsRequest_SystemNotice struct {
+	// 系统通知
+	// 对应：CHAT_EVENT_TYPE_SYSTEM_NOTICE
+	SystemNotice *ChatSystemNoticePayload `protobuf:"bytes,12,opt,name=system_notice,json=systemNotice,proto3,oneof"`
+}
+
+type ChatWsRequest_UserState struct {
+	// 用户进入 / 离开
+	// 对应：
+	// CHAT_EVENT_TYPE_USER_JOIN
+	// CHAT_EVENT_TYPE_USER_LEAVE
+	UserState *ChatUserStatePayload `protobuf:"bytes,13,opt,name=user_state,json=userState,proto3,oneof"`
+}
+
+type ChatWsRequest_Queue struct {
+	// 排队 / 等待服务列表变化
+	// 对应：CHAT_EVENT_TYPE_QUEUE_UPDATE
+	Queue *ChatQueuePayload `protobuf:"bytes,14,opt,name=queue,proto3,oneof"`
+}
+
+type ChatWsRequest_Agent struct {
+	// 坐席接待 / 坐席离开
+	// 对应：
+	// CHAT_EVENT_TYPE_AGENT_ACCEPTED
+	// CHAT_EVENT_TYPE_AGENT_LEAVE
+	Agent *ChatWsAgentPayload `protobuf:"bytes,15,opt,name=agent,proto3,oneof"`
+}
+
+type ChatWsRequest_Transfer struct {
+	// 会话转接
+	// 对应：
+	// CHAT_EVENT_TYPE_TRANSFER_REQUEST
+	// CHAT_EVENT_TYPE_TRANSFER_ACCEPT
+	// CHAT_EVENT_TYPE_TRANSFER_REJECT
+	Transfer *ChatTransferPayload `protobuf:"bytes,16,opt,name=transfer,proto3,oneof"`
+}
+
+type ChatWsRequest_Evaluation struct {
+	// 评价
+	// 对应：
+	// CHAT_EVENT_TYPE_EVALUATION_INVITE
+	// CHAT_EVENT_TYPE_EVALUATION_SUBMIT
+	Evaluation *ChatEvaluationPayload `protobuf:"bytes,17,opt,name=evaluation,proto3,oneof"`
+}
+
+type ChatWsRequest_Typing struct {
+	// 正在输入
+	// 对应：CHAT_EVENT_TYPE_TYPING
+	Typing *ChatTypingPayload `protobuf:"bytes,18,opt,name=typing,proto3,oneof"`
+}
+
+type ChatWsRequest_Receipt struct {
+	// 消息状态回执
+	// 对应：
+	// CHAT_EVENT_TYPE_MESSAGE_DELIVERED
+	// CHAT_EVENT_TYPE_MESSAGE_READ
+	Receipt *ChatMessageReceiptPayload `protobuf:"bytes,19,opt,name=receipt,proto3,oneof"`
+}
+
+type ChatWsRequest_MessageOperate struct {
+	// 消息操作
+	// 对应：
+	// CHAT_EVENT_TYPE_MESSAGE_RECALL
+	// CHAT_EVENT_TYPE_MESSAGE_DELETE
+	MessageOperate *ChatMessageOperatePayload `protobuf:"bytes,20,opt,name=message_operate,json=messageOperate,proto3,oneof"`
+}
+
+type ChatWsRequest_Heartbeat struct {
+	// 心跳
+	// 对应：CHAT_EVENT_TYPE_HEARTBEAT
+	Heartbeat *ChatHeartbeatPayload `protobuf:"bytes,21,opt,name=heartbeat,proto3,oneof"`
+}
+
+func (*ChatWsRequest_Message) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_Session) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_SystemNotice) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_UserState) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_Queue) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_Agent) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_Transfer) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_Evaluation) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_Typing) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_Receipt) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_MessageOperate) isChatWsRequest_Payload() {}
+
+func (*ChatWsRequest_Heartbeat) isChatWsRequest_Payload() {}
+
+// *
+// WebSocket 发送消息请求 payload
+//
+// chat-api 收到后转换为 SendUserMessageReq；
+// chat-admin-api 收到后转换为 SendAgentMessageReq。
+type ChatWsMessagePayload struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	SessionNo       string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`                                  // 会话编号
+	ClientMessageId string                 `protobuf:"bytes,2,opt,name=client_message_id,json=clientMessageId,proto3" json:"client_message_id,omitempty"`              // 客户端消息ID，用于幂等/回执
+	MessageType     ChatMessageType        `protobuf:"varint,3,opt,name=message_type,json=messageType,proto3,enum=chat.ChatMessageType" json:"message_type,omitempty"` // 消息类型
+	Content         string                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`                                                       // 文本内容
+	Url             string                 `protobuf:"bytes,5,opt,name=url,proto3" json:"url,omitempty"`                                                               // 资源URL
+	FileName        string                 `protobuf:"bytes,6,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`                                     // 文件名
+	FileSize        int64                  `protobuf:"varint,7,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`                                    // 文件大小(byte)
+	MimeType        string                 `protobuf:"bytes,8,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`                                     // MIME类型
+	Width           int32                  `protobuf:"varint,9,opt,name=width,proto3" json:"width,omitempty"`                                                          // 图片/视频宽度
+	Height          int32                  `protobuf:"varint,10,opt,name=height,proto3" json:"height,omitempty"`                                                       // 图片/视频高度
+	Duration        int32                  `protobuf:"varint,11,opt,name=duration,proto3" json:"duration,omitempty"`                                                   // 音频/视频时长(秒)
+	Extra           string                 `protobuf:"bytes,12,opt,name=extra,proto3" json:"extra,omitempty"`                                                          // 扩展JSON
+	Sender          *ChatMessageUser       `protobuf:"bytes,13,opt,name=sender,proto3" json:"sender,omitempty"`                                                        // 发送方
+	Receiver        *ChatMessageUser       `protobuf:"bytes,14,opt,name=receiver,proto3" json:"receiver,omitempty"`                                                    // 接收方
+	MerchantId      int64                  `protobuf:"varint,15,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                             // 客服商户ID；通常由 token/context 补齐
+	IsGuest         bool                   `protobuf:"varint,16,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客/临时会话
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ChatWsMessagePayload) Reset() {
+	*x = ChatWsMessagePayload{}
+	mi := &file_proto_chat_model_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatWsMessagePayload) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatWsMessagePayload) ProtoMessage() {}
+
+func (x *ChatWsMessagePayload) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatWsMessagePayload.ProtoReflect.Descriptor instead.
+func (*ChatWsMessagePayload) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ChatWsMessagePayload) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *ChatWsMessagePayload) GetClientMessageId() string {
+	if x != nil {
+		return x.ClientMessageId
+	}
+	return ""
+}
+
+func (x *ChatWsMessagePayload) GetMessageType() ChatMessageType {
+	if x != nil {
+		return x.MessageType
+	}
+	return ChatMessageType_CHAT_MESSAGE_TYPE_UNKNOWN
+}
+
+func (x *ChatWsMessagePayload) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *ChatWsMessagePayload) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *ChatWsMessagePayload) GetFileName() string {
+	if x != nil {
+		return x.FileName
+	}
+	return ""
+}
+
+func (x *ChatWsMessagePayload) GetFileSize() int64 {
+	if x != nil {
+		return x.FileSize
+	}
+	return 0
+}
+
+func (x *ChatWsMessagePayload) GetMimeType() string {
+	if x != nil {
+		return x.MimeType
+	}
+	return ""
+}
+
+func (x *ChatWsMessagePayload) GetWidth() int32 {
+	if x != nil {
+		return x.Width
+	}
+	return 0
+}
+
+func (x *ChatWsMessagePayload) GetHeight() int32 {
+	if x != nil {
+		return x.Height
+	}
+	return 0
+}
+
+func (x *ChatWsMessagePayload) GetDuration() int32 {
+	if x != nil {
+		return x.Duration
+	}
+	return 0
+}
+
+func (x *ChatWsMessagePayload) GetExtra() string {
+	if x != nil {
+		return x.Extra
+	}
+	return ""
+}
+
+func (x *ChatWsMessagePayload) GetSender() *ChatMessageUser {
+	if x != nil {
+		return x.Sender
+	}
+	return nil
+}
+
+func (x *ChatWsMessagePayload) GetReceiver() *ChatMessageUser {
+	if x != nil {
+		return x.Receiver
+	}
+	return nil
+}
+
+func (x *ChatWsMessagePayload) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *ChatWsMessagePayload) GetIsGuest() bool {
+	if x != nil {
+		return x.IsGuest
+	}
+	return false
+}
+
+// *
+// WebSocket 会话请求 payload
+//
+// 用于用户/坐席关闭会话等会话级请求。
+type ChatWsSessionPayload struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`       // 会话编号
+	MerchantId    int64                  `protobuf:"varint,2,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`   // 客服商户ID；通常由 token/context 补齐
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`               // 用户ID
+	AgentId       int64                  `protobuf:"varint,4,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`            // 坐席ID
+	CloseReason   string                 `protobuf:"bytes,5,opt,name=close_reason,json=closeReason,proto3" json:"close_reason,omitempty"` // 关闭原因
+	IsGuest       bool                   `protobuf:"varint,6,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`            // 是否游客/临时会话
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatWsSessionPayload) Reset() {
+	*x = ChatWsSessionPayload{}
+	mi := &file_proto_chat_model_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatWsSessionPayload) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatWsSessionPayload) ProtoMessage() {}
+
+func (x *ChatWsSessionPayload) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatWsSessionPayload.ProtoReflect.Descriptor instead.
+func (*ChatWsSessionPayload) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ChatWsSessionPayload) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *ChatWsSessionPayload) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *ChatWsSessionPayload) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ChatWsSessionPayload) GetAgentId() int64 {
+	if x != nil {
+		return x.AgentId
+	}
+	return 0
+}
+
+func (x *ChatWsSessionPayload) GetCloseReason() string {
+	if x != nil {
+		return x.CloseReason
+	}
+	return ""
+}
+
+func (x *ChatWsSessionPayload) GetIsGuest() bool {
+	if x != nil {
+		return x.IsGuest
+	}
+	return false
+}
+
+// *
+// WebSocket 坐席请求 payload
+//
+// 用于坐席接待、坐席离开等坐席动作。
+type ChatWsAgentPayload struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SessionNo     string                 `protobuf:"bytes,1,opt,name=session_no,json=sessionNo,proto3" json:"session_no,omitempty"`     // 会话编号
+	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`                            // 操作原因
+	MerchantId    int64                  `protobuf:"varint,3,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"` // 客服商户ID；通常由 token/context 补齐
+	AgentId       int64                  `protobuf:"varint,4,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`          // 坐席ID
+	IsGuest       bool                   `protobuf:"varint,5,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`          // 是否游客/临时会话
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChatWsAgentPayload) Reset() {
+	*x = ChatWsAgentPayload{}
+	mi := &file_proto_chat_model_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChatWsAgentPayload) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChatWsAgentPayload) ProtoMessage() {}
+
+func (x *ChatWsAgentPayload) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_chat_model_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChatWsAgentPayload.ProtoReflect.Descriptor instead.
+func (*ChatWsAgentPayload) Descriptor() ([]byte, []int) {
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ChatWsAgentPayload) GetSessionNo() string {
+	if x != nil {
+		return x.SessionNo
+	}
+	return ""
+}
+
+func (x *ChatWsAgentPayload) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *ChatWsAgentPayload) GetMerchantId() int64 {
+	if x != nil {
+		return x.MerchantId
+	}
+	return 0
+}
+
+func (x *ChatWsAgentPayload) GetAgentId() int64 {
+	if x != nil {
+		return x.AgentId
+	}
+	return 0
+}
+
+func (x *ChatWsAgentPayload) GetIsGuest() bool {
+	if x != nil {
+		return x.IsGuest
+	}
+	return false
+}
+
+// *
 // 系统通知 payload
 //
 // 对应事件：
@@ -1975,7 +2624,7 @@ type ChatSystemNoticePayload struct {
 
 func (x *ChatSystemNoticePayload) Reset() {
 	*x = ChatSystemNoticePayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[14]
+	mi := &file_proto_chat_model_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1987,7 +2636,7 @@ func (x *ChatSystemNoticePayload) String() string {
 func (*ChatSystemNoticePayload) ProtoMessage() {}
 
 func (x *ChatSystemNoticePayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[14]
+	mi := &file_proto_chat_model_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2000,7 +2649,7 @@ func (x *ChatSystemNoticePayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatSystemNoticePayload.ProtoReflect.Descriptor instead.
 func (*ChatSystemNoticePayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{14}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ChatSystemNoticePayload) GetSessionNo() string {
@@ -2064,7 +2713,7 @@ type ChatUserStatePayload struct {
 
 func (x *ChatUserStatePayload) Reset() {
 	*x = ChatUserStatePayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[15]
+	mi := &file_proto_chat_model_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2076,7 +2725,7 @@ func (x *ChatUserStatePayload) String() string {
 func (*ChatUserStatePayload) ProtoMessage() {}
 
 func (x *ChatUserStatePayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[15]
+	mi := &file_proto_chat_model_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2089,7 +2738,7 @@ func (x *ChatUserStatePayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatUserStatePayload.ProtoReflect.Descriptor instead.
 func (*ChatUserStatePayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{15}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ChatUserStatePayload) GetSessionNo() string {
@@ -2165,7 +2814,7 @@ type ChatQueuePayload struct {
 
 func (x *ChatQueuePayload) Reset() {
 	*x = ChatQueuePayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[16]
+	mi := &file_proto_chat_model_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2177,7 +2826,7 @@ func (x *ChatQueuePayload) String() string {
 func (*ChatQueuePayload) ProtoMessage() {}
 
 func (x *ChatQueuePayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[16]
+	mi := &file_proto_chat_model_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2190,7 +2839,7 @@ func (x *ChatQueuePayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatQueuePayload.ProtoReflect.Descriptor instead.
 func (*ChatQueuePayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{16}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ChatQueuePayload) GetSessionNo() string {
@@ -2291,7 +2940,7 @@ type ChatAgentPayload struct {
 
 func (x *ChatAgentPayload) Reset() {
 	*x = ChatAgentPayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[17]
+	mi := &file_proto_chat_model_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2303,7 +2952,7 @@ func (x *ChatAgentPayload) String() string {
 func (*ChatAgentPayload) ProtoMessage() {}
 
 func (x *ChatAgentPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[17]
+	mi := &file_proto_chat_model_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2316,7 +2965,7 @@ func (x *ChatAgentPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatAgentPayload.ProtoReflect.Descriptor instead.
 func (*ChatAgentPayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{17}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ChatAgentPayload) GetSessionNo() string {
@@ -2421,7 +3070,7 @@ type ChatTransferPayload struct {
 
 func (x *ChatTransferPayload) Reset() {
 	*x = ChatTransferPayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[18]
+	mi := &file_proto_chat_model_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2433,7 +3082,7 @@ func (x *ChatTransferPayload) String() string {
 func (*ChatTransferPayload) ProtoMessage() {}
 
 func (x *ChatTransferPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[18]
+	mi := &file_proto_chat_model_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2446,7 +3095,7 @@ func (x *ChatTransferPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatTransferPayload.ProtoReflect.Descriptor instead.
 func (*ChatTransferPayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{18}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ChatTransferPayload) GetSessionNo() string {
@@ -2538,7 +3187,7 @@ type ChatEvaluationPayload struct {
 
 func (x *ChatEvaluationPayload) Reset() {
 	*x = ChatEvaluationPayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[19]
+	mi := &file_proto_chat_model_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2550,7 +3199,7 @@ func (x *ChatEvaluationPayload) String() string {
 func (*ChatEvaluationPayload) ProtoMessage() {}
 
 func (x *ChatEvaluationPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[19]
+	mi := &file_proto_chat_model_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2563,7 +3212,7 @@ func (x *ChatEvaluationPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatEvaluationPayload.ProtoReflect.Descriptor instead.
 func (*ChatEvaluationPayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{19}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ChatEvaluationPayload) GetSessionNo() string {
@@ -2653,7 +3302,7 @@ type ChatTypingPayload struct {
 
 func (x *ChatTypingPayload) Reset() {
 	*x = ChatTypingPayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[20]
+	mi := &file_proto_chat_model_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2665,7 +3314,7 @@ func (x *ChatTypingPayload) String() string {
 func (*ChatTypingPayload) ProtoMessage() {}
 
 func (x *ChatTypingPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[20]
+	mi := &file_proto_chat_model_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2678,7 +3327,7 @@ func (x *ChatTypingPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatTypingPayload.ProtoReflect.Descriptor instead.
 func (*ChatTypingPayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{20}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ChatTypingPayload) GetSessionNo() string {
@@ -2745,7 +3394,7 @@ type ChatMessageReceiptPayload struct {
 
 func (x *ChatMessageReceiptPayload) Reset() {
 	*x = ChatMessageReceiptPayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[21]
+	mi := &file_proto_chat_model_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2757,7 +3406,7 @@ func (x *ChatMessageReceiptPayload) String() string {
 func (*ChatMessageReceiptPayload) ProtoMessage() {}
 
 func (x *ChatMessageReceiptPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[21]
+	mi := &file_proto_chat_model_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2770,7 +3419,7 @@ func (x *ChatMessageReceiptPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatMessageReceiptPayload.ProtoReflect.Descriptor instead.
 func (*ChatMessageReceiptPayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{21}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ChatMessageReceiptPayload) GetSessionNo() string {
@@ -2853,7 +3502,7 @@ type ChatMessageOperatePayload struct {
 
 func (x *ChatMessageOperatePayload) Reset() {
 	*x = ChatMessageOperatePayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[22]
+	mi := &file_proto_chat_model_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2865,7 +3514,7 @@ func (x *ChatMessageOperatePayload) String() string {
 func (*ChatMessageOperatePayload) ProtoMessage() {}
 
 func (x *ChatMessageOperatePayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[22]
+	mi := &file_proto_chat_model_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2878,7 +3527,7 @@ func (x *ChatMessageOperatePayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatMessageOperatePayload.ProtoReflect.Descriptor instead.
 func (*ChatMessageOperatePayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{22}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ChatMessageOperatePayload) GetSessionNo() string {
@@ -2960,7 +3609,7 @@ type ChatHeartbeatPayload struct {
 
 func (x *ChatHeartbeatPayload) Reset() {
 	*x = ChatHeartbeatPayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[23]
+	mi := &file_proto_chat_model_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2972,7 +3621,7 @@ func (x *ChatHeartbeatPayload) String() string {
 func (*ChatHeartbeatPayload) ProtoMessage() {}
 
 func (x *ChatHeartbeatPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[23]
+	mi := &file_proto_chat_model_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2985,7 +3634,7 @@ func (x *ChatHeartbeatPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatHeartbeatPayload.ProtoReflect.Descriptor instead.
 func (*ChatHeartbeatPayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{23}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ChatHeartbeatPayload) GetConnectionId() string {
@@ -3048,7 +3697,7 @@ type ChatErrorPayload struct {
 
 func (x *ChatErrorPayload) Reset() {
 	*x = ChatErrorPayload{}
-	mi := &file_proto_chat_model_proto_msgTypes[24]
+	mi := &file_proto_chat_model_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3060,7 +3709,7 @@ func (x *ChatErrorPayload) String() string {
 func (*ChatErrorPayload) ProtoMessage() {}
 
 func (x *ChatErrorPayload) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[24]
+	mi := &file_proto_chat_model_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3073,7 +3722,7 @@ func (x *ChatErrorPayload) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatErrorPayload.ProtoReflect.Descriptor instead.
 func (*ChatErrorPayload) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{24}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ChatErrorPayload) GetSessionNo() string {
@@ -3137,7 +3786,7 @@ type ChatAssignment struct {
 
 func (x *ChatAssignment) Reset() {
 	*x = ChatAssignment{}
-	mi := &file_proto_chat_model_proto_msgTypes[25]
+	mi := &file_proto_chat_model_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3149,7 +3798,7 @@ func (x *ChatAssignment) String() string {
 func (*ChatAssignment) ProtoMessage() {}
 
 func (x *ChatAssignment) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[25]
+	mi := &file_proto_chat_model_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3162,7 +3811,7 @@ func (x *ChatAssignment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatAssignment.ProtoReflect.Descriptor instead.
 func (*ChatAssignment) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{25}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ChatAssignment) GetId() int64 {
@@ -3255,7 +3904,7 @@ type ChatQuickReply struct {
 
 func (x *ChatQuickReply) Reset() {
 	*x = ChatQuickReply{}
-	mi := &file_proto_chat_model_proto_msgTypes[26]
+	mi := &file_proto_chat_model_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3267,7 +3916,7 @@ func (x *ChatQuickReply) String() string {
 func (*ChatQuickReply) ProtoMessage() {}
 
 func (x *ChatQuickReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[26]
+	mi := &file_proto_chat_model_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3280,7 +3929,7 @@ func (x *ChatQuickReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatQuickReply.ProtoReflect.Descriptor instead.
 func (*ChatQuickReply) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{26}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ChatQuickReply) GetId() int64 {
@@ -3380,7 +4029,7 @@ type ChatCategory struct {
 
 func (x *ChatCategory) Reset() {
 	*x = ChatCategory{}
-	mi := &file_proto_chat_model_proto_msgTypes[27]
+	mi := &file_proto_chat_model_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3392,7 +4041,7 @@ func (x *ChatCategory) String() string {
 func (*ChatCategory) ProtoMessage() {}
 
 func (x *ChatCategory) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[27]
+	mi := &file_proto_chat_model_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3405,7 +4054,7 @@ func (x *ChatCategory) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatCategory.ProtoReflect.Descriptor instead.
 func (*ChatCategory) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{27}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *ChatCategory) GetId() int64 {
@@ -3504,7 +4153,7 @@ type ChatSatisfaction struct {
 
 func (x *ChatSatisfaction) Reset() {
 	*x = ChatSatisfaction{}
-	mi := &file_proto_chat_model_proto_msgTypes[28]
+	mi := &file_proto_chat_model_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3516,7 +4165,7 @@ func (x *ChatSatisfaction) String() string {
 func (*ChatSatisfaction) ProtoMessage() {}
 
 func (x *ChatSatisfaction) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[28]
+	mi := &file_proto_chat_model_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3529,7 +4178,7 @@ func (x *ChatSatisfaction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatSatisfaction.ProtoReflect.Descriptor instead.
 func (*ChatSatisfaction) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{28}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *ChatSatisfaction) GetId() int64 {
@@ -3621,7 +4270,7 @@ type ChatReadCursor struct {
 
 func (x *ChatReadCursor) Reset() {
 	*x = ChatReadCursor{}
-	mi := &file_proto_chat_model_proto_msgTypes[29]
+	mi := &file_proto_chat_model_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3633,7 +4282,7 @@ func (x *ChatReadCursor) String() string {
 func (*ChatReadCursor) ProtoMessage() {}
 
 func (x *ChatReadCursor) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[29]
+	mi := &file_proto_chat_model_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3646,7 +4295,7 @@ func (x *ChatReadCursor) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatReadCursor.ProtoReflect.Descriptor instead.
 func (*ChatReadCursor) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{29}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ChatReadCursor) GetId() int64 {
@@ -3738,7 +4387,7 @@ type ChatGroup struct {
 
 func (x *ChatGroup) Reset() {
 	*x = ChatGroup{}
-	mi := &file_proto_chat_model_proto_msgTypes[30]
+	mi := &file_proto_chat_model_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3750,7 +4399,7 @@ func (x *ChatGroup) String() string {
 func (*ChatGroup) ProtoMessage() {}
 
 func (x *ChatGroup) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[30]
+	mi := &file_proto_chat_model_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3763,7 +4412,7 @@ func (x *ChatGroup) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatGroup.ProtoReflect.Descriptor instead.
 func (*ChatGroup) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{30}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *ChatGroup) GetId() int64 {
@@ -3865,7 +4514,7 @@ type ChatWorkOrder struct {
 
 func (x *ChatWorkOrder) Reset() {
 	*x = ChatWorkOrder{}
-	mi := &file_proto_chat_model_proto_msgTypes[31]
+	mi := &file_proto_chat_model_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3877,7 +4526,7 @@ func (x *ChatWorkOrder) String() string {
 func (*ChatWorkOrder) ProtoMessage() {}
 
 func (x *ChatWorkOrder) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_chat_model_proto_msgTypes[31]
+	mi := &file_proto_chat_model_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3890,7 +4539,7 @@ func (x *ChatWorkOrder) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatWorkOrder.ProtoReflect.Descriptor instead.
 func (*ChatWorkOrder) Descriptor() ([]byte, []int) {
-	return file_proto_chat_model_proto_rawDescGZIP(), []int{31}
+	return file_proto_chat_model_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *ChatWorkOrder) GetId() int64 {
@@ -4243,7 +4892,68 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\x0fmessage_operate\x18\x15 \x01(\v2\x1f.chat.ChatMessageOperatePayloadH\x00R\x0emessageOperate\x12:\n" +
 	"\theartbeat\x18\x16 \x01(\v2\x1a.chat.ChatHeartbeatPayloadH\x00R\theartbeat\x12.\n" +
 	"\x05error\x18\x17 \x01(\v2\x16.chat.ChatErrorPayloadH\x00R\x05errorB\t\n" +
-	"\apayload\"\xa0\x01\n" +
+	"\apayload\"\xd3\x06\n" +
+	"\rChatWsRequest\x122\n" +
+	"\n" +
+	"event_type\x18\x01 \x01(\x0e2\x13.chat.ChatEventTypeR\teventType\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\x02 \x01(\tR\trequestId\x12\x1f\n" +
+	"\vclient_time\x18\x03 \x01(\x03R\n" +
+	"clientTime\x126\n" +
+	"\amessage\x18\n" +
+	" \x01(\v2\x1a.chat.ChatWsMessagePayloadH\x00R\amessage\x126\n" +
+	"\asession\x18\v \x01(\v2\x1a.chat.ChatWsSessionPayloadH\x00R\asession\x12D\n" +
+	"\rsystem_notice\x18\f \x01(\v2\x1d.chat.ChatSystemNoticePayloadH\x00R\fsystemNotice\x12;\n" +
+	"\n" +
+	"user_state\x18\r \x01(\v2\x1a.chat.ChatUserStatePayloadH\x00R\tuserState\x12.\n" +
+	"\x05queue\x18\x0e \x01(\v2\x16.chat.ChatQueuePayloadH\x00R\x05queue\x120\n" +
+	"\x05agent\x18\x0f \x01(\v2\x18.chat.ChatWsAgentPayloadH\x00R\x05agent\x127\n" +
+	"\btransfer\x18\x10 \x01(\v2\x19.chat.ChatTransferPayloadH\x00R\btransfer\x12=\n" +
+	"\n" +
+	"evaluation\x18\x11 \x01(\v2\x1b.chat.ChatEvaluationPayloadH\x00R\n" +
+	"evaluation\x121\n" +
+	"\x06typing\x18\x12 \x01(\v2\x17.chat.ChatTypingPayloadH\x00R\x06typing\x12;\n" +
+	"\areceipt\x18\x13 \x01(\v2\x1f.chat.ChatMessageReceiptPayloadH\x00R\areceipt\x12J\n" +
+	"\x0fmessage_operate\x18\x14 \x01(\v2\x1f.chat.ChatMessageOperatePayloadH\x00R\x0emessageOperate\x12:\n" +
+	"\theartbeat\x18\x15 \x01(\v2\x1a.chat.ChatHeartbeatPayloadH\x00R\theartbeatB\t\n" +
+	"\apayload\"\x9c\x04\n" +
+	"\x14ChatWsMessagePayload\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12*\n" +
+	"\x11client_message_id\x18\x02 \x01(\tR\x0fclientMessageId\x128\n" +
+	"\fmessage_type\x18\x03 \x01(\x0e2\x15.chat.ChatMessageTypeR\vmessageType\x12\x18\n" +
+	"\acontent\x18\x04 \x01(\tR\acontent\x12\x10\n" +
+	"\x03url\x18\x05 \x01(\tR\x03url\x12\x1b\n" +
+	"\tfile_name\x18\x06 \x01(\tR\bfileName\x12\x1b\n" +
+	"\tfile_size\x18\a \x01(\x03R\bfileSize\x12\x1b\n" +
+	"\tmime_type\x18\b \x01(\tR\bmimeType\x12\x14\n" +
+	"\x05width\x18\t \x01(\x05R\x05width\x12\x16\n" +
+	"\x06height\x18\n" +
+	" \x01(\x05R\x06height\x12\x1a\n" +
+	"\bduration\x18\v \x01(\x05R\bduration\x12\x14\n" +
+	"\x05extra\x18\f \x01(\tR\x05extra\x12-\n" +
+	"\x06sender\x18\r \x01(\v2\x15.chat.ChatMessageUserR\x06sender\x121\n" +
+	"\breceiver\x18\x0e \x01(\v2\x15.chat.ChatMessageUserR\breceiver\x12\x1f\n" +
+	"\vmerchant_id\x18\x0f \x01(\x03R\n" +
+	"merchantId\x12\x19\n" +
+	"\bis_guest\x18\x10 \x01(\bR\aisGuest\"\xc8\x01\n" +
+	"\x14ChatWsSessionPayload\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x1f\n" +
+	"\vmerchant_id\x18\x02 \x01(\x03R\n" +
+	"merchantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
+	"\bagent_id\x18\x04 \x01(\x03R\aagentId\x12!\n" +
+	"\fclose_reason\x18\x05 \x01(\tR\vcloseReason\x12\x19\n" +
+	"\bis_guest\x18\x06 \x01(\bR\aisGuest\"\xa2\x01\n" +
+	"\x12ChatWsAgentPayload\x12\x1d\n" +
+	"\n" +
+	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x16\n" +
+	"\x06reason\x18\x02 \x01(\tR\x06reason\x12\x1f\n" +
+	"\vmerchant_id\x18\x03 \x01(\x03R\n" +
+	"merchantId\x12\x19\n" +
+	"\bagent_id\x18\x04 \x01(\x03R\aagentId\x12\x19\n" +
+	"\bis_guest\x18\x05 \x01(\bR\aisGuest\"\xa0\x01\n" +
 	"\x17ChatSystemNoticePayload\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x14\n" +
@@ -4497,7 +5207,7 @@ func file_proto_chat_model_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_chat_model_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_chat_model_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_proto_chat_model_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
 var file_proto_chat_model_proto_goTypes = []any{
 	(ChatQueueAction)(0),              // 0: chat.ChatQueueAction
 	(*ChatUser)(nil),                  // 1: chat.ChatUser
@@ -4513,101 +5223,121 @@ var file_proto_chat_model_proto_goTypes = []any{
 	(*ChatHeartbeat)(nil),             // 11: chat.ChatHeartbeat
 	(*ChatEventError)(nil),            // 12: chat.ChatEventError
 	(*ChatEvaluationInvite)(nil),      // 13: chat.ChatEvaluationInvite
-	(*ChatMessageEvent)(nil),          // 14: chat.ChatMessageEvent
-	(*ChatSystemNoticePayload)(nil),   // 15: chat.ChatSystemNoticePayload
-	(*ChatUserStatePayload)(nil),      // 16: chat.ChatUserStatePayload
-	(*ChatQueuePayload)(nil),          // 17: chat.ChatQueuePayload
-	(*ChatAgentPayload)(nil),          // 18: chat.ChatAgentPayload
-	(*ChatTransferPayload)(nil),       // 19: chat.ChatTransferPayload
-	(*ChatEvaluationPayload)(nil),     // 20: chat.ChatEvaluationPayload
-	(*ChatTypingPayload)(nil),         // 21: chat.ChatTypingPayload
-	(*ChatMessageReceiptPayload)(nil), // 22: chat.ChatMessageReceiptPayload
-	(*ChatMessageOperatePayload)(nil), // 23: chat.ChatMessageOperatePayload
-	(*ChatHeartbeatPayload)(nil),      // 24: chat.ChatHeartbeatPayload
-	(*ChatErrorPayload)(nil),          // 25: chat.ChatErrorPayload
-	(*ChatAssignment)(nil),            // 26: chat.ChatAssignment
-	(*ChatQuickReply)(nil),            // 27: chat.ChatQuickReply
-	(*ChatCategory)(nil),              // 28: chat.ChatCategory
-	(*ChatSatisfaction)(nil),          // 29: chat.ChatSatisfaction
-	(*ChatReadCursor)(nil),            // 30: chat.ChatReadCursor
-	(*ChatGroup)(nil),                 // 31: chat.ChatGroup
-	(*ChatWorkOrder)(nil),             // 32: chat.ChatWorkOrder
-	(ChatUserType)(0),                 // 33: chat.ChatUserType
-	(common.YesNo)(0),                 // 34: common.YesNo
-	(common.Enable)(0),                // 35: common.Enable
-	(ChatAgentStatus)(0),              // 36: chat.ChatAgentStatus
-	(ChatSessionSource)(0),            // 37: chat.ChatSessionSource
-	(ChatSessionStatus)(0),            // 38: chat.ChatSessionStatus
-	(ChatSessionPriority)(0),          // 39: chat.ChatSessionPriority
-	(ChatSenderType)(0),               // 40: chat.ChatSenderType
-	(*structpb.Struct)(nil),           // 41: google.protobuf.Struct
-	(ChatMessageType)(0),              // 42: chat.ChatMessageType
-	(ChatMessageStatus)(0),            // 43: chat.ChatMessageStatus
-	(ChatEventType)(0),                // 44: chat.ChatEventType
-	(ChatAssignType)(0),               // 45: chat.ChatAssignType
-	(ChatMessageOperateType)(0),       // 46: chat.ChatMessageOperateType
-	(ChatMessageDeleteScope)(0),       // 47: chat.ChatMessageDeleteScope
+	(*ChatWsResponse)(nil),          // 14: chat.ChatWsResponse
+	(*ChatWsRequest)(nil),             // 15: chat.ChatWsRequest
+	(*ChatWsMessagePayload)(nil),      // 16: chat.ChatWsMessagePayload
+	(*ChatWsSessionPayload)(nil),      // 17: chat.ChatWsSessionPayload
+	(*ChatWsAgentPayload)(nil),        // 18: chat.ChatWsAgentPayload
+	(*ChatSystemNoticePayload)(nil),   // 19: chat.ChatSystemNoticePayload
+	(*ChatUserStatePayload)(nil),      // 20: chat.ChatUserStatePayload
+	(*ChatQueuePayload)(nil),          // 21: chat.ChatQueuePayload
+	(*ChatAgentPayload)(nil),          // 22: chat.ChatAgentPayload
+	(*ChatTransferPayload)(nil),       // 23: chat.ChatTransferPayload
+	(*ChatEvaluationPayload)(nil),     // 24: chat.ChatEvaluationPayload
+	(*ChatTypingPayload)(nil),         // 25: chat.ChatTypingPayload
+	(*ChatMessageReceiptPayload)(nil), // 26: chat.ChatMessageReceiptPayload
+	(*ChatMessageOperatePayload)(nil), // 27: chat.ChatMessageOperatePayload
+	(*ChatHeartbeatPayload)(nil),      // 28: chat.ChatHeartbeatPayload
+	(*ChatErrorPayload)(nil),          // 29: chat.ChatErrorPayload
+	(*ChatAssignment)(nil),            // 30: chat.ChatAssignment
+	(*ChatQuickReply)(nil),            // 31: chat.ChatQuickReply
+	(*ChatCategory)(nil),              // 32: chat.ChatCategory
+	(*ChatSatisfaction)(nil),          // 33: chat.ChatSatisfaction
+	(*ChatReadCursor)(nil),            // 34: chat.ChatReadCursor
+	(*ChatGroup)(nil),                 // 35: chat.ChatGroup
+	(*ChatWorkOrder)(nil),             // 36: chat.ChatWorkOrder
+	(ChatUserType)(0),                 // 37: chat.ChatUserType
+	(common.YesNo)(0),                 // 38: common.YesNo
+	(common.Enable)(0),                // 39: common.Enable
+	(ChatAgentStatus)(0),              // 40: chat.ChatAgentStatus
+	(ChatSessionSource)(0),            // 41: chat.ChatSessionSource
+	(ChatSessionStatus)(0),            // 42: chat.ChatSessionStatus
+	(ChatSessionPriority)(0),          // 43: chat.ChatSessionPriority
+	(ChatSenderType)(0),               // 44: chat.ChatSenderType
+	(*structpb.Struct)(nil),           // 45: google.protobuf.Struct
+	(ChatMessageType)(0),              // 46: chat.ChatMessageType
+	(ChatMessageStatus)(0),            // 47: chat.ChatMessageStatus
+	(ChatEventType)(0),                // 48: chat.ChatEventType
+	(ChatAssignType)(0),               // 49: chat.ChatAssignType
+	(ChatMessageOperateType)(0),       // 50: chat.ChatMessageOperateType
+	(ChatMessageDeleteScope)(0),       // 51: chat.ChatMessageDeleteScope
 }
 var file_proto_chat_model_proto_depIdxs = []int32{
-	33, // 0: chat.ChatUser.user_type:type_name -> chat.ChatUserType
-	34, // 1: chat.ChatUser.is_owner:type_name -> common.YesNo
-	35, // 2: chat.ChatUser.enabled:type_name -> common.Enable
-	35, // 3: chat.ChatMerchant.enabled:type_name -> common.Enable
-	36, // 4: chat.ChatAgent.status:type_name -> chat.ChatAgentStatus
-	34, // 5: chat.ChatAgent.auto_online:type_name -> common.YesNo
-	37, // 6: chat.ChatSession.source:type_name -> chat.ChatSessionSource
-	38, // 7: chat.ChatSession.status:type_name -> chat.ChatSessionStatus
-	39, // 8: chat.ChatSession.priority:type_name -> chat.ChatSessionPriority
-	40, // 9: chat.ChatSession.last_sender_type:type_name -> chat.ChatSenderType
-	41, // 10: chat.ChatSession.ext_json:type_name -> google.protobuf.Struct
-	38, // 11: chat.ChatSession.before_disconnect_status:type_name -> chat.ChatSessionStatus
-	40, // 12: chat.ChatMessageUser.type:type_name -> chat.ChatSenderType
+	37, // 0: chat.ChatUser.user_type:type_name -> chat.ChatUserType
+	38, // 1: chat.ChatUser.is_owner:type_name -> common.YesNo
+	39, // 2: chat.ChatUser.enabled:type_name -> common.Enable
+	39, // 3: chat.ChatMerchant.enabled:type_name -> common.Enable
+	40, // 4: chat.ChatAgent.status:type_name -> chat.ChatAgentStatus
+	38, // 5: chat.ChatAgent.auto_online:type_name -> common.YesNo
+	41, // 6: chat.ChatSession.source:type_name -> chat.ChatSessionSource
+	42, // 7: chat.ChatSession.status:type_name -> chat.ChatSessionStatus
+	43, // 8: chat.ChatSession.priority:type_name -> chat.ChatSessionPriority
+	44, // 9: chat.ChatSession.last_sender_type:type_name -> chat.ChatSenderType
+	45, // 10: chat.ChatSession.ext_json:type_name -> google.protobuf.Struct
+	42, // 11: chat.ChatSession.before_disconnect_status:type_name -> chat.ChatSessionStatus
+	44, // 12: chat.ChatMessageUser.type:type_name -> chat.ChatSenderType
 	5,  // 13: chat.ChatMessage.sender:type_name -> chat.ChatMessageUser
 	5,  // 14: chat.ChatMessage.receiver:type_name -> chat.ChatMessageUser
-	42, // 15: chat.ChatMessage.message_type:type_name -> chat.ChatMessageType
-	43, // 16: chat.ChatMessage.status:type_name -> chat.ChatMessageStatus
-	41, // 17: chat.ChatMessage.payload:type_name -> google.protobuf.Struct
-	40, // 18: chat.ChatTyping.sender_type:type_name -> chat.ChatSenderType
-	40, // 19: chat.ChatMessageReceipt.sender_type:type_name -> chat.ChatSenderType
-	44, // 20: chat.ChatMessageEvent.event_type:type_name -> chat.ChatEventType
-	6,  // 21: chat.ChatMessageEvent.connected:type_name -> chat.WsConnectedPayload
-	7,  // 22: chat.ChatMessageEvent.message:type_name -> chat.ChatMessage
-	4,  // 23: chat.ChatMessageEvent.session:type_name -> chat.ChatSession
-	15, // 24: chat.ChatMessageEvent.system_notice:type_name -> chat.ChatSystemNoticePayload
-	16, // 25: chat.ChatMessageEvent.user_state:type_name -> chat.ChatUserStatePayload
-	17, // 26: chat.ChatMessageEvent.queue:type_name -> chat.ChatQueuePayload
-	18, // 27: chat.ChatMessageEvent.agent:type_name -> chat.ChatAgentPayload
-	19, // 28: chat.ChatMessageEvent.transfer:type_name -> chat.ChatTransferPayload
-	20, // 29: chat.ChatMessageEvent.evaluation:type_name -> chat.ChatEvaluationPayload
-	21, // 30: chat.ChatMessageEvent.typing:type_name -> chat.ChatTypingPayload
-	22, // 31: chat.ChatMessageEvent.receipt:type_name -> chat.ChatMessageReceiptPayload
-	23, // 32: chat.ChatMessageEvent.message_operate:type_name -> chat.ChatMessageOperatePayload
-	24, // 33: chat.ChatMessageEvent.heartbeat:type_name -> chat.ChatHeartbeatPayload
-	25, // 34: chat.ChatMessageEvent.error:type_name -> chat.ChatErrorPayload
-	37, // 35: chat.ChatUserStatePayload.source:type_name -> chat.ChatSessionSource
-	0,  // 36: chat.ChatQueuePayload.queue_action:type_name -> chat.ChatQueueAction
-	38, // 37: chat.ChatQueuePayload.session_status:type_name -> chat.ChatSessionStatus
-	36, // 38: chat.ChatAgentPayload.agent_status:type_name -> chat.ChatAgentStatus
-	45, // 39: chat.ChatAgentPayload.assign_type:type_name -> chat.ChatAssignType
-	38, // 40: chat.ChatAgentPayload.session_status:type_name -> chat.ChatSessionStatus
-	40, // 41: chat.ChatTypingPayload.sender_type:type_name -> chat.ChatSenderType
-	40, // 42: chat.ChatMessageReceiptPayload.operator_type:type_name -> chat.ChatSenderType
-	43, // 43: chat.ChatMessageReceiptPayload.message_status:type_name -> chat.ChatMessageStatus
-	46, // 44: chat.ChatMessageOperatePayload.operate_type:type_name -> chat.ChatMessageOperateType
-	40, // 45: chat.ChatMessageOperatePayload.operator_type:type_name -> chat.ChatSenderType
-	47, // 46: chat.ChatMessageOperatePayload.delete_scope:type_name -> chat.ChatMessageDeleteScope
-	40, // 47: chat.ChatHeartbeatPayload.sender_type:type_name -> chat.ChatSenderType
-	45, // 48: chat.ChatAssignment.assign_type:type_name -> chat.ChatAssignType
-	35, // 49: chat.ChatQuickReply.enabled:type_name -> common.Enable
-	35, // 50: chat.ChatCategory.enabled:type_name -> common.Enable
-	40, // 51: chat.ChatReadCursor.reader_type:type_name -> chat.ChatSenderType
-	35, // 52: chat.ChatGroup.enabled:type_name -> common.Enable
-	39, // 53: chat.ChatWorkOrder.priority:type_name -> chat.ChatSessionPriority
-	54, // [54:54] is the sub-list for method output_type
-	54, // [54:54] is the sub-list for method input_type
-	54, // [54:54] is the sub-list for extension type_name
-	54, // [54:54] is the sub-list for extension extendee
-	0,  // [0:54] is the sub-list for field type_name
+	46, // 15: chat.ChatMessage.message_type:type_name -> chat.ChatMessageType
+	47, // 16: chat.ChatMessage.status:type_name -> chat.ChatMessageStatus
+	45, // 17: chat.ChatMessage.payload:type_name -> google.protobuf.Struct
+	44, // 18: chat.ChatTyping.sender_type:type_name -> chat.ChatSenderType
+	44, // 19: chat.ChatMessageReceipt.sender_type:type_name -> chat.ChatSenderType
+	48, // 20: chat.ChatWsResponse.event_type:type_name -> chat.ChatEventType
+	6,  // 21: chat.ChatWsResponse.connected:type_name -> chat.WsConnectedPayload
+	7,  // 22: chat.ChatWsResponse.message:type_name -> chat.ChatMessage
+	4,  // 23: chat.ChatWsResponse.session:type_name -> chat.ChatSession
+	19, // 24: chat.ChatWsResponse.system_notice:type_name -> chat.ChatSystemNoticePayload
+	20, // 25: chat.ChatWsResponse.user_state:type_name -> chat.ChatUserStatePayload
+	21, // 26: chat.ChatWsResponse.queue:type_name -> chat.ChatQueuePayload
+	22, // 27: chat.ChatWsResponse.agent:type_name -> chat.ChatAgentPayload
+	23, // 28: chat.ChatWsResponse.transfer:type_name -> chat.ChatTransferPayload
+	24, // 29: chat.ChatWsResponse.evaluation:type_name -> chat.ChatEvaluationPayload
+	25, // 30: chat.ChatWsResponse.typing:type_name -> chat.ChatTypingPayload
+	26, // 31: chat.ChatWsResponse.receipt:type_name -> chat.ChatMessageReceiptPayload
+	27, // 32: chat.ChatWsResponse.message_operate:type_name -> chat.ChatMessageOperatePayload
+	28, // 33: chat.ChatWsResponse.heartbeat:type_name -> chat.ChatHeartbeatPayload
+	29, // 34: chat.ChatWsResponse.error:type_name -> chat.ChatErrorPayload
+	48, // 35: chat.ChatWsRequest.event_type:type_name -> chat.ChatEventType
+	16, // 36: chat.ChatWsRequest.message:type_name -> chat.ChatWsMessagePayload
+	17, // 37: chat.ChatWsRequest.session:type_name -> chat.ChatWsSessionPayload
+	19, // 38: chat.ChatWsRequest.system_notice:type_name -> chat.ChatSystemNoticePayload
+	20, // 39: chat.ChatWsRequest.user_state:type_name -> chat.ChatUserStatePayload
+	21, // 40: chat.ChatWsRequest.queue:type_name -> chat.ChatQueuePayload
+	18, // 41: chat.ChatWsRequest.agent:type_name -> chat.ChatWsAgentPayload
+	23, // 42: chat.ChatWsRequest.transfer:type_name -> chat.ChatTransferPayload
+	24, // 43: chat.ChatWsRequest.evaluation:type_name -> chat.ChatEvaluationPayload
+	25, // 44: chat.ChatWsRequest.typing:type_name -> chat.ChatTypingPayload
+	26, // 45: chat.ChatWsRequest.receipt:type_name -> chat.ChatMessageReceiptPayload
+	27, // 46: chat.ChatWsRequest.message_operate:type_name -> chat.ChatMessageOperatePayload
+	28, // 47: chat.ChatWsRequest.heartbeat:type_name -> chat.ChatHeartbeatPayload
+	46, // 48: chat.ChatWsMessagePayload.message_type:type_name -> chat.ChatMessageType
+	5,  // 49: chat.ChatWsMessagePayload.sender:type_name -> chat.ChatMessageUser
+	5,  // 50: chat.ChatWsMessagePayload.receiver:type_name -> chat.ChatMessageUser
+	41, // 51: chat.ChatUserStatePayload.source:type_name -> chat.ChatSessionSource
+	0,  // 52: chat.ChatQueuePayload.queue_action:type_name -> chat.ChatQueueAction
+	42, // 53: chat.ChatQueuePayload.session_status:type_name -> chat.ChatSessionStatus
+	40, // 54: chat.ChatAgentPayload.agent_status:type_name -> chat.ChatAgentStatus
+	49, // 55: chat.ChatAgentPayload.assign_type:type_name -> chat.ChatAssignType
+	42, // 56: chat.ChatAgentPayload.session_status:type_name -> chat.ChatSessionStatus
+	44, // 57: chat.ChatTypingPayload.sender_type:type_name -> chat.ChatSenderType
+	44, // 58: chat.ChatMessageReceiptPayload.operator_type:type_name -> chat.ChatSenderType
+	47, // 59: chat.ChatMessageReceiptPayload.message_status:type_name -> chat.ChatMessageStatus
+	50, // 60: chat.ChatMessageOperatePayload.operate_type:type_name -> chat.ChatMessageOperateType
+	44, // 61: chat.ChatMessageOperatePayload.operator_type:type_name -> chat.ChatSenderType
+	51, // 62: chat.ChatMessageOperatePayload.delete_scope:type_name -> chat.ChatMessageDeleteScope
+	44, // 63: chat.ChatHeartbeatPayload.sender_type:type_name -> chat.ChatSenderType
+	49, // 64: chat.ChatAssignment.assign_type:type_name -> chat.ChatAssignType
+	39, // 65: chat.ChatQuickReply.enabled:type_name -> common.Enable
+	39, // 66: chat.ChatCategory.enabled:type_name -> common.Enable
+	44, // 67: chat.ChatReadCursor.reader_type:type_name -> chat.ChatSenderType
+	39, // 68: chat.ChatGroup.enabled:type_name -> common.Enable
+	43, // 69: chat.ChatWorkOrder.priority:type_name -> chat.ChatSessionPriority
+	70, // [70:70] is the sub-list for method output_type
+	70, // [70:70] is the sub-list for method input_type
+	70, // [70:70] is the sub-list for extension type_name
+	70, // [70:70] is the sub-list for extension extendee
+	0,  // [0:70] is the sub-list for field type_name
 }
 
 func init() { file_proto_chat_model_proto_init() }
@@ -4632,13 +5362,27 @@ func file_proto_chat_model_proto_init() {
 		(*ChatMessageEvent_Heartbeat)(nil),
 		(*ChatMessageEvent_Error)(nil),
 	}
+	file_proto_chat_model_proto_msgTypes[14].OneofWrappers = []any{
+		(*ChatWsRequest_Message)(nil),
+		(*ChatWsRequest_Session)(nil),
+		(*ChatWsRequest_SystemNotice)(nil),
+		(*ChatWsRequest_UserState)(nil),
+		(*ChatWsRequest_Queue)(nil),
+		(*ChatWsRequest_Agent)(nil),
+		(*ChatWsRequest_Transfer)(nil),
+		(*ChatWsRequest_Evaluation)(nil),
+		(*ChatWsRequest_Typing)(nil),
+		(*ChatWsRequest_Receipt)(nil),
+		(*ChatWsRequest_MessageOperate)(nil),
+		(*ChatWsRequest_Heartbeat)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_model_proto_rawDesc), len(file_proto_chat_model_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   32,
+			NumMessages:   36,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -8,6 +8,7 @@ package chat
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -57,7 +58,7 @@ type ChatAppClient interface {
 	// 提交会话评价
 	SubmitChatSatisfaction(ctx context.Context, in *SubmitChatSatisfactionReq, opts ...grpc.CallOption) (*AppChatSatisfactionResp, error)
 	// 订阅客服消息事件流
-	AppSubscribeStream(ctx context.Context, in *AppChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatMessageEvent], error)
+	AppSubscribeStream(ctx context.Context, in *AppChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatWsResponse], error)
 }
 
 type chatAppClient struct {
@@ -158,13 +159,13 @@ func (c *chatAppClient) SubmitChatSatisfaction(ctx context.Context, in *SubmitCh
 	return out, nil
 }
 
-func (c *chatAppClient) AppSubscribeStream(ctx context.Context, in *AppChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatMessageEvent], error) {
+func (c *chatAppClient) AppSubscribeStream(ctx context.Context, in *AppChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatWsResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &ChatApp_ServiceDesc.Streams[0], ChatApp_AppSubscribeStream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[AppChatSubscribeRequest, ChatMessageEvent]{ClientStream: stream}
+	x := &grpc.GenericClientStream[AppChatSubscribeRequest, ChatWsResponse]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -175,7 +176,7 @@ func (c *chatAppClient) AppSubscribeStream(ctx context.Context, in *AppChatSubsc
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ChatApp_AppSubscribeStreamClient = grpc.ServerStreamingClient[ChatMessageEvent]
+type ChatApp_AppSubscribeStreamClient = grpc.ServerStreamingClient[ChatWsResponse]
 
 // ChatAppServer is the server API for ChatApp service.
 // All implementations must embed UnimplementedChatAppServer
@@ -203,7 +204,7 @@ type ChatAppServer interface {
 	// 提交会话评价
 	SubmitChatSatisfaction(context.Context, *SubmitChatSatisfactionReq) (*AppChatSatisfactionResp, error)
 	// 订阅客服消息事件流
-	AppSubscribeStream(*AppChatSubscribeRequest, grpc.ServerStreamingServer[ChatMessageEvent]) error
+	AppSubscribeStream(*AppChatSubscribeRequest, grpc.ServerStreamingServer[ChatWsResponse]) error
 	mustEmbedUnimplementedChatAppServer()
 }
 
@@ -241,7 +242,7 @@ func (UnimplementedChatAppServer) CloseMyChatSession(context.Context, *CloseMyCh
 func (UnimplementedChatAppServer) SubmitChatSatisfaction(context.Context, *SubmitChatSatisfactionReq) (*AppChatSatisfactionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SubmitChatSatisfaction not implemented")
 }
-func (UnimplementedChatAppServer) AppSubscribeStream(*AppChatSubscribeRequest, grpc.ServerStreamingServer[ChatMessageEvent]) error {
+func (UnimplementedChatAppServer) AppSubscribeStream(*AppChatSubscribeRequest, grpc.ServerStreamingServer[ChatWsResponse]) error {
 	return status.Error(codes.Unimplemented, "method AppSubscribeStream not implemented")
 }
 func (UnimplementedChatAppServer) mustEmbedUnimplementedChatAppServer() {}
@@ -432,11 +433,11 @@ func _ChatApp_AppSubscribeStream_Handler(srv interface{}, stream grpc.ServerStre
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(ChatAppServer).AppSubscribeStream(m, &grpc.GenericServerStream[AppChatSubscribeRequest, ChatMessageEvent]{ServerStream: stream})
+	return srv.(ChatAppServer).AppSubscribeStream(m, &grpc.GenericServerStream[AppChatSubscribeRequest, ChatWsResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ChatApp_AppSubscribeStreamServer = grpc.ServerStreamingServer[ChatMessageEvent]
+type ChatApp_AppSubscribeStreamServer = grpc.ServerStreamingServer[ChatWsResponse]
 
 // ChatApp_ServiceDesc is the grpc.ServiceDesc for ChatApp service.
 // It's only intended for direct use with grpc.RegisterService,

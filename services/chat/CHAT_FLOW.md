@@ -16,7 +16,8 @@
 - 游客消息使用 `GM...` 临时消息号，通过 Redis Pub/Sub 推送，不写 MySQL/MongoDB。
 - 登录用户消息调用 `[RPC] ChatApp.SendUserMessage`，由 `services/chat` 写消息、更新会话状态并发布事件。
 - 用户侧接待前显示排队提示；坐席必须点击“接待”后，会话才进入进行中。
-- 实时事件统一使用 `ChatMessageEvent`，事件类型为 `ChatEventType` enum，不再使用字符串事件名解析。
+- JS 客户端发送给 `chat-api` / `chat-admin-api` 的 WS 请求统一使用 `ChatWsRequest`，结构为 `eventType + oneof payload`。
+- 服务端推送给 JS 客户端的实时事件统一使用 `ChatWsResponse`，事件类型为 `ChatEventType` enum，不再使用字符串事件名解析。
 
 ## 用户身份和 SessionNo
 
@@ -34,6 +35,7 @@
    - token 来源优先级: Cookie chat_token、query chatToken、Authorization Bearer、x-chat-token、Sec-WebSocket-Protocol token.*
    - merchantId 不作为 WS 入参传递，由 chatToken 承载
    - chat-api 校验 token，组装 ChatWSMessagesReq
+   - WS 发送请求体使用 ChatWsRequest，例如 `{ eventType: MESSAGE, message: {...} }`
 
 3. chat-api 根据 IsGuest 处理 sessionNo
    - IsGuest=true 且 sessionNo 为空: 调 ChatApp.GenerateChatSessionNo，生成临时 CS...
@@ -134,26 +136,26 @@ sequenceDiagram
     end
     CA-->>U: [WS] WS_CONNECTED, temporary=true, sessionNo=CS...
     CA->>BUS: [Redis Pub/Sub] QUEUE_UPDATE, 临时排队提示
-    U->>CA: [WS] SEND_USER_MESSAGE
+    U->>CA: [WS] ChatWsRequest MESSAGE + message
     CA->>CA: 生成 GM 临时消息, 不落库
     CA->>BUS: [Redis Pub/Sub] MESSAGE
     CA->>BUS: [Redis Pub/Sub] QUEUE_UPDATE
     BUS-->>AU: 待接待会话/消息
     BUS-->>U: 排队提示
-    AU->>AA: [WS] ACCEPT_CHAT_SESSION
+    AU->>AA: [WS] ChatWsRequest AGENT_ACCEPTED + agent
     AA->>BUS: [Redis Pub/Sub] AGENT_ACCEPTED
     BUS-->>U: 客服已接入
     BUS-->>AU: 会话进入进行中
-    AU->>AA: [WS] SEND_AGENT_MESSAGE
+    AU->>AA: [WS] ChatWsRequest MESSAGE + message
     AA->>BUS: [Redis Pub/Sub] MESSAGE, senderType=AGENT
     BUS-->>U: 坐席消息
     U->>CA: [WS] MESSAGE_READ，可选
     CA->>BUS: [Redis Pub/Sub] MESSAGE_READ，可选
-    AU->>AA: [WS] CLOSE_CHAT_SESSION
+    AU->>AA: [WS] ChatWsRequest SESSION_CLOSE + session
     AA->>BUS: [Redis Pub/Sub] SESSION_CLOSE
     opt 需要评价
         AA->>BUS: [Redis Pub/Sub] EVALUATION_INVITE
-        U->>CA: [WS] EVALUATION_SUBMIT
+        U->>CA: [WS] ChatWsRequest EVALUATION_SUBMIT + evaluation
         CA->>BUS: [Redis Pub/Sub] EVALUATION_SUBMIT
     end
     BUS-->>U: 会话结束
@@ -186,33 +188,33 @@ sequenceDiagram
         CA->>CA: 使用 token.sessionNo
     end
     CA-->>U: [WS] WS_CONNECTED, sessionNo=CS...
-    U->>CA: [WS] SEND_USER_MESSAGE
+    U->>CA: [WS] ChatWsRequest MESSAGE + message
     CA->>RPC: [RPC] SendUserMessage
     RPC->>RPC: [DB] 写消息并更新会话状态
     RPC->>BUS: [Redis Pub/Sub] MESSAGE
     RPC->>BUS: [Redis Pub/Sub] QUEUE_UPDATE
     BUS-->>AU: 待接待/消息通知
     BUS-->>U: 排队提示
-    AU->>AA: [WS] ACCEPT_CHAT_SESSION
+    AU->>AA: [WS] ChatWsRequest AGENT_ACCEPTED + agent
     AA->>RPC: [RPC] ChatAdmin.AcceptChatSession
     RPC->>RPC: [DB] 绑定 agentId, 状态 SERVING
     RPC->>BUS: [Redis Pub/Sub] AGENT_ACCEPTED
     RPC->>BUS: [Redis Pub/Sub] QUEUE_UPDATE
     BUS-->>U: XX客服正在为你服务
     BUS-->>AU: 会话进入进行中
-    AU->>AA: [WS] SEND_AGENT_MESSAGE
+    AU->>AA: [WS] ChatWsRequest MESSAGE + message
     AA->>RPC: [RPC] ChatAdmin.SendAgentMessage
     RPC->>BUS: [Redis Pub/Sub] MESSAGE
     BUS-->>U: 坐席消息
     U->>CA: [WS] MESSAGE_READ，可选
     CA->>RPC: [RPC] ReadMessage / 批量已读，可选
     RPC->>BUS: [Redis Pub/Sub] MESSAGE_READ，可选
-    AU->>AA: [WS] CLOSE_CHAT_SESSION
+    AU->>AA: [WS] ChatWsRequest SESSION_CLOSE + session
     AA->>RPC: [RPC] ChatAdmin.CloseChatSession
     RPC->>BUS: [Redis Pub/Sub] SESSION_CLOSE
     opt 需要评价
         RPC->>BUS: [Redis Pub/Sub] EVALUATION_INVITE
-        U->>CA: [WS] EVALUATION_SUBMIT
+        U->>CA: [WS] ChatWsRequest EVALUATION_SUBMIT + evaluation
         CA->>RPC: [RPC] SubmitEvaluation
         RPC->>BUS: [Redis Pub/Sub] EVALUATION_SUBMIT
     end
@@ -257,7 +259,7 @@ stateDiagram-v2
 | 补写 cookie | `/chat/internal/token-cookie`，入参 `chatToken`，校验后 `Set-Cookie: chat_token` | 同游客 |
 | WS 建连 | `/chat/ws/messages` 必须携带 `chatToken`，优先用 `chat_token` cookie，不单独传 `merchantId` | 同游客 |
 | 获取 sessionNo | `GenerateChatSessionNo` 生成临时 `CS...`，不落库 | `OpenChatSession` 创建/复用 `CS...`，落库 |
-| 用户发送消息 | `SEND_USER_MESSAGE`，chat-api 生成 `GM...` 临时消息并广播 | `SEND_USER_MESSAGE`，chat-api 调 `ChatApp.SendUserMessage` |
+| 用户发送消息 | `ChatWsRequest MESSAGE + message`，chat-api 生成 `GM...` 临时消息并广播 | `ChatWsRequest MESSAGE + message`，chat-api 调 `ChatApp.SendUserMessage` |
 | 排队信息 | chat-api 发布临时 `QUEUE_UPDATE` | services/chat 发布 `QUEUE_UPDATE`，也可 `GetMyChatQueueInfo` 查询 |
 | 坐席接待 | chat-admin-api 临时发布 `AGENT_ACCEPTED` | chat-admin-api 调 `ChatAdmin.AcceptChatSession` |
 | 坐席回复 | chat-admin-api 临时发布 `MESSAGE` | chat-admin-api 调 `ChatAdmin.SendAgentMessage` |
@@ -467,7 +469,11 @@ SESSION_CLOSE，close_reason = TIMEOUT
 | 类型/RPC | 位置 | 用途 |
 | --- | --- | --- |
 | `ChatEventType` | `proto/chat/enum.proto` | WS/Redis 统一事件枚举 |
-| `ChatMessageEvent` | `proto/chat/model.proto` | Redis/WS 推送 envelope，包含 `code`、`msg`、`event_type`、`created_at` 和 `oneof payload` |
+| `ChatWsRequest` | `proto/chat/model.proto` | JS -> chat-api/chat-admin-api 的 WS 请求 envelope，包含 `event_type`、`request_id`、`client_time` 和 `oneof payload` |
+| `ChatWsResponse` | `proto/chat/model.proto` | Redis/WS 推送 envelope，包含 `code`、`msg`、`event_type`、`created_at` 和 `oneof payload` |
+| `ChatWsMessagePayload` | `proto/chat/model.proto` | `MESSAGE` 请求 payload，服务端按用户端/坐席端转换成对应 RPC req |
+| `ChatWsSessionPayload` | `proto/chat/model.proto` | `SESSION_CLOSE` 等会话级请求 payload |
+| `ChatWsAgentPayload` | `proto/chat/model.proto` | `AGENT_ACCEPTED` / `AGENT_LEAVE` 等坐席动作请求 payload |
 | `ChatQueuePayload` | `proto/chat/model.proto` | `QUEUE_UPDATE` 推送 payload |
 | `ChatQueueInfo` | `proto/chat/model.proto` | 排队信息查询结构 |
 | `WsConnectedPayload` | `proto/chat/model.proto` | WS connected 结构 |

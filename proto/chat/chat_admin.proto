@@ -146,7 +146,7 @@ service ChatAdmin {
   rpc DeleteChatWorkOrder(DeleteChatWorkOrderReq) returns (AdminCommonResp);
 
   // 订阅客服消息事件流
-  rpc AdminSubscribeStream(AdminChatSubscribeRequest) returns (stream ChatMessageEvent);
+  rpc AdminSubscribeStream(AdminChatSubscribeRequest) returns (stream ChatWsResponse);
 }
 
 message AdminCommonResp { common.RespBase base = 1; }

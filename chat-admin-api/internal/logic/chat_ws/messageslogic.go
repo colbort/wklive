@@ -65,7 +65,7 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 			streamCancel()
 		},
 	)
-	client.SendEvent(&chat.ChatMessageEvent{
+	client.SendEvent(&chat.ChatWsResponse{
 		Code:      200,
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_WS_CONNECTED,
@@ -124,7 +124,7 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELETE:
 			// TODO handle message delete
 		case chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT:
-			conn.SendEvent(&chat.ChatMessageEvent{
+			conn.SendEvent(&chat.ChatWsResponse{
 				Code:      200,
 				Msg:       "",
 				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT,
@@ -219,7 +219,7 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 		sendWSError(conn, "failed to accept chat session", err)
 		return
 	}
-	conn.SendEvent(&chat.ChatMessageEvent{
+	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      resp.Base.Code,
 		Msg:       resp.Base.Msg,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED,
@@ -256,7 +256,7 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 		sendWSError(conn, "failed to close chat session", err)
 		return
 	}
-	conn.SendEvent(&chat.ChatMessageEvent{
+	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      resp.Base.Code,
 		Msg:       resp.Base.Msg,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE,
@@ -268,7 +268,7 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 }
 
 func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
-	conn.SendEvent(&chat.ChatMessageEvent{
+	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      200,
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_TYPING,
@@ -280,7 +280,7 @@ func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connecti
 }
 
 func (l *MessagesLogic) handleEvaluationInvite(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
-	conn.SendEvent(&chat.ChatMessageEvent{
+	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      200,
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE,
@@ -303,7 +303,7 @@ func sessionAgentFromPayload(conn *ws.Connection, sessionNo string, agentId int6
 }
 
 func sendWSError(conn *ws.Connection, message string, err error) {
-	conn.SendEvent(&chat.ChatMessageEvent{
+	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      200,
 		Msg:       "",
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,

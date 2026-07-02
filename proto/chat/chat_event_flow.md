@@ -126,7 +126,50 @@ enum ChatEventType {
 
 ---
 
-## 4. 事件总表
+## 4. WebSocket 数据结构
+
+WebSocket 方向分为两种 envelope：
+
+| 方向 | 结构 | 说明 |
+|---|---|---|
+| JS 客户端 -> chat-api / chat-admin-api | `ChatWsRequest` | 客户端请求结构，包含 `event_type`、`request_id`、`client_time` 和 `oneof payload` |
+| 服务端 -> JS 客户端 | `ChatWsResponse` | 服务端推送结构，包含 `code`、`msg`、`event_type`、`created_at` 和 `oneof payload` |
+
+`ChatWsRequest` 示例：
+
+```json
+{
+  "eventType": "CHAT_EVENT_TYPE_MESSAGE",
+  "requestId": "client-msg-001",
+  "clientTime": 1760000000000,
+  "message": {
+    "sessionNo": "CS...",
+    "clientMessageId": "client-msg-001",
+    "messageType": "CHAT_MESSAGE_TYPE_TEXT",
+    "content": "你好"
+  }
+}
+```
+
+常用请求 payload：
+
+| 事件 | payload 字段 | payload 类型 |
+|---|---|---|
+| `CHAT_EVENT_TYPE_MESSAGE` | `message` | `ChatWsMessagePayload` |
+| `CHAT_EVENT_TYPE_SESSION_CLOSE` | `session` | `ChatWsSessionPayload` |
+| `CHAT_EVENT_TYPE_AGENT_ACCEPTED` | `agent` | `ChatWsAgentPayload` |
+| `CHAT_EVENT_TYPE_AGENT_LEAVE` | `agent` | `ChatWsAgentPayload` |
+| `CHAT_EVENT_TYPE_TYPING` | `typing` | `ChatTypingPayload` |
+| `CHAT_EVENT_TYPE_EVALUATION_INVITE` | `evaluation` | `ChatEvaluationPayload` |
+| `CHAT_EVENT_TYPE_EVALUATION_SUBMIT` | `evaluation` | `ChatEvaluationPayload` |
+| `CHAT_EVENT_TYPE_MESSAGE_READ` | `receipt` | `ChatMessageReceiptPayload` |
+| `CHAT_EVENT_TYPE_MESSAGE_RECALL` | `message_operate` | `ChatMessageOperatePayload` |
+| `CHAT_EVENT_TYPE_MESSAGE_DELETE` | `message_operate` | `ChatMessageOperatePayload` |
+| `CHAT_EVENT_TYPE_HEARTBEAT` | `heartbeat` | `ChatHeartbeatPayload` |
+
+---
+
+## 5. 事件总表
 
 | 事件类型 | 主要含义 | 主要触发方 | 推送目标 | 是否建议入库 |
 |---|---|---|---|---|
@@ -154,9 +197,9 @@ enum ChatEventType {
 
 ---
 
-## 5. 完整主流程
+## 6. 完整主流程
 
-### 5.1 用户打开客服页面
+### 6.1 用户打开客服页面
 
 用户打开 APP / H5 客服页面，客户端先获取 `chatToken`，服务端返回 token 数据并设置 `Set-Cookie: chat_token=...`，之后客户端建立 WebSocket 连接。
 
@@ -195,7 +238,7 @@ Token / Cookie 规则：
 
 ---
 
-### 5.2 用户发起咨询，进入等待服务列表
+### 6.2 用户发起咨询，进入等待服务列表
 
 用户点击“联系客服”或发送第一条咨询后，服务端创建等待会话，并加入等待服务列表。
 
@@ -254,7 +297,7 @@ session_status = WAITING
 
 ---
 
-### 5.3 等待列表变化
+### 6.3 等待列表变化
 
 当等待人数、排队位置、预计等待时间变化时，服务端继续推送 `QUEUE_UPDATE`。
 
@@ -289,7 +332,7 @@ estimated_wait_seconds = 120
 
 ---
 
-### 5.4 坐席主动接待会话
+### 6.4 坐席主动接待会话
 
 坐席在后台等待服务列表中点击“接待”。
 
@@ -339,7 +382,7 @@ queue_action = ACCEPTED
 
 ---
 
-### 5.5 双方开始聊天
+### 6.5 双方开始聊天
 
 用户或坐席发送消息。
 
@@ -378,7 +421,7 @@ CHAT_EVENT_TYPE_MESSAGE_READ
 
 ---
 
-### 5.6 正在输入
+### 6.6 正在输入
 
 用户或坐席正在输入时，客户端发送 `TYPING`。
 
@@ -407,7 +450,7 @@ CHAT_EVENT_TYPE_MESSAGE_READ
 
 ---
 
-### 5.7 消息撤回
+### 6.7 消息撤回
 
 用户或坐席撤回自己发送的消息。
 
@@ -444,7 +487,7 @@ message_id = M10001
 
 ---
 
-### 5.8 消息删除
+### 6.8 消息删除
 
 消息删除要区分两种业务。
 
@@ -477,7 +520,7 @@ delete_scope = SELF / BOTH
 
 ---
 
-### 5.9 会话转接
+### 6.9 会话转接
 
 当前坐席将会话转接给其他坐席。
 
@@ -532,7 +575,7 @@ CHAT_EVENT_TYPE_TRANSFER_REJECT
 
 ---
 
-### 5.10 坐席离开会话
+### 6.10 坐席离开会话
 
 坐席主动离开，或因为下线、异常断开导致离开。
 
@@ -556,7 +599,7 @@ CHAT_EVENT_TYPE_AGENT_LEAVE
 
 ---
 
-### 5.11 会话关闭
+### 6.11 会话关闭
 
 用户、坐席或系统关闭会话。
 
@@ -616,7 +659,7 @@ close_reason = TIMEOUT
 
 ---
 
-### 5.12 邀请评价
+### 6.12 邀请评价
 
 会话结束前或结束后，服务端邀请用户评价。
 
@@ -640,7 +683,7 @@ CHAT_EVENT_TYPE_EVALUATION_INVITE
 
 ---
 
-### 5.13 用户提交评价
+### 6.13 用户提交评价
 
 用户提交满意度、星级、标签、文字评价。
 
@@ -672,7 +715,7 @@ comment = 服务很好
 
 ---
 
-### 5.14 心跳
+### 6.14 心跳
 
 客户端和服务端之间定时心跳，用于判断连接是否存活。
 
@@ -697,7 +740,7 @@ comment = 服务很好
 
 ---
 
-### 5.15 错误事件
+### 6.15 错误事件
 
 发生业务错误时，服务端返回错误事件。
 
@@ -739,7 +782,7 @@ error_message = 该会话已被其他坐席接待
 
 ---
 
-## 6. 主流程时序图
+## 7. 主流程时序图
 
 ```mermaid
 sequenceDiagram
@@ -798,9 +841,9 @@ sequenceDiagram
 
 ---
 
-## 7. 常见分支流程
+## 8. 常见分支流程
 
-### 7.1 暂无坐席在线
+### 8.1 暂无坐席在线
 
 ```text
 用户发起咨询
@@ -825,7 +868,7 @@ SESSION_CLOSE，close_reason = NO_AGENT
 
 ---
 
-### 7.2 用户取消等待
+### 8.2 用户取消等待
 
 ```text
 用户进入等待列表
@@ -849,7 +892,7 @@ SESSION_CLOSE，close_reason = USER
 
 ---
 
-### 7.3 坐席接待竞争
+### 8.3 坐席接待竞争
 
 多个坐席同时点击同一个等待会话时，只允许一个坐席成功。
 
@@ -882,7 +925,7 @@ error_message = 该会话已被其他坐席接待
 
 ---
 
-### 7.4 转接成功
+### 8.4 转接成功
 
 ```text
 当前坐席发起转接
@@ -906,7 +949,7 @@ AGENT_ACCEPTED
 
 ---
 
-### 7.5 转接拒绝
+### 8.5 转接拒绝
 
 ```text
 当前坐席发起转接
@@ -929,7 +972,7 @@ TRANSFER_REJECT
 
 ---
 
-### 7.6 用户长时间不回复，系统关闭
+### 8.6 用户长时间不回复，系统关闭
 
 ```text
 会话服务中
@@ -950,7 +993,7 @@ SESSION_CLOSE，close_reason = TIMEOUT
 
 ---
 
-### 7.7 用户网络异常断开与恢复
+### 8.7 用户网络异常断开与恢复
 
 用户 WebSocket 异常断开或心跳超时时，只表示连接离线，不等同于会话关闭。
 
@@ -995,7 +1038,7 @@ SESSION_CLOSE，close_reason = INTERNET_ERROR
 
 ---
 
-## 8. 推荐字段设计
+## 9. 推荐字段设计
 
 为了支撑上面的事件流，`ChatEvent` 建议至少包含这些字段：
 
@@ -1088,7 +1131,7 @@ message ChatTransferInfo {
 
 ---
 
-## 9. 事件入库建议
+## 10. 事件入库建议
 
 | 事件类型 | 是否入库 | 原因 |
 |---|---|---|
@@ -1115,9 +1158,9 @@ message ChatTransferInfo {
 
 ---
 
-## 10. 推荐服务端处理规则
+## 11. 推荐服务端处理规则
 
-### 10.1 用户进入等待列表
+### 11.1 用户进入等待列表
 
 服务端应该：
 
@@ -1129,7 +1172,7 @@ message ChatTransferInfo {
 
 ---
 
-### 10.2 坐席接待
+### 11.2 坐席接待
 
 服务端应该：
 
@@ -1143,7 +1186,7 @@ message ChatTransferInfo {
 
 ---
 
-### 10.3 消息发送
+### 11.3 消息发送
 
 服务端应该：
 
@@ -1157,7 +1200,7 @@ message ChatTransferInfo {
 
 ---
 
-### 10.4 已读处理
+### 11.4 已读处理
 
 服务端应该：
 
@@ -1168,7 +1211,7 @@ message ChatTransferInfo {
 
 ---
 
-### 10.5 会话关闭
+### 11.5 会话关闭
 
 服务端应该：
 
@@ -1180,7 +1223,7 @@ message ChatTransferInfo {
 
 ---
 
-### 10.6 网络异常断开
+### 11.6 网络异常断开
 
 服务端应该：
 
@@ -1192,7 +1235,7 @@ message ChatTransferInfo {
 
 ---
 
-## 11. 总结
+## 12. 总结
 
 当前事件设计的核心流程是：
 

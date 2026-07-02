@@ -243,7 +243,7 @@ export interface ChatErrorPayload {
   retryable?: boolean;
 }
 
-export interface ChatMessageEvent {
+export interface ChatWsResponse {
   code?: number;
   msg?: string;
   eventType: ChatEventType;
@@ -264,7 +264,7 @@ export interface ChatMessageEvent {
   error?: ChatErrorPayload;
 }
 
-export type ChatWsEvent = ChatMessageEvent;
+export type ChatWsEvent = ChatWsResponse;
 
 export interface ChatWsRequest<TPayload = unknown> {
   eventType?: ChatEventType;

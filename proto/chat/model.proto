@@ -193,7 +193,7 @@ message ChatEvaluationInvite {
 /**
  * WebSocket / 推送统一事件
  */
-message ChatMessageEvent {
+message ChatWsResponse {
   // 业务状态码
   // 例如：0 成功，非 0 表示错误
   int32 code = 1;
@@ -284,6 +284,138 @@ message ChatMessageEvent {
     // CHAT_EVENT_TYPE_ERROR
     ChatErrorPayload error = 23;
   }
+}
+
+/**
+ * WebSocket 客户端请求统一 envelope
+ *
+ * JS 客户端发送给 chat-api / chat-admin-api 的 WS 请求统一使用该结构。
+ * event_type 表示本次请求动作，payload 使用 oneof，字段名与事件语义保持一致。
+ */
+message ChatWsRequest {
+  // 事件类型 / 请求动作
+  ChatEventType event_type = 1;
+
+  // 客户端请求 ID，用于幂等、排查或回执关联
+  string request_id = 2;
+
+  // 客户端时间戳，毫秒
+  int64 client_time = 3;
+
+  oneof payload {
+    // 发送普通聊天消息
+    // 对应：CHAT_EVENT_TYPE_MESSAGE
+    ChatWsMessagePayload message = 10;
+
+    // 会话关闭
+    // 对应：CHAT_EVENT_TYPE_SESSION_CLOSE
+    ChatWsSessionPayload session = 11;
+
+    // 系统通知
+    // 对应：CHAT_EVENT_TYPE_SYSTEM_NOTICE
+    ChatSystemNoticePayload system_notice = 12;
+
+    // 用户进入 / 离开
+    // 对应：
+    // CHAT_EVENT_TYPE_USER_JOIN
+    // CHAT_EVENT_TYPE_USER_LEAVE
+    ChatUserStatePayload user_state = 13;
+
+    // 排队 / 等待服务列表变化
+    // 对应：CHAT_EVENT_TYPE_QUEUE_UPDATE
+    ChatQueuePayload queue = 14;
+
+    // 坐席接待 / 坐席离开
+    // 对应：
+    // CHAT_EVENT_TYPE_AGENT_ACCEPTED
+    // CHAT_EVENT_TYPE_AGENT_LEAVE
+    ChatWsAgentPayload agent = 15;
+
+    // 会话转接
+    // 对应：
+    // CHAT_EVENT_TYPE_TRANSFER_REQUEST
+    // CHAT_EVENT_TYPE_TRANSFER_ACCEPT
+    // CHAT_EVENT_TYPE_TRANSFER_REJECT
+    ChatTransferPayload transfer = 16;
+
+    // 评价
+    // 对应：
+    // CHAT_EVENT_TYPE_EVALUATION_INVITE
+    // CHAT_EVENT_TYPE_EVALUATION_SUBMIT
+    ChatEvaluationPayload evaluation = 17;
+
+    // 正在输入
+    // 对应：CHAT_EVENT_TYPE_TYPING
+    ChatTypingPayload typing = 18;
+
+    // 消息状态回执
+    // 对应：
+    // CHAT_EVENT_TYPE_MESSAGE_DELIVERED
+    // CHAT_EVENT_TYPE_MESSAGE_READ
+    ChatMessageReceiptPayload receipt = 19;
+
+    // 消息操作
+    // 对应：
+    // CHAT_EVENT_TYPE_MESSAGE_RECALL
+    // CHAT_EVENT_TYPE_MESSAGE_DELETE
+    ChatMessageOperatePayload message_operate = 20;
+
+    // 心跳
+    // 对应：CHAT_EVENT_TYPE_HEARTBEAT
+    ChatHeartbeatPayload heartbeat = 21;
+  }
+}
+
+/**
+ * WebSocket 发送消息请求 payload
+ *
+ * chat-api 收到后转换为 SendUserMessageReq；
+ * chat-admin-api 收到后转换为 SendAgentMessageReq。
+ */
+message ChatWsMessagePayload {
+  string session_no = 1;            // 会话编号
+  string client_message_id = 2;     // 客户端消息ID，用于幂等/回执
+  ChatMessageType message_type = 3; // 消息类型
+  string content = 4;               // 文本内容
+  string url = 5;                   // 资源URL
+  string file_name = 6;             // 文件名
+  int64 file_size = 7;              // 文件大小(byte)
+  string mime_type = 8;             // MIME类型
+  int32 width = 9;                  // 图片/视频宽度
+  int32 height = 10;                // 图片/视频高度
+  int32 duration = 11;              // 音频/视频时长(秒)
+  string extra = 12;                // 扩展JSON
+  ChatMessageUser sender = 13;      // 发送方
+  ChatMessageUser receiver = 14;    // 接收方
+  int64 merchant_id = 15;           // 客服商户ID；通常由 token/context 补齐
+  bool is_guest = 16;               // 是否游客/临时会话
+}
+
+/**
+ * WebSocket 会话请求 payload
+ *
+ * 用于用户/坐席关闭会话等会话级请求。
+ */
+message ChatWsSessionPayload {
+  string session_no = 1;     // 会话编号
+  int64 merchant_id = 2;     // 客服商户ID；通常由 token/context 补齐
+  int64 user_id = 3;         // 用户ID
+  int64 agent_id = 4;        // 坐席ID
+  string close_reason = 5;   // 关闭原因
+  bool is_guest = 6;         // 是否游客/临时会话
+}
+
+/**
+ * WebSocket 坐席请求 payload
+ *
+ * 用于坐席接待、坐席离开等坐席动作。
+ */
+message ChatWsAgentPayload {
+  string session_no = 1; // 会话编号
+  string reason = 2;     // 操作原因
+  int64 merchant_id = 3; // 客服商户ID；通常由 token/context 补齐
+  int64 agent_id = 4;   // 坐席ID
+  bool is_guest = 5;    // 是否游客/临时会话
 }
 
 /**

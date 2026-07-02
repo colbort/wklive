@@ -28,7 +28,7 @@ func NewSendUserTypingLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 
 // 发送用户输入状态
 func (l *SendUserTypingLogic) SendUserTyping(in *chat.SendUserTypingReq) (*chat.AppCommonResp, error) {
-	event := &chat.ChatMessageEvent{
+	event := &chat.ChatWsResponse{
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_TYPING,
 		CreatedAt: utils.NowMillis(),
 		Payload:   &chat.ChatMessageEvent_Typing{Typing: in.Typing},

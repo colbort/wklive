@@ -8,6 +8,7 @@ package chat
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -152,7 +153,7 @@ type ChatAdminClient interface {
 	// 删除工单
 	DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 订阅客服消息事件流
-	AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatMessageEvent], error)
+	AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatWsResponse], error)
 }
 
 type chatAdminClient struct {
@@ -573,13 +574,13 @@ func (c *chatAdminClient) DeleteChatWorkOrder(ctx context.Context, in *DeleteCha
 	return out, nil
 }
 
-func (c *chatAdminClient) AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatMessageEvent], error) {
+func (c *chatAdminClient) AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ChatWsResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &ChatAdmin_ServiceDesc.Streams[0], ChatAdmin_AdminSubscribeStream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[AdminChatSubscribeRequest, ChatMessageEvent]{ClientStream: stream}
+	x := &grpc.GenericClientStream[AdminChatSubscribeRequest, ChatWsResponse]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -590,7 +591,7 @@ func (c *chatAdminClient) AdminSubscribeStream(ctx context.Context, in *AdminCha
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ChatAdmin_AdminSubscribeStreamClient = grpc.ServerStreamingClient[ChatMessageEvent]
+type ChatAdmin_AdminSubscribeStreamClient = grpc.ServerStreamingClient[ChatWsResponse]
 
 // ChatAdminServer is the server API for ChatAdmin service.
 // All implementations must embed UnimplementedChatAdminServer
@@ -681,7 +682,7 @@ type ChatAdminServer interface {
 	// 删除工单
 	DeleteChatWorkOrder(context.Context, *DeleteChatWorkOrderReq) (*AdminCommonResp, error)
 	// 订阅客服消息事件流
-	AdminSubscribeStream(*AdminChatSubscribeRequest, grpc.ServerStreamingServer[ChatMessageEvent]) error
+	AdminSubscribeStream(*AdminChatSubscribeRequest, grpc.ServerStreamingServer[ChatWsResponse]) error
 	mustEmbedUnimplementedChatAdminServer()
 }
 
@@ -815,7 +816,7 @@ func (UnimplementedChatAdminServer) PageChatWorkOrders(context.Context, *PageCha
 func (UnimplementedChatAdminServer) DeleteChatWorkOrder(context.Context, *DeleteChatWorkOrderReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteChatWorkOrder not implemented")
 }
-func (UnimplementedChatAdminServer) AdminSubscribeStream(*AdminChatSubscribeRequest, grpc.ServerStreamingServer[ChatMessageEvent]) error {
+func (UnimplementedChatAdminServer) AdminSubscribeStream(*AdminChatSubscribeRequest, grpc.ServerStreamingServer[ChatWsResponse]) error {
 	return status.Error(codes.Unimplemented, "method AdminSubscribeStream not implemented")
 }
 func (UnimplementedChatAdminServer) mustEmbedUnimplementedChatAdminServer() {}
@@ -1582,11 +1583,11 @@ func _ChatAdmin_AdminSubscribeStream_Handler(srv interface{}, stream grpc.Server
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(ChatAdminServer).AdminSubscribeStream(m, &grpc.GenericServerStream[AdminChatSubscribeRequest, ChatMessageEvent]{ServerStream: stream})
+	return srv.(ChatAdminServer).AdminSubscribeStream(m, &grpc.GenericServerStream[AdminChatSubscribeRequest, ChatWsResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ChatAdmin_AdminSubscribeStreamServer = grpc.ServerStreamingServer[ChatMessageEvent]
+type ChatAdmin_AdminSubscribeStreamServer = grpc.ServerStreamingServer[ChatWsResponse]
 
 // ChatAdmin_ServiceDesc is the grpc.ServiceDesc for ChatAdmin service.
 // It's only intended for direct use with grpc.RegisterService,

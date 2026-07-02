@@ -81,7 +81,7 @@ func (c *Connection) ReadPump() {
 		}
 		var event InboundEvent
 		if err := json.Unmarshal(payload, &event); err != nil {
-			c.SendEvent(&chat.ChatMessageEvent{
+			c.SendEvent(&chat.ChatWsResponse{
 				Code:      200,
 				Msg:       "",
 				EventType: chat.ChatEventType_CHAT_EVENT_TYPE_ERROR,
@@ -139,7 +139,7 @@ func (c *Connection) WritePump() {
 	}
 }
 
-func (c *Connection) SendEvent(event *chat.ChatMessageEvent) {
+func (c *Connection) SendEvent(event *chat.ChatWsResponse) {
 	if event == nil {
 		return
 	}

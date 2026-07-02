@@ -42,7 +42,7 @@ service ChatApp {
       returns (AppChatSatisfactionResp);
 
   // 订阅客服消息事件流
-  rpc AppSubscribeStream(AppChatSubscribeRequest) returns (stream ChatMessageEvent);
+  rpc AppSubscribeStream(AppChatSubscribeRequest) returns (stream ChatWsResponse);
 }
 
 message AppCommonResp {

@@ -22,7 +22,7 @@ type PublishMessageEventReq struct {
 func PublishMessageEvent(req PublishMessageEventReq) error {
 	createdAt := utils.NowMillis()
 
-	event := &chat.ChatMessageEvent{
+	event := &chat.ChatWsResponse{
 		Code:      200,
 		Msg:       "",
 		EventType: req.EventType,

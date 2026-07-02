@@ -7,12 +7,13 @@
 package chat
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
 	common "wklive/proto/common"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -4768,7 +4769,7 @@ var file_proto_chat_chat_admin_proto_goTypes = []any{
 	(*ChatQuickReply)(nil),                 // 83: chat.ChatQuickReply
 	(*ChatCategory)(nil),                   // 84: chat.ChatCategory
 	(*ChatWorkOrder)(nil),                  // 85: chat.ChatWorkOrder
-	(*ChatMessageEvent)(nil),               // 86: chat.ChatMessageEvent
+	(*ChatWsResponse)(nil),               // 86: chat.ChatWsResponse
 }
 var file_proto_chat_chat_admin_proto_depIdxs = []int32{
 	64,  // 0: chat.AdminCommonResp.base:type_name -> common.RespBase
@@ -4933,7 +4934,7 @@ var file_proto_chat_chat_admin_proto_depIdxs = []int32{
 	63,  // 159: chat.ChatAdmin.GetChatWorkOrder:output_type -> chat.AdminChatWorkOrderResp
 	55,  // 160: chat.ChatAdmin.PageChatWorkOrders:output_type -> chat.PageChatWorkOrdersResp
 	0,   // 161: chat.ChatAdmin.DeleteChatWorkOrder:output_type -> chat.AdminCommonResp
-	86,  // 162: chat.ChatAdmin.AdminSubscribeStream:output_type -> chat.ChatMessageEvent
+	86,  // 162: chat.ChatAdmin.AdminSubscribeStream:output_type -> chat.ChatWsResponse
 	121, // [121:163] is the sub-list for method output_type
 	79,  // [79:121] is the sub-list for method input_type
 	79,  // [79:79] is the sub-list for extension type_name
