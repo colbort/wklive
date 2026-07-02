@@ -315,7 +315,7 @@ async function loadSessions(loadActiveMessages = false) {
       limit: 50,
     });
     const previousActiveSessionNo = activeSessionNo.value;
-    sessions.value = mergeLiveSessions(resp.data.map(normalizeSession));
+    sessions.value = collapseGuestSessions(resp.data.map(normalizeSession));
     syncActiveSession();
     if (
       loadActiveMessages &&
@@ -427,42 +427,56 @@ function dispatchWsEvent(event: ChatWsEvent) {
 
 function handleAgentStateWsEvent(payload: ChatAgentPayload) {
   updateAgentFromEvent(payload);
+  scheduleRefreshSessions();
 }
 
 function handleAgentAcceptedWsEvent(payload: ChatAgentPayload) {
-  markSessionAccepted(payload);
+  if (payload.sessionNo) {
+    setSessionStatusMessage(payload.sessionNo, payload.remark || "");
+    if (Number(payload.agentId || agentId.value) === agentId.value) {
+      statusFilter.value = "serving";
+      activeSessionNo.value = payload.sessionNo;
+    }
+  }
   scheduleRefreshSessions();
 }
 
 function handleSessionCloseWsEvent(payload: ChatSession) {
-  markSessionClosed(payload);
+  if (payload.sessionNo) {
+    setSessionStatusMessage(
+      payload.sessionNo,
+      payload.closeReason || "本次会话已结束",
+    );
+    if (activeSessionNo.value === payload.sessionNo) {
+      statusFilter.value = "closed";
+    }
+  }
   scheduleRefreshSessions();
 }
 
 function handleQueueUpdateWsEvent(payload: ChatQueuePayload) {
-  updateQueueFromPayload(payload);
-  focusWaitingSession(payload.sessionNo);
+  if (payload.sessionNo) {
+    setSessionStatusMessage(payload.sessionNo, queueStatusMessage(payload));
+    focusWaitingSession(payload.sessionNo);
+  }
   scheduleRefreshSessions();
 }
 
 function handleUserJoinWsEvent(event: ChatWsEvent) {
-  const session = event.session ? normalizeSession(event.session) : undefined;
-  const sessionNo = session?.sessionNo || event.userState?.sessionNo || "";
+  const sessionNo = event.session?.sessionNo || event.userState?.sessionNo || "";
   if (!sessionNo) {
     scheduleRefreshSessions();
     return;
-  }
-  if (session) {
-    upsertSession(session);
-  } else if (!sessions.value.some((item) => item.sessionNo === sessionNo)) {
-    upsertSession(sessionFromUserState(event.userState));
   }
   focusWaitingSession(sessionNo);
   scheduleRefreshSessions();
 }
 
 function handleUserLeaveWsEvent(payload: ChatUserStatePayload) {
-  handleUserLeave(payload);
+  if (payload.sessionNo) {
+    setSessionStatusMessage(payload.sessionNo, payload.userName || "用户已离开");
+  }
+  scheduleRefreshSessions();
 }
 
 function handleMessageWsEvent(payload: ChatMessage) {
@@ -502,15 +516,11 @@ function handleWsConnectedWsEvent(payload: WsConnectedPayload) {
 }
 
 function applyWsSessionMessage(message: ChatMessage) {
-  let messagePushed = false;
   if (message.sessionNo && message.messageNo) {
     normalizeMessageEnums(message);
     if (shouldAppendWsMessage(message)) {
-      messagePushed = pushMessage(message);
+      pushMessage(message);
     }
-  }
-  if (message.sessionNo && shouldAppendWsMessage(message)) {
-    upsertSessionFromMessage(message, messagePushed);
   }
   const session = message.sessionNo
     ? sessions.value.find((item) => item.sessionNo === message.sessionNo)
@@ -522,6 +532,7 @@ function applyWsSessionMessage(message: ChatMessage) {
   ) {
     statusFilter.value = "waiting";
   }
+  scheduleRefreshSessions();
   return message;
 }
 
@@ -530,63 +541,6 @@ function focusWaitingSession(sessionNo: string) {
     statusFilter.value = "waiting";
     mobileChatOpen.value = false;
   }
-}
-
-function handleUserLeave(payload: ChatUserStatePayload) {
-  const sessionNo = payload.sessionNo;
-  if (!sessionNo) {
-    scheduleRefreshSessions();
-    return;
-  }
-  const index = sessions.value.findIndex(
-    (item) => item.sessionNo === sessionNo,
-  );
-  if (index < 0) {
-    scheduleRefreshSessions();
-    return;
-  }
-  const session = sessions.value[index];
-  const status = sessionStatusValue(session.status);
-  if (isGuestSession(session)) {
-    removeSession(sessionNo);
-    if (activeSessionNo.value === sessionNo) {
-      syncActiveSession();
-      mobileChatOpen.value = false;
-    }
-    return;
-  }
-  if (status === sessionStatus.waiting || needsAccept(session)) {
-    removeSession(sessionNo);
-    if (activeSessionNo.value === sessionNo) {
-      syncActiveSession();
-      mobileChatOpen.value = false;
-    }
-    if (statusFilter.value === "waiting") {
-      scheduleRefreshSessions();
-    }
-    return;
-  }
-  if (status === sessionStatus.closed) {
-    if (statusFilter.value === "closed") {
-      scheduleRefreshSessions();
-    }
-    return;
-  }
-  const message = payload.userName || "用户已离开";
-  setSessionStatusMessage(sessionNo, message);
-  session.lastMessage = message;
-  session.lastMessageTime = Number(Date.now());
-  session.updateTimes = session.lastMessageTime;
-  ElMessage.info(message);
-}
-
-function removeSession(sessionNo: string) {
-  sessions.value = sessions.value.filter((item) => item.sessionNo !== sessionNo);
-  const { [sessionNo]: _removedMessage, ...nextStatusMessages } =
-    sessionStatusMessages.value;
-  sessionStatusMessages.value = nextStatusMessages;
-  const { [sessionNo]: _removedMessages, ...nextMessages } = messages.value;
-  messages.value = nextMessages;
 }
 
 function updateAgentFromEvent(agent?: ChatAgentPayload) {
@@ -599,20 +553,6 @@ function updateAgentFromEvent(agent?: ChatAgentPayload) {
     welcomeMessage: agent.remark || auth.agent?.welcomeMessage || "",
     updateTimes: agent.actionTime || auth.agent?.updateTimes || 0,
   };
-}
-
-function updateQueueFromPayload(queue: ChatQueuePayload) {
-  if (!queue.sessionNo) return;
-  setSessionStatusMessage(queue.sessionNo, queueStatusMessage(queue));
-  const exists = sessions.value.find(
-    (item) => item.sessionNo === queue.sessionNo,
-  );
-  if (!exists) return;
-  const nextStatus = sessionStatusValue(queue.sessionStatus);
-  if (nextStatus) {
-    exists.status = nextStatus;
-  }
-  exists.updateTimes = Number(queue.actionTime || exists.updateTimes);
 }
 
 function scheduleRefreshSessions() {
@@ -640,216 +580,6 @@ function applyMessageReceipt(payload: ChatMessageReceiptPayload) {
   message.status = Number(payload.messageStatus || message.status);
   message.updateTime = Number(payload.receiptTime || message.updateTime);
   messages.value[payload.sessionNo] = [...list];
-}
-
-function upsertSessionFromMessage(
-  message: ChatMessage,
-  shouldCountUnread = true,
-) {
-  const exists = sessions.value.find(
-    (item) => item.sessionNo === message.sessionNo,
-  );
-  if (exists) {
-    exists.lastMessage = message.content;
-    exists.lastMessageNo = message.messageNo;
-    exists.lastMessageTime = message.createTime;
-    exists.lastSenderType = senderTypeValue(message.senderType);
-    exists.updateTimes = message.updateTime;
-    const senderType = senderTypeValue(message.senderType);
-    if (
-      senderType === 1 &&
-      sessionStatusValue(exists.status) !== sessionStatus.closed
-    ) {
-      exists.status = sessionStatus.pendingAgent;
-      if (shouldCountUnread) {
-        exists.agentUnreadCount += 1;
-      }
-    }
-    if (
-      senderType === 2 &&
-      sessionStatusValue(exists.status) !== sessionStatus.closed
-    ) {
-      exists.status = sessionStatus.pendingUser;
-      if (shouldCountUnread) {
-        exists.userUnreadCount += 1;
-      }
-      exists.agentId = Number(messageAgentId(message) || agentId.value);
-    }
-    return;
-  }
-
-  sessions.value = [transientSessionFromMessage(message), ...sessions.value];
-  syncActiveSession();
-}
-
-function markSessionAccepted(payload: ChatAgentPayload) {
-  const sessionNo = payload.sessionNo;
-  if (!sessionNo) return;
-  setSessionStatusMessage(sessionNo, payload.remark || "");
-  const session = sessions.value.find((item) => item.sessionNo === sessionNo);
-  const acceptedAgentId = Number(payload.agentId || agentId.value);
-  if (!session) {
-    scheduleRefreshSessions();
-  } else {
-    session.agentId = acceptedAgentId;
-    session.status = sessionStatus.serving;
-    session.updateTimes = Number(payload.actionTime || session.updateTimes);
-  }
-  if (acceptedAgentId === agentId.value) {
-    statusFilter.value = "serving";
-    activeSessionNo.value = sessionNo;
-  } else {
-    syncActiveSession();
-  }
-}
-
-function markSessionClosed(payload: ChatSession) {
-  const sessionNo = payload.sessionNo;
-  if (!sessionNo) return;
-  const closedSession = normalizeSession(payload);
-  upsertSession(closedSession);
-  const session = sessions.value.find((item) => item.sessionNo === sessionNo);
-  if (isGuestSession(session)) {
-    removeSession(sessionNo);
-    if (activeSessionNo.value === sessionNo) {
-      syncActiveSession();
-      mobileChatOpen.value = false;
-    }
-    return;
-  }
-  setSessionStatusMessage(
-    sessionNo,
-    closedSession.closeReason || "本次会话已结束",
-  );
-  if (session) {
-    session.status = sessionStatus.closed;
-    session.closeTime = closedSession.closeTime || Date.now();
-    session.closeReason = closedSession.closeReason || session.closeReason || "";
-    session.lastMessage =
-      closedSession.closeReason ||
-      closedSession.lastMessage ||
-      session.lastMessage ||
-      "本次会话已结束";
-    session.lastMessageTime =
-      closedSession.lastMessageTime || session.closeTime;
-    session.updateTimes = closedSession.updateTimes || session.closeTime;
-  }
-  if (activeSessionNo.value === sessionNo) {
-    statusFilter.value = "closed";
-  }
-  syncActiveSession();
-}
-
-function upsertSession(session: ChatSession) {
-  const normalized = normalizeSession(session);
-  const exists = sessions.value.find(
-    (item) => item.sessionNo === normalized.sessionNo,
-  );
-  if (!exists) {
-    const guestKey = guestSessionKey(normalized);
-    const rest = guestKey
-      ? sessions.value.filter((item) => guestSessionKey(item) !== guestKey)
-      : sessions.value;
-    sessions.value = [normalized, ...rest];
-    return;
-  }
-  Object.assign(exists, normalized);
-  sessions.value = collapseGuestSessions(sessions.value);
-}
-
-function transientSessionFromMessage(message: ChatMessage): ChatSession {
-  const senderType = senderTypeValue(message.senderType);
-  return {
-    id: 0,
-    sessionNo: message.sessionNo,
-    merchantId: Number(message.merchantId || merchantId.value),
-    userId: Number(messageUserId(message)),
-    source: 2,
-    status:
-      senderType === 2 ? sessionStatus.pendingUser : sessionStatus.pendingAgent,
-    priority: 1,
-    agentId: Number(messageAgentId(message)),
-    groupId: 0,
-    title: message.sender?.nickname || "访客",
-    category: "",
-    lastMessage: message.content,
-    lastSenderType: message.senderType,
-    lastMessageTime: message.createTime,
-    userUnreadCount: senderType === 2 ? 1 : 0,
-    agentUnreadCount: senderType === 1 ? 1 : 0,
-    closeTime: 0,
-    closeReason: "",
-    extJson: {
-      nickname: message.sender?.nickname || "访客",
-      avatarUrl: message.sender?.avatarUrl || "",
-    },
-    lastMessageNo: message.messageNo,
-    createTimes: message.createTime,
-    updateTimes: message.updateTime || message.createTime,
-  };
-}
-
-function sessionFromUserState(payload?: ChatUserStatePayload): ChatSession {
-  const now = Date.now();
-  const nickname = payload?.userName || "访客";
-  return {
-    id: 0,
-    sessionNo: payload?.sessionNo || "",
-    merchantId: merchantId.value,
-    userId: Number(payload?.userId || 0),
-    source: Number(payload?.source || 0),
-    status: sessionStatus.waiting,
-    priority: 1,
-    agentId: 0,
-    groupId: 0,
-    title: nickname,
-    category: "",
-    lastMessage: payload?.online ? "用户已进入客服页面" : "用户离线",
-    lastSenderType: 1,
-    lastMessageTime: now,
-    userUnreadCount: 0,
-    agentUnreadCount: 0,
-    closeTime: 0,
-    closeReason: "",
-    extJson: {
-      nickname,
-      avatarUrl: payload?.avatar || "",
-    },
-    avatarUrl: payload?.avatar || "",
-    lastMessageNo: "",
-    createTimes: now,
-    updateTimes: now,
-  };
-}
-
-function messageAgentId(message?: ChatMessage) {
-  if (!message) return 0;
-  if (senderTypeValue(message.sender?.type) === 2) return message.sender?.id || 0;
-  if (senderTypeValue(message.receiver?.type) === 2)
-    return message.receiver?.id || 0;
-  return 0;
-}
-
-function messageUserId(message?: ChatMessage) {
-  if (!message) return 0;
-  if (senderTypeValue(message.sender?.type) === 1) return message.sender?.id || 0;
-  if (senderTypeValue(message.receiver?.type) === 1)
-    return message.receiver?.id || 0;
-  return 0;
-}
-
-function mergeLiveSessions(nextSessions: ChatSession[]) {
-  const validNextSessions = nextSessions.filter((item) =>
-    Boolean(item.sessionNo),
-  );
-  const nextNos = new Set(validNextSessions.map((item) => item.sessionNo));
-  const localLiveSessions = sessions.value.filter(
-    (item) =>
-      Boolean(item.sessionNo) &&
-      !nextNos.has(item.sessionNo) &&
-      sessionStatusValue(item.status) !== sessionStatus.closed,
-  );
-  return collapseGuestSessions([...localLiveSessions, ...validNextSessions]);
 }
 
 function isGuestSession(session?: ChatSession) {

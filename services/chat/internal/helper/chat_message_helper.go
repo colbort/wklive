@@ -134,22 +134,6 @@ func buildMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *mode
 			AvatarUrl: opts.Receiver.GetAvatarUrl(),
 		}
 	}
-	// 用户端发送的消息；Sender，Receiver 在发送消息的时候已经赋值
-	// 坐席端发送的消息；Sender 在发送消息的时候已经赋值；
-	if message.Sender.Type == int64(chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT) {
-		message.Receiver = &models.ChatMessageUser{
-			Id:        chatUser.Id,
-			Type:      int64(chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT),
-			Nickname:  chatUser.Nickname,
-			AvatarUrl: chatUser.AvatarUrl,
-		}
-	} else {
-		// 坐席端发送的消息，接收方是用户端；Receiver 信息在发送新的时候已经赋值；
-		message.Sender = &models.ChatMessageUser{
-			Nickname:  chatUser.Nickname,
-			AvatarUrl: chatUser.AvatarUrl,
-		}
-	}
 	return &message, nil
 }
 
