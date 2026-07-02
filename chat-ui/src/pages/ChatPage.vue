@@ -21,6 +21,7 @@ const authError = ref("");
 const activeMode = ref<ChatMode>("mobile");
 const rating = ref(5);
 const evaluationComment = ref("");
+const evaluationModalDismissed = ref(false);
 
 const chat = useChatSocket();
 
@@ -38,11 +39,11 @@ const canSubmitEvaluation = computed(
     rating.value >= 1 &&
     rating.value <= 5,
 );
-const showEvaluationPanel = computed(
+const showEvaluationModal = computed(
   () =>
-    Boolean(chat.evaluationInvite.value) ||
-    chat.sessionClosed.value ||
-    chat.evaluationSubmitted.value,
+    (Boolean(chat.evaluationInvite.value) || chat.sessionClosed.value) &&
+    !chat.evaluationSubmitted.value &&
+    !evaluationModalDismissed.value,
 );
 
 function messageDirection(message: {
@@ -112,7 +113,12 @@ async function submitEvaluation() {
   );
   if (submitted) {
     evaluationComment.value = "";
+    evaluationModalDismissed.value = true;
   }
+}
+
+function closeEvaluationModal() {
+  evaluationModalDismissed.value = true;
 }
 
 function handleComposerAction() {
@@ -179,6 +185,15 @@ watch(
   },
 );
 
+watch(
+  () => Boolean(chat.evaluationInvite.value) || chat.sessionClosed.value,
+  (visible) => {
+    if (visible && !chat.evaluationSubmitted.value) {
+      evaluationModalDismissed.value = false;
+    }
+  },
+);
+
 function handlePageHide() {
   void chat.endSession("page_leave", true);
 }
@@ -230,45 +245,6 @@ onBeforeUnmount(() => {
         {{ chat.error.value || authError }}
       </p>
 
-      <section v-if="showEvaluationPanel" class="evaluation-panel">
-        <div class="rating-row">
-          <button
-            v-for="value in 5"
-            :key="value"
-            class="rating-button"
-            :class="{ active: value <= rating }"
-            type="button"
-            :disabled="
-              !chat.isOpen.value ||
-              chat.evaluationSubmitting.value ||
-              chat.evaluationSubmitted.value
-            "
-            @click="rating = value"
-          >
-            ★
-          </button>
-        </div>
-        <textarea
-          v-model="evaluationComment"
-          class="evaluation-input"
-          :disabled="
-            !chat.isOpen.value ||
-            chat.evaluationSubmitting.value ||
-            chat.evaluationSubmitted.value
-          "
-          placeholder="补充评价"
-          rows="2"
-        />
-        <button
-          class="evaluation-submit"
-          type="button"
-          :disabled="!canSubmitEvaluation"
-          @click="submitEvaluation"
-        >
-          {{ chat.evaluationSubmitted.value ? "已评价" : "提交评价" }}
-        </button>
-      </section>
-
       <form class="composer" @submit.prevent="handleComposerAction">
         <button
           class="resource-button"
@@ -310,5 +286,65 @@ onBeforeUnmount(() => {
         </button>
       </form>
     </section>
+
+    <div
+      v-if="showEvaluationModal"
+      class="evaluation-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="evaluation-title"
+    >
+      <section class="evaluation-dialog">
+        <header class="evaluation-header">
+          <h2 id="evaluation-title">服务评价</h2>
+          <button
+            class="evaluation-close"
+            type="button"
+            aria-label="关闭"
+            @click="closeEvaluationModal"
+          >
+            ×
+          </button>
+        </header>
+        <div class="rating-row">
+          <button
+            v-for="value in 5"
+            :key="value"
+            class="rating-button"
+            :class="{ active: value <= rating }"
+            type="button"
+            :aria-label="`${value} 星`"
+            :disabled="!chat.isOpen.value || chat.evaluationSubmitting.value"
+            @click="rating = value"
+          >
+            ★
+          </button>
+        </div>
+        <textarea
+          v-model="evaluationComment"
+          class="evaluation-input"
+          :disabled="!chat.isOpen.value || chat.evaluationSubmitting.value"
+          placeholder="补充评价"
+          rows="3"
+        />
+        <div class="evaluation-actions">
+          <button
+            class="evaluation-secondary"
+            type="button"
+            @click="closeEvaluationModal"
+          >
+            稍后
+          </button>
+          <button
+            class="evaluation-submit"
+            type="button"
+            :disabled="!canSubmitEvaluation"
+            @click="submitEvaluation"
+          >
+            提交评价
+          </button>
+        </div>
+      </section>
+    </div>
   </main>
 </template>

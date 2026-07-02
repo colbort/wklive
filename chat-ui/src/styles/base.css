@@ -371,6 +371,95 @@ textarea:focus {
   white-space: nowrap;
 }
 
+.evaluation-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(15, 23, 42, 0.42);
+  z-index: 20;
+}
+
+.evaluation-dialog {
+  display: grid;
+  gap: 14px;
+  width: min(420px, 100%);
+  padding: 18px;
+  border: 1px solid #d9e3ef;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.22);
+}
+
+.evaluation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.evaluation-header h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 17px;
+  font-weight: 760;
+}
+
+.evaluation-close {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid #d9e3ef;
+  border-radius: 8px;
+  color: #64748b;
+  background: #fff;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.rating-row {
+  display: grid;
+  grid-template-columns: repeat(5, 40px);
+  gap: 8px;
+}
+
+.rating-button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid #d9e3ef;
+  border-radius: 8px;
+  color: #94a3b8;
+  background: #f8fafc;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.rating-button.active {
+  border-color: #f59e0b;
+  color: #f59e0b;
+  background: #fffbeb;
+}
+
+.evaluation-input {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.evaluation-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.evaluation-secondary,
+.evaluation-submit {
+  min-height: 42px;
+}
+
 @media (max-width: 760px) {
   .test-page {
     grid-template-columns: 1fr;
@@ -391,5 +480,14 @@ textarea:focus {
   .composer-input textarea {
     max-height: 120px;
     min-height: 44px;
+  }
+
+  .evaluation-overlay {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .evaluation-dialog {
+    width: 100%;
   }
 }
