@@ -123,9 +123,7 @@ const activeMessages = computed(() =>
     : [],
 );
 const visibleMessages = computed(() =>
-  activeNeedsAccept.value
-    ? []
-    : activeMessages.value.filter((message) => !isQueueSystemMessage(message)),
+  activeMessages.value.filter((message) => !isQueueSystemMessage(message)),
 );
 const merchantId = computed(
   () => auth.user?.merchantId || auth.agent?.merchantId || 0,
@@ -483,6 +481,7 @@ function handleUserLeaveWsEvent(payload: ChatUserStatePayload) {
 }
 
 function handleMessageWsEvent(payload: ChatMessage) {
+  console.log("收到消息，消息编号：" + payload.messageNo)
   applyWsSessionMessage(payload);
 }
 
@@ -689,7 +688,7 @@ function needsAccept(session?: ChatSession) {
 }
 
 function normalizeMessageEnums(message: ChatMessage) {
-  message.senderType = senderTypeValue(message.sender?.type);
+  message.senderType = senderTypeValue(message.senderType || message.sender?.type);
 }
 
 function normalizeMessage(message: ChatMessage) {

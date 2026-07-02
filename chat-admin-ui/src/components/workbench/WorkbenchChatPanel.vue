@@ -152,7 +152,7 @@ function formatNickname(nickname: string) {
         选择左侧会话后查看消息
       </div>
       <div
-        v-else-if="activeNeedsAccept"
+        v-else-if="activeNeedsAccept && !messages.length"
         class="empty-state"
       >
         接待后查看历史消息

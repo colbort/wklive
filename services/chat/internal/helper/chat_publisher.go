@@ -25,7 +25,7 @@ func PublishMessageEvent[P any](ctx context.Context, busRedis *redis.Redis, chan
 		return err
 	}
 
-	payloadBytes, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	payloadBytes, err := protojson.MarshalOptions{UseProtoNames: false, UseEnumNumbers: true}.Marshal(event)
 	if err != nil {
 		return err
 	}

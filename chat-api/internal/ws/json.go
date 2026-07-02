@@ -59,11 +59,7 @@ func protoScalarJSONValue(field protoreflect.FieldDescriptor, value protoreflect
 	case protoreflect.BoolKind:
 		return value.Bool()
 	case protoreflect.EnumKind:
-		enumValue := field.Enum().Values().ByNumber(value.Enum())
-		if enumValue == nil {
-			return int32(value.Enum())
-		}
-		return string(enumValue.Name())
+		return int32(value.Enum())
 	case protoreflect.Int32Kind, protoreflect.Sint32Kind, protoreflect.Sfixed32Kind:
 		return int32(value.Int())
 	case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:

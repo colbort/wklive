@@ -33,7 +33,7 @@ func (l *SendAgentTypingLogic) SendAgentTyping(in *chat.SendAgentTypingReq) (*ch
 		CreatedAt: utils.NowMillis(),
 		Payload:   &chat.ChatWsResponse_Typing{Typing: in.Typing},
 	}
-	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	payload, err := protojson.MarshalOptions{UseProtoNames: false, UseEnumNumbers: true}.Marshal(event)
 	if err != nil {
 		return &chat.AdminCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

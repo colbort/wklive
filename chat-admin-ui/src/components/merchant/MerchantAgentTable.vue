@@ -19,7 +19,7 @@ import {
   type CreateChatAgentPayload,
   type UpdateChatAgentPayload,
 } from "@/api/chat";
-import { chatEventType } from "@/api/constant";
+import { chatEventType, type ChatEventType } from "@/api/constant";
 import { useAuthStore } from "@/stores/auth";
 import type { ChatAgent, ChatGroup } from "@/types/chat";
 import {
@@ -165,12 +165,12 @@ function clearReconnectTimer() {
 function handleWsMessage(payload: string) {
   try {
     const event = JSON.parse(payload) as {
-      type?: string;
+      eventType?: ChatEventType;
       agent?: ChatAgent;
     };
     if (
-      (event.type !== chatEventType.SYSTEM_NOTICE &&
-        event.type !== chatEventType.AGENT_LEAVE) ||
+      (event.eventType !== chatEventType.SYSTEM_NOTICE &&
+        event.eventType !== chatEventType.AGENT_LEAVE) ||
       !event.agent
     )
       return;
