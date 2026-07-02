@@ -540,6 +540,45 @@ p {
   white-space: pre-wrap;
 }
 
+.bubble-image,
+.bubble-video {
+  display: block;
+  max-width: min(320px, 54vw);
+  max-height: 280px;
+  border-radius: 6px;
+  object-fit: contain;
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.bubble-audio {
+  width: min(320px, 54vw);
+}
+
+.bubble-file {
+  display: grid;
+  gap: 4px;
+  min-width: min(240px, 52vw);
+  color: inherit;
+  text-decoration: none;
+}
+
+.bubble-file strong {
+  overflow-wrap: anywhere;
+}
+
+.bubble-file small {
+  color: currentColor;
+  opacity: 0.72;
+}
+
+.resource-input {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .message-row.sent .bubble {
   color: #fff;
   background: #2563eb;

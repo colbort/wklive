@@ -8,6 +8,7 @@ import {
   watch,
 } from "vue";
 import { setChatTokenCookie } from "@/api/chat";
+import ChatMessageBubble from "@/components/ChatMessageBubble.vue";
 import { useChatSocket } from "@/composables/useChatSocket";
 
 type ChatMode = "mobile" | "desktop";
@@ -134,9 +135,17 @@ function openResourcePicker() {
   resourceInput.value?.click();
 }
 
-function handleResourceSelected(event: Event) {
+async function handleResourceSelected(event: Event) {
   const input = event.target as HTMLInputElement;
-  selectedResourceName.value = input.files?.[0]?.name || "";
+  const file = input.files?.[0];
+  selectedResourceName.value = file?.name || "";
+  if (!file) return;
+  try {
+    await chat.sendImage(file);
+    selectedResourceName.value = "";
+  } finally {
+    input.value = "";
+  }
 }
 
 function resizeMessageInput() {
@@ -209,6 +218,7 @@ onBeforeUnmount(() => {
     ref="resourceInput"
     class="resource-input"
     type="file"
+    accept="image/*"
     @change="handleResourceSelected"
   />
 
@@ -224,21 +234,13 @@ onBeforeUnmount(() => {
           <span>请描述您遇到的问题，客服会在这里接收并回复。</span>
         </div>
 
-        <article
+        <ChatMessageBubble
           v-for="message in chat.messages.value"
           :key="message.messageNo"
-          class="message-row"
-          :class="{
-            sent: messageDirection(message) === 'sent',
-            received: messageDirection(message) === 'received',
-            system: messageDirection(message) === 'system',
-          }"
-        >
-          <div class="bubble">
-            <span>{{ messageSenderName(message) }}</span>
-            <p>{{ message.content }}</p>
-          </div>
-        </article>
+          :message="message"
+          :direction="messageDirection(message)"
+          :sender-name="messageSenderName(message)"
+        />
       </div>
 
       <p v-if="chat.error.value || authError" class="error-line">
@@ -252,7 +254,7 @@ onBeforeUnmount(() => {
           :disabled="!canComposeMessage"
           @click="openResourcePicker"
         >
-          资源
+          图片
         </button>
         <div class="composer-input">
           <textarea

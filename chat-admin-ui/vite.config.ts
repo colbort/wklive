@@ -30,6 +30,10 @@ export default defineConfig(({ mode }) => {
           target: proxyTarget,
           changeOrigin: true,
         },
+        '/chat_uploads': {
+          target: proxyTarget,
+          changeOrigin: true,
+        },
       },
     },
   }

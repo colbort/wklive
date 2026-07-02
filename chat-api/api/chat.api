@@ -78,6 +78,18 @@ type OptionsResp {
 	data Options
 }
 
+type UploadFileData {
+	url      string `json:"url"`
+	fileName string `json:"fileName"`
+	fileSize int64  `json:"fileSize"`
+	mimeType string `json:"mimeType"`
+}
+
+type UploadFileResp {
+	RespBase
+	data UploadFileData `json:"data"`
+}
+
 @server (
 	prefix:     /chat
 	group:      chat_token

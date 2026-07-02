@@ -4,6 +4,7 @@ import {
   listChatMessagesWithMeta,
   options as loadOptions,
   sendChatSocketEvent,
+  uploadChatFile,
 } from "@/api/chat";
 import { createChatWsRequest } from "@/types/chat";
 import type {
@@ -200,6 +201,34 @@ export function useChatSocket() {
       return;
     }
     const payload = buildTextMessagePayload(text);
+    sendUserMessagePayload(payload);
+  }
+
+  async function sendImage(file: File) {
+    if (!canSendResourceMessage()) {
+      return false;
+    }
+    if (!file.type.startsWith("image/")) {
+      error.value = "请选择图片文件";
+      return false;
+    }
+    try {
+      const uploaded = await uploadChatFile(file, chatToken.value);
+      const payload = buildImageMessagePayload({
+        url: uploaded.url,
+        fileName: uploaded.fileName || file.name,
+        fileSize: uploaded.fileSize || file.size,
+        mimeType: uploaded.mimeType || file.type,
+      });
+      sendUserMessagePayload(payload);
+      return true;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : "图片发送失败";
+      return false;
+    }
+  }
+
+  function sendUserMessagePayload(payload: SendUserMessagePayload) {
     const clientMessageId = `user-msg-${Date.now()}`;
     payload.clientMessageId = clientMessageId;
     sendUserMessageEvent(payload);
@@ -212,6 +241,15 @@ export function useChatSocket() {
       socket.value &&
         socket.value.readyState === WebSocket.OPEN &&
         content &&
+        agentAccepted.value &&
+        !sessionClosed.value,
+    );
+  }
+
+  function canSendResourceMessage() {
+    return Boolean(
+      socket.value &&
+        socket.value.readyState === WebSocket.OPEN &&
         agentAccepted.value &&
         !sessionClosed.value,
     );
@@ -237,6 +275,23 @@ export function useChatSocket() {
         nickname: agent.value?.agentName || "",
         avatarUrl: agent.value?.agentAvatar?.trim() || "",
       },
+    };
+  }
+
+  function buildImageMessagePayload(file: {
+    url: string;
+    fileName: string;
+    fileSize: number;
+    mimeType: string;
+  }): SendUserMessagePayload {
+    return {
+      ...buildTextMessagePayload(file.fileName),
+      messageType: 2,
+      content: file.fileName,
+      url: file.url,
+      fileName: file.fileName,
+      fileSize: file.fileSize,
+      mimeType: file.mimeType,
     };
   }
 
@@ -382,10 +437,8 @@ export function useChatSocket() {
 
   function handleAgentAcceptedEvent(payload: ChatAgentPayload) {
     agent.value = payload;
-    queueStatus.value = serviceStatusMessage(
-      payload.agentName,
-      payload.remark || "",
-    );
+    let name = payload.agentName
+    queueStatus.value = name ? `${name} 正在为你服务` : "客服正在为你服务";
   }
 
   function handleSessionCloseEvent(_payload: ChatSession) {
@@ -395,11 +448,6 @@ export function useChatSocket() {
 
   function handleMessageEvent(payload: ChatMessage) {
     const message = normalizeMessage(payload);
-    if (message.senderType === 2) {
-      queueStatus.value = serviceStatusMessage(
-        agent.value?.agentName || agentNameFromMessage(message),
-      );
-    }
     pushMessage(message);
   }
 
@@ -482,13 +530,6 @@ export function useChatSocket() {
   function agentNameFromMessage(message?: ChatMessage) {
     if (!message || message.senderType !== 2) return "";
     return (message.sender?.nickname || "").trim();
-  }
-
-  function serviceStatusMessage(agentName = "", preferred = "") {
-    const text = preferred.trim();
-    if (text.includes("客服正在为你服务")) return text;
-    const name = agentName.trim();
-    return name ? `${name} 客服正在为你服务` : "客服正在为你服务";
   }
 
   function pushMessage(message: ChatMessage) {
@@ -625,6 +666,7 @@ export function useChatSocket() {
     loadHistory,
     resetMessages,
     submitEvaluation,
+    sendImage,
     sendText,
   };
 }

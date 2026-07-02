@@ -24,6 +24,13 @@ export interface ChatTokenResp {
   expireAt: number;
 }
 
+export interface UploadFileData {
+  url: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+}
+
 export function createChatToken(
   data: CreateChatTokenReq,
 ): Promise<ChatTokenResp> {
@@ -55,6 +62,23 @@ export function listChatMessagesWithMeta(
     params,
     token: chatToken,
   });
+}
+
+export async function uploadChatFile(file: File, chatToken = "") {
+  const data = new FormData();
+  data.append("file", file, file.name);
+  const payload = await requestForm<
+    ApiResp<UploadFileData> & { Data?: UploadFileData }
+  >("/upload/file", {
+    method: "POST",
+    body: data,
+    token: chatToken,
+  });
+  const uploaded = payload.data || payload.Data;
+  if (!uploaded?.url) {
+    throw new Error("图片上传失败");
+  }
+  return uploaded;
 }
 
 export function chatWsUrl(): string {
@@ -122,6 +146,12 @@ interface RequestOptions {
   keepalive?: boolean;
 }
 
+interface FormRequestOptions {
+  method: "POST";
+  token?: string;
+  body: FormData;
+}
+
 async function requestData<T>(
   path: string,
   options: RequestOptions,
@@ -160,6 +190,28 @@ async function request<T extends RespBase>(
   return payload;
 }
 
+async function requestForm<T extends RespBase>(
+  path: string,
+  options: FormRequestOptions,
+): Promise<T> {
+  const res = await fetch(buildUrl(path), {
+    method: options.method,
+    headers: buildAuthHeaders(options.token),
+    body: options.body,
+    credentials: "include",
+    referrerPolicy: "no-referrer",
+  });
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+
+  const payload = (await res.json()) as T;
+  if (payload.code !== 200) {
+    throw new Error(payload.msg || "请求失败");
+  }
+  return payload;
+}
+
 function buildUrl(path: string, params?: object) {
   const url = new URL(`${apiBaseUrl}${path}`, window.location.origin);
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -177,13 +229,19 @@ function buildHeaders(options: RequestOptions) {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
-  if (options.token?.trim()) {
-    headers.Authorization = `Bearer ${options.token.trim()}`;
-  }
+  Object.assign(headers, buildAuthHeaders(options.token));
   Object.entries(options.headers || {}).forEach(([key, value]) => {
     if (value !== undefined && value !== "") {
       headers[key] = value;
     }
   });
+  return headers;
+}
+
+function buildAuthHeaders(token = "") {
+  const headers: Record<string, string> = {};
+  if (token.trim()) {
+    headers.Authorization = `Bearer ${token.trim()}`;
+  }
   return headers;
 }

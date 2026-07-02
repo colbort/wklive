@@ -7,6 +7,7 @@ import {
   pageMessages,
   pageSessions,
   updateAgentStatus,
+  uploadChatFile,
 } from "@/api/chat";
 import { chatEventType, type ChatEventType } from "@/api/constant";
 import WorkbenchChatPanel from "@/components/workbench/WorkbenchChatPanel.vue";
@@ -845,7 +846,7 @@ function send(value: string) {
     return;
   }
   const clientMessageId = `agent-msg-${Date.now()}`;
-  const payload: SendAgentMessagePayload = {
+  return sendAgentMessagePayload({
     clientMessageId,
     merchantId: merchantId.value,
     sessionNo: activeSession.value?.sessionNo || "",
@@ -857,7 +858,51 @@ function send(value: string) {
       nickname: auth.user?.nickname || "",
       avatarUrl: auth.user?.avatarUrl || "",
     },
-  };
+  });
+}
+
+async function sendImage(file: File) {
+  if (!canSendResourceMessage()) {
+    return false;
+  }
+  if (!file.type.startsWith("image/")) {
+    ElMessage.warning("请选择图片文件");
+    return false;
+  }
+  try {
+    const resp = await uploadChatFile(file);
+    const data = resp.data || resp.Data;
+    if (!data?.url) {
+      ElMessage.error("图片上传失败");
+      return false;
+    }
+    const clientMessageId = `agent-msg-${Date.now()}`;
+    return sendAgentMessagePayload({
+      clientMessageId,
+      merchantId: merchantId.value,
+      sessionNo: activeSession.value?.sessionNo || "",
+      messageType: 2,
+      content: data.fileName || file.name,
+      url: data.url,
+      fileName: data.fileName || file.name,
+      fileSize: data.fileSize || file.size,
+      mimeType: data.mimeType || file.type,
+      sender: {
+        type: 2,
+        id: auth.user?.id || 0,
+        nickname: auth.user?.nickname || "",
+        avatarUrl: auth.user?.avatarUrl || "",
+      },
+    });
+  } catch (err) {
+    ElMessage.error(err instanceof Error ? err.message : "图片发送失败");
+    return false;
+  }
+}
+
+function sendAgentMessagePayload(payload: SendAgentMessagePayload) {
+  const clientMessageId = payload.clientMessageId || `agent-msg-${Date.now()}`;
+  payload.clientMessageId = clientMessageId;
   const sent = sendWsEvent(
     createChatWsRequest(chatEventType.MESSAGE, "message", payload, {
       requestId: clientMessageId,
@@ -904,6 +949,14 @@ function buildOptimisticAgentMessage(
 function canSendMessage(content: string) {
   return Boolean(
     content &&
+      canSendResourceMessage(),
+  );
+}
+
+function canSendResourceMessage() {
+  return Boolean(
+      socket &&
+      socket.readyState === WebSocket.OPEN &&
       activeSession.value &&
       merchantId.value &&
       agentId.value &&
@@ -1003,6 +1056,7 @@ function buildAcceptSessionPayload(
       @back="backToSessions"
       @close="closeSession"
       @send="send"
+      @send-image="sendImage"
     />
 
     <WorkbenchCustomerPanel :session="activeSession" />

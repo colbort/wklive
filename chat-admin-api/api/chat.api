@@ -521,6 +521,18 @@ type PageChatWorkOrdersResp {
 	data []ChatWorkOrder `json:"data"`
 }
 
+type UploadFileData {
+	url      string `json:"url"`
+	fileName string `json:"fileName"`
+	fileSize int64  `json:"fileSize"`
+	mimeType string `json:"mimeType"`
+}
+
+type UploadFileResp {
+	RespBase
+	data UploadFileData `json:"data"`
+}
+
 @server (
 	prefix:     /chat/admin
 	group:      chat_auth
@@ -700,4 +712,3 @@ service chatAdmin {
 	@handler DeleteChatWorkOrder
 	delete /work-orders/:id (DeleteChatWorkOrderReq) returns (RespBase)
 }
-

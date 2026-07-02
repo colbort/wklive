@@ -562,3 +562,15 @@ type UpdateChatWorkOrderReq struct {
 	Status        int64  `json:"status,optional"`
 	Remark        string `json:"remark,optional"`
 }
+
+type UploadFileData struct {
+	Url      string `json:"url"`
+	FileName string `json:"fileName"`
+	FileSize int64  `json:"fileSize"`
+	MimeType string `json:"mimeType"`
+}
+
+type UploadFileResp struct {
+	RespBase
+	Data UploadFileData `json:"data"`
+}

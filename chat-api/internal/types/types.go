@@ -111,3 +111,15 @@ type RespBase struct {
 type SetChatTokenCookieReq struct {
 	ChatToken string `json:"chatToken"`
 }
+
+type UploadFileData struct {
+	Url      string `json:"url"`
+	FileName string `json:"fileName"`
+	FileSize int64  `json:"fileSize"`
+	MimeType string `json:"mimeType"`
+}
+
+type UploadFileResp struct {
+	RespBase
+	Data UploadFileData `json:"data"`
+}

@@ -8,6 +8,7 @@ import {
   putData,
   putRaw,
 } from "./request";
+import type { RespBase } from "./request";
 import type {
   ChatAgent,
   ChatCategory,
@@ -133,6 +134,18 @@ export interface SendAgentMessagePayload {
   clientMsgNo?: string;
 }
 
+export interface UploadFileData {
+  url: string;
+  fileName: string;
+  fileSize: number;
+  mimeType: string;
+}
+
+export interface UploadFileResp extends RespBase {
+  data?: UploadFileData;
+  Data?: UploadFileData;
+}
+
 export function login(data: LoginReq) {
   return postData<LoginData>("/login", data);
 }
@@ -153,6 +166,12 @@ export function uploadProfileAvatar(file: Blob) {
   const data = new FormData();
   data.append("avatar", file, "avatar.jpg");
   return postRaw<ProfileResp>("/profile/avatar", data);
+}
+
+export function uploadChatFile(file: File) {
+  const data = new FormData();
+  data.append("file", file, file.name);
+  return postRaw<UploadFileResp>("/upload/file", data);
 }
 
 export function options() {

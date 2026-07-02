@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import ChatMessageBubble from "@/components/workbench/ChatMessageBubble.vue";
 import type { ChatMessage, ChatSession } from "@/types/chat";
 
 const props = defineProps<{
@@ -23,9 +24,11 @@ const emit = defineEmits<{
   back: [];
   close: [];
   send: [content: string];
+  sendImage: [file: File];
 }>();
 
 const draft = ref("");
+const imageInput = ref<HTMLInputElement>();
 
 watch(
   () => props.session?.sessionNo,
@@ -63,6 +66,19 @@ function submit() {
   draft.value = "";
 }
 
+function openImagePicker() {
+  if (!props.canReply) return;
+  imageInput.value?.click();
+}
+
+function handleImageSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = "";
+  if (!file) return;
+  emit("sendImage", file);
+}
+
 function formatNickname(nickname: string) {
   if (nickname.length <=5) return nickname
   return nickname.slice(0, 5)
@@ -71,6 +87,13 @@ function formatNickname(nickname: string) {
 
 <template>
   <section class="chat-panel workbench-region">
+    <input
+      ref="imageInput"
+      class="resource-input"
+      type="file"
+      accept="image/*"
+      @change="handleImageSelected"
+    />
     <header class="chat-header">
       <button
         v-if="showMobileBack"
@@ -145,21 +168,13 @@ function formatNickname(nickname: string) {
       >
         暂无消息
       </div>
-      <div
+      <ChatMessageBubble
         v-for="message in messages"
         :key="message.messageNo"
-        class="message-row"
-        :class="{
-          sent: messageDirection(message) === 'sent',
-          received: messageDirection(message) === 'received',
-          system: messageDirection(message) === 'system',
-        }"
-      >
-        <div class="bubble">
-          <span>{{ messageSenderName(message) }}</span>
-          <p>{{ message.content }}</p>
-        </div>
-      </div>
+        :message="message"
+        :direction="messageDirection(message)"
+        :sender-name="messageSenderName(message)"
+      />
     </div>
 
     <footer class="composer">
@@ -173,7 +188,12 @@ function formatNickname(nickname: string) {
         @keydown.ctrl.enter.prevent="submit"
       />
       <div class="composer-actions">
-        <el-button>快捷回复</el-button>
+        <el-button
+          :disabled="!canReply"
+          @click="openImagePicker"
+        >
+          图片
+        </el-button>
         <el-button
           type="primary"
           :disabled="!canReply"
