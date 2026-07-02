@@ -240,6 +240,7 @@ onBeforeUnmount(() => {
           :message="message"
           :direction="messageDirection(message)"
           :sender-name="messageSenderName(message)"
+          :resolve-url="chat.resolveFileUrl"
         />
       </div>
 

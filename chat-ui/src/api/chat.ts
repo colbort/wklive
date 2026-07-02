@@ -81,6 +81,19 @@ export async function uploadChatFile(file: File, chatToken = "") {
   return uploaded;
 }
 
+export async function getChatFileBlob(url: string, chatToken = "") {
+  const res = await fetch(buildUrl("/upload/file", { url }), {
+    method: "GET",
+    headers: buildAuthHeaders(chatToken),
+    credentials: "include",
+    referrerPolicy: "no-referrer",
+  });
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+  return res.blob();
+}
+
 export function chatWsUrl(): string {
   const queryWsUrl = new URLSearchParams(window.location.search).get("wsUrl");
   if (queryWsUrl) {

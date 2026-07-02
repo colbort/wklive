@@ -14,5 +14,6 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64
 	} `json:"Jwt" yaml:"Jwt"`
-	ChatRpc zrpc.RpcClientConf
+	ChatRpc       zrpc.RpcClientConf
+	ChatUploadDir string `json:",default=/Users/sky/Documents/chat_uploads"`
 }

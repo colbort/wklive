@@ -1,6 +1,7 @@
 import { computed, ref } from "vue";
 import {
   createChatSocket,
+  getChatFileBlob,
   listChatMessagesWithMeta,
   options as loadOptions,
   sendChatSocketEvent,
@@ -226,6 +227,13 @@ export function useChatSocket() {
       error.value = err instanceof Error ? err.message : "图片发送失败";
       return false;
     }
+  }
+
+  async function resolveFileUrl(url: string) {
+    if (!url.trim()) return "";
+    if (!url.startsWith("/chat_uploads/")) return url;
+    const blob = await getChatFileBlob(url, chatToken.value);
+    return URL.createObjectURL(blob);
   }
 
   function sendUserMessagePayload(payload: SendUserMessagePayload) {
@@ -665,6 +673,7 @@ export function useChatSocket() {
     endSession,
     loadHistory,
     resetMessages,
+    resolveFileUrl,
     submitEvaluation,
     sendImage,
     sendText,

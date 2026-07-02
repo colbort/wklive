@@ -17,6 +17,7 @@ const props = defineProps<{
   userId: number;
   showGuestRefreshNotice: boolean;
   showMobileBack?: boolean;
+  resolveUrl?: (url: string) => Promise<string> | string;
 }>();
 
 const emit = defineEmits<{
@@ -174,6 +175,7 @@ function formatNickname(nickname: string) {
         :message="message"
         :direction="messageDirection(message)"
         :sender-name="messageSenderName(message)"
+        :resolve-url="resolveUrl"
       />
     </div>
 

@@ -5,6 +5,7 @@ import {
   postBase,
   postData,
   postRaw,
+  request as httpRequest,
   putData,
   putRaw,
 } from "./request";
@@ -172,6 +173,14 @@ export function uploadChatFile(file: File) {
   const data = new FormData();
   data.append("file", file, file.name);
   return postRaw<UploadFileResp>("/upload/file", data);
+}
+
+export async function getChatFileBlob(url: string) {
+  const res = await httpRequest.get<Blob>("/upload/file", {
+    params: { url },
+    responseType: "blob",
+  });
+  return res.data;
 }
 
 export function options() {

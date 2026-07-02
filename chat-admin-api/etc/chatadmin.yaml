@@ -9,3 +9,5 @@ ChatRpc:
   Endpoints:
     - 127.0.0.1:8088
   NonBlock: true
+
+ChatUploadDir: ../chat_uploads

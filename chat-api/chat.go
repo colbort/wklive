@@ -37,7 +37,7 @@ func main() {
 	if len(c.Cors) > 0 {
 		opts = append(opts, rest.WithCors(c.Cors...), rest.WithFileServer(
 			"/chat_uploads",
-			http.Dir("./chat_uploads"),
+			http.Dir(c.ChatUploadDir),
 		))
 	}
 	server := rest.MustNewServer(c.RestConf, opts...)

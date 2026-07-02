@@ -40,8 +40,8 @@ func main() {
 		rest.WithCorsHeaders(string(utils.CtxKeyMerchantId)),
 		rest.WithCorsHeaders(string(utils.CtxKeyChatUserId)),
 		rest.WithFileServer(
-			"/avatars",
-			http.Dir("./avatars"),
+			"/chat_uploads",
+			http.Dir(c.ChatUploadDir),
 		),
 	)
 	defer server.Stop()

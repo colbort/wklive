@@ -19,7 +19,7 @@ import (
 
 const (
 	MaxChatUploadSize = 100 << 20
-	chatUploadDir     = "chat_uploads"
+	chatUploadURLPath = "chat_uploads"
 )
 
 type UploadFileLogic struct {
@@ -37,28 +37,36 @@ func NewUploadFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upload
 }
 
 func (l *UploadFileLogic) UploadFile(file multipart.File, header *multipart.FileHeader) (*types.UploadFileResp, error) {
-	return saveUploadFile(file, header)
+	return saveUploadFile(l.uploadDir(), file, header)
 }
 
 func (l *UploadFileLogic) UploadedFilePath(rawURL string) (string, error) {
-	return uploadedFilePath(rawURL)
+	return uploadedFilePath(l.uploadDir(), rawURL)
 }
 
-func saveUploadFile(file multipart.File, header *multipart.FileHeader) (*types.UploadFileResp, error) {
+func (l *UploadFileLogic) uploadDir() string {
+	dir := strings.TrimSpace(l.svcCtx.Config.ChatUploadDir)
+	if dir == "" {
+		return chatUploadURLPath
+	}
+	return dir
+}
+
+func saveUploadFile(uploadDir string, file multipart.File, header *multipart.FileHeader) (*types.UploadFileResp, error) {
 	if file == nil || header == nil {
 		return nil, fmt.Errorf("file is required")
 	}
 	if header.Size <= 0 || header.Size > MaxChatUploadSize {
 		return nil, fmt.Errorf("file size exceeds limit")
 	}
-	if err := os.MkdirAll(chatUploadDir, 0o755); err != nil {
+	if err := os.MkdirAll(uploadDir, 0o755); err != nil {
 		return nil, err
 	}
 
 	originalName := filepath.Base(header.Filename)
 	ext := strings.ToLower(filepath.Ext(originalName))
 	filename := fmt.Sprintf("chat_%d%s", time.Now().UnixNano(), ext)
-	targetPath := filepath.Join(chatUploadDir, filename)
+	targetPath := filepath.Join(uploadDir, filename)
 	target, err := os.Create(targetPath)
 	if err != nil {
 		return nil, err
@@ -75,7 +83,7 @@ func saveUploadFile(file multipart.File, header *multipart.FileHeader) (*types.U
 			Msg:  "",
 		},
 		Data: types.UploadFileData{
-			Url:      "/" + chatUploadDir + "/" + filename,
+			Url:      "/" + chatUploadURLPath + "/" + filename,
 			FileName: originalName,
 			FileSize: header.Size,
 			MimeType: firstNonEmpty(header.Header.Get("Content-Type"), "application/octet-stream"),
@@ -83,7 +91,7 @@ func saveUploadFile(file multipart.File, header *multipart.FileHeader) (*types.U
 	}, nil
 }
 
-func uploadedFilePath(rawURL string) (string, error) {
+func uploadedFilePath(uploadDir string, rawURL string) (string, error) {
 	rawURL = strings.TrimSpace(rawURL)
 	if rawURL == "" {
 		return "", fmt.Errorf("file url is required")
@@ -93,7 +101,7 @@ func uploadedFilePath(rawURL string) (string, error) {
 	}
 
 	cleanPath := filepath.Clean("/" + strings.TrimLeft(rawURL, "/"))
-	prefix := "/" + chatUploadDir + "/"
+	prefix := "/" + chatUploadURLPath + "/"
 	if !strings.HasPrefix(cleanPath, prefix) {
 		return "", fmt.Errorf("invalid file url")
 	}
@@ -102,7 +110,7 @@ func uploadedFilePath(rawURL string) (string, error) {
 	if filename == "." || filename == string(filepath.Separator) {
 		return "", fmt.Errorf("invalid file url")
 	}
-	targetPath := filepath.Join(chatUploadDir, filename)
+	targetPath := filepath.Join(uploadDir, filename)
 	info, err := os.Stat(targetPath)
 	if err != nil {
 		return "", err

@@ -1,17 +1,56 @@
 <script setup lang="ts">
+import { onBeforeUnmount, ref, watch } from "vue";
 import type { ChatMessage } from "@/types/chat";
 
-defineProps<{
+const props = defineProps<{
   message: ChatMessage;
   direction: "sent" | "received" | "system";
   senderName: string;
+  resolveUrl?: (url: string) => Promise<string> | string;
 }>();
+
+const imageSrc = ref("");
+let objectUrl = "";
+
+watch(
+  () => [props.message.messageType, props.message.url, props.resolveUrl] as const,
+  () => {
+    void loadImageSrc();
+  },
+  { immediate: true },
+);
+
+onBeforeUnmount(clearObjectUrl);
 
 function fileSizeText(size = 0) {
   if (!size) return "";
   if (size < 1024) return `${size} B`;
   if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
   return `${(size / 1024 / 1024).toFixed(1)} MB`;
+}
+
+async function loadImageSrc() {
+  clearObjectUrl();
+  imageSrc.value = "";
+  if (props.message.messageType !== 2 || !props.message.url) return;
+  try {
+    const resolved = props.resolveUrl
+      ? await props.resolveUrl(props.message.url)
+      : props.message.url;
+    imageSrc.value = resolved;
+    if (resolved.startsWith("blob:")) {
+      objectUrl = resolved;
+    }
+  } catch {
+    imageSrc.value = props.message.url;
+  }
+}
+
+function clearObjectUrl() {
+  if (objectUrl) {
+    URL.revokeObjectURL(objectUrl);
+    objectUrl = "";
+  }
 }
 </script>
 
@@ -23,9 +62,9 @@ function fileSizeText(size = 0) {
     <div class="bubble">
       <span>{{ senderName }}</span>
       <img
-        v-if="message.messageType === 2 && message.url"
+        v-if="message.messageType === 2 && imageSrc"
         class="bubble-image"
-        :src="message.url"
+        :src="imageSrc"
         :alt="message.fileName || message.content || 'image'"
       />
       <video

@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import {
   chatAdminWsUrl,
+  getChatFileBlob,
   options as loadOptions,
   pageMessages,
   pageSessions,
@@ -900,6 +901,13 @@ async function sendImage(file: File) {
   }
 }
 
+async function resolveFileUrl(url: string) {
+  if (!url.trim()) return "";
+  if (!url.startsWith("/chat_uploads/")) return url;
+  const blob = await getChatFileBlob(url);
+  return URL.createObjectURL(blob);
+}
+
 function sendAgentMessagePayload(payload: SendAgentMessagePayload) {
   const clientMessageId = payload.clientMessageId || `agent-msg-${Date.now()}`;
   payload.clientMessageId = clientMessageId;
@@ -1052,6 +1060,7 @@ function buildAcceptSessionPayload(
       :user-id="userId"
       :show-guest-refresh-notice="showGuestRefreshNotice"
       :show-mobile-back="mobileChatOpen"
+      :resolve-url="resolveFileUrl"
       @accept="acceptSession"
       @back="backToSessions"
       @close="closeSession"
