@@ -50,6 +50,7 @@ const messages = ref<Record<string, ChatMessage[]>>({});
 const sessionStatusMessages = ref<Record<string, string>>({});
 const wsState = ref<"idle" | "open" | "closed">("idle");
 const changingAgentStatus = ref(false);
+const pendingAgentMessageNos: Record<string, string[]> = {};
 const defaultAgentStatusOptions: DisplayOptionItem[] = [
   {
     code: "CHAT_AGENT_STATUS_OFFLINE",
@@ -575,11 +576,28 @@ function pushMessage(message: ChatMessage) {
 function applyMessageReceipt(payload: ChatMessageReceiptPayload) {
   if (!payload.sessionNo || !payload.messageNo) return;
   const list = messages.value[payload.sessionNo] || [];
-  const message = list.find((item) => item.messageNo === payload.messageNo);
+  let message = list.find((item) => item.messageNo === payload.messageNo);
+  if (!message) {
+    const pendingNo = pendingAgentMessageNos[payload.sessionNo]?.shift();
+    message = pendingNo
+      ? list.find((item) => item.messageNo === pendingNo)
+      : undefined;
+    if (message) {
+      message.messageNo = payload.messageNo;
+    }
+  }
   if (!message) return;
   message.status = Number(payload.messageStatus || message.status);
   message.updateTime = Number(payload.receiptTime || message.updateTime);
   messages.value[payload.sessionNo] = [...list];
+}
+
+function trackPendingAgentMessage(sessionNo: string, messageNo: string) {
+  if (!sessionNo || !messageNo) return;
+  pendingAgentMessageNos[sessionNo] = [
+    ...(pendingAgentMessageNos[sessionNo] || []),
+    messageNo,
+  ];
 }
 
 function isGuestSession(session?: ChatSession) {
@@ -826,7 +844,9 @@ function send(value: string) {
   if (!canSendMessage(content)) {
     return;
   }
+  const clientMessageId = `agent-msg-${Date.now()}`;
   const payload: SendAgentMessagePayload = {
+    clientMessageId,
     merchantId: merchantId.value,
     sessionNo: activeSession.value?.sessionNo || "",
     messageType: 1,
@@ -838,11 +858,47 @@ function send(value: string) {
       avatarUrl: auth.user?.avatarUrl || "",
     },
   };
-  return sendWsEvent(
+  const sent = sendWsEvent(
     createChatWsRequest(chatEventType.MESSAGE, "message", payload, {
-      requestId: `agent-msg-${Date.now()}`,
+      requestId: clientMessageId,
     }),
   );
+  if (sent) {
+    pushMessage(buildOptimisticAgentMessage(payload, clientMessageId));
+    trackPendingAgentMessage(payload.sessionNo || "", clientMessageId);
+    scheduleRefreshSessions();
+  }
+  return sent;
+}
+
+function buildOptimisticAgentMessage(
+  payload: SendAgentMessagePayload,
+  clientMessageId: string,
+): ChatMessage {
+  const now = Date.now();
+  return {
+    id: 0,
+    messageNo: clientMessageId,
+    sessionNo: payload.sessionNo || "",
+    merchantId: payload.merchantId || merchantId.value,
+    senderType: 2,
+    sender: payload.sender,
+    receiver: payload.receiver,
+    messageType: payload.messageType,
+    content: payload.content || "",
+    url: payload.url || "",
+    fileName: payload.fileName || "",
+    fileSize: payload.fileSize || 0,
+    mimeType: payload.mimeType || "",
+    width: payload.width || 0,
+    height: payload.height || 0,
+    duration: payload.duration || 0,
+    status: 0,
+    extra: payload.extra || "",
+    readTime: 0,
+    createTime: now,
+    updateTime: now,
+  };
 }
 
 function canSendMessage(content: string) {
