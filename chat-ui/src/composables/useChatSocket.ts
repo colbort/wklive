@@ -69,8 +69,8 @@ export function useChatSocket() {
   let manualClose = false;
   let suppressNextCloseReconnect = false;
   let reconnectAttempts = 0;
-  let reconnectTimer: ReturnType<typeof window.setTimeout> | null = null;
-  let reconnectTicker: ReturnType<typeof window.setInterval> | null = null;
+  let reconnectTimer: number | null = null;
+  let reconnectTicker: number | null = null;
   const pendingUserMessageNos: Record<string, string[]> = {};
 
   const isOpen = computed(() => status.value === "open");
@@ -479,19 +479,17 @@ export function useChatSocket() {
   }
 
   function handleQueueUpdateEvent(payload: ChatQueuePayload) {
-    let message = "";
     const position = Number(payload.queuePosition || 0);
-    if (position > 1) {
-      message = `正在排队，您前面还有 ${position - 1} 人。`;
-    } else {
-      message = "您是当前队列第 1 位，客服即将接入。";
-    }
+    const message =
+      position > 1
+        ? `正在排队，您前面还有 ${position - 1} 人。`
+        : "您是当前队列第 1 位，客服即将接入。";
     queueStatus.value = message;
   }
 
   function handleAgentAcceptedEvent(payload: ChatAgentPayload) {
     agent.value = payload;
-    let name = payload.agentName;
+    const name = payload.agentName;
     queueStatus.value = name ? `${name} 正在为你服务` : "客服正在为你服务";
   }
 
