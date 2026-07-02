@@ -420,6 +420,7 @@ type PageChatMessagesReq struct {
 	PageReq
 	MerchantId int64  `form:"merchantId"`
 	SessionNo  string `path:"sessionNo"`
+	IsGuest    bool   `form:"isGuest"`
 	SenderType int64  `form:"senderType,optional"`
 }
 

@@ -56,14 +56,14 @@ func (l *PageChatSessionsLogic) PageChatSessions(in *chat.PageChatSessionsReq) (
 	if dbCursor < 0 {
 		dbCursor = 0
 	}
-	list, total, err := l.svcCtx.ChatSessionModel.FindPage(l.ctx, filter, dbCursor, limit)
+	list, _, err := l.svcCtx.ChatSessionModel.FindPage(l.ctx, filter, dbCursor, limit)
 	if err != nil {
 		return &chat.PageChatSessionsResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	data := mergeTransientAndStoredSessions(transient, list, cursor, limit)
+	data := toProtoMergedSessions(list, transient)
 	return &chat.PageChatSessionsResp{
-		Base: ih.OffsetBase(cursor, limit, len(data), total+int64(len(transient))),
-		Data: ih.ToProtoSessions(data),
+		Base: ih.OffsetBase(cursor, limit, len(data), int64(len(data))),
+		Data: data,
 	}, nil
 }
 
@@ -132,28 +132,13 @@ func transientSessionMatchesFilter(session *models.TChatSession, filter models.C
 	return true
 }
 
-func mergeTransientAndStoredSessions(transient, stored []*models.TChatSession, cursor, limit int64) []*models.TChatSession {
-	if limit <= 0 {
-		limit = pageutil.NormalizeLimit(limit)
+func toProtoMergedSessions(list, transient []*models.TChatSession) []*chat.ChatSession {
+	resp := make([]*chat.ChatSession, 0)
+	for _, session := range transient {
+		resp = append(resp, ih.ToProtoSession(session, true))
 	}
-	resp := make([]*models.TChatSession, 0, limit)
-	transientTotal := int64(len(transient))
-	if cursor < transientTotal {
-		end := cursor + limit
-		if end > transientTotal {
-			end = transientTotal
-		}
-		resp = append(resp, transient[cursor:end]...)
-	}
-	if int64(len(resp)) >= limit {
-		return resp
-	}
-	remaining := limit - int64(len(resp))
-	if remaining > int64(len(stored)) {
-		remaining = int64(len(stored))
-	}
-	if remaining > 0 {
-		resp = append(resp, stored[:remaining]...)
+	for _, session := range list {
+		resp = append(resp, ih.ToProtoSession(session, false))
 	}
 	return resp
 }

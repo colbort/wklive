@@ -30,36 +30,11 @@ func NewPageChatMessagesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *PageChatMessagesLogic) PageChatMessages(req *types.PageChatMessagesReq) (resp *types.PageChatMessagesResp, err error) {
-	// sessionNo := strings.TrimSpace(req.SessionNo)
-	// if l.svcCtx.ChatAdminCli != nil {
-	// 	transientSession, err := l.svcCtx.ChatAdminCli.AdminGetTransientChatSession(l.ctx, &chat.AdminGetTransientChatSessionReq{
-	// 		MerchantId: req.MerchantId,
-	// 		SessionNo:  sessionNo,
-	// 	})
-	// 	if err == nil && transientSession.GetBase().GetCode() == 200 {
-	// 		rpcResp, err := l.svcCtx.ChatAdminCli.PageChatMessages(l.ctx, &chat.PageChatMessagesReq{
-	// 			MerchantId: req.MerchantId,
-	// 			SessionNo:  sessionNo,
-	// 			SenderType: chat.ChatSenderType(req.SenderType),
-	// 			IsGuest:    true,
-	// 			Page: &common.PageReq{
-	// 				Cursor: req.Cursor,
-	// 				Limit:  req.Limit,
-	// 			},
-	// 		})
-	// 		if err != nil {
-	// 			return nil, err
-	// 		}
-	// 		return &types.PageChatMessagesResp{
-	// 			RespBase: respBaseToType(rpcResp.GetBase()),
-	// 			Data:     protoMessagesToTypes(req.MerchantId, rpcResp.GetData()),
-	// 		}, nil
-	// 	}
-	// }
 	rpcResp, err := l.svcCtx.ChatAdminCli.PageChatMessages(l.ctx, &chat.PageChatMessagesReq{
 		SessionNo:  req.SessionNo,
 		SenderType: chat.ChatSenderType(req.SenderType),
 		MerchantId: req.MerchantId,
+		IsGuest:    req.IsGuest,
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,

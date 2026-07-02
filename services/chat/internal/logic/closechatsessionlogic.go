@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"wklive/common/helper"
 	"wklive/common/utils"
 
@@ -39,6 +40,7 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 		return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, true)}, nil
 	}
 	if ih.IsInternetErrorCloseReason(in.GetCloseReasonType(), in.GetCloseReason()) {
+		// 网络错误
 		if in.IsGuest {
 			session, err = ih.MarkTransientSessionInternetError(l.ctx, l.svcCtx, session)
 			if err != nil {
@@ -49,14 +51,15 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 				return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-		_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventUserLeave, &chat.ChatWsResponse_UserState{UserState: &chat.ChatUserStatePayload{
-			SessionNo: in.SessionNo,
-			UserId:    session.UserId,
-			UserName:  "",
-			Avatar:    "",
-			Online:    true,
-			Source:    chat.ChatSessionSource_CHAT_SESSION_SOURCE_APP,
-		}})
+		_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAppEventChannel, ih.PublishEventError, &chat.ChatWsResponse_Error{
+			Error: &chat.ChatErrorPayload{
+				MessageNo:    "",
+				ErrorCode:    0,
+				ErrorMessage: "internet error",
+				Detail:       fmt.Sprintf("agent %d internet error: %s", session.AgentId, in.CloseReason),
+				Retryable:    false,
+			},
+		})
 		return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 	}
 	if in.GetIsGuest() {

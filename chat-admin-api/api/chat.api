@@ -326,6 +326,7 @@ type PageChatMessagesReq {
 	PageReq
 	merchantId int64  `form:"merchantId"`
 	sessionNo  string `path:"sessionNo"`
+	isGuest    bool   `form:"isGuest"`
 	senderType int64  `form:"senderType,optional"`
 }
 

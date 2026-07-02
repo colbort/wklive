@@ -355,7 +355,7 @@ func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Con
 	if payload != nil {
 		closeReason = firstNonEmpty(payload.GetCloseReason(), closeReason)
 	}
-	_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(ctx, &chat.CloseMyChatSessionReq{
+	resp, err := l.svcCtx.ChatAppCli.CloseMyChatSession(ctx, &chat.CloseMyChatSessionReq{
 		SessionNo:       conn.SessionNo,
 		CloseReasonType: chat.ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_USER,
 		CloseReason:     closeReason,
@@ -365,6 +365,9 @@ func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Con
 	})
 	if err != nil {
 		logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
+	}
+	if resp.Base.Code != 200 {
+		logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s msg=%v", conn.MerchantId, conn.UserId, conn.SessionNo, resp.Base.Msg)
 	}
 }
 

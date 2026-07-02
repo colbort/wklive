@@ -2,7 +2,6 @@ package chat_ws
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -164,9 +163,9 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 			if userState != nil {
 				conn.Receivers.Delete(userState.SessionNo)
 			}
-			fmt.Println("==================== 11")
-			// 移除 坐席接待中的 用户信息
+			logx.Infof("user %d finish session, session no is %s", userState.UserId, userState.SessionNo)
 		}
+
 		conn.SendEvent(event)
 	}
 }
@@ -229,6 +228,7 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 	// 加入接待用户
 	if resp.Data != nil {
 		conn.Receivers.Store(resp.Data.SessionNo, resp.Data.User)
+		logx.Infof("user %d accepted, session no is %s\n", resp.Data.User.Id, resp.Data.SessionNo)
 	}
 	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      resp.Base.Code,

@@ -170,6 +170,34 @@ export interface ChatAgentPayload {
   actionTime: number;
 }
 
+export interface ChatSystemNoticePayload {
+  sessionNo?: string;
+  title?: string;
+  content: string;
+  level?: "info" | "warning" | "error" | string;
+  showInChat?: boolean;
+}
+
+export interface ChatEvaluationPayload {
+  sessionNo: string;
+  userId?: number;
+  agentId?: number;
+  evaluationId?: number;
+  rating?: number;
+  tags?: string[];
+  comment?: string;
+  submitted?: boolean;
+  evaluatedAt?: number;
+}
+
+export interface ChatTypingPayload {
+  sessionNo: string;
+  senderId: number;
+  senderType: ChatSenderType;
+  text?: string;
+  actionTime: number;
+}
+
 export interface ChatErrorPayload {
   messageNo?: string;
   errorCode: number;
@@ -196,9 +224,12 @@ export interface ChatWsResponse {
   connected?: WsConnectedPayload;
   message?: ChatMessage;
   session?: ChatSession;
+  systemNotice?: ChatSystemNoticePayload;
   userState?: ChatUserStatePayload;
   queue?: ChatQueuePayload;
   agent?: ChatAgentPayload;
+  evaluation?: ChatEvaluationPayload;
+  typing?: ChatTypingPayload;
   receipt?: ChatMessageReceiptPayload;
   error?: ChatErrorPayload;
 }

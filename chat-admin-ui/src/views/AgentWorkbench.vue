@@ -19,11 +19,14 @@ import type {
   ChatWsEvent,
   ChatWsRequest,
   ChatAgent,
+  ChatEvaluationPayload,
   ChatMessage,
   ChatMessageReceiptPayload,
   ChatQueuePayload,
   ChatSession,
   ChatSessionExtJson,
+  ChatSystemNoticePayload,
+  ChatTypingPayload,
   ChatUserStatePayload,
   CloseAgentChatSessionPayload,
   SendAgentMessagePayload,
@@ -179,6 +182,8 @@ const incomingWsHandlers: Partial<
     event.message && handleMessageWsEvent(event.message),
   [chatEventType.MESSAGE_DELIVERED]: (event) =>
     event.receipt && handleMessageReceiptWsEvent(event.receipt),
+  [chatEventType.SYSTEM_NOTICE]: (event) =>
+    event.systemNotice && handleSystemNoticeWsEvent(event.systemNotice),
   [chatEventType.USER_JOIN]: (event) => handleUserJoinWsEvent(event),
   [chatEventType.USER_LEAVE]: (event) =>
     event.userState && handleUserLeaveWsEvent(event.userState),
@@ -186,10 +191,18 @@ const incomingWsHandlers: Partial<
     event.queue && handleQueueUpdateWsEvent(event.queue),
   [chatEventType.AGENT_ACCEPTED]: (event) =>
     event.agent && handleAgentAcceptedWsEvent(event.agent),
+  [chatEventType.AGENT_JOIN]: (event) =>
+    event.agent && handleAgentStateWsEvent(event.agent),
   [chatEventType.AGENT_LEAVE]: (event) =>
     event.agent && handleAgentStateWsEvent(event.agent),
   [chatEventType.SESSION_CLOSE]: (event) =>
     event.session && handleSessionCloseWsEvent(event.session),
+  [chatEventType.EVALUATION_SUBMIT]: (event) =>
+    event.evaluation && handleEvaluationSubmitWsEvent(event.evaluation),
+  [chatEventType.TYPING]: (event) =>
+    event.typing && handleTypingWsEvent(event.typing),
+  [chatEventType.ERROR]: (event) =>
+    event.error && ElMessage.error(event.error.errorMessage || "操作失败"),
 };
 
 onMounted(async () => {
@@ -328,6 +341,7 @@ async function loadMessages(sessionNo: string) {
   try {
     const resp = await pageMessages(sessionNo, {
       merchantId: merchantId.value,
+      isGuest: session?.isGuest||false,
       limit: 50,
     });
     messages.value[sessionNo] = sortMessages(
@@ -432,8 +446,8 @@ function handleQueueUpdateWsEvent(payload: ChatQueuePayload) {
 }
 
 function handleUserJoinWsEvent(event: ChatWsEvent) {
-  const userState = event.userState
-  const sessionNo = userState?.sessionNo || "";
+  const session = event.session ? normalizeSession(event.session) : undefined;
+  const sessionNo = session?.sessionNo || event.userState?.sessionNo || "";
   if (!sessionNo) {
     scheduleRefreshSessions();
     return;
@@ -455,8 +469,32 @@ function handleMessageWsEvent(payload: ChatMessage) {
   applyWsSessionMessage(payload);
 }
 
+function handleSystemNoticeWsEvent(payload: ChatSystemNoticePayload) {
+  const content = payload.content || payload.title || "";
+  if (!content) return;
+  if (payload.level === "error") {
+    ElMessage.error(content);
+    return;
+  }
+  if (payload.level === "warning") {
+    ElMessage.warning(content);
+    return;
+  }
+  ElMessage.info(content);
+}
+
 function handleMessageReceiptWsEvent(payload: ChatMessageReceiptPayload) {
   applyMessageReceipt(payload);
+}
+
+function handleEvaluationSubmitWsEvent(payload: ChatEvaluationPayload) {
+  if (!payload.sessionNo) return;
+  setSessionStatusMessage(payload.sessionNo, payload.submitted === false ? "评价提交失败" : "用户已提交评价");
+}
+
+function handleTypingWsEvent(payload: ChatTypingPayload) {
+  if (!payload.sessionNo) return;
+  setSessionStatusMessage(payload.sessionNo, payload.text || "用户正在输入");
 }
 
 function handleWsConnectedWsEvent(payload: WsConnectedPayload) {
