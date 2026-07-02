@@ -67,6 +67,7 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessa
 		if err != nil {
 			return nil, nil, err
 		}
+		msg = ToProtoMessage(mmg)
 	}
 
 	_ = PublishMessageEvent(PublishMessageEventReq{

@@ -9,7 +9,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 const (
@@ -141,7 +140,7 @@ func (c *Connection) SendEvent(event *chat.ChatMessageEvent) {
 	if event == nil {
 		return
 	}
-	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
+	payload, err := json.Marshal(event)
 	if err != nil {
 		logx.Errorf("marshal chat user ws event failed: %v", err)
 		return

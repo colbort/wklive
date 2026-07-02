@@ -214,7 +214,7 @@ export function useChatSocket() {
       },
       receiver: {
         type: 2,
-        id: agent.value?.agentUserId || agent.value?.agentId || 0,
+        id: agent.value?.agentUserId || 0,
         nickname: agent.value?.agentName || "",
         avatarUrl: agent.value?.agentAvatar?.trim() || "",
       },

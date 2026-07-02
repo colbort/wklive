@@ -175,8 +175,7 @@ const incomingWsHandlers: Partial<
     event.connected && handleWsConnectedWsEvent(event.connected),
   [chatEventType.MESSAGE]: (event) =>
     event.message && handleMessageWsEvent(event.message),
-  [chatEventType.USER_JOIN]: (event) =>
-    event.userState && handleUserJoinWsEvent(event.userState),
+  [chatEventType.USER_JOIN]: (event) => handleUserJoinWsEvent(event),
   [chatEventType.USER_LEAVE]: (event) =>
     event.userState && handleUserLeaveWsEvent(event.userState),
   [chatEventType.QUEUE_UPDATE]: (event) =>
@@ -419,9 +418,20 @@ function handleQueueUpdateWsEvent(payload: ChatQueuePayload) {
   scheduleRefreshSessions();
 }
 
-function handleUserJoinWsEvent(payload: ChatUserStatePayload) {
-  focusWaitingSession(payload.sessionNo);
-  void loadSessions();
+function handleUserJoinWsEvent(event: ChatWsEvent) {
+  const session = event.session ? normalizeSession(event.session) : undefined;
+  const sessionNo = session?.sessionNo || event.userState?.sessionNo || "";
+  if (!sessionNo) {
+    scheduleRefreshSessions();
+    return;
+  }
+  if (session) {
+    upsertSession(session);
+  } else if (!sessions.value.some((item) => item.sessionNo === sessionNo)) {
+    upsertSession(sessionFromUserState(event.userState));
+  }
+  focusWaitingSession(sessionNo);
+  scheduleRefreshSessions();
 }
 
 function handleUserLeaveWsEvent(payload: ChatUserStatePayload) {
@@ -711,6 +721,39 @@ function transientSessionFromMessage(message: ChatMessage): ChatSession {
     lastMessageNo: message.messageNo,
     createTimes: message.createTime,
     updateTimes: message.updateTime || message.createTime,
+  };
+}
+
+function sessionFromUserState(payload?: ChatUserStatePayload): ChatSession {
+  const now = Date.now();
+  const nickname = payload?.userName || "访客";
+  return {
+    id: 0,
+    sessionNo: payload?.sessionNo || "",
+    merchantId: merchantId.value,
+    userId: Number(payload?.userId || 0),
+    source: Number(payload?.source || 0),
+    status: sessionStatus.waiting,
+    priority: 1,
+    agentId: 0,
+    groupId: 0,
+    title: nickname,
+    category: "",
+    lastMessage: payload?.online ? "用户已进入客服页面" : "用户离线",
+    lastSenderType: 1,
+    lastMessageTime: now,
+    userUnreadCount: 0,
+    agentUnreadCount: 0,
+    closeTime: 0,
+    closeReason: "",
+    extJson: {
+      nickname,
+      avatarUrl: payload?.avatar || "",
+    },
+    avatarUrl: payload?.avatar || "",
+    lastMessageNo: "",
+    createTimes: now,
+    updateTimes: now,
   };
 }
 
