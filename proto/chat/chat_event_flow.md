@@ -33,75 +33,79 @@ enum ChatEventType {
   // proto 默认占位，不作为业务事件使用
   CHAT_EVENT_TYPE_UNSPECIFIED = 0;
 
+  // ws 连接确认
+  // 例如：客户端连接成功后，推送确认信息
+  CHAT_EVENT_TYPE_WS_CONNECTED = 1;
+
   // 普通聊天消息
-  CHAT_EVENT_TYPE_MESSAGE = 1;
+  CHAT_EVENT_TYPE_MESSAGE = 2;
 
   // 通用系统通知
   // 例如：系统维护、风险提示、暂无客服在线、普通提示
-  CHAT_EVENT_TYPE_SYSTEM_NOTICE = 2;
+  CHAT_EVENT_TYPE_SYSTEM_NOTICE = 3;
 
-  // 用户进入客服页面 / 建立 WebSocket 连接
-  CHAT_EVENT_TYPE_USER_JOIN = 3;
+  // 用户进入客服页面 / 业务在线状态
+  CHAT_EVENT_TYPE_USER_JOIN = 4;
 
   // 用户离开客服页面 / 断开 WebSocket 连接
-  CHAT_EVENT_TYPE_USER_LEAVE = 4;
+  CHAT_EVENT_TYPE_USER_LEAVE = 5;
 
   // 等待服务列表信息更新
   // 例如：进入等待列表、取消等待、等待人数变化、预计等待时间变化
-  CHAT_EVENT_TYPE_QUEUE_UPDATE = 5;
+  CHAT_EVENT_TYPE_QUEUE_UPDATE = 6;
 
   // 坐席主动接待会话
   // 例如：坐席 小王 已接待本次会话
-  CHAT_EVENT_TYPE_AGENT_ACCEPTED = 6;
+  CHAT_EVENT_TYPE_AGENT_ACCEPTED = 7;
 
   // 坐席离开会话
-  CHAT_EVENT_TYPE_AGENT_LEAVE = 7;
+  CHAT_EVENT_TYPE_AGENT_LEAVE = 8;
 
   // 会话转接发起
   // 例如：坐席 小王 发起转接给坐席 小李
-  CHAT_EVENT_TYPE_TRANSFER_REQUEST = 8;
+  CHAT_EVENT_TYPE_TRANSFER_REQUEST = 9;
 
   // 会话转接接受
   // 例如：坐席 小李 接受转接
-  CHAT_EVENT_TYPE_TRANSFER_ACCEPT = 9;
+  CHAT_EVENT_TYPE_TRANSFER_ACCEPT = 10;
 
   // 会话转接拒绝
   // 例如：坐席 小李 拒绝转接
-  CHAT_EVENT_TYPE_TRANSFER_REJECT = 10;
+  CHAT_EVENT_TYPE_TRANSFER_REJECT = 11;
 
   // 会话关闭 / 会话结束
   // 具体关闭原因用 ChatSessionCloseReason 表示
-  CHAT_EVENT_TYPE_SESSION_CLOSE = 11;
+  CHAT_EVENT_TYPE_SESSION_CLOSE = 12;
 
   // 邀请用户评价
-  CHAT_EVENT_TYPE_EVALUATION_INVITE = 12;
+  CHAT_EVENT_TYPE_EVALUATION_INVITE = 13;
 
   // 用户提交评价
-  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 13;
+  CHAT_EVENT_TYPE_EVALUATION_SUBMIT = 14;
 
   // 正在输入
   // 建议发送方每隔 1~2 秒节流发送一次
   // 接收方 3~5 秒内没有继续收到 TYPING，则自动隐藏“正在输入”
-  CHAT_EVENT_TYPE_TYPING = 14;
+  CHAT_EVENT_TYPE_TYPING = 15;
 
   // 消息已送达
-  CHAT_EVENT_TYPE_MESSAGE_DELIVERED = 15;
+  CHAT_EVENT_TYPE_MESSAGE_DELIVERED = 16;
 
   // 消息已读
-  CHAT_EVENT_TYPE_MESSAGE_READ = 16;
+  CHAT_EVENT_TYPE_MESSAGE_READ = 17;
 
   // 消息撤回
-  CHAT_EVENT_TYPE_MESSAGE_RECALL = 17;
+  CHAT_EVENT_TYPE_MESSAGE_RECALL = 18;
 
   // 消息删除
-  CHAT_EVENT_TYPE_MESSAGE_DELETE = 18;
+  CHAT_EVENT_TYPE_MESSAGE_DELETE = 19;
 
   // 心跳
-  CHAT_EVENT_TYPE_HEARTBEAT = 19;
+  CHAT_EVENT_TYPE_HEARTBEAT = 20;
 
   // 错误事件
   // 例如：发送失败、会话不存在、权限不足
-  CHAT_EVENT_TYPE_ERROR = 20;
+  CHAT_EVENT_TYPE_ERROR = 21;
 }
 ```
 
@@ -126,9 +130,10 @@ enum ChatEventType {
 
 | 事件类型 | 主要含义 | 主要触发方 | 推送目标 | 是否建议入库 |
 |---|---|---|---|---|
+| `CHAT_EVENT_TYPE_WS_CONNECTED` | WebSocket 连接确认 | 服务端 | 当前连接自己 | 否 |
 | `CHAT_EVENT_TYPE_MESSAGE` | 普通聊天消息 | 用户 / 坐席 / 系统 / 机器人 | 对方，必要时回推自己 | 是 |
 | `CHAT_EVENT_TYPE_SYSTEM_NOTICE` | 系统通知 | 服务端 | 用户端 / 坐席端 / 双方，按场景 | 可选 |
-| `CHAT_EVENT_TYPE_USER_JOIN` | 用户进入客服页面或连接会话 | 用户端 | 坐席端 / 管理端，可选 | 可选 |
+| `CHAT_EVENT_TYPE_USER_JOIN` | 用户进入客服页面或业务在线 | 用户端 | 坐席端 / 管理端，可选 | 可选 |
 | `CHAT_EVENT_TYPE_USER_LEAVE` | 用户离开客服页面或断开连接 | 用户端 / 服务端 | 坐席端 / 管理端，可选 | 可选 |
 | `CHAT_EVENT_TYPE_QUEUE_UPDATE` | 等待服务列表变化 | 服务端 | 用户端 + 坐席端等待列表 | 是 |
 | `CHAT_EVENT_TYPE_AGENT_ACCEPTED` | 坐席主动接待会话 | 坐席端 | 用户端 + 当前坐席端 + 管理端可选 | 是 |
@@ -153,12 +158,18 @@ enum ChatEventType {
 
 ### 5.1 用户打开客服页面
 
-用户打开 APP / H5 客服页面，客户端建立 WebSocket 连接。
+用户打开 APP / H5 客服页面，客户端先获取 `chatToken`，服务端返回 token 数据并设置 `Set-Cookie: chat_token=...`，之后客户端建立 WebSocket 连接。
 
 ```text
 用户打开客服页面
 ↓
+调用 /chat/internal/tokens 获取 chatToken
+↓
+服务端返回 chatToken，并 Set-Cookie: chat_token=...
+↓
 建立 WebSocket 连接
+↓
+CHAT_EVENT_TYPE_WS_CONNECTED
 ↓
 CHAT_EVENT_TYPE_USER_JOIN
 ```
@@ -167,7 +178,18 @@ CHAT_EVENT_TYPE_USER_JOIN
 
 | 事件 | 触发方 | 推送目标 | 说明 |
 |---|---|---|---|
-| `USER_JOIN` | 用户端 | 坐席端 / 管理端，可选 | 表示用户进入客服页面或连接成功 |
+| `WS_CONNECTED` | 服务端 | 当前连接自己 | 表示 WebSocket 已建立成功，客户端可进入后续业务流程 |
+| `USER_JOIN` | 用户端 | 坐席端 / 管理端，可选 | 表示用户进入客服页面或恢复业务在线状态 |
+
+Token / Cookie 规则：
+
+| 项 | 说明 |
+|---|---|
+| 获取 token | 用户侧先调用 `/chat/internal/tokens`，返回 `chatToken`、`expireAt`、`sessionNo` |
+| 设置 cookie | token 创建成功时服务端设置 `Set-Cookie: chat_token=...` |
+| cookie 属性 | `Path=/chat`、`HttpOnly`、`Secure`、`SameSite=None`，过期时间与 token 对齐 |
+| 补写 cookie | 如果前端已有 token 但需要补写 cookie，可调用 `/chat/internal/token-cookie` |
+| WS token 来源 | 优先读取 `Cookie: chat_token=...`，也支持 query `chatToken`、`Authorization Bearer`、`x-chat-token`、`Sec-WebSocket-Protocol token.*` |
 
 是否必须推给坐席端，取决于你后台是否需要显示“用户已进入页面”。如果只是用户打开页面，还没有发起咨询，可以不推给具体坐席，只在服务端记录连接状态。
 
@@ -725,7 +747,10 @@ sequenceDiagram
     participant S as 服务端
     participant A as 坐席端
 
+    U->>S: /chat/internal/tokens
+    S-->>U: chatToken + Set-Cookie: chat_token
     U->>S: 建立 WebSocket
+    S-->>U: WS_CONNECTED
     S-->>A: USER_JOIN，可选
 
     U->>S: 发起咨询 / 发送第一条消息
@@ -762,6 +787,7 @@ sequenceDiagram
         S-->>A: USER_LEAVE，session_status=INTERNET_ERROR
         Note over S: 不发送 SESSION_CLOSE，保留会话等待重连
         U->>S: 重新建立 WebSocket
+        S-->>U: WS_CONNECTED
         S-->>A: USER_JOIN，恢复原会话状态
     end
 
@@ -939,6 +965,8 @@ USER_LEAVE，session_status = INTERNET_ERROR
 ↓
 用户重新建立 WebSocket
 ↓
+WS_CONNECTED
+↓
 USER_JOIN，恢复断线前会话状态
 ```
 
@@ -954,6 +982,7 @@ SESSION_CLOSE，close_reason = INTERNET_ERROR
 
 | 事件 | 推送目标 |
 |---|---|
+| `WS_CONNECTED` | 当前连接自己 |
 | `USER_LEAVE` | 坐席端 / 管理端可选 |
 | `USER_JOIN` | 坐席端 / 管理端可选 |
 | `SESSION_CLOSE` | 用户端 + 坐席端 |
@@ -1158,7 +1187,7 @@ message ChatTransferInfo {
 1. 检测到用户 WebSocket 断开或心跳超时时，设置会话状态为 `INTERNET_ERROR`。
 2. 推送 `USER_LEAVE` 给坐席端或管理端，表示用户离线。
 3. 不立即推送 `SESSION_CLOSE`，保留会话等待用户重连。
-4. 用户重连时恢复断线前会话状态，并推送 `USER_JOIN`。
+4. 用户重连时先推送 `WS_CONNECTED` 给当前连接，再恢复断线前会话状态，并推送 `USER_JOIN`。
 5. 如果超过允许等待时间仍未重连，再设置会话为 `CLOSED`，并推送 `SESSION_CLOSE close_reason = INTERNET_ERROR` 给双方。
 
 ---
@@ -1168,6 +1197,8 @@ message ChatTransferInfo {
 当前事件设计的核心流程是：
 
 ```text
+WS_CONNECTED
+↓
 USER_JOIN
 ↓
 QUEUE_UPDATE
@@ -1189,6 +1220,7 @@ SESSION_CLOSE
 
 | 事件 | 核心作用 |
 |---|---|
+| `WS_CONNECTED` | 表示 WebSocket 连接已建立成功 |
 | `QUEUE_UPDATE` | 表示用户进入或更新等待服务列表 |
 | `AGENT_ACCEPTED` | 表示坐席主动接待用户 |
 | `MESSAGE` | 表示普通聊天消息 |

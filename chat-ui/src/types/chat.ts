@@ -172,7 +172,6 @@ export interface ChatAgentPayload {
   sessionStatus?: number;
   remark?: string;
   actionTime: number;
-  accept?: boolean
 }
 
 export interface ChatTransferPayload {
