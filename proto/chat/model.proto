@@ -723,6 +723,9 @@ message ChatMessageOperatePayload {
 
   // 操作时间，毫秒
   int64 operated_at = 8;
+
+  // 是否游客/临时会话
+  bool is_guest = 9;
 }
 
 /**

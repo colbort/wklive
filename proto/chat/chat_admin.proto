@@ -68,8 +68,11 @@ service ChatAdmin {
   // 发送客服消息
   rpc SendAgentMessage(SendAgentMessageReq) returns (AdminChatMessageResp);
 
-    // 发送用户输入状态
+  // 发送用户输入状态
   rpc SendAgentTyping(SendAgentTypingReq) returns (AdminCommonResp);
+
+  // 客服侧消息删除/撤回
+  rpc OperateAgentMessage(OperateAgentMessageReq) returns (AdminCommonResp);
 
   // 查询会话消息
   rpc PageChatMessages(PageChatMessagesReq) returns (PageChatMessagesResp);
@@ -334,6 +337,11 @@ message SendAgentTypingReq {
   int64 user_id = 2;            // 用户ID
   bool is_guest = 3;            // 是否游客/临时会话
   ChatTypingPayload typing = 4; // 输入状态 payload
+}
+
+message OperateAgentMessageReq {
+  ChatMessageOperatePayload message_operate = 1; // 消息删除/撤回 payload
+  bool is_guest = 2;                              // 是否游客/临时会话
 }
 
 message PageChatMessagesReq {

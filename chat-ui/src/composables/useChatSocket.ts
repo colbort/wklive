@@ -13,6 +13,7 @@ import type {
   ChatErrorPayload,
   ChatEvaluationPayload,
   ChatMessageReceiptPayload,
+  ChatMessageOperatePayload,
   ChatMessage,
   OptionGroup,
   ChatQueuePayload,
@@ -30,7 +31,17 @@ type ConnectOptions = Record<string, never>;
 const reconnectDelays = [1000, 2000, 5000, 10000, 15000];
 const messageStatus = {
   SENDING: 1,
+  RECALLED: 6,
+  DELETED: 7,
 };
+const messageOperateType = {
+  RECALL: 1,
+  DELETE: 2,
+};
+const messageDeleteScope = {
+  BOTH: 2,
+};
+const recallWindowMs = 3 * 60 * 1000;
 
 export function useChatSocket() {
   const socket = ref<WebSocket | null>(null);
@@ -96,6 +107,10 @@ export function useChatSocket() {
       event.message && handleMessageEvent(event.message),
     [chatEventType.MESSAGE_DELIVERED]: (event) =>
       event.receipt && handleMessageReceiptEvent(event.receipt),
+    [chatEventType.MESSAGE_RECALL]: (event) =>
+      event.messageOperate && handleMessageOperateEvent(event.messageOperate),
+    [chatEventType.MESSAGE_DELETE]: (event) =>
+      event.messageOperate && handleMessageOperateEvent(event.messageOperate),
   };
 
   // Connection lifecycle
@@ -313,6 +328,45 @@ export function useChatSocket() {
     );
   }
 
+  function recallMessage(message: ChatMessage) {
+    if (!canRecallMessage(message)) return false;
+    return sendMessageOperate(message, messageOperateType.RECALL);
+  }
+
+  function deleteMessage(message: ChatMessage) {
+    return sendMessageOperate(
+      message,
+      messageOperateType.DELETE,
+      messageDeleteScope.BOTH,
+    );
+  }
+
+  function sendMessageOperate(
+    message: ChatMessage,
+    operateType: number,
+    deleteScope = 0,
+  ) {
+    if (!socket.value || socket.value.readyState !== WebSocket.OPEN) return false;
+    if (!message.sessionNo || !message.messageNo) return false;
+    const eventType =
+      operateType === messageOperateType.RECALL
+        ? chatEventType.MESSAGE_RECALL
+        : chatEventType.MESSAGE_DELETE;
+    sendChatSocketEvent(
+      socket.value,
+      createChatWsRequest(eventType, "messageOperate", {
+        sessionNo: message.sessionNo,
+        messageNo: message.messageNo,
+        operateType,
+        operatorId: connected.value?.userId || 0,
+        operatorType: 1,
+        deleteScope,
+        operatedAt: Date.now(),
+      }),
+    );
+    return true;
+  }
+
   async function endSession(closeReason = "user_closed", keepalive = false) {
     if (!sessionClosed.value && socket.value?.readyState === WebSocket.OPEN) {
       sendChatSocketEvent(
@@ -483,6 +537,21 @@ export function useChatSocket() {
     message.updateTime = Number(payload.receiptTime || message.updateTime);
   }
 
+  function handleMessageOperateEvent(payload: ChatMessageOperatePayload) {
+    if (!payload.sessionNo || !payload.messageNo) return;
+    if (payload.operateType === messageOperateType.DELETE) {
+      const message = messages.value.find(
+        (item) => item.messageNo === payload.messageNo,
+      );
+      if (!message) return;
+      markMessageDeleted(message, payload.operatedAt);
+      return;
+    }
+    messages.value = messages.value.filter(
+      (item) => item.messageNo !== payload.messageNo,
+    );
+  }
+
   async function loadChatOptions() {
     if (optionGroups.value.length) return;
     try {
@@ -544,8 +613,12 @@ export function useChatSocket() {
     if (!message?.messageNo) {
       return;
     }
+    if (message.status === messageStatus.RECALLED) return;
     if (messages.value.some((item) => item.messageNo === message.messageNo)) {
       return;
+    }
+    if (message.status === messageStatus.DELETED) {
+      markMessageDeleted(message, message.updateTime);
     }
     messages.value.push(message);
   }
@@ -597,12 +670,38 @@ export function useChatSocket() {
   function prependMessages(list: ChatMessage[]) {
     const seen = new Set(messages.value.map((item) => item.messageNo));
     const next = list.filter(
-      (item) => item.messageNo && !seen.has(item.messageNo),
+      (item) =>
+        item.messageNo &&
+        !seen.has(item.messageNo) &&
+        item.status !== messageStatus.RECALLED,
     );
     if (!next.length) {
       return;
     }
+    next.forEach((item) => {
+      if (item.status === messageStatus.DELETED) {
+        markMessageDeleted(item, item.updateTime);
+      }
+    });
     messages.value = [...next, ...messages.value];
+  }
+
+  function canRecallMessage(message: ChatMessage) {
+    const createTime = Number(message.createTime || message.updateTime || 0);
+    return createTime > 0 && Date.now() - createTime <= recallWindowMs;
+  }
+
+  function markMessageDeleted(message: ChatMessage, operatedAt?: number) {
+    message.status = messageStatus.DELETED;
+    message.content = "";
+    message.url = "";
+    message.fileName = "";
+    message.fileSize = 0;
+    message.mimeType = "";
+    message.width = 0;
+    message.height = 0;
+    message.duration = 0;
+    message.updateTime = Number(operatedAt || Date.now());
   }
 
   function resetHistoryState() {
@@ -632,8 +731,8 @@ export function useChatSocket() {
       status: message.status ?? 0,
       extra: message.extra ?? "",
       readTime: message.readTime ?? 0,
-      createTime: message.createTime ?? 0,
-      updateTime: message.updateTime ?? 0,
+      createTime: message.createTime ?? (message as { createTimes?: number }).createTimes ?? 0,
+      updateTime: message.updateTime ?? (message as { updateTimes?: number }).updateTimes ?? 0,
     };
   }
 
@@ -674,6 +773,8 @@ export function useChatSocket() {
     loadHistory,
     resetMessages,
     resolveFileUrl,
+    recallMessage,
+    deleteMessage,
     submitEvaluation,
     sendImage,
     sendText,

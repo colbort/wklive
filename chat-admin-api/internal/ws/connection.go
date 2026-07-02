@@ -28,7 +28,6 @@ type Connection struct {
 	Receivers  sync.Map              // 坐席接待中的用户
 	OnMessage  func(*Connection, *chat.ChatWsRequest)
 	OnClose    func(*Connection)
-	IsGuest    bool
 }
 
 func NewConnection(conn *websocket.Conn, sender *chat.ChatMessageUser, merchantId int64, agentId int64, onMessage func(*Connection, *chat.ChatWsRequest), onClose func(*Connection)) *Connection {

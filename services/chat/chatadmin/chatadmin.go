@@ -16,6 +16,7 @@ import (
 type (
 	AcceptChatSessionReq           = chat.AcceptChatSessionReq
 	AcceptChatSessionResp          = chat.AcceptChatSessionResp
+	AcceptChatSessionUser          = chat.AcceptChatSessionUser
 	AdminChatAgentResp             = chat.AdminChatAgentResp
 	AdminChatCategoryResp          = chat.AdminChatCategoryResp
 	AdminChatGroupResp             = chat.AdminChatGroupResp
@@ -56,6 +57,7 @@ type (
 	ListEnabledChatCategoriesReq   = chat.ListEnabledChatCategoriesReq
 	ListEnabledChatQuickRepliesReq = chat.ListEnabledChatQuickRepliesReq
 	MarkAgentMessagesReadReq       = chat.MarkAgentMessagesReadReq
+	OperateAgentMessageReq         = chat.OperateAgentMessageReq
 	PageChatAgentsReq              = chat.PageChatAgentsReq
 	PageChatAgentsResp             = chat.PageChatAgentsResp
 	PageChatCategoriesReq          = chat.PageChatCategoriesReq
@@ -121,6 +123,8 @@ type (
 		SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error)
 		// 发送用户输入状态
 		SendAgentTyping(ctx context.Context, in *SendAgentTypingReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 客服侧消息删除/撤回
+		OperateAgentMessage(ctx context.Context, in *OperateAgentMessageReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 查询会话消息
 		PageChatMessages(ctx context.Context, in *PageChatMessagesReq, opts ...grpc.CallOption) (*PageChatMessagesResp, error)
 		// 标记客服侧已读
@@ -296,6 +300,12 @@ func (m *defaultChatAdmin) SendAgentMessage(ctx context.Context, in *SendAgentMe
 func (m *defaultChatAdmin) SendAgentTyping(ctx context.Context, in *SendAgentTypingReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.SendAgentTyping(ctx, in, opts...)
+}
+
+// 客服侧消息删除/撤回
+func (m *defaultChatAdmin) OperateAgentMessage(ctx context.Context, in *OperateAgentMessageReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.OperateAgentMessage(ctx, in, opts...)
 }
 
 // 查询会话消息

@@ -31,6 +31,9 @@ service ChatApp {
   // 发送用户输入状态
   rpc SendUserTyping(SendUserTypingReq) returns (AppCommonResp);
 
+  // 用户侧消息删除/撤回
+  rpc OperateUserMessage(OperateUserMessageReq) returns (AppCommonResp);
+
   // 查询会话消息
   rpc ListMyChatMessages(ListMyChatMessagesReq) returns (AppListChatMessagesResp);
 
@@ -133,6 +136,11 @@ message SendUserTypingReq {
   int64 user_id = 2;            // 用户ID
   bool is_guest = 3;            // 是否游客/临时会话
   ChatTypingPayload typing = 4; // 输入状态 payload
+}
+
+message OperateUserMessageReq {
+  ChatMessageOperatePayload message_operate = 1; // 消息删除/撤回 payload
+  bool is_guest = 2;                              // 是否游客/临时会话
 }
 
 message ListMyChatMessagesReq {

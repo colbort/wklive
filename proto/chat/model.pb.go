@@ -3495,7 +3495,9 @@ type ChatMessageOperatePayload struct {
 	// 操作原因
 	Reason string `protobuf:"bytes,7,opt,name=reason,proto3" json:"reason,omitempty"`
 	// 操作时间，毫秒
-	OperatedAt    int64 `protobuf:"varint,8,opt,name=operated_at,json=operatedAt,proto3" json:"operated_at,omitempty"`
+	OperatedAt int64 `protobuf:"varint,8,opt,name=operated_at,json=operatedAt,proto3" json:"operated_at,omitempty"`
+	// 是否游客/临时会话
+	IsGuest       bool `protobuf:"varint,9,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3584,6 +3586,13 @@ func (x *ChatMessageOperatePayload) GetOperatedAt() int64 {
 		return x.OperatedAt
 	}
 	return 0
+}
+
+func (x *ChatMessageOperatePayload) GetIsGuest() bool {
+	if x != nil {
+		return x.IsGuest
+	}
+	return false
 }
 
 // *
@@ -5030,7 +5039,7 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"operatorId\x129\n" +
 	"\roperator_type\x18\x05 \x01(\x0e2\x14.chat.ChatSenderTypeR\foperatorType\x12>\n" +
 	"\x0emessage_status\x18\x06 \x01(\x0e2\x17.chat.ChatMessageStatusR\rmessageStatus\x12!\n" +
-	"\freceipt_time\x18\a \x01(\x03R\vreceiptTime\"\xf0\x02\n" +
+	"\freceipt_time\x18\a \x01(\x03R\vreceiptTime\"\x8b\x03\n" +
 	"\x19ChatMessageOperatePayload\x12\x1d\n" +
 	"\n" +
 	"session_no\x18\x01 \x01(\tR\tsessionNo\x12\x1d\n" +
@@ -5043,7 +5052,8 @@ const file_proto_chat_model_proto_rawDesc = "" +
 	"\fdelete_scope\x18\x06 \x01(\x0e2\x1c.chat.ChatMessageDeleteScopeR\vdeleteScope\x12\x16\n" +
 	"\x06reason\x18\a \x01(\tR\x06reason\x12\x1f\n" +
 	"\voperated_at\x18\b \x01(\x03R\n" +
-	"operatedAt\"\xc6\x01\n" +
+	"operatedAt\x12\x19\n" +
+	"\bis_guest\x18\t \x01(\bR\aisGuest\"\xc6\x01\n" +
 	"\x14ChatHeartbeatPayload\x12#\n" +
 	"\rconnection_id\x18\x01 \x01(\tR\fconnectionId\x12\x10\n" +
 	"\x03uid\x18\x02 \x01(\tR\x03uid\x125\n" +

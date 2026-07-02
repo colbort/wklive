@@ -123,9 +123,9 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, *chat.ChatWsRequest) {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ:
 			// TODO handle message read
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_RECALL:
-			// TODO handle message recall
+			l.handleAgentMessageOperate(context.Background(), conn, event.GetMessageOperate(), chat.ChatMessageOperateType_CHAT_MESSAGE_OPERATE_TYPE_RECALL)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELETE:
-			// TODO handle message delete
+			l.handleAgentMessageOperate(context.Background(), conn, event.GetMessageOperate(), chat.ChatMessageOperateType_CHAT_MESSAGE_OPERATE_TYPE_DELETE)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT:
 			conn.SendEvent(&chat.ChatWsResponse{
 				Code:      200,
@@ -191,7 +191,7 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		Extra:           payload.GetExtra(),
 		Sender:          firstNonNilMessageUser(conn.Sender, payload.Sender),
 		MerchantId:      conn.MerchantId,
-		IsGuest:         conn.IsGuest,
+		IsGuest:         payload.GetIsGuest(),
 	}
 	receiver, ok := conn.Receivers.Load(payload.SessionNo)
 	if ok {
@@ -227,7 +227,7 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 		Reason:     payload.GetReason(),
 		MerchantId: conn.MerchantId,
 		AgentId:    firstNonZero(payload.GetAgentId(), conn.AgentId),
-		IsGuest:    conn.IsGuest,
+		IsGuest:    payload.GetIsGuest(),
 	})
 	if err != nil {
 		conn.SendError("failed to accept chat session", err.Error())
@@ -290,6 +290,36 @@ func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connecti
 			Typing: &chat.ChatTypingPayload{},
 		},
 	})
+}
+
+func (l *MessagesLogic) handleAgentMessageOperate(ctx context.Context, conn *ws.Connection, payload *chat.ChatMessageOperatePayload, operateType chat.ChatMessageOperateType) {
+	if conn == nil {
+		return
+	}
+	if payload == nil {
+		conn.SendError("invalid message operate payload", "messageOperate is nil")
+		return
+	}
+	payload.OperateType = operateType
+	payload.OperatorId = conn.Sender.GetId()
+	payload.OperatorType = chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT
+	if payload.DeleteScope == chat.ChatMessageDeleteScope_CHAT_MESSAGE_DELETE_SCOPE_UNKNOWN {
+		payload.DeleteScope = chat.ChatMessageDeleteScope_CHAT_MESSAGE_DELETE_SCOPE_BOTH
+	}
+
+	rpcCtx := context.WithValue(ctx, utils.CtxKeyMerchantId, conn.MerchantId)
+	rpcCtx = context.WithValue(rpcCtx, utils.CtxKeyUid, conn.Sender.GetId())
+	resp, err := l.svcCtx.ChatAdminCli.OperateAgentMessage(rpcCtx, &chat.OperateAgentMessageReq{
+		MessageOperate: payload,
+		IsGuest:        payload.GetIsGuest(),
+	})
+	if err != nil {
+		conn.SendError("operate message err", err.Error())
+		return
+	}
+	if resp.GetBase().GetCode() != 200 {
+		conn.SendError("operate message err", resp.GetBase().GetMsg())
+	}
 }
 
 func (l *MessagesLogic) handleEvaluationInvite(ctx context.Context, conn *ws.Connection, payload *chat.ChatEvaluationPayload) {

@@ -203,6 +203,58 @@ func ListTransientMessages(ctx context.Context, rds *redis.Redis, merchantId int
 	return list[cursor:end], end < int64(len(list)), end, nil
 }
 
+func UpdateTransientMessageStatus(ctx context.Context, rds *redis.Redis, merchantId int64, sessionNo, messageNo string, status chat.ChatMessageStatus, updateTimes int64) error {
+	if rds == nil {
+		return fmt.Errorf("chat redis is not configured")
+	}
+	sessionNo = strings.TrimSpace(sessionNo)
+	messageNo = strings.TrimSpace(messageNo)
+	if merchantId <= 0 || sessionNo == "" || messageNo == "" {
+		return fmt.Errorf("merchant_id, session_no and message_no are required")
+	}
+	key := transientMessagesKey(merchantId, sessionNo)
+	raw, err := rds.LrangeCtx(ctx, key, 0, int(transientMessageLimit-1))
+	if err != nil {
+		return err
+	}
+	if len(raw) == 0 {
+		return fmt.Errorf("chat message not found")
+	}
+	updated := false
+	next := make([]string, 0, len(raw))
+	for _, item := range raw {
+		var msg chat.ChatMessage
+		if err := protojson.Unmarshal([]byte(item), &msg); err != nil {
+			next = append(next, item)
+			continue
+		}
+		if msg.GetMessageNo() == messageNo {
+			msg.Status = status
+			msg.UpdateTimes = updateTimes
+			payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(&msg)
+			if err != nil {
+				return err
+			}
+			next = append(next, string(payload))
+			updated = true
+			continue
+		}
+		next = append(next, item)
+	}
+	if !updated {
+		return fmt.Errorf("chat message not found")
+	}
+	if _, err := rds.DelCtx(ctx, key); err != nil {
+		return err
+	}
+	for i := len(next) - 1; i >= 0; i-- {
+		if _, err := rds.LpushCtx(ctx, key, next[i]); err != nil {
+			return err
+		}
+	}
+	return rds.ExpireCtx(ctx, key, DefaultTransientTTLSeconds)
+}
+
 func transientSessionStatusMatches(filter int64, status int64) bool {
 	if filter == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING) {
 		return status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING) ||

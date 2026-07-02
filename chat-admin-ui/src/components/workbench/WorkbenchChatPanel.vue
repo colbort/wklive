@@ -26,6 +26,8 @@ const emit = defineEmits<{
   close: [];
   send: [content: string];
   sendImage: [file: File];
+  recallMessage: [message: ChatMessage];
+  deleteMessage: [message: ChatMessage];
 }>();
 
 const draft = ref("");
@@ -176,6 +178,8 @@ function formatNickname(nickname: string) {
         :direction="messageDirection(message)"
         :sender-name="messageSenderName(message)"
         :resolve-url="resolveUrl"
+        @recall="emit('recallMessage', message)"
+        @delete="emit('deleteMessage', message)"
       />
     </div>
 

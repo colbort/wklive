@@ -25,6 +25,7 @@ const (
 	ChatApp_GetChatSessionByUser_FullMethodName   = "/chat.ChatApp/GetChatSessionByUser"
 	ChatApp_SendUserMessage_FullMethodName        = "/chat.ChatApp/SendUserMessage"
 	ChatApp_SendUserTyping_FullMethodName         = "/chat.ChatApp/SendUserTyping"
+	ChatApp_OperateUserMessage_FullMethodName     = "/chat.ChatApp/OperateUserMessage"
 	ChatApp_ListMyChatMessages_FullMethodName     = "/chat.ChatApp/ListMyChatMessages"
 	ChatApp_CloseMyChatSession_FullMethodName     = "/chat.ChatApp/CloseMyChatSession"
 	ChatApp_SubmitChatSatisfaction_FullMethodName = "/chat.ChatApp/SubmitChatSatisfaction"
@@ -50,6 +51,8 @@ type ChatAppClient interface {
 	SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error)
 	// 发送用户输入状态
 	SendUserTyping(ctx context.Context, in *SendUserTypingReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	// 用户侧消息删除/撤回
+	OperateUserMessage(ctx context.Context, in *OperateUserMessageReq, opts ...grpc.CallOption) (*AppCommonResp, error)
 	// 查询会话消息
 	ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*AppListChatMessagesResp, error)
 	// 关闭我的会话
@@ -128,6 +131,16 @@ func (c *chatAppClient) SendUserTyping(ctx context.Context, in *SendUserTypingRe
 	return out, nil
 }
 
+func (c *chatAppClient) OperateUserMessage(ctx context.Context, in *OperateUserMessageReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AppCommonResp)
+	err := c.cc.Invoke(ctx, ChatApp_OperateUserMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *chatAppClient) ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*AppListChatMessagesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AppListChatMessagesResp)
@@ -196,6 +209,8 @@ type ChatAppServer interface {
 	SendUserMessage(context.Context, *SendUserMessageReq) (*AppChatMessageResp, error)
 	// 发送用户输入状态
 	SendUserTyping(context.Context, *SendUserTypingReq) (*AppCommonResp, error)
+	// 用户侧消息删除/撤回
+	OperateUserMessage(context.Context, *OperateUserMessageReq) (*AppCommonResp, error)
 	// 查询会话消息
 	ListMyChatMessages(context.Context, *ListMyChatMessagesReq) (*AppListChatMessagesResp, error)
 	// 关闭我的会话
@@ -231,6 +246,9 @@ func (UnimplementedChatAppServer) SendUserMessage(context.Context, *SendUserMess
 }
 func (UnimplementedChatAppServer) SendUserTyping(context.Context, *SendUserTypingReq) (*AppCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SendUserTyping not implemented")
+}
+func (UnimplementedChatAppServer) OperateUserMessage(context.Context, *OperateUserMessageReq) (*AppCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method OperateUserMessage not implemented")
 }
 func (UnimplementedChatAppServer) ListMyChatMessages(context.Context, *ListMyChatMessagesReq) (*AppListChatMessagesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyChatMessages not implemented")
@@ -373,6 +391,24 @@ func _ChatApp_SendUserTyping_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatApp_OperateUserMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OperateUserMessageReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAppServer).OperateUserMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatApp_OperateUserMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAppServer).OperateUserMessage(ctx, req.(*OperateUserMessageReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ChatApp_ListMyChatMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListMyChatMessagesReq)
 	if err := dec(in); err != nil {
@@ -468,6 +504,10 @@ var ChatApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendUserTyping",
 			Handler:    _ChatApp_SendUserTyping_Handler,
+		},
+		{
+			MethodName: "OperateUserMessage",
+			Handler:    _ChatApp_OperateUserMessage_Handler,
 		},
 		{
 			MethodName: "ListMyChatMessages",

@@ -241,6 +241,8 @@ onBeforeUnmount(() => {
           :direction="messageDirection(message)"
           :sender-name="messageSenderName(message)"
           :resolve-url="chat.resolveFileUrl"
+          @recall="chat.recallMessage"
+          @delete="chat.deleteMessage"
         />
       </div>
 

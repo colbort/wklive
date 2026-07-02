@@ -30,6 +30,7 @@ type (
 	ListMyChatMessagesReq     = chat.ListMyChatMessagesReq
 	OpenChatSessionReq        = chat.OpenChatSessionReq
 	OpenChatSessionResp       = chat.OpenChatSessionResp
+	OperateUserMessageReq     = chat.OperateUserMessageReq
 	SendUserMessageReq        = chat.SendUserMessageReq
 	SendUserTypingReq         = chat.SendUserTypingReq
 	SubmitChatSatisfactionReq = chat.SubmitChatSatisfactionReq
@@ -47,6 +48,8 @@ type (
 		SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error)
 		// 发送用户输入状态
 		SendUserTyping(ctx context.Context, in *SendUserTypingReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		// 用户侧消息删除/撤回
+		OperateUserMessage(ctx context.Context, in *OperateUserMessageReq, opts ...grpc.CallOption) (*AppCommonResp, error)
 		// 查询会话消息
 		ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*AppListChatMessagesResp, error)
 		// 关闭我的会话
@@ -102,6 +105,12 @@ func (m *defaultChatApp) SendUserMessage(ctx context.Context, in *SendUserMessag
 func (m *defaultChatApp) SendUserTyping(ctx context.Context, in *SendUserTypingReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.SendUserTyping(ctx, in, opts...)
+}
+
+// 用户侧消息删除/撤回
+func (m *defaultChatApp) OperateUserMessage(ctx context.Context, in *OperateUserMessageReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.OperateUserMessage(ctx, in, opts...)
 }
 
 // 查询会话消息

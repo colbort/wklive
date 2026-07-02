@@ -9,6 +9,8 @@ export const chatEventType = {
   EVALUATION_SUBMIT: 15,
   TYPING: 16,
   MESSAGE_DELIVERED: 17,
+  MESSAGE_RECALL: 19,
+  MESSAGE_DELETE: 20,
   ERROR: 22,
 } as const;
 

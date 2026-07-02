@@ -363,6 +363,34 @@ textarea:focus {
   opacity: 0.72;
 }
 
+.message-context-menu {
+  position: fixed;
+  z-index: 60;
+  display: grid;
+  min-width: 104px;
+  overflow: hidden;
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  padding: 4px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+}
+
+.message-context-menu button {
+  min-height: 32px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 12px;
+  color: #172033;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.message-context-menu button:hover {
+  background: #eef3f8;
+}
+
 .error-line {
   padding: 8px 18px 0;
 }

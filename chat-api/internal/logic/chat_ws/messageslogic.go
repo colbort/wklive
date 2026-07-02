@@ -151,9 +151,9 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, *chat.ChatWsRequest) {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ:
 			// TODO handle message read
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_RECALL:
-			// TODO handle message recall
+			l.handleUserMessageOperate(context.Background(), conn, event.GetMessageOperate(), chat.ChatMessageOperateType_CHAT_MESSAGE_OPERATE_TYPE_RECALL)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELETE:
-			// TODO handle message delete
+			l.handleUserMessageOperate(context.Background(), conn, event.GetMessageOperate(), chat.ChatMessageOperateType_CHAT_MESSAGE_OPERATE_TYPE_DELETE)
 		case chat.ChatEventType_CHAT_EVENT_TYPE_HEARTBEAT:
 			conn.SendEvent(&chat.ChatWsResponse{
 				Code:      200,
@@ -310,6 +310,34 @@ func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connectio
 	if resp.GetBase().GetCode() != successCode {
 		conn.SendError("call rpc fail", resp.GetBase().GetMsg())
 		return
+	}
+}
+
+func (l *MessagesLogic) handleUserMessageOperate(ctx context.Context, conn *ws.Connection, payload *chat.ChatMessageOperatePayload, operateType chat.ChatMessageOperateType) {
+	if conn == nil {
+		return
+	}
+	if payload == nil {
+		conn.SendError("invalid message operate payload", "messageOperate is nil")
+		return
+	}
+	payload.SessionNo = firstNonEmpty(payload.GetSessionNo(), conn.SessionNo)
+	payload.OperateType = operateType
+	payload.OperatorId = conn.UserId
+	payload.OperatorType = chat.ChatSenderType_CHAT_SENDER_TYPE_USER
+
+	rpcCtx := context.WithValue(ctx, utils.CtxKeyMerchantId, conn.MerchantId)
+	rpcCtx = context.WithValue(rpcCtx, utils.CtxKeyUid, conn.UserId)
+	resp, err := l.svcCtx.ChatAppCli.OperateUserMessage(rpcCtx, &chat.OperateUserMessageReq{
+		MessageOperate: payload,
+		IsGuest:        conn.IsGuest,
+	})
+	if err != nil {
+		conn.SendError("operate message err", err.Error())
+		return
+	}
+	if resp.GetBase().GetCode() != successCode {
+		conn.SendError("operate message err", resp.GetBase().GetMsg())
 	}
 }
 

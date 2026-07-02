@@ -59,6 +59,12 @@ func (s *ChatAppServer) SendUserTyping(ctx context.Context, in *chat.SendUserTyp
 	return l.SendUserTyping(in)
 }
 
+// 用户侧消息删除/撤回
+func (s *ChatAppServer) OperateUserMessage(ctx context.Context, in *chat.OperateUserMessageReq) (*chat.AppCommonResp, error) {
+	l := logic.NewOperateUserMessageLogic(ctx, s.svcCtx)
+	return l.OperateUserMessage(in)
+}
+
 // 查询会话消息
 func (s *ChatAppServer) ListMyChatMessages(ctx context.Context, in *chat.ListMyChatMessagesReq) (*chat.AppListChatMessagesResp, error) {
 	l := logic.NewListMyChatMessagesLogic(ctx, s.svcCtx)

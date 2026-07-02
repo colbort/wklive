@@ -127,6 +127,8 @@ export interface ChatMessage {
 export type ChatQueueAction = number;
 export type ChatSenderType = number;
 export type ChatMessageStatus = number;
+export type ChatMessageOperateType = number;
+export type ChatMessageDeleteScope = number;
 
 export interface WsConnectedPayload {
   message: string;
@@ -216,6 +218,18 @@ export interface ChatMessageReceiptPayload {
   receiptTime: number;
 }
 
+export interface ChatMessageOperatePayload {
+  sessionNo: string;
+  messageNo: string;
+  operateType: ChatMessageOperateType;
+  operatorId: number;
+  operatorType: ChatSenderType;
+  deleteScope?: ChatMessageDeleteScope;
+  reason?: string;
+  operatedAt: number;
+  isGuest?: boolean;
+}
+
 export interface ChatWsResponse {
   code?: number;
   msg?: string;
@@ -231,6 +245,7 @@ export interface ChatWsResponse {
   evaluation?: ChatEvaluationPayload;
   typing?: ChatTypingPayload;
   receipt?: ChatMessageReceiptPayload;
+  messageOperate?: ChatMessageOperatePayload;
   error?: ChatErrorPayload;
 }
 
@@ -288,7 +303,7 @@ export interface ChatWsRequestPayloadMap {
   evaluation: Record<string, unknown>;
   typing: Record<string, unknown>;
   receipt: ChatMessageReceiptPayload;
-  messageOperate: Record<string, unknown>;
+  messageOperate: ChatMessageOperatePayload;
   heartbeat: Record<string, unknown>;
 }
 

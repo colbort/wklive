@@ -143,6 +143,12 @@ func (s *ChatAdminServer) SendAgentTyping(ctx context.Context, in *chat.SendAgen
 	return l.SendAgentTyping(in)
 }
 
+// 客服侧消息删除/撤回
+func (s *ChatAdminServer) OperateAgentMessage(ctx context.Context, in *chat.OperateAgentMessageReq) (*chat.AdminCommonResp, error) {
+	l := logic.NewOperateAgentMessageLogic(ctx, s.svcCtx)
+	return l.OperateAgentMessage(in)
+}
+
 // 查询会话消息
 func (s *ChatAdminServer) PageChatMessages(ctx context.Context, in *chat.PageChatMessagesReq) (*chat.PageChatMessagesResp, error) {
 	l := logic.NewPageChatMessagesLogic(ctx, s.svcCtx)

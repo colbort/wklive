@@ -23,6 +23,7 @@ import type {
   ChatAgent,
   ChatEvaluationPayload,
   ChatMessage,
+  ChatMessageOperatePayload,
   ChatMessageReceiptPayload,
   ChatQueuePayload,
   ChatSession,
@@ -53,6 +54,18 @@ const sessionStatusMessages = ref<Record<string, string>>({});
 const wsState = ref<"idle" | "open" | "closed">("idle");
 const changingAgentStatus = ref(false);
 const pendingAgentMessageNos: Record<string, string[]> = {};
+const messageStatus = {
+  RECALLED: 6,
+  DELETED: 7,
+};
+const messageOperateType = {
+  RECALL: 1,
+  DELETE: 2,
+};
+const messageDeleteScope = {
+  BOTH: 2,
+};
+const recallWindowMs = 3 * 60 * 1000;
 const defaultAgentStatusOptions: DisplayOptionItem[] = [
   {
     code: "CHAT_AGENT_STATUS_OFFLINE",
@@ -183,6 +196,10 @@ const incomingWsHandlers: Partial<
     event.message && handleMessageWsEvent(event.message),
   [chatEventType.MESSAGE_DELIVERED]: (event) =>
     event.receipt && handleMessageReceiptWsEvent(event.receipt),
+  [chatEventType.MESSAGE_RECALL]: (event) =>
+    event.messageOperate && handleMessageOperateWsEvent(event.messageOperate),
+  [chatEventType.MESSAGE_DELETE]: (event) =>
+    event.messageOperate && handleMessageOperateWsEvent(event.messageOperate),
   [chatEventType.SYSTEM_NOTICE]: (event) =>
     event.systemNotice && handleSystemNoticeWsEvent(event.systemNotice),
   [chatEventType.USER_JOIN]: (event) => handleUserJoinWsEvent(event),
@@ -348,7 +365,11 @@ async function loadMessages(sessionNo: string) {
     messages.value[sessionNo] = sortMessages(
       resp.data
         .map(normalizeMessage)
-        .filter((message) => !isQueueSystemMessage(message)),
+        .filter(
+          (message) =>
+            message.status !== messageStatus.RECALLED &&
+            !isQueueSystemMessage(message),
+        ),
     );
   } catch (err) {
     ElMessage.error(err instanceof Error ? err.message : "加载消息失败");
@@ -572,6 +593,10 @@ function scheduleRefreshSessions() {
 
 function pushMessage(message: ChatMessage) {
   if (!message.messageNo || isQueueSystemMessage(message)) return false;
+  if (message.status === messageStatus.RECALLED) return false;
+  if (message.status === messageStatus.DELETED) {
+    markMessageDeleted(message, message.updateTime);
+  }
   const list = messages.value[message.sessionNo] || [];
   if (list.some((item) => item.messageNo === message.messageNo)) return false;
   messages.value[message.sessionNo] = sortMessages([...list, message]);
@@ -595,6 +620,21 @@ function applyMessageReceipt(payload: ChatMessageReceiptPayload) {
   message.status = Number(payload.messageStatus || message.status);
   message.updateTime = Number(payload.receiptTime || message.updateTime);
   messages.value[payload.sessionNo] = [...list];
+}
+
+function handleMessageOperateWsEvent(payload: ChatMessageOperatePayload) {
+  if (!payload.sessionNo || !payload.messageNo) return;
+  const list = messages.value[payload.sessionNo] || [];
+  if (payload.operateType === messageOperateType.DELETE) {
+    const message = list.find((item) => item.messageNo === payload.messageNo);
+    if (!message) return;
+    markMessageDeleted(message, payload.operatedAt);
+    messages.value[payload.sessionNo] = [...list];
+    return;
+  }
+  messages.value[payload.sessionNo] = list.filter(
+    (item) => item.messageNo !== payload.messageNo,
+  );
 }
 
 function trackPendingAgentMessage(sessionNo: string, messageNo: string) {
@@ -703,7 +743,28 @@ function normalizeMessageEnums(message: ChatMessage) {
 
 function normalizeMessage(message: ChatMessage) {
   normalizeMessageEnums(message);
+  if (message.status === messageStatus.DELETED) {
+    markMessageDeleted(message, message.updateTime);
+  }
   return message;
+}
+
+function canRecallMessage(message: ChatMessage) {
+  const createTime = Number(message.createTime || message.updateTime || 0);
+  return createTime > 0 && Date.now() - createTime <= recallWindowMs;
+}
+
+function markMessageDeleted(message: ChatMessage, operatedAt?: number) {
+  message.status = messageStatus.DELETED;
+  message.content = "";
+  message.url = "";
+  message.fileName = "";
+  message.fileSize = 0;
+  message.mimeType = "";
+  message.width = 0;
+  message.height = 0;
+  message.duration = 0;
+  message.updateTime = Number(operatedAt || Date.now());
 }
 
 function sortMessages(list: ChatMessage[]) {
@@ -910,6 +971,7 @@ function send(value: string) {
     sessionNo: activeSession.value?.sessionNo || "",
     messageType: 1,
     content,
+    isGuest: activeIsGuest.value,
     sender: {
       type: 2,
       id: auth.user?.id || 0,
@@ -945,6 +1007,7 @@ async function sendImage(file: File) {
       fileName: data.fileName || file.name,
       fileSize: data.fileSize || file.size,
       mimeType: data.mimeType || file.type,
+      isGuest: activeIsGuest.value,
       sender: {
         type: 2,
         id: auth.user?.id || 0,
@@ -979,6 +1042,43 @@ function sendAgentMessagePayload(payload: SendAgentMessagePayload) {
     scheduleRefreshSessions();
   }
   return sent;
+}
+
+function recallMessage(message: ChatMessage) {
+  if (!canRecallMessage(message)) return false;
+  return sendMessageOperate(message, messageOperateType.RECALL);
+}
+
+function deleteMessage(message: ChatMessage) {
+  return sendMessageOperate(
+    message,
+    messageOperateType.DELETE,
+    messageDeleteScope.BOTH,
+  );
+}
+
+function sendMessageOperate(
+  message: ChatMessage,
+  operateType: number,
+  deleteScope = 0,
+) {
+  if (!message.sessionNo || !message.messageNo) return false;
+  const eventType =
+    operateType === messageOperateType.RECALL
+      ? chatEventType.MESSAGE_RECALL
+      : chatEventType.MESSAGE_DELETE;
+  return sendWsEvent(
+    createChatWsRequest(eventType, "messageOperate", {
+      sessionNo: message.sessionNo,
+      messageNo: message.messageNo,
+      operateType,
+      operatorId: auth.user?.id || 0,
+      operatorType: 2,
+      deleteScope,
+      operatedAt: Date.now(),
+      isGuest: isGuestSession(activeSession.value),
+    }),
+  );
 }
 
 function buildOptimisticAgentMessage(
@@ -1051,7 +1151,7 @@ function buildCloseSessionPayload(
     userId: session.userId,
     sessionNo: session.sessionNo,
     closeReason: "closed by agent",
-    isGuest: session.isGuest || false,
+    isGuest: isGuestSession(session),
   };
 }
 
@@ -1079,7 +1179,7 @@ function buildAcceptSessionPayload(
     merchantId: merchantId.value,
     agentId: agentId.value,
     sessionNo: session.sessionNo,
-    isGuest: session.isGuest,
+    isGuest: isGuestSession(session),
     reason: "accepted by agent",
   };
 }
@@ -1123,6 +1223,8 @@ function buildAcceptSessionPayload(
       @close="closeSession"
       @send="send"
       @send-image="sendImage"
+      @recall-message="recallMessage"
+      @delete-message="deleteMessage"
     />
 
     <WorkbenchCustomerPanel :session="activeSession" />
