@@ -143,13 +143,15 @@ function clearObjectUrl() {
   >
     <div class="bubble">
       <span>{{ senderName }}</span>
-      <p v-if="message.status === deletedStatus">消息已删除</p>
+      <p v-if="message.status === deletedStatus">
+        消息已删除
+      </p>
       <img
         v-else-if="message.messageType === 2 && imageSrc"
         class="bubble-image"
         :src="imageSrc"
         :alt="message.fileName || message.content || 'image'"
-      />
+      >
       <video
         v-else-if="message.messageType === 4 && message.url"
         class="bubble-video"
@@ -173,7 +175,9 @@ function clearObjectUrl() {
         <strong>{{ message.fileName || message.content || "文件" }}</strong>
         <small>{{ message.mimeType }} {{ fileSizeText(message.fileSize) }}</small>
       </a>
-      <p v-else>{{ message.content }}</p>
+      <p v-else>
+        {{ message.content }}
+      </p>
     </div>
     <div
       v-if="menuOpen && hasMenu()"
