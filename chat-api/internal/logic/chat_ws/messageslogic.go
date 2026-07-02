@@ -14,7 +14,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 const (
@@ -129,22 +128,26 @@ func (l *MessagesLogic) Messages(conn *websocket.Conn, req types.ChatWSMessagesR
 }
 
 // 处理用户通过 ws 发送的事件。
-func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
-	return func(conn *ws.Connection, event ws.InboundEvent) {
-		eventType, ok := chat.ChatEventType_value[event.EventType]
-		if !ok {
-			sendWSError(conn, "event type parse err: "+event.EventType)
+func (l *MessagesLogic) onMessage() func(*ws.Connection, *chat.ChatWsRequest) {
+	return func(conn *ws.Connection, event *chat.ChatWsRequest) {
+		if event == nil {
+			sendWSError(conn, "invalid request")
 			return
 		}
-		switch chat.ChatEventType(eventType) {
+		eventType := event.GetEventType()
+		if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED {
+			sendWSError(conn, "event type is required")
+			return
+		}
+		switch eventType {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE:
-			l.handleSendUserMessage(context.Background(), conn, event.Data)
+			l.handleSendUserMessage(context.Background(), conn, event.GetMessage())
 		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
-			l.handleCloseUserSession(context.Background(), conn)
+			l.handleCloseUserSession(context.Background(), conn, event.GetSession())
 		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING:
-			l.handleUserTyping(context.Background(), conn, event.Data)
+			l.handleUserTyping(context.Background(), conn, event.GetTyping())
 		case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_SUBMIT:
-			l.handleSubmitEvaluation(context.Background(), conn, event.Data)
+			l.handleSubmitEvaluation(context.Background(), conn, event.GetEvaluation())
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ:
 			// TODO handle message read
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_RECALL:
@@ -215,9 +218,8 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 // 处理用户发消息：
 // 游客：chat-api 构造消息并转发；
 // 登录用户：先调用内部服务入库，再把返回的消息转发给后台和用户侧。
-func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
-	var req chat.SendUserMessageReq
-	if err := protojson.Unmarshal(payload, &req); err != nil {
+func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Connection, payload *chat.ChatWsMessagePayload) {
+	if payload == nil {
 		sendWSError(conn, "invalid message payload")
 		return
 	}
@@ -225,14 +227,29 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 		sendWSError(conn, "sessionNo is required")
 		return
 	}
-	req.Sender = &chat.ChatMessageUser{
-		Id:        conn.UserId,
-		Nickname:  conn.Username,
-		AvatarUrl: conn.AvatarUrl,
-		Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+	req := chat.SendUserMessageReq{
+		SessionNo:       firstNonEmpty(payload.GetSessionNo(), conn.SessionNo),
+		ClientMessageId: payload.GetClientMessageId(),
+		MessageType:     payload.GetMessageType(),
+		Content:         payload.GetContent(),
+		Url:             payload.GetUrl(),
+		FileName:        payload.GetFileName(),
+		FileSize:        payload.GetFileSize(),
+		MimeType:        payload.GetMimeType(),
+		Width:           payload.GetWidth(),
+		Height:          payload.GetHeight(),
+		Duration:        payload.GetDuration(),
+		Extra:           payload.GetExtra(),
+		Sender: &chat.ChatMessageUser{
+			Id:        conn.UserId,
+			Nickname:  conn.Username,
+			AvatarUrl: conn.AvatarUrl,
+			Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
+		},
+		Receiver:   payload.GetReceiver(),
+		MerchantId: conn.MerchantId,
+		IsGuest:    conn.IsGuest,
 	}
-	req.MerchantId = conn.MerchantId
-	req.IsGuest = conn.IsGuest
 	resp, err := l.svcCtx.ChatAppCli.SendUserMessage(ctx, &req)
 	if err != nil {
 		sendWSError(conn, err.Error())
@@ -264,29 +281,32 @@ func (l *MessagesLogic) handleSendUserMessage(ctx context.Context, conn *ws.Conn
 	})
 }
 
-func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
+func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connection, payload *chat.ChatTypingPayload) {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		return
 	}
 	now := time.Now().UnixMilli()
-	typing := chat.ChatTypingPayload{
+	typing := &chat.ChatTypingPayload{
 		SessionNo:  conn.SessionNo,
 		SenderId:   conn.UserId,
 		SenderType: chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
 		Text:       "用户正在输入",
 		ActionTime: now,
 	}
-	if len(payload) > 0 {
-		if err := protojson.Unmarshal(payload, &typing); err != nil {
-			sendWSError(conn, "invalid typing payload")
-			return
+	if payload != nil {
+		typing = payload
+		typing.SessionNo = firstNonEmpty(typing.GetSessionNo(), conn.SessionNo)
+		typing.SenderId = conn.UserId
+		typing.SenderType = chat.ChatSenderType_CHAT_SENDER_TYPE_USER
+		if typing.ActionTime == 0 {
+			typing.ActionTime = now
 		}
 	}
 	resp, err := l.svcCtx.ChatAppCli.SendUserTyping(ctx, &chat.SendUserTypingReq{
 		MerchantId: conn.MerchantId,
 		UserId:     conn.UserId,
 		IsGuest:    conn.IsGuest,
-		Typing:     &typing,
+		Typing:     typing,
 	})
 	if err != nil {
 		sendWSError(conn, err.Error())
@@ -298,21 +318,16 @@ func (l *MessagesLogic) handleUserTyping(ctx context.Context, conn *ws.Connectio
 	}
 }
 
-func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
+func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Connection, payload *chat.ChatEvaluationPayload) {
 	if conn == nil || strings.TrimSpace(conn.SessionNo) == "" {
 		sendWSError(conn, "sessionNo is required")
 		return
 	}
-	var data struct {
-		Score   int32  `json:"score"`
-		Content string `json:"content"`
-		Tags    string `json:"tags"`
-	}
-	if err := json.Unmarshal(payload, &data); err != nil {
+	if payload == nil {
 		sendWSError(conn, "invalid evaluation payload")
 		return
 	}
-	if data.Score < 1 || data.Score > 5 {
+	if payload.GetRating() < 1 || payload.GetRating() > 5 {
 		sendWSError(conn, "score must be between 1 and 5")
 		return
 	}
@@ -320,9 +335,9 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 		SessionNo:  conn.SessionNo,
 		MerchantId: conn.MerchantId,
 		UserId:     conn.UserId,
-		Score:      data.Score,
-		Content:    strings.TrimSpace(data.Content),
-		Tags:       strings.TrimSpace(data.Tags),
+		Score:      payload.GetRating(),
+		Content:    strings.TrimSpace(payload.GetComment()),
+		Tags:       strings.Join(payload.GetTags(), ","),
 		IsGuest:    conn.IsGuest,
 	})
 	if err != nil {
@@ -344,11 +359,15 @@ func (l *MessagesLogic) handleSubmitEvaluation(ctx context.Context, conn *ws.Con
 	})
 }
 
-func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Connection) {
+func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Connection, payload *chat.ChatWsSessionPayload) {
+	closeReason := "用户主动结束会话"
+	if payload != nil {
+		closeReason = firstNonEmpty(payload.GetCloseReason(), closeReason)
+	}
 	_, err := l.svcCtx.ChatAppCli.CloseMyChatSession(ctx, &chat.CloseMyChatSessionReq{
 		SessionNo:       conn.SessionNo,
 		CloseReasonType: chat.ChatSessionCloseReason_CHAT_SESSION_CLOSE_REASON_USER,
-		CloseReason:     "用户主动结束会话",
+		CloseReason:     closeReason,
 		MerchantId:      conn.MerchantId,
 		UserId:          conn.UserId,
 		IsGuest:         conn.IsGuest,
@@ -374,4 +393,13 @@ func sendWSError(conn *ws.Connection, message string) {
 			Retryable:    false,
 		}},
 	})
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if text := strings.TrimSpace(value); text != "" {
+			return text
+		}
+	}
+	return ""
 }

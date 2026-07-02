@@ -41,7 +41,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if agent.Status != int64(chat.ChatAgentStatus_CHAT_AGENT_STATUS_ONLINE) {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(400, "chat agent is not online")}, nil
 	}
-	session, base, err := ih.AcceptChatSession(l.ctx, l.svcCtx, ih.AssignSessionOptions{
+	session, err := ih.AcceptChatSession(l.ctx, l.svcCtx, ih.AssignSessionOptions{
 		SessionNo:  in.SessionNo,
 		Agent:      agent,
 		AssignType: chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL,
@@ -50,9 +50,6 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	})
 	if err != nil {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
-	}
-	if base != nil {
-		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
 	user, err := l.svcCtx.ChatUserModel.FindOne(l.ctx, agent.UserId)
 	if err != nil {
@@ -80,13 +77,16 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 	if err != nil {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	_ = ih.PublishMessageEvent(ih.PublishMessageEventReq{
+	err = ih.PublishMessageEvent(ih.PublishMessageEventReq{
 		Ctx:       l.ctx,
 		BusRedis:  l.svcCtx.BusRedis,
 		Channel:   chat.ChatAppEventChannel,
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_QUEUE_UPDATE,
 		Payload:   &chat.ChatMessageEvent_Queue{Queue: queue},
 	})
+	if err != nil {
+		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+	}
 	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, false)}, nil
 }
 

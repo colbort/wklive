@@ -29,10 +29,7 @@ func NewPageChatAgentsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 
 // 分页查询坐席
 func (l *PageChatAgentsLogic) PageChatAgents(in *chat.PageChatAgentsReq) (*chat.PageChatAgentsResp, error) {
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.PageChatAgentsResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.PageChatAgentsResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

@@ -27,7 +27,7 @@ func NewSendAgentMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 发送客服消息
 func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (*chat.AdminChatMessageResp, error) {
-	msg, base, err := ih.SendMessage(l.ctx, l.svcCtx, ih.SendMessageOptions{
+	msg, err := ih.SendMessage(l.ctx, l.svcCtx, ih.SendMessageOptions{
 		MerchantId:     in.GetMerchantId(),
 		SessionNo:      in.GetSessionNo(),
 		IsGuest:        in.GetIsGuest(),
@@ -40,12 +40,9 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 		MimeType:       in.GetMimeType(),
 		FileSize:       in.GetFileSize(),
 		Duration:       in.GetDuration(),
-		MessageChannel: chat.ChatAppEventChannel,
+		ReceiveChannel: chat.ChatAppEventChannel,
 		ReceiptChannel: chat.ChatAdminEventChannel,
 	})
-	if base != nil {
-		return &chat.AdminChatMessageResp{Base: base}, nil
-	}
 	if err != nil {
 		return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

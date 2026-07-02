@@ -27,7 +27,7 @@ func NewSendUserMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 发送用户消息
 func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*chat.AppChatMessageResp, error) {
-	msg, base, err := ih.SendMessage(l.ctx, l.svcCtx, ih.SendMessageOptions{
+	msg, err := ih.SendMessage(l.ctx, l.svcCtx, ih.SendMessageOptions{
 		MerchantId:     in.GetMerchantId(),
 		SessionNo:      in.GetSessionNo(),
 		IsGuest:        in.GetIsGuest(),
@@ -40,12 +40,9 @@ func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*ch
 		MimeType:       in.GetMimeType(),
 		FileSize:       in.GetFileSize(),
 		Duration:       in.GetDuration(),
-		MessageChannel: chat.ChatAdminEventChannel,
+		ReceiveChannel: chat.ChatAdminEventChannel,
 		ReceiptChannel: chat.ChatAppEventChannel,
 	})
-	if base != nil {
-		return &chat.AppChatMessageResp{Base: base}, nil
-	}
 	if err != nil {
 		return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

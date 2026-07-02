@@ -266,10 +266,48 @@ export interface ChatWsResponse {
 
 export type ChatWsEvent = ChatWsResponse;
 
-export interface ChatWsRequest<TPayload = unknown> {
-  eventType?: ChatEventType;
-  data: TPayload;
+export interface ChatWsRequestBase {
+  eventType: ChatEventType;
+  requestId?: string;
+  clientTime?: number;
 }
 
-export type ChatUiWsReq =
-  ChatWsRequest<SendUserMessagePayload>;
+export interface ChatWsRequestPayloadMap {
+  message: SendUserMessagePayload;
+  session: CloseChatSessionPayload;
+  systemNotice: ChatSystemNoticePayload;
+  userState: ChatUserStatePayload;
+  queue: ChatQueuePayload;
+  agent: ChatAgentPayload;
+  transfer: ChatTransferPayload;
+  evaluation: ChatEvaluationPayload;
+  typing: ChatTypingPayload;
+  receipt: ChatMessageReceiptPayload;
+  messageOperate: ChatMessageOperatePayload;
+  heartbeat: ChatHeartbeatPayload;
+}
+
+export type ChatWsRequestPayloadKey = keyof ChatWsRequestPayloadMap;
+
+type ChatWsRequestOneof<K extends ChatWsRequestPayloadKey> = {
+  [P in K]: Pick<ChatWsRequestPayloadMap, P> &
+    Partial<Record<Exclude<ChatWsRequestPayloadKey, P>, never>>;
+}[K];
+
+export type ChatWsRequest = ChatWsRequestBase &
+  ChatWsRequestOneof<ChatWsRequestPayloadKey>;
+
+export function createChatWsRequest<K extends ChatWsRequestPayloadKey>(
+  eventType: ChatEventType,
+  payloadKey: K,
+  payload: ChatWsRequestPayloadMap[K],
+  options: Omit<ChatWsRequestBase, "eventType" | "clientTime"> &
+    Partial<Pick<ChatWsRequestBase, "clientTime">> = {},
+): ChatWsRequest {
+  return {
+    eventType,
+    clientTime: Date.now(),
+    ...options,
+    [payloadKey]: payload,
+  } as ChatWsRequest;
+}

@@ -27,10 +27,7 @@ func NewListEnabledChatQuickRepliesLogic(ctx context.Context, svcCtx *svc.Servic
 
 // 查询启用快捷回复
 func (l *ListEnabledChatQuickRepliesLogic) ListEnabledChatQuickReplies(in *chat.ListEnabledChatQuickRepliesReq) (*chat.ListChatQuickRepliesResp, error) {
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.ListChatQuickRepliesResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.ListChatQuickRepliesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -22,24 +23,24 @@ const (
 
 var sequence uint64
 
-func MerchantIDFromMetadata(ctx context.Context) (int64, *common.RespBase, error) {
+func MerchantIDFromMetadata(ctx context.Context) (int64, error) {
 	merchantID, err := utils.GetMerchantIdFromMd(ctx)
 	if err != nil || merchantID <= 0 {
-		return 0, helper.ErrResp(400, "merchant_id is required"), nil
+		return 0, errors.New("merchant_id is required")
 	}
-	return merchantID, nil, nil
+	return merchantID, nil
 }
 
-func ChatAppIdentityFromMetadata(ctx context.Context) (int64, int64, *common.RespBase, error) {
-	merchantID, base, err := MerchantIDFromMetadata(ctx)
-	if base != nil || err != nil {
-		return 0, 0, base, err
+func ChatAppIdentityFromMetadata(ctx context.Context) (int64, int64, error) {
+	merchantID, err := MerchantIDFromMetadata(ctx)
+	if err != nil {
+		return 0, 0, err
 	}
 	userID, err := utils.GetUserIdFromMd(ctx)
 	if err != nil || userID == 0 {
-		return 0, 0, helper.ErrResp(400, "user_id is required"), nil
+		return 0, 0, errors.New("user_id is required")
 	}
-	return merchantID, userID, nil, nil
+	return merchantID, userID, nil
 }
 
 func OffsetBase(cursor, limit int64, size int, total int64) *common.RespBase {

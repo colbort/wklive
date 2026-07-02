@@ -2,7 +2,6 @@ package chat_ws
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -15,7 +14,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var upgrader = websocket.Upgrader{
@@ -87,18 +85,22 @@ func (l *MessagesLogic) Messages(w http.ResponseWriter, r *http.Request, req typ
 	client.ReadPump()
 }
 
-func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
-	return func(conn *ws.Connection, event ws.InboundEvent) {
-		eventType, ok := chat.ChatEventType_value[event.EventType]
-		if !ok {
-			sendWSError(conn, "invalid event type", fmt.Errorf("invalid event type: %s", event.EventType))
+func (l *MessagesLogic) onMessage() func(*ws.Connection, *chat.ChatWsRequest) {
+	return func(conn *ws.Connection, event *chat.ChatWsRequest) {
+		if event == nil {
+			sendWSError(conn, "invalid request", fmt.Errorf("invalid request"))
 			return
 		}
-		switch chat.ChatEventType(eventType) {
+		eventType := event.GetEventType()
+		if eventType == chat.ChatEventType_CHAT_EVENT_TYPE_UNSPECIFIED {
+			sendWSError(conn, "event type is required", fmt.Errorf("event type is required"))
+			return
+		}
+		switch eventType {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_ACCEPTED: // 接待客户服务
-			l.handleAcceptChatSession(context.Background(), conn, event.Data)
+			l.handleAcceptChatSession(context.Background(), conn, event.GetAgent())
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE: //
-			l.handleSendAgentMessage(context.Background(), conn, event.Data)
+			l.handleSendAgentMessage(context.Background(), conn, event.GetMessage())
 		case chat.ChatEventType_CHAT_EVENT_TYPE_SYSTEM_NOTICE:
 			// TODO handle merchant system notice
 		case chat.ChatEventType_CHAT_EVENT_TYPE_AGENT_LEAVE:
@@ -110,11 +112,11 @@ func (l *MessagesLogic) onMessage() func(*ws.Connection, ws.InboundEvent) {
 		case chat.ChatEventType_CHAT_EVENT_TYPE_TRANSFER_REJECT:
 			// TODO handle transfer reject
 		case chat.ChatEventType_CHAT_EVENT_TYPE_SESSION_CLOSE:
-			l.handleCloseChatSession(context.Background(), conn, event.Data)
+			l.handleCloseChatSession(context.Background(), conn, event.GetSession())
 		case chat.ChatEventType_CHAT_EVENT_TYPE_EVALUATION_INVITE:
-			l.handleEvaluationInvite(context.Background(), conn, event.Data)
+			l.handleEvaluationInvite(context.Background(), conn, event.GetEvaluation())
 		case chat.ChatEventType_CHAT_EVENT_TYPE_TYPING:
-			l.handleAgentTyping(context.Background(), conn, event.Data)
+			l.handleAgentTyping(context.Background(), conn, event.GetTyping())
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELIVERED:
 			// TODO handle message delivered
 		case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_READ:
@@ -174,15 +176,27 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 	}
 }
 
-func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
-	var req chat.SendAgentMessageReq
-	if err := protojson.Unmarshal(payload, &req); err != nil {
-		sendWSError(conn, "invalid send_agent_message payload", err)
+func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Connection, payload *chat.ChatWsMessagePayload) {
+	if payload == nil {
+		sendWSError(conn, "invalid send_agent_message payload", fmt.Errorf("invalid send_agent_message payload"))
 		return
 	}
-	req.Sender = &chat.ChatMessageUser{
-		Id:   conn.AgentUserId,
-		Type: chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT,
+	req := chat.SendAgentMessageReq{
+		SessionNo:       firstNonEmpty(payload.GetSessionNo(), conn.SessionNo),
+		ClientMessageId: payload.GetClientMessageId(),
+		MessageType:     payload.GetMessageType(),
+		Content:         payload.GetContent(),
+		Url:             payload.GetUrl(),
+		FileName:        payload.GetFileName(),
+		FileSize:        payload.GetFileSize(),
+		MimeType:        payload.GetMimeType(),
+		Width:           payload.GetWidth(),
+		Height:          payload.GetHeight(),
+		Duration:        payload.GetDuration(),
+		Extra:           payload.GetExtra(),
+		Sender:          payload.Sender,
+		MerchantId:      conn.MerchantId,
+		IsGuest:         conn.IsGuest,
 	}
 	req.Receiver = &chat.ChatMessageUser{
 		Id:        conn.UserId,
@@ -190,29 +204,29 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		AvatarUrl: conn.AvatarUrl,
 		Type:      chat.ChatSenderType_CHAT_SENDER_TYPE_USER,
 	}
-	req.MerchantId = conn.MerchantId
-	req.SessionNo = conn.SessionNo
-	req.MerchantId = conn.MerchantId
-	req.IsGuest = conn.IsGuest
-	_, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
+	resp, err := l.svcCtx.ChatAdminCli.SendAgentMessage(ctx, &req)
 	if err != nil {
 		sendWSError(conn, "failed to send agent message", err)
 		return
 	}
+	if resp.Base.Code != 200 {
+		logx.Errorf("chat admin send message fail, error message is : %s", resp.Base.Msg)
+	} else {
+		logx.Errorf("chat admin send message success, message no is : %s", resp.Data.MessageNo)
+	}
 }
 
-func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
-	var data chat.AcceptChatSessionReq
-	if err := protojson.Unmarshal(payload, &data); err != nil {
-		sendWSError(conn, "invalid accept_chat_session payload", err)
+func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Connection, payload *chat.ChatWsAgentPayload) {
+	if payload == nil {
+		sendWSError(conn, "invalid accept_chat_session payload", fmt.Errorf("invalid accept_chat_session payload"))
 		return
 	}
 
 	resp, err := l.svcCtx.ChatAdminCli.AcceptChatSession(ctx, &chat.AcceptChatSessionReq{
-		SessionNo:  conn.SessionNo,
-		Reason:     data.Reason,
+		SessionNo:  firstNonEmpty(payload.GetSessionNo(), conn.SessionNo),
+		Reason:     payload.GetReason(),
 		MerchantId: conn.MerchantId,
-		AgentId:    conn.AgentId,
+		AgentId:    firstNonZero(payload.GetAgentId(), conn.AgentId),
 		IsGuest:    conn.IsGuest,
 	})
 	if err != nil {
@@ -230,11 +244,17 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 	})
 }
 
-func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
-	var req chat.CloseChatSessionReq
-	if err := protojson.Unmarshal(payload, &req); err != nil {
-		sendWSError(conn, "invalid close_chat_session payload", err)
+func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Connection, payload *chat.ChatWsSessionPayload) {
+	if payload == nil {
+		sendWSError(conn, "invalid close_chat_session payload", fmt.Errorf("invalid close_chat_session payload"))
 		return
+	}
+	req := chat.CloseChatSessionReq{
+		SessionNo:   payload.GetSessionNo(),
+		MerchantId:  payload.GetMerchantId(),
+		UserId:      payload.GetUserId(),
+		CloseReason: payload.GetCloseReason(),
+		IsGuest:     payload.GetIsGuest(),
 	}
 	if req.SessionNo == "" {
 		req.SessionNo = conn.SessionNo
@@ -267,7 +287,7 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 	})
 }
 
-func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
+func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connection, payload *chat.ChatTypingPayload) {
 	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      200,
 		Msg:       "",
@@ -279,7 +299,7 @@ func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connecti
 	})
 }
 
-func (l *MessagesLogic) handleEvaluationInvite(ctx context.Context, conn *ws.Connection, payload json.RawMessage) {
+func (l *MessagesLogic) handleEvaluationInvite(ctx context.Context, conn *ws.Connection, payload *chat.ChatEvaluationPayload) {
 	conn.SendEvent(&chat.ChatWsResponse{
 		Code:      200,
 		Msg:       "",
@@ -328,4 +348,13 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
+}
+
+func firstNonZero(values ...int64) int64 {
+	for _, value := range values {
+		if value != 0 {
+			return value
+		}
+	}
+	return 0
 }

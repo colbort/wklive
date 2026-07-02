@@ -15,11 +15,12 @@ import WorkbenchSessionList from "@/components/workbench/WorkbenchSessionList.vu
 import { useAuthStore } from "@/stores/auth";
 import type {
   AcceptChatSessionPayload,
-  ChatAdminUiWsReq,
   ChatAgentPayload,
   ChatWsEvent,
+  ChatWsRequest,
   ChatAgent,
   ChatMessage,
+  ChatMessageReceiptPayload,
   ChatQueuePayload,
   ChatSession,
   ChatSessionExtJson,
@@ -28,6 +29,7 @@ import type {
   SendAgentMessagePayload,
   WsConnectedPayload,
 } from "@/types/chat";
+import { createChatWsRequest } from "@/types/chat";
 import {
   optionGroup,
   withOptionLabels,
@@ -175,6 +177,8 @@ const incomingWsHandlers: Partial<
     event.connected && handleWsConnectedWsEvent(event.connected),
   [chatEventType.MESSAGE]: (event) =>
     event.message && handleMessageWsEvent(event.message),
+  [chatEventType.MESSAGE_DELIVERED]: (event) =>
+    event.receipt && handleMessageReceiptWsEvent(event.receipt),
   [chatEventType.USER_JOIN]: (event) => handleUserJoinWsEvent(event),
   [chatEventType.USER_LEAVE]: (event) =>
     event.userState && handleUserLeaveWsEvent(event.userState),
@@ -405,6 +409,7 @@ function handleAgentStateWsEvent(payload: ChatAgentPayload) {
 
 function handleAgentAcceptedWsEvent(payload: ChatAgentPayload) {
   markSessionAccepted(payload);
+  scheduleRefreshSessions();
 }
 
 function handleSessionCloseWsEvent(payload: ChatSession) {
@@ -440,6 +445,10 @@ function handleUserLeaveWsEvent(payload: ChatUserStatePayload) {
 
 function handleMessageWsEvent(payload: ChatMessage) {
   applyWsSessionMessage(payload);
+}
+
+function handleMessageReceiptWsEvent(payload: ChatMessageReceiptPayload) {
+  applyMessageReceipt(payload);
 }
 
 function handleWsConnectedWsEvent(payload: WsConnectedPayload) {
@@ -575,6 +584,16 @@ function pushMessage(message: ChatMessage) {
   if (list.some((item) => item.messageNo === message.messageNo)) return false;
   messages.value[message.sessionNo] = sortMessages([...list, message]);
   return true;
+}
+
+function applyMessageReceipt(payload: ChatMessageReceiptPayload) {
+  if (!payload.sessionNo || !payload.messageNo) return;
+  const list = messages.value[payload.sessionNo] || [];
+  const message = list.find((item) => item.messageNo === payload.messageNo);
+  if (!message) return;
+  message.status = Number(payload.messageStatus || message.status);
+  message.updateTime = Number(payload.receiptTime || message.updateTime);
+  messages.value[payload.sessionNo] = [...list];
 }
 
 function upsertSessionFromMessage(
@@ -1018,7 +1037,7 @@ function backToSessions() {
   mobileChatOpen.value = false;
 }
 
-function sendWsEvent(request: ChatAdminUiWsReq) {
+function sendWsEvent(request: ChatWsRequest) {
   if (!socket || socket.readyState !== WebSocket.OPEN) {
     return false;
   }
@@ -1031,10 +1050,23 @@ function send(value: string) {
   if (!canSendMessage(content)) {
     return;
   }
-  sendWsEvent({
-    eventType: chatEventType.MESSAGE,
-    data: buildAgentMessagePayload(content),
-  });
+  const payload: SendAgentMessagePayload = {
+    merchantId: merchantId.value,
+    sessionNo: activeSession.value?.sessionNo || "",
+    messageType: 1,
+    content,
+    sender: {
+      type: 2,
+      id: auth.user?.id || 0,
+      nickname: auth.user?.nickname || "",
+      avatarUrl: auth.user?.avatarUrl || "",
+    },
+  };
+  return sendWsEvent(
+    createChatWsRequest(chatEventType.MESSAGE, "message", payload, {
+      requestId: `agent-msg-${Date.now()}`,
+    }),
+  );
 }
 
 function canSendMessage(content: string) {
@@ -1048,29 +1080,17 @@ function canSendMessage(content: string) {
   );
 }
 
-function buildAgentMessagePayload(content: string): SendAgentMessagePayload {
-  return {
-    merchantId: merchantId.value,
-    sessionNo: activeSession.value?.sessionNo || "",
-    messageType: 1,
-    content,
-    sender: {
-      type: 2,
-      id: auth.user?.id || 0,
-      nickname: auth.user?.nickname || "",
-      avatarUrl: auth.user?.avatarUrl || "",
-    },
-  };
-}
-
 function closeSession() {
   if (!activeSession.value) {
     return;
   }
-  sendWsEvent({
-    eventType: chatEventType.SESSION_CLOSE,
-    data: buildCloseSessionPayload(activeSession.value),
-  });
+  sendWsEvent(
+    createChatWsRequest(
+      chatEventType.SESSION_CLOSE,
+      "session",
+      buildCloseSessionPayload(activeSession.value),
+    ),
+  );
 }
 
 function buildCloseSessionPayload(
@@ -1093,10 +1113,13 @@ function acceptSession() {
     ElMessage.warning("坐席在线后才能接待会话");
     return;
   }
-  sendWsEvent({
-    eventType: chatEventType.AGENT_ACCEPTED,
-    data: buildAcceptSessionPayload(activeSession.value),
-  });
+  sendWsEvent(
+    createChatWsRequest(
+      chatEventType.AGENT_ACCEPTED,
+      "agent",
+      buildAcceptSessionPayload(activeSession.value),
+    ),
+  );
 }
 
 function buildAcceptSessionPayload(

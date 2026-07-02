@@ -53,19 +53,13 @@ func (l *PageChatMessagesLogic) PageChatMessages(in *chat.PageChatMessagesReq) (
 		}, nil
 	}
 
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.PageChatMessagesResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.PageChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	session, base, err := ih.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
+	session, err := ih.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
 	if err != nil {
 		return &chat.PageChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
-	}
-	if base != nil {
-		return &chat.PageChatMessagesResp{Base: base}, nil
 	}
 
 	cursor, limit := pageutil.Input(in.GetPage())
@@ -83,6 +77,6 @@ func (l *PageChatMessagesLogic) PageChatMessages(in *chat.PageChatMessagesReq) (
 		return &chat.PageChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	nextCursor := ih.MessageNextCursor(list)
-	base = helper.OkWithOthers(0, int64(len(list)) == limit && nextCursor > 0, cursor > 0, nextCursor, cursor)
+	base := helper.OkWithOthers(0, int64(len(list)) == limit && nextCursor > 0, cursor > 0, nextCursor, cursor)
 	return &chat.PageChatMessagesResp{Base: base, Data: ih.ToProtoMessages(list)}, nil
 }

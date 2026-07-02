@@ -2,14 +2,13 @@ package helper
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
 
-	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/chat"
-	"wklive/proto/common"
 	"wklive/services/chat/internal/svc"
 	"wklive/services/chat/models"
 )
@@ -20,31 +19,31 @@ const (
 	transientInternetErrorKey = "chat:session:internet_error_timeout"
 )
 
-func GetSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int64, sessionNo string, isGuest bool) (*models.TChatSession, *common.RespBase, error) {
+func GetSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int64, sessionNo string, isGuest bool) (*models.TChatSession, error) {
 	if merchantID <= 0 || strings.TrimSpace(sessionNo) == "" {
-		return nil, helper.ErrResp(500, "params err, merchant id is invalid or session no is empty"), nil
+		return nil, errors.New("params err, merchant id is invalid or session no is empty")
 	}
 	if isGuest {
 		session, err := GetTransientSession(ctx, svcCtx.BusRedis, merchantID, sessionNo)
 		if err != nil {
-			return nil, helper.ErrResp(404, "chat session not found"), nil
+			return nil, errors.New("chat session not found")
 		}
 		if session.MerchantId != merchantID {
-			return nil, helper.ErrResp(404, "chat session not found"), nil
+			return nil, errors.New("chat session not found")
 		}
-		return session, nil, nil
+		return session, nil
 	} else {
 		data, err := svcCtx.ChatSessionModel.FindOneBySessionNo(ctx, sessionNo)
 		if err == models.ErrNotFound {
-			return nil, helper.ErrResp(404, "chat session not found"), nil
+			return nil, errors.New("chat session not found")
 		}
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 		if data.MerchantId != merchantID {
-			return nil, helper.ErrResp(404, "chat session not found"), nil
+			return nil, errors.New("chat session not found")
 		}
-		return data, nil, nil
+		return data, nil
 	}
 }
 
@@ -82,29 +81,29 @@ type AssignSessionOptions struct {
 	IsGuest    bool
 }
 
-func AcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, in AssignSessionOptions) (*models.TChatSession, *common.RespBase, error) {
-	session, base, err := GetSession(ctx, svcCtx, in.Agent.MerchantId, in.SessionNo, in.IsGuest)
-	if base != nil || err != nil {
-		return nil, base, err
+func AcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, in AssignSessionOptions) (*models.TChatSession, error) {
+	session, err := GetSession(ctx, svcCtx, in.Agent.MerchantId, in.SessionNo, in.IsGuest)
+	if err != nil {
+		return nil, err
 	}
 	if in.Agent == nil || in.Agent.Id <= 0 {
-		return nil, helper.ErrResp(400, "invalid agent"), nil
+		return nil, errors.New("invalid agent")
 	}
 	assignType := NormalizeAssignType(in.AssignType)
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-		return nil, helper.ErrResp(400, "chat session is closed"), nil
+		return nil, errors.New("chat session is closed")
 	}
-	if base := ValidateAssignableSession(session, assignType); base != nil {
-		return nil, base, nil
+	if err := ValidateAssignableSession(session, assignType); err != nil {
+		return nil, err
 	}
 
 	fromAgentID := session.AgentId
 	if fromAgentID != in.Agent.Id {
 		if err := ChangeAgentSessionCount(ctx, svcCtx, fromAgentID, -1); err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 		if err := ChangeAgentSessionCount(ctx, svcCtx, in.Agent.Id, 1); err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 	}
 
@@ -117,11 +116,11 @@ func AcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, in Assig
 	if in.IsGuest {
 		session, err = UpsertTransientSession(ctx, svcCtx.BusRedis, session)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 	} else {
 		if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 	}
 
@@ -136,37 +135,37 @@ func AcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, in Assig
 		UpdateTimes: now,
 	})
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return session, nil, nil
+	return session, nil
 }
 
-func ValidateAssignableSession(session *models.TChatSession, assignType chat.ChatAssignType) *common.RespBase {
+func ValidateAssignableSession(session *models.TChatSession, assignType chat.ChatAssignType) error {
 	switch assignType {
 	case chat.ChatAssignType_CHAT_ASSIGN_TYPE_AUTO:
 		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING) &&
 			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING) &&
 			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_USER) &&
 			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT) {
-			return helper.ErrResp(400, "chat session cannot be assigned")
+			return errors.New("chat session cannot be assigned")
 		}
 	case chat.ChatAssignType_CHAT_ASSIGN_TYPE_MANUAL:
 		if session.AgentId != 0 {
-			return helper.ErrResp(400, "chat session is already accepted")
+			return errors.New("chat session is already accepted")
 		}
 		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_WAITING) &&
 			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT) {
-			return helper.ErrResp(400, "chat session cannot be accepted")
+			return errors.New("chat session cannot be accepted")
 		}
 	case chat.ChatAssignType_CHAT_ASSIGN_TYPE_TRANSFER:
 		if session.AgentId == 0 {
-			return helper.ErrResp(400, "chat session is not accepted")
+			return errors.New("chat session is not accepted")
 		}
 		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING) &&
 			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_USER) &&
 			session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_PENDING_AGENT) {
-			return helper.ErrResp(400, "chat session cannot be transferred")
+			return errors.New("chat session cannot be transferred")
 		}
 	}
 	return nil

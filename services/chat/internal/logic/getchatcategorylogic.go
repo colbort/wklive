@@ -31,10 +31,7 @@ func (l *GetChatCategoryLogic) GetChatCategory(in *chat.GetChatCategoryReq) (*ch
 	if in.GetId() <= 0 {
 		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatCategoryResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

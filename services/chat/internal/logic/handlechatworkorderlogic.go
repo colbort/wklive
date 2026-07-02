@@ -36,10 +36,7 @@ func (l *HandleChatWorkOrderLogic) HandleChatWorkOrder(in *chat.HandleChatWorkOr
 	if in.GetStatus() <= 0 {
 		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "status is required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatWorkOrderResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

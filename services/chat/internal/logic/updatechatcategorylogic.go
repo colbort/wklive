@@ -38,10 +38,7 @@ func (l *UpdateChatCategoryLogic) UpdateChatCategory(in *chat.UpdateChatCategory
 	if categoryName == "" {
 		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(400, "category_name is required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatCategoryResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

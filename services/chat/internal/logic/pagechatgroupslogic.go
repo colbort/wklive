@@ -30,10 +30,7 @@ func NewPageChatGroupsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 
 // 分页查询客服分组
 func (l *PageChatGroupsLogic) PageChatGroups(in *chat.PageChatGroupsReq) (*chat.PageChatGroupsResp, error) {
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.PageChatGroupsResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.PageChatGroupsResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

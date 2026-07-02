@@ -2,12 +2,10 @@ import type {
   ApiResp,
   ChatOptions,
   ChatMessage,
-  ChatUiWsReq,
+  ChatWsRequest,
   ListChatMessagesParams,
   RespBase,
-  SendUserMessagePayload,
 } from "@/types/chat";
-import { chatEventType } from "./constant";
 
 const apiBaseUrl = import.meta.env.VITE_CHAT_API_BASE_URL || "/chat";
 const chatWsProtocol = "wklive-chat";
@@ -59,17 +57,6 @@ export function listChatMessagesWithMeta(
   });
 }
 
-export function closeMyChatSession(
-  closeReason = "",
-  keepalive = false,
-): Promise<RespBase> {
-  return requestBase("/session/close", {
-    method: "POST",
-    body: { closeReason },
-    keepalive,
-  });
-}
-
 export function chatWsUrl(): string {
   const queryWsUrl = new URLSearchParams(window.location.search).get("wsUrl");
   if (queryWsUrl) {
@@ -114,23 +101,16 @@ export function createChatSocket(options: CreateChatSocketOptions): WebSocket {
 
 export function sendChatSocketTypedEvent(
   socket: WebSocket,
-  request: ChatUiWsReq,
+  request: ChatWsRequest,
 ) {
   socket.send(JSON.stringify(request));
 }
 
 export function sendChatSocketEvent(
   socket: WebSocket,
-  request: ChatUiWsReq,
+  request: ChatWsRequest,
 ) {
   sendChatSocketTypedEvent(socket, request);
-}
-
-export function sendChatSocketUserMessage(
-  socket: WebSocket,
-  data: SendUserMessagePayload,
-) {
-  sendChatSocketEvent(socket, { eventType: chatEventType.MESSAGE, data });
 }
 
 interface RequestOptions {

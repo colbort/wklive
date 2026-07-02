@@ -41,10 +41,7 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "username, password and nickname are required")}, nil
 	}
 
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatAgentResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

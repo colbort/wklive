@@ -37,10 +37,7 @@ func (l *CreateChatQuickReplyLogic) CreateChatQuickReply(in *chat.CreateChatQuic
 	if title == "" || content == "" {
 		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(400, "title and content are required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatQuickReplyResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

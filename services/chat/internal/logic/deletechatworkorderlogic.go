@@ -31,10 +31,7 @@ func (l *DeleteChatWorkOrderLogic) DeleteChatWorkOrder(in *chat.DeleteChatWorkOr
 	if in.GetId() <= 0 {
 		return &chat.AdminCommonResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminCommonResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

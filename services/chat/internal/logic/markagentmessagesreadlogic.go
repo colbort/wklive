@@ -29,19 +29,13 @@ func NewMarkAgentMessagesReadLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 标记客服侧已读
 func (l *MarkAgentMessagesReadLogic) MarkAgentMessagesRead(in *chat.MarkAgentMessagesReadReq) (*chat.AdminMarkMessagesReadResp, error) {
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminMarkMessagesReadResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	session, base, err := ih.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
+	session, err := ih.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
 	if err != nil {
 		return &chat.AdminMarkMessagesReadResp{Base: helper.ErrResp(500, err.Error())}, nil
-	}
-	if base != nil {
-		return &chat.AdminMarkMessagesReadResp{Base: base}, nil
 	}
 	operatorID, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil || operatorID <= 0 {

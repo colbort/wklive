@@ -28,12 +28,9 @@ func NewCloseChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 关闭会话
 func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (*chat.AdminChatSessionResp, error) {
-	session, base, err := ih.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.GetIsGuest())
+	session, err := ih.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.GetIsGuest())
 	if err != nil {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
-	}
-	if base != nil {
-		return &chat.AdminChatSessionResp{Base: base}, nil
 	}
 	if session.UserId != in.GetUserId() {
 		return &chat.AdminChatSessionResp{Base: helper.ErrResp(404, "chat session not found")}, nil

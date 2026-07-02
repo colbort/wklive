@@ -1,16 +1,18 @@
 import { computed, ref } from "vue";
 import {
-  closeMyChatSession,
   createChatSocket,
   listChatMessagesWithMeta,
   options as loadOptions,
-  sendChatSocketUserMessage,
+  sendChatSocketEvent,
 } from "@/api/chat";
+import { createChatWsRequest } from "@/types/chat";
 import type {
   ChatAgentPayload,
   ChatErrorPayload,
   ChatEvaluationPayload,
+  ChatMessageReceiptPayload,
   ChatMessage,
+  CloseChatSessionPayload,
   OptionGroup,
   ChatQueuePayload,
   ChatSession,
@@ -34,6 +36,9 @@ export function useChatSocket() {
   const queueStatus = ref("");
   const optionGroups = ref<OptionGroup[]>([]);
   const agent = ref<ChatAgentPayload | null>(null);
+  const evaluationInvite = ref<ChatEvaluationPayload | null>(null);
+  const evaluationSubmitting = ref(false);
+  const evaluationSubmitted = ref(false);
   const agentAccepted = computed(() => Boolean(agent.value));
   const sessionClosed = ref(false);
   const historyLoading = ref(false);
@@ -83,6 +88,8 @@ export function useChatSocket() {
       event.session && handleSessionCloseEvent(event.session),
     [chatEventType.MESSAGE]: (event) =>
       event.message && handleMessageEvent(event.message),
+    [chatEventType.MESSAGE_DELIVERED]: (event) =>
+      event.receipt && handleMessageReceiptEvent(event.receipt),
   };
 
   // Connection lifecycle
@@ -223,29 +230,79 @@ export function useChatSocket() {
 
   function sendUserMessageEvent(payload: SendUserMessagePayload) {
     if (!socket.value) return;
-    sendChatSocketUserMessage(socket.value, payload);
+    sendChatSocketEvent(
+      socket.value,
+      createChatWsRequest(chatEventType.MESSAGE, "message", payload, {
+        requestId: payload.clientMessageId,
+      }),
+    );
   }
 
   async function endSession(closeReason = "user_closed", keepalive = false) {
-    const current = connected.value;
-    const canCloseSession = Boolean(
-      current?.sessionNo && !current.isGuest && !sessionClosed.value,
-    );
-
-    if (canCloseSession) {
-      try {
-        await closeMyChatSession(closeReason, keepalive);
-      } catch (err) {
-        if (!keepalive) {
-          error.value = err instanceof Error ? err.message : "结束会话失败";
-          return false;
-        }
-      }
+    if (!sessionClosed.value && socket.value?.readyState === WebSocket.OPEN) {
+      sendChatSocketEvent(
+        socket.value,
+        createChatWsRequest(
+          chatEventType.SESSION_CLOSE,
+          "session",
+          {
+            merchantId: connected.value?.merchantId || 0,
+            closeReason,
+          },
+        ),
+      );
     }
 
     sessionClosed.value = true;
-    close();
+    queueStatus.value = "本次会话已结束。";
+    if (keepalive) {
+      closeSocketOnly(true);
+      status.value = "closed";
+    }
     return true;
+  }
+
+  async function submitEvaluation(
+    rating: number,
+    comment = "",
+    tags: string[] = [],
+  ) {
+    if (
+      evaluationSubmitting.value ||
+      evaluationSubmitted.value ||
+      !socket.value ||
+      socket.value.readyState !== WebSocket.OPEN
+    ) {
+      return false;
+    }
+    evaluationSubmitting.value = true;
+    error.value = "";
+    try {
+      sendChatSocketEvent(
+        socket.value,
+        createChatWsRequest(
+          chatEventType.EVALUATION_SUBMIT,
+          "evaluation",
+          {
+            sessionNo: connected.value?.sessionNo || "",
+            userId: connected.value?.userId || 0,
+            agentId: agent.value?.agentId || evaluationInvite.value?.agentId || 0,
+            evaluationId: evaluationInvite.value?.evaluationId || 0,
+            rating,
+            tags,
+            comment: comment.trim(),
+            submitted: true,
+            evaluatedAt: Date.now(),
+          },
+        ),
+      );
+      return true;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : "评价提交失败";
+      return false;
+    } finally {
+      evaluationSubmitting.value = false;
+    }
   }
 
   function resetMessages() {
@@ -284,10 +341,13 @@ export function useChatSocket() {
   }
 
   function handleEvaluationInviteEvent(payload: ChatEvaluationPayload) {
+    evaluationInvite.value = payload;
+    evaluationSubmitted.value = false;
     queueStatus.value = payload.comment || "请对本次服务进行评价";
   }
 
   function handleEvaluationSubmitEvent(payload: ChatEvaluationPayload) {
+    evaluationSubmitted.value = payload.submitted !== false;
     queueStatus.value = payload.submitted === false ? "评价提交失败" : "评价已提交";
   }
 
@@ -318,8 +378,6 @@ export function useChatSocket() {
   function handleSessionCloseEvent(_payload: ChatSession) {
     sessionClosed.value = true;
     queueStatus.value = "本次会话已结束。";
-    closeSocketOnly(true);
-    status.value = "closed";
   }
 
   function handleMessageEvent(payload: ChatMessage) {
@@ -330,6 +388,16 @@ export function useChatSocket() {
       );
     }
     pushMessage(message);
+  }
+
+  function handleMessageReceiptEvent(payload: ChatMessageReceiptPayload) {
+    if (!payload.messageNo) return;
+    const message = messages.value.find(
+      (item) => item.messageNo === payload.messageNo,
+    );
+    if (!message) return;
+    message.status = Number(payload.messageStatus || message.status);
+    message.updateTime = Number(payload.receiptTime || message.updateTime);
   }
 
   async function loadChatOptions() {
@@ -467,6 +535,9 @@ export function useChatSocket() {
     error,
     queueStatus,
     agent,
+    evaluationInvite,
+    evaluationSubmitted,
+    evaluationSubmitting,
     sessionClosed,
     historyHasMore,
     historyLoading,
@@ -481,6 +552,7 @@ export function useChatSocket() {
     endSession,
     loadHistory,
     resetMessages,
+    submitEvaluation,
     sendText,
   };
 }

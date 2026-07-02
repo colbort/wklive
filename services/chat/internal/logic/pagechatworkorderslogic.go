@@ -30,10 +30,7 @@ func NewPageChatWorkOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 分页查询工单
 func (l *PageChatWorkOrdersLogic) PageChatWorkOrders(in *chat.PageChatWorkOrdersReq) (*chat.PageChatWorkOrdersResp, error) {
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.PageChatWorkOrdersResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.PageChatWorkOrdersResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

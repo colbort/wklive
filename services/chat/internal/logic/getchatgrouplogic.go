@@ -31,10 +31,7 @@ func (l *GetChatGroupLogic) GetChatGroup(in *chat.GetChatGroupReq) (*chat.AdminC
 	if in.GetId() <= 0 {
 		return &chat.AdminChatGroupResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatGroupResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

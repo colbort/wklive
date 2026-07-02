@@ -8,6 +8,7 @@ export const chatEventType = {
   AGENT_ACCEPTED: "CHAT_EVENT_TYPE_AGENT_ACCEPTED",
   AGENT_LEAVE: "CHAT_EVENT_TYPE_AGENT_LEAVE",
   SESSION_CLOSE: "CHAT_EVENT_TYPE_SESSION_CLOSE",
+  MESSAGE_DELIVERED: "CHAT_EVENT_TYPE_MESSAGE_DELIVERED",
 } as const;
 
 export type ChatEventType = (typeof chatEventType)[keyof typeof chatEventType];

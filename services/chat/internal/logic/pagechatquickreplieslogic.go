@@ -30,10 +30,7 @@ func NewPageChatQuickRepliesLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 分页查询快捷回复
 func (l *PageChatQuickRepliesLogic) PageChatQuickReplies(in *chat.PageChatQuickRepliesReq) (*chat.PageChatQuickRepliesResp, error) {
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.PageChatQuickRepliesResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.PageChatQuickRepliesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

@@ -30,10 +30,7 @@ func NewPageChatCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 分页查询问题分类
 func (l *PageChatCategoriesLogic) PageChatCategories(in *chat.PageChatCategoriesReq) (*chat.PageChatCategoriesResp, error) {
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.PageChatCategoriesResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.PageChatCategoriesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

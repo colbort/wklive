@@ -125,6 +125,8 @@ export interface ChatMessage {
 }
 
 export type ChatQueueAction = number;
+export type ChatSenderType = number;
+export type ChatMessageStatus = number;
 
 export interface WsConnectedPayload {
   message: string;
@@ -178,6 +180,16 @@ export interface ChatErrorPayload {
   retryable?: boolean;
 }
 
+export interface ChatMessageReceiptPayload {
+  sessionNo: string;
+  messageNo: string;
+  senderId?: number;
+  operatorId: number;
+  operatorType: ChatSenderType;
+  messageStatus: ChatMessageStatus;
+  receiptTime: number;
+}
+
 export interface ChatWsResponse {
   code?: number;
   msg?: string;
@@ -189,14 +201,16 @@ export interface ChatWsResponse {
   userState?: ChatUserStatePayload;
   queue?: ChatQueuePayload;
   agent?: ChatAgentPayload;
+  receipt?: ChatMessageReceiptPayload;
   error?: ChatErrorPayload;
 }
 
 export type ChatWsEvent = ChatWsResponse;
 
-export interface ChatWsRequest<TPayload = unknown> {
-  eventType?: ChatEventType;
-  data: TPayload;
+export interface ChatWsRequestBase {
+  eventType: ChatEventType;
+  requestId?: string;
+  clientTime?: number;
 }
 
 export interface SendAgentMessagePayload {
@@ -234,7 +248,42 @@ export interface CloseAgentChatSessionPayload {
   isGuest?: boolean;
 }
 
-export type ChatAdminUiWsReq =
-  | ChatWsRequest<AcceptChatSessionPayload>
-  | ChatWsRequest<SendAgentMessagePayload>
-  | ChatWsRequest<CloseAgentChatSessionPayload>;
+export interface ChatWsRequestPayloadMap {
+  message: SendAgentMessagePayload;
+  session: CloseAgentChatSessionPayload;
+  systemNotice: Record<string, unknown>;
+  userState: ChatUserStatePayload;
+  queue: ChatQueuePayload;
+  agent: AcceptChatSessionPayload;
+  transfer: Record<string, unknown>;
+  evaluation: Record<string, unknown>;
+  typing: Record<string, unknown>;
+  receipt: ChatMessageReceiptPayload;
+  messageOperate: Record<string, unknown>;
+  heartbeat: Record<string, unknown>;
+}
+
+export type ChatWsRequestPayloadKey = keyof ChatWsRequestPayloadMap;
+
+type ChatWsRequestOneof<K extends ChatWsRequestPayloadKey> = {
+  [P in K]: Pick<ChatWsRequestPayloadMap, P> &
+    Partial<Record<Exclude<ChatWsRequestPayloadKey, P>, never>>;
+}[K];
+
+export type ChatWsRequest = ChatWsRequestBase &
+  ChatWsRequestOneof<ChatWsRequestPayloadKey>;
+
+export function createChatWsRequest<K extends ChatWsRequestPayloadKey>(
+  eventType: ChatEventType,
+  payloadKey: K,
+  payload: ChatWsRequestPayloadMap[K],
+  options: Omit<ChatWsRequestBase, "eventType" | "clientTime"> &
+    Partial<Pick<ChatWsRequestBase, "clientTime">> = {},
+): ChatWsRequest {
+  return {
+    eventType,
+    clientTime: Date.now(),
+    ...options,
+    [payloadKey]: payload,
+  } as ChatWsRequest;
+}

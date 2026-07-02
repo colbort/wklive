@@ -31,10 +31,7 @@ func (l *GetChatAgentLogic) GetChatAgent(in *chat.GetChatAgentReq) (*chat.AdminC
 	if in.GetId() <= 0 {
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatAgentResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

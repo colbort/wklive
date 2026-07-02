@@ -37,12 +37,9 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "score must be between 1 and 5")}, nil
 	}
 
-	session, base, err := ih.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.IsGuest)
+	session, err := ih.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.IsGuest)
 	if err != nil {
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
-	}
-	if base != nil {
-		return &chat.AppChatSatisfactionResp{Base: base}, nil
 	}
 	if session.UserId != in.UserId {
 		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "permission denied")}, nil

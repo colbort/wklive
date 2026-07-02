@@ -53,19 +53,13 @@ func (l *ListMyChatMessagesLogic) ListMyChatMessages(in *chat.ListMyChatMessages
 		}, nil
 	}
 
-	merchantID, userID, base, err := ih.ChatAppIdentityFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AppListChatMessagesResp{Base: base}, nil
-	}
+	merchantID, userID, err := ih.ChatAppIdentityFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AppListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	session, base, err := ih.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
+	session, err := ih.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
 	if err != nil {
 		return &chat.AppListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
-	}
-	if base != nil {
-		return &chat.AppListChatMessagesResp{Base: base}, nil
 	}
 	if session.UserId != userID {
 		return &chat.AppListChatMessagesResp{Base: helper.ErrResp(404, "chat session not found")}, nil
@@ -85,6 +79,6 @@ func (l *ListMyChatMessagesLogic) ListMyChatMessages(in *chat.ListMyChatMessages
 		return &chat.AppListChatMessagesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	nextCursor := ih.MessageNextCursor(list)
-	base = helper.OkWithOthers(0, int64(len(list)) == limit && nextCursor > 0, cursor > 0, nextCursor, cursor)
+	base := helper.OkWithOthers(0, int64(len(list)) == limit && nextCursor > 0, cursor > 0, nextCursor, cursor)
 	return &chat.AppListChatMessagesResp{Base: base, Data: ih.ToProtoMessages(list)}, nil
 }

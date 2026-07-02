@@ -38,10 +38,7 @@ func (l *UpdateChatGroupLogic) UpdateChatGroup(in *chat.UpdateChatGroupReq) (*ch
 	if groupName == "" {
 		return &chat.AdminChatGroupResp{Base: helper.ErrResp(400, "group_name is required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatGroupResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

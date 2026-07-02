@@ -19,12 +19,28 @@ const messageList = ref<HTMLDivElement>();
 const selectedResourceName = ref("");
 const authError = ref("");
 const activeMode = ref<ChatMode>("mobile");
+const rating = ref(5);
+const evaluationComment = ref("");
 
 const chat = useChatSocket();
 
 const showDesktopFrame = computed(() => activeMode.value === "desktop");
 const hasDraft = computed(() => draft.value.trim().length > 0);
 const composerActionLabel = computed(() => (hasDraft.value ? "发送" : "结束"));
+const canSubmitEvaluation = computed(
+  () =>
+    chat.isOpen.value &&
+    !chat.evaluationSubmitting.value &&
+    !chat.evaluationSubmitted.value &&
+    rating.value >= 1 &&
+    rating.value <= 5,
+);
+const showEvaluationPanel = computed(
+  () =>
+    Boolean(chat.evaluationInvite.value) ||
+    chat.sessionClosed.value ||
+    chat.evaluationSubmitted.value,
+);
 
 function messageDirection(message: {
   senderType: number;
@@ -84,6 +100,16 @@ function sendMessage() {
 
 async function endChat() {
   await chat.endSession("user_closed");
+}
+
+async function submitEvaluation() {
+  const submitted = await chat.submitEvaluation(
+    rating.value,
+    evaluationComment.value,
+  );
+  if (submitted) {
+    evaluationComment.value = "";
+  }
 }
 
 function handleComposerAction() {
@@ -200,6 +226,45 @@ onBeforeUnmount(() => {
       <p v-if="chat.error.value || authError" class="error-line">
         {{ chat.error.value || authError }}
       </p>
+
+      <section v-if="showEvaluationPanel" class="evaluation-panel">
+        <div class="rating-row">
+          <button
+            v-for="value in 5"
+            :key="value"
+            class="rating-button"
+            :class="{ active: value <= rating }"
+            type="button"
+            :disabled="
+              !chat.isOpen.value ||
+              chat.evaluationSubmitting.value ||
+              chat.evaluationSubmitted.value
+            "
+            @click="rating = value"
+          >
+            ★
+          </button>
+        </div>
+        <textarea
+          v-model="evaluationComment"
+          class="evaluation-input"
+          :disabled="
+            !chat.isOpen.value ||
+            chat.evaluationSubmitting.value ||
+            chat.evaluationSubmitted.value
+          "
+          placeholder="补充评价"
+          rows="2"
+        />
+        <button
+          class="evaluation-submit"
+          type="button"
+          :disabled="!canSubmitEvaluation"
+          @click="submitEvaluation"
+        >
+          {{ chat.evaluationSubmitted.value ? "已评价" : "提交评价" }}
+        </button>
+      </section>
 
       <form class="composer" @submit.prevent="handleComposerAction">
         <button

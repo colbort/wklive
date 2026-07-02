@@ -27,10 +27,7 @@ func NewListEnabledChatCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceC
 
 // 查询启用问题分类
 func (l *ListEnabledChatCategoriesLogic) ListEnabledChatCategories(in *chat.ListEnabledChatCategoriesReq) (*chat.ListChatCategoriesResp, error) {
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.ListChatCategoriesResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.ListChatCategoriesResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

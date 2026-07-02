@@ -1,7 +1,6 @@
 package ws
 
 import (
-	"encoding/json"
 	"time"
 
 	"wklive/common/utils"
@@ -9,6 +8,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 const (
@@ -17,11 +17,6 @@ const (
 	pingPeriod     = (pongWait * 9) / 10
 	maxMessageSize = 8192
 )
-
-type InboundEvent struct {
-	EventType string          `json:"eventType"`
-	Data      json.RawMessage `json:"data"`
-}
 
 type Connection struct {
 	Conn       *websocket.Conn
@@ -32,11 +27,11 @@ type Connection struct {
 	MerchantId int64
 	SessionNo  string
 	IsGuest    bool
-	OnMessage  func(*Connection, InboundEvent)
+	OnMessage  func(*Connection, *chat.ChatWsRequest)
 	OnClose    func(*Connection)
 }
 
-func NewConnection(conn *websocket.Conn, userId int64, username string, avatarUrl string, merchantId int64, sessionNo string, isGuest bool, onMessage func(*Connection, InboundEvent), onClose func(*Connection)) *Connection {
+func NewConnection(conn *websocket.Conn, userId int64, username string, avatarUrl string, merchantId int64, sessionNo string, isGuest bool, onMessage func(*Connection, *chat.ChatWsRequest), onClose func(*Connection)) *Connection {
 	return &Connection{
 		Conn:       conn,
 		Send:       make(chan []byte, 32),
@@ -76,8 +71,8 @@ func (c *Connection) ReadPump() {
 		if len(payload) == 0 || c.OnMessage == nil {
 			continue
 		}
-		var event InboundEvent
-		if err := json.Unmarshal(payload, &event); err != nil {
+		var event chat.ChatWsRequest
+		if err := protojson.Unmarshal(payload, &event); err != nil {
 			c.SendEvent(&chat.ChatWsResponse{
 				Code:      200,
 				Msg:       "",
@@ -96,7 +91,7 @@ func (c *Connection) ReadPump() {
 			})
 			continue
 		}
-		c.OnMessage(c, event)
+		c.OnMessage(c, &event)
 	}
 }
 
@@ -140,7 +135,7 @@ func (c *Connection) SendEvent(event *chat.ChatWsResponse) {
 	if event == nil {
 		return
 	}
-	payload, err := json.Marshal(event)
+	payload, err := protojson.MarshalOptions{UseProtoNames: false}.Marshal(event)
 	if err != nil {
 		logx.Errorf("marshal chat user ws event failed: %v", err)
 		return

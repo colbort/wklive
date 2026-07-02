@@ -31,10 +31,7 @@ func (l *GetChatQuickReplyLogic) GetChatQuickReply(in *chat.GetChatQuickReplyReq
 	if in.GetId() <= 0 {
 		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatQuickReplyResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

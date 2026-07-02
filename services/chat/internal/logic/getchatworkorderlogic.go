@@ -32,10 +32,7 @@ func (l *GetChatWorkOrderLogic) GetChatWorkOrder(in *chat.GetChatWorkOrderReq) (
 	if in.GetId() <= 0 && strings.TrimSpace(in.GetWorkOrderNo()) == "" {
 		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "id or work_order_no is required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatWorkOrderResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

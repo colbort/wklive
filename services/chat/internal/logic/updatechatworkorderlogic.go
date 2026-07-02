@@ -39,10 +39,7 @@ func (l *UpdateChatWorkOrderLogic) UpdateChatWorkOrder(in *chat.UpdateChatWorkOr
 	if title == "" || content == "" {
 		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "title and content are required")}, nil
 	}
-	merchantID, base, err := ih.MerchantIDFromMetadata(l.ctx)
-	if base != nil {
-		return &chat.AdminChatWorkOrderResp{Base: base}, nil
-	}
+	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
 		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
