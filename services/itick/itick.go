@@ -12,6 +12,7 @@ import (
 	"wklive/services/itick/internal/pkg/bootstrap"
 	"wklive/services/itick/internal/server"
 	"wklive/services/itick/internal/svc"
+	tasksub "wklive/services/itick/internal/tasks"
 
 	"wklive/common/etcd"
 
@@ -41,6 +42,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	tasksub.StartTaskSubscriber(ctx, svcCtx)
 
 	// 预热的 categoryCode + interval，自行按你的业务改
 	if err := bootstrap.PreheatCoinKlineModels(svcCtx.Factory); err != nil {

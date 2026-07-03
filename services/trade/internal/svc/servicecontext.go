@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	bus "wklive/common/bus/redis"
 	"wklive/common/i18n"
 	"wklive/services/trade/internal/config"
 	"wklive/services/trade/models"
@@ -21,6 +22,7 @@ type ServiceContext struct {
 	Config                    config.Config
 	DB                        sqlx.SqlConn
 	Redis                     *redis.Redis
+	TaskSubscriber            *bus.Subscriber
 	TradeSymbolModel          models.TTradeSymbolModel
 	TradeSymbolSpotModel      models.TTradeSymbolSpotModel
 	TradeSymbolContractModel  models.TTradeSymbolContractModel
@@ -45,10 +47,12 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
+	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 	return &ServiceContext{
 		Config:                    c,
 		DB:                        conn,
 		Redis:                     redis.MustNewRedis(c.Redis.RedisConf),
+		TaskSubscriber:            taskSubscriber,
 		TradeSymbolModel:          models.NewTTradeSymbolModel(conn, c.CacheRedis),
 		TradeSymbolSpotModel:      models.NewTTradeSymbolSpotModel(conn, c.CacheRedis),
 		TradeSymbolContractModel:  models.NewTTradeSymbolContractModel(conn, c.CacheRedis),

@@ -2,16 +2,11 @@ package tasks
 
 import (
 	"context"
-	"fmt"
-	"time"
 
-	"wklive/proto/trade"
-	"wklive/services/system/internal/global"
+	"wklive/common/tasks"
 	"wklive/services/system/internal/plugins/cronx"
 	"wklive/services/system/models"
 )
-
-const tradeTaskRPCTimeout = 5 * time.Minute
 
 func init() {
 	cronx.Register("trade.ProcessOrderMatching", "订单撮合", runTradeProcessOrderMatching)
@@ -22,43 +17,21 @@ func init() {
 }
 
 func runTradeProcessOrderMatching(ctx context.Context, job *models.SysJob) error {
-	return callTradeTask(ctx, job, "process order matching", global.TradeTaskCli.ProcessOrderMatching)
+	return publishTask(ctx, job, tasks.ServiceTrade, tasks.ActionTradeProcessOrderMatching)
 }
 
 func runTradeProcessPositions(ctx context.Context, job *models.SysJob) error {
-	return callTradeTask(ctx, job, "process positions", global.TradeTaskCli.ProcessPositions)
+	return publishTask(ctx, job, tasks.ServiceTrade, tasks.ActionTradeProcessPositions)
 }
 
 func runTradeProcessContractSettlements(ctx context.Context, job *models.SysJob) error {
-	return callTradeTask(ctx, job, "process contract settlements", global.TradeTaskCli.ProcessContractSettlements)
+	return publishTask(ctx, job, tasks.ServiceTrade, tasks.ActionTradeProcessContractSettlements)
 }
 
 func runTradeProcessTradeEvents(ctx context.Context, job *models.SysJob) error {
-	return callTradeTask(ctx, job, "process trade events", global.TradeTaskCli.ProcessTradeEvents)
+	return publishTask(ctx, job, tasks.ServiceTrade, tasks.ActionTradeProcessTradeEvents)
 }
 
 func runTradeExpireRiskLimits(ctx context.Context, job *models.SysJob) error {
-	return callTradeTask(ctx, job, "expire risk limits", global.TradeTaskCli.ExpireRiskLimits)
-}
-
-func callTradeTask(
-	ctx context.Context,
-	_ *models.SysJob,
-	action string,
-	fn func(context.Context, *trade.TradeTaskReq, ...grpcCallOption) (*trade.TradeTaskResp, error),
-) error {
-	rpcCtx, cancel := context.WithTimeout(ctx, tradeTaskRPCTimeout)
-	defer cancel()
-
-	result, err := fn(rpcCtx, &trade.TradeTaskReq{TenantId: 0})
-	if err != nil {
-		return err
-	}
-	if result == nil || result.Base == nil {
-		return fmt.Errorf("trade %s failed, empty response", action)
-	}
-	if result.Base.Code != 200 {
-		return fmt.Errorf("trade %s failed, code: %d, message: %s", action, result.Base.Code, result.Base.Msg)
-	}
-	return nil
+	return publishTask(ctx, job, tasks.ServiceTrade, tasks.ActionTradeExpireRiskLimits)
 }

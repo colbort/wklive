@@ -90,6 +90,7 @@
       "BTCUSDT",
       "casbin",
       "chatadmin",
+      "chatinternal",
       "cobo",
       "configurator",
       "cronx",
@@ -345,7 +346,7 @@
     ],
     "compounds": [
       {
-        "name": "debug:services:all",
+        "name": "debug:rpc:all",
         "configurations": [
           "asset",
           "trade",
@@ -359,6 +360,16 @@
         ],
         "stopAll": true
       },
+      {
+        "name": "debug:api:all",
+        "configurations": [
+          "chat-api",
+          "app-api",
+          "chat-admin-api",
+          "admin-api"
+        ],
+        "stopAll": true
+      }
     ]
   },
 }

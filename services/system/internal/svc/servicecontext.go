@@ -1,14 +1,11 @@
 package svc
 
 import (
-	"wklive/proto/itick"
-	"wklive/proto/option"
-	"wklive/proto/staking"
-	"wklive/proto/trade"
+	bus "wklive/common/bus/redis"
 	"wklive/services/chat/chatinternal"
 	"wklive/services/system/internal/config"
-	"wklive/services/system/internal/global"
 	"wklive/services/system/internal/plugins/cronx"
+	"wklive/services/system/internal/tasks"
 	"wklive/services/system/models"
 
 	"github.com/redis/go-redis/v9"
@@ -23,6 +20,8 @@ type ServiceContext struct {
 	DB                          sqlx.SqlConn
 	Cache                       cache.Cache
 	Cron                        *cronx.CronManager
+	TaskPublisher               *bus.Publisher
+	TaskSubscriber              *bus.Subscriber
 	UserModel                   models.SysUserModel
 	RoleModel                   models.SysRoleModel
 	MenuModel                   models.SysMenuModel
@@ -40,14 +39,13 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	global.ItickTaskCli = itick.NewItickTaskClient(zrpc.MustNewClient(c.ItickRpc).Conn())
-	global.OptionTaskCli = option.NewOptionTaskClient(zrpc.MustNewClient(c.OptionRpc).Conn())
-	global.StakingTaskCli = staking.NewStakingTaskClient(zrpc.MustNewClient(c.StakingRpc).Conn())
-	global.TradeTaskCli = trade.NewTradeTaskClient(zrpc.MustNewClient(c.TradeRpc).Conn())
+	taskPublisher := bus.NewPublisherFromRedisConf(c.CacheRedis[0].RedisConf)
+	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
+	tasks.InitTaskPublisher(taskPublisher)
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	jobLogModel := models.NewSysJobLogModel(conn, c.CacheRedis)
-	global.ConfigModel = models.NewSysConfigModel(conn, c.CacheRedis)
+	configModel := models.NewSysConfigModel(conn, c.CacheRedis)
 	cron := cronx.NewCronManager(jobLogModel)
 	cron.LoadRegisteredHandlers()
 	cron.StartScheduler()
@@ -56,6 +54,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:                          conn,
 		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat(""), redis.Nil),
 		Cron:                        cron,
+		TaskPublisher:               taskPublisher,
+		TaskSubscriber:              taskSubscriber,
 		UserModel:                   models.NewSysUserModel(conn, c.CacheRedis),
 		RoleModel:                   models.NewSysRoleModel(conn, c.CacheRedis),
 		MenuModel:                   models.NewSysMenuModel(conn, c.CacheRedis),
@@ -63,7 +63,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RoleMenuModel:               models.NewSysRoleMenuModel(conn, c.CacheRedis),
 		LoginLogModel:               models.NewSysLoginLogModel(conn, c.CacheRedis),
 		OpLogModel:                  models.NewSysOpLogModel(conn, c.CacheRedis),
-		ConfigModel:                 global.ConfigModel,
+		ConfigModel:                 configModel,
 		VerificationCodeRecordModel: models.NewSysVerificationCodeRecordModel(conn, c.CacheRedis),
 		JobModel:                    models.NewSysJobModel(conn, c.CacheRedis),
 		JobLogModel:                 jobLogModel,

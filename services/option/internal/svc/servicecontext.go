@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	bus "wklive/common/bus/redis"
 	"wklive/proto/asset"
 	"wklive/services/option/internal/config"
 	"wklive/services/option/models"
@@ -17,6 +18,7 @@ type ServiceContext struct {
 	Config                    config.Config
 	DB                        sqlx.SqlConn
 	Redis                     *redis.Redis
+	TaskSubscriber            *bus.Subscriber
 	OptionContractModel       models.TOptionContractModel
 	OptionMarketModel         models.TOptionMarketModel
 	OptionMarketSnapshotModel models.TOptionMarketSnapshotModel
@@ -33,10 +35,12 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
+	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 	return &ServiceContext{
 		Config:                    c,
 		DB:                        conn,
 		Redis:                     redis.MustNewRedis(c.Redis.RedisConf),
+		TaskSubscriber:            taskSubscriber,
 		OptionContractModel:       models.NewTOptionContractModel(conn, c.CacheRedis),
 		OptionMarketModel:         models.NewTOptionMarketModel(conn, c.CacheRedis),
 		OptionMarketSnapshotModel: models.NewTOptionMarketSnapshotModel(conn, c.CacheRedis),

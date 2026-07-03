@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	bus "wklive/common/bus/redis"
 	"wklive/proto/option"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
@@ -27,6 +28,7 @@ type ServiceContext struct {
 	ItickManager                *client.ItickManager
 	Hub                         *server.Hub
 	LockRedis                   *redis.Client
+	TaskSubscriber              *bus.Subscriber
 	Cache                       cache.Cache
 	Factory                     *models.CoinKlineModelFactory
 	Writer                      *klinewriter.BatchWriter
@@ -67,6 +69,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Password: c.LockRedis[0].Pass,
 		DB:       0,
 	})
+	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 
 	// 这里不能 defer Close，不然函数返回后 Redis 连接就被关掉了
 	// defer rdb.Close()
@@ -135,6 +138,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ItickManager:                itickManager,
 		Hub:                         hub,
 		LockRedis:                   lockRedis,
+		TaskSubscriber:              taskSubscriber,
 		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat("quote"), redis.Nil),
 		Factory:                     factory,
 		Writer:                      writer,

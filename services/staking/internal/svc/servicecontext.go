@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	bus "wklive/common/bus/redis"
 	"wklive/proto/asset"
 	"wklive/services/staking/internal/config"
 	"wklive/services/staking/models"
@@ -17,6 +18,7 @@ type ServiceContext struct {
 	Config              config.Config
 	DB                  sqlx.SqlConn
 	Redis               *redis.Redis
+	TaskSubscriber      *bus.Subscriber
 	StakeOrderModel     models.TStakeOrderModel
 	StakeProductModel   models.TStakeProductModel
 	StakeRedeemLogModel models.TStakeRedeemLogModel
@@ -27,10 +29,12 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
+	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 	return &ServiceContext{
 		Config:              c,
 		DB:                  conn,
 		Redis:               redis.MustNewRedis(c.Redis.RedisConf),
+		TaskSubscriber:      taskSubscriber,
 		StakeOrderModel:     models.NewTStakeOrderModel(conn, c.CacheRedis),
 		StakeProductModel:   models.NewTStakeProductModel(conn, c.CacheRedis),
 		StakeRedeemLogModel: models.NewTStakeRedeemLogModel(conn, c.CacheRedis),
