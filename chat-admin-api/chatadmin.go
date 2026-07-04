@@ -40,6 +40,10 @@ func main() {
 		rest.WithCorsHeaders(string(utils.CtxKeyMerchantId)),
 		rest.WithCorsHeaders(string(utils.CtxKeyChatUserId)),
 		rest.WithFileServer(
+			"/avatars",
+			http.Dir("./avatars"),
+		),
+		rest.WithFileServer(
 			"/chat_uploads",
 			http.Dir(c.ChatUploadDir),
 		),

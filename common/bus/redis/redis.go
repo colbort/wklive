@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	v9 "github.com/redis/go-redis/v9"
-	zeroredis "github.com/zeromicro/go-zero/core/stores/redis"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 type Message struct {
@@ -17,19 +17,19 @@ type Message struct {
 type Handler func(context.Context, Message) error
 
 type Publisher struct {
-	rds *zeroredis.Redis
+	rds *redis.Redis
 }
 
 type Subscriber struct {
 	client *v9.Client
 }
 
-func NewPublisher(rds *zeroredis.Redis) *Publisher {
+func NewPublisher(rds *redis.Redis) *Publisher {
 	return &Publisher{rds: rds}
 }
 
-func NewPublisherFromRedisConf(conf zeroredis.RedisConf) *Publisher {
-	return NewPublisher(zeroredis.MustNewRedis(conf))
+func NewPublisherFromRedisConf(conf redis.RedisConf) *Publisher {
+	return NewPublisher(redis.MustNewRedis(conf))
 }
 
 func (p *Publisher) Publish(ctx context.Context, channel string, payload any) error {
@@ -39,7 +39,7 @@ func (p *Publisher) Publish(ctx context.Context, channel string, payload any) er
 	return Publish(ctx, p.rds, channel, payload)
 }
 
-func Publish(ctx context.Context, rds *zeroredis.Redis, channel string, payload any) error {
+func Publish(ctx context.Context, rds *redis.Redis, channel string, payload any) error {
 	if rds == nil {
 		return fmt.Errorf("bus redis publisher is nil")
 	}
@@ -60,7 +60,7 @@ func NewSubscriber(client *v9.Client) *Subscriber {
 	return &Subscriber{client: client}
 }
 
-func NewSubscriberFromRedisConf(conf zeroredis.RedisConf) *Subscriber {
+func NewSubscriberFromRedisConf(conf redis.RedisConf) *Subscriber {
 	return NewSubscriber(NewGoRedisClient(conf))
 }
 
@@ -108,7 +108,7 @@ func Subscribe(ctx context.Context, client *v9.Client, channel string, handler H
 	}
 }
 
-func NewGoRedisClient(conf zeroredis.RedisConf) *v9.Client {
+func NewGoRedisClient(conf redis.RedisConf) *v9.Client {
 	return v9.NewClient(&v9.Options{
 		Addr:     conf.Host,
 		Username: conf.User,

@@ -37,6 +37,13 @@ func (l *SysCronJobStopLogic) SysCronJobStop(in *system.SysCronJobStopReq) (*sys
 			Base: helper.ErrResp(i18n.CronJobNotFound, i18n.Translate(i18n.CronJobNotFound, l.ctx)),
 		}, nil
 	}
+	job.Status = int64(system.JobStatus_JOB_STATUS_DISABLED)
+	err = l.svcCtx.JobModel.Update(l.ctx, job)
+	if err != nil {
+		return &system.RespBase{
+			Base: helper.ErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
+		}, nil
+	}
 	l.svcCtx.Cron.PauseJob(job.Id)
 	return &system.RespBase{
 		Base: helper.OkResp(),

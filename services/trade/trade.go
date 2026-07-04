@@ -11,7 +11,7 @@ import (
 	"wklive/services/trade/internal/logic"
 	"wklive/services/trade/internal/server"
 	"wklive/services/trade/internal/svc"
-	tasksub "wklive/services/trade/internal/tasks"
+	"wklive/services/trade/internal/tasks"
 
 	"wklive/common/etcd"
 
@@ -40,7 +40,7 @@ func main() {
 	svcCtx := svc.NewServiceContext(c)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	tasksub.StartTaskSubscriber(ctx, svcCtx)
+	tasks.StartTaskSubscriber(ctx, svcCtx)
 
 	if restored, err := logic.RestoreOrderBookCache(context.Background(), svcCtx); err != nil {
 		fmt.Printf("Restore order book cache failed: %v\n", err)

@@ -10,7 +10,7 @@ import (
 	"wklive/services/staking/internal/config"
 	"wklive/services/staking/internal/server"
 	"wklive/services/staking/internal/svc"
-	tasksub "wklive/services/staking/internal/tasks"
+	"wklive/services/staking/internal/tasks"
 
 	"wklive/common/etcd"
 
@@ -39,7 +39,7 @@ func main() {
 	svcCtx := svc.NewServiceContext(c)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	tasksub.StartTaskSubscriber(ctx, svcCtx)
+	tasks.StartTaskSubscriber(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		staking.RegisterStakingAdminServer(grpcServer, server.NewStakingAdminServer(svcCtx))

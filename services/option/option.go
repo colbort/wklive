@@ -10,7 +10,7 @@ import (
 	"wklive/services/option/internal/config"
 	"wklive/services/option/internal/server"
 	"wklive/services/option/internal/svc"
-	tasksub "wklive/services/option/internal/tasks"
+	"wklive/services/option/internal/tasks"
 
 	"wklive/common/etcd"
 
@@ -39,7 +39,7 @@ func main() {
 	svcCtx := svc.NewServiceContext(c)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	tasksub.StartTaskSubscriber(ctx, svcCtx)
+	tasks.StartTaskSubscriber(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		option.RegisterOptionAdminServer(grpcServer, server.NewOptionAdminServer(svcCtx))
