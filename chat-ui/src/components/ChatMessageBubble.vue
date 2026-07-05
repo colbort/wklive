@@ -7,6 +7,9 @@ const props = defineProps<{
   direction: "sent" | "received" | "system";
   senderName: string;
   resolveUrl?: (url: string) => Promise<string> | string;
+  enableCopy?: boolean;
+  enableRecall?: boolean;
+  enableDelete?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -25,7 +28,7 @@ const recalledStatus = 6;
 const deletedStatus = 7;
 const recallWindowMs = 3 * 60 * 1000;
 
-function canDelete() {
+function canOperateMessage() {
   return (
     props.direction === "sent" &&
     props.message.status !== sendingStatus &&
@@ -34,17 +37,34 @@ function canDelete() {
   );
 }
 
+function canDelete() {
+  return props.enableDelete !== false && canOperateMessage();
+}
+
+function canCopy() {
+  return (
+    props.enableCopy !== false &&
+    props.message.messageType === 1 &&
+    props.message.status !== recalledStatus &&
+    props.message.status !== deletedStatus &&
+    Boolean(props.message.content?.trim())
+  );
+}
+
 function canRecall() {
   const createTime = Number(
     props.message.createTime || props.message.updateTime || 0,
   );
   return (
-    canDelete() && createTime > 0 && Date.now() - createTime <= recallWindowMs
+    props.enableRecall !== false &&
+    canOperateMessage() &&
+    createTime > 0 &&
+    Date.now() - createTime <= recallWindowMs
   );
 }
 
 function hasMenu() {
-  return canDelete() || canRecall();
+  return canCopy() || canDelete() || canRecall();
 }
 
 watch(
@@ -102,6 +122,12 @@ function emitRecall() {
 function emitDelete() {
   if (!canDelete()) return;
   emit("delete", props.message);
+  closeMenu();
+}
+
+async function copyMessage() {
+  if (!canCopy()) return;
+  await navigator.clipboard?.writeText(props.message.content);
   closeMenu();
 }
 
@@ -189,6 +215,13 @@ function clearObjectUrl() {
       :style="{ left: `${menuLeft}px`, top: `${menuTop}px` }"
       @click.stop
     >
+      <button
+        v-if="canCopy()"
+        type="button"
+        @click="copyMessage"
+      >
+        复制
+      </button>
       <button
         v-if="canRecall()"
         type="button"

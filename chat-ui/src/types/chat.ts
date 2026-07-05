@@ -29,6 +29,29 @@ export interface ChatOptions {
   options: OptionGroup[];
 }
 
+export interface ChatThemeConfig {
+  backgroundColor: string;
+  primaryColor: string;
+  noticeBarColor: string;
+  noticeTextColor: string;
+  agentBubbleColor: string;
+  userBubbleColor: string;
+}
+
+export interface ChatFeatureConfig {
+  enableCopy: boolean;
+  enableRevoke: boolean;
+  enableDelete: boolean;
+  enableQuote: boolean;
+  enableForward: boolean;
+}
+
+export interface ChatAppConfig {
+  title: string;
+  uiConfig: ChatThemeConfig;
+  featureConfig: ChatFeatureConfig;
+}
+
 export interface PageReq {
   cursor?: number;
   limit?: number;

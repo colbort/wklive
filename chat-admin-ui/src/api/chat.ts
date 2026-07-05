@@ -13,9 +13,12 @@ import type { RespBase } from "./request";
 import type {
   ChatAgent,
   ChatCategory,
+  ChatFeatureConfig,
   ChatGroup,
+  ChatMerchantConfig,
   ChatMessage,
   ChatSession,
+  ChatThemeConfig,
   ChatUser,
 } from "@/types/chat";
 
@@ -111,6 +114,12 @@ export interface UpdateChatAgentPayload {
   remark?: string;
 }
 
+export interface UpdateChatConfigPayload {
+  title?: string;
+  uiConfig?: Partial<ChatThemeConfig>;
+  featureConfig?: ChatFeatureConfig;
+}
+
 export interface PageChatMessagesParams {
   merchantId: number;
   cursor?: number;
@@ -185,6 +194,14 @@ export async function getChatFileBlob(url: string) {
 
 export function options() {
   return getData<ChatAdminOptions>("/options");
+}
+
+export function getChatConfig() {
+  return getData<ChatMerchantConfig>("/config");
+}
+
+export function updateChatConfig(data: UpdateChatConfigPayload) {
+  return putData<ChatMerchantConfig>("/config", data);
 }
 
 export function pageAgents(params: Record<string, unknown>) {

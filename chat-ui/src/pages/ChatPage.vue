@@ -7,11 +7,33 @@ import {
   ref,
   watch,
 } from "vue";
-import { setChatTokenCookie } from "@/api/chat";
+import { getChatConfig, setChatTokenCookie } from "@/api/chat";
 import ChatMessageBubble from "@/components/ChatMessageBubble.vue";
 import { useChatSocket } from "@/composables/useChatSocket";
+import type {
+  ChatAppConfig,
+  ChatFeatureConfig,
+  ChatThemeConfig,
+} from "@/types/chat";
 
 type ChatMode = "mobile" | "desktop";
+
+const defaultTheme: ChatThemeConfig = {
+  backgroundColor: "#F6F8FB",
+  primaryColor: "#128577",
+  noticeBarColor: "#102A43",
+  noticeTextColor: "#E6FFFA",
+  agentBubbleColor: "#FFFFFF",
+  userBubbleColor: "#128577",
+};
+
+const defaultFeatures: ChatFeatureConfig = {
+  enableCopy: true,
+  enableRevoke: true,
+  enableDelete: true,
+  enableQuote: false,
+  enableForward: false,
+};
 
 const draft = ref("");
 const resourceInput = ref<HTMLInputElement>();
@@ -23,10 +45,34 @@ const activeMode = ref<ChatMode>("mobile");
 const rating = ref(5);
 const evaluationComment = ref("");
 const evaluationModalDismissed = ref(false);
+const chatConfig = ref<ChatAppConfig>({
+  title: "在线客服",
+  uiConfig: { ...defaultTheme },
+  featureConfig: { ...defaultFeatures },
+});
 
 const chat = useChatSocket();
 
 const showDesktopFrame = computed(() => activeMode.value === "desktop");
+const pageTitle = computed(() => chatConfig.value.title || "在线客服");
+const themeStyle = computed(() => {
+  const theme = {
+    ...defaultTheme,
+    ...(chatConfig.value.uiConfig || {}),
+  };
+  return {
+    "--chat-background-color": theme.backgroundColor,
+    "--chat-primary-color": theme.primaryColor,
+    "--chat-notice-bar-color": theme.noticeBarColor,
+    "--chat-notice-text-color": theme.noticeTextColor,
+    "--chat-agent-bubble-color": theme.agentBubbleColor,
+    "--chat-user-bubble-color": theme.userBubbleColor,
+  };
+});
+const featureConfig = computed(() => ({
+  ...defaultFeatures,
+  ...(chatConfig.value.featureConfig || {}),
+}));
 const hasDraft = computed(() => draft.value.trim().length > 0);
 const composerActionLabel = computed(() => (hasDraft.value ? "发送" : "结束"));
 const canComposeMessage = computed(
@@ -87,6 +133,16 @@ async function connectChat() {
       authError.value = err instanceof Error ? err.message : "认证失败";
       return;
     }
+  }
+  try {
+    chatConfig.value = {
+      ...chatConfig.value,
+      ...(await getChatConfig(token)),
+    };
+    document.title = pageTitle.value;
+  } catch (err) {
+    authError.value = err instanceof Error ? err.message : "加载配置失败";
+    return;
   }
   chat.resetMessages();
   chat.connect(token);
@@ -230,6 +286,7 @@ onBeforeUnmount(() => {
   <main
     class="chat-page"
     :class="{ 'chat-page--desktop': showDesktopFrame }"
+    :style="themeStyle"
   >
     <section
       class="chat-shell"
@@ -259,6 +316,9 @@ onBeforeUnmount(() => {
           :direction="messageDirection(message)"
           :sender-name="messageSenderName(message)"
           :resolve-url="chat.resolveFileUrl"
+          :enable-copy="featureConfig.enableCopy"
+          :enable-recall="featureConfig.enableRevoke"
+          :enable-delete="featureConfig.enableDelete"
           @recall="chat.recallMessage"
           @delete="chat.deleteMessage"
         />

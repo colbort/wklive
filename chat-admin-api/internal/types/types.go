@@ -82,6 +82,22 @@ type ChatCategoryResp struct {
 	Data ChatCategory `json:"data"`
 }
 
+type ChatConfigReq struct {
+}
+
+type ChatConfigResp struct {
+	RespBase
+	Data ChatMerchantConfig `json:"data"`
+}
+
+type ChatFeatureConfig struct {
+	EnableCopy    bool `json:"enableCopy,optional"`
+	EnableRevoke  bool `json:"enableRevoke,optional"`
+	EnableDelete  bool `json:"enableDelete,optional"`
+	EnableQuote   bool `json:"enableQuote,optional"`
+	EnableForward bool `json:"enableForward,optional"`
+}
+
 type ChatGroup struct {
 	Id          int64  `json:"id"`
 	MerchantId  int64  `json:"merchantId"`
@@ -98,6 +114,19 @@ type ChatGroup struct {
 type ChatGroupResp struct {
 	RespBase
 	Data ChatGroup `json:"data"`
+}
+
+type ChatMerchantConfig struct {
+	MerchantId    int64             `json:"merchantId"`
+	ApiKey        string            `json:"apiKey"`
+	ApiSecret     string            `json:"apiSecret"`
+	Enabled       int64             `json:"enabled"`
+	ExpireTime    int64             `json:"expireTime"`
+	CreateTimes   int64             `json:"createTimes"`
+	UpdateTimes   int64             `json:"updateTimes"`
+	Title         string            `json:"title"`
+	UiConfig      ChatThemeConfig   `json:"uiConfig,optional"`
+	FeatureConfig ChatFeatureConfig `json:"featureConfig,optional"`
 }
 
 type ChatMessage struct {
@@ -171,11 +200,21 @@ type ChatSession struct {
 	LastMessageNo    string `json:"lastMessageNo"`
 	CreateTimes      int64  `json:"createTimes"`
 	UpdateTimes      int64  `json:"updateTimes"`
+	IsGuest          bool   `json:"isGuest"`
 }
 
 type ChatSessionResp struct {
 	RespBase
 	Data ChatSession `json:"data"`
+}
+
+type ChatThemeConfig struct {
+	BackgroundColor  string `json:"backgroundColor,optional"`
+	PrimaryColor     string `json:"primaryColor,optional"`
+	NoticeBarColor   string `json:"noticeBarColor,optional"`
+	NoticeTextColor  string `json:"noticeTextColor,optional"`
+	AgentBubbleColor string `json:"agentBubbleColor,optional"`
+	UserBubbleColor  string `json:"userBubbleColor,optional"`
 }
 
 type ChatUser struct {
@@ -527,6 +566,12 @@ type UpdateChatCategoryReq struct {
 	Enabled      int64  `json:"enabled,optional"`
 	Sort         int64  `json:"sort,optional"`
 	Remark       string `json:"remark,optional"`
+}
+
+type UpdateChatConfigReq struct {
+	Title         string            `json:"title,optional"`
+	UiConfig      ChatThemeConfig   `json:"uiConfig,optional"`
+	FeatureConfig ChatFeatureConfig `json:"featureConfig,optional"`
 }
 
 type UpdateChatGroupReq struct {

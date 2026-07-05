@@ -53,6 +53,18 @@ func (s *ChatAdminServer) GetChatUserById(ctx context.Context, in *chat.GetChatU
 	return l.GetChatUserById(in)
 }
 
+// 查询chat-ui配置
+func (s *ChatAdminServer) GetChatConfig(ctx context.Context, in *chat.GetChatConfigReq) (*chat.AdminChatConfigResp, error) {
+	l := logic.NewGetChatConfigLogic(ctx, s.svcCtx)
+	return l.GetChatConfig(in)
+}
+
+// 更新chat-ui配置
+func (s *ChatAdminServer) UpdateChatConfig(ctx context.Context, in *chat.UpdateChatConfigReq) (*chat.AdminChatConfigResp, error) {
+	l := logic.NewUpdateChatConfigLogic(ctx, s.svcCtx)
+	return l.UpdateChatConfig(in)
+}
+
 // 创建客服分组
 func (s *ChatAdminServer) CreateChatGroup(ctx context.Context, in *chat.CreateChatGroupReq) (*chat.AdminChatGroupResp, error) {
 	l := logic.NewCreateChatGroupLogic(ctx, s.svcCtx)

@@ -60,6 +60,36 @@ export interface ChatCategory {
   updateTimes: number;
 }
 
+export interface ChatThemeConfig {
+  backgroundColor: string;
+  primaryColor: string;
+  noticeBarColor: string;
+  noticeTextColor: string;
+  agentBubbleColor: string;
+  userBubbleColor: string;
+}
+
+export interface ChatFeatureConfig {
+  enableCopy: boolean;
+  enableRevoke: boolean;
+  enableDelete: boolean;
+  enableQuote: boolean;
+  enableForward: boolean;
+}
+
+export interface ChatMerchantConfig {
+  merchantId: number;
+  apiKey: string;
+  apiSecret: string;
+  enabled: number;
+  expireTime: number;
+  createTimes: number;
+  updateTimes: number;
+  title: string;
+  uiConfig: ChatThemeConfig;
+  featureConfig: ChatFeatureConfig;
+}
+
 export interface ChatSession {
   id: number;
   sessionNo: string;

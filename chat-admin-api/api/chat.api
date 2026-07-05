@@ -80,6 +80,7 @@ type ChatSession {
 	lastMessageNo    string `json:"lastMessageNo"`
 	createTimes      int64  `json:"createTimes"`
 	updateTimes      int64  `json:"updateTimes"`
+	isGuest          bool   `json:"isGuest"`
 }
 
 type ChatMessageSender {
@@ -193,6 +194,49 @@ type ChatAdminProfileResp {
 	RespBase
 	user  ChatUser  `json:"user"`
 	agent ChatAgent `json:"agent,optional"`
+}
+
+type ChatThemeConfig {
+	backgroundColor  string `json:"backgroundColor,optional"`
+	primaryColor     string `json:"primaryColor,optional"`
+	noticeBarColor   string `json:"noticeBarColor,optional"`
+	noticeTextColor  string `json:"noticeTextColor,optional"`
+	agentBubbleColor string `json:"agentBubbleColor,optional"`
+	userBubbleColor  string `json:"userBubbleColor,optional"`
+}
+
+type ChatFeatureConfig {
+	enableCopy    bool `json:"enableCopy,optional"`
+	enableRevoke  bool `json:"enableRevoke,optional"`
+	enableDelete  bool `json:"enableDelete,optional"`
+	enableQuote   bool `json:"enableQuote,optional"`
+	enableForward bool `json:"enableForward,optional"`
+}
+
+type ChatMerchantConfig {
+	merchantId     int64             `json:"merchantId"`
+	apiKey         string            `json:"apiKey"`
+	apiSecret      string            `json:"apiSecret"`
+	enabled        int64             `json:"enabled"`
+	expireTime     int64             `json:"expireTime"`
+	createTimes    int64             `json:"createTimes"`
+	updateTimes    int64             `json:"updateTimes"`
+	title          string            `json:"title"`
+	uiConfig       ChatThemeConfig   `json:"uiConfig,optional"`
+	featureConfig  ChatFeatureConfig `json:"featureConfig,optional"`
+}
+
+type ChatConfigReq {}
+
+type UpdateChatConfigReq {
+	title         string            `json:"title,optional"`
+	uiConfig      ChatThemeConfig   `json:"uiConfig,optional"`
+	featureConfig ChatFeatureConfig `json:"featureConfig,optional"`
+}
+
+type ChatConfigResp {
+	RespBase
+	data ChatMerchantConfig `json:"data"`
 }
 
 type CreateChatGroupReq {
@@ -564,6 +608,12 @@ service chatAdmin {
 
 	@handler Options
 	get /options returns (ChatAdminOptionsResp)
+
+	@handler GetChatConfig
+	get /config (ChatConfigReq) returns (ChatConfigResp)
+
+	@handler UpdateChatConfig
+	put /config (UpdateChatConfigReq) returns (ChatConfigResp)
 }
 
 @server (

@@ -63,6 +63,37 @@ type CreateChatTokenResp {
 	data ChatToken `json:"data"`
 }
 
+type ChatThemeConfig {
+	backgroundColor  string `json:"backgroundColor,optional"`
+	primaryColor     string `json:"primaryColor,optional"`
+	noticeBarColor   string `json:"noticeBarColor,optional"`
+	noticeTextColor  string `json:"noticeTextColor,optional"`
+	agentBubbleColor string `json:"agentBubbleColor,optional"`
+	userBubbleColor  string `json:"userBubbleColor,optional"`
+}
+
+type ChatFeatureConfig {
+	enableCopy    bool `json:"enableCopy,optional"`
+	enableRevoke  bool `json:"enableRevoke,optional"`
+	enableDelete  bool `json:"enableDelete,optional"`
+	enableQuote   bool `json:"enableQuote,optional"`
+	enableForward bool `json:"enableForward,optional"`
+}
+
+type ChatAppConfig {
+	title         string            `json:"title"`
+	uiConfig      ChatThemeConfig   `json:"uiConfig,optional"`
+	featureConfig ChatFeatureConfig `json:"featureConfig,optional"`
+}
+
+type GetChatConfigReq {
+}
+
+type ChatConfigResp {
+	RespBase
+	data ChatAppConfig `json:"data"`
+}
+
 type SetChatTokenCookieReq {
 	chatToken string `json:"chatToken"`
 }
@@ -123,4 +154,8 @@ service chat-api {
 	// 关闭当前会话
 	@handler CloseMyChatSession
 	post /session/close (CloseMyChatSessionReq) returns (RespBase)
+
+	// 获取chat-ui配置
+	@handler GetChatConfig
+	get /config (GetChatConfigReq) returns (ChatConfigResp)
 }

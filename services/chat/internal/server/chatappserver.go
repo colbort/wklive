@@ -29,6 +29,12 @@ func (s *ChatAppServer) AuthChatMerchant(ctx context.Context, in *chat.AuthChatM
 	return l.AuthChatMerchant(in)
 }
 
+// 获取chat-ui配置
+func (s *ChatAppServer) GetChatConfig(ctx context.Context, in *chat.GetAppChatConfigReq) (*chat.AppChatConfigResp, error) {
+	l := logic.NewGetAppChatConfigLogic(ctx, s.svcCtx)
+	return l.GetAppChatConfig(in)
+}
+
 // 创建或获取当前未关闭会话；服务端负责生成 session_no
 func (s *ChatAppServer) OpenChatSession(ctx context.Context, in *chat.OpenChatSessionReq) (*chat.OpenChatSessionResp, error) {
 	l := logic.NewOpenChatSessionLogic(ctx, s.svcCtx)

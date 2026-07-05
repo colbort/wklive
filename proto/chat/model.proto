@@ -28,14 +28,37 @@ message ChatUser {
   string last_login_ip = 16;  // 最后登录IP
 }
 
+// chat-ui主题配置
+message ChatThemeConfig {
+  string background_color = 1;    // 页面背景色
+  string primary_color = 2;       // 主色/按钮色
+  string notice_bar_color = 3;    // 服务提示条背景色
+  string notice_text_color = 4;   // 服务提示条文字色
+  string agent_bubble_color = 5;  // 客服消息气泡色
+  string user_bubble_color = 6;   // 用户消息气泡色
+}
+
+// chat-ui功能开关
+message ChatFeatureConfig {
+  bool enable_copy = 1;     // 消息复制
+  bool enable_revoke = 2;   // 消息撤回
+  bool enable_delete = 3;   // 消息删除
+  bool enable_quote = 4;    // 引用回复
+  bool enable_forward = 5;  // 消息转发
+}
+
 // 客服商户接入信息
 message ChatMerchant {
-  int64 merchant_id = 1;     // 客服商户ID
-  string api_key = 2;        // 对接客服API Key
-  common.Enable enabled = 3; // 启用状态
-  int64 expire_time = 4;     // 到期时间戳(毫秒)
-  int64 create_times = 5;    // 创建时间戳(毫秒)
-  int64 update_times = 6;    // 更新时间戳(毫秒)
+  int64 merchant_id = 1;                  // 客服商户ID
+  string api_key = 2;                     // 对接客服API Key
+  string api_secret = 3;                  //
+  common.Enable enabled = 4;              // 启用状态
+  int64 expire_time = 5;                  // 到期时间戳(毫秒)
+  int64 create_times = 6;                 // 创建时间戳(毫秒)
+  int64 update_times = 7;                 // 更新时间戳(毫秒)
+  string title = 8;                       // chat-ui标题
+  ChatThemeConfig ui_config = 9;          // chat-ui展示配置
+  ChatFeatureConfig feature_config = 10;   // chat-ui功能开关
 }
 
 // 客服坐席

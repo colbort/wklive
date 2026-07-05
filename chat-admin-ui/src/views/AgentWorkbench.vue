@@ -352,7 +352,7 @@ async function loadSessions(loadActiveMessages = false) {
 async function loadMessages(sessionNo: string) {
   if (!merchantId.value) return;
   const session = sessions.value.find((item) => item.sessionNo === sessionNo);
-  if (sessionNeedsAccept(session)) {
+  if (!session || sessionNeedsAccept(session)) {
     return;
   }
   loadingMessages.value = true;
@@ -873,7 +873,7 @@ function normalizeSession(session: ChatSession) {
   session.createTimes = Number(session.createTimes || 0);
   session.updateTimes = Number(session.updateTimes || 0);
   session.extJson = normalizeSessionExtJson(session);
-  session.isGuest = Boolean(session.isGuest || session.extJson.isGuest);
+  session.isGuest = Boolean(session.isGuest);
   return session;
 }
 

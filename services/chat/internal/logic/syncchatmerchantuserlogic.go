@@ -135,18 +135,30 @@ func (l *SyncChatMerchantUserLogic) upsertMerchantInfo(in *chat.SyncChatMerchant
 			return err
 		}
 		info = &models.TChatMerchantInfo{
-			MerchantId:  in.GetMerchantId(),
-			ApiKey:      apiKey,
-			ApiSecret:   apiSecret,
-			Enabled:     enabled,
-			ExpireTime:  in.GetExpireTime(),
-			CreateTimes: now,
-			UpdateTimes: now,
+			MerchantId:    in.GetMerchantId(),
+			Title:         defaultChatTitle(in),
+			ApiKey:        apiKey,
+			ApiSecret:     apiSecret,
+			UiConfig:      protoMessageToNullString(defaultChatThemeConfig()),
+			FeatureConfig: protoMessageToNullStringWithDefaults(defaultChatFeatureConfig()),
+			Enabled:       enabled,
+			ExpireTime:    in.GetExpireTime(),
+			CreateTimes:   now,
+			UpdateTimes:   now,
 		}
 		_, err = l.svcCtx.ChatMerchantInfoModel.Insert(l.ctx, info)
 		return err
 	}
 
+	if strings.TrimSpace(info.Title) == "" {
+		info.Title = defaultChatTitle(in)
+	}
+	if !info.UiConfig.Valid || strings.TrimSpace(info.UiConfig.String) == "" {
+		info.UiConfig = protoMessageToNullString(defaultChatThemeConfig())
+	}
+	if !info.FeatureConfig.Valid || strings.TrimSpace(info.FeatureConfig.String) == "" {
+		info.FeatureConfig = protoMessageToNullStringWithDefaults(defaultChatFeatureConfig())
+	}
 	info.Enabled = enabled
 	info.ExpireTime = in.GetExpireTime()
 	if info.ApiKey == "" || info.ApiSecret == "" {
@@ -163,6 +175,34 @@ func (l *SyncChatMerchantUserLogic) upsertMerchantInfo(in *chat.SyncChatMerchant
 	}
 	info.UpdateTimes = now
 	return l.svcCtx.ChatMerchantInfoModel.Update(l.ctx, info)
+}
+
+func defaultChatTitle(in *chat.SyncChatMerchantUserReq) string {
+	if title := strings.TrimSpace(in.GetMerchantName()); title != "" {
+		return title
+	}
+	return "在线客服"
+}
+
+func defaultChatThemeConfig() *chat.ChatThemeConfig {
+	return &chat.ChatThemeConfig{
+		BackgroundColor:  "#F6F8FB",
+		PrimaryColor:     "#128577",
+		NoticeBarColor:   "#102A43",
+		NoticeTextColor:  "#E6FFFA",
+		AgentBubbleColor: "#FFFFFF",
+		UserBubbleColor:  "#128577",
+	}
+}
+
+func defaultChatFeatureConfig() *chat.ChatFeatureConfig {
+	return &chat.ChatFeatureConfig{
+		EnableCopy:    true,
+		EnableRevoke:  true,
+		EnableDelete:  true,
+		EnableQuote:   false,
+		EnableForward: false,
+	}
 }
 
 func (l *SyncChatMerchantUserLogic) disableMerchantInfo(merchantId, now int64) error {

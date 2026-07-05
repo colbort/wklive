@@ -19,6 +19,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.UserRateLimit},
 			[]rest.Route{
 				{
+					Method:  http.MethodGet,
+					Path:    "/config",
+					Handler: chat.GetChatConfigHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPost,
 					Path:    "/session/close",
 					Handler: chat.CloseMyChatSessionHandler(serverCtx),

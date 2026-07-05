@@ -1,11 +1,15 @@
 package helper
 
 import (
+	"database/sql"
+	"strings"
+
 	"wklive/proto/chat"
 	"wklive/proto/common"
 	"wklive/services/chat/models"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -178,13 +182,41 @@ func ToProtoMerchant(data *models.TChatMerchantInfo) *chat.ChatMerchant {
 		return nil
 	}
 	return &chat.ChatMerchant{
-		MerchantId:  data.MerchantId,
-		ApiKey:      data.ApiKey,
-		Enabled:     common.Enable(data.Enabled),
-		ExpireTime:  data.ExpireTime,
-		CreateTimes: data.CreateTimes,
-		UpdateTimes: data.UpdateTimes,
+		MerchantId:    data.MerchantId,
+		ApiKey:        data.ApiKey,
+		ApiSecret:     data.ApiSecret,
+		Enabled:       common.Enable(data.Enabled),
+		ExpireTime:    data.ExpireTime,
+		CreateTimes:   data.CreateTimes,
+		UpdateTimes:   data.UpdateTimes,
+		Title:         data.Title,
+		UiConfig:      NullStringToChatThemeConfig(data.UiConfig),
+		FeatureConfig: NullStringToChatFeatureConfig(data.FeatureConfig),
 	}
+}
+
+func NullStringToChatThemeConfig(ns sql.NullString) *chat.ChatThemeConfig {
+	if !ns.Valid || strings.TrimSpace(ns.String) == "" {
+		return nil
+	}
+	var cfg chat.ChatThemeConfig
+	opts := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err := opts.Unmarshal([]byte(ns.String), &cfg); err != nil {
+		return nil
+	}
+	return &cfg
+}
+
+func NullStringToChatFeatureConfig(ns sql.NullString) *chat.ChatFeatureConfig {
+	if !ns.Valid || strings.TrimSpace(ns.String) == "" {
+		return nil
+	}
+	var cfg chat.ChatFeatureConfig
+	opts := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err := opts.Unmarshal([]byte(ns.String), &cfg); err != nil {
+		return nil
+	}
+	return &cfg
 }
 
 func ToProtoSession(data *models.TChatSession, isGuest bool) *chat.ChatSession {

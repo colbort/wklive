@@ -3,6 +3,25 @@
 
 package types
 
+type ChatAppConfig struct {
+	Title         string            `json:"title"`
+	UiConfig      ChatThemeConfig   `json:"uiConfig,optional"`
+	FeatureConfig ChatFeatureConfig `json:"featureConfig,optional"`
+}
+
+type ChatConfigResp struct {
+	RespBase
+	Data ChatAppConfig `json:"data"`
+}
+
+type ChatFeatureConfig struct {
+	EnableCopy    bool `json:"enableCopy,optional"`
+	EnableRevoke  bool `json:"enableRevoke,optional"`
+	EnableDelete  bool `json:"enableDelete,optional"`
+	EnableQuote   bool `json:"enableQuote,optional"`
+	EnableForward bool `json:"enableForward,optional"`
+}
+
 type ChatMessage struct {
 	MessageNo   string            `json:"messageNo"`
 	SessionNo   string            `json:"sessionNo"`
@@ -32,6 +51,15 @@ type ChatMessageSender struct {
 	AvatarUrl  string `json:"avatarUrl"`
 }
 
+type ChatThemeConfig struct {
+	BackgroundColor  string `json:"backgroundColor,optional"`
+	PrimaryColor     string `json:"primaryColor,optional"`
+	NoticeBarColor   string `json:"noticeBarColor,optional"`
+	NoticeTextColor  string `json:"noticeTextColor,optional"`
+	AgentBubbleColor string `json:"agentBubbleColor,optional"`
+	UserBubbleColor  string `json:"userBubbleColor,optional"`
+}
+
 type ChatToken struct {
 	ChatToken string `json:"chatToken"`
 	ExpireAt  int64  `json:"expireAt"`
@@ -55,6 +83,9 @@ type CreateChatTokenReq struct {
 type CreateChatTokenResp struct {
 	RespBase
 	Data ChatToken `json:"data"`
+}
+
+type GetChatConfigReq struct {
 }
 
 type IdReq struct {

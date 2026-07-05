@@ -44,14 +44,17 @@ type (
 	}
 
 	TChatMerchantInfo struct {
-		Id          int64  `db:"id"`           // 主键ID
-		MerchantId  int64  `db:"merchant_id"`  // 客服商户ID
-		ApiKey      string `db:"api_key"`      // 对接客服API Key
-		ApiSecret   string `db:"api_secret"`   // 对接客服API Secret
-		Enabled     int64  `db:"enabled"`      // 启用状态:1启用 2禁用
-		ExpireTime  int64  `db:"expire_time"`  // 到期时间戳(毫秒)
-		CreateTimes int64  `db:"create_times"` // 创建时间戳(毫秒)
-		UpdateTimes int64  `db:"update_times"` // 更新时间戳(毫秒)
+		Id            int64          `db:"id"`             // 主键ID
+		MerchantId    int64          `db:"merchant_id"`    // 客服商户ID
+		Title         string         `db:"title"`          // chat-ui标题
+		ApiKey        string         `db:"api_key"`        // 对接客服API Key
+		ApiSecret     string         `db:"api_secret"`     // 对接客服API Secret
+		UiConfig      sql.NullString `db:"ui_config"`      // chat-ui展示配置
+		FeatureConfig sql.NullString `db:"feature_config"` // chat-ui功能开关
+		Enabled       int64          `db:"enabled"`        // 启用状态:1启用 2禁用
+		ExpireTime    int64          `db:"expire_time"`    // 到期时间戳(毫秒)
+		CreateTimes   int64          `db:"create_times"`   // 创建时间戳(毫秒)
+		UpdateTimes   int64          `db:"update_times"`   // 更新时间戳(毫秒)
 	}
 )
 
@@ -140,8 +143,8 @@ func (m *defaultTChatMerchantInfoModel) Insert(ctx context.Context, data *TChatM
 	tChatMerchantInfoIdKey := fmt.Sprintf("%s%v", cacheTChatMerchantInfoIdPrefix, data.Id)
 	tChatMerchantInfoMerchantIdKey := fmt.Sprintf("%s%v", cacheTChatMerchantInfoMerchantIdPrefix, data.MerchantId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, tChatMerchantInfoRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.MerchantId, data.ApiKey, data.ApiSecret, data.Enabled, data.ExpireTime, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tChatMerchantInfoRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.MerchantId, data.Title, data.ApiKey, data.ApiSecret, data.UiConfig, data.FeatureConfig, data.Enabled, data.ExpireTime, data.CreateTimes, data.UpdateTimes)
 	}, tChatMerchantInfoApiKeyKey, tChatMerchantInfoIdKey, tChatMerchantInfoMerchantIdKey)
 	return ret, err
 }
@@ -157,7 +160,7 @@ func (m *defaultTChatMerchantInfoModel) Update(ctx context.Context, newData *TCh
 	tChatMerchantInfoMerchantIdKey := fmt.Sprintf("%s%v", cacheTChatMerchantInfoMerchantIdPrefix, data.MerchantId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tChatMerchantInfoRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.MerchantId, newData.ApiKey, newData.ApiSecret, newData.Enabled, newData.ExpireTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.MerchantId, newData.Title, newData.ApiKey, newData.ApiSecret, newData.UiConfig, newData.FeatureConfig, newData.Enabled, newData.ExpireTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tChatMerchantInfoApiKeyKey, tChatMerchantInfoIdKey, tChatMerchantInfoMerchantIdKey)
 	return err
 }

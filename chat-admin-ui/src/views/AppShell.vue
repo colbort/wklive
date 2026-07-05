@@ -55,10 +55,15 @@ const merchantMenu = [
   { path: "/merchant/groups", label: "客服分组" },
   { path: "/merchant/categories", label: "问题分类" },
 ];
+const merchantPageLabels = [
+  ...merchantMenu,
+  { path: "/merchant/config", label: "客服配置" },
+];
 
 const currentMenuLabel = computed(
   () =>
-    merchantMenu.find((item) => item.path === route.path)?.label || "客服管理",
+    merchantPageLabels.find((item) => item.path === route.path)?.label ||
+    "客服管理",
 );
 const merchantName = computed(
   () => auth.user?.nickname || auth.user?.username || "商户",
@@ -103,6 +108,8 @@ async function handleSettingsCommand(command: string) {
     openPasswordDialog();
   } else if (command === "avatar") {
     openAvatarDialog();
+  } else if (command === "chatConfig") {
+    await router.push("/merchant/config");
   } else if (command === "logout") {
     await logout();
   }
@@ -518,6 +525,9 @@ onMounted(() => {
           </button>
           <template #dropdown>
             <el-dropdown-menu>
+              <el-dropdown-item command="chatConfig">
+                客服配置
+              </el-dropdown-item>
               <el-dropdown-item command="password">
                 修改密码
               </el-dropdown-item>

@@ -73,6 +73,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.AdminRateLimit},
 			[]rest.Route{
 				{
+					Method:  http.MethodGet,
+					Path:    "/config",
+					Handler: chat_auth.GetChatConfigHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/config",
+					Handler: chat_auth.UpdateChatConfigHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPost,
 					Path:    "/logout",
 					Handler: chat_auth.LogoutHandler(serverCtx),

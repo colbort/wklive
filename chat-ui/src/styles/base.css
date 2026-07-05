@@ -1,4 +1,10 @@
 :root {
+  --chat-background-color: #f6f8fb;
+  --chat-primary-color: #128577;
+  --chat-notice-bar-color: #102a43;
+  --chat-notice-text-color: #e6fffa;
+  --chat-agent-bubble-color: #fff;
+  --chat-user-bubble-color: #128577;
   color: #172033;
   background: #eef3f8;
   font-family:
@@ -148,8 +154,8 @@ textarea {
 
 input:focus,
 textarea:focus {
-  border-color: #0f766e;
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.13);
+  border-color: var(--chat-primary-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--chat-primary-color) 18%, transparent);
 }
 
 .primary-button,
@@ -164,7 +170,7 @@ textarea:focus {
 .primary-button,
 .send-button {
   color: #fff;
-  background: #0f766e;
+  background: var(--chat-primary-color);
 }
 
 .primary-button,
@@ -174,8 +180,8 @@ textarea:focus {
 
 .secondary-button,
 .resource-button {
-  color: #0f766e;
-  background: #d8f3ed;
+  color: var(--chat-primary-color);
+  background: color-mix(in srgb, var(--chat-primary-color) 14%, white);
 }
 
 .resource-input {
@@ -207,7 +213,7 @@ textarea:focus {
   height: 100dvh;
   min-height: 0;
   overflow: hidden;
-  background: #eef3f8;
+  background: var(--chat-background-color);
 }
 
 .chat-page .chat-shell {
@@ -248,10 +254,7 @@ textarea:focus {
   min-height: 0;
   overflow-y: auto;
   padding: 18px;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.78)),
-    url("https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1600&q=80")
-      center/cover;
+  background: var(--chat-background-color);
 }
 
 .welcome-message {
@@ -271,9 +274,9 @@ textarea:focus {
 
 .queue-message {
   width: 100%;
-  padding: 2px 0;
-  color: #1d4ed8;
-  background: red;
+  padding: 6px 10px;
+  color: var(--chat-notice-text-color);
+  background: var(--chat-notice-bar-color);
   text-align: center;
   z-index: 1;
 }
@@ -298,13 +301,13 @@ textarea:focus {
   padding: 10px 12px;
   border-radius: 8px;
   color: #fff;
-  background: #0f766e;
-  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.18);
+  background: var(--chat-user-bubble-color);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--chat-user-bubble-color) 22%, transparent);
 }
 
 .message-row.received .bubble {
   color: #1e293b;
-  background: #fff;
+  background: var(--chat-agent-bubble-color);
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 

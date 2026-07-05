@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	ChatApp_AuthChatMerchant_FullMethodName       = "/chat.ChatApp/AuthChatMerchant"
+	ChatApp_GetChatConfig_FullMethodName          = "/chat.ChatApp/GetChatConfig"
 	ChatApp_OpenChatSession_FullMethodName        = "/chat.ChatApp/OpenChatSession"
 	ChatApp_GenerateChatSessionNo_FullMethodName  = "/chat.ChatApp/GenerateChatSessionNo"
 	ChatApp_GetChatSessionByUser_FullMethodName   = "/chat.ChatApp/GetChatSessionByUser"
@@ -41,6 +42,8 @@ const (
 type ChatAppClient interface {
 	// 商户接入鉴权
 	AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error)
+	// 获取chat-ui配置
+	GetChatConfig(ctx context.Context, in *GetAppChatConfigReq, opts ...grpc.CallOption) (*AppChatConfigResp, error)
 	// 创建或获取当前未关闭会话；服务端负责生成 session_no
 	OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*OpenChatSessionResp, error)
 	// 生成会话编号
@@ -75,6 +78,16 @@ func (c *chatAppClient) AuthChatMerchant(ctx context.Context, in *AuthChatMercha
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AuthChatMerchantResp)
 	err := c.cc.Invoke(ctx, ChatApp_AuthChatMerchant_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAppClient) GetChatConfig(ctx context.Context, in *GetAppChatConfigReq, opts ...grpc.CallOption) (*AppChatConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AppChatConfigResp)
+	err := c.cc.Invoke(ctx, ChatApp_GetChatConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -199,6 +212,8 @@ type ChatApp_AppSubscribeStreamClient = grpc.ServerStreamingClient[ChatWsRespons
 type ChatAppServer interface {
 	// 商户接入鉴权
 	AuthChatMerchant(context.Context, *AuthChatMerchantReq) (*AuthChatMerchantResp, error)
+	// 获取chat-ui配置
+	GetChatConfig(context.Context, *GetAppChatConfigReq) (*AppChatConfigResp, error)
 	// 创建或获取当前未关闭会话；服务端负责生成 session_no
 	OpenChatSession(context.Context, *OpenChatSessionReq) (*OpenChatSessionResp, error)
 	// 生成会话编号
@@ -231,6 +246,9 @@ type UnimplementedChatAppServer struct{}
 
 func (UnimplementedChatAppServer) AuthChatMerchant(context.Context, *AuthChatMerchantReq) (*AuthChatMerchantResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AuthChatMerchant not implemented")
+}
+func (UnimplementedChatAppServer) GetChatConfig(context.Context, *GetAppChatConfigReq) (*AppChatConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetChatConfig not implemented")
 }
 func (UnimplementedChatAppServer) OpenChatSession(context.Context, *OpenChatSessionReq) (*OpenChatSessionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method OpenChatSession not implemented")
@@ -297,6 +315,24 @@ func _ChatApp_AuthChatMerchant_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAppServer).AuthChatMerchant(ctx, req.(*AuthChatMerchantReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatApp_GetChatConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAppChatConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAppServer).GetChatConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatApp_GetChatConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAppServer).GetChatConfig(ctx, req.(*GetAppChatConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -484,6 +520,10 @@ var ChatApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AuthChatMerchant",
 			Handler:    _ChatApp_AuthChatMerchant_Handler,
+		},
+		{
+			MethodName: "GetChatConfig",
+			Handler:    _ChatApp_GetChatConfig_Handler,
 		},
 		{
 			MethodName: "OpenChatSession",

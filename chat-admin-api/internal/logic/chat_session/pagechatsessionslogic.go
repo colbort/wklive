@@ -92,6 +92,7 @@ func protoSessionToType(item *chat.ChatSession) types.ChatSession {
 		LastMessageNo:    item.GetLastMessageNo(),
 		CreateTimes:      item.GetCreateTimes(),
 		UpdateTimes:      item.GetUpdateTimes(),
+		IsGuest:          item.IsGuest,
 	}
 }
 

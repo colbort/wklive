@@ -21,7 +21,6 @@ type ServiceContext struct {
 	Cache                       cache.Cache
 	Cron                        *cronx.CronManager
 	TaskPublisher               *bus.Publisher
-	TaskSubscriber              *bus.Subscriber
 	UserModel                   models.SysUserModel
 	RoleModel                   models.SysRoleModel
 	MenuModel                   models.SysMenuModel
@@ -40,7 +39,6 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	taskPublisher := bus.NewPublisherFromRedisConf(c.CacheRedis[0].RedisConf)
-	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 	tasks.InitTaskPublisher(taskPublisher)
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
@@ -55,7 +53,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat(""), redis.Nil),
 		Cron:                        cron,
 		TaskPublisher:               taskPublisher,
-		TaskSubscriber:              taskSubscriber,
 		UserModel:                   models.NewSysUserModel(conn, c.CacheRedis),
 		RoleModel:                   models.NewSysRoleModel(conn, c.CacheRedis),
 		MenuModel:                   models.NewSysMenuModel(conn, c.CacheRedis),

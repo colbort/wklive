@@ -26,8 +26,11 @@ CREATE TABLE `t_chat_user` (
 CREATE TABLE `t_chat_merchant_info` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `merchant_id` bigint NOT NULL DEFAULT '0' COMMENT '客服商户ID',
+  `title` varchar(128) NOT NULL DEFAULT '' COMMENT 'chat-ui标题',
   `api_key` varchar(64) NOT NULL DEFAULT '' COMMENT '对接客服API Key',
   `api_secret` varchar(128) NOT NULL DEFAULT '' COMMENT '对接客服API Secret',
+  `ui_config` json DEFAULT NULL COMMENT 'chat-ui展示配置',
+  `feature_config` json DEFAULT NULL COMMENT 'chat-ui功能开关',
   `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '启用状态:1启用 2禁用',
   `expire_time` bigint NOT NULL DEFAULT '0' COMMENT '到期时间戳(毫秒)',
   `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间戳(毫秒)',

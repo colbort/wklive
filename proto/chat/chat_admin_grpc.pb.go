@@ -24,6 +24,8 @@ const (
 	ChatAdmin_Profile_FullMethodName                     = "/chat.ChatAdmin/Profile"
 	ChatAdmin_UpdateProfile_FullMethodName               = "/chat.ChatAdmin/UpdateProfile"
 	ChatAdmin_GetChatUserById_FullMethodName             = "/chat.ChatAdmin/GetChatUserById"
+	ChatAdmin_GetChatConfig_FullMethodName               = "/chat.ChatAdmin/GetChatConfig"
+	ChatAdmin_UpdateChatConfig_FullMethodName            = "/chat.ChatAdmin/UpdateChatConfig"
 	ChatAdmin_CreateChatGroup_FullMethodName             = "/chat.ChatAdmin/CreateChatGroup"
 	ChatAdmin_UpdateChatGroup_FullMethodName             = "/chat.ChatAdmin/UpdateChatGroup"
 	ChatAdmin_GetChatGroup_FullMethodName                = "/chat.ChatAdmin/GetChatGroup"
@@ -80,6 +82,10 @@ type ChatAdminClient interface {
 	UpdateProfile(ctx context.Context, in *UpdateChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
 	// 获取用户
 	GetChatUserById(ctx context.Context, in *GetChatUserByIdReq, opts ...grpc.CallOption) (*GetChatUserByIdResp, error)
+	// 查询chat-ui配置
+	GetChatConfig(ctx context.Context, in *GetChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error)
+	// 更新chat-ui配置
+	UpdateChatConfig(ctx context.Context, in *UpdateChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error)
 	// 创建客服分组
 	CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
 	// 更新客服分组
@@ -210,6 +216,26 @@ func (c *chatAdminClient) GetChatUserById(ctx context.Context, in *GetChatUserBy
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetChatUserByIdResp)
 	err := c.cc.Invoke(ctx, ChatAdmin_GetChatUserById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) GetChatConfig(ctx context.Context, in *GetChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatConfigResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_GetChatConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatAdminClient) UpdateChatConfig(ctx context.Context, in *UpdateChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminChatConfigResp)
+	err := c.cc.Invoke(ctx, ChatAdmin_UpdateChatConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -621,6 +647,10 @@ type ChatAdminServer interface {
 	UpdateProfile(context.Context, *UpdateChatAdminProfileReq) (*ChatAdminProfileResp, error)
 	// 获取用户
 	GetChatUserById(context.Context, *GetChatUserByIdReq) (*GetChatUserByIdResp, error)
+	// 查询chat-ui配置
+	GetChatConfig(context.Context, *GetChatConfigReq) (*AdminChatConfigResp, error)
+	// 更新chat-ui配置
+	UpdateChatConfig(context.Context, *UpdateChatConfigReq) (*AdminChatConfigResp, error)
 	// 创建客服分组
 	CreateChatGroup(context.Context, *CreateChatGroupReq) (*AdminChatGroupResp, error)
 	// 更新客服分组
@@ -721,6 +751,12 @@ func (UnimplementedChatAdminServer) UpdateProfile(context.Context, *UpdateChatAd
 }
 func (UnimplementedChatAdminServer) GetChatUserById(context.Context, *GetChatUserByIdReq) (*GetChatUserByIdResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetChatUserById not implemented")
+}
+func (UnimplementedChatAdminServer) GetChatConfig(context.Context, *GetChatConfigReq) (*AdminChatConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetChatConfig not implemented")
+}
+func (UnimplementedChatAdminServer) UpdateChatConfig(context.Context, *UpdateChatConfigReq) (*AdminChatConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateChatConfig not implemented")
 }
 func (UnimplementedChatAdminServer) CreateChatGroup(context.Context, *CreateChatGroupReq) (*AdminChatGroupResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateChatGroup not implemented")
@@ -943,6 +979,42 @@ func _ChatAdmin_GetChatUserById_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAdminServer).GetChatUserById(ctx, req.(*GetChatUserByIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_GetChatConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChatConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).GetChatConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_GetChatConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).GetChatConfig(ctx, req.(*GetChatConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatAdmin_UpdateChatConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateChatConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAdminServer).UpdateChatConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ChatAdmin_UpdateChatConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAdminServer).UpdateChatConfig(ctx, req.(*UpdateChatConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1650,6 +1722,14 @@ var ChatAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetChatUserById",
 			Handler:    _ChatAdmin_GetChatUserById_Handler,
+		},
+		{
+			MethodName: "GetChatConfig",
+			Handler:    _ChatAdmin_GetChatConfig_Handler,
+		},
+		{
+			MethodName: "UpdateChatConfig",
+			Handler:    _ChatAdmin_UpdateChatConfig_Handler,
 		},
 		{
 			MethodName: "CreateChatGroup",

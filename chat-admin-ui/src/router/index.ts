@@ -34,6 +34,12 @@ export const router = createRouter({
           meta: { role: 1, activeTab: "groups" },
         },
         {
+          path: "merchant/config",
+          name: "MerchantChatConfig",
+          component: () => import("@/views/MerchantChatConfig.vue"),
+          meta: { role: 1, activeTab: "config" },
+        },
+        {
           path: "agent/workbench",
           name: "AgentWorkbench",
           component: () => import("@/views/AgentWorkbench.vue"),

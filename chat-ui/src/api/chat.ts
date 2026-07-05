@@ -1,5 +1,6 @@
 import type {
   ApiResp,
+  ChatAppConfig,
   ChatOptions,
   ChatMessage,
   ChatWsRequest,
@@ -50,6 +51,13 @@ export function setChatTokenCookie(chatToken: string): Promise<RespBase> {
 export function options(): Promise<ChatOptions> {
   return requestData<ChatOptions>("/options", {
     method: "GET",
+  });
+}
+
+export function getChatConfig(chatToken = ""): Promise<ChatAppConfig> {
+  return requestData<ChatAppConfig>("/config", {
+    method: "GET",
+    token: chatToken,
   });
 }
 

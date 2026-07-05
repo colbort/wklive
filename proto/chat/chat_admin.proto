@@ -25,6 +25,12 @@ service ChatAdmin {
   // 获取用户
   rpc GetChatUserById(GetChatUserByIdReq) returns (GetChatUserByIdResp);
 
+  // 查询chat-ui配置
+  rpc GetChatConfig(GetChatConfigReq) returns (AdminChatConfigResp);
+
+  // 更新chat-ui配置
+  rpc UpdateChatConfig(UpdateChatConfigReq) returns (AdminChatConfigResp);
+
   // 创建客服分组
   rpc CreateChatGroup(CreateChatGroupReq) returns (AdminChatGroupResp);
 
@@ -190,6 +196,19 @@ message GetChatUserByIdReq {
 message GetChatUserByIdResp {
   common.RespBase base = 1;
   ChatUser data = 2;
+}
+
+message GetChatConfigReq {}
+
+message UpdateChatConfigReq {
+  string title = 1;                         // chat-ui标题
+  ChatThemeConfig ui_config = 2;            // chat-ui展示配置
+  ChatFeatureConfig feature_config = 3;     // chat-ui功能开关
+}
+
+message AdminChatConfigResp {
+  common.RespBase base = 1;
+  ChatMerchant data = 2;
 }
 
 message ChatAdminProfileResp {
