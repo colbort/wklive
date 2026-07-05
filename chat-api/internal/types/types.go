@@ -66,10 +66,6 @@ type ChatToken struct {
 	SessionNo string `json:"sessionNo"`
 }
 
-type CloseMyChatSessionReq struct {
-	CloseReason string `json:"closeReason,optional"`
-}
-
 type CreateChatTokenReq struct {
 	ApiKey     string `json:"apiKey"`
 	ApiSecret  string `json:"apiSecret"`

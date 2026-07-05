@@ -17,6 +17,12 @@ import type {
 } from "@/types/chat";
 
 type ChatMode = "mobile" | "desktop";
+type TokenPayload = {
+  exp?: number;
+  expireAt?: number;
+};
+
+const chatTokenStorageKey = "wklive:chat-token";
 
 const defaultTheme: ChatThemeConfig = {
   backgroundColor: "#F6F8FB",
@@ -119,18 +125,32 @@ function hydrateFromQuery() {
   const queryChatToken = params.get("chatToken");
   const queryMode = params.get("mode");
   activeMode.value = queryMode === "desktop" ? "desktop" : "mobile";
-  return queryChatToken?.trim() || "";
+  return queryChatToken?.trim() || storedChatToken();
 }
 
 async function connectChat() {
   authError.value = "";
   const token = hydrateFromQuery();
+  if (!token) {
+    exitChatPage("expired", "登录已过期，请重新进入客服页面");
+    return;
+  }
+  if (isChatTokenExpired(token)) {
+    clearStoredChatToken();
+    exitChatPage("expired", "登录已过期，请重新进入客服页面");
+    return;
+  }
   if (token) {
     try {
       await setChatTokenCookie(token);
+      storeChatToken(token);
       removeChatTokenFromUrl();
     } catch (err) {
-      authError.value = err instanceof Error ? err.message : "认证失败";
+      clearStoredChatToken();
+      exitChatPage(
+        "auth_failed",
+        err instanceof Error ? err.message : "认证失败",
+      );
       return;
     }
   }
@@ -141,11 +161,82 @@ async function connectChat() {
     };
     document.title = pageTitle.value;
   } catch (err) {
-    authError.value = err instanceof Error ? err.message : "加载配置失败";
+    clearStoredChatToken();
+    exitChatPage(
+      "auth_failed",
+      err instanceof Error ? err.message : "加载配置失败",
+    );
     return;
   }
   chat.resetMessages();
   chat.connect(token);
+}
+
+function exitChatPage(reason: string, message: string) {
+  authError.value = message;
+  chat.close();
+  window.parent?.postMessage(
+    {
+      type: "wklive-chat:close",
+      reason,
+      message,
+    },
+    "*",
+  );
+
+  if (window.self !== window.top) return;
+  if (window.history.length > 1) {
+    window.history.back();
+    return;
+  }
+  window.close();
+}
+
+function storedChatToken() {
+  try {
+    return sessionStorage.getItem(chatTokenStorageKey)?.trim() || "";
+  } catch {
+    return "";
+  }
+}
+
+function storeChatToken(token: string) {
+  try {
+    sessionStorage.setItem(chatTokenStorageKey, token);
+  } catch {
+    // sessionStorage can be unavailable in restricted browser contexts.
+  }
+}
+
+function clearStoredChatToken() {
+  try {
+    sessionStorage.removeItem(chatTokenStorageKey);
+  } catch {
+    // no-op
+  }
+}
+
+function isChatTokenExpired(token: string) {
+  const payload = parseChatTokenPayload(token);
+  const expireAt = Number(payload?.expireAt || 0);
+  const exp = Number(payload?.exp || 0);
+  const expiresAtMs = expireAt > 0 ? expireAt : exp > 0 ? exp * 1000 : 0;
+  return expiresAtMs > 0 && expiresAtMs <= Date.now() + 5000;
+}
+
+function parseChatTokenPayload(token: string): TokenPayload | null {
+  const payload = token.split(".")[1];
+  if (!payload) return null;
+  try {
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(
+      normalized.length + ((4 - (normalized.length % 4)) % 4),
+      "=",
+    );
+    return JSON.parse(atob(padded)) as TokenPayload;
+  } catch {
+    return null;
+  }
 }
 
 function removeChatTokenFromUrl() {

@@ -24,11 +24,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: chat.GetChatConfigHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodPost,
-					Path:    "/session/close",
-					Handler: chat.CloseMyChatSessionHandler(serverCtx),
-				},
-				{
 					Method:  http.MethodGet,
 					Path:    "/session/messages",
 					Handler: chat.ListMyChatMessagesHandler(serverCtx),

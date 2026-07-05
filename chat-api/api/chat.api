@@ -38,10 +38,6 @@ type ListChatMessagesResp {
 	data []ChatMessage `json:"data"`
 }
 
-type CloseMyChatSessionReq {
-	closeReason string `json:"closeReason,optional"`
-}
-
 type CreateChatTokenReq {
 	apiKey     string `json:"apiKey"`
 	apiSecret  string `json:"apiSecret"`
@@ -150,10 +146,6 @@ service chat-api {
 	// 获取历史消息
 	@handler ListMyChatMessages
 	get /session/messages (ListChatMessagesReq) returns (ListChatMessagesResp)
-
-	// 关闭当前会话
-	@handler CloseMyChatSession
-	post /session/close (CloseMyChatSessionReq) returns (RespBase)
 
 	// 获取chat-ui配置
 	@handler GetChatConfig

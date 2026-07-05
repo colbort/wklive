@@ -127,6 +127,7 @@ export function useChatSocket() {
     reconnectingIn.value = 0;
     status.value = reconnectAttempts > 0 ? "reconnecting" : "connecting";
     const ws = createChatSocket({
+      token: chatToken.value,
       onOpen: () => {
         reconnectAttempts = 0;
         reconnectingIn.value = 0;

@@ -99,6 +99,15 @@ const iframeExample = `<iframe
   style="width: 100%; height: 720px; border: 0;"
   allow="clipboard-write"
 ></iframe>`;
+const parentMessageExample = `window.addEventListener("message", (event) => {
+  // if (event.origin !== "https://chat.example.com") return;
+
+  const data = event.data || {};
+  if (data.type !== "wklive-chat:close") return;
+
+  document.querySelector("#chat-iframe")?.remove();
+  // 同时关闭业务侧弹窗/抽屉
+});`;
 const configRequestExample = `GET /chat/config
 Authorization: Bearer <CHAT_TOKEN>`;
 
@@ -266,9 +275,25 @@ async function submit() {
               <pre><code>{{ iframeExample }}</code></pre>
             </div>
             <div class="integration-step">
-              <strong>3. chat-ui 读取配置</strong>
+              <strong>3. 父页面监听关闭消息</strong>
+              <p>token 过期或认证失败时，chat-ui 会通知父页面关闭 iframe。</p>
+              <pre><code>{{ parentMessageExample }}</code></pre>
+            </div>
+            <div class="integration-step">
+              <strong>4. chat-ui 读取配置</strong>
               <p>chat-ui 会使用同一个 JWT 获取标题、颜色和功能开关。</p>
               <pre><code>{{ configRequestExample }}</code></pre>
+            </div>
+            <div class="integration-step">
+              <strong>注意事项</strong>
+              <ul class="integration-notes">
+                <li>API Secret 只能保存在业务服务端，不要放到浏览器或 App 包内。</li>
+                <li>ChatToken 过期后需要业务服务端重新签发，再重新打开客服 iframe。</li>
+                <li>postMessage 不能检测父页面是否已监听，父页面需要按约定处理 wklive-chat:close。</li>
+                <li>如果父页面没有监听 postMessage，chat-ui 无法主动关闭外层 iframe 或弹窗，只会显示过期/认证失败提示。</li>
+                <li>如需确认父页面已处理关闭事件，可自行扩展 close:ack 回执。</li>
+                <li>生产环境建议校验 event.origin，只接受可信 chat-ui 域名。</li>
+              </ul>
             </div>
           </div>
         </section>
@@ -477,6 +502,16 @@ async function submit() {
   font-size: 12px;
   line-height: 1.55;
   white-space: pre;
+}
+
+.integration-notes {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+  color: #667085;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .config-actions {

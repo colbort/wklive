@@ -125,8 +125,14 @@ export interface CreateChatSocketOptions {
   onClose?: (event: CloseEvent) => void;
 }
 
-export function createChatSocket(options: CreateChatSocketOptions): WebSocket {
+export function createChatSocket(
+  options: CreateChatSocketOptions & { token?: string },
+): WebSocket {
   const protocols = [chatWsProtocol];
+  const tokenProtocol = chatWsTokenProtocol(options.token || "");
+  if (tokenProtocol) {
+    protocols.push(tokenProtocol);
+  }
 
   const socket = new WebSocket(chatWsUrl(), protocols);
   if (options.onOpen) {
@@ -142,6 +148,21 @@ export function createChatSocket(options: CreateChatSocketOptions): WebSocket {
     socket.addEventListener("close", options.onClose);
   }
   return socket;
+}
+
+function chatWsTokenProtocol(token: string) {
+  token = token.trim();
+  if (!token) return "";
+  return `token.${base64UrlEncode(token)}`;
+}
+
+function base64UrlEncode(value: string) {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 export function sendChatSocketTypedEvent(
