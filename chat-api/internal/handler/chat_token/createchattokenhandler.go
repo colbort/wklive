@@ -4,18 +4,27 @@
 package chat_token
 
 import (
+	"fmt"
 	"net/http"
+	"slices"
 	"time"
+	"wklive/common/utils"
 
 	"chat-api/internal/jwt"
 	"chat-api/internal/logic/chat_token"
 	"chat-api/internal/svc"
 	"chat-api/internal/types"
+
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
 func CreateChatTokenHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		ip := utils.GetClientIP(r)
+		if !slices.Contains(svcCtx.Config.ChatTokenIPWhitelist, ip) {
+			httpx.ErrorCtx(r.Context(), w, fmt.Errorf("%s is not in ip white list", ip))
+			return
+		}
 		var req types.CreateChatTokenReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)

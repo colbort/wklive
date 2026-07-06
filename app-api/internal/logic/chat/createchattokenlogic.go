@@ -7,8 +7,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -208,22 +208,39 @@ func (l *CreateChatTokenLogic) requestChatToken(cfg *system.ChatConfig, identity
 	httpReq.Header.Set("Content-Type", "application/json")
 
 	client := http.Client{Timeout: 5 * time.Second}
+
 	httpResp, err := client.Do(httpReq)
 	if err != nil {
 		return types.ChatToken{}, err
 	}
 	defer httpResp.Body.Close()
 
+	// 先处理 HTTP 状态码
 	if httpResp.StatusCode < 200 || httpResp.StatusCode >= 300 {
-		return types.ChatToken{}, fmt.Errorf("chat-api HTTP %d", httpResp.StatusCode)
+		body, _ := io.ReadAll(httpResp.Body)
+
+		return types.ChatToken{}, fmt.Errorf(
+			"chat-api returned %s: %s",
+			httpResp.Status,
+			string(body),
+		)
 	}
+
+	// 再解析业务响应
 	var resp chatTokenResp
 	if err := json.NewDecoder(httpResp.Body).Decode(&resp); err != nil {
 		return types.ChatToken{}, err
 	}
+
+	// 最后处理业务状态码
 	if resp.Code != 200 {
-		return types.ChatToken{}, errors.New(resp.Msg)
+		return types.ChatToken{}, fmt.Errorf(
+			"chat-api error, code=%d, msg=%s",
+			resp.Code,
+			resp.Msg,
+		)
 	}
+
 	return resp.Data, nil
 }
 

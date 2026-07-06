@@ -67,3 +67,4 @@ service app {
 	@handler CreateChatToken
 	post /chat/token (CreateChatTokenReq) returns (CreateChatTokenResp)
 }
+
