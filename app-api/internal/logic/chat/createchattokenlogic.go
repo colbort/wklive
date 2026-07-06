@@ -123,70 +123,78 @@ func (l *CreateChatTokenLogic) chatConfig() (*system.ChatConfig, error) {
 	return &cfg, nil
 }
 
-func (l *CreateChatTokenLogic) resolveIdentity(r *http.Request, req *types.CreateChatTokenReq) (chatIdentity, error) {
-	if claims, ok := l.claimsFromAuthorization(r); ok {
-		return l.profileIdentity(claims.UserId, claims.Username)
+func (l *CreateChatTokenLogic) resolveIdentity(r *http.Request, req *types.CreateChatTokenReq) (*chatIdentity, error) {
+	claims, err := l.claimsFromAuthorization(r)
+	if err != nil {
+		// 有token；但是token解析错误
+		return nil, err
 	}
-	return l.guestIdentity(req)
+	if claims != nil {
+		// 用户登录 token 有效
+		return l.profileIdentity(claims.UserId, claims.Username)
+	} else {
+		// 游客
+		return l.guestIdentity(req)
+	}
 }
 
-func (l *CreateChatTokenLogic) claimsFromAuthorization(r *http.Request) (*utils.Claims, bool) {
+func (l *CreateChatTokenLogic) claimsFromAuthorization(r *http.Request) (*utils.Claims, error) {
 	auth := strings.TrimSpace(r.Header.Get("Authorization"))
 	if !strings.HasPrefix(strings.ToLower(auth), "bearer ") {
-		return nil, false
+		return nil, nil
 	}
 	claims, err := utils.ParseToken(l.svcCtx.Config.Jwt.AccessSecret, strings.TrimSpace(auth[7:]))
-	if err != nil || claims.UserId <= 0 {
-		return nil, false
+	if err != nil {
+		return nil, err
 	}
-	return claims, true
+	return claims, nil
 }
 
-func (l *CreateChatTokenLogic) profileIdentity(userId int64, username string) (chatIdentity, error) {
+func (l *CreateChatTokenLogic) profileIdentity(userId int64, username string) (*chatIdentity, error) {
 	ctx := context.WithValue(l.ctx, utils.CtxKeyUid, userId)
 	ctx = context.WithValue(ctx, utils.CtxKeyUsername, username)
 	resp, err := l.svcCtx.UserCli.GetProfile(ctx, &user.GetProfileReq{})
 	if err != nil {
-		return chatIdentity{}, err
+		return nil, err
 	}
 	if resp.GetBase().GetCode() != 200 {
-		return chatIdentity{}, fmt.Errorf("%s", resp.GetBase().GetMsg())
+		return nil, fmt.Errorf("%s", resp.GetBase().GetMsg())
 	}
 	profile := resp.GetData()
 	if profile == nil || profile.GetUser() == nil {
-		return chatIdentity{UserId: userId, Nickname: firstNonEmpty(username, fmt.Sprintf("user-%d", userId))}, nil
+		return &chatIdentity{UserId: userId, Nickname: firstNonEmpty(username, fmt.Sprintf("user-%d", userId))}, nil
 	}
 	u := profile.GetUser()
-	return chatIdentity{
+	return &chatIdentity{
 		UserId:    u.GetId(),
 		Nickname:  firstNonEmpty(u.GetNickname(), u.GetUsername(), username, fmt.Sprintf("user-%d", userId)),
 		AvatarUrl: u.GetAvatar(),
 	}, nil
 }
 
-func (l *CreateChatTokenLogic) guestIdentity(req *types.CreateChatTokenReq) (chatIdentity, error) {
+func (l *CreateChatTokenLogic) guestIdentity(req *types.CreateChatTokenReq) (*chatIdentity, error) {
 	resp, err := l.svcCtx.UserCli.GuestLogin(l.ctx, &user.GuestLoginReq{
 		DeviceId:    strings.TrimSpace(req.DeviceId),
 		Fingerprint: strings.TrimSpace(req.Fingerprint),
 	})
 	if err != nil {
-		return chatIdentity{}, err
+		return nil, err
 	}
 	if resp.GetBase().GetCode() != 200 {
-		return chatIdentity{}, fmt.Errorf("%s", resp.GetBase().GetMsg())
+		return nil, fmt.Errorf("%s", resp.GetBase().GetMsg())
 	}
 	userId, err := strconv.ParseInt(resp.GetData().GetUserId(), 10, 64)
 	if err != nil {
-		return chatIdentity{}, err
+		return nil, err
 	}
-	return chatIdentity{
+	return &chatIdentity{
 		UserId:   userId,
 		Nickname: firstNonEmpty(resp.GetData().GetUsername(), "游客"),
 		IsGuest:  true,
 	}, nil
 }
 
-func (l *CreateChatTokenLogic) requestChatToken(cfg *system.ChatConfig, identity chatIdentity) (types.ChatToken, error) {
+func (l *CreateChatTokenLogic) requestChatToken(cfg *system.ChatConfig, identity *chatIdentity) (types.ChatToken, error) {
 	payload := chatTokenReq{
 		ApiKey:     strings.TrimSpace(cfg.GetApiKey()),
 		ApiSecret:  strings.TrimSpace(cfg.GetApiSecret()),

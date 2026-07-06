@@ -11,6 +11,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+var ErrTokenExpired = jwt.ErrTokenExpired
+
 type Claims struct {
 	UserId   int64  `json:"userId"`
 	Username string `json:"username"`

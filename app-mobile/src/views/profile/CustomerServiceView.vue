@@ -53,6 +53,7 @@ async function loadChatToken() {
   } catch (error) {
     console.warn('load chat token failed', error)
     loadError.value = '客服配置未完成'
+    router.back()
   } finally {
     loading.value = false
   }
