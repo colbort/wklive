@@ -34,24 +34,9 @@
     </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
-      <el-table
-        v-loading="loading"
-        :data="list"
-        :empty-text="t('common.noData')"
-        stripe
-      >
-        <el-table-column
-          prop="id"
-          :label="t('common.id')"
-          width="80"
-          align="center"
-        />
-        <el-table-column
-          prop="tenantId"
-          :label="t('common.tenantId')"
-          width="100"
-          align="center"
-        />
+      <el-table v-loading="loading" :data="list" :empty-text="t('common.noData')" stripe>
+        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
+        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" align="center" />
         <el-table-column prop="configKey" :label="t('system.configKey')" min-width="150" />
         <el-table-column prop="configValue" :label="t('system.configValue')" min-width="200">
           <template #default="{ row }">
@@ -81,12 +66,7 @@
             {{ formatDate(row.updateTimes) }}
           </template>
         </el-table-column>
-        <el-table-column
-          :label="t('common.actions')"
-          width="150"
-          align="center"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" width="150" align="center" fixed="right">
           <template #default="{ row }">
             <el-button
               v-perm="'sys:config:update'"
@@ -130,12 +110,7 @@
       :close-on-click-modal="false"
       class="sys-config-dialog"
     >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="160px"
-      >
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="160px">
         <el-form-item :label="t('common.tenantId')" prop="tenantId">
           <TenantSelect
             v-model="formData.tenantId"
@@ -347,6 +322,12 @@ const itickConfigForm = ref<ItickConfig>({
   api_url: '',
   api_token: '',
   ws_url: '',
+  reconcile_interval_minutes: 5,
+  reconcile_window_bars: 30,
+  gap_scan_interval_minutes: 60,
+  repair_batch_size: 10,
+  building_bucket_ttl_minutes: 120,
+  ws_kline_stale_seconds: 30,
 })
 
 const rechargeConfigForm = ref<RechargeConfig>({
@@ -494,6 +475,12 @@ function resetTypeForms() {
     api_url: '',
     api_token: '',
     ws_url: '',
+    reconcile_interval_minutes: 5,
+    reconcile_window_bars: 30,
+    gap_scan_interval_minutes: 60,
+    repair_batch_size: 10,
+    building_bucket_ttl_minutes: 120,
+    ws_kline_stale_seconds: 30,
   }
   rechargeConfigForm.value = {
     minAmount: 0,
@@ -584,6 +571,12 @@ function handleConfigKeyChange(value: string) {
       api_url: '',
       api_token: '',
       ws_url: '',
+      reconcile_interval_minutes: 5,
+      reconcile_window_bars: 30,
+      gap_scan_interval_minutes: 60,
+      repair_batch_size: 10,
+      building_bucket_ttl_minutes: 120,
+      ws_kline_stale_seconds: 30,
     }
     formData.configValue = ''
   } else if (value === 'RECHARGE_CONFIG') {
@@ -721,12 +714,24 @@ function handleEdit(row: SysConfigItem) {
         api_url: parsed.api_url || '',
         api_token: parsed.api_token || '',
         ws_url: parsed.ws_url || '',
+        reconcile_interval_minutes: parsed.reconcile_interval_minutes || 5,
+        reconcile_window_bars: parsed.reconcile_window_bars || 30,
+        gap_scan_interval_minutes: parsed.gap_scan_interval_minutes || 60,
+        repair_batch_size: parsed.repair_batch_size || 10,
+        building_bucket_ttl_minutes: parsed.building_bucket_ttl_minutes || 120,
+        ws_kline_stale_seconds: parsed.ws_kline_stale_seconds || 30,
       }
     } catch {
       itickConfigForm.value = {
         api_url: '',
         api_token: '',
         ws_url: '',
+        reconcile_interval_minutes: 5,
+        reconcile_window_bars: 30,
+        gap_scan_interval_minutes: 60,
+        repair_batch_size: 10,
+        building_bucket_ttl_minutes: 120,
+        ws_kline_stale_seconds: 30,
       }
     }
   } else if (row.configKey === 'RECHARGE_CONFIG') {

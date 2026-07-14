@@ -47,6 +47,8 @@ type (
 	ListTenantProductsResp         = itick.ListTenantProductsResp
 	SyncCategoryProductsReq        = itick.SyncCategoryProductsReq
 	SyncCategoryProductsResp       = itick.SyncCategoryProductsResp
+	SyncProductKlineHistoryReq     = itick.SyncProductKlineHistoryReq
+	SyncProductKlineHistoryResp    = itick.SyncProductKlineHistoryResp
 	TenantCategoryItem             = itick.TenantCategoryItem
 	TenantProductItem              = itick.TenantProductItem
 	UpdateCategoryReq              = itick.UpdateCategoryReq
@@ -77,6 +79,8 @@ type (
 		GetProduct(ctx context.Context, in *GetProductReq, opts ...grpc.CallOption) (*GetProductResp, error)
 		// K线查看
 		GetProductKline(ctx context.Context, in *GetProductKlineReq, opts ...grpc.CallOption) (*GetProductKlineResp, error)
+		// 从 iTick 获取指定产品历史 K 线并写入 MongoDB
+		SyncProductKlineHistory(ctx context.Context, in *SyncProductKlineHistoryReq, opts ...grpc.CallOption) (*SyncProductKlineHistoryResp, error)
 		// 租户产品类型列表
 		ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error)
 		// 租户产品类型
@@ -176,6 +180,12 @@ func (m *defaultItickAdmin) GetProduct(ctx context.Context, in *GetProductReq, o
 func (m *defaultItickAdmin) GetProductKline(ctx context.Context, in *GetProductKlineReq, opts ...grpc.CallOption) (*GetProductKlineResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.GetProductKline(ctx, in, opts...)
+}
+
+// 从 iTick 获取指定产品历史 K 线并写入 MongoDB
+func (m *defaultItickAdmin) SyncProductKlineHistory(ctx context.Context, in *SyncProductKlineHistoryReq, opts ...grpc.CallOption) (*SyncProductKlineHistoryResp, error) {
+	client := itick.NewItickAdminClient(m.cli.Conn())
+	return client.SyncProductKlineHistory(ctx, in, opts...)
 }
 
 // 租户产品类型列表

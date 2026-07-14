@@ -63,6 +63,12 @@ export type ItickConfig = {
   api_url: string // ITICK API地址
   api_token: string // ITICK API密钥
   ws_url: string // ITICK WebSocket地址
+  reconcile_interval_minutes: number
+  reconcile_window_bars: number
+  gap_scan_interval_minutes: number
+  repair_batch_size: number
+  building_bucket_ttl_minutes: number
+  ws_kline_stale_seconds: number
 }
 
 // 阿里云 OSS配置

@@ -2886,13 +2886,13 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x05limit\x18\x06 \x01(\x03R\x05limit\"]\n" +
 	"\x13GetProductKlineResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12 \n" +
-	"\x04data\x18\x02 \x03(\v2\f.itick.KlineR\x04data\"\xb7\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\f.itick.KlineR\x04data\"\xb1\x01\n" +
 	"\x1aSyncProductKlineHistoryReq\x12#\n" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12'\n" +
 	"\x06k_type\x18\x04 \x01(\x0e2\x10.itick.KlineTypeR\x05kType\x12\x15\n" +
-	"\x06end_ts\x18\x05 \x01(\x03R\x05endTsJ\x04\b\x06\x10\a\"f\n" +
+	"\x06end_ts\x18\x05 \x01(\x03R\x05endTs\"f\n" +
 	"\x1bSyncProductKlineHistoryResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12!\n" +
 	"\fsynced_count\x18\x02 \x01(\x03R\vsyncedCount\"\xde\x01\n" +

@@ -166,3 +166,45 @@ CREATE TABLE `t_itick_kline_sync_progress` (
   KEY `idx_full_synced` (`full_synced`),
   KEY `idx_update_times` (`update_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='iTick K线同步进度表';
+
+CREATE TABLE `t_itick_market_calendar` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `category_code` varchar(32) NOT NULL DEFAULT '',
+  `market` varchar(32) NOT NULL DEFAULT '',
+  `exchange` varchar(64) NOT NULL DEFAULT '',
+  `timezone` varchar(64) NOT NULL DEFAULT 'UTC' COMMENT 'IANA时区',
+  `trading_day_offset` int NOT NULL DEFAULT 0 COMMENT '夜盘归属交易日偏移',
+  `week_start` tinyint NOT NULL DEFAULT 1 COMMENT '1=周一,7=周日',
+  `enabled` tinyint NOT NULL DEFAULT 1,
+  `remark` varchar(255) NOT NULL DEFAULT '',
+  `create_times` bigint NOT NULL DEFAULT 0,
+  `update_times` bigint NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_category_market_exchange` (`category_code`,`market`,`exchange`),
+  KEY `idx_enabled` (`enabled`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick市场交易日历';
+
+CREATE TABLE `t_itick_market_session` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `calendar_id` bigint NOT NULL,
+  `session_type` varchar(32) NOT NULL DEFAULT 'regular',
+  `start_time` varchar(8) NOT NULL DEFAULT '',
+  `end_time` varchar(8) NOT NULL DEFAULT '',
+  `cross_day` tinyint NOT NULL DEFAULT 0,
+  `sort` int NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_calendar_sort` (`calendar_id`,`sort`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick市场交易时段';
+
+CREATE TABLE `t_itick_market_holiday` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `calendar_id` bigint NOT NULL,
+  `trade_date` date NOT NULL,
+  `day_type` varchar(32) NOT NULL DEFAULT 'closed',
+  `open_time` varchar(8) NOT NULL DEFAULT '',
+  `close_time` varchar(8) NOT NULL DEFAULT '',
+  `remark` varchar(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_calendar_date` (`calendar_id`,`trade_date`),
+  KEY `idx_trade_date` (`trade_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick市场节假日及特殊交易日';

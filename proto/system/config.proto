@@ -63,6 +63,12 @@ message ItickConfig {
   string api_url = 1; // ITICK API地址
   string api_token = 2; // ITICK API密钥
   string ws_url = 3; // ITICK WebSocket地址
+  int32 reconcile_interval_minutes = 4; // K线校正间隔，默认5分钟
+  int32 reconcile_window_bars = 5; // 每次校正最近K线数量，默认30
+  int32 gap_scan_interval_minutes = 6; // 缺口扫描间隔，默认60分钟
+  int32 repair_batch_size = 7; // 缺口修复批量大小，默认10
+  int32 building_bucket_ttl_minutes = 8; // 当前K线桶Redis TTL，默认120分钟
+  int32 ws_kline_stale_seconds = 9; // WS K线失效时间，默认30秒
 }
 
 message RechargeConfig {

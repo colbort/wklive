@@ -484,12 +484,18 @@ func (x *ObjectStorageConfig) GetOssDomain() string {
 }
 
 type ItickConfig struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ApiUrl        string                 `protobuf:"bytes,1,opt,name=api_url,json=apiUrl,proto3" json:"api_url,omitempty"`       // ITICK API地址
-	ApiToken      string                 `protobuf:"bytes,2,opt,name=api_token,json=apiToken,proto3" json:"api_token,omitempty"` // ITICK API密钥
-	WsUrl         string                 `protobuf:"bytes,3,opt,name=ws_url,json=wsUrl,proto3" json:"ws_url,omitempty"`          // ITICK WebSocket地址
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                    protoimpl.MessageState `protogen:"open.v1"`
+	ApiUrl                   string                 `protobuf:"bytes,1,opt,name=api_url,json=apiUrl,proto3" json:"api_url,omitempty"`                                                            // ITICK API地址
+	ApiToken                 string                 `protobuf:"bytes,2,opt,name=api_token,json=apiToken,proto3" json:"api_token,omitempty"`                                                      // ITICK API密钥
+	WsUrl                    string                 `protobuf:"bytes,3,opt,name=ws_url,json=wsUrl,proto3" json:"ws_url,omitempty"`                                                               // ITICK WebSocket地址
+	ReconcileIntervalMinutes int32                  `protobuf:"varint,4,opt,name=reconcile_interval_minutes,json=reconcileIntervalMinutes,proto3" json:"reconcile_interval_minutes,omitempty"`   // K线校正间隔，默认5分钟
+	ReconcileWindowBars      int32                  `protobuf:"varint,5,opt,name=reconcile_window_bars,json=reconcileWindowBars,proto3" json:"reconcile_window_bars,omitempty"`                  // 每次校正最近K线数量，默认30
+	GapScanIntervalMinutes   int32                  `protobuf:"varint,6,opt,name=gap_scan_interval_minutes,json=gapScanIntervalMinutes,proto3" json:"gap_scan_interval_minutes,omitempty"`       // 缺口扫描间隔，默认60分钟
+	RepairBatchSize          int32                  `protobuf:"varint,7,opt,name=repair_batch_size,json=repairBatchSize,proto3" json:"repair_batch_size,omitempty"`                              // 缺口修复批量大小，默认10
+	BuildingBucketTtlMinutes int32                  `protobuf:"varint,8,opt,name=building_bucket_ttl_minutes,json=buildingBucketTtlMinutes,proto3" json:"building_bucket_ttl_minutes,omitempty"` // 当前K线桶Redis TTL，默认120分钟
+	WsKlineStaleSeconds      int32                  `protobuf:"varint,9,opt,name=ws_kline_stale_seconds,json=wsKlineStaleSeconds,proto3" json:"ws_kline_stale_seconds,omitempty"`                // WS K线失效时间，默认30秒
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *ItickConfig) Reset() {
@@ -541,6 +547,48 @@ func (x *ItickConfig) GetWsUrl() string {
 		return x.WsUrl
 	}
 	return ""
+}
+
+func (x *ItickConfig) GetReconcileIntervalMinutes() int32 {
+	if x != nil {
+		return x.ReconcileIntervalMinutes
+	}
+	return 0
+}
+
+func (x *ItickConfig) GetReconcileWindowBars() int32 {
+	if x != nil {
+		return x.ReconcileWindowBars
+	}
+	return 0
+}
+
+func (x *ItickConfig) GetGapScanIntervalMinutes() int32 {
+	if x != nil {
+		return x.GapScanIntervalMinutes
+	}
+	return 0
+}
+
+func (x *ItickConfig) GetRepairBatchSize() int32 {
+	if x != nil {
+		return x.RepairBatchSize
+	}
+	return 0
+}
+
+func (x *ItickConfig) GetBuildingBucketTtlMinutes() int32 {
+	if x != nil {
+		return x.BuildingBucketTtlMinutes
+	}
+	return 0
+}
+
+func (x *ItickConfig) GetWsKlineStaleSeconds() int32 {
+	if x != nil {
+		return x.WsKlineStaleSeconds
+	}
+	return 0
 }
 
 type RechargeConfig struct {
@@ -1030,11 +1078,17 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\x05minio\x18\x03 \x01(\v2\x13.system.MinioConfigR\x05minio\x12\x19\n" +
 	"\boss_type\x18\x04 \x01(\x03R\aossType\x12\x1d\n" +
 	"\n" +
-	"oss_domain\x18\x05 \x01(\tR\tossDomain\"Z\n" +
+	"oss_domain\x18\x05 \x01(\tR\tossDomain\"\xa7\x03\n" +
 	"\vItickConfig\x12\x17\n" +
 	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
 	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
-	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\"i\n" +
+	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\x12<\n" +
+	"\x1areconcile_interval_minutes\x18\x04 \x01(\x05R\x18reconcileIntervalMinutes\x122\n" +
+	"\x15reconcile_window_bars\x18\x05 \x01(\x05R\x13reconcileWindowBars\x129\n" +
+	"\x19gap_scan_interval_minutes\x18\x06 \x01(\x05R\x16gapScanIntervalMinutes\x12*\n" +
+	"\x11repair_batch_size\x18\a \x01(\x05R\x0frepairBatchSize\x12=\n" +
+	"\x1bbuilding_bucket_ttl_minutes\x18\b \x01(\x05R\x18buildingBucketTtlMinutes\x123\n" +
+	"\x16ws_kline_stale_seconds\x18\t \x01(\x05R\x13wsKlineStaleSeconds\"i\n" +
 	"\x0eRechargeConfig\x12\x1d\n" +
 	"\n" +
 	"min_amount\x18\x01 \x01(\x03R\tminAmount\x12\x1d\n" +
