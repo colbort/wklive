@@ -24,6 +24,10 @@ var (
 	commonKey = flag.String("common", "/wklive/common/config", "etcd common config key")
 )
 
+type watcherConfig struct {
+	ChatTokenIPWhitelist []string `json:",optional"`
+}
+
 func main() {
 	flag.Parse()
 
@@ -49,6 +53,10 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
 	handler.RegisterCustomHandlers(server, ctx)
+
+	etcd.WatcherConfig(strings.Split(*endpoints, ","), *configKey, func(v watcherConfig) {
+		ctx.Config.ChatTokenIPWhitelist = v.ChatTokenIPWhitelist
+	})
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

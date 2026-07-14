@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -37,14 +36,10 @@ func NewUploadFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upload
 }
 
 func (l *UploadFileLogic) UploadFile(file multipart.File, header *multipart.FileHeader) (*types.UploadFileResp, error) {
-	return saveUploadFile(l.uploadDir(), file, header)
+	return saveUploadFile(l.dir(), file, header)
 }
 
-func (l *UploadFileLogic) UploadedFilePath(rawURL string) (string, error) {
-	return uploadedFilePath(l.uploadDir(), rawURL)
-}
-
-func (l *UploadFileLogic) uploadDir() string {
+func (l *UploadFileLogic) dir() string {
 	dir := strings.TrimSpace(l.svcCtx.Config.ChatUploadDir)
 	if dir == "" {
 		return chatUploadURLPath
@@ -89,36 +84,6 @@ func saveUploadFile(uploadDir string, file multipart.File, header *multipart.Fil
 			MimeType: firstNonEmpty(header.Header.Get("Content-Type"), "application/octet-stream"),
 		},
 	}, nil
-}
-
-func uploadedFilePath(uploadDir string, rawURL string) (string, error) {
-	rawURL = strings.TrimSpace(rawURL)
-	if rawURL == "" {
-		return "", fmt.Errorf("file url is required")
-	}
-	if parsed, err := url.Parse(rawURL); err == nil && parsed.Path != "" {
-		rawURL = parsed.Path
-	}
-
-	cleanPath := filepath.Clean("/" + strings.TrimLeft(rawURL, "/"))
-	prefix := "/" + chatUploadURLPath + "/"
-	if !strings.HasPrefix(cleanPath, prefix) {
-		return "", fmt.Errorf("invalid file url")
-	}
-
-	filename := filepath.Base(cleanPath)
-	if filename == "." || filename == string(filepath.Separator) {
-		return "", fmt.Errorf("invalid file url")
-	}
-	targetPath := filepath.Join(uploadDir, filename)
-	info, err := os.Stat(targetPath)
-	if err != nil {
-		return "", err
-	}
-	if info.IsDir() {
-		return "", fmt.Errorf("invalid file url")
-	}
-	return targetPath, nil
 }
 
 func firstNonEmpty(values ...string) string {

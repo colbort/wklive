@@ -28,15 +28,3 @@ func UploadFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 	}
 }
-
-func DownloadFileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		l := chat_upload.NewUploadFileLogic(r.Context(), svcCtx)
-		path, err := l.UploadedFilePath(r.URL.Query().Get("url"))
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-			return
-		}
-		http.ServeFile(w, r, path)
-	}
-}

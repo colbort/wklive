@@ -68,33 +68,28 @@ func deepMerge(dst, src map[string]any) {
 	}
 }
 
-func WatcherConfig[T any](hosts []string, key string) {
+func WatcherConfig[T any](hosts []string, key string, listeners ...func(T)) {
 	go func() {
 		ss := subscriber.MustNewEtcdSubscriber(subscriber.EtcdConf{
 			Hosts: hosts, // etcd 地址
 			Key:   key,   // 配置key
 		})
 
-		// 创建 configurator
 		cc := configurator.MustNewConfigCenter[T](configurator.Config{
 			Type: "yaml", // 配置值类型：json,yaml,toml
 		}, ss)
 
-		// 获取配置
-		// 注意: 配置如果发生变更，调用的结果永远获取到最新的配置
-		// v, err := cc.GetConfig()
-		// if err != nil {
-		// 	panic(err)
-		// }
-		// fmt.Println(v)
-
-		// 如果想监听配置变化，可以添加 listener
 		cc.AddListener(func() {
 			v, err := cc.GetConfig()
 			if err != nil {
-				panic(err)
+				logx.Errorf("watch config get latest config failed key=%s err=%v", key, err)
+				return
 			}
-			fmt.Println(v)
+			for _, listener := range listeners {
+				if listener != nil {
+					listener(v)
+				}
+			}
 		})
 
 		select {}
