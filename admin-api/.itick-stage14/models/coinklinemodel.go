@@ -282,7 +282,7 @@ func (m *defaultCoinKlineModel) FindBeforeTsByMarketSymbol(ctx context.Context, 
 func (m *defaultCoinKlineModel) FindRangeByMarketSymbol(ctx context.Context, market string, symbol string, startTs, endTs int64) ([]*CoinKline, error) {
 	filter := bson.M{
 		"symbol": normalizeSymbol(symbol),
-		"ts":     bson.M{"$gte": startTs, "$lt": endTs},
+		"ts": bson.M{"$gte": startTs, "$lt": endTs},
 	}
 	if market = normalizeMarket(market); market != "" {
 		filter["market"] = market

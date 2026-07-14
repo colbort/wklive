@@ -23,11 +23,11 @@ type BatchWriter struct {
 	flushInterval time.Duration
 	writeTimeout  time.Duration
 
-	ch           chan *models.CoinKline
-	stopCh       chan struct{}
-	wg           sync.WaitGroup
-	mu           sync.Mutex
-	buffers      map[batchKey][]*models.CoinKline
+	ch      chan *models.CoinKline
+	stopCh  chan struct{}
+	wg      sync.WaitGroup
+	mu      sync.Mutex
+	buffers map[batchKey][]*models.CoinKline
 	flushHandler func([]*models.CoinKline)
 }
 

@@ -53,9 +53,6 @@ func main() {
 	// 启动批量写入器
 	svcCtx.Writer.Start()
 	defer svcCtx.Writer.Stop()
-	derivedAggregator := kline.NewDerivedAggregator(svcCtx.Factory, svcCtx.MarketDataCache)
-	svcCtx.RebuildDerivedKlines = derivedAggregator.Rebuild
-	svcCtx.Writer.SetFlushHandler(derivedAggregator.Rebuild)
 	tickAggregator := kline.NewTickAggregator(svcCtx.Writer)
 	svcCtx.MarketDataCache.SetTickHandler(tickAggregator.Add)
 	tickAggregator.Start()

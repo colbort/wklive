@@ -125,8 +125,6 @@ volume/turnover = 桶内增量求和
 - 只要底层 K 线被 REST 修正，就将所有包含它的上层桶写入 dirty ZSet，由重算 worker 幂等覆盖。
 - 当前代码只支持到 `1mo`，`1y` 需要新增周期定义、存储集合、查询枚举与聚合逻辑。iTick 若没有年度 REST 周期，则由日线确定性生成。
 
-当前实现由 `DerivedAggregator` 统一重算：本地 `1m` 批量落库成功后触发一次，REST 最近 30 根 `1m` 校正完成后再次触发。`5m/15m/30m/1h` 从 MongoDB 的 `1m` 重算，`1d` 从 `1h` 重算，`1w/1mo` 从 `1d` 重算；结果 upsert MongoDB，并覆盖 Redis 中相应周期的最新 K 线。这样正在形成的高周期会随每根 `1m` 更新，REST 修正也会向上层周期传播。
-
 MongoDB 文档建议增加：`source`（realtime/rest/derived）、`confirmed`、`revision`、`updatedAt`。前端查询允许返回正在形成的 K 线，但应能区分 `closed/confirmed`。
 
 ## 5. REST 历史回补与每 5 分钟校准
