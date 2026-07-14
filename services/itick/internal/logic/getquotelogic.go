@@ -6,7 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/proto/itick"
-	"wklive/services/itick/internal/socket/types"
+	"wklive/services/itick/internal/marketdata/types"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"

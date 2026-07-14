@@ -8,12 +8,12 @@ import (
 	"wklive/proto/option"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
+	"wklive/services/itick/internal/marketdata/client"
+	"wklive/services/itick/internal/marketdata/types"
 	"wklive/services/itick/internal/pkg/klinewriter"
-	"wklive/services/itick/internal/socket/client"
-	"wklive/services/itick/internal/socket/types"
 	"wklive/services/itick/models"
 
-	icache "wklive/services/itick/internal/socket/cache"
+	icache "wklive/services/itick/internal/marketdata/cache"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,6 +29,7 @@ type ServiceContext struct {
 	OptionCli                   option.OptionInternalClient
 	ItickManager                *client.ItickManager
 	MarketDataCache             *icache.MarketDataCache
+	BusRedis                    *redis.Client
 	LockRedis                   *redis.Client
 	TaskSubscriber              *bus.Subscriber
 	Cache                       cache.Cache
@@ -143,6 +144,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		OptionCli:                   optionCli,
 		ItickManager:                itickManager,
 		MarketDataCache:             marketDataCache,
+		BusRedis:                    busRedis,
 		LockRedis:                   lockRedis,
 		TaskSubscriber:              taskSubscriber,
 		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat("quote"), redis.Nil),

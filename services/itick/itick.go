@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/config"
+	"wklive/services/itick/internal/marketdata/kline"
 	"wklive/services/itick/internal/pkg/bootstrap"
 	"wklive/services/itick/internal/server"
 	"wklive/services/itick/internal/svc"
@@ -52,6 +54,10 @@ func main() {
 	// 启动批量写入器
 	svcCtx.Writer.Start()
 	defer svcCtx.Writer.Stop()
+	tickAggregator := kline.NewTickAggregator(svcCtx.Writer, 90*time.Second)
+	svcCtx.MarketDataCache.SetTickHandler(tickAggregator.Add)
+	tickAggregator.Start()
+	defer tickAggregator.Stop()
 
 	// 加载 itick 分类数据并初始化 WebSocket 客户端
 	err := svcCtx.ItickManager.Load(ctx)

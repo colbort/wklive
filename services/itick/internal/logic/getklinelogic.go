@@ -8,6 +8,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/proto/itick"
+	"wklive/services/itick/internal/marketdata/kline"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
@@ -137,8 +138,8 @@ func (l *GetKlineLogic) ensureKlineDataComplete(
 		l.Errorf("update kline on-demand progress start failed, id=%d err=%v", progress.Id, err)
 	}
 
-	worker := NewSyncKlinesWorker(l.ctx, l.svcCtx, nil, "", "")
-	job := KlineJob{
+	worker := kline.NewSyncKlinesWorker(l.ctx, l.svcCtx, nil, "", "")
+	job := kline.KlineJob{
 		ApiUrl:   l.svcCtx.Config.Itick.ApiUrl,
 		Token:    l.svcCtx.Config.Itick.Token,
 		Category: in.CategoryCode,
@@ -158,7 +159,7 @@ func (l *GetKlineLogic) ensureKlineDataComplete(
 	newCount := 0
 
 	if needRecent {
-		catchup, err := worker.syncCatchup(job, interval, contiguousTs, now)
+		catchup, err := worker.SyncCatchup(job, interval, contiguousTs, now)
 		if err != nil {
 			_ = l.svcCtx.ItickKlineSyncProgressModel.UpdateSyncFail(l.ctx, progress.Id, mode, time.Now().UnixMilli(), err.Error())
 			return false, err
@@ -173,7 +174,7 @@ func (l *GetKlineLogic) ensureKlineDataComplete(
 	}
 
 	if needHistory && fullSynced == 0 {
-		history, err := worker.syncHistory(job, interval, oldestTs, now)
+		history, err := worker.SyncHistory(job, interval, oldestTs, now)
 		if err != nil {
 			_ = l.svcCtx.ItickKlineSyncProgressModel.UpdateSyncFail(l.ctx, progress.Id, mode, time.Now().UnixMilli(), err.Error())
 			return false, err
