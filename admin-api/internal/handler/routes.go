@@ -175,6 +175,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: itick.GetProductKlineHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/product/kline/sync-history",
+				Handler: itick.SyncProductKlineHistoryHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/products",
 				Handler: itick.ListProductsHandler(serverCtx),

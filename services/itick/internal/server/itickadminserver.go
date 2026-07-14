@@ -89,6 +89,12 @@ func (s *ItickAdminServer) GetProductKline(ctx context.Context, in *itick.GetPro
 	return l.GetProductKline(in)
 }
 
+// 从 iTick 获取指定产品历史 K 线并写入 MongoDB
+func (s *ItickAdminServer) SyncProductKlineHistory(ctx context.Context, in *itick.SyncProductKlineHistoryReq) (*itick.SyncProductKlineHistoryResp, error) {
+	l := logic.NewSyncProductKlineHistoryLogic(ctx, s.svcCtx)
+	return l.SyncProductKlineHistory(in)
+}
+
 // 租户产品类型列表
 func (s *ItickAdminServer) ListTenantCategories(ctx context.Context, in *itick.ListTenantCategoriesReq) (*itick.ListTenantCategoriesResp, error) {
 	l := logic.NewListTenantCategoriesLogic(ctx, s.svcCtx)

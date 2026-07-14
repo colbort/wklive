@@ -74,6 +74,23 @@ type SyncResult struct {
 	FullSynced  bool
 }
 
+// FetchProductHistory fetches one product's requested historical window using
+// the iTick single-product endpoint and persists it to MongoDB.
+func (w *SyncKlinesWorker) FetchProductHistory(job KlineJob, interval string, endTs int64, limit int) (SyncResult, error) {
+	if limit <= 0 {
+		limit = 100
+	}
+	if limit > 5000 {
+		limit = 5000
+	}
+	pageSize := min(limit, 500)
+	maxPages := (limit + pageSize - 1) / pageSize
+	if endTs <= 0 {
+		endTs = time.Now().UnixMilli() + 1
+	}
+	return w.syncBackwardRange(job, interval, endTs, 0, endTs, pageSize, maxPages)
+}
+
 const (
 	activeProductsKey   = "itick:v1:active_products"
 	reconcileBatchSize  = 10

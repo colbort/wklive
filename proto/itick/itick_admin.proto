@@ -152,6 +152,20 @@ message GetProductKlineResp {
   repeated itick.Kline data = 2;
 }
 
+message SyncProductKlineHistoryReq {
+  string category_code = 1;
+  string market = 2;
+  string symbol = 3;
+  itick.KlineType k_type = 4;
+  int64 end_ts = 5;
+  int64 limit = 6;
+}
+
+message SyncProductKlineHistoryResp {
+  common.RespBase base = 1;
+  int64 synced_count = 2;
+}
+
 // ====================
 // tenant product market
 // ====================
@@ -320,6 +334,9 @@ service ItickAdmin {
 
   // K线查看
   rpc GetProductKline(GetProductKlineReq) returns (GetProductKlineResp);
+  // 从 iTick 获取指定产品历史 K 线并写入 MongoDB
+  rpc SyncProductKlineHistory(SyncProductKlineHistoryReq)
+      returns (SyncProductKlineHistoryResp);
 
   // 租户产品类型列表
   rpc ListTenantCategories(ListTenantCategoriesReq)

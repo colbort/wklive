@@ -1,5 +1,5 @@
-import type { RespBase, BaseService, OptionGroup } from '@/services'
-import { getCoreOptions } from '@/stores/core'
+import type { RespBase, BaseService, OptionGroup } from "@/services";
+import { getCoreOptions } from "@/stores/core";
 
 import {
   apiItickProductList,
@@ -7,121 +7,138 @@ import {
   apiItickProductUpdate,
   apiItickProductDetail,
   apiItickProductKline,
-} from '@/api/itick/products'
+  apiSyncItickProductKlineHistory,
+} from "@/api/itick/products";
 
 export type ItickProduct = {
-  id: number
-  categoryType: number
-  categoryName: string
-  categoryCode: string
-  market: string
-  symbol: string
-  code: string
-  name: string
-  displayName: string
-  baseCoin: string
-  quoteCoin: string
-  enabled: number
-  appVisible: number
-  syncPriority: number
-  sort: number
-  icon: string
-  remark: string
-  createTimes: number
-  updateTimes: number
-}
+  id: number;
+  categoryType: number;
+  categoryName: string;
+  categoryCode: string;
+  market: string;
+  symbol: string;
+  code: string;
+  name: string;
+  displayName: string;
+  baseCoin: string;
+  quoteCoin: string;
+  enabled: number;
+  appVisible: number;
+  syncPriority: number;
+  sort: number;
+  icon: string;
+  remark: string;
+  createTimes: number;
+  updateTimes: number;
+};
 
 export type CreateProductReq = {
-  categoryType: number
-  categoryName: string
-  categoryCode: string
-  market: string
-  symbol: string
-  code: string
-  name: string
-  displayName: string
-  baseCoin: string
-  quoteCoin: string
-  enabled: number
-  appVisible: number
-  syncPriority: number
-  sort: number
-  icon: string
-  remark: string
-}
+  categoryType: number;
+  categoryName: string;
+  categoryCode: string;
+  market: string;
+  symbol: string;
+  code: string;
+  name: string;
+  displayName: string;
+  baseCoin: string;
+  quoteCoin: string;
+  enabled: number;
+  appVisible: number;
+  syncPriority: number;
+  sort: number;
+  icon: string;
+  remark: string;
+};
 
 export type UpdateProductReq = {
-  id: number
-  name?: string
-  displayName?: string
-  baseCoin?: string
-  quoteCoin?: string
-  enabled?: number
-  appVisible?: number
-  syncPriority?: number
-  sort?: number
-  icon?: string
-  remark?: string
-}
+  id: number;
+  name?: string;
+  displayName?: string;
+  baseCoin?: string;
+  quoteCoin?: string;
+  enabled?: number;
+  appVisible?: number;
+  syncPriority?: number;
+  sort?: number;
+  icon?: string;
+  remark?: string;
+};
 
 export type ListProductsReq = {
-  categoryType?: number
-  market?: string
-  symbol?: string
-  keyword?: string
-  enabled?: number // 0全部 1启用 2禁用
-  appVisible?: number // 0全部 1显示 2隐藏
-  cursor?: number
-  limit?: number
-}
+  categoryType?: number;
+  market?: string;
+  symbol?: string;
+  keyword?: string;
+  enabled?: number; // 0全部 1启用 2禁用
+  appVisible?: number; // 0全部 1显示 2隐藏
+  cursor?: number;
+  limit?: number;
+};
 
 export type GetProductKlineReq = {
-  market: string
-  symbol: string
-  kType: number
-  endTs: number
-  limit: number
-}
+  categoryCode: string;
+  market: string;
+  symbol: string;
+  kType: number;
+  endTs: number;
+  limit: number;
+};
+
+export type SyncProductKlineHistoryReq = GetProductKlineReq;
+
+export type SyncProductKlineHistoryResp = RespBase & {
+  syncedCount: number;
+};
 
 export type Kline = {
-  market: string
-  symbol: string
-  kType: number
-  ts: number
-  open: number
-  high: number
-  low: number
-  close: number
-  volume: number
-  turnover: number
-}
+  market: string;
+  symbol: string;
+  kType: number;
+  ts: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  turnover: number;
+};
 
 // ===== ITICK服务 =====
 
 export class ProductsService implements BaseService {
   async getOptions(): Promise<RespBase<OptionGroup[]>> {
-    return getCoreOptions()
+    return getCoreOptions();
   }
 
   async getList(params: ListProductsReq): Promise<RespBase<ItickProduct[]>> {
-    return apiItickProductList(params)
+    return apiItickProductList(params);
   }
 
   async create(params: CreateProductReq): Promise<RespBase> {
-    return apiItickProductCreate(params)
+    return apiItickProductCreate(params);
   }
 
-  async update(id: string | number, params: Partial<UpdateProductReq>): Promise<RespBase> {
-    return apiItickProductUpdate({ id: Number(id), ...params })
+  async update(
+    id: string | number,
+    params: Partial<UpdateProductReq>,
+  ): Promise<RespBase> {
+    return apiItickProductUpdate({ id: Number(id), ...params });
   }
 
   async detail(id: number): Promise<RespBase<ItickProduct>> {
-    return apiItickProductDetail(id)
+    return apiItickProductDetail(id);
   }
 
   async kline(params: GetProductKlineReq): Promise<RespBase<Kline[]>> {
-    return apiItickProductKline(params)
+    return apiItickProductKline(params);
+  }
+
+  async syncKlineHistory(
+    params: SyncProductKlineHistoryReq,
+  ): Promise<SyncProductKlineHistoryResp> {
+    return apiSyncItickProductKlineHistory(params);
   }
 }
 
-export const productsService = new ProductsService()
+export const productsService = new ProductsService();

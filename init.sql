@@ -120,6 +120,7 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 422),
 (0, 1, 423),
 (0, 1, 424),
+(0, 1, 425),
 (0, 1, 430),
 (0, 1, 431),
 (0, 1, 432),
@@ -360,6 +361,7 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 400),
 (0, 2, 401),
 (0, 2, 404),
+(0, 2, 425),
 (0, 2, 430),
 (0, 2, 431),
 (0, 2, 432),
@@ -620,7 +622,8 @@ VALUES
 (421, 420, '创建产品', 3, 'POST', '/itick/products', 'itick:product:add', '', '', 421),
 (422, 420, '更新产品', 3, 'PUT', '/itick/products', 'itick:product:update', '', '', 422),
 (423, 420, '获取产品详情', 3, 'GET', '/itick/products/{id}', 'itick:product:detail', '', '', 423),
-(424, 420, 'K线查看', 3, 'GET', '/itick/kline', 'itick:kline:view', '', '', 424),
+(424, 420, 'K线查看', 3, 'GET', '/itick/product/kline', 'itick:kline:view', '', '', 424),
+(425, 420, '同步产品历史K线', 3, 'POST', '/itick/product/kline/sync-history', 'itick:kline:syncHistory', '', '', 425),
 
 -- 租户产品类型管理 330
 (430, 400, '租户产品类型列表', 2, 'GET', '/itick/tenant-categories', 'itick:tenant-category:list', 'itick/tenant-categories', 'OfficeBuilding', 430),

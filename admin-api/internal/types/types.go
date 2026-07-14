@@ -3185,6 +3185,20 @@ type SyncCategoryProductsResp struct {
 	Data string `json:"data"`
 }
 
+type SyncProductKlineHistoryReq struct {
+	CategoryCode string `json:"categoryCode"`
+	Market       string `json:"market"`
+	Symbol       string `json:"symbol"`
+	KType        int64  `json:"kType"`
+	EndTs        int64  `json:"endTs,optional"`
+	Limit        int64  `json:"limit"`
+}
+
+type SyncProductKlineHistoryResp struct {
+	RespBase
+	SyncedCount int64 `json:"syncedCount"`
+}
+
 type SysChatMerchantCreateReq struct {
 	MerchantCode string `json:"merchantCode"`
 	MerchantName string `json:"merchantName"`
