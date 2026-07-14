@@ -120,17 +120,23 @@ func toKlineProto(kType itick.KlineType, item *models.CoinKline) *itick.Kline {
 		return nil
 	}
 	return &itick.Kline{
-		CategoryCode: item.CategoryCode,
-		Market:       item.Market,
-		Symbol:       item.Symbol,
-		KType:        kType,
-		Ts:           item.Ts,
-		Open:         item.Open,
-		High:         item.High,
-		Low:          item.Low,
-		Close:        item.Close,
-		Volume:       item.Volume,
-		Turnover:     item.Turnover,
+		CategoryCode:  item.CategoryCode,
+		Market:        item.Market,
+		Symbol:        item.Symbol,
+		KType:         kType,
+		Ts:            item.Ts,
+		Open:          item.Open,
+		High:          item.High,
+		Low:           item.Low,
+		Close:         item.Close,
+		Volume:        item.Volume,
+		Turnover:      item.Turnover,
+		Source:        item.Source,
+		Revision:      item.Revision,
+		IsClosed:      item.IsClosed,
+		Confirmed:     item.Confirmed,
+		ActualCount:   item.ActualCount,
+		ExpectedCount: item.ExpectedCount,
 	}
 }
 

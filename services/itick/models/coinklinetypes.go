@@ -39,6 +39,14 @@ type CoinKline struct {
 	// 成交额
 	Turnover float64 `bson:"turnover,omitempty" json:"turnover,omitempty"`
 
+	Source         string `bson:"source,omitempty" json:"source,omitempty"`
+	SourcePriority int32  `bson:"sourcePriority,omitempty" json:"-"`
+	Revision       int64  `bson:"revision,omitempty" json:"revision,omitempty"`
+	IsClosed       bool   `bson:"isClosed" json:"isClosed"`
+	Confirmed      bool   `bson:"confirmed" json:"confirmed"`
+	ActualCount    int32  `bson:"actualCount,omitempty" json:"actualCount,omitempty"`
+	ExpectedCount  int32  `bson:"expectedCount,omitempty" json:"expectedCount,omitempty"`
+
 	UpdateAt time.Time `bson:"updateAt,omitempty" json:"updateAt,omitempty"`
 	CreateAt time.Time `bson:"createAt,omitempty" json:"createAt,omitempty"`
 }
@@ -48,6 +56,32 @@ func (m *CoinKline) Normalize() {
 	m.Market = normalizeMarket(m.Market)
 	m.Symbol = normalizeSymbol(m.Symbol)
 	m.Interval = normalizeInterval(m.Interval)
+	m.Source = strings.ToLower(strings.TrimSpace(m.Source))
+	if m.SourcePriority <= 0 {
+		m.SourcePriority = KlineSourcePriority(m.Source)
+	}
+	if m.Revision <= 0 {
+		m.Revision = time.Now().UnixMilli()
+	}
+}
+
+const (
+	KlineSourceRealtime = "realtime"
+	KlineSourceDerived  = "derived"
+	KlineSourceRest     = "rest"
+)
+
+func KlineSourcePriority(source string) int32 {
+	switch strings.ToLower(strings.TrimSpace(source)) {
+	case KlineSourceRest:
+		return 300
+	case KlineSourceDerived:
+		return 200
+	case KlineSourceRealtime:
+		return 100
+	default:
+		return 1
+	}
 }
 
 func normalizeCategory(s string) string {

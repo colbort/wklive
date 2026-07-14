@@ -154,7 +154,8 @@ func (a *TickAggregator) flushClosed(now int64) {
 		}
 		err := a.writer.Enqueue(&models.CoinKline{CategoryCode: key.category, Market: key.market,
 			Symbol: key.symbol, Interval: "1m", Ts: key.ts, Open: bucket.open, High: bucket.high,
-			Low: bucket.low, Close: bucket.close, Volume: bucket.volume, Turnover: bucket.turnover})
+			Low: bucket.low, Close: bucket.close, Volume: bucket.volume, Turnover: bucket.turnover,
+			Source: models.KlineSourceRealtime, Revision: now, IsClosed: true, Confirmed: false, ActualCount: 1, ExpectedCount: 1})
 		if err != nil {
 			logx.Errorf("enqueue tick kline failed, will retry, category=%s market=%s symbol=%s ts=%d err=%v",
 				key.category, key.market, key.symbol, key.ts, err)

@@ -92,14 +92,16 @@ func (a *DerivedAggregator) rebuildBucket(ctx context.Context, category, market,
 	if err != nil || len(list) == 0 {
 		return err
 	}
-	bar := aggregateKlines(category, market, symbol, targetInterval, start, list)
+	bar := aggregateKlines(category, market, symbol, sourceInterval, targetInterval, start, end, list)
 	if err := target.UpsertBySymbolTs(ctx, bar); err != nil {
 		return err
 	}
 	if a.cache != nil {
 		msg := types.ClientMessage{Topic: types.TopicKline, CategoryCode: category, Market: market, Symbol: symbol, Interval: targetInterval}
 		payload := &types.KlinePayload{Interval: targetInterval, Open: bar.Open, High: bar.High, Low: bar.Low,
-			Close: bar.Close, Volume: bar.Volume, Turnover: bar.Turnover, Ts: bar.Ts}
+			Close: bar.Close, Volume: bar.Volume, Turnover: bar.Turnover, Ts: bar.Ts, Source: bar.Source,
+			Revision: bar.Revision, IsClosed: bar.IsClosed, Confirmed: bar.Confirmed,
+			ActualCount: bar.ActualCount, ExpectedCount: bar.ExpectedCount}
 		if err := a.cache.Set(ctx, msg, payload); err != nil {
 			logx.Errorf("cache derived kline failed, category=%s market=%s symbol=%s interval=%s err=%v",
 				category, market, symbol, targetInterval, err)
@@ -108,9 +110,13 @@ func (a *DerivedAggregator) rebuildBucket(ctx context.Context, category, market,
 	return nil
 }
 
-func aggregateKlines(category, market, symbol, interval string, ts int64, list []*models.CoinKline) *models.CoinKline {
+func aggregateKlines(category, market, symbol, sourceInterval, interval string, ts, end int64, list []*models.CoinKline) *models.CoinKline {
+	expected := expectedSourceCount(sourceInterval, interval, ts, end)
 	bar := &models.CoinKline{CategoryCode: category, Market: market, Symbol: symbol, Interval: interval, Ts: ts,
-		Open: list[0].Open, High: -math.MaxFloat64, Low: math.MaxFloat64, Close: list[len(list)-1].Close}
+		Open: list[0].Open, High: -math.MaxFloat64, Low: math.MaxFloat64, Close: list[len(list)-1].Close,
+		Source: models.KlineSourceDerived, Revision: time.Now().UnixMilli(), IsClosed: end <= time.Now().UnixMilli(),
+		ActualCount: int32(len(list)), ExpectedCount: int32(expected)}
+	bar.Confirmed = bar.IsClosed && expected > 0 && len(list) == expected
 	for _, item := range list {
 		if item.High > bar.High {
 			bar.High = item.High
@@ -120,8 +126,22 @@ func aggregateKlines(category, market, symbol, interval string, ts int64, list [
 		}
 		bar.Volume += item.Volume
 		bar.Turnover += item.Turnover
+		bar.Confirmed = bar.Confirmed && item.Confirmed
 	}
 	return bar
+}
+
+func expectedSourceCount(source, target string, start, end int64) int {
+	switch source {
+	case "1m":
+		return int((end - start) / minuteMillis)
+	case "1h":
+		return int((end - start) / int64(time.Hour/time.Millisecond))
+	case "1d":
+		return int(time.UnixMilli(end).UTC().Sub(time.UnixMilli(start).UTC()).Hours() / 24)
+	default:
+		return 0
+	}
 }
 
 func derivedBucket(ts int64, interval string) (int64, int64) {

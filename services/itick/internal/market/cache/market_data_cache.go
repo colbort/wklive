@@ -18,7 +18,23 @@ type CacheEnvelope struct {
 	Market       string          `json:"market,omitempty"`
 	Interval     string          `json:"interval,omitempty"`
 	Payload      json.RawMessage `json:"payload"`
+	Source       string          `json:"source,omitempty"`
+	Revision     int64           `json:"revision,omitempty"`
 }
+
+var setVersionedKlineScript = redis.NewScript(`
+local oldPriority = tonumber(redis.call('HGET', KEYS[2], 'priority') or '0')
+local oldRevision = tonumber(redis.call('HGET', KEYS[2], 'revision') or '0')
+local priority = tonumber(ARGV[2])
+local revision = tonumber(ARGV[3])
+if oldPriority > priority or (oldPriority == priority and oldRevision > revision) then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[1], 'PX', ARGV[4])
+redis.call('HSET', KEYS[2], 'priority', priority, 'revision', revision)
+redis.call('PEXPIRE', KEYS[2], ARGV[5])
+return 1
+`)
 
 type MarketDataCache struct {
 	rdb          *redis.Client
@@ -53,13 +69,26 @@ func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payl
 		Interval:     msg.Interval,
 		Payload:      raw,
 	}
+	if kline, ok := payload.(*types.KlinePayload); ok && kline != nil {
+		env.Source, env.Revision = kline.Source, kline.Revision
+	}
 
 	bs, err := json.Marshal(env)
 	if err != nil {
 		return err
 	}
 
-	if err := b.rdb.Set(ctx, marketDataKey(msg), bs, marketDataTTL(msg.Topic)).Err(); err != nil {
+	if msg.Topic == types.TopicKline {
+		priority := klineCachePriority(env.Source)
+		if env.Revision <= 0 {
+			env.Revision = time.Now().UnixMilli()
+		}
+		key := marketDataKey(msg)
+		if _, err := setVersionedKlineScript.Run(ctx, b.rdb, []string{key, key + ":meta"}, bs,
+			priority, env.Revision, marketDataTTL(msg.Topic).Milliseconds(), (30 * time.Second).Milliseconds()).Result(); err != nil {
+			return err
+		}
+	} else if err := b.rdb.Set(ctx, marketDataKey(msg), bs, marketDataTTL(msg.Topic)).Err(); err != nil {
 		return err
 	}
 	if quote, ok := payload.(*types.QuotePayload); ok && quote != nil {
@@ -79,6 +108,17 @@ func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payl
 		}
 	}
 	return nil
+}
+
+func klineCachePriority(source string) int {
+	switch source {
+	case "itick_ws":
+		return 300
+	case "derived":
+		return 200
+	default:
+		return 100
+	}
 }
 
 func (b *MarketDataCache) SetTickHandler(handler func(context.Context, types.ClientMessage, *types.TickPayload)) {

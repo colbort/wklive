@@ -96,6 +96,7 @@ const (
 	KlineType_KLINE_TYPE_1D      KlineType = 8
 	KlineType_KLINE_TYPE_1W      KlineType = 9
 	KlineType_KLINE_TYPE_1MO     KlineType = 10
+	KlineType_KLINE_TYPE_1Y      KlineType = 11
 )
 
 // Enum value maps for KlineType.
@@ -110,6 +111,7 @@ var (
 		8:  "KLINE_TYPE_1D",
 		9:  "KLINE_TYPE_1W",
 		10: "KLINE_TYPE_1MO",
+		11: "KLINE_TYPE_1Y",
 	}
 	KlineType_value = map[string]int32{
 		"KLINE_TYPE_UNKNOWN": 0,
@@ -121,6 +123,7 @@ var (
 		"KLINE_TYPE_1D":      8,
 		"KLINE_TYPE_1W":      9,
 		"KLINE_TYPE_1MO":     10,
+		"KLINE_TYPE_1Y":      11,
 	}
 )
 
@@ -216,7 +219,7 @@ const file_proto_itick_enum_proto_rawDesc = "" +
 	"\x13CATEGORY_TYPE_STOCK\x10\x03\x12\x18\n" +
 	"\x14CATEGORY_TYPE_FUTURE\x10\x04\x12\x19\n" +
 	"\x15CATEGORY_TYPE_INDICES\x10\x05\x12\x16\n" +
-	"\x12CATEGORY_TYPE_FUND\x10\x06*\xbf\x01\n" +
+	"\x12CATEGORY_TYPE_FUND\x10\x06*\xd2\x01\n" +
 	"\tKlineType\x12\x16\n" +
 	"\x12KLINE_TYPE_UNKNOWN\x10\x00\x12\x11\n" +
 	"\rKLINE_TYPE_1M\x10\x01\x12\x11\n" +
@@ -227,7 +230,8 @@ const file_proto_itick_enum_proto_rawDesc = "" +
 	"\rKLINE_TYPE_1D\x10\b\x12\x11\n" +
 	"\rKLINE_TYPE_1W\x10\t\x12\x12\n" +
 	"\x0eKLINE_TYPE_1MO\x10\n" +
-	"*\x8f\x01\n" +
+	"\x12\x11\n" +
+	"\rKLINE_TYPE_1Y\x10\v*\x8f\x01\n" +
 	"\x11SyncKlinePriority\x12\x1f\n" +
 	"\x1bSYNC_KLINE_PRIORITY_UNKNOWN\x10\x00\x12\x1c\n" +
 	"\x18SYNC_KLINE_PRIORITY_HIGH\x10\x01\x12\x1e\n" +

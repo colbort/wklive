@@ -64,14 +64,20 @@ type TickPayload struct {
 	Ts        int64   `json:"ts"`
 }
 type KlinePayload struct {
-	Interval string  `json:"interval"`
-	Open     float64 `json:"open"`
-	High     float64 `json:"high"`
-	Low      float64 `json:"low"`
-	Close    float64 `json:"close"`
-	Volume   float64 `json:"volume"`
-	Turnover float64 `json:"turnover"`
-	Ts       int64   `json:"ts"`
+	Interval      string  `json:"interval"`
+	Open          float64 `json:"open"`
+	High          float64 `json:"high"`
+	Low           float64 `json:"low"`
+	Close         float64 `json:"close"`
+	Volume        float64 `json:"volume"`
+	Turnover      float64 `json:"turnover"`
+	Ts            int64   `json:"ts"`
+	Source        string  `json:"source,omitempty"`
+	Revision      int64   `json:"revision,omitempty"`
+	IsClosed      bool    `json:"isClosed"`
+	Confirmed     bool    `json:"confirmed"`
+	ActualCount   int32   `json:"actualCount,omitempty"`
+	ExpectedCount int32   `json:"expectedCount,omitempty"`
 }
 
 type Topic string

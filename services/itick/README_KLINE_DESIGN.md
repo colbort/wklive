@@ -109,6 +109,8 @@ market + symbol + ts
 
 作为匹配条件，相同时间桶重复同步只会覆盖，不会新增重复文档。
 
+K 线同时保存 `source/sourcePriority/revision/isClosed/confirmed/actualCount/expectedCount`。MongoDB 更新管道执行 `rest(300) > derived(200) > realtime(100)` 的来源优先级和版本比较，低优先级或旧版本不能覆盖已存在的高优先级新数据。
+
 App 的 `GetKline` 只读取 MongoDB：
 
 ```text
@@ -313,7 +315,7 @@ volume   = sum(源 K 线 volume)
 turnover = sum(源 K 线 turnover)
 ```
 
-不是在旧高周期结果上做增量加减，因此底层 `1m` 被 REST 覆盖后可以确定性重算。
+不是在旧高周期结果上做增量加减，因此底层 `1m` 被 REST 覆盖后可以确定性重算。派生结果记录实际和预期源 K 线数量；只有目标桶已闭合、数量完整且所有源 K 线均为 confirmed 时，才标记 `confirmed=true`。
 
 结果执行两次写入：
 
@@ -459,12 +461,7 @@ itick:v1:kline:{category}:{market}:{symbol}:{interval}
 
 App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送命中的缓存数据，即使内容没有变化；去重或覆盖展示由客户端处理。
 
-当前 iTick WS Kline 与本地 `DerivedAggregator` 会写同一个 Redis Key，存在后写覆盖前写的竞争。推荐后续增加：
-
-- `source=itick_ws/derived`；
-- 数据事件时间或更新时间；
-- 写入时比较版本，避免较旧本地派生覆盖较新的上游实时 K 线；
-- WS 超时后再由本地派生结果接管。
+当前 iTick WS Kline 与本地 `DerivedAggregator` 会写同一个 Redis Key。写入通过 Lua 原子比较来源优先级和 revision：活跃 iTick WS 优先于 derived，并刷新 30 秒版本元数据 TTL；WS 超过 30 秒未更新后 derived 可以接管，WS 恢复后重新以高优先级覆盖。
 
 ## 9. Redis 行情缓存
 
@@ -498,7 +495,6 @@ App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送
 - gap scanner 和定点补洞任务；
 - 历史同步断点续传和目标保留期；
 - 多实例聚合 owner 切换期间的显式恢复；
-- REST 与 realtime/derived 的来源版本和写入优先级。
 
 ## 11. 当前实现限制与下一步
 
@@ -506,9 +502,9 @@ App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送
 
 1. **核对非股票 Tick volume 语义**：确认加密货币、外汇、指数和期货是单次量还是累计量。
 2. **交易日历**：日/周/月按市场时区和交易时段切桶，不再统一 UTC。
-3. **Redis Kline 版本控制**：解决 iTick WS 和本地派生对同一 Key 的覆盖竞争。
-4. **当前桶恢复**：将 1m building state、股票累计量基线或短期 Tick 保存 Redis。
-5. **缺口扫描**：按交易日历检查 MongoDB 连续性，超过最近 30 根窗口的缺口进入 repair queue。
+3. **当前桶恢复**：将 1m building state、股票累计量基线或短期 Tick 保存 Redis。
+4. **缺口扫描**：按交易日历检查 MongoDB 连续性，超过最近 30 根窗口的缺口进入 repair queue。
+5. **派生任务分级**：实时/校正使用高优先级队列，历史回补使用低优先级队列，并批量重算减少 MongoDB 查询。
 6. **年度周期**：增加 `1y` Proto 枚举、周期映射、collection、查询和派生逻辑。
 7. **可观测性**：记录每产品最后 Tick、最后闭合 1m、校正延迟、缺口数、REST 失败、派生队列和派生耗时。
 

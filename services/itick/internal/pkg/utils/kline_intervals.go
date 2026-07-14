@@ -29,6 +29,7 @@ var DefaultKlineIntervals = func() []string {
 	for _, v := range KlineIntervals {
 		out = append(out, v.Name)
 	}
+	out = append(out, "1y")
 	return out
 }()
 
@@ -37,6 +38,7 @@ var DefaultKTypes = func() []int32 {
 	for _, v := range KlineIntervals {
 		out = append(out, int32(v.KType))
 	}
+	out = append(out, int32(itick.KlineType_KLINE_TYPE_1Y))
 	return out
 }()
 
@@ -63,6 +65,8 @@ func init() {
 
 	// 别名
 	nameAliasToName["60m"] = "1h"
+	kTypeToName[itick.KlineType_KLINE_TYPE_1Y] = "1y"
+	nameAliasToName["1y"] = "1y"
 }
 
 func KlineTypeToInterval(kType itick.KlineType) string {
@@ -117,6 +121,8 @@ func IntervalMillis(interval string) int64 {
 		return int64(7 * 24 * time.Hour / time.Millisecond)
 	case "1mo":
 		return int64(30 * 24 * time.Hour / time.Millisecond)
+	case "1y":
+		return int64(365 * 24 * time.Hour / time.Millisecond)
 	default:
 		return 0
 	}
@@ -131,6 +137,9 @@ func LastClosedTs(nowMs int64, interval string) int64 {
 	t := time.UnixMilli(nowMs).UTC()
 
 	switch name {
+	case "1y":
+		firstOfYear := time.Date(t.Year(), 1, 1, 0, 0, 0, 0, time.UTC)
+		return firstOfYear.AddDate(-1, 0, 0).UnixMilli()
 	case "1mo":
 		firstOfMonth := time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.UTC)
 		return firstOfMonth.AddDate(0, -1, 0).UnixMilli()

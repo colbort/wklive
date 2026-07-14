@@ -59,6 +59,12 @@ message Kline {
   double close = 9;
   double volume = 10;
   double turnover = 11;
+  string source = 12;
+  int64 revision = 13;
+  bool is_closed = 14;
+  bool confirmed = 15;
+  int32 actual_count = 16;
+  int32 expected_count = 17;
 }
 
 // 实时报价

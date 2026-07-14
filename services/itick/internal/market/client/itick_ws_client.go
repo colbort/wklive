@@ -524,6 +524,8 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.Up
 			Volume:   d.V,
 			Turnover: d.TU,
 			Ts:       d.T,
+			Source:   "itick_ws",
+			Revision: time.Now().UnixMilli(),
 		}
 		_ = c.marketCache.Set(ctx, msg, &payload)
 	}

@@ -358,6 +358,12 @@ type Kline struct {
 	Close         float64                `protobuf:"fixed64,9,opt,name=close,proto3" json:"close,omitempty"`
 	Volume        float64                `protobuf:"fixed64,10,opt,name=volume,proto3" json:"volume,omitempty"`
 	Turnover      float64                `protobuf:"fixed64,11,opt,name=turnover,proto3" json:"turnover,omitempty"`
+	Source        string                 `protobuf:"bytes,12,opt,name=source,proto3" json:"source,omitempty"`
+	Revision      int64                  `protobuf:"varint,13,opt,name=revision,proto3" json:"revision,omitempty"`
+	IsClosed      bool                   `protobuf:"varint,14,opt,name=is_closed,json=isClosed,proto3" json:"is_closed,omitempty"`
+	Confirmed     bool                   `protobuf:"varint,15,opt,name=confirmed,proto3" json:"confirmed,omitempty"`
+	ActualCount   int32                  `protobuf:"varint,16,opt,name=actual_count,json=actualCount,proto3" json:"actual_count,omitempty"`
+	ExpectedCount int32                  `protobuf:"varint,17,opt,name=expected_count,json=expectedCount,proto3" json:"expected_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -465,6 +471,48 @@ func (x *Kline) GetVolume() float64 {
 func (x *Kline) GetTurnover() float64 {
 	if x != nil {
 		return x.Turnover
+	}
+	return 0
+}
+
+func (x *Kline) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *Kline) GetRevision() int64 {
+	if x != nil {
+		return x.Revision
+	}
+	return 0
+}
+
+func (x *Kline) GetIsClosed() bool {
+	if x != nil {
+		return x.IsClosed
+	}
+	return false
+}
+
+func (x *Kline) GetConfirmed() bool {
+	if x != nil {
+		return x.Confirmed
+	}
+	return false
+}
+
+func (x *Kline) GetActualCount() int32 {
+	if x != nil {
+		return x.ActualCount
+	}
+	return 0
+}
+
+func (x *Kline) GetExpectedCount() int32 {
+	if x != nil {
+		return x.ExpectedCount
 	}
 	return 0
 }
@@ -1014,7 +1062,7 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\x04icon\x18\x10 \x01(\tR\x04icon\x12\x16\n" +
 	"\x06remark\x18\x11 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x12 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x13 \x01(\x03R\vupdateTimes\"\x99\x02\n" +
+	"\fupdate_times\x18\x13 \x01(\x03R\vupdateTimes\"\xd2\x03\n" +
 	"\x05Kline\x12#\n" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12\x16\n" +
@@ -1027,7 +1075,13 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\x05close\x18\t \x01(\x01R\x05close\x12\x16\n" +
 	"\x06volume\x18\n" +
 	" \x01(\x01R\x06volume\x12\x1a\n" +
-	"\bturnover\x18\v \x01(\x01R\bturnover\"\xb6\x03\n" +
+	"\bturnover\x18\v \x01(\x01R\bturnover\x12\x16\n" +
+	"\x06source\x18\f \x01(\tR\x06source\x12\x1a\n" +
+	"\brevision\x18\r \x01(\x03R\brevision\x12\x1b\n" +
+	"\tis_closed\x18\x0e \x01(\bR\bisClosed\x12\x1c\n" +
+	"\tconfirmed\x18\x0f \x01(\bR\tconfirmed\x12!\n" +
+	"\factual_count\x18\x10 \x01(\x05R\vactualCount\x12%\n" +
+	"\x0eexpected_count\x18\x11 \x01(\x05R\rexpectedCount\"\xb6\x03\n" +
 	"\x05Quote\x12#\n" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12\x1d\n" +

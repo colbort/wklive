@@ -12,7 +12,7 @@ func TestAggregateKlines(t *testing.T) {
 		{Open: 10, High: 12, Low: 9, Close: 11, Volume: 2, Turnover: 21},
 		{Open: 11, High: 14, Low: 10, Close: 13, Volume: 3, Turnover: 38},
 	}
-	bar := aggregateKlines("crypto", "BA", "BTCUSDT", "5m", 1000, list)
+	bar := aggregateKlines("crypto", "BA", "BTCUSDT", "1m", "5m", 0, 5*minuteMillis, list)
 	if bar.Open != 10 || bar.High != 14 || bar.Low != 9 || bar.Close != 13 {
 		t.Fatalf("unexpected OHLC: %+v", bar)
 	}

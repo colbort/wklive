@@ -270,6 +270,9 @@ func (w *SyncKlinesWorker) reconcileProduct(group *reconcileGroup, product *mode
 		if !validClosedKline(item, lastClosed, utils.IntervalMillis(interval)) {
 			continue
 		}
+		if len(list) == 0 {
+			return fmt.Errorf("batch response contains no valid closed klines")
+		}
 		list = append(list, w.toCoinKline(job, interval, item))
 		if item.T > latestTs {
 			latestTs = item.T
@@ -404,17 +407,23 @@ func (w *SyncKlinesWorker) syncBackwardRange(job KlineJob, interval string, et i
 
 func (w *SyncKlinesWorker) toCoinKline(job KlineJob, interval string, item ItickKlineItem) *models.CoinKline {
 	return &models.CoinKline{
-		CategoryCode: job.Category,
-		Market:       job.Market,
-		Symbol:       job.Symbol,
-		Interval:     interval,
-		Ts:           item.T,
-		Open:         item.O,
-		High:         item.H,
-		Low:          item.L,
-		Close:        item.C,
-		Volume:       item.V,
-		Turnover:     item.Tu,
+		CategoryCode:  job.Category,
+		Market:        job.Market,
+		Symbol:        job.Symbol,
+		Interval:      interval,
+		Ts:            item.T,
+		Open:          item.O,
+		High:          item.H,
+		Low:           item.L,
+		Close:         item.C,
+		Volume:        item.V,
+		Turnover:      item.Tu,
+		Source:        models.KlineSourceRest,
+		Revision:      time.Now().UnixMilli(),
+		IsClosed:      true,
+		Confirmed:     true,
+		ActualCount:   1,
+		ExpectedCount: 1,
 	}
 }
 

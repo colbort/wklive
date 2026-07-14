@@ -133,28 +133,8 @@ func (m *defaultCoinKlineModel) UpsertBySymbolTs(ctx context.Context, data *Coin
 		"ts":     data.Ts,
 	}
 
-	update := bson.M{
-		"$set": bson.M{
-			"categoryCode": data.CategoryCode,
-			"market":       data.Market,
-			"symbol":       data.Symbol,
-			"interval":     data.Interval,
-			"ts":           data.Ts,
-			"open":         data.Open,
-			"high":         data.High,
-			"low":          data.Low,
-			"close":        data.Close,
-			"volume":       data.Volume,
-			"turnover":     data.Turnover,
-			"updateAt":     data.UpdateAt,
-		},
-		"$setOnInsert": bson.M{
-			"createAt": data.CreateAt,
-		},
-	}
-
 	opts := options.UpdateOne().SetUpsert(true)
-	_, err := m.conn.UpdateOne(ctx, filter, update, opts)
+	_, err := m.conn.UpdateOne(ctx, filter, priorityUpdatePipeline(data), opts)
 	return err
 }
 
@@ -183,29 +163,9 @@ func (m *defaultCoinKlineModel) BulkUpsertBySymbolTs(ctx context.Context, list [
 			"ts":     data.Ts,
 		}
 
-		update := bson.M{
-			"$set": bson.M{
-				"categoryCode": data.CategoryCode,
-				"market":       data.Market,
-				"symbol":       data.Symbol,
-				"interval":     data.Interval,
-				"ts":           data.Ts,
-				"open":         data.Open,
-				"high":         data.High,
-				"low":          data.Low,
-				"close":        data.Close,
-				"volume":       data.Volume,
-				"turnover":     data.Turnover,
-				"updateAt":     data.UpdateAt,
-			},
-			"$setOnInsert": bson.M{
-				"createAt": data.CreateAt,
-			},
-		}
-
 		writes = append(writes, mongo.NewUpdateOneModel().
 			SetFilter(filter).
-			SetUpdate(update).
+			SetUpdate(priorityUpdatePipeline(data)).
 			SetUpsert(true))
 	}
 
@@ -216,6 +176,30 @@ func (m *defaultCoinKlineModel) BulkUpsertBySymbolTs(ctx context.Context, list [
 	opts := options.BulkWrite().SetOrdered(false)
 	_, err := m.conn.Collection.BulkWrite(ctx, writes, opts)
 	return err
+}
+
+func priorityUpdatePipeline(data *CoinKline) mongo.Pipeline {
+	existingPriority := bson.D{{Key: "$ifNull", Value: bson.A{"$sourcePriority", 0}}}
+	existingRevision := bson.D{{Key: "$ifNull", Value: bson.A{"$revision", 0}}}
+	canReplace := bson.D{{Key: "$or", Value: bson.A{
+		bson.D{{Key: "$gt", Value: bson.A{data.SourcePriority, existingPriority}}},
+		bson.D{{Key: "$and", Value: bson.A{
+			bson.D{{Key: "$eq", Value: bson.A{data.SourcePriority, existingPriority}}},
+			bson.D{{Key: "$gte", Value: bson.A{data.Revision, existingRevision}}},
+		}}},
+	}}}
+	fields := bson.M{
+		"categoryCode": data.CategoryCode, "market": data.Market, "symbol": data.Symbol,
+		"interval": data.Interval, "ts": data.Ts, "open": data.Open, "high": data.High,
+		"low": data.Low, "close": data.Close, "volume": data.Volume, "turnover": data.Turnover,
+		"source": data.Source, "sourcePriority": data.SourcePriority, "revision": data.Revision,
+		"isClosed": data.IsClosed, "confirmed": data.Confirmed, "actualCount": data.ActualCount,
+		"expectedCount": data.ExpectedCount, "updateAt": data.UpdateAt,
+		"createAt": bson.D{{Key: "$ifNull", Value: bson.A{"$createAt", data.CreateAt}}},
+	}
+	return mongo.Pipeline{bson.D{{Key: "$replaceWith", Value: bson.D{{Key: "$cond", Value: bson.A{
+		canReplace, bson.D{{Key: "$mergeObjects", Value: bson.A{"$$ROOT", fields}}}, "$$ROOT",
+	}}}}}}
 }
 
 func (m *defaultCoinKlineModel) FindLatestBySymbol(ctx context.Context, symbol string, limit int64) ([]*CoinKline, error) {

@@ -26,6 +26,7 @@ enum KlineType {
   KLINE_TYPE_1D = 8;
   KLINE_TYPE_1W = 9;
   KLINE_TYPE_1MO = 10;
+  KLINE_TYPE_1Y = 11;
 }
 
 // K线同步优先级
