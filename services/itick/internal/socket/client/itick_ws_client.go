@@ -30,12 +30,24 @@ const (
 	defaultPongWait       = 70 * time.Second
 	defaultPingPeriod     = 30 * time.Second
 	defaultReconnectDelay = 5 * time.Second
-	defaultReconcileGap   = 5 * time.Second
 	defaultSubscribeDelay = 50 * time.Millisecond
 
 	defaultLeaderTTL      = 15 * time.Second
 	defaultLeaderRenewGap = 5 * time.Second
 )
+
+type wsHandshakeError struct {
+	err        error
+	statusCode int
+	body       string
+	retryAfter time.Duration
+}
+
+func (e *wsHandshakeError) Error() string {
+	return fmt.Sprintf("%v: http_status=%d body=%q", e.err, e.statusCode, e.body)
+}
+
+func (e *wsHandshakeError) Unwrap() error { return e.err }
 
 type ItickWsClient struct {
 	url          string
@@ -208,6 +220,12 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 		}
 		if err := c.connect(); err != nil {
 			logx.Errorf("itick ws connect failed: %v %s", err, c.url)
+			var handshakeErr *wsHandshakeError
+			if errors.As(err, &handshakeErr) && handshakeErr.statusCode == http.StatusTooManyRequests && c.connectLimiter != nil {
+				if penalizeErr := c.connectLimiter.Penalize(ctx, handshakeErr.retryAfter); penalizeErr != nil {
+					logx.Errorf("set itick ws global cool down failed: %v", penalizeErr)
+				}
+			}
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
@@ -237,8 +255,6 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 			logx.Errorf("itick ws restore subscriptions failed, category=%s err=%v", c.categoryCode, err)
 		}
 
-		go c.reconcileSubscriptionsLoop(sessionCtx)
-
 		if err := c.readLoop(sessionCtx); err != nil {
 			if isNormalWsClose(err) {
 				logx.Infof("itick ws read loop closed normally, category=%s err=%v", c.categoryCode, err)
@@ -258,22 +274,6 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 	}
 }
 
-func (c *ItickWsClient) reconcileSubscriptionsLoop(ctx context.Context) {
-	ticker := time.NewTicker(defaultReconcileGap)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case <-ticker.C:
-			if err := c.restoreSubscriptions(ctx); err != nil {
-				logx.Errorf("itick ws reconcile subscriptions failed, category=%s err=%v", c.categoryCode, err)
-			}
-		}
-	}
-}
-
 func (c *ItickWsClient) connect() error {
 	header := http.Header{}
 	header.Set("token", c.token)
@@ -283,7 +283,10 @@ func (c *ItickWsClient) connect() error {
 		if resp != nil {
 			defer resp.Body.Close()
 			body, _ := io.ReadAll(io.LimitReader(resp.Body, 2048))
-			return fmt.Errorf("%w: http_status=%d body=%q", err, resp.StatusCode, strings.TrimSpace(string(body)))
+			return &wsHandshakeError{
+				err: err, statusCode: resp.StatusCode, body: strings.TrimSpace(string(body)),
+				retryAfter: parseRetryAfter(resp.Header.Get("Retry-After")),
+			}
 		}
 		return err
 	}
@@ -304,6 +307,17 @@ func (c *ItickWsClient) connect() error {
 	return nil
 }
 
+func parseRetryAfter(value string) time.Duration {
+	value = strings.TrimSpace(value)
+	if seconds, err := strconv.Atoi(value); err == nil && seconds > 0 {
+		return time.Duration(seconds) * time.Second
+	}
+	if retryAt, err := http.ParseTime(value); err == nil {
+		return max(time.Until(retryAt), 0)
+	}
+	return 30 * time.Second
+}
+
 func (c *ItickWsClient) keepaliveLoop(conn *websocket.Conn) {
 	ticker := time.NewTicker(defaultPingPeriod)
 	defer ticker.Stop()
@@ -322,7 +336,8 @@ func (c *ItickWsClient) keepaliveLoop(conn *websocket.Conn) {
 		}
 
 		if err := c.writePing(current); err != nil {
-			logx.Errorf("itick ping failed: %v", err)
+			logx.Errorf("itick ping failed, category=%s err=%v", c.categoryCode, err)
+			c.closeConn()
 			return
 		}
 	}
@@ -775,14 +790,21 @@ func (c *ItickWsClient) buildSubscriptionGroups(items map[string]types.ClientMes
 		groupSets[types][params] = struct{}{}
 	}
 
-	groups := make(map[string]string, len(groupSets))
-	for types, set := range groupSets {
+	typesByParams := make(map[string][]string)
+	for streamType, set := range groupSets {
 		params := make([]string, 0, len(set))
 		for item := range set {
 			params = append(params, item)
 		}
 		sort.Strings(params)
-		groups[types] = strings.Join(params, ",")
+		paramsKey := strings.Join(params, ",")
+		typesByParams[paramsKey] = append(typesByParams[paramsKey], streamType)
+	}
+
+	groups := make(map[string]string, len(typesByParams))
+	for params, streamTypes := range typesByParams {
+		sort.Strings(streamTypes)
+		groups[strings.Join(streamTypes, ",")] = params
 	}
 
 	return groups, nil
@@ -816,7 +838,7 @@ func (c *ItickWsClient) buildItickSubscribe(msg types.ClientMessage) (string, st
 	return params, tys, nil
 }
 
-func (c *ItickWsClient) subscribe(params, tys string) error {
+func (c *ItickWsClient) subscribe(params string, tys string) error {
 	req := types.SubscribeReq{
 		Ac:     "subscribe",
 		Params: params,
@@ -824,14 +846,14 @@ func (c *ItickWsClient) subscribe(params, tys string) error {
 	}
 
 	if err := c.writeJSON(req); err != nil {
-		logx.Errorf("itick subscribe failed, category=%s params=%s, types=%s", c.categoryCode, params, tys)
+		logx.Errorf("itick subscribe failed, category=%s params=%s types=%s err=%v", c.categoryCode, params, tys, err)
 		return err
 	}
 
 	return nil
 }
 
-func (c *ItickWsClient) unsubscribe(params, tys string) error {
+func (c *ItickWsClient) unsubscribe(params string, tys string) error {
 	req := types.UnsubscribeReq{
 		Ac:     "unsubscribe",
 		Params: params,
@@ -925,7 +947,7 @@ func (c *ItickWsClient) resetUpstreamGroups() {
 	c.upstreamGroups = make(map[string]string)
 }
 
-func sameDesiredSubscriptions(left, right map[string]types.ClientMessage) bool {
+func sameDesiredSubscriptions(left map[string]types.ClientMessage, right map[string]types.ClientMessage) bool {
 	if len(left) != len(right) {
 		return false
 	}
@@ -938,7 +960,7 @@ func sameDesiredSubscriptions(left, right map[string]types.ClientMessage) bool {
 	return true
 }
 
-func sameClientMessage(left, right types.ClientMessage) bool {
+func sameClientMessage(left types.ClientMessage, right types.ClientMessage) bool {
 	return left.Topic == right.Topic &&
 		left.CategoryCode == right.CategoryCode &&
 		left.Symbol == right.Symbol &&
@@ -946,7 +968,7 @@ func sameClientMessage(left, right types.ClientMessage) bool {
 		left.Interval == right.Interval
 }
 
-func buildSymbolRegion(symbol, market string) string {
+func buildSymbolRegion(symbol string, market string) string {
 	return strings.ToUpper(strings.TrimSpace(symbol)) + "$" + strings.ToUpper(strings.TrimSpace(market))
 }
 

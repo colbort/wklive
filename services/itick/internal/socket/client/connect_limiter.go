@@ -10,45 +10,71 @@ import (
 // RedisConnectLimiter enforces iTick's connection-rate limit across every
 // service instance, not merely within one process.
 type RedisConnectLimiter struct {
-	rdb *redis.Client
-	key string
+	rdb         *redis.Client
+	gateKey     string
+	coolDownKey string
 }
 
 func NewRedisConnectLimiter(rdb *redis.Client) *RedisConnectLimiter {
-	return &RedisConnectLimiter{rdb: rdb, key: "itick:v1:ws:connect_rate"}
+	return &RedisConnectLimiter{
+		rdb: rdb, gateKey: "itick:v1:ws:connect_gate", coolDownKey: "itick:v1:ws:connect_cool_down",
+	}
 }
 
 func (l *RedisConnectLimiter) Wait(ctx context.Context) error {
-	const script = `
-local nowParts = redis.call('TIME')
-local now = nowParts[1] * 1000 + math.floor(nowParts[2] / 1000)
-redis.call('ZREMRANGEBYSCORE', KEYS[1], '-inf', now - 1000)
-if redis.call('ZCARD', KEYS[1]) < 2 then
-  redis.call('ZADD', KEYS[1], now, ARGV[1])
-  redis.call('PEXPIRE', KEYS[1], 2000)
-  return 0
-end
-local oldest = redis.call('ZRANGE', KEYS[1], 0, 0, 'WITHSCORES')
-return math.max(1, 1000 - (now - tonumber(oldest[2])))
-`
 	for {
+		if ttl, err := l.rdb.PTTL(ctx, l.coolDownKey).Result(); err != nil && err != redis.Nil {
+			return err
+		} else if ttl > 0 {
+			if err := waitContext(ctx, ttl+100*time.Millisecond); err != nil {
+				return err
+			}
+			continue
+		}
 		token, err := randomToken()
 		if err != nil {
 			return err
 		}
-		waitMs, err := l.rdb.Eval(ctx, script, []string{l.key}, token).Int64()
+		ok, err := l.rdb.SetNX(ctx, l.gateKey, token, 3*time.Second).Result()
 		if err != nil {
 			return err
 		}
-		if waitMs <= 0 {
+		if ok {
 			return nil
 		}
-		timer := time.NewTimer(time.Duration(waitMs+50) * time.Millisecond)
-		select {
-		case <-ctx.Done():
-			timer.Stop()
-			return ctx.Err()
-		case <-timer.C:
+		ttl, err := l.rdb.PTTL(ctx, l.gateKey).Result()
+		if err != nil && err != redis.Nil {
+			return err
 		}
+		if ttl <= 0 {
+			ttl = 500 * time.Millisecond
+		}
+		if err := waitContext(ctx, ttl+100*time.Millisecond); err != nil {
+			return err
+		}
+	}
+}
+
+func (l *RedisConnectLimiter) Penalize(ctx context.Context, duration time.Duration) error {
+	if duration < 30*time.Second {
+		duration = 30 * time.Second
+	}
+	const script = `
+local ttl = redis.call('PTTL', KEYS[1])
+if ttl < tonumber(ARGV[1]) then
+  redis.call('SET', KEYS[1], '1', 'PX', ARGV[1])
+end
+return 1`
+	return l.rdb.Eval(ctx, script, []string{l.coolDownKey}, duration.Milliseconds()).Err()
+}
+
+func waitContext(ctx context.Context, duration time.Duration) error {
+	timer := time.NewTimer(duration)
+	defer timer.Stop()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-timer.C:
+		return nil
 	}
 }

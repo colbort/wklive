@@ -2,6 +2,7 @@ package client
 
 import (
 	"testing"
+
 	"wklive/services/itick/internal/socket/cache"
 	"wklive/services/itick/internal/socket/types"
 )
@@ -41,5 +42,25 @@ func TestEnsureDesiredSubscriptionsMergesWithoutReplacing(t *testing.T) {
 	}
 	if _, ok := c.desiredSubs[cache.BuildTopicKey(second)]; !ok {
 		t.Fatalf("expected second subscription to be desired")
+	}
+}
+
+func TestBuildSubscriptionGroupsCombinesTypesWithSameProducts(t *testing.T) {
+	c := NewItickWsClient("ws://example.test/crypto", "", "crypto", nil, nil, nil)
+	items := make(map[string]types.ClientMessage)
+	for _, symbol := range []string{"BTCUSDT", "ETHUSDT"} {
+		for _, topic := range []types.Topic{types.TopicQuote, types.TopicTick} {
+			msg := cache.NormalizeClientMessage(types.ClientMessage{
+				Topic: topic, CategoryCode: "crypto", Symbol: symbol, Market: "BA",
+			})
+			items[cache.BuildTopicKey(msg)] = msg
+		}
+	}
+	groups, err := c.buildSubscriptionGroups(items)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(groups) != 1 || groups["quote,tick"] != "BTCUSDT$BA,ETHUSDT$BA" {
+		t.Fatalf("unexpected subscription groups: %#v", groups)
 	}
 }
