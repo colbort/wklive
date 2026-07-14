@@ -21,6 +21,7 @@ type (
 		Resolve(ctx context.Context, category, market, exchange string) (*TItickMarketCalendar, error)
 		FindSessions(ctx context.Context, calendarID int64) ([]*TItickMarketSession, error)
 		FindHoliday(ctx context.Context, calendarID int64, date time.Time) (*TItickMarketHoliday, error)
+		Ensure(ctx context.Context, category, market, exchange, timezone string, now int64) (*TItickMarketCalendar, error)
 	}
 
 	customTItickMarketCalendarModel struct {
@@ -33,6 +34,28 @@ func NewTItickMarketCalendarModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	return &customTItickMarketCalendarModel{
 		defaultTItickMarketCalendarModel: newTItickMarketCalendarModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTItickMarketCalendarModel) Ensure(ctx context.Context, category, market, exchange, timezone string, now int64) (*TItickMarketCalendar, error) {
+	category = strings.ToLower(strings.TrimSpace(category))
+	market = strings.ToUpper(strings.TrimSpace(market))
+	exchange = strings.TrimSpace(exchange)
+	if timezone = strings.TrimSpace(timezone); timezone == "" {
+		timezone = "UTC"
+	}
+	query := `INSERT INTO ` + m.table + `
+		(category_code,market,exchange,timezone,trading_day_offset,week_start,enabled,remark,create_times,update_times)
+		VALUES (?,?,?,?,0,1,1,'iTick holiday sync',?,?)
+		ON DUPLICATE KEY UPDATE timezone=VALUES(timezone),enabled=1,update_times=VALUES(update_times)`
+	if _, err := m.ExecNoCacheCtx(ctx, query, category, market, exchange, timezone, now, now); err != nil {
+		return nil, err
+	}
+	var out TItickMarketCalendar
+	if err := m.QueryRowNoCacheCtx(ctx, &out, `SELECT `+tItickMarketCalendarRows+` FROM `+m.table+`
+		WHERE category_code=? AND market=? AND exchange=? LIMIT 1`, category, market, exchange); err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // Resolve uses the exact exchange first and falls back to the market default

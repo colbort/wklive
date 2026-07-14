@@ -50,6 +50,13 @@ func NewResolver(model Model, ttl time.Duration) *Resolver {
 	return &Resolver{model: model, cache: make(map[string]cacheItem), holidays: make(map[string]holidayItem), ttl: ttl}
 }
 
+func (r *Resolver) Invalidate() {
+	r.mu.Lock()
+	clear(r.cache)
+	clear(r.holidays)
+	r.mu.Unlock()
+}
+
 // IsTradingMinute reports whether a missing 1m bucket is expected to exist.
 // Crypto falls back to 24x7. Other categories require calendar sessions; this
 // conservative fallback prevents overnight/weekend false-positive repairs.

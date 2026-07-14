@@ -8,7 +8,7 @@ import (
 	"wklive/proto/option"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
-	marketcalendar "wklive/services/itick/internal/market/calendar"
+	"wklive/services/itick/internal/market/calendar"
 	"wklive/services/itick/internal/market/client"
 	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/internal/pkg/klinewriter"
@@ -47,7 +47,8 @@ type ServiceContext struct {
 	ItickQuoteModel             models.TItickQuoteModel
 	ItickKlineSyncProgressModel models.TItickKlineSyncProgressModel
 	MarketCalendarModel         models.TItickMarketCalendarModel
-	MarketCalendarResolver      *marketcalendar.Resolver
+	MarketHolidayModel          models.TItickMarketHolidayModel
+	MarketCalendarResolver      *calendar.Resolver
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -63,7 +64,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	itickQuoteModel := models.NewTItickQuoteModel(conn, c.CacheRedis)
 	itickKlineSyncProgressModel := models.NewTItickKlineSyncProgressModel(conn, c.CacheRedis)
 	marketCalendarModel := models.NewTItickMarketCalendarModel(conn, c.CacheRedis)
-	marketCalendarResolver := marketcalendar.NewResolver(marketCalendarModel, 10*time.Minute)
+	marketHolidayModel := models.NewTItickMarketHolidayModel(conn, c.CacheRedis)
+	marketCalendarResolver := calendar.NewResolver(marketCalendarModel, 10*time.Minute)
 
 	busRedis := redis.NewClient(&redis.Options{
 		Addr:     c.BusRedis[0].Host,
@@ -154,6 +156,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ItickQuoteModel:             itickQuoteModel,
 		ItickKlineSyncProgressModel: itickKlineSyncProgressModel,
 		MarketCalendarModel:         marketCalendarModel,
+		MarketHolidayModel:          marketHolidayModel,
 		MarketCalendarResolver:      marketCalendarResolver,
 	}
 }

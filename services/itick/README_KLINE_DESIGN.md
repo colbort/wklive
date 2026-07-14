@@ -331,6 +331,14 @@ turnover = sum(源 K 线 turnover)
 
 Resolver 按 `category + market + exchange` 查找定义并缓存；目前派生 K 线模型未保存 exchange，因此派生链使用 `category + market` 的默认日历记录，配置时必须为各市场提供 exchange 为空的默认行。
 
+### 6.5 股票节假日自动同步
+
+`HolidaySyncService` 在服务启动时立即执行一次，此后每 24 小时执行一次。多实例通过 Redis 锁 `itick:market_calendar:holiday_sync` 互斥。
+
+同步范围来自 `KlineCategoryRegions["stock"]`，再通过 `StockHolidayRegionCodes` 转成 `/symbol/v2/holidays` 的 code；`SZ/SH` 合并为 `CN`，相同 code 只请求一次。响应中的 `z` 用于确保 `stock + market + 默认 exchange` Calendar 存在并更新时区，`d/v` 按 `calendar_id + trade_date` 幂等写入 `t_itick_market_holiday`，`day_type` 固定为 `closed`。同步只 upsert，不删除接口本次未返回的历史记录；成功写入后主动清空 Resolver 日历和 Holiday 缓存。
+
+接口字段 `t` 是市场标准交易时段描述，不作为节假日当天开放时间写入。正常 Session 仍需独立初始化和确认。
+
 ## 7. 每 5 分钟增量校正
 
 ### 7.1 任务入口
@@ -529,6 +537,7 @@ App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送
 | Tick → 1m | `internal/market/kline/tick_aggregator.go` |
 | 高周期派生 | `internal/market/kline/derived_aggregator.go` |
 | 历史缺口扫描与修复队列 | `internal/market/kline/gap_repair.go` |
+| 股票节假日同步 | `internal/market/calendar/holiday_sync.go` |
 | MongoDB 批量写入 | `internal/pkg/klinewriter/batch_writer.go` |
 | MongoDB Kline Model | `models/coinklinemodel.go` |
 | 周期映射 | `internal/pkg/utils/kline_intervals.go` |

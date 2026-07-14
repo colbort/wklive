@@ -12,8 +12,10 @@ import (
 	"wklive/proto/itick"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
+	"wklive/services/itick/internal/market/calendar"
 	"wklive/services/itick/internal/market/kline"
 	"wklive/services/itick/internal/pkg/bootstrap"
+	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/server"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/internal/tasks"
@@ -49,6 +51,11 @@ func main() {
 	svcCtx.ItickRuntimeConfig = loadItickRuntimeConfig(ctx, svcCtx.SystemCli)
 	svcCtx.MarketDataCache.SetKlineStaleTTL(time.Duration(svcCtx.ItickRuntimeConfig.WsKlineStaleSeconds) * time.Second)
 	tasks.StartTaskSubscriber(ctx, svcCtx)
+	holidaySync := calendar.NewHolidaySyncService(ctx, c.Itick.ApiUrl, c.Itick.Token,
+		svcCtx.MarketCalendarModel, svcCtx.MarketHolidayModel, svcCtx.MarketCalendarResolver,
+		utils.NewRedisLock(svcCtx.LockRedis), 24*time.Hour)
+	holidaySync.Start()
+	defer holidaySync.Stop()
 
 	// 预热的 categoryCode + interval，自行按你的业务改
 	if err := bootstrap.PreheatCoinKlineModels(svcCtx.Factory); err != nil {
