@@ -37,6 +37,10 @@ type ItickManager struct {
 	startMu sync.Mutex
 	started bool
 	runCtx  context.Context
+
+	recoveryMu      sync.Mutex
+	recoveryRunning map[string]bool
+	onReconnect     func(string)
 }
 
 // LoadActiveProductSubscriptions loads the deduplicated product set maintained
@@ -179,15 +183,16 @@ func NewItickManager(
 	marketCache *cache.MarketDataCache,
 ) *ItickManager {
 	return &ItickManager{
-		wsUrl:        wsUrl,
-		token:        token,
-		model:        model,
-		productModel: productModel,
-		busRedis:     busRedis,
-		lockRedis:    lockRedis,
-		marketCache:  marketCache,
-		preheater:    cache.NewMarketDataPreheater(apiURL, token, marketCache),
-		clients:      make(map[string]*ItickWsClient),
+		wsUrl:           wsUrl,
+		token:           token,
+		model:           model,
+		productModel:    productModel,
+		busRedis:        busRedis,
+		lockRedis:       lockRedis,
+		marketCache:     marketCache,
+		preheater:       cache.NewMarketDataPreheater(apiURL, token, marketCache),
+		clients:         make(map[string]*ItickWsClient),
+		recoveryRunning: make(map[string]bool),
 	}
 }
 
@@ -220,6 +225,7 @@ func (m *ItickManager) Load(ctx context.Context) error {
 			NewRedisLeaderLock(m.lockRedis, lockKey),
 			connectLimiter,
 		)
+		newClients[categoryCode].SetReconnectHandler(m.handleReconnect)
 	}
 
 	if len(newClients) == 0 {
@@ -232,6 +238,29 @@ func (m *ItickManager) Load(ctx context.Context) error {
 
 	logx.Infof("itick manager loaded categories success, count=%d", len(newClients))
 	return nil
+}
+
+func (m *ItickManager) SetReconnectHandler(handler func(category string)) {
+	m.recoveryMu.Lock()
+	m.onReconnect = handler
+	m.recoveryMu.Unlock()
+}
+
+func (m *ItickManager) handleReconnect(category string) {
+	m.recoveryMu.Lock()
+	if m.recoveryRunning[category] || m.onReconnect == nil {
+		m.recoveryMu.Unlock()
+		return
+	}
+	m.recoveryRunning[category] = true
+	handler := m.onReconnect
+	m.recoveryMu.Unlock()
+	defer func() {
+		m.recoveryMu.Lock()
+		delete(m.recoveryRunning, category)
+		m.recoveryMu.Unlock()
+	}()
+	handler(category)
 }
 
 func (m *ItickManager) Start(ctx context.Context) error {

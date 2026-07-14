@@ -9,7 +9,7 @@ import (
 )
 
 func TestTickAggregatorUsesEventTimeAndDeduplicates(t *testing.T) {
-	a := NewTickAggregator(nil)
+	a := NewTickAggregator(nil, nil, 0)
 	now := time.Now().UnixMilli()
 	bucketTs := now / minuteMillis * minuteMillis
 	msg := types.ClientMessage{CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT"}
@@ -32,7 +32,7 @@ func TestTickAggregatorUsesEventTimeAndDeduplicates(t *testing.T) {
 }
 
 func TestTickAggregatorRejectsFinalizedBucket(t *testing.T) {
-	a := NewTickAggregator(nil)
+	a := NewTickAggregator(nil, nil, 0)
 	now := time.Now().UnixMilli()
 	bucketTs := now / minuteMillis * minuteMillis
 	productKey := "crypto:BA:BTCUSDT"
@@ -45,7 +45,7 @@ func TestTickAggregatorRejectsFinalizedBucket(t *testing.T) {
 }
 
 func TestTickAggregatorUsesStockCumulativeVolumeDelta(t *testing.T) {
-	a := NewTickAggregator(nil)
+	a := NewTickAggregator(nil, nil, 0)
 	now := time.Now().UnixMilli()
 	bucketTs := now / minuteMillis * minuteMillis
 	msg := types.ClientMessage{CategoryCode: "stock", Market: "US", Symbol: "AAPL"}

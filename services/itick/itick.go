@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"wklive/proto/itick"
+	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
 	"wklive/services/itick/internal/market/kline"
 	"wklive/services/itick/internal/pkg/bootstrap"
@@ -43,6 +46,8 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	svcCtx.ItickRuntimeConfig = loadItickRuntimeConfig(ctx, svcCtx.SystemCli)
+	svcCtx.MarketDataCache.SetKlineStaleTTL(time.Duration(svcCtx.ItickRuntimeConfig.WsKlineStaleSeconds) * time.Second)
 	tasks.StartTaskSubscriber(ctx, svcCtx)
 
 	// 预热的 categoryCode + interval，自行按你的业务改
@@ -52,14 +57,32 @@ func main() {
 
 	// 启动批量写入器
 	svcCtx.Writer.Start()
-	derivedAggregator := kline.NewDerivedAggregator(svcCtx.Factory, svcCtx.MarketDataCache)
+	derivedAggregator := kline.NewDerivedAggregator(svcCtx.Factory, svcCtx.MarketDataCache, svcCtx.MarketCalendarResolver)
 	derivedWorker := kline.NewDerivedWorker(derivedAggregator, 1024)
 	derivedWorker.Start()
 	defer derivedWorker.Stop()
 	defer svcCtx.Writer.Stop()
 	svcCtx.RebuildDerivedKlines = derivedWorker.Rebuild
+	svcCtx.RebuildHistoricalKlines = derivedWorker.RebuildHistory
+	gapRepair := kline.NewGapRepairService(ctx, svcCtx,
+		time.Duration(svcCtx.ItickRuntimeConfig.GapScanIntervalMinutes)*time.Minute,
+		int(svcCtx.ItickRuntimeConfig.RepairBatchSize))
+	gapRepair.Start(c.Itick.ApiUrl, c.Itick.Token)
+	defer gapRepair.Stop()
+	svcCtx.ItickManager.SetReconnectHandler(func(category string) {
+		repairCtx, repairCancel := context.WithTimeout(context.Background(), 30*time.Minute)
+		defer repairCancel()
+		worker := kline.NewSyncKlinesWorker(repairCtx, svcCtx, nil, "", "")
+		if err := worker.RepairAfterReconnect(c.Itick.ApiUrl, c.Itick.Token, category); err != nil {
+			log.Printf("repair itick klines after ws reconnect failed, category=%s err=%v", category, err)
+		}
+		if err := worker.ReconcileRecent(c.Itick.ApiUrl, c.Itick.Token, category); err != nil {
+			log.Printf("reconcile recent itick klines after ws reconnect failed, category=%s err=%v", category, err)
+		}
+	})
 	svcCtx.Writer.SetFlushHandler(derivedWorker.Enqueue)
-	tickAggregator := kline.NewTickAggregator(svcCtx.Writer)
+	tickAggregator := kline.NewTickAggregator(svcCtx.Writer, svcCtx.BusRedis,
+		time.Duration(svcCtx.ItickRuntimeConfig.BuildingBucketTtlMinutes)*time.Minute)
 	svcCtx.MarketDataCache.SetTickHandler(tickAggregator.Add)
 	tickAggregator.Start()
 	defer tickAggregator.Stop()
@@ -90,4 +113,35 @@ func main() {
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
+}
+
+func loadItickRuntimeConfig(ctx context.Context, cli system.SystemClient) *system.ItickConfig {
+	config := &system.ItickConfig{ReconcileIntervalMinutes: 5, ReconcileWindowBars: 30,
+		GapScanIntervalMinutes: 60, RepairBatchSize: 10, BuildingBucketTtlMinutes: 120, WsKlineStaleSeconds: 30}
+	key := system.SysConfigType_ITICK_CONFIG
+	callCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	resp, err := cli.SysConfigDetail(callCtx, &system.SysConfigDetailReq{ConfigKey: &key})
+	if err == nil && resp.GetData() != nil {
+		_ = json.Unmarshal([]byte(resp.GetData().GetConfigValue()), config)
+	}
+	if config.ReconcileIntervalMinutes <= 0 {
+		config.ReconcileIntervalMinutes = 5
+	}
+	if config.ReconcileWindowBars <= 0 {
+		config.ReconcileWindowBars = 30
+	}
+	if config.GapScanIntervalMinutes <= 0 {
+		config.GapScanIntervalMinutes = 60
+	}
+	if config.RepairBatchSize <= 0 {
+		config.RepairBatchSize = 10
+	}
+	if config.BuildingBucketTtlMinutes <= 0 {
+		config.BuildingBucketTtlMinutes = 120
+	}
+	if config.WsKlineStaleSeconds <= 0 {
+		config.WsKlineStaleSeconds = 30
+	}
+	return config
 }

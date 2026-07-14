@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"wklive/services/itick/internal/market/cache"
+	marketcalendar "wklive/services/itick/internal/market/calendar"
 	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/models"
 
@@ -33,12 +34,13 @@ var derivedIntervals = []derivedInterval{
 // from persisted lower-interval bars. It is invoked after local 1m writes and
 // after REST reconciliation overwrites 1m bars.
 type DerivedAggregator struct {
-	factory *models.CoinKlineModelFactory
-	cache   *cache.MarketDataCache
+	factory  *models.CoinKlineModelFactory
+	cache    *cache.MarketDataCache
+	calendar *marketcalendar.Resolver
 }
 
-func NewDerivedAggregator(factory *models.CoinKlineModelFactory, marketCache *cache.MarketDataCache) *DerivedAggregator {
-	return &DerivedAggregator{factory: factory, cache: marketCache}
+func NewDerivedAggregator(factory *models.CoinKlineModelFactory, marketCache *cache.MarketDataCache, calendar *marketcalendar.Resolver) *DerivedAggregator {
+	return &DerivedAggregator{factory: factory, cache: marketCache, calendar: calendar}
 }
 
 func (a *DerivedAggregator) Rebuild(minutes []*models.CoinKline) error {
@@ -64,17 +66,19 @@ func (a *DerivedAggregator) Rebuild(minutes []*models.CoinKline) error {
 
 	var failures []error
 	for _, interval := range derivedIntervals {
-		buckets := make(map[productMinute]struct{})
+		buckets := make(map[productMinute]map[int64]struct{})
 		for item := range items {
-			start, _ := derivedBucket(item.ts, interval.name)
-			item.ts = start
-			buckets[item] = struct{}{}
+			start, _ := a.bucket(ctx, item.category, item.market, item.ts, interval.name)
+			product := productMinute{category: item.category, market: item.market, symbol: item.symbol}
+			if buckets[product] == nil {
+				buckets[product] = make(map[int64]struct{})
+			}
+			buckets[product][start] = struct{}{}
 		}
-		for bucket := range buckets {
-			start, end := derivedBucket(bucket.ts, interval.name)
-			if err := a.rebuildBucket(ctx, bucket.category, bucket.market, bucket.symbol, interval.source, interval.name, start, end); err != nil {
-				logx.Errorf("rebuild derived kline failed, category=%s market=%s symbol=%s interval=%s ts=%d err=%v",
-					bucket.category, bucket.market, bucket.symbol, interval.name, start, err)
+		for product, starts := range buckets {
+			if err := a.rebuildProductBuckets(ctx, product.category, product.market, product.symbol, interval.source, interval.name, starts); err != nil {
+				logx.Errorf("rebuild derived kline failed, category=%s market=%s symbol=%s interval=%s err=%v",
+					product.category, product.market, product.symbol, interval.name, err)
 				failures = append(failures, err)
 			}
 		}
@@ -82,29 +86,63 @@ func (a *DerivedAggregator) Rebuild(minutes []*models.CoinKline) error {
 	return errors.Join(failures...)
 }
 
-func (a *DerivedAggregator) rebuildBucket(ctx context.Context, category, market, symbol, sourceInterval, targetInterval string, start, end int64) error {
+func (a *DerivedAggregator) bucket(ctx context.Context, category, market string, ts int64, interval string) (int64, int64) {
+	if a.calendar != nil {
+		return a.calendar.Bucket(ctx, category, market, "", ts, interval)
+	}
+	return derivedBucket(ts, interval)
+}
+
+func (a *DerivedAggregator) rebuildProductBuckets(ctx context.Context, category, market, symbol, sourceInterval, targetInterval string, starts map[int64]struct{}) error {
 	source := a.factory.New(category, sourceInterval)
 	target := a.factory.New(category, targetInterval)
-	if source == nil || target == nil {
+	if source == nil || target == nil || len(starts) == 0 {
 		return nil
 	}
-	list, err := source.FindRangeByMarketSymbol(ctx, market, symbol, start, end)
+	var minStart, maxEnd int64
+	ends := make(map[int64]int64, len(starts))
+	for start := range starts {
+		_, end := a.bucket(ctx, category, market, start, targetInterval)
+		ends[start] = end
+		if minStart == 0 || start < minStart {
+			minStart = start
+		}
+		if end > maxEnd {
+			maxEnd = end
+		}
+	}
+	list, err := source.FindRangeByMarketSymbol(ctx, market, symbol, minStart, maxEnd)
 	if err != nil || len(list) == 0 {
 		return err
 	}
-	bar := aggregateKlines(category, market, symbol, sourceInterval, targetInterval, start, end, list)
-	if err := target.UpsertBySymbolTs(ctx, bar); err != nil {
+	grouped := make(map[int64][]*models.CoinKline, len(starts))
+	for _, item := range list {
+		start, _ := a.bucket(ctx, category, market, item.Ts, targetInterval)
+		if _, wanted := starts[start]; wanted {
+			grouped[start] = append(grouped[start], item)
+		}
+	}
+	bars := make([]*models.CoinKline, 0, len(grouped))
+	for start, sourceBars := range grouped {
+		if len(sourceBars) == 0 {
+			continue
+		}
+		bars = append(bars, aggregateKlines(category, market, symbol, sourceInterval, targetInterval, start, ends[start], sourceBars))
+	}
+	if err := target.BulkUpsertBySymbolTs(ctx, bars); err != nil {
 		return err
 	}
 	if a.cache != nil {
-		msg := types.ClientMessage{Topic: types.TopicKline, CategoryCode: category, Market: market, Symbol: symbol, Interval: targetInterval}
-		payload := &types.KlinePayload{Interval: targetInterval, Open: bar.Open, High: bar.High, Low: bar.Low,
-			Close: bar.Close, Volume: bar.Volume, Turnover: bar.Turnover, Ts: bar.Ts, Source: bar.Source,
-			Revision: bar.Revision, IsClosed: bar.IsClosed, Confirmed: bar.Confirmed,
-			ActualCount: bar.ActualCount, ExpectedCount: bar.ExpectedCount}
-		if err := a.cache.Set(ctx, msg, payload); err != nil {
-			logx.Errorf("cache derived kline failed, category=%s market=%s symbol=%s interval=%s err=%v",
-				category, market, symbol, targetInterval, err)
+		for _, bar := range bars {
+			msg := types.ClientMessage{Topic: types.TopicKline, CategoryCode: category, Market: market, Symbol: symbol, Interval: targetInterval}
+			payload := &types.KlinePayload{Interval: targetInterval, Open: bar.Open, High: bar.High, Low: bar.Low,
+				Close: bar.Close, Volume: bar.Volume, Turnover: bar.Turnover, Ts: bar.Ts, Source: bar.Source,
+				Revision: bar.Revision, IsClosed: bar.IsClosed, Confirmed: bar.Confirmed,
+				ActualCount: bar.ActualCount, ExpectedCount: bar.ExpectedCount}
+			if err := a.cache.Set(ctx, msg, payload); err != nil {
+				logx.Errorf("cache derived kline failed, category=%s market=%s symbol=%s interval=%s err=%v",
+					category, market, symbol, targetInterval, err)
+			}
 		}
 	}
 	return nil

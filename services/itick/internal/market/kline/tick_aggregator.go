@@ -2,6 +2,7 @@ package kline
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"math"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	"wklive/services/itick/internal/pkg/klinewriter"
 	"wklive/services/itick/models"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -48,22 +50,51 @@ type TickAggregator struct {
 	stopOnce  sync.Once
 	stopCh    chan struct{}
 	doneCh    chan struct{}
+	rdb       *redis.Client
+	stateTTL  time.Duration
 }
 
-func NewTickAggregator(writer *klinewriter.BatchWriter) *TickAggregator {
+type persistedTickState struct {
+	Category string  `json:"category"`
+	Market   string  `json:"market"`
+	Symbol   string  `json:"symbol"`
+	Ts       int64   `json:"ts"`
+	OpenTs   int64   `json:"openTs"`
+	CloseTs  int64   `json:"closeTs"`
+	Open     float64 `json:"open"`
+	High     float64 `json:"high"`
+	Low      float64 `json:"low"`
+	Close    float64 `json:"close"`
+	Volume   float64 `json:"volume"`
+	Turnover float64 `json:"turnover"`
+}
+
+type persistedBaseline struct {
+	ProductKey string  `json:"productKey"`
+	Ts         int64   `json:"ts"`
+	Volume     float64 `json:"volume"`
+}
+
+func NewTickAggregator(writer *klinewriter.BatchWriter, rdb *redis.Client, stateTTL time.Duration) *TickAggregator {
+	if stateTTL <= 0 {
+		stateTTL = 120 * time.Minute
+	}
 	return &TickAggregator{writer: writer, buckets: make(map[tickBucketKey]*tickBucket),
 		seen: make(map[string]int64), finalized: make(map[string]int64), baselines: make(map[string]volumeBaseline),
-		stopCh: make(chan struct{}), doneCh: make(chan struct{})}
+		stopCh: make(chan struct{}), doneCh: make(chan struct{}), rdb: rdb, stateTTL: stateTTL}
 }
 
-func (a *TickAggregator) Start() { go a.run() }
+func (a *TickAggregator) Start() {
+	a.restore(context.Background())
+	go a.run()
+}
 
 func (a *TickAggregator) Stop() {
 	a.stopOnce.Do(func() { close(a.stopCh) })
 	<-a.doneCh
 }
 
-func (a *TickAggregator) Add(_ context.Context, msg types.ClientMessage, tick *types.TickPayload) {
+func (a *TickAggregator) Add(ctx context.Context, msg types.ClientMessage, tick *types.TickPayload) {
 	if tick == nil || tick.Ts <= 0 || tick.LastPrice <= 0 || tick.Volume < 0 || tick.Turnover < 0 ||
 		math.IsNaN(tick.LastPrice) || math.IsInf(tick.LastPrice, 0) {
 		return
@@ -100,6 +131,7 @@ func (a *TickAggregator) Add(_ context.Context, msg types.ClientMessage, tick *t
 	if bucket == nil {
 		a.buckets[key] = &tickBucket{openTs: tick.Ts, closeTs: tick.Ts, open: tick.LastPrice,
 			high: tick.LastPrice, low: tick.LastPrice, close: tick.LastPrice, volume: volume, turnover: turnover}
+		a.persist(ctx, key, a.buckets[key], productKey)
 		return
 	}
 	if tick.Ts < bucket.openTs {
@@ -112,6 +144,7 @@ func (a *TickAggregator) Add(_ context.Context, msg types.ClientMessage, tick *t
 	bucket.low = math.Min(bucket.low, tick.LastPrice)
 	bucket.volume += volume
 	bucket.turnover += turnover
+	a.persist(ctx, key, bucket, productKey)
 }
 
 // iTick stock tick volume is a daily cumulative value. The first or reset
@@ -162,6 +195,9 @@ func (a *TickAggregator) flushClosed(now int64) {
 			continue
 		}
 		delete(a.buckets, key)
+		if a.rdb != nil {
+			_ = a.rdb.Del(context.Background(), a.bucketRedisKey(key)).Err()
+		}
 		productKey := key.category + ":" + key.market + ":" + key.symbol
 		if key.ts > a.finalized[productKey] {
 			a.finalized[productKey] = key.ts
@@ -173,4 +209,59 @@ func (a *TickAggregator) flushClosed(now int64) {
 		}
 	}
 	a.mu.Unlock()
+}
+
+func (a *TickAggregator) persist(ctx context.Context, key tickBucketKey, bucket *tickBucket, productKey string) {
+	if a.rdb == nil || bucket == nil {
+		return
+	}
+	state, _ := json.Marshal(persistedTickState{Category: key.category, Market: key.market, Symbol: key.symbol, Ts: key.ts,
+		OpenTs: bucket.openTs, CloseTs: bucket.closeTs, Open: bucket.open, High: bucket.high, Low: bucket.low, Close: bucket.close, Volume: bucket.volume, Turnover: bucket.turnover})
+	baseline := a.baselines[productKey]
+	base, _ := json.Marshal(persistedBaseline{ProductKey: productKey, Ts: baseline.ts, Volume: baseline.volume})
+	pipe := a.rdb.Pipeline()
+	pipe.Set(ctx, a.bucketRedisKey(key), state, a.stateTTL)
+	pipe.Set(ctx, "itick:v1:kline:baseline:"+productKey, base, a.stateTTL)
+	_, _ = pipe.Exec(ctx)
+}
+
+func (a *TickAggregator) bucketRedisKey(key tickBucketKey) string {
+	return fmt.Sprintf("itick:v1:kline:building:%s:%s:%s:%d", key.category, key.market, key.symbol, key.ts)
+}
+
+func (a *TickAggregator) restore(ctx context.Context) {
+	if a.rdb == nil {
+		return
+	}
+	for _, pattern := range []string{"itick:v1:kline:building:*", "itick:v1:kline:baseline:*"} {
+		var cursor uint64
+		for {
+			keys, next, err := a.rdb.Scan(ctx, cursor, pattern, 200).Result()
+			if err != nil {
+				break
+			}
+			for _, key := range keys {
+				raw, err := a.rdb.Get(ctx, key).Bytes()
+				if err != nil {
+					continue
+				}
+				if strings.Contains(key, ":building:") {
+					var v persistedTickState
+					if json.Unmarshal(raw, &v) == nil {
+						k := tickBucketKey{v.Category, v.Market, v.Symbol, v.Ts}
+						a.buckets[k] = &tickBucket{v.OpenTs, v.CloseTs, v.Open, v.High, v.Low, v.Close, v.Volume, v.Turnover}
+					}
+				} else {
+					var v persistedBaseline
+					if json.Unmarshal(raw, &v) == nil {
+						a.baselines[v.ProductKey] = volumeBaseline{v.Ts, v.Volume}
+					}
+				}
+			}
+			cursor = next
+			if cursor == 0 {
+				break
+			}
+		}
+	}
 }

@@ -8,6 +8,7 @@ import (
 	"wklive/proto/option"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
+	marketcalendar "wklive/services/itick/internal/market/calendar"
 	"wklive/services/itick/internal/market/client"
 	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/internal/pkg/klinewriter"
@@ -25,6 +26,7 @@ import (
 
 type ServiceContext struct {
 	Config                      config.Config
+	ItickRuntimeConfig          *system.ItickConfig
 	SystemCli                   system.SystemClient
 	OptionCli                   option.OptionInternalClient
 	ItickManager                *client.ItickManager
@@ -36,6 +38,7 @@ type ServiceContext struct {
 	Factory                     *models.CoinKlineModelFactory
 	Writer                      *klinewriter.BatchWriter
 	RebuildDerivedKlines        func([]*models.CoinKline) error
+	RebuildHistoricalKlines     func([]*models.CoinKline) error
 	ItickCategoryModel          models.TItickCategoryModel
 	ItickProductModel           models.TItickProductModel
 	ItickTenantCategoryModel    models.TItickTenantCategoryModel
@@ -43,6 +46,8 @@ type ServiceContext struct {
 	ItickSyncTaskModel          models.TItickSyncTaskModel
 	ItickQuoteModel             models.TItickQuoteModel
 	ItickKlineSyncProgressModel models.TItickKlineSyncProgressModel
+	MarketCalendarModel         models.TItickMarketCalendarModel
+	MarketCalendarResolver      *marketcalendar.Resolver
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -57,6 +62,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	itickSyncTaskModel := models.NewTItickSyncTaskModel(conn, c.CacheRedis)
 	itickQuoteModel := models.NewTItickQuoteModel(conn, c.CacheRedis)
 	itickKlineSyncProgressModel := models.NewTItickKlineSyncProgressModel(conn, c.CacheRedis)
+	marketCalendarModel := models.NewTItickMarketCalendarModel(conn, c.CacheRedis)
+	marketCalendarResolver := marketcalendar.NewResolver(marketCalendarModel, 10*time.Minute)
 
 	busRedis := redis.NewClient(&redis.Options{
 		Addr:     c.BusRedis[0].Host,
@@ -146,5 +153,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ItickSyncTaskModel:          itickSyncTaskModel,
 		ItickQuoteModel:             itickQuoteModel,
 		ItickKlineSyncProgressModel: itickKlineSyncProgressModel,
+		MarketCalendarModel:         marketCalendarModel,
+		MarketCalendarResolver:      marketCalendarResolver,
 	}
 }

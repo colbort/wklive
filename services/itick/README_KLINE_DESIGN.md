@@ -271,7 +271,7 @@ DerivedWorker.Enqueue → DerivedAggregator.Rebuild
 
 iTick 股票 Tick 的 `v` 按当日累计成交量处理：第一条或累计值重置时只建立基线，后续使用 `current.v - previous.v` 作为分钟增量；乱序 Tick 不推进基线。股票 Tick 没有可靠 `tu` 时，临时 turnover 使用 `deltaVolume × lastPrice` 估算，最终仍以 5 分钟 REST K 线校正为准。其他品类目前仍按 Tick 自带 volume/turnover 为单次增量直接累加，需要继续根据各品类官方字段语义核对。
 
-当前分钟桶仅在进程内存，服务重启会丢失尚未闭合的桶；没有 Tick 的分钟也不会凭空生成 K 线，等待 REST 补齐。
+当前分钟桶和股票累计量基线在每次 Tick 更新时同步保存到 Redis。服务启动时扫描并恢复未过期状态；分钟桶成功进入 BatchWriter 后才删除 Redis building key。没有 Tick 的分钟不会凭空生成 K 线，仍由 REST 校准补齐。
 
 ## 6. 高周期派生
 
@@ -294,17 +294,17 @@ iTick 股票 Tick 的 `v` 按当日累计成交量处理：第一条或累计值
                     └─→ 1mo
 ```
 
-当前支持：
+持久化和实时派生支持：
 
 ```text
 1m, 5m, 15m, 30m, 1h, 1d, 1w, 1mo
 ```
 
-尚未定义 `1y` 的 Proto 枚举、周期映射和查询入口。
+`1y` 已定义 Proto 枚举和查询入口；App 查询 `1y` 时从 MongoDB `1d` 数据按市场日历年度边界动态聚合，不订阅 iTick WS `kline@11`，也不单独落 `1y` collection。
 
 ### 6.3 重算方法
 
-每个受影响的目标桶通过 `FindRangeByMarketSymbol` 读取完整源区间，然后重新计算：
+重算先按产品和目标周期合并受影响桶，用一次 `FindRangeByMarketSymbol` 读取覆盖这些桶的完整源区间，在内存分桶后通过一次 MongoDB BulkWrite 写入，避免逐桶小查询：
 
 ```text
 open     = 第一根源 K 线 open
@@ -322,14 +322,14 @@ turnover = sum(源 K 线 turnover)
 1. upsert 对应周期 MongoDB collection；
 2. 覆盖 Redis 对应周期实时缓存，供 App WS 推送。
 
-### 6.4 当前时间边界
+### 6.4 市场时间边界
 
-- `5m/15m/30m/1h`：按 UTC 毫秒固定宽度切桶；
-- `1d`：UTC 00:00 切桶；
-- `1w`：UTC 周一 00:00 切桶；
-- `1mo`：UTC 每月 1 日 00:00 切桶。
+- `5m/15m/30m/1h`：固定宽度切桶；
+- `1d/1w/1mo/1y`：通过 `t_itick_market_calendar` 的 IANA 时区、交易日偏移和周起始日计算；
+- `t_itick_market_session` 保存交易时段，`t_itick_market_holiday` 保存休市和特殊交易日，为缺口扫描提供判断基础；
+- 未配置市场日历时安全回退 UTC、周一为周起始日。
 
-这对 24×7 加密货币较自然，但股票、期货、外汇可能需要按交易所时区、交易日、盘前盘后和夜盘规则切桶。当前实现尚未接入市场日历。
+Resolver 按 `category + market + exchange` 查找定义并缓存；目前派生 K 线模型未保存 exchange，因此派生链使用 `category + market` 的默认日历记录，配置时必须为各市场提供 exchange 为空的默认行。
 
 ## 7. 每 5 分钟增量校正
 
@@ -387,7 +387,7 @@ GET /{category}/klines
 
 ```text
 kType=1     // 1m
-limit=30    // 最近 30 根
+limit={ReconcileWindowBars，默认 30}
 codes=最多 10 个产品
 region={market}
 exchange={exchange，可选}
@@ -461,7 +461,7 @@ itick:v1:kline:{category}:{market}:{symbol}:{interval}
 
 App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送命中的缓存数据，即使内容没有变化；去重或覆盖展示由客户端处理。
 
-当前 iTick WS Kline 与本地 `DerivedAggregator` 会写同一个 Redis Key。写入通过 Lua 原子比较来源优先级和 revision：活跃 iTick WS 优先于 derived，并刷新 30 秒版本元数据 TTL；WS 超过 30 秒未更新后 derived 可以接管，WS 恢复后重新以高优先级覆盖。
+当前 iTick WS Kline 与本地 `DerivedAggregator` 会写同一个 Redis Key。写入通过 Lua 原子比较来源优先级和 revision：活跃 iTick WS 优先于 derived，并刷新版本元数据 TTL；TTL 使用系统 `ITICK_CONFIG.wsKlineStaleSeconds`（默认 30 秒），超时后 derived 可以接管，WS 恢复后重新以高优先级覆盖。
 
 ## 9. Redis 行情缓存
 
@@ -474,7 +474,13 @@ App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送
 | Depth | `itick:v1:depth:{category}:{market}:{symbol}` | 5 分钟 |
 | Kline | `itick:v1:kline:{category}:{market}:{symbol}:{interval}` | 24 小时 |
 
-当前没有实现 Tick Redis Stream、Redis 中的 1m building bucket、dirty ZSet 或产品 refcount Hash。Tick 当前桶和去重状态保存在 `TickAggregator` 进程内存中。
+另外保存：
+
+- `itick:v1:kline:building:{category}:{market}:{symbol}:{ts}`：未闭合 1m 桶，TTL 使用 `buildingBucketTtlMinutes`；
+- `itick:v1:kline:baseline:{productKey}`：股票累计成交量基线；
+- Kline 的 `:meta` Hash：来源优先级和 revision，TTL 使用 `wsKlineStaleSeconds`。
+
+当前没有实现 Tick Redis Stream、dirty ZSet 或产品 refcount Hash。
 
 ## 10. 故障恢复与幂等性
 
@@ -484,15 +490,22 @@ App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送
 - WS 重连后根据内存 `desiredSubs` 恢复订阅；
 - MongoDB 使用 upsert，可重复执行；
 - 每 5 分钟任务使用 Redis 分布式锁；
-- 最近 30 根 REST 窗口可以修复短时间断线、漏 Tick、迟到 Tick；
+- 可配置最近窗口 REST 校准可以修复短时间断线、漏 Tick、迟到 Tick；
 - REST 修正后高周期重新从低周期完整计算。
+- Tick 当前分钟桶和股票累计量基线可从 Redis 恢复；
+- 派生任务区分高优先级实时/校准队列与低优先级历史队列；
+- 高周期按产品和周期批量查询、批量写入。
+- WS 在首次连接之后再次完成鉴权和恢复订阅时，按 category 立即触发 reconnect repair；同一 category 同时只运行一个恢复任务；
+- reconnect repair 读取每个活跃产品 MongoDB 最新 `1m` 作为断点，通过单产品 `/kline` 的 `et` 参数从当前最后闭合分钟向后分页，直到碰到该断点，因此停机时间超过最近校准窗口也能补齐；
+- 断点回补完成后再执行一次该 category 的批量最近窗口校准，矫正断线边界附近的临时 K 线；没有任何本地历史的产品不会在重连时意外启动全历史同步，仍由管理后台初始化。
+- `GapRepairService` 按 `gapScanIntervalMinutes` 周期扫描活跃产品的 MongoDB `1m`；每个产品每轮最多读取 2000 根，并将分页游标保存到 `itick:v1:kline:gap_scan:{productId}`，多轮后覆盖完整历史；
+- scanner 跳过最近校准窗口，并使用市场时区、Session、周末和 Holiday 过滤非交易分钟；非 crypto 市场没有日历或 Session 时保守跳过，避免把夜间休市误判为缺口；
+- 缺口任务持久化到 Redis ZSet `itick:v1:kline:repair:queue` 和 Hash `itick:v1:kline:repair:jobs`，多实例通过 Lua 原子领取；
+- repair worker 每批最多处理 `repairBatchSize` 个任务，使用单产品 `/kline?et=` 定点向后分页，只写缺口范围，并通过历史低优先级派生队列传播到高周期；
+- repair 失败按分钟级指数退避，最大 12 小时；成功任务保存 30 天完成标记，避免休市边界或供应商确实无数据时反复请求。
 
 仍需完善：
 
-- Tick 当前分钟桶持久化，服务重启时当前分钟会丢失；
-- WS 断线后立即触发 repair，目前只能等待下一个 5 分钟任务；
-- 长时间停机超过 30 分钟时，最近窗口不能覆盖全部缺口；
-- gap scanner 和定点补洞任务；
 - 历史同步断点续传和目标保留期；
 - 多实例聚合 owner 切换期间的显式恢复；
 
@@ -501,12 +514,9 @@ App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送
 按优先级建议：
 
 1. **核对非股票 Tick volume 语义**：确认加密货币、外汇、指数和期货是单次量还是累计量。
-2. **交易日历**：日/周/月按市场时区和交易时段切桶，不再统一 UTC。
-3. **当前桶恢复**：将 1m building state、股票累计量基线或短期 Tick 保存 Redis。
-4. **缺口扫描**：按交易日历检查 MongoDB 连续性，超过最近 30 根窗口的缺口进入 repair queue。
-5. **派生任务分级**：实时/校正使用高优先级队列，历史回补使用低优先级队列，并批量重算减少 MongoDB 查询。
-6. **年度周期**：增加 `1y` Proto 枚举、周期映射、collection、查询和派生逻辑。
-7. **可观测性**：记录每产品最后 Tick、最后闭合 1m、校正延迟、缺口数、REST 失败、派生队列和派生耗时。
+2. **交易所精度**：把 exchange 传播到 K 线元数据或产品上下文，避免只能使用市场默认日历。
+3. **配置热更新**：当前 `ITICK_CONFIG` 在服务启动时读取，修改后需要重启服务；任务中心的执行频率仍由外部调度配置控制。
+4. **可观测性**：补充 repair queue 长度、最老任务等待时间、扫描游标进度和永久失败告警。
 
 ## 12. 关键代码位置
 
@@ -518,6 +528,7 @@ App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送
 | 历史分页与最近窗口 REST | `internal/market/kline/sync_worker.go` |
 | Tick → 1m | `internal/market/kline/tick_aggregator.go` |
 | 高周期派生 | `internal/market/kline/derived_aggregator.go` |
+| 历史缺口扫描与修复队列 | `internal/market/kline/gap_repair.go` |
 | MongoDB 批量写入 | `internal/pkg/klinewriter/batch_writer.go` |
 | MongoDB Kline Model | `models/coinklinemodel.go` |
 | 周期映射 | `internal/pkg/utils/kline_intervals.go` |

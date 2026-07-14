@@ -69,6 +69,56 @@ type SyncResult struct {
 	NewCount int
 }
 
+// RepairAfterReconnect fills every closed 1m bar newer than the latest bar
+// already stored in MongoDB. Unlike the batch reconciliation endpoint, the
+// single-product endpoint supports et pagination, so this also covers outages
+// longer than ReconcileWindowBars.
+func (w *SyncKlinesWorker) RepairAfterReconnect(apiURL, token, category string) error {
+	products, err := w.loadActiveProducts()
+	if err != nil {
+		return err
+	}
+	category = utils.NormalizeCategory(category)
+	lastClosed := utils.LastClosedTs(cutils.NowMillis(), "1m")
+	var failures []string
+	for _, product := range products {
+		productCategory := utils.NormalizeCategory(product.CategoryCode)
+		if productCategory != category {
+			continue
+		}
+		market, symbol := utils.NormalizeMarket(product.Market), utils.NormalizeSymbol(product.Symbol)
+		model := w.svcCtx.Factory.New(productCategory, "1m")
+		if model == nil {
+			continue
+		}
+		latest, findErr := model.FindLatestByMarketSymbol(w.ctx, market, symbol, 1)
+		if findErr != nil {
+			failures = append(failures, fmt.Sprintf("%s: find latest: %v", symbol, findErr))
+			continue
+		}
+		// A product without any local history must be initialized explicitly by
+		// the admin history task; reconnect repair must not start a full-history job.
+		if len(latest) == 0 || latest[0] == nil || latest[0].Ts >= lastClosed {
+			continue
+		}
+		job := KlineJob{ApiUrl: apiURL, Token: token, Category: productCategory,
+			Market: market, Symbol: symbol, KType: reconcileKType}
+		result, repairErr := w.syncBackwardAfter(job, "1m", lastClosed, latest[0].Ts, 500)
+		if repairErr != nil {
+			failures = append(failures, fmt.Sprintf("%s: %v", symbol, repairErr))
+			continue
+		}
+		if result.NewCount > 0 {
+			w.Infof("repaired klines after ws reconnect, category=%s market=%s symbol=%s count=%d",
+				productCategory, market, symbol, result.NewCount)
+		}
+	}
+	if len(failures) > 0 {
+		return fmt.Errorf("reconnect repair partial failure (%d): %s", len(failures), strings.Join(failures, "; "))
+	}
+	return nil
+}
+
 // FetchProductHistory walks backwards until iTick has no older data and
 // persists every returned page to MongoDB. Page size is internal and is not
 // exposed by the Admin API.
@@ -81,10 +131,9 @@ func (w *SyncKlinesWorker) FetchProductHistory(job KlineJob, interval string, en
 }
 
 const (
-	activeProductsKey   = "itick:v1:active_products"
-	reconcileBatchSize  = 10
-	reconcileKType      = int32(1)
-	reconcileWindowBars = 30
+	activeProductsKey  = "itick:v1:active_products"
+	reconcileBatchSize = 10
+	reconcileKType     = int32(1)
 )
 
 type reconcileGroup struct {
@@ -98,8 +147,15 @@ type reconcileGroup struct {
 // five-minute scheduler. It never walks backwards through historical pages.
 func (w *SyncKlinesWorker) RunReconcile(taskNo, apiURL, token string) {
 	w.runTask(taskNo, "五分钟校准中", func() error {
-		return w.doReconcile(apiURL, token)
+		return w.doReconcile(apiURL, token, "")
 	})
+}
+
+// ReconcileRecent applies the same bounded correction as the five-minute task
+// without creating task records. It is used after a WS reconnect, where the
+// caller already owns the recovery lifecycle.
+func (w *SyncKlinesWorker) ReconcileRecent(apiURL, token, category string) error {
+	return w.doReconcile(apiURL, token, utils.NormalizeCategory(category))
 }
 
 func (w *SyncKlinesWorker) runTask(taskNo, runningMessage string, run func() error) {
@@ -147,7 +203,7 @@ func (w *SyncKlinesWorker) autoRenewLock(ctx context.Context, interval, ttl time
 	}
 }
 
-func (w *SyncKlinesWorker) doReconcile(apiURL, token string) error {
+func (w *SyncKlinesWorker) doReconcile(apiURL, token, onlyCategory string) error {
 	products, err := w.loadActiveProducts()
 	if err != nil {
 		return err
@@ -155,6 +211,9 @@ func (w *SyncKlinesWorker) doReconcile(apiURL, token string) error {
 	groups := make(map[string]*reconcileGroup)
 	for _, product := range products {
 		category := utils.NormalizeCategory(product.CategoryCode)
+		if onlyCategory != "" && category != onlyCategory {
+			continue
+		}
 		market := utils.NormalizeMarket(product.Market)
 		symbol := utils.NormalizeSymbol(product.Symbol)
 		if category == "" || market == "" || symbol == "" || !utils.IsSupportedKlineCategory(category) {
@@ -230,7 +289,14 @@ func (w *SyncKlinesWorker) reconcileBatch(apiURL, token string, group *reconcile
 	for _, product := range products {
 		codes = append(codes, product.Symbol)
 	}
-	data, err := w.getBatchKlines(w.ctx, apiURL, token, group.category, group.market, group.exchange, codes, reconcileKType, reconcileWindowBars)
+	windowBars := 30
+	if w.svcCtx.ItickRuntimeConfig != nil {
+		windowBars = int(w.svcCtx.ItickRuntimeConfig.ReconcileWindowBars)
+	}
+	if windowBars <= 0 {
+		windowBars = 30
+	}
+	data, err := w.getBatchKlines(w.ctx, apiURL, token, group.category, group.market, group.exchange, codes, reconcileKType, windowBars)
 	if err != nil {
 		return fmt.Errorf("category=%s market=%s codes=%s: %w", group.category, group.market, strings.Join(codes, ","), err)
 	}
@@ -270,9 +336,6 @@ func (w *SyncKlinesWorker) reconcileProduct(group *reconcileGroup, product *mode
 		if !validClosedKline(item, lastClosed, utils.IntervalMillis(interval)) {
 			continue
 		}
-		if len(list) == 0 {
-			return fmt.Errorf("batch response contains no valid closed klines")
-		}
 		list = append(list, w.toCoinKline(job, interval, item))
 		if item.T > latestTs {
 			latestTs = item.T
@@ -280,6 +343,9 @@ func (w *SyncKlinesWorker) reconcileProduct(group *reconcileGroup, product *mode
 		if oldestTs == 0 || item.T < oldestTs {
 			oldestTs = item.T
 		}
+	}
+	if len(list) == 0 {
+		return fmt.Errorf("batch response contains no valid closed klines")
 	}
 	if err := w.bulkUpsertKlines(group.category, interval, list); err != nil {
 		return err
@@ -390,8 +456,8 @@ func (w *SyncKlinesWorker) syncBackwardRange(job KlineJob, interval string, et i
 			if err := w.bulkUpsertKlines(job.Category, interval, list); err != nil {
 				return result, err
 			}
-			if interval == "1m" && w.svcCtx.RebuildDerivedKlines != nil {
-				if err := w.svcCtx.RebuildDerivedKlines(list); err != nil {
+			if interval == "1m" && w.svcCtx.RebuildHistoricalKlines != nil {
+				if err := w.svcCtx.RebuildHistoricalKlines(list); err != nil {
 					return result, fmt.Errorf("rebuild derived klines: %w", err)
 				}
 			}
@@ -403,6 +469,46 @@ func (w *SyncKlinesWorker) syncBackwardRange(job KlineJob, interval string, et i
 		}
 		et = minTs - 1
 	}
+}
+
+func (w *SyncKlinesWorker) syncBackwardAfter(job KlineJob, interval string, et, afterTs int64, limit int) (SyncResult, error) {
+	var result SyncResult
+	for et > afterTs {
+		resp, err := w.getSingleKline(w.ctx, job, et, limit)
+		if err != nil {
+			return result, err
+		}
+		if len(resp.Data) == 0 {
+			return result, nil
+		}
+		list := make([]*models.CoinKline, 0, len(resp.Data))
+		minTs := resp.Data[0].T
+		for _, item := range resp.Data {
+			if item.T < minTs {
+				minTs = item.T
+			}
+			if item.T <= afterTs || item.T > et || !validClosedKline(item, et, utils.IntervalMillis(interval)) {
+				continue
+			}
+			list = append(list, w.toCoinKline(job, interval, item))
+		}
+		if len(list) > 0 {
+			if err := w.bulkUpsertKlines(job.Category, interval, list); err != nil {
+				return result, err
+			}
+			if w.svcCtx.RebuildHistoricalKlines != nil {
+				if err := w.svcCtx.RebuildHistoricalKlines(list); err != nil {
+					return result, fmt.Errorf("rebuild derived klines: %w", err)
+				}
+			}
+			result.NewCount += len(list)
+		}
+		if len(resp.Data) < limit || minTs <= afterTs || minTs <= 0 || minTs >= et {
+			return result, nil
+		}
+		et = minTs - 1
+	}
+	return result, nil
 }
 
 func (w *SyncKlinesWorker) toCoinKline(job KlineJob, interval string, item ItickKlineItem) *models.CoinKline {

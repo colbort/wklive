@@ -68,7 +68,8 @@ func (l *GetKlineLogic) getYearKlines(in *itick.GetKlineReq) (*itick.GetKlineRes
 	}
 	byYear := make(map[int][]*models.CoinKline)
 	for _, row := range rows {
-		year := time.UnixMilli(row.Ts).UTC().Year()
+		start, _ := l.svcCtx.MarketCalendarResolver.Bucket(l.ctx, in.CategoryCode, in.Market, "", row.Ts, "1y")
+		year := time.UnixMilli(start).UTC().Year()
 		byYear[year] = append(byYear[year], row)
 	}
 	years := make([]int, 0, len(byYear))
@@ -83,7 +84,8 @@ func (l *GetKlineLogic) getYearKlines(in *itick.GetKlineReq) (*itick.GetKlineRes
 		}
 		list := byYear[year]
 		sort.Slice(list, func(i, j int) bool { return list[i].Ts < list[j].Ts })
-		bar := aggregateQueryKlines(in, time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC).UnixMilli(), list)
+		start, _ := l.svcCtx.MarketCalendarResolver.Bucket(l.ctx, in.CategoryCode, in.Market, "", list[0].Ts, "1y")
+		bar := aggregateQueryKlines(in, start, list)
 		data = append(data, toKlineProto(in.KType, bar))
 	}
 	return &itick.GetKlineResp{Base: helper.OkResp(), Data: data}, nil

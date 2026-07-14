@@ -71,6 +71,8 @@ type ItickWsClient struct {
 	leader        int32
 	started       int32
 	authenticated int32
+	sessions      int64
+	onReconnect   func(string)
 }
 
 func NewItickWsClient(
@@ -251,6 +253,9 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 		if err := c.restoreSubscriptions(sessionCtx); err != nil {
 			logx.Errorf("itick ws restore subscriptions failed, category=%s err=%v", c.categoryCode, err)
 		}
+		if atomic.AddInt64(&c.sessions, 1) > 1 && c.onReconnect != nil {
+			go c.onReconnect(c.categoryCode)
+		}
 
 		if err := c.readLoop(sessionCtx); err != nil {
 			if isNormalWsClose(err) {
@@ -269,6 +274,10 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 		case <-time.After(defaultReconnectDelay):
 		}
 	}
+}
+
+func (c *ItickWsClient) SetReconnectHandler(handler func(string)) {
+	c.onReconnect = handler
 }
 
 func (c *ItickWsClient) connect() error {

@@ -37,10 +37,11 @@ return 1
 `)
 
 type MarketDataCache struct {
-	rdb          *redis.Client
-	mu           sync.RWMutex
-	quoteHandler func(context.Context, types.ClientMessage, *types.QuotePayload)
-	tickHandler  func(context.Context, types.ClientMessage, *types.TickPayload)
+	rdb           *redis.Client
+	mu            sync.RWMutex
+	klineStaleTTL time.Duration
+	quoteHandler  func(context.Context, types.ClientMessage, *types.QuotePayload)
+	tickHandler   func(context.Context, types.ClientMessage, *types.TickPayload)
 }
 
 type CachedMarketData struct {
@@ -50,7 +51,16 @@ type CachedMarketData struct {
 }
 
 func NewMarketDataCache(rdb *redis.Client) *MarketDataCache {
-	return &MarketDataCache{rdb: rdb}
+	return &MarketDataCache{rdb: rdb, klineStaleTTL: 30 * time.Second}
+}
+
+func (b *MarketDataCache) SetKlineStaleTTL(ttl time.Duration) {
+	if ttl <= 0 {
+		return
+	}
+	b.mu.Lock()
+	b.klineStaleTTL = ttl
+	b.mu.Unlock()
 }
 
 func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payload any) error {
@@ -84,8 +94,11 @@ func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payl
 			env.Revision = time.Now().UnixMilli()
 		}
 		key := marketDataKey(msg)
+		b.mu.RLock()
+		staleTTL := b.klineStaleTTL
+		b.mu.RUnlock()
 		if _, err := setVersionedKlineScript.Run(ctx, b.rdb, []string{key, key + ":meta"}, bs,
-			priority, env.Revision, marketDataTTL(msg.Topic).Milliseconds(), (30 * time.Second).Milliseconds()).Result(); err != nil {
+			priority, env.Revision, marketDataTTL(msg.Topic).Milliseconds(), staleTTL.Milliseconds()).Result(); err != nil {
 			return err
 		}
 	} else if err := b.rdb.Set(ctx, marketDataKey(msg), bs, marketDataTTL(msg.Topic)).Err(); err != nil {
