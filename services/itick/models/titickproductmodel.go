@@ -30,6 +30,7 @@ type (
 		tItickProductModel
 		FindPage(ctx context.Context, filter ItickProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error)
 		FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error)
+		FindActivePage(ctx context.Context, cursor, limit int64) ([]*TItickProduct, error)
 		Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error)
 	}
 
@@ -43,6 +44,24 @@ func NewTItickProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.O
 	return &customTItickProductModel{
 		defaultTItickProductModel: newTItickProductModel(conn, c, opts...),
 	}
+}
+
+// FindActivePage returns enabled products referenced by at least one enabled
+// tenant. The EXISTS predicate naturally deduplicates products across tenants.
+func (m *defaultTItickProductModel) FindActivePage(ctx context.Context, cursor, limit int64) ([]*TItickProduct, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	query := fmt.Sprintf(`SELECT %s FROM %s AS p
+		WHERE p.id > ? AND p.enabled = 1
+		AND EXISTS (
+			SELECT 1 FROM t_itick_tenant_product AS tp
+			WHERE tp.product_id = p.id AND tp.enabled = 1
+		)
+		ORDER BY p.id ASC LIMIT ?`, qualifyRows("p", tItickProductRows), m.table)
+	var list []*TItickProduct
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, cursor, limit); err != nil {
+		return nil, err
+	}
+	return list, nil
 }
 
 func (m *defaultTItickProductModel) FindPage(ctx context.Context, filter ItickProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error) {

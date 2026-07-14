@@ -5,10 +5,12 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
 
+	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/socket/server"
 	"wklive/services/itick/models"
 
@@ -20,56 +22,161 @@ type ItickManager struct {
 	wsUrl string
 	token string
 
-	model models.TItickCategoryModel
-	hub   *server.Hub
+	model        models.TItickCategoryModel
+	productModel models.TItickProductModel
 
-	busRedis  *redis.Client
-	lockRedis *redis.Client
-	registry  *SubscriptionRegistry
-	bus       *ClusterBus
+	busRedis    *redis.Client
+	lockRedis   *redis.Client
+	marketCache *MarketDataCache
+	preheater   *MarketDataPreheater
 
 	mu      sync.RWMutex
 	clients map[string]*ItickWsClient
 
 	startMu sync.Mutex
 	started bool
+}
 
-	changeMu            sync.Mutex
-	pendingChanges      []SubscriptionChange
-	pendingChangesTimer *time.Timer
+// LoadActiveProductSubscriptions loads the deduplicated product set maintained
+// by tenant-product changes. These subscriptions are service-owned and do not
+// disappear when an app websocket disconnects.
+func (m *ItickManager) LoadActiveProductSubscriptions(ctx context.Context) error {
+	return m.refreshActiveProductSubscriptions(ctx, true)
+}
 
-	quoteHandler func(ctx context.Context, msg server.ClientMessage, payload *QuotePayload)
+func (m *ItickManager) RefreshActiveProductSubscriptions(ctx context.Context) error {
+	return m.refreshActiveProductSubscriptions(ctx, false)
+}
+
+func (m *ItickManager) refreshActiveProductSubscriptions(ctx context.Context, warm bool) error {
+	if err := m.rebuildActiveProducts(ctx); err != nil {
+		return fmt.Errorf("rebuild active itick products: %w", err)
+	}
+	ids, err := m.busRedis.SMembers(ctx, "itick:v1:active_products").Result()
+	if err != nil {
+		return err
+	}
+
+	msgs := make([]server.ClientMessage, 0, len(ids)*(3+len(utils.KlineIntervals)))
+	for _, rawID := range ids {
+		id, err := strconv.ParseInt(strings.TrimSpace(rawID), 10, 64)
+		if err != nil || id <= 0 {
+			logx.Errorf("skip invalid active itick product id=%q", rawID)
+			continue
+		}
+		meta, err := m.busRedis.HGetAll(ctx, fmt.Sprintf("itick:v1:product:%d", id)).Result()
+		if err != nil {
+			return err
+		}
+		category := strings.ToLower(strings.TrimSpace(meta["category_code"]))
+		market := strings.ToUpper(strings.TrimSpace(meta["market"]))
+		symbol := strings.ToUpper(strings.TrimSpace(meta["symbol"]))
+		if category == "" || market == "" || symbol == "" {
+			logx.Errorf("skip active itick product without metadata, id=%d", id)
+			continue
+		}
+
+		for _, topic := range []server.Topic{server.TopicDepth, server.TopicTick, server.TopicQuote} {
+			msgs = append(msgs, server.ClientMessage{Topic: topic, CategoryCode: category, Market: market, Symbol: symbol})
+		}
+		for _, interval := range utils.KlineIntervals {
+			msgs = append(msgs, server.ClientMessage{
+				Topic: server.TopicKline, CategoryCode: category, Market: market,
+				Symbol: symbol, Interval: interval.Name,
+			})
+		}
+	}
+
+	byCategory := make(map[string]map[string]server.ClientMessage)
+	for _, msg := range normalizeUniqueMessages(msgs) {
+		if byCategory[msg.CategoryCode] == nil {
+			byCategory[msg.CategoryCode] = make(map[string]server.ClientMessage)
+		}
+		byCategory[msg.CategoryCode][server.BuildTopicKey(msg)] = msg
+	}
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	for category, cli := range m.clients {
+		items := byCategory[category]
+		if err := cli.replaceDesiredSubscriptions(items); err != nil && cli.IsLeader() {
+			return err
+		}
+	}
+	if warm {
+		m.preheater.Warm(ctx, msgs)
+	}
+	logx.Infof("loaded active itick product subscriptions, products=%d topics=%d", len(ids), len(msgs))
+	return nil
+}
+
+func (m *ItickManager) rebuildActiveProducts(ctx context.Context) error {
+	const activeKey = "itick:v1:active_products"
+	tempKey := fmt.Sprintf("%s:rebuild:%d", activeKey, time.Now().UnixNano())
+	// The marker keeps the temporary set alive when there are zero products.
+	if err := m.busRedis.SAdd(ctx, tempKey, "__empty__").Err(); err != nil {
+		return err
+	}
+	defer m.busRedis.Del(context.Background(), tempKey)
+
+	var cursor int64
+	var count int
+	for {
+		products, err := m.productModel.FindActivePage(ctx, cursor, 500)
+		if err != nil {
+			return err
+		}
+		if len(products) == 0 {
+			break
+		}
+		pipe := m.busRedis.Pipeline()
+		for _, product := range products {
+			pipe.SAdd(ctx, tempKey, product.Id)
+			pipe.HSet(ctx, fmt.Sprintf("itick:v1:product:%d", product.Id), map[string]any{
+				"category_code": product.CategoryCode,
+				"market":        product.Market,
+				"symbol":        product.Symbol,
+				"exchange":      product.Exchange,
+			})
+			cursor = product.Id
+			count++
+		}
+		if _, err := pipe.Exec(ctx); err != nil {
+			return err
+		}
+		if len(products) < 500 {
+			break
+		}
+	}
+	if err := m.busRedis.Rename(ctx, tempKey, activeKey).Err(); err != nil {
+		return err
+	}
+	if err := m.busRedis.SRem(ctx, activeKey, "__empty__").Err(); err != nil {
+		return err
+	}
+	logx.Infof("rebuilt active itick products, count=%d", count)
+	return nil
 }
 
 func NewItickManager(
 	wsUrl string,
+	apiURL string,
 	token string,
-	hub *server.Hub,
 	model models.TItickCategoryModel,
+	productModel models.TItickProductModel,
 	busRedis *redis.Client,
 	lockRedis *redis.Client,
+	marketCache *MarketDataCache,
 ) *ItickManager {
-	registry := NewSubscriptionRegistry(
-		busRedis,
-		"itick:subs",
-		"itick:subs:changes",
-	)
-
-	bus := NewClusterBus(
-		busRedis,
-		"itick:cluster:bus",
-	)
-
 	return &ItickManager{
-		wsUrl:     wsUrl,
-		token:     token,
-		model:     model,
-		hub:       hub,
-		busRedis:  busRedis,
-		lockRedis: lockRedis,
-		registry:  registry,
-		bus:       bus,
-		clients:   make(map[string]*ItickWsClient),
+		wsUrl:        wsUrl,
+		token:        token,
+		model:        model,
+		productModel: productModel,
+		busRedis:     busRedis,
+		lockRedis:    lockRedis,
+		marketCache:  marketCache,
+		preheater:    NewMarketDataPreheater(apiURL, token, marketCache),
+		clients:      make(map[string]*ItickWsClient),
 	}
 }
 
@@ -97,10 +204,8 @@ func (m *ItickManager) Load(ctx context.Context) error {
 			upstreamURL,
 			m.token,
 			categoryCode,
-			m.bus,
-			m.registry,
+			m.marketCache,
 			NewRedisLeaderLock(m.lockRedis, lockKey),
-			m.hub,
 		)
 	}
 
@@ -125,25 +230,6 @@ func (m *ItickManager) Start(ctx context.Context) error {
 	m.started = true
 	m.startMu.Unlock()
 
-	if err := m.bus.Subscribe(ctx, func(msg server.ClientMessage, payload any) {
-		m.hub.Broadcast(msg, payload)
-		m.dispatchQuote(ctx, msg, payload)
-	}); err != nil {
-		m.startMu.Lock()
-		m.started = false
-		m.startMu.Unlock()
-		return err
-	}
-
-	if err := m.registry.WatchChanges(ctx, func(changes []SubscriptionChange) {
-		m.queueSubscriptionChanges(changes)
-	}); err != nil {
-		m.startMu.Lock()
-		m.started = false
-		m.startMu.Unlock()
-		return err
-	}
-
 	m.mu.RLock()
 	clients := make([]*ItickWsClient, 0, len(m.clients))
 	for _, cli := range m.clients {
@@ -154,120 +240,28 @@ func (m *ItickManager) Start(ctx context.Context) error {
 	for _, cli := range clients {
 		cli.Start(ctx)
 	}
+	go m.reconcileActiveProducts(ctx)
 
 	return nil
 }
 
-func (m *ItickManager) SetQuoteHandler(handler func(ctx context.Context, msg server.ClientMessage, payload *QuotePayload)) {
-	m.quoteHandler = handler
-}
-
-func (m *ItickManager) dispatchQuote(ctx context.Context, msg server.ClientMessage, payload any) {
-	if msg.Topic != server.TopicQuote || m.quoteHandler == nil {
-		return
-	}
-	quote, ok := payload.(*QuotePayload)
-	if !ok || quote == nil {
-		return
-	}
-	go m.quoteHandler(ctx, msg, quote)
-}
-
-func (m *ItickManager) queueSubscriptionChanges(changes []SubscriptionChange) {
-	if len(changes) == 0 {
-		return
-	}
-
-	m.changeMu.Lock()
-	defer m.changeMu.Unlock()
-
-	m.pendingChanges = append(m.pendingChanges, changes...)
-	if m.pendingChangesTimer != nil {
-		m.pendingChangesTimer.Reset(defaultSubscribeDelay)
-		return
-	}
-
-	m.pendingChangesTimer = time.AfterFunc(defaultSubscribeDelay, m.flushSubscriptionChanges)
-}
-
-func (m *ItickManager) flushSubscriptionChanges() {
-	m.changeMu.Lock()
-	changes := m.pendingChanges
-	m.pendingChanges = nil
-	m.pendingChangesTimer = nil
-	m.changeMu.Unlock()
-
-	if len(changes) == 0 {
-		return
-	}
-
-	byCategory := make(map[string][]SubscriptionChange)
-	for _, change := range changes {
-		categoryCode := strings.ToLower(strings.TrimSpace(change.CategoryCode))
-		if categoryCode == "" {
-			continue
-		}
-		byCategory[categoryCode] = append(byCategory[categoryCode], change)
-	}
-
-	m.mu.RLock()
-	clients := make(map[string]*ItickWsClient, len(byCategory))
-	for categoryCode := range byCategory {
-		clients[categoryCode] = m.clients[categoryCode]
-	}
-	m.mu.RUnlock()
-
-	for categoryCode, changes := range byCategory {
-		cli := clients[categoryCode]
-		if cli != nil {
-			cli.HandleSubscriptionChanges(changes)
-		}
-	}
-}
-
-func (m *ItickManager) AddGlobalSubscriptions(ctx context.Context, msgs []server.ClientMessage) error {
-	return m.registry.AddMany(ctx, msgs)
-}
-
-func (m *ItickManager) RemoveGlobalSubscriptions(ctx context.Context, msgs []server.ClientMessage) error {
-	return m.registry.RemoveMany(ctx, msgs)
-}
-
-func (m *ItickManager) EnsureUpstreamSubscriptions(ctx context.Context, msgs []server.ClientMessage) error {
-	uniqueMsgs := normalizeUniqueMessages(msgs)
-	if len(uniqueMsgs) == 0 {
-		return nil
-	}
-
-	byCategory := make(map[string]map[string]server.ClientMessage)
-	if err := m.registry.EnsureLeases(ctx, uniqueMsgs); err != nil {
-		return err
-	}
-	for _, msg := range uniqueMsgs {
-		categoryCode := strings.ToLower(strings.TrimSpace(msg.CategoryCode))
-		if byCategory[categoryCode] == nil {
-			byCategory[categoryCode] = make(map[string]server.ClientMessage)
-		}
-		byCategory[categoryCode][server.BuildTopicKey(msg)] = msg
-	}
-
-	m.mu.RLock()
-	clients := make(map[string]*ItickWsClient, len(byCategory))
-	for categoryCode := range byCategory {
-		clients[categoryCode] = m.clients[categoryCode]
-	}
-	m.mu.RUnlock()
-
-	for categoryCode, items := range byCategory {
-		cli := clients[categoryCode]
-		if cli != nil && cli.IsLeader() {
-			if err := cli.subscribeByClientMessages(items); err != nil {
-				return err
+func (m *ItickManager) reconcileActiveProducts(ctx context.Context) {
+	ticker := time.NewTicker(time.Minute)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			if err := m.RefreshActiveProductSubscriptions(ctx); err != nil {
+				logx.Errorf("reconcile active itick products failed: %v", err)
 			}
 		}
 	}
+}
 
-	return nil
+func (m *ItickManager) SetQuoteHandler(handler func(ctx context.Context, msg server.ClientMessage, payload *QuotePayload)) {
+	m.marketCache.SetQuoteHandler(handler)
 }
 
 func sha1Hex(s string) string {

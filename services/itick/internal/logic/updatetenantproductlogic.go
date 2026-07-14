@@ -69,6 +69,9 @@ func (l *UpdateTenantProductLogic) UpdateTenantProduct(in *itick.UpdateTenantPro
 	if err := l.svcCtx.ItickTenantProductModel.Update(l.ctx, item); err != nil {
 		return nil, err
 	}
+	if err := l.svcCtx.ItickManager.RefreshActiveProductSubscriptions(l.ctx); err != nil {
+		l.Errorf("refresh active products after update failed: %v", err)
+	}
 
 	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
 }

@@ -7,7 +7,7 @@ import (
 )
 
 func TestEnsureDesiredSubscriptionsMergesWithoutReplacing(t *testing.T) {
-	c := NewItickWsClient("ws://example.test/crypto", "", "crypto", nil, nil, nil, nil)
+	c := NewItickWsClient("ws://example.test/crypto", "", "crypto", nil, nil)
 
 	first := server.NormalizeClientMessage(server.ClientMessage{
 		Topic:        server.TopicQuote,

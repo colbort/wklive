@@ -54,10 +54,8 @@ type ItickWsClient struct {
 	syncSubMu    sync.Mutex
 	syncSubTimer *time.Timer
 
-	bus      *ClusterBus
-	registry *SubscriptionRegistry
-	locker   *RedisLeaderLock
-	hub      *server.Hub
+	marketCache *MarketDataCache
+	locker      *RedisLeaderLock
 
 	leader int32
 	closed int32
@@ -65,10 +63,8 @@ type ItickWsClient struct {
 
 func NewItickWsClient(
 	url, token, categoryCode string,
-	bus *ClusterBus,
-	registry *SubscriptionRegistry,
+	marketCache *MarketDataCache,
 	locker *RedisLeaderLock,
-	hub *server.Hub,
 ) *ItickWsClient {
 	return &ItickWsClient{
 		url:          url,
@@ -79,10 +75,8 @@ func NewItickWsClient(
 		},
 		desiredSubs:    make(map[string]server.ClientMessage),
 		upstreamGroups: make(map[string]string),
-		bus:            bus,
-		registry:       registry,
+		marketCache:    marketCache,
 		locker:         locker,
-		hub:            hub,
 	}
 }
 
@@ -457,7 +451,7 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env Upstream
 			Turnover:  d.TU,
 			Ts:        d.T,
 		}
-		_ = c.bus.Publish(ctx, msg, &payload)
+		_ = c.marketCache.Set(ctx, msg, &payload)
 
 	case server.TopicTick:
 		payload := TickPayload{
@@ -465,7 +459,7 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env Upstream
 			Volume:    d.V,
 			Ts:        d.T,
 		}
-		_ = c.bus.Publish(ctx, msg, &payload)
+		_ = c.marketCache.Set(ctx, msg, &payload)
 
 	case server.TopicDepth:
 		asks := make([]*DepthLevel, 0)
@@ -479,7 +473,7 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env Upstream
 			Asks: asks,
 			Bids: bids,
 		}
-		_ = c.bus.Publish(ctx, msg, &payload)
+		_ = c.marketCache.Set(ctx, msg, &payload)
 
 	case server.TopicKline:
 		payload := KlinePayload{
@@ -492,67 +486,12 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env Upstream
 			Turnover: d.TU,
 			Ts:       d.T,
 		}
-		_ = c.bus.Publish(ctx, msg, &payload)
+		_ = c.marketCache.Set(ctx, msg, &payload)
 	}
 }
 
-func (c *ItickWsClient) HandleSubscriptionChanges(changes []SubscriptionChange) {
-	if !c.IsLeader() {
-		return
-	}
-
-	changed := false
-	for _, change := range changes {
-		if strings.ToLower(strings.TrimSpace(change.CategoryCode)) != c.categoryCode {
-			continue
-		}
-
-		msg := change.ToClientMessage()
-		key := server.BuildTopicKey(msg)
-
-		switch change.Action {
-		case SubscriptionAdd:
-			if _, _, err := c.buildItickSubscribe(msg); err != nil {
-				logx.Errorf("leader build subscribe failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
-				continue
-			}
-			if c.addDesiredSubscription(key, msg) {
-				changed = true
-			}
-		case SubscriptionRemove:
-			if c.removeDesiredSubscription(key) {
-				changed = true
-			}
-		}
-	}
-
-	if changed {
-		c.queueSubscriptionSync()
-	}
-}
-
-func (c *ItickWsClient) restoreSubscriptions(ctx context.Context) error {
-	registryList, err := c.registry.ListActive(ctx, c.categoryCode)
-	if err != nil {
-		return err
-	}
-
-	merged := make(map[string]server.ClientMessage, len(registryList))
-	for _, msg := range registryList {
-		merged[server.BuildTopicKey(msg)] = msg
-	}
-
-	if c.hub != nil {
-		for _, msg := range c.hub.SnapshotSubscriptions(c.categoryCode) {
-			key := server.BuildTopicKey(msg)
-			merged[key] = msg
-			if err := c.registry.EnsureLease(ctx, msg); err != nil {
-				logx.Errorf("restore local subscription lease failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
-			}
-		}
-	}
-
-	return c.replaceDesiredSubscriptions(merged)
+func (c *ItickWsClient) restoreSubscriptions(_ context.Context) error {
+	return c.syncDesiredSubscriptions()
 }
 
 func (c *ItickWsClient) subscribeByClientMessages(items map[string]server.ClientMessage) error {

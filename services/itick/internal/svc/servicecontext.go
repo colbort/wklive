@@ -26,7 +26,7 @@ type ServiceContext struct {
 	SystemCli                   system.SystemClient
 	OptionCli                   option.OptionInternalClient
 	ItickManager                *client.ItickManager
-	Hub                         *server.Hub
+	MarketDataCache             *client.MarketDataCache
 	LockRedis                   *redis.Client
 	TaskSubscriber              *bus.Subscriber
 	Cache                       cache.Cache
@@ -44,8 +44,6 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	systemCli := system.NewSystemClient(zrpc.MustNewClient(c.SystemRpc).Conn())
 	optionCli := option.NewOptionInternalClient(zrpc.MustNewClient(c.OptionRpc).Conn())
-	hub := server.NewHub()
-
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 
 	itickCategoryModel := models.NewTItickCategoryModel(conn, c.CacheRedis)
@@ -69,6 +67,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Password: c.LockRedis[0].Pass,
 		DB:       0,
 	})
+	marketDataCache := client.NewMarketDataCache(busRedis)
 	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 
 	// 这里不能 defer Close，不然函数返回后 Redis 连接就被关掉了
@@ -86,11 +85,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	itickManager := client.NewItickManager(
 		c.Itick.WSUrl,
+		c.Itick.ApiUrl,
 		c.Itick.Token,
-		hub,
 		itickCategoryModel,
+		itickProductModel,
 		busRedis,
 		lockRedis,
+		marketDataCache,
 	)
 	itickManager.SetQuoteHandler(func(_ context.Context, msg server.ClientMessage, payload *client.QuotePayload) {
 		rpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -128,6 +129,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		logx.Errorf("itick manager load failed: %v", err)
 	}
 
+	if err := itickManager.LoadActiveProductSubscriptions(ctx); err != nil {
+		logx.Errorf("load active itick product subscriptions failed: %v", err)
+	}
 	if err := itickManager.Start(ctx); err != nil {
 		logx.Errorf("itick manager start failed: %v", err)
 	}
@@ -136,7 +140,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SystemCli:                   systemCli,
 		OptionCli:                   optionCli,
 		ItickManager:                itickManager,
-		Hub:                         hub,
+		MarketDataCache:             marketDataCache,
 		LockRedis:                   lockRedis,
 		TaskSubscriber:              taskSubscriber,
 		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat("quote"), redis.Nil),

@@ -34,6 +34,9 @@ func (l *CreateTenantProductLogic) CreateTenantProduct(in *itick.CreateTenantPro
 	if err != nil {
 		return nil, err
 	}
+	if err := l.svcCtx.ItickManager.RefreshActiveProductSubscriptions(l.ctx); err != nil {
+		l.Errorf("refresh active products after create failed: %v", err)
+	}
 	if product == nil {
 		return &itick.AdminCommonResp{
 			Base: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx)),
