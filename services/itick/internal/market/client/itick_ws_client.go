@@ -253,7 +253,8 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 		if err := c.restoreSubscriptions(sessionCtx); err != nil {
 			logx.Errorf("itick ws restore subscriptions failed, category=%s err=%v", c.categoryCode, err)
 		}
-		if atomic.AddInt64(&c.sessions, 1) > 1 && c.onReconnect != nil {
+		atomic.AddInt64(&c.sessions, 1)
+		if c.onReconnect != nil {
 			go c.onReconnect(c.categoryCode)
 		}
 

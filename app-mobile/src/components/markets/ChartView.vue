@@ -78,7 +78,7 @@ const selectedProduct = computed(() => {
 const selectedDisplaySymbol = computed(() => {
   const product = selectedProduct.value
   if (!product) return '--'
-  if (product.baseCoin && product.quoteCoin) return `${product.baseCoin}/${product.quoteCoin}`
+  if (product.baseCoin && product.quoteCoin && product.symbol.endsWith('USDT')) return `${product.baseCoin}/USDT`
 
   const quote = product.quoteCoin || 'USDT'
   if (product.symbol.toUpperCase().endsWith(quote.toUpperCase())) {

@@ -473,8 +473,20 @@ func (w *SyncKlinesWorker) syncBackwardRange(job KlineJob, interval string, et i
 
 func (w *SyncKlinesWorker) syncBackwardAfter(job KlineJob, interval string, et, afterTs int64, limit int) (SyncResult, error) {
 	var result SyncResult
-	for et > afterTs {
-		resp, err := w.getSingleKline(w.ctx, job, et, limit)
+	intervalMs := utils.IntervalMillis(interval)
+	if intervalMs <= 0 {
+		return result, fmt.Errorf("invalid kline interval: %s", interval)
+	}
+	// iTick treats et as an exclusive upper boundary in practice. Ask through
+	// the next bucket boundary so that the requested end bar itself is included,
+	// while upperTs below still prevents accepting a later bar.
+	upperTs := et
+	cursorEt := et + intervalMs
+	if cursorEt < et { // int64 overflow guard
+		cursorEt = et
+	}
+	for cursorEt > afterTs {
+		resp, err := w.getSingleKline(w.ctx, job, cursorEt, limit)
 		if err != nil {
 			return result, err
 		}
@@ -487,7 +499,7 @@ func (w *SyncKlinesWorker) syncBackwardAfter(job KlineJob, interval string, et, 
 			if item.T < minTs {
 				minTs = item.T
 			}
-			if item.T <= afterTs || item.T > et || !validClosedKline(item, et, utils.IntervalMillis(interval)) {
+			if item.T <= afterTs || item.T > upperTs || !validClosedKline(item, upperTs, intervalMs) {
 				continue
 			}
 			list = append(list, w.toCoinKline(job, interval, item))
@@ -503,10 +515,14 @@ func (w *SyncKlinesWorker) syncBackwardAfter(job KlineJob, interval string, et, 
 			}
 			result.NewCount += len(list)
 		}
-		if len(resp.Data) < limit || minTs <= afterTs || minTs <= 0 || minTs >= et {
+		// Do not treat a short page as the end of the requested range. iTick may
+		// cap the effective page size below limit (for example by package or
+		// server-side policy). Continue from the oldest returned timestamp until
+		// the lower boundary is reached or the API returns an empty page.
+		if minTs <= afterTs || minTs <= 0 || minTs >= cursorEt {
 			return result, nil
 		}
-		et = minTs - 1
+		cursorEt = minTs - 1
 	}
 	return result, nil
 }

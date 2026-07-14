@@ -19,10 +19,13 @@ import (
 )
 
 const (
-	gapQueueKey     = "itick:v1:kline:repair:queue"
-	gapJobHashKey   = "itick:v1:kline:repair:jobs"
-	gapScanPageSize = int64(2000)
-	minuteMs        = int64(time.Minute / time.Millisecond)
+	gapQueueKey      = "itick:v1:kline:repair:queue"
+	gapJobHashKey    = "itick:v1:kline:repair:jobs"
+	gapDeadHashKey   = "itick:v1:kline:repair:dead"
+	gapDoneKeyPrefix = "itick:v2:kline:repair:done:"
+	gapScanPageSize  = int64(2000)
+	gapMaxAttempts   = 5
+	minuteMs         = int64(time.Minute / time.Millisecond)
 )
 
 var claimGapJobScript = redis.NewScript(`
@@ -46,6 +49,12 @@ type GapRepairJob struct {
 	StartTs  int64  `json:"startTs"`
 	EndTs    int64  `json:"endTs"`
 	Attempts int    `json:"attempts"`
+}
+
+type gapDeadLetter struct {
+	Job      *GapRepairJob `json:"job"`
+	Error    string        `json:"error"`
+	FailedAt int64         `json:"failedAt"`
 }
 
 // GapRepairService incrementally walks old 1m history and stores repair jobs
@@ -104,11 +113,9 @@ func (s *GapRepairService) scanOnce() error {
 	if err != nil {
 		return err
 	}
-	window := int64(30)
-	if s.svcCtx.ItickRuntimeConfig != nil && s.svcCtx.ItickRuntimeConfig.ReconcileWindowBars > 0 {
-		window = int64(s.svcCtx.ItickRuntimeConfig.ReconcileWindowBars)
-	}
-	cutoff := time.Now().UnixMilli()/minuteMs*minuteMs - window*minuteMs
+	// Scan every closed minute. The five-minute reconciliation remains useful
+	// for correction, but gap detection must not depend on an external scheduler.
+	cutoff := time.Now().UnixMilli()/minuteMs*minuteMs - minuteMs
 	for _, product := range products {
 		if err := s.scanProduct(product, cutoff); err != nil {
 			logx.Errorf("scan product kline gaps failed, product=%d symbol=%s err=%v", product.Id, product.Symbol, err)
@@ -206,7 +213,10 @@ func gapJobID(category, market, symbol string, start, end int64) string {
 }
 
 func (s *GapRepairService) enqueue(job GapRepairJob) error {
-	if exists, err := s.svcCtx.BusRedis.Exists(s.ctx, "itick:v1:kline:repair:done:"+job.ID).Result(); err != nil || exists > 0 {
+	if exists, err := s.svcCtx.BusRedis.Exists(s.ctx, gapDoneKeyPrefix+job.ID).Result(); err != nil || exists > 0 {
+		return err
+	}
+	if dead, err := s.svcCtx.BusRedis.HExists(s.ctx, gapDeadHashKey, job.ID).Result(); err != nil || dead {
 		return err
 	}
 	raw, _ := json.Marshal(job)
@@ -264,24 +274,109 @@ func (s *GapRepairService) claim() (*GapRepairJob, error) {
 }
 
 func (s *GapRepairService) repair(apiURL, token string, job *GapRepairJob) {
+	// Another overlapping repair or the five-minute reconciliation may already
+	// have filled this range while the job was waiting in the retry queue.
+	// Remove such stale jobs before making another external request.
+	if err := s.verifyGapComplete(job); err == nil {
+		s.completeRepair(job, 0, "already complete")
+		return
+	}
+
 	klineJob := KlineJob{ApiUrl: apiURL, Token: token, Category: job.Category, Market: job.Market,
 		Symbol: job.Symbol, KType: reconcileKType}
 	result, err := s.worker.syncBackwardAfter(klineJob, "1m", job.EndTs, job.StartTs-minuteMs, 500)
 	if err == nil {
-		pipe := s.svcCtx.BusRedis.TxPipeline()
-		pipe.HDel(s.ctx, gapJobHashKey, job.ID)
-		pipe.Set(s.ctx, "itick:v1:kline:repair:done:"+job.ID, result.NewCount, 30*24*time.Hour)
-		_, _ = pipe.Exec(s.ctx)
-		logx.Infof("repaired historical kline gap, category=%s market=%s symbol=%s start=%d end=%d count=%d",
-			job.Category, job.Market, job.Symbol, job.StartTs, job.EndTs, result.NewCount)
+		err = s.verifyGapComplete(job)
+	}
+	if err == nil {
+		s.completeRepair(job, result.NewCount, "REST repair")
 		return
 	}
 	job.Attempts++
+	if job.Attempts >= gapMaxAttempts {
+		s.deadLetter(job, err)
+		return
+	}
 	delay := min(time.Duration(1<<min(job.Attempts, 10))*time.Minute, 12*time.Hour)
 	raw, _ := json.Marshal(job)
 	pipe := s.svcCtx.BusRedis.TxPipeline()
 	pipe.HSet(s.ctx, gapJobHashKey, job.ID, raw)
 	pipe.ZAdd(s.ctx, gapQueueKey, redis.Z{Score: float64(time.Now().Add(delay).UnixMilli()), Member: job.ID})
 	_, _ = pipe.Exec(s.ctx)
-	logx.Errorf("repair historical kline gap failed, id=%s attempts=%d retry=%s err=%v", job.ID, job.Attempts, delay, err)
+	logx.Errorf("repair historical kline gap failed, id=%s category=%s market=%s exchange=%s symbol=%s start=%s end=%s fetched=%d attempts=%d retry=%s err=%v",
+		job.ID, job.Category, job.Market, job.Exchange, job.Symbol,
+		formatRepairTs(job.StartTs), formatRepairTs(job.EndTs), result.NewCount, job.Attempts, delay, err)
+}
+
+func (s *GapRepairService) deadLetter(job *GapRepairJob, repairErr error) {
+	letter := gapDeadLetter{Job: job, Error: repairErr.Error(), FailedAt: time.Now().UnixMilli()}
+	raw, _ := json.Marshal(letter)
+	pipe := s.svcCtx.BusRedis.TxPipeline()
+	pipe.HDel(s.ctx, gapJobHashKey, job.ID)
+	pipe.HSet(s.ctx, gapDeadHashKey, job.ID, raw)
+	if _, err := pipe.Exec(s.ctx); err != nil {
+		logx.Errorf("dead-letter historical kline gap failed, id=%s err=%v", job.ID, err)
+		return
+	}
+	logx.Errorf("historical kline gap moved to dead-letter after %d attempts, id=%s category=%s market=%s exchange=%s symbol=%s start=%s end=%s err=%v",
+		job.Attempts, job.ID, job.Category, job.Market, job.Exchange, job.Symbol,
+		formatRepairTs(job.StartTs), formatRepairTs(job.EndTs), repairErr)
+}
+
+func (s *GapRepairService) completeRepair(job *GapRepairJob, count int, reason string) {
+	pipe := s.svcCtx.BusRedis.TxPipeline()
+	pipe.HDel(s.ctx, gapJobHashKey, job.ID)
+	pipe.HDel(s.ctx, gapDeadHashKey, job.ID)
+	pipe.Set(s.ctx, gapDoneKeyPrefix+job.ID, count, 30*24*time.Hour)
+	if _, err := pipe.Exec(s.ctx); err != nil {
+		logx.Errorf("complete historical kline gap job failed, id=%s err=%v", job.ID, err)
+		return
+	}
+	logx.Infof("completed historical kline gap, category=%s market=%s symbol=%s start=%s end=%s count=%d reason=%s",
+		job.Category, job.Market, job.Symbol, formatRepairTs(job.StartTs), formatRepairTs(job.EndTs), count, reason)
+}
+
+func (s *GapRepairService) verifyGapComplete(job *GapRepairJob) error {
+	model := s.svcCtx.Factory.New(job.Category, "1m")
+	if model == nil {
+		return fmt.Errorf("invalid 1m model for category=%s", job.Category)
+	}
+	list, err := model.FindRangeByMarketSymbol(s.ctx, job.Market, job.Symbol, job.StartTs, job.EndTs+minuteMs)
+	if err != nil {
+		return err
+	}
+	present := make(map[int64]struct{}, len(list))
+	for _, bar := range list {
+		if bar != nil {
+			present[bar.Ts] = struct{}{}
+		}
+	}
+	missingCount := 0
+	var firstMissing, lastMissing int64
+	for ts := job.StartTs; ts <= job.EndTs; ts += minuteMs {
+		trading := s.svcCtx.MarketCalendarResolver == nil ||
+			s.svcCtx.MarketCalendarResolver.IsTradingMinute(s.ctx, job.Category, job.Market, job.Exchange, ts)
+		if !trading {
+			continue
+		}
+		if _, ok := present[ts]; !ok {
+			if missingCount == 0 {
+				firstMissing = ts
+			}
+			lastMissing = ts
+			missingCount++
+		}
+	}
+	if missingCount > 0 {
+		return fmt.Errorf("REST completed but MongoDB still has %d missing trading minutes, first=%s last=%s",
+			missingCount, formatRepairTs(firstMissing), formatRepairTs(lastMissing))
+	}
+	return nil
+}
+
+func formatRepairTs(ts int64) string {
+	if ts <= 0 {
+		return "-"
+	}
+	return time.UnixMilli(ts).UTC().Format(time.RFC3339)
 }

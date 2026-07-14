@@ -503,14 +503,14 @@ App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送
 - Tick 当前分钟桶和股票累计量基线可从 Redis 恢复；
 - 派生任务区分高优先级实时/校准队列与低优先级历史队列；
 - 高周期按产品和周期批量查询、批量写入。
-- WS 在首次连接之后再次完成鉴权和恢复订阅时，按 category 立即触发 reconnect repair；同一 category 同时只运行一个恢复任务；
+- WS 每次完成鉴权和恢复订阅（包括服务启动后的首次连接）都会按 category 立即触发 reconnect repair；同一 category 同时只运行一个恢复任务；
 - reconnect repair 读取每个活跃产品 MongoDB 最新 `1m` 作为断点，通过单产品 `/kline` 的 `et` 参数从当前最后闭合分钟向后分页，直到碰到该断点，因此停机时间超过最近校准窗口也能补齐；
 - 断点回补完成后再执行一次该 category 的批量最近窗口校准，矫正断线边界附近的临时 K 线；没有任何本地历史的产品不会在重连时意外启动全历史同步，仍由管理后台初始化。
 - `GapRepairService` 按 `gapScanIntervalMinutes` 周期扫描活跃产品的 MongoDB `1m`；每个产品每轮最多读取 2000 根，并将分页游标保存到 `itick:v1:kline:gap_scan:{productId}`，多轮后覆盖完整历史；
-- scanner 跳过最近校准窗口，并使用市场时区、Session、周末和 Holiday 过滤非交易分钟；非 crypto 市场没有日历或 Session 时保守跳过，避免把夜间休市误判为缺口；
+- scanner 扫描到当前最后一个已闭合分钟，并使用市场时区、Session、周末和 Holiday 过滤非交易分钟；它不再跳过最近校准窗口，因此不依赖外部五分钟任务才能补最近缺口；非 crypto 市场没有日历或 Session 时保守跳过，避免把夜间休市误判为缺口；
 - 缺口任务持久化到 Redis ZSet `itick:v1:kline:repair:queue` 和 Hash `itick:v1:kline:repair:jobs`，多实例通过 Lua 原子领取；
 - repair worker 每批最多处理 `repairBatchSize` 个任务，使用单产品 `/kline?et=` 定点向后分页，只写缺口范围，并通过历史低优先级派生队列传播到高周期；
-- repair 失败按分钟级指数退避，最大 12 小时；成功任务保存 30 天完成标记，避免休市边界或供应商确实无数据时反复请求。
+- repair 在请求 REST 前先查询 MongoDB，已被其他重叠任务或五分钟校准补齐的旧任务会直接清理；REST 写入后再次确认区间内每个应交易分钟都已存在；空响应或部分回补按分钟级指数退避重试，连续 5 次仍无法补齐时移入 Redis Hash `itick:v1:kline:repair:dead`，scanner 不再重复创建同一任务；验证成功的任务保存 30 天完成标记。
 
 仍需完善：
 
