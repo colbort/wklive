@@ -794,55 +794,55 @@ func (c *ItickWsClient) buildItickSubscribe(msg types.ClientMessage) (string, st
 	}
 
 	params := buildSymbolRegion(msg.Symbol, msg.Market)
-	ts := ""
+	tys := ""
 
 	switch msg.Topic {
 	case types.TopicQuote:
-		ts = "quote"
+		tys = "quote"
 	case types.TopicDepth:
-		ts = "depth"
+		tys = "depth"
 	case types.TopicTick:
-		ts = "tick"
+		tys = "tick"
 	case types.TopicKline:
-		ts, err := intervalToItickKlineType(msg.Interval)
+		temp, err := utils.IntervalToStream(msg.Interval)
 		if err != nil {
 			return "", "", err
 		}
-		ts = ts
+		tys = temp
 	default:
 		return "", "", fmt.Errorf("unsupported topic: %s", msg.Topic)
 	}
 
-	return params, ts, nil
+	return params, tys, nil
 }
 
-func (c *ItickWsClient) subscribe(params, ts string) error {
+func (c *ItickWsClient) subscribe(params, tys string) error {
 	req := types.SubscribeReq{
 		Ac:     "subscribe",
 		Params: params,
-		Types:  ts,
+		Types:  tys,
 	}
 
 	if err := c.writeJSON(req); err != nil {
-		logx.Errorf("itick subscribe failed, category=%s params=%s, types=%s", c.categoryCode, params, ts)
+		logx.Errorf("itick subscribe failed, category=%s params=%s, types=%s", c.categoryCode, params, tys)
 		return err
 	}
 
 	return nil
 }
 
-func (c *ItickWsClient) unsubscribe(params, ts string) error {
+func (c *ItickWsClient) unsubscribe(params, tys string) error {
 	req := types.UnsubscribeReq{
 		Ac:     "unsubscribe",
 		Params: params,
-		Types:  ts,
+		Types:  tys,
 	}
 
 	if err := c.writeJSON(req); err != nil {
 		return err
 	}
 
-	logx.Infof("itick unsubscribe success, category=%s params=%s, types=%s", c.categoryCode, params, ts)
+	logx.Infof("itick unsubscribe success, category=%s params=%s, types=%s", c.categoryCode, params, tys)
 	return nil
 }
 
@@ -948,10 +948,6 @@ func sameClientMessage(left, right types.ClientMessage) bool {
 
 func buildSymbolRegion(symbol, market string) string {
 	return strings.ToUpper(strings.TrimSpace(symbol)) + "$" + strings.ToUpper(strings.TrimSpace(market))
-}
-
-func intervalToItickKlineType(interval string) (string, error) {
-	return utils.IntervalToStream(interval)
 }
 
 func mapItickType(t string) (types.Topic, string) {
