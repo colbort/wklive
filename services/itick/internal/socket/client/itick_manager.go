@@ -89,8 +89,14 @@ func (m *ItickManager) refreshActiveProductSubscriptions(ctx context.Context, wa
 		}
 	}
 
+	if warm {
+		m.preheater.Warm(ctx, msgs)
+	}
 	byCategory := make(map[string]map[string]types.ClientMessage)
 	for _, msg := range normalizeUniqueMessages(msgs) {
+		if m.preheater.IsUnsupported(msg.CategoryCode) {
+			continue
+		}
 		if byCategory[msg.CategoryCode] == nil {
 			byCategory[msg.CategoryCode] = make(map[string]types.ClientMessage)
 		}
@@ -109,9 +115,6 @@ func (m *ItickManager) refreshActiveProductSubscriptions(ctx context.Context, wa
 		if started && len(items) > 0 && runCtx != nil {
 			cli.Start(runCtx)
 		}
-	}
-	if warm {
-		m.preheater.Warm(ctx, msgs)
 	}
 	logx.Infof("loaded active itick product subscriptions, products=%d topics=%d", len(ids), len(msgs))
 	return nil

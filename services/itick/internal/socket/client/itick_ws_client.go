@@ -72,9 +72,10 @@ type ItickWsClient struct {
 	locker         *RedisLeaderLock
 	connectLimiter *RedisConnectLimiter
 
-	leader  int32
-	closed  int32
-	started int32
+	leader        int32
+	closed        int32
+	started       int32
+	authenticated int32
 }
 
 func NewItickWsClient(
@@ -250,6 +251,7 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 				continue
 			}
 		}
+		atomic.StoreInt32(&c.authenticated, 1)
 
 		if err := c.restoreSubscriptions(sessionCtx); err != nil {
 			logx.Errorf("itick ws restore subscriptions failed, category=%s err=%v", c.categoryCode, err)
@@ -561,7 +563,7 @@ func (c *ItickWsClient) replaceDesiredSubscriptions(items map[string]types.Clien
 	}
 	c.subMu.Unlock()
 
-	if !needSync {
+	if !needSync || !c.canSyncSubscriptions() {
 		return nil
 	}
 
@@ -589,7 +591,7 @@ func (c *ItickWsClient) ensureDesiredSubscriptions(items map[string]types.Client
 	}
 	c.subMu.Unlock()
 
-	if !changed {
+	if !changed || !c.canSyncSubscriptions() {
 		return nil
 	}
 
@@ -637,7 +639,7 @@ func (c *ItickWsClient) flushSubscriptionSync() {
 	c.syncSubTimer = nil
 	c.syncSubMu.Unlock()
 
-	if !c.IsLeader() || c.IsClosed() {
+	if !c.canSyncSubscriptions() {
 		return
 	}
 
@@ -917,7 +919,17 @@ func (c *ItickWsClient) IsLeader() bool {
 	return atomic.LoadInt32(&c.leader) == 1
 }
 
+func (c *ItickWsClient) canSyncSubscriptions() bool {
+	if !c.IsLeader() || c.IsClosed() || atomic.LoadInt32(&c.authenticated) != 1 {
+		return false
+	}
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.conn != nil
+}
+
 func (c *ItickWsClient) closeConn() {
+	atomic.StoreInt32(&c.authenticated, 0)
 	c.mu.Lock()
 	conn := c.conn
 	c.conn = nil

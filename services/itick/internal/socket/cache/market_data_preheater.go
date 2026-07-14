@@ -17,20 +17,23 @@ import (
 )
 
 type MarketDataPreheater struct {
-	apiURL     string
-	token      string
-	cache      *MarketDataCache
-	httpClient *http.Client
-	limiter    *rate.Limiter
+	apiURL      string
+	token       string
+	cache       *MarketDataCache
+	httpClient  *http.Client
+	limiter     *rate.Limiter
+	mu          sync.RWMutex
+	unsupported map[string]struct{}
 }
 
 func NewMarketDataPreheater(apiURL, token string, cache *MarketDataCache) *MarketDataPreheater {
 	return &MarketDataPreheater{
-		apiURL:     strings.TrimRight(strings.TrimSpace(apiURL), "/"),
-		token:      strings.TrimSpace(token),
-		cache:      cache,
-		httpClient: &http.Client{Timeout: 10 * time.Second},
-		limiter:    rate.NewLimiter(rate.Limit(400.0/60.0), 1),
+		apiURL:      strings.TrimRight(strings.TrimSpace(apiURL), "/"),
+		token:       strings.TrimSpace(token),
+		cache:       cache,
+		httpClient:  &http.Client{Timeout: 10 * time.Second},
+		limiter:     rate.NewLimiter(rate.Limit(400.0/60.0), 1),
+		unsupported: make(map[string]struct{}),
 	}
 }
 
@@ -62,33 +65,61 @@ func (p *MarketDataPreheater) Warm(ctx context.Context, msgs []types.ClientMessa
 		groups[groupKey] = append(groups[groupKey], msg)
 	}
 
-	jobs := make(chan marketDataBatch)
+	batchesByCategory := make(map[string][]marketDataBatch)
+	for _, items := range groups {
+		for start := 0; start < len(items); start += marketDataPreheatBatchSize {
+			end := min(start+marketDataPreheatBatchSize, len(items))
+			batch := marketDataBatch{category: items[start].CategoryCode, market: items[start].Market,
+				topic: items[start].Topic, msgs: items[start:end]}
+			batchesByCategory[batch.category] = append(batchesByCategory[batch.category], batch)
+		}
+	}
+
+	jobs := make(chan []marketDataBatch)
 	var wg sync.WaitGroup
-	for range 8 {
+	for range min(8, len(batchesByCategory)) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			for batch := range jobs {
-				if err := p.fetchBatchAndCache(ctx, batch); err != nil {
+			for batches := range jobs {
+				for _, batch := range batches {
+					err := p.fetchBatchAndCache(ctx, batch)
+					if err == nil {
+						continue
+					}
+					if isPackageUnsupported(err) {
+						p.markUnsupported(batch.category)
+						logx.Errorf("itick package does not support category, category=%s err=%v", batch.category, err)
+						break
+					}
 					logx.Errorf("preheat itick market data batch failed, topic=%s category=%s market=%s count=%d err=%v",
 						batch.topic, batch.category, batch.market, len(batch.msgs), err)
 				}
 			}
 		}()
 	}
-	for _, items := range groups {
-		for start := 0; start < len(items); start += marketDataPreheatBatchSize {
-			end := min(start+marketDataPreheatBatchSize, len(items))
-			jobs <- marketDataBatch{
-				category: items[start].CategoryCode,
-				market:   items[start].Market,
-				topic:    items[start].Topic,
-				msgs:     items[start:end],
-			}
-		}
+	for _, batches := range batchesByCategory {
+		jobs <- batches
 	}
 	close(jobs)
 	wg.Wait()
+}
+
+func (p *MarketDataPreheater) IsUnsupported(category string) bool {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	_, ok := p.unsupported[strings.ToLower(strings.TrimSpace(category))]
+	return ok
+}
+
+func (p *MarketDataPreheater) markUnsupported(category string) {
+	p.mu.Lock()
+	p.unsupported[strings.ToLower(strings.TrimSpace(category))] = struct{}{}
+	p.mu.Unlock()
+}
+
+func isPackageUnsupported(err error) bool {
+	return err != nil && strings.Contains(strings.ToLower(err.Error()), "package only supports subscribing")
 }
 
 func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch marketDataBatch) error {
@@ -127,8 +158,8 @@ func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch mark
 		return fmt.Errorf("REST returned status %d", resp.StatusCode)
 	}
 	var result struct {
-		Code int                     `json:"code"`
-		Msg  string                  `json:"msg"`
+		Code int                           `json:"code"`
+		Msg  string                        `json:"msg"`
 		Data map[string]types.UpstreamData `json:"data"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {

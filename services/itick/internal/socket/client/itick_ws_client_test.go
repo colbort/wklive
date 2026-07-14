@@ -25,13 +25,13 @@ func TestEnsureDesiredSubscriptionsMergesWithoutReplacing(t *testing.T) {
 
 	if err := c.ensureDesiredSubscriptions(map[string]types.ClientMessage{
 		cache.BuildTopicKey(first): first,
-	}); err == nil {
-		t.Fatalf("expected sync to fail without a websocket connection")
+	}); err != nil {
+		t.Fatalf("expected disconnected client to only store desired subscription: %v", err)
 	}
 	if err := c.ensureDesiredSubscriptions(map[string]types.ClientMessage{
 		cache.BuildTopicKey(second): second,
-	}); err == nil {
-		t.Fatalf("expected sync to fail without a websocket connection")
+	}); err != nil {
+		t.Fatalf("expected disconnected client to only store desired subscription: %v", err)
 	}
 
 	c.subMu.Lock()
