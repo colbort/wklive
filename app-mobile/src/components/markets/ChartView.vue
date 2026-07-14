@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
+  ActionType,
   dispose,
   init,
   type Chart,
@@ -13,6 +14,7 @@ import {
 } from 'klinecharts'
 
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
+import AppIcon from '@/components/common/AppIcon.vue'
 import { getLocale, useI18n } from '@/i18n'
 import type { Interval } from '@/types/core'
 import type {
@@ -169,7 +171,7 @@ function handlePointerEnd(event: TouchEvent | MouseEvent) {
   swipeStartX.value = null
   swipeStartY.value = null
 
-  if (deltaX > 56 && Math.abs(deltaY) < 42) {
+  if (deltaX > 56 && Math.abs(deltaY) < 42 && !props.loadingKline) {
     emit('loadPreviousPage')
   }
 }
@@ -240,18 +242,48 @@ function initKlineChart() {
   chartResizeObserver.observe(chartHostRef.value)
 }
 
+function disposeKlineChart() {
+  chartResizeObserver?.disconnect()
+  chartResizeObserver = null
+  if (chart) {
+    dispose(chart)
+    chart = null
+  }
+}
+
 function syncKlineChartData() {
   if (!chart) return
 
   if (!props.viewingLatestKlinePage) {
     const currentData = chart.getDataList()
+    if (!currentData.length) {
+      chart.applyNewData(klineChartData.value, true)
+      return
+    }
+    const visibleRange = chart.getVisibleRange()
     const firstTimestamp = currentData[0]?.timestamp ?? 0
     const previousData = firstTimestamp
       ? klineChartData.value.filter((item) => item.timestamp < firstTimestamp)
       : klineChartData.value
 
     if (previousData.length) {
-      chart.applyMoreData(previousData, true)
+      const activeChart = chart
+      const restoreRightDataIndex = visibleRange.to + previousData.length
+      const restoreAnchor = () => {
+        activeChart.unsubscribeAction(ActionType.OnDataReady, restoreAnchor)
+        if (chart === activeChart) {
+          // scrollToDataIndex aligns the requested item to the right side. Use
+          // the old visible right edge shifted by the number of prepended bars
+          // to preserve the complete viewport instead of showing bar zero.
+          window.requestAnimationFrame(() => {
+            if (chart === activeChart) {
+              activeChart.scrollToDataIndex(restoreRightDataIndex)
+            }
+          })
+        }
+      }
+      activeChart.subscribeAction(ActionType.OnDataReady, restoreAnchor)
+      activeChart.applyNewData(klineChartData.value, true)
     }
     return
   }
@@ -283,15 +315,23 @@ onBeforeUnmount(() => {
   scrollContainer?.removeEventListener('scroll', requestDetailTabsPinUpdate)
   window.removeEventListener('resize', refreshDetailTabsPin)
   if (pinRaf) window.cancelAnimationFrame(pinRaf)
-  chartResizeObserver?.disconnect()
-  chartResizeObserver = null
-  if (chart) {
-    dispose(chart)
-    chart = null
-  }
+  disposeKlineChart()
 })
 
 watch(klineChartData, syncKlineChartData)
+
+watch(activeDetailTab, async (tab) => {
+  if (tab !== 'market') {
+    disposeKlineChart()
+    return
+  }
+
+  // The market panel uses v-if, so returning from depth/trades creates a new
+  // host element. Wait for that element before creating and sizing the chart.
+  await nextTick()
+  initKlineChart()
+  chart?.resize()
+})
 
 watch(
   () => getLocale(),
