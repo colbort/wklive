@@ -66,6 +66,7 @@ func (m *defaultTItickProductModel) FindActivePage(ctx context.Context, cursor, 
 
 func (m *defaultTItickProductModel) FindPage(ctx context.Context, filter ItickProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
+	queryLimit := limit + 1
 
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("category_type", int64(filter.CategoryType))
@@ -76,16 +77,13 @@ func (m *defaultTItickProductModel) FindPage(ctx context.Context, filter ItickPr
 	if strings.TrimSpace(filter.Symbol) != "" {
 		builder.LikeString("symbol", filter.Symbol)
 	}
+	if keyword := strings.TrimSpace(filter.Keyword); keyword != "" {
+		like := "%" + keyword + "%"
+		builder.Or([]string{"name LIKE ?", "display_name LIKE ?", "code LIKE ?", "symbol LIKE ?"}, like, like, like, like)
+	}
 
 	where := builder.Where()
 	args := builder.Args()
-
-	// ---- total ----
-	var total int64
-	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
-		return nil, 0, err
-	}
 
 	// ---- list ----
 	listArgs := append([]any{}, args...)
@@ -101,7 +99,7 @@ func (m *defaultTItickProductModel) FindPage(ctx context.Context, filter ItickPr
 			LIMIT ?`,
 			tItickProductRows, m.table, where,
 		)
-		listArgs = append(listArgs, limit)
+		listArgs = append(listArgs, queryLimit)
 	} else {
 		// 后续页
 		listSql = fmt.Sprintf(
@@ -112,7 +110,7 @@ func (m *defaultTItickProductModel) FindPage(ctx context.Context, filter ItickPr
 			LIMIT ?`,
 			tItickProductRows, m.table, where,
 		)
-		listArgs = append(listArgs, cursor, limit)
+		listArgs = append(listArgs, cursor, queryLimit)
 	}
 
 	var list []*TItickProduct
@@ -120,7 +118,9 @@ func (m *defaultTItickProductModel) FindPage(ctx context.Context, filter ItickPr
 		return nil, 0, err
 	}
 
-	return list, total, nil
+	// Cursor pagination only needs one extra row to determine hasNext. Returning
+	// total=0 avoids an exact COUNT scan on every page request.
+	return list, 0, nil
 }
 
 func (m *defaultTItickProductModel) FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error) {

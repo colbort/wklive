@@ -7,7 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/itick"
-	"wklive/services/itick/internal/marketdata/kline"
+	"wklive/services/itick/internal/market/kline"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 
@@ -37,7 +37,7 @@ func (l *SyncProductKlineHistoryLogic) SyncProductKlineHistory(in *itick.SyncPro
 	}
 	worker := kline.NewSyncKlinesWorker(l.ctx, l.svcCtx, nil, "", "")
 	result, err := worker.FetchProductHistory(kline.KlineJob{ApiUrl: l.svcCtx.Config.Itick.ApiUrl, Token: l.svcCtx.Config.Itick.Token,
-		Category: in.CategoryCode, Market: in.Market, Symbol: in.Symbol, KType: int32(in.KType)}, interval, in.EndTs, int(in.Limit))
+		Category: in.CategoryCode, Market: in.Market, Symbol: in.Symbol, KType: int32(in.KType)}, interval, in.EndTs)
 	if err != nil {
 		return nil, err
 	}

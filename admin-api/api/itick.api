@@ -258,12 +258,11 @@ type ListProductsResp {
 // K线
 // ====================
 type GetProductKlineReq {
-	categoryCode string `json:"categoryCode"`
-	market       string `json:"market"`
-	symbol       string `json:"symbol"`
-	kType        int64  `json:"kType"`
-	endTs        int64  `json:"endTs"`
-	limit        int64  `json:"limit"`
+	categoryCode string `form:"categoryCode"`
+	market       string `form:"market"`
+	symbol       string `form:"symbol"`
+	kType        int64  `form:"kType"`
+	endTs        int64  `form:"endTs"`
 }
 
 type GetProductKlineResp {
@@ -277,7 +276,6 @@ type SyncProductKlineHistoryReq {
 	symbol       string `json:"symbol"`
 	kType        int64  `json:"kType"`
 	endTs        int64  `json:"endTs,optional"`
-	limit        int64  `json:"limit"`
 }
 
 type SyncProductKlineHistoryResp {

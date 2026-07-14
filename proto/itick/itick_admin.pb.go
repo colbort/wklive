@@ -1405,7 +1405,6 @@ type SyncProductKlineHistoryReq struct {
 	Symbol        string                 `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	KType         KlineType              `protobuf:"varint,4,opt,name=k_type,json=kType,proto3,enum=itick.KlineType" json:"k_type,omitempty"`
 	EndTs         int64                  `protobuf:"varint,5,opt,name=end_ts,json=endTs,proto3" json:"end_ts,omitempty"`
-	Limit         int64                  `protobuf:"varint,6,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1471,13 +1470,6 @@ func (x *SyncProductKlineHistoryReq) GetKType() KlineType {
 func (x *SyncProductKlineHistoryReq) GetEndTs() int64 {
 	if x != nil {
 		return x.EndTs
-	}
-	return 0
-}
-
-func (x *SyncProductKlineHistoryReq) GetLimit() int64 {
-	if x != nil {
-		return x.Limit
 	}
 	return 0
 }
@@ -2894,14 +2886,13 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x05limit\x18\x06 \x01(\x03R\x05limit\"]\n" +
 	"\x13GetProductKlineResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12 \n" +
-	"\x04data\x18\x02 \x03(\v2\f.itick.KlineR\x04data\"\xc7\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\f.itick.KlineR\x04data\"\xb7\x01\n" +
 	"\x1aSyncProductKlineHistoryReq\x12#\n" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12'\n" +
 	"\x06k_type\x18\x04 \x01(\x0e2\x10.itick.KlineTypeR\x05kType\x12\x15\n" +
-	"\x06end_ts\x18\x05 \x01(\x03R\x05endTs\x12\x14\n" +
-	"\x05limit\x18\x06 \x01(\x03R\x05limit\"f\n" +
+	"\x06end_ts\x18\x05 \x01(\x03R\x05endTsJ\x04\b\x06\x10\a\"f\n" +
 	"\x1bSyncProductKlineHistoryResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12!\n" +
 	"\fsynced_count\x18\x02 \x01(\x03R\vsyncedCount\"\xde\x01\n" +

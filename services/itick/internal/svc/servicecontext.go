@@ -8,12 +8,12 @@ import (
 	"wklive/proto/option"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
-	"wklive/services/itick/internal/marketdata/client"
-	"wklive/services/itick/internal/marketdata/types"
+	"wklive/services/itick/internal/market/client"
+	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/internal/pkg/klinewriter"
 	"wklive/services/itick/models"
 
-	icache "wklive/services/itick/internal/marketdata/cache"
+	icache "wklive/services/itick/internal/market/cache"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"

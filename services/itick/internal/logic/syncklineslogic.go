@@ -11,7 +11,7 @@ import (
 	"wklive/common/i18n"
 	cutils "wklive/common/utils"
 	"wklive/proto/itick"
-	"wklive/services/itick/internal/marketdata/kline"
+	"wklive/services/itick/internal/market/kline"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"

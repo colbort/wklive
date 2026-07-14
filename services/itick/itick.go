@@ -10,7 +10,7 @@ import (
 
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/config"
-	"wklive/services/itick/internal/marketdata/kline"
+	"wklive/services/itick/internal/market/kline"
 	"wklive/services/itick/internal/pkg/bootstrap"
 	"wklive/services/itick/internal/server"
 	"wklive/services/itick/internal/svc"

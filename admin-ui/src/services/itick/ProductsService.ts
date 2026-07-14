@@ -85,7 +85,7 @@ export type GetProductKlineReq = {
   limit: number;
 };
 
-export type SyncProductKlineHistoryReq = GetProductKlineReq;
+export type SyncProductKlineHistoryReq = Omit<GetProductKlineReq, "limit">;
 
 export type SyncProductKlineHistoryResp = RespBase & {
   syncedCount: number;

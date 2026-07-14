@@ -1246,12 +1246,12 @@ type GetPositionResp struct {
 }
 
 type GetProductKlineReq struct {
-	CategoryCode string `json:"categoryCode"`
-	Market       string `json:"market"`
-	Symbol       string `json:"symbol"`
-	KType        int64  `json:"kType"`
-	EndTs        int64  `json:"endTs"`
-	Limit        int64  `json:"limit"`
+	CategoryCode string `form:"categoryCode"`
+	Market       string `form:"market"`
+	Symbol       string `form:"symbol"`
+	KType        int64  `form:"kType"`
+	EndTs        int64  `form:"endTs"`
+	Limit        int64  `form:"limit"`
 }
 
 type GetProductKlineResp struct {
@@ -3191,7 +3191,6 @@ type SyncProductKlineHistoryReq struct {
 	Symbol       string `json:"symbol"`
 	KType        int64  `json:"kType"`
 	EndTs        int64  `json:"endTs,optional"`
-	Limit        int64  `json:"limit"`
 }
 
 type SyncProductKlineHistoryResp struct {

@@ -10,7 +10,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/proto/system"
-	"wklive/services/itick/internal/marketdata/types"
+	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/models"
 )
 

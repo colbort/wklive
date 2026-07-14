@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"wklive/proto/itick"
-	"wklive/services/itick/internal/marketdata/cache"
-	"wklive/services/itick/internal/marketdata/types"
+	"wklive/services/itick/internal/market/cache"
+	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
