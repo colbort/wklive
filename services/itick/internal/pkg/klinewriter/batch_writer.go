@@ -28,11 +28,14 @@ type BatchWriter struct {
 	wg           sync.WaitGroup
 	mu           sync.Mutex
 	buffers      map[batchKey][]*models.CoinKline
-	flushHandler func([]*models.CoinKline)
+	handlerMu    sync.RWMutex
+	flushHandler func([]*models.CoinKline) error
 }
 
-func (w *BatchWriter) SetFlushHandler(handler func([]*models.CoinKline)) {
+func (w *BatchWriter) SetFlushHandler(handler func([]*models.CoinKline) error) {
+	w.handlerMu.Lock()
 	w.flushHandler = handler
+	w.handlerMu.Unlock()
 }
 
 func NewBatchWriter(
@@ -190,7 +193,12 @@ func (w *BatchWriter) flush(key batchKey, list []*models.CoinKline) {
 
 	logx.Infof("batch bulk upsert success, categoryCode=%s interval=%s size=%d",
 		key.CategoryCode, key.Interval, len(list))
-	if key.Interval == "1m" && w.flushHandler != nil {
-		w.flushHandler(list)
+	w.handlerMu.RLock()
+	handler := w.flushHandler
+	w.handlerMu.RUnlock()
+	if key.Interval == "1m" && handler != nil {
+		if err := handler(list); err != nil {
+			logx.Errorf("enqueue derived kline rebuild failed, size=%d err=%v", len(list), err)
+		}
 	}
 }

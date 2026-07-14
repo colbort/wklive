@@ -43,3 +43,21 @@ func TestTickAggregatorRejectsFinalizedBucket(t *testing.T) {
 		t.Fatal("finalized bucket must not be recreated by late ticks")
 	}
 }
+
+func TestTickAggregatorUsesStockCumulativeVolumeDelta(t *testing.T) {
+	a := NewTickAggregator(nil)
+	now := time.Now().UnixMilli()
+	bucketTs := now / minuteMillis * minuteMillis
+	msg := types.ClientMessage{CategoryCode: "stock", Market: "US", Symbol: "AAPL"}
+	a.Add(context.Background(), msg, &types.TickPayload{LastPrice: 10, Volume: 100, Ts: bucketTs + 1_000})
+	a.Add(context.Background(), msg, &types.TickPayload{LastPrice: 11, Volume: 103, Ts: bucketTs + 2_000})
+	a.Add(context.Background(), msg, &types.TickPayload{LastPrice: 12, Volume: 108, Ts: bucketTs + 3_000})
+
+	bucket := a.buckets[tickBucketKey{category: "stock", market: "US", symbol: "AAPL", ts: bucketTs}]
+	if bucket == nil || bucket.volume != 8 {
+		t.Fatalf("expected cumulative volume delta 8, got %+v", bucket)
+	}
+	if bucket.turnover != 93 {
+		t.Fatalf("expected estimated turnover 93, got %+v", bucket)
+	}
+}

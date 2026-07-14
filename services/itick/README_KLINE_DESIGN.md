@@ -1,248 +1,531 @@
-# iTick K 线历史与增量更新设计（待确认）
+# iTick K 线历史同步与增量更新实现流程
 
-> 目标：只维护租户实际使用的产品，在服务重启、Redis 丢失、WebSocket 断线、消息乱序或定时任务重复执行时，仍能自动恢复并最终得到完整、一致的 K 线数据。
+> 本文以 `services/itick` 当前代码为准，说明历史数据同步、实时 `1m` 聚合、每 5 分钟校正及高周期派生的实际调用链。未实现或仍有风险的部分单独列在文末。
 
-## 1. 设计结论
-
-1. MySQL 是“租户正在使用哪些产品”的唯一真源；Redis 是可重建的运行时索引，不能成为唯一依据。
-2. 实时 K 线使用 **tick** 生成，不使用 quote 生成：quote 是最新行情快照，成交量通常是累计值，且采样可能遗漏区间高低点；tick 更适合形成 OHLCV。
-3. 本地只直接聚合 `1m`；`5m/15m/30m/1h/1d/1w/1mo/1y` 从已落库的低周期 K 线逐级或直接聚合。这样可减少计算量，并使高周期能够随 1m 修正而确定性重算。
-4. 本地实时聚合结果是“临时/低延迟数据”；iTick REST 批量 K 线是“校准数据”。每 5 分钟拉取最近窗口，采用幂等 upsert 覆盖并重算受影响的高周期。
-5. 历史回补和 5 分钟增量校准分成两个独立任务，使用不同队列、并发和限流，避免首次历史同步拖慢实时补洞。
-6. 所有时间统一保存 UTC 毫秒时间戳；日、周、月、年 K 线必须按产品所属市场的时区、交易时段和交易日历切桶，不能固定按 UTC 的 24 小时、7 天或 30 天计算。
-
-## 2. 数据职责
-
-### 2.1 MySQL
-
-- `t_itick_product`：产品主数据。
-- `t_itick_tenant_product`：租户产品关系，是活跃产品集合的来源。
-- `t_itick_kline_sync_progress`：每个产品、周期的历史回补和增量校准水位。
-- 建议新增 `t_itick_product_change_outbox`：租户产品变更事件。租户关系和 outbox 在同一事务提交，消费者异步更新 Redis，解决“数据库成功但 Redis 更新失败”的双写不一致。
-
-活跃产品建议定义为：
+## 1. 总体数据链路
 
 ```text
+                                ┌─ iTick 单产品 /{category}/kline
+管理后台手动同步指定产品/周期 ────┤
+                                └─ 向历史方向分页 → MongoDB upsert
+
+任务中心每 5 分钟触发 SyncKlines
+        ↓
+Redis/MySQL 加载活跃产品
+        ↓
+iTick 批量 /{category}/klines，最近 30 根 1m
+        ↓
+校验已闭合 K 线 → MongoDB upsert
+        ↓
+DerivedAggregator 重算受影响的高周期 → MongoDB + Redis
+
+iTick WebSocket tick
+        ↓
+TickAggregator 按事件时间聚合 1m
+        ↓ 每个自然分钟结束，最多约 5 秒检查延迟
+BatchWriter 批量 upsert MongoDB
+        ↓ 写入成功回调
+DerivedAggregator 重算受影响的高周期 → MongoDB + Redis
+
+iTick WebSocket kline@N
+        ↓
+只覆盖 Redis 实时 K 线缓存 → App WS 每 5 秒读取并推送
+```
+
+核心原则：
+
+1. MongoDB 保存历史查询数据，写入使用 `(market, symbol, ts)` 幂等 upsert。
+2. Redis 保存实时行情快照和正在变化的 K 线，不作为永久历史真源。
+3. 本地 Tick 只直接生成 `1m`；其他周期从已落库低周期确定性重算。
+4. iTick REST 最近窗口数据用于补齐、覆盖本地 Tick 聚合的临时结果。
+5. 历史全量同步和每 5 分钟校正是两个独立入口，不能混用。
+
+## 2. 活跃产品与订阅来源
+
+### 2.1 MySQL 真源
+
+活跃产品由 `TItickProductModel.FindActivePage` 查询，条件是：
+
+```sql
 t_itick_product.enabled = 1
 AND EXISTS (
-  SELECT 1 FROM t_itick_tenant_product
-  WHERE product_id = t_itick_product.id AND enabled = 1
+  SELECT 1
+  FROM t_itick_tenant_product
+  WHERE product_id = t_itick_product.id
+    AND enabled = 1
 )
 ```
 
-`app_visible` 只控制展示，不建议控制行情采集；否则仅隐藏产品就会中断行情。若业务明确隐藏即停采，再将它加入判断条件。
+因此多个租户使用相同产品时只采集一次；只要仍有一个启用租户使用，产品就不会退出订阅集合。
 
-建议补索引：
+### 2.2 Redis 运行时索引
 
-```sql
-ALTER TABLE t_itick_tenant_product
-  ADD KEY idx_product_enabled_tenant (product_id, enabled, tenant_id);
-```
+`ItickManager.rebuildActiveProducts` 从 MySQL 全量重建：
 
-### 2.2 Redis
-
-Redis key 建议带版本前缀，方便以后平滑迁移：
-
-| Key | 类型 | 用途 |
+| Key | 类型 | 当前用途 |
 | --- | --- | --- |
-| `itick:v1:active_products` | Set | 活跃 `product_id` 去重集合 |
-| `itick:v1:product:{id}` | Hash | category/market/symbol/timezone/session 等订阅元数据 |
-| `itick:v1:product_refcount` | Hash | `product_id -> 启用租户数`，用于增删判断 |
-| `itick:v1:quote:{product_id}` | Hash/String | 最新 quote，设置 TTL |
-| `itick:v1:depth:{product_id}` | String | 最新完整 depth 快照，设置短 TTL |
-| `itick:v1:tick:last:{product_id}` | String | 最新 tick，设置 TTL |
-| `itick:v1:ticks:{product_id}` | Stream | 用于 1m 聚合和故障恢复的短期 tick 流，按长度/时间裁剪 |
-| `itick:v1:kline:building:{product_id}:1m` | Hash | 当前未闭合 1m K 线 |
-| `itick:v1:kline:dirty` | ZSet | 需要重算的产品/周期/时间桶 |
+| `itick:v1:active_products` | Set | 活跃产品 ID |
+| `itick:v1:product:{id}` | Hash | `category_code/market/symbol/exchange` |
 
-quote/depth/tick 都是实时缓存，不作为永久历史真源。TTL 建议：quote/tick-last 10～30 分钟，depth 1～5 分钟；tick Stream 根据容量保留 1～6 小时。实际值需根据产品数、tick 频率和 Redis 内存压测确定，不能无限保留。
+使用临时 Set 构建后 `RENAME`，避免重建过程中读到半套 active set。Redis 丢失时可从 MySQL 恢复。
 
-Redis 集合必须支持全量重建：服务启动时以及周期性对账任务从 MySQL 扫描活跃产品，在临时 key 构建完成后 `RENAME` 原子替换 active set/refcount，修复漏事件、人工改库和 Redis 数据丢失。
+### 2.3 WebSocket 订阅集合
 
-## 3. 租户产品变更流程
-
-### 3.1 新增或由禁用改为启用
-
-1. 一个 MySQL 事务内写 `t_itick_tenant_product` 和 outbox。
-2. outbox 消费者查询该产品当前启用租户数（不要只依赖传入事件推算）。
-3. 使用 Lua 原子更新 refcount、active set 和产品元数据。
-4. 当计数从 `0 -> N` 时发布 `product.activate`：
-   - 建立 quote、tick、depth 的上游订阅；
-   - 创建各周期同步进度；
-   - 将最近窗口校准和历史回补任务入队。
-5. 重复事件必须幂等，不能重复增加引用计数。
-
-### 3.2 删除或由启用改为禁用
-
-1. 一个 MySQL 事务内更新关系和 outbox。
-2. 消费者重新查询数据库中的启用租户数。
-3. 仍有其他租户使用时只更新 refcount，不移除 active set、不取消订阅。
-4. 计数为 0 时移出 active set，发布 `product.deactivate` 并取消上游订阅。
-5. 不立即删除 MongoDB 历史 K 线和同步进度；保留数据能在产品重新启用时快速追平。历史数据保留期限由独立的数据生命周期策略控制。
-
-现有批量更新接口还未实际写入数据。实现时应先计算变更前后集合差异，再在一个事务内批量 upsert/delete 与写 outbox，避免逐条操作产生中间状态。
-
-## 4. 实时行情与 K 线生成
-
-### 4.1 WebSocket 接收
-
-只订阅 `active_products` 中产品。收到消息后先规范化唯一身份：
+每个活跃产品生成以下订阅：
 
 ```text
-product_id <-> category_code + market + normalized_symbol
+depth, tick, quote,
+kline@1, kline@2, kline@3, kline@4,
+kline@5, kline@8, kline@9, kline@10
 ```
 
-- quote：覆盖写最新快照；可继续推送给期权等下游。
-- depth：如果上游是增量深度，必须维护 sequence 并在断档时重新获取快照；不能把增量包当成完整盘口覆盖。
-- tick：按 `(product_id, upstream_trade_id)` 去重；如果上游没有 trade id，使用稳定字段生成短期去重键。写入短期 Redis Stream，再交给 1m 聚合器。
-- 所有数据校验时间戳、价格、成交量；明显未来时间、非法负值进入错误流并报警。
+内部先使用 `1m/5m/15m/30m/1h/1d/1w/1mo`，发送前由 `IntervalToStream` 转换成 iTick 的 `kline@N`。
 
-### 4.2 1m 聚合
+订阅按 `categoryCode` 分给对应的 `ItickWsClient`，保存在进程内存 `desiredSubs`。它是完整快照替换，不是逐条追加。连接认证成功、订阅变化或重连后，`syncDesiredSubscriptions` 负责退订旧组合、订阅新组合。
 
-以交易所事件时间而非服务接收时间切桶：
+服务启动、创建/更新/批量更新租户产品时会刷新订阅集合。
+
+## 3. MongoDB 存储与查询
+
+MongoDB collection 按品类和周期拆分：
 
 ```text
-bucket_start = floor(event_ts / 60_000) * 60_000
-open  = 桶内事件时间最早 tick 的价格
-high  = max(price)
-low   = min(price)
-close = 桶内事件时间最晚 tick 的价格
-volume/turnover = 桶内增量求和
+{category}_kline_{interval}
 ```
 
-需注意：如果 tick 的 `volume` 是当日累计量，必须先按相邻 tick 做差；出现跨交易日、负差或重置时重新建立基线，不能直接累加累计值。此字段语义需要用 iTick 实际报文验证后再实现。
-
-每个自然分钟结束后，聚合器在下一次 5 秒检查内将刚闭合的 `1m` K 线写入 MongoDB，不等待额外迟到窗口。因此在 `12:01/12:02/.../12:05` 会依次落库 `[12:00,12:01)/[12:01,12:02)/.../[12:04,12:05)`。迟到、漏失或上游修订的数据不再修改已经闭合的内存桶，而由每 5 分钟 REST 最近 30 根 `1m` 批量 upsert 统一补齐和校正。写入唯一键为 `(market, symbol, ts)`，任务重试不会产生重复数据。
-
-没有 tick 不代表缺数据：非交易时段不生成 K 线；交易时段内是否用上一收盘价补零成交量 K 线，应按 iTick REST 的口径决定。默认不凭空补 K 线，交给 REST 校准确认。
-
-### 4.3 高周期聚合
-
-- `5m/15m/30m/1h`：从已确认的 1m 聚合。
-- `1d`：从 1m 或 1h 按市场交易日聚合。
-- `1w/1mo/1y`：从已确认的 1d 按市场日历聚合。
-- 聚合规则：首根 open、最高 high、最低 low、末根 close、volume/turnover 求和。
-- 只要底层 K 线被 REST 修正，就将所有包含它的上层桶写入 dirty ZSet，由重算 worker 幂等覆盖。
-- 当前代码只支持到 `1mo`，`1y` 需要新增周期定义、存储集合、查询枚举与聚合逻辑。iTick 若没有年度 REST 周期，则由日线确定性生成。
-
-当前实现由 `DerivedAggregator` 统一重算：本地 `1m` 批量落库成功后触发一次，REST 最近 30 根 `1m` 校正完成后再次触发。`5m/15m/30m/1h` 从 MongoDB 的 `1m` 重算，`1d` 从 `1h` 重算，`1w/1mo` 从 `1d` 重算；结果 upsert MongoDB，并覆盖 Redis 中相应周期的最新 K 线。这样正在形成的高周期会随每根 `1m` 更新，REST 修正也会向上层周期传播。
-
-MongoDB 文档建议增加：`source`（realtime/rest/derived）、`confirmed`、`revision`、`updatedAt`。前端查询允许返回正在形成的 K 线，但应能区分 `closed/confirmed`。
-
-## 5. REST 历史回补与每 5 分钟校准
-
-### 5.1 五分钟校准任务
-
-建议在整 5 分钟结束后延迟 20～60 秒执行，避免上游 K 线尚未最终结算。任务流程：
-
-1. 从 Redis 活跃集合取产品；Redis 不可用时降级从 MySQL 查询。
-2. 按 category/market 和 iTick 批量接口上限分组，请求最近滑动窗口，不逐产品逐周期无界调用。
-3. 重点校准 `1m` 最近 15～30 分钟，覆盖断线、迟到和上游修订；如果批量接口支持多周期，可低频抽检上游高周期。
-4. REST 返回先校验时间桶、排序、重复项和 OHLC 合法性，再 bulk upsert。
-5. 对发生新增或数值变化的 1m 标记高周期 dirty 桶并重算。
-6. 只有数据落库成功后才推进 progress 水位；部分产品失败只重试失败项，不能让整批成功项回滚或水位误进。
-
-为避免所有实例重复执行，调度器使用 Redis leader lock；具体 job 使用稳定幂等键，例如：
+例如：
 
 ```text
-reconcile:{product_id}:1m:{window_end}
+crypto_kline_1m
+crypto_kline_5m
+forex_kline_1h
 ```
 
-任务必须有指数退避、随机抖动、429/5xx 分类重试、超时和熔断；全局限流要低于 iTick 套餐上限并预留实时接口余量。
+`CoinKlineModel.UpsertBySymbolTs` 和 `BulkUpsertBySymbolTs` 使用：
 
-### 5.2 历史回补任务
+```text
+market + symbol + ts
+```
 
-产品首次激活后先回补近期数据，保证用户立即可查，再后台向过去分页：
+作为匹配条件，相同时间桶重复同步只会覆盖，不会新增重复文档。
 
-1. `1m`：按业务保留期回补，而不是默认无限追溯。
-2. `1d`：可直接拉更长历史，快速满足长期图表。
-3. 其他周期优先由底层数据生成；如需与供应商完全一致，可追加低优先级 REST 校验。
-4. 每页成功落库后更新 `oldest_ts`；到达配置的历史起点或上游明确返回无数据才设 `full_synced=1`。
+App 的 `GetKline` 只读取 MongoDB：
 
-当前逻辑以“返回数量小于 limit”判断全量完成不够稳健：节假日、停牌、接口分页行为都可能导致短页。应同时记录目标历史边界，并使用连续空页/明确结束条件确认。
+```text
+KType → interval → Factory.New(category, interval)
+      → FindBeforeTsByMarketSymbol
+```
 
-## 6. 完整性判定与补洞
+该接口不会在查询时调用 iTick REST。当前形成中的 K 线由 App 的订阅流另外从 Redis 获取，是否与历史列表合并由客户端处理。
 
-`latest_ts` 只能表示见过的最大时间，不能证明中间连续。建议保留现有 `contiguous_ts`，并补充：
+## 4. 管理后台历史 K 线同步
 
-- `target_from_ts`：配置要求的历史起点。
-- `last_reconcile_window_end`：最近确认完成的校准窗口。
-- `consecutive_failures`、`next_retry_at`：失败调度。
-- `last_error_code`：区分限流、网络、参数和无数据。
+### 4.1 入口与职责
 
-每天运行低优先级 gap scanner：按市场日历计算“本应存在”的时间桶，与 MongoDB 实际桶比较。缺口进入 repair queue，由 REST 定点补洞；补洞后再次验证才推进 `contiguous_ts`。停牌、节假日和非交易时段不算缺口。
+入口：
 
-建议建立两级校验：
+```text
+SyncProductKlineHistoryLogic.SyncProductKlineHistory
+```
 
-- 结构校验：唯一键、时间对齐、`low <= open/close <= high`、非负量。
-- 一致性校验：抽样比较本地聚合与 iTick 高周期 K 线，差异超过价格精度/成交量容忍度即报警并重算。
+用途：管理员为一个指定产品、指定周期主动拉取历史 K 线。它不是每 5 分钟任务，也不会扫描全部活跃产品。
 
-## 7. 并发、幂等和故障恢复
+请求确定：
 
-- 活跃产品变更：MySQL transaction + outbox；Redis 更新使用 Lua 原子脚本。
-- 行情消费：按 `product_id` 一致性分区，同一产品在同一时刻只由一个聚合 owner 处理。
-- MongoDB：唯一索引 + upsert；REST 数据优先级高于 realtime，derived 数据可被底层修正触发覆盖。
-- Redis 丢失：从 MySQL 重建 active set；从 MongoDB 最后一根 K 线和 REST 最近窗口恢复聚合状态。
-- WebSocket 重连：重新加载活跃集合并恢复订阅，立即为断线时间段提交 REST repair job。
-- 服务滚动发布：租约续期和 leader lock 必须有 TTL；旧 owner 失效后新 owner 可接管。
-- 产品停用：停止新增数据，不删除历史；未完成队列任务执行前再次检查产品是否活跃。
+- `categoryCode`
+- `market`
+- `symbol`
+- `kType`
+- `endTs`，为空时使用当前时间之后 1 毫秒
 
-## 8. 查询策略
+### 4.2 使用的 iTick 接口
 
-查询 K 线时：
+历史同步使用单产品接口：
 
-1. 已闭合历史从 MongoDB 读取。
-2. 当前形成中的桶从 Redis 合并到结果末尾。
-3. 查询层按唯一键去重，以 Redis 当前桶覆盖同时间的未确认 MongoDB 数据。
-4. 返回 `confirmed`/`isClosed`，避免客户端把临时 K 线当最终值。
-5. Redis 不可用时仍可返回 MongoDB 已闭合数据，接口降级但不失败。
+```text
+GET /{category}/kline
+```
 
-## 9. 监控与告警
+关键参数：
 
-至少暴露以下指标：
+```text
+region={market}
+code={symbol}
+kType={指定周期}
+et={当前分页结束时间}
+limit=500
+```
 
-- 活跃产品数、各 topic 实际订阅数、Redis refcount 与 DB 实际数量差异。
-- WebSocket 连接/重连次数、最后消息时间、乱序/重复/非法 tick 数。
-- 各任务队列长度、处理耗时、成功率、重试次数、iTick 429/5xx。
-- 每产品/周期最后确认时间、最大延迟、缺口数、REST 与本地聚合差异数。
-- Redis Stream 长度/内存、MongoDB bulk upsert 耗时和失败数。
+该接口支持 `et`，因此能够从指定结束时间向历史方向分页。这里不能换成批量 `/klines`，因为批量接口只适合获取最近窗口，没有历史起止范围参数。
 
-关键告警：交易时段内产品长时间无 tick、校准连续失败、gap 持续未修复、active set 与 DB 不一致、任务堆积超过一个校准周期。
+### 4.3 向后分页算法
 
-## 10. 推荐实施顺序
+`FetchProductHistory` 调用 `syncBackwardRange`：
 
-### 第一阶段：活跃产品与可靠订阅
+```text
+et = 请求 endTs 或当前时间 + 1
 
-- 完成批量租户产品写入。
-- 增加 outbox、active set/refcount、启动全量重建和周期对账。
-- 订阅范围从全部产品改为活跃产品，支持 0->1 订阅和 1->0 退订。
+while true:
+    请求最多 500 根
+    空结果                     → 完成
+    过滤掉 ts > 初始 endTs     → 防止越界
+    当前页 bulk upsert MongoDB
+    返回数量 < 500             → 完成
+    minTs <= 0                 → 完成
+    minTs >= 当前 et           → 防止游标不前进，完成
+    et = minTs - 1             → 继续向过去请求
+```
 
-### 第二阶段：REST 完整性链路
+接口没有对管理员暴露 `limit/maxPages`。同步会一直向过去翻页，直到 iTick 返回短页、空页或游标无法继续推进。
 
-- 将历史回补和 5 分钟增量校准拆开。
-- 增量任务使用批量接口、滑动窗口、幂等 job、失败项重试。
-- 修正 progress 推进规则，加入市场日历 gap scanner。
+返回的 `syncedCount` 是本次写入列表的累计数量；因为底层是 upsert，它不等同于 MongoDB 实际新增文档数。
 
-### 第三阶段：实时聚合
+### 4.4 当前历史同步边界
 
-- Redis 保存 quote/depth/tick，tick Stream 限长。
-- 实现 tick -> 1m、迟到乱序处理、当前桶查询合并。
-- REST 修正 1m 后触发高周期 dirty 重算。
+1. 历史同步只处理管理员指定的周期。
+2. 如果管理员同步的是 `1m`，每页成功落库后会通过 `DerivedWorker` 等待受影响高周期重算完成；失败会终止历史同步并返回错误。
+3. 管理员直接同步其他周期时只 upsert 指定周期，不再反向影响低周期或其他周期。
+4. 当前历史同步没有更新 `t_itick_kline_sync_progress`，进度表主要由 5 分钟校正流程推进。
+5. 单次请求可能持续很久；当前没有保留期边界、取消任务记录或断点续传水位。
 
-### 第四阶段：高周期与年度 K 线
+## 5. Tick 实时生成 1m
 
-- 按市场时区/交易日历生成 `5m` 到 `1y`。
-- 增加 source/confirmed/revision 字段与一致性抽检。
-- 压测 Redis 内存、MongoDB 写入、iTick 配额和大规模重连恢复。
+### 5.1 启动与输入
 
-## 11. 实现前需要确认的业务项
+服务启动时：
 
-1. `enabled=1` 是否就是“租户正在使用”；`app_visible=2` 是否仍需持续采集？本文默认仍采集。
-2. 各品类的 1m 历史保留期分别是多少；是否真的需要无限历史？
-3. iTick tick 中 `volume` 是单笔量还是当日累计量，是否提供稳定 trade id/sequence。
-4. iTick 所谓“批量 K 线接口”的请求上限、频率、是否支持多产品及多周期一次请求。
-5. 股票/期货是否包含盘前盘后、夜盘；日线使用交易所时区还是供应商固定口径。
-6. 无成交分钟是否需要以前收补 OHLC、volume=0；建议以 iTick REST 返回口径为准。
-7. MongoDB 历史数据的保留策略，以及产品停用后保留多久。
+```text
+NewTickAggregator(Writer)
+MarketDataCache.SetTickHandler(tickAggregator.Add)
+tickAggregator.Start()
+```
 
-以上业务项确认后，再确定表结构迁移、Redis key 最终格式、任务拆分和代码改造清单。
+iTick WS 的 Tick 先写 Redis 最新 Tick 缓存，再同步调用 Tick handler。
+
+### 5.2 事件时间切桶
+
+```text
+bucketTs = floor(tick.ts / 60_000) * 60_000
+```
+
+每个 `(category, market, symbol, bucketTs)` 保存一个内存桶：
+
+```text
+open     = 事件时间最早 Tick 的价格
+high     = 最高 Tick 价格
+low      = 最低 Tick 价格
+close    = 事件时间最晚 Tick 的价格
+volume   = Tick volume 累加
+turnover = Tick turnover 累加
+```
+
+当前校验规则：
+
+- 时间不能超过当前时间 30 秒；
+- 只接受最近 10 分钟内的 Tick；
+- 价格必须大于 0；
+- volume/turnover 不能为负；
+- 使用 `product + ts + price + volume + turnover` 指纹短期去重。
+
+### 5.3 每分钟闭合
+
+聚合器每 5 秒扫描一次：
+
+```text
+bucketTs + 60_000 <= now
+```
+
+满足条件的 `1m` 被视为闭合，送入 `BatchWriter`。同一产品已经闭合的时间桶记录在 `finalized`，之后到达的迟到 Tick 不再重新打开该桶。
+
+示例：
+
+```text
+12:01 → 写 [12:00, 12:01)
+12:02 → 写 [12:01, 12:02)
+12:03 → 写 [12:02, 12:03)
+12:04 → 写 [12:03, 12:04)
+12:05 → 写 [12:04, 12:05)
+```
+
+实际触发可能比整分钟晚 0～5 秒，之后还需等待 BatchWriter 的 flush interval。
+
+### 5.4 BatchWriter
+
+BatchWriter 按：
+
+```text
+category + market + interval
+```
+
+分组缓冲，达到 batch size 或 flush interval 后执行 MongoDB bulk upsert。`1m` 写入成功后调用 `flushHandler`，将重算请求快速放入独立 `DerivedWorker` 队列，避免 MongoDB 高周期查询阻塞 BatchWriter：
+
+```text
+DerivedWorker.Enqueue → DerivedAggregator.Rebuild
+```
+
+因此只有 MongoDB `1m` 写入成功，才向上重算高周期。队列满时记录错误；BatchWriter 不会等待异步高周期重算完成。
+
+### 5.5 当前 Tick 聚合风险
+
+iTick 股票 Tick 的 `v` 按当日累计成交量处理：第一条或累计值重置时只建立基线，后续使用 `current.v - previous.v` 作为分钟增量；乱序 Tick 不推进基线。股票 Tick 没有可靠 `tu` 时，临时 turnover 使用 `deltaVolume × lastPrice` 估算，最终仍以 5 分钟 REST K 线校正为准。其他品类目前仍按 Tick 自带 volume/turnover 为单次增量直接累加，需要继续根据各品类官方字段语义核对。
+
+当前分钟桶仅在进程内存，服务重启会丢失尚未闭合的桶；没有 Tick 的分钟也不会凭空生成 K 线，等待 REST 补齐。
+
+## 6. 高周期派生
+
+### 6.1 触发入口
+
+`DerivedAggregator.Rebuild` 有两个入口：
+
+1. Tick 生成的 `1m` 被 BatchWriter 成功写入 MongoDB后；
+2. 每 5 分钟 REST 最近窗口 `1m` 被成功 upsert 后。
+
+两条路径共用同一套重算逻辑，保证 REST 修正能够向所有上层周期传播。
+
+### 6.2 周期层级
+
+```text
+1m ──→ 5m
+   ├─→ 15m
+   ├─→ 30m
+   └─→ 1h ──→ 1d ──→ 1w
+                    └─→ 1mo
+```
+
+当前支持：
+
+```text
+1m, 5m, 15m, 30m, 1h, 1d, 1w, 1mo
+```
+
+尚未定义 `1y` 的 Proto 枚举、周期映射和查询入口。
+
+### 6.3 重算方法
+
+每个受影响的目标桶通过 `FindRangeByMarketSymbol` 读取完整源区间，然后重新计算：
+
+```text
+open     = 第一根源 K 线 open
+high     = max(源 K 线 high)
+low      = min(源 K 线 low)
+close    = 最后一根源 K 线 close
+volume   = sum(源 K 线 volume)
+turnover = sum(源 K 线 turnover)
+```
+
+不是在旧高周期结果上做增量加减，因此底层 `1m` 被 REST 覆盖后可以确定性重算。
+
+结果执行两次写入：
+
+1. upsert 对应周期 MongoDB collection；
+2. 覆盖 Redis 对应周期实时缓存，供 App WS 推送。
+
+### 6.4 当前时间边界
+
+- `5m/15m/30m/1h`：按 UTC 毫秒固定宽度切桶；
+- `1d`：UTC 00:00 切桶；
+- `1w`：UTC 周一 00:00 切桶；
+- `1mo`：UTC 每月 1 日 00:00 切桶。
+
+这对 24×7 加密货币较自然，但股票、期货、外汇可能需要按交易所时区、交易日、盘前盘后和夜盘规则切桶。当前实现尚未接入市场日历。
+
+## 7. 每 5 分钟增量校正
+
+### 7.1 任务入口
+
+任务中心向 iTick 服务发送：
+
+```text
+ActionItickSyncKlines
+```
+
+`tasks/subscriber.go` 调用 `SyncKlinesLogic.SyncKlines`。代码本身不创建本地 ticker；是否严格每 5 分钟执行由外部任务中心的调度配置决定。
+
+### 7.2 分布式互斥与任务记录
+
+`SyncKlinesLogic`：
+
+1. 校验 iTick API URL 和 Token；
+2. 根据 `apiURL + token` 生成 Redis lock key；
+3. 获取 30 秒分布式锁；
+4. 新增 `t_itick_sync_task`，类型为 `reconcile_klines`；
+5. 启动最多 10 分钟的后台 goroutine；
+6. worker 每 10 秒续租，TTL 30 秒；
+7. 完成、失败或 panic 时更新任务状态并释放锁。
+
+如果已有任务持锁，本次请求返回“任务正在运行”，不会重复启动。
+
+### 7.3 加载和分组产品
+
+优先从：
+
+```text
+SMEMBERS itick:v1:active_products
+```
+
+读取产品 ID，再批量查询 MySQL 产品信息。Redis 报错或集合为空时，使用 `FindActivePage` 从 MySQL 分页扫描。
+
+过滤无效或不支持 K 线的品类后，按以下维度分组：
+
+```text
+category + market + exchange
+```
+
+每组最多 10 个产品调用一次批量接口。
+
+### 7.4 iTick 最近窗口请求
+
+使用批量接口：
+
+```text
+GET /{category}/klines
+```
+
+固定参数：
+
+```text
+kType=1     // 1m
+limit=30    // 最近 30 根
+codes=最多 10 个产品
+region={market}
+exchange={exchange，可选}
+```
+
+请求限流器当前配置约为 400 次/分钟、burst=1；HTTP 超时 20 秒。
+
+批量接口没有 `start/end/et`，因此这里不做历史分页，只用于有限最近窗口校正。
+
+### 7.5 校验、落库和传播
+
+每个返回项只接受：
+
+```text
+ts > 0
+ts <= 当前最后一个已闭合 1m
+ts % 60_000 == 0
+low <= open/close <= high
+high >= low
+volume >= 0
+turnover >= 0
+```
+
+通过校验的数据：
+
+```text
+bulk upsert 1m MongoDB
+        ↓
+DerivedAggregator.Rebuild
+        ↓
+重算受影响的 5m/15m/30m/1h/1d/1w/1mo
+        ↓
+更新高周期 MongoDB 和 Redis
+        ↓
+更新 t_itick_kline_sync_progress
+```
+
+进度记录当前更新：
+
+- `latest_ts`
+- `oldest_ts`
+- `last_reconcile_ts`
+- mode=`reconcile`
+- 本次覆盖数量说明
+
+单个产品缺少返回、MongoDB 写入、派生重算或进度更新失败时，会记录该产品错误并继续处理同批其他产品；批次结束后返回产品级汇总错误。其他批次也会继续处理。最终只要存在失败，整个同步任务状态标记失败。
+
+### 7.6 12:00～12:05 示例
+
+```text
+12:01  Tick 聚合并写入 12:00 这根 1m，高周期随之更新
+12:02  写入 12:01 这根 1m，高周期再次更新
+12:03  写入 12:02 这根 1m
+12:04  写入 12:03 这根 1m
+12:05  写入 12:04 这根 1m
+12:05 任务执行后，iTick 最近 30 根 1m 覆盖 [12:00,12:05) 等最近窗口
+       所有受影响高周期再次从 MongoDB 源数据完整重算
+```
+
+实际生产建议在整 5 分钟后延迟 20～60 秒调度，避免 iTick 刚闭合的 K 线尚未稳定。
+
+## 8. iTick WebSocket K 线的作用
+
+iTick WS 的 `kline@1...kline@10` 当前只写 Redis：
+
+```text
+itick:v1:kline:{category}:{market}:{symbol}:{interval}
+```
+
+它不会直接写 MongoDB，也不会触发 `DerivedAggregator`。作用是为 App 提供正在形成中的、比本地每分钟派生更实时的 K 线。
+
+App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送命中的缓存数据，即使内容没有变化；去重或覆盖展示由客户端处理。
+
+当前 iTick WS Kline 与本地 `DerivedAggregator` 会写同一个 Redis Key，存在后写覆盖前写的竞争。推荐后续增加：
+
+- `source=itick_ws/derived`；
+- 数据事件时间或更新时间；
+- 写入时比较版本，避免较旧本地派生覆盖较新的上游实时 K 线；
+- WS 超时后再由本地派生结果接管。
+
+## 9. Redis 行情缓存
+
+当前实际 Key：
+
+| 数据 | Key | TTL |
+| --- | --- | --- |
+| Quote | `itick:v1:quote:{category}:{market}:{symbol}` | 30 分钟 |
+| Tick | `itick:v1:tick:{category}:{market}:{symbol}` | 30 分钟 |
+| Depth | `itick:v1:depth:{category}:{market}:{symbol}` | 5 分钟 |
+| Kline | `itick:v1:kline:{category}:{market}:{symbol}:{interval}` | 24 小时 |
+
+当前没有实现 Tick Redis Stream、Redis 中的 1m building bucket、dirty ZSet 或产品 refcount Hash。Tick 当前桶和去重状态保存在 `TickAggregator` 进程内存中。
+
+## 10. 故障恢复与幂等性
+
+已经具备：
+
+- Redis active set 可从 MySQL 全量重建；
+- WS 重连后根据内存 `desiredSubs` 恢复订阅；
+- MongoDB 使用 upsert，可重复执行；
+- 每 5 分钟任务使用 Redis 分布式锁；
+- 最近 30 根 REST 窗口可以修复短时间断线、漏 Tick、迟到 Tick；
+- REST 修正后高周期重新从低周期完整计算。
+
+仍需完善：
+
+- Tick 当前分钟桶持久化，服务重启时当前分钟会丢失；
+- WS 断线后立即触发 repair，目前只能等待下一个 5 分钟任务；
+- 长时间停机超过 30 分钟时，最近窗口不能覆盖全部缺口；
+- gap scanner 和定点补洞任务；
+- 历史同步断点续传和目标保留期；
+- 多实例聚合 owner 切换期间的显式恢复；
+- REST 与 realtime/derived 的来源版本和写入优先级。
+
+## 11. 当前实现限制与下一步
+
+按优先级建议：
+
+1. **核对非股票 Tick volume 语义**：确认加密货币、外汇、指数和期货是单次量还是累计量。
+2. **交易日历**：日/周/月按市场时区和交易时段切桶，不再统一 UTC。
+3. **Redis Kline 版本控制**：解决 iTick WS 和本地派生对同一 Key 的覆盖竞争。
+4. **当前桶恢复**：将 1m building state、股票累计量基线或短期 Tick 保存 Redis。
+5. **缺口扫描**：按交易日历检查 MongoDB 连续性，超过最近 30 根窗口的缺口进入 repair queue。
+6. **年度周期**：增加 `1y` Proto 枚举、周期映射、collection、查询和派生逻辑。
+7. **可观测性**：记录每产品最后 Tick、最后闭合 1m、校正延迟、缺口数、REST 失败、派生队列和派生耗时。
+
+## 12. 关键代码位置
+
+| 职责 | 文件 |
+| --- | --- |
+| App MongoDB Kline 查询 | `internal/logic/getklinelogic.go` |
+| 管理后台历史同步入口 | `internal/logic/syncproductklinehistorylogic.go` |
+| 每 5 分钟任务入口 | `internal/logic/syncklineslogic.go` |
+| 历史分页与最近窗口 REST | `internal/market/kline/sync_worker.go` |
+| Tick → 1m | `internal/market/kline/tick_aggregator.go` |
+| 高周期派生 | `internal/market/kline/derived_aggregator.go` |
+| MongoDB 批量写入 | `internal/pkg/klinewriter/batch_writer.go` |
+| MongoDB Kline Model | `models/coinklinemodel.go` |
+| 周期映射 | `internal/pkg/utils/kline_intervals.go` |
+| WS 订阅与消息处理 | `internal/market/client/itick_ws_client.go` |
+| 活跃产品和订阅构建 | `internal/market/client/itick_manager.go` |
+| Redis 行情缓存 | `internal/market/cache/market_data_cache.go` |
+| 任务消息消费 | `internal/tasks/subscriber.go` |

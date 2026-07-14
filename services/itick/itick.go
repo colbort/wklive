@@ -52,10 +52,13 @@ func main() {
 
 	// 启动批量写入器
 	svcCtx.Writer.Start()
-	defer svcCtx.Writer.Stop()
 	derivedAggregator := kline.NewDerivedAggregator(svcCtx.Factory, svcCtx.MarketDataCache)
-	svcCtx.RebuildDerivedKlines = derivedAggregator.Rebuild
-	svcCtx.Writer.SetFlushHandler(derivedAggregator.Rebuild)
+	derivedWorker := kline.NewDerivedWorker(derivedAggregator, 1024)
+	derivedWorker.Start()
+	defer derivedWorker.Stop()
+	defer svcCtx.Writer.Stop()
+	svcCtx.RebuildDerivedKlines = derivedWorker.Rebuild
+	svcCtx.Writer.SetFlushHandler(derivedWorker.Enqueue)
 	tickAggregator := kline.NewTickAggregator(svcCtx.Writer)
 	svcCtx.MarketDataCache.SetTickHandler(tickAggregator.Add)
 	tickAggregator.Start()
@@ -66,8 +69,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	if err := svcCtx.ItickManager.LoadActiveProductSubscriptions(ctx); err != nil {
+		panic(err)
+	}
 	// 启动 itick 数据流管理器
-	svcCtx.ItickManager.Start(ctx)
+	if err := svcCtx.ItickManager.Start(ctx); err != nil {
+		panic(err)
+	}
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		itick.RegisterItickAdminServer(grpcServer, server.NewItickAdminServer(svcCtx))

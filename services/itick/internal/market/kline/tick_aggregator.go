@@ -31,6 +31,11 @@ type tickBucket struct {
 	volume, turnover float64
 }
 
+type volumeBaseline struct {
+	ts     int64
+	volume float64
+}
+
 // TickAggregator creates only 1m bars. REST reconciliation remains the source
 // of truth and may overwrite these low-latency bars later.
 type TickAggregator struct {
@@ -39,6 +44,7 @@ type TickAggregator struct {
 	buckets   map[tickBucketKey]*tickBucket
 	seen      map[string]int64
 	finalized map[string]int64
+	baselines map[string]volumeBaseline
 	stopOnce  sync.Once
 	stopCh    chan struct{}
 	doneCh    chan struct{}
@@ -46,7 +52,8 @@ type TickAggregator struct {
 
 func NewTickAggregator(writer *klinewriter.BatchWriter) *TickAggregator {
 	return &TickAggregator{writer: writer, buckets: make(map[tickBucketKey]*tickBucket),
-		seen: make(map[string]int64), finalized: make(map[string]int64), stopCh: make(chan struct{}), doneCh: make(chan struct{})}
+		seen: make(map[string]int64), finalized: make(map[string]int64), baselines: make(map[string]volumeBaseline),
+		stopCh: make(chan struct{}), doneCh: make(chan struct{})}
 }
 
 func (a *TickAggregator) Start() { go a.run() }
@@ -84,11 +91,15 @@ func (a *TickAggregator) Add(_ context.Context, msg types.ClientMessage, tick *t
 	if bucketTs <= a.finalized[productKey] {
 		return
 	}
+	volume, turnover := tick.Volume, tick.Turnover
+	if category == "stock" {
+		volume, turnover = a.stockVolumeDelta(productKey, tick)
+	}
 	key := tickBucketKey{category: category, market: market, symbol: symbol, ts: bucketTs}
 	bucket := a.buckets[key]
 	if bucket == nil {
 		a.buckets[key] = &tickBucket{openTs: tick.Ts, closeTs: tick.Ts, open: tick.LastPrice,
-			high: tick.LastPrice, low: tick.LastPrice, close: tick.LastPrice, volume: tick.Volume, turnover: tick.Turnover}
+			high: tick.LastPrice, low: tick.LastPrice, close: tick.LastPrice, volume: volume, turnover: turnover}
 		return
 	}
 	if tick.Ts < bucket.openTs {
@@ -99,8 +110,25 @@ func (a *TickAggregator) Add(_ context.Context, msg types.ClientMessage, tick *t
 	}
 	bucket.high = math.Max(bucket.high, tick.LastPrice)
 	bucket.low = math.Min(bucket.low, tick.LastPrice)
-	bucket.volume += tick.Volume
-	bucket.turnover += tick.Turnover
+	bucket.volume += volume
+	bucket.turnover += turnover
+}
+
+// iTick stock tick volume is a daily cumulative value. The first or reset
+// sample establishes a baseline; only positive forward deltas belong to the
+// current minute. Stock tick has no reliable turnover field, so use the
+// incremental volume multiplied by the latest price until REST correction.
+func (a *TickAggregator) stockVolumeDelta(productKey string, tick *types.TickPayload) (float64, float64) {
+	previous, ok := a.baselines[productKey]
+	a.baselines[productKey] = volumeBaseline{ts: tick.Ts, volume: tick.Volume}
+	if !ok || tick.Ts <= previous.ts || tick.Volume < previous.volume {
+		if ok && tick.Ts <= previous.ts {
+			a.baselines[productKey] = previous
+		}
+		return 0, 0
+	}
+	delta := tick.Volume - previous.volume
+	return delta, delta * tick.LastPrice
 }
 
 func (a *TickAggregator) run() {
@@ -120,15 +148,22 @@ func (a *TickAggregator) run() {
 
 func (a *TickAggregator) flushClosed(now int64) {
 	a.mu.Lock()
-	ready := make(map[tickBucketKey]*tickBucket)
 	for key, bucket := range a.buckets {
-		if key.ts+minuteMillis <= now {
-			ready[key] = bucket
-			delete(a.buckets, key)
-			productKey := key.category + ":" + key.market + ":" + key.symbol
-			if key.ts > a.finalized[productKey] {
-				a.finalized[productKey] = key.ts
-			}
+		if key.ts+minuteMillis > now {
+			continue
+		}
+		err := a.writer.Enqueue(&models.CoinKline{CategoryCode: key.category, Market: key.market,
+			Symbol: key.symbol, Interval: "1m", Ts: key.ts, Open: bucket.open, High: bucket.high,
+			Low: bucket.low, Close: bucket.close, Volume: bucket.volume, Turnover: bucket.turnover})
+		if err != nil {
+			logx.Errorf("enqueue tick kline failed, will retry, category=%s market=%s symbol=%s ts=%d err=%v",
+				key.category, key.market, key.symbol, key.ts, err)
+			continue
+		}
+		delete(a.buckets, key)
+		productKey := key.category + ":" + key.market + ":" + key.symbol
+		if key.ts > a.finalized[productKey] {
+			a.finalized[productKey] = key.ts
 		}
 	}
 	for fingerprint, expires := range a.seen {
@@ -137,13 +172,4 @@ func (a *TickAggregator) flushClosed(now int64) {
 		}
 	}
 	a.mu.Unlock()
-
-	for key, bucket := range ready {
-		if err := a.writer.Enqueue(&models.CoinKline{CategoryCode: key.category, Market: key.market,
-			Symbol: key.symbol, Interval: "1m", Ts: key.ts, Open: bucket.open, High: bucket.high,
-			Low: bucket.low, Close: bucket.close, Volume: bucket.volume, Turnover: bucket.turnover}); err != nil {
-			logx.Errorf("enqueue tick kline failed, category=%s market=%s symbol=%s ts=%d err=%v",
-				key.category, key.market, key.symbol, key.ts, err)
-		}
-	}
 }

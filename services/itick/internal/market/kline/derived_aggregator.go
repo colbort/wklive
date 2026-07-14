@@ -2,6 +2,7 @@ package kline
 
 import (
 	"context"
+	"errors"
 	"math"
 	"strings"
 	"time"
@@ -40,9 +41,9 @@ func NewDerivedAggregator(factory *models.CoinKlineModelFactory, marketCache *ca
 	return &DerivedAggregator{factory: factory, cache: marketCache}
 }
 
-func (a *DerivedAggregator) Rebuild(minutes []*models.CoinKline) {
+func (a *DerivedAggregator) Rebuild(minutes []*models.CoinKline) error {
 	if a == nil || a.factory == nil || len(minutes) == 0 {
-		return
+		return nil
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -61,6 +62,7 @@ func (a *DerivedAggregator) Rebuild(minutes []*models.CoinKline) {
 		items[productMinute{strings.ToLower(item.CategoryCode), strings.ToUpper(item.Market), strings.ToUpper(item.Symbol), item.Ts}] = struct{}{}
 	}
 
+	var failures []error
 	for _, interval := range derivedIntervals {
 		buckets := make(map[productMinute]struct{})
 		for item := range items {
@@ -73,9 +75,11 @@ func (a *DerivedAggregator) Rebuild(minutes []*models.CoinKline) {
 			if err := a.rebuildBucket(ctx, bucket.category, bucket.market, bucket.symbol, interval.source, interval.name, start, end); err != nil {
 				logx.Errorf("rebuild derived kline failed, category=%s market=%s symbol=%s interval=%s ts=%d err=%v",
 					bucket.category, bucket.market, bucket.symbol, interval.name, start, err)
+				failures = append(failures, err)
 			}
 		}
 	}
+	return errors.Join(failures...)
 }
 
 func (a *DerivedAggregator) rebuildBucket(ctx context.Context, category, market, symbol, sourceInterval, targetInterval string, start, end int64) error {

@@ -35,7 +35,7 @@ type ServiceContext struct {
 	Cache                       cache.Cache
 	Factory                     *models.CoinKlineModelFactory
 	Writer                      *klinewriter.BatchWriter
-	RebuildDerivedKlines        func([]*models.CoinKline)
+	RebuildDerivedKlines        func([]*models.CoinKline) error
 	ItickCategoryModel          models.TItickCategoryModel
 	ItickProductModel           models.TItickProductModel
 	ItickTenantCategoryModel    models.TItickTenantCategoryModel
@@ -127,18 +127,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		}
 	})
 
-	ctx := context.Background()
-
-	if err := itickManager.Load(ctx); err != nil {
-		logx.Errorf("itick manager load failed: %v", err)
-	}
-
-	if err := itickManager.LoadActiveProductSubscriptions(ctx); err != nil {
-		logx.Errorf("load active itick product subscriptions failed: %v", err)
-	}
-	if err := itickManager.Start(ctx); err != nil {
-		logx.Errorf("itick manager start failed: %v", err)
-	}
 	return &ServiceContext{
 		Config:                      c,
 		SystemCli:                   systemCli,

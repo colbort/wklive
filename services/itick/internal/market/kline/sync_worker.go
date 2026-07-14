@@ -237,55 +237,69 @@ func (w *SyncKlinesWorker) reconcileBatch(apiURL, token string, group *reconcile
 	interval := utils.KTypeToIntervalName(reconcileKType)
 	now := cutils.NowMillis()
 	lastClosed := utils.LastClosedTs(now, interval)
+	var failures []string
 	for _, product := range products {
-		items := data[product.Symbol]
-		if items == nil {
-			for symbol, candidate := range data {
-				if strings.EqualFold(symbol, product.Symbol) {
-					items = candidate
-					break
-				}
+		if err := w.reconcileProduct(group, product, data, interval, now, lastClosed); err != nil {
+			failures = append(failures, fmt.Sprintf("symbol=%s: %v", product.Symbol, err))
+		}
+	}
+	if len(failures) > 0 {
+		return fmt.Errorf("batch product failures (%d): %s", len(failures), strings.Join(failures, "; "))
+	}
+	return nil
+}
+
+func (w *SyncKlinesWorker) reconcileProduct(group *reconcileGroup, product *models.TItickProduct,
+	data map[string][]ItickKlineItem, interval string, now, lastClosed int64) error {
+	items := data[product.Symbol]
+	if items == nil {
+		for symbol, candidate := range data {
+			if strings.EqualFold(symbol, product.Symbol) {
+				items = candidate
+				break
 			}
 		}
-		if len(items) == 0 {
-			return fmt.Errorf("batch response missing kline data, category=%s market=%s symbol=%s", group.category, group.market, product.Symbol)
+	}
+	if len(items) == 0 {
+		return fmt.Errorf("batch response missing kline data")
+	}
+	list := make([]*models.CoinKline, 0, len(items))
+	var latestTs, oldestTs int64
+	job := KlineJob{Category: group.category, Market: group.market, Symbol: product.Symbol, KType: reconcileKType}
+	for _, item := range items {
+		if !validClosedKline(item, lastClosed, utils.IntervalMillis(interval)) {
+			continue
 		}
-		list := make([]*models.CoinKline, 0, len(items))
-		var latestTs, oldestTs int64
-		job := KlineJob{Category: group.category, Market: group.market, Symbol: product.Symbol, KType: reconcileKType}
-		for _, item := range items {
-			if !validClosedKline(item, lastClosed, utils.IntervalMillis(interval)) {
-				continue
-			}
-			list = append(list, w.toCoinKline(job, interval, item))
-			if item.T > latestTs {
-				latestTs = item.T
-			}
-			if oldestTs == 0 || item.T < oldestTs {
-				oldestTs = item.T
-			}
+		list = append(list, w.toCoinKline(job, interval, item))
+		if item.T > latestTs {
+			latestTs = item.T
 		}
-		if err := w.bulkUpsertKlines(group.category, interval, list); err != nil {
-			return err
+		if oldestTs == 0 || item.T < oldestTs {
+			oldestTs = item.T
 		}
-		if w.svcCtx.RebuildDerivedKlines != nil {
-			w.svcCtx.RebuildDerivedKlines(list)
+	}
+	if err := w.bulkUpsertKlines(group.category, interval, list); err != nil {
+		return err
+	}
+	if w.svcCtx.RebuildDerivedKlines != nil {
+		if err := w.svcCtx.RebuildDerivedKlines(list); err != nil {
+			return fmt.Errorf("rebuild derived klines: %w", err)
 		}
-		progress, err := w.svcCtx.ItickKlineSyncProgressModel.FindOrCreate(w.ctx, group.category, group.market, product.Symbol, interval)
-		if err != nil {
-			return err
-		}
-		if latestTs == 0 {
-			latestTs = progress.LatestTs
-		}
-		if oldestTs == 0 || (progress.OldestTs > 0 && progress.OldestTs < oldestTs) {
-			oldestTs = progress.OldestTs
-		}
-		if err := w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncSuccess(w.ctx, progress.Id, "reconcile", latestTs,
-			progress.ContiguousTs, now, oldestTs, progress.FullSynced, now,
-			fmt.Sprintf("五分钟校准成功，覆盖=%d", len(list))); err != nil {
-			return err
-		}
+	}
+	progress, err := w.svcCtx.ItickKlineSyncProgressModel.FindOrCreate(w.ctx, group.category, group.market, product.Symbol, interval)
+	if err != nil {
+		return err
+	}
+	if latestTs == 0 {
+		latestTs = progress.LatestTs
+	}
+	if oldestTs == 0 || (progress.OldestTs > 0 && progress.OldestTs < oldestTs) {
+		oldestTs = progress.OldestTs
+	}
+	if err := w.svcCtx.ItickKlineSyncProgressModel.UpdateSyncSuccess(w.ctx, progress.Id, "reconcile", latestTs,
+		progress.ContiguousTs, now, oldestTs, progress.FullSynced, now,
+		fmt.Sprintf("五分钟校准成功，覆盖=%d", len(list))); err != nil {
+		return err
 	}
 	return nil
 }
@@ -372,6 +386,11 @@ func (w *SyncKlinesWorker) syncBackwardRange(job KlineJob, interval string, et i
 		if len(list) > 0 {
 			if err := w.bulkUpsertKlines(job.Category, interval, list); err != nil {
 				return result, err
+			}
+			if interval == "1m" && w.svcCtx.RebuildDerivedKlines != nil {
+				if err := w.svcCtx.RebuildDerivedKlines(list); err != nil {
+					return result, fmt.Errorf("rebuild derived klines: %w", err)
+				}
 			}
 			result.NewCount += len(list)
 		}
