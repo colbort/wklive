@@ -11,7 +11,8 @@ import (
 	"time"
 
 	"wklive/services/itick/internal/pkg/utils"
-	"wklive/services/itick/internal/socket/server"
+	"wklive/services/itick/internal/socket/cache"
+	"wklive/services/itick/internal/socket/types"
 	"wklive/services/itick/models"
 
 	"github.com/redis/go-redis/v9"
@@ -27,14 +28,15 @@ type ItickManager struct {
 
 	busRedis    *redis.Client
 	lockRedis   *redis.Client
-	marketCache *MarketDataCache
-	preheater   *MarketDataPreheater
+	marketCache *cache.MarketDataCache
+	preheater   *cache.MarketDataPreheater
 
 	mu      sync.RWMutex
 	clients map[string]*ItickWsClient
 
 	startMu sync.Mutex
 	started bool
+	runCtx  context.Context
 }
 
 // LoadActiveProductSubscriptions loads the deduplicated product set maintained
@@ -57,7 +59,7 @@ func (m *ItickManager) refreshActiveProductSubscriptions(ctx context.Context, wa
 		return err
 	}
 
-	msgs := make([]server.ClientMessage, 0, len(ids)*(3+len(utils.KlineIntervals)))
+	msgs := make([]types.ClientMessage, 0, len(ids)*(3+len(utils.KlineIntervals)))
 	for _, rawID := range ids {
 		id, err := strconv.ParseInt(strings.TrimSpace(rawID), 10, 64)
 		if err != nil || id <= 0 {
@@ -76,23 +78,23 @@ func (m *ItickManager) refreshActiveProductSubscriptions(ctx context.Context, wa
 			continue
 		}
 
-		for _, topic := range []server.Topic{server.TopicDepth, server.TopicTick, server.TopicQuote} {
-			msgs = append(msgs, server.ClientMessage{Topic: topic, CategoryCode: category, Market: market, Symbol: symbol})
+		for _, topic := range []types.Topic{types.TopicDepth, types.TopicTick, types.TopicQuote} {
+			msgs = append(msgs, types.ClientMessage{Topic: topic, CategoryCode: category, Market: market, Symbol: symbol})
 		}
 		for _, interval := range utils.KlineIntervals {
-			msgs = append(msgs, server.ClientMessage{
-				Topic: server.TopicKline, CategoryCode: category, Market: market,
+			msgs = append(msgs, types.ClientMessage{
+				Topic: types.TopicKline, CategoryCode: category, Market: market,
 				Symbol: symbol, Interval: interval.Name,
 			})
 		}
 	}
 
-	byCategory := make(map[string]map[string]server.ClientMessage)
+	byCategory := make(map[string]map[string]types.ClientMessage)
 	for _, msg := range normalizeUniqueMessages(msgs) {
 		if byCategory[msg.CategoryCode] == nil {
-			byCategory[msg.CategoryCode] = make(map[string]server.ClientMessage)
+			byCategory[msg.CategoryCode] = make(map[string]types.ClientMessage)
 		}
-		byCategory[msg.CategoryCode][server.BuildTopicKey(msg)] = msg
+		byCategory[msg.CategoryCode][cache.BuildTopicKey(msg)] = msg
 	}
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -100,6 +102,12 @@ func (m *ItickManager) refreshActiveProductSubscriptions(ctx context.Context, wa
 		items := byCategory[category]
 		if err := cli.replaceDesiredSubscriptions(items); err != nil && cli.IsLeader() {
 			return err
+		}
+		m.startMu.Lock()
+		started, runCtx := m.started, m.runCtx
+		m.startMu.Unlock()
+		if started && len(items) > 0 && runCtx != nil {
+			cli.Start(runCtx)
 		}
 	}
 	if warm {
@@ -165,7 +173,7 @@ func NewItickManager(
 	productModel models.TItickProductModel,
 	busRedis *redis.Client,
 	lockRedis *redis.Client,
-	marketCache *MarketDataCache,
+	marketCache *cache.MarketDataCache,
 ) *ItickManager {
 	return &ItickManager{
 		wsUrl:        wsUrl,
@@ -175,7 +183,7 @@ func NewItickManager(
 		busRedis:     busRedis,
 		lockRedis:    lockRedis,
 		marketCache:  marketCache,
-		preheater:    NewMarketDataPreheater(apiURL, token, marketCache),
+		preheater:    cache.NewMarketDataPreheater(apiURL, token, marketCache),
 		clients:      make(map[string]*ItickWsClient),
 	}
 }
@@ -187,6 +195,7 @@ func (m *ItickManager) Load(ctx context.Context) error {
 	}
 
 	newClients := make(map[string]*ItickWsClient)
+	connectLimiter := NewRedisConnectLimiter(m.lockRedis)
 
 	for _, item := range categories {
 		categoryCode := strings.ToLower(strings.TrimSpace(item.CategoryCode))
@@ -206,6 +215,7 @@ func (m *ItickManager) Load(ctx context.Context) error {
 			categoryCode,
 			m.marketCache,
 			NewRedisLeaderLock(m.lockRedis, lockKey),
+			connectLimiter,
 		)
 	}
 
@@ -228,6 +238,7 @@ func (m *ItickManager) Start(ctx context.Context) error {
 		return nil
 	}
 	m.started = true
+	m.runCtx = ctx
 	m.startMu.Unlock()
 
 	m.mu.RLock()
@@ -238,7 +249,9 @@ func (m *ItickManager) Start(ctx context.Context) error {
 	m.mu.RUnlock()
 
 	for _, cli := range clients {
-		cli.Start(ctx)
+		if cli.HasDesiredSubscriptions() {
+			cli.Start(ctx)
+		}
 	}
 	go m.reconcileActiveProducts(ctx)
 
@@ -260,7 +273,7 @@ func (m *ItickManager) reconcileActiveProducts(ctx context.Context) {
 	}
 }
 
-func (m *ItickManager) SetQuoteHandler(handler func(ctx context.Context, msg server.ClientMessage, payload *QuotePayload)) {
+func (m *ItickManager) SetQuoteHandler(handler func(ctx context.Context, msg types.ClientMessage, payload *types.QuotePayload)) {
 	m.marketCache.SetQuoteHandler(handler)
 }
 
@@ -269,12 +282,12 @@ func sha1Hex(s string) string {
 	return hex.EncodeToString(sum[:])
 }
 
-func normalizeUniqueMessages(msgs []server.ClientMessage) []server.ClientMessage {
-	out := make([]server.ClientMessage, 0, len(msgs))
+func normalizeUniqueMessages(msgs []types.ClientMessage) []types.ClientMessage {
+	out := make([]types.ClientMessage, 0, len(msgs))
 	seen := make(map[string]struct{}, len(msgs))
 	for _, msg := range msgs {
-		msg = server.NormalizeClientMessage(msg)
-		key := server.BuildTopicKey(msg)
+		msg = cache.NormalizeClientMessage(msg)
+		key := cache.BuildTopicKey(msg)
 		if key == "" {
 			continue
 		}

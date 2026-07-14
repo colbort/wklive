@@ -1,4 +1,4 @@
-package client
+package cache
 
 import (
 	"context"
@@ -10,8 +10,7 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"wklive/services/itick/internal/socket/server"
+	"wklive/services/itick/internal/socket/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"golang.org/x/time/rate"
@@ -40,21 +39,21 @@ const marketDataPreheatBatchSize = 10
 type marketDataBatch struct {
 	category string
 	market   string
-	topic    server.Topic
-	msgs     []server.ClientMessage
+	topic    types.Topic
+	msgs     []types.ClientMessage
 }
 
 // Warm fetches REST snapshots through the batch quotes/ticks/depths endpoints.
 // Kline messages are ignored because their reconciliation has a separate flow.
-func (p *MarketDataPreheater) Warm(ctx context.Context, msgs []server.ClientMessage) {
-	groups := make(map[string][]server.ClientMessage)
+func (p *MarketDataPreheater) Warm(ctx context.Context, msgs []types.ClientMessage) {
+	groups := make(map[string][]types.ClientMessage)
 	seen := make(map[string]struct{})
 	for _, msg := range msgs {
-		msg = server.NormalizeClientMessage(msg)
-		if msg.Topic != server.TopicQuote && msg.Topic != server.TopicTick && msg.Topic != server.TopicDepth {
+		msg = NormalizeClientMessage(msg)
+		if msg.Topic != types.TopicQuote && msg.Topic != types.TopicTick && msg.Topic != types.TopicDepth {
 			continue
 		}
-		topicKey := server.BuildTopicKey(msg)
+		topicKey := BuildTopicKey(msg)
 		if _, ok := seen[topicKey]; ok {
 			continue
 		}
@@ -130,7 +129,7 @@ func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch mark
 	var result struct {
 		Code int                     `json:"code"`
 		Msg  string                  `json:"msg"`
-		Data map[string]UpstreamData `json:"data"`
+		Data map[string]types.UpstreamData `json:"data"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return err
@@ -160,19 +159,19 @@ func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch mark
 	return nil
 }
 
-func restPayload(topic server.Topic, data UpstreamData) any {
+func restPayload(topic types.Topic, data types.UpstreamData) any {
 	switch topic {
-	case server.TopicQuote:
-		return &QuotePayload{LastPrice: data.LD, Open: data.O, High: data.H, Low: data.L,
+	case types.TopicQuote:
+		return &types.QuotePayload{LastPrice: data.LD, Open: data.O, High: data.H, Low: data.L,
 			Volume: data.V, Turnover: data.TU, Ts: data.T}
-	case server.TopicTick:
-		return &TickPayload{LastPrice: data.LD, Volume: data.V, Ts: data.T}
-	case server.TopicDepth:
-		asks := make([]*DepthLevel, 0)
-		bids := make([]*DepthLevel, 0)
+	case types.TopicTick:
+		return &types.TickPayload{LastPrice: data.LD, Volume: data.V, Ts: data.T}
+	case types.TopicDepth:
+		asks := make([]*types.DepthLevel, 0)
+		bids := make([]*types.DepthLevel, 0)
 		_ = json.Unmarshal(data.A, &asks)
 		_ = json.Unmarshal(data.B, &bids)
-		return &DepthPayload{Asks: asks, Bids: bids}
+		return &types.DepthPayload{Asks: asks, Bids: bids}
 	default:
 		return nil
 	}

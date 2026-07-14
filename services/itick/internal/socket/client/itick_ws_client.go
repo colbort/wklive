@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"math"
 	"math/rand"
 	"net/http"
@@ -16,7 +17,8 @@ import (
 	"time"
 	cutils "wklive/common/utils"
 	"wklive/services/itick/internal/pkg/utils"
-	"wklive/services/itick/internal/socket/server"
+	"wklive/services/itick/internal/socket/cache"
+	"wklive/services/itick/internal/socket/types"
 
 	"github.com/gorilla/websocket"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -48,23 +50,26 @@ type ItickWsClient struct {
 	writeMu sync.Mutex
 
 	subMu          sync.Mutex
-	desiredSubs    map[string]server.ClientMessage
+	desiredSubs    map[string]types.ClientMessage
 	upstreamGroups map[string]string
 
 	syncSubMu    sync.Mutex
 	syncSubTimer *time.Timer
 
-	marketCache *MarketDataCache
-	locker      *RedisLeaderLock
+	marketCache    *cache.MarketDataCache
+	locker         *RedisLeaderLock
+	connectLimiter *RedisConnectLimiter
 
-	leader int32
-	closed int32
+	leader  int32
+	closed  int32
+	started int32
 }
 
 func NewItickWsClient(
 	url, token, categoryCode string,
-	marketCache *MarketDataCache,
+	marketCache *cache.MarketDataCache,
 	locker *RedisLeaderLock,
+	connectLimiter *RedisConnectLimiter,
 ) *ItickWsClient {
 	return &ItickWsClient{
 		url:          url,
@@ -73,15 +78,25 @@ func NewItickWsClient(
 		dialer: &websocket.Dialer{
 			HandshakeTimeout: 10 * time.Second,
 		},
-		desiredSubs:    make(map[string]server.ClientMessage),
+		desiredSubs:    make(map[string]types.ClientMessage),
 		upstreamGroups: make(map[string]string),
 		marketCache:    marketCache,
 		locker:         locker,
+		connectLimiter: connectLimiter,
 	}
 }
 
 func (c *ItickWsClient) Start(ctx context.Context) {
+	if !atomic.CompareAndSwapInt32(&c.started, 0, 1) {
+		return
+	}
 	go c.leaderLoop(ctx)
+}
+
+func (c *ItickWsClient) HasDesiredSubscriptions() bool {
+	c.subMu.Lock()
+	defer c.subMu.Unlock()
+	return len(c.desiredSubs) > 0
 }
 
 func (c *ItickWsClient) leaderLoop(ctx context.Context) {
@@ -119,7 +134,7 @@ func (c *ItickWsClient) leaderLoop(ctx context.Context) {
 
 		lostCh := make(chan struct{}, 1)
 
-		go c.renewLoop(lockCtx, token, lostCh)
+		go c.renewLoop(lockCtx, token, lostCh, cancel)
 
 		if err := c.runAsLeader(lockCtx); err != nil && !errors.Is(err, context.Canceled) {
 			logx.Errorf("itick ws leader session stopped, category=%s err=%v", c.categoryCode, err)
@@ -146,7 +161,7 @@ func (c *ItickWsClient) leaderLoop(ctx context.Context) {
 	}
 }
 
-func (c *ItickWsClient) renewLoop(ctx context.Context, token string, lostCh chan<- struct{}) {
+func (c *ItickWsClient) renewLoop(ctx context.Context, token string, lostCh chan<- struct{}, cancel context.CancelFunc) {
 	ticker := time.NewTicker(defaultLeaderRenewGap)
 	defer ticker.Stop()
 
@@ -158,39 +173,50 @@ func (c *ItickWsClient) renewLoop(ctx context.Context, token string, lostCh chan
 			ok, err := c.locker.Refresh(ctx, token, defaultLeaderTTL)
 			if err != nil {
 				logx.Errorf("refresh leader lock failed, category=%s err=%v", c.categoryCode, err)
-				select {
-				case lostCh <- struct{}{}:
-				default:
-				}
+				c.handleLeaderLost(lostCh, cancel)
 				return
 			}
 			if !ok {
 				logx.Errorf("leader lock lost, category=%s", c.categoryCode)
-				select {
-				case lostCh <- struct{}{}:
-				default:
-				}
+				c.handleLeaderLost(lostCh, cancel)
 				return
 			}
 		}
 	}
 }
 
+func (c *ItickWsClient) handleLeaderLost(lostCh chan<- struct{}, cancel context.CancelFunc) {
+	select {
+	case lostCh <- struct{}{}:
+	default:
+	}
+	cancel()
+	c.closeConn()
+}
+
 func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
+	reconnectDelay := defaultReconnectDelay
 	for {
 		if ctx.Err() != nil || c.IsClosed() {
 			return ctx.Err()
 		}
 
+		if c.connectLimiter != nil {
+			if err := c.connectLimiter.Wait(ctx); err != nil {
+				return err
+			}
+		}
 		if err := c.connect(); err != nil {
 			logx.Errorf("itick ws connect failed: %v %s", err, c.url)
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
-			case <-time.After(defaultReconnectDelay):
+			case <-time.After(reconnectDelay + time.Duration(rand.Int63n(int64(time.Second)))):
+				reconnectDelay = min(reconnectDelay*2, time.Minute)
 				continue
 			}
 		}
+		reconnectDelay = defaultReconnectDelay
 
 		sessionCtx, stopSession := context.WithCancel(ctx)
 
@@ -252,8 +278,13 @@ func (c *ItickWsClient) connect() error {
 	header := http.Header{}
 	header.Set("token", c.token)
 
-	conn, _, err := c.dialer.Dial(c.url, header)
+	conn, resp, err := c.dialer.Dial(c.url, header)
 	if err != nil {
+		if resp != nil {
+			defer resp.Body.Close()
+			body, _ := io.ReadAll(io.LimitReader(resp.Body, 2048))
+			return fmt.Errorf("%w: http_status=%d body=%q", err, resp.StatusCode, strings.TrimSpace(string(body)))
+		}
 		return err
 	}
 
@@ -314,7 +345,6 @@ func (c *ItickWsClient) readLoop(ctx context.Context) error {
 
 		_, data, err := conn.ReadMessage()
 		if err != nil {
-			logx.Errorf("读取数据失败 category=%s %v", c.categoryCode, err)
 			return err
 		}
 
@@ -352,7 +382,7 @@ func (c *ItickWsClient) waitAuthenticated(ctx context.Context) error {
 			return err
 		}
 
-		var env UpstreamEnvelope
+		var env types.UpstreamEnvelope
 		if err := json.Unmarshal(data, &env); err != nil {
 			return fmt.Errorf("unmarshal auth message failed: %w", err)
 		}
@@ -387,7 +417,7 @@ func (c *ItickWsClient) waitAuthenticated(ctx context.Context) error {
 }
 
 func (c *ItickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) {
-	var env UpstreamEnvelope
+	var env types.UpstreamEnvelope
 	if err := json.Unmarshal(data, &env); err != nil {
 		logx.Errorf("itick ws unmarshal envelope failed: %v", err)
 		return
@@ -396,7 +426,7 @@ func (c *ItickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) 
 	c.handleUpstreamEnvelope(ctx, env)
 }
 
-func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env UpstreamEnvelope) {
+func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.UpstreamEnvelope) {
 	if env.ResAc != "" {
 		switch env.ResAc {
 		case "auth", "subscribe", "unsubscribe":
@@ -415,7 +445,7 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env Upstream
 		return
 	}
 
-	var d UpstreamData
+	var d types.UpstreamData
 	if err := json.Unmarshal(env.Data, &d); err != nil {
 		logx.Errorf("itick ws unmarshal data failed: %v", err)
 		return
@@ -432,7 +462,7 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env Upstream
 		return
 	}
 
-	msg := server.ClientMessage{
+	msg := types.ClientMessage{
 		Topic:        topic,
 		CategoryCode: c.categoryCode,
 		Symbol:       strings.ToUpper(strings.TrimSpace(d.S)),
@@ -441,8 +471,8 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env Upstream
 	}
 
 	switch topic {
-	case server.TopicQuote:
-		payload := QuotePayload{
+	case types.TopicQuote:
+		payload := types.QuotePayload{
 			LastPrice: d.LD,
 			Open:      d.O,
 			High:      d.H,
@@ -453,30 +483,30 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env Upstream
 		}
 		_ = c.marketCache.Set(ctx, msg, &payload)
 
-	case server.TopicTick:
-		payload := TickPayload{
+	case types.TopicTick:
+		payload := types.TickPayload{
 			LastPrice: d.LD,
 			Volume:    d.V,
 			Ts:        d.T,
 		}
 		_ = c.marketCache.Set(ctx, msg, &payload)
 
-	case server.TopicDepth:
-		asks := make([]*DepthLevel, 0)
-		bids := make([]*DepthLevel, 0)
+	case types.TopicDepth:
+		asks := make([]*types.DepthLevel, 0)
+		bids := make([]*types.DepthLevel, 0)
 		_ = json.Unmarshal(d.A, &asks)
 		_ = json.Unmarshal(d.B, &bids)
 		asks = appendSyntheticDepthLevels(asks, true, 6)
 		bids = appendSyntheticDepthLevels(bids, false, 6)
 
-		payload := DepthPayload{
+		payload := types.DepthPayload{
 			Asks: asks,
 			Bids: bids,
 		}
 		_ = c.marketCache.Set(ctx, msg, &payload)
 
-	case server.TopicKline:
-		payload := KlinePayload{
+	case types.TopicKline:
+		payload := types.KlinePayload{
 			Interval: interval,
 			Open:     d.O,
 			High:     d.H,
@@ -494,12 +524,12 @@ func (c *ItickWsClient) restoreSubscriptions(_ context.Context) error {
 	return c.syncDesiredSubscriptions()
 }
 
-func (c *ItickWsClient) subscribeByClientMessages(items map[string]server.ClientMessage) error {
+func (c *ItickWsClient) subscribeByClientMessages(items map[string]types.ClientMessage) error {
 	return c.ensureDesiredSubscriptions(items)
 }
 
-func (c *ItickWsClient) replaceDesiredSubscriptions(items map[string]server.ClientMessage) error {
-	next := make(map[string]server.ClientMessage, len(items))
+func (c *ItickWsClient) replaceDesiredSubscriptions(items map[string]types.ClientMessage) error {
+	next := make(map[string]types.ClientMessage, len(items))
 	for key, msg := range items {
 		if _, _, err := c.buildItickSubscribe(msg); err != nil {
 			logx.Errorf("build desired subscribe failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
@@ -523,8 +553,8 @@ func (c *ItickWsClient) replaceDesiredSubscriptions(items map[string]server.Clie
 	return c.syncDesiredSubscriptions()
 }
 
-func (c *ItickWsClient) ensureDesiredSubscriptions(items map[string]server.ClientMessage) error {
-	next := make(map[string]server.ClientMessage, len(items))
+func (c *ItickWsClient) ensureDesiredSubscriptions(items map[string]types.ClientMessage) error {
+	next := make(map[string]types.ClientMessage, len(items))
 	for key, msg := range items {
 		if _, _, err := c.buildItickSubscribe(msg); err != nil {
 			logx.Errorf("build ensure subscribe failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
@@ -551,7 +581,7 @@ func (c *ItickWsClient) ensureDesiredSubscriptions(items map[string]server.Clien
 	return c.syncDesiredSubscriptions()
 }
 
-func (c *ItickWsClient) addDesiredSubscription(key string, msg server.ClientMessage) bool {
+func (c *ItickWsClient) addDesiredSubscription(key string, msg types.ClientMessage) bool {
 	c.subMu.Lock()
 	defer c.subMu.Unlock()
 
@@ -603,7 +633,7 @@ func (c *ItickWsClient) flushSubscriptionSync() {
 
 func (c *ItickWsClient) syncDesiredSubscriptions() error {
 	c.subMu.Lock()
-	desired := make(map[string]server.ClientMessage, len(c.desiredSubs))
+	desired := make(map[string]types.ClientMessage, len(c.desiredSubs))
 	for key, msg := range c.desiredSubs {
 		desired[key] = msg
 	}
@@ -645,12 +675,12 @@ func (c *ItickWsClient) syncDesiredSubscriptions() error {
 	return nil
 }
 
-func appendSyntheticDepthLevels(levels []*DepthLevel, isAsk bool, count int) []*DepthLevel {
+func appendSyntheticDepthLevels(levels []*types.DepthLevel, isAsk bool, count int) []*types.DepthLevel {
 	if count <= 0 {
 		return levels
 	}
 
-	valid := make([]*DepthLevel, 0, len(levels))
+	valid := make([]*types.DepthLevel, 0, len(levels))
 	for _, level := range levels {
 		if level != nil && level.Price > 0 {
 			valid = append(valid, level)
@@ -687,7 +717,7 @@ func appendSyntheticDepthLevels(levels []*DepthLevel, isAsk bool, count int) []*
 		direction = 1
 	}
 
-	out := append([]*DepthLevel{}, levels...)
+	out := append([]*types.DepthLevel{}, levels...)
 	for i := 1; i <= count; i++ {
 		priceOffset := step * float64(i) * (1 + rand.Float64()*0.35)
 		price := basePrice + direction*priceOffset
@@ -695,7 +725,7 @@ func appendSyntheticDepthLevels(levels []*DepthLevel, isAsk bool, count int) []*
 			continue
 		}
 		volume := avgVolume * (0.55 + rand.Float64()*0.9)
-		out = append(out, &DepthLevel{
+		out = append(out, &types.DepthLevel{
 			Price:        roundDepthPrice(price),
 			Volume:       roundDepthVolume(volume),
 			Position:     maxPosition + int64(i),
@@ -732,7 +762,7 @@ func roundDepthVolume(value float64) float64 {
 	return math.Round(value*1e5) / 1e5
 }
 
-func (c *ItickWsClient) buildSubscriptionGroups(items map[string]server.ClientMessage) (map[string]string, error) {
+func (c *ItickWsClient) buildSubscriptionGroups(items map[string]types.ClientMessage) (map[string]string, error) {
 	groupSets := make(map[string]map[string]struct{})
 	for key, msg := range items {
 		params, types, err := c.buildItickSubscribe(msg)
@@ -758,59 +788,61 @@ func (c *ItickWsClient) buildSubscriptionGroups(items map[string]server.ClientMe
 	return groups, nil
 }
 
-func (c *ItickWsClient) buildItickSubscribe(msg server.ClientMessage) (params string, types string, err error) {
+func (c *ItickWsClient) buildItickSubscribe(msg types.ClientMessage) (string, string, error) {
 	if msg.Symbol == "" || msg.Market == "" {
 		return "", "", errors.New("symbol or market is empty")
 	}
 
-	params = buildSymbolRegion(msg.Symbol, msg.Market)
+	params := buildSymbolRegion(msg.Symbol, msg.Market)
+	ts := ""
 
 	switch msg.Topic {
-	case server.TopicQuote:
-		types = "quote"
-	case server.TopicDepth:
-		types = "depth"
-	case server.TopicTick:
-		types = "tick"
-	case server.TopicKline:
-		types, err = intervalToItickKlineType(msg.Interval)
+	case types.TopicQuote:
+		ts = "quote"
+	case types.TopicDepth:
+		ts = "depth"
+	case types.TopicTick:
+		ts = "tick"
+	case types.TopicKline:
+		ts, err := intervalToItickKlineType(msg.Interval)
 		if err != nil {
 			return "", "", err
 		}
+		ts = ts
 	default:
 		return "", "", fmt.Errorf("unsupported topic: %s", msg.Topic)
 	}
 
-	return params, types, nil
+	return params, ts, nil
 }
 
-func (c *ItickWsClient) subscribe(params, types string) error {
-	req := SubscribeReq{
+func (c *ItickWsClient) subscribe(params, ts string) error {
+	req := types.SubscribeReq{
 		Ac:     "subscribe",
 		Params: params,
-		Types:  types,
+		Types:  ts,
 	}
 
 	if err := c.writeJSON(req); err != nil {
-		logx.Errorf("itick subscribe failed, category=%s params=%s, types=%s", c.categoryCode, params, types)
+		logx.Errorf("itick subscribe failed, category=%s params=%s, types=%s", c.categoryCode, params, ts)
 		return err
 	}
 
 	return nil
 }
 
-func (c *ItickWsClient) unsubscribe(params, types string) error {
-	req := UnsubscribeReq{
+func (c *ItickWsClient) unsubscribe(params, ts string) error {
+	req := types.UnsubscribeReq{
 		Ac:     "unsubscribe",
 		Params: params,
-		Types:  types,
+		Types:  ts,
 	}
 
 	if err := c.writeJSON(req); err != nil {
 		return err
 	}
 
-	logx.Infof("itick unsubscribe success, category=%s params=%s, types=%s", c.categoryCode, params, types)
+	logx.Infof("itick unsubscribe success, category=%s params=%s, types=%s", c.categoryCode, params, ts)
 	return nil
 }
 
@@ -832,7 +864,7 @@ func (c *ItickWsClient) writeJSON(v any) error {
 
 func (c *ItickWsClient) writePing(conn *websocket.Conn) error {
 	ts := strconv.FormatInt(cutils.NowMillis(), 10)
-	req := PingReq{
+	req := types.PingReq{
 		Ac:     "ping",
 		Params: ts,
 	}
@@ -893,7 +925,7 @@ func (c *ItickWsClient) resetUpstreamGroups() {
 	c.upstreamGroups = make(map[string]string)
 }
 
-func sameDesiredSubscriptions(left, right map[string]server.ClientMessage) bool {
+func sameDesiredSubscriptions(left, right map[string]types.ClientMessage) bool {
 	if len(left) != len(right) {
 		return false
 	}
@@ -906,7 +938,7 @@ func sameDesiredSubscriptions(left, right map[string]server.ClientMessage) bool 
 	return true
 }
 
-func sameClientMessage(left, right server.ClientMessage) bool {
+func sameClientMessage(left, right types.ClientMessage) bool {
 	return left.Topic == right.Topic &&
 		left.CategoryCode == right.CategoryCode &&
 		left.Symbol == right.Symbol &&
@@ -922,17 +954,17 @@ func intervalToItickKlineType(interval string) (string, error) {
 	return utils.IntervalToStream(interval)
 }
 
-func mapItickType(t string) (server.Topic, string) {
+func mapItickType(t string) (types.Topic, string) {
 	switch strings.ToLower(strings.TrimSpace(t)) {
 	case "quote":
-		return server.TopicQuote, ""
+		return types.TopicQuote, ""
 	case "depth":
-		return server.TopicDepth, ""
+		return types.TopicDepth, ""
 	case "tick":
-		return server.TopicTick, ""
+		return types.TopicTick, ""
 	default:
 		if interval, ok := utils.StreamToInterval(t); ok {
-			return server.TopicKline, interval
+			return types.TopicKline, interval
 		}
 		return "", ""
 	}

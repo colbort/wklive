@@ -1,10 +1,13 @@
-package server
+package cache
 
-import "testing"
+import (
+	"testing"
+	"wklive/services/itick/internal/socket/types"
+)
 
 func TestNormalizeClientMessageClearsIntervalForNonKline(t *testing.T) {
-	msg := NormalizeClientMessage(ClientMessage{
-		Topic:        TopicQuote,
+	msg := NormalizeClientMessage(types.ClientMessage{
+		Topic:        types.TopicQuote,
 		CategoryCode: " Crypto ",
 		Symbol:       "BTCUSDT",
 		Market:       "ba",
@@ -20,8 +23,8 @@ func TestNormalizeClientMessageClearsIntervalForNonKline(t *testing.T) {
 }
 
 func TestNormalizeClientMessageKeepsKlineInterval(t *testing.T) {
-	msg := NormalizeClientMessage(ClientMessage{
-		Topic:        TopicKline,
+	msg := NormalizeClientMessage(types.ClientMessage{
+		Topic:        types.TopicKline,
 		CategoryCode: "crypto",
 		Symbol:       "BTCUSDT",
 		Market:       "ba",
@@ -34,15 +37,15 @@ func TestNormalizeClientMessageKeepsKlineInterval(t *testing.T) {
 }
 
 func TestBuildTopicKeyIgnoresIntervalForQuote(t *testing.T) {
-	withInterval := BuildTopicKey(ClientMessage{
-		Topic:        TopicQuote,
+	withInterval := BuildTopicKey(types.ClientMessage{
+		Topic:        types.TopicQuote,
 		CategoryCode: "crypto",
 		Symbol:       "BTCUSDT",
 		Market:       "BA",
 		Interval:     "1m",
 	})
-	withoutInterval := BuildTopicKey(ClientMessage{
-		Topic:        TopicQuote,
+	withoutInterval := BuildTopicKey(types.ClientMessage{
+		Topic:        types.TopicQuote,
 		CategoryCode: "crypto",
 		Symbol:       "BTCUSDT",
 		Market:       "BA",
@@ -54,24 +57,24 @@ func TestBuildTopicKeyIgnoresIntervalForQuote(t *testing.T) {
 }
 
 func TestBuildTopicKeySeparatesTopicTypes(t *testing.T) {
-	base := ClientMessage{
+	base := types.ClientMessage{
 		CategoryCode: "crypto",
 		Symbol:       "ETHUSDT",
 		Market:       "BA",
 	}
 
 	quote := base
-	quote.Topic = TopicQuote
+	quote.Topic = types.TopicQuote
 	depth := base
-	depth.Topic = TopicDepth
+	depth.Topic = types.TopicDepth
 	tick := base
-	tick.Topic = TopicTick
+	tick.Topic = types.TopicTick
 	kline := base
-	kline.Topic = TopicKline
+	kline.Topic = types.TopicKline
 	kline.Interval = "1m"
 
 	keys := map[string]struct{}{}
-	for _, msg := range []ClientMessage{quote, depth, tick, kline} {
+	for _, msg := range []types.ClientMessage{quote, depth, tick, kline} {
 		key := BuildTopicKey(msg)
 		if _, ok := keys[key]; ok {
 			t.Fatalf("expected distinct topic key, got duplicate %q", key)

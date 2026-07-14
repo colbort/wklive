@@ -1,4 +1,4 @@
-package client
+package types
 
 import "encoding/json"
 
@@ -7,13 +7,11 @@ type SubscribeReq struct {
 	Params string `json:"params"`
 	Types  string `json:"types"`
 }
-
 type UnsubscribeReq struct {
 	Ac     string `json:"ac"`
 	Params string `json:"params"`
 	Types  string `json:"types"`
 }
-
 type PingReq struct {
 	Ac     string `json:"ac"`
 	Params string `json:"params"`
@@ -25,11 +23,9 @@ type UpstreamEnvelope struct {
 	Msg   string          `json:"msg,omitempty"`
 	Data  json.RawMessage `json:"data,omitempty"`
 }
-
 type UpstreamPongData struct {
 	Params string `json:"params"`
 }
-
 type UpstreamData struct {
 	S    string          `json:"s,omitempty"`
 	R    string          `json:"r,omitempty"`
@@ -45,21 +41,16 @@ type UpstreamData struct {
 	A    json.RawMessage `json:"a,omitempty"`
 	B    json.RawMessage `json:"b,omitempty"`
 }
-
-// 深度档位
 type DepthLevel struct {
 	Price        float64 `json:"p"`
 	Volume       float64 `json:"v"`
 	Position     int64   `json:"po"`
 	OriginVolume float64 `json:"o"`
 }
-
-// 深度
 type DepthPayload struct {
 	Asks []*DepthLevel `json:"asks"`
 	Bids []*DepthLevel `json:"bids"`
 }
-
 type QuotePayload struct {
 	LastPrice float64 `json:"lastPrice"`
 	Open      float64 `json:"open"`
@@ -69,13 +60,11 @@ type QuotePayload struct {
 	Turnover  float64 `json:"turnover"`
 	Ts        int64   `json:"ts"`
 }
-
 type TickPayload struct {
 	LastPrice float64 `json:"lastPrice"`
 	Volume    float64 `json:"volume"`
 	Ts        int64   `json:"ts"`
 }
-
 type KlinePayload struct {
 	Interval string  `json:"interval"`
 	Open     float64 `json:"open"`
@@ -85,4 +74,21 @@ type KlinePayload struct {
 	Volume   float64 `json:"volume"`
 	Turnover float64 `json:"turnover"`
 	Ts       int64   `json:"ts"`
+}
+
+type Topic string
+
+const (
+	TopicQuote Topic = "quote"
+	TopicDepth Topic = "depth"
+	TopicTick  Topic = "tick"
+	TopicKline Topic = "kline"
+)
+
+type ClientMessage struct {
+	Topic        Topic  `json:"topic"`
+	CategoryCode string `json:"categoryCode"`
+	Symbol       string `json:"symbol"`
+	Market       string `json:"market,omitempty"`
+	Interval     string `json:"interval,omitempty"`
 }

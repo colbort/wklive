@@ -6,7 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/proto/itick"
-	"wklive/services/itick/internal/socket/client"
+	"wklive/services/itick/internal/socket/types"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +29,7 @@ func NewGetQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetQuote
 // 获取最新报价
 func (l *GetQuoteLogic) GetQuote(in *itick.GetQuoteReq) (*itick.GetQuoteResp, error) {
 	key := fmt.Sprintf("itick:quote:%s:%s:%s", in.CategoryCode, in.Market, in.Symbol)
-	var data client.QuotePayload
+	var data types.QuotePayload
 	err := l.svcCtx.Cache.GetCtx(l.ctx, key, &data)
 	if err != nil {
 		return nil, err

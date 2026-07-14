@@ -6,7 +6,8 @@ import (
 	"time"
 
 	"wklive/proto/itick"
-	"wklive/services/itick/internal/socket/server"
+	"wklive/services/itick/internal/socket/cache"
+	"wklive/services/itick/internal/socket/types"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -52,7 +53,7 @@ func (l *SubscribeStreamLogic) SubscribeStream(in *itick.SubscribeRequest, strea
 
 func (l *SubscribeStreamLogic) pushCachedMarketData(
 	ctx context.Context,
-	msgs []server.ClientMessage,
+	msgs []types.ClientMessage,
 	stream itick.ItickApp_SubscribeStreamServer,
 ) error {
 	items, err := l.svcCtx.MarketDataCache.ReadMany(ctx, msgs)
@@ -78,17 +79,17 @@ func (l *SubscribeStreamLogic) pushCachedMarketData(
 	return nil
 }
 
-func normalizeUniqueClientMessages(in *itick.SubscribeRequest) []server.ClientMessage {
+func normalizeUniqueClientMessages(in *itick.SubscribeRequest) []types.ClientMessage {
 	if in == nil || len(in.Topics) == 0 {
 		return nil
 	}
-	uniq := make(map[string]server.ClientMessage, len(in.Topics))
+	uniq := make(map[string]types.ClientMessage, len(in.Topics))
 	for _, topic := range in.Topics {
 		if topic == nil {
 			continue
 		}
-		msg := server.NormalizeClientMessage(server.ClientMessage{
-			Topic:        server.Topic(topic.Topic),
+		msg := cache.NormalizeClientMessage(types.ClientMessage{
+			Topic:        types.Topic(topic.Topic),
 			CategoryCode: topic.CategoryCode,
 			Symbol:       topic.Symbol,
 			Market:       topic.Market,
@@ -97,12 +98,12 @@ func normalizeUniqueClientMessages(in *itick.SubscribeRequest) []server.ClientMe
 		if msg.Topic == "" || msg.CategoryCode == "" || msg.Symbol == "" || msg.Market == "" {
 			continue
 		}
-		if msg.Topic == server.TopicKline && msg.Interval == "" {
+		if msg.Topic == types.TopicKline && msg.Interval == "" {
 			continue
 		}
-		uniq[server.BuildTopicKey(msg)] = msg
+		uniq[cache.BuildTopicKey(msg)] = msg
 	}
-	out := make([]server.ClientMessage, 0, len(uniq))
+	out := make([]types.ClientMessage, 0, len(uniq))
 	for _, msg := range uniq {
 		out = append(out, msg)
 	}

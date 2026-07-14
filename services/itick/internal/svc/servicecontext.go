@@ -10,8 +10,10 @@ import (
 	"wklive/services/itick/internal/config"
 	"wklive/services/itick/internal/pkg/klinewriter"
 	"wklive/services/itick/internal/socket/client"
-	"wklive/services/itick/internal/socket/server"
+	"wklive/services/itick/internal/socket/types"
 	"wklive/services/itick/models"
+
+	icache "wklive/services/itick/internal/socket/cache"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -26,7 +28,7 @@ type ServiceContext struct {
 	SystemCli                   system.SystemClient
 	OptionCli                   option.OptionInternalClient
 	ItickManager                *client.ItickManager
-	MarketDataCache             *client.MarketDataCache
+	MarketDataCache             *icache.MarketDataCache
 	LockRedis                   *redis.Client
 	TaskSubscriber              *bus.Subscriber
 	Cache                       cache.Cache
@@ -67,7 +69,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Password: c.LockRedis[0].Pass,
 		DB:       0,
 	})
-	marketDataCache := client.NewMarketDataCache(busRedis)
+	marketDataCache := icache.NewMarketDataCache(busRedis)
 	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 
 	// 这里不能 defer Close，不然函数返回后 Redis 连接就被关掉了
@@ -93,7 +95,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		lockRedis,
 		marketDataCache,
 	)
-	itickManager.SetQuoteHandler(func(_ context.Context, msg server.ClientMessage, payload *client.QuotePayload) {
+	itickManager.SetQuoteHandler(func(_ context.Context, msg types.ClientMessage, payload *types.QuotePayload) {
 		rpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
 

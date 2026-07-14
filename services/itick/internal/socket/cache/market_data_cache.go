@@ -1,4 +1,4 @@
-package client
+package cache
 
 import (
 	"context"
@@ -6,13 +6,12 @@ import (
 	"fmt"
 	"sync"
 	"time"
-
-	"wklive/services/itick/internal/socket/server"
+	"wklive/services/itick/internal/socket/types"
 
 	"github.com/redis/go-redis/v9"
 )
 
-type ClusterEnvelope struct {
+type CacheEnvelope struct {
 	Topic        string          `json:"topic"`
 	CategoryCode string          `json:"categoryCode"`
 	Symbol       string          `json:"symbol"`
@@ -24,11 +23,11 @@ type ClusterEnvelope struct {
 type MarketDataCache struct {
 	rdb          *redis.Client
 	mu           sync.RWMutex
-	quoteHandler func(context.Context, server.ClientMessage, *QuotePayload)
+	quoteHandler func(context.Context, types.ClientMessage, *types.QuotePayload)
 }
 
 type CachedMarketData struct {
-	Message server.ClientMessage
+	Message types.ClientMessage
 	Payload any
 	Version string
 }
@@ -37,15 +36,15 @@ func NewMarketDataCache(rdb *redis.Client) *MarketDataCache {
 	return &MarketDataCache{rdb: rdb}
 }
 
-func (b *MarketDataCache) Set(ctx context.Context, msg server.ClientMessage, payload any) error {
-	msg = server.NormalizeClientMessage(msg)
+func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payload any) error {
+	msg = NormalizeClientMessage(msg)
 
 	raw, err := json.Marshal(payload)
 	if err != nil {
 		return err
 	}
 
-	env := ClusterEnvelope{
+	env := CacheEnvelope{
 		Topic:        string(msg.Topic),
 		CategoryCode: msg.CategoryCode,
 		Symbol:       msg.Symbol,
@@ -62,7 +61,7 @@ func (b *MarketDataCache) Set(ctx context.Context, msg server.ClientMessage, pay
 	if err := b.rdb.Set(ctx, marketDataKey(msg), bs, marketDataTTL(msg.Topic)).Err(); err != nil {
 		return err
 	}
-	if quote, ok := payload.(*QuotePayload); ok && quote != nil {
+	if quote, ok := payload.(*types.QuotePayload); ok && quote != nil {
 		b.mu.RLock()
 		handler := b.quoteHandler
 		b.mu.RUnlock()
@@ -73,26 +72,26 @@ func (b *MarketDataCache) Set(ctx context.Context, msg server.ClientMessage, pay
 	return nil
 }
 
-func (b *MarketDataCache) SetQuoteHandler(handler func(context.Context, server.ClientMessage, *QuotePayload)) {
+func (b *MarketDataCache) SetQuoteHandler(handler func(context.Context, types.ClientMessage, *types.QuotePayload)) {
 	b.mu.Lock()
 	b.quoteHandler = handler
 	b.mu.Unlock()
 }
 
-func (b *MarketDataCache) Read(ctx context.Context, msg server.ClientMessage) (any, string, error) {
+func (b *MarketDataCache) Read(ctx context.Context, msg types.ClientMessage) (any, string, error) {
 	raw, err := b.rdb.Get(ctx, marketDataKey(msg)).Result()
 	if err != nil {
 		return nil, "", err
 	}
-	var env ClusterEnvelope
+	var env CacheEnvelope
 	if err := json.Unmarshal([]byte(raw), &env); err != nil {
 		return nil, "", err
 	}
-	payload, err := decodeClusterPayload(msg.Topic, env.Payload)
+	payload, err := decodeMarketDataPayload(msg.Topic, env.Payload)
 	return payload, raw, err
 }
 
-func (b *MarketDataCache) ReadMany(ctx context.Context, msgs []server.ClientMessage) ([]CachedMarketData, error) {
+func (b *MarketDataCache) ReadMany(ctx context.Context, msgs []types.ClientMessage) ([]CachedMarketData, error) {
 	if len(msgs) == 0 {
 		return nil, nil
 	}
@@ -110,11 +109,11 @@ func (b *MarketDataCache) ReadMany(ctx context.Context, msgs []server.ClientMess
 		if !ok || raw == "" {
 			continue
 		}
-		var env ClusterEnvelope
+		var env CacheEnvelope
 		if err := json.Unmarshal([]byte(raw), &env); err != nil {
 			continue
 		}
-		payload, err := decodeClusterPayload(msgs[i].Topic, env.Payload)
+		payload, err := decodeMarketDataPayload(msgs[i].Topic, env.Payload)
 		if err != nil {
 			continue
 		}
@@ -123,50 +122,50 @@ func (b *MarketDataCache) ReadMany(ctx context.Context, msgs []server.ClientMess
 	return out, nil
 }
 
-func marketDataKey(msg server.ClientMessage) string {
-	msg = server.NormalizeClientMessage(msg)
-	if msg.Topic == server.TopicKline {
+func marketDataKey(msg types.ClientMessage) string {
+	msg = NormalizeClientMessage(msg)
+	if msg.Topic == types.TopicKline {
 		return fmt.Sprintf("itick:v1:kline:%s:%s:%s:%s", msg.CategoryCode, msg.Market, msg.Symbol, msg.Interval)
 	}
 	return fmt.Sprintf("itick:v1:%s:%s:%s:%s", msg.Topic, msg.CategoryCode, msg.Market, msg.Symbol)
 }
 
-func marketDataTTL(topic server.Topic) time.Duration {
+func marketDataTTL(topic types.Topic) time.Duration {
 	switch topic {
-	case server.TopicDepth:
+	case types.TopicDepth:
 		return 5 * time.Minute
-	case server.TopicKline:
+	case types.TopicKline:
 		return 24 * time.Hour
 	default:
 		return 30 * time.Minute
 	}
 }
 
-func decodeClusterPayload(topic server.Topic, raw json.RawMessage) (any, error) {
+func decodeMarketDataPayload(topic types.Topic, raw json.RawMessage) (any, error) {
 	switch topic {
-	case server.TopicQuote:
-		var v QuotePayload
+	case types.TopicQuote:
+		var v types.QuotePayload
 		if err := json.Unmarshal(raw, &v); err != nil {
 			return nil, err
 		}
 		return &v, nil
 
-	case server.TopicTick:
-		var v TickPayload
+	case types.TopicTick:
+		var v types.TickPayload
 		if err := json.Unmarshal(raw, &v); err != nil {
 			return nil, err
 		}
 		return &v, nil
 
-	case server.TopicDepth:
-		var v DepthPayload
+	case types.TopicDepth:
+		var v types.DepthPayload
 		if err := json.Unmarshal(raw, &v); err != nil {
 			return nil, err
 		}
 		return &v, nil
 
-	case server.TopicKline:
-		var v KlinePayload
+	case types.TopicKline:
+		var v types.KlinePayload
 		if err := json.Unmarshal(raw, &v); err != nil {
 			return nil, err
 		}

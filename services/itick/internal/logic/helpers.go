@@ -10,7 +10,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/proto/system"
-	"wklive/services/itick/internal/socket/client"
+	"wklive/services/itick/internal/socket/types"
 	"wklive/services/itick/models"
 )
 
@@ -97,7 +97,7 @@ func toQuoteProto(item *models.TItickQuote) *itick.Quote {
 	}
 }
 
-func toQuotePayloadProto(categoryCode, market, symbol string, item *client.QuotePayload) *itick.Quote {
+func toQuotePayloadProto(categoryCode, market, symbol string, item *types.QuotePayload) *itick.Quote {
 	if item == nil {
 		return nil
 	}
