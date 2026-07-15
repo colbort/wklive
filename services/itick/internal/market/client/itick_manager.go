@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha1"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -107,11 +108,19 @@ func (m *ItickManager) refreshActiveProductSubscriptions(ctx context.Context, wa
 		byCategory[msg.CategoryCode][cache.BuildTopicKey(msg)] = msg
 	}
 	m.mu.RLock()
-	defer m.mu.RUnlock()
+	clients := make(map[string]*ItickWsClient, len(m.clients))
 	for category, cli := range m.clients {
+		clients[category] = cli
+	}
+	m.mu.RUnlock()
+
+	var syncErrors []error
+	for category, cli := range clients {
 		items := byCategory[category]
 		if err := cli.replaceDesiredSubscriptions(items); err != nil && cli.IsLeader() {
-			return err
+			syncErr := fmt.Errorf("sync active subscriptions, category=%s: %w", category, err)
+			logx.Errorf("%v", syncErr)
+			syncErrors = append(syncErrors, syncErr)
 		}
 		m.startMu.Lock()
 		started, runCtx := m.started, m.runCtx
@@ -121,7 +130,7 @@ func (m *ItickManager) refreshActiveProductSubscriptions(ctx context.Context, wa
 		}
 	}
 	logx.Infof("loaded active itick product subscriptions, products=%d topics=%d", len(ids), len(msgs))
-	return nil
+	return errors.Join(syncErrors...)
 }
 
 func (m *ItickManager) rebuildActiveProducts(ctx context.Context) error {
