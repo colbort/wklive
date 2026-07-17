@@ -10,6 +10,7 @@ info (
 import "common.api"
 import "auth_public.api"
 import "auth_private.api"
+import "security.api"
 import "system.api"
 import "user.api"
 import "payment.api"

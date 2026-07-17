@@ -4,6 +4,8 @@
 package config
 
 import (
+	"wklive/common/reqenc"
+
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -15,13 +17,14 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64
 	} `json:"Jwt" yaml:"Jwt"`
-	SystemRpc  zrpc.RpcClientConf
-	UserRpc    zrpc.RpcClientConf
-	PaymentRpc zrpc.RpcClientConf
-	ItickRpc   zrpc.RpcClientConf
-	AssetRpc   zrpc.RpcClientConf
-	OptionRpc  zrpc.RpcClientConf
-	StakingRpc zrpc.RpcClientConf
-	TradeRpc   zrpc.RpcClientConf
-	RedisConf  redis.RedisConf `json:"Redis" yaml:"Redis"`
+	SystemRpc         zrpc.RpcClientConf
+	UserRpc           zrpc.RpcClientConf
+	PaymentRpc        zrpc.RpcClientConf
+	ItickRpc          zrpc.RpcClientConf
+	AssetRpc          zrpc.RpcClientConf
+	OptionRpc         zrpc.RpcClientConf
+	StakingRpc        zrpc.RpcClientConf
+	TradeRpc          zrpc.RpcClientConf
+	RedisConf         redis.RedisConf `json:"Redis" yaml:"Redis"`
+	RequestEncryption reqenc.Config   `json:"RequestEncryption" yaml:"RequestEncryption"`
 }

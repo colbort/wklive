@@ -12,6 +12,7 @@ import (
 	itick "wklive/admin-api/internal/handler/itick"
 	option "wklive/admin-api/internal/handler/option"
 	payment "wklive/admin-api/internal/handler/payment"
+	security "wklive/admin-api/internal/handler/security"
 	staking "wklive/admin-api/internal/handler/staking"
 	system "wklive/admin-api/internal/handler/system"
 	trade "wklive/admin-api/internal/handler/trade"
@@ -666,6 +667,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/admin/payment"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/encryption-config",
+				Handler: security.EncryptionConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/encryption-session",
+				Handler: security.EncryptionSessionHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/admin/security"),
 	)
 
 	server.AddRoutes(

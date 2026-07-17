@@ -9,6 +9,21 @@ Jwt:
   AccessSecret: "your_access_secret"
   AccessExpire: 3600
 
+# 请求体加密。admin-ui 根据 /admin/security/encryption-config 返回的 enabled
+# 判断是否加密；灰度阶段使用 OPTIONAL，前端全部上线后可改为 REQUIRED。
+RequestEncryption:
+  Scope: admin-api
+  Mode: DISABLED # DISABLED / OPTIONAL / REQUIRED
+  RSAKid: ""
+  RSAPrivateKeyPath: ""
+  SessionWrapKey: "" # 启用时必须由密钥管理系统注入恰好 32 字节的密钥
+  SessionTTLSeconds: 960
+  RotateBeforeSeconds: 180
+  ClockSkewSeconds: 120
+  NonceTTLSeconds: 120
+  MaxPlaintextBytes: 1048576
+  MaxCipherTextBytes: 1052672
+
 SystemRpc:
   rpcType: zrpc
   Etcd:

@@ -246,14 +246,16 @@ func parsePerm(perm string) (obj string, act string, ok bool) {
 
 func isWhitePath(path string) bool {
 	whiteList := map[string]struct{}{
-		"/admin/system/core":         {},
-		"/admin/system/auth/login":   {},
-		"/admin/system/auth/profile": {},
-		"/admin/system/auth/captcha": {},
-		"/admin/upload/avatar":       {},
-		"/admin/upload/file":         {},
-		"/admin/ws/notifications":    {},
-		"/health":                    {},
+		"/admin/system/core":                 {},
+		"/admin/system/auth/login":           {},
+		"/admin/system/auth/profile":         {},
+		"/admin/system/auth/captcha":         {},
+		"/admin/security/encryption-config":  {},
+		"/admin/security/encryption-session": {},
+		"/admin/upload/avatar":               {},
+		"/admin/upload/file":                 {},
+		"/admin/ws/notifications":            {},
+		"/health":                            {},
 	}
 
 	_, ok := whiteList[path]

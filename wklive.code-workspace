@@ -138,6 +138,7 @@
       "protoreflect",
       "PTTL",
       "qrcode",
+      "reqenc",
       "resetpwd",
       "risklevel",
       "robfig",

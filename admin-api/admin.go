@@ -18,6 +18,7 @@ import (
 
 	"wklive/common/etcd"
 	um "wklive/common/middleware"
+	"wklive/common/reqenc"
 	"wklive/common/utils"
 )
 
@@ -40,7 +41,14 @@ func main() {
 	server := rest.MustNewServer(
 		c.RestConf,
 		rest.WithCors("*"),
-		rest.WithCorsHeaders(string(utils.CtxKeyTenantId)),
+		rest.WithCorsHeaders(
+			string(utils.CtxKeyTenantId),
+			reqenc.HeaderVersion,
+			reqenc.HeaderLocation,
+			reqenc.HeaderKeyID,
+			reqenc.HeaderTimestamp,
+			reqenc.HeaderNonce,
+		),
 		rest.WithFileServer(
 			"/avatars",
 			http.Dir("./avatars"),
@@ -49,6 +57,9 @@ func main() {
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
+	encryptionService := mustNewRequestEncryption(c)
+	ctx.RequestEncryption = encryptionService
+	server.Use(reqenc.NewMiddleware(encryptionService, adminRequestEncryptionRegistry()).Handle)
 	requestLogMiddleware := um.NewRequestLogMiddleware("ADMIN-API")
 	server.Use(requestLogMiddleware.Handle)
 	headerMiddleware := um.NewHeaderMiddleware()

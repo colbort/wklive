@@ -692,6 +692,12 @@ type CreateCryptoWalletAccountReq struct {
 	IsDefault            int64  `json:"isDefault"` // 是否默认：1是 2否
 }
 
+type CreateEncryptionSessionReq struct {
+	Version      string `json:"version"`
+	RsaKid       string `json:"rsaKid"`
+	EncryptedKey string `json:"encryptedKey"`
+}
+
 type CreatePayPlatformReq struct {
 	PlatformCode string `json:"platformCode"`
 	PlatformName string `json:"platformName"`
@@ -980,6 +986,36 @@ type Depth struct {
 type DepthLevel struct {
 	Price  float64 `json:"price"`
 	Volume float64 `json:"volume"`
+}
+
+type EncryptionConfigData struct {
+	Version             string `json:"version"`
+	Mode                string `json:"mode"`
+	Enabled             bool   `json:"enabled"`
+	Required            bool   `json:"required"`
+	RsaKid              string `json:"rsaKid,optional"`
+	PublicKey           string `json:"publicKey,optional"`
+	KeyAlgorithm        string `json:"keyAlgorithm,optional"`
+	ContentAlgorithm    string `json:"contentAlgorithm,optional"`
+	SessionTtlSeconds   int    `json:"sessionTtlSeconds"`
+	RotateBeforeSeconds int    `json:"rotateBeforeSeconds"`
+	ServerTime          int64  `json:"serverTime"`
+}
+
+type EncryptionConfigResp struct {
+	RespBase
+	Data EncryptionConfigData `json:"data"`
+}
+
+type EncryptionSessionData struct {
+	KeyId       string `json:"keyId"`
+	ExpiresAt   int64  `json:"expiresAt"`
+	RotateAfter int64  `json:"rotateAfter"`
+}
+
+type EncryptionSessionResp struct {
+	RespBase
+	Data EncryptionSessionData `json:"data"`
 }
 
 type GetAccountReq struct {

@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"wklive/admin-api/internal/config"
 	"wklive/admin-api/internal/ws"
+	"wklive/common/reqenc"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/itick"
@@ -26,17 +27,18 @@ import (
 )
 
 type ServiceContext struct {
-	Config          config.Config
-	SystemCli       system.SystemClient
-	UserCli         user.UserAdminClient
-	PaymentCli      payment.PaymentAdminClient
-	ItickCli        itick.ItickAdminClient
-	AssetCli        asset.AssetAdminClient
-	OptionCli       option.OptionAdminClient
-	StakingCli      staking.StakingAdminClient
-	TradeCli        trade.TradeAdminClient
-	TradeAppCli     trade.TradeAppClient
-	NotificationHub *ws.Hub
+	Config            config.Config
+	SystemCli         system.SystemClient
+	UserCli           user.UserAdminClient
+	PaymentCli        payment.PaymentAdminClient
+	ItickCli          itick.ItickAdminClient
+	AssetCli          asset.AssetAdminClient
+	OptionCli         option.OptionAdminClient
+	StakingCli        staking.StakingAdminClient
+	TradeCli          trade.TradeAdminClient
+	TradeAppCli       trade.TradeAppClient
+	NotificationHub   *ws.Hub
+	RequestEncryption *reqenc.Service
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
