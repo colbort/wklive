@@ -1,6 +1,9 @@
 Name: admin
 Host: 0.0.0.0
 Port: 8888
+# Historical K-line synchronization performs paginated REST reads and MongoDB
+# writes synchronously, so the default 3-second HTTP deadline is too short.
+Timeout: 120000
 
 Jwt:
   AccessSecret: "your_access_secret"
@@ -29,6 +32,8 @@ PaymentRpc:
 
 ItickRpc:
   rpcType: zrpc
+  # Must cover the long-running SyncProductKlineHistory RPC.
+  Timeout: 120000
   Etcd:
     Hosts:
       - "127.0.0.1:2379"
