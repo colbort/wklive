@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/conf"
-	configurator "github.com/zeromicro/go-zero/core/configcenter"
-	"github.com/zeromicro/go-zero/core/configcenter/subscriber"
 	"github.com/zeromicro/go-zero/core/logx"
 	v3 "go.etcd.io/etcd/client/v3"
 	"gopkg.in/yaml.v2"
@@ -68,30 +66,56 @@ func deepMerge(dst, src map[string]any) {
 	}
 }
 
-func WatcherConfig[T any](hosts []string, key string, listeners ...func(T)) {
+func WatcherConfig[T any](
+	hosts []string,
+	key string,
+	listeners ...func(T),
+) {
 	go func() {
-		ss := subscriber.MustNewEtcdSubscriber(subscriber.EtcdConf{
-			Hosts: hosts, // etcd 地址
-			Key:   key,   // 配置key
+		cli, err := v3.New(v3.Config{
+			Endpoints:   hosts,
+			DialTimeout: 3 * time.Second,
 		})
+		if err != nil {
+			logx.Errorf("create etcd watcher failed key=%s err=%v", key, err)
+			return
+		}
+		defer cli.Close()
 
-		cc := configurator.MustNewConfigCenter[T](configurator.Config{
-			Type: "yaml", // 配置值类型：json,yaml,toml
-		}, ss)
+		watchChan := cli.Watch(context.Background(), key)
 
-		cc.AddListener(func() {
-			v, err := cc.GetConfig()
-			if err != nil {
-				logx.Errorf("watch config get latest config failed key=%s err=%v", key, err)
-				return
+		for response := range watchChan {
+			if response.Err() != nil {
+				logx.Errorf(
+					"watch config failed key=%s err=%v",
+					key,
+					response.Err(),
+				)
+				continue
 			}
-			for _, listener := range listeners {
-				if listener != nil {
-					listener(v)
+
+			for _, event := range response.Events {
+				if event.Type != v3.EventTypePut ||
+					len(event.Kv.Value) == 0 {
+					continue
+				}
+
+				var value T
+				if err := conf.LoadFromYamlBytes(event.Kv.Value, &value); err != nil {
+					logx.Errorf(
+						"parse watched config failed key=%s err=%v",
+						key,
+						err,
+					)
+					continue
+				}
+
+				for _, listener := range listeners {
+					if listener != nil {
+						listener(value)
+					}
 				}
 			}
-		})
-
-		select {}
+		}
 	}()
 }

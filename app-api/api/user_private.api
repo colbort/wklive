@@ -166,6 +166,20 @@ type SetDefaultBankReq {
 	id int64 `path:"id"`
 }
 
+type CreateGuestTransferReq {
+}
+
+type CreateGuestTransferData {
+	code        string `json:"code"`
+	redirectUrl string `json:"redirectUrl"`
+	expireAt    int64  `json:"expireAt"`
+}
+
+type CreateGuestTransferResp {
+	RespBase
+	data CreateGuestTransferData `json:"data"`
+}
+
 @server (
 	prefix:     /app/user
 	group:      user_private
@@ -178,6 +192,9 @@ service app {
 
 	@handler GetProfile
 	get /profile returns (GetProfileResp)
+
+	@handler CreateGuestTransfer
+	post /guest-transfer/create (CreateGuestTransferReq) returns (CreateGuestTransferResp)
 
 	@handler UpdateProfile
 	put /profile (UpdateProfileReq) returns (UpdateProfileResp)
@@ -246,4 +263,3 @@ service app {
 	@handler SetDefaultBank
 	put /banks/:id/default (SetDefaultBankReq) returns (RespBase)
 }
-

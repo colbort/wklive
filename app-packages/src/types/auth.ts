@@ -71,6 +71,25 @@ export interface GuestLoginData {
   username: string
 }
 
+export interface CreateGuestTransferReq {
+}
+
+export interface CreateGuestTransferData {
+  code: string
+  redirectUrl: string
+  expireAt: number
+}
+
+export interface ExchangeGuestTransferReq {
+  code: string
+}
+
+export interface ExchangeGuestTransferData {
+  token: string
+  deviceId: string
+  userId: string
+}
+
 export interface RefreshTokenReq {
   tenantCode?: string
   refreshToken: string

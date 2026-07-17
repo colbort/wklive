@@ -894,6 +894,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/tenant-domains",
+				Handler: system.SysTenantDomainListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/tenant-domains",
+				Handler: system.SysTenantDomainCreateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/tenant-domains",
+				Handler: system.SysTenantDomainUpdateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/tenant-domains/:id",
+				Handler: system.SysTenantDomainDeleteHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/tenant/detail",
 				Handler: system.SysTenantDetailHandler(serverCtx),
 			},

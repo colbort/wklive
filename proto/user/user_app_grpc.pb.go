@@ -19,28 +19,30 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserApp_Register_FullMethodName            = "/user.UserApp/Register"
-	UserApp_Login_FullMethodName               = "/user.UserApp/Login"
-	UserApp_GuestLogin_FullMethodName          = "/user.UserApp/GuestLogin"
-	UserApp_Logout_FullMethodName              = "/user.UserApp/Logout"
-	UserApp_RefreshToken_FullMethodName        = "/user.UserApp/RefreshToken"
-	UserApp_GetProfile_FullMethodName          = "/user.UserApp/GetProfile"
-	UserApp_UpdateProfile_FullMethodName       = "/user.UserApp/UpdateProfile"
-	UserApp_ChangeLoginPassword_FullMethodName = "/user.UserApp/ChangeLoginPassword"
-	UserApp_GetIdentity_FullMethodName         = "/user.UserApp/GetIdentity"
-	UserApp_SubmitIdentity_FullMethodName      = "/user.UserApp/SubmitIdentity"
-	UserApp_UpdateIdentity_FullMethodName      = "/user.UserApp/UpdateIdentity"
-	UserApp_GetSecurity_FullMethodName         = "/user.UserApp/GetSecurity"
-	UserApp_SetPayPassword_FullMethodName      = "/user.UserApp/SetPayPassword"
-	UserApp_ChangePayPassword_FullMethodName   = "/user.UserApp/ChangePayPassword"
-	UserApp_InitGoogle2FA_FullMethodName       = "/user.UserApp/InitGoogle2FA"
-	UserApp_EnableGoogle2FA_FullMethodName     = "/user.UserApp/EnableGoogle2FA"
-	UserApp_DisableGoogle2FA_FullMethodName    = "/user.UserApp/DisableGoogle2FA"
-	UserApp_ListBanks_FullMethodName           = "/user.UserApp/ListBanks"
-	UserApp_AddBank_FullMethodName             = "/user.UserApp/AddBank"
-	UserApp_UpdateBank_FullMethodName          = "/user.UserApp/UpdateBank"
-	UserApp_DeleteBank_FullMethodName          = "/user.UserApp/DeleteBank"
-	UserApp_SetDefaultBank_FullMethodName      = "/user.UserApp/SetDefaultBank"
+	UserApp_Register_FullMethodName              = "/user.UserApp/Register"
+	UserApp_Login_FullMethodName                 = "/user.UserApp/Login"
+	UserApp_GuestLogin_FullMethodName            = "/user.UserApp/GuestLogin"
+	UserApp_CreateGuestTransfer_FullMethodName   = "/user.UserApp/CreateGuestTransfer"
+	UserApp_ExchangeGuestTransfer_FullMethodName = "/user.UserApp/ExchangeGuestTransfer"
+	UserApp_Logout_FullMethodName                = "/user.UserApp/Logout"
+	UserApp_RefreshToken_FullMethodName          = "/user.UserApp/RefreshToken"
+	UserApp_GetProfile_FullMethodName            = "/user.UserApp/GetProfile"
+	UserApp_UpdateProfile_FullMethodName         = "/user.UserApp/UpdateProfile"
+	UserApp_ChangeLoginPassword_FullMethodName   = "/user.UserApp/ChangeLoginPassword"
+	UserApp_GetIdentity_FullMethodName           = "/user.UserApp/GetIdentity"
+	UserApp_SubmitIdentity_FullMethodName        = "/user.UserApp/SubmitIdentity"
+	UserApp_UpdateIdentity_FullMethodName        = "/user.UserApp/UpdateIdentity"
+	UserApp_GetSecurity_FullMethodName           = "/user.UserApp/GetSecurity"
+	UserApp_SetPayPassword_FullMethodName        = "/user.UserApp/SetPayPassword"
+	UserApp_ChangePayPassword_FullMethodName     = "/user.UserApp/ChangePayPassword"
+	UserApp_InitGoogle2FA_FullMethodName         = "/user.UserApp/InitGoogle2FA"
+	UserApp_EnableGoogle2FA_FullMethodName       = "/user.UserApp/EnableGoogle2FA"
+	UserApp_DisableGoogle2FA_FullMethodName      = "/user.UserApp/DisableGoogle2FA"
+	UserApp_ListBanks_FullMethodName             = "/user.UserApp/ListBanks"
+	UserApp_AddBank_FullMethodName               = "/user.UserApp/AddBank"
+	UserApp_UpdateBank_FullMethodName            = "/user.UserApp/UpdateBank"
+	UserApp_DeleteBank_FullMethodName            = "/user.UserApp/DeleteBank"
+	UserApp_SetDefaultBank_FullMethodName        = "/user.UserApp/SetDefaultBank"
 )
 
 // UserAppClient is the client API for UserApp service.
@@ -55,6 +57,10 @@ type UserAppClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	// 游客登了
 	GuestLogin(ctx context.Context, in *GuestLoginReq, opts ...grpc.CallOption) (*GuestLoginResp, error)
+	// 创建游客跨域迁移码
+	CreateGuestTransfer(ctx context.Context, in *CreateGuestTransferReq, opts ...grpc.CallOption) (*CreateGuestTransferResp, error)
+	// 兑换游客跨域迁移码
+	ExchangeGuestTransfer(ctx context.Context, in *ExchangeGuestTransferReq, opts ...grpc.CallOption) (*ExchangeGuestTransferResp, error)
 	// 用户登出
 	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*AppCommonResp, error)
 	// 刷新Token
@@ -127,6 +133,26 @@ func (c *userAppClient) GuestLogin(ctx context.Context, in *GuestLoginReq, opts 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GuestLoginResp)
 	err := c.cc.Invoke(ctx, UserApp_GuestLogin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userAppClient) CreateGuestTransfer(ctx context.Context, in *CreateGuestTransferReq, opts ...grpc.CallOption) (*CreateGuestTransferResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateGuestTransferResp)
+	err := c.cc.Invoke(ctx, UserApp_CreateGuestTransfer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userAppClient) ExchangeGuestTransfer(ctx context.Context, in *ExchangeGuestTransferReq, opts ...grpc.CallOption) (*ExchangeGuestTransferResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ExchangeGuestTransferResp)
+	err := c.cc.Invoke(ctx, UserApp_ExchangeGuestTransfer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -335,6 +361,10 @@ type UserAppServer interface {
 	Login(context.Context, *LoginReq) (*LoginResp, error)
 	// 游客登了
 	GuestLogin(context.Context, *GuestLoginReq) (*GuestLoginResp, error)
+	// 创建游客跨域迁移码
+	CreateGuestTransfer(context.Context, *CreateGuestTransferReq) (*CreateGuestTransferResp, error)
+	// 兑换游客跨域迁移码
+	ExchangeGuestTransfer(context.Context, *ExchangeGuestTransferReq) (*ExchangeGuestTransferResp, error)
 	// 用户登出
 	Logout(context.Context, *LogoutReq) (*AppCommonResp, error)
 	// 刷新Token
@@ -391,6 +421,12 @@ func (UnimplementedUserAppServer) Login(context.Context, *LoginReq) (*LoginResp,
 }
 func (UnimplementedUserAppServer) GuestLogin(context.Context, *GuestLoginReq) (*GuestLoginResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GuestLogin not implemented")
+}
+func (UnimplementedUserAppServer) CreateGuestTransfer(context.Context, *CreateGuestTransferReq) (*CreateGuestTransferResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateGuestTransfer not implemented")
+}
+func (UnimplementedUserAppServer) ExchangeGuestTransfer(context.Context, *ExchangeGuestTransferReq) (*ExchangeGuestTransferResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ExchangeGuestTransfer not implemented")
 }
 func (UnimplementedUserAppServer) Logout(context.Context, *LogoutReq) (*AppCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
@@ -520,6 +556,42 @@ func _UserApp_GuestLogin_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserAppServer).GuestLogin(ctx, req.(*GuestLoginReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserApp_CreateGuestTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateGuestTransferReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserAppServer).CreateGuestTransfer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserApp_CreateGuestTransfer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserAppServer).CreateGuestTransfer(ctx, req.(*CreateGuestTransferReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserApp_ExchangeGuestTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExchangeGuestTransferReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserAppServer).ExchangeGuestTransfer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserApp_ExchangeGuestTransfer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserAppServer).ExchangeGuestTransfer(ctx, req.(*ExchangeGuestTransferReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -884,6 +956,14 @@ var UserApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GuestLogin",
 			Handler:    _UserApp_GuestLogin_Handler,
+		},
+		{
+			MethodName: "CreateGuestTransfer",
+			Handler:    _UserApp_CreateGuestTransfer_Handler,
+		},
+		{
+			MethodName: "ExchangeGuestTransfer",
+			Handler:    _UserApp_ExchangeGuestTransfer_Handler,
 		},
 		{
 			MethodName: "Logout",

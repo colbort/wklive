@@ -1,6 +1,28 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { apiExchangeGuestTransfer } from '@wklive/api/api/userPublic'
+
+const transferStatus = ref('')
+
+onMounted(async () => {
+  const code = new URLSearchParams(window.location.hash.slice(1)).get('code') || ''
+  if (!code) return
+
+  window.history.replaceState(null, '', window.location.pathname + window.location.search)
+  transferStatus.value = '正在恢复游客身份…'
+  try {
+    await apiExchangeGuestTransfer({ code })
+    transferStatus.value = '游客身份已恢复'
+  } catch {
+    transferStatus.value = '游客身份恢复失败，请重新获取迁移链接'
+  }
+})
+</script>
+
 <template>
   <section class="page-card profile-page">
     <h2>用户中心</h2>
+    <p v-if="transferStatus">{{ transferStatus }}</p>
     <div class="profile-grid">
       <RouterLink to="/login">
         登录 / 注册

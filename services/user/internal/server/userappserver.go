@@ -41,6 +41,18 @@ func (s *UserAppServer) GuestLogin(ctx context.Context, in *user.GuestLoginReq) 
 	return l.GuestLogin(in)
 }
 
+// 创建游客跨域迁移码
+func (s *UserAppServer) CreateGuestTransfer(ctx context.Context, in *user.CreateGuestTransferReq) (*user.CreateGuestTransferResp, error) {
+	l := logic.NewCreateGuestTransferLogic(ctx, s.svcCtx)
+	return l.CreateGuestTransfer(in)
+}
+
+// 兑换游客跨域迁移码
+func (s *UserAppServer) ExchangeGuestTransfer(ctx context.Context, in *user.ExchangeGuestTransferReq) (*user.ExchangeGuestTransferResp, error) {
+	l := logic.NewExchangeGuestTransferLogic(ctx, s.svcCtx)
+	return l.ExchangeGuestTransfer(in)
+}
+
 // 用户登出
 func (s *UserAppServer) Logout(ctx context.Context, in *user.LogoutReq) (*user.AppCommonResp, error) {
 	l := logic.NewLogoutLogic(ctx, s.svcCtx)

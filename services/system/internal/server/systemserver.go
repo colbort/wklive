@@ -353,6 +353,32 @@ func (s *SystemServer) SysTenantDetail(ctx context.Context, in *system.SysTenant
 	return l.SysTenantDetail(in)
 }
 
+func (s *SystemServer) SysTenantDomainList(ctx context.Context, in *system.SysTenantDomainListReq) (*system.SysTenantDomainListResp, error) {
+	l := logic.NewSysTenantDomainListLogic(ctx, s.svcCtx)
+	return l.SysTenantDomainList(in)
+}
+
+func (s *SystemServer) SysTenantDomainCreate(ctx context.Context, in *system.SysTenantDomainCreateReq) (*system.RespBase, error) {
+	l := logic.NewSysTenantDomainCreateLogic(ctx, s.svcCtx)
+	return l.SysTenantDomainCreate(in)
+}
+
+func (s *SystemServer) SysTenantDomainUpdate(ctx context.Context, in *system.SysTenantDomainUpdateReq) (*system.RespBase, error) {
+	l := logic.NewSysTenantDomainUpdateLogic(ctx, s.svcCtx)
+	return l.SysTenantDomainUpdate(in)
+}
+
+func (s *SystemServer) SysTenantDomainDelete(ctx context.Context, in *system.SysTenantDomainDeleteReq) (*system.RespBase, error) {
+	l := logic.NewSysTenantDomainDeleteLogic(ctx, s.svcCtx)
+	return l.SysTenantDomainDelete(in)
+}
+
+// 根据租户和来源域名解析游客迁移目标
+func (s *SystemServer) ResolveTenantDomain(ctx context.Context, in *system.ResolveTenantDomainReq) (*system.ResolveTenantDomainResp, error) {
+	l := logic.NewResolveTenantDomainLogic(ctx, s.svcCtx)
+	return l.ResolveTenantDomain(in)
+}
+
 // 创建客服商户
 func (s *SystemServer) SysChatMerchantCreate(ctx context.Context, in *system.SysChatMerchantCreateReq) (*system.RespBase, error) {
 	l := logic.NewSysChatMerchantCreateLogic(ctx, s.svcCtx)

@@ -545,6 +545,43 @@ type SysTenantDetailResp {
 	data SysTenantItem `json:"data"`
 }
 
+type SysTenantDomainItem {
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	origin      string `json:"origin"`
+	status      int64  `json:"status"`
+	priority    int64  `json:"priority"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
+}
+
+type SysTenantDomainListReq {
+	tenantId int64 `form:"tenantId"`
+}
+
+type SysTenantDomainListResp {
+	RespBase
+	data []SysTenantDomainItem `json:"data"`
+}
+
+type SysTenantDomainCreateReq {
+	tenantId int64  `json:"tenantId"`
+	origin   string `json:"origin"`
+	status   int64  `json:"status"`
+	priority int64  `json:"priority"`
+}
+
+type SysTenantDomainUpdateReq {
+	id       int64  `json:"id"`
+	origin   string `json:"origin"`
+	status   int64  `json:"status"`
+	priority int64  `json:"priority"`
+}
+
+type SysTenantDomainDeleteReq {
+	id int64 `path:"id"`
+}
+
 // ===== system: 客服商户 =====
 type SysChatMerchantCreateReq {
 	merchantCode string `json:"merchantCode"`
@@ -784,6 +821,18 @@ service admin {
 
 	@handler SysTenantDetail
 	get /tenant/detail (SysTenantDetailReq) returns (SysTenantDetailResp)
+
+	@handler SysTenantDomainList
+	get /tenant-domains (SysTenantDomainListReq) returns (SysTenantDomainListResp)
+
+	@handler SysTenantDomainCreate
+	post /tenant-domains (SysTenantDomainCreateReq) returns (RespBase)
+
+	@handler SysTenantDomainUpdate
+	put /tenant-domains (SysTenantDomainUpdateReq) returns (RespBase)
+
+	@handler SysTenantDomainDelete
+	delete /tenant-domains/:id (SysTenantDomainDeleteReq) returns (RespBase)
 
 	// --- 客服商户 ---
 	@handler SysChatMerchantCreate

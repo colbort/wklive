@@ -14,47 +14,53 @@ import (
 )
 
 type (
-	AddBankReq             = user.AddBankReq
-	AddBankResp            = user.AddBankResp
-	AppCommonResp          = user.AppCommonResp
-	ChangeLoginPasswordReq = user.ChangeLoginPasswordReq
-	ChangePayPasswordReq   = user.ChangePayPasswordReq
-	DeleteBankReq          = user.DeleteBankReq
-	DisableGoogle2FAReq    = user.DisableGoogle2FAReq
-	EnableGoogle2FAReq     = user.EnableGoogle2FAReq
-	GetIdentityReq         = user.GetIdentityReq
-	GetIdentityResp        = user.GetIdentityResp
-	GetProfileReq          = user.GetProfileReq
-	GetProfileResp         = user.GetProfileResp
-	GetSecurityReq         = user.GetSecurityReq
-	GetSecurityResp        = user.GetSecurityResp
-	GuestLogin             = user.GuestLogin
-	GuestLoginReq          = user.GuestLoginReq
-	GuestLoginResp         = user.GuestLoginResp
-	InitGoogle2FAData      = user.InitGoogle2FAData
-	InitGoogle2FAReq       = user.InitGoogle2FAReq
-	InitGoogle2FAResp      = user.InitGoogle2FAResp
-	ListBanksReq           = user.ListBanksReq
-	ListBanksResp          = user.ListBanksResp
-	LoginData              = user.LoginData
-	LoginReq               = user.LoginReq
-	LoginResp              = user.LoginResp
-	LogoutReq              = user.LogoutReq
-	RefreshTokenReq        = user.RefreshTokenReq
-	RefreshTokenResp       = user.RefreshTokenResp
-	RegisterData           = user.RegisterData
-	RegisterReq            = user.RegisterReq
-	RegisterResp           = user.RegisterResp
-	SetDefaultBankReq      = user.SetDefaultBankReq
-	SetPayPasswordReq      = user.SetPayPasswordReq
-	SubmitIdentityReq      = user.SubmitIdentityReq
-	SubmitIdentityResp     = user.SubmitIdentityResp
-	UpdateBankReq          = user.UpdateBankReq
-	UpdateBankResp         = user.UpdateBankResp
-	UpdateIdentityReq      = user.UpdateIdentityReq
-	UpdateIdentityResp     = user.UpdateIdentityResp
-	UpdateProfileReq       = user.UpdateProfileReq
-	UpdateProfileResp      = user.UpdateProfileResp
+	AddBankReq                = user.AddBankReq
+	AddBankResp               = user.AddBankResp
+	AppCommonResp             = user.AppCommonResp
+	ChangeLoginPasswordReq    = user.ChangeLoginPasswordReq
+	ChangePayPasswordReq      = user.ChangePayPasswordReq
+	CreateGuestTransferData   = user.CreateGuestTransferData
+	CreateGuestTransferReq    = user.CreateGuestTransferReq
+	CreateGuestTransferResp   = user.CreateGuestTransferResp
+	DeleteBankReq             = user.DeleteBankReq
+	DisableGoogle2FAReq       = user.DisableGoogle2FAReq
+	EnableGoogle2FAReq        = user.EnableGoogle2FAReq
+	ExchangeGuestTransferData = user.ExchangeGuestTransferData
+	ExchangeGuestTransferReq  = user.ExchangeGuestTransferReq
+	ExchangeGuestTransferResp = user.ExchangeGuestTransferResp
+	GetIdentityReq            = user.GetIdentityReq
+	GetIdentityResp           = user.GetIdentityResp
+	GetProfileReq             = user.GetProfileReq
+	GetProfileResp            = user.GetProfileResp
+	GetSecurityReq            = user.GetSecurityReq
+	GetSecurityResp           = user.GetSecurityResp
+	GuestLogin                = user.GuestLogin
+	GuestLoginReq             = user.GuestLoginReq
+	GuestLoginResp            = user.GuestLoginResp
+	InitGoogle2FAData         = user.InitGoogle2FAData
+	InitGoogle2FAReq          = user.InitGoogle2FAReq
+	InitGoogle2FAResp         = user.InitGoogle2FAResp
+	ListBanksReq              = user.ListBanksReq
+	ListBanksResp             = user.ListBanksResp
+	LoginData                 = user.LoginData
+	LoginReq                  = user.LoginReq
+	LoginResp                 = user.LoginResp
+	LogoutReq                 = user.LogoutReq
+	RefreshTokenReq           = user.RefreshTokenReq
+	RefreshTokenResp          = user.RefreshTokenResp
+	RegisterData              = user.RegisterData
+	RegisterReq               = user.RegisterReq
+	RegisterResp              = user.RegisterResp
+	SetDefaultBankReq         = user.SetDefaultBankReq
+	SetPayPasswordReq         = user.SetPayPasswordReq
+	SubmitIdentityReq         = user.SubmitIdentityReq
+	SubmitIdentityResp        = user.SubmitIdentityResp
+	UpdateBankReq             = user.UpdateBankReq
+	UpdateBankResp            = user.UpdateBankResp
+	UpdateIdentityReq         = user.UpdateIdentityReq
+	UpdateIdentityResp        = user.UpdateIdentityResp
+	UpdateProfileReq          = user.UpdateProfileReq
+	UpdateProfileResp         = user.UpdateProfileResp
 
 	UserApp interface {
 		// 用户注册
@@ -63,6 +69,10 @@ type (
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		// 游客登了
 		GuestLogin(ctx context.Context, in *GuestLoginReq, opts ...grpc.CallOption) (*GuestLoginResp, error)
+		// 创建游客跨域迁移码
+		CreateGuestTransfer(ctx context.Context, in *CreateGuestTransferReq, opts ...grpc.CallOption) (*CreateGuestTransferResp, error)
+		// 兑换游客跨域迁移码
+		ExchangeGuestTransfer(ctx context.Context, in *ExchangeGuestTransferReq, opts ...grpc.CallOption) (*ExchangeGuestTransferResp, error)
 		// 用户登出
 		Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*AppCommonResp, error)
 		// 刷新Token
@@ -130,6 +140,18 @@ func (m *defaultUserApp) Login(ctx context.Context, in *LoginReq, opts ...grpc.C
 func (m *defaultUserApp) GuestLogin(ctx context.Context, in *GuestLoginReq, opts ...grpc.CallOption) (*GuestLoginResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.GuestLogin(ctx, in, opts...)
+}
+
+// 创建游客跨域迁移码
+func (m *defaultUserApp) CreateGuestTransfer(ctx context.Context, in *CreateGuestTransferReq, opts ...grpc.CallOption) (*CreateGuestTransferResp, error) {
+	client := user.NewUserAppClient(m.cli.Conn())
+	return client.CreateGuestTransfer(ctx, in, opts...)
+}
+
+// 兑换游客跨域迁移码
+func (m *defaultUserApp) ExchangeGuestTransfer(ctx context.Context, in *ExchangeGuestTransferReq, opts ...grpc.CallOption) (*ExchangeGuestTransferResp, error) {
+	client := user.NewUserAppClient(m.cli.Conn())
+	return client.ExchangeGuestTransfer(ctx, in, opts...)
 }
 
 // 用户登出

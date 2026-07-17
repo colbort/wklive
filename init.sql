@@ -279,7 +279,11 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 11104),
 (0, 1, 11200),
 (0, 1, 11201),
-(0, 1, 11202);
+(0, 1, 11202),
+(0, 1, 11300),
+(0, 1, 11301),
+(0, 1, 11302),
+(0, 1, 11303);
 
 INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 -- 用户管理
@@ -491,7 +495,11 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 10304),
 (0, 2, 11100),
 (0, 2, 11101),
-(0, 2, 11102);
+(0, 2, 11202),
+(0, 2, 11300),
+(0, 2, 11301),
+(0, 2, 11302),
+(0, 2, 11303);
 
 
 
@@ -850,3 +858,11 @@ INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
 (11201, 11200, '验证码详情', 3, 'GET', '/system/verification-codes/{id}', 'sys:verification-code:detail', 11201),
 (11202, 11200, '测试发送验证码', 3, 'POST', '/system/verification-codes/test', 'sys:verification-code:test', 11202);
+
+INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
+VALUES (11300, 10000, '租户域名管理', 2, 'GET', '/system/tenant-domains', 'sys:tenant-domain:list', 'system/tenant-domains', 'Connection', 11300);
+INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
+VALUES
+(11301, 11300, '新增租户域名', 3, 'POST', '/system/tenant-domains', 'sys:tenant-domain:add', 11301),
+(11302, 11300, '编辑租户域名', 3, 'PUT', '/system/tenant-domains', 'sys:tenant-domain:update', 11302),
+(11303, 11300, '删除租户域名', 3, 'DELETE', '/system/tenant-domains/{id}', 'sys:tenant-domain:delete', 11303);

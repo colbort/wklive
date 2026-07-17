@@ -1251,7 +1251,6 @@ type GetProductKlineReq struct {
 	Symbol       string `form:"symbol"`
 	KType        int64  `form:"kType"`
 	EndTs        int64  `form:"endTs"`
-	Limit        int64  `form:"limit"`
 }
 
 type GetProductKlineResp struct {
@@ -3571,6 +3570,43 @@ type SysTenantDetailReq struct {
 type SysTenantDetailResp struct {
 	RespBase
 	Data SysTenantItem `json:"data"`
+}
+
+type SysTenantDomainCreateReq struct {
+	TenantId int64  `json:"tenantId"`
+	Origin   string `json:"origin"`
+	Status   int64  `json:"status"`
+	Priority int64  `json:"priority"`
+}
+
+type SysTenantDomainDeleteReq struct {
+	Id int64 `path:"id"`
+}
+
+type SysTenantDomainItem struct {
+	Id          int64  `json:"id"`
+	TenantId    int64  `json:"tenantId"`
+	Origin      string `json:"origin"`
+	Status      int64  `json:"status"`
+	Priority    int64  `json:"priority"`
+	CreateTimes int64  `json:"createTimes"`
+	UpdateTimes int64  `json:"updateTimes"`
+}
+
+type SysTenantDomainListReq struct {
+	TenantId int64 `form:"tenantId"`
+}
+
+type SysTenantDomainListResp struct {
+	RespBase
+	Data []SysTenantDomainItem `json:"data"`
+}
+
+type SysTenantDomainUpdateReq struct {
+	Id       int64  `json:"id"`
+	Origin   string `json:"origin"`
+	Status   int64  `json:"status"`
+	Priority int64  `json:"priority"`
 }
 
 type SysTenantItem struct {

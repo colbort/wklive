@@ -484,6 +484,10 @@ export default {
     ORDER_STATUS_REDEEMED: "Redeemed",
     ORDER_STATUS_EARLY_REDEEMED: "Early Redeemed",
     ORDER_STATUS_CANCELLED: "Cancelled",
+    TENANT_DOMAIN_STATUS_UNKNOWN: "Unknown",
+    TENANT_DOMAIN_STATUS_ACTIVE: "Active",
+    TENANT_DOMAIN_STATUS_RETIRED: "Retired",
+    TENANT_DOMAIN_STATUS_DISABLED: "Disabled",
   },
   system: {
     mgmt: "System",
@@ -493,9 +497,18 @@ export default {
     loginLog: "Login Logs",
     opLog: "Operation Logs",
     tenants: "Tenants",
+    tenantDomains: "Tenant Domains",
     chatMerchants: "Chat Merchants",
     tenantCode: "Tenant Code",
     tenantName: "Tenant Name",
+    domainOrigin: "Domain Origin",
+    domainPriority: "Redirect Priority",
+    addTenantDomain: "Add Tenant Domain",
+    editTenantDomain: "Edit Tenant Domain",
+    pleaseInputDomainOrigin:
+      "Enter a full origin, for example https://example.com",
+    tenantDomainTip:
+      "Retired domains redirect to the highest-priority active domain. At least one active domain must remain.",
     chatMerchantCode: "Chat Merchant Code",
     chatMerchantName: "Chat Merchant Name",
     status: "Status",
@@ -735,6 +748,10 @@ export default {
     "sys:tenant:add": "Add Tenant",
     "sys:tenant:update": "Edit Tenant",
     "sys:tenant:delete": "Delete Tenant",
+    "sys:tenant-domain:list": "Tenant Domain List",
+    "sys:tenant-domain:add": "Add Tenant Domain",
+    "sys:tenant-domain:update": "Edit Tenant Domain",
+    "sys:tenant-domain:delete": "Delete Tenant Domain",
   },
   menu: {
     // ===== User =====

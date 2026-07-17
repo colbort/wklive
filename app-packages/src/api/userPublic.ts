@@ -1,6 +1,17 @@
-import { http, setAccessToken, setRefreshToken, setTenantCode } from './http'
+import {
+  authHttp,
+  getAccessToken,
+  http,
+  setAccessToken,
+  setRefreshToken,
+  setTenantCode,
+} from './http'
 import type { RespBase } from '../types/api'
 import type {
+  CreateGuestTransferData,
+  CreateGuestTransferReq,
+  ExchangeGuestTransferData,
+  ExchangeGuestTransferReq,
   GuestLoginData,
   GuestLoginReq,
   LoginReq,
@@ -15,6 +26,7 @@ import {
   collectGuestFingerprint,
   createGuestFingerprintHash,
   getGuestDeviceId,
+  getGuestToken,
   setGuestDeviceId,
   setGuestId,
   setGuestToken,
@@ -64,7 +76,7 @@ export async function apiGuestLogin(
     tenantCode: params.tenantCode,
   }
 
-  return http.post('/user/guest-login', payload).then((res: { data: RespBase & { data: GuestLoginData } }) => {
+  return http.post('/user/guest-login', payload).then(async (res: { data: RespBase & { data: GuestLoginData } }) => {
     const data = res.data as RespBase & { data: GuestLoginData }
     if (data.data?.token) {
       setGuestToken(data.data.token)
@@ -73,6 +85,36 @@ export async function apiGuestLogin(
     if (data.data?.deviceId) setGuestDeviceId(data.data.deviceId)
     if (data.data?.userId) setGuestId(data.data.userId)
     if (params.tenantCode) setTenantCode(params.tenantCode)
+    await tryAutoRedirectGuestTransfer()
+    return data
+  })
+}
+
+export function apiCreateGuestTransfer(): Promise<RespBase & { data: CreateGuestTransferData }> {
+  return authHttp.post('/user/guest-transfer/create', {}).then((res) => res.data)
+}
+
+export async function tryAutoRedirectGuestTransfer() {
+  if (typeof window === 'undefined' || (!getGuestToken() && !getAccessToken())) return false
+
+  const result = await apiCreateGuestTransfer()
+  if (result.code !== 200 || !result.data?.redirectUrl) return false
+
+  window.location.replace(result.data.redirectUrl)
+  return true
+}
+
+export function apiExchangeGuestTransfer(
+  params: ExchangeGuestTransferReq,
+): Promise<RespBase & { data: ExchangeGuestTransferData }> {
+  return http.post('/user/guest-transfer/exchange', params).then((res) => {
+    const data = res.data as RespBase & { data: ExchangeGuestTransferData }
+    if (data.data?.token) {
+      setGuestToken(data.data.token)
+      setAccessToken(data.data.token)
+    }
+    if (data.data?.deviceId) setGuestDeviceId(data.data.deviceId)
+    if (data.data?.userId) setGuestId(data.data.userId)
     return data
   })
 }

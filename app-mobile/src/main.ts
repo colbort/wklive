@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import { configureApiClient } from '@/api/http'
+import { tryAutoRedirectGuestTransfer } from '@/api/userPublic'
 import App from '@/App.vue'
 import { createI18n, translateApiError } from '@/i18n'
 import { router } from '@/router'
@@ -28,6 +29,10 @@ const systemStore = useSystemStore(pinia)
 const tenantStore = useTenantStore(pinia)
 
 tenantStore.hydrateFromEnv()
+
+tryAutoRedirectGuestTransfer().catch((error: unknown) => {
+  console.warn('Failed to redirect guest transfer', error)
+})
 
 systemStore
   .loadSystemCore()

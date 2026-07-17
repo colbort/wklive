@@ -510,6 +510,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user_private.InitGoogle2FAHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodPost,
+					Path:    "/guest-transfer/create",
+					Handler: user_private.CreateGuestTransferHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodGet,
 					Path:    "/identity",
 					Handler: user_private.GetIdentityHandler(serverCtx),
@@ -628,6 +633,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/guest-login",
 					Handler: user_public.GuestLoginHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/guest-transfer/exchange",
+					Handler: user_public.ExchangeGuestTransferHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

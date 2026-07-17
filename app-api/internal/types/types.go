@@ -563,6 +563,20 @@ type CreateCryptoRechargeOrderResp struct {
 	Data CreateCryptoRechargeOrderData `json:"data"`
 }
 
+type CreateGuestTransferData struct {
+	Code        string `json:"code"`
+	RedirectUrl string `json:"redirectUrl"`
+	ExpireAt    int64  `json:"expireAt"`
+}
+
+type CreateGuestTransferReq struct {
+}
+
+type CreateGuestTransferResp struct {
+	RespBase
+	Data CreateGuestTransferData `json:"data"`
+}
+
 type CreateRechargeOrderReq struct {
 	ChannelId      int64  `json:"channelId"`
 	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
@@ -646,6 +660,21 @@ type Depth struct {
 type DepthLevel struct {
 	Price  float64 `json:"price"`
 	Volume float64 `json:"volume"`
+}
+
+type ExchangeGuestTransferData struct {
+	Token    string `json:"token"`
+	DeviceId string `json:"deviceId"`
+	UserId   string `json:"userId"`
+}
+
+type ExchangeGuestTransferReq struct {
+	Code string `json:"code"`
+}
+
+type ExchangeGuestTransferResp struct {
+	RespBase
+	Data ExchangeGuestTransferData `json:"data"`
 }
 
 type GetFillListReq struct {

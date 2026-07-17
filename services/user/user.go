@@ -24,6 +24,12 @@ var (
 	commonKey = flag.String("common", "/wklive/common/config", "etcd common config key")
 )
 
+type watcherConfig struct {
+	GuestTransfer struct {
+		ExpireSeconds int64
+	} `json:"GuestTransfer" yaml:"GuestTransfer"`
+}
+
 func main() {
 	flag.Parse()
 
@@ -45,6 +51,10 @@ func main() {
 		}
 	})
 	defer s.Stop()
+
+	etcd.WatcherConfig(strings.Split(*endpoints, ","), *configKey, func(v watcherConfig) {
+		ctx.Config.GuestTransfer = v.GuestTransfer
+	})
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()

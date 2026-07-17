@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { configureApiClient } from '@wklive/api/api/http'
+import { tryAutoRedirectGuestTransfer } from '@wklive/api/api/userPublic'
 
 import App from './App.vue'
 import router from './router'
@@ -14,6 +15,10 @@ configureApiClient({
   appTarget: env.VITE_APP_TARGET,
   tenantCode: env.VITE_TENANT_CODE,
   tenantId: env.VITE_TENANT_ID,
+})
+
+tryAutoRedirectGuestTransfer().catch((error: unknown) => {
+  console.warn('Failed to redirect guest transfer', error)
 })
 
 createApp(App).use(createPinia()).use(router).mount('#app')

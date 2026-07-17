@@ -10,6 +10,10 @@ export { ConfigService, configService } from "./system/ConfigService";
 export { CronJobService, cronJobService } from "./system/CronJobService";
 export { TenantsService, tenantsService } from "./system/TenantsService";
 export {
+  TenantDomainsService,
+  tenantDomainsService,
+} from "./system/TenantDomainsService";
+export {
   ChatMerchantsService,
   chatMerchantsService,
 } from "./system/ChatMerchantsService";
@@ -120,6 +124,11 @@ export type {
   SysTenantUpdateReq,
   SysTenantDetailReq,
 } from "./system/TenantsService";
+export type {
+  SysTenantDomainItem,
+  SysTenantDomainCreateReq,
+  SysTenantDomainUpdateReq,
+} from "./system/TenantDomainsService";
 export type {
   SysChatMerchantItem,
   SysChatMerchantListReq,

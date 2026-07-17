@@ -18,5 +18,8 @@ type Config struct {
 	Register struct {
 		UsernameNoRechargeLimit int64
 	} `json:"Register" yaml:"Register"`
+	GuestTransfer struct {
+		ExpireSeconds int64
+	} `json:"GuestTransfer" yaml:"GuestTransfer"`
 	SystemRpc zrpc.RpcClientConf
 }

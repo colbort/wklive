@@ -458,6 +458,58 @@ func (VerificationCodeStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_system_enum_proto_rawDescGZIP(), []int{7}
 }
 
+type TenantDomainStatus int32
+
+const (
+	TenantDomainStatus_TENANT_DOMAIN_STATUS_UNKNOWN  TenantDomainStatus = 0
+	TenantDomainStatus_TENANT_DOMAIN_STATUS_ACTIVE   TenantDomainStatus = 1 // 使用中
+	TenantDomainStatus_TENANT_DOMAIN_STATUS_RETIRED  TenantDomainStatus = 2 // 已退役
+	TenantDomainStatus_TENANT_DOMAIN_STATUS_DISABLED TenantDomainStatus = 3 // 已禁用
+)
+
+// Enum value maps for TenantDomainStatus.
+var (
+	TenantDomainStatus_name = map[int32]string{
+		0: "TENANT_DOMAIN_STATUS_UNKNOWN",
+		1: "TENANT_DOMAIN_STATUS_ACTIVE",
+		2: "TENANT_DOMAIN_STATUS_RETIRED",
+		3: "TENANT_DOMAIN_STATUS_DISABLED",
+	}
+	TenantDomainStatus_value = map[string]int32{
+		"TENANT_DOMAIN_STATUS_UNKNOWN":  0,
+		"TENANT_DOMAIN_STATUS_ACTIVE":   1,
+		"TENANT_DOMAIN_STATUS_RETIRED":  2,
+		"TENANT_DOMAIN_STATUS_DISABLED": 3,
+	}
+)
+
+func (x TenantDomainStatus) Enum() *TenantDomainStatus {
+	p := new(TenantDomainStatus)
+	*p = x
+	return p
+}
+
+func (x TenantDomainStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TenantDomainStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[8].Descriptor()
+}
+
+func (TenantDomainStatus) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[8]
+}
+
+func (x TenantDomainStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TenantDomainStatus.Descriptor instead.
+func (TenantDomainStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{8}
+}
+
 var File_proto_system_enum_proto protoreflect.FileDescriptor
 
 const file_proto_system_enum_proto_rawDesc = "" +
@@ -509,7 +561,12 @@ const file_proto_system_enum_proto_rawDesc = "" +
 	"\x16VerificationCodeStatus\x12$\n" +
 	" VERIFICATION_CODE_STATUS_UNKNOWN\x10\x00\x12$\n" +
 	" VERIFICATION_CODE_STATUS_SUCCESS\x10\x01\x12#\n" +
-	"\x1fVERIFICATION_CODE_STATUS_FAILED\x10\x02B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\x1fVERIFICATION_CODE_STATUS_FAILED\x10\x02*\x9c\x01\n" +
+	"\x12TenantDomainStatus\x12 \n" +
+	"\x1cTENANT_DOMAIN_STATUS_UNKNOWN\x10\x00\x12\x1f\n" +
+	"\x1bTENANT_DOMAIN_STATUS_ACTIVE\x10\x01\x12 \n" +
+	"\x1cTENANT_DOMAIN_STATUS_RETIRED\x10\x02\x12!\n" +
+	"\x1dTENANT_DOMAIN_STATUS_DISABLED\x10\x03B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_enum_proto_rawDescOnce sync.Once
@@ -523,7 +580,7 @@ func file_proto_system_enum_proto_rawDescGZIP() []byte {
 	return file_proto_system_enum_proto_rawDescData
 }
 
-var file_proto_system_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
+var file_proto_system_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
 var file_proto_system_enum_proto_goTypes = []any{
 	(SysConfigType)(0),           // 0: system.SysConfigType
 	(MenuType)(0),                // 1: system.MenuType
@@ -533,6 +590,7 @@ var file_proto_system_enum_proto_goTypes = []any{
 	(VerificationCodeChannel)(0), // 5: system.VerificationCodeChannel
 	(VerificationCodeScene)(0),   // 6: system.VerificationCodeScene
 	(VerificationCodeStatus)(0),  // 7: system.VerificationCodeStatus
+	(TenantDomainStatus)(0),      // 8: system.TenantDomainStatus
 }
 var file_proto_system_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -552,7 +610,7 @@ func file_proto_system_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_enum_proto_rawDesc), len(file_proto_system_enum_proto_rawDesc)),
-			NumEnums:      8,
+			NumEnums:      9,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

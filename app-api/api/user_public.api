@@ -63,6 +63,21 @@ type GuestLoginResp {
 	data GuestLogin `json:"data"`
 }
 
+type ExchangeGuestTransferReq {
+	code string `json:"code"`
+}
+
+type ExchangeGuestTransferData {
+	token    string `json:"token"`
+	deviceId string `json:"deviceId"`
+	userId   string `json:"userId"`
+}
+
+type ExchangeGuestTransferResp {
+	RespBase
+	data ExchangeGuestTransferData `json:"data"`
+}
+
 type RefreshTokenReq {
 	refreshToken string `json:"refreshToken"`
 }
@@ -94,6 +109,9 @@ service app {
 	@handler GuestLogin
 	post /guest-login (GuestLoginReq) returns (GuestLoginResp)
 
+	@handler ExchangeGuestTransfer
+	post /guest-transfer/exchange (ExchangeGuestTransferReq) returns (ExchangeGuestTransferResp)
+
 	@handler SendVerificationCode
 	post /verification-code/send (SendVerificationCodeReq) returns (RespBase)
 }
@@ -107,4 +125,3 @@ service app {
 	@handler RefreshToken
 	post /refresh-token (RefreshTokenReq) returns (RefreshTokenResp)
 }
-

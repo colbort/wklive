@@ -69,6 +69,37 @@ message GuestLoginResp {
   GuestLogin data = 2;
 }
 
+message CreateGuestTransferReq {
+  string source_origin = 1;
+}
+
+message CreateGuestTransferData {
+  string code = 1;
+  string redirect_url = 2;
+  int64 expire_at = 3;
+}
+
+message CreateGuestTransferResp {
+  common.RespBase base = 1;
+  CreateGuestTransferData data = 2;
+}
+
+message ExchangeGuestTransferReq {
+  string code = 1;
+  string current_origin = 2;
+}
+
+message ExchangeGuestTransferData {
+  string token = 1;
+  string device_id = 2;
+  string user_id = 3;
+}
+
+message ExchangeGuestTransferResp {
+  common.RespBase base = 1;
+  ExchangeGuestTransferData data = 2;
+}
+
 message LogoutReq { }
 
 message RefreshTokenReq {
@@ -252,6 +283,10 @@ service UserApp {
   rpc Login(LoginReq) returns (LoginResp);
   // 游客登了
   rpc GuestLogin(GuestLoginReq) returns (GuestLoginResp);
+  // 创建游客跨域迁移码
+  rpc CreateGuestTransfer(CreateGuestTransferReq) returns (CreateGuestTransferResp);
+  // 兑换游客跨域迁移码
+  rpc ExchangeGuestTransfer(ExchangeGuestTransferReq) returns (ExchangeGuestTransferResp);
   // 用户登出
   rpc Logout(LogoutReq) returns (AppCommonResp);
   // 刷新Token

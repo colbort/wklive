@@ -74,6 +74,11 @@ const (
 	System_SysTenantDelete_FullMethodName              = "/system.System/SysTenantDelete"
 	System_SysTenantList_FullMethodName                = "/system.System/SysTenantList"
 	System_SysTenantDetail_FullMethodName              = "/system.System/SysTenantDetail"
+	System_SysTenantDomainList_FullMethodName          = "/system.System/SysTenantDomainList"
+	System_SysTenantDomainCreate_FullMethodName        = "/system.System/SysTenantDomainCreate"
+	System_SysTenantDomainUpdate_FullMethodName        = "/system.System/SysTenantDomainUpdate"
+	System_SysTenantDomainDelete_FullMethodName        = "/system.System/SysTenantDomainDelete"
+	System_ResolveTenantDomain_FullMethodName          = "/system.System/ResolveTenantDomain"
 	System_SysChatMerchantCreate_FullMethodName        = "/system.System/SysChatMerchantCreate"
 	System_SysChatMerchantUpdate_FullMethodName        = "/system.System/SysChatMerchantUpdate"
 	System_SysChatMerchantDelete_FullMethodName        = "/system.System/SysChatMerchantDelete"
@@ -199,6 +204,12 @@ type SystemClient interface {
 	SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
 	// 根据 code 获取租户
 	SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error)
+	SysTenantDomainList(ctx context.Context, in *SysTenantDomainListReq, opts ...grpc.CallOption) (*SysTenantDomainListResp, error)
+	SysTenantDomainCreate(ctx context.Context, in *SysTenantDomainCreateReq, opts ...grpc.CallOption) (*RespBase, error)
+	SysTenantDomainUpdate(ctx context.Context, in *SysTenantDomainUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
+	SysTenantDomainDelete(ctx context.Context, in *SysTenantDomainDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 根据租户和来源域名解析游客迁移目标
+	ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error)
 	// 创建客服商户
 	SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 更新客服商户
@@ -769,6 +780,56 @@ func (c *systemClient) SysTenantDetail(ctx context.Context, in *SysTenantDetailR
 	return out, nil
 }
 
+func (c *systemClient) SysTenantDomainList(ctx context.Context, in *SysTenantDomainListReq, opts ...grpc.CallOption) (*SysTenantDomainListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysTenantDomainListResp)
+	err := c.cc.Invoke(ctx, System_SysTenantDomainList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysTenantDomainCreate(ctx context.Context, in *SysTenantDomainCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysTenantDomainCreate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysTenantDomainUpdate(ctx context.Context, in *SysTenantDomainUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysTenantDomainUpdate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysTenantDomainDelete(ctx context.Context, in *SysTenantDomainDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysTenantDomainDelete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResolveTenantDomainResp)
+	err := c.cc.Invoke(ctx, System_ResolveTenantDomain_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *systemClient) SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
@@ -937,6 +998,12 @@ type SystemServer interface {
 	SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error)
 	// 根据 code 获取租户
 	SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error)
+	SysTenantDomainList(context.Context, *SysTenantDomainListReq) (*SysTenantDomainListResp, error)
+	SysTenantDomainCreate(context.Context, *SysTenantDomainCreateReq) (*RespBase, error)
+	SysTenantDomainUpdate(context.Context, *SysTenantDomainUpdateReq) (*RespBase, error)
+	SysTenantDomainDelete(context.Context, *SysTenantDomainDeleteReq) (*RespBase, error)
+	// 根据租户和来源域名解析游客迁移目标
+	ResolveTenantDomain(context.Context, *ResolveTenantDomainReq) (*ResolveTenantDomainResp, error)
 	// 创建客服商户
 	SysChatMerchantCreate(context.Context, *SysChatMerchantCreateReq) (*RespBase, error)
 	// 更新客服商户
@@ -1121,6 +1188,21 @@ func (UnimplementedSystemServer) SysTenantList(context.Context, *SysTenantListRe
 }
 func (UnimplementedSystemServer) SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantDetail not implemented")
+}
+func (UnimplementedSystemServer) SysTenantDomainList(context.Context, *SysTenantDomainListReq) (*SysTenantDomainListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysTenantDomainList not implemented")
+}
+func (UnimplementedSystemServer) SysTenantDomainCreate(context.Context, *SysTenantDomainCreateReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysTenantDomainCreate not implemented")
+}
+func (UnimplementedSystemServer) SysTenantDomainUpdate(context.Context, *SysTenantDomainUpdateReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysTenantDomainUpdate not implemented")
+}
+func (UnimplementedSystemServer) SysTenantDomainDelete(context.Context, *SysTenantDomainDeleteReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysTenantDomainDelete not implemented")
+}
+func (UnimplementedSystemServer) ResolveTenantDomain(context.Context, *ResolveTenantDomainReq) (*ResolveTenantDomainResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveTenantDomain not implemented")
 }
 func (UnimplementedSystemServer) SysChatMerchantCreate(context.Context, *SysChatMerchantCreateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantCreate not implemented")
@@ -2148,6 +2230,96 @@ func _System_SysTenantDetail_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _System_SysTenantDomainList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantDomainListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysTenantDomainList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysTenantDomainList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysTenantDomainList(ctx, req.(*SysTenantDomainListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysTenantDomainCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantDomainCreateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysTenantDomainCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysTenantDomainCreate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysTenantDomainCreate(ctx, req.(*SysTenantDomainCreateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysTenantDomainUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantDomainUpdateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysTenantDomainUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysTenantDomainUpdate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysTenantDomainUpdate(ctx, req.(*SysTenantDomainUpdateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysTenantDomainDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantDomainDeleteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysTenantDomainDelete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysTenantDomainDelete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysTenantDomainDelete(ctx, req.(*SysTenantDomainDeleteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_ResolveTenantDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResolveTenantDomainReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).ResolveTenantDomain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_ResolveTenantDomain_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).ResolveTenantDomain(ctx, req.(*ResolveTenantDomainReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _System_SysChatMerchantCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysChatMerchantCreateReq)
 	if err := dec(in); err != nil {
@@ -2464,6 +2636,26 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysTenantDetail",
 			Handler:    _System_SysTenantDetail_Handler,
+		},
+		{
+			MethodName: "SysTenantDomainList",
+			Handler:    _System_SysTenantDomainList_Handler,
+		},
+		{
+			MethodName: "SysTenantDomainCreate",
+			Handler:    _System_SysTenantDomainCreate_Handler,
+		},
+		{
+			MethodName: "SysTenantDomainUpdate",
+			Handler:    _System_SysTenantDomainUpdate_Handler,
+		},
+		{
+			MethodName: "SysTenantDomainDelete",
+			Handler:    _System_SysTenantDomainDelete_Handler,
+		},
+		{
+			MethodName: "ResolveTenantDomain",
+			Handler:    _System_ResolveTenantDomain_Handler,
 		},
 		{
 			MethodName: "SysChatMerchantCreate",

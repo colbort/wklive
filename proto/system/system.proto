@@ -558,14 +558,14 @@ message SysCronJobLogListReq {
   int64 status = 5;
 }
 
-message SysCronJobHander {
+message SysCronJobHandler {
   string invoke_target = 1;
   string job_name = 2;
 }
 
 message SysCronJobHandlersResp {
   common.RespBase base = 1;
-  repeated SysCronJobHander data = 2;
+  repeated SysCronJobHandler data = 2;
 }
 
 message SysCronJobLogListResp {
@@ -635,6 +635,45 @@ message SysTenantDetailReq { optional int64 tenant_id = 1; optional string tenan
 message SysTenantDetailResp {
   common.RespBase base = 1;
   SysTenantItem data = 2;
+}
+
+message SysTenantDomainItem {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string origin = 3;
+  TenantDomainStatus status = 4;
+  int64 priority = 5;
+  int64 create_times = 6;
+  int64 update_times = 7;
+}
+message SysTenantDomainListReq { int64 tenant_id = 1; }
+message SysTenantDomainListResp {
+  common.RespBase base = 1;
+  repeated SysTenantDomainItem data = 2;
+}
+message SysTenantDomainCreateReq {
+  int64 tenant_id = 1;
+  string origin = 2;
+  TenantDomainStatus status = 3;
+  int64 priority = 4;
+}
+message SysTenantDomainUpdateReq {
+  int64 id = 1;
+  string origin = 2;
+  TenantDomainStatus status = 3;
+  int64 priority = 4;
+}
+message SysTenantDomainDeleteReq { int64 id = 1; }
+
+message ResolveTenantDomainReq {
+  int64 tenant_id = 1;
+  string source_origin = 2;
+}
+
+message ResolveTenantDomainResp {
+  common.RespBase base = 1;
+  TenantDomainStatus source_status = 2;
+  string target_origin = 3;
 }
 
 // 客服商户管理
@@ -827,6 +866,12 @@ service System {
   rpc SysTenantList(SysTenantListReq) returns (SysTenantListResp);
   // 根据 code 获取租户
   rpc SysTenantDetail(SysTenantDetailReq) returns (SysTenantDetailResp);
+  rpc SysTenantDomainList(SysTenantDomainListReq) returns (SysTenantDomainListResp);
+  rpc SysTenantDomainCreate(SysTenantDomainCreateReq) returns (RespBase);
+  rpc SysTenantDomainUpdate(SysTenantDomainUpdateReq) returns (RespBase);
+  rpc SysTenantDomainDelete(SysTenantDomainDeleteReq) returns (RespBase);
+  // 根据租户和来源域名解析游客迁移目标
+  rpc ResolveTenantDomain(ResolveTenantDomainReq) returns (ResolveTenantDomainResp);
   // 创建客服商户
   rpc SysChatMerchantCreate(SysChatMerchantCreateReq) returns (RespBase);
   // 更新客服商户

@@ -9,3 +9,5 @@ Jwt:
   AccessExpire: 3600
 Register:
   UsernameNoRechargeLimit: 7
+GuestTransfer:
+  ExpireSeconds: 120

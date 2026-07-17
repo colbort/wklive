@@ -39,6 +39,8 @@ type (
 	ProfileResp                      = system.ProfileResp
 	ProfileUser                      = system.ProfileUser
 	ResetUserPwdReq                  = system.ResetUserPwdReq
+	ResolveTenantDomainReq           = system.ResolveTenantDomainReq
+	ResolveTenantDomainResp          = system.ResolveTenantDomainResp
 	RespBase                         = system.RespBase
 	SendVerificationCodeReq          = system.SendVerificationCodeReq
 	SysChatMerchantCreateReq         = system.SysChatMerchantCreateReq
@@ -61,7 +63,7 @@ type (
 	SysConfigUpdateReq               = system.SysConfigUpdateReq
 	SysCronJobCreateReq              = system.SysCronJobCreateReq
 	SysCronJobDeleteReq              = system.SysCronJobDeleteReq
-	SysCronJobHander                 = system.SysCronJobHander
+	SysCronJobHandler                = system.SysCronJobHandler
 	SysCronJobHandlersResp           = system.SysCronJobHandlersResp
 	SysCronJobItem                   = system.SysCronJobItem
 	SysCronJobListReq                = system.SysCronJobListReq
@@ -98,6 +100,12 @@ type (
 	SysTenantDeleteReq               = system.SysTenantDeleteReq
 	SysTenantDetailReq               = system.SysTenantDetailReq
 	SysTenantDetailResp              = system.SysTenantDetailResp
+	SysTenantDomainCreateReq         = system.SysTenantDomainCreateReq
+	SysTenantDomainDeleteReq         = system.SysTenantDomainDeleteReq
+	SysTenantDomainItem              = system.SysTenantDomainItem
+	SysTenantDomainListReq           = system.SysTenantDomainListReq
+	SysTenantDomainListResp          = system.SysTenantDomainListResp
+	SysTenantDomainUpdateReq         = system.SysTenantDomainUpdateReq
 	SysTenantItem                    = system.SysTenantItem
 	SysTenantListReq                 = system.SysTenantListReq
 	SysTenantListResp                = system.SysTenantListResp
@@ -229,6 +237,12 @@ type (
 		SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
 		// 根据 code 获取租户
 		SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error)
+		SysTenantDomainList(ctx context.Context, in *SysTenantDomainListReq, opts ...grpc.CallOption) (*SysTenantDomainListResp, error)
+		SysTenantDomainCreate(ctx context.Context, in *SysTenantDomainCreateReq, opts ...grpc.CallOption) (*RespBase, error)
+		SysTenantDomainUpdate(ctx context.Context, in *SysTenantDomainUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
+		SysTenantDomainDelete(ctx context.Context, in *SysTenantDomainDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 根据租户和来源域名解析游客迁移目标
+		ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error)
 		// 创建客服商户
 		SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 更新客服商户
@@ -580,6 +594,32 @@ func (m *defaultSystem) SysTenantList(ctx context.Context, in *SysTenantListReq,
 func (m *defaultSystem) SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysTenantDetail(ctx, in, opts...)
+}
+
+func (m *defaultSystem) SysTenantDomainList(ctx context.Context, in *SysTenantDomainListReq, opts ...grpc.CallOption) (*SysTenantDomainListResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysTenantDomainList(ctx, in, opts...)
+}
+
+func (m *defaultSystem) SysTenantDomainCreate(ctx context.Context, in *SysTenantDomainCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysTenantDomainCreate(ctx, in, opts...)
+}
+
+func (m *defaultSystem) SysTenantDomainUpdate(ctx context.Context, in *SysTenantDomainUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysTenantDomainUpdate(ctx, in, opts...)
+}
+
+func (m *defaultSystem) SysTenantDomainDelete(ctx context.Context, in *SysTenantDomainDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysTenantDomainDelete(ctx, in, opts...)
+}
+
+// 根据租户和来源域名解析游客迁移目标
+func (m *defaultSystem) ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.ResolveTenantDomain(ctx, in, opts...)
 }
 
 // 创建客服商户

@@ -4,7 +4,11 @@ import { useRouter } from 'vue-router'
 
 import { getAccessToken } from '@/api/http'
 import { apiGetProfile, apiLogout } from '@/api/userPrivate'
-import { apiGuestLogin } from '@/api/userPublic'
+import {
+  apiExchangeGuestTransfer,
+  apiGuestLogin,
+  tryAutoRedirectGuestTransfer,
+} from '@/api/userPublic'
 import AppIcon from '@/components/common/AppIcon.vue'
 import { useI18n } from '@/i18n'
 import { useTenantStore } from '@/stores/tenant'
@@ -59,6 +63,8 @@ const isLoggedIn = ref(Boolean(getAccessToken()))
 const loadingProfile = ref(false)
 const loggingGuest = ref(false)
 const guestLoginError = ref('')
+const pendingGuestTransferCode = ref('')
+const pendingGuestTransferCodeKey = 'pending_guest_transfer_code'
 const tenantStore = useTenantStore()
 const router = useRouter()
 const { locale, t } = useI18n()
@@ -81,8 +87,17 @@ const displayId = computed(
 const avatarUrl = computed(() => userBase.value?.avatar || '')
 
 onMounted(() => {
+  const transferCode = new URLSearchParams(window.location.hash.slice(1)).get('code') || ''
+  if (transferCode) {
+    sessionStorage.setItem(pendingGuestTransferCodeKey, transferCode)
+    window.history.replaceState(null, '', window.location.pathname + window.location.search)
+  }
+  pendingGuestTransferCode.value = transferCode || sessionStorage.getItem(pendingGuestTransferCodeKey) || ''
   if (isLoggedIn.value) {
     loadProfile()
+    tryAutoRedirectGuestTransfer().catch((error) => {
+      console.warn('guest transfer redirect failed', error)
+    })
   }
 })
 
@@ -102,13 +117,32 @@ async function handleGuestLogin() {
   if (loggingGuest.value) return
 
   guestLoginError.value = ''
+  loggingGuest.value = true
+
+  if (pendingGuestTransferCode.value) {
+    const code = pendingGuestTransferCode.value
+    pendingGuestTransferCode.value = ''
+    sessionStorage.removeItem(pendingGuestTransferCodeKey)
+    try {
+      const res = await apiExchangeGuestTransfer({ code })
+      if (res.code === 200 && res.data?.token) {
+        isLoggedIn.value = true
+        await loadProfile()
+        loggingGuest.value = false
+        return
+      }
+    } catch (error) {
+      console.warn('guest transfer failed', error)
+    }
+  }
+
   tenantStore.hydrateFromEnv()
   if (!tenantStore.tenantCode) {
     guestLoginError.value = t('profile.tenantMissing')
+    loggingGuest.value = false
     return
   }
 
-  loggingGuest.value = true
   try {
     const res = await apiGuestLogin({ tenantCode: tenantStore.tenantCode })
     if (res.code !== 200) {
@@ -206,7 +240,9 @@ function goLogin() {
           :aria-busy="loggingGuest"
           @click="handleGuestLogin"
         >
-          <span>{{ loggingGuest ? t('profile.loggingIn') : t('profile.guestLogin') }}</span>
+          <span>
+            {{ loggingGuest ? t('profile.loggingIn') : t('profile.guestLogin') }}
+          </span>
           <i />
         </button>
       </div>

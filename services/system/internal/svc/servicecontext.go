@@ -33,6 +33,7 @@ type ServiceContext struct {
 	JobModel                    models.SysJobModel
 	JobLogModel                 models.SysJobLogModel
 	TenantMode                  models.SysTenantModel
+	TenantDomainModel           models.SysTenantDomainModel
 	ChatMerchantModel           models.SysChatMerchantModel
 	ChatInternal                chatinternal.ChatInternal
 }
@@ -65,6 +66,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		JobModel:                    models.NewSysJobModel(conn, c.CacheRedis),
 		JobLogModel:                 jobLogModel,
 		TenantMode:                  models.NewSysTenantModel(conn, c.CacheRedis),
+		TenantDomainModel:           models.NewSysTenantDomainModel(conn),
 		ChatMerchantModel:           models.NewSysChatMerchantModel(conn, c.CacheRedis),
 		ChatInternal:                chatinternal.NewChatInternal(zrpc.MustNewClient(c.ChatInternalRpc)),
 	}

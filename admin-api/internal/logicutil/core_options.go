@@ -51,6 +51,7 @@ func SystemOptions() []types.OptionsGroup {
 		EnumGroup("verificationCodeChannel", "验证码渠道", system.VerificationCodeChannel_VERIFICATION_CODE_CHANNEL_UNKNOWN.Descriptor()),
 		EnumGroup("verificationCodeScene", "验证码业务场景", system.VerificationCodeScene_VERIFICATION_CODE_SCENE_UNKNOWN.Descriptor()),
 		EnumGroup("verificationCodeStatus", "验证码发送状态", system.VerificationCodeStatus_VERIFICATION_CODE_STATUS_UNKNOWN.Descriptor()),
+		EnumGroup("tenantDomainStatus", "租户域名状态", system.TenantDomainStatus_TENANT_DOMAIN_STATUS_UNKNOWN.Descriptor()),
 	}
 }
 
