@@ -31,6 +31,14 @@ type (
 		Keyword           string
 	}
 
+	GuestDomainMigrationStats struct {
+		NotMigratedCount     int64 `db:"not_migrated_count"`
+		Active7dCount        int64 `db:"active_7d_count"`
+		Active8To30dCount    int64 `db:"active_8_to_30d_count"`
+		Active31To90dCount   int64 `db:"active_31_to_90d_count"`
+		InactiveOver90dCount int64 `db:"inactive_over_90d_count"`
+	}
+
 	// TUserModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTUserModel.
 	TUserModel interface {
@@ -43,6 +51,7 @@ type (
 		FindGuestByDeviceId(ctx context.Context, tenantId int64, deviceId string) (*TUser, error)
 		FindGuestFingerprintCandidates(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUser, error)
 		FindByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUser, error)
+		GetGuestDomainMigrationStats(ctx context.Context, tenantId int64, sourceOrigin string, active7dAt, active30dAt, active90dAt int64) (*GuestDomainMigrationStats, error)
 	}
 
 	customTUserModel struct {
@@ -55,6 +64,32 @@ func NewTUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) T
 	return &customTUserModel{
 		defaultTUserModel: newTUserModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTUserModel) GetGuestDomainMigrationStats(ctx context.Context, tenantId int64, sourceOrigin string, active7dAt, active30dAt, active90dAt int64) (*GuestDomainMigrationStats, error) {
+	var stats GuestDomainMigrationStats
+	query := fmt.Sprintf(`
+		SELECT
+			COUNT(1) AS not_migrated_count,
+			COALESCE(SUM(last_login_time >= ?), 0) AS active_7d_count,
+			COALESCE(SUM(last_login_time >= ? AND last_login_time < ?), 0) AS active_8_to_30d_count,
+			COALESCE(SUM(last_login_time >= ? AND last_login_time < ?), 0) AS active_31_to_90d_count,
+			COALESCE(SUM(last_login_time < ?), 0) AS inactive_over_90d_count
+		FROM %s
+		WHERE tenant_id = ?
+		  AND is_guest = 2
+		  AND deleted = 0
+		  AND source_origin = ?
+		  AND guest_migrated_time = 0
+	`, m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &stats, query,
+		active7dAt,
+		active30dAt, active7dAt,
+		active90dAt, active30dAt,
+		active90dAt,
+		tenantId, sourceOrigin,
+	)
+	return &stats, err
 }
 
 func (m *defaultTUserModel) FindPage(ctx context.Context, filter UserPageFilter, cursor int64, limit int64) ([]*TUser, int64, error) {

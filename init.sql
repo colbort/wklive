@@ -283,7 +283,8 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 11300),
 (0, 1, 11301),
 (0, 1, 11302),
-(0, 1, 11303);
+(0, 1, 11303),
+(0, 1, 11304);
 
 INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 -- 用户管理
@@ -499,7 +500,8 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 11300),
 (0, 2, 11301),
 (0, 2, 11302),
-(0, 2, 11303);
+(0, 2, 11303),
+(0, 2, 11304);
 
 
 
@@ -865,4 +867,5 @@ INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
 (11301, 11300, '新增租户域名', 3, 'POST', '/system/tenant-domains', 'sys:tenant-domain:add', 11301),
 (11302, 11300, '编辑租户域名', 3, 'PUT', '/system/tenant-domains', 'sys:tenant-domain:update', 11302),
-(11303, 11300, '删除租户域名', 3, 'DELETE', '/system/tenant-domains/{id}', 'sys:tenant-domain:delete', 11303);
+(11303, 11300, '删除租户域名', 3, 'DELETE', '/system/tenant-domains/{id}', 'sys:tenant-domain:delete', 11303),
+(11304, 11300, '游客迁移统计', 3, 'GET', '/system/tenant-domains/guest-migration-stats', 'sys:tenant-domain:guest-migration-stats', 11304);

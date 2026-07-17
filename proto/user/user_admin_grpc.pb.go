@@ -19,28 +19,29 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserAdmin_CreateUser_FullMethodName           = "/user.UserAdmin/CreateUser"
-	UserAdmin_GetUserDetail_FullMethodName        = "/user.UserAdmin/GetUserDetail"
-	UserAdmin_ListUsers_FullMethodName            = "/user.UserAdmin/ListUsers"
-	UserAdmin_UpdateUserBase_FullMethodName       = "/user.UserAdmin/UpdateUserBase"
-	UserAdmin_UpdateUserStatus_FullMethodName     = "/user.UserAdmin/UpdateUserStatus"
-	UserAdmin_UpdateUserLevel_FullMethodName      = "/user.UserAdmin/UpdateUserLevel"
-	UserAdmin_ResetLoginPassword_FullMethodName   = "/user.UserAdmin/ResetLoginPassword"
-	UserAdmin_ResetPayPassword_FullMethodName     = "/user.UserAdmin/ResetPayPassword"
-	UserAdmin_UnlockUser_FullMethodName           = "/user.UserAdmin/UnlockUser"
-	UserAdmin_UpdateRiskLevel_FullMethodName      = "/user.UserAdmin/UpdateRiskLevel"
-	UserAdmin_DeleteUser_FullMethodName           = "/user.UserAdmin/DeleteUser"
-	UserAdmin_GetUserSecurity_FullMethodName      = "/user.UserAdmin/GetUserSecurity"
-	UserAdmin_ResetUserGoogle2FA_FullMethodName   = "/user.UserAdmin/ResetUserGoogle2FA"
-	UserAdmin_ListUserIdentities_FullMethodName   = "/user.UserAdmin/ListUserIdentities"
-	UserAdmin_ReviewUserIdentity_FullMethodName   = "/user.UserAdmin/ReviewUserIdentity"
-	UserAdmin_ListUserBanks_FullMethodName        = "/user.UserAdmin/ListUserBanks"
-	UserAdmin_GetUserBank_FullMethodName          = "/user.UserAdmin/GetUserBank"
-	UserAdmin_AddUserBank_FullMethodName          = "/user.UserAdmin/AddUserBank"
-	UserAdmin_UpdateUserBank_FullMethodName       = "/user.UserAdmin/UpdateUserBank"
-	UserAdmin_DeleteUserBank_FullMethodName       = "/user.UserAdmin/DeleteUserBank"
-	UserAdmin_UpdateUserBankStatus_FullMethodName = "/user.UserAdmin/UpdateUserBankStatus"
-	UserAdmin_SetDefaultUserBank_FullMethodName   = "/user.UserAdmin/SetDefaultUserBank"
+	UserAdmin_GuestDomainMigrationStats_FullMethodName = "/user.UserAdmin/GuestDomainMigrationStats"
+	UserAdmin_CreateUser_FullMethodName                = "/user.UserAdmin/CreateUser"
+	UserAdmin_GetUserDetail_FullMethodName             = "/user.UserAdmin/GetUserDetail"
+	UserAdmin_ListUsers_FullMethodName                 = "/user.UserAdmin/ListUsers"
+	UserAdmin_UpdateUserBase_FullMethodName            = "/user.UserAdmin/UpdateUserBase"
+	UserAdmin_UpdateUserStatus_FullMethodName          = "/user.UserAdmin/UpdateUserStatus"
+	UserAdmin_UpdateUserLevel_FullMethodName           = "/user.UserAdmin/UpdateUserLevel"
+	UserAdmin_ResetLoginPassword_FullMethodName        = "/user.UserAdmin/ResetLoginPassword"
+	UserAdmin_ResetPayPassword_FullMethodName          = "/user.UserAdmin/ResetPayPassword"
+	UserAdmin_UnlockUser_FullMethodName                = "/user.UserAdmin/UnlockUser"
+	UserAdmin_UpdateRiskLevel_FullMethodName           = "/user.UserAdmin/UpdateRiskLevel"
+	UserAdmin_DeleteUser_FullMethodName                = "/user.UserAdmin/DeleteUser"
+	UserAdmin_GetUserSecurity_FullMethodName           = "/user.UserAdmin/GetUserSecurity"
+	UserAdmin_ResetUserGoogle2FA_FullMethodName        = "/user.UserAdmin/ResetUserGoogle2FA"
+	UserAdmin_ListUserIdentities_FullMethodName        = "/user.UserAdmin/ListUserIdentities"
+	UserAdmin_ReviewUserIdentity_FullMethodName        = "/user.UserAdmin/ReviewUserIdentity"
+	UserAdmin_ListUserBanks_FullMethodName             = "/user.UserAdmin/ListUserBanks"
+	UserAdmin_GetUserBank_FullMethodName               = "/user.UserAdmin/GetUserBank"
+	UserAdmin_AddUserBank_FullMethodName               = "/user.UserAdmin/AddUserBank"
+	UserAdmin_UpdateUserBank_FullMethodName            = "/user.UserAdmin/UpdateUserBank"
+	UserAdmin_DeleteUserBank_FullMethodName            = "/user.UserAdmin/DeleteUserBank"
+	UserAdmin_UpdateUserBankStatus_FullMethodName      = "/user.UserAdmin/UpdateUserBankStatus"
+	UserAdmin_SetDefaultUserBank_FullMethodName        = "/user.UserAdmin/SetDefaultUserBank"
 )
 
 // UserAdminClient is the client API for UserAdmin service.
@@ -49,6 +50,8 @@ const (
 //
 // 管理后台接口
 type UserAdminClient interface {
+	// 退役域名未迁移游客及活跃分布统计
+	GuestDomainMigrationStats(ctx context.Context, in *GuestDomainMigrationStatsReq, opts ...grpc.CallOption) (*GuestDomainMigrationStatsResp, error)
 	// 创建用户
 	CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserResp, error)
 	// 获取用户详情
@@ -101,6 +104,16 @@ type userAdminClient struct {
 
 func NewUserAdminClient(cc grpc.ClientConnInterface) UserAdminClient {
 	return &userAdminClient{cc}
+}
+
+func (c *userAdminClient) GuestDomainMigrationStats(ctx context.Context, in *GuestDomainMigrationStatsReq, opts ...grpc.CallOption) (*GuestDomainMigrationStatsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GuestDomainMigrationStatsResp)
+	err := c.cc.Invoke(ctx, UserAdmin_GuestDomainMigrationStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *userAdminClient) CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserResp, error) {
@@ -329,6 +342,8 @@ func (c *userAdminClient) SetDefaultUserBank(ctx context.Context, in *SetDefault
 //
 // 管理后台接口
 type UserAdminServer interface {
+	// 退役域名未迁移游客及活跃分布统计
+	GuestDomainMigrationStats(context.Context, *GuestDomainMigrationStatsReq) (*GuestDomainMigrationStatsResp, error)
 	// 创建用户
 	CreateUser(context.Context, *CreateUserReq) (*CreateUserResp, error)
 	// 获取用户详情
@@ -383,6 +398,9 @@ type UserAdminServer interface {
 // pointer dereference when methods are called.
 type UnimplementedUserAdminServer struct{}
 
+func (UnimplementedUserAdminServer) GuestDomainMigrationStats(context.Context, *GuestDomainMigrationStatsReq) (*GuestDomainMigrationStatsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GuestDomainMigrationStats not implemented")
+}
 func (UnimplementedUserAdminServer) CreateUser(context.Context, *CreateUserReq) (*CreateUserResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
 }
@@ -468,6 +486,24 @@ func RegisterUserAdminServer(s grpc.ServiceRegistrar, srv UserAdminServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&UserAdmin_ServiceDesc, srv)
+}
+
+func _UserAdmin_GuestDomainMigrationStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GuestDomainMigrationStatsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserAdminServer).GuestDomainMigrationStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserAdmin_GuestDomainMigrationStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserAdminServer).GuestDomainMigrationStats(ctx, req.(*GuestDomainMigrationStatsReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _UserAdmin_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -873,6 +909,10 @@ var UserAdmin_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "user.UserAdmin",
 	HandlerType: (*UserAdminServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GuestDomainMigrationStats",
+			Handler:    _UserAdmin_GuestDomainMigrationStats_Handler,
+		},
 		{
 			MethodName: "CreateUser",
 			Handler:    _UserAdmin_CreateUser_Handler,

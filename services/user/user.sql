@@ -14,6 +14,9 @@ CREATE TABLE `t_user` (
   `invite_code` varchar(32) DEFAULT NULL COMMENT '邀请码',
   `signature` varchar(255) DEFAULT NULL COMMENT '个性签名',
   `source` varchar(64) DEFAULT NULL COMMENT '注册来源',
+  `source_origin` varchar(255) NOT NULL DEFAULT '' COMMENT '游客首次登录的规范化域名Origin',
+  `guest_migrated_origin` varchar(255) NOT NULL DEFAULT '' COMMENT '游客迁移成功的目标域名Origin',
+  `guest_migrated_time` bigint NOT NULL DEFAULT 0 COMMENT '游客迁移成功时间',
   `referrer_user_id` bigint DEFAULT NULL COMMENT '邀请人ID',
   `last_login_ip` varchar(64) DEFAULT NULL COMMENT '最后登录IP',
   `last_login_time` bigint DEFAULT 0 COMMENT '最后登录时间',
@@ -34,6 +37,7 @@ CREATE TABLE `t_user` (
   KEY `idx_tenant_status` (`tenant_id`, `status`),
   KEY `idx_tenant_deleted` (`tenant_id`, `deleted`),
   KEY `idx_tenant_register_time` (`tenant_id`, `register_time`),
+  KEY `idx_tenant_guest_origin_activity` (`tenant_id`, `is_guest`, `source_origin`, `deleted`, `guest_migrated_time`, `last_login_time`),
   KEY `idx_referrer_user_id` (`referrer_user_id`),
   KEY `idx_last_login_time` (`last_login_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户基础表';

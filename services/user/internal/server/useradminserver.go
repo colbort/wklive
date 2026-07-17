@@ -23,6 +23,12 @@ func NewUserAdminServer(svcCtx *svc.ServiceContext) *UserAdminServer {
 	}
 }
 
+// 退役域名未迁移游客及活跃分布统计
+func (s *UserAdminServer) GuestDomainMigrationStats(ctx context.Context, in *user.GuestDomainMigrationStatsReq) (*user.GuestDomainMigrationStatsResp, error) {
+	l := logic.NewGuestDomainMigrationStatsLogic(ctx, s.svcCtx)
+	return l.GuestDomainMigrationStats(in)
+}
+
 // 创建用户
 func (s *UserAdminServer) CreateUser(ctx context.Context, in *user.CreateUserReq) (*user.CreateUserResp, error) {
 	l := logic.NewCreateUserLogic(ctx, s.svcCtx)

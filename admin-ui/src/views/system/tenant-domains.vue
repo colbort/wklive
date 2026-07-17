@@ -5,11 +5,7 @@
         <TenantSelect v-model="queryForm.tenantId" @change="handleTenantChange" />
       </el-form-item>
       <template #actions>
-        <el-button
-          v-perm="'sys:tenant-domain:add'"
-          type="primary"
-          @click="openCreate"
-        >
+        <el-button v-perm="'sys:tenant-domain:add'" type="primary" @click="openCreate">
           {{ t('common.add') }}
         </el-button>
       </template>
@@ -23,8 +19,18 @@
         show-icon
         class="domain-tip"
       />
-      <el-table v-loading="loading" :data="list" :empty-text="t('common.noData')" stripe>
-        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
+      <el-table
+        v-loading="loading"
+        :data="list"
+        :empty-text="t('common.noData')"
+        stripe
+      >
+        <el-table-column
+          prop="id"
+          :label="t('common.id')"
+          width="80"
+          align="center"
+        />
         <el-table-column prop="origin" :label="t('system.domainOrigin')" min-width="260" />
         <el-table-column :label="t('system.status')" width="120" align="center">
           <template #default="{ row }">
@@ -39,10 +45,52 @@
           width="110"
           align="center"
         />
-        <el-table-column :label="t('common.updateTimes')" width="180" align="center">
-          <template #default="{ row }">{{ formatDate(row.updateTimes) }}</template>
+        <el-table-column
+          v-if="canViewMigrationStats"
+          :label="t('system.notMigratedGuests')"
+          align="center"
+        >
+          <el-table-column :label="t('system.notMigratedTotal')" width="100" align="center">
+            <template #default="{ row }">
+              {{ migrationStat(row, 'notMigratedCount') }}
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('system.activeLast7Days')" width="90" align="center">
+            <template #default="{ row }">
+              {{ migrationStat(row, 'activeLast7DaysCount') }}
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('system.active8To30Days')" width="100" align="center">
+            <template #default="{ row }">
+              {{ migrationStat(row, 'active8To30DaysCount') }}
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('system.active31To90Days')" width="110" align="center">
+            <template #default="{ row }">
+              {{
+                migrationStat(row, 'active31To90DaysCount')
+              }}
+            </template>
+          </el-table-column>
+          <el-table-column :label="t('system.inactiveOver90Days')" width="110" align="center">
+            <template #default="{ row }">
+              {{
+                migrationStat(row, 'inactiveOver90DaysCount')
+              }}
+            </template>
+          </el-table-column>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="170" align="center" fixed="right">
+        <el-table-column :label="t('common.updateTimes')" width="180" align="center">
+          <template #default="{ row }">
+            {{ formatDate(row.updateTimes) }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="t('common.actions')"
+          width="170"
+          align="center"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'sys:tenant-domain:update'"
@@ -71,7 +119,12 @@
       width="560px"
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="110px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="110px"
+      >
         <el-form-item :label="t('system.domainOrigin')" prop="origin">
           <el-input v-model="form.origin" placeholder="https://example.com" clearable />
         </el-form-item>
@@ -86,11 +139,18 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="t('system.domainPriority')" prop="priority">
-          <el-input-number v-model="form.priority" :min="0" :max="2147483647" style="width: 100%" />
+          <el-input-number
+            v-model="form.priority"
+            :min="0"
+            :max="2147483647"
+            style="width: 100%"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
+        <el-button @click="dialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button
           v-perm="isEdit ? 'sys:tenant-domain:update' : 'sys:tenant-domain:add'"
           type="primary"
@@ -112,15 +172,21 @@ import type { OptionGroup } from '@/services'
 import {
   tenantDomainsService,
   type SysTenantDomainCreateReq,
+  type SysTenantDomainGuestMigrationStats,
   type SysTenantDomainItem,
 } from '@/services'
 import { useLoading } from '@/composables/useLoading'
 import { useOptions } from '@/composables/useOptions'
 import { formatDate } from '@/utils'
+import { useAuthStore } from '@/stores/auth'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
+const auth = useAuthStore()
+const canViewMigrationStats = computed(() =>
+  auth.hasPerm('sys:tenant-domain:guest-migration-stats'),
+)
 const optionGroups = ref<OptionGroup[]>([])
 const { formOptionItems, optionLabel } = useOptions(optionGroups)
 const domainStatusOptions = formOptionItems('tenantDomainStatus')
@@ -144,6 +210,11 @@ function statusTagType(status: number) {
   return 'info'
 }
 
+function migrationStat(row: SysTenantDomainItem, field: keyof SysTenantDomainGuestMigrationStats) {
+  if (row.status !== 2) return '--'
+  return row.migrationStats?.[field] ?? '--'
+}
+
 async function loadList() {
   if (!queryForm.tenantId) {
     list.value = []
@@ -153,7 +224,23 @@ async function loadList() {
     try {
       const res = await tenantDomainsService.getList({ tenantId: queryForm.tenantId! })
       if (res.code !== 200) throw new Error(res.msg)
-      list.value = res.data || []
+      const domains = res.data || []
+      await Promise.all(
+        domains
+          .filter((domain) => canViewMigrationStats.value && domain.status === 2)
+          .map(async (domain) => {
+            try {
+              const statsRes = await tenantDomainsService.getGuestMigrationStats(
+                queryForm.tenantId!,
+                domain.origin,
+              )
+              if (statsRes.code === 200) domain.migrationStats = statsRes.data
+            } catch {
+              // 单个域名统计失败不影响域名列表展示
+            }
+          }),
+      )
+      list.value = domains
     } catch (error) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }

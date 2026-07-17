@@ -28,10 +28,11 @@ func NewGuestLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GuestL
 	}
 }
 
-func (l *GuestLoginLogic) GuestLogin(req *types.GuestLoginReq) (resp *types.GuestLoginResp, err error) {
+func (l *GuestLoginLogic) GuestLogin(req *types.GuestLoginReq, sourceOrigin string) (resp *types.GuestLoginResp, err error) {
 	result, err := l.svcCtx.UserCli.GuestLogin(l.ctx, &user.GuestLoginReq{
-		DeviceId:    req.DeviceId,
-		Fingerprint: req.Fingerprint,
+		DeviceId:     req.DeviceId,
+		Fingerprint:  req.Fingerprint,
+		SourceOrigin: sourceOrigin,
 	})
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GuestLoginResp](l.ctx, err)

@@ -582,6 +582,24 @@ type SysTenantDomainDeleteReq {
 	id int64 `path:"id"`
 }
 
+type SysTenantDomainGuestMigrationStatsReq {
+	tenantId int64 `form:"tenantId"`
+	sourceOrigin string `form:"sourceOrigin"`
+}
+
+type SysTenantDomainGuestMigrationStatsData {
+	notMigratedCount          int64 `json:"notMigratedCount"`
+	activeWithinWeekCount     int64 `json:"activeLast7DaysCount"`
+	activeWeekToMonthCount    int64 `json:"active8To30DaysCount"`
+	activeMonthToQuarterCount int64 `json:"active31To90DaysCount"`
+	inactiveOverQuarterCount  int64 `json:"inactiveOver90DaysCount"`
+}
+
+type SysTenantDomainGuestMigrationStatsResp {
+	RespBase
+	data SysTenantDomainGuestMigrationStatsData `json:"data"`
+}
+
 // ===== system: 客服商户 =====
 type SysChatMerchantCreateReq {
 	merchantCode string `json:"merchantCode"`
@@ -833,6 +851,9 @@ service admin {
 
 	@handler SysTenantDomainDelete
 	delete /tenant-domains/:id (SysTenantDomainDeleteReq) returns (RespBase)
+
+	@handler SysTenantDomainGuestMigrationStats
+	get /tenant-domains/guest-migration-stats (SysTenantDomainGuestMigrationStatsReq) returns (SysTenantDomainGuestMigrationStatsResp)
 
 	// --- 客服商户 ---
 	@handler SysChatMerchantCreate

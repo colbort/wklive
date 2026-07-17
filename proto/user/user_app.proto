@@ -55,6 +55,7 @@ message LoginData {
 message GuestLoginReq {
   string device_id = 1;
   string fingerprint = 2;
+  string sourceOrigin = 3;
 }
 
 message GuestLogin {

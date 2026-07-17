@@ -14,42 +14,47 @@ import (
 )
 
 type (
-	AddUserBankReq          = user.AddUserBankReq
-	AddUserBankResp         = user.AddUserBankResp
-	AdminCommonResp         = user.AdminCommonResp
-	CreateUserReq           = user.CreateUserReq
-	CreateUserResp          = user.CreateUserResp
-	DeleteUserBankReq       = user.DeleteUserBankReq
-	DeleteUserReq           = user.DeleteUserReq
-	GetUserBankReq          = user.GetUserBankReq
-	GetUserBankResp         = user.GetUserBankResp
-	GetUserDetailReq        = user.GetUserDetailReq
-	GetUserDetailResp       = user.GetUserDetailResp
-	GetUserSecurityReq      = user.GetUserSecurityReq
-	GetUserSecurityResp     = user.GetUserSecurityResp
-	ListUserBanksReq        = user.ListUserBanksReq
-	ListUserBanksResp       = user.ListUserBanksResp
-	ListUserIdentitiesReq   = user.ListUserIdentitiesReq
-	ListUserIdentitiesResp  = user.ListUserIdentitiesResp
-	ListUsersReq            = user.ListUsersReq
-	ListUsersResp           = user.ListUsersResp
-	ResetLoginPasswordReq   = user.ResetLoginPasswordReq
-	ResetPayPasswordReq     = user.ResetPayPasswordReq
-	ResetUserGoogle2FAReq   = user.ResetUserGoogle2FAReq
-	ReviewUserIdentityReq   = user.ReviewUserIdentityReq
-	ReviewUserIdentityResp  = user.ReviewUserIdentityResp
-	SetDefaultUserBankReq   = user.SetDefaultUserBankReq
-	UnlockUserReq           = user.UnlockUserReq
-	UpdateRiskLevelReq      = user.UpdateRiskLevelReq
-	UpdateUserBankReq       = user.UpdateUserBankReq
-	UpdateUserBankResp      = user.UpdateUserBankResp
-	UpdateUserBankStatusReq = user.UpdateUserBankStatusReq
-	UpdateUserBaseReq       = user.UpdateUserBaseReq
-	UpdateUserBaseResp      = user.UpdateUserBaseResp
-	UpdateUserLevelReq      = user.UpdateUserLevelReq
-	UpdateUserStatusReq     = user.UpdateUserStatusReq
+	AddUserBankReq                = user.AddUserBankReq
+	AddUserBankResp               = user.AddUserBankResp
+	AdminCommonResp               = user.AdminCommonResp
+	CreateUserReq                 = user.CreateUserReq
+	CreateUserResp                = user.CreateUserResp
+	DeleteUserBankReq             = user.DeleteUserBankReq
+	DeleteUserReq                 = user.DeleteUserReq
+	GetUserBankReq                = user.GetUserBankReq
+	GetUserBankResp               = user.GetUserBankResp
+	GetUserDetailReq              = user.GetUserDetailReq
+	GetUserDetailResp             = user.GetUserDetailResp
+	GetUserSecurityReq            = user.GetUserSecurityReq
+	GetUserSecurityResp           = user.GetUserSecurityResp
+	GuestDomainMigrationStatsData = user.GuestDomainMigrationStatsData
+	GuestDomainMigrationStatsReq  = user.GuestDomainMigrationStatsReq
+	GuestDomainMigrationStatsResp = user.GuestDomainMigrationStatsResp
+	ListUserBanksReq              = user.ListUserBanksReq
+	ListUserBanksResp             = user.ListUserBanksResp
+	ListUserIdentitiesReq         = user.ListUserIdentitiesReq
+	ListUserIdentitiesResp        = user.ListUserIdentitiesResp
+	ListUsersReq                  = user.ListUsersReq
+	ListUsersResp                 = user.ListUsersResp
+	ResetLoginPasswordReq         = user.ResetLoginPasswordReq
+	ResetPayPasswordReq           = user.ResetPayPasswordReq
+	ResetUserGoogle2FAReq         = user.ResetUserGoogle2FAReq
+	ReviewUserIdentityReq         = user.ReviewUserIdentityReq
+	ReviewUserIdentityResp        = user.ReviewUserIdentityResp
+	SetDefaultUserBankReq         = user.SetDefaultUserBankReq
+	UnlockUserReq                 = user.UnlockUserReq
+	UpdateRiskLevelReq            = user.UpdateRiskLevelReq
+	UpdateUserBankReq             = user.UpdateUserBankReq
+	UpdateUserBankResp            = user.UpdateUserBankResp
+	UpdateUserBankStatusReq       = user.UpdateUserBankStatusReq
+	UpdateUserBaseReq             = user.UpdateUserBaseReq
+	UpdateUserBaseResp            = user.UpdateUserBaseResp
+	UpdateUserLevelReq            = user.UpdateUserLevelReq
+	UpdateUserStatusReq           = user.UpdateUserStatusReq
 
 	UserAdmin interface {
+		// 退役域名未迁移游客及活跃分布统计
+		GuestDomainMigrationStats(ctx context.Context, in *GuestDomainMigrationStatsReq, opts ...grpc.CallOption) (*GuestDomainMigrationStatsResp, error)
 		// 创建用户
 		CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserResp, error)
 		// 获取用户详情
@@ -105,6 +110,12 @@ func NewUserAdmin(cli zrpc.Client) UserAdmin {
 	return &defaultUserAdmin{
 		cli: cli,
 	}
+}
+
+// 退役域名未迁移游客及活跃分布统计
+func (m *defaultUserAdmin) GuestDomainMigrationStats(ctx context.Context, in *GuestDomainMigrationStatsReq, opts ...grpc.CallOption) (*GuestDomainMigrationStatsResp, error) {
+	client := user.NewUserAdminClient(m.cli.Conn())
+	return client.GuestDomainMigrationStats(ctx, in, opts...)
 }
 
 // 创建用户

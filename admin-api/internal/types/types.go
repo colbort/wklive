@@ -3619,6 +3619,24 @@ type SysTenantDomainDeleteReq struct {
 	Id int64 `path:"id"`
 }
 
+type SysTenantDomainGuestMigrationStatsData struct {
+	NotMigratedCount          int64 `json:"notMigratedCount"`
+	ActiveWithinWeekCount     int64 `json:"activeLast7DaysCount"`
+	ActiveWeekToMonthCount    int64 `json:"active8To30DaysCount"`
+	ActiveMonthToQuarterCount int64 `json:"active31To90DaysCount"`
+	InactiveOverQuarterCount  int64 `json:"inactiveOver90DaysCount"`
+}
+
+type SysTenantDomainGuestMigrationStatsReq struct {
+	TenantId     int64  `form:"tenantId"`
+	SourceOrigin string `form:"sourceOrigin"`
+}
+
+type SysTenantDomainGuestMigrationStatsResp struct {
+	RespBase
+	Data SysTenantDomainGuestMigrationStatsData `json:"data"`
+}
+
 type SysTenantDomainItem struct {
 	Id          int64  `json:"id"`
 	TenantId    int64  `json:"tenantId"`

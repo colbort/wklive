@@ -40,8 +40,18 @@
     </CrudQueryCard>
 
     <el-card class="table-card" shadow="never">
-      <el-table v-loading="loading" :data="list" :empty-text="t('common.noData')" stripe>
-        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
+      <el-table
+        v-loading="loading"
+        :data="list"
+        :empty-text="t('common.noData')"
+        stripe
+      >
+        <el-table-column
+          prop="id"
+          :label="t('common.id')"
+          width="80"
+          align="center"
+        />
         <el-table-column
           prop="merchantCode"
           :label="t('system.chatMerchantCode')"
@@ -73,7 +83,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="remark" :label="t('common.remark')" min-width="150" />
-        <el-table-column :label="t('common.actions')" width="220" align="center" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          width="220"
+          align="center"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button type="info" size="small" @click="handleDetail(row)">
               {{ t('common.detail') }}
@@ -115,7 +130,12 @@
       width="720px"
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="130px">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-width="130px"
+      >
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="t('system.chatMerchantCode')" prop="merchantCode">

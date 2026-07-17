@@ -1,62 +1,41 @@
 // 服务层统一导出
-export type { BaseService } from "./BaseService";
-export { BaseServiceImpl } from "./BaseService";
-export { UserService, userService } from "./system/UserService";
-export { RoleService, roleService } from "./system/RoleService";
-export { MenuService, menuService } from "./system/MenuService";
-export { LogService, logService } from "./system/LogService";
-export { UploadService, uploadService } from "./system/UploadService";
-export { ConfigService, configService } from "./system/ConfigService";
-export { CronJobService, cronJobService } from "./system/CronJobService";
-export { TenantsService, tenantsService } from "./system/TenantsService";
-export {
-  TenantDomainsService,
-  tenantDomainsService,
-} from "./system/TenantDomainsService";
-export {
-  ChatMerchantsService,
-  chatMerchantsService,
-} from "./system/ChatMerchantsService";
-export {
-  VerificationCodeService,
-  verificationCodeService,
-} from "./system/VerificationCodeService";
-export {
-  CategoriesService,
-  categoriesService,
-} from "./itick/CategoriesService";
-export { ProductsService, productsService } from "./itick/ProductsService";
-export {
-  TenantCategoriesService,
-  tenantCategoriesService,
-} from "./itick/TenantCategoriesService";
-export {
-  TenantProductsService,
-  tenantProductsService,
-} from "./itick/TenantProductsService";
-export { CatalogService, catalogService } from "./payment/CatalogService";
-export { TenantService, tenantService } from "./payment/TenantService";
-export { RechargeService, rechargeService } from "./payment/RechargeService";
-export { WithdrawService, withdrawService } from "./payment/WithdrawService";
-export { CryptoService, cryptoService } from "./payment/CryptoService";
-export { AssetService, assetService } from "./asset/AssetService";
-export { OptionService, optionService } from "./option/OptionService";
-export { StakingService, stakingService } from "./staking/StakingService";
-export { TradeService, tradeService } from "./trade/TradeService";
-export {
-  MemberUserService,
-  memberUserService,
-} from "./member/MemberUserService";
+export type { BaseService } from './BaseService'
+export { BaseServiceImpl } from './BaseService'
+export { UserService, userService } from './system/UserService'
+export { RoleService, roleService } from './system/RoleService'
+export { MenuService, menuService } from './system/MenuService'
+export { LogService, logService } from './system/LogService'
+export { UploadService, uploadService } from './system/UploadService'
+export { ConfigService, configService } from './system/ConfigService'
+export { CronJobService, cronJobService } from './system/CronJobService'
+export { TenantsService, tenantsService } from './system/TenantsService'
+export { TenantDomainsService, tenantDomainsService } from './system/TenantDomainsService'
+export { ChatMerchantsService, chatMerchantsService } from './system/ChatMerchantsService'
+export { VerificationCodeService, verificationCodeService } from './system/VerificationCodeService'
+export { CategoriesService, categoriesService } from './itick/CategoriesService'
+export { ProductsService, productsService } from './itick/ProductsService'
+export { TenantCategoriesService, tenantCategoriesService } from './itick/TenantCategoriesService'
+export { TenantProductsService, tenantProductsService } from './itick/TenantProductsService'
+export { CatalogService, catalogService } from './payment/CatalogService'
+export { TenantService, tenantService } from './payment/TenantService'
+export { RechargeService, rechargeService } from './payment/RechargeService'
+export { WithdrawService, withdrawService } from './payment/WithdrawService'
+export { CryptoService, cryptoService } from './payment/CryptoService'
+export { AssetService, assetService } from './asset/AssetService'
+export { OptionService, optionService } from './option/OptionService'
+export { StakingService, stakingService } from './staking/StakingService'
+export { TradeService, tradeService } from './trade/TradeService'
+export { MemberUserService, memberUserService } from './member/MemberUserService'
 
 // 类型导出
-export type { RespBase, OptionItem, OptionGroup } from "./BaseService";
+export type { RespBase, OptionItem, OptionGroup } from './BaseService'
 export type {
   CreateUserRequest,
   UpdateUserRequest,
   UserQueryParams,
   SysUserItem,
   Google2FABindInitResp,
-} from "./system/UserService";
+} from './system/UserService'
 export type {
   Role,
   CreateRoleRequest,
@@ -66,7 +45,7 @@ export type {
   SysRole,
   RoleListResp,
   RoleItem,
-} from "./system/RoleService";
+} from './system/RoleService'
 export type {
   Menu,
   Permission,
@@ -81,7 +60,7 @@ export type {
   SysMenuListResp,
   SysMenuItem,
   SysMenuTreeItem,
-} from "./system/MenuService";
+} from './system/MenuService'
 export type {
   LoginLog,
   OperationLog,
@@ -93,14 +72,14 @@ export type {
   OpLogItem,
   OpLogListReq,
   OpLogListResp,
-} from "./system/LogService";
-export type { UploadFileResp } from "./system/UploadService";
+} from './system/LogService'
+export type { UploadFileResp } from './system/UploadService'
 export type {
   SysConfigItem,
   SysConfigListReq,
   SysConfigCreateReq,
   SysConfigUpdateReq,
-} from "./system/ConfigService";
+} from './system/ConfigService'
 export type {
   SysCronJobItem,
   SysCronJobListReq,
@@ -116,31 +95,32 @@ export type {
   SysCronJobLogItem,
   SysCronJobLogListReq,
   SysCronJobLogListResp,
-} from "./system/CronJobService";
+} from './system/CronJobService'
 export type {
   SysTenantItem,
   SysTenantListReq,
   SysTenantCreateReq,
   SysTenantUpdateReq,
   SysTenantDetailReq,
-} from "./system/TenantsService";
+} from './system/TenantsService'
 export type {
   SysTenantDomainItem,
   SysTenantDomainCreateReq,
   SysTenantDomainUpdateReq,
-} from "./system/TenantDomainsService";
+  SysTenantDomainGuestMigrationStats,
+} from './system/TenantDomainsService'
 export type {
   SysChatMerchantItem,
   SysChatMerchantListReq,
   SysChatMerchantCreateReq,
   SysChatMerchantUpdateReq,
   SysChatMerchantDetailReq,
-} from "./system/ChatMerchantsService";
+} from './system/ChatMerchantsService'
 export type {
   TestVerificationCodeReq,
   VerificationCodeRecordItem,
   VerificationCodeRecordListReq,
-} from "./system/VerificationCodeService";
+} from './system/VerificationCodeService'
 
 export type {
   ListCategoriesReq,
@@ -149,7 +129,7 @@ export type {
   UpdateCategoryReq,
   SyncCategoryProductsReq,
   SyncCategoryProductsResp,
-} from "./itick/CategoriesService";
+} from './itick/CategoriesService'
 
 export type {
   ListProductsReq,
@@ -160,7 +140,7 @@ export type {
   Kline,
   SyncProductKlineHistoryReq,
   SyncProductKlineHistoryResp,
-} from "./itick/ProductsService";
+} from './itick/ProductsService'
 
 export type {
   ItickTenantCategory,
@@ -169,7 +149,7 @@ export type {
   TenantCategoryItem,
   BatchUpsertTenantCategoriesReq,
   ListTenantCategoriesReq,
-} from "./itick/TenantCategoriesService";
+} from './itick/TenantCategoriesService'
 
 export type {
   ItickTenantProduct,
@@ -180,7 +160,7 @@ export type {
   ListTenantProductsReq,
   InitTenantItickDisplayReq,
   InitTenantItickDisplayResp,
-} from "./itick/TenantProductsService";
+} from './itick/TenantProductsService'
 export type {
   PayPlatform,
   PayProduct,
@@ -191,7 +171,7 @@ export type {
   CreatePayProductReq,
   UpdatePayProductReq,
   ListPayProductsReq,
-} from "./payment/CatalogService";
+} from './payment/CatalogService'
 export type {
   TenantPayPlatform,
   TenantPayAccount,
@@ -209,7 +189,7 @@ export type {
   ListTenantPayChannelRulesReq,
   CreateTenantPayChannelRuleReq,
   UpdateTenantPayChannelRuleReq,
-} from "./payment/TenantService";
+} from './payment/TenantService'
 export type {
   UserRechargeStat,
   RechargeOrder,
@@ -218,12 +198,12 @@ export type {
   ListUserRechargeStatsReq,
   ListRechargeOrdersReq,
   ListRechargeNotifyLogsReq,
-} from "./payment/RechargeService";
+} from './payment/RechargeService'
 export type {
   WithdrawOrder,
   ListWithdrawOrdersReq,
   ListWithdrawNotifyLogsReq,
-} from "./payment/WithdrawService";
+} from './payment/WithdrawService'
 export type {
   CryptoRechargeAddress,
   CryptoRechargeTx,
@@ -237,7 +217,7 @@ export type {
   UpdateCryptoRechargeAddressReq,
   UpdateCryptoRechargeTxReq,
   UpdateCryptoWalletAccountReq,
-} from "./payment/CryptoService";
+} from './payment/CryptoService'
 export type {
   AssetUserAsset,
   AssetCoinConfig,
@@ -260,7 +240,7 @@ export type {
   AdminUnfreezeAssetReq,
   AdminLockAssetReq,
   AdminUnlockAssetReq,
-} from "./asset/AssetService";
+} from './asset/AssetService'
 export type {
   OptionAdminCommonResp,
   OptionContract,
@@ -300,7 +280,7 @@ export type {
   ListAccountsReq,
   GetBillReq,
   ListBillsReq,
-} from "./option/OptionService";
+} from './option/OptionService'
 export type {
   StakeProduct,
   StakeOrder,
@@ -317,7 +297,7 @@ export type {
   AdminRedeemLogListReq,
   AdminManualRewardReq,
   AdminManualRedeemReq,
-} from "./staking/StakingService";
+} from './staking/StakingService'
 export type {
   TradeSymbol,
   TradeSymbolSpot,
@@ -366,7 +346,7 @@ export type {
   GetTradeEventListReq,
   GetTradeEventDetailReq,
   RetryTradeEventReq,
-} from "./trade/TradeService";
+} from './trade/TradeService'
 export type {
   MemberRespBase,
   UserBase,
@@ -397,4 +377,4 @@ export type {
   UpdateMemberUserBankReq,
   UpdateMemberUserBankEnabledReq,
   SetDefaultUserBankReq,
-} from "./member/MemberUserService";
+} from './member/MemberUserService'

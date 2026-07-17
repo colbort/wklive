@@ -3,6 +3,7 @@ import { getCoreOptions } from '@/stores/core'
 import {
   apiSysTenantDomainCreate,
   apiSysTenantDomainDelete,
+  apiSysTenantDomainGuestMigrationStats,
   apiSysTenantDomainList,
   apiSysTenantDomainUpdate,
 } from '@/api/system/tenant-domains'
@@ -15,6 +16,15 @@ export type SysTenantDomainItem = {
   priority: number
   createTimes: number
   updateTimes: number
+  migrationStats?: SysTenantDomainGuestMigrationStats
+}
+
+export type SysTenantDomainGuestMigrationStats = {
+  notMigratedCount: number
+  activeLast7DaysCount: number
+  active8To30DaysCount: number
+  active31To90DaysCount: number
+  inactiveOver90DaysCount: number
 }
 
 export type SysTenantDomainCreateReq = {
@@ -33,6 +43,13 @@ export class TenantDomainsService implements BaseService {
 
   getList(params: { tenantId: number }): Promise<RespBase<SysTenantDomainItem[]>> {
     return apiSysTenantDomainList(params.tenantId)
+  }
+
+  getGuestMigrationStats(
+    tenantId: number,
+    sourceOrigin: string,
+  ): Promise<RespBase<SysTenantDomainGuestMigrationStats>> {
+    return apiSysTenantDomainGuestMigrationStats(tenantId, sourceOrigin)
   }
 
   create(data: SysTenantDomainCreateReq): Promise<RespBase> {

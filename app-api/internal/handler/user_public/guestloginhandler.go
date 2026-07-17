@@ -21,10 +21,11 @@ func GuestLoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
+		sourceOrigin := r.Header.Get("Origin")
 
 		ctx := utils.ContextWithClientIP(r.Context(), utils.GetClientIP(r))
 		l := user_public.NewGuestLoginLogic(ctx, svcCtx)
-		resp, err := l.GuestLogin(&req)
+		resp, err := l.GuestLogin(&req, sourceOrigin)
 		if err != nil {
 			httpx.ErrorCtx(ctx, w, err)
 		} else {

@@ -478,6 +478,7 @@ type GuestLoginReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DeviceId      string                 `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	Fingerprint   string                 `protobuf:"bytes,2,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`
+	SourceOrigin  string                 `protobuf:"bytes,3,opt,name=sourceOrigin,proto3" json:"sourceOrigin,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -522,6 +523,13 @@ func (x *GuestLoginReq) GetDeviceId() string {
 func (x *GuestLoginReq) GetFingerprint() string {
 	if x != nil {
 		return x.Fingerprint
+	}
+	return ""
+}
+
+func (x *GuestLoginReq) GetSourceOrigin() string {
+	if x != nil {
+		return x.SourceOrigin
 	}
 	return ""
 }
@@ -2818,10 +2826,11 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\tLoginData\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
 	"\x05token\x18\x02 \x01(\v2\x11.common.TokenInfoR\x05token\x12+\n" +
-	"\aprofile\x18\x03 \x01(\v2\x11.user.UserProfileR\aprofile\"N\n" +
+	"\aprofile\x18\x03 \x01(\v2\x11.user.UserProfileR\aprofile\"r\n" +
 	"\rGuestLoginReq\x12\x1b\n" +
 	"\tdevice_id\x18\x01 \x01(\tR\bdeviceId\x12 \n" +
-	"\vfingerprint\x18\x02 \x01(\tR\vfingerprint\"n\n" +
+	"\vfingerprint\x18\x02 \x01(\tR\vfingerprint\x12\"\n" +
+	"\fsourceOrigin\x18\x03 \x01(\tR\fsourceOrigin\"n\n" +
 	"\n" +
 	"GuestLogin\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x17\n" +

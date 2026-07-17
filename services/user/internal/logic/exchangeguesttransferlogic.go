@@ -3,11 +3,14 @@ package logic
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"strings"
+	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
+	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -41,6 +44,28 @@ func (l *ExchangeGuestTransferLogic) ExchangeGuestTransfer(in *user.ExchangeGues
 	var payload guestTransferPayload
 	if err := json.Unmarshal([]byte(raw), &payload); err != nil || payload.TargetOrigin != currentOrigin || payload.UserID <= 0 {
 		return exchangeGuestTransferError(l.ctx), nil
+	}
+
+	guest, err := l.svcCtx.UserModel.FindOne(l.ctx, payload.UserID)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return exchangeGuestTransferError(l.ctx), nil
+		}
+		return nil, err
+	}
+	if guest.TenantId != payload.TenantID || guest.IsGuest != 2 || guest.Deleted != 0 || guest.Status != 1 {
+		return exchangeGuestTransferError(l.ctx), nil
+	}
+	now := time.Now().UnixMilli()
+	if guest.SourceOrigin == "" {
+		guest.SourceOrigin = payload.SourceOrigin
+	}
+	guest.GuestMigratedOrigin = currentOrigin
+	guest.GuestMigratedTime = now
+	guest.LastLoginTime = now
+	guest.UpdateTimes = now
+	if err := l.svcCtx.UserModel.Update(l.ctx, guest); err != nil {
+		return nil, err
 	}
 
 	expand, err := json.Marshal(map[string]any{"tenantId": payload.TenantID})

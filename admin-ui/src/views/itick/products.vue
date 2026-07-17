@@ -161,7 +161,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.actions')" align="center" width="210" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="210"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'itick:product:detail'"
@@ -171,10 +176,20 @@
             >
               {{ t('itick.detail') }}
             </el-button>
-            <el-button v-perm="'itick:kline:view'" link type="primary" @click="handleKline(row)">
+            <el-button
+              v-perm="'itick:kline:view'"
+              link
+              type="primary"
+              @click="handleKline(row)"
+            >
               {{ t('itick.klineView') }}
             </el-button>
-            <el-button v-perm="'itick:product:update'" link type="primary" @click="handleEdit(row)">
+            <el-button
+              v-perm="'itick:product:update'"
+              link
+              type="primary"
+              @click="handleEdit(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -198,7 +213,12 @@
       :title="formMode === 'add' ? t('itick.addProduct') : t('itick.editProduct')"
       width="700px"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="120px"
+      >
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item
@@ -463,7 +483,12 @@
             />
           </el-form-item>
           <el-form-item :label="t('itick.klineLimit')">
-            <el-input-number v-model="klineQuery.limit" :min="1" :max="5000" :step="100" />
+            <el-input-number
+              v-model="klineQuery.limit"
+              :min="1"
+              :max="5000"
+              :step="100"
+            />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" :loading="klineLoading" @click="loadKlines">
@@ -480,11 +505,23 @@
           </el-form-item>
         </el-form>
 
-        <el-alert :title="t('itick.syncKlineHistoryTip')" type="info" :closable="false" show-icon />
+        <el-alert
+          :title="t('itick.syncKlineHistoryTip')"
+          type="info"
+          :closable="false"
+          show-icon
+        />
       </div>
-      <el-table v-loading="klineLoading" :data="klineList" stripe height="100%">
+      <el-table
+        v-loading="klineLoading"
+        :data="klineList"
+        stripe
+        height="100%"
+      >
         <el-table-column :label="t('itick.klineTime')" min-width="180">
-          <template #default="{ row }">{{ formatDate(row.ts) }}</template>
+          <template #default="{ row }">
+            {{ formatDate(row.ts) }}
+          </template>
         </el-table-column>
         <el-table-column prop="open" :label="t('itick.open')" min-width="120" />
         <el-table-column prop="high" :label="t('itick.high')" min-width="120" />

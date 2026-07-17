@@ -257,8 +257,29 @@ message SetDefaultUserBankReq {
   int64 user_id = 3;
 }
 
+message GuestDomainMigrationStatsReq {
+  int64 tenant_id = 1;
+  string source_origin = 2;
+}
+
+message GuestDomainMigrationStatsData {
+  int64 not_migrated_count = 1;
+  int64 active_within_week_count = 2;
+  int64 active_week_to_month_count = 3;
+  int64 active_month_to_quarter_count = 4;
+  int64 inactive_over_quarter_count = 5;
+}
+
+message GuestDomainMigrationStatsResp {
+  common.RespBase base = 1;
+  GuestDomainMigrationStatsData data = 2;
+}
+
 // 管理后台接口
 service UserAdmin {
+  // 退役域名未迁移游客及活跃分布统计
+  rpc GuestDomainMigrationStats(GuestDomainMigrationStatsReq)
+      returns (GuestDomainMigrationStatsResp);
   // 创建用户
   rpc CreateUser(CreateUserReq) returns (CreateUserResp);
   // 获取用户详情

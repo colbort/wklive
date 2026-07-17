@@ -931,6 +931,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/tenant-domains/guest-migration-stats",
+				Handler: system.SysTenantDomainGuestMigrationStatsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/tenant/detail",
 				Handler: system.SysTenantDetailHandler(serverCtx),
 			},

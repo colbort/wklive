@@ -39,6 +39,14 @@ func NewGuestLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GuestL
 // 游客登了
 func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginResp, error) {
 	registerIP, _ := utils.GetClientIPFromMd(l.ctx)
+	sourceOrigin := ""
+	if in.GetSourceOrigin() != "" {
+		var ok bool
+		sourceOrigin, ok = normalizeTransferOrigin(in.GetSourceOrigin())
+		if !ok {
+			return &user.GuestLoginResp{Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx))}, nil
+		}
+	}
 	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
 	if err != nil || tenantCode == "" {
 		return &user.GuestLoginResp{
@@ -83,9 +91,14 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		matched.LastLoginIp = sql.NullString{String: registerIP, Valid: registerIP != ""}
 		matched.LastLoginTime = now
 		matched.UpdateTimes = now
+		if matched.SourceOrigin == "" {
+			matched.SourceOrigin = sourceOrigin
+		}
 		if matched.DeviceId == "" {
 			matched.DeviceId = fmt.Sprintf("%d", matched.Id)
 		}
+		matched.GuestMigratedOrigin = ""
+		matched.GuestMigratedTime = 0
 		_ = l.svcCtx.UserModel.Update(l.ctx, matched)
 		if err := l.saveFingerprint(tenant.Data.Id, matched.Id, matched.DeviceId, in.Fingerprint, registerIP, now); err != nil {
 			return nil, err
@@ -129,6 +142,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		InviteCode:     sql.NullString{String: inviteCode, Valid: true},
 		Signature:      sql.NullString{},
 		Source:         sql.NullString{String: "guest", Valid: true},
+		SourceOrigin:   sourceOrigin,
 		ReferrerUserId: sql.NullInt64{},
 		LastLoginIp:    sql.NullString{String: registerIP, Valid: registerIP != ""},
 		LastLoginTime:  now,

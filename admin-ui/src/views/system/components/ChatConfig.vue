@@ -11,33 +11,21 @@
     </el-form-item>
 
     <el-form-item :label="t('system.chatApi')" prop="api">
-      <el-input
-        v-model="form.api"
-        :placeholder="t('system.chatApiPlaceholder')"
-      />
+      <el-input v-model="form.api" :placeholder="t('system.chatApiPlaceholder')" />
     </el-form-item>
 
     <el-form-item :label="t('system.chatUiUrl')" prop="ui_url">
-      <el-input
-        v-model="form.chat_ui_url"
-        :placeholder="t('system.chatUiUrlPlaceholder')"
-      />
+      <el-input v-model="form.chat_ui_url" :placeholder="t('system.chatUiUrlPlaceholder')" />
     </el-form-item>
 
     <el-form-item :label="t('system.chatWsUrl')" prop="ws_url">
-      <el-input
-        v-model="form.chat_ws_url"
-        :placeholder="t('system.chatWsUrlPlaceholder')"
-      />
+      <el-input v-model="form.chat_ws_url" :placeholder="t('system.chatWsUrlPlaceholder')" />
     </el-form-item>
 
     <el-row :gutter="20">
       <el-col :xs="24" :sm="12">
         <el-form-item :label="t('system.apiKey')" prop="api_key">
-          <el-input
-            v-model="form.api_key"
-            :placeholder="t('system.apiKeyPlaceholder')"
-          />
+          <el-input v-model="form.api_key" :placeholder="t('system.apiKeyPlaceholder')" />
         </el-form-item>
       </el-col>
       <el-col :xs="24" :sm="12">

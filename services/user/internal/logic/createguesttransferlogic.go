@@ -35,6 +35,7 @@ type guestTransferPayload struct {
 	UserID       int64  `json:"userId"`
 	DeviceID     string `json:"deviceId"`
 	Username     string `json:"username"`
+	SourceOrigin string `json:"sourceOrigin"`
 	TargetOrigin string `json:"targetOrigin"`
 	CreatedAt    int64  `json:"createdAt"`
 }
@@ -91,7 +92,7 @@ func (l *CreateGuestTransferLogic) CreateGuestTransfer(in *user.CreateGuestTrans
 	now := time.Now()
 	payload, err := json.Marshal(guestTransferPayload{
 		TenantID: guest.TenantId, UserID: guest.Id, DeviceID: guest.DeviceId,
-		Username: guest.Username, TargetOrigin: targetOrigin, CreatedAt: now.UnixMilli(),
+		Username: guest.Username, SourceOrigin: sourceOrigin, TargetOrigin: targetOrigin, CreatedAt: now.UnixMilli(),
 	})
 	if err != nil {
 		return nil, err

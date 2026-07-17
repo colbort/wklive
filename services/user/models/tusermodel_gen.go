@@ -46,34 +46,37 @@ type (
 	}
 
 	TUser struct {
-		Id             int64          `db:"id"`               // 用户ID
-		TenantId       int64          `db:"tenant_id"`        // 租户ID
-		UserNo         string         `db:"user_no"`          // 用户编号
-		Username       string         `db:"username"`         // 用户名
-		Nickname       sql.NullString `db:"nickname"`         // 昵称
-		Avatar         sql.NullString `db:"avatar"`           // 头像
-		PasswordHash   string         `db:"password_hash"`    // 登录密码哈希
-		RegisterType   int64          `db:"register_type"`    // 注册方式：1用户名 2手机号 3邮箱 4游客
-		Status         int64          `db:"status"`           // 状态：1正常 2禁用 3冻结 4注销
-		MemberLevel    int64          `db:"member_level"`     // 会员等级
-		Language       sql.NullString `db:"language"`         // 语言
-		Timezone       sql.NullString `db:"timezone"`         // 时区
-		InviteCode     sql.NullString `db:"invite_code"`      // 邀请码
-		Signature      sql.NullString `db:"signature"`        // 个性签名
-		Source         sql.NullString `db:"source"`           // 注册来源
-		ReferrerUserId sql.NullInt64  `db:"referrer_user_id"` // 邀请人ID
-		LastLoginIp    sql.NullString `db:"last_login_ip"`    // 最后登录IP
-		LastLoginTime  int64          `db:"last_login_time"`  // 最后登录时间
-		RegisterIp     sql.NullString `db:"register_ip"`      // 注册IP
-		RegisterTime   int64          `db:"register_time"`    // 注册时间
-		IsGuest        int64          `db:"is_guest"`         // 是否游客；1正常用户，2游客
-		IsRecharge     int64          `db:"is_recharge"`      // 是否充值；1是 2否
-		DeviceId       string         `db:"device_id"`        // 设备唯一ID
-		Fingerprint    sql.NullString `db:"fingerprint"`      // 浏览器指纹JSON
-		Remark         sql.NullString `db:"remark"`           // 备注
-		Deleted        int64          `db:"deleted"`          // 删除状态：0未删除 1已删除
-		CreateTimes    int64          `db:"create_times"`     // 创建时间
-		UpdateTimes    int64          `db:"update_times"`     // 更新时间
+		Id                  int64          `db:"id"`                    // 用户ID
+		TenantId            int64          `db:"tenant_id"`             // 租户ID
+		UserNo              string         `db:"user_no"`               // 用户编号
+		Username            string         `db:"username"`              // 用户名
+		Nickname            sql.NullString `db:"nickname"`              // 昵称
+		Avatar              sql.NullString `db:"avatar"`                // 头像
+		PasswordHash        string         `db:"password_hash"`         // 登录密码哈希
+		RegisterType        int64          `db:"register_type"`         // 注册方式：1用户名 2手机号 3邮箱 4游客
+		Status              int64          `db:"status"`                // 状态：1正常 2禁用 3冻结 4注销
+		MemberLevel         int64          `db:"member_level"`          // 会员等级
+		Language            sql.NullString `db:"language"`              // 语言
+		Timezone            sql.NullString `db:"timezone"`              // 时区
+		InviteCode          sql.NullString `db:"invite_code"`           // 邀请码
+		Signature           sql.NullString `db:"signature"`             // 个性签名
+		Source              sql.NullString `db:"source"`                // 注册来源
+		SourceOrigin        string         `db:"source_origin"`         // 游客首次登录的规范化域名Origin
+		GuestMigratedOrigin string         `db:"guest_migrated_origin"` // 游客迁移成功的目标域名Origin
+		GuestMigratedTime   int64          `db:"guest_migrated_time"`   // 游客迁移成功时间
+		ReferrerUserId      sql.NullInt64  `db:"referrer_user_id"`      // 邀请人ID
+		LastLoginIp         sql.NullString `db:"last_login_ip"`         // 最后登录IP
+		LastLoginTime       int64          `db:"last_login_time"`       // 最后登录时间
+		RegisterIp          sql.NullString `db:"register_ip"`           // 注册IP
+		RegisterTime        int64          `db:"register_time"`         // 注册时间
+		IsGuest             int64          `db:"is_guest"`              // 是否游客；1正常用户，2游客
+		IsRecharge          int64          `db:"is_recharge"`           // 是否充值；1是 2否
+		DeviceId            string         `db:"device_id"`             // 设备唯一ID
+		Fingerprint         sql.NullString `db:"fingerprint"`           // 浏览器指纹JSON
+		Remark              sql.NullString `db:"remark"`                // 备注
+		Deleted             int64          `db:"deleted"`               // 删除状态：0未删除 1已删除
+		CreateTimes         int64          `db:"create_times"`          // 创建时间
+		UpdateTimes         int64          `db:"update_times"`          // 更新时间
 	}
 )
 
@@ -184,8 +187,8 @@ func (m *defaultTUserModel) Insert(ctx context.Context, data *TUser) (sql.Result
 	tUserTenantIdUserNoKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUserNoPrefix, data.TenantId, data.UserNo)
 	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserNo, data.Username, data.Nickname, data.Avatar, data.PasswordHash, data.RegisterType, data.Status, data.MemberLevel, data.Language, data.Timezone, data.InviteCode, data.Signature, data.Source, data.ReferrerUserId, data.LastLoginIp, data.LastLoginTime, data.RegisterIp, data.RegisterTime, data.IsGuest, data.IsRecharge, data.DeviceId, data.Fingerprint, data.Remark, data.Deleted, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserNo, data.Username, data.Nickname, data.Avatar, data.PasswordHash, data.RegisterType, data.Status, data.MemberLevel, data.Language, data.Timezone, data.InviteCode, data.Signature, data.Source, data.SourceOrigin, data.GuestMigratedOrigin, data.GuestMigratedTime, data.ReferrerUserId, data.LastLoginIp, data.LastLoginTime, data.RegisterIp, data.RegisterTime, data.IsGuest, data.IsRecharge, data.DeviceId, data.Fingerprint, data.Remark, data.Deleted, data.CreateTimes, data.UpdateTimes)
 	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return ret, err
 }
@@ -202,7 +205,7 @@ func (m *defaultTUserModel) Update(ctx context.Context, newData *TUser) error {
 	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserNo, newData.Username, newData.Nickname, newData.Avatar, newData.PasswordHash, newData.RegisterType, newData.Status, newData.MemberLevel, newData.Language, newData.Timezone, newData.InviteCode, newData.Signature, newData.Source, newData.ReferrerUserId, newData.LastLoginIp, newData.LastLoginTime, newData.RegisterIp, newData.RegisterTime, newData.IsGuest, newData.IsRecharge, newData.DeviceId, newData.Fingerprint, newData.Remark, newData.Deleted, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserNo, newData.Username, newData.Nickname, newData.Avatar, newData.PasswordHash, newData.RegisterType, newData.Status, newData.MemberLevel, newData.Language, newData.Timezone, newData.InviteCode, newData.Signature, newData.Source, newData.SourceOrigin, newData.GuestMigratedOrigin, newData.GuestMigratedTime, newData.ReferrerUserId, newData.LastLoginIp, newData.LastLoginTime, newData.RegisterIp, newData.RegisterTime, newData.IsGuest, newData.IsRecharge, newData.DeviceId, newData.Fingerprint, newData.Remark, newData.Deleted, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return err
 }

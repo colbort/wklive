@@ -2438,6 +2438,186 @@ func (x *SetDefaultUserBankReq) GetUserId() int64 {
 	return 0
 }
 
+type GuestDomainMigrationStatsReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	SourceOrigin  string                 `protobuf:"bytes,2,opt,name=source_origin,json=sourceOrigin,proto3" json:"source_origin,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GuestDomainMigrationStatsReq) Reset() {
+	*x = GuestDomainMigrationStatsReq{}
+	mi := &file_proto_user_user_admin_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GuestDomainMigrationStatsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GuestDomainMigrationStatsReq) ProtoMessage() {}
+
+func (x *GuestDomainMigrationStatsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_user_admin_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GuestDomainMigrationStatsReq.ProtoReflect.Descriptor instead.
+func (*GuestDomainMigrationStatsReq) Descriptor() ([]byte, []int) {
+	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *GuestDomainMigrationStatsReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GuestDomainMigrationStatsReq) GetSourceOrigin() string {
+	if x != nil {
+		return x.SourceOrigin
+	}
+	return ""
+}
+
+type GuestDomainMigrationStatsData struct {
+	state                     protoimpl.MessageState `protogen:"open.v1"`
+	NotMigratedCount          int64                  `protobuf:"varint,1,opt,name=not_migrated_count,json=notMigratedCount,proto3" json:"not_migrated_count,omitempty"`
+	ActiveWithinWeekCount     int64                  `protobuf:"varint,2,opt,name=active_within_week_count,json=activeWithinWeekCount,proto3" json:"active_within_week_count,omitempty"`
+	ActiveWeekToMonthCount    int64                  `protobuf:"varint,3,opt,name=active_week_to_month_count,json=activeWeekToMonthCount,proto3" json:"active_week_to_month_count,omitempty"`
+	ActiveMonthToQuarterCount int64                  `protobuf:"varint,4,opt,name=active_month_to_quarter_count,json=activeMonthToQuarterCount,proto3" json:"active_month_to_quarter_count,omitempty"`
+	InactiveOverQuarterCount  int64                  `protobuf:"varint,5,opt,name=inactive_over_quarter_count,json=inactiveOverQuarterCount,proto3" json:"inactive_over_quarter_count,omitempty"`
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
+}
+
+func (x *GuestDomainMigrationStatsData) Reset() {
+	*x = GuestDomainMigrationStatsData{}
+	mi := &file_proto_user_user_admin_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GuestDomainMigrationStatsData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GuestDomainMigrationStatsData) ProtoMessage() {}
+
+func (x *GuestDomainMigrationStatsData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_user_admin_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GuestDomainMigrationStatsData.ProtoReflect.Descriptor instead.
+func (*GuestDomainMigrationStatsData) Descriptor() ([]byte, []int) {
+	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *GuestDomainMigrationStatsData) GetNotMigratedCount() int64 {
+	if x != nil {
+		return x.NotMigratedCount
+	}
+	return 0
+}
+
+func (x *GuestDomainMigrationStatsData) GetActiveWithinWeekCount() int64 {
+	if x != nil {
+		return x.ActiveWithinWeekCount
+	}
+	return 0
+}
+
+func (x *GuestDomainMigrationStatsData) GetActiveWeekToMonthCount() int64 {
+	if x != nil {
+		return x.ActiveWeekToMonthCount
+	}
+	return 0
+}
+
+func (x *GuestDomainMigrationStatsData) GetActiveMonthToQuarterCount() int64 {
+	if x != nil {
+		return x.ActiveMonthToQuarterCount
+	}
+	return 0
+}
+
+func (x *GuestDomainMigrationStatsData) GetInactiveOverQuarterCount() int64 {
+	if x != nil {
+		return x.InactiveOverQuarterCount
+	}
+	return 0
+}
+
+type GuestDomainMigrationStatsResp struct {
+	state         protoimpl.MessageState         `protogen:"open.v1"`
+	Base          *common.RespBase               `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *GuestDomainMigrationStatsData `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GuestDomainMigrationStatsResp) Reset() {
+	*x = GuestDomainMigrationStatsResp{}
+	mi := &file_proto_user_user_admin_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GuestDomainMigrationStatsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GuestDomainMigrationStatsResp) ProtoMessage() {}
+
+func (x *GuestDomainMigrationStatsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_user_admin_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GuestDomainMigrationStatsResp.ProtoReflect.Descriptor instead.
+func (*GuestDomainMigrationStatsResp) Descriptor() ([]byte, []int) {
+	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *GuestDomainMigrationStatsResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GuestDomainMigrationStatsResp) GetData() *GuestDomainMigrationStatsData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 var File_proto_user_user_admin_proto protoreflect.FileDescriptor
 
 const file_proto_user_user_admin_proto_rawDesc = "" +
@@ -2643,8 +2823,21 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\x15SetDefaultUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId2\xe0\v\n" +
-	"\tUserAdmin\x127\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\"`\n" +
+	"\x1cGuestDomainMigrationStatsReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
+	"\rsource_origin\x18\x02 \x01(\tR\fsourceOrigin\"\xc3\x02\n" +
+	"\x1dGuestDomainMigrationStatsData\x12,\n" +
+	"\x12not_migrated_count\x18\x01 \x01(\x03R\x10notMigratedCount\x127\n" +
+	"\x18active_within_week_count\x18\x02 \x01(\x03R\x15activeWithinWeekCount\x12:\n" +
+	"\x1aactive_week_to_month_count\x18\x03 \x01(\x03R\x16activeWeekToMonthCount\x12@\n" +
+	"\x1dactive_month_to_quarter_count\x18\x04 \x01(\x03R\x19activeMonthToQuarterCount\x12=\n" +
+	"\x1binactive_over_quarter_count\x18\x05 \x01(\x03R\x18inactiveOverQuarterCount\"~\n" +
+	"\x1dGuestDomainMigrationStatsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x127\n" +
+	"\x04data\x18\x02 \x01(\v2#.user.GuestDomainMigrationStatsDataR\x04data2\xc6\f\n" +
+	"\tUserAdmin\x12d\n" +
+	"\x19GuestDomainMigrationStats\x12\".user.GuestDomainMigrationStatsReq\x1a#.user.GuestDomainMigrationStatsResp\x127\n" +
 	"\n" +
 	"CreateUser\x12\x13.user.CreateUserReq\x1a\x14.user.CreateUserResp\x12@\n" +
 	"\rGetUserDetail\x12\x16.user.GetUserDetailReq\x1a\x17.user.GetUserDetailResp\x124\n" +
@@ -2683,151 +2876,158 @@ func file_proto_user_user_admin_proto_rawDescGZIP() []byte {
 	return file_proto_user_user_admin_proto_rawDescData
 }
 
-var file_proto_user_user_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
+var file_proto_user_user_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
 var file_proto_user_user_admin_proto_goTypes = []any{
-	(*AdminCommonResp)(nil),         // 0: user.AdminCommonResp
-	(*CreateUserReq)(nil),           // 1: user.CreateUserReq
-	(*CreateUserResp)(nil),          // 2: user.CreateUserResp
-	(*GetUserDetailReq)(nil),        // 3: user.GetUserDetailReq
-	(*GetUserDetailResp)(nil),       // 4: user.GetUserDetailResp
-	(*ListUsersReq)(nil),            // 5: user.ListUsersReq
-	(*ListUsersResp)(nil),           // 6: user.ListUsersResp
-	(*UpdateUserBaseReq)(nil),       // 7: user.UpdateUserBaseReq
-	(*UpdateUserBaseResp)(nil),      // 8: user.UpdateUserBaseResp
-	(*UpdateUserStatusReq)(nil),     // 9: user.UpdateUserStatusReq
-	(*UpdateUserLevelReq)(nil),      // 10: user.UpdateUserLevelReq
-	(*ResetLoginPasswordReq)(nil),   // 11: user.ResetLoginPasswordReq
-	(*ResetPayPasswordReq)(nil),     // 12: user.ResetPayPasswordReq
-	(*UnlockUserReq)(nil),           // 13: user.UnlockUserReq
-	(*UpdateRiskLevelReq)(nil),      // 14: user.UpdateRiskLevelReq
-	(*DeleteUserReq)(nil),           // 15: user.DeleteUserReq
-	(*GetUserSecurityReq)(nil),      // 16: user.GetUserSecurityReq
-	(*GetUserSecurityResp)(nil),     // 17: user.GetUserSecurityResp
-	(*ResetUserGoogle2FAReq)(nil),   // 18: user.ResetUserGoogle2FAReq
-	(*ListUserIdentitiesReq)(nil),   // 19: user.ListUserIdentitiesReq
-	(*ListUserIdentitiesResp)(nil),  // 20: user.ListUserIdentitiesResp
-	(*ReviewUserIdentityReq)(nil),   // 21: user.ReviewUserIdentityReq
-	(*ReviewUserIdentityResp)(nil),  // 22: user.ReviewUserIdentityResp
-	(*ListUserBanksReq)(nil),        // 23: user.ListUserBanksReq
-	(*ListUserBanksResp)(nil),       // 24: user.ListUserBanksResp
-	(*GetUserBankReq)(nil),          // 25: user.GetUserBankReq
-	(*GetUserBankResp)(nil),         // 26: user.GetUserBankResp
-	(*AddUserBankReq)(nil),          // 27: user.AddUserBankReq
-	(*AddUserBankResp)(nil),         // 28: user.AddUserBankResp
-	(*UpdateUserBankReq)(nil),       // 29: user.UpdateUserBankReq
-	(*UpdateUserBankResp)(nil),      // 30: user.UpdateUserBankResp
-	(*DeleteUserBankReq)(nil),       // 31: user.DeleteUserBankReq
-	(*UpdateUserBankStatusReq)(nil), // 32: user.UpdateUserBankStatusReq
-	(*SetDefaultUserBankReq)(nil),   // 33: user.SetDefaultUserBankReq
-	(*common.RespBase)(nil),         // 34: common.RespBase
-	(RegisterType)(0),               // 35: user.RegisterType
-	(UserStatus)(0),                 // 36: user.UserStatus
-	(*UserDetail)(nil),              // 37: user.UserDetail
-	(*common.PageReq)(nil),          // 38: common.PageReq
-	(VerifyStatus)(0),               // 39: user.VerifyStatus
-	(KycLevel)(0),                   // 40: user.KycLevel
-	(*UserItem)(nil),                // 41: user.UserItem
-	(RiskLevel)(0),                  // 42: user.RiskLevel
-	(*UserSecurity)(nil),            // 43: user.UserSecurity
-	(IdType)(0),                     // 44: user.IdType
-	(*UserIdentityItem)(nil),        // 45: user.UserIdentityItem
-	(*UserIdentity)(nil),            // 46: user.UserIdentity
-	(common.Enable)(0),              // 47: common.Enable
-	(*UserBankItem)(nil),            // 48: user.UserBankItem
-	(common.YesNo)(0),               // 49: common.YesNo
+	(*AdminCommonResp)(nil),               // 0: user.AdminCommonResp
+	(*CreateUserReq)(nil),                 // 1: user.CreateUserReq
+	(*CreateUserResp)(nil),                // 2: user.CreateUserResp
+	(*GetUserDetailReq)(nil),              // 3: user.GetUserDetailReq
+	(*GetUserDetailResp)(nil),             // 4: user.GetUserDetailResp
+	(*ListUsersReq)(nil),                  // 5: user.ListUsersReq
+	(*ListUsersResp)(nil),                 // 6: user.ListUsersResp
+	(*UpdateUserBaseReq)(nil),             // 7: user.UpdateUserBaseReq
+	(*UpdateUserBaseResp)(nil),            // 8: user.UpdateUserBaseResp
+	(*UpdateUserStatusReq)(nil),           // 9: user.UpdateUserStatusReq
+	(*UpdateUserLevelReq)(nil),            // 10: user.UpdateUserLevelReq
+	(*ResetLoginPasswordReq)(nil),         // 11: user.ResetLoginPasswordReq
+	(*ResetPayPasswordReq)(nil),           // 12: user.ResetPayPasswordReq
+	(*UnlockUserReq)(nil),                 // 13: user.UnlockUserReq
+	(*UpdateRiskLevelReq)(nil),            // 14: user.UpdateRiskLevelReq
+	(*DeleteUserReq)(nil),                 // 15: user.DeleteUserReq
+	(*GetUserSecurityReq)(nil),            // 16: user.GetUserSecurityReq
+	(*GetUserSecurityResp)(nil),           // 17: user.GetUserSecurityResp
+	(*ResetUserGoogle2FAReq)(nil),         // 18: user.ResetUserGoogle2FAReq
+	(*ListUserIdentitiesReq)(nil),         // 19: user.ListUserIdentitiesReq
+	(*ListUserIdentitiesResp)(nil),        // 20: user.ListUserIdentitiesResp
+	(*ReviewUserIdentityReq)(nil),         // 21: user.ReviewUserIdentityReq
+	(*ReviewUserIdentityResp)(nil),        // 22: user.ReviewUserIdentityResp
+	(*ListUserBanksReq)(nil),              // 23: user.ListUserBanksReq
+	(*ListUserBanksResp)(nil),             // 24: user.ListUserBanksResp
+	(*GetUserBankReq)(nil),                // 25: user.GetUserBankReq
+	(*GetUserBankResp)(nil),               // 26: user.GetUserBankResp
+	(*AddUserBankReq)(nil),                // 27: user.AddUserBankReq
+	(*AddUserBankResp)(nil),               // 28: user.AddUserBankResp
+	(*UpdateUserBankReq)(nil),             // 29: user.UpdateUserBankReq
+	(*UpdateUserBankResp)(nil),            // 30: user.UpdateUserBankResp
+	(*DeleteUserBankReq)(nil),             // 31: user.DeleteUserBankReq
+	(*UpdateUserBankStatusReq)(nil),       // 32: user.UpdateUserBankStatusReq
+	(*SetDefaultUserBankReq)(nil),         // 33: user.SetDefaultUserBankReq
+	(*GuestDomainMigrationStatsReq)(nil),  // 34: user.GuestDomainMigrationStatsReq
+	(*GuestDomainMigrationStatsData)(nil), // 35: user.GuestDomainMigrationStatsData
+	(*GuestDomainMigrationStatsResp)(nil), // 36: user.GuestDomainMigrationStatsResp
+	(*common.RespBase)(nil),               // 37: common.RespBase
+	(RegisterType)(0),                     // 38: user.RegisterType
+	(UserStatus)(0),                       // 39: user.UserStatus
+	(*UserDetail)(nil),                    // 40: user.UserDetail
+	(*common.PageReq)(nil),                // 41: common.PageReq
+	(VerifyStatus)(0),                     // 42: user.VerifyStatus
+	(KycLevel)(0),                         // 43: user.KycLevel
+	(*UserItem)(nil),                      // 44: user.UserItem
+	(RiskLevel)(0),                        // 45: user.RiskLevel
+	(*UserSecurity)(nil),                  // 46: user.UserSecurity
+	(IdType)(0),                           // 47: user.IdType
+	(*UserIdentityItem)(nil),              // 48: user.UserIdentityItem
+	(*UserIdentity)(nil),                  // 49: user.UserIdentity
+	(common.Enable)(0),                    // 50: common.Enable
+	(*UserBankItem)(nil),                  // 51: user.UserBankItem
+	(common.YesNo)(0),                     // 52: common.YesNo
 }
 var file_proto_user_user_admin_proto_depIdxs = []int32{
-	34, // 0: user.AdminCommonResp.base:type_name -> common.RespBase
-	35, // 1: user.CreateUserReq.register_type:type_name -> user.RegisterType
-	36, // 2: user.CreateUserReq.status:type_name -> user.UserStatus
-	34, // 3: user.CreateUserResp.base:type_name -> common.RespBase
-	34, // 4: user.GetUserDetailResp.base:type_name -> common.RespBase
-	37, // 5: user.GetUserDetailResp.data:type_name -> user.UserDetail
-	38, // 6: user.ListUsersReq.page:type_name -> common.PageReq
-	36, // 7: user.ListUsersReq.status:type_name -> user.UserStatus
-	39, // 8: user.ListUsersReq.verify_status:type_name -> user.VerifyStatus
-	40, // 9: user.ListUsersReq.kyc_level:type_name -> user.KycLevel
-	34, // 10: user.ListUsersResp.base:type_name -> common.RespBase
-	41, // 11: user.ListUsersResp.data:type_name -> user.UserItem
-	34, // 12: user.UpdateUserBaseResp.base:type_name -> common.RespBase
-	37, // 13: user.UpdateUserBaseResp.data:type_name -> user.UserDetail
-	36, // 14: user.UpdateUserStatusReq.status:type_name -> user.UserStatus
-	42, // 15: user.UpdateRiskLevelReq.risk_level:type_name -> user.RiskLevel
-	34, // 16: user.GetUserSecurityResp.base:type_name -> common.RespBase
-	43, // 17: user.GetUserSecurityResp.data:type_name -> user.UserSecurity
-	38, // 18: user.ListUserIdentitiesReq.page:type_name -> common.PageReq
-	39, // 19: user.ListUserIdentitiesReq.verify_status:type_name -> user.VerifyStatus
-	40, // 20: user.ListUserIdentitiesReq.kyc_level:type_name -> user.KycLevel
-	44, // 21: user.ListUserIdentitiesReq.id_type:type_name -> user.IdType
-	34, // 22: user.ListUserIdentitiesResp.base:type_name -> common.RespBase
-	45, // 23: user.ListUserIdentitiesResp.data:type_name -> user.UserIdentityItem
-	39, // 24: user.ReviewUserIdentityReq.verify_status:type_name -> user.VerifyStatus
-	34, // 25: user.ReviewUserIdentityResp.base:type_name -> common.RespBase
-	46, // 26: user.ReviewUserIdentityResp.data:type_name -> user.UserIdentity
-	38, // 27: user.ListUserBanksReq.page:type_name -> common.PageReq
-	47, // 28: user.ListUserBanksReq.enabled:type_name -> common.Enable
-	34, // 29: user.ListUserBanksResp.base:type_name -> common.RespBase
-	48, // 30: user.ListUserBanksResp.data:type_name -> user.UserBankItem
-	34, // 31: user.GetUserBankResp.base:type_name -> common.RespBase
-	48, // 32: user.GetUserBankResp.data:type_name -> user.UserBankItem
-	49, // 33: user.AddUserBankReq.is_default:type_name -> common.YesNo
-	47, // 34: user.AddUserBankReq.enabled:type_name -> common.Enable
-	34, // 35: user.AddUserBankResp.base:type_name -> common.RespBase
-	48, // 36: user.AddUserBankResp.data:type_name -> user.UserBankItem
-	49, // 37: user.UpdateUserBankReq.is_default:type_name -> common.YesNo
-	47, // 38: user.UpdateUserBankReq.enabled:type_name -> common.Enable
-	34, // 39: user.UpdateUserBankResp.base:type_name -> common.RespBase
-	48, // 40: user.UpdateUserBankResp.data:type_name -> user.UserBankItem
-	47, // 41: user.UpdateUserBankStatusReq.enabled:type_name -> common.Enable
-	1,  // 42: user.UserAdmin.CreateUser:input_type -> user.CreateUserReq
-	3,  // 43: user.UserAdmin.GetUserDetail:input_type -> user.GetUserDetailReq
-	5,  // 44: user.UserAdmin.ListUsers:input_type -> user.ListUsersReq
-	7,  // 45: user.UserAdmin.UpdateUserBase:input_type -> user.UpdateUserBaseReq
-	9,  // 46: user.UserAdmin.UpdateUserStatus:input_type -> user.UpdateUserStatusReq
-	10, // 47: user.UserAdmin.UpdateUserLevel:input_type -> user.UpdateUserLevelReq
-	11, // 48: user.UserAdmin.ResetLoginPassword:input_type -> user.ResetLoginPasswordReq
-	12, // 49: user.UserAdmin.ResetPayPassword:input_type -> user.ResetPayPasswordReq
-	13, // 50: user.UserAdmin.UnlockUser:input_type -> user.UnlockUserReq
-	14, // 51: user.UserAdmin.UpdateRiskLevel:input_type -> user.UpdateRiskLevelReq
-	15, // 52: user.UserAdmin.DeleteUser:input_type -> user.DeleteUserReq
-	16, // 53: user.UserAdmin.GetUserSecurity:input_type -> user.GetUserSecurityReq
-	18, // 54: user.UserAdmin.ResetUserGoogle2FA:input_type -> user.ResetUserGoogle2FAReq
-	19, // 55: user.UserAdmin.ListUserIdentities:input_type -> user.ListUserIdentitiesReq
-	21, // 56: user.UserAdmin.ReviewUserIdentity:input_type -> user.ReviewUserIdentityReq
-	23, // 57: user.UserAdmin.ListUserBanks:input_type -> user.ListUserBanksReq
-	25, // 58: user.UserAdmin.GetUserBank:input_type -> user.GetUserBankReq
-	27, // 59: user.UserAdmin.AddUserBank:input_type -> user.AddUserBankReq
-	29, // 60: user.UserAdmin.UpdateUserBank:input_type -> user.UpdateUserBankReq
-	31, // 61: user.UserAdmin.DeleteUserBank:input_type -> user.DeleteUserBankReq
-	32, // 62: user.UserAdmin.UpdateUserBankStatus:input_type -> user.UpdateUserBankStatusReq
-	33, // 63: user.UserAdmin.SetDefaultUserBank:input_type -> user.SetDefaultUserBankReq
-	2,  // 64: user.UserAdmin.CreateUser:output_type -> user.CreateUserResp
-	4,  // 65: user.UserAdmin.GetUserDetail:output_type -> user.GetUserDetailResp
-	6,  // 66: user.UserAdmin.ListUsers:output_type -> user.ListUsersResp
-	8,  // 67: user.UserAdmin.UpdateUserBase:output_type -> user.UpdateUserBaseResp
-	0,  // 68: user.UserAdmin.UpdateUserStatus:output_type -> user.AdminCommonResp
-	0,  // 69: user.UserAdmin.UpdateUserLevel:output_type -> user.AdminCommonResp
-	0,  // 70: user.UserAdmin.ResetLoginPassword:output_type -> user.AdminCommonResp
-	0,  // 71: user.UserAdmin.ResetPayPassword:output_type -> user.AdminCommonResp
-	0,  // 72: user.UserAdmin.UnlockUser:output_type -> user.AdminCommonResp
-	0,  // 73: user.UserAdmin.UpdateRiskLevel:output_type -> user.AdminCommonResp
-	0,  // 74: user.UserAdmin.DeleteUser:output_type -> user.AdminCommonResp
-	17, // 75: user.UserAdmin.GetUserSecurity:output_type -> user.GetUserSecurityResp
-	0,  // 76: user.UserAdmin.ResetUserGoogle2FA:output_type -> user.AdminCommonResp
-	20, // 77: user.UserAdmin.ListUserIdentities:output_type -> user.ListUserIdentitiesResp
-	22, // 78: user.UserAdmin.ReviewUserIdentity:output_type -> user.ReviewUserIdentityResp
-	24, // 79: user.UserAdmin.ListUserBanks:output_type -> user.ListUserBanksResp
-	26, // 80: user.UserAdmin.GetUserBank:output_type -> user.GetUserBankResp
-	28, // 81: user.UserAdmin.AddUserBank:output_type -> user.AddUserBankResp
-	30, // 82: user.UserAdmin.UpdateUserBank:output_type -> user.UpdateUserBankResp
-	0,  // 83: user.UserAdmin.DeleteUserBank:output_type -> user.AdminCommonResp
-	0,  // 84: user.UserAdmin.UpdateUserBankStatus:output_type -> user.AdminCommonResp
-	0,  // 85: user.UserAdmin.SetDefaultUserBank:output_type -> user.AdminCommonResp
-	64, // [64:86] is the sub-list for method output_type
-	42, // [42:64] is the sub-list for method input_type
-	42, // [42:42] is the sub-list for extension type_name
-	42, // [42:42] is the sub-list for extension extendee
-	0,  // [0:42] is the sub-list for field type_name
+	37, // 0: user.AdminCommonResp.base:type_name -> common.RespBase
+	38, // 1: user.CreateUserReq.register_type:type_name -> user.RegisterType
+	39, // 2: user.CreateUserReq.status:type_name -> user.UserStatus
+	37, // 3: user.CreateUserResp.base:type_name -> common.RespBase
+	37, // 4: user.GetUserDetailResp.base:type_name -> common.RespBase
+	40, // 5: user.GetUserDetailResp.data:type_name -> user.UserDetail
+	41, // 6: user.ListUsersReq.page:type_name -> common.PageReq
+	39, // 7: user.ListUsersReq.status:type_name -> user.UserStatus
+	42, // 8: user.ListUsersReq.verify_status:type_name -> user.VerifyStatus
+	43, // 9: user.ListUsersReq.kyc_level:type_name -> user.KycLevel
+	37, // 10: user.ListUsersResp.base:type_name -> common.RespBase
+	44, // 11: user.ListUsersResp.data:type_name -> user.UserItem
+	37, // 12: user.UpdateUserBaseResp.base:type_name -> common.RespBase
+	40, // 13: user.UpdateUserBaseResp.data:type_name -> user.UserDetail
+	39, // 14: user.UpdateUserStatusReq.status:type_name -> user.UserStatus
+	45, // 15: user.UpdateRiskLevelReq.risk_level:type_name -> user.RiskLevel
+	37, // 16: user.GetUserSecurityResp.base:type_name -> common.RespBase
+	46, // 17: user.GetUserSecurityResp.data:type_name -> user.UserSecurity
+	41, // 18: user.ListUserIdentitiesReq.page:type_name -> common.PageReq
+	42, // 19: user.ListUserIdentitiesReq.verify_status:type_name -> user.VerifyStatus
+	43, // 20: user.ListUserIdentitiesReq.kyc_level:type_name -> user.KycLevel
+	47, // 21: user.ListUserIdentitiesReq.id_type:type_name -> user.IdType
+	37, // 22: user.ListUserIdentitiesResp.base:type_name -> common.RespBase
+	48, // 23: user.ListUserIdentitiesResp.data:type_name -> user.UserIdentityItem
+	42, // 24: user.ReviewUserIdentityReq.verify_status:type_name -> user.VerifyStatus
+	37, // 25: user.ReviewUserIdentityResp.base:type_name -> common.RespBase
+	49, // 26: user.ReviewUserIdentityResp.data:type_name -> user.UserIdentity
+	41, // 27: user.ListUserBanksReq.page:type_name -> common.PageReq
+	50, // 28: user.ListUserBanksReq.enabled:type_name -> common.Enable
+	37, // 29: user.ListUserBanksResp.base:type_name -> common.RespBase
+	51, // 30: user.ListUserBanksResp.data:type_name -> user.UserBankItem
+	37, // 31: user.GetUserBankResp.base:type_name -> common.RespBase
+	51, // 32: user.GetUserBankResp.data:type_name -> user.UserBankItem
+	52, // 33: user.AddUserBankReq.is_default:type_name -> common.YesNo
+	50, // 34: user.AddUserBankReq.enabled:type_name -> common.Enable
+	37, // 35: user.AddUserBankResp.base:type_name -> common.RespBase
+	51, // 36: user.AddUserBankResp.data:type_name -> user.UserBankItem
+	52, // 37: user.UpdateUserBankReq.is_default:type_name -> common.YesNo
+	50, // 38: user.UpdateUserBankReq.enabled:type_name -> common.Enable
+	37, // 39: user.UpdateUserBankResp.base:type_name -> common.RespBase
+	51, // 40: user.UpdateUserBankResp.data:type_name -> user.UserBankItem
+	50, // 41: user.UpdateUserBankStatusReq.enabled:type_name -> common.Enable
+	37, // 42: user.GuestDomainMigrationStatsResp.base:type_name -> common.RespBase
+	35, // 43: user.GuestDomainMigrationStatsResp.data:type_name -> user.GuestDomainMigrationStatsData
+	34, // 44: user.UserAdmin.GuestDomainMigrationStats:input_type -> user.GuestDomainMigrationStatsReq
+	1,  // 45: user.UserAdmin.CreateUser:input_type -> user.CreateUserReq
+	3,  // 46: user.UserAdmin.GetUserDetail:input_type -> user.GetUserDetailReq
+	5,  // 47: user.UserAdmin.ListUsers:input_type -> user.ListUsersReq
+	7,  // 48: user.UserAdmin.UpdateUserBase:input_type -> user.UpdateUserBaseReq
+	9,  // 49: user.UserAdmin.UpdateUserStatus:input_type -> user.UpdateUserStatusReq
+	10, // 50: user.UserAdmin.UpdateUserLevel:input_type -> user.UpdateUserLevelReq
+	11, // 51: user.UserAdmin.ResetLoginPassword:input_type -> user.ResetLoginPasswordReq
+	12, // 52: user.UserAdmin.ResetPayPassword:input_type -> user.ResetPayPasswordReq
+	13, // 53: user.UserAdmin.UnlockUser:input_type -> user.UnlockUserReq
+	14, // 54: user.UserAdmin.UpdateRiskLevel:input_type -> user.UpdateRiskLevelReq
+	15, // 55: user.UserAdmin.DeleteUser:input_type -> user.DeleteUserReq
+	16, // 56: user.UserAdmin.GetUserSecurity:input_type -> user.GetUserSecurityReq
+	18, // 57: user.UserAdmin.ResetUserGoogle2FA:input_type -> user.ResetUserGoogle2FAReq
+	19, // 58: user.UserAdmin.ListUserIdentities:input_type -> user.ListUserIdentitiesReq
+	21, // 59: user.UserAdmin.ReviewUserIdentity:input_type -> user.ReviewUserIdentityReq
+	23, // 60: user.UserAdmin.ListUserBanks:input_type -> user.ListUserBanksReq
+	25, // 61: user.UserAdmin.GetUserBank:input_type -> user.GetUserBankReq
+	27, // 62: user.UserAdmin.AddUserBank:input_type -> user.AddUserBankReq
+	29, // 63: user.UserAdmin.UpdateUserBank:input_type -> user.UpdateUserBankReq
+	31, // 64: user.UserAdmin.DeleteUserBank:input_type -> user.DeleteUserBankReq
+	32, // 65: user.UserAdmin.UpdateUserBankStatus:input_type -> user.UpdateUserBankStatusReq
+	33, // 66: user.UserAdmin.SetDefaultUserBank:input_type -> user.SetDefaultUserBankReq
+	36, // 67: user.UserAdmin.GuestDomainMigrationStats:output_type -> user.GuestDomainMigrationStatsResp
+	2,  // 68: user.UserAdmin.CreateUser:output_type -> user.CreateUserResp
+	4,  // 69: user.UserAdmin.GetUserDetail:output_type -> user.GetUserDetailResp
+	6,  // 70: user.UserAdmin.ListUsers:output_type -> user.ListUsersResp
+	8,  // 71: user.UserAdmin.UpdateUserBase:output_type -> user.UpdateUserBaseResp
+	0,  // 72: user.UserAdmin.UpdateUserStatus:output_type -> user.AdminCommonResp
+	0,  // 73: user.UserAdmin.UpdateUserLevel:output_type -> user.AdminCommonResp
+	0,  // 74: user.UserAdmin.ResetLoginPassword:output_type -> user.AdminCommonResp
+	0,  // 75: user.UserAdmin.ResetPayPassword:output_type -> user.AdminCommonResp
+	0,  // 76: user.UserAdmin.UnlockUser:output_type -> user.AdminCommonResp
+	0,  // 77: user.UserAdmin.UpdateRiskLevel:output_type -> user.AdminCommonResp
+	0,  // 78: user.UserAdmin.DeleteUser:output_type -> user.AdminCommonResp
+	17, // 79: user.UserAdmin.GetUserSecurity:output_type -> user.GetUserSecurityResp
+	0,  // 80: user.UserAdmin.ResetUserGoogle2FA:output_type -> user.AdminCommonResp
+	20, // 81: user.UserAdmin.ListUserIdentities:output_type -> user.ListUserIdentitiesResp
+	22, // 82: user.UserAdmin.ReviewUserIdentity:output_type -> user.ReviewUserIdentityResp
+	24, // 83: user.UserAdmin.ListUserBanks:output_type -> user.ListUserBanksResp
+	26, // 84: user.UserAdmin.GetUserBank:output_type -> user.GetUserBankResp
+	28, // 85: user.UserAdmin.AddUserBank:output_type -> user.AddUserBankResp
+	30, // 86: user.UserAdmin.UpdateUserBank:output_type -> user.UpdateUserBankResp
+	0,  // 87: user.UserAdmin.DeleteUserBank:output_type -> user.AdminCommonResp
+	0,  // 88: user.UserAdmin.UpdateUserBankStatus:output_type -> user.AdminCommonResp
+	0,  // 89: user.UserAdmin.SetDefaultUserBank:output_type -> user.AdminCommonResp
+	67, // [67:90] is the sub-list for method output_type
+	44, // [44:67] is the sub-list for method input_type
+	44, // [44:44] is the sub-list for extension type_name
+	44, // [44:44] is the sub-list for extension extendee
+	0,  // [0:44] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_user_admin_proto_init() }
@@ -2843,7 +3043,7 @@ func file_proto_user_user_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_user_admin_proto_rawDesc), len(file_proto_user_user_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   34,
+			NumMessages:   37,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
