@@ -16,7 +16,6 @@ type (
 		Id          int64  `db:"id"`
 		UserId      int64  `db:"user_id"`
 		Fingerprint string `db:"fingerprint"`
-		SourceIp    string `db:"source_ip"`
 	}
 
 	// TUserFingerprintModel is an interface to be customized, add more methods here,
@@ -76,7 +75,7 @@ func (m *defaultTUserFingerprintModel) FindGuestFingerprintCandidates(ctx contex
 	args = append(args, limit)
 
 	query := fmt.Sprintf(`
-		SELECT f.id, f.user_id, f.fingerprint, f.source_ip
+		SELECT f.id, f.user_id, f.fingerprint
 		FROM %s f
 		JOIN t_user u ON u.tenant_id = f.tenant_id AND u.id = f.user_id
 		WHERE %s

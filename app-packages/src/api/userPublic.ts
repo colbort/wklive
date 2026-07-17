@@ -20,8 +20,8 @@ import {
   setGuestToken,
 } from '../utils/guestFingerprint'
 
-export function apiRegister(params: RegisterReq): Promise<RespBase & RegisterResp> {
-  const guestFingerprint = collectGuestFingerprint()
+export async function apiRegister(params: RegisterReq): Promise<RespBase & RegisterResp> {
+  const guestFingerprint = await collectGuestFingerprint()
   const fingerprint = params.fingerprint || JSON.stringify(guestFingerprint)
   const deviceId =
     params.deviceId || getGuestDeviceId() || `web_${createGuestFingerprintHash(guestFingerprint)}`
@@ -53,10 +53,10 @@ export function apiLogin(params: LoginReq): Promise<RespBase & LoginResp> {
   })
 }
 
-export function apiGuestLogin(
+export async function apiGuestLogin(
   params: Partial<GuestLoginReq> & Pick<GuestLoginReq, 'tenantCode'>,
 ): Promise<RespBase & { data: GuestLoginData }> {
-  const guestFingerprint = collectGuestFingerprint()
+  const guestFingerprint = await collectGuestFingerprint()
   const payload: GuestLoginReq = {
     ...params,
     deviceId: params.deviceId || getGuestDeviceId(),

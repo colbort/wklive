@@ -72,7 +72,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 	}
 
 	if matched == nil && in.Fingerprint != "" {
-		matched, err = l.findMatchedGuestByFingerprint(tenant.Data.Id, in.Fingerprint, registerIP)
+		matched, err = l.findMatchedGuestByFingerprint(tenant.Data.Id, in.Fingerprint)
 		if err != nil {
 			return nil, err
 		}
@@ -190,20 +190,17 @@ func (l *GuestLoginLogic) buildGuestLoginResp(tenantId int64, guest *models.TUse
 	}, nil
 }
 
-func (l *GuestLoginLogic) findMatchedGuestByFingerprint(tenantId int64, fingerprint string, registerIp string) (*models.TUser, error) {
-	current, ok := parseFingerprint(fingerprint, registerIp)
+func (l *GuestLoginLogic) findMatchedGuestByFingerprint(tenantId int64, fingerprint string) (*models.TUser, error) {
+	visitorId, ok := parseFingerprintVisitorID(fingerprint)
 	if !ok {
 		return nil, nil
 	}
 
-	matchKey := buildFingerprintMatchKey(current)
+	matchKey := buildFingerprintMatchKey(visitorId)
 
-	var bestUserId int64
-	bestScore := 0
 	cursor := int64(0)
 	limit := int64(500)
 	for {
-		// 查找得分最高的
 		fingerprintCandidates, err := l.svcCtx.FingerprintModel.FindGuestFingerprintCandidates(l.ctx, tenantId, matchKey, cursor, limit)
 		if err != nil {
 			return nil, err
@@ -214,33 +211,24 @@ func (l *GuestLoginLogic) findMatchedGuestByFingerprint(tenantId int64, fingerpr
 
 		for _, candidate := range fingerprintCandidates {
 			cursor = candidate.Id
-			stored, ok := parseFingerprint(candidate.Fingerprint, candidate.SourceIp)
-			if !ok {
+			storedVisitorId, ok := parseFingerprintVisitorID(candidate.Fingerprint)
+			if !ok || storedVisitorId != visitorId {
 				continue
 			}
-			score := scoreGuestFingerprint(current, stored)
-			if score <= bestScore {
-				continue
+
+			matched, err := l.svcCtx.UserModel.FindByTenantIdUserId(l.ctx, tenantId, candidate.UserId)
+			if err != nil {
+				if errors.Is(err, models.ErrNotFound) {
+					continue
+				}
+				return nil, err
 			}
-			bestScore = score
-			bestUserId = candidate.UserId
+			return matched, nil
 		}
 
 		if int64(len(fingerprintCandidates)) < limit {
 			break
 		}
-	}
-
-	// 有 得分 高于 90，的 用户
-	if bestScore >= 90 {
-		best, err := l.svcCtx.UserModel.FindByTenantIdUserId(l.ctx, tenantId, bestUserId)
-		if err != nil {
-			if errors.Is(err, models.ErrNotFound) {
-				return nil, nil
-			}
-			return nil, err
-		}
-		return best, nil
 	}
 
 	return nil, nil
@@ -250,11 +238,11 @@ func (l *GuestLoginLogic) saveFingerprint(tenantId int64, userId int64, deviceId
 	if fingerprint == "" {
 		return nil
 	}
-	parsed, ok := parseFingerprint(fingerprint, sourceIp)
+	visitorId, ok := parseFingerprintVisitorID(fingerprint)
 	if !ok {
 		return nil
 	}
-	matchKey := buildFingerprintMatchKey(parsed)
+	matchKey := buildFingerprintMatchKey(visitorId)
 
 	hash := sha256.Sum256([]byte(fingerprint))
 	return l.svcCtx.FingerprintModel.UpsertSeen(l.ctx, &models.TUserFingerprint{
@@ -272,114 +260,22 @@ func (l *GuestLoginLogic) saveFingerprint(tenantId int64, userId int64, deviceId
 	})
 }
 
-func parseFingerprint(raw string, ip string) (map[string]any, bool) {
+func parseFingerprintVisitorID(raw string) (string, bool) {
 	if raw == "" {
-		return nil, false
+		return "", false
 	}
-	var out map[string]any
+	var out struct {
+		VisitorID string `json:"visitorId"`
+	}
 	if err := json.Unmarshal([]byte(raw), &out); err != nil {
-		return nil, false
+		return "", false
 	}
-	out["ip"] = ip
-	return out, true
+	return out.VisitorID, out.VisitorID != ""
 }
 
-func buildFingerprintMatchKey(fingerprint map[string]any) string {
-	keys := []string{
-		"platform",
-		"osName",
-		"deviceType",
-	}
-	values := make(map[string]string, len(keys))
-	for _, key := range keys {
-		value, ok := fingerprint[key].(string)
-		if ok && value != "" {
-			values[key] = value
-		}
-	}
-	if len(values) < 2 {
-		return ""
-	}
-	payload, err := json.Marshal(values)
-	if err != nil {
-		return ""
-	}
-	hash := sha256.Sum256(payload)
+func buildFingerprintMatchKey(visitorId string) string {
+	hash := sha256.Sum256([]byte("fingerprintjs:" + visitorId))
 	return hex.EncodeToString(hash[:])
-}
-
-func scoreGuestFingerprint(left, right map[string]any) int {
-	score := 0
-	score += scoreStringField(left, right, "platform", 12)
-	score += scoreStringField(left, right, "timezone", 8)
-	score += scoreStringField(left, right, "language", 4)
-	score += scoreAnyField(left, right, "languages", 3)
-	score += scoreStringField(left, right, "browserName", 1)
-	score += scoreStringField(left, right, "browserMajorVersion", 1)
-	score += scoreStringField(left, right, "osName", 12)
-	score += scoreStringField(left, right, "deviceType", 10)
-	score += scoreNumberField(left, right, "screenWidth", 10)
-	score += scoreNumberField(left, right, "screenHeight", 10)
-	score += scoreNumberField(left, right, "availWidth", 4)
-	score += scoreNumberField(left, right, "availHeight", 4)
-	score += scoreNumberField(left, right, "colorDepth", 4)
-	score += scoreNumberField(left, right, "pixelRatio", 8)
-	score += scoreNumberField(left, right, "hardwareConcurrency", 10)
-	score += scoreNumberField(left, right, "deviceMemory", 8)
-	score += scoreNumberField(left, right, "maxTouchPoints", 8)
-	score += scoreBoolField(left, right, "cookieEnabled", 2)
-	score += scoreBoolField(left, right, "localStorageSupported", 3)
-	score += scoreBoolField(left, right, "sessionStorageSupported", 3)
-	score += scoreBoolField(left, right, "indexedDBSupported", 3)
-	score += scoreStringField(left, right, "ip", 2)
-	return score
-}
-
-func scoreStringField(left, right map[string]any, field string, weight int) int {
-	lv, lok := left[field].(string)
-	rv, rok := right[field].(string)
-	if !lok || !rok || lv == "" || rv == "" || lv != rv {
-		return 0
-	}
-	return weight
-}
-
-func scoreNumberField(left, right map[string]any, field string, weight int) int {
-	lv, lok := left[field].(float64)
-	rv, rok := right[field].(float64)
-	if !lok || !rok || lv != rv {
-		return 0
-	}
-	return weight
-}
-
-func scoreBoolField(left, right map[string]any, field string, weight int) int {
-	lv, lok := left[field].(bool)
-	rv, rok := right[field].(bool)
-	if !lok || !rok || lv != rv {
-		return 0
-	}
-	return weight
-}
-
-func scoreAnyField(left, right map[string]any, field string, weight int) int {
-	lv, lok := left[field]
-	rv, rok := right[field]
-	if !lok || !rok {
-		return 0
-	}
-	lb, err := json.Marshal(lv)
-	if err != nil {
-		return 0
-	}
-	rb, err := json.Marshal(rv)
-	if err != nil {
-		return 0
-	}
-	if string(lb) != string(rb) {
-		return 0
-	}
-	return weight
 }
 
 func (l *GuestLoginLogic) checkGuestLimit(ip string) error {

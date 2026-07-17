@@ -15,8 +15,8 @@ export type ChatTokenData = {
   chatWsUrl?: string
 }
 
-export function apiCreateChatToken(): Promise<RespBase & { data: ChatTokenData }> {
-  const fingerprint = collectGuestFingerprint()
+export async function apiCreateChatToken(): Promise<RespBase & { data: ChatTokenData }> {
+  const fingerprint = await collectGuestFingerprint()
   const deviceId = getGuestDeviceId() || `web_${createGuestFingerprintHash(fingerprint)}`
   if (!getGuestDeviceId()) setGuestDeviceId(deviceId)
 
