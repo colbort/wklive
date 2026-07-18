@@ -39,7 +39,9 @@ type Config struct {
 }
 
 type ItickConf struct {
-	ApiUrl string
-	WSUrl  string
-	Token  string
+	ApiUrl                 string
+	WSUrl                  string
+	Token                  string
+	RestRateLimitPerMinute int
+	RestRateLimitBurst     int
 }

@@ -11,6 +11,7 @@ import (
 	"wklive/services/itick/internal/market/calendar"
 	"wklive/services/itick/internal/market/client"
 	"wklive/services/itick/internal/market/types"
+	"wklive/services/itick/internal/pkg/itickrest"
 	"wklive/services/itick/internal/pkg/klinewriter"
 	"wklive/services/itick/models"
 
@@ -22,6 +23,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/syncx"
 	"github.com/zeromicro/go-zero/zrpc"
+	"golang.org/x/time/rate"
 )
 
 type ServiceContext struct {
@@ -49,9 +51,21 @@ type ServiceContext struct {
 	MarketCalendarModel         models.TItickMarketCalendarModel
 	MarketHolidayModel          models.TItickMarketHolidayModel
 	MarketCalendarResolver      *calendar.Resolver
+	ItickRestClient             *itickrest.Client
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	restRatePerMinute := c.Itick.RestRateLimitPerMinute
+	if restRatePerMinute <= 0 {
+		restRatePerMinute = 100
+	}
+	restRateBurst := c.Itick.RestRateLimitBurst
+	if restRateBurst <= 0 {
+		restRateBurst = 1
+	}
+	itickRestLimiter := rate.NewLimiter(rate.Limit(float64(restRatePerMinute)/60.0), restRateBurst)
+	itickRestClient := itickrest.New(c.Itick.Token, itickRestLimiter, nil)
+
 	systemCli := system.NewSystemClient(zrpc.MustNewClient(c.SystemRpc).Conn())
 	optionCli := option.NewOptionInternalClient(zrpc.MustNewClient(c.OptionRpc).Conn())
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
@@ -105,6 +119,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		busRedis,
 		lockRedis,
 		marketDataCache,
+		itickRestClient,
 	)
 	itickManager.SetQuoteHandler(func(_ context.Context, msg types.ClientMessage, payload *types.QuotePayload) {
 		rpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -158,5 +173,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		MarketCalendarModel:         marketCalendarModel,
 		MarketHolidayModel:          marketHolidayModel,
 		MarketCalendarResolver:      marketCalendarResolver,
+		ItickRestClient:             itickRestClient,
 	}
 }

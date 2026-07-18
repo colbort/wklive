@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"path"
 	"sort"
@@ -14,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"wklive/services/itick/internal/pkg/itickrest"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/models"
 
@@ -26,17 +25,16 @@ const (
 )
 
 type HolidaySyncService struct {
-	ctx      context.Context
-	cancel   context.CancelFunc
-	apiURL   string
-	token    string
-	calendar models.TItickMarketCalendarModel
-	holiday  models.TItickMarketHolidayModel
-	resolver *Resolver
-	lock     *utils.RedisLock
-	client   *http.Client
-	interval time.Duration
-	wg       sync.WaitGroup
+	ctx        context.Context
+	cancel     context.CancelFunc
+	apiURL     string
+	calendar   models.TItickMarketCalendarModel
+	holiday    models.TItickMarketHolidayModel
+	resolver   *Resolver
+	lock       *utils.RedisLock
+	restClient *itickrest.Client
+	interval   time.Duration
+	wg         sync.WaitGroup
 }
 
 type holidayResponse struct {
@@ -57,7 +55,7 @@ type holidayAPIItem struct {
 func NewHolidaySyncService(
 	parent context.Context,
 	apiURL string,
-	token string,
+	restClient *itickrest.Client,
 	calendar models.TItickMarketCalendarModel,
 	holiday models.TItickMarketHolidayModel,
 	resolver *Resolver,
@@ -69,16 +67,15 @@ func NewHolidaySyncService(
 	}
 	ctx, cancel := context.WithCancel(parent)
 	return &HolidaySyncService{
-		ctx:      ctx,
-		cancel:   cancel,
-		apiURL:   strings.TrimSpace(apiURL),
-		token:    strings.TrimSpace(token),
-		calendar: calendar,
-		holiday:  holiday,
-		resolver: resolver,
-		lock:     lock,
-		interval: interval,
-		client:   &http.Client{Timeout: 20 * time.Second},
+		ctx:        ctx,
+		cancel:     cancel,
+		apiURL:     strings.TrimSpace(apiURL),
+		calendar:   calendar,
+		holiday:    holiday,
+		resolver:   resolver,
+		lock:       lock,
+		interval:   interval,
+		restClient: restClient,
 	}
 }
 
@@ -108,8 +105,8 @@ func (s *HolidaySyncService) loop() {
 }
 
 func (s *HolidaySyncService) run() {
-	if s.apiURL == "" || s.token == "" || s.calendar == nil || s.holiday == nil {
-		logx.Error("skip iTick holiday sync: missing api URL, token or model")
+	if s.apiURL == "" || s.restClient == nil || s.calendar == nil || s.holiday == nil {
+		logx.Error("skip iTick holiday sync: missing REST client, api URL or model")
 		return
 	}
 	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
@@ -208,21 +205,11 @@ func (s *HolidaySyncService) fetch(ctx context.Context, code string) ([]holidayA
 	query := base.Query()
 	query.Set("code", code)
 	base.RawQuery = query.Encode()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, base.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("accept", "application/json")
-	req.Header.Set("token", s.token)
-	resp, err := s.client.Do(req)
+	resp, err := s.restClient.Get(ctx, base.String())
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		raw, _ := io.ReadAll(io.LimitReader(resp.Body, 2048))
-		return nil, fmt.Errorf("status=%d body=%s", resp.StatusCode, strings.TrimSpace(string(raw)))
-	}
 	var out holidayResponse
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err

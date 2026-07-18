@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"path"
 	"sort"
@@ -19,17 +17,14 @@ import (
 	"wklive/services/itick/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"golang.org/x/time/rate"
 )
 
 type SyncKlinesWorker struct {
-	ctx          context.Context
-	svcCtx       *svc.ServiceContext
-	lock         *utils.RedisLock
-	lockKey      string
-	lockValue    string
-	httpClient   *http.Client
-	itickLimiter *rate.Limiter
+	ctx       context.Context
+	svcCtx    *svc.ServiceContext
+	lock      *utils.RedisLock
+	lockKey   string
+	lockValue string
 	logx.Logger
 }
 
@@ -46,13 +41,7 @@ func NewSyncKlinesWorker(
 		lock:      lock,
 		lockKey:   lockKey,
 		lockValue: lockValue,
-		httpClient: &http.Client{
-			Timeout: 20 * time.Second,
-		},
-		// 500次/分钟 = 500.0/60 次/秒
-		// burst 这里给 1，最稳，不会突然打一波
-		itickLimiter: rate.NewLimiter(rate.Limit(400.0/60.0), 1),
-		Logger:       logx.WithContext(ctx),
+		Logger:    logx.WithContext(ctx),
 	}
 }
 
@@ -395,24 +384,11 @@ func (w *SyncKlinesWorker) getBatchKlines(ctx context.Context, apiURL, token, ca
 		q.Set("exchange", exchange)
 	}
 	base.RawQuery = q.Encode()
-	if err := w.itickLimiter.Wait(ctx); err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, base.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("accept", "application/json")
-	req.Header.Set("token", strings.TrimSpace(token))
-	resp, err := w.httpClient.Do(req)
+	resp, err := w.svcCtx.ItickRestClient.Get(ctx, base.String())
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		raw, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("REST returned status=%d body=%s", resp.StatusCode, strings.TrimSpace(string(raw)))
-	}
 	var out struct {
 		Code int                         `json:"code"`
 		Msg  string                      `json:"msg"`
@@ -622,26 +598,11 @@ func (w *SyncKlinesWorker) getSingleKline(
 		q.Set("et", strconv.FormatInt(et, 10))
 	}
 	base.RawQuery = q.Encode()
-	if w.itickLimiter != nil {
-		if err := w.itickLimiter.Wait(ctx); err != nil {
-			return nil, err
-		}
-	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, base.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("accept", "application/json")
-	req.Header.Set("token", token)
-	resp, err := w.httpClient.Do(req)
+	resp, err := w.svcCtx.ItickRestClient.Get(ctx, base.String())
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		raw, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("REST returned status=%d body=%s", resp.StatusCode, strings.TrimSpace(string(raw)))
-	}
 	var out ItickKlineResponse
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err

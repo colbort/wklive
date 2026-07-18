@@ -4,35 +4,29 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"net/url"
 	"path"
 	"strings"
 	"sync"
-	"time"
 	"wklive/services/itick/internal/market/types"
+	"wklive/services/itick/internal/pkg/itickrest"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"golang.org/x/time/rate"
 )
 
 type MarketDataPreheater struct {
 	apiURL      string
-	token       string
 	cache       *MarketDataCache
-	httpClient  *http.Client
-	limiter     *rate.Limiter
+	restClient  *itickrest.Client
 	mu          sync.RWMutex
 	unsupported map[string]struct{}
 }
 
-func NewMarketDataPreheater(apiURL, token string, cache *MarketDataCache) *MarketDataPreheater {
+func NewMarketDataPreheater(apiURL string, cache *MarketDataCache, restClient *itickrest.Client) *MarketDataPreheater {
 	return &MarketDataPreheater{
 		apiURL:      strings.TrimRight(strings.TrimSpace(apiURL), "/"),
-		token:       strings.TrimSpace(token),
 		cache:       cache,
-		httpClient:  &http.Client{Timeout: 10 * time.Second},
-		limiter:     rate.NewLimiter(rate.Limit(400.0/60.0), 1),
+		restClient:  restClient,
 		unsupported: make(map[string]struct{}),
 	}
 }
@@ -123,7 +117,7 @@ func isPackageUnsupported(err error) bool {
 }
 
 func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch marketDataBatch) error {
-	if p.apiURL == "" || p.token == "" || p.cache == nil {
+	if p.apiURL == "" || p.restClient == nil || p.cache == nil {
 		return fmt.Errorf("REST preheater is not configured")
 	}
 	base, err := url.Parse(p.apiURL)
@@ -140,23 +134,11 @@ func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch mark
 	query.Set("codes", strings.Join(codes, ","))
 	base.RawQuery = query.Encode()
 
-	if err := p.limiter.Wait(ctx); err != nil {
-		return err
-	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, base.String(), nil)
-	if err != nil {
-		return err
-	}
-	req.Header.Set("accept", "application/json")
-	req.Header.Set("token", p.token)
-	resp, err := p.httpClient.Do(req)
+	resp, err := p.restClient.Get(ctx, base.String())
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("REST returned status %d", resp.StatusCode)
-	}
 	var result struct {
 		Code int                           `json:"code"`
 		Msg  string                        `json:"msg"`

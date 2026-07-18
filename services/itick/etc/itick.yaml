@@ -14,6 +14,9 @@ Itick:
   ApiUrl: https://api.itick.org
   WSUrl: wss://api.itick.org
   Token: 5093272afb5241dfa3fd5505937289804447d9d6941547b2ab45929024c0fd4b
+  # 所有 iTick REST 接口共享这一份全局额度，不区分请求路径。
+  RestRateLimitPerMinute: 100
+  RestRateLimitBurst: 1
 
 OptionRpc:
   rpcType: zrpc

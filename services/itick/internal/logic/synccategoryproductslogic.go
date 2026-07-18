@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"net/url"
 	"path"
 	"strings"
@@ -244,26 +243,11 @@ func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, 
 	q.Set("code", "")
 	base.RawQuery = q.Encode()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, base.String(), nil)
-	if err != nil {
-		return nil, i18n.StatusError(ctx, i18n.InternalServerError)
-	}
-	req.Header.Set("accept", "application/json")
-	req.Header.Set("token", token)
-
-	client := &http.Client{
-		Timeout: 15 * time.Second,
-	}
-
-	resp, err := client.Do(req)
+	resp, err := w.svcCtx.ItickRestClient.Get(ctx, base.String())
 	if err != nil {
 		return nil, i18n.StatusError(ctx, i18n.ServiceUnavailable)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, i18n.StatusError(ctx, i18n.ServiceUnavailable)
-	}
 
 	var out SymbolListResponse
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {

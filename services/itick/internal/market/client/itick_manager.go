@@ -13,6 +13,7 @@ import (
 
 	"wklive/services/itick/internal/market/cache"
 	"wklive/services/itick/internal/market/types"
+	"wklive/services/itick/internal/pkg/itickrest"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/models"
 
@@ -190,6 +191,7 @@ func NewItickManager(
 	busRedis *redis.Client,
 	lockRedis *redis.Client,
 	marketCache *cache.MarketDataCache,
+	restClient *itickrest.Client,
 ) *ItickManager {
 	return &ItickManager{
 		wsUrl:           wsUrl,
@@ -199,7 +201,7 @@ func NewItickManager(
 		busRedis:        busRedis,
 		lockRedis:       lockRedis,
 		marketCache:     marketCache,
-		preheater:       cache.NewMarketDataPreheater(apiURL, token, marketCache),
+		preheater:       cache.NewMarketDataPreheater(apiURL, marketCache, restClient),
 		clients:         make(map[string]*ItickWsClient),
 		recoveryRunning: make(map[string]bool),
 	}
