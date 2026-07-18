@@ -8,6 +8,12 @@ import { useAuthStore } from '@/stores'
 import type { RespBase } from '@/services'
 import { ENV } from '@/config/environment'
 import { logger } from '@/utils/logger'
+import {
+  encryptAxiosRequest,
+  isEncryptionSessionExpiredError,
+  resetRequestEncryptionSession,
+  type EncryptionAxiosConfig,
+} from '@/utils/requestEncryption'
 
 export const http: AxiosInstance = axios.create({
   baseURL: ENV.API_BASE_URL,
@@ -18,7 +24,7 @@ export const http: AxiosInstance = axios.create({
 })
 
 http.interceptors.request.use(
-  (config) => {
+  async (config) => {
     const auth = useAuthStore()
     if (auth.token) {
       config.headers.Authorization = `Bearer ${auth.token}`
@@ -27,7 +33,7 @@ http.interceptors.request.use(
       config.headers['x-tenant-id'] = String(auth.tenantId)
     }
     logger.debug(`[${config.method?.toUpperCase()}] ${config.url || ''}`)
-    return config
+    return encryptAxiosRequest(config)
   },
   (error) => {
     logger.error('Request error', error)
@@ -42,6 +48,19 @@ http.interceptors.response.use(
   },
   (error) => {
     const response = error?.response
+
+    const requestConfig = error?.config as EncryptionAxiosConfig | undefined
+    if (
+      requestConfig &&
+      !requestConfig.__requestEncryptionRetry &&
+      isEncryptionSessionExpiredError(error)
+    ) {
+      requestConfig.__requestEncryptionRetry = true
+      requestConfig.data = requestConfig.__requestEncryptionPlainData
+      requestConfig.params = requestConfig.__requestEncryptionPlainParams
+      resetRequestEncryptionSession()
+      return http.request(requestConfig)
+    }
 
     if (response?.status === 401) {
       const auth = useAuthStore()

@@ -105,7 +105,7 @@ func (m *Middleware) decryptRequest(r *http.Request, rule Rule) error {
 	return replaceRequestPayload(r, location, plaintext)
 }
 
-func (m *Middleware) decryptPayload(r *http.Request, location Location, key, aad []byte) ([]byte, error) {
+func (m *Middleware) decryptPayload(r *http.Request, location Location, key []byte, aad []byte) ([]byte, error) {
 	switch location {
 	case LocationJSON:
 		mediaType, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
@@ -156,7 +156,7 @@ func (m *Middleware) decryptPayload(r *http.Request, location Location, key, aad
 	}
 }
 
-func decryptPacked(encoded string, key, aad []byte, maxBytes int64) ([]byte, error) {
+func decryptPacked(encoded string, key []byte, aad []byte, maxBytes int64) ([]byte, error) {
 	raw, err := base64URL.DecodeString(encoded)
 	if err != nil || int64(len(raw)) > maxBytes || len(raw) < 12+16 {
 		return nil, ErrInvalidPayload

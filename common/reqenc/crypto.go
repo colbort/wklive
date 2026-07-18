@@ -61,7 +61,7 @@ func unwrapClientKey(privateKey *rsa.PrivateKey, encoded string) ([]byte, error)
 	return key, nil
 }
 
-func encryptGCM(key, plaintext, aad []byte) (nonce, cipherText []byte, err error) {
+func encryptGCM(key []byte, plaintext []byte, aad []byte) (nonce []byte, cipherText []byte, err error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, nil, err
@@ -77,7 +77,7 @@ func encryptGCM(key, plaintext, aad []byte) (nonce, cipherText []byte, err error
 	return nonce, gcm.Seal(nil, nonce, plaintext, aad), nil
 }
 
-func decryptGCM(key, nonce, cipherText, aad []byte) ([]byte, error) {
+func decryptGCM(key []byte, nonce []byte, cipherText []byte, aad []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, ErrInvalidPayload
@@ -93,7 +93,7 @@ func decryptGCM(key, nonce, cipherText, aad []byte) ([]byte, error) {
 	return plaintext, nil
 }
 
-func wrapSessionKey(wrapKey, sessionKey []byte) (string, error) {
+func wrapSessionKey(wrapKey []byte, sessionKey []byte) (string, error) {
 	nonce, cipherText, err := encryptGCM(wrapKey, sessionKey, nil)
 	if err != nil {
 		return "", err

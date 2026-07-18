@@ -2,63 +2,72 @@
 
 ```
 /wklive
-├─ admin-api      # 管理后台 API 网关服务（go-zero），路由、鉴权、业务接口聚合
-│  ├─ api         # API 接口定义文件
-│  ├─ avatars     # 头像上传相关
-│  ├─ curl        # API 测试脚本
-│  ├─ etc         # 配置文件
-│  ├─ internal    # 内部实现
-│  │  ├─ config   # 配置管理
-│  │  ├─ handler  # HTTP 处理器
-│  │  ├─ logic    # 业务逻辑
-│  │  ├─ middleware # 中间件
-│  │  └─ svc      # 服务上下文
-│  ├─ admin.go    # 主入口文件
-│  ├─ go.mod      # Go 模块文件
-│  └─ Makefile    # 构建脚本
-├─ admin-ui       # 管理后台前端（Vue 3 + Element Plus + TypeScript）
-│  ├─ src
-│  │  ├─ api      # API 调用封装
-│  │  ├─ components # 公共组件
-│  │  ├─ composables # Vue 组合式函数
-│  │  ├─ config   # 配置文件
-│  │  ├─ directives # Vue 指令
-│  │  ├─ i18n     # 国际化
-│  │  ├─ layout   # 页面布局组件
-│  │  ├─ router   # 路由配置
-│  │  ├─ services # 服务层
-│  │  ├─ stores   # Pinia 状态管理
-│  │  ├─ utils    # 工具函数
-│  │  ├─ views    # 页面组件
-│  │  ├─ App.vue  # 根组件
-│  │  └─ main.ts  # 应用入口
-│  ├─ public       # 静态资源
-│  ├─ dist         # 构建输出
-│  ├─ package.json # 项目配置
-│  ├─ vite.config.ts # Vite 配置
-│  ├─ tsconfig.json # TypeScript 配置
-│  └─ index.html   # HTML 模板
-├─ services       # 业务微服务模块
-│  ├─ system      # 系统管理微服务
-│  └─ user        # 用户管理微服务
-├─ common         # 公共工具库（配置加载、存储、Nacos/Etcd、JWT 认证等）
-│  ├─ etcd        # Etcd 客户端封装
-│  ├─ nacos       # Nacos 客户端封装
-│  ├─ storage     # 存储服务（OSS、MinIO、COS）
-│  ├─ utils       # 通用工具函数
-│  └─ go.mod      # Go 模块文件
-├─ proto          # gRPC/Protobuf 定义
-│  ├─ system      # 系统服务协议定义
-│  └─ user        # 用户服务协议定义
-├─ app-api        # 应用 API 接口层（预留扩展）
-│  ├─ api         # API 接口定义
-│  ├─ etc         # 配置文件
-│  ├─ internal    # 内部实现
-│  ├─ app.go      # 主入口文件
-│  └─ go.mod      # Go 模块文件
-├─ .github        # GitHub Actions 工作流
-├─ wklive.code-workspace # VS Code 工作区配置
-└─ README.md      # 项目说明文档
+├─ admin-api          # 管理后台 API 网关（go-zero）
+│  ├─ api             # REST API 定义
+│  ├─ etc             # 服务配置
+│  └─ internal        # handler、logic、middleware、svc 等实现
+├─ admin-ui           # 管理后台 Web（Vue 3 + Element Plus + TypeScript）
+│  ├─ public          # 静态资源
+│  └─ src             # API、组件、路由、状态、页面等
+├─ app-api            # 客户端 API 网关（go-zero）
+│  ├─ api
+│  ├─ etc
+│  └─ internal
+├─ app-web            # 客户端 Web（Vue 3 + Vite）
+│  ├─ public
+│  ├─ assets
+│  └─ src
+├─ app-mobile         # 移动客户端（Ionic/Capacitor + Vue）
+│  ├─ android         # Android 工程
+│  ├─ ios             # iOS 工程
+│  └─ src
+├─ app-packages       # app-web/app-mobile 共享的 TypeScript 包
+│  └─ src             # API、类型和工具
+├─ chat-api           # 客服业务 API 网关
+│  ├─ api
+│  ├─ etc
+│  └─ internal
+├─ chat-ui            # 客服聊天客户端
+│  └─ src
+├─ chat-admin-api     # 客服管理 API 网关
+│  ├─ api
+│  ├─ etc
+│  └─ internal
+├─ chat-admin-ui      # 客服管理后台
+│  └─ src
+├─ services           # gRPC 业务微服务
+│  ├─ asset          # 资产服务
+│  ├─ chat           # 客服服务
+│  ├─ itick          # 行情与产品数据服务
+│  ├─ option         # 期权服务
+│  ├─ payment        # 支付服务
+│  ├─ staking        # 质押服务
+│  ├─ system         # 系统与租户服务
+│  ├─ trade          # 交易服务
+│  └─ user           # 用户服务
+├─ proto              # gRPC/Protobuf 协议与生成代码
+│  ├─ asset
+│  ├─ chat
+│  ├─ common
+│  ├─ itick
+│  ├─ option
+│  ├─ payment
+│  ├─ staking
+│  ├─ system
+│  ├─ trade
+│  └─ user
+├─ common             # Go 公共库
+│  ├─ bus             # Redis 消息总线
+│  ├─ etcd / nacos    # 配置与服务发现
+│  ├─ i18n            # 国际化与错误响应
+│  ├─ middleware      # 通用中间件
+│  ├─ storage         # 对象存储封装
+│  └─ utils           # 通用工具
+├─ .github            # GitHub Actions 与项目辅助文档
+├─ init.sql           # 数据库初始化数据
+├─ etcdwp.json        # Etcd 配置示例/备份
+├─ wklive.code-workspace
+└─ README.md
 ```
 
 ## 修复 go 文件中的 import

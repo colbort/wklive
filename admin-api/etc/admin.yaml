@@ -13,10 +13,10 @@ Jwt:
 # 判断是否加密；灰度阶段使用 OPTIONAL，前端全部上线后可改为 REQUIRED。
 RequestEncryption:
   Scope: admin-api
-  Mode: DISABLED # DISABLED / OPTIONAL / REQUIRED
-  RSAKid: ""
-  RSAPrivateKeyPath: ""
-  SessionWrapKey: "" # 启用时必须由密钥管理系统注入恰好 32 字节的密钥
+  Mode: REQUIRED # DISABLED / OPTIONAL / REQUIRED
+  RSAKid: "admin-api-20260718"
+  RSAPrivateKeyPath: "/Users/sky/local/go/src/wklive/secrets/admin-api-private.pem"
+  SessionWrapKey: "0@29odn4s*dP@tcMZ=U_sQHppG4Av114" # 启用时必须由密钥管理系统注入恰好 32 字节的密钥
   SessionTTLSeconds: 960
   RotateBeforeSeconds: 180
   ClockSkewSeconds: 120

@@ -29,7 +29,7 @@ func (s *RedisStore) sessionKey(keyID string) string {
 	return fmt.Sprintf("security:encryption:%s:session:%s", s.scope, keyID)
 }
 
-func (s *RedisStore) nonceKey(keyID, nonce string) string {
+func (s *RedisStore) nonceKey(keyID string, nonce string) string {
 	return fmt.Sprintf("security:encryption:%s:nonce:%s:%s", s.scope, keyID, nonce)
 }
 
@@ -53,7 +53,7 @@ func (s *RedisStore) GetSession(ctx context.Context, keyID string) (*Session, er
 	return &session, nil
 }
 
-func (s *RedisStore) UseNonce(ctx context.Context, keyID, nonce string, ttl time.Duration) (bool, error) {
+func (s *RedisStore) UseNonce(ctx context.Context, keyID string, nonce string, ttl time.Duration) (bool, error) {
 	return s.redis.SetnxExCtx(ctx, s.nonceKey(keyID, nonce), "1", max(1, int(ttl.Seconds())))
 }
 

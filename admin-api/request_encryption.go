@@ -36,12 +36,18 @@ func adminRequestEncryptionRegistry() *reqenc.Registry {
 		"/admin/system/",
 		"/admin/trade/",
 	}
-	methods := []string{http.MethodPost, http.MethodPut, http.MethodPatch}
-	rules := make([]reqenc.Rule, 0, len(prefixes)*len(methods))
+	jsonMethods := []string{http.MethodPost, http.MethodPut, http.MethodPatch}
+	queryMethods := []string{http.MethodGet, http.MethodDelete}
+	rules := make([]reqenc.Rule, 0, len(prefixes)*(len(jsonMethods)+len(queryMethods)))
 	for _, prefix := range prefixes {
-		for _, method := range methods {
+		for _, method := range jsonMethods {
 			rules = append(rules, reqenc.Rule{
 				Method: method, Path: prefix, PathPrefix: true, Location: reqenc.LocationJSON,
+			})
+		}
+		for _, method := range queryMethods {
+			rules = append(rules, reqenc.Rule{
+				Method: method, Path: prefix, PathPrefix: true, Location: reqenc.LocationQuery,
 			})
 		}
 	}
