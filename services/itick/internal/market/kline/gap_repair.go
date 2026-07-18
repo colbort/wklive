@@ -16,6 +16,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 const (
@@ -116,12 +117,19 @@ func (s *GapRepairService) scanOnce() error {
 	// Scan every closed minute. The five-minute reconciliation remains useful
 	// for correction, but gap detection must not depend on an external scheduler.
 	cutoff := time.Now().UnixMilli()/minuteMs*minuteMs - minuteMs
-	for _, product := range products {
-		if err := s.scanProduct(product, cutoff); err != nil {
-			logx.Errorf("scan product kline gaps failed, product=%d symbol=%s err=%v", product.Id, product.Symbol, err)
+	return mr.MapReduceVoid(func(source chan<- *models.TItickProduct) {
+		for _, product := range products {
+			source <- product
 		}
-	}
-	return nil
+	}, func(product *models.TItickProduct, writer mr.Writer[error], _ func(error)) {
+		if err := s.scanProduct(product, cutoff); err != nil {
+			writer.Write(fmt.Errorf("product=%d symbol=%s: %w", product.Id, product.Symbol, err))
+		}
+	}, func(pipe <-chan error, _ func(error)) {
+		for err := range pipe {
+			logx.Errorf("scan product kline gaps failed, %v", err)
+		}
+	}, mr.WithContext(s.ctx), mr.WithWorkers(4))
 }
 
 func (s *GapRepairService) scanProduct(product *models.TItickProduct, cutoff int64) error {

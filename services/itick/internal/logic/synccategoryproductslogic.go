@@ -17,6 +17,7 @@ import (
 	"wklive/services/itick/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type SyncCategoryProductsLogic struct {
@@ -130,55 +131,41 @@ func (w *SyncCategoryProductsWorker) doSync(in *itick.SyncCategoryProductsReq) e
 		return i18n.StatusError(w.ctx, i18n.CategoryNotFound)
 	}
 
-	regions, err := w.getRegion(result.CategoryCode)
+	regions, err := utils.GetKlineCategoryRegions(result.CategoryCode)
 	if err != nil {
 		return i18n.StatusError(w.ctx, i18n.MarketRequired)
 	}
 
-	for _, market := range regions {
-		resp, err := w.getSymbolList(
-			w.ctx,
-			w.svcCtx.Config.Itick.ApiUrl,
-			w.svcCtx.Config.Itick.Token,
-			result.CategoryCode,
-			market,
-		)
-		if err != nil {
-			return err
+	return mr.MapReduceVoid(func(source chan<- string) {
+		for _, market := range regions {
+			source <- market
 		}
+	}, func(market string, _ mr.Writer[struct{}], cancel func(error)) {
+		if err := w.syncMarketProducts(result, market); err != nil {
+			cancel(err)
+		}
+	}, func(_ <-chan struct{}, _ func(error)) {
+	}, mr.WithContext(w.ctx), mr.WithWorkers(2))
+}
 
-		for _, item := range resp.Data {
-			_, err := w.svcCtx.ItickProductModel.Upsert(w.ctx, &models.TItickProduct{
-				CategoryType: result.CategoryType,
-				CategoryName: result.CategoryName,
-				CategoryCode: result.CategoryCode,
-				Market:       market,
-				Symbol:       item.Code,
-				Code:         item.Code,
-				Name:         item.Name,
-				DisplayName:  item.Name,
-				Exchange:     item.Exchange,
-				Sector:       item.Sector,
-				Lug:          item.Lug,
-				BaseCoin:     "",
-				QuoteCoin:    "",
-				Enabled:      1,
-				AppVisible:   1,
-				Sort:         0,
-				Icon:         "",
-				Remark:       fmt.Sprintf("同步自 iTick，分类：%s，地区：%s", result.CategoryCode, market),
-				CreateTimes:  cutils.NowMillis(),
-				UpdateTimes:  cutils.NowMillis(),
-			})
-			if err != nil {
-				logx.Errorf("insert product failed, code=%s, err=%v", item.Code, err)
-				// 这里你自己决定：
-				// 1. 遇到单条失败继续
-				// 2. 直接终止整个任务
-			}
+func (w *SyncCategoryProductsWorker) syncMarketProducts(category *models.TItickCategory, market string) error {
+	resp, err := w.getSymbolList(w.ctx, w.svcCtx.Config.Itick.ApiUrl, w.svcCtx.Config.Itick.Token, category.CategoryCode, market)
+	if err != nil {
+		return err
+	}
+	for _, item := range resp.Data {
+		_, err := w.svcCtx.ItickProductModel.Upsert(w.ctx, &models.TItickProduct{
+			CategoryType: category.CategoryType, CategoryName: category.CategoryName, CategoryCode: category.CategoryCode,
+			Market: market, Symbol: item.Code, Code: item.Code, Name: item.Name, DisplayName: item.Name,
+			Exchange: item.Exchange, Sector: item.Sector, Lug: item.Lug, BaseCoin: "", QuoteCoin: "",
+			Enabled: 1, AppVisible: 1, Sort: 0, Icon: "",
+			Remark:      fmt.Sprintf("同步自 iTick，分类：%s，地区：%s", category.CategoryCode, market),
+			CreateTimes: cutils.NowMillis(), UpdateTimes: cutils.NowMillis(),
+		})
+		if err != nil {
+			logx.Errorf("insert product failed, code=%s, err=%v", item.Code, err)
 		}
 	}
-
 	return nil
 }
 
@@ -259,10 +246,6 @@ func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, 
 	}
 
 	return &out, nil
-}
-
-func (lw *SyncCategoryProductsWorker) getRegion(category string) ([]string, error) {
-	return utils.GetKlineCategoryRegions(category)
 }
 
 func (w *SyncCategoryProductsWorker) updateTaskStatus(taskNo string, status int64, message string) error {

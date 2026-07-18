@@ -12,6 +12,7 @@ import (
 	"wklive/services/itick/internal/pkg/itickrest"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type MarketDataPreheater struct {
@@ -69,34 +70,25 @@ func (p *MarketDataPreheater) Warm(ctx context.Context, msgs []types.ClientMessa
 		}
 	}
 
-	jobs := make(chan []marketDataBatch)
-	var wg sync.WaitGroup
-	for range min(8, len(batchesByCategory)) {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for batches := range jobs {
-				for _, batch := range batches {
-					err := p.fetchBatchAndCache(ctx, batch)
-					if err == nil {
-						continue
-					}
-					if isPackageUnsupported(err) {
-						p.markUnsupported(batch.category)
-						logx.Errorf("itick package does not support category, category=%s err=%v", batch.category, err)
-						break
-					}
-					logx.Errorf("preheat itick market data batch failed, topic=%s category=%s market=%s count=%d err=%v",
-						batch.topic, batch.category, batch.market, len(batch.msgs), err)
-				}
+	mr.ForEach(func(source chan<- []marketDataBatch) {
+		for _, batches := range batchesByCategory {
+			source <- batches
+		}
+	}, func(batches []marketDataBatch) {
+		for _, batch := range batches {
+			err := p.fetchBatchAndCache(ctx, batch)
+			if err == nil {
+				continue
 			}
-		}()
-	}
-	for _, batches := range batchesByCategory {
-		jobs <- batches
-	}
-	close(jobs)
-	wg.Wait()
+			if isPackageUnsupported(err) {
+				p.markUnsupported(batch.category)
+				logx.Errorf("itick package does not support category, category=%s err=%v", batch.category, err)
+				break
+			}
+			logx.Errorf("preheat itick market data batch failed, topic=%s category=%s market=%s count=%d err=%v",
+				batch.topic, batch.category, batch.market, len(batch.msgs), err)
+		}
+	}, mr.WithContext(ctx), mr.WithWorkers(8))
 }
 
 func (p *MarketDataPreheater) IsUnsupported(category string) bool {

@@ -17,6 +17,7 @@ import (
 	"wklive/services/itick/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type SyncKlinesWorker struct {
@@ -132,6 +133,11 @@ type reconcileGroup struct {
 	products []*models.TItickProduct
 }
 
+type reconcileTask struct {
+	group    *reconcileGroup
+	products []*models.TItickProduct
+}
+
 // RunReconcile performs only the bounded recent-window correction used by the
 // five-minute scheduler. It never walks backwards through historical pages.
 func (w *SyncKlinesWorker) RunReconcile(taskNo, apiURL, token string) {
@@ -221,20 +227,27 @@ func (w *SyncKlinesWorker) doReconcile(apiURL, token, onlyCategory string) error
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)
-	var failures []string
-	for _, key := range keys {
-		group := groups[key]
-		for start := 0; start < len(group.products); start += reconcileBatchSize {
-			end := min(start+reconcileBatchSize, len(group.products))
-			if err := w.reconcileBatch(apiURL, token, group, group.products[start:end]); err != nil {
-				failures = append(failures, err.Error())
+	return mr.MapReduceVoid(func(source chan<- reconcileTask) {
+		for _, key := range keys {
+			group := groups[key]
+			for start := 0; start < len(group.products); start += reconcileBatchSize {
+				end := min(start+reconcileBatchSize, len(group.products))
+				source <- reconcileTask{group: group, products: group.products[start:end]}
 			}
 		}
-	}
-	if len(failures) > 0 {
-		return fmt.Errorf("kline reconcile partial failure (%d): %s", len(failures), strings.Join(failures, "; "))
-	}
-	return nil
+	}, func(task reconcileTask, writer mr.Writer[error], _ func(error)) {
+		if err := w.reconcileBatch(apiURL, token, task.group, task.products); err != nil {
+			writer.Write(err)
+		}
+	}, func(pipe <-chan error, cancel func(error)) {
+		var failures []string
+		for err := range pipe {
+			failures = append(failures, err.Error())
+		}
+		if len(failures) > 0 {
+			cancel(fmt.Errorf("kline reconcile partial failure (%d): %s", len(failures), strings.Join(failures, "; ")))
+		}
+	}, mr.WithContext(w.ctx), mr.WithWorkers(4))
 }
 
 func (w *SyncKlinesWorker) loadActiveProducts() ([]*models.TItickProduct, error) {
