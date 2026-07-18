@@ -42,6 +42,7 @@ func (l *EncryptionConfigLogic) EncryptionConfig() (resp *types.EncryptionConfig
 			SessionTtlSeconds:   config.SessionTTLSeconds,
 			RotateBeforeSeconds: config.RotateBeforeSeconds,
 			ServerTime:          config.ServerTime,
+			ProtectedPrefixes:   config.ProtectedPrefixes,
 		},
 	}, nil
 }

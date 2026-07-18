@@ -28,17 +28,18 @@ var (
 )
 
 type EncryptionConfigData struct {
-	Version             string `json:"version"`
-	Mode                Mode   `json:"mode"`
-	Enabled             bool   `json:"enabled"`
-	Required            bool   `json:"required"`
-	RSAKid              string `json:"rsaKid,omitempty"`
-	PublicKey           string `json:"publicKey,omitempty"`
-	KeyAlgorithm        string `json:"keyAlgorithm,omitempty"`
-	ContentAlgorithm    string `json:"contentAlgorithm,omitempty"`
-	SessionTTLSeconds   int    `json:"sessionTtlSeconds"`
-	RotateBeforeSeconds int    `json:"rotateBeforeSeconds"`
-	ServerTime          int64  `json:"serverTime"`
+	Version             string   `json:"version"`
+	Mode                Mode     `json:"mode"`
+	Enabled             bool     `json:"enabled"`
+	Required            bool     `json:"required"`
+	RSAKid              string   `json:"rsaKid,omitempty"`
+	PublicKey           string   `json:"publicKey,omitempty"`
+	KeyAlgorithm        string   `json:"keyAlgorithm,omitempty"`
+	ContentAlgorithm    string   `json:"contentAlgorithm,omitempty"`
+	SessionTTLSeconds   int      `json:"sessionTtlSeconds"`
+	RotateBeforeSeconds int      `json:"rotateBeforeSeconds"`
+	ServerTime          int64    `json:"serverTime"`
+	ProtectedPrefixes   []string `json:"protectedPrefixes"`
 }
 
 type CreateSessionRequest struct {

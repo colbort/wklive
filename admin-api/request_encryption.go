@@ -25,20 +25,15 @@ func mustNewRequestEncryption(c config.Config) *reqenc.Service {
 	return service
 }
 
-func adminRequestEncryptionRegistry() *reqenc.Registry {
-	prefixes := []string{
-		"/admin/asset/",
-		"/admin/itick/",
-		"/admin/member/",
-		"/admin/option/",
-		"/admin/payment/",
-		"/admin/staking/",
-		"/admin/system/",
-		"/admin/trade/",
+func adminRequestEncryptionRegistry(encryptionConfig reqenc.Config) *reqenc.Registry {
+	rules := []reqenc.Rule{
+		// The client needs these plaintext endpoints before it has an AES session.
+		{Method: http.MethodGet, Path: "/admin/security/encryption-config", Exempt: true},
+		{Method: http.MethodPost, Path: "/admin/security/encryption-session", Exempt: true},
 	}
+	prefixes := encryptionConfig.WithDefaults().ProtectedPrefixes
 	jsonMethods := []string{http.MethodPost, http.MethodPut, http.MethodPatch}
 	queryMethods := []string{http.MethodGet, http.MethodDelete}
-	rules := make([]reqenc.Rule, 0, len(prefixes)*(len(jsonMethods)+len(queryMethods)))
 	for _, prefix := range prefixes {
 		for _, method := range jsonMethods {
 			rules = append(rules, reqenc.Rule{
@@ -50,6 +45,20 @@ func adminRequestEncryptionRegistry() *reqenc.Registry {
 				Method: method, Path: prefix, PathPrefix: true, Location: reqenc.LocationQuery,
 			})
 		}
+	}
+	// REQUIRED protects every supported admin API method. These catch-all rules
+	// are ignored in OPTIONAL mode, where only the prefixes above are protected.
+	for _, method := range jsonMethods {
+		rules = append(rules, reqenc.Rule{
+			Method: method, Path: "/admin/", PathPrefix: true,
+			Location: reqenc.LocationJSON, RequiredOnly: true,
+		})
+	}
+	for _, method := range queryMethods {
+		rules = append(rules, reqenc.Rule{
+			Method: method, Path: "/admin/", PathPrefix: true,
+			Location: reqenc.LocationQuery, RequiredOnly: true,
+		})
 	}
 	return reqenc.NewRegistry(rules...)
 }

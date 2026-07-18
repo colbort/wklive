@@ -45,6 +45,7 @@ func (s *Service) ConfigData() EncryptionConfigData {
 		RSAKid: c.RSAKid, PublicKey: s.publicKey, KeyAlgorithm: KeyAlgorithm,
 		ContentAlgorithm: ContentAlgorithm, SessionTTLSeconds: c.SessionTTLSeconds,
 		RotateBeforeSeconds: c.RotateBeforeSeconds, ServerTime: s.now().UnixMilli(),
+		ProtectedPrefixes: append([]string(nil), c.ProtectedPrefixes...),
 	}
 }
 

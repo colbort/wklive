@@ -12,6 +12,7 @@ type EncryptionConfigData {
 	sessionTtlSeconds   int    `json:"sessionTtlSeconds"`
 	rotateBeforeSeconds int    `json:"rotateBeforeSeconds"`
 	serverTime          int64  `json:"serverTime"`
+	protectedPrefixes   []string `json:"protectedPrefixes"`
 }
 
 type EncryptionConfigResp {

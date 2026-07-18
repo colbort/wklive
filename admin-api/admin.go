@@ -59,7 +59,10 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 	encryptionService := mustNewRequestEncryption(c)
 	ctx.RequestEncryption = encryptionService
-	server.Use(reqenc.NewMiddleware(encryptionService, adminRequestEncryptionRegistry()).Handle)
+	server.Use(reqenc.NewMiddleware(
+		encryptionService,
+		adminRequestEncryptionRegistry(c.RequestEncryption),
+	).Handle)
 	requestLogMiddleware := um.NewRequestLogMiddleware("ADMIN-API")
 	server.Use(requestLogMiddleware.Handle)
 	headerMiddleware := um.NewHeaderMiddleware()

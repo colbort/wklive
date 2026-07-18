@@ -11,6 +11,11 @@ type Rule struct {
 	PathPrefix   bool
 	Location     Location
 	PathTemplate string
+	// RequiredOnly marks a catch-all rule that is enabled only in REQUIRED mode.
+	// Regular rules are enabled in OPTIONAL and REQUIRED modes.
+	RequiredOnly bool
+	// Exempt keeps bootstrap or protocol-incompatible routes in plaintext.
+	Exempt bool
 }
 
 type Registry struct {

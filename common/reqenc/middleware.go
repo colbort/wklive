@@ -24,12 +24,12 @@ func NewMiddleware(service *Service, registry *Registry) *Middleware {
 
 func (m *Middleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rule, protected := m.registry.Match(r)
-		if !protected || r.Method == http.MethodOptions {
+		if r.Method == http.MethodOptions {
 			next(w, r)
 			return
 		}
 
+		rule, matched := m.registry.Match(r)
 		encrypted := strings.TrimSpace(r.Header.Get(HeaderVersion)) != ""
 		switch m.service.config.Mode {
 		case ModeDisabled:
@@ -40,13 +40,21 @@ func (m *Middleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			next(w, r)
 			return
 		case ModeRequired:
+			if !matched || rule.Exempt {
+				next(w, r)
+				return
+			}
 			if !encrypted {
 				writeError(w, ErrRequired)
 				return
 			}
 		case ModeOptional:
-			if !encrypted {
+			if !matched || rule.Exempt || rule.RequiredOnly {
 				next(w, r)
+				return
+			}
+			if !encrypted {
+				writeError(w, ErrRequired)
 				return
 			}
 		}

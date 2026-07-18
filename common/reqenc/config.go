@@ -22,22 +22,26 @@ const (
 )
 
 type Config struct {
-	Scope               string `json:"Scope" yaml:"Scope"`
-	Mode                Mode   `json:"Mode" yaml:"Mode"`
-	RSAKid              string `json:"RSAKid" yaml:"RSAKid"`
-	RSAPrivateKeyPath   string `json:"RSAPrivateKeyPath" yaml:"RSAPrivateKeyPath"`
-	SessionWrapKey      string `json:"SessionWrapKey" yaml:"SessionWrapKey"`
-	SessionTTLSeconds   int    `json:"SessionTTLSeconds" yaml:"SessionTTLSeconds"`
-	RotateBeforeSeconds int    `json:"RotateBeforeSeconds" yaml:"RotateBeforeSeconds"`
-	ClockSkewSeconds    int    `json:"ClockSkewSeconds" yaml:"ClockSkewSeconds"`
-	NonceTTLSeconds     int    `json:"NonceTTLSeconds" yaml:"NonceTTLSeconds"`
-	MaxPlaintextBytes   int64  `json:"MaxPlaintextBytes" yaml:"MaxPlaintextBytes"`
-	MaxCipherTextBytes  int64  `json:"MaxCipherTextBytes" yaml:"MaxCipherTextBytes"`
+	Scope               string   `json:"Scope" yaml:"Scope"`
+	Mode                Mode     `json:"Mode" yaml:"Mode"`
+	RSAKid              string   `json:"RSAKid" yaml:"RSAKid"`
+	RSAPrivateKeyPath   string   `json:"RSAPrivateKeyPath" yaml:"RSAPrivateKeyPath"`
+	SessionWrapKey      string   `json:"SessionWrapKey" yaml:"SessionWrapKey"`
+	SessionTTLSeconds   int      `json:"SessionTTLSeconds" yaml:"SessionTTLSeconds"`
+	RotateBeforeSeconds int      `json:"RotateBeforeSeconds" yaml:"RotateBeforeSeconds"`
+	ClockSkewSeconds    int      `json:"ClockSkewSeconds" yaml:"ClockSkewSeconds"`
+	NonceTTLSeconds     int      `json:"NonceTTLSeconds" yaml:"NonceTTLSeconds"`
+	MaxPlaintextBytes   int64    `json:"MaxPlaintextBytes" yaml:"MaxPlaintextBytes"`
+	MaxCipherTextBytes  int64    `json:"MaxCipherTextBytes" yaml:"MaxCipherTextBytes"`
+	ProtectedPrefixes   []string `json:"ProtectedPrefixes" yaml:"ProtectedPrefixes"`
 }
 
 func (c Config) WithDefaults() Config {
 	c.Scope = strings.TrimSpace(c.Scope)
 	c.Mode = Mode(strings.ToUpper(strings.TrimSpace(string(c.Mode))))
+	for index, prefix := range c.ProtectedPrefixes {
+		c.ProtectedPrefixes[index] = strings.TrimSpace(prefix)
+	}
 	if c.Mode == "" {
 		c.Mode = ModeDisabled
 	}

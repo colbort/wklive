@@ -989,17 +989,18 @@ type DepthLevel struct {
 }
 
 type EncryptionConfigData struct {
-	Version             string `json:"version"`
-	Mode                string `json:"mode"`
-	Enabled             bool   `json:"enabled"`
-	Required            bool   `json:"required"`
-	RsaKid              string `json:"rsaKid,optional"`
-	PublicKey           string `json:"publicKey,optional"`
-	KeyAlgorithm        string `json:"keyAlgorithm,optional"`
-	ContentAlgorithm    string `json:"contentAlgorithm,optional"`
-	SessionTtlSeconds   int    `json:"sessionTtlSeconds"`
-	RotateBeforeSeconds int    `json:"rotateBeforeSeconds"`
-	ServerTime          int64  `json:"serverTime"`
+	Version             string   `json:"version"`
+	Mode                string   `json:"mode"`
+	Enabled             bool     `json:"enabled"`
+	Required            bool     `json:"required"`
+	RsaKid              string   `json:"rsaKid,optional"`
+	PublicKey           string   `json:"publicKey,optional"`
+	KeyAlgorithm        string   `json:"keyAlgorithm,optional"`
+	ContentAlgorithm    string   `json:"contentAlgorithm,optional"`
+	SessionTtlSeconds   int      `json:"sessionTtlSeconds"`
+	RotateBeforeSeconds int      `json:"rotateBeforeSeconds"`
+	ServerTime          int64    `json:"serverTime"`
+	ProtectedPrefixes   []string `json:"protectedPrefixes"`
 }
 
 type EncryptionConfigResp struct {

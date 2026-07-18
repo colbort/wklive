@@ -41,7 +41,19 @@ committed to the repository.
 
 ## Route registration
 
-Only registered routes are decrypted or required to be encrypted.
+Mode semantics:
+
+- `DISABLED`: every route is plaintext and encrypted requests are rejected.
+- `OPTIONAL`: regular registered routes must be encrypted; other routes stay plaintext.
+- `REQUIRED`: regular and `RequiredOnly` routes must be encrypted.
+
+Use `RequiredOnly` catch-all rules to cover all supported API methods in `REQUIRED` mode, and
+explicit `Exempt` rules for the encryption bootstrap endpoints. `OPTIONS`, multipart uploads, and
+WebSocket traffic should remain outside the encrypted rules.
+
+Put the optional-mode route prefixes in `Config.ProtectedPrefixes` and return them to clients from
+the encryption-config endpoint as `protectedPrefixes`, so the server and clients use one source of
+truth.
 
 ```go
 registry := reqenc.NewRegistry(
@@ -58,7 +70,7 @@ server.Use(reqenc.NewMiddleware(service, registry).Handle)
 Register the middleware before request logging, RBAC, rate limiting, or any middleware that reads
 the request body or parameters.
 
-The two bootstrap handlers must remain outside the protected registry:
+The two bootstrap handlers must be registered as `Exempt` when a `RequiredOnly` catch-all is used:
 
 ```go
 service.ConfigHandler()
@@ -66,5 +78,5 @@ service.SessionHandler()
 ```
 
 Every API must use a distinct `Scope`, Redis key namespace, and preferably a distinct RSA key.
-Start deployments in `DISABLED`, then use `OPTIONAL`, and only switch selected routes to
-`REQUIRED` after every corresponding frontend is deployed.
+Start deployments in `DISABLED`, switch to `OPTIONAL` after clients encrypt selected routes, and
+switch to `REQUIRED` after clients encrypt every supported route.

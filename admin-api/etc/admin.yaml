@@ -14,6 +14,16 @@ Jwt:
 RequestEncryption:
   Scope: admin-api
   Mode: REQUIRED # DISABLED / OPTIONAL / REQUIRED
+  # OPTIONAL 模式下仅这些接口前缀强制加密；REQUIRED 模式下所有 /admin/ 接口强制加密。
+  ProtectedPrefixes:
+    - "/admin/asset/"
+    - "/admin/itick/"
+    - "/admin/member/"
+    - "/admin/option/"
+    - "/admin/payment/"
+    - "/admin/staking/"
+    - "/admin/system/"
+    - "/admin/trade/"
   RSAKid: "admin-api-20260718"
   RSAPrivateKeyPath: "/Users/sky/local/go/src/wklive/secrets/admin-api-private.pem"
   SessionWrapKey: "0@29odn4s*dP@tcMZ=U_sQHppG4Av114" # 启用时必须由密钥管理系统注入恰好 32 字节的密钥

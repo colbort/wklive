@@ -5,16 +5,6 @@ const LOCATION_JSON = 'JSON'
 const LOCATION_QUERY = 'QUERY'
 const CONFIG_PATH = '/admin/security/encryption-config'
 const SESSION_PATH = '/admin/security/encryption-session'
-const PROTECTED_PREFIXES = [
-  '/admin/asset/',
-  '/admin/itick/',
-  '/admin/member/',
-  '/admin/option/',
-  '/admin/payment/',
-  '/admin/staking/',
-  '/admin/system/',
-  '/admin/trade/',
-]
 
 type EncryptionConfig = {
   version: string
@@ -28,6 +18,7 @@ type EncryptionConfig = {
   sessionTtlSeconds: number
   rotateBeforeSeconds: number
   serverTime: number
+  protectedPrefixes: string[]
 }
 
 type EncryptionSession = {
@@ -165,10 +156,16 @@ async function ensureSession(config: EncryptionConfig, baseURL?: string): Promis
 
 function requestLocation(
   config: InternalAxiosRequestConfig,
+  encryption: EncryptionConfig,
 ): typeof LOCATION_JSON | typeof LOCATION_QUERY | undefined {
   const method = (config.method || '').toUpperCase()
   const pathname = new URL(axios.getUri(config), window.location.origin).pathname
-  if (!PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))) return undefined
+  const protectedRequest =
+    encryption.mode === 'REQUIRED'
+      ? pathname.startsWith('/admin/')
+      : encryption.mode === 'OPTIONAL' &&
+        (encryption.protectedPrefixes || []).some((prefix) => pathname.startsWith(prefix))
+  if (!protectedRequest) return undefined
   if (['POST', 'PUT', 'PATCH'].includes(method)) return LOCATION_JSON
   if (['GET', 'DELETE'].includes(method)) return LOCATION_QUERY
   return undefined
@@ -190,8 +187,6 @@ function buildAAD(
 export async function encryptAxiosRequest(
   rawConfig: InternalAxiosRequestConfig,
 ): Promise<InternalAxiosRequestConfig> {
-  const location = requestLocation(rawConfig)
-  if (!location) return rawConfig
   if (typeof FormData !== 'undefined' && rawConfig.data instanceof FormData) {
     return rawConfig
   }
@@ -199,6 +194,8 @@ export async function encryptAxiosRequest(
   const config = rawConfig as EncryptionAxiosConfig
   const encryption = await loadEncryptionConfig(config.baseURL)
   if (!encryption.enabled || encryption.mode === 'DISABLED') return config
+  const location = requestLocation(config, encryption)
+  if (!location) return config
 
   const session = await ensureSession(encryption, config.baseURL)
   const timestamp = String(Math.floor(adjustedNow() / 1000))

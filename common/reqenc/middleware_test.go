@@ -138,6 +138,52 @@ func TestRequiredModeRejectsPlaintext(t *testing.T) {
 	}
 }
 
+func TestOptionalModeRequiresEncryptionOnlyForSelectedRoutes(t *testing.T) {
+	service := &Service{config: Config{Scope: "test", Mode: ModeOptional}.WithDefaults()}
+	called := 0
+	handler := NewMiddleware(service, NewRegistry(
+		Rule{Method: http.MethodPost, Path: "/api/selected", Location: LocationJSON},
+		Rule{Method: http.MethodPost, Path: "/api/", PathPrefix: true, Location: LocationJSON, RequiredOnly: true},
+	)).Handle(func(http.ResponseWriter, *http.Request) {
+		called++
+	})
+
+	selected := httptest.NewRecorder()
+	handler(selected, httptest.NewRequest(http.MethodPost, "/api/selected", nil))
+	if selected.Code != http.StatusPreconditionRequired {
+		t.Fatalf("selected route status=%d", selected.Code)
+	}
+
+	other := httptest.NewRecorder()
+	handler(other, httptest.NewRequest(http.MethodPost, "/api/other", nil))
+	if other.Code != http.StatusOK || called != 1 {
+		t.Fatalf("unselected route status=%d called=%d", other.Code, called)
+	}
+}
+
+func TestRequiredModeUsesRequiredOnlyRulesAndHonorsExemptions(t *testing.T) {
+	service := &Service{config: Config{Scope: "test", Mode: ModeRequired}.WithDefaults()}
+	called := 0
+	handler := NewMiddleware(service, NewRegistry(
+		Rule{Method: http.MethodGet, Path: "/api/bootstrap", Exempt: true},
+		Rule{Method: http.MethodGet, Path: "/api/", PathPrefix: true, Location: LocationQuery, RequiredOnly: true},
+	)).Handle(func(http.ResponseWriter, *http.Request) {
+		called++
+	})
+
+	protected := httptest.NewRecorder()
+	handler(protected, httptest.NewRequest(http.MethodGet, "/api/users", nil))
+	if protected.Code != http.StatusPreconditionRequired {
+		t.Fatalf("required-only route status=%d", protected.Code)
+	}
+
+	exempt := httptest.NewRecorder()
+	handler(exempt, httptest.NewRequest(http.MethodGet, "/api/bootstrap", nil))
+	if exempt.Code != http.StatusOK || called != 1 {
+		t.Fatalf("exempt route status=%d called=%d", exempt.Code, called)
+	}
+}
+
 func TestRegistryMatchesPathPrefix(t *testing.T) {
 	registry := NewRegistry(Rule{
 		Method: http.MethodPost, Path: "/admin/system/", PathPrefix: true, Location: LocationJSON,
