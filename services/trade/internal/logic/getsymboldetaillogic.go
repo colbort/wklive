@@ -12,6 +12,7 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type GetSymbolDetailLogic struct {
@@ -48,28 +49,45 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 			Symbol: symbolToProto(item),
 		},
 	}
-	spot, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, tenantId, in.SymbolId)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
+	var spot *models.TTradeSymbolSpot
+	var contractCfg *models.TTradeSymbolContract
+	var configs []*models.TTradeSymbolLeverageConfig
+	err = mr.Finish(
+		func() error {
+			var queryErr error
+			spot, queryErr = l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, tenantId, in.SymbolId)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+		func() error {
+			var queryErr error
+			contractCfg, queryErr = l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, tenantId, in.SymbolId)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+		func() error {
+			var queryErr error
+			configs, _, queryErr = l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
+				TenantId: tenantId, SymbolId: in.SymbolId, MarketType: item.MarketType, Enabled: 1,
+			}, 0, 100)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+	)
+	if err != nil {
 		return nil, err
 	}
 	if spot != nil {
 		resp.Data.Spot = spotSymbolToProto(spot)
 	}
-	contractCfg, err := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, tenantId, in.SymbolId)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
-		return nil, err
-	}
 	if contractCfg != nil {
 		resp.Data.Contract = contractSymbolToProto(contractCfg)
-	}
-	configs, _, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
-		TenantId:   tenantId,
-		SymbolId:   in.SymbolId,
-		MarketType: item.MarketType,
-		Enabled:    1,
-	}, 0, 100)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
-		return nil, err
 	}
 	for _, cfg := range configs {
 		resp.Data.LeverageConfigs = append(resp.Data.LeverageConfigs, symbolLeverageConfigToProto(cfg))

@@ -13,6 +13,7 @@ import (
 	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type GetSystemCoreLogic struct {
@@ -31,47 +32,53 @@ func NewGetSystemCoreLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err error) {
 	tenantId := int64(0)
-	key := system.SysConfigType_SYSTEM_CORE
-	cd, err := l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
-		TenantId:  &tenantId,
-		ConfigKey: &key,
-	})
+	coreKey := system.SysConfigType_SYSTEM_CORE
+	storageKey := system.SysConfigType_OBJECT_STORAGE
+	var coreConfig, storageConfig *system.SysConfigDetailResp
+	err = mr.Finish(
+		func() error {
+			var callErr error
+			coreConfig, callErr = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
+				TenantId: &tenantId, ConfigKey: &coreKey,
+			})
+			return callErr
+		},
+		func() error {
+			var callErr error
+			storageConfig, callErr = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
+				TenantId: &tenantId, ConfigKey: &storageKey,
+			})
+			return callErr
+		},
+	)
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
-	if cd.GetBase().GetCode() != 200 || cd.GetData() == nil {
+	if coreConfig.GetBase().GetCode() != 200 || coreConfig.GetData() == nil {
 		return &types.GetSystemCoreResp{
 			RespBase: types.RespBase{
-				Code: cd.GetBase().GetCode(),
-				Msg:  cd.GetBase().GetMsg(),
+				Code: coreConfig.GetBase().GetCode(),
+				Msg:  coreConfig.GetBase().GetMsg(),
 			},
 		}, nil
 	}
 
 	var core system.SystemCore
-	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &core)
+	err = json.Unmarshal([]byte(coreConfig.GetData().GetConfigValue()), &core)
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
 
-	key = system.SysConfigType_OBJECT_STORAGE
-	cd, err = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
-		TenantId:  &tenantId,
-		ConfigKey: &key,
-	})
-	if err != nil {
-		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
-	}
-	if cd.GetBase().GetCode() != 200 || cd.GetData() == nil {
+	if storageConfig.GetBase().GetCode() != 200 || storageConfig.GetData() == nil {
 		return &types.GetSystemCoreResp{
 			RespBase: types.RespBase{
-				Code: cd.GetBase().GetCode(),
-				Msg:  cd.GetBase().GetMsg(),
+				Code: storageConfig.GetBase().GetCode(),
+				Msg:  storageConfig.GetBase().GetMsg(),
 			},
 		}, nil
 	}
 	var storage system.ObjectStorageConfig
-	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &storage)
+	err = json.Unmarshal([]byte(storageConfig.GetData().GetConfigValue()), &storage)
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
@@ -86,8 +93,8 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 	}
 	return &types.GetSystemCoreResp{
 		RespBase: types.RespBase{
-			Code: cd.Base.Code,
-			Msg:  cd.Base.Msg,
+			Code: coreConfig.GetBase().GetCode(),
+			Msg:  coreConfig.GetBase().GetMsg(),
 		},
 		Data: types.GetSystemCore{
 			SiteName:      core.SiteName,

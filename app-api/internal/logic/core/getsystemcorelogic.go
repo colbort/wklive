@@ -15,6 +15,7 @@ import (
 	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type GetSystemCoreLogic struct {
@@ -33,38 +34,46 @@ func NewGetSystemCoreLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err error) {
 	tenantId := int64(0)
-	key := system.SysConfigType_SYSTEM_CORE
-	cd, err := l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
-		TenantId:  &tenantId,
-		ConfigKey: &key,
-	})
+	coreKey := system.SysConfigType_SYSTEM_CORE
+	storageKey := system.SysConfigType_OBJECT_STORAGE
+	var coreConfig, storageConfig *system.SysConfigDetailResp
+	var intervalsResult *itick.KlineIntervalsResp
+	err = mr.Finish(
+		func() error {
+			var callErr error
+			coreConfig, callErr = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
+				TenantId: &tenantId, ConfigKey: &coreKey,
+			})
+			return callErr
+		},
+		func() error {
+			var callErr error
+			storageConfig, callErr = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
+				TenantId: &tenantId, ConfigKey: &storageKey,
+			})
+			return callErr
+		},
+		func() error {
+			var callErr error
+			intervalsResult, callErr = l.svcCtx.ItickCli.GetKlineIntervals(l.ctx, &itick.AppEmpty{})
+			return callErr
+		},
+	)
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
 	var config system.SystemCore
-	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &config)
-	if err != nil {
-		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
-	}
-	key = system.SysConfigType_OBJECT_STORAGE
-	cd, err = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
-		TenantId:  &tenantId,
-		ConfigKey: &key,
-	})
+	err = json.Unmarshal([]byte(coreConfig.GetData().GetConfigValue()), &config)
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
 	var storage system.ObjectStorageConfig
-	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &storage)
-	if err != nil {
-		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
-	}
-	result, err := l.svcCtx.ItickCli.GetKlineIntervals(l.ctx, &itick.AppEmpty{})
+	err = json.Unmarshal([]byte(storageConfig.GetData().GetConfigValue()), &storage)
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
 	intervals := make([]types.Interval, 0)
-	for _, item := range result.Data {
+	for _, item := range intervalsResult.GetData() {
 		intervals = append(intervals, types.Interval{
 			Name:  item.Name,
 			KType: item.KType,

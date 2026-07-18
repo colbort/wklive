@@ -10,6 +10,7 @@ import (
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type GetUserDetailLogic struct {
@@ -40,21 +41,38 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 		}, nil
 	}
 
-	// 查询身份信息
-	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
-		return nil, err
-	}
-	// 查询安全信息
-	security, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
-		return nil, err
-	}
-	userBanks, _, err := l.svcCtx.UserBankModel.FindPage(l.ctx, models.UserBankPageFilter{
-		TenantId: tuser.TenantId,
-		UserId:   in.UserId,
-	}, 0, 100)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
+	var identity *models.TUserIdentity
+	var security *models.TUserSecurity
+	var userBanks []*models.TUserBank
+	err = mr.Finish(
+		func() error {
+			var queryErr error
+			identity, queryErr = l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+		func() error {
+			var queryErr error
+			security, queryErr = l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+		func() error {
+			var queryErr error
+			userBanks, _, queryErr = l.svcCtx.UserBankModel.FindPage(l.ctx, models.UserBankPageFilter{
+				TenantId: tuser.TenantId, UserId: in.UserId,
+			}, 0, 100)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+	)
+	if err != nil {
 		return nil, err
 	}
 	return &user.GetUserDetailResp{
