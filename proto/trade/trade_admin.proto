@@ -149,6 +149,9 @@ service TradeAdmin {
   rpc GetSettlementInstructionList(GetSettlementInstructionListReq) returns (GetSettlementInstructionListResp);
   // 仅重置失败/人工处理的结算指令；不得修改金额
   rpc RetrySettlementInstruction(RetrySettlementInstructionReq) returns (AdminCommonResp);
+  rpc SetInsuranceFundAccount(SetInsuranceFundAccountReq) returns (AdminCommonResp);
+  rpc GetInsuranceFundAccountList(GetInsuranceFundAccountListReq) returns (GetInsuranceFundAccountListResp);
+  rpc GetMarketSnapshotList(GetMarketSnapshotListReq) returns (GetMarketSnapshotListResp);
 }
 
 message AdminCommonResp { common.RespBase base = 1; }
@@ -717,7 +720,7 @@ message ContractLiquidation {
   PositionSide position_side = 6; MarginMode margin_mode = 7; string trigger_mark_price = 8; string trigger_index_price = 9;
   string trigger_qty = 10; string liquidated_qty = 11; string maintenance_margin = 12; string account_equity = 13;
   string bankruptcy_price = 14; string liquidation_fee = 15; string insurance_fund_amount = 16; string adl_qty = 17;
-  LiquidationStatus status = 18; string reason = 19; int64 started_at = 20; int64 completed_at = 21; int64 create_times = 22; int64 update_times = 23;
+  LiquidationStatus status = 18; string reason = 19; int64 started_at = 20; int64 completed_at = 21; int64 create_times = 22; int64 update_times = 23; string trigger_snapshot_id = 24;
 }
 message GetLiquidationListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 user_id = 3; int64 symbol_id = 4; int64 position_id = 5; LiquidationStatus status = 6; TimeRange time_range = 7; }
 message GetLiquidationListResp { common.RespBase base = 1; repeated ContractLiquidation data = 2; }
@@ -729,6 +732,15 @@ message TradeSecondsPriceSnapshot {
 }
 message GetSecondsPriceSnapshotListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 order_id = 3; SecondsPriceSnapshotType snapshot_type = 4; }
 message GetSecondsPriceSnapshotListResp { common.RespBase base = 1; repeated TradeSecondsPriceSnapshot data = 2; }
+
+message InsuranceFundAccount { int64 id = 1; int64 tenant_id = 2; int64 symbol_id = 3; string settle_asset = 4; int64 fund_user_id = 5; common.WalletType wallet_type = 6; common.YesNo adl_enabled = 7; common.Enable status = 8; int64 version = 9; int64 create_times = 10; int64 update_times = 11; }
+message SetInsuranceFundAccountReq { int64 id = 1; int64 tenant_id = 2; int64 symbol_id = 3; string settle_asset = 4; int64 fund_user_id = 5; common.WalletType wallet_type = 6; common.YesNo adl_enabled = 7; common.Enable status = 8; int64 version = 9; }
+message GetInsuranceFundAccountListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 symbol_id = 3; string settle_asset = 4; common.Enable status = 5; }
+message GetInsuranceFundAccountListResp { common.RespBase base = 1; repeated InsuranceFundAccount data = 2; }
+
+message TradeMarketSnapshot { int64 id = 1; string snapshot_id = 2; string snapshot_kind = 3; int64 symbol_id = 4; string source = 5; string price = 6; string mark_price = 7; string index_price = 8; string funding_rate = 9; int64 source_timestamp = 10; int64 snapshot_timestamp = 11; int64 revision = 12; string formula_version = 13; common.YesNo confirmed = 14; string raw_payload = 15; int64 create_times = 16; }
+message GetMarketSnapshotListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 symbol_id = 3; string snapshot_kind = 4; int64 start_time = 5; int64 end_time = 6; }
+message GetMarketSnapshotListResp { common.RespBase base = 1; repeated TradeMarketSnapshot data = 2; }
 
 message TradeAssetReservation {
   int64 id = 1; int64 order_id = 2; string reservation_no = 3; string asset = 4; string reserved_amount = 5;

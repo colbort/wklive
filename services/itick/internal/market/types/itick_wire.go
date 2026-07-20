@@ -1,6 +1,9 @@
 package types
 
-import "encoding/json"
+import (
+	"encoding/json"
+	cache "wklive/common/market"
+)
 
 type SubscribeReq struct {
 	Ac     string `json:"ac"`
@@ -38,61 +41,18 @@ type UpstreamData struct {
 	A    json.RawMessage `json:"a,omitempty"`
 	B    json.RawMessage `json:"b,omitempty"`
 }
-type DepthLevel struct {
-	Price        float64 `json:"p"`
-	Volume       float64 `json:"v"`
-	Position     int64   `json:"po"`
-	OriginVolume float64 `json:"o"`
-}
-type DepthPayload struct {
-	Asks []*DepthLevel `json:"asks"`
-	Bids []*DepthLevel `json:"bids"`
-}
-type QuotePayload struct {
-	LastPrice float64 `json:"lastPrice"`
-	Open      float64 `json:"open"`
-	High      float64 `json:"high"`
-	Low       float64 `json:"low"`
-	Volume    float64 `json:"volume"`
-	Turnover  float64 `json:"turnover"`
-	Ts        int64   `json:"ts"`
-}
-type TickPayload struct {
-	LastPrice float64 `json:"lastPrice"`
-	Volume    float64 `json:"volume"`
-	Turnover  float64 `json:"turnover"`
-	Ts        int64   `json:"ts"`
-}
-type KlinePayload struct {
-	Interval      string  `json:"interval"`
-	Open          float64 `json:"open"`
-	High          float64 `json:"high"`
-	Low           float64 `json:"low"`
-	Close         float64 `json:"close"`
-	Volume        float64 `json:"volume"`
-	Turnover      float64 `json:"turnover"`
-	Ts            int64   `json:"ts"`
-	Source        string  `json:"source,omitempty"`
-	Revision      int64   `json:"revision,omitempty"`
-	IsClosed      bool    `json:"isClosed"`
-	Confirmed     bool    `json:"confirmed"`
-	ActualCount   int32   `json:"actualCount,omitempty"`
-	ExpectedCount int32   `json:"expectedCount,omitempty"`
-}
-
-type Topic string
+type DepthLevel = cache.DepthLevel
+type DepthPayload = cache.DepthPayload
+type QuotePayload = cache.QuotePayload
+type TickPayload = cache.TickPayload
+type KlinePayload = cache.KlinePayload
+type Topic = cache.Topic
 
 const (
-	TopicQuote Topic = "quote"
-	TopicDepth Topic = "depth"
-	TopicTick  Topic = "tick"
-	TopicKline Topic = "kline"
+	TopicQuote = cache.TopicQuote
+	TopicDepth = cache.TopicDepth
+	TopicTick  = cache.TopicTick
+	TopicKline = cache.TopicKline
 )
 
-type ClientMessage struct {
-	Topic        Topic  `json:"topic"`
-	CategoryCode string `json:"categoryCode"`
-	Symbol       string `json:"symbol"`
-	Market       string `json:"market,omitempty"`
-	Interval     string `json:"interval,omitempty"`
-}
+type ClientMessage = cache.ClientMessage

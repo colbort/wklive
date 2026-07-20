@@ -28,6 +28,7 @@ type (
 	TAssetFlowModel interface {
 		tAssetFlowModel
 		FindPage(ctx context.Context, filter AssetFlowPageFilter, cursor int64, limit int64) ([]*TAssetFlow, int64, error)
+		FindOneByTenantBizNo(ctx context.Context, tenantID int64, bizNo string) (*TAssetFlow, error)
 	}
 
 	customTAssetFlowModel struct {
@@ -40,6 +41,15 @@ func NewTAssetFlowModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opti
 	return &customTAssetFlowModel{
 		defaultTAssetFlowModel: newTAssetFlowModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTAssetFlowModel) FindOneByTenantBizNo(ctx context.Context, tenantID int64, bizNo string) (*TAssetFlow, error) {
+	var row TAssetFlow
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND biz_no=? ORDER BY id DESC LIMIT 1", tAssetFlowRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, bizNo); err != nil {
+		return nil, err
+	}
+	return &row, nil
 }
 
 func (m *defaultTAssetFlowModel) FindPage(ctx context.Context, filter AssetFlowPageFilter, cursor int64, limit int64) ([]*TAssetFlow, int64, error) {

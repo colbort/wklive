@@ -107,7 +107,7 @@ func (l *ProcessReservationReleasesLogic) markSucceeded(item *models.TTradeSettl
 		conn := sqlx.NewSqlConnFromSession(session)
 		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
-		current, err := instructionModel.FindOne(ctx, item.Id)
+		current, err := instructionModel.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
 			return err
 		}
@@ -117,7 +117,7 @@ func (l *ProcessReservationReleasesLogic) markSucceeded(item *models.TTradeSettl
 		if current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
 			return fmt.Errorf("reservation release instruction is not processing")
 		}
-		reservation, err := reservationModel.FindOneByTenantIdReservationNo(ctx, item.TenantId, item.ReservationNo)
+		reservation, err := reservationModel.FindOneByReservationNoForUpdate(ctx, item.TenantId, item.ReservationNo)
 		if err != nil {
 			return err
 		}
@@ -146,9 +146,12 @@ func (l *ProcessReservationReleasesLogic) markFailed(item *models.TTradeSettleme
 		conn := sqlx.NewSqlConnFromSession(session)
 		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
-		current, err := instructionModel.FindOne(ctx, item.Id)
+		current, err := instructionModel.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
 			return err
+		}
+		if current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) || current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+			return nil
 		}
 		current.RetryCount++
 		terminal := current.RetryCount >= spotSettlementMaxRetry

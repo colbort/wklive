@@ -636,6 +636,11 @@ func feeRateByLiquidity(liquidity trade.LiquidityType, makerFeeRate, takerFeeRat
 }
 
 func feeAssetForOrder(order *models.TTradeOrder, symbol *models.TTradeSymbol) string {
+	if order != nil && order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) {
+		// Spot fees are denominated in quote asset in the current reservation
+		// model, so they are always backed by the same frozen asset.
+		return symbol.QuoteAsset
+	}
 	if order.FeeAsset != "" {
 		return order.FeeAsset
 	}

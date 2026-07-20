@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"sync"
 	"time"
-	"wklive/services/itick/internal/market/types"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -36,16 +35,26 @@ redis.call('PEXPIRE', KEYS[2], ARGV[5])
 return 1
 `)
 
+var setVersionedRealtimeScript = redis.NewScript(`
+local oldTs = tonumber(redis.call('HGET', KEYS[2], 'source_ts') or '0')
+local sourceTs = tonumber(ARGV[2])
+if sourceTs <= 0 or oldTs >= sourceTs then return 0 end
+redis.call('SET', KEYS[1], ARGV[1], 'PX', ARGV[3])
+redis.call('HSET', KEYS[2], 'source_ts', sourceTs)
+redis.call('PEXPIRE', KEYS[2], ARGV[3])
+return 1
+`)
+
 type MarketDataCache struct {
 	rdb           *redis.Client
 	mu            sync.RWMutex
 	klineStaleTTL time.Duration
-	quoteHandler  func(context.Context, types.ClientMessage, *types.QuotePayload)
-	tickHandler   func(context.Context, types.ClientMessage, *types.TickPayload)
+	quoteHandler  func(context.Context, ClientMessage, *QuotePayload)
+	tickHandler   func(context.Context, ClientMessage, *TickPayload)
 }
 
 type CachedMarketData struct {
-	Message types.ClientMessage
+	Message ClientMessage
 	Payload any
 	Version string
 }
@@ -63,7 +72,7 @@ func (b *MarketDataCache) SetKlineStaleTTL(ttl time.Duration) {
 	b.mu.Unlock()
 }
 
-func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payload any) error {
+func (b *MarketDataCache) Set(ctx context.Context, msg ClientMessage, payload any) error {
 	msg = NormalizeClientMessage(msg)
 
 	raw, err := json.Marshal(payload)
@@ -79,7 +88,7 @@ func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payl
 		Interval:     msg.Interval,
 		Payload:      raw,
 	}
-	if kline, ok := payload.(*types.KlinePayload); ok && kline != nil {
+	if kline, ok := payload.(*KlinePayload); ok && kline != nil {
 		env.Source, env.Revision = kline.Source, kline.Revision
 	}
 
@@ -88,7 +97,7 @@ func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payl
 		return err
 	}
 
-	if msg.Topic == types.TopicKline {
+	if msg.Topic == TopicKline {
 		priority := klineCachePriority(env.Source)
 		if env.Revision <= 0 {
 			env.Revision = time.Now().UnixMilli()
@@ -101,10 +110,32 @@ func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payl
 			priority, env.Revision, marketDataTTL(msg.Topic).Milliseconds(), staleTTL.Milliseconds()).Result(); err != nil {
 			return err
 		}
-	} else if err := b.rdb.Set(ctx, marketDataKey(msg), raw, marketDataTTL(msg.Topic)).Err(); err != nil {
-		return err
+	} else {
+		sourceTs := int64(0)
+		switch v := payload.(type) {
+		case *QuotePayload:
+			if v != nil {
+				sourceTs = v.Ts
+			}
+		case *TickPayload:
+			if v != nil {
+				sourceTs = v.Ts
+			}
+		}
+		if sourceTs > 0 {
+			key := marketDataKey(msg)
+			accepted, runErr := setVersionedRealtimeScript.Run(ctx, b.rdb, []string{key, key + ":meta"}, raw, sourceTs, marketDataTTL(msg.Topic).Milliseconds()).Int()
+			if runErr != nil {
+				return runErr
+			}
+			if accepted == 0 {
+				return nil
+			}
+		} else if err := b.rdb.Set(ctx, marketDataKey(msg), raw, marketDataTTL(msg.Topic)).Err(); err != nil {
+			return err
+		}
 	}
-	if quote, ok := payload.(*types.QuotePayload); ok && quote != nil {
+	if quote, ok := payload.(*QuotePayload); ok && quote != nil {
 		b.mu.RLock()
 		handler := b.quoteHandler
 		b.mu.RUnlock()
@@ -112,7 +143,7 @@ func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payl
 			go handler(ctx, msg, quote)
 		}
 	}
-	if tick, ok := payload.(*types.TickPayload); ok && tick != nil {
+	if tick, ok := payload.(*TickPayload); ok && tick != nil {
 		b.mu.RLock()
 		handler := b.tickHandler
 		b.mu.RUnlock()
@@ -134,19 +165,19 @@ func klineCachePriority(source string) int {
 	}
 }
 
-func (b *MarketDataCache) SetTickHandler(handler func(context.Context, types.ClientMessage, *types.TickPayload)) {
+func (b *MarketDataCache) SetTickHandler(handler func(context.Context, ClientMessage, *TickPayload)) {
 	b.mu.Lock()
 	b.tickHandler = handler
 	b.mu.Unlock()
 }
 
-func (b *MarketDataCache) SetQuoteHandler(handler func(context.Context, types.ClientMessage, *types.QuotePayload)) {
+func (b *MarketDataCache) SetQuoteHandler(handler func(context.Context, ClientMessage, *QuotePayload)) {
 	b.mu.Lock()
 	b.quoteHandler = handler
 	b.mu.Unlock()
 }
 
-func (b *MarketDataCache) ReadMany(ctx context.Context, msgs []types.ClientMessage) ([]CachedMarketData, error) {
+func (b *MarketDataCache) ReadMany(ctx context.Context, msgs []ClientMessage) ([]CachedMarketData, error) {
 	if len(msgs) == 0 {
 		return nil, nil
 	}
@@ -165,7 +196,7 @@ func (b *MarketDataCache) ReadMany(ctx context.Context, msgs []types.ClientMessa
 			continue
 		}
 		payloadRaw := json.RawMessage(raw)
-		if msgs[i].Topic == types.TopicKline {
+		if msgs[i].Topic == TopicKline {
 			var env CacheEnvelope
 			if err := json.Unmarshal([]byte(raw), &env); err != nil {
 				continue
@@ -181,50 +212,50 @@ func (b *MarketDataCache) ReadMany(ctx context.Context, msgs []types.ClientMessa
 	return out, nil
 }
 
-func marketDataKey(msg types.ClientMessage) string {
+func marketDataKey(msg ClientMessage) string {
 	msg = NormalizeClientMessage(msg)
-	if msg.Topic == types.TopicKline {
+	if msg.Topic == TopicKline {
 		return fmt.Sprintf("itick:v1:kline:%s:%s:%s:%s", msg.CategoryCode, msg.Market, msg.Symbol, msg.Interval)
 	}
 	return fmt.Sprintf("itick:%s:%s:%s:%s", msg.Topic, msg.CategoryCode, msg.Market, msg.Symbol)
 }
 
-func marketDataTTL(topic types.Topic) time.Duration {
+func marketDataTTL(topic Topic) time.Duration {
 	switch topic {
-	case types.TopicDepth:
+	case TopicDepth:
 		return 5 * time.Minute
-	case types.TopicKline:
+	case TopicKline:
 		return 24 * time.Hour
 	default:
 		return 30 * time.Minute
 	}
 }
 
-func decodeMarketDataPayload(topic types.Topic, raw json.RawMessage) (any, error) {
+func decodeMarketDataPayload(topic Topic, raw json.RawMessage) (any, error) {
 	switch topic {
-	case types.TopicQuote:
-		var v types.QuotePayload
+	case TopicQuote:
+		var v QuotePayload
 		if err := json.Unmarshal(raw, &v); err != nil {
 			return nil, err
 		}
 		return &v, nil
 
-	case types.TopicTick:
-		var v types.TickPayload
+	case TopicTick:
+		var v TickPayload
 		if err := json.Unmarshal(raw, &v); err != nil {
 			return nil, err
 		}
 		return &v, nil
 
-	case types.TopicDepth:
-		var v types.DepthPayload
+	case TopicDepth:
+		var v DepthPayload
 		if err := json.Unmarshal(raw, &v); err != nil {
 			return nil, err
 		}
 		return &v, nil
 
-	case types.TopicKline:
-		var v types.KlinePayload
+	case TopicKline:
+		var v KlinePayload
 		if err := json.Unmarshal(raw, &v); err != nil {
 			return nil, err
 		}

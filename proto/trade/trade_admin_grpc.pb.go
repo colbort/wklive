@@ -64,6 +64,9 @@ const (
 	TradeAdmin_GetAssetReservationList_FullMethodName      = "/trade.TradeAdmin/GetAssetReservationList"
 	TradeAdmin_GetSettlementInstructionList_FullMethodName = "/trade.TradeAdmin/GetSettlementInstructionList"
 	TradeAdmin_RetrySettlementInstruction_FullMethodName   = "/trade.TradeAdmin/RetrySettlementInstruction"
+	TradeAdmin_SetInsuranceFundAccount_FullMethodName      = "/trade.TradeAdmin/SetInsuranceFundAccount"
+	TradeAdmin_GetInsuranceFundAccountList_FullMethodName  = "/trade.TradeAdmin/GetInsuranceFundAccountList"
+	TradeAdmin_GetMarketSnapshotList_FullMethodName        = "/trade.TradeAdmin/GetMarketSnapshotList"
 )
 
 // TradeAdminClient is the client API for TradeAdmin service.
@@ -157,6 +160,9 @@ type TradeAdminClient interface {
 	GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error)
 	// 仅重置失败/人工处理的结算指令；不得修改金额
 	RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	GetInsuranceFundAccountList(ctx context.Context, in *GetInsuranceFundAccountListReq, opts ...grpc.CallOption) (*GetInsuranceFundAccountListResp, error)
+	GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error)
 }
 
 type tradeAdminClient struct {
@@ -617,6 +623,36 @@ func (c *tradeAdminClient) RetrySettlementInstruction(ctx context.Context, in *R
 	return out, nil
 }
 
+func (c *tradeAdminClient) SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_SetInsuranceFundAccount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetInsuranceFundAccountList(ctx context.Context, in *GetInsuranceFundAccountListReq, opts ...grpc.CallOption) (*GetInsuranceFundAccountListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInsuranceFundAccountListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetInsuranceFundAccountList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMarketSnapshotListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetMarketSnapshotList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TradeAdminServer is the server API for TradeAdmin service.
 // All implementations must embed UnimplementedTradeAdminServer
 // for forward compatibility.
@@ -708,6 +744,9 @@ type TradeAdminServer interface {
 	GetSettlementInstructionList(context.Context, *GetSettlementInstructionListReq) (*GetSettlementInstructionListResp, error)
 	// 仅重置失败/人工处理的结算指令；不得修改金额
 	RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*AdminCommonResp, error)
+	SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*AdminCommonResp, error)
+	GetInsuranceFundAccountList(context.Context, *GetInsuranceFundAccountListReq) (*GetInsuranceFundAccountListResp, error)
+	GetMarketSnapshotList(context.Context, *GetMarketSnapshotListReq) (*GetMarketSnapshotListResp, error)
 	mustEmbedUnimplementedTradeAdminServer()
 }
 
@@ -852,6 +891,15 @@ func (UnimplementedTradeAdminServer) GetSettlementInstructionList(context.Contex
 }
 func (UnimplementedTradeAdminServer) RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetrySettlementInstruction not implemented")
+}
+func (UnimplementedTradeAdminServer) SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetInsuranceFundAccount not implemented")
+}
+func (UnimplementedTradeAdminServer) GetInsuranceFundAccountList(context.Context, *GetInsuranceFundAccountListReq) (*GetInsuranceFundAccountListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetInsuranceFundAccountList not implemented")
+}
+func (UnimplementedTradeAdminServer) GetMarketSnapshotList(context.Context, *GetMarketSnapshotListReq) (*GetMarketSnapshotListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMarketSnapshotList not implemented")
 }
 func (UnimplementedTradeAdminServer) mustEmbedUnimplementedTradeAdminServer() {}
 func (UnimplementedTradeAdminServer) testEmbeddedByValue()                    {}
@@ -1684,6 +1732,60 @@ func _TradeAdmin_RetrySettlementInstruction_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TradeAdmin_SetInsuranceFundAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetInsuranceFundAccountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).SetInsuranceFundAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_SetInsuranceFundAccount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).SetInsuranceFundAccount(ctx, req.(*SetInsuranceFundAccountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetInsuranceFundAccountList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInsuranceFundAccountListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetInsuranceFundAccountList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetInsuranceFundAccountList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetInsuranceFundAccountList(ctx, req.(*GetInsuranceFundAccountListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetMarketSnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMarketSnapshotListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetMarketSnapshotList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetMarketSnapshotList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetMarketSnapshotList(ctx, req.(*GetMarketSnapshotListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TradeAdmin_ServiceDesc is the grpc.ServiceDesc for TradeAdmin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1870,6 +1972,18 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RetrySettlementInstruction",
 			Handler:    _TradeAdmin_RetrySettlementInstruction_Handler,
+		},
+		{
+			MethodName: "SetInsuranceFundAccount",
+			Handler:    _TradeAdmin_SetInsuranceFundAccount_Handler,
+		},
+		{
+			MethodName: "GetInsuranceFundAccountList",
+			Handler:    _TradeAdmin_GetInsuranceFundAccountList_Handler,
+		},
+		{
+			MethodName: "GetMarketSnapshotList",
+			Handler:    _TradeAdmin_GetMarketSnapshotList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

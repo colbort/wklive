@@ -378,6 +378,13 @@ export type {
   GetSettlementInstructionListReq,
   GetSettlementInstructionListResp,
   RetrySettlementInstructionReq,
+  InsuranceFundAccount,
+  SetInsuranceFundAccountReq,
+  GetInsuranceFundAccountListReq,
+  GetInsuranceFundAccountListResp,
+  TradeMarketSnapshot,
+  GetMarketSnapshotListReq,
+  GetMarketSnapshotListResp,
 } from './trade/TradeService'
 export type {
   MemberRespBase,

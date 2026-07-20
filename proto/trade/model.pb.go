@@ -2738,6 +2738,7 @@ type ContractPosition struct {
 	RiskRate          string                 `protobuf:"bytes,28,opt,name=risk_rate,json=riskRate,proto3" json:"risk_rate,omitempty"`
 	LastFundingTime   int64                  `protobuf:"varint,29,opt,name=last_funding_time,json=lastFundingTime,proto3" json:"last_funding_time,omitempty"`
 	ClosedAt          int64                  `protobuf:"varint,30,opt,name=closed_at,json=closedAt,proto3" json:"closed_at,omitempty"`
+	MarkSnapshotId    string                 `protobuf:"bytes,31,opt,name=mark_snapshot_id,json=markSnapshotId,proto3" json:"mark_snapshot_id,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -2980,6 +2981,13 @@ func (x *ContractPosition) GetClosedAt() int64 {
 		return x.ClosedAt
 	}
 	return 0
+}
+
+func (x *ContractPosition) GetMarkSnapshotId() string {
+	if x != nil {
+		return x.MarkSnapshotId
+	}
+	return ""
 }
 
 type ContractPositionHistory struct {
@@ -4883,7 +4891,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\auser_id\x18\x05 \x01(\x03R\x06userId\x128\n" +
 	"\rcancel_source\x18\x06 \x01(\x0e2\x13.trade.CancelSourceR\fcancelSource\x12#\n" +
 	"\rcancel_reason\x18\a \x01(\tR\fcancelReason\x12!\n" +
-	"\fcreate_times\x18\b \x01(\x03R\vcreateTimes\"\xec\b\n" +
+	"\fcreate_times\x18\b \x01(\x03R\vcreateTimes\"\x96\t\n" +
 	"\x10ContractPosition\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -4918,7 +4926,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x10bankruptcy_price\x18\x1b \x01(\tR\x0fbankruptcyPrice\x12\x1b\n" +
 	"\trisk_rate\x18\x1c \x01(\tR\briskRate\x12*\n" +
 	"\x11last_funding_time\x18\x1d \x01(\x03R\x0flastFundingTime\x12\x1b\n" +
-	"\tclosed_at\x18\x1e \x01(\x03R\bclosedAt\"\xe9\n" +
+	"\tclosed_at\x18\x1e \x01(\x03R\bclosedAt\x12(\n" +
+	"\x10mark_snapshot_id\x18\x1f \x01(\tR\x0emarkSnapshotId\"\xe9\n" +
 	"\n" +
 	"\x17ContractPositionHistory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +

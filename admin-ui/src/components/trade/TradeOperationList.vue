@@ -194,6 +194,7 @@ const configs: Record<Kind, { filters: string[]; columns: string[]; api: ListApi
       'symbolId',
       'positionId',
       'positionSide',
+	  'triggerSnapshotId',
       'triggerQty',
       'liquidatedQty',
       'liquidationFee',

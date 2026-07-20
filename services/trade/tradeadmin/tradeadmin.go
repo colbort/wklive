@@ -84,6 +84,11 @@ type (
 	GetUserTradeLimitReq             = trade.GetUserTradeLimitReq
 	GetUserTradeLimitResp            = trade.GetUserTradeLimitResp
 	RetrySettlementInstructionReq    = trade.RetrySettlementInstructionReq
+	SetInsuranceFundAccountReq       = trade.SetInsuranceFundAccountReq
+	GetInsuranceFundAccountListReq   = trade.GetInsuranceFundAccountListReq
+	GetInsuranceFundAccountListResp  = trade.GetInsuranceFundAccountListResp
+	GetMarketSnapshotListReq         = trade.GetMarketSnapshotListReq
+	GetMarketSnapshotListResp        = trade.GetMarketSnapshotListResp
 	RetryTradeEventReq               = trade.RetryTradeEventReq
 	SetContractRiskLimitTierReq      = trade.SetContractRiskLimitTierReq
 	SetContractSymbolConfigReq       = trade.SetContractSymbolConfigReq
@@ -187,6 +192,9 @@ type (
 		GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error)
 		// 仅重置失败/人工处理的结算指令；不得修改金额
 		RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		GetInsuranceFundAccountList(ctx context.Context, in *GetInsuranceFundAccountListReq, opts ...grpc.CallOption) (*GetInsuranceFundAccountListResp, error)
+		GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error)
 	}
 
 	defaultTradeAdmin struct {
@@ -463,4 +471,14 @@ func (m *defaultTradeAdmin) GetSettlementInstructionList(ctx context.Context, in
 func (m *defaultTradeAdmin) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.RetrySettlementInstruction(ctx, in, opts...)
+}
+
+func (m *defaultTradeAdmin) SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	return trade.NewTradeAdminClient(m.cli.Conn()).SetInsuranceFundAccount(ctx, in, opts...)
+}
+func (m *defaultTradeAdmin) GetInsuranceFundAccountList(ctx context.Context, in *GetInsuranceFundAccountListReq, opts ...grpc.CallOption) (*GetInsuranceFundAccountListResp, error) {
+	return trade.NewTradeAdminClient(m.cli.Conn()).GetInsuranceFundAccountList(ctx, in, opts...)
+}
+func (m *defaultTradeAdmin) GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error) {
+	return trade.NewTradeAdminClient(m.cli.Conn()).GetMarketSnapshotList(ctx, in, opts...)
 }

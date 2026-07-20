@@ -100,6 +100,25 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		if (in.SecondsDirection == 1 && secondsCfg.UpEnabled != 1) || (in.SecondsDirection == 2 && secondsCfg.DownEnabled != 1) || amount.LessThan(secondsCfg.MinStake) || (secondsCfg.MaxStake.IsPositive() && amount.GreaterThan(secondsCfg.MaxStake)) {
 			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
 		}
+		if secondsCfg.MaxExposureAmount.IsPositive() {
+			lockKey := fmt.Sprintf("trade:seconds:exposure:%d:%d", tenantId, in.SymbolId)
+			lockValue := fmt.Sprintf("%d:%d:%d", userId, utils.NowMillis(), in.DurationSeconds)
+			if lockErr := acquireTradeTaskLock(l.ctx, l.svcCtx.Redis, lockKey, lockValue); lockErr != nil {
+				return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "seconds contract exposure is being updated; retry")}, nil
+			}
+			defer func() { _ = releaseTradeTaskLock(context.Background(), l.svcCtx.Redis, lockKey, lockValue) }()
+			exposure, exposureErr := l.svcCtx.TradeOrderSecondsModel.SumExposure(l.ctx, tenantId, in.SymbolId, []int64{
+				int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVATING),
+				int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVE),
+				int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING),
+			})
+			if exposureErr != nil {
+				return nil, exposureErr
+			}
+			if exposure.Add(amount).GreaterThan(secondsCfg.MaxExposureAmount) {
+				return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "seconds contract exposure limit exceeded")}, nil
+			}
+		}
 	} else {
 		orderType, triggerKind = normalizeOrderTypeAndTriggerKind(orderType, triggerKind, price)
 		if !isSupportedOrderType(orderType) || !isSupportedTriggerKind(triggerKind) {
@@ -574,6 +593,17 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		if err != nil {
 			return nil, err
 		}
+		// Cross margin is account-level risk. It cannot be accepted until wallet
+		// equity, open-order margin and every position sharing the margin asset are
+		// continuously projected from Asset and mark-price events. Silently using
+		// the isolated-position formula here would permit orders that cannot be
+		// liquidated correctly.
+		if in.MarginMode == trade.MarginMode_MARGIN_MODE_CROSS {
+			return nil, errors.New("cross margin is temporarily unavailable: account-level risk projection is not enabled")
+		}
+		if in.MarginMode != trade.MarginMode_MARGIN_MODE_ISOLATED {
+			return nil, errors.New("invalid derivative margin mode")
+		}
 		if symbol.ContractType != int64(trade.ContractType_CONTRACT_TYPE_PERPETUAL) && symbol.ContractType != int64(trade.ContractType_CONTRACT_TYPE_DELIVERY) {
 			return nil, errors.New("invalid derivative contract type")
 		}
@@ -591,7 +621,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		if !qty.IsPositive() || !plan.riskPrice.IsPositive() || leverage <= 0 {
 			return nil, errors.New("derivative order requires quantity, risk price and leverage")
 		}
-		if in.MarginMode == trade.MarginMode_MARGIN_MODE_CROSS && cfg.SupportCross != 1 || in.MarginMode == trade.MarginMode_MARGIN_MODE_ISOLATED && cfg.SupportIsolated != 1 {
+		if cfg.SupportIsolated != 1 {
 			return nil, errors.New("margin mode is not supported")
 		}
 		if in.PositionSide != trade.PositionSide_POSITION_SIDE_NET && in.PositionSide != trade.PositionSide_POSITION_SIDE_LONG && in.PositionSide != trade.PositionSide_POSITION_SIDE_SHORT {

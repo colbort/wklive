@@ -6,11 +6,13 @@ import (
 	"os"
 	"time"
 	bus "wklive/common/bus/redis"
+	cache "wklive/common/market"
 	"wklive/services/trade/internal/config"
 	"wklive/services/trade/models"
 
 	"wklive/proto/asset"
 
+	v9 "github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -40,6 +42,7 @@ type ServiceContext struct {
 	ContractMarginSnapshotModel models.TContractMarginSnapshotModel
 	ContractRiskLimitTierModel  models.TContractRiskLimitTierModel
 	ContractLiquidationModel    models.TContractLiquidationModel
+	ContractInsuranceFundModel  models.TContractInsuranceFundAccountModel
 	ContractFundingBatchModel   models.TContractFundingBatchModel
 	ContractFundingSettleModel  models.TContractFundingSettlementModel
 	ContractDeliveryBatchModel  models.TContractDeliveryBatchModel
@@ -58,11 +61,14 @@ type ServiceContext struct {
 	TradeAssetReservationModel  models.TTradeAssetReservationModel
 	TradeSettlementInstrModel   models.TTradeSettlementInstructionModel
 	AssetClient                 asset.AssetInternalClient
+	MarketDataCache             *cache.MarketDataCache
+	TradeMarketSnapshotModel    models.TTradeMarketSnapshotModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
+	marketRedis := v9.NewClient(&v9.Options{Addr: c.CacheRedis[0].Host, Username: c.CacheRedis[0].User, Password: c.CacheRedis[0].Pass})
 	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 	tradeEventPublisher := bus.NewPublisherFromRedisConf(c.CacheRedis[0].RedisConf)
 	tradeEventSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
@@ -92,6 +98,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ContractMarginSnapshotModel: models.NewTContractMarginSnapshotModel(conn, c.CacheRedis),
 		ContractRiskLimitTierModel:  models.NewTContractRiskLimitTierModel(conn, c.CacheRedis),
 		ContractLiquidationModel:    models.NewTContractLiquidationModel(conn, c.CacheRedis),
+		ContractInsuranceFundModel:  models.NewTContractInsuranceFundAccountModel(conn),
 		ContractFundingBatchModel:   models.NewTContractFundingBatchModel(conn, c.CacheRedis),
 		ContractFundingSettleModel:  models.NewTContractFundingSettlementModel(conn, c.CacheRedis),
 		ContractDeliveryBatchModel:  models.NewTContractDeliveryBatchModel(conn, c.CacheRedis),
@@ -110,6 +117,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TradeAssetReservationModel:  models.NewTTradeAssetReservationModel(conn, c.CacheRedis),
 		TradeSettlementInstrModel:   models.NewTTradeSettlementInstructionModel(conn, c.CacheRedis),
 		AssetClient:                 asset.NewAssetInternalClient(assetCli.Conn()),
+		MarketDataCache:             cache.NewMarketDataCache(marketRedis),
+		TradeMarketSnapshotModel:    models.NewTTradeMarketSnapshotModel(conn),
 	}
 }
 

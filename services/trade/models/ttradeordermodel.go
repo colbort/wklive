@@ -46,6 +46,7 @@ type (
 		FindOneForUpdate(ctx context.Context, id int64) (*TTradeOrder, error)
 		FindOneByTenantIdOrderNoForUpdate(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error)
 		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error)
+		CountBySymbolStatuses(ctx context.Context, tenantID, symbolID int64, statuses []int64) (int64, error)
 	}
 
 	customTTradeOrderModel struct {
@@ -58,6 +59,24 @@ func NewTTradeOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opt
 	return &customTTradeOrderModel{
 		defaultTTradeOrderModel: newTTradeOrderModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTTradeOrderModel) CountBySymbolStatuses(ctx context.Context, tenantID, symbolID int64, statuses []int64) (int64, error) {
+	if len(statuses) == 0 {
+		return 0, nil
+	}
+	holders := make([]string, len(statuses))
+	args := []any{tenantID, symbolID}
+	for i, status := range statuses {
+		holders[i] = "?"
+		args = append(args, status)
+	}
+	var count int64
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND symbol_id=? AND status IN (%s)", m.table, strings.Join(holders, ","))
+	if err := m.QueryRowNoCacheCtx(ctx, &count, query, args...); err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func (m *defaultTTradeOrderModel) FindPage(ctx context.Context, filter TradeOrderPageFilter, cursor int64, limit int64) ([]*TTradeOrder, int64, error) {

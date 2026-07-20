@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"wklive/common/i18n"
-	"wklive/proto/itick"
 	"wklive/services/asset/internal/config"
 	"wklive/services/asset/models"
 
+	cache "wklive/common/market"
+
+	v9 "github.com/redis/go-redis/v9"
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
@@ -26,12 +26,12 @@ type ServiceContext struct {
 	AssetFreezeModel     models.TAssetFreezeModel
 	AssetIdempotentModel models.TAssetIdempotentModel
 	AssetCoinConfigModel models.TAssetCoinConfigModel
-	ItickClient          itick.ItickAppClient
+	MarketDataCache      *cache.MarketDataCache
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
-	itickCli := zrpc.MustNewClient(c.ItickRpc)
+	marketRedis := v9.NewClient(&v9.Options{Addr: c.CacheRedis[0].Host, Username: c.CacheRedis[0].User, Password: c.CacheRedis[0].Pass})
 	return &ServiceContext{
 		Config:               c,
 		DB:                   conn,
@@ -42,7 +42,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AssetFreezeModel:     models.NewTAssetFreezeModel(conn, c.CacheRedis),
 		AssetIdempotentModel: models.NewTAssetIdempotentModel(conn, c.CacheRedis),
 		AssetCoinConfigModel: models.NewTAssetCoinConfigModel(conn, c.CacheRedis),
-		ItickClient:          itick.NewItickAppClient(itickCli.Conn()),
+		MarketDataCache:      cache.NewMarketDataCache(marketRedis),
 	}
 }
 
@@ -91,20 +91,22 @@ func SanitizeBizNo(bizNo string) string {
 
 // 获取最新报价
 func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (decimal.Decimal, error) {
-	resp, err := s.ItickClient.GetQuote(ctx, &itick.GetQuoteReq{
+	msg := cache.NormalizeClientMessage(cache.ClientMessage{
+		Topic:        cache.TopicQuote,
 		CategoryCode: "crypto",
 		Market:       "BA",
 		Symbol:       symbol,
 	})
+	items, err := s.MarketDataCache.ReadMany(ctx, []cache.ClientMessage{msg})
 	if err != nil {
-		return decimal.Zero, err
+		return decimal.NewFromInt(0), err
 	}
-	if resp == nil || resp.GetBase() == nil || resp.GetBase().GetCode() != 200 || resp.GetData() == nil {
-		return decimal.Zero, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
+	if len(items) == 0 {
+		return decimal.NewFromInt(0), redis.Nil
 	}
-	price, err := decimal.NewFromString(resp.GetData().GetLastPrice())
-	if err != nil || !price.IsPositive() {
-		return decimal.Zero, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
+	data, ok := items[0].Payload.(*cache.QuotePayload)
+	if !ok || data == nil {
+		return decimal.NewFromInt(0), redis.Nil
 	}
-	return price, nil
+	return decimal.NewFromFloat(data.LastPrice), nil
 }

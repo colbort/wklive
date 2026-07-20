@@ -304,6 +304,30 @@ CREATE TABLE `t_trade_order_seconds` (
   CONSTRAINT `chk_seconds_order` CHECK (`direction` IN (1, 2) AND `duration_seconds` > 0 AND `stake_amount` > 0 AND `payout_rate` >= 0 AND `fee_rate` >= 0 AND `result` IN (0, 1, 2, 3, 4) AND `settlement_status` BETWEEN 0 AND 7 AND `profit_amount` >= 0 AND `fee_amount` >= 0 AND `return_amount` >= 0 AND `version` >= 0 AND ((`settlement_status` IN (0, 1) AND `start_price` = 0 AND `start_price_time` = 0 AND `expire_time` = 0) OR (`settlement_status` >= 2 AND `start_price` > 0 AND `start_price_time` > 0 AND `activated_at` > 0 AND `expire_time` > `activated_at`)))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='秒合约订单及到期结算快照';
 
+CREATE TABLE `t_trade_market_snapshot` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID，0为公共行情',
+  `snapshot_id` VARCHAR(64) NOT NULL COMMENT '快照内容哈希',
+  `snapshot_kind` VARCHAR(32) NOT NULL COMMENT 'PRICE/FUNDING/MARK/INDEX/DELIVERY',
+  `symbol_id` BIGINT NOT NULL DEFAULT 0,
+  `source` VARCHAR(255) NOT NULL DEFAULT '',
+  `price` DECIMAL(36,18) NOT NULL DEFAULT 0,
+  `mark_price` DECIMAL(36,18) NOT NULL DEFAULT 0,
+  `index_price` DECIMAL(36,18) NOT NULL DEFAULT 0,
+  `funding_rate` DECIMAL(20,10) NOT NULL DEFAULT 0,
+  `source_timestamp` BIGINT NOT NULL,
+  `snapshot_timestamp` BIGINT NOT NULL,
+  `revision` BIGINT NOT NULL,
+  `formula_version` VARCHAR(64) NOT NULL DEFAULT '',
+  `confirmed` TINYINT NOT NULL DEFAULT 1,
+  `raw_payload` JSON NOT NULL,
+  `create_times` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_symbol_snapshot` (`tenant_id`,`symbol_id`,`snapshot_id`),
+  KEY `idx_symbol_kind_time` (`tenant_id`,`symbol_id`,`snapshot_kind`,`source_timestamp`),
+  CONSTRAINT `chk_trade_market_snapshot` CHECK (`source_timestamp` > 0 AND `revision` > 0 AND `confirmed` IN (1,2))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='结算使用的不可变行情及资金费快照';
+
 CREATE TABLE `t_trade_seconds_price_snapshot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -393,6 +417,7 @@ CREATE TABLE `t_contract_position` (
   `frozen_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '挂单冻结数量',
   `open_avg_price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '开仓均价',
   `mark_price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '标记价格快照',
+  `mark_snapshot_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '不可变标记价格快照ID',
   `margin_asset` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '保证金币种',
   `position_margin` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '仓位保证金',
   `maintenance_margin` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '当前维持保证金要求',
@@ -748,7 +773,7 @@ CREATE TABLE `t_trade_settlement_instruction` (
   KEY `idx_tenant_fill` (`tenant_id`, `fill_id`),
   KEY `idx_tenant_order` (`tenant_id`, `order_id`),
   KEY `idx_tenant_biz` (`tenant_id`, `biz_type`, `biz_id`, `step_no`),
-  CONSTRAINT `chk_settlement_instruction` CHECK (`action` IN (1, 2, 3, 4, 5, 6) AND `amount` > 0 AND `step_no` > 0 AND `status` IN (1, 2, 3, 4, 5) AND `retry_count` >= 0)
+  CONSTRAINT `chk_settlement_instruction` CHECK (`action` IN (1, 2, 3, 4, 5, 6, 7, 8) AND `amount` > 0 AND `step_no` > 0 AND `status` IN (1, 2, 3, 4, 5) AND `retry_count` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='发送给Asset的幂等结算指令';
 
 CREATE TABLE `t_contract_liquidation` (
@@ -761,6 +786,7 @@ CREATE TABLE `t_contract_liquidation` (
   `position_side` TINYINT NOT NULL COMMENT '仓位方向：1净持仓 2多 3空',
   `margin_mode` TINYINT NOT NULL COMMENT '保证金模式：1全仓 2逐仓',
   `trigger_mark_price` DECIMAL(36,18) NOT NULL COMMENT '触发强平的标记价格',
+  `trigger_snapshot_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '强平触发价格快照ID',
   `trigger_index_price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '触发时指数价格',
   `trigger_qty` DECIMAL(36,18) NOT NULL COMMENT '接管时仓位数量',
   `liquidated_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '已强平数量',
@@ -784,6 +810,24 @@ CREATE TABLE `t_contract_liquidation` (
   CONSTRAINT `chk_contract_liquidation` CHECK (`position_side` IN (1, 2, 3) AND `margin_mode` IN (1, 2) AND `trigger_mark_price` > 0 AND `trigger_index_price` >= 0 AND `trigger_qty` > 0 AND `liquidated_qty` >= 0 AND `liquidated_qty` <= `trigger_qty` AND `maintenance_margin` >= 0 AND `bankruptcy_price` >= 0 AND `liquidation_fee` >= 0 AND `insurance_fund_amount` >= 0 AND `adl_qty` >= 0 AND `status` BETWEEN 1 AND 7 AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约强平、保险基金与ADL处理记录';
 
+CREATE TABLE `t_contract_insurance_fund_account` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
+  `symbol_id` BIGINT NOT NULL DEFAULT 0 COMMENT '交易标的ID，0表示该资产默认账户',
+  `settle_asset` VARCHAR(32) NOT NULL COMMENT '结算资产',
+  `fund_user_id` BIGINT NOT NULL COMMENT 'Asset保险基金用户ID',
+  `wallet_type` TINYINT NOT NULL DEFAULT 3 COMMENT 'Asset钱包类型',
+  `adl_enabled` TINYINT NOT NULL DEFAULT 2 COMMENT '余额不足是否启用ADL：1是 2否',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1启用 2禁用',
+  `version` BIGINT NOT NULL DEFAULT 0 COMMENT '版本号',
+  `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_symbol_asset` (`tenant_id`, `symbol_id`, `settle_asset`),
+  KEY `idx_tenant_asset_status` (`tenant_id`, `settle_asset`, `status`),
+  CONSTRAINT `chk_insurance_fund_account` CHECK (`fund_user_id` > 0 AND `wallet_type` > 0 AND `adl_enabled` IN (1,2) AND `status` IN (1,2))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户级合约保险基金账户配置';
+
 CREATE TABLE `t_contract_funding_batch` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -792,7 +836,7 @@ CREATE TABLE `t_contract_funding_batch` (
   `funding_rate` DECIMAL(20,10) NOT NULL COMMENT '锁定资金费率',
   `mark_price` DECIMAL(36,18) NOT NULL COMMENT '锁定标记价格',
   `index_price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '锁定指数价格',
-  `price_source` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '价格来源',
+  `price_source` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '统一资金费快照ID',
   `formula_version` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '费率与金额公式版本',
   `settlement_time` BIGINT NOT NULL COMMENT '资金费结算时刻',
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1价格已锁定 2结算中 3已完成 4失败 5人工处理',
@@ -845,7 +889,7 @@ CREATE TABLE `t_contract_delivery_batch` (
   `batch_no` VARCHAR(64) NOT NULL COMMENT '交割批次号',
   `symbol_id` BIGINT NOT NULL COMMENT '交割合约标的ID',
   `settlement_price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '锁定交割价格',
-  `price_source` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '交割价格来源',
+  `price_source` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '统一交割价格快照ID',
   `price_algorithm` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '采样算法及版本',
   `sample_snapshot` JSON DEFAULT NULL COMMENT '原始样本与剔除信息摘要',
   `open_cutoff_time` BIGINT NOT NULL DEFAULT 0 COMMENT '停止开仓时间快照',

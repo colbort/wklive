@@ -99,3 +99,19 @@ func TestInverseMaintenanceUsesBaseSettlementUnit(t *testing.T) {
 		t.Fatalf("inverse liquidation equation mismatch: equity=%s maintenance=%s price=%s", equityAtLiquidation, maintenanceAtLiquidation, position.LiquidationPrice)
 	}
 }
+
+func TestRiskTierMaintenanceAmountAndCrossBoundary(t *testing.T) {
+	position := &models.TContractPosition{PositionSide: int64(trade.PositionSide_POSITION_SIDE_LONG), ContractValueType: int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_LINEAR), MarginMode: int64(trade.MarginMode_MARGIN_MODE_ISOLATED), Qty: decimal.NewFromInt(10), OpenAvgPrice: decimal.NewFromInt(100), MarkPrice: decimal.NewFromInt(100), PositionMargin: decimal.NewFromInt(100)}
+	contract := &models.TTradeSymbolContract{ContractSize: decimal.NewFromInt(1), MaintenanceMarginRate: decimal.RequireFromString("0.01")}
+	tier := &models.TContractRiskLimitTier{MaintenanceMarginRate: decimal.RequireFromString("0.02"), MaintenanceAmount: decimal.NewFromInt(5)}
+	recalculatePositionRisk(position, contract, tier)
+	if !position.MaintenanceMargin.Equal(decimal.NewFromInt(15)) {
+		t.Fatalf("tier maintenance = %s, want 15", position.MaintenanceMargin)
+	}
+
+	position.MarginMode = int64(trade.MarginMode_MARGIN_MODE_CROSS)
+	recalculatePositionRisk(position, contract, tier)
+	if !position.RiskRate.IsZero() || !position.LiquidationPrice.IsZero() || !position.BankruptcyPrice.IsZero() {
+		t.Fatal("cross position must not use isolated liquidation approximation")
+	}
+}

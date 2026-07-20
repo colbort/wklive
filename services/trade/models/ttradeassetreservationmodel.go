@@ -23,6 +23,7 @@ type (
 		AddReleased(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error)
 		BeginRelease(ctx context.Context, id int64, updateTimes int64) (bool, error)
 		MarkSettlementFailure(ctx context.Context, id, retryStatus int64, terminal bool, nextRetryAt int64, message string, updateTimes int64) error
+		FindOneByReservationNoForUpdate(ctx context.Context, tenantID int64, reservationNo string) (*TTradeAssetReservation, error)
 	}
 
 	customTTradeAssetReservationModel struct {
@@ -35,6 +36,15 @@ func NewTTradeAssetReservationModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 	return &customTTradeAssetReservationModel{
 		defaultTTradeAssetReservationModel: newTTradeAssetReservationModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTTradeAssetReservationModel) FindOneByReservationNoForUpdate(ctx context.Context, tenantID int64, reservationNo string) (*TTradeAssetReservation, error) {
+	var item TTradeAssetReservation
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND reservation_no = ? LIMIT 1 FOR UPDATE", tTradeAssetReservationRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantID, reservationNo); err != nil {
+		return nil, err
+	}
+	return &item, nil
 }
 
 func (m *defaultTTradeAssetReservationModel) BeginRelease(ctx context.Context, id int64, updateTimes int64) (bool, error) {

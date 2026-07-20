@@ -59,6 +59,7 @@ type (
 		FrozenQty         decimal.Decimal `db:"frozen_qty"`          // 挂单冻结数量
 		OpenAvgPrice      decimal.Decimal `db:"open_avg_price"`      // 开仓均价
 		MarkPrice         decimal.Decimal `db:"mark_price"`          // 标记价格快照
+		MarkSnapshotId    string          `db:"mark_snapshot_id"`    // 不可变标记价格快照ID
 		MarginAsset       string          `db:"margin_asset"`        // 保证金币种
 		PositionMargin    decimal.Decimal `db:"position_margin"`     // 仓位保证金
 		MaintenanceMargin decimal.Decimal `db:"maintenance_margin"`  // 当前维持保证金要求

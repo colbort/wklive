@@ -32,6 +32,7 @@ type (
 		// 增加已有资产的可用余额，调用方需要先创建不存在的资产记录
 		AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (int64, error)
 		SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error)
+		FindOneForUpdate(ctx context.Context, tenantId, userId, walletType int64, coin string) (*TUserAsset, error)
 		// 冻结资产（下单冻结）
 		FreezeAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error)
 		// 解冻资产（撤单）
@@ -50,6 +51,15 @@ type (
 		*defaultTUserAssetModel
 	}
 )
+
+func (m *defaultTUserAssetModel) FindOneForUpdate(ctx context.Context, tenantId, userId, walletType int64, coin string) (*TUserAsset, error) {
+	var row TUserAsset
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND user_id=? AND wallet_type=? AND coin=? AND enabled=1 FOR UPDATE", tUserAssetRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantId, userId, walletType, coin); err != nil {
+		return nil, err
+	}
+	return &row, nil
+}
 
 // NewTUserAssetModel returns a model for the database table.
 func NewTUserAssetModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TUserAssetModel {

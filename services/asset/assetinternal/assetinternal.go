@@ -17,6 +17,9 @@ type (
 	AddAvailableReq             = asset.AddAvailableReq
 	ChangeAssetData             = asset.ChangeAssetData
 	ChangeAssetResp             = asset.ChangeAssetResp
+	CoverInsuranceDeficitReq    = asset.CoverInsuranceDeficitReq
+	CoverInsuranceDeficitResp   = asset.CoverInsuranceDeficitResp
+	ReverseInsuranceCoverReq    = asset.ReverseInsuranceCoverReq
 	DeductFrozenAssetByBizNoReq = asset.DeductFrozenAssetByBizNoReq
 	DeductFrozenAssetReq        = asset.DeductFrozenAssetReq
 	DeductLockedAssetByBizNoReq = asset.DeductLockedAssetByBizNoReq
@@ -63,6 +66,8 @@ type (
 		DeductLockedAssetByBizNo(ctx context.Context, in *DeductLockedAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 		// 钱包划转
 		TransferAsset(ctx context.Context, in *TransferAssetReq, opts ...grpc.CallOption) (*TransferAssetResp, error)
+		CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error)
+		ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	}
 
 	defaultAssetInternal struct {
@@ -152,4 +157,11 @@ func (m *defaultAssetInternal) DeductLockedAssetByBizNo(ctx context.Context, in 
 func (m *defaultAssetInternal) TransferAsset(ctx context.Context, in *TransferAssetReq, opts ...grpc.CallOption) (*TransferAssetResp, error) {
 	client := asset.NewAssetInternalClient(m.cli.Conn())
 	return client.TransferAsset(ctx, in, opts...)
+}
+
+func (m *defaultAssetInternal) CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error) {
+	return asset.NewAssetInternalClient(m.cli.Conn()).CoverInsuranceDeficit(ctx, in, opts...)
+}
+func (m *defaultAssetInternal) ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+	return asset.NewAssetInternalClient(m.cli.Conn()).ReverseInsuranceCover(ctx, in, opts...)
 }

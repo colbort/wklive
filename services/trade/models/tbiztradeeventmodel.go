@@ -31,8 +31,8 @@ type (
 		FindPage(ctx context.Context, filter BizTradeEventPageFilter, cursor int64, limit int64) ([]*TBizTradeEvent, int64, error)
 		FindDispatchable(ctx context.Context, tenantID, now, staleBefore, cursor, limit int64, eventTypes []string) ([]*TBizTradeEvent, error)
 		ClaimDispatch(ctx context.Context, id int64, claimant string, now, staleBefore int64) (bool, error)
-		MarkDelivered(ctx context.Context, id, now int64) (bool, error)
-		MarkDeliveryFailed(ctx context.Context, id, now, nextRetryAt int64, errorMessage string) (bool, error)
+		MarkDelivered(ctx context.Context, id int64, claimant string, now int64) (bool, error)
+		MarkDeliveryFailed(ctx context.Context, id int64, claimant string, now, nextRetryAt int64, errorMessage string) (bool, error)
 		ResetForManualRetry(ctx context.Context, id, operatorID, now int64) (bool, error)
 	}
 
@@ -50,11 +50,12 @@ func NewTBizTradeEventModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.
 
 func (m *defaultTBizTradeEventModel) FindDispatchable(ctx context.Context, tenantID, now, staleBefore, cursor, limit int64, eventTypes []string) ([]*TBizTradeEvent, error) {
 	limit = sqlutil.NormalizeLimit(limit)
-	if len(eventTypes) == 0 {
-		return nil, nil
+	eventFilter := ""
+	if len(eventTypes) > 0 {
+		marks := strings.TrimSuffix(strings.Repeat("?,", len(eventTypes)), ",")
+		eventFilter = fmt.Sprintf(" AND event_type IN (%s)", marks)
 	}
-	marks := strings.TrimSuffix(strings.Repeat("?,", len(eventTypes)), ",")
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND event_type IN (%s) AND id > ? AND (((event_status = 1 OR (event_status = 3 AND next_retry_at <= ?)) AND (max_retry_count = 0 OR retry_count < max_retry_count)) OR (event_status = 5 AND claimed_at <= ?)) ORDER BY id ASC LIMIT ?", tBizTradeEventRows, m.table, marks)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ?%s AND id > ? AND (((event_status = 1 OR (event_status = 3 AND next_retry_at <= ?)) AND (max_retry_count = 0 OR retry_count < max_retry_count)) OR (event_status = 5 AND claimed_at <= ?)) ORDER BY id ASC LIMIT ?", tBizTradeEventRows, m.table, eventFilter)
 	args := []any{tenantID}
 	for _, eventType := range eventTypes {
 		args = append(args, eventType)
@@ -71,13 +72,13 @@ func (m *defaultTBizTradeEventModel) ClaimDispatch(ctx context.Context, id int64
 	return m.conditionalEventUpdate(ctx, id, "event_status = 5, retry_count = retry_count + 1, claimed_by = ?, claimed_at = ?, update_times = ?", []any{claimant, now, now}, "(event_status = 1 OR (event_status = 3 AND next_retry_at <= ?) OR (event_status = 5 AND claimed_at <= ?)) AND (max_retry_count = 0 OR retry_count < max_retry_count)", now, staleBefore)
 }
 
-func (m *defaultTBizTradeEventModel) MarkDelivered(ctx context.Context, id, now int64) (bool, error) {
-	return m.conditionalEventUpdate(ctx, id, "event_status = 2, delivered_at = ?, claimed_by = '', claimed_at = 0, next_retry_at = 0, last_error_msg = '', update_times = ?", []any{now, now}, "event_status IN (1, 3, 5)")
+func (m *defaultTBizTradeEventModel) MarkDelivered(ctx context.Context, id int64, claimant string, now int64) (bool, error) {
+	return m.conditionalEventUpdate(ctx, id, "event_status = 2, delivered_at = ?, claimed_by = '', claimed_at = 0, next_retry_at = 0, last_error_msg = '', update_times = ?", []any{now, now}, "event_status = 5 AND claimed_by = ?", claimant)
 }
 
-func (m *defaultTBizTradeEventModel) MarkDeliveryFailed(ctx context.Context, id, now, nextRetryAt int64, errorMessage string) (bool, error) {
+func (m *defaultTBizTradeEventModel) MarkDeliveryFailed(ctx context.Context, id int64, claimant string, now, nextRetryAt int64, errorMessage string) (bool, error) {
 	errorMessage = truncateTradeEventError(errorMessage)
-	return m.conditionalEventUpdate(ctx, id, "event_status = IF(max_retry_count > 0 AND retry_count >= max_retry_count, 6, 3), next_retry_at = ?, last_error_msg = ?, claimed_by = '', claimed_at = 0, update_times = ?", []any{nextRetryAt, errorMessage, now}, "event_status IN (1, 3, 5)")
+	return m.conditionalEventUpdate(ctx, id, "event_status = IF(max_retry_count > 0 AND retry_count >= max_retry_count, 6, 3), next_retry_at = ?, last_error_msg = ?, claimed_by = '', claimed_at = 0, update_times = ?", []any{nextRetryAt, errorMessage, now}, "event_status = 5 AND claimed_by = ?", claimant)
 }
 
 func truncateTradeEventError(message string) string {

@@ -35,9 +35,6 @@ func (l *ProcessPositionsLogic) ProcessPositions(in *trade.TradeTaskReq) (*trade
 		if err := l.forceLiquidation(in); err != nil {
 			return nil, err
 		}
-		if err := l.closePositions(in); err != nil {
-			return nil, err
-		}
 		return okTradeTaskResp(), nil
 	})
 }
@@ -57,7 +54,28 @@ func (l *ProcessPositionsLogic) refreshMarkPrices(in *trade.TradeTaskReq) error 
 			if !position.Qty.IsPositive() {
 				continue
 			}
-			if err := createTradeTaskEvent(l.ctx, l.svcCtx, position.TenantId, "MARK_PRICE_REFRESH_REQUIRED", "position", position.Id, position.UserId, position.SymbolId, int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE), "mark price refresh task"); err != nil {
+			contract, err := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, position.TenantId, position.SymbolId)
+			if errors.Is(err, models.ErrNotFound) {
+				continue
+			}
+			if err != nil {
+				return err
+			}
+			quote, err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuoteKind("MARK_PRICE", contract.MarkPriceSource, position.SymbolId, 30_000)
+			if err != nil {
+				l.Errorf("skip stale mark price, positionId=%d err=%v", position.Id, err)
+				continue
+			}
+			position.MarkPrice = mustParseFloat(quote.LastPrice)
+			position.MarkSnapshotId = quote.SnapshotID
+			tier, err := NewProcessContractPositionFillsLogic(l.ctx, l.svcCtx).riskTierForPosition(l.ctx, position, contract)
+			if err != nil {
+				return err
+			}
+			recalculatePositionRisk(position, contract, tier)
+			position.Version++
+			position.UpdateTimes = utils.NowMillis()
+			if err := l.svcCtx.ContractPositionModel.Update(l.ctx, position); err != nil {
 				return err
 			}
 		}
@@ -87,7 +105,7 @@ func (l *ProcessPositionsLogic) forceLiquidation(in *trade.TradeTaskReq) error {
 			if !needLiquidation {
 				continue
 			}
-			if err := createTradeTaskEvent(l.ctx, l.svcCtx, position.TenantId, "FORCE_LIQUIDATION_REQUIRED", "position", position.Id, position.UserId, position.SymbolId, int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE), "force liquidation task"); err != nil {
+			if err := NewProcessLiquidationsLogic(l.ctx, l.svcCtx).ProcessPosition(position.Id); err != nil {
 				return err
 			}
 		}

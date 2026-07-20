@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -17,9 +18,9 @@ type (
 	// and implement the added methods in customTTradeEventInboxModel.
 	TTradeEventInboxModel interface {
 		tTradeEventInboxModel
-		Claim(ctx context.Context, consumer string, tenantID int64, eventNo, eventType string, now, staleBefore int64) (claimed, completed bool, err error)
-		Complete(ctx context.Context, consumer string, tenantID int64, eventNo string, now int64) error
-		Fail(ctx context.Context, consumer string, tenantID int64, eventNo, errorMessage string, now int64) error
+		Claim(ctx context.Context, consumer string, tenantID int64, eventNo, eventType string, now, staleBefore int64) (claimed, completed bool, lease int64, err error)
+		Complete(ctx context.Context, consumer string, tenantID int64, eventNo string, lease, now int64) (bool, error)
+		Fail(ctx context.Context, consumer string, tenantID int64, eventNo string, lease int64, errorMessage string, now int64) error
 	}
 
 	customTTradeEventInboxModel struct {
@@ -34,46 +35,46 @@ func NewTTradeEventInboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cach
 	}
 }
 
-func (m *defaultTTradeEventInboxModel) Claim(ctx context.Context, consumer string, tenantID int64, eventNo, eventType string, now, staleBefore int64) (bool, bool, error) {
+func (m *defaultTTradeEventInboxModel) Claim(ctx context.Context, consumer string, tenantID int64, eventNo, eventType string, now, staleBefore int64) (bool, bool, int64, error) {
 	item, err := m.FindOneByConsumerTenantIdEventNo(ctx, consumer, tenantID, eventNo)
 	if errors.Is(err, ErrNotFound) {
 		_, insertErr := m.Insert(ctx, &TTradeEventInbox{TenantId: tenantID, Consumer: consumer, EventNo: eventNo, EventType: eventType, Status: 1, CreateTimes: now, UpdateTimes: now})
 		if insertErr == nil {
-			return true, false, nil
+			return true, false, now, nil
 		}
 		item, err = m.FindOneByConsumerTenantIdEventNo(ctx, consumer, tenantID, eventNo)
 		if err != nil {
-			return false, false, insertErr
+			return false, false, 0, insertErr
 		}
 	} else if err != nil {
-		return false, false, err
+		return false, false, 0, err
 	}
 	if item.Status == 2 {
-		return false, true, nil
+		return false, true, 0, nil
 	}
 	if item.Status == 1 && item.UpdateTimes > staleBefore {
-		return false, false, nil
+		return false, false, 0, nil
 	}
-	changed, err := m.conditionalInboxUpdate(ctx, item, "status = 1, retry_count = retry_count + 1, last_error_msg = '', update_times = ?", []any{now}, "status = 3 OR (status = 1 AND update_times <= ?)", staleBefore)
-	return changed, false, err
+	changed, err := m.conditionalInboxUpdate(ctx, item, "status = 1, retry_count = retry_count + 1, last_error_msg = '', update_times = ?", []any{now}, "(status = 3 AND update_times <= ?) OR (status = 1 AND update_times <= ?)", now, staleBefore)
+	return changed, false, now, err
 }
 
-func (m *defaultTTradeEventInboxModel) Complete(ctx context.Context, consumer string, tenantID int64, eventNo string, now int64) error {
+func (m *defaultTTradeEventInboxModel) Complete(ctx context.Context, consumer string, tenantID int64, eventNo string, lease, now int64) (bool, error) {
 	item, err := m.FindOneByConsumerTenantIdEventNo(ctx, consumer, tenantID, eventNo)
 	if err != nil {
-		return err
+		return false, err
 	}
-	_, err = m.conditionalInboxUpdate(ctx, item, "status = 2, last_error_msg = '', update_times = ?", []any{now}, "status = 1")
-	return err
+	return m.conditionalInboxUpdate(ctx, item, "status = 2, last_error_msg = '', update_times = ?", []any{now}, "status = 1 AND update_times = ?", lease)
 }
 
-func (m *defaultTTradeEventInboxModel) Fail(ctx context.Context, consumer string, tenantID int64, eventNo, errorMessage string, now int64) error {
+func (m *defaultTTradeEventInboxModel) Fail(ctx context.Context, consumer string, tenantID int64, eventNo string, lease int64, errorMessage string, now int64) error {
 	errorMessage = truncateTradeEventError(errorMessage)
 	item, err := m.FindOneByConsumerTenantIdEventNo(ctx, consumer, tenantID, eventNo)
 	if err != nil {
 		return err
 	}
-	_, err = m.conditionalInboxUpdate(ctx, item, "status = 3, last_error_msg = ?, update_times = ?", []any{errorMessage, now}, "status = 1")
+	nextRetryAt := now + time.Second.Milliseconds()
+	_, err = m.conditionalInboxUpdate(ctx, item, "status = 3, last_error_msg = ?, update_times = ?", []any{errorMessage, nextRetryAt}, "status = 1 AND update_times = ?", lease)
 	return err
 }
 

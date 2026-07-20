@@ -78,7 +78,7 @@ func unfreezeRemainingOrderAsset(svcCtx *svc.ServiceContext, ctx context.Context
 		conn := sqlx.NewSqlConnFromSession(session)
 		reservationModel := models.NewTTradeAssetReservationModel(conn, svcCtx.Config.CacheRedis)
 		instructionModel := models.NewTTradeSettlementInstructionModel(conn, svcCtx.Config.CacheRedis)
-		reservation, err := reservationModel.FindOneByTenantIdReservationNo(txCtx, order.TenantId, order.OrderNo)
+		reservation, err := reservationModel.FindOneByReservationNoForUpdate(txCtx, order.TenantId, order.OrderNo)
 		if errors.Is(err, models.ErrNotFound) {
 			return nil
 		}

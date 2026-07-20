@@ -70,6 +70,7 @@ export type ContractFundingBatch = {
   symbolId: number
   fundingRate: string
   markPrice: string
+  markSnapshotId: string
   indexPrice: string
   priceSource: string
   formulaVersion: string
@@ -88,6 +89,13 @@ export type GetFundingBatchListReq = TradePageReq & {
   timeRange?: TimeRange
 }
 export type GetFundingBatchListResp = RespBase<ContractFundingBatch[]>
+export type InsuranceFundAccount = { id:number;tenantId:number;symbolId:number;settleAsset:string;fundUserId:number;walletType:number;adlEnabled:number;status:number;version:number;createTimes:number;updateTimes:number }
+export type SetInsuranceFundAccountReq = Omit<InsuranceFundAccount,'createTimes'|'updateTimes'>
+export type GetInsuranceFundAccountListReq = TradePageReq & {tenantId?:number;symbolId?:number;settleAsset?:string;status?:number}
+export type GetInsuranceFundAccountListResp = RespBase<InsuranceFundAccount[]>
+export type TradeMarketSnapshot = {id:number;snapshotId:string;snapshotKind:string;symbolId:number;source:string;price:string;markPrice:string;indexPrice:string;fundingRate:string;sourceTimestamp:number;snapshotTimestamp:number;revision:number;formulaVersion:string;confirmed:number;rawPayload:string;createTimes:number}
+export type GetMarketSnapshotListReq = TradePageReq & {tenantId?:number;symbolId?:number;snapshotKind?:string;startTime?:number;endTime?:number}
+export type GetMarketSnapshotListResp = RespBase<TradeMarketSnapshot[]>
 export type ContractFundingSettlement = {
   id: number
   settlementNo: string
@@ -183,6 +191,7 @@ export type ContractLiquidation = {
   positionSide: number
   marginMode: number
   triggerMarkPrice: string
+  triggerSnapshotId: string
   triggerIndexPrice: string
   triggerQty: string
   liquidatedQty: string
@@ -499,7 +508,13 @@ export type ContractPosition = {
   unrealizedPnl: string
   realizedPnl: string
   liquidationPrice: string
+  maintenanceMargin: string
+  bankruptcyPrice: string
+  riskRate: string
+  status: number
   adlRank: number
+  lastFundingTime: number
+  closedAt: number
   version: number
   createTimes: number
   updateTimes: number

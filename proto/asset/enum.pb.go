@@ -99,15 +99,16 @@ func (AssetOpType) EnumDescriptor() ([]byte, []int) {
 type BizType int32
 
 const (
-	BizType_BIZ_TYPE_UNKNOWN  BizType = 0
-	BizType_BIZ_TYPE_PAYMENT  BizType = 1 // 充值提现
-	BizType_BIZ_TYPE_TRADE    BizType = 2 // 交易
-	BizType_BIZ_TYPE_STAKING  BizType = 3 // 锁仓
-	BizType_BIZ_TYPE_OPTION   BizType = 4 // 期权
-	BizType_BIZ_TYPE_TRANSFER BizType = 5 // 划转
-	BizType_BIZ_TYPE_SYSTEM   BizType = 6 // 系统调账
-	BizType_BIZ_TYPE_ACTIVITY BizType = 7 // 活动
-	BizType_BIZ_TYPE_EARN     BizType = 8 // 理财
+	BizType_BIZ_TYPE_UNKNOWN        BizType = 0
+	BizType_BIZ_TYPE_PAYMENT        BizType = 1 // 充值提现
+	BizType_BIZ_TYPE_TRADE          BizType = 2 // 交易
+	BizType_BIZ_TYPE_STAKING        BizType = 3 // 锁仓
+	BizType_BIZ_TYPE_OPTION         BizType = 4 // 期权
+	BizType_BIZ_TYPE_TRANSFER       BizType = 5 // 划转
+	BizType_BIZ_TYPE_SYSTEM         BizType = 6 // 系统调账
+	BizType_BIZ_TYPE_ACTIVITY       BizType = 7 // 活动
+	BizType_BIZ_TYPE_EARN           BizType = 8 // 理财
+	BizType_BIZ_TYPE_INSURANCE_FUND BizType = 9 // 合约保险基金
 )
 
 // Enum value maps for BizType.
@@ -122,17 +123,19 @@ var (
 		6: "BIZ_TYPE_SYSTEM",
 		7: "BIZ_TYPE_ACTIVITY",
 		8: "BIZ_TYPE_EARN",
+		9: "BIZ_TYPE_INSURANCE_FUND",
 	}
 	BizType_value = map[string]int32{
-		"BIZ_TYPE_UNKNOWN":  0,
-		"BIZ_TYPE_PAYMENT":  1,
-		"BIZ_TYPE_TRADE":    2,
-		"BIZ_TYPE_STAKING":  3,
-		"BIZ_TYPE_OPTION":   4,
-		"BIZ_TYPE_TRANSFER": 5,
-		"BIZ_TYPE_SYSTEM":   6,
-		"BIZ_TYPE_ACTIVITY": 7,
-		"BIZ_TYPE_EARN":     8,
+		"BIZ_TYPE_UNKNOWN":        0,
+		"BIZ_TYPE_PAYMENT":        1,
+		"BIZ_TYPE_TRADE":          2,
+		"BIZ_TYPE_STAKING":        3,
+		"BIZ_TYPE_OPTION":         4,
+		"BIZ_TYPE_TRANSFER":       5,
+		"BIZ_TYPE_SYSTEM":         6,
+		"BIZ_TYPE_ACTIVITY":       7,
+		"BIZ_TYPE_EARN":           8,
+		"BIZ_TYPE_INSURANCE_FUND": 9,
 	}
 )
 
@@ -174,10 +177,12 @@ const (
 	SceneType_SCENE_TYPE_WITHDRAW_REJECT  SceneType = 3 // 提现驳回
 	SceneType_SCENE_TYPE_WITHDRAW_SUCCESS SceneType = 4 // 提现成功
 	// trade
-	SceneType_SCENE_TYPE_PLACE_ORDER  SceneType = 11 // 下单冻结
-	SceneType_SCENE_TYPE_CANCEL_ORDER SceneType = 12 // 撤单解冻
-	SceneType_SCENE_TYPE_TRADE_MATCH  SceneType = 13 // 成交扣减
-	SceneType_SCENE_TYPE_TRADE_FEE    SceneType = 14 // 手续费
+	SceneType_SCENE_TYPE_PLACE_ORDER             SceneType = 11 // 下单冻结
+	SceneType_SCENE_TYPE_CANCEL_ORDER            SceneType = 12 // 撤单解冻
+	SceneType_SCENE_TYPE_TRADE_MATCH             SceneType = 13 // 成交扣减
+	SceneType_SCENE_TYPE_TRADE_FEE               SceneType = 14 // 手续费
+	SceneType_SCENE_TYPE_INSURANCE_FUND_COVER    SceneType = 15 // 保险基金穿仓赔付
+	SceneType_SCENE_TYPE_INSURANCE_FUND_REVERSAL SceneType = 16 // 保险基金赔付冲正
 	// staking / earn
 	SceneType_SCENE_TYPE_STAKING_JOIN    SceneType = 21 // 参与锁仓
 	SceneType_SCENE_TYPE_STAKING_RELEASE SceneType = 22 // 锁仓释放
@@ -203,6 +208,8 @@ var (
 		12: "SCENE_TYPE_CANCEL_ORDER",
 		13: "SCENE_TYPE_TRADE_MATCH",
 		14: "SCENE_TYPE_TRADE_FEE",
+		15: "SCENE_TYPE_INSURANCE_FUND_COVER",
+		16: "SCENE_TYPE_INSURANCE_FUND_REVERSAL",
 		21: "SCENE_TYPE_STAKING_JOIN",
 		22: "SCENE_TYPE_STAKING_RELEASE",
 		23: "SCENE_TYPE_STAKING_REWARD",
@@ -213,23 +220,25 @@ var (
 		44: "SCENE_TYPE_AIRDROP",
 	}
 	SceneType_value = map[string]int32{
-		"SCENE_TYPE_UNKNOWN":          0,
-		"SCENE_TYPE_RECHARGE":         1,
-		"SCENE_TYPE_WITHDRAW_APPLY":   2,
-		"SCENE_TYPE_WITHDRAW_REJECT":  3,
-		"SCENE_TYPE_WITHDRAW_SUCCESS": 4,
-		"SCENE_TYPE_PLACE_ORDER":      11,
-		"SCENE_TYPE_CANCEL_ORDER":     12,
-		"SCENE_TYPE_TRADE_MATCH":      13,
-		"SCENE_TYPE_TRADE_FEE":        14,
-		"SCENE_TYPE_STAKING_JOIN":     21,
-		"SCENE_TYPE_STAKING_RELEASE":  22,
-		"SCENE_TYPE_STAKING_REWARD":   23,
-		"SCENE_TYPE_TRANSFER":         31,
-		"SCENE_TYPE_MANUAL_ADD":       41,
-		"SCENE_TYPE_MANUAL_SUB":       42,
-		"SCENE_TYPE_SYSTEM_ADJUST":    43,
-		"SCENE_TYPE_AIRDROP":          44,
+		"SCENE_TYPE_UNKNOWN":                 0,
+		"SCENE_TYPE_RECHARGE":                1,
+		"SCENE_TYPE_WITHDRAW_APPLY":          2,
+		"SCENE_TYPE_WITHDRAW_REJECT":         3,
+		"SCENE_TYPE_WITHDRAW_SUCCESS":        4,
+		"SCENE_TYPE_PLACE_ORDER":             11,
+		"SCENE_TYPE_CANCEL_ORDER":            12,
+		"SCENE_TYPE_TRADE_MATCH":             13,
+		"SCENE_TYPE_TRADE_FEE":               14,
+		"SCENE_TYPE_INSURANCE_FUND_COVER":    15,
+		"SCENE_TYPE_INSURANCE_FUND_REVERSAL": 16,
+		"SCENE_TYPE_STAKING_JOIN":            21,
+		"SCENE_TYPE_STAKING_RELEASE":         22,
+		"SCENE_TYPE_STAKING_REWARD":          23,
+		"SCENE_TYPE_TRANSFER":                31,
+		"SCENE_TYPE_MANUAL_ADD":              41,
+		"SCENE_TYPE_MANUAL_SUB":              42,
+		"SCENE_TYPE_SYSTEM_ADJUST":           43,
+		"SCENE_TYPE_AIRDROP":                 44,
 	}
 )
 
@@ -548,7 +557,7 @@ const file_proto_asset_enum_proto_rawDesc = "" +
 	"\x19ASSET_OP_TYPE_LOCK_DEDUCT\x10\b\x12\x1d\n" +
 	"\x19ASSET_OP_TYPE_TRANSFER_IN\x10\t\x12\x1e\n" +
 	"\x1aASSET_OP_TYPE_TRANSFER_OUT\x10\n" +
-	"*\xca\x01\n" +
+	"*\xe7\x01\n" +
 	"\aBizType\x12\x14\n" +
 	"\x10BIZ_TYPE_UNKNOWN\x10\x00\x12\x14\n" +
 	"\x10BIZ_TYPE_PAYMENT\x10\x01\x12\x12\n" +
@@ -558,7 +567,8 @@ const file_proto_asset_enum_proto_rawDesc = "" +
 	"\x11BIZ_TYPE_TRANSFER\x10\x05\x12\x13\n" +
 	"\x0fBIZ_TYPE_SYSTEM\x10\x06\x12\x15\n" +
 	"\x11BIZ_TYPE_ACTIVITY\x10\a\x12\x11\n" +
-	"\rBIZ_TYPE_EARN\x10\b*\xec\x03\n" +
+	"\rBIZ_TYPE_EARN\x10\b\x12\x1b\n" +
+	"\x17BIZ_TYPE_INSURANCE_FUND\x10\t*\xb9\x04\n" +
 	"\tSceneType\x12\x16\n" +
 	"\x12SCENE_TYPE_UNKNOWN\x10\x00\x12\x17\n" +
 	"\x13SCENE_TYPE_RECHARGE\x10\x01\x12\x1d\n" +
@@ -568,7 +578,9 @@ const file_proto_asset_enum_proto_rawDesc = "" +
 	"\x16SCENE_TYPE_PLACE_ORDER\x10\v\x12\x1b\n" +
 	"\x17SCENE_TYPE_CANCEL_ORDER\x10\f\x12\x1a\n" +
 	"\x16SCENE_TYPE_TRADE_MATCH\x10\r\x12\x18\n" +
-	"\x14SCENE_TYPE_TRADE_FEE\x10\x0e\x12\x1b\n" +
+	"\x14SCENE_TYPE_TRADE_FEE\x10\x0e\x12#\n" +
+	"\x1fSCENE_TYPE_INSURANCE_FUND_COVER\x10\x0f\x12&\n" +
+	"\"SCENE_TYPE_INSURANCE_FUND_REVERSAL\x10\x10\x12\x1b\n" +
 	"\x17SCENE_TYPE_STAKING_JOIN\x10\x15\x12\x1e\n" +
 	"\x1aSCENE_TYPE_STAKING_RELEASE\x10\x16\x12\x1d\n" +
 	"\x19SCENE_TYPE_STAKING_REWARD\x10\x17\x12\x17\n" +

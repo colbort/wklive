@@ -160,3 +160,14 @@ CREATE TABLE `t_asset_idempotent` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_biz_scene_no` (`tenant_id`,`biz_type`,`scene_type`,`biz_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资产幂等控制表';
+
+CREATE TABLE `t_asset_insurance_cover` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT, `tenant_id` BIGINT NOT NULL, `fund_user_id` BIGINT NOT NULL,
+  `wallet_type` TINYINT NOT NULL, `coin` VARCHAR(32) NOT NULL, `liquidation_id` BIGINT NOT NULL,
+  `liquidation_no` VARCHAR(96) NOT NULL, `requested_amount` DECIMAL(36,18) NOT NULL,
+  `covered_amount` DECIMAL(36,18) NOT NULL, `remaining_amount` DECIMAL(36,18) NOT NULL,
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1完成 2已冲正', `create_times` BIGINT NOT NULL, `update_times` BIGINT NOT NULL,
+  PRIMARY KEY (`id`), UNIQUE KEY `uk_tenant_liquidation_no` (`tenant_id`,`liquidation_no`),
+  KEY `idx_fund_asset_time` (`tenant_id`,`fund_user_id`,`coin`,`create_times`),
+  CONSTRAINT `chk_asset_insurance_cover` CHECK (`requested_amount` > 0 AND `covered_amount` >= 0 AND `remaining_amount` >= 0 AND `requested_amount` = `covered_amount` + `remaining_amount` AND `status` IN (1,2))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='保险基金穿仓赔付及幂等结果';

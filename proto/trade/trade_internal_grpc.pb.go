@@ -19,7 +19,6 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TradeInternal_RecordOrderFill_FullMethodName       = "/trade.TradeInternal/RecordOrderFill"
 	TradeInternal_RecordPositionHistory_FullMethodName = "/trade.TradeInternal/RecordPositionHistory"
 	TradeInternal_CreateTradeEvent_FullMethodName      = "/trade.TradeInternal/CreateTradeEvent"
 	TradeInternal_CheckOrderRisk_FullMethodName        = "/trade.TradeInternal/CheckOrderRisk"
@@ -31,8 +30,6 @@ const (
 //
 // 交易服务内部接口
 type TradeInternalClient interface {
-	// 记录订单成交信息
-	RecordOrderFill(ctx context.Context, in *RecordOrderFillReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
 	// 记录持仓历史信息
 	RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
 	// 创建交易事件
@@ -47,16 +44,6 @@ type tradeInternalClient struct {
 
 func NewTradeInternalClient(cc grpc.ClientConnInterface) TradeInternalClient {
 	return &tradeInternalClient{cc}
-}
-
-func (c *tradeInternalClient) RecordOrderFill(ctx context.Context, in *RecordOrderFillReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(InternalCommonResp)
-	err := c.cc.Invoke(ctx, TradeInternal_RecordOrderFill_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *tradeInternalClient) RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
@@ -95,8 +82,6 @@ func (c *tradeInternalClient) CheckOrderRisk(ctx context.Context, in *CheckOrder
 //
 // 交易服务内部接口
 type TradeInternalServer interface {
-	// 记录订单成交信息
-	RecordOrderFill(context.Context, *RecordOrderFillReq) (*InternalCommonResp, error)
 	// 记录持仓历史信息
 	RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error)
 	// 创建交易事件
@@ -113,9 +98,6 @@ type TradeInternalServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTradeInternalServer struct{}
 
-func (UnimplementedTradeInternalServer) RecordOrderFill(context.Context, *RecordOrderFillReq) (*InternalCommonResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method RecordOrderFill not implemented")
-}
 func (UnimplementedTradeInternalServer) RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RecordPositionHistory not implemented")
 }
@@ -144,24 +126,6 @@ func RegisterTradeInternalServer(s grpc.ServiceRegistrar, srv TradeInternalServe
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&TradeInternal_ServiceDesc, srv)
-}
-
-func _TradeInternal_RecordOrderFill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RecordOrderFillReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TradeInternalServer).RecordOrderFill(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TradeInternal_RecordOrderFill_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeInternalServer).RecordOrderFill(ctx, req.(*RecordOrderFillReq))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _TradeInternal_RecordPositionHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -225,10 +189,6 @@ var TradeInternal_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "trade.TradeInternal",
 	HandlerType: (*TradeInternalServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "RecordOrderFill",
-			Handler:    _TradeInternal_RecordOrderFill_Handler,
-		},
 		{
 			MethodName: "RecordPositionHistory",
 			Handler:    _TradeInternal_RecordPositionHistory_Handler,

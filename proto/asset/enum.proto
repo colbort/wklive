@@ -30,6 +30,7 @@ enum BizType {
   BIZ_TYPE_SYSTEM = 6; // 系统调账
   BIZ_TYPE_ACTIVITY = 7; // 活动
   BIZ_TYPE_EARN = 8; // 理财
+  BIZ_TYPE_INSURANCE_FUND = 9; // 合约保险基金
 }
 
 // 业务场景
@@ -47,6 +48,8 @@ enum SceneType {
   SCENE_TYPE_CANCEL_ORDER = 12; // 撤单解冻
   SCENE_TYPE_TRADE_MATCH = 13; // 成交扣减
   SCENE_TYPE_TRADE_FEE = 14; // 手续费
+  SCENE_TYPE_INSURANCE_FUND_COVER = 15; // 保险基金穿仓赔付
+  SCENE_TYPE_INSURANCE_FUND_REVERSAL = 16; // 保险基金赔付冲正
 
   // staking / earn
   SCENE_TYPE_STAKING_JOIN = 21; // 参与锁仓

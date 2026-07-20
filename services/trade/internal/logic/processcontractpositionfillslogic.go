@@ -54,12 +54,20 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 		positionModel := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		historyModel := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
 		contractOrderModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
+		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+		projected, err := historyModel.CountByRefFillId(ctx, fill.TenantId, fill.Id)
+		if err != nil {
+			return err
+		}
+		if projected > 0 {
+			return nil
+		}
 
 		remaining := fill.Qty
 		if fill.PositionSide == int64(trade.PositionSide_POSITION_SIDE_NET) {
 			closeSide, openSide := netPositionSides(fill.Side)
-			closed, err := l.applyClose(ctx, positionModel, historyModel, eventModel, fill, contractOrder, contract, closeSide, remaining)
+			closed, err := l.applyClose(ctx, positionModel, historyModel, eventModel, instructionModel, fill, contractOrder, contract, closeSide, remaining)
 			if err != nil {
 				return err
 			}
@@ -73,7 +81,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 				}
 			}
 		} else if isClosingFill(fill.PositionSide, fill.Side) {
-			closed, err := l.applyClose(ctx, positionModel, historyModel, eventModel, fill, contractOrder, contract, fill.PositionSide, remaining)
+			closed, err := l.applyClose(ctx, positionModel, historyModel, eventModel, instructionModel, fill, contractOrder, contract, fill.PositionSide, remaining)
 			if err != nil {
 				return err
 			}
@@ -132,7 +140,11 @@ func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, posit
 	position.MarkPrice = fill.Price
 	position.Status = int64(trade.PositionStatus_POSITION_STATUS_NORMAL)
 	position.ClosedAt = 0
-	recalculatePositionRisk(position, contract)
+	riskTier, err := l.riskTierForPosition(ctx, position, contract)
+	if err != nil {
+		return err
+	}
+	recalculatePositionRisk(position, contract, riskTier)
 	position.Version++
 	position.UpdateTimes = now
 	if position.Id == 0 {
@@ -151,7 +163,7 @@ func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, posit
 	return writePositionProjection(ctx, historyModel, eventModel, before, position, fill, actionKey, action, decimal.Zero, qty)
 }
 
-func (l *ProcessContractPositionFillsLogic) applyClose(ctx context.Context, positionModel models.TContractPositionModel, historyModel models.TContractPositionHistoryModel, eventModel models.TBizTradeEventModel, fill *models.TTradeFill, contractOrder *models.TTradeOrderContract, contract *models.TTradeSymbolContract, side int64, requested decimal.Decimal) (decimal.Decimal, error) {
+func (l *ProcessContractPositionFillsLogic) applyClose(ctx context.Context, positionModel models.TContractPositionModel, historyModel models.TContractPositionHistoryModel, eventModel models.TBizTradeEventModel, instructionModel models.TTradeSettlementInstructionModel, fill *models.TTradeFill, contractOrder *models.TTradeOrderContract, contract *models.TTradeSymbolContract, side int64, requested decimal.Decimal) (decimal.Decimal, error) {
 	if !requested.IsPositive() {
 		return decimal.Zero, nil
 	}
@@ -191,7 +203,11 @@ func (l *ProcessContractPositionFillsLogic) applyClose(ctx context.Context, posi
 		position.Status = int64(trade.PositionStatus_POSITION_STATUS_CLOSED)
 		position.ClosedAt = utils.NowMillis()
 	} else {
-		recalculatePositionRisk(position, contract)
+		riskTier, err := l.riskTierForPosition(ctx, position, contract)
+		if err != nil {
+			return decimal.Zero, err
+		}
+		recalculatePositionRisk(position, contract, riskTier)
 	}
 	position.Version++
 	position.UpdateTimes = utils.NowMillis()
@@ -205,7 +221,45 @@ func (l *ProcessContractPositionFillsLogic) applyClose(ctx context.Context, posi
 	if err := writePositionProjection(ctx, historyModel, eventModel, before, position, fill, actionKey, action, realized, qty); err != nil {
 		return decimal.Zero, err
 	}
+	if err := writeContractCloseSettlements(ctx, instructionModel, fill, contractOrder, position.Id, marginReleased, realized); err != nil {
+		return decimal.Zero, err
+	}
 	return qty, nil
+}
+
+func writeContractCloseSettlements(ctx context.Context, instructionModel models.TTradeSettlementInstructionModel, fill *models.TTradeFill, contractOrder *models.TTradeOrderContract, positionID int64, marginReleased, realized decimal.Decimal) error {
+	now := utils.NowMillis()
+	stepNo := int64(10)
+	insert := func(suffix string, action trade.SettlementInstructionAction, amount decimal.Decimal) error {
+		if !amount.IsPositive() {
+			return nil
+		}
+		instruction := &models.TTradeSettlementInstruction{TenantId: fill.TenantId, InstructionNo: derivedTradeBizNo(fill.FillNo, suffix), BizType: "fill", BizId: fill.FillNo, BatchNo: fill.MatchNo, FillId: fill.Id, OrderId: fill.OrderId, PositionId: positionID, ReservationNo: fill.OrderNo, UserId: fill.UserId, Action: int64(action), Asset: contractOrder.MarginAsset, Amount: amount, StepNo: stepNo, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}
+		stepNo++
+		return insertSettlementInstructionIdempotent(ctx, instructionModel, instruction)
+	}
+	if err := insert("MARGIN_RELEASE", trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_MARGIN, roundContractCredit(marginReleased)); err != nil {
+		return err
+	}
+	if realized.IsPositive() {
+		return insert("PNL_PROFIT", trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_POST_PNL, roundContractCredit(realized))
+	}
+	if realized.IsNegative() {
+		return insert("PNL_LOSS", trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS, roundContractDebit(realized.Abs()))
+	}
+	return nil
+}
+
+func (l *ProcessContractPositionFillsLogic) riskTierForPosition(ctx context.Context, position *models.TContractPosition, contract *models.TTradeSymbolContract) (*models.TContractRiskLimitTier, error) {
+	values, err := calculateContractTradeValues(position.ContractValueType, position.Qty, contract.ContractSize, position.MarkPrice)
+	if err != nil {
+		return nil, err
+	}
+	tier, err := l.svcCtx.ContractRiskLimitTierModel.FindByNotional(ctx, position.TenantId, position.SymbolId, values.QuoteNotional)
+	if errors.Is(err, models.ErrNotFound) {
+		return nil, nil
+	}
+	return tier, err
 }
 
 func writePositionProjection(ctx context.Context, historyModel models.TContractPositionHistoryModel, eventModel models.TBizTradeEventModel, before, after *models.TContractPosition, fill *models.TTradeFill, actionKey string, action trade.PositionActionType, realized, appliedQty decimal.Decimal) error {
@@ -257,41 +311,59 @@ func contractRealizedPnl(side int64, openPrice, closePrice, qty, contractSize de
 	return roundContractCredit(pnl)
 }
 
-func recalculatePositionRisk(position *models.TContractPosition, contract *models.TTradeSymbolContract) {
+func recalculatePositionRisk(position *models.TContractPosition, contract *models.TTradeSymbolContract, tiers ...*models.TContractRiskLimitTier) {
 	position.UnrealizedPnl = contractRealizedPnl(position.PositionSide, position.OpenAvgPrice, position.MarkPrice, position.Qty, contract.ContractSize, position.ContractValueType)
 	values, err := calculateContractTradeValues(position.ContractValueType, position.Qty, contract.ContractSize, position.MarkPrice)
 	if err != nil {
 		position.Status = int64(trade.PositionStatus_POSITION_STATUS_MANUAL_REVIEW)
 		return
 	}
-	position.MaintenanceMargin = roundContractDebit(values.SettlementNotional.Mul(contract.MaintenanceMarginRate))
+	maintenanceRate := contract.MaintenanceMarginRate
+	maintenanceAmount := decimal.Zero
+	if len(tiers) > 0 && tiers[0] != nil {
+		maintenanceRate = tiers[0].MaintenanceMarginRate
+		maintenanceAmount = tiers[0].MaintenanceAmount
+	}
+	position.MaintenanceMargin = decimalMaxZero(roundContractDebit(values.SettlementNotional.Mul(maintenanceRate)).Sub(maintenanceAmount))
+	if position.MarginMode == int64(trade.MarginMode_MARGIN_MODE_CROSS) {
+		// Cross liquidation is account-level and requires wallet equity plus all
+		// positions sharing the margin asset. Never persist an isolated-position
+		// approximation that could trigger an incorrect liquidation.
+		position.RiskRate = decimal.Zero
+		position.BankruptcyPrice = decimal.Zero
+		position.LiquidationPrice = decimal.Zero
+		return
+	}
 	equity := position.PositionMargin.Add(position.IsolatedMargin).Add(position.UnrealizedPnl)
 	if equity.IsPositive() {
 		position.RiskRate = position.MaintenanceMargin.Div(equity)
 	} else {
 		position.RiskRate = decimal.Zero
 	}
-	position.BankruptcyPrice, position.LiquidationPrice = contractRiskPrices(position, contract)
+	position.BankruptcyPrice, position.LiquidationPrice = contractRiskPricesWithMaintenance(position, contract, maintenanceRate, maintenanceAmount)
 }
 
 func contractRiskPrices(position *models.TContractPosition, contract *models.TTradeSymbolContract) (decimal.Decimal, decimal.Decimal) {
+	return contractRiskPricesWithMaintenance(position, contract, contract.MaintenanceMarginRate, decimal.Zero)
+}
+
+func contractRiskPricesWithMaintenance(position *models.TContractPosition, contract *models.TTradeSymbolContract, maintenanceRate, maintenanceAmount decimal.Decimal) (decimal.Decimal, decimal.Decimal) {
 	contracts := position.Qty.Mul(contract.ContractSize)
 	if !contracts.IsPositive() || !position.OpenAvgPrice.IsPositive() {
 		return decimal.Zero, decimal.Zero
 	}
 	margin := position.PositionMargin.Add(position.IsolatedMargin)
-	maintenanceRate := contract.MaintenanceMarginRate
 	if position.ContractValueType == int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_INVERSE) {
 		base := decimal.NewFromInt(1).Div(position.OpenAvgPrice)
 		bankDenom := base
 		if position.PositionSide == int64(trade.PositionSide_POSITION_SIDE_LONG) {
 			bankDenom = base.Add(margin.Div(contracts))
-			liquidation := contracts.Mul(decimal.NewFromInt(1).Add(maintenanceRate)).Div(margin.Add(contracts.Mul(base)))
+			liquidation := contracts.Mul(decimal.NewFromInt(1).Add(maintenanceRate)).Div(margin.Add(contracts.Mul(base)).Add(maintenanceAmount))
 			return decimal.NewFromInt(1).Div(bankDenom), liquidation
 		} else {
 			bankDenom = base.Sub(margin.Div(contracts))
 		}
-		liqDenom := contracts.Mul(base).Sub(margin)
+		liqDenom := contracts.Mul(base).Sub(margin).Sub(maintenanceAmount)
 		if !bankDenom.IsPositive() || !liqDenom.IsPositive() {
 			return decimal.Zero, decimal.Zero
 		}
@@ -305,11 +377,11 @@ func contractRiskPrices(position *models.TContractPosition, contract *models.TTr
 		if !denominator.IsPositive() {
 			return bankruptcy, decimal.Zero
 		}
-		liquidation := decimalMaxZero(position.OpenAvgPrice.Sub(bankDelta).Div(denominator))
+		liquidation := decimalMaxZero(position.OpenAvgPrice.Sub(bankDelta).Sub(maintenanceAmount.Div(contracts)).Div(denominator))
 		return bankruptcy, liquidation
 	}
 	bankruptcy := position.OpenAvgPrice.Add(bankDelta)
-	liquidation := position.OpenAvgPrice.Add(bankDelta).Div(decimal.NewFromInt(1).Add(maintenanceRate))
+	liquidation := position.OpenAvgPrice.Add(bankDelta).Add(maintenanceAmount.Div(contracts)).Div(decimal.NewFromInt(1).Add(maintenanceRate))
 	return bankruptcy, liquidation
 }
 

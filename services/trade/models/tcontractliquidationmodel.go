@@ -16,6 +16,7 @@ type (
 	TContractLiquidationModel interface {
 		tContractLiquidationModel
 		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractLiquidation, int64, error)
+		FindActiveByPosition(ctx context.Context, tenantID, positionID int64) (*TContractLiquidation, error)
 	}
 
 	customTContractLiquidationModel struct {
@@ -27,6 +28,20 @@ type (
 func NewTContractLiquidationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TContractLiquidationModel {
 	return &customTContractLiquidationModel{
 		defaultTContractLiquidationModel: newTContractLiquidationModel(conn, c, opts...),
+	}
+}
+
+func (m *defaultTContractLiquidationModel) FindActiveByPosition(ctx context.Context, tenantID, positionID int64) (*TContractLiquidation, error) {
+	var row TContractLiquidation
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND position_id = ? AND status IN (?, ?, ?) ORDER BY id DESC LIMIT 1", tContractLiquidationRows, m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, positionID, 1, 2, 4)
+	switch err {
+	case nil:
+		return &row, nil
+	case sqlx.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
 	}
 }
 

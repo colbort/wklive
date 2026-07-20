@@ -267,7 +267,7 @@ func TestSelectOrderMatchPlanKeepsBookPriority(t *testing.T) {
 }
 
 func TestRemainingMatchQty(t *testing.T) {
-	got := remainingMatchQty(&models.TTradeOrder{Amount: testDecimal(10000), FilledAmount: testDecimal(2500)}, testDecimal(5))
+	got := remainingMatchQty(&models.TTradeOrder{Amount: testDecimal(100), FilledAmount: testDecimal(25)}, testDecimal(5))
 	if !got.Equal(testDecimal(15)) {
 		t.Fatalf("remainingMatchQty() = %v, want 15", got)
 	}
@@ -278,8 +278,8 @@ func TestRemainingMatchQty(t *testing.T) {
 	}
 }
 
-func TestOrderFillNeedByAmountUsesMinorAmount(t *testing.T) {
-	need := orderFillNeed{remainingAmount: testDecimal(10000)}
+func TestOrderFillNeedByAmountUsesNaturalAmount(t *testing.T) {
+	need := orderFillNeed{remainingAmount: testDecimal(100)}
 	if got := need.matchQty(testDecimal(20)); !got.Equal(testDecimal(5)) {
 		t.Fatalf("matchQty() = %v, want 5", got)
 	}
@@ -292,23 +292,23 @@ func TestCanApplyOrderFill(t *testing.T) {
 		Price:     testDecimal(10),
 		Qty:       testDecimal(10),
 		FilledQty: testDecimal(4),
-		Amount:    testDecimal(10000),
+		Amount:    testDecimal(100),
 	}
-	if !canApplyOrderFill(qtyOrder, &models.TTradeFill{Price: testDecimal(12), Qty: testDecimal(6), Amount: testDecimal(7200)}) {
+	if !canApplyOrderFill(qtyOrder, &models.TTradeFill{Price: testDecimal(12), Qty: testDecimal(6), Amount: testDecimal(72)}) {
 		t.Fatal("remaining qty should be fillable")
 	}
-	if canApplyOrderFill(qtyOrder, &models.TTradeFill{Price: testDecimal(12), Qty: testDecimal(7), Amount: testDecimal(8400)}) {
+	if canApplyOrderFill(qtyOrder, &models.TTradeFill{Price: testDecimal(12), Qty: testDecimal(7), Amount: testDecimal(84)}) {
 		t.Fatal("fill should not exceed remaining qty")
 	}
-	if canApplyOrderFill(qtyOrder, &models.TTradeFill{Price: testDecimal(9), Qty: testDecimal(6), Amount: testDecimal(5400)}) {
+	if canApplyOrderFill(qtyOrder, &models.TTradeFill{Price: testDecimal(9), Qty: testDecimal(6), Amount: testDecimal(54)}) {
 		t.Fatal("sell limit fill price should not be below order price")
 	}
 
-	amountOrder := &models.TTradeOrder{Amount: testDecimal(10000), FilledAmount: testDecimal(4000)}
-	if !canApplyOrderFill(amountOrder, &models.TTradeFill{Qty: testDecimal(3), Amount: testDecimal(6000)}) {
+	amountOrder := &models.TTradeOrder{Amount: testDecimal(100), FilledAmount: testDecimal(40)}
+	if !canApplyOrderFill(amountOrder, &models.TTradeFill{Qty: testDecimal(3), Amount: testDecimal(60)}) {
 		t.Fatal("remaining amount should be fillable")
 	}
-	if canApplyOrderFill(amountOrder, &models.TTradeFill{Qty: testDecimal(3), Amount: testDecimal(6100)}) {
+	if canApplyOrderFill(amountOrder, &models.TTradeFill{Qty: testDecimal(3), Amount: testDecimal(61)}) {
 		t.Fatal("fill should not exceed remaining amount")
 	}
 }
@@ -459,7 +459,7 @@ func TestCanFullyFillFromBookByAmount(t *testing.T) {
 		Side:      int64(common.Side_SIDE_BUY),
 		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
 		Price:     testDecimal(100),
-		Amount:    testDecimal(10000),
+		Amount:    testDecimal(100),
 	}
 	opposites := []*models.TTradeOrder{
 		{Side: int64(common.Side_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: testDecimal(10), Qty: testDecimal(5)},
@@ -503,8 +503,8 @@ func TestTradeFillFromProtoRequiresCompleteExecution(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !fill.Amount.Equal(testDecimal(2000)) {
-		t.Fatalf("computed fill amount = %v, want 2000", fill.Amount)
+	if !fill.Amount.Equal(testDecimal(20)) {
+		t.Fatalf("computed fill amount = %v, want 20", fill.Amount)
 	}
 }
 

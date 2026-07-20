@@ -53,6 +53,7 @@ type (
 		PositionSide        int64           `db:"position_side"`         // 仓位方向：1净持仓 2多 3空
 		MarginMode          int64           `db:"margin_mode"`           // 保证金模式：1全仓 2逐仓
 		TriggerMarkPrice    decimal.Decimal `db:"trigger_mark_price"`    // 触发强平的标记价格
+		TriggerSnapshotId   string          `db:"trigger_snapshot_id"`   // 强平触发价格快照ID
 		TriggerIndexPrice   decimal.Decimal `db:"trigger_index_price"`   // 触发时指数价格
 		TriggerQty          decimal.Decimal `db:"trigger_qty"`           // 接管时仓位数量
 		LiquidatedQty       decimal.Decimal `db:"liquidated_qty"`        // 已强平数量

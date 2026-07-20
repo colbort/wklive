@@ -148,10 +148,11 @@ Matcher 必须在同一数据库事务中完成：
 - `CONSUME_FROZEN` 使用订单冻结业务号扣减冻结资产；
 - `CREDIT_AVAILABLE` 将成交所得资产计入用户可用余额；
 - 买方手续费从下单冻结中扣减，卖方手续费从成交所得中扣减；
-- Trade 数量在进入 Asset 前统一转换为内部最小金额单位；
+- Trade 与 Asset 统一使用自然 Decimal 金额，不再写死两位小数或乘以 100；
 - 订单全部成交且所有成交扣减完成后，自动创建价格改善/多余冻结释放指令；
 - Instruction、Fill 和 Reservation 分别推进 `PROCESSING/SUCCESS/FAILED/MANUAL_REVIEW`、`PENDING/PROCESSING/SETTLED/FAILED` 和 `FROZEN/PART_CONSUMED/CONSUMED/RELEASED`；
 - Asset 成功但 Trade 本地提交失败时，使用相同 `instruction_no` 重试；
+- 本地成功确认会锁定 Settlement Instruction 和 Reservation，租约重入不会重复累计消费/释放金额；
 - `PROCESSING` 指令超过租约时间后可以重新领取；
 - 连续失败达到上限后进入人工处理；
 - Fill 全部指令完成后，同事务写入 `SPOT_FILL_SETTLED` Outbox。
@@ -168,7 +169,7 @@ Asset 的 `AddAvailable`、`SubAvailable`、`DeductFrozenAsset` 和 `UnfreezeAss
 - 全部平仓；
 - 超量反向开仓（若产品允许）；
 - `NET/LONG/SHORT` 模式；
-- `CROSS/ISOLATED` 保证金模式；
+- `ISOLATED` 保证金模式已进入成交与结算链路；`CROSS` 仅保留模型和配置，账户级权益投影、标记价格驱动的风险重算及强平闭环完成前，下单接口必须拒绝全仓订单；
 - Reduce Only 限制。
 
 同一仓位事务至少更新：
@@ -196,10 +197,12 @@ Reduce Only 成交时必须消费对应的 `reserved_close_qty`；订单撤销�
 - `action_key = fill_no + position_side + action` 提供仓位投影幂等；
 - 支持 LONG/SHORT 开仓、同向加仓、部分减仓和全部平仓；
 - NET 委托按成交方向先平反向仓位，剩余数量再反向开仓；
-- 支持 CROSS/ISOLATED 维度隔离，Reduce Only 不允许反向开仓；
+- 已支持 ISOLATED 维度隔离，Reduce Only 不允许反向开仓；CROSS 在账户级风控闭环完成前由下单入口拒绝；
 - 平仓成交消费 `reserved_close_qty`，非 Reduce Only 的 LONG/SHORT 平仓单也在下单阶段预占可平数量；
+- Fill 级仓位投影先检查已提交的 Position History，事件重放不会再次消费 `reserved_close_qty`；
 - 线性合约采用数量加权均价及价差盈亏，反向合约采用调和均价及倒数价格盈亏；
 - 更新仓位保证金、维持保证金、未实现/已实现盈亏、风险率、强平价、破产价、状态和版本。
+- 平仓投影同事务追加保证金释放和已实现盈亏 Asset 指令，盈利入账、亏损扣款及手续费均使用独立稳定幂等键。
 
 本节完成的是 Trade 内部仓位事实投影。成交保证金、手续费、已实现盈亏与 Asset 账本之间的最终资金结算，仍由 Settlement Instruction 链路处理，不应以 Position 更新成功代替 Asset 结算成功。
 
@@ -241,6 +244,7 @@ fee_base              = contract_value_quote / fill_price * fee_rate
 - 线性仓位使用数量加权开仓均价，反向仓位使用调和均价；
 - 线性与反向多空已实现/未实现盈亏分别计算；
 - 强平价使用 `equity(liquidation_price) = maintenance_margin(liquidation_price)` 求解，不使用当前 Mark Price 的维持保证金倒推；
+- 维持保证金采用成交命中的风险档位费率和 `maintenance_amount`；全仓不得套用逐仓强平公式，在账户级权益快照闭环前不生成误导性的单仓强平价；
 - 委托价格和数量必须符合 `price_tick/qty_step`；保证金及手续费等扣款按 18 位小数向上取整，盈亏和入账按 18 位小数向零截断；
 - 永续和交割共用成交公式，但 Funding 和 Delivery 仍走各自独立结算流程。
 
@@ -276,6 +280,7 @@ FROZEN/PART_CONSUMED
 - 指令失败同步记录 Reservation 的 `retry_count/next_retry_at/last_error_msg`，达到上限后 Reservation 进入 `FAILED`、指令进入 `MANUAL_REVIEW`；
 - `PROCESSING` 租约超时、普通失败和进程中断均可由定时扫描恢复；
 - Settlement Instruction 成功和 Reservation 金额/状态变更位于同一 Trade 数据库事务。
+- 订单剩余资金仅使用 `order_no + RELEASE` 唯一指令，多个最终 Fill 并发不会产生不同幂等键的重复解冻。
 
 ### 3.6 撤单和成交并发（P0，已完成）
 
@@ -344,6 +349,14 @@ FREEZING
 
 行情无效或无法取得可信结算价时，不得直接判输，应进入退款或人工处理流程。
 
+当前实现已经补齐：
+
+- 秒合约冻结后进入 `ACTIVATING`，由结算任务从 `common/market` 锁定起始价并进入 `ACTIVE`；
+- 支持以逗号、分号或 `|` 配置多个 `category:market:symbol` 行情源，过滤陈旧及未来时间戳后取中位数；所有候选价和最终选中价均落审计快照；
+- 到期窗口、算法版本、方向、容差、平局退款/判输、WIN/LOSE/DRAW/VOID 已接入；
+- 本金扣除、胜出派彩和退款使用稳定 Asset 幂等号，失败可由任务恢复；
+- 平台敞口检查使用 Symbol 级 Redis 锁，避免并发下单突破上限。
+
 ### 3.8 永续资金费缺口（P1）
 
 目前只生成资金费事件，需要继续实现：
@@ -357,6 +370,8 @@ FREEZING
 - `funding_batch_id + position_id` 唯一幂等；
 - `last_funding_time` 更新；
 - 失败重试、人工处理和批次对账。
+
+当前实现已经补齐 Funding Batch、标记价/指数价/费率/公式快照、逐仓仓位明细、先扣付款方再给收款方、Asset 幂等、失败退避和人工状态、`last_funding_time` 更新及批次完成对账。资金费率采用 `premium-v1=(mark-index)/index` 并应用配置上下限。
 
 ### 3.9 交割合约缺口（P1）
 
@@ -379,6 +394,8 @@ FREEZING
 
 必须使用稳定幂等键 `delivery_batch_id + position_id`，保存最终价格来源、采样窗口和算法版本。
 
+当前实现已经补齐 CLOSE_ONLY、停止撮合后的系统撤单与预占释放等待、最终价锁定、Delivery Batch/明细、保证金/盈亏/交割费幂等结算、仓位结算历史、关闭仓位及批次对账；存在未完成订单时不会提前锁价交割。
+
 ### 3.10 强平缺口（P1）
 
 当前只有风险扫描和事件入口，后续需要实现：
@@ -393,6 +410,10 @@ FREEZING
 - ADL；
 - Liquidation Batch/明细；
 - 强平事件、重试、审计和人工处理。
+
+当前实现已经补齐逐仓风险单元锁定、撤销增险订单、强平接管、剩余权益/强平费结算、保险基金系统账户、保险不足后的 ADL 对手仓位选择、仓位历史、完成事件及无法安全处理时转人工。保险基金账户按租户、交易标的和结算资产配置在 `t_contract_insurance_fund_account`；Asset 使用 `CoverInsuranceDeficit` 原子执行全部或部分赔付，并在 `t_asset_insurance_cover` 保存不可变幂等结果。剩余穿仓金额按 ADL 候选人在标记价与破产价之间让渡的盈利计算承接数量，仍不足时进入人工处理。
+
+秒合约、资金费、交割和强平使用 `common/market` 的已确认不可变快照。每个快照包含内容哈希 ID、来源时间、接收时间、修订版本、公式版本及确认状态，并持久化到 `t_trade_market_snapshot`；结算批次和强平记录保存对应快照 ID。资金费率仅接受交易对明确配置的 `premium-v1` 权威公式入口，未知或空来源直接拒绝创建批次，不再使用最近成交价或静默回退。
 
 ### 3.11 Event/Outbox（P0，已完成核心可靠投递）
 
@@ -411,10 +432,10 @@ Outbox 必须具备：
 当前实现已经补齐：
 
 - Outbox 与订单、Fill、Settlement Instruction、Position History 等业务事实同事务写入，`tenant_id + event_no` 唯一；
-- `PENDING/FAILED/租约过期的 PROCESSING` 记录通过条件更新原子领取，多实例不会同时取得有效投递权；
+- 所有 Outbox 类型均会扫描投递；`PENDING/FAILED/租约过期的 PROCESSING` 记录通过条件更新原子领取，多实例不会同时取得有效投递权；
 - Outbox 保存 `consumer`、`payload_version`、`claimed_by/claimed_at` 和 `delivered_at`；
 - 发布成功不直接视为业务成功，只有消费者完成业务处理和 Inbox 确认后才将 Outbox 更新为 `SUCCESS`；
-- 消费端使用 `consumer + tenant_id + event_no` 唯一 Inbox，Redis Pub/Sub 多实例广播不会重复产生业务影响；
+- 消费端使用 `consumer + tenant_id + event_no` 唯一 Inbox，并以领取时间作为 fencing token；过期 Worker 无法确认新租约，Redis Pub/Sub 多实例广播不会重复产生业务影响；
 - 失败按 1 秒起步进行指数退避，最大退避约 512 秒，达到 `max_retry_count` 后进入 `DEAD_LETTER`；
 - 管理后台仅允许对 `FAILED/DEAD_LETTER` 事件进行人工重试，人工重试清理领取信息并重新获得完整重试预算；
 - 当前内部事件只接受 Payload V1，未知版本和未知事件类型会失败并进入统一重试/死信流程；
@@ -636,7 +657,7 @@ flowchart LR
 | 期限 | 永续、交割 |
 | 价值 | 线性、反向 |
 | 本位 | U 本位、币本位 |
-| 保证金 | 全仓、逐仓 |
+| 保证金 | 逐仓；全仓暂不纳入上线验收 |
 | 持仓 | NET、LONG、SHORT |
 | 动作 | 开仓、加仓、减仓、全平、反向 |
 | 委托 | 限价、市价、条件单、Reduce Only |

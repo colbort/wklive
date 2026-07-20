@@ -100,3 +100,9 @@ func (s *AssetInternalServer) TransferAsset(ctx context.Context, in *asset.Trans
 	l := logic.NewTransferAssetLogic(ctx, s.svcCtx)
 	return l.TransferAsset(in)
 }
+
+func (s *AssetInternalServer) CoverInsuranceDeficit(ctx context.Context, in *asset.CoverInsuranceDeficitReq) (*asset.CoverInsuranceDeficitResp, error) {
+	l := logic.NewCoverInsuranceDeficitLogic(ctx, s.svcCtx)
+	return l.Cover(in)
+}
+func(s *AssetInternalServer)ReverseInsuranceCover(ctx context.Context,in *asset.ReverseInsuranceCoverReq)(*asset.ChangeAssetResp,error){return logic.NewReverseInsuranceCoverLogic(ctx,s.svcCtx).Reverse(in)}

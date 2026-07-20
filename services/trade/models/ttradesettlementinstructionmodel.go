@@ -24,6 +24,7 @@ type (
 		CountUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error)
 		CountAllUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error)
 		Claim(ctx context.Context, id, now int64) (bool, error)
+		FindOneForUpdate(ctx context.Context, id int64) (*TTradeSettlementInstruction, error)
 	}
 
 	customTTradeSettlementInstructionModel struct {
@@ -36,6 +37,15 @@ func NewTTradeSettlementInstructionModel(conn sqlx.SqlConn, c cache.CacheConf, o
 	return &customTTradeSettlementInstructionModel{
 		defaultTTradeSettlementInstructionModel: newTTradeSettlementInstructionModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTTradeSettlementInstructionModel) FindOneForUpdate(ctx context.Context, id int64) (*TTradeSettlementInstruction, error) {
+	var item TTradeSettlementInstruction
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tTradeSettlementInstructionRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
+		return nil, err
+	}
+	return &item, nil
 }
 
 func (m *defaultTTradeSettlementInstructionModel) CountAllUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error) {

@@ -601,6 +601,7 @@ type ContractLiquidation struct {
 	PositionSide        int64  `json:"positionSide"`
 	MarginMode          int64  `json:"marginMode"`
 	TriggerMarkPrice    string `json:"triggerMarkPrice"`
+	TriggerSnapshotId   string `json:"triggerSnapshotId"`
 	TriggerIndexPrice   string `json:"triggerIndexPrice"`
 	TriggerQty          string `json:"triggerQty"`
 	LiquidatedQty       string `json:"liquidatedQty"`
@@ -652,13 +653,20 @@ type ContractPosition struct {
 	FrozenQty         string `json:"frozenQty"`
 	OpenAvgPrice      string `json:"openAvgPrice"`
 	MarkPrice         string `json:"markPrice"`
+	MarkSnapshotId    string `json:"markSnapshotId"`
 	MarginAsset       string `json:"marginAsset"`
 	PositionMargin    string `json:"positionMargin"`
 	IsolatedMargin    string `json:"isolatedMargin"`
 	UnrealizedPnl     string `json:"unrealizedPnl"`
 	RealizedPnl       string `json:"realizedPnl"`
 	LiquidationPrice  string `json:"liquidationPrice"`
+	MaintenanceMargin string `json:"maintenanceMargin"`
+	BankruptcyPrice   string `json:"bankruptcyPrice"`
+	RiskRate          string `json:"riskRate"`
+	Status            int64  `json:"status"`
 	AdlRank           int64  `json:"adlRank"`
+	LastFundingTime   int64  `json:"lastFundingTime"`
+	ClosedAt          int64  `json:"closedAt"`
 	Version           int64  `json:"version"`
 	CreateTimes       int64  `json:"createTimes"`
 	UpdateTimes       int64  `json:"updateTimes"`
@@ -1384,6 +1392,19 @@ type GetFundingSettlementListResp struct {
 	Data []ContractFundingSettlement `json:"data"`
 }
 
+type GetInsuranceFundAccountListReq struct {
+	PageReq
+	TenantId    int64  `form:"tenantId,optional"`
+	SymbolId    int64  `form:"symbolId,optional"`
+	SettleAsset string `form:"settleAsset,optional"`
+	Status      int64  `form:"status,optional"`
+}
+
+type GetInsuranceFundAccountListResp struct {
+	RespBase
+	Data []InsuranceFundAccount `json:"data"`
+}
+
 type GetLiquidationListReq struct {
 	PageReq
 	TenantId   int64     `form:"tenantId,optional"`
@@ -1419,6 +1440,20 @@ type GetMarketReq struct {
 type GetMarketResp struct {
 	RespBase
 	Data OptionMarket `json:"data"`
+}
+
+type GetMarketSnapshotListReq struct {
+	PageReq
+	TenantId     int64  `form:"tenantId,optional"`
+	SymbolId     int64  `form:"symbolId,optional"`
+	SnapshotKind string `form:"snapshotKind,optional"`
+	StartTime    int64  `form:"startTime,optional"`
+	EndTime      int64  `form:"endTime,optional"`
+}
+
+type GetMarketSnapshotListResp struct {
+	RespBase
+	Data []TradeMarketSnapshot `json:"data"`
 }
 
 type GetOrderDetailAdminReq struct {
@@ -1971,6 +2006,20 @@ type InitTenantItickDisplayReq struct {
 type InitTenantItickDisplayResp struct {
 	RespBase
 	Data InitTenantItickDisplayData `json:"data"`
+}
+
+type InsuranceFundAccount struct {
+	Id          int64  `json:"id"`
+	TenantId    int64  `json:"tenantId"`
+	SymbolId    int64  `json:"symbolId"`
+	SettleAsset string `json:"settleAsset"`
+	FundUserId  int64  `json:"fundUserId"`
+	WalletType  int64  `json:"walletType"`
+	AdlEnabled  int64  `json:"adlEnabled"`
+	Status      int64  `json:"status"`
+	Version     int64  `json:"version"`
+	CreateTimes int64  `json:"createTimes"`
+	UpdateTimes int64  `json:"updateTimes"`
 }
 
 type ItickCategory struct {
@@ -3311,6 +3360,18 @@ type SetDefaultUserBankReq struct {
 	UserId   int64 `json:"userId"`
 }
 
+type SetInsuranceFundAccountReq struct {
+	Id          int64  `json:"id,optional"`
+	TenantId    int64  `json:"tenantId"`
+	SymbolId    int64  `json:"symbolId,optional"`
+	SettleAsset string `json:"settleAsset"`
+	FundUserId  int64  `json:"fundUserId"`
+	WalletType  int64  `json:"walletType"`
+	AdlEnabled  int64  `json:"adlEnabled"`
+	Status      int64  `json:"status"`
+	Version     int64  `json:"version,optional"`
+}
+
 type SetSecondsSymbolConfigReq struct {
 	TenantId                 int64  `json:"tenantId"`
 	SymbolId                 int64  `json:"symbolId"`
@@ -4272,6 +4333,25 @@ type TradeFill struct {
 	RealizedPnl          string `json:"realizedPnl"`
 	MatchTime            int64  `json:"matchTime"`
 	CreateTimes          int64  `json:"createTimes"`
+}
+
+type TradeMarketSnapshot struct {
+	Id                int64  `json:"id"`
+	SnapshotId        string `json:"snapshotId"`
+	SnapshotKind      string `json:"snapshotKind"`
+	SymbolId          int64  `json:"symbolId"`
+	Source            string `json:"source"`
+	Price             string `json:"price"`
+	MarkPrice         string `json:"markPrice"`
+	IndexPrice        string `json:"indexPrice"`
+	FundingRate       string `json:"fundingRate"`
+	SourceTimestamp   int64  `json:"sourceTimestamp"`
+	SnapshotTimestamp int64  `json:"snapshotTimestamp"`
+	Revision          int64  `json:"revision"`
+	FormulaVersion    string `json:"formulaVersion"`
+	Confirmed         int64  `json:"confirmed"`
+	RawPayload        string `json:"rawPayload"`
+	CreateTimes       int64  `json:"createTimes"`
 }
 
 type TradeOrder struct {

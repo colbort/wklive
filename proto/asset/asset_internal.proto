@@ -50,6 +50,10 @@ service AssetInternal {
 
   // 钱包划转
   rpc TransferAsset(TransferAssetReq) returns (TransferAssetResp);
+
+  // 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
+  rpc CoverInsuranceDeficit(CoverInsuranceDeficitReq) returns (CoverInsuranceDeficitResp);
+  rpc ReverseInsuranceCover(ReverseInsuranceCoverReq) returns (ChangeAssetResp);
 }
 
 message AddAvailableReq {
@@ -252,3 +256,24 @@ message ChangeAssetData {
   string biz_no = 1;
   UserAsset asset = 2;
 }
+
+message CoverInsuranceDeficitReq {
+  int64 tenant_id = 1;
+  int64 fund_user_id = 2;
+  common.WalletType wallet_type = 3;
+  string coin = 4;
+  string requested_amount = 5;
+  int64 liquidation_id = 6;
+  string liquidation_no = 7;
+  string remark = 8;
+}
+
+message CoverInsuranceDeficitResp {
+  common.RespBase base = 1;
+  string requested_amount = 2;
+  string covered_amount = 3;
+  string remaining_amount = 4;
+  UserAsset fund_asset = 5;
+  bool idempotent_replay = 6;
+}
+message ReverseInsuranceCoverReq { int64 tenant_id = 1; string liquidation_no = 2; string reversal_no = 3; string remark = 4; }

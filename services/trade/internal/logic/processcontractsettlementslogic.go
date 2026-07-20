@@ -28,10 +28,13 @@ func NewProcessContractSettlementsLogic(ctx context.Context, svcCtx *svc.Service
 // 合约结算（永续资金费率/交割合约）；秒合约是独立产品，不属于 contract_type。
 func (l *ProcessContractSettlementsLogic) ProcessContractSettlements(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	return runTradeTaskWithLock(l.ctx, l.svcCtx, "process_contract_settlements", func() (*trade.TradeTaskResp, error) {
-		if err := l.settleFundingFees(in); err != nil {
+		if err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
 			return nil, err
 		}
-		if err := l.disableExpiredSymbols(in.GetTenantId(), trade.ContractType_CONTRACT_TYPE_DELIVERY); err != nil {
+		if err := NewProcessFundingSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
+			return nil, err
+		}
+		if err := NewProcessDeliverySettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
 			return nil, err
 		}
 		return okTradeTaskResp(), nil

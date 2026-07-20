@@ -340,6 +340,7 @@ func positionToProto(item *models.TContractPosition) *trade.ContractPosition {
 		FrozenQty:         conv.FloatString(item.FrozenQty),
 		OpenAvgPrice:      conv.FloatString(item.OpenAvgPrice),
 		MarkPrice:         conv.FloatString(item.MarkPrice),
+		MarkSnapshotId:    item.MarkSnapshotId,
 		MarginAsset:       item.MarginAsset,
 		PositionMargin:    conv.FloatString(item.PositionMargin),
 		MaintenanceMargin: conv.FloatString(item.MaintenanceMargin),
@@ -738,11 +739,11 @@ const (
 )
 
 func toTradeMinorAmount(amount decimal.Decimal) decimal.Decimal {
-	return amount.Mul(decimal.NewFromInt(100))
+	return amount
 }
 
 func fromTradeMinorAmount(amount decimal.Decimal) decimal.Decimal {
-	return amount.Div(decimal.NewFromInt(100))
+	return amount
 }
 
 func tradeMinorAmountAtPrice(price, qty decimal.Decimal) decimal.Decimal {

@@ -1,23 +1,18 @@
 package cache
 
-import (
-	"strings"
-	"wklive/services/itick/internal/market/types"
-)
+import cache "wklive/common/market"
 
-func BuildTopicKey(msg types.ClientMessage) string {
-	msg = NormalizeClientMessage(msg)
-	return strings.ToLower(string(msg.Topic) + ":" + msg.CategoryCode + ":" + msg.Symbol + ":" + msg.Market + ":" + msg.Interval)
-}
+type MarketDataCache = cache.MarketDataCache
+type CachedMarketData = cache.CachedMarketData
 
-func NormalizeClientMessage(msg types.ClientMessage) types.ClientMessage {
-	msg.Topic = types.Topic(strings.ToLower(strings.TrimSpace(string(msg.Topic))))
-	msg.CategoryCode = strings.ToLower(strings.TrimSpace(msg.CategoryCode))
-	msg.Symbol = strings.ToUpper(strings.TrimSpace(msg.Symbol))
-	msg.Market = strings.ToUpper(strings.TrimSpace(msg.Market))
-	msg.Interval = strings.ToLower(strings.TrimSpace(msg.Interval))
-	if msg.Topic != types.TopicKline {
-		msg.Interval = ""
+var NewMarketDataCache = cache.NewMarketDataCache
+var BuildTopicKey = cache.BuildTopicKey
+var NormalizeClientMessage = cache.NormalizeClientMessage
+
+func marketDataKey(msg cache.ClientMessage) string {
+	msg = cache.NormalizeClientMessage(msg)
+	if msg.Topic == cache.TopicKline {
+		return "itick:v1:kline:" + msg.CategoryCode + ":" + msg.Market + ":" + msg.Symbol + ":" + msg.Interval
 	}
-	return msg
+	return "itick:" + string(msg.Topic) + ":" + msg.CategoryCode + ":" + msg.Market + ":" + msg.Symbol
 }

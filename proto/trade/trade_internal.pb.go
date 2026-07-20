@@ -396,9 +396,8 @@ const file_proto_trade_trade_internal_proto_rawDesc = "" +
 	"\vreject_code\x18\x02 \x01(\tR\n" +
 	"rejectCode\x12\x1d\n" +
 	"\n" +
-	"reject_msg\x18\x03 \x01(\tR\trejectMsg2\xbf\x02\n" +
-	"\rTradeInternal\x12G\n" +
-	"\x0fRecordOrderFill\x12\x19.trade.RecordOrderFillReq\x1a\x19.trade.InternalCommonResp\x12S\n" +
+	"reject_msg\x18\x03 \x01(\tR\trejectMsg2\xf6\x01\n" +
+	"\rTradeInternal\x12S\n" +
 	"\x15RecordPositionHistory\x12\x1f.trade.RecordPositionHistoryReq\x1a\x19.trade.InternalCommonResp\x12I\n" +
 	"\x10CreateTradeEvent\x12\x1a.trade.CreateTradeEventReq\x1a\x19.trade.InternalCommonResp\x12E\n" +
 	"\x0eCheckOrderRisk\x12\x18.trade.CheckOrderRiskReq\x1a\x19.trade.CheckOrderRiskRespB\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
@@ -439,16 +438,14 @@ var file_proto_trade_trade_internal_proto_depIdxs = []int32{
 	10, // 4: trade.CheckOrderRiskReq.side:type_name -> common.Side
 	11, // 5: trade.CheckOrderRiskReq.position_side:type_name -> trade.PositionSide
 	12, // 6: trade.CheckOrderRiskReq.order_type:type_name -> trade.OrderType
-	1,  // 7: trade.TradeInternal.RecordOrderFill:input_type -> trade.RecordOrderFillReq
-	2,  // 8: trade.TradeInternal.RecordPositionHistory:input_type -> trade.RecordPositionHistoryReq
-	3,  // 9: trade.TradeInternal.CreateTradeEvent:input_type -> trade.CreateTradeEventReq
-	4,  // 10: trade.TradeInternal.CheckOrderRisk:input_type -> trade.CheckOrderRiskReq
-	0,  // 11: trade.TradeInternal.RecordOrderFill:output_type -> trade.InternalCommonResp
-	0,  // 12: trade.TradeInternal.RecordPositionHistory:output_type -> trade.InternalCommonResp
-	0,  // 13: trade.TradeInternal.CreateTradeEvent:output_type -> trade.InternalCommonResp
-	5,  // 14: trade.TradeInternal.CheckOrderRisk:output_type -> trade.CheckOrderRiskResp
-	11, // [11:15] is the sub-list for method output_type
-	7,  // [7:11] is the sub-list for method input_type
+	2,  // 7: trade.TradeInternal.RecordPositionHistory:input_type -> trade.RecordPositionHistoryReq
+	3,  // 8: trade.TradeInternal.CreateTradeEvent:input_type -> trade.CreateTradeEventReq
+	4,  // 9: trade.TradeInternal.CheckOrderRisk:input_type -> trade.CheckOrderRiskReq
+	0,  // 10: trade.TradeInternal.RecordPositionHistory:output_type -> trade.InternalCommonResp
+	0,  // 11: trade.TradeInternal.CreateTradeEvent:output_type -> trade.InternalCommonResp
+	5,  // 12: trade.TradeInternal.CheckOrderRisk:output_type -> trade.CheckOrderRiskResp
+	10, // [10:13] is the sub-list for method output_type
+	7,  // [7:10] is the sub-list for method input_type
 	7,  // [7:7] is the sub-list for extension type_name
 	7,  // [7:7] is the sub-list for extension extendee
 	0,  // [0:7] is the sub-list for field type_name

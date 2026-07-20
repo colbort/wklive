@@ -47,7 +47,7 @@ func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*t
 		if err := l.recoverSettlementPendingOrders(in); err != nil {
 			return nil, err
 		}
-		if err := l.dispatchPendingRealtimeEvents(in); err != nil {
+		if err := l.dispatchPendingTradeEvents(in); err != nil {
 			return nil, err
 		}
 		if err := l.recoverFreezingOrders(in); err != nil {
@@ -106,21 +106,21 @@ func (l *ProcessTradeEventsLogic) recoverTerminatingOrders(in *trade.TradeTaskRe
 	}
 }
 
-// dispatchPendingRealtimeEvents republishes durable outbox records. Publishing
+// dispatchPendingTradeEvents republishes all durable outbox records. Publishing
 // does not mark the record successful; only the consumer may acknowledge it.
 // This makes Redis Pub/Sub the low-latency path while the outbox remains the
 // recovery source when a process or message is lost.
-func (l *ProcessTradeEventsLogic) dispatchPendingRealtimeEvents(in *trade.TradeTaskReq) error {
+func (l *ProcessTradeEventsLogic) dispatchPendingTradeEvents(in *trade.TradeTaskReq) error {
 	cursor := int64(0)
 	for {
 		now := utils.NowMillis()
-		items, err := l.svcCtx.BizTradeEventModel.FindDispatchable(l.ctx, in.GetTenantId(), now, now-realtime.ClaimLeaseMillis, cursor, 100, []string{realtime.EventOrderAccepted, realtime.EventFillCreated, realtime.EventPositionFill})
+		items, err := l.svcCtx.BizTradeEventModel.FindDispatchable(l.ctx, in.GetTenantId(), now, now-realtime.ClaimLeaseMillis, cursor, 100, nil)
 		if err != nil {
 			return err
 		}
 		for _, item := range items {
 			cursor = item.Id
-			event := realtime.Event{Version: item.PayloadVersion, EventNo: item.EventNo, Type: item.EventType, TenantID: item.TenantId, BizID: item.BizId}
+			event := realtime.Event{Version: item.PayloadVersion, Consumer: item.Consumer, EventNo: item.EventNo, Type: item.EventType, TenantID: item.TenantId, BizID: item.BizId, Payload: item.Payload}
 			if err := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
 				l.Errorf("dispatch trade event failed, eventNo=%s: %v", item.EventNo, err)
 			}

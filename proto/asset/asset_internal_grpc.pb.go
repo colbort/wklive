@@ -32,6 +32,8 @@ const (
 	AssetInternal_DeductLockedAsset_FullMethodName        = "/asset.AssetInternal/DeductLockedAsset"
 	AssetInternal_DeductLockedAssetByBizNo_FullMethodName = "/asset.AssetInternal/DeductLockedAssetByBizNo"
 	AssetInternal_TransferAsset_FullMethodName            = "/asset.AssetInternal/TransferAsset"
+	AssetInternal_CoverInsuranceDeficit_FullMethodName    = "/asset.AssetInternal/CoverInsuranceDeficit"
+	AssetInternal_ReverseInsuranceCover_FullMethodName    = "/asset.AssetInternal/ReverseInsuranceCover"
 )
 
 // AssetInternalClient is the client API for AssetInternal service.
@@ -66,6 +68,9 @@ type AssetInternalClient interface {
 	DeductLockedAssetByBizNo(ctx context.Context, in *DeductLockedAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	// 钱包划转
 	TransferAsset(ctx context.Context, in *TransferAssetReq, opts ...grpc.CallOption) (*TransferAssetResp, error)
+	// 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
+	CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error)
+	ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 }
 
 type assetInternalClient struct {
@@ -206,6 +211,26 @@ func (c *assetInternalClient) TransferAsset(ctx context.Context, in *TransferAss
 	return out, nil
 }
 
+func (c *assetInternalClient) CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CoverInsuranceDeficitResp)
+	err := c.cc.Invoke(ctx, AssetInternal_CoverInsuranceDeficit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetInternalClient) ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetInternal_ReverseInsuranceCover_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AssetInternalServer is the server API for AssetInternal service.
 // All implementations must embed UnimplementedAssetInternalServer
 // for forward compatibility.
@@ -238,6 +263,9 @@ type AssetInternalServer interface {
 	DeductLockedAssetByBizNo(context.Context, *DeductLockedAssetByBizNoReq) (*ChangeAssetResp, error)
 	// 钱包划转
 	TransferAsset(context.Context, *TransferAssetReq) (*TransferAssetResp, error)
+	// 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
+	CoverInsuranceDeficit(context.Context, *CoverInsuranceDeficitReq) (*CoverInsuranceDeficitResp, error)
+	ReverseInsuranceCover(context.Context, *ReverseInsuranceCoverReq) (*ChangeAssetResp, error)
 	mustEmbedUnimplementedAssetInternalServer()
 }
 
@@ -286,6 +314,12 @@ func (UnimplementedAssetInternalServer) DeductLockedAssetByBizNo(context.Context
 }
 func (UnimplementedAssetInternalServer) TransferAsset(context.Context, *TransferAssetReq) (*TransferAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method TransferAsset not implemented")
+}
+func (UnimplementedAssetInternalServer) CoverInsuranceDeficit(context.Context, *CoverInsuranceDeficitReq) (*CoverInsuranceDeficitResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CoverInsuranceDeficit not implemented")
+}
+func (UnimplementedAssetInternalServer) ReverseInsuranceCover(context.Context, *ReverseInsuranceCoverReq) (*ChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReverseInsuranceCover not implemented")
 }
 func (UnimplementedAssetInternalServer) mustEmbedUnimplementedAssetInternalServer() {}
 func (UnimplementedAssetInternalServer) testEmbeddedByValue()                       {}
@@ -542,6 +576,42 @@ func _AssetInternal_TransferAsset_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AssetInternal_CoverInsuranceDeficit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CoverInsuranceDeficitReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetInternalServer).CoverInsuranceDeficit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetInternal_CoverInsuranceDeficit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetInternalServer).CoverInsuranceDeficit(ctx, req.(*CoverInsuranceDeficitReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AssetInternal_ReverseInsuranceCover_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReverseInsuranceCoverReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetInternalServer).ReverseInsuranceCover(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetInternal_ReverseInsuranceCover_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetInternalServer).ReverseInsuranceCover(ctx, req.(*ReverseInsuranceCoverReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AssetInternal_ServiceDesc is the grpc.ServiceDesc for AssetInternal service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -600,6 +670,14 @@ var AssetInternal_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TransferAsset",
 			Handler:    _AssetInternal_TransferAsset_Handler,
+		},
+		{
+			MethodName: "CoverInsuranceDeficit",
+			Handler:    _AssetInternal_CoverInsuranceDeficit_Handler,
+		},
+		{
+			MethodName: "ReverseInsuranceCover",
+			Handler:    _AssetInternal_ReverseInsuranceCover_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

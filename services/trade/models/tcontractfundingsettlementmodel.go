@@ -16,6 +16,8 @@ type (
 	TContractFundingSettlementModel interface {
 		tContractFundingSettlementModel
 		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractFundingSettlement, int64, error)
+		CountUnsettledPayers(ctx context.Context, tenantID, batchID, settledStatus int64) (int64, error)
+		CountByBatchStatus(ctx context.Context, tenantID, batchID, status int64) (int64, error)
 	}
 
 	customTContractFundingSettlementModel struct {
@@ -28,6 +30,24 @@ func NewTContractFundingSettlementModel(conn sqlx.SqlConn, c cache.CacheConf, op
 	return &customTContractFundingSettlementModel{
 		defaultTContractFundingSettlementModel: newTContractFundingSettlementModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTContractFundingSettlementModel) CountUnsettledPayers(ctx context.Context, tenantID, batchID, settledStatus int64) (int64, error) {
+	var count int64
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND batch_id=? AND fee_amount<0 AND status<>?", m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantID, batchID, settledStatus); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (m *defaultTContractFundingSettlementModel) CountByBatchStatus(ctx context.Context, tenantID, batchID, status int64) (int64, error) {
+	var count int64
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND batch_id=? AND status=?", m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantID, batchID, status); err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func (m *defaultTContractFundingSettlementModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractFundingSettlement, int64, error) {

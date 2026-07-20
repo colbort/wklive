@@ -1107,6 +1107,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: trade.GetFundingSettlementListHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/insurance-fund/accounts",
+				Handler: trade.SetInsuranceFundAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/insurance-fund/accounts",
+				Handler: trade.GetInsuranceFundAccountListHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/liquidations",
 				Handler: trade.GetLiquidationListHandler(serverCtx),
@@ -1115,6 +1125,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/margin-snapshots",
 				Handler: trade.GetMarginSnapshotListAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/market-snapshots",
+				Handler: trade.GetMarketSnapshotListHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,

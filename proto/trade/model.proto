@@ -343,6 +343,7 @@ message ContractPosition {
   string risk_rate = 28;
   int64 last_funding_time = 29;
   int64 closed_at = 30;
+  string mark_snapshot_id = 31;
 }
 
 message ContractPositionHistory {

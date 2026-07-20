@@ -1882,6 +1882,258 @@ func (x *ChangeAssetData) GetAsset() *UserAsset {
 	return nil
 }
 
+type CoverInsuranceDeficitReq struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	FundUserId      int64                  `protobuf:"varint,2,opt,name=fund_user_id,json=fundUserId,proto3" json:"fund_user_id,omitempty"`
+	WalletType      common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
+	Coin            string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
+	RequestedAmount string                 `protobuf:"bytes,5,opt,name=requested_amount,json=requestedAmount,proto3" json:"requested_amount,omitempty"`
+	LiquidationId   int64                  `protobuf:"varint,6,opt,name=liquidation_id,json=liquidationId,proto3" json:"liquidation_id,omitempty"`
+	LiquidationNo   string                 `protobuf:"bytes,7,opt,name=liquidation_no,json=liquidationNo,proto3" json:"liquidation_no,omitempty"`
+	Remark          string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *CoverInsuranceDeficitReq) Reset() {
+	*x = CoverInsuranceDeficitReq{}
+	mi := &file_proto_asset_asset_internal_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CoverInsuranceDeficitReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CoverInsuranceDeficitReq) ProtoMessage() {}
+
+func (x *CoverInsuranceDeficitReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_internal_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CoverInsuranceDeficitReq.ProtoReflect.Descriptor instead.
+func (*CoverInsuranceDeficitReq) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_internal_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *CoverInsuranceDeficitReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *CoverInsuranceDeficitReq) GetFundUserId() int64 {
+	if x != nil {
+		return x.FundUserId
+	}
+	return 0
+}
+
+func (x *CoverInsuranceDeficitReq) GetWalletType() common.WalletType {
+	if x != nil {
+		return x.WalletType
+	}
+	return common.WalletType(0)
+}
+
+func (x *CoverInsuranceDeficitReq) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *CoverInsuranceDeficitReq) GetRequestedAmount() string {
+	if x != nil {
+		return x.RequestedAmount
+	}
+	return ""
+}
+
+func (x *CoverInsuranceDeficitReq) GetLiquidationId() int64 {
+	if x != nil {
+		return x.LiquidationId
+	}
+	return 0
+}
+
+func (x *CoverInsuranceDeficitReq) GetLiquidationNo() string {
+	if x != nil {
+		return x.LiquidationNo
+	}
+	return ""
+}
+
+func (x *CoverInsuranceDeficitReq) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+type CoverInsuranceDeficitResp struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Base             *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	RequestedAmount  string                 `protobuf:"bytes,2,opt,name=requested_amount,json=requestedAmount,proto3" json:"requested_amount,omitempty"`
+	CoveredAmount    string                 `protobuf:"bytes,3,opt,name=covered_amount,json=coveredAmount,proto3" json:"covered_amount,omitempty"`
+	RemainingAmount  string                 `protobuf:"bytes,4,opt,name=remaining_amount,json=remainingAmount,proto3" json:"remaining_amount,omitempty"`
+	FundAsset        *UserAsset             `protobuf:"bytes,5,opt,name=fund_asset,json=fundAsset,proto3" json:"fund_asset,omitempty"`
+	IdempotentReplay bool                   `protobuf:"varint,6,opt,name=idempotent_replay,json=idempotentReplay,proto3" json:"idempotent_replay,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *CoverInsuranceDeficitResp) Reset() {
+	*x = CoverInsuranceDeficitResp{}
+	mi := &file_proto_asset_asset_internal_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CoverInsuranceDeficitResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CoverInsuranceDeficitResp) ProtoMessage() {}
+
+func (x *CoverInsuranceDeficitResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_internal_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CoverInsuranceDeficitResp.ProtoReflect.Descriptor instead.
+func (*CoverInsuranceDeficitResp) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_internal_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *CoverInsuranceDeficitResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *CoverInsuranceDeficitResp) GetRequestedAmount() string {
+	if x != nil {
+		return x.RequestedAmount
+	}
+	return ""
+}
+
+func (x *CoverInsuranceDeficitResp) GetCoveredAmount() string {
+	if x != nil {
+		return x.CoveredAmount
+	}
+	return ""
+}
+
+func (x *CoverInsuranceDeficitResp) GetRemainingAmount() string {
+	if x != nil {
+		return x.RemainingAmount
+	}
+	return ""
+}
+
+func (x *CoverInsuranceDeficitResp) GetFundAsset() *UserAsset {
+	if x != nil {
+		return x.FundAsset
+	}
+	return nil
+}
+
+func (x *CoverInsuranceDeficitResp) GetIdempotentReplay() bool {
+	if x != nil {
+		return x.IdempotentReplay
+	}
+	return false
+}
+
+type ReverseInsuranceCoverReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	LiquidationNo string                 `protobuf:"bytes,2,opt,name=liquidation_no,json=liquidationNo,proto3" json:"liquidation_no,omitempty"`
+	ReversalNo    string                 `protobuf:"bytes,3,opt,name=reversal_no,json=reversalNo,proto3" json:"reversal_no,omitempty"`
+	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReverseInsuranceCoverReq) Reset() {
+	*x = ReverseInsuranceCoverReq{}
+	mi := &file_proto_asset_asset_internal_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReverseInsuranceCoverReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReverseInsuranceCoverReq) ProtoMessage() {}
+
+func (x *ReverseInsuranceCoverReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_internal_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReverseInsuranceCoverReq.ProtoReflect.Descriptor instead.
+func (*ReverseInsuranceCoverReq) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_internal_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ReverseInsuranceCoverReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ReverseInsuranceCoverReq) GetLiquidationNo() string {
+	if x != nil {
+		return x.LiquidationNo
+	}
+	return ""
+}
+
+func (x *ReverseInsuranceCoverReq) GetReversalNo() string {
+	if x != nil {
+		return x.ReversalNo
+	}
+	return ""
+}
+
+func (x *ReverseInsuranceCoverReq) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
 var File_proto_asset_asset_internal_proto protoreflect.FileDescriptor
 
 const file_proto_asset_asset_internal_proto_rawDesc = "" +
@@ -2070,7 +2322,32 @@ const file_proto_asset_asset_internal_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x01(\v2\x16.asset.ChangeAssetDataR\x04data\"P\n" +
 	"\x0fChangeAssetData\x12\x15\n" +
 	"\x06biz_no\x18\x01 \x01(\tR\x05bizNo\x12&\n" +
-	"\x05asset\x18\x02 \x01(\v2\x10.asset.UserAssetR\x05asset2\xa9\a\n" +
+	"\x05asset\x18\x02 \x01(\v2\x10.asset.UserAssetR\x05asset\"\xb3\x02\n" +
+	"\x18CoverInsuranceDeficitReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12 \n" +
+	"\ffund_user_id\x18\x02 \x01(\x03R\n" +
+	"fundUserId\x123\n" +
+	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
+	"walletType\x12\x12\n" +
+	"\x04coin\x18\x04 \x01(\tR\x04coin\x12)\n" +
+	"\x10requested_amount\x18\x05 \x01(\tR\x0frequestedAmount\x12%\n" +
+	"\x0eliquidation_id\x18\x06 \x01(\x03R\rliquidationId\x12%\n" +
+	"\x0eliquidation_no\x18\a \x01(\tR\rliquidationNo\x12\x16\n" +
+	"\x06remark\x18\b \x01(\tR\x06remark\"\x9c\x02\n" +
+	"\x19CoverInsuranceDeficitResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
+	"\x10requested_amount\x18\x02 \x01(\tR\x0frequestedAmount\x12%\n" +
+	"\x0ecovered_amount\x18\x03 \x01(\tR\rcoveredAmount\x12)\n" +
+	"\x10remaining_amount\x18\x04 \x01(\tR\x0fremainingAmount\x12/\n" +
+	"\n" +
+	"fund_asset\x18\x05 \x01(\v2\x10.asset.UserAssetR\tfundAsset\x12+\n" +
+	"\x11idempotent_replay\x18\x06 \x01(\bR\x10idempotentReplay\"\x97\x01\n" +
+	"\x18ReverseInsuranceCoverReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12%\n" +
+	"\x0eliquidation_no\x18\x02 \x01(\tR\rliquidationNo\x12\x1f\n" +
+	"\vreversal_no\x18\x03 \x01(\tR\n" +
+	"reversalNo\x12\x16\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark2\xd7\b\n" +
 	"\rAssetInternal\x12>\n" +
 	"\fAddAvailable\x12\x16.asset.AddAvailableReq\x1a\x16.asset.ChangeAssetResp\x12>\n" +
 	"\fSubAvailable\x12\x16.asset.SubAvailableReq\x1a\x16.asset.ChangeAssetResp\x12<\n" +
@@ -2084,7 +2361,9 @@ const file_proto_asset_asset_internal_proto_rawDesc = "" +
 	"\x12UnlockAssetByBizNo\x12\x1c.asset.UnlockAssetByBizNoReq\x1a\x16.asset.ChangeAssetResp\x12H\n" +
 	"\x11DeductLockedAsset\x12\x1b.asset.DeductLockedAssetReq\x1a\x16.asset.ChangeAssetResp\x12V\n" +
 	"\x18DeductLockedAssetByBizNo\x12\".asset.DeductLockedAssetByBizNoReq\x1a\x16.asset.ChangeAssetResp\x12B\n" +
-	"\rTransferAsset\x12\x17.asset.TransferAssetReq\x1a\x18.asset.TransferAssetRespB\x1aZ\x18wklive/proto/asset;assetb\x06proto3"
+	"\rTransferAsset\x12\x17.asset.TransferAssetReq\x1a\x18.asset.TransferAssetResp\x12Z\n" +
+	"\x15CoverInsuranceDeficit\x12\x1f.asset.CoverInsuranceDeficitReq\x1a .asset.CoverInsuranceDeficitResp\x12P\n" +
+	"\x15ReverseInsuranceCover\x12\x1f.asset.ReverseInsuranceCoverReq\x1a\x16.asset.ChangeAssetRespB\x1aZ\x18wklive/proto/asset;assetb\x06proto3"
 
 var (
 	file_proto_asset_asset_internal_proto_rawDescOnce sync.Once
@@ -2098,7 +2377,7 @@ func file_proto_asset_asset_internal_proto_rawDescGZIP() []byte {
 	return file_proto_asset_asset_internal_proto_rawDescData
 }
 
-var file_proto_asset_asset_internal_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
+var file_proto_asset_asset_internal_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_proto_asset_asset_internal_proto_goTypes = []any{
 	(*AddAvailableReq)(nil),             // 0: asset.AddAvailableReq
 	(*SubAvailableReq)(nil),             // 1: asset.SubAvailableReq
@@ -2121,93 +2400,103 @@ var file_proto_asset_asset_internal_proto_goTypes = []any{
 	(*TransferAssetData)(nil),           // 18: asset.TransferAssetData
 	(*ChangeAssetResp)(nil),             // 19: asset.ChangeAssetResp
 	(*ChangeAssetData)(nil),             // 20: asset.ChangeAssetData
-	(common.WalletType)(0),              // 21: common.WalletType
-	(BizType)(0),                        // 22: asset.BizType
-	(SceneType)(0),                      // 23: asset.SceneType
-	(*common.RespBase)(nil),             // 24: common.RespBase
-	(*UserAsset)(nil),                   // 25: asset.UserAsset
+	(*CoverInsuranceDeficitReq)(nil),    // 21: asset.CoverInsuranceDeficitReq
+	(*CoverInsuranceDeficitResp)(nil),   // 22: asset.CoverInsuranceDeficitResp
+	(*ReverseInsuranceCoverReq)(nil),    // 23: asset.ReverseInsuranceCoverReq
+	(common.WalletType)(0),              // 24: common.WalletType
+	(BizType)(0),                        // 25: asset.BizType
+	(SceneType)(0),                      // 26: asset.SceneType
+	(*common.RespBase)(nil),             // 27: common.RespBase
+	(*UserAsset)(nil),                   // 28: asset.UserAsset
 }
 var file_proto_asset_asset_internal_proto_depIdxs = []int32{
-	21, // 0: asset.AddAvailableReq.wallet_type:type_name -> common.WalletType
-	22, // 1: asset.AddAvailableReq.biz_type:type_name -> asset.BizType
-	23, // 2: asset.AddAvailableReq.scene_type:type_name -> asset.SceneType
-	21, // 3: asset.SubAvailableReq.wallet_type:type_name -> common.WalletType
-	22, // 4: asset.SubAvailableReq.biz_type:type_name -> asset.BizType
-	23, // 5: asset.SubAvailableReq.scene_type:type_name -> asset.SceneType
-	21, // 6: asset.FreezeAssetReq.wallet_type:type_name -> common.WalletType
-	22, // 7: asset.FreezeAssetReq.biz_type:type_name -> asset.BizType
-	23, // 8: asset.FreezeAssetReq.scene_type:type_name -> asset.SceneType
-	24, // 9: asset.FreezeAssetResp.base:type_name -> common.RespBase
+	24, // 0: asset.AddAvailableReq.wallet_type:type_name -> common.WalletType
+	25, // 1: asset.AddAvailableReq.biz_type:type_name -> asset.BizType
+	26, // 2: asset.AddAvailableReq.scene_type:type_name -> asset.SceneType
+	24, // 3: asset.SubAvailableReq.wallet_type:type_name -> common.WalletType
+	25, // 4: asset.SubAvailableReq.biz_type:type_name -> asset.BizType
+	26, // 5: asset.SubAvailableReq.scene_type:type_name -> asset.SceneType
+	24, // 6: asset.FreezeAssetReq.wallet_type:type_name -> common.WalletType
+	25, // 7: asset.FreezeAssetReq.biz_type:type_name -> asset.BizType
+	26, // 8: asset.FreezeAssetReq.scene_type:type_name -> asset.SceneType
+	27, // 9: asset.FreezeAssetResp.base:type_name -> common.RespBase
 	4,  // 10: asset.FreezeAssetResp.data:type_name -> asset.FreezeAssetData
-	25, // 11: asset.FreezeAssetData.asset:type_name -> asset.UserAsset
-	22, // 12: asset.UnfreezeAssetReq.biz_type:type_name -> asset.BizType
-	23, // 13: asset.UnfreezeAssetReq.scene_type:type_name -> asset.SceneType
-	22, // 14: asset.UnfreezeAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
-	22, // 15: asset.UnfreezeAssetByBizNoReq.biz_type:type_name -> asset.BizType
-	23, // 16: asset.UnfreezeAssetByBizNoReq.scene_type:type_name -> asset.SceneType
-	22, // 17: asset.DeductFrozenAssetReq.biz_type:type_name -> asset.BizType
-	23, // 18: asset.DeductFrozenAssetReq.scene_type:type_name -> asset.SceneType
-	22, // 19: asset.DeductFrozenAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
-	22, // 20: asset.DeductFrozenAssetByBizNoReq.biz_type:type_name -> asset.BizType
-	23, // 21: asset.DeductFrozenAssetByBizNoReq.scene_type:type_name -> asset.SceneType
-	21, // 22: asset.LockAssetReq.wallet_type:type_name -> common.WalletType
-	22, // 23: asset.LockAssetReq.biz_type:type_name -> asset.BizType
-	23, // 24: asset.LockAssetReq.scene_type:type_name -> asset.SceneType
-	24, // 25: asset.LockAssetResp.base:type_name -> common.RespBase
+	28, // 11: asset.FreezeAssetData.asset:type_name -> asset.UserAsset
+	25, // 12: asset.UnfreezeAssetReq.biz_type:type_name -> asset.BizType
+	26, // 13: asset.UnfreezeAssetReq.scene_type:type_name -> asset.SceneType
+	25, // 14: asset.UnfreezeAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
+	25, // 15: asset.UnfreezeAssetByBizNoReq.biz_type:type_name -> asset.BizType
+	26, // 16: asset.UnfreezeAssetByBizNoReq.scene_type:type_name -> asset.SceneType
+	25, // 17: asset.DeductFrozenAssetReq.biz_type:type_name -> asset.BizType
+	26, // 18: asset.DeductFrozenAssetReq.scene_type:type_name -> asset.SceneType
+	25, // 19: asset.DeductFrozenAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
+	25, // 20: asset.DeductFrozenAssetByBizNoReq.biz_type:type_name -> asset.BizType
+	26, // 21: asset.DeductFrozenAssetByBizNoReq.scene_type:type_name -> asset.SceneType
+	24, // 22: asset.LockAssetReq.wallet_type:type_name -> common.WalletType
+	25, // 23: asset.LockAssetReq.biz_type:type_name -> asset.BizType
+	26, // 24: asset.LockAssetReq.scene_type:type_name -> asset.SceneType
+	27, // 25: asset.LockAssetResp.base:type_name -> common.RespBase
 	11, // 26: asset.LockAssetResp.data:type_name -> asset.LockAssetData
-	25, // 27: asset.LockAssetData.asset:type_name -> asset.UserAsset
-	22, // 28: asset.UnlockAssetReq.biz_type:type_name -> asset.BizType
-	23, // 29: asset.UnlockAssetReq.scene_type:type_name -> asset.SceneType
-	22, // 30: asset.UnlockAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
-	22, // 31: asset.UnlockAssetByBizNoReq.biz_type:type_name -> asset.BizType
-	23, // 32: asset.UnlockAssetByBizNoReq.scene_type:type_name -> asset.SceneType
-	22, // 33: asset.DeductLockedAssetReq.biz_type:type_name -> asset.BizType
-	23, // 34: asset.DeductLockedAssetReq.scene_type:type_name -> asset.SceneType
-	22, // 35: asset.DeductLockedAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
-	22, // 36: asset.DeductLockedAssetByBizNoReq.biz_type:type_name -> asset.BizType
-	23, // 37: asset.DeductLockedAssetByBizNoReq.scene_type:type_name -> asset.SceneType
-	21, // 38: asset.TransferAssetReq.from_wallet_type:type_name -> common.WalletType
-	21, // 39: asset.TransferAssetReq.to_wallet_type:type_name -> common.WalletType
-	22, // 40: asset.TransferAssetReq.biz_type:type_name -> asset.BizType
-	23, // 41: asset.TransferAssetReq.scene_type:type_name -> asset.SceneType
-	24, // 42: asset.TransferAssetResp.base:type_name -> common.RespBase
+	28, // 27: asset.LockAssetData.asset:type_name -> asset.UserAsset
+	25, // 28: asset.UnlockAssetReq.biz_type:type_name -> asset.BizType
+	26, // 29: asset.UnlockAssetReq.scene_type:type_name -> asset.SceneType
+	25, // 30: asset.UnlockAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
+	25, // 31: asset.UnlockAssetByBizNoReq.biz_type:type_name -> asset.BizType
+	26, // 32: asset.UnlockAssetByBizNoReq.scene_type:type_name -> asset.SceneType
+	25, // 33: asset.DeductLockedAssetReq.biz_type:type_name -> asset.BizType
+	26, // 34: asset.DeductLockedAssetReq.scene_type:type_name -> asset.SceneType
+	25, // 35: asset.DeductLockedAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
+	25, // 36: asset.DeductLockedAssetByBizNoReq.biz_type:type_name -> asset.BizType
+	26, // 37: asset.DeductLockedAssetByBizNoReq.scene_type:type_name -> asset.SceneType
+	24, // 38: asset.TransferAssetReq.from_wallet_type:type_name -> common.WalletType
+	24, // 39: asset.TransferAssetReq.to_wallet_type:type_name -> common.WalletType
+	25, // 40: asset.TransferAssetReq.biz_type:type_name -> asset.BizType
+	26, // 41: asset.TransferAssetReq.scene_type:type_name -> asset.SceneType
+	27, // 42: asset.TransferAssetResp.base:type_name -> common.RespBase
 	18, // 43: asset.TransferAssetResp.data:type_name -> asset.TransferAssetData
-	25, // 44: asset.TransferAssetData.from_asset:type_name -> asset.UserAsset
-	25, // 45: asset.TransferAssetData.to_asset:type_name -> asset.UserAsset
-	24, // 46: asset.ChangeAssetResp.base:type_name -> common.RespBase
+	28, // 44: asset.TransferAssetData.from_asset:type_name -> asset.UserAsset
+	28, // 45: asset.TransferAssetData.to_asset:type_name -> asset.UserAsset
+	27, // 46: asset.ChangeAssetResp.base:type_name -> common.RespBase
 	20, // 47: asset.ChangeAssetResp.data:type_name -> asset.ChangeAssetData
-	25, // 48: asset.ChangeAssetData.asset:type_name -> asset.UserAsset
-	0,  // 49: asset.AssetInternal.AddAvailable:input_type -> asset.AddAvailableReq
-	1,  // 50: asset.AssetInternal.SubAvailable:input_type -> asset.SubAvailableReq
-	2,  // 51: asset.AssetInternal.FreezeAsset:input_type -> asset.FreezeAssetReq
-	5,  // 52: asset.AssetInternal.UnfreezeAsset:input_type -> asset.UnfreezeAssetReq
-	6,  // 53: asset.AssetInternal.UnfreezeAssetByBizNo:input_type -> asset.UnfreezeAssetByBizNoReq
-	7,  // 54: asset.AssetInternal.DeductFrozenAsset:input_type -> asset.DeductFrozenAssetReq
-	8,  // 55: asset.AssetInternal.DeductFrozenAssetByBizNo:input_type -> asset.DeductFrozenAssetByBizNoReq
-	9,  // 56: asset.AssetInternal.LockAsset:input_type -> asset.LockAssetReq
-	12, // 57: asset.AssetInternal.UnlockAsset:input_type -> asset.UnlockAssetReq
-	13, // 58: asset.AssetInternal.UnlockAssetByBizNo:input_type -> asset.UnlockAssetByBizNoReq
-	14, // 59: asset.AssetInternal.DeductLockedAsset:input_type -> asset.DeductLockedAssetReq
-	15, // 60: asset.AssetInternal.DeductLockedAssetByBizNo:input_type -> asset.DeductLockedAssetByBizNoReq
-	16, // 61: asset.AssetInternal.TransferAsset:input_type -> asset.TransferAssetReq
-	19, // 62: asset.AssetInternal.AddAvailable:output_type -> asset.ChangeAssetResp
-	19, // 63: asset.AssetInternal.SubAvailable:output_type -> asset.ChangeAssetResp
-	3,  // 64: asset.AssetInternal.FreezeAsset:output_type -> asset.FreezeAssetResp
-	19, // 65: asset.AssetInternal.UnfreezeAsset:output_type -> asset.ChangeAssetResp
-	19, // 66: asset.AssetInternal.UnfreezeAssetByBizNo:output_type -> asset.ChangeAssetResp
-	19, // 67: asset.AssetInternal.DeductFrozenAsset:output_type -> asset.ChangeAssetResp
-	19, // 68: asset.AssetInternal.DeductFrozenAssetByBizNo:output_type -> asset.ChangeAssetResp
-	10, // 69: asset.AssetInternal.LockAsset:output_type -> asset.LockAssetResp
-	19, // 70: asset.AssetInternal.UnlockAsset:output_type -> asset.ChangeAssetResp
-	19, // 71: asset.AssetInternal.UnlockAssetByBizNo:output_type -> asset.ChangeAssetResp
-	19, // 72: asset.AssetInternal.DeductLockedAsset:output_type -> asset.ChangeAssetResp
-	19, // 73: asset.AssetInternal.DeductLockedAssetByBizNo:output_type -> asset.ChangeAssetResp
-	17, // 74: asset.AssetInternal.TransferAsset:output_type -> asset.TransferAssetResp
-	62, // [62:75] is the sub-list for method output_type
-	49, // [49:62] is the sub-list for method input_type
-	49, // [49:49] is the sub-list for extension type_name
-	49, // [49:49] is the sub-list for extension extendee
-	0,  // [0:49] is the sub-list for field type_name
+	28, // 48: asset.ChangeAssetData.asset:type_name -> asset.UserAsset
+	24, // 49: asset.CoverInsuranceDeficitReq.wallet_type:type_name -> common.WalletType
+	27, // 50: asset.CoverInsuranceDeficitResp.base:type_name -> common.RespBase
+	28, // 51: asset.CoverInsuranceDeficitResp.fund_asset:type_name -> asset.UserAsset
+	0,  // 52: asset.AssetInternal.AddAvailable:input_type -> asset.AddAvailableReq
+	1,  // 53: asset.AssetInternal.SubAvailable:input_type -> asset.SubAvailableReq
+	2,  // 54: asset.AssetInternal.FreezeAsset:input_type -> asset.FreezeAssetReq
+	5,  // 55: asset.AssetInternal.UnfreezeAsset:input_type -> asset.UnfreezeAssetReq
+	6,  // 56: asset.AssetInternal.UnfreezeAssetByBizNo:input_type -> asset.UnfreezeAssetByBizNoReq
+	7,  // 57: asset.AssetInternal.DeductFrozenAsset:input_type -> asset.DeductFrozenAssetReq
+	8,  // 58: asset.AssetInternal.DeductFrozenAssetByBizNo:input_type -> asset.DeductFrozenAssetByBizNoReq
+	9,  // 59: asset.AssetInternal.LockAsset:input_type -> asset.LockAssetReq
+	12, // 60: asset.AssetInternal.UnlockAsset:input_type -> asset.UnlockAssetReq
+	13, // 61: asset.AssetInternal.UnlockAssetByBizNo:input_type -> asset.UnlockAssetByBizNoReq
+	14, // 62: asset.AssetInternal.DeductLockedAsset:input_type -> asset.DeductLockedAssetReq
+	15, // 63: asset.AssetInternal.DeductLockedAssetByBizNo:input_type -> asset.DeductLockedAssetByBizNoReq
+	16, // 64: asset.AssetInternal.TransferAsset:input_type -> asset.TransferAssetReq
+	21, // 65: asset.AssetInternal.CoverInsuranceDeficit:input_type -> asset.CoverInsuranceDeficitReq
+	23, // 66: asset.AssetInternal.ReverseInsuranceCover:input_type -> asset.ReverseInsuranceCoverReq
+	19, // 67: asset.AssetInternal.AddAvailable:output_type -> asset.ChangeAssetResp
+	19, // 68: asset.AssetInternal.SubAvailable:output_type -> asset.ChangeAssetResp
+	3,  // 69: asset.AssetInternal.FreezeAsset:output_type -> asset.FreezeAssetResp
+	19, // 70: asset.AssetInternal.UnfreezeAsset:output_type -> asset.ChangeAssetResp
+	19, // 71: asset.AssetInternal.UnfreezeAssetByBizNo:output_type -> asset.ChangeAssetResp
+	19, // 72: asset.AssetInternal.DeductFrozenAsset:output_type -> asset.ChangeAssetResp
+	19, // 73: asset.AssetInternal.DeductFrozenAssetByBizNo:output_type -> asset.ChangeAssetResp
+	10, // 74: asset.AssetInternal.LockAsset:output_type -> asset.LockAssetResp
+	19, // 75: asset.AssetInternal.UnlockAsset:output_type -> asset.ChangeAssetResp
+	19, // 76: asset.AssetInternal.UnlockAssetByBizNo:output_type -> asset.ChangeAssetResp
+	19, // 77: asset.AssetInternal.DeductLockedAsset:output_type -> asset.ChangeAssetResp
+	19, // 78: asset.AssetInternal.DeductLockedAssetByBizNo:output_type -> asset.ChangeAssetResp
+	17, // 79: asset.AssetInternal.TransferAsset:output_type -> asset.TransferAssetResp
+	22, // 80: asset.AssetInternal.CoverInsuranceDeficit:output_type -> asset.CoverInsuranceDeficitResp
+	19, // 81: asset.AssetInternal.ReverseInsuranceCover:output_type -> asset.ChangeAssetResp
+	67, // [67:82] is the sub-list for method output_type
+	52, // [52:67] is the sub-list for method input_type
+	52, // [52:52] is the sub-list for extension type_name
+	52, // [52:52] is the sub-list for extension extendee
+	0,  // [0:52] is the sub-list for field type_name
 }
 
 func init() { file_proto_asset_asset_internal_proto_init() }
@@ -2223,7 +2512,7 @@ func file_proto_asset_asset_internal_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_asset_asset_internal_proto_rawDesc), len(file_proto_asset_asset_internal_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   21,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

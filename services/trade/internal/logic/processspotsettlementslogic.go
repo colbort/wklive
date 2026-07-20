@@ -172,6 +172,12 @@ func (l *ProcessFillSettlementsLogic) executeAssetInstruction(item *models.TTrad
 	case trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN:
 		bizType, scene, bizID, bizNo := matchReq(asset.SceneType_SCENE_TYPE_TRADE_MATCH)
 		resp, err = l.svcCtx.AssetClient.DeductFrozenAssetByBizNo(l.ctx, &asset.DeductFrozenAssetByBizNoReq{TenantId: item.TenantId, TargetBizType: asset.BizType_BIZ_TYPE_TRADE, TargetBizNo: item.ReservationNo, Amount: item.Amount.String(), BizType: bizType, SceneType: scene, BizId: bizID, BizNo: bizNo, Remark: "contract fill consume margin"})
+	case trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_MARGIN, trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_POST_PNL:
+		bizType, scene, bizID, bizNo := matchReq(asset.SceneType_SCENE_TYPE_TRADE_MATCH)
+		resp, err = l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{TenantId: item.TenantId, UserId: item.UserId, WalletType: walletType, Coin: item.Asset, Amount: item.Amount.String(), BizType: bizType, SceneType: scene, BizId: bizID, BizNo: bizNo, Remark: "contract margin or profit credit"})
+	case trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS:
+		bizType, scene, bizID, bizNo := matchReq(asset.SceneType_SCENE_TYPE_TRADE_MATCH)
+		resp, err = l.svcCtx.AssetClient.SubAvailable(l.ctx, &asset.SubAvailableReq{TenantId: item.TenantId, UserId: item.UserId, WalletType: walletType, Coin: item.Asset, Amount: item.Amount.String(), BizType: bizType, SceneType: scene, BizId: bizID, BizNo: bizNo, Remark: "contract realized loss debit"})
 	default:
 		return fmt.Errorf("unsupported spot settlement action: %d", item.Action)
 	}
@@ -196,7 +202,7 @@ func (l *ProcessFillSettlementsLogic) markSucceeded(item *models.TTradeSettlemen
 		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
 		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
 
-		current, err := instructionModel.FindOne(ctx, item.Id)
+		current, err := instructionModel.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
 			return err
 		}
@@ -214,7 +220,7 @@ func (l *ProcessFillSettlementsLogic) markSucceeded(item *models.TTradeSettlemen
 			return err
 		}
 
-		reservation, err := reservationModel.FindOneByTenantIdReservationNo(ctx, item.TenantId, item.ReservationNo)
+		reservation, err := reservationModel.FindOneByReservationNoForUpdate(ctx, item.TenantId, item.ReservationNo)
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
 			return err
 		}
@@ -358,7 +364,7 @@ func ensureFillRemainderRelease(ctx context.Context, instructionModel models.TTr
 	if err != nil || unfinished > 0 {
 		return err
 	}
-	reservation, err := reservationModel.FindOneByTenantIdReservationNo(ctx, order.TenantId, order.OrderNo)
+	reservation, err := reservationModel.FindOneByReservationNoForUpdate(ctx, order.TenantId, order.OrderNo)
 	if errors.Is(err, models.ErrNotFound) {
 		return nil
 	}
@@ -372,17 +378,10 @@ func ensureFillRemainderRelease(ctx context.Context, instructionModel models.TTr
 	if _, err := reservationModel.BeginRelease(ctx, reservation.Id, now); err != nil {
 		return err
 	}
-	instructions, err := instructionModel.FindByFillId(ctx, fill.TenantId, fill.Id)
-	if err != nil {
-		return err
-	}
-	stepNo := int64(1)
-	for _, instruction := range instructions {
-		if instruction.StepNo >= stepNo {
-			stepNo = instruction.StepNo + 1
-		}
-	}
-	return insertSettlementInstructionIdempotent(ctx, instructionModel, &models.TTradeSettlementInstruction{TenantId: fill.TenantId, InstructionNo: derivedTradeBizNo(fill.FillNo, "RELEASE"), BizType: "fill", BizId: fill.FillNo, BatchNo: fill.MatchNo, FillId: fill.Id, OrderId: order.Id, ReservationNo: order.OrderNo, UserId: order.UserId, Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN), Asset: reservation.Asset, Amount: remaining, StepNo: stepNo, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now})
+	// The remainder belongs to the order reservation, not to an individual Fill.
+	// A stable order-level key prevents concurrent final Fills from creating two
+	// independently idempotent unfreeze requests for the same balance.
+	return insertSettlementInstructionIdempotent(ctx, instructionModel, &models.TTradeSettlementInstruction{TenantId: fill.TenantId, InstructionNo: derivedTradeBizNo(order.OrderNo, "RELEASE"), BizType: "order", BizId: order.OrderNo, OrderId: order.Id, ReservationNo: order.OrderNo, UserId: order.UserId, Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN), Asset: reservation.Asset, Amount: remaining, StepNo: 1, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now})
 }
 
 func (l *ProcessFillSettlementsLogic) markFailed(item *models.TTradeSettlementInstruction, cause error) error {
@@ -392,9 +391,12 @@ func (l *ProcessFillSettlementsLogic) markFailed(item *models.TTradeSettlementIn
 		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
 		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
-		current, err := instructionModel.FindOne(ctx, item.Id)
+		current, err := instructionModel.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
 			return err
+		}
+		if current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) || current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+			return nil
 		}
 		current.RetryCount++
 		current.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED)

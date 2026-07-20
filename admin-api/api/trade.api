@@ -223,13 +223,20 @@ type ContractPosition {
 	frozenQty         string `json:"frozenQty"`
 	openAvgPrice      string `json:"openAvgPrice"`
 	markPrice         string `json:"markPrice"`
+	markSnapshotId   string `json:"markSnapshotId"`
 	marginAsset       string `json:"marginAsset"`
 	positionMargin    string `json:"positionMargin"`
 	isolatedMargin    string `json:"isolatedMargin"`
 	unrealizedPnl     string `json:"unrealizedPnl"`
 	realizedPnl       string `json:"realizedPnl"`
 	liquidationPrice  string `json:"liquidationPrice"`
+	maintenanceMargin string `json:"maintenanceMargin"`
+	bankruptcyPrice string `json:"bankruptcyPrice"`
+	riskRate string `json:"riskRate"`
+	status int64 `json:"status"`
 	adlRank           int64  `json:"adlRank"`
+	lastFundingTime int64 `json:"lastFundingTime"`
+	closedAt int64 `json:"closedAt"`
 	version           int64  `json:"version"`
 	createTimes       int64  `json:"createTimes"`
 	updateTimes       int64  `json:"updateTimes"`
@@ -985,6 +992,71 @@ type GetFundingBatchListResp {
 	data []ContractFundingBatch `json:"data"`
 }
 
+type InsuranceFundAccount {
+	id int64 `json:"id"`
+	tenantId int64 `json:"tenantId"`
+	symbolId int64 `json:"symbolId"`
+	settleAsset string `json:"settleAsset"`
+	fundUserId int64 `json:"fundUserId"`
+	walletType int64 `json:"walletType"`
+	adlEnabled int64 `json:"adlEnabled"`
+	status int64 `json:"status"`
+	version int64 `json:"version"`
+	createTimes int64 `json:"createTimes"`
+	updateTimes int64 `json:"updateTimes"`
+}
+type SetInsuranceFundAccountReq {
+	id int64 `json:"id,optional"`
+	tenantId int64 `json:"tenantId"`
+	symbolId int64 `json:"symbolId,optional"`
+	settleAsset string `json:"settleAsset"`
+	fundUserId int64 `json:"fundUserId"`
+	walletType int64 `json:"walletType"`
+	adlEnabled int64 `json:"adlEnabled"`
+	status int64 `json:"status"`
+	version int64 `json:"version,optional"`
+}
+type GetInsuranceFundAccountListReq {
+	PageReq
+	tenantId int64 `form:"tenantId,optional"`
+	symbolId int64 `form:"symbolId,optional"`
+	settleAsset string `form:"settleAsset,optional"`
+	status int64 `form:"status,optional"`
+}
+type GetInsuranceFundAccountListResp { RespBase
+	data []InsuranceFundAccount `json:"data"`
+}
+
+type TradeMarketSnapshot {
+	id int64 `json:"id"`
+	snapshotId string `json:"snapshotId"`
+	snapshotKind string `json:"snapshotKind"`
+	symbolId int64 `json:"symbolId"`
+	source string `json:"source"`
+	price string `json:"price"`
+	markPrice string `json:"markPrice"`
+	indexPrice string `json:"indexPrice"`
+	fundingRate string `json:"fundingRate"`
+	sourceTimestamp int64 `json:"sourceTimestamp"`
+	snapshotTimestamp int64 `json:"snapshotTimestamp"`
+	revision int64 `json:"revision"`
+	formulaVersion string `json:"formulaVersion"`
+	confirmed int64 `json:"confirmed"`
+	rawPayload string `json:"rawPayload"`
+	createTimes int64 `json:"createTimes"`
+}
+type GetMarketSnapshotListReq {
+	PageReq
+	tenantId int64 `form:"tenantId,optional"`
+	symbolId int64 `form:"symbolId,optional"`
+	snapshotKind string `form:"snapshotKind,optional"`
+	startTime int64 `form:"startTime,optional"`
+	endTime int64 `form:"endTime,optional"`
+}
+type GetMarketSnapshotListResp { RespBase
+	data []TradeMarketSnapshot `json:"data"`
+}
+
 type ContractFundingSettlement {
 	id             int64  `json:"id"`
 	settlementNo   string `json:"settlementNo"`
@@ -1101,6 +1173,7 @@ type ContractLiquidation {
 	positionSide        int64  `json:"positionSide"`
 	marginMode          int64  `json:"marginMode"`
 	triggerMarkPrice    string `json:"triggerMarkPrice"`
+	triggerSnapshotId  string `json:"triggerSnapshotId"`
 	triggerIndexPrice   string `json:"triggerIndexPrice"`
 	triggerQty          string `json:"triggerQty"`
 	liquidatedQty       string `json:"liquidatedQty"`
@@ -1371,4 +1444,11 @@ service admin {
 
 	@handler RetrySettlementInstruction
 	post /operations/settlement-instructions/retry (RetrySettlementInstructionReq) returns (AdminCommonResp)
+
+	@handler SetInsuranceFundAccount
+	post /insurance-fund/accounts (SetInsuranceFundAccountReq) returns (AdminCommonResp)
+	@handler GetInsuranceFundAccountList
+	get /insurance-fund/accounts (GetInsuranceFundAccountListReq) returns (GetInsuranceFundAccountListResp)
+	@handler GetMarketSnapshotList
+	get /market-snapshots (GetMarketSnapshotListReq) returns (GetMarketSnapshotListResp)
 }

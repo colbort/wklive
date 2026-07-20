@@ -76,6 +76,13 @@ import type {
   GetSettlementInstructionListResp,
   RetrySettlementInstructionReq,
   UpdateSymbolReq,
+  InsuranceFundAccount,
+  SetInsuranceFundAccountReq,
+  GetInsuranceFundAccountListReq,
+  GetInsuranceFundAccountListResp,
+  TradeMarketSnapshot,
+  GetMarketSnapshotListReq,
+  GetMarketSnapshotListResp,
 } from '@/services'
 
 export function apiTradeListSymbols(
@@ -291,4 +298,14 @@ export function apiTradeRetrySettlementInstruction(
   params: RetrySettlementInstructionReq,
 ): Promise<RespBase> {
   return post('/admin/trade/operations/settlement-instructions/retry', params)
+}
+
+export function apiTradeListInsuranceFundAccounts(params:GetInsuranceFundAccountListReq):Promise<GetInsuranceFundAccountListResp>{
+  return get<InsuranceFundAccount[]>('/admin/trade/insurance-fund/accounts',params)
+}
+export function apiTradeSetInsuranceFundAccount(params:SetInsuranceFundAccountReq):Promise<RespBase>{
+  return post('/admin/trade/insurance-fund/accounts',params)
+}
+export function apiTradeListMarketSnapshots(params:GetMarketSnapshotListReq):Promise<GetMarketSnapshotListResp>{
+  return get<TradeMarketSnapshot[]>('/admin/trade/market-snapshots',params)
 }

@@ -27,6 +27,7 @@ type (
 	TContractPositionHistoryModel interface {
 		tContractPositionHistoryModel
 		FindPage(ctx context.Context, filter ContractPositionHistoryPageFilter, cursor int64, limit int64) ([]*TContractPositionHistory, int64, error)
+		CountByRefFillId(ctx context.Context, tenantID, fillID int64) (int64, error)
 	}
 
 	customTContractPositionHistoryModel struct {
@@ -39,6 +40,15 @@ func NewTContractPositionHistoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts
 	return &customTContractPositionHistoryModel{
 		defaultTContractPositionHistoryModel: newTContractPositionHistoryModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTContractPositionHistoryModel) CountByRefFillId(ctx context.Context, tenantID, fillID int64) (int64, error) {
+	var count int64
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id = ? AND ref_fill_id = ?", m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantID, fillID); err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func (m *defaultTContractPositionHistoryModel) FindPage(ctx context.Context, filter ContractPositionHistoryPageFilter, cursor int64, limit int64) ([]*TContractPositionHistory, int64, error) {

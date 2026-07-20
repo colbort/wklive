@@ -16,6 +16,7 @@ type (
 	TContractDeliverySettlementModel interface {
 		tContractDeliverySettlementModel
 		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractDeliverySettlement, int64, error)
+		CountByBatchStatus(ctx context.Context, tenantID, batchID, status int64) (int64, error)
 	}
 
 	customTContractDeliverySettlementModel struct {
@@ -28,6 +29,15 @@ func NewTContractDeliverySettlementModel(conn sqlx.SqlConn, c cache.CacheConf, o
 	return &customTContractDeliverySettlementModel{
 		defaultTContractDeliverySettlementModel: newTContractDeliverySettlementModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTContractDeliverySettlementModel) CountByBatchStatus(ctx context.Context, tenantID, batchID, status int64) (int64, error) {
+	var count int64
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND batch_id=? AND status=?", m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantID, batchID, status); err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func (m *defaultTContractDeliverySettlementModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractDeliverySettlement, int64, error) {
