@@ -3,10 +3,11 @@ package events
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	bus "wklive/common/bus/redis"
 	"wklive/common/utils"
-	"wklive/proto/trade"
 	"wklive/services/trade/internal/logic"
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
@@ -23,12 +24,35 @@ func StartSubscriber(ctx context.Context, svcCtx *svc.ServiceContext) {
 				logx.Errorf("decode trade real-time event failed: %v", err)
 				return nil
 			}
-			if err := handleEvent(messageCtx, svcCtx, event); err != nil {
-				logx.Errorf("handle trade real-time event failed, eventNo=%s type=%s bizId=%s err=%v", event.EventNo, event.Type, event.BizID, err)
-				_ = markEvent(svcCtx, messageCtx, event, false, err.Error())
+			if err := validateEvent(event); err != nil {
+				logx.Errorf("invalid trade real-time event, eventNo=%s: %v", event.EventNo, err)
+				_ = markEventFailed(svcCtx, messageCtx, event, err.Error())
 				return nil
 			}
-			if err := markEvent(svcCtx, messageCtx, event, true, ""); err != nil {
+			now := utils.NowMillis()
+			claimed, completed, err := svcCtx.TradeEventInboxModel.Claim(messageCtx, realtime.ConsumerTradeRealtime, event.TenantID, event.EventNo, event.Type, now, now-realtime.ClaimLeaseMillis)
+			if err != nil {
+				logx.Errorf("claim trade event inbox failed, eventNo=%s err=%v", event.EventNo, err)
+				return nil
+			}
+			if completed {
+				_ = markEventSuccess(svcCtx, messageCtx, event)
+				return nil
+			}
+			if !claimed {
+				return nil
+			}
+			if err := handleEvent(messageCtx, svcCtx, event); err != nil {
+				logx.Errorf("handle trade real-time event failed, eventNo=%s type=%s bizId=%s err=%v", event.EventNo, event.Type, event.BizID, err)
+				_ = svcCtx.TradeEventInboxModel.Fail(messageCtx, realtime.ConsumerTradeRealtime, event.TenantID, event.EventNo, err.Error(), utils.NowMillis())
+				_ = markEventFailed(svcCtx, messageCtx, event, err.Error())
+				return nil
+			}
+			if err := svcCtx.TradeEventInboxModel.Complete(messageCtx, realtime.ConsumerTradeRealtime, event.TenantID, event.EventNo, utils.NowMillis()); err != nil {
+				logx.Errorf("complete trade event inbox failed, eventNo=%s err=%v", event.EventNo, err)
+				return nil
+			}
+			if err := markEventSuccess(svcCtx, messageCtx, event); err != nil {
 				logx.Errorf("mark trade real-time event success failed, eventNo=%s err=%v", event.EventNo, err)
 			}
 			return nil
@@ -36,6 +60,21 @@ func StartSubscriber(ctx context.Context, svcCtx *svc.ServiceContext) {
 			logx.Errorf("trade real-time event subscriber stopped: %v", err)
 		}
 	}()
+}
+
+func validateEvent(event realtime.Event) error {
+	if event.EventNo == "" || event.TenantID <= 0 || event.Type == "" {
+		return errors.New("event_no, tenant_id and type are required")
+	}
+	if event.Version != realtime.PayloadVersionV1 {
+		return fmt.Errorf("unsupported payload version %d", event.Version)
+	}
+	switch event.Type {
+	case realtime.EventOrderAccepted, realtime.EventFillCreated, realtime.EventPositionFill:
+		return nil
+	default:
+		return fmt.Errorf("unsupported event type %s", event.Type)
+	}
 }
 
 func handleEvent(ctx context.Context, svcCtx *svc.ServiceContext, event realtime.Event) error {
@@ -59,33 +98,60 @@ func handleEvent(ctx context.Context, svcCtx *svc.ServiceContext, event realtime
 			}
 			fillID = fill.Id
 		}
-		return logic.NewProcessSpotSettlementsLogic(ctx, svcCtx).ProcessFill(fillID)
+		return logic.NewProcessFillSettlementsLogic(ctx, svcCtx).ProcessFill(fillID)
+	case realtime.EventPositionFill:
+		fillID := event.FillID
+		if fillID <= 0 {
+			fill, err := svcCtx.TradeFillModel.FindOneByTenantIdFillNo(ctx, event.TenantID, event.BizID)
+			if err != nil {
+				return err
+			}
+			fillID = fill.Id
+		}
+		if err := logic.NewProcessContractPositionFillsLogic(ctx, svcCtx).ProcessFill(fillID); err != nil {
+			return err
+		}
+		return logic.NewProcessFillSettlementsLogic(ctx, svcCtx).ProcessFill(fillID)
 	default:
-		return nil
+		return fmt.Errorf("unsupported event type %s", event.Type)
 	}
 }
 
-func markEvent(svcCtx *svc.ServiceContext, ctx context.Context, event realtime.Event, success bool, errorMessage string) error {
+func findOutboxEvent(svcCtx *svc.ServiceContext, ctx context.Context, event realtime.Event) (*models.TBizTradeEvent, error) {
 	if event.EventNo == "" {
-		return nil
+		return nil, nil
 	}
 	item, err := svcCtx.BizTradeEventModel.FindOneByTenantIdEventNo(ctx, event.TenantID, event.EventNo)
 	if errors.Is(err, models.ErrNotFound) {
-		return nil
+		return nil, nil
 	}
-	if err != nil {
+	return item, err
+}
+
+func markEventSuccess(svcCtx *svc.ServiceContext, ctx context.Context, event realtime.Event) error {
+	item, err := findOutboxEvent(svcCtx, ctx, event)
+	if err != nil || item == nil {
 		return err
 	}
-	if success {
-		item.EventStatus = int64(trade.EventStatus_EVENT_STATUS_SUCCESS)
-		item.LastErrorMsg = ""
-		item.NextRetryAt = 0
-	} else {
-		item.EventStatus = int64(trade.EventStatus_EVENT_STATUS_FAILED)
-		item.RetryCount++
-		item.LastErrorMsg = errorMessage
-		item.NextRetryAt = utils.NowMillis() + 1000
+	_, err = svcCtx.BizTradeEventModel.MarkDelivered(ctx, item.Id, utils.NowMillis())
+	return err
+}
+
+func markEventFailed(svcCtx *svc.ServiceContext, ctx context.Context, event realtime.Event, errorMessage string) error {
+	item, err := findOutboxEvent(svcCtx, ctx, event)
+	if err != nil || item == nil {
+		return err
 	}
-	item.UpdateTimes = utils.NowMillis()
-	return svcCtx.BizTradeEventModel.Update(ctx, item)
+	now := utils.NowMillis()
+	delay := time.Duration(1) * time.Second
+	retry := item.RetryCount
+	if retry < 1 {
+		retry = 1
+	}
+	if retry > 10 {
+		retry = 10
+	}
+	delay *= time.Duration(1 << (retry - 1))
+	_, err = svcCtx.BizTradeEventModel.MarkDeliveryFailed(ctx, item.Id, now, now+delay.Milliseconds(), errorMessage)
+	return err
 }

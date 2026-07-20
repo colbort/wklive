@@ -350,6 +350,9 @@ const fallbackOptions: Record<string, OptionItem[]> = {
     { value: 6, code: 'ORDER_STATUS_EXPIRED' },
     { value: 7, code: 'ORDER_STATUS_FREEZING' },
     { value: 8, code: 'ORDER_STATUS_TRIGGER_WAITING' },
+    { value: 9, code: 'ORDER_STATUS_CANCELING' },
+    { value: 10, code: 'ORDER_STATUS_EXPIRING' },
+    { value: 11, code: 'ORDER_STATUS_SETTLEMENT_PENDING' },
   ],
   triggerType: [
     { value: 1, code: 'TRIGGER_TYPE_LAST_PRICE' },
@@ -467,7 +470,7 @@ function orderStatusTagType(status: number) {
   if (status === 2) return 'warning'
   if (status === 4 || status === 6) return 'info'
   if (status === 5) return 'danger'
-  if (status === 7 || status === 8) return 'warning'
+  if (status === 7 || status === 8 || status === 9 || status === 10 || status === 11) return 'warning'
   return ''
 }
 

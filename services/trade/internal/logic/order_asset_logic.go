@@ -5,12 +5,14 @@ import (
 	"errors"
 
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 // assetFreezeError distinguishes an explicit Asset rejection from an RPC
@@ -66,65 +68,54 @@ func freezeOrderAsset(
 	return resp.GetData().GetFreezeNo(), nil
 }
 
-func unfreezeOrderAsset(
-	svcCtx *svc.ServiceContext,
-	ctx context.Context,
-	order *models.TTradeOrder,
-	freezeNo string,
-	amount decimal.Decimal,
-	reason string,
-) error {
-	if order == nil || freezeNo == "" || !amount.IsPositive() {
-		return nil
-	}
-
-	resp, err := svcCtx.AssetClient.UnfreezeAsset(ctx, &asset.UnfreezeAssetReq{
-		TenantId:  order.TenantId,
-		FreezeNo:  freezeNo,
-		Amount:    amount.String(),
-		BizType:   asset.BizType_BIZ_TYPE_TRADE,
-		SceneType: asset.SceneType_SCENE_TYPE_CANCEL_ORDER,
-		BizId:     order.Id,
-		BizNo:     order.OrderNo,
-		Remark:    reason,
-	})
-	if err != nil {
-		return err
-	}
-	if resp == nil || resp.Base == nil {
-		return i18n.StatusError(ctx, i18n.InternalServerError)
-	}
-	if resp.Base.Code != 200 {
-		return i18n.StatusError(ctx, resp.Base.Code)
-	}
-
-	return nil
-}
-
 func unfreezeRemainingOrderAsset(svcCtx *svc.ServiceContext, ctx context.Context, order *models.TTradeOrder, reason string) error {
 	if order == nil || order.OrderNo == "" {
 		return nil
 	}
-
-	resp, err := svcCtx.AssetClient.UnfreezeAssetByBizNo(ctx, &asset.UnfreezeAssetByBizNoReq{
-		TenantId:      order.TenantId,
-		TargetBizType: asset.BizType_BIZ_TYPE_TRADE,
-		TargetBizNo:   order.OrderNo,
-		BizType:       asset.BizType_BIZ_TYPE_TRADE,
-		SceneType:     asset.SceneType_SCENE_TYPE_CANCEL_ORDER,
-		BizId:         order.Id,
-		BizNo:         order.OrderNo,
-		Remark:        reason,
+	var instructionID int64
+	now := utils.NowMillis()
+	err := svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		reservationModel := models.NewTTradeAssetReservationModel(conn, svcCtx.Config.CacheRedis)
+		instructionModel := models.NewTTradeSettlementInstructionModel(conn, svcCtx.Config.CacheRedis)
+		reservation, err := reservationModel.FindOneByTenantIdReservationNo(txCtx, order.TenantId, order.OrderNo)
+		if errors.Is(err, models.ErrNotFound) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		unfinished, err := instructionModel.CountUnfinishedByOrder(txCtx, order.TenantId, order.Id)
+		if err != nil {
+			return err
+		}
+		if unfinished > 0 {
+			return nil
+		}
+		remaining := reservation.ReservedAmount.Sub(reservation.ConsumedAmount).Sub(reservation.ReleasedAmount)
+		if !remaining.IsPositive() {
+			return nil
+		}
+		instructionNo := derivedTradeBizNo(order.OrderNo, "RELEASE")
+		if err := insertSettlementInstructionIdempotent(txCtx, instructionModel, &models.TTradeSettlementInstruction{TenantId: order.TenantId, InstructionNo: instructionNo, BizType: "order", BizId: order.OrderNo, OrderId: order.Id, ReservationNo: order.OrderNo, UserId: order.UserId, Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN), Asset: reservation.Asset, Amount: remaining, StepNo: 1, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, LastErrorMsg: reason, CreateTimes: now, UpdateTimes: now}); err != nil {
+			return err
+		}
+		instruction, err := instructionModel.FindOneByTenantIdInstructionNo(txCtx, order.TenantId, instructionNo)
+		if err != nil {
+			return err
+		}
+		instructionID = instruction.Id
+		_, err = reservationModel.BeginRelease(txCtx, reservation.Id, now)
+		return err
 	})
 	if err != nil {
 		return err
 	}
-	if resp == nil || resp.Base == nil {
-		return i18n.StatusError(ctx, i18n.InternalServerError)
+	if instructionID == 0 {
+		return svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
+			_, err := finalizeOrderTermination(txCtx, sqlx.NewSqlConnFromSession(session), svcCtx, order.Id, utils.NowMillis())
+			return err
+		})
 	}
-	if resp.Base.Code != 200 {
-		return i18n.StatusError(ctx, resp.Base.Code)
-	}
-
-	return nil
+	return NewProcessReservationReleasesLogic(ctx, svcCtx).ProcessInstruction(instructionID)
 }

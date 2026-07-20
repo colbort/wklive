@@ -440,26 +440,31 @@ type BatchUpsertTenantProductsReq struct {
 }
 
 type BizTradeEvent struct {
-	Id            int64  `json:"id"`
-	TenantId      int64  `json:"tenantId"`
-	EventNo       string `json:"eventNo"`
-	EventType     string `json:"eventType"`
-	BizId         string `json:"bizId"`
-	BizType       string `json:"bizType"`
-	UserId        int64  `json:"userId"`
-	SymbolId      int64  `json:"symbolId"`
-	ProductType   int64  `json:"productType"`
-	OperatorId    int64  `json:"operatorId"`
-	Source        int64  `json:"source"`
-	EventStatus   int64  `json:"eventStatus"`
-	RetryCount    int64  `json:"retryCount"`
-	MaxRetryCount int64  `json:"maxRetryCount"`
-	NextRetryAt   int64  `json:"nextRetryAt"`
-	LastErrorMsg  string `json:"lastErrorMsg"`
-	Payload       string `json:"payload"`
-	ExtData       string `json:"extData"`
-	CreateTimes   int64  `json:"createTimes"`
-	UpdateTimes   int64  `json:"updateTimes"`
+	Id             int64  `json:"id"`
+	TenantId       int64  `json:"tenantId"`
+	EventNo        string `json:"eventNo"`
+	EventType      string `json:"eventType"`
+	BizId          string `json:"bizId"`
+	BizType        string `json:"bizType"`
+	UserId         int64  `json:"userId"`
+	SymbolId       int64  `json:"symbolId"`
+	ProductType    int64  `json:"productType"`
+	OperatorId     int64  `json:"operatorId"`
+	Source         int64  `json:"source"`
+	EventStatus    int64  `json:"eventStatus"`
+	RetryCount     int64  `json:"retryCount"`
+	MaxRetryCount  int64  `json:"maxRetryCount"`
+	NextRetryAt    int64  `json:"nextRetryAt"`
+	LastErrorMsg   string `json:"lastErrorMsg"`
+	Payload        string `json:"payload"`
+	ExtData        string `json:"extData"`
+	CreateTimes    int64  `json:"createTimes"`
+	UpdateTimes    int64  `json:"updateTimes"`
+	Consumer       string `json:"consumer"`
+	PayloadVersion int64  `json:"payloadVersion"`
+	ClaimedBy      string `json:"claimedBy"`
+	ClaimedAt      int64  `json:"claimedAt"`
+	DeliveredAt    int64  `json:"deliveredAt"`
 }
 
 type ChangeUserStatusReq struct {

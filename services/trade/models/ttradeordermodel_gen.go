@@ -60,7 +60,7 @@ type (
 		PositionSide      int64           `db:"position_side"`       // 持仓方向：0未知/无 1净持仓 2多 3空，现货一般为0
 		OrderType         int64           `db:"order_type"`          // 成交方式：0不适用 1限价 2市价；秒合约为0
 		TimeInForce       int64           `db:"time_in_force"`       // 订单有效方式：0默认 1GTC 2IOC 3FOK 4PostOnly
-		Status            int64           `db:"status"`              // 订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期 7冻结中 8等待触发
+		Status            int64           `db:"status"`              // 订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期 7冻结中 8等待触发 9撤单中 10过期处理中 11结算中
 		Price             decimal.Decimal `db:"price"`               // 委托价格
 		Qty               decimal.Decimal `db:"qty"`                 // 委托数量
 		Amount            decimal.Decimal `db:"amount"`              // 委托总额或名义价值

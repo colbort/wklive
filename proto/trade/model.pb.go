@@ -4339,29 +4339,34 @@ func (x *RiskOrderCheckLog) GetCreateTimes() int64 {
 }
 
 type BizTradeEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	EventNo       string                 `protobuf:"bytes,3,opt,name=event_no,json=eventNo,proto3" json:"event_no,omitempty"`
-	EventType     string                 `protobuf:"bytes,4,opt,name=event_type,json=eventType,proto3" json:"event_type,omitempty"`
-	BizId         string                 `protobuf:"bytes,5,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	BizType       string                 `protobuf:"bytes,6,opt,name=biz_type,json=bizType,proto3" json:"biz_type,omitempty"`
-	UserId        int64                  `protobuf:"varint,7,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	SymbolId      int64                  `protobuf:"varint,8,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,9,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
-	OperatorId    int64                  `protobuf:"varint,10,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
-	Source        SourceType             `protobuf:"varint,11,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
-	EventStatus   EventStatus            `protobuf:"varint,12,opt,name=event_status,json=eventStatus,proto3,enum=trade.EventStatus" json:"event_status,omitempty"`
-	RetryCount    int64                  `protobuf:"varint,13,opt,name=retry_count,json=retryCount,proto3" json:"retry_count,omitempty"`
-	MaxRetryCount int64                  `protobuf:"varint,14,opt,name=max_retry_count,json=maxRetryCount,proto3" json:"max_retry_count,omitempty"`
-	NextRetryAt   int64                  `protobuf:"varint,15,opt,name=next_retry_at,json=nextRetryAt,proto3" json:"next_retry_at,omitempty"`
-	LastErrorMsg  string                 `protobuf:"bytes,16,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
-	Payload       string                 `protobuf:"bytes,17,opt,name=payload,proto3" json:"payload,omitempty"`
-	ExtData       string                 `protobuf:"bytes,18,opt,name=ext_data,json=extData,proto3" json:"ext_data,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes   int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId       int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	EventNo        string                 `protobuf:"bytes,3,opt,name=event_no,json=eventNo,proto3" json:"event_no,omitempty"`
+	EventType      string                 `protobuf:"bytes,4,opt,name=event_type,json=eventType,proto3" json:"event_type,omitempty"`
+	BizId          string                 `protobuf:"bytes,5,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	BizType        string                 `protobuf:"bytes,6,opt,name=biz_type,json=bizType,proto3" json:"biz_type,omitempty"`
+	UserId         int64                  `protobuf:"varint,7,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	SymbolId       int64                  `protobuf:"varint,8,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	ProductType    ProductType            `protobuf:"varint,9,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	OperatorId     int64                  `protobuf:"varint,10,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
+	Source         SourceType             `protobuf:"varint,11,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
+	EventStatus    EventStatus            `protobuf:"varint,12,opt,name=event_status,json=eventStatus,proto3,enum=trade.EventStatus" json:"event_status,omitempty"`
+	RetryCount     int64                  `protobuf:"varint,13,opt,name=retry_count,json=retryCount,proto3" json:"retry_count,omitempty"`
+	MaxRetryCount  int64                  `protobuf:"varint,14,opt,name=max_retry_count,json=maxRetryCount,proto3" json:"max_retry_count,omitempty"`
+	NextRetryAt    int64                  `protobuf:"varint,15,opt,name=next_retry_at,json=nextRetryAt,proto3" json:"next_retry_at,omitempty"`
+	LastErrorMsg   string                 `protobuf:"bytes,16,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
+	Payload        string                 `protobuf:"bytes,17,opt,name=payload,proto3" json:"payload,omitempty"`
+	ExtData        string                 `protobuf:"bytes,18,opt,name=ext_data,json=extData,proto3" json:"ext_data,omitempty"`
+	CreateTimes    int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes    int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Consumer       string                 `protobuf:"bytes,21,opt,name=consumer,proto3" json:"consumer,omitempty"`
+	PayloadVersion int64                  `protobuf:"varint,22,opt,name=payload_version,json=payloadVersion,proto3" json:"payload_version,omitempty"`
+	ClaimedBy      string                 `protobuf:"bytes,23,opt,name=claimed_by,json=claimedBy,proto3" json:"claimed_by,omitempty"`
+	ClaimedAt      int64                  `protobuf:"varint,24,opt,name=claimed_at,json=claimedAt,proto3" json:"claimed_at,omitempty"`
+	DeliveredAt    int64                  `protobuf:"varint,25,opt,name=delivered_at,json=deliveredAt,proto3" json:"delivered_at,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *BizTradeEvent) Reset() {
@@ -4530,6 +4535,41 @@ func (x *BizTradeEvent) GetCreateTimes() int64 {
 func (x *BizTradeEvent) GetUpdateTimes() int64 {
 	if x != nil {
 		return x.UpdateTimes
+	}
+	return 0
+}
+
+func (x *BizTradeEvent) GetConsumer() string {
+	if x != nil {
+		return x.Consumer
+	}
+	return ""
+}
+
+func (x *BizTradeEvent) GetPayloadVersion() int64 {
+	if x != nil {
+		return x.PayloadVersion
+	}
+	return 0
+}
+
+func (x *BizTradeEvent) GetClaimedBy() string {
+	if x != nil {
+		return x.ClaimedBy
+	}
+	return ""
+}
+
+func (x *BizTradeEvent) GetClaimedAt() int64 {
+	if x != nil {
+		return x.ClaimedAt
+	}
+	return 0
+}
+
+func (x *BizTradeEvent) GetDeliveredAt() int64 {
+	if x != nil {
+		return x.DeliveredAt
 	}
 	return 0
 }
@@ -5050,7 +5090,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"operatorId\x12)\n" +
 	"\x06source\x18\x10 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12%\n" +
 	"\x0echeck_snapshot\x18\x11 \x01(\tR\rcheckSnapshot\x12!\n" +
-	"\fcreate_times\x18\x12 \x01(\x03R\vcreateTimes\"\xa6\x05\n" +
+	"\fcreate_times\x18\x12 \x01(\x03R\vcreateTimes\"\xcc\x06\n" +
 	"\rBizTradeEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -5075,7 +5115,14 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\apayload\x18\x11 \x01(\tR\apayload\x12\x19\n" +
 	"\bext_data\x18\x12 \x01(\tR\aextData\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimesB\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\x12\x1a\n" +
+	"\bconsumer\x18\x15 \x01(\tR\bconsumer\x12'\n" +
+	"\x0fpayload_version\x18\x16 \x01(\x03R\x0epayloadVersion\x12\x1d\n" +
+	"\n" +
+	"claimed_by\x18\x17 \x01(\tR\tclaimedBy\x12\x1d\n" +
+	"\n" +
+	"claimed_at\x18\x18 \x01(\x03R\tclaimedAt\x12!\n" +
+	"\fdelivered_at\x18\x19 \x01(\x03R\vdeliveredAtB\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
 
 var (
 	file_proto_trade_model_proto_rawDescOnce sync.Once

@@ -189,21 +189,23 @@ func createTradeTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenan
 	}
 	now := utils.NowMillis()
 	_, err = svcCtx.BizTradeEventModel.Insert(ctx, &models.TBizTradeEvent{
-		TenantId:      tenantID,
-		EventNo:       eventNo,
-		EventType:     eventType,
-		BizId:         bizIDText,
-		BizType:       bizType,
-		UserId:        userID,
-		SymbolId:      symbolID,
-		ProductType:   productType,
-		Source:        int64(trade.SourceType_SOURCE_TYPE_TASK),
-		EventStatus:   int64(trade.EventStatus_EVENT_STATUS_PENDING),
-		MaxRetryCount: 3,
-		NextRetryAt:   now,
-		Payload:       normalizeTradeEventJSON(payload),
-		CreateTimes:   now,
-		UpdateTimes:   now,
+		TenantId:       tenantID,
+		EventNo:        eventNo,
+		EventType:      eventType,
+		BizId:          bizIDText,
+		BizType:        bizType,
+		UserId:         userID,
+		SymbolId:       symbolID,
+		ProductType:    productType,
+		Source:         int64(trade.SourceType_SOURCE_TYPE_TASK),
+		Consumer:       tradeEventConsumer(eventType),
+		EventStatus:    int64(trade.EventStatus_EVENT_STATUS_PENDING),
+		MaxRetryCount:  3,
+		NextRetryAt:    now,
+		PayloadVersion: tradeEventPayloadVersion,
+		Payload:        normalizeTradeEventJSON(payload),
+		CreateTimes:    now,
+		UpdateTimes:    now,
 	})
 	return err
 }

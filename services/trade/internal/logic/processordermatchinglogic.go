@@ -222,7 +222,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 	if err != nil {
 		return false, err
 	}
-	makerFeeRate, takerFeeRate, err := l.matchFeeRates(key)
+	makerFeeRate, takerFeeRate, contractConfig, err := l.matchFeeRates(key)
 	if err != nil {
 		return false, err
 	}
@@ -274,8 +274,19 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 
 			buyLiquidity := liquidityTypeForOrder(lockedPlan.BuyOrder, lockedPlan.SellOrder)
 			sellLiquidity := liquidityTypeForOrder(lockedPlan.SellOrder, lockedPlan.BuyOrder)
-			buyFee := matchFeeAmount(lockedPlan.Amount, buyLiquidity, makerFeeRate, takerFeeRate)
-			sellFee := matchFeeAmount(lockedPlan.Amount, sellLiquidity, makerFeeRate, takerFeeRate)
+			var buyFee, sellFee decimal.Decimal
+			if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+				values, err := calculateContractTradeValues(symbol.ContractValueType, lockedPlan.Qty, contractConfig.ContractSize, lockedPlan.Price)
+				if err != nil {
+					return err
+				}
+				lockedPlan.Amount = values.QuoteNotional
+				buyFee = calculateContractFee(values, feeRateByLiquidity(buyLiquidity, makerFeeRate, takerFeeRate))
+				sellFee = calculateContractFee(values, feeRateByLiquidity(sellLiquidity, makerFeeRate, takerFeeRate))
+			} else {
+				buyFee = matchFeeAmount(lockedPlan.Amount, buyLiquidity, makerFeeRate, takerFeeRate)
+				sellFee = matchFeeAmount(lockedPlan.Amount, sellLiquidity, makerFeeRate, takerFeeRate)
+			}
 
 			buyFill, buyOrder, err := recordOrderFillWithModels(ctx, fillModel, orderModel, buildMatchFill(lockedPlan.BuyOrder, matchNo, buyFillNo, buyLiquidity, lockedPlan, buyFee, feeAssetForOrder(lockedPlan.BuyOrder, symbol), now), now)
 			if err != nil {
@@ -295,6 +306,12 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 				realtime.Event{EventNo: derivedTradeBizNo(buyFill.FillNo, "FILL"), Type: realtime.EventFillCreated, TenantID: buyFill.TenantId, BizID: buyFill.FillNo, OrderID: buyFill.OrderId, FillID: buyFill.Id},
 				realtime.Event{EventNo: derivedTradeBizNo(sellFill.FillNo, "FILL"), Type: realtime.EventFillCreated, TenantID: sellFill.TenantId, BizID: sellFill.FillNo, OrderID: sellFill.OrderId, FillID: sellFill.Id},
 			)
+			if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+				createdFillEvents = append(createdFillEvents,
+					realtime.Event{EventNo: derivedTradeBizNo(buyFill.FillNo, "POSITION"), Type: realtime.EventPositionFill, TenantID: buyFill.TenantId, BizID: buyFill.FillNo, OrderID: buyFill.OrderId, FillID: buyFill.Id},
+					realtime.Event{EventNo: derivedTradeBizNo(sellFill.FillNo, "POSITION"), Type: realtime.EventPositionFill, TenantID: sellFill.TenantId, BizID: sellFill.FillNo, OrderID: sellFill.OrderId, FillID: sellFill.Id},
+				)
+			}
 			matchedOrderIDs[lockedPlan.BuyOrder.Id] = struct{}{}
 			matchedOrderIDs[lockedPlan.SellOrder.Id] = struct{}{}
 			matched = true
@@ -305,7 +322,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 		return matched, err
 	}
 	for _, event := range createdFillEvents {
-		if publishErr := realtime.Publish(l.ctx, l.svcCtx.TradeEventPublisher, event); publishErr != nil {
+		if publishErr := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); publishErr != nil {
 			l.Errorf("publish real-time fill event failed, eventNo=%s fillId=%d err=%v", event.EventNo, event.FillID, publishErr)
 		}
 	}
@@ -608,10 +625,14 @@ func liquidityTypeForOrder(order, peer *models.TTradeOrder) trade.LiquidityType 
 }
 
 func matchFeeAmount(amount decimal.Decimal, liquidity trade.LiquidityType, makerFeeRate, takerFeeRate decimal.Decimal) decimal.Decimal {
+	return amount.Mul(feeRateByLiquidity(liquidity, makerFeeRate, takerFeeRate))
+}
+
+func feeRateByLiquidity(liquidity trade.LiquidityType, makerFeeRate, takerFeeRate decimal.Decimal) decimal.Decimal {
 	if liquidity == trade.LiquidityType_LIQUIDITY_TYPE_MAKER {
-		return amount.Mul(makerFeeRate)
+		return makerFeeRate
 	}
-	return amount.Mul(takerFeeRate)
+	return takerFeeRate
 }
 
 func feeAssetForOrder(order *models.TTradeOrder, symbol *models.TTradeSymbol) string {
@@ -621,19 +642,19 @@ func feeAssetForOrder(order *models.TTradeOrder, symbol *models.TTradeSymbol) st
 	return marginAssetForSymbol(symbol)
 }
 
-func (l *ProcessOrderMatchingLogic) matchFeeRates(key models.TradeOrderMatchKey) (decimal.Decimal, decimal.Decimal, error) {
+func (l *ProcessOrderMatchingLogic) matchFeeRates(key models.TradeOrderMatchKey) (decimal.Decimal, decimal.Decimal, *models.TTradeSymbolContract, error) {
 	if key.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) {
 		spot, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, key.TenantId, key.SymbolId)
 		if err != nil {
-			return decimal.Zero, decimal.Zero, err
+			return decimal.Zero, decimal.Zero, nil, err
 		}
-		return spot.MakerFeeRate, spot.TakerFeeRate, nil
+		return spot.MakerFeeRate, spot.TakerFeeRate, nil, nil
 	}
 	contract, err := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, key.TenantId, key.SymbolId)
 	if err != nil {
-		return decimal.Zero, decimal.Zero, err
+		return decimal.Zero, decimal.Zero, nil, err
 	}
-	return contract.MakerFeeRate, contract.TakerFeeRate, nil
+	return contract.MakerFeeRate, contract.TakerFeeRate, contract, nil
 }
 
 func (l *ProcessOrderMatchingLogic) expireResidualImmediateOrders(key models.TradeOrderMatchKey) error {
@@ -721,8 +742,10 @@ func (l *ProcessOrderMatchingLogic) expireOpenOrderNow(orderID int64, reason str
 		if !isMatchableOrderStatus(order.Status) {
 			return nil
 		}
-		order.Status = int64(trade.OrderStatus_ORDER_STATUS_EXPIRED)
+		order.Status = int64(trade.OrderStatus_ORDER_STATUS_EXPIRING)
+		order.CanceledQty = decimalMaxZero(order.Qty.Sub(order.FilledQty))
 		order.CancelReason = reason
+		order.Version++
 		order.UpdateTimes = now
 		if err := orderModel.Update(ctx, order); err != nil {
 			return err

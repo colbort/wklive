@@ -33,12 +33,12 @@ func TestOrderStatusAfterFill(t *testing.T) {
 		{
 			name:  "filled by qty",
 			order: &models.TTradeOrder{Qty: testDecimal(10), Amount: testDecimal(10000), FilledQty: testDecimal(10), FilledAmount: testDecimal(10000)},
-			want:  int64(trade.OrderStatus_ORDER_STATUS_FILLED),
+			want:  int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING),
 		},
 		{
 			name:  "filled by amount when qty target missing",
 			order: &models.TTradeOrder{Amount: testDecimal(10000), FilledAmount: testDecimal(10000)},
-			want:  int64(trade.OrderStatus_ORDER_STATUS_FILLED),
+			want:  int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING),
 		},
 	}
 
@@ -75,6 +75,11 @@ func TestOrderStateCategories(t *testing.T) {
 	}
 	if !isTerminalOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_EXPIRED)) {
 		t.Fatal("expired should be terminal")
+	}
+	for _, status := range []trade.OrderStatus{trade.OrderStatus_ORDER_STATUS_CANCELING, trade.OrderStatus_ORDER_STATUS_EXPIRING, trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING} {
+		if isMatchableOrderStatus(int64(status)) || isTerminalOrderStatus(int64(status)) {
+			t.Fatalf("intermediate status %s must be neither matchable nor terminal", status)
+		}
 	}
 }
 

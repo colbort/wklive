@@ -72,9 +72,7 @@
         </el-table-column>
 
         <el-table-column :label="t('trade.retryCount')" width="120" align="right">
-          <template #default="{ row }">
-            {{ row.retryCount }} / {{ row.maxRetryCount }}
-          </template>
+          <template #default="{ row }"> {{ row.retryCount }} / {{ row.maxRetryCount }} </template>
         </el-table-column>
 
         <el-table-column :label="t('trade.nextRetryAt')" min-width="170">
@@ -89,24 +87,15 @@
           </template>
         </el-table-column>
 
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="170"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="170" fixed="right">
           <template #default="{ row }">
-            <el-button
-              v-perm="'trade:event:detail'"
-              link
-              type="primary"
-              @click="showDetail(row)"
-            >
+            <el-button v-perm="'trade:event:detail'" link type="primary" @click="showDetail(row)">
               <el-icon><View /></el-icon>
               {{ t('option.detail') }}
             </el-button>
 
             <el-button
+              v-if="row.eventStatus === 3 || row.eventStatus === 6"
               v-perm="'trade:event:retry'"
               link
               type="warning"
@@ -176,6 +165,12 @@
             <el-descriptions-item :label="t('trade.eventStatus')">
               {{ optionLabel('eventStatus', detailData.eventStatus) }}
             </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.consumer')">
+              {{ detailData.consumer || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.payloadVersion')">
+              {{ detailData.payloadVersion || '-' }}
+            </el-descriptions-item>
           </el-descriptions>
 
           <el-descriptions :title="t('trade.eventBizInfo')" :column="2" border>
@@ -202,6 +197,15 @@
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.nextRetryAt')">
               {{ formatDateOrDash(detailData.nextRetryAt) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.claimedBy')">
+              {{ detailData.claimedBy || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.claimedAt')">
+              {{ formatDateOrDash(detailData.claimedAt) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.deliveredAt')">
+              {{ formatDateOrDash(detailData.deliveredAt) }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.lastErrorMsg')" :span="2">
               <span class="error-text">{{ detailData.lastErrorMsg || '-' }}</span>
@@ -263,6 +267,8 @@ const fallbackOptions: Record<string, OptionItem[]> = {
     { value: 2, code: 'EVENT_STATUS_SUCCESS' },
     { value: 3, code: 'EVENT_STATUS_FAILED' },
     { value: 4, code: 'EVENT_STATUS_CANCELED' },
+    { value: 5, code: 'EVENT_STATUS_PROCESSING' },
+    { value: 6, code: 'EVENT_STATUS_DEAD_LETTER' },
   ],
   sourceType: [
     { value: 1, code: 'SOURCE_TYPE_SYSTEM' },
@@ -307,6 +313,7 @@ function optionLabel(key: string, value?: number | string) {
 function eventStatusTagType(status: number) {
   if (status === 2) return 'success'
   if (status === 3) return 'danger'
+  if (status === 6) return 'danger'
   if (status === 4) return 'info'
   return 'warning'
 }

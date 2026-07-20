@@ -29,6 +29,7 @@ type (
 		tTradeFillModel
 		FindPage(ctx context.Context, filter TradeFillPageFilter, cursor int64, limit int64) ([]*TTradeFill, int64, error)
 		FindLastPrice(ctx context.Context, tenantId, symbolId, marketType int64) (decimal.Decimal, error)
+		CountUnsettledByOrder(ctx context.Context, tenantId, orderId int64) (int64, error)
 	}
 
 	customTTradeFillModel struct {
@@ -41,6 +42,15 @@ func NewTTradeFillModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opti
 	return &customTTradeFillModel{
 		defaultTTradeFillModel: newTTradeFillModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTTradeFillModel) CountUnsettledByOrder(ctx context.Context, tenantId, orderId int64) (int64, error) {
+	var count int64
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id = ? AND order_id = ? AND settlement_status <> 3", m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantId, orderId); err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func (m *defaultTTradeFillModel) FindPage(ctx context.Context, filter TradeFillPageFilter, cursor int64, limit int64) ([]*TTradeFill, int64, error) {

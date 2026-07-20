@@ -9,11 +9,19 @@ import (
 const Channel = "trade:domain-events"
 
 const (
+	ConsumerTradeRealtime = "trade-realtime"
+	PayloadVersionV1      = int64(1)
+	ClaimLeaseMillis      = int64(30_000)
+)
+
+const (
 	EventOrderAccepted = "ORDER_ACCEPTED"
 	EventFillCreated   = "FILL_CREATED"
+	EventPositionFill  = "POSITION_FILL_REQUIRED"
 )
 
 type Event struct {
+	Version  int64  `json:"version"`
 	EventNo  string `json:"event_no"`
 	Type     string `json:"type"`
 	TenantID int64  `json:"tenant_id"`

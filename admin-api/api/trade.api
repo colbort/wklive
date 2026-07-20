@@ -415,6 +415,11 @@ type BizTradeEvent {
 	extData       string `json:"extData"`
 	createTimes   int64  `json:"createTimes"`
 	updateTimes   int64  `json:"updateTimes"`
+	consumer      string `json:"consumer"`
+	payloadVersion int64 `json:"payloadVersion"`
+	claimedBy     string `json:"claimedBy"`
+	claimedAt     int64  `json:"claimedAt"`
+	deliveredAt   int64  `json:"deliveredAt"`
 }
 
 type AdminCommonResp {
@@ -1367,4 +1372,3 @@ service admin {
 	@handler RetrySettlementInstruction
 	post /operations/settlement-instructions/retry (RetrySettlementInstructionReq) returns (AdminCommonResp)
 }
-

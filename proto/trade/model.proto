@@ -529,4 +529,9 @@ message BizTradeEvent {
   string ext_data = 18;
   int64 create_times = 19;
   int64 update_times = 20;
+  string consumer = 21;
+  int64 payload_version = 22;
+  string claimed_by = 23;
+  int64 claimed_at = 24;
+  int64 delivered_at = 25;
 }

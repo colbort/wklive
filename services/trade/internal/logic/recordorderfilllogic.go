@@ -264,15 +264,18 @@ func findOrderForFill(ctx context.Context, orderModel models.TTradeOrderModel, f
 }
 
 func applyFillToOrder(order *models.TTradeOrder, fill *models.TTradeFill, now int64) {
+	previousFilledQty := order.FilledQty
 	order.FilledQty = order.FilledQty.Add(fill.Qty)
 	order.FilledAmount = order.FilledAmount.Add(fill.Amount)
 	if order.Qty.IsPositive() && order.FilledQty.GreaterThan(order.Qty) {
 		order.FilledQty = order.Qty
 	}
-	if order.Amount.IsPositive() && order.FilledAmount.GreaterThan(order.Amount) {
+	if order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) && order.Amount.IsPositive() && order.FilledAmount.GreaterThan(order.Amount) {
 		order.FilledAmount = order.Amount
 	}
-	if order.FilledQty.IsPositive() && order.FilledAmount.IsPositive() {
+	if order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) && fill.Price.IsPositive() {
+		order.AvgPrice = contractAveragePrice(order.AvgPrice, previousFilledQty, fill.Price, fill.Qty, order.ContractValueType)
+	} else if order.FilledQty.IsPositive() && order.FilledAmount.IsPositive() {
 		order.AvgPrice = fromTradeMinorAmount(order.FilledAmount).Div(order.FilledQty)
 	}
 	order.Fee = order.Fee.Add(fill.Fee)
@@ -280,5 +283,6 @@ func applyFillToOrder(order *models.TTradeOrder, fill *models.TTradeFill, now in
 		order.FeeAsset = fill.FeeAsset
 	}
 	order.Status = orderStatusAfterFill(order)
+	order.Version++
 	order.UpdateTimes = now
 }

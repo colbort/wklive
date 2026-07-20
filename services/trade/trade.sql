@@ -183,7 +183,7 @@ CREATE TABLE `t_trade_order` (
   `position_side` TINYINT NOT NULL DEFAULT 0 COMMENT '持仓方向：0未知/无 1净持仓 2多 3空，现货一般为0',
   `order_type` TINYINT NOT NULL DEFAULT 0 COMMENT '成交方式：0不适用 1限价 2市价；秒合约为0',
   `time_in_force` TINYINT NOT NULL DEFAULT 0 COMMENT '订单有效方式：0默认 1GTC 2IOC 3FOK 4PostOnly',
-  `status` TINYINT NOT NULL COMMENT '订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期 7冻结中 8等待触发',
+  `status` TINYINT NOT NULL COMMENT '订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期 7冻结中 8等待触发 9撤单中 10过期处理中 11结算中',
   `price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '委托价格',
   `qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '委托数量',
   `amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '委托总额或名义价值',
@@ -225,8 +225,8 @@ CREATE TABLE `t_trade_order` (
     (`product_type` IN (1, 2) AND `side` IN (1, 2) AND `order_type` IN (1, 2))
     OR (`product_type` = 3 AND `side` = 0 AND `order_type` = 0)
   ),
-  CONSTRAINT `chk_order_status` CHECK (`status` IN (1, 2, 3, 4, 5, 6, 7, 8)),
-  CONSTRAINT `chk_order_amounts` CHECK (`price` >= 0 AND `qty` >= 0 AND `amount` >= 0 AND `filled_qty` >= 0 AND `canceled_qty` >= 0 AND (`qty` = 0 OR `filled_qty` + `canceled_qty` <= `qty`) AND `filled_amount` >= 0 AND (`amount` = 0 OR `filled_amount` <= `amount`) AND `fee` >= 0),
+  CONSTRAINT `chk_order_status` CHECK (`status` IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)),
+  CONSTRAINT `chk_order_amounts` CHECK (`price` >= 0 AND `qty` >= 0 AND `amount` >= 0 AND `filled_qty` >= 0 AND `canceled_qty` >= 0 AND (`qty` = 0 OR `filled_qty` + `canceled_qty` <= `qty`) AND `filled_amount` >= 0 AND `fee` >= 0),
   CONSTRAINT `chk_order_flags` CHECK (`is_reduce_only` IN (1, 2) AND `is_close_position` IN (1, 2) AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易订单主表';
 
@@ -656,11 +656,16 @@ CREATE TABLE `t_biz_trade_event` (
   `product_type` TINYINT NOT NULL DEFAULT 0 COMMENT '产品大类：0无 1现货 2衍生品 3秒合约',
   `operator_id` BIGINT NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
   `source` TINYINT NOT NULL DEFAULT 1 COMMENT '来源：1系统 2用户 3后台管理 4任务',
-  `event_status` TINYINT NOT NULL DEFAULT 1 COMMENT '事件状态：1待投递 2投递成功 3投递失败 4已取消',
+  `consumer` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '目标消费者标识；内部实时事件为trade-realtime',
+  `event_status` TINYINT NOT NULL DEFAULT 1 COMMENT '事件状态：1待投递 2投递成功 3投递失败 4已取消 5投递中 6死信',
   `retry_count` INT NOT NULL DEFAULT 0 COMMENT '重试次数',
   `max_retry_count` INT NOT NULL DEFAULT 20 COMMENT '最大重试次数',
   `next_retry_at` BIGINT NOT NULL DEFAULT 0 COMMENT '下次重试时间，毫秒时间戳',
   `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '最后一次投递错误信息',
+  `claimed_by` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '当前领取实例',
+  `claimed_at` BIGINT NOT NULL DEFAULT 0 COMMENT '领取时间，毫秒时间戳',
+  `delivered_at` BIGINT NOT NULL DEFAULT 0 COMMENT '消费成功时间，毫秒时间戳',
+  `payload_version` INT NOT NULL DEFAULT 1 COMMENT '事件Payload结构版本',
   `payload` JSON NOT NULL COMMENT '事件内容，JSON格式',
   `ext_data` JSON DEFAULT NULL COMMENT '扩展字段，JSON格式',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间，毫秒时间戳',
@@ -668,10 +673,11 @@ CREATE TABLE `t_biz_trade_event` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_event_no` (`tenant_id`, `event_no`),
   KEY `idx_tenant_event_status_next_retry_at` (`tenant_id`, `event_status`, `next_retry_at`),
+  KEY `idx_tenant_event_status_claimed_at` (`tenant_id`, `event_status`, `claimed_at`),
   KEY `idx_tenant_event_type_created` (`tenant_id`, `event_type`, `create_times`),
   KEY `idx_tenant_biz_type_biz_id` (`tenant_id`, `biz_type`, `biz_id`),
   KEY `idx_tenant_user_created` (`tenant_id`, `user_id`, `create_times`),
-  CONSTRAINT `chk_trade_event` CHECK (`product_type` IN (0, 1, 2, 3) AND `event_status` IN (1, 2, 3, 4) AND `retry_count` >= 0 AND `max_retry_count` >= 0)
+  CONSTRAINT `chk_trade_event` CHECK (`product_type` IN (0, 1, 2, 3) AND `event_status` IN (1, 2, 3, 4, 5, 6) AND `retry_count` >= 0 AND `max_retry_count` >= 0 AND `payload_version` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易业务事件表';
 
 CREATE TABLE `t_trade_event_inbox` (

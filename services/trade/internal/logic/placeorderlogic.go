@@ -316,7 +316,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	}
 	if !isSeconds && order.Status == int64(trade.OrderStatus_ORDER_STATUS_PENDING) {
 		event := realtime.Event{EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), Type: realtime.EventOrderAccepted, TenantID: order.TenantId, BizID: order.OrderNo, OrderID: order.Id}
-		if err := realtime.Publish(l.ctx, l.svcCtx.TradeEventPublisher, event); err != nil {
+		if err := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
 			l.Errorf("publish real-time order accepted event failed, orderId=%d eventNo=%s err=%v", order.Id, event.EventNo, err)
 		}
 	}
@@ -374,7 +374,7 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 				return err
 			}
 		}
-		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), EventType: realtime.EventOrderAccepted, BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
+		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), EventType: realtime.EventOrderAccepted, BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), Consumer: tradeEventConsumer(realtime.EventOrderAccepted), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, PayloadVersion: tradeEventPayloadVersion, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 		return err
 	})
 }
@@ -600,13 +600,14 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		if err := validateContractSideSwitch(cfg, in); err != nil {
 			return nil, err
 		}
-		contractValue := qty.Mul(cfg.ContractSize)
-		if symbol.ContractValueType == int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_INVERSE) {
-			plan.notional = contractValue
-			plan.marginAmount = contractValue.Div(plan.riskPrice).Div(decimal.NewFromInt(leverage))
-		} else {
-			plan.notional = contractValue.Mul(plan.riskPrice)
-			plan.marginAmount = plan.notional.Div(decimal.NewFromInt(leverage))
+		values, err := calculateContractTradeValues(symbol.ContractValueType, qty, cfg.ContractSize, plan.riskPrice)
+		if err != nil {
+			return nil, err
+		}
+		plan.notional = values.QuoteNotional
+		plan.marginAmount, err = calculateContractMargin(values, leverage)
+		if err != nil {
+			return nil, err
 		}
 		if err := validateSymbolNotional(symbol, plan.notional); err != nil {
 			return nil, err
@@ -621,13 +622,15 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 			}
 			plan.riskTierID = tier.Id
 		}
-		fee := plan.notional.Mul(cfg.TakerFeeRate)
-		if symbol.ContractValueType == int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_INVERSE) {
-			fee = contractValue.Div(plan.riskPrice).Mul(cfg.TakerFeeRate)
-		}
+		fee := calculateContractFee(values, cfg.TakerFeeRate)
 		plan.frozenAsset = marginAssetForSymbol(symbol)
-		if in.IsReduceOnly == common.YesNo_YES_NO_YES {
-			position, findErr := l.svcCtx.ContractPositionModel.FindOneByTenantIdUserIdSymbolIdPositionSideMarginMode(l.ctx, tenantID, userID, symbol.Id, int64(in.PositionSide), int64(in.MarginMode))
+		isHedgeClose := in.PositionSide != trade.PositionSide_POSITION_SIDE_NET && isClosingFill(int64(in.PositionSide), int64(in.Side))
+		if in.IsReduceOnly == common.YesNo_YES_NO_YES || isHedgeClose {
+			lookupSide := int64(in.PositionSide)
+			if in.PositionSide == trade.PositionSide_POSITION_SIDE_NET {
+				lookupSide, _ = netPositionSides(int64(in.Side))
+			}
+			position, findErr := l.svcCtx.ContractPositionModel.FindOneByTenantIdUserIdSymbolIdPositionSideMarginMode(l.ctx, tenantID, userID, symbol.Id, lookupSide, int64(in.MarginMode))
 			if findErr != nil {
 				return nil, errors.New("no matching position available to close")
 			}
@@ -677,14 +680,24 @@ func (l *PlaceOrderLogic) validateUserTradingEnabled(tenantID, userID int64, sym
 
 func validateSymbolOrderIncrements(symbol *models.TTradeSymbol, orderType trade.OrderType, price, qty decimal.Decimal) error {
 	if orderType == trade.OrderType_ORDER_TYPE_LIMIT {
-		if symbol.MinPrice.IsPositive() && price.LessThan(symbol.MinPrice) || symbol.MaxPrice.IsPositive() && price.GreaterThan(symbol.MaxPrice) || symbol.PriceTick.IsPositive() && !price.Mod(symbol.PriceTick).IsZero() {
+		if decimalPlaces(price) > symbol.PriceScale || symbol.MinPrice.IsPositive() && price.LessThan(symbol.MinPrice) || symbol.MaxPrice.IsPositive() && price.GreaterThan(symbol.MaxPrice) || symbol.PriceTick.IsPositive() && !price.Mod(symbol.PriceTick).IsZero() {
 			return errors.New("price violates symbol price limit or tick size")
 		}
 	}
-	if qty.IsPositive() && (symbol.MinQty.IsPositive() && qty.LessThan(symbol.MinQty) || symbol.MaxQty.IsPositive() && qty.GreaterThan(symbol.MaxQty) || symbol.QtyStep.IsPositive() && !qty.Mod(symbol.QtyStep).IsZero()) {
+	if qty.IsPositive() && (decimalPlaces(qty) > symbol.QtyScale || symbol.MinQty.IsPositive() && qty.LessThan(symbol.MinQty) || symbol.MaxQty.IsPositive() && qty.GreaterThan(symbol.MaxQty) || symbol.QtyStep.IsPositive() && !qty.Mod(symbol.QtyStep).IsZero()) {
 		return errors.New("quantity violates symbol quantity limit or step size")
 	}
 	return nil
+}
+
+func decimalPlaces(value decimal.Decimal) int64 {
+	text := value.String()
+	for index, char := range text {
+		if char == '.' {
+			return int64(len(text) - index - 1)
+		}
+	}
+	return 0
 }
 
 func validateSymbolNotional(symbol *models.TTradeSymbol, notional decimal.Decimal) error {

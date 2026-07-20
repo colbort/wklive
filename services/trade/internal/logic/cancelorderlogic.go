@@ -73,8 +73,10 @@ func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.AppComm
 		if locked.TenantId != tenantId || locked.UserId != userId || !isOpenOrderStatus(locked.Status) {
 			return nil
 		}
-		locked.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELED)
+		locked.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELING)
+		locked.CanceledQty = decimalMaxZero(locked.Qty.Sub(locked.FilledQty))
 		locked.CancelReason = orderCancelReason("user")
+		locked.Version++
 		locked.UpdateTimes = utils.NowMillis()
 		if err := orderModel.Update(ctx, locked); err != nil {
 			return err

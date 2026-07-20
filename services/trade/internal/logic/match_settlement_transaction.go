@@ -101,7 +101,7 @@ func createMatchSettlementRecords(
 		return err
 	}
 	orderEventType := "ORDER_PART_FILLED"
-	if order.Status == int64(trade.OrderStatus_ORDER_STATUS_FILLED) {
+	if order.Status == int64(trade.OrderStatus_ORDER_STATUS_FILLED) || order.Status == int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING) {
 		orderEventType = "ORDER_FILLED"
 	}
 	if err := insertMatchOutboxEvent(ctx, eventModel, order, derivedTradeBizNo(fill.FillNo, "ORDER"), orderEventType, order.OrderNo, "order", string(payload), now); err != nil {
@@ -148,7 +148,11 @@ func buildFillSettlementInstructions(ctx context.Context, contractOrderModel mod
 	}
 	specs := make([]settlementInstructionSpec, 0, 2)
 	if order.IsReduceOnly != int64(common.YesNo_YES_NO_YES) && contractOrder.MarginAmount.IsPositive() && order.Qty.IsPositive() {
-		marginDelta := contractOrder.MarginAmount.Mul(fill.Qty).Div(order.Qty)
+		settlementNotional := fill.Amount
+		if fill.ContractValueType == int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_INVERSE) {
+			settlementNotional = fill.Amount.Div(fill.Price)
+		}
+		marginDelta := roundContractDebit(settlementNotional.Div(decimal.NewFromInt(contractOrder.Leverage)))
 		specs = append(specs, settlementInstructionSpec{suffix: "MARGIN", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN, asset: contractOrder.MarginAsset, amount: marginDelta})
 	}
 	if fill.Fee.IsPositive() {
@@ -172,6 +176,7 @@ func insertMatchOutboxEvent(ctx context.Context, eventModel models.TBizTradeEven
 		TenantId: order.TenantId, EventNo: eventNo, EventType: eventType,
 		BizId: bizID, BizType: bizType, UserId: order.UserId, SymbolId: order.SymbolId,
 		ProductType: order.ProductType, OperatorId: 0, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM),
+		Consumer: tradeEventConsumer(eventType), PayloadVersion: tradeEventPayloadVersion,
 		EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20,
 		NextRetryAt: now, Payload: payload, CreateTimes: now, UpdateTimes: now,
 	})

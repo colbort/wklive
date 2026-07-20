@@ -42,26 +42,31 @@ type (
 	}
 
 	TBizTradeEvent struct {
-		Id            int64          `db:"id"`              // 主键ID
-		TenantId      int64          `db:"tenant_id"`       // 租户ID
-		EventNo       string         `db:"event_no"`        // 事件号
-		EventType     string         `db:"event_type"`      // 事件类型，如ORDER_CREATED、ORDER_FILLED、ORDER_CANCELED、POSITION_CHANGED、MARGIN_CHANGED
-		BizId         string         `db:"biz_id"`          // 业务主键，如订单号、成交号、持仓ID等
-		BizType       string         `db:"biz_type"`        // 业务类型，如order、fill、position、margin
-		UserId        int64          `db:"user_id"`         // 用户ID
-		SymbolId      int64          `db:"symbol_id"`       // 交易标的ID，没有则为0
-		ProductType   int64          `db:"product_type"`    // 产品大类：0无 1现货 2衍生品 3秒合约
-		OperatorId    int64          `db:"operator_id"`     // 操作人ID，系统操作时可为0
-		Source        int64          `db:"source"`          // 来源：1系统 2用户 3后台管理 4任务
-		EventStatus   int64          `db:"event_status"`    // 事件状态：1待投递 2投递成功 3投递失败 4已取消
-		RetryCount    int64          `db:"retry_count"`     // 重试次数
-		MaxRetryCount int64          `db:"max_retry_count"` // 最大重试次数
-		NextRetryAt   int64          `db:"next_retry_at"`   // 下次重试时间，毫秒时间戳
-		LastErrorMsg  string         `db:"last_error_msg"`  // 最后一次投递错误信息
-		Payload       string         `db:"payload"`         // 事件内容，JSON格式
-		ExtData       sql.NullString `db:"ext_data"`        // 扩展字段，JSON格式
-		CreateTimes   int64          `db:"create_times"`    // 创建时间，毫秒时间戳
-		UpdateTimes   int64          `db:"update_times"`    // 更新时间，毫秒时间戳
+		Id             int64          `db:"id"`              // 主键ID
+		TenantId       int64          `db:"tenant_id"`       // 租户ID
+		EventNo        string         `db:"event_no"`        // 事件号
+		EventType      string         `db:"event_type"`      // 事件类型，如ORDER_CREATED、ORDER_FILLED、ORDER_CANCELED、POSITION_CHANGED、MARGIN_CHANGED
+		BizId          string         `db:"biz_id"`          // 业务主键，如订单号、成交号、持仓ID等
+		BizType        string         `db:"biz_type"`        // 业务类型，如order、fill、position、margin
+		UserId         int64          `db:"user_id"`         // 用户ID
+		SymbolId       int64          `db:"symbol_id"`       // 交易标的ID，没有则为0
+		ProductType    int64          `db:"product_type"`    // 产品大类：0无 1现货 2衍生品 3秒合约
+		OperatorId     int64          `db:"operator_id"`     // 操作人ID，系统操作时可为0
+		Source         int64          `db:"source"`          // 来源：1系统 2用户 3后台管理 4任务
+		Consumer       string         `db:"consumer"`        // 目标消费者标识
+		EventStatus    int64          `db:"event_status"`    // 事件状态：1待投递 2成功 3失败 4取消 5处理中 6死信
+		RetryCount     int64          `db:"retry_count"`     // 重试次数
+		MaxRetryCount  int64          `db:"max_retry_count"` // 最大重试次数
+		NextRetryAt    int64          `db:"next_retry_at"`   // 下次重试时间，毫秒时间戳
+		LastErrorMsg   string         `db:"last_error_msg"`  // 最后一次投递错误信息
+		ClaimedBy      string         `db:"claimed_by"`      // 当前领取实例
+		ClaimedAt      int64          `db:"claimed_at"`      // 领取时间，毫秒时间戳
+		DeliveredAt    int64          `db:"delivered_at"`    // 消费成功时间，毫秒时间戳
+		PayloadVersion int64          `db:"payload_version"` // 消息载荷版本
+		Payload        string         `db:"payload"`         // 事件内容，JSON格式
+		ExtData        sql.NullString `db:"ext_data"`        // 扩展字段，JSON格式
+		CreateTimes    int64          `db:"create_times"`    // 创建时间，毫秒时间戳
+		UpdateTimes    int64          `db:"update_times"`    // 更新时间，毫秒时间戳
 	}
 )
 
@@ -125,11 +130,17 @@ func (m *defaultTBizTradeEventModel) FindOneByTenantIdEventNo(ctx context.Contex
 }
 
 func (m *defaultTBizTradeEventModel) Insert(ctx context.Context, data *TBizTradeEvent) (sql.Result, error) {
+	if data.Consumer == "" {
+		data.Consumer = "trade-domain"
+	}
+	if data.PayloadVersion <= 0 {
+		data.PayloadVersion = 1
+	}
 	tBizTradeEventIdKey := fmt.Sprintf("%s%v", cacheTBizTradeEventIdPrefix, data.Id)
 	tBizTradeEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tBizTradeEventRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.EventNo, data.EventType, data.BizId, data.BizType, data.UserId, data.SymbolId, data.ProductType, data.OperatorId, data.Source, data.EventStatus, data.RetryCount, data.MaxRetryCount, data.NextRetryAt, data.LastErrorMsg, data.Payload, data.ExtData, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tBizTradeEventRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.EventNo, data.EventType, data.BizId, data.BizType, data.UserId, data.SymbolId, data.ProductType, data.OperatorId, data.Source, data.Consumer, data.EventStatus, data.RetryCount, data.MaxRetryCount, data.NextRetryAt, data.LastErrorMsg, data.ClaimedBy, data.ClaimedAt, data.DeliveredAt, data.PayloadVersion, data.Payload, data.ExtData, data.CreateTimes, data.UpdateTimes)
 	}, tBizTradeEventIdKey, tBizTradeEventTenantIdEventNoKey)
 	return ret, err
 }
@@ -144,7 +155,7 @@ func (m *defaultTBizTradeEventModel) Update(ctx context.Context, newData *TBizTr
 	tBizTradeEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tBizTradeEventRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.EventNo, newData.EventType, newData.BizId, newData.BizType, newData.UserId, newData.SymbolId, newData.ProductType, newData.OperatorId, newData.Source, newData.EventStatus, newData.RetryCount, newData.MaxRetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.Payload, newData.ExtData, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.EventNo, newData.EventType, newData.BizId, newData.BizType, newData.UserId, newData.SymbolId, newData.ProductType, newData.OperatorId, newData.Source, newData.Consumer, newData.EventStatus, newData.RetryCount, newData.MaxRetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.ClaimedBy, newData.ClaimedAt, newData.DeliveredAt, newData.PayloadVersion, newData.Payload, newData.ExtData, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tBizTradeEventIdKey, tBizTradeEventTenantIdEventNoKey)
 	return err
 }

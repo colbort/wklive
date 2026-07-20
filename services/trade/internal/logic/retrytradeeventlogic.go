@@ -42,14 +42,13 @@ func (l *RetryTradeEventLogic) RetryTradeEvent(in *trade.RetryTradeEventReq) (*t
 	} else if base != nil {
 		return &trade.AdminCommonResp{Base: base}, nil
 	}
-	item.EventStatus = int64(trade.EventStatus_EVENT_STATUS_PENDING)
-	item.RetryCount++
-	item.NextRetryAt = utils.NowMillis()
-	item.OperatorId = in.OperatorId
-	item.LastErrorMsg = ""
-	item.UpdateTimes = utils.NowMillis()
-	if err = l.svcCtx.BizTradeEventModel.Update(l.ctx, item); err != nil {
+	now := utils.NowMillis()
+	changed, err := l.svcCtx.BizTradeEventModel.ResetForManualRetry(l.ctx, item.Id, in.OperatorId, now)
+	if err != nil {
 		return nil, err
+	}
+	if !changed {
+		return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
 	}
 	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
 }

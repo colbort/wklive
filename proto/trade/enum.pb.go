@@ -436,40 +436,49 @@ func (TimeInForce) EnumDescriptor() ([]byte, []int) {
 type OrderStatus int32
 
 const (
-	OrderStatus_ORDER_STATUS_UNKNOWN         OrderStatus = 0
-	OrderStatus_ORDER_STATUS_PENDING         OrderStatus = 1
-	OrderStatus_ORDER_STATUS_PART_FILLED     OrderStatus = 2
-	OrderStatus_ORDER_STATUS_FILLED          OrderStatus = 3
-	OrderStatus_ORDER_STATUS_CANCELED        OrderStatus = 4
-	OrderStatus_ORDER_STATUS_REJECTED        OrderStatus = 5
-	OrderStatus_ORDER_STATUS_EXPIRED         OrderStatus = 6
-	OrderStatus_ORDER_STATUS_FREEZING        OrderStatus = 7
-	OrderStatus_ORDER_STATUS_TRIGGER_WAITING OrderStatus = 8
+	OrderStatus_ORDER_STATUS_UNKNOWN            OrderStatus = 0
+	OrderStatus_ORDER_STATUS_PENDING            OrderStatus = 1
+	OrderStatus_ORDER_STATUS_PART_FILLED        OrderStatus = 2
+	OrderStatus_ORDER_STATUS_FILLED             OrderStatus = 3
+	OrderStatus_ORDER_STATUS_CANCELED           OrderStatus = 4
+	OrderStatus_ORDER_STATUS_REJECTED           OrderStatus = 5
+	OrderStatus_ORDER_STATUS_EXPIRED            OrderStatus = 6
+	OrderStatus_ORDER_STATUS_FREEZING           OrderStatus = 7
+	OrderStatus_ORDER_STATUS_TRIGGER_WAITING    OrderStatus = 8
+	OrderStatus_ORDER_STATUS_CANCELING          OrderStatus = 9
+	OrderStatus_ORDER_STATUS_EXPIRING           OrderStatus = 10
+	OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING OrderStatus = 11
 )
 
 // Enum value maps for OrderStatus.
 var (
 	OrderStatus_name = map[int32]string{
-		0: "ORDER_STATUS_UNKNOWN",
-		1: "ORDER_STATUS_PENDING",
-		2: "ORDER_STATUS_PART_FILLED",
-		3: "ORDER_STATUS_FILLED",
-		4: "ORDER_STATUS_CANCELED",
-		5: "ORDER_STATUS_REJECTED",
-		6: "ORDER_STATUS_EXPIRED",
-		7: "ORDER_STATUS_FREEZING",
-		8: "ORDER_STATUS_TRIGGER_WAITING",
+		0:  "ORDER_STATUS_UNKNOWN",
+		1:  "ORDER_STATUS_PENDING",
+		2:  "ORDER_STATUS_PART_FILLED",
+		3:  "ORDER_STATUS_FILLED",
+		4:  "ORDER_STATUS_CANCELED",
+		5:  "ORDER_STATUS_REJECTED",
+		6:  "ORDER_STATUS_EXPIRED",
+		7:  "ORDER_STATUS_FREEZING",
+		8:  "ORDER_STATUS_TRIGGER_WAITING",
+		9:  "ORDER_STATUS_CANCELING",
+		10: "ORDER_STATUS_EXPIRING",
+		11: "ORDER_STATUS_SETTLEMENT_PENDING",
 	}
 	OrderStatus_value = map[string]int32{
-		"ORDER_STATUS_UNKNOWN":         0,
-		"ORDER_STATUS_PENDING":         1,
-		"ORDER_STATUS_PART_FILLED":     2,
-		"ORDER_STATUS_FILLED":          3,
-		"ORDER_STATUS_CANCELED":        4,
-		"ORDER_STATUS_REJECTED":        5,
-		"ORDER_STATUS_EXPIRED":         6,
-		"ORDER_STATUS_FREEZING":        7,
-		"ORDER_STATUS_TRIGGER_WAITING": 8,
+		"ORDER_STATUS_UNKNOWN":            0,
+		"ORDER_STATUS_PENDING":            1,
+		"ORDER_STATUS_PART_FILLED":        2,
+		"ORDER_STATUS_FILLED":             3,
+		"ORDER_STATUS_CANCELED":           4,
+		"ORDER_STATUS_REJECTED":           5,
+		"ORDER_STATUS_EXPIRED":            6,
+		"ORDER_STATUS_FREEZING":           7,
+		"ORDER_STATUS_TRIGGER_WAITING":    8,
+		"ORDER_STATUS_CANCELING":          9,
+		"ORDER_STATUS_EXPIRING":           10,
+		"ORDER_STATUS_SETTLEMENT_PENDING": 11,
 	}
 )
 
@@ -879,11 +888,13 @@ func (RiskCheckResult) EnumDescriptor() ([]byte, []int) {
 type EventStatus int32
 
 const (
-	EventStatus_EVENT_STATUS_UNKNOWN  EventStatus = 0
-	EventStatus_EVENT_STATUS_PENDING  EventStatus = 1
-	EventStatus_EVENT_STATUS_SUCCESS  EventStatus = 2
-	EventStatus_EVENT_STATUS_FAILED   EventStatus = 3
-	EventStatus_EVENT_STATUS_CANCELED EventStatus = 4
+	EventStatus_EVENT_STATUS_UNKNOWN     EventStatus = 0
+	EventStatus_EVENT_STATUS_PENDING     EventStatus = 1
+	EventStatus_EVENT_STATUS_SUCCESS     EventStatus = 2
+	EventStatus_EVENT_STATUS_FAILED      EventStatus = 3
+	EventStatus_EVENT_STATUS_CANCELED    EventStatus = 4
+	EventStatus_EVENT_STATUS_PROCESSING  EventStatus = 5
+	EventStatus_EVENT_STATUS_DEAD_LETTER EventStatus = 6
 )
 
 // Enum value maps for EventStatus.
@@ -894,13 +905,17 @@ var (
 		2: "EVENT_STATUS_SUCCESS",
 		3: "EVENT_STATUS_FAILED",
 		4: "EVENT_STATUS_CANCELED",
+		5: "EVENT_STATUS_PROCESSING",
+		6: "EVENT_STATUS_DEAD_LETTER",
 	}
 	EventStatus_value = map[string]int32{
-		"EVENT_STATUS_UNKNOWN":  0,
-		"EVENT_STATUS_PENDING":  1,
-		"EVENT_STATUS_SUCCESS":  2,
-		"EVENT_STATUS_FAILED":   3,
-		"EVENT_STATUS_CANCELED": 4,
+		"EVENT_STATUS_UNKNOWN":     0,
+		"EVENT_STATUS_PENDING":     1,
+		"EVENT_STATUS_SUCCESS":     2,
+		"EVENT_STATUS_FAILED":      3,
+		"EVENT_STATUS_CANCELED":    4,
+		"EVENT_STATUS_PROCESSING":  5,
+		"EVENT_STATUS_DEAD_LETTER": 6,
 	}
 )
 
@@ -2118,7 +2133,7 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\x11TIME_IN_FORCE_GTC\x10\x01\x12\x15\n" +
 	"\x11TIME_IN_FORCE_IOC\x10\x02\x12\x15\n" +
 	"\x11TIME_IN_FORCE_FOK\x10\x03\x12\x1b\n" +
-	"\x17TIME_IN_FORCE_POST_ONLY\x10\x04*\x85\x02\n" +
+	"\x17TIME_IN_FORCE_POST_ONLY\x10\x04*\xe1\x02\n" +
 	"\vOrderStatus\x12\x18\n" +
 	"\x14ORDER_STATUS_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14ORDER_STATUS_PENDING\x10\x01\x12\x1c\n" +
@@ -2128,7 +2143,11 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\x15ORDER_STATUS_REJECTED\x10\x05\x12\x18\n" +
 	"\x14ORDER_STATUS_EXPIRED\x10\x06\x12\x19\n" +
 	"\x15ORDER_STATUS_FREEZING\x10\a\x12 \n" +
-	"\x1cORDER_STATUS_TRIGGER_WAITING\x10\b*V\n" +
+	"\x1cORDER_STATUS_TRIGGER_WAITING\x10\b\x12\x1a\n" +
+	"\x16ORDER_STATUS_CANCELING\x10\t\x12\x19\n" +
+	"\x15ORDER_STATUS_EXPIRING\x10\n" +
+	"\x12#\n" +
+	"\x1fORDER_STATUS_SETTLEMENT_PENDING\x10\v*V\n" +
 	"\n" +
 	"MarginMode\x12\x17\n" +
 	"\x13MARGIN_MODE_UNKNOWN\x10\x00\x12\x15\n" +
@@ -2169,13 +2188,15 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\x19RISK_CHECK_RESULT_UNKNOWN\x10\x00\x12\x1a\n" +
 	"\x16RISK_CHECK_RESULT_PASS\x10\x01\x12\x1c\n" +
 	"\x18RISK_CHECK_RESULT_REJECT\x10\x02\x12\x1f\n" +
-	"\x1bRISK_CHECK_RESULT_WARN_PASS\x10\x03*\x8f\x01\n" +
+	"\x1bRISK_CHECK_RESULT_WARN_PASS\x10\x03*\xca\x01\n" +
 	"\vEventStatus\x12\x18\n" +
 	"\x14EVENT_STATUS_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14EVENT_STATUS_PENDING\x10\x01\x12\x18\n" +
 	"\x14EVENT_STATUS_SUCCESS\x10\x02\x12\x17\n" +
 	"\x13EVENT_STATUS_FAILED\x10\x03\x12\x19\n" +
-	"\x15EVENT_STATUS_CANCELED\x10\x04*\xd4\x02\n" +
+	"\x15EVENT_STATUS_CANCELED\x10\x04\x12\x1b\n" +
+	"\x17EVENT_STATUS_PROCESSING\x10\x05\x12\x1c\n" +
+	"\x18EVENT_STATUS_DEAD_LETTER\x10\x06*\xd4\x02\n" +
 	"\x12PositionActionType\x12 \n" +
 	"\x1cPOSITION_ACTION_TYPE_UNKNOWN\x10\x00\x12\x1d\n" +
 	"\x19POSITION_ACTION_TYPE_OPEN\x10\x01\x12!\n" +

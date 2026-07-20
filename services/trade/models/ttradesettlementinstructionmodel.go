@@ -18,9 +18,11 @@ type (
 	TTradeSettlementInstructionModel interface {
 		tTradeSettlementInstructionModel
 		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeSettlementInstruction, int64, error)
-		FindPendingSpot(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error)
+		FindPendingFillSettlements(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error)
+		FindPendingOrderReleases(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error)
 		FindByFillId(ctx context.Context, tenantId, fillId int64) ([]*TTradeSettlementInstruction, error)
 		CountUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error)
+		CountAllUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error)
 		Claim(ctx context.Context, id, now int64) (bool, error)
 	}
 
@@ -36,6 +38,25 @@ func NewTTradeSettlementInstructionModel(conn sqlx.SqlConn, c cache.CacheConf, o
 	}
 }
 
+func (m *defaultTTradeSettlementInstructionModel) CountAllUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error) {
+	var count int64
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id = ? AND order_id = ? AND status <> 3", m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantId, orderId); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (m *defaultTTradeSettlementInstructionModel) FindPendingOrderReleases(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE (? = 0 OR tenant_id = ?) AND biz_type = 'order' AND action = 2 AND ((status IN (1, 4) AND (next_retry_at = 0 OR next_retry_at <= ?)) OR (status = 2 AND update_times <= ?)) ORDER BY id ASC LIMIT ?", tTradeSettlementInstructionRows, m.table)
+	var list []*TTradeSettlementInstruction
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, tenantId, tenantId, now, now-60*1000, limit); err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
 func (m *defaultTTradeSettlementInstructionModel) CountUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error) {
 	var count int64
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id = ? AND order_id = ? AND status <> 3 AND action <> 2", m.table)
@@ -45,10 +66,10 @@ func (m *defaultTTradeSettlementInstructionModel) CountUnfinishedByOrder(ctx con
 	return count, nil
 }
 
-func (m *defaultTTradeSettlementInstructionModel) FindPendingSpot(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error) {
+func (m *defaultTTradeSettlementInstructionModel) FindPendingFillSettlements(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	staleBefore := now - 60*1000
-	query := fmt.Sprintf("SELECT %s FROM %s i JOIN t_trade_fill f ON f.tenant_id = i.tenant_id AND f.id = i.fill_id WHERE (? = 0 OR i.tenant_id = ?) AND i.biz_type = 'fill' AND f.product_type = 1 AND ((i.status IN (1, 4) AND (i.next_retry_at = 0 OR i.next_retry_at <= ?)) OR (i.status = 2 AND i.update_times <= ?)) AND NOT EXISTS (SELECT 1 FROM %s p WHERE p.tenant_id = i.tenant_id AND p.fill_id = i.fill_id AND p.step_no < i.step_no AND p.status <> 3) ORDER BY i.id ASC LIMIT ?", prefixedSettlementInstructionRows("i"), m.table, m.table)
+	query := fmt.Sprintf("SELECT %s FROM %s i JOIN t_trade_fill f ON f.tenant_id = i.tenant_id AND f.id = i.fill_id WHERE (? = 0 OR i.tenant_id = ?) AND i.biz_type = 'fill' AND f.product_type IN (1, 2) AND ((i.status IN (1, 4) AND (i.next_retry_at = 0 OR i.next_retry_at <= ?)) OR (i.status = 2 AND i.update_times <= ?)) AND NOT EXISTS (SELECT 1 FROM %s p WHERE p.tenant_id = i.tenant_id AND p.fill_id = i.fill_id AND p.step_no < i.step_no AND p.status <> 3) ORDER BY i.id ASC LIMIT ?", prefixedSettlementInstructionRows("i"), m.table, m.table)
 	var list []*TTradeSettlementInstruction
 	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, tenantId, tenantId, now, staleBefore, limit); err != nil {
 		return nil, err

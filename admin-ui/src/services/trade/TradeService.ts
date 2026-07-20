@@ -671,6 +671,11 @@ export type BizTradeEvent = {
   extData: string
   createTimes: number
   updateTimes: number
+  consumer: string
+  payloadVersion: number
+  claimedBy: string
+  claimedAt: number
+  deliveredAt: number
 }
 
 export type CreateSymbolReq = Omit<TradeSymbol, 'id' | 'createTimes' | 'updateTimes'>

@@ -2,7 +2,10 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"strings"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
@@ -26,6 +29,11 @@ type (
 	TBizTradeEventModel interface {
 		tBizTradeEventModel
 		FindPage(ctx context.Context, filter BizTradeEventPageFilter, cursor int64, limit int64) ([]*TBizTradeEvent, int64, error)
+		FindDispatchable(ctx context.Context, tenantID, now, staleBefore, cursor, limit int64, eventTypes []string) ([]*TBizTradeEvent, error)
+		ClaimDispatch(ctx context.Context, id int64, claimant string, now, staleBefore int64) (bool, error)
+		MarkDelivered(ctx context.Context, id, now int64) (bool, error)
+		MarkDeliveryFailed(ctx context.Context, id, now, nextRetryAt int64, errorMessage string) (bool, error)
+		ResetForManualRetry(ctx context.Context, id, operatorID, now int64) (bool, error)
 	}
 
 	customTBizTradeEventModel struct {
@@ -38,6 +46,70 @@ func NewTBizTradeEventModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.
 	return &customTBizTradeEventModel{
 		defaultTBizTradeEventModel: newTBizTradeEventModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTBizTradeEventModel) FindDispatchable(ctx context.Context, tenantID, now, staleBefore, cursor, limit int64, eventTypes []string) ([]*TBizTradeEvent, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	if len(eventTypes) == 0 {
+		return nil, nil
+	}
+	marks := strings.TrimSuffix(strings.Repeat("?,", len(eventTypes)), ",")
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND event_type IN (%s) AND id > ? AND (((event_status = 1 OR (event_status = 3 AND next_retry_at <= ?)) AND (max_retry_count = 0 OR retry_count < max_retry_count)) OR (event_status = 5 AND claimed_at <= ?)) ORDER BY id ASC LIMIT ?", tBizTradeEventRows, m.table, marks)
+	args := []any{tenantID}
+	for _, eventType := range eventTypes {
+		args = append(args, eventType)
+	}
+	args = append(args, cursor, now, staleBefore, limit)
+	var list []*TBizTradeEvent
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, args...); err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+func (m *defaultTBizTradeEventModel) ClaimDispatch(ctx context.Context, id int64, claimant string, now, staleBefore int64) (bool, error) {
+	return m.conditionalEventUpdate(ctx, id, "event_status = 5, retry_count = retry_count + 1, claimed_by = ?, claimed_at = ?, update_times = ?", []any{claimant, now, now}, "(event_status = 1 OR (event_status = 3 AND next_retry_at <= ?) OR (event_status = 5 AND claimed_at <= ?)) AND (max_retry_count = 0 OR retry_count < max_retry_count)", now, staleBefore)
+}
+
+func (m *defaultTBizTradeEventModel) MarkDelivered(ctx context.Context, id, now int64) (bool, error) {
+	return m.conditionalEventUpdate(ctx, id, "event_status = 2, delivered_at = ?, claimed_by = '', claimed_at = 0, next_retry_at = 0, last_error_msg = '', update_times = ?", []any{now, now}, "event_status IN (1, 3, 5)")
+}
+
+func (m *defaultTBizTradeEventModel) MarkDeliveryFailed(ctx context.Context, id, now, nextRetryAt int64, errorMessage string) (bool, error) {
+	errorMessage = truncateTradeEventError(errorMessage)
+	return m.conditionalEventUpdate(ctx, id, "event_status = IF(max_retry_count > 0 AND retry_count >= max_retry_count, 6, 3), next_retry_at = ?, last_error_msg = ?, claimed_by = '', claimed_at = 0, update_times = ?", []any{nextRetryAt, errorMessage, now}, "event_status IN (1, 3, 5)")
+}
+
+func truncateTradeEventError(message string) string {
+	runes := []rune(message)
+	if len(runes) <= 500 {
+		return message
+	}
+	return string(runes[:500])
+}
+
+func (m *defaultTBizTradeEventModel) ResetForManualRetry(ctx context.Context, id, operatorID, now int64) (bool, error) {
+	return m.conditionalEventUpdate(ctx, id, "event_status = 1, retry_count = 0, next_retry_at = ?, last_error_msg = '', claimed_by = '', claimed_at = 0, delivered_at = 0, operator_id = ?, update_times = ?", []any{now, operatorID, now}, "event_status IN (3, 6)")
+}
+
+func (m *defaultTBizTradeEventModel) conditionalEventUpdate(ctx context.Context, id int64, setClause string, setArgs []any, whereClause string, whereArgs ...any) (bool, error) {
+	item, err := m.FindOne(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	idKey := fmt.Sprintf("%s%v", cacheTBizTradeEventIdPrefix, id)
+	uniqueKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, item.TenantId, item.EventNo)
+	args := append(append([]any{}, setArgs...), id)
+	args = append(args, whereArgs...)
+	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		query := fmt.Sprintf("UPDATE %s SET %s WHERE id = ? AND %s", m.table, setClause, whereClause)
+		return conn.ExecCtx(ctx, query, args...)
+	}, idKey, uniqueKey)
+	if err != nil {
+		return false, err
+	}
+	affected, err := result.RowsAffected()
+	return affected == 1, err
 }
 
 func (m *defaultTBizTradeEventModel) FindPage(ctx context.Context, filter BizTradeEventPageFilter, cursor int64, limit int64) ([]*TBizTradeEvent, int64, error) {

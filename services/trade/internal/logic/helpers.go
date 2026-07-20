@@ -639,26 +639,31 @@ func tradeEventToProto(item *models.TBizTradeEvent) *trade.BizTradeEvent {
 		return nil
 	}
 	return &trade.BizTradeEvent{
-		Id:            item.Id,
-		TenantId:      item.TenantId,
-		EventNo:       item.EventNo,
-		EventType:     item.EventType,
-		BizId:         item.BizId,
-		BizType:       item.BizType,
-		UserId:        item.UserId,
-		SymbolId:      item.SymbolId,
-		ProductType:   trade.ProductType(item.ProductType),
-		OperatorId:    item.OperatorId,
-		Source:        trade.SourceType(item.Source),
-		EventStatus:   trade.EventStatus(item.EventStatus),
-		RetryCount:    item.RetryCount,
-		MaxRetryCount: item.MaxRetryCount,
-		NextRetryAt:   item.NextRetryAt,
-		LastErrorMsg:  item.LastErrorMsg,
-		Payload:       item.Payload,
-		ExtData:       conv.NullStringValue(item.ExtData),
-		CreateTimes:   item.CreateTimes,
-		UpdateTimes:   item.UpdateTimes,
+		Id:             item.Id,
+		TenantId:       item.TenantId,
+		EventNo:        item.EventNo,
+		EventType:      item.EventType,
+		BizId:          item.BizId,
+		BizType:        item.BizType,
+		UserId:         item.UserId,
+		SymbolId:       item.SymbolId,
+		ProductType:    trade.ProductType(item.ProductType),
+		OperatorId:     item.OperatorId,
+		Source:         trade.SourceType(item.Source),
+		Consumer:       item.Consumer,
+		EventStatus:    trade.EventStatus(item.EventStatus),
+		RetryCount:     item.RetryCount,
+		MaxRetryCount:  item.MaxRetryCount,
+		NextRetryAt:    item.NextRetryAt,
+		LastErrorMsg:   item.LastErrorMsg,
+		PayloadVersion: item.PayloadVersion,
+		ClaimedBy:      item.ClaimedBy,
+		ClaimedAt:      item.ClaimedAt,
+		DeliveredAt:    item.DeliveredAt,
+		Payload:        item.Payload,
+		ExtData:        conv.NullStringValue(item.ExtData),
+		CreateTimes:    item.CreateTimes,
+		UpdateTimes:    item.UpdateTimes,
 	}
 }
 
@@ -794,6 +799,10 @@ func freezingOrderStatuses() []int64 {
 	return []int64{int64(trade.OrderStatus_ORDER_STATUS_FREEZING)}
 }
 
+func terminatingOrderStatuses() []int64 {
+	return []int64{int64(trade.OrderStatus_ORDER_STATUS_CANCELING), int64(trade.OrderStatus_ORDER_STATUS_EXPIRING)}
+}
+
 func isTriggerWaitingOrderStatus(status int64) bool {
 	return trade.OrderStatus(status) == trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING
 }
@@ -818,10 +827,10 @@ func orderStatusAfterFill(order *models.TTradeOrder) int64 {
 		return int64(trade.OrderStatus_ORDER_STATUS_PENDING)
 	}
 	if reachedFillTarget(order.FilledQty, order.Qty) {
-		return int64(trade.OrderStatus_ORDER_STATUS_FILLED)
+		return int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING)
 	}
 	if !order.Qty.IsPositive() && reachedFillTarget(order.FilledAmount, order.Amount) {
-		return int64(trade.OrderStatus_ORDER_STATUS_FILLED)
+		return int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING)
 	}
 	return int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED)
 }

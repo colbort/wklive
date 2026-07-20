@@ -158,7 +158,7 @@ Matcher 必须在同一数据库事务中完成：
 
 Asset 的 `AddAvailable`、`SubAvailable`、`DeductFrozenAsset` 和 `UnfreezeAsset` 已使用 `biz_no` 幂等，重复消费不会重复扣款、入账或解冻。
 
-### 3.3 合约仓位结算缺口（P0）
+### 3.3 合约仓位结算（P0，已完成仓位投影）
 
 合约 Fill 后必须根据成交动作更新 Position：
 
@@ -189,7 +189,21 @@ Asset 的 `AddAvailable`、`SubAvailable`、`DeductFrozenAsset` 和 `UnfreezeAss
 
 Reduce Only 成交时必须消费对应的 `reserved_close_qty`；订单撤销或过期时必须释放剩余预占。
 
-### 3.4 合约公式缺口（P0）
+当前实现已经补齐：
+
+- 撮合事务产生 `POSITION_FILL_REQUIRED` 后实时发布，Outbox 定时扫描负责丢失消息恢复；
+- 每个 Fill 在数据库事务内锁定对应仓位，更新 Position、写入 Position History 和 `POSITION_UPDATED` Outbox；
+- `action_key = fill_no + position_side + action` 提供仓位投影幂等；
+- 支持 LONG/SHORT 开仓、同向加仓、部分减仓和全部平仓；
+- NET 委托按成交方向先平反向仓位，剩余数量再反向开仓；
+- 支持 CROSS/ISOLATED 维度隔离，Reduce Only 不允许反向开仓；
+- 平仓成交消费 `reserved_close_qty`，非 Reduce Only 的 LONG/SHORT 平仓单也在下单阶段预占可平数量；
+- 线性合约采用数量加权均价及价差盈亏，反向合约采用调和均价及倒数价格盈亏；
+- 更新仓位保证金、维持保证金、未实现/已实现盈亏、风险率、强平价、破产价、状态和版本。
+
+本节完成的是 Trade 内部仓位事实投影。成交保证金、手续费、已实现盈亏与 Asset 账本之间的最终资金结算，仍由 Settlement Instruction 链路处理，不应以 Position 更新成功代替 Asset 结算成功。
+
+### 3.4 合约公式（P0，已完成成交基础公式）
 
 不能使用统一的 `price * qty` 处理所有合约。
 
@@ -218,7 +232,19 @@ fee_base              = contract_value_quote / fill_price * fee_rate
 
 永续与交割合约成交公式可以共用，但资金费和到期交割必须独立处理。
 
-### 3.5 Reservation 状态缺口（P0）
+当前实现已经统一到 `contract_math.go`：
+
+- 线性合约的 Quote 名义价值和 Settlement 名义价值均为 `qty * contract_size * price`；
+- 反向合约的 Quote 名义价值为 `qty * contract_size`，Settlement/Base 名义价值为 `quote_notional / price`；
+- 下单保证金、撮合 Fill Amount、Maker/Taker Fee、成交保证金指令和仓位维持保证金使用同一公式入口；
+- U 本位手续费和保证金使用稳定币口径，币本位手续费、保证金及盈亏使用基础币口径；
+- 线性仓位使用数量加权开仓均价，反向仓位使用调和均价；
+- 线性与反向多空已实现/未实现盈亏分别计算；
+- 强平价使用 `equity(liquidation_price) = maintenance_margin(liquidation_price)` 求解，不使用当前 Mark Price 的维持保证金倒推；
+- 委托价格和数量必须符合 `price_tick/qty_step`；保证金及手续费等扣款按 18 位小数向上取整，盈亏和入账按 18 位小数向零截断；
+- 永续和交割共用成交公式，但 Funding 和 Delivery 仍走各自独立结算流程。
+
+### 3.5 Reservation 状态（P0，已完成）
 
 资金预占应随 Fill 推进：
 
@@ -238,7 +264,20 @@ FROZEN/PART_CONSUMED
 
 不得在本地状态没有记录的情况下直接调用 Asset 后结束流程。每次消费和释放都应有 Settlement Instruction、幂等键、重试次数和错误信息。
 
-### 3.6 撤单和成交并发缺口（P0）
+当前实现已经补齐：
+
+- 现货与合约 Fill 共用资金结算 Worker，按 `step_no` 顺序消费 Settlement Instruction；
+- 现货 `CONSUME_FROZEN`、买方冻结手续费以及合约 `ADJUST_MARGIN/DEDUCT_FEE` 成功后累计 `consumed_amount`；
+- 第一次部分消费后进入 `PART_CONSUMED`，全部由成交消耗时进入 `CONSUMED`；
+- 价格改善、订单全部成交后的剩余预占、撤单、过期和撮合残余均先创建 `RELEASE_FROZEN` 指令，再进入 `RELEASING`；
+- 释放完成后累计 `released_amount`，当 `consumed_amount + released_amount = reserved_amount` 时进入 `RELEASED`；
+- 撤单和过期路径不再绕过本地状态直接调用 Asset；
+- 指令使用 `instruction_no` 作为 Asset 幂等业务号，Asset 成功但 Trade 提交失败时可安全重试；
+- 指令失败同步记录 Reservation 的 `retry_count/next_retry_at/last_error_msg`，达到上限后 Reservation 进入 `FAILED`、指令进入 `MANUAL_REVIEW`；
+- `PROCESSING` 租约超时、普通失败和进程中断均可由定时扫描恢复；
+- Settlement Instruction 成功和 Reservation 金额/状态变更位于同一 Trade 数据库事务。
+
+### 3.6 撤单和成交并发（P0，已完成）
 
 当前撤单过早进入 `CANCELED`，标准流程应调整为：
 
@@ -262,6 +301,20 @@ OPEN/PARTIALLY_FILLED
 ```
 
 需要补充或真正使用 `CANCELING`、`EXPIRING`、`SETTLEMENT_PENDING` 等中间状态。
+
+当前实现已经补齐：
+
+- 新增并实际使用 `CANCELING`、`EXPIRING`、`SETTLEMENT_PENDING`；
+- 撤单、过期和撮合均锁定 `t_trade_order` 行后校验状态，先获得行锁的一方决定最终成交量；
+- `CANCELING/EXPIRING` 不属于可撮合状态，Redis 订单簿尚未删除时 Matcher 的数据库二次校验仍会拒绝成交；
+- 撤单或过期在行锁事务内固化 `canceled_qty = qty - filled_qty`，之后才创建资产释放指令；
+- 如果已有 Fill 资金指令尚未完成，剩余冻结资产释放必须等待成交消费完成后再计算，避免先解冻再扣减；
+- 资产 Reservation 和合约 `reserved_close_qty` 全部释放成功后，订单才进入 `CANCELED/EXPIRED`；
+- 数量全部成交后先进入 `SETTLEMENT_PENDING`，所有 Fill 的 Asset 指令和合约 Position 投影成功后才进入 `FILLED`；
+- 每次成交和中间态/终态切换都会推进订单 `version`；
+- 最终写入 `ORDER_CANCELED/ORDER_EXPIRED/ORDER_SETTLED` Outbox；
+- 定时任务扫描 `CANCELING/EXPIRING/SETTLEMENT_PENDING`，可恢复释放指令遗漏或终态提交前进程退出；
+- 管理后台已增加三种中间状态的筛选项、中英文翻译和标签显示。
 
 ### 3.7 秒合约执行缺口（P1）
 
@@ -341,7 +394,7 @@ FREEZING
 - Liquidation Batch/明细；
 - 强平事件、重试、审计和人工处理。
 
-### 3.11 Event/Outbox 缺口（P0）
+### 3.11 Event/Outbox（P0，已完成核心可靠投递）
 
 Outbox 必须具备：
 
@@ -355,7 +408,19 @@ Outbox 必须具备：
 - 消费者幂等；
 - 事件 Payload 版本。
 
-仅将失败事件重新设置成 `PENDING`，不能视为完成可靠投递。
+当前实现已经补齐：
+
+- Outbox 与订单、Fill、Settlement Instruction、Position History 等业务事实同事务写入，`tenant_id + event_no` 唯一；
+- `PENDING/FAILED/租约过期的 PROCESSING` 记录通过条件更新原子领取，多实例不会同时取得有效投递权；
+- Outbox 保存 `consumer`、`payload_version`、`claimed_by/claimed_at` 和 `delivered_at`；
+- 发布成功不直接视为业务成功，只有消费者完成业务处理和 Inbox 确认后才将 Outbox 更新为 `SUCCESS`；
+- 消费端使用 `consumer + tenant_id + event_no` 唯一 Inbox，Redis Pub/Sub 多实例广播不会重复产生业务影响；
+- 失败按 1 秒起步进行指数退避，最大退避约 512 秒，达到 `max_retry_count` 后进入 `DEAD_LETTER`；
+- 管理后台仅允许对 `FAILED/DEAD_LETTER` 事件进行人工重试，人工重试清理领取信息并重新获得完整重试预算；
+- 当前内部事件只接受 Payload V1，未知版本和未知事件类型会失败并进入统一重试/死信流程；
+- 定时任务只作为未投递、失败到期和领取租约超时的恢复入口，不再把失败记录简单重置为 `PENDING`。
+
+该链路提供至少一次投递；业务消费者仍必须保持幂等。Inbox 负责阻止并发重复执行，业务表唯一键和 Asset 幂等业务号负责覆盖“外部副作用成功但 Inbox 完成前进程退出”的重放窗口。
 
 ## 4. 目标架构
 

@@ -3,6 +3,7 @@ package svc
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 	bus "wklive/common/bus/redis"
 	"wklive/services/trade/internal/config"
@@ -22,6 +23,7 @@ type ServiceContext struct {
 	TaskSubscriber              *bus.Subscriber
 	TradeEventPublisher         *bus.Publisher
 	TradeEventSubscriber        *bus.Subscriber
+	TradeEventInstanceID        string
 	TradeSymbolModel            models.TTradeSymbolModel
 	TradeSymbolSpotModel        models.TTradeSymbolSpotModel
 	TradeSymbolContractModel    models.TTradeSymbolContractModel
@@ -64,6 +66,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 	tradeEventPublisher := bus.NewPublisherFromRedisConf(c.CacheRedis[0].RedisConf)
 	tradeEventSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
+	hostname, _ := os.Hostname()
+	instanceID := fmt.Sprintf("%s:%d:%d", hostname, os.Getpid(), time.Now().UnixNano())
 	return &ServiceContext{
 		Config:                      c,
 		DB:                          conn,
@@ -71,6 +75,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TaskSubscriber:              taskSubscriber,
 		TradeEventPublisher:         tradeEventPublisher,
 		TradeEventSubscriber:        tradeEventSubscriber,
+		TradeEventInstanceID:        instanceID,
 		TradeSymbolModel:            models.NewTTradeSymbolModel(conn, c.CacheRedis),
 		TradeSymbolSpotModel:        models.NewTTradeSymbolSpotModel(conn, c.CacheRedis),
 		TradeSymbolContractModel:    models.NewTTradeSymbolContractModel(conn, c.CacheRedis),

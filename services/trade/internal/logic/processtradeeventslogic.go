@@ -35,10 +35,16 @@ func NewProcessTradeEventsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 // 交易事件处理（失败重试/订单过期/冻结资产修复）
 func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	return runTradeTaskWithLock(l.ctx, l.svcCtx, "process_trade_events", func() (*trade.TradeTaskResp, error) {
-		if err := NewProcessSpotSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
+		if err := NewProcessFillSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
 			return nil, err
 		}
-		if err := l.retryTradeEvents(in); err != nil {
+		if err := NewProcessReservationReleasesLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
+			return nil, err
+		}
+		if err := l.recoverTerminatingOrders(in); err != nil {
+			return nil, err
+		}
+		if err := l.recoverSettlementPendingOrders(in); err != nil {
 			return nil, err
 		}
 		if err := l.dispatchPendingRealtimeEvents(in); err != nil {
@@ -60,82 +66,75 @@ func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*t
 	})
 }
 
+func (l *ProcessTradeEventsLogic) recoverSettlementPendingOrders(in *trade.TradeTaskReq) error {
+	cursor := int64(0)
+	for {
+		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{TenantId: in.GetTenantId(), Statuses: []int64{int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING)}}, cursor, 100)
+		if err != nil {
+			return err
+		}
+		for _, order := range orders {
+			cursor = order.Id
+			if err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+				return finalizeSettledOrder(ctx, sqlx.NewSqlConnFromSession(session), l.svcCtx, order.Id, utils.NowMillis())
+			}); err != nil {
+				return err
+			}
+		}
+		if len(orders) < 100 {
+			return nil
+		}
+	}
+}
+
+func (l *ProcessTradeEventsLogic) recoverTerminatingOrders(in *trade.TradeTaskReq) error {
+	cursor := int64(0)
+	for {
+		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{TenantId: in.GetTenantId(), Statuses: terminatingOrderStatuses()}, cursor, 100)
+		if err != nil {
+			return err
+		}
+		for _, order := range orders {
+			cursor = order.Id
+			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, order, "trade termination recovery release"); err != nil {
+				return err
+			}
+		}
+		if len(orders) < 100 {
+			return nil
+		}
+	}
+}
+
 // dispatchPendingRealtimeEvents republishes durable outbox records. Publishing
 // does not mark the record successful; only the consumer may acknowledge it.
 // This makes Redis Pub/Sub the low-latency path while the outbox remains the
 // recovery source when a process or message is lost.
 func (l *ProcessTradeEventsLogic) dispatchPendingRealtimeEvents(in *trade.TradeTaskReq) error {
-	for _, eventType := range []string{realtime.EventOrderAccepted, realtime.EventFillCreated} {
-		cursor := int64(0)
-		for {
-			items, _, err := l.svcCtx.BizTradeEventModel.FindPage(l.ctx, models.BizTradeEventPageFilter{
-				TenantId:    in.GetTenantId(),
-				EventType:   eventType,
-				EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING),
-			}, cursor, 100)
-			if err != nil {
-				return err
-			}
-			for _, item := range items {
-				cursor = item.Id
-				if item.NextRetryAt > 0 && item.NextRetryAt > utils.NowMillis() {
-					continue
-				}
-				event := realtime.Event{EventNo: item.EventNo, Type: item.EventType, TenantID: item.TenantId, BizID: item.BizId}
-				if err := realtime.Publish(l.ctx, l.svcCtx.TradeEventPublisher, event); err != nil {
-					return err
-				}
-			}
-			if len(items) < 100 {
-				break
-			}
-		}
-	}
-	return nil
-}
-
-type triggerPriceKey struct {
-	tenantId    int64
-	symbolId    int64
-	productType int64
-}
-
-func (l *ProcessTradeEventsLogic) retryTradeEvents(in *trade.TradeTaskReq) error {
-	now := utils.NowMillis()
 	cursor := int64(0)
 	for {
-		items, _, err := l.svcCtx.BizTradeEventModel.FindPage(l.ctx, models.BizTradeEventPageFilter{
-			TenantId:    in.GetTenantId(),
-			EventStatus: int64(trade.EventStatus_EVENT_STATUS_FAILED),
-			TimeEnd:     now,
-		}, cursor, 100)
+		now := utils.NowMillis()
+		items, err := l.svcCtx.BizTradeEventModel.FindDispatchable(l.ctx, in.GetTenantId(), now, now-realtime.ClaimLeaseMillis, cursor, 100, []string{realtime.EventOrderAccepted, realtime.EventFillCreated, realtime.EventPositionFill})
 		if err != nil {
 			return err
 		}
-		if len(items) == 0 {
-			return nil
-		}
 		for _, item := range items {
 			cursor = item.Id
-			if item.MaxRetryCount > 0 && item.RetryCount >= item.MaxRetryCount {
-				continue
-			}
-			if item.NextRetryAt > 0 && item.NextRetryAt > now {
-				continue
-			}
-			item.EventStatus = int64(trade.EventStatus_EVENT_STATUS_PENDING)
-			item.RetryCount++
-			item.NextRetryAt = now
-			item.LastErrorMsg = ""
-			item.UpdateTimes = now
-			if err := l.svcCtx.BizTradeEventModel.Update(l.ctx, item); err != nil {
-				return err
+			event := realtime.Event{Version: item.PayloadVersion, EventNo: item.EventNo, Type: item.EventType, TenantID: item.TenantId, BizID: item.BizId}
+			if err := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
+				l.Errorf("dispatch trade event failed, eventNo=%s: %v", item.EventNo, err)
 			}
 		}
 		if len(items) < 100 {
 			return nil
 		}
 	}
+}
+
+type triggerPriceKey struct {
+	tenantId    int64
+	symbolId    int64
+	productType int64
 }
 
 func (l *ProcessTradeEventsLogic) recoverFreezingOrders(in *trade.TradeTaskReq) error {
@@ -301,8 +300,9 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 			TenantId: order.TenantId, EventNo: eventNo, EventType: realtime.EventOrderAccepted,
 			BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId,
 			ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM),
-			EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now,
-			Payload: "{}", CreateTimes: now, UpdateTimes: now,
+			Consumer: tradeEventConsumer(realtime.EventOrderAccepted), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now,
+			PayloadVersion: tradeEventPayloadVersion,
+			Payload:        "{}", CreateTimes: now, UpdateTimes: now,
 		}); err != nil {
 			return err
 		}
@@ -316,7 +316,7 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 		return err
 	}
 	event := realtime.Event{EventNo: eventNo, Type: realtime.EventOrderAccepted, TenantID: triggeredOrder.TenantId, BizID: triggeredOrder.OrderNo, OrderID: triggeredOrder.Id}
-	if err := realtime.Publish(l.ctx, l.svcCtx.TradeEventPublisher, event); err != nil {
+	if err := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
 		l.Errorf("publish triggered order event failed, orderId=%d eventNo=%s err=%v", triggeredOrder.Id, eventNo, err)
 	}
 	return nil
@@ -369,8 +369,10 @@ func (l *ProcessTradeEventsLogic) expireOrderIfNeeded(orderID, now int64) (*mode
 		if !shouldExpireOrder(order, now) {
 			return nil
 		}
-		order.Status = int64(trade.OrderStatus_ORDER_STATUS_EXPIRED)
+		order.Status = int64(trade.OrderStatus_ORDER_STATUS_EXPIRING)
+		order.CanceledQty = decimalMaxZero(order.Qty.Sub(order.FilledQty))
 		order.CancelReason = orderExpireReason(order)
+		order.Version++
 		order.UpdateTimes = now
 		if err := orderModel.Update(ctx, order); err != nil {
 			return err

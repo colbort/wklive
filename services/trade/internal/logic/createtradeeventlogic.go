@@ -43,26 +43,39 @@ func (l *CreateTradeEventLogic) CreateTradeEvent(in *trade.CreateTradeEventReq) 
 				return nil, err
 			}
 		}
+		consumer := in.Event.Consumer
+		if consumer == "" {
+			consumer = tradeEventConsumer(in.Event.EventType)
+		}
+		payloadVersion := in.Event.PayloadVersion
+		if payloadVersion <= 0 {
+			payloadVersion = tradeEventPayloadVersion
+		}
 		_, err = l.svcCtx.BizTradeEventModel.Insert(l.ctx, &models.TBizTradeEvent{
-			TenantId:      in.Event.TenantId,
-			EventNo:       eventNo,
-			EventType:     in.Event.EventType,
-			BizId:         in.Event.BizId,
-			BizType:       in.Event.BizType,
-			UserId:        in.Event.UserId,
-			SymbolId:      in.Event.SymbolId,
-			ProductType:   int64(in.Event.ProductType),
-			OperatorId:    in.Event.OperatorId,
-			Source:        int64(in.Event.Source),
-			EventStatus:   int64(in.Event.EventStatus),
-			RetryCount:    int64(in.Event.RetryCount),
-			MaxRetryCount: int64(in.Event.MaxRetryCount),
-			NextRetryAt:   in.Event.NextRetryAt,
-			LastErrorMsg:  in.Event.LastErrorMsg,
-			Payload:       normalizeTradeEventJSON(in.Event.Payload),
-			ExtData:       nullableTradeEventJSON(in.Event.ExtData),
-			CreateTimes:   in.Event.CreateTimes,
-			UpdateTimes:   in.Event.UpdateTimes,
+			TenantId:       in.Event.TenantId,
+			EventNo:        eventNo,
+			EventType:      in.Event.EventType,
+			BizId:          in.Event.BizId,
+			BizType:        in.Event.BizType,
+			UserId:         in.Event.UserId,
+			SymbolId:       in.Event.SymbolId,
+			ProductType:    int64(in.Event.ProductType),
+			OperatorId:     in.Event.OperatorId,
+			Source:         int64(in.Event.Source),
+			Consumer:       consumer,
+			EventStatus:    int64(in.Event.EventStatus),
+			RetryCount:     int64(in.Event.RetryCount),
+			MaxRetryCount:  int64(in.Event.MaxRetryCount),
+			NextRetryAt:    in.Event.NextRetryAt,
+			LastErrorMsg:   in.Event.LastErrorMsg,
+			ClaimedBy:      in.Event.ClaimedBy,
+			ClaimedAt:      in.Event.ClaimedAt,
+			DeliveredAt:    in.Event.DeliveredAt,
+			PayloadVersion: payloadVersion,
+			Payload:        normalizeTradeEventJSON(in.Event.Payload),
+			ExtData:        nullableTradeEventJSON(in.Event.ExtData),
+			CreateTimes:    in.Event.CreateTimes,
+			UpdateTimes:    in.Event.UpdateTimes,
 		})
 		if err != nil {
 			return nil, err
