@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"wklive/common/conv"
+	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/models"
@@ -107,30 +108,37 @@ func contractSymbolToProto(item *models.TTradeSymbolContract) *trade.TradeSymbol
 		return nil
 	}
 	return &trade.TradeSymbolContract{
-		Id:                     item.Id,
-		TenantId:               item.TenantId,
-		SymbolId:               item.SymbolId,
-		ContractSize:           conv.FloatString(item.ContractSize),
-		Multiplier:             conv.FloatString(item.Multiplier),
-		MaintenanceMarginRate:  conv.FloatString(item.MaintenanceMarginRate),
-		InitialMarginRate:      conv.FloatString(item.InitialMarginRate),
-		MakerFeeRate:           conv.FloatString(item.MakerFeeRate),
-		TakerFeeRate:           conv.FloatString(item.TakerFeeRate),
-		FundingIntervalMinutes: item.FundingIntervalMinutes,
-		FundingRateCap:         conv.FloatString(item.FundingRateCap),
-		FundingRateFloor:       conv.FloatString(item.FundingRateFloor),
-		IndexSymbol:            item.IndexSymbol,
-		MarkPriceSource:        item.MarkPriceSource,
-		SettlementPriceSource:  item.SettlementPriceSource,
-		DeliveryTime:           item.DeliveryTime,
-		SupportCross:           item.SupportCross,
-		SupportIsolated:        item.SupportIsolated,
-		OpenLongEnabled:        enableToProto(item.OpenLongEnabled),
-		OpenShortEnabled:       enableToProto(item.OpenShortEnabled),
-		CloseLongEnabled:       enableToProto(item.CloseLongEnabled),
-		CloseShortEnabled:      enableToProto(item.CloseShortEnabled),
-		CreateTimes:            item.CreateTimes,
-		UpdateTimes:            item.UpdateTimes,
+		Id:                       item.Id,
+		TenantId:                 item.TenantId,
+		SymbolId:                 item.SymbolId,
+		ContractSize:             conv.FloatString(item.ContractSize),
+		Multiplier:               conv.FloatString(item.Multiplier),
+		MaintenanceMarginRate:    conv.FloatString(item.MaintenanceMarginRate),
+		InitialMarginRate:        conv.FloatString(item.InitialMarginRate),
+		MakerFeeRate:             conv.FloatString(item.MakerFeeRate),
+		TakerFeeRate:             conv.FloatString(item.TakerFeeRate),
+		FundingIntervalMinutes:   item.FundingIntervalMinutes,
+		FundingRateCap:           conv.FloatString(item.FundingRateCap),
+		FundingRateFloor:         conv.FloatString(item.FundingRateFloor),
+		FundingRateSource:        item.FundingRateSource,
+		IndexSymbol:              item.IndexSymbol,
+		MarkPriceSource:          item.MarkPriceSource,
+		SettlementPriceSource:    item.SettlementPriceSource,
+		DeliveryTime:             item.DeliveryTime,
+		OpenCutoffTime:           item.OpenCutoffTime,
+		MatchingStopTime:         item.MatchingStopTime,
+		SettlementWindowSeconds:  item.SettlementWindowSeconds,
+		SettlementPriceAlgorithm: item.SettlementPriceAlgorithm,
+		DeliveryFeeRate:          conv.FloatString(item.DeliveryFeeRate),
+		LiquidationFeeRate:       conv.FloatString(item.LiquidationFeeRate),
+		SupportCross:             item.SupportCross,
+		SupportIsolated:          item.SupportIsolated,
+		OpenLongEnabled:          enableToProto(item.OpenLongEnabled),
+		OpenShortEnabled:         enableToProto(item.OpenShortEnabled),
+		CloseLongEnabled:         enableToProto(item.CloseLongEnabled),
+		CloseShortEnabled:        enableToProto(item.CloseShortEnabled),
+		CreateTimes:              item.CreateTimes,
+		UpdateTimes:              item.UpdateTimes,
 	}
 }
 
@@ -141,9 +149,12 @@ func secondsSymbolToProto(item *models.TTradeSymbolSeconds) *trade.TradeSymbolSe
 	return &trade.TradeSymbolSeconds{
 		Id: item.Id, TenantId: item.TenantId, SymbolId: item.SymbolId,
 		DurationSeconds: item.DurationSeconds, PayoutRate: conv.FloatString(item.PayoutRate),
-		DrawRule: item.DrawRule, StartPriceSource: item.StartPriceSource,
+		DrawRule: trade.SecondsDrawRule(item.DrawRule), StartPriceSource: item.StartPriceSource,
 		SettlementPriceSource: item.SettlementPriceSource, QuoteValidityMs: item.QuoteValidityMs,
 		MinStake: conv.FloatString(item.MinStake), MaxStake: conv.FloatString(item.MaxStake),
+		FeeRate: conv.FloatString(item.FeeRate), SettlementWindowMs: item.SettlementWindowMs,
+		SettlementPriceAlgorithm: item.SettlementPriceAlgorithm,
+		DrawTolerance:            conv.FloatString(item.DrawTolerance), MaxExposureAmount: conv.FloatString(item.MaxExposureAmount),
 		UpEnabled: enableToProto(item.UpEnabled), DownEnabled: enableToProto(item.DownEnabled),
 		CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
 	}
@@ -181,6 +192,7 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 		TenantId:          item.TenantId,
 		OrderNo:           item.OrderNo,
 		ClientOrderId:     item.ClientOrderId.String,
+		RequestHash:       item.RequestHash,
 		UserId:            item.UserId,
 		SymbolId:          item.SymbolId,
 		ProductType:       trade.ProductType(item.ProductType),
@@ -196,18 +208,25 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 		Amount:            conv.FloatString(item.Amount),
 		FilledQty:         conv.FloatString(item.FilledQty),
 		FilledAmount:      conv.FloatString(item.FilledAmount),
+		CanceledQty:       conv.FloatString(item.CanceledQty),
 		AvgPrice:          conv.FloatString(item.AvgPrice),
 		Fee:               conv.FloatString(item.Fee),
 		FeeAsset:          item.FeeAsset,
 		Source:            trade.OrderSourceType(item.Source),
 		IsReduceOnly:      common.YesNo(item.IsReduceOnly),
+		IsClosePosition:   common.YesNo(item.IsClosePosition),
 		TriggerPrice:      conv.FloatString(item.TriggerPrice),
-		TriggerType:       item.TriggerType,
+		TriggerType:       trade.TriggerType(item.TriggerType),
 		TriggerKind:       trade.TriggerKind(item.TriggerKind),
+		OcoGroupNo:        item.OcoGroupNo,
+		ExpireAt:          item.ExpireAt,
+		TriggeredAt:       item.TriggeredAt,
+		CompletionReason:  item.CompletionReason,
 		CancelReason:      item.CancelReason,
 		BizExt:            conv.NullStringValue(item.BizExt),
 		CreateTimes:       item.CreateTimes,
 		UpdateTimes:       item.UpdateTimes,
+		Version:           item.Version,
 	}
 }
 
@@ -240,7 +259,10 @@ func orderContractToProto(item *models.TTradeOrderContract) *trade.TradeOrderCon
 		Leverage:          item.Leverage,
 		MarginAsset:       item.MarginAsset,
 		MarginAmount:      conv.FloatString(item.MarginAmount),
-		ClosePositionType: item.ClosePositionType,
+		ReservedCloseQty:  conv.FloatString(item.ReservedCloseQty),
+		RiskPrice:         conv.FloatString(item.RiskPrice),
+		RiskTierId:        item.RiskTierId,
+		ClosePositionType: trade.ClosePositionType(item.ClosePositionType),
 		LiquidationPrice:  conv.FloatString(item.LiquidationPrice),
 		TakeProfitPrice:   conv.FloatString(item.TakeProfitPrice),
 		StopLossPrice:     conv.FloatString(item.StopLossPrice),
@@ -276,7 +298,7 @@ func fillToProto(item *models.TTradeFill) *trade.TradeFill {
 		RealizedPnl:          conv.FloatString(item.RealizedPnl),
 		MatchTime:            item.MatchTime,
 		CreateTimes:          item.CreateTimes,
-		SettlementStatus:     item.SettlementStatus,
+		SettlementStatus:     trade.FillSettlementStatus(item.SettlementStatus),
 		SettlementRetryCount: item.SettlementRetryCount,
 		SettledAt:            item.SettledAt,
 	}
@@ -292,7 +314,7 @@ func cancelLogToProto(item *models.TTradeCancelLog) *trade.TradeCancelLog {
 		OrderId:      item.OrderId,
 		OrderNo:      item.OrderNo,
 		UserId:       item.UserId,
-		CancelSource: item.CancelSource,
+		CancelSource: trade.CancelSource(item.CancelSource),
 		CancelReason: item.CancelReason,
 		CreateTimes:  item.CreateTimes,
 	}
@@ -311,6 +333,7 @@ func positionToProto(item *models.TContractPosition) *trade.ContractPosition {
 		ContractValueType: trade.ContractValueType(item.ContractValueType),
 		PositionSide:      trade.PositionSide(item.PositionSide),
 		MarginMode:        trade.MarginMode(item.MarginMode),
+		Status:            trade.PositionStatus(item.Status),
 		Leverage:          item.Leverage,
 		Qty:               conv.FloatString(item.Qty),
 		AvailQty:          conv.FloatString(item.AvailQty),
@@ -319,12 +342,17 @@ func positionToProto(item *models.TContractPosition) *trade.ContractPosition {
 		MarkPrice:         conv.FloatString(item.MarkPrice),
 		MarginAsset:       item.MarginAsset,
 		PositionMargin:    conv.FloatString(item.PositionMargin),
+		MaintenanceMargin: conv.FloatString(item.MaintenanceMargin),
 		IsolatedMargin:    conv.FloatString(item.IsolatedMargin),
 		UnrealizedPnl:     conv.FloatString(item.UnrealizedPnl),
 		RealizedPnl:       conv.FloatString(item.RealizedPnl),
 		LiquidationPrice:  conv.FloatString(item.LiquidationPrice),
+		BankruptcyPrice:   conv.FloatString(item.BankruptcyPrice),
+		RiskRate:          conv.FloatString(item.RiskRate),
 		AdlRank:           item.AdlRank,
 		Version:           item.Version,
+		LastFundingTime:   item.LastFundingTime,
+		ClosedAt:          item.ClosedAt,
 		CreateTimes:       item.CreateTimes,
 		UpdateTimes:       item.UpdateTimes,
 	}
@@ -538,7 +566,7 @@ func riskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUser
 		MaxCancelCountPerDay: item.MaxCancelCountPerDay,
 		MaxOpenNotional:      conv.FloatString(item.MaxOpenNotional),
 		MaxPositionNotional:  conv.FloatString(item.MaxPositionNotional),
-		RiskLevel:            item.RiskLevel,
+		RiskLevel:            trade.RiskLevel(item.RiskLevel),
 		OperatorId:           item.OperatorId,
 		Source:               trade.SourceType(item.Source),
 		Enabled:              enableToProto(item.Enabled),
@@ -1062,4 +1090,12 @@ func walletTypeForProduct(productType trade.ProductType) common.WalletType {
 	default:
 		return common.WalletType_WALLET_TYPE_CONTRACT
 	}
+}
+
+func adminTenantID(ctx context.Context, requested int64) int64 {
+	// 管理端请求只能访问网关注入的当前租户，不能通过请求体切换租户。
+	if tenantID, err := utils.GetTenantIdFromMd(ctx); err == nil && tenantID > 0 {
+		return tenantID
+	}
+	return requested
 }

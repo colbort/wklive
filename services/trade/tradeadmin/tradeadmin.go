@@ -14,63 +14,92 @@ import (
 )
 
 type (
-	AdminCommonResp                 = trade.AdminCommonResp
-	CreateSymbolReq                 = trade.CreateSymbolReq
-	GetCancelLogListAdminReq        = trade.GetCancelLogListAdminReq
-	GetCancelLogListAdminResp       = trade.GetCancelLogListAdminResp
-	GetContractUserConfigReq        = trade.GetContractUserConfigReq
-	GetContractUserConfigResp       = trade.GetContractUserConfigResp
-	GetFillDetailAdminReq           = trade.GetFillDetailAdminReq
-	GetFillDetailAdminResp          = trade.GetFillDetailAdminResp
-	GetFillListAdminReq             = trade.GetFillListAdminReq
-	GetFillListAdminResp            = trade.GetFillListAdminResp
-	GetMarginSnapshotListAdminReq   = trade.GetMarginSnapshotListAdminReq
-	GetMarginSnapshotListAdminResp  = trade.GetMarginSnapshotListAdminResp
-	GetOrderDetailAdminReq          = trade.GetOrderDetailAdminReq
-	GetOrderDetailAdminResp         = trade.GetOrderDetailAdminResp
-	GetOrderListAdminReq            = trade.GetOrderListAdminReq
-	GetOrderListAdminResp           = trade.GetOrderListAdminResp
-	GetPositionDetailAdminReq       = trade.GetPositionDetailAdminReq
-	GetPositionDetailAdminResp      = trade.GetPositionDetailAdminResp
-	GetPositionHistoryListAdminReq  = trade.GetPositionHistoryListAdminReq
-	GetPositionHistoryListAdminResp = trade.GetPositionHistoryListAdminResp
-	GetPositionListAdminReq         = trade.GetPositionListAdminReq
-	GetPositionListAdminResp        = trade.GetPositionListAdminResp
-	GetRiskOrderCheckLogListReq     = trade.GetRiskOrderCheckLogListReq
-	GetRiskOrderCheckLogListResp    = trade.GetRiskOrderCheckLogListResp
-	GetSymbolDetailAdminData        = trade.GetSymbolDetailAdminData
-	GetSymbolDetailAdminReq         = trade.GetSymbolDetailAdminReq
-	GetSymbolDetailAdminResp        = trade.GetSymbolDetailAdminResp
-	GetSymbolLeverageConfigListReq  = trade.GetSymbolLeverageConfigListReq
-	GetSymbolLeverageConfigListResp = trade.GetSymbolLeverageConfigListResp
-	GetSymbolLeverageConfigReq      = trade.GetSymbolLeverageConfigReq
-	GetSymbolLeverageConfigResp     = trade.GetSymbolLeverageConfigResp
-	GetSymbolListAdminReq           = trade.GetSymbolListAdminReq
-	GetSymbolListAdminResp          = trade.GetSymbolListAdminResp
-	GetTradeEventDetailReq          = trade.GetTradeEventDetailReq
-	GetTradeEventDetailResp         = trade.GetTradeEventDetailResp
-	GetTradeEventListReq            = trade.GetTradeEventListReq
-	GetTradeEventListResp           = trade.GetTradeEventListResp
-	GetUserLeverageConfigReq        = trade.GetUserLeverageConfigReq
-	GetUserLeverageConfigResp       = trade.GetUserLeverageConfigResp
-	GetUserSymbolLimitReq           = trade.GetUserSymbolLimitReq
-	GetUserSymbolLimitResp          = trade.GetUserSymbolLimitResp
-	GetUserTradeConfigReq           = trade.GetUserTradeConfigReq
-	GetUserTradeConfigResp          = trade.GetUserTradeConfigResp
-	GetUserTradeLimitReq            = trade.GetUserTradeLimitReq
-	GetUserTradeLimitResp           = trade.GetUserTradeLimitResp
-	RetryTradeEventReq              = trade.RetryTradeEventReq
-	SetContractSymbolConfigReq      = trade.SetContractSymbolConfigReq
-	SetContractUserConfigReq        = trade.SetContractUserConfigReq
-	SetSecondsSymbolConfigReq       = trade.SetSecondsSymbolConfigReq
-	SetSpotSymbolConfigReq          = trade.SetSpotSymbolConfigReq
-	SetSymbolLeverageConfigReq      = trade.SetSymbolLeverageConfigReq
-	SetSymbolSessionReq             = trade.SetSymbolSessionReq
-	SetUserLeverageConfigReq        = trade.SetUserLeverageConfigReq
-	SetUserSymbolLimitReq           = trade.SetUserSymbolLimitReq
-	SetUserTradeConfigReq           = trade.SetUserTradeConfigReq
-	SetUserTradeLimitReq            = trade.SetUserTradeLimitReq
-	UpdateSymbolReq                 = trade.UpdateSymbolReq
+	AdminCommonResp                  = trade.AdminCommonResp
+	ContractDeliveryBatch            = trade.ContractDeliveryBatch
+	ContractDeliverySettlement       = trade.ContractDeliverySettlement
+	ContractFundingBatch             = trade.ContractFundingBatch
+	ContractFundingSettlement        = trade.ContractFundingSettlement
+	ContractLiquidation              = trade.ContractLiquidation
+	ContractRiskLimitTier            = trade.ContractRiskLimitTier
+	CreateSymbolReq                  = trade.CreateSymbolReq
+	GetAssetReservationListReq       = trade.GetAssetReservationListReq
+	GetAssetReservationListResp      = trade.GetAssetReservationListResp
+	GetCancelLogListAdminReq         = trade.GetCancelLogListAdminReq
+	GetCancelLogListAdminResp        = trade.GetCancelLogListAdminResp
+	GetContractRiskLimitTierListReq  = trade.GetContractRiskLimitTierListReq
+	GetContractRiskLimitTierListResp = trade.GetContractRiskLimitTierListResp
+	GetContractUserConfigReq         = trade.GetContractUserConfigReq
+	GetContractUserConfigResp        = trade.GetContractUserConfigResp
+	GetDeliveryBatchListReq          = trade.GetDeliveryBatchListReq
+	GetDeliveryBatchListResp         = trade.GetDeliveryBatchListResp
+	GetDeliverySettlementListReq     = trade.GetDeliverySettlementListReq
+	GetDeliverySettlementListResp    = trade.GetDeliverySettlementListResp
+	GetFillDetailAdminReq            = trade.GetFillDetailAdminReq
+	GetFillDetailAdminResp           = trade.GetFillDetailAdminResp
+	GetFillListAdminReq              = trade.GetFillListAdminReq
+	GetFillListAdminResp             = trade.GetFillListAdminResp
+	GetFundingBatchListReq           = trade.GetFundingBatchListReq
+	GetFundingBatchListResp          = trade.GetFundingBatchListResp
+	GetFundingSettlementListReq      = trade.GetFundingSettlementListReq
+	GetFundingSettlementListResp     = trade.GetFundingSettlementListResp
+	GetLiquidationListReq            = trade.GetLiquidationListReq
+	GetLiquidationListResp           = trade.GetLiquidationListResp
+	GetMarginSnapshotListAdminReq    = trade.GetMarginSnapshotListAdminReq
+	GetMarginSnapshotListAdminResp   = trade.GetMarginSnapshotListAdminResp
+	GetOrderDetailAdminReq           = trade.GetOrderDetailAdminReq
+	GetOrderDetailAdminResp          = trade.GetOrderDetailAdminResp
+	GetOrderListAdminReq             = trade.GetOrderListAdminReq
+	GetOrderListAdminResp            = trade.GetOrderListAdminResp
+	GetPositionDetailAdminReq        = trade.GetPositionDetailAdminReq
+	GetPositionDetailAdminResp       = trade.GetPositionDetailAdminResp
+	GetPositionHistoryListAdminReq   = trade.GetPositionHistoryListAdminReq
+	GetPositionHistoryListAdminResp  = trade.GetPositionHistoryListAdminResp
+	GetPositionListAdminReq          = trade.GetPositionListAdminReq
+	GetPositionListAdminResp         = trade.GetPositionListAdminResp
+	GetRiskOrderCheckLogListReq      = trade.GetRiskOrderCheckLogListReq
+	GetRiskOrderCheckLogListResp     = trade.GetRiskOrderCheckLogListResp
+	GetSecondsPriceSnapshotListReq   = trade.GetSecondsPriceSnapshotListReq
+	GetSecondsPriceSnapshotListResp  = trade.GetSecondsPriceSnapshotListResp
+	GetSettlementInstructionListReq  = trade.GetSettlementInstructionListReq
+	GetSettlementInstructionListResp = trade.GetSettlementInstructionListResp
+	GetSymbolDetailAdminData         = trade.GetSymbolDetailAdminData
+	GetSymbolDetailAdminReq          = trade.GetSymbolDetailAdminReq
+	GetSymbolDetailAdminResp         = trade.GetSymbolDetailAdminResp
+	GetSymbolLeverageConfigListReq   = trade.GetSymbolLeverageConfigListReq
+	GetSymbolLeverageConfigListResp  = trade.GetSymbolLeverageConfigListResp
+	GetSymbolLeverageConfigReq       = trade.GetSymbolLeverageConfigReq
+	GetSymbolLeverageConfigResp      = trade.GetSymbolLeverageConfigResp
+	GetSymbolListAdminReq            = trade.GetSymbolListAdminReq
+	GetSymbolListAdminResp           = trade.GetSymbolListAdminResp
+	GetTradeEventDetailReq           = trade.GetTradeEventDetailReq
+	GetTradeEventDetailResp          = trade.GetTradeEventDetailResp
+	GetTradeEventListReq             = trade.GetTradeEventListReq
+	GetTradeEventListResp            = trade.GetTradeEventListResp
+	GetUserLeverageConfigReq         = trade.GetUserLeverageConfigReq
+	GetUserLeverageConfigResp        = trade.GetUserLeverageConfigResp
+	GetUserSymbolLimitReq            = trade.GetUserSymbolLimitReq
+	GetUserSymbolLimitResp           = trade.GetUserSymbolLimitResp
+	GetUserTradeConfigReq            = trade.GetUserTradeConfigReq
+	GetUserTradeConfigResp           = trade.GetUserTradeConfigResp
+	GetUserTradeLimitReq             = trade.GetUserTradeLimitReq
+	GetUserTradeLimitResp            = trade.GetUserTradeLimitResp
+	RetrySettlementInstructionReq    = trade.RetrySettlementInstructionReq
+	RetryTradeEventReq               = trade.RetryTradeEventReq
+	SetContractRiskLimitTierReq      = trade.SetContractRiskLimitTierReq
+	SetContractSymbolConfigReq       = trade.SetContractSymbolConfigReq
+	SetContractUserConfigReq         = trade.SetContractUserConfigReq
+	SetSecondsSymbolConfigReq        = trade.SetSecondsSymbolConfigReq
+	SetSpotSymbolConfigReq           = trade.SetSpotSymbolConfigReq
+	SetSymbolLeverageConfigReq       = trade.SetSymbolLeverageConfigReq
+	SetSymbolSessionReq              = trade.SetSymbolSessionReq
+	SetUserLeverageConfigReq         = trade.SetUserLeverageConfigReq
+	SetUserSymbolLimitReq            = trade.SetUserSymbolLimitReq
+	SetUserTradeConfigReq            = trade.SetUserTradeConfigReq
+	SetUserTradeLimitReq             = trade.SetUserTradeLimitReq
+	TradeAssetReservation            = trade.TradeAssetReservation
+	TradeSecondsPriceSnapshot        = trade.TradeSecondsPriceSnapshot
+	TradeSettlementInstruction       = trade.TradeSettlementInstruction
+	UpdateSymbolReq                  = trade.UpdateSymbolReq
 
 	TradeAdmin interface {
 		// 创建交易对
@@ -141,6 +170,23 @@ type (
 		GetTradeEventDetail(ctx context.Context, in *GetTradeEventDetailReq, opts ...grpc.CallOption) (*GetTradeEventDetailResp, error)
 		// 重试交易事件
 		RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 保存合约风险限额档位
+		SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取合约风险限额档位列表
+		GetContractRiskLimitTierList(ctx context.Context, in *GetContractRiskLimitTierListReq, opts ...grpc.CallOption) (*GetContractRiskLimitTierListResp, error)
+		// 资金费批次与结算明细（只读）
+		GetFundingBatchList(ctx context.Context, in *GetFundingBatchListReq, opts ...grpc.CallOption) (*GetFundingBatchListResp, error)
+		GetFundingSettlementList(ctx context.Context, in *GetFundingSettlementListReq, opts ...grpc.CallOption) (*GetFundingSettlementListResp, error)
+		// 交割批次与结算明细（只读）
+		GetDeliveryBatchList(ctx context.Context, in *GetDeliveryBatchListReq, opts ...grpc.CallOption) (*GetDeliveryBatchListResp, error)
+		GetDeliverySettlementList(ctx context.Context, in *GetDeliverySettlementListReq, opts ...grpc.CallOption) (*GetDeliverySettlementListResp, error)
+		// 强平、秒合约价格与结算异常（只读）
+		GetLiquidationList(ctx context.Context, in *GetLiquidationListReq, opts ...grpc.CallOption) (*GetLiquidationListResp, error)
+		GetSecondsPriceSnapshotList(ctx context.Context, in *GetSecondsPriceSnapshotListReq, opts ...grpc.CallOption) (*GetSecondsPriceSnapshotListResp, error)
+		GetAssetReservationList(ctx context.Context, in *GetAssetReservationListReq, opts ...grpc.CallOption) (*GetAssetReservationListResp, error)
+		GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error)
+		// 仅重置失败/人工处理的结算指令；不得修改金额
+		RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	}
 
 	defaultTradeAdmin struct {
@@ -356,4 +402,65 @@ func (m *defaultTradeAdmin) GetTradeEventDetail(ctx context.Context, in *GetTrad
 func (m *defaultTradeAdmin) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.RetryTradeEvent(ctx, in, opts...)
+}
+
+// 保存合约风险限额档位
+func (m *defaultTradeAdmin) SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.SetContractRiskLimitTier(ctx, in, opts...)
+}
+
+// 获取合约风险限额档位列表
+func (m *defaultTradeAdmin) GetContractRiskLimitTierList(ctx context.Context, in *GetContractRiskLimitTierListReq, opts ...grpc.CallOption) (*GetContractRiskLimitTierListResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetContractRiskLimitTierList(ctx, in, opts...)
+}
+
+// 资金费批次与结算明细（只读）
+func (m *defaultTradeAdmin) GetFundingBatchList(ctx context.Context, in *GetFundingBatchListReq, opts ...grpc.CallOption) (*GetFundingBatchListResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetFundingBatchList(ctx, in, opts...)
+}
+
+func (m *defaultTradeAdmin) GetFundingSettlementList(ctx context.Context, in *GetFundingSettlementListReq, opts ...grpc.CallOption) (*GetFundingSettlementListResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetFundingSettlementList(ctx, in, opts...)
+}
+
+// 交割批次与结算明细（只读）
+func (m *defaultTradeAdmin) GetDeliveryBatchList(ctx context.Context, in *GetDeliveryBatchListReq, opts ...grpc.CallOption) (*GetDeliveryBatchListResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetDeliveryBatchList(ctx, in, opts...)
+}
+
+func (m *defaultTradeAdmin) GetDeliverySettlementList(ctx context.Context, in *GetDeliverySettlementListReq, opts ...grpc.CallOption) (*GetDeliverySettlementListResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetDeliverySettlementList(ctx, in, opts...)
+}
+
+// 强平、秒合约价格与结算异常（只读）
+func (m *defaultTradeAdmin) GetLiquidationList(ctx context.Context, in *GetLiquidationListReq, opts ...grpc.CallOption) (*GetLiquidationListResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetLiquidationList(ctx, in, opts...)
+}
+
+func (m *defaultTradeAdmin) GetSecondsPriceSnapshotList(ctx context.Context, in *GetSecondsPriceSnapshotListReq, opts ...grpc.CallOption) (*GetSecondsPriceSnapshotListResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetSecondsPriceSnapshotList(ctx, in, opts...)
+}
+
+func (m *defaultTradeAdmin) GetAssetReservationList(ctx context.Context, in *GetAssetReservationListReq, opts ...grpc.CallOption) (*GetAssetReservationListResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetAssetReservationList(ctx, in, opts...)
+}
+
+func (m *defaultTradeAdmin) GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetSettlementInstructionList(ctx, in, opts...)
+}
+
+// 仅重置失败/人工处理的结算指令；不得修改金额
+func (m *defaultTradeAdmin) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.RetrySettlementInstruction(ctx, in, opts...)
 }

@@ -131,6 +131,24 @@ service TradeAdmin {
 
   // 重试交易事件
   rpc RetryTradeEvent(RetryTradeEventReq) returns (AdminCommonResp);
+
+  // 保存合约风险限额档位
+  rpc SetContractRiskLimitTier(SetContractRiskLimitTierReq) returns (AdminCommonResp);
+  // 获取合约风险限额档位列表
+  rpc GetContractRiskLimitTierList(GetContractRiskLimitTierListReq) returns (GetContractRiskLimitTierListResp);
+  // 资金费批次与结算明细（只读）
+  rpc GetFundingBatchList(GetFundingBatchListReq) returns (GetFundingBatchListResp);
+  rpc GetFundingSettlementList(GetFundingSettlementListReq) returns (GetFundingSettlementListResp);
+  // 交割批次与结算明细（只读）
+  rpc GetDeliveryBatchList(GetDeliveryBatchListReq) returns (GetDeliveryBatchListResp);
+  rpc GetDeliverySettlementList(GetDeliverySettlementListReq) returns (GetDeliverySettlementListResp);
+  // 强平、秒合约价格与结算异常（只读）
+  rpc GetLiquidationList(GetLiquidationListReq) returns (GetLiquidationListResp);
+  rpc GetSecondsPriceSnapshotList(GetSecondsPriceSnapshotListReq) returns (GetSecondsPriceSnapshotListResp);
+  rpc GetAssetReservationList(GetAssetReservationListReq) returns (GetAssetReservationListResp);
+  rpc GetSettlementInstructionList(GetSettlementInstructionListReq) returns (GetSettlementInstructionListResp);
+  // 仅重置失败/人工处理的结算指令；不得修改金额
+  rpc RetrySettlementInstruction(RetrySettlementInstructionReq) returns (AdminCommonResp);
 }
 
 message AdminCommonResp { common.RespBase base = 1; }
@@ -249,6 +267,13 @@ message SetContractSymbolConfigReq {
   string settlement_price_source = 19;
   common.Enable close_long_enabled = 20;
   common.Enable close_short_enabled = 21;
+  string funding_rate_source = 22;
+  int64 open_cutoff_time = 23;
+  int64 matching_stop_time = 24;
+  int64 settlement_window_seconds = 25;
+  string settlement_price_algorithm = 26;
+  string delivery_fee_rate = 27;
+  string liquidation_fee_rate = 28;
 }
 
 message SetSecondsSymbolConfigReq {
@@ -256,7 +281,7 @@ message SetSecondsSymbolConfigReq {
   int64 symbol_id = 2;
   int64 duration_seconds = 3;
   string payout_rate = 4;
-  int64 draw_rule = 5;
+  SecondsDrawRule draw_rule = 5;
   string start_price_source = 6;
   string settlement_price_source = 7;
   int64 quote_validity_ms = 8;
@@ -264,6 +289,11 @@ message SetSecondsSymbolConfigReq {
   string max_stake = 10;
   common.Enable up_enabled = 11;
   common.Enable down_enabled = 12;
+  string fee_rate = 13;
+  int64 settlement_window_ms = 14;
+  string settlement_price_algorithm = 15;
+  string draw_tolerance = 16;
+  string max_exposure_amount = 17;
 }
 
 message SetSymbolSessionReq {
@@ -619,4 +649,106 @@ message RetryTradeEventReq {
   int64 tenant_id = 1;
   int64 id = 2;
   int64 operator_id = 3;
+}
+
+message SetContractRiskLimitTierReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  int64 symbol_id = 3;
+  int64 tier_no = 4;
+  string notional_floor = 5;
+  string notional_cap = 6;
+  int64 max_leverage = 7;
+  string initial_margin_rate = 8;
+  string maintenance_margin_rate = 9;
+  string maintenance_amount = 10;
+  common.Enable enabled = 11;
+}
+
+message ContractRiskLimitTier {
+  int64 id = 1; int64 tenant_id = 2; int64 symbol_id = 3; int64 tier_no = 4;
+  string notional_floor = 5; string notional_cap = 6; int64 max_leverage = 7;
+  string initial_margin_rate = 8; string maintenance_margin_rate = 9;
+  string maintenance_amount = 10; common.Enable enabled = 11; int64 create_times = 12; int64 update_times = 13;
+}
+message GetContractRiskLimitTierListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 symbol_id = 3; common.Enable enabled = 4; }
+message GetContractRiskLimitTierListResp { common.RespBase base = 1; repeated ContractRiskLimitTier data = 2; }
+
+message ContractFundingBatch {
+  int64 id = 1; string batch_no = 2; int64 symbol_id = 3; string funding_rate = 4;
+  string mark_price = 5; string index_price = 6; string price_source = 7; string formula_version = 8;
+  int64 settlement_time = 9; FundingBatchStatus status = 10; int64 total_positions = 11; int64 settled_positions = 12;
+  string last_error_msg = 13; int64 create_times = 14; int64 update_times = 15;
+}
+message GetFundingBatchListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 symbol_id = 3; FundingBatchStatus status = 4; TimeRange time_range = 5; }
+message GetFundingBatchListResp { common.RespBase base = 1; repeated ContractFundingBatch data = 2; }
+
+message ContractFundingSettlement {
+  int64 id = 1; string settlement_no = 2; int64 batch_id = 3; string batch_no = 4; int64 symbol_id = 5;
+  int64 user_id = 6; int64 position_id = 7; PositionSide position_side = 8; string funding_rate = 9;
+  string mark_price = 10; string position_qty = 11; string fee_asset = 12; string fee_amount = 13;
+  int64 settlement_time = 14; FundingSettlementStatus status = 15; int64 retry_count = 16; int64 next_retry_at = 17;
+  string last_error_msg = 18; int64 settled_at = 19; int64 create_times = 20; int64 update_times = 21;
+}
+message GetFundingSettlementListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 batch_id = 3; int64 user_id = 4; int64 position_id = 5; FundingSettlementStatus status = 6; }
+message GetFundingSettlementListResp { common.RespBase base = 1; repeated ContractFundingSettlement data = 2; }
+
+message ContractDeliveryBatch {
+  int64 id = 1; string batch_no = 2; int64 symbol_id = 3; string settlement_price = 4; string price_source = 5;
+  string price_algorithm = 6; int64 open_cutoff_time = 7; int64 matching_stop_time = 8; int64 delivery_time = 9;
+  DeliveryBatchStatus status = 10; int64 total_positions = 11; int64 settled_positions = 12; string last_error_msg = 13;
+  int64 create_times = 14; int64 update_times = 15;
+}
+message GetDeliveryBatchListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 symbol_id = 3; DeliveryBatchStatus status = 4; TimeRange time_range = 5; }
+message GetDeliveryBatchListResp { common.RespBase base = 1; repeated ContractDeliveryBatch data = 2; }
+
+message ContractDeliverySettlement {
+  int64 id = 1; string settlement_no = 2; int64 batch_id = 3; string batch_no = 4; int64 symbol_id = 5;
+  int64 user_id = 6; int64 position_id = 7; PositionSide position_side = 8; string settlement_price = 9;
+  string position_qty = 10; string realized_pnl = 11; string delivery_fee = 12; string settle_asset = 13;
+  int64 delivery_time = 14; DeliverySettlementStatus status = 15; int64 retry_count = 16; int64 next_retry_at = 17;
+  string last_error_msg = 18; int64 settled_at = 19; int64 create_times = 20; int64 update_times = 21;
+}
+message GetDeliverySettlementListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 batch_id = 3; int64 user_id = 4; int64 position_id = 5; DeliverySettlementStatus status = 6; }
+message GetDeliverySettlementListResp { common.RespBase base = 1; repeated ContractDeliverySettlement data = 2; }
+
+message ContractLiquidation {
+  int64 id = 1; string liquidation_no = 2; int64 position_id = 3; int64 user_id = 4; int64 symbol_id = 5;
+  PositionSide position_side = 6; MarginMode margin_mode = 7; string trigger_mark_price = 8; string trigger_index_price = 9;
+  string trigger_qty = 10; string liquidated_qty = 11; string maintenance_margin = 12; string account_equity = 13;
+  string bankruptcy_price = 14; string liquidation_fee = 15; string insurance_fund_amount = 16; string adl_qty = 17;
+  LiquidationStatus status = 18; string reason = 19; int64 started_at = 20; int64 completed_at = 21; int64 create_times = 22; int64 update_times = 23;
+}
+message GetLiquidationListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 user_id = 3; int64 symbol_id = 4; int64 position_id = 5; LiquidationStatus status = 6; TimeRange time_range = 7; }
+message GetLiquidationListResp { common.RespBase base = 1; repeated ContractLiquidation data = 2; }
+
+message TradeSecondsPriceSnapshot {
+  int64 id = 1; int64 order_id = 2; SecondsPriceSnapshotType snapshot_type = 3; string source = 4; string price = 5;
+  int64 quote_time = 6; int64 received_at = 7; string algorithm = 8; int64 is_selected = 9;
+  string raw_payload = 10; int64 create_times = 11;
+}
+message GetSecondsPriceSnapshotListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 order_id = 3; SecondsPriceSnapshotType snapshot_type = 4; }
+message GetSecondsPriceSnapshotListResp { common.RespBase base = 1; repeated TradeSecondsPriceSnapshot data = 2; }
+
+message TradeAssetReservation {
+  int64 id = 1; int64 order_id = 2; string reservation_no = 3; string asset = 4; string reserved_amount = 5;
+  string consumed_amount = 6; string released_amount = 7; AssetReservationStatus status = 8; int64 retry_count = 9;
+  int64 next_retry_at = 10; string last_error_msg = 11; int64 version = 12; int64 create_times = 13; int64 update_times = 14;
+}
+message GetAssetReservationListReq { int64 tenant_id = 1; common.PageReq page = 2; int64 order_id = 3; AssetReservationStatus status = 4; }
+message GetAssetReservationListResp { common.RespBase base = 1; repeated TradeAssetReservation data = 2; }
+
+message TradeSettlementInstruction {
+  int64 id = 1; string instruction_no = 2; string biz_type = 3; string biz_id = 4; string batch_no = 5;
+  int64 fill_id = 6; int64 order_id = 7; int64 position_id = 8; string reservation_no = 9; int64 user_id = 10;
+  SettlementInstructionAction action = 11; string asset = 12; string amount = 13; int64 step_no = 14; SettlementInstructionStatus status = 15;
+  int64 retry_count = 16; int64 next_retry_at = 17; string last_error_msg = 18; int64 create_times = 19; int64 update_times = 20;
+}
+message GetSettlementInstructionListReq { int64 tenant_id = 1; common.PageReq page = 2; string biz_type = 3; string biz_id = 4; int64 order_id = 5; SettlementInstructionStatus status = 6; }
+message GetSettlementInstructionListResp { common.RespBase base = 1; repeated TradeSettlementInstruction data = 2; }
+message RetrySettlementInstructionReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string reason = 4;
+  reserved 3; // 操作人必须从可信网关元数据获取，禁止客户端传入
 }

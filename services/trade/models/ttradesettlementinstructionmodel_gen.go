@@ -47,12 +47,18 @@ type (
 		Id            int64           `db:"id"`             // 主键ID
 		TenantId      int64           `db:"tenant_id"`      // 租户ID
 		InstructionNo string          `db:"instruction_no"` // 结算指令号/幂等键
+		BizType       string          `db:"biz_type"`       // 业务类型：fill/order/funding/delivery/liquidation/seconds
+		BizId         string          `db:"biz_id"`         // 业务幂等主键
+		BatchNo       string          `db:"batch_no"`       // 资金费、交割或强平批次号
 		FillId        int64           `db:"fill_id"`        // 成交ID，非成交结算可为0
 		OrderId       int64           `db:"order_id"`       // 订单ID
+		PositionId    int64           `db:"position_id"`    // 持仓ID，非持仓结算可为0
+		ReservationNo string          `db:"reservation_no"` // 关联Asset预占号
 		UserId        int64           `db:"user_id"`        // 用户ID
 		Action        int64           `db:"action"`         // 动作：1扣冻结 2释放冻结 3可用入账 4扣手续费 5盈亏入账 6保证金调整
 		Asset         string          `db:"asset"`          // 资产
 		Amount        decimal.Decimal `db:"amount"`         // 金额，正数
+		StepNo        int64           `db:"step_no"`        // 同一业务Saga内的执行顺序
 		Status        int64           `db:"status"`         // 状态：1待执行 2执行中 3成功 4失败 5人工处理
 		RetryCount    int64           `db:"retry_count"`    // 重试次数
 		NextRetryAt   int64           `db:"next_retry_at"`  // 下次重试时间
@@ -125,8 +131,8 @@ func (m *defaultTTradeSettlementInstructionModel) Insert(ctx context.Context, da
 	tTradeSettlementInstructionIdKey := fmt.Sprintf("%s%v", cacheTTradeSettlementInstructionIdPrefix, data.Id)
 	tTradeSettlementInstructionTenantIdInstructionNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeSettlementInstructionTenantIdInstructionNoPrefix, data.TenantId, data.InstructionNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSettlementInstructionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.InstructionNo, data.FillId, data.OrderId, data.UserId, data.Action, data.Asset, data.Amount, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSettlementInstructionRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.InstructionNo, data.BizType, data.BizId, data.BatchNo, data.FillId, data.OrderId, data.PositionId, data.ReservationNo, data.UserId, data.Action, data.Asset, data.Amount, data.StepNo, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
 	}, tTradeSettlementInstructionIdKey, tTradeSettlementInstructionTenantIdInstructionNoKey)
 	return ret, err
 }
@@ -141,7 +147,7 @@ func (m *defaultTTradeSettlementInstructionModel) Update(ctx context.Context, ne
 	tTradeSettlementInstructionTenantIdInstructionNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeSettlementInstructionTenantIdInstructionNoPrefix, data.TenantId, data.InstructionNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeSettlementInstructionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.InstructionNo, newData.FillId, newData.OrderId, newData.UserId, newData.Action, newData.Asset, newData.Amount, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.InstructionNo, newData.BizType, newData.BizId, newData.BatchNo, newData.FillId, newData.OrderId, newData.PositionId, newData.ReservationNo, newData.UserId, newData.Action, newData.Asset, newData.Amount, newData.StepNo, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeSettlementInstructionIdKey, tTradeSettlementInstructionTenantIdInstructionNoKey)
 	return err
 }

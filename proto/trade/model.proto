@@ -97,6 +97,13 @@ message TradeSymbolContract {
   common.Enable open_short_enabled = 24;
   common.Enable close_long_enabled = 25;
   common.Enable close_short_enabled = 26;
+  string funding_rate_source = 27;
+  int64 open_cutoff_time = 28;
+  int64 matching_stop_time = 29;
+  int64 settlement_window_seconds = 30;
+  string settlement_price_algorithm = 31;
+  string delivery_fee_rate = 32;
+  string liquidation_fee_rate = 33;
   reserved 14, 15;
 }
 
@@ -106,7 +113,7 @@ message TradeSymbolSeconds {
   int64 symbol_id = 3;
   int64 duration_seconds = 4;
   string payout_rate = 5;
-  int64 draw_rule = 6;
+  SecondsDrawRule draw_rule = 6;
   string start_price_source = 7;
   string settlement_price_source = 8;
   int64 quote_validity_ms = 9;
@@ -116,6 +123,11 @@ message TradeSymbolSeconds {
   common.Enable down_enabled = 13;
   int64 create_times = 14;
   int64 update_times = 15;
+  string fee_rate = 16;
+  int64 settlement_window_ms = 17;
+  string settlement_price_algorithm = 18;
+  string draw_tolerance = 19;
+  string max_exposure_amount = 20;
 }
 
 message TradeSymbolSession {
@@ -178,7 +190,7 @@ message TradeOrder {
   OrderSourceType source = 21;
   common.YesNo is_reduce_only = 22;
   string trigger_price = 24;
-  int64 trigger_type = 25;
+  TriggerType trigger_type = 25;
   string cancel_reason = 26;
   string biz_ext = 27;
   int64 create_times = 28;
@@ -186,6 +198,14 @@ message TradeOrder {
   TriggerKind trigger_kind = 30;
   ContractType contract_type = 31;
   ContractValueType contract_value_type = 32;
+  string request_hash = 33;
+  string canceled_qty = 34;
+  common.YesNo is_close_position = 35;
+  string oco_group_no = 36;
+  int64 expire_at = 37;
+  int64 triggered_at = 38;
+  string completion_reason = 39;
+  int64 version = 40;
   reserved 23;
 }
 
@@ -209,19 +229,22 @@ message TradeOrderContract {
   int64 leverage = 5;
   string margin_asset = 6;
   string margin_amount = 7;
-  int64 close_position_type = 8;
+  ClosePositionType close_position_type = 8;
   string liquidation_price = 9;
   string take_profit_price = 10;
   string stop_loss_price = 11;
   int64 create_times = 12;
   int64 update_times = 13;
+  string reserved_close_qty = 14;
+  string risk_price = 15;
+  int64 risk_tier_id = 16;
 }
 
 message TradeOrderSeconds {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 order_id = 3;
-  int64 direction = 4;
+  SecondsDirection direction = 4;
   int64 duration_seconds = 5;
   string stake_asset = 6;
   string stake_amount = 7;
@@ -231,12 +254,23 @@ message TradeOrderSeconds {
   int64 expire_time = 11;
   string settlement_price = 12;
   int64 settlement_price_time = 13;
-  int64 result = 14;
-  string payout_amount = 15;
-  int64 settlement_status = 16;
+  SecondsResult result = 14;
+  string return_amount = 15;
+  SecondsSettlementStatus settlement_status = 16;
   string reservation_no = 17;
   int64 create_times = 18;
   int64 update_times = 19;
+  string fee_rate = 20;
+  int64 frozen_at = 21;
+  int64 activated_at = 22;
+  string start_price_source = 23;
+  string settlement_price_source = 24;
+  string price_algorithm = 25;
+  string profit_amount = 26;
+  string fee_amount = 27;
+  string settlement_reason = 28;
+  int64 settled_at = 29;
+  int64 version = 30;
 }
 
 message TradeFill {
@@ -262,7 +296,7 @@ message TradeFill {
   string match_no = 20;
   ContractType contract_type = 21;
   ContractValueType contract_value_type = 22;
-  int64 settlement_status = 23;
+  FillSettlementStatus settlement_status = 23;
   int64 settlement_retry_count = 24;
   int64 settled_at = 25;
 }
@@ -273,7 +307,7 @@ message TradeCancelLog {
   int64 order_id = 3;
   string order_no = 4;
   int64 user_id = 5;
-  int64 cancel_source = 6;
+  CancelSource cancel_source = 6;
   string cancel_reason = 7;
   int64 create_times = 8;
 }
@@ -303,6 +337,12 @@ message ContractPosition {
   int64 create_times = 22;
   int64 update_times = 23;
   ContractValueType contract_value_type = 24;
+  PositionStatus status = 25;
+  string maintenance_margin = 26;
+  string bankruptcy_price = 27;
+  string risk_rate = 28;
+  int64 last_funding_time = 29;
+  int64 closed_at = 30;
 }
 
 message ContractPositionHistory {
@@ -410,7 +450,7 @@ message RiskUserTradeLimit {
   int64 max_cancel_count_per_day = 14;
   string max_open_notional = 15;
   string max_position_notional = 16;
-  int64 risk_level = 17;
+  RiskLevel risk_level = 17;
   int64 operator_id = 18;
   SourceType source = 19;
   common.Enable enabled = 20; // 状态,0表示全部，1表示启用，2表示禁用

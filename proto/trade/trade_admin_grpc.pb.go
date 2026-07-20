@@ -19,40 +19,51 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TradeAdmin_CreateSymbol_FullMethodName                = "/trade.TradeAdmin/CreateSymbol"
-	TradeAdmin_UpdateSymbol_FullMethodName                = "/trade.TradeAdmin/UpdateSymbol"
-	TradeAdmin_GetSymbolListAdmin_FullMethodName          = "/trade.TradeAdmin/GetSymbolListAdmin"
-	TradeAdmin_GetSymbolDetailAdmin_FullMethodName        = "/trade.TradeAdmin/GetSymbolDetailAdmin"
-	TradeAdmin_SetSpotSymbolConfig_FullMethodName         = "/trade.TradeAdmin/SetSpotSymbolConfig"
-	TradeAdmin_SetContractSymbolConfig_FullMethodName     = "/trade.TradeAdmin/SetContractSymbolConfig"
-	TradeAdmin_SetSecondsSymbolConfig_FullMethodName      = "/trade.TradeAdmin/SetSecondsSymbolConfig"
-	TradeAdmin_SetSymbolSession_FullMethodName            = "/trade.TradeAdmin/SetSymbolSession"
-	TradeAdmin_SetSymbolLeverageConfig_FullMethodName     = "/trade.TradeAdmin/SetSymbolLeverageConfig"
-	TradeAdmin_GetSymbolLeverageConfig_FullMethodName     = "/trade.TradeAdmin/GetSymbolLeverageConfig"
-	TradeAdmin_GetSymbolLeverageConfigList_FullMethodName = "/trade.TradeAdmin/GetSymbolLeverageConfigList"
-	TradeAdmin_GetOrderListAdmin_FullMethodName           = "/trade.TradeAdmin/GetOrderListAdmin"
-	TradeAdmin_GetOrderDetailAdmin_FullMethodName         = "/trade.TradeAdmin/GetOrderDetailAdmin"
-	TradeAdmin_GetFillListAdmin_FullMethodName            = "/trade.TradeAdmin/GetFillListAdmin"
-	TradeAdmin_GetFillDetailAdmin_FullMethodName          = "/trade.TradeAdmin/GetFillDetailAdmin"
-	TradeAdmin_GetPositionListAdmin_FullMethodName        = "/trade.TradeAdmin/GetPositionListAdmin"
-	TradeAdmin_GetPositionDetailAdmin_FullMethodName      = "/trade.TradeAdmin/GetPositionDetailAdmin"
-	TradeAdmin_GetPositionHistoryListAdmin_FullMethodName = "/trade.TradeAdmin/GetPositionHistoryListAdmin"
-	TradeAdmin_GetMarginSnapshotListAdmin_FullMethodName  = "/trade.TradeAdmin/GetMarginSnapshotListAdmin"
-	TradeAdmin_GetCancelLogListAdmin_FullMethodName       = "/trade.TradeAdmin/GetCancelLogListAdmin"
-	TradeAdmin_SetUserTradeLimit_FullMethodName           = "/trade.TradeAdmin/SetUserTradeLimit"
-	TradeAdmin_SetUserSymbolLimit_FullMethodName          = "/trade.TradeAdmin/SetUserSymbolLimit"
-	TradeAdmin_GetUserTradeLimit_FullMethodName           = "/trade.TradeAdmin/GetUserTradeLimit"
-	TradeAdmin_GetUserSymbolLimit_FullMethodName          = "/trade.TradeAdmin/GetUserSymbolLimit"
-	TradeAdmin_SetUserTradeConfig_FullMethodName          = "/trade.TradeAdmin/SetUserTradeConfig"
-	TradeAdmin_GetUserTradeConfig_FullMethodName          = "/trade.TradeAdmin/GetUserTradeConfig"
-	TradeAdmin_SetContractUserConfig_FullMethodName       = "/trade.TradeAdmin/SetContractUserConfig"
-	TradeAdmin_GetContractUserConfig_FullMethodName       = "/trade.TradeAdmin/GetContractUserConfig"
-	TradeAdmin_GetRiskOrderCheckLogList_FullMethodName    = "/trade.TradeAdmin/GetRiskOrderCheckLogList"
-	TradeAdmin_SetUserLeverageConfig_FullMethodName       = "/trade.TradeAdmin/SetUserLeverageConfig"
-	TradeAdmin_GetUserLeverageConfig_FullMethodName       = "/trade.TradeAdmin/GetUserLeverageConfig"
-	TradeAdmin_GetTradeEventList_FullMethodName           = "/trade.TradeAdmin/GetTradeEventList"
-	TradeAdmin_GetTradeEventDetail_FullMethodName         = "/trade.TradeAdmin/GetTradeEventDetail"
-	TradeAdmin_RetryTradeEvent_FullMethodName             = "/trade.TradeAdmin/RetryTradeEvent"
+	TradeAdmin_CreateSymbol_FullMethodName                 = "/trade.TradeAdmin/CreateSymbol"
+	TradeAdmin_UpdateSymbol_FullMethodName                 = "/trade.TradeAdmin/UpdateSymbol"
+	TradeAdmin_GetSymbolListAdmin_FullMethodName           = "/trade.TradeAdmin/GetSymbolListAdmin"
+	TradeAdmin_GetSymbolDetailAdmin_FullMethodName         = "/trade.TradeAdmin/GetSymbolDetailAdmin"
+	TradeAdmin_SetSpotSymbolConfig_FullMethodName          = "/trade.TradeAdmin/SetSpotSymbolConfig"
+	TradeAdmin_SetContractSymbolConfig_FullMethodName      = "/trade.TradeAdmin/SetContractSymbolConfig"
+	TradeAdmin_SetSecondsSymbolConfig_FullMethodName       = "/trade.TradeAdmin/SetSecondsSymbolConfig"
+	TradeAdmin_SetSymbolSession_FullMethodName             = "/trade.TradeAdmin/SetSymbolSession"
+	TradeAdmin_SetSymbolLeverageConfig_FullMethodName      = "/trade.TradeAdmin/SetSymbolLeverageConfig"
+	TradeAdmin_GetSymbolLeverageConfig_FullMethodName      = "/trade.TradeAdmin/GetSymbolLeverageConfig"
+	TradeAdmin_GetSymbolLeverageConfigList_FullMethodName  = "/trade.TradeAdmin/GetSymbolLeverageConfigList"
+	TradeAdmin_GetOrderListAdmin_FullMethodName            = "/trade.TradeAdmin/GetOrderListAdmin"
+	TradeAdmin_GetOrderDetailAdmin_FullMethodName          = "/trade.TradeAdmin/GetOrderDetailAdmin"
+	TradeAdmin_GetFillListAdmin_FullMethodName             = "/trade.TradeAdmin/GetFillListAdmin"
+	TradeAdmin_GetFillDetailAdmin_FullMethodName           = "/trade.TradeAdmin/GetFillDetailAdmin"
+	TradeAdmin_GetPositionListAdmin_FullMethodName         = "/trade.TradeAdmin/GetPositionListAdmin"
+	TradeAdmin_GetPositionDetailAdmin_FullMethodName       = "/trade.TradeAdmin/GetPositionDetailAdmin"
+	TradeAdmin_GetPositionHistoryListAdmin_FullMethodName  = "/trade.TradeAdmin/GetPositionHistoryListAdmin"
+	TradeAdmin_GetMarginSnapshotListAdmin_FullMethodName   = "/trade.TradeAdmin/GetMarginSnapshotListAdmin"
+	TradeAdmin_GetCancelLogListAdmin_FullMethodName        = "/trade.TradeAdmin/GetCancelLogListAdmin"
+	TradeAdmin_SetUserTradeLimit_FullMethodName            = "/trade.TradeAdmin/SetUserTradeLimit"
+	TradeAdmin_SetUserSymbolLimit_FullMethodName           = "/trade.TradeAdmin/SetUserSymbolLimit"
+	TradeAdmin_GetUserTradeLimit_FullMethodName            = "/trade.TradeAdmin/GetUserTradeLimit"
+	TradeAdmin_GetUserSymbolLimit_FullMethodName           = "/trade.TradeAdmin/GetUserSymbolLimit"
+	TradeAdmin_SetUserTradeConfig_FullMethodName           = "/trade.TradeAdmin/SetUserTradeConfig"
+	TradeAdmin_GetUserTradeConfig_FullMethodName           = "/trade.TradeAdmin/GetUserTradeConfig"
+	TradeAdmin_SetContractUserConfig_FullMethodName        = "/trade.TradeAdmin/SetContractUserConfig"
+	TradeAdmin_GetContractUserConfig_FullMethodName        = "/trade.TradeAdmin/GetContractUserConfig"
+	TradeAdmin_GetRiskOrderCheckLogList_FullMethodName     = "/trade.TradeAdmin/GetRiskOrderCheckLogList"
+	TradeAdmin_SetUserLeverageConfig_FullMethodName        = "/trade.TradeAdmin/SetUserLeverageConfig"
+	TradeAdmin_GetUserLeverageConfig_FullMethodName        = "/trade.TradeAdmin/GetUserLeverageConfig"
+	TradeAdmin_GetTradeEventList_FullMethodName            = "/trade.TradeAdmin/GetTradeEventList"
+	TradeAdmin_GetTradeEventDetail_FullMethodName          = "/trade.TradeAdmin/GetTradeEventDetail"
+	TradeAdmin_RetryTradeEvent_FullMethodName              = "/trade.TradeAdmin/RetryTradeEvent"
+	TradeAdmin_SetContractRiskLimitTier_FullMethodName     = "/trade.TradeAdmin/SetContractRiskLimitTier"
+	TradeAdmin_GetContractRiskLimitTierList_FullMethodName = "/trade.TradeAdmin/GetContractRiskLimitTierList"
+	TradeAdmin_GetFundingBatchList_FullMethodName          = "/trade.TradeAdmin/GetFundingBatchList"
+	TradeAdmin_GetFundingSettlementList_FullMethodName     = "/trade.TradeAdmin/GetFundingSettlementList"
+	TradeAdmin_GetDeliveryBatchList_FullMethodName         = "/trade.TradeAdmin/GetDeliveryBatchList"
+	TradeAdmin_GetDeliverySettlementList_FullMethodName    = "/trade.TradeAdmin/GetDeliverySettlementList"
+	TradeAdmin_GetLiquidationList_FullMethodName           = "/trade.TradeAdmin/GetLiquidationList"
+	TradeAdmin_GetSecondsPriceSnapshotList_FullMethodName  = "/trade.TradeAdmin/GetSecondsPriceSnapshotList"
+	TradeAdmin_GetAssetReservationList_FullMethodName      = "/trade.TradeAdmin/GetAssetReservationList"
+	TradeAdmin_GetSettlementInstructionList_FullMethodName = "/trade.TradeAdmin/GetSettlementInstructionList"
+	TradeAdmin_RetrySettlementInstruction_FullMethodName   = "/trade.TradeAdmin/RetrySettlementInstruction"
 )
 
 // TradeAdminClient is the client API for TradeAdmin service.
@@ -129,6 +140,23 @@ type TradeAdminClient interface {
 	GetTradeEventDetail(ctx context.Context, in *GetTradeEventDetailReq, opts ...grpc.CallOption) (*GetTradeEventDetailResp, error)
 	// 重试交易事件
 	RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 保存合约风险限额档位
+	SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 获取合约风险限额档位列表
+	GetContractRiskLimitTierList(ctx context.Context, in *GetContractRiskLimitTierListReq, opts ...grpc.CallOption) (*GetContractRiskLimitTierListResp, error)
+	// 资金费批次与结算明细（只读）
+	GetFundingBatchList(ctx context.Context, in *GetFundingBatchListReq, opts ...grpc.CallOption) (*GetFundingBatchListResp, error)
+	GetFundingSettlementList(ctx context.Context, in *GetFundingSettlementListReq, opts ...grpc.CallOption) (*GetFundingSettlementListResp, error)
+	// 交割批次与结算明细（只读）
+	GetDeliveryBatchList(ctx context.Context, in *GetDeliveryBatchListReq, opts ...grpc.CallOption) (*GetDeliveryBatchListResp, error)
+	GetDeliverySettlementList(ctx context.Context, in *GetDeliverySettlementListReq, opts ...grpc.CallOption) (*GetDeliverySettlementListResp, error)
+	// 强平、秒合约价格与结算异常（只读）
+	GetLiquidationList(ctx context.Context, in *GetLiquidationListReq, opts ...grpc.CallOption) (*GetLiquidationListResp, error)
+	GetSecondsPriceSnapshotList(ctx context.Context, in *GetSecondsPriceSnapshotListReq, opts ...grpc.CallOption) (*GetSecondsPriceSnapshotListResp, error)
+	GetAssetReservationList(ctx context.Context, in *GetAssetReservationListReq, opts ...grpc.CallOption) (*GetAssetReservationListResp, error)
+	GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error)
+	// 仅重置失败/人工处理的结算指令；不得修改金额
+	RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 }
 
 type tradeAdminClient struct {
@@ -479,6 +507,116 @@ func (c *tradeAdminClient) RetryTradeEvent(ctx context.Context, in *RetryTradeEv
 	return out, nil
 }
 
+func (c *tradeAdminClient) SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_SetContractRiskLimitTier_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetContractRiskLimitTierList(ctx context.Context, in *GetContractRiskLimitTierListReq, opts ...grpc.CallOption) (*GetContractRiskLimitTierListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContractRiskLimitTierListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetContractRiskLimitTierList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetFundingBatchList(ctx context.Context, in *GetFundingBatchListReq, opts ...grpc.CallOption) (*GetFundingBatchListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetFundingBatchListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetFundingBatchList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetFundingSettlementList(ctx context.Context, in *GetFundingSettlementListReq, opts ...grpc.CallOption) (*GetFundingSettlementListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetFundingSettlementListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetFundingSettlementList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetDeliveryBatchList(ctx context.Context, in *GetDeliveryBatchListReq, opts ...grpc.CallOption) (*GetDeliveryBatchListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDeliveryBatchListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetDeliveryBatchList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetDeliverySettlementList(ctx context.Context, in *GetDeliverySettlementListReq, opts ...grpc.CallOption) (*GetDeliverySettlementListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDeliverySettlementListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetDeliverySettlementList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetLiquidationList(ctx context.Context, in *GetLiquidationListReq, opts ...grpc.CallOption) (*GetLiquidationListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetLiquidationListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetLiquidationList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetSecondsPriceSnapshotList(ctx context.Context, in *GetSecondsPriceSnapshotListReq, opts ...grpc.CallOption) (*GetSecondsPriceSnapshotListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSecondsPriceSnapshotListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetSecondsPriceSnapshotList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetAssetReservationList(ctx context.Context, in *GetAssetReservationListReq, opts ...grpc.CallOption) (*GetAssetReservationListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAssetReservationListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetAssetReservationList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSettlementInstructionListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetSettlementInstructionList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_RetrySettlementInstruction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TradeAdminServer is the server API for TradeAdmin service.
 // All implementations must embed UnimplementedTradeAdminServer
 // for forward compatibility.
@@ -553,6 +691,23 @@ type TradeAdminServer interface {
 	GetTradeEventDetail(context.Context, *GetTradeEventDetailReq) (*GetTradeEventDetailResp, error)
 	// 重试交易事件
 	RetryTradeEvent(context.Context, *RetryTradeEventReq) (*AdminCommonResp, error)
+	// 保存合约风险限额档位
+	SetContractRiskLimitTier(context.Context, *SetContractRiskLimitTierReq) (*AdminCommonResp, error)
+	// 获取合约风险限额档位列表
+	GetContractRiskLimitTierList(context.Context, *GetContractRiskLimitTierListReq) (*GetContractRiskLimitTierListResp, error)
+	// 资金费批次与结算明细（只读）
+	GetFundingBatchList(context.Context, *GetFundingBatchListReq) (*GetFundingBatchListResp, error)
+	GetFundingSettlementList(context.Context, *GetFundingSettlementListReq) (*GetFundingSettlementListResp, error)
+	// 交割批次与结算明细（只读）
+	GetDeliveryBatchList(context.Context, *GetDeliveryBatchListReq) (*GetDeliveryBatchListResp, error)
+	GetDeliverySettlementList(context.Context, *GetDeliverySettlementListReq) (*GetDeliverySettlementListResp, error)
+	// 强平、秒合约价格与结算异常（只读）
+	GetLiquidationList(context.Context, *GetLiquidationListReq) (*GetLiquidationListResp, error)
+	GetSecondsPriceSnapshotList(context.Context, *GetSecondsPriceSnapshotListReq) (*GetSecondsPriceSnapshotListResp, error)
+	GetAssetReservationList(context.Context, *GetAssetReservationListReq) (*GetAssetReservationListResp, error)
+	GetSettlementInstructionList(context.Context, *GetSettlementInstructionListReq) (*GetSettlementInstructionListResp, error)
+	// 仅重置失败/人工处理的结算指令；不得修改金额
+	RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*AdminCommonResp, error)
 	mustEmbedUnimplementedTradeAdminServer()
 }
 
@@ -664,6 +819,39 @@ func (UnimplementedTradeAdminServer) GetTradeEventDetail(context.Context, *GetTr
 }
 func (UnimplementedTradeAdminServer) RetryTradeEvent(context.Context, *RetryTradeEventReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryTradeEvent not implemented")
+}
+func (UnimplementedTradeAdminServer) SetContractRiskLimitTier(context.Context, *SetContractRiskLimitTierReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetContractRiskLimitTier not implemented")
+}
+func (UnimplementedTradeAdminServer) GetContractRiskLimitTierList(context.Context, *GetContractRiskLimitTierListReq) (*GetContractRiskLimitTierListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetContractRiskLimitTierList not implemented")
+}
+func (UnimplementedTradeAdminServer) GetFundingBatchList(context.Context, *GetFundingBatchListReq) (*GetFundingBatchListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFundingBatchList not implemented")
+}
+func (UnimplementedTradeAdminServer) GetFundingSettlementList(context.Context, *GetFundingSettlementListReq) (*GetFundingSettlementListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFundingSettlementList not implemented")
+}
+func (UnimplementedTradeAdminServer) GetDeliveryBatchList(context.Context, *GetDeliveryBatchListReq) (*GetDeliveryBatchListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetDeliveryBatchList not implemented")
+}
+func (UnimplementedTradeAdminServer) GetDeliverySettlementList(context.Context, *GetDeliverySettlementListReq) (*GetDeliverySettlementListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetDeliverySettlementList not implemented")
+}
+func (UnimplementedTradeAdminServer) GetLiquidationList(context.Context, *GetLiquidationListReq) (*GetLiquidationListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetLiquidationList not implemented")
+}
+func (UnimplementedTradeAdminServer) GetSecondsPriceSnapshotList(context.Context, *GetSecondsPriceSnapshotListReq) (*GetSecondsPriceSnapshotListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSecondsPriceSnapshotList not implemented")
+}
+func (UnimplementedTradeAdminServer) GetAssetReservationList(context.Context, *GetAssetReservationListReq) (*GetAssetReservationListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAssetReservationList not implemented")
+}
+func (UnimplementedTradeAdminServer) GetSettlementInstructionList(context.Context, *GetSettlementInstructionListReq) (*GetSettlementInstructionListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSettlementInstructionList not implemented")
+}
+func (UnimplementedTradeAdminServer) RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method RetrySettlementInstruction not implemented")
 }
 func (UnimplementedTradeAdminServer) mustEmbedUnimplementedTradeAdminServer() {}
 func (UnimplementedTradeAdminServer) testEmbeddedByValue()                    {}
@@ -1298,6 +1486,204 @@ func _TradeAdmin_RetryTradeEvent_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TradeAdmin_SetContractRiskLimitTier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetContractRiskLimitTierReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).SetContractRiskLimitTier(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_SetContractRiskLimitTier_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).SetContractRiskLimitTier(ctx, req.(*SetContractRiskLimitTierReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetContractRiskLimitTierList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetContractRiskLimitTierListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetContractRiskLimitTierList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetContractRiskLimitTierList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetContractRiskLimitTierList(ctx, req.(*GetContractRiskLimitTierListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetFundingBatchList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFundingBatchListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetFundingBatchList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetFundingBatchList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetFundingBatchList(ctx, req.(*GetFundingBatchListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetFundingSettlementList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFundingSettlementListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetFundingSettlementList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetFundingSettlementList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetFundingSettlementList(ctx, req.(*GetFundingSettlementListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetDeliveryBatchList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDeliveryBatchListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetDeliveryBatchList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetDeliveryBatchList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetDeliveryBatchList(ctx, req.(*GetDeliveryBatchListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetDeliverySettlementList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDeliverySettlementListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetDeliverySettlementList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetDeliverySettlementList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetDeliverySettlementList(ctx, req.(*GetDeliverySettlementListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetLiquidationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLiquidationListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetLiquidationList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetLiquidationList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetLiquidationList(ctx, req.(*GetLiquidationListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetSecondsPriceSnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSecondsPriceSnapshotListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetSecondsPriceSnapshotList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetSecondsPriceSnapshotList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetSecondsPriceSnapshotList(ctx, req.(*GetSecondsPriceSnapshotListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetAssetReservationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAssetReservationListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetAssetReservationList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetAssetReservationList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetAssetReservationList(ctx, req.(*GetAssetReservationListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetSettlementInstructionList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSettlementInstructionListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetSettlementInstructionList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetSettlementInstructionList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetSettlementInstructionList(ctx, req.(*GetSettlementInstructionListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_RetrySettlementInstruction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RetrySettlementInstructionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).RetrySettlementInstruction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_RetrySettlementInstruction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).RetrySettlementInstruction(ctx, req.(*RetrySettlementInstructionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TradeAdmin_ServiceDesc is the grpc.ServiceDesc for TradeAdmin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1440,6 +1826,50 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RetryTradeEvent",
 			Handler:    _TradeAdmin_RetryTradeEvent_Handler,
+		},
+		{
+			MethodName: "SetContractRiskLimitTier",
+			Handler:    _TradeAdmin_SetContractRiskLimitTier_Handler,
+		},
+		{
+			MethodName: "GetContractRiskLimitTierList",
+			Handler:    _TradeAdmin_GetContractRiskLimitTierList_Handler,
+		},
+		{
+			MethodName: "GetFundingBatchList",
+			Handler:    _TradeAdmin_GetFundingBatchList_Handler,
+		},
+		{
+			MethodName: "GetFundingSettlementList",
+			Handler:    _TradeAdmin_GetFundingSettlementList_Handler,
+		},
+		{
+			MethodName: "GetDeliveryBatchList",
+			Handler:    _TradeAdmin_GetDeliveryBatchList_Handler,
+		},
+		{
+			MethodName: "GetDeliverySettlementList",
+			Handler:    _TradeAdmin_GetDeliverySettlementList_Handler,
+		},
+		{
+			MethodName: "GetLiquidationList",
+			Handler:    _TradeAdmin_GetLiquidationList_Handler,
+		},
+		{
+			MethodName: "GetSecondsPriceSnapshotList",
+			Handler:    _TradeAdmin_GetSecondsPriceSnapshotList_Handler,
+		},
+		{
+			MethodName: "GetAssetReservationList",
+			Handler:    _TradeAdmin_GetAssetReservationList_Handler,
+		},
+		{
+			MethodName: "GetSettlementInstructionList",
+			Handler:    _TradeAdmin_GetSettlementInstructionList_Handler,
+		},
+		{
+			MethodName: "RetrySettlementInstruction",
+			Handler:    _TradeAdmin_RetrySettlementInstruction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

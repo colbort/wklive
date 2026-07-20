@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
@@ -44,6 +45,7 @@ type (
 		FindOpenMatchOrders(ctx context.Context, tenantId, symbolId, marketType, side int64, statuses []int64, marketOrderType int64, limit int64) ([]*TTradeOrder, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TTradeOrder, error)
 		FindOneByTenantIdOrderNoForUpdate(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error)
+		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error)
 	}
 
 	customTTradeOrderModel struct {
@@ -180,6 +182,23 @@ func (m *defaultTTradeOrderModel) FindOneByTenantIdOrderNoForUpdate(ctx context.
 	var resp TTradeOrder
 	sql := fmt.Sprintf("SELECT %s FROM %s WHERE `tenant_id` = ? AND `order_no` = ? LIMIT 1 FOR UPDATE", tTradeOrderRows, m.table)
 	err := m.QueryRowNoCacheCtx(ctx, &resp, sql, tenantId, orderNo)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+// FindOneByTenantIdUserIdClientOrderId supports endpoints that do not carry product_type,
+// such as cancel-by-client-order-id. New order idempotency checks should use the generated
+// product-scoped unique-key lookup.
+func (m *defaultTTradeOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error) {
+	var resp TTradeOrder
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE `tenant_id` = ? AND `user_id` = ? AND `client_order_id` = ? ORDER BY `id` DESC LIMIT 1", tTradeOrderRows, m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, tenantId, userId, clientOrderId)
 	switch err {
 	case nil:
 		return &resp, nil

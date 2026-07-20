@@ -2,7 +2,9 @@ package logic
 
 import (
 	"context"
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"errors"
 	"fmt"
 
@@ -17,6 +19,7 @@ import (
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"google.golang.org/protobuf/proto"
 )
 
 type PlaceOrderLogic struct {
@@ -51,12 +54,21 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		return nil, err
 	}
 	configTenantId := symbol.TenantId
+	requestBytes, err := proto.MarshalOptions{Deterministic: true}.Marshal(in)
+	if err != nil {
+		return nil, err
+	}
+	requestDigest := sha256.Sum256(requestBytes)
+	requestHash := hex.EncodeToString(requestDigest[:])
 	if in.ClientOrderId != "" {
-		exists, err := l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, sql.NullString{String: in.ClientOrderId, Valid: true})
+		exists, err := l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdProductTypeClientOrderId(l.ctx, tenantId, userId, symbol.ProductType, sql.NullString{String: in.ClientOrderId, Valid: true})
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
 			return nil, err
 		}
 		if exists != nil {
+			if exists.RequestHash != "" && exists.RequestHash != requestHash {
+				return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, "client_order_id already exists with different order parameters")}, nil
+			}
 			return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(exists)}, nil
 		}
 	}
@@ -154,6 +166,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		TenantId:          tenantId,
 		OrderNo:           orderNo,
 		ClientOrderId:     sql.NullString{String: in.ClientOrderId, Valid: in.ClientOrderId != ""},
+		RequestHash:       requestHash,
 		UserId:            userId,
 		SymbolId:          in.SymbolId,
 		ProductType:       symbol.ProductType,
@@ -222,7 +235,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		}
 		if isSeconds {
 			frozenAsset, frozenAmount = symbol.SettleAsset, amount
-			_, err = secondsModel.Insert(ctx, &models.TTradeOrderSeconds{TenantId: tenantId, OrderId: order.Id, Direction: in.SecondsDirection, DurationSeconds: in.DurationSeconds, StakeAsset: frozenAsset, StakeAmount: amount, PayoutRate: secondsCfg.PayoutRate, SettlementStatus: 0, CreateTimes: now, UpdateTimes: now})
+			_, err = secondsModel.Insert(ctx, &models.TTradeOrderSeconds{TenantId: tenantId, OrderId: order.Id, Direction: int64(in.SecondsDirection), DurationSeconds: in.DurationSeconds, StakeAsset: frozenAsset, StakeAmount: amount, PayoutRate: secondsCfg.PayoutRate, SettlementStatus: 0, CreateTimes: now, UpdateTimes: now})
 			return err
 		}
 

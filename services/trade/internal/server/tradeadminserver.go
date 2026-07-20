@@ -226,3 +226,64 @@ func (s *TradeAdminServer) RetryTradeEvent(ctx context.Context, in *trade.RetryT
 	l := logic.NewRetryTradeEventLogic(ctx, s.svcCtx)
 	return l.RetryTradeEvent(in)
 }
+
+// 保存合约风险限额档位
+func (s *TradeAdminServer) SetContractRiskLimitTier(ctx context.Context, in *trade.SetContractRiskLimitTierReq) (*trade.AdminCommonResp, error) {
+	l := logic.NewSetContractRiskLimitTierLogic(ctx, s.svcCtx)
+	return l.SetContractRiskLimitTier(in)
+}
+
+// 获取合约风险限额档位列表
+func (s *TradeAdminServer) GetContractRiskLimitTierList(ctx context.Context, in *trade.GetContractRiskLimitTierListReq) (*trade.GetContractRiskLimitTierListResp, error) {
+	l := logic.NewGetContractRiskLimitTierListLogic(ctx, s.svcCtx)
+	return l.GetContractRiskLimitTierList(in)
+}
+
+// 资金费批次与结算明细（只读）
+func (s *TradeAdminServer) GetFundingBatchList(ctx context.Context, in *trade.GetFundingBatchListReq) (*trade.GetFundingBatchListResp, error) {
+	l := logic.NewGetFundingBatchListLogic(ctx, s.svcCtx)
+	return l.GetFundingBatchList(in)
+}
+
+func (s *TradeAdminServer) GetFundingSettlementList(ctx context.Context, in *trade.GetFundingSettlementListReq) (*trade.GetFundingSettlementListResp, error) {
+	l := logic.NewGetFundingSettlementListLogic(ctx, s.svcCtx)
+	return l.GetFundingSettlementList(in)
+}
+
+// 交割批次与结算明细（只读）
+func (s *TradeAdminServer) GetDeliveryBatchList(ctx context.Context, in *trade.GetDeliveryBatchListReq) (*trade.GetDeliveryBatchListResp, error) {
+	l := logic.NewGetDeliveryBatchListLogic(ctx, s.svcCtx)
+	return l.GetDeliveryBatchList(in)
+}
+
+func (s *TradeAdminServer) GetDeliverySettlementList(ctx context.Context, in *trade.GetDeliverySettlementListReq) (*trade.GetDeliverySettlementListResp, error) {
+	l := logic.NewGetDeliverySettlementListLogic(ctx, s.svcCtx)
+	return l.GetDeliverySettlementList(in)
+}
+
+// 强平、秒合约价格与结算异常（只读）
+func (s *TradeAdminServer) GetLiquidationList(ctx context.Context, in *trade.GetLiquidationListReq) (*trade.GetLiquidationListResp, error) {
+	l := logic.NewGetLiquidationListLogic(ctx, s.svcCtx)
+	return l.GetLiquidationList(in)
+}
+
+func (s *TradeAdminServer) GetSecondsPriceSnapshotList(ctx context.Context, in *trade.GetSecondsPriceSnapshotListReq) (*trade.GetSecondsPriceSnapshotListResp, error) {
+	l := logic.NewGetSecondsPriceSnapshotListLogic(ctx, s.svcCtx)
+	return l.GetSecondsPriceSnapshotList(in)
+}
+
+func (s *TradeAdminServer) GetAssetReservationList(ctx context.Context, in *trade.GetAssetReservationListReq) (*trade.GetAssetReservationListResp, error) {
+	l := logic.NewGetAssetReservationListLogic(ctx, s.svcCtx)
+	return l.GetAssetReservationList(in)
+}
+
+func (s *TradeAdminServer) GetSettlementInstructionList(ctx context.Context, in *trade.GetSettlementInstructionListReq) (*trade.GetSettlementInstructionListResp, error) {
+	l := logic.NewGetSettlementInstructionListLogic(ctx, s.svcCtx)
+	return l.GetSettlementInstructionList(in)
+}
+
+// 仅重置失败/人工处理的结算指令；不得修改金额
+func (s *TradeAdminServer) RetrySettlementInstruction(ctx context.Context, in *trade.RetrySettlementInstructionReq) (*trade.AdminCommonResp, error) {
+	l := logic.NewRetrySettlementInstructionLogic(ctx, s.svcCtx)
+	return l.RetrySettlementInstruction(in)
+}

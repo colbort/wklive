@@ -53,6 +53,9 @@ type (
 		ConsumedAmount decimal.Decimal `db:"consumed_amount"` // 已结算消耗金额
 		ReleasedAmount decimal.Decimal `db:"released_amount"` // 已释放金额
 		Status         int64           `db:"status"`          // 状态：1冻结中 2已冻结 3部分消耗 4已消耗 5释放中 6已释放 7失败
+		RetryCount     int64           `db:"retry_count"`     // 查询、消费或释放重试次数
+		NextRetryAt    int64           `db:"next_retry_at"`   // 下次重试时间
+		LastErrorMsg   string          `db:"last_error_msg"`  // 最后错误
 		Version        int64           `db:"version"`         // 乐观锁版本
 		CreateTimes    int64           `db:"create_times"`    // 创建时间
 		UpdateTimes    int64           `db:"update_times"`    // 更新时间
@@ -122,8 +125,8 @@ func (m *defaultTTradeAssetReservationModel) Insert(ctx context.Context, data *T
 	tTradeAssetReservationIdKey := fmt.Sprintf("%s%v", cacheTTradeAssetReservationIdPrefix, data.Id)
 	tTradeAssetReservationTenantIdReservationNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeAssetReservationTenantIdReservationNoPrefix, data.TenantId, data.ReservationNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeAssetReservationRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.ReservationNo, data.Asset, data.ReservedAmount, data.ConsumedAmount, data.ReleasedAmount, data.Status, data.Version, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeAssetReservationRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.ReservationNo, data.Asset, data.ReservedAmount, data.ConsumedAmount, data.ReleasedAmount, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.Version, data.CreateTimes, data.UpdateTimes)
 	}, tTradeAssetReservationIdKey, tTradeAssetReservationTenantIdReservationNoKey)
 	return ret, err
 }
@@ -138,7 +141,7 @@ func (m *defaultTTradeAssetReservationModel) Update(ctx context.Context, newData
 	tTradeAssetReservationTenantIdReservationNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeAssetReservationTenantIdReservationNoPrefix, data.TenantId, data.ReservationNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeAssetReservationRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.ReservationNo, newData.Asset, newData.ReservedAmount, newData.ConsumedAmount, newData.ReleasedAmount, newData.Status, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.ReservationNo, newData.Asset, newData.ReservedAmount, newData.ConsumedAmount, newData.ReleasedAmount, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeAssetReservationIdKey, tTradeAssetReservationTenantIdReservationNoKey)
 	return err
 }

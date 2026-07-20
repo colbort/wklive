@@ -1063,6 +1063,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/delivery/batches",
+				Handler: trade.GetDeliveryBatchListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/delivery/settlements",
+				Handler: trade.GetDeliverySettlementListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/events",
 				Handler: trade.GetTradeEventListHandler(serverCtx),
 			},
@@ -1088,8 +1098,38 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/funding/batches",
+				Handler: trade.GetFundingBatchListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/funding/settlements",
+				Handler: trade.GetFundingSettlementListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/liquidations",
+				Handler: trade.GetLiquidationListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/margin-snapshots",
 				Handler: trade.GetMarginSnapshotListAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/operations/asset-reservations",
+				Handler: trade.GetAssetReservationListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/operations/settlement-instructions",
+				Handler: trade.GetSettlementInstructionListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/operations/settlement-instructions/retry",
+				Handler: trade.RetrySettlementInstructionHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -1120,6 +1160,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/risk-order-check-logs",
 				Handler: trade.GetRiskOrderCheckLogListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/risk-tiers",
+				Handler: trade.SetContractRiskLimitTierHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/risk-tiers",
+				Handler: trade.GetContractRiskLimitTierListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/seconds/price-snapshots",
+				Handler: trade.GetSecondsPriceSnapshotListHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,

@@ -97,7 +97,7 @@ message PlaceOrderReq {
   string stop_loss_price = 18;
   OrderSourceType order_source = 19;
   TriggerKind trigger_kind = 20;
-  int64 seconds_direction = 21; // 秒合约方向：1看涨 2看跌，其他产品为0
+  SecondsDirection seconds_direction = 21;
   int64 duration_seconds = 22; // 秒合约到期周期，其他产品为0
   reserved 12;
 }

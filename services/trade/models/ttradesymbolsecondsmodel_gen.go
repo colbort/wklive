@@ -44,21 +44,26 @@ type (
 	}
 
 	TTradeSymbolSeconds struct {
-		Id                    int64           `db:"id"`                      // 主键ID
-		TenantId              int64           `db:"tenant_id"`               // 租户ID
-		SymbolId              int64           `db:"symbol_id"`               // 交易标的ID
-		DurationSeconds       int64           `db:"duration_seconds"`        // 到期周期，秒
-		PayoutRate            decimal.Decimal `db:"payout_rate"`             // 胜出收益率
-		DrawRule              int64           `db:"draw_rule"`               // 平局规则：1退本金 2判输
-		StartPriceSource      string          `db:"start_price_source"`      // 起始价格来源
-		SettlementPriceSource string          `db:"settlement_price_source"` // 结算价格来源
-		QuoteValidityMs       int64           `db:"quote_validity_ms"`       // 价格快照最大延迟毫秒
-		MinStake              decimal.Decimal `db:"min_stake"`               // 最小本金
-		MaxStake              decimal.Decimal `db:"max_stake"`               // 最大本金，0表示不限
-		UpEnabled             int64           `db:"up_enabled"`              // 看涨开关：1启用 2禁用
-		DownEnabled           int64           `db:"down_enabled"`            // 看跌开关：1启用 2禁用
-		CreateTimes           int64           `db:"create_times"`            // 创建时间
-		UpdateTimes           int64           `db:"update_times"`            // 更新时间
+		Id                       int64           `db:"id"`                         // 主键ID
+		TenantId                 int64           `db:"tenant_id"`                  // 租户ID
+		SymbolId                 int64           `db:"symbol_id"`                  // 交易标的ID
+		DurationSeconds          int64           `db:"duration_seconds"`           // 到期周期，秒
+		PayoutRate               decimal.Decimal `db:"payout_rate"`                // 胜出收益率
+		FeeRate                  decimal.Decimal `db:"fee_rate"`                   // 秒合约手续费率
+		DrawRule                 int64           `db:"draw_rule"`                  // 平局规则：1退本金 2判输
+		StartPriceSource         string          `db:"start_price_source"`         // 起始价格来源
+		SettlementPriceSource    string          `db:"settlement_price_source"`    // 结算价格来源
+		QuoteValidityMs          int64           `db:"quote_validity_ms"`          // 价格快照最大延迟毫秒
+		SettlementWindowMs       int64           `db:"settlement_window_ms"`       // 到期价采样窗口毫秒数
+		SettlementPriceAlgorithm string          `db:"settlement_price_algorithm"` // 结算价格算法及版本标识
+		DrawTolerance            decimal.Decimal `db:"draw_tolerance"`             // 平局价格容差
+		MaxExposureAmount        decimal.Decimal `db:"max_exposure_amount"`        // 产品总敞口上限，0表示不限
+		MinStake                 decimal.Decimal `db:"min_stake"`                  // 最小本金
+		MaxStake                 decimal.Decimal `db:"max_stake"`                  // 最大本金，0表示不限
+		UpEnabled                int64           `db:"up_enabled"`                 // 看涨开关：1启用 2禁用
+		DownEnabled              int64           `db:"down_enabled"`               // 看跌开关：1启用 2禁用
+		CreateTimes              int64           `db:"create_times"`               // 创建时间
+		UpdateTimes              int64           `db:"update_times"`               // 更新时间
 	}
 )
 
@@ -125,8 +130,8 @@ func (m *defaultTTradeSymbolSecondsModel) Insert(ctx context.Context, data *TTra
 	tTradeSymbolSecondsIdKey := fmt.Sprintf("%s%v", cacheTTradeSymbolSecondsIdPrefix, data.Id)
 	tTradeSymbolSecondsTenantIdSymbolIdDurationSecondsKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeSymbolSecondsTenantIdSymbolIdDurationSecondsPrefix, data.TenantId, data.SymbolId, data.DurationSeconds)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSymbolSecondsRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.SymbolId, data.DurationSeconds, data.PayoutRate, data.DrawRule, data.StartPriceSource, data.SettlementPriceSource, data.QuoteValidityMs, data.MinStake, data.MaxStake, data.UpEnabled, data.DownEnabled, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSymbolSecondsRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.SymbolId, data.DurationSeconds, data.PayoutRate, data.FeeRate, data.DrawRule, data.StartPriceSource, data.SettlementPriceSource, data.QuoteValidityMs, data.SettlementWindowMs, data.SettlementPriceAlgorithm, data.DrawTolerance, data.MaxExposureAmount, data.MinStake, data.MaxStake, data.UpEnabled, data.DownEnabled, data.CreateTimes, data.UpdateTimes)
 	}, tTradeSymbolSecondsIdKey, tTradeSymbolSecondsTenantIdSymbolIdDurationSecondsKey)
 	return ret, err
 }
@@ -141,7 +146,7 @@ func (m *defaultTTradeSymbolSecondsModel) Update(ctx context.Context, newData *T
 	tTradeSymbolSecondsTenantIdSymbolIdDurationSecondsKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeSymbolSecondsTenantIdSymbolIdDurationSecondsPrefix, data.TenantId, data.SymbolId, data.DurationSeconds)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeSymbolSecondsRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SymbolId, newData.DurationSeconds, newData.PayoutRate, newData.DrawRule, newData.StartPriceSource, newData.SettlementPriceSource, newData.QuoteValidityMs, newData.MinStake, newData.MaxStake, newData.UpEnabled, newData.DownEnabled, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SymbolId, newData.DurationSeconds, newData.PayoutRate, newData.FeeRate, newData.DrawRule, newData.StartPriceSource, newData.SettlementPriceSource, newData.QuoteValidityMs, newData.SettlementWindowMs, newData.SettlementPriceAlgorithm, newData.DrawTolerance, newData.MaxExposureAmount, newData.MinStake, newData.MaxStake, newData.UpEnabled, newData.DownEnabled, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeSymbolSecondsIdKey, tTradeSymbolSecondsTenantIdSymbolIdDurationSecondsKey)
 	return err
 }

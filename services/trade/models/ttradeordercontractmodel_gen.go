@@ -51,6 +51,9 @@ type (
 		Leverage          int64           `db:"leverage"`            // 下单时杠杆倍数
 		MarginAsset       string          `db:"margin_asset"`        // 保证金币种
 		MarginAmount      decimal.Decimal `db:"margin_amount"`       // 本次订单占用保证金
+		ReservedCloseQty  decimal.Decimal `db:"reserved_close_qty"`  // Position预占的可平数量
+		RiskPrice         decimal.Decimal `db:"risk_price"`          // 下单保证金与风控计算使用的价格快照
+		RiskTierId        int64           `db:"risk_tier_id"`        // 下单时命中的风险限额档位ID
 		ClosePositionType int64           `db:"close_position_type"` // 平仓类型：0普通 1平多 2平空
 		LiquidationPrice  decimal.Decimal `db:"liquidation_price"`   // 下单时预估强平价格
 		TakeProfitPrice   decimal.Decimal `db:"take_profit_price"`   // 止盈价格
@@ -123,8 +126,8 @@ func (m *defaultTTradeOrderContractModel) Insert(ctx context.Context, data *TTra
 	tTradeOrderContractIdKey := fmt.Sprintf("%s%v", cacheTTradeOrderContractIdPrefix, data.Id)
 	tTradeOrderContractTenantIdOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderContractTenantIdOrderIdPrefix, data.TenantId, data.OrderId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderContractRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.MarginMode, data.Leverage, data.MarginAsset, data.MarginAmount, data.ClosePositionType, data.LiquidationPrice, data.TakeProfitPrice, data.StopLossPrice, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderContractRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.MarginMode, data.Leverage, data.MarginAsset, data.MarginAmount, data.ReservedCloseQty, data.RiskPrice, data.RiskTierId, data.ClosePositionType, data.LiquidationPrice, data.TakeProfitPrice, data.StopLossPrice, data.CreateTimes, data.UpdateTimes)
 	}, tTradeOrderContractIdKey, tTradeOrderContractTenantIdOrderIdKey)
 	return ret, err
 }
@@ -139,7 +142,7 @@ func (m *defaultTTradeOrderContractModel) Update(ctx context.Context, newData *T
 	tTradeOrderContractTenantIdOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderContractTenantIdOrderIdPrefix, data.TenantId, data.OrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeOrderContractRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.MarginMode, newData.Leverage, newData.MarginAsset, newData.MarginAmount, newData.ClosePositionType, newData.LiquidationPrice, newData.TakeProfitPrice, newData.StopLossPrice, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.MarginMode, newData.Leverage, newData.MarginAsset, newData.MarginAmount, newData.ReservedCloseQty, newData.RiskPrice, newData.RiskTierId, newData.ClosePositionType, newData.LiquidationPrice, newData.TakeProfitPrice, newData.StopLossPrice, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeOrderContractIdKey, tTradeOrderContractTenantIdOrderIdKey)
 	return err
 }

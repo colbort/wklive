@@ -25,16 +25,16 @@ var (
 	tContractDeliverySettlementRowsExpectAutoSet   = strings.Join(stringx.Remove(tContractDeliverySettlementFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tContractDeliverySettlementRowsWithPlaceHolder = strings.Join(stringx.Remove(tContractDeliverySettlementFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTContractDeliverySettlementIdPrefix                             = "cache:tContractDeliverySettlement:id:"
-	cacheTContractDeliverySettlementTenantIdPositionIdDeliveryTimePrefix = "cache:tContractDeliverySettlement:tenantId:positionId:deliveryTime:"
-	cacheTContractDeliverySettlementTenantIdSettlementNoPrefix           = "cache:tContractDeliverySettlement:tenantId:settlementNo:"
+	cacheTContractDeliverySettlementIdPrefix                        = "cache:tContractDeliverySettlement:id:"
+	cacheTContractDeliverySettlementTenantIdBatchIdPositionIdPrefix = "cache:tContractDeliverySettlement:tenantId:batchId:positionId:"
+	cacheTContractDeliverySettlementTenantIdSettlementNoPrefix      = "cache:tContractDeliverySettlement:tenantId:settlementNo:"
 )
 
 type (
 	tContractDeliverySettlementModel interface {
 		Insert(ctx context.Context, data *TContractDeliverySettlement) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TContractDeliverySettlement, error)
-		FindOneByTenantIdPositionIdDeliveryTime(ctx context.Context, tenantId int64, positionId int64, deliveryTime int64) (*TContractDeliverySettlement, error)
+		FindOneByTenantIdBatchIdPositionId(ctx context.Context, tenantId int64, batchId int64, positionId int64) (*TContractDeliverySettlement, error)
 		FindOneByTenantIdSettlementNo(ctx context.Context, tenantId int64, settlementNo string) (*TContractDeliverySettlement, error)
 		Update(ctx context.Context, data *TContractDeliverySettlement) error
 		Delete(ctx context.Context, id int64) error
@@ -49,15 +49,23 @@ type (
 		Id              int64           `db:"id"`               // 主键ID
 		TenantId        int64           `db:"tenant_id"`        // 租户ID
 		SettlementNo    string          `db:"settlement_no"`    // 交割结算号
+		BatchId         int64           `db:"batch_id"`         // 交割批次ID
+		BatchNo         string          `db:"batch_no"`         // 交割批次号快照
 		SymbolId        int64           `db:"symbol_id"`        // 交割合约标的ID
 		UserId          int64           `db:"user_id"`          // 用户ID
 		PositionId      int64           `db:"position_id"`      // 持仓ID
+		PositionSide    int64           `db:"position_side"`    // 仓位方向快照：1净持仓 2多 3空
 		SettlementPrice decimal.Decimal `db:"settlement_price"` // 交割价格
 		PositionQty     decimal.Decimal `db:"position_qty"`     // 交割持仓量
 		RealizedPnl     decimal.Decimal `db:"realized_pnl"`     // 交割已实现盈亏
+		DeliveryFee     decimal.Decimal `db:"delivery_fee"`     // 交割手续费
 		SettleAsset     string          `db:"settle_asset"`     // 结算资产
 		DeliveryTime    int64           `db:"delivery_time"`    // 交割时间
-		Status          int64           `db:"status"`           // 状态：1待结算 2已结算 3失败
+		Status          int64           `db:"status"`           // 状态：1待结算 2已结算 3失败 4人工处理
+		RetryCount      int64           `db:"retry_count"`      // 重试次数
+		NextRetryAt     int64           `db:"next_retry_at"`    // 下次重试时间
+		LastErrorMsg    string          `db:"last_error_msg"`   // 最后错误
+		SettledAt       int64           `db:"settled_at"`       // 结算完成时间
 		CreateTimes     int64           `db:"create_times"`     // 创建时间
 		UpdateTimes     int64           `db:"update_times"`     // 更新时间
 	}
@@ -77,12 +85,12 @@ func (m *defaultTContractDeliverySettlementModel) Delete(ctx context.Context, id
 	}
 
 	tContractDeliverySettlementIdKey := fmt.Sprintf("%s%v", cacheTContractDeliverySettlementIdPrefix, id)
-	tContractDeliverySettlementTenantIdPositionIdDeliveryTimeKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractDeliverySettlementTenantIdPositionIdDeliveryTimePrefix, data.TenantId, data.PositionId, data.DeliveryTime)
+	tContractDeliverySettlementTenantIdBatchIdPositionIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractDeliverySettlementTenantIdBatchIdPositionIdPrefix, data.TenantId, data.BatchId, data.PositionId)
 	tContractDeliverySettlementTenantIdSettlementNoKey := fmt.Sprintf("%s%v:%v", cacheTContractDeliverySettlementTenantIdSettlementNoPrefix, data.TenantId, data.SettlementNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tContractDeliverySettlementIdKey, tContractDeliverySettlementTenantIdPositionIdDeliveryTimeKey, tContractDeliverySettlementTenantIdSettlementNoKey)
+	}, tContractDeliverySettlementIdKey, tContractDeliverySettlementTenantIdBatchIdPositionIdKey, tContractDeliverySettlementTenantIdSettlementNoKey)
 	return err
 }
 
@@ -103,12 +111,12 @@ func (m *defaultTContractDeliverySettlementModel) FindOne(ctx context.Context, i
 	}
 }
 
-func (m *defaultTContractDeliverySettlementModel) FindOneByTenantIdPositionIdDeliveryTime(ctx context.Context, tenantId int64, positionId int64, deliveryTime int64) (*TContractDeliverySettlement, error) {
-	tContractDeliverySettlementTenantIdPositionIdDeliveryTimeKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractDeliverySettlementTenantIdPositionIdDeliveryTimePrefix, tenantId, positionId, deliveryTime)
+func (m *defaultTContractDeliverySettlementModel) FindOneByTenantIdBatchIdPositionId(ctx context.Context, tenantId int64, batchId int64, positionId int64) (*TContractDeliverySettlement, error) {
+	tContractDeliverySettlementTenantIdBatchIdPositionIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractDeliverySettlementTenantIdBatchIdPositionIdPrefix, tenantId, batchId, positionId)
 	var resp TContractDeliverySettlement
-	err := m.QueryRowIndexCtx(ctx, &resp, tContractDeliverySettlementTenantIdPositionIdDeliveryTimeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `position_id` = ? and `delivery_time` = ? limit 1", tContractDeliverySettlementRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, positionId, deliveryTime); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tContractDeliverySettlementTenantIdBatchIdPositionIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `batch_id` = ? and `position_id` = ? limit 1", tContractDeliverySettlementRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, batchId, positionId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -145,12 +153,12 @@ func (m *defaultTContractDeliverySettlementModel) FindOneByTenantIdSettlementNo(
 
 func (m *defaultTContractDeliverySettlementModel) Insert(ctx context.Context, data *TContractDeliverySettlement) (sql.Result, error) {
 	tContractDeliverySettlementIdKey := fmt.Sprintf("%s%v", cacheTContractDeliverySettlementIdPrefix, data.Id)
-	tContractDeliverySettlementTenantIdPositionIdDeliveryTimeKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractDeliverySettlementTenantIdPositionIdDeliveryTimePrefix, data.TenantId, data.PositionId, data.DeliveryTime)
+	tContractDeliverySettlementTenantIdBatchIdPositionIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractDeliverySettlementTenantIdBatchIdPositionIdPrefix, data.TenantId, data.BatchId, data.PositionId)
 	tContractDeliverySettlementTenantIdSettlementNoKey := fmt.Sprintf("%s%v:%v", cacheTContractDeliverySettlementTenantIdSettlementNoPrefix, data.TenantId, data.SettlementNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractDeliverySettlementRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.SettlementNo, data.SymbolId, data.UserId, data.PositionId, data.SettlementPrice, data.PositionQty, data.RealizedPnl, data.SettleAsset, data.DeliveryTime, data.Status, data.CreateTimes, data.UpdateTimes)
-	}, tContractDeliverySettlementIdKey, tContractDeliverySettlementTenantIdPositionIdDeliveryTimeKey, tContractDeliverySettlementTenantIdSettlementNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractDeliverySettlementRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.SettlementNo, data.BatchId, data.BatchNo, data.SymbolId, data.UserId, data.PositionId, data.PositionSide, data.SettlementPrice, data.PositionQty, data.RealizedPnl, data.DeliveryFee, data.SettleAsset, data.DeliveryTime, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.SettledAt, data.CreateTimes, data.UpdateTimes)
+	}, tContractDeliverySettlementIdKey, tContractDeliverySettlementTenantIdBatchIdPositionIdKey, tContractDeliverySettlementTenantIdSettlementNoKey)
 	return ret, err
 }
 
@@ -161,12 +169,12 @@ func (m *defaultTContractDeliverySettlementModel) Update(ctx context.Context, ne
 	}
 
 	tContractDeliverySettlementIdKey := fmt.Sprintf("%s%v", cacheTContractDeliverySettlementIdPrefix, data.Id)
-	tContractDeliverySettlementTenantIdPositionIdDeliveryTimeKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractDeliverySettlementTenantIdPositionIdDeliveryTimePrefix, data.TenantId, data.PositionId, data.DeliveryTime)
+	tContractDeliverySettlementTenantIdBatchIdPositionIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractDeliverySettlementTenantIdBatchIdPositionIdPrefix, data.TenantId, data.BatchId, data.PositionId)
 	tContractDeliverySettlementTenantIdSettlementNoKey := fmt.Sprintf("%s%v:%v", cacheTContractDeliverySettlementTenantIdSettlementNoPrefix, data.TenantId, data.SettlementNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractDeliverySettlementRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SettlementNo, newData.SymbolId, newData.UserId, newData.PositionId, newData.SettlementPrice, newData.PositionQty, newData.RealizedPnl, newData.SettleAsset, newData.DeliveryTime, newData.Status, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tContractDeliverySettlementIdKey, tContractDeliverySettlementTenantIdPositionIdDeliveryTimeKey, tContractDeliverySettlementTenantIdSettlementNoKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SettlementNo, newData.BatchId, newData.BatchNo, newData.SymbolId, newData.UserId, newData.PositionId, newData.PositionSide, newData.SettlementPrice, newData.PositionQty, newData.RealizedPnl, newData.DeliveryFee, newData.SettleAsset, newData.DeliveryTime, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.SettledAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tContractDeliverySettlementIdKey, tContractDeliverySettlementTenantIdBatchIdPositionIdKey, tContractDeliverySettlementTenantIdSettlementNoKey)
 	return err
 }
 

@@ -44,25 +44,36 @@ type (
 	}
 
 	TTradeOrderSeconds struct {
-		Id                  int64           `db:"id"`                    // 主键ID
-		TenantId            int64           `db:"tenant_id"`             // 租户ID
-		OrderId             int64           `db:"order_id"`              // 订单ID
-		Direction           int64           `db:"direction"`             // 方向：1看涨 2看跌
-		DurationSeconds     int64           `db:"duration_seconds"`      // 到期周期秒数
-		StakeAsset          string          `db:"stake_asset"`           // 本金资产
-		StakeAmount         decimal.Decimal `db:"stake_amount"`          // 本金金额
-		PayoutRate          decimal.Decimal `db:"payout_rate"`           // 下单时锁定的收益率
-		StartPrice          decimal.Decimal `db:"start_price"`           // 起始价格
-		StartPriceTime      int64           `db:"start_price_time"`      // 起始价格时间
-		ExpireTime          int64           `db:"expire_time"`           // 到期时间
-		SettlementPrice     decimal.Decimal `db:"settlement_price"`      // 结算价格
-		SettlementPriceTime int64           `db:"settlement_price_time"` // 结算价格时间
-		Result              int64           `db:"result"`                // 结果：0待定 1胜 2负 3平
-		PayoutAmount        decimal.Decimal `db:"payout_amount"`         // 派彩金额
-		SettlementStatus    int64           `db:"settlement_status"`     // 结算状态：0待激活 1进行中 2待结算 3已结算 4失败
-		ReservationNo       string          `db:"reservation_no"`        // Asset资金预占号
-		CreateTimes         int64           `db:"create_times"`          // 创建时间
-		UpdateTimes         int64           `db:"update_times"`          // 更新时间
+		Id                    int64           `db:"id"`                      // 主键ID
+		TenantId              int64           `db:"tenant_id"`               // 租户ID
+		OrderId               int64           `db:"order_id"`                // 订单ID
+		Direction             int64           `db:"direction"`               // 方向：1看涨 2看跌
+		DurationSeconds       int64           `db:"duration_seconds"`        // 到期周期秒数
+		StakeAsset            string          `db:"stake_asset"`             // 本金资产
+		StakeAmount           decimal.Decimal `db:"stake_amount"`            // 本金金额
+		PayoutRate            decimal.Decimal `db:"payout_rate"`             // 下单时锁定的收益率
+		FeeRate               decimal.Decimal `db:"fee_rate"`                // 下单时锁定的手续费率
+		FrozenAt              int64           `db:"frozen_at"`               // 本金冻结成功时间
+		ActivatedAt           int64           `db:"activated_at"`            // 起始价锁定并激活时间
+		StartPrice            decimal.Decimal `db:"start_price"`             // 起始价格
+		StartPriceTime        int64           `db:"start_price_time"`        // 起始价格时间
+		StartPriceSource      string          `db:"start_price_source"`      // 起始价格来源快照
+		ExpireTime            int64           `db:"expire_time"`             // 到期时间
+		SettlementPrice       decimal.Decimal `db:"settlement_price"`        // 结算价格
+		SettlementPriceTime   int64           `db:"settlement_price_time"`   // 结算价格时间
+		SettlementPriceSource string          `db:"settlement_price_source"` // 结算价格来源快照
+		PriceAlgorithm        string          `db:"price_algorithm"`         // 结算采样算法及版本快照
+		Result                int64           `db:"result"`                  // 结果：0待定 1胜 2负 3平 4作废
+		ProfitAmount          decimal.Decimal `db:"profit_amount"`           // 盈利金额，不含返还本金
+		FeeAmount             decimal.Decimal `db:"fee_amount"`              // 手续费金额
+		ReturnAmount          decimal.Decimal `db:"return_amount"`           // 最终返还本金及收益总额
+		SettlementStatus      int64           `db:"settlement_status"`       // 流程状态：0待冻结 1激活中 2进行中 3结算中 4已结算 5退款中 6已退款 7人工处理
+		ReservationNo         string          `db:"reservation_no"`          // Asset资金预占号
+		SettlementReason      string          `db:"settlement_reason"`       // 结算、作废、退款或人工处理原因
+		SettledAt             int64           `db:"settled_at"`              // 结算或退款完成时间
+		Version               int64           `db:"version"`                 // 并发状态转移版本号
+		CreateTimes           int64           `db:"create_times"`            // 创建时间
+		UpdateTimes           int64           `db:"update_times"`            // 更新时间
 	}
 )
 
@@ -129,8 +140,8 @@ func (m *defaultTTradeOrderSecondsModel) Insert(ctx context.Context, data *TTrad
 	tTradeOrderSecondsIdKey := fmt.Sprintf("%s%v", cacheTTradeOrderSecondsIdPrefix, data.Id)
 	tTradeOrderSecondsTenantIdOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderSecondsTenantIdOrderIdPrefix, data.TenantId, data.OrderId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderSecondsRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.Direction, data.DurationSeconds, data.StakeAsset, data.StakeAmount, data.PayoutRate, data.StartPrice, data.StartPriceTime, data.ExpireTime, data.SettlementPrice, data.SettlementPriceTime, data.Result, data.PayoutAmount, data.SettlementStatus, data.ReservationNo, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderSecondsRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.Direction, data.DurationSeconds, data.StakeAsset, data.StakeAmount, data.PayoutRate, data.FeeRate, data.FrozenAt, data.ActivatedAt, data.StartPrice, data.StartPriceTime, data.StartPriceSource, data.ExpireTime, data.SettlementPrice, data.SettlementPriceTime, data.SettlementPriceSource, data.PriceAlgorithm, data.Result, data.ProfitAmount, data.FeeAmount, data.ReturnAmount, data.SettlementStatus, data.ReservationNo, data.SettlementReason, data.SettledAt, data.Version, data.CreateTimes, data.UpdateTimes)
 	}, tTradeOrderSecondsIdKey, tTradeOrderSecondsTenantIdOrderIdKey)
 	return ret, err
 }
@@ -145,7 +156,7 @@ func (m *defaultTTradeOrderSecondsModel) Update(ctx context.Context, newData *TT
 	tTradeOrderSecondsTenantIdOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderSecondsTenantIdOrderIdPrefix, data.TenantId, data.OrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeOrderSecondsRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.Direction, newData.DurationSeconds, newData.StakeAsset, newData.StakeAmount, newData.PayoutRate, newData.StartPrice, newData.StartPriceTime, newData.ExpireTime, newData.SettlementPrice, newData.SettlementPriceTime, newData.Result, newData.PayoutAmount, newData.SettlementStatus, newData.ReservationNo, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.Direction, newData.DurationSeconds, newData.StakeAsset, newData.StakeAmount, newData.PayoutRate, newData.FeeRate, newData.FrozenAt, newData.ActivatedAt, newData.StartPrice, newData.StartPriceTime, newData.StartPriceSource, newData.ExpireTime, newData.SettlementPrice, newData.SettlementPriceTime, newData.SettlementPriceSource, newData.PriceAlgorithm, newData.Result, newData.ProfitAmount, newData.FeeAmount, newData.ReturnAmount, newData.SettlementStatus, newData.ReservationNo, newData.SettlementReason, newData.SettledAt, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeOrderSecondsIdKey, tTradeOrderSecondsTenantIdOrderIdKey)
 	return err
 }

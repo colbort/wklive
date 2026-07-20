@@ -362,8 +362,8 @@ type PlaceOrderReq struct {
 	StopLossPrice    string                 `protobuf:"bytes,18,opt,name=stop_loss_price,json=stopLossPrice,proto3" json:"stop_loss_price,omitempty"`
 	OrderSource      OrderSourceType        `protobuf:"varint,19,opt,name=order_source,json=orderSource,proto3,enum=trade.OrderSourceType" json:"order_source,omitempty"`
 	TriggerKind      TriggerKind            `protobuf:"varint,20,opt,name=trigger_kind,json=triggerKind,proto3,enum=trade.TriggerKind" json:"trigger_kind,omitempty"`
-	SecondsDirection int64                  `protobuf:"varint,21,opt,name=seconds_direction,json=secondsDirection,proto3" json:"seconds_direction,omitempty"` // 秒合约方向：1看涨 2看跌，其他产品为0
-	DurationSeconds  int64                  `protobuf:"varint,22,opt,name=duration_seconds,json=durationSeconds,proto3" json:"duration_seconds,omitempty"`    // 秒合约到期周期，其他产品为0
+	SecondsDirection SecondsDirection       `protobuf:"varint,21,opt,name=seconds_direction,json=secondsDirection,proto3,enum=trade.SecondsDirection" json:"seconds_direction,omitempty"`
+	DurationSeconds  int64                  `protobuf:"varint,22,opt,name=duration_seconds,json=durationSeconds,proto3" json:"duration_seconds,omitempty"` // 秒合约到期周期，其他产品为0
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -524,11 +524,11 @@ func (x *PlaceOrderReq) GetTriggerKind() TriggerKind {
 	return TriggerKind_TRIGGER_KIND_NONE
 }
 
-func (x *PlaceOrderReq) GetSecondsDirection() int64 {
+func (x *PlaceOrderReq) GetSecondsDirection() SecondsDirection {
 	if x != nil {
 		return x.SecondsDirection
 	}
-	return 0
+	return SecondsDirection_SECONDS_DIRECTION_UNKNOWN
 }
 
 func (x *PlaceOrderReq) GetDurationSeconds() int64 {
@@ -1593,7 +1593,7 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x04spot\x18\x02 \x01(\v2\x16.trade.TradeSymbolSpotR\x04spot\x126\n" +
 	"\bcontract\x18\x03 \x01(\v2\x1a.trade.TradeSymbolContractR\bcontract\x12K\n" +
 	"\x10leverage_configs\x18\x04 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x0fleverageConfigs\x12B\n" +
-	"\x0fseconds_configs\x18\x05 \x03(\v2\x19.trade.TradeSymbolSecondsR\x0esecondsConfigs\"\xe4\x06\n" +
+	"\x0fseconds_configs\x18\x05 \x03(\v2\x19.trade.TradeSymbolSecondsR\x0esecondsConfigs\"\xfd\x06\n" +
 	"\rPlaceOrderReq\x12\x1b\n" +
 	"\tsymbol_id\x18\x01 \x01(\x03R\bsymbolId\x12 \n" +
 	"\x04side\x18\x03 \x01(\x0e2\f.common.SideR\x04side\x128\n" +
@@ -1615,8 +1615,8 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x11take_profit_price\x18\x11 \x01(\tR\x0ftakeProfitPrice\x12&\n" +
 	"\x0fstop_loss_price\x18\x12 \x01(\tR\rstopLossPrice\x129\n" +
 	"\forder_source\x18\x13 \x01(\x0e2\x16.trade.OrderSourceTypeR\vorderSource\x125\n" +
-	"\ftrigger_kind\x18\x14 \x01(\x0e2\x12.trade.TriggerKindR\vtriggerKind\x12+\n" +
-	"\x11seconds_direction\x18\x15 \x01(\x03R\x10secondsDirection\x12)\n" +
+	"\ftrigger_kind\x18\x14 \x01(\x0e2\x12.trade.TriggerKindR\vtriggerKind\x12D\n" +
+	"\x11seconds_direction\x18\x15 \x01(\x0e2\x17.trade.SecondsDirectionR\x10secondsDirection\x12)\n" +
 	"\x10duration_seconds\x18\x16 \x01(\x03R\x0fdurationSecondsJ\x04\b\x02\x10\x03J\x04\b\f\x10\r\"]\n" +
 	"\x0ePlaceOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
@@ -1759,18 +1759,19 @@ var file_proto_trade_trade_app_proto_goTypes = []any{
 	(MarginMode)(0),                   // 39: trade.MarginMode
 	(OrderSourceType)(0),              // 40: trade.OrderSourceType
 	(TriggerKind)(0),                  // 41: trade.TriggerKind
-	(*TradeOrder)(nil),                // 42: trade.TradeOrder
-	(*common.PageReq)(nil),            // 43: common.PageReq
-	(OrderStatus)(0),                  // 44: trade.OrderStatus
-	(*TimeRange)(nil),                 // 45: trade.TimeRange
-	(*TradeOrderSpot)(nil),            // 46: trade.TradeOrderSpot
-	(*TradeOrderContract)(nil),        // 47: trade.TradeOrderContract
-	(*TradeOrderSeconds)(nil),         // 48: trade.TradeOrderSeconds
-	(*TradeFill)(nil),                 // 49: trade.TradeFill
-	(ContractType)(0),                 // 50: trade.ContractType
-	(*ContractPosition)(nil),          // 51: trade.ContractPosition
-	(*ContractMarginSnapshot)(nil),    // 52: trade.ContractMarginSnapshot
-	(*ContractLeverageConfig)(nil),    // 53: trade.ContractLeverageConfig
+	(SecondsDirection)(0),             // 42: trade.SecondsDirection
+	(*TradeOrder)(nil),                // 43: trade.TradeOrder
+	(*common.PageReq)(nil),            // 44: common.PageReq
+	(OrderStatus)(0),                  // 45: trade.OrderStatus
+	(*TimeRange)(nil),                 // 46: trade.TimeRange
+	(*TradeOrderSpot)(nil),            // 47: trade.TradeOrderSpot
+	(*TradeOrderContract)(nil),        // 48: trade.TradeOrderContract
+	(*TradeOrderSeconds)(nil),         // 49: trade.TradeOrderSeconds
+	(*TradeFill)(nil),                 // 50: trade.TradeFill
+	(ContractType)(0),                 // 51: trade.ContractType
+	(*ContractPosition)(nil),          // 52: trade.ContractPosition
+	(*ContractMarginSnapshot)(nil),    // 53: trade.ContractMarginSnapshot
+	(*ContractLeverageConfig)(nil),    // 54: trade.ContractLeverageConfig
 }
 var file_proto_trade_trade_app_proto_depIdxs = []int32{
 	25, // 0: trade.AppCommonResp.base:type_name -> common.RespBase
@@ -1794,68 +1795,69 @@ var file_proto_trade_trade_app_proto_depIdxs = []int32{
 	39, // 18: trade.PlaceOrderReq.margin_mode:type_name -> trade.MarginMode
 	40, // 19: trade.PlaceOrderReq.order_source:type_name -> trade.OrderSourceType
 	41, // 20: trade.PlaceOrderReq.trigger_kind:type_name -> trade.TriggerKind
-	25, // 21: trade.PlaceOrderResp.base:type_name -> common.RespBase
-	42, // 22: trade.PlaceOrderResp.data:type_name -> trade.TradeOrder
-	26, // 23: trade.CancelAllOrdersReq.product_type:type_name -> trade.ProductType
-	33, // 24: trade.CancelAllOrdersReq.side:type_name -> common.Side
-	34, // 25: trade.CancelAllOrdersReq.position_side:type_name -> trade.PositionSide
-	25, // 26: trade.CancelAllOrdersResp.base:type_name -> common.RespBase
-	43, // 27: trade.GetOrderListReq.page:type_name -> common.PageReq
-	26, // 28: trade.GetOrderListReq.product_type:type_name -> trade.ProductType
-	44, // 29: trade.GetOrderListReq.status:type_name -> trade.OrderStatus
-	33, // 30: trade.GetOrderListReq.side:type_name -> common.Side
-	45, // 31: trade.GetOrderListReq.time_range:type_name -> trade.TimeRange
-	25, // 32: trade.GetOrderListResp.base:type_name -> common.RespBase
-	42, // 33: trade.GetOrderListResp.data:type_name -> trade.TradeOrder
-	25, // 34: trade.GetOrderDetailResp.base:type_name -> common.RespBase
-	15, // 35: trade.GetOrderDetailResp.data:type_name -> trade.GetOrderDetailData
-	42, // 36: trade.GetOrderDetailData.order:type_name -> trade.TradeOrder
-	46, // 37: trade.GetOrderDetailData.spot:type_name -> trade.TradeOrderSpot
-	47, // 38: trade.GetOrderDetailData.contract:type_name -> trade.TradeOrderContract
-	48, // 39: trade.GetOrderDetailData.seconds:type_name -> trade.TradeOrderSeconds
-	43, // 40: trade.GetFillListReq.page:type_name -> common.PageReq
-	26, // 41: trade.GetFillListReq.product_type:type_name -> trade.ProductType
-	45, // 42: trade.GetFillListReq.time_range:type_name -> trade.TimeRange
-	25, // 43: trade.GetFillListResp.base:type_name -> common.RespBase
-	49, // 44: trade.GetFillListResp.data:type_name -> trade.TradeFill
-	50, // 45: trade.GetPositionListReq.contract_type:type_name -> trade.ContractType
-	25, // 46: trade.GetPositionListResp.base:type_name -> common.RespBase
-	51, // 47: trade.GetPositionListResp.data:type_name -> trade.ContractPosition
-	25, // 48: trade.GetMarginSnapshotListResp.base:type_name -> common.RespBase
-	52, // 49: trade.GetMarginSnapshotListResp.data:type_name -> trade.ContractMarginSnapshot
-	39, // 50: trade.GetLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	25, // 51: trade.GetLeverageConfigResp.base:type_name -> common.RespBase
-	53, // 52: trade.GetLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
-	39, // 53: trade.SetLeverageReq.margin_mode:type_name -> trade.MarginMode
-	1,  // 54: trade.TradeApp.GetSymbolList:input_type -> trade.GetSymbolListReq
-	3,  // 55: trade.TradeApp.GetSymbolDetail:input_type -> trade.GetSymbolDetailReq
-	6,  // 56: trade.TradeApp.PlaceOrder:input_type -> trade.PlaceOrderReq
-	8,  // 57: trade.TradeApp.CancelOrder:input_type -> trade.CancelOrderReq
-	9,  // 58: trade.TradeApp.CancelAllOrders:input_type -> trade.CancelAllOrdersReq
-	11, // 59: trade.TradeApp.GetOrderList:input_type -> trade.GetOrderListReq
-	13, // 60: trade.TradeApp.GetOrderDetail:input_type -> trade.GetOrderDetailReq
-	16, // 61: trade.TradeApp.GetFillList:input_type -> trade.GetFillListReq
-	18, // 62: trade.TradeApp.GetPositionList:input_type -> trade.GetPositionListReq
-	20, // 63: trade.TradeApp.GetMarginSnapshotList:input_type -> trade.GetMarginSnapshotListReq
-	22, // 64: trade.TradeApp.GetLeverageConfig:input_type -> trade.GetLeverageConfigReq
-	24, // 65: trade.TradeApp.SetLeverage:input_type -> trade.SetLeverageReq
-	2,  // 66: trade.TradeApp.GetSymbolList:output_type -> trade.GetSymbolListResp
-	4,  // 67: trade.TradeApp.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
-	7,  // 68: trade.TradeApp.PlaceOrder:output_type -> trade.PlaceOrderResp
-	0,  // 69: trade.TradeApp.CancelOrder:output_type -> trade.AppCommonResp
-	10, // 70: trade.TradeApp.CancelAllOrders:output_type -> trade.CancelAllOrdersResp
-	12, // 71: trade.TradeApp.GetOrderList:output_type -> trade.GetOrderListResp
-	14, // 72: trade.TradeApp.GetOrderDetail:output_type -> trade.GetOrderDetailResp
-	17, // 73: trade.TradeApp.GetFillList:output_type -> trade.GetFillListResp
-	19, // 74: trade.TradeApp.GetPositionList:output_type -> trade.GetPositionListResp
-	21, // 75: trade.TradeApp.GetMarginSnapshotList:output_type -> trade.GetMarginSnapshotListResp
-	23, // 76: trade.TradeApp.GetLeverageConfig:output_type -> trade.GetLeverageConfigResp
-	0,  // 77: trade.TradeApp.SetLeverage:output_type -> trade.AppCommonResp
-	66, // [66:78] is the sub-list for method output_type
-	54, // [54:66] is the sub-list for method input_type
-	54, // [54:54] is the sub-list for extension type_name
-	54, // [54:54] is the sub-list for extension extendee
-	0,  // [0:54] is the sub-list for field type_name
+	42, // 21: trade.PlaceOrderReq.seconds_direction:type_name -> trade.SecondsDirection
+	25, // 22: trade.PlaceOrderResp.base:type_name -> common.RespBase
+	43, // 23: trade.PlaceOrderResp.data:type_name -> trade.TradeOrder
+	26, // 24: trade.CancelAllOrdersReq.product_type:type_name -> trade.ProductType
+	33, // 25: trade.CancelAllOrdersReq.side:type_name -> common.Side
+	34, // 26: trade.CancelAllOrdersReq.position_side:type_name -> trade.PositionSide
+	25, // 27: trade.CancelAllOrdersResp.base:type_name -> common.RespBase
+	44, // 28: trade.GetOrderListReq.page:type_name -> common.PageReq
+	26, // 29: trade.GetOrderListReq.product_type:type_name -> trade.ProductType
+	45, // 30: trade.GetOrderListReq.status:type_name -> trade.OrderStatus
+	33, // 31: trade.GetOrderListReq.side:type_name -> common.Side
+	46, // 32: trade.GetOrderListReq.time_range:type_name -> trade.TimeRange
+	25, // 33: trade.GetOrderListResp.base:type_name -> common.RespBase
+	43, // 34: trade.GetOrderListResp.data:type_name -> trade.TradeOrder
+	25, // 35: trade.GetOrderDetailResp.base:type_name -> common.RespBase
+	15, // 36: trade.GetOrderDetailResp.data:type_name -> trade.GetOrderDetailData
+	43, // 37: trade.GetOrderDetailData.order:type_name -> trade.TradeOrder
+	47, // 38: trade.GetOrderDetailData.spot:type_name -> trade.TradeOrderSpot
+	48, // 39: trade.GetOrderDetailData.contract:type_name -> trade.TradeOrderContract
+	49, // 40: trade.GetOrderDetailData.seconds:type_name -> trade.TradeOrderSeconds
+	44, // 41: trade.GetFillListReq.page:type_name -> common.PageReq
+	26, // 42: trade.GetFillListReq.product_type:type_name -> trade.ProductType
+	46, // 43: trade.GetFillListReq.time_range:type_name -> trade.TimeRange
+	25, // 44: trade.GetFillListResp.base:type_name -> common.RespBase
+	50, // 45: trade.GetFillListResp.data:type_name -> trade.TradeFill
+	51, // 46: trade.GetPositionListReq.contract_type:type_name -> trade.ContractType
+	25, // 47: trade.GetPositionListResp.base:type_name -> common.RespBase
+	52, // 48: trade.GetPositionListResp.data:type_name -> trade.ContractPosition
+	25, // 49: trade.GetMarginSnapshotListResp.base:type_name -> common.RespBase
+	53, // 50: trade.GetMarginSnapshotListResp.data:type_name -> trade.ContractMarginSnapshot
+	39, // 51: trade.GetLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	25, // 52: trade.GetLeverageConfigResp.base:type_name -> common.RespBase
+	54, // 53: trade.GetLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
+	39, // 54: trade.SetLeverageReq.margin_mode:type_name -> trade.MarginMode
+	1,  // 55: trade.TradeApp.GetSymbolList:input_type -> trade.GetSymbolListReq
+	3,  // 56: trade.TradeApp.GetSymbolDetail:input_type -> trade.GetSymbolDetailReq
+	6,  // 57: trade.TradeApp.PlaceOrder:input_type -> trade.PlaceOrderReq
+	8,  // 58: trade.TradeApp.CancelOrder:input_type -> trade.CancelOrderReq
+	9,  // 59: trade.TradeApp.CancelAllOrders:input_type -> trade.CancelAllOrdersReq
+	11, // 60: trade.TradeApp.GetOrderList:input_type -> trade.GetOrderListReq
+	13, // 61: trade.TradeApp.GetOrderDetail:input_type -> trade.GetOrderDetailReq
+	16, // 62: trade.TradeApp.GetFillList:input_type -> trade.GetFillListReq
+	18, // 63: trade.TradeApp.GetPositionList:input_type -> trade.GetPositionListReq
+	20, // 64: trade.TradeApp.GetMarginSnapshotList:input_type -> trade.GetMarginSnapshotListReq
+	22, // 65: trade.TradeApp.GetLeverageConfig:input_type -> trade.GetLeverageConfigReq
+	24, // 66: trade.TradeApp.SetLeverage:input_type -> trade.SetLeverageReq
+	2,  // 67: trade.TradeApp.GetSymbolList:output_type -> trade.GetSymbolListResp
+	4,  // 68: trade.TradeApp.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
+	7,  // 69: trade.TradeApp.PlaceOrder:output_type -> trade.PlaceOrderResp
+	0,  // 70: trade.TradeApp.CancelOrder:output_type -> trade.AppCommonResp
+	10, // 71: trade.TradeApp.CancelAllOrders:output_type -> trade.CancelAllOrdersResp
+	12, // 72: trade.TradeApp.GetOrderList:output_type -> trade.GetOrderListResp
+	14, // 73: trade.TradeApp.GetOrderDetail:output_type -> trade.GetOrderDetailResp
+	17, // 74: trade.TradeApp.GetFillList:output_type -> trade.GetFillListResp
+	19, // 75: trade.TradeApp.GetPositionList:output_type -> trade.GetPositionListResp
+	21, // 76: trade.TradeApp.GetMarginSnapshotList:output_type -> trade.GetMarginSnapshotListResp
+	23, // 77: trade.TradeApp.GetLeverageConfig:output_type -> trade.GetLeverageConfigResp
+	0,  // 78: trade.TradeApp.SetLeverage:output_type -> trade.AppCommonResp
+	67, // [67:79] is the sub-list for method output_type
+	55, // [55:67] is the sub-list for method input_type
+	55, // [55:55] is the sub-list for extension type_name
+	55, // [55:55] is the sub-list for extension extendee
+	0,  // [0:55] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_trade_app_proto_init() }

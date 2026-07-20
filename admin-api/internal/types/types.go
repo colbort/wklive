@@ -487,6 +487,82 @@ type CloseRechargeOrderReq struct {
 	Remark   string `json:"remark,optional"`
 }
 
+type ContractDeliveryBatch struct {
+	Id               int64  `json:"id"`
+	BatchNo          string `json:"batchNo"`
+	SymbolId         int64  `json:"symbolId"`
+	SettlementPrice  string `json:"settlementPrice"`
+	PriceSource      string `json:"priceSource"`
+	PriceAlgorithm   string `json:"priceAlgorithm"`
+	OpenCutoffTime   int64  `json:"openCutoffTime"`
+	MatchingStopTime int64  `json:"matchingStopTime"`
+	DeliveryTime     int64  `json:"deliveryTime"`
+	Status           int64  `json:"status"`
+	TotalPositions   int64  `json:"totalPositions"`
+	SettledPositions int64  `json:"settledPositions"`
+	LastErrorMsg     string `json:"lastErrorMsg"`
+}
+
+type ContractDeliverySettlement struct {
+	Id              int64  `json:"id"`
+	SettlementNo    string `json:"settlementNo"`
+	BatchId         int64  `json:"batchId"`
+	BatchNo         string `json:"batchNo"`
+	SymbolId        int64  `json:"symbolId"`
+	UserId          int64  `json:"userId"`
+	PositionId      int64  `json:"positionId"`
+	PositionSide    int64  `json:"positionSide"`
+	SettlementPrice string `json:"settlementPrice"`
+	PositionQty     string `json:"positionQty"`
+	RealizedPnl     string `json:"realizedPnl"`
+	DeliveryFee     string `json:"deliveryFee"`
+	SettleAsset     string `json:"settleAsset"`
+	DeliveryTime    int64  `json:"deliveryTime"`
+	Status          int64  `json:"status"`
+	RetryCount      int64  `json:"retryCount"`
+	LastErrorMsg    string `json:"lastErrorMsg"`
+	SettledAt       int64  `json:"settledAt"`
+}
+
+type ContractFundingBatch struct {
+	Id               int64  `json:"id"`
+	BatchNo          string `json:"batchNo"`
+	SymbolId         int64  `json:"symbolId"`
+	FundingRate      string `json:"fundingRate"`
+	MarkPrice        string `json:"markPrice"`
+	IndexPrice       string `json:"indexPrice"`
+	PriceSource      string `json:"priceSource"`
+	FormulaVersion   string `json:"formulaVersion"`
+	SettlementTime   int64  `json:"settlementTime"`
+	Status           int64  `json:"status"`
+	TotalPositions   int64  `json:"totalPositions"`
+	SettledPositions int64  `json:"settledPositions"`
+	LastErrorMsg     string `json:"lastErrorMsg"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type ContractFundingSettlement struct {
+	Id             int64  `json:"id"`
+	SettlementNo   string `json:"settlementNo"`
+	BatchId        int64  `json:"batchId"`
+	BatchNo        string `json:"batchNo"`
+	SymbolId       int64  `json:"symbolId"`
+	UserId         int64  `json:"userId"`
+	PositionId     int64  `json:"positionId"`
+	PositionSide   int64  `json:"positionSide"`
+	FundingRate    string `json:"fundingRate"`
+	MarkPrice      string `json:"markPrice"`
+	PositionQty    string `json:"positionQty"`
+	FeeAsset       string `json:"feeAsset"`
+	FeeAmount      string `json:"feeAmount"`
+	SettlementTime int64  `json:"settlementTime"`
+	Status         int64  `json:"status"`
+	RetryCount     int64  `json:"retryCount"`
+	LastErrorMsg   string `json:"lastErrorMsg"`
+	SettledAt      int64  `json:"settledAt"`
+}
+
 type ContractLeverageConfig struct {
 	Id            int64  `json:"id"`
 	TenantId      int64  `json:"tenantId"`
@@ -501,6 +577,30 @@ type ContractLeverageConfig struct {
 	Remark        string `json:"remark"`
 	CreateTimes   int64  `json:"createTimes"`
 	UpdateTimes   int64  `json:"updateTimes"`
+}
+
+type ContractLiquidation struct {
+	Id                  int64  `json:"id"`
+	LiquidationNo       string `json:"liquidationNo"`
+	PositionId          int64  `json:"positionId"`
+	UserId              int64  `json:"userId"`
+	SymbolId            int64  `json:"symbolId"`
+	PositionSide        int64  `json:"positionSide"`
+	MarginMode          int64  `json:"marginMode"`
+	TriggerMarkPrice    string `json:"triggerMarkPrice"`
+	TriggerIndexPrice   string `json:"triggerIndexPrice"`
+	TriggerQty          string `json:"triggerQty"`
+	LiquidatedQty       string `json:"liquidatedQty"`
+	MaintenanceMargin   string `json:"maintenanceMargin"`
+	AccountEquity       string `json:"accountEquity"`
+	BankruptcyPrice     string `json:"bankruptcyPrice"`
+	LiquidationFee      string `json:"liquidationFee"`
+	InsuranceFundAmount string `json:"insuranceFundAmount"`
+	AdlQty              string `json:"adlQty"`
+	Status              int64  `json:"status"`
+	Reason              string `json:"reason"`
+	StartedAt           int64  `json:"startedAt"`
+	CompletedAt         int64  `json:"completedAt"`
 }
 
 type ContractMarginSnapshot struct {
@@ -583,6 +683,21 @@ type ContractPositionHistory struct {
 	Source               int64  `json:"source"`
 	Remark               string `json:"remark"`
 	CreateTimes          int64  `json:"createTimes"`
+}
+
+type ContractRiskLimitTier struct {
+	Id                    int64  `json:"id"`
+	SymbolId              int64  `json:"symbolId"`
+	TierNo                int64  `json:"tierNo"`
+	NotionalFloor         string `json:"notionalFloor"`
+	NotionalCap           string `json:"notionalCap"`
+	MaxLeverage           int64  `json:"maxLeverage"`
+	InitialMarginRate     string `json:"initialMarginRate"`
+	MaintenanceMarginRate string `json:"maintenanceMarginRate"`
+	MaintenanceAmount     string `json:"maintenanceAmount"`
+	Enabled               int64  `json:"enabled"`
+	CreateTimes           int64  `json:"createTimes"`
+	UpdateTimes           int64  `json:"updateTimes"`
 }
 
 type ContractUserConfig struct {
@@ -1051,6 +1166,18 @@ type GetAssetCoinConfigReq struct {
 	TenantId int64 `form:"tenantId,optional"`
 }
 
+type GetAssetReservationListReq struct {
+	PageReq
+	TenantId int64 `form:"tenantId,optional"`
+	OrderId  int64 `form:"orderId,optional"`
+	Status   int64 `form:"status,optional"`
+}
+
+type GetAssetReservationListResp struct {
+	RespBase
+	Data []TradeAssetReservation `json:"data"`
+}
+
 type GetBillReq struct {
 	TenantId int64  `form:"tenantId,optional"`
 	Id       int64  `form:"id,optional"`
@@ -1097,6 +1224,18 @@ type GetContractResp struct {
 	Data OptionContractDetail `json:"data"`
 }
 
+type GetContractRiskLimitTierListReq struct {
+	PageReq
+	TenantId int64 `form:"tenantId,optional"`
+	SymbolId int64 `form:"symbolId,optional"`
+	Enabled  int64 `form:"enabled,optional"`
+}
+
+type GetContractRiskLimitTierListResp struct {
+	RespBase
+	Data []ContractRiskLimitTier `json:"data"`
+}
+
 type GetContractUserConfigReq struct {
 	TenantId int64 `form:"tenantId,optional"`
 	UserId   int64 `form:"userId"`
@@ -1140,6 +1279,33 @@ type GetCryptoWalletAccountResp struct {
 	Data CryptoWalletAccount `json:"data"`
 }
 
+type GetDeliveryBatchListReq struct {
+	PageReq
+	TenantId  int64     `form:"tenantId,optional"`
+	SymbolId  int64     `form:"symbolId,optional"`
+	Status    int64     `form:"status,optional"`
+	TimeRange TimeRange `form:"timeRange,optional"`
+}
+
+type GetDeliveryBatchListResp struct {
+	RespBase
+	Data []ContractDeliveryBatch `json:"data"`
+}
+
+type GetDeliverySettlementListReq struct {
+	PageReq
+	TenantId   int64 `form:"tenantId,optional"`
+	BatchId    int64 `form:"batchId,optional"`
+	UserId     int64 `form:"userId,optional"`
+	PositionId int64 `form:"positionId,optional"`
+	Status     int64 `form:"status,optional"`
+}
+
+type GetDeliverySettlementListResp struct {
+	RespBase
+	Data []ContractDeliverySettlement `json:"data"`
+}
+
 type GetExerciseReq struct {
 	TenantId   int64  `form:"tenantId,optional"`
 	Id         int64  `form:"id,optional"`
@@ -1173,6 +1339,48 @@ type GetFillListAdminReq struct {
 type GetFillListAdminResp struct {
 	RespBase
 	Data []TradeFill `json:"data"`
+}
+
+type GetFundingBatchListReq struct {
+	PageReq
+	TenantId  int64     `form:"tenantId,optional"`
+	SymbolId  int64     `form:"symbolId,optional"`
+	Status    int64     `form:"status,optional"`
+	TimeRange TimeRange `form:"timeRange,optional"`
+}
+
+type GetFundingBatchListResp struct {
+	RespBase
+	Data []ContractFundingBatch `json:"data"`
+}
+
+type GetFundingSettlementListReq struct {
+	PageReq
+	TenantId   int64 `form:"tenantId,optional"`
+	BatchId    int64 `form:"batchId,optional"`
+	UserId     int64 `form:"userId,optional"`
+	PositionId int64 `form:"positionId,optional"`
+	Status     int64 `form:"status,optional"`
+}
+
+type GetFundingSettlementListResp struct {
+	RespBase
+	Data []ContractFundingSettlement `json:"data"`
+}
+
+type GetLiquidationListReq struct {
+	PageReq
+	TenantId   int64     `form:"tenantId,optional"`
+	UserId     int64     `form:"userId,optional"`
+	SymbolId   int64     `form:"symbolId,optional"`
+	PositionId int64     `form:"positionId,optional"`
+	Status     int64     `form:"status,optional"`
+	TimeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type GetLiquidationListResp struct {
+	RespBase
+	Data []ContractLiquidation `json:"data"`
 }
 
 type GetMarginSnapshotListAdminReq struct {
@@ -1363,6 +1571,32 @@ type GetRiskOrderCheckLogListReq struct {
 type GetRiskOrderCheckLogListResp struct {
 	RespBase
 	Data []RiskOrderCheckLog `json:"data"`
+}
+
+type GetSecondsPriceSnapshotListReq struct {
+	PageReq
+	TenantId     int64 `form:"tenantId,optional"`
+	OrderId      int64 `form:"orderId"`
+	SnapshotType int64 `form:"snapshotType,optional"`
+}
+
+type GetSecondsPriceSnapshotListResp struct {
+	RespBase
+	Data []TradeSecondsPriceSnapshot `json:"data"`
+}
+
+type GetSettlementInstructionListReq struct {
+	PageReq
+	TenantId int64  `form:"tenantId,optional"`
+	BizType  string `form:"bizType,optional"`
+	BizId    string `form:"bizId,optional"`
+	OrderId  int64  `form:"orderId,optional"`
+	Status   int64  `form:"status,optional"`
+}
+
+type GetSettlementInstructionListResp struct {
+	RespBase
+	Data []TradeSettlementInstruction `json:"data"`
 }
 
 type GetSettlementReq struct {
@@ -2902,6 +3136,12 @@ type RetryNotifyReq struct {
 	OrderNo  string `path:"orderNo"`
 }
 
+type RetrySettlementInstructionReq struct {
+	TenantId int64  `json:"tenantId,optional"`
+	Id       int64  `json:"id"`
+	Reason   string `json:"reason"`
+}
+
 type RetryTradeEventReq struct {
 	TenantId   int64 `json:"tenantId"`
 	Id         int64 `json:"id"`
@@ -2995,28 +3235,49 @@ type RiskUserTradeLimit struct {
 	UpdateTimes          int64  `json:"updateTimes"`
 }
 
+type SetContractRiskLimitTierReq struct {
+	TenantId              int64  `json:"tenantId,optional"`
+	Id                    int64  `json:"id,optional"`
+	SymbolId              int64  `json:"symbolId"`
+	TierNo                int64  `json:"tierNo"`
+	NotionalFloor         string `json:"notionalFloor"`
+	NotionalCap           string `json:"notionalCap"`
+	MaxLeverage           int64  `json:"maxLeverage"`
+	InitialMarginRate     string `json:"initialMarginRate"`
+	MaintenanceMarginRate string `json:"maintenanceMarginRate"`
+	MaintenanceAmount     string `json:"maintenanceAmount"`
+	Enabled               int64  `json:"enabled"`
+}
+
 type SetContractSymbolConfigReq struct {
-	TenantId               int64  `json:"tenantId"`
-	SymbolId               int64  `json:"symbolId"`
-	ContractSize           string `json:"contractSize"`
-	Multiplier             string `json:"multiplier"`
-	MaintenanceMarginRate  string `json:"maintenanceMarginRate"`
-	InitialMarginRate      string `json:"initialMarginRate"`
-	MakerFeeRate           string `json:"makerFeeRate"`
-	TakerFeeRate           string `json:"takerFeeRate"`
-	FundingIntervalMinutes int64  `json:"fundingIntervalMinutes"`
-	DeliveryTime           int64  `json:"deliveryTime"`
-	SupportCross           int64  `json:"supportCross"`
-	SupportIsolated        int64  `json:"supportIsolated"`
-	FundingRateCap         string `json:"fundingRateCap"`
-	FundingRateFloor       string `json:"fundingRateFloor"`
-	IndexSymbol            string `json:"indexSymbol"`
-	MarkPriceSource        string `json:"markPriceSource"`
-	SettlementPriceSource  string `json:"settlementPriceSource"`
-	OpenLongEnabled        int64  `json:"openLongEnabled"`
-	OpenShortEnabled       int64  `json:"openShortEnabled"`
-	CloseLongEnabled       int64  `json:"closeLongEnabled"`
-	CloseShortEnabled      int64  `json:"closeShortEnabled"`
+	TenantId                 int64  `json:"tenantId"`
+	SymbolId                 int64  `json:"symbolId"`
+	ContractSize             string `json:"contractSize"`
+	Multiplier               string `json:"multiplier"`
+	MaintenanceMarginRate    string `json:"maintenanceMarginRate"`
+	InitialMarginRate        string `json:"initialMarginRate"`
+	MakerFeeRate             string `json:"makerFeeRate"`
+	TakerFeeRate             string `json:"takerFeeRate"`
+	FundingIntervalMinutes   int64  `json:"fundingIntervalMinutes"`
+	DeliveryTime             int64  `json:"deliveryTime"`
+	SupportCross             int64  `json:"supportCross"`
+	SupportIsolated          int64  `json:"supportIsolated"`
+	FundingRateCap           string `json:"fundingRateCap"`
+	FundingRateFloor         string `json:"fundingRateFloor"`
+	FundingRateSource        string `json:"fundingRateSource"`
+	IndexSymbol              string `json:"indexSymbol"`
+	MarkPriceSource          string `json:"markPriceSource"`
+	SettlementPriceSource    string `json:"settlementPriceSource"`
+	OpenCutoffTime           int64  `json:"openCutoffTime"`
+	MatchingStopTime         int64  `json:"matchingStopTime"`
+	SettlementWindowSeconds  int64  `json:"settlementWindowSeconds"`
+	SettlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
+	DeliveryFeeRate          string `json:"deliveryFeeRate"`
+	LiquidationFeeRate       string `json:"liquidationFeeRate"`
+	OpenLongEnabled          int64  `json:"openLongEnabled"`
+	OpenShortEnabled         int64  `json:"openShortEnabled"`
+	CloseLongEnabled         int64  `json:"closeLongEnabled"`
+	CloseShortEnabled        int64  `json:"closeShortEnabled"`
 }
 
 type SetContractUserConfigReq struct {
@@ -3035,18 +3296,23 @@ type SetDefaultUserBankReq struct {
 }
 
 type SetSecondsSymbolConfigReq struct {
-	TenantId              int64  `json:"tenantId"`
-	SymbolId              int64  `json:"symbolId"`
-	DurationSeconds       int64  `json:"durationSeconds"`
-	PayoutRate            string `json:"payoutRate"`
-	DrawRule              int64  `json:"drawRule"`
-	StartPriceSource      string `json:"startPriceSource"`
-	SettlementPriceSource string `json:"settlementPriceSource"`
-	QuoteValidityMs       int64  `json:"quoteValidityMs"`
-	MinStake              string `json:"minStake"`
-	MaxStake              string `json:"maxStake"`
-	UpEnabled             int64  `json:"upEnabled"`
-	DownEnabled           int64  `json:"downEnabled"`
+	TenantId                 int64  `json:"tenantId"`
+	SymbolId                 int64  `json:"symbolId"`
+	DurationSeconds          int64  `json:"durationSeconds"`
+	PayoutRate               string `json:"payoutRate"`
+	FeeRate                  string `json:"feeRate"`
+	DrawRule                 int64  `json:"drawRule"`
+	StartPriceSource         string `json:"startPriceSource"`
+	SettlementPriceSource    string `json:"settlementPriceSource"`
+	QuoteValidityMs          int64  `json:"quoteValidityMs"`
+	SettlementWindowMs       int64  `json:"settlementWindowMs"`
+	SettlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
+	DrawTolerance            string `json:"drawTolerance"`
+	MaxExposureAmount        string `json:"maxExposureAmount"`
+	MinStake                 string `json:"minStake"`
+	MaxStake                 string `json:"maxStake"`
+	UpEnabled                int64  `json:"upEnabled"`
+	DownEnabled              int64  `json:"downEnabled"`
 }
 
 type SetSpotSymbolConfigReq struct {
@@ -3936,6 +4202,21 @@ type TimeRange struct {
 	EndTime   int64 `form:"endTime,optional"`
 }
 
+type TradeAssetReservation struct {
+	Id             int64  `json:"id"`
+	OrderId        int64  `json:"orderId"`
+	ReservationNo  string `json:"reservationNo"`
+	Asset          string `json:"asset"`
+	ReservedAmount string `json:"reservedAmount"`
+	ConsumedAmount string `json:"consumedAmount"`
+	ReleasedAmount string `json:"releasedAmount"`
+	Status         int64  `json:"status"`
+	RetryCount     int64  `json:"retryCount"`
+	NextRetryAt    int64  `json:"nextRetryAt"`
+	LastErrorMsg   string `json:"lastErrorMsg"`
+	Version        int64  `json:"version"`
+}
+
 type TradeCancelLog struct {
 	Id           int64  `json:"id"`
 	TenantId     int64  `json:"tenantId"`
@@ -4009,6 +4290,41 @@ type TradeOrder struct {
 	UpdateTimes       int64  `json:"updateTimes"`
 }
 
+type TradeSecondsPriceSnapshot struct {
+	Id           int64  `json:"id"`
+	OrderId      int64  `json:"orderId"`
+	SnapshotType int64  `json:"snapshotType"`
+	Source       string `json:"source"`
+	Price        string `json:"price"`
+	QuoteTime    int64  `json:"quoteTime"`
+	ReceivedAt   int64  `json:"receivedAt"`
+	Algorithm    string `json:"algorithm"`
+	IsSelected   int64  `json:"isSelected"`
+	RawPayload   string `json:"rawPayload"`
+	CreateTimes  int64  `json:"createTimes"`
+}
+
+type TradeSettlementInstruction struct {
+	Id            int64  `json:"id"`
+	InstructionNo string `json:"instructionNo"`
+	BizType       string `json:"bizType"`
+	BizId         string `json:"bizId"`
+	BatchNo       string `json:"batchNo"`
+	FillId        int64  `json:"fillId"`
+	OrderId       int64  `json:"orderId"`
+	PositionId    int64  `json:"positionId"`
+	ReservationNo string `json:"reservationNo"`
+	UserId        int64  `json:"userId"`
+	Action        int64  `json:"action"`
+	Asset         string `json:"asset"`
+	Amount        string `json:"amount"`
+	StepNo        int64  `json:"stepNo"`
+	Status        int64  `json:"status"`
+	RetryCount    int64  `json:"retryCount"`
+	NextRetryAt   int64  `json:"nextRetryAt"`
+	LastErrorMsg  string `json:"lastErrorMsg"`
+}
+
 type TradeSymbol struct {
 	Id                int64  `json:"id"`
 	TenantId          int64  `json:"tenantId"`
@@ -4042,30 +4358,37 @@ type TradeSymbol struct {
 }
 
 type TradeSymbolContract struct {
-	Id                     int64  `json:"id"`
-	TenantId               int64  `json:"tenantId"`
-	SymbolId               int64  `json:"symbolId"`
-	ContractSize           string `json:"contractSize"`
-	Multiplier             string `json:"multiplier"`
-	MaintenanceMarginRate  string `json:"maintenanceMarginRate"`
-	InitialMarginRate      string `json:"initialMarginRate"`
-	MakerFeeRate           string `json:"makerFeeRate"`
-	TakerFeeRate           string `json:"takerFeeRate"`
-	FundingIntervalMinutes int64  `json:"fundingIntervalMinutes"`
-	DeliveryTime           int64  `json:"deliveryTime"`
-	SupportCross           int64  `json:"supportCross"`
-	SupportIsolated        int64  `json:"supportIsolated"`
-	FundingRateCap         string `json:"fundingRateCap"`
-	FundingRateFloor       string `json:"fundingRateFloor"`
-	IndexSymbol            string `json:"indexSymbol"`
-	MarkPriceSource        string `json:"markPriceSource"`
-	SettlementPriceSource  string `json:"settlementPriceSource"`
-	OpenLongEnabled        int64  `json:"openLongEnabled"`
-	OpenShortEnabled       int64  `json:"openShortEnabled"`
-	CloseLongEnabled       int64  `json:"closeLongEnabled"`
-	CloseShortEnabled      int64  `json:"closeShortEnabled"`
-	CreateTimes            int64  `json:"createTimes"`
-	UpdateTimes            int64  `json:"updateTimes"`
+	Id                       int64  `json:"id"`
+	TenantId                 int64  `json:"tenantId"`
+	SymbolId                 int64  `json:"symbolId"`
+	ContractSize             string `json:"contractSize"`
+	Multiplier               string `json:"multiplier"`
+	MaintenanceMarginRate    string `json:"maintenanceMarginRate"`
+	InitialMarginRate        string `json:"initialMarginRate"`
+	MakerFeeRate             string `json:"makerFeeRate"`
+	TakerFeeRate             string `json:"takerFeeRate"`
+	FundingIntervalMinutes   int64  `json:"fundingIntervalMinutes"`
+	DeliveryTime             int64  `json:"deliveryTime"`
+	SupportCross             int64  `json:"supportCross"`
+	SupportIsolated          int64  `json:"supportIsolated"`
+	FundingRateCap           string `json:"fundingRateCap"`
+	FundingRateFloor         string `json:"fundingRateFloor"`
+	FundingRateSource        string `json:"fundingRateSource"`
+	IndexSymbol              string `json:"indexSymbol"`
+	MarkPriceSource          string `json:"markPriceSource"`
+	SettlementPriceSource    string `json:"settlementPriceSource"`
+	OpenCutoffTime           int64  `json:"openCutoffTime"`
+	MatchingStopTime         int64  `json:"matchingStopTime"`
+	SettlementWindowSeconds  int64  `json:"settlementWindowSeconds"`
+	SettlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
+	DeliveryFeeRate          string `json:"deliveryFeeRate"`
+	LiquidationFeeRate       string `json:"liquidationFeeRate"`
+	OpenLongEnabled          int64  `json:"openLongEnabled"`
+	OpenShortEnabled         int64  `json:"openShortEnabled"`
+	CloseLongEnabled         int64  `json:"closeLongEnabled"`
+	CloseShortEnabled        int64  `json:"closeShortEnabled"`
+	CreateTimes              int64  `json:"createTimes"`
+	UpdateTimes              int64  `json:"updateTimes"`
 }
 
 type TradeSymbolLeverageConfig struct {
@@ -4083,21 +4406,26 @@ type TradeSymbolLeverageConfig struct {
 }
 
 type TradeSymbolSeconds struct {
-	Id                    int64  `json:"id"`
-	TenantId              int64  `json:"tenantId"`
-	SymbolId              int64  `json:"symbolId"`
-	DurationSeconds       int64  `json:"durationSeconds"`
-	PayoutRate            string `json:"payoutRate"`
-	DrawRule              int64  `json:"drawRule"`
-	StartPriceSource      string `json:"startPriceSource"`
-	SettlementPriceSource string `json:"settlementPriceSource"`
-	QuoteValidityMs       int64  `json:"quoteValidityMs"`
-	MinStake              string `json:"minStake"`
-	MaxStake              string `json:"maxStake"`
-	UpEnabled             int64  `json:"upEnabled"`
-	DownEnabled           int64  `json:"downEnabled"`
-	CreateTimes           int64  `json:"createTimes"`
-	UpdateTimes           int64  `json:"updateTimes"`
+	Id                       int64  `json:"id"`
+	TenantId                 int64  `json:"tenantId"`
+	SymbolId                 int64  `json:"symbolId"`
+	DurationSeconds          int64  `json:"durationSeconds"`
+	PayoutRate               string `json:"payoutRate"`
+	FeeRate                  string `json:"feeRate"`
+	DrawRule                 int64  `json:"drawRule"`
+	StartPriceSource         string `json:"startPriceSource"`
+	SettlementPriceSource    string `json:"settlementPriceSource"`
+	QuoteValidityMs          int64  `json:"quoteValidityMs"`
+	SettlementWindowMs       int64  `json:"settlementWindowMs"`
+	SettlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
+	DrawTolerance            string `json:"drawTolerance"`
+	MaxExposureAmount        string `json:"maxExposureAmount"`
+	MinStake                 string `json:"minStake"`
+	MaxStake                 string `json:"maxStake"`
+	UpEnabled                int64  `json:"upEnabled"`
+	DownEnabled              int64  `json:"downEnabled"`
+	CreateTimes              int64  `json:"createTimes"`
+	UpdateTimes              int64  `json:"updateTimes"`
 }
 
 type TradeSymbolSession struct {

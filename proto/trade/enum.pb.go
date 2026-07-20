@@ -1105,6 +1105,977 @@ func (TriggerType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_trade_enum_proto_rawDescGZIP(), []int{19}
 }
 
+type SecondsDrawRule int32
+
+const (
+	SecondsDrawRule_SECONDS_DRAW_RULE_UNKNOWN SecondsDrawRule = 0
+	SecondsDrawRule_SECONDS_DRAW_RULE_REFUND  SecondsDrawRule = 1
+	SecondsDrawRule_SECONDS_DRAW_RULE_LOSE    SecondsDrawRule = 2
+)
+
+// Enum value maps for SecondsDrawRule.
+var (
+	SecondsDrawRule_name = map[int32]string{
+		0: "SECONDS_DRAW_RULE_UNKNOWN",
+		1: "SECONDS_DRAW_RULE_REFUND",
+		2: "SECONDS_DRAW_RULE_LOSE",
+	}
+	SecondsDrawRule_value = map[string]int32{
+		"SECONDS_DRAW_RULE_UNKNOWN": 0,
+		"SECONDS_DRAW_RULE_REFUND":  1,
+		"SECONDS_DRAW_RULE_LOSE":    2,
+	}
+)
+
+func (x SecondsDrawRule) Enum() *SecondsDrawRule {
+	p := new(SecondsDrawRule)
+	*p = x
+	return p
+}
+
+func (x SecondsDrawRule) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SecondsDrawRule) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[20].Descriptor()
+}
+
+func (SecondsDrawRule) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[20]
+}
+
+func (x SecondsDrawRule) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SecondsDrawRule.Descriptor instead.
+func (SecondsDrawRule) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{20}
+}
+
+type ClosePositionType int32
+
+const (
+	ClosePositionType_CLOSE_POSITION_TYPE_NORMAL ClosePositionType = 0
+	ClosePositionType_CLOSE_POSITION_TYPE_LONG   ClosePositionType = 1
+	ClosePositionType_CLOSE_POSITION_TYPE_SHORT  ClosePositionType = 2
+)
+
+// Enum value maps for ClosePositionType.
+var (
+	ClosePositionType_name = map[int32]string{
+		0: "CLOSE_POSITION_TYPE_NORMAL",
+		1: "CLOSE_POSITION_TYPE_LONG",
+		2: "CLOSE_POSITION_TYPE_SHORT",
+	}
+	ClosePositionType_value = map[string]int32{
+		"CLOSE_POSITION_TYPE_NORMAL": 0,
+		"CLOSE_POSITION_TYPE_LONG":   1,
+		"CLOSE_POSITION_TYPE_SHORT":  2,
+	}
+)
+
+func (x ClosePositionType) Enum() *ClosePositionType {
+	p := new(ClosePositionType)
+	*p = x
+	return p
+}
+
+func (x ClosePositionType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ClosePositionType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[21].Descriptor()
+}
+
+func (ClosePositionType) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[21]
+}
+
+func (x ClosePositionType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ClosePositionType.Descriptor instead.
+func (ClosePositionType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{21}
+}
+
+type SecondsDirection int32
+
+const (
+	SecondsDirection_SECONDS_DIRECTION_UNKNOWN SecondsDirection = 0
+	SecondsDirection_SECONDS_DIRECTION_UP      SecondsDirection = 1
+	SecondsDirection_SECONDS_DIRECTION_DOWN    SecondsDirection = 2
+)
+
+// Enum value maps for SecondsDirection.
+var (
+	SecondsDirection_name = map[int32]string{
+		0: "SECONDS_DIRECTION_UNKNOWN",
+		1: "SECONDS_DIRECTION_UP",
+		2: "SECONDS_DIRECTION_DOWN",
+	}
+	SecondsDirection_value = map[string]int32{
+		"SECONDS_DIRECTION_UNKNOWN": 0,
+		"SECONDS_DIRECTION_UP":      1,
+		"SECONDS_DIRECTION_DOWN":    2,
+	}
+)
+
+func (x SecondsDirection) Enum() *SecondsDirection {
+	p := new(SecondsDirection)
+	*p = x
+	return p
+}
+
+func (x SecondsDirection) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SecondsDirection) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[22].Descriptor()
+}
+
+func (SecondsDirection) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[22]
+}
+
+func (x SecondsDirection) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SecondsDirection.Descriptor instead.
+func (SecondsDirection) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{22}
+}
+
+type SecondsResult int32
+
+const (
+	SecondsResult_SECONDS_RESULT_PENDING SecondsResult = 0
+	SecondsResult_SECONDS_RESULT_WIN     SecondsResult = 1
+	SecondsResult_SECONDS_RESULT_LOSE    SecondsResult = 2
+	SecondsResult_SECONDS_RESULT_DRAW    SecondsResult = 3
+	SecondsResult_SECONDS_RESULT_VOID    SecondsResult = 4
+)
+
+// Enum value maps for SecondsResult.
+var (
+	SecondsResult_name = map[int32]string{
+		0: "SECONDS_RESULT_PENDING",
+		1: "SECONDS_RESULT_WIN",
+		2: "SECONDS_RESULT_LOSE",
+		3: "SECONDS_RESULT_DRAW",
+		4: "SECONDS_RESULT_VOID",
+	}
+	SecondsResult_value = map[string]int32{
+		"SECONDS_RESULT_PENDING": 0,
+		"SECONDS_RESULT_WIN":     1,
+		"SECONDS_RESULT_LOSE":    2,
+		"SECONDS_RESULT_DRAW":    3,
+		"SECONDS_RESULT_VOID":    4,
+	}
+)
+
+func (x SecondsResult) Enum() *SecondsResult {
+	p := new(SecondsResult)
+	*p = x
+	return p
+}
+
+func (x SecondsResult) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SecondsResult) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[23].Descriptor()
+}
+
+func (SecondsResult) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[23]
+}
+
+func (x SecondsResult) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SecondsResult.Descriptor instead.
+func (SecondsResult) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{23}
+}
+
+type SecondsSettlementStatus int32
+
+const (
+	SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_PENDING_FREEZE SecondsSettlementStatus = 0
+	SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVATING     SecondsSettlementStatus = 1
+	SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVE         SecondsSettlementStatus = 2
+	SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING       SecondsSettlementStatus = 3
+	SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLED        SecondsSettlementStatus = 4
+	SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDING      SecondsSettlementStatus = 5
+	SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDED       SecondsSettlementStatus = 6
+	SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_MANUAL_REVIEW  SecondsSettlementStatus = 7
+)
+
+// Enum value maps for SecondsSettlementStatus.
+var (
+	SecondsSettlementStatus_name = map[int32]string{
+		0: "SECONDS_SETTLEMENT_STATUS_PENDING_FREEZE",
+		1: "SECONDS_SETTLEMENT_STATUS_ACTIVATING",
+		2: "SECONDS_SETTLEMENT_STATUS_ACTIVE",
+		3: "SECONDS_SETTLEMENT_STATUS_SETTLING",
+		4: "SECONDS_SETTLEMENT_STATUS_SETTLED",
+		5: "SECONDS_SETTLEMENT_STATUS_REFUNDING",
+		6: "SECONDS_SETTLEMENT_STATUS_REFUNDED",
+		7: "SECONDS_SETTLEMENT_STATUS_MANUAL_REVIEW",
+	}
+	SecondsSettlementStatus_value = map[string]int32{
+		"SECONDS_SETTLEMENT_STATUS_PENDING_FREEZE": 0,
+		"SECONDS_SETTLEMENT_STATUS_ACTIVATING":     1,
+		"SECONDS_SETTLEMENT_STATUS_ACTIVE":         2,
+		"SECONDS_SETTLEMENT_STATUS_SETTLING":       3,
+		"SECONDS_SETTLEMENT_STATUS_SETTLED":        4,
+		"SECONDS_SETTLEMENT_STATUS_REFUNDING":      5,
+		"SECONDS_SETTLEMENT_STATUS_REFUNDED":       6,
+		"SECONDS_SETTLEMENT_STATUS_MANUAL_REVIEW":  7,
+	}
+)
+
+func (x SecondsSettlementStatus) Enum() *SecondsSettlementStatus {
+	p := new(SecondsSettlementStatus)
+	*p = x
+	return p
+}
+
+func (x SecondsSettlementStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SecondsSettlementStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[24].Descriptor()
+}
+
+func (SecondsSettlementStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[24]
+}
+
+func (x SecondsSettlementStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SecondsSettlementStatus.Descriptor instead.
+func (SecondsSettlementStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{24}
+}
+
+type FillSettlementStatus int32
+
+const (
+	FillSettlementStatus_FILL_SETTLEMENT_STATUS_UNKNOWN       FillSettlementStatus = 0
+	FillSettlementStatus_FILL_SETTLEMENT_STATUS_PENDING       FillSettlementStatus = 1
+	FillSettlementStatus_FILL_SETTLEMENT_STATUS_PROCESSING    FillSettlementStatus = 2
+	FillSettlementStatus_FILL_SETTLEMENT_STATUS_SETTLED       FillSettlementStatus = 3
+	FillSettlementStatus_FILL_SETTLEMENT_STATUS_FAILED        FillSettlementStatus = 4
+	FillSettlementStatus_FILL_SETTLEMENT_STATUS_MANUAL_REVIEW FillSettlementStatus = 5
+)
+
+// Enum value maps for FillSettlementStatus.
+var (
+	FillSettlementStatus_name = map[int32]string{
+		0: "FILL_SETTLEMENT_STATUS_UNKNOWN",
+		1: "FILL_SETTLEMENT_STATUS_PENDING",
+		2: "FILL_SETTLEMENT_STATUS_PROCESSING",
+		3: "FILL_SETTLEMENT_STATUS_SETTLED",
+		4: "FILL_SETTLEMENT_STATUS_FAILED",
+		5: "FILL_SETTLEMENT_STATUS_MANUAL_REVIEW",
+	}
+	FillSettlementStatus_value = map[string]int32{
+		"FILL_SETTLEMENT_STATUS_UNKNOWN":       0,
+		"FILL_SETTLEMENT_STATUS_PENDING":       1,
+		"FILL_SETTLEMENT_STATUS_PROCESSING":    2,
+		"FILL_SETTLEMENT_STATUS_SETTLED":       3,
+		"FILL_SETTLEMENT_STATUS_FAILED":        4,
+		"FILL_SETTLEMENT_STATUS_MANUAL_REVIEW": 5,
+	}
+)
+
+func (x FillSettlementStatus) Enum() *FillSettlementStatus {
+	p := new(FillSettlementStatus)
+	*p = x
+	return p
+}
+
+func (x FillSettlementStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (FillSettlementStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[25].Descriptor()
+}
+
+func (FillSettlementStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[25]
+}
+
+func (x FillSettlementStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use FillSettlementStatus.Descriptor instead.
+func (FillSettlementStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{25}
+}
+
+type PositionStatus int32
+
+const (
+	PositionStatus_POSITION_STATUS_UNKNOWN             PositionStatus = 0
+	PositionStatus_POSITION_STATUS_NORMAL              PositionStatus = 1
+	PositionStatus_POSITION_STATUS_PENDING_LIQUIDATION PositionStatus = 2
+	PositionStatus_POSITION_STATUS_LIQUIDATING         PositionStatus = 3
+	PositionStatus_POSITION_STATUS_DELIVERING          PositionStatus = 4
+	PositionStatus_POSITION_STATUS_CLOSED              PositionStatus = 5
+	PositionStatus_POSITION_STATUS_MANUAL_REVIEW       PositionStatus = 6
+)
+
+// Enum value maps for PositionStatus.
+var (
+	PositionStatus_name = map[int32]string{
+		0: "POSITION_STATUS_UNKNOWN",
+		1: "POSITION_STATUS_NORMAL",
+		2: "POSITION_STATUS_PENDING_LIQUIDATION",
+		3: "POSITION_STATUS_LIQUIDATING",
+		4: "POSITION_STATUS_DELIVERING",
+		5: "POSITION_STATUS_CLOSED",
+		6: "POSITION_STATUS_MANUAL_REVIEW",
+	}
+	PositionStatus_value = map[string]int32{
+		"POSITION_STATUS_UNKNOWN":             0,
+		"POSITION_STATUS_NORMAL":              1,
+		"POSITION_STATUS_PENDING_LIQUIDATION": 2,
+		"POSITION_STATUS_LIQUIDATING":         3,
+		"POSITION_STATUS_DELIVERING":          4,
+		"POSITION_STATUS_CLOSED":              5,
+		"POSITION_STATUS_MANUAL_REVIEW":       6,
+	}
+)
+
+func (x PositionStatus) Enum() *PositionStatus {
+	p := new(PositionStatus)
+	*p = x
+	return p
+}
+
+func (x PositionStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PositionStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[26].Descriptor()
+}
+
+func (PositionStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[26]
+}
+
+func (x PositionStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PositionStatus.Descriptor instead.
+func (PositionStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{26}
+}
+
+type RiskLevel int32
+
+const (
+	RiskLevel_RISK_LEVEL_DEFAULT RiskLevel = 0
+	RiskLevel_RISK_LEVEL_LOW     RiskLevel = 1
+	RiskLevel_RISK_LEVEL_MEDIUM  RiskLevel = 2
+	RiskLevel_RISK_LEVEL_HIGH    RiskLevel = 3
+)
+
+// Enum value maps for RiskLevel.
+var (
+	RiskLevel_name = map[int32]string{
+		0: "RISK_LEVEL_DEFAULT",
+		1: "RISK_LEVEL_LOW",
+		2: "RISK_LEVEL_MEDIUM",
+		3: "RISK_LEVEL_HIGH",
+	}
+	RiskLevel_value = map[string]int32{
+		"RISK_LEVEL_DEFAULT": 0,
+		"RISK_LEVEL_LOW":     1,
+		"RISK_LEVEL_MEDIUM":  2,
+		"RISK_LEVEL_HIGH":    3,
+	}
+)
+
+func (x RiskLevel) Enum() *RiskLevel {
+	p := new(RiskLevel)
+	*p = x
+	return p
+}
+
+func (x RiskLevel) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RiskLevel) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[27].Descriptor()
+}
+
+func (RiskLevel) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[27]
+}
+
+func (x RiskLevel) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RiskLevel.Descriptor instead.
+func (RiskLevel) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{27}
+}
+
+type SecondsPriceSnapshotType int32
+
+const (
+	SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_UNKNOWN              SecondsPriceSnapshotType = 0
+	SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_START                SecondsPriceSnapshotType = 1
+	SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_SETTLEMENT_CANDIDATE SecondsPriceSnapshotType = 2
+	SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_FINAL_SETTLEMENT     SecondsPriceSnapshotType = 3
+)
+
+// Enum value maps for SecondsPriceSnapshotType.
+var (
+	SecondsPriceSnapshotType_name = map[int32]string{
+		0: "SECONDS_PRICE_SNAPSHOT_TYPE_UNKNOWN",
+		1: "SECONDS_PRICE_SNAPSHOT_TYPE_START",
+		2: "SECONDS_PRICE_SNAPSHOT_TYPE_SETTLEMENT_CANDIDATE",
+		3: "SECONDS_PRICE_SNAPSHOT_TYPE_FINAL_SETTLEMENT",
+	}
+	SecondsPriceSnapshotType_value = map[string]int32{
+		"SECONDS_PRICE_SNAPSHOT_TYPE_UNKNOWN":              0,
+		"SECONDS_PRICE_SNAPSHOT_TYPE_START":                1,
+		"SECONDS_PRICE_SNAPSHOT_TYPE_SETTLEMENT_CANDIDATE": 2,
+		"SECONDS_PRICE_SNAPSHOT_TYPE_FINAL_SETTLEMENT":     3,
+	}
+)
+
+func (x SecondsPriceSnapshotType) Enum() *SecondsPriceSnapshotType {
+	p := new(SecondsPriceSnapshotType)
+	*p = x
+	return p
+}
+
+func (x SecondsPriceSnapshotType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SecondsPriceSnapshotType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[28].Descriptor()
+}
+
+func (SecondsPriceSnapshotType) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[28]
+}
+
+func (x SecondsPriceSnapshotType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SecondsPriceSnapshotType.Descriptor instead.
+func (SecondsPriceSnapshotType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{28}
+}
+
+type AssetReservationStatus int32
+
+const (
+	AssetReservationStatus_ASSET_RESERVATION_STATUS_UNKNOWN       AssetReservationStatus = 0
+	AssetReservationStatus_ASSET_RESERVATION_STATUS_FREEZING      AssetReservationStatus = 1
+	AssetReservationStatus_ASSET_RESERVATION_STATUS_FROZEN        AssetReservationStatus = 2
+	AssetReservationStatus_ASSET_RESERVATION_STATUS_PART_CONSUMED AssetReservationStatus = 3
+	AssetReservationStatus_ASSET_RESERVATION_STATUS_CONSUMED      AssetReservationStatus = 4
+	AssetReservationStatus_ASSET_RESERVATION_STATUS_RELEASING     AssetReservationStatus = 5
+	AssetReservationStatus_ASSET_RESERVATION_STATUS_RELEASED      AssetReservationStatus = 6
+	AssetReservationStatus_ASSET_RESERVATION_STATUS_FAILED        AssetReservationStatus = 7
+)
+
+// Enum value maps for AssetReservationStatus.
+var (
+	AssetReservationStatus_name = map[int32]string{
+		0: "ASSET_RESERVATION_STATUS_UNKNOWN",
+		1: "ASSET_RESERVATION_STATUS_FREEZING",
+		2: "ASSET_RESERVATION_STATUS_FROZEN",
+		3: "ASSET_RESERVATION_STATUS_PART_CONSUMED",
+		4: "ASSET_RESERVATION_STATUS_CONSUMED",
+		5: "ASSET_RESERVATION_STATUS_RELEASING",
+		6: "ASSET_RESERVATION_STATUS_RELEASED",
+		7: "ASSET_RESERVATION_STATUS_FAILED",
+	}
+	AssetReservationStatus_value = map[string]int32{
+		"ASSET_RESERVATION_STATUS_UNKNOWN":       0,
+		"ASSET_RESERVATION_STATUS_FREEZING":      1,
+		"ASSET_RESERVATION_STATUS_FROZEN":        2,
+		"ASSET_RESERVATION_STATUS_PART_CONSUMED": 3,
+		"ASSET_RESERVATION_STATUS_CONSUMED":      4,
+		"ASSET_RESERVATION_STATUS_RELEASING":     5,
+		"ASSET_RESERVATION_STATUS_RELEASED":      6,
+		"ASSET_RESERVATION_STATUS_FAILED":        7,
+	}
+)
+
+func (x AssetReservationStatus) Enum() *AssetReservationStatus {
+	p := new(AssetReservationStatus)
+	*p = x
+	return p
+}
+
+func (x AssetReservationStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AssetReservationStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[29].Descriptor()
+}
+
+func (AssetReservationStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[29]
+}
+
+func (x AssetReservationStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AssetReservationStatus.Descriptor instead.
+func (AssetReservationStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{29}
+}
+
+type SettlementInstructionAction int32
+
+const (
+	SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_UNKNOWN          SettlementInstructionAction = 0
+	SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN   SettlementInstructionAction = 1
+	SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN   SettlementInstructionAction = 2
+	SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE SettlementInstructionAction = 3
+	SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE       SettlementInstructionAction = 4
+	SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_POST_PNL         SettlementInstructionAction = 5
+	SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN    SettlementInstructionAction = 6
+)
+
+// Enum value maps for SettlementInstructionAction.
+var (
+	SettlementInstructionAction_name = map[int32]string{
+		0: "SETTLEMENT_INSTRUCTION_ACTION_UNKNOWN",
+		1: "SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN",
+		2: "SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN",
+		3: "SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE",
+		4: "SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE",
+		5: "SETTLEMENT_INSTRUCTION_ACTION_POST_PNL",
+		6: "SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN",
+	}
+	SettlementInstructionAction_value = map[string]int32{
+		"SETTLEMENT_INSTRUCTION_ACTION_UNKNOWN":          0,
+		"SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN":   1,
+		"SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN":   2,
+		"SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE": 3,
+		"SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE":       4,
+		"SETTLEMENT_INSTRUCTION_ACTION_POST_PNL":         5,
+		"SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN":    6,
+	}
+)
+
+func (x SettlementInstructionAction) Enum() *SettlementInstructionAction {
+	p := new(SettlementInstructionAction)
+	*p = x
+	return p
+}
+
+func (x SettlementInstructionAction) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SettlementInstructionAction) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[30].Descriptor()
+}
+
+func (SettlementInstructionAction) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[30]
+}
+
+func (x SettlementInstructionAction) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SettlementInstructionAction.Descriptor instead.
+func (SettlementInstructionAction) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{30}
+}
+
+type SettlementInstructionStatus int32
+
+const (
+	SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_UNKNOWN       SettlementInstructionStatus = 0
+	SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING       SettlementInstructionStatus = 1
+	SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING    SettlementInstructionStatus = 2
+	SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS       SettlementInstructionStatus = 3
+	SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED        SettlementInstructionStatus = 4
+	SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW SettlementInstructionStatus = 5
+)
+
+// Enum value maps for SettlementInstructionStatus.
+var (
+	SettlementInstructionStatus_name = map[int32]string{
+		0: "SETTLEMENT_INSTRUCTION_STATUS_UNKNOWN",
+		1: "SETTLEMENT_INSTRUCTION_STATUS_PENDING",
+		2: "SETTLEMENT_INSTRUCTION_STATUS_PROCESSING",
+		3: "SETTLEMENT_INSTRUCTION_STATUS_SUCCESS",
+		4: "SETTLEMENT_INSTRUCTION_STATUS_FAILED",
+		5: "SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW",
+	}
+	SettlementInstructionStatus_value = map[string]int32{
+		"SETTLEMENT_INSTRUCTION_STATUS_UNKNOWN":       0,
+		"SETTLEMENT_INSTRUCTION_STATUS_PENDING":       1,
+		"SETTLEMENT_INSTRUCTION_STATUS_PROCESSING":    2,
+		"SETTLEMENT_INSTRUCTION_STATUS_SUCCESS":       3,
+		"SETTLEMENT_INSTRUCTION_STATUS_FAILED":        4,
+		"SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW": 5,
+	}
+)
+
+func (x SettlementInstructionStatus) Enum() *SettlementInstructionStatus {
+	p := new(SettlementInstructionStatus)
+	*p = x
+	return p
+}
+
+func (x SettlementInstructionStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SettlementInstructionStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[31].Descriptor()
+}
+
+func (SettlementInstructionStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[31]
+}
+
+func (x SettlementInstructionStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SettlementInstructionStatus.Descriptor instead.
+func (SettlementInstructionStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{31}
+}
+
+type LiquidationStatus int32
+
+const (
+	LiquidationStatus_LIQUIDATION_STATUS_UNKNOWN           LiquidationStatus = 0
+	LiquidationStatus_LIQUIDATION_STATUS_PENDING_TAKEOVER  LiquidationStatus = 1
+	LiquidationStatus_LIQUIDATION_STATUS_LIQUIDATING       LiquidationStatus = 2
+	LiquidationStatus_LIQUIDATION_STATUS_PARTIAL_RECOVERED LiquidationStatus = 3
+	LiquidationStatus_LIQUIDATION_STATUS_COMPLETED         LiquidationStatus = 4
+	LiquidationStatus_LIQUIDATION_STATUS_INSURANCE_FUND    LiquidationStatus = 5
+	LiquidationStatus_LIQUIDATION_STATUS_ADL               LiquidationStatus = 6
+	LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW     LiquidationStatus = 7
+)
+
+// Enum value maps for LiquidationStatus.
+var (
+	LiquidationStatus_name = map[int32]string{
+		0: "LIQUIDATION_STATUS_UNKNOWN",
+		1: "LIQUIDATION_STATUS_PENDING_TAKEOVER",
+		2: "LIQUIDATION_STATUS_LIQUIDATING",
+		3: "LIQUIDATION_STATUS_PARTIAL_RECOVERED",
+		4: "LIQUIDATION_STATUS_COMPLETED",
+		5: "LIQUIDATION_STATUS_INSURANCE_FUND",
+		6: "LIQUIDATION_STATUS_ADL",
+		7: "LIQUIDATION_STATUS_MANUAL_REVIEW",
+	}
+	LiquidationStatus_value = map[string]int32{
+		"LIQUIDATION_STATUS_UNKNOWN":           0,
+		"LIQUIDATION_STATUS_PENDING_TAKEOVER":  1,
+		"LIQUIDATION_STATUS_LIQUIDATING":       2,
+		"LIQUIDATION_STATUS_PARTIAL_RECOVERED": 3,
+		"LIQUIDATION_STATUS_COMPLETED":         4,
+		"LIQUIDATION_STATUS_INSURANCE_FUND":    5,
+		"LIQUIDATION_STATUS_ADL":               6,
+		"LIQUIDATION_STATUS_MANUAL_REVIEW":     7,
+	}
+)
+
+func (x LiquidationStatus) Enum() *LiquidationStatus {
+	p := new(LiquidationStatus)
+	*p = x
+	return p
+}
+
+func (x LiquidationStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (LiquidationStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[32].Descriptor()
+}
+
+func (LiquidationStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[32]
+}
+
+func (x LiquidationStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use LiquidationStatus.Descriptor instead.
+func (LiquidationStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{32}
+}
+
+type FundingBatchStatus int32
+
+const (
+	FundingBatchStatus_FUNDING_BATCH_STATUS_UNKNOWN       FundingBatchStatus = 0
+	FundingBatchStatus_FUNDING_BATCH_STATUS_PRICE_LOCKED  FundingBatchStatus = 1
+	FundingBatchStatus_FUNDING_BATCH_STATUS_SETTLING      FundingBatchStatus = 2
+	FundingBatchStatus_FUNDING_BATCH_STATUS_COMPLETED     FundingBatchStatus = 3
+	FundingBatchStatus_FUNDING_BATCH_STATUS_FAILED        FundingBatchStatus = 4
+	FundingBatchStatus_FUNDING_BATCH_STATUS_MANUAL_REVIEW FundingBatchStatus = 5
+)
+
+// Enum value maps for FundingBatchStatus.
+var (
+	FundingBatchStatus_name = map[int32]string{
+		0: "FUNDING_BATCH_STATUS_UNKNOWN",
+		1: "FUNDING_BATCH_STATUS_PRICE_LOCKED",
+		2: "FUNDING_BATCH_STATUS_SETTLING",
+		3: "FUNDING_BATCH_STATUS_COMPLETED",
+		4: "FUNDING_BATCH_STATUS_FAILED",
+		5: "FUNDING_BATCH_STATUS_MANUAL_REVIEW",
+	}
+	FundingBatchStatus_value = map[string]int32{
+		"FUNDING_BATCH_STATUS_UNKNOWN":       0,
+		"FUNDING_BATCH_STATUS_PRICE_LOCKED":  1,
+		"FUNDING_BATCH_STATUS_SETTLING":      2,
+		"FUNDING_BATCH_STATUS_COMPLETED":     3,
+		"FUNDING_BATCH_STATUS_FAILED":        4,
+		"FUNDING_BATCH_STATUS_MANUAL_REVIEW": 5,
+	}
+)
+
+func (x FundingBatchStatus) Enum() *FundingBatchStatus {
+	p := new(FundingBatchStatus)
+	*p = x
+	return p
+}
+
+func (x FundingBatchStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (FundingBatchStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[33].Descriptor()
+}
+
+func (FundingBatchStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[33]
+}
+
+func (x FundingBatchStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use FundingBatchStatus.Descriptor instead.
+func (FundingBatchStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{33}
+}
+
+type FundingSettlementStatus int32
+
+const (
+	FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_UNKNOWN       FundingSettlementStatus = 0
+	FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_PENDING       FundingSettlementStatus = 1
+	FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_SETTLED       FundingSettlementStatus = 2
+	FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_FAILED        FundingSettlementStatus = 3
+	FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_MANUAL_REVIEW FundingSettlementStatus = 4
+)
+
+// Enum value maps for FundingSettlementStatus.
+var (
+	FundingSettlementStatus_name = map[int32]string{
+		0: "FUNDING_SETTLEMENT_STATUS_UNKNOWN",
+		1: "FUNDING_SETTLEMENT_STATUS_PENDING",
+		2: "FUNDING_SETTLEMENT_STATUS_SETTLED",
+		3: "FUNDING_SETTLEMENT_STATUS_FAILED",
+		4: "FUNDING_SETTLEMENT_STATUS_MANUAL_REVIEW",
+	}
+	FundingSettlementStatus_value = map[string]int32{
+		"FUNDING_SETTLEMENT_STATUS_UNKNOWN":       0,
+		"FUNDING_SETTLEMENT_STATUS_PENDING":       1,
+		"FUNDING_SETTLEMENT_STATUS_SETTLED":       2,
+		"FUNDING_SETTLEMENT_STATUS_FAILED":        3,
+		"FUNDING_SETTLEMENT_STATUS_MANUAL_REVIEW": 4,
+	}
+)
+
+func (x FundingSettlementStatus) Enum() *FundingSettlementStatus {
+	p := new(FundingSettlementStatus)
+	*p = x
+	return p
+}
+
+func (x FundingSettlementStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (FundingSettlementStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[34].Descriptor()
+}
+
+func (FundingSettlementStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[34]
+}
+
+func (x FundingSettlementStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use FundingSettlementStatus.Descriptor instead.
+func (FundingSettlementStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{34}
+}
+
+type DeliveryBatchStatus int32
+
+const (
+	DeliveryBatchStatus_DELIVERY_BATCH_STATUS_UNKNOWN          DeliveryBatchStatus = 0
+	DeliveryBatchStatus_DELIVERY_BATCH_STATUS_CLOSE_ONLY       DeliveryBatchStatus = 1
+	DeliveryBatchStatus_DELIVERY_BATCH_STATUS_MATCHING_STOPPED DeliveryBatchStatus = 2
+	DeliveryBatchStatus_DELIVERY_BATCH_STATUS_PRICE_LOCKING    DeliveryBatchStatus = 3
+	DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING         DeliveryBatchStatus = 4
+	DeliveryBatchStatus_DELIVERY_BATCH_STATUS_COMPLETED        DeliveryBatchStatus = 5
+	DeliveryBatchStatus_DELIVERY_BATCH_STATUS_FAILED           DeliveryBatchStatus = 6
+	DeliveryBatchStatus_DELIVERY_BATCH_STATUS_MANUAL_REVIEW    DeliveryBatchStatus = 7
+	DeliveryBatchStatus_DELIVERY_BATCH_STATUS_ARCHIVED         DeliveryBatchStatus = 8
+)
+
+// Enum value maps for DeliveryBatchStatus.
+var (
+	DeliveryBatchStatus_name = map[int32]string{
+		0: "DELIVERY_BATCH_STATUS_UNKNOWN",
+		1: "DELIVERY_BATCH_STATUS_CLOSE_ONLY",
+		2: "DELIVERY_BATCH_STATUS_MATCHING_STOPPED",
+		3: "DELIVERY_BATCH_STATUS_PRICE_LOCKING",
+		4: "DELIVERY_BATCH_STATUS_SETTLING",
+		5: "DELIVERY_BATCH_STATUS_COMPLETED",
+		6: "DELIVERY_BATCH_STATUS_FAILED",
+		7: "DELIVERY_BATCH_STATUS_MANUAL_REVIEW",
+		8: "DELIVERY_BATCH_STATUS_ARCHIVED",
+	}
+	DeliveryBatchStatus_value = map[string]int32{
+		"DELIVERY_BATCH_STATUS_UNKNOWN":          0,
+		"DELIVERY_BATCH_STATUS_CLOSE_ONLY":       1,
+		"DELIVERY_BATCH_STATUS_MATCHING_STOPPED": 2,
+		"DELIVERY_BATCH_STATUS_PRICE_LOCKING":    3,
+		"DELIVERY_BATCH_STATUS_SETTLING":         4,
+		"DELIVERY_BATCH_STATUS_COMPLETED":        5,
+		"DELIVERY_BATCH_STATUS_FAILED":           6,
+		"DELIVERY_BATCH_STATUS_MANUAL_REVIEW":    7,
+		"DELIVERY_BATCH_STATUS_ARCHIVED":         8,
+	}
+)
+
+func (x DeliveryBatchStatus) Enum() *DeliveryBatchStatus {
+	p := new(DeliveryBatchStatus)
+	*p = x
+	return p
+}
+
+func (x DeliveryBatchStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DeliveryBatchStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[35].Descriptor()
+}
+
+func (DeliveryBatchStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[35]
+}
+
+func (x DeliveryBatchStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DeliveryBatchStatus.Descriptor instead.
+func (DeliveryBatchStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{35}
+}
+
+type DeliverySettlementStatus int32
+
+const (
+	DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_UNKNOWN       DeliverySettlementStatus = 0
+	DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_PENDING       DeliverySettlementStatus = 1
+	DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_SETTLED       DeliverySettlementStatus = 2
+	DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_FAILED        DeliverySettlementStatus = 3
+	DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW DeliverySettlementStatus = 4
+)
+
+// Enum value maps for DeliverySettlementStatus.
+var (
+	DeliverySettlementStatus_name = map[int32]string{
+		0: "DELIVERY_SETTLEMENT_STATUS_UNKNOWN",
+		1: "DELIVERY_SETTLEMENT_STATUS_PENDING",
+		2: "DELIVERY_SETTLEMENT_STATUS_SETTLED",
+		3: "DELIVERY_SETTLEMENT_STATUS_FAILED",
+		4: "DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW",
+	}
+	DeliverySettlementStatus_value = map[string]int32{
+		"DELIVERY_SETTLEMENT_STATUS_UNKNOWN":       0,
+		"DELIVERY_SETTLEMENT_STATUS_PENDING":       1,
+		"DELIVERY_SETTLEMENT_STATUS_SETTLED":       2,
+		"DELIVERY_SETTLEMENT_STATUS_FAILED":        3,
+		"DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW": 4,
+	}
+)
+
+func (x DeliverySettlementStatus) Enum() *DeliverySettlementStatus {
+	p := new(DeliverySettlementStatus)
+	*p = x
+	return p
+}
+
+func (x DeliverySettlementStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DeliverySettlementStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[36].Descriptor()
+}
+
+func (DeliverySettlementStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[36]
+}
+
+func (x DeliverySettlementStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DeliverySettlementStatus.Descriptor instead.
+func (DeliverySettlementStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{36}
+}
+
 var File_proto_trade_enum_proto protoreflect.FileDescriptor
 
 const file_proto_trade_enum_proto_rawDesc = "" +
@@ -1225,7 +2196,121 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\x14TRIGGER_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
 	"\x17TRIGGER_TYPE_LAST_PRICE\x10\x01\x12\x1b\n" +
 	"\x17TRIGGER_TYPE_MARK_PRICE\x10\x02\x12\x1c\n" +
-	"\x18TRIGGER_TYPE_INDEX_PRICE\x10\x03B\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
+	"\x18TRIGGER_TYPE_INDEX_PRICE\x10\x03*j\n" +
+	"\x0fSecondsDrawRule\x12\x1d\n" +
+	"\x19SECONDS_DRAW_RULE_UNKNOWN\x10\x00\x12\x1c\n" +
+	"\x18SECONDS_DRAW_RULE_REFUND\x10\x01\x12\x1a\n" +
+	"\x16SECONDS_DRAW_RULE_LOSE\x10\x02*p\n" +
+	"\x11ClosePositionType\x12\x1e\n" +
+	"\x1aCLOSE_POSITION_TYPE_NORMAL\x10\x00\x12\x1c\n" +
+	"\x18CLOSE_POSITION_TYPE_LONG\x10\x01\x12\x1d\n" +
+	"\x19CLOSE_POSITION_TYPE_SHORT\x10\x02*g\n" +
+	"\x10SecondsDirection\x12\x1d\n" +
+	"\x19SECONDS_DIRECTION_UNKNOWN\x10\x00\x12\x18\n" +
+	"\x14SECONDS_DIRECTION_UP\x10\x01\x12\x1a\n" +
+	"\x16SECONDS_DIRECTION_DOWN\x10\x02*\x8e\x01\n" +
+	"\rSecondsResult\x12\x1a\n" +
+	"\x16SECONDS_RESULT_PENDING\x10\x00\x12\x16\n" +
+	"\x12SECONDS_RESULT_WIN\x10\x01\x12\x17\n" +
+	"\x13SECONDS_RESULT_LOSE\x10\x02\x12\x17\n" +
+	"\x13SECONDS_RESULT_DRAW\x10\x03\x12\x17\n" +
+	"\x13SECONDS_RESULT_VOID\x10\x04*\xe4\x02\n" +
+	"\x17SecondsSettlementStatus\x12,\n" +
+	"(SECONDS_SETTLEMENT_STATUS_PENDING_FREEZE\x10\x00\x12(\n" +
+	"$SECONDS_SETTLEMENT_STATUS_ACTIVATING\x10\x01\x12$\n" +
+	" SECONDS_SETTLEMENT_STATUS_ACTIVE\x10\x02\x12&\n" +
+	"\"SECONDS_SETTLEMENT_STATUS_SETTLING\x10\x03\x12%\n" +
+	"!SECONDS_SETTLEMENT_STATUS_SETTLED\x10\x04\x12'\n" +
+	"#SECONDS_SETTLEMENT_STATUS_REFUNDING\x10\x05\x12&\n" +
+	"\"SECONDS_SETTLEMENT_STATUS_REFUNDED\x10\x06\x12+\n" +
+	"'SECONDS_SETTLEMENT_STATUS_MANUAL_REVIEW\x10\a*\xf6\x01\n" +
+	"\x14FillSettlementStatus\x12\"\n" +
+	"\x1eFILL_SETTLEMENT_STATUS_UNKNOWN\x10\x00\x12\"\n" +
+	"\x1eFILL_SETTLEMENT_STATUS_PENDING\x10\x01\x12%\n" +
+	"!FILL_SETTLEMENT_STATUS_PROCESSING\x10\x02\x12\"\n" +
+	"\x1eFILL_SETTLEMENT_STATUS_SETTLED\x10\x03\x12!\n" +
+	"\x1dFILL_SETTLEMENT_STATUS_FAILED\x10\x04\x12(\n" +
+	"$FILL_SETTLEMENT_STATUS_MANUAL_REVIEW\x10\x05*\xf2\x01\n" +
+	"\x0ePositionStatus\x12\x1b\n" +
+	"\x17POSITION_STATUS_UNKNOWN\x10\x00\x12\x1a\n" +
+	"\x16POSITION_STATUS_NORMAL\x10\x01\x12'\n" +
+	"#POSITION_STATUS_PENDING_LIQUIDATION\x10\x02\x12\x1f\n" +
+	"\x1bPOSITION_STATUS_LIQUIDATING\x10\x03\x12\x1e\n" +
+	"\x1aPOSITION_STATUS_DELIVERING\x10\x04\x12\x1a\n" +
+	"\x16POSITION_STATUS_CLOSED\x10\x05\x12!\n" +
+	"\x1dPOSITION_STATUS_MANUAL_REVIEW\x10\x06*c\n" +
+	"\tRiskLevel\x12\x16\n" +
+	"\x12RISK_LEVEL_DEFAULT\x10\x00\x12\x12\n" +
+	"\x0eRISK_LEVEL_LOW\x10\x01\x12\x15\n" +
+	"\x11RISK_LEVEL_MEDIUM\x10\x02\x12\x13\n" +
+	"\x0fRISK_LEVEL_HIGH\x10\x03*\xd2\x01\n" +
+	"\x18SecondsPriceSnapshotType\x12'\n" +
+	"#SECONDS_PRICE_SNAPSHOT_TYPE_UNKNOWN\x10\x00\x12%\n" +
+	"!SECONDS_PRICE_SNAPSHOT_TYPE_START\x10\x01\x124\n" +
+	"0SECONDS_PRICE_SNAPSHOT_TYPE_SETTLEMENT_CANDIDATE\x10\x02\x120\n" +
+	",SECONDS_PRICE_SNAPSHOT_TYPE_FINAL_SETTLEMENT\x10\x03*\xd1\x02\n" +
+	"\x16AssetReservationStatus\x12$\n" +
+	" ASSET_RESERVATION_STATUS_UNKNOWN\x10\x00\x12%\n" +
+	"!ASSET_RESERVATION_STATUS_FREEZING\x10\x01\x12#\n" +
+	"\x1fASSET_RESERVATION_STATUS_FROZEN\x10\x02\x12*\n" +
+	"&ASSET_RESERVATION_STATUS_PART_CONSUMED\x10\x03\x12%\n" +
+	"!ASSET_RESERVATION_STATUS_CONSUMED\x10\x04\x12&\n" +
+	"\"ASSET_RESERVATION_STATUS_RELEASING\x10\x05\x12%\n" +
+	"!ASSET_RESERVATION_STATUS_RELEASED\x10\x06\x12#\n" +
+	"\x1fASSET_RESERVATION_STATUS_FAILED\x10\a*\xeb\x02\n" +
+	"\x1bSettlementInstructionAction\x12)\n" +
+	"%SETTLEMENT_INSTRUCTION_ACTION_UNKNOWN\x10\x00\x120\n" +
+	",SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN\x10\x01\x120\n" +
+	",SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN\x10\x02\x122\n" +
+	".SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE\x10\x03\x12,\n" +
+	"(SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE\x10\x04\x12*\n" +
+	"&SETTLEMENT_INSTRUCTION_ACTION_POST_PNL\x10\x05\x12/\n" +
+	"+SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN\x10\x06*\xa7\x02\n" +
+	"\x1bSettlementInstructionStatus\x12)\n" +
+	"%SETTLEMENT_INSTRUCTION_STATUS_UNKNOWN\x10\x00\x12)\n" +
+	"%SETTLEMENT_INSTRUCTION_STATUS_PENDING\x10\x01\x12,\n" +
+	"(SETTLEMENT_INSTRUCTION_STATUS_PROCESSING\x10\x02\x12)\n" +
+	"%SETTLEMENT_INSTRUCTION_STATUS_SUCCESS\x10\x03\x12(\n" +
+	"$SETTLEMENT_INSTRUCTION_STATUS_FAILED\x10\x04\x12/\n" +
+	"+SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW\x10\x05*\xb5\x02\n" +
+	"\x11LiquidationStatus\x12\x1e\n" +
+	"\x1aLIQUIDATION_STATUS_UNKNOWN\x10\x00\x12'\n" +
+	"#LIQUIDATION_STATUS_PENDING_TAKEOVER\x10\x01\x12\"\n" +
+	"\x1eLIQUIDATION_STATUS_LIQUIDATING\x10\x02\x12(\n" +
+	"$LIQUIDATION_STATUS_PARTIAL_RECOVERED\x10\x03\x12 \n" +
+	"\x1cLIQUIDATION_STATUS_COMPLETED\x10\x04\x12%\n" +
+	"!LIQUIDATION_STATUS_INSURANCE_FUND\x10\x05\x12\x1a\n" +
+	"\x16LIQUIDATION_STATUS_ADL\x10\x06\x12$\n" +
+	" LIQUIDATION_STATUS_MANUAL_REVIEW\x10\a*\xed\x01\n" +
+	"\x12FundingBatchStatus\x12 \n" +
+	"\x1cFUNDING_BATCH_STATUS_UNKNOWN\x10\x00\x12%\n" +
+	"!FUNDING_BATCH_STATUS_PRICE_LOCKED\x10\x01\x12!\n" +
+	"\x1dFUNDING_BATCH_STATUS_SETTLING\x10\x02\x12\"\n" +
+	"\x1eFUNDING_BATCH_STATUS_COMPLETED\x10\x03\x12\x1f\n" +
+	"\x1bFUNDING_BATCH_STATUS_FAILED\x10\x04\x12&\n" +
+	"\"FUNDING_BATCH_STATUS_MANUAL_REVIEW\x10\x05*\xe1\x01\n" +
+	"\x17FundingSettlementStatus\x12%\n" +
+	"!FUNDING_SETTLEMENT_STATUS_UNKNOWN\x10\x00\x12%\n" +
+	"!FUNDING_SETTLEMENT_STATUS_PENDING\x10\x01\x12%\n" +
+	"!FUNDING_SETTLEMENT_STATUS_SETTLED\x10\x02\x12$\n" +
+	" FUNDING_SETTLEMENT_STATUS_FAILED\x10\x03\x12+\n" +
+	"'FUNDING_SETTLEMENT_STATUS_MANUAL_REVIEW\x10\x04*\xeb\x02\n" +
+	"\x13DeliveryBatchStatus\x12!\n" +
+	"\x1dDELIVERY_BATCH_STATUS_UNKNOWN\x10\x00\x12$\n" +
+	" DELIVERY_BATCH_STATUS_CLOSE_ONLY\x10\x01\x12*\n" +
+	"&DELIVERY_BATCH_STATUS_MATCHING_STOPPED\x10\x02\x12'\n" +
+	"#DELIVERY_BATCH_STATUS_PRICE_LOCKING\x10\x03\x12\"\n" +
+	"\x1eDELIVERY_BATCH_STATUS_SETTLING\x10\x04\x12#\n" +
+	"\x1fDELIVERY_BATCH_STATUS_COMPLETED\x10\x05\x12 \n" +
+	"\x1cDELIVERY_BATCH_STATUS_FAILED\x10\x06\x12'\n" +
+	"#DELIVERY_BATCH_STATUS_MANUAL_REVIEW\x10\a\x12\"\n" +
+	"\x1eDELIVERY_BATCH_STATUS_ARCHIVED\x10\b*\xe7\x01\n" +
+	"\x18DeliverySettlementStatus\x12&\n" +
+	"\"DELIVERY_SETTLEMENT_STATUS_UNKNOWN\x10\x00\x12&\n" +
+	"\"DELIVERY_SETTLEMENT_STATUS_PENDING\x10\x01\x12&\n" +
+	"\"DELIVERY_SETTLEMENT_STATUS_SETTLED\x10\x02\x12%\n" +
+	"!DELIVERY_SETTLEMENT_STATUS_FAILED\x10\x03\x12,\n" +
+	"(DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW\x10\x04B\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
 
 var (
 	file_proto_trade_enum_proto_rawDescOnce sync.Once
@@ -1239,28 +2324,45 @@ func file_proto_trade_enum_proto_rawDescGZIP() []byte {
 	return file_proto_trade_enum_proto_rawDescData
 }
 
-var file_proto_trade_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 20)
+var file_proto_trade_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 37)
 var file_proto_trade_enum_proto_goTypes = []any{
-	(ProductType)(0),        // 0: trade.ProductType
-	(ContractValueType)(0),  // 1: trade.ContractValueType
-	(ContractType)(0),       // 2: trade.ContractType
-	(SymbolStatus)(0),       // 3: trade.SymbolStatus
-	(PositionSide)(0),       // 4: trade.PositionSide
-	(OrderType)(0),          // 5: trade.OrderType
-	(TriggerKind)(0),        // 6: trade.TriggerKind
-	(TimeInForce)(0),        // 7: trade.TimeInForce
-	(OrderStatus)(0),        // 8: trade.OrderStatus
-	(MarginMode)(0),         // 9: trade.MarginMode
-	(PositionMode)(0),       // 10: trade.PositionMode
-	(LiquidityType)(0),      // 11: trade.LiquidityType
-	(SourceType)(0),         // 12: trade.SourceType
-	(OrderSourceType)(0),    // 13: trade.OrderSourceType
-	(RiskCheckType)(0),      // 14: trade.RiskCheckType
-	(RiskCheckResult)(0),    // 15: trade.RiskCheckResult
-	(EventStatus)(0),        // 16: trade.EventStatus
-	(PositionActionType)(0), // 17: trade.PositionActionType
-	(CancelSource)(0),       // 18: trade.CancelSource
-	(TriggerType)(0),        // 19: trade.TriggerType
+	(ProductType)(0),                 // 0: trade.ProductType
+	(ContractValueType)(0),           // 1: trade.ContractValueType
+	(ContractType)(0),                // 2: trade.ContractType
+	(SymbolStatus)(0),                // 3: trade.SymbolStatus
+	(PositionSide)(0),                // 4: trade.PositionSide
+	(OrderType)(0),                   // 5: trade.OrderType
+	(TriggerKind)(0),                 // 6: trade.TriggerKind
+	(TimeInForce)(0),                 // 7: trade.TimeInForce
+	(OrderStatus)(0),                 // 8: trade.OrderStatus
+	(MarginMode)(0),                  // 9: trade.MarginMode
+	(PositionMode)(0),                // 10: trade.PositionMode
+	(LiquidityType)(0),               // 11: trade.LiquidityType
+	(SourceType)(0),                  // 12: trade.SourceType
+	(OrderSourceType)(0),             // 13: trade.OrderSourceType
+	(RiskCheckType)(0),               // 14: trade.RiskCheckType
+	(RiskCheckResult)(0),             // 15: trade.RiskCheckResult
+	(EventStatus)(0),                 // 16: trade.EventStatus
+	(PositionActionType)(0),          // 17: trade.PositionActionType
+	(CancelSource)(0),                // 18: trade.CancelSource
+	(TriggerType)(0),                 // 19: trade.TriggerType
+	(SecondsDrawRule)(0),             // 20: trade.SecondsDrawRule
+	(ClosePositionType)(0),           // 21: trade.ClosePositionType
+	(SecondsDirection)(0),            // 22: trade.SecondsDirection
+	(SecondsResult)(0),               // 23: trade.SecondsResult
+	(SecondsSettlementStatus)(0),     // 24: trade.SecondsSettlementStatus
+	(FillSettlementStatus)(0),        // 25: trade.FillSettlementStatus
+	(PositionStatus)(0),              // 26: trade.PositionStatus
+	(RiskLevel)(0),                   // 27: trade.RiskLevel
+	(SecondsPriceSnapshotType)(0),    // 28: trade.SecondsPriceSnapshotType
+	(AssetReservationStatus)(0),      // 29: trade.AssetReservationStatus
+	(SettlementInstructionAction)(0), // 30: trade.SettlementInstructionAction
+	(SettlementInstructionStatus)(0), // 31: trade.SettlementInstructionStatus
+	(LiquidationStatus)(0),           // 32: trade.LiquidationStatus
+	(FundingBatchStatus)(0),          // 33: trade.FundingBatchStatus
+	(FundingSettlementStatus)(0),     // 34: trade.FundingSettlementStatus
+	(DeliveryBatchStatus)(0),         // 35: trade.DeliveryBatchStatus
+	(DeliverySettlementStatus)(0),    // 36: trade.DeliverySettlementStatus
 }
 var file_proto_trade_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -1280,7 +2382,7 @@ func file_proto_trade_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_trade_enum_proto_rawDesc), len(file_proto_trade_enum_proto_rawDesc)),
-			NumEnums:      20,
+			NumEnums:      37,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

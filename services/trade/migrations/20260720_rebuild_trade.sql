@@ -2,7 +2,10 @@
 -- 删除完成后，执行 services/trade/trade.sql 创建最终结构。
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `t_contract_delivery_settlement`;
+DROP TABLE IF EXISTS `t_contract_delivery_batch`;
 DROP TABLE IF EXISTS `t_contract_funding_settlement`;
+DROP TABLE IF EXISTS `t_contract_funding_batch`;
+DROP TABLE IF EXISTS `t_contract_liquidation`;
 DROP TABLE IF EXISTS `t_trade_settlement_instruction`;
 DROP TABLE IF EXISTS `t_trade_asset_reservation`;
 DROP TABLE IF EXISTS `t_trade_event_inbox`;
@@ -11,6 +14,7 @@ DROP TABLE IF EXISTS `t_risk_order_check_log`;
 DROP TABLE IF EXISTS `t_risk_user_symbol_limit`;
 DROP TABLE IF EXISTS `t_risk_user_trade_limit`;
 DROP TABLE IF EXISTS `t_trade_symbol_leverage_default`;
+DROP TABLE IF EXISTS `t_contract_risk_limit_tier`;
 DROP TABLE IF EXISTS `t_trade_symbol_leverage_config`;
 DROP TABLE IF EXISTS `t_contract_leverage_config`;
 DROP TABLE IF EXISTS `t_contract_position_history`;
@@ -19,6 +23,7 @@ DROP TABLE IF EXISTS `t_contract_position`;
 DROP TABLE IF EXISTS `t_trade_cancel_log`;
 DROP TABLE IF EXISTS `t_trade_fill`;
 DROP TABLE IF EXISTS `t_trade_order_seconds`;
+DROP TABLE IF EXISTS `t_trade_seconds_price_snapshot`;
 DROP TABLE IF EXISTS `t_trade_order_contract`;
 DROP TABLE IF EXISTS `t_trade_order_spot`;
 DROP TABLE IF EXISTS `t_trade_order`;

@@ -51,9 +51,14 @@ func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(in *trade.SetSecond
 	if item == nil {
 		item = &models.TTradeSymbolSeconds{TenantId: symbol.TenantId, SymbolId: in.SymbolId, DurationSeconds: in.DurationSeconds, UpEnabled: int64(common.Enable_ENABLE_ENABLED), DownEnabled: int64(common.Enable_ENABLE_ENABLED), CreateTimes: now}
 	}
-	item.PayoutRate, item.DrawRule = mustParseFloat(in.PayoutRate), in.DrawRule
+	item.PayoutRate, item.DrawRule = mustParseFloat(in.PayoutRate), int64(in.DrawRule)
+	item.FeeRate = mustParseFloat(in.FeeRate)
 	item.StartPriceSource, item.SettlementPriceSource = in.StartPriceSource, in.SettlementPriceSource
 	item.QuoteValidityMs = in.QuoteValidityMs
+	item.SettlementWindowMs = in.SettlementWindowMs
+	item.SettlementPriceAlgorithm = in.SettlementPriceAlgorithm
+	item.DrawTolerance = mustParseFloat(in.DrawTolerance)
+	item.MaxExposureAmount = mustParseFloat(in.MaxExposureAmount)
 	item.MinStake, item.MaxStake = mustParseFloat(in.MinStake), mustParseFloat(in.MaxStake)
 	item.UpEnabled = enableToModel(in.UpEnabled, item.UpEnabled)
 	item.DownEnabled = enableToModel(in.DownEnabled, item.DownEnabled)

@@ -28,11 +28,18 @@ type ServiceContext struct {
 	TradeOrderSpotModel         models.TTradeOrderSpotModel
 	TradeOrderContractModel     models.TTradeOrderContractModel
 	TradeOrderSecondsModel      models.TTradeOrderSecondsModel
+	TradeSecondsPriceModel      models.TTradeSecondsPriceSnapshotModel
 	TradeFillModel              models.TTradeFillModel
 	TradeCancelLogModel         models.TTradeCancelLogModel
 	ContractPositionModel       models.TContractPositionModel
 	ContractPositionHistModel   models.TContractPositionHistoryModel
 	ContractMarginSnapshotModel models.TContractMarginSnapshotModel
+	ContractRiskLimitTierModel  models.TContractRiskLimitTierModel
+	ContractLiquidationModel    models.TContractLiquidationModel
+	ContractFundingBatchModel   models.TContractFundingBatchModel
+	ContractFundingSettleModel  models.TContractFundingSettlementModel
+	ContractDeliveryBatchModel  models.TContractDeliveryBatchModel
+	ContractDeliverySettleModel models.TContractDeliverySettlementModel
 	ContractUserConfigModel     models.TContractUserConfigModel
 	TradeSymbolSecondsModel     models.TTradeSymbolSecondsModel
 	TradeSymbolSessionModel     models.TTradeSymbolSessionModel
@@ -43,6 +50,9 @@ type ServiceContext struct {
 	RiskUserSymbolLimitModel    models.TRiskUserSymbolLimitModel
 	RiskOrderCheckLogModel      models.TRiskOrderCheckLogModel
 	BizTradeEventModel          models.TBizTradeEventModel
+	TradeEventInboxModel        models.TTradeEventInboxModel
+	TradeAssetReservationModel  models.TTradeAssetReservationModel
+	TradeSettlementInstrModel   models.TTradeSettlementInstructionModel
 	AssetClient                 asset.AssetInternalClient
 }
 
@@ -63,11 +73,18 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TradeOrderSpotModel:         models.NewTTradeOrderSpotModel(conn, c.CacheRedis),
 		TradeOrderContractModel:     models.NewTTradeOrderContractModel(conn, c.CacheRedis),
 		TradeOrderSecondsModel:      models.NewTTradeOrderSecondsModel(conn, c.CacheRedis),
+		TradeSecondsPriceModel:      models.NewTTradeSecondsPriceSnapshotModel(conn, c.CacheRedis),
 		TradeFillModel:              models.NewTTradeFillModel(conn, c.CacheRedis),
 		TradeCancelLogModel:         models.NewTTradeCancelLogModel(conn, c.CacheRedis),
 		ContractPositionModel:       models.NewTContractPositionModel(conn, c.CacheRedis),
 		ContractPositionHistModel:   models.NewTContractPositionHistoryModel(conn, c.CacheRedis),
 		ContractMarginSnapshotModel: models.NewTContractMarginSnapshotModel(conn, c.CacheRedis),
+		ContractRiskLimitTierModel:  models.NewTContractRiskLimitTierModel(conn, c.CacheRedis),
+		ContractLiquidationModel:    models.NewTContractLiquidationModel(conn, c.CacheRedis),
+		ContractFundingBatchModel:   models.NewTContractFundingBatchModel(conn, c.CacheRedis),
+		ContractFundingSettleModel:  models.NewTContractFundingSettlementModel(conn, c.CacheRedis),
+		ContractDeliveryBatchModel:  models.NewTContractDeliveryBatchModel(conn, c.CacheRedis),
+		ContractDeliverySettleModel: models.NewTContractDeliverySettlementModel(conn, c.CacheRedis),
 		ContractUserConfigModel:     models.NewTContractUserConfigModel(conn, c.CacheRedis),
 		TradeSymbolSecondsModel:     models.NewTTradeSymbolSecondsModel(conn, c.CacheRedis),
 		TradeSymbolSessionModel:     models.NewTTradeSymbolSessionModel(conn, c.CacheRedis),
@@ -78,6 +95,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RiskUserSymbolLimitModel:    models.NewTRiskUserSymbolLimitModel(conn, c.CacheRedis),
 		RiskOrderCheckLogModel:      models.NewTRiskOrderCheckLogModel(conn, c.CacheRedis),
 		BizTradeEventModel:          models.NewTBizTradeEventModel(conn, c.CacheRedis),
+		TradeEventInboxModel:        models.NewTTradeEventInboxModel(conn, c.CacheRedis),
+		TradeAssetReservationModel:  models.NewTTradeAssetReservationModel(conn, c.CacheRedis),
+		TradeSettlementInstrModel:   models.NewTTradeSettlementInstructionModel(conn, c.CacheRedis),
 		AssetClient:                 asset.NewAssetInternalClient(assetCli.Conn()),
 	}
 }

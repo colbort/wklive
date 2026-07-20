@@ -25,9 +25,9 @@ var (
 	tTradeOrderRowsExpectAutoSet   = strings.Join(stringx.Remove(tTradeOrderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tTradeOrderRowsWithPlaceHolder = strings.Join(stringx.Remove(tTradeOrderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTTradeOrderIdPrefix                          = "cache:tTradeOrder:id:"
-	cacheTTradeOrderTenantIdOrderNoPrefix             = "cache:tTradeOrder:tenantId:orderNo:"
-	cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix = "cache:tTradeOrder:tenantId:userId:clientOrderId:"
+	cacheTTradeOrderIdPrefix                                     = "cache:tTradeOrder:id:"
+	cacheTTradeOrderTenantIdOrderNoPrefix                        = "cache:tTradeOrder:tenantId:orderNo:"
+	cacheTTradeOrderTenantIdUserIdProductTypeClientOrderIdPrefix = "cache:tTradeOrder:tenantId:userId:productType:clientOrderId:"
 )
 
 type (
@@ -35,7 +35,7 @@ type (
 		Insert(ctx context.Context, data *TTradeOrder) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TTradeOrder, error)
 		FindOneByTenantIdOrderNo(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error)
-		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId int64, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error)
+		FindOneByTenantIdUserIdProductTypeClientOrderId(ctx context.Context, tenantId int64, userId int64, productType int64, clientOrderId sql.NullString) (*TTradeOrder, error)
 		Update(ctx context.Context, data *TTradeOrder) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -50,6 +50,7 @@ type (
 		TenantId          int64           `db:"tenant_id"`           // 租户ID
 		OrderNo           string          `db:"order_no"`            // 平台订单号，全租户内唯一
 		ClientOrderId     sql.NullString  `db:"client_order_id"`     // 客户端订单号，可空；非空时用于幂等控制
+		RequestHash       string          `db:"request_hash"`        // 规范化下单参数摘要，用于识别幂等键参数冲突
 		UserId            int64           `db:"user_id"`             // 用户ID
 		SymbolId          int64           `db:"symbol_id"`           // 交易标的ID
 		ProductType       int64           `db:"product_type"`        // 产品大类快照：1现货 2衍生品 3秒合约
@@ -65,16 +66,23 @@ type (
 		Amount            decimal.Decimal `db:"amount"`              // 委托总额或名义价值
 		FilledQty         decimal.Decimal `db:"filled_qty"`          // 累计成交数量
 		FilledAmount      decimal.Decimal `db:"filled_amount"`       // 累计成交金额
+		CanceledQty       decimal.Decimal `db:"canceled_qty"`        // Matcher最终确认的撤销或过期数量
 		AvgPrice          decimal.Decimal `db:"avg_price"`           // 平均成交价格
 		Fee               decimal.Decimal `db:"fee"`                 // 累计手续费
 		FeeAsset          string          `db:"fee_asset"`           // 手续费币种
 		Source            int64           `db:"source"`              // 订单来源：1App 2Web 3API 4System
 		IsReduceOnly      int64           `db:"is_reduce_only"`      // 是否只减仓：1是 2否
+		IsClosePosition   int64           `db:"is_close_position"`   // 是否在触发/执行时关闭全部可平仓位：1是 2否
 		TriggerPrice      decimal.Decimal `db:"trigger_price"`       // 触发价格，非条件单则为0
 		TriggerType       int64           `db:"trigger_type"`        // 触发价格类型：0无 1最新价 2标记价 3指数价
 		TriggerKind       int64           `db:"trigger_kind"`        // 触发用途：0无 1条件单 2止盈 3止损
+		OcoGroupNo        string          `db:"oco_group_no"`        // OCO关联组号，空表示无关联
+		ExpireAt          int64           `db:"expire_at"`           // GTD到期时间，0表示不适用
+		TriggeredAt       int64           `db:"triggered_at"`        // 条件单实际触发时间
+		CompletionReason  string          `db:"completion_reason"`   // 终止原因，如FILLED、DUST、NO_LIQUIDITY、PRICE_PROTECTION
 		CancelReason      string          `db:"cancel_reason"`       // 撤单原因或拒单原因
 		BizExt            sql.NullString  `db:"biz_ext"`             // 业务扩展字段，JSON格式
+		Version           int64           `db:"version"`             // 订单并发状态转移版本号
 		CreateTimes       int64           `db:"create_times"`        // 创建时间，毫秒时间戳
 		UpdateTimes       int64           `db:"update_times"`        // 更新时间，毫秒时间戳
 	}
@@ -95,11 +103,11 @@ func (m *defaultTTradeOrderModel) Delete(ctx context.Context, id int64) error {
 
 	tTradeOrderIdKey := fmt.Sprintf("%s%v", cacheTTradeOrderIdPrefix, id)
 	tTradeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
-	tTradeOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix, data.TenantId, data.UserId, data.ClientOrderId)
+	tTradeOrderTenantIdUserIdProductTypeClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeOrderTenantIdUserIdProductTypeClientOrderIdPrefix, data.TenantId, data.UserId, data.ProductType, data.ClientOrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tTradeOrderIdKey, tTradeOrderTenantIdOrderNoKey, tTradeOrderTenantIdUserIdClientOrderIdKey)
+	}, tTradeOrderIdKey, tTradeOrderTenantIdOrderNoKey, tTradeOrderTenantIdUserIdProductTypeClientOrderIdKey)
 	return err
 }
 
@@ -140,12 +148,12 @@ func (m *defaultTTradeOrderModel) FindOneByTenantIdOrderNo(ctx context.Context, 
 	}
 }
 
-func (m *defaultTTradeOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId int64, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error) {
-	tTradeOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix, tenantId, userId, clientOrderId)
+func (m *defaultTTradeOrderModel) FindOneByTenantIdUserIdProductTypeClientOrderId(ctx context.Context, tenantId int64, userId int64, productType int64, clientOrderId sql.NullString) (*TTradeOrder, error) {
+	tTradeOrderTenantIdUserIdProductTypeClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeOrderTenantIdUserIdProductTypeClientOrderIdPrefix, tenantId, userId, productType, clientOrderId)
 	var resp TTradeOrder
-	err := m.QueryRowIndexCtx(ctx, &resp, tTradeOrderTenantIdUserIdClientOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `client_order_id` = ? limit 1", tTradeOrderRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, clientOrderId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tTradeOrderTenantIdUserIdProductTypeClientOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `product_type` = ? and `client_order_id` = ? limit 1", tTradeOrderRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, productType, clientOrderId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -163,11 +171,11 @@ func (m *defaultTTradeOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx conte
 func (m *defaultTTradeOrderModel) Insert(ctx context.Context, data *TTradeOrder) (sql.Result, error) {
 	tTradeOrderIdKey := fmt.Sprintf("%s%v", cacheTTradeOrderIdPrefix, data.Id)
 	tTradeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
-	tTradeOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix, data.TenantId, data.UserId, data.ClientOrderId)
+	tTradeOrderTenantIdUserIdProductTypeClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeOrderTenantIdUserIdProductTypeClientOrderIdPrefix, data.TenantId, data.UserId, data.ProductType, data.ClientOrderId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.ClientOrderId, data.UserId, data.SymbolId, data.ProductType, data.ContractType, data.ContractValueType, data.Side, data.PositionSide, data.OrderType, data.TimeInForce, data.Status, data.Price, data.Qty, data.Amount, data.FilledQty, data.FilledAmount, data.AvgPrice, data.Fee, data.FeeAsset, data.Source, data.IsReduceOnly, data.TriggerPrice, data.TriggerType, data.TriggerKind, data.CancelReason, data.BizExt, data.CreateTimes, data.UpdateTimes)
-	}, tTradeOrderIdKey, tTradeOrderTenantIdOrderNoKey, tTradeOrderTenantIdUserIdClientOrderIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.ClientOrderId, data.RequestHash, data.UserId, data.SymbolId, data.ProductType, data.ContractType, data.ContractValueType, data.Side, data.PositionSide, data.OrderType, data.TimeInForce, data.Status, data.Price, data.Qty, data.Amount, data.FilledQty, data.FilledAmount, data.CanceledQty, data.AvgPrice, data.Fee, data.FeeAsset, data.Source, data.IsReduceOnly, data.IsClosePosition, data.TriggerPrice, data.TriggerType, data.TriggerKind, data.OcoGroupNo, data.ExpireAt, data.TriggeredAt, data.CompletionReason, data.CancelReason, data.BizExt, data.Version, data.CreateTimes, data.UpdateTimes)
+	}, tTradeOrderIdKey, tTradeOrderTenantIdOrderNoKey, tTradeOrderTenantIdUserIdProductTypeClientOrderIdKey)
 	return ret, err
 }
 
@@ -179,11 +187,11 @@ func (m *defaultTTradeOrderModel) Update(ctx context.Context, newData *TTradeOrd
 
 	tTradeOrderIdKey := fmt.Sprintf("%s%v", cacheTTradeOrderIdPrefix, data.Id)
 	tTradeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
-	tTradeOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix, data.TenantId, data.UserId, data.ClientOrderId)
+	tTradeOrderTenantIdUserIdProductTypeClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeOrderTenantIdUserIdProductTypeClientOrderIdPrefix, data.TenantId, data.UserId, data.ProductType, data.ClientOrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.ClientOrderId, newData.UserId, newData.SymbolId, newData.ProductType, newData.ContractType, newData.ContractValueType, newData.Side, newData.PositionSide, newData.OrderType, newData.TimeInForce, newData.Status, newData.Price, newData.Qty, newData.Amount, newData.FilledQty, newData.FilledAmount, newData.AvgPrice, newData.Fee, newData.FeeAsset, newData.Source, newData.IsReduceOnly, newData.TriggerPrice, newData.TriggerType, newData.TriggerKind, newData.CancelReason, newData.BizExt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tTradeOrderIdKey, tTradeOrderTenantIdOrderNoKey, tTradeOrderTenantIdUserIdClientOrderIdKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.ClientOrderId, newData.RequestHash, newData.UserId, newData.SymbolId, newData.ProductType, newData.ContractType, newData.ContractValueType, newData.Side, newData.PositionSide, newData.OrderType, newData.TimeInForce, newData.Status, newData.Price, newData.Qty, newData.Amount, newData.FilledQty, newData.FilledAmount, newData.CanceledQty, newData.AvgPrice, newData.Fee, newData.FeeAsset, newData.Source, newData.IsReduceOnly, newData.IsClosePosition, newData.TriggerPrice, newData.TriggerType, newData.TriggerKind, newData.OcoGroupNo, newData.ExpireAt, newData.TriggeredAt, newData.CompletionReason, newData.CancelReason, newData.BizExt, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tTradeOrderIdKey, tTradeOrderTenantIdOrderNoKey, tTradeOrderTenantIdUserIdProductTypeClientOrderIdKey)
 	return err
 }
 

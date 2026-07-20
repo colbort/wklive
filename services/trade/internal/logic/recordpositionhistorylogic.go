@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 
 	"wklive/common/helper"
 	"wklive/proto/trade"
@@ -30,6 +31,12 @@ func (l *RecordPositionHistoryLogic) RecordPositionHistory(in *trade.RecordPosit
 	if in.History == nil {
 		return &trade.InternalCommonResp{Base: helper.OkResp()}, nil
 	}
+	actionKey := fmt.Sprintf("manual:%d:%d:%d:%d", in.History.PositionId, in.History.ActionType, in.History.OperatorId, in.History.CreateTimes)
+	if in.History.RefFillId > 0 {
+		actionKey = fmt.Sprintf("fill:%d:%d:%d", in.History.RefFillId, in.History.PositionId, in.History.ActionType)
+	} else if in.History.RefOrderId > 0 {
+		actionKey = fmt.Sprintf("order:%d:%d:%d", in.History.RefOrderId, in.History.PositionId, in.History.ActionType)
+	}
 	_, err := l.svcCtx.ContractPositionHistModel.Insert(l.ctx, &models.TContractPositionHistory{
 		TenantId:             in.History.TenantId,
 		PositionId:           in.History.PositionId,
@@ -39,6 +46,7 @@ func (l *RecordPositionHistoryLogic) RecordPositionHistory(in *trade.RecordPosit
 		ContractValueType:    int64(in.History.ContractValueType),
 		PositionSide:         int64(in.History.PositionSide),
 		ActionType:           int64(in.History.ActionType),
+		ActionKey:            actionKey,
 		BeforeQty:            mustParseFloat(in.History.BeforeQty),
 		AfterQty:             mustParseFloat(in.History.AfterQty),
 		BeforeAvailQty:       mustParseFloat(in.History.BeforeAvailQty),

@@ -68,10 +68,17 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 	cfg.FundingIntervalMinutes = int64(in.FundingIntervalMinutes)
 	cfg.FundingRateCap = mustParseFloat(in.FundingRateCap)
 	cfg.FundingRateFloor = mustParseFloat(in.FundingRateFloor)
+	cfg.FundingRateSource = in.FundingRateSource
 	cfg.IndexSymbol = in.IndexSymbol
 	cfg.MarkPriceSource = in.MarkPriceSource
 	cfg.SettlementPriceSource = in.SettlementPriceSource
 	cfg.DeliveryTime = in.DeliveryTime
+	cfg.OpenCutoffTime = in.OpenCutoffTime
+	cfg.MatchingStopTime = in.MatchingStopTime
+	cfg.SettlementWindowSeconds = in.SettlementWindowSeconds
+	cfg.SettlementPriceAlgorithm = in.SettlementPriceAlgorithm
+	cfg.DeliveryFeeRate = mustParseFloat(in.DeliveryFeeRate)
+	cfg.LiquidationFeeRate = mustParseFloat(in.LiquidationFeeRate)
 	cfg.SupportCross = in.SupportCross
 	cfg.SupportIsolated = in.SupportIsolated
 	cfg.OpenLongEnabled = enableToModel(in.OpenLongEnabled, cfg.OpenLongEnabled)
