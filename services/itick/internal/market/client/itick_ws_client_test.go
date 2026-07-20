@@ -1,11 +1,19 @@
 package client
 
 import (
+	"encoding/json"
 	"testing"
 
 	"wklive/services/itick/internal/market/cache"
 	"wklive/services/itick/internal/market/types"
 )
+
+func TestRawDecimalTokenPreservesSourcePrecision(t *testing.T) {
+	got := rawDecimalToken(json.RawMessage(`{"ld":12345.678901234567890123}`), "ld")
+	if got != "12345.678901234567890123" {
+		t.Fatalf("raw decimal = %q", got)
+	}
+}
 
 func TestReplaceDesiredSubscriptionsReplacesSnapshot(t *testing.T) {
 	c := NewItickWsClient("ws://example.test/crypto", "", "crypto", nil, nil, nil)

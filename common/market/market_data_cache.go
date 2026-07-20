@@ -49,7 +49,7 @@ type MarketDataCache struct {
 	rdb           *redis.Client
 	mu            sync.RWMutex
 	klineStaleTTL time.Duration
-	quoteHandler  func(context.Context, ClientMessage, *QuotePayload)
+	quoteHandler  func(context.Context, ClientMessage, *QuotePayload) error
 	tickHandler   func(context.Context, ClientMessage, *TickPayload)
 }
 
@@ -136,11 +136,18 @@ func (b *MarketDataCache) Set(ctx context.Context, msg ClientMessage, payload an
 		}
 	}
 	if quote, ok := payload.(*QuotePayload); ok && quote != nil {
+		if quote.Authority != "" && quote.LastPriceText != "" {
+			if _, err := b.PublishAuthoritativeQuote(ctx, msg, quote); err != nil {
+				return err
+			}
+		}
 		b.mu.RLock()
 		handler := b.quoteHandler
 		b.mu.RUnlock()
 		if handler != nil {
-			go handler(ctx, msg, quote)
+			if err := handler(ctx, msg, quote); err != nil {
+				return err
+			}
 		}
 	}
 	if tick, ok := payload.(*TickPayload); ok && tick != nil {
@@ -171,7 +178,7 @@ func (b *MarketDataCache) SetTickHandler(handler func(context.Context, ClientMes
 	b.mu.Unlock()
 }
 
-func (b *MarketDataCache) SetQuoteHandler(handler func(context.Context, ClientMessage, *QuotePayload)) {
+func (b *MarketDataCache) SetQuoteHandler(handler func(context.Context, ClientMessage, *QuotePayload) error) {
 	b.mu.Lock()
 	b.quoteHandler = handler
 	b.mu.Unlock()

@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ItickApp_ListVisibleCategories_FullMethodName = "/itick.ItickApp/ListVisibleCategories"
-	ItickApp_ListVisibleProducts_FullMethodName   = "/itick.ItickApp/ListVisibleProducts"
-	ItickApp_GetKline_FullMethodName              = "/itick.ItickApp/GetKline"
-	ItickApp_GetQuote_FullMethodName              = "/itick.ItickApp/GetQuote"
-	ItickApp_BatchGetQuote_FullMethodName         = "/itick.ItickApp/BatchGetQuote"
-	ItickApp_SubscribeStream_FullMethodName       = "/itick.ItickApp/SubscribeStream"
-	ItickApp_GetKlineIntervals_FullMethodName     = "/itick.ItickApp/GetKlineIntervals"
+	ItickApp_ListVisibleCategories_FullMethodName    = "/itick.ItickApp/ListVisibleCategories"
+	ItickApp_ListVisibleProducts_FullMethodName      = "/itick.ItickApp/ListVisibleProducts"
+	ItickApp_GetKline_FullMethodName                 = "/itick.ItickApp/GetKline"
+	ItickApp_GetQuote_FullMethodName                 = "/itick.ItickApp/GetQuote"
+	ItickApp_BatchGetQuote_FullMethodName            = "/itick.ItickApp/BatchGetQuote"
+	ItickApp_GetAuthoritativeSnapshot_FullMethodName = "/itick.ItickApp/GetAuthoritativeSnapshot"
+	ItickApp_SubscribeStream_FullMethodName          = "/itick.ItickApp/SubscribeStream"
+	ItickApp_GetKlineIntervals_FullMethodName        = "/itick.ItickApp/GetKlineIntervals"
 )
 
 // ItickAppClient is the client API for ItickApp service.
@@ -46,6 +47,8 @@ type ItickAppClient interface {
 	GetQuote(ctx context.Context, in *GetQuoteReq, opts ...grpc.CallOption) (*GetQuoteResp, error)
 	// 批量获取最新报价
 	BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq, opts ...grpc.CallOption) (*BatchGetQuoteResp, error)
+	// 按业务时刻读取生产方永久归档的权威快照
+	GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error)
 	// 订阅数据流
 	SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[PushReply], error)
 	// 获取 kline 粒度
@@ -110,6 +113,16 @@ func (c *itickAppClient) BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq
 	return out, nil
 }
 
+func (c *itickAppClient) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAuthoritativeSnapshotResp)
+	err := c.cc.Invoke(ctx, ItickApp_GetAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *itickAppClient) SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[PushReply], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &ItickApp_ServiceDesc.Streams[0], ItickApp_SubscribeStream_FullMethodName, cOpts...)
@@ -157,6 +170,8 @@ type ItickAppServer interface {
 	GetQuote(context.Context, *GetQuoteReq) (*GetQuoteResp, error)
 	// 批量获取最新报价
 	BatchGetQuote(context.Context, *BatchGetQuoteReq) (*BatchGetQuoteResp, error)
+	// 按业务时刻读取生产方永久归档的权威快照
+	GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error)
 	// 订阅数据流
 	SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error
 	// 获取 kline 粒度
@@ -185,6 +200,9 @@ func (UnimplementedItickAppServer) GetQuote(context.Context, *GetQuoteReq) (*Get
 }
 func (UnimplementedItickAppServer) BatchGetQuote(context.Context, *BatchGetQuoteReq) (*BatchGetQuoteResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method BatchGetQuote not implemented")
+}
+func (UnimplementedItickAppServer) GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAuthoritativeSnapshot not implemented")
 }
 func (UnimplementedItickAppServer) SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error {
 	return status.Error(codes.Unimplemented, "method SubscribeStream not implemented")
@@ -303,6 +321,24 @@ func _ItickApp_BatchGetQuote_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ItickApp_GetAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAuthoritativeSnapshotReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAppServer).GetAuthoritativeSnapshot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickApp_GetAuthoritativeSnapshot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAppServer).GetAuthoritativeSnapshot(ctx, req.(*GetAuthoritativeSnapshotReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ItickApp_SubscribeStream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(SubscribeRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -358,6 +394,10 @@ var ItickApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BatchGetQuote",
 			Handler:    _ItickApp_BatchGetQuote_Handler,
+		},
+		{
+			MethodName: "GetAuthoritativeSnapshot",
+			Handler:    _ItickApp_GetAuthoritativeSnapshot_Handler,
 		},
 		{
 			MethodName: "GetKlineIntervals",

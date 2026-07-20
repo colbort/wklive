@@ -66,30 +66,26 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 			} else if !errors.Is(err, models.ErrNotFound) {
 				return err
 			}
-			mark, index, rate, source, err := l.lockFundingInputs(c)
+			mark, index, rate, source, err := l.lockFundingInputs(c, settlementTime)
 			if err != nil {
 				return err
-			}
-			positions, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{TenantId: c.TenantId, SymbolId: c.SymbolId})
-			if err != nil {
-				return err
-			}
-			active := positions[:0]
-			for _, p := range positions {
-				if p.Qty.IsPositive() && p.Status == int64(trade.PositionStatus_POSITION_STATUS_NORMAL) {
-					active = append(active, p)
-				}
 			}
 			batchNo := fmt.Sprintf("FND-%d-%d", c.SymbolId, settlementTime)
 			if err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 				conn := sqlx.NewSqlConnFromSession(session)
 				bm := models.NewTContractFundingBatchModel(conn, l.svcCtx.Config.CacheRedis)
 				sm := models.NewTContractFundingSettlementModel(conn, l.svcCtx.Config.CacheRedis)
+				pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
+				active, err := pm.FindActiveListForUpdate(ctx, c.TenantId, c.SymbolId)
+				if err != nil {
+					return err
+				}
 				res, err := bm.Insert(ctx, &models.TContractFundingBatch{TenantId: c.TenantId, BatchNo: batchNo, SymbolId: c.SymbolId, FundingRate: rate, MarkPrice: mark, IndexPrice: index, PriceSource: source, FormulaVersion: "premium-v1", SettlementTime: settlementTime, Status: int64(trade.FundingBatchStatus_FUNDING_BATCH_STATUS_SETTLING), TotalPositions: int64(len(active)), CreateTimes: now, UpdateTimes: now})
 				if err != nil {
 					return err
 				}
 				batchID, _ := res.LastInsertId()
+				feeTotals := make(map[string]decimal.Decimal)
 				for _, p := range active {
 					values, err := calculateContractTradeValues(p.ContractValueType, p.Qty, c.ContractSize, mark)
 					if err != nil {
@@ -99,9 +95,13 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 					if p.PositionSide == int64(trade.PositionSide_POSITION_SIDE_LONG) {
 						fee = fee.Neg()
 					}
-					if _, err = sm.Insert(ctx, &models.TContractFundingSettlement{TenantId: c.TenantId, SettlementNo: fmt.Sprintf("%s-%d", batchNo, p.Id), BatchId: batchID, BatchNo: batchNo, SymbolId: c.SymbolId, UserId: p.UserId, PositionId: p.Id, PositionSide: p.PositionSide, FundingRate: rate, MarkPrice: mark, PositionQty: p.Qty, FeeAsset: p.MarginAsset, FeeAmount: fee, SettlementTime: settlementTime, Status: int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
+					feeTotals[p.MarginAsset] = feeTotals[p.MarginAsset].Add(fee)
+					if _, err = sm.Insert(ctx, &models.TContractFundingSettlement{TenantId: c.TenantId, SettlementNo: fmt.Sprintf("%s-%d", batchNo, p.Id), BatchId: batchID, BatchNo: batchNo, SymbolId: c.SymbolId, UserId: p.UserId, PositionId: p.Id, PositionSide: p.PositionSide, FundingRate: rate, MarkPrice: mark, PositionQty: p.Qty, PositionVersion: p.Version, FeeAsset: p.MarginAsset, FeeAmount: fee, SettlementTime: settlementTime, Status: int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
 						return err
 					}
+				}
+				if err = validateFundingConservation(feeTotals); err != nil {
+					return err
 				}
 				return nil
 			}); err != nil {
@@ -114,12 +114,21 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 	}
 }
 
-func (l *ProcessFundingSettlementsLogic) lockFundingInputs(c *models.TTradeSymbolContract) (decimal.Decimal, decimal.Decimal, decimal.Decimal, string, error) {
+func validateFundingConservation(totals map[string]decimal.Decimal) error {
+	for asset, total := range totals {
+		if !total.IsZero() {
+			return fmt.Errorf("funding batch is not balanced: asset=%s difference=%s", asset, total)
+		}
+	}
+	return nil
+}
+
+func (l *ProcessFundingSettlementsLogic) lockFundingInputs(c *models.TTradeSymbolContract, settlementTime int64) (decimal.Decimal, decimal.Decimal, decimal.Decimal, string, error) {
 	if c.FundingRateSource != "premium-v1" {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", fmt.Errorf("unsupported authoritative funding rate source: %q", c.FundingRateSource)
 	}
 	quotes := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx)
-	markQ, err := quotes.getValidQuoteKind("MARK_PRICE", c.MarkPriceSource, c.SymbolId, 30_000)
+	markQ, _, err := quotes.getValidQuotesAtKind("MARK_PRICE", c.MarkPriceSource, c.SymbolId, settlementTime, 30_000)
 	if err != nil {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
 	}
@@ -128,7 +137,7 @@ func (l *ProcessFundingSettlementsLogic) lockFundingInputs(c *models.TTradeSymbo
 	if category != "" && market != "" && len(parseParts(indexSource)) < 3 {
 		indexSource = category + ":" + market + ":" + indexSource
 	}
-	indexQ, err := quotes.getValidQuoteKind("INDEX_PRICE", indexSource, c.SymbolId, 30_000)
+	indexQ, _, err := quotes.getValidQuotesAtKind("INDEX_PRICE", indexSource, c.SymbolId, settlementTime, 30_000)
 	if err != nil {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
 	}
@@ -258,9 +267,12 @@ func (l *ProcessFundingSettlementsLogic) completeFunding(row *models.TContractFu
 		sm := models.NewTContractFundingSettlementModel(conn, l.svcCtx.Config.CacheRedis)
 		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		hm := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
-		current, err := pm.FindOne(ctx, row.PositionId)
+		current, err := pm.FindOneForUpdate(ctx, row.PositionId)
 		if err != nil {
 			return err
+		}
+		if current.Id != row.PositionId {
+			return errors.New("funding settlement position identity changed")
 		}
 		if current.LastFundingTime < row.SettlementTime {
 			before := cloneContractPosition(current)

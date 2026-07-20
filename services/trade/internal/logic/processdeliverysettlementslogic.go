@@ -128,7 +128,7 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 	} else if !errors.Is(err, models.ErrNotFound) {
 		return err
 	}
-	quote, err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuoteKind("DELIVERY_PRICE", c.SettlementPriceSource, c.SymbolId, c.SettlementWindowSeconds*1000)
+	quote, _, err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuotesAtKind("DELIVERY_PRICE", c.SettlementPriceSource, c.SymbolId, c.DeliveryTime, c.SettlementWindowSeconds*1000)
 	if err != nil {
 		return err
 	}
@@ -234,6 +234,13 @@ func (l *ProcessDeliverySettlementsLogic) settleOne(row *models.TContractDeliver
 	if err != nil {
 		return err
 	}
+	if !position.Qty.IsPositive() || position.Status == int64(trade.PositionStatus_POSITION_STATUS_CLOSED) {
+		row.Status = int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW)
+		row.NextRetryAt = 0
+		row.LastErrorMsg = "delivery position was already closed before asset settlement"
+		row.UpdateTimes = utils.NowMillis()
+		return l.svcCtx.ContractDeliverySettleModel.Update(l.ctx, row)
+	}
 	calls := []struct {
 		suffix string
 		credit bool
@@ -268,8 +275,12 @@ func (l *ProcessDeliverySettlementsLogic) settleOne(row *models.TContractDeliver
 		if err != nil {
 			return err
 		}
-		if current.Qty.IsZero() {
-			return nil
+		if current.Qty.IsZero() || current.Status == int64(trade.PositionStatus_POSITION_STATUS_CLOSED) {
+			row.Status = int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW)
+			row.NextRetryAt = 0
+			row.LastErrorMsg = "delivery position changed after asset settlement"
+			row.UpdateTimes = now
+			return sm.Update(ctx, row)
 		}
 		before := cloneContractPosition(current)
 		current.Qty, current.AvailQty, current.FrozenQty = decimal.Zero, decimal.Zero, decimal.Zero

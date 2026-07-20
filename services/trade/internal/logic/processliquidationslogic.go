@@ -244,8 +244,9 @@ func (l *ProcessLiquidationsLogic) executeADL(bankrupt *models.TContractPosition
 	})
 	done := decimal.Zero
 	remaining := deficit
+	remainingQty := decimalMaxZero(bankrupt.Qty.Sub(liq.AdlQty))
 	for _, candidate := range positions {
-		if candidate.Id == bankrupt.Id || !candidate.Qty.IsPositive() || candidate.PositionSide == bankrupt.PositionSide {
+		if candidate.Id == bankrupt.Id || !candidate.Qty.IsPositive() || candidate.PositionSide == bankrupt.PositionSide || candidate.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) || !remainingQty.IsPositive() {
 			continue
 		}
 		markPnl := contractRealizedPnl(candidate.PositionSide, candidate.OpenAvgPrice, bankrupt.MarkPrice, candidate.Qty, contract.ContractSize, candidate.ContractValueType)
@@ -254,19 +255,11 @@ func (l *ProcessLiquidationsLogic) executeADL(bankrupt *models.TContractPosition
 		if !reliefPerQty.IsPositive() {
 			continue
 		}
-		qty := decimalMin(candidate.Qty, remaining.Div(reliefPerQty))
+		qty := adlTakeoverQty(candidate.Qty, remainingQty, remaining, reliefPerQty)
 		if !qty.IsPositive() {
 			continue
 		}
 		before := cloneContractPosition(candidate)
-		release := proportionalAmount(candidate.PositionMargin.Add(candidate.IsolatedMargin), qty, candidate.Qty)
-		pnl := contractRealizedPnl(candidate.PositionSide, candidate.OpenAvgPrice, bankrupt.BankruptcyPrice, qty, contract.ContractSize, candidate.ContractValueType)
-		credit := decimalMaxZero(release.Add(pnl))
-		if credit.IsPositive() {
-			if err := l.assetChange(candidate.TenantId, candidate.UserId, candidate.MarginAsset, credit, true, liq.Id, fmt.Sprintf("%s-ADL-%d", liq.LiquidationNo, candidate.Id), "automatic deleveraging"); err != nil {
-				return done, remaining, err
-			}
-		}
 		err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 			conn := sqlx.NewSqlConnFromSession(session)
 			pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
@@ -275,13 +268,25 @@ func (l *ProcessLiquidationsLogic) executeADL(bankrupt *models.TContractPosition
 			if e != nil {
 				return e
 			}
-			if current.Version != before.Version || current.Qty.LessThan(qty) {
+			if current.Version != before.Version || current.Qty.LessThan(qty) || current.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) {
 				return errors.New("ADL candidate changed during takeover")
 			}
 			before = cloneContractPosition(current)
+			positionMarginRelease, isolatedMarginRelease := adlMarginRelease(current.PositionMargin, current.IsolatedMargin, qty, current.Qty)
+			pnl := contractRealizedPnl(current.PositionSide, current.OpenAvgPrice, bankrupt.BankruptcyPrice, qty, contract.ContractSize, current.ContractValueType)
+			credit := decimalMaxZero(positionMarginRelease.Add(isolatedMarginRelease).Add(pnl))
+			// Keep the position row locked while applying the idempotent Asset change.
+			// If the local transaction fails after Asset succeeds, retrying the same
+			// biz_no completes the position change without crediting twice.
+			if credit.IsPositive() {
+				if e = l.assetChange(current.TenantId, current.UserId, current.MarginAsset, credit, true, liq.Id, fmt.Sprintf("%s-ADL-%d", liq.LiquidationNo, current.Id), "automatic deleveraging"); e != nil {
+					return e
+				}
+			}
 			current.Qty = current.Qty.Sub(qty)
 			current.AvailQty = decimalMaxZero(current.AvailQty.Sub(qty))
-			current.PositionMargin = decimalMaxZero(current.PositionMargin.Sub(release))
+			current.PositionMargin = decimalMaxZero(current.PositionMargin.Sub(positionMarginRelease))
+			current.IsolatedMargin = decimalMaxZero(current.IsolatedMargin.Sub(isolatedMarginRelease))
 			current.RealizedPnl = current.RealizedPnl.Add(pnl)
 			current.AdlRank = 0
 			current.Version++
@@ -299,12 +304,24 @@ func (l *ProcessLiquidationsLogic) executeADL(bankrupt *models.TContractPosition
 			return done, remaining, err
 		}
 		done = done.Add(qty)
+		remainingQty = decimalMaxZero(remainingQty.Sub(qty))
 		remaining = decimalMaxZero(remaining.Sub(reliefPerQty.Mul(qty)))
 		if remaining.IsZero() {
 			break
 		}
 	}
 	return done, remaining, nil
+}
+
+func adlTakeoverQty(candidateQty, bankruptRemainingQty, deficit, reliefPerQty decimal.Decimal) decimal.Decimal {
+	if !candidateQty.IsPositive() || !bankruptRemainingQty.IsPositive() || !deficit.IsPositive() || !reliefPerQty.IsPositive() {
+		return decimal.Zero
+	}
+	return decimalMin(decimalMin(candidateQty, deficit.Div(reliefPerQty)), bankruptRemainingQty)
+}
+
+func adlMarginRelease(positionMargin, isolatedMargin, qty, totalQty decimal.Decimal) (decimal.Decimal, decimal.Decimal) {
+	return proportionalAmount(positionMargin, qty, totalQty), proportionalAmount(isolatedMargin, qty, totalQty)
 }
 
 func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContractPosition, liq *models.TContractLiquidation, fee decimal.Decimal) error {

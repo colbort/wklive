@@ -53,6 +53,12 @@ func (s *ItickAppServer) BatchGetQuote(ctx context.Context, in *itick.BatchGetQu
 	return l.BatchGetQuote(in)
 }
 
+// 按业务时刻读取生产方永久归档的权威快照
+func (s *ItickAppServer) GetAuthoritativeSnapshot(ctx context.Context, in *itick.GetAuthoritativeSnapshotReq) (*itick.GetAuthoritativeSnapshotResp, error) {
+	l := logic.NewGetAuthoritativeSnapshotLogic(ctx, s.svcCtx)
+	return l.GetAuthoritativeSnapshot(in)
+}
+
 // 订阅数据流
 func (s *ItickAppServer) SubscribeStream(in *itick.SubscribeRequest, stream itick.ItickApp_SubscribeStreamServer) error {
 	l := logic.NewSubscribeStreamLogic(stream.Context(), s.svcCtx)

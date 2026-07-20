@@ -28,6 +28,8 @@ type (
 		tContractPositionModel
 		FindPage(ctx context.Context, filter ContractPositionPageFilter, cursor int64, limit int64) ([]*TContractPosition, int64, error)
 		FindList(ctx context.Context, filter ContractPositionPageFilter) ([]*TContractPosition, error)
+		FindActiveListForUpdate(ctx context.Context, tenantID, symbolID int64) ([]*TContractPosition, error)
+		FindOneForUpdate(ctx context.Context, id int64) (*TContractPosition, error)
 		FindOneForUpdateByTenantUserSymbolSideMode(ctx context.Context, tenantID, userID, symbolID, positionSide, marginMode int64) (*TContractPosition, error)
 		ReserveCloseQty(ctx context.Context, id, version int64, qty decimal.Decimal, updateTimes int64) error
 		ReleaseCloseQty(ctx context.Context, id int64, qty decimal.Decimal, updateTimes int64) error
@@ -43,6 +45,24 @@ func NewTContractPositionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cac
 	return &customTContractPositionModel{
 		defaultTContractPositionModel: newTContractPositionModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTContractPositionModel) FindActiveListForUpdate(ctx context.Context, tenantID, symbolID int64) ([]*TContractPosition, error) {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND symbol_id = ? AND status = 1 AND qty > 0 ORDER BY id FOR UPDATE", tContractPositionRows, m.table)
+	var positions []*TContractPosition
+	if err := m.QueryRowsNoCacheCtx(ctx, &positions, query, tenantID, symbolID); err != nil {
+		return nil, err
+	}
+	return positions, nil
+}
+
+func (m *defaultTContractPositionModel) FindOneForUpdate(ctx context.Context, id int64) (*TContractPosition, error) {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tContractPositionRows, m.table)
+	var position TContractPosition
+	if err := m.QueryRowNoCacheCtx(ctx, &position, query, id); err != nil {
+		return nil, err
+	}
+	return &position, nil
 }
 
 func (m *defaultTContractPositionModel) FindOneForUpdateByTenantUserSymbolSideMode(ctx context.Context, tenantID, userID, symbolID, positionSide, marginMode int64) (*TContractPosition, error) {

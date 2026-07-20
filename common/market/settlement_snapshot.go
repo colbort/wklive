@@ -7,8 +7,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
+
+const authoritativeSnapshotTTL = 365 * 24 * time.Hour
 
 func (b *MarketDataCache) LockPriceSnapshot(ctx context.Context, kind string, msg ClientMessage, maxAge time.Duration) (*SettlementSnapshot, error) {
 	items, err := b.ReadMany(ctx, []ClientMessage{msg})
@@ -54,6 +59,77 @@ func (b *MarketDataCache) PutSettlementSnapshot(ctx context.Context, s *Settleme
 	}
 	key := fmt.Sprintf("market:settlement:v1:%s", s.SnapshotID)
 	return b.rdb.SetNX(ctx, key, raw, 30*24*time.Hour).Err()
+}
+
+// PublishAuthoritativeQuote archives an immutable source-owned quote. Only the
+// market-data producer may call this; consumers must query the archive and may
+// not promote their local quote cache to an authoritative snapshot.
+func (b *MarketDataCache) PublishAuthoritativeQuote(ctx context.Context, msg ClientMessage, q *QuotePayload) (*SettlementSnapshot, error) {
+	msg = NormalizeClientMessage(msg)
+	if q == nil || q.Ts <= 0 || strings.TrimSpace(q.LastPriceText) == "" || strings.TrimSpace(q.Authority) == "" {
+		return nil, errors.New("authoritative quote metadata is incomplete")
+	}
+	s := &SettlementSnapshot{
+		Kind:              "FINAL_QUOTE",
+		CategoryCode:      msg.CategoryCode,
+		Market:            msg.Market,
+		Symbol:            msg.Symbol,
+		Price:             strings.TrimSpace(q.LastPriceText),
+		Source:            msg.Market,
+		SourceTimestamp:   q.Ts,
+		SnapshotTimestamp: time.Now().UnixMilli(),
+		Revision:          q.Ts,
+		FormulaVersion:    "source-quote-v1",
+		Authority:         strings.TrimSpace(q.Authority),
+		Confirmed:         true,
+	}
+	s.SnapshotID = snapshotDigest(s)
+	raw, err := json.Marshal(s)
+	if err != nil {
+		return nil, err
+	}
+	dataKey := fmt.Sprintf("market:authoritative:v1:%s", s.SnapshotID)
+	indexKey := authoritativeSnapshotIndex(msg, s.Authority)
+	pipe := b.rdb.TxPipeline()
+	pipe.SetNX(ctx, dataKey, raw, authoritativeSnapshotTTL)
+	pipe.ZAdd(ctx, indexKey, redis.Z{Score: float64(s.SourceTimestamp), Member: s.SnapshotID})
+	pipe.Expire(ctx, indexKey, authoritativeSnapshotTTL)
+	if _, err = pipe.Exec(ctx); err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+// FindAuthoritativeQuoteAt returns the newest finalized source quote at or
+// before targetTime, bounded by maxLookback.
+func (b *MarketDataCache) FindAuthoritativeQuoteAt(ctx context.Context, msg ClientMessage, authority string, targetTime int64, maxLookback time.Duration) (*SettlementSnapshot, error) {
+	msg = NormalizeClientMessage(msg)
+	if targetTime <= 0 || maxLookback <= 0 || strings.TrimSpace(authority) == "" {
+		return nil, errors.New("invalid authoritative snapshot query")
+	}
+	ids, err := b.rdb.ZRevRangeByScore(ctx, authoritativeSnapshotIndex(msg, authority), &redis.ZRangeBy{Max: fmt.Sprintf("%d", targetTime), Min: fmt.Sprintf("%d", targetTime-maxLookback.Milliseconds()), Offset: 0, Count: 1}).Result()
+	if err != nil {
+		return nil, err
+	}
+	if len(ids) != 1 {
+		return nil, errors.New("authoritative snapshot unavailable at target time")
+	}
+	raw, err := b.rdb.Get(ctx, fmt.Sprintf("market:authoritative:v1:%s", ids[0])).Bytes()
+	if err != nil {
+		return nil, err
+	}
+	var s SettlementSnapshot
+	if err = json.Unmarshal(raw, &s); err != nil {
+		return nil, err
+	}
+	if !s.Confirmed || s.Authority != strings.TrimSpace(authority) || s.SourceTimestamp > targetTime {
+		return nil, errors.New("invalid authoritative snapshot")
+	}
+	return &s, nil
+}
+
+func authoritativeSnapshotIndex(msg ClientMessage, authority string) string {
+	return fmt.Sprintf("market:authoritative:v1:index:%s:%s:%s:%s", strings.ToLower(strings.TrimSpace(authority)), msg.CategoryCode, msg.Market, msg.Symbol)
 }
 
 func (b *MarketDataCache) GetSettlementSnapshot(ctx context.Context, id string) (*SettlementSnapshot, error) {

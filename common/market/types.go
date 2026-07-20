@@ -17,6 +17,7 @@ type SettlementSnapshot struct {
 	SnapshotTimestamp int64  `json:"snapshotTimestamp"`
 	Revision          int64  `json:"revision"`
 	FormulaVersion    string `json:"formulaVersion,omitempty"`
+	Authority         string `json:"authority,omitempty"`
 	Confirmed         bool   `json:"confirmed"`
 }
 
@@ -32,12 +33,16 @@ type DepthPayload struct {
 }
 type QuotePayload struct {
 	LastPrice float64 `json:"lastPrice"`
-	Open      float64 `json:"open"`
-	High      float64 `json:"high"`
-	Low       float64 `json:"low"`
-	Volume    float64 `json:"volume"`
-	Turnover  float64 `json:"turnover"`
-	Ts        int64   `json:"ts"`
+	// LastPriceText preserves the exact decimal token received from the source.
+	// Financial settlement must use this field instead of converting LastPrice.
+	LastPriceText string  `json:"lastPriceText,omitempty"`
+	Open          float64 `json:"open"`
+	High          float64 `json:"high"`
+	Low           float64 `json:"low"`
+	Volume        float64 `json:"volume"`
+	Turnover      float64 `json:"turnover"`
+	Ts            int64   `json:"ts"`
+	Authority     string  `json:"authority,omitempty"`
 }
 type TickPayload struct {
 	LastPrice float64 `json:"lastPrice"`

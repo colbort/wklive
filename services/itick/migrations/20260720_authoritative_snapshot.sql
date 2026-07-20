@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS `t_itick_authoritative_snapshot` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `snapshot_id` VARCHAR(64) NOT NULL,
+  `authority` VARCHAR(32) NOT NULL,
+  `snapshot_kind` VARCHAR(32) NOT NULL,
+  `category_code` VARCHAR(64) NOT NULL DEFAULT '',
+  `market` VARCHAR(32) NOT NULL DEFAULT '',
+  `symbol` VARCHAR(64) NOT NULL,
+  `price` DECIMAL(65,30) NOT NULL,
+  `source_timestamp` BIGINT NOT NULL,
+  `snapshot_timestamp` BIGINT NOT NULL,
+  `revision` BIGINT NOT NULL,
+  `formula_version` VARCHAR(64) NOT NULL DEFAULT '',
+  `raw_payload` JSON NOT NULL,
+  `create_times` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_snapshot_id` (`snapshot_id`),
+  UNIQUE KEY `uk_authority_product_revision` (`authority`,`category_code`,`market`,`symbol`,`source_timestamp`,`revision`),
+  KEY `idx_product_time` (`authority`,`category_code`,`market`,`symbol`,`source_timestamp`,`revision`),
+  CONSTRAINT `chk_authoritative_snapshot` CHECK (`price` > 0 AND `source_timestamp` > 0 AND `snapshot_timestamp` > 0 AND `revision` > 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

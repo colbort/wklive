@@ -14,24 +14,27 @@ import (
 )
 
 type (
-	AppCommonResp             = itick.AppCommonResp
-	AppEmpty                  = itick.AppEmpty
-	BatchGetQuoteReq          = itick.BatchGetQuoteReq
-	BatchGetQuoteResp         = itick.BatchGetQuoteResp
-	GetKlineReq               = itick.GetKlineReq
-	GetKlineResp              = itick.GetKlineResp
-	GetQuoteReq               = itick.GetQuoteReq
-	GetQuoteResp              = itick.GetQuoteResp
-	KlineInterval             = itick.KlineInterval
-	KlineIntervalsResp        = itick.KlineIntervalsResp
-	ListVisibleCategoriesReq  = itick.ListVisibleCategoriesReq
-	ListVisibleCategoriesResp = itick.ListVisibleCategoriesResp
-	ListVisibleProductsReq    = itick.ListVisibleProductsReq
-	ListVisibleProductsResp   = itick.ListVisibleProductsResp
-	MarketSymbol              = itick.MarketSymbol
-	PushReply                 = itick.PushReply
-	SubscribeRequest          = itick.SubscribeRequest
-	SubscribeTopic            = itick.SubscribeTopic
+	AppCommonResp                = itick.AppCommonResp
+	AppEmpty                     = itick.AppEmpty
+	AuthoritativeSnapshot        = itick.AuthoritativeSnapshot
+	BatchGetQuoteReq             = itick.BatchGetQuoteReq
+	BatchGetQuoteResp            = itick.BatchGetQuoteResp
+	GetAuthoritativeSnapshotReq  = itick.GetAuthoritativeSnapshotReq
+	GetAuthoritativeSnapshotResp = itick.GetAuthoritativeSnapshotResp
+	GetKlineReq                  = itick.GetKlineReq
+	GetKlineResp                 = itick.GetKlineResp
+	GetQuoteReq                  = itick.GetQuoteReq
+	GetQuoteResp                 = itick.GetQuoteResp
+	KlineInterval                = itick.KlineInterval
+	KlineIntervalsResp           = itick.KlineIntervalsResp
+	ListVisibleCategoriesReq     = itick.ListVisibleCategoriesReq
+	ListVisibleCategoriesResp    = itick.ListVisibleCategoriesResp
+	ListVisibleProductsReq       = itick.ListVisibleProductsReq
+	ListVisibleProductsResp      = itick.ListVisibleProductsResp
+	MarketSymbol                 = itick.MarketSymbol
+	PushReply                    = itick.PushReply
+	SubscribeRequest             = itick.SubscribeRequest
+	SubscribeTopic               = itick.SubscribeTopic
 
 	ItickApp interface {
 		// 获取允许显示的产品类型
@@ -44,6 +47,8 @@ type (
 		GetQuote(ctx context.Context, in *GetQuoteReq, opts ...grpc.CallOption) (*GetQuoteResp, error)
 		// 批量获取最新报价
 		BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq, opts ...grpc.CallOption) (*BatchGetQuoteResp, error)
+		// 按业务时刻读取生产方永久归档的权威快照
+		GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error)
 		// 订阅数据流
 		SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (itick.ItickApp_SubscribeStreamClient, error)
 		// 获取 kline 粒度
@@ -89,6 +94,12 @@ func (m *defaultItickApp) GetQuote(ctx context.Context, in *GetQuoteReq, opts ..
 func (m *defaultItickApp) BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq, opts ...grpc.CallOption) (*BatchGetQuoteResp, error) {
 	client := itick.NewItickAppClient(m.cli.Conn())
 	return client.BatchGetQuote(ctx, in, opts...)
+}
+
+// 按业务时刻读取生产方永久归档的权威快照
+func (m *defaultItickApp) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
+	client := itick.NewItickAppClient(m.cli.Conn())
+	return client.GetAuthoritativeSnapshot(ctx, in, opts...)
 }
 
 // 订阅数据流

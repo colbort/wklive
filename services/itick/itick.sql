@@ -135,6 +135,28 @@ CREATE TABLE `t_itick_quote` (
   KEY `idx_quote_ts` (`quote_ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick实时报价表';
 
+CREATE TABLE `t_itick_authoritative_snapshot` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `snapshot_id` VARCHAR(64) NOT NULL COMMENT '内容哈希ID',
+  `authority` VARCHAR(32) NOT NULL COMMENT '权威生产方',
+  `snapshot_kind` VARCHAR(32) NOT NULL COMMENT 'FINAL_QUOTE/MARK/INDEX/FUNDING/DELIVERY',
+  `category_code` VARCHAR(64) NOT NULL DEFAULT '',
+  `market` VARCHAR(32) NOT NULL DEFAULT '',
+  `symbol` VARCHAR(64) NOT NULL,
+  `price` DECIMAL(65,30) NOT NULL,
+  `source_timestamp` BIGINT NOT NULL,
+  `snapshot_timestamp` BIGINT NOT NULL,
+  `revision` BIGINT NOT NULL,
+  `formula_version` VARCHAR(64) NOT NULL DEFAULT '',
+  `raw_payload` JSON NOT NULL,
+  `create_times` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_snapshot_id` (`snapshot_id`),
+  UNIQUE KEY `uk_authority_product_revision` (`authority`,`category_code`,`market`,`symbol`,`source_timestamp`,`revision`),
+  KEY `idx_product_time` (`authority`,`category_code`,`market`,`symbol`,`source_timestamp`,`revision`),
+  CONSTRAINT `chk_authoritative_snapshot` CHECK (`price` > 0 AND `source_timestamp` > 0 AND `snapshot_timestamp` > 0 AND `revision` > 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick/Price Engine权威行情永久档案';
+
 CREATE TABLE `t_itick_kline_sync_progress` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
 

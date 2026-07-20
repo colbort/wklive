@@ -4,15 +4,16 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
-	"time"
 
 	cache "wklive/common/market"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/common"
+	"wklive/proto/itick"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -107,7 +108,7 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 			if err != nil {
 				return err
 			}
-			quote, candidates, err := l.getValidQuotesKind("SECONDS_SETTLEMENT", cfg.SettlementPriceSource, item.SymbolId, cfg.QuoteValidityMs)
+			quote, candidates, err := l.getValidQuotesAtKind("SECONDS_SETTLEMENT", cfg.SettlementPriceSource, item.SymbolId, item.ExpireTime, cfg.QuoteValidityMs)
 			if err != nil {
 				return l.moveSecondsToRefund(item, "invalid settlement quote: "+err.Error())
 			}
@@ -265,13 +266,17 @@ func (l *ProcessSecondsSettlementsLogic) getValidQuotes(source string, symbolID,
 	return l.getValidQuotesKind("SETTLEMENT_PRICE", source, symbolID, validity)
 }
 func (l *ProcessSecondsSettlementsLogic) getValidQuotesKind(kind, source string, symbolID, validity int64) (*marketQuoteSnapshot, []*marketQuoteSnapshot, error) {
+	return l.getValidQuotesAtKind(kind, source, symbolID, utils.NowMillis(), validity)
+}
+
+func (l *ProcessSecondsSettlementsLogic) getValidQuotesAtKind(kind, source string, symbolID, targetTime, validity int64) (*marketQuoteSnapshot, []*marketQuoteSnapshot, error) {
 	sources := strings.FieldsFunc(source, func(r rune) bool { return r == ',' || r == '|' || r == ';' })
 	if len(sources) == 0 {
 		sources = []string{source}
 	}
 	candidates := make([]*marketQuoteSnapshot, 0, len(sources))
 	for _, currentSource := range sources {
-		q, err := l.getOneValidQuote(kind, strings.TrimSpace(currentSource), symbolID, validity)
+		q, err := l.getOneValidQuote(kind, strings.TrimSpace(currentSource), symbolID, targetTime, validity)
 		if err == nil {
 			candidates = append(candidates, q)
 		}
@@ -285,7 +290,7 @@ func (l *ProcessSecondsSettlementsLogic) getValidQuotesKind(kind, source string,
 	return candidates[len(candidates)/2], candidates, nil
 }
 
-func (l *ProcessSecondsSettlementsLogic) getOneValidQuote(kind, source string, symbolID, validity int64) (*marketQuoteSnapshot, error) {
+func (l *ProcessSecondsSettlementsLogic) getOneValidQuote(kind, source string, symbolID, targetTime, validity int64) (*marketQuoteSnapshot, error) {
 	category, market, symbol := parseQuoteSource(source)
 	tradeSymbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, symbolID)
 	if err != nil {
@@ -294,20 +299,27 @@ func (l *ProcessSecondsSettlementsLogic) getOneValidQuote(kind, source string, s
 	if symbol == "" {
 		symbol = tradeSymbol.Symbol
 	}
-	if l.svcCtx.MarketDataCache != nil {
-		if validity <= 0 {
-			validity = 30_000
-		}
-		s, err := l.svcCtx.MarketDataCache.LockPriceSnapshot(l.ctx, kind, cache.ClientMessage{Topic: cache.TopicQuote, CategoryCode: category, Market: market, Symbol: symbol}, time.Duration(validity)*time.Millisecond)
-		if err == nil {
-			if err = persistMarketSnapshot(l.ctx, l.svcCtx.TradeMarketSnapshotModel, tradeSymbol.TenantId, symbolID, s); err != nil {
-				return nil, err
-			}
-			q := &marketQuoteSnapshot{Category: category, Market: market, Symbol: symbol, LastPrice: s.Price, QuoteTs: s.SourceTimestamp, ReceivedAt: s.SnapshotTimestamp, SnapshotID: s.SnapshotID, Revision: s.Revision, Confirmed: s.Confirmed}
-			if quoteIsValid(q, validity) {
-				return q, nil
-			}
-		}
+	if validity <= 0 {
+		validity = 30_000
+	}
+	if l.svcCtx.ItickClient == nil {
+		return nil, errors.New("authoritative market archive client is unavailable")
+	}
+	resp, err := l.svcCtx.ItickClient.GetAuthoritativeSnapshot(l.ctx, &itick.GetAuthoritativeSnapshotReq{Authority: "itick-ws", CategoryCode: category, Market: market, Symbol: symbol, TargetTime: targetTime, MaxLookbackMs: validity})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil || resp.GetBase() == nil || resp.GetBase().GetCode() != 200 || resp.GetData() == nil {
+		return nil, errors.New("authoritative market archive rejected query")
+	}
+	d := resp.GetData()
+	s := &cache.SettlementSnapshot{SnapshotID: d.SnapshotId, Kind: d.SnapshotKind, CategoryCode: d.CategoryCode, Market: d.Market, Symbol: d.Symbol, Price: d.Price, Source: d.Market, SourceTimestamp: d.SourceTimestamp, SnapshotTimestamp: d.SnapshotTimestamp, Revision: d.Revision, FormulaVersion: d.FormulaVersion, Authority: d.Authority, Confirmed: true}
+	if err = persistMarketSnapshot(l.ctx, l.svcCtx.TradeMarketSnapshotModel, tradeSymbol.TenantId, symbolID, s); err != nil {
+		return nil, err
+	}
+	q := &marketQuoteSnapshot{Category: category, Market: market, Symbol: symbol, LastPrice: s.Price, QuoteTs: s.SourceTimestamp, ReceivedAt: s.SnapshotTimestamp, SnapshotID: s.SnapshotID, Revision: s.Revision, Confirmed: s.Confirmed}
+	if quoteIsValidAt(q, targetTime, validity) {
+		return q, nil
 	}
 	return nil, fmt.Errorf("market quote cache miss: source=%s", source)
 }
@@ -325,8 +337,10 @@ func persistMarketSnapshot(ctx context.Context, model models.TTradeMarketSnapsho
 	return err
 }
 func quoteIsValid(q *marketQuoteSnapshot, validity int64) bool {
-	now := utils.NowMillis()
-	return q != nil && q.Confirmed && q.SnapshotID != "" && mustParseFloat(q.LastPrice).IsPositive() && q.QuoteTs > 0 && q.QuoteTs <= now+1000 && (validity <= 0 || now-q.QuoteTs <= validity)
+	return quoteIsValidAt(q, utils.NowMillis(), validity)
+}
+func quoteIsValidAt(q *marketQuoteSnapshot, targetTime, validity int64) bool {
+	return q != nil && q.Confirmed && q.SnapshotID != "" && mustParseFloat(q.LastPrice).IsPositive() && q.QuoteTs > 0 && q.QuoteTs <= targetTime && (validity <= 0 || targetTime-q.QuoteTs <= validity)
 }
 func parseQuoteSource(source string) (string, string, string) {
 	parts := strings.Split(source, ":")

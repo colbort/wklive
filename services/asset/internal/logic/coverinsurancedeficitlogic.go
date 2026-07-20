@@ -9,6 +9,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
@@ -32,7 +33,7 @@ func (l *CoverInsuranceDeficitLogic) Cover(in *asset.CoverInsuranceDeficitReq) (
 	if err != nil || !requested.IsPositive() {
 		return nil, i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 	}
-	if in.TenantId <= 0 || in.FundUserId <= 0 || in.Coin == "" || in.LiquidationNo == "" {
+	if in.TenantId <= 0 || in.FundUserId <= 0 || in.Coin == "" || in.LiquidationId <= 0 || in.LiquidationNo == "" || in.WalletType != common.WalletType_WALLET_TYPE_CONTRACT {
 		return nil, fmt.Errorf("invalid insurance fund request")
 	}
 	now := utils.NowMillis()
@@ -53,7 +54,7 @@ func (l *CoverInsuranceDeficitLogic) Cover(in *asset.CoverInsuranceDeficitReq) (
 			if err != nil {
 				return err
 			}
-			if !cover.RequestedAmount.Equal(requested) || cover.FundUserId != in.FundUserId || cover.Coin != in.Coin {
+			if !cover.RequestedAmount.Equal(requested) || cover.FundUserId != in.FundUserId || cover.WalletType != int64(in.WalletType) || cover.Coin != in.Coin || cover.LiquidationId != in.LiquidationId {
 				return fmt.Errorf("insurance idempotency parameters changed")
 			}
 			covered, replay = cover.CoveredAmount, true

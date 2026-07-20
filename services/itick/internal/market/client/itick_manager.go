@@ -316,7 +316,7 @@ func (m *ItickManager) reconcileActiveProducts(ctx context.Context) {
 	}
 }
 
-func (m *ItickManager) SetQuoteHandler(handler func(ctx context.Context, msg types.ClientMessage, payload *types.QuotePayload)) {
+func (m *ItickManager) SetQuoteHandler(handler func(ctx context.Context, msg types.ClientMessage, payload *types.QuotePayload) error) {
 	m.marketCache.SetQuoteHandler(handler)
 }
 

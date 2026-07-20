@@ -866,6 +866,7 @@ CREATE TABLE `t_contract_funding_settlement` (
   `funding_rate` DECIMAL(20,10) NOT NULL COMMENT '资金费率',
   `mark_price` DECIMAL(36,18) NOT NULL COMMENT '结算标记价',
   `position_qty` DECIMAL(36,18) NOT NULL COMMENT '结算持仓量',
+  `position_version` BIGINT NOT NULL COMMENT '批次锁定时持仓版本',
   `fee_asset` VARCHAR(32) NOT NULL COMMENT '资金费资产',
   `fee_amount` DECIMAL(36,18) NOT NULL COMMENT '资金费，正收负付',
   `settlement_time` BIGINT NOT NULL COMMENT '结算时间',
@@ -880,7 +881,7 @@ CREATE TABLE `t_contract_funding_settlement` (
   UNIQUE KEY `uk_tenant_settlement_no` (`tenant_id`, `settlement_no`),
   UNIQUE KEY `uk_batch_position` (`tenant_id`, `batch_id`, `position_id`),
   KEY `idx_funding_settlement_retry` (`tenant_id`, `status`, `next_retry_at`),
-  CONSTRAINT `chk_funding_settlement` CHECK (`position_side` IN (1, 2, 3) AND `mark_price` > 0 AND `position_qty` > 0 AND `settlement_time` > 0 AND `status` IN (1, 2, 3, 4) AND `retry_count` >= 0)
+  CONSTRAINT `chk_funding_settlement` CHECK (`position_side` IN (1, 2, 3) AND `mark_price` > 0 AND `position_qty` > 0 AND `position_version` >= 0 AND `settlement_time` > 0 AND `status` IN (1, 2, 3, 4) AND `retry_count` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='永续合约资金费结算记录';
 
 CREATE TABLE `t_contract_delivery_batch` (

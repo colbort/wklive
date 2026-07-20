@@ -491,13 +491,15 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.Up
 	switch topic {
 	case types.TopicQuote:
 		payload := types.QuotePayload{
-			LastPrice: d.LD,
-			Open:      d.O,
-			High:      d.H,
-			Low:       d.L,
-			Volume:    d.V,
-			Turnover:  d.TU,
-			Ts:        d.T,
+			LastPrice:     d.LD,
+			LastPriceText: rawDecimalToken(env.Data, "ld"),
+			Open:          d.O,
+			High:          d.H,
+			Low:           d.L,
+			Volume:        d.V,
+			Turnover:      d.TU,
+			Ts:            d.T,
+			Authority:     "itick-ws",
 		}
 		if err := c.marketCache.Set(ctx, msg, &payload); err != nil {
 			logx.Errorf("cache itick quote failed, category=%s market=%s symbol=%s err=%v", msg.CategoryCode, msg.Market, msg.Symbol, err)
@@ -547,6 +549,18 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.Up
 			logx.Errorf("cache itick kline failed, category=%s market=%s symbol=%s interval=%s err=%v", msg.CategoryCode, msg.Market, msg.Symbol, msg.Interval, err)
 		}
 	}
+}
+
+func rawDecimalToken(data json.RawMessage, field string) string {
+	var values map[string]json.RawMessage
+	if json.Unmarshal(data, &values) != nil {
+		return ""
+	}
+	raw := strings.TrimSpace(string(values[field]))
+	if len(raw) >= 2 && raw[0] == '"' && raw[len(raw)-1] == '"' {
+		raw = raw[1 : len(raw)-1]
+	}
+	return raw
 }
 
 func (c *ItickWsClient) restoreSubscriptions(_ context.Context) error {
