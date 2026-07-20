@@ -8,6 +8,7 @@ import (
 
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/config"
+	"wklive/services/trade/internal/events"
 	"wklive/services/trade/internal/logic"
 	"wklive/services/trade/internal/server"
 	"wklive/services/trade/internal/svc"
@@ -47,6 +48,7 @@ func main() {
 	} else {
 		fmt.Printf("Restored %d open orders into order book cache.\n", restored)
 	}
+	events.StartSubscriber(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		trade.RegisterTradeAdminServer(grpcServer, server.NewTradeAdminServer(svcCtx))

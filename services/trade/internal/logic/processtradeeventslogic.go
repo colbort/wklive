@@ -9,6 +9,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -40,6 +41,9 @@ func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*t
 		if err := l.retryTradeEvents(in); err != nil {
 			return nil, err
 		}
+		if err := l.dispatchPendingRealtimeEvents(in); err != nil {
+			return nil, err
+		}
 		if err := l.recoverFreezingOrders(in); err != nil {
 			return nil, err
 		}
@@ -54,6 +58,40 @@ func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*t
 		}
 		return okTradeTaskResp(), nil
 	})
+}
+
+// dispatchPendingRealtimeEvents republishes durable outbox records. Publishing
+// does not mark the record successful; only the consumer may acknowledge it.
+// This makes Redis Pub/Sub the low-latency path while the outbox remains the
+// recovery source when a process or message is lost.
+func (l *ProcessTradeEventsLogic) dispatchPendingRealtimeEvents(in *trade.TradeTaskReq) error {
+	for _, eventType := range []string{realtime.EventOrderAccepted, realtime.EventFillCreated} {
+		cursor := int64(0)
+		for {
+			items, _, err := l.svcCtx.BizTradeEventModel.FindPage(l.ctx, models.BizTradeEventPageFilter{
+				TenantId:    in.GetTenantId(),
+				EventType:   eventType,
+				EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING),
+			}, cursor, 100)
+			if err != nil {
+				return err
+			}
+			for _, item := range items {
+				cursor = item.Id
+				if item.NextRetryAt > 0 && item.NextRetryAt > utils.NowMillis() {
+					continue
+				}
+				event := realtime.Event{EventNo: item.EventNo, Type: item.EventType, TenantID: item.TenantId, BizID: item.BizId}
+				if err := realtime.Publish(l.ctx, l.svcCtx.TradeEventPublisher, event); err != nil {
+					return err
+				}
+			}
+			if len(items) < 100 {
+				break
+			}
+		}
+	}
+	return nil
 }
 
 type triggerPriceKey struct {
@@ -224,9 +262,11 @@ func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) e
 
 func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPrice decimal.Decimal, now int64) error {
 	var triggeredOrder *models.TTradeOrder
+	var eventNo string
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
+		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)
 		if err != nil {
 			return err
@@ -256,13 +296,30 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 		if err := orderModel.Update(ctx, order); err != nil {
 			return err
 		}
+		eventNo = derivedTradeBizNo(order.OrderNo, "TRIGGERED")
+		if _, err := eventModel.Insert(ctx, &models.TBizTradeEvent{
+			TenantId: order.TenantId, EventNo: eventNo, EventType: realtime.EventOrderAccepted,
+			BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId,
+			ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM),
+			EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now,
+			Payload: "{}", CreateTimes: now, UpdateTimes: now,
+		}); err != nil {
+			return err
+		}
 		triggeredOrder = order
 		return nil
 	})
 	if err != nil || triggeredOrder == nil {
 		return err
 	}
-	return cacheOrderBookOrder(l.svcCtx, l.ctx, triggeredOrder)
+	if err := cacheOrderBookOrder(l.svcCtx, l.ctx, triggeredOrder); err != nil {
+		return err
+	}
+	event := realtime.Event{EventNo: eventNo, Type: realtime.EventOrderAccepted, TenantID: triggeredOrder.TenantId, BizID: triggeredOrder.OrderNo, OrderID: triggeredOrder.Id}
+	if err := realtime.Publish(l.ctx, l.svcCtx.TradeEventPublisher, event); err != nil {
+		l.Errorf("publish triggered order event failed, orderId=%d eventNo=%s err=%v", triggeredOrder.Id, eventNo, err)
+	}
+	return nil
 }
 
 func (l *ProcessTradeEventsLogic) expireImmediateOrders(in *trade.TradeTaskReq) error {

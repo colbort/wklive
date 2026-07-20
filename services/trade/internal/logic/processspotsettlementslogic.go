@@ -33,6 +33,58 @@ func NewProcessSpotSettlementsLogic(ctx context.Context, svcCtx *svc.ServiceCont
 	return &ProcessSpotSettlementsLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
 }
 
+// ProcessFill is the real-time entry point invoked by FILL_CREATED. It handles
+// only one Fill and preserves step ordering; Process remains the recovery scan.
+func (l *ProcessSpotSettlementsLogic) ProcessFill(fillID int64) error {
+	fill, err := l.svcCtx.TradeFillModel.FindOne(l.ctx, fillID)
+	if err != nil {
+		return err
+	}
+	if fill.ProductType != int64(trade.ProductType_PRODUCT_TYPE_SPOT) || fill.SettlementStatus == int64(trade.FillSettlementStatus_FILL_SETTLEMENT_STATUS_SETTLED) {
+		return nil
+	}
+	for step := 0; step < 16; step++ {
+		items, err := l.svcCtx.TradeSettlementInstrModel.FindByFillId(l.ctx, fill.TenantId, fill.Id)
+		if err != nil {
+			return err
+		}
+		var next *models.TTradeSettlementInstruction
+		for _, item := range items {
+			if item.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
+				continue
+			}
+			if item.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW) {
+				return nil
+			}
+			next = item
+			break
+		}
+		if next == nil {
+			return nil
+		}
+		now := utils.NowMillis()
+		if next.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED) && next.NextRetryAt > now || next.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) && next.UpdateTimes > now-60*1000 {
+			return nil
+		}
+		claimed, err := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, next.Id, now)
+		if err != nil {
+			return err
+		}
+		if !claimed {
+			return nil
+		}
+		if err := l.processInstruction(next); err != nil {
+			if markErr := l.markFailed(next, err); markErr != nil {
+				return markErr
+			}
+			return err
+		}
+	}
+	return fmt.Errorf("spot fill settlement exceeded maximum steps: %d", fillID)
+}
+
+// Process scans pending instructions as a recovery path for lost events,
+// expired processing leases and retryable failures.
 func (l *ProcessSpotSettlementsLogic) Process(tenantID int64) error {
 	for processed := 0; processed < spotSettlementMaxSteps; {
 		now := utils.NowMillis()

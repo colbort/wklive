@@ -20,6 +20,8 @@ type ServiceContext struct {
 	DB                          sqlx.SqlConn
 	Redis                       *redis.Redis
 	TaskSubscriber              *bus.Subscriber
+	TradeEventPublisher         *bus.Publisher
+	TradeEventSubscriber        *bus.Subscriber
 	TradeSymbolModel            models.TTradeSymbolModel
 	TradeSymbolSpotModel        models.TTradeSymbolSpotModel
 	TradeSymbolContractModel    models.TTradeSymbolContractModel
@@ -60,11 +62,15 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
+	tradeEventPublisher := bus.NewPublisherFromRedisConf(c.CacheRedis[0].RedisConf)
+	tradeEventSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 	return &ServiceContext{
 		Config:                      c,
 		DB:                          conn,
 		Redis:                       redis.MustNewRedis(c.Redis.RedisConf),
 		TaskSubscriber:              taskSubscriber,
+		TradeEventPublisher:         tradeEventPublisher,
+		TradeEventSubscriber:        tradeEventSubscriber,
 		TradeSymbolModel:            models.NewTTradeSymbolModel(conn, c.CacheRedis),
 		TradeSymbolSpotModel:        models.NewTTradeSymbolSpotModel(conn, c.CacheRedis),
 		TradeSymbolContractModel:    models.NewTTradeSymbolContractModel(conn, c.CacheRedis),

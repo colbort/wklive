@@ -64,7 +64,18 @@ OrderAccepted
 
 ### 2.2 当前成交路径
 
-目前同步撮合的主要路径为：
+目前成交主链路采用实时事件驱动，定时任务仅用于恢复：
+
+```text
+订单接受/条件单触发
+  -> 事务内写入 ORDER_ACCEPTED Outbox
+  -> 提交后发布实时事件
+  -> 按 tenant + product + symbol 串行撮合
+  -> 成交事务提交后发布 FILL_CREATED
+  -> 现货按 Fill 实时执行 Settlement Instruction
+```
+
+单次撮合事务为：
 
 ```text
 锁定买卖订单
@@ -79,7 +90,7 @@ OrderAccepted
   -> 提交事务
 ```
 
-上述记录已经位于同一数据库事务。Settlement Instruction 和 Position 事件目前只是可靠的待执行记录，实际 Asset 结算、Position 更新、Reservation 状态推进和结算 Worker 仍属于后续 3.2 至 3.5 的范围。因此，当前的 `FILLED` 仍表示撮合数量完成，不代表资金和仓位已经完成最终结算。
+上述记录已经位于同一数据库事务。现货 Settlement Instruction 已有实时消费者并可推进 Asset、Fill 和 Reservation 状态；定时任务会扫描未完成指令和未确认 Outbox 进行恢复。合约 Position 事件仍只是可靠的待执行记录，实际 Position 更新属于后续 3.3 至 3.5 的范围。因此，`FILLED` 只表示撮合数量完成，是否最终结算应以 Fill/Settlement 状态为准。
 
 ## 3. 缺口清单
 
@@ -619,15 +630,14 @@ flowchart LR
   -> 更新订单成交状态
 ```
 
-尚未形成：
+现货已经形成：
 
 ```text
 Fill
   -> Asset 资金结算
-  -> Position 更新
   -> Reservation 消费/释放
-  -> 结算事件可靠投递
-  -> 对账和失败恢复
+  -> Fill 结算状态推进
+  -> Outbox 重投和定时扫描恢复
 ```
 
-因此当前成交模块属于“撮合基础已存在，结算闭环待开发”。后续首先应完成通用成交事务、现货结算和合约 Position Engine，不建议先扩展更多订单类型或管理页面。
+尚未形成的核心链路是合约 Position 更新、保证金/盈亏结算，以及秒合约、永续资金费、交割、强平和全链路对账。因此当前可认为“通用成交事务和现货资金结算已具备主链路与恢复链路”，但不能认为所有产品的成交结算业务已经完整；下一优先级仍是合约 Position Engine。

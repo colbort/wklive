@@ -178,16 +178,6 @@ func TestOrderInputGuards(t *testing.T) {
 	}
 }
 
-func TestOrderAmountPriceDistinguishesOrderType(t *testing.T) {
-	logic := &PlaceOrderLogic{}
-	if got, err := logic.orderAmountPrice(trade.OrderType_ORDER_TYPE_LIMIT, testDecimal(10)); err != nil || !got.Equal(testDecimal(10)) {
-		t.Fatalf("limit amount price = %v, err = %v, want 10", got, err)
-	}
-	if got, err := logic.orderAmountPrice(trade.OrderType_ORDER_TYPE_MARKET, testDecimal(10)); err != nil || !got.IsZero() {
-		t.Fatalf("market amount price = %v, err = %v, want 0 because trade does not resolve quotes", got, err)
-	}
-}
-
 func TestMatchExecutionPrice(t *testing.T) {
 	tests := []struct {
 		name string

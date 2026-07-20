@@ -3,11 +3,15 @@ package logic
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	"wklive/common/conv"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -58,6 +62,34 @@ func (l *ProcessOrderMatchingLogic) ProcessOrderMatching(in *trade.TradeTaskReq)
 		}
 		return okTradeTaskResp(), nil
 	})
+}
+
+// ProcessOrder is the real-time entry point. Events for the same order book
+// are serialized by a symbol-scoped distributed lock; different symbols can
+// match concurrently.
+func (l *ProcessOrderMatchingLogic) ProcessOrder(orderID int64) error {
+	order, err := l.svcCtx.TradeOrderModel.FindOne(l.ctx, orderID)
+	if err != nil {
+		return err
+	}
+	if !isMatchableOrderStatus(order.Status) {
+		return nil
+	}
+	key := models.TradeOrderMatchKey{TenantId: order.TenantId, SymbolId: order.SymbolId, ProductType: order.ProductType}
+	lockKey := fmt.Sprintf("trade:matching:%d:%d:%d", key.TenantId, key.ProductType, key.SymbolId)
+	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
+	if err := acquireTradeTaskLock(l.ctx, l.svcCtx.Redis, lockKey, lockValue); err != nil {
+		if i18n.IsStatusError(err, i18n.SyncTaskAlreadyRunning) {
+			return nil
+		}
+		return err
+	}
+	defer func() {
+		if err := releaseTradeTaskLock(context.Background(), l.svcCtx.Redis, lockKey, lockValue); err != nil {
+			l.Errorf("release real-time matching lock failed, key=%s err=%v", lockKey, err)
+		}
+	}()
+	return l.matchOrderBook(key)
 }
 
 func (l *ProcessOrderMatchingLogic) matchOrderBook(key models.TradeOrderMatchKey) error {
@@ -198,6 +230,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 	now := utils.NowMillis()
 	matched := false
 	matchedOrderIDs := make(map[int64]struct{})
+	var createdFillEvents []realtime.Event
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
@@ -258,6 +291,10 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 			if err := createMatchSettlementRecords(ctx, instructionModel, eventModel, contractOrderModel, symbol, sellOrder, sellFill, now); err != nil {
 				return err
 			}
+			createdFillEvents = append(createdFillEvents,
+				realtime.Event{EventNo: derivedTradeBizNo(buyFill.FillNo, "FILL"), Type: realtime.EventFillCreated, TenantID: buyFill.TenantId, BizID: buyFill.FillNo, OrderID: buyFill.OrderId, FillID: buyFill.Id},
+				realtime.Event{EventNo: derivedTradeBizNo(sellFill.FillNo, "FILL"), Type: realtime.EventFillCreated, TenantID: sellFill.TenantId, BizID: sellFill.FillNo, OrderID: sellFill.OrderId, FillID: sellFill.Id},
+			)
 			matchedOrderIDs[lockedPlan.BuyOrder.Id] = struct{}{}
 			matchedOrderIDs[lockedPlan.SellOrder.Id] = struct{}{}
 			matched = true
@@ -266,6 +303,11 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 	})
 	if err != nil || !matched {
 		return matched, err
+	}
+	for _, event := range createdFillEvents {
+		if publishErr := realtime.Publish(l.ctx, l.svcCtx.TradeEventPublisher, event); publishErr != nil {
+			l.Errorf("publish real-time fill event failed, eventNo=%s fillId=%d err=%v", event.EventNo, event.FillID, publishErr)
+		}
 	}
 	for orderID := range matchedOrderIDs {
 		if syncErr := syncOrderBookCacheByID(l.svcCtx, l.ctx, orderID); syncErr != nil {

@@ -14,6 +14,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -115,16 +116,10 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		timeInForce = normalizeOrderTimeInForce(orderType, timeInForce)
 	}
 	if !isSeconds && amount.IsZero() && orderType == trade.OrderType_ORDER_TYPE_LIMIT {
-		amountPrice, err := l.orderAmountPrice(orderType, price)
-		if err != nil {
-			l.Errorf("place order resolve amount price failed, tenantId=%d userId=%d symbolId=%d orderType=%d price=%v triggerPrice=%v err=%v",
-				tenantId, userId, in.SymbolId, orderType, price, triggerPrice, err)
-			return nil, err
-		}
-		if !amountPrice.IsPositive() || !qty.IsPositive() {
+		if !price.IsPositive() || !qty.IsPositive() {
 			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
-		amount = tradeMinorAmountAtPrice(amountPrice, qty)
+		amount = tradeMinorAmountAtPrice(price, qty)
 	}
 
 	if !qty.IsPositive() && !amount.IsPositive() {
@@ -319,6 +314,12 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	if err := syncOrderBookCache(l.svcCtx, l.ctx, order); err != nil {
 		l.Errorf("sync redis order book after place order failed, orderId=%d err=%v", order.Id, err)
 	}
+	if !isSeconds && order.Status == int64(trade.OrderStatus_ORDER_STATUS_PENDING) {
+		event := realtime.Event{EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), Type: realtime.EventOrderAccepted, TenantID: order.TenantId, BizID: order.OrderNo, OrderID: order.Id}
+		if err := realtime.Publish(l.ctx, l.svcCtx.TradeEventPublisher, event); err != nil {
+			l.Errorf("publish real-time order accepted event failed, orderId=%d eventNo=%s err=%v", order.Id, event.EventNo, err)
+		}
+	}
 
 	return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(order)}, nil
 }
@@ -373,7 +374,7 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 				return err
 			}
 		}
-		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: order.OrderNo + "-ACCEPTED", EventType: "ORDER_ACCEPTED", BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
+		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), EventType: realtime.EventOrderAccepted, BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 		return err
 	})
 }
@@ -429,17 +430,6 @@ func (l *PlaceOrderLogic) rejectOrderAfterFreezeFailure(order *models.TTradeOrde
 		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: order.OrderNo + "-REJECTED", EventType: "ORDER_REJECTED", BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 		return err
 	})
-}
-
-func (l *PlaceOrderLogic) orderAmountPrice(orderType trade.OrderType, price decimal.Decimal) (decimal.Decimal, error) {
-	switch {
-	case orderType == trade.OrderType_ORDER_TYPE_LIMIT:
-		return price, nil
-	case orderType == trade.OrderType_ORDER_TYPE_MARKET:
-		return decimal.Zero, nil
-	default:
-		return decimal.Zero, nil
-	}
 }
 
 func (l *PlaceOrderLogic) postOnlyWouldTake(tenantID, symbolID, marketType, side int64, price decimal.Decimal) (bool, error) {
