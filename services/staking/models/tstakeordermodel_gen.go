@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,44 +44,44 @@ type (
 	}
 
 	TStakeOrder struct {
-		Id               int64   `db:"id"`                 // 主键ID
-		TenantId         int64   `db:"tenant_id"`          // 租户ID
-		OrderNo          string  `db:"order_no"`           // 质押订单号
-		UserId           int64   `db:"user_id"`            // 用户ID
-		ProductId        int64   `db:"product_id"`         // 质押产品ID
-		ProductNo        string  `db:"product_no"`         // 质押产品编号快照
-		ProductName      string  `db:"product_name"`       // 质押产品名称快照
-		ProductType      int64   `db:"product_type"`       // 产品类型快照：1活期 2定期
-		CoinName         string  `db:"coin_name"`          // 质押币种名称快照
-		CoinSymbol       string  `db:"coin_symbol"`        // 质押币种符号快照
-		RewardCoinName   string  `db:"reward_coin_name"`   // 收益币种名称快照
-		RewardCoinSymbol string  `db:"reward_coin_symbol"` // 收益币种符号快照
-		StakeAmount      float64 `db:"stake_amount"`       // 质押数量
-		Apr              float64 `db:"apr"`                // 年化收益率快照
-		LockDays         int64   `db:"lock_days"`          // 锁仓天数快照
-		InterestMode     int64   `db:"interest_mode"`      // 计息方式快照：1按天计息 2到期一次性计息
-		RewardMode       int64   `db:"reward_mode"`        // 发息方式快照：1每日发放 2到期发放
-		AllowEarlyRedeem int64   `db:"allow_early_redeem"` // 是否允许提前赎回快照：1是 2否
-		EarlyRedeemRate  float64 `db:"early_redeem_rate"`  // 提前赎回手续费率快照
-		InterestDays     int64   `db:"interest_days"`      // 已计息天数
-		StartTimes       int64   `db:"start_times"`        // 起息时间戳
-		EndTimes         int64   `db:"end_times"`          // 到期时间戳，活期可为0
-		LastRewardTimes  int64   `db:"last_reward_times"`  // 最后一次收益发放时间戳
-		NextRewardTimes  int64   `db:"next_reward_times"`  // 下一次收益发放时间戳
-		TotalReward      float64 `db:"total_reward"`       // 累计收益
-		PendingReward    float64 `db:"pending_reward"`     // 待发放收益
-		RedeemAmount     float64 `db:"redeem_amount"`      // 赎回本金数量
-		RedeemFee        float64 `db:"redeem_fee"`         // 赎回手续费
-		Status           int64   `db:"status"`             // 订单状态：1质押中 2已到期 3已赎回 4提前赎回 5已取消
-		RedeemType       int64   `db:"redeem_type"`        // 赎回类型：1未赎回 2到期赎回 3提前赎回 4手动赎回
-		RedeemApplyTimes int64   `db:"redeem_apply_times"` // 申请赎回时间戳
-		RedeemTimes      int64   `db:"redeem_times"`       // 实际赎回时间戳
-		Source           int64   `db:"source"`             // 来源：1后台 2H5 3APP 4API
-		Remark           string  `db:"remark"`             // 备注
-		CreateUserId     int64   `db:"create_user_id"`     // 创建人ID
-		UpdateUserId     int64   `db:"update_user_id"`     // 更新人ID
-		CreateTimes      int64   `db:"create_times"`       // 创建时间戳
-		UpdateTimes      int64   `db:"update_times"`       // 更新时间戳
+		Id               int64           `db:"id"`                 // 主键ID
+		TenantId         int64           `db:"tenant_id"`          // 租户ID
+		OrderNo          string          `db:"order_no"`           // 质押订单号
+		UserId           int64           `db:"user_id"`            // 用户ID
+		ProductId        int64           `db:"product_id"`         // 质押产品ID
+		ProductNo        string          `db:"product_no"`         // 质押产品编号快照
+		ProductName      string          `db:"product_name"`       // 质押产品名称快照
+		ProductType      int64           `db:"product_type"`       // 产品类型快照：1活期 2定期
+		CoinName         string          `db:"coin_name"`          // 质押币种名称快照
+		CoinSymbol       string          `db:"coin_symbol"`        // 质押币种符号快照
+		RewardCoinName   string          `db:"reward_coin_name"`   // 收益币种名称快照
+		RewardCoinSymbol string          `db:"reward_coin_symbol"` // 收益币种符号快照
+		StakeAmount      decimal.Decimal `db:"stake_amount"`       // 质押数量
+		Apr              decimal.Decimal `db:"apr"`                // 年化收益率快照
+		LockDays         int64           `db:"lock_days"`          // 锁仓天数快照
+		InterestMode     int64           `db:"interest_mode"`      // 计息方式快照：1按天计息 2到期一次性计息
+		RewardMode       int64           `db:"reward_mode"`        // 发息方式快照：1每日发放 2到期发放
+		AllowEarlyRedeem int64           `db:"allow_early_redeem"` // 是否允许提前赎回快照：1是 2否
+		EarlyRedeemRate  decimal.Decimal `db:"early_redeem_rate"`  // 提前赎回手续费率快照
+		InterestDays     int64           `db:"interest_days"`      // 已计息天数
+		StartTimes       int64           `db:"start_times"`        // 起息时间戳
+		EndTimes         int64           `db:"end_times"`          // 到期时间戳，活期可为0
+		LastRewardTimes  int64           `db:"last_reward_times"`  // 最后一次收益发放时间戳
+		NextRewardTimes  int64           `db:"next_reward_times"`  // 下一次收益发放时间戳
+		TotalReward      decimal.Decimal `db:"total_reward"`       // 累计收益
+		PendingReward    decimal.Decimal `db:"pending_reward"`     // 待发放收益
+		RedeemAmount     decimal.Decimal `db:"redeem_amount"`      // 赎回本金数量
+		RedeemFee        decimal.Decimal `db:"redeem_fee"`         // 赎回手续费
+		Status           int64           `db:"status"`             // 订单状态：1质押中 2已到期 3已赎回 4提前赎回 5已取消
+		RedeemType       int64           `db:"redeem_type"`        // 赎回类型：1未赎回 2到期赎回 3提前赎回 4手动赎回
+		RedeemApplyTimes int64           `db:"redeem_apply_times"` // 申请赎回时间戳
+		RedeemTimes      int64           `db:"redeem_times"`       // 实际赎回时间戳
+		Source           int64           `db:"source"`             // 来源：1后台 2H5 3APP 4API
+		Remark           string          `db:"remark"`             // 备注
+		CreateUserId     int64           `db:"create_user_id"`     // 创建人ID
+		UpdateUserId     int64           `db:"update_user_id"`     // 更新人ID
+		CreateTimes      int64           `db:"create_times"`       // 创建时间戳
+		UpdateTimes      int64           `db:"update_times"`       // 更新时间戳
 	}
 )
 

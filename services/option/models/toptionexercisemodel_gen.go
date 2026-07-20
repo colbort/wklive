@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,27 +44,27 @@ type (
 	}
 
 	TOptionExercise struct {
-		Id              int64   `db:"id"`               // 主键ID
-		TenantId        int64   `db:"tenant_id"`        // 租户ID
-		ExerciseNo      string  `db:"exercise_no"`      // 行权单号
-		UserId          int64   `db:"user_id"`          // 用户ID
-		AccountId       int64   `db:"account_id"`       // 交易账户ID
-		ContractId      int64   `db:"contract_id"`      // 合约ID
-		PositionId      int64   `db:"position_id"`      // 持仓ID
-		ExerciseType    int64   `db:"exercise_type"`    // 行权类型：1用户主动 2系统自动
-		ExerciseQty     float64 `db:"exercise_qty"`     // 行权数量
-		StrikePrice     float64 `db:"strike_price"`     // 行权价
-		SettlementPrice float64 `db:"settlement_price"` // 结算价
-		ExerciseAmount  float64 `db:"exercise_amount"`  // 行权金额
-		ProfitAmount    float64 `db:"profit_amount"`    // 行权收益
-		Fee             float64 `db:"fee"`              // 行权手续费
-		FeeCoin         string  `db:"fee_coin"`         // 手续费币种
-		Status          int64   `db:"status"`           // 状态：1待处理 2已执行 3已拒绝 4已取消
-		Remark          string  `db:"remark"`           // 备注
-		ExerciseTime    int64   `db:"exercise_time"`    // 行权时间
-		FinishTime      int64   `db:"finish_time"`      // 完成时间
-		CreateTimes     int64   `db:"create_times"`     // 创建时间
-		UpdateTimes     int64   `db:"update_times"`     // 更新时间
+		Id              int64           `db:"id"`               // 主键ID
+		TenantId        int64           `db:"tenant_id"`        // 租户ID
+		ExerciseNo      string          `db:"exercise_no"`      // 行权单号
+		UserId          int64           `db:"user_id"`          // 用户ID
+		AccountId       int64           `db:"account_id"`       // 交易账户ID
+		ContractId      int64           `db:"contract_id"`      // 合约ID
+		PositionId      int64           `db:"position_id"`      // 持仓ID
+		ExerciseType    int64           `db:"exercise_type"`    // 行权类型：1用户主动 2系统自动
+		ExerciseQty     decimal.Decimal `db:"exercise_qty"`     // 行权数量
+		StrikePrice     decimal.Decimal `db:"strike_price"`     // 行权价
+		SettlementPrice decimal.Decimal `db:"settlement_price"` // 结算价
+		ExerciseAmount  decimal.Decimal `db:"exercise_amount"`  // 行权金额
+		ProfitAmount    decimal.Decimal `db:"profit_amount"`    // 行权收益
+		Fee             decimal.Decimal `db:"fee"`              // 行权手续费
+		FeeCoin         string          `db:"fee_coin"`         // 手续费币种
+		Status          int64           `db:"status"`           // 状态：0未知 1待处理 2已执行 3已拒绝 4已取消
+		Remark          string          `db:"remark"`           // 备注
+		ExerciseTime    int64           `db:"exercise_time"`    // 行权时间
+		FinishTime      int64           `db:"finish_time"`      // 完成时间
+		CreateTimes     int64           `db:"create_times"`     // 创建时间
+		UpdateTimes     int64           `db:"update_times"`     // 更新时间
 	}
 )
 

@@ -25,6 +25,8 @@ const (
 	TradeAdmin_GetSymbolDetailAdmin_FullMethodName        = "/trade.TradeAdmin/GetSymbolDetailAdmin"
 	TradeAdmin_SetSpotSymbolConfig_FullMethodName         = "/trade.TradeAdmin/SetSpotSymbolConfig"
 	TradeAdmin_SetContractSymbolConfig_FullMethodName     = "/trade.TradeAdmin/SetContractSymbolConfig"
+	TradeAdmin_SetSecondsSymbolConfig_FullMethodName      = "/trade.TradeAdmin/SetSecondsSymbolConfig"
+	TradeAdmin_SetSymbolSession_FullMethodName            = "/trade.TradeAdmin/SetSymbolSession"
 	TradeAdmin_SetSymbolLeverageConfig_FullMethodName     = "/trade.TradeAdmin/SetSymbolLeverageConfig"
 	TradeAdmin_GetSymbolLeverageConfig_FullMethodName     = "/trade.TradeAdmin/GetSymbolLeverageConfig"
 	TradeAdmin_GetSymbolLeverageConfigList_FullMethodName = "/trade.TradeAdmin/GetSymbolLeverageConfigList"
@@ -35,7 +37,7 @@ const (
 	TradeAdmin_GetPositionListAdmin_FullMethodName        = "/trade.TradeAdmin/GetPositionListAdmin"
 	TradeAdmin_GetPositionDetailAdmin_FullMethodName      = "/trade.TradeAdmin/GetPositionDetailAdmin"
 	TradeAdmin_GetPositionHistoryListAdmin_FullMethodName = "/trade.TradeAdmin/GetPositionHistoryListAdmin"
-	TradeAdmin_GetMarginAccountListAdmin_FullMethodName   = "/trade.TradeAdmin/GetMarginAccountListAdmin"
+	TradeAdmin_GetMarginSnapshotListAdmin_FullMethodName  = "/trade.TradeAdmin/GetMarginSnapshotListAdmin"
 	TradeAdmin_GetCancelLogListAdmin_FullMethodName       = "/trade.TradeAdmin/GetCancelLogListAdmin"
 	TradeAdmin_SetUserTradeLimit_FullMethodName           = "/trade.TradeAdmin/SetUserTradeLimit"
 	TradeAdmin_SetUserSymbolLimit_FullMethodName          = "/trade.TradeAdmin/SetUserSymbolLimit"
@@ -43,6 +45,8 @@ const (
 	TradeAdmin_GetUserSymbolLimit_FullMethodName          = "/trade.TradeAdmin/GetUserSymbolLimit"
 	TradeAdmin_SetUserTradeConfig_FullMethodName          = "/trade.TradeAdmin/SetUserTradeConfig"
 	TradeAdmin_GetUserTradeConfig_FullMethodName          = "/trade.TradeAdmin/GetUserTradeConfig"
+	TradeAdmin_SetContractUserConfig_FullMethodName       = "/trade.TradeAdmin/SetContractUserConfig"
+	TradeAdmin_GetContractUserConfig_FullMethodName       = "/trade.TradeAdmin/GetContractUserConfig"
 	TradeAdmin_GetRiskOrderCheckLogList_FullMethodName    = "/trade.TradeAdmin/GetRiskOrderCheckLogList"
 	TradeAdmin_SetUserLeverageConfig_FullMethodName       = "/trade.TradeAdmin/SetUserLeverageConfig"
 	TradeAdmin_GetUserLeverageConfig_FullMethodName       = "/trade.TradeAdmin/GetUserLeverageConfig"
@@ -69,6 +73,10 @@ type TradeAdminClient interface {
 	SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 设置合约交易对配置
 	SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 设置秒合约产品配置
+	SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 保存交易时段配置
+	SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 保存交易对杠杆档位配置
 	SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 获取交易对杠杆档位配置
@@ -89,8 +97,8 @@ type TradeAdminClient interface {
 	GetPositionDetailAdmin(ctx context.Context, in *GetPositionDetailAdminReq, opts ...grpc.CallOption) (*GetPositionDetailAdminResp, error)
 	// 获取持仓历史列表
 	GetPositionHistoryListAdmin(ctx context.Context, in *GetPositionHistoryListAdminReq, opts ...grpc.CallOption) (*GetPositionHistoryListAdminResp, error)
-	// 获取保证金账户列表
-	GetMarginAccountListAdmin(ctx context.Context, in *GetMarginAccountListAdminReq, opts ...grpc.CallOption) (*GetMarginAccountListAdminResp, error)
+	// 获取合约风控保证金快照列表
+	GetMarginSnapshotListAdmin(ctx context.Context, in *GetMarginSnapshotListAdminReq, opts ...grpc.CallOption) (*GetMarginSnapshotListAdminResp, error)
 	// 获取撤单日志列表
 	GetCancelLogListAdmin(ctx context.Context, in *GetCancelLogListAdminReq, opts ...grpc.CallOption) (*GetCancelLogListAdminResp, error)
 	// 设置用户交易限制
@@ -105,6 +113,10 @@ type TradeAdminClient interface {
 	SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 获取用户交易配置
 	GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error)
+	// 设置用户合约偏好配置
+	SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 获取用户合约偏好配置
+	GetContractUserConfig(ctx context.Context, in *GetContractUserConfigReq, opts ...grpc.CallOption) (*GetContractUserConfigResp, error)
 	// 获取风控订单校验日志列表
 	GetRiskOrderCheckLogList(ctx context.Context, in *GetRiskOrderCheckLogListReq, opts ...grpc.CallOption) (*GetRiskOrderCheckLogListResp, error)
 	// 设置用户杠杆配置
@@ -181,6 +193,26 @@ func (c *tradeAdminClient) SetContractSymbolConfig(ctx context.Context, in *SetC
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminCommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetContractSymbolConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_SetSecondsSymbolConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_SetSymbolSession_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -287,10 +319,10 @@ func (c *tradeAdminClient) GetPositionHistoryListAdmin(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetMarginAccountListAdmin(ctx context.Context, in *GetMarginAccountListAdminReq, opts ...grpc.CallOption) (*GetMarginAccountListAdminResp, error) {
+func (c *tradeAdminClient) GetMarginSnapshotListAdmin(ctx context.Context, in *GetMarginSnapshotListAdminReq, opts ...grpc.CallOption) (*GetMarginSnapshotListAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetMarginAccountListAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetMarginAccountListAdmin_FullMethodName, in, out, cOpts...)
+	out := new(GetMarginSnapshotListAdminResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetMarginSnapshotListAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -361,6 +393,26 @@ func (c *tradeAdminClient) GetUserTradeConfig(ctx context.Context, in *GetUserTr
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserTradeConfigResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_GetUserTradeConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_SetContractUserConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetContractUserConfig(ctx context.Context, in *GetContractUserConfigReq, opts ...grpc.CallOption) (*GetContractUserConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContractUserConfigResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetContractUserConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -445,6 +497,10 @@ type TradeAdminServer interface {
 	SetSpotSymbolConfig(context.Context, *SetSpotSymbolConfigReq) (*AdminCommonResp, error)
 	// 设置合约交易对配置
 	SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*AdminCommonResp, error)
+	// 设置秒合约产品配置
+	SetSecondsSymbolConfig(context.Context, *SetSecondsSymbolConfigReq) (*AdminCommonResp, error)
+	// 保存交易时段配置
+	SetSymbolSession(context.Context, *SetSymbolSessionReq) (*AdminCommonResp, error)
 	// 保存交易对杠杆档位配置
 	SetSymbolLeverageConfig(context.Context, *SetSymbolLeverageConfigReq) (*AdminCommonResp, error)
 	// 获取交易对杠杆档位配置
@@ -465,8 +521,8 @@ type TradeAdminServer interface {
 	GetPositionDetailAdmin(context.Context, *GetPositionDetailAdminReq) (*GetPositionDetailAdminResp, error)
 	// 获取持仓历史列表
 	GetPositionHistoryListAdmin(context.Context, *GetPositionHistoryListAdminReq) (*GetPositionHistoryListAdminResp, error)
-	// 获取保证金账户列表
-	GetMarginAccountListAdmin(context.Context, *GetMarginAccountListAdminReq) (*GetMarginAccountListAdminResp, error)
+	// 获取合约风控保证金快照列表
+	GetMarginSnapshotListAdmin(context.Context, *GetMarginSnapshotListAdminReq) (*GetMarginSnapshotListAdminResp, error)
 	// 获取撤单日志列表
 	GetCancelLogListAdmin(context.Context, *GetCancelLogListAdminReq) (*GetCancelLogListAdminResp, error)
 	// 设置用户交易限制
@@ -481,6 +537,10 @@ type TradeAdminServer interface {
 	SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*AdminCommonResp, error)
 	// 获取用户交易配置
 	GetUserTradeConfig(context.Context, *GetUserTradeConfigReq) (*GetUserTradeConfigResp, error)
+	// 设置用户合约偏好配置
+	SetContractUserConfig(context.Context, *SetContractUserConfigReq) (*AdminCommonResp, error)
+	// 获取用户合约偏好配置
+	GetContractUserConfig(context.Context, *GetContractUserConfigReq) (*GetContractUserConfigResp, error)
 	// 获取风控订单校验日志列表
 	GetRiskOrderCheckLogList(context.Context, *GetRiskOrderCheckLogListReq) (*GetRiskOrderCheckLogListResp, error)
 	// 设置用户杠杆配置
@@ -521,6 +581,12 @@ func (UnimplementedTradeAdminServer) SetSpotSymbolConfig(context.Context, *SetSp
 func (UnimplementedTradeAdminServer) SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetContractSymbolConfig not implemented")
 }
+func (UnimplementedTradeAdminServer) SetSecondsSymbolConfig(context.Context, *SetSecondsSymbolConfigReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetSecondsSymbolConfig not implemented")
+}
+func (UnimplementedTradeAdminServer) SetSymbolSession(context.Context, *SetSymbolSessionReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetSymbolSession not implemented")
+}
 func (UnimplementedTradeAdminServer) SetSymbolLeverageConfig(context.Context, *SetSymbolLeverageConfigReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetSymbolLeverageConfig not implemented")
 }
@@ -551,8 +617,8 @@ func (UnimplementedTradeAdminServer) GetPositionDetailAdmin(context.Context, *Ge
 func (UnimplementedTradeAdminServer) GetPositionHistoryListAdmin(context.Context, *GetPositionHistoryListAdminReq) (*GetPositionHistoryListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPositionHistoryListAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) GetMarginAccountListAdmin(context.Context, *GetMarginAccountListAdminReq) (*GetMarginAccountListAdminResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetMarginAccountListAdmin not implemented")
+func (UnimplementedTradeAdminServer) GetMarginSnapshotListAdmin(context.Context, *GetMarginSnapshotListAdminReq) (*GetMarginSnapshotListAdminResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMarginSnapshotListAdmin not implemented")
 }
 func (UnimplementedTradeAdminServer) GetCancelLogListAdmin(context.Context, *GetCancelLogListAdminReq) (*GetCancelLogListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCancelLogListAdmin not implemented")
@@ -574,6 +640,12 @@ func (UnimplementedTradeAdminServer) SetUserTradeConfig(context.Context, *SetUse
 }
 func (UnimplementedTradeAdminServer) GetUserTradeConfig(context.Context, *GetUserTradeConfigReq) (*GetUserTradeConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserTradeConfig not implemented")
+}
+func (UnimplementedTradeAdminServer) SetContractUserConfig(context.Context, *SetContractUserConfigReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetContractUserConfig not implemented")
+}
+func (UnimplementedTradeAdminServer) GetContractUserConfig(context.Context, *GetContractUserConfigReq) (*GetContractUserConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetContractUserConfig not implemented")
 }
 func (UnimplementedTradeAdminServer) GetRiskOrderCheckLogList(context.Context, *GetRiskOrderCheckLogListReq) (*GetRiskOrderCheckLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRiskOrderCheckLogList not implemented")
@@ -718,6 +790,42 @@ func _TradeAdmin_SetContractSymbolConfig_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TradeAdminServer).SetContractSymbolConfig(ctx, req.(*SetContractSymbolConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_SetSecondsSymbolConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSecondsSymbolConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).SetSecondsSymbolConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_SetSecondsSymbolConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).SetSecondsSymbolConfig(ctx, req.(*SetSecondsSymbolConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_SetSymbolSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSymbolSessionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).SetSymbolSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_SetSymbolSession_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).SetSymbolSession(ctx, req.(*SetSymbolSessionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -902,20 +1010,20 @@ func _TradeAdmin_GetPositionHistoryListAdmin_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetMarginAccountListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetMarginAccountListAdminReq)
+func _TradeAdmin_GetMarginSnapshotListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMarginSnapshotListAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetMarginAccountListAdmin(ctx, in)
+		return srv.(TradeAdminServer).GetMarginSnapshotListAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetMarginAccountListAdmin_FullMethodName,
+		FullMethod: TradeAdmin_GetMarginSnapshotListAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetMarginAccountListAdmin(ctx, req.(*GetMarginAccountListAdminReq))
+		return srv.(TradeAdminServer).GetMarginSnapshotListAdmin(ctx, req.(*GetMarginSnapshotListAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1042,6 +1150,42 @@ func _TradeAdmin_GetUserTradeConfig_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TradeAdminServer).GetUserTradeConfig(ctx, req.(*GetUserTradeConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_SetContractUserConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetContractUserConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).SetContractUserConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_SetContractUserConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).SetContractUserConfig(ctx, req.(*SetContractUserConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetContractUserConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetContractUserConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetContractUserConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetContractUserConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetContractUserConfig(ctx, req.(*GetContractUserConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1186,6 +1330,14 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TradeAdmin_SetContractSymbolConfig_Handler,
 		},
 		{
+			MethodName: "SetSecondsSymbolConfig",
+			Handler:    _TradeAdmin_SetSecondsSymbolConfig_Handler,
+		},
+		{
+			MethodName: "SetSymbolSession",
+			Handler:    _TradeAdmin_SetSymbolSession_Handler,
+		},
+		{
 			MethodName: "SetSymbolLeverageConfig",
 			Handler:    _TradeAdmin_SetSymbolLeverageConfig_Handler,
 		},
@@ -1226,8 +1378,8 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TradeAdmin_GetPositionHistoryListAdmin_Handler,
 		},
 		{
-			MethodName: "GetMarginAccountListAdmin",
-			Handler:    _TradeAdmin_GetMarginAccountListAdmin_Handler,
+			MethodName: "GetMarginSnapshotListAdmin",
+			Handler:    _TradeAdmin_GetMarginSnapshotListAdmin_Handler,
 		},
 		{
 			MethodName: "GetCancelLogListAdmin",
@@ -1256,6 +1408,14 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserTradeConfig",
 			Handler:    _TradeAdmin_GetUserTradeConfig_Handler,
+		},
+		{
+			MethodName: "SetContractUserConfig",
+			Handler:    _TradeAdmin_SetContractUserConfig_Handler,
+		},
+		{
+			MethodName: "GetContractUserConfig",
+			Handler:    _TradeAdmin_GetContractUserConfig_Handler,
 		},
 		{
 			MethodName: "GetRiskOrderCheckLogList",

@@ -96,12 +96,12 @@ export type Kline = {
   symbol: string
   kType: number
   ts: number
-  open: number
-  high: number
-  low: number
-  close: number
-  volume: number
-  turnover: number
+  open: string
+  high: string
+  low: string
+  close: string
+  volume: string
+  turnover: string
 }
 
 // ===== ITICK服务 =====

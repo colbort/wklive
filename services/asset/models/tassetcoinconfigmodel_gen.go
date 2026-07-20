@@ -54,10 +54,10 @@ type (
 		IconText        string `db:"icon_text"`        // 币种图标文案/符号
 		IconBgColor     string `db:"icon_bg_color"`    // 图标背景色
 		DecimalPlaces   int64  `db:"decimal_places"`   // 资产展示精度
-		AppVisible      int64  `db:"app_visible"`      // APP操作页展示开关:1显示 0隐藏
-		RechargeEnabled int64  `db:"recharge_enabled"` // 充值页展示开关:1显示 0隐藏
-		WithdrawEnabled int64  `db:"withdraw_enabled"` // 提现页展示开关:1显示 0隐藏
-		TransferEnabled int64  `db:"transfer_enabled"` // 划转页展示开关:1显示 0隐藏
+		AppVisible      int64  `db:"app_visible"`      // APP操作页展示开关:1显示 2隐藏
+		RechargeEnabled int64  `db:"recharge_enabled"` // 充值页展示开关:1显示 2隐藏
+		WithdrawEnabled int64  `db:"withdraw_enabled"` // 提现页展示开关:1显示 2隐藏
+		TransferEnabled int64  `db:"transfer_enabled"` // 划转页展示开关:1显示 2隐藏
 		Enabled         int64  `db:"enabled"`          // 启用开关:1启用 2禁用
 		Sort            int64  `db:"sort"`             // 排序,越小越靠前
 		Remark          string `db:"remark"`           // 备注

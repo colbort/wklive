@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,29 +44,30 @@ type (
 	}
 
 	TContractPosition struct {
-		Id               int64   `db:"id"`                // 主键ID
-		TenantId         int64   `db:"tenant_id"`         // 租户ID
-		UserId           int64   `db:"user_id"`           // 用户ID
-		SymbolId         int64   `db:"symbol_id"`         // 交易标的ID
-		MarketType       int64   `db:"market_type"`       // 市场类型：2秒合约 3U本位 4币本位
-		PositionSide     int64   `db:"position_side"`     // 持仓方向：1净持仓 2多 3空
-		MarginMode       int64   `db:"margin_mode"`       // 保证金模式：1全仓 2逐仓
-		Leverage         int64   `db:"leverage"`          // 当前杠杆倍数
-		Qty              float64 `db:"qty"`               // 当前持仓数量
-		AvailQty         float64 `db:"avail_qty"`         // 可平仓数量
-		FrozenQty        float64 `db:"frozen_qty"`        // 挂单冻结数量
-		OpenAvgPrice     float64 `db:"open_avg_price"`    // 开仓均价
-		MarkPrice        float64 `db:"mark_price"`        // 标记价格快照
-		MarginAsset      string  `db:"margin_asset"`      // 保证金币种
-		PositionMargin   float64 `db:"position_margin"`   // 仓位保证金
-		IsolatedMargin   float64 `db:"isolated_margin"`   // 逐仓追加保证金
-		UnrealizedPnl    float64 `db:"unrealized_pnl"`    // 未实现盈亏
-		RealizedPnl      float64 `db:"realized_pnl"`      // 已实现盈亏
-		LiquidationPrice float64 `db:"liquidation_price"` // 强平价格
-		AdlRank          int64   `db:"adl_rank"`          // 自动减仓优先级
-		Version          int64   `db:"version"`           // 乐观锁版本号
-		CreateTimes      int64   `db:"create_times"`      // 创建时间，毫秒时间戳
-		UpdateTimes      int64   `db:"update_times"`      // 更新时间，毫秒时间戳
+		Id                int64           `db:"id"`                  // 主键ID
+		TenantId          int64           `db:"tenant_id"`           // 租户ID
+		UserId            int64           `db:"user_id"`             // 用户ID
+		SymbolId          int64           `db:"symbol_id"`           // 交易标的ID
+		ContractType      int64           `db:"contract_type"`       // 合约期限类型：1永续 2交割
+		ContractValueType int64           `db:"contract_value_type"` // 合约价值类型：1线性 2反向
+		PositionSide      int64           `db:"position_side"`       // 持仓方向：1净持仓 2多 3空
+		MarginMode        int64           `db:"margin_mode"`         // 保证金模式：1全仓 2逐仓
+		Leverage          int64           `db:"leverage"`            // 当前杠杆倍数
+		Qty               decimal.Decimal `db:"qty"`                 // 当前持仓数量
+		AvailQty          decimal.Decimal `db:"avail_qty"`           // 可平仓数量
+		FrozenQty         decimal.Decimal `db:"frozen_qty"`          // 挂单冻结数量
+		OpenAvgPrice      decimal.Decimal `db:"open_avg_price"`      // 开仓均价
+		MarkPrice         decimal.Decimal `db:"mark_price"`          // 标记价格快照
+		MarginAsset       string          `db:"margin_asset"`        // 保证金币种
+		PositionMargin    decimal.Decimal `db:"position_margin"`     // 仓位保证金
+		IsolatedMargin    decimal.Decimal `db:"isolated_margin"`     // 逐仓追加保证金
+		UnrealizedPnl     decimal.Decimal `db:"unrealized_pnl"`      // 未实现盈亏
+		RealizedPnl       decimal.Decimal `db:"realized_pnl"`        // 已实现盈亏
+		LiquidationPrice  decimal.Decimal `db:"liquidation_price"`   // 强平价格
+		AdlRank           int64           `db:"adl_rank"`            // 自动减仓优先级
+		Version           int64           `db:"version"`             // 乐观锁版本号
+		CreateTimes       int64           `db:"create_times"`        // 创建时间，毫秒时间戳
+		UpdateTimes       int64           `db:"update_times"`        // 更新时间，毫秒时间戳
 	}
 )
 
@@ -131,8 +134,8 @@ func (m *defaultTContractPositionModel) Insert(ctx context.Context, data *TContr
 	tContractPositionIdKey := fmt.Sprintf("%s%v", cacheTContractPositionIdPrefix, data.Id)
 	tContractPositionTenantIdUserIdSymbolIdPositionSideMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractPositionTenantIdUserIdSymbolIdPositionSideMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.PositionSide, data.MarginMode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractPositionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SymbolId, data.MarketType, data.PositionSide, data.MarginMode, data.Leverage, data.Qty, data.AvailQty, data.FrozenQty, data.OpenAvgPrice, data.MarkPrice, data.MarginAsset, data.PositionMargin, data.IsolatedMargin, data.UnrealizedPnl, data.RealizedPnl, data.LiquidationPrice, data.AdlRank, data.Version, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractPositionRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SymbolId, data.ContractType, data.ContractValueType, data.PositionSide, data.MarginMode, data.Leverage, data.Qty, data.AvailQty, data.FrozenQty, data.OpenAvgPrice, data.MarkPrice, data.MarginAsset, data.PositionMargin, data.IsolatedMargin, data.UnrealizedPnl, data.RealizedPnl, data.LiquidationPrice, data.AdlRank, data.Version, data.CreateTimes, data.UpdateTimes)
 	}, tContractPositionIdKey, tContractPositionTenantIdUserIdSymbolIdPositionSideMarginModeKey)
 	return ret, err
 }
@@ -147,7 +150,7 @@ func (m *defaultTContractPositionModel) Update(ctx context.Context, newData *TCo
 	tContractPositionTenantIdUserIdSymbolIdPositionSideMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractPositionTenantIdUserIdSymbolIdPositionSideMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.PositionSide, data.MarginMode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractPositionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SymbolId, newData.MarketType, newData.PositionSide, newData.MarginMode, newData.Leverage, newData.Qty, newData.AvailQty, newData.FrozenQty, newData.OpenAvgPrice, newData.MarkPrice, newData.MarginAsset, newData.PositionMargin, newData.IsolatedMargin, newData.UnrealizedPnl, newData.RealizedPnl, newData.LiquidationPrice, newData.AdlRank, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SymbolId, newData.ContractType, newData.ContractValueType, newData.PositionSide, newData.MarginMode, newData.Leverage, newData.Qty, newData.AvailQty, newData.FrozenQty, newData.OpenAvgPrice, newData.MarkPrice, newData.MarginAsset, newData.PositionMargin, newData.IsolatedMargin, newData.UnrealizedPnl, newData.RealizedPnl, newData.LiquidationPrice, newData.AdlRank, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tContractPositionIdKey, tContractPositionTenantIdUserIdSymbolIdPositionSideMarginModeKey)
 	return err
 }

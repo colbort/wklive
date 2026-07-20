@@ -13,6 +13,8 @@ import (
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -85,7 +87,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	var feeAmount int64
 	if channel.FeeType == int64(payment.FeeType_FEE_TYPE_RATE) {
 		// 按比例计算
-		feeAmount = in.RechargeAmount * int64(channel.FeeRate*100) / 10000
+		feeAmount = decimal.NewFromInt(in.RechargeAmount).Mul(channel.FeeRate).Div(decimal.NewFromInt(100)).IntPart()
 	} else if channel.FeeType == int64(payment.FeeType_FEE_TYPE_FIXED) {
 		// 固定费用
 		feeAmount = channel.FeeFixedAmount

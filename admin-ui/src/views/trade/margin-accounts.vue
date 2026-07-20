@@ -7,9 +7,6 @@
       <el-form-item :label="t('trade.userId')">
         <UserSelect v-model="currentQuery.userId" :tenant-id="currentQuery.tenantId || undefined" />
       </el-form-item>
-      <el-form-item :label="t('trade.marketType')">
-        <el-input-number v-model="currentQuery.marketType" :min="0" :precision="0" />
-      </el-form-item>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
@@ -23,12 +20,7 @@
           show-overflow-tooltip
         />
 
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="100"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="100" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('option.detail') }}
@@ -58,7 +50,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
-import { tradeService, type ContractMarginAccount } from '@/services'
+import { tradeService, type ContractMarginSnapshot } from '@/services'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
@@ -70,7 +62,6 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
 interface CurrentQuery {
   tenantId: number | undefined
   userId: number | undefined
-  marketType: number | undefined
   limit: number
 }
 
@@ -81,20 +72,18 @@ interface CurrentColumn {
 }
 
 const loading = ref(false)
-const rows = ref<ContractMarginAccount[]>([])
+const rows = ref<ContractMarginSnapshot[]>([])
 const detailVisible = ref(false)
-const detailData = ref<ContractMarginAccount | null>(null)
+const detailData = ref<ContractMarginSnapshot | null>(null)
 
 const currentQuery = reactive<CurrentQuery>({
   tenantId: undefined,
   userId: undefined,
-  marketType: undefined,
   limit: 20,
 })
 
 const currentColumns: CurrentColumn[] = [
   { prop: 'userId', label: t('trade.userId'), width: 100 },
-  { prop: 'marketType', label: t('trade.marketType'), width: 100 },
   { prop: 'marginAsset', label: t('trade.marginAsset'), width: 120 },
   { prop: 'balance', label: t('trade.balance') },
   { prop: 'availableBalance', label: t('trade.availableBalance') },
@@ -103,7 +92,7 @@ const currentColumns: CurrentColumn[] = [
 const loadList = async () => {
   loading.value = true
   try {
-    const res = await tradeService.listMarginAccounts({
+    const res = await tradeService.listMarginSnapshots({
       ...currentQuery,
       cursor: pagination.cursor,
       limit: pagination.limit,
@@ -118,12 +107,11 @@ const loadList = async () => {
 const resetQuery = () => {
   currentQuery.tenantId = undefined
   currentQuery.userId = undefined
-  currentQuery.marketType = undefined
   currentQuery.limit = 100
   loadList()
 }
 
-const showDetail = (row: ContractMarginAccount) => {
+const showDetail = (row: ContractMarginSnapshot) => {
   detailData.value = row
   detailVisible.value = true
 }

@@ -31,11 +31,11 @@ func NewSubAvailableLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SubA
 
 // 扣减可用余额
 func (l *SubAvailableLogic) SubAvailable(in *asset.SubAvailableReq) (*asset.ChangeAssetResp, error) {
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		return nil, err
 	}
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		return nil, i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 	}
 

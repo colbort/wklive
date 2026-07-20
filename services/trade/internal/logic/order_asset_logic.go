@@ -2,13 +2,14 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/i18n"
 	"wklive/proto/asset"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
+
+	"github.com/shopspring/decimal"
 )
 
 func freezeOrderAsset(
@@ -17,18 +18,18 @@ func freezeOrderAsset(
 	order *models.TTradeOrder,
 	symbol *models.TTradeSymbol,
 	frozenAsset string,
-	frozenAmount float64,
+	frozenAmount decimal.Decimal,
 ) (string, error) {
-	if order == nil || symbol == nil || frozenAsset == "" || frozenAmount <= 0 {
+	if order == nil || symbol == nil || frozenAsset == "" || !frozenAmount.IsPositive() {
 		return "", nil
 	}
 
 	resp, err := svcCtx.AssetClient.FreezeAsset(ctx, &asset.FreezeAssetReq{
 		TenantId:   order.TenantId,
 		UserId:     order.UserId,
-		WalletType: walletTypeForMarket(trade.MarketType(order.MarketType)),
+		WalletType: walletTypeForProduct(trade.ProductType(order.ProductType)),
 		Coin:       frozenAsset,
-		Amount:     fmt.Sprintf("%v", frozenAmount),
+		Amount:     frozenAmount.String(),
 		BizType:    asset.BizType_BIZ_TYPE_TRADE,
 		SceneType:  asset.SceneType_SCENE_TYPE_PLACE_ORDER,
 		BizId:      order.Id,
@@ -53,17 +54,17 @@ func unfreezeOrderAsset(
 	ctx context.Context,
 	order *models.TTradeOrder,
 	freezeNo string,
-	amount float64,
+	amount decimal.Decimal,
 	reason string,
 ) error {
-	if order == nil || freezeNo == "" || amount <= 0 {
+	if order == nil || freezeNo == "" || !amount.IsPositive() {
 		return nil
 	}
 
 	resp, err := svcCtx.AssetClient.UnfreezeAsset(ctx, &asset.UnfreezeAssetReq{
 		TenantId:  order.TenantId,
 		FreezeNo:  freezeNo,
-		Amount:    fmt.Sprintf("%v", amount),
+		Amount:    amount.String(),
 		BizType:   asset.BizType_BIZ_TYPE_TRADE,
 		SceneType: asset.SceneType_SCENE_TYPE_CANCEL_ORDER,
 		BizId:     order.Id,

@@ -31,13 +31,13 @@ func NewDeductLockedAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 扣减锁仓余额
 func (l *DeductLockedAssetLogic) DeductLockedAsset(in *asset.DeductLockedAssetReq) (*asset.ChangeAssetResp, error) {
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("DeductLockedAsset parse amount failed, tenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("DeductLockedAsset validate amount failed, tenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
@@ -56,7 +56,7 @@ func (l *DeductLockedAssetLogic) DeductLockedAsset(in *asset.DeductLockedAssetRe
 			in.TenantId, lock.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
-	if amount > lock.RemainAmount {
+	if amount.GreaterThan(lock.RemainAmount) {
 		err := i18n.StatusError(l.ctx, i18n.DeductAmountExceedsLocked)
 		l.Errorf("DeductLockedAsset amount exceeds locked amount, tenantId=%d lockNo=%s amount=%s remainAmount=%v bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, lock.RemainAmount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)

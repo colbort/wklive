@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -40,24 +42,24 @@ type (
 	}
 
 	TRiskOrderCheckLog struct {
-		Id            int64          `db:"id"`              // 主键ID
-		TenantId      int64          `db:"tenant_id"`       // 租户ID
-		OrderNo       string         `db:"order_no"`        // 平台订单号
-		ClientOrderId string         `db:"client_order_id"` // 客户端订单号
-		UserId        int64          `db:"user_id"`         // 用户ID
-		SymbolId      int64          `db:"symbol_id"`       // 交易标的ID
-		MarketType    int64          `db:"market_type"`     // 市场类型：1现货 2秒合约 3U本位 4币本位
-		CheckType     int64          `db:"check_type"`      // 检查类型：1余额检查 2保证金检查 3仓位检查 4交易权限检查 5价格保护检查 6数量限制检查 7名义价值限制检查 8频率限制检查
-		CheckResult   int64          `db:"check_result"`    // 检查结果：1通过 2拒绝 3告警放行
-		RejectCode    string         `db:"reject_code"`     // 拒绝码
-		RejectMsg     string         `db:"reject_msg"`      // 拒绝原因描述
-		RequestPrice  float64        `db:"request_price"`   // 请求价格
-		RequestQty    float64        `db:"request_qty"`     // 请求数量
-		RequestAmount float64        `db:"request_amount"`  // 请求名义价值或金额
-		OperatorId    int64          `db:"operator_id"`     // 操作人ID，系统操作时可为0
-		Source        int64          `db:"source"`          // 来源：1系统 2用户 3后台管理 4任务
-		CheckSnapshot sql.NullString `db:"check_snapshot"`  // 检查时的上下文快照，JSON格式
-		CreateTimes   int64          `db:"create_times"`    // 创建时间，毫秒时间戳
+		Id            int64           `db:"id"`              // 主键ID
+		TenantId      int64           `db:"tenant_id"`       // 租户ID
+		OrderNo       string          `db:"order_no"`        // 平台订单号
+		ClientOrderId string          `db:"client_order_id"` // 客户端订单号
+		UserId        int64           `db:"user_id"`         // 用户ID
+		SymbolId      int64           `db:"symbol_id"`       // 交易标的ID
+		ProductType   int64           `db:"product_type"`    // 产品大类快照
+		CheckType     int64           `db:"check_type"`      // 检查类型：1余额检查 2保证金检查 3仓位检查 4交易权限检查 5价格保护检查 6数量限制检查 7名义价值限制检查 8频率限制检查
+		CheckResult   int64           `db:"check_result"`    // 检查结果：1通过 2拒绝 3告警放行
+		RejectCode    string          `db:"reject_code"`     // 拒绝码
+		RejectMsg     string          `db:"reject_msg"`      // 拒绝原因描述
+		RequestPrice  decimal.Decimal `db:"request_price"`   // 请求价格
+		RequestQty    decimal.Decimal `db:"request_qty"`     // 请求数量
+		RequestAmount decimal.Decimal `db:"request_amount"`  // 请求名义价值或金额
+		OperatorId    int64           `db:"operator_id"`     // 操作人ID，系统操作时可为0
+		Source        int64           `db:"source"`          // 来源：1系统 2用户 3后台管理 4任务
+		CheckSnapshot sql.NullString  `db:"check_snapshot"`  // 检查时的上下文快照，JSON格式
+		CreateTimes   int64           `db:"create_times"`    // 创建时间，毫秒时间戳
 	}
 )
 
@@ -98,7 +100,7 @@ func (m *defaultTRiskOrderCheckLogModel) Insert(ctx context.Context, data *TRisk
 	tRiskOrderCheckLogIdKey := fmt.Sprintf("%s%v", cacheTRiskOrderCheckLogIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRiskOrderCheckLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.ClientOrderId, data.UserId, data.SymbolId, data.MarketType, data.CheckType, data.CheckResult, data.RejectCode, data.RejectMsg, data.RequestPrice, data.RequestQty, data.RequestAmount, data.OperatorId, data.Source, data.CheckSnapshot, data.CreateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.ClientOrderId, data.UserId, data.SymbolId, data.ProductType, data.CheckType, data.CheckResult, data.RejectCode, data.RejectMsg, data.RequestPrice, data.RequestQty, data.RequestAmount, data.OperatorId, data.Source, data.CheckSnapshot, data.CreateTimes)
 	}, tRiskOrderCheckLogIdKey)
 	return ret, err
 }
@@ -107,7 +109,7 @@ func (m *defaultTRiskOrderCheckLogModel) Update(ctx context.Context, data *TRisk
 	tRiskOrderCheckLogIdKey := fmt.Sprintf("%s%v", cacheTRiskOrderCheckLogIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tRiskOrderCheckLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.ClientOrderId, data.UserId, data.SymbolId, data.MarketType, data.CheckType, data.CheckResult, data.RejectCode, data.RejectMsg, data.RequestPrice, data.RequestQty, data.RequestAmount, data.OperatorId, data.Source, data.CheckSnapshot, data.CreateTimes, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.ClientOrderId, data.UserId, data.SymbolId, data.ProductType, data.CheckType, data.CheckResult, data.RejectCode, data.RejectMsg, data.RequestPrice, data.RequestQty, data.RequestAmount, data.OperatorId, data.Source, data.CheckSnapshot, data.CreateTimes, data.Id)
 	}, tRiskOrderCheckLogIdKey)
 	return err
 }

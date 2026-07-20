@@ -13,7 +13,7 @@ import {
   apiTradeListCancelLogs,
   apiTradeListEvents,
   apiTradeListFills,
-  apiTradeListMarginAccounts,
+  apiTradeListMarginSnapshots,
   apiTradeListOrders,
   apiTradeListPositionHistories,
   apiTradeListPositions,
@@ -23,6 +23,7 @@ import {
   apiTradeSetSymbolLeverageConfig,
   apiTradeRetryEvent,
   apiTradeSetContractConfig,
+  apiTradeSetSecondsConfig,
   apiTradeSetSpotConfig,
   apiTradeSetUserLeverageConfig,
   apiTradeSetUserSymbolLimit,
@@ -42,11 +43,13 @@ export type TradeSymbol = {
   tenantId: number // 租户ID
   symbol: string // 交易对编码
   displaySymbol: string // 展示名称
-  marketType: number
+  productType: number
   baseAsset: string
   quoteAsset: string
   settleAsset: string
   contractType: number
+  contractValueType: number
+  marginAsset: string
   status: number
   priceScale: number
   qtyScale: number
@@ -57,9 +60,10 @@ export type TradeSymbol = {
   maxQty: string
   qtyStep: string
   minNotional: string
-  maxLeverage: number // 最大杠杆
-  openTime: number // 开盘时间
-  closeTime: number // 收盘时间
+  maxNotional: string
+  listingTime: number
+  tradingStartTime: number
+  tradingEndTime: number
   sort: number // 排序
   remark: string // 备注
   createTimes: number // 创建时间
@@ -72,8 +76,8 @@ export type TradeSymbolSpot = {
   symbolId: number
   makerFeeRate: string
   takerFeeRate: string
-  buyEnabled: number // 买入开关：1启用 2禁用
-  sellEnabled: number // 卖出开关：1启用 2禁用
+  buyEnabled: number
+  sellEnabled: number
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
 }
@@ -92,21 +96,44 @@ export type TradeSymbolContract = {
   deliveryTime: number // 交割时间
   supportCross: number // 全仓支持状态：0不支持 1支持
   supportIsolated: number // 逐仓支持状态：0不支持 1支持
-  buyEnabled: number // 买入开关：1启用 2禁用
-  sellEnabled: number // 卖出开关：1启用 2禁用
+  fundingRateCap: string
+  fundingRateFloor: string
+  indexSymbol: string
+  markPriceSource: string
+  settlementPriceSource: string
+  openLongEnabled: number
+  openShortEnabled: number
+  closeLongEnabled: number
+  closeShortEnabled: number
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
+}
+
+export type TradeSymbolSeconds = {
+  id: number
+  tenantId: number
+  symbolId: number
+  durationSeconds: number
+  payoutRate: string
+  drawRule: number
+  startPriceSource: string
+  settlementPriceSource: string
+  quoteValidityMs: number
+  minStake: string
+  maxStake: string
+  upEnabled: number
+  downEnabled: number
+  createTimes: number
+  updateTimes: number
 }
 
 export type TradeSymbolLeverageConfig = {
   id: number
   tenantId: number
   symbolId: number
-  marketType: number
   marginMode: number
-  leverageValues: number[]
-  defaultLeverage: number
-  maxLeverage: number
+  leverage: number
+  isDefault: number
   enabled: number
   sort: number
   remark: string
@@ -118,6 +145,7 @@ export type TradeSymbolDetailData = {
   symbol: TradeSymbol
   spot?: TradeSymbolSpot
   contract?: TradeSymbolContract
+  secondsConfigs?: TradeSymbolSeconds[]
   leverageConfigs?: TradeSymbolLeverageConfig[]
 }
 
@@ -127,13 +155,9 @@ export type TradeUserConfig = {
   id: number
   tenantId: number
   userId: number
-  marketType: number
+  productType: number
   symbolId: number
-  positionMode: number
-  marginMode: number
-  defaultLeverage: number // 默认杠杆
   tradeEnabled: number // 交易开关：1启用 2禁用
-  reduceOnlyEnabled: number // 仅减仓开关：1启用 2禁用
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
 }
@@ -145,7 +169,9 @@ export type TradeOrder = {
   clientOrderId: string
   userId: number
   symbolId: number
-  marketType: number
+  productType: number
+  contractType: number
+  contractValueType: number
   side: number
   positionSide: number
   orderType: number
@@ -161,7 +187,6 @@ export type TradeOrder = {
   feeAsset: string
   source: number
   isReduceOnly: number // 是否只减仓：1是 2否
-  isCloseOnly: number // 是否只平仓：1是 2否
   triggerPrice: string
   triggerType: number
   triggerKind: number
@@ -179,7 +204,13 @@ export type TradeFill = {
   orderNo: string
   userId: number
   symbolId: number
-  marketType: number
+  productType: number
+  contractType: number
+  contractValueType: number
+  matchNo: string
+  settlementStatus: number
+  settlementRetryCount: number
+  settledAt: number
   side: number
   positionSide: number
   price: string
@@ -209,7 +240,8 @@ export type ContractPosition = {
   tenantId: number
   userId: number
   symbolId: number
-  marketType: number
+  contractType: number
+  contractValueType: number
   positionSide: number
   marginMode: number
   leverage: number
@@ -236,7 +268,8 @@ export type ContractPositionHistory = {
   positionId: number
   userId: number
   symbolId: number
-  marketType: number
+  contractType: number
+  contractValueType: number
   positionSide: number
   actionType: number
   beforeQty: string
@@ -265,13 +298,12 @@ export type ContractPositionHistory = {
   createTimes: number
 }
 
-export type ContractMarginAccount = {
+export type ContractMarginSnapshot = {
   id: number
   tenantId: number
   userId: number
-  marketType: number
   marginAsset: string
-  balance: string
+  walletBalance: string
   availableBalance: string
   frozenBalance: string
   positionMargin: string
@@ -281,6 +313,8 @@ export type ContractMarginAccount = {
   version: number
   createTimes: number
   updateTimes: number
+  sourceEventNo: string
+  snapshotTime: number
 }
 
 export type ContractLeverageConfig = {
@@ -288,12 +322,9 @@ export type ContractLeverageConfig = {
   tenantId: number
   userId: number
   symbolId: number
-  marketType: number
   marginMode: number
-  positionMode: number
   longLeverage: number
   shortLeverage: number
-  maxLeverage: number
   operatorId: number
   source: number
   enabled: number // 启用状态
@@ -306,7 +337,7 @@ export type RiskUserTradeLimit = {
   id: number
   tenantId: number
   userId: number
-  marketType: number
+  productType: number
   canOpen: number // 开仓权限：0禁止 1允许
   canClose: number // 平仓权限：0禁止 1允许
   canCancel: number // 撤单权限：0禁止 1允许
@@ -335,7 +366,6 @@ export type RiskUserSymbolLimit = {
   tenantId: number
   userId: number
   symbolId: number
-  marketType: number
   maxPositionQty: string
   maxPositionNotional: string
   maxOpenOrders: number
@@ -363,7 +393,7 @@ export type RiskOrderCheckLog = {
   clientOrderId: string
   userId: number
   symbolId: number
-  marketType: number
+  productType: number
   checkType: number
   checkResult: number
   rejectCode: string
@@ -386,7 +416,7 @@ export type BizTradeEvent = {
   bizType: string
   userId: number
   symbolId: number
-  marketType: number
+  productType: number
   operatorId: number
   source: number
   eventStatus: number
@@ -416,9 +446,10 @@ export type UpdateSymbolReq = {
   maxQty: string
   qtyStep: string
   minNotional: string
-  maxLeverage: number
-  openTime: number
-  closeTime: number
+  maxNotional: string
+  listingTime: number
+  tradingStartTime: number
+  tradingEndTime: number
   sort: number
   remark?: string // 备注
 }
@@ -427,7 +458,7 @@ export type GetSymbolListAdminReq = {
   cursor?: number // 游标
   limit?: number // 每页条数
   tenantId?: number // 租户ID
-  marketType?: number // 市场类型
+  productType?: number
   status?: number // 状态
   keyword?: string // 关键字
 }
@@ -444,6 +475,11 @@ export type SetContractSymbolConfigReq = Omit<
   'id' | 'createTimes' | 'updateTimes'
 >
 
+export type SetSecondsSymbolConfigReq = Omit<
+  TradeSymbolSeconds,
+  'id' | 'createTimes' | 'updateTimes'
+>
+
 export type SetSymbolLeverageConfigReq = Omit<
   TradeSymbolLeverageConfig,
   'id' | 'createTimes' | 'updateTimes'
@@ -454,7 +490,6 @@ export type GetSymbolLeverageConfigListReq = {
   limit?: number
   tenantId?: number
   symbolId?: number
-  marketType?: number
   marginMode?: number
   enabled?: number
 }
@@ -464,7 +499,7 @@ export type GetOrderListAdminReq = {
   limit?: number
   tenantId?: number
   userId?: number
-  marketType?: number
+  productType?: number
   symbolId?: number
   status?: number
   keyword?: string
@@ -481,7 +516,7 @@ export type GetFillListAdminReq = {
   limit?: number
   tenantId?: number
   userId?: number
-  marketType?: number
+  productType?: number
   symbolId?: number
   timeRange?: TimeRange
 }
@@ -496,7 +531,7 @@ export type GetPositionListAdminReq = {
   limit?: number
   tenantId?: number
   userId?: number
-  marketType?: number
+  contractType?: number
   symbolId?: number
 }
 
@@ -511,18 +546,17 @@ export type GetPositionHistoryListAdminReq = {
   tenantId?: number
   userId?: number
   symbolId?: number
-  marketType?: number
+  contractType?: number
   positionId?: number
   actionType?: number
   timeRange?: TimeRange
 }
 
-export type GetMarginAccountListAdminReq = {
+export type GetMarginSnapshotListAdminReq = {
   cursor?: number
   limit?: number
   tenantId?: number
   userId?: number
-  marketType?: number
   marginAsset?: string
 }
 
@@ -544,7 +578,7 @@ export type SetUserSymbolLimitReq = Omit<RiskUserSymbolLimit, 'id' | 'createTime
 export type GetUserTradeLimitReq = {
   tenantId?: number
   userId?: number
-  marketType?: number
+  productType?: number
   symbolId?: number
 }
 
@@ -552,25 +586,20 @@ export type GetUserSymbolLimitReq = {
   tenantId?: number
   userId?: number
   symbolId?: number
-  marketType?: number
 }
 
 export type SetUserTradeConfigReq = {
   tenantId: number // 租户ID
   userId: number // 用户ID
-  marketType: number // 市场类型
+  productType: number
   symbolId: number // 交易对ID
-  positionMode: number // 仓位模式
-  marginMode: number // 保证金模式
-  defaultLeverage: number // 默认杠杆
   tradeEnabled: number // 交易开关：1启用 2禁用
-  reduceOnlyEnabled: number // 仅减仓开关：1启用 2禁用
 }
 
 export type GetUserTradeConfigReq = {
   tenantId?: number
   userId?: number
-  marketType?: number
+  productType?: number
   symbolId?: number
 }
 
@@ -581,7 +610,7 @@ export type GetRiskOrderCheckLogListReq = {
   userId?: number
   symbolId?: number
   orderNo?: string
-  marketType?: number
+  productType?: number
   checkType?: number
   checkResult?: number
   timeRange?: TimeRange
@@ -596,7 +625,6 @@ export type GetUserLeverageConfigReq = {
   tenantId?: number
   userId?: number
   symbolId?: number
-  marketType?: number
   marginMode?: number
 }
 
@@ -652,6 +680,10 @@ export class TradeService {
     return apiTradeSetContractConfig(params)
   }
 
+  setSecondsConfig(params: SetSecondsSymbolConfigReq) {
+    return apiTradeSetSecondsConfig(params)
+  }
+
   listSymbolLeverageConfigs(params: GetSymbolLeverageConfigListReq) {
     return apiTradeListSymbolLeverageConfigs(params)
   }
@@ -688,8 +720,8 @@ export class TradeService {
     return apiTradeListPositionHistories(params)
   }
 
-  listMarginAccounts(params: GetMarginAccountListAdminReq) {
-    return apiTradeListMarginAccounts(params)
+  listMarginSnapshots(params: GetMarginSnapshotListAdminReq) {
+    return apiTradeListMarginSnapshots(params)
   }
 
   listCancelLogs(params: GetCancelLogListAdminReq) {

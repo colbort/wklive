@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -28,20 +30,20 @@ type (
 		FindPage(ctx context.Context, filter UserAssetPageFilter, cursor int64, limit int64) ([]*TUserAsset, int64, error)
 		FindAll(ctx context.Context, filter UserAssetPageFilter) ([]*TUserAsset, error)
 		// 增加已有资产的可用余额，调用方需要先创建不存在的资产记录
-		AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (int64, error)
-		SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
+		AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (int64, error)
+		SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error)
 		// 冻结资产（下单冻结）
-		FreezeAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
+		FreezeAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error)
 		// 解冻资产（撤单）
-		UnfreezeAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
+		UnfreezeAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error)
 		// 从冻结里扣减（订单成交）
-		DeductFromFrozen(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
+		DeductFromFrozen(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error)
 		// 从锁仓里扣减（协议消耗）
-		DeductLockedAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
+		DeductLockedAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error)
 		// 锁仓（staking 参与）
-		LockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
+		LockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error)
 		// 解锁
-		UnlockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
+		UnlockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error)
 	}
 
 	customTUserAssetModel struct {
@@ -154,7 +156,7 @@ func (m *defaultTUserAssetModel) userAssetCacheKeys(ctx context.Context, tenantI
 }
 
 // 增加可用资产（充值等）
-func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (int64, error) {
+func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (int64, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -189,7 +191,7 @@ func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantI
 	return 0, fmt.Errorf("asset disabled or not found")
 }
 
-func (m *defaultTUserAssetModel) SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTUserAssetModel) SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -215,7 +217,7 @@ func (m *defaultTUserAssetModel) SubAvailableAmount(ctx context.Context, tenantI
 	return affected > 0, nil
 }
 
-func (m *defaultTUserAssetModel) DeductLockedAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTUserAssetModel) DeductLockedAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -242,7 +244,7 @@ func (m *defaultTUserAssetModel) DeductLockedAmount(ctx context.Context, tenantI
 }
 
 // 冻结资产（下单冻结）：可用 - amount，冻结 + amount
-func (m *defaultTUserAssetModel) FreezeAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTUserAssetModel) FreezeAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -271,7 +273,7 @@ func (m *defaultTUserAssetModel) FreezeAmount(ctx context.Context, tenantId, use
 }
 
 // 解冻资产（撤单）：可用 + amount，冻结 - amount
-func (m *defaultTUserAssetModel) UnfreezeAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTUserAssetModel) UnfreezeAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -300,7 +302,7 @@ func (m *defaultTUserAssetModel) UnfreezeAmount(ctx context.Context, tenantId, u
 }
 
 // 从冻结里扣减（订单成交）：冻结 - amount，总资产 - amount
-func (m *defaultTUserAssetModel) DeductFromFrozen(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTUserAssetModel) DeductFromFrozen(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -329,7 +331,7 @@ func (m *defaultTUserAssetModel) DeductFromFrozen(ctx context.Context, tenantId,
 }
 
 // 锁仓（staking 参与）：可用 - amount，锁定 + amount
-func (m *defaultTUserAssetModel) LockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTUserAssetModel) LockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -358,7 +360,7 @@ func (m *defaultTUserAssetModel) LockAmount(ctx context.Context, tenantId, userI
 }
 
 // 解锁：可用 + amount，锁定 - amount
-func (m *defaultTUserAssetModel) UnlockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTUserAssetModel) UnlockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 

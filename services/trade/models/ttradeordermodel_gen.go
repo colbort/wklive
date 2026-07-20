@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -33,7 +35,7 @@ type (
 		Insert(ctx context.Context, data *TTradeOrder) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TTradeOrder, error)
 		FindOneByTenantIdOrderNo(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error)
-		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId int64, userId int64, clientOrderId string) (*TTradeOrder, error)
+		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId int64, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error)
 		Update(ctx context.Context, data *TTradeOrder) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -44,36 +46,37 @@ type (
 	}
 
 	TTradeOrder struct {
-		Id            int64          `db:"id"`              // 主键ID
-		TenantId      int64          `db:"tenant_id"`       // 租户ID
-		OrderNo       string         `db:"order_no"`        // 平台订单号，全租户内唯一
-		ClientOrderId string         `db:"client_order_id"` // 客户端订单号，用于幂等控制
-		UserId        int64          `db:"user_id"`         // 用户ID
-		SymbolId      int64          `db:"symbol_id"`       // 交易标的ID
-		MarketType    int64          `db:"market_type"`     // 市场类型：1现货 2秒合约 3U本位 4币本位
-		Side          int64          `db:"side"`            // 买卖方向：1买 2卖
-		PositionSide  int64          `db:"position_side"`   // 持仓方向：0未知/无 1净持仓 2多 3空，现货一般为0
-		OrderType     int64          `db:"order_type"`      // 成交方式：1限价 2市价
-		TimeInForce   int64          `db:"time_in_force"`   // 订单有效方式：0默认 1GTC 2IOC 3FOK 4PostOnly
-		Status        int64          `db:"status"`          // 订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期 7冻结中 8等待触发
-		Price         float64        `db:"price"`           // 委托价格
-		Qty           float64        `db:"qty"`             // 委托数量
-		Amount        float64        `db:"amount"`          // 委托总额或名义价值
-		FilledQty     float64        `db:"filled_qty"`      // 累计成交数量
-		FilledAmount  float64        `db:"filled_amount"`   // 累计成交金额
-		AvgPrice      float64        `db:"avg_price"`       // 平均成交价格
-		Fee           float64        `db:"fee"`             // 累计手续费
-		FeeAsset      string         `db:"fee_asset"`       // 手续费币种
-		Source        int64          `db:"source"`          // 订单来源：1App 2Web 3API 4System
-		IsReduceOnly  int64          `db:"is_reduce_only"`  // 是否只减仓：1是 2否
-		IsCloseOnly   int64          `db:"is_close_only"`   // 是否只允许平仓：1是 2否
-		TriggerPrice  float64        `db:"trigger_price"`   // 触发价格，非条件单则为0
-		TriggerType   int64          `db:"trigger_type"`    // 触发价格类型：0无 1最新价 2标记价 3指数价
-		TriggerKind   int64          `db:"trigger_kind"`    // 触发用途：0无 1条件单 2止盈 3止损
-		CancelReason  string         `db:"cancel_reason"`   // 撤单原因或拒单原因
-		BizExt        sql.NullString `db:"biz_ext"`         // 业务扩展字段，JSON格式
-		CreateTimes   int64          `db:"create_times"`    // 创建时间，毫秒时间戳
-		UpdateTimes   int64          `db:"update_times"`    // 更新时间，毫秒时间戳
+		Id                int64           `db:"id"`                  // 主键ID
+		TenantId          int64           `db:"tenant_id"`           // 租户ID
+		OrderNo           string          `db:"order_no"`            // 平台订单号，全租户内唯一
+		ClientOrderId     sql.NullString  `db:"client_order_id"`     // 客户端订单号，可空；非空时用于幂等控制
+		UserId            int64           `db:"user_id"`             // 用户ID
+		SymbolId          int64           `db:"symbol_id"`           // 交易标的ID
+		ProductType       int64           `db:"product_type"`        // 产品大类快照：1现货 2衍生品 3秒合约
+		ContractType      int64           `db:"contract_type"`       // 合约期限类型快照：0不适用 1永续 2交割
+		ContractValueType int64           `db:"contract_value_type"` // 合约价值类型快照：0不适用 1线性 2反向
+		Side              int64           `db:"side"`                // 买卖方向：0不适用 1买 2卖；秒合约为0
+		PositionSide      int64           `db:"position_side"`       // 持仓方向：0未知/无 1净持仓 2多 3空，现货一般为0
+		OrderType         int64           `db:"order_type"`          // 成交方式：0不适用 1限价 2市价；秒合约为0
+		TimeInForce       int64           `db:"time_in_force"`       // 订单有效方式：0默认 1GTC 2IOC 3FOK 4PostOnly
+		Status            int64           `db:"status"`              // 订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期 7冻结中 8等待触发
+		Price             decimal.Decimal `db:"price"`               // 委托价格
+		Qty               decimal.Decimal `db:"qty"`                 // 委托数量
+		Amount            decimal.Decimal `db:"amount"`              // 委托总额或名义价值
+		FilledQty         decimal.Decimal `db:"filled_qty"`          // 累计成交数量
+		FilledAmount      decimal.Decimal `db:"filled_amount"`       // 累计成交金额
+		AvgPrice          decimal.Decimal `db:"avg_price"`           // 平均成交价格
+		Fee               decimal.Decimal `db:"fee"`                 // 累计手续费
+		FeeAsset          string          `db:"fee_asset"`           // 手续费币种
+		Source            int64           `db:"source"`              // 订单来源：1App 2Web 3API 4System
+		IsReduceOnly      int64           `db:"is_reduce_only"`      // 是否只减仓：1是 2否
+		TriggerPrice      decimal.Decimal `db:"trigger_price"`       // 触发价格，非条件单则为0
+		TriggerType       int64           `db:"trigger_type"`        // 触发价格类型：0无 1最新价 2标记价 3指数价
+		TriggerKind       int64           `db:"trigger_kind"`        // 触发用途：0无 1条件单 2止盈 3止损
+		CancelReason      string          `db:"cancel_reason"`       // 撤单原因或拒单原因
+		BizExt            sql.NullString  `db:"biz_ext"`             // 业务扩展字段，JSON格式
+		CreateTimes       int64           `db:"create_times"`        // 创建时间，毫秒时间戳
+		UpdateTimes       int64           `db:"update_times"`        // 更新时间，毫秒时间戳
 	}
 )
 
@@ -137,7 +140,7 @@ func (m *defaultTTradeOrderModel) FindOneByTenantIdOrderNo(ctx context.Context, 
 	}
 }
 
-func (m *defaultTTradeOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId int64, userId int64, clientOrderId string) (*TTradeOrder, error) {
+func (m *defaultTTradeOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId int64, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error) {
 	tTradeOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix, tenantId, userId, clientOrderId)
 	var resp TTradeOrder
 	err := m.QueryRowIndexCtx(ctx, &resp, tTradeOrderTenantIdUserIdClientOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
@@ -162,8 +165,8 @@ func (m *defaultTTradeOrderModel) Insert(ctx context.Context, data *TTradeOrder)
 	tTradeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
 	tTradeOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix, data.TenantId, data.UserId, data.ClientOrderId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.ClientOrderId, data.UserId, data.SymbolId, data.MarketType, data.Side, data.PositionSide, data.OrderType, data.TimeInForce, data.Status, data.Price, data.Qty, data.Amount, data.FilledQty, data.FilledAmount, data.AvgPrice, data.Fee, data.FeeAsset, data.Source, data.IsReduceOnly, data.IsCloseOnly, data.TriggerPrice, data.TriggerType, data.TriggerKind, data.CancelReason, data.BizExt, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.ClientOrderId, data.UserId, data.SymbolId, data.ProductType, data.ContractType, data.ContractValueType, data.Side, data.PositionSide, data.OrderType, data.TimeInForce, data.Status, data.Price, data.Qty, data.Amount, data.FilledQty, data.FilledAmount, data.AvgPrice, data.Fee, data.FeeAsset, data.Source, data.IsReduceOnly, data.TriggerPrice, data.TriggerType, data.TriggerKind, data.CancelReason, data.BizExt, data.CreateTimes, data.UpdateTimes)
 	}, tTradeOrderIdKey, tTradeOrderTenantIdOrderNoKey, tTradeOrderTenantIdUserIdClientOrderIdKey)
 	return ret, err
 }
@@ -179,7 +182,7 @@ func (m *defaultTTradeOrderModel) Update(ctx context.Context, newData *TTradeOrd
 	tTradeOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix, data.TenantId, data.UserId, data.ClientOrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.ClientOrderId, newData.UserId, newData.SymbolId, newData.MarketType, newData.Side, newData.PositionSide, newData.OrderType, newData.TimeInForce, newData.Status, newData.Price, newData.Qty, newData.Amount, newData.FilledQty, newData.FilledAmount, newData.AvgPrice, newData.Fee, newData.FeeAsset, newData.Source, newData.IsReduceOnly, newData.IsCloseOnly, newData.TriggerPrice, newData.TriggerType, newData.TriggerKind, newData.CancelReason, newData.BizExt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.ClientOrderId, newData.UserId, newData.SymbolId, newData.ProductType, newData.ContractType, newData.ContractValueType, newData.Side, newData.PositionSide, newData.OrderType, newData.TimeInForce, newData.Status, newData.Price, newData.Qty, newData.Amount, newData.FilledQty, newData.FilledAmount, newData.AvgPrice, newData.Fee, newData.FeeAsset, newData.Source, newData.IsReduceOnly, newData.TriggerPrice, newData.TriggerType, newData.TriggerKind, newData.CancelReason, newData.BizExt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeOrderIdKey, tTradeOrderTenantIdOrderNoKey, tTradeOrderTenantIdUserIdClientOrderIdKey)
 	return err
 }

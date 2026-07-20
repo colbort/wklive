@@ -50,11 +50,13 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 	}
 	if cfg == nil {
 		cfg = &models.TTradeSymbolContract{
-			TenantId:    symbol.TenantId,
-			SymbolId:    in.SymbolId,
-			BuyEnabled:  int64(common.Enable_ENABLE_ENABLED),
-			SellEnabled: int64(common.Enable_ENABLE_ENABLED),
-			CreateTimes: now,
+			TenantId:          symbol.TenantId,
+			SymbolId:          in.SymbolId,
+			OpenLongEnabled:   int64(common.Enable_ENABLE_ENABLED),
+			OpenShortEnabled:  int64(common.Enable_ENABLE_ENABLED),
+			CloseLongEnabled:  int64(common.Enable_ENABLE_ENABLED),
+			CloseShortEnabled: int64(common.Enable_ENABLE_ENABLED),
+			CreateTimes:       now,
 		}
 	}
 	cfg.ContractSize = mustParseFloat(in.ContractSize)
@@ -64,11 +66,18 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 	cfg.MakerFeeRate = mustParseFloat(in.MakerFeeRate)
 	cfg.TakerFeeRate = mustParseFloat(in.TakerFeeRate)
 	cfg.FundingIntervalMinutes = int64(in.FundingIntervalMinutes)
+	cfg.FundingRateCap = mustParseFloat(in.FundingRateCap)
+	cfg.FundingRateFloor = mustParseFloat(in.FundingRateFloor)
+	cfg.IndexSymbol = in.IndexSymbol
+	cfg.MarkPriceSource = in.MarkPriceSource
+	cfg.SettlementPriceSource = in.SettlementPriceSource
 	cfg.DeliveryTime = in.DeliveryTime
 	cfg.SupportCross = in.SupportCross
 	cfg.SupportIsolated = in.SupportIsolated
-	cfg.BuyEnabled = enableToModel(in.BuyEnabled, cfg.BuyEnabled)
-	cfg.SellEnabled = enableToModel(in.SellEnabled, cfg.SellEnabled)
+	cfg.OpenLongEnabled = enableToModel(in.OpenLongEnabled, cfg.OpenLongEnabled)
+	cfg.OpenShortEnabled = enableToModel(in.OpenShortEnabled, cfg.OpenShortEnabled)
+	cfg.CloseLongEnabled = enableToModel(in.CloseLongEnabled, cfg.CloseLongEnabled)
+	cfg.CloseShortEnabled = enableToModel(in.CloseShortEnabled, cfg.CloseShortEnabled)
 	cfg.UpdateTimes = now
 	if cfg.Id == 0 {
 		if _, err = l.svcCtx.TradeSymbolContractModel.Insert(l.ctx, cfg); err != nil {

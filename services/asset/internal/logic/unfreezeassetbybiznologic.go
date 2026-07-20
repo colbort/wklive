@@ -29,19 +29,19 @@ func NewUnfreezeAssetByBizNoLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 func (l *UnfreezeAssetByBizNoLogic) UnfreezeAssetByBizNo(in *asset.UnfreezeAssetByBizNoReq) (*asset.ChangeAssetResp, error) {
 	rawAmount := strings.TrimSpace(in.Amount)
-	amount, err := conv.ParseFloatField(rawAmount)
+	amount, err := conv.ParseDecimalField(rawAmount)
 	if err != nil {
 		l.Errorf("UnfreezeAssetByBizNo parse amount failed, tenantId=%d targetBizType=%d targetBizNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.TargetBizType, in.TargetBizNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
-	if amount < 0 {
+	if amount.IsNegative() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustNotBeNegative)
 		l.Errorf("UnfreezeAssetByBizNo validate amount failed, tenantId=%d targetBizType=%d targetBizNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.TargetBizType, in.TargetBizNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
-	unfreezeRemaining := rawAmount == "" || amount == 0
+	unfreezeRemaining := rawAmount == "" || amount.IsZero()
 	unfreezeAmount := rawAmount
 
 	freeze, err := findFreezeByBizNo(l.ctx, l.svcCtx, in.TenantId, in.TargetBizType, in.TargetBizNo)
@@ -54,7 +54,7 @@ func (l *UnfreezeAssetByBizNoLogic) UnfreezeAssetByBizNo(in *asset.UnfreezeAsset
 		return nil, err
 	}
 	if unfreezeRemaining {
-		if freeze.RemainAmount <= 0 || (freeze.Status != 1 && freeze.Status != 2) {
+		if !freeze.RemainAmount.IsPositive() || (freeze.Status != 1 && freeze.Status != 2) {
 			return &asset.ChangeAssetResp{Base: helper.OkResp(), Data: &asset.ChangeAssetData{BizNo: in.BizNo}}, nil
 		}
 		unfreezeAmount = conv.FloatString(freeze.RemainAmount)

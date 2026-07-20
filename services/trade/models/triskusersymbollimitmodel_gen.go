@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -23,15 +25,15 @@ var (
 	tRiskUserSymbolLimitRowsExpectAutoSet   = strings.Join(stringx.Remove(tRiskUserSymbolLimitFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tRiskUserSymbolLimitRowsWithPlaceHolder = strings.Join(stringx.Remove(tRiskUserSymbolLimitFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTRiskUserSymbolLimitIdPrefix                               = "cache:tRiskUserSymbolLimit:id:"
-	cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypePrefix = "cache:tRiskUserSymbolLimit:tenantId:userId:symbolId:marketType:"
+	cacheTRiskUserSymbolLimitIdPrefix                     = "cache:tRiskUserSymbolLimit:id:"
+	cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdPrefix = "cache:tRiskUserSymbolLimit:tenantId:userId:symbolId:"
 )
 
 type (
 	tRiskUserSymbolLimitModel interface {
 		Insert(ctx context.Context, data *TRiskUserSymbolLimit) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TRiskUserSymbolLimit, error)
-		FindOneByTenantIdUserIdSymbolIdMarketType(ctx context.Context, tenantId int64, userId int64, symbolId int64, marketType int64) (*TRiskUserSymbolLimit, error)
+		FindOneByTenantIdUserIdSymbolId(ctx context.Context, tenantId int64, userId int64, symbolId int64) (*TRiskUserSymbolLimit, error)
 		Update(ctx context.Context, data *TRiskUserSymbolLimit) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -42,29 +44,28 @@ type (
 	}
 
 	TRiskUserSymbolLimit struct {
-		Id                  int64   `db:"id"`                     // 主键ID
-		TenantId            int64   `db:"tenant_id"`              // 租户ID
-		UserId              int64   `db:"user_id"`                // 用户ID
-		SymbolId            int64   `db:"symbol_id"`              // 交易标的ID
-		MarketType          int64   `db:"market_type"`            // 市场类型：1现货 2秒合约 3U本位 4币本位
-		MaxPositionQty      float64 `db:"max_position_qty"`       // 最大持仓数量，0表示不限
-		MaxPositionNotional float64 `db:"max_position_notional"`  // 最大持仓名义价值，0表示不限
-		MaxOpenOrders       int64   `db:"max_open_orders"`        // 最大挂单数，0表示不限
-		MaxOrderQty         float64 `db:"max_order_qty"`          // 单笔最大下单数量，0表示不限
-		MaxOrderNotional    float64 `db:"max_order_notional"`     // 单笔最大下单名义价值，0表示不限
-		MinOrderQty         float64 `db:"min_order_qty"`          // 单笔最小下单数量，0表示不限制
-		MinOrderNotional    float64 `db:"min_order_notional"`     // 单笔最小下单名义价值，0表示不限制
-		MaxLongPositionQty  float64 `db:"max_long_position_qty"`  // 最大多头持仓数量，0表示不限
-		MaxShortPositionQty float64 `db:"max_short_position_qty"` // 最大空头持仓数量，0表示不限
-		PriceDeviationRate  float64 `db:"price_deviation_rate"`   // 允许价格偏离率，0表示不限制
-		OperatorId          int64   `db:"operator_id"`            // 操作人ID，系统操作时可为0
-		Source              int64   `db:"source"`                 // 来源：1系统 2用户 3后台管理 4任务
-		Enabled             int64   `db:"enabled"`                // 启用开关：1启用 2禁用
-		EffectiveStartTime  int64   `db:"effective_start_time"`   // 限制生效开始时间，毫秒时间戳
-		EffectiveEndTime    int64   `db:"effective_end_time"`     // 限制生效结束时间，毫秒时间戳
-		Remark              string  `db:"remark"`                 // 备注
-		CreateTimes         int64   `db:"create_times"`           // 创建时间，毫秒时间戳
-		UpdateTimes         int64   `db:"update_times"`           // 更新时间，毫秒时间戳
+		Id                  int64           `db:"id"`                     // 主键ID
+		TenantId            int64           `db:"tenant_id"`              // 租户ID
+		UserId              int64           `db:"user_id"`                // 用户ID
+		SymbolId            int64           `db:"symbol_id"`              // 交易标的ID
+		MaxPositionQty      decimal.Decimal `db:"max_position_qty"`       // 最大持仓数量，0表示不限
+		MaxPositionNotional decimal.Decimal `db:"max_position_notional"`  // 最大持仓名义价值，0表示不限
+		MaxOpenOrders       int64           `db:"max_open_orders"`        // 最大挂单数，0表示不限
+		MaxOrderQty         decimal.Decimal `db:"max_order_qty"`          // 单笔最大下单数量，0表示不限
+		MaxOrderNotional    decimal.Decimal `db:"max_order_notional"`     // 单笔最大下单名义价值，0表示不限
+		MinOrderQty         decimal.Decimal `db:"min_order_qty"`          // 单笔最小下单数量，0表示不限制
+		MinOrderNotional    decimal.Decimal `db:"min_order_notional"`     // 单笔最小下单名义价值，0表示不限制
+		MaxLongPositionQty  decimal.Decimal `db:"max_long_position_qty"`  // 最大多头持仓数量，0表示不限
+		MaxShortPositionQty decimal.Decimal `db:"max_short_position_qty"` // 最大空头持仓数量，0表示不限
+		PriceDeviationRate  decimal.Decimal `db:"price_deviation_rate"`   // 允许价格偏离率，0表示不限制
+		OperatorId          int64           `db:"operator_id"`            // 操作人ID，系统操作时可为0
+		Source              int64           `db:"source"`                 // 来源：1系统 2用户 3后台管理 4任务
+		Enabled             int64           `db:"enabled"`                // 启用开关：1启用 2禁用
+		EffectiveStartTime  int64           `db:"effective_start_time"`   // 限制生效开始时间，毫秒时间戳
+		EffectiveEndTime    int64           `db:"effective_end_time"`     // 限制生效结束时间，毫秒时间戳
+		Remark              string          `db:"remark"`                 // 备注
+		CreateTimes         int64           `db:"create_times"`           // 创建时间，毫秒时间戳
+		UpdateTimes         int64           `db:"update_times"`           // 更新时间，毫秒时间戳
 	}
 )
 
@@ -82,11 +83,11 @@ func (m *defaultTRiskUserSymbolLimitModel) Delete(ctx context.Context, id int64)
 	}
 
 	tRiskUserSymbolLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserSymbolLimitIdPrefix, id)
-	tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarketType)
+	tRiskUserSymbolLimitTenantIdUserIdSymbolIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdPrefix, data.TenantId, data.UserId, data.SymbolId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tRiskUserSymbolLimitIdKey, tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey)
+	}, tRiskUserSymbolLimitIdKey, tRiskUserSymbolLimitTenantIdUserIdSymbolIdKey)
 	return err
 }
 
@@ -107,12 +108,12 @@ func (m *defaultTRiskUserSymbolLimitModel) FindOne(ctx context.Context, id int64
 	}
 }
 
-func (m *defaultTRiskUserSymbolLimitModel) FindOneByTenantIdUserIdSymbolIdMarketType(ctx context.Context, tenantId int64, userId int64, symbolId int64, marketType int64) (*TRiskUserSymbolLimit, error) {
-	tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypePrefix, tenantId, userId, symbolId, marketType)
+func (m *defaultTRiskUserSymbolLimitModel) FindOneByTenantIdUserIdSymbolId(ctx context.Context, tenantId int64, userId int64, symbolId int64) (*TRiskUserSymbolLimit, error) {
+	tRiskUserSymbolLimitTenantIdUserIdSymbolIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdPrefix, tenantId, userId, symbolId)
 	var resp TRiskUserSymbolLimit
-	err := m.QueryRowIndexCtx(ctx, &resp, tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `symbol_id` = ? and `market_type` = ? limit 1", tRiskUserSymbolLimitRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, symbolId, marketType); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tRiskUserSymbolLimitTenantIdUserIdSymbolIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `symbol_id` = ? limit 1", tRiskUserSymbolLimitRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, symbolId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -129,11 +130,11 @@ func (m *defaultTRiskUserSymbolLimitModel) FindOneByTenantIdUserIdSymbolIdMarket
 
 func (m *defaultTRiskUserSymbolLimitModel) Insert(ctx context.Context, data *TRiskUserSymbolLimit) (sql.Result, error) {
 	tRiskUserSymbolLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserSymbolLimitIdPrefix, data.Id)
-	tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarketType)
+	tRiskUserSymbolLimitTenantIdUserIdSymbolIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdPrefix, data.TenantId, data.UserId, data.SymbolId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRiskUserSymbolLimitRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SymbolId, data.MarketType, data.MaxPositionQty, data.MaxPositionNotional, data.MaxOpenOrders, data.MaxOrderQty, data.MaxOrderNotional, data.MinOrderQty, data.MinOrderNotional, data.MaxLongPositionQty, data.MaxShortPositionQty, data.PriceDeviationRate, data.OperatorId, data.Source, data.Enabled, data.EffectiveStartTime, data.EffectiveEndTime, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, tRiskUserSymbolLimitIdKey, tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRiskUserSymbolLimitRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SymbolId, data.MaxPositionQty, data.MaxPositionNotional, data.MaxOpenOrders, data.MaxOrderQty, data.MaxOrderNotional, data.MinOrderQty, data.MinOrderNotional, data.MaxLongPositionQty, data.MaxShortPositionQty, data.PriceDeviationRate, data.OperatorId, data.Source, data.Enabled, data.EffectiveStartTime, data.EffectiveEndTime, data.Remark, data.CreateTimes, data.UpdateTimes)
+	}, tRiskUserSymbolLimitIdKey, tRiskUserSymbolLimitTenantIdUserIdSymbolIdKey)
 	return ret, err
 }
 
@@ -144,11 +145,11 @@ func (m *defaultTRiskUserSymbolLimitModel) Update(ctx context.Context, newData *
 	}
 
 	tRiskUserSymbolLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserSymbolLimitIdPrefix, data.Id)
-	tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarketType)
+	tRiskUserSymbolLimitTenantIdUserIdSymbolIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdPrefix, data.TenantId, data.UserId, data.SymbolId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tRiskUserSymbolLimitRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SymbolId, newData.MarketType, newData.MaxPositionQty, newData.MaxPositionNotional, newData.MaxOpenOrders, newData.MaxOrderQty, newData.MaxOrderNotional, newData.MinOrderQty, newData.MinOrderNotional, newData.MaxLongPositionQty, newData.MaxShortPositionQty, newData.PriceDeviationRate, newData.OperatorId, newData.Source, newData.Enabled, newData.EffectiveStartTime, newData.EffectiveEndTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tRiskUserSymbolLimitIdKey, tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SymbolId, newData.MaxPositionQty, newData.MaxPositionNotional, newData.MaxOpenOrders, newData.MaxOrderQty, newData.MaxOrderNotional, newData.MinOrderQty, newData.MinOrderNotional, newData.MaxLongPositionQty, newData.MaxShortPositionQty, newData.PriceDeviationRate, newData.OperatorId, newData.Source, newData.Enabled, newData.EffectiveStartTime, newData.EffectiveEndTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tRiskUserSymbolLimitIdKey, tRiskUserSymbolLimitTenantIdUserIdSymbolIdKey)
 	return err
 }
 

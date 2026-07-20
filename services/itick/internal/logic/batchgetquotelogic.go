@@ -5,6 +5,8 @@ import (
 
 	"wklive/common/helper"
 	"wklive/proto/itick"
+	"wklive/services/itick/internal/market/cache"
+	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -26,13 +28,42 @@ func NewBatchGetQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bat
 
 // 批量获取最新报价
 func (l *BatchGetQuoteLogic) BatchGetQuote(in *itick.BatchGetQuoteReq) (*itick.BatchGetQuoteResp, error) {
-	result, err := l.svcCtx.ItickQuoteModel.FindQuotes(l.ctx, in.Data)
+	msgs := make([]types.ClientMessage, 0, len(in.GetData()))
+	for _, item := range in.GetData() {
+		if item == nil {
+			continue
+		}
+		categoryCode := item.GetCategoryCode()
+		if categoryCode == "" {
+			categoryCode = in.GetCategoryCode()
+		}
+		market := item.GetMarket()
+		if market == "" {
+			market = in.GetMarket()
+		}
+		msg := cache.NormalizeClientMessage(types.ClientMessage{
+			Topic:        types.TopicQuote,
+			CategoryCode: categoryCode,
+			Market:       market,
+			Symbol:       item.GetSymbol(),
+		})
+		if msg.CategoryCode == "" || msg.Market == "" || msg.Symbol == "" {
+			continue
+		}
+		msgs = append(msgs, msg)
+	}
+
+	result, err := l.svcCtx.MarketDataCache.ReadMany(l.ctx, msgs)
 	if err != nil {
 		return nil, err
 	}
-	data := make([]*itick.Quote, 0)
-	for _, quote := range result {
-		data = append(data, toQuoteProto(quote))
+	data := make([]*itick.Quote, 0, len(result))
+	for _, item := range result {
+		quote, ok := item.Payload.(*types.QuotePayload)
+		if !ok || quote == nil {
+			continue
+		}
+		data = append(data, toQuotePayloadProto(item.Message.CategoryCode, item.Message.Market, item.Message.Symbol, quote))
 	}
 
 	return &itick.BatchGetQuoteResp{

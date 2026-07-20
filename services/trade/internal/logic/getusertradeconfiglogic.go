@@ -28,7 +28,7 @@ func NewGetUserTradeConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 获取用户交易配置
 func (l *GetUserTradeConfigLogic) GetUserTradeConfig(in *trade.GetUserTradeConfigReq) (*trade.GetUserTradeConfigResp, error) {
-	item, err := l.svcCtx.TradeUserConfigModel.FindOneByTenantIdUserIdMarketTypeSymbolId(l.ctx, in.TenantId, in.UserId, int64(in.MarketType), in.SymbolId)
+	item, err := l.svcCtx.TradeUserConfigModel.FindOneByTenantIdUserIdProductTypeSymbolId(l.ctx, in.TenantId, in.UserId, int64(in.ProductType), in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

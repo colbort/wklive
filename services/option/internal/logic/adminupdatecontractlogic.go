@@ -89,49 +89,49 @@ func (l *AdminUpdateContractLogic) AdminUpdateContract(in *option.UpdateContract
 		item.SettlementType = int64(in.SettlementType)
 	}
 	if in.StrikePrice != "" {
-		value, err := conv.ParseFloatField(in.StrikePrice)
+		value, err := conv.ParseDecimalField(in.StrikePrice)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.StrikePriceFormatError, i18n.Translate(i18n.StrikePriceFormatError, l.ctx))}, nil
 		}
 		item.StrikePrice = value
 	}
 	if in.ContractUnit != "" {
-		value, err := conv.ParseFloatField(in.ContractUnit)
+		value, err := conv.ParseDecimalField(in.ContractUnit)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.ContractUnitFormatError, i18n.Translate(i18n.ContractUnitFormatError, l.ctx))}, nil
 		}
 		item.ContractUnit = value
 	}
 	if in.MinOrderQty != "" {
-		value, err := conv.ParseFloatField(in.MinOrderQty)
+		value, err := conv.ParseDecimalField(in.MinOrderQty)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.MinOrderQuantityFormatError, i18n.Translate(i18n.MinOrderQuantityFormatError, l.ctx))}, nil
 		}
 		item.MinOrderQty = value
 	}
 	if in.MaxOrderQty != "" {
-		value, err := conv.ParseFloatField(in.MaxOrderQty)
+		value, err := conv.ParseDecimalField(in.MaxOrderQty)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.MaxOrderQuantityFormatError, i18n.Translate(i18n.MaxOrderQuantityFormatError, l.ctx))}, nil
 		}
 		item.MaxOrderQty = value
 	}
 	if in.PriceTick != "" {
-		value, err := conv.ParseFloatField(in.PriceTick)
+		value, err := conv.ParseDecimalField(in.PriceTick)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.PriceTickFormatError, i18n.Translate(i18n.PriceTickFormatError, l.ctx))}, nil
 		}
 		item.PriceTick = value
 	}
 	if in.QtyStep != "" {
-		value, err := conv.ParseFloatField(in.QtyStep)
+		value, err := conv.ParseDecimalField(in.QtyStep)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.QuantityStepFormatError, i18n.Translate(i18n.QuantityStepFormatError, l.ctx))}, nil
 		}
 		item.QtyStep = value
 	}
 	if in.Multiplier != "" {
-		value, err := conv.ParseFloatField(in.Multiplier)
+		value, err := conv.ParseDecimalField(in.Multiplier)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.MultiplierFormatError, i18n.Translate(i18n.MultiplierFormatError, l.ctx))}, nil
 		}

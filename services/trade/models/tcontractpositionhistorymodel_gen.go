@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -40,38 +42,39 @@ type (
 	}
 
 	TContractPositionHistory struct {
-		Id                   int64   `db:"id"`                     // 主键ID
-		TenantId             int64   `db:"tenant_id"`              // 租户ID
-		PositionId           int64   `db:"position_id"`            // 持仓ID，对应t_contract_position.id
-		UserId               int64   `db:"user_id"`                // 用户ID
-		SymbolId             int64   `db:"symbol_id"`              // 交易标的ID
-		MarketType           int64   `db:"market_type"`            // 市场类型：2秒合约 3U本位 4币本位
-		PositionSide         int64   `db:"position_side"`          // 持仓方向：1净持仓 2多 3空
-		ActionType           int64   `db:"action_type"`            // 变更动作类型：1开仓 2加仓 3减仓 4平仓 5强平 6结算 7资金费结转 8手动调整
-		BeforeQty            float64 `db:"before_qty"`             // 变更前持仓数量
-		AfterQty             float64 `db:"after_qty"`              // 变更后持仓数量
-		BeforeAvailQty       float64 `db:"before_avail_qty"`       // 变更前可平数量
-		AfterAvailQty        float64 `db:"after_avail_qty"`        // 变更后可平数量
-		BeforeFrozenQty      float64 `db:"before_frozen_qty"`      // 变更前冻结数量
-		AfterFrozenQty       float64 `db:"after_frozen_qty"`       // 变更后冻结数量
-		BeforeOpenAvgPrice   float64 `db:"before_open_avg_price"`  // 变更前开仓均价
-		AfterOpenAvgPrice    float64 `db:"after_open_avg_price"`   // 变更后开仓均价
-		BeforePositionMargin float64 `db:"before_position_margin"` // 变更前仓位保证金
-		AfterPositionMargin  float64 `db:"after_position_margin"`  // 变更后仓位保证金
-		BeforeIsolatedMargin float64 `db:"before_isolated_margin"` // 变更前逐仓附加保证金
-		AfterIsolatedMargin  float64 `db:"after_isolated_margin"`  // 变更后逐仓附加保证金
-		BeforeUnrealizedPnl  float64 `db:"before_unrealized_pnl"`  // 变更前未实现盈亏
-		AfterUnrealizedPnl   float64 `db:"after_unrealized_pnl"`   // 变更后未实现盈亏
-		RealizedPnlDelta     float64 `db:"realized_pnl_delta"`     // 本次变更产生的已实现盈亏增量
-		FeeDelta             float64 `db:"fee_delta"`              // 本次变更产生的手续费增量
-		FeeAsset             string  `db:"fee_asset"`              // 手续费币种
-		MarkPrice            float64 `db:"mark_price"`             // 本次记录时的标记价格
-		RefOrderId           int64   `db:"ref_order_id"`           // 关联订单ID，没有则为0
-		RefFillId            int64   `db:"ref_fill_id"`            // 关联成交ID，没有则为0
-		OperatorId           int64   `db:"operator_id"`            // 操作人ID，系统操作时可为0
-		Source               int64   `db:"source"`                 // 来源：1系统 2用户 3后台管理 4任务
-		Remark               string  `db:"remark"`                 // 备注
-		CreateTimes          int64   `db:"create_times"`           // 创建时间，毫秒时间戳
+		Id                   int64           `db:"id"`                     // 主键ID
+		TenantId             int64           `db:"tenant_id"`              // 租户ID
+		PositionId           int64           `db:"position_id"`            // 持仓ID，对应t_contract_position.id
+		UserId               int64           `db:"user_id"`                // 用户ID
+		SymbolId             int64           `db:"symbol_id"`              // 交易标的ID
+		ContractType         int64           `db:"contract_type"`          // 合约期限类型快照：1永续 2交割
+		ContractValueType    int64           `db:"contract_value_type"`    // 合约价值类型快照：1线性 2反向
+		PositionSide         int64           `db:"position_side"`          // 持仓方向：1净持仓 2多 3空
+		ActionType           int64           `db:"action_type"`            // 变更动作类型：1开仓 2加仓 3减仓 4平仓 5强平 6结算 7资金费结转 8手动调整
+		BeforeQty            decimal.Decimal `db:"before_qty"`             // 变更前持仓数量
+		AfterQty             decimal.Decimal `db:"after_qty"`              // 变更后持仓数量
+		BeforeAvailQty       decimal.Decimal `db:"before_avail_qty"`       // 变更前可平数量
+		AfterAvailQty        decimal.Decimal `db:"after_avail_qty"`        // 变更后可平数量
+		BeforeFrozenQty      decimal.Decimal `db:"before_frozen_qty"`      // 变更前冻结数量
+		AfterFrozenQty       decimal.Decimal `db:"after_frozen_qty"`       // 变更后冻结数量
+		BeforeOpenAvgPrice   decimal.Decimal `db:"before_open_avg_price"`  // 变更前开仓均价
+		AfterOpenAvgPrice    decimal.Decimal `db:"after_open_avg_price"`   // 变更后开仓均价
+		BeforePositionMargin decimal.Decimal `db:"before_position_margin"` // 变更前仓位保证金
+		AfterPositionMargin  decimal.Decimal `db:"after_position_margin"`  // 变更后仓位保证金
+		BeforeIsolatedMargin decimal.Decimal `db:"before_isolated_margin"` // 变更前逐仓附加保证金
+		AfterIsolatedMargin  decimal.Decimal `db:"after_isolated_margin"`  // 变更后逐仓附加保证金
+		BeforeUnrealizedPnl  decimal.Decimal `db:"before_unrealized_pnl"`  // 变更前未实现盈亏
+		AfterUnrealizedPnl   decimal.Decimal `db:"after_unrealized_pnl"`   // 变更后未实现盈亏
+		RealizedPnlDelta     decimal.Decimal `db:"realized_pnl_delta"`     // 本次变更产生的已实现盈亏增量
+		FeeDelta             decimal.Decimal `db:"fee_delta"`              // 本次变更产生的手续费增量
+		FeeAsset             string          `db:"fee_asset"`              // 手续费币种
+		MarkPrice            decimal.Decimal `db:"mark_price"`             // 本次记录时的标记价格
+		RefOrderId           int64           `db:"ref_order_id"`           // 关联订单ID，没有则为0
+		RefFillId            int64           `db:"ref_fill_id"`            // 关联成交ID，没有则为0
+		OperatorId           int64           `db:"operator_id"`            // 操作人ID，系统操作时可为0
+		Source               int64           `db:"source"`                 // 来源：1系统 2用户 3后台管理 4任务
+		Remark               string          `db:"remark"`                 // 备注
+		CreateTimes          int64           `db:"create_times"`           // 创建时间，毫秒时间戳
 	}
 )
 
@@ -111,8 +114,8 @@ func (m *defaultTContractPositionHistoryModel) FindOne(ctx context.Context, id i
 func (m *defaultTContractPositionHistoryModel) Insert(ctx context.Context, data *TContractPositionHistory) (sql.Result, error) {
 	tContractPositionHistoryIdKey := fmt.Sprintf("%s%v", cacheTContractPositionHistoryIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractPositionHistoryRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.PositionId, data.UserId, data.SymbolId, data.MarketType, data.PositionSide, data.ActionType, data.BeforeQty, data.AfterQty, data.BeforeAvailQty, data.AfterAvailQty, data.BeforeFrozenQty, data.AfterFrozenQty, data.BeforeOpenAvgPrice, data.AfterOpenAvgPrice, data.BeforePositionMargin, data.AfterPositionMargin, data.BeforeIsolatedMargin, data.AfterIsolatedMargin, data.BeforeUnrealizedPnl, data.AfterUnrealizedPnl, data.RealizedPnlDelta, data.FeeDelta, data.FeeAsset, data.MarkPrice, data.RefOrderId, data.RefFillId, data.OperatorId, data.Source, data.Remark, data.CreateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractPositionHistoryRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.PositionId, data.UserId, data.SymbolId, data.ContractType, data.ContractValueType, data.PositionSide, data.ActionType, data.BeforeQty, data.AfterQty, data.BeforeAvailQty, data.AfterAvailQty, data.BeforeFrozenQty, data.AfterFrozenQty, data.BeforeOpenAvgPrice, data.AfterOpenAvgPrice, data.BeforePositionMargin, data.AfterPositionMargin, data.BeforeIsolatedMargin, data.AfterIsolatedMargin, data.BeforeUnrealizedPnl, data.AfterUnrealizedPnl, data.RealizedPnlDelta, data.FeeDelta, data.FeeAsset, data.MarkPrice, data.RefOrderId, data.RefFillId, data.OperatorId, data.Source, data.Remark, data.CreateTimes)
 	}, tContractPositionHistoryIdKey)
 	return ret, err
 }
@@ -121,7 +124,7 @@ func (m *defaultTContractPositionHistoryModel) Update(ctx context.Context, data 
 	tContractPositionHistoryIdKey := fmt.Sprintf("%s%v", cacheTContractPositionHistoryIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractPositionHistoryRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.PositionId, data.UserId, data.SymbolId, data.MarketType, data.PositionSide, data.ActionType, data.BeforeQty, data.AfterQty, data.BeforeAvailQty, data.AfterAvailQty, data.BeforeFrozenQty, data.AfterFrozenQty, data.BeforeOpenAvgPrice, data.AfterOpenAvgPrice, data.BeforePositionMargin, data.AfterPositionMargin, data.BeforeIsolatedMargin, data.AfterIsolatedMargin, data.BeforeUnrealizedPnl, data.AfterUnrealizedPnl, data.RealizedPnlDelta, data.FeeDelta, data.FeeAsset, data.MarkPrice, data.RefOrderId, data.RefFillId, data.OperatorId, data.Source, data.Remark, data.CreateTimes, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.PositionId, data.UserId, data.SymbolId, data.ContractType, data.ContractValueType, data.PositionSide, data.ActionType, data.BeforeQty, data.AfterQty, data.BeforeAvailQty, data.AfterAvailQty, data.BeforeFrozenQty, data.AfterFrozenQty, data.BeforeOpenAvgPrice, data.AfterOpenAvgPrice, data.BeforePositionMargin, data.AfterPositionMargin, data.BeforeIsolatedMargin, data.AfterIsolatedMargin, data.BeforeUnrealizedPnl, data.AfterUnrealizedPnl, data.RealizedPnlDelta, data.FeeDelta, data.FeeAsset, data.MarkPrice, data.RefOrderId, data.RefFillId, data.OperatorId, data.Source, data.Remark, data.CreateTimes, data.Id)
 	}, tContractPositionHistoryIdKey)
 	return err
 }

@@ -499,7 +499,9 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.Up
 			Turnover:  d.TU,
 			Ts:        d.T,
 		}
-		_ = c.marketCache.Set(ctx, msg, &payload)
+		if err := c.marketCache.Set(ctx, msg, &payload); err != nil {
+			logx.Errorf("cache itick quote failed, category=%s market=%s symbol=%s err=%v", msg.CategoryCode, msg.Market, msg.Symbol, err)
+		}
 
 	case types.TopicTick:
 		payload := types.TickPayload{
@@ -508,7 +510,9 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.Up
 			Turnover:  d.TU,
 			Ts:        d.T,
 		}
-		_ = c.marketCache.Set(ctx, msg, &payload)
+		if err := c.marketCache.Set(ctx, msg, &payload); err != nil {
+			logx.Errorf("cache itick tick failed, category=%s market=%s symbol=%s err=%v", msg.CategoryCode, msg.Market, msg.Symbol, err)
+		}
 
 	case types.TopicDepth:
 		asks := make([]*types.DepthLevel, 0)
@@ -522,7 +526,9 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.Up
 			Asks: asks,
 			Bids: bids,
 		}
-		_ = c.marketCache.Set(ctx, msg, &payload)
+		if err := c.marketCache.Set(ctx, msg, &payload); err != nil {
+			logx.Errorf("cache itick depth failed, category=%s market=%s symbol=%s err=%v", msg.CategoryCode, msg.Market, msg.Symbol, err)
+		}
 
 	case types.TopicKline:
 		payload := types.KlinePayload{
@@ -537,7 +543,9 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.Up
 			Source:   "itick_ws",
 			Revision: time.Now().UnixMilli(),
 		}
-		_ = c.marketCache.Set(ctx, msg, &payload)
+		if err := c.marketCache.Set(ctx, msg, &payload); err != nil {
+			logx.Errorf("cache itick kline failed, category=%s market=%s symbol=%s interval=%s err=%v", msg.CategoryCode, msg.Market, msg.Symbol, msg.Interval, err)
+		}
 	}
 }
 

@@ -15,7 +15,7 @@ type (
 		TenantId    int64
 		UserId      int64
 		SymbolId    int64
-		MarketType  int64
+		ProductType int64
 		CheckType   int64
 		CheckResult int64
 		TimeStart   int64
@@ -47,7 +47,7 @@ func (m *defaultTRiskOrderCheckLogModel) FindPage(ctx context.Context, filter Ri
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("user_id", filter.UserId)
 	builder.EqInt64("symbol_id", filter.SymbolId)
-	builder.EqInt64("market_type", filter.MarketType)
+	builder.EqInt64("product_type", filter.ProductType)
 	builder.EqInt64("check_type", filter.CheckType)
 	builder.EqInt64("check_result", filter.CheckResult)
 	builder.GteInt64("create_times", filter.TimeStart)

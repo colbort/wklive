@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -40,26 +42,26 @@ type (
 	}
 
 	TStakeRewardLog struct {
-		Id               int64   `db:"id"`                 // 主键ID
-		TenantId         int64   `db:"tenant_id"`          // 租户ID
-		OrderId          int64   `db:"order_id"`           // 质押订单ID
-		OrderNo          string  `db:"order_no"`           // 质押订单号
-		UserId           int64   `db:"user_id"`            // 用户ID
-		ProductId        int64   `db:"product_id"`         // 质押产品ID
-		ProductName      string  `db:"product_name"`       // 质押产品名称快照
-		CoinSymbol       string  `db:"coin_symbol"`        // 质押币种符号快照
-		RewardCoinSymbol string  `db:"reward_coin_symbol"` // 收益币种符号快照
-		RewardAmount     float64 `db:"reward_amount"`      // 本次收益数量
-		BeforeReward     float64 `db:"before_reward"`      // 发放前累计收益
-		AfterReward      float64 `db:"after_reward"`       // 发放后累计收益
-		RewardType       int64   `db:"reward_type"`        // 收益类型：1日收益 2到期收益 3补发收益 4手动发放
-		RewardStatus     int64   `db:"reward_status"`      // 发放状态：1失败 2成功
-		RewardTimes      int64   `db:"reward_times"`       // 收益发放时间戳
-		Remark           string  `db:"remark"`             // 备注
-		CreateUserId     int64   `db:"create_user_id"`     // 创建人ID
-		UpdateUserId     int64   `db:"update_user_id"`     // 更新人ID
-		CreateTimes      int64   `db:"create_times"`       // 创建时间戳
-		UpdateTimes      int64   `db:"update_times"`       // 更新时间戳
+		Id               int64           `db:"id"`                 // 主键ID
+		TenantId         int64           `db:"tenant_id"`          // 租户ID
+		OrderId          int64           `db:"order_id"`           // 质押订单ID
+		OrderNo          string          `db:"order_no"`           // 质押订单号
+		UserId           int64           `db:"user_id"`            // 用户ID
+		ProductId        int64           `db:"product_id"`         // 质押产品ID
+		ProductName      string          `db:"product_name"`       // 质押产品名称快照
+		CoinSymbol       string          `db:"coin_symbol"`        // 质押币种符号快照
+		RewardCoinSymbol string          `db:"reward_coin_symbol"` // 收益币种符号快照
+		RewardAmount     decimal.Decimal `db:"reward_amount"`      // 本次收益数量
+		BeforeReward     decimal.Decimal `db:"before_reward"`      // 发放前累计收益
+		AfterReward      decimal.Decimal `db:"after_reward"`       // 发放后累计收益
+		RewardType       int64           `db:"reward_type"`        // 收益类型：1日收益 2到期收益 3补发收益 4手动发放
+		RewardStatus     int64           `db:"reward_status"`      // 发放状态：1失败 2成功
+		RewardTimes      int64           `db:"reward_times"`       // 收益发放时间戳
+		Remark           string          `db:"remark"`             // 备注
+		CreateUserId     int64           `db:"create_user_id"`     // 创建人ID
+		UpdateUserId     int64           `db:"update_user_id"`     // 更新人ID
+		CreateTimes      int64           `db:"create_times"`       // 创建时间戳
+		UpdateTimes      int64           `db:"update_times"`       // 更新时间戳
 	}
 )
 

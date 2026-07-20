@@ -12,16 +12,16 @@ import (
 	"wklive/admin-api/internal/types"
 )
 
-func GetMarginAccountListAdminHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func GetMarginSnapshotListAdminHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.GetMarginAccountListAdminReq
+		var req types.GetMarginSnapshotListAdminReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := trade.NewGetMarginAccountListAdminLogic(r.Context(), svcCtx)
-		resp, err := l.GetMarginAccountListAdmin(&req)
+		l := trade.NewGetMarginSnapshotListAdminLogic(r.Context(), svcCtx)
+		resp, err := l.GetMarginSnapshotListAdmin(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

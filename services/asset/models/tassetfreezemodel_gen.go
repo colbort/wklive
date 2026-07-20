@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,26 +44,26 @@ type (
 	}
 
 	TAssetFreeze struct {
-		Id             int64          `db:"id"`              // 主键ID
-		FreezeNo       string         `db:"freeze_no"`       // 冻结单号
-		TenantId       int64          `db:"tenant_id"`       // 租户ID
-		UserId         int64          `db:"user_id"`         // 用户ID
-		WalletType     int64          `db:"wallet_type"`     // 钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权
-		Coin           string         `db:"coin"`            // 币种代码
-		BizType        string         `db:"biz_type"`        // 业务类型:trade/withdraw/option/system
-		SceneType      string         `db:"scene_type"`      // 业务场景:place_order/withdraw_apply/option_open/manual_freeze
-		BizId          int64          `db:"biz_id"`          // 业务ID
-		BizNo          string         `db:"biz_no"`          // 业务单号
-		Amount         float64        `db:"amount"`          // 冻结总金额
-		UsedAmount     float64        `db:"used_amount"`     // 已使用金额
-		UnfreezeAmount float64        `db:"unfreeze_amount"` // 已解冻金额
-		RemainAmount   float64        `db:"remain_amount"`   // 剩余冻结金额
-		Status         int64          `db:"status"`          // 状态:1冻结中 2部分释放 3已解冻 4已扣完 5已关闭
-		ExpireTime     int64          `db:"expire_time"`     // 过期时间戳(毫秒),0表示不过期
-		Remark         string         `db:"remark"`          // 备注
-		ExtJson        sql.NullString `db:"ext_json"`        // 扩展信息JSON
-		CreateTimes    int64          `db:"create_times"`    // 创建时间戳(毫秒)
-		UpdateTimes    int64          `db:"update_times"`    // 更新时间戳(毫秒)
+		Id             int64           `db:"id"`              // 主键ID
+		FreezeNo       string          `db:"freeze_no"`       // 冻结单号
+		TenantId       int64           `db:"tenant_id"`       // 租户ID
+		UserId         int64           `db:"user_id"`         // 用户ID
+		WalletType     int64           `db:"wallet_type"`     // 钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权
+		Coin           string          `db:"coin"`            // 币种代码
+		BizType        string          `db:"biz_type"`        // 业务类型:trade/withdraw/option/system
+		SceneType      string          `db:"scene_type"`      // 业务场景:place_order/withdraw_apply/option_open/manual_freeze
+		BizId          int64           `db:"biz_id"`          // 业务ID
+		BizNo          string          `db:"biz_no"`          // 业务单号
+		Amount         decimal.Decimal `db:"amount"`          // 冻结总金额
+		UsedAmount     decimal.Decimal `db:"used_amount"`     // 已使用金额
+		UnfreezeAmount decimal.Decimal `db:"unfreeze_amount"` // 已解冻金额
+		RemainAmount   decimal.Decimal `db:"remain_amount"`   // 剩余冻结金额
+		Status         int64           `db:"status"`          // 状态:1冻结中 2部分释放 3已解冻 4已扣完 5已关闭
+		ExpireTime     int64           `db:"expire_time"`     // 过期时间戳(毫秒),0表示不过期
+		Remark         string          `db:"remark"`          // 备注
+		ExtJson        sql.NullString  `db:"ext_json"`        // 扩展信息JSON
+		CreateTimes    int64           `db:"create_times"`    // 创建时间戳(毫秒)
+		UpdateTimes    int64           `db:"update_times"`    // 更新时间戳(毫秒)
 	}
 )
 

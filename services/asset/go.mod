@@ -3,12 +3,14 @@ module wklive/services/asset
 go 1.26.4
 
 require (
+	github.com/shopspring/decimal v1.4.0
 	github.com/zeromicro/go-zero v1.10.2
 	google.golang.org/grpc v1.81.1
 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
 	wklive/common v0.0.0-00010101000000-000000000000
 	wklive/proto/asset v0.0.0-00010101000000-000000000000
 	wklive/proto/common v0.0.0-00010101000000-000000000000
+	wklive/proto/itick v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -115,5 +117,7 @@ require (
 replace wklive/proto/common => ../../proto/common
 
 replace wklive/proto/asset => ../../proto/asset
+
+replace wklive/proto/itick => ../../proto/itick
 
 replace wklive/common => ../../common

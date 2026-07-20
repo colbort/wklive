@@ -1,11 +1,6 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard
-      :model="riskQuery"
-      :show-actions="false"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="riskQuery" :show-actions="false" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -16,33 +11,17 @@
         <SymbolSelect
           v-model="riskQuery.symbolId"
           :tenant-id="riskQuery.tenantId || undefined"
-          :market-type="riskQuery.marketType || undefined"
+          :product-type="riskQuery.productType || undefined"
         />
       </el-form-item>
-      <el-form-item :label="t('trade.marketType')">
-        <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
+      <el-form-item :label="t('trade.productType')">
+        <el-input-number v-model="riskQuery.productType" :min="0" :precision="0" />
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never">
       <el-form label-width="120px">
-        <el-form-item :label="t('trade.positionMode')">
-          <el-input-number v-model="tradeConfigForm.positionMode" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('trade.marginMode')">
-          <el-input-number v-model="tradeConfigForm.marginMode" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item :label="t('trade.defaultLeverage')">
-          <el-input-number v-model="tradeConfigForm.defaultLeverage" :min="0" :precision="0" />
-        </el-form-item>
         <el-form-item :label="t('trade.tradeEnabled')">
           <el-switch v-model="tradeConfigForm.tradeEnabled" :active-value="1" :inactive-value="2" />
-        </el-form-item>
-        <el-form-item :label="t('trade.reduceOnlyEnabled')">
-          <el-switch
-            v-model="tradeConfigForm.reduceOnlyEnabled"
-            :active-value="1"
-            :inactive-value="2"
-          />
         </el-form-item>
         <el-button
           v-perm="'trade:user-trade-config:update'"
@@ -73,18 +52,14 @@ const riskQuery = reactive<GetUserTradeConfigReq>({
   tenantId: undefined as number | undefined,
   userId: undefined as number | undefined,
   symbolId: undefined as number | undefined,
-  marketType: undefined as number | undefined,
+  productType: undefined as number | undefined,
 })
 const tradeConfigForm = reactive<SetUserTradeConfigReq>({
   tenantId: 0,
   userId: 0,
-  marketType: 0,
+  productType: 0,
   symbolId: 0,
-  positionMode: 0,
-  marginMode: 0,
-  defaultLeverage: 1,
   tradeEnabled: 1,
-  reduceOnlyEnabled: 2,
 })
 
 const loadList = async () => {

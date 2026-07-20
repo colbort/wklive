@@ -83,14 +83,17 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Admi
 	if in.MinNotional != "" {
 		item.MinNotional = mustParseFloat(in.MinNotional)
 	}
-	if in.MaxLeverage != 0 {
-		item.MaxLeverage = int64(in.MaxLeverage)
+	if in.MaxNotional != "" {
+		item.MaxNotional = mustParseFloat(in.MaxNotional)
 	}
-	if in.OpenTime != 0 {
-		item.OpenTime = in.OpenTime
+	if in.ListingTime != 0 {
+		item.ListingTime = in.ListingTime
 	}
-	if in.CloseTime != 0 {
-		item.CloseTime = in.CloseTime
+	if in.TradingStartTime != 0 {
+		item.TradingStartTime = in.TradingStartTime
+	}
+	if in.TradingEndTime != 0 {
+		item.TradingEndTime = in.TradingEndTime
 	}
 	if in.Sort != 0 {
 		item.Sort = int64(in.Sort)

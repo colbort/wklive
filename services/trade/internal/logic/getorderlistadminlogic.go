@@ -36,14 +36,14 @@ func (l *GetOrderListAdminLogic) GetOrderListAdmin(in *trade.GetOrderListAdminRe
 	}
 	cursor, limit := pageutil.Input(in.Page)
 	data, total, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
-		TenantId:   in.TenantId,
-		UserId:     in.UserId,
-		SymbolId:   in.SymbolId,
-		MarketType: int64(in.MarketType),
-		Status:     int64(in.Status),
-		TimeStart:  in.TimeRange.StartTime,
-		TimeEnd:    in.TimeRange.EndTime,
-		Keyword:    in.Keyword,
+		TenantId:    in.TenantId,
+		UserId:      in.UserId,
+		SymbolId:    in.SymbolId,
+		ProductType: int64(in.ProductType),
+		Status:      int64(in.Status),
+		TimeStart:   in.TimeRange.StartTime,
+		TimeEnd:     in.TimeRange.EndTime,
+		Keyword:     in.Keyword,
 	}, cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

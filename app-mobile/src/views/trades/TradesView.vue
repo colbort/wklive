@@ -2,12 +2,11 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { apiListAssetCoinConfigs } from '@/api/asset'
 import { getAccessToken } from '@/api/http'
 import {
   apiTradeCancelOrder,
   apiTradeGetLeverageConfig,
-  apiTradeGetMarginAccountList,
+  apiTradeGetMarginSnapshotList,
   apiTradeGetOrderList,
   apiTradeGetPositionList,
   apiTradeGetSymbolDetail,
@@ -19,19 +18,18 @@ import CommonPage from '@/components/common/CommonPage.vue'
 import TradeView from '@/components/trades/TradeView.vue'
 import { useTradingDesk } from '@/composables/useTradingDesk'
 import { t } from '@/i18n'
-import type { AssetCoinConfig } from '@/types/asset'
 import type {
   ContractLeverageConfig,
-  ContractMarginAccount,
+  ContractMarginSnapshot,
   ContractPosition,
   PlaceOrderReq,
   TradeOrder,
   TradeSymbol,
   TradeSymbolContract,
   TradeSymbolLeverageConfig,
+  TradeSymbolSeconds,
   TradeSymbolSpot,
 } from '@/types/trade'
-import { formatAssetMinorAmount } from '@/utils/assetAmount'
 import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type SubmitSide = 'buy' | 'sell'
@@ -40,18 +38,19 @@ type TradeSymbolDetail = {
   spot: TradeSymbolSpot | null
   contract: TradeSymbolContract | null
   leverageConfigs: TradeSymbolLeverageConfig[]
+  secondsConfigs: TradeSymbolSeconds[]
 }
 
-const MARKET_TYPE_SPOT = 1
-const MARKET_TYPE_SECONDS_CONTRACT = 2
-const MARKET_TYPE_USDT_CONTRACT = 3
-const MARKET_TYPE_COIN_CONTRACT = 4
+const PRODUCT_TYPE_SPOT = 1
+const PRODUCT_TYPE_DERIVATIVE = 2
+const PRODUCT_TYPE_SECONDS = 3
+const CONTRACT_VALUE_TYPE_LINEAR = 1
+const CONTRACT_VALUE_TYPE_INVERSE = 2
 const TRADE_SIDE_BUY = 1
 const TRADE_SIDE_SELL = 2
 const POSITION_SIDE_NET = 1
 const POSITION_SIDE_LONG = 2
 const POSITION_SIDE_SHORT = 3
-const POSITION_MODE_ONE_WAY = 1
 const ORDER_TYPE_LIMIT = 1
 const ORDER_TYPE_MARKET = 2
 const TIME_IN_FORCE_GTC = 1
@@ -70,8 +69,7 @@ const tradeSymbolDetail = ref<TradeSymbolDetail | null>(null)
 const userLeverageConfig = ref<ContractLeverageConfig | null>(null)
 const tradeOrders = ref<TradeOrder[]>([])
 const tradePositions = ref<ContractPosition[]>([])
-const marginAccounts = ref<ContractMarginAccount[]>([])
-const assetCoinConfigs = ref<AssetCoinConfig[]>([])
+const marginAccounts = ref<ContractMarginSnapshot[]>([])
 const loadingTradeSymbols = ref(false)
 const loadingTradeDetail = ref(false)
 const loadingTradeAccount = ref(false)
@@ -94,7 +92,6 @@ let tradeAccountRequestId = 0
 let tradeOrdersRequestId = 0
 let leverageConfigRequestId = 0
 let saveLeverageRequestId = 0
-let assetCoinConfigsRequestId = 0
 const {
   selectedCategoryType,
   selectedProductKey,
@@ -129,30 +126,11 @@ const isLoggedIn = computed(() => Boolean(authToken.value))
 const selectedTradeSymbol = computed(() => matchTradeSymbol())
 const selectedTradeSettleAsset = computed(() => {
   return (
+    selectedTradeSymbol.value?.marginAsset ||
     selectedTradeSymbol.value?.settleAsset ||
     selectedTradeSymbol.value?.quoteAsset ||
     selectedProduct.value?.quoteCoin ||
     'USDT'
-  )
-})
-const selectedTradeWalletType = computed(() => {
-  const symbol = selectedTradeSymbol.value
-  if (symbol && isContractMarket(symbol.marketType)) return 3
-  if (tradeKind.value === 'stock') return 2
-  if (tradeKind.value === 'option') return 5
-  return 1
-})
-const selectedTradeSettleConfig = computed(() => {
-  const settleAsset = selectedTradeSettleAsset.value.toUpperCase()
-  return (
-    assetCoinConfigs.value.find((config) => {
-      return (
-        config.walletType === selectedTradeWalletType.value &&
-        config.coin.toUpperCase() === settleAsset
-      )
-    }) ||
-    assetCoinConfigs.value.find((config) => config.coin.toUpperCase() === settleAsset) ||
-    null
   )
 })
 const displaySelectedTradeSymbol = computed(() => {
@@ -164,10 +142,7 @@ const displaySelectedTradeSymbol = computed(() => {
     minPrice: symbol.minPrice,
     maxPrice: symbol.maxPrice,
     priceTick: symbol.priceTick,
-    minNotional: formatAssetMinorAmount(
-      symbol.minNotional,
-      selectedTradeSettleConfig.value?.decimalPlaces,
-    ),
+    minNotional: symbol.minNotional,
   }
 })
 const selectedMarginAccount = computed(() => {
@@ -178,12 +153,7 @@ const selectedMarginAccount = computed(() => {
     null
   )
 })
-const availableBalance = computed(() =>
-  formatAssetMinorAmount(
-    selectedMarginAccount.value?.availableBalance || '0',
-    selectedTradeSettleConfig.value?.decimalPlaces,
-  ),
-)
+const availableBalance = computed(() => selectedMarginAccount.value?.availableBalance || '0')
 const longPositionQty = computed(() => {
   const position = tradePositions.value.find((item) => item.positionSide === POSITION_SIDE_LONG)
   return position?.availQty || position?.qty || '0'
@@ -193,20 +163,16 @@ const shortPositionQty = computed(() => {
   return position?.availQty || position?.qty || '0'
 })
 const activeLeverageConfig = computed(() => {
-  const symbol = selectedTradeSymbol.value
-  if (!symbol) return null
-  return (
-    tradeSymbolDetail.value?.leverageConfigs.find((config) => {
-      return (
-        config.enabled === 1 &&
-        config.marketType === symbol.marketType &&
-        config.marginMode === marginMode.value
-      )
-    }) || null
-  )
+  if (!selectedTradeSymbol.value) return null
+  const configs = (tradeSymbolDetail.value?.leverageConfigs || []).filter((config) => {
+    return config.enabled === 1 && config.marginMode === marginMode.value
+  })
+  return configs.find((config) => config.isDefault === 1) || configs[0] || null
 })
 const configuredLeverageValues = computed(() => {
-  const values = activeLeverageConfig.value?.leverageValues || []
+  const values = (tradeSymbolDetail.value?.leverageConfigs || [])
+    .filter((config) => config.enabled === 1 && config.marginMode === marginMode.value)
+    .map((config) => config.leverage)
   return Array.from(
     new Set(values.map(Number).filter((value) => Number.isFinite(value) && value > 0)),
   ).sort((left, right) => left - right)
@@ -215,8 +181,6 @@ const maxTradeLeverage = computed(() => {
   return Math.max(
     1,
     configuredLeverageValues.value[configuredLeverageValues.value.length - 1] || 0,
-    Number(activeLeverageConfig.value?.maxLeverage || 0),
-    Number(selectedTradeSymbol.value?.maxLeverage || 0),
   )
 })
 const tradeLeverageValues = computed(() => {
@@ -296,13 +260,6 @@ watch(
   },
   { immediate: true },
 )
-watch(
-  selectedTradeWalletType,
-  () => {
-    void loadAssetCoinConfigs()
-  },
-  { immediate: true },
-)
 
 onMounted(() => {
   syncAuthState()
@@ -328,12 +285,8 @@ function isSuccessCode(code: number) {
   return code === 0 || code === 200
 }
 
-function isContractMarket(marketType: number) {
-  return [
-    MARKET_TYPE_SECONDS_CONTRACT,
-    MARKET_TYPE_USDT_CONTRACT,
-    MARKET_TYPE_COIN_CONTRACT,
-  ].includes(marketType)
+function isContractMarket(productType: number) {
+  return productType === PRODUCT_TYPE_DERIVATIVE
 }
 
 function normalizeSymbolText(value: string) {
@@ -374,12 +327,13 @@ function symbolCandidates(symbol: TradeSymbol) {
 
 function marketPreference(symbol: TradeSymbol) {
   if (tradeKind.value === 'crypto') {
-    if (symbol.marketType === MARKET_TYPE_USDT_CONTRACT) return 0
-    if (symbol.marketType === MARKET_TYPE_COIN_CONTRACT) return 1
-    if (symbol.marketType === MARKET_TYPE_SPOT) return 2
+    if (symbol.productType === PRODUCT_TYPE_DERIVATIVE && symbol.contractValueType === CONTRACT_VALUE_TYPE_LINEAR) return 0
+    if (symbol.productType === PRODUCT_TYPE_DERIVATIVE && symbol.contractValueType === CONTRACT_VALUE_TYPE_INVERSE) return 1
+    if (symbol.productType === PRODUCT_TYPE_SPOT) return 2
+    if (symbol.productType === PRODUCT_TYPE_SECONDS) return 3
   }
 
-  if (symbol.marketType === MARKET_TYPE_SPOT) return 0
+  if (symbol.productType === PRODUCT_TYPE_SPOT) return 0
   return 1
 }
 
@@ -397,34 +351,11 @@ function matchTradeSymbol() {
 function isPositiveDecimal(value: string) {
   const text = value.trim()
   if (!/^\d+(\.\d+)?$/.test(text)) return false
-  return Number(text) > 0
-}
-
-function assetConfigForCoin(coin: string) {
-  const normalizedCoin = coin.toUpperCase()
-  return (
-    assetCoinConfigs.value.find((config) => {
-      return (
-        config.walletType === selectedTradeWalletType.value &&
-        config.coin.toUpperCase() === normalizedCoin
-      )
-    }) ||
-    assetCoinConfigs.value.find((config) => config.coin.toUpperCase() === normalizedCoin) ||
-    null
-  )
-}
-
-function formatTradeMoney(value: string, coin = selectedTradeSettleAsset.value) {
-  return formatAssetMinorAmount(value, assetConfigForCoin(coin)?.decimalPlaces)
+  return /[1-9]/.test(text)
 }
 
 function normalizeTradeOrderAmounts(order: TradeOrder): TradeOrder {
-  return {
-    ...order,
-    amount: formatTradeMoney(order.amount),
-    filledAmount: formatTradeMoney(order.filledAmount),
-    fee: formatTradeMoney(order.fee, order.feeAsset || selectedTradeSettleAsset.value),
-  }
+  return order
 }
 
 function createClientOrderId() {
@@ -432,7 +363,7 @@ function createClientOrderId() {
 }
 
 function orderPositionSide(symbol: TradeSymbol, side: SubmitSide) {
-  if (!isContractMarket(symbol.marketType)) return POSITION_SIDE_NET
+  if (!isContractMarket(symbol.productType)) return POSITION_SIDE_NET
   return side === 'buy' ? POSITION_SIDE_LONG : POSITION_SIDE_SHORT
 }
 
@@ -451,29 +382,10 @@ function defaultTradeLeverage() {
   return clampLeverage(
     userLeverageConfig.value?.longLeverage ||
       userLeverageConfig.value?.shortLeverage ||
-      activeLeverageConfig.value?.defaultLeverage ||
+      activeLeverageConfig.value?.leverage ||
       tradeLeverageValues.value[0] ||
       1,
   )
-}
-
-async function loadAssetCoinConfigs() {
-  const requestId = ++assetCoinConfigsRequestId
-
-  try {
-    const resp = await apiListAssetCoinConfigs({
-      walletType: selectedTradeWalletType.value,
-      operationType: 0,
-    })
-    if (requestId !== assetCoinConfigsRequestId) return
-
-    assetCoinConfigs.value = isSuccessCode(resp.code) ? resp.data || [] : []
-  } catch (error) {
-    console.warn('load trade asset coin configs failed', error)
-    if (requestId === assetCoinConfigsRequestId) {
-      assetCoinConfigs.value = []
-    }
-  }
 }
 
 function updateMarginMode(value: number) {
@@ -490,7 +402,7 @@ async function loadUserLeverageConfig() {
   const requestId = ++leverageConfigRequestId
   const symbol = selectedTradeSymbol.value
 
-  if (!isLoggedIn.value || !symbol || !isContractMarket(symbol.marketType)) {
+  if (!isLoggedIn.value || !symbol || !isContractMarket(symbol.productType)) {
     userLeverageConfig.value = null
     leverage.value = defaultTradeLeverage()
     return
@@ -499,7 +411,6 @@ async function loadUserLeverageConfig() {
   try {
     const resp = await apiTradeGetLeverageConfig({
       symbolId: symbol.id,
-      marketType: symbol.marketType,
       marginMode: marginMode.value,
     })
     if (requestId !== leverageConfigRequestId) return
@@ -522,14 +433,12 @@ async function loadUserLeverageConfig() {
 async function saveUserLeverageConfig(nextLeverage: number) {
   const requestId = ++saveLeverageRequestId
   const symbol = selectedTradeSymbol.value
-  if (!isLoggedIn.value || !symbol || !isContractMarket(symbol.marketType)) return
+  if (!isLoggedIn.value || !symbol || !isContractMarket(symbol.productType)) return
 
   try {
     const resp = await apiTradeSetLeverage({
       symbolId: symbol.id,
-      marketType: symbol.marketType,
       marginMode: marginMode.value,
-      positionMode: POSITION_MODE_ONE_WAY,
       longLeverage: nextLeverage,
       shortLeverage: nextLeverage,
     })
@@ -595,6 +504,7 @@ async function loadTradeSymbolDetail(symbolId: number) {
       spot: resp.data?.spot || null,
       contract: resp.data?.contract || null,
       leverageConfigs: resp.data?.leverageConfigs || [],
+      secondsConfigs: resp.data?.secondsConfigs || [],
     }
     leverage.value = defaultTradeLeverage()
     void loadUserLeverageConfig()
@@ -631,7 +541,7 @@ async function refreshTradeAccount() {
   ordersError.value = ''
 
   const orderParams = {
-    marketType: symbol.marketType,
+    productType: symbol.productType,
     symbolId: symbol.id,
     limit: 100,
   }
@@ -640,11 +550,10 @@ async function refreshTradeAccount() {
     const [ordersResult, positionsResult, accountsResult] = await Promise.allSettled([
       apiTradeGetOrderList(orderParams),
       apiTradeGetPositionList({
-        marketType: symbol.marketType,
+        contractType: symbol.contractType,
         symbolId: symbol.id,
       }),
-      apiTradeGetMarginAccountList({
-        marketType: symbol.marketType,
+      apiTradeGetMarginSnapshotList({
         marginAsset: selectedTradeSettleAsset.value,
       }),
     ])
@@ -709,7 +618,7 @@ async function refreshTradeOrders() {
 
   try {
     const resp = await apiTradeGetOrderList({
-      marketType: symbol.marketType,
+      productType: symbol.productType,
       symbolId: symbol.id,
       limit: 100,
     })
@@ -770,7 +679,6 @@ async function submitTradeOrder(side: SubmitSide) {
 
   const params: PlaceOrderReq = {
     symbolId: symbol.id,
-    marketType: symbol.marketType,
     side: side === 'buy' ? TRADE_SIDE_BUY : TRADE_SIDE_SELL,
     positionSide: orderPositionSide(symbol, side),
     orderType: isLimitOrder ? ORDER_TYPE_LIMIT : ORDER_TYPE_MARKET,
@@ -780,11 +688,25 @@ async function submitTradeOrder(side: SubmitSide) {
     orderSource: ORDER_SOURCE_WEB,
   }
 
+  if (symbol.productType === PRODUCT_TYPE_SECONDS) {
+    const secondsConfig = tradeSymbolDetail.value?.secondsConfigs.find((config) => {
+      return side === 'buy' ? config.upEnabled === 1 : config.downEnabled === 1
+    })
+    if (!secondsConfig) {
+      tradeError.value = t('trade.symbolNotConfigured')
+      return
+    }
+    params.amount = qty
+    params.qty = undefined
+    params.secondsDirection = side === 'buy' ? 1 : 2
+    params.durationSeconds = secondsConfig.durationSeconds
+  }
+
   if (isLimitOrder) {
     params.price = price
   }
 
-  if (isContractMarket(symbol.marketType)) {
+  if (isContractMarket(symbol.productType)) {
     params.marginMode = marginMode.value
     params.leverage = clampLeverage(leverage.value)
     const takeProfitPriceText = takeProfitPrice.value.trim()

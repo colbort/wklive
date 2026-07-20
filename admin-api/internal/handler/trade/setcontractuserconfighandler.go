@@ -7,21 +7,21 @@ import (
 	"net/http"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"wklive/app-api/internal/logic/trade"
-	"wklive/app-api/internal/svc"
-	"wklive/app-api/internal/types"
+	"wklive/admin-api/internal/logic/trade"
+	"wklive/admin-api/internal/svc"
+	"wklive/admin-api/internal/types"
 )
 
-func GetMarginAccountListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func SetContractUserConfigHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.GetMarginAccountListReq
+		var req types.SetContractUserConfigReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := trade.NewGetMarginAccountListLogic(r.Context(), svcCtx)
-		resp, err := l.GetMarginAccountList(&req)
+		l := trade.NewSetContractUserConfigLogic(r.Context(), svcCtx)
+		resp, err := l.SetContractUserConfig(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

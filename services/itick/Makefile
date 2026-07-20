@@ -1,5 +1,3 @@
-GOCTL ?= goctl
-
 # 当前服务 module（必须与你 services/itick/go.mod 的 module 一致）
 MODULE := wklive/services/itick
 
@@ -83,5 +81,7 @@ clean-main:
 
 .PHONY: gen-model
 gen-model:
-	# goctl model mongo --type CoinKline --dir ./models
-	goctl model mysql ddl --src itick.sql --dir ./models -c
+	@$(MAKE) check-goctl
+	@echo "🔧 [services/itick] generating decimal-safe models..."
+	@$(GOCTL) model mysql ddl --src itick.sql --dir ./models -c
+	@echo "✅ [services/itick] models generated (DECIMAL -> decimal.Decimal)"

@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,28 +44,28 @@ type (
 	}
 
 	TOptionMarket struct {
-		Id               int64   `db:"id"`                // 主键ID
-		TenantId         int64   `db:"tenant_id"`         // 租户ID
-		ContractId       int64   `db:"contract_id"`       // 合约ID
-		UnderlyingPrice  float64 `db:"underlying_price"`  // 标的价格
-		MarkPrice        float64 `db:"mark_price"`        // 标记价格/参考权利金
-		LastPrice        float64 `db:"last_price"`        // 最新成交价
-		BidPrice         float64 `db:"bid_price"`         // 买一价
-		AskPrice         float64 `db:"ask_price"`         // 卖一价
-		TheoreticalPrice float64 `db:"theoretical_price"` // 理论价/风险定价
-		IntrinsicValue   float64 `db:"intrinsic_value"`   // 内在价值
-		TimeValue        float64 `db:"time_value"`        // 时间价值
-		Iv               float64 `db:"iv"`                // 隐含波动率
-		Delta            float64 `db:"delta"`             // Delta
-		Gamma            float64 `db:"gamma"`             // Gamma
-		Theta            float64 `db:"theta"`             // Theta
-		Vega             float64 `db:"vega"`              // Vega
-		Rho              float64 `db:"rho"`               // Rho
-		RiskFreeRate     float64 `db:"risk_free_rate"`    // 无风险利率
-		PricingModel     string  `db:"pricing_model"`     // 定价模型，如 Black-Scholes
-		SnapshotTime     int64   `db:"snapshot_time"`     // 行情快照时间
-		CreateTimes      int64   `db:"create_times"`      // 创建时间
-		UpdateTimes      int64   `db:"update_times"`      // 更新时间
+		Id               int64           `db:"id"`                // 主键ID
+		TenantId         int64           `db:"tenant_id"`         // 租户ID
+		ContractId       int64           `db:"contract_id"`       // 合约ID
+		UnderlyingPrice  decimal.Decimal `db:"underlying_price"`  // 标的价格
+		MarkPrice        decimal.Decimal `db:"mark_price"`        // 标记价格/参考权利金
+		LastPrice        decimal.Decimal `db:"last_price"`        // 最新成交价
+		BidPrice         decimal.Decimal `db:"bid_price"`         // 买一价
+		AskPrice         decimal.Decimal `db:"ask_price"`         // 卖一价
+		TheoreticalPrice decimal.Decimal `db:"theoretical_price"` // 理论价/风险定价
+		IntrinsicValue   decimal.Decimal `db:"intrinsic_value"`   // 内在价值
+		TimeValue        decimal.Decimal `db:"time_value"`        // 时间价值
+		Iv               decimal.Decimal `db:"iv"`                // 隐含波动率
+		Delta            decimal.Decimal `db:"delta"`             // Delta
+		Gamma            decimal.Decimal `db:"gamma"`             // Gamma
+		Theta            decimal.Decimal `db:"theta"`             // Theta
+		Vega             decimal.Decimal `db:"vega"`              // Vega
+		Rho              decimal.Decimal `db:"rho"`               // Rho
+		RiskFreeRate     decimal.Decimal `db:"risk_free_rate"`    // 无风险利率
+		PricingModel     string          `db:"pricing_model"`     // 定价模型，如 Black-Scholes
+		SnapshotTime     int64           `db:"snapshot_time"`     // 行情快照时间
+		CreateTimes      int64           `db:"create_times"`      // 创建时间
+		UpdateTimes      int64           `db:"update_times"`      // 更新时间
 	}
 )
 

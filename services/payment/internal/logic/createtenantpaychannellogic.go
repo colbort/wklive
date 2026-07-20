@@ -35,7 +35,7 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 		errLogic = "CreateTenantPayChannel"
 	)
 
-	feeRate, err := conv.ParseFloatField(in.FeeRate)
+	feeRate, err := conv.ParseDecimalField(in.FeeRate)
 	if err != nil {
 		return nil, err
 	}

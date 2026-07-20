@@ -9,6 +9,7 @@ import (
 	"wklive/proto/option"
 	"wklive/services/option/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -16,7 +17,7 @@ func (l *AppPlaceOrderLogic) matchOrder(contract *models.TOptionContract, order 
 	if order.OrderType == int64(option.OrderType_ORDER_TYPE_POST_ONLY) {
 		return nil
 	}
-	if order.Price <= 0 || order.UnfilledQty <= optionFloatEpsilon {
+	if !order.Price.IsPositive() || !order.UnfilledQty.IsPositive() {
 		return nil
 	}
 
@@ -33,7 +34,7 @@ func (l *AppPlaceOrderLogic) matchOrder(contract *models.TOptionContract, order 
 		if err != nil {
 			return err
 		}
-		for incoming.UnfilledQty > optionFloatEpsilon {
+		for incoming.UnfilledQty.IsPositive() {
 			makers, err := orderModel.FindMatchableOrders(ctx, incoming.TenantId, incoming.ContractId, oppositeOrderSide(incoming.Side), incoming.Price, 50)
 			if err != nil {
 				return err
@@ -44,18 +45,18 @@ func (l *AppPlaceOrderLogic) matchOrder(contract *models.TOptionContract, order 
 
 			matched := false
 			for _, maker := range makers {
-				if incoming.UnfilledQty <= optionFloatEpsilon {
+				if !incoming.UnfilledQty.IsPositive() {
 					break
 				}
-				if maker.Id == incoming.Id || maker.UnfilledQty <= optionFloatEpsilon {
+				if maker.Id == incoming.Id || !maker.UnfilledQty.IsPositive() {
 					continue
 				}
 				if maker.UserId == incoming.UserId && maker.AccountId == incoming.AccountId {
 					continue
 				}
 
-				tradeQty := minFloat64(incoming.UnfilledQty, maker.UnfilledQty)
-				if tradeQty <= optionFloatEpsilon {
+				tradeQty := decimal.Min(incoming.UnfilledQty, maker.UnfilledQty)
+				if !tradeQty.IsPositive() {
 					continue
 				}
 				tradePrice := maker.Price
@@ -149,7 +150,7 @@ func makerSide(side int64) int64 {
 	return int64(common.Side_SIDE_UNKNOWN)
 }
 
-func updateMarketLastTrade(ctx context.Context, model models.TOptionMarketModel, contract *models.TOptionContract, price float64, now int64) error {
+func updateMarketLastTrade(ctx context.Context, model models.TOptionMarketModel, contract *models.TOptionContract, price decimal.Decimal, now int64) error {
 	market, err := model.FindOneByTenantIdContractId(ctx, contract.TenantId, contract.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return err
@@ -170,10 +171,10 @@ func updateMarketLastTrade(ctx context.Context, model models.TOptionMarketModel,
 	}
 
 	market.LastPrice = price
-	if market.MarkPrice <= 0 {
+	if !market.MarkPrice.IsPositive() {
 		market.MarkPrice = price
 	}
-	if market.TheoreticalPrice <= 0 {
+	if !market.TheoreticalPrice.IsPositive() {
 		market.TheoreticalPrice = price
 	}
 	market.SnapshotTime = now
@@ -182,7 +183,7 @@ func updateMarketLastTrade(ctx context.Context, model models.TOptionMarketModel,
 }
 
 func applyTradeAccountBills(ctx context.Context, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, trade *models.TOptionTrade, now int64) error {
-	if err := applyOptionAccountDelta(ctx, accountModel, billModel, trade.TenantId, trade.BuyUserId, trade.BuyAccountId, trade.FeeCoin, -trade.Turnover, int64(option.BillRefType_BILL_REF_TYPE_TRADE), trade.Id, trade.TradeNo+"-BUY", "option trade premium paid", false, now); err != nil {
+	if err := applyOptionAccountDelta(ctx, accountModel, billModel, trade.TenantId, trade.BuyUserId, trade.BuyAccountId, trade.FeeCoin, trade.Turnover.Neg(), int64(option.BillRefType_BILL_REF_TYPE_TRADE), trade.Id, trade.TradeNo+"-BUY", "option trade premium paid", false, now); err != nil {
 		return err
 	}
 	return applyOptionAccountDelta(ctx, accountModel, billModel, trade.TenantId, trade.SellUserId, trade.SellAccountId, trade.FeeCoin, trade.Turnover, int64(option.BillRefType_BILL_REF_TYPE_TRADE), trade.Id, trade.TradeNo+"-SELL", "option trade premium received", false, now)

@@ -4,20 +4,25 @@ package trade;
 
 option go_package = "wklive/proto/trade;trade";
 
-enum MarketType {
-  MARKET_TYPE_UNKNOWN = 0;
-  MARKET_TYPE_SPOT = 1;
-  MARKET_TYPE_SECONDS_CONTRACT = 2;
-  MARKET_TYPE_USDT_CONTRACT = 3;
-  MARKET_TYPE_COIN_CONTRACT = 4;
+// 产品大类。与合约期限、合约价值类型分开建模。
+enum ProductType {
+  PRODUCT_TYPE_UNKNOWN = 0;
+  PRODUCT_TYPE_SPOT = 1;
+  PRODUCT_TYPE_DERIVATIVE = 2;
+  PRODUCT_TYPE_SECONDS = 3;
+}
+
+// 合约价值和盈亏计算模型。U/币本位由保证金及结算资产确定。
+enum ContractValueType {
+  CONTRACT_VALUE_TYPE_NOT_APPLICABLE = 0;
+  CONTRACT_VALUE_TYPE_LINEAR = 1;
+  CONTRACT_VALUE_TYPE_INVERSE = 2;
 }
 
 enum ContractType {
-  CONTRACT_TYPE_UNKNOWN = 0;
-  CONTRACT_TYPE_NONE = 1;
-  CONTRACT_TYPE_PERPETUAL = 2;
-  CONTRACT_TYPE_DELIVERY = 3;
-  CONTRACT_TYPE_SECONDS = 4;
+  CONTRACT_TYPE_NOT_APPLICABLE = 0;
+  CONTRACT_TYPE_PERPETUAL = 1;
+  CONTRACT_TYPE_DELIVERY = 2;
 }
 
 enum SymbolStatus {

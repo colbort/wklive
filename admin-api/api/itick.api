@@ -39,23 +39,23 @@ type ItickProduct {
 
 // K线
 type Kline {
-	categoryCode string  `json:"categoryCode"`
-	market       string  `json:"market"`
-	symbol       string  `json:"symbol"`
-	kType        int64   `json:"kType"`
-	ts           int64   `json:"ts"`
-	open         float64 `json:"open"`
-	high         float64 `json:"high"`
-	low          float64 `json:"low"`
-	close        float64 `json:"close"`
-	volume       float64 `json:"volume"`
-	turnover     float64 `json:"turnover"`
+	categoryCode string `json:"categoryCode"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
+	kType        int64  `json:"kType"`
+	ts           int64  `json:"ts"`
+	open         string `json:"open"`
+	high         string `json:"high"`
+	low          string `json:"low"`
+	close        string `json:"close"`
+	volume       string `json:"volume"`
+	turnover     string `json:"turnover"`
 }
 
 // 深度档位
 type DepthLevel {
-	price  float64 `json:"price"`
-	volume float64 `json:"volume"`
+	price  string `json:"price"`
+	volume string `json:"volume"`
 }
 
 // 深度
@@ -69,19 +69,19 @@ type Depth {
 
 // 实时报价
 type Quote {
-	market         string  `json:"market"`
-	symbol         string  `json:"symbol"`
-	lastPrice      float64 `json:"lastPrice"`
-	openPrice      float64 `json:"openPrice"`
-	highPrice      float64 `json:"highPrice"`
-	lowPrice       float64 `json:"lowPrice"`
-	prevClosePrice float64 `json:"prevClosePrice"`
-	changeValue    float64 `json:"changeValue"`
-	changeRate     float64 `json:"changeRate"`
-	volume         float64 `json:"volume"`
-	turnover       float64 `json:"turnover"`
-	quoteTs        int64   `json:"quoteTs"`
-	tradeStatus    int64   `json:"tradeStatus"`
+	market         string `json:"market"`
+	symbol         string `json:"symbol"`
+	lastPrice      string `json:"lastPrice"`
+	openPrice      string `json:"openPrice"`
+	highPrice      string `json:"highPrice"`
+	lowPrice       string `json:"lowPrice"`
+	prevClosePrice string `json:"prevClosePrice"`
+	changeValue    string `json:"changeValue"`
+	changeRate     string `json:"changeRate"`
+	volume         string `json:"volume"`
+	turnover       string `json:"turnover"`
+	quoteTs        int64  `json:"quoteTs"`
+	tradeStatus    int64  `json:"tradeStatus"`
 }
 
 type ItickTenantCategory {
@@ -517,3 +517,4 @@ service admin {
 	@handler InitTenantItickDisplay
 	post /tenant-display/init (InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp)
 }
+

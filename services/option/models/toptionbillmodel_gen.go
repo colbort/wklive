@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,19 +44,19 @@ type (
 	}
 
 	TOptionBill struct {
-		Id            int64   `db:"id"`             // 主键ID
-		TenantId      int64   `db:"tenant_id"`      // 租户ID
-		UserId        int64   `db:"user_id"`        // 用户ID
-		AccountId     int64   `db:"account_id"`     // 交易账户ID
-		BizNo         string  `db:"biz_no"`         // 业务流水号
-		RefType       int64   `db:"ref_type"`       // 关联类型：1下单 2成交 3撤单 4行权 5结算 6手续费
-		RefId         int64   `db:"ref_id"`         // 关联ID
-		Coin          string  `db:"coin"`           // 币种
-		ChangeAmount  float64 `db:"change_amount"`  // 变动金额，正负都有可能
-		BalanceBefore float64 `db:"balance_before"` // 变动前余额
-		BalanceAfter  float64 `db:"balance_after"`  // 变动后余额
-		Remark        string  `db:"remark"`         // 备注
-		CreateTimes   int64   `db:"create_times"`   // 创建时间
+		Id            int64           `db:"id"`             // 主键ID
+		TenantId      int64           `db:"tenant_id"`      // 租户ID
+		UserId        int64           `db:"user_id"`        // 用户ID
+		AccountId     int64           `db:"account_id"`     // 交易账户ID
+		BizNo         string          `db:"biz_no"`         // 业务流水号
+		RefType       int64           `db:"ref_type"`       // 关联类型：1下单 2成交 3撤单 4行权 5结算 6手续费
+		RefId         int64           `db:"ref_id"`         // 关联ID
+		Coin          string          `db:"coin"`           // 币种
+		ChangeAmount  decimal.Decimal `db:"change_amount"`  // 变动金额，正负都有可能
+		BalanceBefore decimal.Decimal `db:"balance_before"` // 变动前余额
+		BalanceAfter  decimal.Decimal `db:"balance_after"`  // 变动后余额
+		Remark        string          `db:"remark"`         // 备注
+		CreateTimes   int64           `db:"create_times"`   // 创建时间
 	}
 )
 

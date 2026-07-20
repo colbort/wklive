@@ -14,6 +14,7 @@ import (
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -53,20 +54,20 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
 	}
 
-	redeemAmount, err := conv.ParseFloatField(in.RedeemAmount)
-	if err != nil || redeemAmount <= 0 || redeemAmount > order.StakeAmount {
+	redeemAmount, err := conv.ParseDecimalField(in.RedeemAmount)
+	if err != nil || !redeemAmount.IsPositive() || redeemAmount.GreaterThan(order.StakeAmount) {
 		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.RedeemAmountInvalid, i18n.Translate(i18n.RedeemAmountInvalid, l.ctx))}, nil
 	}
-	rewardAmount, err := conv.ParseFloatField(in.RewardAmount)
-	if err != nil || rewardAmount < 0 {
+	rewardAmount, err := conv.ParseDecimalField(in.RewardAmount)
+	if err != nil || rewardAmount.IsNegative() {
 		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
 	}
-	feeRate, err := conv.ParseFloatField(in.FeeRate)
-	if err != nil || feeRate < 0 {
+	feeRate, err := conv.ParseDecimalField(in.FeeRate)
+	if err != nil || feeRate.IsNegative() {
 		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	feeAmount, err := conv.ParseFloatField(in.FeeAmount)
-	if err != nil || feeAmount < 0 {
+	feeAmount, err := conv.ParseDecimalField(in.FeeAmount)
+	if err != nil || feeAmount.IsNegative() {
 		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
@@ -75,11 +76,11 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		return nil, err
 	}
 	now := utils.NowMillis()
-	unlockAmount := redeemAmount - feeAmount
-	if unlockAmount < 0 {
-		unlockAmount = 0
+	unlockAmount := redeemAmount.Sub(feeAmount)
+	if unlockAmount.IsNegative() {
+		unlockAmount = decimal.Zero
 	}
-	if unlockAmount > 0 {
+	if unlockAmount.IsPositive() {
 		resp, err := l.svcCtx.AssetClient.UnlockAssetByBizNo(l.ctx, &asset.UnlockAssetByBizNoReq{
 			TenantId:      order.TenantId,
 			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,
@@ -105,7 +106,7 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
 	}
-	if feeAmount > 0 {
+	if feeAmount.IsPositive() {
 		resp, err := l.svcCtx.AssetClient.DeductLockedAssetByBizNo(l.ctx, &asset.DeductLockedAssetByBizNoReq{
 			TenantId:      order.TenantId,
 			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,
@@ -131,7 +132,7 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
 	}
-	if rewardAmount > 0 {
+	if rewardAmount.IsPositive() {
 		resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 			TenantId:   order.TenantId,
 			UserId:     order.UserId,
@@ -164,10 +165,10 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		return nil, err
 	}
 	if product != nil {
-		if product.StakedAmount >= order.StakeAmount {
-			product.StakedAmount -= order.StakeAmount
+		if product.StakedAmount.GreaterThanOrEqual(order.StakeAmount) {
+			product.StakedAmount = product.StakedAmount.Sub(order.StakeAmount)
 		} else {
-			product.StakedAmount = 0
+			product.StakedAmount = decimal.Zero
 		}
 		product.UpdateUserId = in.OperatorUid
 		product.UpdateTimes = now
@@ -175,8 +176,8 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 
 	order.RedeemAmount = redeemAmount
 	order.RedeemFee = feeAmount
-	order.TotalReward += rewardAmount
-	order.PendingReward = 0
+	order.TotalReward = order.TotalReward.Add(rewardAmount)
+	order.PendingReward = decimal.Zero
 	order.RedeemType = int64(in.RedeemType)
 	order.RedeemApplyTimes = now
 	order.RedeemTimes = now

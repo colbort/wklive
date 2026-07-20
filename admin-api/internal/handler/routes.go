@@ -1052,6 +1052,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: trade.GetCancelLogListAdminHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/contract-user-config",
+				Handler: trade.SetContractUserConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/contract-user-config",
+				Handler: trade.GetContractUserConfigHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/events",
 				Handler: trade.GetTradeEventListHandler(serverCtx),
@@ -1078,8 +1088,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/margin-accounts",
-				Handler: trade.GetMarginAccountListAdminHandler(serverCtx),
+				Path:    "/margin-snapshots",
+				Handler: trade.GetMarginSnapshotListAdminHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -1145,6 +1155,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/symbols/leverage-configs",
 				Handler: trade.GetSymbolLeverageConfigListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/symbols/seconds-config",
+				Handler: trade.SetSecondsSymbolConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/symbols/session",
+				Handler: trade.SetSymbolSessionHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,

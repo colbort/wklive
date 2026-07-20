@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,26 +44,26 @@ type (
 	}
 
 	TAssetLock struct {
-		Id           int64          `db:"id"`            // 主键ID
-		LockNo       string         `db:"lock_no"`       // 锁仓单号
-		TenantId     int64          `db:"tenant_id"`     // 租户ID
-		UserId       int64          `db:"user_id"`       // 用户ID
-		WalletType   int64          `db:"wallet_type"`   // 钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权
-		Coin         string         `db:"coin"`          // 币种代码
-		BizType      string         `db:"biz_type"`      // 业务类型:staking/earn/activity/system
-		SceneType    string         `db:"scene_type"`    // 业务场景:staking_join/fixed_earn_join/activity_lock/manual_lock
-		BizId        int64          `db:"biz_id"`        // 业务ID
-		BizNo        string         `db:"biz_no"`        // 业务单号
-		Amount       float64        `db:"amount"`        // 锁仓总金额
-		UnlockAmount float64        `db:"unlock_amount"` // 已解锁金额
-		RemainAmount float64        `db:"remain_amount"` // 剩余锁仓金额
-		Status       int64          `db:"status"`        // 状态:1锁仓中 2部分解锁 3已解锁 4已关闭
-		StartTime    int64          `db:"start_time"`    // 开始时间戳(毫秒)
-		EndTime      int64          `db:"end_time"`      // 结束时间戳(毫秒)
-		Remark       string         `db:"remark"`        // 备注
-		ExtJson      sql.NullString `db:"ext_json"`      // 扩展信息JSON
-		CreateTimes  int64          `db:"create_times"`  // 创建时间戳(毫秒)
-		UpdateTimes  int64          `db:"update_times"`  // 更新时间戳(毫秒)
+		Id           int64           `db:"id"`            // 主键ID
+		LockNo       string          `db:"lock_no"`       // 锁仓单号
+		TenantId     int64           `db:"tenant_id"`     // 租户ID
+		UserId       int64           `db:"user_id"`       // 用户ID
+		WalletType   int64           `db:"wallet_type"`   // 钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权
+		Coin         string          `db:"coin"`          // 币种代码
+		BizType      string          `db:"biz_type"`      // 业务类型:staking/earn/activity/system
+		SceneType    string          `db:"scene_type"`    // 业务场景:staking_join/fixed_earn_join/activity_lock/manual_lock
+		BizId        int64           `db:"biz_id"`        // 业务ID
+		BizNo        string          `db:"biz_no"`        // 业务单号
+		Amount       decimal.Decimal `db:"amount"`        // 锁仓总金额
+		UnlockAmount decimal.Decimal `db:"unlock_amount"` // 已解锁金额
+		RemainAmount decimal.Decimal `db:"remain_amount"` // 剩余锁仓金额
+		Status       int64           `db:"status"`        // 状态:1锁仓中 2部分解锁 3已解锁 4已关闭
+		StartTime    int64           `db:"start_time"`    // 开始时间戳(毫秒)
+		EndTime      int64           `db:"end_time"`      // 结束时间戳(毫秒)
+		Remark       string          `db:"remark"`        // 备注
+		ExtJson      sql.NullString  `db:"ext_json"`      // 扩展信息JSON
+		CreateTimes  int64           `db:"create_times"`  // 创建时间戳(毫秒)
+		UpdateTimes  int64           `db:"update_times"`  // 更新时间戳(毫秒)
 	}
 )
 

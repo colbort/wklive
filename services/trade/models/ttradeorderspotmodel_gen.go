@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,15 +44,15 @@ type (
 	}
 
 	TTradeOrderSpot struct {
-		Id           int64   `db:"id"`            // 主键ID
-		TenantId     int64   `db:"tenant_id"`     // 租户ID
-		OrderId      int64   `db:"order_id"`      // 订单ID，对应t_trade_order.id
-		FrozenAsset  string  `db:"frozen_asset"`  // 下单冻结的资产币种
-		FrozenAmount float64 `db:"frozen_amount"` // 下单冻结的资产数量
-		SettleAsset  string  `db:"settle_asset"`  // 结算币种
-		SettleAmount float64 `db:"settle_amount"` // 结算金额
-		CreateTimes  int64   `db:"create_times"`  // 创建时间，毫秒时间戳
-		UpdateTimes  int64   `db:"update_times"`  // 更新时间，毫秒时间戳
+		Id           int64           `db:"id"`            // 主键ID
+		TenantId     int64           `db:"tenant_id"`     // 租户ID
+		OrderId      int64           `db:"order_id"`      // 订单ID，对应t_trade_order.id
+		FrozenAsset  string          `db:"frozen_asset"`  // 下单冻结的资产币种
+		FrozenAmount decimal.Decimal `db:"frozen_amount"` // 下单冻结的资产数量
+		SettleAsset  string          `db:"settle_asset"`  // 结算币种
+		SettleAmount decimal.Decimal `db:"settle_amount"` // 结算金额
+		CreateTimes  int64           `db:"create_times"`  // 创建时间，毫秒时间戳
+		UpdateTimes  int64           `db:"update_times"`  // 更新时间，毫秒时间戳
 	}
 )
 

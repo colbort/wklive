@@ -23,15 +23,15 @@ var (
 	tTradeUserConfigRowsExpectAutoSet   = strings.Join(stringx.Remove(tTradeUserConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tTradeUserConfigRowsWithPlaceHolder = strings.Join(stringx.Remove(tTradeUserConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTTradeUserConfigIdPrefix                               = "cache:tTradeUserConfig:id:"
-	cacheTTradeUserConfigTenantIdUserIdMarketTypeSymbolIdPrefix = "cache:tTradeUserConfig:tenantId:userId:marketType:symbolId:"
+	cacheTTradeUserConfigIdPrefix                                = "cache:tTradeUserConfig:id:"
+	cacheTTradeUserConfigTenantIdUserIdProductTypeSymbolIdPrefix = "cache:tTradeUserConfig:tenantId:userId:productType:symbolId:"
 )
 
 type (
 	tTradeUserConfigModel interface {
 		Insert(ctx context.Context, data *TTradeUserConfig) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TTradeUserConfig, error)
-		FindOneByTenantIdUserIdMarketTypeSymbolId(ctx context.Context, tenantId int64, userId int64, marketType int64, symbolId int64) (*TTradeUserConfig, error)
+		FindOneByTenantIdUserIdProductTypeSymbolId(ctx context.Context, tenantId int64, userId int64, productType int64, symbolId int64) (*TTradeUserConfig, error)
 		Update(ctx context.Context, data *TTradeUserConfig) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -42,18 +42,14 @@ type (
 	}
 
 	TTradeUserConfig struct {
-		Id                int64 `db:"id"`                  // 主键ID
-		TenantId          int64 `db:"tenant_id"`           // 租户ID
-		UserId            int64 `db:"user_id"`             // 用户ID
-		MarketType        int64 `db:"market_type"`         // 市场类型：1现货 2秒合约 3U本位 4币本位
-		SymbolId          int64 `db:"symbol_id"`           // 交易标的ID，0表示该市场下的全局配置
-		PositionMode      int64 `db:"position_mode"`       // 持仓模式：1单向持仓 2双向持仓
-		MarginMode        int64 `db:"margin_mode"`         // 保证金模式：1全仓 2逐仓
-		DefaultLeverage   int64 `db:"default_leverage"`    // 默认杠杆倍数
-		TradeEnabled      int64 `db:"trade_enabled"`       // 交易开关：1启用 2禁用
-		ReduceOnlyEnabled int64 `db:"reduce_only_enabled"` // 仅减仓开关：1启用 2禁用
-		CreateTimes       int64 `db:"create_times"`        // 创建时间，毫秒时间戳
-		UpdateTimes       int64 `db:"update_times"`        // 更新时间，毫秒时间戳
+		Id           int64 `db:"id"`            // 主键ID
+		TenantId     int64 `db:"tenant_id"`     // 租户ID
+		UserId       int64 `db:"user_id"`       // 用户ID
+		ProductType  int64 `db:"product_type"`  // 产品大类：1现货 2衍生品 3秒合约
+		SymbolId     int64 `db:"symbol_id"`     // 交易标的ID，0表示该市场下的全局配置
+		TradeEnabled int64 `db:"trade_enabled"` // 交易开关：1启用 2禁用
+		CreateTimes  int64 `db:"create_times"`  // 创建时间，毫秒时间戳
+		UpdateTimes  int64 `db:"update_times"`  // 更新时间，毫秒时间戳
 	}
 )
 
@@ -71,11 +67,11 @@ func (m *defaultTTradeUserConfigModel) Delete(ctx context.Context, id int64) err
 	}
 
 	tTradeUserConfigIdKey := fmt.Sprintf("%s%v", cacheTTradeUserConfigIdPrefix, id)
-	tTradeUserConfigTenantIdUserIdMarketTypeSymbolIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeUserConfigTenantIdUserIdMarketTypeSymbolIdPrefix, data.TenantId, data.UserId, data.MarketType, data.SymbolId)
+	tTradeUserConfigTenantIdUserIdProductTypeSymbolIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeUserConfigTenantIdUserIdProductTypeSymbolIdPrefix, data.TenantId, data.UserId, data.ProductType, data.SymbolId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tTradeUserConfigIdKey, tTradeUserConfigTenantIdUserIdMarketTypeSymbolIdKey)
+	}, tTradeUserConfigIdKey, tTradeUserConfigTenantIdUserIdProductTypeSymbolIdKey)
 	return err
 }
 
@@ -96,12 +92,12 @@ func (m *defaultTTradeUserConfigModel) FindOne(ctx context.Context, id int64) (*
 	}
 }
 
-func (m *defaultTTradeUserConfigModel) FindOneByTenantIdUserIdMarketTypeSymbolId(ctx context.Context, tenantId int64, userId int64, marketType int64, symbolId int64) (*TTradeUserConfig, error) {
-	tTradeUserConfigTenantIdUserIdMarketTypeSymbolIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeUserConfigTenantIdUserIdMarketTypeSymbolIdPrefix, tenantId, userId, marketType, symbolId)
+func (m *defaultTTradeUserConfigModel) FindOneByTenantIdUserIdProductTypeSymbolId(ctx context.Context, tenantId int64, userId int64, productType int64, symbolId int64) (*TTradeUserConfig, error) {
+	tTradeUserConfigTenantIdUserIdProductTypeSymbolIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeUserConfigTenantIdUserIdProductTypeSymbolIdPrefix, tenantId, userId, productType, symbolId)
 	var resp TTradeUserConfig
-	err := m.QueryRowIndexCtx(ctx, &resp, tTradeUserConfigTenantIdUserIdMarketTypeSymbolIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `market_type` = ? and `symbol_id` = ? limit 1", tTradeUserConfigRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, marketType, symbolId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tTradeUserConfigTenantIdUserIdProductTypeSymbolIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `product_type` = ? and `symbol_id` = ? limit 1", tTradeUserConfigRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, productType, symbolId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -118,11 +114,11 @@ func (m *defaultTTradeUserConfigModel) FindOneByTenantIdUserIdMarketTypeSymbolId
 
 func (m *defaultTTradeUserConfigModel) Insert(ctx context.Context, data *TTradeUserConfig) (sql.Result, error) {
 	tTradeUserConfigIdKey := fmt.Sprintf("%s%v", cacheTTradeUserConfigIdPrefix, data.Id)
-	tTradeUserConfigTenantIdUserIdMarketTypeSymbolIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeUserConfigTenantIdUserIdMarketTypeSymbolIdPrefix, data.TenantId, data.UserId, data.MarketType, data.SymbolId)
+	tTradeUserConfigTenantIdUserIdProductTypeSymbolIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeUserConfigTenantIdUserIdProductTypeSymbolIdPrefix, data.TenantId, data.UserId, data.ProductType, data.SymbolId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeUserConfigRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.MarketType, data.SymbolId, data.PositionMode, data.MarginMode, data.DefaultLeverage, data.TradeEnabled, data.ReduceOnlyEnabled, data.CreateTimes, data.UpdateTimes)
-	}, tTradeUserConfigIdKey, tTradeUserConfigTenantIdUserIdMarketTypeSymbolIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, tTradeUserConfigRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.ProductType, data.SymbolId, data.TradeEnabled, data.CreateTimes, data.UpdateTimes)
+	}, tTradeUserConfigIdKey, tTradeUserConfigTenantIdUserIdProductTypeSymbolIdKey)
 	return ret, err
 }
 
@@ -133,11 +129,11 @@ func (m *defaultTTradeUserConfigModel) Update(ctx context.Context, newData *TTra
 	}
 
 	tTradeUserConfigIdKey := fmt.Sprintf("%s%v", cacheTTradeUserConfigIdPrefix, data.Id)
-	tTradeUserConfigTenantIdUserIdMarketTypeSymbolIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeUserConfigTenantIdUserIdMarketTypeSymbolIdPrefix, data.TenantId, data.UserId, data.MarketType, data.SymbolId)
+	tTradeUserConfigTenantIdUserIdProductTypeSymbolIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeUserConfigTenantIdUserIdProductTypeSymbolIdPrefix, data.TenantId, data.UserId, data.ProductType, data.SymbolId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeUserConfigRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.MarketType, newData.SymbolId, newData.PositionMode, newData.MarginMode, newData.DefaultLeverage, newData.TradeEnabled, newData.ReduceOnlyEnabled, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tTradeUserConfigIdKey, tTradeUserConfigTenantIdUserIdMarketTypeSymbolIdKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.ProductType, newData.SymbolId, newData.TradeEnabled, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tTradeUserConfigIdKey, tTradeUserConfigTenantIdUserIdProductTypeSymbolIdKey)
 	return err
 }
 

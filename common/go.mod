@@ -66,6 +66,7 @@ require (
 	github.com/prometheus/procfs v0.20.1 // indirect
 	github.com/redis/go-redis/v9 v9.20.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
+	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/titanous/json5 v1.0.0 // indirect

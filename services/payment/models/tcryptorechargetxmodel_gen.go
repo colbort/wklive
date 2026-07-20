@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,25 +44,25 @@ type (
 	}
 
 	TCryptoRechargeTx struct {
-		Id                   int64          `db:"id"`                     // 主键ID
-		TenantId             int64          `db:"tenant_id"`              // 租户ID
-		UserId               int64          `db:"user_id"`                // 用户ID
-		OrderId              int64          `db:"order_id"`               // 充值订单ID
-		OrderNo              string         `db:"order_no"`               // 充值订单号
-		Coin                 string         `db:"coin"`                   // 币种
-		ChainCode            int64          `db:"chain_code"`             // 链类型
-		TxHash               string         `db:"tx_hash"`                // 交易哈希
-		FromAddress          string         `db:"from_address"`           // 付款地址
-		ToAddress            string         `db:"to_address"`             // 收款地址
-		Memo                 string         `db:"memo"`                   // memo/tag
-		Amount               float64        `db:"amount"`                 // 链上到账数量
-		BlockHeight          int64          `db:"block_height"`           // 区块高度
-		ConfirmCount         int64          `db:"confirm_count"`          // 当前确认数
-		RequiredConfirmCount int64          `db:"required_confirm_count"` // 要求确认数
-		Status               int64          `db:"status"`                 // 状态:1待确认 2确认中 3已确认 4失败 5已入账
-		RawData              sql.NullString `db:"raw_data"`               // 链上原始数据
-		CreateTimes          int64          `db:"create_times"`
-		UpdateTimes          int64          `db:"update_times"`
+		Id                   int64           `db:"id"`                     // 主键ID
+		TenantId             int64           `db:"tenant_id"`              // 租户ID
+		UserId               int64           `db:"user_id"`                // 用户ID
+		OrderId              int64           `db:"order_id"`               // 充值订单ID
+		OrderNo              string          `db:"order_no"`               // 充值订单号
+		Coin                 string          `db:"coin"`                   // 币种
+		ChainCode            int64           `db:"chain_code"`             // 链类型
+		TxHash               string          `db:"tx_hash"`                // 交易哈希
+		FromAddress          string          `db:"from_address"`           // 付款地址
+		ToAddress            string          `db:"to_address"`             // 收款地址
+		Memo                 string          `db:"memo"`                   // memo/tag
+		Amount               decimal.Decimal `db:"amount"`                 // 链上到账数量
+		BlockHeight          int64           `db:"block_height"`           // 区块高度
+		ConfirmCount         int64           `db:"confirm_count"`          // 当前确认数
+		RequiredConfirmCount int64           `db:"required_confirm_count"` // 要求确认数
+		Status               int64           `db:"status"`                 // 状态:1待确认 2确认中 3已确认 4失败 5已入账
+		RawData              sql.NullString  `db:"raw_data"`               // 链上原始数据
+		CreateTimes          int64           `db:"create_times"`
+		UpdateTimes          int64           `db:"update_times"`
 	}
 )
 

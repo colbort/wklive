@@ -51,7 +51,7 @@ func (l *CreateTradeEventLogic) CreateTradeEvent(in *trade.CreateTradeEventReq) 
 			BizType:       in.Event.BizType,
 			UserId:        in.Event.UserId,
 			SymbolId:      in.Event.SymbolId,
-			MarketType:    int64(in.Event.MarketType),
+			ProductType:   int64(in.Event.ProductType),
 			OperatorId:    in.Event.OperatorId,
 			Source:        int64(in.Event.Source),
 			EventStatus:   int64(in.Event.EventStatus),

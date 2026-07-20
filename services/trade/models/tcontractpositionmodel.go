@@ -15,7 +15,7 @@ type (
 		TenantId     int64
 		UserId       int64
 		SymbolId     int64
-		MarketType   int64
+		ContractType int64
 		PositionSide int64
 	}
 
@@ -45,7 +45,7 @@ func (m *defaultTContractPositionModel) FindPage(ctx context.Context, filter Con
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("user_id", filter.UserId)
 	builder.EqInt64("symbol_id", filter.SymbolId)
-	builder.EqInt64("market_type", filter.MarketType)
+	builder.EqInt64("contract_type", filter.ContractType)
 	builder.EqInt64("position_side", filter.PositionSide)
 
 	where := builder.Where()
@@ -78,7 +78,7 @@ func (m *defaultTContractPositionModel) FindList(ctx context.Context, filter Con
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("user_id", filter.UserId)
 	builder.EqInt64("symbol_id", filter.SymbolId)
-	builder.EqInt64("market_type", filter.MarketType)
+	builder.EqInt64("contract_type", filter.ContractType)
 	builder.EqInt64("position_side", filter.PositionSide)
 
 	sql := fmt.Sprintf("SELECT %s FROM %s WHERE %s ORDER BY id DESC", tContractPositionRows, m.table, builder.Where())

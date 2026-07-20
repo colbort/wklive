@@ -13,6 +13,7 @@ import (
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -53,11 +54,11 @@ func (l *TransferMyAssetLogic) TransferMyAsset(in *asset.TransferMyAssetReq) (*a
 	if in.FromWalletType == in.ToWalletType && fromCoin == toCoin {
 		return nil, i18n.StatusError(l.ctx, i18n.SameWalletCoinTransferNotNeeded)
 	}
-	fromAmount, err := conv.ParseFloatField(in.Amount)
+	fromAmount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		return nil, err
 	}
-	if fromAmount <= 0 {
+	if !fromAmount.IsPositive() {
 		return nil, i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 	}
 	toAmount, err := l.exchangeTransferAmount(fromCoin, toCoin, fromAmount)
@@ -83,39 +84,39 @@ func (l *TransferMyAssetLogic) TransferMyAsset(in *asset.TransferMyAssetReq) (*a
 	}, nil
 }
 
-func (l *TransferMyAssetLogic) exchangeTransferAmount(fromCoin, toCoin string, fromAmount float64) (float64, error) {
+func (l *TransferMyAssetLogic) exchangeTransferAmount(fromCoin, toCoin string, fromAmount decimal.Decimal) (decimal.Decimal, error) {
 	if fromCoin == toCoin {
 		return fromAmount, nil
 	}
 
 	fromRate, err := l.usdtRate(fromCoin)
 	if err != nil {
-		return 0, err
+		return decimal.Zero, err
 	}
 	toRate, err := l.usdtRate(toCoin)
 	if err != nil {
-		return 0, err
+		return decimal.Zero, err
 	}
-	if fromRate <= 0 || toRate <= 0 {
-		return 0, i18n.StatusError(l.ctx, i18n.InvalidExchangeRate)
+	if !fromRate.IsPositive() || !toRate.IsPositive() {
+		return decimal.Zero, i18n.StatusError(l.ctx, i18n.InvalidExchangeRate)
 	}
 
-	return fromAmount * fromRate / toRate, nil
+	return fromAmount.Mul(fromRate).Div(toRate), nil
 }
 
-func (l *TransferMyAssetLogic) usdtRate(coin string) (float64, error) {
+func (l *TransferMyAssetLogic) usdtRate(coin string) (decimal.Decimal, error) {
 	if coin == "USDT" {
-		return 1, nil
+		return decimal.NewFromInt(1), nil
 	}
 	rate, err := l.svcCtx.LastPrice(l.ctx, coin+"USDT")
 	if err != nil {
 		l.Errorf("TransferMyAsset get exchange rate failed, coin=%s err=%v", coin, err)
-		return 0, err
+		return decimal.Zero, err
 	}
 	return rate, nil
 }
 
-func (l *TransferMyAssetLogic) transferAsset(tenantId, userId int64, fromWalletType, toWalletType common.WalletType, fromCoin, toCoin string, fromAmount, toAmount float64, bizNo, remark string) (*asset.TransferMyAssetResp, error) {
+func (l *TransferMyAssetLogic) transferAsset(tenantId, userId int64, fromWalletType, toWalletType common.WalletType, fromCoin, toCoin string, fromAmount, toAmount decimal.Decimal, bizNo, remark string) (*asset.TransferMyAssetResp, error) {
 	ts := utils.NowMillis()
 	var (
 		beforeFrom *models.TUserAsset

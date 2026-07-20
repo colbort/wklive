@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"strconv"
 	"strings"
 
 	"wklive/common/helper"
@@ -83,15 +84,15 @@ func toQuoteProto(item *models.TItickQuote) *itick.Quote {
 		CategoryCode:   item.CategoryCode,
 		Market:         item.Market,
 		Symbol:         item.Symbol,
-		LastPrice:      item.LastPrice,
-		OpenPrice:      item.OpenPrice,
-		HighPrice:      item.HighPrice,
-		LowPrice:       item.LowPrice,
-		PrevClosePrice: item.PrevClosePrice,
-		ChangeValue:    item.ChangeValue,
-		ChangeRate:     item.ChangeRate,
-		Volume:         item.Volume,
-		Turnover:       item.Turnover,
+		LastPrice:      item.LastPrice.String(),
+		OpenPrice:      item.OpenPrice.String(),
+		HighPrice:      item.HighPrice.String(),
+		LowPrice:       item.LowPrice.String(),
+		PrevClosePrice: item.PrevClosePrice.String(),
+		ChangeValue:    item.ChangeValue.String(),
+		ChangeRate:     item.ChangeRate.String(),
+		Volume:         item.Volume.String(),
+		Turnover:       item.Turnover.String(),
 		QuoteTs:        item.QuoteTs,
 		TradeStatus:    item.TradeStatus,
 	}
@@ -105,12 +106,12 @@ func toQuotePayloadProto(categoryCode, market, symbol string, item *types.QuoteP
 		CategoryCode: categoryCode,
 		Market:       market,
 		Symbol:       symbol,
-		LastPrice:    item.LastPrice,
-		OpenPrice:    item.Open,
-		HighPrice:    item.High,
-		LowPrice:     item.LastPrice,
-		Volume:       item.Volume,
-		Turnover:     item.Turnover,
+		LastPrice:    formatMarketDecimal(item.LastPrice),
+		OpenPrice:    formatMarketDecimal(item.Open),
+		HighPrice:    formatMarketDecimal(item.High),
+		LowPrice:     formatMarketDecimal(item.LastPrice),
+		Volume:       formatMarketDecimal(item.Volume),
+		Turnover:     formatMarketDecimal(item.Turnover),
 		QuoteTs:      item.Ts,
 	}
 }
@@ -125,12 +126,12 @@ func toKlineProto(kType itick.KlineType, item *models.CoinKline) *itick.Kline {
 		Symbol:        item.Symbol,
 		KType:         kType,
 		Ts:            item.Ts,
-		Open:          item.Open,
-		High:          item.High,
-		Low:           item.Low,
-		Close:         item.Close,
-		Volume:        item.Volume,
-		Turnover:      item.Turnover,
+		Open:          formatMarketDecimal(item.Open),
+		High:          formatMarketDecimal(item.High),
+		Low:           formatMarketDecimal(item.Low),
+		Close:         formatMarketDecimal(item.Close),
+		Volume:        formatMarketDecimal(item.Volume),
+		Turnover:      formatMarketDecimal(item.Turnover),
 		Source:        item.Source,
 		Revision:      item.Revision,
 		IsClosed:      item.IsClosed,
@@ -138,6 +139,10 @@ func toKlineProto(kType itick.KlineType, item *models.CoinKline) *itick.Kline {
 		ActualCount:   item.ActualCount,
 		ExpectedCount: item.ExpectedCount,
 	}
+}
+
+func formatMarketDecimal(value float64) string {
+	return strconv.FormatFloat(value, 'f', -1, 64)
 }
 
 func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.TItickCategory, tenant *system.SysTenantItem) *itick.ItickTenantCategory {

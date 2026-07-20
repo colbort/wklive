@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"math"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -14,6 +13,7 @@ import (
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -53,31 +53,30 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.StakingProductUnavailable, i18n.Translate(i18n.StakingProductUnavailable, l.ctx))}, nil
 	}
 
-	amount, err := conv.ParseFloatField(in.StakeAmount)
-	if err != nil || amount <= 0 {
+	amount, err := conv.ParseDecimalField(in.StakeAmount)
+	if err != nil || !amount.IsPositive() {
 		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountInvalid, i18n.Translate(i18n.StakeAmountInvalid, l.ctx))}, nil
 	}
-	if product.MinAmount > 0 && amount < product.MinAmount {
+	if product.MinAmount.IsPositive() && amount.LessThan(product.MinAmount) {
 		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountBelowMinimum, i18n.Translate(i18n.StakeAmountBelowMinimum, l.ctx))}, nil
 	}
-	if product.MaxAmount > 0 && amount > product.MaxAmount {
+	if product.MaxAmount.IsPositive() && amount.GreaterThan(product.MaxAmount) {
 		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountAboveMaximum, i18n.Translate(i18n.StakeAmountAboveMaximum, l.ctx))}, nil
 	}
-	if product.StepAmount > 0 {
-		steps := amount / product.StepAmount
-		if math.Abs(steps-math.Round(steps)) > 1e-9 {
+	if product.StepAmount.IsPositive() {
+		if !amount.Mod(product.StepAmount).IsZero() {
 			return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountStepInvalid, i18n.Translate(i18n.StakeAmountStepInvalid, l.ctx))}, nil
 		}
 	}
-	if product.TotalAmount > 0 && product.StakedAmount+amount > product.TotalAmount+1e-9 {
+	if product.TotalAmount.IsPositive() && product.StakedAmount.Add(amount).GreaterThan(product.TotalAmount) {
 		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.ProductQuotaInsufficient, i18n.Translate(i18n.ProductQuotaInsufficient, l.ctx))}, nil
 	}
-	if product.UserLimitAmount > 0 {
+	if product.UserLimitAmount.IsPositive() {
 		userStaked, err := l.svcCtx.StakeOrderModel.SumStakeAmountByStatuses(l.ctx, tenantId, userId, in.ProductId, activeOrderStatuses())
 		if err != nil {
 			return nil, err
 		}
-		if userStaked+amount > product.UserLimitAmount+1e-9 {
+		if userStaked.Add(amount).GreaterThan(product.UserLimitAmount) {
 			return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.UserStakeLimitExceeded, i18n.Translate(i18n.UserStakeLimitExceeded, l.ctx))}, nil
 		}
 	}
@@ -116,10 +115,10 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		EndTimes:         endTimes,
 		LastRewardTimes:  0,
 		NextRewardTimes:  calcNextRewardTime(int64(now), staking.RewardMode(product.RewardMode), int64(endTimes)),
-		TotalReward:      0,
-		PendingReward:    0,
-		RedeemAmount:     0,
-		RedeemFee:        0,
+		TotalReward:      decimal.Zero,
+		PendingReward:    decimal.Zero,
+		RedeemAmount:     decimal.Zero,
+		RedeemFee:        decimal.Zero,
 		Status:           int64(staking.OrderStatus_ORDER_STATUS_STAKING),
 		RedeemType:       int64(staking.RedeemType_REDEEM_TYPE_NONE),
 		RedeemApplyTimes: 0,
@@ -159,7 +158,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 	}
 
-	product.StakedAmount += amount
+	product.StakedAmount = product.StakedAmount.Add(amount)
 	product.UpdateUserId = userId
 	product.UpdateTimes = now
 	var id int64

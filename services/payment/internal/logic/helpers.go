@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"strconv"
 
 	"wklive/common/conv"
@@ -325,7 +324,7 @@ func toTenantPayChannelProto(item *models.TTenantPayChannel) *payment.TenantPayC
 		DailyMaxAmount:  item.DailyMaxAmount,
 		DailyMaxCount:   item.DailyMaxCount,
 		FeeType:         payment.FeeType(item.FeeType),
-		FeeRate:         fmt.Sprintf("%f", item.FeeRate),
+		FeeRate:         item.FeeRate.String(),
 		FeeFixedAmount:  item.FeeFixedAmount,
 		ExtConfig:       item.ExtConfig.String,
 		Remark:          item.Remark.String,

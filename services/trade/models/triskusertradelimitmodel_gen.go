@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -23,15 +25,15 @@ var (
 	tRiskUserTradeLimitRowsExpectAutoSet   = strings.Join(stringx.Remove(tRiskUserTradeLimitFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tRiskUserTradeLimitRowsWithPlaceHolder = strings.Join(stringx.Remove(tRiskUserTradeLimitFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTRiskUserTradeLimitIdPrefix                       = "cache:tRiskUserTradeLimit:id:"
-	cacheTRiskUserTradeLimitTenantIdUserIdMarketTypePrefix = "cache:tRiskUserTradeLimit:tenantId:userId:marketType:"
+	cacheTRiskUserTradeLimitIdPrefix                        = "cache:tRiskUserTradeLimit:id:"
+	cacheTRiskUserTradeLimitTenantIdUserIdProductTypePrefix = "cache:tRiskUserTradeLimit:tenantId:userId:productType:"
 )
 
 type (
 	tRiskUserTradeLimitModel interface {
 		Insert(ctx context.Context, data *TRiskUserTradeLimit) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TRiskUserTradeLimit, error)
-		FindOneByTenantIdUserIdMarketType(ctx context.Context, tenantId int64, userId int64, marketType int64) (*TRiskUserTradeLimit, error)
+		FindOneByTenantIdUserIdProductType(ctx context.Context, tenantId int64, userId int64, productType int64) (*TRiskUserTradeLimit, error)
 		Update(ctx context.Context, data *TRiskUserTradeLimit) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -42,31 +44,31 @@ type (
 	}
 
 	TRiskUserTradeLimit struct {
-		Id                   int64   `db:"id"`                       // 主键ID
-		TenantId             int64   `db:"tenant_id"`                // 租户ID
-		UserId               int64   `db:"user_id"`                  // 用户ID
-		MarketType           int64   `db:"market_type"`              // 市场类型：1现货 2秒合约 3U本位 4币本位
-		CanOpen              int64   `db:"can_open"`                 // 是否允许开仓/开单：1允许 0禁止
-		CanClose             int64   `db:"can_close"`                // 是否允许平仓/卖出：1允许 0禁止
-		CanCancel            int64   `db:"can_cancel"`               // 是否允许撤单：1允许 0禁止
-		CanTriggerOrder      int64   `db:"can_trigger_order"`        // 是否允许条件单：1允许 0禁止
-		CanApiTrade          int64   `db:"can_api_trade"`            // 是否允许API交易：1允许 0禁止
-		TradeEnabled         int64   `db:"trade_enabled"`            // 交易开关：1启用 2禁用
-		OnlyReduceOnly       int64   `db:"only_reduce_only"`         // 仅减仓开关：1启用 2禁用
-		MaxOpenOrderCount    int64   `db:"max_open_order_count"`     // 最大挂单数，0表示不限
-		MaxOrderCountPerDay  int64   `db:"max_order_count_per_day"`  // 单日最大下单次数，0表示不限
-		MaxCancelCountPerDay int64   `db:"max_cancel_count_per_day"` // 单日最大撤单次数，0表示不限
-		MaxOpenNotional      float64 `db:"max_open_notional"`        // 最大可开仓名义价值，0表示不限
-		MaxPositionNotional  float64 `db:"max_position_notional"`    // 最大持仓名义价值，0表示不限
-		RiskLevel            int64   `db:"risk_level"`               // 风险等级：0默认 1低风险限制 2中风险限制 3高风险限制
-		OperatorId           int64   `db:"operator_id"`              // 操作人ID，系统操作时可为0
-		Source               int64   `db:"source"`                   // 来源：1系统 2用户 3后台管理 4任务
-		Enabled              int64   `db:"enabled"`                  // 启用开关：1启用 2禁用
-		EffectiveStartTime   int64   `db:"effective_start_time"`     // 限制生效开始时间，毫秒时间戳，0表示立即生效
-		EffectiveEndTime     int64   `db:"effective_end_time"`       // 限制生效结束时间，毫秒时间戳，0表示长期有效
-		Remark               string  `db:"remark"`                   // 备注
-		CreateTimes          int64   `db:"create_times"`             // 创建时间，毫秒时间戳
-		UpdateTimes          int64   `db:"update_times"`             // 更新时间，毫秒时间戳
+		Id                   int64           `db:"id"`                       // 主键ID
+		TenantId             int64           `db:"tenant_id"`                // 租户ID
+		UserId               int64           `db:"user_id"`                  // 用户ID
+		ProductType          int64           `db:"product_type"`             // 产品大类：1现货 2衍生品 3秒合约
+		CanOpen              int64           `db:"can_open"`                 // 是否允许开仓/开单：1允许 0禁止
+		CanClose             int64           `db:"can_close"`                // 是否允许平仓/卖出：1允许 0禁止
+		CanCancel            int64           `db:"can_cancel"`               // 是否允许撤单：1允许 0禁止
+		CanTriggerOrder      int64           `db:"can_trigger_order"`        // 是否允许条件单：1允许 0禁止
+		CanApiTrade          int64           `db:"can_api_trade"`            // 是否允许API交易：1允许 0禁止
+		TradeEnabled         int64           `db:"trade_enabled"`            // 交易开关：1启用 2禁用
+		OnlyReduceOnly       int64           `db:"only_reduce_only"`         // 仅减仓开关：1启用 2禁用
+		MaxOpenOrderCount    int64           `db:"max_open_order_count"`     // 最大挂单数，0表示不限
+		MaxOrderCountPerDay  int64           `db:"max_order_count_per_day"`  // 单日最大下单次数，0表示不限
+		MaxCancelCountPerDay int64           `db:"max_cancel_count_per_day"` // 单日最大撤单次数，0表示不限
+		MaxOpenNotional      decimal.Decimal `db:"max_open_notional"`        // 最大可开仓名义价值，0表示不限
+		MaxPositionNotional  decimal.Decimal `db:"max_position_notional"`    // 最大持仓名义价值，0表示不限
+		RiskLevel            int64           `db:"risk_level"`               // 风险等级：0默认 1低风险限制 2中风险限制 3高风险限制
+		OperatorId           int64           `db:"operator_id"`              // 操作人ID，系统操作时可为0
+		Source               int64           `db:"source"`                   // 来源：1系统 2用户 3后台管理 4任务
+		Enabled              int64           `db:"enabled"`                  // 启用开关：1启用 2禁用
+		EffectiveStartTime   int64           `db:"effective_start_time"`     // 限制生效开始时间，毫秒时间戳，0表示立即生效
+		EffectiveEndTime     int64           `db:"effective_end_time"`       // 限制生效结束时间，毫秒时间戳，0表示长期有效
+		Remark               string          `db:"remark"`                   // 备注
+		CreateTimes          int64           `db:"create_times"`             // 创建时间，毫秒时间戳
+		UpdateTimes          int64           `db:"update_times"`             // 更新时间，毫秒时间戳
 	}
 )
 
@@ -84,11 +86,11 @@ func (m *defaultTRiskUserTradeLimitModel) Delete(ctx context.Context, id int64) 
 	}
 
 	tRiskUserTradeLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserTradeLimitIdPrefix, id)
-	tRiskUserTradeLimitTenantIdUserIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdMarketTypePrefix, data.TenantId, data.UserId, data.MarketType)
+	tRiskUserTradeLimitTenantIdUserIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypePrefix, data.TenantId, data.UserId, data.ProductType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdMarketTypeKey)
+	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdProductTypeKey)
 	return err
 }
 
@@ -109,12 +111,12 @@ func (m *defaultTRiskUserTradeLimitModel) FindOne(ctx context.Context, id int64)
 	}
 }
 
-func (m *defaultTRiskUserTradeLimitModel) FindOneByTenantIdUserIdMarketType(ctx context.Context, tenantId int64, userId int64, marketType int64) (*TRiskUserTradeLimit, error) {
-	tRiskUserTradeLimitTenantIdUserIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdMarketTypePrefix, tenantId, userId, marketType)
+func (m *defaultTRiskUserTradeLimitModel) FindOneByTenantIdUserIdProductType(ctx context.Context, tenantId int64, userId int64, productType int64) (*TRiskUserTradeLimit, error) {
+	tRiskUserTradeLimitTenantIdUserIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypePrefix, tenantId, userId, productType)
 	var resp TRiskUserTradeLimit
-	err := m.QueryRowIndexCtx(ctx, &resp, tRiskUserTradeLimitTenantIdUserIdMarketTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `market_type` = ? limit 1", tRiskUserTradeLimitRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, marketType); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tRiskUserTradeLimitTenantIdUserIdProductTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `product_type` = ? limit 1", tRiskUserTradeLimitRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, productType); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -131,11 +133,11 @@ func (m *defaultTRiskUserTradeLimitModel) FindOneByTenantIdUserIdMarketType(ctx 
 
 func (m *defaultTRiskUserTradeLimitModel) Insert(ctx context.Context, data *TRiskUserTradeLimit) (sql.Result, error) {
 	tRiskUserTradeLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserTradeLimitIdPrefix, data.Id)
-	tRiskUserTradeLimitTenantIdUserIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdMarketTypePrefix, data.TenantId, data.UserId, data.MarketType)
+	tRiskUserTradeLimitTenantIdUserIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypePrefix, data.TenantId, data.UserId, data.ProductType)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRiskUserTradeLimitRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.MarketType, data.CanOpen, data.CanClose, data.CanCancel, data.CanTriggerOrder, data.CanApiTrade, data.TradeEnabled, data.OnlyReduceOnly, data.MaxOpenOrderCount, data.MaxOrderCountPerDay, data.MaxCancelCountPerDay, data.MaxOpenNotional, data.MaxPositionNotional, data.RiskLevel, data.OperatorId, data.Source, data.Enabled, data.EffectiveStartTime, data.EffectiveEndTime, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdMarketTypeKey)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.ProductType, data.CanOpen, data.CanClose, data.CanCancel, data.CanTriggerOrder, data.CanApiTrade, data.TradeEnabled, data.OnlyReduceOnly, data.MaxOpenOrderCount, data.MaxOrderCountPerDay, data.MaxCancelCountPerDay, data.MaxOpenNotional, data.MaxPositionNotional, data.RiskLevel, data.OperatorId, data.Source, data.Enabled, data.EffectiveStartTime, data.EffectiveEndTime, data.Remark, data.CreateTimes, data.UpdateTimes)
+	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdProductTypeKey)
 	return ret, err
 }
 
@@ -146,11 +148,11 @@ func (m *defaultTRiskUserTradeLimitModel) Update(ctx context.Context, newData *T
 	}
 
 	tRiskUserTradeLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserTradeLimitIdPrefix, data.Id)
-	tRiskUserTradeLimitTenantIdUserIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdMarketTypePrefix, data.TenantId, data.UserId, data.MarketType)
+	tRiskUserTradeLimitTenantIdUserIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypePrefix, data.TenantId, data.UserId, data.ProductType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tRiskUserTradeLimitRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.MarketType, newData.CanOpen, newData.CanClose, newData.CanCancel, newData.CanTriggerOrder, newData.CanApiTrade, newData.TradeEnabled, newData.OnlyReduceOnly, newData.MaxOpenOrderCount, newData.MaxOrderCountPerDay, newData.MaxCancelCountPerDay, newData.MaxOpenNotional, newData.MaxPositionNotional, newData.RiskLevel, newData.OperatorId, newData.Source, newData.Enabled, newData.EffectiveStartTime, newData.EffectiveEndTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdMarketTypeKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.ProductType, newData.CanOpen, newData.CanClose, newData.CanCancel, newData.CanTriggerOrder, newData.CanApiTrade, newData.TradeEnabled, newData.OnlyReduceOnly, newData.MaxOpenOrderCount, newData.MaxOrderCountPerDay, newData.MaxCancelCountPerDay, newData.MaxOpenNotional, newData.MaxPositionNotional, newData.RiskLevel, newData.OperatorId, newData.Source, newData.Enabled, newData.EffectiveStartTime, newData.EffectiveEndTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdProductTypeKey)
 	return err
 }
 

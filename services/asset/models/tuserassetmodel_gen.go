@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,20 +44,20 @@ type (
 	}
 
 	TUserAsset struct {
-		Id              int64   `db:"id"`               // 主键ID
-		TenantId        int64   `db:"tenant_id"`        // 租户ID
-		UserId          int64   `db:"user_id"`          // 用户ID
-		WalletType      int64   `db:"wallet_type"`      // 钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权
-		Coin            string  `db:"coin"`             // 币种代码,如 USDT/BTC/ETH
-		TotalAmount     float64 `db:"total_amount"`     // 总资产
-		AvailableAmount float64 `db:"available_amount"` // 可用资产
-		FrozenAmount    float64 `db:"frozen_amount"`    // 冻结资产
-		LockedAmount    float64 `db:"locked_amount"`    // 锁定资产/锁仓资产
-		Enabled         int64   `db:"enabled"`          // 启用开关:1启用 2禁用
-		Version         int64   `db:"version"`          // 版本号,用于乐观锁
-		Remark          string  `db:"remark"`           // 备注
-		CreateTimes     int64   `db:"create_times"`     // 创建时间戳(毫秒)
-		UpdateTimes     int64   `db:"update_times"`     // 更新时间戳(毫秒)
+		Id              int64           `db:"id"`               // 主键ID
+		TenantId        int64           `db:"tenant_id"`        // 租户ID
+		UserId          int64           `db:"user_id"`          // 用户ID
+		WalletType      int64           `db:"wallet_type"`      // 钱包类型:1现金/现货 2股票/资金 3合约 4理财 5期权
+		Coin            string          `db:"coin"`             // 币种代码,如 USDT/BTC/ETH
+		TotalAmount     decimal.Decimal `db:"total_amount"`     // 总资产
+		AvailableAmount decimal.Decimal `db:"available_amount"` // 可用资产
+		FrozenAmount    decimal.Decimal `db:"frozen_amount"`    // 冻结资产
+		LockedAmount    decimal.Decimal `db:"locked_amount"`    // 锁定资产/锁仓资产
+		Enabled         int64           `db:"enabled"`          // 启用开关:1启用 2禁用
+		Version         int64           `db:"version"`          // 版本号,用于乐观锁
+		Remark          string          `db:"remark"`           // 备注
+		CreateTimes     int64           `db:"create_times"`     // 创建时间戳(毫秒)
+		UpdateTimes     int64           `db:"update_times"`     // 更新时间戳(毫秒)
 	}
 )
 

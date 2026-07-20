@@ -2,8 +2,9 @@ package models
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
@@ -33,7 +34,7 @@ type (
 	TStakeOrderModel interface {
 		tStakeOrderModel
 		FindPage(ctx context.Context, filter StakeOrderPageFilter, cursor int64, limit int64) ([]*TStakeOrder, int64, error)
-		SumStakeAmountByStatuses(ctx context.Context, tenantID, user_id, productID int64, statuses []int64) (float64, error)
+		SumStakeAmountByStatuses(ctx context.Context, tenantID, user_id, productID int64, statuses []int64) (decimal.Decimal, error)
 	}
 
 	customTStakeOrderModel struct {
@@ -100,17 +101,20 @@ func (m *defaultTStakeOrderModel) FindPage(ctx context.Context, filter StakeOrde
 	return list, total, nil
 }
 
-func (m *defaultTStakeOrderModel) SumStakeAmountByStatuses(ctx context.Context, tenantID, user_id, productID int64, statuses []int64) (float64, error) {
+func (m *defaultTStakeOrderModel) SumStakeAmountByStatuses(ctx context.Context, tenantID, user_id, productID int64, statuses []int64) (decimal.Decimal, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.And("tenant_id = ?", tenantID)
 	builder.And("user_id = ?", user_id)
 	builder.And("product_id = ?", productID)
 	builder.InInt64("status", statuses)
 
-	var total sql.NullFloat64
+	var total decimal.NullDecimal
 	query := fmt.Sprintf("SELECT COALESCE(SUM(stake_amount), 0) FROM %s WHERE %s", m.table, builder.Where())
 	if err := m.QueryRowNoCacheCtx(ctx, &total, query, builder.Args()...); err != nil {
-		return 0, err
+		return decimal.Zero, err
 	}
-	return total.Float64, nil
+	if !total.Valid {
+		return decimal.Zero, nil
+	}
+	return total.Decimal, nil
 }

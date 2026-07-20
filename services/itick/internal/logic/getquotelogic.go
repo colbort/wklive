@@ -2,13 +2,14 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/helper"
 	"wklive/proto/itick"
+	"wklive/services/itick/internal/market/cache"
 	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/internal/svc"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -28,15 +29,26 @@ func NewGetQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetQuote
 
 // 获取最新报价
 func (l *GetQuoteLogic) GetQuote(in *itick.GetQuoteReq) (*itick.GetQuoteResp, error) {
-	key := fmt.Sprintf("itick:quote:%s:%s:%s", in.CategoryCode, in.Market, in.Symbol)
-	var data types.QuotePayload
-	err := l.svcCtx.Cache.GetCtx(l.ctx, key, &data)
+	msg := cache.NormalizeClientMessage(types.ClientMessage{
+		Topic:        types.TopicQuote,
+		CategoryCode: in.CategoryCode,
+		Market:       in.Market,
+		Symbol:       in.Symbol,
+	})
+	items, err := l.svcCtx.MarketDataCache.ReadMany(l.ctx, []types.ClientMessage{msg})
 	if err != nil {
 		return nil, err
+	}
+	if len(items) == 0 {
+		return nil, redis.Nil
+	}
+	data, ok := items[0].Payload.(*types.QuotePayload)
+	if !ok || data == nil {
+		return nil, redis.Nil
 	}
 
 	return &itick.GetQuoteResp{
 		Base: helper.OkResp(),
-		Data: toQuotePayloadProto(in.CategoryCode, in.Market, in.Symbol, &data),
+		Data: toQuotePayloadProto(msg.CategoryCode, msg.Market, msg.Symbol, data),
 	}, nil
 }

@@ -5,11 +5,13 @@ export interface TradeSymbol {
   tenantId: number
   symbol: string
   displaySymbol: string
-  marketType: number
+  productType: number
   baseAsset: string
   quoteAsset: string
   settleAsset: string
   contractType: number
+  contractValueType: number
+  marginAsset: string
   status: number
   priceScale: number
   qtyScale: number
@@ -20,9 +22,10 @@ export interface TradeSymbol {
   maxQty: string
   qtyStep: string
   minNotional: string
-  maxLeverage: number
-  openTime: number
-  closeTime: number
+  maxNotional: string
+  listingTime: number
+  tradingStartTime: number
+  tradingEndTime: number
   sort: number
   remark: string
   createTimes: number
@@ -41,6 +44,24 @@ export interface TradeSymbolSpot {
   updateTimes: number
 }
 
+export interface TradeSymbolSeconds {
+  id: number
+  tenantId: number
+  symbolId: number
+  durationSeconds: number
+  payoutRate: string
+  drawRule: number
+  startPriceSource: string
+  settlementPriceSource: string
+  quoteValidityMs: number
+  minStake: string
+  maxStake: string
+  upEnabled: number
+  downEnabled: number
+  createTimes: number
+  updateTimes: number
+}
+
 export interface TradeSymbolContract {
   id: number
   tenantId: number
@@ -55,8 +76,15 @@ export interface TradeSymbolContract {
   deliveryTime: number
   supportCross: number
   supportIsolated: number
-  buyEnabled: number
-  sellEnabled: number
+  fundingRateCap: string
+  fundingRateFloor: string
+  indexSymbol: string
+  markPriceSource: string
+  settlementPriceSource: string
+  openLongEnabled: number
+  openShortEnabled: number
+  closeLongEnabled: number
+  closeShortEnabled: number
   createTimes: number
   updateTimes: number
 }
@@ -68,7 +96,9 @@ export interface TradeOrder {
   clientOrderId: string
   userId: number
   symbolId: number
-  marketType: number
+  productType: number
+  contractType: number
+  contractValueType: number
   side: number
   positionSide: number
   orderType: number
@@ -84,12 +114,33 @@ export interface TradeOrder {
   feeAsset: string
   source: number
   isReduceOnly: number // 是否只减仓：1是 2否
-  isCloseOnly: number // 是否只允许平仓：1是 2否
   triggerPrice: string
   triggerType: number
   triggerKind: number
   cancelReason: string
   bizExt: string
+  createTimes: number
+  updateTimes: number
+}
+
+export interface TradeOrderSeconds {
+  id: number
+  tenantId: number
+  orderId: number
+  direction: number
+  durationSeconds: number
+  stakeAsset: string
+  stakeAmount: string
+  payoutRate: string
+  startPrice: string
+  startPriceTime: number
+  expireTime: number
+  settlementPrice: string
+  settlementPriceTime: number
+  result: number
+  payoutAmount: string
+  settlementStatus: number
+  reservationNo: string
   createTimes: number
   updateTimes: number
 }
@@ -102,7 +153,13 @@ export interface TradeFill {
   orderNo: string
   userId: number
   symbolId: number
-  marketType: number
+  productType: number
+  contractType: number
+  contractValueType: number
+  matchNo: string
+  settlementStatus: number
+  settlementRetryCount: number
+  settledAt: number
   side: number
   positionSide: number
   price: string
@@ -121,7 +178,8 @@ export interface ContractPosition {
   tenantId: number
   userId: number
   symbolId: number
-  marketType: number
+  contractType: number
+  contractValueType: number
   positionSide: number
   marginMode: number
   leverage: number
@@ -142,13 +200,12 @@ export interface ContractPosition {
   updateTimes: number
 }
 
-export interface ContractMarginAccount {
+export interface ContractMarginSnapshot {
   id: number
   tenantId: number
   userId: number
-  marketType: number
   marginAsset: string
-  balance: string
+  walletBalance: string
   availableBalance: string
   frozenBalance: string
   positionMargin: string
@@ -156,6 +213,8 @@ export interface ContractMarginAccount {
   unrealizedPnl: string
   realizedPnl: string
   version: number
+  sourceEventNo: string
+  snapshotTime: number
   createTimes: number
   updateTimes: number
 }
@@ -165,12 +224,9 @@ export interface ContractLeverageConfig {
   tenantId: number
   userId: number
   symbolId: number
-  marketType: number
   marginMode: number
-  positionMode: number
   longLeverage: number
   shortLeverage: number
-  maxLeverage: number
   operatorId: number
   source: number
   enabled: number
@@ -183,11 +239,9 @@ export interface TradeSymbolLeverageConfig {
   id: number
   tenantId: number
   symbolId: number
-  marketType: number
   marginMode: number
-  leverageValues: number[]
-  defaultLeverage: number
-  maxLeverage: number
+  leverage: number
+  isDefault: number
   enabled: number
   sort: number
   remark: string
@@ -196,7 +250,7 @@ export interface TradeSymbolLeverageConfig {
 }
 
 export interface GetSymbolListReq {
-  marketType?: number
+  productType?: number
   status?: number
 }
 
@@ -206,7 +260,6 @@ export interface GetSymbolDetailReq {
 
 export interface PlaceOrderReq {
   symbolId: number
-  marketType: number
   side: number
   positionSide: number
   orderType: number
@@ -216,7 +269,6 @@ export interface PlaceOrderReq {
   qty?: string
   amount?: string
   isReduceOnly?: number // 是否只减仓：1是 2否
-  isCloseOnly?: number // 是否只允许平仓：1是 2否
   triggerPrice?: string
   triggerType?: number
   triggerKind?: number
@@ -225,6 +277,8 @@ export interface PlaceOrderReq {
   takeProfitPrice?: string
   stopLossPrice?: string
   orderSource?: number
+  secondsDirection?: number
+  durationSeconds?: number
 }
 
 export interface CancelOrderReq {
@@ -234,14 +288,14 @@ export interface CancelOrderReq {
 }
 
 export interface CancelAllOrdersReq {
-  marketType?: number
+  productType?: number
   symbolId?: number
   side?: number
   positionSide?: number
 }
 
 export interface GetOrderListReq extends PageReq {
-  marketType?: number
+  productType?: number
   symbolId?: number
   status?: number
   side?: number
@@ -254,32 +308,28 @@ export interface GetOrderDetailReq {
 }
 
 export interface GetFillListReq extends PageReq {
-  marketType?: number
+  productType?: number
   symbolId?: number
   timeRange?: TimeRange
 }
 
 export interface GetPositionListReq {
-  marketType?: number
+  contractType?: number
   symbolId?: number
 }
 
-export interface GetMarginAccountListReq {
-  marketType?: number
+export interface GetMarginSnapshotListReq {
   marginAsset?: string
 }
 
 export interface GetLeverageConfigReq {
   symbolId: number
-  marketType: number
   marginMode: number
 }
 
 export interface SetLeverageReq {
   symbolId: number
-  marketType: number
   marginMode: number
-  positionMode: number
   longLeverage: number
   shortLeverage: number
 }

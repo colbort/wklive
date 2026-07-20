@@ -11,6 +11,8 @@ import (
 	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
+
+	"github.com/shopspring/decimal"
 )
 
 func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
@@ -370,9 +372,9 @@ func toAssetLockProto(data *models.TAssetLock) *asset.AssetLock {
 	}
 }
 
-func buildAssetFlowRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, changeType, bizType, sceneType string, bizId int64, bizNo string, opType asset.AssetOpType, amount float64, before *models.TUserAsset, after *models.TUserAsset, remark string, ts int64) *models.TAssetFlow {
-	beforeTotal, beforeAvailable, beforeFrozen, beforeLocked := 0.0, 0.0, 0.0, 0.0
-	afterTotal, afterAvailable, afterFrozen, afterLocked := 0.0, 0.0, 0.0, 0.0
+func buildAssetFlowRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, changeType, bizType, sceneType string, bizId int64, bizNo string, opType asset.AssetOpType, amount decimal.Decimal, before *models.TUserAsset, after *models.TUserAsset, remark string, ts int64) *models.TAssetFlow {
+	beforeTotal, beforeAvailable, beforeFrozen, beforeLocked := decimal.Zero, decimal.Zero, decimal.Zero, decimal.Zero
+	afterTotal, afterAvailable, afterFrozen, afterLocked := decimal.Zero, decimal.Zero, decimal.Zero, decimal.Zero
 	if before != nil {
 		beforeTotal = before.TotalAmount
 		beforeAvailable = before.AvailableAmount
@@ -417,7 +419,7 @@ func buildAssetFlowRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenan
 	}
 }
 
-func buildAssetFreezeRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount float64, expireTime, ts int64) *models.TAssetFreeze {
+func buildAssetFreezeRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount decimal.Decimal, expireTime, ts int64) *models.TAssetFreeze {
 	freezeNo, err := svcCtx.GenerateOrderNo(ctx, "FREEZE", bizNo)
 	if err != nil {
 		return nil
@@ -432,8 +434,8 @@ func buildAssetFreezeRecord(svcCtx *svc.ServiceContext, ctx context.Context, ten
 		SceneType:      sceneType,
 		BizNo:          bizNo,
 		Amount:         amount,
-		UsedAmount:     0,
-		UnfreezeAmount: 0,
+		UsedAmount:     decimal.Zero,
+		UnfreezeAmount: decimal.Zero,
 		RemainAmount:   amount,
 		Status:         1,
 		ExpireTime:     expireTime,
@@ -443,7 +445,7 @@ func buildAssetFreezeRecord(svcCtx *svc.ServiceContext, ctx context.Context, ten
 	}
 }
 
-func buildAssetLockRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount float64, startTime, endTime, ts int64) *models.TAssetLock {
+func buildAssetLockRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount decimal.Decimal, startTime, endTime, ts int64) *models.TAssetLock {
 	lockNo, err := svcCtx.GenerateOrderNo(ctx, "FREEZE", bizNo)
 	if err != nil {
 		return nil
@@ -458,7 +460,7 @@ func buildAssetLockRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenan
 		SceneType:    sceneType,
 		BizNo:        bizNo,
 		Amount:       amount,
-		UnlockAmount: 0,
+		UnlockAmount: decimal.Zero,
 		RemainAmount: amount,
 		Status:       1,
 		StartTime:    startTime,

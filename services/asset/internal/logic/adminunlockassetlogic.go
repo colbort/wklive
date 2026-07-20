@@ -31,13 +31,13 @@ func NewAdminUnlockAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 后台解锁资产
 func (l *AdminUnlockAssetLogic) AdminUnlockAsset(in *asset.AdminUnlockAssetReq) (*asset.AdminChangeAssetResp, error) {
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("AdminUnlockAsset parse amount failed, tenantId=%d lockNo=%s amount=%s bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, in.BizNo, err)
 		return nil, err
 	}
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("AdminUnlockAsset validate amount failed, tenantId=%d lockNo=%s amount=%s bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, in.BizNo, err)
@@ -61,7 +61,7 @@ func (l *AdminUnlockAssetLogic) AdminUnlockAsset(in *asset.AdminUnlockAssetReq) 
 	} else if base != nil {
 		return &asset.AdminChangeAssetResp{Base: base}, nil
 	}
-	if amount > lock.RemainAmount {
+	if amount.GreaterThan(lock.RemainAmount) {
 		err := i18n.StatusError(l.ctx, i18n.UnlockAmountExceedsLocked)
 		l.Errorf("AdminUnlockAsset amount exceeds locked amount, tenantId=%d lockNo=%s amount=%s remainAmount=%v bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, lock.RemainAmount, in.BizNo, err)

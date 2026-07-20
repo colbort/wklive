@@ -28,7 +28,7 @@ func NewGetUserSymbolLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 获取用户交易对限制
 func (l *GetUserSymbolLimitLogic) GetUserSymbolLimit(in *trade.GetUserSymbolLimitReq) (*trade.GetUserSymbolLimitResp, error) {
-	item, err := l.svcCtx.RiskUserSymbolLimitModel.FindOneByTenantIdUserIdSymbolIdMarketType(l.ctx, in.TenantId, in.UserId, in.SymbolId, int64(in.MarketType))
+	item, err := l.svcCtx.RiskUserSymbolLimitModel.FindOneByTenantIdUserIdSymbolId(l.ctx, in.TenantId, in.UserId, in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

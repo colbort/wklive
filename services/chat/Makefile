@@ -1,5 +1,3 @@
-GOCTL ?= goctl
-
 # 当前服务 module（必须与你 services/chat/go.mod 的 module 一致）
 MODULE := wklive/services/chat
 
@@ -83,5 +81,7 @@ clean-main:
 
 .PHONY: gen-model
 gen-model:
-	# goctl model mongo --type ChatMessage --dir ./models
-	goctl model mysql ddl --src chat.sql --dir ./models -c
+	@$(MAKE) check-goctl
+	@echo "🔧 [services/chat] generating decimal-safe models..."
+	@$(GOCTL) model mysql ddl --src chat.sql --dir ./models -c
+	@echo "✅ [services/chat] models generated (DECIMAL -> decimal.Decimal)"

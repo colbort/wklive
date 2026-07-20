@@ -14,31 +14,31 @@ import (
 )
 
 type (
-	AppCommonResp            = trade.AppCommonResp
-	CancelAllOrdersReq       = trade.CancelAllOrdersReq
-	CancelAllOrdersResp      = trade.CancelAllOrdersResp
-	CancelOrderReq           = trade.CancelOrderReq
-	GetFillListReq           = trade.GetFillListReq
-	GetFillListResp          = trade.GetFillListResp
-	GetLeverageConfigReq     = trade.GetLeverageConfigReq
-	GetLeverageConfigResp    = trade.GetLeverageConfigResp
-	GetMarginAccountListReq  = trade.GetMarginAccountListReq
-	GetMarginAccountListResp = trade.GetMarginAccountListResp
-	GetOrderDetailData       = trade.GetOrderDetailData
-	GetOrderDetailReq        = trade.GetOrderDetailReq
-	GetOrderDetailResp       = trade.GetOrderDetailResp
-	GetOrderListReq          = trade.GetOrderListReq
-	GetOrderListResp         = trade.GetOrderListResp
-	GetPositionListReq       = trade.GetPositionListReq
-	GetPositionListResp      = trade.GetPositionListResp
-	GetSymbolDetailData      = trade.GetSymbolDetailData
-	GetSymbolDetailReq       = trade.GetSymbolDetailReq
-	GetSymbolDetailResp      = trade.GetSymbolDetailResp
-	GetSymbolListReq         = trade.GetSymbolListReq
-	GetSymbolListResp        = trade.GetSymbolListResp
-	PlaceOrderReq            = trade.PlaceOrderReq
-	PlaceOrderResp           = trade.PlaceOrderResp
-	SetLeverageReq           = trade.SetLeverageReq
+	AppCommonResp             = trade.AppCommonResp
+	CancelAllOrdersReq        = trade.CancelAllOrdersReq
+	CancelAllOrdersResp       = trade.CancelAllOrdersResp
+	CancelOrderReq            = trade.CancelOrderReq
+	GetFillListReq            = trade.GetFillListReq
+	GetFillListResp           = trade.GetFillListResp
+	GetLeverageConfigReq      = trade.GetLeverageConfigReq
+	GetLeverageConfigResp     = trade.GetLeverageConfigResp
+	GetMarginSnapshotListReq  = trade.GetMarginSnapshotListReq
+	GetMarginSnapshotListResp = trade.GetMarginSnapshotListResp
+	GetOrderDetailData        = trade.GetOrderDetailData
+	GetOrderDetailReq         = trade.GetOrderDetailReq
+	GetOrderDetailResp        = trade.GetOrderDetailResp
+	GetOrderListReq           = trade.GetOrderListReq
+	GetOrderListResp          = trade.GetOrderListResp
+	GetPositionListReq        = trade.GetPositionListReq
+	GetPositionListResp       = trade.GetPositionListResp
+	GetSymbolDetailData       = trade.GetSymbolDetailData
+	GetSymbolDetailReq        = trade.GetSymbolDetailReq
+	GetSymbolDetailResp       = trade.GetSymbolDetailResp
+	GetSymbolListReq          = trade.GetSymbolListReq
+	GetSymbolListResp         = trade.GetSymbolListResp
+	PlaceOrderReq             = trade.PlaceOrderReq
+	PlaceOrderResp            = trade.PlaceOrderResp
+	SetLeverageReq            = trade.SetLeverageReq
 
 	TradeApp interface {
 		// 获取交易对列表
@@ -59,8 +59,8 @@ type (
 		GetFillList(ctx context.Context, in *GetFillListReq, opts ...grpc.CallOption) (*GetFillListResp, error)
 		// 获取持仓列表
 		GetPositionList(ctx context.Context, in *GetPositionListReq, opts ...grpc.CallOption) (*GetPositionListResp, error)
-		// 获取保证金账户列表
-		GetMarginAccountList(ctx context.Context, in *GetMarginAccountListReq, opts ...grpc.CallOption) (*GetMarginAccountListResp, error)
+		// 获取合约风控保证金快照列表
+		GetMarginSnapshotList(ctx context.Context, in *GetMarginSnapshotListReq, opts ...grpc.CallOption) (*GetMarginSnapshotListResp, error)
 		// 获取当前杠杆配置
 		GetLeverageConfig(ctx context.Context, in *GetLeverageConfigReq, opts ...grpc.CallOption) (*GetLeverageConfigResp, error)
 		// 设置杠杆倍数
@@ -132,10 +132,10 @@ func (m *defaultTradeApp) GetPositionList(ctx context.Context, in *GetPositionLi
 	return client.GetPositionList(ctx, in, opts...)
 }
 
-// 获取保证金账户列表
-func (m *defaultTradeApp) GetMarginAccountList(ctx context.Context, in *GetMarginAccountListReq, opts ...grpc.CallOption) (*GetMarginAccountListResp, error) {
+// 获取合约风控保证金快照列表
+func (m *defaultTradeApp) GetMarginSnapshotList(ctx context.Context, in *GetMarginSnapshotListReq, opts ...grpc.CallOption) (*GetMarginSnapshotListResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
-	return client.GetMarginAccountList(ctx, in, opts...)
+	return client.GetMarginSnapshotList(ctx, in, opts...)
 }
 
 // 获取当前杠杆配置

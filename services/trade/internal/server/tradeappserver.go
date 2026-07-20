@@ -77,10 +77,10 @@ func (s *TradeAppServer) GetPositionList(ctx context.Context, in *trade.GetPosit
 	return l.GetPositionList(in)
 }
 
-// 获取保证金账户列表
-func (s *TradeAppServer) GetMarginAccountList(ctx context.Context, in *trade.GetMarginAccountListReq) (*trade.GetMarginAccountListResp, error) {
-	l := logic.NewGetMarginAccountListLogic(ctx, s.svcCtx)
-	return l.GetMarginAccountList(in)
+// 获取合约风控保证金快照列表
+func (s *TradeAppServer) GetMarginSnapshotList(ctx context.Context, in *trade.GetMarginSnapshotListReq) (*trade.GetMarginSnapshotListResp, error) {
+	l := logic.NewGetMarginSnapshotListLogic(ctx, s.svcCtx)
+	return l.GetMarginSnapshotList(in)
 }
 
 // 获取当前杠杆配置

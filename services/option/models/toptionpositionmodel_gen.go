@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,28 +44,28 @@ type (
 	}
 
 	TOptionPosition struct {
-		Id                int64   `db:"id"`                 // 主键ID
-		TenantId          int64   `db:"tenant_id"`          // 租户ID
-		UserId            int64   `db:"user_id"`            // 用户ID
-		AccountId         int64   `db:"account_id"`         // 交易账户ID
-		ContractId        int64   `db:"contract_id"`        // 合约ID
-		UnderlyingSymbol  string  `db:"underlying_symbol"`  // 标的
-		Side              int64   `db:"side"`               // 持仓方向：1多头 2空头
-		PositionQty       float64 `db:"position_qty"`       // 持仓数量
-		AvailableQty      float64 `db:"available_qty"`      // 可用数量
-		FrozenQty         float64 `db:"frozen_qty"`         // 冻结数量
-		OpenAvgPrice      float64 `db:"open_avg_price"`     // 开仓均价/平均权利金
-		MarkPrice         float64 `db:"mark_price"`         // 标记价格
-		PositionValue     float64 `db:"position_value"`     // 持仓价值
-		MarginAmount      float64 `db:"margin_amount"`      // 占用保证金
-		MaintenanceMargin float64 `db:"maintenance_margin"` // 维持保证金
-		UnrealizedPnl     float64 `db:"unrealized_pnl"`     // 未实现盈亏
-		RealizedPnl       float64 `db:"realized_pnl"`       // 已实现盈亏
-		ExerciseableQty   float64 `db:"exerciseable_qty"`   // 可行权数量
-		Status            int64   `db:"status"`             // 状态：1持仓中 2已平仓 3已行权 4已到期 5已结算
-		LastCalcTime      int64   `db:"last_calc_time"`     // 上次风控计算时间
-		CreateTimes       int64   `db:"create_times"`       // 创建时间
-		UpdateTimes       int64   `db:"update_times"`       // 更新时间
+		Id                int64           `db:"id"`                 // 主键ID
+		TenantId          int64           `db:"tenant_id"`          // 租户ID
+		UserId            int64           `db:"user_id"`            // 用户ID
+		AccountId         int64           `db:"account_id"`         // 交易账户ID
+		ContractId        int64           `db:"contract_id"`        // 合约ID
+		UnderlyingSymbol  string          `db:"underlying_symbol"`  // 标的
+		Side              int64           `db:"side"`               // 持仓方向：1多头 2空头
+		PositionQty       decimal.Decimal `db:"position_qty"`       // 持仓数量
+		AvailableQty      decimal.Decimal `db:"available_qty"`      // 可用数量
+		FrozenQty         decimal.Decimal `db:"frozen_qty"`         // 冻结数量
+		OpenAvgPrice      decimal.Decimal `db:"open_avg_price"`     // 开仓均价/平均权利金
+		MarkPrice         decimal.Decimal `db:"mark_price"`         // 标记价格
+		PositionValue     decimal.Decimal `db:"position_value"`     // 持仓价值
+		MarginAmount      decimal.Decimal `db:"margin_amount"`      // 占用保证金
+		MaintenanceMargin decimal.Decimal `db:"maintenance_margin"` // 维持保证金
+		UnrealizedPnl     decimal.Decimal `db:"unrealized_pnl"`     // 未实现盈亏
+		RealizedPnl       decimal.Decimal `db:"realized_pnl"`       // 已实现盈亏
+		ExerciseableQty   decimal.Decimal `db:"exerciseable_qty"`   // 可行权数量
+		Status            int64           `db:"status"`             // 状态：0未知 1持仓中 2已平仓 3已行权 4已到期 5已结算
+		LastCalcTime      int64           `db:"last_calc_time"`     // 上次风控计算时间
+		CreateTimes       int64           `db:"create_times"`       // 创建时间
+		UpdateTimes       int64           `db:"update_times"`       // 更新时间
 	}
 )
 

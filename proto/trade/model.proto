@@ -33,11 +33,13 @@ message TradeSymbol {
   int64 tenant_id = 2;
   string symbol = 3;
   string display_symbol = 4;
-  MarketType market_type = 5;
+  ProductType product_type = 5;
   string base_asset = 6;
   string quote_asset = 7;
   string settle_asset = 8;
   ContractType contract_type = 9;
+  ContractValueType contract_value_type = 27;
+  string margin_asset = 28;
   SymbolStatus status = 10;
   int64 price_scale = 11;
   int64 qty_scale = 12;
@@ -48,13 +50,14 @@ message TradeSymbol {
   string max_qty = 17;
   string qty_step = 18;
   string min_notional = 19;
-  int64 max_leverage = 20;
-  int64 open_time = 21;
-  int64 close_time = 22;
+  string max_notional = 20;
+  int64 listing_time = 21;
+  int64 trading_start_time = 22;
   int64 sort = 23;
   string remark = 24;
   int64 create_times = 25;
   int64 update_times = 26;
+  int64 trading_end_time = 29;
 }
 
 message TradeSymbolSpot {
@@ -83,25 +86,72 @@ message TradeSymbolContract {
   int64 delivery_time = 11;
   int64 support_cross = 12;
   int64 support_isolated = 13;
-  common.Enable buy_enabled = 14; // 状态,0表示全部，1表示启用，2表示禁用
-  common.Enable sell_enabled = 15; // 状态,0表示全部，1表示启用，2表示禁用
   int64 create_times = 16;
   int64 update_times = 17;
+  string funding_rate_cap = 18;
+  string funding_rate_floor = 19;
+  string index_symbol = 20;
+  string mark_price_source = 21;
+  string settlement_price_source = 22;
+  common.Enable open_long_enabled = 23;
+  common.Enable open_short_enabled = 24;
+  common.Enable close_long_enabled = 25;
+  common.Enable close_short_enabled = 26;
+  reserved 14, 15;
+}
+
+message TradeSymbolSeconds {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 symbol_id = 3;
+  int64 duration_seconds = 4;
+  string payout_rate = 5;
+  int64 draw_rule = 6;
+  string start_price_source = 7;
+  string settlement_price_source = 8;
+  int64 quote_validity_ms = 9;
+  string min_stake = 10;
+  string max_stake = 11;
+  common.Enable up_enabled = 12;
+  common.Enable down_enabled = 13;
+  int64 create_times = 14;
+  int64 update_times = 15;
+}
+
+message TradeSymbolSession {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 symbol_id = 3;
+  int64 day_of_week = 4;
+  int64 start_second = 5;
+  int64 end_second = 6;
+  string timezone = 7;
+  common.Enable enabled = 8;
 }
 
 message TradeUserConfig {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
-  MarketType market_type = 4;
+  ProductType product_type = 4;
   int64 symbol_id = 5;
-  PositionMode position_mode = 6;
-  MarginMode margin_mode = 7;
-  int64 default_leverage = 8;
   common.Enable trade_enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
-  common.Enable reduce_only_enabled = 10; // 状态,0表示全部，1表示启用，2表示禁用
   int64 create_times = 11;
   int64 update_times = 12;
+  reserved 6, 7, 8, 10;
+}
+
+message ContractUserConfig {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 symbol_id = 4;
+  PositionMode position_mode = 5;
+  MarginMode margin_mode = 6;
+  int64 default_leverage = 7;
+  int64 create_times = 9;
+  int64 update_times = 10;
+  reserved 8;
 }
 
 message TradeOrder {
@@ -111,7 +161,7 @@ message TradeOrder {
   string client_order_id = 4;
   int64 user_id = 5;
   int64 symbol_id = 6;
-  MarketType market_type = 7;
+  ProductType product_type = 7;
   common.Side side = 8; // 买卖方向
   PositionSide position_side = 9;
   OrderType order_type = 10;
@@ -127,7 +177,6 @@ message TradeOrder {
   string fee_asset = 20;
   OrderSourceType source = 21;
   common.YesNo is_reduce_only = 22;
-  common.YesNo is_close_only = 23;
   string trigger_price = 24;
   int64 trigger_type = 25;
   string cancel_reason = 26;
@@ -135,6 +184,9 @@ message TradeOrder {
   int64 create_times = 28;
   int64 update_times = 29;
   TriggerKind trigger_kind = 30;
+  ContractType contract_type = 31;
+  ContractValueType contract_value_type = 32;
+  reserved 23;
 }
 
 message TradeOrderSpot {
@@ -165,6 +217,28 @@ message TradeOrderContract {
   int64 update_times = 13;
 }
 
+message TradeOrderSeconds {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 order_id = 3;
+  int64 direction = 4;
+  int64 duration_seconds = 5;
+  string stake_asset = 6;
+  string stake_amount = 7;
+  string payout_rate = 8;
+  string start_price = 9;
+  int64 start_price_time = 10;
+  int64 expire_time = 11;
+  string settlement_price = 12;
+  int64 settlement_price_time = 13;
+  int64 result = 14;
+  string payout_amount = 15;
+  int64 settlement_status = 16;
+  string reservation_no = 17;
+  int64 create_times = 18;
+  int64 update_times = 19;
+}
+
 message TradeFill {
   int64 id = 1;
   int64 tenant_id = 2;
@@ -173,7 +247,7 @@ message TradeFill {
   string order_no = 5;
   int64 user_id = 6;
   int64 symbol_id = 7;
-  MarketType market_type = 8;
+  ProductType product_type = 8;
   common.Side side = 9; // 买卖方向
   PositionSide position_side = 10;
   string price = 11;
@@ -185,6 +259,12 @@ message TradeFill {
   string realized_pnl = 17;
   int64 match_time = 18;
   int64 create_times = 19;
+  string match_no = 20;
+  ContractType contract_type = 21;
+  ContractValueType contract_value_type = 22;
+  int64 settlement_status = 23;
+  int64 settlement_retry_count = 24;
+  int64 settled_at = 25;
 }
 
 message TradeCancelLog {
@@ -203,7 +283,7 @@ message ContractPosition {
   int64 tenant_id = 2;
   int64 user_id = 3;
   int64 symbol_id = 4;
-  MarketType market_type = 5;
+  ContractType contract_type = 5;
   PositionSide position_side = 6;
   MarginMode margin_mode = 7;
   int64 leverage = 8;
@@ -222,6 +302,7 @@ message ContractPosition {
   int64 version = 21;
   int64 create_times = 22;
   int64 update_times = 23;
+  ContractValueType contract_value_type = 24;
 }
 
 message ContractPositionHistory {
@@ -230,7 +311,7 @@ message ContractPositionHistory {
   int64 position_id = 3;
   int64 user_id = 4;
   int64 symbol_id = 5;
-  MarketType market_type = 6;
+  ContractType contract_type = 6;
   PositionSide position_side = 7;
   PositionActionType action_type = 8;
   string before_qty = 9;
@@ -257,15 +338,15 @@ message ContractPositionHistory {
   SourceType source = 30;
   string remark = 31;
   int64 create_times = 32;
+  ContractValueType contract_value_type = 33;
 }
 
-message ContractMarginAccount {
+message ContractMarginSnapshot {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
-  MarketType market_type = 4;
   string margin_asset = 5;
-  string balance = 6;
+  string wallet_balance = 6;
   string available_balance = 7;
   string frozen_balance = 8;
   string position_margin = 9;
@@ -275,6 +356,9 @@ message ContractMarginAccount {
   int64 version = 13;
   int64 create_times = 14;
   int64 update_times = 15;
+  string source_event_no = 16;
+  int64 snapshot_time = 17;
+  reserved 4;
 }
 
 message ContractLeverageConfig {
@@ -282,41 +366,38 @@ message ContractLeverageConfig {
   int64 tenant_id = 2;
   int64 user_id = 3;
   int64 symbol_id = 4;
-  MarketType market_type = 5;
   MarginMode margin_mode = 6;
-  PositionMode position_mode = 7;
   int64 long_leverage = 8;
   int64 short_leverage = 9;
-  int64 max_leverage = 10;
   int64 operator_id = 11;
   SourceType source = 12;
   common.Enable enabled = 13; // 状态,0表示全部，1表示启用，2表示禁用
   string remark = 14;
   int64 create_times = 15;
   int64 update_times = 16;
+  reserved 5, 7, 10;
 }
 
 message TradeSymbolLeverageConfig {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 symbol_id = 3;
-  MarketType market_type = 4;
   MarginMode margin_mode = 5;
-  repeated int64 leverage_values = 6;
-  int64 default_leverage = 7;
-  int64 max_leverage = 8;
+  int64 leverage = 6;
+  common.YesNo is_default = 7;
   common.Enable enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
   int64 sort = 10;
   string remark = 11;
   int64 create_times = 12;
   int64 update_times = 13;
+  reserved 4, 8;
 }
 
 message RiskUserTradeLimit {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
-  MarketType market_type = 4;
+  ProductType product_type = 4;
   int64 can_open = 5;
   int64 can_close = 6;
   int64 can_cancel = 7;
@@ -345,7 +426,7 @@ message RiskUserSymbolLimit {
   int64 tenant_id = 2;
   int64 user_id = 3;
   int64 symbol_id = 4;
-  MarketType market_type = 5;
+  reserved 5;
   string max_position_qty = 6;
   string max_position_notional = 7;
   int64 max_open_orders = 8;
@@ -373,7 +454,7 @@ message RiskOrderCheckLog {
   string client_order_id = 4;
   int64 user_id = 5;
   int64 symbol_id = 6;
-  MarketType market_type = 7;
+  ProductType product_type = 7;
   RiskCheckType check_type = 8;
   RiskCheckResult check_result = 9;
   string reject_code = 10;
@@ -396,7 +477,7 @@ message BizTradeEvent {
   string biz_type = 6;
   int64 user_id = 7;
   int64 symbol_id = 8;
-  MarketType market_type = 9;
+  ProductType product_type = 9;
   int64 operator_id = 10;
   SourceType source = 11;
   EventStatus event_status = 12;

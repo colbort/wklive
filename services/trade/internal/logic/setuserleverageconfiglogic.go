@@ -38,7 +38,7 @@ func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeve
 	}
 
 	now := utils.NowMillis()
-	item, err := l.svcCtx.ContractLeverageCfgModel.FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(l.ctx, in.TenantId, in.UserId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode))
+	item, err := l.svcCtx.ContractLeverageCfgModel.FindOneByTenantIdUserIdSymbolIdMarginMode(l.ctx, in.TenantId, in.UserId, in.SymbolId, int64(in.MarginMode))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -47,16 +47,13 @@ func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeve
 			TenantId:    in.TenantId,
 			UserId:      in.UserId,
 			SymbolId:    in.SymbolId,
-			MarketType:  int64(in.MarketType),
 			MarginMode:  int64(in.MarginMode),
 			Enabled:     int64(common.Enable_ENABLE_ENABLED),
 			CreateTimes: now,
 		}
 	}
-	item.PositionMode = int64(in.PositionMode)
 	item.LongLeverage = in.LongLeverage
 	item.ShortLeverage = in.ShortLeverage
-	item.MaxLeverage = in.MaxLeverage
 	item.OperatorId = in.OperatorId
 	item.Source = int64(in.Source)
 	item.Enabled = enableToModel(in.Enabled, item.Enabled)

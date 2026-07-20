@@ -2,16 +2,18 @@ package svc
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
 	"wklive/common/i18n"
+	"wklive/proto/itick"
 	"wklive/services/asset/internal/config"
 	"wklive/services/asset/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
@@ -24,10 +26,12 @@ type ServiceContext struct {
 	AssetFreezeModel     models.TAssetFreezeModel
 	AssetIdempotentModel models.TAssetIdempotentModel
 	AssetCoinConfigModel models.TAssetCoinConfigModel
+	ItickClient          itick.ItickAppClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
+	itickCli := zrpc.MustNewClient(c.ItickRpc)
 	return &ServiceContext{
 		Config:               c,
 		DB:                   conn,
@@ -38,6 +42,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AssetFreezeModel:     models.NewTAssetFreezeModel(conn, c.CacheRedis),
 		AssetIdempotentModel: models.NewTAssetIdempotentModel(conn, c.CacheRedis),
 		AssetCoinConfigModel: models.NewTAssetCoinConfigModel(conn, c.CacheRedis),
+		ItickClient:          itick.NewItickAppClient(itickCli.Conn()),
 	}
 }
 
@@ -85,26 +90,21 @@ func SanitizeBizNo(bizNo string) string {
 }
 
 // 获取最新报价
-func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (float64, error) {
-	key := fmt.Sprintf("itick:quote:%s:%s:%s", "crypto", "BA", symbol)
-	data, err := s.Redis.GetCtx(ctx, key)
+func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (decimal.Decimal, error) {
+	resp, err := s.ItickClient.GetQuote(ctx, &itick.GetQuoteReq{
+		CategoryCode: "crypto",
+		Market:       "BA",
+		Symbol:       symbol,
+	})
 	if err != nil {
-		return 0, err
+		return decimal.Zero, err
 	}
-	if strings.TrimSpace(data) == "" {
-		return 0, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
+	if resp == nil || resp.GetBase() == nil || resp.GetBase().GetCode() != 200 || resp.GetData() == nil {
+		return decimal.Zero, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
 	}
-
-	var quoteData struct {
-		Price float64 `json:"lastPrice"`
+	price, err := decimal.NewFromString(resp.GetData().GetLastPrice())
+	if err != nil || !price.IsPositive() {
+		return decimal.Zero, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
 	}
-	err = json.Unmarshal([]byte(data), &quoteData)
-	if err != nil {
-		return 0, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
-	}
-	if quoteData.Price <= 0 {
-		return 0, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
-	}
-
-	return quoteData.Price, nil
+	return price, nil
 }

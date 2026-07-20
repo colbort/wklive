@@ -13,6 +13,7 @@ import (
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -66,14 +67,14 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 		return nil, err
 	}
 
-	exerciseQty, err := conv.ParseFloatField(in.ExerciseQty)
-	if err != nil || exerciseQty <= 0 {
+	exerciseQty, err := conv.ParseDecimalField(in.ExerciseQty)
+	if err != nil || !exerciseQty.IsPositive() {
 		return &option.AppExerciseResp{Base: helper.ErrResp(i18n.ExerciseQuantityFormatError, i18n.Translate(i18n.ExerciseQuantityFormatError, l.ctx))}, nil
 	}
-	if position.ExerciseableQty+optionFloatEpsilon < exerciseQty {
+	if position.ExerciseableQty.LessThan(exerciseQty) {
 		return &option.AppExerciseResp{Base: helper.ErrResp(i18n.ExercisableQuantityExceeded, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
 	}
-	if position.AvailableQty+optionFloatEpsilon < exerciseQty {
+	if position.AvailableQty.LessThan(exerciseQty) {
 		return &option.AppExerciseResp{Base: helper.ErrResp(i18n.ExercisableQuantityExceeded, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
 	}
 	now := time.Now().Unix()
@@ -89,7 +90,7 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 	}
 	settlementPrice := market.UnderlyingPrice
 	profitAmount := optionSettlementPayoff(contract, settlementPrice, exerciseQty)
-	if profitAmount <= optionFloatEpsilon {
+	if !profitAmount.IsPositive() {
 		return &option.AppExerciseResp{Base: helper.ErrResp(i18n.OptionNotInTheMoney, i18n.Translate(i18n.OptionNotInTheMoney, l.ctx))}, nil
 	}
 
@@ -111,7 +112,7 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 		SettlementPrice: settlementPrice,
 		ExerciseAmount:  optionExerciseAmount(contract, exerciseQty),
 		ProfitAmount:    profitAmount,
-		Fee:             0,
+		Fee:             decimal.Zero,
 		FeeCoin:         contract.SettleCoin,
 		Status:          int64(option.ExerciseStatus_EXERCISE_STATUS_DONE),
 		ExerciseTime:    now,
@@ -137,19 +138,19 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 		}
 		item.Id = id
 
-		position.PositionQty = normalizeZero(maxFloat64(position.PositionQty-exerciseQty, 0))
-		position.AvailableQty = normalizeZero(maxFloat64(position.AvailableQty-exerciseQty, 0))
-		position.ExerciseableQty = normalizeZero(maxFloat64(position.ExerciseableQty-exerciseQty, 0))
-		position.PositionValue = position.MarkPrice * position.PositionQty * optionMultiplier(contract)
-		position.RealizedPnl = normalizeZero(position.RealizedPnl + profitAmount)
+		position.PositionQty = decimal.Max(position.PositionQty.Sub(exerciseQty), decimal.Zero)
+		position.AvailableQty = decimal.Max(position.AvailableQty.Sub(exerciseQty), decimal.Zero)
+		position.ExerciseableQty = decimal.Max(position.ExerciseableQty.Sub(exerciseQty), decimal.Zero)
+		position.PositionValue = position.MarkPrice.Mul(position.PositionQty).Mul(optionMultiplier(contract))
+		position.RealizedPnl = position.RealizedPnl.Add(profitAmount)
 		position.UpdateTimes = now
-		if position.PositionQty <= optionFloatEpsilon {
-			position.PositionQty = 0
-			position.AvailableQty = 0
-			position.FrozenQty = 0
-			position.ExerciseableQty = 0
-			position.PositionValue = 0
-			position.UnrealizedPnl = 0
+		if !position.PositionQty.IsPositive() {
+			position.PositionQty = decimal.Zero
+			position.AvailableQty = decimal.Zero
+			position.FrozenQty = decimal.Zero
+			position.ExerciseableQty = decimal.Zero
+			position.PositionValue = decimal.Zero
+			position.UnrealizedPnl = decimal.Zero
 			position.Status = int64(option.PositionStatus_POSITION_STATUS_EXERCISED)
 		}
 		if err := positionModel.Update(ctx, position); err != nil {

@@ -429,7 +429,7 @@ type BatchGetQuoteResp struct {
 }
 
 type CancelAllOrdersReq struct {
-	MarketType   int64 `json:"marketType,optional"`
+	ProductType  int64 `json:"productType,optional"`
 	SymbolId     int64 `json:"symbolId,optional"`
 	Side         int64 `json:"side,optional"`
 	PositionSide int64 `json:"positionSide,optional"`
@@ -475,12 +475,9 @@ type ContractLeverageConfig struct {
 	TenantId      int64  `json:"tenantId"`
 	UserId        int64  `json:"userId"`
 	SymbolId      int64  `json:"symbolId"`
-	MarketType    int64  `json:"marketType"`
 	MarginMode    int64  `json:"marginMode"`
-	PositionMode  int64  `json:"positionMode"`
 	LongLeverage  int64  `json:"longLeverage"`  // 多头杠杆
 	ShortLeverage int64  `json:"shortLeverage"` // 空头杠杆
-	MaxLeverage   int64  `json:"maxLeverage"`   // 最大杠杆
 	OperatorId    int64  `json:"operatorId"`
 	Source        int64  `json:"source"`
 	Enabled       int64  `json:"enabled"`     // 启用状态
@@ -489,13 +486,12 @@ type ContractLeverageConfig struct {
 	UpdateTimes   int64  `json:"updateTimes"` // 更新时间
 }
 
-type ContractMarginAccount struct {
+type ContractMarginSnapshot struct {
 	Id               int64  `json:"id"`
 	TenantId         int64  `json:"tenantId"`
 	UserId           int64  `json:"userId"`
-	MarketType       int64  `json:"marketType"`
 	MarginAsset      string `json:"marginAsset"`
-	Balance          string `json:"balance"`
+	WalletBalance    string `json:"walletBalance"`
 	AvailableBalance string `json:"availableBalance"`
 	FrozenBalance    string `json:"frozenBalance"`
 	PositionMargin   string `json:"positionMargin"`
@@ -503,34 +499,37 @@ type ContractMarginAccount struct {
 	UnrealizedPnl    string `json:"unrealizedPnl"`
 	RealizedPnl      string `json:"realizedPnl"`
 	Version          int64  `json:"version"`
+	SourceEventNo    string `json:"sourceEventNo"`
+	SnapshotTime     int64  `json:"snapshotTime"`
 	CreateTimes      int64  `json:"createTimes"`
 	UpdateTimes      int64  `json:"updateTimes"`
 }
 
 type ContractPosition struct {
-	Id               int64  `json:"id"`
-	TenantId         int64  `json:"tenantId"`
-	UserId           int64  `json:"userId"`
-	SymbolId         int64  `json:"symbolId"`
-	MarketType       int64  `json:"marketType"`
-	PositionSide     int64  `json:"positionSide"`
-	MarginMode       int64  `json:"marginMode"`
-	Leverage         int64  `json:"leverage"` // 杠杆倍数
-	Qty              string `json:"qty"`
-	AvailQty         string `json:"availQty"`
-	FrozenQty        string `json:"frozenQty"`
-	OpenAvgPrice     string `json:"openAvgPrice"`
-	MarkPrice        string `json:"markPrice"`
-	MarginAsset      string `json:"marginAsset"`
-	PositionMargin   string `json:"positionMargin"`
-	IsolatedMargin   string `json:"isolatedMargin"`
-	UnrealizedPnl    string `json:"unrealizedPnl"`
-	RealizedPnl      string `json:"realizedPnl"`
-	LiquidationPrice string `json:"liquidationPrice"`
-	AdlRank          int64  `json:"adlRank"` // ADL等级
-	Version          int64  `json:"version"`
-	CreateTimes      int64  `json:"createTimes"`
-	UpdateTimes      int64  `json:"updateTimes"`
+	Id                int64  `json:"id"`
+	TenantId          int64  `json:"tenantId"`
+	UserId            int64  `json:"userId"`
+	SymbolId          int64  `json:"symbolId"`
+	ContractType      int64  `json:"contractType"`
+	ContractValueType int64  `json:"contractValueType"`
+	PositionSide      int64  `json:"positionSide"`
+	MarginMode        int64  `json:"marginMode"`
+	Leverage          int64  `json:"leverage"` // 杠杆倍数
+	Qty               string `json:"qty"`
+	AvailQty          string `json:"availQty"`
+	FrozenQty         string `json:"frozenQty"`
+	OpenAvgPrice      string `json:"openAvgPrice"`
+	MarkPrice         string `json:"markPrice"`
+	MarginAsset       string `json:"marginAsset"`
+	PositionMargin    string `json:"positionMargin"`
+	IsolatedMargin    string `json:"isolatedMargin"`
+	UnrealizedPnl     string `json:"unrealizedPnl"`
+	RealizedPnl       string `json:"realizedPnl"`
+	LiquidationPrice  string `json:"liquidationPrice"`
+	AdlRank           int64  `json:"adlRank"` // ADL等级
+	Version           int64  `json:"version"`
+	CreateTimes       int64  `json:"createTimes"`
+	UpdateTimes       int64  `json:"updateTimes"`
 }
 
 type CreateChatTokenReq struct {
@@ -658,8 +657,8 @@ type Depth struct {
 }
 
 type DepthLevel struct {
-	Price  float64 `json:"price"`
-	Volume float64 `json:"volume"`
+	Price  string `json:"price"`
+	Volume string `json:"volume"`
 }
 
 type ExchangeGuestTransferData struct {
@@ -679,9 +678,9 @@ type ExchangeGuestTransferResp struct {
 
 type GetFillListReq struct {
 	PageReq
-	MarketType int64     `form:"marketType,optional"`
-	SymbolId   int64     `form:"symbolId,optional"`
-	TimeRange  TimeRange `form:"timeRange,optional"`
+	ProductType int64     `form:"productType,optional"`
+	SymbolId    int64     `form:"symbolId,optional"`
+	TimeRange   TimeRange `form:"timeRange,optional"`
 }
 
 type GetFillListResp struct {
@@ -710,7 +709,6 @@ type GetKlineResp struct {
 
 type GetLeverageConfigReq struct {
 	SymbolId   int64 `form:"symbolId"`
-	MarketType int64 `form:"marketType"`
 	MarginMode int64 `form:"marginMode"`
 }
 
@@ -719,14 +717,13 @@ type GetLeverageConfigResp struct {
 	Data ContractLeverageConfig `json:"data"`
 }
 
-type GetMarginAccountListReq struct {
-	MarketType  int64  `form:"marketType,optional"`
+type GetMarginSnapshotListReq struct {
 	MarginAsset string `form:"marginAsset,optional"`
 }
 
-type GetMarginAccountListResp struct {
+type GetMarginSnapshotListResp struct {
 	RespBase
-	Data []ContractMarginAccount `json:"data"`
+	Data []ContractMarginSnapshot `json:"data"`
 }
 
 type GetMyAssetReq struct {
@@ -798,6 +795,7 @@ type GetOrderDetailData struct {
 	Order    TradeOrder          `json:"order"`
 	Spot     TradeSymbolSpot     `json:"spot"`
 	Contract TradeSymbolContract `json:"contract"`
+	Seconds  TradeOrderSeconds   `json:"seconds"`
 }
 
 type GetOrderDetailReq struct {
@@ -812,11 +810,11 @@ type GetOrderDetailResp struct {
 
 type GetOrderListReq struct {
 	PageReq
-	MarketType int64     `form:"marketType,optional"`
-	SymbolId   int64     `form:"symbolId,optional"`
-	Status     int64     `form:"status,optional"`
-	Side       int64     `form:"side,optional"`
-	TimeRange  TimeRange `form:"timeRange,optional"`
+	ProductType int64     `form:"productType,optional"`
+	SymbolId    int64     `form:"symbolId,optional"`
+	Status      int64     `form:"status,optional"`
+	Side        int64     `form:"side,optional"`
+	TimeRange   TimeRange `form:"timeRange,optional"`
 }
 
 type GetOrderListResp struct {
@@ -825,8 +823,8 @@ type GetOrderListResp struct {
 }
 
 type GetPositionListReq struct {
-	MarketType int64 `form:"marketType,optional"`
-	SymbolId   int64 `form:"symbolId,optional"`
+	ContractType int64 `form:"contractType,optional"`
+	SymbolId     int64 `form:"symbolId,optional"`
 }
 
 type GetPositionListResp struct {
@@ -860,6 +858,7 @@ type GetSymbolDetailData struct {
 	Spot            TradeSymbolSpot             `json:"spot"`
 	Contract        TradeSymbolContract         `json:"contract"`
 	LeverageConfigs []TradeSymbolLeverageConfig `json:"leverageConfigs"`
+	SecondsConfigs  []TradeSymbolSeconds        `json:"secondsConfigs"`
 }
 
 type GetSymbolDetailReq struct {
@@ -872,8 +871,8 @@ type GetSymbolDetailResp struct {
 }
 
 type GetSymbolListReq struct {
-	MarketType int64 `form:"marketType,optional"` // 市场类型
-	Status     int64 `form:"status,optional"`     // 状态
+	ProductType int64 `form:"productType,optional"`
+	Status      int64 `form:"status,optional"` // 状态
 }
 
 type GetSymbolListResp struct {
@@ -998,17 +997,17 @@ type ItickTenantProduct struct {
 }
 
 type Kline struct {
-	CategoryCode string  `json:"categoryCode"`
-	Market       string  `json:"market"`
-	Symbol       string  `json:"symbol"`
-	KType        int64   `json:"kType"`
-	Ts           int64   `json:"ts"`
-	Open         float64 `json:"open"`
-	High         float64 `json:"high"`
-	Low          float64 `json:"low"`
-	Close        float64 `json:"close"`
-	Volume       float64 `json:"volume"`
-	Turnover     float64 `json:"turnover"`
+	CategoryCode string `json:"categoryCode"`
+	Market       string `json:"market"`
+	Symbol       string `json:"symbol"`
+	KType        int64  `json:"kType"`
+	Ts           int64  `json:"ts"`
+	Open         string `json:"open"`
+	High         string `json:"high"`
+	Low          string `json:"low"`
+	Close        string `json:"close"`
+	Volume       string `json:"volume"`
+	Turnover     string `json:"turnover"`
 }
 
 type ListAssetCoinConfigsReq struct {
@@ -1425,26 +1424,26 @@ type PageReq struct {
 }
 
 type PlaceOrderReq struct {
-	SymbolId        int64  `json:"symbolId"`   // 交易对ID
-	MarketType      int64  `json:"marketType"` // 市场类型
-	Side            int64  `json:"side"`
-	PositionSide    int64  `json:"positionSide"`
-	OrderType       int64  `json:"orderType"`
-	TimeInForce     int64  `json:"timeInForce"`
-	ClientOrderId   string `json:"clientOrderId,optional"`
-	Price           string `json:"price,optional"`
-	Qty             string `json:"qty,optional"`
-	Amount          string `json:"amount,optional"`
-	IsReduceOnly    int64  `json:"isReduceOnly,optional"` // 是否只减仓：1是 2否
-	IsCloseOnly     int64  `json:"isCloseOnly,optional"`  // 是否只平仓：1是 2否
-	TriggerPrice    string `json:"triggerPrice,optional"`
-	TriggerType     int64  `json:"triggerType,optional"`
-	TriggerKind     int64  `json:"triggerKind,optional"`
-	MarginMode      int64  `json:"marginMode,optional"`
-	Leverage        int64  `json:"leverage,optional"` // 杠杆倍数
-	TakeProfitPrice string `json:"takeProfitPrice,optional"`
-	StopLossPrice   string `json:"stopLossPrice,optional"`
-	OrderSource     int64  `json:"orderSource,optional"`
+	SymbolId         int64  `json:"symbolId"` // 交易对ID
+	Side             int64  `json:"side"`
+	PositionSide     int64  `json:"positionSide"`
+	OrderType        int64  `json:"orderType"`
+	TimeInForce      int64  `json:"timeInForce"`
+	ClientOrderId    string `json:"clientOrderId,optional"`
+	Price            string `json:"price,optional"`
+	Qty              string `json:"qty,optional"`
+	Amount           string `json:"amount,optional"`
+	IsReduceOnly     int64  `json:"isReduceOnly,optional"` // 是否只减仓：1是 2否
+	TriggerPrice     string `json:"triggerPrice,optional"`
+	TriggerType      int64  `json:"triggerType,optional"`
+	TriggerKind      int64  `json:"triggerKind,optional"`
+	MarginMode       int64  `json:"marginMode,optional"`
+	Leverage         int64  `json:"leverage,optional"` // 杠杆倍数
+	TakeProfitPrice  string `json:"takeProfitPrice,optional"`
+	StopLossPrice    string `json:"stopLossPrice,optional"`
+	OrderSource      int64  `json:"orderSource,optional"`
+	SecondsDirection int64  `json:"secondsDirection,optional"`
+	DurationSeconds  int64  `json:"durationSeconds,optional"`
 }
 
 type PlaceOrderResp struct {
@@ -1462,20 +1461,20 @@ type QueryMyRechargeOrderStatusResp struct {
 }
 
 type Quote struct {
-	CategoryCode   string  `json:"categoryCode"`
-	Market         string  `json:"market"`
-	Symbol         string  `json:"symbol"`
-	LastPrice      float64 `json:"lastPrice"`
-	OpenPrice      float64 `json:"openPrice"`
-	HighPrice      float64 `json:"highPrice"`
-	LowPrice       float64 `json:"lowPrice"`
-	PrevClosePrice float64 `json:"prevClosePrice"`
-	ChangeValue    float64 `json:"changeValue"`
-	ChangeRate     float64 `json:"changeRate"`
-	Volume         float64 `json:"volume"`
-	Turnover       float64 `json:"turnover"`
-	QuoteTs        int64   `json:"quoteTs"`
-	TradeStatus    int64   `json:"tradeStatus"`
+	CategoryCode   string `json:"categoryCode"`
+	Market         string `json:"market"`
+	Symbol         string `json:"symbol"`
+	LastPrice      string `json:"lastPrice"`
+	OpenPrice      string `json:"openPrice"`
+	HighPrice      string `json:"highPrice"`
+	LowPrice       string `json:"lowPrice"`
+	PrevClosePrice string `json:"prevClosePrice"`
+	ChangeValue    string `json:"changeValue"`
+	ChangeRate     string `json:"changeRate"`
+	Volume         string `json:"volume"`
+	Turnover       string `json:"turnover"`
+	QuoteTs        int64  `json:"quoteTs"`
+	TradeStatus    int64  `json:"tradeStatus"`
 }
 
 type RechargeOrder struct {
@@ -1571,9 +1570,7 @@ type SetDefaultBankReq struct {
 
 type SetLeverageReq struct {
 	SymbolId      int64 `json:"symbolId"` // 交易对ID
-	MarketType    int64 `json:"marketType"`
 	MarginMode    int64 `json:"marginMode"`
-	PositionMode  int64 `json:"positionMode"`
 	LongLeverage  int64 `json:"longLeverage"`  // 多头杠杆
 	ShortLeverage int64 `json:"shortLeverage"` // 空头杠杆
 }
@@ -1757,87 +1754,119 @@ type TradeAppCommonResp struct {
 }
 
 type TradeFill struct {
-	Id            int64  `json:"id"`
-	TenantId      int64  `json:"tenantId"`
-	FillNo        string `json:"fillNo"`
-	OrderId       int64  `json:"orderId"`
-	OrderNo       string `json:"orderNo"`
-	UserId        int64  `json:"userId"`
-	SymbolId      int64  `json:"symbolId"`
-	MarketType    int64  `json:"marketType"`
-	Side          int64  `json:"side"`
-	PositionSide  int64  `json:"positionSide"`
-	Price         string `json:"price"`
-	Qty           string `json:"qty"`
-	Amount        string `json:"amount"`
-	Fee           string `json:"fee"`
-	FeeAsset      string `json:"feeAsset"`
-	LiquidityType int64  `json:"liquidityType"`
-	RealizedPnl   string `json:"realizedPnl"`
-	MatchTime     int64  `json:"matchTime"`
-	CreateTimes   int64  `json:"createTimes"`
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	FillNo               string `json:"fillNo"`
+	OrderId              int64  `json:"orderId"`
+	OrderNo              string `json:"orderNo"`
+	UserId               int64  `json:"userId"`
+	SymbolId             int64  `json:"symbolId"`
+	ProductType          int64  `json:"productType"`
+	ContractType         int64  `json:"contractType"`
+	ContractValueType    int64  `json:"contractValueType"`
+	MatchNo              string `json:"matchNo"`
+	SettlementStatus     int64  `json:"settlementStatus"`
+	SettlementRetryCount int64  `json:"settlementRetryCount"`
+	SettledAt            int64  `json:"settledAt"`
+	Side                 int64  `json:"side"`
+	PositionSide         int64  `json:"positionSide"`
+	Price                string `json:"price"`
+	Qty                  string `json:"qty"`
+	Amount               string `json:"amount"`
+	Fee                  string `json:"fee"`
+	FeeAsset             string `json:"feeAsset"`
+	LiquidityType        int64  `json:"liquidityType"`
+	RealizedPnl          string `json:"realizedPnl"`
+	MatchTime            int64  `json:"matchTime"`
+	CreateTimes          int64  `json:"createTimes"`
 }
 
 type TradeOrder struct {
-	Id            int64  `json:"id"`
-	TenantId      int64  `json:"tenantId"`
-	OrderNo       string `json:"orderNo"`
-	ClientOrderId string `json:"clientOrderId"`
-	UserId        int64  `json:"userId"`
-	SymbolId      int64  `json:"symbolId"`
-	MarketType    int64  `json:"marketType"`
-	Side          int64  `json:"side"`
-	PositionSide  int64  `json:"positionSide"`
-	OrderType     int64  `json:"orderType"`
-	TimeInForce   int64  `json:"timeInForce"`
-	Status        int64  `json:"status"`
-	Price         string `json:"price"`
-	Qty           string `json:"qty"`
-	Amount        string `json:"amount"`
-	FilledQty     string `json:"filledQty"`
-	FilledAmount  string `json:"filledAmount"`
-	AvgPrice      string `json:"avgPrice"`
-	Fee           string `json:"fee"`
-	FeeAsset      string `json:"feeAsset"`
-	Source        int64  `json:"source"`
-	IsReduceOnly  int64  `json:"isReduceOnly"` // 是否只减仓：1是 2否
-	IsCloseOnly   int64  `json:"isCloseOnly"`  // 是否只平仓：1是 2否
-	TriggerPrice  string `json:"triggerPrice"`
-	TriggerType   int64  `json:"triggerType"` // 触发类型
-	TriggerKind   int64  `json:"triggerKind"` // 触发用途：0无 1条件单 2止盈 3止损
-	CancelReason  string `json:"cancelReason"`
-	BizExt        string `json:"bizExt"`
-	CreateTimes   int64  `json:"createTimes"`
-	UpdateTimes   int64  `json:"updateTimes"`
+	Id                int64  `json:"id"`
+	TenantId          int64  `json:"tenantId"`
+	OrderNo           string `json:"orderNo"`
+	ClientOrderId     string `json:"clientOrderId"`
+	UserId            int64  `json:"userId"`
+	SymbolId          int64  `json:"symbolId"`
+	ProductType       int64  `json:"productType"`
+	ContractType      int64  `json:"contractType"`
+	ContractValueType int64  `json:"contractValueType"`
+	Side              int64  `json:"side"`
+	PositionSide      int64  `json:"positionSide"`
+	OrderType         int64  `json:"orderType"`
+	TimeInForce       int64  `json:"timeInForce"`
+	Status            int64  `json:"status"`
+	Price             string `json:"price"`
+	Qty               string `json:"qty"`
+	Amount            string `json:"amount"`
+	FilledQty         string `json:"filledQty"`
+	FilledAmount      string `json:"filledAmount"`
+	AvgPrice          string `json:"avgPrice"`
+	Fee               string `json:"fee"`
+	FeeAsset          string `json:"feeAsset"`
+	Source            int64  `json:"source"`
+	IsReduceOnly      int64  `json:"isReduceOnly"` // 是否只减仓：1是 2否
+	TriggerPrice      string `json:"triggerPrice"`
+	TriggerType       int64  `json:"triggerType"` // 触发类型
+	TriggerKind       int64  `json:"triggerKind"` // 触发用途：0无 1条件单 2止盈 3止损
+	CancelReason      string `json:"cancelReason"`
+	BizExt            string `json:"bizExt"`
+	CreateTimes       int64  `json:"createTimes"`
+	UpdateTimes       int64  `json:"updateTimes"`
+}
+
+type TradeOrderSeconds struct {
+	Id                  int64  `json:"id"`
+	TenantId            int64  `json:"tenantId"`
+	OrderId             int64  `json:"orderId"`
+	Direction           int64  `json:"direction"`
+	DurationSeconds     int64  `json:"durationSeconds"`
+	StakeAsset          string `json:"stakeAsset"`
+	StakeAmount         string `json:"stakeAmount"`
+	PayoutRate          string `json:"payoutRate"`
+	StartPrice          string `json:"startPrice"`
+	StartPriceTime      int64  `json:"startPriceTime"`
+	ExpireTime          int64  `json:"expireTime"`
+	SettlementPrice     string `json:"settlementPrice"`
+	SettlementPriceTime int64  `json:"settlementPriceTime"`
+	Result              int64  `json:"result"`
+	PayoutAmount        string `json:"payoutAmount"`
+	SettlementStatus    int64  `json:"settlementStatus"`
+	ReservationNo       string `json:"reservationNo"`
+	CreateTimes         int64  `json:"createTimes"`
+	UpdateTimes         int64  `json:"updateTimes"`
 }
 
 type TradeSymbol struct {
-	Id            int64  `json:"id"`            // 主键ID
-	TenantId      int64  `json:"tenantId"`      // 租户ID
-	Symbol        string `json:"symbol"`        // 交易对编码
-	DisplaySymbol string `json:"displaySymbol"` // 展示名称
-	MarketType    int64  `json:"marketType"`
-	BaseAsset     string `json:"baseAsset"`
-	QuoteAsset    string `json:"quoteAsset"`
-	SettleAsset   string `json:"settleAsset"`
-	ContractType  int64  `json:"contractType"`
-	Status        int64  `json:"status"`
-	PriceScale    int64  `json:"priceScale"` // 价格精度
-	QtyScale      int64  `json:"qtyScale"`   // 数量精度
-	MinPrice      string `json:"minPrice"`
-	MaxPrice      string `json:"maxPrice"`
-	PriceTick     string `json:"priceTick"`
-	MinQty        string `json:"minQty"`
-	MaxQty        string `json:"maxQty"`
-	QtyStep       string `json:"qtyStep"`
-	MinNotional   string `json:"minNotional"`
-	MaxLeverage   int64  `json:"maxLeverage"` // 最大杠杆
-	OpenTime      int64  `json:"openTime"`
-	CloseTime     int64  `json:"closeTime"`
-	Sort          int64  `json:"sort"`        // 排序
-	Remark        string `json:"remark"`      // 备注
-	CreateTimes   int64  `json:"createTimes"` // 创建时间
-	UpdateTimes   int64  `json:"updateTimes"` // 更新时间
+	Id                int64  `json:"id"`            // 主键ID
+	TenantId          int64  `json:"tenantId"`      // 租户ID
+	Symbol            string `json:"symbol"`        // 交易对编码
+	DisplaySymbol     string `json:"displaySymbol"` // 展示名称
+	ProductType       int64  `json:"productType"`
+	BaseAsset         string `json:"baseAsset"`
+	QuoteAsset        string `json:"quoteAsset"`
+	SettleAsset       string `json:"settleAsset"`
+	ContractType      int64  `json:"contractType"`
+	ContractValueType int64  `json:"contractValueType"`
+	MarginAsset       string `json:"marginAsset"`
+	Status            int64  `json:"status"`
+	PriceScale        int64  `json:"priceScale"` // 价格精度
+	QtyScale          int64  `json:"qtyScale"`   // 数量精度
+	MinPrice          string `json:"minPrice"`
+	MaxPrice          string `json:"maxPrice"`
+	PriceTick         string `json:"priceTick"`
+	MinQty            string `json:"minQty"`
+	MaxQty            string `json:"maxQty"`
+	QtyStep           string `json:"qtyStep"`
+	MinNotional       string `json:"minNotional"`
+	MaxNotional       string `json:"maxNotional"`
+	ListingTime       int64  `json:"listingTime"`
+	TradingStartTime  int64  `json:"tradingStartTime"`
+	TradingEndTime    int64  `json:"tradingEndTime"`
+	Sort              int64  `json:"sort"`        // 排序
+	Remark            string `json:"remark"`      // 备注
+	CreateTimes       int64  `json:"createTimes"` // 创建时间
+	UpdateTimes       int64  `json:"updateTimes"` // 更新时间
 }
 
 type TradeSymbolContract struct {
@@ -1854,26 +1883,49 @@ type TradeSymbolContract struct {
 	DeliveryTime           int64  `json:"deliveryTime"`
 	SupportCross           int64  `json:"supportCross"`    // 全仓支持状态：0不支持 1支持
 	SupportIsolated        int64  `json:"supportIsolated"` // 逐仓支持状态：0不支持 1支持
-	BuyEnabled             int64  `json:"buyEnabled"`      // 买入开关：1启用 2禁用
-	SellEnabled            int64  `json:"sellEnabled"`     // 卖出开关：1启用 2禁用
+	FundingRateCap         string `json:"fundingRateCap"`
+	FundingRateFloor       string `json:"fundingRateFloor"`
+	IndexSymbol            string `json:"indexSymbol"`
+	MarkPriceSource        string `json:"markPriceSource"`
+	SettlementPriceSource  string `json:"settlementPriceSource"`
+	OpenLongEnabled        int64  `json:"openLongEnabled"`
+	OpenShortEnabled       int64  `json:"openShortEnabled"`
+	CloseLongEnabled       int64  `json:"closeLongEnabled"`
+	CloseShortEnabled      int64  `json:"closeShortEnabled"`
 	CreateTimes            int64  `json:"createTimes"`
 	UpdateTimes            int64  `json:"updateTimes"`
 }
 
 type TradeSymbolLeverageConfig struct {
-	Id              int64   `json:"id"`
-	TenantId        int64   `json:"tenantId"`
-	SymbolId        int64   `json:"symbolId"`
-	MarketType      int64   `json:"marketType"`
-	MarginMode      int64   `json:"marginMode"`
-	LeverageValues  []int64 `json:"leverageValues"`
-	DefaultLeverage int64   `json:"defaultLeverage"`
-	MaxLeverage     int64   `json:"maxLeverage"`
-	Enabled         int64   `json:"enabled"`
-	Sort            int64   `json:"sort"`
-	Remark          string  `json:"remark"`
-	CreateTimes     int64   `json:"createTimes"`
-	UpdateTimes     int64   `json:"updateTimes"`
+	Id          int64  `json:"id"`
+	TenantId    int64  `json:"tenantId"`
+	SymbolId    int64  `json:"symbolId"`
+	MarginMode  int64  `json:"marginMode"`
+	Leverage    int64  `json:"leverage"`
+	IsDefault   int64  `json:"isDefault"`
+	Enabled     int64  `json:"enabled"`
+	Sort        int64  `json:"sort"`
+	Remark      string `json:"remark"`
+	CreateTimes int64  `json:"createTimes"`
+	UpdateTimes int64  `json:"updateTimes"`
+}
+
+type TradeSymbolSeconds struct {
+	Id                    int64  `json:"id"`
+	TenantId              int64  `json:"tenantId"`
+	SymbolId              int64  `json:"symbolId"`
+	DurationSeconds       int64  `json:"durationSeconds"`
+	PayoutRate            string `json:"payoutRate"`
+	DrawRule              int64  `json:"drawRule"`
+	StartPriceSource      string `json:"startPriceSource"`
+	SettlementPriceSource string `json:"settlementPriceSource"`
+	QuoteValidityMs       int64  `json:"quoteValidityMs"`
+	MinStake              string `json:"minStake"`
+	MaxStake              string `json:"maxStake"`
+	UpEnabled             int64  `json:"upEnabled"`
+	DownEnabled           int64  `json:"downEnabled"`
+	CreateTimes           int64  `json:"createTimes"`
+	UpdateTimes           int64  `json:"updateTimes"`
 }
 
 type TradeSymbolSpot struct {

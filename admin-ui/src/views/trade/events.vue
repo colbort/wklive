@@ -49,9 +49,9 @@
         <el-table-column prop="userId" :label="t('trade.userId')" width="100" />
         <el-table-column prop="symbolId" :label="t('trade.symbolId')" width="100" />
 
-        <el-table-column :label="t('trade.marketType')" min-width="130">
+        <el-table-column :label="t('trade.productType')" min-width="130">
           <template #default="{ row }">
-            {{ row.marketType ? optionLabel('marketType', row.marketType) : '-' }}
+            {{ row.productType ? optionLabel('productType', row.productType) : '-' }}
           </template>
         </el-table-column>
 
@@ -72,9 +72,7 @@
         </el-table-column>
 
         <el-table-column :label="t('trade.retryCount')" width="120" align="right">
-          <template #default="{ row }">
-            {{ row.retryCount }} / {{ row.maxRetryCount }}
-          </template>
+          <template #default="{ row }"> {{ row.retryCount }} / {{ row.maxRetryCount }} </template>
         </el-table-column>
 
         <el-table-column :label="t('trade.nextRetryAt')" min-width="170">
@@ -89,29 +87,14 @@
           </template>
         </el-table-column>
 
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="170"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="170" fixed="right">
           <template #default="{ row }">
-            <el-button
-              v-perm="'trade:event:detail'"
-              link
-              type="primary"
-              @click="showDetail(row)"
-            >
+            <el-button v-perm="'trade:event:detail'" link type="primary" @click="showDetail(row)">
               <el-icon><View /></el-icon>
               {{ t('option.detail') }}
             </el-button>
 
-            <el-button
-              v-perm="'trade:event:retry'"
-              link
-              type="warning"
-              @click="retryEvent(row)"
-            >
+            <el-button v-perm="'trade:event:retry'" link type="warning" @click="retryEvent(row)">
               <el-icon><RefreshRight /></el-icon>
               {{ t('trade.retry') }}
             </el-button>
@@ -165,8 +148,10 @@
             <el-descriptions-item :label="t('trade.symbolId')">
               {{ detailData.symbolId || '-' }}
             </el-descriptions-item>
-            <el-descriptions-item :label="t('trade.marketType')">
-              {{ detailData.marketType ? optionLabel('marketType', detailData.marketType) : '-' }}
+            <el-descriptions-item :label="t('trade.productType')">
+              {{
+                detailData.productType ? optionLabel('productType', detailData.productType) : '-'
+              }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.source')">
               {{ optionLabel('sourceType', detailData.source) }}
@@ -250,11 +235,10 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
   usePagination<number>(20)
 
 const fallbackOptions: Record<string, OptionItem[]> = {
-  marketType: [
-    { value: 1, code: 'MARKET_TYPE_SPOT' },
-    { value: 2, code: 'MARKET_TYPE_SECONDS_CONTRACT' },
-    { value: 3, code: 'MARKET_TYPE_USDT_CONTRACT' },
-    { value: 4, code: 'MARKET_TYPE_COIN_CONTRACT' },
+  productType: [
+    { value: 1, code: 'PRODUCT_TYPE_SPOT' },
+    { value: 2, code: 'PRODUCT_TYPE_DERIVATIVE' },
+    { value: 3, code: 'PRODUCT_TYPE_SECONDS' },
   ],
   eventStatus: [
     { value: 0, code: 'EVENT_STATUS_UNKNOWN' },

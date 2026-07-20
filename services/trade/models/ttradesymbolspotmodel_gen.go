@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,15 +44,15 @@ type (
 	}
 
 	TTradeSymbolSpot struct {
-		Id           int64   `db:"id"`             // 主键ID
-		TenantId     int64   `db:"tenant_id"`      // 租户ID
-		SymbolId     int64   `db:"symbol_id"`      // 交易标的ID，对应t_trade_symbol.id
-		MakerFeeRate float64 `db:"maker_fee_rate"` // Maker手续费率
-		TakerFeeRate float64 `db:"taker_fee_rate"` // Taker手续费率
-		BuyEnabled   int64   `db:"buy_enabled"`    // 买入开关：1启用 2禁用
-		SellEnabled  int64   `db:"sell_enabled"`   // 卖出开关：1启用 2禁用
-		CreateTimes  int64   `db:"create_times"`   // 创建时间，毫秒时间戳
-		UpdateTimes  int64   `db:"update_times"`   // 更新时间，毫秒时间戳
+		Id           int64           `db:"id"`             // 主键ID
+		TenantId     int64           `db:"tenant_id"`      // 租户ID
+		SymbolId     int64           `db:"symbol_id"`      // 交易标的ID，对应t_trade_symbol.id
+		MakerFeeRate decimal.Decimal `db:"maker_fee_rate"` // Maker手续费率
+		TakerFeeRate decimal.Decimal `db:"taker_fee_rate"` // Taker手续费率
+		BuyEnabled   int64           `db:"buy_enabled"`    // 买入开关：1启用 2禁用
+		SellEnabled  int64           `db:"sell_enabled"`   // 卖出开关：1启用 2禁用
+		CreateTimes  int64           `db:"create_times"`   // 创建时间，毫秒时间戳
+		UpdateTimes  int64           `db:"update_times"`   // 更新时间，毫秒时间戳
 	}
 )
 

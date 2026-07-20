@@ -203,7 +203,6 @@ type CheckOrderRiskReq struct {
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	MarketType    MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	Side          common.Side            `protobuf:"varint,5,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionSide  PositionSide           `protobuf:"varint,6,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	OrderType     OrderType              `protobuf:"varint,7,opt,name=order_type,json=orderType,proto3,enum=trade.OrderType" json:"order_type,omitempty"`
@@ -263,13 +262,6 @@ func (x *CheckOrderRiskReq) GetSymbolId() int64 {
 		return x.SymbolId
 	}
 	return 0
-}
-
-func (x *CheckOrderRiskReq) GetMarketType() MarketType {
-	if x != nil {
-		return x.MarketType
-	}
-	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *CheckOrderRiskReq) GetSide() common.Side {
@@ -386,13 +378,11 @@ const file_proto_trade_trade_internal_proto_rawDesc = "" +
 	"\x18RecordPositionHistoryReq\x128\n" +
 	"\ahistory\x18\x01 \x01(\v2\x1e.trade.ContractPositionHistoryR\ahistory\"A\n" +
 	"\x13CreateTradeEventReq\x12*\n" +
-	"\x05event\x18\x01 \x01(\v2\x14.trade.BizTradeEventR\x05event\"\xe7\x02\n" +
+	"\x05event\x18\x01 \x01(\v2\x14.trade.BizTradeEventR\x05event\"\xb9\x02\n" +
 	"\x11CheckOrderRiskReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x122\n" +
-	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
-	"marketType\x12 \n" +
+	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x12 \n" +
 	"\x04side\x18\x05 \x01(\x0e2\f.common.SideR\x04side\x128\n" +
 	"\rposition_side\x18\x06 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\x12/\n" +
 	"\n" +
@@ -400,7 +390,7 @@ const file_proto_trade_trade_internal_proto_rawDesc = "" +
 	"\x05price\x18\b \x01(\tR\x05price\x12\x10\n" +
 	"\x03qty\x18\t \x01(\tR\x03qty\x12\x16\n" +
 	"\x06amount\x18\n" +
-	" \x01(\tR\x06amount\"l\n" +
+	" \x01(\tR\x06amountJ\x04\b\x04\x10\x05\"l\n" +
 	"\x12CheckOrderRiskResp\x12\x16\n" +
 	"\x06passed\x18\x01 \x01(\x03R\x06passed\x12\x1f\n" +
 	"\vreject_code\x18\x02 \x01(\tR\n" +
@@ -437,33 +427,31 @@ var file_proto_trade_trade_internal_proto_goTypes = []any{
 	(*TradeFill)(nil),                // 7: trade.TradeFill
 	(*ContractPositionHistory)(nil),  // 8: trade.ContractPositionHistory
 	(*BizTradeEvent)(nil),            // 9: trade.BizTradeEvent
-	(MarketType)(0),                  // 10: trade.MarketType
-	(common.Side)(0),                 // 11: common.Side
-	(PositionSide)(0),                // 12: trade.PositionSide
-	(OrderType)(0),                   // 13: trade.OrderType
+	(common.Side)(0),                 // 10: common.Side
+	(PositionSide)(0),                // 11: trade.PositionSide
+	(OrderType)(0),                   // 12: trade.OrderType
 }
 var file_proto_trade_trade_internal_proto_depIdxs = []int32{
 	6,  // 0: trade.InternalCommonResp.base:type_name -> common.RespBase
 	7,  // 1: trade.RecordOrderFillReq.fill:type_name -> trade.TradeFill
 	8,  // 2: trade.RecordPositionHistoryReq.history:type_name -> trade.ContractPositionHistory
 	9,  // 3: trade.CreateTradeEventReq.event:type_name -> trade.BizTradeEvent
-	10, // 4: trade.CheckOrderRiskReq.market_type:type_name -> trade.MarketType
-	11, // 5: trade.CheckOrderRiskReq.side:type_name -> common.Side
-	12, // 6: trade.CheckOrderRiskReq.position_side:type_name -> trade.PositionSide
-	13, // 7: trade.CheckOrderRiskReq.order_type:type_name -> trade.OrderType
-	1,  // 8: trade.TradeInternal.RecordOrderFill:input_type -> trade.RecordOrderFillReq
-	2,  // 9: trade.TradeInternal.RecordPositionHistory:input_type -> trade.RecordPositionHistoryReq
-	3,  // 10: trade.TradeInternal.CreateTradeEvent:input_type -> trade.CreateTradeEventReq
-	4,  // 11: trade.TradeInternal.CheckOrderRisk:input_type -> trade.CheckOrderRiskReq
-	0,  // 12: trade.TradeInternal.RecordOrderFill:output_type -> trade.InternalCommonResp
-	0,  // 13: trade.TradeInternal.RecordPositionHistory:output_type -> trade.InternalCommonResp
-	0,  // 14: trade.TradeInternal.CreateTradeEvent:output_type -> trade.InternalCommonResp
-	5,  // 15: trade.TradeInternal.CheckOrderRisk:output_type -> trade.CheckOrderRiskResp
-	12, // [12:16] is the sub-list for method output_type
-	8,  // [8:12] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	10, // 4: trade.CheckOrderRiskReq.side:type_name -> common.Side
+	11, // 5: trade.CheckOrderRiskReq.position_side:type_name -> trade.PositionSide
+	12, // 6: trade.CheckOrderRiskReq.order_type:type_name -> trade.OrderType
+	1,  // 7: trade.TradeInternal.RecordOrderFill:input_type -> trade.RecordOrderFillReq
+	2,  // 8: trade.TradeInternal.RecordPositionHistory:input_type -> trade.RecordPositionHistoryReq
+	3,  // 9: trade.TradeInternal.CreateTradeEvent:input_type -> trade.CreateTradeEventReq
+	4,  // 10: trade.TradeInternal.CheckOrderRisk:input_type -> trade.CheckOrderRiskReq
+	0,  // 11: trade.TradeInternal.RecordOrderFill:output_type -> trade.InternalCommonResp
+	0,  // 12: trade.TradeInternal.RecordPositionHistory:output_type -> trade.InternalCommonResp
+	0,  // 13: trade.TradeInternal.CreateTradeEvent:output_type -> trade.InternalCommonResp
+	5,  // 14: trade.TradeInternal.CheckOrderRisk:output_type -> trade.CheckOrderRiskResp
+	11, // [11:15] is the sub-list for method output_type
+	7,  // [7:11] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_trade_internal_proto_init() }

@@ -14,6 +14,8 @@ import (
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -57,25 +59,25 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotTradable, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
 	}
 
-	price, err := conv.ParseFloatField(in.Price)
+	price, err := conv.ParseDecimalField(in.Price)
 	if err != nil {
 		return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.PriceFormatError, i18n.Translate(i18n.PriceFormatError, l.ctx))}, nil
 	}
-	qty, err := conv.ParseFloatField(in.Qty)
-	if err != nil || qty <= 0 {
+	qty, err := conv.ParseDecimalField(in.Qty)
+	if err != nil || !qty.IsPositive() {
 		return &option.AppPlaceOrderResp{Base: helper.ErrResp(i18n.QuantityFormatError, i18n.Translate(i18n.QuantityFormatError, l.ctx))}, nil
 	}
 
-	marginAmount := 0.0
+	marginAmount := decimal.Zero
 	if in.PositionEffect == option.PositionEffect_POSITION_EFFECT_OPEN {
 		multiplier := contract.Multiplier
-		if multiplier <= 0 {
+		if !multiplier.IsPositive() {
 			multiplier = contract.ContractUnit
 		}
-		if multiplier <= 0 {
-			multiplier = 1
+		if !multiplier.IsPositive() {
+			multiplier = decimal.NewFromInt(1)
 		}
-		marginAmount = price * qty * multiplier
+		marginAmount = price.Mul(qty).Mul(multiplier)
 	}
 
 	if in.ClientOrderId != "" {
@@ -106,11 +108,11 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		OrderType:        int64(in.OrderType),
 		Price:            price,
 		Qty:              qty,
-		FilledQty:        0,
+		FilledQty:        decimal.Zero,
 		UnfilledQty:      qty,
-		AvgPrice:         0,
-		Turnover:         0,
-		Fee:              0,
+		AvgPrice:         decimal.Zero,
+		Turnover:         decimal.Zero,
+		Fee:              decimal.Zero,
 		FeeCoin:          contract.SettleCoin,
 		MarginAmount:     marginAmount,
 		Source:           int64(option.OrderSource_ORDER_SOURCE_APP),
@@ -150,7 +152,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		return nil, err
 	}
 
-	if marginAmount > 0 {
+	if marginAmount.IsPositive() {
 		resp, err := l.svcCtx.AssetClient.FreezeAsset(l.ctx, &asset.FreezeAssetReq{
 			TenantId:   tenantId,
 			UserId:     userId,

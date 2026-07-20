@@ -5,11 +5,11 @@ import type {
   CancelAllOrdersReq,
   CancelOrderReq,
   ContractLeverageConfig,
-  ContractMarginAccount,
+  ContractMarginSnapshot,
   ContractPosition,
   GetFillListReq,
   GetLeverageConfigReq,
-  GetMarginAccountListReq,
+  GetMarginSnapshotListReq,
   GetOrderDetailReq,
   GetOrderListReq,
   GetPositionListReq,
@@ -22,7 +22,9 @@ import type {
   TradeSymbol,
   TradeSymbolContract,
   TradeSymbolLeverageConfig,
+  TradeSymbolSeconds,
   TradeSymbolSpot,
+  TradeOrderSeconds,
 } from '../types/trade'
 
 export function apiTradeGetSymbolList(
@@ -40,6 +42,7 @@ export function apiTradeGetSymbolDetail(params: GetSymbolDetailReq): Promise<
       spot: TradeSymbolSpot
       contract: TradeSymbolContract
       leverageConfigs: TradeSymbolLeverageConfig[]
+      secondsConfigs: TradeSymbolSeconds[]
     }
   }
 > {
@@ -84,6 +87,7 @@ export function apiTradeGetOrderDetail(params: GetOrderDetailReq): Promise<
       order: TradeOrder
       spot: TradeSymbolSpot
       contract: TradeSymbolContract
+      seconds: TradeOrderSeconds
     }
   }
 > {
@@ -108,11 +112,11 @@ export function apiTradeGetPositionList(
     .then((res: { data: any }) => res.data)
 }
 
-export function apiTradeGetMarginAccountList(
-  params: GetMarginAccountListReq,
-): Promise<RespBase & { data: ContractMarginAccount[] }> {
+export function apiTradeGetMarginSnapshotList(
+  params: GetMarginSnapshotListReq,
+): Promise<RespBase & { data: ContractMarginSnapshot[] }> {
   return authHttp
-    .get('/trade/margin-accounts', { params: compactParams(params) })
+    .get('/trade/margin-snapshots', { params: compactParams(params) })
     .then((res: { data: any }) => res.data)
 }
 

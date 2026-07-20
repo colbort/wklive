@@ -36,12 +36,12 @@ func (l *GetFillListAdminLogic) GetFillListAdmin(in *trade.GetFillListAdminReq) 
 	}
 	cursor, limit := pageutil.Input(in.Page)
 	data, total, err := l.svcCtx.TradeFillModel.FindPage(l.ctx, models.TradeFillPageFilter{
-		TenantId:   in.TenantId,
-		UserId:     in.UserId,
-		SymbolId:   in.SymbolId,
-		MarketType: int64(in.MarketType),
-		TimeStart:  in.TimeRange.StartTime,
-		TimeEnd:    in.TimeRange.EndTime,
+		TenantId:    in.TenantId,
+		UserId:      in.UserId,
+		SymbolId:    in.SymbolId,
+		ProductType: int64(in.ProductType),
+		TimeStart:   in.TimeRange.StartTime,
+		TimeEnd:     in.TimeRange.EndTime,
 	}, cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

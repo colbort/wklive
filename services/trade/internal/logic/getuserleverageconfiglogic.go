@@ -28,7 +28,7 @@ func NewGetUserLeverageConfigLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 获取用户杠杆配置
 func (l *GetUserLeverageConfigLogic) GetUserLeverageConfig(in *trade.GetUserLeverageConfigReq) (*trade.GetUserLeverageConfigResp, error) {
-	item, err := l.svcCtx.ContractLeverageCfgModel.FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(l.ctx, in.TenantId, in.UserId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode))
+	item, err := l.svcCtx.ContractLeverageCfgModel.FindOneByTenantIdUserIdSymbolIdMarginMode(l.ctx, in.TenantId, in.UserId, in.SymbolId, int64(in.MarginMode))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

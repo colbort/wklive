@@ -5,6 +5,45 @@ import (
 	"wklive/services/itick/internal/market/types"
 )
 
+func TestMarketDataKeyUsesLegacyKeyForRealtimeTopics(t *testing.T) {
+	tests := []struct {
+		topic types.Topic
+		want  string
+	}{
+		{topic: types.TopicQuote, want: "itick:quote:crypto:BA:BTCUSDT"},
+		{topic: types.TopicDepth, want: "itick:depth:crypto:BA:BTCUSDT"},
+		{topic: types.TopicTick, want: "itick:tick:crypto:BA:BTCUSDT"},
+	}
+
+	for _, tt := range tests {
+		t.Run(string(tt.topic), func(t *testing.T) {
+			got := marketDataKey(types.ClientMessage{
+				Topic:        tt.topic,
+				CategoryCode: " Crypto ",
+				Market:       "ba",
+				Symbol:       "btcusdt",
+			})
+			if got != tt.want {
+				t.Fatalf("marketDataKey() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMarketDataKeyKeepsVersionedKlineKey(t *testing.T) {
+	got := marketDataKey(types.ClientMessage{
+		Topic:        types.TopicKline,
+		CategoryCode: "crypto",
+		Market:       "ba",
+		Symbol:       "btcusdt",
+		Interval:     "1M",
+	})
+	want := "itick:v1:kline:crypto:BA:BTCUSDT:1m"
+	if got != want {
+		t.Fatalf("marketDataKey() = %q, want %q", got, want)
+	}
+}
+
 func TestNormalizeClientMessageClearsIntervalForNonKline(t *testing.T) {
 	msg := NormalizeClientMessage(types.ClientMessage{
 		Topic:        types.TopicQuote,

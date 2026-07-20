@@ -1,11 +1,6 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard
-      :model="riskQuery"
-      :show-actions="false"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="riskQuery" :show-actions="false" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -13,14 +8,7 @@
         <UserSelect v-model="riskQuery.userId" :tenant-id="riskQuery.tenantId || undefined" />
       </el-form-item>
       <el-form-item :label="t('trade.symbolId')">
-        <SymbolSelect
-          v-model="riskQuery.symbolId"
-          :tenant-id="riskQuery.tenantId || undefined"
-          :market-type="riskQuery.marketType || undefined"
-        />
-      </el-form-item>
-      <el-form-item :label="t('trade.marketType')">
-        <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
+        <SymbolSelect v-model="riskQuery.symbolId" :tenant-id="riskQuery.tenantId || undefined" />
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never">
@@ -69,13 +57,11 @@ const riskQuery = reactive<GetUserSymbolLimitReq>({
   tenantId: undefined as number | undefined,
   userId: undefined as number | undefined,
   symbolId: undefined as number | undefined,
-  marketType: undefined as number | undefined,
 })
 const symbolLimitForm = reactive<SetUserSymbolLimitReq>({
   tenantId: 0,
   userId: 0,
   symbolId: 0,
-  marketType: 0,
   maxPositionQty: '',
   maxPositionNotional: '',
   maxOpenOrders: 0,

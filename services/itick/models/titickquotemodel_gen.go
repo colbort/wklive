@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,23 +44,23 @@ type (
 	}
 
 	TItickQuote struct {
-		Id             int64   `db:"id"`               // 主键ID
-		CategoryCode   string  `db:"category_code"`    // 产品类型标识, 如 forex/crypto/stock/future/indices/fund
-		Market         string  `db:"market"`           // 市场/地区，如 GB
-		Symbol         string  `db:"symbol"`           // 代码，如 EURUSD
-		LastPrice      float64 `db:"last_price"`       // 最新价，对应 ld
-		OpenPrice      float64 `db:"open_price"`       // 开盘价，对应 o
-		HighPrice      float64 `db:"high_price"`       // 最高价，对应 h
-		LowPrice       float64 `db:"low_price"`        // 最低价，对应 l
-		PrevClosePrice float64 `db:"prev_close_price"` // 昨收价，按 ld - ch 计算
-		ChangeValue    float64 `db:"change_value"`     // 涨跌额，对应 ch
-		ChangeRate     float64 `db:"change_rate"`      // 涨跌幅(%)，对应 chp
-		Volume         float64 `db:"volume"`           // 成交量，对应 v
-		Turnover       float64 `db:"turnover"`         // 成交额，对应 tu
-		QuoteTs        int64   `db:"quote_ts"`         // 行情时间戳(毫秒)，对应 t
-		TradeStatus    int64   `db:"trade_status"`     // 交易状态，对应 ts
-		CreateTimes    int64   `db:"create_times"`     // 创建时间(毫秒)
-		UpdateTimes    int64   `db:"update_times"`     // 更新时间(毫秒)
+		Id             int64           `db:"id"`               // 主键ID
+		CategoryCode   string          `db:"category_code"`    // 产品类型标识, 如 forex/crypto/stock/future/indices/fund
+		Market         string          `db:"market"`           // 市场/地区，如 GB
+		Symbol         string          `db:"symbol"`           // 代码，如 EURUSD
+		LastPrice      decimal.Decimal `db:"last_price"`       // 最新价，对应 ld
+		OpenPrice      decimal.Decimal `db:"open_price"`       // 开盘价，对应 o
+		HighPrice      decimal.Decimal `db:"high_price"`       // 最高价，对应 h
+		LowPrice       decimal.Decimal `db:"low_price"`        // 最低价，对应 l
+		PrevClosePrice decimal.Decimal `db:"prev_close_price"` // 昨收价，按 ld - ch 计算
+		ChangeValue    decimal.Decimal `db:"change_value"`     // 涨跌额，对应 ch
+		ChangeRate     decimal.Decimal `db:"change_rate"`      // 涨跌幅(%)，对应 chp
+		Volume         decimal.Decimal `db:"volume"`           // 成交量，对应 v
+		Turnover       decimal.Decimal `db:"turnover"`         // 成交额，对应 tu
+		QuoteTs        int64           `db:"quote_ts"`         // 行情时间戳(毫秒)，对应 t
+		TradeStatus    int64           `db:"trade_status"`     // 交易状态，对应 ts
+		CreateTimes    int64           `db:"create_times"`     // 创建时间(毫秒)
+		UpdateTimes    int64           `db:"update_times"`     // 更新时间(毫秒)
 	}
 )
 

@@ -17,7 +17,7 @@ type (
 		TenantId        int64
 		UserId          int64
 		SymbolId        int64
-		MarketType      int64
+		ProductType     int64
 		Status          int64
 		Side            int64
 		TimeStart       int64
@@ -29,9 +29,9 @@ type (
 	}
 
 	TradeOrderMatchKey struct {
-		TenantId   int64 `db:"tenant_id"`
-		SymbolId   int64 `db:"symbol_id"`
-		MarketType int64 `db:"market_type"`
+		TenantId    int64 `db:"tenant_id"`
+		SymbolId    int64 `db:"symbol_id"`
+		ProductType int64 `db:"product_type"`
 	}
 
 	// TTradeOrderModel is an interface to be customized, add more methods here,
@@ -64,7 +64,7 @@ func (m *defaultTTradeOrderModel) FindPage(ctx context.Context, filter TradeOrde
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("user_id", filter.UserId)
 	builder.EqInt64("symbol_id", filter.SymbolId)
-	builder.EqInt64("market_type", filter.MarketType)
+	builder.EqInt64("product_type", filter.ProductType)
 	builder.EqInt64("status", filter.Status)
 	builder.EqInt64("side", filter.Side)
 	builder.EqInt64("position_side", filter.PositionSide)
@@ -114,7 +114,7 @@ func (m *defaultTTradeOrderModel) CountByStatuses(ctx context.Context, tenantId,
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", int64(tenantId))
 	builder.EqInt64("user_id", int64(userId))
-	builder.EqInt64("market_type", marketType)
+	builder.EqInt64("product_type", marketType)
 	builder.InInt64("status", statuses)
 
 	var total int64
@@ -128,7 +128,7 @@ func (m *defaultTTradeOrderModel) CountByStatuses(ctx context.Context, tenantId,
 func (m *defaultTTradeOrderModel) FindMatchKeys(ctx context.Context, tenantId int64, statuses []int64, limit int64) ([]TradeOrderMatchKey, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	where, args := openOrderWhere(tenantId, 0, 0, 0, statuses)
-	sql := fmt.Sprintf("SELECT tenant_id, symbol_id, market_type FROM %s WHERE %s AND order_type IN (?, ?) GROUP BY tenant_id, symbol_id, market_type ORDER BY tenant_id ASC, symbol_id ASC, market_type ASC LIMIT ?", m.table, where)
+	sql := fmt.Sprintf("SELECT tenant_id, symbol_id, product_type FROM %s WHERE %s AND order_type IN (?, ?) GROUP BY tenant_id, symbol_id, product_type ORDER BY tenant_id ASC, symbol_id ASC, product_type ASC LIMIT ?", m.table, where)
 	args = append(args, 1, 2, limit)
 
 	var list []TradeOrderMatchKey
@@ -202,7 +202,7 @@ func openOrderWhere(tenantId, symbolId, marketType, side int64, statuses []int64
 		args = append(args, symbolId)
 	}
 	if marketType > 0 {
-		parts = append(parts, "market_type = ?")
+		parts = append(parts, "product_type = ?")
 		args = append(args, marketType)
 	}
 	if side > 0 {

@@ -168,7 +168,7 @@ func nullableTradeEventJSON(raw string) sql.NullString {
 	}
 }
 
-func createTradeTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenantID int64, eventType, bizType string, bizID int64, userID, symbolID, marketType int64, payload string) error {
+func createTradeTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenantID int64, eventType, bizType string, bizID int64, userID, symbolID, productType int64, payload string) error {
 	bizIDText := strconv.FormatInt(bizID, 10)
 	exists, _, err := svcCtx.BizTradeEventModel.FindPage(ctx, models.BizTradeEventPageFilter{
 		TenantId:    tenantID,
@@ -196,7 +196,7 @@ func createTradeTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenan
 		BizType:       bizType,
 		UserId:        userID,
 		SymbolId:      symbolID,
-		MarketType:    marketType,
+		ProductType:   productType,
 		Source:        int64(trade.SourceType_SOURCE_TYPE_TASK),
 		EventStatus:   int64(trade.EventStatus_EVENT_STATUS_PENDING),
 		MaxRetryCount: 3,

@@ -583,7 +583,7 @@ type SysTenantDomainDeleteReq {
 }
 
 type SysTenantDomainGuestMigrationStatsReq {
-	tenantId int64 `form:"tenantId"`
+	tenantId     int64  `form:"tenantId"`
 	sourceOrigin string `form:"sourceOrigin"`
 }
 
@@ -871,3 +871,4 @@ service admin {
 	@handler SysChatMerchantDetail
 	get /chat-merchant/detail (SysChatMerchantDetailReq) returns (SysChatMerchantDetailResp)
 }
+

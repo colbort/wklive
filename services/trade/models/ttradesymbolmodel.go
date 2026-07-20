@@ -12,10 +12,10 @@ var _ TTradeSymbolModel = (*customTTradeSymbolModel)(nil)
 
 type (
 	TradeSymbolPageFilter struct {
-		TenantId   int64
-		MarketType int64
-		Status     int64
-		Keyword    string
+		TenantId    int64
+		ProductType int64
+		Status      int64
+		Keyword     string
 	}
 
 	// TTradeSymbolModel is an interface to be customized, add more methods here,
@@ -42,7 +42,7 @@ func (m *defaultTTradeSymbolModel) FindPage(ctx context.Context, filter TradeSym
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
-	builder.EqInt64("market_type", filter.MarketType)
+	builder.EqInt64("product_type", filter.ProductType)
 	builder.EqInt64("status", filter.Status)
 	if filter.Keyword != "" {
 		kw := "%" + filter.Keyword + "%"
@@ -77,7 +77,7 @@ func (m *defaultTTradeSymbolModel) FindPage(ctx context.Context, filter TradeSym
 func (m *defaultTTradeSymbolModel) FindAll(ctx context.Context, filter TradeSymbolPageFilter) ([]*TTradeSymbol, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
-	builder.EqInt64("market_type", filter.MarketType)
+	builder.EqInt64("product_type", filter.ProductType)
 	builder.EqInt64("status", filter.Status)
 	if filter.Keyword != "" {
 		kw := "%" + filter.Keyword + "%"

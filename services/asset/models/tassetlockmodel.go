@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
@@ -28,9 +30,9 @@ type (
 		tAssetLockModel
 		FindPage(ctx context.Context, filter AssetLockPageFilter, cursor int64, limit int64) ([]*TAssetLock, int64, error)
 		// 解锁时更新锁仓记录
-		UpdateUnlock(ctx context.Context, lockNo string, amount float64, updateTimes int64) (bool, error)
+		UpdateUnlock(ctx context.Context, lockNo string, amount decimal.Decimal, updateTimes int64) (bool, error)
 		// 扣减锁仓记录
-		UpdateDeduct(ctx context.Context, lockNo string, amount float64, updateTimes int64) (bool, error)
+		UpdateDeduct(ctx context.Context, lockNo string, amount decimal.Decimal, updateTimes int64) (bool, error)
 	}
 
 	customTAssetLockModel struct {
@@ -100,7 +102,7 @@ func (m *defaultTAssetLockModel) FindPage(ctx context.Context, filter AssetLockP
 
 // 解锁时更新锁仓记录：unlock_amount += amount，remain_amount -= amount
 // 当 remain_amount 为 0 时，状态改为 3（已解锁）；否则为 2（部分解锁）
-func (m *defaultTAssetLockModel) UpdateUnlock(ctx context.Context, lockNo string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTAssetLockModel) UpdateUnlock(ctx context.Context, lockNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -127,7 +129,7 @@ func (m *defaultTAssetLockModel) UpdateUnlock(ctx context.Context, lockNo string
 
 // 扣减锁仓记录：remain_amount -= amount
 // 当 remain_amount 为 0 时，状态改为 4（已关闭）；否则为 2（部分解锁）
-func (m *defaultTAssetLockModel) UpdateDeduct(ctx context.Context, lockNo string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTAssetLockModel) UpdateDeduct(ctx context.Context, lockNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 

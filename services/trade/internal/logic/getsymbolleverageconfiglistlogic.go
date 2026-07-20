@@ -32,7 +32,6 @@ func (l *GetSymbolLeverageConfigListLogic) GetSymbolLeverageConfigList(in *trade
 	data, total, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
 		TenantId:   in.TenantId,
 		SymbolId:   in.SymbolId,
-		MarketType: int64(in.MarketType),
 		MarginMode: int64(in.MarginMode),
 		Enabled:    enableToModel(in.Enabled, 0),
 	}, cursor, limit)
@@ -46,7 +45,11 @@ func (l *GetSymbolLeverageConfigListLogic) GetSymbolLeverageConfigList(in *trade
 	}
 	resp := &trade.GetSymbolLeverageConfigListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
-		resp.Data = append(resp.Data, symbolLeverageConfigToProto(item))
+		defaultLeverage, findErr := findDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, item.TenantId, item.SymbolId, item.MarginMode)
+		if findErr != nil {
+			return nil, findErr
+		}
+		resp.Data = append(resp.Data, symbolLeverageConfigToProto(item, defaultLeverage))
 	}
 	return resp, nil
 }

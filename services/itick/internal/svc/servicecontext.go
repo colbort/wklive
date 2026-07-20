@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	bus "wklive/common/bus/redis"
@@ -129,12 +130,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			CategoryCode:    msg.CategoryCode,
 			Market:          msg.Market,
 			Symbol:          msg.Symbol,
-			UnderlyingPrice: payload.LastPrice,
-			OpenPrice:       payload.Open,
-			HighPrice:       payload.High,
-			LowPrice:        payload.Low,
-			Volume:          payload.Volume,
-			Turnover:        payload.Turnover,
+			UnderlyingPrice: strconv.FormatFloat(payload.LastPrice, 'f', -1, 64),
+			OpenPrice:       strconv.FormatFloat(payload.Open, 'f', -1, 64),
+			HighPrice:       strconv.FormatFloat(payload.High, 'f', -1, 64),
+			LowPrice:        strconv.FormatFloat(payload.Low, 'f', -1, 64),
+			Volume:          strconv.FormatFloat(payload.Volume, 'f', -1, 64),
+			Turnover:        strconv.FormatFloat(payload.Turnover, 'f', -1, 64),
 			QuoteTs:         payload.Ts,
 		})
 		if err != nil {

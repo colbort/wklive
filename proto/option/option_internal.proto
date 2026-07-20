@@ -11,12 +11,12 @@ message SyncMarketQuoteReq {
   string category_code = 2;
   string market = 3;
   string symbol = 4;
-  double underlying_price = 5;
-  double open_price = 6;
-  double high_price = 7;
-  double low_price = 8;
-  double volume = 9;
-  double turnover = 10;
+  string underlying_price = 5;
+  string open_price = 6;
+  string high_price = 7;
+  string low_price = 8;
+  string volume = 9;
+  string turnover = 10;
   int64 quote_ts = 11;
 }
 

@@ -3,6 +3,8 @@ package models
 import (
 	"context"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
@@ -32,7 +34,7 @@ type (
 	TOptionOrderModel interface {
 		tOptionOrderModel
 		FindPage(ctx context.Context, filter OptionOrderPageFilter, cursor int64, limit int64) ([]*TOptionOrder, int64, error)
-		FindMatchableOrders(ctx context.Context, tenantId, contractId, side int64, price float64, limit int64) ([]*TOptionOrder, error)
+		FindMatchableOrders(ctx context.Context, tenantId, contractId, side int64, price decimal.Decimal, limit int64) ([]*TOptionOrder, error)
 	}
 
 	customTOptionOrderModel struct {
@@ -90,7 +92,7 @@ func (m *defaultTOptionOrderModel) FindPage(ctx context.Context, filter OptionOr
 	return list, total, nil
 }
 
-func (m *defaultTOptionOrderModel) FindMatchableOrders(ctx context.Context, tenantId, contractId, side int64, price float64, limit int64) ([]*TOptionOrder, error) {
+func (m *defaultTOptionOrderModel) FindMatchableOrders(ctx context.Context, tenantId, contractId, side int64, price decimal.Decimal, limit int64) ([]*TOptionOrder, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	priceClause := "price <= ?"

@@ -54,10 +54,10 @@ func (l *ProcessPositionsLogic) refreshMarkPrices(in *trade.TradeTaskReq) error 
 		}
 		for _, position := range positions {
 			cursor = position.Id
-			if position.Qty <= 0 {
+			if !position.Qty.IsPositive() {
 				continue
 			}
-			if err := createTradeTaskEvent(l.ctx, l.svcCtx, position.TenantId, "MARK_PRICE_REFRESH_REQUIRED", "position", position.Id, position.UserId, position.SymbolId, position.MarketType, "mark price refresh task"); err != nil {
+			if err := createTradeTaskEvent(l.ctx, l.svcCtx, position.TenantId, "MARK_PRICE_REFRESH_REQUIRED", "position", position.Id, position.UserId, position.SymbolId, int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE), "mark price refresh task"); err != nil {
 				return err
 			}
 		}
@@ -79,15 +79,15 @@ func (l *ProcessPositionsLogic) forceLiquidation(in *trade.TradeTaskReq) error {
 		}
 		for _, position := range positions {
 			cursor = position.Id
-			if position.Qty <= 0 || position.MarkPrice <= 0 || position.LiquidationPrice <= 0 {
+			if !position.Qty.IsPositive() || !position.MarkPrice.IsPositive() || !position.LiquidationPrice.IsPositive() {
 				continue
 			}
-			needLiquidation := (position.PositionSide == int64(trade.PositionSide_POSITION_SIDE_LONG) && position.MarkPrice <= position.LiquidationPrice) ||
-				(position.PositionSide == int64(trade.PositionSide_POSITION_SIDE_SHORT) && position.MarkPrice >= position.LiquidationPrice)
+			needLiquidation := (position.PositionSide == int64(trade.PositionSide_POSITION_SIDE_LONG) && position.MarkPrice.LessThanOrEqual(position.LiquidationPrice)) ||
+				(position.PositionSide == int64(trade.PositionSide_POSITION_SIDE_SHORT) && position.MarkPrice.GreaterThanOrEqual(position.LiquidationPrice))
 			if !needLiquidation {
 				continue
 			}
-			if err := createTradeTaskEvent(l.ctx, l.svcCtx, position.TenantId, "FORCE_LIQUIDATION_REQUIRED", "position", position.Id, position.UserId, position.SymbolId, position.MarketType, "force liquidation task"); err != nil {
+			if err := createTradeTaskEvent(l.ctx, l.svcCtx, position.TenantId, "FORCE_LIQUIDATION_REQUIRED", "position", position.Id, position.UserId, position.SymbolId, int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE), "force liquidation task"); err != nil {
 				return err
 			}
 		}
@@ -110,7 +110,7 @@ func (l *ProcessPositionsLogic) closePositions(in *trade.TradeTaskReq) error {
 		}
 		for _, position := range positions {
 			cursor = position.Id
-			if position.Qty <= 0 {
+			if !position.Qty.IsPositive() {
 				continue
 			}
 			symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, position.SymbolId)
@@ -120,10 +120,10 @@ func (l *ProcessPositionsLogic) closePositions(in *trade.TradeTaskReq) error {
 			if err != nil {
 				return err
 			}
-			if symbol.Status != int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED) && (symbol.CloseTime == 0 || symbol.CloseTime > now) {
+			if symbol.Status != int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED) && (symbol.TradingEndTime == 0 || symbol.TradingEndTime > now) {
 				continue
 			}
-			if err := createTradeTaskEvent(l.ctx, l.svcCtx, position.TenantId, "CLOSE_POSITION_REQUIRED", "position", position.Id, position.UserId, position.SymbolId, position.MarketType, "close position task"); err != nil {
+			if err := createTradeTaskEvent(l.ctx, l.svcCtx, position.TenantId, "CLOSE_POSITION_REQUIRED", "position", position.Id, position.UserId, position.SymbolId, symbol.ProductType, "close position task"); err != nil {
 				return err
 			}
 		}

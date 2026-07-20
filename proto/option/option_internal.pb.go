@@ -28,12 +28,12 @@ type SyncMarketQuoteReq struct {
 	CategoryCode    string                 `protobuf:"bytes,2,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	Market          string                 `protobuf:"bytes,3,opt,name=market,proto3" json:"market,omitempty"`
 	Symbol          string                 `protobuf:"bytes,4,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	UnderlyingPrice float64                `protobuf:"fixed64,5,opt,name=underlying_price,json=underlyingPrice,proto3" json:"underlying_price,omitempty"`
-	OpenPrice       float64                `protobuf:"fixed64,6,opt,name=open_price,json=openPrice,proto3" json:"open_price,omitempty"`
-	HighPrice       float64                `protobuf:"fixed64,7,opt,name=high_price,json=highPrice,proto3" json:"high_price,omitempty"`
-	LowPrice        float64                `protobuf:"fixed64,8,opt,name=low_price,json=lowPrice,proto3" json:"low_price,omitempty"`
-	Volume          float64                `protobuf:"fixed64,9,opt,name=volume,proto3" json:"volume,omitempty"`
-	Turnover        float64                `protobuf:"fixed64,10,opt,name=turnover,proto3" json:"turnover,omitempty"`
+	UnderlyingPrice string                 `protobuf:"bytes,5,opt,name=underlying_price,json=underlyingPrice,proto3" json:"underlying_price,omitempty"`
+	OpenPrice       string                 `protobuf:"bytes,6,opt,name=open_price,json=openPrice,proto3" json:"open_price,omitempty"`
+	HighPrice       string                 `protobuf:"bytes,7,opt,name=high_price,json=highPrice,proto3" json:"high_price,omitempty"`
+	LowPrice        string                 `protobuf:"bytes,8,opt,name=low_price,json=lowPrice,proto3" json:"low_price,omitempty"`
+	Volume          string                 `protobuf:"bytes,9,opt,name=volume,proto3" json:"volume,omitempty"`
+	Turnover        string                 `protobuf:"bytes,10,opt,name=turnover,proto3" json:"turnover,omitempty"`
 	QuoteTs         int64                  `protobuf:"varint,11,opt,name=quote_ts,json=quoteTs,proto3" json:"quote_ts,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -97,46 +97,46 @@ func (x *SyncMarketQuoteReq) GetSymbol() string {
 	return ""
 }
 
-func (x *SyncMarketQuoteReq) GetUnderlyingPrice() float64 {
+func (x *SyncMarketQuoteReq) GetUnderlyingPrice() string {
 	if x != nil {
 		return x.UnderlyingPrice
 	}
-	return 0
+	return ""
 }
 
-func (x *SyncMarketQuoteReq) GetOpenPrice() float64 {
+func (x *SyncMarketQuoteReq) GetOpenPrice() string {
 	if x != nil {
 		return x.OpenPrice
 	}
-	return 0
+	return ""
 }
 
-func (x *SyncMarketQuoteReq) GetHighPrice() float64 {
+func (x *SyncMarketQuoteReq) GetHighPrice() string {
 	if x != nil {
 		return x.HighPrice
 	}
-	return 0
+	return ""
 }
 
-func (x *SyncMarketQuoteReq) GetLowPrice() float64 {
+func (x *SyncMarketQuoteReq) GetLowPrice() string {
 	if x != nil {
 		return x.LowPrice
 	}
-	return 0
+	return ""
 }
 
-func (x *SyncMarketQuoteReq) GetVolume() float64 {
+func (x *SyncMarketQuoteReq) GetVolume() string {
 	if x != nil {
 		return x.Volume
 	}
-	return 0
+	return ""
 }
 
-func (x *SyncMarketQuoteReq) GetTurnover() float64 {
+func (x *SyncMarketQuoteReq) GetTurnover() string {
 	if x != nil {
 		return x.Turnover
 	}
-	return 0
+	return ""
 }
 
 func (x *SyncMarketQuoteReq) GetQuoteTs() int64 {
@@ -200,15 +200,15 @@ const file_proto_option_option_internal_proto_rawDesc = "" +
 	"\rcategory_code\x18\x02 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x03 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x04 \x01(\tR\x06symbol\x12)\n" +
-	"\x10underlying_price\x18\x05 \x01(\x01R\x0funderlyingPrice\x12\x1d\n" +
+	"\x10underlying_price\x18\x05 \x01(\tR\x0funderlyingPrice\x12\x1d\n" +
 	"\n" +
-	"open_price\x18\x06 \x01(\x01R\topenPrice\x12\x1d\n" +
+	"open_price\x18\x06 \x01(\tR\topenPrice\x12\x1d\n" +
 	"\n" +
-	"high_price\x18\a \x01(\x01R\thighPrice\x12\x1b\n" +
-	"\tlow_price\x18\b \x01(\x01R\blowPrice\x12\x16\n" +
-	"\x06volume\x18\t \x01(\x01R\x06volume\x12\x1a\n" +
+	"high_price\x18\a \x01(\tR\thighPrice\x12\x1b\n" +
+	"\tlow_price\x18\b \x01(\tR\blowPrice\x12\x16\n" +
+	"\x06volume\x18\t \x01(\tR\x06volume\x12\x1a\n" +
 	"\bturnover\x18\n" +
-	" \x01(\x01R\bturnover\x12\x19\n" +
+	" \x01(\tR\bturnover\x12\x19\n" +
 	"\bquote_ts\x18\v \x01(\x03R\aquoteTs\":\n" +
 	"\x12InternalCommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2[\n" +

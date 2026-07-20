@@ -19,6 +19,7 @@ type (
 	AcceptChatSessionUser          = chat.AcceptChatSessionUser
 	AdminChatAgentResp             = chat.AdminChatAgentResp
 	AdminChatCategoryResp          = chat.AdminChatCategoryResp
+	AdminChatConfigResp            = chat.AdminChatConfigResp
 	AdminChatGroupResp             = chat.AdminChatGroupResp
 	AdminChatMessageResp           = chat.AdminChatMessageResp
 	AdminChatQuickReplyResp        = chat.AdminChatQuickReplyResp
@@ -45,6 +46,7 @@ type (
 	DeleteChatWorkOrderReq         = chat.DeleteChatWorkOrderReq
 	GetChatAgentReq                = chat.GetChatAgentReq
 	GetChatCategoryReq             = chat.GetChatCategoryReq
+	GetChatConfigReq               = chat.GetChatConfigReq
 	GetChatGroupReq                = chat.GetChatGroupReq
 	GetChatQuickReplyReq           = chat.GetChatQuickReplyReq
 	GetChatSessionReq              = chat.GetChatSessionReq
@@ -78,6 +80,7 @@ type (
 	UpdateChatAgentReq             = chat.UpdateChatAgentReq
 	UpdateChatAgentStatusReq       = chat.UpdateChatAgentStatusReq
 	UpdateChatCategoryReq          = chat.UpdateChatCategoryReq
+	UpdateChatConfigReq            = chat.UpdateChatConfigReq
 	UpdateChatGroupReq             = chat.UpdateChatGroupReq
 	UpdateChatQuickReplyReq        = chat.UpdateChatQuickReplyReq
 	UpdateChatWorkOrderReq         = chat.UpdateChatWorkOrderReq
@@ -93,6 +96,10 @@ type (
 		UpdateProfile(ctx context.Context, in *UpdateChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
 		// 获取用户
 		GetChatUserById(ctx context.Context, in *GetChatUserByIdReq, opts ...grpc.CallOption) (*GetChatUserByIdResp, error)
+		// 查询chat-ui配置
+		GetChatConfig(ctx context.Context, in *GetChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error)
+		// 更新chat-ui配置
+		UpdateChatConfig(ctx context.Context, in *UpdateChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error)
 		// 创建客服分组
 		CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
 		// 更新客服分组
@@ -210,6 +217,18 @@ func (m *defaultChatAdmin) UpdateProfile(ctx context.Context, in *UpdateChatAdmi
 func (m *defaultChatAdmin) GetChatUserById(ctx context.Context, in *GetChatUserByIdReq, opts ...grpc.CallOption) (*GetChatUserByIdResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.GetChatUserById(ctx, in, opts...)
+}
+
+// 查询chat-ui配置
+func (m *defaultChatAdmin) GetChatConfig(ctx context.Context, in *GetChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.GetChatConfig(ctx, in, opts...)
+}
+
+// 更新chat-ui配置
+func (m *defaultChatAdmin) UpdateChatConfig(ctx context.Context, in *UpdateChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error) {
+	client := chat.NewChatAdminClient(m.cli.Conn())
+	return client.UpdateChatConfig(ctx, in, opts...)
 }
 
 // 创建客服分组

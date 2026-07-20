@@ -11,6 +11,7 @@ import (
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 )
@@ -135,9 +136,9 @@ func redisEvalOK(ret any) bool {
 	}
 }
 
-func calcTaskReward(order *models.TStakeOrder, days int64) float64 {
-	if order == nil || order.StakeAmount <= 0 || order.Apr <= 0 || days <= 0 {
-		return 0
+func calcTaskReward(order *models.TStakeOrder, days int64) decimal.Decimal {
+	if order == nil || !order.StakeAmount.IsPositive() || !order.Apr.IsPositive() || days <= 0 {
+		return decimal.Zero
 	}
-	return order.StakeAmount * order.Apr / 100 * float64(days) / 365
+	return order.StakeAmount.Mul(order.Apr).Mul(decimal.NewFromInt(days)).Div(decimal.NewFromInt(36500))
 }

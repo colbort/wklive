@@ -59,6 +59,18 @@ func (s *TradeAdminServer) SetContractSymbolConfig(ctx context.Context, in *trad
 	return l.SetContractSymbolConfig(in)
 }
 
+// 设置秒合约产品配置
+func (s *TradeAdminServer) SetSecondsSymbolConfig(ctx context.Context, in *trade.SetSecondsSymbolConfigReq) (*trade.AdminCommonResp, error) {
+	l := logic.NewSetSecondsSymbolConfigLogic(ctx, s.svcCtx)
+	return l.SetSecondsSymbolConfig(in)
+}
+
+// 保存交易时段配置
+func (s *TradeAdminServer) SetSymbolSession(ctx context.Context, in *trade.SetSymbolSessionReq) (*trade.AdminCommonResp, error) {
+	l := logic.NewSetSymbolSessionLogic(ctx, s.svcCtx)
+	return l.SetSymbolSession(in)
+}
+
 // 保存交易对杠杆档位配置
 func (s *TradeAdminServer) SetSymbolLeverageConfig(ctx context.Context, in *trade.SetSymbolLeverageConfigReq) (*trade.AdminCommonResp, error) {
 	l := logic.NewSetSymbolLeverageConfigLogic(ctx, s.svcCtx)
@@ -119,10 +131,10 @@ func (s *TradeAdminServer) GetPositionHistoryListAdmin(ctx context.Context, in *
 	return l.GetPositionHistoryListAdmin(in)
 }
 
-// 获取保证金账户列表
-func (s *TradeAdminServer) GetMarginAccountListAdmin(ctx context.Context, in *trade.GetMarginAccountListAdminReq) (*trade.GetMarginAccountListAdminResp, error) {
-	l := logic.NewGetMarginAccountListAdminLogic(ctx, s.svcCtx)
-	return l.GetMarginAccountListAdmin(in)
+// 获取合约风控保证金快照列表
+func (s *TradeAdminServer) GetMarginSnapshotListAdmin(ctx context.Context, in *trade.GetMarginSnapshotListAdminReq) (*trade.GetMarginSnapshotListAdminResp, error) {
+	l := logic.NewGetMarginSnapshotListAdminLogic(ctx, s.svcCtx)
+	return l.GetMarginSnapshotListAdmin(in)
 }
 
 // 获取撤单日志列表
@@ -165,6 +177,18 @@ func (s *TradeAdminServer) SetUserTradeConfig(ctx context.Context, in *trade.Set
 func (s *TradeAdminServer) GetUserTradeConfig(ctx context.Context, in *trade.GetUserTradeConfigReq) (*trade.GetUserTradeConfigResp, error) {
 	l := logic.NewGetUserTradeConfigLogic(ctx, s.svcCtx)
 	return l.GetUserTradeConfig(in)
+}
+
+// 设置用户合约偏好配置
+func (s *TradeAdminServer) SetContractUserConfig(ctx context.Context, in *trade.SetContractUserConfigReq) (*trade.AdminCommonResp, error) {
+	l := logic.NewSetContractUserConfigLogic(ctx, s.svcCtx)
+	return l.SetContractUserConfig(in)
+}
+
+// 获取用户合约偏好配置
+func (s *TradeAdminServer) GetContractUserConfig(ctx context.Context, in *trade.GetContractUserConfigReq) (*trade.GetContractUserConfigResp, error) {
+	l := logic.NewGetContractUserConfigLogic(ctx, s.svcCtx)
+	return l.GetContractUserConfig(in)
 }
 
 // 获取风控订单校验日志列表

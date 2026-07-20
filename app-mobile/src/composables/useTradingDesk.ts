@@ -760,12 +760,12 @@ function mergeKlineList(current: KlinePayload[], next: KlinePayload[]) {
 
 function normalizeKlineList(
   items: Array<{
-    open: number
-    high: number
-    low: number
-    close: number
-    volume: number
-    turnover: number
+    open: string | number
+    high: string | number
+    low: string | number
+    close: string | number
+    volume: string | number
+    turnover: string | number
     ts: number
   }>,
   interval = DEFAULT_INTERVAL,
@@ -773,12 +773,12 @@ function normalizeKlineList(
   return items
     .map((item) => ({
       interval,
-      open: item.open,
-      high: item.high,
-      low: item.low,
-      close: item.close,
-      volume: item.volume,
-      turnover: item.turnover,
+      open: Number(item.open),
+      high: Number(item.high),
+      low: Number(item.low),
+      close: Number(item.close),
+      volume: Number(item.volume),
+      turnover: Number(item.turnover),
       ts: item.ts,
     }))
     .sort((left, right) => right.ts - left.ts)

@@ -12,16 +12,6 @@ const (
 	TenantDomainStatusDisabled int64 = 3
 )
 
-type SysTenantDomain struct {
-	Id          int64  `db:"id"`
-	TenantId    int64  `db:"tenant_id"`
-	Origin      string `db:"origin"`
-	Status      int64  `db:"status"`
-	Priority    int64  `db:"priority"`
-	CreateTimes int64  `db:"create_times"`
-	UpdateTimes int64  `db:"update_times"`
-}
-
 type SysTenantDomainModel interface {
 	FindByTenantOrigin(ctx context.Context, tenantId int64, origin string) (*SysTenantDomain, error)
 	FindHighestPriorityActive(ctx context.Context, tenantId int64) (*SysTenantDomain, error)

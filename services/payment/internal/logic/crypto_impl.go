@@ -209,7 +209,7 @@ func listCryptoWalletAccounts(ctx context.Context, svcCtx *svc.ServiceContext, i
 }
 
 func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoRechargeTxReq) (*payment.AdminCommonResp, error) {
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		return nil, err
 	}

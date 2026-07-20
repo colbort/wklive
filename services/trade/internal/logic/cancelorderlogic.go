@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 
 	"wklive/common/helper"
@@ -49,7 +50,7 @@ func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.AppComm
 	case in.OrderNo != "":
 		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdOrderNo(l.ctx, tenantId, in.OrderNo)
 	case in.ClientOrderId != "":
-		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, in.ClientOrderId)
+		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, sql.NullString{String: in.ClientOrderId, Valid: true})
 	default:
 		return &trade.AppCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}

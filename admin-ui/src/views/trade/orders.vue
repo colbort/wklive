@@ -13,14 +13,14 @@
         <SymbolSelect
           v-model="query.symbolId"
           :tenant-id="query.tenantId || undefined"
-          :market-type="query.marketType || undefined"
+          :product-type="query.productType || undefined"
         />
       </el-form-item>
 
-      <el-form-item :label="t('trade.marketType')">
-        <el-select v-model="query.marketType" clearable class="query-field">
+      <el-form-item :label="t('trade.productType')">
+        <el-select v-model="query.productType" clearable class="query-field">
           <el-option
-            v-for="item in marketTypeOptions"
+            v-for="item in productTypeOptions"
             :key="item.value"
             :label="optionItemLabel(item)"
             :value="item.value"
@@ -64,10 +64,10 @@
         <el-table-column prop="userId" :label="t('trade.userId')" width="100" />
         <el-table-column prop="symbolId" :label="t('trade.symbolId')" width="100" />
 
-        <el-table-column :label="t('trade.marketType')" min-width="130">
+        <el-table-column :label="t('trade.productType')" min-width="130">
           <template #default="{ row }">
             <el-tag size="small" effect="light">
-              {{ optionLabel('marketType', row.marketType) }}
+              {{ optionLabel('productType', row.productType) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -127,19 +127,9 @@
           </template>
         </el-table-column>
 
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="110"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="110" fixed="right">
           <template #default="{ row }">
-            <el-button
-              v-perm="'trade:order:detail'"
-              link
-              type="primary"
-              @click="showDetail(row)"
-            >
+            <el-button v-perm="'trade:order:detail'" link type="primary" @click="showDetail(row)">
               <el-icon><View /></el-icon>
               {{ t('option.detail') }}
             </el-button>
@@ -190,8 +180,8 @@
             <el-descriptions-item :label="t('trade.symbolId')">
               {{ detailData.symbolId }}
             </el-descriptions-item>
-            <el-descriptions-item :label="t('trade.marketType')">
-              {{ optionLabel('marketType', detailData.marketType) }}
+            <el-descriptions-item :label="t('trade.productType')">
+              {{ optionLabel('productType', detailData.productType) }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.positionSide')">
               {{ optionLabel('positionSide', detailData.positionSide) }}
@@ -230,9 +220,6 @@
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.isReduceOnly')">
               {{ yesNoLabel(detailData.isReduceOnly) }}
-            </el-descriptions-item>
-            <el-descriptions-item :label="t('trade.isCloseOnly')">
-              {{ yesNoLabel(detailData.isCloseOnly) }}
             </el-descriptions-item>
           </el-descriptions>
 
@@ -290,6 +277,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { View } from '@element-plus/icons-vue'
+import Decimal from 'decimal.js'
 import { usePagination } from '@/composables'
 import { tradeService, type OptionGroup, type OptionItem, type TradeOrder } from '@/services'
 import { formatDate } from '@/utils'
@@ -307,17 +295,16 @@ type OrderQuery = {
   tenantId?: number
   userId?: number
   symbolId?: number
-  marketType?: number
+  productType?: number
   status?: number
   keyword: string
 }
 
 const fallbackOptions: Record<string, OptionItem[]> = {
-  marketType: [
-    { value: 1, code: 'MARKET_TYPE_SPOT' },
-    { value: 2, code: 'MARKET_TYPE_SECONDS_CONTRACT' },
-    { value: 3, code: 'MARKET_TYPE_USDT_CONTRACT' },
-    { value: 4, code: 'MARKET_TYPE_COIN_CONTRACT' },
+  productType: [
+    { value: 1, code: 'PRODUCT_TYPE_SPOT' },
+    { value: 2, code: 'PRODUCT_TYPE_DERIVATIVE' },
+    { value: 3, code: 'PRODUCT_TYPE_SECONDS' },
   ],
   tradeSide: [
     { value: 1, code: 'TRADE_SIDE_BUY' },
@@ -378,13 +365,13 @@ const query = reactive<OrderQuery>({
   tenantId: undefined,
   userId: undefined,
   symbolId: undefined,
-  marketType: undefined,
+  productType: undefined,
   status: undefined,
   keyword: '',
 })
 
 const detailTitle = computed(() => `${t('trade.orders')}${t('option.detail')}`)
-const marketTypeOptions = computed(() => optionItems('marketType'))
+const productTypeOptions = computed(() => optionItems('productType'))
 const orderStatusOptions = computed(() => optionItems('orderStatus'))
 const fillProgress = computed(() => calcFillProgress(detailData.value))
 
@@ -408,7 +395,7 @@ const loadList = async () => {
       tenantId: query.tenantId || undefined,
       userId: query.userId || undefined,
       symbolId: query.symbolId || undefined,
-      marketType: query.marketType || undefined,
+      productType: query.productType || undefined,
       status: query.status || undefined,
       keyword: query.keyword || undefined,
       cursor: pagination.cursor,
@@ -425,7 +412,7 @@ const resetQuery = () => {
   query.tenantId = undefined
   query.userId = undefined
   query.symbolId = undefined
-  query.marketType = undefined
+  query.productType = undefined
   query.status = undefined
   query.keyword = ''
   resetAndLoad(loadList)
@@ -486,14 +473,23 @@ function yesNoLabel(value?: number) {
 
 function calcFillProgress(order: TradeOrder | null) {
   if (!order) return 0
-  const filledQty = Number(order.filledQty || 0)
-  const qty = Number(order.qty || 0)
-  if (qty > 0) return Math.min(100, Math.round((filledQty / qty) * 100))
 
-  const filledAmount = Number(order.filledAmount || 0)
-  const amount = Number(order.amount || 0)
-  if (amount > 0) return Math.min(100, Math.round((filledAmount / amount) * 100))
-  return 0
+  const calculate = (filled: string, total: string): number | null => {
+    try {
+      const totalValue = new Decimal(total || 0)
+      if (!totalValue.isPositive()) return null
+
+      return Decimal.min(new Decimal(filled || 0).div(totalValue).mul(100), 100)
+        .toDecimalPlaces(0, Decimal.ROUND_HALF_UP)
+        .toNumber()
+    } catch {
+      return 0
+    }
+  }
+
+  return (
+    calculate(order.filledQty, order.qty) ?? calculate(order.filledAmount, order.amount) ?? 0
+  )
 }
 
 function formatJsonText(value: string) {

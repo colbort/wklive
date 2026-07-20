@@ -14,6 +14,7 @@ import (
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -50,7 +51,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		return nil, err
 	}
 	if in.ClientOrderId != "" {
-		exists, err := l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, in.ClientOrderId)
+		exists, err := l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, sql.NullString{String: in.ClientOrderId, Valid: true})
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
 			return nil, err
 		}
@@ -62,46 +63,67 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	orderType := in.OrderType
 	triggerKind := in.TriggerKind
 	timeInForce := in.TimeInForce
+	isSeconds := symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SECONDS)
+	var secondsCfg *models.TTradeSymbolSeconds
 
 	price := mustParseFloat(in.Price)
 	qty := mustParseFloat(in.Qty)
 	amount := mustParseFloat(in.Amount)
 	triggerPrice := mustParseFloat(in.TriggerPrice)
-	orderType, triggerKind = normalizeOrderTypeAndTriggerKind(orderType, triggerKind, price)
-	if !isSupportedOrderType(orderType) || !isSupportedTriggerKind(triggerKind) {
-		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	if isSeconds {
+		orderType, triggerKind, timeInForce = trade.OrderType_ORDER_TYPE_UNKNOWN, trade.TriggerKind_TRIGGER_KIND_NONE, trade.TimeInForce_TIME_IN_FORCE_UNKNOWN
+		if in.SecondsDirection < 1 || in.SecondsDirection > 2 || in.DurationSeconds <= 0 || !amount.IsPositive() {
+			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		secondsCfg, err = l.svcCtx.TradeSymbolSecondsModel.FindOneByTenantIdSymbolIdDurationSeconds(l.ctx, tenantId, symbol.Id, in.DurationSeconds)
+		if errors.Is(err, models.ErrNotFound) {
+			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		}
+		if err != nil {
+			return nil, err
+		}
+		if (in.SecondsDirection == 1 && secondsCfg.UpEnabled != 1) || (in.SecondsDirection == 2 && secondsCfg.DownEnabled != 1) || amount.LessThan(secondsCfg.MinStake) || (secondsCfg.MaxStake.IsPositive() && amount.GreaterThan(secondsCfg.MaxStake)) {
+			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
+		}
+	} else {
+		orderType, triggerKind = normalizeOrderTypeAndTriggerKind(orderType, triggerKind, price)
+		if !isSupportedOrderType(orderType) || !isSupportedTriggerKind(triggerKind) {
+			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
 	}
 	if hasNegativeOrderInput(price, qty, amount, triggerPrice) {
 		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	if !isValidOrderPrice(orderType, price) || !isValidOrderTimeInForce(orderType, triggerKind, timeInForce) {
+	if !isSeconds && (!isValidOrderPrice(orderType, price) || !isValidOrderTimeInForce(orderType, triggerKind, timeInForce)) {
 		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	timeInForce = normalizeOrderTimeInForce(orderType, timeInForce)
-	if amount == 0 {
+	if !isSeconds {
+		timeInForce = normalizeOrderTimeInForce(orderType, timeInForce)
+	}
+	if !isSeconds && amount.IsZero() {
 		amountPrice, err := l.orderAmountPrice(symbol, orderType, price)
 		if err != nil {
 			l.Errorf("place order resolve amount price failed, tenantId=%d userId=%d symbolId=%d orderType=%d price=%v triggerPrice=%v err=%v",
 				tenantId, userId, in.SymbolId, orderType, price, triggerPrice, err)
 			return nil, err
 		}
-		if amountPrice <= 0 || qty <= 0 {
+		if !amountPrice.IsPositive() || !qty.IsPositive() {
 			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		amount = tradeMinorAmountAtPrice(amountPrice, qty)
 	}
 
-	if qty <= 0 && amount <= 0 {
+	if !qty.IsPositive() && !amount.IsPositive() {
 		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	if isTriggerKind(triggerKind) && triggerPrice <= 0 {
+	if !isSeconds && isTriggerKind(triggerKind) && !triggerPrice.IsPositive() {
 		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
-		if orderType != trade.OrderType_ORDER_TYPE_LIMIT || price <= 0 {
+		if orderType != trade.OrderType_ORDER_TYPE_LIMIT || !price.IsPositive() {
 			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
-		wouldTake, err := l.postOnlyWouldTake(tenantId, in.SymbolId, int64(in.MarketType), int64(in.Side), price)
+		wouldTake, err := l.postOnlyWouldTake(tenantId, in.SymbolId, symbol.ProductType, int64(in.Side), price)
 		if err != nil {
 			return nil, err
 		}
@@ -110,9 +132,9 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		}
 	}
 	leverage := int64(1)
-	if in.MarketType != trade.MarketType_MARKET_TYPE_SPOT {
+	if isDerivativeProduct(trade.ProductType(symbol.ProductType)) {
 		var ok bool
-		leverage, ok, err = ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, tenantId, symbol, in.MarginMode, in.Leverage)
+		leverage, ok, err = ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, tenantId, symbol, in.MarginMode, in.Leverage)
 		if err != nil {
 			return nil, err
 		}
@@ -128,38 +150,42 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	marginAsset := marginAssetForSymbol(symbol)
 	now := utils.NowMillis()
 	order := &models.TTradeOrder{
-		TenantId:      tenantId,
-		OrderNo:       orderNo,
-		ClientOrderId: in.ClientOrderId,
-		UserId:        userId,
-		SymbolId:      in.SymbolId,
-		MarketType:    int64(in.MarketType),
-		Side:          int64(in.Side),
-		PositionSide:  int64(in.PositionSide),
-		OrderType:     int64(orderType),
-		TimeInForce:   int64(timeInForce),
-		Status:        int64(trade.OrderStatus_ORDER_STATUS_FREEZING),
-		Price:         price,
-		Qty:           qty,
-		Amount:        amount,
-		FilledQty:     0,
-		FilledAmount:  0,
-		AvgPrice:      0,
-		Fee:           0,
-		FeeAsset:      marginAsset,
-		Source:        int64(in.OrderSource),
-		IsReduceOnly:  yesNoToModel(common.YesNo(in.IsReduceOnly), int64(common.YesNo_YES_NO_NO)),
-		IsCloseOnly:   yesNoToModel(common.YesNo(in.IsCloseOnly), int64(common.YesNo_YES_NO_NO)),
-		TriggerPrice:  triggerPrice,
-		TriggerType:   int64(in.TriggerType),
-		TriggerKind:   int64(triggerKind),
-		BizExt:        sql.NullString{String: "", Valid: false},
-		CreateTimes:   now,
-		UpdateTimes:   now,
+		TenantId:          tenantId,
+		OrderNo:           orderNo,
+		ClientOrderId:     sql.NullString{String: in.ClientOrderId, Valid: in.ClientOrderId != ""},
+		UserId:            userId,
+		SymbolId:          in.SymbolId,
+		ProductType:       symbol.ProductType,
+		ContractType:      symbol.ContractType,
+		ContractValueType: symbol.ContractValueType,
+		Side:              int64(in.Side),
+		PositionSide:      int64(in.PositionSide),
+		OrderType:         int64(orderType),
+		TimeInForce:       int64(timeInForce),
+		Status:            int64(trade.OrderStatus_ORDER_STATUS_FREEZING),
+		Price:             price,
+		Qty:               qty,
+		Amount:            amount,
+		FilledQty:         decimal.Zero,
+		FilledAmount:      decimal.Zero,
+		AvgPrice:          decimal.Zero,
+		Fee:               decimal.Zero,
+		FeeAsset:          marginAsset,
+		Source:            int64(in.OrderSource),
+		IsReduceOnly:      yesNoToModel(common.YesNo(in.IsReduceOnly), int64(common.YesNo_YES_NO_NO)),
+		TriggerPrice:      triggerPrice,
+		TriggerType:       int64(in.TriggerType),
+		TriggerKind:       int64(triggerKind),
+		BizExt:            sql.NullString{String: "", Valid: false},
+		CreateTimes:       now,
+		UpdateTimes:       now,
+	}
+	if isSeconds {
+		order.Side, order.PositionSide, order.OrderType, order.TimeInForce, order.Price, order.Qty = 0, 0, 0, 0, decimal.Zero, decimal.Zero
 	}
 	var (
 		frozenAsset  string
-		frozenAmount float64
+		frozenAmount decimal.Decimal
 		freezeNo     string
 	)
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
@@ -167,6 +193,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		spotModel := models.NewTTradeOrderSpotModel(conn, l.svcCtx.Config.CacheRedis)
 		contractModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
+		secondsModel := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
 
 		res, err := orderModel.Insert(ctx, order)
 		if err != nil {
@@ -175,7 +202,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		id, _ := res.LastInsertId()
 		order.Id = id
 
-		if in.MarketType == trade.MarketType_MARKET_TYPE_SPOT {
+		if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) {
 			frozenAsset, frozenAmount = spotFrozenAssetAndAmount(symbol, in.Side, qty, amount)
 			spot := &models.TTradeOrderSpot{
 				TenantId:     tenantId,
@@ -192,6 +219,11 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			}
 			return nil
 		}
+		if isSeconds {
+			frozenAsset, frozenAmount = symbol.SettleAsset, amount
+			_, err = secondsModel.Insert(ctx, &models.TTradeOrderSeconds{TenantId: tenantId, OrderId: order.Id, Direction: in.SecondsDirection, DurationSeconds: in.DurationSeconds, StakeAsset: frozenAsset, StakeAmount: amount, PayoutRate: secondsCfg.PayoutRate, SettlementStatus: 0, CreateTimes: now, UpdateTimes: now})
+			return err
+		}
 
 		frozenAsset, frozenAmount = marginAsset, amount
 		contract := &models.TTradeOrderContract{
@@ -202,7 +234,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			MarginAsset:       marginAsset,
 			MarginAmount:      amount,
 			ClosePositionType: 0,
-			LiquidationPrice:  0,
+			LiquidationPrice:  decimal.Zero,
 			TakeProfitPrice:   mustParseFloat(in.TakeProfitPrice),
 			StopLossPrice:     mustParseFloat(in.StopLossPrice),
 			CreateTimes:       now,
@@ -219,8 +251,8 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 
 	freezeNo, err = freezeOrderAsset(l.svcCtx, l.ctx, order, symbol, frozenAsset, frozenAmount)
 	if err != nil {
-		l.Errorf("place order freeze asset failed, tenantId=%d userId=%d orderNo=%s symbolId=%d marketType=%d frozenAsset=%s frozenAmount=%v err=%v",
-			tenantId, userId, order.OrderNo, in.SymbolId, in.MarketType, frozenAsset, frozenAmount, err)
+		l.Errorf("place order freeze asset failed, tenantId=%d userId=%d orderNo=%s symbolId=%d productType=%d frozenAsset=%s frozenAmount=%v err=%v",
+			tenantId, userId, order.OrderNo, in.SymbolId, symbol.ProductType, frozenAsset, frozenAmount, err)
 		order.Status = int64(trade.OrderStatus_ORDER_STATUS_REJECTED)
 		order.CancelReason = fmt.Sprintf("asset freeze failed: %v", err)
 		order.UpdateTimes = utils.NowMillis()
@@ -230,6 +262,16 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		return nil, err
 	}
 	if freezeNo != "" {
+		if isSeconds {
+			secondsOrder, findErr := l.svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(l.ctx, tenantId, order.Id)
+			if findErr != nil {
+				return nil, findErr
+			}
+			secondsOrder.ReservationNo, secondsOrder.UpdateTimes = freezeNo, utils.NowMillis()
+			if updateErr := l.svcCtx.TradeOrderSecondsModel.Update(l.ctx, secondsOrder); updateErr != nil {
+				return nil, updateErr
+			}
+		}
 		ext := orderAssetExt{FreezeNo: freezeNo}
 		if isTriggerKind(triggerKind) {
 			ext.OriginalOrderType = int64(orderType)
@@ -273,21 +315,18 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(order)}, nil
 }
 
-func (l *PlaceOrderLogic) orderAmountPrice(symbol *models.TTradeSymbol, orderType trade.OrderType, price float64) (float64, error) {
+func (l *PlaceOrderLogic) orderAmountPrice(symbol *models.TTradeSymbol, orderType trade.OrderType, price decimal.Decimal) (decimal.Decimal, error) {
 	switch {
 	case orderType == trade.OrderType_ORDER_TYPE_LIMIT:
 		return price, nil
 	case orderType == trade.OrderType_ORDER_TYPE_MARKET:
-		if symbol == nil {
-			return 0, nil
-		}
-		return l.svcCtx.LastPrice(l.ctx, symbol.Symbol)
+		return decimal.Zero, nil
 	default:
-		return 0, nil
+		return decimal.Zero, nil
 	}
 }
 
-func (l *PlaceOrderLogic) postOnlyWouldTake(tenantID, symbolID, marketType, side int64, price float64) (bool, error) {
+func (l *PlaceOrderLogic) postOnlyWouldTake(tenantID, symbolID, marketType, side int64, price decimal.Decimal) (bool, error) {
 	oppositeSide := int64(common.Side_SIDE_SELL)
 	if side == int64(common.Side_SIDE_SELL) {
 		oppositeSide = int64(common.Side_SIDE_BUY)
@@ -310,7 +349,7 @@ func (l *PlaceOrderLogic) postOnlyWouldTake(tenantID, symbolID, marketType, side
 		return true, nil
 	}
 	if side == int64(common.Side_SIDE_BUY) {
-		return price+orderFillEpsilon >= opposite.Price, nil
+		return price.GreaterThanOrEqual(opposite.Price), nil
 	}
-	return opposite.Price+orderFillEpsilon >= price, nil
+	return opposite.Price.GreaterThanOrEqual(price), nil
 }

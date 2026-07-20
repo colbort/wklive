@@ -2,14 +2,14 @@ import { get, post } from '@/utils/request'
 import type {
   BizTradeEvent,
   ContractLeverageConfig,
-  ContractMarginAccount,
+  ContractMarginSnapshot,
   ContractPosition,
   ContractPositionHistory,
   CreateSymbolReq,
   GetCancelLogListAdminReq,
   GetFillDetailAdminReq,
   GetFillListAdminReq,
-  GetMarginAccountListAdminReq,
+  GetMarginSnapshotListAdminReq,
   GetOrderDetailAdminReq,
   GetOrderListAdminReq,
   GetPositionDetailAdminReq,
@@ -31,6 +31,7 @@ import type {
   RiskUserSymbolLimit,
   RiskUserTradeLimit,
   SetContractSymbolConfigReq,
+  SetSecondsSymbolConfigReq,
   SetSpotSymbolConfigReq,
   SetSymbolLeverageConfigReq,
   SetUserLeverageConfigReq,
@@ -72,6 +73,10 @@ export function apiTradeSetSpotConfig(params: SetSpotSymbolConfigReq): Promise<R
 
 export function apiTradeSetContractConfig(params: SetContractSymbolConfigReq): Promise<RespBase> {
   return post('/admin/trade/symbols/contract-config', params)
+}
+
+export function apiTradeSetSecondsConfig(params: SetSecondsSymbolConfigReq): Promise<RespBase> {
+  return post('/admin/trade/symbols/seconds-config', params)
 }
 
 export function apiTradeListSymbolLeverageConfigs(
@@ -120,10 +125,10 @@ export function apiTradeListPositionHistories(
   return get<ContractPositionHistory[]>('/admin/trade/position-histories', params)
 }
 
-export function apiTradeListMarginAccounts(
-  params: GetMarginAccountListAdminReq,
-): Promise<RespBase<ContractMarginAccount[]>> {
-  return get<ContractMarginAccount[]>('/admin/trade/margin-accounts', params)
+export function apiTradeListMarginSnapshots(
+  params: GetMarginSnapshotListAdminReq,
+): Promise<RespBase<ContractMarginSnapshot[]>> {
+  return get<ContractMarginSnapshot[]>('/admin/trade/margin-snapshots', params)
 }
 
 export function apiTradeListCancelLogs(

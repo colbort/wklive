@@ -32,13 +32,13 @@ func NewFreezeAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Freez
 // 冻结余额
 func (l *FreezeAssetLogic) FreezeAsset(in *asset.FreezeAssetReq) (*asset.FreezeAssetResp, error) {
 	walletType := int64(in.WalletType)
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("FreezeAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.UserId, walletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("FreezeAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.UserId, walletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)

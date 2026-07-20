@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,19 +44,19 @@ type (
 	}
 
 	TTradeOrderContract struct {
-		Id                int64   `db:"id"`                  // 主键ID
-		TenantId          int64   `db:"tenant_id"`           // 租户ID
-		OrderId           int64   `db:"order_id"`            // 订单ID，对应t_trade_order.id
-		MarginMode        int64   `db:"margin_mode"`         // 保证金模式：1全仓 2逐仓
-		Leverage          int64   `db:"leverage"`            // 下单时杠杆倍数
-		MarginAsset       string  `db:"margin_asset"`        // 保证金币种
-		MarginAmount      float64 `db:"margin_amount"`       // 本次订单占用保证金
-		ClosePositionType int64   `db:"close_position_type"` // 平仓类型：0普通 1平多 2平空
-		LiquidationPrice  float64 `db:"liquidation_price"`   // 下单时预估强平价格
-		TakeProfitPrice   float64 `db:"take_profit_price"`   // 止盈价格
-		StopLossPrice     float64 `db:"stop_loss_price"`     // 止损价格
-		CreateTimes       int64   `db:"create_times"`        // 创建时间，毫秒时间戳
-		UpdateTimes       int64   `db:"update_times"`        // 更新时间，毫秒时间戳
+		Id                int64           `db:"id"`                  // 主键ID
+		TenantId          int64           `db:"tenant_id"`           // 租户ID
+		OrderId           int64           `db:"order_id"`            // 订单ID，对应t_trade_order.id
+		MarginMode        int64           `db:"margin_mode"`         // 保证金模式：1全仓 2逐仓
+		Leverage          int64           `db:"leverage"`            // 下单时杠杆倍数
+		MarginAsset       string          `db:"margin_asset"`        // 保证金币种
+		MarginAmount      decimal.Decimal `db:"margin_amount"`       // 本次订单占用保证金
+		ClosePositionType int64           `db:"close_position_type"` // 平仓类型：0普通 1平多 2平空
+		LiquidationPrice  decimal.Decimal `db:"liquidation_price"`   // 下单时预估强平价格
+		TakeProfitPrice   decimal.Decimal `db:"take_profit_price"`   // 止盈价格
+		StopLossPrice     decimal.Decimal `db:"stop_loss_price"`     // 止损价格
+		CreateTimes       int64           `db:"create_times"`        // 创建时间，毫秒时间戳
+		UpdateTimes       int64           `db:"update_times"`        // 更新时间，毫秒时间戳
 	}
 )
 

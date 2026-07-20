@@ -14,7 +14,6 @@ type (
 	TradeSymbolLeverageConfigPageFilter struct {
 		TenantId   int64
 		SymbolId   int64
-		MarketType int64
 		MarginMode int64
 		Enabled    int64
 	}
@@ -41,7 +40,6 @@ func (m *defaultTTradeSymbolLeverageConfigModel) FindPage(ctx context.Context, f
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("symbol_id", filter.SymbolId)
-	builder.EqInt64("market_type", filter.MarketType)
 	builder.EqInt64("margin_mode", filter.MarginMode)
 	if filter.Enabled > 0 {
 		builder.And("enabled = ?", filter.Enabled)

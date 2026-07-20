@@ -38,7 +38,7 @@ func (l *SetUserSymbolLimitLogic) SetUserSymbolLimit(in *trade.SetUserSymbolLimi
 	}
 
 	now := utils.NowMillis()
-	item, err := l.svcCtx.RiskUserSymbolLimitModel.FindOneByTenantIdUserIdSymbolIdMarketType(l.ctx, in.TenantId, in.UserId, in.SymbolId, int64(in.MarketType))
+	item, err := l.svcCtx.RiskUserSymbolLimitModel.FindOneByTenantIdUserIdSymbolId(l.ctx, in.TenantId, in.UserId, in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -47,7 +47,6 @@ func (l *SetUserSymbolLimitLogic) SetUserSymbolLimit(in *trade.SetUserSymbolLimi
 			TenantId:    in.TenantId,
 			UserId:      in.UserId,
 			SymbolId:    in.SymbolId,
-			MarketType:  int64(in.MarketType),
 			Enabled:     int64(common.Enable_ENABLE_ENABLED),
 			CreateTimes: now,
 		}

@@ -1,11 +1,6 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard
-      :model="riskQuery"
-      :show-actions="false"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="riskQuery" :show-actions="false" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="riskQuery.tenantId" class="tenant-select-filter" />
       </el-form-item>
@@ -16,11 +11,11 @@
         <SymbolSelect
           v-model="riskQuery.symbolId"
           :tenant-id="riskQuery.tenantId || undefined"
-          :market-type="riskQuery.marketType || undefined"
+          :product-type="riskQuery.productType || undefined"
         />
       </el-form-item>
-      <el-form-item :label="t('trade.marketType')">
-        <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
+      <el-form-item :label="t('trade.productType')">
+        <el-input-number v-model="riskQuery.productType" :min="0" :precision="0" />
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never">
@@ -82,12 +77,12 @@ const riskQuery = reactive<GetUserTradeLimitReq>({
   tenantId: undefined as number | undefined,
   userId: undefined as number | undefined,
   symbolId: undefined as number | undefined,
-  marketType: undefined as number | undefined,
+  productType: undefined as number | undefined,
 })
 const tradeLimitForm = reactive<SetUserTradeLimitReq>({
   tenantId: 0,
   userId: 0,
-  marketType: 0,
+  productType: 0,
   canOpen: 1,
   canClose: 1,
   canCancel: 1,

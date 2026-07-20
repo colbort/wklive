@@ -13,6 +13,7 @@ import (
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -71,7 +72,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) processDailyReward(order *models.TS
 		return nil
 	}
 	rewardAmount := calcTaskReward(order, 1)
-	if rewardAmount <= 0 {
+	if !rewardAmount.IsPositive() {
 		return nil
 	}
 
@@ -106,7 +107,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) processDailyReward(order *models.TS
 
 	beforeReward := order.TotalReward
 	if rewardStatus == int64(staking.RewardStatus_REWARD_STATUS_SUCCESS) {
-		order.TotalReward += rewardAmount
+		order.TotalReward = order.TotalReward.Add(rewardAmount)
 		order.LastRewardTimes = now
 		order.NextRewardTimes = calcNextRewardTime(now, staking.RewardMode(order.RewardMode), order.EndTimes)
 		order.InterestDays++
@@ -157,7 +158,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 		if days <= 0 {
 			days = 1
 		}
-		order.PendingReward += calcTaskReward(order, days)
+		order.PendingReward = order.PendingReward.Add(calcTaskReward(order, days))
 	}
 
 	redeemNo := maturityRedeemBizNo(order)
@@ -183,7 +184,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 			order.TenantId, order.UserId, order.Id, order.OrderNo, redeemNo, order.StakeAmount, assetBaseMsg(resp))
 		return l.insertRedeemFailedLog(order, redeemNo, rewardAmount, now, assetBaseMsg(resp))
 	}
-	if rewardAmount > 0 {
+	if rewardAmount.IsPositive() {
 		resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 			TenantId:   order.TenantId,
 			UserId:     order.UserId,
@@ -213,16 +214,16 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 		return err
 	}
 	if product != nil {
-		if product.StakedAmount >= order.StakeAmount {
-			product.StakedAmount -= order.StakeAmount
+		if product.StakedAmount.GreaterThanOrEqual(order.StakeAmount) {
+			product.StakedAmount = product.StakedAmount.Sub(order.StakeAmount)
 		} else {
-			product.StakedAmount = 0
+			product.StakedAmount = decimal.Zero
 		}
 		product.UpdateTimes = now
 	}
 	order.RedeemAmount = order.StakeAmount
-	order.TotalReward += rewardAmount
-	order.PendingReward = 0
+	order.TotalReward = order.TotalReward.Add(rewardAmount)
+	order.PendingReward = decimal.Zero
 	order.RedeemType = int64(staking.RedeemType_REDEEM_TYPE_MATURITY)
 	order.RedeemApplyTimes = now
 	order.RedeemTimes = now
@@ -268,7 +269,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 	return nil
 }
 
-func (l *ProcessRewardsAndSettleOrdersLogic) insertRedeemFailedLog(order *models.TStakeOrder, redeemNo string, rewardAmount float64, now int64, remark string) error {
+func (l *ProcessRewardsAndSettleOrdersLogic) insertRedeemFailedLog(order *models.TStakeOrder, redeemNo string, rewardAmount decimal.Decimal, now int64, remark string) error {
 	if remark == "" {
 		remark = "staking maturity redeem failed"
 	}

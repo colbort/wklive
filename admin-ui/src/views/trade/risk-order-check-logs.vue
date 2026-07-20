@@ -11,11 +11,11 @@
         <SymbolSelect
           v-model="riskQuery.symbolId"
           :tenant-id="riskQuery.tenantId || undefined"
-          :market-type="riskQuery.marketType || undefined"
+          :product-type="riskQuery.productType || undefined"
         />
       </el-form-item>
-      <el-form-item :label="t('trade.marketType')">
-        <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
+      <el-form-item :label="t('trade.productType')">
+        <el-input-number v-model="riskQuery.productType" :min="0" :precision="0" />
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never" class="table-card">
@@ -36,12 +36,7 @@
           min-width="220"
           show-overflow-tooltip
         />
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="100"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="100" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="((detailData = row), (detailVisible = true))">
               {{ t('option.detail') }}
@@ -84,7 +79,7 @@ interface RiskQuery {
   tenantId?: number
   userId?: number
   symbolId?: number
-  marketType?: number
+  productType?: number
 }
 
 const rows = ref<RiskOrderCheckLog[]>([])
@@ -94,7 +89,7 @@ const riskQuery = reactive<RiskQuery>({
   tenantId: undefined as number | undefined,
   userId: undefined as number | undefined,
   symbolId: undefined as number | undefined,
-  marketType: undefined as number | undefined,
+  productType: undefined as number | undefined,
 })
 const riskLogQuery = reactive<GetRiskOrderCheckLogListReq>({
   tenantId: 0,

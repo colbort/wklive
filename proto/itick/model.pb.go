@@ -352,12 +352,12 @@ type Kline struct {
 	Symbol        string                 `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	KType         KlineType              `protobuf:"varint,4,opt,name=k_type,json=kType,proto3,enum=itick.KlineType" json:"k_type,omitempty"`
 	Ts            int64                  `protobuf:"varint,5,opt,name=ts,proto3" json:"ts,omitempty"`
-	Open          float64                `protobuf:"fixed64,6,opt,name=open,proto3" json:"open,omitempty"`
-	High          float64                `protobuf:"fixed64,7,opt,name=high,proto3" json:"high,omitempty"`
-	Low           float64                `protobuf:"fixed64,8,opt,name=low,proto3" json:"low,omitempty"`
-	Close         float64                `protobuf:"fixed64,9,opt,name=close,proto3" json:"close,omitempty"`
-	Volume        float64                `protobuf:"fixed64,10,opt,name=volume,proto3" json:"volume,omitempty"`
-	Turnover      float64                `protobuf:"fixed64,11,opt,name=turnover,proto3" json:"turnover,omitempty"`
+	Open          string                 `protobuf:"bytes,6,opt,name=open,proto3" json:"open,omitempty"`
+	High          string                 `protobuf:"bytes,7,opt,name=high,proto3" json:"high,omitempty"`
+	Low           string                 `protobuf:"bytes,8,opt,name=low,proto3" json:"low,omitempty"`
+	Close         string                 `protobuf:"bytes,9,opt,name=close,proto3" json:"close,omitempty"`
+	Volume        string                 `protobuf:"bytes,10,opt,name=volume,proto3" json:"volume,omitempty"`
+	Turnover      string                 `protobuf:"bytes,11,opt,name=turnover,proto3" json:"turnover,omitempty"`
 	Source        string                 `protobuf:"bytes,12,opt,name=source,proto3" json:"source,omitempty"`
 	Revision      int64                  `protobuf:"varint,13,opt,name=revision,proto3" json:"revision,omitempty"`
 	IsClosed      bool                   `protobuf:"varint,14,opt,name=is_closed,json=isClosed,proto3" json:"is_closed,omitempty"`
@@ -433,46 +433,46 @@ func (x *Kline) GetTs() int64 {
 	return 0
 }
 
-func (x *Kline) GetOpen() float64 {
+func (x *Kline) GetOpen() string {
 	if x != nil {
 		return x.Open
 	}
-	return 0
+	return ""
 }
 
-func (x *Kline) GetHigh() float64 {
+func (x *Kline) GetHigh() string {
 	if x != nil {
 		return x.High
 	}
-	return 0
+	return ""
 }
 
-func (x *Kline) GetLow() float64 {
+func (x *Kline) GetLow() string {
 	if x != nil {
 		return x.Low
 	}
-	return 0
+	return ""
 }
 
-func (x *Kline) GetClose() float64 {
+func (x *Kline) GetClose() string {
 	if x != nil {
 		return x.Close
 	}
-	return 0
+	return ""
 }
 
-func (x *Kline) GetVolume() float64 {
+func (x *Kline) GetVolume() string {
 	if x != nil {
 		return x.Volume
 	}
-	return 0
+	return ""
 }
 
-func (x *Kline) GetTurnover() float64 {
+func (x *Kline) GetTurnover() string {
 	if x != nil {
 		return x.Turnover
 	}
-	return 0
+	return ""
 }
 
 func (x *Kline) GetSource() string {
@@ -522,15 +522,15 @@ type Quote struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	CategoryCode   string                 `protobuf:"bytes,1,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	Symbol         string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	LastPrice      float64                `protobuf:"fixed64,3,opt,name=last_price,json=lastPrice,proto3" json:"last_price,omitempty"`
-	OpenPrice      float64                `protobuf:"fixed64,4,opt,name=open_price,json=openPrice,proto3" json:"open_price,omitempty"`
-	HighPrice      float64                `protobuf:"fixed64,5,opt,name=high_price,json=highPrice,proto3" json:"high_price,omitempty"`
-	LowPrice       float64                `protobuf:"fixed64,6,opt,name=low_price,json=lowPrice,proto3" json:"low_price,omitempty"`
-	PrevClosePrice float64                `protobuf:"fixed64,7,opt,name=prev_close_price,json=prevClosePrice,proto3" json:"prev_close_price,omitempty"`
-	ChangeValue    float64                `protobuf:"fixed64,8,opt,name=change_value,json=changeValue,proto3" json:"change_value,omitempty"`
-	ChangeRate     float64                `protobuf:"fixed64,9,opt,name=change_rate,json=changeRate,proto3" json:"change_rate,omitempty"`
-	Volume         float64                `protobuf:"fixed64,10,opt,name=volume,proto3" json:"volume,omitempty"`
-	Turnover       float64                `protobuf:"fixed64,11,opt,name=turnover,proto3" json:"turnover,omitempty"`
+	LastPrice      string                 `protobuf:"bytes,3,opt,name=last_price,json=lastPrice,proto3" json:"last_price,omitempty"`
+	OpenPrice      string                 `protobuf:"bytes,4,opt,name=open_price,json=openPrice,proto3" json:"open_price,omitempty"`
+	HighPrice      string                 `protobuf:"bytes,5,opt,name=high_price,json=highPrice,proto3" json:"high_price,omitempty"`
+	LowPrice       string                 `protobuf:"bytes,6,opt,name=low_price,json=lowPrice,proto3" json:"low_price,omitempty"`
+	PrevClosePrice string                 `protobuf:"bytes,7,opt,name=prev_close_price,json=prevClosePrice,proto3" json:"prev_close_price,omitempty"`
+	ChangeValue    string                 `protobuf:"bytes,8,opt,name=change_value,json=changeValue,proto3" json:"change_value,omitempty"`
+	ChangeRate     string                 `protobuf:"bytes,9,opt,name=change_rate,json=changeRate,proto3" json:"change_rate,omitempty"`
+	Volume         string                 `protobuf:"bytes,10,opt,name=volume,proto3" json:"volume,omitempty"`
+	Turnover       string                 `protobuf:"bytes,11,opt,name=turnover,proto3" json:"turnover,omitempty"`
 	QuoteTs        int64                  `protobuf:"varint,12,opt,name=quote_ts,json=quoteTs,proto3" json:"quote_ts,omitempty"`
 	TradeStatus    int64                  `protobuf:"varint,13,opt,name=trade_status,json=tradeStatus,proto3" json:"trade_status,omitempty"`
 	Market         string                 `protobuf:"bytes,14,opt,name=market,proto3" json:"market,omitempty"`
@@ -582,67 +582,67 @@ func (x *Quote) GetSymbol() string {
 	return ""
 }
 
-func (x *Quote) GetLastPrice() float64 {
+func (x *Quote) GetLastPrice() string {
 	if x != nil {
 		return x.LastPrice
 	}
-	return 0
+	return ""
 }
 
-func (x *Quote) GetOpenPrice() float64 {
+func (x *Quote) GetOpenPrice() string {
 	if x != nil {
 		return x.OpenPrice
 	}
-	return 0
+	return ""
 }
 
-func (x *Quote) GetHighPrice() float64 {
+func (x *Quote) GetHighPrice() string {
 	if x != nil {
 		return x.HighPrice
 	}
-	return 0
+	return ""
 }
 
-func (x *Quote) GetLowPrice() float64 {
+func (x *Quote) GetLowPrice() string {
 	if x != nil {
 		return x.LowPrice
 	}
-	return 0
+	return ""
 }
 
-func (x *Quote) GetPrevClosePrice() float64 {
+func (x *Quote) GetPrevClosePrice() string {
 	if x != nil {
 		return x.PrevClosePrice
 	}
-	return 0
+	return ""
 }
 
-func (x *Quote) GetChangeValue() float64 {
+func (x *Quote) GetChangeValue() string {
 	if x != nil {
 		return x.ChangeValue
 	}
-	return 0
+	return ""
 }
 
-func (x *Quote) GetChangeRate() float64 {
+func (x *Quote) GetChangeRate() string {
 	if x != nil {
 		return x.ChangeRate
 	}
-	return 0
+	return ""
 }
 
-func (x *Quote) GetVolume() float64 {
+func (x *Quote) GetVolume() string {
 	if x != nil {
 		return x.Volume
 	}
-	return 0
+	return ""
 }
 
-func (x *Quote) GetTurnover() float64 {
+func (x *Quote) GetTurnover() string {
 	if x != nil {
 		return x.Turnover
 	}
-	return 0
+	return ""
 }
 
 func (x *Quote) GetQuoteTs() int64 {
@@ -1069,13 +1069,13 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12'\n" +
 	"\x06k_type\x18\x04 \x01(\x0e2\x10.itick.KlineTypeR\x05kType\x12\x0e\n" +
 	"\x02ts\x18\x05 \x01(\x03R\x02ts\x12\x12\n" +
-	"\x04open\x18\x06 \x01(\x01R\x04open\x12\x12\n" +
-	"\x04high\x18\a \x01(\x01R\x04high\x12\x10\n" +
-	"\x03low\x18\b \x01(\x01R\x03low\x12\x14\n" +
-	"\x05close\x18\t \x01(\x01R\x05close\x12\x16\n" +
+	"\x04open\x18\x06 \x01(\tR\x04open\x12\x12\n" +
+	"\x04high\x18\a \x01(\tR\x04high\x12\x10\n" +
+	"\x03low\x18\b \x01(\tR\x03low\x12\x14\n" +
+	"\x05close\x18\t \x01(\tR\x05close\x12\x16\n" +
 	"\x06volume\x18\n" +
-	" \x01(\x01R\x06volume\x12\x1a\n" +
-	"\bturnover\x18\v \x01(\x01R\bturnover\x12\x16\n" +
+	" \x01(\tR\x06volume\x12\x1a\n" +
+	"\bturnover\x18\v \x01(\tR\bturnover\x12\x16\n" +
 	"\x06source\x18\f \x01(\tR\x06source\x12\x1a\n" +
 	"\brevision\x18\r \x01(\x03R\brevision\x12\x1b\n" +
 	"\tis_closed\x18\x0e \x01(\bR\bisClosed\x12\x1c\n" +
@@ -1086,19 +1086,19 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12\x1d\n" +
 	"\n" +
-	"last_price\x18\x03 \x01(\x01R\tlastPrice\x12\x1d\n" +
+	"last_price\x18\x03 \x01(\tR\tlastPrice\x12\x1d\n" +
 	"\n" +
-	"open_price\x18\x04 \x01(\x01R\topenPrice\x12\x1d\n" +
+	"open_price\x18\x04 \x01(\tR\topenPrice\x12\x1d\n" +
 	"\n" +
-	"high_price\x18\x05 \x01(\x01R\thighPrice\x12\x1b\n" +
-	"\tlow_price\x18\x06 \x01(\x01R\blowPrice\x12(\n" +
-	"\x10prev_close_price\x18\a \x01(\x01R\x0eprevClosePrice\x12!\n" +
-	"\fchange_value\x18\b \x01(\x01R\vchangeValue\x12\x1f\n" +
-	"\vchange_rate\x18\t \x01(\x01R\n" +
+	"high_price\x18\x05 \x01(\tR\thighPrice\x12\x1b\n" +
+	"\tlow_price\x18\x06 \x01(\tR\blowPrice\x12(\n" +
+	"\x10prev_close_price\x18\a \x01(\tR\x0eprevClosePrice\x12!\n" +
+	"\fchange_value\x18\b \x01(\tR\vchangeValue\x12\x1f\n" +
+	"\vchange_rate\x18\t \x01(\tR\n" +
 	"changeRate\x12\x16\n" +
 	"\x06volume\x18\n" +
-	" \x01(\x01R\x06volume\x12\x1a\n" +
-	"\bturnover\x18\v \x01(\x01R\bturnover\x12\x19\n" +
+	" \x01(\tR\x06volume\x12\x1a\n" +
+	"\bturnover\x18\v \x01(\tR\bturnover\x12\x19\n" +
 	"\bquote_ts\x18\f \x01(\x03R\aquoteTs\x12!\n" +
 	"\ftrade_status\x18\r \x01(\x03R\vtradeStatus\x12\x16\n" +
 	"\x06market\x18\x0e \x01(\tR\x06market\"\xe9\x03\n" +

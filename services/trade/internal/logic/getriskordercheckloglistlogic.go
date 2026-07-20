@@ -33,7 +33,7 @@ func (l *GetRiskOrderCheckLogListLogic) GetRiskOrderCheckLogList(in *trade.GetRi
 		TenantId:    in.TenantId,
 		UserId:      in.UserId,
 		SymbolId:    in.SymbolId,
-		MarketType:  int64(in.MarketType),
+		ProductType: int64(in.ProductType),
 		CheckType:   int64(in.CheckType),
 		CheckResult: int64(in.CheckResult),
 		TimeStart:   in.TimeRange.StartTime,

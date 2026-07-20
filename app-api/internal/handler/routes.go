@@ -441,8 +441,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/margin-accounts",
-					Handler: trade.GetMarginAccountListHandler(serverCtx),
+					Path:    "/margin-snapshots",
+					Handler: trade.GetMarginSnapshotListHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,

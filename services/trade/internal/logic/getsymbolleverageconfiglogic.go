@@ -36,7 +36,13 @@ func (l *GetSymbolLeverageConfigLogic) GetSymbolLeverageConfig(in *trade.GetSymb
 	if in.Id > 0 {
 		item, err = l.svcCtx.SymbolLeverageCfgModel.FindOne(l.ctx, in.Id)
 	} else {
-		item, err = l.svcCtx.SymbolLeverageCfgModel.FindOneByTenantIdSymbolIdMarketTypeMarginMode(l.ctx, in.TenantId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode))
+		var list []*models.TTradeSymbolLeverageConfig
+		list, _, err = l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{TenantId: in.TenantId, SymbolId: in.SymbolId, MarginMode: int64(in.MarginMode)}, 0, 1)
+		if err == nil && len(list) > 0 {
+			item = list[0]
+		} else if err == nil {
+			err = models.ErrNotFound
+		}
 	}
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != in.TenantId) {
 		return &trade.GetSymbolLeverageConfigResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
@@ -44,9 +50,13 @@ func (l *GetSymbolLeverageConfigLogic) GetSymbolLeverageConfig(in *trade.GetSymb
 	if err != nil {
 		return nil, err
 	}
+	defaultLeverage, err := findDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, item.TenantId, item.SymbolId, item.MarginMode)
+	if err != nil {
+		return nil, err
+	}
 
 	return &trade.GetSymbolLeverageConfigResp{
 		Base: helper.OkResp(),
-		Data: symbolLeverageConfigToProto(item),
+		Data: symbolLeverageConfigToProto(item, defaultLeverage),
 	}, nil
 }

@@ -61,7 +61,7 @@ const emit = defineEmits<{
   (e: 'submit-order', side: SubmitSide): void
 }>()
 
-const MARKET_TYPE_SPOT = 1
+const PRODUCT_TYPE_SPOT = 1
 const percentSteps = [0, 25, 50, 75, 100]
 type SelectionSheet = 'margin' | 'leverage' | 'risk' | null
 type RiskEntrySide = 'long' | 'short'
@@ -93,7 +93,7 @@ const marginModeOptions = computed(() => {
   const options = tradeOptions.getGroup('marginMode').filter((option) => option.value > 0)
   return options.length ? options : [{ value: 1, code: 'MARGIN_MODE_CROSS' }]
 })
-const isSpotTrade = computed(() => props.selectedTradeSymbol?.marketType === MARKET_TYPE_SPOT)
+const isSpotTrade = computed(() => props.selectedTradeSymbol?.productType === PRODUCT_TYPE_SPOT)
 const canSubmit = computed(
   () => props.isLoggedIn && props.tradeAvailable && !props.tradeSymbolLoading,
 )

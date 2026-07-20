@@ -37,31 +37,31 @@ func (l *AdminCreateContractLogic) AdminCreateContract(in *option.CreateContract
 		return nil, err
 	}
 
-	strikePrice, err := conv.ParseFloatField(in.StrikePrice)
+	strikePrice, err := conv.ParseDecimalField(in.StrikePrice)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.StrikePriceFormatError, i18n.Translate(i18n.StrikePriceFormatError, l.ctx))}, nil
 	}
-	contractUnit, err := conv.ParseFloatField(in.ContractUnit)
+	contractUnit, err := conv.ParseDecimalField(in.ContractUnit)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ContractUnitFormatError, i18n.Translate(i18n.ContractUnitFormatError, l.ctx))}, nil
 	}
-	minOrderQty, err := conv.ParseFloatField(in.MinOrderQty)
+	minOrderQty, err := conv.ParseDecimalField(in.MinOrderQty)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.MinOrderQuantityFormatError, i18n.Translate(i18n.MinOrderQuantityFormatError, l.ctx))}, nil
 	}
-	maxOrderQty, err := conv.ParseFloatField(in.MaxOrderQty)
+	maxOrderQty, err := conv.ParseDecimalField(in.MaxOrderQty)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.MaxOrderQuantityFormatError, i18n.Translate(i18n.MaxOrderQuantityFormatError, l.ctx))}, nil
 	}
-	priceTick, err := conv.ParseFloatField(in.PriceTick)
+	priceTick, err := conv.ParseDecimalField(in.PriceTick)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.PriceTickFormatError, i18n.Translate(i18n.PriceTickFormatError, l.ctx))}, nil
 	}
-	qtyStep, err := conv.ParseFloatField(in.QtyStep)
+	qtyStep, err := conv.ParseDecimalField(in.QtyStep)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.QuantityStepFormatError, i18n.Translate(i18n.QuantityStepFormatError, l.ctx))}, nil
 	}
-	multiplier, err := conv.ParseFloatField(in.Multiplier)
+	multiplier, err := conv.ParseDecimalField(in.Multiplier)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.MultiplierFormatError, i18n.Translate(i18n.MultiplierFormatError, l.ctx))}, nil
 	}

@@ -79,14 +79,14 @@ const props = withDefaults(
     disabled?: boolean
     placeholder?: string
     tenantId?: number
-    marketType?: number
+    productType?: number
   }>(),
   {
     modelValue: undefined,
     disabled: false,
     placeholder: '',
     tenantId: undefined,
-    marketType: undefined,
+    productType: undefined,
   },
 )
 
@@ -153,7 +153,7 @@ async function loadSymbols() {
       cursor: pagination.cursor,
       limit: pagination.limit,
       tenantId: props.tenantId || undefined,
-      marketType: props.marketType || undefined,
+      productType: props.productType || undefined,
       keyword: queryKeyword.value || undefined,
     })
     symbols.value = res.data || []

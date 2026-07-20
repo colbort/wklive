@@ -10,6 +10,8 @@ import (
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -45,18 +47,18 @@ func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryRe
 		return nil, err
 	}
 
-	totalAsset := 0.0
-	totalAvailable := 0.0
-	totalFrozen := 0.0
-	totalLocked := 0.0
+	totalAsset := decimal.Zero
+	totalAvailable := decimal.Zero
+	totalFrozen := decimal.Zero
+	totalLocked := decimal.Zero
 	resp := &asset.GetMyAssetSummaryResp{Base: helper.OkResp(), Data: &asset.UserAssetSummary{TenantId: tenantId, UserId: userId}}
 	for _, item := range list {
 		// 总资产、可用资产、冻结资产、锁定资产，单位都是USDT
 		if item.Coin == "USDT" {
-			totalAsset += item.TotalAmount
-			totalAvailable += item.AvailableAmount
-			totalFrozen += item.FrozenAmount
-			totalLocked += item.LockedAmount
+			totalAsset = totalAsset.Add(item.TotalAmount)
+			totalAvailable = totalAvailable.Add(item.AvailableAmount)
+			totalFrozen = totalFrozen.Add(item.FrozenAmount)
+			totalLocked = totalLocked.Add(item.LockedAmount)
 		} else {
 			// 其他币种需要换算成USDT
 			exchangeRate, err := l.svcCtx.LastPrice(l.ctx, item.Coin+"USDT")
@@ -64,10 +66,10 @@ func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryRe
 				logx.Errorf("GetExchangeRate error: tenantId=%d, coin=%s, err=%v", tenantId, item.Coin, err)
 				continue
 			}
-			totalAsset += item.TotalAmount * exchangeRate
-			totalAvailable += item.AvailableAmount * exchangeRate
-			totalFrozen += item.FrozenAmount * exchangeRate
-			totalLocked += item.LockedAmount * exchangeRate
+			totalAsset = totalAsset.Add(item.TotalAmount.Mul(exchangeRate))
+			totalAvailable = totalAvailable.Add(item.AvailableAmount.Mul(exchangeRate))
+			totalFrozen = totalFrozen.Add(item.FrozenAmount.Mul(exchangeRate))
+			totalLocked = totalLocked.Add(item.LockedAmount.Mul(exchangeRate))
 		}
 		resp.Data.Assets = append(resp.Data.Assets, toUserAssetProto(item))
 	}

@@ -1,17 +1,17 @@
 import "common.api"
 
 type EncryptionConfigData {
-	version             string `json:"version"`
-	mode                string `json:"mode"`
-	enabled             bool   `json:"enabled"`
-	required            bool   `json:"required"`
-	rsaKid              string `json:"rsaKid,optional"`
-	publicKey           string `json:"publicKey,optional"`
-	keyAlgorithm        string `json:"keyAlgorithm,optional"`
-	contentAlgorithm    string `json:"contentAlgorithm,optional"`
-	sessionTtlSeconds   int    `json:"sessionTtlSeconds"`
-	rotateBeforeSeconds int    `json:"rotateBeforeSeconds"`
-	serverTime          int64  `json:"serverTime"`
+	version             string   `json:"version"`
+	mode                string   `json:"mode"`
+	enabled             bool     `json:"enabled"`
+	required            bool     `json:"required"`
+	rsaKid              string   `json:"rsaKid,optional"`
+	publicKey           string   `json:"publicKey,optional"`
+	keyAlgorithm        string   `json:"keyAlgorithm,optional"`
+	contentAlgorithm    string   `json:"contentAlgorithm,optional"`
+	sessionTtlSeconds   int      `json:"sessionTtlSeconds"`
+	rotateBeforeSeconds int      `json:"rotateBeforeSeconds"`
+	serverTime          int64    `json:"serverTime"`
 	protectedPrefixes   []string `json:"protectedPrefixes"`
 }
 
@@ -48,3 +48,4 @@ service admin {
 	@handler EncryptionSession
 	post /encryption-session (CreateEncryptionSessionReq) returns (EncryptionSessionResp)
 }
+

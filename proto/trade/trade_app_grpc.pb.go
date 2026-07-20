@@ -19,18 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TradeApp_GetSymbolList_FullMethodName        = "/trade.TradeApp/GetSymbolList"
-	TradeApp_GetSymbolDetail_FullMethodName      = "/trade.TradeApp/GetSymbolDetail"
-	TradeApp_PlaceOrder_FullMethodName           = "/trade.TradeApp/PlaceOrder"
-	TradeApp_CancelOrder_FullMethodName          = "/trade.TradeApp/CancelOrder"
-	TradeApp_CancelAllOrders_FullMethodName      = "/trade.TradeApp/CancelAllOrders"
-	TradeApp_GetOrderList_FullMethodName         = "/trade.TradeApp/GetOrderList"
-	TradeApp_GetOrderDetail_FullMethodName       = "/trade.TradeApp/GetOrderDetail"
-	TradeApp_GetFillList_FullMethodName          = "/trade.TradeApp/GetFillList"
-	TradeApp_GetPositionList_FullMethodName      = "/trade.TradeApp/GetPositionList"
-	TradeApp_GetMarginAccountList_FullMethodName = "/trade.TradeApp/GetMarginAccountList"
-	TradeApp_GetLeverageConfig_FullMethodName    = "/trade.TradeApp/GetLeverageConfig"
-	TradeApp_SetLeverage_FullMethodName          = "/trade.TradeApp/SetLeverage"
+	TradeApp_GetSymbolList_FullMethodName         = "/trade.TradeApp/GetSymbolList"
+	TradeApp_GetSymbolDetail_FullMethodName       = "/trade.TradeApp/GetSymbolDetail"
+	TradeApp_PlaceOrder_FullMethodName            = "/trade.TradeApp/PlaceOrder"
+	TradeApp_CancelOrder_FullMethodName           = "/trade.TradeApp/CancelOrder"
+	TradeApp_CancelAllOrders_FullMethodName       = "/trade.TradeApp/CancelAllOrders"
+	TradeApp_GetOrderList_FullMethodName          = "/trade.TradeApp/GetOrderList"
+	TradeApp_GetOrderDetail_FullMethodName        = "/trade.TradeApp/GetOrderDetail"
+	TradeApp_GetFillList_FullMethodName           = "/trade.TradeApp/GetFillList"
+	TradeApp_GetPositionList_FullMethodName       = "/trade.TradeApp/GetPositionList"
+	TradeApp_GetMarginSnapshotList_FullMethodName = "/trade.TradeApp/GetMarginSnapshotList"
+	TradeApp_GetLeverageConfig_FullMethodName     = "/trade.TradeApp/GetLeverageConfig"
+	TradeApp_SetLeverage_FullMethodName           = "/trade.TradeApp/SetLeverage"
 )
 
 // TradeAppClient is the client API for TradeApp service.
@@ -57,8 +57,8 @@ type TradeAppClient interface {
 	GetFillList(ctx context.Context, in *GetFillListReq, opts ...grpc.CallOption) (*GetFillListResp, error)
 	// 获取持仓列表
 	GetPositionList(ctx context.Context, in *GetPositionListReq, opts ...grpc.CallOption) (*GetPositionListResp, error)
-	// 获取保证金账户列表
-	GetMarginAccountList(ctx context.Context, in *GetMarginAccountListReq, opts ...grpc.CallOption) (*GetMarginAccountListResp, error)
+	// 获取合约风控保证金快照列表
+	GetMarginSnapshotList(ctx context.Context, in *GetMarginSnapshotListReq, opts ...grpc.CallOption) (*GetMarginSnapshotListResp, error)
 	// 获取当前杠杆配置
 	GetLeverageConfig(ctx context.Context, in *GetLeverageConfigReq, opts ...grpc.CallOption) (*GetLeverageConfigResp, error)
 	// 设置杠杆倍数
@@ -163,10 +163,10 @@ func (c *tradeAppClient) GetPositionList(ctx context.Context, in *GetPositionLis
 	return out, nil
 }
 
-func (c *tradeAppClient) GetMarginAccountList(ctx context.Context, in *GetMarginAccountListReq, opts ...grpc.CallOption) (*GetMarginAccountListResp, error) {
+func (c *tradeAppClient) GetMarginSnapshotList(ctx context.Context, in *GetMarginSnapshotListReq, opts ...grpc.CallOption) (*GetMarginSnapshotListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetMarginAccountListResp)
-	err := c.cc.Invoke(ctx, TradeApp_GetMarginAccountList_FullMethodName, in, out, cOpts...)
+	out := new(GetMarginSnapshotListResp)
+	err := c.cc.Invoke(ctx, TradeApp_GetMarginSnapshotList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -217,8 +217,8 @@ type TradeAppServer interface {
 	GetFillList(context.Context, *GetFillListReq) (*GetFillListResp, error)
 	// 获取持仓列表
 	GetPositionList(context.Context, *GetPositionListReq) (*GetPositionListResp, error)
-	// 获取保证金账户列表
-	GetMarginAccountList(context.Context, *GetMarginAccountListReq) (*GetMarginAccountListResp, error)
+	// 获取合约风控保证金快照列表
+	GetMarginSnapshotList(context.Context, *GetMarginSnapshotListReq) (*GetMarginSnapshotListResp, error)
 	// 获取当前杠杆配置
 	GetLeverageConfig(context.Context, *GetLeverageConfigReq) (*GetLeverageConfigResp, error)
 	// 设置杠杆倍数
@@ -260,8 +260,8 @@ func (UnimplementedTradeAppServer) GetFillList(context.Context, *GetFillListReq)
 func (UnimplementedTradeAppServer) GetPositionList(context.Context, *GetPositionListReq) (*GetPositionListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPositionList not implemented")
 }
-func (UnimplementedTradeAppServer) GetMarginAccountList(context.Context, *GetMarginAccountListReq) (*GetMarginAccountListResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetMarginAccountList not implemented")
+func (UnimplementedTradeAppServer) GetMarginSnapshotList(context.Context, *GetMarginSnapshotListReq) (*GetMarginSnapshotListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMarginSnapshotList not implemented")
 }
 func (UnimplementedTradeAppServer) GetLeverageConfig(context.Context, *GetLeverageConfigReq) (*GetLeverageConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLeverageConfig not implemented")
@@ -452,20 +452,20 @@ func _TradeApp_GetPositionList_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_GetMarginAccountList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetMarginAccountListReq)
+func _TradeApp_GetMarginSnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMarginSnapshotListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).GetMarginAccountList(ctx, in)
+		return srv.(TradeAppServer).GetMarginSnapshotList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_GetMarginAccountList_FullMethodName,
+		FullMethod: TradeApp_GetMarginSnapshotList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).GetMarginAccountList(ctx, req.(*GetMarginAccountListReq))
+		return srv.(TradeAppServer).GetMarginSnapshotList(ctx, req.(*GetMarginSnapshotListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -550,8 +550,8 @@ var TradeApp_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TradeApp_GetPositionList_Handler,
 		},
 		{
-			MethodName: "GetMarginAccountList",
-			Handler:    _TradeApp_GetMarginAccountList_Handler,
+			MethodName: "GetMarginSnapshotList",
+			Handler:    _TradeApp_GetMarginSnapshotList_Handler,
 		},
 		{
 			MethodName: "GetLeverageConfig",

@@ -31,13 +31,13 @@ func NewAdminUnfreezeAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 后台解冻资产
 func (l *AdminUnfreezeAssetLogic) AdminUnfreezeAsset(in *asset.AdminUnfreezeAssetReq) (*asset.AdminChangeAssetResp, error) {
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("AdminUnfreezeAsset parse amount failed, tenantId=%d freezeNo=%s amount=%s bizNo=%s err=%v",
 			in.TenantId, in.FreezeNo, in.Amount, in.BizNo, err)
 		return nil, err
 	}
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("AdminUnfreezeAsset validate amount failed, tenantId=%d freezeNo=%s amount=%s bizNo=%s err=%v",
 			in.TenantId, in.FreezeNo, in.Amount, in.BizNo, err)
@@ -75,7 +75,7 @@ func (l *AdminUnfreezeAssetLogic) AdminUnfreezeAsset(in *asset.AdminUnfreezeAsse
 		if freeze.Status != 1 && freeze.Status != 2 {
 			return i18n.StatusError(ctx, i18n.FreezeRecordNotReleasable)
 		}
-		if amount > freeze.RemainAmount {
+		if amount.GreaterThan(freeze.RemainAmount) {
 			return i18n.StatusError(ctx, i18n.UnfreezeAmountExceedsFrozen)
 		}
 

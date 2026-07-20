@@ -64,105 +64,105 @@ func (l *AdminUpdateMarketLogic) AdminUpdateMarket(in *option.UpdateMarketReq) (
 		}
 	}
 	if in.UnderlyingPrice != "" {
-		value, err := conv.ParseFloatField(in.UnderlyingPrice)
+		value, err := conv.ParseDecimalField(in.UnderlyingPrice)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.UnderlyingPriceFormatError, i18n.Translate(i18n.UnderlyingPriceFormatError, l.ctx))}, nil
 		}
 		market.UnderlyingPrice = value
 	}
 	if in.MarkPrice != "" {
-		value, err := conv.ParseFloatField(in.MarkPrice)
+		value, err := conv.ParseDecimalField(in.MarkPrice)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.MarkPriceFormatError, i18n.Translate(i18n.MarkPriceFormatError, l.ctx))}, nil
 		}
 		market.MarkPrice = value
 	}
 	if in.LastPrice != "" {
-		value, err := conv.ParseFloatField(in.LastPrice)
+		value, err := conv.ParseDecimalField(in.LastPrice)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.LastPriceFormatError, i18n.Translate(i18n.LastPriceFormatError, l.ctx))}, nil
 		}
 		market.LastPrice = value
 	}
 	if in.BidPrice != "" {
-		value, err := conv.ParseFloatField(in.BidPrice)
+		value, err := conv.ParseDecimalField(in.BidPrice)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.BidPriceFormatError, i18n.Translate(i18n.BidPriceFormatError, l.ctx))}, nil
 		}
 		market.BidPrice = value
 	}
 	if in.AskPrice != "" {
-		value, err := conv.ParseFloatField(in.AskPrice)
+		value, err := conv.ParseDecimalField(in.AskPrice)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.AskPriceFormatError, i18n.Translate(i18n.AskPriceFormatError, l.ctx))}, nil
 		}
 		market.AskPrice = value
 	}
 	if in.TheoreticalPrice != "" {
-		value, err := conv.ParseFloatField(in.TheoreticalPrice)
+		value, err := conv.ParseDecimalField(in.TheoreticalPrice)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.TheoreticalPriceFormatError, i18n.Translate(i18n.TheoreticalPriceFormatError, l.ctx))}, nil
 		}
 		market.TheoreticalPrice = value
 	}
 	if in.IntrinsicValue != "" {
-		value, err := conv.ParseFloatField(in.IntrinsicValue)
+		value, err := conv.ParseDecimalField(in.IntrinsicValue)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.IntrinsicValueFormatError, i18n.Translate(i18n.IntrinsicValueFormatError, l.ctx))}, nil
 		}
 		market.IntrinsicValue = value
 	}
 	if in.TimeValue != "" {
-		value, err := conv.ParseFloatField(in.TimeValue)
+		value, err := conv.ParseDecimalField(in.TimeValue)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.TimeValueFormatError, i18n.Translate(i18n.TimeValueFormatError, l.ctx))}, nil
 		}
 		market.TimeValue = value
 	}
 	if in.Iv != "" {
-		value, err := conv.ParseFloatField(in.Iv)
+		value, err := conv.ParseDecimalField(in.Iv)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.IVFormatError, i18n.Translate(i18n.IVFormatError, l.ctx))}, nil
 		}
 		market.Iv = value
 	}
 	if in.Delta != "" {
-		value, err := conv.ParseFloatField(in.Delta)
+		value, err := conv.ParseDecimalField(in.Delta)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.DeltaFormatError, i18n.Translate(i18n.DeltaFormatError, l.ctx))}, nil
 		}
 		market.Delta = value
 	}
 	if in.Gamma != "" {
-		value, err := conv.ParseFloatField(in.Gamma)
+		value, err := conv.ParseDecimalField(in.Gamma)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.GammaFormatError, i18n.Translate(i18n.GammaFormatError, l.ctx))}, nil
 		}
 		market.Gamma = value
 	}
 	if in.Theta != "" {
-		value, err := conv.ParseFloatField(in.Theta)
+		value, err := conv.ParseDecimalField(in.Theta)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.ThetaFormatError, i18n.Translate(i18n.ThetaFormatError, l.ctx))}, nil
 		}
 		market.Theta = value
 	}
 	if in.Vega != "" {
-		value, err := conv.ParseFloatField(in.Vega)
+		value, err := conv.ParseDecimalField(in.Vega)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.VegaFormatError, i18n.Translate(i18n.VegaFormatError, l.ctx))}, nil
 		}
 		market.Vega = value
 	}
 	if in.Rho != "" {
-		value, err := conv.ParseFloatField(in.Rho)
+		value, err := conv.ParseDecimalField(in.Rho)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.RhoFormatError, i18n.Translate(i18n.RhoFormatError, l.ctx))}, nil
 		}
 		market.Rho = value
 	}
 	if in.RiskFreeRate != "" {
-		value, err := conv.ParseFloatField(in.RiskFreeRate)
+		value, err := conv.ParseDecimalField(in.RiskFreeRate)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.ErrResp(i18n.RiskFreeRateFormatError, i18n.Translate(i18n.RiskFreeRateFormatError, l.ctx))}, nil
 		}

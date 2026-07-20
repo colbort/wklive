@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,25 +44,31 @@ type (
 	}
 
 	TTradeFill struct {
-		Id            int64   `db:"id"`             // 主键ID
-		TenantId      int64   `db:"tenant_id"`      // 租户ID
-		FillNo        string  `db:"fill_no"`        // 成交号
-		OrderId       int64   `db:"order_id"`       // 订单ID
-		OrderNo       string  `db:"order_no"`       // 平台订单号
-		UserId        int64   `db:"user_id"`        // 用户ID
-		SymbolId      int64   `db:"symbol_id"`      // 交易标的ID
-		MarketType    int64   `db:"market_type"`    // 市场类型：1现货 2秒合约 3U本位 4币本位
-		Side          int64   `db:"side"`           // 买卖方向：1买 2卖
-		PositionSide  int64   `db:"position_side"`  // 持仓方向：0未知/无 1净持仓 2多 3空
-		Price         float64 `db:"price"`          // 成交价格
-		Qty           float64 `db:"qty"`            // 成交数量
-		Amount        float64 `db:"amount"`         // 成交金额
-		Fee           float64 `db:"fee"`            // 手续费
-		FeeAsset      string  `db:"fee_asset"`      // 手续费币种
-		LiquidityType int64   `db:"liquidity_type"` // 流动性类型：1Maker 2Taker
-		RealizedPnl   float64 `db:"realized_pnl"`   // 已实现盈亏，现货一般为0
-		MatchTime     int64   `db:"match_time"`     // 成交时间，毫秒时间戳
-		CreateTimes   int64   `db:"create_times"`   // 创建时间，毫秒时间戳
+		Id                   int64           `db:"id"`                     // 主键ID
+		TenantId             int64           `db:"tenant_id"`              // 租户ID
+		FillNo               string          `db:"fill_no"`                // 成交号
+		MatchNo              string          `db:"match_no"`               // 撮合编号，同一买卖成交共享
+		OrderId              int64           `db:"order_id"`               // 订单ID
+		OrderNo              string          `db:"order_no"`               // 平台订单号
+		UserId               int64           `db:"user_id"`                // 用户ID
+		SymbolId             int64           `db:"symbol_id"`              // 交易标的ID
+		ProductType          int64           `db:"product_type"`           // 产品大类快照：1现货 2衍生品
+		ContractType         int64           `db:"contract_type"`          // 合约期限类型快照
+		ContractValueType    int64           `db:"contract_value_type"`    // 合约价值类型快照
+		Side                 int64           `db:"side"`                   // 买卖方向：1买 2卖
+		PositionSide         int64           `db:"position_side"`          // 持仓方向：0未知/无 1净持仓 2多 3空
+		Price                decimal.Decimal `db:"price"`                  // 成交价格
+		Qty                  decimal.Decimal `db:"qty"`                    // 成交数量
+		Amount               decimal.Decimal `db:"amount"`                 // 成交金额
+		Fee                  decimal.Decimal `db:"fee"`                    // 手续费
+		FeeAsset             string          `db:"fee_asset"`              // 手续费币种
+		LiquidityType        int64           `db:"liquidity_type"`         // 流动性类型：1Maker 2Taker
+		RealizedPnl          decimal.Decimal `db:"realized_pnl"`           // 已实现盈亏，现货一般为0
+		SettlementStatus     int64           `db:"settlement_status"`      // 结算状态：1待结算 2结算中 3已结算 4失败 5人工处理
+		SettlementRetryCount int64           `db:"settlement_retry_count"` // 结算重试次数
+		SettledAt            int64           `db:"settled_at"`             // 结算完成时间
+		MatchTime            int64           `db:"match_time"`             // 成交时间，毫秒时间戳
+		CreateTimes          int64           `db:"create_times"`           // 创建时间，毫秒时间戳
 	}
 )
 
@@ -127,8 +135,8 @@ func (m *defaultTTradeFillModel) Insert(ctx context.Context, data *TTradeFill) (
 	tTradeFillIdKey := fmt.Sprintf("%s%v", cacheTTradeFillIdPrefix, data.Id)
 	tTradeFillTenantIdFillNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeFillTenantIdFillNoPrefix, data.TenantId, data.FillNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeFillRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.FillNo, data.OrderId, data.OrderNo, data.UserId, data.SymbolId, data.MarketType, data.Side, data.PositionSide, data.Price, data.Qty, data.Amount, data.Fee, data.FeeAsset, data.LiquidityType, data.RealizedPnl, data.MatchTime, data.CreateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeFillRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.FillNo, data.MatchNo, data.OrderId, data.OrderNo, data.UserId, data.SymbolId, data.ProductType, data.ContractType, data.ContractValueType, data.Side, data.PositionSide, data.Price, data.Qty, data.Amount, data.Fee, data.FeeAsset, data.LiquidityType, data.RealizedPnl, data.SettlementStatus, data.SettlementRetryCount, data.SettledAt, data.MatchTime, data.CreateTimes)
 	}, tTradeFillIdKey, tTradeFillTenantIdFillNoKey)
 	return ret, err
 }
@@ -143,7 +151,7 @@ func (m *defaultTTradeFillModel) Update(ctx context.Context, newData *TTradeFill
 	tTradeFillTenantIdFillNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeFillTenantIdFillNoPrefix, data.TenantId, data.FillNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeFillRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.FillNo, newData.OrderId, newData.OrderNo, newData.UserId, newData.SymbolId, newData.MarketType, newData.Side, newData.PositionSide, newData.Price, newData.Qty, newData.Amount, newData.Fee, newData.FeeAsset, newData.LiquidityType, newData.RealizedPnl, newData.MatchTime, newData.CreateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.FillNo, newData.MatchNo, newData.OrderId, newData.OrderNo, newData.UserId, newData.SymbolId, newData.ProductType, newData.ContractType, newData.ContractValueType, newData.Side, newData.PositionSide, newData.Price, newData.Qty, newData.Amount, newData.Fee, newData.FeeAsset, newData.LiquidityType, newData.RealizedPnl, newData.SettlementStatus, newData.SettlementRetryCount, newData.SettledAt, newData.MatchTime, newData.CreateTimes, newData.Id)
 	}, tTradeFillIdKey, tTradeFillTenantIdFillNoKey)
 	return err
 }

@@ -18,12 +18,14 @@ type (
 	CreateSymbolReq                 = trade.CreateSymbolReq
 	GetCancelLogListAdminReq        = trade.GetCancelLogListAdminReq
 	GetCancelLogListAdminResp       = trade.GetCancelLogListAdminResp
+	GetContractUserConfigReq        = trade.GetContractUserConfigReq
+	GetContractUserConfigResp       = trade.GetContractUserConfigResp
 	GetFillDetailAdminReq           = trade.GetFillDetailAdminReq
 	GetFillDetailAdminResp          = trade.GetFillDetailAdminResp
 	GetFillListAdminReq             = trade.GetFillListAdminReq
 	GetFillListAdminResp            = trade.GetFillListAdminResp
-	GetMarginAccountListAdminReq    = trade.GetMarginAccountListAdminReq
-	GetMarginAccountListAdminResp   = trade.GetMarginAccountListAdminResp
+	GetMarginSnapshotListAdminReq   = trade.GetMarginSnapshotListAdminReq
+	GetMarginSnapshotListAdminResp  = trade.GetMarginSnapshotListAdminResp
 	GetOrderDetailAdminReq          = trade.GetOrderDetailAdminReq
 	GetOrderDetailAdminResp         = trade.GetOrderDetailAdminResp
 	GetOrderListAdminReq            = trade.GetOrderListAdminReq
@@ -59,8 +61,11 @@ type (
 	GetUserTradeLimitResp           = trade.GetUserTradeLimitResp
 	RetryTradeEventReq              = trade.RetryTradeEventReq
 	SetContractSymbolConfigReq      = trade.SetContractSymbolConfigReq
+	SetContractUserConfigReq        = trade.SetContractUserConfigReq
+	SetSecondsSymbolConfigReq       = trade.SetSecondsSymbolConfigReq
 	SetSpotSymbolConfigReq          = trade.SetSpotSymbolConfigReq
 	SetSymbolLeverageConfigReq      = trade.SetSymbolLeverageConfigReq
+	SetSymbolSessionReq             = trade.SetSymbolSessionReq
 	SetUserLeverageConfigReq        = trade.SetUserLeverageConfigReq
 	SetUserSymbolLimitReq           = trade.SetUserSymbolLimitReq
 	SetUserTradeConfigReq           = trade.SetUserTradeConfigReq
@@ -80,6 +85,10 @@ type (
 		SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 设置合约交易对配置
 		SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 设置秒合约产品配置
+		SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 保存交易时段配置
+		SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 保存交易对杠杆档位配置
 		SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 获取交易对杠杆档位配置
@@ -100,8 +109,8 @@ type (
 		GetPositionDetailAdmin(ctx context.Context, in *GetPositionDetailAdminReq, opts ...grpc.CallOption) (*GetPositionDetailAdminResp, error)
 		// 获取持仓历史列表
 		GetPositionHistoryListAdmin(ctx context.Context, in *GetPositionHistoryListAdminReq, opts ...grpc.CallOption) (*GetPositionHistoryListAdminResp, error)
-		// 获取保证金账户列表
-		GetMarginAccountListAdmin(ctx context.Context, in *GetMarginAccountListAdminReq, opts ...grpc.CallOption) (*GetMarginAccountListAdminResp, error)
+		// 获取合约风控保证金快照列表
+		GetMarginSnapshotListAdmin(ctx context.Context, in *GetMarginSnapshotListAdminReq, opts ...grpc.CallOption) (*GetMarginSnapshotListAdminResp, error)
 		// 获取撤单日志列表
 		GetCancelLogListAdmin(ctx context.Context, in *GetCancelLogListAdminReq, opts ...grpc.CallOption) (*GetCancelLogListAdminResp, error)
 		// 设置用户交易限制
@@ -116,6 +125,10 @@ type (
 		SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 获取用户交易配置
 		GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error)
+		// 设置用户合约偏好配置
+		SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取用户合约偏好配置
+		GetContractUserConfig(ctx context.Context, in *GetContractUserConfigReq, opts ...grpc.CallOption) (*GetContractUserConfigResp, error)
 		// 获取风控订单校验日志列表
 		GetRiskOrderCheckLogList(ctx context.Context, in *GetRiskOrderCheckLogListReq, opts ...grpc.CallOption) (*GetRiskOrderCheckLogListResp, error)
 		// 设置用户杠杆配置
@@ -175,6 +188,18 @@ func (m *defaultTradeAdmin) SetSpotSymbolConfig(ctx context.Context, in *SetSpot
 func (m *defaultTradeAdmin) SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetContractSymbolConfig(ctx, in, opts...)
+}
+
+// 设置秒合约产品配置
+func (m *defaultTradeAdmin) SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.SetSecondsSymbolConfig(ctx, in, opts...)
+}
+
+// 保存交易时段配置
+func (m *defaultTradeAdmin) SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.SetSymbolSession(ctx, in, opts...)
 }
 
 // 保存交易对杠杆档位配置
@@ -237,10 +262,10 @@ func (m *defaultTradeAdmin) GetPositionHistoryListAdmin(ctx context.Context, in 
 	return client.GetPositionHistoryListAdmin(ctx, in, opts...)
 }
 
-// 获取保证金账户列表
-func (m *defaultTradeAdmin) GetMarginAccountListAdmin(ctx context.Context, in *GetMarginAccountListAdminReq, opts ...grpc.CallOption) (*GetMarginAccountListAdminResp, error) {
+// 获取合约风控保证金快照列表
+func (m *defaultTradeAdmin) GetMarginSnapshotListAdmin(ctx context.Context, in *GetMarginSnapshotListAdminReq, opts ...grpc.CallOption) (*GetMarginSnapshotListAdminResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
-	return client.GetMarginAccountListAdmin(ctx, in, opts...)
+	return client.GetMarginSnapshotListAdmin(ctx, in, opts...)
 }
 
 // 获取撤单日志列表
@@ -283,6 +308,18 @@ func (m *defaultTradeAdmin) SetUserTradeConfig(ctx context.Context, in *SetUserT
 func (m *defaultTradeAdmin) GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.GetUserTradeConfig(ctx, in, opts...)
+}
+
+// 设置用户合约偏好配置
+func (m *defaultTradeAdmin) SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.SetContractUserConfig(ctx, in, opts...)
+}
+
+// 获取用户合约偏好配置
+func (m *defaultTradeAdmin) GetContractUserConfig(ctx context.Context, in *GetContractUserConfigReq, opts ...grpc.CallOption) (*GetContractUserConfigResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetContractUserConfig(ctx, in, opts...)
 }
 
 // 获取风控订单校验日志列表

@@ -39,14 +39,14 @@ func (l *GetOrderListLogic) GetOrderList(in *trade.GetOrderListReq) (*trade.GetO
 	}
 	cursor, limit := pageutil.Input(in.Page)
 	data, total, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
-		TenantId:   tenantId,
-		UserId:     userId,
-		SymbolId:   in.SymbolId,
-		MarketType: int64(in.MarketType),
-		Status:     int64(in.Status),
-		Side:       int64(in.Side),
-		TimeStart:  in.TimeRange.StartTime,
-		TimeEnd:    in.TimeRange.EndTime,
+		TenantId:    tenantId,
+		UserId:      userId,
+		SymbolId:    in.SymbolId,
+		ProductType: int64(in.ProductType),
+		Status:      int64(in.Status),
+		Side:        int64(in.Side),
+		TimeStart:   in.TimeRange.StartTime,
+		TimeEnd:     in.TimeRange.EndTime,
 	}, cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

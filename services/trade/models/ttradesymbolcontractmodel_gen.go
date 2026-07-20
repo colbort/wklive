@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,23 +44,30 @@ type (
 	}
 
 	TTradeSymbolContract struct {
-		Id                     int64   `db:"id"`                       // 主键ID
-		TenantId               int64   `db:"tenant_id"`                // 租户ID
-		SymbolId               int64   `db:"symbol_id"`                // 交易标的ID，对应t_trade_symbol.id
-		ContractSize           float64 `db:"contract_size"`            // 每张合约面值
-		Multiplier             float64 `db:"multiplier"`               // 合约乘数
-		MaintenanceMarginRate  float64 `db:"maintenance_margin_rate"`  // 维持保证金率
-		InitialMarginRate      float64 `db:"initial_margin_rate"`      // 初始保证金率
-		MakerFeeRate           float64 `db:"maker_fee_rate"`           // Maker手续费率
-		TakerFeeRate           float64 `db:"taker_fee_rate"`           // Taker手续费率
-		FundingIntervalMinutes int64   `db:"funding_interval_minutes"` // 资金费结算周期，单位分钟
-		DeliveryTime           int64   `db:"delivery_time"`            // 交割时间或到期时间，永续合约为0
-		SupportCross           int64   `db:"support_cross"`            // 是否支持全仓：1支持 0不支持
-		SupportIsolated        int64   `db:"support_isolated"`         // 是否支持逐仓：1支持 0不支持
-		BuyEnabled             int64   `db:"buy_enabled"`              // 开多/买入开关：1启用 2禁用
-		SellEnabled            int64   `db:"sell_enabled"`             // 开空/卖出开关：1启用 2禁用
-		CreateTimes            int64   `db:"create_times"`             // 创建时间，毫秒时间戳
-		UpdateTimes            int64   `db:"update_times"`             // 更新时间，毫秒时间戳
+		Id                     int64           `db:"id"`                       // 主键ID
+		TenantId               int64           `db:"tenant_id"`                // 租户ID
+		SymbolId               int64           `db:"symbol_id"`                // 交易标的ID，对应t_trade_symbol.id
+		ContractSize           decimal.Decimal `db:"contract_size"`            // 每张合约面值
+		Multiplier             decimal.Decimal `db:"multiplier"`               // 合约乘数
+		MaintenanceMarginRate  decimal.Decimal `db:"maintenance_margin_rate"`  // 维持保证金率
+		InitialMarginRate      decimal.Decimal `db:"initial_margin_rate"`      // 初始保证金率
+		MakerFeeRate           decimal.Decimal `db:"maker_fee_rate"`           // Maker手续费率
+		TakerFeeRate           decimal.Decimal `db:"taker_fee_rate"`           // Taker手续费率
+		FundingIntervalMinutes int64           `db:"funding_interval_minutes"` // 资金费结算周期，单位分钟
+		FundingRateCap         decimal.Decimal `db:"funding_rate_cap"`         // 资金费率上限，0表示不限制
+		FundingRateFloor       decimal.Decimal `db:"funding_rate_floor"`       // 资金费率下限，0表示不限制
+		IndexSymbol            string          `db:"index_symbol"`             // 指数价格标识
+		MarkPriceSource        string          `db:"mark_price_source"`        // 标记价格来源
+		SettlementPriceSource  string          `db:"settlement_price_source"`  // 交割结算价格来源
+		DeliveryTime           int64           `db:"delivery_time"`            // 交割时间或到期时间，永续合约为0
+		SupportCross           int64           `db:"support_cross"`            // 是否支持全仓：1支持 0不支持
+		SupportIsolated        int64           `db:"support_isolated"`         // 是否支持逐仓：1支持 0不支持
+		OpenLongEnabled        int64           `db:"open_long_enabled"`        // 开多开关：1启用 2禁用
+		OpenShortEnabled       int64           `db:"open_short_enabled"`       // 开空开关：1启用 2禁用
+		CloseLongEnabled       int64           `db:"close_long_enabled"`       // 平多开关：1启用 2禁用
+		CloseShortEnabled      int64           `db:"close_short_enabled"`      // 平空开关：1启用 2禁用
+		CreateTimes            int64           `db:"create_times"`             // 创建时间，毫秒时间戳
+		UpdateTimes            int64           `db:"update_times"`             // 更新时间，毫秒时间戳
 	}
 )
 
@@ -125,8 +134,8 @@ func (m *defaultTTradeSymbolContractModel) Insert(ctx context.Context, data *TTr
 	tTradeSymbolContractIdKey := fmt.Sprintf("%s%v", cacheTTradeSymbolContractIdPrefix, data.Id)
 	tTradeSymbolContractTenantIdSymbolIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeSymbolContractTenantIdSymbolIdPrefix, data.TenantId, data.SymbolId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSymbolContractRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.SymbolId, data.ContractSize, data.Multiplier, data.MaintenanceMarginRate, data.InitialMarginRate, data.MakerFeeRate, data.TakerFeeRate, data.FundingIntervalMinutes, data.DeliveryTime, data.SupportCross, data.SupportIsolated, data.BuyEnabled, data.SellEnabled, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSymbolContractRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.SymbolId, data.ContractSize, data.Multiplier, data.MaintenanceMarginRate, data.InitialMarginRate, data.MakerFeeRate, data.TakerFeeRate, data.FundingIntervalMinutes, data.FundingRateCap, data.FundingRateFloor, data.IndexSymbol, data.MarkPriceSource, data.SettlementPriceSource, data.DeliveryTime, data.SupportCross, data.SupportIsolated, data.OpenLongEnabled, data.OpenShortEnabled, data.CloseLongEnabled, data.CloseShortEnabled, data.CreateTimes, data.UpdateTimes)
 	}, tTradeSymbolContractIdKey, tTradeSymbolContractTenantIdSymbolIdKey)
 	return ret, err
 }
@@ -141,7 +150,7 @@ func (m *defaultTTradeSymbolContractModel) Update(ctx context.Context, newData *
 	tTradeSymbolContractTenantIdSymbolIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeSymbolContractTenantIdSymbolIdPrefix, data.TenantId, data.SymbolId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeSymbolContractRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SymbolId, newData.ContractSize, newData.Multiplier, newData.MaintenanceMarginRate, newData.InitialMarginRate, newData.MakerFeeRate, newData.TakerFeeRate, newData.FundingIntervalMinutes, newData.DeliveryTime, newData.SupportCross, newData.SupportIsolated, newData.BuyEnabled, newData.SellEnabled, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SymbolId, newData.ContractSize, newData.Multiplier, newData.MaintenanceMarginRate, newData.InitialMarginRate, newData.MakerFeeRate, newData.TakerFeeRate, newData.FundingIntervalMinutes, newData.FundingRateCap, newData.FundingRateFloor, newData.IndexSymbol, newData.MarkPriceSource, newData.SettlementPriceSource, newData.DeliveryTime, newData.SupportCross, newData.SupportIsolated, newData.OpenLongEnabled, newData.OpenShortEnabled, newData.CloseLongEnabled, newData.CloseShortEnabled, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeSymbolContractIdKey, tTradeSymbolContractTenantIdSymbolIdKey)
 	return err
 }

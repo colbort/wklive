@@ -28,7 +28,7 @@ func NewGetUserTradeLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 获取用户交易限制
 func (l *GetUserTradeLimitLogic) GetUserTradeLimit(in *trade.GetUserTradeLimitReq) (*trade.GetUserTradeLimitResp, error) {
-	item, err := l.svcCtx.RiskUserTradeLimitModel.FindOneByTenantIdUserIdMarketType(l.ctx, in.TenantId, in.UserId, int64(in.MarketType))
+	item, err := l.svcCtx.RiskUserTradeLimitModel.FindOneByTenantIdUserIdProductType(l.ctx, in.TenantId, in.UserId, int64(in.ProductType))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

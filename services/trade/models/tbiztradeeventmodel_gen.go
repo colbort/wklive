@@ -50,7 +50,7 @@ type (
 		BizType       string         `db:"biz_type"`        // 业务类型，如order、fill、position、margin
 		UserId        int64          `db:"user_id"`         // 用户ID
 		SymbolId      int64          `db:"symbol_id"`       // 交易标的ID，没有则为0
-		MarketType    int64          `db:"market_type"`     // 市场类型：0无 1现货 2秒合约 3U本位 4币本位
+		ProductType   int64          `db:"product_type"`    // 产品大类：0无 1现货 2衍生品 3秒合约
 		OperatorId    int64          `db:"operator_id"`     // 操作人ID，系统操作时可为0
 		Source        int64          `db:"source"`          // 来源：1系统 2用户 3后台管理 4任务
 		EventStatus   int64          `db:"event_status"`    // 事件状态：1待投递 2投递成功 3投递失败 4已取消
@@ -129,7 +129,7 @@ func (m *defaultTBizTradeEventModel) Insert(ctx context.Context, data *TBizTrade
 	tBizTradeEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tBizTradeEventRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.EventNo, data.EventType, data.BizId, data.BizType, data.UserId, data.SymbolId, data.MarketType, data.OperatorId, data.Source, data.EventStatus, data.RetryCount, data.MaxRetryCount, data.NextRetryAt, data.LastErrorMsg, data.Payload, data.ExtData, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.EventNo, data.EventType, data.BizId, data.BizType, data.UserId, data.SymbolId, data.ProductType, data.OperatorId, data.Source, data.EventStatus, data.RetryCount, data.MaxRetryCount, data.NextRetryAt, data.LastErrorMsg, data.Payload, data.ExtData, data.CreateTimes, data.UpdateTimes)
 	}, tBizTradeEventIdKey, tBizTradeEventTenantIdEventNoKey)
 	return ret, err
 }
@@ -144,7 +144,7 @@ func (m *defaultTBizTradeEventModel) Update(ctx context.Context, newData *TBizTr
 	tBizTradeEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tBizTradeEventRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.EventNo, newData.EventType, newData.BizId, newData.BizType, newData.UserId, newData.SymbolId, newData.MarketType, newData.OperatorId, newData.Source, newData.EventStatus, newData.RetryCount, newData.MaxRetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.Payload, newData.ExtData, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.EventNo, newData.EventType, newData.BizId, newData.BizType, newData.UserId, newData.SymbolId, newData.ProductType, newData.OperatorId, newData.Source, newData.EventStatus, newData.RetryCount, newData.MaxRetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.Payload, newData.ExtData, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tBizTradeEventIdKey, tBizTradeEventTenantIdEventNoKey)
 	return err
 }

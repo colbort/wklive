@@ -72,7 +72,7 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 		func() error {
 			var queryErr error
 			configs, _, queryErr = l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
-				TenantId: tenantId, SymbolId: in.SymbolId, MarketType: item.MarketType, Enabled: 1,
+				TenantId: tenantId, SymbolId: in.SymbolId, Enabled: 1,
 			}, 0, 100)
 			if errors.Is(queryErr, models.ErrNotFound) {
 				return nil
@@ -90,7 +90,11 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 		resp.Data.Contract = contractSymbolToProto(contractCfg)
 	}
 	for _, cfg := range configs {
-		resp.Data.LeverageConfigs = append(resp.Data.LeverageConfigs, symbolLeverageConfigToProto(cfg))
+		defaultLeverage, findErr := findDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, cfg.TenantId, cfg.SymbolId, cfg.MarginMode)
+		if findErr != nil {
+			return nil, findErr
+		}
+		resp.Data.LeverageConfigs = append(resp.Data.LeverageConfigs, symbolLeverageConfigToProto(cfg, defaultLeverage))
 	}
 	return resp, nil
 }

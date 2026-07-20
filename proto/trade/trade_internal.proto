@@ -36,7 +36,7 @@ message CheckOrderRiskReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
   int64 symbol_id = 3;
-  MarketType market_type = 4;
+  reserved 4;
   common.Side side = 5; // 买卖方向
   PositionSide position_side = 6;
   OrderType order_type = 7;

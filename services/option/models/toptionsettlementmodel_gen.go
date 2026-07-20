@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -44,22 +46,22 @@ type (
 	}
 
 	TOptionSettlement struct {
-		Id               int64   `db:"id"`                // 主键ID
-		TenantId         int64   `db:"tenant_id"`         // 租户ID
-		SettlementNo     string  `db:"settlement_no"`     // 结算单号
-		ContractId       int64   `db:"contract_id"`       // 合约ID
-		UnderlyingSymbol string  `db:"underlying_symbol"` // 标的
-		ExpireTime       int64   `db:"expire_time"`       // 到期时间
-		SettlementTime   int64   `db:"settlement_time"`   // 结算时间
-		DeliveryPrice    float64 `db:"delivery_price"`    // 交割结算价
-		TheoreticalPrice float64 `db:"theoretical_price"` // 结算理论价
-		Iv               float64 `db:"iv"`                // 结算时IV
-		IsItm            int64   `db:"is_itm"`            // 是否实值：1是 2否
-		ExerciseResult   int64   `db:"exercise_result"`   // 行权结果：1未执行 2自动行权 3自动放弃
-		Status           int64   `db:"status"`            // 状态：1待结算 2结算中 3已完成 4失败
-		Remark           string  `db:"remark"`            // 备注
-		CreateTimes      int64   `db:"create_times"`      // 创建时间
-		UpdateTimes      int64   `db:"update_times"`      // 更新时间
+		Id               int64           `db:"id"`                // 主键ID
+		TenantId         int64           `db:"tenant_id"`         // 租户ID
+		SettlementNo     string          `db:"settlement_no"`     // 结算单号
+		ContractId       int64           `db:"contract_id"`       // 合约ID
+		UnderlyingSymbol string          `db:"underlying_symbol"` // 标的
+		ExpireTime       int64           `db:"expire_time"`       // 到期时间
+		SettlementTime   int64           `db:"settlement_time"`   // 结算时间
+		DeliveryPrice    decimal.Decimal `db:"delivery_price"`    // 交割结算价
+		TheoreticalPrice decimal.Decimal `db:"theoretical_price"` // 结算理论价
+		Iv               decimal.Decimal `db:"iv"`                // 结算时IV
+		IsItm            int64           `db:"is_itm"`            // 是否实值：1是 2否
+		ExerciseResult   int64           `db:"exercise_result"`   // 行权结果：1未执行 2自动行权 3自动放弃
+		Status           int64           `db:"status"`            // 状态：0未知 1待结算 2结算中 3已完成 4失败
+		Remark           string          `db:"remark"`            // 备注
+		CreateTimes      int64           `db:"create_times"`      // 创建时间
+		UpdateTimes      int64           `db:"update_times"`      // 更新时间
 	}
 )
 

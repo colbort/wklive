@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,22 +44,22 @@ type (
 	}
 
 	TOptionAccount struct {
-		Id               int64   `db:"id"`                // 主键ID
-		TenantId         int64   `db:"tenant_id"`         // 租户ID
-		UserId           int64   `db:"user_id"`           // 用户ID
-		AccountId        int64   `db:"account_id"`        // 交易账户ID
-		MarginCoin       string  `db:"margin_coin"`       // 保证金币种
-		Balance          float64 `db:"balance"`           // 账户余额
-		AvailableBalance float64 `db:"available_balance"` // 可用余额
-		FrozenBalance    float64 `db:"frozen_balance"`    // 冻结余额
-		PositionMargin   float64 `db:"position_margin"`   // 持仓保证金
-		OrderMargin      float64 `db:"order_margin"`      // 委托保证金
-		UnrealizedPnl    float64 `db:"unrealized_pnl"`    // 未实现盈亏
-		RealizedPnl      float64 `db:"realized_pnl"`      // 已实现盈亏
-		RiskRate         float64 `db:"risk_rate"`         // 风险率
-		Status           int64   `db:"status"`            // 状态：1正常 2冻结 3限制交易
-		CreateTimes      int64   `db:"create_times"`      // 创建时间
-		UpdateTimes      int64   `db:"update_times"`      // 更新时间
+		Id               int64           `db:"id"`                // 主键ID
+		TenantId         int64           `db:"tenant_id"`         // 租户ID
+		UserId           int64           `db:"user_id"`           // 用户ID
+		AccountId        int64           `db:"account_id"`        // 交易账户ID
+		MarginCoin       string          `db:"margin_coin"`       // 保证金币种
+		Balance          decimal.Decimal `db:"balance"`           // 账户余额
+		AvailableBalance decimal.Decimal `db:"available_balance"` // 可用余额
+		FrozenBalance    decimal.Decimal `db:"frozen_balance"`    // 冻结余额
+		PositionMargin   decimal.Decimal `db:"position_margin"`   // 持仓保证金
+		OrderMargin      decimal.Decimal `db:"order_margin"`      // 委托保证金
+		UnrealizedPnl    decimal.Decimal `db:"unrealized_pnl"`    // 未实现盈亏
+		RealizedPnl      decimal.Decimal `db:"realized_pnl"`      // 已实现盈亏
+		RiskRate         decimal.Decimal `db:"risk_rate"`         // 风险率
+		Status           int64           `db:"status"`            // 状态：1正常 2冻结 3限制交易
+		CreateTimes      int64           `db:"create_times"`      // 创建时间
+		UpdateTimes      int64           `db:"update_times"`      // 更新时间
 	}
 )
 

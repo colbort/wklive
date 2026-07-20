@@ -37,8 +37,8 @@ func (l *GetLeverageConfigLogic) GetLeverageConfig(in *trade.GetLeverageConfigRe
 	if err != nil {
 		return nil, err
 	}
-	cfg, err := l.svcCtx.ContractLeverageCfgModel.FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(
-		l.ctx, tenantId, userId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode),
+	cfg, err := l.svcCtx.ContractLeverageCfgModel.FindOneByTenantIdUserIdSymbolIdMarginMode(
+		l.ctx, tenantId, userId, in.SymbolId, int64(in.MarginMode),
 	)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

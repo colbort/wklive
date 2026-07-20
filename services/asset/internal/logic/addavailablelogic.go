@@ -11,6 +11,8 @@ import (
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -31,13 +33,13 @@ func NewAddAvailableLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddA
 
 // 增加可用余额
 func (l *AddAvailableLogic) AddAvailable(in *asset.AddAvailableReq) (*asset.ChangeAssetResp, error) {
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("AddAvailable parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("AddAvailable validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
@@ -82,8 +84,8 @@ func (l *AddAvailableLogic) AddAvailable(in *asset.AddAvailableReq) (*asset.Chan
 				Coin:            in.Coin,
 				TotalAmount:     amount,
 				AvailableAmount: amount,
-				FrozenAmount:    0,
-				LockedAmount:    0,
+				FrozenAmount:    decimal.Zero,
+				LockedAmount:    decimal.Zero,
 				Enabled:         1,
 				Version:         1,
 				Remark:          in.Remark,

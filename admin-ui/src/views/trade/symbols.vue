@@ -7,10 +7,10 @@
         </div>
       </el-form-item>
 
-      <el-form-item :label="t('trade.marketType')">
-        <el-select v-model="query.marketType" clearable class="query-field">
+      <el-form-item :label="t('trade.productType')">
+        <el-select v-model="query.productType" clearable class="query-field">
           <el-option
-            v-for="item in marketTypeOptions"
+            v-for="item in productTypeOptions"
             :key="item.value"
             :label="optionItemLabel(item)"
             :value="item.value"
@@ -46,20 +46,20 @@
         <el-table-column prop="tenantId" :label="t('trade.tenantId')" width="100" />
 
         <el-table-column min-width="190" show-overflow-tooltip>
-          <template #header>
-            {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }}
-          </template>
+          <template #header> {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }} </template>
           <template #default="{ row }">
             <div class="symbol-cell">
-              <span class="symbol-code">{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span>
+              <span class="symbol-code"
+                >{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span
+              >
             </div>
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('trade.marketType')" min-width="130">
+        <el-table-column :label="t('trade.productType')" min-width="130">
           <template #default="{ row }">
             <el-tag size="small" effect="light">
-              {{ optionLabel('marketType', row.marketType) }}
+              {{ optionLabel('productType', row.productType) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -105,9 +105,9 @@
             {{ row.qtyStep || '-' }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('trade.maxLeverage')" width="110">
+        <el-table-column :label="t('trade.maxNotional')" min-width="130">
           <template #default="{ row }">
-            {{ row.maxLeverage || '-' }}
+            {{ row.maxNotional || '-' }}
           </template>
         </el-table-column>
         <el-table-column :label="t('common.sort')" width="90">
@@ -115,19 +115,9 @@
             {{ row.sort || 0 }}
           </template>
         </el-table-column>
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="260"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button
-              v-perm="'trade:symbol:detail'"
-              link
-              type="primary"
-              @click="showDetail(row)"
-            >
+            <el-button v-perm="'trade:symbol:detail'" link type="primary" @click="showDetail(row)">
               {{ t('option.detail') }}
             </el-button>
             <el-button
@@ -155,6 +145,15 @@
               @click="openContractDialog(row)"
             >
               {{ t('trade.contractConfig') }}
+            </el-button>
+            <el-button
+              v-if="row.productType === 3"
+              v-perm="'trade:symbol:seconds-config'"
+              link
+              type="primary"
+              @click="openSecondsDialog(row)"
+            >
+              {{ t('trade.secondsConfig') }}
             </el-button>
             <el-button
               v-if="isContractMarket(row)"
@@ -199,14 +198,14 @@
             <el-input v-model="symbolForm.displaySymbol" />
           </el-form-item>
 
-          <el-form-item :label="t('trade.marketType')">
+          <el-form-item :label="t('trade.productType')">
             <el-select
-              v-model="symbolForm.marketType"
+              v-model="symbolForm.productType"
               class="full-width"
               :disabled="Boolean(symbolForm.id)"
             >
               <el-option
-                v-for="item in marketTypeFormOptions"
+                v-for="item in productTypeFormOptions"
                 :key="item.value"
                 :label="optionItemLabel(item)"
                 :value="item.value"
@@ -222,6 +221,21 @@
             >
               <el-option
                 v-for="item in contractTypeFormOptions"
+                :key="item.value"
+                :label="optionItemLabel(item)"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="t('trade.contractValueType')">
+            <el-select
+              v-model="symbolForm.contractValueType"
+              class="full-width"
+              :disabled="Boolean(symbolForm.id) || !isDerivativeProduct"
+            >
+              <el-option
+                v-for="item in contractValueTypeFormOptions"
                 :key="item.value"
                 :label="optionItemLabel(item)"
                 :value="item.value"
@@ -252,6 +266,10 @@
             <el-input v-model="symbolForm.settleAsset" :disabled="Boolean(symbolForm.id)" />
           </el-form-item>
 
+          <el-form-item v-if="isDerivativeProduct" :label="t('trade.marginAsset')">
+            <el-input v-model="symbolForm.marginAsset" :disabled="Boolean(symbolForm.id)" />
+          </el-form-item>
+
           <el-form-item :label="t('trade.priceScale')">
             <el-input-number
               v-model="symbolForm.priceScale"
@@ -270,13 +288,8 @@
             />
           </el-form-item>
 
-          <el-form-item :label="t('trade.maxLeverage')">
-            <el-input-number
-              v-model="symbolForm.maxLeverage"
-              :min="0"
-              :precision="0"
-              class="full-width"
-            />
+          <el-form-item :label="t('trade.maxNotional')">
+            <el-input v-model="symbolForm.maxNotional" />
           </el-form-item>
 
           <el-form-item :label="t('trade.minPrice')">
@@ -307,16 +320,15 @@
             <el-input v-model="symbolForm.minNotional" />
           </el-form-item>
 
-          <el-form-item :label="t('trade.openTime')">
-            <el-date-picker
-              v-model="symbolOpenTime"
-              type="datetime"
-              clearable
-              class="full-width"
-            />
+          <el-form-item :label="t('trade.listingTime')">
+            <el-date-picker v-model="symbolListingTime" type="datetime" clearable class="full-width" />
           </el-form-item>
 
-          <el-form-item :label="t('trade.closeTime')">
+          <el-form-item :label="t('trade.tradingStartTime')">
+            <el-date-picker v-model="symbolOpenTime" type="datetime" clearable class="full-width" />
+          </el-form-item>
+
+          <el-form-item :label="t('trade.tradingEndTime')">
             <el-date-picker
               v-model="symbolCloseTime"
               type="datetime"
@@ -326,12 +338,7 @@
           </el-form-item>
 
           <el-form-item :label="t('common.sort')">
-            <el-input-number
-              v-model="symbolForm.sort"
-              :min="0"
-              :precision="0"
-              class="full-width"
-            />
+            <el-input-number v-model="symbolForm.sort" :min="0" :precision="0" class="full-width" />
           </el-form-item>
 
           <el-form-item :label="t('common.remark')" class="wide">
@@ -352,6 +359,29 @@
         >
           {{ t('common.confirm') }}
         </el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="secondsVisible" :title="t('trade.secondsConfig')" width="760px">
+      <el-form label-width="148px" class="dialog-form">
+        <div class="form-grid two">
+          <el-form-item :label="t('trade.tenantId')"><TenantSelect v-model="secondsForm.tenantId" include-system disabled /></el-form-item>
+          <el-form-item :label="t('trade.symbolId')"><el-input-number v-model="secondsForm.symbolId" disabled class="full-width" /></el-form-item>
+          <el-form-item :label="t('trade.durationSeconds')"><el-input-number v-model="secondsForm.durationSeconds" :min="1" class="full-width" /></el-form-item>
+          <el-form-item :label="t('trade.payoutRate')"><el-input v-model="secondsForm.payoutRate" /></el-form-item>
+          <el-form-item :label="t('trade.drawRule')"><el-input-number v-model="secondsForm.drawRule" :min="1" :max="2" class="full-width" /></el-form-item>
+          <el-form-item :label="t('trade.quoteValidityMs')"><el-input-number v-model="secondsForm.quoteValidityMs" :min="1" class="full-width" /></el-form-item>
+          <el-form-item :label="t('trade.startPriceSource')"><el-input v-model="secondsForm.startPriceSource" /></el-form-item>
+          <el-form-item :label="t('trade.settlementPriceSource')"><el-input v-model="secondsForm.settlementPriceSource" /></el-form-item>
+          <el-form-item :label="t('trade.minStake')"><el-input v-model="secondsForm.minStake" /></el-form-item>
+          <el-form-item :label="t('trade.maxStake')"><el-input v-model="secondsForm.maxStake" /></el-form-item>
+          <el-form-item :label="t('trade.upEnabled')"><el-select v-model="secondsForm.upEnabled" class="full-width"><el-option v-for="item in enableStatusOptions" :key="item.value" :label="optionItemLabel(item)" :value="item.value" /></el-select></el-form-item>
+          <el-form-item :label="t('trade.downEnabled')"><el-select v-model="secondsForm.downEnabled" class="full-width"><el-option v-for="item in enableStatusOptions" :key="item.value" :label="optionItemLabel(item)" :value="item.value" /></el-select></el-form-item>
+        </div>
+      </el-form>
+      <template #footer>
+        <el-button @click="secondsVisible = false">{{ t('common.cancel') }}</el-button>
+        <el-button v-perm="'trade:symbol:seconds-config'" type="primary" :loading="submitLoading" @click="submitSecondsConfig">{{ t('common.confirm') }}</el-button>
       </template>
     </el-dialog>
 
@@ -469,6 +499,26 @@
             />
           </el-form-item>
 
+          <el-form-item :label="t('trade.fundingRateCap')">
+            <el-input v-model="contractForm.fundingRateCap" />
+          </el-form-item>
+
+          <el-form-item :label="t('trade.fundingRateFloor')">
+            <el-input v-model="contractForm.fundingRateFloor" />
+          </el-form-item>
+
+          <el-form-item :label="t('trade.indexSymbol')">
+            <el-input v-model="contractForm.indexSymbol" />
+          </el-form-item>
+
+          <el-form-item :label="t('trade.markPriceSource')">
+            <el-input v-model="contractForm.markPriceSource" />
+          </el-form-item>
+
+          <el-form-item :label="t('trade.settlementPriceSource')">
+            <el-input v-model="contractForm.settlementPriceSource" />
+          </el-form-item>
+
           <el-form-item :label="t('option.deliverTime')">
             <el-date-picker
               v-model="contractDeliveryTime"
@@ -500,8 +550,8 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item :label="t('trade.buyEnabled')">
-            <el-select v-model="contractForm.buyEnabled" class="full-width">
+          <el-form-item :label="t('trade.openLongEnabled')">
+            <el-select v-model="contractForm.openLongEnabled" class="full-width">
               <el-option
                 v-for="item in enableStatusOptions"
                 :key="item.value"
@@ -511,14 +561,26 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item :label="t('trade.sellEnabled')">
-            <el-select v-model="contractForm.sellEnabled" class="full-width">
+          <el-form-item :label="t('trade.openShortEnabled')">
+            <el-select v-model="contractForm.openShortEnabled" class="full-width">
               <el-option
                 v-for="item in enableStatusOptions"
                 :key="item.value"
                 :label="optionItemLabel(item)"
                 :value="item.value"
               />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="t('trade.closeLongEnabled')">
+            <el-select v-model="contractForm.closeLongEnabled" class="full-width">
+              <el-option v-for="item in enableStatusOptions" :key="item.value" :label="optionItemLabel(item)" :value="item.value" />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="t('trade.closeShortEnabled')">
+            <el-select v-model="contractForm.closeShortEnabled" class="full-width">
+              <el-option v-for="item in enableStatusOptions" :key="item.value" :label="optionItemLabel(item)" :value="item.value" />
             </el-select>
           </el-form-item>
         </div>
@@ -556,17 +618,6 @@
             />
           </el-form-item>
 
-          <el-form-item :label="t('trade.marketType')">
-            <el-select v-model="leverageForm.marketType" disabled class="full-width">
-              <el-option
-                v-for="item in marketTypeFormOptions"
-                :key="item.value"
-                :label="optionItemLabel(item)"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-
           <el-form-item :label="t('trade.marginMode')">
             <el-select v-model="leverageForm.marginMode" class="full-width">
               <el-option
@@ -587,15 +638,6 @@
                 :value="item.value"
               />
             </el-select>
-          </el-form-item>
-
-          <el-form-item :label="t('trade.maxLeverage')">
-            <el-input-number
-              v-model="leverageForm.maxLeverage"
-              :min="1"
-              :precision="0"
-              class="full-width"
-            />
           </el-form-item>
 
           <el-form-item :label="t('trade.status')">
@@ -654,12 +696,7 @@
         </el-button>
       </div>
 
-      <el-table
-        :data="leverageRows"
-        size="small"
-        border
-        class="leverage-table"
-      >
+      <el-table :data="leverageGroups" size="small" border class="leverage-table">
         <el-table-column :label="t('trade.marginMode')" width="130">
           <template #default="{ row }">
             {{ optionLabel('marginMode', row.marginMode) }}
@@ -671,13 +708,11 @@
           </template>
         </el-table-column>
         <el-table-column :label="t('trade.defaultLeverage')" width="130">
-          <template #default="{ row }">
-            {{ row.defaultLeverage }}X
-          </template>
+          <template #default="{ row }"> {{ row.defaultLeverage }}X </template>
         </el-table-column>
         <el-table-column :label="t('trade.maxLeverage')" width="120">
           <template #default="{ row }">
-            {{ row.maxLeverage }}X
+            {{ row.leverageValues[row.leverageValues.length - 1] || 1 }}X
           </template>
         </el-table-column>
         <el-table-column :label="t('trade.status')" width="110">
@@ -735,8 +770,8 @@
         <el-descriptions-item :label="t('trade.displaySymbol')">
           {{ detailData.displaySymbol || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('trade.marketType')">
-          {{ optionLabel('marketType', detailData.marketType) }}
+        <el-descriptions-item :label="t('trade.productType')">
+          {{ optionLabel('productType', detailData.productType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('trade.baseAsset')">
           {{ detailData.baseAsset || '-' }}
@@ -749,6 +784,12 @@
         </el-descriptions-item>
         <el-descriptions-item :label="t('trade.contractType')">
           {{ optionLabel('contractType', detailData.contractType) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('trade.contractValueType')">
+          {{ optionLabel('contractValueType', detailData.contractValueType) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('trade.marginAsset')">
+          {{ detailData.marginAsset || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('trade.priceScale')">
           {{ detailData.priceScale }}
@@ -777,17 +818,20 @@
         <el-descriptions-item :label="t('trade.minNotional')">
           {{ detailData.minNotional || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('trade.maxLeverage')">
-          {{ detailData.maxLeverage || '-' }}
+        <el-descriptions-item :label="t('trade.maxNotional')">
+          {{ detailData.maxNotional || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.sort')">
           {{ detailData.sort || 0 }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('trade.openTime')">
-          {{ formatDate(detailData.openTime || 0) }}
+        <el-descriptions-item :label="t('trade.listingTime')">
+          {{ formatDate(detailData.listingTime || 0) }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('trade.closeTime')">
-          {{ formatDate(detailData.closeTime || 0) }}
+        <el-descriptions-item :label="t('trade.tradingStartTime')">
+          {{ formatDate(detailData.tradingStartTime || 0) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('trade.tradingEndTime')">
+          {{ formatDate(detailData.tradingEndTime || 0) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.createTimes')">
           {{ formatDate(detailData.createTimes || 0) }}
@@ -804,7 +848,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
@@ -826,7 +870,7 @@ type DatePickerValue = Date | string | number | null | undefined
 
 interface SymbolQuery {
   tenantId: number | undefined
-  marketType: number | undefined
+  productType: number | undefined
   keyword: string
   status: number | undefined
 }
@@ -836,11 +880,13 @@ interface SymbolForm {
   tenantId: number
   symbol: string
   displaySymbol: string
-  marketType: number
+  productType: number
   baseAsset: string
   quoteAsset: string
   settleAsset: string
   contractType: number
+  contractValueType: number
+  marginAsset: string
   status: number
   priceScale: number
   qtyScale: number
@@ -851,9 +897,10 @@ interface SymbolForm {
   maxQty: string
   qtyStep: string
   minNotional: string
-  maxLeverage: number
-  openTime: number
-  closeTime: number
+  maxNotional: string
+  listingTime: number
+  tradingStartTime: number
+  tradingEndTime: number
   sort: number
   remark: string
 }
@@ -880,18 +927,38 @@ interface ContractForm {
   deliveryTime: number
   supportCross: number
   supportIsolated: number
-  buyEnabled: number
-  sellEnabled: number
+  fundingRateCap: string
+  fundingRateFloor: string
+  indexSymbol: string
+  markPriceSource: string
+  settlementPriceSource: string
+  openLongEnabled: number
+  openShortEnabled: number
+  closeLongEnabled: number
+  closeShortEnabled: number
+}
+
+interface SecondsForm {
+  tenantId: number
+  symbolId: number
+  durationSeconds: number
+  payoutRate: string
+  drawRule: number
+  startPriceSource: string
+  settlementPriceSource: string
+  quoteValidityMs: number
+  minStake: string
+  maxStake: string
+  upEnabled: number
+  downEnabled: number
 }
 
 interface LeverageForm {
   tenantId: number
   symbolId: number
-  marketType: number
   marginMode: number
   leverageValues: number[]
   defaultLeverage: number
-  maxLeverage: number
   enabled: number
   sort: number
   remark: string
@@ -909,25 +976,29 @@ const detailData = ref<TradeSymbol | null>(null)
 const symbolVisible = ref(false)
 const spotVisible = ref(false)
 const contractVisible = ref(false)
+const secondsVisible = ref(false)
 const leverageVisible = ref(false)
 const optionGroups = ref<OptionGroup[]>([])
 const leverageSymbol = ref<TradeSymbol | null>(null)
 const leverageRows = ref<TradeSymbolLeverageConfig[]>([])
 
-const marketTypeFallbackOptions: OptionItem[] = [
-  { value: 0, code: 'MARKET_TYPE_UNKNOWN' },
-  { value: 1, code: 'MARKET_TYPE_SPOT' },
-  { value: 2, code: 'MARKET_TYPE_SECONDS_CONTRACT' },
-  { value: 3, code: 'MARKET_TYPE_USDT_CONTRACT' },
-  { value: 4, code: 'MARKET_TYPE_COIN_CONTRACT' },
+const productTypeFallbackOptions: OptionItem[] = [
+  { value: 0, code: 'PRODUCT_TYPE_UNKNOWN' },
+  { value: 1, code: 'PRODUCT_TYPE_SPOT' },
+  { value: 2, code: 'PRODUCT_TYPE_DERIVATIVE' },
+  { value: 3, code: 'PRODUCT_TYPE_SECONDS' },
 ]
 
 const contractTypeFallbackOptions: OptionItem[] = [
-  { value: 0, code: 'CONTRACT_TYPE_UNKNOWN' },
-  { value: 1, code: 'CONTRACT_TYPE_NONE' },
-  { value: 2, code: 'CONTRACT_TYPE_PERPETUAL' },
-  { value: 3, code: 'CONTRACT_TYPE_DELIVERY' },
-  { value: 4, code: 'CONTRACT_TYPE_SECONDS' },
+  { value: 0, code: 'CONTRACT_TYPE_NOT_APPLICABLE' },
+  { value: 1, code: 'CONTRACT_TYPE_PERPETUAL' },
+  { value: 2, code: 'CONTRACT_TYPE_DELIVERY' },
+]
+
+const contractValueTypeFallbackOptions: OptionItem[] = [
+  { value: 0, code: 'CONTRACT_VALUE_TYPE_NOT_APPLICABLE' },
+  { value: 1, code: 'CONTRACT_VALUE_TYPE_LINEAR' },
+  { value: 2, code: 'CONTRACT_VALUE_TYPE_INVERSE' },
 ]
 
 const symbolStatusFallbackOptions: OptionItem[] = [
@@ -962,7 +1033,7 @@ const leverageValueFallbackOptions: OptionItem[] = [
 
 const query = reactive<SymbolQuery>({
   tenantId: undefined,
-  marketType: undefined,
+  productType: undefined,
   keyword: '',
   status: undefined,
 })
@@ -972,11 +1043,13 @@ const getDefaultSymbolForm = (): SymbolForm => ({
   tenantId: 0,
   symbol: '',
   displaySymbol: '',
-  marketType: 1,
+  productType: 1,
   baseAsset: '',
   quoteAsset: '',
   settleAsset: '',
-  contractType: 1,
+  contractType: 0,
+  contractValueType: 0,
+  marginAsset: '',
   status: 1,
   priceScale: 2,
   qtyScale: 4,
@@ -987,9 +1060,10 @@ const getDefaultSymbolForm = (): SymbolForm => ({
   maxQty: '',
   qtyStep: '',
   minNotional: '',
-  maxLeverage: 1,
-  openTime: 0,
-  closeTime: 0,
+  maxNotional: '',
+  listingTime: 0,
+  tradingStartTime: 0,
+  tradingEndTime: 0,
   sort: 0,
   remark: '',
 })
@@ -1016,8 +1090,30 @@ const getDefaultContractForm = (): ContractForm => ({
   deliveryTime: 0,
   supportCross: 1,
   supportIsolated: 1,
-  buyEnabled: 1,
-  sellEnabled: 1,
+  fundingRateCap: '',
+  fundingRateFloor: '',
+  indexSymbol: '',
+  markPriceSource: '',
+  settlementPriceSource: '',
+  openLongEnabled: 1,
+  openShortEnabled: 1,
+  closeLongEnabled: 1,
+  closeShortEnabled: 1,
+})
+
+const getDefaultSecondsForm = (): SecondsForm => ({
+  tenantId: 0,
+  symbolId: 0,
+  durationSeconds: 60,
+  payoutRate: '',
+  drawRule: 1,
+  startPriceSource: '',
+  settlementPriceSource: '',
+  quoteValidityMs: 3000,
+  minStake: '',
+  maxStake: '',
+  upEnabled: 1,
+  downEnabled: 1,
 })
 
 const defaultLeverageValues = (
@@ -1034,15 +1130,13 @@ const getDefaultLeverageForm = (
   marginMode = 1,
   leverageOptions: OptionItem[] = leverageValueFallbackOptions,
 ): LeverageForm => {
-  const values = defaultLeverageValues(row?.maxLeverage || 1, leverageOptions)
+  const values = defaultLeverageValues(125, leverageOptions)
   return {
     tenantId: row?.tenantId || 0,
     symbolId: row?.id || 0,
-    marketType: row?.marketType || 3,
     marginMode,
     leverageValues: values,
     defaultLeverage: values[0] || 1,
-    maxLeverage: Math.max(1, Number(row?.maxLeverage || values[values.length - 1] || 1)),
     enabled: 1,
     sort: marginMode,
     remark: '',
@@ -1052,6 +1146,7 @@ const getDefaultLeverageForm = (
 const symbolForm = reactive<SymbolForm>(getDefaultSymbolForm())
 const spotForm = reactive<SpotForm>(getDefaultSpotForm())
 const contractForm = reactive<ContractForm>(getDefaultContractForm())
+const secondsForm = reactive<SecondsForm>(getDefaultSecondsForm())
 const leverageForm = reactive<LeverageForm>(getDefaultLeverageForm())
 
 const optionGroupWithFallback = (key: string, fallback: OptionItem[]) =>
@@ -1062,14 +1157,28 @@ const optionGroupWithFallback = (key: string, fallback: OptionItem[]) =>
 
 const withoutUnknown = (options: OptionItem[]) => options.filter((item) => item.value !== 0)
 
-const marketTypeOptions = optionGroupWithFallback('marketType', marketTypeFallbackOptions)
+const productTypeOptions = optionGroupWithFallback('productType', productTypeFallbackOptions)
 const contractTypeOptions = optionGroupWithFallback('contractType', contractTypeFallbackOptions)
+const contractValueTypeOptions = optionGroupWithFallback(
+  'contractValueType',
+  contractValueTypeFallbackOptions,
+)
 const symbolStatusOptions = optionGroupWithFallback('symbolStatus', symbolStatusFallbackOptions)
 const enableStatusOptions = optionGroupWithFallback('enableStatus', enableStatusFallbackOptions)
 const marginModeOptions = optionGroupWithFallback('marginMode', marginModeFallbackOptions)
 const leverageValueOptions = optionGroupWithFallback('leverageValue', leverageValueFallbackOptions)
-const marketTypeFormOptions = computed(() => withoutUnknown(marketTypeOptions.value))
-const contractTypeFormOptions = computed(() => withoutUnknown(contractTypeOptions.value))
+const productTypeFormOptions = computed(() => withoutUnknown(productTypeOptions.value))
+const isDerivativeProduct = computed(() => symbolForm.productType === 2)
+const contractTypeFormOptions = computed(() =>
+  isDerivativeProduct.value
+    ? withoutUnknown(contractTypeOptions.value)
+    : contractTypeOptions.value.filter((item) => item.value === 0),
+)
+const contractValueTypeFormOptions = computed(() =>
+  isDerivativeProduct.value
+    ? withoutUnknown(contractValueTypeOptions.value)
+    : contractValueTypeOptions.value.filter((item) => item.value === 0),
+)
 const symbolStatusFormOptions = computed(() => withoutUnknown(symbolStatusOptions.value))
 const marginModeFormOptions = computed(() => withoutUnknown(marginModeOptions.value))
 const leverageValueFormOptions = computed(() => {
@@ -1084,21 +1193,31 @@ const optionValueByCode = (key: string, code: string, fallback: number) => {
   const option = findOptionGroup(optionGroups.value, key).find((item) => item.code === code)
   return Number(option?.value || fallback)
 }
-const spotMarketValue = computed(() => optionValueByCode('marketType', 'MARKET_TYPE_SPOT', 1))
+const spotMarketValue = computed(() => optionValueByCode('productType', 'PRODUCT_TYPE_SPOT', 1))
 const contractMarketValues = computed(() => {
-  const codes = new Set([
-    'MARKET_TYPE_SECONDS_CONTRACT',
-    'MARKET_TYPE_USDT_CONTRACT',
-    'MARKET_TYPE_COIN_CONTRACT',
-  ])
-  const values = findOptionGroup(optionGroups.value, 'marketType')
+  const codes = new Set(['PRODUCT_TYPE_DERIVATIVE'])
+  const values = findOptionGroup(optionGroups.value, 'productType')
     .filter((item) => codes.has(item.code))
     .map((item) => Number(item.value))
-  return values.length ? values : [2, 3, 4]
+  return values.length ? values : [2]
 })
 const crossMarginModeValue = computed(() => optionValueByCode('marginMode', 'MARGIN_MODE_CROSS', 1))
 const enabledStatusValue = computed(() =>
   optionValueByCode('enableStatus', 'ENABLE_STATUS_ENABLED', 1),
+)
+
+watch(
+  () => symbolForm.productType,
+  (productType) => {
+    if (productType !== 2) {
+      symbolForm.contractType = 0
+      symbolForm.contractValueType = 0
+      symbolForm.marginAsset = ''
+      return
+    }
+    if (symbolForm.contractType === 0) symbolForm.contractType = 1
+    if (symbolForm.contractValueType === 0) symbolForm.contractValueType = 1
+  },
 )
 
 const timestampToDate = (timestamp?: number) => {
@@ -1120,16 +1239,23 @@ const dateToUnixSeconds = (value: DatePickerValue) => {
 }
 
 const symbolOpenTime = computed({
-  get: () => timestampToDate(symbolForm.openTime),
+  get: () => timestampToDate(symbolForm.tradingStartTime),
   set: (value: DatePickerValue) => {
-    symbolForm.openTime = dateToUnixSeconds(value)
+    symbolForm.tradingStartTime = dateToUnixSeconds(value)
+  },
+})
+
+const symbolListingTime = computed({
+  get: () => timestampToDate(symbolForm.listingTime),
+  set: (value: DatePickerValue) => {
+    symbolForm.listingTime = dateToUnixSeconds(value)
   },
 })
 
 const symbolCloseTime = computed({
-  get: () => timestampToDate(symbolForm.closeTime),
+  get: () => timestampToDate(symbolForm.tradingEndTime),
   set: (value: DatePickerValue) => {
-    symbolForm.closeTime = dateToUnixSeconds(value)
+    symbolForm.tradingEndTime = dateToUnixSeconds(value)
   },
 })
 
@@ -1144,8 +1270,9 @@ const optionItemLabel = (item: OptionItem) => getOptionLabel(t, item.code, item.
 
 const optionLabel = (key: string, value?: number | string) => {
   const fallbackMap: Record<string, OptionItem[]> = {
-    marketType: marketTypeFallbackOptions,
+    productType: productTypeFallbackOptions,
     contractType: contractTypeFallbackOptions,
+    contractValueType: contractValueTypeFallbackOptions,
     symbolStatus: symbolStatusFallbackOptions,
     enableStatus: enableStatusFallbackOptions,
     marginMode: marginModeFallbackOptions,
@@ -1170,19 +1297,22 @@ const symbolStatusTagType = (status?: number): TagType => {
   }
 }
 
-const isSpotMarket = (row: TradeSymbol) => row.marketType === spotMarketValue.value
+const isSpotMarket = (row: TradeSymbol) => row.productType === spotMarketValue.value
 
-const isContractMarket = (row: TradeSymbol) => contractMarketValues.value.includes(row.marketType)
+const isContractMarket = (row: TradeSymbol) => contractMarketValues.value.includes(row.productType)
 
 const applyLeverageForm = (config: LeverageForm | TradeSymbolLeverageConfig) => {
   Object.assign(leverageForm, {
     tenantId: config.tenantId,
     symbolId: config.symbolId,
-    marketType: config.marketType,
     marginMode: config.marginMode,
-    leverageValues: [...(config.leverageValues || [])],
-    defaultLeverage: config.defaultLeverage,
-    maxLeverage: config.maxLeverage,
+    leverageValues: 'leverageValues' in config ? [...config.leverageValues] : [config.leverage],
+    defaultLeverage:
+      'defaultLeverage' in config
+        ? config.defaultLeverage
+        : config.isDefault === 1
+          ? config.leverage
+          : leverageForm.defaultLeverage,
     enabled: config.enabled,
     sort: config.sort,
     remark: config.remark || '',
@@ -1214,7 +1344,7 @@ const loadList = async () => {
 
 const resetQuery = () => {
   query.tenantId = undefined
-  query.marketType = undefined
+  query.productType = undefined
   query.keyword = ''
   query.status = undefined
   resetAndLoad(loadList)
@@ -1299,8 +1429,15 @@ const openContractDialog = async (row: TradeSymbol) => {
       deliveryTime: contract.deliveryTime,
       supportCross: contract.supportCross,
       supportIsolated: contract.supportIsolated,
-      buyEnabled: contract.buyEnabled,
-      sellEnabled: contract.sellEnabled,
+      fundingRateCap: contract.fundingRateCap,
+      fundingRateFloor: contract.fundingRateFloor,
+      indexSymbol: contract.indexSymbol,
+      markPriceSource: contract.markPriceSource,
+      settlementPriceSource: contract.settlementPriceSource,
+      openLongEnabled: contract.openLongEnabled,
+      openShortEnabled: contract.openShortEnabled,
+      closeLongEnabled: contract.closeLongEnabled,
+      closeShortEnabled: contract.closeShortEnabled,
     })
   }
   contractVisible.value = true
@@ -1317,13 +1454,34 @@ const submitContractConfig = async () => {
   }
 }
 
+const openSecondsDialog = async (row: TradeSymbol) => {
+  Object.assign(secondsForm, getDefaultSecondsForm(), {
+    tenantId: row.tenantId,
+    symbolId: row.id,
+  })
+  const detail = await tradeService.getSymbol({ tenantId: row.tenantId, id: row.id })
+  const config = detail.data?.secondsConfigs?.[0]
+  if (config) Object.assign(secondsForm, config)
+  secondsVisible.value = true
+}
+
+const submitSecondsConfig = async () => {
+  submitLoading.value = true
+  try {
+    await tradeService.setSecondsConfig(secondsForm)
+    ElMessage.success(t('trade.saveSuccess'))
+    secondsVisible.value = false
+  } finally {
+    submitLoading.value = false
+  }
+}
+
 const loadLeverageConfigs = async () => {
   const row = leverageSymbol.value
   if (!row) return
   const res = await tradeService.listSymbolLeverageConfigs({
     tenantId: row.tenantId,
     symbolId: row.id,
-    marketType: row.marketType,
     limit: 20,
   })
   leverageRows.value = res.data || []
@@ -1335,6 +1493,28 @@ const availableLeverageMarginModes = computed(() =>
 const configuredLeverageMarginModes = computed(
   () => new Set(leverageRows.value.map((item) => Number(item.marginMode))),
 )
+const leverageGroups = computed<LeverageForm[]>(() => {
+  const groups = new Map<number, TradeSymbolLeverageConfig[]>()
+  leverageRows.value.forEach((item) => {
+    const rows = groups.get(item.marginMode) || []
+    rows.push(item)
+    groups.set(item.marginMode, rows)
+  })
+  return Array.from(groups.entries()).map(([marginMode, items]) => {
+    const values = items.map((item) => item.leverage).sort((a, b) => a - b)
+    const defaultItem = items.find((item) => item.isDefault === 1)
+    return {
+      tenantId: items[0]?.tenantId || 0,
+      symbolId: items[0]?.symbolId || 0,
+      marginMode,
+      leverageValues: values,
+      defaultLeverage: defaultItem?.leverage || values[0] || 1,
+      enabled: items.every((item) => item.enabled === 1) ? 1 : 2,
+      sort: Math.min(...items.map((item) => item.sort)),
+      remark: defaultItem?.remark || items[0]?.remark || '',
+    }
+  })
+})
 const unusedLeverageMarginModes = computed(() =>
   availableLeverageMarginModes.value.filter(
     (value) => !configuredLeverageMarginModes.value.has(value),
@@ -1365,15 +1545,12 @@ const handleLeverageValuesChange = () => {
   if (!values.length) return
 
   const maxSelectedLeverage = values[values.length - 1]
-  if (maxSelectedLeverage > Number(leverageForm.maxLeverage || 1)) {
-    leverageForm.maxLeverage = maxSelectedLeverage
-  }
   if (!values.includes(Number(leverageForm.defaultLeverage || 0))) {
     leverageForm.defaultLeverage = values[0]
   }
 }
 
-const editLeverageConfig = (row: TradeSymbolLeverageConfig) => {
+const editLeverageConfig = (row: LeverageForm | TradeSymbolLeverageConfig) => {
   applyLeverageForm(row)
 }
 
@@ -1383,8 +1560,8 @@ const openLeverageDialog = async (row: TradeSymbol) => {
   newLeverageConfig(crossMarginModeValue.value)
   leverageVisible.value = true
   await loadLeverageConfigs()
-  if (leverageRows.value.length) {
-    editLeverageConfig(leverageRows.value[0])
+  if (leverageGroups.value.length) {
+    editLeverageConfig(leverageGroups.value[0])
   }
 }
 
@@ -1394,9 +1571,7 @@ const submitLeverageConfig = async () => {
     ElMessage.warning(t('trade.leverageValuesRequired'))
     return
   }
-  const maxLeverage = Math.max(1, Number(leverageForm.maxLeverage || 1), values[values.length - 1])
-  const leverageValues = values.filter((value) => value <= maxLeverage)
-  const finalValues = leverageValues.length ? leverageValues : [1]
+  const finalValues = values
   const defaultLeverage = finalValues.includes(leverageForm.defaultLeverage)
     ? leverageForm.defaultLeverage
     : finalValues[0]
@@ -1404,12 +1579,24 @@ const submitLeverageConfig = async () => {
   Object.assign(leverageForm, {
     leverageValues: finalValues,
     defaultLeverage,
-    maxLeverage,
   })
 
   submitLoading.value = true
   try {
-    await tradeService.setSymbolLeverageConfig({ ...leverageForm })
+    await Promise.all(
+      finalValues.map((leverage, index) =>
+        tradeService.setSymbolLeverageConfig({
+          tenantId: leverageForm.tenantId,
+          symbolId: leverageForm.symbolId,
+          marginMode: leverageForm.marginMode,
+          leverage,
+          isDefault: leverage === defaultLeverage ? 1 : 2,
+          enabled: leverageForm.enabled,
+          sort: index,
+          remark: leverageForm.remark,
+        }),
+      ),
+    )
     ElMessage.success(t('trade.saveSuccessSymbolLeverageConfig'))
     await loadLeverageConfigs()
   } finally {

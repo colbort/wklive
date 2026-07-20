@@ -38,26 +38,21 @@ func (l *SetUserTradeConfigLogic) SetUserTradeConfig(in *trade.SetUserTradeConfi
 	}
 
 	now := utils.NowMillis()
-	item, err := l.svcCtx.TradeUserConfigModel.FindOneByTenantIdUserIdMarketTypeSymbolId(l.ctx, in.TenantId, in.UserId, int64(in.MarketType), in.SymbolId)
+	item, err := l.svcCtx.TradeUserConfigModel.FindOneByTenantIdUserIdProductTypeSymbolId(l.ctx, in.TenantId, in.UserId, int64(in.ProductType), in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if item == nil {
 		item = &models.TTradeUserConfig{
-			TenantId:          in.TenantId,
-			UserId:            in.UserId,
-			MarketType:        int64(in.MarketType),
-			SymbolId:          in.SymbolId,
-			TradeEnabled:      int64(common.Enable_ENABLE_ENABLED),
-			ReduceOnlyEnabled: int64(common.Enable_ENABLE_DISABLED),
-			CreateTimes:       now,
+			TenantId:     in.TenantId,
+			UserId:       in.UserId,
+			ProductType:  int64(in.ProductType),
+			SymbolId:     in.SymbolId,
+			TradeEnabled: int64(common.Enable_ENABLE_ENABLED),
+			CreateTimes:  now,
 		}
 	}
-	item.PositionMode = int64(in.PositionMode)
-	item.MarginMode = int64(in.MarginMode)
-	item.DefaultLeverage = in.DefaultLeverage
 	item.TradeEnabled = enableToModel(in.TradeEnabled, item.TradeEnabled)
-	item.ReduceOnlyEnabled = enableToModel(in.ReduceOnlyEnabled, item.ReduceOnlyEnabled)
 	item.UpdateTimes = now
 	if item.Id == 0 {
 		_, err = l.svcCtx.TradeUserConfigModel.Insert(l.ctx, item)

@@ -13,6 +13,7 @@ import (
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -126,7 +127,7 @@ func (l *ProcessContractLifecycleLogic) expireContractOrders(contract *models.TO
 		}
 		for _, order := range orders {
 			cursor = order.Id
-			if order.MarginAmount > 0 {
+			if order.MarginAmount.IsPositive() {
 				resp, err := l.svcCtx.AssetClient.UnfreezeAssetByBizNo(l.ctx, &asset.UnfreezeAssetByBizNoReq{
 					TenantId:      order.TenantId,
 					TargetBizType: asset.BizType_BIZ_TYPE_OPTION,
@@ -173,7 +174,7 @@ func (l *ProcessContractLifecycleLogic) autoExerciseContract(contract *models.TO
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return err
 	}
-	deliveryPrice := 0.0
+	deliveryPrice := decimal.Zero
 	if market != nil {
 		deliveryPrice = market.UnderlyingPrice
 	}
@@ -195,9 +196,9 @@ func (l *ProcessContractLifecycleLogic) autoExerciseContract(contract *models.TO
 			if position.Side != int64(common.PositionSide_POSITION_SIDE_LONG) {
 				continue
 			}
-			if position.ExerciseableQty <= 0 || intrinsicValue <= optionFloatEpsilon {
+			if !position.ExerciseableQty.IsPositive() || !intrinsicValue.IsPositive() {
 				position.Status = int64(option.PositionStatus_POSITION_STATUS_EXPIRED)
-				position.ExerciseableQty = 0
+				position.ExerciseableQty = decimal.Zero
 				position.UpdateTimes = now
 				if err := l.svcCtx.OptionPositionModel.Update(l.ctx, position); err != nil {
 					return err
@@ -243,7 +244,7 @@ func (l *ProcessContractLifecycleLogic) autoExerciseContract(contract *models.TO
 				return err
 			}
 			position.Status = int64(option.PositionStatus_POSITION_STATUS_EXERCISED)
-			position.ExerciseableQty = 0
+			position.ExerciseableQty = decimal.Zero
 			position.UpdateTimes = now
 			if err := l.svcCtx.OptionPositionModel.Update(l.ctx, position); err != nil {
 				return err
@@ -267,16 +268,16 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return err
 	}
-	deliveryPrice := 0.0
-	theoreticalPrice := 0.0
-	iv := 0.0
+	deliveryPrice := decimal.Zero
+	theoreticalPrice := decimal.Zero
+	iv := decimal.Zero
 	isITM := int64(common.YesNo_YES_NO_NO)
 	if market != nil {
 		deliveryPrice = market.UnderlyingPrice
 		theoreticalPrice = market.TheoreticalPrice
 		iv = market.Iv
-		if (contract.OptionType == int64(option.OptionType_OPTION_TYPE_CALL) && deliveryPrice > contract.StrikePrice) ||
-			(contract.OptionType == int64(option.OptionType_OPTION_TYPE_PUT) && deliveryPrice < contract.StrikePrice) {
+		if (contract.OptionType == int64(option.OptionType_OPTION_TYPE_CALL) && deliveryPrice.GreaterThan(contract.StrikePrice)) ||
+			(contract.OptionType == int64(option.OptionType_OPTION_TYPE_PUT) && deliveryPrice.LessThan(contract.StrikePrice)) {
 			isITM = int64(common.YesNo_YES_NO_YES)
 		}
 	}
@@ -337,7 +338,7 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 	})
 }
 
-func settleContractPositions(ctx context.Context, positionModel models.TOptionPositionModel, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, contract *models.TOptionContract, settlementNo string, settlementId int64, deliveryPrice float64, now int64) error {
+func settleContractPositions(ctx context.Context, positionModel models.TOptionPositionModel, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, contract *models.TOptionContract, settlementNo string, settlementId int64, deliveryPrice decimal.Decimal, now int64) error {
 	cursor := int64(0)
 	for {
 		positions, _, err := positionModel.FindPage(ctx, models.OptionPositionPageFilter{
@@ -358,26 +359,26 @@ func settleContractPositions(ctx context.Context, positionModel models.TOptionPo
 			cursor = position.Id
 			qty := position.PositionQty
 			payoff := optionSettlementPayoff(contract, deliveryPrice, qty)
-			changeAmount := 0.0
+			changeAmount := decimal.Zero
 			if position.Side == int64(common.PositionSide_POSITION_SIDE_LONG) {
 				if contract.IsAutoExercise == int64(common.YesNo_YES_NO_YES) || position.Status == int64(option.PositionStatus_POSITION_STATUS_EXERCISED) {
 					changeAmount = payoff
 				}
 			} else if position.Side == int64(common.PositionSide_POSITION_SIDE_SHORT) {
 				if contract.IsAutoExercise == int64(common.YesNo_YES_NO_YES) {
-					changeAmount = -payoff
+					changeAmount = payoff.Neg()
 				}
 			}
 
-			position.PositionQty = 0
-			position.AvailableQty = 0
-			position.FrozenQty = 0
-			position.PositionValue = 0
-			position.MarginAmount = 0
-			position.MaintenanceMargin = 0
-			position.UnrealizedPnl = 0
-			position.ExerciseableQty = 0
-			position.RealizedPnl = normalizeZero(position.RealizedPnl + changeAmount)
+			position.PositionQty = decimal.Zero
+			position.AvailableQty = decimal.Zero
+			position.FrozenQty = decimal.Zero
+			position.PositionValue = decimal.Zero
+			position.MarginAmount = decimal.Zero
+			position.MaintenanceMargin = decimal.Zero
+			position.UnrealizedPnl = decimal.Zero
+			position.ExerciseableQty = decimal.Zero
+			position.RealizedPnl = position.RealizedPnl.Add(changeAmount)
 			position.Status = int64(option.PositionStatus_POSITION_STATUS_SETTLED)
 			position.LastCalcTime = now
 			position.UpdateTimes = now

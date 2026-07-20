@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"math"
 	"strings"
 	"time"
 
@@ -13,6 +12,7 @@ import (
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -40,7 +40,8 @@ func (l *SyncMarketQuoteLogic) SyncMarketQuote(in *option.SyncMarketQuoteReq) (*
 	if symbol == "" {
 		return &option.InternalCommonResp{Base: helper.ErrResp(i18n.SymbolRequired, i18n.Translate(i18n.SymbolRequired, l.ctx))}, nil
 	}
-	if in.GetUnderlyingPrice() <= 0 {
+	underlyingPrice, err := decimal.NewFromString(strings.TrimSpace(in.GetUnderlyingPrice()))
+	if err != nil || !underlyingPrice.IsPositive() {
 		return &option.InternalCommonResp{Base: helper.ErrResp(i18n.UnderlyingPriceMustBePositive, i18n.Translate(i18n.UnderlyingPriceMustBePositive, l.ctx))}, nil
 	}
 
@@ -66,7 +67,7 @@ func (l *SyncMarketQuoteLogic) SyncMarketQuote(in *option.SyncMarketQuoteReq) (*
 			if !canSyncMarketQuote(contract.Status) {
 				continue
 			}
-			if err := l.syncContractMarket(contract, in.GetUnderlyingPrice(), snapshotTime, now); err != nil {
+			if err := l.syncContractMarket(contract, underlyingPrice, snapshotTime, now); err != nil {
 				return nil, err
 			}
 			updated++
@@ -78,7 +79,7 @@ func (l *SyncMarketQuoteLogic) SyncMarketQuote(in *option.SyncMarketQuoteReq) (*
 	return &option.InternalCommonResp{Base: helper.OkResp()}, nil
 }
 
-func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContract, underlyingPrice float64, snapshotTime int64, now int64) error {
+func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContract, underlyingPrice decimal.Decimal, snapshotTime int64, now int64) error {
 	intrinsicValue := calcIntrinsicValue(contract.OptionType, contract.StrikePrice, underlyingPrice)
 
 	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
@@ -100,8 +101,8 @@ func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContra
 
 		market.UnderlyingPrice = underlyingPrice
 		market.IntrinsicValue = intrinsicValue
-		if market.MarkPrice > 0 {
-			market.TimeValue = math.Max(market.MarkPrice-intrinsicValue, 0)
+		if market.MarkPrice.IsPositive() {
+			market.TimeValue = decimal.Max(market.MarkPrice.Sub(intrinsicValue), decimal.Zero)
 		}
 		market.SnapshotTime = snapshotTime
 		market.UpdateTimes = now
@@ -142,13 +143,13 @@ func normalizeQuoteTime(ts int64, fallback int64) int64 {
 	return ts
 }
 
-func calcIntrinsicValue(optionType int64, strikePrice float64, underlyingPrice float64) float64 {
+func calcIntrinsicValue(optionType int64, strikePrice decimal.Decimal, underlyingPrice decimal.Decimal) decimal.Decimal {
 	switch option.OptionType(optionType) {
 	case option.OptionType_OPTION_TYPE_CALL:
-		return math.Max(underlyingPrice-strikePrice, 0)
+		return decimal.Max(underlyingPrice.Sub(strikePrice), decimal.Zero)
 	case option.OptionType_OPTION_TYPE_PUT:
-		return math.Max(strikePrice-underlyingPrice, 0)
+		return decimal.Max(strikePrice.Sub(underlyingPrice), decimal.Zero)
 	default:
-		return 0
+		return decimal.Zero
 	}
 }

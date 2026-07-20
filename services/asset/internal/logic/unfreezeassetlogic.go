@@ -31,13 +31,13 @@ func NewUnfreezeAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unf
 
 // 解冻余额
 func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.ChangeAssetResp, error) {
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("UnfreezeAsset parse amount failed, tenantId=%d freezeNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.FreezeNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("UnfreezeAsset validate amount failed, tenantId=%d freezeNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.FreezeNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
@@ -62,7 +62,7 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.C
 		if freeze.Status != 1 && freeze.Status != 2 {
 			return i18n.StatusError(ctx, i18n.FreezeRecordNotReleasable)
 		}
-		if amount > freeze.RemainAmount {
+		if amount.GreaterThan(freeze.RemainAmount) {
 			return i18n.StatusError(ctx, i18n.UnfreezeAmountExceedsFrozen)
 		}
 

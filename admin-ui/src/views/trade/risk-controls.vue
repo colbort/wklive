@@ -1,11 +1,6 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard
-      :model="riskQuery"
-      :show-actions="false"
-      @search="loadList"
-      @reset="resetQuery"
-    >
+    <CrudQueryCard :model="riskQuery" :show-actions="false" @search="loadList" @reset="resetQuery">
       <template #header>
         {{ t('trade.riskQuery') }}
       </template>
@@ -21,12 +16,12 @@
         <SymbolSelect
           v-model="riskQuery.symbolId"
           :tenant-id="riskQuery.tenantId || undefined"
-          :market-type="riskQuery.marketType || undefined"
+          :product-type="riskQuery.productType || undefined"
         />
       </el-form-item>
 
-      <el-form-item :label="t('trade.marketType')">
-        <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
+      <el-form-item :label="t('trade.productType')">
+        <el-input-number v-model="riskQuery.productType" :min="0" :precision="0" />
       </el-form-item>
     </CrudQueryCard>
 
@@ -121,29 +116,9 @@
         </template>
 
         <el-form label-width="120px">
-          <el-form-item :label="t('trade.positionMode')">
-            <el-input-number v-model="tradeConfigForm.positionMode" :min="0" :precision="0" />
-          </el-form-item>
-
-          <el-form-item :label="t('trade.marginMode')">
-            <el-input-number v-model="tradeConfigForm.marginMode" :min="0" :precision="0" />
-          </el-form-item>
-
-          <el-form-item :label="t('trade.defaultLeverage')">
-            <el-input-number v-model="tradeConfigForm.defaultLeverage" :min="0" :precision="0" />
-          </el-form-item>
-
           <el-form-item :label="t('trade.tradeEnabled')">
             <el-switch
               v-model="tradeConfigForm.tradeEnabled"
-              :active-value="1"
-              :inactive-value="2"
-            />
-          </el-form-item>
-
-          <el-form-item :label="t('trade.reduceOnlyEnabled')">
-            <el-switch
-              v-model="tradeConfigForm.reduceOnlyEnabled"
               :active-value="1"
               :inactive-value="2"
             />
@@ -165,20 +140,12 @@
             <el-input-number v-model="leverageForm.marginMode" :min="0" :precision="0" />
           </el-form-item>
 
-          <el-form-item :label="t('trade.positionMode')">
-            <el-input-number v-model="leverageForm.positionMode" :min="0" :precision="0" />
-          </el-form-item>
-
           <el-form-item :label="t('trade.longLeverage')">
             <el-input-number v-model="leverageForm.longLeverage" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.shortLeverage')">
             <el-input-number v-model="leverageForm.shortLeverage" :min="0" :precision="0" />
-          </el-form-item>
-
-          <el-form-item :label="t('trade.maxLeverage')">
-            <el-input-number v-model="leverageForm.maxLeverage" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.operatorId')">
@@ -250,12 +217,7 @@
           show-overflow-tooltip
         />
 
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="100"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="100" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('option.detail') }}
@@ -305,7 +267,7 @@ interface RiskQuery {
   tenantId: number
   userId: number
   symbolId: number
-  marketType: number
+  productType: number
   marginMode: number
 }
 
@@ -320,22 +282,16 @@ interface RiskLogQuery {
 interface TradeConfigForm {
   tenantId: number
   userId: number
-  marketType: number
+  productType: number
   symbolId: number
-  positionMode: number
-  marginMode: number
-  defaultLeverage: number
   tradeEnabled: number
-  reduceOnlyEnabled: number
 }
 
 interface LeverageForm {
   tenantId: number
   userId: number
   symbolId: number
-  marketType: number
   marginMode: number
-  positionMode: number
   longLeverage: number
   shortLeverage: number
   maxLeverage: number
@@ -355,7 +311,7 @@ const riskQuery = reactive<RiskQuery>({
   tenantId: 0,
   userId: 0,
   symbolId: 0,
-  marketType: 0,
+  productType: 0,
   marginMode: 0,
 })
 
@@ -370,7 +326,7 @@ const riskLogQuery = reactive<RiskLogQuery>({
 const tradeLimitForm = reactive<SetUserTradeLimitReq>({
   tenantId: 0,
   userId: 0,
-  marketType: 0,
+  productType: 0,
   canOpen: 1,
   canClose: 1,
   canCancel: 1,
@@ -396,7 +352,6 @@ const symbolLimitForm = reactive<SetUserSymbolLimitReq>({
   tenantId: 0,
   userId: 0,
   symbolId: 0,
-  marketType: 0,
   maxPositionQty: '',
   maxPositionNotional: '',
   maxOpenOrders: 0,
@@ -418,22 +373,16 @@ const symbolLimitForm = reactive<SetUserSymbolLimitReq>({
 const tradeConfigForm = reactive<TradeConfigForm>({
   tenantId: 0,
   userId: 0,
-  marketType: 0,
+  productType: 0,
   symbolId: 0,
-  positionMode: 0,
-  marginMode: 0,
-  defaultLeverage: 1,
   tradeEnabled: 1,
-  reduceOnlyEnabled: 2,
 })
 
 const leverageForm = reactive<LeverageForm>({
   tenantId: 0,
   userId: 0,
   symbolId: 0,
-  marketType: 0,
   marginMode: 0,
-  positionMode: 0,
   longLeverage: 1,
   shortLeverage: 1,
   maxLeverage: 1,

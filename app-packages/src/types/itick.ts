@@ -44,12 +44,12 @@ export interface Kline {
   symbol: string
   kType: number
   ts: number
-  open: number
-  high: number
-  low: number
-  close: number
-  volume: number
-  turnover: number
+  open: string
+  high: string
+  low: string
+  close: string
+  volume: string
+  turnover: string
 }
 
 export interface DepthLevel {
@@ -72,15 +72,15 @@ export interface Quote {
   categoryCode: string
   market: string
   symbol: string
-  lastPrice: number
-  openPrice: number
-  highPrice: number
-  lowPrice: number
-  prevClosePrice: number
-  changeValue: number
-  changeRate: number
-  volume: number
-  turnover: number
+  lastPrice: string
+  openPrice: string
+  highPrice: string
+  lowPrice: string
+  prevClosePrice: string
+  changeValue: string
+  changeRate: string
+  volume: string
+  turnover: string
   quoteTs: number
   tradeStatus: number
 }

@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -44,35 +46,35 @@ type (
 	}
 
 	TOptionOrder struct {
-		Id               int64   `db:"id"`                // 主键ID
-		TenantId         int64   `db:"tenant_id"`         // 租户ID
-		OrderNo          string  `db:"order_no"`          // 订单号
-		UserId           int64   `db:"user_id"`           // 用户ID
-		AccountId        int64   `db:"account_id"`        // 交易账户ID
-		ContractId       int64   `db:"contract_id"`       // 期权合约ID
-		UnderlyingSymbol string  `db:"underlying_symbol"` // 标的
-		Side             int64   `db:"side"`              // 买卖方向：1买 2卖
-		PositionEffect   int64   `db:"position_effect"`   // 开平方向：1开仓 2平仓
-		OrderType        int64   `db:"order_type"`        // 订单类型：1限价 2市价 3只做maker 4IOC 5FOK
-		Price            float64 `db:"price"`             // 委托价格/权利金
-		Qty              float64 `db:"qty"`               // 委托数量
-		FilledQty        float64 `db:"filled_qty"`        // 已成交数量
-		UnfilledQty      float64 `db:"unfilled_qty"`      // 未成交数量
-		AvgPrice         float64 `db:"avg_price"`         // 成交均价
-		Turnover         float64 `db:"turnover"`          // 成交额
-		Fee              float64 `db:"fee"`               // 手续费
-		FeeCoin          string  `db:"fee_coin"`          // 手续费币种
-		MarginAmount     float64 `db:"margin_amount"`     // 冻结保证金
-		Source           int64   `db:"source"`            // 订单来源：1APP 2WEB 3API 4ADMIN
-		ClientOrderId    string  `db:"client_order_id"`   // 客户端订单号
-		ReduceOnly       int64   `db:"reduce_only"`       // 是否只减仓：1是 2否
-		Mmp              int64   `db:"mmp"`               // 是否做市商保护单：1是 2否
-		Status           int64   `db:"status"`            // 状态：1待撮合 2部分成交 3完全成交 4已撤单 5拒单 6已过期
-		CancelReason     string  `db:"cancel_reason"`     // 撤单/拒单原因
-		MatchTime        int64   `db:"match_time"`        // 最后成交时间
-		CancelTime       int64   `db:"cancel_time"`       // 撤单时间
-		CreateTimes      int64   `db:"create_times"`      // 创建时间
-		UpdateTimes      int64   `db:"update_times"`      // 更新时间
+		Id               int64           `db:"id"`                // 主键ID
+		TenantId         int64           `db:"tenant_id"`         // 租户ID
+		OrderNo          string          `db:"order_no"`          // 订单号
+		UserId           int64           `db:"user_id"`           // 用户ID
+		AccountId        int64           `db:"account_id"`        // 交易账户ID
+		ContractId       int64           `db:"contract_id"`       // 期权合约ID
+		UnderlyingSymbol string          `db:"underlying_symbol"` // 标的
+		Side             int64           `db:"side"`              // 买卖方向：1买 2卖
+		PositionEffect   int64           `db:"position_effect"`   // 开平方向：1开仓 2平仓
+		OrderType        int64           `db:"order_type"`        // 订单类型：1限价 2市价 3只做maker 4IOC 5FOK
+		Price            decimal.Decimal `db:"price"`             // 委托价格/权利金
+		Qty              decimal.Decimal `db:"qty"`               // 委托数量
+		FilledQty        decimal.Decimal `db:"filled_qty"`        // 已成交数量
+		UnfilledQty      decimal.Decimal `db:"unfilled_qty"`      // 未成交数量
+		AvgPrice         decimal.Decimal `db:"avg_price"`         // 成交均价
+		Turnover         decimal.Decimal `db:"turnover"`          // 成交额
+		Fee              decimal.Decimal `db:"fee"`               // 手续费
+		FeeCoin          string          `db:"fee_coin"`          // 手续费币种
+		MarginAmount     decimal.Decimal `db:"margin_amount"`     // 冻结保证金
+		Source           int64           `db:"source"`            // 订单来源：1APP 2WEB 3API 4ADMIN
+		ClientOrderId    string          `db:"client_order_id"`   // 客户端订单号
+		ReduceOnly       int64           `db:"reduce_only"`       // 是否只减仓：1是 2否
+		Mmp              int64           `db:"mmp"`               // 是否做市商保护单：1是 2否
+		Status           int64           `db:"status"`            // 状态：0未知 1待撮合 2部分成交 3完全成交 4已撤单 5拒单 6已过期
+		CancelReason     string          `db:"cancel_reason"`     // 撤单/拒单原因
+		MatchTime        int64           `db:"match_time"`        // 最后成交时间
+		CancelTime       int64           `db:"cancel_time"`       // 撤单时间
+		CreateTimes      int64           `db:"create_times"`      // 创建时间
+		UpdateTimes      int64           `db:"update_times"`      // 更新时间
 	}
 )
 

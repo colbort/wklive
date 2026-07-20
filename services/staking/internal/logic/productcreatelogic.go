@@ -11,6 +11,7 @@ import (
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -38,31 +39,31 @@ func (l *ProductCreateLogic) ProductCreate(in *staking.AdminProductCreateReq) (*
 		return nil, err
 	}
 
-	apr, err := conv.ParseFloatField(in.Apr)
+	apr, err := conv.ParseDecimalField(in.Apr)
 	if err != nil {
 		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	minAmount, err := conv.ParseFloatField(in.MinAmount)
+	minAmount, err := conv.ParseDecimalField(in.MinAmount)
 	if err != nil {
 		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	maxAmount, err := conv.ParseFloatField(in.MaxAmount)
+	maxAmount, err := conv.ParseDecimalField(in.MaxAmount)
 	if err != nil {
 		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	stepAmount, err := conv.ParseFloatField(in.StepAmount)
+	stepAmount, err := conv.ParseDecimalField(in.StepAmount)
 	if err != nil {
 		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	totalAmount, err := conv.ParseFloatField(in.TotalAmount)
+	totalAmount, err := conv.ParseDecimalField(in.TotalAmount)
 	if err != nil {
 		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	userLimitAmount, err := conv.ParseFloatField(in.UserLimitAmount)
+	userLimitAmount, err := conv.ParseDecimalField(in.UserLimitAmount)
 	if err != nil {
 		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	earlyRedeemRate, err := conv.ParseFloatField(in.EarlyRedeemRate)
+	earlyRedeemRate, err := conv.ParseDecimalField(in.EarlyRedeemRate)
 	if err != nil {
 		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
@@ -83,7 +84,7 @@ func (l *ProductCreateLogic) ProductCreate(in *staking.AdminProductCreateReq) (*
 		MaxAmount:        maxAmount,
 		StepAmount:       stepAmount,
 		TotalAmount:      totalAmount,
-		StakedAmount:     0,
+		StakedAmount:     decimal.Zero,
 		UserLimitAmount:  userLimitAmount,
 		InterestMode:     int64(in.InterestMode),
 		RewardMode:       int64(in.RewardMode),

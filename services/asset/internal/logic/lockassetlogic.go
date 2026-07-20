@@ -31,13 +31,13 @@ func NewLockAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LockAss
 
 // 锁仓
 func (l *LockAssetLogic) LockAsset(in *asset.LockAssetReq) (*asset.LockAssetResp, error) {
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("LockAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizNo=%s err=%v",
 			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizNo, err)
 		return nil, err
 	}
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("LockAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizNo=%s err=%v",
 			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizNo, err)

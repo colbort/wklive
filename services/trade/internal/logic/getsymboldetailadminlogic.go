@@ -44,15 +44,18 @@ func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(in *trade.GetSymbolDeta
 		},
 	}
 	configs, _, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
-		TenantId:   in.TenantId,
-		SymbolId:   in.Id,
-		MarketType: item.MarketType,
+		TenantId: in.TenantId,
+		SymbolId: in.Id,
 	}, 0, 100)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	for _, cfg := range configs {
-		resp.Data.LeverageConfigs = append(resp.Data.LeverageConfigs, symbolLeverageConfigToProto(cfg))
+		defaultLeverage, findErr := findDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, cfg.TenantId, cfg.SymbolId, cfg.MarginMode)
+		if findErr != nil {
+			return nil, findErr
+		}
+		resp.Data.LeverageConfigs = append(resp.Data.LeverageConfigs, symbolLeverageConfigToProto(cfg, defaultLeverage))
 	}
 	return resp, nil
 }

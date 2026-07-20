@@ -23,15 +23,15 @@ var (
 	tContractLeverageConfigRowsExpectAutoSet   = strings.Join(stringx.Remove(tContractLeverageConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tContractLeverageConfigRowsWithPlaceHolder = strings.Join(stringx.Remove(tContractLeverageConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTContractLeverageConfigIdPrefix                                         = "cache:tContractLeverageConfig:id:"
-	cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModePrefix = "cache:tContractLeverageConfig:tenantId:userId:symbolId:marketType:marginMode:"
+	cacheTContractLeverageConfigIdPrefix                               = "cache:tContractLeverageConfig:id:"
+	cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarginModePrefix = "cache:tContractLeverageConfig:tenantId:userId:symbolId:marginMode:"
 )
 
 type (
 	tContractLeverageConfigModel interface {
 		Insert(ctx context.Context, data *TContractLeverageConfig) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TContractLeverageConfig, error)
-		FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(ctx context.Context, tenantId int64, userId int64, symbolId int64, marketType int64, marginMode int64) (*TContractLeverageConfig, error)
+		FindOneByTenantIdUserIdSymbolIdMarginMode(ctx context.Context, tenantId int64, userId int64, symbolId int64, marginMode int64) (*TContractLeverageConfig, error)
 		Update(ctx context.Context, data *TContractLeverageConfig) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -46,12 +46,9 @@ type (
 		TenantId      int64  `db:"tenant_id"`      // 租户ID
 		UserId        int64  `db:"user_id"`        // 用户ID
 		SymbolId      int64  `db:"symbol_id"`      // 交易标的ID
-		MarketType    int64  `db:"market_type"`    // 市场类型：2秒合约 3U本位 4币本位
 		MarginMode    int64  `db:"margin_mode"`    // 保证金模式：1全仓 2逐仓
-		PositionMode  int64  `db:"position_mode"`  // 持仓模式：1单向持仓 2双向持仓
 		LongLeverage  int64  `db:"long_leverage"`  // 做多杠杆倍数
 		ShortLeverage int64  `db:"short_leverage"` // 做空杠杆倍数
-		MaxLeverage   int64  `db:"max_leverage"`   // 当前允许的最大杠杆倍数
 		OperatorId    int64  `db:"operator_id"`    // 操作人ID，系统操作时可为0
 		Source        int64  `db:"source"`         // 来源：1系统 2用户 3后台管理 4任务
 		Enabled       int64  `db:"enabled"`        // 启用开关：1启用 2禁用
@@ -75,11 +72,11 @@ func (m *defaultTContractLeverageConfigModel) Delete(ctx context.Context, id int
 	}
 
 	tContractLeverageConfigIdKey := fmt.Sprintf("%s%v", cacheTContractLeverageConfigIdPrefix, id)
-	tContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarketType, data.MarginMode)
+	tContractLeverageConfigTenantIdUserIdSymbolIdMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarginMode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tContractLeverageConfigIdKey, tContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModeKey)
+	}, tContractLeverageConfigIdKey, tContractLeverageConfigTenantIdUserIdSymbolIdMarginModeKey)
 	return err
 }
 
@@ -100,12 +97,12 @@ func (m *defaultTContractLeverageConfigModel) FindOne(ctx context.Context, id in
 	}
 }
 
-func (m *defaultTContractLeverageConfigModel) FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(ctx context.Context, tenantId int64, userId int64, symbolId int64, marketType int64, marginMode int64) (*TContractLeverageConfig, error) {
-	tContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModePrefix, tenantId, userId, symbolId, marketType, marginMode)
+func (m *defaultTContractLeverageConfigModel) FindOneByTenantIdUserIdSymbolIdMarginMode(ctx context.Context, tenantId int64, userId int64, symbolId int64, marginMode int64) (*TContractLeverageConfig, error) {
+	tContractLeverageConfigTenantIdUserIdSymbolIdMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarginModePrefix, tenantId, userId, symbolId, marginMode)
 	var resp TContractLeverageConfig
-	err := m.QueryRowIndexCtx(ctx, &resp, tContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `symbol_id` = ? and `market_type` = ? and `margin_mode` = ? limit 1", tContractLeverageConfigRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, symbolId, marketType, marginMode); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tContractLeverageConfigTenantIdUserIdSymbolIdMarginModeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `symbol_id` = ? and `margin_mode` = ? limit 1", tContractLeverageConfigRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, symbolId, marginMode); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -122,11 +119,11 @@ func (m *defaultTContractLeverageConfigModel) FindOneByTenantIdUserIdSymbolIdMar
 
 func (m *defaultTContractLeverageConfigModel) Insert(ctx context.Context, data *TContractLeverageConfig) (sql.Result, error) {
 	tContractLeverageConfigIdKey := fmt.Sprintf("%s%v", cacheTContractLeverageConfigIdPrefix, data.Id)
-	tContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarketType, data.MarginMode)
+	tContractLeverageConfigTenantIdUserIdSymbolIdMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarginMode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractLeverageConfigRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SymbolId, data.MarketType, data.MarginMode, data.PositionMode, data.LongLeverage, data.ShortLeverage, data.MaxLeverage, data.OperatorId, data.Source, data.Enabled, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, tContractLeverageConfigIdKey, tContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModeKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractLeverageConfigRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SymbolId, data.MarginMode, data.LongLeverage, data.ShortLeverage, data.OperatorId, data.Source, data.Enabled, data.Remark, data.CreateTimes, data.UpdateTimes)
+	}, tContractLeverageConfigIdKey, tContractLeverageConfigTenantIdUserIdSymbolIdMarginModeKey)
 	return ret, err
 }
 
@@ -137,11 +134,11 @@ func (m *defaultTContractLeverageConfigModel) Update(ctx context.Context, newDat
 	}
 
 	tContractLeverageConfigIdKey := fmt.Sprintf("%s%v", cacheTContractLeverageConfigIdPrefix, data.Id)
-	tContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarketType, data.MarginMode)
+	tContractLeverageConfigTenantIdUserIdSymbolIdMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.MarginMode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractLeverageConfigRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SymbolId, newData.MarketType, newData.MarginMode, newData.PositionMode, newData.LongLeverage, newData.ShortLeverage, newData.MaxLeverage, newData.OperatorId, newData.Source, newData.Enabled, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tContractLeverageConfigIdKey, tContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModeKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SymbolId, newData.MarginMode, newData.LongLeverage, newData.ShortLeverage, newData.OperatorId, newData.Source, newData.Enabled, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tContractLeverageConfigIdKey, tContractLeverageConfigTenantIdUserIdSymbolIdMarginModeKey)
 	return err
 }
 

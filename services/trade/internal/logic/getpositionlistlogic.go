@@ -38,10 +38,10 @@ func (l *GetPositionListLogic) GetPositionList(in *trade.GetPositionListReq) (*t
 		return nil, err
 	}
 	data, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{
-		TenantId:   tenantId,
-		UserId:     userId,
-		SymbolId:   in.SymbolId,
-		MarketType: int64(in.MarketType),
+		TenantId:     tenantId,
+		UserId:       userId,
+		SymbolId:     in.SymbolId,
+		ContractType: int64(in.ContractType),
 	})
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

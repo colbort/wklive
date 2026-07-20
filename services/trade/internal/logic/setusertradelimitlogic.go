@@ -38,7 +38,7 @@ func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitRe
 	}
 
 	now := utils.NowMillis()
-	item, err := l.svcCtx.RiskUserTradeLimitModel.FindOneByTenantIdUserIdMarketType(l.ctx, in.TenantId, in.UserId, int64(in.MarketType))
+	item, err := l.svcCtx.RiskUserTradeLimitModel.FindOneByTenantIdUserIdProductType(l.ctx, in.TenantId, in.UserId, int64(in.ProductType))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitRe
 		item = &models.TRiskUserTradeLimit{
 			TenantId:       in.TenantId,
 			UserId:         in.UserId,
-			MarketType:     int64(in.MarketType),
+			ProductType:    int64(in.ProductType),
 			TradeEnabled:   int64(common.Enable_ENABLE_ENABLED),
 			OnlyReduceOnly: int64(common.Enable_ENABLE_DISABLED),
 			Enabled:        int64(common.Enable_ENABLE_ENABLED),

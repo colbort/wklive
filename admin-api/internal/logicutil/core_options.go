@@ -97,8 +97,9 @@ func PaymentOptions() []types.OptionsGroup {
 
 func TradeOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
-		EnumGroup("marketType", "市场类型", trade.MarketType_MARKET_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("contractType", "合约类型", trade.ContractType_CONTRACT_TYPE_UNKNOWN.Descriptor()),
+		EnumGroup("productType", "产品类型", trade.ProductType_PRODUCT_TYPE_UNKNOWN.Descriptor()),
+		EnumGroup("contractType", "合约期限类型", trade.ContractType_CONTRACT_TYPE_NOT_APPLICABLE.Descriptor()),
+		EnumGroup("contractValueType", "合约价值类型", trade.ContractValueType_CONTRACT_VALUE_TYPE_NOT_APPLICABLE.Descriptor()),
 		EnumGroup("symbolStatus", "交易对状态", trade.SymbolStatus_SYMBOL_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("orderType", "订单类型", trade.OrderType_ORDER_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("triggerKind", "触发用途", trade.TriggerKind_TRIGGER_KIND_NONE.Descriptor()),

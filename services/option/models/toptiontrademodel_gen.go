@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,28 +44,28 @@ type (
 	}
 
 	TOptionTrade struct {
-		Id               int64   `db:"id"`                // 主键ID
-		TenantId         int64   `db:"tenant_id"`         // 租户ID
-		TradeNo          string  `db:"trade_no"`          // 成交号
-		ContractId       int64   `db:"contract_id"`       // 期权合约ID
-		UnderlyingSymbol string  `db:"underlying_symbol"` // 标的
-		BuyOrderId       int64   `db:"buy_order_id"`      // 买单ID
-		BuyOrderNo       string  `db:"buy_order_no"`      // 买单订单号
-		BuyUserId        int64   `db:"buy_user_id"`       // 买方用户ID
-		BuyAccountId     int64   `db:"buy_account_id"`    // 买方账户ID
-		SellOrderId      int64   `db:"sell_order_id"`     // 卖单ID
-		SellOrderNo      string  `db:"sell_order_no"`     // 卖单订单号
-		SellUserId       int64   `db:"sell_user_id"`      // 卖方用户ID
-		SellAccountId    int64   `db:"sell_account_id"`   // 卖方账户ID
-		Price            float64 `db:"price"`             // 成交价格/权利金
-		Qty              float64 `db:"qty"`               // 成交数量
-		Turnover         float64 `db:"turnover"`          // 成交额
-		BuyFee           float64 `db:"buy_fee"`           // 买方手续费
-		SellFee          float64 `db:"sell_fee"`          // 卖方手续费
-		FeeCoin          string  `db:"fee_coin"`          // 手续费币种
-		MakerSide        int64   `db:"maker_side"`        // maker方向：1买 2卖
-		TradeTime        int64   `db:"trade_time"`        // 成交时间
-		CreateTimes      int64   `db:"create_times"`      // 创建时间
+		Id               int64           `db:"id"`                // 主键ID
+		TenantId         int64           `db:"tenant_id"`         // 租户ID
+		TradeNo          string          `db:"trade_no"`          // 成交号
+		ContractId       int64           `db:"contract_id"`       // 期权合约ID
+		UnderlyingSymbol string          `db:"underlying_symbol"` // 标的
+		BuyOrderId       int64           `db:"buy_order_id"`      // 买单ID
+		BuyOrderNo       string          `db:"buy_order_no"`      // 买单订单号
+		BuyUserId        int64           `db:"buy_user_id"`       // 买方用户ID
+		BuyAccountId     int64           `db:"buy_account_id"`    // 买方账户ID
+		SellOrderId      int64           `db:"sell_order_id"`     // 卖单ID
+		SellOrderNo      string          `db:"sell_order_no"`     // 卖单订单号
+		SellUserId       int64           `db:"sell_user_id"`      // 卖方用户ID
+		SellAccountId    int64           `db:"sell_account_id"`   // 卖方账户ID
+		Price            decimal.Decimal `db:"price"`             // 成交价格/权利金
+		Qty              decimal.Decimal `db:"qty"`               // 成交数量
+		Turnover         decimal.Decimal `db:"turnover"`          // 成交额
+		BuyFee           decimal.Decimal `db:"buy_fee"`           // 买方手续费
+		SellFee          decimal.Decimal `db:"sell_fee"`          // 卖方手续费
+		FeeCoin          string          `db:"fee_coin"`          // 手续费币种
+		MakerSide        int64           `db:"maker_side"`        // maker方向：1买 2卖
+		TradeTime        int64           `db:"trade_time"`        // 成交时间
+		CreateTimes      int64           `db:"create_times"`      // 创建时间
 	}
 )
 

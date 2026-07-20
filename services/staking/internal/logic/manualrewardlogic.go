@@ -46,8 +46,8 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 		return &staking.AdminManualRewardResp{Page: base}, nil
 	}
 
-	rewardAmount, err := conv.ParseFloatField(in.RewardAmount)
-	if err != nil || rewardAmount <= 0 {
+	rewardAmount, err := conv.ParseDecimalField(in.RewardAmount)
+	if err != nil || !rewardAmount.IsPositive() {
 		return &staking.AdminManualRewardResp{Page: helper.ErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
 	}
 
@@ -79,7 +79,7 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 	}
 
 	beforeReward := order.TotalReward
-	afterReward := beforeReward + rewardAmount
+	afterReward := beforeReward.Add(rewardAmount)
 	order.TotalReward = afterReward
 	order.LastRewardTimes = now
 	order.NextRewardTimes = calcNextRewardTime(int64(now), staking.RewardMode(order.RewardMode), int64(order.EndTimes))

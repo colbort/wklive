@@ -43,64 +43,24 @@ func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymb
 	} else if base != nil {
 		return &trade.AdminCommonResp{Base: base}, nil
 	}
-	if !isContractMarket(in.MarketType) || symbol.MarketType != int64(in.MarketType) || in.MarginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN {
+	if symbol.ProductType != int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) || in.MarginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN || in.Leverage <= 0 {
 		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
 	now := utils.NowMillis()
-	item, err := l.svcCtx.SymbolLeverageCfgModel.FindOneByTenantIdSymbolIdMarketTypeMarginMode(l.ctx, symbol.TenantId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode))
+	item, err := l.svcCtx.SymbolLeverageCfgModel.FindOneByTenantIdSymbolIdMarginModeLeverage(l.ctx, symbol.TenantId, in.SymbolId, int64(in.MarginMode), in.Leverage)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-	isCreate := item == nil
-	if isCreate {
+	if item == nil {
 		item = &models.TTradeSymbolLeverageConfig{
 			TenantId:    symbol.TenantId,
 			SymbolId:    in.SymbolId,
-			MarketType:  int64(in.MarketType),
 			MarginMode:  int64(in.MarginMode),
+			Leverage:    in.Leverage,
 			Enabled:     int64(common.Enable_ENABLE_ENABLED),
-			Sort:        int64(in.MarginMode),
 			CreateTimes: now,
 		}
-	}
-
-	if isCreate || in.MaxLeverage > 0 || len(in.LeverageValues) > 0 || in.DefaultLeverage > 0 {
-		maxLeverage := item.MaxLeverage
-		if in.MaxLeverage > 0 {
-			maxLeverage = in.MaxLeverage
-		}
-
-		leverageSource := parseLeverageValues(item.LeverageValues)
-		if len(in.LeverageValues) > 0 {
-			leverageSource = in.LeverageValues
-		}
-		if len(leverageSource) == 0 && in.DefaultLeverage > 0 {
-			leverageSource = []int64{in.DefaultLeverage}
-		}
-		if valueMax := maxLeverageValue(leverageSource); valueMax > maxLeverage {
-			maxLeverage = valueMax
-		}
-
-		if maxLeverage <= 0 {
-			maxLeverage = symbol.MaxLeverage
-		}
-		if maxLeverage <= 0 {
-			maxLeverage = 1
-		}
-
-		leverageText, leverageValues := joinLeverageValues(leverageSource, maxLeverage)
-		defaultLeverage := item.DefaultLeverage
-		if in.DefaultLeverage > 0 {
-			defaultLeverage = in.DefaultLeverage
-		}
-		if !containsLeverage(leverageValues, defaultLeverage) {
-			defaultLeverage = leverageValues[0]
-		}
-
-		item.LeverageValues = leverageText
-		item.DefaultLeverage = defaultLeverage
-		item.MaxLeverage = maxLeverage
 	}
 
 	if in.Enabled > 0 {
@@ -122,15 +82,31 @@ func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymb
 		return nil, err
 	}
 
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
-}
-
-func maxLeverageValue(values []int64) int64 {
-	var maxValue int64
-	for _, value := range values {
-		if value > maxValue {
-			maxValue = value
+	if in.IsDefault != common.YesNo_YES_NO_UNKNOWN {
+		defaultItem, findErr := l.svcCtx.SymbolLeverageDefaultModel.FindOneByTenantIdSymbolIdMarginMode(l.ctx, symbol.TenantId, in.SymbolId, int64(in.MarginMode))
+		if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
+			return nil, findErr
+		}
+		if in.IsDefault == common.YesNo_YES_NO_YES {
+			if item.Enabled != int64(common.Enable_ENABLE_ENABLED) {
+				return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			}
+			if defaultItem == nil {
+				defaultItem = &models.TTradeSymbolLeverageDefault{TenantId: symbol.TenantId, SymbolId: in.SymbolId, MarginMode: int64(in.MarginMode), CreateTimes: now}
+			}
+			defaultItem.Leverage, defaultItem.UpdateTimes = in.Leverage, now
+			if defaultItem.Id == 0 {
+				_, err = l.svcCtx.SymbolLeverageDefaultModel.Insert(l.ctx, defaultItem)
+			} else {
+				err = l.svcCtx.SymbolLeverageDefaultModel.Update(l.ctx, defaultItem)
+			}
+		} else if defaultItem != nil && defaultItem.Leverage == in.Leverage {
+			err = l.svcCtx.SymbolLeverageDefaultModel.Delete(l.ctx, defaultItem.Id)
+		}
+		if err != nil {
+			return nil, err
 		}
 	}
-	return maxValue
+
+	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
 }

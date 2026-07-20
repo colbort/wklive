@@ -37,13 +37,13 @@ func (l *AdminSubAssetLogic) AdminSubAsset(in *asset.AdminSubAssetReq) (*asset.A
 		return &asset.AdminChangeAssetResp{Base: base}, nil
 	}
 
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("AdminSubAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
 			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
 		return nil, err
 	}
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("AdminSubAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
 			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)

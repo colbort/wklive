@@ -101,7 +101,7 @@ func (b *MarketDataCache) Set(ctx context.Context, msg types.ClientMessage, payl
 			priority, env.Revision, marketDataTTL(msg.Topic).Milliseconds(), staleTTL.Milliseconds()).Result(); err != nil {
 			return err
 		}
-	} else if err := b.rdb.Set(ctx, marketDataKey(msg), bs, marketDataTTL(msg.Topic)).Err(); err != nil {
+	} else if err := b.rdb.Set(ctx, marketDataKey(msg), raw, marketDataTTL(msg.Topic)).Err(); err != nil {
 		return err
 	}
 	if quote, ok := payload.(*types.QuotePayload); ok && quote != nil {
@@ -164,11 +164,15 @@ func (b *MarketDataCache) ReadMany(ctx context.Context, msgs []types.ClientMessa
 		if !ok || raw == "" {
 			continue
 		}
-		var env CacheEnvelope
-		if err := json.Unmarshal([]byte(raw), &env); err != nil {
-			continue
+		payloadRaw := json.RawMessage(raw)
+		if msgs[i].Topic == types.TopicKline {
+			var env CacheEnvelope
+			if err := json.Unmarshal([]byte(raw), &env); err != nil {
+				continue
+			}
+			payloadRaw = env.Payload
 		}
-		payload, err := decodeMarketDataPayload(msgs[i].Topic, env.Payload)
+		payload, err := decodeMarketDataPayload(msgs[i].Topic, payloadRaw)
 		if err != nil {
 			continue
 		}
@@ -182,7 +186,7 @@ func marketDataKey(msg types.ClientMessage) string {
 	if msg.Topic == types.TopicKline {
 		return fmt.Sprintf("itick:v1:kline:%s:%s:%s:%s", msg.CategoryCode, msg.Market, msg.Symbol, msg.Interval)
 	}
-	return fmt.Sprintf("itick:v1:%s:%s:%s:%s", msg.Topic, msg.CategoryCode, msg.Market, msg.Symbol)
+	return fmt.Sprintf("itick:%s:%s:%s:%s", msg.Topic, msg.CategoryCode, msg.Market, msg.Symbol)
 }
 
 func marketDataTTL(topic types.Topic) time.Duration {

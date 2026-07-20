@@ -45,7 +45,7 @@ func (l *CancelAllOrdersLogic) CancelAllOrders(in *trade.CancelAllOrdersReq) (*t
 			TenantId:     tenantId,
 			UserId:       userId,
 			SymbolId:     in.SymbolId,
-			MarketType:   int64(in.MarketType),
+			ProductType:  int64(in.ProductType),
 			Side:         int64(in.Side),
 			Statuses:     openOrderStatuses(),
 			PositionSide: int64(in.PositionSide),

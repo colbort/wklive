@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -29,9 +31,9 @@ type (
 		tAssetFreezeModel
 		FindPage(ctx context.Context, filter AssetFreezePageFilter, cursor int64, limit int64) ([]*TAssetFreeze, int64, error)
 		// 解冻时更新冻结记录
-		UpdateUnfreeze(ctx context.Context, freezeNo string, amount float64, updateTime int64) (bool, error)
+		UpdateUnfreeze(ctx context.Context, freezeNo string, amount decimal.Decimal, updateTime int64) (bool, error)
 		// 从冻结里扣减时更新冻结记录
-		UpdateDeduct(ctx context.Context, freezeNo string, amount float64, updateTime int64) (bool, error)
+		UpdateDeduct(ctx context.Context, freezeNo string, amount decimal.Decimal, updateTime int64) (bool, error)
 	}
 
 	customTAssetFreezeModel struct {
@@ -120,7 +122,7 @@ func (m *defaultTAssetFreezeModel) assetFreezeCacheKeys(ctx context.Context, fre
 
 // 解冻时更新冻结记录：unfreeze_amount += amount，remain_amount -= amount
 // 当 remain_amount 为 0 时，纯解冻为 3（已解冻），混合扣减/解冻为 5（已关闭）；否则为 2（部分释放）
-func (m *defaultTAssetFreezeModel) UpdateUnfreeze(ctx context.Context, freezeNo string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTAssetFreezeModel) UpdateUnfreeze(ctx context.Context, freezeNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -153,7 +155,7 @@ func (m *defaultTAssetFreezeModel) UpdateUnfreeze(ctx context.Context, freezeNo 
 
 // 从冻结里扣减时更新冻结记录：used_amount += amount，remain_amount -= amount
 // 当 remain_amount 为 0 时，纯扣减为 4（已扣完），混合扣减/解冻为 5（已关闭）；否则为 2（部分释放）
-func (m *defaultTAssetFreezeModel) UpdateDeduct(ctx context.Context, freezeNo string, amount float64, updateTimes int64) (bool, error) {
+func (m *defaultTAssetFreezeModel) UpdateDeduct(ctx context.Context, freezeNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 

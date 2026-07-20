@@ -1,5 +1,3 @@
-GOCTL ?= goctl
-
 # 当前服务 module（必须与你 services/system/go.mod 的 module 一致）
 MODULE := wklive/services/system
 
@@ -81,4 +79,7 @@ clean-gen:
 
 .PHONY: gen-model
 gen-model:
-	goctl model mysql ddl --src system.sql --dir ./models -c
+	@$(MAKE) check-goctl
+	@echo "🔧 [services/system] generating decimal-safe models..."
+	@$(GOCTL) model mysql ddl --src system.sql --dir ./models -c
+	@echo "✅ [services/system] models generated (DECIMAL -> decimal.Decimal)"

@@ -30,14 +30,14 @@ func NewGetPositionHistoryListAdminLogic(ctx context.Context, svcCtx *svc.Servic
 func (l *GetPositionHistoryListAdminLogic) GetPositionHistoryListAdmin(in *trade.GetPositionHistoryListAdminReq) (*trade.GetPositionHistoryListAdminResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
 	data, total, err := l.svcCtx.ContractPositionHistModel.FindPage(l.ctx, models.ContractPositionHistoryPageFilter{
-		TenantId:   in.TenantId,
-		UserId:     in.UserId,
-		SymbolId:   in.SymbolId,
-		MarketType: int64(in.MarketType),
-		PositionId: int64(in.PositionId),
-		ActionType: int64(in.ActionType),
-		TimeStart:  in.TimeRange.StartTime,
-		TimeEnd:    in.TimeRange.EndTime,
+		TenantId:     in.TenantId,
+		UserId:       in.UserId,
+		SymbolId:     in.SymbolId,
+		ContractType: int64(in.ContractType),
+		PositionId:   int64(in.PositionId),
+		ActionType:   int64(in.ActionType),
+		TimeStart:    in.TimeRange.StartTime,
+		TimeEnd:      in.TimeRange.EndTime,
 	}, cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

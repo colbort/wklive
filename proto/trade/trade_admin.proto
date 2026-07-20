@@ -31,6 +31,13 @@ service TradeAdmin {
   rpc SetContractSymbolConfig(SetContractSymbolConfigReq)
       returns (AdminCommonResp);
 
+  // 设置秒合约产品配置
+  rpc SetSecondsSymbolConfig(SetSecondsSymbolConfigReq)
+      returns (AdminCommonResp);
+
+  // 保存交易时段配置
+  rpc SetSymbolSession(SetSymbolSessionReq) returns (AdminCommonResp);
+
   // 保存交易对杠杆档位配置
   rpc SetSymbolLeverageConfig(SetSymbolLeverageConfigReq)
       returns (AdminCommonResp);
@@ -69,9 +76,9 @@ service TradeAdmin {
   rpc GetPositionHistoryListAdmin(GetPositionHistoryListAdminReq)
       returns (GetPositionHistoryListAdminResp);
 
-  // 获取保证金账户列表
-  rpc GetMarginAccountListAdmin(GetMarginAccountListAdminReq)
-      returns (GetMarginAccountListAdminResp);
+  // 获取合约风控保证金快照列表
+  rpc GetMarginSnapshotListAdmin(GetMarginSnapshotListAdminReq)
+      returns (GetMarginSnapshotListAdminResp);
 
   // 获取撤单日志列表
   rpc GetCancelLogListAdmin(GetCancelLogListAdminReq)
@@ -96,6 +103,13 @@ service TradeAdmin {
   // 获取用户交易配置
   rpc GetUserTradeConfig(GetUserTradeConfigReq)
       returns (GetUserTradeConfigResp);
+
+  // 设置用户合约偏好配置
+  rpc SetContractUserConfig(SetContractUserConfigReq) returns (AdminCommonResp);
+
+  // 获取用户合约偏好配置
+  rpc GetContractUserConfig(GetContractUserConfigReq)
+      returns (GetContractUserConfigResp);
 
   // 获取风控订单校验日志列表
   rpc GetRiskOrderCheckLogList(GetRiskOrderCheckLogListReq)
@@ -125,11 +139,13 @@ message CreateSymbolReq {
   int64 tenant_id = 1;
   string symbol = 2;
   string display_symbol = 3;
-  MarketType market_type = 4;
+  ProductType product_type = 4;
   string base_asset = 5;
   string quote_asset = 6;
   string settle_asset = 7;
   ContractType contract_type = 8;
+  ContractValueType contract_value_type = 24;
+  string margin_asset = 25;
   SymbolStatus status = 9;
   int64 price_scale = 10;
   int64 qty_scale = 11;
@@ -140,11 +156,12 @@ message CreateSymbolReq {
   string max_qty = 16;
   string qty_step = 17;
   string min_notional = 18;
-  int64 max_leverage = 19;
-  int64 open_time = 20;
-  int64 close_time = 21;
+  string max_notional = 19;
+  int64 listing_time = 20;
+  int64 trading_start_time = 21;
   int64 sort = 22;
   string remark = 23;
+  int64 trading_end_time = 26;
 }
 
 message UpdateSymbolReq {
@@ -161,17 +178,18 @@ message UpdateSymbolReq {
   string max_qty = 11;
   string qty_step = 12;
   string min_notional = 13;
-  int64 max_leverage = 14;
-  int64 open_time = 15;
-  int64 close_time = 16;
+  string max_notional = 14;
+  int64 listing_time = 15;
+  int64 trading_start_time = 16;
   int64 sort = 17;
   string remark = 18;
+  int64 trading_end_time = 19;
 }
 
 message GetSymbolListAdminReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
-  MarketType market_type = 3;
+  ProductType product_type = 3;
   SymbolStatus status = 4;
   string keyword = 5;
 }
@@ -194,6 +212,10 @@ message GetSymbolDetailAdminResp {
 message GetSymbolDetailAdminData {
   TradeSymbol data = 1;
   repeated TradeSymbolLeverageConfig leverage_configs = 2;
+  TradeSymbolSpot spot = 3;
+  TradeSymbolContract contract = 4;
+  repeated TradeSymbolSeconds seconds_configs = 5;
+  repeated TradeSymbolSession sessions = 6;
 }
 
 message SetSpotSymbolConfigReq {
@@ -218,18 +240,50 @@ message SetContractSymbolConfigReq {
   int64 delivery_time = 10;
   int64 support_cross = 11;
   int64 support_isolated = 12;
-  common.Enable buy_enabled = 13; // 状态,0表示全部，1表示启用，2表示禁用
-  common.Enable sell_enabled = 14; // 状态,0表示全部，1表示启用，2表示禁用
+  common.Enable open_long_enabled = 13;
+  common.Enable open_short_enabled = 14;
+  string funding_rate_cap = 15;
+  string funding_rate_floor = 16;
+  string index_symbol = 17;
+  string mark_price_source = 18;
+  string settlement_price_source = 19;
+  common.Enable close_long_enabled = 20;
+  common.Enable close_short_enabled = 21;
+}
+
+message SetSecondsSymbolConfigReq {
+  int64 tenant_id = 1;
+  int64 symbol_id = 2;
+  int64 duration_seconds = 3;
+  string payout_rate = 4;
+  int64 draw_rule = 5;
+  string start_price_source = 6;
+  string settlement_price_source = 7;
+  int64 quote_validity_ms = 8;
+  string min_stake = 9;
+  string max_stake = 10;
+  common.Enable up_enabled = 11;
+  common.Enable down_enabled = 12;
+}
+
+message SetSymbolSessionReq {
+  int64 tenant_id = 1;
+  int64 symbol_id = 2;
+  int64 day_of_week = 3;
+  int64 start_second = 4;
+  int64 end_second = 5;
+  string timezone = 6;
+  common.Enable enabled = 7;
 }
 
 message SetSymbolLeverageConfigReq {
   int64 tenant_id = 1;
   int64 symbol_id = 2;
-  MarketType market_type = 3;
+  reserved 3;
   MarginMode margin_mode = 4;
-  repeated int64 leverage_values = 5;
-  int64 default_leverage = 6;
-  int64 max_leverage = 7;
+  int64 leverage = 5;
+  common.YesNo is_default = 6;
+  reserved 7;
   common.Enable enabled = 8; // 状态,0表示全部，1表示启用，2表示禁用
   int64 sort = 9;
   string remark = 10;
@@ -239,7 +293,7 @@ message GetSymbolLeverageConfigReq {
   int64 tenant_id = 1;
   int64 id = 2;
   int64 symbol_id = 3;
-  MarketType market_type = 4;
+  reserved 4;
   MarginMode margin_mode = 5;
 }
 
@@ -252,7 +306,7 @@ message GetSymbolLeverageConfigListReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
   int64 symbol_id = 3;
-  MarketType market_type = 4;
+  reserved 4;
   MarginMode margin_mode = 5;
   common.Enable enabled = 6; // 状态,0表示全部，1表示启用，2表示禁用
 }
@@ -266,7 +320,7 @@ message GetOrderListAdminReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
   int64 user_id = 3;
-  MarketType market_type = 4;
+  ProductType product_type = 4;
   int64 symbol_id = 5;
   OrderStatus status = 6;
   string keyword = 7;
@@ -292,7 +346,7 @@ message GetFillListAdminReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
   int64 user_id = 3;
-  MarketType market_type = 4;
+  ProductType product_type = 4;
   int64 symbol_id = 5;
   TimeRange time_range = 6;
 }
@@ -316,7 +370,7 @@ message GetPositionListAdminReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
   int64 user_id = 3;
-  MarketType market_type = 4;
+  ContractType contract_type = 4;
   int64 symbol_id = 5;
 }
 
@@ -340,7 +394,7 @@ message GetPositionHistoryListAdminReq {
   common.PageReq page = 2;
   int64 user_id = 3;
   int64 symbol_id = 4;
-  MarketType market_type = 5;
+  ContractType contract_type = 5;
   int64 position_id = 6;
   PositionActionType action_type = 7;
   TimeRange time_range = 8;
@@ -351,17 +405,17 @@ message GetPositionHistoryListAdminResp {
   repeated ContractPositionHistory data = 2;
 }
 
-message GetMarginAccountListAdminReq {
+message GetMarginSnapshotListAdminReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
   int64 user_id = 3;
-  MarketType market_type = 4;
+  reserved 4;
   string margin_asset = 5;
 }
 
-message GetMarginAccountListAdminResp {
+message GetMarginSnapshotListAdminResp {
   common.RespBase base = 1;
-  repeated ContractMarginAccount data = 2;
+  repeated ContractMarginSnapshot data = 2;
 }
 
 message GetCancelLogListAdminReq {
@@ -382,7 +436,7 @@ message GetCancelLogListAdminResp {
 message SetUserTradeLimitReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  MarketType market_type = 3;
+  ProductType product_type = 3;
   int64 can_open = 4;
   int64 can_close = 5;
   int64 can_cancel = 6;
@@ -408,7 +462,7 @@ message SetUserSymbolLimitReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
   int64 symbol_id = 3;
-  MarketType market_type = 4;
+  reserved 4;
   string max_position_qty = 5;
   string max_position_notional = 6;
   int64 max_open_orders = 7;
@@ -430,7 +484,7 @@ message SetUserSymbolLimitReq {
 message GetUserTradeLimitReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  MarketType market_type = 3;
+  ProductType product_type = 3;
 }
 
 message GetUserTradeLimitResp {
@@ -442,7 +496,7 @@ message GetUserSymbolLimitReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
   int64 symbol_id = 3;
-  MarketType market_type = 4;
+  reserved 4;
 }
 
 message GetUserSymbolLimitResp {
@@ -453,19 +507,16 @@ message GetUserSymbolLimitResp {
 message SetUserTradeConfigReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  MarketType market_type = 3;
+  ProductType product_type = 3;
   int64 symbol_id = 4; // 0 表示该市场下的全局配置
-  PositionMode position_mode = 5;
-  MarginMode margin_mode = 6;
-  int64 default_leverage = 7;
   common.Enable trade_enabled = 8; // 状态,0表示全部，1表示启用，2表示禁用
-  common.Enable reduce_only_enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
+  reserved 5, 6, 7, 9;
 }
 
 message GetUserTradeConfigReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  MarketType market_type = 3;
+  ProductType product_type = 3;
   int64 symbol_id = 4; // 0 表示该市场下的全局配置
 }
 
@@ -474,12 +525,33 @@ message GetUserTradeConfigResp {
   TradeUserConfig data = 2;
 }
 
+message SetContractUserConfigReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 symbol_id = 3; // 0 表示合约全局配置
+  PositionMode position_mode = 4;
+  MarginMode margin_mode = 5;
+  int64 default_leverage = 6;
+  reserved 7;
+}
+
+message GetContractUserConfigReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 symbol_id = 3; // 0 表示合约全局配置
+}
+
+message GetContractUserConfigResp {
+  common.RespBase base = 1;
+  ContractUserConfig data = 2;
+}
+
 message GetRiskOrderCheckLogListReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
   int64 user_id = 3;
   int64 symbol_id = 4;
-  MarketType market_type = 5;
+  ProductType product_type = 5;
   RiskCheckType check_type = 6;
   RiskCheckResult check_result = 7;
   TimeRange time_range = 8;
@@ -494,12 +566,11 @@ message SetUserLeverageConfigReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
   int64 symbol_id = 3;
-  MarketType market_type = 4;
+  reserved 4;
   MarginMode margin_mode = 5;
-  PositionMode position_mode = 6;
   int64 long_leverage = 7;
   int64 short_leverage = 8;
-  int64 max_leverage = 9;
+  reserved 6, 9;
   int64 operator_id = 10;
   SourceType source = 11;
   common.Enable enabled = 12; // 状态,0表示全部，1表示启用，2表示禁用
@@ -510,7 +581,7 @@ message GetUserLeverageConfigReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
   int64 symbol_id = 3;
-  MarketType market_type = 4;
+  reserved 4;
   MarginMode margin_mode = 5;
 }
 

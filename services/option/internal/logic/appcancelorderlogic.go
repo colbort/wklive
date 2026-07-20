@@ -55,7 +55,7 @@ func (l *AppCancelOrderLogic) AppCancelOrder(in *option.AppCancelOrderReq) (*opt
 		return &option.AppCommonResp{Base: helper.ErrResp(i18n.CurrentStatusCannotCancel, i18n.Translate(i18n.CurrentStatusCannotCancel, l.ctx))}, nil
 	}
 
-	if item.MarginAmount > 0 {
+	if item.MarginAmount.IsPositive() {
 		resp, err := l.svcCtx.AssetClient.UnfreezeAssetByBizNo(l.ctx, &asset.UnfreezeAssetByBizNoReq{
 			TenantId:      item.TenantId,
 			TargetBizType: asset.BizType_BIZ_TYPE_OPTION,

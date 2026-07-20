@@ -25,16 +25,13 @@ func NewProcessContractSettlementsLogic(ctx context.Context, svcCtx *svc.Service
 	}
 }
 
-// 合约结算（资金费率/交割合约/秒合约）
+// 合约结算（永续资金费率/交割合约）；秒合约是独立产品，不属于 contract_type。
 func (l *ProcessContractSettlementsLogic) ProcessContractSettlements(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	return runTradeTaskWithLock(l.ctx, l.svcCtx, "process_contract_settlements", func() (*trade.TradeTaskResp, error) {
 		if err := l.settleFundingFees(in); err != nil {
 			return nil, err
 		}
 		if err := l.disableExpiredSymbols(in.GetTenantId(), trade.ContractType_CONTRACT_TYPE_DELIVERY); err != nil {
-			return nil, err
-		}
-		if err := l.disableExpiredSymbols(in.GetTenantId(), trade.ContractType_CONTRACT_TYPE_SECONDS); err != nil {
 			return nil, err
 		}
 		return okTradeTaskResp(), nil
@@ -71,7 +68,7 @@ func (l *ProcessContractSettlementsLogic) settleFundingFees(in *trade.TradeTaskR
 			if intervalMillis <= 0 || now%intervalMillis > 60*1000 {
 				continue
 			}
-			if err := createTradeTaskEvent(l.ctx, l.svcCtx, contract.TenantId, "FUNDING_FEE_SETTLEMENT_REQUIRED", "symbol", symbol.Id, 0, symbol.Id, symbol.MarketType, "funding fee task"); err != nil {
+			if err := createTradeTaskEvent(l.ctx, l.svcCtx, contract.TenantId, "FUNDING_FEE_SETTLEMENT_REQUIRED", "symbol", symbol.Id, 0, symbol.Id, symbol.ProductType, "funding fee task"); err != nil {
 				return err
 			}
 		}
@@ -123,7 +120,7 @@ func (l *ProcessContractSettlementsLogic) disableExpiredSymbols(tenantID int64, 
 				BizId:         symbol.Symbol,
 				BizType:       "symbol",
 				SymbolId:      symbol.Id,
-				MarketType:    symbol.MarketType,
+				ProductType:   symbol.ProductType,
 				Source:        int64(trade.SourceType_SOURCE_TYPE_TASK),
 				EventStatus:   int64(trade.EventStatus_EVENT_STATUS_PENDING),
 				MaxRetryCount: 3,

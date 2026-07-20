@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"math"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -13,6 +12,7 @@ import (
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -97,8 +97,14 @@ func recordOrderFillWithModels(ctx context.Context, fillModel models.TTradeFillM
 	if fill.SymbolId <= 0 {
 		fill.SymbolId = order.SymbolId
 	}
-	if fill.MarketType <= 0 {
-		fill.MarketType = order.MarketType
+	if fill.ProductType <= 0 {
+		fill.ProductType = order.ProductType
+	}
+	if fill.ContractType <= 0 {
+		fill.ContractType = order.ContractType
+	}
+	if fill.ContractValueType <= 0 {
+		fill.ContractValueType = order.ContractValueType
 	}
 	if fill.Side <= 0 {
 		fill.Side = order.Side
@@ -127,7 +133,7 @@ func fillMatchesOrder(order *models.TTradeOrder, fill *models.TTradeFill) bool {
 	if fill.SymbolId > 0 && fill.SymbolId != order.SymbolId {
 		return false
 	}
-	if fill.MarketType > 0 && fill.MarketType != order.MarketType {
+	if fill.ProductType > 0 && fill.ProductType != order.ProductType {
 		return false
 	}
 	if fill.Side > 0 && fill.Side != order.Side {
@@ -146,23 +152,22 @@ func canApplyOrderFill(order *models.TTradeOrder, fill *models.TTradeFill) bool 
 	if !canApplyOrderFillPrice(order, fill) {
 		return false
 	}
-	if order.Qty > 0 {
-		return fill.Qty > 0 && fill.Qty <= math.Max(order.Qty-order.FilledQty, 0)+orderFillEpsilon
+	if order.Qty.IsPositive() {
+		return fill.Qty.IsPositive() && fill.Qty.LessThanOrEqual(decimal.Max(order.Qty.Sub(order.FilledQty), decimal.Zero))
 	}
-	return order.Amount > 0 &&
-		fill.Amount > 0 &&
-		fill.Amount <= math.Max(order.Amount-order.FilledAmount, 0)+orderMatchAmountEpsilon
+	return order.Amount.IsPositive() && fill.Amount.IsPositive() &&
+		fill.Amount.LessThanOrEqual(decimal.Max(order.Amount.Sub(order.FilledAmount), decimal.Zero))
 }
 
 func canApplyOrderFillPrice(order *models.TTradeOrder, fill *models.TTradeFill) bool {
-	if order == nil || fill == nil || order.OrderType != int64(trade.OrderType_ORDER_TYPE_LIMIT) || order.Price <= 0 || fill.Price <= 0 {
+	if order == nil || fill == nil || order.OrderType != int64(trade.OrderType_ORDER_TYPE_LIMIT) || !order.Price.IsPositive() || !fill.Price.IsPositive() {
 		return true
 	}
 	if order.Side == int64(common.Side_SIDE_BUY) {
-		return fill.Price <= order.Price+orderFillEpsilon
+		return fill.Price.LessThanOrEqual(order.Price)
 	}
 	if order.Side == int64(common.Side_SIDE_SELL) {
-		return fill.Price+orderFillEpsilon >= order.Price
+		return fill.Price.GreaterThanOrEqual(order.Price)
 	}
 	return false
 }
@@ -174,10 +179,10 @@ func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, e
 	price := mustParseFloat(fill.Price)
 	qty := mustParseFloat(fill.Qty)
 	amount := mustParseFloat(fill.Amount)
-	if amount <= 0 && price > 0 && qty > 0 {
+	if !amount.IsPositive() && price.IsPositive() && qty.IsPositive() {
 		amount = tradeMinorAmountAtPrice(price, qty)
 	}
-	if price <= 0 || qty <= 0 || amount <= 0 {
+	if !price.IsPositive() || !qty.IsPositive() || !amount.IsPositive() {
 		return nil, i18n.StatusError(context.Background(), i18n.ParamError)
 	}
 	createTimes := fill.CreateTimes
@@ -189,24 +194,26 @@ func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, e
 		matchTime = createTimes
 	}
 	return &models.TTradeFill{
-		TenantId:      fill.TenantId,
-		FillNo:        fill.FillNo,
-		OrderId:       fill.OrderId,
-		OrderNo:       fill.OrderNo,
-		UserId:        fill.UserId,
-		SymbolId:      fill.SymbolId,
-		MarketType:    int64(fill.MarketType),
-		Side:          int64(fill.Side),
-		PositionSide:  int64(fill.PositionSide),
-		Price:         price,
-		Qty:           qty,
-		Amount:        amount,
-		Fee:           mustParseFloat(fill.Fee),
-		FeeAsset:      fill.FeeAsset,
-		LiquidityType: int64(fill.LiquidityType),
-		RealizedPnl:   mustParseFloat(fill.RealizedPnl),
-		MatchTime:     matchTime,
-		CreateTimes:   createTimes,
+		TenantId:          fill.TenantId,
+		FillNo:            fill.FillNo,
+		OrderId:           fill.OrderId,
+		OrderNo:           fill.OrderNo,
+		UserId:            fill.UserId,
+		SymbolId:          fill.SymbolId,
+		ProductType:       int64(fill.ProductType),
+		ContractType:      int64(fill.ContractType),
+		ContractValueType: int64(fill.ContractValueType),
+		Side:              int64(fill.Side),
+		PositionSide:      int64(fill.PositionSide),
+		Price:             price,
+		Qty:               qty,
+		Amount:            amount,
+		Fee:               mustParseFloat(fill.Fee),
+		FeeAsset:          fill.FeeAsset,
+		LiquidityType:     int64(fill.LiquidityType),
+		RealizedPnl:       mustParseFloat(fill.RealizedPnl),
+		MatchTime:         matchTime,
+		CreateTimes:       createTimes,
 	}, nil
 }
 
@@ -231,18 +238,18 @@ func findOrderForFill(ctx context.Context, orderModel models.TTradeOrderModel, f
 }
 
 func applyFillToOrder(order *models.TTradeOrder, fill *models.TTradeFill, now int64) {
-	order.FilledQty += fill.Qty
-	order.FilledAmount += fill.Amount
-	if order.Qty > 0 && order.FilledQty > order.Qty && order.FilledQty-order.Qty <= orderFillEpsilon {
+	order.FilledQty = order.FilledQty.Add(fill.Qty)
+	order.FilledAmount = order.FilledAmount.Add(fill.Amount)
+	if order.Qty.IsPositive() && order.FilledQty.GreaterThan(order.Qty) {
 		order.FilledQty = order.Qty
 	}
-	if order.Amount > 0 && order.FilledAmount > order.Amount && order.FilledAmount-order.Amount <= orderMatchAmountEpsilon {
+	if order.Amount.IsPositive() && order.FilledAmount.GreaterThan(order.Amount) {
 		order.FilledAmount = order.Amount
 	}
-	if order.FilledQty > 0 && order.FilledAmount > 0 {
-		order.AvgPrice = fromTradeMinorAmount(order.FilledAmount) / order.FilledQty
+	if order.FilledQty.IsPositive() && order.FilledAmount.IsPositive() {
+		order.AvgPrice = fromTradeMinorAmount(order.FilledAmount).Div(order.FilledQty)
 	}
-	order.Fee += fill.Fee
+	order.Fee = order.Fee.Add(fill.Fee)
 	if fill.FeeAsset != "" {
 		order.FeeAsset = fill.FeeAsset
 	}

@@ -37,9 +37,9 @@ service TradeApp {
   // 获取持仓列表
   rpc GetPositionList(GetPositionListReq) returns (GetPositionListResp);
 
-  // 获取保证金账户列表
-  rpc GetMarginAccountList(GetMarginAccountListReq)
-      returns (GetMarginAccountListResp);
+  // 获取合约风控保证金快照列表
+  rpc GetMarginSnapshotList(GetMarginSnapshotListReq)
+      returns (GetMarginSnapshotListResp);
 
   // 获取当前杠杆配置
   rpc GetLeverageConfig(GetLeverageConfigReq) returns (GetLeverageConfigResp);
@@ -51,7 +51,7 @@ service TradeApp {
 message AppCommonResp { common.RespBase base = 1; }
 
 message GetSymbolListReq {
-  MarketType market_type = 1;
+  ProductType product_type = 1;
   SymbolStatus status = 2;
 }
 
@@ -74,11 +74,12 @@ message GetSymbolDetailData {
   TradeSymbolSpot spot = 2;
   TradeSymbolContract contract = 3;
   repeated TradeSymbolLeverageConfig leverage_configs = 4;
+  repeated TradeSymbolSeconds seconds_configs = 5;
 }
 
 message PlaceOrderReq {
   int64 symbol_id = 1;
-  MarketType market_type = 2;
+  reserved 2;
   common.Side side = 3; // 买卖方向
   PositionSide position_side = 4;
   OrderType order_type = 5;
@@ -88,7 +89,6 @@ message PlaceOrderReq {
   string qty = 9;
   string amount = 10;
   common.YesNo is_reduce_only = 11;
-  common.YesNo is_close_only = 12;
   string trigger_price = 13;
   TriggerType trigger_type = 14;
   MarginMode margin_mode = 15;
@@ -97,6 +97,9 @@ message PlaceOrderReq {
   string stop_loss_price = 18;
   OrderSourceType order_source = 19;
   TriggerKind trigger_kind = 20;
+  int64 seconds_direction = 21; // 秒合约方向：1看涨 2看跌，其他产品为0
+  int64 duration_seconds = 22; // 秒合约到期周期，其他产品为0
+  reserved 12;
 }
 
 message PlaceOrderResp {
@@ -111,7 +114,7 @@ message CancelOrderReq {
 }
 
 message CancelAllOrdersReq {
-  MarketType market_type = 1;
+  ProductType product_type = 1;
   int64 symbol_id = 2;
   common.Side side = 3; // 买卖方向
   PositionSide position_side = 4;
@@ -124,7 +127,7 @@ message CancelAllOrdersResp {
 
 message GetOrderListReq {
   common.PageReq page = 1;
-  MarketType market_type = 2;
+  ProductType product_type = 2;
   int64 symbol_id = 3;
   OrderStatus status = 4;
   common.Side side = 5; // 买卖方向
@@ -150,11 +153,12 @@ message GetOrderDetailData {
   TradeOrder order = 1;
   TradeOrderSpot spot = 2;
   TradeOrderContract contract = 3;
+  TradeOrderSeconds seconds = 4;
 }
 
 message GetFillListReq {
   common.PageReq page = 1;
-  MarketType market_type = 2;
+  ProductType product_type = 2;
   int64 symbol_id = 3;
   TimeRange time_range = 4;
 }
@@ -165,7 +169,7 @@ message GetFillListResp {
 }
 
 message GetPositionListReq {
-  MarketType market_type = 1;
+  ContractType contract_type = 1;
   int64 symbol_id = 2;
 }
 
@@ -174,19 +178,19 @@ message GetPositionListResp {
   repeated ContractPosition data = 2;
 }
 
-message GetMarginAccountListReq {
-  MarketType market_type = 1;
+message GetMarginSnapshotListReq {
+  reserved 1;
   string margin_asset = 2;
 }
 
-message GetMarginAccountListResp {
+message GetMarginSnapshotListResp {
   common.RespBase base = 1;
-  repeated ContractMarginAccount data = 2;
+  repeated ContractMarginSnapshot data = 2;
 }
 
 message GetLeverageConfigReq {
   int64 symbol_id = 1;
-  MarketType market_type = 2;
+  reserved 2;
   MarginMode margin_mode = 3;
 }
 
@@ -197,9 +201,9 @@ message GetLeverageConfigResp {
 
 message SetLeverageReq {
   int64 symbol_id = 1;
-  MarketType market_type = 2;
+  reserved 2;
   MarginMode margin_mode = 3;
-  PositionMode position_mode = 4;
   int64 long_leverage = 5;
   int64 short_leverage = 6;
+  reserved 4;
 }

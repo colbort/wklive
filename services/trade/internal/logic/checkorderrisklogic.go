@@ -34,7 +34,11 @@ func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trad
 	rejectCode := ""
 	rejectMsg := ""
 	checkResult := trade.RiskCheckResult_RISK_CHECK_RESULT_PASS
-	limitCfg, err := l.svcCtx.RiskUserTradeLimitModel.FindOneByTenantIdUserIdMarketType(l.ctx, in.TenantId, in.UserId, int64(in.MarketType))
+	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
+	if err != nil {
+		return nil, err
+	}
+	limitCfg, err := l.svcCtx.RiskUserTradeLimitModel.FindOneByTenantIdUserIdProductType(l.ctx, in.TenantId, in.UserId, symbol.ProductType)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -49,29 +53,29 @@ func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trad
 			rejectMsg = "open disabled"
 		}
 	}
-	symbolLimit, err := l.svcCtx.RiskUserSymbolLimitModel.FindOneByTenantIdUserIdSymbolIdMarketType(l.ctx, in.TenantId, in.UserId, in.SymbolId, int64(in.MarketType))
+	symbolLimit, err := l.svcCtx.RiskUserSymbolLimitModel.FindOneByTenantIdUserIdSymbolId(l.ctx, in.TenantId, in.UserId, in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	qty := mustParseFloat(in.Qty)
 	amount := mustParseFloat(in.Amount)
 	if symbolLimit != nil && resp.Passed == 1 {
-		if symbolLimit.MinOrderQty > 0 && qty > 0 && qty < symbolLimit.MinOrderQty {
+		if symbolLimit.MinOrderQty.IsPositive() && qty.IsPositive() && qty.LessThan(symbolLimit.MinOrderQty) {
 			resp.Passed = 0
 			rejectCode = "MIN_QTY"
 			rejectMsg = "quantity below minimum"
 		}
-		if symbolLimit.MaxOrderQty > 0 && qty > 0 && qty > symbolLimit.MaxOrderQty {
+		if symbolLimit.MaxOrderQty.IsPositive() && qty.IsPositive() && qty.GreaterThan(symbolLimit.MaxOrderQty) {
 			resp.Passed = 0
 			rejectCode = "MAX_QTY"
 			rejectMsg = "quantity exceeds maximum"
 		}
-		if symbolLimit.MinOrderNotional > 0 && amount > 0 && amount < symbolLimit.MinOrderNotional {
+		if symbolLimit.MinOrderNotional.IsPositive() && amount.IsPositive() && amount.LessThan(symbolLimit.MinOrderNotional) {
 			resp.Passed = 0
 			rejectCode = "MIN_NOTIONAL"
 			rejectMsg = "amount below minimum"
 		}
-		if symbolLimit.MaxOrderNotional > 0 && amount > 0 && amount > symbolLimit.MaxOrderNotional {
+		if symbolLimit.MaxOrderNotional.IsPositive() && amount.IsPositive() && amount.GreaterThan(symbolLimit.MaxOrderNotional) {
 			resp.Passed = 0
 			rejectCode = "MAX_NOTIONAL"
 			rejectMsg = "amount exceeds maximum"
@@ -86,7 +90,7 @@ func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trad
 		TenantId:      in.TenantId,
 		UserId:        in.UserId,
 		SymbolId:      in.SymbolId,
-		MarketType:    int64(in.MarketType),
+		ProductType:   symbol.ProductType,
 		CheckType:     int64(trade.RiskCheckType_RISK_CHECK_TYPE_TRADE_PERMISSION),
 		CheckResult:   int64(checkResult),
 		RejectCode:    rejectCode,

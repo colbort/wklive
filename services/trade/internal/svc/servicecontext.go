@@ -2,12 +2,9 @@ package svc
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 	bus "wklive/common/bus/redis"
-	"wklive/common/i18n"
 	"wklive/services/trade/internal/config"
 	"wklive/services/trade/models"
 
@@ -19,29 +16,34 @@ import (
 )
 
 type ServiceContext struct {
-	Config                    config.Config
-	DB                        sqlx.SqlConn
-	Redis                     *redis.Redis
-	TaskSubscriber            *bus.Subscriber
-	TradeSymbolModel          models.TTradeSymbolModel
-	TradeSymbolSpotModel      models.TTradeSymbolSpotModel
-	TradeSymbolContractModel  models.TTradeSymbolContractModel
-	TradeUserConfigModel      models.TTradeUserConfigModel
-	TradeOrderModel           models.TTradeOrderModel
-	TradeOrderSpotModel       models.TTradeOrderSpotModel
-	TradeOrderContractModel   models.TTradeOrderContractModel
-	TradeFillModel            models.TTradeFillModel
-	TradeCancelLogModel       models.TTradeCancelLogModel
-	ContractPositionModel     models.TContractPositionModel
-	ContractPositionHistModel models.TContractPositionHistoryModel
-	ContractMarginAcctModel   models.TContractMarginAccountModel
-	ContractLeverageCfgModel  models.TContractLeverageConfigModel
-	SymbolLeverageCfgModel    models.TTradeSymbolLeverageConfigModel
-	RiskUserTradeLimitModel   models.TRiskUserTradeLimitModel
-	RiskUserSymbolLimitModel  models.TRiskUserSymbolLimitModel
-	RiskOrderCheckLogModel    models.TRiskOrderCheckLogModel
-	BizTradeEventModel        models.TBizTradeEventModel
-	AssetClient               asset.AssetInternalClient
+	Config                      config.Config
+	DB                          sqlx.SqlConn
+	Redis                       *redis.Redis
+	TaskSubscriber              *bus.Subscriber
+	TradeSymbolModel            models.TTradeSymbolModel
+	TradeSymbolSpotModel        models.TTradeSymbolSpotModel
+	TradeSymbolContractModel    models.TTradeSymbolContractModel
+	TradeUserConfigModel        models.TTradeUserConfigModel
+	TradeOrderModel             models.TTradeOrderModel
+	TradeOrderSpotModel         models.TTradeOrderSpotModel
+	TradeOrderContractModel     models.TTradeOrderContractModel
+	TradeOrderSecondsModel      models.TTradeOrderSecondsModel
+	TradeFillModel              models.TTradeFillModel
+	TradeCancelLogModel         models.TTradeCancelLogModel
+	ContractPositionModel       models.TContractPositionModel
+	ContractPositionHistModel   models.TContractPositionHistoryModel
+	ContractMarginSnapshotModel models.TContractMarginSnapshotModel
+	ContractUserConfigModel     models.TContractUserConfigModel
+	TradeSymbolSecondsModel     models.TTradeSymbolSecondsModel
+	TradeSymbolSessionModel     models.TTradeSymbolSessionModel
+	ContractLeverageCfgModel    models.TContractLeverageConfigModel
+	SymbolLeverageCfgModel      models.TTradeSymbolLeverageConfigModel
+	SymbolLeverageDefaultModel  models.TTradeSymbolLeverageDefaultModel
+	RiskUserTradeLimitModel     models.TRiskUserTradeLimitModel
+	RiskUserSymbolLimitModel    models.TRiskUserSymbolLimitModel
+	RiskOrderCheckLogModel      models.TRiskOrderCheckLogModel
+	BizTradeEventModel          models.TBizTradeEventModel
+	AssetClient                 asset.AssetInternalClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -49,29 +51,34 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
 	return &ServiceContext{
-		Config:                    c,
-		DB:                        conn,
-		Redis:                     redis.MustNewRedis(c.Redis.RedisConf),
-		TaskSubscriber:            taskSubscriber,
-		TradeSymbolModel:          models.NewTTradeSymbolModel(conn, c.CacheRedis),
-		TradeSymbolSpotModel:      models.NewTTradeSymbolSpotModel(conn, c.CacheRedis),
-		TradeSymbolContractModel:  models.NewTTradeSymbolContractModel(conn, c.CacheRedis),
-		TradeUserConfigModel:      models.NewTTradeUserConfigModel(conn, c.CacheRedis),
-		TradeOrderModel:           models.NewTTradeOrderModel(conn, c.CacheRedis),
-		TradeOrderSpotModel:       models.NewTTradeOrderSpotModel(conn, c.CacheRedis),
-		TradeOrderContractModel:   models.NewTTradeOrderContractModel(conn, c.CacheRedis),
-		TradeFillModel:            models.NewTTradeFillModel(conn, c.CacheRedis),
-		TradeCancelLogModel:       models.NewTTradeCancelLogModel(conn, c.CacheRedis),
-		ContractPositionModel:     models.NewTContractPositionModel(conn, c.CacheRedis),
-		ContractPositionHistModel: models.NewTContractPositionHistoryModel(conn, c.CacheRedis),
-		ContractMarginAcctModel:   models.NewTContractMarginAccountModel(conn, c.CacheRedis),
-		ContractLeverageCfgModel:  models.NewTContractLeverageConfigModel(conn, c.CacheRedis),
-		SymbolLeverageCfgModel:    models.NewTTradeSymbolLeverageConfigModel(conn, c.CacheRedis),
-		RiskUserTradeLimitModel:   models.NewTRiskUserTradeLimitModel(conn, c.CacheRedis),
-		RiskUserSymbolLimitModel:  models.NewTRiskUserSymbolLimitModel(conn, c.CacheRedis),
-		RiskOrderCheckLogModel:    models.NewTRiskOrderCheckLogModel(conn, c.CacheRedis),
-		BizTradeEventModel:        models.NewTBizTradeEventModel(conn, c.CacheRedis),
-		AssetClient:               asset.NewAssetInternalClient(assetCli.Conn()),
+		Config:                      c,
+		DB:                          conn,
+		Redis:                       redis.MustNewRedis(c.Redis.RedisConf),
+		TaskSubscriber:              taskSubscriber,
+		TradeSymbolModel:            models.NewTTradeSymbolModel(conn, c.CacheRedis),
+		TradeSymbolSpotModel:        models.NewTTradeSymbolSpotModel(conn, c.CacheRedis),
+		TradeSymbolContractModel:    models.NewTTradeSymbolContractModel(conn, c.CacheRedis),
+		TradeUserConfigModel:        models.NewTTradeUserConfigModel(conn, c.CacheRedis),
+		TradeOrderModel:             models.NewTTradeOrderModel(conn, c.CacheRedis),
+		TradeOrderSpotModel:         models.NewTTradeOrderSpotModel(conn, c.CacheRedis),
+		TradeOrderContractModel:     models.NewTTradeOrderContractModel(conn, c.CacheRedis),
+		TradeOrderSecondsModel:      models.NewTTradeOrderSecondsModel(conn, c.CacheRedis),
+		TradeFillModel:              models.NewTTradeFillModel(conn, c.CacheRedis),
+		TradeCancelLogModel:         models.NewTTradeCancelLogModel(conn, c.CacheRedis),
+		ContractPositionModel:       models.NewTContractPositionModel(conn, c.CacheRedis),
+		ContractPositionHistModel:   models.NewTContractPositionHistoryModel(conn, c.CacheRedis),
+		ContractMarginSnapshotModel: models.NewTContractMarginSnapshotModel(conn, c.CacheRedis),
+		ContractUserConfigModel:     models.NewTContractUserConfigModel(conn, c.CacheRedis),
+		TradeSymbolSecondsModel:     models.NewTTradeSymbolSecondsModel(conn, c.CacheRedis),
+		TradeSymbolSessionModel:     models.NewTTradeSymbolSessionModel(conn, c.CacheRedis),
+		ContractLeverageCfgModel:    models.NewTContractLeverageConfigModel(conn, c.CacheRedis),
+		SymbolLeverageCfgModel:      models.NewTTradeSymbolLeverageConfigModel(conn, c.CacheRedis),
+		SymbolLeverageDefaultModel:  models.NewTTradeSymbolLeverageDefaultModel(conn, c.CacheRedis),
+		RiskUserTradeLimitModel:     models.NewTRiskUserTradeLimitModel(conn, c.CacheRedis),
+		RiskUserSymbolLimitModel:    models.NewTRiskUserSymbolLimitModel(conn, c.CacheRedis),
+		RiskOrderCheckLogModel:      models.NewTRiskOrderCheckLogModel(conn, c.CacheRedis),
+		BizTradeEventModel:          models.NewTBizTradeEventModel(conn, c.CacheRedis),
+		AssetClient:                 asset.NewAssetInternalClient(assetCli.Conn()),
 	}
 }
 
@@ -95,29 +102,4 @@ func (s *ServiceContext) GenerateBizNo(ctx context.Context, prefix string) (stri
 
 	orderID := fmt.Sprintf("%s%s%06d", prefix, date, seq)
 	return orderID, nil
-}
-
-// 获取最新报价
-func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (float64, error) {
-	key := fmt.Sprintf("itick:quote:%s:%s:%s", "crypto", "BA", symbol)
-	data, err := s.Redis.GetCtx(ctx, key)
-	if err != nil {
-		return 0, err
-	}
-	if strings.TrimSpace(data) == "" {
-		return 0, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
-	}
-
-	var quoteData struct {
-		Price float64 `json:"lastPrice"`
-	}
-	err = json.Unmarshal([]byte(data), &quoteData)
-	if err != nil {
-		return 0, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
-	}
-	if quoteData.Price <= 0 {
-		return 0, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
-	}
-
-	return quoteData.Price, nil
 }

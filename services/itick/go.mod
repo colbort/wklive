@@ -5,6 +5,7 @@ go 1.26.4
 require (
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
 	github.com/redis/go-redis/v9 v9.20.1
+	github.com/shopspring/decimal v1.4.0
 	github.com/zeromicro/go-zero v1.10.2
 	go.mongodb.org/mongo-driver/v2 v2.6.1
 	golang.org/x/time v0.15.0

@@ -11,6 +11,7 @@ import (
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -52,9 +53,9 @@ func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*t
 }
 
 type triggerPriceKey struct {
-	tenantId   int64
-	symbolId   int64
-	marketType int64
+	tenantId    int64
+	symbolId    int64
+	productType int64
 }
 
 func (l *ProcessTradeEventsLogic) retryTradeEvents(in *trade.TradeTaskReq) error {
@@ -151,7 +152,7 @@ func (l *ProcessTradeEventsLogic) rejectFreezingOrderIfNeeded(orderID, now int64
 func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) error {
 	now := utils.NowMillis()
 	cursor := int64(0)
-	priceCache := make(map[triggerPriceKey]float64)
+	priceCache := make(map[triggerPriceKey]decimal.Decimal)
 	for {
 		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
 			TenantId: in.GetTenantId(),
@@ -165,10 +166,10 @@ func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) e
 		}
 		for _, order := range orders {
 			cursor = order.Id
-			key := triggerPriceKey{tenantId: order.TenantId, symbolId: order.SymbolId, marketType: order.MarketType}
+			key := triggerPriceKey{tenantId: order.TenantId, symbolId: order.SymbolId, productType: order.ProductType}
 			triggerPrice, ok := priceCache[key]
 			if !ok {
-				triggerPrice, err = l.svcCtx.TradeFillModel.FindLastPrice(l.ctx, order.TenantId, order.SymbolId, order.MarketType)
+				triggerPrice, err = l.svcCtx.TradeFillModel.FindLastPrice(l.ctx, order.TenantId, order.SymbolId, order.ProductType)
 				if errors.Is(err, models.ErrNotFound) {
 					continue
 				}
@@ -190,7 +191,7 @@ func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) e
 	}
 }
 
-func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPrice float64, now int64) error {
+func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPrice decimal.Decimal, now int64) error {
 	var triggeredOrder *models.TTradeOrder
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)

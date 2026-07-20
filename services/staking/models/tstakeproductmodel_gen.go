@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,34 +44,34 @@ type (
 	}
 
 	TStakeProduct struct {
-		Id               int64   `db:"id"`                 // 主键ID
-		TenantId         int64   `db:"tenant_id"`          // 租户ID
-		ProductNo        string  `db:"product_no"`         // 质押产品编号
-		ProductName      string  `db:"product_name"`       // 质押产品名称
-		ProductType      int64   `db:"product_type"`       // 产品类型：1活期 2定期
-		CoinName         string  `db:"coin_name"`          // 质押币种名称
-		CoinSymbol       string  `db:"coin_symbol"`        // 质押币种符号
-		RewardCoinName   string  `db:"reward_coin_name"`   // 收益币种名称
-		RewardCoinSymbol string  `db:"reward_coin_symbol"` // 收益币种符号
-		Apr              float64 `db:"apr"`                // 年化收益率，例如12.5000表示12.5%
-		LockDays         int64   `db:"lock_days"`          // 锁仓天数，0表示活期
-		MinAmount        float64 `db:"min_amount"`         // 最小质押数量
-		MaxAmount        float64 `db:"max_amount"`         // 最大质押数量，0表示不限制
-		StepAmount       float64 `db:"step_amount"`        // 递增数量，0表示不限制步长
-		TotalAmount      float64 `db:"total_amount"`       // 产品总可质押数量，0表示不限制
-		StakedAmount     float64 `db:"staked_amount"`      // 当前已质押数量
-		UserLimitAmount  float64 `db:"user_limit_amount"`  // 单用户最大可质押数量，0表示不限制
-		InterestMode     int64   `db:"interest_mode"`      // 计息方式：1按天计息 2到期一次性计息
-		RewardMode       int64   `db:"reward_mode"`        // 发息方式：1每日发放 2到期发放
-		AllowEarlyRedeem int64   `db:"allow_early_redeem"` // 是否允许提前赎回：1是 2否
-		EarlyRedeemRate  float64 `db:"early_redeem_rate"`  // 提前赎回手续费率，例如5.0000表示5%
-		Status           int64   `db:"status"`             // 产品状态：1禁用 2启用 3下架
-		Sort             int64   `db:"sort"`               // 排序值，越大越靠前
-		Remark           string  `db:"remark"`             // 备注
-		CreateUserId     int64   `db:"create_user_id"`     // 创建人ID
-		UpdateUserId     int64   `db:"update_user_id"`     // 更新人ID
-		CreateTimes      int64   `db:"create_times"`       // 创建时间戳
-		UpdateTimes      int64   `db:"update_times"`       // 更新时间戳
+		Id               int64           `db:"id"`                 // 主键ID
+		TenantId         int64           `db:"tenant_id"`          // 租户ID
+		ProductNo        string          `db:"product_no"`         // 质押产品编号
+		ProductName      string          `db:"product_name"`       // 质押产品名称
+		ProductType      int64           `db:"product_type"`       // 产品类型：1活期 2定期
+		CoinName         string          `db:"coin_name"`          // 质押币种名称
+		CoinSymbol       string          `db:"coin_symbol"`        // 质押币种符号
+		RewardCoinName   string          `db:"reward_coin_name"`   // 收益币种名称
+		RewardCoinSymbol string          `db:"reward_coin_symbol"` // 收益币种符号
+		Apr              decimal.Decimal `db:"apr"`                // 年化收益率，例如12.5000表示12.5%
+		LockDays         int64           `db:"lock_days"`          // 锁仓天数，0表示活期
+		MinAmount        decimal.Decimal `db:"min_amount"`         // 最小质押数量
+		MaxAmount        decimal.Decimal `db:"max_amount"`         // 最大质押数量，0表示不限制
+		StepAmount       decimal.Decimal `db:"step_amount"`        // 递增数量，0表示不限制步长
+		TotalAmount      decimal.Decimal `db:"total_amount"`       // 产品总可质押数量，0表示不限制
+		StakedAmount     decimal.Decimal `db:"staked_amount"`      // 当前已质押数量
+		UserLimitAmount  decimal.Decimal `db:"user_limit_amount"`  // 单用户最大可质押数量，0表示不限制
+		InterestMode     int64           `db:"interest_mode"`      // 计息方式：1按天计息 2到期一次性计息
+		RewardMode       int64           `db:"reward_mode"`        // 发息方式：1每日发放 2到期发放
+		AllowEarlyRedeem int64           `db:"allow_early_redeem"` // 是否允许提前赎回：1是 2否
+		EarlyRedeemRate  decimal.Decimal `db:"early_redeem_rate"`  // 提前赎回手续费率，例如5.0000表示5%
+		Status           int64           `db:"status"`             // 产品状态：1禁用 2启用 3下架
+		Sort             int64           `db:"sort"`               // 排序值，越大越靠前
+		Remark           string          `db:"remark"`             // 备注
+		CreateUserId     int64           `db:"create_user_id"`     // 创建人ID
+		UpdateUserId     int64           `db:"update_user_id"`     // 更新人ID
+		CreateTimes      int64           `db:"create_times"`       // 创建时间戳
+		UpdateTimes      int64           `db:"update_times"`       // 更新时间戳
 	}
 )
 

@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -23,15 +25,15 @@ var (
 	tTradeSymbolRowsExpectAutoSet   = strings.Join(stringx.Remove(tTradeSymbolFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tTradeSymbolRowsWithPlaceHolder = strings.Join(stringx.Remove(tTradeSymbolFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTTradeSymbolIdPrefix                       = "cache:tTradeSymbol:id:"
-	cacheTTradeSymbolTenantIdSymbolMarketTypePrefix = "cache:tTradeSymbol:tenantId:symbol:marketType:"
+	cacheTTradeSymbolIdPrefix                                                     = "cache:tTradeSymbol:id:"
+	cacheTTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypePrefix = "cache:tTradeSymbol:tenantId:symbol:productType:contractType:contractValueType:"
 )
 
 type (
 	tTradeSymbolModel interface {
 		Insert(ctx context.Context, data *TTradeSymbol) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TTradeSymbol, error)
-		FindOneByTenantIdSymbolMarketType(ctx context.Context, tenantId int64, symbol string, marketType int64) (*TTradeSymbol, error)
+		FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(ctx context.Context, tenantId int64, symbol string, productType int64, contractType int64, contractValueType int64) (*TTradeSymbol, error)
 		Update(ctx context.Context, data *TTradeSymbol) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -42,32 +44,35 @@ type (
 	}
 
 	TTradeSymbol struct {
-		Id            int64   `db:"id"`             // 主键ID
-		TenantId      int64   `db:"tenant_id"`      // 租户ID
-		Symbol        string  `db:"symbol"`         // 统一交易标的代码，如BTCUSDT、ETHUSD-PERP
-		DisplaySymbol string  `db:"display_symbol"` // 前端展示名称
-		MarketType    int64   `db:"market_type"`    // 市场类型：1现货 2秒合约 3U本位 4币本位
-		BaseAsset     string  `db:"base_asset"`     // 基础资产，例如BTC
-		QuoteAsset    string  `db:"quote_asset"`    // 计价资产，例如USDT
-		SettleAsset   string  `db:"settle_asset"`   // 结算资产，现货一般等于quote_asset
-		ContractType  int64   `db:"contract_type"`  // 合约类型：0未知 1非合约 2永续 3交割 4秒合约
-		Status        int64   `db:"status"`         // 交易状态：1启用 2停用 3仅平仓
-		PriceScale    int64   `db:"price_scale"`    // 价格精度，小数位数
-		QtyScale      int64   `db:"qty_scale"`      // 数量精度，小数位数
-		MinPrice      float64 `db:"min_price"`      // 最小下单价格
-		MaxPrice      float64 `db:"max_price"`      // 最大下单价格
-		PriceTick     float64 `db:"price_tick"`     // 价格步长
-		MinQty        float64 `db:"min_qty"`        // 最小下单数量
-		MaxQty        float64 `db:"max_qty"`        // 最大下单数量
-		QtyStep       float64 `db:"qty_step"`       // 数量步长
-		MinNotional   float64 `db:"min_notional"`   // 最小名义价值
-		MaxLeverage   int64   `db:"max_leverage"`   // 最大杠杆倍数，现货固定为1
-		OpenTime      int64   `db:"open_time"`      // 开盘时间，毫秒时间戳，0表示不限
-		CloseTime     int64   `db:"close_time"`     // 收盘时间，毫秒时间戳，0表示不限
-		Sort          int64   `db:"sort"`           // 排序值，越小越靠前
-		Remark        string  `db:"remark"`         // 备注
-		CreateTimes   int64   `db:"create_times"`   // 创建时间，毫秒时间戳
-		UpdateTimes   int64   `db:"update_times"`   // 更新时间，毫秒时间戳
+		Id                int64           `db:"id"`                  // 主键ID
+		TenantId          int64           `db:"tenant_id"`           // 租户ID
+		Symbol            string          `db:"symbol"`              // 统一交易标的代码，如BTCUSDT、ETHUSD-PERP
+		DisplaySymbol     string          `db:"display_symbol"`      // 前端展示名称
+		ProductType       int64           `db:"product_type"`        // 产品大类：1现货 2衍生品 3秒合约
+		BaseAsset         string          `db:"base_asset"`          // 基础资产，例如BTC
+		QuoteAsset        string          `db:"quote_asset"`         // 计价资产，例如USDT
+		SettleAsset       string          `db:"settle_asset"`        // 结算资产，现货一般等于quote_asset
+		MarginAsset       string          `db:"margin_asset"`        // 保证金资产；现货为空，U本位为稳定币，币本位为基础币
+		ContractType      int64           `db:"contract_type"`       // 合约期限类型：0不适用 1永续 2交割
+		ContractValueType int64           `db:"contract_value_type"` // 合约价值类型：0不适用 1线性 2反向
+		Status            int64           `db:"status"`              // 交易状态：1启用 2禁用 3仅平仓
+		PriceScale        int64           `db:"price_scale"`         // 价格精度，小数位数
+		QtyScale          int64           `db:"qty_scale"`           // 数量精度，小数位数
+		MinPrice          decimal.Decimal `db:"min_price"`           // 最小下单价格
+		MaxPrice          decimal.Decimal `db:"max_price"`           // 最大下单价格
+		PriceTick         decimal.Decimal `db:"price_tick"`          // 价格步长
+		MinQty            decimal.Decimal `db:"min_qty"`             // 最小下单数量
+		MaxQty            decimal.Decimal `db:"max_qty"`             // 最大下单数量
+		QtyStep           decimal.Decimal `db:"qty_step"`            // 数量步长
+		MinNotional       decimal.Decimal `db:"min_notional"`        // 最小名义价值
+		MaxNotional       decimal.Decimal `db:"max_notional"`        // 最大名义价值，0表示不限
+		ListingTime       int64           `db:"listing_time"`        // 产品上线时间，毫秒时间戳，0表示不限
+		TradingStartTime  int64           `db:"trading_start_time"`  // 开始交易时间，毫秒时间戳，0表示不限
+		TradingEndTime    int64           `db:"trading_end_time"`    // 停止交易时间，毫秒时间戳，0表示不限
+		Sort              int64           `db:"sort"`                // 排序值，越小越靠前
+		Remark            string          `db:"remark"`              // 备注
+		CreateTimes       int64           `db:"create_times"`        // 创建时间，毫秒时间戳
+		UpdateTimes       int64           `db:"update_times"`        // 更新时间，毫秒时间戳
 	}
 )
 
@@ -85,11 +90,11 @@ func (m *defaultTTradeSymbolModel) Delete(ctx context.Context, id int64) error {
 	}
 
 	tTradeSymbolIdKey := fmt.Sprintf("%s%v", cacheTTradeSymbolIdPrefix, id)
-	tTradeSymbolTenantIdSymbolMarketTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeSymbolTenantIdSymbolMarketTypePrefix, data.TenantId, data.Symbol, data.MarketType)
+	tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypePrefix, data.TenantId, data.Symbol, data.ProductType, data.ContractType, data.ContractValueType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tTradeSymbolIdKey, tTradeSymbolTenantIdSymbolMarketTypeKey)
+	}, tTradeSymbolIdKey, tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey)
 	return err
 }
 
@@ -110,12 +115,12 @@ func (m *defaultTTradeSymbolModel) FindOne(ctx context.Context, id int64) (*TTra
 	}
 }
 
-func (m *defaultTTradeSymbolModel) FindOneByTenantIdSymbolMarketType(ctx context.Context, tenantId int64, symbol string, marketType int64) (*TTradeSymbol, error) {
-	tTradeSymbolTenantIdSymbolMarketTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeSymbolTenantIdSymbolMarketTypePrefix, tenantId, symbol, marketType)
+func (m *defaultTTradeSymbolModel) FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(ctx context.Context, tenantId int64, symbol string, productType int64, contractType int64, contractValueType int64) (*TTradeSymbol, error) {
+	tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypePrefix, tenantId, symbol, productType, contractType, contractValueType)
 	var resp TTradeSymbol
-	err := m.QueryRowIndexCtx(ctx, &resp, tTradeSymbolTenantIdSymbolMarketTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `symbol` = ? and `market_type` = ? limit 1", tTradeSymbolRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, symbol, marketType); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `symbol` = ? and `product_type` = ? and `contract_type` = ? and `contract_value_type` = ? limit 1", tTradeSymbolRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, symbol, productType, contractType, contractValueType); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -132,11 +137,11 @@ func (m *defaultTTradeSymbolModel) FindOneByTenantIdSymbolMarketType(ctx context
 
 func (m *defaultTTradeSymbolModel) Insert(ctx context.Context, data *TTradeSymbol) (sql.Result, error) {
 	tTradeSymbolIdKey := fmt.Sprintf("%s%v", cacheTTradeSymbolIdPrefix, data.Id)
-	tTradeSymbolTenantIdSymbolMarketTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeSymbolTenantIdSymbolMarketTypePrefix, data.TenantId, data.Symbol, data.MarketType)
+	tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypePrefix, data.TenantId, data.Symbol, data.ProductType, data.ContractType, data.ContractValueType)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSymbolRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.Symbol, data.DisplaySymbol, data.MarketType, data.BaseAsset, data.QuoteAsset, data.SettleAsset, data.ContractType, data.Status, data.PriceScale, data.QtyScale, data.MinPrice, data.MaxPrice, data.PriceTick, data.MinQty, data.MaxQty, data.QtyStep, data.MinNotional, data.MaxLeverage, data.OpenTime, data.CloseTime, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, tTradeSymbolIdKey, tTradeSymbolTenantIdSymbolMarketTypeKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSymbolRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.Symbol, data.DisplaySymbol, data.ProductType, data.BaseAsset, data.QuoteAsset, data.SettleAsset, data.MarginAsset, data.ContractType, data.ContractValueType, data.Status, data.PriceScale, data.QtyScale, data.MinPrice, data.MaxPrice, data.PriceTick, data.MinQty, data.MaxQty, data.QtyStep, data.MinNotional, data.MaxNotional, data.ListingTime, data.TradingStartTime, data.TradingEndTime, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
+	}, tTradeSymbolIdKey, tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey)
 	return ret, err
 }
 
@@ -147,11 +152,11 @@ func (m *defaultTTradeSymbolModel) Update(ctx context.Context, newData *TTradeSy
 	}
 
 	tTradeSymbolIdKey := fmt.Sprintf("%s%v", cacheTTradeSymbolIdPrefix, data.Id)
-	tTradeSymbolTenantIdSymbolMarketTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeSymbolTenantIdSymbolMarketTypePrefix, data.TenantId, data.Symbol, data.MarketType)
+	tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypePrefix, data.TenantId, data.Symbol, data.ProductType, data.ContractType, data.ContractValueType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeSymbolRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Symbol, newData.DisplaySymbol, newData.MarketType, newData.BaseAsset, newData.QuoteAsset, newData.SettleAsset, newData.ContractType, newData.Status, newData.PriceScale, newData.QtyScale, newData.MinPrice, newData.MaxPrice, newData.PriceTick, newData.MinQty, newData.MaxQty, newData.QtyStep, newData.MinNotional, newData.MaxLeverage, newData.OpenTime, newData.CloseTime, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tTradeSymbolIdKey, tTradeSymbolTenantIdSymbolMarketTypeKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Symbol, newData.DisplaySymbol, newData.ProductType, newData.BaseAsset, newData.QuoteAsset, newData.SettleAsset, newData.MarginAsset, newData.ContractType, newData.ContractValueType, newData.Status, newData.PriceScale, newData.QtyScale, newData.MinPrice, newData.MaxPrice, newData.PriceTick, newData.MinQty, newData.MaxQty, newData.QtyStep, newData.MinNotional, newData.MaxNotional, newData.ListingTime, newData.TradingStartTime, newData.TradingEndTime, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tTradeSymbolIdKey, tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey)
 	return err
 }
 

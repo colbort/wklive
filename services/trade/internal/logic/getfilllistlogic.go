@@ -39,12 +39,12 @@ func (l *GetFillListLogic) GetFillList(in *trade.GetFillListReq) (*trade.GetFill
 		return nil, err
 	}
 	data, total, err := l.svcCtx.TradeFillModel.FindPage(l.ctx, models.TradeFillPageFilter{
-		TenantId:   tenantId,
-		UserId:     userId,
-		SymbolId:   in.SymbolId,
-		MarketType: int64(in.MarketType),
-		TimeStart:  in.TimeRange.StartTime,
-		TimeEnd:    in.TimeRange.EndTime,
+		TenantId:    tenantId,
+		UserId:      userId,
+		SymbolId:    in.SymbolId,
+		ProductType: int64(in.ProductType),
+		TimeStart:   in.TimeRange.StartTime,
+		TimeEnd:     in.TimeRange.EndTime,
 	}, cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

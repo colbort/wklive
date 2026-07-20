@@ -12,14 +12,14 @@ var _ TContractPositionHistoryModel = (*customTContractPositionHistoryModel)(nil
 
 type (
 	ContractPositionHistoryPageFilter struct {
-		TenantId   int64
-		UserId     int64
-		SymbolId   int64
-		MarketType int64
-		PositionId int64
-		ActionType int64
-		TimeStart  int64
-		TimeEnd    int64
+		TenantId     int64
+		UserId       int64
+		SymbolId     int64
+		ContractType int64
+		PositionId   int64
+		ActionType   int64
+		TimeStart    int64
+		TimeEnd      int64
 	}
 
 	// TContractPositionHistoryModel is an interface to be customized, add more methods here,
@@ -47,7 +47,7 @@ func (m *defaultTContractPositionHistoryModel) FindPage(ctx context.Context, fil
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("user_id", filter.UserId)
 	builder.EqInt64("symbol_id", filter.SymbolId)
-	builder.EqInt64("market_type", filter.MarketType)
+	builder.EqInt64("contract_type", filter.ContractType)
 	builder.EqInt64("position_id", filter.PositionId)
 	builder.EqInt64("action_type", filter.ActionType)
 	builder.GteInt64("create_times", filter.TimeStart)

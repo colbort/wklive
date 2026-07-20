@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"math"
 
 	"wklive/common/conv"
 	"wklive/common/utils"
@@ -12,15 +11,15 @@ import (
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 const (
-	orderMatchKeyLimit      = int64(200)
-	orderMatchBookDepth     = int64(50)
-	orderMatchMaxPerKey     = 200
-	orderMatchAmountEpsilon = 1e-9
+	orderMatchKeyLimit  = int64(200)
+	orderMatchBookDepth = int64(50)
+	orderMatchMaxPerKey = 200
 )
 
 type ProcessOrderMatchingLogic struct {
@@ -32,9 +31,9 @@ type ProcessOrderMatchingLogic struct {
 type orderMatchPlan struct {
 	BuyOrder  *models.TTradeOrder
 	SellOrder *models.TTradeOrder
-	Price     float64
-	Qty       float64
-	Amount    float64
+	Price     decimal.Decimal
+	Qty       decimal.Decimal
+	Amount    decimal.Decimal
 }
 
 func NewProcessOrderMatchingLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProcessOrderMatchingLogic {
@@ -97,8 +96,8 @@ func (l *ProcessOrderMatchingLogic) findNextOrderMatch(key models.TradeOrderMatc
 func (l *ProcessOrderMatchingLogic) findOpenMatchOrdersFromBook(key models.TradeOrderMatchKey, side, limit int64) ([]*models.TTradeOrder, error) {
 	orders, err := l.findOpenMatchOrdersFromCache(key, side, limit)
 	if err != nil {
-		l.Errorf("find match orders from redis book failed, tenantId=%d symbolId=%d marketType=%d side=%d err=%v",
-			key.TenantId, key.SymbolId, key.MarketType, side, err)
+		l.Errorf("find match orders from redis book failed, tenantId=%d symbolId=%d productType=%d side=%d err=%v",
+			key.TenantId, key.SymbolId, key.ProductType, side, err)
 	} else if len(orders) > 0 {
 		return orders, nil
 	}
@@ -107,7 +106,7 @@ func (l *ProcessOrderMatchingLogic) findOpenMatchOrdersFromBook(key models.Trade
 		l.ctx,
 		key.TenantId,
 		key.SymbolId,
-		key.MarketType,
+		key.ProductType,
 		side,
 		matchableOrderStatuses(),
 		int64(trade.OrderType_ORDER_TYPE_MARKET),
@@ -128,7 +127,7 @@ func (l *ProcessOrderMatchingLogic) findOpenMatchOrdersFromCache(key models.Trad
 	if l.svcCtx == nil || l.svcCtx.Redis == nil || limit <= 0 {
 		return nil, nil
 	}
-	cacheKey := orderBookKeyBySide(key.TenantId, key.SymbolId, key.MarketType, side)
+	cacheKey := orderBookKeyBySide(key.TenantId, key.SymbolId, key.ProductType, side)
 	scanLimit := limit * orderBookScanFactor
 	members, err := l.svcCtx.Redis.ZrangeCtx(l.ctx, cacheKey, 0, scanLimit-1)
 	if err != nil {
@@ -300,12 +299,12 @@ func buildOrderMatchPlan(buy, sell *models.TTradeOrder) *orderMatchPlan {
 	}
 	buyQty := remainingMatchQty(buy, price)
 	sellQty := remainingMatchQty(sell, price)
-	qty := math.Min(buyQty, sellQty)
-	if qty <= orderFillEpsilon {
+	qty := decimal.Min(buyQty, sellQty)
+	if !qty.IsPositive() {
 		return nil
 	}
 	amount := tradeMinorAmountAtPrice(price, qty)
-	if amount <= orderMatchAmountEpsilon {
+	if !amount.IsPositive() {
 		return nil
 	}
 	return &orderMatchPlan{
@@ -325,7 +324,7 @@ func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orde
 	if focal.Side == int64(common.Side_SIDE_SELL) {
 		oppositeSide = int64(common.Side_SIDE_BUY)
 	}
-	opposites, err := orderModel.FindOpenMatchOrders(ctx, key.TenantId, key.SymbolId, key.MarketType, oppositeSide, matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
+	opposites, err := orderModel.FindOpenMatchOrders(ctx, key.TenantId, key.SymbolId, key.ProductType, oppositeSide, matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
 	if err != nil {
 		return nil, false, err
 	}
@@ -351,19 +350,19 @@ func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orde
 
 		focalQty := need.matchQty(price)
 		oppositeQty := remainingMatchQty(opposite, price)
-		if focalQty <= orderFillEpsilon {
+		if !focalQty.IsPositive() {
 			break
 		}
-		if oppositeQty <= orderFillEpsilon {
+		if !oppositeQty.IsPositive() {
 			continue
 		}
-		if isFOKOrder(opposite) && oppositeQty > focalQty+orderFillEpsilon {
+		if isFOKOrder(opposite) && oppositeQty.GreaterThan(focalQty) {
 			continue
 		}
 
-		qty := math.Min(focalQty, oppositeQty)
+		qty := decimal.Min(focalQty, oppositeQty)
 		amount := tradeMinorAmountAtPrice(price, qty)
-		if qty <= orderFillEpsilon || amount <= orderMatchAmountEpsilon {
+		if !qty.IsPositive() || !amount.IsPositive() {
 			continue
 		}
 		plans = append(plans, &orderMatchPlan{
@@ -385,7 +384,7 @@ func sameMatchBook(order *models.TTradeOrder, key models.TradeOrderMatchKey, sid
 	return order != nil &&
 		order.TenantId == key.TenantId &&
 		order.SymbolId == key.SymbolId &&
-		order.MarketType == key.MarketType &&
+		order.ProductType == key.ProductType &&
 		order.Side == side
 }
 
@@ -396,7 +395,7 @@ func matchSides(left, right *models.TTradeOrder) (*models.TTradeOrder, *models.T
 	return right, left
 }
 
-func buildMatchFill(order *models.TTradeOrder, fillNo string, liquidity trade.LiquidityType, plan *orderMatchPlan, fee float64, feeAsset string, now int64) *trade.TradeFill {
+func buildMatchFill(order *models.TTradeOrder, fillNo string, liquidity trade.LiquidityType, plan *orderMatchPlan, fee decimal.Decimal, feeAsset string, now int64) *trade.TradeFill {
 	return &trade.TradeFill{
 		TenantId:      order.TenantId,
 		FillNo:        fillNo,
@@ -404,7 +403,7 @@ func buildMatchFill(order *models.TTradeOrder, fillNo string, liquidity trade.Li
 		OrderNo:       order.OrderNo,
 		UserId:        order.UserId,
 		SymbolId:      order.SymbolId,
-		MarketType:    trade.MarketType(order.MarketType),
+		ProductType:   trade.ProductType(order.ProductType),
 		Side:          common.Side(order.Side),
 		PositionSide:  trade.PositionSide(order.PositionSide),
 		Price:         conv.FloatString(plan.Price),
@@ -419,71 +418,71 @@ func buildMatchFill(order *models.TTradeOrder, fillNo string, liquidity trade.Li
 	}
 }
 
-func matchExecutionPrice(buy, sell *models.TTradeOrder) (float64, bool) {
+func matchExecutionPrice(buy, sell *models.TTradeOrder) (decimal.Decimal, bool) {
 	buyMarket := buy.OrderType == int64(trade.OrderType_ORDER_TYPE_MARKET)
 	sellMarket := sell.OrderType == int64(trade.OrderType_ORDER_TYPE_MARKET)
 	switch {
 	case buyMarket && sellMarket:
-		return 0, false
+		return decimal.Zero, false
 	case buyMarket:
-		return sell.Price, sell.Price > 0
+		return sell.Price, sell.Price.IsPositive()
 	case sellMarket:
-		return buy.Price, buy.Price > 0
-	case buy.Price+orderFillEpsilon < sell.Price:
-		return 0, false
+		return buy.Price, buy.Price.IsPositive()
+	case buy.Price.LessThan(sell.Price):
+		return decimal.Zero, false
 	case buy.Id < sell.Id:
-		return buy.Price, buy.Price > 0
+		return buy.Price, buy.Price.IsPositive()
 	default:
-		return sell.Price, sell.Price > 0
+		return sell.Price, sell.Price.IsPositive()
 	}
 }
 
-func remainingMatchQty(order *models.TTradeOrder, price float64) float64 {
-	if order.Qty > 0 {
-		return math.Max(order.Qty-order.FilledQty, 0)
+func remainingMatchQty(order *models.TTradeOrder, price decimal.Decimal) decimal.Decimal {
+	if order.Qty.IsPositive() {
+		return decimal.Max(order.Qty.Sub(order.FilledQty), decimal.Zero)
 	}
-	if order.Amount > 0 && price > 0 {
-		return tradeQtyFromMinorAmount(math.Max(order.Amount-order.FilledAmount, 0), price)
+	if order.Amount.IsPositive() && price.IsPositive() {
+		return tradeQtyFromMinorAmount(decimal.Max(order.Amount.Sub(order.FilledAmount), decimal.Zero), price)
 	}
-	return 0
+	return decimal.Zero
 }
 
 type orderFillNeed struct {
 	byQty           bool
-	remainingQty    float64
-	remainingAmount float64
+	remainingQty    decimal.Decimal
+	remainingAmount decimal.Decimal
 }
 
 func newOrderFillNeed(order *models.TTradeOrder) orderFillNeed {
 	if order == nil {
 		return orderFillNeed{}
 	}
-	if order.Qty > 0 {
-		return orderFillNeed{byQty: true, remainingQty: math.Max(order.Qty-order.FilledQty, 0)}
+	if order.Qty.IsPositive() {
+		return orderFillNeed{byQty: true, remainingQty: decimal.Max(order.Qty.Sub(order.FilledQty), decimal.Zero)}
 	}
-	return orderFillNeed{remainingAmount: math.Max(order.Amount-order.FilledAmount, 0)}
+	return orderFillNeed{remainingAmount: decimal.Max(order.Amount.Sub(order.FilledAmount), decimal.Zero)}
 }
 
-func (n orderFillNeed) matchQty(price float64) float64 {
+func (n orderFillNeed) matchQty(price decimal.Decimal) decimal.Decimal {
 	if n.byQty {
 		return n.remainingQty
 	}
 	return tradeQtyFromMinorAmount(n.remainingAmount, price)
 }
 
-func (n *orderFillNeed) consume(qty, amount float64) {
+func (n *orderFillNeed) consume(qty, amount decimal.Decimal) {
 	if n.byQty {
-		n.remainingQty = math.Max(n.remainingQty-qty, 0)
+		n.remainingQty = decimal.Max(n.remainingQty.Sub(qty), decimal.Zero)
 		return
 	}
-	n.remainingAmount = math.Max(n.remainingAmount-amount, 0)
+	n.remainingAmount = decimal.Max(n.remainingAmount.Sub(amount), decimal.Zero)
 }
 
 func (n orderFillNeed) filled() bool {
 	if n.byQty {
-		return n.remainingQty <= orderFillEpsilon
+		return !n.remainingQty.IsPositive()
 	}
-	return n.remainingAmount <= orderMatchAmountEpsilon
+	return !n.remainingAmount.IsPositive()
 }
 
 func isFOKOrder(order *models.TTradeOrder) bool {
@@ -501,7 +500,7 @@ func canFullyFillFromBook(order *models.TTradeOrder, opposites []*models.TTradeO
 	need := newOrderFillNeed(order)
 	for _, opposite := range opposites {
 		var (
-			price float64
+			price decimal.Decimal
 			ok    bool
 		)
 		if order.Side == int64(common.Side_SIDE_BUY) {
@@ -515,16 +514,16 @@ func canFullyFillFromBook(order *models.TTradeOrder, opposites []*models.TTradeO
 		}
 		focalQty := need.matchQty(price)
 		oppositeQty := remainingMatchQty(opposite, price)
-		if focalQty <= orderFillEpsilon {
+		if !focalQty.IsPositive() {
 			return true
 		}
-		if oppositeQty <= orderFillEpsilon {
+		if !oppositeQty.IsPositive() {
 			continue
 		}
-		if isFOKOrder(opposite) && oppositeQty > focalQty+orderFillEpsilon {
+		if isFOKOrder(opposite) && oppositeQty.GreaterThan(focalQty) {
 			continue
 		}
-		qty := math.Min(focalQty, oppositeQty)
+		qty := decimal.Min(focalQty, oppositeQty)
 		need.consume(qty, tradeMinorAmountAtPrice(price, qty))
 		if need.filled() {
 			return true
@@ -550,11 +549,11 @@ func liquidityTypeForOrder(order, peer *models.TTradeOrder) trade.LiquidityType 
 	return trade.LiquidityType_LIQUIDITY_TYPE_TAKER
 }
 
-func matchFeeAmount(amount float64, liquidity trade.LiquidityType, makerFeeRate, takerFeeRate float64) float64 {
+func matchFeeAmount(amount decimal.Decimal, liquidity trade.LiquidityType, makerFeeRate, takerFeeRate decimal.Decimal) decimal.Decimal {
 	if liquidity == trade.LiquidityType_LIQUIDITY_TYPE_MAKER {
-		return amount * makerFeeRate
+		return amount.Mul(makerFeeRate)
 	}
-	return amount * takerFeeRate
+	return amount.Mul(takerFeeRate)
 }
 
 func feeAssetForOrder(order *models.TTradeOrder, symbol *models.TTradeSymbol) string {
@@ -564,27 +563,27 @@ func feeAssetForOrder(order *models.TTradeOrder, symbol *models.TTradeSymbol) st
 	return marginAssetForSymbol(symbol)
 }
 
-func (l *ProcessOrderMatchingLogic) matchFeeRates(key models.TradeOrderMatchKey) (float64, float64, error) {
-	if key.MarketType == int64(trade.MarketType_MARKET_TYPE_SPOT) {
+func (l *ProcessOrderMatchingLogic) matchFeeRates(key models.TradeOrderMatchKey) (decimal.Decimal, decimal.Decimal, error) {
+	if key.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) {
 		spot, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, key.TenantId, key.SymbolId)
 		if err != nil {
-			return 0, 0, err
+			return decimal.Zero, decimal.Zero, err
 		}
 		return spot.MakerFeeRate, spot.TakerFeeRate, nil
 	}
 	contract, err := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, key.TenantId, key.SymbolId)
 	if err != nil {
-		return 0, 0, err
+		return decimal.Zero, decimal.Zero, err
 	}
 	return contract.MakerFeeRate, contract.TakerFeeRate, nil
 }
 
 func (l *ProcessOrderMatchingLogic) expireResidualImmediateOrders(key models.TradeOrderMatchKey) error {
-	buys, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.MarketType, int64(common.Side_SIDE_BUY), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
+	buys, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.ProductType, int64(common.Side_SIDE_BUY), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
 	if err != nil {
 		return err
 	}
-	sells, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.MarketType, int64(common.Side_SIDE_SELL), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
+	sells, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.ProductType, int64(common.Side_SIDE_SELL), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
 	if err != nil {
 		return err
 	}
@@ -633,18 +632,18 @@ func postOnlyWouldTakeTop(order *models.TTradeOrder, buys, sells []*models.TTrad
 	}
 	for _, opposite := range opposites {
 		var (
-			price float64
+			price decimal.Decimal
 			ok    bool
 		)
 		if order.Side == int64(common.Side_SIDE_BUY) {
 			price, ok = matchExecutionPrice(order, opposite)
-			if ok && price > 0 && liquidityTypeForOrder(order, opposite) == trade.LiquidityType_LIQUIDITY_TYPE_TAKER {
+			if ok && price.IsPositive() && liquidityTypeForOrder(order, opposite) == trade.LiquidityType_LIQUIDITY_TYPE_TAKER {
 				return true
 			}
 			continue
 		}
 		price, ok = matchExecutionPrice(opposite, order)
-		if ok && price > 0 && liquidityTypeForOrder(order, opposite) == trade.LiquidityType_LIQUIDITY_TYPE_TAKER {
+		if ok && price.IsPositive() && liquidityTypeForOrder(order, opposite) == trade.LiquidityType_LIQUIDITY_TYPE_TAKER {
 			return true
 		}
 	}

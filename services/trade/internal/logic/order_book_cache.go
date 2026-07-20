@@ -23,15 +23,15 @@ func orderBookKey(order *models.TTradeOrder) string {
 	if order == nil {
 		return ""
 	}
-	return orderBookKeyBySide(order.TenantId, order.SymbolId, order.MarketType, order.Side)
+	return orderBookKeyBySide(order.TenantId, order.SymbolId, order.ProductType, order.Side)
 }
 
-func orderBookKeyBySide(tenantID, symbolID, marketType, side int64) string {
+func orderBookKeyBySide(tenantID, symbolID, productType, side int64) string {
 	sideName := "sell"
 	if side == int64(common.Side_SIDE_BUY) {
 		sideName = "buy"
 	}
-	return fmt.Sprintf("%s:%d:%d:%d:%s", orderBookKeyPrefix, tenantID, marketType, symbolID, sideName)
+	return fmt.Sprintf("%s:%d:%d:%d:%s", orderBookKeyPrefix, tenantID, productType, symbolID, sideName)
 }
 
 func orderBookMember(orderID int64) string {
@@ -50,9 +50,11 @@ func orderBookScore(order *models.TTradeOrder) float64 {
 		return orderBookMarketScore
 	}
 	if order.Side == int64(common.Side_SIDE_BUY) {
-		return -order.Price
+		value, _ := order.Price.Neg().Float64()
+		return value
 	}
-	return order.Price
+	value, _ := order.Price.Float64()
+	return value
 }
 
 func isOrderBookOrder(order *models.TTradeOrder) bool {

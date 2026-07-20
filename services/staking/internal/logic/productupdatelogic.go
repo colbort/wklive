@@ -71,7 +71,7 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*
 		item.RewardCoinSymbol = in.RewardCoinSymbol
 	}
 	if in.Apr != "" {
-		apr, err := conv.ParseFloatField(in.Apr)
+		apr, err := conv.ParseDecimalField(in.Apr)
 		if err != nil {
 			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
@@ -81,35 +81,35 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*
 		item.LockDays = int64(in.LockDays)
 	}
 	if in.MinAmount != "" {
-		minAmount, err := conv.ParseFloatField(in.MinAmount)
+		minAmount, err := conv.ParseDecimalField(in.MinAmount)
 		if err != nil {
 			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.MinAmount = minAmount
 	}
 	if in.MaxAmount != "" {
-		maxAmount, err := conv.ParseFloatField(in.MaxAmount)
+		maxAmount, err := conv.ParseDecimalField(in.MaxAmount)
 		if err != nil {
 			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.MaxAmount = maxAmount
 	}
 	if in.StepAmount != "" {
-		stepAmount, err := conv.ParseFloatField(in.StepAmount)
+		stepAmount, err := conv.ParseDecimalField(in.StepAmount)
 		if err != nil {
 			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.StepAmount = stepAmount
 	}
 	if in.TotalAmount != "" {
-		totalAmount, err := conv.ParseFloatField(in.TotalAmount)
+		totalAmount, err := conv.ParseDecimalField(in.TotalAmount)
 		if err != nil {
 			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.TotalAmount = totalAmount
 	}
 	if in.UserLimitAmount != "" {
-		userLimitAmount, err := conv.ParseFloatField(in.UserLimitAmount)
+		userLimitAmount, err := conv.ParseDecimalField(in.UserLimitAmount)
 		if err != nil {
 			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
@@ -125,7 +125,7 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*
 		item.AllowEarlyRedeem = int64(in.AllowEarlyRedeem)
 	}
 	if in.EarlyRedeemRate != "" {
-		earlyRedeemRate, err := conv.ParseFloatField(in.EarlyRedeemRate)
+		earlyRedeemRate, err := conv.ParseDecimalField(in.EarlyRedeemRate)
 		if err != nil {
 			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}

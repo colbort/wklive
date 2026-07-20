@@ -14,6 +14,7 @@ import (
 )
 
 type (
+	AppChatConfigResp         = chat.AppChatConfigResp
 	AppChatMessageResp        = chat.AppChatMessageResp
 	AppChatSatisfactionResp   = chat.AppChatSatisfactionResp
 	AppChatSessionResp        = chat.AppChatSessionResp
@@ -23,9 +24,11 @@ type (
 	AuthChatMerchantData      = chat.AuthChatMerchantData
 	AuthChatMerchantReq       = chat.AuthChatMerchantReq
 	AuthChatMerchantResp      = chat.AuthChatMerchantResp
+	ChatAppConfig             = chat.ChatAppConfig
 	CloseMyChatSessionReq     = chat.CloseMyChatSessionReq
 	GenerateChatSessionNoReq  = chat.GenerateChatSessionNoReq
 	GenerateChatSessionNoResp = chat.GenerateChatSessionNoResp
+	GetAppChatConfigReq       = chat.GetAppChatConfigReq
 	GetChatSessionByUserReq   = chat.GetChatSessionByUserReq
 	ListMyChatMessagesReq     = chat.ListMyChatMessagesReq
 	OpenChatSessionReq        = chat.OpenChatSessionReq
@@ -38,6 +41,8 @@ type (
 	ChatApp interface {
 		// 商户接入鉴权
 		AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error)
+		// 获取chat-ui配置
+		GetChatConfig(ctx context.Context, in *GetAppChatConfigReq, opts ...grpc.CallOption) (*AppChatConfigResp, error)
 		// 创建或获取当前未关闭会话；服务端负责生成 session_no
 		OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*OpenChatSessionResp, error)
 		// 生成会话编号
@@ -75,6 +80,12 @@ func NewChatApp(cli zrpc.Client) ChatApp {
 func (m *defaultChatApp) AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.AuthChatMerchant(ctx, in, opts...)
+}
+
+// 获取chat-ui配置
+func (m *defaultChatApp) GetChatConfig(ctx context.Context, in *GetAppChatConfigReq, opts ...grpc.CallOption) (*AppChatConfigResp, error) {
+	client := chat.NewChatAppClient(m.cli.Conn())
+	return client.GetChatConfig(ctx, in, opts...)
 }
 
 // 创建或获取当前未关闭会话；服务端负责生成 session_no

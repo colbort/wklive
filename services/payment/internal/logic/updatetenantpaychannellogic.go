@@ -97,7 +97,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 		channel.FeeType = int64(in.FeeType)
 	}
 	if in.FeeRate != "" {
-		feeRate, err := conv.ParseFloatField(in.FeeRate)
+		feeRate, err := conv.ParseDecimalField(in.FeeRate)
 		if err != nil {
 			return nil, err
 		}

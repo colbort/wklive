@@ -3,28 +3,27 @@ package logic
 import (
 	"context"
 	"errors"
-	"math"
 
 	"wklive/common/i18n"
 	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/models"
+
+	"github.com/shopspring/decimal"
 )
 
-const optionFloatEpsilon = 1e-9
-
-func optionMultiplier(contract *models.TOptionContract) float64 {
-	if contract.Multiplier > 0 {
+func optionMultiplier(contract *models.TOptionContract) decimal.Decimal {
+	if contract.Multiplier.IsPositive() {
 		return contract.Multiplier
 	}
-	if contract.ContractUnit > 0 {
+	if contract.ContractUnit.IsPositive() {
 		return contract.ContractUnit
 	}
-	return 1
+	return decimal.NewFromInt(1)
 }
 
-func optionTurnover(contract *models.TOptionContract, price, qty float64) float64 {
-	return price * qty * optionMultiplier(contract)
+func optionTurnover(contract *models.TOptionContract, price, qty decimal.Decimal) decimal.Decimal {
+	return price.Mul(qty).Mul(optionMultiplier(contract))
 }
 
 func oppositeOrderSide(side int64) int64 {
@@ -57,49 +56,28 @@ func closePositionSide(orderSide int64) int64 {
 	return 0
 }
 
-func minFloat64(a, b float64) float64 {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func maxFloat64(a, b float64) float64 {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func normalizeZero(value float64) float64 {
-	if math.Abs(value) <= optionFloatEpsilon {
-		return 0
-	}
-	return value
-}
-
-func applyTradeToOrder(order *models.TOptionOrder, contract *models.TOptionContract, price, qty float64, now int64) {
+func applyTradeToOrder(order *models.TOptionOrder, contract *models.TOptionContract, price, qty decimal.Decimal, now int64) {
 	prevFilled := order.FilledQty
-	nextFilled := prevFilled + qty
-	if nextFilled <= optionFloatEpsilon {
+	nextFilled := prevFilled.Add(qty)
+	if !nextFilled.IsPositive() {
 		return
 	}
 
-	order.AvgPrice = ((order.AvgPrice * prevFilled) + (price * qty)) / nextFilled
-	order.FilledQty = normalizeZero(nextFilled)
-	order.UnfilledQty = normalizeZero(maxFloat64(order.Qty-order.FilledQty, 0))
-	order.Turnover += optionTurnover(contract, price, qty)
+	order.AvgPrice = order.AvgPrice.Mul(prevFilled).Add(price.Mul(qty)).Div(nextFilled)
+	order.FilledQty = nextFilled
+	order.UnfilledQty = decimal.Max(order.Qty.Sub(order.FilledQty), decimal.Zero)
+	order.Turnover = order.Turnover.Add(optionTurnover(contract, price, qty))
 	order.MatchTime = now
 	order.UpdateTimes = now
-	if order.UnfilledQty <= optionFloatEpsilon {
-		order.UnfilledQty = 0
+	if !order.UnfilledQty.IsPositive() {
+		order.UnfilledQty = decimal.Zero
 		order.Status = int64(option.OrderStatus_ORDER_STATUS_FILLED)
 		return
 	}
 	order.Status = int64(option.OrderStatus_ORDER_STATUS_PART_FILLED)
 }
 
-func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
+func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty decimal.Decimal, now int64) error {
 	side := openPositionSide(order.Side)
 	if side == 0 {
 		return i18n.StatusError(ctx, i18n.ParamError)
@@ -112,7 +90,7 @@ func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, 
 
 	multiplier := optionMultiplier(contract)
 	if errors.Is(err, models.ErrNotFound) {
-		exerciseableQty := 0.0
+		exerciseableQty := decimal.Zero
 		if side == int64(common.PositionSide_POSITION_SIDE_LONG) {
 			exerciseableQty = qty
 		}
@@ -127,7 +105,7 @@ func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, 
 			AvailableQty:     qty,
 			OpenAvgPrice:     price,
 			MarkPrice:        price,
-			PositionValue:    price * qty * multiplier,
+			PositionValue:    price.Mul(qty).Mul(multiplier),
 			ExerciseableQty:  exerciseableQty,
 			Status:           int64(option.PositionStatus_POSITION_STATUS_HOLDING),
 			LastCalcTime:     now,
@@ -137,20 +115,20 @@ func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, 
 		return err
 	}
 
-	nextQty := pos.PositionQty + qty
-	if nextQty <= optionFloatEpsilon {
+	nextQty := pos.PositionQty.Add(qty)
+	if !nextQty.IsPositive() {
 		return nil
 	}
-	pos.OpenAvgPrice = ((pos.OpenAvgPrice * pos.PositionQty) + (price * qty)) / nextQty
-	pos.PositionQty = normalizeZero(nextQty)
-	pos.AvailableQty = normalizeZero(pos.AvailableQty + qty)
+	pos.OpenAvgPrice = pos.OpenAvgPrice.Mul(pos.PositionQty).Add(price.Mul(qty)).Div(nextQty)
+	pos.PositionQty = nextQty
+	pos.AvailableQty = pos.AvailableQty.Add(qty)
 	pos.MarkPrice = price
-	pos.PositionValue = pos.MarkPrice * pos.PositionQty * multiplier
+	pos.PositionValue = pos.MarkPrice.Mul(pos.PositionQty).Mul(multiplier)
 	if side == int64(common.PositionSide_POSITION_SIDE_LONG) {
-		pos.ExerciseableQty = normalizeZero(pos.ExerciseableQty + qty)
-		pos.UnrealizedPnl = (pos.MarkPrice - pos.OpenAvgPrice) * pos.PositionQty * multiplier
+		pos.ExerciseableQty = pos.ExerciseableQty.Add(qty)
+		pos.UnrealizedPnl = pos.MarkPrice.Sub(pos.OpenAvgPrice).Mul(pos.PositionQty).Mul(multiplier)
 	} else {
-		pos.UnrealizedPnl = (pos.OpenAvgPrice - pos.MarkPrice) * pos.PositionQty * multiplier
+		pos.UnrealizedPnl = pos.OpenAvgPrice.Sub(pos.MarkPrice).Mul(pos.PositionQty).Mul(multiplier)
 	}
 	pos.Status = int64(option.PositionStatus_POSITION_STATUS_HOLDING)
 	pos.LastCalcTime = now
@@ -158,7 +136,7 @@ func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, 
 	return model.Update(ctx, pos)
 }
 
-func updateClosePosition(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
+func updateClosePosition(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty decimal.Decimal, now int64) error {
 	side := closePositionSide(order.Side)
 	if side == 0 {
 		return i18n.StatusError(ctx, i18n.ParamError)
@@ -172,40 +150,40 @@ func updateClosePosition(ctx context.Context, model models.TOptionPositionModel,
 		return i18n.StatusError(ctx, i18n.OperationNotAllowed)
 	}
 
-	reduceQty := minFloat64(qty, pos.PositionQty)
+	reduceQty := decimal.Min(qty, pos.PositionQty)
 	multiplier := optionMultiplier(contract)
 	if side == int64(common.PositionSide_POSITION_SIDE_LONG) {
-		pos.RealizedPnl += (price - pos.OpenAvgPrice) * reduceQty * multiplier
-		pos.ExerciseableQty = normalizeZero(maxFloat64(pos.ExerciseableQty-reduceQty, 0))
+		pos.RealizedPnl = pos.RealizedPnl.Add(price.Sub(pos.OpenAvgPrice).Mul(reduceQty).Mul(multiplier))
+		pos.ExerciseableQty = decimal.Max(pos.ExerciseableQty.Sub(reduceQty), decimal.Zero)
 	} else {
-		pos.RealizedPnl += (pos.OpenAvgPrice - price) * reduceQty * multiplier
+		pos.RealizedPnl = pos.RealizedPnl.Add(pos.OpenAvgPrice.Sub(price).Mul(reduceQty).Mul(multiplier))
 	}
 
-	if pos.FrozenQty >= reduceQty {
-		pos.FrozenQty = normalizeZero(pos.FrozenQty - reduceQty)
+	if pos.FrozenQty.GreaterThanOrEqual(reduceQty) {
+		pos.FrozenQty = pos.FrozenQty.Sub(reduceQty)
 	} else {
-		left := reduceQty - pos.FrozenQty
-		pos.FrozenQty = 0
-		pos.AvailableQty = normalizeZero(maxFloat64(pos.AvailableQty-left, 0))
+		left := reduceQty.Sub(pos.FrozenQty)
+		pos.FrozenQty = decimal.Zero
+		pos.AvailableQty = decimal.Max(pos.AvailableQty.Sub(left), decimal.Zero)
 	}
-	pos.PositionQty = normalizeZero(maxFloat64(pos.PositionQty-reduceQty, 0))
+	pos.PositionQty = decimal.Max(pos.PositionQty.Sub(reduceQty), decimal.Zero)
 	pos.MarkPrice = price
-	pos.PositionValue = pos.MarkPrice * pos.PositionQty * multiplier
+	pos.PositionValue = pos.MarkPrice.Mul(pos.PositionQty).Mul(multiplier)
 	pos.LastCalcTime = now
 	pos.UpdateTimes = now
-	if pos.PositionQty <= optionFloatEpsilon {
-		pos.PositionQty = 0
-		pos.AvailableQty = 0
-		pos.FrozenQty = 0
-		pos.ExerciseableQty = 0
-		pos.UnrealizedPnl = 0
-		pos.PositionValue = 0
+	if !pos.PositionQty.IsPositive() {
+		pos.PositionQty = decimal.Zero
+		pos.AvailableQty = decimal.Zero
+		pos.FrozenQty = decimal.Zero
+		pos.ExerciseableQty = decimal.Zero
+		pos.UnrealizedPnl = decimal.Zero
+		pos.PositionValue = decimal.Zero
 		pos.Status = int64(option.PositionStatus_POSITION_STATUS_CLOSED)
 	}
 	return model.Update(ctx, pos)
 }
 
-func updatePositionByFilledOrder(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
+func updatePositionByFilledOrder(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty decimal.Decimal, now int64) error {
 	if order.PositionEffect == int64(option.PositionEffect_POSITION_EFFECT_CLOSE) {
 		return updateClosePosition(ctx, model, contract, order, price, qty, now)
 	}
@@ -225,18 +203,18 @@ func freezeClosePosition(ctx context.Context, model models.TOptionPositionModel,
 	if err != nil {
 		return err
 	}
-	if pos.Status != int64(option.PositionStatus_POSITION_STATUS_HOLDING) || pos.AvailableQty+optionFloatEpsilon < order.Qty {
+	if pos.Status != int64(option.PositionStatus_POSITION_STATUS_HOLDING) || pos.AvailableQty.LessThan(order.Qty) {
 		return i18n.StatusError(ctx, i18n.QuantityFormatError)
 	}
 
-	pos.AvailableQty = normalizeZero(pos.AvailableQty - order.Qty)
-	pos.FrozenQty = normalizeZero(pos.FrozenQty + order.Qty)
+	pos.AvailableQty = pos.AvailableQty.Sub(order.Qty)
+	pos.FrozenQty = pos.FrozenQty.Add(order.Qty)
 	pos.UpdateTimes = now
 	return model.Update(ctx, pos)
 }
 
-func releaseClosePositionFrozenQty(ctx context.Context, model models.TOptionPositionModel, order *models.TOptionOrder, qty float64, now int64) error {
-	if order.PositionEffect != int64(option.PositionEffect_POSITION_EFFECT_CLOSE) || qty <= optionFloatEpsilon {
+func releaseClosePositionFrozenQty(ctx context.Context, model models.TOptionPositionModel, order *models.TOptionOrder, qty decimal.Decimal, now int64) error {
+	if order.PositionEffect != int64(option.PositionEffect_POSITION_EFFECT_CLOSE) || !qty.IsPositive() {
 		return nil
 	}
 
@@ -248,38 +226,38 @@ func releaseClosePositionFrozenQty(ctx context.Context, model models.TOptionPosi
 	if err != nil {
 		return err
 	}
-	releaseQty := minFloat64(qty, pos.FrozenQty)
-	pos.FrozenQty = normalizeZero(maxFloat64(pos.FrozenQty-releaseQty, 0))
-	pos.AvailableQty = normalizeZero(pos.AvailableQty + releaseQty)
+	releaseQty := decimal.Min(qty, pos.FrozenQty)
+	pos.FrozenQty = decimal.Max(pos.FrozenQty.Sub(releaseQty), decimal.Zero)
+	pos.AvailableQty = pos.AvailableQty.Add(releaseQty)
 	pos.UpdateTimes = now
 	return model.Update(ctx, pos)
 }
 
-func optionIntrinsicValue(contract *models.TOptionContract, deliveryPrice float64) float64 {
+func optionIntrinsicValue(contract *models.TOptionContract, deliveryPrice decimal.Decimal) decimal.Decimal {
 	if contract.OptionType == int64(option.OptionType_OPTION_TYPE_CALL) {
-		return maxFloat64(deliveryPrice-contract.StrikePrice, 0)
+		return decimal.Max(deliveryPrice.Sub(contract.StrikePrice), decimal.Zero)
 	}
 	if contract.OptionType == int64(option.OptionType_OPTION_TYPE_PUT) {
-		return maxFloat64(contract.StrikePrice-deliveryPrice, 0)
+		return decimal.Max(contract.StrikePrice.Sub(deliveryPrice), decimal.Zero)
 	}
-	return 0
+	return decimal.Zero
 }
 
-func optionSettlementPayoff(contract *models.TOptionContract, deliveryPrice, qty float64) float64 {
-	return optionIntrinsicValue(contract, deliveryPrice) * qty * optionMultiplier(contract)
+func optionSettlementPayoff(contract *models.TOptionContract, deliveryPrice, qty decimal.Decimal) decimal.Decimal {
+	return optionIntrinsicValue(contract, deliveryPrice).Mul(qty).Mul(optionMultiplier(contract))
 }
 
-func optionExerciseAmount(contract *models.TOptionContract, qty float64) float64 {
-	return contract.StrikePrice * qty * optionMultiplier(contract)
+func optionExerciseAmount(contract *models.TOptionContract, qty decimal.Decimal) decimal.Decimal {
+	return contract.StrikePrice.Mul(qty).Mul(optionMultiplier(contract))
 }
 
-func applyOptionAccountDelta(ctx context.Context, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, tenantId, userId, accountId int64, coin string, amount float64, refType, refId int64, bizNo, remark string, realized bool, now int64) error {
-	if math.Abs(amount) <= optionFloatEpsilon {
+func applyOptionAccountDelta(ctx context.Context, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, tenantId, userId, accountId int64, coin string, amount decimal.Decimal, refType, refId int64, bizNo, remark string, realized bool, now int64) error {
+	if amount.IsZero() {
 		return nil
 	}
 
 	account, err := accountModel.FindOneByTenantIdUserIdAccountIdMarginCoin(ctx, tenantId, userId, accountId, coin)
-	before := 0.0
+	before := decimal.Zero
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return err
 	}
@@ -303,10 +281,10 @@ func applyOptionAccountDelta(ctx context.Context, accountModel models.TOptionAcc
 		}
 	} else {
 		before = account.Balance
-		account.Balance = normalizeZero(account.Balance + amount)
-		account.AvailableBalance = normalizeZero(account.AvailableBalance + amount)
+		account.Balance = account.Balance.Add(amount)
+		account.AvailableBalance = account.AvailableBalance.Add(amount)
 		if realized {
-			account.RealizedPnl = normalizeZero(account.RealizedPnl + amount)
+			account.RealizedPnl = account.RealizedPnl.Add(amount)
 		}
 		account.UpdateTimes = now
 		if err := accountModel.Update(ctx, account); err != nil {
@@ -324,7 +302,7 @@ func applyOptionAccountDelta(ctx context.Context, accountModel models.TOptionAcc
 		Coin:          coin,
 		ChangeAmount:  amount,
 		BalanceBefore: before,
-		BalanceAfter:  before + amount,
+		BalanceAfter:  before.Add(amount),
 		Remark:        remark,
 		CreateTimes:   now,
 	})

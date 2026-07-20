@@ -14,6 +14,7 @@ import (
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -69,22 +70,22 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 	}
 
 	redeemAmount := order.StakeAmount
-	feeRate := 0.0
+	feeRate := decimal.Zero
 	if redeemType == staking.RedeemType_REDEEM_TYPE_EARLY {
 		feeRate = order.EarlyRedeemRate
 	}
-	feeAmount := redeemAmount * feeRate / 100
+	feeAmount := redeemAmount.Mul(feeRate).Div(decimal.NewFromInt(100))
 	rewardAmount := order.PendingReward
 	redeemNo, err := l.svcCtx.GenerateBizNo(l.ctx, "SKR")
 	if err != nil {
 		return nil, err
 	}
 	now := utils.NowMillis()
-	unlockAmount := redeemAmount - feeAmount
-	if unlockAmount < 0 {
-		unlockAmount = 0
+	unlockAmount := redeemAmount.Sub(feeAmount)
+	if unlockAmount.IsNegative() {
+		unlockAmount = decimal.Zero
 	}
-	if unlockAmount > 0 {
+	if unlockAmount.IsPositive() {
 		resp, err := l.svcCtx.AssetClient.UnlockAssetByBizNo(l.ctx, &asset.UnlockAssetByBizNoReq{
 			TenantId:      order.TenantId,
 			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,
@@ -110,7 +111,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
 	}
-	if feeAmount > 0 {
+	if feeAmount.IsPositive() {
 		resp, err := l.svcCtx.AssetClient.DeductLockedAssetByBizNo(l.ctx, &asset.DeductLockedAssetByBizNoReq{
 			TenantId:      order.TenantId,
 			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,
@@ -136,7 +137,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
 	}
-	if rewardAmount > 0 {
+	if rewardAmount.IsPositive() {
 		resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 			TenantId:   order.TenantId,
 			UserId:     order.UserId,
@@ -169,10 +170,10 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		return nil, err
 	}
 	if product != nil {
-		if product.StakedAmount >= order.StakeAmount {
-			product.StakedAmount -= order.StakeAmount
+		if product.StakedAmount.GreaterThanOrEqual(order.StakeAmount) {
+			product.StakedAmount = product.StakedAmount.Sub(order.StakeAmount)
 		} else {
-			product.StakedAmount = 0
+			product.StakedAmount = decimal.Zero
 		}
 		product.UpdateUserId = userId
 		product.UpdateTimes = now
@@ -180,8 +181,8 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 
 	order.RedeemAmount = redeemAmount
 	order.RedeemFee = feeAmount
-	order.TotalReward += rewardAmount
-	order.PendingReward = 0
+	order.TotalReward = order.TotalReward.Add(rewardAmount)
+	order.PendingReward = decimal.Zero
 	order.RedeemType = int64(redeemType)
 	order.RedeemApplyTimes = now
 	order.RedeemTimes = now

@@ -31,13 +31,13 @@ func NewUnlockAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unloc
 
 // 解锁
 func (l *UnlockAssetLogic) UnlockAsset(in *asset.UnlockAssetReq) (*asset.ChangeAssetResp, error) {
-	amount, err := conv.ParseFloatField(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("UnlockAsset parse amount failed, tenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("UnlockAsset validate amount failed, tenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
@@ -81,7 +81,7 @@ func (l *UnlockAssetLogic) UnlockAsset(in *asset.UnlockAssetReq) (*asset.ChangeA
 		if err != nil {
 			return err
 		}
-		if amount > lock.RemainAmount {
+		if amount.GreaterThan(lock.RemainAmount) {
 			return i18n.StatusError(ctx, i18n.UnlockAmountExceedsLocked)
 		}
 

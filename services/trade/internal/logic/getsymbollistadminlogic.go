@@ -30,10 +30,10 @@ func NewGetSymbolListAdminLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *GetSymbolListAdminLogic) GetSymbolListAdmin(in *trade.GetSymbolListAdminReq) (*trade.GetSymbolListAdminResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
 	data, total, err := l.svcCtx.TradeSymbolModel.FindPage(l.ctx, models.TradeSymbolPageFilter{
-		TenantId:   in.TenantId,
-		MarketType: int64(in.MarketType),
-		Status:     int64(in.Status),
-		Keyword:    in.Keyword,
+		TenantId:    in.TenantId,
+		ProductType: int64(in.ProductType),
+		Status:      int64(in.Status),
+		Keyword:     in.Keyword,
 	}, cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
