@@ -202,6 +202,9 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 		conn := sqlx.NewSqlConnFromSession(session)
 		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
+		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+		contractOrderModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
 
 		buy, err := orderModel.FindOneForUpdate(ctx, plan.BuyOrder.Id)
 		if err != nil {
@@ -223,6 +226,10 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 			if lockedPlan == nil || !sameMatchBook(lockedPlan.BuyOrder, key, int64(common.Side_SIDE_BUY)) || !sameMatchBook(lockedPlan.SellOrder, key, int64(common.Side_SIDE_SELL)) {
 				return nil
 			}
+			matchNo, err := l.svcCtx.GenerateBizNo(ctx, "MAT")
+			if err != nil {
+				return err
+			}
 			buyFillNo, err := l.svcCtx.GenerateBizNo(ctx, "FIL")
 			if err != nil {
 				return err
@@ -237,10 +244,18 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 			buyFee := matchFeeAmount(lockedPlan.Amount, buyLiquidity, makerFeeRate, takerFeeRate)
 			sellFee := matchFeeAmount(lockedPlan.Amount, sellLiquidity, makerFeeRate, takerFeeRate)
 
-			if err := recordOrderFillWithModels(ctx, fillModel, orderModel, buildMatchFill(lockedPlan.BuyOrder, buyFillNo, buyLiquidity, lockedPlan, buyFee, feeAssetForOrder(lockedPlan.BuyOrder, symbol), now), now); err != nil {
+			buyFill, buyOrder, err := recordOrderFillWithModels(ctx, fillModel, orderModel, buildMatchFill(lockedPlan.BuyOrder, matchNo, buyFillNo, buyLiquidity, lockedPlan, buyFee, feeAssetForOrder(lockedPlan.BuyOrder, symbol), now), now)
+			if err != nil {
 				return err
 			}
-			if err := recordOrderFillWithModels(ctx, fillModel, orderModel, buildMatchFill(lockedPlan.SellOrder, sellFillNo, sellLiquidity, lockedPlan, sellFee, feeAssetForOrder(lockedPlan.SellOrder, symbol), now), now); err != nil {
+			sellFill, sellOrder, err := recordOrderFillWithModels(ctx, fillModel, orderModel, buildMatchFill(lockedPlan.SellOrder, matchNo, sellFillNo, sellLiquidity, lockedPlan, sellFee, feeAssetForOrder(lockedPlan.SellOrder, symbol), now), now)
+			if err != nil {
+				return err
+			}
+			if err := createMatchSettlementRecords(ctx, instructionModel, eventModel, contractOrderModel, symbol, buyOrder, buyFill, now); err != nil {
+				return err
+			}
+			if err := createMatchSettlementRecords(ctx, instructionModel, eventModel, contractOrderModel, symbol, sellOrder, sellFill, now); err != nil {
 				return err
 			}
 			matchedOrderIDs[lockedPlan.BuyOrder.Id] = struct{}{}
@@ -395,10 +410,11 @@ func matchSides(left, right *models.TTradeOrder) (*models.TTradeOrder, *models.T
 	return right, left
 }
 
-func buildMatchFill(order *models.TTradeOrder, fillNo string, liquidity trade.LiquidityType, plan *orderMatchPlan, fee decimal.Decimal, feeAsset string, now int64) *trade.TradeFill {
+func buildMatchFill(order *models.TTradeOrder, matchNo, fillNo string, liquidity trade.LiquidityType, plan *orderMatchPlan, fee decimal.Decimal, feeAsset string, now int64) *trade.TradeFill {
 	return &trade.TradeFill{
 		TenantId:      order.TenantId,
 		FillNo:        fillNo,
+		MatchNo:       matchNo,
 		OrderId:       order.Id,
 		OrderNo:       order.OrderNo,
 		UserId:        order.UserId,

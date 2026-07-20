@@ -36,12 +36,30 @@ func (l *RecordOrderFillLogic) RecordOrderFill(in *trade.RecordOrderFillReq) (*t
 	if in.Fill == nil {
 		return &trade.InternalCommonResp{Base: helper.OkResp()}, nil
 	}
+	if in.Fill.MatchNo == "" {
+		matchNo, err := l.svcCtx.GenerateBizNo(l.ctx, "MAT")
+		if err != nil {
+			return nil, err
+		}
+		in.Fill.MatchNo = matchNo
+	}
 	now := utils.NowMillis()
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-		return recordOrderFillWithModels(ctx, fillModel, orderModel, in.Fill, now)
+		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+		contractOrderModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
+		fill, order, err := recordOrderFillWithModels(ctx, fillModel, orderModel, in.Fill, now)
+		if err != nil || order == nil {
+			return err
+		}
+		symbol, err := l.svcCtx.TradeSymbolModel.FindOne(ctx, order.SymbolId)
+		if err != nil {
+			return err
+		}
+		return createMatchSettlementRecords(ctx, instructionModel, eventModel, contractOrderModel, symbol, order, fill, now)
 	})
 	if i18n.IsStatusError(err, i18n.ParamError) {
 		return &trade.InternalCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
@@ -58,31 +76,32 @@ func (l *RecordOrderFillLogic) RecordOrderFill(in *trade.RecordOrderFillReq) (*t
 	return &trade.InternalCommonResp{Base: helper.OkResp()}, nil
 }
 
-func recordOrderFillWithModels(ctx context.Context, fillModel models.TTradeFillModel, orderModel models.TTradeOrderModel, in *trade.TradeFill, now int64) error {
+func recordOrderFillWithModels(ctx context.Context, fillModel models.TTradeFillModel, orderModel models.TTradeOrderModel, in *trade.TradeFill, now int64) (*models.TTradeFill, *models.TTradeOrder, error) {
 	fill, err := tradeFillFromProto(in, now)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	exists, err := fillModel.FindOneByTenantIdFillNo(ctx, fill.TenantId, fill.FillNo)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
-		return err
+		return nil, nil, err
 	}
 	if exists != nil {
-		return nil
+		order, findErr := findOrderForFill(ctx, orderModel, in)
+		return exists, order, findErr
 	}
 
 	order, err := findOrderForFill(ctx, orderModel, in)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	if !isMatchableOrderStatus(order.Status) {
-		return i18n.StatusError(ctx, i18n.OperationNotAllowed)
+		return nil, nil, i18n.StatusError(ctx, i18n.OperationNotAllowed)
 	}
 	if !fillMatchesOrder(order, fill) {
-		return i18n.StatusError(ctx, i18n.ParamError)
+		return nil, nil, i18n.StatusError(ctx, i18n.ParamError)
 	}
 	if !canApplyOrderFill(order, fill) {
-		return i18n.StatusError(ctx, i18n.ParamError)
+		return nil, nil, i18n.StatusError(ctx, i18n.ParamError)
 	}
 
 	if fill.OrderId <= 0 {
@@ -113,11 +132,16 @@ func recordOrderFillWithModels(ctx context.Context, fillModel models.TTradeFillM
 		fill.PositionSide = order.PositionSide
 	}
 
-	if _, err = fillModel.Insert(ctx, fill); err != nil {
-		return err
+	result, err := fillModel.Insert(ctx, fill)
+	if err != nil {
+		return nil, nil, err
 	}
+	fill.Id, _ = result.LastInsertId()
 	applyFillToOrder(order, fill, now)
-	return orderModel.Update(ctx, order)
+	if err := orderModel.Update(ctx, order); err != nil {
+		return nil, nil, err
+	}
+	return fill, order, nil
 }
 
 func fillMatchesOrder(order *models.TTradeOrder, fill *models.TTradeFill) bool {
@@ -173,7 +197,7 @@ func canApplyOrderFillPrice(order *models.TTradeOrder, fill *models.TTradeFill) 
 }
 
 func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, error) {
-	if fill == nil || fill.TenantId <= 0 || fill.FillNo == "" || (fill.OrderId <= 0 && fill.OrderNo == "") {
+	if fill == nil || fill.TenantId <= 0 || fill.FillNo == "" || fill.MatchNo == "" || (fill.OrderId <= 0 && fill.OrderNo == "") {
 		return nil, i18n.StatusError(context.Background(), i18n.ParamError)
 	}
 	price := mustParseFloat(fill.Price)
@@ -196,6 +220,7 @@ func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, e
 	return &models.TTradeFill{
 		TenantId:          fill.TenantId,
 		FillNo:            fill.FillNo,
+		MatchNo:           fill.MatchNo,
 		OrderId:           fill.OrderId,
 		OrderNo:           fill.OrderNo,
 		UserId:            fill.UserId,
@@ -212,6 +237,7 @@ func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, e
 		FeeAsset:          fill.FeeAsset,
 		LiquidityType:     int64(fill.LiquidityType),
 		RealizedPnl:       mustParseFloat(fill.RealizedPnl),
+		SettlementStatus:  int64(trade.FillSettlementStatus_FILL_SETTLEMENT_STATUS_PENDING),
 		MatchTime:         matchTime,
 		CreateTimes:       createTimes,
 	}, nil

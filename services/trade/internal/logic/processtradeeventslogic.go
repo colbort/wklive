@@ -7,6 +7,7 @@ import (
 
 	"wklive/common/conv"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -33,6 +34,9 @@ func NewProcessTradeEventsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 // 交易事件处理（失败重试/订单过期/冻结资产修复）
 func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	return runTradeTaskWithLock(l.ctx, l.svcCtx, "process_trade_events", func() (*trade.TradeTaskResp, error) {
+		if err := NewProcessSpotSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
+			return nil, err
+		}
 		if err := l.retryTradeEvents(in); err != nil {
 			return nil, err
 		}
@@ -112,7 +116,7 @@ func (l *ProcessTradeEventsLogic) recoverFreezingOrders(in *trade.TradeTaskReq) 
 		}
 		for _, order := range orders {
 			cursor = order.Id
-			if _, err := l.rejectFreezingOrderIfNeeded(order.Id, now); err != nil {
+			if err := l.recoverFreezingOrder(order, now); err != nil {
 				return err
 			}
 		}
@@ -122,31 +126,58 @@ func (l *ProcessTradeEventsLogic) recoverFreezingOrders(in *trade.TradeTaskReq) 
 	}
 }
 
-func (l *ProcessTradeEventsLogic) rejectFreezingOrderIfNeeded(orderID, now int64) (*models.TTradeOrder, error) {
-	var rejectedOrder *models.TTradeOrder
-	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-		order, err := orderModel.FindOneForUpdate(ctx, orderID)
+func (l *ProcessTradeEventsLogic) recoverFreezingOrder(order *models.TTradeOrder, now int64) error {
+	if !shouldRecoverFreezingOrder(order, now) {
+		return nil
+	}
+	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, order.SymbolId)
+	if err != nil {
+		return err
+	}
+	reservation, err := l.svcCtx.TradeAssetReservationModel.FindOneByTenantIdReservationNo(l.ctx, order.TenantId, order.OrderNo)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return err
+	}
+	var assetName string
+	var amount decimal.Decimal
+	if reservation != nil {
+		if reservation.NextRetryAt > now {
+			return nil
+		}
+		assetName, amount = reservation.Asset, reservation.ReservedAmount
+	}
+	freezeNo, freezeErr := freezeOrderAsset(l.svcCtx, l.ctx, order, symbol, assetName, amount)
+	placeLogic := NewPlaceOrderLogic(l.ctx, l.svcCtx)
+	if freezeErr != nil {
+		if !isDefinitiveAssetFreezeError(freezeErr) {
+			return placeLogic.markAssetReservationRetry(order, freezeErr)
+		}
+		plan, err := l.recoveryRejectPlan(order)
 		if err != nil {
 			return err
 		}
-		if !shouldRecoverFreezingOrder(order, now) {
-			return nil
-		}
-		order.Status = int64(trade.OrderStatus_ORDER_STATUS_REJECTED)
-		order.CancelReason = "rejected by freeze timeout"
-		order.UpdateTimes = now
-		if err := orderModel.Update(ctx, order); err != nil {
-			return err
-		}
-		rejectedOrder = order
-		return nil
-	})
-	if err != nil || rejectedOrder == nil {
-		return rejectedOrder, err
+		plan.frozenAmount = amount
+		return placeLogic.rejectOrderAfterFreezeFailure(order, plan, freezeErr)
 	}
-	return rejectedOrder, removeOrderBookOrder(l.svcCtx, l.ctx, rejectedOrder)
+	return placeLogic.finalizeAcceptedOrder(order, freezeNo, amount, trade.TriggerKind(order.TriggerKind), trade.OrderType(order.OrderType), order.TriggerPrice, order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SECONDS))
+}
+
+func (l *ProcessTradeEventsLogic) recoveryRejectPlan(order *models.TTradeOrder) (*placeOrderPlan, error) {
+	plan := &placeOrderPlan{}
+	if order.ProductType != int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) || order.IsReduceOnly != int64(common.YesNo_YES_NO_YES) {
+		return plan, nil
+	}
+	ext, err := l.svcCtx.TradeOrderContractModel.FindOneByTenantIdOrderId(l.ctx, order.TenantId, order.Id)
+	if err != nil {
+		return nil, err
+	}
+	position, err := l.svcCtx.ContractPositionModel.FindOneByTenantIdUserIdSymbolIdPositionSideMarginMode(l.ctx, order.TenantId, order.UserId, order.SymbolId, order.PositionSide, ext.MarginMode)
+	if err != nil {
+		return nil, err
+	}
+	plan.positionID = position.Id
+	plan.reservedCloseQty = ext.ReservedCloseQty
+	return plan, nil
 }
 
 func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) error {

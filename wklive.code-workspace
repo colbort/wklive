@@ -148,6 +148,7 @@
       "Segs",
       "Setex",
       "Setnx",
+      "shopspring",
       "Solana",
       "sqlc",
       "sqlutil",

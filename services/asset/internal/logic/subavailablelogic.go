@@ -45,6 +45,18 @@ func (l *SubAvailableLogic) SubAvailable(in *asset.SubAvailableReq) (*asset.Chan
 		conn := sqlx.NewSqlConnFromSession(session)
 		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis)
 		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis)
+		idempotentModel := models.NewTAssetIdempotentModel(conn, l.svcCtx.Config.CacheRedis)
+
+		if in.BizNo != "" {
+			done, err := prepareAssetIdempotent(ctx, idempotentModel, in.TenantId, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizNo, in.Remark, ts)
+			if err != nil {
+				return err
+			}
+			if done {
+				after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
+				return err
+			}
+		}
 
 		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
 		if err != nil {
@@ -67,6 +79,11 @@ func (l *SubAvailableLogic) SubAvailable(in *asset.SubAvailableReq) (*asset.Chan
 		flow := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, assetSceneType(in.SceneType), assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_SUB, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
+		}
+		if in.BizNo != "" {
+			if err := completeAssetIdempotent(ctx, idempotentModel, in.TenantId, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizNo, ts); err != nil {
+				return err
+			}
 		}
 		return nil
 	})

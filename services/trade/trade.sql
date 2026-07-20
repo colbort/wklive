@@ -351,6 +351,7 @@ CREATE TABLE `t_trade_fill` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间，毫秒时间戳',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_fill_no` (`tenant_id`, `fill_no`),
+  UNIQUE KEY `uk_tenant_match_order` (`tenant_id`, `match_no`, `order_id`),
   KEY `idx_tenant_order_id` (`tenant_id`, `order_id`),
   KEY `idx_tenant_match_no` (`tenant_id`, `match_no`),
   KEY `idx_settlement_retry` (`tenant_id`, `settlement_status`, `create_times`),

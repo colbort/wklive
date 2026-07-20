@@ -662,7 +662,7 @@ func tradeEventToProto(item *models.TBizTradeEvent) *trade.BizTradeEvent {
 	}
 }
 
-func ensureLeverage(symbol *models.TTradeSymbol, leverage int64) int64 {
+func ensureLeverage(leverage int64) int64 {
 	if leverage <= 0 {
 		return 1
 	}
@@ -671,14 +671,14 @@ func ensureLeverage(symbol *models.TTradeSymbol, leverage int64) int64 {
 
 func ensureConfiguredLeverage(ctx context.Context, model models.TTradeSymbolLeverageConfigModel, defaultModel models.TTradeSymbolLeverageDefaultModel, tenantId int64, symbol *models.TTradeSymbol, marginMode trade.MarginMode, leverage int64) (int64, bool, error) {
 	if symbol == nil || model == nil || marginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN || !isDerivativeProduct(trade.ProductType(symbol.ProductType)) {
-		return ensureLeverage(symbol, leverage), true, nil
+		return ensureLeverage(leverage), true, nil
 	}
 
 	configs, _, err := model.FindPage(ctx, models.TradeSymbolLeverageConfigPageFilter{
 		TenantId: tenantId, SymbolId: symbol.Id, MarginMode: int64(marginMode), Enabled: 1,
 	}, 0, 200)
 	if errors.Is(err, models.ErrNotFound) || len(configs) == 0 {
-		return ensureLeverage(symbol, leverage), true, nil
+		return ensureLeverage(leverage), true, nil
 	}
 	if err != nil {
 		return 0, false, err

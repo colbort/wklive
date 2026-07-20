@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"context"
 	"database/sql"
 	"testing"
 
@@ -179,10 +180,10 @@ func TestOrderInputGuards(t *testing.T) {
 
 func TestOrderAmountPriceDistinguishesOrderType(t *testing.T) {
 	logic := &PlaceOrderLogic{}
-	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_LIMIT, testDecimal(10)); err != nil || !got.Equal(testDecimal(10)) {
+	if got, err := logic.orderAmountPrice(trade.OrderType_ORDER_TYPE_LIMIT, testDecimal(10)); err != nil || !got.Equal(testDecimal(10)) {
 		t.Fatalf("limit amount price = %v, err = %v, want 10", got, err)
 	}
-	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_MARKET, testDecimal(10)); err != nil || !got.IsZero() {
+	if got, err := logic.orderAmountPrice(trade.OrderType_ORDER_TYPE_MARKET, testDecimal(10)); err != nil || !got.IsZero() {
 		t.Fatalf("market amount price = %v, err = %v, want 0 because trade does not resolve quotes", got, err)
 	}
 }
@@ -499,6 +500,7 @@ func TestTradeFillFromProtoRequiresCompleteExecution(t *testing.T) {
 	fill, err := tradeFillFromProto(&trade.TradeFill{
 		TenantId: 1,
 		FillNo:   "FIL2",
+		MatchNo:  "MAT1",
 		OrderId:  1,
 		Price:    "10",
 		Qty:      "2",
@@ -508,6 +510,27 @@ func TestTradeFillFromProtoRequiresCompleteExecution(t *testing.T) {
 	}
 	if !fill.Amount.Equal(testDecimal(2000)) {
 		t.Fatalf("computed fill amount = %v, want 2000", fill.Amount)
+	}
+}
+
+func TestBuildSpotFillSettlementInstructions(t *testing.T) {
+	symbol := &models.TTradeSymbol{BaseAsset: "BTC", QuoteAsset: "USDT"}
+	fill := &models.TTradeFill{Qty: testDecimal(2), Amount: testDecimal(20000), Fee: testDecimal(10), FeeAsset: "USDT"}
+
+	buy, err := buildFillSettlementInstructions(context.Background(), nil, symbol, &models.TTradeOrder{ProductType: int64(trade.ProductType_PRODUCT_TYPE_SPOT), Side: int64(common.Side_SIDE_BUY)}, fill)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(buy) != 3 || buy[0].asset != "USDT" || buy[0].action != trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN || !buy[0].amount.Equal(fill.Amount) || buy[1].asset != "BTC" || !buy[1].amount.Equal(toTradeMinorAmount(fill.Qty)) {
+		t.Fatalf("unexpected spot buy settlement instructions: %+v", buy)
+	}
+
+	sell, err := buildFillSettlementInstructions(context.Background(), nil, symbol, &models.TTradeOrder{ProductType: int64(trade.ProductType_PRODUCT_TYPE_SPOT), Side: int64(common.Side_SIDE_SELL)}, fill)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(sell) != 3 || sell[0].asset != "BTC" || !sell[0].amount.Equal(toTradeMinorAmount(fill.Qty)) || sell[1].asset != "USDT" || !sell[1].amount.Equal(fill.Amount) {
+		t.Fatalf("unexpected spot sell settlement instructions: %+v", sell)
 	}
 }
 

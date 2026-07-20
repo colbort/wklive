@@ -2,7 +2,10 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
@@ -25,6 +28,8 @@ type (
 		tContractPositionModel
 		FindPage(ctx context.Context, filter ContractPositionPageFilter, cursor int64, limit int64) ([]*TContractPosition, int64, error)
 		FindList(ctx context.Context, filter ContractPositionPageFilter) ([]*TContractPosition, error)
+		ReserveCloseQty(ctx context.Context, id, version int64, qty decimal.Decimal, updateTimes int64) error
+		ReleaseCloseQty(ctx context.Context, id int64, qty decimal.Decimal, updateTimes int64) error
 	}
 
 	customTContractPositionModel struct {
@@ -37,6 +42,54 @@ func NewTContractPositionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cac
 	return &customTContractPositionModel{
 		defaultTContractPositionModel: newTContractPositionModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTContractPositionModel) ReleaseCloseQty(ctx context.Context, id int64, qty decimal.Decimal, updateTimes int64) error {
+	data, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+	idKey := fmt.Sprintf("%s%v", cacheTContractPositionIdPrefix, id)
+	uniqueKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractPositionTenantIdUserIdSymbolIdPositionSideMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.PositionSide, data.MarginMode)
+	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		query := fmt.Sprintf("UPDATE %s SET avail_qty = avail_qty + ?, frozen_qty = frozen_qty - ?, version = version + 1, update_times = ? WHERE id = ? AND frozen_qty >= ?", m.table)
+		return conn.ExecCtx(ctx, query, qty, qty, updateTimes, id, qty)
+	}, idKey, uniqueKey)
+	if err != nil {
+		return err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rows != 1 {
+		return fmt.Errorf("reserved position quantity is insufficient")
+	}
+	return nil
+}
+
+func (m *defaultTContractPositionModel) ReserveCloseQty(ctx context.Context, id, version int64, qty decimal.Decimal, updateTimes int64) error {
+	data, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+	idKey := fmt.Sprintf("%s%v", cacheTContractPositionIdPrefix, id)
+	uniqueKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractPositionTenantIdUserIdSymbolIdPositionSideMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.PositionSide, data.MarginMode)
+	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		query := fmt.Sprintf("UPDATE %s SET avail_qty = avail_qty - ?, frozen_qty = frozen_qty + ?, version = version + 1, update_times = ? WHERE id = ? AND version = ? AND status = 1 AND avail_qty >= ?", m.table)
+		return conn.ExecCtx(ctx, query, qty, qty, updateTimes, id, version, qty)
+	}, idKey, uniqueKey)
+	if err != nil {
+		return err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rows != 1 {
+		return fmt.Errorf("position changed or available quantity is insufficient")
+	}
+	return nil
 }
 
 func (m *defaultTContractPositionModel) FindPage(ctx context.Context, filter ContractPositionPageFilter, cursor int64, limit int64) ([]*TContractPosition, int64, error) {

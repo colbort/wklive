@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"errors"
 
 	"wklive/common/i18n"
 	"wklive/proto/asset"
@@ -11,6 +12,22 @@ import (
 
 	"github.com/shopspring/decimal"
 )
+
+// assetFreezeError distinguishes an explicit Asset rejection from an RPC
+// outcome that is unknown to Trade. Only an explicit response is safe to map
+// to ORDER_STATUS_REJECTED.
+type assetFreezeError struct {
+	err        error
+	definitive bool
+}
+
+func (e *assetFreezeError) Error() string { return e.err.Error() }
+func (e *assetFreezeError) Unwrap() error { return e.err }
+
+func isDefinitiveAssetFreezeError(err error) bool {
+	var target *assetFreezeError
+	return errors.As(err, &target) && target.definitive
+}
 
 func freezeOrderAsset(
 	svcCtx *svc.ServiceContext,
@@ -37,13 +54,13 @@ func freezeOrderAsset(
 		Remark:     "trade place order freeze",
 	})
 	if err != nil {
-		return "", err
+		return "", &assetFreezeError{err: err}
 	}
 	if resp == nil || resp.Base == nil {
-		return "", i18n.StatusError(ctx, i18n.InternalServerError)
+		return "", &assetFreezeError{err: i18n.StatusError(ctx, i18n.InternalServerError)}
 	}
 	if resp.Base.Code != 200 {
-		return "", i18n.StatusError(ctx, resp.Base.Code)
+		return "", &assetFreezeError{err: i18n.StatusError(ctx, resp.Base.Code), definitive: true}
 	}
 
 	return resp.GetData().GetFreezeNo(), nil

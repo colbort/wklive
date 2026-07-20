@@ -3,6 +3,8 @@ package models
 import (
 	"context"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
@@ -16,6 +18,7 @@ type (
 	TContractRiskLimitTierModel interface {
 		tContractRiskLimitTierModel
 		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractRiskLimitTier, int64, error)
+		FindByNotional(ctx context.Context, tenantId, symbolId int64, notional decimal.Decimal) (*TContractRiskLimitTier, error)
 	}
 
 	customTContractRiskLimitTierModel struct {
@@ -28,6 +31,18 @@ func NewTContractRiskLimitTierModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 	return &customTContractRiskLimitTierModel{
 		defaultTContractRiskLimitTierModel: newTContractRiskLimitTierModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTContractRiskLimitTierModel) FindByNotional(ctx context.Context, tenantId, symbolId int64, notional decimal.Decimal) (*TContractRiskLimitTier, error) {
+	var item TContractRiskLimitTier
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND symbol_id = ? AND enabled = 1 AND notional_floor <= ? AND (notional_cap = 0 OR notional_cap >= ?) ORDER BY tier_no ASC LIMIT 1", tContractRiskLimitTierRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantId, symbolId, notional, notional); err != nil {
+		if err == sqlx.ErrNotFound {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+	return &item, nil
 }
 
 func (m *defaultTContractRiskLimitTierModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractRiskLimitTier, int64, error) {
