@@ -127,9 +127,19 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.actions')" align="center" width="110" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="110"
+          fixed="right"
+        >
           <template #default="{ row }">
-            <el-button v-perm="'trade:order:detail'" link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'trade:order:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               <el-icon><View /></el-icon>
               {{ t('option.detail') }}
             </el-button>
@@ -487,9 +497,7 @@ function calcFillProgress(order: TradeOrder | null) {
     }
   }
 
-  return (
-    calculate(order.filledQty, order.qty) ?? calculate(order.filledAmount, order.amount) ?? 0
-  )
+  return calculate(order.filledQty, order.qty) ?? calculate(order.filledAmount, order.amount) ?? 0
 }
 
 function formatJsonText(value: string) {

@@ -46,6 +46,35 @@ import type {
   TradeSymbolDetailResp,
   TradeSymbolLeverageConfig,
   TradeUserConfig,
+  ContractRiskLimitTier,
+  SetContractRiskLimitTierReq,
+  GetContractRiskLimitTierListReq,
+  GetContractRiskLimitTierListResp,
+  ContractFundingBatch,
+  GetFundingBatchListReq,
+  GetFundingBatchListResp,
+  ContractFundingSettlement,
+  GetFundingSettlementListReq,
+  GetFundingSettlementListResp,
+  ContractDeliveryBatch,
+  GetDeliveryBatchListReq,
+  GetDeliveryBatchListResp,
+  ContractDeliverySettlement,
+  GetDeliverySettlementListReq,
+  GetDeliverySettlementListResp,
+  ContractLiquidation,
+  GetLiquidationListReq,
+  GetLiquidationListResp,
+  TradeSecondsPriceSnapshot,
+  GetSecondsPriceSnapshotListReq,
+  GetSecondsPriceSnapshotListResp,
+  TradeAssetReservation,
+  GetAssetReservationListReq,
+  GetAssetReservationListResp,
+  TradeSettlementInstruction,
+  GetSettlementInstructionListReq,
+  GetSettlementInstructionListResp,
+  RetrySettlementInstructionReq,
   UpdateSymbolReq,
 } from '@/services'
 
@@ -195,4 +224,71 @@ export function apiTradeGetEvent(params: GetTradeEventDetailReq): Promise<RespBa
 
 export function apiTradeRetryEvent(params: RetryTradeEventReq): Promise<RespBase> {
   return post('/admin/trade/events/retry', params)
+}
+
+export function apiTradeListRiskTiers(
+  params: GetContractRiskLimitTierListReq,
+): Promise<GetContractRiskLimitTierListResp> {
+  return get<ContractRiskLimitTier[]>('/admin/trade/risk-tiers', params)
+}
+
+export function apiTradeSetRiskTier(params: SetContractRiskLimitTierReq): Promise<RespBase> {
+  return post('/admin/trade/risk-tiers', params)
+}
+
+export function apiTradeListFundingBatches(
+  params: GetFundingBatchListReq,
+): Promise<GetFundingBatchListResp> {
+  return get<ContractFundingBatch[]>('/admin/trade/funding/batches', params)
+}
+
+export function apiTradeListFundingSettlements(
+  params: GetFundingSettlementListReq,
+): Promise<GetFundingSettlementListResp> {
+  return get<ContractFundingSettlement[]>('/admin/trade/funding/settlements', params)
+}
+
+export function apiTradeListDeliveryBatches(
+  params: GetDeliveryBatchListReq,
+): Promise<GetDeliveryBatchListResp> {
+  return get<ContractDeliveryBatch[]>('/admin/trade/delivery/batches', params)
+}
+
+export function apiTradeListDeliverySettlements(
+  params: GetDeliverySettlementListReq,
+): Promise<GetDeliverySettlementListResp> {
+  return get<ContractDeliverySettlement[]>('/admin/trade/delivery/settlements', params)
+}
+
+export function apiTradeListLiquidations(
+  params: GetLiquidationListReq,
+): Promise<GetLiquidationListResp> {
+  return get<ContractLiquidation[]>('/admin/trade/liquidations', params)
+}
+
+export function apiTradeListSecondsPriceSnapshots(
+  params: GetSecondsPriceSnapshotListReq,
+): Promise<GetSecondsPriceSnapshotListResp> {
+  return get<TradeSecondsPriceSnapshot[]>('/admin/trade/seconds/price-snapshots', params)
+}
+
+export function apiTradeListAssetReservations(
+  params: GetAssetReservationListReq,
+): Promise<GetAssetReservationListResp> {
+  return get<TradeAssetReservation[]>('/admin/trade/operations/asset-reservations', params)
+}
+
+export function apiTradeListSettlementInstructions(
+  params: GetSettlementInstructionListReq,
+): Promise<GetSettlementInstructionListResp> {
+  return get<TradeSettlementInstruction[]>(
+    '/admin/trade/operations/settlement-instructions',
+    params,
+  )
+}
+
+export function apiTradeRetrySettlementInstruction(
+  params: RetrySettlementInstructionReq,
+): Promise<RespBase> {
+  return post('/admin/trade/operations/settlement-instructions/retry', params)
 }

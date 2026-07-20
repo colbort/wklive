@@ -46,12 +46,12 @@
         <el-table-column prop="tenantId" :label="t('trade.tenantId')" width="100" />
 
         <el-table-column min-width="190" show-overflow-tooltip>
-          <template #header> {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }} </template>
+          <template #header>
+            {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }}
+          </template>
           <template #default="{ row }">
             <div class="symbol-cell">
-              <span class="symbol-code"
-                >{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span
-              >
+              <span class="symbol-code">{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span>
             </div>
           </template>
         </el-table-column>
@@ -115,9 +115,19 @@
             {{ row.sort || 0 }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" align="center" width="260" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="260"
+          fixed="right"
+        >
           <template #default="{ row }">
-            <el-button v-perm="'trade:symbol:detail'" link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'trade:symbol:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('option.detail') }}
             </el-button>
             <el-button
@@ -321,11 +331,21 @@
           </el-form-item>
 
           <el-form-item :label="t('trade.listingTime')">
-            <el-date-picker v-model="symbolListingTime" type="datetime" clearable class="full-width" />
+            <el-date-picker
+              v-model="symbolListingTime"
+              type="datetime"
+              clearable
+              class="full-width"
+            />
           </el-form-item>
 
           <el-form-item :label="t('trade.tradingStartTime')">
-            <el-date-picker v-model="symbolOpenTime" type="datetime" clearable class="full-width" />
+            <el-date-picker
+              v-model="symbolOpenTime"
+              type="datetime"
+              clearable
+              class="full-width"
+            />
           </el-form-item>
 
           <el-form-item :label="t('trade.tradingEndTime')">
@@ -338,7 +358,12 @@
           </el-form-item>
 
           <el-form-item :label="t('common.sort')">
-            <el-input-number v-model="symbolForm.sort" :min="0" :precision="0" class="full-width" />
+            <el-input-number
+              v-model="symbolForm.sort"
+              :min="0"
+              :precision="0"
+              class="full-width"
+            />
           </el-form-item>
 
           <el-form-item :label="t('common.remark')" class="wide">
@@ -365,23 +390,75 @@
     <el-dialog v-model="secondsVisible" :title="t('trade.secondsConfig')" width="760px">
       <el-form label-width="148px" class="dialog-form">
         <div class="form-grid two">
-          <el-form-item :label="t('trade.tenantId')"><TenantSelect v-model="secondsForm.tenantId" include-system disabled /></el-form-item>
-          <el-form-item :label="t('trade.symbolId')"><el-input-number v-model="secondsForm.symbolId" disabled class="full-width" /></el-form-item>
-          <el-form-item :label="t('trade.durationSeconds')"><el-input-number v-model="secondsForm.durationSeconds" :min="1" class="full-width" /></el-form-item>
-          <el-form-item :label="t('trade.payoutRate')"><el-input v-model="secondsForm.payoutRate" /></el-form-item>
-          <el-form-item :label="t('trade.drawRule')"><el-input-number v-model="secondsForm.drawRule" :min="1" :max="2" class="full-width" /></el-form-item>
-          <el-form-item :label="t('trade.quoteValidityMs')"><el-input-number v-model="secondsForm.quoteValidityMs" :min="1" class="full-width" /></el-form-item>
-          <el-form-item :label="t('trade.startPriceSource')"><el-input v-model="secondsForm.startPriceSource" /></el-form-item>
-          <el-form-item :label="t('trade.settlementPriceSource')"><el-input v-model="secondsForm.settlementPriceSource" /></el-form-item>
-          <el-form-item :label="t('trade.minStake')"><el-input v-model="secondsForm.minStake" /></el-form-item>
-          <el-form-item :label="t('trade.maxStake')"><el-input v-model="secondsForm.maxStake" /></el-form-item>
-          <el-form-item :label="t('trade.upEnabled')"><el-select v-model="secondsForm.upEnabled" class="full-width"><el-option v-for="item in enableStatusOptions" :key="item.value" :label="optionItemLabel(item)" :value="item.value" /></el-select></el-form-item>
-          <el-form-item :label="t('trade.downEnabled')"><el-select v-model="secondsForm.downEnabled" class="full-width"><el-option v-for="item in enableStatusOptions" :key="item.value" :label="optionItemLabel(item)" :value="item.value" /></el-select></el-form-item>
+          <el-form-item :label="t('trade.tenantId')">
+            <TenantSelect v-model="secondsForm.tenantId" include-system disabled />
+          </el-form-item>
+          <el-form-item :label="t('trade.symbolId')">
+            <el-input-number v-model="secondsForm.symbolId" disabled class="full-width" />
+          </el-form-item>
+          <el-form-item :label="t('trade.durationSeconds')">
+            <el-input-number v-model="secondsForm.durationSeconds" :min="1" class="full-width" />
+          </el-form-item>
+          <el-form-item :label="t('trade.payoutRate')">
+            <el-input v-model="secondsForm.payoutRate" />
+          </el-form-item>
+          <el-form-item :label="t('trade.drawRule')">
+            <el-input-number
+              v-model="secondsForm.drawRule"
+              :min="1"
+              :max="2"
+              class="full-width"
+            />
+          </el-form-item>
+          <el-form-item :label="t('trade.quoteValidityMs')">
+            <el-input-number v-model="secondsForm.quoteValidityMs" :min="1" class="full-width" />
+          </el-form-item>
+          <el-form-item :label="t('trade.startPriceSource')">
+            <el-input v-model="secondsForm.startPriceSource" />
+          </el-form-item>
+          <el-form-item :label="t('trade.settlementPriceSource')">
+            <el-input v-model="secondsForm.settlementPriceSource" />
+          </el-form-item>
+          <el-form-item :label="t('trade.minStake')">
+            <el-input v-model="secondsForm.minStake" />
+          </el-form-item>
+          <el-form-item :label="t('trade.maxStake')">
+            <el-input v-model="secondsForm.maxStake" />
+          </el-form-item>
+          <el-form-item :label="t('trade.upEnabled')">
+            <el-select v-model="secondsForm.upEnabled" class="full-width">
+              <el-option
+                v-for="item in enableStatusOptions"
+                :key="item.value"
+                :label="optionItemLabel(item)"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="t('trade.downEnabled')">
+            <el-select v-model="secondsForm.downEnabled" class="full-width">
+              <el-option
+                v-for="item in enableStatusOptions"
+                :key="item.value"
+                :label="optionItemLabel(item)"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
         </div>
       </el-form>
       <template #footer>
-        <el-button @click="secondsVisible = false">{{ t('common.cancel') }}</el-button>
-        <el-button v-perm="'trade:symbol:seconds-config'" type="primary" :loading="submitLoading" @click="submitSecondsConfig">{{ t('common.confirm') }}</el-button>
+        <el-button @click="secondsVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button
+          v-perm="'trade:symbol:seconds-config'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitSecondsConfig"
+        >
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
 
@@ -574,13 +651,23 @@
 
           <el-form-item :label="t('trade.closeLongEnabled')">
             <el-select v-model="contractForm.closeLongEnabled" class="full-width">
-              <el-option v-for="item in enableStatusOptions" :key="item.value" :label="optionItemLabel(item)" :value="item.value" />
+              <el-option
+                v-for="item in enableStatusOptions"
+                :key="item.value"
+                :label="optionItemLabel(item)"
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
 
           <el-form-item :label="t('trade.closeShortEnabled')">
             <el-select v-model="contractForm.closeShortEnabled" class="full-width">
-              <el-option v-for="item in enableStatusOptions" :key="item.value" :label="optionItemLabel(item)" :value="item.value" />
+              <el-option
+                v-for="item in enableStatusOptions"
+                :key="item.value"
+                :label="optionItemLabel(item)"
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
         </div>
@@ -696,7 +783,12 @@
         </el-button>
       </div>
 
-      <el-table :data="leverageGroups" size="small" border class="leverage-table">
+      <el-table
+        :data="leverageGroups"
+        size="small"
+        border
+        class="leverage-table"
+      >
         <el-table-column :label="t('trade.marginMode')" width="130">
           <template #default="{ row }">
             {{ optionLabel('marginMode', row.marginMode) }}
@@ -708,7 +800,9 @@
           </template>
         </el-table-column>
         <el-table-column :label="t('trade.defaultLeverage')" width="130">
-          <template #default="{ row }"> {{ row.defaultLeverage }}X </template>
+          <template #default="{ row }">
+            {{ row.defaultLeverage }}X
+          </template>
         </el-table-column>
         <el-table-column :label="t('trade.maxLeverage')" width="120">
           <template #default="{ row }">
@@ -1544,7 +1638,6 @@ const handleLeverageValuesChange = () => {
   leverageForm.leverageValues = values
   if (!values.length) return
 
-  const maxSelectedLeverage = values[values.length - 1]
   if (!values.includes(Number(leverageForm.defaultLeverage || 0))) {
     leverageForm.defaultLeverage = values[0]
   }

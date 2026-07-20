@@ -501,6 +501,8 @@ type ContractDeliveryBatch struct {
 	TotalPositions   int64  `json:"totalPositions"`
 	SettledPositions int64  `json:"settledPositions"`
 	LastErrorMsg     string `json:"lastErrorMsg"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
 }
 
 type ContractDeliverySettlement struct {
@@ -520,8 +522,11 @@ type ContractDeliverySettlement struct {
 	DeliveryTime    int64  `json:"deliveryTime"`
 	Status          int64  `json:"status"`
 	RetryCount      int64  `json:"retryCount"`
+	NextRetryAt     int64  `json:"nextRetryAt"`
 	LastErrorMsg    string `json:"lastErrorMsg"`
 	SettledAt       int64  `json:"settledAt"`
+	CreateTimes     int64  `json:"createTimes"`
+	UpdateTimes     int64  `json:"updateTimes"`
 }
 
 type ContractFundingBatch struct {
@@ -559,8 +564,11 @@ type ContractFundingSettlement struct {
 	SettlementTime int64  `json:"settlementTime"`
 	Status         int64  `json:"status"`
 	RetryCount     int64  `json:"retryCount"`
+	NextRetryAt    int64  `json:"nextRetryAt"`
 	LastErrorMsg   string `json:"lastErrorMsg"`
 	SettledAt      int64  `json:"settledAt"`
+	CreateTimes    int64  `json:"createTimes"`
+	UpdateTimes    int64  `json:"updateTimes"`
 }
 
 type ContractLeverageConfig struct {
@@ -601,6 +609,8 @@ type ContractLiquidation struct {
 	Reason              string `json:"reason"`
 	StartedAt           int64  `json:"startedAt"`
 	CompletedAt         int64  `json:"completedAt"`
+	CreateTimes         int64  `json:"createTimes"`
+	UpdateTimes         int64  `json:"updateTimes"`
 }
 
 type ContractMarginSnapshot struct {
@@ -687,6 +697,7 @@ type ContractPositionHistory struct {
 
 type ContractRiskLimitTier struct {
 	Id                    int64  `json:"id"`
+	TenantId              int64  `json:"tenantId"`
 	SymbolId              int64  `json:"symbolId"`
 	TierNo                int64  `json:"tierNo"`
 	NotionalFloor         string `json:"notionalFloor"`
@@ -1576,7 +1587,7 @@ type GetRiskOrderCheckLogListResp struct {
 type GetSecondsPriceSnapshotListReq struct {
 	PageReq
 	TenantId     int64 `form:"tenantId,optional"`
-	OrderId      int64 `form:"orderId"`
+	OrderId      int64 `form:"orderId,optional"`
 	SnapshotType int64 `form:"snapshotType,optional"`
 }
 
@@ -4215,6 +4226,8 @@ type TradeAssetReservation struct {
 	NextRetryAt    int64  `json:"nextRetryAt"`
 	LastErrorMsg   string `json:"lastErrorMsg"`
 	Version        int64  `json:"version"`
+	CreateTimes    int64  `json:"createTimes"`
+	UpdateTimes    int64  `json:"updateTimes"`
 }
 
 type TradeCancelLog struct {
@@ -4323,6 +4336,8 @@ type TradeSettlementInstruction struct {
 	RetryCount    int64  `json:"retryCount"`
 	NextRetryAt   int64  `json:"nextRetryAt"`
 	LastErrorMsg  string `json:"lastErrorMsg"`
+	CreateTimes   int64  `json:"createTimes"`
+	UpdateTimes   int64  `json:"updateTimes"`
 }
 
 type TradeSymbol struct {

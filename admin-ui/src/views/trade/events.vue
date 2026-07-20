@@ -72,7 +72,9 @@
         </el-table-column>
 
         <el-table-column :label="t('trade.retryCount')" width="120" align="right">
-          <template #default="{ row }"> {{ row.retryCount }} / {{ row.maxRetryCount }} </template>
+          <template #default="{ row }">
+            {{ row.retryCount }} / {{ row.maxRetryCount }}
+          </template>
         </el-table-column>
 
         <el-table-column :label="t('trade.nextRetryAt')" min-width="170">
@@ -87,14 +89,29 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.actions')" align="center" width="170" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="170"
+          fixed="right"
+        >
           <template #default="{ row }">
-            <el-button v-perm="'trade:event:detail'" link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'trade:event:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               <el-icon><View /></el-icon>
               {{ t('option.detail') }}
             </el-button>
 
-            <el-button v-perm="'trade:event:retry'" link type="warning" @click="retryEvent(row)">
+            <el-button
+              v-perm="'trade:event:retry'"
+              link
+              type="warning"
+              @click="retryEvent(row)"
+            >
               <el-icon><RefreshRight /></el-icon>
               {{ t('trade.retry') }}
             </el-button>

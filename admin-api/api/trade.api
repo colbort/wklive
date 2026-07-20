@@ -909,6 +909,7 @@ type RetryTradeEventReq {
 
 type ContractRiskLimitTier {
 	id                    int64  `json:"id"`
+	tenantId              int64  `json:"tenantId"`
 	symbolId              int64  `json:"symbolId"`
 	tierNo                int64  `json:"tierNo"`
 	notionalFloor         string `json:"notionalFloor"`
@@ -996,8 +997,11 @@ type ContractFundingSettlement {
 	settlementTime int64  `json:"settlementTime"`
 	status         int64  `json:"status"`
 	retryCount     int64  `json:"retryCount"`
+	nextRetryAt    int64  `json:"nextRetryAt"`
 	lastErrorMsg   string `json:"lastErrorMsg"`
 	settledAt      int64  `json:"settledAt"`
+	createTimes    int64  `json:"createTimes"`
+	updateTimes    int64  `json:"updateTimes"`
 }
 
 type GetFundingSettlementListReq {
@@ -1028,6 +1032,8 @@ type ContractDeliveryBatch {
 	totalPositions   int64  `json:"totalPositions"`
 	settledPositions int64  `json:"settledPositions"`
 	lastErrorMsg     string `json:"lastErrorMsg"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
 }
 
 type GetDeliveryBatchListReq {
@@ -1060,8 +1066,11 @@ type ContractDeliverySettlement {
 	deliveryTime    int64  `json:"deliveryTime"`
 	status          int64  `json:"status"`
 	retryCount      int64  `json:"retryCount"`
+	nextRetryAt     int64  `json:"nextRetryAt"`
 	lastErrorMsg    string `json:"lastErrorMsg"`
 	settledAt       int64  `json:"settledAt"`
+	createTimes     int64  `json:"createTimes"`
+	updateTimes     int64  `json:"updateTimes"`
 }
 
 type GetDeliverySettlementListReq {
@@ -1100,6 +1109,8 @@ type ContractLiquidation {
 	reason              string `json:"reason"`
 	startedAt           int64  `json:"startedAt"`
 	completedAt         int64  `json:"completedAt"`
+	createTimes         int64  `json:"createTimes"`
+	updateTimes         int64  `json:"updateTimes"`
 }
 
 type GetLiquidationListReq {
@@ -1134,7 +1145,7 @@ type TradeSecondsPriceSnapshot {
 type GetSecondsPriceSnapshotListReq {
 	PageReq
 	tenantId     int64 `form:"tenantId,optional"`
-	orderId      int64 `form:"orderId"`
+	orderId      int64 `form:"orderId,optional"`
 	snapshotType int64 `form:"snapshotType,optional"`
 }
 
@@ -1156,6 +1167,8 @@ type TradeAssetReservation {
 	nextRetryAt    int64  `json:"nextRetryAt"`
 	lastErrorMsg   string `json:"lastErrorMsg"`
 	version        int64  `json:"version"`
+	createTimes    int64  `json:"createTimes"`
+	updateTimes    int64  `json:"updateTimes"`
 }
 
 type GetAssetReservationListReq {
@@ -1189,6 +1202,8 @@ type TradeSettlementInstruction {
 	retryCount    int64  `json:"retryCount"`
 	nextRetryAt   int64  `json:"nextRetryAt"`
 	lastErrorMsg  string `json:"lastErrorMsg"`
+	createTimes   int64  `json:"createTimes"`
+	updateTimes   int64  `json:"updateTimes"`
 }
 
 type GetSettlementInstructionListReq {

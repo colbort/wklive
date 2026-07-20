@@ -38,6 +38,249 @@ export type TimeRange = {
   endTime?: number // 结束时间
 }
 
+export type TradePageReq = { cursor?: number; limit?: number }
+export type ContractRiskLimitTier = {
+  id: number
+  tenantId: number
+  symbolId: number
+  tierNo: number
+  notionalFloor: string
+  notionalCap: string
+  maxLeverage: number
+  initialMarginRate: string
+  maintenanceMarginRate: string
+  maintenanceAmount: string
+  enabled: number
+  createTimes: number
+  updateTimes: number
+}
+export type SetContractRiskLimitTierReq = Omit<
+  ContractRiskLimitTier,
+  'id' | 'tenantId' | 'createTimes' | 'updateTimes'
+> & { tenantId?: number; id?: number }
+export type GetContractRiskLimitTierListReq = TradePageReq & {
+  tenantId?: number
+  symbolId?: number
+  enabled?: number
+}
+export type GetContractRiskLimitTierListResp = RespBase<ContractRiskLimitTier[]>
+export type ContractFundingBatch = {
+  id: number
+  batchNo: string
+  symbolId: number
+  fundingRate: string
+  markPrice: string
+  indexPrice: string
+  priceSource: string
+  formulaVersion: string
+  settlementTime: number
+  status: number
+  totalPositions: number
+  settledPositions: number
+  lastErrorMsg: string
+  createTimes: number
+  updateTimes: number
+}
+export type GetFundingBatchListReq = TradePageReq & {
+  tenantId?: number
+  symbolId?: number
+  status?: number
+  timeRange?: TimeRange
+}
+export type GetFundingBatchListResp = RespBase<ContractFundingBatch[]>
+export type ContractFundingSettlement = {
+  id: number
+  settlementNo: string
+  batchId: number
+  batchNo: string
+  symbolId: number
+  userId: number
+  positionId: number
+  positionSide: number
+  fundingRate: string
+  markPrice: string
+  positionQty: string
+  feeAsset: string
+  feeAmount: string
+  settlementTime: number
+  status: number
+  retryCount: number
+  nextRetryAt: number
+  lastErrorMsg: string
+  settledAt: number
+  createTimes: number
+  updateTimes: number
+}
+export type GetFundingSettlementListReq = TradePageReq & {
+  tenantId?: number
+  batchId?: number
+  userId?: number
+  positionId?: number
+  status?: number
+}
+export type GetFundingSettlementListResp = RespBase<ContractFundingSettlement[]>
+export type ContractDeliveryBatch = {
+  id: number
+  batchNo: string
+  symbolId: number
+  settlementPrice: string
+  priceSource: string
+  priceAlgorithm: string
+  openCutoffTime: number
+  matchingStopTime: number
+  deliveryTime: number
+  status: number
+  totalPositions: number
+  settledPositions: number
+  lastErrorMsg: string
+  createTimes: number
+  updateTimes: number
+}
+export type GetDeliveryBatchListReq = TradePageReq & {
+  tenantId?: number
+  symbolId?: number
+  status?: number
+  timeRange?: TimeRange
+}
+export type GetDeliveryBatchListResp = RespBase<ContractDeliveryBatch[]>
+export type ContractDeliverySettlement = {
+  id: number
+  settlementNo: string
+  batchId: number
+  batchNo: string
+  symbolId: number
+  userId: number
+  positionId: number
+  positionSide: number
+  settlementPrice: string
+  positionQty: string
+  realizedPnl: string
+  deliveryFee: string
+  settleAsset: string
+  deliveryTime: number
+  status: number
+  retryCount: number
+  nextRetryAt: number
+  lastErrorMsg: string
+  settledAt: number
+  createTimes: number
+  updateTimes: number
+}
+export type GetDeliverySettlementListReq = TradePageReq & {
+  tenantId?: number
+  batchId?: number
+  userId?: number
+  positionId?: number
+  status?: number
+}
+export type GetDeliverySettlementListResp = RespBase<ContractDeliverySettlement[]>
+export type ContractLiquidation = {
+  id: number
+  liquidationNo: string
+  positionId: number
+  userId: number
+  symbolId: number
+  positionSide: number
+  marginMode: number
+  triggerMarkPrice: string
+  triggerIndexPrice: string
+  triggerQty: string
+  liquidatedQty: string
+  maintenanceMargin: string
+  accountEquity: string
+  bankruptcyPrice: string
+  liquidationFee: string
+  insuranceFundAmount: string
+  adlQty: string
+  status: number
+  reason: string
+  startedAt: number
+  completedAt: number
+  createTimes: number
+  updateTimes: number
+}
+export type GetLiquidationListReq = TradePageReq & {
+  tenantId?: number
+  userId?: number
+  symbolId?: number
+  positionId?: number
+  status?: number
+  timeRange?: TimeRange
+}
+export type GetLiquidationListResp = RespBase<ContractLiquidation[]>
+export type TradeSecondsPriceSnapshot = {
+  id: number
+  orderId: number
+  snapshotType: number
+  source: string
+  price: string
+  quoteTime: number
+  receivedAt: number
+  algorithm: string
+  isSelected: number
+  rawPayload: string
+  createTimes: number
+}
+export type GetSecondsPriceSnapshotListReq = TradePageReq & {
+  tenantId?: number
+  orderId?: number
+  snapshotType?: number
+}
+export type GetSecondsPriceSnapshotListResp = RespBase<TradeSecondsPriceSnapshot[]>
+export type TradeAssetReservation = {
+  id: number
+  orderId: number
+  reservationNo: string
+  asset: string
+  reservedAmount: string
+  consumedAmount: string
+  releasedAmount: string
+  status: number
+  retryCount: number
+  nextRetryAt: number
+  lastErrorMsg: string
+  version: number
+  createTimes: number
+  updateTimes: number
+}
+export type GetAssetReservationListReq = TradePageReq & {
+  tenantId?: number
+  orderId?: number
+  status?: number
+}
+export type GetAssetReservationListResp = RespBase<TradeAssetReservation[]>
+export type TradeSettlementInstruction = {
+  id: number
+  instructionNo: string
+  bizType: string
+  bizId: string
+  batchNo: string
+  fillId: number
+  orderId: number
+  positionId: number
+  reservationNo: string
+  userId: number
+  action: number
+  asset: string
+  amount: string
+  stepNo: number
+  status: number
+  retryCount: number
+  nextRetryAt: number
+  lastErrorMsg: string
+  createTimes: number
+  updateTimes: number
+}
+export type GetSettlementInstructionListReq = TradePageReq & {
+  tenantId?: number
+  bizType?: string
+  bizId?: string
+  orderId?: number
+  status?: number
+}
+export type GetSettlementInstructionListResp = RespBase<TradeSettlementInstruction[]>
+export type RetrySettlementInstructionReq = { tenantId?: number; id: number; reason: string }
+
 export type TradeSymbol = {
   id: number // 主键ID
   tenantId: number // 租户ID

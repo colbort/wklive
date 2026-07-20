@@ -67,16 +67,12 @@
           </el-table-column>
           <el-table-column :label="t('system.active31To90Days')" width="110" align="center">
             <template #default="{ row }">
-              {{
-                migrationStat(row, 'active31To90DaysCount')
-              }}
+              {{ migrationStat(row, 'active31To90DaysCount') }}
             </template>
           </el-table-column>
           <el-table-column :label="t('system.inactiveOver90Days')" width="110" align="center">
             <template #default="{ row }">
-              {{
-                migrationStat(row, 'inactiveOver90DaysCount')
-              }}
+              {{ migrationStat(row, 'inactiveOver90DaysCount') }}
             </template>
           </el-table-column>
         </el-table-column>

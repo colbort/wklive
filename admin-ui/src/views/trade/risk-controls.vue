@@ -1,6 +1,11 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard :model="riskQuery" :show-actions="false" @search="loadList" @reset="resetQuery">
+    <CrudQueryCard
+      :model="riskQuery"
+      :show-actions="false"
+      @search="loadList"
+      @reset="resetQuery"
+    >
       <template #header>
         {{ t('trade.riskQuery') }}
       </template>
@@ -217,7 +222,12 @@
           show-overflow-tooltip
         />
 
-        <el-table-column :label="t('common.actions')" align="center" width="100" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="100"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('option.detail') }}

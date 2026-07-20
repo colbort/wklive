@@ -776,7 +776,7 @@ VALUES
 (1040, 1000, '持仓列表', 2, 'GET', '/trade/positions', 'trade:position:list', 'trade/positions', 'PieChart', 1040),
 (1041, 1040, '获取持仓详情', 3, 'GET', '/trade/positions/detail', 'trade:position:detail', '', '', 1041),
 (1050, 1000, '持仓历史列表', 2, 'GET', '/trade/position-histories', 'trade:position-history:list', 'trade/position-histories', 'Histogram', 1050),
-(1060, 1000, '保证金快照列表', 2, 'GET', '/trade/margin-snapshots', 'trade:margin-snapshot:list', 'trade/margin-snapshots', 'Wallet', 1060),
+(1060, 1000, '保证金快照', 2, 'GET', '/trade/margin-snapshots', 'trade:margin-snapshot:list', 'trade/margin-accounts', 'Wallet', 1060),
 (1070, 1000, '撤单日志列表', 2, 'GET', '/trade/cancel-logs', 'trade:cancel-log:list', 'trade/cancel-logs', 'DocumentDelete', 1070),
 (1080, 1000, '用户交易限制', 2, 'GET', '/trade/user-trade-limit', 'trade:user-trade-limit:detail', 'trade/user-trade-limit', 'Warning', 1080),
 (1081, 1080, '设置用户交易限制', 3, 'POST', '/trade/user-trade-limit', 'trade:user-trade-limit:update', '', '', 1081),
@@ -792,17 +792,17 @@ VALUES
 (1130, 1000, '交易事件列表', 2, 'GET', '/trade/events', 'trade:event:list', 'trade/events', 'Bell', 1130),
 (1131, 1130, '获取交易事件详情', 3, 'GET', '/trade/events/detail', 'trade:event:detail', '', '', 1131),
 (1132, 1130, '重试交易事件', 3, 'POST', '/trade/events/retry', 'trade:event:retry', '', '', 1132),
-(1140, 1000, '合约风险档位', 2, 'GET', '/trade/risk-tiers', 'trade:risk-tier:list', 'trade/risk-tiers', 'Warning', 1140),
+(1140, 1000, '合约风险限额', 2, 'GET', '/trade/risk-tiers', 'trade:risk-tier:list', 'trade/risk-tiers', 'Warning', 1140),
 (1141, 1140, '保存合约风险档位', 3, 'POST', '/trade/risk-tiers', 'trade:risk-tier:update', '', '', 1141),
 (1150, 1000, '资金费批次', 2, 'GET', '/trade/funding/batches', 'trade:funding-batch:list', 'trade/funding-batches', 'Money', 1150),
-(1151, 1150, '资金费结算明细', 3, 'GET', '/trade/funding/settlements', 'trade:funding-settlement:list', '', '', 1151),
+(1151, 1000, '资金费结算明细', 2, 'GET', '/trade/funding/settlements', 'trade:funding-settlement:list', 'trade/funding-settlements', 'Tickets', 1151),
 (1160, 1000, '交割批次', 2, 'GET', '/trade/delivery/batches', 'trade:delivery-batch:list', 'trade/delivery-batches', 'Calendar', 1160),
-(1161, 1160, '交割结算明细', 3, 'GET', '/trade/delivery/settlements', 'trade:delivery-settlement:list', '', '', 1161),
-(1170, 1000, '强平记录', 2, 'GET', '/trade/liquidations', 'trade:liquidation:list', 'trade/liquidations', 'WarningFilled', 1170),
-(1180, 1020, '秒合约价格审计', 3, 'GET', '/trade/seconds/price-snapshots', 'trade:seconds-price-snapshot:list', '', '', 1180),
-(1190, 1000, '交易异常处理', 2, 'GET', '/trade/operations/asset-reservations', 'trade:operation:asset-reservation:list', 'trade/operations', 'Tools', 1190),
-(1191, 1190, '结算指令列表', 3, 'GET', '/trade/operations/settlement-instructions', 'trade:operation:settlement-instruction:list', '', '', 1191),
-(1192, 1190, '重试结算指令', 3, 'POST', '/trade/operations/settlement-instructions/retry', 'trade:operation:settlement-instruction:retry', '', '', 1192);
+(1161, 1000, '交割结算明细', 2, 'GET', '/trade/delivery/settlements', 'trade:delivery-settlement:list', 'trade/delivery-settlements', 'DocumentChecked', 1161),
+(1170, 1000, '强平与ADL', 2, 'GET', '/trade/liquidations', 'trade:liquidation:list', 'trade/liquidations', 'WarningFilled', 1170),
+(1180, 1000, '秒合约价格快照', 2, 'GET', '/trade/seconds/price-snapshots', 'trade:seconds-price-snapshot:list', 'trade/seconds-price-snapshots', 'Camera', 1180),
+(1190, 1000, '资金预占记录', 2, 'GET', '/trade/operations/asset-reservations', 'trade:operation:asset-reservation:list', 'trade/asset-reservations', 'Lock', 1190),
+(1191, 1000, '结算指令', 2, 'GET', '/trade/operations/settlement-instructions', 'trade:operation:settlement-instruction:list', 'trade/settlement-instructions', 'Operation', 1191),
+(1192, 1191, '重试结算指令', 3, 'POST', '/trade/operations/settlement-instructions/retry', 'trade:operation:settlement-instruction:retry', '', '', 1192);
 
 
 
