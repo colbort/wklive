@@ -50,6 +50,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	if err != nil {
 		return nil, err
 	}
+	configTenantId := symbol.TenantId
 	if in.ClientOrderId != "" {
 		exists, err := l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, sql.NullString{String: in.ClientOrderId, Valid: true})
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -75,7 +76,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		if in.SecondsDirection < 1 || in.SecondsDirection > 2 || in.DurationSeconds <= 0 || !amount.IsPositive() {
 			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
-		secondsCfg, err = l.svcCtx.TradeSymbolSecondsModel.FindOneByTenantIdSymbolIdDurationSeconds(l.ctx, tenantId, symbol.Id, in.DurationSeconds)
+		secondsCfg, err = l.svcCtx.TradeSymbolSecondsModel.FindOneByTenantIdSymbolIdDurationSeconds(l.ctx, configTenantId, symbol.Id, in.DurationSeconds)
 		if errors.Is(err, models.ErrNotFound) {
 			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 		}
@@ -134,7 +135,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	leverage := int64(1)
 	if isDerivativeProduct(trade.ProductType(symbol.ProductType)) {
 		var ok bool
-		leverage, ok, err = ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, tenantId, symbol, in.MarginMode, in.Leverage)
+		leverage, ok, err = ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, configTenantId, symbol, in.MarginMode, in.Leverage)
 		if err != nil {
 			return nil, err
 		}

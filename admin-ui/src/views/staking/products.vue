@@ -239,7 +239,7 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
 
 const optionGroups = ref<OptionGroup[]>([])
 const productTypeFormOptions = computed(() =>
-  findFormOptionGroup(optionGroups.value, 'productType'),
+  findFormOptionGroup(optionGroups.value, 'stakingProductType'),
 )
 const productStatusFormOptions = computed(() =>
   findFormOptionGroup(optionGroups.value, 'productStatus'),

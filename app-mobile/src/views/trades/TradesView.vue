@@ -462,7 +462,10 @@ async function loadTradeSymbols() {
   loadingTradeSymbols.value = true
 
   try {
-    const resp = await apiTradeGetSymbolList({ status: SYMBOL_STATUS_ENABLED })
+    const resp = await apiTradeGetSymbolList({
+      productType: PRODUCT_TYPE_SPOT,
+      status: SYMBOL_STATUS_ENABLED,
+    })
     if (requestId !== tradeSymbolsRequestId) return
 
     if (!isSuccessCode(resp.code)) {

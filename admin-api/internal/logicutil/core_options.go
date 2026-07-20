@@ -136,7 +136,7 @@ func OptionOptions() []types.OptionsGroup {
 func StakingOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
 		EnumGroup("productStatus", "产品状态", staking.ProductStatus_PRODUCT_STATUS_UNKNOWN.Descriptor()),
-		EnumGroup("productType", "产品类型", staking.ProductType_PRODUCT_TYPE_UNKNOWN.Descriptor()),
+		EnumGroup("stakingProductType", "质押产品类型", staking.ProductType_PRODUCT_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("interestMode", "计息模式", staking.InterestMode_INTEREST_MODE_UNKNOWN.Descriptor()),
 		EnumGroup("rewardMode", "奖励模式", staking.RewardMode_REWARD_MODE_UNKNOWN.Descriptor()),
 		EnumGroup("stakingOrderStatus", "质押订单状态", staking.OrderStatus_ORDER_STATUS_UNKNOWN.Descriptor()),

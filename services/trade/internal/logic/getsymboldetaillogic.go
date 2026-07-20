@@ -42,6 +42,7 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 	if err != nil {
 		return nil, err
 	}
+	configTenantId := item.TenantId
 
 	resp := &trade.GetSymbolDetailResp{
 		Base: helper.OkResp(),
@@ -52,10 +53,11 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 	var spot *models.TTradeSymbolSpot
 	var contractCfg *models.TTradeSymbolContract
 	var configs []*models.TTradeSymbolLeverageConfig
+	var secondsConfigs []*models.TTradeSymbolSeconds
 	err = mr.Finish(
 		func() error {
 			var queryErr error
-			spot, queryErr = l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, tenantId, in.SymbolId)
+			spot, queryErr = l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, configTenantId, in.SymbolId)
 			if errors.Is(queryErr, models.ErrNotFound) {
 				return nil
 			}
@@ -63,7 +65,7 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 		},
 		func() error {
 			var queryErr error
-			contractCfg, queryErr = l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, tenantId, in.SymbolId)
+			contractCfg, queryErr = l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, configTenantId, in.SymbolId)
 			if errors.Is(queryErr, models.ErrNotFound) {
 				return nil
 			}
@@ -72,8 +74,16 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 		func() error {
 			var queryErr error
 			configs, _, queryErr = l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
-				TenantId: tenantId, SymbolId: in.SymbolId, Enabled: 1,
+				TenantId: configTenantId, SymbolId: in.SymbolId, Enabled: 1,
 			}, 0, 100)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+		func() error {
+			var queryErr error
+			secondsConfigs, queryErr = l.svcCtx.TradeSymbolSecondsModel.FindAllByTenantIdSymbolId(l.ctx, configTenantId, in.SymbolId)
 			if errors.Is(queryErr, models.ErrNotFound) {
 				return nil
 			}
@@ -95,6 +105,9 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 			return nil, findErr
 		}
 		resp.Data.LeverageConfigs = append(resp.Data.LeverageConfigs, symbolLeverageConfigToProto(cfg, defaultLeverage))
+	}
+	for _, cfg := range secondsConfigs {
+		resp.Data.SecondsConfigs = append(resp.Data.SecondsConfigs, secondsSymbolToProto(cfg))
 	}
 	return resp, nil
 }

@@ -134,6 +134,21 @@ func contractSymbolToProto(item *models.TTradeSymbolContract) *trade.TradeSymbol
 	}
 }
 
+func secondsSymbolToProto(item *models.TTradeSymbolSeconds) *trade.TradeSymbolSeconds {
+	if item == nil {
+		return nil
+	}
+	return &trade.TradeSymbolSeconds{
+		Id: item.Id, TenantId: item.TenantId, SymbolId: item.SymbolId,
+		DurationSeconds: item.DurationSeconds, PayoutRate: conv.FloatString(item.PayoutRate),
+		DrawRule: item.DrawRule, StartPriceSource: item.StartPriceSource,
+		SettlementPriceSource: item.SettlementPriceSource, QuoteValidityMs: item.QuoteValidityMs,
+		MinStake: conv.FloatString(item.MinStake), MaxStake: conv.FloatString(item.MaxStake),
+		UpEnabled: enableToProto(item.UpEnabled), DownEnabled: enableToProto(item.DownEnabled),
+		CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+	}
+}
+
 func userConfigToProto(item *models.TTradeUserConfig) *trade.TradeUserConfig {
 	if item == nil {
 		return nil
