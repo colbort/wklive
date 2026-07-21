@@ -1,26 +1,17 @@
 <template>
-  <div class="module-page">
+  <div class="module-page price-formula-page">
     <CrudQueryCard :model="query" @search="load" @reset="reset">
-      <el-form-item :label="t('itick.authority')">
-        <el-input
-          v-model="query.authority"
-          clearable
-        />
+      <el-form-item class="operation-query-item" :label="t('itick.authority')">
+        <el-input v-model="query.authority" clearable class="operation-query-control" />
       </el-form-item>
-      <el-form-item :label="t('itick.snapshotKind')">
-        <el-input
-          v-model="query.snapshotKind"
-          clearable
-        />
+      <el-form-item class="operation-query-item" :label="t('itick.snapshotKind')">
+        <el-input v-model="query.snapshotKind" clearable class="operation-query-control" />
       </el-form-item>
-      <el-form-item :label="t('itick.symbol')">
-        <el-input
-          v-model="query.symbol"
-          clearable
-        />
+      <el-form-item class="operation-query-item" :label="t('itick.symbol')">
+        <el-input v-model="query.symbol" clearable class="operation-query-control" />
       </el-form-item>
-      <el-form-item :label="t('common.status')">
-        <el-select v-model="query.status" clearable style="width: 140px">
+      <el-form-item class="operation-query-item" :label="t('common.status')">
+        <el-select v-model="query.status" clearable class="operation-query-control">
           <el-option
             v-for="item in formulaStatuses"
             :key="item.value"
@@ -31,9 +22,7 @@
       </el-form-item>
       <template #actions>
         <el-button v-perm="'itick:price-formula:create'" type="primary" @click="openCreate">
-          {{
-            t('itick.createFormula')
-          }}
+          {{ t('itick.createFormula') }}
         </el-button>
       </template>
     </CrudQueryCard>
@@ -49,9 +38,7 @@
         <el-table-column :label="t('common.status')" width="110">
           <template #default="{ row }">
             <el-tag :type="formulaStatusType(row.status)">
-              {{
-                formulaStatusLabel(row.status)
-              }}
+              {{ formulaStatusLabel(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -98,34 +85,22 @@
       <el-form :model="form" label-width="150px">
         <el-row :gutter="16">
           <el-col :span="12">
-            <el-form-item
-              :label="t('itick.formulaNo')"
-              required
-            >
+            <el-form-item :label="t('itick.formulaNo')" required>
               <el-input v-model="form.formulaNo" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              :label="t('itick.formulaVersion')"
-              required
-            >
+            <el-form-item :label="t('itick.formulaVersion')" required>
               <el-input v-model="form.formulaVersion" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              :label="t('itick.authority')"
-              required
-            >
+            <el-form-item :label="t('itick.authority')" required>
               <el-input v-model="form.authority" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              :label="t('itick.snapshotKind')"
-              required
-            >
+            <el-form-item :label="t('itick.snapshotKind')" required>
               <el-input v-model="form.snapshotKind" />
             </el-form-item>
           </el-col>
@@ -140,27 +115,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item
-              :label="t('itick.symbol')"
-              required
-            >
+            <el-form-item :label="t('itick.symbol')" required>
               <el-input v-model="form.symbol" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              :label="t('itick.algorithm')"
-              required
-            >
-              <el-select
-                v-model="form.algorithm"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="algorithm in algorithms"
-                  :key="algorithm"
-                  :value="algorithm"
-                />
+            <el-form-item :label="t('itick.algorithm')" required>
+              <el-select v-model="form.algorithm" style="width: 100%">
+                <el-option v-for="algorithm in algorithms" :key="algorithm" :value="algorithm" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -212,39 +174,27 @@
               <el-input v-model="row.symbol" />
             </template>
           </el-table-column>
-          <el-table-column
-            :label="t('itick.weight')"
-            width="130"
-          >
+          <el-table-column :label="t('itick.weight')" width="130">
             <template #default="{ row }">
               <el-input v-model="row.weight" />
             </template>
           </el-table-column>
           <el-table-column width="70">
             <template #default="{ $index }">
-              <el-button
-                link
-                type="danger"
-                @click="form.components.splice($index, 1)"
-              >
+              <el-button link type="danger" @click="form.components.splice($index, 1)">
                 ×
               </el-button>
             </template>
           </el-table-column>
         </el-table>
         <el-button class="component-add" @click="addComponent">
-          {{
-            t('itick.addComponent')
-          }}
+          {{ t('itick.addComponent') }}
         </el-button>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">
-          {{ t('common.cancel') }}
-        </el-button><el-button type="primary" :loading="saving" @click="save">
-          {{
-            t('common.confirm')
-          }}
+        <el-button @click="dialogVisible = false"> {{ t('common.cancel') }} </el-button
+        ><el-button type="primary" :loading="saving" @click="save">
+          {{ t('common.confirm') }}
         </el-button>
       </template>
     </el-dialog>
@@ -255,6 +205,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 import { usePagination } from '@/composables'
 import {
   apiChangePriceFormulaStatus,
@@ -376,9 +327,3 @@ async function changeStatus(row: PriceFormula, status: 1 | 3) {
 }
 onMounted(load)
 </script>
-
-<style scoped>
-.component-add {
-  margin-top: 12px;
-}
-</style>
