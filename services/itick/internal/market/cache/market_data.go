@@ -8,6 +8,7 @@ type CachedMarketData = cache.CachedMarketData
 var NewMarketDataCache = cache.NewMarketDataCache
 var BuildTopicKey = cache.BuildTopicKey
 var NormalizeClientMessage = cache.NormalizeClientMessage
+var BuildAuthoritativeQuoteSnapshot = cache.BuildAuthoritativeQuoteSnapshot
 
 func marketDataKey(msg cache.ClientMessage) string {
 	msg = cache.NormalizeClientMessage(msg)

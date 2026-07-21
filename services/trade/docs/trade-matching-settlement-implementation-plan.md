@@ -4,9 +4,11 @@
 >
 > 本文用于指导后续开发和验收，不替代订单生命周期业务设计。
 >
-> **2026-07-20 复审结论：** 3.1～3.6、3.11 已具备核心闭环；3.7～3.10 已有模型、任务、幂等指令和后台审计入口，但权威行情快照、资金费历史时点、保险基金账户鉴权、ADL 资金/仓位原子性等仍存在 P0 缺口。3.7～3.10 当前只能用于开发和联调，**不得启用秒合约真实派彩、生产资金费、自动交割资金结算、自动强平、保险基金赔付或 ADL**。
+> **2026-07-20 复审结论：** 3.1～3.6、3.11 已具备核心闭环；资金费平台差额账户和逐步骤 Saga、交割 Asset/Position Saga、ADL 持久化执行步骤、权威行情 outbox 与 Redis 修复已经落地。独立版本化 Price Engine、日终跨服务对账、故障注入、保险基金账户鉴权及部分运营边界仍未通过，**不得启用秒合约真实派彩、生产资金费、自动交割归档、自动强平、保险基金赔付或 ADL**。
 >
-> **2026-07-20 修复进展：** iTick WebSocket 已保留行情源原始十进制价格并发布带来源身份的不可变历史 Quote，同时写入 `t_itick_authoritative_snapshot` 永久档案；Trade 通过 iTick RPC 按目标业务时刻查询 MySQL 档案，Redis 仅保留加速副本。资金费批次创建已在事务内锁定参与仓位并保存 `position_version`，仓位落账使用 `FOR UPDATE`，不守恒批次会在创建事务内拒绝。上述改动关闭了“Trade 自行确认普通 Quote”“历史周期读取执行时最新价”“Quote 只有 TTL 缓存”“资金费仓位无锁覆盖”四个直接缺陷，但 Authority 注册、独立 Price Engine 公式快照、平台差额账户和跨服务 Saga 尚未完成，**所有原生产门禁继续生效**。
+> **2026-07-20 修复进展：** iTick WebSocket 已保留行情源原始十进制价格并发布带来源身份的不可变历史 Quote，同时写入永久档案。资金费批次会锁定仓位版本；用户付款、用户收款和平台差额均生成持久化 Settlement Instruction，付款步骤完成后才开放收款，Worker 使用原子 Claim 和过期租约恢复。非零差额由租户/资产维度的平台账户以相反方向承接，未配置账户则拒绝创建批次；历史未完成批次由迁移回填指令。独立 Price Engine、日终资产对账和故障注入验收尚未完成，相关生产门禁继续生效。
+
+> **2026-07-20 精度与模型复审：** iTick 永久档案保留 `DECIMAL(65,30)` 源精度，Trade 在写入 `DECIMAL(36,18)` 事实表前显式校验精度；快照模型唯一查询及缓存键包含 `snapshot_kind`。Trade 与 iTick models 已分别通过标准 `make gen-model` 从最终 SQL 重新生成，自定义查询只位于 `*model.go`，生成代码位于 `*model_gen.go`。该修复消除了静默舍入、跨 Kind 误读和手写生成模型漂移，但不代表 Price Engine、对账或故障注入已经完成。
 
 ### 文档状态说明
 
@@ -63,11 +65,11 @@ OrderAccepted
 | 下单冻结恢复 | `FREEZING` 订单按原 `order_no/biz_no` 幂等重试 Asset | 已有 |
 | 成交后续指令 | Fill 同事务创建 Settlement Instruction、Outbox；合约创建 `POSITION_FILL_REQUIRED` | 已补齐指令生产 |
 | Position 扫描 | 能读取缓存行情、更新风险字段并触发逐仓强平 | 主体已实现，权威 Mark Price 未验收 |
-| 永续资金费 | 已有历史时点 Quote、Batch、仓位锁/版本快照、守恒拒绝、Asset 幂等及后台查询 | 主体已实现，Price Engine、差额账户和 Saga 未通过 |
-| 交割到期 | 已有停开仓、撤单、Batch、资金和仓位结算 | 主体已实现，历史窗口取价和恢复未通过 |
+| 永续资金费 | 已有历史时点 Quote、Batch、仓位锁/版本快照、平台差额账户、持久化 Asset Saga、原子领取及后台查询 | 主体已实现，Price Engine、日终对账和故障注入未通过 |
+| 交割到期 | 已有停开仓、撤单、Batch、逐步骤 Asset Saga、租约恢复和最终仓位投影 | 主体已实现，多样本算法、零资产步骤和对账未通过 |
 | 秒合约 | 已有激活、判定、派彩、退款和价格审计 | 主体已实现，快照权威性未通过 |
 | 保险基金 | 已有租户配置、部分赔付、流水和冲正接口 | 主体已实现，Asset 账户身份鉴权未通过 |
-| ADL | 已有候选排序、金额计算和仓位历史 | 禁止生产：资金/仓位原子性和公式仍有 P0 |
+| ADL | 已有候选排序、持久化预留、执行明细、Asset/Position 两阶段恢复和仓位历史 | 禁止生产：独立恢复扫描、上层强平 Saga、对账和故障注入未通过 |
 
 当前主要实现位置：
 
@@ -400,16 +402,16 @@ FREEZING
 - Batch 按 `settlement_time` 查询不晚于目标时刻且位于允许回看窗口内的 iTick 历史 Quote，不再用任务执行时的最新 Quote 补算历史周期；
 - 创建 Batch 和 Settlement 的同一事务内按持仓 ID 顺序 `FOR UPDATE` 锁定正常仓位，保存数量及 `position_version`；
 - 完成资金费投影时按 `position_id FOR UPDATE` 锁定仓位，避免与成交投影相互覆盖；
-- 创建批次时按结算资产校验全部明细的 `fee_amount` 合计严格为零，不守恒批次整体回滚，不允许先执行 Asset 后再发现差额；
+- 创建批次时按结算资产汇总 `fee_amount`；非零合计由已启用的平台差额账户生成反向指令承接，账户缺失时批次整体回滚；
 - 增加 `20260720_funding_position_version.sql` 迁移和守恒测试。
 
 当前 P0：
 
 - iTick 已新增 MySQL 永久档案和历史查询 RPC，Trade 不再把 Redis TTL 数据作为结算事实来源；仍缺档案备份、分区归档和灾备恢复演练；
-- Trade 查询固定要求 `authority=itick-ws`，REST 预热、断线修复和未来其他权威源尚未纳入统一来源注册与修订规则；
+- Authority 已由注册表控制启停和允许的快照类型，Trade 通过 `MarketAuthority` 配置选择来源；REST 预热和断线修复尚未注册为权威生产方，快照修订与撤销规则仍未实现；
 - 当前归档的是 iTick 最终 Quote，不是独立 Price Engine 生成的 Mark Price、Index Price 和 Funding Rate 快照；成分、权重、异常剔除、平滑及公式版本仍未闭环；
-- 严格零和校验能够阻止资金凭空产生，但尚无平台差额账户承接合法的持仓不平衡和逐笔舍入尾差，这类批次目前会被安全拒绝；
-- Asset 扣款/入账仍不是持久化逐步骤 Settlement Instruction；外部成功而 Trade 本地提交失败时依赖 Asset `biz_no` 幂等重试，缺少可查询、可补偿的跨服务 Saga；
+- 用户与平台差额指令合计严格为零；每个步骤有稳定幂等号、失败重试和人工处理终态，批次必须等待全部指令和仓位投影完成；
+- Asset 扣款/入账已经转换为持久化逐步骤 Settlement Instruction，付款、平台差额和收款按步骤执行；仍缺跨服务日终对账和进程崩溃/超时故障注入验收；
 - `position_version` 已入库，但后台 Proto/API 尚未展示该审计字段，资金费对账报表和故障注入仍未验收。
 
 在以上问题修复前，资金费任务仅允许测试环境运行。
@@ -435,15 +437,15 @@ FREEZING
 
 必须使用稳定幂等键 `delivery_batch_id + position_id`，保存最终价格来源、采样窗口和算法版本。
 
-当前已经实现 CLOSE_ONLY、停止撮合后的系统撤单与预占释放等待、Delivery Batch/明细、保证金/盈亏/交割费幂等结算、仓位结算历史、关闭仓位及批次统计；存在未完成订单时不会提前锁价交割。
+当前已经实现 CLOSE_ONLY、停止撮合后的系统撤单与预占释放等待、Delivery Batch/明细、扣款先于入账的逐步骤 Settlement Instruction、原子领取和租约恢复、仓位结算历史、关闭仓位及批次统计；旧批次迁移沿用历史 Asset 业务号，可恢复部分执行。存在未完成订单时不会提前锁价交割。
 
 当前缺口：
 
-- P0：已能按交割时刻查询 iTick MySQL 永久归档 Quote，但仍未冻结完整候选样本集合；
+- P0：已能按交割时刻查询 iTick MySQL 永久归档 Quote，且超出 Trade `DECIMAL(36,18)` 精度契约的价格会被拒绝，但仍未冻结完整候选样本集合；
 - P0：缺少多样本算法、异常剔除摘要及按原样本集合重放的能力；
 - P1：无论配置何种 `settlement_price_algorithm`，当前实际只取一个历史 Quote，却会把配置的算法名称写入批次；
-- P1：已关闭或并发变化仓位会进入 `MANUAL_REVIEW`，不再永久重试；但 Asset 已执行后才发现仓位变化的路径仍需 Saga 对账和补偿；
-- P1：缺少交割批次资金守恒和 Asset 流水对账完成条件，当前仅按已结算明细数量完成批次。
+- P1：Asset/Position Saga 已完成，全部资产指令成功后才关闭仓位；但保证金释放、盈亏和手续费全部为零时缺少“无 Asset 步骤直接投影”终态；
+- P1：缺少交割批次资金守恒和 Asset 流水对账完成条件；当前完成条件包含指令与仓位终态，但尚未核验 Asset 账本流水。
 
 ### 3.10 强平、保险基金与 ADL（主体已实现，禁止生产）
 
@@ -460,15 +462,15 @@ FREEZING
 - Liquidation Batch/明细；
 - 强平事件、重试、审计和人工处理。
 
-当前已经实现逐仓风险单元状态、撤销增险订单、强平接管入口、保险基金配置、Asset 全额/部分赔付和冲正、ADL 候选排序、仓位历史、完成事件及人工处理状态。
+当前已经实现逐仓风险单元状态、撤销增险订单、强平接管入口、保险基金配置、Asset 全额/部分赔付和冲正、ADL 候选排序、`t_contract_adl_execution` 执行事实、仓位预留、仓位历史、完成事件及人工处理状态。
 
 当前 P0：
 
-- ADL 已调整为锁定候选仓位并校验版本后调用幂等 Asset 入账，且只选择 `NORMAL` 仓位；但外部 RPC 仍位于数据库事务期间，没有持久化 PREPARED/ASSET_DONE/POSITION_DONE Saga，超时和提交失败恢复边界仍不充分；
-- `position_margin` 与 `isolated_margin` 已分别按比例扣减，ADL 累计数量也已限制为不超过被接管仓位剩余数量；但尚无持久化仓位预留，无法跨进程证明数量边界；
+- ADL 已将候选仓位、版本、减仓数量、两类保证金释放、PnL、Asset 入账和风险缓释金额持久化，Asset RPC 位于数据库事务之外，并按 `PREPARED/ASSET_DONE/POSITION_DONE/FAILED/MANUAL` 恢复；
+- `position_margin` 与 `isolated_margin` 分别按比例扣减，累计数量不超过被接管仓位剩余数量，候选仓位在 Asset 调用前进入持久化预留状态；仍缺独立扫描未完成 ADL Execution 的恢复 Worker，当前依赖同一强平任务再次触发；
 - Asset 的 `CoverInsuranceDeficit` 信任调用方传入的 `fund_user_id/wallet_type/coin`，Asset 本身没有验证该账户确为保险基金，内部调用方可能误扣普通用户账户；
-- 保险基金赔付、ADL 分配和最终关闭被强平仓位之间没有持久化 Saga/执行明细，无法证明每一步的资金和仓位边界；
-- 当前 Mark Price 快照由 Trade 对普通 Quote 自行确认，不是独立 Mark Price Engine 发布的权威快照。
+- ADL 分配已有持久化执行明细，但保险基金赔付、ADL 集合和最终关闭被强平仓位之间仍缺统一上层 Liquidation Saga；
+- 当前风险输入来自 iTick 永久归档的 `FINAL_QUOTE`，不再是 Trade 对 Redis 普通 Quote 自行确认；但它仍不是独立 Mark Price Engine 发布的权威 Mark 快照。
 
 当前 P1：
 
@@ -486,19 +488,30 @@ FREEZING
 - iTick WebSocket 解码时保留源报文原始十进制价格文本，结算快照不再从 `float64` 反向格式化；
 - iTick 以 `authority=itick-ws` 发布不可变 `FINAL_QUOTE`，按品类、市场、Symbol 和来源时间建立历史索引；
 - iTick 将快照幂等写入 `t_itick_authoritative_snapshot`，Redis 只作为 365 天加速副本；
+- `t_itick_authority_registry` 注册生产方、启停状态和允许发布的快照类型；未注册、禁用或越权类型在生产和查询时都会被拒绝；
 - iTick App 提供按 Authority、产品、业务目标时刻和最大回看窗口查询永久档案的 RPC；Trade 只通过该 RPC 获取结算输入；
+- 历史查询强制指定 `snapshot_kind`，不同类型使用包含 Kind 的唯一键和索引，不会在同一产品/时刻混读 Quote、Mark、Index 或 Funding；
+- iTick 生成模型的唯一查询方法和缓存键同样包含 `snapshot_kind`，避免模型层重新引入跨 Kind 误读；
+- iTick 源档案允许 30 位小数，Trade 事实表当前只允许 18 位小数；跨服务边界执行显式精度校验，超限失败并阻断结算，不允许数据库静默舍入；
+- 永久档案先于 Redis 和实时 Quote 缓存写入；MySQL 失败时不会发布仅存在缓存的“权威”数据；
+- 权威快照和 `t_itick_snapshot_outbox` 在同一 MySQL 事务写入；WebSocket 热路径不再等待 Redis 或 Option RPC；
+- Snapshot Outbox 使用原子领取、60 秒过期租约、指数退避和人工终态；Redis 发布失败会从 MySQL 永久事实自动重建，迁移会为历史快照补建修复任务；
+- 重复写入只有不可变身份完全一致时才视为幂等，同一 Authority/Kind/产品/时刻/修订号出现不同内容会明确报冲突，不再被 `INSERT IGNORE` 静默吞掉；
+- 写入永久档案前校验 `DECIMAL(65,30)` 边界，超过 35 位整数或 30 位小数的源价格会被明确拒绝，不允许数据库静默舍入后参与结算；
 - 快照包含内容哈希 ID、用途、来源时间、接收时间、修订号和公式版本；
 - Trade 使用的快照持久化到 `t_trade_market_snapshot`；
 - 秒合约、资金费、交割和强平记录能够保存快照 ID。
 
 尚不能称为“权威行情快照”：
 
-- 当前只有 iTick WebSocket Quote 由生产方确认；REST 预热、断线补数据及其他行情源没有统一 Authority 注册、确认和修订协议；
+- 当前只有 iTick WebSocket Authority 默认注册；REST 预热、断线补数据及其他行情源尚未注册，也没有快照修订和撤销协议；
 - MySQL 永久档案已建立，但尚未完成按时间分区、冷备、跨地域灾备和恢复演练；
 - Mark Price、Index Price 的成分、权重、异常剔除和平滑公式没有统一版本化实现；
 - Funding Rate 没有由独立 Price Engine 发布最终快照，仍由 Trade 根据两个 Quote 计算；
 - `t_trade_market_snapshot` 只保存被 Trade 使用过的快照，不是行情全量权威档案；
-- 来源查询当前写死 `itick-ws`，尚不支持配置化的 Authority 白名单、优先级、修订替换和撤销。
+- Authority 已可注册、禁用并限制类型，Trade 查询来源已配置化；尚不支持多 Authority 优先级、修订替换和快照撤销。
+- 不带 Authority 的 Quote 当前不会进入权威 Snapshot Outbox，原 Option 同步行为需要单独的非权威异步通道或明确禁用；
+- Snapshot Outbox 的人工终态尚无管理端查询、重试和告警入口。
 
 目标边界保持不变：itick 或独立 Price Engine 负责生产并永久归档 Mark/Index/Funding/Delivery Candidate 快照，Trade 只能按业务时刻和用途读取已经确认的快照，不得自行把普通 Quote 升格为权威快照。当前永久归档只覆盖 `FINAL_QUOTE`，仍不能替代版本化 Price Engine。
 
@@ -536,12 +549,12 @@ Outbox 必须具备：
 
 | 优先级 | 问题 | 修复完成标准 | 当前门禁 |
 | --- | --- | --- | --- |
-| P0 | 权威行情已永久归档 Quote，尚缺 Price Engine | MySQL 永久档案和历史 RPC 已完成；仍须由 Price Engine 发布版本化 Mark/Index/Funding/Delivery 快照，并支持 Authority 注册、修订和撤销 | 禁止秒合约真实派彩、资金费、交割和自动强平 |
-| P0 | 资金费缺少差额账户和持久化 Saga | 当前已按历史时点取 Quote、事务锁仓并拒绝不守恒批次；仍须增加平台差额账户、逐步骤指令、对账和故障恢复 | 禁止生产资金费任务 |
-| P0 | ADL 缺少持久化 Saga | 已改为锁仓校验后幂等入账；仍须持久化仓位预留及 PREPARED/ASSET_DONE/POSITION_DONE，冲突可查询、可补偿且不重复入账 | 禁止 ADL |
-| P0 | ADL 数量和保证金已局部修复，跨进程边界未验收 | 当前已限制总量、分桶扣减保证金且只选正常仓位；仍须以 Saga、并发和故障注入证明边界 | 禁止 ADL |
+| P0 | 权威行情已永久归档并注册 Authority，尚缺 Price Engine | MySQL 永久档案、历史 RPC、Authority 启停/类型校验和 Trade 配置化已完成；仍须由 Price Engine 发布版本化 Mark/Index/Funding/Delivery 快照，并支持修订和撤销 | 禁止秒合约真实派彩、资金费、交割和自动强平 |
+| P0 | 资金费生产验收尚未完成 | 平台差额账户、逐步骤指令、原子领取、租约恢复和历史批次回填已完成；仍须 Price Engine、日终对账和故障注入验收 | 禁止生产资金费任务 |
+| P0 | ADL 生产验收尚未完成 | 持久化预留、执行事实、PREPARED/ASSET_DONE/POSITION_DONE、数量上限和分桶保证金已实现；仍须独立恢复扫描、上层 Liquidation Saga、对账和故障注入 | 禁止 ADL |
 | P0 | 保险基金账户身份由 Trade 参数指定 | Asset 根据租户和账户类型自行解析并校验基金账户，不接受普通用户账户冒充；赔付和冲正参数全量幂等校验 | 禁止保险基金真实扣款 |
-| P1 | 交割算法、历史样本和恢复状态不完整 | 固化样本集合及算法；延迟任务可重放；零仓位/已关闭仓位明确终态；Asset 对账后完成 Batch | 禁止自动归档交割合约 |
+| P1 | 交割算法、零步骤边界和对账不完整 | Asset/Position Saga 和旧批次恢复已完成；仍须固化多样本算法、处理零 Asset 步骤，并在 Asset 对账后完成 Batch | 禁止自动归档交割合约 |
+| P1 | 行情异步发布运营入口不完整 | 快照/outbox 同事务、租约恢复和 Redis 修复已完成；仍须处理非 Authority Quote，并增加人工任务查询、重试和告警 | 不得宣称行情发布闭环完成 |
 | P1 | 秒合约精度、错过窗口后的运营闭环不足 | 价格全链路定点数；退款、人工补偿、批量对账和异常率告警通过验收 | 仅测试环境运行 |
 | P1 | 保险基金冲正响应和日终对账不足 | 重放返回原真实流水；基金余额、赔付、冲正、ADL 每日自动对账和告警 | 不得标记风险闭环完成 |
 
@@ -666,13 +679,13 @@ flowchart LR
 
 开发内容：Funding Batch/Settlement、Delivery Batch/Settlement、价格快照、逐仓结算、保证金释放及对账。
 
-当前情况：Batch 已按历史业务时点读取 iTick Quote，仓位参与集合在事务内加锁并保存版本，不守恒批次会安全回滚；但永久权威档案、Price Engine 公式快照、平台差额账户、逐步骤 Asset Saga、后台版本审计及交割恢复仍未通过，生产任务保持关闭。
+当前情况：Batch 已读取历史永久 Quote，仓位集合在事务内加锁并保存版本，价格执行精度契约校验；平台差额账户、资金费/交割逐步骤 Asset Saga、原子领取、租约恢复和旧批次回填已经完成。Price Engine 公式快照、多样本交割算法、零 Asset 步骤终态、日终对账及故障注入仍未通过，生产任务保持关闭。
 
 ### 阶段七：强平和风险闭环（主体已实现，存在 P0，禁止生产）
 
 开发内容：强平批次、撤单、风险重算、强平委托、保险基金、穿仓和 ADL。
 
-当前情况：风险扫描、保险基金和 ADL 主体代码已存在，但 3.10、3.12 的资金/仓位原子性、数量上限、基金账户鉴权和持久化 Saga 尚未关闭。
+当前情况：ADL 持久化预留、数量上限、保证金分桶及 Asset/Position 两阶段 Saga 已完成；独立恢复扫描、保险基金账户鉴权、上层 Liquidation Saga、日终对账和故障注入尚未关闭。
 
 ### 阶段八：对账和故障演练（P0，贯穿各阶段）
 
@@ -794,14 +807,14 @@ flowchart LR
 
 基于本次复审，后续严格按以下顺序实施：
 
-1. 在已完成 iTick Quote 永久归档和历史 RPC 的基础上，实现 Authority 注册，并由 Price Engine 生产版本化 Mark/Index/Funding/Delivery 快照；
-2. 在已完成历史取价、仓位事务锁和守恒拒绝的基础上，补齐资金费平台差额账户、逐步骤 Asset Saga、后台审计和故障恢复；
-3. 修复 ADL 的仓位预留、数量上限、保证金扣减及 Asset/Position 持久化 Saga；
-4. 将保险基金账户解析和身份校验收口到 Asset，并强化赔付/冲正幂等参数校验；
-5. 补齐交割历史样本重放、算法一致性、恢复终态和 Asset 对账；
-6. 补齐秒合约定点数精度、退款补偿、批量对账和告警；
-7. 完成现货及合约全矩阵回归、并发测试和跨服务故障注入；
-8. 逐项解除 3.12 门禁，小流量启用并持续核对资金、仓位和流水。
+1. 在已完成 iTick Quote 永久归档、历史 RPC 和 Authority 注册的基础上，由 Price Engine 生产版本化 Mark/Index/Funding/Delivery 快照，并实现修订和撤销；
+2. 对已完成的资金费平台差额账户、逐步骤 Asset Saga 和租约恢复执行跨服务对账与故障注入验收；
+3. 为 ADL 增加独立恢复扫描，并把保险基金、ADL 集合和强平关闭纳入统一 Liquidation Saga；
+4. 修复非 Authority Quote 异步同步、零 Asset 步骤交割及 Snapshot Outbox 人工运营入口；
+5. 将保险基金账户解析和身份校验收口到 Asset，并强化赔付/冲正幂等参数校验；
+6. 补齐交割历史样本重放、算法一致性和 Asset 对账；
+7. 补齐秒合约退款补偿、批量对账和告警；
+8. 完成日终自动对账、全矩阵回归、并发测试和跨服务故障注入后逐项解除门禁。
 
 前四项 P0 未全部完成前，不得通过配置、人工触发或定时任务绕过门禁。P0 关闭后仍需完成 P1 和验收方案，才能宣称秒合约、永续、交割及风险处置业务完整。
 
@@ -831,8 +844,8 @@ Fill
 当前不能作出“所有 P0 已完成”或“可以按真实资金上线”的结论：
 
 - 3.1～3.6、3.11 已具备核心实现，其中合约矩阵及跨服务故障注入仍需持续验收；
-- 3.7～3.10 只有主体实现，权威价格、历史时点结算、保险基金账户安全和 ADL 原子性尚未闭环；
-- 历史时点 Quote 查询、iTick 原始十进制价格、资金费仓位锁/版本快照和零和拒绝已实现，但它们只是关闭直接资金风险的过渡能力，不等于永久权威快照、差额账户或 Saga 已完成；
+- 3.7～3.10 已补齐历史取价、资金费/交割 Saga 和 ADL 两阶段执行，但版本化 Price Engine、保险基金账户安全、自动对账和故障注入尚未闭环；
+- 永久 Quote 档案、精度契约、平台差额账户、结算 Saga 和行情 outbox 已实现；这些能力仍不能替代 Price Engine、账本对账及生产故障验收；
 - 秒合约真实派彩、生产资金费、自动交割归档、自动强平、保险基金真实扣款和 ADL 必须保持关闭；
 - 下一开发优先级以 3.12 的 P0 顺序为准，不再是重复建设 Position Engine。
 

@@ -74,6 +74,17 @@ func (b *MarketDataCache) SetKlineStaleTTL(ttl time.Duration) {
 
 func (b *MarketDataCache) Set(ctx context.Context, msg ClientMessage, payload any) error {
 	msg = NormalizeClientMessage(msg)
+	if quote, ok := payload.(*QuotePayload); ok && quote != nil && quote.Authority != "" {
+		b.mu.RLock()
+		handler := b.quoteHandler
+		b.mu.RUnlock()
+		if handler == nil {
+			return fmt.Errorf("authoritative quote handler is not configured")
+		}
+		if err := handler(ctx, msg, quote); err != nil {
+			return err
+		}
+	}
 
 	raw, err := json.Marshal(payload)
 	if err != nil {
@@ -136,17 +147,14 @@ func (b *MarketDataCache) Set(ctx context.Context, msg ClientMessage, payload an
 		}
 	}
 	if quote, ok := payload.(*QuotePayload); ok && quote != nil {
-		if quote.Authority != "" && quote.LastPriceText != "" {
-			if _, err := b.PublishAuthoritativeQuote(ctx, msg, quote); err != nil {
-				return err
-			}
-		}
-		b.mu.RLock()
-		handler := b.quoteHandler
-		b.mu.RUnlock()
-		if handler != nil {
-			if err := handler(ctx, msg, quote); err != nil {
-				return err
+		if quote.Authority == "" {
+			b.mu.RLock()
+			handler := b.quoteHandler
+			b.mu.RUnlock()
+			if handler != nil {
+				if err := handler(ctx, msg, quote); err != nil {
+					return err
+				}
 			}
 		}
 	}

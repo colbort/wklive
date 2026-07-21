@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 
 	bus "wklive/common/bus/redis"
@@ -52,6 +51,8 @@ type ServiceContext struct {
 	ItickSyncTaskModel          models.TItickSyncTaskModel
 	ItickQuoteModel             models.TItickQuoteModel
 	AuthoritativeSnapshotModel  AuthoritativeSnapshotStore
+	SnapshotOutboxModel         models.TItickSnapshotOutboxModel
+	AuthorityRegistryModel      AuthorityRegistryStore
 	ItickKlineSyncProgressModel models.TItickKlineSyncProgressModel
 	MarketCalendarModel         models.TItickMarketCalendarModel
 	MarketHolidayModel          models.TItickMarketHolidayModel
@@ -60,8 +61,13 @@ type ServiceContext struct {
 }
 
 type AuthoritativeSnapshotStore interface {
-	InsertIgnore(context.Context, *models.TItickAuthoritativeSnapshot) error
-	FindAtOrBefore(context.Context, string, string, string, string, int64, int64) (*models.TItickAuthoritativeSnapshot, error)
+	InsertImmutable(context.Context, *models.TItickAuthoritativeSnapshot) error
+	InsertImmutableAndEnqueue(context.Context, *models.TItickAuthoritativeSnapshot, string) error
+	FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*models.TItickAuthoritativeSnapshot, error)
+}
+
+type AuthorityRegistryStore interface {
+	FindEnabled(context.Context, string) (*models.TItickAuthorityRegistry, error)
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -87,6 +93,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	itickSyncTaskModel := models.NewTItickSyncTaskModel(conn, c.CacheRedis)
 	itickQuoteModel := models.NewTItickQuoteModel(conn, c.CacheRedis)
 	authoritativeSnapshotModel := models.NewTItickAuthoritativeSnapshotModel(conn, c.CacheRedis)
+	authorityRegistryModel := models.NewTItickAuthorityRegistryModel(conn, c.CacheRedis)
+	snapshotOutboxModel := models.NewTItickSnapshotOutboxModel(conn, c.CacheRedis)
 	itickKlineSyncProgressModel := models.NewTItickKlineSyncProgressModel(conn, c.CacheRedis)
 	marketCalendarModel := models.NewTItickMarketCalendarModel(conn, c.CacheRedis)
 	marketHolidayModel := models.NewTItickMarketHolidayModel(conn, c.CacheRedis)
@@ -136,46 +144,30 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		rpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
 		if payload.Authority != "" && payload.LastPriceText != "" {
-			snapshot, snapshotErr := marketDataCache.PublishAuthoritativeQuote(rpcCtx, msg, payload)
+			authority, authorityErr := authorityRegistryModel.FindEnabled(rpcCtx, payload.Authority)
+			if authorityErr != nil {
+				return fmt.Errorf("resolve market authority %q: %w", payload.Authority, authorityErr)
+			}
+			if !authority.Allows("FINAL_QUOTE") {
+				return fmt.Errorf("market authority %q cannot publish FINAL_QUOTE", payload.Authority)
+			}
+			snapshot, snapshotErr := icache.BuildAuthoritativeQuoteSnapshot(msg, payload)
 			if snapshotErr != nil {
 				logx.Errorf("publish authoritative quote failed, symbol=%s market=%s err=%v", msg.Symbol, msg.Market, snapshotErr)
 				return snapshotErr
 			}
 			raw, marshalErr := json.Marshal(snapshot)
+			outboxPayload, outboxErr := json.Marshal(map[string]any{"snapshot": snapshot, "message": msg, "quote": payload})
 			price, priceErr := decimal.NewFromString(snapshot.Price)
-			if marshalErr != nil || priceErr != nil {
+			if marshalErr != nil || outboxErr != nil || priceErr != nil {
 				logx.Errorf("encode authoritative quote failed, snapshot=%s", snapshot.SnapshotID)
-				return fmt.Errorf("encode authoritative quote: marshal=%v price=%v", marshalErr, priceErr)
+				return fmt.Errorf("encode authoritative quote: snapshot=%v outbox=%v price=%v", marshalErr, outboxErr, priceErr)
 			}
-			if snapshotErr = authoritativeSnapshotModel.InsertIgnore(rpcCtx, &models.TItickAuthoritativeSnapshot{SnapshotId: snapshot.SnapshotID, Authority: snapshot.Authority, SnapshotKind: snapshot.Kind, CategoryCode: snapshot.CategoryCode, Market: snapshot.Market, Symbol: snapshot.Symbol, Price: price, SourceTimestamp: snapshot.SourceTimestamp, SnapshotTimestamp: snapshot.SnapshotTimestamp, Revision: snapshot.Revision, FormulaVersion: snapshot.FormulaVersion, RawPayload: string(raw), CreateTimes: time.Now().UnixMilli()}); snapshotErr != nil {
+			if snapshotErr = authoritativeSnapshotModel.InsertImmutableAndEnqueue(rpcCtx, &models.TItickAuthoritativeSnapshot{SnapshotId: snapshot.SnapshotID, Authority: snapshot.Authority, SnapshotKind: snapshot.Kind, CategoryCode: snapshot.CategoryCode, Market: snapshot.Market, Symbol: snapshot.Symbol, Price: price, SourceTimestamp: snapshot.SourceTimestamp, SnapshotTimestamp: snapshot.SnapshotTimestamp, Revision: snapshot.Revision, FormulaVersion: snapshot.FormulaVersion, RawPayload: string(raw), CreateTimes: time.Now().UnixMilli()}, string(outboxPayload)); snapshotErr != nil {
 				logx.Errorf("archive authoritative quote failed, snapshot=%s err=%v", snapshot.SnapshotID, snapshotErr)
 				return snapshotErr
 			}
-		}
-
-		resp, err := optionCli.SyncMarketQuote(rpcCtx, &option.SyncMarketQuoteReq{
-			CategoryCode:    msg.CategoryCode,
-			Market:          msg.Market,
-			Symbol:          msg.Symbol,
-			UnderlyingPrice: strconv.FormatFloat(payload.LastPrice, 'f', -1, 64),
-			OpenPrice:       strconv.FormatFloat(payload.Open, 'f', -1, 64),
-			HighPrice:       strconv.FormatFloat(payload.High, 'f', -1, 64),
-			LowPrice:        strconv.FormatFloat(payload.Low, 'f', -1, 64),
-			Volume:          strconv.FormatFloat(payload.Volume, 'f', -1, 64),
-			Turnover:        strconv.FormatFloat(payload.Turnover, 'f', -1, 64),
-			QuoteTs:         payload.Ts,
-		})
-		if err != nil {
-			logx.Errorf("sync option market quote failed, symbol=%s market=%s err=%v", msg.Symbol, msg.Market, err)
 			return nil
-		}
-		if resp == nil || resp.GetBase() == nil {
-			logx.Errorf("sync option market quote empty response, symbol=%s market=%s", msg.Symbol, msg.Market)
-			return nil
-		}
-		if resp.GetBase().GetCode() != 200 {
-			logx.Errorf("sync option market quote rejected, symbol=%s market=%s code=%d msg=%s",
-				msg.Symbol, msg.Market, resp.GetBase().GetCode(), resp.GetBase().GetMsg())
 		}
 		return nil
 	})
@@ -199,6 +191,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ItickSyncTaskModel:          itickSyncTaskModel,
 		ItickQuoteModel:             itickQuoteModel,
 		AuthoritativeSnapshotModel:  authoritativeSnapshotModel,
+		SnapshotOutboxModel:         snapshotOutboxModel,
+		AuthorityRegistryModel:      authorityRegistryModel,
 		ItickKlineSyncProgressModel: itickKlineSyncProgressModel,
 		MarketCalendarModel:         marketCalendarModel,
 		MarketHolidayModel:          marketHolidayModel,

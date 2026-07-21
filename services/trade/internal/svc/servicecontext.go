@@ -46,6 +46,8 @@ type ServiceContext struct {
 	ContractInsuranceFundModel  models.TContractInsuranceFundAccountModel
 	ContractFundingBatchModel   models.TContractFundingBatchModel
 	ContractFundingSettleModel  models.TContractFundingSettlementModel
+	FundingDifferenceAcctModel  models.TContractFundingDifferenceAccountModel
+	ContractAdlExecutionModel   models.TContractAdlExecutionModel
 	ContractDeliveryBatchModel  models.TContractDeliveryBatchModel
 	ContractDeliverySettleModel models.TContractDeliverySettlementModel
 	ContractUserConfigModel     models.TContractUserConfigModel
@@ -101,9 +103,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ContractMarginSnapshotModel: models.NewTContractMarginSnapshotModel(conn, c.CacheRedis),
 		ContractRiskLimitTierModel:  models.NewTContractRiskLimitTierModel(conn, c.CacheRedis),
 		ContractLiquidationModel:    models.NewTContractLiquidationModel(conn, c.CacheRedis),
-		ContractInsuranceFundModel:  models.NewTContractInsuranceFundAccountModel(conn),
+		ContractInsuranceFundModel:  models.NewTContractInsuranceFundAccountModel(conn, c.CacheRedis),
 		ContractFundingBatchModel:   models.NewTContractFundingBatchModel(conn, c.CacheRedis),
 		ContractFundingSettleModel:  models.NewTContractFundingSettlementModel(conn, c.CacheRedis),
+		FundingDifferenceAcctModel:  models.NewTContractFundingDifferenceAccountModel(conn, c.CacheRedis),
+		ContractAdlExecutionModel:   models.NewTContractAdlExecutionModel(conn, c.CacheRedis),
 		ContractDeliveryBatchModel:  models.NewTContractDeliveryBatchModel(conn, c.CacheRedis),
 		ContractDeliverySettleModel: models.NewTContractDeliverySettlementModel(conn, c.CacheRedis),
 		ContractUserConfigModel:     models.NewTContractUserConfigModel(conn, c.CacheRedis),
@@ -122,7 +126,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AssetClient:                 asset.NewAssetInternalClient(assetCli.Conn()),
 		ItickClient:                 itick.NewItickAppClient(itickCli.Conn()),
 		MarketDataCache:             cache.NewMarketDataCache(marketRedis),
-		TradeMarketSnapshotModel:    models.NewTTradeMarketSnapshotModel(conn),
+		TradeMarketSnapshotModel:    models.NewTTradeMarketSnapshotModel(conn, c.CacheRedis),
 	}
 }
 

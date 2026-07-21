@@ -186,7 +186,7 @@ func insertMatchOutboxEvent(ctx context.Context, eventModel models.TBizTradeEven
 func insertSettlementInstructionIdempotent(ctx context.Context, model models.TTradeSettlementInstructionModel, instruction *models.TTradeSettlementInstruction) error {
 	exists, err := model.FindOneByTenantIdInstructionNo(ctx, instruction.TenantId, instruction.InstructionNo)
 	if err == nil {
-		if exists.BizId != instruction.BizId || exists.FillId != instruction.FillId || exists.OrderId != instruction.OrderId || exists.Action != instruction.Action || exists.Asset != instruction.Asset || !exists.Amount.Equal(instruction.Amount) {
+		if !sameSettlementInstructionIdentity(exists, instruction) {
 			return fmt.Errorf("settlement instruction idempotency conflict: %s", instruction.InstructionNo)
 		}
 		return nil
@@ -196,4 +196,8 @@ func insertSettlementInstructionIdempotent(ctx context.Context, model models.TTr
 	}
 	_, err = model.Insert(ctx, instruction)
 	return err
+}
+
+func sameSettlementInstructionIdentity(a, b *models.TTradeSettlementInstruction) bool {
+	return a != nil && b != nil && a.TenantId == b.TenantId && a.InstructionNo == b.InstructionNo && a.BizType == b.BizType && a.BizId == b.BizId && a.BatchNo == b.BatchNo && a.FillId == b.FillId && a.OrderId == b.OrderId && a.PositionId == b.PositionId && a.ReservationNo == b.ReservationNo && a.UserId == b.UserId && a.Action == b.Action && a.Asset == b.Asset && a.Amount.Equal(b.Amount) && a.StepNo == b.StepNo
 }

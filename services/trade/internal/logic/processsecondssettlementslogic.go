@@ -305,7 +305,11 @@ func (l *ProcessSecondsSettlementsLogic) getOneValidQuote(kind, source string, s
 	if l.svcCtx.ItickClient == nil {
 		return nil, errors.New("authoritative market archive client is unavailable")
 	}
-	resp, err := l.svcCtx.ItickClient.GetAuthoritativeSnapshot(l.ctx, &itick.GetAuthoritativeSnapshotReq{Authority: "itick-ws", CategoryCode: category, Market: market, Symbol: symbol, TargetTime: targetTime, MaxLookbackMs: validity})
+	authority := strings.TrimSpace(l.svcCtx.Config.MarketAuthority)
+	if authority == "" {
+		return nil, errors.New("market authority is not configured")
+	}
+	resp, err := l.svcCtx.ItickClient.GetAuthoritativeSnapshot(l.ctx, &itick.GetAuthoritativeSnapshotReq{Authority: authority, SnapshotKind: "FINAL_QUOTE", CategoryCode: category, Market: market, Symbol: symbol, TargetTime: targetTime, MaxLookbackMs: validity})
 	if err != nil {
 		return nil, err
 	}
@@ -325,6 +329,11 @@ func (l *ProcessSecondsSettlementsLogic) getOneValidQuote(kind, source string, s
 }
 
 func persistMarketSnapshot(ctx context.Context, model models.TTradeMarketSnapshotModel, tenantID, symbolID int64, s *cache.SettlementSnapshot) error {
+	for field, value := range map[string]string{"price": s.Price, "mark_price": s.MarkPrice, "index_price": s.IndexPrice, "funding_rate": s.FundingRate} {
+		if err := validateTradeDecimal(value); err != nil {
+			return fmt.Errorf("authoritative snapshot %s exceeds Trade DECIMAL(36,18) contract: %w", field, err)
+		}
+	}
 	raw, err := json.Marshal(s)
 	if err != nil {
 		return err
@@ -335,6 +344,32 @@ func persistMarketSnapshot(ctx context.Context, model models.TTradeMarketSnapsho
 	}
 	_, err = model.InsertIgnore(ctx, &models.TTradeMarketSnapshot{TenantId: tenantID, SnapshotId: s.SnapshotID, SnapshotKind: s.Kind, SymbolId: symbolID, Source: s.Source, Price: mustParseFloat(s.Price), MarkPrice: mustParseFloat(s.MarkPrice), IndexPrice: mustParseFloat(s.IndexPrice), FundingRate: mustParseFloat(s.FundingRate), SourceTimestamp: s.SourceTimestamp, SnapshotTimestamp: s.SnapshotTimestamp, Revision: s.Revision, FormulaVersion: s.FormulaVersion, Confirmed: confirmed, RawPayload: string(raw), CreateTimes: utils.NowMillis()})
 	return err
+}
+
+func validateTradeDecimal(value string) error {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return nil
+	}
+	d, err := decimal.NewFromString(value)
+	if err != nil {
+		return fmt.Errorf("invalid decimal %q", value)
+	}
+	plain := d.String()
+	unsigned := strings.TrimPrefix(plain, "-")
+	parts := strings.SplitN(unsigned, ".", 2)
+	integerDigits := len(strings.TrimLeft(parts[0], "0"))
+	if integerDigits == 0 {
+		integerDigits = 1
+	}
+	fractionDigits := 0
+	if len(parts) == 2 {
+		fractionDigits = len(strings.TrimRight(parts[1], "0"))
+	}
+	if integerDigits > 18 || fractionDigits > 18 {
+		return fmt.Errorf("value %q requires %d integer and %d fractional digits", value, integerDigits, fractionDigits)
+	}
+	return nil
 }
 func quoteIsValid(q *marketQuoteSnapshot, validity int64) bool {
 	return quoteIsValidAt(q, utils.NowMillis(), validity)

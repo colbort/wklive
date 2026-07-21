@@ -86,6 +86,7 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 				}
 				batchID, _ := res.LastInsertId()
 				feeTotals := make(map[string]decimal.Decimal)
+				im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 				for _, p := range active {
 					values, err := calculateContractTradeValues(p.ContractValueType, p.Qty, c.ContractSize, mark)
 					if err != nil {
@@ -96,12 +97,33 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 						fee = fee.Neg()
 					}
 					feeTotals[p.MarginAsset] = feeTotals[p.MarginAsset].Add(fee)
-					if _, err = sm.Insert(ctx, &models.TContractFundingSettlement{TenantId: c.TenantId, SettlementNo: fmt.Sprintf("%s-%d", batchNo, p.Id), BatchId: batchID, BatchNo: batchNo, SymbolId: c.SymbolId, UserId: p.UserId, PositionId: p.Id, PositionSide: p.PositionSide, FundingRate: rate, MarkPrice: mark, PositionQty: p.Qty, PositionVersion: p.Version, FeeAsset: p.MarginAsset, FeeAmount: fee, SettlementTime: settlementTime, Status: int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
+					settlementNo := fmt.Sprintf("%s-%d", batchNo, p.Id)
+					if _, err = sm.Insert(ctx, &models.TContractFundingSettlement{TenantId: c.TenantId, SettlementNo: settlementNo, BatchId: batchID, BatchNo: batchNo, SymbolId: c.SymbolId, UserId: p.UserId, PositionId: p.Id, PositionSide: p.PositionSide, FundingRate: rate, MarkPrice: mark, PositionQty: p.Qty, PositionVersion: p.Version, FeeAsset: p.MarginAsset, FeeAmount: fee, SettlementTime: settlementTime, Status: int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
 						return err
 					}
+					if !fee.IsZero() {
+						action, step := trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE, int64(2)
+						if fee.IsNegative() {
+							action, step = trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS, 1
+						}
+						if err = insertSettlementInstructionIdempotent(ctx, im, &models.TTradeSettlementInstruction{TenantId: c.TenantId, InstructionNo: settlementNo + "-ASSET", BizType: "funding", BizId: settlementNo, BatchNo: batchNo, PositionId: p.Id, UserId: p.UserId, Action: int64(action), Asset: p.MarginAsset, Amount: fee.Abs(), StepNo: step, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
+							return err
+						}
+					}
 				}
-				if err = validateFundingConservation(feeTotals); err != nil {
-					return err
+				for assetCode, difference := range feeTotals {
+					if difference.IsZero() {
+						continue
+					}
+					account, accountErr := l.svcCtx.FundingDifferenceAcctModel.FindEnabled(ctx, c.TenantId, assetCode)
+					if accountErr != nil {
+						return fmt.Errorf("funding difference account unavailable: asset=%s difference=%s: %w", assetCode, difference, accountErr)
+					}
+					action, step := fundingDifferenceInstruction(difference)
+					instructionNo := fmt.Sprintf("%s-DIFF-%s", batchNo, assetCode)
+					if err = insertSettlementInstructionIdempotent(ctx, im, &models.TTradeSettlementInstruction{TenantId: c.TenantId, InstructionNo: instructionNo, BizType: "funding", BizId: "DIFF:" + assetCode, BatchNo: batchNo, UserId: account.FundUserId, Action: int64(action), Asset: assetCode, Amount: difference.Abs(), StepNo: step, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
+						return err
+					}
 				}
 				return nil
 			}); err != nil {
@@ -114,13 +136,11 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 	}
 }
 
-func validateFundingConservation(totals map[string]decimal.Decimal) error {
-	for asset, total := range totals {
-		if !total.IsZero() {
-			return fmt.Errorf("funding batch is not balanced: asset=%s difference=%s", asset, total)
-		}
+func fundingDifferenceInstruction(userNet decimal.Decimal) (trade.SettlementInstructionAction, int64) {
+	if userNet.IsNegative() {
+		return trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE, 2
 	}
-	return nil
+	return trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS, 1
 }
 
 func (l *ProcessFundingSettlementsLogic) lockFundingInputs(c *models.TTradeSymbolContract, settlementTime int64) (decimal.Decimal, decimal.Decimal, decimal.Decimal, string, error) {
@@ -190,107 +210,211 @@ func parseParts(v string) []string {
 }
 
 func (l *ProcessFundingSettlementsLogic) settlePending(tenantID int64) error {
-	for _, status := range []trade.FundingSettlementStatus{trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_PENDING, trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_FAILED} {
-		cursor := int64(0)
-		for {
-			rows, _, err := l.svcCtx.ContractFundingSettleModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: tenantID, Status: int64(status)}, cursor, 100)
-			if err != nil {
+	// Zero-value settlements have no Asset step but still need the position projection.
+	rows, _, err := l.svcCtx.ContractFundingSettleModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: tenantID, Status: int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_PENDING)}, 0, 100)
+	if err != nil {
+		return err
+	}
+	for _, row := range rows {
+		if row.FeeAmount.IsZero() {
+			if err = l.completeFunding(row); err != nil {
 				return err
 			}
-			if len(rows) == 0 {
-				break
+		}
+	}
+	for processed := 0; processed < 1000; {
+		now := utils.NowMillis()
+		instructions, findErr := l.svcCtx.TradeSettlementInstrModel.FindPendingBiz(l.ctx, tenantID, "funding", now, 100)
+		if findErr != nil {
+			return findErr
+		}
+		if len(instructions) == 0 {
+			break
+		}
+		progressed := false
+		for _, instruction := range instructions {
+			claimed, claimErr := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, instruction.Id, now)
+			if claimErr != nil {
+				return claimErr
 			}
-			for _, row := range rows {
-				cursor = row.Id
-				if row.NextRetryAt > utils.NowMillis() {
-					continue
-				}
-				if row.FeeAmount.IsPositive() {
-					ready, readyErr := l.fundingReceiversReady(row)
-					if readyErr != nil {
-						return readyErr
-					}
-					if !ready {
-						continue
-					}
-				}
-				if err := l.settleOne(row); err != nil {
-					row.RetryCount++
-					row.LastErrorMsg = err.Error()
-					row.NextRetryAt = utils.NowMillis() + tradeEventRetryDelay(row.RetryCount).Milliseconds()
-					row.Status = int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_FAILED)
-					row.UpdateTimes = utils.NowMillis()
-					if row.RetryCount >= 20 {
-						row.Status = int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_MANUAL_REVIEW)
-					}
-					if updateErr := l.svcCtx.ContractFundingSettleModel.Update(l.ctx, row); updateErr != nil {
-						return updateErr
-					}
+			if !claimed {
+				continue
+			}
+			progressed = true
+			processed++
+			if executeErr := l.executeFundingInstruction(instruction); executeErr != nil {
+				if markErr := l.failFundingInstruction(instruction, executeErr); markErr != nil {
+					return markErr
 				}
 			}
-			if len(rows) < 100 {
-				break
-			}
+		}
+		if !progressed {
+			break
 		}
 	}
 	return l.finishBatches(tenantID)
 }
 
-func (l *ProcessFundingSettlementsLogic) fundingReceiversReady(row *models.TContractFundingSettlement) (bool, error) {
-	count, err := l.svcCtx.ContractFundingSettleModel.CountUnsettledPayers(l.ctx, row.TenantId, row.BatchId, int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_SETTLED))
-	return count == 0, err
-}
-func (l *ProcessFundingSettlementsLogic) settleOne(row *models.TContractFundingSettlement) error {
-	if row.FeeAmount.IsZero() {
-		return l.completeFunding(row)
+func (l *ProcessFundingSettlementsLogic) executeFundingInstruction(item *models.TTradeSettlementInstruction) error {
+	walletType := common.WalletType_WALLET_TYPE_CONTRACT
+	if item.PositionId == 0 {
+		account, err := l.svcCtx.FundingDifferenceAcctModel.FindEnabled(l.ctx, item.TenantId, item.Asset)
+		if err != nil {
+			return fmt.Errorf("resolve funding difference account: %w", err)
+		}
+		if account == nil || account.FundUserId != item.UserId || account.WalletType <= 0 {
+			return errors.New("funding difference account identity changed")
+		}
+		walletType = common.WalletType(account.WalletType)
+	} else if err := l.validateFundingUserInstruction(item); err != nil {
+		return err
 	}
 	var resp *asset.ChangeAssetResp
 	var err error
-	amount := row.FeeAmount.Abs().String()
-	if row.FeeAmount.IsPositive() {
-		resp, err = l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{TenantId: row.TenantId, UserId: row.UserId, WalletType: common.WalletType_WALLET_TYPE_CONTRACT, Coin: row.FeeAsset, Amount: amount, BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_TRADE_MATCH, BizId: row.Id, BizNo: row.SettlementNo, Remark: "contract funding income"})
+	requestID := item.Id
+	if item.Action == int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE) {
+		resp, err = l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{TenantId: item.TenantId, UserId: item.UserId, WalletType: walletType, Coin: item.Asset, Amount: item.Amount.String(), BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_TRADE_MATCH, BizId: requestID, BizNo: item.InstructionNo, Remark: "contract funding saga credit"})
+	} else if item.Action == int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS) {
+		resp, err = l.svcCtx.AssetClient.SubAvailable(l.ctx, &asset.SubAvailableReq{TenantId: item.TenantId, UserId: item.UserId, WalletType: walletType, Coin: item.Asset, Amount: item.Amount.String(), BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_TRADE_MATCH, BizId: requestID, BizNo: item.InstructionNo, Remark: "contract funding saga debit"})
 	} else {
-		resp, err = l.svcCtx.AssetClient.SubAvailable(l.ctx, &asset.SubAvailableReq{TenantId: row.TenantId, UserId: row.UserId, WalletType: common.WalletType_WALLET_TYPE_CONTRACT, Coin: row.FeeAsset, Amount: amount, BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_TRADE_MATCH, BizId: row.Id, BizNo: row.SettlementNo, Remark: "contract funding payment"})
+		return fmt.Errorf("invalid funding instruction action: %d", item.Action)
 	}
 	if err != nil {
 		return err
 	}
-	if resp.GetBase().GetCode() != 200 {
-		return fmt.Errorf("funding asset rejected: %s", resp.GetBase().GetMsg())
+	if resp == nil || resp.GetBase() == nil {
+		return errors.New("funding asset instruction returned an empty response")
 	}
-	return l.completeFunding(row)
+	if resp.GetBase().GetCode() != 200 {
+		return fmt.Errorf("funding asset instruction rejected: code=%d msg=%s", resp.GetBase().GetCode(), resp.GetBase().GetMsg())
+	}
+	return l.completeFundingInstruction(item)
 }
+
+func (l *ProcessFundingSettlementsLogic) validateFundingUserInstruction(item *models.TTradeSettlementInstruction) error {
+	settlement, err := l.svcCtx.ContractFundingSettleModel.FindOneByTenantIdSettlementNo(l.ctx, item.TenantId, item.BizId)
+	if err != nil {
+		return err
+	}
+	expectedAction := int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE)
+	if settlement.FeeAmount.IsNegative() {
+		expectedAction = int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS)
+	}
+	if settlement.BatchNo != item.BatchNo || settlement.PositionId != item.PositionId || settlement.UserId != item.UserId || settlement.FeeAsset != item.Asset || !settlement.FeeAmount.Abs().Equal(item.Amount) || item.Action != expectedAction || settlement.FeeAmount.IsZero() {
+		return errors.New("funding instruction does not match immutable settlement facts")
+	}
+	position, err := l.svcCtx.ContractPositionModel.FindOne(l.ctx, item.PositionId)
+	if err != nil {
+		return err
+	}
+	if position.TenantId != item.TenantId || position.UserId != item.UserId || position.LastFundingTime >= settlement.SettlementTime {
+		return errors.New("funding instruction position identity or settlement time is invalid")
+	}
+	return nil
+}
+
+func (l *ProcessFundingSettlementsLogic) completeFundingInstruction(item *models.TTradeSettlementInstruction) error {
+	now := utils.NowMillis()
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+		current, err := im.FindOneForUpdate(ctx, item.Id)
+		if err != nil || current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
+			return err
+		}
+		if current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+			return errors.New("funding instruction lease lost")
+		}
+		if current.PositionId > 0 {
+			settlement, findErr := models.NewTContractFundingSettlementModel(conn, l.svcCtx.Config.CacheRedis).FindOneByTenantIdSettlementNo(ctx, current.TenantId, current.BizId)
+			if findErr != nil {
+				return findErr
+			}
+			if err = l.completeFundingInSession(ctx, conn, settlement, now); err != nil {
+				return err
+			}
+		}
+		current.Status, current.NextRetryAt, current.LastErrorMsg, current.UpdateTimes = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS), 0, "", now
+		return im.Update(ctx, current)
+	})
+}
+
+func (l *ProcessFundingSettlementsLogic) failFundingInstruction(item *models.TTradeSettlementInstruction, cause error) error {
+	now := utils.NowMillis()
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		im := models.NewTTradeSettlementInstructionModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+		current, err := im.FindOneForUpdate(ctx, item.Id)
+		if err != nil {
+			return err
+		}
+		if current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+			return nil
+		}
+		current.RetryCount++
+		current.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED)
+		current.NextRetryAt = now + tradeEventRetryDelay(current.RetryCount).Milliseconds()
+		if current.RetryCount >= 20 {
+			current.Status, current.NextRetryAt = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW), 0
+		}
+		current.LastErrorMsg, current.UpdateTimes = cause.Error(), now
+		if err = im.Update(ctx, current); err != nil {
+			return err
+		}
+		if current.PositionId > 0 {
+			sm := models.NewTContractFundingSettlementModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+			settlement, findErr := sm.FindOneByTenantIdSettlementNo(ctx, current.TenantId, current.BizId)
+			if findErr != nil {
+				return findErr
+			}
+			settlement.RetryCount = current.RetryCount
+			settlement.NextRetryAt = current.NextRetryAt
+			settlement.LastErrorMsg = current.LastErrorMsg
+			settlement.UpdateTimes = now
+			settlement.Status = int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_FAILED)
+			if current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW) {
+				settlement.Status = int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_MANUAL_REVIEW)
+			}
+			return sm.Update(ctx, settlement)
+		}
+		return nil
+	})
+}
+
 func (l *ProcessFundingSettlementsLogic) completeFunding(row *models.TContractFundingSettlement) error {
 	now := utils.NowMillis()
 	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		sm := models.NewTContractFundingSettlementModel(conn, l.svcCtx.Config.CacheRedis)
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		hm := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
-		current, err := pm.FindOneForUpdate(ctx, row.PositionId)
-		if err != nil {
+		return l.completeFundingInSession(ctx, conn, row, now)
+	})
+}
+
+func (l *ProcessFundingSettlementsLogic) completeFundingInSession(ctx context.Context, conn sqlx.SqlConn, row *models.TContractFundingSettlement, now int64) error {
+	sm := models.NewTContractFundingSettlementModel(conn, l.svcCtx.Config.CacheRedis)
+	pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
+	hm := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
+	current, err := pm.FindOneForUpdate(ctx, row.PositionId)
+	if err != nil {
+		return err
+	}
+	if current.Id != row.PositionId {
+		return errors.New("funding settlement position identity changed")
+	}
+	if current.LastFundingTime < row.SettlementTime {
+		before := cloneContractPosition(current)
+		current.LastFundingTime = row.SettlementTime
+		current.RealizedPnl = current.RealizedPnl.Add(row.FeeAmount)
+		current.Version++
+		current.UpdateTimes = now
+		if err = pm.Update(ctx, current); err != nil {
 			return err
 		}
-		if current.Id != row.PositionId {
-			return errors.New("funding settlement position identity changed")
+		if err = writeSystemPositionHistory(ctx, hm, before, current, row.SettlementNo, trade.PositionActionType_POSITION_ACTION_TYPE_FUNDING_FEE, row.FeeAmount, decimal.Zero, row.MarkPrice, "funding fee settlement"); err != nil {
+			return err
 		}
-		if current.LastFundingTime < row.SettlementTime {
-			before := cloneContractPosition(current)
-			current.LastFundingTime = row.SettlementTime
-			current.RealizedPnl = current.RealizedPnl.Add(row.FeeAmount)
-			current.Version++
-			current.UpdateTimes = now
-			if err = pm.Update(ctx, current); err != nil {
-				return err
-			}
-			if err = writeSystemPositionHistory(ctx, hm, before, current, row.SettlementNo, trade.PositionActionType_POSITION_ACTION_TYPE_FUNDING_FEE, row.FeeAmount, decimal.Zero, row.MarkPrice, "funding fee settlement"); err != nil {
-				return err
-			}
-		}
-		row.Status = int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_SETTLED)
-		row.SettledAt, row.NextRetryAt, row.LastErrorMsg, row.UpdateTimes = now, 0, "", now
-		return sm.Update(ctx, row)
-	})
+	}
+	row.Status = int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_SETTLED)
+	row.SettledAt, row.NextRetryAt, row.LastErrorMsg, row.UpdateTimes = now, 0, "", now
+	return sm.Update(ctx, row)
 }
 func (l *ProcessFundingSettlementsLogic) finishBatches(tenantID int64) error {
 	batches, _, err := l.svcCtx.ContractFundingBatchModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: tenantID, Status: int64(trade.FundingBatchStatus_FUNDING_BATCH_STATUS_SETTLING)}, 0, 100)
@@ -298,12 +422,23 @@ func (l *ProcessFundingSettlementsLogic) finishBatches(tenantID int64) error {
 		return err
 	}
 	for _, b := range batches {
+		manual, manualErr := l.svcCtx.TradeSettlementInstrModel.CountByBatchStatus(l.ctx, b.TenantId, "funding", b.BatchNo, int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW))
+		if manualErr != nil {
+			return manualErr
+		}
+		unfinished, instructionErr := l.svcCtx.TradeSettlementInstrModel.CountUnfinishedByBatch(l.ctx, b.TenantId, "funding", b.BatchNo)
+		if instructionErr != nil {
+			return instructionErr
+		}
 		count, err := l.svcCtx.ContractFundingSettleModel.CountByBatchStatus(l.ctx, b.TenantId, b.Id, int64(trade.FundingSettlementStatus_FUNDING_SETTLEMENT_STATUS_SETTLED))
 		if err != nil {
 			return err
 		}
 		b.SettledPositions = count
-		if count == b.TotalPositions {
+		if manual > 0 {
+			b.Status = int64(trade.FundingBatchStatus_FUNDING_BATCH_STATUS_MANUAL_REVIEW)
+			b.LastErrorMsg = "one or more funding asset instructions require manual review"
+		} else if count == b.TotalPositions && unfinished == 0 {
 			b.Status = int64(trade.FundingBatchStatus_FUNDING_BATCH_STATUS_COMPLETED)
 		}
 		b.Version++

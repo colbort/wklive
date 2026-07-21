@@ -51,7 +51,7 @@ type (
 		BatchNo          string          `db:"batch_no"`           // 交割批次号
 		SymbolId         int64           `db:"symbol_id"`          // 交割合约标的ID
 		SettlementPrice  decimal.Decimal `db:"settlement_price"`   // 锁定交割价格
-		PriceSource      string          `db:"price_source"`       // 交割价格来源
+		PriceSource      string          `db:"price_source"`       // 统一交割价格快照ID
 		PriceAlgorithm   string          `db:"price_algorithm"`    // 采样算法及版本
 		SampleSnapshot   sql.NullString  `db:"sample_snapshot"`    // 原始样本与剔除信息摘要
 		OpenCutoffTime   int64           `db:"open_cutoff_time"`   // 停止开仓时间快照

@@ -135,6 +135,25 @@ CREATE TABLE `t_itick_quote` (
   KEY `idx_quote_ts` (`quote_ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick实时报价表';
 
+CREATE TABLE `t_itick_authority_registry` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `authority` VARCHAR(32) NOT NULL,
+  `producer_type` VARCHAR(32) NOT NULL COMMENT 'ITICK_WS/ITICK_REST/PRICE_ENGINE',
+  `allowed_kinds` JSON NOT NULL COMMENT '允许发布的快照类型',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1启用 2禁用',
+  `version` BIGINT NOT NULL DEFAULT 0,
+  `create_times` BIGINT NOT NULL,
+  `update_times` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_authority` (`authority`),
+  CONSTRAINT `chk_authority_registry` CHECK (`status` IN (1,2) AND `version` >= 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权威行情生产方注册表';
+
+INSERT INTO `t_itick_authority_registry`
+(`authority`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
+VALUES ('itick-ws','ITICK_WS',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
+ON DUPLICATE KEY UPDATE `producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
+
 CREATE TABLE `t_itick_authoritative_snapshot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `snapshot_id` VARCHAR(64) NOT NULL COMMENT '内容哈希ID',
@@ -152,10 +171,19 @@ CREATE TABLE `t_itick_authoritative_snapshot` (
   `create_times` BIGINT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_snapshot_id` (`snapshot_id`),
-  UNIQUE KEY `uk_authority_product_revision` (`authority`,`category_code`,`market`,`symbol`,`source_timestamp`,`revision`),
-  KEY `idx_product_time` (`authority`,`category_code`,`market`,`symbol`,`source_timestamp`,`revision`),
+  UNIQUE KEY `uk_authority_product_revision` (`authority`,`snapshot_kind`,`category_code`,`market`,`symbol`,`source_timestamp`,`revision`),
+  KEY `idx_product_time` (`authority`,`snapshot_kind`,`category_code`,`market`,`symbol`,`source_timestamp`,`revision`),
   CONSTRAINT `chk_authoritative_snapshot` CHECK (`price` > 0 AND `source_timestamp` > 0 AND `snapshot_timestamp` > 0 AND `revision` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick/Price Engine权威行情永久档案';
+
+CREATE TABLE `t_itick_snapshot_outbox` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT, `snapshot_id` VARCHAR(64) NOT NULL,
+  `payload` JSON NOT NULL, `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1 pending 2 processing 3 success 4 failed 5 manual',
+  `retry_count` INT NOT NULL DEFAULT 0, `next_retry_at` BIGINT NOT NULL DEFAULT 0,
+  `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '', `create_times` BIGINT NOT NULL, `update_times` BIGINT NOT NULL,
+  PRIMARY KEY (`id`), UNIQUE KEY `uk_snapshot_outbox` (`snapshot_id`),
+  KEY `idx_snapshot_outbox_retry` (`status`,`next_retry_at`,`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权威行情异步发布与Redis修复任务';
 
 CREATE TABLE `t_itick_kline_sync_progress` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',

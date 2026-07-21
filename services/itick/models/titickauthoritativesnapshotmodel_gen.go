@@ -25,16 +25,16 @@ var (
 	tItickAuthoritativeSnapshotRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickAuthoritativeSnapshotFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickAuthoritativeSnapshotRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickAuthoritativeSnapshotFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTItickAuthoritativeSnapshotIdPrefix                                                       = "cache:tItickAuthoritativeSnapshot:id:"
-	cacheTItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionPrefix = "cache:tItickAuthoritativeSnapshot:authority:categoryCode:market:symbol:sourceTimestamp:revision:"
-	cacheTItickAuthoritativeSnapshotSnapshotIdPrefix                                               = "cache:tItickAuthoritativeSnapshot:snapshotId:"
+	cacheTItickAuthoritativeSnapshotIdPrefix                                                                   = "cache:tItickAuthoritativeSnapshot:id:"
+	cacheTItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionPrefix = "cache:tItickAuthoritativeSnapshot:authority:snapshotKind:categoryCode:market:symbol:sourceTimestamp:revision:"
+	cacheTItickAuthoritativeSnapshotSnapshotIdPrefix                                                           = "cache:tItickAuthoritativeSnapshot:snapshotId:"
 )
 
 type (
 	tItickAuthoritativeSnapshotModel interface {
 		Insert(ctx context.Context, data *TItickAuthoritativeSnapshot) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TItickAuthoritativeSnapshot, error)
-		FindOneByAuthorityCategoryCodeMarketSymbolSourceTimestampRevision(ctx context.Context, authority string, categoryCode string, market string, symbol string, sourceTimestamp int64, revision int64) (*TItickAuthoritativeSnapshot, error)
+		FindOneByAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevision(ctx context.Context, authority string, snapshotKind string, categoryCode string, market string, symbol string, sourceTimestamp int64, revision int64) (*TItickAuthoritativeSnapshot, error)
 		FindOneBySnapshotId(ctx context.Context, snapshotId string) (*TItickAuthoritativeSnapshot, error)
 		Update(ctx context.Context, data *TItickAuthoritativeSnapshot) error
 		Delete(ctx context.Context, id int64) error
@@ -76,13 +76,13 @@ func (m *defaultTItickAuthoritativeSnapshotModel) Delete(ctx context.Context, id
 		return err
 	}
 
-	tItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionPrefix, data.Authority, data.CategoryCode, data.Market, data.Symbol, data.SourceTimestamp, data.Revision)
+	tItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v:%v", cacheTItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionPrefix, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.SourceTimestamp, data.Revision)
 	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotIdPrefix, id)
 	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotSnapshotIdPrefix, data.SnapshotId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionKey, tItickAuthoritativeSnapshotIdKey, tItickAuthoritativeSnapshotSnapshotIdKey)
+	}, tItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionKey, tItickAuthoritativeSnapshotIdKey, tItickAuthoritativeSnapshotSnapshotIdKey)
 	return err
 }
 
@@ -103,12 +103,12 @@ func (m *defaultTItickAuthoritativeSnapshotModel) FindOne(ctx context.Context, i
 	}
 }
 
-func (m *defaultTItickAuthoritativeSnapshotModel) FindOneByAuthorityCategoryCodeMarketSymbolSourceTimestampRevision(ctx context.Context, authority string, categoryCode string, market string, symbol string, sourceTimestamp int64, revision int64) (*TItickAuthoritativeSnapshot, error) {
-	tItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionPrefix, authority, categoryCode, market, symbol, sourceTimestamp, revision)
+func (m *defaultTItickAuthoritativeSnapshotModel) FindOneByAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevision(ctx context.Context, authority string, snapshotKind string, categoryCode string, market string, symbol string, sourceTimestamp int64, revision int64) (*TItickAuthoritativeSnapshot, error) {
+	tItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v:%v", cacheTItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionPrefix, authority, snapshotKind, categoryCode, market, symbol, sourceTimestamp, revision)
 	var resp TItickAuthoritativeSnapshot
-	err := m.QueryRowIndexCtx(ctx, &resp, tItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `authority` = ? and `category_code` = ? and `market` = ? and `symbol` = ? and `source_timestamp` = ? and `revision` = ? limit 1", tItickAuthoritativeSnapshotRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, authority, categoryCode, market, symbol, sourceTimestamp, revision); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `authority` = ? and `snapshot_kind` = ? and `category_code` = ? and `market` = ? and `symbol` = ? and `source_timestamp` = ? and `revision` = ? limit 1", tItickAuthoritativeSnapshotRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, authority, snapshotKind, categoryCode, market, symbol, sourceTimestamp, revision); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -144,13 +144,13 @@ func (m *defaultTItickAuthoritativeSnapshotModel) FindOneBySnapshotId(ctx contex
 }
 
 func (m *defaultTItickAuthoritativeSnapshotModel) Insert(ctx context.Context, data *TItickAuthoritativeSnapshot) (sql.Result, error) {
-	tItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionPrefix, data.Authority, data.CategoryCode, data.Market, data.Symbol, data.SourceTimestamp, data.Revision)
+	tItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v:%v", cacheTItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionPrefix, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.SourceTimestamp, data.Revision)
 	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotIdPrefix, data.Id)
 	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotSnapshotIdPrefix, data.SnapshotId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickAuthoritativeSnapshotRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.SnapshotId, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.Price, data.SourceTimestamp, data.SnapshotTimestamp, data.Revision, data.FormulaVersion, data.RawPayload, data.CreateTimes)
-	}, tItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionKey, tItickAuthoritativeSnapshotIdKey, tItickAuthoritativeSnapshotSnapshotIdKey)
+	}, tItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionKey, tItickAuthoritativeSnapshotIdKey, tItickAuthoritativeSnapshotSnapshotIdKey)
 	return ret, err
 }
 
@@ -160,13 +160,13 @@ func (m *defaultTItickAuthoritativeSnapshotModel) Update(ctx context.Context, ne
 		return err
 	}
 
-	tItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionPrefix, data.Authority, data.CategoryCode, data.Market, data.Symbol, data.SourceTimestamp, data.Revision)
+	tItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v:%v", cacheTItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionPrefix, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.SourceTimestamp, data.Revision)
 	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotIdPrefix, data.Id)
 	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotSnapshotIdPrefix, data.SnapshotId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickAuthoritativeSnapshotRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.SnapshotId, newData.Authority, newData.SnapshotKind, newData.CategoryCode, newData.Market, newData.Symbol, newData.Price, newData.SourceTimestamp, newData.SnapshotTimestamp, newData.Revision, newData.FormulaVersion, newData.RawPayload, newData.CreateTimes, newData.Id)
-	}, tItickAuthoritativeSnapshotAuthorityCategoryCodeMarketSymbolSourceTimestampRevisionKey, tItickAuthoritativeSnapshotIdKey, tItickAuthoritativeSnapshotSnapshotIdKey)
+	}, tItickAuthoritativeSnapshotAuthoritySnapshotKindCategoryCodeMarketSymbolSourceTimestampRevisionKey, tItickAuthoritativeSnapshotIdKey, tItickAuthoritativeSnapshotSnapshotIdKey)
 	return err
 }
 

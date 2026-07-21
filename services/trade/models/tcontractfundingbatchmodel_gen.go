@@ -53,7 +53,7 @@ type (
 		FundingRate      decimal.Decimal `db:"funding_rate"`      // 锁定资金费率
 		MarkPrice        decimal.Decimal `db:"mark_price"`        // 锁定标记价格
 		IndexPrice       decimal.Decimal `db:"index_price"`       // 锁定指数价格
-		PriceSource      string          `db:"price_source"`      // 价格来源
+		PriceSource      string          `db:"price_source"`      // 统一资金费快照ID
 		FormulaVersion   string          `db:"formula_version"`   // 费率与金额公式版本
 		SettlementTime   int64           `db:"settlement_time"`   // 资金费结算时刻
 		Status           int64           `db:"status"`            // 状态：1价格已锁定 2结算中 3已完成 4失败 5人工处理

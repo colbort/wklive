@@ -136,8 +136,8 @@ func (m *defaultTContractLiquidationModel) Insert(ctx context.Context, data *TCo
 	tContractLiquidationIdKey := fmt.Sprintf("%s%v", cacheTContractLiquidationIdPrefix, data.Id)
 	tContractLiquidationTenantIdLiquidationNoKey := fmt.Sprintf("%s%v:%v", cacheTContractLiquidationTenantIdLiquidationNoPrefix, data.TenantId, data.LiquidationNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractLiquidationRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.LiquidationNo, data.PositionId, data.UserId, data.SymbolId, data.PositionSide, data.MarginMode, data.TriggerMarkPrice, data.TriggerIndexPrice, data.TriggerQty, data.LiquidatedQty, data.MaintenanceMargin, data.AccountEquity, data.BankruptcyPrice, data.LiquidationFee, data.InsuranceFundAmount, data.AdlQty, data.Status, data.Reason, data.StartedAt, data.CompletedAt, data.Version, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractLiquidationRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.LiquidationNo, data.PositionId, data.UserId, data.SymbolId, data.PositionSide, data.MarginMode, data.TriggerMarkPrice, data.TriggerSnapshotId, data.TriggerIndexPrice, data.TriggerQty, data.LiquidatedQty, data.MaintenanceMargin, data.AccountEquity, data.BankruptcyPrice, data.LiquidationFee, data.InsuranceFundAmount, data.AdlQty, data.Status, data.Reason, data.StartedAt, data.CompletedAt, data.Version, data.CreateTimes, data.UpdateTimes)
 	}, tContractLiquidationIdKey, tContractLiquidationTenantIdLiquidationNoKey)
 	return ret, err
 }
@@ -152,7 +152,7 @@ func (m *defaultTContractLiquidationModel) Update(ctx context.Context, newData *
 	tContractLiquidationTenantIdLiquidationNoKey := fmt.Sprintf("%s%v:%v", cacheTContractLiquidationTenantIdLiquidationNoPrefix, data.TenantId, data.LiquidationNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractLiquidationRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.LiquidationNo, newData.PositionId, newData.UserId, newData.SymbolId, newData.PositionSide, newData.MarginMode, newData.TriggerMarkPrice, newData.TriggerIndexPrice, newData.TriggerQty, newData.LiquidatedQty, newData.MaintenanceMargin, newData.AccountEquity, newData.BankruptcyPrice, newData.LiquidationFee, newData.InsuranceFundAmount, newData.AdlQty, newData.Status, newData.Reason, newData.StartedAt, newData.CompletedAt, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.LiquidationNo, newData.PositionId, newData.UserId, newData.SymbolId, newData.PositionSide, newData.MarginMode, newData.TriggerMarkPrice, newData.TriggerSnapshotId, newData.TriggerIndexPrice, newData.TriggerQty, newData.LiquidatedQty, newData.MaintenanceMargin, newData.AccountEquity, newData.BankruptcyPrice, newData.LiquidationFee, newData.InsuranceFundAmount, newData.AdlQty, newData.Status, newData.Reason, newData.StartedAt, newData.CompletedAt, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tContractLiquidationIdKey, tContractLiquidationTenantIdLiquidationNoKey)
 	return err
 }

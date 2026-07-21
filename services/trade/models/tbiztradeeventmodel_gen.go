@@ -53,8 +53,8 @@ type (
 		ProductType    int64          `db:"product_type"`    // 产品大类：0无 1现货 2衍生品 3秒合约
 		OperatorId     int64          `db:"operator_id"`     // 操作人ID，系统操作时可为0
 		Source         int64          `db:"source"`          // 来源：1系统 2用户 3后台管理 4任务
-		Consumer       string         `db:"consumer"`        // 目标消费者标识
-		EventStatus    int64          `db:"event_status"`    // 事件状态：1待投递 2成功 3失败 4取消 5处理中 6死信
+		Consumer       string         `db:"consumer"`        // 目标消费者标识；内部实时事件为trade-realtime
+		EventStatus    int64          `db:"event_status"`    // 事件状态：1待投递 2投递成功 3投递失败 4已取消 5投递中 6死信
 		RetryCount     int64          `db:"retry_count"`     // 重试次数
 		MaxRetryCount  int64          `db:"max_retry_count"` // 最大重试次数
 		NextRetryAt    int64          `db:"next_retry_at"`   // 下次重试时间，毫秒时间戳
@@ -62,7 +62,7 @@ type (
 		ClaimedBy      string         `db:"claimed_by"`      // 当前领取实例
 		ClaimedAt      int64          `db:"claimed_at"`      // 领取时间，毫秒时间戳
 		DeliveredAt    int64          `db:"delivered_at"`    // 消费成功时间，毫秒时间戳
-		PayloadVersion int64          `db:"payload_version"` // 消息载荷版本
+		PayloadVersion int64          `db:"payload_version"` // 事件Payload结构版本
 		Payload        string         `db:"payload"`         // 事件内容，JSON格式
 		ExtData        sql.NullString `db:"ext_data"`        // 扩展字段，JSON格式
 		CreateTimes    int64          `db:"create_times"`    // 创建时间，毫秒时间戳
@@ -130,12 +130,6 @@ func (m *defaultTBizTradeEventModel) FindOneByTenantIdEventNo(ctx context.Contex
 }
 
 func (m *defaultTBizTradeEventModel) Insert(ctx context.Context, data *TBizTradeEvent) (sql.Result, error) {
-	if data.Consumer == "" {
-		data.Consumer = "trade-domain"
-	}
-	if data.PayloadVersion <= 0 {
-		data.PayloadVersion = 1
-	}
 	tBizTradeEventIdKey := fmt.Sprintf("%s%v", cacheTBizTradeEventIdPrefix, data.Id)
 	tBizTradeEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {

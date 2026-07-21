@@ -746,6 +746,7 @@ type GetAuthoritativeSnapshotReq struct {
 	Symbol        string                 `protobuf:"bytes,4,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	TargetTime    int64                  `protobuf:"varint,5,opt,name=target_time,json=targetTime,proto3" json:"target_time,omitempty"`
 	MaxLookbackMs int64                  `protobuf:"varint,6,opt,name=max_lookback_ms,json=maxLookbackMs,proto3" json:"max_lookback_ms,omitempty"`
+	SnapshotKind  string                 `protobuf:"bytes,7,opt,name=snapshot_kind,json=snapshotKind,proto3" json:"snapshot_kind,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -820,6 +821,13 @@ func (x *GetAuthoritativeSnapshotReq) GetMaxLookbackMs() int64 {
 		return x.MaxLookbackMs
 	}
 	return 0
+}
+
+func (x *GetAuthoritativeSnapshotReq) GetSnapshotKind() string {
+	if x != nil {
+		return x.SnapshotKind
+	}
+	return ""
 }
 
 type AuthoritativeSnapshot struct {
@@ -1355,7 +1363,7 @@ const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\x04data\x18\x03 \x03(\v2\x13.itick.MarketSymbolR\x04data\"[\n" +
 	"\x11BatchGetQuoteResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12 \n" +
-	"\x04data\x18\x02 \x03(\v2\f.itick.QuoteR\x04data\"\xd9\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\f.itick.QuoteR\x04data\"\xfe\x01\n" +
 	"\x1bGetAuthoritativeSnapshotReq\x12\x1c\n" +
 	"\tauthority\x18\x01 \x01(\tR\tauthority\x12#\n" +
 	"\rcategory_code\x18\x02 \x01(\tR\fcategoryCode\x12\x16\n" +
@@ -1363,7 +1371,8 @@ const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\x06symbol\x18\x04 \x01(\tR\x06symbol\x12\x1f\n" +
 	"\vtarget_time\x18\x05 \x01(\x03R\n" +
 	"targetTime\x12&\n" +
-	"\x0fmax_lookback_ms\x18\x06 \x01(\x03R\rmaxLookbackMs\"\xa6\x03\n" +
+	"\x0fmax_lookback_ms\x18\x06 \x01(\x03R\rmaxLookbackMs\x12#\n" +
+	"\rsnapshot_kind\x18\a \x01(\tR\fsnapshotKind\"\xa6\x03\n" +
 	"\x15AuthoritativeSnapshot\x12\x1f\n" +
 	"\vsnapshot_id\x18\x01 \x01(\tR\n" +
 	"snapshotId\x12\x1c\n" +

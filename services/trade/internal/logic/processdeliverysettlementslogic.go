@@ -8,8 +8,6 @@ import (
 	"fmt"
 
 	"wklive/common/utils"
-	"wklive/proto/asset"
-	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -154,6 +152,7 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 		conn := sqlx.NewSqlConnFromSession(session)
 		bm := models.NewTContractDeliveryBatchModel(conn, l.svcCtx.Config.CacheRedis)
 		sm := models.NewTContractDeliverySettlementModel(conn, l.svcCtx.Config.CacheRedis)
+		im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		symbolModel := models.NewTTradeSymbolModel(conn, l.svcCtx.Config.CacheRedis)
 		res, err := bm.Insert(ctx, &models.TContractDeliveryBatch{TenantId: c.TenantId, BatchNo: batchNo, SymbolId: c.SymbolId, SettlementPrice: price, PriceSource: quote.SnapshotID, PriceAlgorithm: nonEmpty(c.SettlementPriceAlgorithm, "last-v1"), SampleSnapshot: sql.NullString{String: raw, Valid: true}, OpenCutoffTime: c.OpenCutoffTime, MatchingStopTime: c.MatchingStopTime, DeliveryTime: c.DeliveryTime, Status: int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING), TotalPositions: int64(len(active)), CreateTimes: now, UpdateTimes: now})
@@ -175,8 +174,15 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 				return err
 			}
 			fee := roundContractDebit(values.SettlementNotional.Mul(c.DeliveryFeeRate))
-			if _, err = sm.Insert(ctx, &models.TContractDeliverySettlement{TenantId: locked.TenantId, SettlementNo: fmt.Sprintf("%s-%d", batchNo, locked.Id), BatchId: batchID, BatchNo: batchNo, SymbolId: locked.SymbolId, UserId: locked.UserId, PositionId: locked.Id, PositionSide: locked.PositionSide, SettlementPrice: price, PositionQty: locked.Qty, RealizedPnl: pnl, DeliveryFee: fee, SettleAsset: locked.MarginAsset, DeliveryTime: c.DeliveryTime, Status: int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
+			settlementNo := fmt.Sprintf("%s-%d", batchNo, locked.Id)
+			if _, err = sm.Insert(ctx, &models.TContractDeliverySettlement{TenantId: locked.TenantId, SettlementNo: settlementNo, BatchId: batchID, BatchNo: batchNo, SymbolId: locked.SymbolId, UserId: locked.UserId, PositionId: locked.Id, PositionSide: locked.PositionSide, SettlementPrice: price, PositionQty: locked.Qty, RealizedPnl: pnl, DeliveryFee: fee, SettleAsset: locked.MarginAsset, DeliveryTime: c.DeliveryTime, Status: int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
 				return err
+			}
+			steps := deliveryAssetSteps(locked.PositionMargin.Add(locked.IsolatedMargin), pnl, fee)
+			for _, step := range steps {
+				if err = insertSettlementInstructionIdempotent(ctx, im, &models.TTradeSettlementInstruction{TenantId: locked.TenantId, InstructionNo: settlementNo + "-" + step.suffix, BizType: "delivery", BizId: settlementNo, BatchNo: batchNo, PositionId: locked.Id, UserId: locked.UserId, Action: int64(step.action), Asset: locked.MarginAsset, Amount: step.amount, StepNo: step.stepNo, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
+					return err
+				}
 			}
 			locked.Status = int64(trade.PositionStatus_POSITION_STATUS_DELIVERING)
 			locked.Version++
@@ -192,82 +198,82 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 }
 
 func (l *ProcessDeliverySettlementsLogic) settlePending(tenantID int64) error {
-	for _, status := range []trade.DeliverySettlementStatus{trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_PENDING, trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_FAILED} {
-		cursor := int64(0)
-		for {
-			rows, _, err := l.svcCtx.ContractDeliverySettleModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: tenantID, Status: int64(status)}, cursor, 100)
-			if err != nil {
-				return err
+	for processed := 0; processed < 1000; {
+		now := utils.NowMillis()
+		items, err := l.svcCtx.TradeSettlementInstrModel.FindPendingBiz(l.ctx, tenantID, "delivery", now, 100)
+		if err != nil {
+			return err
+		}
+		if len(items) == 0 {
+			break
+		}
+		progressed := false
+		for _, item := range items {
+			claimed, claimErr := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, item.Id, now)
+			if claimErr != nil {
+				return claimErr
 			}
-			if len(rows) == 0 {
-				break
+			if !claimed {
+				continue
 			}
-			for _, row := range rows {
-				cursor = row.Id
-				if row.NextRetryAt > utils.NowMillis() {
-					continue
-				}
-				if err := l.settleOne(row); err != nil {
-					row.RetryCount++
-					row.LastErrorMsg = err.Error()
-					row.NextRetryAt = utils.NowMillis() + tradeEventRetryDelay(row.RetryCount).Milliseconds()
-					row.Status = int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_FAILED)
-					if row.RetryCount >= 20 {
-						row.Status = int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW)
-					}
-					row.UpdateTimes = utils.NowMillis()
-					if uerr := l.svcCtx.ContractDeliverySettleModel.Update(l.ctx, row); uerr != nil {
-						return uerr
-					}
+			progressed = true
+			processed++
+			if executeErr := l.executeDeliveryInstruction(item); executeErr != nil {
+				if failErr := l.failDeliveryInstruction(item, executeErr); failErr != nil {
+					return failErr
 				}
 			}
-			if len(rows) < 100 {
-				break
-			}
+		}
+		if !progressed {
+			break
 		}
 	}
 	return l.finishBatches(tenantID)
 }
 
-func (l *ProcessDeliverySettlementsLogic) settleOne(row *models.TContractDeliverySettlement) error {
+func (l *ProcessDeliverySettlementsLogic) executeDeliveryInstruction(item *models.TTradeSettlementInstruction) error {
+	row, err := l.svcCtx.ContractDeliverySettleModel.FindOneByTenantIdSettlementNo(l.ctx, item.TenantId, item.BizId)
+	if err != nil {
+		return err
+	}
+	if row.BatchNo != item.BatchNo || row.PositionId != item.PositionId || row.UserId != item.UserId || row.SettleAsset != item.Asset {
+		return errors.New("delivery instruction does not match settlement")
+	}
 	position, err := l.svcCtx.ContractPositionModel.FindOne(l.ctx, row.PositionId)
 	if err != nil {
 		return err
 	}
-	if !position.Qty.IsPositive() || position.Status == int64(trade.PositionStatus_POSITION_STATUS_CLOSED) {
-		row.Status = int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW)
-		row.NextRetryAt = 0
-		row.LastErrorMsg = "delivery position was already closed before asset settlement"
-		row.UpdateTimes = utils.NowMillis()
-		return l.svcCtx.ContractDeliverySettleModel.Update(l.ctx, row)
+	if position.Status != int64(trade.PositionStatus_POSITION_STATUS_DELIVERING) || !position.Qty.Equal(row.PositionQty) {
+		return errors.New("delivery reserved position changed before asset step")
 	}
-	calls := []struct {
-		suffix string
-		credit bool
-		amount decimal.Decimal
-		remark string
-	}{{"MARGIN", true, position.PositionMargin.Add(position.IsolatedMargin), "delivery margin release"}, {"PROFIT", true, decimalMaxZero(row.RealizedPnl), "delivery profit"}, {"LOSS", false, decimalMaxZero(row.RealizedPnl.Neg()), "delivery loss"}, {"FEE", false, row.DeliveryFee, "delivery fee"}}
-	for _, call := range calls {
-		if !call.amount.IsPositive() {
-			continue
-		}
-		bizNo := row.SettlementNo + "-" + call.suffix
-		var resp *asset.ChangeAssetResp
-		if call.credit {
-			resp, err = l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{TenantId: row.TenantId, UserId: row.UserId, WalletType: common.WalletType_WALLET_TYPE_CONTRACT, Coin: row.SettleAsset, Amount: call.amount.String(), BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_TRADE_MATCH, BizId: row.Id, BizNo: bizNo, Remark: call.remark})
-		} else {
-			resp, err = l.svcCtx.AssetClient.SubAvailable(l.ctx, &asset.SubAvailableReq{TenantId: row.TenantId, UserId: row.UserId, WalletType: common.WalletType_WALLET_TYPE_CONTRACT, Coin: row.SettleAsset, Amount: call.amount.String(), BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_TRADE_MATCH, BizId: row.Id, BizNo: bizNo, Remark: call.remark})
-		}
-		if err != nil {
-			return err
-		}
-		if resp.GetBase().GetCode() != 200 {
-			return fmt.Errorf("delivery asset rejected: %s", resp.GetBase().GetMsg())
-		}
+	if !matchesDeliveryAssetStep(item, deliveryAssetSteps(position.PositionMargin.Add(position.IsolatedMargin), row.RealizedPnl, row.DeliveryFee)) {
+		return errors.New("delivery instruction action, amount or step was modified")
+	}
+	if err = executeSimpleAssetInstruction(l.ctx, l.svcCtx, item, "delivery settlement"); err != nil {
+		return err
 	}
 	now := utils.NowMillis()
 	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
+		im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+		currentInstruction, err := im.FindOneForUpdate(ctx, item.Id)
+		if err != nil {
+			return err
+		}
+		if currentInstruction.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
+			return nil
+		}
+		if currentInstruction.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+			return errors.New("delivery instruction lease lost")
+		}
+		currentInstruction.Status, currentInstruction.NextRetryAt, currentInstruction.LastErrorMsg, currentInstruction.UpdateTimes = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS), 0, "", now
+		if err = im.Update(ctx, currentInstruction); err != nil {
+			return err
+		}
+		unfinished, err := im.CountUnfinishedByBiz(ctx, item.TenantId, "delivery", item.BizId)
+		if err != nil || unfinished > 0 {
+			return err
+		}
 		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		sm := models.NewTContractDeliverySettlementModel(conn, l.svcCtx.Config.CacheRedis)
 		hm := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
@@ -275,12 +281,8 @@ func (l *ProcessDeliverySettlementsLogic) settleOne(row *models.TContractDeliver
 		if err != nil {
 			return err
 		}
-		if current.Qty.IsZero() || current.Status == int64(trade.PositionStatus_POSITION_STATUS_CLOSED) {
-			row.Status = int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW)
-			row.NextRetryAt = 0
-			row.LastErrorMsg = "delivery position changed after asset settlement"
-			row.UpdateTimes = now
-			return sm.Update(ctx, row)
+		if current.Status != int64(trade.PositionStatus_POSITION_STATUS_DELIVERING) || !current.Qty.Equal(row.PositionQty) {
+			return errors.New("delivery reserved position changed after asset step")
 		}
 		before := cloneContractPosition(current)
 		current.Qty, current.AvailQty, current.FrozenQty = decimal.Zero, decimal.Zero, decimal.Zero
@@ -305,18 +307,45 @@ func (l *ProcessDeliverySettlementsLogic) settleOne(row *models.TContractDeliver
 		return sm.Update(ctx, row)
 	})
 }
+
+func (l *ProcessDeliverySettlementsLogic) failDeliveryInstruction(item *models.TTradeSettlementInstruction, cause error) error {
+	return failContractSagaInstruction(l.ctx, l.svcCtx, item, cause, func(ctx context.Context, conn sqlx.SqlConn, current *models.TTradeSettlementInstruction, manual bool, now int64) error {
+		sm := models.NewTContractDeliverySettlementModel(conn, l.svcCtx.Config.CacheRedis)
+		row, err := sm.FindOneByTenantIdSettlementNo(ctx, current.TenantId, current.BizId)
+		if err != nil {
+			return err
+		}
+		row.Status = int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_FAILED)
+		if manual {
+			row.Status = int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW)
+		}
+		row.RetryCount, row.NextRetryAt, row.LastErrorMsg, row.UpdateTimes = current.RetryCount, current.NextRetryAt, current.LastErrorMsg, now
+		return sm.Update(ctx, row)
+	})
+}
 func (l *ProcessDeliverySettlementsLogic) finishBatches(tenantID int64) error {
 	batches, _, err := l.svcCtx.ContractDeliveryBatchModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: tenantID, Status: int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING)}, 0, 100)
 	if err != nil {
 		return err
 	}
 	for _, b := range batches {
+		unfinished, instructionErr := l.svcCtx.TradeSettlementInstrModel.CountUnfinishedByBatch(l.ctx, b.TenantId, "delivery", b.BatchNo)
+		if instructionErr != nil {
+			return instructionErr
+		}
+		manual, manualErr := l.svcCtx.TradeSettlementInstrModel.CountByBatchStatus(l.ctx, b.TenantId, "delivery", b.BatchNo, int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW))
+		if manualErr != nil {
+			return manualErr
+		}
 		count, err := l.svcCtx.ContractDeliverySettleModel.CountByBatchStatus(l.ctx, b.TenantId, b.Id, int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_SETTLED))
 		if err != nil {
 			return err
 		}
 		b.SettledPositions = count
-		if count == b.TotalPositions {
+		if manual > 0 {
+			b.Status = int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_MANUAL_REVIEW)
+			b.LastErrorMsg = "one or more delivery asset instructions require manual review"
+		} else if count == b.TotalPositions && unfinished == 0 {
 			b.Status = int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_COMPLETED)
 		}
 		b.Version++

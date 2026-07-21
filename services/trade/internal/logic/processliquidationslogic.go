@@ -232,6 +232,21 @@ func (l *ProcessLiquidationsLogic) assetChange(tenant, user int64, coin string, 
 // It records the quantity takeover boundary; settlement at bankruptcy price is
 // deliberately capped by the bankrupt position quantity.
 func (l *ProcessLiquidationsLogic) executeADL(bankrupt *models.TContractPosition, contract *models.TTradeSymbolContract, liq *models.TContractLiquidation, deficit decimal.Decimal) (decimal.Decimal, decimal.Decimal, error) {
+	existing, err := l.svcCtx.ContractAdlExecutionModel.FindByLiquidation(l.ctx, bankrupt.TenantId, liq.Id)
+	if err != nil {
+		return decimal.Zero, deficit, err
+	}
+	done, relieved := decimal.Zero, decimal.Zero
+	used := make(map[int64]struct{}, len(existing))
+	for _, execution := range existing {
+		used[execution.PositionId] = struct{}{}
+		if execution.Status != 3 {
+			if err = l.runADLExecution(execution); err != nil {
+				return done, decimalMaxZero(deficit.Sub(relieved)), err
+			}
+		}
+		done, relieved = done.Add(execution.Qty), relieved.Add(execution.ReliefAmount)
+	}
 	positions, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{TenantId: bankrupt.TenantId, SymbolId: bankrupt.SymbolId})
 	if err != nil {
 		return decimal.Zero, deficit, err
@@ -242,11 +257,11 @@ func (l *ProcessLiquidationsLogic) executeADL(bankrupt *models.TContractPosition
 		}
 		return positions[i].AdlRank > positions[j].AdlRank
 	})
-	done := decimal.Zero
-	remaining := deficit
+	remaining := decimalMaxZero(deficit.Sub(relieved))
 	remainingQty := decimalMaxZero(bankrupt.Qty.Sub(liq.AdlQty))
 	for _, candidate := range positions {
-		if candidate.Id == bankrupt.Id || !candidate.Qty.IsPositive() || candidate.PositionSide == bankrupt.PositionSide || candidate.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) || !remainingQty.IsPositive() {
+		_, alreadyUsed := used[candidate.Id]
+		if alreadyUsed || candidate.Id == bankrupt.Id || !candidate.Qty.IsPositive() || candidate.PositionSide == bankrupt.PositionSide || candidate.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) || !remainingQty.IsPositive() {
 			continue
 		}
 		markPnl := contractRealizedPnl(candidate.PositionSide, candidate.OpenAvgPrice, bankrupt.MarkPrice, candidate.Qty, contract.ContractSize, candidate.ContractValueType)
@@ -259,47 +274,11 @@ func (l *ProcessLiquidationsLogic) executeADL(bankrupt *models.TContractPosition
 		if !qty.IsPositive() {
 			continue
 		}
-		before := cloneContractPosition(candidate)
-		err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-			conn := sqlx.NewSqlConnFromSession(session)
-			pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-			hm := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
-			current, e := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, candidate.TenantId, candidate.UserId, candidate.SymbolId, candidate.PositionSide, candidate.MarginMode)
-			if e != nil {
-				return e
-			}
-			if current.Version != before.Version || current.Qty.LessThan(qty) || current.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) {
-				return errors.New("ADL candidate changed during takeover")
-			}
-			before = cloneContractPosition(current)
-			positionMarginRelease, isolatedMarginRelease := adlMarginRelease(current.PositionMargin, current.IsolatedMargin, qty, current.Qty)
-			pnl := contractRealizedPnl(current.PositionSide, current.OpenAvgPrice, bankrupt.BankruptcyPrice, qty, contract.ContractSize, current.ContractValueType)
-			credit := decimalMaxZero(positionMarginRelease.Add(isolatedMarginRelease).Add(pnl))
-			// Keep the position row locked while applying the idempotent Asset change.
-			// If the local transaction fails after Asset succeeds, retrying the same
-			// biz_no completes the position change without crediting twice.
-			if credit.IsPositive() {
-				if e = l.assetChange(current.TenantId, current.UserId, current.MarginAsset, credit, true, liq.Id, fmt.Sprintf("%s-ADL-%d", liq.LiquidationNo, current.Id), "automatic deleveraging"); e != nil {
-					return e
-				}
-			}
-			current.Qty = current.Qty.Sub(qty)
-			current.AvailQty = decimalMaxZero(current.AvailQty.Sub(qty))
-			current.PositionMargin = decimalMaxZero(current.PositionMargin.Sub(positionMarginRelease))
-			current.IsolatedMargin = decimalMaxZero(current.IsolatedMargin.Sub(isolatedMarginRelease))
-			current.RealizedPnl = current.RealizedPnl.Add(pnl)
-			current.AdlRank = 0
-			current.Version++
-			current.UpdateTimes = utils.NowMillis()
-			if current.Qty.IsZero() {
-				current.Status = int64(trade.PositionStatus_POSITION_STATUS_CLOSED)
-				current.ClosedAt = utils.NowMillis()
-			}
-			if e = pm.Update(ctx, current); e != nil {
-				return e
-			}
-			return writeSystemPositionHistory(ctx, hm, before, current, fmt.Sprintf("%s:ADL:%d", liq.LiquidationNo, current.Id), trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, pnl, decimal.Zero, bankrupt.BankruptcyPrice, "automatic deleveraging")
-		})
+		execution, prepareErr := l.prepareADLExecution(candidate, bankrupt, contract, liq, qty, reliefPerQty.Mul(qty))
+		if prepareErr != nil {
+			return done, remaining, prepareErr
+		}
+		err = l.runADLExecution(execution)
 		if err != nil {
 			return done, remaining, err
 		}
@@ -322,6 +301,141 @@ func adlTakeoverQty(candidateQty, bankruptRemainingQty, deficit, reliefPerQty de
 
 func adlMarginRelease(positionMargin, isolatedMargin, qty, totalQty decimal.Decimal) (decimal.Decimal, decimal.Decimal) {
 	return proportionalAmount(positionMargin, qty, totalQty), proportionalAmount(isolatedMargin, qty, totalQty)
+}
+
+func (l *ProcessLiquidationsLogic) prepareADLExecution(candidate, bankrupt *models.TContractPosition, contract *models.TTradeSymbolContract, liq *models.TContractLiquidation, qty, relief decimal.Decimal) (*models.TContractAdlExecution, error) {
+	now := utils.NowMillis()
+	executionNo := fmt.Sprintf("%s-ADL-%d", liq.LiquidationNo, candidate.Id)
+	var prepared *models.TContractAdlExecution
+	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
+		current, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, candidate.TenantId, candidate.UserId, candidate.SymbolId, candidate.PositionSide, candidate.MarginMode)
+		if err != nil {
+			return err
+		}
+		if current.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) || current.Version != candidate.Version || current.Qty.LessThan(qty) {
+			return errors.New("ADL candidate changed before reservation")
+		}
+		positionMargin, isolatedMargin := adlMarginRelease(current.PositionMargin, current.IsolatedMargin, qty, current.Qty)
+		pnl := contractRealizedPnl(current.PositionSide, current.OpenAvgPrice, bankrupt.BankruptcyPrice, qty, contract.ContractSize, current.ContractValueType)
+		credit := decimalMaxZero(positionMargin.Add(isolatedMargin).Add(pnl))
+		current.Status = int64(trade.PositionStatus_POSITION_STATUS_LIQUIDATING)
+		current.Version++
+		current.UpdateTimes = now
+		if err = pm.Update(ctx, current); err != nil {
+			return err
+		}
+		prepared = &models.TContractAdlExecution{TenantId: current.TenantId, ExecutionNo: executionNo, LiquidationId: liq.Id, LiquidationNo: liq.LiquidationNo, PositionId: current.Id, UserId: current.UserId, PositionVersion: current.Version, Qty: qty, PositionMarginRelease: positionMargin, IsolatedMarginRelease: isolatedMargin, RealizedPnl: pnl, AssetCredit: credit, Asset: current.MarginAsset, BankruptcyPrice: bankrupt.BankruptcyPrice, ReliefAmount: relief, Status: 1, CreateTimes: now, UpdateTimes: now}
+		if _, err = models.NewTContractAdlExecutionModel(conn, l.svcCtx.Config.CacheRedis).Insert(ctx, prepared); err != nil {
+			return err
+		}
+		if credit.IsPositive() {
+			return insertSettlementInstructionIdempotent(ctx, models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis), &models.TTradeSettlementInstruction{TenantId: current.TenantId, InstructionNo: executionNo, BizType: "adl", BizId: executionNo, BatchNo: liq.LiquidationNo, PositionId: current.Id, UserId: current.UserId, Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE), Asset: current.MarginAsset, Amount: credit, StepNo: 1, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now})
+		}
+		return nil
+	})
+	return prepared, err
+}
+
+func (l *ProcessLiquidationsLogic) runADLExecution(execution *models.TContractAdlExecution) error {
+	if execution.Status == 3 {
+		return nil
+	}
+	var instruction *models.TTradeSettlementInstruction
+	if execution.AssetCredit.IsPositive() {
+		var err error
+		instruction, err = l.svcCtx.TradeSettlementInstrModel.FindOneByTenantIdInstructionNo(l.ctx, execution.TenantId, execution.ExecutionNo)
+		if err != nil {
+			return err
+		}
+		claimed, err := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, instruction.Id, utils.NowMillis())
+		if err != nil {
+			return err
+		}
+		if !claimed {
+			if instruction.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
+				return l.completeADLExecution(execution, nil)
+			}
+			return fmt.Errorf("ADL instruction is not claimable: status=%d", instruction.Status)
+		}
+		if err = executeSimpleAssetInstruction(l.ctx, l.svcCtx, instruction, "automatic deleveraging"); err != nil {
+			cause := err
+			if markErr := failContractSagaInstruction(l.ctx, l.svcCtx, instruction, cause, func(ctx context.Context, conn sqlx.SqlConn, current *models.TTradeSettlementInstruction, manual bool, now int64) error {
+				em := models.NewTContractAdlExecutionModel(conn, l.svcCtx.Config.CacheRedis)
+				e, findErr := em.FindOneByExecutionNo(ctx, current.TenantId, current.BizId)
+				if findErr != nil {
+					return findErr
+				}
+				e.Status, e.LastErrorMsg, e.UpdateTimes = 4, current.LastErrorMsg, now
+				if manual {
+					e.Status = 5
+				}
+				return em.Update(ctx, e)
+			}); markErr != nil {
+				return markErr
+			}
+			return cause
+		}
+	}
+	return l.completeADLExecution(execution, instruction)
+}
+
+func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContractAdlExecution, instruction *models.TTradeSettlementInstruction) error {
+	now := utils.NowMillis()
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		em := models.NewTContractAdlExecutionModel(conn, l.svcCtx.Config.CacheRedis)
+		e, err := em.FindOneForUpdate(ctx, execution.Id)
+		if err != nil {
+			return err
+		}
+		if e.Status == 3 {
+			return nil
+		}
+		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
+		current, err := pm.FindOneForUpdate(ctx, e.PositionId)
+		if err != nil {
+			return err
+		}
+		if current.Status != int64(trade.PositionStatus_POSITION_STATUS_LIQUIDATING) || current.Version != e.PositionVersion || current.Qty.LessThan(e.Qty) {
+			return errors.New("ADL reserved position changed")
+		}
+		if instruction != nil {
+			im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+			i, lockErr := im.FindOneForUpdate(ctx, instruction.Id)
+			if lockErr != nil {
+				return lockErr
+			}
+			if i.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+				return errors.New("ADL instruction lease lost")
+			}
+			i.Status, i.NextRetryAt, i.LastErrorMsg, i.UpdateTimes = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS), 0, "", now
+			if err = im.Update(ctx, i); err != nil {
+				return err
+			}
+			e.Status = 2
+		}
+		before := cloneContractPosition(current)
+		current.Qty = current.Qty.Sub(e.Qty)
+		current.AvailQty = decimalMaxZero(current.AvailQty.Sub(e.Qty))
+		current.PositionMargin = decimalMaxZero(current.PositionMargin.Sub(e.PositionMarginRelease))
+		current.IsolatedMargin = decimalMaxZero(current.IsolatedMargin.Sub(e.IsolatedMarginRelease))
+		current.RealizedPnl = current.RealizedPnl.Add(e.RealizedPnl)
+		current.AdlRank, current.Version, current.UpdateTimes = 0, current.Version+1, now
+		current.Status = int64(trade.PositionStatus_POSITION_STATUS_NORMAL)
+		if current.Qty.IsZero() {
+			current.Status, current.ClosedAt = int64(trade.PositionStatus_POSITION_STATUS_CLOSED), now
+		}
+		if err = pm.Update(ctx, current); err != nil {
+			return err
+		}
+		if err = writeSystemPositionHistory(ctx, models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis), before, current, e.ExecutionNo, trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, e.RealizedPnl, decimal.Zero, e.BankruptcyPrice, "automatic deleveraging"); err != nil {
+			return err
+		}
+		e.Status, e.LastErrorMsg, e.UpdateTimes = 3, "", now
+		return em.Update(ctx, e)
+	})
 }
 
 func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContractPosition, liq *models.TContractLiquidation, fee decimal.Decimal) error {

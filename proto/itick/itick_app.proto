@@ -94,6 +94,7 @@ message GetAuthoritativeSnapshotReq {
   string symbol = 4;
   int64 target_time = 5;
   int64 max_lookback_ms = 6;
+  string snapshot_kind = 7;
 }
 
 message AuthoritativeSnapshot {

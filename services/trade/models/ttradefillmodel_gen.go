@@ -25,8 +25,9 @@ var (
 	tTradeFillRowsExpectAutoSet   = strings.Join(stringx.Remove(tTradeFillFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tTradeFillRowsWithPlaceHolder = strings.Join(stringx.Remove(tTradeFillFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTTradeFillIdPrefix             = "cache:tTradeFill:id:"
-	cacheTTradeFillTenantIdFillNoPrefix = "cache:tTradeFill:tenantId:fillNo:"
+	cacheTTradeFillIdPrefix                     = "cache:tTradeFill:id:"
+	cacheTTradeFillTenantIdFillNoPrefix         = "cache:tTradeFill:tenantId:fillNo:"
+	cacheTTradeFillTenantIdMatchNoOrderIdPrefix = "cache:tTradeFill:tenantId:matchNo:orderId:"
 )
 
 type (
@@ -34,6 +35,7 @@ type (
 		Insert(ctx context.Context, data *TTradeFill) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TTradeFill, error)
 		FindOneByTenantIdFillNo(ctx context.Context, tenantId int64, fillNo string) (*TTradeFill, error)
+		FindOneByTenantIdMatchNoOrderId(ctx context.Context, tenantId int64, matchNo string, orderId int64) (*TTradeFill, error)
 		Update(ctx context.Context, data *TTradeFill) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -87,10 +89,11 @@ func (m *defaultTTradeFillModel) Delete(ctx context.Context, id int64) error {
 
 	tTradeFillIdKey := fmt.Sprintf("%s%v", cacheTTradeFillIdPrefix, id)
 	tTradeFillTenantIdFillNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeFillTenantIdFillNoPrefix, data.TenantId, data.FillNo)
+	tTradeFillTenantIdMatchNoOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeFillTenantIdMatchNoOrderIdPrefix, data.TenantId, data.MatchNo, data.OrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tTradeFillIdKey, tTradeFillTenantIdFillNoKey)
+	}, tTradeFillIdKey, tTradeFillTenantIdFillNoKey, tTradeFillTenantIdMatchNoOrderIdKey)
 	return err
 }
 
@@ -131,13 +134,34 @@ func (m *defaultTTradeFillModel) FindOneByTenantIdFillNo(ctx context.Context, te
 	}
 }
 
+func (m *defaultTTradeFillModel) FindOneByTenantIdMatchNoOrderId(ctx context.Context, tenantId int64, matchNo string, orderId int64) (*TTradeFill, error) {
+	tTradeFillTenantIdMatchNoOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeFillTenantIdMatchNoOrderIdPrefix, tenantId, matchNo, orderId)
+	var resp TTradeFill
+	err := m.QueryRowIndexCtx(ctx, &resp, tTradeFillTenantIdMatchNoOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `match_no` = ? and `order_id` = ? limit 1", tTradeFillRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, matchNo, orderId); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultTTradeFillModel) Insert(ctx context.Context, data *TTradeFill) (sql.Result, error) {
 	tTradeFillIdKey := fmt.Sprintf("%s%v", cacheTTradeFillIdPrefix, data.Id)
 	tTradeFillTenantIdFillNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeFillTenantIdFillNoPrefix, data.TenantId, data.FillNo)
+	tTradeFillTenantIdMatchNoOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeFillTenantIdMatchNoOrderIdPrefix, data.TenantId, data.MatchNo, data.OrderId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeFillRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.TenantId, data.FillNo, data.MatchNo, data.OrderId, data.OrderNo, data.UserId, data.SymbolId, data.ProductType, data.ContractType, data.ContractValueType, data.Side, data.PositionSide, data.Price, data.Qty, data.Amount, data.Fee, data.FeeAsset, data.LiquidityType, data.RealizedPnl, data.SettlementStatus, data.SettlementRetryCount, data.SettledAt, data.MatchTime, data.CreateTimes)
-	}, tTradeFillIdKey, tTradeFillTenantIdFillNoKey)
+	}, tTradeFillIdKey, tTradeFillTenantIdFillNoKey, tTradeFillTenantIdMatchNoOrderIdKey)
 	return ret, err
 }
 
@@ -149,10 +173,11 @@ func (m *defaultTTradeFillModel) Update(ctx context.Context, newData *TTradeFill
 
 	tTradeFillIdKey := fmt.Sprintf("%s%v", cacheTTradeFillIdPrefix, data.Id)
 	tTradeFillTenantIdFillNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeFillTenantIdFillNoPrefix, data.TenantId, data.FillNo)
+	tTradeFillTenantIdMatchNoOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeFillTenantIdMatchNoOrderIdPrefix, data.TenantId, data.MatchNo, data.OrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeFillRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.TenantId, newData.FillNo, newData.MatchNo, newData.OrderId, newData.OrderNo, newData.UserId, newData.SymbolId, newData.ProductType, newData.ContractType, newData.ContractValueType, newData.Side, newData.PositionSide, newData.Price, newData.Qty, newData.Amount, newData.Fee, newData.FeeAsset, newData.LiquidityType, newData.RealizedPnl, newData.SettlementStatus, newData.SettlementRetryCount, newData.SettledAt, newData.MatchTime, newData.CreateTimes, newData.Id)
-	}, tTradeFillIdKey, tTradeFillTenantIdFillNoKey)
+	}, tTradeFillIdKey, tTradeFillTenantIdFillNoKey, tTradeFillTenantIdMatchNoOrderIdKey)
 	return err
 }
 

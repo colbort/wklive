@@ -853,6 +853,21 @@ CREATE TABLE `t_contract_funding_batch` (
   CONSTRAINT `chk_funding_batch` CHECK (`mark_price` > 0 AND `index_price` >= 0 AND `settlement_time` > 0 AND `status` BETWEEN 1 AND 5 AND `total_positions` >= 0 AND `settled_positions` >= 0 AND `settled_positions` <= `total_positions` AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='永续合约资金费锁定与执行批次';
 
+CREATE TABLE `t_contract_funding_difference_account` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `tenant_id` BIGINT NOT NULL,
+  `settle_asset` VARCHAR(32) NOT NULL,
+  `fund_user_id` BIGINT NOT NULL COMMENT 'Asset平台资金费差额账户用户ID',
+  `wallet_type` TINYINT NOT NULL COMMENT 'Asset钱包类型',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1启用 2禁用',
+  `version` BIGINT NOT NULL DEFAULT 0,
+  `create_times` BIGINT NOT NULL DEFAULT 0,
+  `update_times` BIGINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_asset` (`tenant_id`,`settle_asset`),
+  CONSTRAINT `chk_funding_difference_account` CHECK (`tenant_id` > 0 AND `fund_user_id` > 0 AND `wallet_type` > 0 AND `status` IN (1,2))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资金费舍入及非零差额平台账户';
+
 CREATE TABLE `t_contract_funding_settlement` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -883,6 +898,22 @@ CREATE TABLE `t_contract_funding_settlement` (
   KEY `idx_funding_settlement_retry` (`tenant_id`, `status`, `next_retry_at`),
   CONSTRAINT `chk_funding_settlement` CHECK (`position_side` IN (1, 2, 3) AND `mark_price` > 0 AND `position_qty` > 0 AND `position_version` >= 0 AND `settlement_time` > 0 AND `status` IN (1, 2, 3, 4) AND `retry_count` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='永续合约资金费结算记录';
+
+CREATE TABLE `t_contract_adl_execution` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT, `tenant_id` BIGINT NOT NULL,
+  `execution_no` VARCHAR(96) NOT NULL, `liquidation_id` BIGINT NOT NULL, `liquidation_no` VARCHAR(64) NOT NULL,
+  `position_id` BIGINT NOT NULL, `user_id` BIGINT NOT NULL, `position_version` BIGINT NOT NULL,
+  `qty` DECIMAL(36,18) NOT NULL, `position_margin_release` DECIMAL(36,18) NOT NULL,
+  `isolated_margin_release` DECIMAL(36,18) NOT NULL, `realized_pnl` DECIMAL(36,18) NOT NULL,
+  `asset_credit` DECIMAL(36,18) NOT NULL, `asset` VARCHAR(32) NOT NULL,
+  `bankruptcy_price` DECIMAL(36,18) NOT NULL, `relief_amount` DECIMAL(36,18) NOT NULL,
+  `status` TINYINT NOT NULL DEFAULT 1, `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '',
+  `create_times` BIGINT NOT NULL DEFAULT 0, `update_times` BIGINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`), UNIQUE KEY `uk_tenant_execution` (`tenant_id`,`execution_no`),
+  UNIQUE KEY `uk_liquidation_position` (`tenant_id`,`liquidation_id`,`position_id`),
+  KEY `idx_adl_recovery` (`tenant_id`,`status`,`update_times`),
+  CONSTRAINT `chk_adl_execution` CHECK (`qty` > 0 AND `position_margin_release` >= 0 AND `isolated_margin_release` >= 0 AND `asset_credit` >= 0 AND `relief_amount` > 0 AND `status` IN (1,2,3,4,5))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='ADL资产与仓位持久化执行步骤';
 
 CREATE TABLE `t_contract_delivery_batch` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
