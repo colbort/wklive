@@ -191,3 +191,8 @@ func (s *ItickAdminServer) RetrySnapshotOutbox(ctx context.Context, in *itick.Re
 	l := logic.NewRetrySnapshotOutboxLogic(ctx, s.svcCtx)
 	return l.RetrySnapshotOutbox(in)
 }
+
+func (s *ItickAdminServer) RevokeAuthoritativeSnapshot(ctx context.Context, in *itick.RevokeAuthoritativeSnapshotReq) (*itick.AdminCommonResp, error) {
+	l := logic.NewRevokeAuthoritativeSnapshotLogic(ctx, s.svcCtx)
+	return l.RevokeAuthoritativeSnapshot(in)
+}

@@ -26,6 +26,10 @@ func (s *authoritativeSnapshotModelStub) FindAfterID(context.Context, int64, int
 	return nil, nil
 }
 
+func (s *authoritativeSnapshotModelStub) FindOneBySnapshotId(context.Context, string) (*models.TItickAuthoritativeSnapshot, error) {
+	return s.row, nil
+}
+
 type authorityRegistryModelStub struct {
 	row *models.TItickAuthorityRegistry
 }

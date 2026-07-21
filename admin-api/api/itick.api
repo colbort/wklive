@@ -520,6 +520,12 @@ type RetrySnapshotOutboxReq {
 	id int64 `path:"id"`
 }
 
+type RevokeAuthoritativeSnapshotReq {
+	snapshotId            string `json:"snapshotId"`
+	replacementSnapshotId string `json:"replacementSnapshotId,optional"`
+	reason                string `json:"reason"`
+}
+
 @server (
 	prefix: /admin/itick
 	group:  itick
@@ -631,4 +637,6 @@ service admin {
 	get /snapshot-outbox (ListSnapshotOutboxReq) returns (ListSnapshotOutboxResp)
 	@handler RetrySnapshotOutbox
 	post /snapshot-outbox/:id/retry (RetrySnapshotOutboxReq) returns (RespBase)
+	@handler RevokeAuthoritativeSnapshot
+	post /authoritative-snapshots/revoke (RevokeAuthoritativeSnapshotReq) returns (RespBase)
 }

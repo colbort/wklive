@@ -123,6 +123,32 @@ func TestAuthoritativeSnapshotSelectsHighestRevisionAtSameSourceTime(t *testing.
 	}
 }
 
+func TestAuthoritativeSnapshotSkipsRevokedRevision(t *testing.T) {
+	server := miniredis.RunT(t)
+	client := redis.NewClient(&redis.Options{Addr: server.Addr()})
+	cache := NewMarketDataCache(client)
+	ctx := context.Background()
+	msg := ClientMessage{Topic: TopicQuote, CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT"}
+	for _, snapshot := range []*SettlementSnapshot{
+		{SnapshotID: "mark-valid", Authority: "price-engine", Kind: "MARK", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT", Price: "100", SourceTimestamp: 1000, SnapshotTimestamp: 1001, Revision: 1, Confirmed: true},
+		{SnapshotID: "mark-bad", Authority: "price-engine", Kind: "MARK", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT", Price: "999", SourceTimestamp: 1000, SnapshotTimestamp: 1002, Revision: 2, Confirmed: true},
+	} {
+		if err := cache.PublishAuthoritativeSnapshot(ctx, snapshot); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := cache.RevokeAuthoritativeSnapshot(ctx, "mark-bad", "", "bad source input"); err != nil {
+		t.Fatal(err)
+	}
+	got, err := cache.FindAuthoritativeSnapshotAt(ctx, msg, "price-engine", "MARK", 1000, time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.SnapshotID != "mark-valid" {
+		t.Fatalf("expected fallback to valid revision, got %s", got.SnapshotID)
+	}
+}
+
 func TestAuthoritativeQuoteRejectsDatabasePrecisionOverflow(t *testing.T) {
 	msg := ClientMessage{Topic: TopicQuote, CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT"}
 	for _, price := range []string{"1.1234567890123456789012345678901", "123456789012345678901234567890123456"} {

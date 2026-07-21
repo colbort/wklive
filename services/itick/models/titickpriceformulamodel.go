@@ -138,8 +138,8 @@ func (m *defaultTItickPriceFormulaModel) FindPage(ctx context.Context, filter Pr
 	return rows, total, err
 }
 
-func (m *defaultTItickPriceFormulaModel) ReleaseTarget(ctx context.Context, id, claimedVersion, target, previous int64) error {
-	_, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_price_formula SET last_target_time=?,update_times=? WHERE id=? AND version=? AND last_target_time=?", previous, time.Now().UnixMilli(), id, claimedVersion, target)
+func (m *defaultTItickPriceFormulaModel) ReleaseTarget(ctx context.Context, id, claimedRunVersion, target, previous int64) error {
+	_, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_price_formula SET last_target_time=?,update_times=? WHERE id=? AND run_version=? AND last_target_time=?", previous, time.Now().UnixMilli(), id, claimedRunVersion, target)
 	return err
 }
 
@@ -149,8 +149,8 @@ func (m *defaultTItickPriceFormulaModel) FindDue(ctx context.Context, now, limit
 	return rows, err
 }
 
-func (m *defaultTItickPriceFormulaModel) ClaimTarget(ctx context.Context, id, version, target, now int64) (bool, error) {
-	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_price_formula SET last_target_time=?,version=version+1,update_times=? WHERE id=? AND version=? AND status=1 AND last_target_time<?", target, now, id, version, target)
+func (m *defaultTItickPriceFormulaModel) ClaimTarget(ctx context.Context, id, runVersion, target, now int64) (bool, error) {
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_price_formula SET last_target_time=?,run_version=run_version+1,update_times=? WHERE id=? AND run_version=? AND status=1 AND last_target_time<?", target, now, id, runVersion, target)
 	if err != nil {
 		return false, err
 	}

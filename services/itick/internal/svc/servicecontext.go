@@ -53,6 +53,7 @@ type ServiceContext struct {
 	ItickQuoteModel             models.TItickQuoteModel
 	AuthoritativeSnapshotModel  AuthoritativeSnapshotStore
 	SnapshotOutboxModel         models.TItickSnapshotOutboxModel
+	SnapshotRevocationModel     models.TItickSnapshotRevocationModel
 	PriceFormulaModel           models.TItickPriceFormulaModel
 	PriceEngine                 *priceengine.Engine
 	AuthorityRegistryModel      AuthorityRegistryStore
@@ -68,6 +69,7 @@ type AuthoritativeSnapshotStore interface {
 	InsertImmutableAndEnqueue(context.Context, *models.TItickAuthoritativeSnapshot, string) error
 	FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*models.TItickAuthoritativeSnapshot, error)
 	FindAfterID(context.Context, int64, int64) ([]*models.TItickAuthoritativeSnapshot, error)
+	FindOneBySnapshotId(context.Context, string) (*models.TItickAuthoritativeSnapshot, error)
 }
 
 type AuthorityRegistryStore interface {
@@ -99,6 +101,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	authoritativeSnapshotModel := models.NewTItickAuthoritativeSnapshotModel(conn, c.CacheRedis)
 	authorityRegistryModel := models.NewTItickAuthorityRegistryModel(conn, c.CacheRedis)
 	snapshotOutboxModel := models.NewTItickSnapshotOutboxModel(conn, c.CacheRedis)
+	snapshotRevocationModel := models.NewTItickSnapshotRevocationModel(conn, c.CacheRedis)
 	priceFormulaModel := models.NewTItickPriceFormulaModel(conn, c.CacheRedis)
 	itickKlineSyncProgressModel := models.NewTItickKlineSyncProgressModel(conn, c.CacheRedis)
 	marketCalendarModel := models.NewTItickMarketCalendarModel(conn, c.CacheRedis)
@@ -197,6 +200,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ItickQuoteModel:             itickQuoteModel,
 		AuthoritativeSnapshotModel:  authoritativeSnapshotModel,
 		SnapshotOutboxModel:         snapshotOutboxModel,
+		SnapshotRevocationModel:     snapshotRevocationModel,
 		PriceFormulaModel:           priceFormulaModel,
 		PriceEngine:                 priceengine.New(priceFormulaModel, authoritativeSnapshotModel),
 		AuthorityRegistryModel:      authorityRegistryModel,

@@ -29,7 +29,7 @@ func StartAuthoritativeSnapshotRebuild(ctx context.Context, svcCtx *svc.ServiceC
 				}
 			}
 			if len(rows) == 0 {
-				return
+				break
 			}
 			for _, row := range rows {
 				snapshot := &market.SettlementSnapshot{SnapshotID: row.SnapshotId, Authority: row.Authority, Kind: row.SnapshotKind, CategoryCode: row.CategoryCode, Market: row.Market, Symbol: row.Symbol, Price: row.Price.String(), Source: row.Authority, SourceTimestamp: row.SourceTimestamp, SnapshotTimestamp: row.SnapshotTimestamp, Revision: row.Revision, FormulaVersion: row.FormulaVersion, Confirmed: true}
@@ -45,6 +45,24 @@ func StartAuthoritativeSnapshotRebuild(ctx context.Context, svcCtx *svc.ServiceC
 					return
 				case <-time.After(time.Second):
 				}
+			}
+		}
+		var revokeAfterID int64
+		for ctx.Err() == nil {
+			rows, err := svcCtx.SnapshotRevocationModel.FindAfterID(ctx, revokeAfterID, 500)
+			if err != nil {
+				logx.Errorf("authoritative snapshot revocation rebuild scan failed: %v", err)
+				return
+			}
+			if len(rows) == 0 {
+				return
+			}
+			for _, row := range rows {
+				if err = svcCtx.MarketDataCache.RevokeAuthoritativeSnapshot(ctx, row.SnapshotId, row.ReplacementSnapshotId, row.Reason); err != nil {
+					logx.Errorf("authoritative snapshot revocation rebuild failed, snapshotId=%s err=%v", row.SnapshotId, err)
+					return
+				}
+				revokeAfterID = row.Id
 			}
 		}
 	}()

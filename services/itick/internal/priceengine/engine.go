@@ -51,7 +51,7 @@ func (e *Engine) RunOnce(ctx context.Context, now int64) error {
 			continue
 		}
 		target := now / f.IntervalMs * f.IntervalMs
-		claimed, claimErr := e.formulas.ClaimTarget(ctx, f.Id, f.Version, target, now)
+		claimed, claimErr := e.formulas.ClaimTarget(ctx, f.Id, f.RunVersion, target, now)
 		if claimErr != nil {
 			return claimErr
 		}
@@ -59,7 +59,7 @@ func (e *Engine) RunOnce(ctx context.Context, now int64) error {
 			continue
 		}
 		if err = e.evaluate(ctx, f, target); err != nil {
-			_ = e.formulas.ReleaseTarget(ctx, f.Id, f.Version+1, target, f.LastTargetTime)
+			_ = e.formulas.ReleaseTarget(ctx, f.Id, f.RunVersion+1, target, f.LastTargetTime)
 			if firstErr == nil {
 				firstErr = err
 			}

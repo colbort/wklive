@@ -48,6 +48,7 @@ const (
 	ItickAdmin_ChangePriceFormulaStatus_FullMethodName    = "/itick.ItickAdmin/ChangePriceFormulaStatus"
 	ItickAdmin_ListSnapshotOutbox_FullMethodName          = "/itick.ItickAdmin/ListSnapshotOutbox"
 	ItickAdmin_RetrySnapshotOutbox_FullMethodName         = "/itick.ItickAdmin/RetrySnapshotOutbox"
+	ItickAdmin_RevokeAuthoritativeSnapshot_FullMethodName = "/itick.ItickAdmin/RevokeAuthoritativeSnapshot"
 )
 
 // ItickAdminClient is the client API for ItickAdmin service.
@@ -111,6 +112,7 @@ type ItickAdminClient interface {
 	ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	ListSnapshotOutbox(ctx context.Context, in *ListSnapshotOutboxReq, opts ...grpc.CallOption) (*ListSnapshotOutboxResp, error)
 	RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 }
 
 type itickAdminClient struct {
@@ -411,6 +413,16 @@ func (c *itickAdminClient) RetrySnapshotOutbox(ctx context.Context, in *RetrySna
 	return out, nil
 }
 
+func (c *itickAdminClient) RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_RevokeAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ItickAdminServer is the server API for ItickAdmin service.
 // All implementations must embed UnimplementedItickAdminServer
 // for forward compatibility.
@@ -472,6 +484,7 @@ type ItickAdminServer interface {
 	ChangePriceFormulaStatus(context.Context, *ChangePriceFormulaStatusReq) (*AdminCommonResp, error)
 	ListSnapshotOutbox(context.Context, *ListSnapshotOutboxReq) (*ListSnapshotOutboxResp, error)
 	RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*AdminCommonResp, error)
+	RevokeAuthoritativeSnapshot(context.Context, *RevokeAuthoritativeSnapshotReq) (*AdminCommonResp, error)
 	mustEmbedUnimplementedItickAdminServer()
 }
 
@@ -568,6 +581,9 @@ func (UnimplementedItickAdminServer) ListSnapshotOutbox(context.Context, *ListSn
 }
 func (UnimplementedItickAdminServer) RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetrySnapshotOutbox not implemented")
+}
+func (UnimplementedItickAdminServer) RevokeAuthoritativeSnapshot(context.Context, *RevokeAuthoritativeSnapshotReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method RevokeAuthoritativeSnapshot not implemented")
 }
 func (UnimplementedItickAdminServer) mustEmbedUnimplementedItickAdminServer() {}
 func (UnimplementedItickAdminServer) testEmbeddedByValue()                    {}
@@ -1112,6 +1128,24 @@ func _ItickAdmin_RetrySnapshotOutbox_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ItickAdmin_RevokeAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RevokeAuthoritativeSnapshotReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).RevokeAuthoritativeSnapshot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_RevokeAuthoritativeSnapshot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).RevokeAuthoritativeSnapshot(ctx, req.(*RevokeAuthoritativeSnapshotReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ItickAdmin_ServiceDesc is the grpc.ServiceDesc for ItickAdmin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1234,6 +1268,10 @@ var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RetrySnapshotOutbox",
 			Handler:    _ItickAdmin_RetrySnapshotOutbox_Handler,
+		},
+		{
+			MethodName: "RevokeAuthoritativeSnapshot",
+			Handler:    _ItickAdmin_RevokeAuthoritativeSnapshot_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

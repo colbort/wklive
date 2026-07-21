@@ -14,6 +14,8 @@
 
 > **2026-07-21 服务解耦复审：** Trade 已移除 `ItickRpc` 配置、客户端和 `proto/itick` 模块依赖；iTick 通过持久化 Snapshot Outbox 异步发布权威快照，Trade 按 Authority、Snapshot Kind、产品和业务时点从共享权威快照索引读取，并写入自身 `t_trade_market_snapshot` 审计事实。Redis 索引已升级为包含 Snapshot Kind，避免同一 Price Engine 的 Mark/Index/Funding/Delivery 相互遮蔽。Trade 结算主链路不再同步调用 iTick 服务。
 
+> **2026-07-21 快照可靠性复审：** iTick 启动时会绕过历史 Outbox 状态，从 MySQL 永久档案完整重建 Redis 权威索引；同一源时点存在多个版本时按最高 revision 确定性选择。快照撤销使用独立不可变撤销事实和 Redis tombstone，可选替代必须是同一 Authority、Kind、产品和源时点的更高 revision，Trade 查询自动跳过被撤销版本。Price Formula 的配置 `version` 与 Worker `run_version` 已分离。Trade 全量持续投影、Outbox Redis/Option 双下游状态拆分仍未完成。
+
 ### 文档状态说明
 
 本文中的状态统一采用：
@@ -412,8 +414,8 @@ FREEZING
 当前 P0：
 
 - iTick 已新增 MySQL 永久档案和历史查询 RPC，Trade 不再把 Redis TTL 数据作为结算事实来源；仍缺档案备份、分区归档和灾备恢复演练；
-- Authority 已由注册表控制启停和允许的快照类型，Trade 通过 `MarketAuthority` 配置选择来源；REST 预热和断线修复尚未注册为权威生产方，快照修订与撤销规则仍未实现；
-- Price Engine 已能发布版本化 Mark Price、Index Price 和 Funding Rate 快照，并固化输入、权重和异常剔除摘要；仍缺管理 Proto/API、公式变更审计页面及生产级平滑算法验收；
+- Authority 已由注册表控制启停和允许的快照类型，Trade 通过 `MarketAuthority` 配置选择来源；快照已支持确定性 revision、撤销和替代，REST 预热和断线修复仍未注册为权威生产方；
+- Price Engine 已能发布版本化 Mark Price、Index Price 和 Funding Rate 快照，并固化输入、权重和异常剔除摘要，管理 Proto/API 已接入 admin-api；仍缺生产级平滑算法及回放验收；
 - 用户与平台差额指令合计严格为零；每个步骤有稳定幂等号、失败重试和人工处理终态，批次必须等待全部指令和仓位投影完成；
 - Asset 扣款/入账已经转换为持久化逐步骤 Settlement Instruction，付款、平台差额和收款按步骤执行；仍缺跨服务日终对账和进程崩溃/超时故障注入验收；
 - `position_version` 已入库，但后台 Proto/API 尚未展示该审计字段，资金费对账报表和故障注入仍未验收。

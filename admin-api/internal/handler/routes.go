@@ -146,6 +146,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				Method:  http.MethodPost,
+				Path:    "/authoritative-snapshots/revoke",
+				Handler: itick.RevokeAuthoritativeSnapshotHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/categories",
 				Handler: itick.ListCategoriesHandler(serverCtx),

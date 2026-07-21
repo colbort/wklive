@@ -3316,6 +3316,12 @@ type ReviewUserIdentityResp struct {
 	Data UserIdentity `json:"data"`
 }
 
+type RevokeAuthoritativeSnapshotReq struct {
+	SnapshotId            string `json:"snapshotId"`
+	ReplacementSnapshotId string `json:"replacementSnapshotId,optional"`
+	Reason                string `json:"reason"`
+}
+
 type RiskOrderCheckLog struct {
 	Id            int64  `json:"id"`
 	TenantId      int64  `json:"tenantId"`

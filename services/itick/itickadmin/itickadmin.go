@@ -56,6 +56,7 @@ type (
 	PriceFormulaReq                = itick.PriceFormulaReq
 	PriceFormulaResp               = itick.PriceFormulaResp
 	RetrySnapshotOutboxReq         = itick.RetrySnapshotOutboxReq
+	RevokeAuthoritativeSnapshotReq = itick.RevokeAuthoritativeSnapshotReq
 	SnapshotOutboxData             = itick.SnapshotOutboxData
 	SyncCategoryProductsReq        = itick.SyncCategoryProductsReq
 	SyncCategoryProductsResp       = itick.SyncCategoryProductsResp
@@ -122,6 +123,7 @@ type (
 		ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		ListSnapshotOutbox(ctx context.Context, in *ListSnapshotOutboxReq, opts ...grpc.CallOption) (*ListSnapshotOutboxResp, error)
 		RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	}
 
 	defaultItickAdmin struct {
@@ -302,4 +304,9 @@ func (m *defaultItickAdmin) ListSnapshotOutbox(ctx context.Context, in *ListSnap
 func (m *defaultItickAdmin) RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.RetrySnapshotOutbox(ctx, in, opts...)
+}
+
+func (m *defaultItickAdmin) RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := itick.NewItickAdminClient(m.cli.Conn())
+	return client.RevokeAuthoritativeSnapshot(ctx, in, opts...)
 }

@@ -162,6 +162,10 @@ func (b *MarketDataCache) FindAuthoritativeSnapshotAt(ctx context.Context, msg C
 	}
 	var selected *SettlementSnapshot
 	for _, id := range ids {
+		revoked, revokeErr := b.rdb.Exists(ctx, authoritativeSnapshotRevocationKey(id)).Result()
+		if revokeErr != nil || revoked > 0 {
+			continue
+		}
 		raw, readErr := b.rdb.Get(ctx, fmt.Sprintf("market:authoritative:v1:%s", id)).Bytes()
 		if readErr != nil {
 			continue
@@ -179,6 +183,24 @@ func (b *MarketDataCache) FindAuthoritativeSnapshotAt(ctx context.Context, msg C
 		return nil, errors.New("valid authoritative snapshot unavailable at target time")
 	}
 	return selected, nil
+}
+
+// RevokeAuthoritativeSnapshot publishes an immutable tombstone. Replacement
+// identity is retained for audit; normal revision ordering selects it.
+func (b *MarketDataCache) RevokeAuthoritativeSnapshot(ctx context.Context, snapshotID, replacementID, reason string) error {
+	snapshotID, replacementID, reason = strings.TrimSpace(snapshotID), strings.TrimSpace(replacementID), strings.TrimSpace(reason)
+	if snapshotID == "" || reason == "" || snapshotID == replacementID {
+		return errors.New("invalid authoritative snapshot revocation")
+	}
+	raw, err := json.Marshal(map[string]string{"snapshot_id": snapshotID, "replacement_snapshot_id": replacementID, "reason": reason})
+	if err != nil {
+		return err
+	}
+	return b.rdb.Set(ctx, authoritativeSnapshotRevocationKey(snapshotID), raw, authoritativeSnapshotTTL).Err()
+}
+
+func authoritativeSnapshotRevocationKey(snapshotID string) string {
+	return fmt.Sprintf("market:authoritative:v1:revoked:%s", strings.TrimSpace(snapshotID))
 }
 
 func authoritativeSnapshotIndex(msg ClientMessage, authority string) string {
