@@ -42,10 +42,14 @@ type (
 	GetFundingBatchListResp          = trade.GetFundingBatchListResp
 	GetFundingSettlementListReq      = trade.GetFundingSettlementListReq
 	GetFundingSettlementListResp     = trade.GetFundingSettlementListResp
+	GetInsuranceFundAccountListReq   = trade.GetInsuranceFundAccountListReq
+	GetInsuranceFundAccountListResp  = trade.GetInsuranceFundAccountListResp
 	GetLiquidationListReq            = trade.GetLiquidationListReq
 	GetLiquidationListResp           = trade.GetLiquidationListResp
 	GetMarginSnapshotListAdminReq    = trade.GetMarginSnapshotListAdminReq
 	GetMarginSnapshotListAdminResp   = trade.GetMarginSnapshotListAdminResp
+	GetMarketSnapshotListReq         = trade.GetMarketSnapshotListReq
+	GetMarketSnapshotListResp        = trade.GetMarketSnapshotListResp
 	GetOrderDetailAdminReq           = trade.GetOrderDetailAdminReq
 	GetOrderDetailAdminResp          = trade.GetOrderDetailAdminResp
 	GetOrderListAdminReq             = trade.GetOrderListAdminReq
@@ -83,16 +87,13 @@ type (
 	GetUserTradeConfigResp           = trade.GetUserTradeConfigResp
 	GetUserTradeLimitReq             = trade.GetUserTradeLimitReq
 	GetUserTradeLimitResp            = trade.GetUserTradeLimitResp
+	InsuranceFundAccount             = trade.InsuranceFundAccount
 	RetrySettlementInstructionReq    = trade.RetrySettlementInstructionReq
-	SetInsuranceFundAccountReq       = trade.SetInsuranceFundAccountReq
-	GetInsuranceFundAccountListReq   = trade.GetInsuranceFundAccountListReq
-	GetInsuranceFundAccountListResp  = trade.GetInsuranceFundAccountListResp
-	GetMarketSnapshotListReq         = trade.GetMarketSnapshotListReq
-	GetMarketSnapshotListResp        = trade.GetMarketSnapshotListResp
 	RetryTradeEventReq               = trade.RetryTradeEventReq
 	SetContractRiskLimitTierReq      = trade.SetContractRiskLimitTierReq
 	SetContractSymbolConfigReq       = trade.SetContractSymbolConfigReq
 	SetContractUserConfigReq         = trade.SetContractUserConfigReq
+	SetInsuranceFundAccountReq       = trade.SetInsuranceFundAccountReq
 	SetSecondsSymbolConfigReq        = trade.SetSecondsSymbolConfigReq
 	SetSpotSymbolConfigReq           = trade.SetSpotSymbolConfigReq
 	SetSymbolLeverageConfigReq       = trade.SetSymbolLeverageConfigReq
@@ -102,6 +103,7 @@ type (
 	SetUserTradeConfigReq            = trade.SetUserTradeConfigReq
 	SetUserTradeLimitReq             = trade.SetUserTradeLimitReq
 	TradeAssetReservation            = trade.TradeAssetReservation
+	TradeMarketSnapshot              = trade.TradeMarketSnapshot
 	TradeSecondsPriceSnapshot        = trade.TradeSecondsPriceSnapshot
 	TradeSettlementInstruction       = trade.TradeSettlementInstruction
 	UpdateSymbolReq                  = trade.UpdateSymbolReq
@@ -474,11 +476,16 @@ func (m *defaultTradeAdmin) RetrySettlementInstruction(ctx context.Context, in *
 }
 
 func (m *defaultTradeAdmin) SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
-	return trade.NewTradeAdminClient(m.cli.Conn()).SetInsuranceFundAccount(ctx, in, opts...)
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.SetInsuranceFundAccount(ctx, in, opts...)
 }
+
 func (m *defaultTradeAdmin) GetInsuranceFundAccountList(ctx context.Context, in *GetInsuranceFundAccountListReq, opts ...grpc.CallOption) (*GetInsuranceFundAccountListResp, error) {
-	return trade.NewTradeAdminClient(m.cli.Conn()).GetInsuranceFundAccountList(ctx, in, opts...)
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetInsuranceFundAccountList(ctx, in, opts...)
 }
+
 func (m *defaultTradeAdmin) GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error) {
-	return trade.NewTradeAdminClient(m.cli.Conn()).GetMarketSnapshotList(ctx, in, opts...)
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetMarketSnapshotList(ctx, in, opts...)
 }

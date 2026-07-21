@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `t_trade_symbol`;
 CREATE TABLE `t_trade_symbol` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -40,6 +41,7 @@ CREATE TABLE `t_trade_symbol` (
   CONSTRAINT `chk_symbol_notional_time` CHECK (`min_notional` >= 0 AND (`max_notional` = 0 OR `max_notional` >= `min_notional`) AND (`trading_end_time` = 0 OR `trading_start_time` = 0 OR `trading_end_time` > `trading_start_time`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易标的主表';
 
+DROP TABLE IF EXISTS `t_trade_symbol_spot`;
 CREATE TABLE `t_trade_symbol_spot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -56,6 +58,7 @@ CREATE TABLE `t_trade_symbol_spot` (
   CONSTRAINT `chk_spot_switches` CHECK (`buy_enabled` IN (1, 2) AND `sell_enabled` IN (1, 2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='现货交易对扩展表';
 
+DROP TABLE IF EXISTS `t_trade_symbol_contract`;
 CREATE TABLE `t_trade_symbol_contract` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -96,6 +99,7 @@ CREATE TABLE `t_trade_symbol_contract` (
   CONSTRAINT `chk_contract_switches` CHECK (`open_long_enabled` IN (1, 2) AND `open_short_enabled` IN (1, 2) AND `close_long_enabled` IN (1, 2) AND `close_short_enabled` IN (1, 2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约交易对扩展表';
 
+DROP TABLE IF EXISTS `t_trade_symbol_seconds`;
 CREATE TABLE `t_trade_symbol_seconds` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -123,6 +127,7 @@ CREATE TABLE `t_trade_symbol_seconds` (
   CONSTRAINT `chk_seconds_switches` CHECK (`up_enabled` IN (1, 2) AND `down_enabled` IN (1, 2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='秒合约产品配置';
 
+DROP TABLE IF EXISTS `t_trade_symbol_session`;
 CREATE TABLE `t_trade_symbol_session` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -139,6 +144,7 @@ CREATE TABLE `t_trade_symbol_session` (
   CONSTRAINT `chk_symbol_session_time` CHECK (`day_of_week` BETWEEN 1 AND 7 AND `start_second` >= 0 AND `start_second` < `end_second` AND `end_second` <= 86400 AND `enabled` IN (1, 2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易标的周期交易时段';
 
+DROP TABLE IF EXISTS `t_trade_user_config`;
 CREATE TABLE `t_trade_user_config` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -153,6 +159,7 @@ CREATE TABLE `t_trade_user_config` (
   CONSTRAINT `chk_trade_user_config` CHECK (`product_type` IN (1, 2, 3) AND `trade_enabled` IN (1, 2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户交易配置表';
 
+DROP TABLE IF EXISTS `t_contract_user_config`;
 CREATE TABLE `t_contract_user_config` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -168,6 +175,7 @@ CREATE TABLE `t_contract_user_config` (
   CONSTRAINT `chk_contract_user_config` CHECK (`position_mode` IN (1, 2) AND `margin_mode` IN (1, 2) AND `default_leverage` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户合约交易偏好配置';
 
+DROP TABLE IF EXISTS `t_trade_order`;
 CREATE TABLE `t_trade_order` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -230,6 +238,7 @@ CREATE TABLE `t_trade_order` (
   CONSTRAINT `chk_order_flags` CHECK (`is_reduce_only` IN (1, 2) AND `is_close_position` IN (1, 2) AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易订单主表';
 
+DROP TABLE IF EXISTS `t_trade_order_spot`;
 CREATE TABLE `t_trade_order_spot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -245,6 +254,7 @@ CREATE TABLE `t_trade_order_spot` (
   CONSTRAINT `chk_order_spot_amounts` CHECK (`frozen_amount` >= 0 AND `settle_amount` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='现货订单明细表';
 
+DROP TABLE IF EXISTS `t_trade_order_contract`;
 CREATE TABLE `t_trade_order_contract` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -267,6 +277,7 @@ CREATE TABLE `t_trade_order_contract` (
   CONSTRAINT `chk_order_contract` CHECK (`margin_mode` IN (1, 2) AND `leverage` > 0 AND `margin_amount` >= 0 AND `reserved_close_qty` >= 0 AND `risk_price` >= 0 AND `close_position_type` IN (0, 1, 2) AND `liquidation_price` >= 0 AND `take_profit_price` >= 0 AND `stop_loss_price` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约订单明细表';
 
+DROP TABLE IF EXISTS `t_trade_order_seconds`;
 CREATE TABLE `t_trade_order_seconds` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -292,6 +303,9 @@ CREATE TABLE `t_trade_order_seconds` (
   `fee_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '手续费金额',
   `return_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '最终返还本金及收益总额',
   `settlement_status` TINYINT NOT NULL DEFAULT 0 COMMENT '流程状态：0待冻结 1激活中 2进行中 3结算中 4已结算 5退款中 6已退款 7人工处理',
+  `retry_count` INT NOT NULL DEFAULT 0 COMMENT '当前流程累计失败次数',
+  `next_retry_at` BIGINT NOT NULL DEFAULT 0 COMMENT '下次允许处理时间',
+  `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '最后处理错误',
   `reservation_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT 'Asset资金预占号',
   `settlement_reason` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '结算、作废、退款或人工处理原因',
   `settled_at` BIGINT NOT NULL DEFAULT 0 COMMENT '结算或退款完成时间',
@@ -301,9 +315,11 @@ CREATE TABLE `t_trade_order_seconds` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_order_id` (`tenant_id`, `order_id`),
   KEY `idx_settlement_due` (`tenant_id`, `settlement_status`, `expire_time`),
-  CONSTRAINT `chk_seconds_order` CHECK (`direction` IN (1, 2) AND `duration_seconds` > 0 AND `stake_amount` > 0 AND `payout_rate` >= 0 AND `fee_rate` >= 0 AND `result` IN (0, 1, 2, 3, 4) AND `settlement_status` BETWEEN 0 AND 7 AND `profit_amount` >= 0 AND `fee_amount` >= 0 AND `return_amount` >= 0 AND `version` >= 0 AND ((`settlement_status` IN (0, 1) AND `start_price` = 0 AND `start_price_time` = 0 AND `expire_time` = 0) OR (`settlement_status` >= 2 AND `start_price` > 0 AND `start_price_time` > 0 AND `activated_at` > 0 AND `expire_time` > `activated_at`)))
+  KEY `idx_seconds_retry_due` (`tenant_id`, `settlement_status`, `next_retry_at`, `id`),
+  CONSTRAINT `chk_seconds_order` CHECK (`direction` IN (1, 2) AND `duration_seconds` > 0 AND `stake_amount` > 0 AND `payout_rate` >= 0 AND `fee_rate` >= 0 AND `result` IN (0, 1, 2, 3, 4) AND `settlement_status` BETWEEN 0 AND 7 AND `retry_count` >= 0 AND `profit_amount` >= 0 AND `fee_amount` >= 0 AND `return_amount` >= 0 AND `version` >= 0 AND ((`settlement_status` IN (0, 1) AND `start_price` = 0 AND `start_price_time` = 0 AND `expire_time` = 0) OR (`settlement_status` >= 2 AND `start_price` > 0 AND `start_price_time` > 0 AND `activated_at` > 0 AND `expire_time` > `activated_at`)))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='秒合约订单及到期结算快照';
 
+DROP TABLE IF EXISTS `t_trade_market_snapshot`;
 CREATE TABLE `t_trade_market_snapshot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID，0为公共行情',
@@ -328,6 +344,7 @@ CREATE TABLE `t_trade_market_snapshot` (
   CONSTRAINT `chk_trade_market_snapshot` CHECK (`source_timestamp` > 0 AND `revision` > 0 AND `confirmed` IN (1,2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='结算使用的不可变行情及资金费快照';
 
+DROP TABLE IF EXISTS `t_trade_seconds_price_snapshot`;
 CREATE TABLE `t_trade_seconds_price_snapshot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -347,6 +364,7 @@ CREATE TABLE `t_trade_seconds_price_snapshot` (
   CONSTRAINT `chk_seconds_price_snapshot` CHECK (`snapshot_type` IN (1, 2, 3) AND `price` > 0 AND `quote_time` > 0 AND `received_at` > 0 AND `is_selected` IN (1, 2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='秒合约可审计价格快照';
 
+DROP TABLE IF EXISTS `t_trade_fill`;
 CREATE TABLE `t_trade_fill` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -387,6 +405,7 @@ CREATE TABLE `t_trade_fill` (
   CONSTRAINT `chk_fill_values` CHECK (`side` IN (1, 2) AND `price` > 0 AND `qty` > 0 AND `amount` > 0 AND `fee` >= 0 AND `liquidity_type` IN (1, 2) AND `settlement_status` IN (1, 2, 3, 4, 5))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='成交明细表';
 
+DROP TABLE IF EXISTS `t_trade_cancel_log`;
 CREATE TABLE `t_trade_cancel_log` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -401,6 +420,7 @@ CREATE TABLE `t_trade_cancel_log` (
   KEY `idx_tenant_user_created` (`tenant_id`, `user_id`, `create_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='撤单日志表';
 
+DROP TABLE IF EXISTS `t_contract_position`;
 CREATE TABLE `t_contract_position` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -442,6 +462,7 @@ CREATE TABLE `t_contract_position` (
   CONSTRAINT `chk_position_quantities` CHECK (`qty` >= 0 AND `avail_qty` >= 0 AND `frozen_qty` >= 0 AND `avail_qty` + `frozen_qty` <= `qty` AND `position_margin` >= 0 AND `maintenance_margin` >= 0 AND `isolated_margin` >= 0 AND `risk_rate` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约当前持仓表';
 
+DROP TABLE IF EXISTS `t_contract_margin_snapshot`;
 CREATE TABLE `t_contract_margin_snapshot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -465,6 +486,7 @@ CREATE TABLE `t_contract_margin_snapshot` (
   CONSTRAINT `chk_margin_snapshot_balances` CHECK (`wallet_balance` >= 0 AND `available_balance` >= 0 AND `frozen_balance` >= 0 AND `position_margin` >= 0 AND `order_margin` >= 0 AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约风控保证金投影；Asset为资金账本唯一事实源';
 
+DROP TABLE IF EXISTS `t_contract_position_history`;
 CREATE TABLE `t_contract_position_history` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -509,6 +531,7 @@ CREATE TABLE `t_contract_position_history` (
   CONSTRAINT `chk_position_history_dimensions` CHECK (`contract_type` IN (1, 2) AND `contract_value_type` IN (1, 2) AND `position_side` IN (1, 2, 3) AND `action_type` IN (1, 2, 3, 4, 5, 6, 7, 8))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约持仓历史表';
 
+DROP TABLE IF EXISTS `t_contract_leverage_config`;
 CREATE TABLE `t_contract_leverage_config` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -529,6 +552,7 @@ CREATE TABLE `t_contract_leverage_config` (
   CONSTRAINT `chk_user_leverage` CHECK (`margin_mode` IN (1, 2) AND `long_leverage` > 0 AND `short_leverage` > 0 AND `enabled` IN (1, 2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户合约杠杆配置表';
 
+DROP TABLE IF EXISTS `t_trade_symbol_leverage_config`;
 CREATE TABLE `t_trade_symbol_leverage_config` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -546,6 +570,7 @@ CREATE TABLE `t_trade_symbol_leverage_config` (
   CONSTRAINT `chk_symbol_leverage` CHECK (`margin_mode` IN (1, 2) AND `leverage` > 0 AND `enabled` IN (1, 2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易对杠杆档位配置表';
 
+DROP TABLE IF EXISTS `t_trade_symbol_leverage_default`;
 CREATE TABLE `t_trade_symbol_leverage_default` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -559,6 +584,7 @@ CREATE TABLE `t_trade_symbol_leverage_default` (
   CONSTRAINT `chk_symbol_default_leverage` CHECK (`margin_mode` IN (1, 2) AND `leverage` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易对默认杠杆配置；每个保证金模式唯一';
 
+DROP TABLE IF EXISTS `t_contract_risk_limit_tier`;
 CREATE TABLE `t_contract_risk_limit_tier` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -579,6 +605,7 @@ CREATE TABLE `t_contract_risk_limit_tier` (
   CONSTRAINT `chk_contract_risk_tier` CHECK (`tier_no` > 0 AND `notional_floor` >= 0 AND (`notional_cap` = 0 OR `notional_cap` > `notional_floor`) AND `max_leverage` > 0 AND `initial_margin_rate` >= `maintenance_margin_rate` AND `maintenance_margin_rate` >= 0 AND `maintenance_amount` >= 0 AND `enabled` IN (1, 2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约名义价值风险限额档位';
 
+DROP TABLE IF EXISTS `t_risk_user_trade_limit`;
 CREATE TABLE `t_risk_user_trade_limit` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -613,6 +640,7 @@ CREATE TABLE `t_risk_user_trade_limit` (
   CONSTRAINT `chk_user_trade_limit_values` CHECK (`max_open_order_count` >= 0 AND `max_order_count_per_day` >= 0 AND `max_cancel_count_per_day` >= 0 AND `max_open_notional` >= 0 AND `max_position_notional` >= 0 AND (`effective_end_time` = 0 OR `effective_start_time` = 0 OR `effective_end_time` > `effective_start_time`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户交易限制表';
 
+DROP TABLE IF EXISTS `t_risk_user_symbol_limit`;
 CREATE TABLE `t_risk_user_symbol_limit` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -643,6 +671,7 @@ CREATE TABLE `t_risk_user_symbol_limit` (
   CONSTRAINT `chk_user_symbol_limit_time` CHECK (`effective_end_time` = 0 OR `effective_start_time` = 0 OR `effective_end_time` > `effective_start_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户单标的限制表';
 
+DROP TABLE IF EXISTS `t_risk_order_check_log`;
 CREATE TABLE `t_risk_order_check_log` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -669,6 +698,7 @@ CREATE TABLE `t_risk_order_check_log` (
   CONSTRAINT `chk_risk_check_log` CHECK (`product_type` IN (1, 2, 3) AND `check_type` BETWEEN 1 AND 8 AND `check_result` IN (1, 2, 3) AND `request_price` >= 0 AND `request_qty` >= 0 AND `request_amount` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单风控检查日志表';
 
+DROP TABLE IF EXISTS `t_biz_trade_event`;
 CREATE TABLE `t_biz_trade_event` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -705,6 +735,7 @@ CREATE TABLE `t_biz_trade_event` (
   CONSTRAINT `chk_trade_event` CHECK (`product_type` IN (0, 1, 2, 3) AND `event_status` IN (1, 2, 3, 4, 5, 6) AND `retry_count` >= 0 AND `max_retry_count` >= 0 AND `payload_version` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易业务事件表';
 
+DROP TABLE IF EXISTS `t_trade_event_inbox`;
 CREATE TABLE `t_trade_event_inbox` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '上游事件所属租户ID',
@@ -722,6 +753,7 @@ CREATE TABLE `t_trade_event_inbox` (
   CONSTRAINT `chk_inbox_status` CHECK (`status` IN (1, 2, 3) AND `retry_count` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易事件消费幂等表';
 
+DROP TABLE IF EXISTS `t_trade_asset_reservation`;
 CREATE TABLE `t_trade_asset_reservation` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -745,6 +777,7 @@ CREATE TABLE `t_trade_asset_reservation` (
   CONSTRAINT `chk_asset_reservation_status` CHECK (`status` IN (1, 2, 3, 4, 5, 6, 7) AND `retry_count` >= 0 AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单资金预占状态镜像';
 
+DROP TABLE IF EXISTS `t_trade_settlement_instruction`;
 CREATE TABLE `t_trade_settlement_instruction` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -776,6 +809,7 @@ CREATE TABLE `t_trade_settlement_instruction` (
   CONSTRAINT `chk_settlement_instruction` CHECK (`action` IN (1, 2, 3, 4, 5, 6, 7, 8) AND `amount` > 0 AND `step_no` > 0 AND `status` IN (1, 2, 3, 4, 5) AND `retry_count` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='发送给Asset的幂等结算指令';
 
+DROP TABLE IF EXISTS `t_contract_liquidation`;
 CREATE TABLE `t_contract_liquidation` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -810,13 +844,12 @@ CREATE TABLE `t_contract_liquidation` (
   CONSTRAINT `chk_contract_liquidation` CHECK (`position_side` IN (1, 2, 3) AND `margin_mode` IN (1, 2) AND `trigger_mark_price` > 0 AND `trigger_index_price` >= 0 AND `trigger_qty` > 0 AND `liquidated_qty` >= 0 AND `liquidated_qty` <= `trigger_qty` AND `maintenance_margin` >= 0 AND `bankruptcy_price` >= 0 AND `liquidation_fee` >= 0 AND `insurance_fund_amount` >= 0 AND `adl_qty` >= 0 AND `status` BETWEEN 1 AND 7 AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约强平、保险基金与ADL处理记录';
 
+DROP TABLE IF EXISTS `t_contract_insurance_fund_account`;
 CREATE TABLE `t_contract_insurance_fund_account` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `symbol_id` BIGINT NOT NULL DEFAULT 0 COMMENT '交易标的ID，0表示该资产默认账户',
   `settle_asset` VARCHAR(32) NOT NULL COMMENT '结算资产',
-  `fund_user_id` BIGINT NOT NULL COMMENT 'Asset保险基金用户ID',
-  `wallet_type` TINYINT NOT NULL DEFAULT 3 COMMENT 'Asset钱包类型',
   `adl_enabled` TINYINT NOT NULL DEFAULT 2 COMMENT '余额不足是否启用ADL：1是 2否',
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1启用 2禁用',
   `version` BIGINT NOT NULL DEFAULT 0 COMMENT '版本号',
@@ -825,9 +858,10 @@ CREATE TABLE `t_contract_insurance_fund_account` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_symbol_asset` (`tenant_id`, `symbol_id`, `settle_asset`),
   KEY `idx_tenant_asset_status` (`tenant_id`, `settle_asset`, `status`),
-  CONSTRAINT `chk_insurance_fund_account` CHECK (`fund_user_id` > 0 AND `wallet_type` > 0 AND `adl_enabled` IN (1,2) AND `status` IN (1,2))
+  CONSTRAINT `chk_insurance_fund_account` CHECK (`adl_enabled` IN (1,2) AND `status` IN (1,2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户级合约保险基金账户配置';
 
+DROP TABLE IF EXISTS `t_contract_funding_batch`;
 CREATE TABLE `t_contract_funding_batch` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -853,6 +887,7 @@ CREATE TABLE `t_contract_funding_batch` (
   CONSTRAINT `chk_funding_batch` CHECK (`mark_price` > 0 AND `index_price` >= 0 AND `settlement_time` > 0 AND `status` BETWEEN 1 AND 5 AND `total_positions` >= 0 AND `settled_positions` >= 0 AND `settled_positions` <= `total_positions` AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='永续合约资金费锁定与执行批次';
 
+DROP TABLE IF EXISTS `t_contract_funding_difference_account`;
 CREATE TABLE `t_contract_funding_difference_account` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `tenant_id` BIGINT NOT NULL,
@@ -868,6 +903,7 @@ CREATE TABLE `t_contract_funding_difference_account` (
   CONSTRAINT `chk_funding_difference_account` CHECK (`tenant_id` > 0 AND `fund_user_id` > 0 AND `wallet_type` > 0 AND `status` IN (1,2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资金费舍入及非零差额平台账户';
 
+DROP TABLE IF EXISTS `t_contract_funding_settlement`;
 CREATE TABLE `t_contract_funding_settlement` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -899,6 +935,7 @@ CREATE TABLE `t_contract_funding_settlement` (
   CONSTRAINT `chk_funding_settlement` CHECK (`position_side` IN (1, 2, 3) AND `mark_price` > 0 AND `position_qty` > 0 AND `position_version` >= 0 AND `settlement_time` > 0 AND `status` IN (1, 2, 3, 4) AND `retry_count` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='永续合约资金费结算记录';
 
+DROP TABLE IF EXISTS `t_contract_adl_execution`;
 CREATE TABLE `t_contract_adl_execution` (
   `id` BIGINT NOT NULL AUTO_INCREMENT, `tenant_id` BIGINT NOT NULL,
   `execution_no` VARCHAR(96) NOT NULL, `liquidation_id` BIGINT NOT NULL, `liquidation_no` VARCHAR(64) NOT NULL,
@@ -915,6 +952,7 @@ CREATE TABLE `t_contract_adl_execution` (
   CONSTRAINT `chk_adl_execution` CHECK (`qty` > 0 AND `position_margin_release` >= 0 AND `isolated_margin_release` >= 0 AND `asset_credit` >= 0 AND `relief_amount` > 0 AND `status` IN (1,2,3,4,5))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='ADL资产与仓位持久化执行步骤';
 
+DROP TABLE IF EXISTS `t_contract_delivery_batch`;
 CREATE TABLE `t_contract_delivery_batch` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -941,6 +979,7 @@ CREATE TABLE `t_contract_delivery_batch` (
   CONSTRAINT `chk_delivery_batch` CHECK (`settlement_price` >= 0 AND `delivery_time` > 0 AND `status` BETWEEN 1 AND 8 AND `total_positions` >= 0 AND `settled_positions` >= 0 AND `settled_positions` <= `total_positions` AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交割合约价格锁定与执行批次';
 
+DROP TABLE IF EXISTS `t_contract_delivery_settlement`;
 CREATE TABLE `t_contract_delivery_settlement` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',

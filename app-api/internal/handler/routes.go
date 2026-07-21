@@ -110,6 +110,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,
+					Path:    "/authoritative-snapshot",
+					Handler: itick.GetAuthoritativeSnapshotHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
 					Path:    "/batch/quote",
 					Handler: itick.BatchGetQuoteHandler(serverCtx),
 				},
@@ -122,6 +127,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/kline",
 					Handler: itick.GetKlineHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/kline-intervals",
+					Handler: itick.GetKlineIntervalsHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,

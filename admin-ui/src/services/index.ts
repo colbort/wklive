@@ -240,6 +240,10 @@ export type {
   AdminUnfreezeAssetReq,
   AdminLockAssetReq,
   AdminUnlockAssetReq,
+  PlatformAccount,
+  GetPlatformAccountReq,
+  SetPlatformAccountReq,
+  AdjustPlatformAccountReq,
 } from './asset/AssetService'
 export type {
   OptionAdminCommonResp,

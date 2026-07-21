@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"testing"
+
+	kafka "github.com/segmentio/kafka-go"
 )
 
 func TestTopicNormalizesLegacyRedisChannel(t *testing.T) {
@@ -48,5 +50,15 @@ func TestBroadcastSubscriberStartsFromLatest(t *testing.T) {
 	}
 	if !subscriber.startFromLatest {
 		t.Fatal("broadcast subscriber must start from latest for a new consumer group")
+	}
+}
+
+func TestKeyedBalancerKeepsEntityOnSamePartition(t *testing.T) {
+	balancer := &keyedBalancer{}
+	partitions := []int{0, 1, 2, 3}
+	first := balancer.Balance(kafka.Message{Key: []byte("fill-1")}, partitions...)
+	second := balancer.Balance(kafka.Message{Key: []byte("fill-1")}, partitions...)
+	if first != second {
+		t.Fatalf("same key selected partitions %d and %d", first, second)
 	}
 }

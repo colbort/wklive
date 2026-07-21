@@ -1885,8 +1885,6 @@ func (x *ChangeAssetData) GetAsset() *UserAsset {
 type CoverInsuranceDeficitReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	FundUserId      int64                  `protobuf:"varint,2,opt,name=fund_user_id,json=fundUserId,proto3" json:"fund_user_id,omitempty"`
-	WalletType      common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin            string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
 	RequestedAmount string                 `protobuf:"bytes,5,opt,name=requested_amount,json=requestedAmount,proto3" json:"requested_amount,omitempty"`
 	LiquidationId   int64                  `protobuf:"varint,6,opt,name=liquidation_id,json=liquidationId,proto3" json:"liquidation_id,omitempty"`
@@ -1933,20 +1931,6 @@ func (x *CoverInsuranceDeficitReq) GetTenantId() int64 {
 	return 0
 }
 
-func (x *CoverInsuranceDeficitReq) GetFundUserId() int64 {
-	if x != nil {
-		return x.FundUserId
-	}
-	return 0
-}
-
-func (x *CoverInsuranceDeficitReq) GetWalletType() common.WalletType {
-	if x != nil {
-		return x.WalletType
-	}
-	return common.WalletType(0)
-}
-
 func (x *CoverInsuranceDeficitReq) GetCoin() string {
 	if x != nil {
 		return x.Coin
@@ -1983,15 +1967,16 @@ func (x *CoverInsuranceDeficitReq) GetRemark() string {
 }
 
 type CoverInsuranceDeficitResp struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Base             *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	RequestedAmount  string                 `protobuf:"bytes,2,opt,name=requested_amount,json=requestedAmount,proto3" json:"requested_amount,omitempty"`
-	CoveredAmount    string                 `protobuf:"bytes,3,opt,name=covered_amount,json=coveredAmount,proto3" json:"covered_amount,omitempty"`
-	RemainingAmount  string                 `protobuf:"bytes,4,opt,name=remaining_amount,json=remainingAmount,proto3" json:"remaining_amount,omitempty"`
-	FundAsset        *UserAsset             `protobuf:"bytes,5,opt,name=fund_asset,json=fundAsset,proto3" json:"fund_asset,omitempty"`
-	IdempotentReplay bool                   `protobuf:"varint,6,opt,name=idempotent_replay,json=idempotentReplay,proto3" json:"idempotent_replay,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"open.v1"`
+	Base                   *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	RequestedAmount        string                 `protobuf:"bytes,2,opt,name=requested_amount,json=requestedAmount,proto3" json:"requested_amount,omitempty"`
+	CoveredAmount          string                 `protobuf:"bytes,3,opt,name=covered_amount,json=coveredAmount,proto3" json:"covered_amount,omitempty"`
+	RemainingAmount        string                 `protobuf:"bytes,4,opt,name=remaining_amount,json=remainingAmount,proto3" json:"remaining_amount,omitempty"`
+	IdempotentReplay       bool                   `protobuf:"varint,6,opt,name=idempotent_replay,json=idempotentReplay,proto3" json:"idempotent_replay,omitempty"`
+	PlatformAccountId      int64                  `protobuf:"varint,7,opt,name=platform_account_id,json=platformAccountId,proto3" json:"platform_account_id,omitempty"`
+	PlatformAccountBalance string                 `protobuf:"bytes,8,opt,name=platform_account_balance,json=platformAccountBalance,proto3" json:"platform_account_balance,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *CoverInsuranceDeficitResp) Reset() {
@@ -2052,18 +2037,25 @@ func (x *CoverInsuranceDeficitResp) GetRemainingAmount() string {
 	return ""
 }
 
-func (x *CoverInsuranceDeficitResp) GetFundAsset() *UserAsset {
-	if x != nil {
-		return x.FundAsset
-	}
-	return nil
-}
-
 func (x *CoverInsuranceDeficitResp) GetIdempotentReplay() bool {
 	if x != nil {
 		return x.IdempotentReplay
 	}
 	return false
+}
+
+func (x *CoverInsuranceDeficitResp) GetPlatformAccountId() int64 {
+	if x != nil {
+		return x.PlatformAccountId
+	}
+	return 0
+}
+
+func (x *CoverInsuranceDeficitResp) GetPlatformAccountBalance() string {
+	if x != nil {
+		return x.PlatformAccountBalance
+	}
+	return ""
 }
 
 type ReverseInsuranceCoverReq struct {
@@ -2138,7 +2130,7 @@ var File_proto_asset_asset_internal_proto protoreflect.FileDescriptor
 
 const file_proto_asset_asset_internal_proto_rawDesc = "" +
 	"\n" +
-	" proto/asset/asset_internal.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\"\xca\x02\n" +
+	" proto/asset/asset_internal.proto\x12\x05asset\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\x1a\x19proto/common/common.proto\"\xca\x02\n" +
 	"\x0fAddAvailableReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x123\n" +
@@ -2322,26 +2314,23 @@ const file_proto_asset_asset_internal_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x01(\v2\x16.asset.ChangeAssetDataR\x04data\"P\n" +
 	"\x0fChangeAssetData\x12\x15\n" +
 	"\x06biz_no\x18\x01 \x01(\tR\x05bizNo\x12&\n" +
-	"\x05asset\x18\x02 \x01(\v2\x10.asset.UserAssetR\x05asset\"\xb3\x02\n" +
+	"\x05asset\x18\x02 \x01(\v2\x10.asset.UserAssetR\x05asset\"\x83\x02\n" +
 	"\x18CoverInsuranceDeficitReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12 \n" +
-	"\ffund_user_id\x18\x02 \x01(\x03R\n" +
-	"fundUserId\x123\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
-	"walletType\x12\x12\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12)\n" +
 	"\x10requested_amount\x18\x05 \x01(\tR\x0frequestedAmount\x12%\n" +
 	"\x0eliquidation_id\x18\x06 \x01(\x03R\rliquidationId\x12%\n" +
 	"\x0eliquidation_no\x18\a \x01(\tR\rliquidationNo\x12\x16\n" +
-	"\x06remark\x18\b \x01(\tR\x06remark\"\x9c\x02\n" +
+	"\x06remark\x18\b \x01(\tR\x06remarkJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\ffund_user_idR\vwallet_type\"\xe7\x02\n" +
 	"\x19CoverInsuranceDeficitResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
 	"\x10requested_amount\x18\x02 \x01(\tR\x0frequestedAmount\x12%\n" +
 	"\x0ecovered_amount\x18\x03 \x01(\tR\rcoveredAmount\x12)\n" +
-	"\x10remaining_amount\x18\x04 \x01(\tR\x0fremainingAmount\x12/\n" +
-	"\n" +
-	"fund_asset\x18\x05 \x01(\v2\x10.asset.UserAssetR\tfundAsset\x12+\n" +
-	"\x11idempotent_replay\x18\x06 \x01(\bR\x10idempotentReplay\"\x97\x01\n" +
+	"\x10remaining_amount\x18\x04 \x01(\tR\x0fremainingAmount\x12+\n" +
+	"\x11idempotent_replay\x18\x06 \x01(\bR\x10idempotentReplay\x12.\n" +
+	"\x13platform_account_id\x18\a \x01(\x03R\x11platformAccountId\x128\n" +
+	"\x18platform_account_balance\x18\b \x01(\tR\x16platformAccountBalanceJ\x04\b\x05\x10\x06R\n" +
+	"fund_asset\"\x97\x01\n" +
 	"\x18ReverseInsuranceCoverReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12%\n" +
 	"\x0eliquidation_no\x18\x02 \x01(\tR\rliquidationNo\x12\x1f\n" +
@@ -2459,44 +2448,42 @@ var file_proto_asset_asset_internal_proto_depIdxs = []int32{
 	27, // 46: asset.ChangeAssetResp.base:type_name -> common.RespBase
 	20, // 47: asset.ChangeAssetResp.data:type_name -> asset.ChangeAssetData
 	28, // 48: asset.ChangeAssetData.asset:type_name -> asset.UserAsset
-	24, // 49: asset.CoverInsuranceDeficitReq.wallet_type:type_name -> common.WalletType
-	27, // 50: asset.CoverInsuranceDeficitResp.base:type_name -> common.RespBase
-	28, // 51: asset.CoverInsuranceDeficitResp.fund_asset:type_name -> asset.UserAsset
-	0,  // 52: asset.AssetInternal.AddAvailable:input_type -> asset.AddAvailableReq
-	1,  // 53: asset.AssetInternal.SubAvailable:input_type -> asset.SubAvailableReq
-	2,  // 54: asset.AssetInternal.FreezeAsset:input_type -> asset.FreezeAssetReq
-	5,  // 55: asset.AssetInternal.UnfreezeAsset:input_type -> asset.UnfreezeAssetReq
-	6,  // 56: asset.AssetInternal.UnfreezeAssetByBizNo:input_type -> asset.UnfreezeAssetByBizNoReq
-	7,  // 57: asset.AssetInternal.DeductFrozenAsset:input_type -> asset.DeductFrozenAssetReq
-	8,  // 58: asset.AssetInternal.DeductFrozenAssetByBizNo:input_type -> asset.DeductFrozenAssetByBizNoReq
-	9,  // 59: asset.AssetInternal.LockAsset:input_type -> asset.LockAssetReq
-	12, // 60: asset.AssetInternal.UnlockAsset:input_type -> asset.UnlockAssetReq
-	13, // 61: asset.AssetInternal.UnlockAssetByBizNo:input_type -> asset.UnlockAssetByBizNoReq
-	14, // 62: asset.AssetInternal.DeductLockedAsset:input_type -> asset.DeductLockedAssetReq
-	15, // 63: asset.AssetInternal.DeductLockedAssetByBizNo:input_type -> asset.DeductLockedAssetByBizNoReq
-	16, // 64: asset.AssetInternal.TransferAsset:input_type -> asset.TransferAssetReq
-	21, // 65: asset.AssetInternal.CoverInsuranceDeficit:input_type -> asset.CoverInsuranceDeficitReq
-	23, // 66: asset.AssetInternal.ReverseInsuranceCover:input_type -> asset.ReverseInsuranceCoverReq
-	19, // 67: asset.AssetInternal.AddAvailable:output_type -> asset.ChangeAssetResp
-	19, // 68: asset.AssetInternal.SubAvailable:output_type -> asset.ChangeAssetResp
-	3,  // 69: asset.AssetInternal.FreezeAsset:output_type -> asset.FreezeAssetResp
-	19, // 70: asset.AssetInternal.UnfreezeAsset:output_type -> asset.ChangeAssetResp
-	19, // 71: asset.AssetInternal.UnfreezeAssetByBizNo:output_type -> asset.ChangeAssetResp
-	19, // 72: asset.AssetInternal.DeductFrozenAsset:output_type -> asset.ChangeAssetResp
-	19, // 73: asset.AssetInternal.DeductFrozenAssetByBizNo:output_type -> asset.ChangeAssetResp
-	10, // 74: asset.AssetInternal.LockAsset:output_type -> asset.LockAssetResp
-	19, // 75: asset.AssetInternal.UnlockAsset:output_type -> asset.ChangeAssetResp
-	19, // 76: asset.AssetInternal.UnlockAssetByBizNo:output_type -> asset.ChangeAssetResp
-	19, // 77: asset.AssetInternal.DeductLockedAsset:output_type -> asset.ChangeAssetResp
-	19, // 78: asset.AssetInternal.DeductLockedAssetByBizNo:output_type -> asset.ChangeAssetResp
-	17, // 79: asset.AssetInternal.TransferAsset:output_type -> asset.TransferAssetResp
-	22, // 80: asset.AssetInternal.CoverInsuranceDeficit:output_type -> asset.CoverInsuranceDeficitResp
-	19, // 81: asset.AssetInternal.ReverseInsuranceCover:output_type -> asset.ChangeAssetResp
-	67, // [67:82] is the sub-list for method output_type
-	52, // [52:67] is the sub-list for method input_type
-	52, // [52:52] is the sub-list for extension type_name
-	52, // [52:52] is the sub-list for extension extendee
-	0,  // [0:52] is the sub-list for field type_name
+	27, // 49: asset.CoverInsuranceDeficitResp.base:type_name -> common.RespBase
+	0,  // 50: asset.AssetInternal.AddAvailable:input_type -> asset.AddAvailableReq
+	1,  // 51: asset.AssetInternal.SubAvailable:input_type -> asset.SubAvailableReq
+	2,  // 52: asset.AssetInternal.FreezeAsset:input_type -> asset.FreezeAssetReq
+	5,  // 53: asset.AssetInternal.UnfreezeAsset:input_type -> asset.UnfreezeAssetReq
+	6,  // 54: asset.AssetInternal.UnfreezeAssetByBizNo:input_type -> asset.UnfreezeAssetByBizNoReq
+	7,  // 55: asset.AssetInternal.DeductFrozenAsset:input_type -> asset.DeductFrozenAssetReq
+	8,  // 56: asset.AssetInternal.DeductFrozenAssetByBizNo:input_type -> asset.DeductFrozenAssetByBizNoReq
+	9,  // 57: asset.AssetInternal.LockAsset:input_type -> asset.LockAssetReq
+	12, // 58: asset.AssetInternal.UnlockAsset:input_type -> asset.UnlockAssetReq
+	13, // 59: asset.AssetInternal.UnlockAssetByBizNo:input_type -> asset.UnlockAssetByBizNoReq
+	14, // 60: asset.AssetInternal.DeductLockedAsset:input_type -> asset.DeductLockedAssetReq
+	15, // 61: asset.AssetInternal.DeductLockedAssetByBizNo:input_type -> asset.DeductLockedAssetByBizNoReq
+	16, // 62: asset.AssetInternal.TransferAsset:input_type -> asset.TransferAssetReq
+	21, // 63: asset.AssetInternal.CoverInsuranceDeficit:input_type -> asset.CoverInsuranceDeficitReq
+	23, // 64: asset.AssetInternal.ReverseInsuranceCover:input_type -> asset.ReverseInsuranceCoverReq
+	19, // 65: asset.AssetInternal.AddAvailable:output_type -> asset.ChangeAssetResp
+	19, // 66: asset.AssetInternal.SubAvailable:output_type -> asset.ChangeAssetResp
+	3,  // 67: asset.AssetInternal.FreezeAsset:output_type -> asset.FreezeAssetResp
+	19, // 68: asset.AssetInternal.UnfreezeAsset:output_type -> asset.ChangeAssetResp
+	19, // 69: asset.AssetInternal.UnfreezeAssetByBizNo:output_type -> asset.ChangeAssetResp
+	19, // 70: asset.AssetInternal.DeductFrozenAsset:output_type -> asset.ChangeAssetResp
+	19, // 71: asset.AssetInternal.DeductFrozenAssetByBizNo:output_type -> asset.ChangeAssetResp
+	10, // 72: asset.AssetInternal.LockAsset:output_type -> asset.LockAssetResp
+	19, // 73: asset.AssetInternal.UnlockAsset:output_type -> asset.ChangeAssetResp
+	19, // 74: asset.AssetInternal.UnlockAssetByBizNo:output_type -> asset.ChangeAssetResp
+	19, // 75: asset.AssetInternal.DeductLockedAsset:output_type -> asset.ChangeAssetResp
+	19, // 76: asset.AssetInternal.DeductLockedAssetByBizNo:output_type -> asset.ChangeAssetResp
+	17, // 77: asset.AssetInternal.TransferAsset:output_type -> asset.TransferAssetResp
+	22, // 78: asset.AssetInternal.CoverInsuranceDeficit:output_type -> asset.CoverInsuranceDeficitResp
+	19, // 79: asset.AssetInternal.ReverseInsuranceCover:output_type -> asset.ChangeAssetResp
+	65, // [65:80] is the sub-list for method output_type
+	50, // [50:65] is the sub-list for method input_type
+	50, // [50:50] is the sub-list for extension type_name
+	50, // [50:50] is the sub-list for extension extendee
+	0,  // [0:50] is the sub-list for field type_name
 }
 
 func init() { file_proto_asset_asset_internal_proto_init() }

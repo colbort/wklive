@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package chat;
 
-import "proto/common/common.proto";
 import "proto/chat/enum.proto";
 import "proto/chat/model.proto";
+import "proto/common/common.proto";
 
 option go_package = "wklive/proto/chat;chat";
 
@@ -21,12 +21,10 @@ service ChatApp {
   rpc OpenChatSession(OpenChatSessionReq) returns (OpenChatSessionResp);
 
   // 生成会话编号
-  rpc GenerateChatSessionNo(GenerateChatSessionNoReq)
-      returns (GenerateChatSessionNoResp);
+  rpc GenerateChatSessionNo(GenerateChatSessionNoReq) returns (GenerateChatSessionNoResp);
 
   // 按商户和用户查询会话
-  rpc GetChatSessionByUser(GetChatSessionByUserReq)
-      returns (AppChatSessionResp);
+  rpc GetChatSessionByUser(GetChatSessionByUserReq) returns (AppChatSessionResp);
 
   // 发送用户消息
   rpc SendUserMessage(SendUserMessageReq) returns (AppChatMessageResp);
@@ -44,8 +42,7 @@ service ChatApp {
   rpc CloseMyChatSession(CloseMyChatSessionReq) returns (AppChatSessionResp);
 
   // 提交会话评价
-  rpc SubmitChatSatisfaction(SubmitChatSatisfactionReq)
-      returns (AppChatSatisfactionResp);
+  rpc SubmitChatSatisfaction(SubmitChatSatisfactionReq) returns (AppChatSatisfactionResp);
 
   // 订阅客服消息事件流
   rpc AppSubscribeStream(AppChatSubscribeRequest) returns (stream ChatWsResponse);
@@ -56,23 +53,23 @@ message AppCommonResp {
 }
 
 message AuthChatMerchantReq {
-  string api_key = 1;           // 对接客服 API Key
-  string api_secret = 2;        // 对接客服 API Secret，仅外部业务方服务端持有
-  string external_user_id = 3;  // 外部业务系统用户ID/访客ID，用于映射客服用户
-  string nickname = 4;          // 用户昵称快照
-  string avatar_url = 5;        // 用户头像快照
+  string api_key = 1; // 对接客服 API Key
+  string api_secret = 2; // 对接客服 API Secret，仅外部业务方服务端持有
+  string external_user_id = 3; // 外部业务系统用户ID/访客ID，用于映射客服用户
+  string nickname = 4; // 用户昵称快照
+  string avatar_url = 5; // 用户头像快照
   ChatSessionSource source = 6; // 来源：APP/WEB/H5 等
-  int64 expire_seconds = 7;     // chatToken有效期，0表示使用服务端默认值
-  string extra = 8;             // 扩展JSON，例如设备、渠道、落地页参数
+  int64 expire_seconds = 7; // chatToken有效期，0表示使用服务端默认值
+  string extra = 8; // 扩展JSON，例如设备、渠道、落地页参数
 }
 
 message AuthChatMerchantData {
-  string chat_token = 1;        // chat-ui 建立 WS 或调用用户接口时携带的 token
-  int64 expire_time = 2;        // chatToken 过期时间戳，毫秒
-  int64 merchant_id = 3;        // 客服商户ID
-  int64 user_id = 4;            // 客服系统内部用户ID/访客ID
-  string external_user_id = 5;  // 外部业务系统用户ID/访客ID
-  ChatMerchant merchant = 6;    // 商户接入信息，不包含 api_secret
+  string chat_token = 1; // chat-ui 建立 WS 或调用用户接口时携带的 token
+  int64 expire_time = 2; // chatToken 过期时间戳，毫秒
+  int64 merchant_id = 3; // 客服商户ID
+  int64 user_id = 4; // 客服系统内部用户ID/访客ID
+  string external_user_id = 5; // 外部业务系统用户ID/访客ID
+  ChatMerchant merchant = 6; // 商户接入信息，不包含 api_secret
 }
 
 message AuthChatMerchantResp {
@@ -80,8 +77,7 @@ message AuthChatMerchantResp {
   AuthChatMerchantData data = 2;
 }
 
-message GetAppChatConfigReq {
-}
+message GetAppChatConfigReq {}
 
 message AppChatConfigResp {
   common.RespBase base = 1;
@@ -89,16 +85,16 @@ message AppChatConfigResp {
 }
 
 message ChatAppConfig {
-  string title = 1;                       // chat-ui标题
-  ChatThemeConfig ui_config = 2;          // chat-ui展示配置
-  ChatFeatureConfig feature_config = 3;   // chat-ui功能开关
+  string title = 1; // chat-ui标题
+  ChatThemeConfig ui_config = 2; // chat-ui展示配置
+  ChatFeatureConfig feature_config = 3; // chat-ui功能开关
 }
 
 message GenerateChatSessionNoReq {
   ChatSessionSource source = 1; // 来源，可为空
-  int64 merchant_id = 2;        // 商户ID；一般可从 chatToken/context 获取
-  int64 user_id = 3;            // 客服系统内部用户ID；一般可从 chatToken/context 获取
-  bool is_guest = 4;            // 是否游客
+  int64 merchant_id = 2; // 商户ID；一般可从 chatToken/context 获取
+  int64 user_id = 3; // 客服系统内部用户ID；一般可从 chatToken/context 获取
+  bool is_guest = 4; // 是否游客
 }
 
 message GenerateChatSessionNoResp {
@@ -108,19 +104,19 @@ message GenerateChatSessionNoResp {
 }
 
 message GetChatSessionByUserReq {
-  int64 merchant_id = 1;        // 商户ID；一般可从 chatToken/context 获取
-  int64 user_id = 2;            // 客服系统内部用户ID
-  string external_user_id = 3;  // 外部业务系统用户ID/访客ID，可选
+  int64 merchant_id = 1; // 商户ID；一般可从 chatToken/context 获取
+  int64 user_id = 2; // 客服系统内部用户ID
+  string external_user_id = 3; // 外部业务系统用户ID/访客ID，可选
   ChatSessionStatus status = 4; // 过滤状态，UNKNOWN 表示优先返回未关闭会话
-  bool include_closed = 5;      // 是否允许返回已关闭会话，默认 false
+  bool include_closed = 5; // 是否允许返回已关闭会话，默认 false
 }
 
 message OpenChatSessionReq {
   ChatSessionSource source = 1; // 来源
-  int64 merchant_id = 2;        // 客服商户ID
-  int64 user_id = 3;            // 用户ID
-  bool is_guest = 4;            // 是否游客
-  string session_no = 5;        // 会话
+  int64 merchant_id = 2; // 客服商户ID
+  int64 user_id = 3; // 用户ID
+  bool is_guest = 4; // 是否游客
+  string session_no = 5; // 会话
   string ext_json = 6;
 }
 
@@ -130,61 +126,61 @@ message OpenChatSessionResp {
 }
 
 message SendUserMessageReq {
-  string session_no = 1;            // 会话编号
-  string client_message_id = 2;     // 客户端消息ID,用于幂等/回执
+  string session_no = 1; // 会话编号
+  string client_message_id = 2; // 客户端消息ID,用于幂等/回执
   ChatMessageType message_type = 3; // 消息类型
-  string content = 4;               // 文本内容
-  string url = 5;                   // 资源URL
-  string file_name = 6;             // 文件名
-  int64 file_size = 7;              // 文件大小(byte)
-  string mime_type = 8;             // MIME类型
-  int32 width = 9;                  // 图片/视频宽度
-  int32 height = 10;                // 图片/视频高度
-  int32 duration = 11;              // 音频/视频时长(秒)
-  string extra = 12;                // 扩展JSON
-  ChatMessageUser sender = 13;      // 用户端
-  ChatMessageUser receiver = 14;    // 用户端
-  int64 merchant_id = 15;           // 
-  bool is_guest = 16;               // 是否游客/临时会话
+  string content = 4; // 文本内容
+  string url = 5; // 资源URL
+  string file_name = 6; // 文件名
+  int64 file_size = 7; // 文件大小(byte)
+  string mime_type = 8; // MIME类型
+  int32 width = 9; // 图片/视频宽度
+  int32 height = 10; // 图片/视频高度
+  int32 duration = 11; // 音频/视频时长(秒)
+  string extra = 12; // 扩展JSON
+  ChatMessageUser sender = 13; // 用户端
+  ChatMessageUser receiver = 14; // 用户端
+  int64 merchant_id = 15; //
+  bool is_guest = 16; // 是否游客/临时会话
 }
 
 message SendUserTypingReq {
-  int64 merchant_id = 1;        // 客服商户ID
-  int64 user_id = 2;            // 用户ID
-  bool is_guest = 3;            // 是否游客/临时会话
+  int64 merchant_id = 1; // 客服商户ID
+  int64 user_id = 2; // 用户ID
+  bool is_guest = 3; // 是否游客/临时会话
   ChatTypingPayload typing = 4; // 输入状态 payload
 }
 
 message OperateUserMessageReq {
   ChatMessageOperatePayload message_operate = 1; // 消息删除/撤回 payload
-  bool is_guest = 2;                              // 是否游客/临时会话
+  bool is_guest = 2; // 是否游客/临时会话
 }
 
 message ListMyChatMessagesReq {
-  string session_no = 1;            // 会话编号
-  common.PageReq page = 2;          // 分页
-  int64 merchant_id = 3;            // 游客临时会话商户ID
-  ChatSenderType sender_type = 4;   // 游客临时消息发送者过滤
-  bool is_guest = 5;                // 是否游客/临时会话
+  string session_no = 1; // 会话编号
+  common.PageReq page = 2; // 分页
+  int64 merchant_id = 3; // 游客临时会话商户ID
+  ChatSenderType sender_type = 4; // 游客临时消息发送者过滤
+  bool is_guest = 5; // 是否游客/临时会话
 }
 
 message CloseMyChatSessionReq {
-  string session_no = 1;                         // 会话编号
-  ChatSessionCloseReason close_reason_type = 2;  // 结束原因类型
-  string close_reason = 3;                       // 结束原因描述
+  string session_no = 1; // 会话编号
+  ChatSessionCloseReason close_reason_type = 2; // 结束原因类型
+  string close_reason = 3; // 结束原因描述
   int64 merchant_id = 4;
   int64 user_id = 5;
-  bool is_guest = 6;                // 是否游客/临时会话
+  bool is_guest = 6; // 是否游客/临时会话
 }
 
 message SubmitChatSatisfactionReq {
   string session_no = 1; // 会话编号
-  int32 score = 2;       // 满意度评分:1-5
-  string content = 3;    // 评价内容
-  string tags = 4;       // 评价标签,逗号分隔
+  int32 score = 2; // 满意度评分:1-5
+  string content = 3; // 评价内容
+  string tags = 4; // 评价标签,逗号分隔
   int64 merchant_id = 5;
   int64 user_id = 6;
-  bool is_guest = 7;     // 是否游客/临时会话
+  bool is_guest = 7; // 是否游客/临时会话
 }
 
 message AppChatSubscribeRequest {}

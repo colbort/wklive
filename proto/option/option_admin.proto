@@ -29,8 +29,7 @@ service OptionAdmin {
   rpc AdminGetMarket(GetMarketReq) returns (GetMarketResp);
 
   // 分页查询期权行情快照列表
-  rpc AdminListMarketSnapshots(ListMarketSnapshotsReq)
-      returns (ListMarketSnapshotsResp);
+  rpc AdminListMarketSnapshots(ListMarketSnapshotsReq) returns (ListMarketSnapshotsResp);
 
   // 获取单个委托订单详情
   rpc AdminGetOrder(GetOrderReq) returns (GetOrderResp);
@@ -75,7 +74,9 @@ service OptionAdmin {
   rpc AdminListBills(ListBillsReq) returns (ListBillsResp);
 }
 
-message AdminCommonResp { common.RespBase base = 1; }
+message AdminCommonResp {
+  common.RespBase base = 1;
+}
 
 message CreateContractReq {
   int64 tenant_id = 1;

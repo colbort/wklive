@@ -1,7 +1,7 @@
 package nacos
 
 import (
-	nacosconf "wklive/common/nacos/config"
+	config "wklive/common/nacos/config"
 	"wklive/common/nacos/naming"
 	"wklive/common/nacos/types"
 )
@@ -11,11 +11,10 @@ func NewDiscovery(c types.NacosConf) (*naming.Discovery, error) { return naming.
 
 func RegisterGrpcResolver(c types.NacosConf) error { return naming.RegisterResolver(c) }
 
-func NewConfigSubscriber(c types.NacosConf) (*nacosconf.Subscriber, error) {
-	return nacosconf.NewSubscriber(c)
+func NewConfigSubscriber(c types.NacosConf) (*config.Subscriber, error) {
+	return config.NewSubscriber(c)
 }
 
-func NewConfigLoader(c types.NacosConf) (*nacosconf.Loader, error) {
-	return nacosconf.NewLoader(c)
+func NewConfigLoader(c types.NacosConf) (*config.Loader, error) {
+	return config.NewLoader(c)
 }
-

@@ -8,7 +8,9 @@ import "proto/user/model.proto";
 
 option go_package = "wklive/proto/user;user";
 
-message AdminCommonResp { common.RespBase base = 1; }
+message AdminCommonResp {
+  common.RespBase base = 1;
+}
 
 message CreateUserReq {
   string tenant_code = 1;
@@ -278,8 +280,7 @@ message GuestDomainMigrationStatsResp {
 // 管理后台接口
 service UserAdmin {
   // 退役域名未迁移游客及活跃分布统计
-  rpc GuestDomainMigrationStats(GuestDomainMigrationStatsReq)
-      returns (GuestDomainMigrationStatsResp);
+  rpc GuestDomainMigrationStats(GuestDomainMigrationStatsReq) returns (GuestDomainMigrationStatsResp);
   // 创建用户
   rpc CreateUser(CreateUserReq) returns (CreateUserResp);
   // 获取用户详情
@@ -307,11 +308,9 @@ service UserAdmin {
   // 重置用户谷歌2FA
   rpc ResetUserGoogle2FA(ResetUserGoogle2FAReq) returns (AdminCommonResp);
   // 实名认证信息列表
-  rpc ListUserIdentities(ListUserIdentitiesReq)
-      returns (ListUserIdentitiesResp);
+  rpc ListUserIdentities(ListUserIdentitiesReq) returns (ListUserIdentitiesResp);
   // 审核实名认证信息
-  rpc ReviewUserIdentity(ReviewUserIdentityReq)
-      returns (ReviewUserIdentityResp);
+  rpc ReviewUserIdentity(ReviewUserIdentityReq) returns (ReviewUserIdentityResp);
   // 用户银行卡列表
   rpc ListUserBanks(ListUserBanksReq) returns (ListUserBanksResp);
   // 获取用户银行卡详情

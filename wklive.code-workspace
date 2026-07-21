@@ -129,6 +129,7 @@
       "Lpush",
       "Lrange",
       "Ltrim",
+      "nacos",
       "omitempty",
       "otpauth",
       "pageutil",

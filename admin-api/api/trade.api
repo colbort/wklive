@@ -997,8 +997,6 @@ type InsuranceFundAccount {
 	tenantId int64 `json:"tenantId"`
 	symbolId int64 `json:"symbolId"`
 	settleAsset string `json:"settleAsset"`
-	fundUserId int64 `json:"fundUserId"`
-	walletType int64 `json:"walletType"`
 	adlEnabled int64 `json:"adlEnabled"`
 	status int64 `json:"status"`
 	version int64 `json:"version"`
@@ -1010,8 +1008,6 @@ type SetInsuranceFundAccountReq {
 	tenantId int64 `json:"tenantId"`
 	symbolId int64 `json:"symbolId,optional"`
 	settleAsset string `json:"settleAsset"`
-	fundUserId int64 `json:"fundUserId"`
-	walletType int64 `json:"walletType"`
 	adlEnabled int64 `json:"adlEnabled"`
 	status int64 `json:"status"`
 	version int64 `json:"version,optional"`

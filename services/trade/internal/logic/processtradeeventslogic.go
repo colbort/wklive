@@ -343,11 +343,11 @@ func (l *ProcessTradeEventsLogic) expireImmediateOrders(in *trade.TradeTaskReq) 
 				return err
 			}
 			if expiredOrder != nil {
-				if err := removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder); err != nil {
-					return err
-				}
 				if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, expiredOrder, "trade expired order unfreeze"); err != nil {
 					return err
+				}
+				if err := removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder); err != nil {
+					l.Errorf("remove expired order from cache failed, orderId=%d err=%v", expiredOrder.Id, err)
 				}
 			}
 		}
@@ -383,7 +383,7 @@ func (l *ProcessTradeEventsLogic) expireOrderIfNeeded(orderID, now int64) (*mode
 	if err != nil || expiredOrder == nil {
 		return expiredOrder, err
 	}
-	return expiredOrder, removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder)
+	return expiredOrder, nil
 }
 
 func (l *ProcessTradeEventsLogic) repairFrozenAssets(in *trade.TradeTaskReq) error {

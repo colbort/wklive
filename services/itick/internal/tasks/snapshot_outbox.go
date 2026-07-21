@@ -26,9 +26,14 @@ func StartSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext) {
 	go func() {
 		ticker := time.NewTicker(time.Second)
 		defer ticker.Stop()
+		lastHealthCheck := time.Time{}
 		for {
 			if err := processSnapshotOutbox(ctx, svcCtx); err != nil && ctx.Err() == nil {
 				logx.Errorf("snapshot outbox worker failed: %v", err)
+			}
+			if lastHealthCheck.IsZero() || time.Since(lastHealthCheck) >= 30*time.Second {
+				checkSnapshotOutboxHealth(ctx, svcCtx, time.Now())
+				lastHealthCheck = time.Now()
 			}
 			select {
 			case <-ctx.Done():
@@ -37,6 +42,33 @@ func StartSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext) {
 			}
 		}
 	}()
+}
+
+func checkSnapshotOutboxHealth(ctx context.Context, svcCtx *svc.ServiceContext, now time.Time) {
+	health, err := svcCtx.SnapshotOutboxModel.Health(ctx)
+	if err != nil {
+		if ctx.Err() == nil {
+			logx.Errorf("snapshot outbox health query failed: %v", err)
+		}
+		return
+	}
+	oldestAge := int64(0)
+	if health.OldestOpenAt > 0 {
+		oldestAge = now.UnixMilli() - health.OldestOpenAt
+	}
+	if !snapshotOutboxUnhealthy(health, oldestAge) {
+		return
+	}
+	logx.Errorf("snapshot outbox unhealthy pending=%d processing=%d failed=%d manual=%d oldest_open_age_ms=%d",
+		health.PendingCount, health.ProcessingCount, health.FailedCount, health.ManualCount, oldestAge)
+}
+
+func snapshotOutboxUnhealthy(health *models.SnapshotOutboxHealth, oldestAgeMillis int64) bool {
+	if health == nil {
+		return true
+	}
+	return health.FailedCount > 0 || health.ManualCount > 0 ||
+		(health.PendingCount+health.ProcessingCount > 0 && oldestAgeMillis > int64(time.Minute/time.Millisecond))
 }
 
 func processSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext) error {
@@ -74,12 +106,26 @@ func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row 
 	if payload.Snapshot == nil {
 		return fmt.Errorf("outbox %s has no snapshot", row.SnapshotId)
 	}
-	if err := svcCtx.MarketDataCache.PublishAuthoritativeSnapshot(ctx, payload.Snapshot); err != nil {
-		return err
+	if row.RedisPublishedAt == 0 {
+		if err := svcCtx.MarketDataCache.PublishAuthoritativeSnapshot(ctx, payload.Snapshot); err != nil {
+			return err
+		}
+		if err := svcCtx.SnapshotOutboxModel.MarkRedisPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
+			return fmt.Errorf("checkpoint Redis snapshot publication: %w", err)
+		}
+		row.RedisPublishedAt = time.Now().UnixMilli()
 	}
 	// Migrated repair rows intentionally contain only the snapshot. Redis repair
 	// is complete even though the original full quote is no longer available.
 	if payload.Quote == nil {
+		if row.OptionPublishedAt == 0 {
+			if err := svcCtx.SnapshotOutboxModel.MarkOptionPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
+				return fmt.Errorf("checkpoint skipped Option publication: %w", err)
+			}
+		}
+		return nil
+	}
+	if row.OptionPublishedAt > 0 {
 		return nil
 	}
 	resp, err := svcCtx.OptionCli.SyncMarketQuote(ctx, &option.SyncMarketQuoteReq{CategoryCode: payload.Message.CategoryCode, Market: payload.Message.Market, Symbol: payload.Message.Symbol, UnderlyingPrice: payload.Quote.LastPriceText, OpenPrice: strconv.FormatFloat(payload.Quote.Open, 'f', -1, 64), HighPrice: strconv.FormatFloat(payload.Quote.High, 'f', -1, 64), LowPrice: strconv.FormatFloat(payload.Quote.Low, 'f', -1, 64), Volume: strconv.FormatFloat(payload.Quote.Volume, 'f', -1, 64), Turnover: strconv.FormatFloat(payload.Quote.Turnover, 'f', -1, 64), QuoteTs: payload.Quote.Ts})
@@ -88,6 +134,9 @@ func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row 
 	}
 	if resp == nil || resp.GetBase() == nil || resp.GetBase().GetCode() != 200 {
 		return fmt.Errorf("option quote sync rejected")
+	}
+	if err = svcCtx.SnapshotOutboxModel.MarkOptionPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
+		return fmt.Errorf("checkpoint Option quote publication: %w", err)
 	}
 	return nil
 }

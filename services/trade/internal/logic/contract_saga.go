@@ -23,6 +23,12 @@ type contractAssetStep struct {
 	stepNo int64
 }
 
+func settlementInstructionLeaseOwned(current, claimed *models.TTradeSettlementInstruction) bool {
+	return current != nil && claimed != nil &&
+		current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) &&
+		current.UpdateTimes == claimed.UpdateTimes
+}
+
 func deliveryAssetSteps(margin, pnl, fee decimal.Decimal) []contractAssetStep {
 	candidates := []contractAssetStep{
 		{suffix: "LOSS", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS, amount: decimalMaxZero(pnl.Neg()), stepNo: 1},
@@ -80,7 +86,7 @@ func failContractSagaInstruction(ctx context.Context, svcCtx *svc.ServiceContext
 		if err != nil {
 			return err
 		}
-		if current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+		if !settlementInstructionLeaseOwned(current, item) {
 			return nil
 		}
 		current.RetryCount++

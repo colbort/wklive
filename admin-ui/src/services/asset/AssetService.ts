@@ -9,6 +9,7 @@ import {
   apiCreateAssetCoinConfig,
   apiDeleteAssetCoinConfig,
   apiGetAssetCoinConfig,
+  apiGetPlatformAccount,
   apiPageAssetCoinConfigs,
   apiGetUserAssetDetail,
   apiPageAssetFlows,
@@ -16,6 +17,8 @@ import {
   apiPageAssetLocks,
   apiPageUserAssets,
   apiUpdateAssetCoinConfig,
+  apiSetPlatformAccount,
+  apiAdjustPlatformAccount,
 } from '@/api/asset'
 import { getCoreOptions } from '@/stores/core'
 
@@ -140,6 +143,28 @@ export type AssetCoinConfig = {
 export type AssetChangeResp = {
   bizNo: string // 业务单号
   asset: AssetUserAsset // 变更后的资产
+}
+
+export type PlatformAccount = {
+  id: number
+  tenantId: number
+  accountType: string
+  coin: string
+  availableAmount: string
+  frozenAmount: string
+  status: number
+  version: number
+  createTimes: number
+  updateTimes: number
+}
+
+export type GetPlatformAccountReq = { tenantId: number; accountType: string; coin: string }
+export type SetPlatformAccountReq = GetPlatformAccountReq & { status: number; version?: number }
+export type AdjustPlatformAccountReq = GetPlatformAccountReq & {
+  requestNo: string
+  direction: number
+  amount: string
+  remark?: string
 }
 
 export type PageUserAssetsReq = {
@@ -344,6 +369,18 @@ export class AssetService {
 
   unlockAsset(params: AdminUnlockAssetReq) {
     return apiAdminUnlockAsset(params)
+  }
+
+  getPlatformAccount(params: GetPlatformAccountReq) {
+    return apiGetPlatformAccount(params)
+  }
+
+  setPlatformAccount(params: SetPlatformAccountReq) {
+    return apiSetPlatformAccount(params)
+  }
+
+  adjustPlatformAccount(params: AdjustPlatformAccountReq) {
+    return apiAdjustPlatformAccount(params)
   }
 }
 

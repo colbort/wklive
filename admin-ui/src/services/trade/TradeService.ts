@@ -89,7 +89,7 @@ export type GetFundingBatchListReq = TradePageReq & {
   timeRange?: TimeRange
 }
 export type GetFundingBatchListResp = RespBase<ContractFundingBatch[]>
-export type InsuranceFundAccount = { id:number;tenantId:number;symbolId:number;settleAsset:string;fundUserId:number;walletType:number;adlEnabled:number;status:number;version:number;createTimes:number;updateTimes:number }
+export type InsuranceFundAccount = { id:number;tenantId:number;symbolId:number;settleAsset:string;adlEnabled:number;status:number;version:number;createTimes:number;updateTimes:number }
 export type SetInsuranceFundAccountReq = Omit<InsuranceFundAccount,'createTimes'|'updateTimes'>
 export type GetInsuranceFundAccountListReq = TradePageReq & {tenantId?:number;symbolId?:number;settleAsset?:string;status?:number}
 export type GetInsuranceFundAccountListResp = RespBase<InsuranceFundAccount[]>

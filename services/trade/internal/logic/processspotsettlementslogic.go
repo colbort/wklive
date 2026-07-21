@@ -66,13 +66,14 @@ func (l *ProcessFillSettlementsLogic) ProcessFill(fillID int64) error {
 		if next.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED) && next.NextRetryAt > now || next.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) && next.UpdateTimes > now-60*1000 {
 			return nil
 		}
-		claimed, err := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, next.Id, now)
+		claimed, lease, err := l.svcCtx.TradeSettlementInstrModel.ClaimLease(l.ctx, next.Id, now)
 		if err != nil {
 			return err
 		}
 		if !claimed {
 			return nil
 		}
+		next.UpdateTimes = lease
 		if err := l.processInstruction(next); err != nil {
 			if markErr := l.markFailed(next, err); markErr != nil {
 				return markErr
@@ -97,13 +98,14 @@ func (l *ProcessFillSettlementsLogic) Process(tenantID int64) error {
 		}
 		progressed := false
 		for _, item := range items {
-			claimed, err := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, item.Id, now)
+			claimed, lease, err := l.svcCtx.TradeSettlementInstrModel.ClaimLease(l.ctx, item.Id, now)
 			if err != nil {
 				return err
 			}
 			if !claimed {
 				continue
 			}
+			item.UpdateTimes = lease
 			progressed = true
 			processed++
 			if err := l.processInstruction(item); err != nil {
@@ -209,7 +211,7 @@ func (l *ProcessFillSettlementsLogic) markSucceeded(item *models.TTradeSettlemen
 		if current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
 			return nil
 		}
-		if current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+		if !settlementInstructionLeaseOwned(current, item) {
 			return fmt.Errorf("settlement instruction is not processing")
 		}
 		current.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS)
@@ -395,7 +397,7 @@ func (l *ProcessFillSettlementsLogic) markFailed(item *models.TTradeSettlementIn
 		if err != nil {
 			return err
 		}
-		if current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) || current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+		if current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) || !settlementInstructionLeaseOwned(current, item) {
 			return nil
 		}
 		current.RetryCount++

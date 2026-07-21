@@ -681,11 +681,11 @@ func (l *ProcessOrderMatchingLogic) expireResidualImmediateOrders(key models.Tra
 			return err
 		}
 		if expiredOrder != nil {
-			if err := removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder); err != nil {
-				return err
-			}
 			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, expiredOrder, "trade matching residual unfreeze"); err != nil {
 				return err
+			}
+			if err := removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder); err != nil {
+				l.Errorf("remove expired residual order from cache failed, orderId=%d err=%v", expiredOrder.Id, err)
 			}
 		}
 	}
@@ -761,5 +761,5 @@ func (l *ProcessOrderMatchingLogic) expireOpenOrderNow(orderID int64, reason str
 	if err != nil || expiredOrder == nil {
 		return expiredOrder, err
 	}
-	return expiredOrder, removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder)
+	return expiredOrder, nil
 }

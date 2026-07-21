@@ -61,7 +61,7 @@ func (m *defaultTContractInsuranceFundAccountModel) FindPage(ctx context.Context
 
 func (m *defaultTContractInsuranceFundAccountModel) FindEnabled(ctx context.Context, tenantID, symbolID int64, asset string) (*TContractInsuranceFundAccount, error) {
 	var row TContractInsuranceFundAccount
-	q := "SELECT id,tenant_id,symbol_id,settle_asset,fund_user_id,wallet_type,adl_enabled,status,version,create_times,update_times FROM t_contract_insurance_fund_account WHERE tenant_id=? AND settle_asset=? AND status=1 AND symbol_id IN (?,0) ORDER BY symbol_id DESC LIMIT 1"
+	q := "SELECT " + tContractInsuranceFundAccountRows + " FROM t_contract_insurance_fund_account WHERE tenant_id=? AND settle_asset=? AND status=1 AND symbol_id IN (?,0) ORDER BY symbol_id DESC LIMIT 1"
 	if err := m.QueryRowNoCacheCtx(ctx, &row, q, tenantID, asset, symbolID); err != nil {
 		return nil, err
 	}

@@ -22,12 +22,11 @@ func StartSubscriber(ctx context.Context, svcCtx *svc.ServiceContext) {
 			var event realtime.Event
 			if err := mq.Decode(msg, &event); err != nil {
 				logx.Errorf("decode trade real-time event failed: %v", err)
-				return nil
+				return fmt.Errorf("decode trade real-time event: %w", err)
 			}
 			if err := validateEvent(event); err != nil {
 				logx.Errorf("invalid trade real-time event, eventNo=%s: %v", event.EventNo, err)
-				_ = markEventFailed(svcCtx, messageCtx, event, err.Error())
-				return nil
+				return errors.Join(err, markEventFailed(svcCtx, messageCtx, event, err.Error()))
 			}
 			consumer := event.Consumer
 			if consumer == "" {
@@ -37,31 +36,31 @@ func StartSubscriber(ctx context.Context, svcCtx *svc.ServiceContext) {
 			claimed, completed, lease, err := svcCtx.TradeEventInboxModel.Claim(messageCtx, consumer, event.TenantID, event.EventNo, event.Type, now, now-realtime.ClaimLeaseMillis)
 			if err != nil {
 				logx.Errorf("claim trade event inbox failed, eventNo=%s err=%v", event.EventNo, err)
-				return nil
+				return err
 			}
 			if completed {
-				_ = markEventSuccess(svcCtx, messageCtx, event)
-				return nil
+				return markEventSuccess(svcCtx, messageCtx, event)
 			}
 			if !claimed {
-				return nil
+				return fmt.Errorf("trade event inbox lease unavailable: eventNo=%s", event.EventNo)
 			}
 			if err := handleEvent(messageCtx, svcCtx, event); err != nil {
 				logx.Errorf("handle trade real-time event failed, eventNo=%s type=%s bizId=%s err=%v", event.EventNo, event.Type, event.BizID, err)
-				_ = svcCtx.TradeEventInboxModel.Fail(messageCtx, consumer, event.TenantID, event.EventNo, lease, err.Error(), utils.NowMillis())
-				_ = markEventFailed(svcCtx, messageCtx, event, err.Error())
-				return nil
+				inboxErr := svcCtx.TradeEventInboxModel.Fail(messageCtx, consumer, event.TenantID, event.EventNo, lease, err.Error(), utils.NowMillis())
+				outboxErr := markEventFailed(svcCtx, messageCtx, event, err.Error())
+				return errors.Join(err, inboxErr, outboxErr)
 			}
 			completedLease, err := svcCtx.TradeEventInboxModel.Complete(messageCtx, consumer, event.TenantID, event.EventNo, lease, utils.NowMillis())
 			if err != nil {
 				logx.Errorf("complete trade event inbox failed, eventNo=%s err=%v", event.EventNo, err)
-				return nil
+				return err
 			}
 			if !completedLease {
-				return nil
+				return fmt.Errorf("trade event inbox completion lease lost: eventNo=%s", event.EventNo)
 			}
 			if err := markEventSuccess(svcCtx, messageCtx, event); err != nil {
 				logx.Errorf("mark trade real-time event success failed, eventNo=%s err=%v", event.EventNo, err)
+				return err
 			}
 			return nil
 		}); err != nil && ctx.Err() == nil {

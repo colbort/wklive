@@ -388,7 +388,7 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 			secondsOrder.ReservationNo = freezeNo
 			secondsOrder.FrozenAt = now
 			secondsOrder.SettlementStatus = 1
-			secondsOrder.UpdateTimes = now
+			secondsOrder.UpdateTimes = 0
 			if err := secondsModel.Update(ctx, secondsOrder); err != nil {
 				return err
 			}

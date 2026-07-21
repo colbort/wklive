@@ -2,17 +2,16 @@ syntax = "proto3";
 
 package asset;
 
-import "proto/common/common.proto";
 import "proto/asset/enum.proto";
 import "proto/asset/model.proto";
+import "proto/common/common.proto";
 
 option go_package = "wklive/proto/asset;asset";
 
 // 用户端资产服务
 service AssetApp {
   // 查询APP资产操作页币种配置
-  rpc ListAssetCoinConfigs(ListAssetCoinConfigsReq)
-      returns (ListAssetCoinConfigsResp);
+  rpc ListAssetCoinConfigs(ListAssetCoinConfigsReq) returns (ListAssetCoinConfigsResp);
 
   // 查询我的资产汇总
   rpc GetMyAssetSummary(GetMyAssetSummaryReq) returns (GetMyAssetSummaryResp);
@@ -37,9 +36,9 @@ service AssetApp {
 }
 
 message ListAssetCoinConfigsReq {
-  common.WalletType  wallet_type = 1;                  // 账户类型
-  AssetCoinOperationType operation_type = 2;   // 操作场景
-  AssetCoinType coin_type = 3;                 // 币种类型,0表示全部
+  common.WalletType wallet_type = 1; // 账户类型
+  AssetCoinOperationType operation_type = 2; // 操作场景
+  AssetCoinType coin_type = 3; // 币种类型,0表示全部
 }
 
 message ListAssetCoinConfigsResp {
@@ -47,8 +46,7 @@ message ListAssetCoinConfigsResp {
   repeated AssetCoinConfig data = 2; // 币种配置列表
 }
 
-message GetMyAssetSummaryReq {
-}
+message GetMyAssetSummaryReq {}
 
 message GetMyAssetSummaryResp {
   common.RespBase base = 1;
@@ -56,8 +54,8 @@ message GetMyAssetSummaryResp {
 }
 
 message ListMyAssetsReq {
-  common.WalletType  wallet_type = 1; // 钱包类型,0表示全部
-  string coin = 2;            // 币种,空表示全部
+  common.WalletType wallet_type = 1; // 钱包类型,0表示全部
+  string coin = 2; // 币种,空表示全部
 }
 
 message ListMyAssetsResp {
@@ -66,8 +64,8 @@ message ListMyAssetsResp {
 }
 
 message GetMyAssetReq {
-  common.WalletType  wallet_type = 1; // 钱包类型
-  string coin = 2;            // 币种
+  common.WalletType wallet_type = 1; // 钱包类型
+  string coin = 2; // 币种
 }
 
 message GetMyAssetResp {
@@ -76,12 +74,12 @@ message GetMyAssetResp {
 }
 
 message ListMyAssetFlowsReq {
-  common.WalletType  wallet_type = 1;      // 钱包类型,0表示全部
-  string coin = 2;                 // 币种
-  BizType biz_type = 3;            // 业务类型,0表示全部
-  SceneType scene_type = 4;        // 业务场景,0表示全部
+  common.WalletType wallet_type = 1; // 钱包类型,0表示全部
+  string coin = 2; // 币种
+  BizType biz_type = 3; // 业务类型,0表示全部
+  SceneType scene_type = 4; // 业务场景,0表示全部
   common.TimeRange time_range = 5; // 时间范围
-  common.PageReq page = 6;         // 分页
+  common.PageReq page = 6; // 分页
 }
 
 message ListMyAssetFlowsResp {
@@ -90,10 +88,10 @@ message ListMyAssetFlowsResp {
 }
 
 message ListMyFreezesReq {
-  common.WalletType  wallet_type = 1; // 钱包类型
-  string coin = 2;            // 币种
-  FreezeStatus status = 3;    // 冻结状态
-  common.PageReq page = 4;    // 分页
+  common.WalletType wallet_type = 1; // 钱包类型
+  string coin = 2; // 币种
+  FreezeStatus status = 3; // 冻结状态
+  common.PageReq page = 4; // 分页
 }
 
 message ListMyFreezesResp {
@@ -102,10 +100,10 @@ message ListMyFreezesResp {
 }
 
 message ListMyLocksReq {
-  common.WalletType  wallet_type = 1; // 钱包类型
-  string coin = 2;            // 币种
-  LockStatus status = 3;      // 锁仓状态
-  common.PageReq page = 4;    // 分页
+  common.WalletType wallet_type = 1; // 钱包类型
+  string coin = 2; // 币种
+  LockStatus status = 3; // 锁仓状态
+  common.PageReq page = 4; // 分页
 }
 
 message ListMyLocksResp {
@@ -114,12 +112,12 @@ message ListMyLocksResp {
 }
 
 message TransferMyAssetReq {
-  common.WalletType  from_wallet_type = 1; // 转出钱包类型
-  common.WalletType  to_wallet_type = 2;   // 转入钱包类型
-  string from_coin = 3;            // 转出币种
-  string to_coin = 4;              // 转入币种
-  string amount = 5;               // 划转金额
-  string remark = 6;               // 备注
+  common.WalletType from_wallet_type = 1; // 转出钱包类型
+  common.WalletType to_wallet_type = 2; // 转入钱包类型
+  string from_coin = 3; // 转出币种
+  string to_coin = 4; // 转入币种
+  string amount = 5; // 划转金额
+  string remark = 6; // 备注
 }
 
 message TransferMyAssetResp {

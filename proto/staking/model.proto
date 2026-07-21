@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package staking;
 
-option go_package = "wklive/proto/staking;staking";
-
 import "proto/common/common.proto";
 import "proto/staking/enum.proto";
+
+option go_package = "wklive/proto/staking;staking";
 
 // 质押产品
 message StakeProduct {

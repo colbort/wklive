@@ -13,6 +13,14 @@ import (
 var _ TItickSnapshotOutboxModel = (*customTItickSnapshotOutboxModel)(nil)
 
 type (
+	SnapshotOutboxHealth struct {
+		PendingCount    int64 `db:"pending_count"`
+		ProcessingCount int64 `db:"processing_count"`
+		FailedCount     int64 `db:"failed_count"`
+		ManualCount     int64 `db:"manual_count"`
+		OldestOpenAt    int64 `db:"oldest_open_at"`
+	}
+
 	// TItickSnapshotOutboxModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTItickSnapshotOutboxModel.
 	TItickSnapshotOutboxModel interface {
@@ -21,8 +29,11 @@ type (
 		Claim(context.Context, int64, int64) (bool, error)
 		MarkSuccess(context.Context, int64, int64) error
 		MarkFailure(context.Context, int64, string, int64) error
+		MarkRedisPublished(context.Context, int64, int64) error
+		MarkOptionPublished(context.Context, int64, int64) error
 		FindPage(context.Context, int64, string, int64, int64) ([]*TItickSnapshotOutbox, int64, error)
 		RetryFailed(context.Context, int64, int64) error
+		Health(context.Context) (*SnapshotOutboxHealth, error)
 	}
 
 	customTItickSnapshotOutboxModel struct {
@@ -35,6 +46,45 @@ func NewTItickSnapshotOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	return &customTItickSnapshotOutboxModel{
 		defaultTItickSnapshotOutboxModel: newTItickSnapshotOutboxModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTItickSnapshotOutboxModel) MarkRedisPublished(ctx context.Context, id, now int64) error {
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET redis_published_at=CASE WHEN redis_published_at=0 THEN ? ELSE redis_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
+	return requireOneOutboxRow(result, err)
+}
+
+func (m *defaultTItickSnapshotOutboxModel) MarkOptionPublished(ctx context.Context, id, now int64) error {
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET option_published_at=CASE WHEN option_published_at=0 THEN ? ELSE option_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
+	return requireOneOutboxRow(result, err)
+}
+
+func requireOneOutboxRow(result sql.Result, err error) error {
+	if err != nil {
+		return err
+	}
+	changed, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if changed != 1 {
+		return sql.ErrNoRows
+	}
+	return nil
+}
+
+func (m *defaultTItickSnapshotOutboxModel) Health(ctx context.Context) (*SnapshotOutboxHealth, error) {
+	var health SnapshotOutboxHealth
+	query := `SELECT
+		COALESCE(SUM(status=1),0) AS pending_count,
+		COALESCE(SUM(status=2),0) AS processing_count,
+		COALESCE(SUM(status=4),0) AS failed_count,
+		COALESCE(SUM(status=5),0) AS manual_count,
+		COALESCE(MIN(CASE WHEN status IN (1,2,4,5) THEN create_times END),0) AS oldest_open_at
+		FROM t_itick_snapshot_outbox`
+	if err := m.QueryRowNoCacheCtx(ctx, &health, query); err != nil {
+		return nil, err
+	}
+	return &health, nil
 }
 
 func (m *defaultTItickSnapshotOutboxModel) FindPage(ctx context.Context, status int64, snapshotID string, cursor, limit int64) ([]*TItickSnapshotOutbox, int64, error) {
@@ -97,8 +147,8 @@ func (m *defaultTItickSnapshotOutboxModel) Claim(ctx context.Context, id, now in
 	return n == 1, e
 }
 func (m *defaultTItickSnapshotOutboxModel) MarkSuccess(ctx context.Context, id, now int64) error {
-	_, e := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=3,next_retry_at=0,last_error_msg='',update_times=? WHERE id=? AND status=2", now, id)
-	return e
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=3,next_retry_at=0,last_error_msg='',update_times=? WHERE id=? AND status=2 AND redis_published_at>0 AND option_published_at>0", now, id)
+	return requireOneOutboxRow(result, err)
 }
 func (m *defaultTItickSnapshotOutboxModel) MarkFailure(ctx context.Context, id int64, msg string, now int64) error {
 	var retries int64

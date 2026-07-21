@@ -46,8 +46,6 @@ type (
 		TenantId    int64  `db:"tenant_id"`    // 租户ID
 		SymbolId    int64  `db:"symbol_id"`    // 交易标的ID，0表示该资产默认账户
 		SettleAsset string `db:"settle_asset"` // 结算资产
-		FundUserId  int64  `db:"fund_user_id"` // Asset保险基金用户ID
-		WalletType  int64  `db:"wallet_type"`  // Asset钱包类型
 		AdlEnabled  int64  `db:"adl_enabled"`  // 余额不足是否启用ADL：1是 2否
 		Status      int64  `db:"status"`       // 状态：1启用 2禁用
 		Version     int64  `db:"version"`      // 版本号
@@ -119,8 +117,8 @@ func (m *defaultTContractInsuranceFundAccountModel) Insert(ctx context.Context, 
 	tContractInsuranceFundAccountIdKey := fmt.Sprintf("%s%v", cacheTContractInsuranceFundAccountIdPrefix, data.Id)
 	tContractInsuranceFundAccountTenantIdSymbolIdSettleAssetKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractInsuranceFundAccountTenantIdSymbolIdSettleAssetPrefix, data.TenantId, data.SymbolId, data.SettleAsset)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractInsuranceFundAccountRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.SymbolId, data.SettleAsset, data.FundUserId, data.WalletType, data.AdlEnabled, data.Status, data.Version, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractInsuranceFundAccountRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.SymbolId, data.SettleAsset, data.AdlEnabled, data.Status, data.Version, data.CreateTimes, data.UpdateTimes)
 	}, tContractInsuranceFundAccountIdKey, tContractInsuranceFundAccountTenantIdSymbolIdSettleAssetKey)
 	return ret, err
 }
@@ -135,7 +133,7 @@ func (m *defaultTContractInsuranceFundAccountModel) Update(ctx context.Context, 
 	tContractInsuranceFundAccountTenantIdSymbolIdSettleAssetKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractInsuranceFundAccountTenantIdSymbolIdSettleAssetPrefix, data.TenantId, data.SymbolId, data.SettleAsset)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractInsuranceFundAccountRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SymbolId, newData.SettleAsset, newData.FundUserId, newData.WalletType, newData.AdlEnabled, newData.Status, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SymbolId, newData.SettleAsset, newData.AdlEnabled, newData.Status, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tContractInsuranceFundAccountIdKey, tContractInsuranceFundAccountTenantIdSymbolIdSettleAssetKey)
 	return err
 }

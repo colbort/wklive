@@ -19,6 +19,10 @@ import type {
   PageAssetFreezesReq,
   PageAssetLocksReq,
   PageUserAssetsReq,
+  PlatformAccount,
+  GetPlatformAccountReq,
+  SetPlatformAccountReq,
+  AdjustPlatformAccountReq,
   RespBase,
   UpdateAssetCoinConfigReq,
 } from '@/services'
@@ -109,4 +113,22 @@ export function apiAdminUnlockAsset(
   params: AdminUnlockAssetReq,
 ): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/unlock', params)
+}
+
+export function apiGetPlatformAccount(
+  params: GetPlatformAccountReq,
+): Promise<RespBase<PlatformAccount>> {
+  return get<PlatformAccount>('/admin/asset/platform-accounts', params)
+}
+
+export function apiSetPlatformAccount(
+  params: SetPlatformAccountReq,
+): Promise<RespBase<PlatformAccount>> {
+  return post<PlatformAccount>('/admin/asset/platform-accounts', params)
+}
+
+export function apiAdjustPlatformAccount(
+  params: AdjustPlatformAccountReq,
+): Promise<RespBase<PlatformAccount>> {
+  return post<PlatformAccount>('/admin/asset/platform-accounts/adjust', params)
 }

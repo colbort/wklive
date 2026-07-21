@@ -19,7 +19,6 @@ type (
 	ChangeAssetResp             = asset.ChangeAssetResp
 	CoverInsuranceDeficitReq    = asset.CoverInsuranceDeficitReq
 	CoverInsuranceDeficitResp   = asset.CoverInsuranceDeficitResp
-	ReverseInsuranceCoverReq    = asset.ReverseInsuranceCoverReq
 	DeductFrozenAssetByBizNoReq = asset.DeductFrozenAssetByBizNoReq
 	DeductFrozenAssetReq        = asset.DeductFrozenAssetReq
 	DeductLockedAssetByBizNoReq = asset.DeductLockedAssetByBizNoReq
@@ -30,6 +29,7 @@ type (
 	LockAssetData               = asset.LockAssetData
 	LockAssetReq                = asset.LockAssetReq
 	LockAssetResp               = asset.LockAssetResp
+	ReverseInsuranceCoverReq    = asset.ReverseInsuranceCoverReq
 	SubAvailableReq             = asset.SubAvailableReq
 	TransferAssetData           = asset.TransferAssetData
 	TransferAssetReq            = asset.TransferAssetReq
@@ -66,6 +66,7 @@ type (
 		DeductLockedAssetByBizNo(ctx context.Context, in *DeductLockedAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 		// 钱包划转
 		TransferAsset(ctx context.Context, in *TransferAssetReq, opts ...grpc.CallOption) (*TransferAssetResp, error)
+		// 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
 		CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error)
 		ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	}
@@ -159,9 +160,13 @@ func (m *defaultAssetInternal) TransferAsset(ctx context.Context, in *TransferAs
 	return client.TransferAsset(ctx, in, opts...)
 }
 
+// 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
 func (m *defaultAssetInternal) CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error) {
-	return asset.NewAssetInternalClient(m.cli.Conn()).CoverInsuranceDeficit(ctx, in, opts...)
+	client := asset.NewAssetInternalClient(m.cli.Conn())
+	return client.CoverInsuranceDeficit(ctx, in, opts...)
 }
+
 func (m *defaultAssetInternal) ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
-	return asset.NewAssetInternalClient(m.cli.Conn()).ReverseInsuranceCover(ctx, in, opts...)
+	client := asset.NewAssetInternalClient(m.cli.Conn())
+	return client.ReverseInsuranceCover(ctx, in, opts...)
 }

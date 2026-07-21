@@ -82,6 +82,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/platform-accounts",
+				Handler: asset.SetPlatformAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/platform-accounts",
+				Handler: asset.GetPlatformAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/platform-accounts/adjust",
+				Handler: asset.AdjustPlatformAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/sub",
 				Handler: asset.AdminSubAssetHandler(serverCtx),
 			},

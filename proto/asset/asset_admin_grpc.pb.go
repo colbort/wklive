@@ -35,6 +35,9 @@ const (
 	AssetAdmin_AdminUnfreezeAsset_FullMethodName    = "/asset.AssetAdmin/AdminUnfreezeAsset"
 	AssetAdmin_AdminLockAsset_FullMethodName        = "/asset.AssetAdmin/AdminLockAsset"
 	AssetAdmin_AdminUnlockAsset_FullMethodName      = "/asset.AssetAdmin/AdminUnlockAsset"
+	AssetAdmin_SetPlatformAccount_FullMethodName    = "/asset.AssetAdmin/SetPlatformAccount"
+	AssetAdmin_GetPlatformAccount_FullMethodName    = "/asset.AssetAdmin/GetPlatformAccount"
+	AssetAdmin_AdjustPlatformAccount_FullMethodName = "/asset.AssetAdmin/AdjustPlatformAccount"
 )
 
 // AssetAdminClient is the client API for AssetAdmin service.
@@ -75,6 +78,12 @@ type AssetAdminClient interface {
 	AdminLockAsset(ctx context.Context, in *AdminLockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
 	// 后台解锁资产
 	AdminUnlockAsset(ctx context.Context, in *AdminUnlockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+	// 设置平台账户（保险基金等，不属于任何用户）
+	SetPlatformAccount(ctx context.Context, in *SetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
+	// 查询平台账户
+	GetPlatformAccount(ctx context.Context, in *GetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
+	// 幂等调整平台账户余额
+	AdjustPlatformAccount(ctx context.Context, in *AdjustPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
 }
 
 type assetAdminClient struct {
@@ -245,6 +254,36 @@ func (c *assetAdminClient) AdminUnlockAsset(ctx context.Context, in *AdminUnlock
 	return out, nil
 }
 
+func (c *assetAdminClient) SetPlatformAccount(ctx context.Context, in *SetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlatformAccountResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_SetPlatformAccount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetAdminClient) GetPlatformAccount(ctx context.Context, in *GetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlatformAccountResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_GetPlatformAccount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetAdminClient) AdjustPlatformAccount(ctx context.Context, in *AdjustPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlatformAccountResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_AdjustPlatformAccount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AssetAdminServer is the server API for AssetAdmin service.
 // All implementations must embed UnimplementedAssetAdminServer
 // for forward compatibility.
@@ -283,6 +322,12 @@ type AssetAdminServer interface {
 	AdminLockAsset(context.Context, *AdminLockAssetReq) (*AdminChangeAssetResp, error)
 	// 后台解锁资产
 	AdminUnlockAsset(context.Context, *AdminUnlockAssetReq) (*AdminChangeAssetResp, error)
+	// 设置平台账户（保险基金等，不属于任何用户）
+	SetPlatformAccount(context.Context, *SetPlatformAccountReq) (*PlatformAccountResp, error)
+	// 查询平台账户
+	GetPlatformAccount(context.Context, *GetPlatformAccountReq) (*PlatformAccountResp, error)
+	// 幂等调整平台账户余额
+	AdjustPlatformAccount(context.Context, *AdjustPlatformAccountReq) (*PlatformAccountResp, error)
 	mustEmbedUnimplementedAssetAdminServer()
 }
 
@@ -340,6 +385,15 @@ func (UnimplementedAssetAdminServer) AdminLockAsset(context.Context, *AdminLockA
 }
 func (UnimplementedAssetAdminServer) AdminUnlockAsset(context.Context, *AdminUnlockAssetReq) (*AdminChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AdminUnlockAsset not implemented")
+}
+func (UnimplementedAssetAdminServer) SetPlatformAccount(context.Context, *SetPlatformAccountReq) (*PlatformAccountResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetPlatformAccount not implemented")
+}
+func (UnimplementedAssetAdminServer) GetPlatformAccount(context.Context, *GetPlatformAccountReq) (*PlatformAccountResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPlatformAccount not implemented")
+}
+func (UnimplementedAssetAdminServer) AdjustPlatformAccount(context.Context, *AdjustPlatformAccountReq) (*PlatformAccountResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdjustPlatformAccount not implemented")
 }
 func (UnimplementedAssetAdminServer) mustEmbedUnimplementedAssetAdminServer() {}
 func (UnimplementedAssetAdminServer) testEmbeddedByValue()                    {}
@@ -650,6 +704,60 @@ func _AssetAdmin_AdminUnlockAsset_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AssetAdmin_SetPlatformAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPlatformAccountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetAdminServer).SetPlatformAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetAdmin_SetPlatformAccount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetAdminServer).SetPlatformAccount(ctx, req.(*SetPlatformAccountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AssetAdmin_GetPlatformAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlatformAccountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetAdminServer).GetPlatformAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetAdmin_GetPlatformAccount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetAdminServer).GetPlatformAccount(ctx, req.(*GetPlatformAccountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AssetAdmin_AdjustPlatformAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdjustPlatformAccountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetAdminServer).AdjustPlatformAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetAdmin_AdjustPlatformAccount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetAdminServer).AdjustPlatformAccount(ctx, req.(*AdjustPlatformAccountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AssetAdmin_ServiceDesc is the grpc.ServiceDesc for AssetAdmin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -720,6 +828,18 @@ var AssetAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdminUnlockAsset",
 			Handler:    _AssetAdmin_AdminUnlockAsset_Handler,
+		},
+		{
+			MethodName: "SetPlatformAccount",
+			Handler:    _AssetAdmin_SetPlatformAccount_Handler,
+		},
+		{
+			MethodName: "GetPlatformAccount",
+			Handler:    _AssetAdmin_GetPlatformAccount_Handler,
+		},
+		{
+			MethodName: "AdjustPlatformAccount",
+			Handler:    _AssetAdmin_AdjustPlatformAccount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

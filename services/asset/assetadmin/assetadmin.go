@@ -14,6 +14,7 @@ import (
 )
 
 type (
+	AdjustPlatformAccountReq  = asset.AdjustPlatformAccountReq
 	AdminAddAssetReq          = asset.AdminAddAssetReq
 	AdminChangeAssetData      = asset.AdminChangeAssetData
 	AdminChangeAssetResp      = asset.AdminChangeAssetResp
@@ -27,6 +28,7 @@ type (
 	DeleteAssetCoinConfigReq  = asset.DeleteAssetCoinConfigReq
 	DeleteAssetCoinConfigResp = asset.DeleteAssetCoinConfigResp
 	GetAssetCoinConfigReq     = asset.GetAssetCoinConfigReq
+	GetPlatformAccountReq     = asset.GetPlatformAccountReq
 	GetUserAssetDetailReq     = asset.GetUserAssetDetailReq
 	GetUserAssetDetailResp    = asset.GetUserAssetDetailResp
 	PageAssetCoinConfigsReq   = asset.PageAssetCoinConfigsReq
@@ -39,6 +41,9 @@ type (
 	PageAssetLocksResp        = asset.PageAssetLocksResp
 	PageUserAssetsReq         = asset.PageUserAssetsReq
 	PageUserAssetsResp        = asset.PageUserAssetsResp
+	PlatformAccount           = asset.PlatformAccount
+	PlatformAccountResp       = asset.PlatformAccountResp
+	SetPlatformAccountReq     = asset.SetPlatformAccountReq
 	UpdateAssetCoinConfigReq  = asset.UpdateAssetCoinConfigReq
 
 	AssetAdmin interface {
@@ -74,6 +79,12 @@ type (
 		AdminLockAsset(ctx context.Context, in *AdminLockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
 		// 后台解锁资产
 		AdminUnlockAsset(ctx context.Context, in *AdminUnlockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+		// 设置平台账户（保险基金等，不属于任何用户）
+		SetPlatformAccount(ctx context.Context, in *SetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
+		// 查询平台账户
+		GetPlatformAccount(ctx context.Context, in *GetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
+		// 幂等调整平台账户余额
+		AdjustPlatformAccount(ctx context.Context, in *AdjustPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
 	}
 
 	defaultAssetAdmin struct {
@@ -181,4 +192,22 @@ func (m *defaultAssetAdmin) AdminLockAsset(ctx context.Context, in *AdminLockAss
 func (m *defaultAssetAdmin) AdminUnlockAsset(ctx context.Context, in *AdminUnlockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
 	client := asset.NewAssetAdminClient(m.cli.Conn())
 	return client.AdminUnlockAsset(ctx, in, opts...)
+}
+
+// 设置平台账户（保险基金等，不属于任何用户）
+func (m *defaultAssetAdmin) SetPlatformAccount(ctx context.Context, in *SetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
+	client := asset.NewAssetAdminClient(m.cli.Conn())
+	return client.SetPlatformAccount(ctx, in, opts...)
+}
+
+// 查询平台账户
+func (m *defaultAssetAdmin) GetPlatformAccount(ctx context.Context, in *GetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
+	client := asset.NewAssetAdminClient(m.cli.Conn())
+	return client.GetPlatformAccount(ctx, in, opts...)
+}
+
+// 幂等调整平台账户余额
+func (m *defaultAssetAdmin) AdjustPlatformAccount(ctx context.Context, in *AdjustPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
+	client := asset.NewAssetAdminClient(m.cli.Conn())
+	return client.AdjustPlatformAccount(ctx, in, opts...)
 }

@@ -29,6 +29,9 @@ func NewProcessReservationReleasesLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 func (l *ProcessReservationReleasesLogic) Process(tenantID int64) error {
+	if err := l.recoverTerminatingOrders(tenantID); err != nil {
+		return err
+	}
 	for processed := 0; processed < spotSettlementMaxSteps; {
 		now := utils.NowMillis()
 		items, err := l.svcCtx.TradeSettlementInstrModel.FindPendingOrderReleases(l.ctx, tenantID, now, reservationReleaseBatchSize)
@@ -40,13 +43,14 @@ func (l *ProcessReservationReleasesLogic) Process(tenantID int64) error {
 		}
 		progressed := false
 		for _, item := range items {
-			claimed, err := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, item.Id, now)
+			claimed, lease, err := l.svcCtx.TradeSettlementInstrModel.ClaimLease(l.ctx, item.Id, now)
 			if err != nil {
 				return err
 			}
 			if !claimed {
 				continue
 			}
+			item.UpdateTimes = lease
 			progressed = true
 			processed++
 			if err := l.executeClaimed(item); err != nil {
@@ -63,6 +67,43 @@ func (l *ProcessReservationReleasesLogic) Process(tenantID int64) error {
 	return nil
 }
 
+// recoverTerminatingOrders closes the crash window between persisting an
+// order's CANCELING/EXPIRING state and creating its durable release
+// instruction. It is intentionally idempotent: the instruction number and
+// reservation transition are protected by unique keys and row locks.
+func (l *ProcessReservationReleasesLogic) recoverTerminatingOrders(tenantID int64) error {
+	cursor := int64(0)
+	for scanned := 0; scanned < spotSettlementMaxSteps; {
+		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
+			TenantId: tenantID,
+			Statuses: terminatingOrderStatuses(),
+		}, cursor, reservationReleaseBatchSize)
+		if err != nil {
+			return err
+		}
+		if len(orders) == 0 {
+			return nil
+		}
+		for _, order := range orders {
+			cursor = order.Id
+			scanned++
+			if err = unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, order, "recover terminating order reservation release"); err != nil {
+				return err
+			}
+			if err = removeOrderBookOrder(l.svcCtx, l.ctx, order); err != nil {
+				l.Errorf("repair terminating order cache failed, orderId=%d err=%v", order.Id, err)
+			}
+			if scanned >= spotSettlementMaxSteps {
+				return nil
+			}
+		}
+		if int64(len(orders)) < reservationReleaseBatchSize {
+			return nil
+		}
+	}
+	return nil
+}
+
 func (l *ProcessReservationReleasesLogic) ProcessInstruction(instructionID int64) error {
 	item, err := l.svcCtx.TradeSettlementInstrModel.FindOne(l.ctx, instructionID)
 	if err != nil {
@@ -71,10 +112,11 @@ func (l *ProcessReservationReleasesLogic) ProcessInstruction(instructionID int64
 	if item.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
 		return nil
 	}
-	claimed, err := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, item.Id, utils.NowMillis())
+	claimed, lease, err := l.svcCtx.TradeSettlementInstrModel.ClaimLease(l.ctx, item.Id, utils.NowMillis())
 	if err != nil || !claimed {
 		return err
 	}
+	item.UpdateTimes = lease
 	if err := l.executeClaimed(item); err != nil {
 		if markErr := l.markFailed(item, err); markErr != nil {
 			return markErr
@@ -114,7 +156,7 @@ func (l *ProcessReservationReleasesLogic) markSucceeded(item *models.TTradeSettl
 		if current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
 			return nil
 		}
-		if current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+		if !settlementInstructionLeaseOwned(current, item) {
 			return fmt.Errorf("reservation release instruction is not processing")
 		}
 		reservation, err := reservationModel.FindOneByReservationNoForUpdate(ctx, item.TenantId, item.ReservationNo)
@@ -150,7 +192,7 @@ func (l *ProcessReservationReleasesLogic) markFailed(item *models.TTradeSettleme
 		if err != nil {
 			return err
 		}
-		if current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) || current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+		if current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) || !settlementInstructionLeaseOwned(current, item) {
 			return nil
 		}
 		current.RetryCount++

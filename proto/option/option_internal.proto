@@ -20,7 +20,9 @@ message SyncMarketQuoteReq {
   int64 quote_ts = 11;
 }
 
-message InternalCommonResp { common.RespBase base = 1; }
+message InternalCommonResp {
+  common.RespBase base = 1;
+}
 
 service OptionInternal {
   // 同步标的行情，更新对应期权合约行情和快照。

@@ -8,11 +8,12 @@ import "proto/payment/model.proto";
 
 option go_package = "wklive/proto/payment;payment";
 
-message AppCommonResp { common.RespBase base = 1; }
+message AppCommonResp {
+  common.RespBase base = 1;
+}
 
 // 当前用户累计充值统计
-message GetMyRechargeStatReq {
-}
+message GetMyRechargeStatReq {}
 
 message GetMyRechargeStatResp {
   common.RespBase base = 1;
@@ -112,7 +113,7 @@ message CreateWithdrawOrderReq {
   int64 amount = 1; // 单位：分
   string currency = 2;
   string address = 3; // 提现地址（钱包地址等）
-  int64 bank_id = 4;  // 银行ID（如果是提现到银行卡）
+  int64 bank_id = 4; // 银行ID（如果是提现到银行卡）
   string remark = 5;
 }
 
@@ -199,57 +200,44 @@ service PaymentApp {
   rpc GetMyRechargeStat(GetMyRechargeStatReq) returns (GetMyRechargeStatResp);
 
   // 获取当前登录用户在指定充值金额下可用的充值通道
-  rpc ListAvailableRechargeChannels(ListAvailableRechargeChannelsReq)
-      returns (ListAvailableRechargeChannelsResp);
+  rpc ListAvailableRechargeChannels(ListAvailableRechargeChannelsReq) returns (ListAvailableRechargeChannelsResp);
 
   // 创建充值订单（服务端需要再次校验通道与用户规则）
-  rpc CreateRechargeOrder(CreateRechargeOrderReq)
-      returns (CreateRechargeOrderResp);
+  rpc CreateRechargeOrder(CreateRechargeOrderReq) returns (CreateRechargeOrderResp);
 
   // 创建链上充值订单
-  rpc CreateCryptoRechargeOrder(CreateCryptoRechargeOrderReq)
-      returns (CreateCryptoRechargeOrderResp);
+  rpc CreateCryptoRechargeOrder(CreateCryptoRechargeOrderReq) returns (CreateCryptoRechargeOrderResp);
 
   // 查询我的订单详情
-  rpc GetMyRechargeOrder(GetMyRechargeOrderReq)
-      returns (GetMyRechargeOrderResp);
+  rpc GetMyRechargeOrder(GetMyRechargeOrderReq) returns (GetMyRechargeOrderResp);
 
   // 查询我的充值订单列表
-  rpc ListMyRechargeOrders(ListMyRechargeOrdersReq)
-      returns (ListMyRechargeOrdersResp);
+  rpc ListMyRechargeOrders(ListMyRechargeOrdersReq) returns (ListMyRechargeOrdersResp);
 
   // 取消未支付订单
   rpc CancelMyRechargeOrder(CancelMyRechargeOrderReq) returns (AppCommonResp);
 
   // 轮询订单状态
-  rpc QueryMyRechargeOrderStatus(QueryMyRechargeOrderStatusReq)
-      returns (QueryMyRechargeOrderStatusResp);
+  rpc QueryMyRechargeOrderStatus(QueryMyRechargeOrderStatusReq) returns (QueryMyRechargeOrderStatusResp);
 
   // 提现
-  rpc CreateWithdrawOrder(CreateWithdrawOrderReq)
-      returns (CreateWithdrawOrderResp);
+  rpc CreateWithdrawOrder(CreateWithdrawOrderReq) returns (CreateWithdrawOrderResp);
 
   // 获取提现订单列表
-  rpc ListMyWithdrawOrders(ListMyWithdrawOrdersReq)
-      returns (ListMyWithdrawOrdersResp);
+  rpc ListMyWithdrawOrders(ListMyWithdrawOrdersReq) returns (ListMyWithdrawOrdersResp);
 
   // 获取提现订单详情
-  rpc GetMyWithdrawOrder(GetMyWithdrawOrderReq)
-      returns (GetMyWithdrawOrderResp);
+  rpc GetMyWithdrawOrder(GetMyWithdrawOrderReq) returns (GetMyWithdrawOrderResp);
 
   // 获取/分配我的链上充值地址
-  rpc GetMyCryptoRechargeAddress(GetMyCryptoRechargeAddressReq)
-      returns (GetMyCryptoRechargeAddressResp);
+  rpc GetMyCryptoRechargeAddress(GetMyCryptoRechargeAddressReq) returns (GetMyCryptoRechargeAddressResp);
 
   // 我的链上充值地址列表
-  rpc ListMyCryptoRechargeAddresses(ListMyCryptoRechargeAddressesReq)
-      returns (ListMyCryptoRechargeAddressesResp);
+  rpc ListMyCryptoRechargeAddresses(ListMyCryptoRechargeAddressesReq) returns (ListMyCryptoRechargeAddressesResp);
 
   // 我的链上充值交易列表
-  rpc ListMyCryptoRechargeTxs(ListMyCryptoRechargeTxsReq)
-      returns (ListMyCryptoRechargeTxsResp);
+  rpc ListMyCryptoRechargeTxs(ListMyCryptoRechargeTxsReq) returns (ListMyCryptoRechargeTxsResp);
 
   // 我的链上充值交易详情
-  rpc GetMyCryptoRechargeTx(GetMyCryptoRechargeTxReq)
-      returns (GetMyCryptoRechargeTxResp);
+  rpc GetMyCryptoRechargeTx(GetMyCryptoRechargeTxReq) returns (GetMyCryptoRechargeTxResp);
 }

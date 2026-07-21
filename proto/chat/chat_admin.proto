@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package chat;
 
-import "proto/common/common.proto";
 import "proto/chat/enum.proto";
 import "proto/chat/model.proto";
+import "proto/common/common.proto";
 
 option go_package = "wklive/proto/chat;chat";
 
@@ -53,8 +53,7 @@ service ChatAdmin {
   rpc UpdateChatAgent(UpdateChatAgentReq) returns (AdminChatAgentResp);
 
   // 更新坐席在线状态
-  rpc UpdateChatAgentStatus(UpdateChatAgentStatusReq)
-      returns (AdminChatAgentResp);
+  rpc UpdateChatAgentStatus(UpdateChatAgentStatusReq) returns (AdminChatAgentResp);
 
   // 查询坐席详情
   rpc GetChatAgent(GetChatAgentReq) returns (AdminChatAgentResp);
@@ -84,30 +83,25 @@ service ChatAdmin {
   rpc PageChatMessages(PageChatMessagesReq) returns (PageChatMessagesResp);
 
   // 标记客服侧已读
-  rpc MarkAgentMessagesRead(MarkAgentMessagesReadReq)
-      returns (AdminMarkMessagesReadResp);
+  rpc MarkAgentMessagesRead(MarkAgentMessagesReadReq) returns (AdminMarkMessagesReadResp);
 
   // 关闭会话
   rpc CloseChatSession(CloseChatSessionReq) returns (AdminChatSessionResp);
 
   // 创建快捷回复
-  rpc CreateChatQuickReply(CreateChatQuickReplyReq)
-      returns (AdminChatQuickReplyResp);
+  rpc CreateChatQuickReply(CreateChatQuickReplyReq) returns (AdminChatQuickReplyResp);
 
   // 更新快捷回复
-  rpc UpdateChatQuickReply(UpdateChatQuickReplyReq)
-      returns (AdminChatQuickReplyResp);
+  rpc UpdateChatQuickReply(UpdateChatQuickReplyReq) returns (AdminChatQuickReplyResp);
 
   // 查询快捷回复详情
   rpc GetChatQuickReply(GetChatQuickReplyReq) returns (AdminChatQuickReplyResp);
 
   // 分页查询快捷回复
-  rpc PageChatQuickReplies(PageChatQuickRepliesReq)
-      returns (PageChatQuickRepliesResp);
+  rpc PageChatQuickReplies(PageChatQuickRepliesReq) returns (PageChatQuickRepliesResp);
 
   // 查询启用快捷回复
-  rpc ListEnabledChatQuickReplies(ListEnabledChatQuickRepliesReq)
-      returns (ListChatQuickRepliesResp);
+  rpc ListEnabledChatQuickReplies(ListEnabledChatQuickRepliesReq) returns (ListChatQuickRepliesResp);
 
   // 删除快捷回复
   rpc DeleteChatQuickReply(DeleteChatQuickReplyReq) returns (AdminCommonResp);
@@ -122,34 +116,28 @@ service ChatAdmin {
   rpc GetChatCategory(GetChatCategoryReq) returns (AdminChatCategoryResp);
 
   // 分页查询问题分类
-  rpc PageChatCategories(PageChatCategoriesReq)
-      returns (PageChatCategoriesResp);
+  rpc PageChatCategories(PageChatCategoriesReq) returns (PageChatCategoriesResp);
 
   // 查询启用问题分类
-  rpc ListEnabledChatCategories(ListEnabledChatCategoriesReq)
-      returns (ListChatCategoriesResp);
+  rpc ListEnabledChatCategories(ListEnabledChatCategoriesReq) returns (ListChatCategoriesResp);
 
   // 删除问题分类
   rpc DeleteChatCategory(DeleteChatCategoryReq) returns (AdminCommonResp);
 
   // 创建工单/离线留言
-  rpc CreateChatWorkOrder(CreateChatWorkOrderReq)
-      returns (AdminChatWorkOrderResp);
+  rpc CreateChatWorkOrder(CreateChatWorkOrderReq) returns (AdminChatWorkOrderResp);
 
   // 更新工单
-  rpc UpdateChatWorkOrder(UpdateChatWorkOrderReq)
-      returns (AdminChatWorkOrderResp);
+  rpc UpdateChatWorkOrder(UpdateChatWorkOrderReq) returns (AdminChatWorkOrderResp);
 
   // 处理工单
-  rpc HandleChatWorkOrder(HandleChatWorkOrderReq)
-      returns (AdminChatWorkOrderResp);
+  rpc HandleChatWorkOrder(HandleChatWorkOrderReq) returns (AdminChatWorkOrderResp);
 
   // 查询工单详情
   rpc GetChatWorkOrder(GetChatWorkOrderReq) returns (AdminChatWorkOrderResp);
 
   // 分页查询工单
-  rpc PageChatWorkOrders(PageChatWorkOrdersReq)
-      returns (PageChatWorkOrdersResp);
+  rpc PageChatWorkOrders(PageChatWorkOrdersReq) returns (PageChatWorkOrdersResp);
 
   // 删除工单
   rpc DeleteChatWorkOrder(DeleteChatWorkOrderReq) returns (AdminCommonResp);
@@ -158,13 +146,15 @@ service ChatAdmin {
   rpc AdminSubscribeStream(AdminChatSubscribeRequest) returns (stream ChatWsResponse);
 }
 
-message AdminCommonResp { common.RespBase base = 1; }
+message AdminCommonResp {
+  common.RespBase base = 1;
+}
 
 message AdminChatSubscribeRequest {}
 
 message ChatAdminLoginReq {
-  string username = 1;    // 登录账号
-  string password = 2;    // 登录密码
+  string username = 1; // 登录账号
+  string password = 2; // 登录密码
   string google_code = 3; // Google验证码
 }
 
@@ -186,7 +176,7 @@ message ChatAdminProfileReq {}
 message UpdateChatAdminProfileReq {
   string old_password = 1; // 原密码
   string new_password = 2; // 新密码
-  string avatar_url = 3;   // 头像URL
+  string avatar_url = 3; // 头像URL
 }
 
 message GetChatUserByIdReq {
@@ -201,9 +191,9 @@ message GetChatUserByIdResp {
 message GetChatConfigReq {}
 
 message UpdateChatConfigReq {
-  string title = 1;                         // chat-ui标题
-  ChatThemeConfig ui_config = 2;            // chat-ui展示配置
-  ChatFeatureConfig feature_config = 3;     // chat-ui功能开关
+  string title = 1; // chat-ui标题
+  ChatThemeConfig ui_config = 2; // chat-ui展示配置
+  ChatFeatureConfig feature_config = 3; // chat-ui功能开关
 }
 
 message AdminChatConfigResp {
@@ -218,21 +208,21 @@ message ChatAdminProfileResp {
 }
 
 message CreateChatGroupReq {
-  string group_code = 1;     // 分组编码
-  string group_name = 2;     // 分组名称
-  string description = 3;    // 分组描述
+  string group_code = 1; // 分组编码
+  string group_name = 2; // 分组名称
+  string description = 3; // 分组描述
   common.Enable enabled = 4; // 启用状态
-  int32 sort = 5;            // 排序
-  string remark = 6;         // 备注
+  int32 sort = 5; // 排序
+  string remark = 6; // 备注
 }
 
 message UpdateChatGroupReq {
-  int64 id = 1;              // 主键ID
-  string group_name = 2;     // 分组名称
-  string description = 3;    // 分组描述
+  int64 id = 1; // 主键ID
+  string group_name = 2; // 分组名称
+  string description = 3; // 分组描述
   common.Enable enabled = 4; // 启用状态
-  int32 sort = 5;            // 排序
-  string remark = 6;         // 备注
+  int32 sort = 5; // 排序
+  string remark = 6; // 备注
 }
 
 message GetChatGroupReq {
@@ -241,8 +231,8 @@ message GetChatGroupReq {
 
 message PageChatGroupsReq {
   common.Enable enabled = 1; // 启用状态,0表示全部
-  string keyword = 2;        // 关键词
-  common.PageReq page = 3;   // 分页
+  string keyword = 2; // 关键词
+  common.PageReq page = 3; // 分页
 }
 
 message DeleteChatGroupReq {
@@ -250,39 +240,39 @@ message DeleteChatGroupReq {
 }
 
 message CreateChatAgentReq {
-  int32 max_session_count = 1;  // 最大同时接待数
-  string remark = 2;            // 备注
-  int64 group_id = 3;           // 客服分组ID
-  string welcome_message = 4;   // 欢迎语
-  string username = 5;          // 登录账号
-  string password = 6;          // 登录密码
-  string nickname = 7;          // 昵称
-  string mobile = 8;            // 手机号
-  string email = 9;             // 邮箱
-  common.Enable enabled = 10;   // 启用状态
+  int32 max_session_count = 1; // 最大同时接待数
+  string remark = 2; // 备注
+  int64 group_id = 3; // 客服分组ID
+  string welcome_message = 4; // 欢迎语
+  string username = 5; // 登录账号
+  string password = 6; // 登录密码
+  string nickname = 7; // 昵称
+  string mobile = 8; // 手机号
+  string email = 9; // 邮箱
+  common.Enable enabled = 10; // 启用状态
   common.YesNo auto_online = 11; // 登录是否自动上线
-  string avatar_url = 12;       // 头像URL
+  string avatar_url = 12; // 头像URL
 }
 
 message UpdateChatAgentReq {
-  int64 id = 1;                 // 主键ID
-  int32 max_session_count = 2;  // 最大同时接待数
-  string remark = 3;            // 备注
-  int64 group_id = 4;           // 客服分组ID
-  string welcome_message = 5;   // 欢迎语
+  int64 id = 1; // 主键ID
+  int32 max_session_count = 2; // 最大同时接待数
+  string remark = 3; // 备注
+  int64 group_id = 4; // 客服分组ID
+  string welcome_message = 5; // 欢迎语
   common.YesNo auto_online = 6; // 登录是否自动上线
-  string nickname = 7;          // 昵称
-  string avatar_url = 8;        // 头像URL
-  string mobile = 9;            // 手机号
-  string email = 10;            // 邮箱
-  common.Enable enabled = 11;   // 启用状态
-  string password = 12;         // 新密码,为空不修改
+  string nickname = 7; // 昵称
+  string avatar_url = 8; // 头像URL
+  string mobile = 9; // 手机号
+  string email = 10; // 邮箱
+  common.Enable enabled = 11; // 启用状态
+  string password = 12; // 新密码,为空不修改
 }
 
 message UpdateChatAgentStatusReq {
-  int64 id = 1;                // 坐席ID；0表示当前登录坐席
-  ChatAgentStatus status = 2;  // 在线状态
-  string reason = 3;           // 状态变化原因
+  int64 id = 1; // 坐席ID；0表示当前登录坐席
+  ChatAgentStatus status = 2; // 在线状态
+  string reason = 3; // 状态变化原因
 }
 
 message GetChatAgentReq {
@@ -290,23 +280,23 @@ message GetChatAgentReq {
 }
 
 message PageChatAgentsReq {
-  int64 chat_user_id = 1;     // 客服用户ID,0表示全部
+  int64 chat_user_id = 1; // 客服用户ID,0表示全部
   ChatAgentStatus status = 2; // 在线状态,0表示全部
-  int64 group_id = 3;         // 客服分组ID,0表示全部
-  common.PageReq page = 4;    // 分页
+  int64 group_id = 3; // 客服分组ID,0表示全部
+  common.PageReq page = 4; // 分页
 }
 
 message PageChatSessionsReq {
-  int64 user_id = 1;                // 用户ID,0表示全部
-  int64 agent_id = 2;               // 坐席ID,0表示全部
-  ChatSessionStatus status = 3;     // 状态,0表示全部
+  int64 user_id = 1; // 用户ID,0表示全部
+  int64 agent_id = 2; // 坐席ID,0表示全部
+  ChatSessionStatus status = 3; // 状态,0表示全部
   ChatSessionPriority priority = 4; // 优先级,0表示全部
-  string category = 5;              // 问题分类,空表示全部
-  common.TimeRange time_range = 6;  // 创建时间范围
-  common.PageReq page = 7;          // 分页
-  int64 group_id = 8;               // 客服分组ID,0表示全部
-  string keyword = 9;               // 关键词:会话号/标题/最后消息
-  int64 merchant_id = 10;           // 客服商户ID
+  string category = 5; // 问题分类,空表示全部
+  common.TimeRange time_range = 6; // 创建时间范围
+  common.PageReq page = 7; // 分页
+  int64 group_id = 8; // 客服分组ID,0表示全部
+  string keyword = 9; // 关键词:会话号/标题/最后消息
+  int64 merchant_id = 10; // 客服商户ID
 }
 
 message GetChatSessionReq {
@@ -315,7 +305,7 @@ message GetChatSessionReq {
 
 message AcceptChatSessionReq {
   string session_no = 1; // 会话编号
-  string reason = 2;     // 接待原因
+  string reason = 2; // 接待原因
   int64 merchant_id = 3;
   int64 agent_id = 4;
   bool is_guest = 5;
@@ -333,77 +323,77 @@ message AcceptChatSessionResp {
 }
 
 message SendAgentMessageReq {
-  string session_no = 1;            // 会话编号
-  string client_message_id = 2;     // 客户端消息ID,用于幂等/回执
+  string session_no = 1; // 会话编号
+  string client_message_id = 2; // 客户端消息ID,用于幂等/回执
   ChatMessageType message_type = 3; // 消息类型
-  string content = 4;               // 文本内容
-  string url = 5;                   // 资源URL
-  string file_name = 6;             // 文件名
-  int64 file_size = 7;              // 文件大小(byte)
-  string mime_type = 8;             // MIME类型
-  int32 width = 9;                  // 图片/视频宽度
-  int32 height = 10;                // 图片/视频高度
-  int32 duration = 11;              // 音频/视频时长(秒)
-  string extra = 12;                // 扩展JSON
-  ChatMessageUser sender = 13;      // 坐席端
-  ChatMessageUser receiver = 14;    // 用户端
-  int64 merchant_id = 15;           // 
-  bool is_guest = 16;               // 是否游客/临时会话
+  string content = 4; // 文本内容
+  string url = 5; // 资源URL
+  string file_name = 6; // 文件名
+  int64 file_size = 7; // 文件大小(byte)
+  string mime_type = 8; // MIME类型
+  int32 width = 9; // 图片/视频宽度
+  int32 height = 10; // 图片/视频高度
+  int32 duration = 11; // 音频/视频时长(秒)
+  string extra = 12; // 扩展JSON
+  ChatMessageUser sender = 13; // 坐席端
+  ChatMessageUser receiver = 14; // 用户端
+  int64 merchant_id = 15; //
+  bool is_guest = 16; // 是否游客/临时会话
 }
 
 message SendAgentTypingReq {
-  int64 merchant_id = 1;        // 客服商户ID
-  int64 user_id = 2;            // 用户ID
-  bool is_guest = 3;            // 是否游客/临时会话
+  int64 merchant_id = 1; // 客服商户ID
+  int64 user_id = 2; // 用户ID
+  bool is_guest = 3; // 是否游客/临时会话
   ChatTypingPayload typing = 4; // 输入状态 payload
 }
 
 message OperateAgentMessageReq {
   ChatMessageOperatePayload message_operate = 1; // 消息删除/撤回 payload
-  bool is_guest = 2;                              // 是否游客/临时会话
+  bool is_guest = 2; // 是否游客/临时会话
 }
 
 message PageChatMessagesReq {
-  string session_no = 1;          // 会话编号
+  string session_no = 1; // 会话编号
   ChatSenderType sender_type = 2; // 发送方类型,0表示全部
-  common.PageReq page = 3;        // 分页
-  int64 merchant_id = 4;          // 游客临时会话商户ID
-  bool is_guest = 5;              // 是否游客/临时会话
+  common.PageReq page = 3; // 分页
+  int64 merchant_id = 4; // 游客临时会话商户ID
+  bool is_guest = 5; // 是否游客/临时会话
 }
 
 message MarkAgentMessagesReadReq {
-  string session_no = 1;           // 会话编号
+  string session_no = 1; // 会话编号
   string last_read_message_no = 2; // 最后已读消息编号,空表示全部
 }
 
 message CloseChatSessionReq {
-  string session_no = 1;                         // 会话编号
-  ChatSessionCloseReason close_reason_type = 2;  // 结束原因类型
-  string close_reason = 3;                       // 结束原因描述
+  string session_no = 1; // 会话编号
+  ChatSessionCloseReason close_reason_type = 2; // 结束原因类型
+  string close_reason = 3; // 结束原因描述
   int64 merchant_id = 4;
   int64 user_id = 5;
-  bool is_guest = 6;                             // 是否游客/临时会话
+  bool is_guest = 6; // 是否游客/临时会话
 }
 
 message CreateChatQuickReplyReq {
-  int64 agent_id = 1;        // 坐席ID,0表示公共快捷回复
-  int64 category_id = 2;     // 分类ID
-  string title = 3;          // 标题
-  string content = 4;        // 内容
+  int64 agent_id = 1; // 坐席ID,0表示公共快捷回复
+  int64 category_id = 2; // 分类ID
+  string title = 3; // 标题
+  string content = 4; // 内容
   common.Enable enabled = 5; // 启用状态
-  int32 sort = 6;            // 排序
-  string remark = 7;         // 备注
+  int32 sort = 6; // 排序
+  string remark = 7; // 备注
 }
 
 message UpdateChatQuickReplyReq {
-  int64 id = 1;              // 主键ID
-  int64 agent_id = 2;        // 坐席ID,0表示公共快捷回复
-  int64 category_id = 3;     // 分类ID
-  string title = 4;          // 标题
-  string content = 5;        // 内容
+  int64 id = 1; // 主键ID
+  int64 agent_id = 2; // 坐席ID,0表示公共快捷回复
+  int64 category_id = 3; // 分类ID
+  string title = 4; // 标题
+  string content = 5; // 内容
   common.Enable enabled = 6; // 启用状态
-  int32 sort = 7;            // 排序
-  string remark = 8;         // 备注
+  int32 sort = 7; // 排序
+  string remark = 8; // 备注
 }
 
 message GetChatQuickReplyReq {
@@ -411,15 +401,15 @@ message GetChatQuickReplyReq {
 }
 
 message PageChatQuickRepliesReq {
-  int64 agent_id = 1;        // 坐席ID,0表示全部
-  int64 category_id = 2;     // 分类ID,0表示全部
+  int64 agent_id = 1; // 坐席ID,0表示全部
+  int64 category_id = 2; // 分类ID,0表示全部
   common.Enable enabled = 3; // 启用状态,0表示全部
-  string keyword = 4;        // 关键词
-  common.PageReq page = 5;   // 分页
+  string keyword = 4; // 关键词
+  common.PageReq page = 5; // 分页
 }
 
 message ListEnabledChatQuickRepliesReq {
-  int64 agent_id = 1;    // 坐席ID,0表示公共
+  int64 agent_id = 1; // 坐席ID,0表示公共
   int64 category_id = 2; // 分类ID,0表示全部
 }
 
@@ -428,23 +418,23 @@ message DeleteChatQuickReplyReq {
 }
 
 message CreateChatCategoryReq {
-  int64 parent_id = 1;       // 父级分类ID
-  string category_code = 2;  // 分类编码
-  string category_name = 3;  // 分类名称
-  int64 group_id = 4;        // 客服分组ID
+  int64 parent_id = 1; // 父级分类ID
+  string category_code = 2; // 分类编码
+  string category_name = 3; // 分类名称
+  int64 group_id = 4; // 客服分组ID
   common.Enable enabled = 5; // 启用状态
-  int32 sort = 6;            // 排序
-  string remark = 7;         // 备注
+  int32 sort = 6; // 排序
+  string remark = 7; // 备注
 }
 
 message UpdateChatCategoryReq {
-  int64 id = 1;              // 主键ID
-  int64 parent_id = 2;       // 父级分类ID
-  string category_name = 3;  // 分类名称
-  int64 group_id = 4;        // 客服分组ID
+  int64 id = 1; // 主键ID
+  int64 parent_id = 2; // 父级分类ID
+  string category_name = 3; // 分类名称
+  int64 group_id = 4; // 客服分组ID
   common.Enable enabled = 5; // 启用状态
-  int32 sort = 6;            // 排序
-  string remark = 7;         // 备注
+  int32 sort = 6; // 排序
+  string remark = 7; // 备注
 }
 
 message GetChatCategoryReq {
@@ -452,16 +442,16 @@ message GetChatCategoryReq {
 }
 
 message PageChatCategoriesReq {
-  int64 parent_id = 1;       // 父级分类ID,0表示全部
-  string category_code = 2;  // 分类编码
-  string category_name = 3;  // 分类名称
+  int64 parent_id = 1; // 父级分类ID,0表示全部
+  string category_code = 2; // 分类编码
+  string category_name = 3; // 分类名称
   common.Enable enabled = 4; // 启用状态,0表示全部
-  string keyword = 5;        // 关键词
-  common.PageReq page = 6;   // 分页
+  string keyword = 5; // 关键词
+  common.PageReq page = 6; // 分页
 }
 
 message ListEnabledChatCategoriesReq {
-  int64 group_id = 1;  // 客服分组ID,0表示全部
+  int64 group_id = 1; // 客服分组ID,0表示全部
   int64 parent_id = 2; // 父级分类ID,0表示全部
 }
 
@@ -470,57 +460,57 @@ message DeleteChatCategoryReq {
 }
 
 message CreateChatWorkOrderReq {
-  string session_no = 1;             // 关联会话编号
-  int64 user_id = 2;                 // 用户ID
-  int64 agent_id = 3;                // 坐席ID
-  int64 group_id = 4;                // 客服分组ID
-  string title = 5;                  // 工单标题
-  string content = 6;                // 工单内容/离线留言
-  string contact_name = 7;           // 联系人
-  string contact_mobile = 8;         // 联系电话
-  string contact_email = 9;          // 联系邮箱
+  string session_no = 1; // 关联会话编号
+  int64 user_id = 2; // 用户ID
+  int64 agent_id = 3; // 坐席ID
+  int64 group_id = 4; // 客服分组ID
+  string title = 5; // 工单标题
+  string content = 6; // 工单内容/离线留言
+  string contact_name = 7; // 联系人
+  string contact_mobile = 8; // 联系电话
+  string contact_email = 9; // 联系邮箱
   ChatSessionPriority priority = 10; // 优先级
-  string remark = 11;                // 备注
+  string remark = 11; // 备注
 }
 
 message UpdateChatWorkOrderReq {
-  int64 id = 1;                     // 主键ID
-  int64 agent_id = 2;               // 坐席ID
-  int64 group_id = 3;               // 客服分组ID
-  string title = 4;                 // 工单标题
-  string content = 5;               // 工单内容/离线留言
-  string contact_name = 6;          // 联系人
-  string contact_mobile = 7;        // 联系电话
-  string contact_email = 8;         // 联系邮箱
+  int64 id = 1; // 主键ID
+  int64 agent_id = 2; // 坐席ID
+  int64 group_id = 3; // 客服分组ID
+  string title = 4; // 工单标题
+  string content = 5; // 工单内容/离线留言
+  string contact_name = 6; // 联系人
+  string contact_mobile = 7; // 联系电话
+  string contact_email = 8; // 联系邮箱
   ChatSessionPriority priority = 9; // 优先级
-  int32 status = 10;                // 状态
-  string remark = 11;               // 备注
+  int32 status = 10; // 状态
+  string remark = 11; // 备注
 }
 
 message HandleChatWorkOrderReq {
-  int64 id = 1;             // 主键ID
-  int64 handler_id = 2;     // 处理人ID
-  int32 status = 3;         // 状态:2处理中 3已完成 4已关闭
+  int64 id = 1; // 主键ID
+  int64 handler_id = 2; // 处理人ID
+  int32 status = 3; // 状态:2处理中 3已完成 4已关闭
   string handle_result = 4; // 处理结果
-  string remark = 5;        // 备注
+  string remark = 5; // 备注
 }
 
 message GetChatWorkOrderReq {
-  int64 id = 1;             // 主键ID
+  int64 id = 1; // 主键ID
   string work_order_no = 2; // 工单编号
 }
 
 message PageChatWorkOrdersReq {
-  string session_no = 1;            // 会话编号
-  int64 user_id = 2;                // 用户ID,0表示全部
-  int64 agent_id = 3;               // 坐席ID,0表示全部
-  int64 group_id = 4;               // 分组ID,0表示全部
+  string session_no = 1; // 会话编号
+  int64 user_id = 2; // 用户ID,0表示全部
+  int64 agent_id = 3; // 坐席ID,0表示全部
+  int64 group_id = 4; // 分组ID,0表示全部
   ChatSessionPriority priority = 5; // 优先级,0表示全部
-  int32 status = 6;                 // 状态,0表示全部
-  int64 handler_id = 7;             // 处理人ID,0表示全部
-  string keyword = 8;               // 关键词
-  common.TimeRange time_range = 9;  // 创建时间范围
-  common.PageReq page = 10;         // 分页
+  int32 status = 6; // 状态,0表示全部
+  int64 handler_id = 7; // 处理人ID,0表示全部
+  string keyword = 8; // 关键词
+  common.TimeRange time_range = 9; // 创建时间范围
+  common.PageReq page = 10; // 分页
 }
 
 message DeleteChatWorkOrderReq {
@@ -592,7 +582,9 @@ message AdminChatMessageResp {
   ChatMessage data = 2;
 }
 
-message AdminMarkMessagesReadResp { common.RespBase base = 1; }
+message AdminMarkMessagesReadResp {
+  common.RespBase base = 1;
+}
 
 message AdminChatQuickReplyResp {
   common.RespBase base = 1;

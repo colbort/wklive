@@ -23,6 +23,7 @@ import (
 )
 
 const secondsWorkBatchSize = int64(100)
+const secondsWorkLeaseMillis = int64(60_000)
 
 type ProcessSecondsSettlementsLogic struct {
 	ctx    context.Context
@@ -46,22 +47,40 @@ type marketQuoteSnapshot struct {
 	Confirmed  bool   `json:"confirmed"`
 }
 
+func secondsWorkLeaseOwned(current *models.TTradeOrderSeconds, status trade.SecondsSettlementStatus, lease int64) bool {
+	return current != nil && current.SettlementStatus == int64(status) && current.UpdateTimes == lease
+}
+
 func NewProcessSecondsSettlementsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProcessSecondsSettlementsLogic {
 	return &ProcessSecondsSettlementsLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
 func (l *ProcessSecondsSettlementsLogic) Process(tenantID int64) error {
-	if err := l.processActivations(tenantID); err != nil {
-		return err
+	return runSecondsPhases(
+		func() error { return l.processActivations(tenantID) },
+		func() error { return l.processSettlements(tenantID) },
+		func() error { return l.processRefunds(tenantID) },
+	)
+}
+
+func runSecondsPhases(phases ...func() error) error {
+	var result error
+	for _, phase := range phases {
+		if phase != nil {
+			result = errors.Join(result, phase())
+		}
 	}
-	if err := l.processSettlements(tenantID); err != nil {
-		return err
-	}
-	return l.processRefunds(tenantID)
+	return result
 }
 
 func (l *ProcessSecondsSettlementsLogic) processActivations(tenantID int64) error {
 	return l.scan(tenantID, int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVATING), 0, func(item *models.SecondsOrderWorkItem) error {
+		now := utils.NowMillis()
+		claimed, lease, err := l.svcCtx.TradeOrderSecondsModel.ClaimActivation(l.ctx, item.Id, now, now-secondsWorkLeaseMillis)
+		if err != nil || !claimed {
+			return err
+		}
+		item.UpdateTimes = lease
 		cfg, err := l.svcCtx.TradeSymbolSecondsModel.FindOneByTenantIdSymbolIdDurationSeconds(l.ctx, item.TenantId, item.SymbolId, item.DurationSeconds)
 		if err != nil {
 			return err
@@ -70,7 +89,7 @@ func (l *ProcessSecondsSettlementsLogic) processActivations(tenantID int64) erro
 		if err != nil {
 			return l.moveSecondsToRefund(item, "invalid start quote: "+err.Error())
 		}
-		now := utils.NowMillis()
+		now = utils.NowMillis()
 		return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 			conn := sqlx.NewSqlConnFromSession(session)
 			model := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
@@ -78,14 +97,15 @@ func (l *ProcessSecondsSettlementsLogic) processActivations(tenantID int64) erro
 			if err != nil {
 				return err
 			}
-			if current.SettlementStatus != int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVATING) {
-				return nil
+			if !secondsWorkLeaseOwned(current, trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVATING, item.UpdateTimes) {
+				return errors.New("seconds activation lease lost")
 			}
 			current.ActivatedAt, current.StartPriceTime, current.ExpireTime = now, quote.QuoteTs, now+current.DurationSeconds*1000
 			current.StartPrice = mustParseFloat(quote.LastPrice)
 			current.StartPriceSource = quoteSource(quote)
 			current.PriceAlgorithm = nonEmpty(cfg.SettlementPriceAlgorithm, "last-v1")
 			current.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVE)
+			current.RetryCount, current.NextRetryAt, current.LastErrorMsg = 0, 0, ""
 			current.Version++
 			current.UpdateTimes = now
 			if err := model.Update(ctx, current); err != nil {
@@ -104,6 +124,13 @@ func (l *ProcessSecondsSettlementsLogic) processActivations(tenantID int64) erro
 func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) error {
 	for _, status := range []trade.SecondsSettlementStatus{trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVE, trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING} {
 		if err := l.scan(tenantID, int64(status), utils.NowMillis(), func(item *models.SecondsOrderWorkItem) error {
+			now := utils.NowMillis()
+			claimed, lease, err := l.svcCtx.TradeOrderSecondsModel.ClaimSettlement(l.ctx, item.Id, now, now-secondsWorkLeaseMillis)
+			if err != nil || !claimed {
+				return err
+			}
+			item.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING)
+			item.UpdateTimes = lease
 			cfg, err := l.svcCtx.TradeSymbolSecondsModel.FindOneByTenantIdSymbolIdDurationSeconds(l.ctx, item.TenantId, item.SymbolId, item.DurationSeconds)
 			if err != nil {
 				return err
@@ -123,14 +150,6 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 			if result == trade.SecondsResult_SECONDS_RESULT_DRAW {
 				return l.moveSecondsToRefund(item, "draw refund")
 			}
-			if item.SettlementStatus == int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVE) {
-				item.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING)
-				item.Version++
-				item.UpdateTimes = utils.NowMillis()
-				if err := l.svcCtx.TradeOrderSecondsModel.Update(l.ctx, &item.TTradeOrderSeconds); err != nil {
-					return err
-				}
-			}
 			profit, fee, returned := secondsPayout(item.StakeAmount, item.PayoutRate, item.FeeRate, result)
 			if err := l.consumeSecondsStake(item); err != nil {
 				return err
@@ -140,7 +159,7 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 					return err
 				}
 			}
-			now := utils.NowMillis()
+			now = utils.NowMillis()
 			return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 				conn := sqlx.NewSqlConnFromSession(session)
 				secondsModel := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
@@ -152,8 +171,8 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 				if current.SettlementStatus == int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLED) {
 					return nil
 				}
-				if current.SettlementStatus != int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVE) && current.SettlementStatus != int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING) {
-					return nil
+				if !secondsWorkLeaseOwned(current, trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING, item.UpdateTimes) {
+					return errors.New("seconds settlement lease lost")
 				}
 				current.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLED)
 				current.Result = int64(result)
@@ -165,6 +184,7 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 				current.ReturnAmount = returned
 				current.SettlementReason = "settled"
 				current.SettledAt = now
+				current.RetryCount, current.NextRetryAt, current.LastErrorMsg = 0, 0, ""
 				current.Version++
 				current.UpdateTimes = now
 				if err := secondsModel.Update(ctx, current); err != nil {
@@ -195,63 +215,116 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 
 func (l *ProcessSecondsSettlementsLogic) processRefunds(tenantID int64) error {
 	return l.scan(tenantID, int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDING), 0, func(item *models.SecondsOrderWorkItem) error {
+		now := utils.NowMillis()
+		claimed, lease, err := l.svcCtx.TradeOrderSecondsModel.ClaimRefund(l.ctx, item.Id, now, now-secondsWorkLeaseMillis)
+		if err != nil || !claimed {
+			return err
+		}
+		item.UpdateTimes = lease
 		resp, err := l.svcCtx.AssetClient.UnfreezeAssetByBizNo(l.ctx, &asset.UnfreezeAssetByBizNoReq{TenantId: item.TenantId, TargetBizType: asset.BizType_BIZ_TYPE_TRADE, TargetBizNo: item.OrderNo, Amount: item.StakeAmount.String(), BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_TRADE_MATCH, BizId: item.Id, BizNo: item.OrderNo + "-SECONDS-REFUND", Remark: "seconds contract refund"})
 		if err != nil {
 			return err
 		}
-		if resp.GetBase().GetCode() != 200 {
-			return fmt.Errorf("seconds refund rejected: %s", resp.GetBase().GetMsg())
-		}
-		now := utils.NowMillis()
-		item.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDED)
-		item.Result = int64(trade.SecondsResult_SECONDS_RESULT_VOID)
-		item.ReturnAmount = item.StakeAmount
-		item.SettledAt = now
-		item.Version++
-		item.UpdateTimes = now
-		if err := l.svcCtx.TradeOrderSecondsModel.Update(l.ctx, &item.TTradeOrderSeconds); err != nil {
+		if err = validateSecondsAssetResponse("refund", resp); err != nil {
 			return err
 		}
-		order, err := l.svcCtx.TradeOrderModel.FindOne(l.ctx, item.OrderId)
-		if err != nil {
-			return err
-		}
-		order.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELED)
-		order.CancelReason = item.SettlementReason
-		order.UpdateTimes = now
-		return l.svcCtx.TradeOrderModel.Update(l.ctx, order)
+		now = utils.NowMillis()
+		return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+			conn := sqlx.NewSqlConnFromSession(session)
+			secondsModel := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
+			orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
+			current, err := secondsModel.FindOneForUpdate(ctx, item.Id)
+			if err != nil {
+				return err
+			}
+			if current.SettlementStatus == int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDED) {
+				return nil
+			}
+			if !secondsWorkLeaseOwned(current, trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDING, item.UpdateTimes) {
+				return errors.New("seconds refund lease lost")
+			}
+			current.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDED)
+			current.Result = int64(trade.SecondsResult_SECONDS_RESULT_VOID)
+			current.ReturnAmount = current.StakeAmount
+			current.SettledAt, current.Version, current.UpdateTimes = now, current.Version+1, now
+			current.RetryCount, current.NextRetryAt, current.LastErrorMsg = 0, 0, ""
+			if err = secondsModel.Update(ctx, current); err != nil {
+				return err
+			}
+			order, err := orderModel.FindOneForUpdate(ctx, current.OrderId)
+			if err != nil {
+				return err
+			}
+			order.Status, order.CancelReason, order.Version, order.UpdateTimes = int64(trade.OrderStatus_ORDER_STATUS_CANCELED), current.SettlementReason, order.Version+1, now
+			return orderModel.Update(ctx, order)
+		})
 	})
 }
 
 func (l *ProcessSecondsSettlementsLogic) scan(tenantID, status, due int64, fn func(*models.SecondsOrderWorkItem) error) error {
+	return scanSecondsWork(func(cursor int64) ([]*models.SecondsOrderWorkItem, error) {
+		return l.svcCtx.TradeOrderSecondsModel.FindWork(l.ctx, tenantID, status, due, cursor, secondsWorkBatchSize)
+	}, func(item *models.SecondsOrderWorkItem) error {
+		itemErr := fn(item)
+		if itemErr == nil {
+			return nil
+		}
+		_, markErr := l.svcCtx.TradeOrderSecondsModel.MarkWorkFailure(l.ctx, item.Id, item.SettlementStatus, item.UpdateTimes, itemErr.Error(), utils.NowMillis())
+		return errors.Join(itemErr, markErr)
+	})
+}
+
+func scanSecondsWork(fetch func(int64) ([]*models.SecondsOrderWorkItem, error), fn func(*models.SecondsOrderWorkItem) error) error {
 	cursor := int64(0)
+	var firstErr error
 	for {
-		items, err := l.svcCtx.TradeOrderSecondsModel.FindWork(l.ctx, tenantID, status, due, cursor, secondsWorkBatchSize)
+		items, err := fetch(cursor)
 		if err != nil {
+			if firstErr != nil {
+				return fmt.Errorf("seconds work item failed: %v; scan failed: %w", firstErr, err)
+			}
 			return err
 		}
 		if len(items) == 0 {
-			return nil
+			return firstErr
 		}
 		for _, item := range items {
 			cursor = item.Id
-			if err := fn(item); err != nil {
-				return err
+			if itemErr := fn(item); itemErr != nil && firstErr == nil {
+				firstErr = fmt.Errorf("seconds order id=%d: %w", item.Id, itemErr)
 			}
 		}
 		if int64(len(items)) < secondsWorkBatchSize {
-			return nil
+			return firstErr
 		}
 	}
 }
 
 func (l *ProcessSecondsSettlementsLogic) moveSecondsToRefund(item *models.SecondsOrderWorkItem, reason string) error {
-	item.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDING)
-	item.Result = int64(trade.SecondsResult_SECONDS_RESULT_VOID)
-	item.SettlementReason = reason
-	item.Version++
-	item.UpdateTimes = utils.NowMillis()
-	return l.svcCtx.TradeOrderSecondsModel.Update(l.ctx, &item.TTradeOrderSeconds)
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		model := models.NewTTradeOrderSecondsModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+		current, err := model.FindOneForUpdate(ctx, item.Id)
+		if err != nil {
+			return err
+		}
+		if current.SettlementStatus == int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDING) || current.SettlementStatus == int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDED) {
+			return nil
+		}
+		if item.SettlementStatus == int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING) {
+			if !secondsWorkLeaseOwned(current, trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING, item.UpdateTimes) {
+				return errors.New("seconds settlement lease lost before refund")
+			}
+		} else if !secondsWorkLeaseOwned(current, trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVATING, item.UpdateTimes) {
+			return errors.New("seconds activation lease lost before refund")
+		}
+		current.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDING)
+		current.Result = int64(trade.SecondsResult_SECONDS_RESULT_VOID)
+		current.SettlementReason = reason
+		current.NextRetryAt, current.LastErrorMsg = 0, ""
+		current.Version++
+		current.UpdateTimes = 0
+		return model.Update(ctx, current)
+	})
 }
 
 func (l *ProcessSecondsSettlementsLogic) getValidQuote(source string, symbolID, validity int64) (*marketQuoteSnapshot, error) {
@@ -440,18 +513,26 @@ func (l *ProcessSecondsSettlementsLogic) consumeSecondsStake(i *models.SecondsOr
 	if e != nil {
 		return e
 	}
-	if r.GetBase().GetCode() != 200 {
-		return fmt.Errorf("seconds consume rejected: %s", r.GetBase().GetMsg())
-	}
-	return nil
+	return validateSecondsAssetResponse("consume", r)
 }
 func (l *ProcessSecondsSettlementsLogic) creditSeconds(i *models.SecondsOrderWorkItem, amount decimal.Decimal) error {
 	r, e := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{TenantId: i.TenantId, UserId: i.UserId, WalletType: common.WalletType_WALLET_TYPE_CONTRACT, Coin: i.StakeAsset, Amount: amount.String(), BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_TRADE_MATCH, BizId: i.Id, BizNo: i.OrderNo + "-SECONDS-PAYOUT", Remark: "seconds payout"})
 	if e != nil {
 		return e
 	}
-	if r.GetBase().GetCode() != 200 {
-		return fmt.Errorf("seconds payout rejected: %s", r.GetBase().GetMsg())
+	return validateSecondsAssetResponse("payout", r)
+}
+
+type secondsAssetResponse interface {
+	GetBase() *common.RespBase
+}
+
+func validateSecondsAssetResponse(action string, response secondsAssetResponse) error {
+	if response == nil || response.GetBase() == nil {
+		return fmt.Errorf("seconds %s returned an empty Asset response", action)
+	}
+	if response.GetBase().GetCode() != 200 {
+		return fmt.Errorf("seconds %s rejected: %s", action, response.GetBase().GetMsg())
 	}
 	return nil
 }

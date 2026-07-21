@@ -399,6 +399,21 @@ type AssetUserAsset struct {
 	UpdateTimes     int64  `json:"updateTimes"`     // 更新时间
 }
 
+type AuthoritativeSnapshot struct {
+	SnapshotId        string `json:"snapshotId"`
+	Authority         string `json:"authority"`
+	SnapshotKind      string `json:"snapshotKind"`
+	CategoryCode      string `json:"categoryCode"`
+	Market            string `json:"market"`
+	Symbol            string `json:"symbol"`
+	Price             string `json:"price"`
+	SourceTimestamp   int64  `json:"sourceTimestamp"`
+	SnapshotTimestamp int64  `json:"snapshotTimestamp"`
+	Revision          int64  `json:"revision"`
+	FormulaVersion    string `json:"formulaVersion"`
+	RawPayload        string `json:"rawPayload"`
+}
+
 type AvailableRechargeChannel struct {
 	ChannelId              int64  `json:"channelId"`
 	ChannelCode            string `json:"channelCode"`
@@ -674,6 +689,21 @@ type ExchangeGuestTransferReq struct {
 type ExchangeGuestTransferResp struct {
 	RespBase
 	Data ExchangeGuestTransferData `json:"data"`
+}
+
+type GetAuthoritativeSnapshotReq struct {
+	Authority     string `form:"authority"`
+	CategoryCode  string `form:"categoryCode"`
+	Market        string `form:"market"`
+	Symbol        string `form:"symbol"`
+	TargetTime    int64  `form:"targetTime"`
+	MaxLookbackMs int64  `form:"maxLookbackMs"`
+	SnapshotKind  string `form:"snapshotKind"`
+}
+
+type GetAuthoritativeSnapshotResp struct {
+	RespBase
+	Data AuthoritativeSnapshot `json:"data"`
 }
 
 type GetFillListReq struct {
@@ -1008,6 +1038,15 @@ type Kline struct {
 	Close        string `json:"close"`
 	Volume       string `json:"volume"`
 	Turnover     string `json:"turnover"`
+}
+
+type KlineInterval struct {
+	Name  string `json:"name"`
+	KType int32  `json:"kType"`
+}
+
+type KlineIntervalsResp struct {
+	Data []KlineInterval `json:"data"`
 }
 
 type ListAssetCoinConfigsReq struct {

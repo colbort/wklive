@@ -27,7 +27,7 @@ func NewAdminInsuranceSnapshotLogic(ctx context.Context, s *svc.ServiceContext) 
 func (l *AdminInsuranceSnapshotLogic) SetInsuranceFundAccount(in *trade.SetInsuranceFundAccountReq) (*trade.AdminCommonResp, error) {
 	tenant := adminTenantID(l.ctx, in.TenantId)
 	assetCode := strings.ToUpper(strings.TrimSpace(in.SettleAsset))
-	if tenant <= 0 || in.FundUserId <= 0 || assetCode == "" || in.WalletType == common.WalletType_WALLET_TYPE_UNKNOWN {
+	if tenant <= 0 || assetCode == "" {
 		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, "invalid insurance fund account")}, nil
 	}
 	if in.SymbolId > 0 {
@@ -45,7 +45,7 @@ func (l *AdminInsuranceSnapshotLogic) SetInsuranceFundAccount(in *trade.SetInsur
 	if adl == 0 {
 		adl = 2
 	}
-	row := &models.TContractInsuranceFundAccount{TenantId: tenant, SymbolId: in.SymbolId, SettleAsset: assetCode, FundUserId: in.FundUserId, WalletType: int64(in.WalletType), AdlEnabled: adl, Status: status, Version: in.Version, CreateTimes: now, UpdateTimes: now}
+	row := &models.TContractInsuranceFundAccount{TenantId: tenant, SymbolId: in.SymbolId, SettleAsset: assetCode, AdlEnabled: adl, Status: status, Version: in.Version, CreateTimes: now, UpdateTimes: now}
 	var err error
 	if in.Id > 0 {
 		old, e := l.svc.ContractInsuranceFundModel.FindOne(l.ctx, in.Id)
@@ -77,7 +77,7 @@ func (l *AdminInsuranceSnapshotLogic) GetInsuranceFundAccountList(in *trade.GetI
 	resp := &trade.GetInsuranceFundAccountListResp{}
 	last := int64(0)
 	for _, v := range rows {
-		resp.Data = append(resp.Data, &trade.InsuranceFundAccount{Id: v.Id, TenantId: v.TenantId, SymbolId: v.SymbolId, SettleAsset: v.SettleAsset, FundUserId: v.FundUserId, WalletType: common.WalletType(v.WalletType), AdlEnabled: common.YesNo(v.AdlEnabled), Status: common.Enable(v.Status), Version: v.Version, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes})
+		resp.Data = append(resp.Data, &trade.InsuranceFundAccount{Id: v.Id, TenantId: v.TenantId, SymbolId: v.SymbolId, SettleAsset: v.SettleAsset, AdlEnabled: common.YesNo(v.AdlEnabled), Status: common.Enable(v.Status), Version: v.Version, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes})
 		last = v.Id
 	}
 	resp.Base = pageutil.Base(cursor, limit, len(rows), total, last)

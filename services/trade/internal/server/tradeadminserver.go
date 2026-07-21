@@ -289,11 +289,16 @@ func (s *TradeAdminServer) RetrySettlementInstruction(ctx context.Context, in *t
 }
 
 func (s *TradeAdminServer) SetInsuranceFundAccount(ctx context.Context, in *trade.SetInsuranceFundAccountReq) (*trade.AdminCommonResp, error) {
-	return logic.NewAdminInsuranceSnapshotLogic(ctx, s.svcCtx).SetInsuranceFundAccount(in)
+	l := logic.NewSetInsuranceFundAccountLogic(ctx, s.svcCtx)
+	return l.SetInsuranceFundAccount(in)
 }
+
 func (s *TradeAdminServer) GetInsuranceFundAccountList(ctx context.Context, in *trade.GetInsuranceFundAccountListReq) (*trade.GetInsuranceFundAccountListResp, error) {
-	return logic.NewAdminInsuranceSnapshotLogic(ctx, s.svcCtx).GetInsuranceFundAccountList(in)
+	l := logic.NewGetInsuranceFundAccountListLogic(ctx, s.svcCtx)
+	return l.GetInsuranceFundAccountList(in)
 }
+
 func (s *TradeAdminServer) GetMarketSnapshotList(ctx context.Context, in *trade.GetMarketSnapshotListReq) (*trade.GetMarketSnapshotListResp, error) {
-	return logic.NewAdminInsuranceSnapshotLogic(ctx, s.svcCtx).GetMarketSnapshotList(in)
+	l := logic.NewGetMarketSnapshotListLogic(ctx, s.svcCtx)
+	return l.GetMarketSnapshotList(in)
 }

@@ -42,3 +42,20 @@ func TestDeliveryInstructionMustMatchImmutableStep(t *testing.T) {
 		t.Fatal("modified delivery amount accepted")
 	}
 }
+
+func TestSettlementInstructionLeaseFencing(t *testing.T) {
+	claimed := &models.TTradeSettlementInstruction{Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING), UpdateTimes: 100}
+	current := &models.TTradeSettlementInstruction{Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING), UpdateTimes: 100}
+	if !settlementInstructionLeaseOwned(current, claimed) {
+		t.Fatal("current lease should be accepted")
+	}
+	current.UpdateTimes = 200
+	if settlementInstructionLeaseOwned(current, claimed) {
+		t.Fatal("expired worker must not own a newer lease")
+	}
+	current.UpdateTimes = 100
+	current.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS)
+	if settlementInstructionLeaseOwned(current, claimed) {
+		t.Fatal("completed instruction must not remain lease-owned")
+	}
+}

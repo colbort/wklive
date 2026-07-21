@@ -23,12 +23,6 @@ func NewTradeInternalServer(svcCtx *svc.ServiceContext) *TradeInternalServer {
 	}
 }
 
-// 记录订单成交信息
-func (s *TradeInternalServer) RecordOrderFill(ctx context.Context, in *trade.RecordOrderFillReq) (*trade.InternalCommonResp, error) {
-	l := logic.NewRecordOrderFillLogic(ctx, s.svcCtx)
-	return l.RecordOrderFill(in)
-}
-
 // 记录持仓历史信息
 func (s *TradeInternalServer) RecordPositionHistory(ctx context.Context, in *trade.RecordPositionHistoryReq) (*trade.InternalCommonResp, error) {
 	l := logic.NewRecordPositionHistoryLogic(ctx, s.svcCtx)

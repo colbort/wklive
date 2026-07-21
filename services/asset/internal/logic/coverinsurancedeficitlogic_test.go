@@ -1,8 +1,9 @@
 package logic
 
 import (
-	"github.com/shopspring/decimal"
 	"testing"
+
+	"github.com/shopspring/decimal"
 )
 
 func TestInsuranceCoverageSupportsPartialAndZero(t *testing.T) {

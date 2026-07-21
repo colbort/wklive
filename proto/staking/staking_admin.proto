@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package staking;
 
-option go_package = "wklive/proto/staking;staking";
-
 import "proto/common/common.proto";
 import "proto/staking/enum.proto";
 import "proto/staking/model.proto";
+
+option go_package = "wklive/proto/staking;staking";
 
 //
 service StakingAdmin {
@@ -16,8 +16,7 @@ service StakingAdmin {
 
   // 获取质押产品详情
   // 根据产品ID查询质押产品详细信息。
-  rpc AdminProductDetail(AdminProductDetailReq)
-      returns (AdminProductDetailResp);
+  rpc AdminProductDetail(AdminProductDetailReq) returns (AdminProductDetailResp);
 
   // 创建质押产品
   // 后台新增一个质押产品配置。
@@ -29,8 +28,7 @@ service StakingAdmin {
 
   // 修改质押产品状态
   // 启用、禁用或下架指定质押产品。
-  rpc ProductChangeStatus(AdminProductChangeStatusReq)
-      returns (AdminProductChangeStatusResp);
+  rpc ProductChangeStatus(AdminProductChangeStatusReq) returns (AdminProductChangeStatusResp);
 
   // 获取质押订单列表
   // 后台分页查询质押订单，支持按订单号、用户ID、产品、状态、赎回类型、来源、时间范围筛选。

@@ -10,8 +10,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-// StartADLRecovery continuously resumes ADL sagas left between the asset and
-// position steps by a crash, timeout, or temporary downstream failure.
+// StartADLRecovery continuously resumes both ADL child executions and their
+// parent liquidation sagas after crashes, timeouts, or downstream failures.
 func StartADLRecovery(ctx context.Context, svcCtx *svc.ServiceContext) {
 	go func() {
 		ticker := time.NewTicker(time.Second)
@@ -23,6 +23,9 @@ func StartADLRecovery(ctx context.Context, svcCtx *svc.ServiceContext) {
 			case <-ticker.C:
 				if err := logic.NewProcessLiquidationsLogic(ctx, svcCtx).RecoverADLExecutions(100); err != nil {
 					logx.Errorf("ADL recovery scan failed: %v", err)
+				}
+				if err := logic.NewProcessLiquidationsLogic(ctx, svcCtx).RecoverLiquidations(100); err != nil {
+					logx.Errorf("liquidation saga recovery scan failed: %v", err)
 				}
 			}
 		}

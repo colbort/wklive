@@ -14,6 +14,7 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -37,6 +38,23 @@ func (l *ProcessLiquidationsLogic) RecoverADLExecutions(limit int64) error {
 	var firstErr error
 	for _, execution := range rows {
 		if err = l.runADLExecution(execution); err != nil && firstErr == nil {
+			firstErr = err
+		}
+	}
+	return firstErr
+}
+
+// RecoverLiquidations resumes the parent saga after insurance or ADL side
+// effects. Child ADL recovery alone is insufficient because it cannot close
+// the bankrupt position or publish LIQUIDATION_COMPLETED.
+func (l *ProcessLiquidationsLogic) RecoverLiquidations(limit int64) error {
+	rows, err := l.svcCtx.ContractLiquidationModel.FindRecoverable(l.ctx, limit)
+	if err != nil {
+		return err
+	}
+	var firstErr error
+	for _, liquidation := range rows {
+		if err = l.ProcessPosition(liquidation.PositionId); err != nil && firstErr == nil {
 			firstErr = err
 		}
 	}
@@ -76,17 +94,25 @@ func (l *ProcessLiquidationsLogic) ProcessPosition(positionID int64) error {
 	if liquidation.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_COMPLETED) {
 		return nil
 	}
-	if err := l.lockRiskUnit(position, liquidation); err != nil {
+	if liquidation.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW) {
+		return nil
+	}
+	lockedPosition, err := l.lockRiskUnit(position, liquidation)
+	if err != nil {
 		return err
 	}
-	if err := l.cancelRiskIncreasingOrders(position); err != nil {
+	if lockedPosition == nil {
+		return nil
+	}
+	if err := l.cancelRiskIncreasingOrders(lockedPosition); err != nil {
 		return err
 	}
-	return l.settleTakeover(position, contract, liquidation)
+	return l.settleTakeover(lockedPosition, contract, liquidation)
 }
 
-func (l *ProcessLiquidationsLogic) lockRiskUnit(position *models.TContractPosition, liq *models.TContractLiquidation) error {
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+func (l *ProcessLiquidationsLogic) lockRiskUnit(position *models.TContractPosition, liq *models.TContractLiquidation) (*models.TContractPosition, error) {
+	var locked *models.TContractPosition
+	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		lm := models.NewTContractLiquidationModel(conn, l.svcCtx.Config.CacheRedis)
@@ -97,13 +123,31 @@ func (l *ProcessLiquidationsLogic) lockRiskUnit(position *models.TContractPositi
 		if !current.Qty.IsPositive() {
 			return nil
 		}
-		current.Status = int64(trade.PositionStatus_POSITION_STATUS_LIQUIDATING)
-		current.Version++
-		current.UpdateTimes = utils.NowMillis()
-		if err := pm.Update(ctx, current); err != nil {
+		currentLiquidation, err := lm.FindOneForUpdate(ctx, liq.Id)
+		if err != nil {
 			return err
 		}
-		liq.Status = int64(trade.LiquidationStatus_LIQUIDATION_STATUS_LIQUIDATING)
+		if currentLiquidation.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_COMPLETED) || currentLiquidation.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW) {
+			return nil
+		}
+		*liq = *currentLiquidation
+		if current.Status == int64(trade.PositionStatus_POSITION_STATUS_LIQUIDATING) {
+			locked = cloneContractPosition(current)
+		} else {
+			if current.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) || current.Version != position.Version {
+				return errors.New("position changed before liquidation takeover")
+			}
+			current.Status = int64(trade.PositionStatus_POSITION_STATUS_LIQUIDATING)
+			current.Version++
+			current.UpdateTimes = utils.NowMillis()
+			if err := pm.Update(ctx, current); err != nil {
+				return err
+			}
+			locked = cloneContractPosition(current)
+		}
+		if liquidationStageRank(trade.LiquidationStatus(liq.Status)) < liquidationStageRank(trade.LiquidationStatus_LIQUIDATION_STATUS_LIQUIDATING) {
+			liq.Status = int64(trade.LiquidationStatus_LIQUIDATION_STATUS_LIQUIDATING)
+		}
 		if liq.StartedAt == 0 {
 			liq.StartedAt = utils.NowMillis()
 		}
@@ -111,6 +155,7 @@ func (l *ProcessLiquidationsLogic) lockRiskUnit(position *models.TContractPositi
 		liq.UpdateTimes = utils.NowMillis()
 		return lm.Update(ctx, liq)
 	})
+	return locked, err
 }
 
 func (l *ProcessLiquidationsLogic) cancelRiskIncreasingOrders(position *models.TContractPosition) error {
@@ -129,19 +174,18 @@ func (l *ProcessLiquidationsLogic) cancelRiskIncreasingOrders(position *models.T
 			if o.IsReduceOnly == int64(common.YesNo_YES_NO_YES) {
 				continue
 			}
-			o.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELING)
-			o.CanceledQty = decimalMaxZero(o.Qty.Sub(o.FilledQty))
-			o.CancelReason = "risk liquidation"
-			o.Version++
-			o.UpdateTimes = utils.NowMillis()
-			if err := l.svcCtx.TradeOrderModel.Update(l.ctx, o); err != nil {
+			terminating, err := beginSystemOrderTermination(l.ctx, l.svcCtx, o.Id, "risk liquidation", true)
+			if err != nil {
 				return err
 			}
-			if err := removeOrderBookOrder(l.svcCtx, l.ctx, o); err != nil {
+			if terminating == nil {
+				continue
+			}
+			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, terminating, "liquidation risk order release"); err != nil {
 				return err
 			}
-			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, o, "liquidation risk order release"); err != nil {
-				return err
+			if err := removeOrderBookOrder(l.svcCtx, l.ctx, terminating); err != nil {
+				logx.WithContext(l.ctx).Errorf("remove liquidation order from cache failed, orderId=%d err=%v", terminating.Id, err)
 			}
 		}
 		if len(orders) < 100 {
@@ -171,40 +215,125 @@ func (l *ProcessLiquidationsLogic) settleTakeover(position *models.TContractPosi
 			return err
 		}
 		if err == nil {
+			if err = l.checkpointLiquidation(liq, trade.LiquidationStatus_LIQUIDATION_STATUS_INSURANCE_FUND, liq.InsuranceFundAmount, liq.AdlQty); err != nil {
+				return err
+			}
 			covered, remaining, coverErr := l.tryInsurance(fund, deficit, liq)
 			if coverErr != nil {
 				return coverErr
 			}
 			liq.InsuranceFundAmount = covered
+			if err = l.checkpointLiquidation(liq, trade.LiquidationStatus_LIQUIDATION_STATUS_INSURANCE_FUND, covered, liq.AdlQty); err != nil {
+				return err
+			}
 			deficit = remaining
 		}
 	}
 	if deficit.IsPositive() {
 		if fund == nil || fund.AdlEnabled != int64(common.YesNo_YES_NO_YES) {
-			liq.Status = int64(trade.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW)
-			liq.Reason = "insurance fund unavailable or insufficient"
-			liq.Version++
-			liq.UpdateTimes = utils.NowMillis()
-			return l.svcCtx.ContractLiquidationModel.Update(l.ctx, liq)
+			return l.markLiquidationManual(liq, "insurance fund unavailable or insufficient")
+		}
+		if err = l.checkpointLiquidation(liq, trade.LiquidationStatus_LIQUIDATION_STATUS_ADL, liq.InsuranceFundAmount, liq.AdlQty); err != nil {
+			return err
 		}
 		adlQty, remaining, err := l.executeADL(position, contract, liq, deficit)
 		if err != nil {
 			return err
 		}
 		liq.AdlQty = adlQty
+		if err = l.checkpointLiquidation(liq, trade.LiquidationStatus_LIQUIDATION_STATUS_ADL, liq.InsuranceFundAmount, adlQty); err != nil {
+			return err
+		}
 		if remaining.IsPositive() {
-			liq.Status = int64(trade.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW)
-			liq.Reason = "ADL liquidity insufficient"
-			liq.Version++
-			liq.UpdateTimes = utils.NowMillis()
-			return l.svcCtx.ContractLiquidationModel.Update(l.ctx, liq)
+			return l.markLiquidationManual(liq, "ADL liquidity insufficient")
 		}
 	}
 	return l.completeLiquidation(position, liq, fee)
 }
 
+func (l *ProcessLiquidationsLogic) markLiquidationManual(liq *models.TContractLiquidation, reason string) error {
+	now := utils.NowMillis()
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		lm := models.NewTContractLiquidationModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+		current, err := lm.FindOneForUpdate(ctx, liq.Id)
+		if err != nil {
+			return err
+		}
+		if current.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_COMPLETED) {
+			*liq = *current
+			return nil
+		}
+		if liq.InsuranceFundAmount.GreaterThan(current.InsuranceFundAmount) {
+			current.InsuranceFundAmount = liq.InsuranceFundAmount
+		}
+		if liq.AdlQty.GreaterThan(current.AdlQty) {
+			current.AdlQty = liq.AdlQty
+		}
+		current.Status = int64(trade.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW)
+		current.Reason = reason
+		current.Version++
+		current.UpdateTimes = now
+		if err = lm.Update(ctx, current); err != nil {
+			return err
+		}
+		*liq = *current
+		return nil
+	})
+}
+
+func (l *ProcessLiquidationsLogic) checkpointLiquidation(liq *models.TContractLiquidation, status trade.LiquidationStatus, insuranceAmount, adlQty decimal.Decimal) error {
+	now := utils.NowMillis()
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		lm := models.NewTContractLiquidationModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+		current, err := lm.FindOneForUpdate(ctx, liq.Id)
+		if err != nil {
+			return err
+		}
+		if current.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_COMPLETED) || current.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW) {
+			*liq = *current
+			return nil
+		}
+		if liquidationStageRank(status) > liquidationStageRank(trade.LiquidationStatus(current.Status)) {
+			current.Status = int64(status)
+		}
+		if insuranceAmount.GreaterThan(current.InsuranceFundAmount) {
+			current.InsuranceFundAmount = insuranceAmount
+		}
+		if adlQty.GreaterThan(current.AdlQty) {
+			current.AdlQty = adlQty
+		}
+		current.Version++
+		current.UpdateTimes = now
+		if err = lm.Update(ctx, current); err != nil {
+			return err
+		}
+		*liq = *current
+		return nil
+	})
+}
+
+func liquidationStageRank(status trade.LiquidationStatus) int {
+	switch status {
+	case trade.LiquidationStatus_LIQUIDATION_STATUS_PENDING_TAKEOVER:
+		return 1
+	case trade.LiquidationStatus_LIQUIDATION_STATUS_LIQUIDATING,
+		trade.LiquidationStatus_LIQUIDATION_STATUS_PARTIAL_RECOVERED:
+		return 2
+	case trade.LiquidationStatus_LIQUIDATION_STATUS_INSURANCE_FUND:
+		return 3
+	case trade.LiquidationStatus_LIQUIDATION_STATUS_ADL:
+		return 4
+	case trade.LiquidationStatus_LIQUIDATION_STATUS_COMPLETED:
+		return 5
+	case trade.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW:
+		return 6
+	default:
+		return 0
+	}
+}
+
 func (l *ProcessLiquidationsLogic) tryInsurance(fund *models.TContractInsuranceFundAccount, amount decimal.Decimal, liq *models.TContractLiquidation) (decimal.Decimal, decimal.Decimal, error) {
-	resp, err := l.svcCtx.AssetClient.CoverInsuranceDeficit(l.ctx, &asset.CoverInsuranceDeficitReq{TenantId: fund.TenantId, FundUserId: fund.FundUserId, WalletType: common.WalletType(fund.WalletType), Coin: fund.SettleAsset, RequestedAmount: amount.String(), LiquidationId: liq.Id, LiquidationNo: liq.LiquidationNo + "-INSURANCE", Remark: "liquidation insurance fund cover"})
+	resp, err := l.svcCtx.AssetClient.CoverInsuranceDeficit(l.ctx, &asset.CoverInsuranceDeficitReq{TenantId: fund.TenantId, Coin: fund.SettleAsset, RequestedAmount: amount.String(), LiquidationId: liq.Id, LiquidationNo: liq.LiquidationNo + "-INSURANCE", Remark: "liquidation insurance fund cover"})
 	if err != nil {
 		return decimal.Zero, amount, err
 	}
@@ -238,6 +367,13 @@ func (l *ProcessLiquidationsLogic) assetChange(tenant, user int64, coin string, 
 	}
 	if err != nil {
 		return err
+	}
+	return validateLiquidationAssetResponse(resp)
+}
+
+func validateLiquidationAssetResponse(resp *asset.ChangeAssetResp) error {
+	if resp == nil || resp.GetBase() == nil {
+		return errors.New("asset change returned an empty response")
 	}
 	if resp.GetBase().GetCode() != 200 {
 		return fmt.Errorf("asset change rejected: %s", resp.GetBase().GetMsg())
@@ -366,7 +502,7 @@ func (l *ProcessLiquidationsLogic) runADLExecution(execution *models.TContractAd
 		if err != nil {
 			return err
 		}
-		claimed, err := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, instruction.Id, utils.NowMillis())
+		claimed, lease, err := l.svcCtx.TradeSettlementInstrModel.ClaimLease(l.ctx, instruction.Id, utils.NowMillis())
 		if err != nil {
 			return err
 		}
@@ -376,6 +512,7 @@ func (l *ProcessLiquidationsLogic) runADLExecution(execution *models.TContractAd
 			}
 			return fmt.Errorf("ADL instruction is not claimable: status=%d", instruction.Status)
 		}
+		instruction.UpdateTimes = lease
 		if err = executeSimpleAssetInstruction(l.ctx, l.svcCtx, instruction, "automatic deleveraging"); err != nil {
 			cause := err
 			if markErr := failContractSagaInstruction(l.ctx, l.svcCtx, instruction, cause, func(ctx context.Context, conn sqlx.SqlConn, current *models.TTradeSettlementInstruction, manual bool, now int64) error {
@@ -424,7 +561,7 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 			if lockErr != nil {
 				return lockErr
 			}
-			if i.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+			if !settlementInstructionLeaseOwned(i, instruction) {
 				return errors.New("ADL instruction lease lost")
 			}
 			i.Status, i.NextRetryAt, i.LastErrorMsg, i.UpdateTimes = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS), 0, "", now
@@ -467,6 +604,14 @@ func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContrac
 		if err != nil {
 			return err
 		}
+		currentLiquidation, err := lm.FindOneForUpdate(ctx, liq.Id)
+		if err != nil {
+			return err
+		}
+		if currentLiquidation.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_COMPLETED) {
+			return nil
+		}
+		*liq = *currentLiquidation
 		before := cloneContractPosition(current)
 		liq.LiquidatedQty = current.Qty
 		liq.LiquidationFee = fee

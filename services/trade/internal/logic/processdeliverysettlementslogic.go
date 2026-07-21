@@ -13,6 +13,7 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -98,20 +99,18 @@ func (l *ProcessDeliverySettlementsLogic) cancelSymbolOrders(symbol *models.TTra
 		}
 		for _, o := range orders {
 			cursor = o.Id
-			now := utils.NowMillis()
-			o.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELING)
-			o.CanceledQty = decimalMaxZero(o.Qty.Sub(o.FilledQty))
-			o.CancelReason = "delivery matching stopped"
-			o.Version++
-			o.UpdateTimes = now
-			if err := l.svcCtx.TradeOrderModel.Update(l.ctx, o); err != nil {
+			terminating, err := beginSystemOrderTermination(l.ctx, l.svcCtx, o.Id, "delivery matching stopped", false)
+			if err != nil {
 				return err
 			}
-			if err := removeOrderBookOrder(l.svcCtx, l.ctx, o); err != nil {
+			if terminating == nil {
+				continue
+			}
+			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, terminating, "delivery order release"); err != nil {
 				return err
 			}
-			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, o, "delivery order release"); err != nil {
-				return err
+			if err := removeOrderBookOrder(l.svcCtx, l.ctx, terminating); err != nil {
+				logx.WithContext(l.ctx).Errorf("remove delivery order from cache failed, orderId=%d err=%v", terminating.Id, err)
 			}
 		}
 		if len(orders) < 100 {
@@ -230,13 +229,14 @@ func (l *ProcessDeliverySettlementsLogic) settlePending(tenantID int64) error {
 		}
 		progressed := false
 		for _, item := range items {
-			claimed, claimErr := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, item.Id, now)
+			claimed, lease, claimErr := l.svcCtx.TradeSettlementInstrModel.ClaimLease(l.ctx, item.Id, now)
 			if claimErr != nil {
 				return claimErr
 			}
 			if !claimed {
 				continue
 			}
+			item.UpdateTimes = lease
 			progressed = true
 			processed++
 			if executeErr := l.executeDeliveryInstruction(item); executeErr != nil {
@@ -284,7 +284,7 @@ func (l *ProcessDeliverySettlementsLogic) executeDeliveryInstruction(item *model
 		if currentInstruction.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
 			return nil
 		}
-		if currentInstruction.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+		if !settlementInstructionLeaseOwned(currentInstruction, item) {
 			return errors.New("delivery instruction lease lost")
 		}
 		currentInstruction.Status, currentInstruction.NextRetryAt, currentInstruction.LastErrorMsg, currentInstruction.UpdateTimes = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS), 0, "", now

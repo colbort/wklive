@@ -3,7 +3,9 @@ package svc
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"wklive/common/mq/kafka"
@@ -151,6 +153,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	itickManager.SetQuoteHandler(func(_ context.Context, msg types.ClientMessage, payload *types.QuotePayload) error {
 		rpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
+		if err := validateAuthoritativeQuoteInput(payload); err != nil {
+			logx.Errorf("reject non-authoritative quote, symbol=%s market=%s err=%v", msg.Symbol, msg.Market, err)
+			return err
+		}
 		if payload.Authority != "" && payload.LastPriceText != "" {
 			authority, authorityErr := authorityRegistryModel.FindEnabled(rpcCtx, payload.Authority)
 			if authorityErr != nil {
@@ -177,7 +183,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			}
 			return nil
 		}
-		return nil
+		return errors.New("unreachable non-authoritative quote branch")
 	})
 
 	return &ServiceContext{
@@ -210,4 +216,17 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		MarketCalendarResolver:      marketCalendarResolver,
 		ItickRestClient:             itickRestClient,
 	}
+}
+
+func validateAuthoritativeQuoteInput(payload *types.QuotePayload) error {
+	if payload == nil {
+		return errors.New("quote payload is nil")
+	}
+	if strings.TrimSpace(payload.Authority) == "" {
+		return errors.New("quote authority is required")
+	}
+	if strings.TrimSpace(payload.LastPriceText) == "" {
+		return errors.New("quote exact decimal price is required")
+	}
+	return nil
 }

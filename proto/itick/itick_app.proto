@@ -10,7 +10,9 @@ option go_package = "wklive/proto/itick;itick";
 
 message AppEmpty {}
 
-message AppCommonResp { common.RespBase base = 1; }
+message AppCommonResp {
+  common.RespBase base = 1;
+}
 
 // ====================
 // 产品类型 & 产品
@@ -117,7 +119,9 @@ message GetAuthoritativeSnapshotResp {
   AuthoritativeSnapshot data = 2;
 }
 
-message SubscribeRequest { repeated SubscribeTopic topics = 1; }
+message SubscribeRequest {
+  repeated SubscribeTopic topics = 1;
+}
 
 message SubscribeTopic {
   string topic = 1; // quote depth tick kline
@@ -141,19 +145,19 @@ message KlineInterval {
   int32 k_type = 2;
 }
 
-message KlineIntervalsResp { repeated KlineInterval data = 1; }
+message KlineIntervalsResp {
+  repeated KlineInterval data = 1;
+}
 
 // ====================
 // app service
 // ====================
 service ItickApp {
   // 获取允许显示的产品类型
-  rpc ListVisibleCategories(ListVisibleCategoriesReq)
-      returns (ListVisibleCategoriesResp);
+  rpc ListVisibleCategories(ListVisibleCategoriesReq) returns (ListVisibleCategoriesResp);
 
   // 获取允许显示的产品
-  rpc ListVisibleProducts(ListVisibleProductsReq)
-      returns (ListVisibleProductsResp);
+  rpc ListVisibleProducts(ListVisibleProductsReq) returns (ListVisibleProductsResp);
 
   // 获取K线
   rpc GetKline(GetKlineReq) returns (GetKlineResp);
@@ -165,8 +169,7 @@ service ItickApp {
   rpc BatchGetQuote(BatchGetQuoteReq) returns (BatchGetQuoteResp);
 
   // 按业务时刻读取生产方永久归档的权威快照
-  rpc GetAuthoritativeSnapshot(GetAuthoritativeSnapshotReq)
-      returns (GetAuthoritativeSnapshotResp);
+  rpc GetAuthoritativeSnapshot(GetAuthoritativeSnapshotReq) returns (GetAuthoritativeSnapshotResp);
 
   // 订阅数据流
   rpc SubscribeStream(SubscribeRequest) returns (stream PushReply);

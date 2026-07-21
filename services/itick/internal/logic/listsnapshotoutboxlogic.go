@@ -36,7 +36,7 @@ func (l *ListSnapshotOutboxLogic) ListSnapshotOutbox(in *itick.ListSnapshotOutbo
 	}
 	data := make([]*itick.SnapshotOutboxData, 0, len(rows))
 	for _, row := range rows {
-		data = append(data, &itick.SnapshotOutboxData{Id: row.Id, SnapshotId: row.SnapshotId, Status: int32(row.Status), RetryCount: row.RetryCount, NextRetryAt: row.NextRetryAt, LastErrorMsg: row.LastErrorMsg, CreateTimes: row.CreateTimes, UpdateTimes: row.UpdateTimes})
+		data = append(data, &itick.SnapshotOutboxData{Id: row.Id, SnapshotId: row.SnapshotId, Status: int32(row.Status), RetryCount: row.RetryCount, NextRetryAt: row.NextRetryAt, LastErrorMsg: row.LastErrorMsg, CreateTimes: row.CreateTimes, UpdateTimes: row.UpdateTimes, RedisPublishedAt: row.RedisPublishedAt, OptionPublishedAt: row.OptionPublishedAt})
 	}
 	lastID := int64(0)
 	if len(rows) > 0 {

@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package trade;
 
-option go_package = "wklive/proto/trade;trade";
-
 import "proto/common/common.proto";
+
+option go_package = "wklive/proto/trade;trade";
 
 message TradeTaskReq {
   int64 tenant_id = 1;

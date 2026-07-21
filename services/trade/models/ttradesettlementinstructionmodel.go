@@ -28,6 +28,7 @@ type (
 		CountUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error)
 		CountAllUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error)
 		Claim(ctx context.Context, id, now int64) (bool, error)
+		ClaimLease(ctx context.Context, id, now int64) (claimed bool, lease int64, err error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TTradeSettlementInstruction, error)
 	}
 
@@ -129,9 +130,14 @@ func (m *defaultTTradeSettlementInstructionModel) FindByFillId(ctx context.Conte
 }
 
 func (m *defaultTTradeSettlementInstructionModel) Claim(ctx context.Context, id, now int64) (bool, error) {
+	claimed, _, err := m.ClaimLease(ctx, id, now)
+	return claimed, err
+}
+
+func (m *defaultTTradeSettlementInstructionModel) ClaimLease(ctx context.Context, id, now int64) (bool, int64, error) {
 	item, err := m.FindOne(ctx, id)
 	if err != nil {
-		return false, err
+		return false, 0, err
 	}
 	idKey := fmt.Sprintf("%s%v", cacheTTradeSettlementInstructionIdPrefix, id)
 	uniqueKey := fmt.Sprintf("%s%v:%v", cacheTTradeSettlementInstructionTenantIdInstructionNoPrefix, item.TenantId, item.InstructionNo)
@@ -140,10 +146,13 @@ func (m *defaultTTradeSettlementInstructionModel) Claim(ctx context.Context, id,
 		return conn.ExecCtx(ctx, query, now, id, now, now-60*1000)
 	}, idKey, uniqueKey)
 	if err != nil {
-		return false, err
+		return false, 0, err
 	}
 	rows, err := result.RowsAffected()
-	return rows == 1, err
+	if err != nil || rows != 1 {
+		return false, 0, err
+	}
+	return true, now, nil
 }
 
 func prefixedSettlementInstructionRows(alias string) string {

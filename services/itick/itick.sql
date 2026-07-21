@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `t_itick_category`;
 CREATE TABLE `t_itick_category` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `category_type` tinyint NOT NULL DEFAULT '0' COMMENT '产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund',
@@ -25,6 +26,7 @@ INSERT INTO `t_itick_category` (`id`, `category_type`, `category_name`, `categor
 (6, 6, '基金',     'fund',    1, 1, 6, '', '', UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000);
 
 
+DROP TABLE IF EXISTS `t_itick_product`;
 CREATE TABLE `t_itick_product` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `category_type` tinyint NOT NULL DEFAULT '0' COMMENT '产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund',
@@ -57,6 +59,7 @@ CREATE TABLE `t_itick_product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='itick产品表';
 
 
+DROP TABLE IF EXISTS `t_itick_tenant_category`;
 CREATE TABLE `t_itick_tenant_category` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` bigint NOT NULL DEFAULT '0' COMMENT '租户ID',
@@ -74,6 +77,7 @@ CREATE TABLE `t_itick_tenant_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户产品类型可见配置表';
 
 
+DROP TABLE IF EXISTS `t_itick_tenant_product`;
 CREATE TABLE `t_itick_tenant_product` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` bigint NOT NULL DEFAULT '0' COMMENT '租户ID',
@@ -91,6 +95,7 @@ CREATE TABLE `t_itick_tenant_product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户产品可见配置表';
 
 
+DROP TABLE IF EXISTS `t_itick_sync_task`;
 CREATE TABLE `t_itick_sync_task` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `task_no` varchar(64) NOT NULL DEFAULT '' COMMENT '任务号',
@@ -105,6 +110,7 @@ CREATE TABLE `t_itick_sync_task` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+DROP TABLE IF EXISTS `t_itick_quote`;
 CREATE TABLE `t_itick_quote` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `category_code` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型标识, 如 forex/crypto/stock/future/indices/fund',
@@ -135,6 +141,7 @@ CREATE TABLE `t_itick_quote` (
   KEY `idx_quote_ts` (`quote_ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick实时报价表';
 
+DROP TABLE IF EXISTS `t_itick_authority_registry`;
 CREATE TABLE `t_itick_authority_registry` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `authority` VARCHAR(32) NOT NULL,
@@ -154,6 +161,12 @@ INSERT INTO `t_itick_authority_registry`
 VALUES ('itick-ws','ITICK_WS',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
 ON DUPLICATE KEY UPDATE `producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
 
+INSERT INTO `t_itick_authority_registry`
+(`authority`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
+VALUES ('itick-rest','ITICK_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
+ON DUPLICATE KEY UPDATE `producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
+
+DROP TABLE IF EXISTS `t_itick_authoritative_snapshot`;
 CREATE TABLE `t_itick_authoritative_snapshot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `snapshot_id` VARCHAR(64) NOT NULL COMMENT '内容哈希ID',
@@ -176,15 +189,19 @@ CREATE TABLE `t_itick_authoritative_snapshot` (
   CONSTRAINT `chk_authoritative_snapshot` CHECK ((`snapshot_kind`='FUNDING' OR `price` > 0) AND `source_timestamp` > 0 AND `snapshot_timestamp` > 0 AND `revision` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick/Price Engine权威行情永久档案';
 
+DROP TABLE IF EXISTS `t_itick_snapshot_outbox`;
 CREATE TABLE `t_itick_snapshot_outbox` (
   `id` BIGINT NOT NULL AUTO_INCREMENT, `snapshot_id` VARCHAR(64) NOT NULL,
   `payload` JSON NOT NULL, `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1 pending 2 processing 3 success 4 failed 5 manual',
   `retry_count` INT NOT NULL DEFAULT 0, `next_retry_at` BIGINT NOT NULL DEFAULT 0,
+  `redis_published_at` BIGINT NOT NULL DEFAULT 0 COMMENT 'Redis权威快照发布完成时间',
+  `option_published_at` BIGINT NOT NULL DEFAULT 0 COMMENT 'Option行情同步完成时间；无需同步时同样置完成',
   `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '', `create_times` BIGINT NOT NULL, `update_times` BIGINT NOT NULL,
   PRIMARY KEY (`id`), UNIQUE KEY `uk_snapshot_outbox` (`snapshot_id`),
   KEY `idx_snapshot_outbox_retry` (`status`,`next_retry_at`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权威行情异步发布与Redis修复任务';
 
+DROP TABLE IF EXISTS `t_itick_snapshot_revocation`;
 CREATE TABLE `t_itick_snapshot_revocation` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `snapshot_id` VARCHAR(64) NOT NULL,
@@ -196,6 +213,7 @@ CREATE TABLE `t_itick_snapshot_revocation` (
   CONSTRAINT `chk_snapshot_revocation_reason` CHECK (CHAR_LENGTH(`reason`) > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权威快照不可变撤销事实';
 
+DROP TABLE IF EXISTS `t_itick_price_formula`;
 CREATE TABLE `t_itick_price_formula` (
   `id` BIGINT NOT NULL AUTO_INCREMENT, `formula_no` VARCHAR(64) NOT NULL,
   `authority` VARCHAR(32) NOT NULL DEFAULT 'price-engine', `snapshot_kind` VARCHAR(32) NOT NULL,
@@ -215,6 +233,7 @@ INSERT INTO `t_itick_authority_registry` (`authority`,`producer_type`,`allowed_k
 VALUES ('price-engine','PRICE_ENGINE',JSON_ARRAY('MARK','INDEX','FUNDING','DELIVERY'),1,0,0,0)
 ON DUPLICATE KEY UPDATE `producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
 
+DROP TABLE IF EXISTS `t_itick_kline_sync_progress`;
 CREATE TABLE `t_itick_kline_sync_progress` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
 
@@ -247,6 +266,7 @@ CREATE TABLE `t_itick_kline_sync_progress` (
   KEY `idx_update_times` (`update_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='iTick K线同步进度表';
 
+DROP TABLE IF EXISTS `t_itick_market_calendar`;
 CREATE TABLE `t_itick_market_calendar` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `category_code` varchar(32) NOT NULL DEFAULT '',
@@ -264,6 +284,7 @@ CREATE TABLE `t_itick_market_calendar` (
   KEY `idx_enabled` (`enabled`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick市场交易日历';
 
+DROP TABLE IF EXISTS `t_itick_market_session`;
 CREATE TABLE `t_itick_market_session` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `calendar_id` bigint NOT NULL,
@@ -276,6 +297,7 @@ CREATE TABLE `t_itick_market_session` (
   KEY `idx_calendar_sort` (`calendar_id`,`sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick市场交易时段';
 
+DROP TABLE IF EXISTS `t_itick_market_holiday`;
 CREATE TABLE `t_itick_market_holiday` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `calendar_id` bigint NOT NULL,

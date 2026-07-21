@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package asset;
 
-import "proto/common/common.proto";
 import "proto/asset/enum.proto";
 import "proto/asset/model.proto";
+import "proto/common/common.proto";
 
 option go_package = "wklive/proto/asset;asset";
 
@@ -29,8 +29,7 @@ service AssetInternal {
   rpc DeductFrozenAsset(DeductFrozenAssetReq) returns (ChangeAssetResp);
 
   // 按业务单号扣减冻结余额
-  rpc DeductFrozenAssetByBizNo(DeductFrozenAssetByBizNoReq)
-      returns (ChangeAssetResp);
+  rpc DeductFrozenAssetByBizNo(DeductFrozenAssetByBizNoReq) returns (ChangeAssetResp);
 
   // 锁仓
   rpc LockAsset(LockAssetReq) returns (LockAssetResp);
@@ -45,8 +44,7 @@ service AssetInternal {
   rpc DeductLockedAsset(DeductLockedAssetReq) returns (ChangeAssetResp);
 
   // 按业务单号扣减锁仓余额
-  rpc DeductLockedAssetByBizNo(DeductLockedAssetByBizNoReq)
-      returns (ChangeAssetResp);
+  rpc DeductLockedAssetByBizNo(DeductLockedAssetByBizNoReq) returns (ChangeAssetResp);
 
   // 钱包划转
   rpc TransferAsset(TransferAssetReq) returns (TransferAssetResp);
@@ -59,7 +57,7 @@ service AssetInternal {
 message AddAvailableReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  common.WalletType  wallet_type = 3;
+  common.WalletType wallet_type = 3;
   string coin = 4;
   string amount = 5;
   BizType biz_type = 6;
@@ -72,7 +70,7 @@ message AddAvailableReq {
 message SubAvailableReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  common.WalletType  wallet_type = 3;
+  common.WalletType wallet_type = 3;
   string coin = 4;
   string amount = 5;
   BizType biz_type = 6;
@@ -85,7 +83,7 @@ message SubAvailableReq {
 message FreezeAssetReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  common.WalletType  wallet_type = 3;
+  common.WalletType wallet_type = 3;
   string coin = 4;
   string amount = 5;
   BizType biz_type = 6;
@@ -155,7 +153,7 @@ message DeductFrozenAssetByBizNoReq {
 message LockAssetReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  common.WalletType  wallet_type = 3;
+  common.WalletType wallet_type = 3;
   string coin = 4;
   string amount = 5;
   BizType biz_type = 6;
@@ -226,8 +224,8 @@ message DeductLockedAssetByBizNoReq {
 message TransferAssetReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  common.WalletType  from_wallet_type = 3;
-  common.WalletType  to_wallet_type = 4;
+  common.WalletType from_wallet_type = 3;
+  common.WalletType to_wallet_type = 4;
   string coin = 5;
   string amount = 6;
   BizType biz_type = 7;
@@ -259,13 +257,13 @@ message ChangeAssetData {
 
 message CoverInsuranceDeficitReq {
   int64 tenant_id = 1;
-  int64 fund_user_id = 2;
-  common.WalletType wallet_type = 3;
   string coin = 4;
   string requested_amount = 5;
   int64 liquidation_id = 6;
   string liquidation_no = 7;
   string remark = 8;
+  reserved 2, 3;
+  reserved "fund_user_id", "wallet_type";
 }
 
 message CoverInsuranceDeficitResp {
@@ -273,7 +271,15 @@ message CoverInsuranceDeficitResp {
   string requested_amount = 2;
   string covered_amount = 3;
   string remaining_amount = 4;
-  UserAsset fund_asset = 5;
   bool idempotent_replay = 6;
+  int64 platform_account_id = 7;
+  string platform_account_balance = 8;
+  reserved 5;
+  reserved "fund_asset";
 }
-message ReverseInsuranceCoverReq { int64 tenant_id = 1; string liquidation_no = 2; string reversal_no = 3; string remark = 4; }
+message ReverseInsuranceCoverReq {
+  int64 tenant_id = 1;
+  string liquidation_no = 2;
+  string reversal_no = 3;
+  string remark = 4;
+}

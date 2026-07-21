@@ -3527,17 +3527,19 @@ func (x *ListSnapshotOutboxReq) GetSnapshotId() string {
 }
 
 type SnapshotOutboxData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	SnapshotId    string                 `protobuf:"bytes,2,opt,name=snapshot_id,json=snapshotId,proto3" json:"snapshot_id,omitempty"`
-	Status        int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
-	RetryCount    int64                  `protobuf:"varint,4,opt,name=retry_count,json=retryCount,proto3" json:"retry_count,omitempty"`
-	NextRetryAt   int64                  `protobuf:"varint,5,opt,name=next_retry_at,json=nextRetryAt,proto3" json:"next_retry_at,omitempty"`
-	LastErrorMsg  string                 `protobuf:"bytes,6,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,7,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes   int64                  `protobuf:"varint,8,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	SnapshotId        string                 `protobuf:"bytes,2,opt,name=snapshot_id,json=snapshotId,proto3" json:"snapshot_id,omitempty"`
+	Status            int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
+	RetryCount        int64                  `protobuf:"varint,4,opt,name=retry_count,json=retryCount,proto3" json:"retry_count,omitempty"`
+	NextRetryAt       int64                  `protobuf:"varint,5,opt,name=next_retry_at,json=nextRetryAt,proto3" json:"next_retry_at,omitempty"`
+	LastErrorMsg      string                 `protobuf:"bytes,6,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
+	CreateTimes       int64                  `protobuf:"varint,7,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes       int64                  `protobuf:"varint,8,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	RedisPublishedAt  int64                  `protobuf:"varint,9,opt,name=redis_published_at,json=redisPublishedAt,proto3" json:"redis_published_at,omitempty"`
+	OptionPublishedAt int64                  `protobuf:"varint,10,opt,name=option_published_at,json=optionPublishedAt,proto3" json:"option_published_at,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *SnapshotOutboxData) Reset() {
@@ -3622,6 +3624,20 @@ func (x *SnapshotOutboxData) GetCreateTimes() int64 {
 func (x *SnapshotOutboxData) GetUpdateTimes() int64 {
 	if x != nil {
 		return x.UpdateTimes
+	}
+	return 0
+}
+
+func (x *SnapshotOutboxData) GetRedisPublishedAt() int64 {
+	if x != nil {
+		return x.RedisPublishedAt
+	}
+	return 0
+}
+
+func (x *SnapshotOutboxData) GetOptionPublishedAt() int64 {
+	if x != nil {
+		return x.OptionPublishedAt
 	}
 	return 0
 }
@@ -4081,7 +4097,7 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\x05R\x06status\x12\x1f\n" +
 	"\vsnapshot_id\x18\x03 \x01(\tR\n" +
-	"snapshotId\"\x8e\x02\n" +
+	"snapshotId\"\xec\x02\n" +
 	"\x12SnapshotOutboxData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vsnapshot_id\x18\x02 \x01(\tR\n" +
@@ -4092,7 +4108,10 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\rnext_retry_at\x18\x05 \x01(\x03R\vnextRetryAt\x12$\n" +
 	"\x0elast_error_msg\x18\x06 \x01(\tR\flastErrorMsg\x12!\n" +
 	"\fcreate_times\x18\a \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\"m\n" +
+	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\x12,\n" +
+	"\x12redis_published_at\x18\t \x01(\x03R\x10redisPublishedAt\x12.\n" +
+	"\x13option_published_at\x18\n" +
+	" \x01(\x03R\x11optionPublishedAt\"m\n" +
 	"\x16ListSnapshotOutboxResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.itick.SnapshotOutboxDataR\x04data\"(\n" +

@@ -6,15 +6,17 @@ import "proto/common/common.proto";
 
 option go_package = "wklive/proto/itick;itick";
 
-message SyncProductsReq {
+message SyncProductsReq {}
+
+message SyncProductsResp {
+  common.RespBase base = 1;
 }
 
-message SyncProductsResp { common.RespBase base = 1; }
+message SyncKlinesReq {}
 
-message SyncKlinesReq {
+message SyncKlinesResp {
+  common.RespBase base = 1;
 }
-
-message SyncKlinesResp { common.RespBase base = 1; }
 
 // ====================
 // 定时任务

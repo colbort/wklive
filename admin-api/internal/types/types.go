@@ -21,6 +21,16 @@ type AddUserBankResp struct {
 	Data UserBankItem `json:"data"`
 }
 
+type AdjustPlatformAccountReq struct {
+	TenantId    int64  `json:"tenantId"`
+	AccountType string `json:"accountType"`
+	Coin        string `json:"coin"`
+	RequestNo   string `json:"requestNo"`
+	Direction   int64  `json:"direction"`
+	Amount      string `json:"amount"`
+	Remark      string `json:"remark,optional"`
+}
+
 type AdminAddAssetReq struct {
 	TenantId   int64  `json:"tenantId"`
 	UserId     int64  `json:"userId"`
@@ -1537,6 +1547,12 @@ type GetPayProductResp struct {
 	Data PayProduct `json:"data"`
 }
 
+type GetPlatformAccountReq struct {
+	TenantId    int64  `form:"tenantId"`
+	AccountType string `form:"accountType"`
+	Coin        string `form:"coin"`
+}
+
 type GetPositionDetailAdminReq struct {
 	TenantId int64 `form:"tenantId,optional"`
 	Id       int64 `form:"id"`
@@ -2034,8 +2050,6 @@ type InsuranceFundAccount struct {
 	TenantId    int64  `json:"tenantId"`
 	SymbolId    int64  `json:"symbolId"`
 	SettleAsset string `json:"settleAsset"`
-	FundUserId  int64  `json:"fundUserId"`
-	WalletType  int64  `json:"walletType"`
 	AdlEnabled  int64  `json:"adlEnabled"`
 	Status      int64  `json:"status"`
 	Version     int64  `json:"version"`
@@ -3135,6 +3149,24 @@ type PayProduct struct {
 	UpdateTimes int64  `json:"updateTimes"`
 }
 
+type PlatformAccount struct {
+	Id              int64  `json:"id"`
+	TenantId        int64  `json:"tenantId"`
+	AccountType     string `json:"accountType"`
+	Coin            string `json:"coin"`
+	AvailableAmount string `json:"availableAmount"`
+	FrozenAmount    string `json:"frozenAmount"`
+	Status          int64  `json:"status"`
+	Version         int64  `json:"version"`
+	CreateTimes     int64  `json:"createTimes"`
+	UpdateTimes     int64  `json:"updateTimes"`
+}
+
+type PlatformAccountResp struct {
+	RespBase
+	Data PlatformAccount `json:"data"`
+}
+
 type PriceFormulaComponent struct {
 	Authority    string `json:"authority"`
 	SnapshotKind string `json:"snapshotKind"`
@@ -3461,9 +3493,15 @@ type SetInsuranceFundAccountReq struct {
 	TenantId    int64  `json:"tenantId"`
 	SymbolId    int64  `json:"symbolId,optional"`
 	SettleAsset string `json:"settleAsset"`
-	FundUserId  int64  `json:"fundUserId"`
-	WalletType  int64  `json:"walletType"`
 	AdlEnabled  int64  `json:"adlEnabled"`
+	Status      int64  `json:"status"`
+	Version     int64  `json:"version,optional"`
+}
+
+type SetPlatformAccountReq struct {
+	TenantId    int64  `json:"tenantId"`
+	AccountType string `json:"accountType"`
+	Coin        string `json:"coin"`
 	Status      int64  `json:"status"`
 	Version     int64  `json:"version,optional"`
 }

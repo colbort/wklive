@@ -8,7 +8,9 @@ import "proto/user/model.proto";
 
 option go_package = "wklive/proto/user;user";
 
-message AppCommonResp { common.RespBase base = 1; }
+message AppCommonResp {
+  common.RespBase base = 1;
+}
 
 message RegisterReq {
   user.RegisterType register_type = 2;
@@ -101,7 +103,7 @@ message ExchangeGuestTransferResp {
   ExchangeGuestTransferData data = 2;
 }
 
-message LogoutReq { }
+message LogoutReq {}
 
 message RefreshTokenReq {
   string refresh_token = 2;
@@ -112,7 +114,7 @@ message RefreshTokenResp {
   common.TokenInfo data = 2;
 }
 
-message GetProfileReq { }
+message GetProfileReq {}
 
 message GetProfileResp {
   common.RespBase base = 1;
@@ -144,7 +146,7 @@ message ChangeLoginPasswordReq {
   string confirm_password = 3;
 }
 
-message GetIdentityReq { }
+message GetIdentityReq {}
 
 message GetIdentityResp {
   common.RespBase base = 1;
@@ -190,7 +192,7 @@ message UpdateIdentityResp {
   user.UserIdentity data = 2;
 }
 
-message GetSecurityReq { }
+message GetSecurityReq {}
 
 message GetSecurityResp {
   common.RespBase base = 1;
@@ -208,7 +210,7 @@ message ChangePayPasswordReq {
   string confirm_password = 3;
 }
 
-message InitGoogle2FAReq { }
+message InitGoogle2FAReq {}
 
 message InitGoogle2FAResp {
   common.RespBase base = 1;

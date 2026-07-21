@@ -132,6 +132,12 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 453),
 (0, 1, 454),
 (0, 1, 470),
+(0, 1, 480),
+(0, 1, 481),
+(0, 1, 482),
+(0, 1, 490),
+(0, 1, 491),
+(0, 1, 492),
 
 (0, 1, 500),
 (0, 1, 510),
@@ -688,6 +694,15 @@ VALUES
 -- 初始化租户展示配置
 (470, 400, '初始化租户展示配置', 2, 'POST', '/itick/tenant-display/init', 'itick:tenant-display:init', 'itick/tenant-display-init', 'Setting', 470);
 
+INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
+VALUES
+(480, 400, '价格公式', 2, 'GET', '/itick/price-formulas', 'itick:price-formula:list', 'itick/price-formulas', 'DataAnalysis', 480),
+(481, 480, '创建价格公式版本', 3, 'POST', '/itick/price-formulas', 'itick:price-formula:create', '', '', 481),
+(482, 480, '切换价格公式状态', 3, 'PUT', '/itick/price-formulas/{id}/status', 'itick:price-formula:status', '', '', 482),
+(490, 400, '快照发布任务', 2, 'GET', '/itick/snapshot-outbox', 'itick:snapshot-outbox:list', 'itick/snapshot-outbox', 'Promotion', 490),
+(491, 490, '重试快照发布任务', 3, 'POST', '/itick/snapshot-outbox/{id}/retry', 'itick:snapshot-outbox:retry', '', '', 491),
+(492, 490, '撤销权威快照', 3, 'POST', '/itick/authoritative-snapshots/revoke', 'itick:authoritative-snapshot:revoke', '', '', 492);
+
 
 -- 资产（asset）
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -808,6 +823,9 @@ VALUES
 (1180, 1000, '秒合约价格快照', 2, 'GET', '/trade/seconds/price-snapshots', 'trade:seconds-price-snapshot:list', 'trade/seconds-price-snapshots', 'Camera', 1180),
 (1181, 1000, '保险基金账户', 2, 'GET', '/trade/insurance-fund/accounts', 'trade:insurance-fund-account:list', 'trade/insurance-fund-accounts', 'SafeBox', 1181),
 (1182, 1181, '保存保险基金账户', 3, 'POST', '/trade/insurance-fund/accounts', 'trade:insurance-fund-account:update', '', '', 1182),
+(1184, 1181, '查询保险基金平台账户', 3, 'GET', '/asset/platform-accounts', 'trade:insurance-fund-account:list', '', '', 1184),
+(1185, 1181, '创建或更新保险基金平台账户', 3, 'POST', '/asset/platform-accounts', 'trade:insurance-fund-account:update', '', '', 1185),
+(1186, 1181, '调整保险基金平台账户余额', 3, 'POST', '/asset/platform-accounts/adjust', 'trade:insurance-fund-account:update', '', '', 1186),
 (1183, 1000, '结算行情快照', 2, 'GET', '/trade/market-snapshots', 'trade:market-snapshot:list', 'trade/market-snapshots', 'DataAnalysis', 1183),
 (1190, 1000, '资金预占记录', 2, 'GET', '/trade/operations/asset-reservations', 'trade:operation:asset-reservation:list', 'trade/asset-reservations', 'Lock', 1190),
 (1191, 1000, '结算指令', 2, 'GET', '/trade/operations/settlement-instructions', 'trade:operation:settlement-instruction:list', 'trade/settlement-instructions', 'Operation', 1191),

@@ -97,11 +97,11 @@ func (l *CancelAllOrdersLogic) CancelAllOrders(in *trade.CancelAllOrdersReq) (*t
 				return nil, err
 			}
 			if canceledOrder != nil {
-				if err = removeOrderBookOrder(l.svcCtx, l.ctx, canceledOrder); err != nil {
-					return nil, err
-				}
 				if err = unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, canceledOrder, "trade cancel all orders unfreeze"); err != nil {
 					return nil, err
+				}
+				if err = removeOrderBookOrder(l.svcCtx, l.ctx, canceledOrder); err != nil {
+					l.Errorf("remove canceled order from cache failed, orderId=%d err=%v", canceledOrder.Id, err)
 				}
 				affected++
 			}

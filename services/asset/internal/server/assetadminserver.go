@@ -118,3 +118,21 @@ func (s *AssetAdminServer) AdminUnlockAsset(ctx context.Context, in *asset.Admin
 	l := logic.NewAdminUnlockAssetLogic(ctx, s.svcCtx)
 	return l.AdminUnlockAsset(in)
 }
+
+// 设置平台账户（保险基金等，不属于任何用户）
+func (s *AssetAdminServer) SetPlatformAccount(ctx context.Context, in *asset.SetPlatformAccountReq) (*asset.PlatformAccountResp, error) {
+	l := logic.NewSetPlatformAccountLogic(ctx, s.svcCtx)
+	return l.SetPlatformAccount(in)
+}
+
+// 查询平台账户
+func (s *AssetAdminServer) GetPlatformAccount(ctx context.Context, in *asset.GetPlatformAccountReq) (*asset.PlatformAccountResp, error) {
+	l := logic.NewGetPlatformAccountLogic(ctx, s.svcCtx)
+	return l.GetPlatformAccount(in)
+}
+
+// 幂等调整平台账户余额
+func (s *AssetAdminServer) AdjustPlatformAccount(ctx context.Context, in *asset.AdjustPlatformAccountReq) (*asset.PlatformAccountResp, error) {
+	l := logic.NewAdjustPlatformAccountLogic(ctx, s.svcCtx)
+	return l.AdjustPlatformAccount(in)
+}

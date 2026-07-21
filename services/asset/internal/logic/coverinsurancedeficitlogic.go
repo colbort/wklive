@@ -3,13 +3,13 @@ package logic
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
-	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
@@ -17,8 +17,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-// CoverInsuranceDeficitLogic performs an idempotent, atomic and partial debit
-// from a dedicated insurance-fund asset account.
+const insuranceFundAccountType = "INSURANCE_FUND"
+
 type CoverInsuranceDeficitLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -28,72 +28,74 @@ func NewCoverInsuranceDeficitLogic(ctx context.Context, svcCtx *svc.ServiceConte
 	return &CoverInsuranceDeficitLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
-func (l *CoverInsuranceDeficitLogic) Cover(in *asset.CoverInsuranceDeficitReq) (*asset.CoverInsuranceDeficitResp, error) {
-	requested, err := conv.ParseDecimalField(in.RequestedAmount)
+func (l *CoverInsuranceDeficitLogic) CoverInsuranceDeficit(in *asset.CoverInsuranceDeficitReq) (*asset.CoverInsuranceDeficitResp, error) {
+	requested, err := conv.ParseDecimalField(in.GetRequestedAmount())
 	if err != nil || !requested.IsPositive() {
 		return nil, i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 	}
-	if in.TenantId <= 0 || in.FundUserId <= 0 || in.Coin == "" || in.LiquidationId <= 0 || in.LiquidationNo == "" || in.WalletType != common.WalletType_WALLET_TYPE_CONTRACT {
+	coin := strings.ToUpper(strings.TrimSpace(in.GetCoin()))
+	if in.GetTenantId() <= 0 || coin == "" || in.GetLiquidationId() <= 0 || in.GetLiquidationNo() == "" {
 		return nil, fmt.Errorf("invalid insurance fund request")
 	}
 	now := utils.NowMillis()
-	covered, replay := decimal.Zero, false
-	var after *models.TUserAsset
+	covered, balance := decimal.Zero, decimal.Zero
+	accountID := int64(0)
+	replay := false
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		am := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis)
-		fm := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis)
-		cm := models.NewTAssetInsuranceCoverModel(conn)
-		im := models.NewTAssetIdempotentModel(conn, l.svcCtx.Config.CacheRedis)
-		done, err := prepareAssetIdempotent(ctx, im, in.TenantId, assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), in.LiquidationNo, in.Remark, now)
+		accounts := models.NewTAssetPlatformAccountModel(conn, l.svcCtx.Config.CacheRedis)
+		flows := models.NewTAssetPlatformFlowModel(conn, l.svcCtx.Config.CacheRedis)
+		covers := models.NewTAssetInsuranceCoverModel(conn, l.svcCtx.Config.CacheRedis)
+		idempotent := models.NewTAssetIdempotentModel(conn, l.svcCtx.Config.CacheRedis)
+		done, err := prepareAssetIdempotent(ctx, idempotent, in.GetTenantId(), assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), in.GetLiquidationNo(), in.GetRemark(), now)
 		if err != nil {
 			return err
 		}
 		if done {
-			cover, err := cm.FindOneByTenantLiquidationNo(ctx, in.TenantId, in.LiquidationNo)
+			cover, err := covers.FindOneByTenantLiquidationNo(ctx, in.GetTenantId(), in.GetLiquidationNo())
 			if err != nil {
 				return err
 			}
-			if !cover.RequestedAmount.Equal(requested) || cover.FundUserId != in.FundUserId || cover.WalletType != int64(in.WalletType) || cover.Coin != in.Coin || cover.LiquidationId != in.LiquidationId {
+			if !cover.RequestedAmount.Equal(requested) || cover.Coin != coin || cover.LiquidationId != in.GetLiquidationId() {
 				return fmt.Errorf("insurance idempotency parameters changed")
 			}
-			covered, replay = cover.CoveredAmount, true
-			after, err = am.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.FundUserId, int64(in.WalletType), in.Coin)
-			return err
+			account, err := accounts.FindOneForUpdate(ctx, in.GetTenantId(), insuranceFundAccountType, coin)
+			if err != nil || account.Id != cover.PlatformAccountId {
+				return fmt.Errorf("insurance platform account changed")
+			}
+			accountID, covered, balance, replay = account.Id, cover.CoveredAmount, account.AvailableAmount, true
+			return nil
 		}
-		before, err := am.FindOneForUpdate(ctx, in.TenantId, in.FundUserId, int64(in.WalletType), in.Coin)
+		account, err := accounts.FindOneForUpdate(ctx, in.GetTenantId(), insuranceFundAccountType, coin)
 		if err != nil {
-			return err
+			return fmt.Errorf("insurance platform account is not configured: %w", err)
 		}
-		covered = insuranceCoverage(requested, before.AvailableAmount)
+		accountID = account.Id
+		covered = insuranceCoverage(requested, account.AvailableAmount)
+		balance = account.AvailableAmount.Sub(covered)
 		if covered.IsPositive() {
-			ok, err := am.SubAvailableAmount(ctx, in.TenantId, in.FundUserId, int64(in.WalletType), in.Coin, covered, now)
+			ok, err := accounts.SubAvailable(ctx, account.Id, covered, now)
 			if err != nil || !ok {
 				if err != nil {
 					return err
 				}
-				return fmt.Errorf("insurance fund concurrent debit rejected")
+				return fmt.Errorf("insurance platform account concurrent debit rejected")
 			}
-		}
-		after, err = am.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.FundUserId, int64(in.WalletType), in.Coin)
-		if err != nil {
-			return err
-		}
-		if covered.IsPositive() {
-			flow := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.FundUserId, int64(in.WalletType), in.Coin, assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), in.LiquidationId, in.LiquidationNo, asset.AssetOpType_ASSET_OP_TYPE_SUB, covered, before, after, in.Remark, now)
-			if _, err = fm.Insert(ctx, flow); err != nil {
+			_, err = flows.Insert(ctx, &models.TAssetPlatformFlow{TenantId: in.GetTenantId(), PlatformAccountId: account.Id, AccountType: account.AccountType, Coin: coin, OpType: 2, Amount: covered, BeforeAvailable: account.AvailableAmount, AfterAvailable: balance, BizType: assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), SceneType: assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), BizId: in.GetLiquidationId(), BizNo: in.GetLiquidationNo(), Remark: in.GetRemark(), CreateTimes: now})
+			if err != nil {
 				return err
 			}
 		}
-		if _, err = cm.Insert(ctx, &models.TAssetInsuranceCover{TenantId: in.TenantId, FundUserId: in.FundUserId, WalletType: int64(in.WalletType), Coin: in.Coin, LiquidationId: in.LiquidationId, LiquidationNo: in.LiquidationNo, RequestedAmount: requested, CoveredAmount: covered, RemainingAmount: requested.Sub(covered), Status: 1, CreateTimes: now, UpdateTimes: now}); err != nil {
+		_, err = covers.Insert(ctx, &models.TAssetInsuranceCover{TenantId: in.GetTenantId(), PlatformAccountId: account.Id, Coin: coin, LiquidationId: in.GetLiquidationId(), LiquidationNo: in.GetLiquidationNo(), RequestedAmount: requested, CoveredAmount: covered, RemainingAmount: requested.Sub(covered), Status: 1, CreateTimes: now, UpdateTimes: now})
+		if err != nil {
 			return err
 		}
-		return completeAssetIdempotent(ctx, im, in.TenantId, assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), in.LiquidationNo, now)
+		return completeAssetIdempotent(ctx, idempotent, in.GetTenantId(), assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), in.GetLiquidationNo(), now)
 	})
 	if err != nil {
 		return nil, err
 	}
-	return &asset.CoverInsuranceDeficitResp{Base: helper.OkResp(), RequestedAmount: requested.String(), CoveredAmount: covered.String(), RemainingAmount: requested.Sub(covered).String(), FundAsset: toUserAssetProto(after), IdempotentReplay: replay}, nil
+	return &asset.CoverInsuranceDeficitResp{Base: helper.OkResp(), RequestedAmount: requested.String(), CoveredAmount: covered.String(), RemainingAmount: requested.Sub(covered).String(), IdempotentReplay: replay, PlatformAccountId: accountID, PlatformAccountBalance: balance.String()}, nil
 }
 
 func insuranceCoverage(requested, available decimal.Decimal) decimal.Decimal {

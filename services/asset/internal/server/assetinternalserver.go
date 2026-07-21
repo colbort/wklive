@@ -101,8 +101,13 @@ func (s *AssetInternalServer) TransferAsset(ctx context.Context, in *asset.Trans
 	return l.TransferAsset(in)
 }
 
+// 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
 func (s *AssetInternalServer) CoverInsuranceDeficit(ctx context.Context, in *asset.CoverInsuranceDeficitReq) (*asset.CoverInsuranceDeficitResp, error) {
 	l := logic.NewCoverInsuranceDeficitLogic(ctx, s.svcCtx)
-	return l.Cover(in)
+	return l.CoverInsuranceDeficit(in)
 }
-func(s *AssetInternalServer)ReverseInsuranceCover(ctx context.Context,in *asset.ReverseInsuranceCoverReq)(*asset.ChangeAssetResp,error){return logic.NewReverseInsuranceCoverLogic(ctx,s.svcCtx).Reverse(in)}
+
+func (s *AssetInternalServer) ReverseInsuranceCover(ctx context.Context, in *asset.ReverseInsuranceCoverReq) (*asset.ChangeAssetResp, error) {
+	l := logic.NewReverseInsuranceCoverLogic(ctx, s.svcCtx)
+	return l.ReverseInsuranceCover(in)
+}

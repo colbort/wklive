@@ -237,13 +237,14 @@ func (l *ProcessFundingSettlementsLogic) settlePending(tenantID int64) error {
 		}
 		progressed := false
 		for _, instruction := range instructions {
-			claimed, claimErr := l.svcCtx.TradeSettlementInstrModel.Claim(l.ctx, instruction.Id, now)
+			claimed, lease, claimErr := l.svcCtx.TradeSettlementInstrModel.ClaimLease(l.ctx, instruction.Id, now)
 			if claimErr != nil {
 				return claimErr
 			}
 			if !claimed {
 				continue
 			}
+			instruction.UpdateTimes = lease
 			progressed = true
 			processed++
 			if executeErr := l.executeFundingInstruction(instruction); executeErr != nil {
@@ -326,7 +327,7 @@ func (l *ProcessFundingSettlementsLogic) completeFundingInstruction(item *models
 		if err != nil || current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
 			return err
 		}
-		if current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+		if !settlementInstructionLeaseOwned(current, item) {
 			return errors.New("funding instruction lease lost")
 		}
 		if current.PositionId > 0 {
@@ -351,7 +352,7 @@ func (l *ProcessFundingSettlementsLogic) failFundingInstruction(item *models.TTr
 		if err != nil {
 			return err
 		}
-		if current.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) {
+		if !settlementInstructionLeaseOwned(current, item) {
 			return nil
 		}
 		current.RetryCount++

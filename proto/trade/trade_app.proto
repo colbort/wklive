@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package trade;
 
-option go_package = "wklive/proto/trade;trade";
-
 import "proto/common/common.proto";
 import "proto/trade/enum.proto";
 import "proto/trade/model.proto";
+
+option go_package = "wklive/proto/trade;trade";
 
 // APP 交易服务接口
 service TradeApp {
@@ -38,8 +38,7 @@ service TradeApp {
   rpc GetPositionList(GetPositionListReq) returns (GetPositionListResp);
 
   // 获取合约风控保证金快照列表
-  rpc GetMarginSnapshotList(GetMarginSnapshotListReq)
-      returns (GetMarginSnapshotListResp);
+  rpc GetMarginSnapshotList(GetMarginSnapshotListReq) returns (GetMarginSnapshotListResp);
 
   // 获取当前杠杆配置
   rpc GetLeverageConfig(GetLeverageConfigReq) returns (GetLeverageConfigResp);
@@ -48,7 +47,9 @@ service TradeApp {
   rpc SetLeverage(SetLeverageReq) returns (AppCommonResp);
 }
 
-message AppCommonResp { common.RespBase base = 1; }
+message AppCommonResp {
+  common.RespBase base = 1;
+}
 
 message GetSymbolListReq {
   ProductType product_type = 1;

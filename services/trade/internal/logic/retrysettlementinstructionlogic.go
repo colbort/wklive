@@ -12,6 +12,7 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type RetrySettlementInstructionLogic struct {
@@ -35,30 +36,43 @@ func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(in *trade.R
 	if err != nil || operatorID <= 0 {
 		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "missing admin operator identity")}, nil
 	}
-	item, err := l.svcCtx.TradeSettlementInstrModel.FindOne(l.ctx, in.Id)
-	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != tenantID) {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "settlement instruction not found")}, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	if item.Status != 4 && item.Status != 5 {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "only failed or manual-review instructions can be retried")}, nil
-	}
-	item.Status = 1
-	item.NextRetryAt = utils.NowMillis()
-	item.LastErrorMsg = ""
-	item.UpdateTimes = utils.NowMillis()
-	if err = l.svcCtx.TradeSettlementInstrModel.Update(l.ctx, item); err != nil {
-		return nil, err
-	}
 	eventNo, err := l.svcCtx.GenerateBizNo(l.ctx, "TRE")
 	if err != nil {
 		return nil, err
 	}
-	_, err = l.svcCtx.BizTradeEventModel.Insert(l.ctx, &models.TBizTradeEvent{TenantId: tenantID, EventNo: eventNo, EventType: "SETTLEMENT_INSTRUCTION_RETRY_REQUESTED", BizId: item.InstructionNo, BizType: "settlement_instruction", UserId: item.UserId, OperatorId: operatorID, Source: int64(trade.SourceType_SOURCE_TYPE_ADMIN), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: utils.NowMillis(), Payload: normalizeTradeEventJSON(in.Reason), CreateTimes: utils.NowMillis(), UpdateTimes: utils.NowMillis()})
+	notFound, invalidStatus := false, false
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		notFound, invalidStatus, err = retrySettlementInstructionTx(ctx, sqlx.NewSqlConnFromSession(session), l.svcCtx, in, tenantID, operatorID, eventNo, utils.NowMillis())
+		return err
+	})
 	if err != nil {
 		return nil, err
 	}
+	if notFound {
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "settlement instruction not found")}, nil
+	}
+	if invalidStatus {
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "only failed or manual-review instructions can be retried")}, nil
+	}
 	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+}
+
+func retrySettlementInstructionTx(ctx context.Context, conn sqlx.SqlConn, svcCtx *svc.ServiceContext, in *trade.RetrySettlementInstructionReq, tenantID, operatorID int64, eventNo string, now int64) (bool, bool, error) {
+	instructionModel := models.NewTTradeSettlementInstructionModel(conn, svcCtx.Config.CacheRedis)
+	item, err := instructionModel.FindOneForUpdate(ctx, in.Id)
+	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != tenantID) {
+		return true, false, nil
+	}
+	if err != nil {
+		return false, false, err
+	}
+	if item.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED) && item.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW) {
+		return false, true, nil
+	}
+	item.Status, item.NextRetryAt, item.LastErrorMsg, item.UpdateTimes = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), now, "", now
+	if err = instructionModel.Update(ctx, item); err != nil {
+		return false, false, err
+	}
+	_, err = models.NewTBizTradeEventModel(conn, svcCtx.Config.CacheRedis).Insert(ctx, &models.TBizTradeEvent{TenantId: tenantID, EventNo: eventNo, EventType: "SETTLEMENT_INSTRUCTION_RETRY_REQUESTED", BizId: item.InstructionNo, BizType: "settlement_instruction", UserId: item.UserId, OperatorId: operatorID, Source: int64(trade.SourceType_SOURCE_TYPE_ADMIN), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: normalizeTradeEventJSON(in.Reason), CreateTimes: now, UpdateTimes: now})
+	return false, false, err
 }

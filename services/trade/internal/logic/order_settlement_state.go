@@ -4,12 +4,38 @@ import (
 	"context"
 	"errors"
 
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
+
+func beginSystemOrderTermination(ctx context.Context, svcCtx *svc.ServiceContext, orderID int64, reason string, rejectReduceOnly bool) (*models.TTradeOrder, error) {
+	var terminating *models.TTradeOrder
+	err := svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
+		orderModel := models.NewTTradeOrderModel(sqlx.NewSqlConnFromSession(session), svcCtx.Config.CacheRedis)
+		current, err := orderModel.FindOneForUpdate(txCtx, orderID)
+		if err != nil {
+			return err
+		}
+		if !isOpenOrderStatus(current.Status) || rejectReduceOnly && current.IsReduceOnly == 1 {
+			return nil
+		}
+		current.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELING)
+		current.CanceledQty = decimalMaxZero(current.Qty.Sub(current.FilledQty))
+		current.CancelReason = reason
+		current.Version++
+		current.UpdateTimes = utils.NowMillis()
+		if err = orderModel.Update(txCtx, current); err != nil {
+			return err
+		}
+		terminating = current
+		return nil
+	})
+	return terminating, err
+}
 
 func finalizeOrderTermination(ctx context.Context, conn sqlx.SqlConn, svcCtx *svc.ServiceContext, orderID int64, now int64) (bool, error) {
 	orderModel := models.NewTTradeOrderModel(conn, svcCtx.Config.CacheRedis)

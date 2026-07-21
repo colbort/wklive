@@ -39,6 +39,18 @@ type Subscriber struct {
 	startFromLatest bool
 }
 
+type keyedBalancer struct {
+	hash  kafka.Hash
+	least kafka.LeastBytes
+}
+
+func (b *keyedBalancer) Balance(message kafka.Message, partitions ...int) int {
+	if len(message.Key) > 0 {
+		return b.hash.Balance(message, partitions...)
+	}
+	return b.least.Balance(message, partitions...)
+}
+
 func NewPublisher(config Config) (*Publisher, error) {
 	brokers, err := validateConfig(config)
 	if err != nil {
@@ -46,7 +58,7 @@ func NewPublisher(config Config) (*Publisher, error) {
 	}
 	return &Publisher{writer: &kafka.Writer{
 		Addr:                   kafka.TCP(brokers...),
-		Balancer:               &kafka.LeastBytes{},
+		Balancer:               &keyedBalancer{},
 		RequiredAcks:           kafka.RequireAll,
 		Async:                  false,
 		AllowAutoTopicCreation: false,
@@ -102,6 +114,12 @@ func MustNewBroadcastSubscriber(config Config, groupID string) *Subscriber {
 }
 
 func (p *Publisher) Publish(ctx context.Context, channel string, payload any) error {
+	return p.PublishKey(ctx, channel, nil, payload)
+}
+
+// PublishKey publishes a message with a stable partitioning key. Events that
+// require per-entity ordering must use the same key for that entity.
+func (p *Publisher) PublishKey(ctx context.Context, channel string, key []byte, payload any) error {
 	if p == nil || p.writer == nil {
 		return errors.New("mq publisher is nil")
 	}
@@ -113,7 +131,7 @@ func (p *Publisher) Publish(ctx context.Context, channel string, payload any) er
 	if err != nil {
 		return err
 	}
-	return p.writer.WriteMessages(ctx, kafka.Message{Topic: topic, Value: data, Time: time.Now()})
+	return p.writer.WriteMessages(ctx, kafka.Message{Topic: topic, Key: append([]byte(nil), key...), Value: data, Time: time.Now()})
 }
 
 func (p *Publisher) Close() error {

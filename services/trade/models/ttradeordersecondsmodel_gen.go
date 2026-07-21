@@ -68,6 +68,9 @@ type (
 		FeeAmount             decimal.Decimal `db:"fee_amount"`              // 手续费金额
 		ReturnAmount          decimal.Decimal `db:"return_amount"`           // 最终返还本金及收益总额
 		SettlementStatus      int64           `db:"settlement_status"`       // 流程状态：0待冻结 1激活中 2进行中 3结算中 4已结算 5退款中 6已退款 7人工处理
+		RetryCount            int64           `db:"retry_count"`             // 当前流程累计失败次数
+		NextRetryAt           int64           `db:"next_retry_at"`           // 下次允许处理时间
+		LastErrorMsg          string          `db:"last_error_msg"`          // 最后处理错误
 		ReservationNo         string          `db:"reservation_no"`          // Asset资金预占号
 		SettlementReason      string          `db:"settlement_reason"`       // 结算、作废、退款或人工处理原因
 		SettledAt             int64           `db:"settled_at"`              // 结算或退款完成时间
@@ -140,8 +143,8 @@ func (m *defaultTTradeOrderSecondsModel) Insert(ctx context.Context, data *TTrad
 	tTradeOrderSecondsIdKey := fmt.Sprintf("%s%v", cacheTTradeOrderSecondsIdPrefix, data.Id)
 	tTradeOrderSecondsTenantIdOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderSecondsTenantIdOrderIdPrefix, data.TenantId, data.OrderId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderSecondsRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.Direction, data.DurationSeconds, data.StakeAsset, data.StakeAmount, data.PayoutRate, data.FeeRate, data.FrozenAt, data.ActivatedAt, data.StartPrice, data.StartPriceTime, data.StartPriceSource, data.ExpireTime, data.SettlementPrice, data.SettlementPriceTime, data.SettlementPriceSource, data.PriceAlgorithm, data.Result, data.ProfitAmount, data.FeeAmount, data.ReturnAmount, data.SettlementStatus, data.ReservationNo, data.SettlementReason, data.SettledAt, data.Version, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderSecondsRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.Direction, data.DurationSeconds, data.StakeAsset, data.StakeAmount, data.PayoutRate, data.FeeRate, data.FrozenAt, data.ActivatedAt, data.StartPrice, data.StartPriceTime, data.StartPriceSource, data.ExpireTime, data.SettlementPrice, data.SettlementPriceTime, data.SettlementPriceSource, data.PriceAlgorithm, data.Result, data.ProfitAmount, data.FeeAmount, data.ReturnAmount, data.SettlementStatus, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.ReservationNo, data.SettlementReason, data.SettledAt, data.Version, data.CreateTimes, data.UpdateTimes)
 	}, tTradeOrderSecondsIdKey, tTradeOrderSecondsTenantIdOrderIdKey)
 	return ret, err
 }
@@ -156,7 +159,7 @@ func (m *defaultTTradeOrderSecondsModel) Update(ctx context.Context, newData *TT
 	tTradeOrderSecondsTenantIdOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderSecondsTenantIdOrderIdPrefix, data.TenantId, data.OrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeOrderSecondsRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.Direction, newData.DurationSeconds, newData.StakeAsset, newData.StakeAmount, newData.PayoutRate, newData.FeeRate, newData.FrozenAt, newData.ActivatedAt, newData.StartPrice, newData.StartPriceTime, newData.StartPriceSource, newData.ExpireTime, newData.SettlementPrice, newData.SettlementPriceTime, newData.SettlementPriceSource, newData.PriceAlgorithm, newData.Result, newData.ProfitAmount, newData.FeeAmount, newData.ReturnAmount, newData.SettlementStatus, newData.ReservationNo, newData.SettlementReason, newData.SettledAt, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.Direction, newData.DurationSeconds, newData.StakeAsset, newData.StakeAmount, newData.PayoutRate, newData.FeeRate, newData.FrozenAt, newData.ActivatedAt, newData.StartPrice, newData.StartPriceTime, newData.StartPriceSource, newData.ExpireTime, newData.SettlementPrice, newData.SettlementPriceTime, newData.SettlementPriceSource, newData.PriceAlgorithm, newData.Result, newData.ProfitAmount, newData.FeeAmount, newData.ReturnAmount, newData.SettlementStatus, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.ReservationNo, newData.SettlementReason, newData.SettledAt, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeOrderSecondsIdKey, tTradeOrderSecondsTenantIdOrderIdKey)
 	return err
 }

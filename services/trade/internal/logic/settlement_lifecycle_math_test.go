@@ -1,12 +1,86 @@
 package logic
 
 import (
+	"errors"
+	"strings"
 	"testing"
 
+	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
 )
+
+func TestValidateSecondsAssetResponse(t *testing.T) {
+	var nilResponse *asset.ChangeAssetResp
+	if err := validateSecondsAssetResponse("payout", nilResponse); err == nil {
+		t.Fatal("typed nil Asset response must be rejected")
+	}
+	if err := validateSecondsAssetResponse("payout", &asset.ChangeAssetResp{}); err == nil {
+		t.Fatal("Asset response without base must be rejected")
+	}
+	if err := validateSecondsAssetResponse("payout", &asset.ChangeAssetResp{Base: &common.RespBase{Code: 500}}); err == nil {
+		t.Fatal("rejected Asset response must return an error")
+	}
+	if err := validateSecondsAssetResponse("payout", &asset.ChangeAssetResp{Base: &common.RespBase{Code: 200}}); err != nil {
+		t.Fatalf("successful Asset response rejected: %v", err)
+	}
+}
+
+func TestScanSecondsWorkContinuesAfterItemFailure(t *testing.T) {
+	fetched := false
+	processed := make([]int64, 0, 3)
+	err := scanSecondsWork(func(cursor int64) ([]*models.SecondsOrderWorkItem, error) {
+		if fetched {
+			return nil, nil
+		}
+		fetched = true
+		return []*models.SecondsOrderWorkItem{{TTradeOrderSeconds: models.TTradeOrderSeconds{Id: 1}}, {TTradeOrderSeconds: models.TTradeOrderSeconds{Id: 2}}, {TTradeOrderSeconds: models.TTradeOrderSeconds{Id: 3}}}, nil
+	}, func(item *models.SecondsOrderWorkItem) error {
+		processed = append(processed, item.Id)
+		if item.Id == 1 {
+			return errors.New("injected")
+		}
+		return nil
+	})
+	if err == nil {
+		t.Fatal("expected aggregate error")
+	}
+	if len(processed) != 3 {
+		t.Fatalf("processed=%v, want all work items", processed)
+	}
+}
+
+func TestRunSecondsPhasesDoesNotShortCircuit(t *testing.T) {
+	called := 0
+	err := runSecondsPhases(
+		func() error { called++; return errors.New("activation") },
+		func() error { called++; return errors.New("settlement") },
+		func() error { called++; return nil },
+	)
+	if called != 3 {
+		t.Fatalf("called=%d, want all phases", called)
+	}
+	if err == nil || !strings.Contains(err.Error(), "activation") || !strings.Contains(err.Error(), "settlement") {
+		t.Fatalf("aggregate error=%v", err)
+	}
+}
+
+func TestSecondsWorkLeaseFencing(t *testing.T) {
+	current := &models.TTradeOrderSeconds{SettlementStatus: int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING), UpdateTimes: 100}
+	if !secondsWorkLeaseOwned(current, trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING, 100) {
+		t.Fatal("current seconds settlement lease should be owned")
+	}
+	if secondsWorkLeaseOwned(current, trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING, 99) {
+		t.Fatal("stale seconds settlement lease must be fenced")
+	}
+	current.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLED)
+	if secondsWorkLeaseOwned(current, trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING, 100) {
+		t.Fatal("completed seconds order must not retain settlement lease")
+	}
+}
 
 func TestSecondsResultAndPayout(t *testing.T) {
 	start := decimal.NewFromInt(100)

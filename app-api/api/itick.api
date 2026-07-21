@@ -204,6 +204,45 @@ type BatchGetQuoteResp {
 	data []Quote `json:"data"`
 }
 
+type GetAuthoritativeSnapshotReq {
+	authority     string `form:"authority"`
+	categoryCode  string `form:"categoryCode"`
+	market        string `form:"market"`
+	symbol        string `form:"symbol"`
+	targetTime    int64  `form:"targetTime"`
+	maxLookbackMs int64  `form:"maxLookbackMs"`
+	snapshotKind  string `form:"snapshotKind"`
+}
+
+type AuthoritativeSnapshot {
+	snapshotId        string `json:"snapshotId"`
+	authority         string `json:"authority"`
+	snapshotKind      string `json:"snapshotKind"`
+	categoryCode      string `json:"categoryCode"`
+	market            string `json:"market"`
+	symbol            string `json:"symbol"`
+	price             string `json:"price"`
+	sourceTimestamp   int64  `json:"sourceTimestamp"`
+	snapshotTimestamp int64  `json:"snapshotTimestamp"`
+	revision          int64  `json:"revision"`
+	formulaVersion    string `json:"formulaVersion"`
+	rawPayload        string `json:"rawPayload"`
+}
+
+type GetAuthoritativeSnapshotResp {
+	RespBase
+	data AuthoritativeSnapshot `json:"data"`
+}
+
+type KlineInterval {
+	name  string `json:"name"`
+	kType int32  `json:"kType"`
+}
+
+type KlineIntervalsResp {
+	data []KlineInterval `json:"data"`
+}
+
 type WsItickReq {
 	id string `path:"id"`
 }
@@ -257,7 +296,14 @@ service app {
 	@handler BatchGetQuote
 	get /batch/quote (BatchGetQuoteReq) returns (BatchGetQuoteResp)
 
+	// 按业务时刻读取永久归档的权威快照
+	@handler GetAuthoritativeSnapshot
+	get /authoritative-snapshot (GetAuthoritativeSnapshotReq) returns (GetAuthoritativeSnapshotResp)
+
+	// 获取 K 线粒度
+	@handler GetKlineIntervals
+	get /kline-intervals returns (KlineIntervalsResp)
+
 	@handler TickWsHandler
 	get /ws/:id (WsItickReq)
 }
-

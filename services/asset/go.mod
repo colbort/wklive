@@ -3,6 +3,7 @@ module wklive/services/asset
 go 1.26.4
 
 require (
+	github.com/redis/go-redis/v9 v9.20.1
 	github.com/shopspring/decimal v1.4.0
 	github.com/zeromicro/go-zero v1.10.2
 	google.golang.org/grpc v1.81.1
@@ -10,7 +11,6 @@ require (
 	wklive/common v0.0.0-00010101000000-000000000000
 	wklive/proto/asset v0.0.0-00010101000000-000000000000
 	wklive/proto/common v0.0.0-00010101000000-000000000000
-	wklive/proto/itick v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -65,7 +65,6 @@ require (
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.68.1 // indirect
 	github.com/prometheus/procfs v0.20.1 // indirect
-	github.com/redis/go-redis/v9 v9.20.1 // indirect
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/titanous/json5 v1.0.0 // indirect

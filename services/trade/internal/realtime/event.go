@@ -33,5 +33,12 @@ type Event struct {
 }
 
 func Publish(ctx context.Context, publisher *mq.Publisher, event Event) error {
-	return publisher.Publish(ctx, Channel, event)
+	return publisher.PublishKey(ctx, Channel, []byte(partitionKey(event)), event)
+}
+
+func partitionKey(event Event) string {
+	if event.BizID != "" {
+		return event.BizID
+	}
+	return event.EventNo
 }
