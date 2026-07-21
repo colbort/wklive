@@ -81,7 +81,7 @@ func (l *LoginLogic) Login(in *chat.ChatAdminLoginReq) (*chat.ChatAdminLoginResp
 		agent.LastActiveTime = now
 		agent.UpdateTimes = now
 		if err := l.svcCtx.ChatAgentModel.Update(l.ctx, agent); err == nil {
-			_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventAgentJoin, &chat.ChatWsResponse_Agent{Agent: &chat.ChatAgentPayload{
+			_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAdminEventChannel, ih.PublishEventAgentJoin, &chat.ChatWsResponse_Agent{Agent: &chat.ChatAgentPayload{
 				SessionNo:     "",
 				AgentId:       agent.Id,
 				AgentName:     user.Nickname,

@@ -4,6 +4,7 @@
 package config
 
 import (
+	"wklive/common/mq/kafka"
 	"wklive/common/reqenc"
 
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -27,4 +28,5 @@ type Config struct {
 	TradeRpc          zrpc.RpcClientConf
 	RedisConf         redis.RedisConf `json:"Redis" yaml:"Redis"`
 	RequestEncryption reqenc.Config   `json:"RequestEncryption" yaml:"RequestEncryption"`
+	MQ                mq.Config       `json:"MQ" yaml:"MQ"`
 }

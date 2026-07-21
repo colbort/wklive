@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 	"time"
-	bus "wklive/common/bus/redis"
 	cache "wklive/common/market"
+	"wklive/common/mq/kafka"
 	"wklive/services/trade/internal/config"
 	"wklive/services/trade/models"
 
@@ -22,9 +22,9 @@ type ServiceContext struct {
 	Config                      config.Config
 	DB                          sqlx.SqlConn
 	Redis                       *redis.Redis
-	TaskSubscriber              *bus.Subscriber
-	TradeEventPublisher         *bus.Publisher
-	TradeEventSubscriber        *bus.Subscriber
+	TaskSubscriber              *mq.Subscriber
+	TradeEventPublisher         *mq.Publisher
+	TradeEventSubscriber        *mq.Subscriber
 	TradeEventInstanceID        string
 	TradeSymbolModel            models.TTradeSymbolModel
 	TradeSymbolSpotModel        models.TTradeSymbolSpotModel
@@ -71,9 +71,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	marketRedis := v9.NewClient(&v9.Options{Addr: c.CacheRedis[0].Host, Username: c.CacheRedis[0].User, Password: c.CacheRedis[0].Pass})
-	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
-	tradeEventPublisher := bus.NewPublisherFromRedisConf(c.CacheRedis[0].RedisConf)
-	tradeEventSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
+	taskSubscriber := mq.MustNewSubscriber(c.MQ, "trade-tasks")
+	tradeEventPublisher := mq.MustNewPublisher(c.MQ)
+	tradeEventSubscriber := mq.MustNewSubscriber(c.MQ, "trade-realtime")
 	hostname, _ := os.Hostname()
 	instanceID := fmt.Sprintf("%s:%d:%d", hostname, os.Getpid(), time.Now().UnixNano())
 	return &ServiceContext{

@@ -1,5 +1,9 @@
 Name: trade.rpc
 ListenOn: 0.0.0.0:8087
+MQ:
+  Brokers: [kafka:9092]
+  ClientID: trade
+  MaxAttempts: 5
 Mode: dev
 Etcd:
   Hosts:

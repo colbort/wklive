@@ -9,6 +9,11 @@ Jwt:
   AccessSecret: "your_access_secret"
   AccessExpire: 3600
 
+MQ:
+  Brokers: [kafka:9092]
+  ClientID: admin-api
+  MaxAttempts: 5
+
 # 请求体加密。admin-ui 根据 /admin/security/encryption-config 返回的 enabled
 # 判断是否加密；灰度阶段使用 OPTIONAL，前端全部上线后可改为 REQUIRED。
 RequestEncryption:

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	bus "wklive/common/bus/redis"
+	"wklive/common/mq/kafka"
 	"wklive/common/utils"
 	"wklive/services/trade/internal/logic"
 	"wklive/services/trade/internal/realtime"
@@ -18,9 +18,9 @@ import (
 
 func StartSubscriber(ctx context.Context, svcCtx *svc.ServiceContext) {
 	go func() {
-		if err := svcCtx.TradeEventSubscriber.Subscribe(ctx, realtime.Channel, func(messageCtx context.Context, msg bus.Message) error {
+		if err := svcCtx.TradeEventSubscriber.Subscribe(ctx, realtime.Channel, func(messageCtx context.Context, msg mq.Message) error {
 			var event realtime.Event
-			if err := bus.Decode(msg, &event); err != nil {
+			if err := mq.Decode(msg, &event); err != nil {
 				logx.Errorf("decode trade real-time event failed: %v", err)
 				return nil
 			}

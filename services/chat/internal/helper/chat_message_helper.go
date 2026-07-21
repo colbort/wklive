@@ -72,11 +72,11 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessa
 		msg = ToProtoMessage(mmg)
 	}
 
-	err = PublishMessageEvent(ctx, svcCtx.BusRedis, opts.ReceiveChannel, PublishEventMessage, &chat.ChatWsResponse_Message{Message: msg})
+	err = PublishMessageEvent(ctx, svcCtx.MQPublisher, opts.ReceiveChannel, PublishEventMessage, &chat.ChatWsResponse_Message{Message: msg})
 	if err != nil {
 		return nil, err
 	}
-	err = PublishMessageEvent(ctx, svcCtx.BusRedis, opts.ReceiptChannel, PublishEventMessageDelivered, &chat.ChatWsResponse_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
+	err = PublishMessageEvent(ctx, svcCtx.MQPublisher, opts.ReceiptChannel, PublishEventMessageDelivered, &chat.ChatWsResponse_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
 		SessionNo:     msg.SessionNo,
 		MessageNo:     msg.MessageNo,
 		SenderId:      msg.Sender.Id,

@@ -81,6 +81,7 @@
       "./app-mobile/src/i18n/locales",
     ],
     "cSpell.words": [
+      "Acks",
       "Aliyun",
       "APIURLIs",
       "assignrole",
@@ -147,6 +148,7 @@
       "risklevel",
       "robfig",
       "Scholes",
+      "segmentio",
       "Segs",
       "Setex",
       "Setnx",

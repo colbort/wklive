@@ -6,9 +6,11 @@ package svc
 import (
 	"context"
 	"fmt"
+	"os"
 	"strconv"
 	"wklive/admin-api/internal/config"
 	"wklive/admin-api/internal/ws"
+	"wklive/common/mq/kafka"
 	"wklive/common/reqenc"
 	"wklive/common/utils"
 	"wklive/proto/asset"
@@ -81,10 +83,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	tradeCli := zrpc.MustNewClient(c.TradeRpc, options)
 	notificationHub := ws.NewHub()
 	go notificationHub.Run()
-	if c.RedisConf.Host != "" {
-		go ws.SubscribeRedis(context.Background(), c.RedisConf, notificationHub)
+	if len(c.MQ.Brokers) > 0 {
+		groupID := "admin-notifications-" + hostname()
+		subscriber := mq.MustNewBroadcastSubscriber(c.MQ, groupID)
+		go ws.SubscribeMQ(context.Background(), subscriber, notificationHub)
 	} else {
-		logx.Info("admin notification redis is not configured, skip subscription")
+		logx.Info("admin notification mq is not configured, skip subscription")
 	}
 
 	return &ServiceContext{
@@ -100,4 +104,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TradeAppCli:     trade.NewTradeAppClient(tradeCli.Conn()),
 		NotificationHub: notificationHub,
 	}
+}
+
+func hostname() string {
+	name, err := os.Hostname()
+	if err != nil || name == "" {
+		return "unknown"
+	}
+	return name
 }

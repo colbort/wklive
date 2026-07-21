@@ -51,7 +51,7 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 				return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-		_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAppEventChannel, ih.PublishEventError, &chat.ChatWsResponse_Error{
+		_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAppEventChannel, ih.PublishEventError, &chat.ChatWsResponse_Error{
 			Error: &chat.ChatErrorPayload{
 				MessageNo:    "",
 				ErrorCode:    0,
@@ -80,6 +80,6 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 			return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	}
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAppEventChannel, ih.PublishEventSessionClose, &chat.ChatWsResponse_Session{Session: ih.ToProtoSession(session, false)})
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAppEventChannel, ih.PublishEventSessionClose, &chat.ChatWsResponse_Session{Session: ih.ToProtoSession(session, false)})
 	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, false)}, nil
 }

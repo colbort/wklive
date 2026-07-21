@@ -8,3 +8,7 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: chat.rpc
+MQ:
+  Brokers: [kafka:9092]
+  ClientID: chat
+  MaxAttempts: 5

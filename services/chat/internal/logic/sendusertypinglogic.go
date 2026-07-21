@@ -37,7 +37,7 @@ func (l *SendUserTypingLogic) SendUserTyping(in *chat.SendUserTypingReq) (*chat.
 	if err != nil {
 		return &chat.AppCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	if _, err := l.svcCtx.BusRedis.PublishCtx(l.ctx, chat.ChatAdminEventChannel, string(payload)); err != nil {
+	if err := l.svcCtx.MQPublisher.Publish(l.ctx, chat.ChatAdminEventChannel, payload); err != nil {
 		return &chat.AppCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	return &chat.AppCommonResp{Base: helper.OkResp()}, nil

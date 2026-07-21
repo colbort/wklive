@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"wklive/common/mq/kafka"
 	"wklive/proto/system"
 	"wklive/services/user/internal/config"
 	"wklive/services/user/models"
@@ -28,6 +29,7 @@ type ServiceContext struct {
 	UserBankModel     models.TUserBankModel
 	FingerprintModel  models.TUserFingerprintModel
 	SystemCli         system.SystemClient
+	MQPublisher       *mq.Publisher
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -48,6 +50,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserBankModel:     models.NewTUserBankModel(conn, c.CacheRedis),
 		FingerprintModel:  models.NewTUserFingerprintModel(conn, c.CacheRedis),
 		SystemCli:         system.NewSystemClient(systemCli.Conn()),
+		MQPublisher:       mq.MustNewPublisher(c.MQ),
 	}
 }
 

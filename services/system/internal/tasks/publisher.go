@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"sync"
 
-	bus "wklive/common/bus/redis"
+	"wklive/common/mq/kafka"
 	"wklive/common/tasks"
 	"wklive/services/system/models"
 )
 
 var (
 	taskPublisherMu sync.RWMutex
-	taskPublisher   *bus.Publisher
+	taskPublisher   *mq.Publisher
 )
 
-func InitTaskPublisher(publisher *bus.Publisher) {
+func InitTaskPublisher(publisher *mq.Publisher) {
 	taskPublisherMu.Lock()
 	defer taskPublisherMu.Unlock()
 	taskPublisher = publisher

@@ -50,7 +50,7 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
-		_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventError, &chat.ChatWsResponse_Error{
+		_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAdminEventChannel, ih.PublishEventError, &chat.ChatWsResponse_Error{
 			Error: &chat.ChatErrorPayload{
 				MessageNo:    "",
 				ErrorCode:    0,
@@ -80,8 +80,8 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 		}
 	}
 	sessionPayload := chat.ChatWsResponse_Session{Session: ih.ToProtoSession(session, in.IsGuest)}
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAppEventChannel, ih.PublishEventSessionClose, &sessionPayload)
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventUserLeave, &chat.ChatWsResponse_UserState{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAppEventChannel, ih.PublishEventSessionClose, &sessionPayload)
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAdminEventChannel, ih.PublishEventUserLeave, &chat.ChatWsResponse_UserState{
 		UserState: &chat.ChatUserStatePayload{
 			SessionNo: in.SessionNo,
 			UserId:    session.UserId,

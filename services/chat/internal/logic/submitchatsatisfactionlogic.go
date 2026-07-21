@@ -79,7 +79,7 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		}
 	}
 
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventEvaluationSubmit, &chat.ChatWsResponse_Evaluation{Evaluation: &chat.ChatEvaluationPayload{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAdminEventChannel, ih.PublishEventEvaluationSubmit, &chat.ChatWsResponse_Evaluation{Evaluation: &chat.ChatEvaluationPayload{
 		SessionNo:    session.SessionNo,
 		UserId:       session.UserId,
 		AgentId:      session.AgentId,

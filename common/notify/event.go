@@ -2,11 +2,10 @@ package notify
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
-	"github.com/zeromicro/go-zero/core/stores/redis"
+	"wklive/common/mq/kafka"
 )
 
 const (
@@ -51,12 +50,6 @@ func NewEvent(eventType, level, title, message string) Event {
 	}
 }
 
-func Publish(ctx context.Context, rds *redis.Redis, event Event) error {
-	payload, err := json.Marshal(event)
-	if err != nil {
-		return err
-	}
-
-	_, err = rds.PublishCtx(ctx, Channel, payload)
-	return err
+func Publish(ctx context.Context, publisher *mq.Publisher, event Event) error {
+	return publisher.Publish(ctx, Channel, event)
 }

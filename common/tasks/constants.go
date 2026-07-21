@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
-	bus "wklive/common/bus/redis"
+	"wklive/common/mq/kafka"
 )
 
 const (
@@ -61,7 +61,7 @@ func NewMessage(service, action string, tenantID int64, jobID int64, jobName str
 	}
 }
 
-func Publish(ctx context.Context, publisher *bus.Publisher, service string, action string, opts PublishOptions) error {
+func Publish(ctx context.Context, publisher *mq.Publisher, service string, action string, opts PublishOptions) error {
 	if publisher == nil {
 		return fmt.Errorf("task publisher is nil")
 	}
@@ -70,7 +70,7 @@ func Publish(ctx context.Context, publisher *bus.Publisher, service string, acti
 	return publisher.Publish(ctx, channel, msg)
 }
 
-func SubscribeService(ctx context.Context, subscriber *bus.Subscriber, service string, handler Handler) error {
+func SubscribeService(ctx context.Context, subscriber *mq.Subscriber, service string, handler Handler) error {
 	if subscriber == nil {
 		return fmt.Errorf("task subscriber is nil")
 	}
@@ -81,9 +81,9 @@ func SubscribeService(ctx context.Context, subscriber *bus.Subscriber, service s
 		return fmt.Errorf("task handler is nil")
 	}
 
-	return subscriber.Subscribe(ctx, channel, func(ctx context.Context, msg bus.Message) error {
+	return subscriber.Subscribe(ctx, channel, func(ctx context.Context, msg mq.Message) error {
 		var payload Message
-		if err := bus.Decode(msg, &payload); err != nil {
+		if err := mq.Decode(msg, &payload); err != nil {
 			return err
 		}
 		if payload.Service != service {

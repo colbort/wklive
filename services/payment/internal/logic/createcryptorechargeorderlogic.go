@@ -148,7 +148,7 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 		"amount":   in.RechargeAmount,
 		"currency": in.Coin,
 	}
-	if err := notify.Publish(l.ctx, l.svcCtx.Redis, event); err != nil {
+	if err := notify.Publish(l.ctx, l.svcCtx.MQPublisher, event); err != nil {
 		l.Errorf("publish admin recharge notification failed, orderNo=%s err=%v", orderNo, err)
 	}
 	releaseCryptoRechargeAddress(l.ctx, l.svcCtx, addressItem.Id)

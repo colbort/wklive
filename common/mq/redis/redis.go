@@ -1,4 +1,6 @@
-package bus
+// Package bus provides the legacy Redis Pub/Sub adapter. New business code
+// should use wklive/common/mq/kafka; this package remains for compatibility.
+package mq
 
 import (
 	"context"
@@ -16,29 +18,19 @@ type Message struct {
 
 type Handler func(context.Context, Message) error
 
-type Publisher struct {
-	rds *redis.Redis
-}
+type Publisher struct{ rds *redis.Redis }
+type Subscriber struct{ client *v9.Client }
 
-type Subscriber struct {
-	client *v9.Client
-}
-
-func NewPublisher(rds *redis.Redis) *Publisher {
-	return &Publisher{rds: rds}
-}
-
+func NewPublisher(rds *redis.Redis) *Publisher { return &Publisher{rds: rds} }
 func NewPublisherFromRedisConf(conf redis.RedisConf) *Publisher {
 	return NewPublisher(redis.MustNewRedis(conf))
 }
-
 func (p *Publisher) Publish(ctx context.Context, channel string, payload any) error {
 	if p == nil {
 		return fmt.Errorf("bus publisher is nil")
 	}
 	return Publish(ctx, p.rds, channel, payload)
 }
-
 func Publish(ctx context.Context, rds *redis.Redis, channel string, payload any) error {
 	if rds == nil {
 		return fmt.Errorf("bus redis publisher is nil")
@@ -46,31 +38,24 @@ func Publish(ctx context.Context, rds *redis.Redis, channel string, payload any)
 	if channel == "" {
 		return fmt.Errorf("bus channel is empty")
 	}
-
 	data, err := encodePayload(payload)
 	if err != nil {
 		return err
 	}
-
 	_, err = rds.PublishCtx(ctx, channel, data)
 	return err
 }
 
-func NewSubscriber(client *v9.Client) *Subscriber {
-	return &Subscriber{client: client}
-}
-
+func NewSubscriber(client *v9.Client) *Subscriber { return &Subscriber{client: client} }
 func NewSubscriberFromRedisConf(conf redis.RedisConf) *Subscriber {
 	return NewSubscriber(NewGoRedisClient(conf))
 }
-
 func (s *Subscriber) Subscribe(ctx context.Context, channel string, handler Handler) error {
 	if s == nil {
 		return fmt.Errorf("bus subscriber is nil")
 	}
 	return Subscribe(ctx, s.client, channel, handler)
 }
-
 func Subscribe(ctx context.Context, client *v9.Client, channel string, handler Handler) error {
 	if client == nil {
 		return fmt.Errorf("bus redis subscriber is nil")
@@ -81,14 +66,11 @@ func Subscribe(ctx context.Context, client *v9.Client, channel string, handler H
 	if handler == nil {
 		return fmt.Errorf("bus handler is nil")
 	}
-
 	pubsub := client.Subscribe(ctx, channel)
 	defer pubsub.Close()
-
 	if _, err := pubsub.Receive(ctx); err != nil {
 		return err
 	}
-
 	ch := pubsub.Channel()
 	for {
 		select {
@@ -98,10 +80,7 @@ func Subscribe(ctx context.Context, client *v9.Client, channel string, handler H
 			if !ok {
 				return nil
 			}
-			if err := handler(ctx, Message{
-				Channel: msg.Channel,
-				Payload: msg.Payload,
-			}); err != nil {
+			if err := handler(ctx, Message{Channel: msg.Channel, Payload: msg.Payload}); err != nil {
 				return err
 			}
 		}
@@ -109,28 +88,22 @@ func Subscribe(ctx context.Context, client *v9.Client, channel string, handler H
 }
 
 func NewGoRedisClient(conf redis.RedisConf) *v9.Client {
-	return v9.NewClient(&v9.Options{
-		Addr:     conf.Host,
-		Username: conf.User,
-		Password: conf.Pass,
-	})
+	return v9.NewClient(&v9.Options{Addr: conf.Host, Username: conf.User, Password: conf.Pass})
 }
-
 func encodePayload(payload any) (any, error) {
-	switch v := payload.(type) {
+	switch value := payload.(type) {
 	case nil:
 		return "", nil
 	case string:
-		return v, nil
+		return value, nil
 	case []byte:
-		return v, nil
+		return value, nil
 	case json.RawMessage:
-		return v, nil
+		return value, nil
 	default:
-		return json.Marshal(v)
+		return json.Marshal(value)
 	}
 }
-
-func Decode(msg Message, v any) error {
-	return json.Unmarshal([]byte(msg.Payload), v)
+func Decode(message Message, target any) error {
+	return json.Unmarshal([]byte(message.Payload), target)
 }

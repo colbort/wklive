@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	"wklive/common/mq/kafka"
 	"wklive/services/payment/internal/config"
 	"wklive/services/payment/models"
 
@@ -19,6 +20,7 @@ type ServiceContext struct {
 	DB                         sqlx.SqlConn
 	Redis                      *redis.Redis
 	AssetCli                   asset.AssetInternalClient
+	MQPublisher                *mq.Publisher
 	PayPlatformModel           models.TPayPlatformModel
 	PayProductModel            models.TPayProductModel
 	UserRechargeStatModel      models.TUserRechargeStatModel
@@ -43,6 +45,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:                         conn,
 		Redis:                      redis.MustNewRedis(c.Redis.RedisConf),
 		AssetCli:                   asset.NewAssetInternalClient(assetCli.Conn()),
+		MQPublisher:                mq.MustNewPublisher(c.MQ),
 		PayPlatformModel:           models.NewTPayPlatformModel(conn, c.CacheRedis),
 		PayProductModel:            models.NewTPayProductModel(conn, c.CacheRedis),
 		UserRechargeStatModel:      models.NewTUserRechargeStatModel(conn, c.CacheRedis),

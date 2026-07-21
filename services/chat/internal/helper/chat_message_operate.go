@@ -94,21 +94,21 @@ func publishMessageOperate(ctx context.Context, svcCtx *svc.ServiceContext, in *
 	}
 	switch eventType {
 	case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_RECALL:
-		if err := PublishMessageEvent(ctx, svcCtx.BusRedis, chat.ChatAppEventChannel, PublishEventMessageRecall, payload); err != nil {
+		if err := PublishMessageEvent(ctx, svcCtx.MQPublisher, chat.ChatAppEventChannel, PublishEventMessageRecall, payload); err != nil {
 			return err
 		}
-		return PublishMessageEvent(ctx, svcCtx.BusRedis, chat.ChatAdminEventChannel, PublishEventMessageRecall, payload)
+		return PublishMessageEvent(ctx, svcCtx.MQPublisher, chat.ChatAdminEventChannel, PublishEventMessageRecall, payload)
 	case chat.ChatEventType_CHAT_EVENT_TYPE_MESSAGE_DELETE:
 		if in.GetDeleteScope() == chat.ChatMessageDeleteScope_CHAT_MESSAGE_DELETE_SCOPE_SELF {
 			if in.GetOperatorType() == chat.ChatSenderType_CHAT_SENDER_TYPE_USER {
-				return PublishMessageEvent(ctx, svcCtx.BusRedis, chat.ChatAppEventChannel, PublishEventMessageDelete, payload)
+				return PublishMessageEvent(ctx, svcCtx.MQPublisher, chat.ChatAppEventChannel, PublishEventMessageDelete, payload)
 			}
-			return PublishMessageEvent(ctx, svcCtx.BusRedis, chat.ChatAdminEventChannel, PublishEventMessageDelete, payload)
+			return PublishMessageEvent(ctx, svcCtx.MQPublisher, chat.ChatAdminEventChannel, PublishEventMessageDelete, payload)
 		}
-		if err := PublishMessageEvent(ctx, svcCtx.BusRedis, chat.ChatAppEventChannel, PublishEventMessageDelete, payload); err != nil {
+		if err := PublishMessageEvent(ctx, svcCtx.MQPublisher, chat.ChatAppEventChannel, PublishEventMessageDelete, payload); err != nil {
 			return err
 		}
-		return PublishMessageEvent(ctx, svcCtx.BusRedis, chat.ChatAdminEventChannel, PublishEventMessageDelete, payload)
+		return PublishMessageEvent(ctx, svcCtx.MQPublisher, chat.ChatAdminEventChannel, PublishEventMessageDelete, payload)
 	default:
 		return nil
 	}

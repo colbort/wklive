@@ -157,7 +157,7 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 		"realName": in.RealName,
 		"idType":   in.IdType.String(),
 	}
-	if err := notify.Publish(l.ctx, l.svcCtx.Redis, event); err != nil {
+	if err := notify.Publish(l.ctx, l.svcCtx.MQPublisher, event); err != nil {
 		l.Errorf("publish admin user notification failed, userId=%d err=%v", tuser.Id, err)
 	}
 

@@ -169,7 +169,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 	}
 	// 向坐席 chat-admin-api 推送 用户上线通知
 	// l.publishUserJoinEvent(ms, in.IsGuest)
-	err := ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventUserJoin, &chat.ChatWsResponse_UserState{UserState: &chat.ChatUserStatePayload{
+	err := ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAdminEventChannel, ih.PublishEventUserJoin, &chat.ChatWsResponse_UserState{UserState: &chat.ChatUserStatePayload{
 		SessionNo: in.SessionNo,
 		UserId:    in.UserId,
 		UserName:  "",

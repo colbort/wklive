@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	"wklive/common/mq/kafka"
 	"wklive/services/chat/internal/config"
 	"wklive/services/chat/models"
 
@@ -28,6 +29,8 @@ type ServiceContext struct {
 	ChatWorkOrderModel    models.TChatWorkOrderModel
 	ChatMessageFactory    *models.ChatMessageModelFactory
 	BusRedis              *redis.Redis
+	MQPublisher           *mq.Publisher
+	ChatEventHub          *ChatEventHub
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -42,6 +45,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		}
 	}
 
+	eventHub := NewChatEventHub()
 	svcCtx := &ServiceContext{
 		Config:                c,
 		DB:                    conn,
@@ -58,7 +62,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ChatWorkOrderModel:    models.NewTChatWorkOrderModel(conn, c.CacheRedis),
 		ChatMessageFactory:    models.NewChatMessageModelFactory(c.Mongo.Url, c.Mongo.Db),
 		BusRedis:              busRedis,
+		MQPublisher:           mq.MustNewPublisher(c.MQ),
+		ChatEventHub:          eventHub,
 	}
+	eventHub.Start(context.Background(), c.MQ)
 
 	return svcCtx
 }

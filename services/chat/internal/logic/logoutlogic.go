@@ -67,7 +67,7 @@ func (l *LogoutLogic) autoOfflineAgent(user *models.TChatUser) error {
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, agent); err != nil {
 		return err
 	}
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventAgentLeave, &chat.ChatWsResponse_Agent{Agent: &chat.ChatAgentPayload{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAdminEventChannel, ih.PublishEventAgentLeave, &chat.ChatWsResponse_Agent{Agent: &chat.ChatAgentPayload{
 		SessionNo:     "",
 		AgentId:       agent.Id,
 		AgentName:     user.Nickname,

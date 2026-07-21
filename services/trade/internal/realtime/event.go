@@ -2,8 +2,7 @@ package realtime
 
 import (
 	"context"
-
-	bus "wklive/common/bus/redis"
+	"wklive/common/mq/kafka"
 )
 
 const Channel = "trade:domain-events"
@@ -33,6 +32,6 @@ type Event struct {
 	Payload    string `json:"payload,omitempty"`
 }
 
-func Publish(ctx context.Context, publisher *bus.Publisher, event Event) error {
+func Publish(ctx context.Context, publisher *mq.Publisher, event Event) error {
 	return publisher.Publish(ctx, Channel, event)
 }

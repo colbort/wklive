@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	bus "wklive/common/bus/redis"
+	"wklive/common/mq/kafka"
 	"wklive/proto/option"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
@@ -39,7 +39,7 @@ type ServiceContext struct {
 	MarketDataCache             *icache.MarketDataCache
 	BusRedis                    *redis.Client
 	LockRedis                   *redis.Client
-	TaskSubscriber              *bus.Subscriber
+	TaskSubscriber              *mq.Subscriber
 	Cache                       cache.Cache
 	Factory                     *models.CoinKlineModelFactory
 	Writer                      *klinewriter.BatchWriter
@@ -122,7 +122,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:       0,
 	})
 	marketDataCache := icache.NewMarketDataCache(busRedis)
-	taskSubscriber := bus.NewSubscriberFromRedisConf(c.CacheRedis[0].RedisConf)
+	taskSubscriber := mq.MustNewSubscriber(c.MQ, "itick-tasks")
 
 	// 这里不能 defer Close，不然函数返回后 Redis 连接就被关掉了
 	// defer rdb.Close()

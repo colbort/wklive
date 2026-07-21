@@ -109,7 +109,7 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 		"amount":   in.Amount,
 		"currency": in.Currency,
 	}
-	if err := notify.Publish(l.ctx, l.svcCtx.Redis, event); err != nil {
+	if err := notify.Publish(l.ctx, l.svcCtx.MQPublisher, event); err != nil {
 		l.Errorf("publish admin withdraw notification failed, orderNo=%s err=%v", orderNo, err)
 	}
 

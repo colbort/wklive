@@ -67,7 +67,7 @@ func (l *AcceptChatSessionLogic) AcceptChatSession(in *chat.AcceptChatSessionReq
 		Remark:        firstNonEmpty(in.GetReason(), "accept"),
 		ActionTime:    utils.NowMillis(),
 	}
-	err = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAppEventChannel, ih.PublishEventAgentAccepted, &chat.ChatWsResponse_Agent{Agent: payload})
+	err = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAppEventChannel, ih.PublishEventAgentAccepted, &chat.ChatWsResponse_Agent{Agent: payload})
 	if err != nil {
 		return &chat.AcceptChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}

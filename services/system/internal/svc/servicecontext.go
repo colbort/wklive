@@ -1,7 +1,7 @@
 package svc
 
 import (
-	bus "wklive/common/bus/redis"
+	"wklive/common/mq/kafka"
 	"wklive/services/chat/chatinternal"
 	"wklive/services/system/internal/config"
 	"wklive/services/system/internal/plugins/cronx"
@@ -20,7 +20,7 @@ type ServiceContext struct {
 	DB                          sqlx.SqlConn
 	Cache                       cache.Cache
 	Cron                        *cronx.CronManager
-	TaskPublisher               *bus.Publisher
+	TaskPublisher               *mq.Publisher
 	UserModel                   models.SysUserModel
 	RoleModel                   models.SysRoleModel
 	MenuModel                   models.SysMenuModel
@@ -39,7 +39,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	taskPublisher := bus.NewPublisherFromRedisConf(c.CacheRedis[0].RedisConf)
+	taskPublisher := mq.MustNewPublisher(c.MQ)
 	tasks.InitTaskPublisher(taskPublisher)
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)

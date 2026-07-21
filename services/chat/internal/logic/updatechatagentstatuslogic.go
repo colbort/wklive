@@ -49,7 +49,7 @@ func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAg
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, data); err != nil {
 		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.BusRedis, chat.ChatAdminEventChannel, ih.PublishEventSystemNotice, &chat.ChatWsResponse_SystemNotice{SystemNotice: &chat.ChatSystemNoticePayload{
+	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAdminEventChannel, ih.PublishEventSystemNotice, &chat.ChatWsResponse_SystemNotice{SystemNotice: &chat.ChatSystemNoticePayload{
 		SessionNo:  "",
 		Title:      "坐席状态变更",
 		Content:    "坐席状态已变更为 " + in.GetStatus().String(),

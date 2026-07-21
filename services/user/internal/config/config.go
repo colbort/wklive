@@ -1,6 +1,8 @@
 package config
 
 import (
+	"wklive/common/mq/kafka"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -22,4 +24,5 @@ type Config struct {
 		ExpireSeconds int64
 	} `json:"GuestTransfer" yaml:"GuestTransfer"`
 	SystemRpc zrpc.RpcClientConf
+	MQ        mq.Config
 }

@@ -10,6 +10,7 @@ require (
 	github.com/nacos-group/nacos-sdk-go v1.1.6
 	github.com/pquerna/otp v1.5.0
 	github.com/redis/go-redis/v9 v9.20.1
+	github.com/segmentio/kafka-go v0.4.51
 	github.com/shopspring/decimal v1.4.0
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.74
@@ -59,6 +60,7 @@ require (
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.3.1 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
+	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect

@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
+	"wklive/common/mq/kafka"
 	"wklive/common/utils"
 	"wklive/proto/chat"
 
-	"github.com/zeromicro/go-zero/core/stores/redis"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func PublishMessageEvent[P any](ctx context.Context, busRedis *redis.Redis, channel string, eventType publishEventType[P], payload P) error {
+func PublishMessageEvent[P any](ctx context.Context, publisher *mq.Publisher, channel string, eventType publishEventType[P], payload P) error {
 	createdAt := utils.NowMillis()
 
 	event := &chat.ChatWsResponse{
@@ -30,11 +30,7 @@ func PublishMessageEvent[P any](ctx context.Context, busRedis *redis.Redis, chan
 		return err
 	}
 
-	if _, err := busRedis.PublishCtx(ctx, channel, string(payloadBytes)); err != nil {
-		return err
-	}
-
-	return nil
+	return publisher.Publish(ctx, channel, payloadBytes)
 }
 
 func setPayload(event *chat.ChatWsResponse, payload any) error {
