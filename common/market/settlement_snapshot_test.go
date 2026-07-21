@@ -73,6 +73,56 @@ func TestAuthoritativeQuoteHandlerFailureDoesNotPublishRealtimeCache(t *testing.
 	}
 }
 
+func TestAuthoritativeSnapshotIndexSeparatesKinds(t *testing.T) {
+	server := miniredis.RunT(t)
+	client := redis.NewClient(&redis.Options{Addr: server.Addr()})
+	cache := NewMarketDataCache(client)
+	ctx := context.Background()
+	msg := ClientMessage{Topic: TopicQuote, CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT"}
+	for _, snapshot := range []*SettlementSnapshot{
+		{SnapshotID: "mark-1", Authority: "price-engine", Kind: "MARK", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT", Price: "100", SourceTimestamp: 1000, SnapshotTimestamp: 1001, Revision: 1000, Confirmed: true},
+		{SnapshotID: "funding-1", Authority: "price-engine", Kind: "FUNDING", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT", Price: "0.001", SourceTimestamp: 1100, SnapshotTimestamp: 1101, Revision: 1100, Confirmed: true},
+	} {
+		if err := cache.PublishAuthoritativeSnapshot(ctx, snapshot); err != nil {
+			t.Fatal(err)
+		}
+	}
+	mark, err := cache.FindAuthoritativeSnapshotAt(ctx, msg, "price-engine", "MARK", 1200, time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	funding, err := cache.FindAuthoritativeSnapshotAt(ctx, msg, "price-engine", "FUNDING", 1200, time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mark.SnapshotID != "mark-1" || funding.SnapshotID != "funding-1" {
+		t.Fatalf("snapshot kinds crossed indexes: mark=%s funding=%s", mark.SnapshotID, funding.SnapshotID)
+	}
+}
+
+func TestAuthoritativeSnapshotSelectsHighestRevisionAtSameSourceTime(t *testing.T) {
+	server := miniredis.RunT(t)
+	client := redis.NewClient(&redis.Options{Addr: server.Addr()})
+	cache := NewMarketDataCache(client)
+	ctx := context.Background()
+	msg := ClientMessage{Topic: TopicQuote, CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT"}
+	for _, snapshot := range []*SettlementSnapshot{
+		{SnapshotID: "mark-rev-1", Authority: "price-engine", Kind: "MARK", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT", Price: "100", SourceTimestamp: 1000, SnapshotTimestamp: 1001, Revision: 1, Confirmed: true},
+		{SnapshotID: "mark-rev-2", Authority: "price-engine", Kind: "MARK", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT", Price: "101", SourceTimestamp: 1000, SnapshotTimestamp: 1002, Revision: 2, Confirmed: true},
+	} {
+		if err := cache.PublishAuthoritativeSnapshot(ctx, snapshot); err != nil {
+			t.Fatal(err)
+		}
+	}
+	got, err := cache.FindAuthoritativeSnapshotAt(ctx, msg, "price-engine", "MARK", 1000, time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.SnapshotID != "mark-rev-2" {
+		t.Fatalf("expected highest revision, got %s", got.SnapshotID)
+	}
+}
+
 func TestAuthoritativeQuoteRejectsDatabasePrecisionOverflow(t *testing.T) {
 	msg := ClientMessage{Topic: TopicQuote, CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT"}
 	for _, price := range []string{"1.1234567890123456789012345678901", "123456789012345678901234567890123456"} {

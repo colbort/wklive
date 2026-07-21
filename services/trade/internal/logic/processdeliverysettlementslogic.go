@@ -175,18 +175,39 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 			}
 			fee := roundContractDebit(values.SettlementNotional.Mul(c.DeliveryFeeRate))
 			settlementNo := fmt.Sprintf("%s-%d", batchNo, locked.Id)
-			if _, err = sm.Insert(ctx, &models.TContractDeliverySettlement{TenantId: locked.TenantId, SettlementNo: settlementNo, BatchId: batchID, BatchNo: batchNo, SymbolId: locked.SymbolId, UserId: locked.UserId, PositionId: locked.Id, PositionSide: locked.PositionSide, SettlementPrice: price, PositionQty: locked.Qty, RealizedPnl: pnl, DeliveryFee: fee, SettleAsset: locked.MarginAsset, DeliveryTime: c.DeliveryTime, Status: int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
+			steps := deliveryAssetSteps(locked.PositionMargin.Add(locked.IsolatedMargin), pnl, fee)
+			settlement := &models.TContractDeliverySettlement{TenantId: locked.TenantId, SettlementNo: settlementNo, BatchId: batchID, BatchNo: batchNo, SymbolId: locked.SymbolId, UserId: locked.UserId, PositionId: locked.Id, PositionSide: locked.PositionSide, SettlementPrice: price, PositionQty: locked.Qty, RealizedPnl: pnl, DeliveryFee: fee, SettleAsset: locked.MarginAsset, DeliveryTime: c.DeliveryTime, Status: int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}
+			if len(steps) == 0 {
+				settlement.Status = int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_SETTLED)
+				settlement.SettledAt = now
+				settlement.NextRetryAt = 0
+			}
+			if _, err = sm.Insert(ctx, settlement); err != nil {
 				return err
 			}
-			steps := deliveryAssetSteps(locked.PositionMargin.Add(locked.IsolatedMargin), pnl, fee)
 			for _, step := range steps {
 				if err = insertSettlementInstructionIdempotent(ctx, im, &models.TTradeSettlementInstruction{TenantId: locked.TenantId, InstructionNo: settlementNo + "-" + step.suffix, BizType: "delivery", BizId: settlementNo, BatchNo: batchNo, PositionId: locked.Id, UserId: locked.UserId, Action: int64(step.action), Asset: locked.MarginAsset, Amount: step.amount, StepNo: step.stepNo, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}); err != nil {
 					return err
 				}
 			}
+			before := cloneContractPosition(locked)
 			locked.Status = int64(trade.PositionStatus_POSITION_STATUS_DELIVERING)
-			locked.Version++
-			locked.UpdateTimes = now
+			if len(steps) == 0 {
+				locked.Qty, locked.AvailQty, locked.FrozenQty = decimal.Zero, decimal.Zero, decimal.Zero
+				locked.PositionMargin, locked.IsolatedMargin, locked.MaintenanceMargin = decimal.Zero, decimal.Zero, decimal.Zero
+				locked.UnrealizedPnl = decimal.Zero
+				locked.RealizedPnl = locked.RealizedPnl.Add(pnl)
+				locked.Status = int64(trade.PositionStatus_POSITION_STATUS_CLOSED)
+				locked.ClosedAt = now
+				locked.Version++
+				locked.UpdateTimes = now
+				if err = writeSystemPositionHistory(ctx, models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis), before, locked, settlementNo, trade.PositionActionType_POSITION_ACTION_TYPE_SETTLEMENT, pnl, fee, price, "delivery settlement without asset step"); err != nil {
+					return err
+				}
+			} else {
+				locked.Version++
+				locked.UpdateTimes = now
+			}
 			if err := pm.Update(ctx, locked); err != nil {
 				return err
 			}

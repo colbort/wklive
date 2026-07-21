@@ -26,6 +26,23 @@ func NewProcessLiquidationsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	return &ProcessLiquidationsLogic{ctx: ctx, svcCtx: svcCtx}
 }
 
+// RecoverADLExecutions resumes durable ADL asset-position sagas independently
+// of the liquidation trigger path. It is safe to run concurrently: the asset
+// instruction lease and the final execution row lock provide serialization.
+func (l *ProcessLiquidationsLogic) RecoverADLExecutions(limit int64) error {
+	rows, err := l.svcCtx.ContractAdlExecutionModel.FindRecoverable(l.ctx, limit)
+	if err != nil {
+		return err
+	}
+	var firstErr error
+	for _, execution := range rows {
+		if err = l.runADLExecution(execution); err != nil && firstErr == nil {
+			firstErr = err
+		}
+	}
+	return firstErr
+}
+
 func (l *ProcessLiquidationsLogic) ProcessPosition(positionID int64) error {
 	position, err := l.svcCtx.ContractPositionModel.FindOne(l.ctx, positionID)
 	if err != nil {

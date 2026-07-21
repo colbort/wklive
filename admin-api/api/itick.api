@@ -419,6 +419,107 @@ type InitTenantItickDisplayResp {
 	data InitTenantItickDisplayData `json:"data"`
 }
 
+type PriceFormulaComponent {
+	authority    string `json:"authority"`
+	snapshotKind string `json:"snapshotKind"`
+	categoryCode string `json:"categoryCode,optional"`
+	market       string `json:"market,optional"`
+	symbol       string `json:"symbol"`
+	weight       string `json:"weight"`
+}
+
+type CreatePriceFormulaReq {
+	formulaNo       string                  `json:"formulaNo"`
+	authority       string                  `json:"authority"`
+	snapshotKind    string                  `json:"snapshotKind"`
+	categoryCode    string                  `json:"categoryCode,optional"`
+	market          string                  `json:"market,optional"`
+	symbol          string                  `json:"symbol"`
+	algorithm       string                  `json:"algorithm"`
+	formulaVersion  string                  `json:"formulaVersion"`
+	components      []PriceFormulaComponent `json:"components"`
+	maxLookbackMs   int64                   `json:"maxLookbackMs"`
+	maxDeviationBps int64                   `json:"maxDeviationBps"`
+	intervalMs      int64                   `json:"intervalMs"`
+	activate        bool                    `json:"activate"`
+}
+
+type PriceFormulaReq {
+	id int64 `path:"id"`
+}
+
+type ChangePriceFormulaStatusReq {
+	id     int64 `path:"id"`
+	status int32 `json:"status"`
+}
+
+type ListPriceFormulasReq {
+	PageReq
+	authority    string `json:"authority,optional"`
+	snapshotKind string `json:"snapshotKind,optional"`
+	categoryCode string `json:"categoryCode,optional"`
+	market       string `json:"market,optional"`
+	symbol       string `json:"symbol,optional"`
+	status       int32  `json:"status,optional"`
+}
+
+type PriceFormulaData {
+	id              int64                   `json:"id"`
+	formulaNo       string                  `json:"formulaNo"`
+	authority       string                  `json:"authority"`
+	snapshotKind    string                  `json:"snapshotKind"`
+	categoryCode    string                  `json:"categoryCode"`
+	market          string                  `json:"market"`
+	symbol          string                  `json:"symbol"`
+	algorithm       string                  `json:"algorithm"`
+	formulaVersion  string                  `json:"formulaVersion"`
+	components      []PriceFormulaComponent `json:"components"`
+	maxLookbackMs   int64                   `json:"maxLookbackMs"`
+	maxDeviationBps int64                   `json:"maxDeviationBps"`
+	intervalMs      int64                   `json:"intervalMs"`
+	lastTargetTime  int64                   `json:"lastTargetTime"`
+	status          int32                   `json:"status"`
+	version         int64                   `json:"version"`
+	createTimes     int64                   `json:"createTimes"`
+	updateTimes     int64                   `json:"updateTimes"`
+}
+
+type PriceFormulaResp {
+	RespBase
+	data PriceFormulaData `json:"data"`
+}
+
+type ListPriceFormulasResp {
+	RespBase
+	data []PriceFormulaData `json:"data"`
+}
+
+type ListSnapshotOutboxReq {
+	PageReq
+	status     int32  `json:"status,optional"`
+	snapshotId string `json:"snapshotId,optional"`
+}
+
+type SnapshotOutboxData {
+	id           int64  `json:"id"`
+	snapshotId   string `json:"snapshotId"`
+	status       int32  `json:"status"`
+	retryCount   int64  `json:"retryCount"`
+	nextRetryAt  int64  `json:"nextRetryAt"`
+	lastErrorMsg string `json:"lastErrorMsg"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
+}
+
+type ListSnapshotOutboxResp {
+	RespBase
+	data []SnapshotOutboxData `json:"data"`
+}
+
+type RetrySnapshotOutboxReq {
+	id int64 `path:"id"`
+}
+
 @server (
 	prefix: /admin/itick
 	group:  itick
@@ -516,5 +617,18 @@ service admin {
 	// 初始化租户展示配置
 	@handler InitTenantItickDisplay
 	post /tenant-display/init (InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp)
-}
 
+	@handler CreatePriceFormula
+	post /price-formulas (CreatePriceFormulaReq) returns (PriceFormulaResp)
+	@handler GetPriceFormula
+	get /price-formulas/:id (PriceFormulaReq) returns (PriceFormulaResp)
+	@handler ListPriceFormulas
+	get /price-formulas (ListPriceFormulasReq) returns (ListPriceFormulasResp)
+	@handler ChangePriceFormulaStatus
+	put /price-formulas/:id/status (ChangePriceFormulaStatusReq) returns (RespBase)
+
+	@handler ListSnapshotOutbox
+	get /snapshot-outbox (ListSnapshotOutboxReq) returns (ListSnapshotOutboxResp)
+	@handler RetrySnapshotOutbox
+	post /snapshot-outbox/:id/retry (RetrySnapshotOutboxReq) returns (RespBase)
+}

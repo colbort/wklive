@@ -42,6 +42,12 @@ const (
 	ItickAdmin_BatchUpsertTenantProducts_FullMethodName   = "/itick.ItickAdmin/BatchUpsertTenantProducts"
 	ItickAdmin_GetTenantProduct_FullMethodName            = "/itick.ItickAdmin/GetTenantProduct"
 	ItickAdmin_InitTenantItickDisplay_FullMethodName      = "/itick.ItickAdmin/InitTenantItickDisplay"
+	ItickAdmin_CreatePriceFormula_FullMethodName          = "/itick.ItickAdmin/CreatePriceFormula"
+	ItickAdmin_GetPriceFormula_FullMethodName             = "/itick.ItickAdmin/GetPriceFormula"
+	ItickAdmin_ListPriceFormulas_FullMethodName           = "/itick.ItickAdmin/ListPriceFormulas"
+	ItickAdmin_ChangePriceFormulaStatus_FullMethodName    = "/itick.ItickAdmin/ChangePriceFormulaStatus"
+	ItickAdmin_ListSnapshotOutbox_FullMethodName          = "/itick.ItickAdmin/ListSnapshotOutbox"
+	ItickAdmin_RetrySnapshotOutbox_FullMethodName         = "/itick.ItickAdmin/RetrySnapshotOutbox"
 )
 
 // ItickAdminClient is the client API for ItickAdmin service.
@@ -98,6 +104,13 @@ type ItickAdminClient interface {
 	GetTenantProduct(ctx context.Context, in *GetTenantProductReq, opts ...grpc.CallOption) (*GetTenantProductResp, error)
 	// 初始化租户展示配置
 	InitTenantItickDisplay(ctx context.Context, in *InitTenantItickDisplayReq, opts ...grpc.CallOption) (*InitTenantItickDisplayResp, error)
+	// Price Engine 公式内容不可原地修改，变更必须创建新版本。
+	CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
+	GetPriceFormula(ctx context.Context, in *PriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
+	ListPriceFormulas(ctx context.Context, in *ListPriceFormulasReq, opts ...grpc.CallOption) (*ListPriceFormulasResp, error)
+	ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	ListSnapshotOutbox(ctx context.Context, in *ListSnapshotOutboxReq, opts ...grpc.CallOption) (*ListSnapshotOutboxResp, error)
+	RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 }
 
 type itickAdminClient struct {
@@ -338,6 +351,66 @@ func (c *itickAdminClient) InitTenantItickDisplay(ctx context.Context, in *InitT
 	return out, nil
 }
 
+func (c *itickAdminClient) CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PriceFormulaResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_CreatePriceFormula_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *itickAdminClient) GetPriceFormula(ctx context.Context, in *PriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PriceFormulaResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_GetPriceFormula_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *itickAdminClient) ListPriceFormulas(ctx context.Context, in *ListPriceFormulasReq, opts ...grpc.CallOption) (*ListPriceFormulasResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPriceFormulasResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_ListPriceFormulas_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *itickAdminClient) ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_ChangePriceFormulaStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *itickAdminClient) ListSnapshotOutbox(ctx context.Context, in *ListSnapshotOutboxReq, opts ...grpc.CallOption) (*ListSnapshotOutboxResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSnapshotOutboxResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_ListSnapshotOutbox_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *itickAdminClient) RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_RetrySnapshotOutbox_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ItickAdminServer is the server API for ItickAdmin service.
 // All implementations must embed UnimplementedItickAdminServer
 // for forward compatibility.
@@ -392,6 +465,13 @@ type ItickAdminServer interface {
 	GetTenantProduct(context.Context, *GetTenantProductReq) (*GetTenantProductResp, error)
 	// 初始化租户展示配置
 	InitTenantItickDisplay(context.Context, *InitTenantItickDisplayReq) (*InitTenantItickDisplayResp, error)
+	// Price Engine 公式内容不可原地修改，变更必须创建新版本。
+	CreatePriceFormula(context.Context, *CreatePriceFormulaReq) (*PriceFormulaResp, error)
+	GetPriceFormula(context.Context, *PriceFormulaReq) (*PriceFormulaResp, error)
+	ListPriceFormulas(context.Context, *ListPriceFormulasReq) (*ListPriceFormulasResp, error)
+	ChangePriceFormulaStatus(context.Context, *ChangePriceFormulaStatusReq) (*AdminCommonResp, error)
+	ListSnapshotOutbox(context.Context, *ListSnapshotOutboxReq) (*ListSnapshotOutboxResp, error)
+	RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*AdminCommonResp, error)
 	mustEmbedUnimplementedItickAdminServer()
 }
 
@@ -470,6 +550,24 @@ func (UnimplementedItickAdminServer) GetTenantProduct(context.Context, *GetTenan
 }
 func (UnimplementedItickAdminServer) InitTenantItickDisplay(context.Context, *InitTenantItickDisplayReq) (*InitTenantItickDisplayResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method InitTenantItickDisplay not implemented")
+}
+func (UnimplementedItickAdminServer) CreatePriceFormula(context.Context, *CreatePriceFormulaReq) (*PriceFormulaResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePriceFormula not implemented")
+}
+func (UnimplementedItickAdminServer) GetPriceFormula(context.Context, *PriceFormulaReq) (*PriceFormulaResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPriceFormula not implemented")
+}
+func (UnimplementedItickAdminServer) ListPriceFormulas(context.Context, *ListPriceFormulasReq) (*ListPriceFormulasResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPriceFormulas not implemented")
+}
+func (UnimplementedItickAdminServer) ChangePriceFormulaStatus(context.Context, *ChangePriceFormulaStatusReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ChangePriceFormulaStatus not implemented")
+}
+func (UnimplementedItickAdminServer) ListSnapshotOutbox(context.Context, *ListSnapshotOutboxReq) (*ListSnapshotOutboxResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListSnapshotOutbox not implemented")
+}
+func (UnimplementedItickAdminServer) RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method RetrySnapshotOutbox not implemented")
 }
 func (UnimplementedItickAdminServer) mustEmbedUnimplementedItickAdminServer() {}
 func (UnimplementedItickAdminServer) testEmbeddedByValue()                    {}
@@ -906,6 +1004,114 @@ func _ItickAdmin_InitTenantItickDisplay_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ItickAdmin_CreatePriceFormula_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePriceFormulaReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).CreatePriceFormula(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_CreatePriceFormula_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).CreatePriceFormula(ctx, req.(*CreatePriceFormulaReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ItickAdmin_GetPriceFormula_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PriceFormulaReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).GetPriceFormula(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_GetPriceFormula_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).GetPriceFormula(ctx, req.(*PriceFormulaReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ItickAdmin_ListPriceFormulas_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPriceFormulasReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).ListPriceFormulas(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_ListPriceFormulas_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).ListPriceFormulas(ctx, req.(*ListPriceFormulasReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ItickAdmin_ChangePriceFormulaStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangePriceFormulaStatusReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).ChangePriceFormulaStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_ChangePriceFormulaStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).ChangePriceFormulaStatus(ctx, req.(*ChangePriceFormulaStatusReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ItickAdmin_ListSnapshotOutbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSnapshotOutboxReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).ListSnapshotOutbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_ListSnapshotOutbox_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).ListSnapshotOutbox(ctx, req.(*ListSnapshotOutboxReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ItickAdmin_RetrySnapshotOutbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RetrySnapshotOutboxReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).RetrySnapshotOutbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_RetrySnapshotOutbox_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).RetrySnapshotOutbox(ctx, req.(*RetrySnapshotOutboxReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ItickAdmin_ServiceDesc is the grpc.ServiceDesc for ItickAdmin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1004,6 +1210,30 @@ var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InitTenantItickDisplay",
 			Handler:    _ItickAdmin_InitTenantItickDisplay_Handler,
+		},
+		{
+			MethodName: "CreatePriceFormula",
+			Handler:    _ItickAdmin_CreatePriceFormula_Handler,
+		},
+		{
+			MethodName: "GetPriceFormula",
+			Handler:    _ItickAdmin_GetPriceFormula_Handler,
+		},
+		{
+			MethodName: "ListPriceFormulas",
+			Handler:    _ItickAdmin_ListPriceFormulas_Handler,
+		},
+		{
+			MethodName: "ChangePriceFormulaStatus",
+			Handler:    _ItickAdmin_ChangePriceFormulaStatus_Handler,
+		},
+		{
+			MethodName: "ListSnapshotOutbox",
+			Handler:    _ItickAdmin_ListSnapshotOutbox_Handler,
+		},
+		{
+			MethodName: "RetrySnapshotOutbox",
+			Handler:    _ItickAdmin_RetrySnapshotOutbox_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

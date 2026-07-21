@@ -52,6 +52,8 @@ func main() {
 	svcCtx.MarketDataCache.SetKlineStaleTTL(time.Duration(svcCtx.ItickRuntimeConfig.WsKlineStaleSeconds) * time.Second)
 	tasks.StartTaskSubscriber(ctx, svcCtx)
 	tasks.StartSnapshotOutbox(ctx, svcCtx)
+	tasks.StartAuthoritativeSnapshotRebuild(ctx, svcCtx)
+	tasks.StartPriceEngine(ctx, svcCtx.PriceEngine)
 	holidaySync := calendar.NewHolidaySyncService(ctx, c.Itick.ApiUrl, svcCtx.ItickRestClient,
 		svcCtx.MarketCalendarModel, svcCtx.MarketHolidayModel, svcCtx.MarketCalendarResolver,
 		utils.NewRedisLock(svcCtx.LockRedis), 24*time.Hour)

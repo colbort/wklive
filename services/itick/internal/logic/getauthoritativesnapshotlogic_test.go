@@ -22,6 +22,10 @@ type authoritativeSnapshotModelStub struct {
 	kind      string
 }
 
+func (s *authoritativeSnapshotModelStub) FindAfterID(context.Context, int64, int64) ([]*models.TItickAuthoritativeSnapshot, error) {
+	return nil, nil
+}
+
 type authorityRegistryModelStub struct {
 	row *models.TItickAuthorityRegistry
 }

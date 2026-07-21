@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	cache "wklive/common/market"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/common"
-	"wklive/proto/itick"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -302,30 +302,52 @@ func (l *ProcessSecondsSettlementsLogic) getOneValidQuote(kind, source string, s
 	if validity <= 0 {
 		validity = 30_000
 	}
-	if l.svcCtx.ItickClient == nil {
-		return nil, errors.New("authoritative market archive client is unavailable")
-	}
+	snapshotKind := archiveSnapshotKind(kind)
 	authority := strings.TrimSpace(l.svcCtx.Config.MarketAuthority)
+	if snapshotKind != "FINAL_QUOTE" {
+		authority = strings.TrimSpace(l.svcCtx.Config.PriceEngineAuthority)
+	}
 	if authority == "" {
 		return nil, errors.New("market authority is not configured")
 	}
-	resp, err := l.svcCtx.ItickClient.GetAuthoritativeSnapshot(l.ctx, &itick.GetAuthoritativeSnapshotReq{Authority: authority, SnapshotKind: "FINAL_QUOTE", CategoryCode: category, Market: market, Symbol: symbol, TargetTime: targetTime, MaxLookbackMs: validity})
+	s, err := l.svcCtx.MarketDataCache.FindAuthoritativeSnapshotAt(l.ctx, cache.ClientMessage{Topic: cache.TopicQuote, CategoryCode: category, Market: market, Symbol: symbol}, authority, snapshotKind, targetTime, time.Duration(validity)*time.Millisecond)
 	if err != nil {
 		return nil, err
 	}
-	if resp == nil || resp.GetBase() == nil || resp.GetBase().GetCode() != 200 || resp.GetData() == nil {
-		return nil, errors.New("authoritative market archive rejected query")
-	}
-	d := resp.GetData()
-	s := &cache.SettlementSnapshot{SnapshotID: d.SnapshotId, Kind: d.SnapshotKind, CategoryCode: d.CategoryCode, Market: d.Market, Symbol: d.Symbol, Price: d.Price, Source: d.Market, SourceTimestamp: d.SourceTimestamp, SnapshotTimestamp: d.SnapshotTimestamp, Revision: d.Revision, FormulaVersion: d.FormulaVersion, Authority: d.Authority, Confirmed: true}
 	if err = persistMarketSnapshot(l.ctx, l.svcCtx.TradeMarketSnapshotModel, tradeSymbol.TenantId, symbolID, s); err != nil {
 		return nil, err
 	}
 	q := &marketQuoteSnapshot{Category: category, Market: market, Symbol: symbol, LastPrice: s.Price, QuoteTs: s.SourceTimestamp, ReceivedAt: s.SnapshotTimestamp, SnapshotID: s.SnapshotID, Revision: s.Revision, Confirmed: s.Confirmed}
-	if quoteIsValidAt(q, targetTime, validity) {
+	if quoteIsValidAtKind(q, targetTime, validity, snapshotKind) {
 		return q, nil
 	}
 	return nil, fmt.Errorf("market quote cache miss: source=%s", source)
+}
+
+func archiveSnapshotKind(kind string) string {
+	switch strings.ToUpper(strings.TrimSpace(kind)) {
+	case "MARK_PRICE", "MARK":
+		return "MARK"
+	case "INDEX_PRICE", "INDEX":
+		return "INDEX"
+	case "FUNDING_RATE", "FUNDING":
+		return "FUNDING"
+	case "DELIVERY_PRICE", "DELIVERY":
+		return "DELIVERY"
+	default:
+		return "FINAL_QUOTE"
+	}
+}
+
+func quoteIsValidAtKind(q *marketQuoteSnapshot, targetTime, validity int64, kind string) bool {
+	if q == nil || !q.Confirmed || q.SnapshotID == "" || q.QuoteTs <= 0 || q.QuoteTs > targetTime || validity > 0 && targetTime-q.QuoteTs > validity {
+		return false
+	}
+	value := mustParseFloat(q.LastPrice)
+	if kind == "FUNDING" {
+		return !value.IsZero() || strings.TrimSpace(q.LastPrice) == "0"
+	}
+	return value.IsPositive()
 }
 
 func persistMarketSnapshot(ctx context.Context, model models.TTradeMarketSnapshotModel, tenantID, symbolID int64, s *cache.SettlementSnapshot) error {

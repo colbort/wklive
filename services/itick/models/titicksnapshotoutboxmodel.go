@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -20,6 +21,8 @@ type (
 		Claim(context.Context, int64, int64) (bool, error)
 		MarkSuccess(context.Context, int64, int64) error
 		MarkFailure(context.Context, int64, string, int64) error
+		FindPage(context.Context, int64, string, int64, int64) ([]*TItickSnapshotOutbox, int64, error)
+		RetryFailed(context.Context, int64, int64) error
 	}
 
 	customTItickSnapshotOutboxModel struct {
@@ -32,6 +35,52 @@ func NewTItickSnapshotOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	return &customTItickSnapshotOutboxModel{
 		defaultTItickSnapshotOutboxModel: newTItickSnapshotOutboxModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTItickSnapshotOutboxModel) FindPage(ctx context.Context, status int64, snapshotID string, cursor, limit int64) ([]*TItickSnapshotOutbox, int64, error) {
+	if limit <= 0 || limit > 200 {
+		limit = 50
+	}
+	where, args := "id>?", []any{cursor}
+	countWhere, countArgs := "id>0", []any{}
+	if status > 0 {
+		where, countWhere = where+" AND status=?", countWhere+" AND status=?"
+		args, countArgs = append(args, status), append(countArgs, status)
+	}
+	if snapshotID != "" {
+		where, countWhere = where+" AND snapshot_id=?", countWhere+" AND snapshot_id=?"
+		args, countArgs = append(args, snapshotID), append(countArgs, snapshotID)
+	}
+	var total int64
+	if err := m.QueryRowNoCacheCtx(ctx, &total, "SELECT COUNT(1) FROM t_itick_snapshot_outbox WHERE "+countWhere, countArgs...); err != nil {
+		return nil, 0, err
+	}
+	args = append(args, limit)
+	var rows []*TItickSnapshotOutbox
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tItickSnapshotOutboxRows+" FROM t_itick_snapshot_outbox WHERE "+where+" ORDER BY id LIMIT ?", args...)
+	return rows, total, err
+}
+
+func (m *defaultTItickSnapshotOutboxModel) RetryFailed(ctx context.Context, id, now int64) error {
+	row, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=1,next_retry_at=?,last_error_msg='',update_times=? WHERE id=? AND status IN (4,5)", now, now, id)
+	if err != nil {
+		return err
+	}
+	changed, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if changed != 1 {
+		return sql.ErrNoRows
+	}
+	return m.DelCacheCtx(ctx,
+		fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxIdPrefix, row.Id),
+		fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxSnapshotIdPrefix, row.SnapshotId),
+	)
 }
 
 func (m *defaultTItickSnapshotOutboxModel) FindPending(ctx context.Context, now, limit int64) ([]*TItickSnapshotOutbox, error) {

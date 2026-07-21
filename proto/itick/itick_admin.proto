@@ -305,6 +305,107 @@ message InitTenantItickDisplayData {
 }
 
 // ====================
+// Versioned Price Engine formulas
+// ====================
+
+message PriceFormulaComponent {
+  string authority = 1;
+  string snapshot_kind = 2;
+  string category_code = 3;
+  string market = 4;
+  string symbol = 5;
+  string weight = 6;
+}
+
+message CreatePriceFormulaReq {
+  string formula_no = 1;
+  string authority = 2;
+  string snapshot_kind = 3;
+  string category_code = 4;
+  string market = 5;
+  string symbol = 6;
+  string algorithm = 7;
+  string formula_version = 8;
+  repeated PriceFormulaComponent components = 9;
+  int64 max_lookback_ms = 10;
+  int64 max_deviation_bps = 11;
+  int64 interval_ms = 12;
+  bool activate = 13;
+}
+
+message PriceFormulaReq { int64 id = 1; }
+
+message ChangePriceFormulaStatusReq {
+  int64 id = 1;
+  int32 status = 2; // 1 activate, 3 revoke; revoke is irreversible
+}
+
+message ListPriceFormulasReq {
+  common.PageReq page = 1;
+  string authority = 2;
+  string snapshot_kind = 3;
+  string category_code = 4;
+  string market = 5;
+  string symbol = 6;
+  int32 status = 7;
+}
+
+message PriceFormulaData {
+  int64 id = 1;
+  string formula_no = 2;
+  string authority = 3;
+  string snapshot_kind = 4;
+  string category_code = 5;
+  string market = 6;
+  string symbol = 7;
+  string algorithm = 8;
+  string formula_version = 9;
+  repeated PriceFormulaComponent components = 10;
+  int64 max_lookback_ms = 11;
+  int64 max_deviation_bps = 12;
+  int64 interval_ms = 13;
+  int64 last_target_time = 14;
+  int32 status = 15;
+  int64 version = 16;
+  int64 create_times = 17;
+  int64 update_times = 18;
+}
+
+message PriceFormulaResp {
+  common.RespBase base = 1;
+  PriceFormulaData data = 2;
+}
+
+message ListPriceFormulasResp {
+  common.RespBase base = 1;
+  repeated PriceFormulaData data = 2;
+}
+
+message ListSnapshotOutboxReq {
+  common.PageReq page = 1;
+  int32 status = 2;
+  string snapshot_id = 3;
+}
+
+message SnapshotOutboxData {
+  int64 id = 1;
+  string snapshot_id = 2;
+  int32 status = 3;
+  int64 retry_count = 4;
+  int64 next_retry_at = 5;
+  string last_error_msg = 6;
+  int64 create_times = 7;
+  int64 update_times = 8;
+}
+
+message ListSnapshotOutboxResp {
+  common.RespBase base = 1;
+  repeated SnapshotOutboxData data = 2;
+}
+
+message RetrySnapshotOutboxReq { int64 id = 1; }
+
+// ====================
 // admin service
 // ====================
 service ItickAdmin {
@@ -366,4 +467,14 @@ service ItickAdmin {
   // 初始化租户展示配置
   rpc InitTenantItickDisplay(InitTenantItickDisplayReq)
       returns (InitTenantItickDisplayResp);
+
+  // Price Engine 公式内容不可原地修改，变更必须创建新版本。
+  rpc CreatePriceFormula(CreatePriceFormulaReq) returns (PriceFormulaResp);
+  rpc GetPriceFormula(PriceFormulaReq) returns (PriceFormulaResp);
+  rpc ListPriceFormulas(ListPriceFormulasReq) returns (ListPriceFormulasResp);
+  rpc ChangePriceFormulaStatus(ChangePriceFormulaStatusReq)
+      returns (AdminCommonResp);
+  rpc ListSnapshotOutbox(ListSnapshotOutboxReq)
+      returns (ListSnapshotOutboxResp);
+  rpc RetrySnapshotOutbox(RetrySnapshotOutboxReq) returns (AdminCommonResp);
 }

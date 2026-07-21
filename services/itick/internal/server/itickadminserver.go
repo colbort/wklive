@@ -160,3 +160,34 @@ func (s *ItickAdminServer) InitTenantItickDisplay(ctx context.Context, in *itick
 	l := logic.NewInitTenantItickDisplayLogic(ctx, s.svcCtx)
 	return l.InitTenantItickDisplay(in)
 }
+
+// Price Engine 公式内容不可原地修改，变更必须创建新版本。
+func (s *ItickAdminServer) CreatePriceFormula(ctx context.Context, in *itick.CreatePriceFormulaReq) (*itick.PriceFormulaResp, error) {
+	l := logic.NewCreatePriceFormulaLogic(ctx, s.svcCtx)
+	return l.CreatePriceFormula(in)
+}
+
+func (s *ItickAdminServer) GetPriceFormula(ctx context.Context, in *itick.PriceFormulaReq) (*itick.PriceFormulaResp, error) {
+	l := logic.NewGetPriceFormulaLogic(ctx, s.svcCtx)
+	return l.GetPriceFormula(in)
+}
+
+func (s *ItickAdminServer) ListPriceFormulas(ctx context.Context, in *itick.ListPriceFormulasReq) (*itick.ListPriceFormulasResp, error) {
+	l := logic.NewListPriceFormulasLogic(ctx, s.svcCtx)
+	return l.ListPriceFormulas(in)
+}
+
+func (s *ItickAdminServer) ChangePriceFormulaStatus(ctx context.Context, in *itick.ChangePriceFormulaStatusReq) (*itick.AdminCommonResp, error) {
+	l := logic.NewChangePriceFormulaStatusLogic(ctx, s.svcCtx)
+	return l.ChangePriceFormulaStatus(in)
+}
+
+func (s *ItickAdminServer) ListSnapshotOutbox(ctx context.Context, in *itick.ListSnapshotOutboxReq) (*itick.ListSnapshotOutboxResp, error) {
+	l := logic.NewListSnapshotOutboxLogic(ctx, s.svcCtx)
+	return l.ListSnapshotOutbox(in)
+}
+
+func (s *ItickAdminServer) RetrySnapshotOutbox(ctx context.Context, in *itick.RetrySnapshotOutboxReq) (*itick.AdminCommonResp, error) {
+	l := logic.NewRetrySnapshotOutboxLogic(ctx, s.svcCtx)
+	return l.RetrySnapshotOutbox(in)
+}

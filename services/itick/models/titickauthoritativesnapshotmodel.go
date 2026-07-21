@@ -20,6 +20,7 @@ type (
 		InsertImmutable(context.Context, *TItickAuthoritativeSnapshot) error
 		InsertImmutableAndEnqueue(context.Context, *TItickAuthoritativeSnapshot, string) error
 		FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*TItickAuthoritativeSnapshot, error)
+		FindAfterID(context.Context, int64, int64) ([]*TItickAuthoritativeSnapshot, error)
 	}
 
 	customTItickAuthoritativeSnapshotModel struct {
@@ -32,6 +33,15 @@ func NewTItickAuthoritativeSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, o
 	return &customTItickAuthoritativeSnapshotModel{
 		defaultTItickAuthoritativeSnapshotModel: newTItickAuthoritativeSnapshotModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTItickAuthoritativeSnapshotModel) FindAfterID(ctx context.Context, afterID, limit int64) ([]*TItickAuthoritativeSnapshot, error) {
+	if limit <= 0 || limit > 1000 {
+		limit = 500
+	}
+	var rows []*TItickAuthoritativeSnapshot
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tItickAuthoritativeSnapshotRows+" FROM t_itick_authoritative_snapshot WHERE id>? ORDER BY id LIMIT ?", afterID, limit)
+	return rows, err
 }
 
 func (m *defaultTItickAuthoritativeSnapshotModel) InsertImmutableAndEnqueue(ctx context.Context, row *TItickAuthoritativeSnapshot, payload string) error {

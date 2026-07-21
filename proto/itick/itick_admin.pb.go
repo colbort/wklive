@@ -2770,6 +2770,958 @@ func (x *InitTenantItickDisplayData) GetProductCount() int64 {
 	return 0
 }
 
+type PriceFormulaComponent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Authority     string                 `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
+	SnapshotKind  string                 `protobuf:"bytes,2,opt,name=snapshot_kind,json=snapshotKind,proto3" json:"snapshot_kind,omitempty"`
+	CategoryCode  string                 `protobuf:"bytes,3,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	Market        string                 `protobuf:"bytes,4,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol        string                 `protobuf:"bytes,5,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Weight        string                 `protobuf:"bytes,6,opt,name=weight,proto3" json:"weight,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PriceFormulaComponent) Reset() {
+	*x = PriceFormulaComponent{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PriceFormulaComponent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PriceFormulaComponent) ProtoMessage() {}
+
+func (x *PriceFormulaComponent) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PriceFormulaComponent.ProtoReflect.Descriptor instead.
+func (*PriceFormulaComponent) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *PriceFormulaComponent) GetAuthority() string {
+	if x != nil {
+		return x.Authority
+	}
+	return ""
+}
+
+func (x *PriceFormulaComponent) GetSnapshotKind() string {
+	if x != nil {
+		return x.SnapshotKind
+	}
+	return ""
+}
+
+func (x *PriceFormulaComponent) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
+}
+
+func (x *PriceFormulaComponent) GetMarket() string {
+	if x != nil {
+		return x.Market
+	}
+	return ""
+}
+
+func (x *PriceFormulaComponent) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *PriceFormulaComponent) GetWeight() string {
+	if x != nil {
+		return x.Weight
+	}
+	return ""
+}
+
+type CreatePriceFormulaReq struct {
+	state           protoimpl.MessageState   `protogen:"open.v1"`
+	FormulaNo       string                   `protobuf:"bytes,1,opt,name=formula_no,json=formulaNo,proto3" json:"formula_no,omitempty"`
+	Authority       string                   `protobuf:"bytes,2,opt,name=authority,proto3" json:"authority,omitempty"`
+	SnapshotKind    string                   `protobuf:"bytes,3,opt,name=snapshot_kind,json=snapshotKind,proto3" json:"snapshot_kind,omitempty"`
+	CategoryCode    string                   `protobuf:"bytes,4,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	Market          string                   `protobuf:"bytes,5,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol          string                   `protobuf:"bytes,6,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Algorithm       string                   `protobuf:"bytes,7,opt,name=algorithm,proto3" json:"algorithm,omitempty"`
+	FormulaVersion  string                   `protobuf:"bytes,8,opt,name=formula_version,json=formulaVersion,proto3" json:"formula_version,omitempty"`
+	Components      []*PriceFormulaComponent `protobuf:"bytes,9,rep,name=components,proto3" json:"components,omitempty"`
+	MaxLookbackMs   int64                    `protobuf:"varint,10,opt,name=max_lookback_ms,json=maxLookbackMs,proto3" json:"max_lookback_ms,omitempty"`
+	MaxDeviationBps int64                    `protobuf:"varint,11,opt,name=max_deviation_bps,json=maxDeviationBps,proto3" json:"max_deviation_bps,omitempty"`
+	IntervalMs      int64                    `protobuf:"varint,12,opt,name=interval_ms,json=intervalMs,proto3" json:"interval_ms,omitempty"`
+	Activate        bool                     `protobuf:"varint,13,opt,name=activate,proto3" json:"activate,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *CreatePriceFormulaReq) Reset() {
+	*x = CreatePriceFormulaReq{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreatePriceFormulaReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreatePriceFormulaReq) ProtoMessage() {}
+
+func (x *CreatePriceFormulaReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreatePriceFormulaReq.ProtoReflect.Descriptor instead.
+func (*CreatePriceFormulaReq) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *CreatePriceFormulaReq) GetFormulaNo() string {
+	if x != nil {
+		return x.FormulaNo
+	}
+	return ""
+}
+
+func (x *CreatePriceFormulaReq) GetAuthority() string {
+	if x != nil {
+		return x.Authority
+	}
+	return ""
+}
+
+func (x *CreatePriceFormulaReq) GetSnapshotKind() string {
+	if x != nil {
+		return x.SnapshotKind
+	}
+	return ""
+}
+
+func (x *CreatePriceFormulaReq) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
+}
+
+func (x *CreatePriceFormulaReq) GetMarket() string {
+	if x != nil {
+		return x.Market
+	}
+	return ""
+}
+
+func (x *CreatePriceFormulaReq) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *CreatePriceFormulaReq) GetAlgorithm() string {
+	if x != nil {
+		return x.Algorithm
+	}
+	return ""
+}
+
+func (x *CreatePriceFormulaReq) GetFormulaVersion() string {
+	if x != nil {
+		return x.FormulaVersion
+	}
+	return ""
+}
+
+func (x *CreatePriceFormulaReq) GetComponents() []*PriceFormulaComponent {
+	if x != nil {
+		return x.Components
+	}
+	return nil
+}
+
+func (x *CreatePriceFormulaReq) GetMaxLookbackMs() int64 {
+	if x != nil {
+		return x.MaxLookbackMs
+	}
+	return 0
+}
+
+func (x *CreatePriceFormulaReq) GetMaxDeviationBps() int64 {
+	if x != nil {
+		return x.MaxDeviationBps
+	}
+	return 0
+}
+
+func (x *CreatePriceFormulaReq) GetIntervalMs() int64 {
+	if x != nil {
+		return x.IntervalMs
+	}
+	return 0
+}
+
+func (x *CreatePriceFormulaReq) GetActivate() bool {
+	if x != nil {
+		return x.Activate
+	}
+	return false
+}
+
+type PriceFormulaReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PriceFormulaReq) Reset() {
+	*x = PriceFormulaReq{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PriceFormulaReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PriceFormulaReq) ProtoMessage() {}
+
+func (x *PriceFormulaReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PriceFormulaReq.ProtoReflect.Descriptor instead.
+func (*PriceFormulaReq) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *PriceFormulaReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type ChangePriceFormulaStatusReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        int32                  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"` // 1 activate, 3 revoke; revoke is irreversible
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChangePriceFormulaStatusReq) Reset() {
+	*x = ChangePriceFormulaStatusReq{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChangePriceFormulaStatusReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangePriceFormulaStatusReq) ProtoMessage() {}
+
+func (x *ChangePriceFormulaStatusReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangePriceFormulaStatusReq.ProtoReflect.Descriptor instead.
+func (*ChangePriceFormulaStatusReq) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *ChangePriceFormulaStatusReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ChangePriceFormulaStatusReq) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+type ListPriceFormulasReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Authority     string                 `protobuf:"bytes,2,opt,name=authority,proto3" json:"authority,omitempty"`
+	SnapshotKind  string                 `protobuf:"bytes,3,opt,name=snapshot_kind,json=snapshotKind,proto3" json:"snapshot_kind,omitempty"`
+	CategoryCode  string                 `protobuf:"bytes,4,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	Market        string                 `protobuf:"bytes,5,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol        string                 `protobuf:"bytes,6,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Status        int32                  `protobuf:"varint,7,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPriceFormulasReq) Reset() {
+	*x = ListPriceFormulasReq{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPriceFormulasReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPriceFormulasReq) ProtoMessage() {}
+
+func (x *ListPriceFormulasReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPriceFormulasReq.ProtoReflect.Descriptor instead.
+func (*ListPriceFormulasReq) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *ListPriceFormulasReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *ListPriceFormulasReq) GetAuthority() string {
+	if x != nil {
+		return x.Authority
+	}
+	return ""
+}
+
+func (x *ListPriceFormulasReq) GetSnapshotKind() string {
+	if x != nil {
+		return x.SnapshotKind
+	}
+	return ""
+}
+
+func (x *ListPriceFormulasReq) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
+}
+
+func (x *ListPriceFormulasReq) GetMarket() string {
+	if x != nil {
+		return x.Market
+	}
+	return ""
+}
+
+func (x *ListPriceFormulasReq) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *ListPriceFormulasReq) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+type PriceFormulaData struct {
+	state           protoimpl.MessageState   `protogen:"open.v1"`
+	Id              int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	FormulaNo       string                   `protobuf:"bytes,2,opt,name=formula_no,json=formulaNo,proto3" json:"formula_no,omitempty"`
+	Authority       string                   `protobuf:"bytes,3,opt,name=authority,proto3" json:"authority,omitempty"`
+	SnapshotKind    string                   `protobuf:"bytes,4,opt,name=snapshot_kind,json=snapshotKind,proto3" json:"snapshot_kind,omitempty"`
+	CategoryCode    string                   `protobuf:"bytes,5,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	Market          string                   `protobuf:"bytes,6,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol          string                   `protobuf:"bytes,7,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Algorithm       string                   `protobuf:"bytes,8,opt,name=algorithm,proto3" json:"algorithm,omitempty"`
+	FormulaVersion  string                   `protobuf:"bytes,9,opt,name=formula_version,json=formulaVersion,proto3" json:"formula_version,omitempty"`
+	Components      []*PriceFormulaComponent `protobuf:"bytes,10,rep,name=components,proto3" json:"components,omitempty"`
+	MaxLookbackMs   int64                    `protobuf:"varint,11,opt,name=max_lookback_ms,json=maxLookbackMs,proto3" json:"max_lookback_ms,omitempty"`
+	MaxDeviationBps int64                    `protobuf:"varint,12,opt,name=max_deviation_bps,json=maxDeviationBps,proto3" json:"max_deviation_bps,omitempty"`
+	IntervalMs      int64                    `protobuf:"varint,13,opt,name=interval_ms,json=intervalMs,proto3" json:"interval_ms,omitempty"`
+	LastTargetTime  int64                    `protobuf:"varint,14,opt,name=last_target_time,json=lastTargetTime,proto3" json:"last_target_time,omitempty"`
+	Status          int32                    `protobuf:"varint,15,opt,name=status,proto3" json:"status,omitempty"`
+	Version         int64                    `protobuf:"varint,16,opt,name=version,proto3" json:"version,omitempty"`
+	CreateTimes     int64                    `protobuf:"varint,17,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes     int64                    `protobuf:"varint,18,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *PriceFormulaData) Reset() {
+	*x = PriceFormulaData{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PriceFormulaData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PriceFormulaData) ProtoMessage() {}
+
+func (x *PriceFormulaData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PriceFormulaData.ProtoReflect.Descriptor instead.
+func (*PriceFormulaData) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *PriceFormulaData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *PriceFormulaData) GetFormulaNo() string {
+	if x != nil {
+		return x.FormulaNo
+	}
+	return ""
+}
+
+func (x *PriceFormulaData) GetAuthority() string {
+	if x != nil {
+		return x.Authority
+	}
+	return ""
+}
+
+func (x *PriceFormulaData) GetSnapshotKind() string {
+	if x != nil {
+		return x.SnapshotKind
+	}
+	return ""
+}
+
+func (x *PriceFormulaData) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
+}
+
+func (x *PriceFormulaData) GetMarket() string {
+	if x != nil {
+		return x.Market
+	}
+	return ""
+}
+
+func (x *PriceFormulaData) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *PriceFormulaData) GetAlgorithm() string {
+	if x != nil {
+		return x.Algorithm
+	}
+	return ""
+}
+
+func (x *PriceFormulaData) GetFormulaVersion() string {
+	if x != nil {
+		return x.FormulaVersion
+	}
+	return ""
+}
+
+func (x *PriceFormulaData) GetComponents() []*PriceFormulaComponent {
+	if x != nil {
+		return x.Components
+	}
+	return nil
+}
+
+func (x *PriceFormulaData) GetMaxLookbackMs() int64 {
+	if x != nil {
+		return x.MaxLookbackMs
+	}
+	return 0
+}
+
+func (x *PriceFormulaData) GetMaxDeviationBps() int64 {
+	if x != nil {
+		return x.MaxDeviationBps
+	}
+	return 0
+}
+
+func (x *PriceFormulaData) GetIntervalMs() int64 {
+	if x != nil {
+		return x.IntervalMs
+	}
+	return 0
+}
+
+func (x *PriceFormulaData) GetLastTargetTime() int64 {
+	if x != nil {
+		return x.LastTargetTime
+	}
+	return 0
+}
+
+func (x *PriceFormulaData) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *PriceFormulaData) GetVersion() int64 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+func (x *PriceFormulaData) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *PriceFormulaData) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+type PriceFormulaResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *PriceFormulaData      `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PriceFormulaResp) Reset() {
+	*x = PriceFormulaResp{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PriceFormulaResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PriceFormulaResp) ProtoMessage() {}
+
+func (x *PriceFormulaResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PriceFormulaResp.ProtoReflect.Descriptor instead.
+func (*PriceFormulaResp) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *PriceFormulaResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *PriceFormulaResp) GetData() *PriceFormulaData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ListPriceFormulasResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*PriceFormulaData    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPriceFormulasResp) Reset() {
+	*x = ListPriceFormulasResp{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[48]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPriceFormulasResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPriceFormulasResp) ProtoMessage() {}
+
+func (x *ListPriceFormulasResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[48]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPriceFormulasResp.ProtoReflect.Descriptor instead.
+func (*ListPriceFormulasResp) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{48}
+}
+
+func (x *ListPriceFormulasResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *ListPriceFormulasResp) GetData() []*PriceFormulaData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ListSnapshotOutboxReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Status        int32                  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
+	SnapshotId    string                 `protobuf:"bytes,3,opt,name=snapshot_id,json=snapshotId,proto3" json:"snapshot_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSnapshotOutboxReq) Reset() {
+	*x = ListSnapshotOutboxReq{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSnapshotOutboxReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSnapshotOutboxReq) ProtoMessage() {}
+
+func (x *ListSnapshotOutboxReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSnapshotOutboxReq.ProtoReflect.Descriptor instead.
+func (*ListSnapshotOutboxReq) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *ListSnapshotOutboxReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *ListSnapshotOutboxReq) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *ListSnapshotOutboxReq) GetSnapshotId() string {
+	if x != nil {
+		return x.SnapshotId
+	}
+	return ""
+}
+
+type SnapshotOutboxData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	SnapshotId    string                 `protobuf:"bytes,2,opt,name=snapshot_id,json=snapshotId,proto3" json:"snapshot_id,omitempty"`
+	Status        int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
+	RetryCount    int64                  `protobuf:"varint,4,opt,name=retry_count,json=retryCount,proto3" json:"retry_count,omitempty"`
+	NextRetryAt   int64                  `protobuf:"varint,5,opt,name=next_retry_at,json=nextRetryAt,proto3" json:"next_retry_at,omitempty"`
+	LastErrorMsg  string                 `protobuf:"bytes,6,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
+	CreateTimes   int64                  `protobuf:"varint,7,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes   int64                  `protobuf:"varint,8,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SnapshotOutboxData) Reset() {
+	*x = SnapshotOutboxData{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SnapshotOutboxData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SnapshotOutboxData) ProtoMessage() {}
+
+func (x *SnapshotOutboxData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SnapshotOutboxData.ProtoReflect.Descriptor instead.
+func (*SnapshotOutboxData) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *SnapshotOutboxData) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SnapshotOutboxData) GetSnapshotId() string {
+	if x != nil {
+		return x.SnapshotId
+	}
+	return ""
+}
+
+func (x *SnapshotOutboxData) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *SnapshotOutboxData) GetRetryCount() int64 {
+	if x != nil {
+		return x.RetryCount
+	}
+	return 0
+}
+
+func (x *SnapshotOutboxData) GetNextRetryAt() int64 {
+	if x != nil {
+		return x.NextRetryAt
+	}
+	return 0
+}
+
+func (x *SnapshotOutboxData) GetLastErrorMsg() string {
+	if x != nil {
+		return x.LastErrorMsg
+	}
+	return ""
+}
+
+func (x *SnapshotOutboxData) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *SnapshotOutboxData) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+type ListSnapshotOutboxResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*SnapshotOutboxData  `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSnapshotOutboxResp) Reset() {
+	*x = ListSnapshotOutboxResp{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSnapshotOutboxResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSnapshotOutboxResp) ProtoMessage() {}
+
+func (x *ListSnapshotOutboxResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSnapshotOutboxResp.ProtoReflect.Descriptor instead.
+func (*ListSnapshotOutboxResp) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *ListSnapshotOutboxResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *ListSnapshotOutboxResp) GetData() []*SnapshotOutboxData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type RetrySnapshotOutboxReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RetrySnapshotOutboxReq) Reset() {
+	*x = RetrySnapshotOutboxReq{}
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RetrySnapshotOutboxReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RetrySnapshotOutboxReq) ProtoMessage() {}
+
+func (x *RetrySnapshotOutboxReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_admin_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RetrySnapshotOutboxReq.ProtoReflect.Descriptor instead.
+func (*RetrySnapshotOutboxReq) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *RetrySnapshotOutboxReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
 var File_proto_itick_itick_admin_proto protoreflect.FileDescriptor
 
 const file_proto_itick_itick_admin_proto_rawDesc = "" +
@@ -2995,7 +3947,97 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x01(\v2!.itick.InitTenantItickDisplayDataR\x04data\"h\n" +
 	"\x1aInitTenantItickDisplayData\x12%\n" +
 	"\x0ecategory_count\x18\x01 \x01(\x03R\rcategoryCount\x12#\n" +
-	"\rproduct_count\x18\x02 \x01(\x03R\fproductCount2\x8a\x0e\n" +
+	"\rproduct_count\x18\x02 \x01(\x03R\fproductCount\"\xc7\x01\n" +
+	"\x15PriceFormulaComponent\x12\x1c\n" +
+	"\tauthority\x18\x01 \x01(\tR\tauthority\x12#\n" +
+	"\rsnapshot_kind\x18\x02 \x01(\tR\fsnapshotKind\x12#\n" +
+	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\x12\x16\n" +
+	"\x06market\x18\x04 \x01(\tR\x06market\x12\x16\n" +
+	"\x06symbol\x18\x05 \x01(\tR\x06symbol\x12\x16\n" +
+	"\x06weight\x18\x06 \x01(\tR\x06weight\"\xe4\x03\n" +
+	"\x15CreatePriceFormulaReq\x12\x1d\n" +
+	"\n" +
+	"formula_no\x18\x01 \x01(\tR\tformulaNo\x12\x1c\n" +
+	"\tauthority\x18\x02 \x01(\tR\tauthority\x12#\n" +
+	"\rsnapshot_kind\x18\x03 \x01(\tR\fsnapshotKind\x12#\n" +
+	"\rcategory_code\x18\x04 \x01(\tR\fcategoryCode\x12\x16\n" +
+	"\x06market\x18\x05 \x01(\tR\x06market\x12\x16\n" +
+	"\x06symbol\x18\x06 \x01(\tR\x06symbol\x12\x1c\n" +
+	"\talgorithm\x18\a \x01(\tR\talgorithm\x12'\n" +
+	"\x0fformula_version\x18\b \x01(\tR\x0eformulaVersion\x12<\n" +
+	"\n" +
+	"components\x18\t \x03(\v2\x1c.itick.PriceFormulaComponentR\n" +
+	"components\x12&\n" +
+	"\x0fmax_lookback_ms\x18\n" +
+	" \x01(\x03R\rmaxLookbackMs\x12*\n" +
+	"\x11max_deviation_bps\x18\v \x01(\x03R\x0fmaxDeviationBps\x12\x1f\n" +
+	"\vinterval_ms\x18\f \x01(\x03R\n" +
+	"intervalMs\x12\x1a\n" +
+	"\bactivate\x18\r \x01(\bR\bactivate\"!\n" +
+	"\x0fPriceFormulaReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"E\n" +
+	"\x1bChangePriceFormulaStatusReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\x05R\x06status\"\xeb\x01\n" +
+	"\x14ListPriceFormulasReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1c\n" +
+	"\tauthority\x18\x02 \x01(\tR\tauthority\x12#\n" +
+	"\rsnapshot_kind\x18\x03 \x01(\tR\fsnapshotKind\x12#\n" +
+	"\rcategory_code\x18\x04 \x01(\tR\fcategoryCode\x12\x16\n" +
+	"\x06market\x18\x05 \x01(\tR\x06market\x12\x16\n" +
+	"\x06symbol\x18\x06 \x01(\tR\x06symbol\x12\x16\n" +
+	"\x06status\x18\a \x01(\x05R\x06status\"\xf5\x04\n" +
+	"\x10PriceFormulaData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
+	"\n" +
+	"formula_no\x18\x02 \x01(\tR\tformulaNo\x12\x1c\n" +
+	"\tauthority\x18\x03 \x01(\tR\tauthority\x12#\n" +
+	"\rsnapshot_kind\x18\x04 \x01(\tR\fsnapshotKind\x12#\n" +
+	"\rcategory_code\x18\x05 \x01(\tR\fcategoryCode\x12\x16\n" +
+	"\x06market\x18\x06 \x01(\tR\x06market\x12\x16\n" +
+	"\x06symbol\x18\a \x01(\tR\x06symbol\x12\x1c\n" +
+	"\talgorithm\x18\b \x01(\tR\talgorithm\x12'\n" +
+	"\x0fformula_version\x18\t \x01(\tR\x0eformulaVersion\x12<\n" +
+	"\n" +
+	"components\x18\n" +
+	" \x03(\v2\x1c.itick.PriceFormulaComponentR\n" +
+	"components\x12&\n" +
+	"\x0fmax_lookback_ms\x18\v \x01(\x03R\rmaxLookbackMs\x12*\n" +
+	"\x11max_deviation_bps\x18\f \x01(\x03R\x0fmaxDeviationBps\x12\x1f\n" +
+	"\vinterval_ms\x18\r \x01(\x03R\n" +
+	"intervalMs\x12(\n" +
+	"\x10last_target_time\x18\x0e \x01(\x03R\x0elastTargetTime\x12\x16\n" +
+	"\x06status\x18\x0f \x01(\x05R\x06status\x12\x18\n" +
+	"\aversion\x18\x10 \x01(\x03R\aversion\x12!\n" +
+	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x12 \x01(\x03R\vupdateTimes\"e\n" +
+	"\x10PriceFormulaResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
+	"\x04data\x18\x02 \x01(\v2\x17.itick.PriceFormulaDataR\x04data\"j\n" +
+	"\x15ListPriceFormulasResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
+	"\x04data\x18\x02 \x03(\v2\x17.itick.PriceFormulaDataR\x04data\"u\n" +
+	"\x15ListSnapshotOutboxReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\x05R\x06status\x12\x1f\n" +
+	"\vsnapshot_id\x18\x03 \x01(\tR\n" +
+	"snapshotId\"\x8e\x02\n" +
+	"\x12SnapshotOutboxData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
+	"\vsnapshot_id\x18\x02 \x01(\tR\n" +
+	"snapshotId\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\x05R\x06status\x12\x1f\n" +
+	"\vretry_count\x18\x04 \x01(\x03R\n" +
+	"retryCount\x12\"\n" +
+	"\rnext_retry_at\x18\x05 \x01(\x03R\vnextRetryAt\x12$\n" +
+	"\x0elast_error_msg\x18\x06 \x01(\tR\flastErrorMsg\x12!\n" +
+	"\fcreate_times\x18\a \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\"m\n" +
+	"\x16ListSnapshotOutboxResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.itick.SnapshotOutboxDataR\x04data\"(\n" +
+	"\x16RetrySnapshotOutboxReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id2\xe4\x11\n" +
 	"\n" +
 	"ItickAdmin\x12E\n" +
 	"\x0eListCategories\x12\x18.itick.ListCategoriesReq\x1a\x19.itick.ListCategoriesResp\x12B\n" +
@@ -3021,7 +4063,13 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x13UpdateTenantProduct\x12\x1d.itick.UpdateTenantProductReq\x1a\x16.itick.AdminCommonResp\x12X\n" +
 	"\x19BatchUpsertTenantProducts\x12#.itick.BatchUpsertTenantProductsReq\x1a\x16.itick.AdminCommonResp\x12K\n" +
 	"\x10GetTenantProduct\x12\x1a.itick.GetTenantProductReq\x1a\x1b.itick.GetTenantProductResp\x12]\n" +
-	"\x16InitTenantItickDisplay\x12 .itick.InitTenantItickDisplayReq\x1a!.itick.InitTenantItickDisplayRespB\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
+	"\x16InitTenantItickDisplay\x12 .itick.InitTenantItickDisplayReq\x1a!.itick.InitTenantItickDisplayResp\x12K\n" +
+	"\x12CreatePriceFormula\x12\x1c.itick.CreatePriceFormulaReq\x1a\x17.itick.PriceFormulaResp\x12B\n" +
+	"\x0fGetPriceFormula\x12\x16.itick.PriceFormulaReq\x1a\x17.itick.PriceFormulaResp\x12N\n" +
+	"\x11ListPriceFormulas\x12\x1b.itick.ListPriceFormulasReq\x1a\x1c.itick.ListPriceFormulasResp\x12V\n" +
+	"\x18ChangePriceFormulaStatus\x12\".itick.ChangePriceFormulaStatusReq\x1a\x16.itick.AdminCommonResp\x12Q\n" +
+	"\x12ListSnapshotOutbox\x12\x1c.itick.ListSnapshotOutboxReq\x1a\x1d.itick.ListSnapshotOutboxResp\x12L\n" +
+	"\x13RetrySnapshotOutbox\x12\x1d.itick.RetrySnapshotOutboxReq\x1a\x16.itick.AdminCommonRespB\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
 
 var (
 	file_proto_itick_itick_admin_proto_rawDescOnce sync.Once
@@ -3035,7 +4083,7 @@ func file_proto_itick_itick_admin_proto_rawDescGZIP() []byte {
 	return file_proto_itick_itick_admin_proto_rawDescData
 }
 
-var file_proto_itick_itick_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 41)
+var file_proto_itick_itick_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 53)
 var file_proto_itick_itick_admin_proto_goTypes = []any{
 	(*AdminCommonResp)(nil),                // 0: itick.AdminCommonResp
 	(*CreateCategoryReq)(nil),              // 1: itick.CreateCategoryReq
@@ -3078,142 +4126,176 @@ var file_proto_itick_itick_admin_proto_goTypes = []any{
 	(*InitTenantItickDisplayReq)(nil),      // 38: itick.InitTenantItickDisplayReq
 	(*InitTenantItickDisplayResp)(nil),     // 39: itick.InitTenantItickDisplayResp
 	(*InitTenantItickDisplayData)(nil),     // 40: itick.InitTenantItickDisplayData
-	(*common.RespBase)(nil),                // 41: common.RespBase
-	(CategoryType)(0),                      // 42: itick.CategoryType
-	(common.Enable)(0),                     // 43: common.Enable
-	(common.Switch)(0),                     // 44: common.Switch
-	(SyncKlinePriority)(0),                 // 45: itick.SyncKlinePriority
-	(*ItickCategory)(nil),                  // 46: itick.ItickCategory
-	(*common.PageReq)(nil),                 // 47: common.PageReq
-	(*ItickProduct)(nil),                   // 48: itick.ItickProduct
-	(KlineType)(0),                         // 49: itick.KlineType
-	(*Kline)(nil),                          // 50: itick.Kline
-	(*ItickTenantCategory)(nil),            // 51: itick.ItickTenantCategory
-	(*ItickTenantProduct)(nil),             // 52: itick.ItickTenantProduct
+	(*PriceFormulaComponent)(nil),          // 41: itick.PriceFormulaComponent
+	(*CreatePriceFormulaReq)(nil),          // 42: itick.CreatePriceFormulaReq
+	(*PriceFormulaReq)(nil),                // 43: itick.PriceFormulaReq
+	(*ChangePriceFormulaStatusReq)(nil),    // 44: itick.ChangePriceFormulaStatusReq
+	(*ListPriceFormulasReq)(nil),           // 45: itick.ListPriceFormulasReq
+	(*PriceFormulaData)(nil),               // 46: itick.PriceFormulaData
+	(*PriceFormulaResp)(nil),               // 47: itick.PriceFormulaResp
+	(*ListPriceFormulasResp)(nil),          // 48: itick.ListPriceFormulasResp
+	(*ListSnapshotOutboxReq)(nil),          // 49: itick.ListSnapshotOutboxReq
+	(*SnapshotOutboxData)(nil),             // 50: itick.SnapshotOutboxData
+	(*ListSnapshotOutboxResp)(nil),         // 51: itick.ListSnapshotOutboxResp
+	(*RetrySnapshotOutboxReq)(nil),         // 52: itick.RetrySnapshotOutboxReq
+	(*common.RespBase)(nil),                // 53: common.RespBase
+	(CategoryType)(0),                      // 54: itick.CategoryType
+	(common.Enable)(0),                     // 55: common.Enable
+	(common.Switch)(0),                     // 56: common.Switch
+	(SyncKlinePriority)(0),                 // 57: itick.SyncKlinePriority
+	(*ItickCategory)(nil),                  // 58: itick.ItickCategory
+	(*common.PageReq)(nil),                 // 59: common.PageReq
+	(*ItickProduct)(nil),                   // 60: itick.ItickProduct
+	(KlineType)(0),                         // 61: itick.KlineType
+	(*Kline)(nil),                          // 62: itick.Kline
+	(*ItickTenantCategory)(nil),            // 63: itick.ItickTenantCategory
+	(*ItickTenantProduct)(nil),             // 64: itick.ItickTenantProduct
 }
 var file_proto_itick_itick_admin_proto_depIdxs = []int32{
-	41, // 0: itick.AdminCommonResp.base:type_name -> common.RespBase
-	42, // 1: itick.CreateCategoryReq.category_type:type_name -> itick.CategoryType
-	43, // 2: itick.CreateCategoryReq.enabled:type_name -> common.Enable
-	44, // 3: itick.CreateCategoryReq.app_visible:type_name -> common.Switch
-	45, // 4: itick.CreateCategoryReq.sync_priority:type_name -> itick.SyncKlinePriority
-	43, // 5: itick.UpdateCategoryReq.enabled:type_name -> common.Enable
-	44, // 6: itick.UpdateCategoryReq.app_visible:type_name -> common.Switch
-	45, // 7: itick.UpdateCategoryReq.sync_priority:type_name -> itick.SyncKlinePriority
-	41, // 8: itick.GetCategoryResp.base:type_name -> common.RespBase
-	46, // 9: itick.GetCategoryResp.data:type_name -> itick.ItickCategory
-	47, // 10: itick.ListCategoriesReq.page:type_name -> common.PageReq
-	42, // 11: itick.ListCategoriesReq.category_type:type_name -> itick.CategoryType
-	43, // 12: itick.ListCategoriesReq.enabled:type_name -> common.Enable
-	44, // 13: itick.ListCategoriesReq.app_visible:type_name -> common.Switch
-	41, // 14: itick.ListCategoriesResp.base:type_name -> common.RespBase
-	46, // 15: itick.ListCategoriesResp.data:type_name -> itick.ItickCategory
-	41, // 16: itick.SyncCategoryProductsResp.base:type_name -> common.RespBase
-	41, // 17: itick.GetSyncTaskStatusResp.base:type_name -> common.RespBase
-	11, // 18: itick.GetSyncTaskStatusResp.data:type_name -> itick.GetSyncTaskStatusData
-	42, // 19: itick.CreateProductReq.category_type:type_name -> itick.CategoryType
-	43, // 20: itick.CreateProductReq.enabled:type_name -> common.Enable
-	44, // 21: itick.CreateProductReq.app_visible:type_name -> common.Switch
-	45, // 22: itick.CreateProductReq.sync_priority:type_name -> itick.SyncKlinePriority
-	43, // 23: itick.UpdateProductReq.enabled:type_name -> common.Enable
-	44, // 24: itick.UpdateProductReq.app_visible:type_name -> common.Switch
-	45, // 25: itick.UpdateProductReq.sync_priority:type_name -> itick.SyncKlinePriority
-	41, // 26: itick.GetProductResp.base:type_name -> common.RespBase
-	48, // 27: itick.GetProductResp.data:type_name -> itick.ItickProduct
-	47, // 28: itick.ListProductsReq.page:type_name -> common.PageReq
-	42, // 29: itick.ListProductsReq.category_type:type_name -> itick.CategoryType
-	43, // 30: itick.ListProductsReq.enabled:type_name -> common.Enable
-	44, // 31: itick.ListProductsReq.app_visible:type_name -> common.Switch
-	41, // 32: itick.ListProductsResp.base:type_name -> common.RespBase
-	48, // 33: itick.ListProductsResp.data:type_name -> itick.ItickProduct
-	49, // 34: itick.GetProductKlineReq.k_type:type_name -> itick.KlineType
-	41, // 35: itick.GetProductKlineResp.base:type_name -> common.RespBase
-	50, // 36: itick.GetProductKlineResp.data:type_name -> itick.Kline
-	49, // 37: itick.SyncProductKlineHistoryReq.k_type:type_name -> itick.KlineType
-	41, // 38: itick.SyncProductKlineHistoryResp.base:type_name -> common.RespBase
-	43, // 39: itick.CreateTenantCategoryReq.enabled:type_name -> common.Enable
-	44, // 40: itick.CreateTenantCategoryReq.app_visible:type_name -> common.Switch
-	43, // 41: itick.UpdateTenantCategoryReq.enabled:type_name -> common.Enable
-	44, // 42: itick.UpdateTenantCategoryReq.app_visible:type_name -> common.Switch
-	25, // 43: itick.BatchUpsertTenantCategoriesReq.data:type_name -> itick.TenantCategoryItem
-	43, // 44: itick.TenantCategoryItem.enabled:type_name -> common.Enable
-	44, // 45: itick.TenantCategoryItem.app_visible:type_name -> common.Switch
-	41, // 46: itick.GetTenantCategoryResp.base:type_name -> common.RespBase
-	51, // 47: itick.GetTenantCategoryResp.data:type_name -> itick.ItickTenantCategory
-	47, // 48: itick.ListTenantCategoriesReq.page:type_name -> common.PageReq
-	42, // 49: itick.ListTenantCategoriesReq.category_type:type_name -> itick.CategoryType
-	43, // 50: itick.ListTenantCategoriesReq.enabled:type_name -> common.Enable
-	44, // 51: itick.ListTenantCategoriesReq.visible_status:type_name -> common.Switch
-	41, // 52: itick.ListTenantCategoriesResp.base:type_name -> common.RespBase
-	51, // 53: itick.ListTenantCategoriesResp.data:type_name -> itick.ItickTenantCategory
-	43, // 54: itick.CreateTenantProductReq.enabled:type_name -> common.Enable
-	44, // 55: itick.CreateTenantProductReq.app_visible:type_name -> common.Switch
-	43, // 56: itick.UpdateTenantProductReq.enabled:type_name -> common.Enable
-	44, // 57: itick.UpdateTenantProductReq.app_visible:type_name -> common.Switch
-	33, // 58: itick.BatchUpsertTenantProductsReq.data:type_name -> itick.TenantProductItem
-	43, // 59: itick.TenantProductItem.enabled:type_name -> common.Enable
-	44, // 60: itick.TenantProductItem.app_visible:type_name -> common.Switch
-	41, // 61: itick.GetTenantProductResp.base:type_name -> common.RespBase
-	52, // 62: itick.GetTenantProductResp.data:type_name -> itick.ItickTenantProduct
-	47, // 63: itick.ListTenantProductsReq.page:type_name -> common.PageReq
-	42, // 64: itick.ListTenantProductsReq.category_type:type_name -> itick.CategoryType
-	43, // 65: itick.ListTenantProductsReq.enabled:type_name -> common.Enable
-	44, // 66: itick.ListTenantProductsReq.app_visible:type_name -> common.Switch
-	41, // 67: itick.ListTenantProductsResp.base:type_name -> common.RespBase
-	52, // 68: itick.ListTenantProductsResp.data:type_name -> itick.ItickTenantProduct
-	41, // 69: itick.InitTenantItickDisplayResp.base:type_name -> common.RespBase
-	40, // 70: itick.InitTenantItickDisplayResp.data:type_name -> itick.InitTenantItickDisplayData
-	5,  // 71: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
-	1,  // 72: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
-	2,  // 73: itick.ItickAdmin.UpdateCategory:input_type -> itick.UpdateCategoryReq
-	3,  // 74: itick.ItickAdmin.GetCategory:input_type -> itick.GetCategoryReq
-	7,  // 75: itick.ItickAdmin.SyncCategoryProducts:input_type -> itick.SyncCategoryProductsReq
-	9,  // 76: itick.ItickAdmin.GetSyncTaskStatus:input_type -> itick.GetSyncTaskStatusReq
-	16, // 77: itick.ItickAdmin.ListProducts:input_type -> itick.ListProductsReq
-	12, // 78: itick.ItickAdmin.CreateProduct:input_type -> itick.CreateProductReq
-	13, // 79: itick.ItickAdmin.UpdateProduct:input_type -> itick.UpdateProductReq
-	14, // 80: itick.ItickAdmin.GetProduct:input_type -> itick.GetProductReq
-	18, // 81: itick.ItickAdmin.GetProductKline:input_type -> itick.GetProductKlineReq
-	20, // 82: itick.ItickAdmin.SyncProductKlineHistory:input_type -> itick.SyncProductKlineHistoryReq
-	28, // 83: itick.ItickAdmin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
-	22, // 84: itick.ItickAdmin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
-	23, // 85: itick.ItickAdmin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
-	24, // 86: itick.ItickAdmin.BatchUpsertTenantCategories:input_type -> itick.BatchUpsertTenantCategoriesReq
-	26, // 87: itick.ItickAdmin.GetTenantCategory:input_type -> itick.GetTenantCategoryReq
-	36, // 88: itick.ItickAdmin.ListTenantProducts:input_type -> itick.ListTenantProductsReq
-	30, // 89: itick.ItickAdmin.CreateTenantProduct:input_type -> itick.CreateTenantProductReq
-	31, // 90: itick.ItickAdmin.UpdateTenantProduct:input_type -> itick.UpdateTenantProductReq
-	32, // 91: itick.ItickAdmin.BatchUpsertTenantProducts:input_type -> itick.BatchUpsertTenantProductsReq
-	34, // 92: itick.ItickAdmin.GetTenantProduct:input_type -> itick.GetTenantProductReq
-	38, // 93: itick.ItickAdmin.InitTenantItickDisplay:input_type -> itick.InitTenantItickDisplayReq
-	6,  // 94: itick.ItickAdmin.ListCategories:output_type -> itick.ListCategoriesResp
-	0,  // 95: itick.ItickAdmin.CreateCategory:output_type -> itick.AdminCommonResp
-	0,  // 96: itick.ItickAdmin.UpdateCategory:output_type -> itick.AdminCommonResp
-	4,  // 97: itick.ItickAdmin.GetCategory:output_type -> itick.GetCategoryResp
-	8,  // 98: itick.ItickAdmin.SyncCategoryProducts:output_type -> itick.SyncCategoryProductsResp
-	10, // 99: itick.ItickAdmin.GetSyncTaskStatus:output_type -> itick.GetSyncTaskStatusResp
-	17, // 100: itick.ItickAdmin.ListProducts:output_type -> itick.ListProductsResp
-	0,  // 101: itick.ItickAdmin.CreateProduct:output_type -> itick.AdminCommonResp
-	0,  // 102: itick.ItickAdmin.UpdateProduct:output_type -> itick.AdminCommonResp
-	15, // 103: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
-	19, // 104: itick.ItickAdmin.GetProductKline:output_type -> itick.GetProductKlineResp
-	21, // 105: itick.ItickAdmin.SyncProductKlineHistory:output_type -> itick.SyncProductKlineHistoryResp
-	29, // 106: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
-	0,  // 107: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.AdminCommonResp
-	0,  // 108: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.AdminCommonResp
-	0,  // 109: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.AdminCommonResp
-	27, // 110: itick.ItickAdmin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
-	37, // 111: itick.ItickAdmin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
-	0,  // 112: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.AdminCommonResp
-	0,  // 113: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.AdminCommonResp
-	0,  // 114: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.AdminCommonResp
-	35, // 115: itick.ItickAdmin.GetTenantProduct:output_type -> itick.GetTenantProductResp
-	39, // 116: itick.ItickAdmin.InitTenantItickDisplay:output_type -> itick.InitTenantItickDisplayResp
-	94, // [94:117] is the sub-list for method output_type
-	71, // [71:94] is the sub-list for method input_type
-	71, // [71:71] is the sub-list for extension type_name
-	71, // [71:71] is the sub-list for extension extendee
-	0,  // [0:71] is the sub-list for field type_name
+	53,  // 0: itick.AdminCommonResp.base:type_name -> common.RespBase
+	54,  // 1: itick.CreateCategoryReq.category_type:type_name -> itick.CategoryType
+	55,  // 2: itick.CreateCategoryReq.enabled:type_name -> common.Enable
+	56,  // 3: itick.CreateCategoryReq.app_visible:type_name -> common.Switch
+	57,  // 4: itick.CreateCategoryReq.sync_priority:type_name -> itick.SyncKlinePriority
+	55,  // 5: itick.UpdateCategoryReq.enabled:type_name -> common.Enable
+	56,  // 6: itick.UpdateCategoryReq.app_visible:type_name -> common.Switch
+	57,  // 7: itick.UpdateCategoryReq.sync_priority:type_name -> itick.SyncKlinePriority
+	53,  // 8: itick.GetCategoryResp.base:type_name -> common.RespBase
+	58,  // 9: itick.GetCategoryResp.data:type_name -> itick.ItickCategory
+	59,  // 10: itick.ListCategoriesReq.page:type_name -> common.PageReq
+	54,  // 11: itick.ListCategoriesReq.category_type:type_name -> itick.CategoryType
+	55,  // 12: itick.ListCategoriesReq.enabled:type_name -> common.Enable
+	56,  // 13: itick.ListCategoriesReq.app_visible:type_name -> common.Switch
+	53,  // 14: itick.ListCategoriesResp.base:type_name -> common.RespBase
+	58,  // 15: itick.ListCategoriesResp.data:type_name -> itick.ItickCategory
+	53,  // 16: itick.SyncCategoryProductsResp.base:type_name -> common.RespBase
+	53,  // 17: itick.GetSyncTaskStatusResp.base:type_name -> common.RespBase
+	11,  // 18: itick.GetSyncTaskStatusResp.data:type_name -> itick.GetSyncTaskStatusData
+	54,  // 19: itick.CreateProductReq.category_type:type_name -> itick.CategoryType
+	55,  // 20: itick.CreateProductReq.enabled:type_name -> common.Enable
+	56,  // 21: itick.CreateProductReq.app_visible:type_name -> common.Switch
+	57,  // 22: itick.CreateProductReq.sync_priority:type_name -> itick.SyncKlinePriority
+	55,  // 23: itick.UpdateProductReq.enabled:type_name -> common.Enable
+	56,  // 24: itick.UpdateProductReq.app_visible:type_name -> common.Switch
+	57,  // 25: itick.UpdateProductReq.sync_priority:type_name -> itick.SyncKlinePriority
+	53,  // 26: itick.GetProductResp.base:type_name -> common.RespBase
+	60,  // 27: itick.GetProductResp.data:type_name -> itick.ItickProduct
+	59,  // 28: itick.ListProductsReq.page:type_name -> common.PageReq
+	54,  // 29: itick.ListProductsReq.category_type:type_name -> itick.CategoryType
+	55,  // 30: itick.ListProductsReq.enabled:type_name -> common.Enable
+	56,  // 31: itick.ListProductsReq.app_visible:type_name -> common.Switch
+	53,  // 32: itick.ListProductsResp.base:type_name -> common.RespBase
+	60,  // 33: itick.ListProductsResp.data:type_name -> itick.ItickProduct
+	61,  // 34: itick.GetProductKlineReq.k_type:type_name -> itick.KlineType
+	53,  // 35: itick.GetProductKlineResp.base:type_name -> common.RespBase
+	62,  // 36: itick.GetProductKlineResp.data:type_name -> itick.Kline
+	61,  // 37: itick.SyncProductKlineHistoryReq.k_type:type_name -> itick.KlineType
+	53,  // 38: itick.SyncProductKlineHistoryResp.base:type_name -> common.RespBase
+	55,  // 39: itick.CreateTenantCategoryReq.enabled:type_name -> common.Enable
+	56,  // 40: itick.CreateTenantCategoryReq.app_visible:type_name -> common.Switch
+	55,  // 41: itick.UpdateTenantCategoryReq.enabled:type_name -> common.Enable
+	56,  // 42: itick.UpdateTenantCategoryReq.app_visible:type_name -> common.Switch
+	25,  // 43: itick.BatchUpsertTenantCategoriesReq.data:type_name -> itick.TenantCategoryItem
+	55,  // 44: itick.TenantCategoryItem.enabled:type_name -> common.Enable
+	56,  // 45: itick.TenantCategoryItem.app_visible:type_name -> common.Switch
+	53,  // 46: itick.GetTenantCategoryResp.base:type_name -> common.RespBase
+	63,  // 47: itick.GetTenantCategoryResp.data:type_name -> itick.ItickTenantCategory
+	59,  // 48: itick.ListTenantCategoriesReq.page:type_name -> common.PageReq
+	54,  // 49: itick.ListTenantCategoriesReq.category_type:type_name -> itick.CategoryType
+	55,  // 50: itick.ListTenantCategoriesReq.enabled:type_name -> common.Enable
+	56,  // 51: itick.ListTenantCategoriesReq.visible_status:type_name -> common.Switch
+	53,  // 52: itick.ListTenantCategoriesResp.base:type_name -> common.RespBase
+	63,  // 53: itick.ListTenantCategoriesResp.data:type_name -> itick.ItickTenantCategory
+	55,  // 54: itick.CreateTenantProductReq.enabled:type_name -> common.Enable
+	56,  // 55: itick.CreateTenantProductReq.app_visible:type_name -> common.Switch
+	55,  // 56: itick.UpdateTenantProductReq.enabled:type_name -> common.Enable
+	56,  // 57: itick.UpdateTenantProductReq.app_visible:type_name -> common.Switch
+	33,  // 58: itick.BatchUpsertTenantProductsReq.data:type_name -> itick.TenantProductItem
+	55,  // 59: itick.TenantProductItem.enabled:type_name -> common.Enable
+	56,  // 60: itick.TenantProductItem.app_visible:type_name -> common.Switch
+	53,  // 61: itick.GetTenantProductResp.base:type_name -> common.RespBase
+	64,  // 62: itick.GetTenantProductResp.data:type_name -> itick.ItickTenantProduct
+	59,  // 63: itick.ListTenantProductsReq.page:type_name -> common.PageReq
+	54,  // 64: itick.ListTenantProductsReq.category_type:type_name -> itick.CategoryType
+	55,  // 65: itick.ListTenantProductsReq.enabled:type_name -> common.Enable
+	56,  // 66: itick.ListTenantProductsReq.app_visible:type_name -> common.Switch
+	53,  // 67: itick.ListTenantProductsResp.base:type_name -> common.RespBase
+	64,  // 68: itick.ListTenantProductsResp.data:type_name -> itick.ItickTenantProduct
+	53,  // 69: itick.InitTenantItickDisplayResp.base:type_name -> common.RespBase
+	40,  // 70: itick.InitTenantItickDisplayResp.data:type_name -> itick.InitTenantItickDisplayData
+	41,  // 71: itick.CreatePriceFormulaReq.components:type_name -> itick.PriceFormulaComponent
+	59,  // 72: itick.ListPriceFormulasReq.page:type_name -> common.PageReq
+	41,  // 73: itick.PriceFormulaData.components:type_name -> itick.PriceFormulaComponent
+	53,  // 74: itick.PriceFormulaResp.base:type_name -> common.RespBase
+	46,  // 75: itick.PriceFormulaResp.data:type_name -> itick.PriceFormulaData
+	53,  // 76: itick.ListPriceFormulasResp.base:type_name -> common.RespBase
+	46,  // 77: itick.ListPriceFormulasResp.data:type_name -> itick.PriceFormulaData
+	59,  // 78: itick.ListSnapshotOutboxReq.page:type_name -> common.PageReq
+	53,  // 79: itick.ListSnapshotOutboxResp.base:type_name -> common.RespBase
+	50,  // 80: itick.ListSnapshotOutboxResp.data:type_name -> itick.SnapshotOutboxData
+	5,   // 81: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
+	1,   // 82: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
+	2,   // 83: itick.ItickAdmin.UpdateCategory:input_type -> itick.UpdateCategoryReq
+	3,   // 84: itick.ItickAdmin.GetCategory:input_type -> itick.GetCategoryReq
+	7,   // 85: itick.ItickAdmin.SyncCategoryProducts:input_type -> itick.SyncCategoryProductsReq
+	9,   // 86: itick.ItickAdmin.GetSyncTaskStatus:input_type -> itick.GetSyncTaskStatusReq
+	16,  // 87: itick.ItickAdmin.ListProducts:input_type -> itick.ListProductsReq
+	12,  // 88: itick.ItickAdmin.CreateProduct:input_type -> itick.CreateProductReq
+	13,  // 89: itick.ItickAdmin.UpdateProduct:input_type -> itick.UpdateProductReq
+	14,  // 90: itick.ItickAdmin.GetProduct:input_type -> itick.GetProductReq
+	18,  // 91: itick.ItickAdmin.GetProductKline:input_type -> itick.GetProductKlineReq
+	20,  // 92: itick.ItickAdmin.SyncProductKlineHistory:input_type -> itick.SyncProductKlineHistoryReq
+	28,  // 93: itick.ItickAdmin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
+	22,  // 94: itick.ItickAdmin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
+	23,  // 95: itick.ItickAdmin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
+	24,  // 96: itick.ItickAdmin.BatchUpsertTenantCategories:input_type -> itick.BatchUpsertTenantCategoriesReq
+	26,  // 97: itick.ItickAdmin.GetTenantCategory:input_type -> itick.GetTenantCategoryReq
+	36,  // 98: itick.ItickAdmin.ListTenantProducts:input_type -> itick.ListTenantProductsReq
+	30,  // 99: itick.ItickAdmin.CreateTenantProduct:input_type -> itick.CreateTenantProductReq
+	31,  // 100: itick.ItickAdmin.UpdateTenantProduct:input_type -> itick.UpdateTenantProductReq
+	32,  // 101: itick.ItickAdmin.BatchUpsertTenantProducts:input_type -> itick.BatchUpsertTenantProductsReq
+	34,  // 102: itick.ItickAdmin.GetTenantProduct:input_type -> itick.GetTenantProductReq
+	38,  // 103: itick.ItickAdmin.InitTenantItickDisplay:input_type -> itick.InitTenantItickDisplayReq
+	42,  // 104: itick.ItickAdmin.CreatePriceFormula:input_type -> itick.CreatePriceFormulaReq
+	43,  // 105: itick.ItickAdmin.GetPriceFormula:input_type -> itick.PriceFormulaReq
+	45,  // 106: itick.ItickAdmin.ListPriceFormulas:input_type -> itick.ListPriceFormulasReq
+	44,  // 107: itick.ItickAdmin.ChangePriceFormulaStatus:input_type -> itick.ChangePriceFormulaStatusReq
+	49,  // 108: itick.ItickAdmin.ListSnapshotOutbox:input_type -> itick.ListSnapshotOutboxReq
+	52,  // 109: itick.ItickAdmin.RetrySnapshotOutbox:input_type -> itick.RetrySnapshotOutboxReq
+	6,   // 110: itick.ItickAdmin.ListCategories:output_type -> itick.ListCategoriesResp
+	0,   // 111: itick.ItickAdmin.CreateCategory:output_type -> itick.AdminCommonResp
+	0,   // 112: itick.ItickAdmin.UpdateCategory:output_type -> itick.AdminCommonResp
+	4,   // 113: itick.ItickAdmin.GetCategory:output_type -> itick.GetCategoryResp
+	8,   // 114: itick.ItickAdmin.SyncCategoryProducts:output_type -> itick.SyncCategoryProductsResp
+	10,  // 115: itick.ItickAdmin.GetSyncTaskStatus:output_type -> itick.GetSyncTaskStatusResp
+	17,  // 116: itick.ItickAdmin.ListProducts:output_type -> itick.ListProductsResp
+	0,   // 117: itick.ItickAdmin.CreateProduct:output_type -> itick.AdminCommonResp
+	0,   // 118: itick.ItickAdmin.UpdateProduct:output_type -> itick.AdminCommonResp
+	15,  // 119: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
+	19,  // 120: itick.ItickAdmin.GetProductKline:output_type -> itick.GetProductKlineResp
+	21,  // 121: itick.ItickAdmin.SyncProductKlineHistory:output_type -> itick.SyncProductKlineHistoryResp
+	29,  // 122: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
+	0,   // 123: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.AdminCommonResp
+	0,   // 124: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.AdminCommonResp
+	0,   // 125: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.AdminCommonResp
+	27,  // 126: itick.ItickAdmin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
+	37,  // 127: itick.ItickAdmin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
+	0,   // 128: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.AdminCommonResp
+	0,   // 129: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.AdminCommonResp
+	0,   // 130: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.AdminCommonResp
+	35,  // 131: itick.ItickAdmin.GetTenantProduct:output_type -> itick.GetTenantProductResp
+	39,  // 132: itick.ItickAdmin.InitTenantItickDisplay:output_type -> itick.InitTenantItickDisplayResp
+	47,  // 133: itick.ItickAdmin.CreatePriceFormula:output_type -> itick.PriceFormulaResp
+	47,  // 134: itick.ItickAdmin.GetPriceFormula:output_type -> itick.PriceFormulaResp
+	48,  // 135: itick.ItickAdmin.ListPriceFormulas:output_type -> itick.ListPriceFormulasResp
+	0,   // 136: itick.ItickAdmin.ChangePriceFormulaStatus:output_type -> itick.AdminCommonResp
+	51,  // 137: itick.ItickAdmin.ListSnapshotOutbox:output_type -> itick.ListSnapshotOutboxResp
+	0,   // 138: itick.ItickAdmin.RetrySnapshotOutbox:output_type -> itick.AdminCommonResp
+	110, // [110:139] is the sub-list for method output_type
+	81,  // [81:110] is the sub-list for method input_type
+	81,  // [81:81] is the sub-list for extension type_name
+	81,  // [81:81] is the sub-list for extension extendee
+	0,   // [0:81] is the sub-list for field type_name
 }
 
 func init() { file_proto_itick_itick_admin_proto_init() }
@@ -3229,7 +4311,7 @@ func file_proto_itick_itick_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_itick_itick_admin_proto_rawDesc), len(file_proto_itick_itick_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   41,
+			NumMessages:   53,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

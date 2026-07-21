@@ -467,6 +467,11 @@ type BizTradeEvent struct {
 	DeliveredAt    int64  `json:"deliveredAt"`
 }
 
+type ChangePriceFormulaStatusReq struct {
+	Id     int64 `path:"id"`
+	Status int32 `json:"status"`
+}
+
 type ChangeUserStatusReq struct {
 	Id      int64 `json:"id"`
 	Enabled int64 `json:"enabled"` // 0未知 1启用 2禁用
@@ -868,6 +873,22 @@ type CreatePayProductReq struct {
 	Currency    string `json:"currency"`
 	Enabled     int64  `json:"enabled"`
 	Remark      string `json:"remark,optional"`
+}
+
+type CreatePriceFormulaReq struct {
+	FormulaNo       string                  `json:"formulaNo"`
+	Authority       string                  `json:"authority"`
+	SnapshotKind    string                  `json:"snapshotKind"`
+	CategoryCode    string                  `json:"categoryCode,optional"`
+	Market          string                  `json:"market,optional"`
+	Symbol          string                  `json:"symbol"`
+	Algorithm       string                  `json:"algorithm"`
+	FormulaVersion  string                  `json:"formulaVersion"`
+	Components      []PriceFormulaComponent `json:"components"`
+	MaxLookbackMs   int64                   `json:"maxLookbackMs"`
+	MaxDeviationBps int64                   `json:"maxDeviationBps"`
+	IntervalMs      int64                   `json:"intervalMs"`
+	Activate        bool                    `json:"activate"`
 }
 
 type CreateProductReq struct {
@@ -2309,6 +2330,21 @@ type ListPositionsResp struct {
 	Data []OptionPositionDetail `json:"data"`
 }
 
+type ListPriceFormulasReq struct {
+	PageReq
+	Authority    string `json:"authority,optional"`
+	SnapshotKind string `json:"snapshotKind,optional"`
+	CategoryCode string `json:"categoryCode,optional"`
+	Market       string `json:"market,optional"`
+	Symbol       string `json:"symbol,optional"`
+	Status       int32  `json:"status,optional"`
+}
+
+type ListPriceFormulasResp struct {
+	RespBase
+	Data []PriceFormulaData `json:"data"`
+}
+
 type ListProductsReq struct {
 	PageReq
 	CategoryType int64  `form:"categoryType,optional"`
@@ -2376,6 +2412,17 @@ type ListSettlementsReq struct {
 type ListSettlementsResp struct {
 	RespBase
 	Data []OptionSettlementDetail `json:"data"`
+}
+
+type ListSnapshotOutboxReq struct {
+	PageReq
+	Status     int32  `json:"status,optional"`
+	SnapshotId string `json:"snapshotId,optional"`
+}
+
+type ListSnapshotOutboxResp struct {
+	RespBase
+	Data []SnapshotOutboxData `json:"data"`
 }
 
 type ListTenantCategoriesReq struct {
@@ -3088,6 +3135,45 @@ type PayProduct struct {
 	UpdateTimes int64  `json:"updateTimes"`
 }
 
+type PriceFormulaComponent struct {
+	Authority    string `json:"authority"`
+	SnapshotKind string `json:"snapshotKind"`
+	CategoryCode string `json:"categoryCode,optional"`
+	Market       string `json:"market,optional"`
+	Symbol       string `json:"symbol"`
+	Weight       string `json:"weight"`
+}
+
+type PriceFormulaData struct {
+	Id              int64                   `json:"id"`
+	FormulaNo       string                  `json:"formulaNo"`
+	Authority       string                  `json:"authority"`
+	SnapshotKind    string                  `json:"snapshotKind"`
+	CategoryCode    string                  `json:"categoryCode"`
+	Market          string                  `json:"market"`
+	Symbol          string                  `json:"symbol"`
+	Algorithm       string                  `json:"algorithm"`
+	FormulaVersion  string                  `json:"formulaVersion"`
+	Components      []PriceFormulaComponent `json:"components"`
+	MaxLookbackMs   int64                   `json:"maxLookbackMs"`
+	MaxDeviationBps int64                   `json:"maxDeviationBps"`
+	IntervalMs      int64                   `json:"intervalMs"`
+	LastTargetTime  int64                   `json:"lastTargetTime"`
+	Status          int32                   `json:"status"`
+	Version         int64                   `json:"version"`
+	CreateTimes     int64                   `json:"createTimes"`
+	UpdateTimes     int64                   `json:"updateTimes"`
+}
+
+type PriceFormulaReq struct {
+	Id int64 `path:"id"`
+}
+
+type PriceFormulaResp struct {
+	RespBase
+	Data PriceFormulaData `json:"data"`
+}
+
 type ProfileData struct {
 	User  ProfileUser `json:"user"`
 	Menus []MenuNode  `json:"menus"`
@@ -3205,6 +3291,10 @@ type RetrySettlementInstructionReq struct {
 	TenantId int64  `json:"tenantId,optional"`
 	Id       int64  `json:"id"`
 	Reason   string `json:"reason"`
+}
+
+type RetrySnapshotOutboxReq struct {
+	Id int64 `path:"id"`
 }
 
 type RetryTradeEventReq struct {
@@ -3488,6 +3578,17 @@ type SetUserTradeLimitReq struct {
 	EffectiveStartTime   int64  `json:"effectiveStartTime"`
 	EffectiveEndTime     int64  `json:"effectiveEndTime"`
 	Remark               string `json:"remark,optional"`
+}
+
+type SnapshotOutboxData struct {
+	Id           int64  `json:"id"`
+	SnapshotId   string `json:"snapshotId"`
+	Status       int32  `json:"status"`
+	RetryCount   int64  `json:"retryCount"`
+	NextRetryAt  int64  `json:"nextRetryAt"`
+	LastErrorMsg string `json:"lastErrorMsg"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type StakeOrder struct {

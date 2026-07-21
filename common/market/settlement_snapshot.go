@@ -127,7 +127,7 @@ func (b *MarketDataCache) PublishAuthoritativeSnapshot(ctx context.Context, s *S
 		return err
 	}
 	dataKey := fmt.Sprintf("market:authoritative:v1:%s", s.SnapshotID)
-	indexKey := authoritativeSnapshotIndex(ClientMessage{Topic: TopicQuote, CategoryCode: s.CategoryCode, Market: s.Market, Symbol: s.Symbol}, s.Authority)
+	indexKey := authoritativeSnapshotKindIndex(ClientMessage{Topic: TopicQuote, CategoryCode: s.CategoryCode, Market: s.Market, Symbol: s.Symbol}, s.Authority, s.Kind)
 	pipe := b.rdb.TxPipeline()
 	pipe.SetNX(ctx, dataKey, raw, authoritativeSnapshotTTL)
 	pipe.ZAdd(ctx, indexKey, redis.Z{Score: float64(s.SourceTimestamp), Member: s.SnapshotID})
@@ -141,33 +141,52 @@ func (b *MarketDataCache) PublishAuthoritativeSnapshot(ctx context.Context, s *S
 // FindAuthoritativeQuoteAt returns the newest finalized source quote at or
 // before targetTime, bounded by maxLookback.
 func (b *MarketDataCache) FindAuthoritativeQuoteAt(ctx context.Context, msg ClientMessage, authority string, targetTime int64, maxLookback time.Duration) (*SettlementSnapshot, error) {
+	return b.FindAuthoritativeSnapshotAt(ctx, msg, authority, "FINAL_QUOTE", targetTime, maxLookback)
+}
+
+// FindAuthoritativeSnapshotAt reads a purpose-specific immutable snapshot.
+// Kind is part of the index so MARK, INDEX, FUNDING and DELIVERY cannot shadow
+// one another when they share an authority and product.
+func (b *MarketDataCache) FindAuthoritativeSnapshotAt(ctx context.Context, msg ClientMessage, authority, kind string, targetTime int64, maxLookback time.Duration) (*SettlementSnapshot, error) {
 	msg = NormalizeClientMessage(msg)
-	if targetTime <= 0 || maxLookback <= 0 || strings.TrimSpace(authority) == "" {
+	kind = strings.ToUpper(strings.TrimSpace(kind))
+	if targetTime <= 0 || maxLookback <= 0 || strings.TrimSpace(authority) == "" || kind == "" {
 		return nil, errors.New("invalid authoritative snapshot query")
 	}
-	ids, err := b.rdb.ZRevRangeByScore(ctx, authoritativeSnapshotIndex(msg, authority), &redis.ZRangeBy{Max: fmt.Sprintf("%d", targetTime), Min: fmt.Sprintf("%d", targetTime-maxLookback.Milliseconds()), Offset: 0, Count: 1}).Result()
+	ids, err := b.rdb.ZRevRangeByScore(ctx, authoritativeSnapshotKindIndex(msg, authority, kind), &redis.ZRangeBy{Max: fmt.Sprintf("%d", targetTime), Min: fmt.Sprintf("%d", targetTime-maxLookback.Milliseconds()), Offset: 0, Count: 100}).Result()
 	if err != nil {
 		return nil, err
 	}
-	if len(ids) != 1 {
+	if len(ids) == 0 {
 		return nil, errors.New("authoritative snapshot unavailable at target time")
 	}
-	raw, err := b.rdb.Get(ctx, fmt.Sprintf("market:authoritative:v1:%s", ids[0])).Bytes()
-	if err != nil {
-		return nil, err
+	var selected *SettlementSnapshot
+	for _, id := range ids {
+		raw, readErr := b.rdb.Get(ctx, fmt.Sprintf("market:authoritative:v1:%s", id)).Bytes()
+		if readErr != nil {
+			continue
+		}
+		var candidate SettlementSnapshot
+		if json.Unmarshal(raw, &candidate) != nil || !candidate.Confirmed || !strings.EqualFold(candidate.Authority, strings.TrimSpace(authority)) || !strings.EqualFold(candidate.Kind, kind) || candidate.SourceTimestamp > targetTime {
+			continue
+		}
+		if selected == nil || candidate.SourceTimestamp > selected.SourceTimestamp || (candidate.SourceTimestamp == selected.SourceTimestamp && candidate.Revision > selected.Revision) {
+			copy := candidate
+			selected = &copy
+		}
 	}
-	var s SettlementSnapshot
-	if err = json.Unmarshal(raw, &s); err != nil {
-		return nil, err
+	if selected == nil {
+		return nil, errors.New("valid authoritative snapshot unavailable at target time")
 	}
-	if !s.Confirmed || s.Authority != strings.TrimSpace(authority) || s.SourceTimestamp > targetTime {
-		return nil, errors.New("invalid authoritative snapshot")
-	}
-	return &s, nil
+	return selected, nil
 }
 
 func authoritativeSnapshotIndex(msg ClientMessage, authority string) string {
 	return fmt.Sprintf("market:authoritative:v1:index:%s:%s:%s:%s", strings.ToLower(strings.TrimSpace(authority)), msg.CategoryCode, msg.Market, msg.Symbol)
+}
+
+func authoritativeSnapshotKindIndex(msg ClientMessage, authority, kind string) string {
+	return fmt.Sprintf("market:authoritative:v2:index:%s:%s:%s:%s:%s", strings.ToLower(strings.TrimSpace(authority)), strings.ToUpper(strings.TrimSpace(kind)), msg.CategoryCode, msg.Market, msg.Symbol)
 }
 
 func (b *MarketDataCache) GetSettlementSnapshot(ctx context.Context, id string) (*SettlementSnapshot, error) {

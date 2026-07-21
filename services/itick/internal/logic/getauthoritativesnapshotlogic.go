@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"wklive/common/helper"
-	marketcache "wklive/common/market"
+	cache "wklive/common/market"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
@@ -34,7 +34,7 @@ func (l *GetAuthoritativeSnapshotLogic) GetAuthoritativeSnapshot(in *itick.GetAu
 	if in == nil || in.TargetTime <= 0 || in.MaxLookbackMs <= 0 || strings.TrimSpace(in.Authority) == "" {
 		return nil, fmt.Errorf("invalid authoritative snapshot query")
 	}
-	msg := marketcache.NormalizeClientMessage(marketcache.ClientMessage{Topic: marketcache.TopicQuote, CategoryCode: in.CategoryCode, Market: in.Market, Symbol: in.Symbol})
+	msg := cache.NormalizeClientMessage(cache.ClientMessage{Topic: cache.TopicQuote, CategoryCode: in.CategoryCode, Market: in.Market, Symbol: in.Symbol})
 	if msg.CategoryCode == "" || msg.Market == "" || msg.Symbol == "" {
 		return nil, fmt.Errorf("authoritative snapshot product is required")
 	}

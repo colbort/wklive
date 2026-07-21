@@ -171,6 +171,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: itick.SyncCategoryProductsHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/price-formulas",
+				Handler: itick.CreatePriceFormulaHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/price-formulas",
+				Handler: itick.ListPriceFormulasHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/price-formulas/:id",
+				Handler: itick.GetPriceFormulaHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/price-formulas/:id/status",
+				Handler: itick.ChangePriceFormulaStatusHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/product/kline",
 				Handler: itick.GetProductKlineHandler(serverCtx),
@@ -199,6 +219,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/products/:id",
 				Handler: itick.GetProductHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/snapshot-outbox",
+				Handler: itick.ListSnapshotOutboxHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/snapshot-outbox/:id/retry",
+				Handler: itick.RetrySnapshotOutboxHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,

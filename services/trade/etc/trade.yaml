@@ -13,11 +13,5 @@ AssetRpc:
     - 127.0.0.1:2379
     Key: asset.rpc
 
-ItickRpc:
-  rpcType: zrpc
-  Etcd:
-    Hosts:
-    - 127.0.0.1:2379
-    Key: itick.rpc
-
 MarketAuthority: itick-ws
+PriceEngineAuthority: price-engine

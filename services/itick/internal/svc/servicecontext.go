@@ -15,6 +15,7 @@ import (
 	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/internal/pkg/itickrest"
 	"wklive/services/itick/internal/pkg/klinewriter"
+	"wklive/services/itick/internal/priceengine"
 	"wklive/services/itick/models"
 
 	icache "wklive/services/itick/internal/market/cache"
@@ -52,6 +53,8 @@ type ServiceContext struct {
 	ItickQuoteModel             models.TItickQuoteModel
 	AuthoritativeSnapshotModel  AuthoritativeSnapshotStore
 	SnapshotOutboxModel         models.TItickSnapshotOutboxModel
+	PriceFormulaModel           models.TItickPriceFormulaModel
+	PriceEngine                 *priceengine.Engine
 	AuthorityRegistryModel      AuthorityRegistryStore
 	ItickKlineSyncProgressModel models.TItickKlineSyncProgressModel
 	MarketCalendarModel         models.TItickMarketCalendarModel
@@ -64,6 +67,7 @@ type AuthoritativeSnapshotStore interface {
 	InsertImmutable(context.Context, *models.TItickAuthoritativeSnapshot) error
 	InsertImmutableAndEnqueue(context.Context, *models.TItickAuthoritativeSnapshot, string) error
 	FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*models.TItickAuthoritativeSnapshot, error)
+	FindAfterID(context.Context, int64, int64) ([]*models.TItickAuthoritativeSnapshot, error)
 }
 
 type AuthorityRegistryStore interface {
@@ -95,6 +99,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	authoritativeSnapshotModel := models.NewTItickAuthoritativeSnapshotModel(conn, c.CacheRedis)
 	authorityRegistryModel := models.NewTItickAuthorityRegistryModel(conn, c.CacheRedis)
 	snapshotOutboxModel := models.NewTItickSnapshotOutboxModel(conn, c.CacheRedis)
+	priceFormulaModel := models.NewTItickPriceFormulaModel(conn, c.CacheRedis)
 	itickKlineSyncProgressModel := models.NewTItickKlineSyncProgressModel(conn, c.CacheRedis)
 	marketCalendarModel := models.NewTItickMarketCalendarModel(conn, c.CacheRedis)
 	marketHolidayModel := models.NewTItickMarketHolidayModel(conn, c.CacheRedis)
@@ -192,6 +197,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ItickQuoteModel:             itickQuoteModel,
 		AuthoritativeSnapshotModel:  authoritativeSnapshotModel,
 		SnapshotOutboxModel:         snapshotOutboxModel,
+		PriceFormulaModel:           priceFormulaModel,
+		PriceEngine:                 priceengine.New(priceFormulaModel, authoritativeSnapshotModel),
 		AuthorityRegistryModel:      authorityRegistryModel,
 		ItickKlineSyncProgressModel: itickKlineSyncProgressModel,
 		MarketCalendarModel:         marketCalendarModel,

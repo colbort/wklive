@@ -42,6 +42,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	tasks.StartTaskSubscriber(ctx, svcCtx)
+	tasks.StartADLRecovery(ctx, svcCtx)
 
 	if restored, err := logic.RestoreOrderBookCache(context.Background(), svcCtx); err != nil {
 		fmt.Printf("Restore order book cache failed: %v\n", err)

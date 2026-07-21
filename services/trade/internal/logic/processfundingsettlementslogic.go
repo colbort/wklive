@@ -161,18 +161,22 @@ func (l *ProcessFundingSettlementsLogic) lockFundingInputs(c *models.TTradeSymbo
 	if err != nil {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
 	}
+	fundingQ, _, err := quotes.getValidQuotesAtKind("FUNDING_RATE", c.MarkPriceSource, c.SymbolId, settlementTime, 30_000)
+	if err != nil {
+		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
+	}
 	mark, index := mustParseFloat(markQ.LastPrice), mustParseFloat(indexQ.LastPrice)
 	if !index.IsPositive() {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", errors.New("invalid funding index price")
 	}
-	rate := mark.Sub(index).Div(index)
+	rate := mustParseFloat(fundingQ.LastPrice)
 	if c.FundingRateCap.IsPositive() && rate.GreaterThan(c.FundingRateCap) {
 		rate = c.FundingRateCap
 	}
 	if c.FundingRateFloor.IsNegative() && rate.LessThan(c.FundingRateFloor) {
 		rate = c.FundingRateFloor
 	}
-	snapshot := &marketcache.SettlementSnapshot{Kind: "FUNDING", MarkPrice: mark.String(), IndexPrice: index.String(), FundingRate: rate.String(), Source: quoteSource(markQ) + "|" + quoteSource(indexQ), SourceTimestamp: minInt64(markQ.QuoteTs, indexQ.QuoteTs), SnapshotTimestamp: utils.NowMillis(), Revision: maxInt64(markQ.Revision, indexQ.Revision), FormulaVersion: "premium-v1", Confirmed: markQ.Confirmed && indexQ.Confirmed}
+	snapshot := &marketcache.SettlementSnapshot{Kind: "FUNDING", MarkPrice: mark.String(), IndexPrice: index.String(), FundingRate: rate.String(), Source: fundingQ.SnapshotID, SourceTimestamp: minInt64(minInt64(markQ.QuoteTs, indexQ.QuoteTs), fundingQ.QuoteTs), SnapshotTimestamp: utils.NowMillis(), Revision: maxInt64(maxInt64(markQ.Revision, indexQ.Revision), fundingQ.Revision), FormulaVersion: "price-engine", Confirmed: markQ.Confirmed && indexQ.Confirmed && fundingQ.Confirmed}
 	if err := l.svcCtx.MarketDataCache.PutSettlementSnapshot(l.ctx, snapshot); err != nil {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
 	}

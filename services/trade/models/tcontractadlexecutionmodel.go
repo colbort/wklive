@@ -17,6 +17,7 @@ type (
 		FindByLiquidation(context.Context, int64, int64) ([]*TContractAdlExecution, error)
 		FindOneByExecutionNo(context.Context, int64, string) (*TContractAdlExecution, error)
 		FindOneForUpdate(context.Context, int64) (*TContractAdlExecution, error)
+		FindRecoverable(context.Context, int64) ([]*TContractAdlExecution, error)
 	}
 
 	customTContractAdlExecutionModel struct {
@@ -45,4 +46,10 @@ func (m *defaultTContractAdlExecutionModel) FindOneForUpdate(ctx context.Context
 	var r TContractAdlExecution
 	err := m.QueryRowNoCacheCtx(ctx, &r, "SELECT "+tContractAdlExecutionRows+" FROM t_contract_adl_execution WHERE id=? FOR UPDATE", id)
 	return &r, err
+}
+
+func (m *defaultTContractAdlExecutionModel) FindRecoverable(ctx context.Context, limit int64) ([]*TContractAdlExecution, error) {
+	var rows []*TContractAdlExecution
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tContractAdlExecutionRows+" FROM t_contract_adl_execution WHERE status IN (1,2,4) ORDER BY update_times,id LIMIT ?", limit)
+	return rows, err
 }

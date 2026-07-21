@@ -17,7 +17,9 @@ type (
 	AdminCommonResp                = itick.AdminCommonResp
 	BatchUpsertTenantCategoriesReq = itick.BatchUpsertTenantCategoriesReq
 	BatchUpsertTenantProductsReq   = itick.BatchUpsertTenantProductsReq
+	ChangePriceFormulaStatusReq    = itick.ChangePriceFormulaStatusReq
 	CreateCategoryReq              = itick.CreateCategoryReq
+	CreatePriceFormulaReq          = itick.CreatePriceFormulaReq
 	CreateProductReq               = itick.CreateProductReq
 	CreateTenantCategoryReq        = itick.CreateTenantCategoryReq
 	CreateTenantProductReq         = itick.CreateTenantProductReq
@@ -39,12 +41,22 @@ type (
 	InitTenantItickDisplayResp     = itick.InitTenantItickDisplayResp
 	ListCategoriesReq              = itick.ListCategoriesReq
 	ListCategoriesResp             = itick.ListCategoriesResp
+	ListPriceFormulasReq           = itick.ListPriceFormulasReq
+	ListPriceFormulasResp          = itick.ListPriceFormulasResp
 	ListProductsReq                = itick.ListProductsReq
 	ListProductsResp               = itick.ListProductsResp
+	ListSnapshotOutboxReq          = itick.ListSnapshotOutboxReq
+	ListSnapshotOutboxResp         = itick.ListSnapshotOutboxResp
 	ListTenantCategoriesReq        = itick.ListTenantCategoriesReq
 	ListTenantCategoriesResp       = itick.ListTenantCategoriesResp
 	ListTenantProductsReq          = itick.ListTenantProductsReq
 	ListTenantProductsResp         = itick.ListTenantProductsResp
+	PriceFormulaComponent          = itick.PriceFormulaComponent
+	PriceFormulaData               = itick.PriceFormulaData
+	PriceFormulaReq                = itick.PriceFormulaReq
+	PriceFormulaResp               = itick.PriceFormulaResp
+	RetrySnapshotOutboxReq         = itick.RetrySnapshotOutboxReq
+	SnapshotOutboxData             = itick.SnapshotOutboxData
 	SyncCategoryProductsReq        = itick.SyncCategoryProductsReq
 	SyncCategoryProductsResp       = itick.SyncCategoryProductsResp
 	SyncProductKlineHistoryReq     = itick.SyncProductKlineHistoryReq
@@ -103,6 +115,13 @@ type (
 		GetTenantProduct(ctx context.Context, in *GetTenantProductReq, opts ...grpc.CallOption) (*GetTenantProductResp, error)
 		// 初始化租户展示配置
 		InitTenantItickDisplay(ctx context.Context, in *InitTenantItickDisplayReq, opts ...grpc.CallOption) (*InitTenantItickDisplayResp, error)
+		// Price Engine 公式内容不可原地修改，变更必须创建新版本。
+		CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
+		GetPriceFormula(ctx context.Context, in *PriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
+		ListPriceFormulas(ctx context.Context, in *ListPriceFormulasReq, opts ...grpc.CallOption) (*ListPriceFormulasResp, error)
+		ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		ListSnapshotOutbox(ctx context.Context, in *ListSnapshotOutboxReq, opts ...grpc.CallOption) (*ListSnapshotOutboxResp, error)
+		RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	}
 
 	defaultItickAdmin struct {
@@ -252,4 +271,35 @@ func (m *defaultItickAdmin) GetTenantProduct(ctx context.Context, in *GetTenantP
 func (m *defaultItickAdmin) InitTenantItickDisplay(ctx context.Context, in *InitTenantItickDisplayReq, opts ...grpc.CallOption) (*InitTenantItickDisplayResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.InitTenantItickDisplay(ctx, in, opts...)
+}
+
+// Price Engine 公式内容不可原地修改，变更必须创建新版本。
+func (m *defaultItickAdmin) CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error) {
+	client := itick.NewItickAdminClient(m.cli.Conn())
+	return client.CreatePriceFormula(ctx, in, opts...)
+}
+
+func (m *defaultItickAdmin) GetPriceFormula(ctx context.Context, in *PriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error) {
+	client := itick.NewItickAdminClient(m.cli.Conn())
+	return client.GetPriceFormula(ctx, in, opts...)
+}
+
+func (m *defaultItickAdmin) ListPriceFormulas(ctx context.Context, in *ListPriceFormulasReq, opts ...grpc.CallOption) (*ListPriceFormulasResp, error) {
+	client := itick.NewItickAdminClient(m.cli.Conn())
+	return client.ListPriceFormulas(ctx, in, opts...)
+}
+
+func (m *defaultItickAdmin) ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := itick.NewItickAdminClient(m.cli.Conn())
+	return client.ChangePriceFormulaStatus(ctx, in, opts...)
+}
+
+func (m *defaultItickAdmin) ListSnapshotOutbox(ctx context.Context, in *ListSnapshotOutboxReq, opts ...grpc.CallOption) (*ListSnapshotOutboxResp, error) {
+	client := itick.NewItickAdminClient(m.cli.Conn())
+	return client.ListSnapshotOutbox(ctx, in, opts...)
+}
+
+func (m *defaultItickAdmin) RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := itick.NewItickAdminClient(m.cli.Conn())
+	return client.RetrySnapshotOutbox(ctx, in, opts...)
 }
