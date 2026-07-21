@@ -3,6 +3,7 @@ package priceengine
 import (
 	"errors"
 	"sort"
+	"wklive/proto/itick"
 
 	"github.com/shopspring/decimal"
 )
@@ -13,7 +14,7 @@ type Input struct {
 	SnapshotID string          `json:"snapshot_id"`
 }
 
-func Calculate(algorithm string, inputs []Input) (decimal.Decimal, error) {
+func Calculate(algorithm itick.PriceAlgorithm, inputs []Input) (decimal.Decimal, error) {
 	if len(inputs) == 0 {
 		return decimal.Zero, errors.New("price formula has no inputs")
 	}
@@ -23,7 +24,7 @@ func Calculate(algorithm string, inputs []Input) (decimal.Decimal, error) {
 		}
 	}
 	switch algorithm {
-	case "WEIGHTED_MEAN":
+	case itick.PriceAlgorithm_PRICE_ALGORITHM_WEIGHTED_MEAN:
 		total, weights := decimal.Zero, decimal.Zero
 		for _, in := range inputs {
 			if !in.Weight.IsPositive() {
@@ -33,7 +34,7 @@ func Calculate(algorithm string, inputs []Input) (decimal.Decimal, error) {
 			weights = weights.Add(in.Weight)
 		}
 		return total.Div(weights), nil
-	case "MEDIAN":
+	case itick.PriceAlgorithm_PRICE_ALGORITHM_MEDIAN:
 		prices := make([]decimal.Decimal, len(inputs))
 		for i, in := range inputs {
 			prices[i] = in.Price
@@ -44,7 +45,7 @@ func Calculate(algorithm string, inputs []Input) (decimal.Decimal, error) {
 			return prices[n/2], nil
 		}
 		return prices[n/2-1].Add(prices[n/2]).Div(decimal.NewFromInt(2)), nil
-	case "PREMIUM_RATE":
+	case itick.PriceAlgorithm_PRICE_ALGORITHM_PREMIUM_RATE:
 		if len(inputs) != 2 {
 			return decimal.Zero, errors.New("premium rate requires mark and index inputs")
 		}

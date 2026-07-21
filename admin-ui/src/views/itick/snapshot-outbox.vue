@@ -98,8 +98,9 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="revokeVisible = false"> {{ t('common.cancel') }} </el-button
-        ><el-button type="danger" :loading="revoking" @click="revoke">
+        <el-button @click="revokeVisible = false">
+          {{ t('common.cancel') }}
+        </el-button><el-button type="danger" :loading="revoking" @click="revoke">
           {{ t('itick.revoke') }}
         </el-button>
       </template>

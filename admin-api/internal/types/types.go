@@ -892,7 +892,7 @@ type CreatePriceFormulaReq struct {
 	CategoryCode    string                  `json:"categoryCode,optional"`
 	Market          string                  `json:"market,optional"`
 	Symbol          string                  `json:"symbol"`
-	Algorithm       string                  `json:"algorithm"`
+	Algorithm       int64                   `json:"algorithm"`
 	FormulaVersion  string                  `json:"formulaVersion"`
 	Components      []PriceFormulaComponent `json:"components"`
 	MaxLookbackMs   int64                   `json:"maxLookbackMs"`
@@ -3184,7 +3184,7 @@ type PriceFormulaData struct {
 	CategoryCode    string                  `json:"categoryCode"`
 	Market          string                  `json:"market"`
 	Symbol          string                  `json:"symbol"`
-	Algorithm       string                  `json:"algorithm"`
+	Algorithm       int64                   `json:"algorithm"`
 	FormulaVersion  string                  `json:"formulaVersion"`
 	Components      []PriceFormulaComponent `json:"components"`
 	MaxLookbackMs   int64                   `json:"maxLookbackMs"`

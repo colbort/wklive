@@ -33,7 +33,11 @@
         <el-table-column prop="authority" :label="t('itick.authority')" min-width="130" />
         <el-table-column prop="snapshotKind" :label="t('itick.snapshotKind')" min-width="140" />
         <el-table-column prop="symbol" :label="t('itick.symbol')" min-width="120" />
-        <el-table-column prop="algorithm" :label="t('itick.algorithm')" min-width="140" />
+        <el-table-column prop="algorithm" :label="t('itick.algorithm')" min-width="140">
+          <template #default="{ row }">
+            {{ algorithmLabel(row.algorithm) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="formulaVersion" :label="t('itick.formulaVersion')" min-width="130" />
         <el-table-column :label="t('common.status')" width="110">
           <template #default="{ row }">
@@ -122,7 +126,12 @@
           <el-col :span="12">
             <el-form-item :label="t('itick.algorithm')" required>
               <el-select v-model="form.algorithm" style="width: 100%">
-                <el-option v-for="algorithm in algorithms" :key="algorithm" :value="algorithm" />
+                <el-option
+                  v-for="algorithm in algorithms"
+                  :key="algorithm.value"
+                  :label="algorithm.label"
+                  :value="algorithm.value"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -192,8 +201,9 @@
         </el-button>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false"> {{ t('common.cancel') }} </el-button
-        ><el-button type="primary" :loading="saving" @click="save">
+        <el-button @click="dialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button><el-button type="primary" :loading="saving" @click="save">
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -207,6 +217,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 import { usePagination } from '@/composables'
+import { getCoreOptions } from '@/stores/core'
+import type { OptionGroup } from '@/services'
+import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import {
   apiChangePriceFormulaStatus,
   apiCreatePriceFormula,
@@ -228,7 +241,13 @@ const query = reactive({
   symbol: '',
   status: undefined as number | undefined,
 })
-const algorithms = ['WEIGHTED_MEAN', 'MEDIAN', 'PREMIUM_RATE']
+const optionGroups = ref<OptionGroup[]>([])
+const algorithms = computed(() =>
+  findOptionGroup(optionGroups.value, 'priceAlgorithm').map((item) => ({
+    value: item.value,
+    label: getOptionLabel(t, item.code, item.value),
+  })),
+)
 const formulaStatuses = computed(() => [
   { value: 1, label: t('itick.active') },
   { value: 2, label: t('itick.inactive') },
@@ -241,7 +260,7 @@ const emptyForm = (): CreatePriceFormulaReq => ({
   categoryCode: '',
   market: '',
   symbol: '',
-  algorithm: 'WEIGHTED_MEAN',
+  algorithm: 1,
   formulaVersion: '',
   components: [],
   maxLookbackMs: 60000,
@@ -252,6 +271,12 @@ const emptyForm = (): CreatePriceFormulaReq => ({
 const form = reactive<CreatePriceFormulaReq>(emptyForm())
 function formulaStatusLabel(status: number) {
   return formulaStatuses.value.find((item) => item.value === status)?.label || String(status)
+}
+function algorithmLabel(algorithm: number) {
+  return algorithms.value.find((item) => item.value === algorithm)?.label || algorithm
+}
+async function loadOptions() {
+  optionGroups.value = (await getCoreOptions()).data || []
 }
 function formulaStatusType(status: number) {
   return status === 1 ? 'success' : status === 3 ? 'danger' : 'info'
@@ -325,5 +350,7 @@ async function changeStatus(row: PriceFormula, status: 1 | 3) {
   ElMessage.success(t('common.success'))
   load()
 }
-onMounted(load)
+onMounted(async () => {
+  await Promise.all([loadOptions(), load()])
+})
 </script>

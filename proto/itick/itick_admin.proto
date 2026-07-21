@@ -334,7 +334,7 @@ message CreatePriceFormulaReq {
   string category_code = 4;
   string market = 5;
   string symbol = 6;
-  string algorithm = 7;
+  itick.PriceAlgorithm algorithm = 7;
   string formula_version = 8;
   repeated PriceFormulaComponent components = 9;
   int64 max_lookback_ms = 10;
@@ -370,7 +370,7 @@ message PriceFormulaData {
   string category_code = 5;
   string market = 6;
   string symbol = 7;
-  string algorithm = 8;
+  itick.PriceAlgorithm algorithm = 8;
   string formula_version = 9;
   repeated PriceFormulaComponent components = 10;
   int64 max_lookback_ms = 11;

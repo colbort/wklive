@@ -1,10 +1,6 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard
-      :model="query"
-      @search="load"
-      @reset="reset"
-    >
+    <CrudQueryCard :model="query" @search="load" @reset="reset">
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="query.tenantId" />
       </el-form-item><el-form-item :label="t('trade.symbolId')">
@@ -12,46 +8,27 @@
       </el-form-item><el-form-item :label="t('trade.snapshotKind')">
         <el-input v-model="query.snapshotKind" clearable />
       </el-form-item>
-    </CrudQueryCard><el-card
-      shadow="never"
-      class="table-card"
-    >
-      <el-table
-        v-loading="loading"
-        :data="rows"
-        stripe
-      >
+    </CrudQueryCard><el-card shadow="never" class="table-card">
+      <el-table v-loading="loading" :data="rows" stripe>
         <el-table-column
           prop="snapshotId"
           :label="t('trade.snapshotId')"
           min-width="220"
           show-overflow-tooltip
-        /><el-table-column
-          prop="snapshotKind"
-          :label="t('trade.snapshotKind')"
-        /><el-table-column
+        /><el-table-column prop="snapshotKind" :label="t('trade.snapshotKind')" /><el-table-column
           prop="symbolId"
           :label="t('trade.symbolId')"
-        /><el-table-column
-          prop="price"
-          :label="t('trade.price')"
-        /><el-table-column
+        /><el-table-column prop="price" :label="t('trade.price')" /><el-table-column
           prop="markPrice"
           :label="t('trade.markPrice')"
-        /><el-table-column
-          prop="indexPrice"
-          :label="t('trade.indexPrice')"
-        /><el-table-column
+        /><el-table-column prop="indexPrice" :label="t('trade.indexPrice')" /><el-table-column
           prop="fundingRate"
           :label="t('trade.fundingRate')"
         /><el-table-column
           prop="sourceTimestamp"
           :label="t('trade.sourceTimestamp')"
           min-width="150"
-        /><el-table-column
-          prop="revision"
-          :label="t('trade.revision')"
-        /><el-table-column
+        /><el-table-column prop="revision" :label="t('trade.revision')" /><el-table-column
           prop="confirmed"
           :label="t('trade.confirmed')"
         />
@@ -71,6 +48,8 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
+import TenantSelect from '@/components/TenantSelect.vue'
 import { usePagination } from '@/composables'
 import { apiTradeListMarketSnapshots } from '@/api/trade'
 import type { TradeMarketSnapshot } from '@/services'

@@ -107,6 +107,10 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
+import SymbolSelect from '@/components/SymbolSelect.vue'
+import TenantSelect from '@/components/TenantSelect.vue'
+import UserSelect from '@/components/UserSelect.vue'
 import { usePagination } from '@/composables'
 import {
   apiTradeListAssetReservations,

@@ -1,7 +1,5 @@
 <template>
-  <div class="module-page">
-    <TradeOperationList kind="deliveryBatches" />
-  </div>
+  <TradeOperationList kind="deliveryBatches" />
 </template>
 <script setup lang="ts">
 import TradeOperationList from '@/components/trade/TradeOperationList.vue'

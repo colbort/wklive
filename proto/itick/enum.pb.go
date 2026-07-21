@@ -207,6 +207,59 @@ func (SyncKlinePriority) EnumDescriptor() ([]byte, []int) {
 	return file_proto_itick_enum_proto_rawDescGZIP(), []int{2}
 }
 
+// 价格公式计算算法
+type PriceAlgorithm int32
+
+const (
+	PriceAlgorithm_PRICE_ALGORITHM_UNKNOWN       PriceAlgorithm = 0
+	PriceAlgorithm_PRICE_ALGORITHM_WEIGHTED_MEAN PriceAlgorithm = 1
+	PriceAlgorithm_PRICE_ALGORITHM_MEDIAN        PriceAlgorithm = 2
+	PriceAlgorithm_PRICE_ALGORITHM_PREMIUM_RATE  PriceAlgorithm = 3
+)
+
+// Enum value maps for PriceAlgorithm.
+var (
+	PriceAlgorithm_name = map[int32]string{
+		0: "PRICE_ALGORITHM_UNKNOWN",
+		1: "PRICE_ALGORITHM_WEIGHTED_MEAN",
+		2: "PRICE_ALGORITHM_MEDIAN",
+		3: "PRICE_ALGORITHM_PREMIUM_RATE",
+	}
+	PriceAlgorithm_value = map[string]int32{
+		"PRICE_ALGORITHM_UNKNOWN":       0,
+		"PRICE_ALGORITHM_WEIGHTED_MEAN": 1,
+		"PRICE_ALGORITHM_MEDIAN":        2,
+		"PRICE_ALGORITHM_PREMIUM_RATE":  3,
+	}
+)
+
+func (x PriceAlgorithm) Enum() *PriceAlgorithm {
+	p := new(PriceAlgorithm)
+	*p = x
+	return p
+}
+
+func (x PriceAlgorithm) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PriceAlgorithm) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_itick_enum_proto_enumTypes[3].Descriptor()
+}
+
+func (PriceAlgorithm) Type() protoreflect.EnumType {
+	return &file_proto_itick_enum_proto_enumTypes[3]
+}
+
+func (x PriceAlgorithm) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PriceAlgorithm.Descriptor instead.
+func (PriceAlgorithm) EnumDescriptor() ([]byte, []int) {
+	return file_proto_itick_enum_proto_rawDescGZIP(), []int{3}
+}
+
 var File_proto_itick_enum_proto protoreflect.FileDescriptor
 
 const file_proto_itick_enum_proto_rawDesc = "" +
@@ -236,7 +289,12 @@ const file_proto_itick_enum_proto_rawDesc = "" +
 	"\x1bSYNC_KLINE_PRIORITY_UNKNOWN\x10\x00\x12\x1c\n" +
 	"\x18SYNC_KLINE_PRIORITY_HIGH\x10\x01\x12\x1e\n" +
 	"\x1aSYNC_KLINE_PRIORITY_NORMAL\x10\x02\x12\x1b\n" +
-	"\x17SYNC_KLINE_PRIORITY_LOW\x10\x03B\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
+	"\x17SYNC_KLINE_PRIORITY_LOW\x10\x03*\x8e\x01\n" +
+	"\x0ePriceAlgorithm\x12\x1b\n" +
+	"\x17PRICE_ALGORITHM_UNKNOWN\x10\x00\x12!\n" +
+	"\x1dPRICE_ALGORITHM_WEIGHTED_MEAN\x10\x01\x12\x1a\n" +
+	"\x16PRICE_ALGORITHM_MEDIAN\x10\x02\x12 \n" +
+	"\x1cPRICE_ALGORITHM_PREMIUM_RATE\x10\x03B\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
 
 var (
 	file_proto_itick_enum_proto_rawDescOnce sync.Once
@@ -250,11 +308,12 @@ func file_proto_itick_enum_proto_rawDescGZIP() []byte {
 	return file_proto_itick_enum_proto_rawDescData
 }
 
-var file_proto_itick_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_proto_itick_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_proto_itick_enum_proto_goTypes = []any{
 	(CategoryType)(0),      // 0: itick.CategoryType
 	(KlineType)(0),         // 1: itick.KlineType
 	(SyncKlinePriority)(0), // 2: itick.SyncKlinePriority
+	(PriceAlgorithm)(0),    // 3: itick.PriceAlgorithm
 }
 var file_proto_itick_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -274,7 +333,7 @@ func file_proto_itick_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_itick_enum_proto_rawDesc), len(file_proto_itick_enum_proto_rawDesc)),
-			NumEnums:      3,
+			NumEnums:      4,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

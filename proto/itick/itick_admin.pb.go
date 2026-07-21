@@ -2862,7 +2862,7 @@ type CreatePriceFormulaReq struct {
 	CategoryCode    string                   `protobuf:"bytes,4,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	Market          string                   `protobuf:"bytes,5,opt,name=market,proto3" json:"market,omitempty"`
 	Symbol          string                   `protobuf:"bytes,6,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	Algorithm       string                   `protobuf:"bytes,7,opt,name=algorithm,proto3" json:"algorithm,omitempty"`
+	Algorithm       PriceAlgorithm           `protobuf:"varint,7,opt,name=algorithm,proto3,enum=itick.PriceAlgorithm" json:"algorithm,omitempty"`
 	FormulaVersion  string                   `protobuf:"bytes,8,opt,name=formula_version,json=formulaVersion,proto3" json:"formula_version,omitempty"`
 	Components      []*PriceFormulaComponent `protobuf:"bytes,9,rep,name=components,proto3" json:"components,omitempty"`
 	MaxLookbackMs   int64                    `protobuf:"varint,10,opt,name=max_lookback_ms,json=maxLookbackMs,proto3" json:"max_lookback_ms,omitempty"`
@@ -2945,11 +2945,11 @@ func (x *CreatePriceFormulaReq) GetSymbol() string {
 	return ""
 }
 
-func (x *CreatePriceFormulaReq) GetAlgorithm() string {
+func (x *CreatePriceFormulaReq) GetAlgorithm() PriceAlgorithm {
 	if x != nil {
 		return x.Algorithm
 	}
-	return ""
+	return PriceAlgorithm_PRICE_ALGORITHM_UNKNOWN
 }
 
 func (x *CreatePriceFormulaReq) GetFormulaVersion() string {
@@ -3191,7 +3191,7 @@ type PriceFormulaData struct {
 	CategoryCode    string                   `protobuf:"bytes,5,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	Market          string                   `protobuf:"bytes,6,opt,name=market,proto3" json:"market,omitempty"`
 	Symbol          string                   `protobuf:"bytes,7,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	Algorithm       string                   `protobuf:"bytes,8,opt,name=algorithm,proto3" json:"algorithm,omitempty"`
+	Algorithm       PriceAlgorithm           `protobuf:"varint,8,opt,name=algorithm,proto3,enum=itick.PriceAlgorithm" json:"algorithm,omitempty"`
 	FormulaVersion  string                   `protobuf:"bytes,9,opt,name=formula_version,json=formulaVersion,proto3" json:"formula_version,omitempty"`
 	Components      []*PriceFormulaComponent `protobuf:"bytes,10,rep,name=components,proto3" json:"components,omitempty"`
 	MaxLookbackMs   int64                    `protobuf:"varint,11,opt,name=max_lookback_ms,json=maxLookbackMs,proto3" json:"max_lookback_ms,omitempty"`
@@ -3285,11 +3285,11 @@ func (x *PriceFormulaData) GetSymbol() string {
 	return ""
 }
 
-func (x *PriceFormulaData) GetAlgorithm() string {
+func (x *PriceFormulaData) GetAlgorithm() PriceAlgorithm {
 	if x != nil {
 		return x.Algorithm
 	}
-	return ""
+	return PriceAlgorithm_PRICE_ALGORITHM_UNKNOWN
 }
 
 func (x *PriceFormulaData) GetFormulaVersion() string {
@@ -4030,7 +4030,7 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x04 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x05 \x01(\tR\x06symbol\x12\x16\n" +
-	"\x06weight\x18\x06 \x01(\tR\x06weight\"\xe4\x03\n" +
+	"\x06weight\x18\x06 \x01(\tR\x06weight\"\xfb\x03\n" +
 	"\x15CreatePriceFormulaReq\x12\x1d\n" +
 	"\n" +
 	"formula_no\x18\x01 \x01(\tR\tformulaNo\x12\x1c\n" +
@@ -4038,8 +4038,8 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\rsnapshot_kind\x18\x03 \x01(\tR\fsnapshotKind\x12#\n" +
 	"\rcategory_code\x18\x04 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x05 \x01(\tR\x06market\x12\x16\n" +
-	"\x06symbol\x18\x06 \x01(\tR\x06symbol\x12\x1c\n" +
-	"\talgorithm\x18\a \x01(\tR\talgorithm\x12'\n" +
+	"\x06symbol\x18\x06 \x01(\tR\x06symbol\x123\n" +
+	"\talgorithm\x18\a \x01(\x0e2\x15.itick.PriceAlgorithmR\talgorithm\x12'\n" +
 	"\x0fformula_version\x18\b \x01(\tR\x0eformulaVersion\x12<\n" +
 	"\n" +
 	"components\x18\t \x03(\v2\x1c.itick.PriceFormulaComponentR\n" +
@@ -4062,7 +4062,7 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\rcategory_code\x18\x04 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x05 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x06 \x01(\tR\x06symbol\x12\x16\n" +
-	"\x06status\x18\a \x01(\x05R\x06status\"\xf5\x04\n" +
+	"\x06status\x18\a \x01(\x05R\x06status\"\x8c\x05\n" +
 	"\x10PriceFormulaData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -4071,8 +4071,8 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\rsnapshot_kind\x18\x04 \x01(\tR\fsnapshotKind\x12#\n" +
 	"\rcategory_code\x18\x05 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x06 \x01(\tR\x06market\x12\x16\n" +
-	"\x06symbol\x18\a \x01(\tR\x06symbol\x12\x1c\n" +
-	"\talgorithm\x18\b \x01(\tR\talgorithm\x12'\n" +
+	"\x06symbol\x18\a \x01(\tR\x06symbol\x123\n" +
+	"\talgorithm\x18\b \x01(\x0e2\x15.itick.PriceAlgorithmR\talgorithm\x12'\n" +
 	"\x0fformula_version\x18\t \x01(\tR\x0eformulaVersion\x12<\n" +
 	"\n" +
 	"components\x18\n" +
@@ -4236,6 +4236,7 @@ var file_proto_itick_itick_admin_proto_goTypes = []any{
 	(*Kline)(nil),                          // 63: itick.Kline
 	(*ItickTenantCategory)(nil),            // 64: itick.ItickTenantCategory
 	(*ItickTenantProduct)(nil),             // 65: itick.ItickTenantProduct
+	(PriceAlgorithm)(0),                    // 66: itick.PriceAlgorithm
 }
 var file_proto_itick_itick_admin_proto_depIdxs = []int32{
 	54,  // 0: itick.AdminCommonResp.base:type_name -> common.RespBase
@@ -4309,81 +4310,83 @@ var file_proto_itick_itick_admin_proto_depIdxs = []int32{
 	65,  // 68: itick.ListTenantProductsResp.data:type_name -> itick.ItickTenantProduct
 	54,  // 69: itick.InitTenantItickDisplayResp.base:type_name -> common.RespBase
 	40,  // 70: itick.InitTenantItickDisplayResp.data:type_name -> itick.InitTenantItickDisplayData
-	41,  // 71: itick.CreatePriceFormulaReq.components:type_name -> itick.PriceFormulaComponent
-	60,  // 72: itick.ListPriceFormulasReq.page:type_name -> common.PageReq
-	41,  // 73: itick.PriceFormulaData.components:type_name -> itick.PriceFormulaComponent
-	54,  // 74: itick.PriceFormulaResp.base:type_name -> common.RespBase
-	46,  // 75: itick.PriceFormulaResp.data:type_name -> itick.PriceFormulaData
-	54,  // 76: itick.ListPriceFormulasResp.base:type_name -> common.RespBase
-	46,  // 77: itick.ListPriceFormulasResp.data:type_name -> itick.PriceFormulaData
-	60,  // 78: itick.ListSnapshotOutboxReq.page:type_name -> common.PageReq
-	54,  // 79: itick.ListSnapshotOutboxResp.base:type_name -> common.RespBase
-	50,  // 80: itick.ListSnapshotOutboxResp.data:type_name -> itick.SnapshotOutboxData
-	5,   // 81: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
-	1,   // 82: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
-	2,   // 83: itick.ItickAdmin.UpdateCategory:input_type -> itick.UpdateCategoryReq
-	3,   // 84: itick.ItickAdmin.GetCategory:input_type -> itick.GetCategoryReq
-	7,   // 85: itick.ItickAdmin.SyncCategoryProducts:input_type -> itick.SyncCategoryProductsReq
-	9,   // 86: itick.ItickAdmin.GetSyncTaskStatus:input_type -> itick.GetSyncTaskStatusReq
-	16,  // 87: itick.ItickAdmin.ListProducts:input_type -> itick.ListProductsReq
-	12,  // 88: itick.ItickAdmin.CreateProduct:input_type -> itick.CreateProductReq
-	13,  // 89: itick.ItickAdmin.UpdateProduct:input_type -> itick.UpdateProductReq
-	14,  // 90: itick.ItickAdmin.GetProduct:input_type -> itick.GetProductReq
-	18,  // 91: itick.ItickAdmin.GetProductKline:input_type -> itick.GetProductKlineReq
-	20,  // 92: itick.ItickAdmin.SyncProductKlineHistory:input_type -> itick.SyncProductKlineHistoryReq
-	28,  // 93: itick.ItickAdmin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
-	22,  // 94: itick.ItickAdmin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
-	23,  // 95: itick.ItickAdmin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
-	24,  // 96: itick.ItickAdmin.BatchUpsertTenantCategories:input_type -> itick.BatchUpsertTenantCategoriesReq
-	26,  // 97: itick.ItickAdmin.GetTenantCategory:input_type -> itick.GetTenantCategoryReq
-	36,  // 98: itick.ItickAdmin.ListTenantProducts:input_type -> itick.ListTenantProductsReq
-	30,  // 99: itick.ItickAdmin.CreateTenantProduct:input_type -> itick.CreateTenantProductReq
-	31,  // 100: itick.ItickAdmin.UpdateTenantProduct:input_type -> itick.UpdateTenantProductReq
-	32,  // 101: itick.ItickAdmin.BatchUpsertTenantProducts:input_type -> itick.BatchUpsertTenantProductsReq
-	34,  // 102: itick.ItickAdmin.GetTenantProduct:input_type -> itick.GetTenantProductReq
-	38,  // 103: itick.ItickAdmin.InitTenantItickDisplay:input_type -> itick.InitTenantItickDisplayReq
-	42,  // 104: itick.ItickAdmin.CreatePriceFormula:input_type -> itick.CreatePriceFormulaReq
-	43,  // 105: itick.ItickAdmin.GetPriceFormula:input_type -> itick.PriceFormulaReq
-	45,  // 106: itick.ItickAdmin.ListPriceFormulas:input_type -> itick.ListPriceFormulasReq
-	44,  // 107: itick.ItickAdmin.ChangePriceFormulaStatus:input_type -> itick.ChangePriceFormulaStatusReq
-	49,  // 108: itick.ItickAdmin.ListSnapshotOutbox:input_type -> itick.ListSnapshotOutboxReq
-	52,  // 109: itick.ItickAdmin.RetrySnapshotOutbox:input_type -> itick.RetrySnapshotOutboxReq
-	53,  // 110: itick.ItickAdmin.RevokeAuthoritativeSnapshot:input_type -> itick.RevokeAuthoritativeSnapshotReq
-	6,   // 111: itick.ItickAdmin.ListCategories:output_type -> itick.ListCategoriesResp
-	0,   // 112: itick.ItickAdmin.CreateCategory:output_type -> itick.AdminCommonResp
-	0,   // 113: itick.ItickAdmin.UpdateCategory:output_type -> itick.AdminCommonResp
-	4,   // 114: itick.ItickAdmin.GetCategory:output_type -> itick.GetCategoryResp
-	8,   // 115: itick.ItickAdmin.SyncCategoryProducts:output_type -> itick.SyncCategoryProductsResp
-	10,  // 116: itick.ItickAdmin.GetSyncTaskStatus:output_type -> itick.GetSyncTaskStatusResp
-	17,  // 117: itick.ItickAdmin.ListProducts:output_type -> itick.ListProductsResp
-	0,   // 118: itick.ItickAdmin.CreateProduct:output_type -> itick.AdminCommonResp
-	0,   // 119: itick.ItickAdmin.UpdateProduct:output_type -> itick.AdminCommonResp
-	15,  // 120: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
-	19,  // 121: itick.ItickAdmin.GetProductKline:output_type -> itick.GetProductKlineResp
-	21,  // 122: itick.ItickAdmin.SyncProductKlineHistory:output_type -> itick.SyncProductKlineHistoryResp
-	29,  // 123: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
-	0,   // 124: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.AdminCommonResp
-	0,   // 125: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.AdminCommonResp
-	0,   // 126: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.AdminCommonResp
-	27,  // 127: itick.ItickAdmin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
-	37,  // 128: itick.ItickAdmin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
-	0,   // 129: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.AdminCommonResp
-	0,   // 130: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.AdminCommonResp
-	0,   // 131: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.AdminCommonResp
-	35,  // 132: itick.ItickAdmin.GetTenantProduct:output_type -> itick.GetTenantProductResp
-	39,  // 133: itick.ItickAdmin.InitTenantItickDisplay:output_type -> itick.InitTenantItickDisplayResp
-	47,  // 134: itick.ItickAdmin.CreatePriceFormula:output_type -> itick.PriceFormulaResp
-	47,  // 135: itick.ItickAdmin.GetPriceFormula:output_type -> itick.PriceFormulaResp
-	48,  // 136: itick.ItickAdmin.ListPriceFormulas:output_type -> itick.ListPriceFormulasResp
-	0,   // 137: itick.ItickAdmin.ChangePriceFormulaStatus:output_type -> itick.AdminCommonResp
-	51,  // 138: itick.ItickAdmin.ListSnapshotOutbox:output_type -> itick.ListSnapshotOutboxResp
-	0,   // 139: itick.ItickAdmin.RetrySnapshotOutbox:output_type -> itick.AdminCommonResp
-	0,   // 140: itick.ItickAdmin.RevokeAuthoritativeSnapshot:output_type -> itick.AdminCommonResp
-	111, // [111:141] is the sub-list for method output_type
-	81,  // [81:111] is the sub-list for method input_type
-	81,  // [81:81] is the sub-list for extension type_name
-	81,  // [81:81] is the sub-list for extension extendee
-	0,   // [0:81] is the sub-list for field type_name
+	66,  // 71: itick.CreatePriceFormulaReq.algorithm:type_name -> itick.PriceAlgorithm
+	41,  // 72: itick.CreatePriceFormulaReq.components:type_name -> itick.PriceFormulaComponent
+	60,  // 73: itick.ListPriceFormulasReq.page:type_name -> common.PageReq
+	66,  // 74: itick.PriceFormulaData.algorithm:type_name -> itick.PriceAlgorithm
+	41,  // 75: itick.PriceFormulaData.components:type_name -> itick.PriceFormulaComponent
+	54,  // 76: itick.PriceFormulaResp.base:type_name -> common.RespBase
+	46,  // 77: itick.PriceFormulaResp.data:type_name -> itick.PriceFormulaData
+	54,  // 78: itick.ListPriceFormulasResp.base:type_name -> common.RespBase
+	46,  // 79: itick.ListPriceFormulasResp.data:type_name -> itick.PriceFormulaData
+	60,  // 80: itick.ListSnapshotOutboxReq.page:type_name -> common.PageReq
+	54,  // 81: itick.ListSnapshotOutboxResp.base:type_name -> common.RespBase
+	50,  // 82: itick.ListSnapshotOutboxResp.data:type_name -> itick.SnapshotOutboxData
+	5,   // 83: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
+	1,   // 84: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
+	2,   // 85: itick.ItickAdmin.UpdateCategory:input_type -> itick.UpdateCategoryReq
+	3,   // 86: itick.ItickAdmin.GetCategory:input_type -> itick.GetCategoryReq
+	7,   // 87: itick.ItickAdmin.SyncCategoryProducts:input_type -> itick.SyncCategoryProductsReq
+	9,   // 88: itick.ItickAdmin.GetSyncTaskStatus:input_type -> itick.GetSyncTaskStatusReq
+	16,  // 89: itick.ItickAdmin.ListProducts:input_type -> itick.ListProductsReq
+	12,  // 90: itick.ItickAdmin.CreateProduct:input_type -> itick.CreateProductReq
+	13,  // 91: itick.ItickAdmin.UpdateProduct:input_type -> itick.UpdateProductReq
+	14,  // 92: itick.ItickAdmin.GetProduct:input_type -> itick.GetProductReq
+	18,  // 93: itick.ItickAdmin.GetProductKline:input_type -> itick.GetProductKlineReq
+	20,  // 94: itick.ItickAdmin.SyncProductKlineHistory:input_type -> itick.SyncProductKlineHistoryReq
+	28,  // 95: itick.ItickAdmin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
+	22,  // 96: itick.ItickAdmin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
+	23,  // 97: itick.ItickAdmin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
+	24,  // 98: itick.ItickAdmin.BatchUpsertTenantCategories:input_type -> itick.BatchUpsertTenantCategoriesReq
+	26,  // 99: itick.ItickAdmin.GetTenantCategory:input_type -> itick.GetTenantCategoryReq
+	36,  // 100: itick.ItickAdmin.ListTenantProducts:input_type -> itick.ListTenantProductsReq
+	30,  // 101: itick.ItickAdmin.CreateTenantProduct:input_type -> itick.CreateTenantProductReq
+	31,  // 102: itick.ItickAdmin.UpdateTenantProduct:input_type -> itick.UpdateTenantProductReq
+	32,  // 103: itick.ItickAdmin.BatchUpsertTenantProducts:input_type -> itick.BatchUpsertTenantProductsReq
+	34,  // 104: itick.ItickAdmin.GetTenantProduct:input_type -> itick.GetTenantProductReq
+	38,  // 105: itick.ItickAdmin.InitTenantItickDisplay:input_type -> itick.InitTenantItickDisplayReq
+	42,  // 106: itick.ItickAdmin.CreatePriceFormula:input_type -> itick.CreatePriceFormulaReq
+	43,  // 107: itick.ItickAdmin.GetPriceFormula:input_type -> itick.PriceFormulaReq
+	45,  // 108: itick.ItickAdmin.ListPriceFormulas:input_type -> itick.ListPriceFormulasReq
+	44,  // 109: itick.ItickAdmin.ChangePriceFormulaStatus:input_type -> itick.ChangePriceFormulaStatusReq
+	49,  // 110: itick.ItickAdmin.ListSnapshotOutbox:input_type -> itick.ListSnapshotOutboxReq
+	52,  // 111: itick.ItickAdmin.RetrySnapshotOutbox:input_type -> itick.RetrySnapshotOutboxReq
+	53,  // 112: itick.ItickAdmin.RevokeAuthoritativeSnapshot:input_type -> itick.RevokeAuthoritativeSnapshotReq
+	6,   // 113: itick.ItickAdmin.ListCategories:output_type -> itick.ListCategoriesResp
+	0,   // 114: itick.ItickAdmin.CreateCategory:output_type -> itick.AdminCommonResp
+	0,   // 115: itick.ItickAdmin.UpdateCategory:output_type -> itick.AdminCommonResp
+	4,   // 116: itick.ItickAdmin.GetCategory:output_type -> itick.GetCategoryResp
+	8,   // 117: itick.ItickAdmin.SyncCategoryProducts:output_type -> itick.SyncCategoryProductsResp
+	10,  // 118: itick.ItickAdmin.GetSyncTaskStatus:output_type -> itick.GetSyncTaskStatusResp
+	17,  // 119: itick.ItickAdmin.ListProducts:output_type -> itick.ListProductsResp
+	0,   // 120: itick.ItickAdmin.CreateProduct:output_type -> itick.AdminCommonResp
+	0,   // 121: itick.ItickAdmin.UpdateProduct:output_type -> itick.AdminCommonResp
+	15,  // 122: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
+	19,  // 123: itick.ItickAdmin.GetProductKline:output_type -> itick.GetProductKlineResp
+	21,  // 124: itick.ItickAdmin.SyncProductKlineHistory:output_type -> itick.SyncProductKlineHistoryResp
+	29,  // 125: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
+	0,   // 126: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.AdminCommonResp
+	0,   // 127: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.AdminCommonResp
+	0,   // 128: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.AdminCommonResp
+	27,  // 129: itick.ItickAdmin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
+	37,  // 130: itick.ItickAdmin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
+	0,   // 131: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.AdminCommonResp
+	0,   // 132: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.AdminCommonResp
+	0,   // 133: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.AdminCommonResp
+	35,  // 134: itick.ItickAdmin.GetTenantProduct:output_type -> itick.GetTenantProductResp
+	39,  // 135: itick.ItickAdmin.InitTenantItickDisplay:output_type -> itick.InitTenantItickDisplayResp
+	47,  // 136: itick.ItickAdmin.CreatePriceFormula:output_type -> itick.PriceFormulaResp
+	47,  // 137: itick.ItickAdmin.GetPriceFormula:output_type -> itick.PriceFormulaResp
+	48,  // 138: itick.ItickAdmin.ListPriceFormulas:output_type -> itick.ListPriceFormulasResp
+	0,   // 139: itick.ItickAdmin.ChangePriceFormulaStatus:output_type -> itick.AdminCommonResp
+	51,  // 140: itick.ItickAdmin.ListSnapshotOutbox:output_type -> itick.ListSnapshotOutboxResp
+	0,   // 141: itick.ItickAdmin.RetrySnapshotOutbox:output_type -> itick.AdminCommonResp
+	0,   // 142: itick.ItickAdmin.RevokeAuthoritativeSnapshot:output_type -> itick.AdminCommonResp
+	113, // [113:143] is the sub-list for method output_type
+	83,  // [83:113] is the sub-list for method input_type
+	83,  // [83:83] is the sub-list for extension type_name
+	83,  // [83:83] is the sub-list for extension extendee
+	0,   // [0:83] is the sub-list for field type_name
 }
 
 func init() { file_proto_itick_itick_admin_proto_init() }

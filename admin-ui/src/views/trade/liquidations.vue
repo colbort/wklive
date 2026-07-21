@@ -1,7 +1,5 @@
 <template>
-  <div class="module-page">
-    <TradeOperationList kind="liquidations" />
-  </div>
+  <TradeOperationList kind="liquidations" />
 </template>
 <script setup lang="ts">
 import TradeOperationList from '@/components/trade/TradeOperationList.vue'

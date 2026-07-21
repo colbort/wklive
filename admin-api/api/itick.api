@@ -435,7 +435,7 @@ type CreatePriceFormulaReq {
 	categoryCode    string                  `json:"categoryCode,optional"`
 	market          string                  `json:"market,optional"`
 	symbol          string                  `json:"symbol"`
-	algorithm       string                  `json:"algorithm"`
+	algorithm       int64                   `json:"algorithm"`
 	formulaVersion  string                  `json:"formulaVersion"`
 	components      []PriceFormulaComponent `json:"components"`
 	maxLookbackMs   int64                   `json:"maxLookbackMs"`
@@ -471,7 +471,7 @@ type PriceFormulaData {
 	categoryCode    string                  `json:"categoryCode"`
 	market          string                  `json:"market"`
 	symbol          string                  `json:"symbol"`
-	algorithm       string                  `json:"algorithm"`
+	algorithm       int64                   `json:"algorithm"`
 	formulaVersion  string                  `json:"formulaVersion"`
 	components      []PriceFormulaComponent `json:"components"`
 	maxLookbackMs   int64                   `json:"maxLookbackMs"`

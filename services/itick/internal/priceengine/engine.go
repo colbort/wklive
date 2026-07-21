@@ -11,6 +11,7 @@ import (
 	"time"
 
 	market "wklive/common/market"
+	"wklive/proto/itick"
 	"wklive/services/itick/models"
 
 	"github.com/shopspring/decimal"
@@ -76,7 +77,7 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 	if len(components) == 0 {
 		return errors.New("price formula components are empty")
 	}
-	if strings.EqualFold(f.Algorithm, "PREMIUM_RATE") && len(components) != 2 {
+	if itick.PriceAlgorithm(f.Algorithm) == itick.PriceAlgorithm_PRICE_ALGORITHM_PREMIUM_RATE && len(components) != 2 {
 		return errors.New("PREMIUM_RATE requires exactly mark and index components")
 	}
 	inputs := make([]Input, 0, len(components))
@@ -100,7 +101,7 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 		}
 	}
 	inputs = filterDeviation(inputs, f.MaxDeviationBps)
-	price, err := Calculate(f.Algorithm, inputs)
+	price, err := Calculate(itick.PriceAlgorithm(f.Algorithm), inputs)
 	if err != nil {
 		return err
 	}

@@ -17,7 +17,7 @@ export type CreatePriceFormulaReq = {
   categoryCode?: string
   market?: string
   symbol: string
-  algorithm: string
+  algorithm: number
   formulaVersion: string
   components: PriceFormulaComponent[]
   maxLookbackMs: number

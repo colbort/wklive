@@ -21,14 +21,13 @@ func normalizePriceFormulaReq(in *itick.CreatePriceFormulaReq) ([]priceengine.Co
 	in.CategoryCode = strings.ToLower(strings.TrimSpace(in.CategoryCode))
 	in.Market = strings.ToUpper(strings.TrimSpace(in.Market))
 	in.Symbol = strings.ToUpper(strings.TrimSpace(in.Symbol))
-	in.Algorithm = strings.ToUpper(strings.TrimSpace(in.Algorithm))
 	if in.MaxLookbackMs <= 0 || in.IntervalMs <= 0 || in.MaxDeviationBps < 0 || in.MaxDeviationBps > 10000 {
 		return nil, errors.New("invalid formula timing or deviation configuration")
 	}
-	if in.Algorithm != "WEIGHTED_MEAN" && in.Algorithm != "MEDIAN" && in.Algorithm != "PREMIUM_RATE" {
+	if in.Algorithm != itick.PriceAlgorithm_PRICE_ALGORITHM_WEIGHTED_MEAN && in.Algorithm != itick.PriceAlgorithm_PRICE_ALGORITHM_MEDIAN && in.Algorithm != itick.PriceAlgorithm_PRICE_ALGORITHM_PREMIUM_RATE {
 		return nil, errors.New("unsupported price formula algorithm")
 	}
-	if len(in.Components) == 0 || (in.Algorithm == "PREMIUM_RATE" && len(in.Components) != 2) {
+	if len(in.Components) == 0 || (in.Algorithm == itick.PriceAlgorithm_PRICE_ALGORITHM_PREMIUM_RATE && len(in.Components) != 2) {
 		return nil, errors.New("invalid price formula components")
 	}
 	components := make([]priceengine.Component, 0, len(in.Components))
@@ -58,7 +57,7 @@ func toPriceFormulaProto(row *models.TItickPriceFormula) *itick.PriceFormulaData
 	}
 	var components []priceengine.Component
 	_ = json.Unmarshal([]byte(row.Components), &components)
-	result := &itick.PriceFormulaData{Id: row.Id, FormulaNo: row.FormulaNo, Authority: row.Authority, SnapshotKind: row.SnapshotKind, CategoryCode: row.CategoryCode, Market: row.Market, Symbol: row.Symbol, Algorithm: row.Algorithm, FormulaVersion: row.FormulaVersion, MaxLookbackMs: row.MaxLookbackMs, MaxDeviationBps: row.MaxDeviationBps, IntervalMs: row.IntervalMs, LastTargetTime: row.LastTargetTime, Status: int32(row.Status), Version: row.Version, CreateTimes: row.CreateTimes, UpdateTimes: row.UpdateTimes}
+	result := &itick.PriceFormulaData{Id: row.Id, FormulaNo: row.FormulaNo, Authority: row.Authority, SnapshotKind: row.SnapshotKind, CategoryCode: row.CategoryCode, Market: row.Market, Symbol: row.Symbol, Algorithm: itick.PriceAlgorithm(row.Algorithm), FormulaVersion: row.FormulaVersion, MaxLookbackMs: row.MaxLookbackMs, MaxDeviationBps: row.MaxDeviationBps, IntervalMs: row.IntervalMs, LastTargetTime: row.LastTargetTime, Status: int32(row.Status), Version: row.Version, CreateTimes: row.CreateTimes, UpdateTimes: row.UpdateTimes}
 	for _, component := range components {
 		result.Components = append(result.Components, &itick.PriceFormulaComponent{Authority: component.Authority, SnapshotKind: component.Kind, CategoryCode: component.CategoryCode, Market: component.Market, Symbol: component.Symbol, Weight: component.Weight})
 	}

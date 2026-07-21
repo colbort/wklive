@@ -1,13 +1,12 @@
 <template>
-  <div class="module-page">
-    <TradeOperationList :key="version" kind="riskTiers">
-      <template #actions>
-        <el-button v-perm="'trade:risk-tier:update'" type="primary" @click="visible = true">
-          {{ t('trade.addRiskTier') }}
-        </el-button>
-      </template>
-    </TradeOperationList>
-    <el-dialog v-model="visible" :title="t('trade.addRiskTier')" width="620px">
+  <TradeOperationList :key="version" kind="riskTiers">
+    <template #actions>
+      <el-button v-perm="'trade:risk-tier:update'" type="primary" @click="visible = true">
+        {{ t('trade.addRiskTier') }}
+      </el-button>
+    </template>
+  </TradeOperationList>
+  <el-dialog v-model="visible" :title="t('trade.addRiskTier')" width="620px">
       <el-form label-width="150px">
         <el-form-item :label="t('trade.symbolId')">
           <el-input-number v-model="form.symbolId" :min="1" />
@@ -33,8 +32,7 @@
           {{ t('common.confirm') }}
         </el-button>
       </template>
-    </el-dialog>
-  </div>
+  </el-dialog>
 </template>
 <script setup lang="ts">
 import { reactive, ref } from 'vue'

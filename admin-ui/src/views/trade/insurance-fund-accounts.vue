@@ -1,32 +1,17 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard
-      :model="query"
-      @search="load"
-      @reset="reset"
-    >
+    <CrudQueryCard :model="query" @search="load" @reset="reset">
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="query.tenantId" />
       </el-form-item><el-form-item :label="t('trade.settleAsset')">
         <el-input v-model="query.settleAsset" clearable />
       </el-form-item><el-button v-perm="'trade:insurance-fund-account:update'" type="primary" @click="edit()">
-        {{
-          t('common.add')
-        }}
+        {{ t('common.add') }}
       </el-button><el-button v-perm="'trade:insurance-fund-account:update'" @click="openPlatformAccount">
-        {{
-          t('trade.platformAccount')
-        }}
+        {{ t('trade.platformAccount') }}
       </el-button>
-    </CrudQueryCard><el-card
-      shadow="never"
-      class="table-card"
-    >
-      <el-table
-        v-loading="loading"
-        :data="rows"
-        stripe
-      >
+    </CrudQueryCard><el-card shadow="never" class="table-card">
+      <el-table v-loading="loading" :data="rows" stripe>
         <el-table-column prop="symbolId" :label="t('trade.symbolId')" /><el-table-column
           prop="settleAsset"
           :label="t('trade.settleAsset')"
@@ -50,15 +35,8 @@
         @limit-change="resetAndLoad(load)"
       />
       >
-    </el-card><el-dialog
-      v-model="visible"
-      :title="t('trade.insuranceFundAccounts')"
-      width="520"
-    >
-      <el-form
-        :model="form"
-        label-width="150"
-      >
+    </el-card><el-dialog v-model="visible" :title="t('trade.insuranceFundAccounts')" width="520">
+      <el-form :model="form" label-width="150">
         <el-form-item :label="t('trade.tenantId')">
           <TenantSelect v-model="form.tenantId" />
         </el-form-item><el-form-item :label="t('trade.symbolId')">
@@ -75,15 +53,8 @@
           {{ t('common.confirm') }}
         </el-button>
       </template>
-    </el-dialog><el-dialog
-      v-model="platformVisible"
-      :title="t('trade.platformAccount')"
-      width="560"
-    >
-      <el-form
-        :model="platformForm"
-        label-width="150"
-      >
+    </el-dialog><el-dialog v-model="platformVisible" :title="t('trade.platformAccount')" width="560">
+      <el-form :model="platformForm" label-width="150">
         <el-form-item :label="t('trade.tenantId')">
           <TenantSelect v-model="platformForm.tenantId" />
         </el-form-item><el-form-item :label="t('trade.settleAsset')">
@@ -112,13 +83,9 @@
         <el-button @click="loadPlatformAccount">
           {{ t('common.search') }}
         </el-button><el-button type="primary" @click="createPlatformAccount">
-          {{
-            t('trade.createAccount')
-          }}
+          {{ t('trade.createAccount') }}
         </el-button><el-button type="success" @click="adjustPlatformAccount">
-          {{
-            t('trade.adjustBalance')
-          }}
+          {{ t('trade.adjustBalance') }}
         </el-button>
       </template>
     </el-dialog>
@@ -128,6 +95,8 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
+import TenantSelect from '@/components/TenantSelect.vue'
 import { usePagination } from '@/composables'
 import { apiTradeListInsuranceFundAccounts, apiTradeSetInsuranceFundAccount } from '@/api/trade'
 import { apiAdjustPlatformAccount, apiGetPlatformAccount, apiSetPlatformAccount } from '@/api/asset'
