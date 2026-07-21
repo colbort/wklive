@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"wklive/common/conv"
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -66,7 +67,7 @@ func (l *TransferMyAssetLogic) TransferMyAsset(in *asset.TransferMyAssetReq) (*a
 		return nil, err
 	}
 
-	bizNo, err := l.svcCtx.GenerateOrderNo(l.ctx, "TRANSFER", "")
+	bizNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "TRANSFER", "")
 	if err != nil {
 		return nil, err
 	}

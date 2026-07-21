@@ -37,7 +37,7 @@ func (l *PageChatMessagesLogic) PageChatMessages(in *chat.PageChatMessagesReq) (
 		}
 		list, hasNext, nextCursor, err := ih.ListTransientMessages(
 			l.ctx,
-			l.svcCtx.BusRedis,
+			l.svcCtx.Redis,
 			in.GetMerchantId(),
 			in.GetSessionNo(),
 			int64(in.GetSenderType()),

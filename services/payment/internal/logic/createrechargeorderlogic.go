@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/notify"
@@ -47,7 +48,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	now := utils.NowMillis()
 
 	// 生成订单号
-	orderNo, err := l.svcCtx.GenerateOrderNo(l.ctx, "RC")
+	orderNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "RC", "")
 	if err != nil {
 		return nil, err
 	}

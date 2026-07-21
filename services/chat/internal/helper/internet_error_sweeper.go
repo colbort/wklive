@@ -67,26 +67,26 @@ func sweepExpiredInternetErrorSessions(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func sweepExpiredTransientInternetErrorSessions(ctx context.Context, svcCtx *svc.ServiceContext, now int64) error {
-	if svcCtx.BusRedis == nil {
+	if svcCtx.Redis == nil {
 		return nil
 	}
-	pairs, err := svcCtx.BusRedis.ZrangebyscoreWithScoresAndLimitCtx(ctx, transientInternetErrorKey, 0, now, 0, internetErrorSweepBatchLimit)
+	pairs, err := svcCtx.Redis.ZrangebyscoreWithScoresAndLimitCtx(ctx, transientInternetErrorKey, 0, now, 0, internetErrorSweepBatchLimit)
 	if err != nil {
 		return err
 	}
 	for _, pair := range pairs {
 		merchantID, sessionNo, ok := parseTransientInternetErrorMember(pair.Key)
 		if !ok {
-			_, _ = svcCtx.BusRedis.ZremCtx(ctx, transientInternetErrorKey, pair.Key)
+			_, _ = svcCtx.Redis.ZremCtx(ctx, transientInternetErrorKey, pair.Key)
 			continue
 		}
-		session, err := GetTransientSession(ctx, svcCtx.BusRedis, merchantID, sessionNo)
+		session, err := GetTransientSession(ctx, svcCtx.Redis, merchantID, sessionNo)
 		if err != nil || session == nil {
-			_, _ = svcCtx.BusRedis.ZremCtx(ctx, transientInternetErrorKey, pair.Key)
+			_, _ = svcCtx.Redis.ZremCtx(ctx, transientInternetErrorKey, pair.Key)
 			continue
 		}
 		if session.Status != int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_INTERNET_ERROR) {
-			_, _ = svcCtx.BusRedis.ZremCtx(ctx, transientInternetErrorKey, pair.Key)
+			_, _ = svcCtx.Redis.ZremCtx(ctx, transientInternetErrorKey, pair.Key)
 			continue
 		}
 		if !IsInternetErrorExpired(session, now) {
@@ -98,10 +98,10 @@ func sweepExpiredTransientInternetErrorSessions(ctx context.Context, svcCtx *svc
 		session.DisconnectTime = 0
 		session.BeforeDisconnectStatus = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN)
 		session.UpdateTimes = now
-		if _, err := UpsertTransientSession(ctx, svcCtx.BusRedis, session); err != nil {
+		if _, err := UpsertTransientSession(ctx, svcCtx.Redis, session); err != nil {
 			return err
 		}
-		_, _ = svcCtx.BusRedis.ZremCtx(ctx, transientInternetErrorKey, pair.Key)
+		_, _ = svcCtx.Redis.ZremCtx(ctx, transientInternetErrorKey, pair.Key)
 	}
 	return nil
 }

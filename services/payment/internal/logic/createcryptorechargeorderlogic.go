@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/notify"
@@ -68,7 +69,7 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 	}
 
 	now := utils.NowMillis()
-	orderNo, err := l.svcCtx.GenerateOrderNo(l.ctx, "CRC")
+	orderNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "CRC", "")
 	if err != nil {
 		return nil, err
 	}

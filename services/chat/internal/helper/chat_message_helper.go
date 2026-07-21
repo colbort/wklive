@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 
+	"wklive/common/generate"
 	"wklive/common/utils"
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
@@ -56,7 +57,7 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessa
 	var msg *chat.ChatMessage
 	if opts.IsGuest {
 		// 游客/临时会话
-		msg, err = AppendTransientMessage(ctx, svcCtx.BusRedis, opts.MerchantId, ToProtoMessage(mmg), session)
+		msg, err = AppendTransientMessage(ctx, svcCtx.Redis, opts.MerchantId, ToProtoMessage(mmg), session)
 		if err != nil {
 			return nil, err
 		}
@@ -92,7 +93,7 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessa
 }
 
 func buildMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, opts SendMessageOptions) (*models.ChatMessage, error) {
-	messageNo, err := svcCtx.GenerateNo(ctx, "CM")
+	messageNo, err := generate.GenerateNo(svcCtx.Redis, ctx, "chat", "CM", "")
 	if err != nil {
 		return nil, errorx.Wrapf(err, "generate message no error")
 	}

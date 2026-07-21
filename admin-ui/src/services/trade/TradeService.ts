@@ -89,12 +89,50 @@ export type GetFundingBatchListReq = TradePageReq & {
   timeRange?: TimeRange
 }
 export type GetFundingBatchListResp = RespBase<ContractFundingBatch[]>
-export type InsuranceFundAccount = { id:number;tenantId:number;symbolId:number;settleAsset:string;adlEnabled:number;status:number;version:number;createTimes:number;updateTimes:number }
-export type SetInsuranceFundAccountReq = Omit<InsuranceFundAccount,'createTimes'|'updateTimes'>
-export type GetInsuranceFundAccountListReq = TradePageReq & {tenantId?:number;symbolId?:number;settleAsset?:string;status?:number}
+export type InsuranceFundAccount = {
+  id: number
+  tenantId: number
+  symbolId: number
+  settleAsset: string
+  adlEnabled: number
+  status: number
+  version: number
+  createTimes: number
+  updateTimes: number
+}
+export type SetInsuranceFundAccountReq = Omit<InsuranceFundAccount, 'createTimes' | 'updateTimes'>
+export type GetInsuranceFundAccountListReq = TradePageReq & {
+  tenantId?: number
+  symbolId?: number
+  settleAsset?: string
+  status?: number
+}
 export type GetInsuranceFundAccountListResp = RespBase<InsuranceFundAccount[]>
-export type TradeMarketSnapshot = {id:number;snapshotId:string;snapshotKind:string;symbolId:number;source:string;price:string;markPrice:string;indexPrice:string;fundingRate:string;sourceTimestamp:number;snapshotTimestamp:number;revision:number;formulaVersion:string;confirmed:number;rawPayload:string;createTimes:number}
-export type GetMarketSnapshotListReq = TradePageReq & {tenantId?:number;symbolId?:number;snapshotKind?:string;startTime?:number;endTime?:number}
+export type TradeMarketSnapshot = {
+  id: number
+  snapshotId: string
+  snapshotKind: string
+  symbolId: number
+  source: string
+  price: string
+  markPrice: string
+  indexPrice: string
+  fundingRate: string
+  sourceTimestamp: number
+  snapshotTimestamp: number
+  revision: number
+  formulaVersion: string
+  confirmed: number
+  rawPayload: string
+  createTimes: number
+}
+export type GetMarketSnapshotListReq = TradePageReq & {
+  tenantId?: number
+  symbolId?: number
+  snapshotKind?: string
+  startTime?: number
+  endTime?: number
+}
 export type GetMarketSnapshotListResp = RespBase<TradeMarketSnapshot[]>
 export type ContractFundingSettlement = {
   id: number

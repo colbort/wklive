@@ -1,9 +1,10 @@
 package config
 
 import (
-	"wklive/common/mq/kafka"
+	mq "wklive/common/mq/kafka"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
@@ -11,8 +12,8 @@ type Config struct {
 	zrpc.RpcServerConf
 	CacheRedis cache.CacheConf
 	MQ         mq.Config
-	BusRedis   cache.CacheConf
-	LockRedis  cache.CacheConf
+	DataCache  redis.RedisKeyConf
+	LockRedis  redis.RedisKeyConf
 	SystemRpc  zrpc.RpcClientConf
 	OptionRpc  zrpc.RpcClientConf
 	Mysql      struct {

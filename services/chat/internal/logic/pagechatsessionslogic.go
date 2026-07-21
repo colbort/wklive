@@ -74,7 +74,7 @@ func (l *PageChatSessionsLogic) listTransientSessions(merchantID int64, filter m
 	for {
 		sessions, hasNext, nextCursor, err := ih.PageTransientSessions(
 			l.ctx,
-			l.svcCtx.BusRedis,
+			l.svcCtx.Redis,
 			merchantID,
 			filter.UserId,
 			filter.AgentId,

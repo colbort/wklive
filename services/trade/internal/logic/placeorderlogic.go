@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -176,7 +177,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	}
 	price, qty, amount = plan.price, plan.qty, plan.notional
 
-	orderNo, err := l.svcCtx.GenerateBizNo(l.ctx, "TRD")
+	orderNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "TRD", "")
 	if err != nil {
 		return nil, err
 	}

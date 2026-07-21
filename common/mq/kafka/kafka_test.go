@@ -14,6 +14,13 @@ func TestTopicNormalizesLegacyRedisChannel(t *testing.T) {
 	}
 }
 
+func TestForServiceDerivesClientID(t *testing.T) {
+	config := ForService(Config{ClientID: "configured-value"}, " Trade.RPC ")
+	if config.ClientID != "trade" {
+		t.Fatalf("ClientID = %q, want trade", config.ClientID)
+	}
+}
+
 func TestEncodePayloadPreservesBytesAndEncodesObjects(t *testing.T) {
 	raw := []byte(`{"id":1}`)
 	got, err := encodePayload(raw)

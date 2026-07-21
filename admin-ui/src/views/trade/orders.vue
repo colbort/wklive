@@ -470,7 +470,8 @@ function orderStatusTagType(status: number) {
   if (status === 2) return 'warning'
   if (status === 4 || status === 6) return 'info'
   if (status === 5) return 'danger'
-  if (status === 7 || status === 8 || status === 9 || status === 10 || status === 11) return 'warning'
+  if (status === 7 || status === 8 || status === 9 || status === 10 || status === 11)
+    return 'warning'
   return ''
 }
 

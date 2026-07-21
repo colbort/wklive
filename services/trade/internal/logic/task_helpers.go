@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -183,7 +184,7 @@ func createTradeTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenan
 	if len(exists) > 0 {
 		return nil
 	}
-	eventNo, err := svcCtx.GenerateBizNo(ctx, "TRE")
+	eventNo, err := generate.GenerateNo(svcCtx.Redis, ctx, "order_id", "TRE", "")
 	if err != nil {
 		return err
 	}

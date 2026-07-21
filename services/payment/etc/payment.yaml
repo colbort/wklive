@@ -6,5 +6,4 @@ Etcd:
   Key: payment.rpc
 MQ:
   Brokers: [kafka:9092]
-  ClientID: payment
   MaxAttempts: 5

@@ -1,12 +1,11 @@
 package svc
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"time"
 	cache "wklive/common/market"
-	"wklive/common/mq/kafka"
+	mq "wklive/common/mq/kafka"
 	"wklive/services/trade/internal/config"
 	"wklive/services/trade/models"
 
@@ -71,9 +70,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	marketRedis := v9.NewClient(&v9.Options{Addr: c.CacheRedis[0].Host, Username: c.CacheRedis[0].User, Password: c.CacheRedis[0].Pass})
-	taskSubscriber := mq.MustNewSubscriber(c.MQ, "trade-tasks")
-	tradeEventPublisher := mq.MustNewPublisher(c.MQ)
-	tradeEventSubscriber := mq.MustNewSubscriber(c.MQ, "trade-realtime")
+	mqConfig := mq.ForService(c.MQ, c.Name)
+	taskSubscriber := mq.MustNewSubscriber(mqConfig, "trade-tasks")
+	tradeEventPublisher := mq.MustNewPublisher(mqConfig)
+	tradeEventSubscriber := mq.MustNewSubscriber(mqConfig, "trade-realtime")
 	hostname, _ := os.Hostname()
 	instanceID := fmt.Sprintf("%s:%d:%d", hostname, os.Getpid(), time.Now().UnixNano())
 	return &ServiceContext{
@@ -124,26 +124,4 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		MarketDataCache:             cache.NewMarketDataCache(marketRedis),
 		TradeMarketSnapshotModel:    models.NewTTradeMarketSnapshotModel(conn, c.CacheRedis),
 	}
-}
-
-func (s *ServiceContext) GenerateBizNo(ctx context.Context, prefix string) (string, error) {
-	now := time.Now()
-	date := now.Format("20060102")
-
-	// 每天、每个前缀单独计数
-	key := fmt.Sprintf("order_id:%s:%s", prefix, date)
-
-	seq, err := s.Redis.IncrCtx(ctx, key)
-	if err != nil {
-		return "", err
-	}
-
-	// 设置过期时间，避免 Redis 一直堆积旧 key
-	// 这里只在第一次创建时设置
-	if seq == 1 {
-		_ = s.Redis.ExpireCtx(ctx, key, 36*int(time.Hour.Seconds()))
-	}
-
-	orderID := fmt.Sprintf("%s%s%06d", prefix, date, seq)
-	return orderID, nil
 }

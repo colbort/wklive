@@ -2,9 +2,7 @@ package svc
 
 import (
 	"context"
-	"fmt"
-	"time"
-	"wklive/common/mq/kafka"
+	mq "wklive/common/mq/kafka"
 	"wklive/services/chat/internal/config"
 	"wklive/services/chat/models"
 
@@ -28,7 +26,7 @@ type ServiceContext struct {
 	ChatGroupModel        models.TChatGroupModel
 	ChatWorkOrderModel    models.TChatWorkOrderModel
 	ChatMessageFactory    *models.ChatMessageModelFactory
-	BusRedis              *redis.Redis
+	Redis              *redis.Redis
 	MQPublisher           *mq.Publisher
 	ChatEventHub          *ChatEventHub
 }
@@ -61,33 +59,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ChatGroupModel:        models.NewTChatGroupModel(conn, c.CacheRedis),
 		ChatWorkOrderModel:    models.NewTChatWorkOrderModel(conn, c.CacheRedis),
 		ChatMessageFactory:    models.NewChatMessageModelFactory(c.Mongo.Url, c.Mongo.Db),
-		BusRedis:              busRedis,
-		MQPublisher:           mq.MustNewPublisher(c.MQ),
+		Redis:              busRedis,
+		MQPublisher:           mq.MustNewPublisher(mq.ForService(c.MQ, c.Name)),
 		ChatEventHub:          eventHub,
 	}
 	eventHub.Start(context.Background(), c.MQ)
 
 	return svcCtx
-}
-
-func (s *ServiceContext) GenerateNo(ctx context.Context, prefix string) (string, error) {
-	now := time.Now()
-	date := now.Format("20060102")
-
-	// 每天、每个前缀单独计数
-	key := fmt.Sprintf("chat:%s:%s", prefix, date)
-
-	seq, err := s.BusRedis.IncrCtx(ctx, key)
-	if err != nil {
-		return "", err
-	}
-
-	// 设置过期时间，避免 Redis 一直堆积旧 key
-	// 这里只在第一次创建时设置
-	if seq == 1 {
-		_ = s.BusRedis.ExpireCtx(ctx, key, 36*int(time.Hour.Seconds()))
-	}
-
-	orderID := fmt.Sprintf("%s%s%06d", prefix, date, seq)
-	return orderID, nil
 }

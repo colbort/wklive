@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 	"wklive/common/conv"
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -94,7 +95,7 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 		return &option.AppExerciseResp{Base: helper.ErrResp(i18n.OptionNotInTheMoney, i18n.Translate(i18n.OptionNotInTheMoney, l.ctx))}, nil
 	}
 
-	exerciseNo, err := l.svcCtx.GenerateBizNo(l.ctx, "EX")
+	exerciseNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "EX", "")
 	if err != nil {
 		return nil, err
 	}

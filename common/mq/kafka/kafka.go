@@ -13,8 +13,8 @@ import (
 
 type Config struct {
 	Brokers        []string
-	ClientID       string
-	GroupID        string
+	ClientID       string `yaml:"ClientID,optional"`
+	GroupID        string `yaml:"GroupID,optional"`
 	MinBytes       int
 	MaxBytes       int
 	MaxAttempts    int
@@ -42,6 +42,17 @@ type Subscriber struct {
 type keyedBalancer struct {
 	hash  kafka.Hash
 	least kafka.LeastBytes
+}
+
+// ForService assigns the Kafka client identity from the go-zero service name.
+// Consumer group IDs remain owned by each concrete subscriber.
+func ForService(config Config, serviceName string) Config {
+	clientID := strings.ToLower(strings.TrimSpace(serviceName))
+	if base, _, found := strings.Cut(clientID, "."); found {
+		clientID = base
+	}
+	config.ClientID = clientID
+	return config
 }
 
 func (b *keyedBalancer) Balance(message kafka.Message, partitions ...int) int {

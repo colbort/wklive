@@ -50,7 +50,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserBankModel:     models.NewTUserBankModel(conn, c.CacheRedis),
 		FingerprintModel:  models.NewTUserFingerprintModel(conn, c.CacheRedis),
 		SystemCli:         system.NewSystemClient(systemCli.Conn()),
-		MQPublisher:       mq.MustNewPublisher(c.MQ),
+		MQPublisher:       mq.MustNewPublisher(mq.ForService(c.MQ, c.Name)),
 	}
 }
 

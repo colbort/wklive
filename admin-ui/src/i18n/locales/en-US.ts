@@ -1455,6 +1455,8 @@ export default {
     detail: 'Detail',
   },
   trade: {
+    enabled: 'Enabled Status',
+    reason: 'Reason',
     symbols: 'Symbols',
     orders: 'Orders',
     fills: 'Fills',

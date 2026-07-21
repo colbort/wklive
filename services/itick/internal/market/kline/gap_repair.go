@@ -142,7 +142,7 @@ func (s *GapRepairService) scanProduct(product *models.TItickProduct, cutoff int
 	}
 	stateKey := fmt.Sprintf("itick:v1:kline:gap_scan:%d", product.Id)
 	var state gapScanState
-	if raw, err := s.svcCtx.BusRedis.Get(s.ctx, stateKey).Bytes(); err == nil {
+	if raw, err := s.svcCtx.DataCache.Get(s.ctx, stateKey).Bytes(); err == nil {
 		_ = json.Unmarshal(raw, &state)
 	}
 	var list []*models.CoinKline
@@ -154,7 +154,7 @@ func (s *GapRepairService) scanProduct(product *models.TItickProduct, cutoff int
 	}
 	if err != nil || len(list) == 0 {
 		if err == nil && state.BeforeTs > 0 {
-			return s.svcCtx.BusRedis.Del(s.ctx, stateKey).Err()
+			return s.svcCtx.DataCache.Del(s.ctx, stateKey).Err()
 		}
 		return err
 	}
@@ -176,11 +176,11 @@ func (s *GapRepairService) scanProduct(product *models.TItickProduct, cutoff int
 		newerTs = bar.Ts
 	}
 	if len(list) < int(gapScanPageSize) {
-		return s.svcCtx.BusRedis.Del(s.ctx, stateKey).Err()
+		return s.svcCtx.DataCache.Del(s.ctx, stateKey).Err()
 	}
 	state = gapScanState{BeforeTs: list[len(list)-1].Ts, NewerTs: list[len(list)-1].Ts}
 	raw, _ := json.Marshal(state)
-	return s.svcCtx.BusRedis.Set(s.ctx, stateKey, raw, 30*24*time.Hour).Err()
+	return s.svcCtx.DataCache.Set(s.ctx, stateKey, raw, 30*24*time.Hour).Err()
 }
 
 func (s *GapRepairService) expectedGapJobs(product *models.TItickProduct, start, end int64) []GapRepairJob {
@@ -221,14 +221,14 @@ func gapJobID(category, market, symbol string, start, end int64) string {
 }
 
 func (s *GapRepairService) enqueue(job GapRepairJob) error {
-	if exists, err := s.svcCtx.BusRedis.Exists(s.ctx, gapDoneKeyPrefix+job.ID).Result(); err != nil || exists > 0 {
+	if exists, err := s.svcCtx.DataCache.Exists(s.ctx, gapDoneKeyPrefix+job.ID).Result(); err != nil || exists > 0 {
 		return err
 	}
-	if dead, err := s.svcCtx.BusRedis.HExists(s.ctx, gapDeadHashKey, job.ID).Result(); err != nil || dead {
+	if dead, err := s.svcCtx.DataCache.HExists(s.ctx, gapDeadHashKey, job.ID).Result(); err != nil || dead {
 		return err
 	}
 	raw, _ := json.Marshal(job)
-	pipe := s.svcCtx.BusRedis.TxPipeline()
+	pipe := s.svcCtx.DataCache.TxPipeline()
 	pipe.HSetNX(s.ctx, gapJobHashKey, job.ID, raw)
 	pipe.ZAddNX(s.ctx, gapQueueKey, redis.Z{Score: float64(time.Now().UnixMilli()), Member: job.ID})
 	_, err := pipe.Exec(s.ctx)
@@ -260,7 +260,7 @@ func (s *GapRepairService) repairLoop(apiURL, token string) {
 }
 
 func (s *GapRepairService) claim() (*GapRepairJob, error) {
-	result, err := claimGapJobScript.Run(s.ctx, s.svcCtx.BusRedis, []string{gapQueueKey, gapJobHashKey}, time.Now().UnixMilli()).Slice()
+	result, err := claimGapJobScript.Run(s.ctx, s.svcCtx.DataCache, []string{gapQueueKey, gapJobHashKey}, time.Now().UnixMilli()).Slice()
 	if err == redis.Nil || len(result) == 0 {
 		return nil, nil
 	}
@@ -307,7 +307,7 @@ func (s *GapRepairService) repair(apiURL, token string, job *GapRepairJob) {
 	}
 	delay := min(time.Duration(1<<min(job.Attempts, 10))*time.Minute, 12*time.Hour)
 	raw, _ := json.Marshal(job)
-	pipe := s.svcCtx.BusRedis.TxPipeline()
+	pipe := s.svcCtx.DataCache.TxPipeline()
 	pipe.HSet(s.ctx, gapJobHashKey, job.ID, raw)
 	pipe.ZAdd(s.ctx, gapQueueKey, redis.Z{Score: float64(time.Now().Add(delay).UnixMilli()), Member: job.ID})
 	_, _ = pipe.Exec(s.ctx)
@@ -319,7 +319,7 @@ func (s *GapRepairService) repair(apiURL, token string, job *GapRepairJob) {
 func (s *GapRepairService) deadLetter(job *GapRepairJob, repairErr error) {
 	letter := gapDeadLetter{Job: job, Error: repairErr.Error(), FailedAt: time.Now().UnixMilli()}
 	raw, _ := json.Marshal(letter)
-	pipe := s.svcCtx.BusRedis.TxPipeline()
+	pipe := s.svcCtx.DataCache.TxPipeline()
 	pipe.HDel(s.ctx, gapJobHashKey, job.ID)
 	pipe.HSet(s.ctx, gapDeadHashKey, job.ID, raw)
 	if _, err := pipe.Exec(s.ctx); err != nil {
@@ -332,7 +332,7 @@ func (s *GapRepairService) deadLetter(job *GapRepairJob, repairErr error) {
 }
 
 func (s *GapRepairService) completeRepair(job *GapRepairJob, count int, reason string) {
-	pipe := s.svcCtx.BusRedis.TxPipeline()
+	pipe := s.svcCtx.DataCache.TxPipeline()
 	pipe.HDel(s.ctx, gapJobHashKey, job.ID)
 	pipe.HDel(s.ctx, gapDeadHashKey, job.ID)
 	pipe.Set(s.ctx, gapDoneKeyPrefix+job.ID, count, 30*24*time.Hour)

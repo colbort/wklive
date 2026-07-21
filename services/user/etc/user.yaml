@@ -13,5 +13,4 @@ GuestTransfer:
   ExpireSeconds: 120
 MQ:
   Brokers: [kafka:9092]
-  ClientID: user
   MaxAttempts: 5

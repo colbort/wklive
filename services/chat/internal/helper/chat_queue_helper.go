@@ -46,7 +46,7 @@ func EstimateWaitSeconds(position int64) int64 {
 }
 
 func countTransientWaitingPosition(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) (int64, int64, error) {
-	if svcCtx == nil || svcCtx.BusRedis == nil || session == nil || session.MerchantId <= 0 {
+	if svcCtx == nil || svcCtx.Redis == nil || session == nil || session.MerchantId <= 0 {
 		return 0, 0, nil
 	}
 	var cursor int64
@@ -55,7 +55,7 @@ func countTransientWaitingPosition(ctx context.Context, svcCtx *svc.ServiceConte
 	for {
 		list, hasNext, nextCursor, err := PageTransientSessions(
 			ctx,
-			svcCtx.BusRedis,
+			svcCtx.Redis,
 			session.MerchantId,
 			0,
 			0,

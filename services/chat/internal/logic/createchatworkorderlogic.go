@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"strings"
+	"wklive/common/generate"
 	"wklive/common/helper"
 
 	"wklive/common/utils"
@@ -40,7 +41,7 @@ func (l *CreateChatWorkOrderLogic) CreateChatWorkOrder(in *chat.CreateChatWorkOr
 	if err != nil {
 		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	workOrderNo, err := l.svcCtx.GenerateNo(l.ctx, "WO")
+	workOrderNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "chat", "WO", "")
 	if err != nil {
 		logx.Errorf("generate work order no error: %v", err)
 		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "generate message no error")}, nil

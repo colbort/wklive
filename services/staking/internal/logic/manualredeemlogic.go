@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/conv"
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -71,7 +72,7 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
-	redeemNo, err := l.svcCtx.GenerateBizNo(l.ctx, "SKR")
+	redeemNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "SKR", "")
 	if err != nil {
 		return nil, err
 	}

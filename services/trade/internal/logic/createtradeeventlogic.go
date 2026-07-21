@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
@@ -38,7 +39,7 @@ func (l *CreateTradeEventLogic) CreateTradeEvent(in *trade.CreateTradeEventReq) 
 	if exists == nil {
 		eventNo := in.Event.EventNo
 		if eventNo == "" {
-			eventNo, err = l.svcCtx.GenerateBizNo(l.ctx, "TRE")
+			eventNo, err = generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "TRE", "")
 			if err != nil {
 				return nil, err
 			}

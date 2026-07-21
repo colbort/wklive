@@ -1450,6 +1450,8 @@ export default {
     detail: '详情',
   },
   trade: {
+    enabled: '启用状态',
+    reason: '原因',
     symbols: '交易对列表',
     orders: '订单列表',
     fills: '成交明细列表',

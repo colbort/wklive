@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/conv"
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -87,7 +88,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		endTimes = now + product.LockDays*24*3600*1000
 	}
 
-	orderNo, err := l.svcCtx.GenerateBizNo(l.ctx, "SKO")
+	orderNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "SKO", "")
 	if err != nil {
 		return nil, err
 	}

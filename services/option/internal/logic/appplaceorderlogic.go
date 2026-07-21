@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 	"wklive/common/conv"
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -90,7 +91,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		}
 	}
 
-	orderNo, err := l.svcCtx.GenerateBizNo(l.ctx, "OP")
+	orderNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "OP", "")
 	if err != nil {
 		return nil, err
 	}

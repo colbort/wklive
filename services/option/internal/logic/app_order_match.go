@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"wklive/common/generate"
 	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/models"
@@ -60,7 +61,7 @@ func (l *AppPlaceOrderLogic) matchOrder(contract *models.TOptionContract, order 
 					continue
 				}
 				tradePrice := maker.Price
-				tradeNo, err := l.svcCtx.GenerateBizNo(ctx, "OT")
+				tradeNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "OT", "")
 				if err != nil {
 					return err
 				}

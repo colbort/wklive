@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/conv"
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -76,7 +77,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 	}
 	feeAmount := redeemAmount.Mul(feeRate).Div(decimal.NewFromInt(100))
 	rewardAmount := order.PendingReward
-	redeemNo, err := l.svcCtx.GenerateBizNo(l.ctx, "SKR")
+	redeemNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "SKR", "")
 	if err != nil {
 		return nil, err
 	}

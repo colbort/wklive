@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/notify"
 	"wklive/common/utils"
@@ -42,7 +43,7 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 	}
 	clientIP, _ := utils.GetClientIPFromMd(l.ctx)
 	now := utils.NowMillis()
-	orderNo, err := l.svcCtx.GenerateOrderNo(l.ctx, "WD")
+	orderNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "WD", "")
 	if err != nil {
 		return nil, err
 	}

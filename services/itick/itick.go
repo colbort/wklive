@@ -91,8 +91,11 @@ func main() {
 		}
 	})
 	svcCtx.Writer.SetFlushHandler(derivedWorker.Enqueue)
-	tickAggregator := kline.NewTickAggregator(svcCtx.Writer, svcCtx.BusRedis,
-		time.Duration(svcCtx.ItickRuntimeConfig.BuildingBucketTtlMinutes)*time.Minute)
+	tickAggregator := kline.NewTickAggregator(
+		svcCtx.Writer,
+		svcCtx.DataCache,
+		time.Duration(svcCtx.ItickRuntimeConfig.BuildingBucketTtlMinutes)*time.Minute,
+	)
 	svcCtx.MarketDataCache.SetTickHandler(tickAggregator.Add)
 	tickAggregator.Start()
 	defer tickAggregator.Stop()

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -36,7 +37,7 @@ func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(in *trade.R
 	if err != nil || operatorID <= 0 {
 		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "missing admin operator identity")}, nil
 	}
-	eventNo, err := l.svcCtx.GenerateBizNo(l.ctx, "TRE")
+	eventNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "TRE", "")
 	if err != nil {
 		return nil, err
 	}

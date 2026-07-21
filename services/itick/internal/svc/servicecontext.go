@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"wklive/common/mq/kafka"
+	mq "wklive/common/mq/kafka"
 	"wklive/proto/option"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
@@ -39,7 +39,7 @@ type ServiceContext struct {
 	OptionCli                   option.OptionInternalClient
 	ItickManager                *client.ItickManager
 	MarketDataCache             *icache.MarketDataCache
-	BusRedis                    *redis.Client
+	DataCache                   *redis.Client
 	LockRedis                   *redis.Client
 	TaskSubscriber              *mq.Subscriber
 	Cache                       cache.Cache
@@ -110,21 +110,22 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	marketHolidayModel := models.NewTItickMarketHolidayModel(conn, c.CacheRedis)
 	marketCalendarResolver := calendar.NewResolver(marketCalendarModel, 10*time.Minute)
 
-	busRedis := redis.NewClient(&redis.Options{
-		Addr:     c.BusRedis[0].Host,
-		Username: c.BusRedis[0].User,
-		Password: c.BusRedis[0].Pass,
+	dataCache := redis.NewClient(&redis.Options{
+		Addr:     c.DataCache.Host,
+		Username: c.DataCache.User,
+		Password: c.DataCache.Pass,
 		DB:       0,
 	})
 
 	lockRedis := redis.NewClient(&redis.Options{
-		Addr:     c.LockRedis[0].Host,
-		Username: c.LockRedis[0].User,
-		Password: c.LockRedis[0].Pass,
+		Addr:     c.LockRedis.Host,
+		Username: c.LockRedis.User,
+		Password: c.LockRedis.Pass,
 		DB:       0,
 	})
-	marketDataCache := icache.NewMarketDataCache(busRedis)
-	taskSubscriber := mq.MustNewSubscriber(c.MQ, "itick-tasks")
+	marketDataCache := icache.NewMarketDataCache(dataCache)
+	mqConfig := mq.ForService(c.MQ, c.Name)
+	taskSubscriber := mq.MustNewSubscriber(mqConfig, "itick-tasks")
 
 	// 这里不能 defer Close，不然函数返回后 Redis 连接就被关掉了
 	// defer rdb.Close()
@@ -145,7 +146,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		c.Itick.Token,
 		itickCategoryModel,
 		itickProductModel,
-		busRedis,
+		dataCache,
 		lockRedis,
 		marketDataCache,
 		itickRestClient,
@@ -192,7 +193,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		OptionCli:                   optionCli,
 		ItickManager:                itickManager,
 		MarketDataCache:             marketDataCache,
-		BusRedis:                    busRedis,
+		DataCache:                   dataCache,
 		LockRedis:                   lockRedis,
 		TaskSubscriber:              taskSubscriber,
 		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat("quote"), redis.Nil),

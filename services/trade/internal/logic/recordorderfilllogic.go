@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -37,7 +38,7 @@ func (l *RecordOrderFillLogic) RecordOrderFill(in *trade.RecordOrderFillReq) (*t
 		return &trade.InternalCommonResp{Base: helper.OkResp()}, nil
 	}
 	if in.Fill.MatchNo == "" {
-		matchNo, err := l.svcCtx.GenerateBizNo(l.ctx, "MAT")
+		matchNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "MAT", "")
 		if err != nil {
 			return nil, err
 		}

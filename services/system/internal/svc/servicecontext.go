@@ -39,7 +39,8 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	taskPublisher := mq.MustNewPublisher(c.MQ)
+	mqConfig := mq.ForService(c.MQ, c.Name)
+	taskPublisher := mq.MustNewPublisher(mqConfig)
 	tasks.InitTaskPublisher(taskPublisher)
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)

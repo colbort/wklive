@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"wklive/common/conv"
+	"wklive/common/generate"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
@@ -259,15 +260,15 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 			if lockedPlan == nil || !sameMatchBook(lockedPlan.BuyOrder, key, int64(common.Side_SIDE_BUY)) || !sameMatchBook(lockedPlan.SellOrder, key, int64(common.Side_SIDE_SELL)) {
 				return nil
 			}
-			matchNo, err := l.svcCtx.GenerateBizNo(ctx, "MAT")
+			matchNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "MAT", "")
 			if err != nil {
 				return err
 			}
-			buyFillNo, err := l.svcCtx.GenerateBizNo(ctx, "FIL")
+			buyFillNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "FIL", "")
 			if err != nil {
 				return err
 			}
-			sellFillNo, err := l.svcCtx.GenerateBizNo(ctx, "FIL")
+			sellFillNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "FIL", "")
 			if err != nil {
 				return err
 			}

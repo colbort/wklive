@@ -60,7 +60,7 @@ func OperateMessage(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.Ch
 
 func updateMessageOperateStatus(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.ChatMessageOperatePayload, merchantId int64, status chat.ChatMessageStatus, isGuest bool) error {
 	if isGuest {
-		return UpdateTransientMessageStatus(ctx, svcCtx.BusRedis, merchantId, in.GetSessionNo(), in.GetMessageNo(), status, in.GetOperatedAt())
+		return UpdateTransientMessageStatus(ctx, svcCtx.Redis, merchantId, in.GetSessionNo(), in.GetMessageNo(), status, in.GetOperatedAt())
 	}
 	model := svcCtx.ChatMessageFactory.New(merchantId)
 	if model == nil {
@@ -89,7 +89,7 @@ func shouldPersistMessageOperate(in *chat.ChatMessageOperatePayload) bool {
 }
 
 func publishMessageOperate(ctx context.Context, svcCtx *svc.ServiceContext, in *chat.ChatMessageOperatePayload, eventType chat.ChatEventType, payload *chat.ChatWsResponse_MessageOperate) error {
-	if svcCtx.BusRedis == nil {
+	if svcCtx.Redis == nil {
 		return nil
 	}
 	switch eventType {

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"wklive/common/generate"
 	"wklive/common/helper"
 
 	"wklive/proto/chat"
@@ -37,7 +38,7 @@ func (l *GenerateChatSessionNoLogic) GenerateChatSessionNo(in *chat.GenerateChat
 		if session != nil {
 			sessionNo = session.GetSessionNo()
 		} else {
-			sn, err := l.svcCtx.GenerateNo(l.ctx, "GCS")
+			sn, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "chat", "GCS", "")
 			if err != nil {
 				return nil, err
 			}
@@ -50,7 +51,7 @@ func (l *GenerateChatSessionNoLogic) GenerateChatSessionNo(in *chat.GenerateChat
 		} else if err != models.ErrNotFound {
 			return &chat.GenerateChatSessionNoResp{Base: helper.ErrResp(500, err.Error())}, nil
 		} else {
-			sn, err := l.svcCtx.GenerateNo(l.ctx, "CS")
+			sn, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "chat", "CS", "")
 			if err != nil {
 				return nil, err
 			}
@@ -72,7 +73,7 @@ func (l *GenerateChatSessionNoLogic) findGuestTransientSession(merchantID, userI
 	for {
 		list, hasNext, nextCursor, err := ih.PageTransientSessions(
 			l.ctx,
-			l.svcCtx.BusRedis,
+			l.svcCtx.Redis,
 			merchantID,
 			userID,
 			0,

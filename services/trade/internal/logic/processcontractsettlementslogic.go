@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/generate"
 	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
@@ -112,7 +113,7 @@ func (l *ProcessContractSettlementsLogic) disableExpiredSymbols(tenantID int64, 
 			if err := l.svcCtx.TradeSymbolModel.Update(l.ctx, symbol); err != nil {
 				return err
 			}
-			eventNo, err := l.svcCtx.GenerateBizNo(l.ctx, "TRE")
+			eventNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "TRE", "")
 			if err != nil {
 				return err
 			}

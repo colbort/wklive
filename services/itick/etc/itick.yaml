@@ -2,7 +2,6 @@ Name: itick.rpc
 ListenOn: 0.0.0.0:8080
 MQ:
   Brokers: [kafka:9092]
-  ClientID: itick
   MaxAttempts: 5
 MethodTimeouts:
   - FullMethod: /itick.ItickAdmin/SyncProductKlineHistory

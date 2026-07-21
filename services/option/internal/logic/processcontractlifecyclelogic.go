@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"wklive/common/conv"
+	"wklive/common/generate"
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/option"
@@ -215,7 +216,7 @@ func (l *ProcessContractLifecycleLogic) autoExerciseContract(contract *models.TO
 			if len(exists) > 0 {
 				continue
 			}
-			exerciseNo, err := l.svcCtx.GenerateBizNo(l.ctx, "EX")
+			exerciseNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "EX", "")
 			if err != nil {
 				return err
 			}
@@ -289,7 +290,7 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 			exerciseResult = int64(option.ExerciseResult_EXERCISE_RESULT_AUTO_ABANDON)
 		}
 	}
-	settlementNo, err := l.svcCtx.GenerateBizNo(l.ctx, "OPS")
+	settlementNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "OPS", "")
 	if err != nil {
 		return err
 	}

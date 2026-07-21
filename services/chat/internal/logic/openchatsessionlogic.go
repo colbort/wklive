@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
+	"wklive/common/generate"
 	"wklive/common/helper"
 
 	"wklive/common/utils"
@@ -41,14 +42,14 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		sessionNo := strings.TrimSpace(in.GetSessionNo())
 		var err error
 		if sessionNo == "" {
-			sessionNo, err = l.svcCtx.GenerateNo(l.ctx, "CS")
+			sessionNo, err = generate.GenerateNo(l.svcCtx.Redis, l.ctx, "chat", "CS", "")
 			if err != nil {
 				logx.Errorf("generate guest session no error: %v", err)
 				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate session no error")}, nil
 			}
 		}
 
-		ms, err = ih.GetTransientSession(l.ctx, l.svcCtx.BusRedis, in.GetMerchantId(), sessionNo)
+		ms, err = ih.GetTransientSession(l.ctx, l.svcCtx.Redis, in.GetMerchantId(), sessionNo)
 		if err != nil && !errors.Is(err, redis.Nil) {
 			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
@@ -98,7 +99,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 		ms.UserId = in.GetUserId()
 		ms.ExtJson = sql.NullString{String: in.GetExtJson(), Valid: strings.TrimSpace(in.GetExtJson()) != ""}
 
-		ms, err = ih.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, ms)
+		ms, err = ih.UpsertTransientSession(l.ctx, l.svcCtx.Redis, ms)
 		if err != nil {
 			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
@@ -109,7 +110,7 @@ func (l *OpenChatSessionLogic) OpenChatSession(in *chat.OpenChatSessionReq) (*ch
 			return &chat.OpenChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		if session == nil {
-			sessionNo, err := l.svcCtx.GenerateNo(l.ctx, "CS")
+			sessionNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "chat", "CS", "")
 			if err != nil {
 				logx.Errorf("generate session no error: %v", err)
 				return &chat.OpenChatSessionResp{Base: helper.ErrResp(400, "generate session no error")}, nil

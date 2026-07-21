@@ -71,7 +71,7 @@ func (l *CloseChatSessionLogic) CloseChatSession(in *chat.CloseChatSessionReq) (
 		session.BeforeDisconnectStatus = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_UNKNOWN)
 		session.UpdateTimes = now
 		_ = ih.RemoveTransientInternetErrorTimeout(l.ctx, l.svcCtx, session.MerchantId, session.SessionNo)
-		session, err = ih.UpsertTransientSession(l.ctx, l.svcCtx.BusRedis, session)
+		session, err = ih.UpsertTransientSession(l.ctx, l.svcCtx.Redis, session)
 		if err != nil {
 			return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}

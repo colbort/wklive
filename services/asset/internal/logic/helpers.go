@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/conv"
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -387,7 +388,7 @@ func buildAssetFlowRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenan
 		afterFrozen = after.FrozenAmount
 		afterLocked = after.LockedAmount
 	}
-	flowNo, err := svcCtx.GenerateOrderNo(ctx, "FLOW", bizNo)
+	flowNo, err := generate.GenerateNo(svcCtx.Redis, ctx, "order_id", "FLOW", bizNo)
 	if err != nil {
 		return nil
 	}
@@ -420,7 +421,7 @@ func buildAssetFlowRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenan
 }
 
 func buildAssetFreezeRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount decimal.Decimal, expireTime, ts int64) *models.TAssetFreeze {
-	freezeNo, err := svcCtx.GenerateOrderNo(ctx, "FREEZE", bizNo)
+	freezeNo, err := generate.GenerateNo(svcCtx.Redis, ctx, "order_id", "FREEZE", bizNo)
 	if err != nil {
 		return nil
 	}
@@ -446,7 +447,7 @@ func buildAssetFreezeRecord(svcCtx *svc.ServiceContext, ctx context.Context, ten
 }
 
 func buildAssetLockRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount decimal.Decimal, startTime, endTime, ts int64) *models.TAssetLock {
-	lockNo, err := svcCtx.GenerateOrderNo(ctx, "FREEZE", bizNo)
+	lockNo, err := generate.GenerateNo(svcCtx.Redis, ctx, "order_id", "FREEZE", bizNo)
 	if err != nil {
 		return nil
 	}

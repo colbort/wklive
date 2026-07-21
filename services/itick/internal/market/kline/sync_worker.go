@@ -251,8 +251,8 @@ func (w *SyncKlinesWorker) doReconcile(apiURL, token, onlyCategory string) error
 }
 
 func (w *SyncKlinesWorker) loadActiveProducts() ([]*models.TItickProduct, error) {
-	if w.svcCtx.BusRedis != nil {
-		members, err := w.svcCtx.BusRedis.SMembers(w.ctx, activeProductsKey).Result()
+	if w.svcCtx.DataCache != nil {
+		members, err := w.svcCtx.DataCache.SMembers(w.ctx, activeProductsKey).Result()
 		if err == nil && len(members) > 0 {
 			ids := make([]int64, 0, len(members))
 			for _, member := range members {

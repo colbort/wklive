@@ -24,7 +24,7 @@ func GetSession(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int6
 		return nil, errors.New("params err, merchant id is invalid or session no is empty")
 	}
 	if isGuest {
-		session, err := GetTransientSession(ctx, svcCtx.BusRedis, merchantID, sessionNo)
+		session, err := GetTransientSession(ctx, svcCtx.Redis, merchantID, sessionNo)
 		if err != nil {
 			return nil, errors.New("chat session not found")
 		}
@@ -114,7 +114,7 @@ func AcceptChatSession(ctx context.Context, svcCtx *svc.ServiceContext, in Assig
 	session.Status = int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_SERVING)
 	session.UpdateTimes = now
 	if in.IsGuest {
-		session, err = UpsertTransientSession(ctx, svcCtx.BusRedis, session)
+		session, err = UpsertTransientSession(ctx, svcCtx.Redis, session)
 		if err != nil {
 			return nil, err
 		}
@@ -248,7 +248,7 @@ func MarkTransientSessionInternetError(ctx context.Context, svcCtx *svc.ServiceC
 	}
 	now := utils.NowMillis()
 	markInternetErrorSessionFields(session, now)
-	next, err := UpsertTransientSession(ctx, svcCtx.BusRedis, session)
+	next, err := UpsertTransientSession(ctx, svcCtx.Redis, session)
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +320,7 @@ func restoreInternetErrorSessionFields(session *models.TChatSession, now int64) 
 }
 
 func upsertTransientSessionAndRemoveInternetErrorTimeout(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, restored bool) (*models.TChatSession, bool, error) {
-	next, err := UpsertTransientSession(ctx, svcCtx.BusRedis, session)
+	next, err := UpsertTransientSession(ctx, svcCtx.Redis, session)
 	_ = RemoveTransientInternetErrorTimeout(ctx, svcCtx, session.MerchantId, session.SessionNo)
 	return next, restored, err
 }
@@ -330,20 +330,20 @@ func IsInternetErrorCloseReason(reasonType chat.ChatSessionCloseReason, reason s
 }
 
 func addTransientInternetErrorTimeout(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession) error {
-	if svcCtx.BusRedis == nil || session == nil {
+	if svcCtx.Redis == nil || session == nil {
 		return nil
 	}
 	score := session.DisconnectTime + int64(InternetErrorCloseDelay/time.Millisecond)
 	member := transientInternetErrorMember(session.MerchantId, session.SessionNo)
-	_, err := svcCtx.BusRedis.ZaddCtx(ctx, transientInternetErrorKey, score, member)
+	_, err := svcCtx.Redis.ZaddCtx(ctx, transientInternetErrorKey, score, member)
 	return err
 }
 
 func RemoveTransientInternetErrorTimeout(ctx context.Context, svcCtx *svc.ServiceContext, merchantID int64, sessionNo string) error {
-	if svcCtx.BusRedis == nil {
+	if svcCtx.Redis == nil {
 		return nil
 	}
-	_, err := svcCtx.BusRedis.ZremCtx(ctx, transientInternetErrorKey, transientInternetErrorMember(merchantID, sessionNo))
+	_, err := svcCtx.Redis.ZremCtx(ctx, transientInternetErrorKey, transientInternetErrorMember(merchantID, sessionNo))
 	return err
 }
 
