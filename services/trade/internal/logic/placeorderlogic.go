@@ -335,9 +335,14 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	if err := syncOrderBookCache(l.svcCtx, l.ctx, order); err != nil {
 		l.Errorf("sync redis order book after place order failed, orderId=%d err=%v", order.Id, err)
 	}
-	// finalizeAcceptedOrder persisted ORDER_ACCEPTED in the transactional outbox.
-	// ProcessTradeEvents owns Kafka dispatch and retry; publishing here would put
-	// broker connection and acknowledgement latency on the PlaceOrder RPC path.
+	if !isSeconds && order.Status == int64(trade.OrderStatus_ORDER_STATUS_PENDING) {
+		event := realtime.Event{EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), Type: realtime.EventOrderAccepted, TenantID: order.TenantId, BizID: order.OrderNo, OrderID: order.Id}
+		if err := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
+			// The event remains pending in the durable outbox and can be retried by
+			// ProcessTradeEvents. A broker failure must not roll back the order.
+			l.Errorf("publish real-time order accepted event failed, orderId=%d eventNo=%s err=%v", order.Id, event.EventNo, err)
+		}
+	}
 
 	return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(order)}, nil
 }

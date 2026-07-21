@@ -50,13 +50,18 @@ func NewTBizTradeEventModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.
 
 func (m *defaultTBizTradeEventModel) FindDispatchable(ctx context.Context, tenantID, now, staleBefore, cursor, limit int64, eventTypes []string) ([]*TBizTradeEvent, error) {
 	limit = sqlutil.NormalizeLimit(limit)
+	tenantFilter := ""
+	args := make([]any, 0, len(eventTypes)+5)
+	if tenantID > 0 {
+		tenantFilter = "tenant_id = ? AND "
+		args = append(args, tenantID)
+	}
 	eventFilter := ""
 	if len(eventTypes) > 0 {
 		marks := strings.TrimSuffix(strings.Repeat("?,", len(eventTypes)), ",")
 		eventFilter = fmt.Sprintf(" AND event_type IN (%s)", marks)
 	}
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ?%s AND id > ? AND (((event_status = 1 OR (event_status = 3 AND next_retry_at <= ?)) AND (max_retry_count = 0 OR retry_count < max_retry_count)) OR (event_status = 5 AND claimed_at <= ?)) ORDER BY id ASC LIMIT ?", tBizTradeEventRows, m.table, eventFilter)
-	args := []any{tenantID}
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s1 = 1%s AND id > ? AND (((event_status = 1 OR (event_status = 3 AND next_retry_at <= ?)) AND (max_retry_count = 0 OR retry_count < max_retry_count)) OR (event_status = 5 AND claimed_at <= ?)) ORDER BY id ASC LIMIT ?", tBizTradeEventRows, m.table, tenantFilter, eventFilter)
 	for _, eventType := range eventTypes {
 		args = append(args, eventType)
 	}
