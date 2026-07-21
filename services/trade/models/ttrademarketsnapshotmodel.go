@@ -17,6 +17,7 @@ type (
 		tTradeMarketSnapshotModel
 		InsertIgnore(ctx context.Context, row *TTradeMarketSnapshot) (sql.Result, error)
 		FindOneBySnapshotID(ctx context.Context, id string) (*TTradeMarketSnapshot, error)
+		FindLatestConfirmed(ctx context.Context, tenantID, symbolID, minSourceTimestamp int64) (*TTradeMarketSnapshot, error)
 		FindPage(ctx context.Context, tenantID, symbolID, cursor, limit, start, end int64, kind string) ([]*TTradeMarketSnapshot, int64, error)
 	}
 
@@ -43,6 +44,16 @@ func (m *defaultTTradeMarketSnapshotModel) FindOneBySnapshotID(ctx context.Conte
 	}
 	return &r, nil
 }
+
+func (m *defaultTTradeMarketSnapshotModel) FindLatestConfirmed(ctx context.Context, tenantID, symbolID, minSourceTimestamp int64) (*TTradeMarketSnapshot, error) {
+	var row TTradeMarketSnapshot
+	err := m.QueryRowNoCacheCtx(ctx, &row, "SELECT "+tTradeMarketSnapshotRows+" FROM t_trade_market_snapshot WHERE tenant_id IN (?,0) AND symbol_id=? AND confirmed=1 AND source_timestamp>=? ORDER BY (tenant_id=?) DESC, source_timestamp DESC, revision DESC, id DESC LIMIT 1", tenantID, symbolID, minSourceTimestamp, tenantID)
+	if err != nil {
+		return nil, err
+	}
+	return &row, nil
+}
+
 func (m *defaultTTradeMarketSnapshotModel) FindPage(ctx context.Context, t, sym, cursor, limit, start, end int64, kind string) ([]*TTradeMarketSnapshot, int64, error) {
 	where := "tenant_id=?"
 	args := []any{t}

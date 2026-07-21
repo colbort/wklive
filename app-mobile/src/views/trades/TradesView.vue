@@ -48,6 +48,7 @@ const CONTRACT_VALUE_TYPE_LINEAR = 1
 const CONTRACT_VALUE_TYPE_INVERSE = 2
 const TRADE_SIDE_BUY = 1
 const TRADE_SIDE_SELL = 2
+const POSITION_SIDE_UNKNOWN = 0
 const POSITION_SIDE_NET = 1
 const POSITION_SIDE_LONG = 2
 const POSITION_SIDE_SHORT = 3
@@ -363,6 +364,7 @@ function createClientOrderId() {
 }
 
 function orderPositionSide(symbol: TradeSymbol, side: SubmitSide) {
+  if (symbol.productType === PRODUCT_TYPE_SPOT) return POSITION_SIDE_UNKNOWN
   if (!isContractMarket(symbol.productType)) return POSITION_SIDE_NET
   return side === 'buy' ? POSITION_SIDE_LONG : POSITION_SIDE_SHORT
 }
@@ -703,6 +705,13 @@ async function submitTradeOrder(side: SubmitSide) {
     params.qty = undefined
     params.secondsDirection = side === 'buy' ? 1 : 2
     params.durationSeconds = secondsConfig.durationSeconds
+  }
+
+  // A spot market buy is expressed in quote-asset amount. Spot sell and
+  // limit orders continue to use base-asset quantity.
+  if (symbol.productType === PRODUCT_TYPE_SPOT && !isLimitOrder && side === 'buy') {
+    params.amount = qty
+    params.qty = undefined
   }
 
   if (isLimitOrder) {

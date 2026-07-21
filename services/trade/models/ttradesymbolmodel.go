@@ -38,6 +38,23 @@ func NewTTradeSymbolModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Op
 	}
 }
 
+// FindOne evicts cache entries written by the legacy symbol model. Those
+// entries used fields such as MarketType instead of ProductType, so decoding
+// them into the current model silently produces PRODUCT_TYPE_UNKNOWN and can
+// route otherwise valid spot orders through derivative validation.
+func (m *customTTradeSymbolModel) FindOne(ctx context.Context, id int64) (*TTradeSymbol, error) {
+	row, err := m.defaultTTradeSymbolModel.FindOne(ctx, id)
+	if err != nil || row.ProductType != 0 {
+		return row, err
+	}
+
+	idKey := fmt.Sprintf("%s%v", cacheTTradeSymbolIdPrefix, id)
+	if err := m.DelCacheCtx(ctx, idKey); err != nil {
+		return nil, err
+	}
+	return m.defaultTTradeSymbolModel.FindOne(ctx, id)
+}
+
 func (m *defaultTTradeSymbolModel) FindPage(ctx context.Context, filter TradeSymbolPageFilter, cursor int64, limit int64) ([]*TTradeSymbol, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()

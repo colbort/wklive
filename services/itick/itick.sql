@@ -184,7 +184,6 @@ CREATE TABLE `t_itick_authoritative_snapshot` (
   `create_times` BIGINT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_snapshot_id` (`snapshot_id`),
-  UNIQUE KEY `uk_authority_product_revision` (`authority`,`snapshot_kind`,`category_code`,`market`,`symbol`,`source_timestamp`,`revision`),
   KEY `idx_product_time` (`authority`,`snapshot_kind`,`category_code`,`market`,`symbol`,`source_timestamp`,`revision`),
   CONSTRAINT `chk_authoritative_snapshot` CHECK ((`snapshot_kind`='FUNDING' OR `price` > 0) AND `source_timestamp` > 0 AND `snapshot_timestamp` > 0 AND `revision` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick/Price Engine权威行情永久档案';

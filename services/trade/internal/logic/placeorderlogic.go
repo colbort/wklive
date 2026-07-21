@@ -208,6 +208,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		FeeAsset:          marginAsset,
 		Source:            int64(in.OrderSource),
 		IsReduceOnly:      yesNoToModel(common.YesNo(in.IsReduceOnly), int64(common.YesNo_YES_NO_NO)),
+		IsClosePosition:   int64(common.YesNo_YES_NO_NO),
 		TriggerPrice:      triggerPrice,
 		TriggerType:       int64(in.TriggerType),
 		TriggerKind:       int64(triggerKind),
@@ -334,12 +335,9 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	if err := syncOrderBookCache(l.svcCtx, l.ctx, order); err != nil {
 		l.Errorf("sync redis order book after place order failed, orderId=%d err=%v", order.Id, err)
 	}
-	if !isSeconds && order.Status == int64(trade.OrderStatus_ORDER_STATUS_PENDING) {
-		event := realtime.Event{EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), Type: realtime.EventOrderAccepted, TenantID: order.TenantId, BizID: order.OrderNo, OrderID: order.Id}
-		if err := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
-			l.Errorf("publish real-time order accepted event failed, orderId=%d eventNo=%s err=%v", order.Id, event.EventNo, err)
-		}
-	}
+	// finalizeAcceptedOrder persisted ORDER_ACCEPTED in the transactional outbox.
+	// ProcessTradeEvents owns Kafka dispatch and retry; publishing here would put
+	// broker connection and acknowledgement latency on the PlaceOrder RPC path.
 
 	return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(order)}, nil
 }
@@ -543,6 +541,16 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 	if in.Side != common.Side_SIDE_BUY && in.Side != common.Side_SIDE_SELL {
 		return nil, errors.New("invalid order side")
 	}
+	// Reject derivative-only fields before quantity validation or reference-price
+	// lookup. Otherwise a malformed spot request can be reported as a market-data
+	// failure, which hides the actual request error.
+	if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) &&
+		(in.IsReduceOnly == common.YesNo_YES_NO_YES ||
+			in.PositionSide != trade.PositionSide_POSITION_SIDE_UNKNOWN ||
+			in.MarginMode != trade.MarginMode_MARGIN_MODE_UNKNOWN ||
+			in.Leverage > 0) {
+		return nil, errors.New("position, margin and reduce-only fields are not valid for spot orders")
+	}
 	if err := validateSymbolOrderIncrements(symbol, orderType, price, qty); err != nil {
 		return nil, err
 	}
@@ -569,14 +577,14 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 	switch trade.ProductType(symbol.ProductType) {
 	case trade.ProductType_PRODUCT_TYPE_SPOT:
 		cfg, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, symbol.Id)
+		if errors.Is(err, models.ErrNotFound) || errors.Is(err, sql.ErrNoRows) {
+			return nil, errors.New("spot symbol configuration not found")
+		}
 		if err != nil {
 			return nil, err
 		}
 		if (in.Side == common.Side_SIDE_BUY && cfg.BuyEnabled != int64(common.Enable_ENABLE_ENABLED)) || (in.Side == common.Side_SIDE_SELL && cfg.SellEnabled != int64(common.Enable_ENABLE_ENABLED)) {
 			return nil, errors.New("spot side is disabled")
-		}
-		if in.IsReduceOnly == common.YesNo_YES_NO_YES || in.PositionSide != trade.PositionSide_POSITION_SIDE_UNKNOWN || in.MarginMode != trade.MarginMode_MARGIN_MODE_UNKNOWN || in.Leverage > 0 {
-			return nil, errors.New("position, margin and reduce-only fields are not valid for spot orders")
 		}
 		if !plan.notional.IsPositive() && qty.IsPositive() {
 			plan.notional = tradeMinorAmountAtPrice(plan.riskPrice, qty)
@@ -761,8 +769,53 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 	if err != nil {
 		return decimal.Zero, err
 	}
-	if len(orders) == 0 || !orders[0].Price.IsPositive() {
-		return decimal.Zero, errors.New("no valid reference price for market order")
+	if len(orders) > 0 && orders[0].Price.IsPositive() {
+		return orders[0].Price, nil
 	}
-	return orders[0].Price, nil
+
+	const maxReferencePriceAge = int64(30_000)
+	if isDerivativeProduct(trade.ProductType(symbol.ProductType)) {
+		contract, contractErr := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, symbol.Id)
+		if contractErr != nil && !errors.Is(contractErr, models.ErrNotFound) {
+			return decimal.Zero, contractErr
+		}
+		if contract != nil && contract.MarkPriceSource != "" {
+			quote, quoteErr := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuoteKind("MARK_PRICE", contract.MarkPriceSource, symbol.Id, maxReferencePriceAge)
+			if quoteErr == nil {
+				price := mustParseFloat(quote.LastPrice)
+				if price.IsPositive() {
+					return price, nil
+				}
+			}
+			// A newly listed contract may receive authoritative source quotes before
+			// its versioned price formula has emitted the first MARK snapshot.
+			// Use the same configured source's confirmed FINAL_QUOTE during that
+			// bootstrap window; the 30-second validity bound still applies.
+			quote, quoteErr = NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuoteKind("FINAL_QUOTE", contract.MarkPriceSource, symbol.Id, maxReferencePriceAge)
+			if quoteErr == nil {
+				price := mustParseFloat(quote.LastPrice)
+				if price.IsPositive() {
+					return price, nil
+				}
+			}
+		}
+	}
+
+	snapshot, snapshotErr := l.svcCtx.TradeMarketSnapshotModel.FindLatestConfirmed(l.ctx, tenantID, symbol.Id, nowMillis()-maxReferencePriceAge)
+	if snapshotErr != nil {
+		if errors.Is(snapshotErr, models.ErrNotFound) {
+			return decimal.Zero, errors.New("no valid reference price for market order")
+		}
+		return decimal.Zero, snapshotErr
+	}
+	if isDerivativeProduct(trade.ProductType(symbol.ProductType)) && snapshot.MarkPrice.IsPositive() {
+		return snapshot.MarkPrice, nil
+	}
+	if snapshot.Price.IsPositive() {
+		return snapshot.Price, nil
+	}
+	if snapshot.IndexPrice.IsPositive() {
+		return snapshot.IndexPrice, nil
+	}
+	return decimal.Zero, errors.New("no valid reference price for market order")
 }

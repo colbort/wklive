@@ -174,7 +174,9 @@ func (b *MarketDataCache) FindAuthoritativeSnapshotAt(ctx context.Context, msg C
 		if json.Unmarshal(raw, &candidate) != nil || !candidate.Confirmed || !strings.EqualFold(candidate.Authority, strings.TrimSpace(authority)) || !strings.EqualFold(candidate.Kind, kind) || candidate.SourceTimestamp > targetTime {
 			continue
 		}
-		if selected == nil || candidate.SourceTimestamp > selected.SourceTimestamp || (candidate.SourceTimestamp == selected.SourceTimestamp && candidate.Revision > selected.Revision) {
+		if selected == nil || candidate.SourceTimestamp > selected.SourceTimestamp ||
+			(candidate.SourceTimestamp == selected.SourceTimestamp && candidate.Revision > selected.Revision) ||
+			(candidate.SourceTimestamp == selected.SourceTimestamp && candidate.Revision == selected.Revision && candidate.SnapshotTimestamp > selected.SnapshotTimestamp) {
 			copy := candidate
 			selected = &copy
 		}

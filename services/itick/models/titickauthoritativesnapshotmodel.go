@@ -49,7 +49,7 @@ func (m *defaultTItickAuthoritativeSnapshotModel) InsertImmutableAndEnqueue(ctx 
 		conn := sqlx.NewSqlConnFromSession(session)
 		_, err := conn.ExecCtx(ctx, `INSERT INTO t_itick_authoritative_snapshot
 (snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times)
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE snapshot_id=IF(snapshot_id=VALUES(snapshot_id),snapshot_id,NULL)`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE snapshot_id=VALUES(snapshot_id)`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
 		if err != nil {
 			return err
 		}
@@ -105,7 +105,7 @@ func (m *defaultTItickAuthoritativeSnapshotModel) FindAtOrBefore(ctx context.Con
 	err := m.QueryRowNoCacheCtx(ctx, &row, `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
 FROM t_itick_authoritative_snapshot
 WHERE authority=? AND snapshot_kind=? AND category_code=? AND market=? AND symbol=? AND source_timestamp<=? AND source_timestamp>=?
-ORDER BY source_timestamp DESC,revision DESC LIMIT 1`, authority, kind, category, market, symbol, targetTime, minTime)
+ORDER BY source_timestamp DESC,revision DESC,id DESC LIMIT 1`, authority, kind, category, market, symbol, targetTime, minTime)
 	if errors.Is(err, ErrNotFound) {
 		return nil, ErrNotFound
 	}
