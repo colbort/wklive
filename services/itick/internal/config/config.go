@@ -40,6 +40,35 @@ type Config struct {
 		// WriteTimeoutMs 是单次 MongoDB 批量写入超时时间，单位毫秒。
 		WriteTimeoutMs int
 	}
+	// SnapshotOutboxCleanup 控制已成功发布的权威快照 Outbox 清理任务。
+	// 未配置或配置为非正数时，任务使用代码内置的安全默认值。
+	SnapshotOutboxCleanup struct {
+		// SuccessRetentionMinutes 是 status=3 成功记录的保留时间，单位分钟。
+		SuccessRetentionMinutes int
+
+		// IntervalSeconds 是清理任务的执行周期，单位秒。
+		IntervalSeconds int
+
+		// BatchSize 是单条 DELETE 语句最多删除的记录数，上限为 10000。
+		BatchSize int64
+
+		// MaxBatchesPerRun 是每轮任务最多执行的删除批次数，用于限制单轮数据库压力。
+		MaxBatchesPerRun int
+
+		// BatchPauseMs 是相邻删除批次之间的等待时间，单位毫秒。
+		BatchPauseMs int
+	}
+	// AuthoritativeCache controls the bounded Redis authoritative snapshot cache.
+	AuthoritativeCache struct {
+		// HotWindowMinutes is the Redis historical lookback window. Older reads use MySQL.
+		HotWindowMinutes int
+		// LegacyCleanupEnabled removes the obsolete v1/v2 Redis layout after a coordinated rollout.
+		LegacyCleanupEnabled bool
+		// LegacyCleanupScanCount limits each non-blocking SCAN batch.
+		LegacyCleanupScanCount int64
+		// LegacyCleanupIntervalSeconds is the delay between legacy cleanup batches.
+		LegacyCleanupIntervalSeconds int
+	}
 }
 
 type ItickConf struct {

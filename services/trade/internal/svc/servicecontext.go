@@ -10,6 +10,7 @@ import (
 	"wklive/services/trade/models"
 
 	"wklive/proto/asset"
+	"wklive/proto/itick"
 
 	v9 "github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -62,6 +63,7 @@ type ServiceContext struct {
 	TradeAssetReservationModel  models.TTradeAssetReservationModel
 	TradeSettlementInstrModel   models.TTradeSettlementInstructionModel
 	AssetClient                 asset.AssetInternalClient
+	ItickClient                 itick.ItickInternalClient
 	MarketDataCache             *cache.MarketDataCache
 	TradeMarketSnapshotModel    models.TTradeMarketSnapshotModel
 }
@@ -69,6 +71,7 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
+	itickCli := zrpc.MustNewClient(c.ItickRpc)
 	marketRedis := v9.NewClient(&v9.Options{Addr: c.CacheRedis[0].Host, Username: c.CacheRedis[0].User, Password: c.CacheRedis[0].Pass})
 	mqConfig := mq.ForService(c.MQ, c.Name)
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "trade-tasks")
@@ -121,6 +124,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TradeAssetReservationModel:  models.NewTTradeAssetReservationModel(conn, c.CacheRedis),
 		TradeSettlementInstrModel:   models.NewTTradeSettlementInstructionModel(conn, c.CacheRedis),
 		AssetClient:                 asset.NewAssetInternalClient(assetCli.Conn()),
+		ItickClient:                 itick.NewItickInternalClient(itickCli.Conn()),
 		MarketDataCache:             cache.NewMarketDataCache(marketRedis),
 		TradeMarketSnapshotModel:    models.NewTTradeMarketSnapshotModel(conn, c.CacheRedis),
 	}

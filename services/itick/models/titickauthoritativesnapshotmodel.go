@@ -21,6 +21,7 @@ type (
 		InsertImmutableAndEnqueue(context.Context, *TItickAuthoritativeSnapshot, string) error
 		FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*TItickAuthoritativeSnapshot, error)
 		FindAfterID(context.Context, int64, int64) ([]*TItickAuthoritativeSnapshot, error)
+		FindLatestPage(context.Context, int64, int64) ([]*TItickAuthoritativeSnapshot, error)
 	}
 
 	customTItickAuthoritativeSnapshotModel struct {
@@ -33,6 +34,21 @@ func NewTItickAuthoritativeSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, o
 	return &customTItickAuthoritativeSnapshotModel{
 		defaultTItickAuthoritativeSnapshotModel: newTItickAuthoritativeSnapshotModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTItickAuthoritativeSnapshotModel) FindLatestPage(ctx context.Context, afterID, limit int64) ([]*TItickAuthoritativeSnapshot, error) {
+	if limit <= 0 || limit > 1000 {
+		limit = 500
+	}
+	var rows []*TItickAuthoritativeSnapshot
+	query := `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
+FROM (
+	SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times,
+		ROW_NUMBER() OVER (PARTITION BY authority,snapshot_kind,category_code,market,symbol ORDER BY source_timestamp DESC,revision DESC,id DESC) AS row_num
+	FROM t_itick_authoritative_snapshot
+) ranked WHERE row_num=1 AND id>? ORDER BY id LIMIT ?`
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, query, afterID, limit)
+	return rows, err
 }
 
 func (m *defaultTItickAuthoritativeSnapshotModel) FindAfterID(ctx context.Context, afterID, limit int64) ([]*TItickAuthoritativeSnapshot, error) {
@@ -49,11 +65,26 @@ func (m *defaultTItickAuthoritativeSnapshotModel) InsertImmutableAndEnqueue(ctx 
 		conn := sqlx.NewSqlConnFromSession(session)
 		_, err := conn.ExecCtx(ctx, `INSERT INTO t_itick_authoritative_snapshot
 (snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times)
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE snapshot_id=VALUES(snapshot_id)`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
 		if err != nil {
-			return err
+			var mysqlErr *mysql.MySQLError
+			if !errors.As(err, &mysqlErr) || mysqlErr.Number != 1062 {
+				return err
+			}
+			var existing TItickAuthoritativeSnapshot
+			query := `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
+FROM t_itick_authoritative_snapshot WHERE snapshot_id=? LIMIT 1`
+			if findErr := conn.QueryRowCtx(ctx, &existing, query, row.SnapshotId); findErr != nil {
+				return findErr
+			}
+			if sameAuthoritativeSnapshotIdentity(&existing, row) {
+				// The permanent archive is the deduplication source after a successful
+				// outbox row has been cleaned up. Do not enqueue a replayed snapshot.
+				return nil
+			}
+			return authoritativeSnapshotConflictError(row)
 		}
-		_, err = conn.ExecCtx(ctx, "INSERT IGNORE INTO t_itick_snapshot_outbox(snapshot_id,payload,status,retry_count,next_retry_at,last_error_msg,create_times,update_times) VALUES(?,?,1,0,0,'',?,?)", row.SnapshotId, payload, row.CreateTimes, row.CreateTimes)
+		_, err = conn.ExecCtx(ctx, "INSERT INTO t_itick_snapshot_outbox(snapshot_id,payload,status,retry_count,next_retry_at,last_error_msg,create_times,update_times) VALUES(?,?,1,0,0,'',?,?)", row.SnapshotId, payload, row.CreateTimes, row.CreateTimes)
 		return err
 	})
 }
@@ -83,6 +114,10 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`, row.SnapshotId, row.Authority, row.SnapshotK
 	if findErr != nil && !errors.Is(findErr, ErrNotFound) {
 		return findErr
 	}
+	return authoritativeSnapshotConflictError(row)
+}
+
+func authoritativeSnapshotConflictError(row *TItickAuthoritativeSnapshot) error {
 	return fmt.Errorf("authoritative snapshot immutable-key conflict: authority=%s kind=%s symbol=%s source_timestamp=%d revision=%d", row.Authority, row.SnapshotKind, row.Symbol, row.SourceTimestamp, row.Revision)
 }
 
@@ -105,6 +140,7 @@ func (m *defaultTItickAuthoritativeSnapshotModel) FindAtOrBefore(ctx context.Con
 	err := m.QueryRowNoCacheCtx(ctx, &row, `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
 FROM t_itick_authoritative_snapshot
 WHERE authority=? AND snapshot_kind=? AND category_code=? AND market=? AND symbol=? AND source_timestamp<=? AND source_timestamp>=?
+	AND NOT EXISTS (SELECT 1 FROM t_itick_snapshot_revocation r WHERE r.snapshot_id=t_itick_authoritative_snapshot.snapshot_id)
 ORDER BY source_timestamp DESC,revision DESC,id DESC LIMIT 1`, authority, kind, category, market, symbol, targetTime, minTime)
 	if errors.Is(err, ErrNotFound) {
 		return nil, ErrNotFound

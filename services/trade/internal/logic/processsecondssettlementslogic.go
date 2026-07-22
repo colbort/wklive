@@ -14,6 +14,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/common"
+	"wklive/proto/itick"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -385,7 +386,10 @@ func (l *ProcessSecondsSettlementsLogic) getOneValidQuote(kind, source string, s
 	}
 	s, err := l.svcCtx.MarketDataCache.FindAuthoritativeSnapshotAt(l.ctx, cache.ClientMessage{Topic: cache.TopicQuote, CategoryCode: category, Market: market, Symbol: symbol}, authority, snapshotKind, targetTime, time.Duration(validity)*time.Millisecond)
 	if err != nil {
-		return nil, err
+		s, err = l.findAuthoritativeSnapshotInArchive(authority, snapshotKind, category, market, symbol, targetTime, validity)
+		if err != nil {
+			return nil, err
+		}
 	}
 	if err = persistMarketSnapshot(l.ctx, l.svcCtx.TradeMarketSnapshotModel, tradeSymbol.TenantId, symbolID, s); err != nil {
 		return nil, err
@@ -395,6 +399,43 @@ func (l *ProcessSecondsSettlementsLogic) getOneValidQuote(kind, source string, s
 		return q, nil
 	}
 	return nil, fmt.Errorf("market quote cache miss: source=%s", source)
+}
+
+func (l *ProcessSecondsSettlementsLogic) findAuthoritativeSnapshotInArchive(authority, kind, category, market, symbol string, targetTime, validity int64) (*cache.SettlementSnapshot, error) {
+	if l.svcCtx.ItickClient == nil {
+		return nil, errors.New("itick archive client is not configured")
+	}
+	resp, err := l.svcCtx.ItickClient.GetAuthoritativeSnapshot(l.ctx, &itick.GetAuthoritativeSnapshotReq{
+		Authority:     authority,
+		SnapshotKind:  kind,
+		CategoryCode:  category,
+		Market:        market,
+		Symbol:        symbol,
+		TargetTime:    targetTime,
+		MaxLookbackMs: validity,
+	})
+	if err != nil || resp.GetData() == nil {
+		if err != nil {
+			return nil, err
+		}
+		return nil, errors.New("authoritative snapshot unavailable in archive")
+	}
+	row := resp.GetData()
+	return &cache.SettlementSnapshot{
+		SnapshotID:        row.GetSnapshotId(),
+		Authority:         row.GetAuthority(),
+		Kind:              row.GetSnapshotKind(),
+		CategoryCode:      row.GetCategoryCode(),
+		Market:            row.GetMarket(),
+		Symbol:            row.GetSymbol(),
+		Price:             row.GetPrice(),
+		Source:            row.GetAuthority(),
+		SourceTimestamp:   row.GetSourceTimestamp(),
+		SnapshotTimestamp: row.GetSnapshotTimestamp(),
+		Revision:          row.GetRevision(),
+		FormulaVersion:    row.GetFormulaVersion(),
+		Confirmed:         true,
+	}, nil
 }
 
 func archiveSnapshotKind(kind string) string {

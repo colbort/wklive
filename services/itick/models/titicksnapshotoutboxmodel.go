@@ -34,6 +34,7 @@ type (
 		FindPage(context.Context, int64, string, int64, int64) ([]*TItickSnapshotOutbox, int64, error)
 		RetryFailed(context.Context, int64, int64) error
 		Health(context.Context) (*SnapshotOutboxHealth, error)
+		DeleteSucceededBefore(context.Context, int64, int64) (int64, error)
 	}
 
 	customTItickSnapshotOutboxModel struct {
@@ -46,6 +47,18 @@ func NewTItickSnapshotOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	return &customTItickSnapshotOutboxModel{
 		defaultTItickSnapshotOutboxModel: newTItickSnapshotOutboxModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTItickSnapshotOutboxModel) DeleteSucceededBefore(ctx context.Context, cutoff, limit int64) (int64, error) {
+	if limit <= 0 || limit > 10000 {
+		limit = 5000
+	}
+	result, err := m.ExecNoCacheCtx(ctx, `DELETE FROM t_itick_snapshot_outbox
+		WHERE status=3 AND update_times<? ORDER BY id LIMIT ?`, cutoff, limit)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 func (m *defaultTItickSnapshotOutboxModel) MarkRedisPublished(ctx context.Context, id, now int64) error {

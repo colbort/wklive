@@ -197,7 +197,8 @@ CREATE TABLE `t_itick_snapshot_outbox` (
   `option_published_at` BIGINT NOT NULL DEFAULT 0 COMMENT 'Option行情同步完成时间；无需同步时同样置完成',
   `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '', `create_times` BIGINT NOT NULL, `update_times` BIGINT NOT NULL,
   PRIMARY KEY (`id`), UNIQUE KEY `uk_snapshot_outbox` (`snapshot_id`),
-  KEY `idx_snapshot_outbox_retry` (`status`,`next_retry_at`,`id`)
+  KEY `idx_snapshot_outbox_retry` (`status`,`next_retry_at`,`id`),
+  KEY `idx_snapshot_outbox_cleanup` (`status`,`update_times`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权威行情异步发布与Redis修复任务';
 
 DROP TABLE IF EXISTS `t_itick_snapshot_revocation`;

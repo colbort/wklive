@@ -53,7 +53,7 @@ type ServiceContext struct {
 	ItickTenantProductModel     models.TItickTenantProductModel
 	ItickSyncTaskModel          models.TItickSyncTaskModel
 	ItickQuoteModel             models.TItickQuoteModel
-	AuthoritativeSnapshotModel  AuthoritativeSnapshotStore
+	AuthoritativeSnapshotModel  models.TItickAuthoritativeSnapshotModel
 	SnapshotOutboxModel         models.TItickSnapshotOutboxModel
 	SnapshotRevocationModel     models.TItickSnapshotRevocationModel
 	PriceFormulaModel           models.TItickPriceFormulaModel
@@ -64,14 +64,6 @@ type ServiceContext struct {
 	MarketHolidayModel          models.TItickMarketHolidayModel
 	MarketCalendarResolver      *calendar.Resolver
 	ItickRestClient             *itickrest.Client
-}
-
-type AuthoritativeSnapshotStore interface {
-	InsertImmutable(context.Context, *models.TItickAuthoritativeSnapshot) error
-	InsertImmutableAndEnqueue(context.Context, *models.TItickAuthoritativeSnapshot, string) error
-	FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*models.TItickAuthoritativeSnapshot, error)
-	FindAfterID(context.Context, int64, int64) ([]*models.TItickAuthoritativeSnapshot, error)
-	FindOneBySnapshotId(context.Context, string) (*models.TItickAuthoritativeSnapshot, error)
 }
 
 type AuthorityRegistryStore interface {

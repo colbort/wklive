@@ -77,7 +77,7 @@ clean-gen:
 	@rm -rf wklive/
 
 clean-main:
-	@rm -rf itickadmin.go itickapp.go iticktask.go ./etc/itickadmin.yaml ./etc/itickapp.yaml ./etc/iticktask.yaml
+	@rm -rf itickadmin.go itickapp.go itickinternal.go iticktask.go ./etc/itickadmin.yaml ./etc/itickapp.yaml ./etc/itickinternal.yaml ./etc/iticktask.yaml
 
 .PHONY: gen-model
 gen-model:

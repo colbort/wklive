@@ -50,9 +50,16 @@ func main() {
 	defer cancel()
 	svcCtx.ItickRuntimeConfig = loadItickRuntimeConfig(ctx, svcCtx.SystemCli)
 	svcCtx.MarketDataCache.SetKlineStaleTTL(time.Duration(svcCtx.ItickRuntimeConfig.WsKlineStaleSeconds) * time.Second)
+	hotWindowMinutes := c.AuthoritativeCache.HotWindowMinutes
+	if hotWindowMinutes <= 0 {
+		hotWindowMinutes = 30
+	}
+	svcCtx.MarketDataCache.SetAuthoritativeHotWindow(time.Duration(hotWindowMinutes) * time.Minute)
 	tasks.StartTaskSubscriber(ctx, svcCtx)
 	tasks.StartSnapshotOutbox(ctx, svcCtx)
+	tasks.StartSnapshotOutboxCleanup(ctx, svcCtx)
 	tasks.StartAuthoritativeSnapshotRebuild(ctx, svcCtx)
+	tasks.StartLegacyAuthoritativeCacheCleanup(ctx, svcCtx)
 	tasks.StartPriceEngine(ctx, svcCtx.PriceEngine)
 	holidaySync := calendar.NewHolidaySyncService(ctx, c.Itick.ApiUrl, svcCtx.ItickRestClient,
 		svcCtx.MarketCalendarModel, svcCtx.MarketHolidayModel, svcCtx.MarketCalendarResolver,
@@ -116,6 +123,7 @@ func main() {
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		itick.RegisterItickAdminServer(grpcServer, server.NewItickAdminServer(svcCtx))
 		itick.RegisterItickAppServer(grpcServer, server.NewItickAppServer(svcCtx))
+		itick.RegisterItickInternalServer(grpcServer, server.NewItickInternalServer(svcCtx))
 		itick.RegisterItickTaskServer(grpcServer, server.NewItickTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {

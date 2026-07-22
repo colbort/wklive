@@ -15,6 +15,7 @@ gen: check-protoc
 		proto/itick/enum.proto \
 		proto/itick/model.proto \
 		proto/itick/itick_app.proto \
+		proto/itick/itick_internal.proto \
 		proto/itick/itick_admin.proto \
 		proto/itick/itick_task.proto 
 	@echo "✅ [proto/itick] generated"

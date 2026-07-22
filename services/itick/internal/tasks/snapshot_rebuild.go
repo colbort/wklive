@@ -10,15 +10,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-// StartAuthoritativeSnapshotRebuild reconstructs the disposable Redis index
-// from the permanent MySQL archive on every service start. It deliberately
-// bypasses outbox delivery state, so a Redis loss is recoverable even when all
-// historical outbox rows were already marked successful.
+// StartAuthoritativeSnapshotRebuild reconstructs only the latest snapshot for
+// each product. Historical reads fall back to the permanent MySQL archive, so
+// service startup never republishes the complete archive into Redis.
 func StartAuthoritativeSnapshotRebuild(ctx context.Context, svcCtx *svc.ServiceContext) {
 	go func() {
 		var afterID int64
 		for ctx.Err() == nil {
-			rows, err := svcCtx.AuthoritativeSnapshotModel.FindAfterID(ctx, afterID, 500)
+			rows, err := svcCtx.AuthoritativeSnapshotModel.FindLatestPage(ctx, afterID, 500)
 			if err != nil {
 				logx.Errorf("authoritative snapshot rebuild scan failed: %v", err)
 				select {

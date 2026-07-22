@@ -46,11 +46,12 @@ return 1
 `)
 
 type MarketDataCache struct {
-	rdb           *redis.Client
-	mu            sync.RWMutex
-	klineStaleTTL time.Duration
-	quoteHandler  func(context.Context, ClientMessage, *QuotePayload) error
-	tickHandler   func(context.Context, ClientMessage, *TickPayload)
+	rdb                    *redis.Client
+	mu                     sync.RWMutex
+	klineStaleTTL          time.Duration
+	authoritativeHotWindow time.Duration
+	quoteHandler           func(context.Context, ClientMessage, *QuotePayload) error
+	tickHandler            func(context.Context, ClientMessage, *TickPayload)
 }
 
 type CachedMarketData struct {
@@ -60,7 +61,18 @@ type CachedMarketData struct {
 }
 
 func NewMarketDataCache(rdb *redis.Client) *MarketDataCache {
-	return &MarketDataCache{rdb: rdb, klineStaleTTL: 30 * time.Second}
+	return &MarketDataCache{rdb: rdb, klineStaleTTL: 30 * time.Second, authoritativeHotWindow: 30 * time.Minute}
+}
+
+// SetAuthoritativeHotWindow limits authoritative snapshot history retained in
+// Redis. MySQL remains the permanent archive for older snapshots.
+func (b *MarketDataCache) SetAuthoritativeHotWindow(window time.Duration) {
+	if window <= 0 {
+		return
+	}
+	b.mu.Lock()
+	b.authoritativeHotWindow = window
+	b.mu.Unlock()
 }
 
 func (b *MarketDataCache) SetKlineStaleTTL(ttl time.Duration) {

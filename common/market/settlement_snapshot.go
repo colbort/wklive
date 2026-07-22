@@ -14,7 +14,31 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-const authoritativeSnapshotTTL = 365 * 24 * time.Hour
+const (
+	authoritativeSnapshotTTL       = 365 * 24 * time.Hour
+	authoritativeLatestSnapshotTTL = 7 * 24 * time.Hour
+)
+
+var setLatestAuthoritativeSnapshotScript = redis.NewScript(`
+local incoming = cjson.decode(ARGV[1])
+local currentRaw = redis.call('GET', KEYS[1])
+if currentRaw then
+  local current = cjson.decode(currentRaw)
+  local currentSource = tonumber(current.sourceTimestamp) or 0
+  local incomingSource = tonumber(incoming.sourceTimestamp) or 0
+  local currentRevision = tonumber(current.revision) or 0
+  local incomingRevision = tonumber(incoming.revision) or 0
+  local currentSnapshot = tonumber(current.snapshotTimestamp) or 0
+  local incomingSnapshot = tonumber(incoming.snapshotTimestamp) or 0
+  if currentSource > incomingSource or
+     (currentSource == incomingSource and currentRevision > incomingRevision) or
+     (currentSource == incomingSource and currentRevision == incomingRevision and currentSnapshot >= incomingSnapshot) then
+    return currentSource
+  end
+end
+redis.call('SET', KEYS[1], ARGV[1], 'PX', ARGV[2])
+return tonumber(incoming.sourceTimestamp) or 0
+`)
 
 func (b *MarketDataCache) LockPriceSnapshot(ctx context.Context, kind string, msg ClientMessage, maxAge time.Duration) (*SettlementSnapshot, error) {
 	items, err := b.ReadMany(ctx, []ClientMessage{msg})
@@ -126,12 +150,26 @@ func (b *MarketDataCache) PublishAuthoritativeSnapshot(ctx context.Context, s *S
 	if err != nil {
 		return err
 	}
-	dataKey := fmt.Sprintf("market:authoritative:v1:%s", s.SnapshotID)
-	indexKey := authoritativeSnapshotKindIndex(ClientMessage{Topic: TopicQuote, CategoryCode: s.CategoryCode, Market: s.Market, Symbol: s.Symbol}, s.Authority, s.Kind)
+	msg := ClientMessage{Topic: TopicQuote, CategoryCode: s.CategoryCode, Market: s.Market, Symbol: s.Symbol}
+	b.mu.RLock()
+	hotWindow := b.authoritativeHotWindow
+	b.mu.RUnlock()
+	if hotWindow <= 0 {
+		hotWindow = 30 * time.Minute
+	}
+	latestKey := authoritativeLatestSnapshotKey(msg, s.Authority, s.Kind)
+	hotKey := authoritativeHotSnapshotKey(msg, s.Authority, s.Kind)
+	latestSource, err := setLatestAuthoritativeSnapshotScript.Run(ctx, b.rdb, []string{latestKey}, raw, authoritativeLatestSnapshotTTL.Milliseconds()).Int64()
+	if err != nil {
+		return err
+	}
+	cutoff := latestSource - hotWindow.Milliseconds()
 	pipe := b.rdb.TxPipeline()
-	pipe.SetNX(ctx, dataKey, raw, authoritativeSnapshotTTL)
-	pipe.ZAdd(ctx, indexKey, redis.Z{Score: float64(s.SourceTimestamp), Member: s.SnapshotID})
-	pipe.Expire(ctx, indexKey, authoritativeSnapshotTTL)
+	if s.SourceTimestamp >= cutoff {
+		pipe.ZAdd(ctx, hotKey, redis.Z{Score: float64(s.SourceTimestamp), Member: raw})
+	}
+	pipe.ZRemRangeByScore(ctx, hotKey, "-inf", fmt.Sprintf("(%d", cutoff))
+	pipe.Expire(ctx, hotKey, hotWindow*2)
 	if _, err = pipe.Exec(ctx); err != nil {
 		return err
 	}
@@ -153,25 +191,21 @@ func (b *MarketDataCache) FindAuthoritativeSnapshotAt(ctx context.Context, msg C
 	if targetTime <= 0 || maxLookback <= 0 || strings.TrimSpace(authority) == "" || kind == "" {
 		return nil, errors.New("invalid authoritative snapshot query")
 	}
-	ids, err := b.rdb.ZRevRangeByScore(ctx, authoritativeSnapshotKindIndex(msg, authority, kind), &redis.ZRangeBy{Max: fmt.Sprintf("%d", targetTime), Min: fmt.Sprintf("%d", targetTime-maxLookback.Milliseconds()), Offset: 0, Count: 100}).Result()
+	raws, err := b.rdb.ZRevRangeByScore(ctx, authoritativeHotSnapshotKey(msg, authority, kind), &redis.ZRangeBy{Max: fmt.Sprintf("%d", targetTime), Min: fmt.Sprintf("%d", targetTime-maxLookback.Milliseconds()), Offset: 0, Count: 100}).Result()
 	if err != nil {
 		return nil, err
 	}
-	if len(ids) == 0 {
+	if len(raws) == 0 {
 		return nil, errors.New("authoritative snapshot unavailable at target time")
 	}
 	var selected *SettlementSnapshot
-	for _, id := range ids {
-		revoked, revokeErr := b.rdb.Exists(ctx, authoritativeSnapshotRevocationKey(id)).Result()
-		if revokeErr != nil || revoked > 0 {
-			continue
-		}
-		raw, readErr := b.rdb.Get(ctx, fmt.Sprintf("market:authoritative:v1:%s", id)).Bytes()
-		if readErr != nil {
-			continue
-		}
+	for _, raw := range raws {
 		var candidate SettlementSnapshot
-		if json.Unmarshal(raw, &candidate) != nil || !candidate.Confirmed || !strings.EqualFold(candidate.Authority, strings.TrimSpace(authority)) || !strings.EqualFold(candidate.Kind, kind) || candidate.SourceTimestamp > targetTime {
+		if json.Unmarshal([]byte(raw), &candidate) != nil || !candidate.Confirmed || !strings.EqualFold(candidate.Authority, strings.TrimSpace(authority)) || !strings.EqualFold(candidate.Kind, kind) || candidate.SourceTimestamp > targetTime {
+			continue
+		}
+		revoked, revokeErr := b.rdb.Exists(ctx, authoritativeSnapshotRevocationKey(candidate.SnapshotID)).Result()
+		if revokeErr != nil || revoked > 0 {
 			continue
 		}
 		if selected == nil || candidate.SourceTimestamp > selected.SourceTimestamp ||
@@ -211,6 +245,65 @@ func authoritativeSnapshotIndex(msg ClientMessage, authority string) string {
 
 func authoritativeSnapshotKindIndex(msg ClientMessage, authority, kind string) string {
 	return fmt.Sprintf("market:authoritative:v2:index:%s:%s:%s:%s:%s", strings.ToLower(strings.TrimSpace(authority)), strings.ToUpper(strings.TrimSpace(kind)), msg.CategoryCode, msg.Market, msg.Symbol)
+}
+
+func authoritativeLatestSnapshotKey(msg ClientMessage, authority, kind string) string {
+	msg = NormalizeClientMessage(msg)
+	return fmt.Sprintf("market:authoritative:v3:latest:%s:%s:%s:%s:%s", strings.ToLower(strings.TrimSpace(authority)), strings.ToUpper(strings.TrimSpace(kind)), msg.CategoryCode, msg.Market, msg.Symbol)
+}
+
+func authoritativeHotSnapshotKey(msg ClientMessage, authority, kind string) string {
+	msg = NormalizeClientMessage(msg)
+	return fmt.Sprintf("market:authoritative:v3:hot:%s:%s:%s:%s:%s", strings.ToLower(strings.TrimSpace(authority)), strings.ToUpper(strings.TrimSpace(kind)), msg.CategoryCode, msg.Market, msg.Symbol)
+}
+
+// FindLatestAuthoritativeSnapshot returns the latest product snapshot without
+// retaining the full immutable history in Redis.
+func (b *MarketDataCache) FindLatestAuthoritativeSnapshot(ctx context.Context, msg ClientMessage, authority, kind string) (*SettlementSnapshot, error) {
+	raw, err := b.rdb.Get(ctx, authoritativeLatestSnapshotKey(msg, authority, kind)).Bytes()
+	if err != nil {
+		return nil, err
+	}
+	var snapshot SettlementSnapshot
+	if err = json.Unmarshal(raw, &snapshot); err != nil {
+		return nil, err
+	}
+	if !snapshot.Confirmed || snapshot.SnapshotID == "" {
+		return nil, errors.New("invalid latest authoritative snapshot")
+	}
+	return &snapshot, nil
+}
+
+// CleanupLegacyAuthoritativeCache removes a bounded SCAN batch of the v1/v2
+// cache layout. Revocation tombstones are retained for correctness.
+func (b *MarketDataCache) CleanupLegacyAuthoritativeCache(ctx context.Context, cursor uint64, count int64) (uint64, int64, error) {
+	if count <= 0 || count > 5000 {
+		count = 500
+	}
+	var deleted int64
+	next, keys, err := scanLegacyAuthoritativeKeys(ctx, b.rdb, cursor, count)
+	if err != nil {
+		return cursor, 0, err
+	}
+	if len(keys) > 0 {
+		deleted, err = b.rdb.Unlink(ctx, keys...).Result()
+	}
+	return next, deleted, err
+}
+
+func scanLegacyAuthoritativeKeys(ctx context.Context, rdb *redis.Client, cursor uint64, count int64) (uint64, []string, error) {
+	keys, next, err := rdb.Scan(ctx, cursor, "market:authoritative:v[12]:*", count).Result()
+	if err != nil {
+		return cursor, nil, err
+	}
+	filtered := keys[:0]
+	for _, key := range keys {
+		if strings.Contains(key, ":revoked:") {
+			continue
+		}
+		filtered = append(filtered, key)
+	}
+	return next, filtered, nil
 }
 
 func (b *MarketDataCache) GetSettlementSnapshot(ctx context.Context, id string) (*SettlementSnapshot, error) {

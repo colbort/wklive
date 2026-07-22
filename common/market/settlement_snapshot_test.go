@@ -149,6 +149,80 @@ func TestAuthoritativeSnapshotSkipsRevokedRevision(t *testing.T) {
 	}
 }
 
+func TestAuthoritativeSnapshotCacheUsesBoundedV3Layout(t *testing.T) {
+	server := miniredis.RunT(t)
+	client := redis.NewClient(&redis.Options{Addr: server.Addr()})
+	cache := NewMarketDataCache(client)
+	cache.SetAuthoritativeHotWindow(time.Minute)
+	ctx := context.Background()
+	msg := ClientMessage{Topic: TopicQuote, CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT"}
+	first := &SettlementSnapshot{SnapshotID: "first", Authority: "itick-ws", Kind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT", Price: "100", SourceTimestamp: 1000, SnapshotTimestamp: 1001, Revision: 1000, Confirmed: true}
+	second := &SettlementSnapshot{SnapshotID: "second", Authority: "itick-ws", Kind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT", Price: "101", SourceTimestamp: 61_001, SnapshotTimestamp: 61_002, Revision: 61_001, Confirmed: true}
+	for _, snapshot := range []*SettlementSnapshot{first, second} {
+		if err := cache.PublishAuthoritativeSnapshot(ctx, snapshot); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if exists := client.Exists(ctx, "market:authoritative:v1:first").Val(); exists != 0 {
+		t.Fatal("v3 publisher must not create per-snapshot legacy keys")
+	}
+	if count := client.ZCard(ctx, authoritativeHotSnapshotKey(msg, "itick-ws", "FINAL_QUOTE")).Val(); count != 1 {
+		t.Fatalf("hot snapshot count=%d want=1", count)
+	}
+	latest, err := cache.FindLatestAuthoritativeSnapshot(ctx, msg, "itick-ws", "FINAL_QUOTE")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if latest.SnapshotID != second.SnapshotID {
+		t.Fatalf("latest=%s want=%s", latest.SnapshotID, second.SnapshotID)
+	}
+	if err := cache.PublishAuthoritativeSnapshot(ctx, first); err != nil {
+		t.Fatal(err)
+	}
+	latest, err = cache.FindLatestAuthoritativeSnapshot(ctx, msg, "itick-ws", "FINAL_QUOTE")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if latest.SnapshotID != second.SnapshotID {
+		t.Fatalf("out-of-order publish regressed latest to %s", latest.SnapshotID)
+	}
+	if count := client.ZCard(ctx, authoritativeHotSnapshotKey(msg, "itick-ws", "FINAL_QUOTE")).Val(); count != 1 {
+		t.Fatalf("out-of-window replay increased hot snapshot count to %d", count)
+	}
+}
+
+func TestCleanupLegacyAuthoritativeCachePreservesRevocations(t *testing.T) {
+	server := miniredis.RunT(t)
+	client := redis.NewClient(&redis.Options{Addr: server.Addr()})
+	cache := NewMarketDataCache(client)
+	ctx := context.Background()
+	legacyData := "market:authoritative:v1:snapshot-1"
+	legacyIndex := "market:authoritative:v2:index:itick-ws:FINAL_QUOTE:crypto:BA:BTCUSDT"
+	revocation := "market:authoritative:v1:revoked:snapshot-2"
+	for _, key := range []string{legacyData, legacyIndex, revocation} {
+		if err := client.Set(ctx, key, "value", time.Hour).Err(); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var cursor uint64
+	for {
+		next, _, err := cache.CleanupLegacyAuthoritativeCache(ctx, cursor, 100)
+		if err != nil {
+			t.Fatal(err)
+		}
+		cursor = next
+		if cursor == 0 {
+			break
+		}
+	}
+	if exists := client.Exists(ctx, legacyData, legacyIndex).Val(); exists != 0 {
+		t.Fatalf("legacy cache keys still exist: %d", exists)
+	}
+	if exists := client.Exists(ctx, revocation).Val(); exists != 1 {
+		t.Fatal("revocation tombstone must be preserved")
+	}
+}
+
 func TestAuthoritativeQuoteRejectsDatabasePrecisionOverflow(t *testing.T) {
 	msg := ClientMessage{Topic: TopicQuote, CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT"}
 	for _, price := range []string{"1.1234567890123456789012345678901", "123456789012345678901234567890123456"} {

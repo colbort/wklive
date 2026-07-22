@@ -48,7 +48,7 @@
     "key" : "\/wklive\/system-rpc\/config"
   },
   {
-    "value" : "Name: trade.rpc\nListenOn: 0.0.0.0:8087\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   ",
+    "value" : "Name: trade.rpc\nListenOn: 0.0.0.0:8087\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: itick.rpc",
     "key" : "\/wklive\/trade-rpc\/config"
   },
   {

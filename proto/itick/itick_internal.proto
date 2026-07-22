@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package itick;
+
+import "proto/itick/itick_app.proto";
+
+option go_package = "wklive/proto/itick;itick";
+
+// ItickInternal exposes service-to-service market-data capabilities. Public
+// API gateways should continue to use ItickApp.
+service ItickInternal {
+  // Reads an authoritative snapshot from the permanent archive at or before
+  // the requested business timestamp.
+  rpc GetAuthoritativeSnapshot(GetAuthoritativeSnapshotReq) returns (GetAuthoritativeSnapshotResp);
+}

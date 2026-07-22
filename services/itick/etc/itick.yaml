@@ -38,3 +38,25 @@ KlineWriter:
   BatchSize: 300
   FlushIntervalMs: 1000
   WriteTimeoutMs: 5000
+
+SnapshotOutboxCleanup:
+  # status=3 的成功记录保留时间，单位分钟。
+  SuccessRetentionMinutes: 30
+  # 清理任务执行周期，单位秒。
+  IntervalSeconds: 60
+  # 单批最多删除数量，上限 10000。
+  BatchSize: 5000
+  # 单轮最多执行批次数，防止长时间占用数据库。
+  MaxBatchesPerRun: 10
+  # 相邻批次之间的等待时间，单位毫秒。
+  BatchPauseMs: 100
+
+AuthoritativeCache:
+  # Redis 只保留最近 30 分钟的历史快照；更早的查询回源 MySQL。
+  HotWindowMinutes: 30
+  # 所有依赖方升级到 v3 并验证后再开启旧 v1/v2 Key 清理。
+  LegacyCleanupEnabled: false
+  # 每次 SCAN 的建议数量；SCAN 本身不保证精确返回该数量。
+  LegacyCleanupScanCount: 500
+  # 旧 Key 清理批次间隔，单位秒。
+  LegacyCleanupIntervalSeconds: 1
