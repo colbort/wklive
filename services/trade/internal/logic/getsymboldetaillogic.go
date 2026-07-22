@@ -54,6 +54,7 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 	var contractCfg *models.TTradeSymbolContract
 	var configs []*models.TTradeSymbolLeverageConfig
 	var secondsConfigs []*models.TTradeSymbolSeconds
+	var sessions []*models.TTradeSymbolSession
 	err = mr.Finish(
 		func() error {
 			var queryErr error
@@ -89,6 +90,14 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 			}
 			return queryErr
 		},
+		func() error {
+			var queryErr error
+			sessions, queryErr = l.svcCtx.TradeSymbolSessionModel.FindAllByTenantIdSymbolId(l.ctx, configTenantId, in.SymbolId)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
 	)
 	if err != nil {
 		return nil, err
@@ -108,6 +117,9 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 	}
 	for _, cfg := range secondsConfigs {
 		resp.Data.SecondsConfigs = append(resp.Data.SecondsConfigs, secondsSymbolToProto(cfg))
+	}
+	for _, session := range sessions {
+		resp.Data.Sessions = append(resp.Data.Sessions, symbolSessionToProto(session))
 	}
 	return resp, nil
 }

@@ -392,7 +392,12 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="secondsVisible" :title="t('trade.secondsConfig')" width="760px">
+    <el-dialog
+      v-model="secondsVisible"
+      :title="t('trade.secondsConfig')"
+      width="900px"
+      class="seconds-config-dialog"
+    >
       <el-form label-width="148px" class="dialog-form">
         <div class="form-grid two">
           <el-form-item :label="t('trade.tenantId')">
@@ -402,10 +407,18 @@
             <el-input-number v-model="secondsForm.symbolId" disabled class="full-width" />
           </el-form-item>
           <el-form-item :label="t('trade.durationSeconds')">
-            <el-input-number v-model="secondsForm.durationSeconds" :min="1" class="full-width" />
+            <el-input-number
+              v-model="secondsForm.durationSeconds"
+              :min="1"
+              :disabled="editingSecondsConfig"
+              class="full-width"
+            />
           </el-form-item>
           <el-form-item :label="t('trade.payoutRate')">
             <el-input v-model="secondsForm.payoutRate" />
+          </el-form-item>
+          <el-form-item :label="t('trade.secondsFeeRate')">
+            <el-input v-model="secondsForm.feeRate" />
           </el-form-item>
           <el-form-item :label="t('trade.drawRule')">
             <el-input-number
@@ -418,11 +431,27 @@
           <el-form-item :label="t('trade.quoteValidityMs')">
             <el-input-number v-model="secondsForm.quoteValidityMs" :min="1" class="full-width" />
           </el-form-item>
+          <el-form-item :label="t('trade.settlementWindowMs')">
+            <el-input-number
+              v-model="secondsForm.settlementWindowMs"
+              :min="1"
+              class="full-width"
+            />
+          </el-form-item>
           <el-form-item :label="t('trade.startPriceSource')">
             <el-input v-model="secondsForm.startPriceSource" />
           </el-form-item>
           <el-form-item :label="t('trade.settlementPriceSource')">
             <el-input v-model="secondsForm.settlementPriceSource" />
+          </el-form-item>
+          <el-form-item :label="t('trade.settlementPriceAlgorithm')">
+            <el-input v-model="secondsForm.settlementPriceAlgorithm" />
+          </el-form-item>
+          <el-form-item :label="t('trade.drawTolerance')">
+            <el-input v-model="secondsForm.drawTolerance" />
+          </el-form-item>
+          <el-form-item :label="t('trade.maxExposureAmount')">
+            <el-input v-model="secondsForm.maxExposureAmount" />
           </el-form-item>
           <el-form-item :label="t('trade.minStake')">
             <el-input v-model="secondsForm.minStake" />
@@ -452,6 +481,47 @@
           </el-form-item>
         </div>
       </el-form>
+
+      <div class="dialog-subheader">
+        <strong>{{ secondsSymbol?.displaySymbol || secondsSymbol?.symbol || '-' }}</strong>
+        <el-button
+          v-perm="'trade:symbol:seconds-config'"
+          size="small"
+          @click="newSecondsConfig"
+        >
+          <el-icon><Plus /></el-icon>
+          {{ t('common.add') }}
+        </el-button>
+      </div>
+
+      <el-table :data="secondsRows" size="small" border>
+        <el-table-column prop="durationSeconds" :label="t('trade.durationSeconds')" width="150" />
+        <el-table-column prop="payoutRate" :label="t('trade.payoutRate')" width="110" />
+        <el-table-column prop="feeRate" :label="t('trade.secondsFeeRate')" width="110" />
+        <el-table-column :label="t('trade.stakeRange')" min-width="150">
+          <template #default="{ row }">
+            {{ row.minStake }} - {{ row.maxStake }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('trade.directionStatus')" min-width="150">
+          <template #default="{ row }">
+            {{ t('trade.upEnabled') }}: {{ optionLabel('enableStatus', row.upEnabled) }} /
+            {{ t('trade.downEnabled') }}: {{ optionLabel('enableStatus', row.downEnabled) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.actions')" align="center" width="90">
+          <template #default="{ row }">
+            <el-button
+              v-perm="'trade:symbol:seconds-config'"
+              link
+              type="primary"
+              @click="editSecondsConfig(row)"
+            >
+              {{ t('common.edit') }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       <template #footer>
         <el-button @click="secondsVisible = false">
           {{ t('common.cancel') }}
@@ -531,7 +601,13 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="contractVisible" :title="t('trade.contractConfig')" width="760px">
+    <el-dialog
+      v-model="contractVisible"
+      :title="t('trade.contractConfig')"
+      width="900px"
+      class="contract-config-dialog"
+    >
+      <el-alert :title="contractConfigSummary" type="info" :closable="false" show-icon />
       <el-form label-width="126px" class="dialog-form">
         <div class="form-grid two">
           <el-form-item :label="t('trade.tenantId')">
@@ -549,7 +625,9 @@
           </el-form-item>
 
           <el-form-item :label="t('trade.contractSize')">
-            <el-input v-model="contractForm.contractSize" />
+            <el-input v-model="contractForm.contractSize">
+              <template #append>{{ contractSizeUnit }}</template>
+            </el-input>
           </el-form-item>
 
           <el-form-item :label="t('option.multiplier')">
@@ -572,7 +650,7 @@
             <el-input v-model="contractForm.takerFeeRate" />
           </el-form-item>
 
-          <el-form-item :label="t('trade.fundingIntervalMinutes')">
+          <el-form-item v-if="isPerpetualContract" :label="t('trade.fundingIntervalMinutes')">
             <el-input-number
               v-model="contractForm.fundingIntervalMinutes"
               :min="0"
@@ -581,12 +659,16 @@
             />
           </el-form-item>
 
-          <el-form-item :label="t('trade.fundingRateCap')">
+          <el-form-item v-if="isPerpetualContract" :label="t('trade.fundingRateCap')">
             <el-input v-model="contractForm.fundingRateCap" />
           </el-form-item>
 
-          <el-form-item :label="t('trade.fundingRateFloor')">
+          <el-form-item v-if="isPerpetualContract" :label="t('trade.fundingRateFloor')">
             <el-input v-model="contractForm.fundingRateFloor" />
+          </el-form-item>
+
+          <el-form-item v-if="isPerpetualContract" :label="t('trade.fundingRateSource')">
+            <el-input v-model="contractForm.fundingRateSource" />
           </el-form-item>
 
           <el-form-item :label="t('trade.indexSymbol')">
@@ -597,11 +679,11 @@
             <el-input v-model="contractForm.markPriceSource" />
           </el-form-item>
 
-          <el-form-item :label="t('trade.settlementPriceSource')">
+          <el-form-item v-if="isDeliveryContract" :label="t('trade.settlementPriceSource')">
             <el-input v-model="contractForm.settlementPriceSource" />
           </el-form-item>
 
-          <el-form-item :label="t('option.deliverTime')">
+          <el-form-item v-if="isDeliveryContract" :label="t('option.deliverTime')">
             <el-date-picker
               v-model="contractDeliveryTime"
               type="datetime"
@@ -610,25 +692,56 @@
             />
           </el-form-item>
 
+          <el-form-item v-if="isDeliveryContract" :label="t('trade.openCutoffTime')">
+            <el-date-picker
+              v-model="contractOpenCutoffTime"
+              type="datetime"
+              clearable
+              class="full-width"
+            />
+          </el-form-item>
+
+          <el-form-item v-if="isDeliveryContract" :label="t('trade.matchingStopTime')">
+            <el-date-picker
+              v-model="contractMatchingStopTime"
+              type="datetime"
+              clearable
+              class="full-width"
+            />
+          </el-form-item>
+
+          <el-form-item v-if="isDeliveryContract" :label="t('trade.settlementWindowSeconds')">
+            <el-input-number
+              v-model="contractForm.settlementWindowSeconds"
+              :min="0"
+              :precision="0"
+              class="full-width"
+            />
+          </el-form-item>
+
+          <el-form-item v-if="isDeliveryContract" :label="t('trade.settlementPriceAlgorithm')">
+            <el-input v-model="contractForm.settlementPriceAlgorithm" />
+          </el-form-item>
+
+          <el-form-item v-if="isDeliveryContract" :label="t('trade.deliveryFeeRate')">
+            <el-input v-model="contractForm.deliveryFeeRate" />
+          </el-form-item>
+
+          <el-form-item :label="t('trade.liquidationFeeRate')">
+            <el-input v-model="contractForm.liquidationFeeRate" />
+          </el-form-item>
+
           <el-form-item :label="t('trade.supportCross')">
             <el-select v-model="contractForm.supportCross" class="full-width">
-              <el-option
-                v-for="item in enableStatusOptions"
-                :key="item.value"
-                :label="optionItemLabel(item)"
-                :value="item.value"
-              />
+              <el-option :label="t('trade.supported')" :value="1" />
+              <el-option :label="t('trade.notSupported')" :value="0" />
             </el-select>
           </el-form-item>
 
           <el-form-item :label="t('trade.supportIsolated')">
             <el-select v-model="contractForm.supportIsolated" class="full-width">
-              <el-option
-                v-for="item in enableStatusOptions"
-                :key="item.value"
-                :label="optionItemLabel(item)"
-                :value="item.value"
-              />
+              <el-option :label="t('trade.supported')" :value="1" />
+              <el-option :label="t('trade.notSupported')" :value="0" />
             </el-select>
           </el-form-item>
 
@@ -958,6 +1071,7 @@ import {
   type OptionItem,
   type TradeSymbol,
   type TradeSymbolLeverageConfig,
+  type TradeSymbolSeconds,
 } from '@/services'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
@@ -1028,9 +1142,16 @@ interface ContractForm {
   supportIsolated: number
   fundingRateCap: string
   fundingRateFloor: string
+  fundingRateSource: string
   indexSymbol: string
   markPriceSource: string
   settlementPriceSource: string
+  openCutoffTime: number
+  matchingStopTime: number
+  settlementWindowSeconds: number
+  settlementPriceAlgorithm: string
+  deliveryFeeRate: string
+  liquidationFeeRate: string
   openLongEnabled: number
   openShortEnabled: number
   closeLongEnabled: number
@@ -1042,10 +1163,15 @@ interface SecondsForm {
   symbolId: number
   durationSeconds: number
   payoutRate: string
+  feeRate: string
   drawRule: number
   startPriceSource: string
   settlementPriceSource: string
   quoteValidityMs: number
+  settlementWindowMs: number
+  settlementPriceAlgorithm: string
+  drawTolerance: string
+  maxExposureAmount: string
   minStake: string
   maxStake: string
   upEnabled: number
@@ -1079,6 +1205,10 @@ const secondsVisible = ref(false)
 const leverageVisible = ref(false)
 const optionGroups = ref<OptionGroup[]>([])
 const leverageSymbol = ref<TradeSymbol | null>(null)
+const contractSymbol = ref<TradeSymbol | null>(null)
+const secondsSymbol = ref<TradeSymbol | null>(null)
+const secondsRows = ref<TradeSymbolSeconds[]>([])
+const editingSecondsConfig = ref(false)
 const leverageRows = ref<TradeSymbolLeverageConfig[]>([])
 
 const productTypeFallbackOptions: OptionItem[] = [
@@ -1191,9 +1321,16 @@ const getDefaultContractForm = (): ContractForm => ({
   supportIsolated: 1,
   fundingRateCap: '',
   fundingRateFloor: '',
+  fundingRateSource: '',
   indexSymbol: '',
   markPriceSource: '',
   settlementPriceSource: '',
+  openCutoffTime: 0,
+  matchingStopTime: 0,
+  settlementWindowSeconds: 0,
+  settlementPriceAlgorithm: 'last-v1',
+  deliveryFeeRate: '0',
+  liquidationFeeRate: '0',
   openLongEnabled: 1,
   openShortEnabled: 1,
   closeLongEnabled: 1,
@@ -1205,10 +1342,15 @@ const getDefaultSecondsForm = (): SecondsForm => ({
   symbolId: 0,
   durationSeconds: 60,
   payoutRate: '',
+  feeRate: '0',
   drawRule: 1,
   startPriceSource: '',
   settlementPriceSource: '',
   quoteValidityMs: 3000,
+  settlementWindowMs: 1000,
+  settlementPriceAlgorithm: 'last-v1',
+  drawTolerance: '0',
+  maxExposureAmount: '0',
   minStake: '',
   maxStake: '',
   upEnabled: 1,
@@ -1293,6 +1435,31 @@ const optionValueByCode = (key: string, code: string, fallback: number) => {
   return Number(option?.value || fallback)
 }
 const spotMarketValue = computed(() => optionValueByCode('productType', 'PRODUCT_TYPE_SPOT', 1))
+const perpetualContractTypeValue = computed(() =>
+  optionValueByCode('contractType', 'CONTRACT_TYPE_PERPETUAL', 1),
+)
+const deliveryContractTypeValue = computed(() =>
+  optionValueByCode('contractType', 'CONTRACT_TYPE_DELIVERY', 2),
+)
+const linearContractValueType = computed(() =>
+  optionValueByCode('contractValueType', 'CONTRACT_VALUE_TYPE_LINEAR', 1),
+)
+const isPerpetualContract = computed(
+  () => contractSymbol.value?.contractType === perpetualContractTypeValue.value,
+)
+const isDeliveryContract = computed(
+  () => contractSymbol.value?.contractType === deliveryContractTypeValue.value,
+)
+const contractSizeUnit = computed(() =>
+  contractSymbol.value?.contractValueType === linearContractValueType.value
+    ? `${contractSymbol.value?.baseAsset || '-'}/${t('trade.contractQuantityUnit')}`
+    : `${contractSymbol.value?.quoteAsset || 'USD'}/${t('trade.contractQuantityUnit')}`,
+)
+const contractConfigSummary = computed(() => {
+  const row = contractSymbol.value
+  if (!row) return '-'
+  return `${row.displaySymbol || row.symbol} · ${optionLabel('contractType', row.contractType)} · ${optionLabel('contractValueType', row.contractValueType)} · ${t('trade.marginAsset')}: ${row.marginAsset || '-'} · ${t('trade.settleAsset')}: ${row.settleAsset || '-'}`
+})
 const contractMarketValues = computed(() => {
   const codes = new Set(['PRODUCT_TYPE_DERIVATIVE'])
   const values = findOptionGroup(optionGroups.value, 'productType')
@@ -1362,6 +1529,20 @@ const contractDeliveryTime = computed({
   get: () => timestampToDate(contractForm.deliveryTime),
   set: (value: DatePickerValue) => {
     contractForm.deliveryTime = dateToUnixSeconds(value)
+  },
+})
+
+const contractOpenCutoffTime = computed({
+  get: () => timestampToDate(contractForm.openCutoffTime),
+  set: (value: DatePickerValue) => {
+    contractForm.openCutoffTime = dateToUnixSeconds(value)
+  },
+})
+
+const contractMatchingStopTime = computed({
+  get: () => timestampToDate(contractForm.matchingStopTime),
+  set: (value: DatePickerValue) => {
+    contractForm.matchingStopTime = dateToUnixSeconds(value)
   },
 })
 
@@ -1508,6 +1689,7 @@ const submitSpotConfig = async () => {
 }
 
 const openContractDialog = async (row: TradeSymbol) => {
+  contractSymbol.value = row
   Object.assign(contractForm, getDefaultContractForm(), {
     tenantId: row.tenantId || 0,
     symbolId: row.id || 0,
@@ -1530,9 +1712,16 @@ const openContractDialog = async (row: TradeSymbol) => {
       supportIsolated: contract.supportIsolated,
       fundingRateCap: contract.fundingRateCap,
       fundingRateFloor: contract.fundingRateFloor,
+      fundingRateSource: contract.fundingRateSource,
       indexSymbol: contract.indexSymbol,
       markPriceSource: contract.markPriceSource,
       settlementPriceSource: contract.settlementPriceSource,
+      openCutoffTime: contract.openCutoffTime,
+      matchingStopTime: contract.matchingStopTime,
+      settlementWindowSeconds: contract.settlementWindowSeconds,
+      settlementPriceAlgorithm: contract.settlementPriceAlgorithm,
+      deliveryFeeRate: contract.deliveryFeeRate,
+      liquidationFeeRate: contract.liquidationFeeRate,
       openLongEnabled: contract.openLongEnabled,
       openShortEnabled: contract.openShortEnabled,
       closeLongEnabled: contract.closeLongEnabled,
@@ -1543,6 +1732,27 @@ const openContractDialog = async (row: TradeSymbol) => {
 }
 
 const submitContractConfig = async () => {
+  if (contractForm.supportCross !== 1 && contractForm.supportIsolated !== 1) {
+    ElMessage.warning(t('trade.marginModeSupportRequired'))
+    return
+  }
+  if (isPerpetualContract.value) {
+    Object.assign(contractForm, {
+      deliveryTime: 0,
+      openCutoffTime: 0,
+      matchingStopTime: 0,
+      settlementWindowSeconds: 0,
+      settlementPriceAlgorithm: '',
+      deliveryFeeRate: '0',
+    })
+  } else if (isDeliveryContract.value) {
+    Object.assign(contractForm, {
+      fundingIntervalMinutes: 0,
+      fundingRateCap: '0',
+      fundingRateFloor: '0',
+      fundingRateSource: '',
+    })
+  }
   submitLoading.value = true
   try {
     await tradeService.setContractConfig(contractForm)
@@ -1553,15 +1763,36 @@ const submitContractConfig = async () => {
   }
 }
 
-const openSecondsDialog = async (row: TradeSymbol) => {
-  Object.assign(secondsForm, getDefaultSecondsForm(), {
-    tenantId: row.tenantId,
-    symbolId: row.id,
-  })
+const loadSecondsConfigs = async () => {
+  const row = secondsSymbol.value
+  if (!row) return
   const detail = await tradeService.getSymbol({ tenantId: row.tenantId, id: row.id })
-  const config = detail.data?.secondsConfigs?.[0]
-  if (config) Object.assign(secondsForm, config)
+  secondsRows.value = (detail.data?.secondsConfigs || []).slice().sort(
+    (left, right) => left.durationSeconds - right.durationSeconds,
+  )
+}
+
+const newSecondsConfig = () => {
+  const row = secondsSymbol.value
+  Object.assign(secondsForm, getDefaultSecondsForm(), {
+    tenantId: row?.tenantId || 0,
+    symbolId: row?.id || 0,
+  })
+  editingSecondsConfig.value = false
+}
+
+const editSecondsConfig = (config: TradeSymbolSeconds) => {
+  Object.assign(secondsForm, getDefaultSecondsForm(), config)
+  editingSecondsConfig.value = true
+}
+
+const openSecondsDialog = async (row: TradeSymbol) => {
+  secondsSymbol.value = row
+  secondsRows.value = []
+  newSecondsConfig()
   secondsVisible.value = true
+  await loadSecondsConfigs()
+  if (secondsRows.value.length) editSecondsConfig(secondsRows.value[0])
 }
 
 const submitSecondsConfig = async () => {
@@ -1569,7 +1800,10 @@ const submitSecondsConfig = async () => {
   try {
     await tradeService.setSecondsConfig(secondsForm)
     ElMessage.success(t('trade.saveSuccess'))
-    secondsVisible.value = false
+    const savedDuration = secondsForm.durationSeconds
+    await loadSecondsConfigs()
+    const saved = secondsRows.value.find((item) => item.durationSeconds === savedDuration)
+    if (saved) editSecondsConfig(saved)
   } finally {
     submitLoading.value = false
   }
@@ -1681,20 +1915,16 @@ const submitLeverageConfig = async () => {
 
   submitLoading.value = true
   try {
-    await Promise.all(
-      finalValues.map((leverage, index) =>
-        tradeService.setSymbolLeverageConfig({
-          tenantId: leverageForm.tenantId,
-          symbolId: leverageForm.symbolId,
-          marginMode: leverageForm.marginMode,
-          leverage,
-          isDefault: leverage === defaultLeverage ? 1 : 2,
-          enabled: leverageForm.enabled,
-          sort: index,
-          remark: leverageForm.remark,
-        }),
-      ),
-    )
+    await tradeService.setSymbolLeverageConfig({
+      tenantId: leverageForm.tenantId,
+      symbolId: leverageForm.symbolId,
+      marginMode: leverageForm.marginMode,
+      leverageValues: finalValues,
+      defaultLeverage,
+      enabled: leverageForm.enabled,
+      sort: leverageForm.sort,
+      remark: leverageForm.remark,
+    })
     ElMessage.success(t('trade.saveSuccessSymbolLeverageConfig'))
     await loadLeverageConfigs()
   } finally {
@@ -1758,6 +1988,20 @@ onMounted(() => {
 
 .dialog-form :deep(.el-form-item) {
   margin-bottom: 14px;
+}
+
+:deep(.seconds-config-dialog .el-dialog__body) {
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+}
+
+:deep(.contract-config-dialog .el-dialog__body) {
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
+}
+
+:deep(.contract-config-dialog .el-alert) {
+  margin-bottom: 18px;
 }
 
 .form-grid {

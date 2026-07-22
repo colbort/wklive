@@ -6,6 +6,7 @@ package trade
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 
@@ -27,7 +28,5 @@ func NewSetSecondsSymbolConfigLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(req *types.SetSecondsSymbolConfigReq) (resp *types.AdminCommonResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	return logicutil.Proxy[types.AdminCommonResp](l.ctx, req, l.svcCtx.TradeCli.SetSecondsSymbolConfig)
 }

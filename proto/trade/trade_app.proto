@@ -76,6 +76,7 @@ message GetSymbolDetailData {
   TradeSymbolContract contract = 3;
   repeated TradeSymbolLeverageConfig leverage_configs = 4;
   repeated TradeSymbolSeconds seconds_configs = 5;
+  repeated TradeSymbolSession sessions = 6;
 }
 
 message PlaceOrderReq {

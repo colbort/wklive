@@ -3536,14 +3536,14 @@ type SetSpotSymbolConfigReq struct {
 }
 
 type SetSymbolLeverageConfigReq struct {
-	TenantId   int64  `json:"tenantId"`
-	SymbolId   int64  `json:"symbolId"`
-	MarginMode int64  `json:"marginMode"`
-	Leverage   int64  `json:"leverage"`
-	IsDefault  int64  `json:"isDefault"`
-	Enabled    int64  `json:"enabled"`
-	Sort       int64  `json:"sort"`
-	Remark     string `json:"remark,optional"`
+	TenantId        int64   `json:"tenantId"`
+	SymbolId        int64   `json:"symbolId"`
+	MarginMode      int64   `json:"marginMode"`
+	Enabled         int64   `json:"enabled"`
+	Sort            int64   `json:"sort"`
+	Remark          string  `json:"remark,optional"`
+	LeverageValues  []int64 `json:"leverageValues"`
+	DefaultLeverage int64   `json:"defaultLeverage"`
 }
 
 type SetSymbolSessionReq struct {

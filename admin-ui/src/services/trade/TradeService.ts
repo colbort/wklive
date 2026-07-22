@@ -388,9 +388,16 @@ export type TradeSymbolContract = {
   supportIsolated: number // 逐仓支持状态：0不支持 1支持
   fundingRateCap: string
   fundingRateFloor: string
+  fundingRateSource: string
   indexSymbol: string
   markPriceSource: string
   settlementPriceSource: string
+  openCutoffTime: number
+  matchingStopTime: number
+  settlementWindowSeconds: number
+  settlementPriceAlgorithm: string
+  deliveryFeeRate: string
+  liquidationFeeRate: string
   openLongEnabled: number
   openShortEnabled: number
   closeLongEnabled: number
@@ -405,10 +412,15 @@ export type TradeSymbolSeconds = {
   symbolId: number
   durationSeconds: number
   payoutRate: string
+  feeRate: string
   drawRule: number
   startPriceSource: string
   settlementPriceSource: string
   quoteValidityMs: number
+  settlementWindowMs: number
+  settlementPriceAlgorithm: string
+  drawTolerance: string
+  maxExposureAmount: string
   minStake: string
   maxStake: string
   upEnabled: number
@@ -781,10 +793,16 @@ export type SetSecondsSymbolConfigReq = Omit<
   'id' | 'createTimes' | 'updateTimes'
 >
 
-export type SetSymbolLeverageConfigReq = Omit<
-  TradeSymbolLeverageConfig,
-  'id' | 'createTimes' | 'updateTimes'
->
+export type SetSymbolLeverageConfigReq = {
+  tenantId: number
+  symbolId: number
+  marginMode: number
+  leverageValues: number[]
+  defaultLeverage: number
+  enabled: number
+  sort: number
+  remark: string
+}
 
 export type GetSymbolLeverageConfigListReq = {
   cursor?: number

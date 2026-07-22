@@ -889,6 +889,7 @@ type GetSymbolDetailData struct {
 	Contract        TradeSymbolContract         `json:"contract"`
 	LeverageConfigs []TradeSymbolLeverageConfig `json:"leverageConfigs"`
 	SecondsConfigs  []TradeSymbolSeconds        `json:"secondsConfigs"`
+	Sessions        []TradeSymbolSession        `json:"sessions"`
 }
 
 type GetSymbolDetailReq struct {
@@ -1909,30 +1910,37 @@ type TradeSymbol struct {
 }
 
 type TradeSymbolContract struct {
-	Id                     int64  `json:"id"`
-	TenantId               int64  `json:"tenantId"`
-	SymbolId               int64  `json:"symbolId"`
-	ContractSize           string `json:"contractSize"`
-	Multiplier             string `json:"multiplier"`
-	MaintenanceMarginRate  string `json:"maintenanceMarginRate"`
-	InitialMarginRate      string `json:"initialMarginRate"`
-	MakerFeeRate           string `json:"makerFeeRate"`
-	TakerFeeRate           string `json:"takerFeeRate"`
-	FundingIntervalMinutes int64  `json:"fundingIntervalMinutes"` // 资金费率间隔分钟数
-	DeliveryTime           int64  `json:"deliveryTime"`
-	SupportCross           int64  `json:"supportCross"`    // 全仓支持状态：0不支持 1支持
-	SupportIsolated        int64  `json:"supportIsolated"` // 逐仓支持状态：0不支持 1支持
-	FundingRateCap         string `json:"fundingRateCap"`
-	FundingRateFloor       string `json:"fundingRateFloor"`
-	IndexSymbol            string `json:"indexSymbol"`
-	MarkPriceSource        string `json:"markPriceSource"`
-	SettlementPriceSource  string `json:"settlementPriceSource"`
-	OpenLongEnabled        int64  `json:"openLongEnabled"`
-	OpenShortEnabled       int64  `json:"openShortEnabled"`
-	CloseLongEnabled       int64  `json:"closeLongEnabled"`
-	CloseShortEnabled      int64  `json:"closeShortEnabled"`
-	CreateTimes            int64  `json:"createTimes"`
-	UpdateTimes            int64  `json:"updateTimes"`
+	Id                       int64  `json:"id"`
+	TenantId                 int64  `json:"tenantId"`
+	SymbolId                 int64  `json:"symbolId"`
+	ContractSize             string `json:"contractSize"`
+	Multiplier               string `json:"multiplier"`
+	MaintenanceMarginRate    string `json:"maintenanceMarginRate"`
+	InitialMarginRate        string `json:"initialMarginRate"`
+	MakerFeeRate             string `json:"makerFeeRate"`
+	TakerFeeRate             string `json:"takerFeeRate"`
+	FundingIntervalMinutes   int64  `json:"fundingIntervalMinutes"` // 资金费率间隔分钟数
+	DeliveryTime             int64  `json:"deliveryTime"`
+	SupportCross             int64  `json:"supportCross"`    // 全仓支持状态：0不支持 1支持
+	SupportIsolated          int64  `json:"supportIsolated"` // 逐仓支持状态：0不支持 1支持
+	FundingRateCap           string `json:"fundingRateCap"`
+	FundingRateFloor         string `json:"fundingRateFloor"`
+	FundingRateSource        string `json:"fundingRateSource"`
+	IndexSymbol              string `json:"indexSymbol"`
+	MarkPriceSource          string `json:"markPriceSource"`
+	SettlementPriceSource    string `json:"settlementPriceSource"`
+	OpenCutoffTime           int64  `json:"openCutoffTime"`
+	MatchingStopTime         int64  `json:"matchingStopTime"`
+	SettlementWindowSeconds  int64  `json:"settlementWindowSeconds"`
+	SettlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
+	DeliveryFeeRate          string `json:"deliveryFeeRate"`
+	LiquidationFeeRate       string `json:"liquidationFeeRate"`
+	OpenLongEnabled          int64  `json:"openLongEnabled"`
+	OpenShortEnabled         int64  `json:"openShortEnabled"`
+	CloseLongEnabled         int64  `json:"closeLongEnabled"`
+	CloseShortEnabled        int64  `json:"closeShortEnabled"`
+	CreateTimes              int64  `json:"createTimes"`
+	UpdateTimes              int64  `json:"updateTimes"`
 }
 
 type TradeSymbolLeverageConfig struct {
@@ -1950,21 +1958,37 @@ type TradeSymbolLeverageConfig struct {
 }
 
 type TradeSymbolSeconds struct {
-	Id                    int64  `json:"id"`
-	TenantId              int64  `json:"tenantId"`
-	SymbolId              int64  `json:"symbolId"`
-	DurationSeconds       int64  `json:"durationSeconds"`
-	PayoutRate            string `json:"payoutRate"`
-	DrawRule              int64  `json:"drawRule"`
-	StartPriceSource      string `json:"startPriceSource"`
-	SettlementPriceSource string `json:"settlementPriceSource"`
-	QuoteValidityMs       int64  `json:"quoteValidityMs"`
-	MinStake              string `json:"minStake"`
-	MaxStake              string `json:"maxStake"`
-	UpEnabled             int64  `json:"upEnabled"`
-	DownEnabled           int64  `json:"downEnabled"`
-	CreateTimes           int64  `json:"createTimes"`
-	UpdateTimes           int64  `json:"updateTimes"`
+	Id                       int64  `json:"id"`
+	TenantId                 int64  `json:"tenantId"`
+	SymbolId                 int64  `json:"symbolId"`
+	DurationSeconds          int64  `json:"durationSeconds"`
+	PayoutRate               string `json:"payoutRate"`
+	FeeRate                  string `json:"feeRate"`
+	DrawRule                 int64  `json:"drawRule"`
+	StartPriceSource         string `json:"startPriceSource"`
+	SettlementPriceSource    string `json:"settlementPriceSource"`
+	QuoteValidityMs          int64  `json:"quoteValidityMs"`
+	SettlementWindowMs       int64  `json:"settlementWindowMs"`
+	SettlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
+	DrawTolerance            string `json:"drawTolerance"`
+	MaxExposureAmount        string `json:"maxExposureAmount"`
+	MinStake                 string `json:"minStake"`
+	MaxStake                 string `json:"maxStake"`
+	UpEnabled                int64  `json:"upEnabled"`
+	DownEnabled              int64  `json:"downEnabled"`
+	CreateTimes              int64  `json:"createTimes"`
+	UpdateTimes              int64  `json:"updateTimes"`
+}
+
+type TradeSymbolSession struct {
+	Id          int64  `json:"id"`
+	TenantId    int64  `json:"tenantId"`
+	SymbolId    int64  `json:"symbolId"`
+	DayOfWeek   int64  `json:"dayOfWeek"`
+	StartSecond int64  `json:"startSecond"`
+	EndSecond   int64  `json:"endSecond"`
+	Timezone    string `json:"timezone"`
+	Enabled     int64  `json:"enabled"`
 }
 
 type TradeSymbolSpot struct {

@@ -590,11 +590,11 @@ type SetSymbolLeverageConfigReq {
 	tenantId   int64  `json:"tenantId"`
 	symbolId   int64  `json:"symbolId"`
 	marginMode int64  `json:"marginMode"`
-	leverage   int64  `json:"leverage"`
-	isDefault  int64  `json:"isDefault"`
 	enabled    int64  `json:"enabled"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark,optional"`
+	leverageValues  []int64 `json:"leverageValues"`
+	defaultLeverage int64   `json:"defaultLeverage"`
 }
 
 type GetSymbolLeverageConfigReq {

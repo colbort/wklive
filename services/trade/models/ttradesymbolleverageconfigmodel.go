@@ -21,12 +21,59 @@ type (
 	TTradeSymbolLeverageConfigModel interface {
 		tTradeSymbolLeverageConfigModel
 		FindPage(ctx context.Context, filter TradeSymbolLeverageConfigPageFilter, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error)
+		SyncGroup(ctx context.Context, tenantId, symbolId, marginMode int64, leverageValues []int64, defaultLeverage, enabled, sort int64, remark string, now int64) error
 	}
 
 	customTTradeSymbolLeverageConfigModel struct {
 		*defaultTTradeSymbolLeverageConfigModel
 	}
 )
+
+func (m *customTTradeSymbolLeverageConfigModel) SyncGroup(ctx context.Context, tenantId, symbolId, marginMode int64, leverageValues []int64, defaultLeverage, enabled, sort int64, remark string, now int64) error {
+	var oldRows []*TTradeSymbolLeverageConfig
+	var oldDefaultIds []int64
+	err := m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
+		if err := session.QueryRowsCtx(ctx, &oldRows, "select "+tTradeSymbolLeverageConfigRows+" from `t_trade_symbol_leverage_config` where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", tenantId, symbolId, marginMode); err != nil {
+			return err
+		}
+		if err := session.QueryRowsCtx(ctx, &oldDefaultIds, "select `id` from `t_trade_symbol_leverage_default` where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", tenantId, symbolId, marginMode); err != nil {
+			return err
+		}
+		if _, err := session.ExecCtx(ctx, "delete from `t_trade_symbol_leverage_config` where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", tenantId, symbolId, marginMode); err != nil {
+			return err
+		}
+		for index, leverage := range leverageValues {
+			if _, err := session.ExecCtx(ctx, "insert into `t_trade_symbol_leverage_config` (`tenant_id`, `symbol_id`, `margin_mode`, `leverage`, `enabled`, `sort`, `remark`, `create_times`, `update_times`) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", tenantId, symbolId, marginMode, leverage, enabled, sort+int64(index), remark, now, now); err != nil {
+				return err
+			}
+		}
+		if enabled == 1 {
+			_, err := session.ExecCtx(ctx, "insert into `t_trade_symbol_leverage_default` (`tenant_id`, `symbol_id`, `margin_mode`, `leverage`, `create_times`, `update_times`) values (?, ?, ?, ?, ?, ?) on duplicate key update `leverage` = values(`leverage`), `update_times` = values(`update_times`)", tenantId, symbolId, marginMode, defaultLeverage, now, now)
+			return err
+		}
+		_, err := session.ExecCtx(ctx, "delete from `t_trade_symbol_leverage_default` where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", tenantId, symbolId, marginMode)
+		return err
+	})
+	if err != nil {
+		return err
+	}
+
+	keys := make([]string, 0, len(oldRows)*2+len(leverageValues)+len(oldDefaultIds)+1)
+	for _, row := range oldRows {
+		keys = append(keys,
+			fmt.Sprintf("%s%v", cacheTTradeSymbolLeverageConfigIdPrefix, row.Id),
+			fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeSymbolLeverageConfigTenantIdSymbolIdMarginModeLeveragePrefix, tenantId, symbolId, marginMode, row.Leverage),
+		)
+	}
+	for _, leverage := range leverageValues {
+		keys = append(keys, fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeSymbolLeverageConfigTenantIdSymbolIdMarginModeLeveragePrefix, tenantId, symbolId, marginMode, leverage))
+	}
+	for _, id := range oldDefaultIds {
+		keys = append(keys, fmt.Sprintf("%s%v", cacheTTradeSymbolLeverageDefaultIdPrefix, id))
+	}
+	keys = append(keys, fmt.Sprintf("%s%v:%v:%v", cacheTTradeSymbolLeverageDefaultTenantIdSymbolIdMarginModePrefix, tenantId, symbolId, marginMode))
+	return m.DelCacheCtx(ctx, keys...)
+}
 
 func NewTTradeSymbolLeverageConfigModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TTradeSymbolLeverageConfigModel {
 	return &customTTradeSymbolLeverageConfigModel{
