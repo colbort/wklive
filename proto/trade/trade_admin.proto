@@ -213,7 +213,7 @@ message GetSymbolDetailAdminResp {
 }
 
 message GetSymbolDetailAdminData {
-  TradeSymbol data = 1;
+  TradeSymbol symbol = 1;
   repeated TradeSymbolLeverageConfig leverage_configs = 2;
   TradeSymbolSpot spot = 3;
   TradeSymbolContract contract = 4;

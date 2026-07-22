@@ -732,7 +732,7 @@ func (x *GetSymbolDetailAdminResp) GetData() *GetSymbolDetailAdminData {
 
 type GetSymbolDetailAdminData struct {
 	state           protoimpl.MessageState       `protogen:"open.v1"`
-	Data            *TradeSymbol                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Symbol          *TradeSymbol                 `protobuf:"bytes,1,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	LeverageConfigs []*TradeSymbolLeverageConfig `protobuf:"bytes,2,rep,name=leverage_configs,json=leverageConfigs,proto3" json:"leverage_configs,omitempty"`
 	Spot            *TradeSymbolSpot             `protobuf:"bytes,3,opt,name=spot,proto3" json:"spot,omitempty"`
 	Contract        *TradeSymbolContract         `protobuf:"bytes,4,opt,name=contract,proto3" json:"contract,omitempty"`
@@ -772,9 +772,9 @@ func (*GetSymbolDetailAdminData) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *GetSymbolDetailAdminData) GetData() *TradeSymbol {
+func (x *GetSymbolDetailAdminData) GetSymbol() *TradeSymbol {
 	if x != nil {
-		return x.Data
+		return x.Symbol
 	}
 	return nil
 }
@@ -8246,9 +8246,9 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"u\n" +
 	"\x18GetSymbolDetailAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x123\n" +
-	"\x04data\x18\x02 \x01(\v2\x1f.trade.GetSymbolDetailAdminDataR\x04data\"\xee\x02\n" +
-	"\x18GetSymbolDetailAdminData\x12&\n" +
-	"\x04data\x18\x01 \x01(\v2\x12.trade.TradeSymbolR\x04data\x12K\n" +
+	"\x04data\x18\x02 \x01(\v2\x1f.trade.GetSymbolDetailAdminDataR\x04data\"\xf2\x02\n" +
+	"\x18GetSymbolDetailAdminData\x12*\n" +
+	"\x06symbol\x18\x01 \x01(\v2\x12.trade.TradeSymbolR\x06symbol\x12K\n" +
 	"\x10leverage_configs\x18\x02 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x0fleverageConfigs\x12*\n" +
 	"\x04spot\x18\x03 \x01(\v2\x16.trade.TradeSymbolSpotR\x04spot\x126\n" +
 	"\bcontract\x18\x04 \x01(\v2\x1a.trade.TradeSymbolContractR\bcontract\x12B\n" +
@@ -9181,7 +9181,7 @@ var file_proto_trade_trade_admin_proto_depIdxs = []int32{
 	99,  // 10: trade.GetSymbolListAdminResp.data:type_name -> trade.TradeSymbol
 	93,  // 11: trade.GetSymbolDetailAdminResp.base:type_name -> common.RespBase
 	7,   // 12: trade.GetSymbolDetailAdminResp.data:type_name -> trade.GetSymbolDetailAdminData
-	99,  // 13: trade.GetSymbolDetailAdminData.data:type_name -> trade.TradeSymbol
+	99,  // 13: trade.GetSymbolDetailAdminData.symbol:type_name -> trade.TradeSymbol
 	100, // 14: trade.GetSymbolDetailAdminData.leverage_configs:type_name -> trade.TradeSymbolLeverageConfig
 	101, // 15: trade.GetSymbolDetailAdminData.spot:type_name -> trade.TradeSymbolSpot
 	102, // 16: trade.GetSymbolDetailAdminData.contract:type_name -> trade.TradeSymbolContract

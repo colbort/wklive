@@ -160,6 +160,22 @@ func secondsSymbolToProto(item *models.TTradeSymbolSeconds) *trade.TradeSymbolSe
 	}
 }
 
+func symbolSessionToProto(item *models.TTradeSymbolSession) *trade.TradeSymbolSession {
+	if item == nil {
+		return nil
+	}
+	return &trade.TradeSymbolSession{
+		Id:          item.Id,
+		TenantId:    item.TenantId,
+		SymbolId:    item.SymbolId,
+		DayOfWeek:   item.DayOfWeek,
+		StartSecond: item.StartSecond,
+		EndSecond:   item.EndSecond,
+		Timezone:    item.Timezone,
+		Enabled:     enableToProto(item.Enabled),
+	}
+}
+
 func userConfigToProto(item *models.TTradeUserConfig) *trade.TradeUserConfig {
 	if item == nil {
 		return nil

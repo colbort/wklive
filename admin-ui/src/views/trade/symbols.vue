@@ -69,6 +69,11 @@
             {{ optionLabel('contractType', row.contractType) }}
           </template>
         </el-table-column>
+        <el-table-column :label="t('trade.contractValueType')" min-width="150">
+          <template #default="{ row }">
+            {{ optionLabel('contractValueType', row.contractValueType) }}
+          </template>
+        </el-table-column>
         <el-table-column :label="t('trade.status')" width="120">
           <template #default="{ row }">
             <el-tag size="small" :type="symbolStatusTagType(row.status)" effect="light">

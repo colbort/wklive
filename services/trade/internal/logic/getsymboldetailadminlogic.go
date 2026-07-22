@@ -11,6 +11,7 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/mr"
 )
 
 type GetSymbolDetailAdminLogic struct {
@@ -40,22 +41,77 @@ func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(in *trade.GetSymbolDeta
 	resp := &trade.GetSymbolDetailAdminResp{
 		Base: helper.OkResp(),
 		Data: &trade.GetSymbolDetailAdminData{
-			Data: symbolToProto(item),
+			Symbol: symbolToProto(item),
 		},
 	}
-	configs, _, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
-		TenantId: in.TenantId,
-		SymbolId: in.Id,
-	}, 0, 100)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
+	var spot *models.TTradeSymbolSpot
+	var contractCfg *models.TTradeSymbolContract
+	var leverageConfigs []*models.TTradeSymbolLeverageConfig
+	var secondsConfigs []*models.TTradeSymbolSeconds
+	var sessions []*models.TTradeSymbolSession
+	err = mr.Finish(
+		func() error {
+			var queryErr error
+			spot, queryErr = l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, item.TenantId, item.Id)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+		func() error {
+			var queryErr error
+			contractCfg, queryErr = l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, item.TenantId, item.Id)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+		func() error {
+			var queryErr error
+			leverageConfigs, _, queryErr = l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
+				TenantId: item.TenantId,
+				SymbolId: item.Id,
+			}, 0, 100)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+		func() error {
+			var queryErr error
+			secondsConfigs, queryErr = l.svcCtx.TradeSymbolSecondsModel.FindAllByTenantIdSymbolId(l.ctx, item.TenantId, item.Id)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+		func() error {
+			var queryErr error
+			sessions, queryErr = l.svcCtx.TradeSymbolSessionModel.FindAllByTenantIdSymbolId(l.ctx, item.TenantId, item.Id)
+			if errors.Is(queryErr, models.ErrNotFound) {
+				return nil
+			}
+			return queryErr
+		},
+	)
+	if err != nil {
 		return nil, err
 	}
-	for _, cfg := range configs {
+
+	resp.Data.Spot = spotSymbolToProto(spot)
+	resp.Data.Contract = contractSymbolToProto(contractCfg)
+	for _, cfg := range leverageConfigs {
 		defaultLeverage, findErr := findDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, cfg.TenantId, cfg.SymbolId, cfg.MarginMode)
 		if findErr != nil {
 			return nil, findErr
 		}
 		resp.Data.LeverageConfigs = append(resp.Data.LeverageConfigs, symbolLeverageConfigToProto(cfg, defaultLeverage))
+	}
+	for _, cfg := range secondsConfigs {
+		resp.Data.SecondsConfigs = append(resp.Data.SecondsConfigs, secondsSymbolToProto(cfg))
+	}
+	for _, session := range sessions {
+		resp.Data.Sessions = append(resp.Data.Sessions, symbolSessionToProto(session))
 	}
 	return resp, nil
 }

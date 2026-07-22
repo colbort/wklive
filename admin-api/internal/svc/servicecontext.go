@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"wklive/admin-api/internal/config"
 	"wklive/admin-api/internal/ws"
-	"wklive/common/mq/kafka"
+	mq "wklive/common/mq/kafka"
 	"wklive/common/reqenc"
 	"wklive/common/utils"
 	"wklive/proto/asset"
@@ -38,7 +38,6 @@ type ServiceContext struct {
 	OptionCli         option.OptionAdminClient
 	StakingCli        staking.StakingAdminClient
 	TradeCli          trade.TradeAdminClient
-	TradeAppCli       trade.TradeAppClient
 	NotificationHub   *ws.Hub
 	RequestEncryption *reqenc.Service
 }
@@ -101,7 +100,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		OptionCli:       option.NewOptionAdminClient(optionCli.Conn()),
 		StakingCli:      staking.NewStakingAdminClient(stakingCli.Conn()),
 		TradeCli:        trade.NewTradeAdminClient(tradeCli.Conn()),
-		TradeAppCli:     trade.NewTradeAppClient(tradeCli.Conn()),
 		NotificationHub: notificationHub,
 	}
 }
