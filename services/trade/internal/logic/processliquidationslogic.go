@@ -10,6 +10,7 @@ import (
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -196,11 +197,11 @@ func (l *ProcessLiquidationsLogic) cancelRiskIncreasingOrders(position *models.T
 
 func (l *ProcessLiquidationsLogic) settleTakeover(position *models.TContractPosition, contract *models.TTradeSymbolContract, liq *models.TContractLiquidation) error {
 	pnl := contractRealizedPnl(position.PositionSide, position.OpenAvgPrice, position.MarkPrice, position.Qty, contract.ContractSize, position.ContractValueType)
-	values, err := calculateContractTradeValues(position.ContractValueType, position.Qty, contract.ContractSize, position.MarkPrice)
+	values, err := contractmath.CalculateTradeValues(position.ContractValueType, position.Qty, contract.ContractSize, position.MarkPrice)
 	if err != nil {
 		return err
 	}
-	fee := roundContractDebit(values.SettlementNotional.Mul(contract.LiquidationFeeRate))
+	fee := contractmath.RoundDebit(values.SettlementNotional.Mul(contract.LiquidationFeeRate))
 	equity := position.PositionMargin.Add(position.IsolatedMargin).Add(pnl).Sub(fee)
 	if equity.IsPositive() {
 		if err := l.assetChange(position.TenantId, position.UserId, position.MarginAsset, equity, true, liq.Id, liq.LiquidationNo+"-RESIDUAL", "liquidation residual equity"); err != nil {

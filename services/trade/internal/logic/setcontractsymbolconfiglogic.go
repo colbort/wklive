@@ -9,7 +9,9 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/authz"
 	"wklive/services/trade/internal/svc"
+	"wklive/services/trade/internal/validation"
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -38,15 +40,15 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 	if err != nil {
 		return nil, err
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
+	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &trade.AdminCommonResp{Base: base}, nil
 	}
-	if err := validateContractTradingTimeline(symbol, in.DeliveryTime, in.OpenCutoffTime, in.MatchingStopTime); err != nil {
+	if err := validation.ContractTradingTimeline(symbol, in.DeliveryTime, in.OpenCutoffTime, in.MatchingStopTime); err != nil {
 		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
-	if err := validateContractMarginModes(in.SupportCross, in.SupportIsolated); err != nil {
+	if err := validation.ContractMarginModes(in.SupportCross, in.SupportIsolated); err != nil {
 		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
 	now := utils.NowMillis()

@@ -12,6 +12,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -277,13 +278,13 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 			sellLiquidity := liquidityTypeForOrder(lockedPlan.SellOrder, lockedPlan.BuyOrder)
 			var buyFee, sellFee decimal.Decimal
 			if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
-				values, err := calculateContractTradeValues(symbol.ContractValueType, lockedPlan.Qty, contractConfig.ContractSize, lockedPlan.Price)
+				values, err := contractmath.CalculateTradeValues(symbol.ContractValueType, lockedPlan.Qty, contractConfig.ContractSize, lockedPlan.Price)
 				if err != nil {
 					return err
 				}
 				lockedPlan.Amount = values.QuoteNotional
-				buyFee = calculateContractFee(values, feeRateByLiquidity(buyLiquidity, makerFeeRate, takerFeeRate))
-				sellFee = calculateContractFee(values, feeRateByLiquidity(sellLiquidity, makerFeeRate, takerFeeRate))
+				buyFee = contractmath.CalculateFee(values, feeRateByLiquidity(buyLiquidity, makerFeeRate, takerFeeRate))
+				sellFee = contractmath.CalculateFee(values, feeRateByLiquidity(sellLiquidity, makerFeeRate, takerFeeRate))
 			} else {
 				buyFee = matchFeeAmount(lockedPlan.Amount, buyLiquidity, makerFeeRate, takerFeeRate)
 				sellFee = matchFeeAmount(lockedPlan.Amount, sellLiquidity, makerFeeRate, takerFeeRate)

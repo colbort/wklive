@@ -16,6 +16,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -545,8 +546,8 @@ func secondsPayout(stake, payoutRate, feeRate decimal.Decimal, result trade.Seco
 	if result != trade.SecondsResult_SECONDS_RESULT_WIN {
 		return decimal.Zero, decimal.Zero, decimal.Zero
 	}
-	profit := roundContractCredit(stake.Mul(payoutRate))
-	fee := roundContractDebit(profit.Mul(feeRate))
+	profit := contractmath.RoundCredit(stake.Mul(payoutRate))
+	fee := contractmath.RoundDebit(profit.Mul(feeRate))
 	return profit, fee, stake.Add(profit).Sub(fee)
 }
 func (l *ProcessSecondsSettlementsLogic) consumeSecondsStake(i *models.SecondsOrderWorkItem) error {

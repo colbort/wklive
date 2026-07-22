@@ -9,6 +9,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
+	"wklive/services/trade/internal/validation"
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -30,7 +31,7 @@ func NewCreateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 
 // 创建交易对
 func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.AdminCommonResp, error) {
-	if err := validateSymbolTradingTimeline(in.ProductType, in.ContractType, in.ListingTime, in.TradingStartTime, in.TradingEndTime); err != nil {
+	if err := validation.SymbolTradingTimeline(in.ProductType, in.ContractType, in.ListingTime, in.TradingStartTime, in.TradingEndTime); err != nil {
 		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
 	exists, err := l.svcCtx.TradeSymbolModel.FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(l.ctx, in.TenantId, in.Symbol, int64(in.ProductType), int64(in.ContractType), int64(in.ContractValueType))

@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/mapper"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -35,7 +36,7 @@ func (l *GetContractRiskLimitTierListLogic) GetContractRiskLimitTierList(in *tra
 	last := int64(0)
 	resp := &trade.GetContractRiskLimitTierListResp{}
 	for _, v := range data {
-		resp.Data = append(resp.Data, riskTierProto(v))
+		resp.Data = append(resp.Data, mapper.RiskTierProto(v))
 		last = v.Id
 	}
 	resp.Base = pageutil.Base(cursor, limit, len(data), total, last)

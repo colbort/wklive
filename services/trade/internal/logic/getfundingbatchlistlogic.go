@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/mapper"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -35,7 +36,7 @@ func (l *GetFundingBatchListLogic) GetFundingBatchList(in *trade.GetFundingBatch
 	last := int64(0)
 	resp := &trade.GetFundingBatchListResp{}
 	for _, v := range data {
-		resp.Data = append(resp.Data, fundingBatchProto(v))
+		resp.Data = append(resp.Data, mapper.FundingBatchProto(v))
 		last = v.Id
 	}
 	resp.Base = pageutil.Base(cursor, limit, len(data), total, last)

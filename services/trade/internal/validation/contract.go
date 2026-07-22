@@ -1,4 +1,4 @@
-package logic
+package validation
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"wklive/services/trade/models"
 )
 
-func validateSymbolTradingTimeline(productType trade.ProductType, contractType trade.ContractType, listingTime, tradingStartTime, tradingEndTime int64) error {
+func SymbolTradingTimeline(productType trade.ProductType, contractType trade.ContractType, listingTime, tradingStartTime, tradingEndTime int64) error {
 	if listingTime < 0 || tradingStartTime < 0 || tradingEndTime < 0 {
 		return errors.New("交易时间不能为负数")
 	}
@@ -28,7 +28,7 @@ func validateSymbolTradingTimeline(productType trade.ProductType, contractType t
 	return nil
 }
 
-func validateContractTradingTimeline(symbol *models.TTradeSymbol, deliveryTime, openCutoffTime, matchingStopTime int64) error {
+func ContractTradingTimeline(symbol *models.TTradeSymbol, deliveryTime, openCutoffTime, matchingStopTime int64) error {
 	if symbol == nil || symbol.ProductType != int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 		return errors.New("只有衍生品交易对可以配置合约参数")
 	}
@@ -42,7 +42,7 @@ func validateContractTradingTimeline(symbol *models.TTradeSymbol, deliveryTime, 
 	if contractType != trade.ContractType_CONTRACT_TYPE_DELIVERY {
 		return errors.New("交易对合约类型无效")
 	}
-	if err := validateSymbolTradingTimeline(trade.ProductType(symbol.ProductType), contractType, symbol.ListingTime, symbol.TradingStartTime, symbol.TradingEndTime); err != nil {
+	if err := SymbolTradingTimeline(trade.ProductType(symbol.ProductType), contractType, symbol.ListingTime, symbol.TradingStartTime, symbol.TradingEndTime); err != nil {
 		return err
 	}
 	if deliveryTime <= 0 || openCutoffTime <= 0 || matchingStopTime <= 0 {
@@ -63,7 +63,7 @@ func validateContractTradingTimeline(symbol *models.TTradeSymbol, deliveryTime, 
 	return nil
 }
 
-func validateContractMarginModes(supportCross, supportIsolated int64) error {
+func ContractMarginModes(supportCross, supportIsolated int64) error {
 	if (supportCross != 0 && supportCross != 1) || (supportIsolated != 0 && supportIsolated != 1) {
 		return errors.New("保证金模式支持开关只能为0或1")
 	}
@@ -73,7 +73,7 @@ func validateContractMarginModes(supportCross, supportIsolated int64) error {
 	return nil
 }
 
-func contractSupportsMarginMode(config *models.TTradeSymbolContract, marginMode trade.MarginMode) bool {
+func ContractSupportsMarginMode(config *models.TTradeSymbolContract, marginMode trade.MarginMode) bool {
 	if config == nil {
 		return false
 	}

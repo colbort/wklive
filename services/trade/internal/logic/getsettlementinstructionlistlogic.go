@@ -5,6 +5,7 @@ import (
 	"wklive/common/pageutil"
 
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/mapper"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -34,7 +35,7 @@ func (l *GetSettlementInstructionListLogic) GetSettlementInstructionList(in *tra
 	last := int64(0)
 	resp := &trade.GetSettlementInstructionListResp{}
 	for _, v := range d {
-		resp.Data = append(resp.Data, instructionProto(v))
+		resp.Data = append(resp.Data, mapper.InstructionProto(v))
 		last = v.Id
 	}
 	resp.Base = pageutil.Base(cursor, limit, len(d), total, last)

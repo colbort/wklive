@@ -9,6 +9,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/authz"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -31,7 +32,7 @@ func NewSetUserTradeLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 设置用户交易限制
 func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitReq) (*trade.AdminCommonResp, error) {
-	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &trade.AdminCommonResp{Base: base}, nil

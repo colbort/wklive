@@ -5,6 +5,7 @@ import (
 	"wklive/common/pageutil"
 
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/mapper"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -35,7 +36,7 @@ func (l *GetLiquidationListLogic) GetLiquidationList(in *trade.GetLiquidationLis
 	last := int64(0)
 	resp := &trade.GetLiquidationListResp{}
 	for _, v := range d {
-		resp.Data = append(resp.Data, liquidationProto(v))
+		resp.Data = append(resp.Data, mapper.LiquidationProto(v))
 		last = v.Id
 	}
 	resp.Base = pageutil.Base(cursor, limit, len(d), total, last)

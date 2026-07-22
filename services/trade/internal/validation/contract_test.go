@@ -1,4 +1,4 @@
-package logic
+package validation
 
 import (
 	"testing"
@@ -22,7 +22,7 @@ func TestValidateSymbolTradingTimeline(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validateSymbolTradingTimeline(trade.ProductType_PRODUCT_TYPE_DERIVATIVE, trade.ContractType_CONTRACT_TYPE_DELIVERY, tt.listing, tt.start, tt.end)
+			err := SymbolTradingTimeline(trade.ProductType_PRODUCT_TYPE_DERIVATIVE, trade.ContractType_CONTRACT_TYPE_DELIVERY, tt.listing, tt.start, tt.end)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("validateSymbolTradingTimeline() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -38,38 +38,38 @@ func TestValidateContractTradingTimeline(t *testing.T) {
 		TradingStartTime: 200,
 		TradingEndTime:   500,
 	}
-	if err := validateContractTradingTimeline(symbol, 600, 300, 500); err != nil {
+	if err := ContractTradingTimeline(symbol, 600, 300, 500); err != nil {
 		t.Fatalf("valid delivery timeline rejected: %v", err)
 	}
-	if err := validateContractTradingTimeline(symbol, 500, 300, 400); err == nil {
+	if err := ContractTradingTimeline(symbol, 500, 300, 400); err == nil {
 		t.Fatal("delivery at trading end should be rejected")
 	}
-	if err := validateContractTradingTimeline(symbol, 600, 300, 501); err == nil {
+	if err := ContractTradingTimeline(symbol, 600, 300, 501); err == nil {
 		t.Fatal("matching after trading end should be rejected")
 	}
 }
 
 func TestValidateContractMarginModes(t *testing.T) {
-	if err := validateContractMarginModes(0, 1); err != nil {
+	if err := ContractMarginModes(0, 1); err != nil {
 		t.Fatalf("isolated-only mode rejected: %v", err)
 	}
-	if err := validateContractMarginModes(0, 0); err == nil {
+	if err := ContractMarginModes(0, 0); err == nil {
 		t.Fatal("configuration without a supported margin mode should be rejected")
 	}
-	if err := validateContractMarginModes(2, 1); err == nil {
+	if err := ContractMarginModes(2, 1); err == nil {
 		t.Fatal("invalid support flag should be rejected")
 	}
 }
 
 func TestContractSupportsMarginMode(t *testing.T) {
 	config := &models.TTradeSymbolContract{SupportCross: 0, SupportIsolated: 1}
-	if contractSupportsMarginMode(config, trade.MarginMode_MARGIN_MODE_CROSS) {
+	if ContractSupportsMarginMode(config, trade.MarginMode_MARGIN_MODE_CROSS) {
 		t.Fatal("unsupported cross margin was accepted")
 	}
-	if !contractSupportsMarginMode(config, trade.MarginMode_MARGIN_MODE_ISOLATED) {
+	if !ContractSupportsMarginMode(config, trade.MarginMode_MARGIN_MODE_ISOLATED) {
 		t.Fatal("supported isolated margin was rejected")
 	}
-	if contractSupportsMarginMode(config, trade.MarginMode_MARGIN_MODE_UNKNOWN) {
+	if ContractSupportsMarginMode(config, trade.MarginMode_MARGIN_MODE_UNKNOWN) {
 		t.Fatal("unknown margin mode was accepted")
 	}
 }

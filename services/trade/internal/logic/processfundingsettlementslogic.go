@@ -10,6 +10,7 @@ import (
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -88,11 +89,11 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 				feeTotals := make(map[string]decimal.Decimal)
 				im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 				for _, p := range active {
-					values, err := calculateContractTradeValues(p.ContractValueType, p.Qty, c.ContractSize, mark)
+					values, err := contractmath.CalculateTradeValues(p.ContractValueType, p.Qty, c.ContractSize, mark)
 					if err != nil {
 						return err
 					}
-					fee := roundContractCredit(values.SettlementNotional.Mul(rate))
+					fee := contractmath.RoundCredit(values.SettlementNotional.Mul(rate))
 					if p.PositionSide == int64(trade.PositionSide_POSITION_SIDE_LONG) {
 						fee = fee.Neg()
 					}

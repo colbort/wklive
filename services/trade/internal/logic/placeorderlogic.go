@@ -15,6 +15,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -644,12 +645,12 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		if err := validateContractSideSwitch(cfg, in); err != nil {
 			return nil, err
 		}
-		values, err := calculateContractTradeValues(symbol.ContractValueType, qty, cfg.ContractSize, plan.riskPrice)
+		values, err := contractmath.CalculateTradeValues(symbol.ContractValueType, qty, cfg.ContractSize, plan.riskPrice)
 		if err != nil {
 			return nil, err
 		}
 		plan.notional = values.QuoteNotional
-		plan.marginAmount, err = calculateContractMargin(values, leverage)
+		plan.marginAmount, err = contractmath.CalculateMargin(values, leverage)
 		if err != nil {
 			return nil, err
 		}
@@ -666,7 +667,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 			}
 			plan.riskTierID = tier.Id
 		}
-		fee := calculateContractFee(values, cfg.TakerFeeRate)
+		fee := contractmath.CalculateFee(values, cfg.TakerFeeRate)
 		plan.frozenAsset = marginAssetForSymbol(symbol)
 		isHedgeClose := in.PositionSide != trade.PositionSide_POSITION_SIDE_NET && isClosingFill(int64(in.PositionSide), int64(in.Side))
 		if in.IsReduceOnly == common.YesNo_YES_NO_YES || isHedgeClose {

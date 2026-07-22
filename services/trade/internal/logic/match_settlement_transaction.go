@@ -9,6 +9,7 @@ import (
 
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
@@ -152,7 +153,7 @@ func buildFillSettlementInstructions(ctx context.Context, contractOrderModel mod
 		if fill.ContractValueType == int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_INVERSE) {
 			settlementNotional = fill.Amount.Div(fill.Price)
 		}
-		marginDelta := roundContractDebit(settlementNotional.Div(decimal.NewFromInt(contractOrder.Leverage)))
+		marginDelta := contractmath.RoundDebit(settlementNotional.Div(decimal.NewFromInt(contractOrder.Leverage)))
 		specs = append(specs, settlementInstructionSpec{suffix: "MARGIN", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN, asset: contractOrder.MarginAsset, amount: marginDelta})
 	}
 	if fill.Fee.IsPositive() {

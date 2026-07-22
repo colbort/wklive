@@ -8,6 +8,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/authz"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -37,7 +38,7 @@ func (l *RetryTradeEventLogic) RetryTradeEvent(in *trade.RetryTradeEventReq) (*t
 	if err != nil {
 		return nil, err
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, item.TenantId, i18n.TradeNotFound); err != nil {
+	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, item.TenantId, i18n.TradeNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &trade.AdminCommonResp{Base: base}, nil

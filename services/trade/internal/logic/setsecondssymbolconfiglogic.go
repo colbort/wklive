@@ -9,6 +9,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/authz"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -38,7 +39,7 @@ func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(in *trade.SetSecond
 	if err != nil {
 		return nil, err
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
+	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &trade.AdminCommonResp{Base: base}, nil

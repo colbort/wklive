@@ -9,6 +9,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
+	"wklive/services/trade/internal/validation"
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -101,7 +102,7 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Admi
 	if in.Remark != "" {
 		item.Remark = in.Remark
 	}
-	if err := validateSymbolTradingTimeline(trade.ProductType(item.ProductType), trade.ContractType(item.ContractType), item.ListingTime, item.TradingStartTime, item.TradingEndTime); err != nil {
+	if err := validation.SymbolTradingTimeline(trade.ProductType(item.ProductType), trade.ContractType(item.ContractType), item.ListingTime, item.TradingStartTime, item.TradingEndTime); err != nil {
 		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
 	item.UpdateTimes = utils.NowMillis()

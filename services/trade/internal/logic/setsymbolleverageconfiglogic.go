@@ -9,7 +9,9 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/authz"
 	"wklive/services/trade/internal/svc"
+	"wklive/services/trade/internal/validation"
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -38,7 +40,7 @@ func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymb
 	if err != nil {
 		return nil, err
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
+	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &trade.AdminCommonResp{Base: base}, nil
@@ -78,7 +80,7 @@ func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymb
 		}
 		return nil, findErr
 	}
-	if !contractSupportsMarginMode(contractCfg, in.MarginMode) {
+	if !validation.ContractSupportsMarginMode(contractCfg, in.MarginMode) {
 		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, "该合约不支持所选保证金模式，不能配置对应杠杆")}, nil
 	}
 	if err := l.svcCtx.SymbolLeverageCfgModel.SyncGroup(l.ctx, symbol.TenantId, symbol.Id, int64(in.MarginMode), values, in.DefaultLeverage, int64(in.Enabled), in.Sort, in.Remark, utils.NowMillis()); err != nil {

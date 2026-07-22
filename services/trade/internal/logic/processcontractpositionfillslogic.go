@@ -8,6 +8,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -125,11 +126,11 @@ func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, posit
 		position = &models.TContractPosition{TenantId: fill.TenantId, UserId: fill.UserId, SymbolId: fill.SymbolId, ContractType: fill.ContractType, ContractValueType: fill.ContractValueType, PositionSide: side, MarginMode: contractOrder.MarginMode, Status: int64(trade.PositionStatus_POSITION_STATUS_NORMAL), Leverage: contractOrder.Leverage, MarginAsset: contractOrder.MarginAsset, CreateTimes: now}
 	}
 	before := cloneContractPosition(position)
-	values, err := calculateContractTradeValues(fill.ContractValueType, qty, contract.ContractSize, fill.Price)
+	values, err := contractmath.CalculateTradeValues(fill.ContractValueType, qty, contract.ContractSize, fill.Price)
 	if err != nil {
 		return err
 	}
-	margin, err := calculateContractMargin(values, contractOrder.Leverage)
+	margin, err := contractmath.CalculateMargin(values, contractOrder.Leverage)
 	if err != nil {
 		return err
 	}
@@ -238,20 +239,20 @@ func writeContractCloseSettlements(ctx context.Context, instructionModel models.
 		stepNo++
 		return insertSettlementInstructionIdempotent(ctx, instructionModel, instruction)
 	}
-	if err := insert("MARGIN_RELEASE", trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_MARGIN, roundContractCredit(marginReleased)); err != nil {
+	if err := insert("MARGIN_RELEASE", trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_MARGIN, contractmath.RoundCredit(marginReleased)); err != nil {
 		return err
 	}
 	if realized.IsPositive() {
-		return insert("PNL_PROFIT", trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_POST_PNL, roundContractCredit(realized))
+		return insert("PNL_PROFIT", trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_POST_PNL, contractmath.RoundCredit(realized))
 	}
 	if realized.IsNegative() {
-		return insert("PNL_LOSS", trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS, roundContractDebit(realized.Abs()))
+		return insert("PNL_LOSS", trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS, contractmath.RoundDebit(realized.Abs()))
 	}
 	return nil
 }
 
 func (l *ProcessContractPositionFillsLogic) riskTierForPosition(ctx context.Context, position *models.TContractPosition, contract *models.TTradeSymbolContract) (*models.TContractRiskLimitTier, error) {
-	values, err := calculateContractTradeValues(position.ContractValueType, position.Qty, contract.ContractSize, position.MarkPrice)
+	values, err := contractmath.CalculateTradeValues(position.ContractValueType, position.Qty, contract.ContractSize, position.MarkPrice)
 	if err != nil {
 		return nil, err
 	}
@@ -300,20 +301,20 @@ func contractRealizedPnl(side int64, openPrice, closePrice, qty, contractSize de
 	if valueType == int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_INVERSE) {
 		pnl := contracts.Mul(decimal.NewFromInt(1).Div(openPrice).Sub(decimal.NewFromInt(1).Div(closePrice)))
 		if side == int64(trade.PositionSide_POSITION_SIDE_SHORT) {
-			return roundContractCredit(pnl.Neg())
+			return contractmath.RoundCredit(pnl.Neg())
 		}
-		return roundContractCredit(pnl)
+		return contractmath.RoundCredit(pnl)
 	}
 	pnl := closePrice.Sub(openPrice).Mul(contracts)
 	if side == int64(trade.PositionSide_POSITION_SIDE_SHORT) {
-		return roundContractCredit(pnl.Neg())
+		return contractmath.RoundCredit(pnl.Neg())
 	}
-	return roundContractCredit(pnl)
+	return contractmath.RoundCredit(pnl)
 }
 
 func recalculatePositionRisk(position *models.TContractPosition, contract *models.TTradeSymbolContract, tiers ...*models.TContractRiskLimitTier) {
 	position.UnrealizedPnl = contractRealizedPnl(position.PositionSide, position.OpenAvgPrice, position.MarkPrice, position.Qty, contract.ContractSize, position.ContractValueType)
-	values, err := calculateContractTradeValues(position.ContractValueType, position.Qty, contract.ContractSize, position.MarkPrice)
+	values, err := contractmath.CalculateTradeValues(position.ContractValueType, position.Qty, contract.ContractSize, position.MarkPrice)
 	if err != nil {
 		position.Status = int64(trade.PositionStatus_POSITION_STATUS_MANUAL_REVIEW)
 		return
@@ -324,7 +325,7 @@ func recalculatePositionRisk(position *models.TContractPosition, contract *model
 		maintenanceRate = tiers[0].MaintenanceMarginRate
 		maintenanceAmount = tiers[0].MaintenanceAmount
 	}
-	position.MaintenanceMargin = decimalMaxZero(roundContractDebit(values.SettlementNotional.Mul(maintenanceRate)).Sub(maintenanceAmount))
+	position.MaintenanceMargin = decimalMaxZero(contractmath.RoundDebit(values.SettlementNotional.Mul(maintenanceRate)).Sub(maintenanceAmount))
 	if position.MarginMode == int64(trade.MarginMode_MARGIN_MODE_CROSS) {
 		// Cross liquidation is account-level and requires wallet equity plus all
 		// positions sharing the margin asset. Never persist an isolated-position

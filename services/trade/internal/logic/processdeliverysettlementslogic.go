@@ -9,6 +9,7 @@ import (
 
 	"wklive/common/utils"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -168,11 +169,11 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 				return fmt.Errorf("delivery position changed during price lock: %d", p.Id)
 			}
 			pnl := contractRealizedPnl(locked.PositionSide, locked.OpenAvgPrice, price, locked.Qty, c.ContractSize, locked.ContractValueType)
-			values, err := calculateContractTradeValues(locked.ContractValueType, locked.Qty, c.ContractSize, price)
+			values, err := contractmath.CalculateTradeValues(locked.ContractValueType, locked.Qty, c.ContractSize, price)
 			if err != nil {
 				return err
 			}
-			fee := roundContractDebit(values.SettlementNotional.Mul(c.DeliveryFeeRate))
+			fee := contractmath.RoundDebit(values.SettlementNotional.Mul(c.DeliveryFeeRate))
 			settlementNo := fmt.Sprintf("%s-%d", batchNo, locked.Id)
 			steps := deliveryAssetSteps(locked.PositionMargin.Add(locked.IsolatedMargin), pnl, fee)
 			settlement := &models.TContractDeliverySettlement{TenantId: locked.TenantId, SettlementNo: settlementNo, BatchId: batchID, BatchNo: batchNo, SymbolId: locked.SymbolId, UserId: locked.UserId, PositionId: locked.Id, PositionSide: locked.PositionSide, SettlementPrice: price, PositionQty: locked.Qty, RealizedPnl: pnl, DeliveryFee: fee, SettleAsset: locked.MarginAsset, DeliveryTime: c.DeliveryTime, Status: int64(trade.DeliverySettlementStatus_DELIVERY_SETTLEMENT_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now}

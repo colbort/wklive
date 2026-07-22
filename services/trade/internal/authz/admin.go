@@ -1,4 +1,4 @@
-package logic
+package authz
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"wklive/proto/common"
 )
 
-func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
+func AdminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
 	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(ctx, currentTenantId)
 	if err != nil {
 		return nil, i18n.StatusError(ctx, i18n.UserNotFound)
