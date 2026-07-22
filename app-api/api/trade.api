@@ -261,17 +261,17 @@ type ContractLeverageConfig {
 }
 
 type TradeSymbolLeverageConfig {
-	id          int64  `json:"id"`
-	tenantId    int64  `json:"tenantId"`
-	symbolId    int64  `json:"symbolId"`
-	marginMode  int64  `json:"marginMode"`
-	leverage    int64  `json:"leverage"`
-	isDefault   int64  `json:"isDefault"`
-	enabled     int64  `json:"enabled"`
-	sort        int64  `json:"sort"`
-	remark      string `json:"remark"`
-	createTimes int64  `json:"createTimes"`
-	updateTimes int64  `json:"updateTimes"`
+	id              int64   `json:"id"`
+	tenantId        int64   `json:"tenantId"`
+	symbolId        int64   `json:"symbolId"`
+	marginMode      int64   `json:"marginMode"`
+	leverageValues  []int64 `json:"leverageValues"`
+	defaultLeverage int64   `json:"defaultLeverage"`
+	enabled         int64   `json:"enabled"`
+	sort            int64   `json:"sort"`
+	remark          string  `json:"remark"`
+	createTimes     int64   `json:"createTimes"`
+	updateTimes     int64   `json:"updateTimes"`
 }
 
 type TradeAppCommonResp {

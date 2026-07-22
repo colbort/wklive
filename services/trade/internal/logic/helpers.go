@@ -465,22 +465,22 @@ func symbolLeverageConfigToProto(item *models.TTradeSymbolLeverageConfig, defaul
 	if item == nil {
 		return nil
 	}
-	isDefault := common.YesNo_YES_NO_NO
-	if len(defaultLeverage) > 0 && defaultLeverage[0] == item.Leverage {
-		isDefault = common.YesNo_YES_NO_YES
+	var defaultValue int64
+	if len(defaultLeverage) > 0 {
+		defaultValue = defaultLeverage[0]
 	}
 	return &trade.TradeSymbolLeverageConfig{
-		Id:          item.Id,
-		TenantId:    item.TenantId,
-		SymbolId:    item.SymbolId,
-		MarginMode:  trade.MarginMode(item.MarginMode),
-		Leverage:    item.Leverage,
-		IsDefault:   isDefault,
-		Enabled:     enableToProto(item.Enabled),
-		Sort:        item.Sort,
-		Remark:      item.Remark,
-		CreateTimes: item.CreateTimes,
-		UpdateTimes: item.UpdateTimes,
+		Id:              item.Id,
+		TenantId:        item.TenantId,
+		SymbolId:        item.SymbolId,
+		MarginMode:      trade.MarginMode(item.MarginMode),
+		LeverageValues:  parseLeverageValues(item.LeverageValues),
+		DefaultLeverage: defaultValue,
+		Enabled:         enableToProto(item.Enabled),
+		Sort:            item.Sort,
+		Remark:          item.Remark,
+		CreateTimes:     item.CreateTimes,
+		UpdateTimes:     item.UpdateTimes,
 	}
 }
 
@@ -499,24 +499,39 @@ func findDefaultLeverage(ctx context.Context, model models.TTradeSymbolLeverageD
 }
 
 func parseLeverageValues(value string) []int64 {
+	var jsonValues []int64
+	if json.Unmarshal([]byte(value), &jsonValues) == nil {
+		return normalizeLeverageValues(jsonValues)
+	}
 	parts := strings.Split(value, ",")
 	values := make([]int64, 0, len(parts))
-	seen := make(map[int64]struct{}, len(parts))
 	for _, part := range parts {
 		next, err := strconv.ParseInt(strings.TrimSpace(part), 10, 64)
 		if err != nil || next <= 0 {
 			continue
 		}
-		if _, ok := seen[next]; ok {
-			continue
-		}
-		seen[next] = struct{}{}
 		values = append(values, next)
 	}
-	sort.Slice(values, func(i, j int) bool {
-		return values[i] < values[j]
+	return normalizeLeverageValues(values)
+}
+
+func normalizeLeverageValues(values []int64) []int64 {
+	result := make([]int64, 0, len(values))
+	seen := make(map[int64]struct{}, len(values))
+	for _, value := range values {
+		if value <= 0 {
+			continue
+		}
+		if _, ok := seen[value]; ok {
+			continue
+		}
+		seen[value] = struct{}{}
+		result = append(result, value)
+	}
+	sort.Slice(result, func(i, j int) bool {
+		return result[i] < result[j]
 	})
-	return values
+	return result
 }
 
 func joinLeverageValues(values []int64, maxLeverage int64) (string, []int64) {
@@ -718,12 +733,17 @@ func ensureConfiguredLeverage(ctx context.Context, model models.TTradeSymbolLeve
 			}
 		}
 		if effective <= 0 {
-			effective = configs[0].Leverage
+			values := parseLeverageValues(configs[0].LeverageValues)
+			if len(values) > 0 {
+				effective = values[0]
+			}
 		}
 	}
 	for _, cfg := range configs {
-		if cfg.Leverage == effective {
-			return effective, true, nil
+		for _, configured := range parseLeverageValues(cfg.LeverageValues) {
+			if configured == effective {
+				return effective, true, nil
+			}
 		}
 	}
 	return 0, false, nil

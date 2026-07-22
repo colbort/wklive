@@ -165,15 +165,14 @@ const shortPositionQty = computed(() => {
 })
 const activeLeverageConfig = computed(() => {
   if (!selectedTradeSymbol.value) return null
-  const configs = (tradeSymbolDetail.value?.leverageConfigs || []).filter((config) => {
+  return (tradeSymbolDetail.value?.leverageConfigs || []).find((config) => {
     return config.enabled === 1 && config.marginMode === marginMode.value
-  })
-  return configs.find((config) => config.isDefault === 1) || configs[0] || null
+  }) || null
 })
 const configuredLeverageValues = computed(() => {
   const values = (tradeSymbolDetail.value?.leverageConfigs || [])
     .filter((config) => config.enabled === 1 && config.marginMode === marginMode.value)
-    .map((config) => config.leverage)
+    .flatMap((config) => config.leverageValues || [])
   return Array.from(
     new Set(values.map(Number).filter((value) => Number.isFinite(value) && value > 0)),
   ).sort((left, right) => left - right)
@@ -384,7 +383,7 @@ function defaultTradeLeverage() {
   return clampLeverage(
     userLeverageConfig.value?.longLeverage ||
       userLeverageConfig.value?.shortLeverage ||
-      activeLeverageConfig.value?.leverage ||
+      activeLeverageConfig.value?.defaultLeverage ||
       tradeLeverageValues.value[0] ||
       1,
   )

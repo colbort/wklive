@@ -558,16 +558,16 @@ CREATE TABLE `t_trade_symbol_leverage_config` (
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID，对应t_trade_symbol.id',
   `margin_mode` TINYINT NOT NULL COMMENT '保证金模式：1全仓 2逐仓',
-  `leverage` INT NOT NULL COMMENT '单个可选杠杆倍数',
+  `leverage_values` JSON NOT NULL COMMENT '可选杠杆倍数列表，如[1,2,5,10]',
   `enabled` TINYINT NOT NULL DEFAULT 1 COMMENT '启用开关：1启用 2禁用',
   `sort` INT NOT NULL DEFAULT 0 COMMENT '排序值，越小越靠前',
   `remark` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '备注',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间，毫秒时间戳',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间，毫秒时间戳',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_symbol_margin_leverage` (`tenant_id`, `symbol_id`, `margin_mode`, `leverage`),
+  UNIQUE KEY `uk_tenant_symbol_margin_mode` (`tenant_id`, `symbol_id`, `margin_mode`),
   KEY `idx_tenant_symbol_margin_enabled` (`tenant_id`, `symbol_id`, `margin_mode`, `enabled`),
-  CONSTRAINT `chk_symbol_leverage` CHECK (`margin_mode` IN (1, 2) AND `leverage` > 0 AND `enabled` IN (1, 2))
+  CONSTRAINT `chk_symbol_leverage` CHECK (`margin_mode` IN (1, 2) AND JSON_LENGTH(`leverage_values`) > 0 AND `enabled` IN (1, 2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易对杠杆档位配置表';
 
 DROP TABLE IF EXISTS `t_trade_symbol_leverage_default`;

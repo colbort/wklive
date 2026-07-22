@@ -46,12 +46,12 @@
         <el-table-column prop="tenantId" :label="t('trade.tenantId')" width="100" />
 
         <el-table-column min-width="190" show-overflow-tooltip>
-          <template #header>
-            {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }}
-          </template>
+          <template #header> {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }} </template>
           <template #default="{ row }">
             <div class="symbol-cell">
-              <span class="symbol-code">{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span>
+              <span class="symbol-code"
+                >{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span
+              >
             </div>
           </template>
         </el-table-column>
@@ -120,19 +120,9 @@
             {{ row.sort || 0 }}
           </template>
         </el-table-column>
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="260"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button
-              v-perm="'trade:symbol:detail'"
-              link
-              type="primary"
-              @click="showDetail(row)"
-            >
+            <el-button v-perm="'trade:symbol:detail'" link type="primary" @click="showDetail(row)">
               {{ t('option.detail') }}
             </el-button>
             <el-button
@@ -349,6 +339,7 @@
               v-model="symbolOpenTime"
               type="datetime"
               clearable
+              :disabled-date="disableTradingStartDate"
               class="full-width"
             />
           </el-form-item>
@@ -358,17 +349,13 @@
               v-model="symbolCloseTime"
               type="datetime"
               clearable
+              :disabled-date="disableTradingEndDate"
               class="full-width"
             />
           </el-form-item>
 
           <el-form-item :label="t('common.sort')">
-            <el-input-number
-              v-model="symbolForm.sort"
-              :min="0"
-              :precision="0"
-              class="full-width"
-            />
+            <el-input-number v-model="symbolForm.sort" :min="0" :precision="0" class="full-width" />
           </el-form-item>
 
           <el-form-item :label="t('common.remark')" class="wide">
@@ -421,22 +408,13 @@
             <el-input v-model="secondsForm.feeRate" />
           </el-form-item>
           <el-form-item :label="t('trade.drawRule')">
-            <el-input-number
-              v-model="secondsForm.drawRule"
-              :min="1"
-              :max="2"
-              class="full-width"
-            />
+            <el-input-number v-model="secondsForm.drawRule" :min="1" :max="2" class="full-width" />
           </el-form-item>
           <el-form-item :label="t('trade.quoteValidityMs')">
             <el-input-number v-model="secondsForm.quoteValidityMs" :min="1" class="full-width" />
           </el-form-item>
           <el-form-item :label="t('trade.settlementWindowMs')">
-            <el-input-number
-              v-model="secondsForm.settlementWindowMs"
-              :min="1"
-              class="full-width"
-            />
+            <el-input-number v-model="secondsForm.settlementWindowMs" :min="1" class="full-width" />
           </el-form-item>
           <el-form-item :label="t('trade.startPriceSource')">
             <el-input v-model="secondsForm.startPriceSource" />
@@ -484,11 +462,7 @@
 
       <div class="dialog-subheader">
         <strong>{{ secondsSymbol?.displaySymbol || secondsSymbol?.symbol || '-' }}</strong>
-        <el-button
-          v-perm="'trade:symbol:seconds-config'"
-          size="small"
-          @click="newSecondsConfig"
-        >
+        <el-button v-perm="'trade:symbol:seconds-config'" size="small" @click="newSecondsConfig">
           <el-icon><Plus /></el-icon>
           {{ t('common.add') }}
         </el-button>
@@ -499,9 +473,7 @@
         <el-table-column prop="payoutRate" :label="t('trade.payoutRate')" width="110" />
         <el-table-column prop="feeRate" :label="t('trade.secondsFeeRate')" width="110" />
         <el-table-column :label="t('trade.stakeRange')" min-width="150">
-          <template #default="{ row }">
-            {{ row.minStake }} - {{ row.maxStake }}
-          </template>
+          <template #default="{ row }"> {{ row.minStake }} - {{ row.maxStake }} </template>
         </el-table-column>
         <el-table-column :label="t('trade.directionStatus')" min-width="150">
           <template #default="{ row }">
@@ -626,7 +598,9 @@
 
           <el-form-item :label="t('trade.contractSize')">
             <el-input v-model="contractForm.contractSize">
-              <template #append>{{ contractSizeUnit }}</template>
+              <template #append>
+                {{ contractSizeUnit }}
+              </template>
             </el-input>
           </el-form-item>
 
@@ -688,6 +662,7 @@
               v-model="contractDeliveryTime"
               type="datetime"
               clearable
+              :disabled-date="disableDeliveryDate"
               class="full-width"
             />
           </el-form-item>
@@ -697,6 +672,7 @@
               v-model="contractOpenCutoffTime"
               type="datetime"
               clearable
+              :disabled-date="disableOpenCutoffDate"
               class="full-width"
             />
           </el-form-item>
@@ -706,6 +682,7 @@
               v-model="contractMatchingStopTime"
               type="datetime"
               clearable
+              :disabled-date="disableMatchingStopDate"
               class="full-width"
             />
           </el-form-item>
@@ -826,7 +803,7 @@
           <el-form-item :label="t('trade.marginMode')">
             <el-select v-model="leverageForm.marginMode" class="full-width">
               <el-option
-                v-for="item in marginModeFormOptions"
+                v-for="item in availableLeverageMarginModeOptions"
                 :key="item.value"
                 :label="optionItemLabel(item)"
                 :value="item.value"
@@ -901,12 +878,7 @@
         </el-button>
       </div>
 
-      <el-table
-        :data="leverageGroups"
-        size="small"
-        border
-        class="leverage-table"
-      >
+      <el-table :data="leverageGroups" size="small" border class="leverage-table">
         <el-table-column :label="t('trade.marginMode')" width="130">
           <template #default="{ row }">
             {{ optionLabel('marginMode', row.marginMode) }}
@@ -918,9 +890,7 @@
           </template>
         </el-table-column>
         <el-table-column :label="t('trade.defaultLeverage')" width="130">
-          <template #default="{ row }">
-            {{ row.defaultLeverage }}X
-          </template>
+          <template #default="{ row }"> {{ row.defaultLeverage }}X </template>
         </el-table-column>
         <el-table-column :label="t('trade.maxLeverage')" width="120">
           <template #default="{ row }">
@@ -1070,6 +1040,7 @@ import {
   type OptionGroup,
   type OptionItem,
   type TradeSymbol,
+  type TradeSymbolContract,
   type TradeSymbolLeverageConfig,
   type TradeSymbolSeconds,
 } from '@/services'
@@ -1205,6 +1176,7 @@ const secondsVisible = ref(false)
 const leverageVisible = ref(false)
 const optionGroups = ref<OptionGroup[]>([])
 const leverageSymbol = ref<TradeSymbol | null>(null)
+const leverageContractConfig = ref<TradeSymbolContract | null>(null)
 const contractSymbol = ref<TradeSymbol | null>(null)
 const secondsSymbol = ref<TradeSymbol | null>(null)
 const secondsRows = ref<TradeSymbolSeconds[]>([])
@@ -1306,31 +1278,31 @@ const getDefaultSpotForm = (): SpotForm => ({
   sellEnabled: 1,
 })
 
-const getDefaultContractForm = (): ContractForm => ({
+const getDefaultContractForm = (row?: TradeSymbol | null): ContractForm => ({
   tenantId: 0,
   symbolId: 0,
-  contractSize: '',
-  multiplier: '',
-  maintenanceMarginRate: '',
-  initialMarginRate: '',
-  makerFeeRate: '',
-  takerFeeRate: '',
-  fundingIntervalMinutes: 0,
+  contractSize: row?.contractValueType === 2 ? '100' : '1',
+  multiplier: '1',
+  maintenanceMarginRate: '0.005',
+  initialMarginRate: '0.01',
+  makerFeeRate: '0.0002',
+  takerFeeRate: '0.0005',
+  fundingIntervalMinutes: row?.contractType === 1 ? 480 : 0,
   deliveryTime: 0,
-  supportCross: 1,
+  supportCross: 0,
   supportIsolated: 1,
-  fundingRateCap: '',
-  fundingRateFloor: '',
-  fundingRateSource: '',
-  indexSymbol: '',
-  markPriceSource: '',
-  settlementPriceSource: '',
+  fundingRateCap: row?.contractType === 1 ? '0.003' : '0',
+  fundingRateFloor: row?.contractType === 1 ? '-0.003' : '0',
+  fundingRateSource: row?.contractType === 1 ? 'funding-v1' : '',
+  indexSymbol: row?.symbol || '',
+  markPriceSource: row?.symbol || '',
+  settlementPriceSource: row?.contractType === 2 ? row.symbol : '',
   openCutoffTime: 0,
   matchingStopTime: 0,
-  settlementWindowSeconds: 0,
+  settlementWindowSeconds: row?.contractType === 2 ? 60 : 0,
   settlementPriceAlgorithm: 'last-v1',
-  deliveryFeeRate: '0',
-  liquidationFeeRate: '0',
+  deliveryFeeRate: row?.contractType === 2 ? '0.0005' : '0',
+  liquidationFeeRate: '0.005',
   openLongEnabled: 1,
   openShortEnabled: 1,
   closeLongEnabled: 1,
@@ -1468,6 +1440,9 @@ const contractMarketValues = computed(() => {
   return values.length ? values : [2]
 })
 const crossMarginModeValue = computed(() => optionValueByCode('marginMode', 'MARGIN_MODE_CROSS', 1))
+const isolatedMarginModeValue = computed(() =>
+  optionValueByCode('marginMode', 'MARGIN_MODE_ISOLATED', 2),
+)
 const enabledStatusValue = computed(() =>
   optionValueByCode('enableStatus', 'ENABLE_STATUS_ENABLED', 1),
 )
@@ -1491,7 +1466,7 @@ const timestampToDate = (timestamp?: number) => {
   return new Date(timestamp < 1e12 ? timestamp * 1000 : timestamp)
 }
 
-const dateToUnixSeconds = (value: DatePickerValue) => {
+const dateToTimestamp = (value: DatePickerValue) => {
   if (!value) return 0
   const time =
     typeof value === 'number'
@@ -1501,50 +1476,160 @@ const dateToUnixSeconds = (value: DatePickerValue) => {
       : value instanceof Date
         ? value.getTime()
         : new Date(value).getTime()
-  return Number.isNaN(time) ? 0 : Math.floor(time / 1000)
+  return Number.isNaN(time) ? 0 : Math.floor(time)
 }
+
+const MINUTE_MILLISECONDS = 60 * 1000
+const DEFAULT_START_DELAY = 10 * MINUTE_MILLISECONDS
+const DEFAULT_TRADING_DURATION = 30 * MINUTE_MILLISECONDS
+const DEFAULT_OPEN_CUTOFF_ADVANCE = 30 * MINUTE_MILLISECONDS
+const DEFAULT_DELIVERY_DELAY = 10 * MINUTE_MILLISECONDS
+
+const dayStartMillis = (timestamp: number) => {
+  const date = timestampToDate(timestamp) || new Date(0)
+  date.setHours(0, 0, 0, 0)
+  return date.getTime()
+}
+
+const disabledBefore = (date: Date, timestamp: number) =>
+  timestamp > 0 && date.getTime() < dayStartMillis(timestamp)
+
+const disabledAfter = (date: Date, timestamp: number) => {
+  if (timestamp <= 0) return false
+  const end = timestampToDate(timestamp) || new Date(0)
+  end.setHours(23, 59, 59, 999)
+  return date.getTime() > end.getTime()
+}
+
+const disableTradingStartDate = (date: Date) => disabledBefore(date, symbolForm.listingTime)
+const disableTradingEndDate = (date: Date) => disabledBefore(date, symbolForm.tradingStartTime)
+const disableOpenCutoffDate = (date: Date) =>
+  disabledBefore(date, contractSymbol.value?.tradingStartTime || 0) ||
+  disabledAfter(date, contractForm.matchingStopTime || contractForm.deliveryTime)
+const disableMatchingStopDate = (date: Date) =>
+  disabledBefore(
+    date,
+    contractForm.openCutoffTime || contractSymbol.value?.tradingStartTime || 0,
+  ) || disabledAfter(date, contractForm.deliveryTime)
+const disableDeliveryDate = (date: Date) =>
+  disabledBefore(date, contractForm.matchingStopTime || contractSymbol.value?.tradingEndTime || 0)
 
 const symbolOpenTime = computed({
   get: () => timestampToDate(symbolForm.tradingStartTime),
   set: (value: DatePickerValue) => {
-    symbolForm.tradingStartTime = dateToUnixSeconds(value)
+    const selected = dateToTimestamp(value)
+    if (!selected) {
+      symbolForm.tradingStartTime = 0
+      return
+    }
+    symbolForm.tradingStartTime = Math.max(
+      selected,
+      symbolForm.listingTime ? symbolForm.listingTime + MINUTE_MILLISECONDS : selected,
+    )
+    if (symbolForm.tradingEndTime <= symbolForm.tradingStartTime) {
+      symbolForm.tradingEndTime = symbolForm.tradingStartTime + DEFAULT_TRADING_DURATION
+    }
   },
 })
 
 const symbolListingTime = computed({
   get: () => timestampToDate(symbolForm.listingTime),
   set: (value: DatePickerValue) => {
-    symbolForm.listingTime = dateToUnixSeconds(value)
+    symbolForm.listingTime = dateToTimestamp(value)
+    if (!symbolForm.listingTime) return
+    if (symbolForm.tradingStartTime <= symbolForm.listingTime) {
+      symbolForm.tradingStartTime = symbolForm.listingTime + DEFAULT_START_DELAY
+    }
+    if (symbolForm.tradingEndTime <= symbolForm.tradingStartTime) {
+      symbolForm.tradingEndTime = symbolForm.tradingStartTime + DEFAULT_TRADING_DURATION
+    }
   },
 })
 
 const symbolCloseTime = computed({
   get: () => timestampToDate(symbolForm.tradingEndTime),
   set: (value: DatePickerValue) => {
-    symbolForm.tradingEndTime = dateToUnixSeconds(value)
+    const selected = dateToTimestamp(value)
+    if (!selected) {
+      symbolForm.tradingEndTime = 0
+      return
+    }
+    symbolForm.tradingEndTime = Math.max(
+      selected,
+      symbolForm.tradingStartTime ? symbolForm.tradingStartTime + MINUTE_MILLISECONDS : selected,
+    )
   },
 })
 
 const contractDeliveryTime = computed({
   get: () => timestampToDate(contractForm.deliveryTime),
   set: (value: DatePickerValue) => {
-    contractForm.deliveryTime = dateToUnixSeconds(value)
+    const selected = dateToTimestamp(value)
+    contractForm.deliveryTime = selected
+      ? Math.max(
+          selected,
+          contractForm.matchingStopTime
+            ? contractForm.matchingStopTime + MINUTE_MILLISECONDS
+            : selected,
+        )
+      : 0
   },
 })
 
 const contractOpenCutoffTime = computed({
   get: () => timestampToDate(contractForm.openCutoffTime),
   set: (value: DatePickerValue) => {
-    contractForm.openCutoffTime = dateToUnixSeconds(value)
+    const selected = dateToTimestamp(value)
+    const tradingStart = contractSymbol.value?.tradingStartTime || 0
+    contractForm.openCutoffTime = selected
+      ? Math.max(selected, tradingStart ? tradingStart + MINUTE_MILLISECONDS : selected)
+      : 0
+    if (
+      contractForm.openCutoffTime &&
+      contractForm.matchingStopTime <= contractForm.openCutoffTime
+    ) {
+      contractForm.matchingStopTime = contractForm.openCutoffTime + DEFAULT_DELIVERY_DELAY
+    }
+    if (
+      contractForm.matchingStopTime &&
+      contractForm.deliveryTime <= contractForm.matchingStopTime
+    ) {
+      contractForm.deliveryTime = contractForm.matchingStopTime + DEFAULT_DELIVERY_DELAY
+    }
   },
 })
 
 const contractMatchingStopTime = computed({
   get: () => timestampToDate(contractForm.matchingStopTime),
   set: (value: DatePickerValue) => {
-    contractForm.matchingStopTime = dateToUnixSeconds(value)
+    const selected = dateToTimestamp(value)
+    const minimum = contractForm.openCutoffTime || contractSymbol.value?.tradingStartTime || 0
+    contractForm.matchingStopTime = selected
+      ? Math.max(selected, minimum ? minimum + MINUTE_MILLISECONDS : selected)
+      : 0
+    if (
+      contractForm.matchingStopTime &&
+      contractForm.deliveryTime <= contractForm.matchingStopTime
+    ) {
+      contractForm.deliveryTime = contractForm.matchingStopTime + DEFAULT_DELIVERY_DELAY
+    }
   },
 })
+
+const applyDefaultDeliveryTimeline = () => {
+  const row = contractSymbol.value
+  if (!row?.tradingEndTime) return
+  const matchingStopTime = row.tradingEndTime
+  const openCutoffTime = Math.max(
+    row.tradingStartTime ? row.tradingStartTime + MINUTE_MILLISECONDS : 0,
+    matchingStopTime - DEFAULT_OPEN_CUTOFF_ADVANCE,
+  )
+  if (!contractForm.matchingStopTime) contractForm.matchingStopTime = matchingStopTime
+  if (!contractForm.openCutoffTime) contractForm.openCutoffTime = openCutoffTime
+  if (!contractForm.deliveryTime) {
+    contractForm.deliveryTime = matchingStopTime + DEFAULT_DELIVERY_DELAY
+  }
+}
 
 const optionItemLabel = (item: OptionItem) => getOptionLabel(t, item.code, item.value)
 
@@ -1586,13 +1671,8 @@ const applyLeverageForm = (config: LeverageForm | TradeSymbolLeverageConfig) => 
     tenantId: config.tenantId,
     symbolId: config.symbolId,
     marginMode: config.marginMode,
-    leverageValues: 'leverageValues' in config ? [...config.leverageValues] : [config.leverage],
-    defaultLeverage:
-      'defaultLeverage' in config
-        ? config.defaultLeverage
-        : config.isDefault === 1
-          ? config.leverage
-          : leverageForm.defaultLeverage,
+    leverageValues: [...config.leverageValues],
+    defaultLeverage: config.defaultLeverage,
     enabled: config.enabled,
     sort: config.sort,
     remark: config.remark || '',
@@ -1642,6 +1722,30 @@ const openSymbolDialog = (row?: TradeSymbol) => {
 }
 
 const submitSymbol = async () => {
+  if (
+    symbolForm.listingTime > 0 &&
+    symbolForm.tradingStartTime > 0 &&
+    symbolForm.tradingStartTime <= symbolForm.listingTime
+  ) {
+    ElMessage.warning('开始交易时间必须晚于上线时间')
+    return
+  }
+  if (
+    symbolForm.tradingStartTime > 0 &&
+    symbolForm.tradingEndTime > 0 &&
+    symbolForm.tradingEndTime <= symbolForm.tradingStartTime
+  ) {
+    ElMessage.warning('停止交易时间必须晚于开始交易时间')
+    return
+  }
+  if (
+    symbolForm.productType === 2 &&
+    symbolForm.contractType === deliveryContractTypeValue.value &&
+    (!symbolForm.listingTime || !symbolForm.tradingStartTime || !symbolForm.tradingEndTime)
+  ) {
+    ElMessage.warning('交割合约必须配置上线、开始交易和停止交易时间')
+    return
+  }
   submitLoading.value = true
   try {
     if (symbolForm.id) {
@@ -1690,7 +1794,7 @@ const submitSpotConfig = async () => {
 
 const openContractDialog = async (row: TradeSymbol) => {
   contractSymbol.value = row
-  Object.assign(contractForm, getDefaultContractForm(), {
+  Object.assign(contractForm, getDefaultContractForm(row), {
     tenantId: row.tenantId || 0,
     symbolId: row.id || 0,
   })
@@ -1728,6 +1832,7 @@ const openContractDialog = async (row: TradeSymbol) => {
       closeShortEnabled: contract.closeShortEnabled,
     })
   }
+  if (isDeliveryContract.value) applyDefaultDeliveryTimeline()
   contractVisible.value = true
 }
 
@@ -1746,6 +1851,35 @@ const submitContractConfig = async () => {
       deliveryFeeRate: '0',
     })
   } else if (isDeliveryContract.value) {
+    if (
+      !contractForm.openCutoffTime ||
+      !contractForm.matchingStopTime ||
+      !contractForm.deliveryTime
+    ) {
+      ElMessage.warning('交割合约必须配置停止开仓、停止撮合和交割时间')
+      return
+    }
+    if (
+      contractForm.openCutoffTime >= contractForm.matchingStopTime ||
+      contractForm.matchingStopTime >= contractForm.deliveryTime
+    ) {
+      ElMessage.warning('时间顺序必须是：停止开仓 < 停止撮合 < 交割')
+      return
+    }
+    if (
+      contractSymbol.value?.tradingStartTime &&
+      contractForm.openCutoffTime <= contractSymbol.value.tradingStartTime
+    ) {
+      ElMessage.warning('停止开仓时间不能早于交易对开始交易时间')
+      return
+    }
+    if (
+      contractSymbol.value?.tradingEndTime &&
+      contractForm.matchingStopTime > contractSymbol.value.tradingEndTime
+    ) {
+      ElMessage.warning('停止撮合时间不能晚于交易对停止交易时间')
+      return
+    }
     Object.assign(contractForm, {
       fundingIntervalMinutes: 0,
       fundingRateCap: '0',
@@ -1767,9 +1901,9 @@ const loadSecondsConfigs = async () => {
   const row = secondsSymbol.value
   if (!row) return
   const detail = await tradeService.getSymbol({ tenantId: row.tenantId, id: row.id })
-  secondsRows.value = (detail.data?.secondsConfigs || []).slice().sort(
-    (left, right) => left.durationSeconds - right.durationSeconds,
-  )
+  secondsRows.value = (detail.data?.secondsConfigs || [])
+    .slice()
+    .sort((left, right) => left.durationSeconds - right.durationSeconds)
 }
 
 const newSecondsConfig = () => {
@@ -1820,33 +1954,38 @@ const loadLeverageConfigs = async () => {
   leverageRows.value = res.data || []
 }
 
+const availableLeverageMarginModeOptions = computed(() =>
+  marginModeFormOptions.value.filter((item) => {
+    const value = Number(item.value)
+    if (value === crossMarginModeValue.value) {
+      return leverageContractConfig.value?.supportCross === 1
+    }
+    if (value === isolatedMarginModeValue.value) {
+      return leverageContractConfig.value?.supportIsolated === 1
+    }
+    return false
+  }),
+)
 const availableLeverageMarginModes = computed(() =>
-  marginModeFormOptions.value.map((item) => Number(item.value)).filter((value) => value > 0),
+  availableLeverageMarginModeOptions.value.map((item) => Number(item.value)),
 )
 const configuredLeverageMarginModes = computed(
   () => new Set(leverageRows.value.map((item) => Number(item.marginMode))),
 )
 const leverageGroups = computed<LeverageForm[]>(() => {
-  const groups = new Map<number, TradeSymbolLeverageConfig[]>()
-  leverageRows.value.forEach((item) => {
-    const rows = groups.get(item.marginMode) || []
-    rows.push(item)
-    groups.set(item.marginMode, rows)
-  })
-  return Array.from(groups.entries()).map(([marginMode, items]) => {
-    const values = items.map((item) => item.leverage).sort((a, b) => a - b)
-    const defaultItem = items.find((item) => item.isDefault === 1)
-    return {
-      tenantId: items[0]?.tenantId || 0,
-      symbolId: items[0]?.symbolId || 0,
-      marginMode,
-      leverageValues: values,
-      defaultLeverage: defaultItem?.leverage || values[0] || 1,
-      enabled: items.every((item) => item.enabled === 1) ? 1 : 2,
-      sort: Math.min(...items.map((item) => item.sort)),
-      remark: defaultItem?.remark || items[0]?.remark || '',
-    }
-  })
+  const supported = new Set(availableLeverageMarginModes.value)
+  return leverageRows.value
+    .filter((item) => supported.has(Number(item.marginMode)))
+    .map((item) => ({
+      tenantId: item.tenantId,
+      symbolId: item.symbolId,
+      marginMode: item.marginMode,
+      leverageValues: normalizeLeverageValues(item.leverageValues || []),
+      defaultLeverage: item.defaultLeverage || item.leverageValues?.[0] || 1,
+      enabled: item.enabled,
+      sort: item.sort,
+      remark: item.remark || '',
+    }))
 })
 const unusedLeverageMarginModes = computed(() =>
   availableLeverageMarginModes.value.filter(
@@ -1858,7 +1997,7 @@ const canAddLeverageConfig = computed(() => unusedLeverageMarginModes.value.leng
 const nextLeverageMarginMode = () =>
   unusedLeverageMarginModes.value[0] ||
   availableLeverageMarginModes.value[0] ||
-  crossMarginModeValue.value
+  isolatedMarginModeValue.value
 
 const newLeverageConfig = (marginMode = nextLeverageMarginMode()) => {
   applyLeverageForm({
@@ -1888,16 +2027,26 @@ const editLeverageConfig = (row: LeverageForm | TradeSymbolLeverageConfig) => {
 
 const openLeverageDialog = async (row: TradeSymbol) => {
   leverageSymbol.value = row
+  leverageContractConfig.value = null
   leverageRows.value = []
-  newLeverageConfig(crossMarginModeValue.value)
   leverageVisible.value = true
-  await loadLeverageConfigs()
+  const [detail] = await Promise.all([
+    tradeService.getSymbol({ tenantId: row.tenantId, id: row.id }),
+    loadLeverageConfigs(),
+  ])
+  leverageContractConfig.value = detail.data?.contract || null
   if (leverageGroups.value.length) {
     editLeverageConfig(leverageGroups.value[0])
+  } else {
+    newLeverageConfig()
   }
 }
 
 const submitLeverageConfig = async () => {
+  if (!availableLeverageMarginModes.value.includes(Number(leverageForm.marginMode))) {
+    ElMessage.warning('该合约不支持所选保证金模式，不能配置对应杠杆')
+    return
+  }
   const values = normalizeLeverageValues(leverageForm.leverageValues)
   if (!values.length) {
     ElMessage.warning(t('trade.leverageValuesRequired'))

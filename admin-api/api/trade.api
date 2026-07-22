@@ -223,7 +223,7 @@ type ContractPosition {
 	frozenQty         string `json:"frozenQty"`
 	openAvgPrice      string `json:"openAvgPrice"`
 	markPrice         string `json:"markPrice"`
-	markSnapshotId   string `json:"markSnapshotId"`
+	markSnapshotId    string `json:"markSnapshotId"`
 	marginAsset       string `json:"marginAsset"`
 	positionMargin    string `json:"positionMargin"`
 	isolatedMargin    string `json:"isolatedMargin"`
@@ -231,12 +231,12 @@ type ContractPosition {
 	realizedPnl       string `json:"realizedPnl"`
 	liquidationPrice  string `json:"liquidationPrice"`
 	maintenanceMargin string `json:"maintenanceMargin"`
-	bankruptcyPrice string `json:"bankruptcyPrice"`
-	riskRate string `json:"riskRate"`
-	status int64 `json:"status"`
+	bankruptcyPrice   string `json:"bankruptcyPrice"`
+	riskRate          string `json:"riskRate"`
+	status            int64  `json:"status"`
 	adlRank           int64  `json:"adlRank"`
-	lastFundingTime int64 `json:"lastFundingTime"`
-	closedAt int64 `json:"closedAt"`
+	lastFundingTime   int64  `json:"lastFundingTime"`
+	closedAt          int64  `json:"closedAt"`
 	version           int64  `json:"version"`
 	createTimes       int64  `json:"createTimes"`
 	updateTimes       int64  `json:"updateTimes"`
@@ -314,17 +314,17 @@ type ContractLeverageConfig {
 }
 
 type TradeSymbolLeverageConfig {
-	id          int64  `json:"id"`
-	tenantId    int64  `json:"tenantId"`
-	symbolId    int64  `json:"symbolId"`
-	marginMode  int64  `json:"marginMode"`
-	leverage    int64  `json:"leverage"`
-	isDefault   int64  `json:"isDefault"`
-	enabled     int64  `json:"enabled"`
-	sort        int64  `json:"sort"`
-	remark      string `json:"remark"`
-	createTimes int64  `json:"createTimes"`
-	updateTimes int64  `json:"updateTimes"`
+	id              int64   `json:"id"`
+	tenantId        int64   `json:"tenantId"`
+	symbolId        int64   `json:"symbolId"`
+	marginMode      int64   `json:"marginMode"`
+	leverageValues  []int64 `json:"leverageValues"`
+	defaultLeverage int64   `json:"defaultLeverage"`
+	enabled         int64   `json:"enabled"`
+	sort            int64   `json:"sort"`
+	remark          string  `json:"remark"`
+	createTimes     int64   `json:"createTimes"`
+	updateTimes     int64   `json:"updateTimes"`
 }
 
 type RiskUserTradeLimit {
@@ -402,31 +402,31 @@ type RiskOrderCheckLog {
 }
 
 type BizTradeEvent {
-	id            int64  `json:"id"`
-	tenantId      int64  `json:"tenantId"`
-	eventNo       string `json:"eventNo"`
-	eventType     string `json:"eventType"`
-	bizId         string `json:"bizId"`
-	bizType       string `json:"bizType"`
-	userId        int64  `json:"userId"`
-	symbolId      int64  `json:"symbolId"`
-	productType   int64  `json:"productType"`
-	operatorId    int64  `json:"operatorId"`
-	source        int64  `json:"source"`
-	eventStatus   int64  `json:"eventStatus"`
-	retryCount    int64  `json:"retryCount"`
-	maxRetryCount int64  `json:"maxRetryCount"`
-	nextRetryAt   int64  `json:"nextRetryAt"`
-	lastErrorMsg  string `json:"lastErrorMsg"`
-	payload       string `json:"payload"`
-	extData       string `json:"extData"`
-	createTimes   int64  `json:"createTimes"`
-	updateTimes   int64  `json:"updateTimes"`
-	consumer      string `json:"consumer"`
-	payloadVersion int64 `json:"payloadVersion"`
-	claimedBy     string `json:"claimedBy"`
-	claimedAt     int64  `json:"claimedAt"`
-	deliveredAt   int64  `json:"deliveredAt"`
+	id             int64  `json:"id"`
+	tenantId       int64  `json:"tenantId"`
+	eventNo        string `json:"eventNo"`
+	eventType      string `json:"eventType"`
+	bizId          string `json:"bizId"`
+	bizType        string `json:"bizType"`
+	userId         int64  `json:"userId"`
+	symbolId       int64  `json:"symbolId"`
+	productType    int64  `json:"productType"`
+	operatorId     int64  `json:"operatorId"`
+	source         int64  `json:"source"`
+	eventStatus    int64  `json:"eventStatus"`
+	retryCount     int64  `json:"retryCount"`
+	maxRetryCount  int64  `json:"maxRetryCount"`
+	nextRetryAt    int64  `json:"nextRetryAt"`
+	lastErrorMsg   string `json:"lastErrorMsg"`
+	payload        string `json:"payload"`
+	extData        string `json:"extData"`
+	createTimes    int64  `json:"createTimes"`
+	updateTimes    int64  `json:"updateTimes"`
+	consumer       string `json:"consumer"`
+	payloadVersion int64  `json:"payloadVersion"`
+	claimedBy      string `json:"claimedBy"`
+	claimedAt      int64  `json:"claimedAt"`
+	deliveredAt    int64  `json:"deliveredAt"`
 }
 
 type AdminCommonResp {
@@ -587,12 +587,12 @@ type SetSymbolSessionReq {
 }
 
 type SetSymbolLeverageConfigReq {
-	tenantId   int64  `json:"tenantId"`
-	symbolId   int64  `json:"symbolId"`
-	marginMode int64  `json:"marginMode"`
-	enabled    int64  `json:"enabled"`
-	sort       int64  `json:"sort"`
-	remark     string `json:"remark,optional"`
+	tenantId        int64   `json:"tenantId"`
+	symbolId        int64   `json:"symbolId"`
+	marginMode      int64   `json:"marginMode"`
+	enabled         int64   `json:"enabled"`
+	sort            int64   `json:"sort"`
+	remark          string  `json:"remark,optional"`
 	leverageValues  []int64 `json:"leverageValues"`
 	defaultLeverage int64   `json:"defaultLeverage"`
 }
@@ -993,63 +993,70 @@ type GetFundingBatchListResp {
 }
 
 type InsuranceFundAccount {
-	id int64 `json:"id"`
-	tenantId int64 `json:"tenantId"`
-	symbolId int64 `json:"symbolId"`
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	symbolId    int64  `json:"symbolId"`
 	settleAsset string `json:"settleAsset"`
-	adlEnabled int64 `json:"adlEnabled"`
-	status int64 `json:"status"`
-	version int64 `json:"version"`
-	createTimes int64 `json:"createTimes"`
-	updateTimes int64 `json:"updateTimes"`
+	adlEnabled  int64  `json:"adlEnabled"`
+	status      int64  `json:"status"`
+	version     int64  `json:"version"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
 }
+
 type SetInsuranceFundAccountReq {
-	id int64 `json:"id,optional"`
-	tenantId int64 `json:"tenantId"`
-	symbolId int64 `json:"symbolId,optional"`
+	id          int64  `json:"id,optional"`
+	tenantId    int64  `json:"tenantId"`
+	symbolId    int64  `json:"symbolId,optional"`
 	settleAsset string `json:"settleAsset"`
-	adlEnabled int64 `json:"adlEnabled"`
-	status int64 `json:"status"`
-	version int64 `json:"version,optional"`
+	adlEnabled  int64  `json:"adlEnabled"`
+	status      int64  `json:"status"`
+	version     int64  `json:"version,optional"`
 }
+
 type GetInsuranceFundAccountListReq {
 	PageReq
-	tenantId int64 `form:"tenantId,optional"`
-	symbolId int64 `form:"symbolId,optional"`
+	tenantId    int64  `form:"tenantId,optional"`
+	symbolId    int64  `form:"symbolId,optional"`
 	settleAsset string `form:"settleAsset,optional"`
-	status int64 `form:"status,optional"`
+	status      int64  `form:"status,optional"`
 }
-type GetInsuranceFundAccountListResp { RespBase
+
+type GetInsuranceFundAccountListResp {
+	RespBase
 	data []InsuranceFundAccount `json:"data"`
 }
 
 type TradeMarketSnapshot {
-	id int64 `json:"id"`
-	snapshotId string `json:"snapshotId"`
-	snapshotKind string `json:"snapshotKind"`
-	symbolId int64 `json:"symbolId"`
-	source string `json:"source"`
-	price string `json:"price"`
-	markPrice string `json:"markPrice"`
-	indexPrice string `json:"indexPrice"`
-	fundingRate string `json:"fundingRate"`
-	sourceTimestamp int64 `json:"sourceTimestamp"`
-	snapshotTimestamp int64 `json:"snapshotTimestamp"`
-	revision int64 `json:"revision"`
-	formulaVersion string `json:"formulaVersion"`
-	confirmed int64 `json:"confirmed"`
-	rawPayload string `json:"rawPayload"`
-	createTimes int64 `json:"createTimes"`
+	id                int64  `json:"id"`
+	snapshotId        string `json:"snapshotId"`
+	snapshotKind      string `json:"snapshotKind"`
+	symbolId          int64  `json:"symbolId"`
+	source            string `json:"source"`
+	price             string `json:"price"`
+	markPrice         string `json:"markPrice"`
+	indexPrice        string `json:"indexPrice"`
+	fundingRate       string `json:"fundingRate"`
+	sourceTimestamp   int64  `json:"sourceTimestamp"`
+	snapshotTimestamp int64  `json:"snapshotTimestamp"`
+	revision          int64  `json:"revision"`
+	formulaVersion    string `json:"formulaVersion"`
+	confirmed         int64  `json:"confirmed"`
+	rawPayload        string `json:"rawPayload"`
+	createTimes       int64  `json:"createTimes"`
 }
+
 type GetMarketSnapshotListReq {
 	PageReq
-	tenantId int64 `form:"tenantId,optional"`
-	symbolId int64 `form:"symbolId,optional"`
+	tenantId     int64  `form:"tenantId,optional"`
+	symbolId     int64  `form:"symbolId,optional"`
 	snapshotKind string `form:"snapshotKind,optional"`
-	startTime int64 `form:"startTime,optional"`
-	endTime int64 `form:"endTime,optional"`
+	startTime    int64  `form:"startTime,optional"`
+	endTime      int64  `form:"endTime,optional"`
 }
-type GetMarketSnapshotListResp { RespBase
+
+type GetMarketSnapshotListResp {
+	RespBase
 	data []TradeMarketSnapshot `json:"data"`
 }
 
@@ -1169,7 +1176,7 @@ type ContractLiquidation {
 	positionSide        int64  `json:"positionSide"`
 	marginMode          int64  `json:"marginMode"`
 	triggerMarkPrice    string `json:"triggerMarkPrice"`
-	triggerSnapshotId  string `json:"triggerSnapshotId"`
+	triggerSnapshotId   string `json:"triggerSnapshotId"`
 	triggerIndexPrice   string `json:"triggerIndexPrice"`
 	triggerQty          string `json:"triggerQty"`
 	liquidatedQty       string `json:"liquidatedQty"`
@@ -1443,8 +1450,11 @@ service admin {
 
 	@handler SetInsuranceFundAccount
 	post /insurance-fund/accounts (SetInsuranceFundAccountReq) returns (AdminCommonResp)
+
 	@handler GetInsuranceFundAccountList
 	get /insurance-fund/accounts (GetInsuranceFundAccountListReq) returns (GetInsuranceFundAccountListResp)
+
 	@handler GetMarketSnapshotList
 	get /market-snapshots (GetMarketSnapshotListReq) returns (GetMarketSnapshotListResp)
 }
+

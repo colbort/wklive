@@ -240,8 +240,8 @@ export interface TradeSymbolLeverageConfig {
   tenantId: number
   symbolId: number
   marginMode: number
-  leverage: number
-  isDefault: number
+  leverageValues: number[]
+  defaultLeverage: number
   enabled: number
   sort: number
   remark: string

@@ -166,8 +166,7 @@ type SetDefaultBankReq {
 	id int64 `path:"id"`
 }
 
-type CreateGuestTransferReq {
-}
+type CreateGuestTransferReq {}
 
 type CreateGuestTransferData {
 	code        string `json:"code"`
@@ -263,3 +262,4 @@ service app {
 	@handler SetDefaultBank
 	put /banks/:id/default (SetDefaultBankReq) returns (RespBase)
 }
+

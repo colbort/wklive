@@ -307,3 +307,4 @@ service app {
 	@handler TickWsHandler
 	get /ws/:id (WsItickReq)
 }
+

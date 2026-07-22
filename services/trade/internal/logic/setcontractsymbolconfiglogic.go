@@ -43,6 +43,12 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 	} else if base != nil {
 		return &trade.AdminCommonResp{Base: base}, nil
 	}
+	if err := validateContractTradingTimeline(symbol, in.DeliveryTime, in.OpenCutoffTime, in.MatchingStopTime); err != nil {
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
+	}
+	if err := validateContractMarginModes(in.SupportCross, in.SupportIsolated); err != nil {
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
+	}
 	now := utils.NowMillis()
 	cfg, err := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -92,6 +98,16 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 		}
 	} else if err = l.svcCtx.TradeSymbolContractModel.Update(l.ctx, cfg); err != nil {
 		return nil, err
+	}
+	if in.SupportCross == 0 {
+		if err := l.svcCtx.SymbolLeverageCfgModel.DisableGroup(l.ctx, symbol.TenantId, symbol.Id, int64(trade.MarginMode_MARGIN_MODE_CROSS), now); err != nil {
+			return nil, err
+		}
+	}
+	if in.SupportIsolated == 0 {
+		if err := l.svcCtx.SymbolLeverageCfgModel.DisableGroup(l.ctx, symbol.TenantId, symbol.Id, int64(trade.MarginMode_MARGIN_MODE_ISOLATED), now); err != nil {
+			return nil, err
+		}
 	}
 
 	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil

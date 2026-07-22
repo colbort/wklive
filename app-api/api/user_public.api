@@ -125,3 +125,4 @@ service app {
 	@handler RefreshToken
 	post /refresh-token (RefreshTokenReq) returns (RefreshTokenResp)
 }
+

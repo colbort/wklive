@@ -1944,17 +1944,17 @@ type TradeSymbolContract struct {
 }
 
 type TradeSymbolLeverageConfig struct {
-	Id          int64  `json:"id"`
-	TenantId    int64  `json:"tenantId"`
-	SymbolId    int64  `json:"symbolId"`
-	MarginMode  int64  `json:"marginMode"`
-	Leverage    int64  `json:"leverage"`
-	IsDefault   int64  `json:"isDefault"`
-	Enabled     int64  `json:"enabled"`
-	Sort        int64  `json:"sort"`
-	Remark      string `json:"remark"`
-	CreateTimes int64  `json:"createTimes"`
-	UpdateTimes int64  `json:"updateTimes"`
+	Id              int64   `json:"id"`
+	TenantId        int64   `json:"tenantId"`
+	SymbolId        int64   `json:"symbolId"`
+	MarginMode      int64   `json:"marginMode"`
+	LeverageValues  []int64 `json:"leverageValues"`
+	DefaultLeverage int64   `json:"defaultLeverage"`
+	Enabled         int64   `json:"enabled"`
+	Sort            int64   `json:"sort"`
+	Remark          string  `json:"remark"`
+	CreateTimes     int64   `json:"createTimes"`
+	UpdateTimes     int64   `json:"updateTimes"`
 }
 
 type TradeSymbolSeconds struct {

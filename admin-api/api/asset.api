@@ -343,41 +343,45 @@ type AdminChangeAssetResp {
 }
 
 type PlatformAccount {
-	id int64 `json:"id"`
-	tenantId int64 `json:"tenantId"`
-	accountType string `json:"accountType"`
-	coin string `json:"coin"`
+	id              int64  `json:"id"`
+	tenantId        int64  `json:"tenantId"`
+	accountType     string `json:"accountType"`
+	coin            string `json:"coin"`
 	availableAmount string `json:"availableAmount"`
-	frozenAmount string `json:"frozenAmount"`
-	status int64 `json:"status"`
-	version int64 `json:"version"`
-	createTimes int64 `json:"createTimes"`
-	updateTimes int64 `json:"updateTimes"`
+	frozenAmount    string `json:"frozenAmount"`
+	status          int64  `json:"status"`
+	version         int64  `json:"version"`
+	createTimes     int64  `json:"createTimes"`
+	updateTimes     int64  `json:"updateTimes"`
 }
+
 type PlatformAccountResp {
 	RespBase
 	data PlatformAccount `json:"data"`
 }
+
 type SetPlatformAccountReq {
-	tenantId int64 `json:"tenantId"`
+	tenantId    int64  `json:"tenantId"`
 	accountType string `json:"accountType"`
-	coin string `json:"coin"`
-	status int64 `json:"status"`
-	version int64 `json:"version,optional"`
+	coin        string `json:"coin"`
+	status      int64  `json:"status"`
+	version     int64  `json:"version,optional"`
 }
+
 type GetPlatformAccountReq {
-	tenantId int64 `form:"tenantId"`
+	tenantId    int64  `form:"tenantId"`
 	accountType string `form:"accountType"`
-	coin string `form:"coin"`
+	coin        string `form:"coin"`
 }
+
 type AdjustPlatformAccountReq {
-	tenantId int64 `json:"tenantId"`
+	tenantId    int64  `json:"tenantId"`
 	accountType string `json:"accountType"`
-	coin string `json:"coin"`
-	requestNo string `json:"requestNo"`
-	direction int64 `json:"direction"`
-	amount string `json:"amount"`
-	remark string `json:"remark,optional"`
+	coin        string `json:"coin"`
+	requestNo   string `json:"requestNo"`
+	direction   int64  `json:"direction"`
+	amount      string `json:"amount"`
+	remark      string `json:"remark,optional"`
 }
 
 @server (
@@ -443,3 +447,4 @@ service admin {
 	@handler AdjustPlatformAccount
 	post /platform-accounts/adjust (AdjustPlatformAccountReq) returns (PlatformAccountResp)
 }
+

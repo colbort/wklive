@@ -2,9 +2,12 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+
 	"wklive/common/sqlutil"
 )
 
@@ -22,6 +25,7 @@ type (
 		tTradeSymbolLeverageConfigModel
 		FindPage(ctx context.Context, filter TradeSymbolLeverageConfigPageFilter, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error)
 		SyncGroup(ctx context.Context, tenantId, symbolId, marginMode int64, leverageValues []int64, defaultLeverage, enabled, sort int64, remark string, now int64) error
+		DisableGroup(ctx context.Context, tenantId, symbolId, marginMode, now int64) error
 	}
 
 	customTTradeSymbolLeverageConfigModel struct {
@@ -29,23 +33,53 @@ type (
 	}
 )
 
+func (m *customTTradeSymbolLeverageConfigModel) DisableGroup(ctx context.Context, tenantId, symbolId, marginMode, now int64) error {
+	var rows []*TTradeSymbolLeverageConfig
+	var defaultIds []int64
+	err := m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
+		if err := session.QueryRowsCtx(ctx, &rows, "select "+tTradeSymbolLeverageConfigRows+" from `t_trade_symbol_leverage_config` where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", tenantId, symbolId, marginMode); err != nil {
+			return err
+		}
+		if err := session.QueryRowsCtx(ctx, &defaultIds, "select `id` from `t_trade_symbol_leverage_default` where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", tenantId, symbolId, marginMode); err != nil {
+			return err
+		}
+		if _, err := session.ExecCtx(ctx, "update `t_trade_symbol_leverage_config` set `enabled` = 2, `update_times` = ? where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", now, tenantId, symbolId, marginMode); err != nil {
+			return err
+		}
+		_, err := session.ExecCtx(ctx, "delete from `t_trade_symbol_leverage_default` where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", tenantId, symbolId, marginMode)
+		return err
+	})
+	if err != nil {
+		return err
+	}
+	keys := make([]string, 0, len(rows)+len(defaultIds)+2)
+	for _, row := range rows {
+		keys = append(keys, fmt.Sprintf("%s%v", cacheTTradeSymbolLeverageConfigIdPrefix, row.Id))
+	}
+	keys = append(keys, fmt.Sprintf("%s%v:%v:%v", cacheTTradeSymbolLeverageConfigTenantIdSymbolIdMarginModePrefix, tenantId, symbolId, marginMode))
+	for _, id := range defaultIds {
+		keys = append(keys, fmt.Sprintf("%s%v", cacheTTradeSymbolLeverageDefaultIdPrefix, id))
+	}
+	keys = append(keys, fmt.Sprintf("%s%v:%v:%v", cacheTTradeSymbolLeverageDefaultTenantIdSymbolIdMarginModePrefix, tenantId, symbolId, marginMode))
+	return m.DelCacheCtx(ctx, keys...)
+}
+
 func (m *customTTradeSymbolLeverageConfigModel) SyncGroup(ctx context.Context, tenantId, symbolId, marginMode int64, leverageValues []int64, defaultLeverage, enabled, sort int64, remark string, now int64) error {
 	var oldRows []*TTradeSymbolLeverageConfig
 	var oldDefaultIds []int64
-	err := m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
+	encodedValues, err := json.Marshal(leverageValues)
+	if err != nil {
+		return err
+	}
+	err = m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
 		if err := session.QueryRowsCtx(ctx, &oldRows, "select "+tTradeSymbolLeverageConfigRows+" from `t_trade_symbol_leverage_config` where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", tenantId, symbolId, marginMode); err != nil {
 			return err
 		}
 		if err := session.QueryRowsCtx(ctx, &oldDefaultIds, "select `id` from `t_trade_symbol_leverage_default` where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", tenantId, symbolId, marginMode); err != nil {
 			return err
 		}
-		if _, err := session.ExecCtx(ctx, "delete from `t_trade_symbol_leverage_config` where `tenant_id` = ? and `symbol_id` = ? and `margin_mode` = ?", tenantId, symbolId, marginMode); err != nil {
+		if _, err := session.ExecCtx(ctx, "insert into `t_trade_symbol_leverage_config` (`tenant_id`, `symbol_id`, `margin_mode`, `leverage_values`, `enabled`, `sort`, `remark`, `create_times`, `update_times`) values (?, ?, ?, ?, ?, ?, ?, ?, ?) on duplicate key update `leverage_values` = values(`leverage_values`), `enabled` = values(`enabled`), `sort` = values(`sort`), `remark` = values(`remark`), `update_times` = values(`update_times`)", tenantId, symbolId, marginMode, string(encodedValues), enabled, sort, remark, now, now); err != nil {
 			return err
-		}
-		for index, leverage := range leverageValues {
-			if _, err := session.ExecCtx(ctx, "insert into `t_trade_symbol_leverage_config` (`tenant_id`, `symbol_id`, `margin_mode`, `leverage`, `enabled`, `sort`, `remark`, `create_times`, `update_times`) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", tenantId, symbolId, marginMode, leverage, enabled, sort+int64(index), remark, now, now); err != nil {
-				return err
-			}
 		}
 		if enabled == 1 {
 			_, err := session.ExecCtx(ctx, "insert into `t_trade_symbol_leverage_default` (`tenant_id`, `symbol_id`, `margin_mode`, `leverage`, `create_times`, `update_times`) values (?, ?, ?, ?, ?, ?) on duplicate key update `leverage` = values(`leverage`), `update_times` = values(`update_times`)", tenantId, symbolId, marginMode, defaultLeverage, now, now)
@@ -58,16 +92,11 @@ func (m *customTTradeSymbolLeverageConfigModel) SyncGroup(ctx context.Context, t
 		return err
 	}
 
-	keys := make([]string, 0, len(oldRows)*2+len(leverageValues)+len(oldDefaultIds)+1)
+	keys := make([]string, 0, len(oldRows)+len(oldDefaultIds)+2)
 	for _, row := range oldRows {
-		keys = append(keys,
-			fmt.Sprintf("%s%v", cacheTTradeSymbolLeverageConfigIdPrefix, row.Id),
-			fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeSymbolLeverageConfigTenantIdSymbolIdMarginModeLeveragePrefix, tenantId, symbolId, marginMode, row.Leverage),
-		)
+		keys = append(keys, fmt.Sprintf("%s%v", cacheTTradeSymbolLeverageConfigIdPrefix, row.Id))
 	}
-	for _, leverage := range leverageValues {
-		keys = append(keys, fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeSymbolLeverageConfigTenantIdSymbolIdMarginModeLeveragePrefix, tenantId, symbolId, marginMode, leverage))
-	}
+	keys = append(keys, fmt.Sprintf("%s%v:%v:%v", cacheTTradeSymbolLeverageConfigTenantIdSymbolIdMarginModePrefix, tenantId, symbolId, marginMode))
 	for _, id := range oldDefaultIds {
 		keys = append(keys, fmt.Sprintf("%s%v", cacheTTradeSymbolLeverageDefaultIdPrefix, id))
 	}

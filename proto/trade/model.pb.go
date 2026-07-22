@@ -3595,20 +3595,20 @@ func (x *ContractLeverageConfig) GetUpdateTimes() int64 {
 }
 
 type TradeSymbolLeverageConfig struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	MarginMode    MarginMode             `protobuf:"varint,5,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
-	Leverage      int64                  `protobuf:"varint,6,opt,name=leverage,proto3" json:"leverage,omitempty"`
-	IsDefault     common.YesNo           `protobuf:"varint,7,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`
-	Enabled       common.Enable          `protobuf:"varint,9,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	Sort          int64                  `protobuf:"varint,10,opt,name=sort,proto3" json:"sort,omitempty"`
-	Remark        string                 `protobuf:"bytes,11,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes   int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	SymbolId        int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	MarginMode      MarginMode             `protobuf:"varint,5,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
+	Enabled         common.Enable          `protobuf:"varint,9,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
+	Sort            int64                  `protobuf:"varint,10,opt,name=sort,proto3" json:"sort,omitempty"`
+	Remark          string                 `protobuf:"bytes,11,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreateTimes     int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes     int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	LeverageValues  []int64                `protobuf:"varint,14,rep,packed,name=leverage_values,json=leverageValues,proto3" json:"leverage_values,omitempty"`
+	DefaultLeverage int64                  `protobuf:"varint,15,opt,name=default_leverage,json=defaultLeverage,proto3" json:"default_leverage,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *TradeSymbolLeverageConfig) Reset() {
@@ -3669,20 +3669,6 @@ func (x *TradeSymbolLeverageConfig) GetMarginMode() MarginMode {
 	return MarginMode_MARGIN_MODE_UNKNOWN
 }
 
-func (x *TradeSymbolLeverageConfig) GetLeverage() int64 {
-	if x != nil {
-		return x.Leverage
-	}
-	return 0
-}
-
-func (x *TradeSymbolLeverageConfig) GetIsDefault() common.YesNo {
-	if x != nil {
-		return x.IsDefault
-	}
-	return common.YesNo(0)
-}
-
 func (x *TradeSymbolLeverageConfig) GetEnabled() common.Enable {
 	if x != nil {
 		return x.Enabled
@@ -3714,6 +3700,20 @@ func (x *TradeSymbolLeverageConfig) GetCreateTimes() int64 {
 func (x *TradeSymbolLeverageConfig) GetUpdateTimes() int64 {
 	if x != nil {
 		return x.UpdateTimes
+	}
+	return 0
+}
+
+func (x *TradeSymbolLeverageConfig) GetLeverageValues() []int64 {
+	if x != nil {
+		return x.LeverageValues
+	}
+	return nil
+}
+
+func (x *TradeSymbolLeverageConfig) GetDefaultLeverage() int64 {
+	if x != nil {
+		return x.DefaultLeverage
 	}
 	return 0
 }
@@ -5004,22 +5004,21 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x06remark\x18\x0e \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x0f \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimesJ\x04\b\x05\x10\x06J\x04\b\a\x10\bJ\x04\b\n" +
-	"\x10\v\"\x8b\x03\n" +
+	"\x10\v\"\xa1\x03\n" +
 	"\x19TradeSymbolLeverageConfig\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x122\n" +
 	"\vmargin_mode\x18\x05 \x01(\x0e2\x11.trade.MarginModeR\n" +
-	"marginMode\x12\x1a\n" +
-	"\bleverage\x18\x06 \x01(\x03R\bleverage\x12,\n" +
-	"\n" +
-	"is_default\x18\a \x01(\x0e2\r.common.YesNoR\tisDefault\x12(\n" +
+	"marginMode\x12(\n" +
 	"\aenabled\x18\t \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x12\n" +
 	"\x04sort\x18\n" +
 	" \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\v \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\r \x01(\x03R\vupdateTimesJ\x04\b\x04\x10\x05J\x04\b\b\x10\t\"\x8b\b\n" +
+	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\x12'\n" +
+	"\x0fleverage_values\x18\x0e \x03(\x03R\x0eleverageValues\x12)\n" +
+	"\x10default_leverage\x18\x0f \x01(\x03R\x0fdefaultLeverageJ\x04\b\x04\x10\x05J\x04\b\x06\x10\aJ\x04\b\a\x10\bJ\x04\b\b\x10\t\"\x8b\b\n" +
 	"\x12RiskUserTradeLimit\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -5266,28 +5265,27 @@ var file_proto_trade_model_proto_depIdxs = []int32{
 	54, // 55: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
 	32, // 56: trade.ContractLeverageConfig.enabled:type_name -> common.Enable
 	35, // 57: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	42, // 58: trade.TradeSymbolLeverageConfig.is_default:type_name -> common.YesNo
-	32, // 59: trade.TradeSymbolLeverageConfig.enabled:type_name -> common.Enable
-	28, // 60: trade.RiskUserTradeLimit.product_type:type_name -> trade.ProductType
-	32, // 61: trade.RiskUserTradeLimit.trade_enabled:type_name -> common.Enable
-	32, // 62: trade.RiskUserTradeLimit.only_reduce_only:type_name -> common.Enable
-	55, // 63: trade.RiskUserTradeLimit.risk_level:type_name -> trade.RiskLevel
-	54, // 64: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
-	32, // 65: trade.RiskUserTradeLimit.enabled:type_name -> common.Enable
-	54, // 66: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
-	32, // 67: trade.RiskUserSymbolLimit.enabled:type_name -> common.Enable
-	28, // 68: trade.RiskOrderCheckLog.product_type:type_name -> trade.ProductType
-	56, // 69: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
-	57, // 70: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
-	54, // 71: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
-	28, // 72: trade.BizTradeEvent.product_type:type_name -> trade.ProductType
-	54, // 73: trade.BizTradeEvent.source:type_name -> trade.SourceType
-	58, // 74: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
-	75, // [75:75] is the sub-list for method output_type
-	75, // [75:75] is the sub-list for method input_type
-	75, // [75:75] is the sub-list for extension type_name
-	75, // [75:75] is the sub-list for extension extendee
-	0,  // [0:75] is the sub-list for field type_name
+	32, // 58: trade.TradeSymbolLeverageConfig.enabled:type_name -> common.Enable
+	28, // 59: trade.RiskUserTradeLimit.product_type:type_name -> trade.ProductType
+	32, // 60: trade.RiskUserTradeLimit.trade_enabled:type_name -> common.Enable
+	32, // 61: trade.RiskUserTradeLimit.only_reduce_only:type_name -> common.Enable
+	55, // 62: trade.RiskUserTradeLimit.risk_level:type_name -> trade.RiskLevel
+	54, // 63: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
+	32, // 64: trade.RiskUserTradeLimit.enabled:type_name -> common.Enable
+	54, // 65: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
+	32, // 66: trade.RiskUserSymbolLimit.enabled:type_name -> common.Enable
+	28, // 67: trade.RiskOrderCheckLog.product_type:type_name -> trade.ProductType
+	56, // 68: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
+	57, // 69: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
+	54, // 70: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
+	28, // 71: trade.BizTradeEvent.product_type:type_name -> trade.ProductType
+	54, // 72: trade.BizTradeEvent.source:type_name -> trade.SourceType
+	58, // 73: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
+	74, // [74:74] is the sub-list for method output_type
+	74, // [74:74] is the sub-list for method input_type
+	74, // [74:74] is the sub-list for extension type_name
+	74, // [74:74] is the sub-list for extension extendee
+	0,  // [0:74] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_model_proto_init() }

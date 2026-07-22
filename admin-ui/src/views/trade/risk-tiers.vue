@@ -7,31 +7,31 @@
     </template>
   </TradeOperationList>
   <el-dialog v-model="visible" :title="t('trade.addRiskTier')" width="620px">
-      <el-form label-width="150px">
-        <el-form-item :label="t('trade.symbolId')">
-          <el-input-number v-model="form.symbolId" :min="1" />
-        </el-form-item><el-form-item :label="t('trade.tierNo')">
-          <el-input-number v-model="form.tierNo" :min="1" />
-        </el-form-item><el-form-item :label="t('trade.notionalFloor')">
-          <el-input v-model="form.notionalFloor" />
-        </el-form-item><el-form-item :label="t('trade.notionalCap')">
-          <el-input v-model="form.notionalCap" />
-        </el-form-item><el-form-item :label="t('trade.maxLeverage')">
-          <el-input-number v-model="form.maxLeverage" :min="1" />
-        </el-form-item><el-form-item :label="t('trade.initialMarginRate')">
-          <el-input v-model="form.initialMarginRate" />
-        </el-form-item><el-form-item :label="t('trade.maintenanceMarginRate')">
-          <el-input v-model="form.maintenanceMarginRate" />
-        </el-form-item><el-form-item :label="t('trade.maintenanceAmount')">
-          <el-input v-model="form.maintenanceAmount" />
-        </el-form-item>
-      </el-form><template #footer>
-        <el-button @click="visible = false">
-          {{ t('common.cancel') }}
-        </el-button><el-button type="primary" @click="save">
-          {{ t('common.confirm') }}
-        </el-button>
-      </template>
+    <el-form label-width="150px">
+      <el-form-item :label="t('trade.symbolId')">
+        <el-input-number v-model="form.symbolId" :min="1" />
+      </el-form-item><el-form-item :label="t('trade.tierNo')">
+        <el-input-number v-model="form.tierNo" :min="1" />
+      </el-form-item><el-form-item :label="t('trade.notionalFloor')">
+        <el-input v-model="form.notionalFloor" />
+      </el-form-item><el-form-item :label="t('trade.notionalCap')">
+        <el-input v-model="form.notionalCap" />
+      </el-form-item><el-form-item :label="t('trade.maxLeverage')">
+        <el-input-number v-model="form.maxLeverage" :min="1" />
+      </el-form-item><el-form-item :label="t('trade.initialMarginRate')">
+        <el-input v-model="form.initialMarginRate" />
+      </el-form-item><el-form-item :label="t('trade.maintenanceMarginRate')">
+        <el-input v-model="form.maintenanceMarginRate" />
+      </el-form-item><el-form-item :label="t('trade.maintenanceAmount')">
+        <el-input v-model="form.maintenanceAmount" />
+      </el-form-item>
+    </el-form><template #footer>
+      <el-button @click="visible = false">
+        {{ t('common.cancel') }}
+      </el-button><el-button type="primary" @click="save">
+        {{ t('common.confirm') }}
+      </el-button>
+    </template>
   </el-dialog>
 </template>
 <script setup lang="ts">

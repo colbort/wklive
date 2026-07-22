@@ -626,17 +626,23 @@ service admin {
 
 	@handler CreatePriceFormula
 	post /price-formulas (CreatePriceFormulaReq) returns (PriceFormulaResp)
+
 	@handler GetPriceFormula
 	get /price-formulas/:id (PriceFormulaReq) returns (PriceFormulaResp)
+
 	@handler ListPriceFormulas
 	get /price-formulas (ListPriceFormulasReq) returns (ListPriceFormulasResp)
+
 	@handler ChangePriceFormulaStatus
 	put /price-formulas/:id/status (ChangePriceFormulaStatusReq) returns (RespBase)
 
 	@handler ListSnapshotOutbox
 	get /snapshot-outbox (ListSnapshotOutboxReq) returns (ListSnapshotOutboxResp)
+
 	@handler RetrySnapshotOutbox
 	post /snapshot-outbox/:id/retry (RetrySnapshotOutboxReq) returns (RespBase)
+
 	@handler RevokeAuthoritativeSnapshot
 	post /authoritative-snapshots/revoke (RevokeAuthoritativeSnapshotReq) returns (RespBase)
 }
+

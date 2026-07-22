@@ -101,6 +101,9 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Admi
 	if in.Remark != "" {
 		item.Remark = in.Remark
 	}
+	if err := validateSymbolTradingTimeline(trade.ProductType(item.ProductType), trade.ContractType(item.ContractType), item.ListingTime, item.TradingStartTime, item.TradingEndTime); err != nil {
+		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
+	}
 	item.UpdateTimes = utils.NowMillis()
 	if err = l.svcCtx.TradeSymbolModel.Update(l.ctx, item); err != nil {
 		return nil, err
