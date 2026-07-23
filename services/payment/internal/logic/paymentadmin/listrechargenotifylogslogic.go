@@ -1,0 +1,65 @@
+package paymentadminlogic
+
+import (
+	"context"
+	"errors"
+
+	"wklive/common/pageutil"
+	"wklive/proto/payment"
+	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type ListRechargeNotifyLogsLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewListRechargeNotifyLogsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListRechargeNotifyLogsLogic {
+	return &ListRechargeNotifyLogsLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 充值回调日志列表
+func (l *ListRechargeNotifyLogsLogic) ListRechargeNotifyLogs(in *payment.ListRechargeNotifyLogsReq) (*payment.ListRechargeNotifyLogsResp, error) {
+	logs, total, err := l.svcCtx.RechargeNotifyLogModel.FindPage(
+		l.ctx,
+		models.RechargeNotifyLogPageFilter{
+			TenantId:        in.TenantId,
+			OrderNo:         in.OrderNo,
+			OrderId:         in.OrderId,
+			PlatformId:      in.PlatformId,
+			ChannelId:       in.ChannelId,
+			NotifyStatus:    int64(in.NotifyStatus),
+			SignResult:      int64(in.SignResult),
+			CreateTimeStart: in.CreateTimeStart,
+			CreateTimeEnd:   in.CreateTimeEnd,
+		},
+		in.Page.Cursor,
+		in.Page.Limit,
+	)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+
+	lastID := int64(0)
+	if len(logs) > 0 {
+		lastID = logs[len(logs)-1].Id
+	}
+
+	data := make([]*payment.PayNotifyLog, 0, len(logs))
+	for _, log := range logs {
+		data = append(data, toRechargeNotifyLogProto(log))
+	}
+
+	return &payment.ListRechargeNotifyLogsResp{
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(logs), total, lastID),
+		Data: data,
+	}, nil
+}

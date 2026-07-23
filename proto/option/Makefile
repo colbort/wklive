@@ -4,17 +4,13 @@ REPO_ROOT := ../..
 
 gen:
 	@echo "🔧 [proto/option] generating option pb..."
+	@rm -f option_*.pb.go
 	cd $(REPO_ROOT) && protoc \
 		-I . \
 		--go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		proto/common/common.proto \
-		proto/option/enum.proto \
-		proto/option/model.proto \
-		proto/option/option_internal.proto \
-		proto/option/option_app.proto \
-		proto/option/option_admin.proto \
-		proto/option/option_task.proto
+		proto/option/*.proto
 	@echo "✅ [proto/option] generated"
 
 clean:

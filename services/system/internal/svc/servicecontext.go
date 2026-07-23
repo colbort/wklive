@@ -2,7 +2,7 @@ package svc
 
 import (
 	"wklive/common/mq/kafka"
-	"wklive/services/chat/chatinternal"
+	"wklive/services/chat/client/chatinternal"
 	"wklive/services/system/internal/config"
 	"wklive/services/system/internal/plugins/cronx"
 	"wklive/services/system/internal/tasks"

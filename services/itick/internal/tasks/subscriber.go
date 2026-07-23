@@ -6,7 +6,7 @@ import (
 
 	"wklive/common/tasks"
 	"wklive/proto/itick"
-	"wklive/services/itick/internal/logic"
+	logic "wklive/services/itick/internal/logic/iticktask"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"

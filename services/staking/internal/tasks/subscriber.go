@@ -6,7 +6,7 @@ import (
 
 	"wklive/common/tasks"
 	"wklive/proto/staking"
-	"wklive/services/staking/internal/logic"
+	logic "wklive/services/staking/internal/logic/stakingtask"
 	"wklive/services/staking/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"

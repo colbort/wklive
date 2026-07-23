@@ -1,0 +1,654 @@
+syntax = "proto3";
+
+package user;
+
+import "proto/common/common.proto";
+import "proto/user/enum.proto";
+import "proto/user/model.proto";
+
+option go_package = "wklive/proto/user;user";
+
+message AppCommonResp {
+  common.RespBase base = 1;
+}
+
+message RegisterReq {
+  user.RegisterType register_type = 2;
+  string username = 3;
+  string phone = 4;
+  string email = 5;
+  string password = 6;
+  string confirm_password = 7;
+  string invite_code = 8;
+  string source = 9;
+  string device_id = 10;
+  string fingerprint = 11;
+}
+
+message RegisterResp {
+  common.RespBase base = 1;
+  RegisterData data = 2;
+}
+
+message RegisterData {
+  int64 user_id = 1;
+  common.TokenInfo token = 2;
+  user.UserProfile profile = 3;
+}
+
+message LoginReq {
+  user.LoginType login_type = 2;
+  string account = 3;
+  string password = 4;
+  string google_code = 5;
+}
+
+message LoginResp {
+  common.RespBase base = 1;
+  LoginData data = 2;
+}
+
+message LoginData {
+  int64 user_id = 1;
+  common.TokenInfo token = 2;
+  user.UserProfile profile = 3;
+}
+
+message GuestLoginReq {
+  string device_id = 1;
+  string fingerprint = 2;
+  string sourceOrigin = 3;
+}
+
+message GuestLogin {
+  string token = 1;
+  string user_id = 2;
+  bool is_new = 3;
+  string username = 4;
+}
+
+message GuestLoginResp {
+  common.RespBase base = 1;
+  GuestLogin data = 2;
+}
+
+message CreateGuestTransferReq {
+  string source_origin = 1;
+}
+
+message CreateGuestTransferData {
+  string code = 1;
+  string redirect_url = 2;
+  int64 expire_at = 3;
+}
+
+message CreateGuestTransferResp {
+  common.RespBase base = 1;
+  CreateGuestTransferData data = 2;
+}
+
+message ExchangeGuestTransferReq {
+  string code = 1;
+  string current_origin = 2;
+}
+
+message ExchangeGuestTransferData {
+  string token = 1;
+  string device_id = 2;
+  string user_id = 3;
+}
+
+message ExchangeGuestTransferResp {
+  common.RespBase base = 1;
+  ExchangeGuestTransferData data = 2;
+}
+
+message LogoutReq {}
+
+message RefreshTokenReq {
+  string refresh_token = 2;
+}
+
+message RefreshTokenResp {
+  common.RespBase base = 1;
+  common.TokenInfo data = 2;
+}
+
+message GetProfileReq {}
+
+message GetProfileResp {
+  common.RespBase base = 1;
+  user.UserProfile data = 2;
+}
+
+message UpdateProfileReq {
+  string nickname = 1;
+  string avatar = 2;
+  string language = 3;
+  string timezone = 4;
+  string signature = 5;
+  user.Gender gender = 6;
+  int64 birthday = 7;
+  string country_code = 8;
+  string province = 9;
+  string city = 10;
+  string address = 11;
+}
+
+message UpdateProfileResp {
+  common.RespBase base = 1;
+  user.UserProfile data = 2;
+}
+
+message ChangeLoginPasswordReq {
+  string old_password = 1;
+  string new_password = 2;
+  string confirm_password = 3;
+}
+
+message GetIdentityReq {}
+
+message GetIdentityResp {
+  common.RespBase base = 1;
+  user.UserIdentity data = 2;
+}
+
+message SubmitIdentityReq {
+  string phone = 1;
+  string email = 2;
+  string real_name = 3;
+  user.Gender gender = 4;
+  int64 birthday = 5;
+  string country_code = 6;
+  string province = 7;
+  string city = 8;
+  string address = 9;
+  user.IdType id_type = 10;
+  string id_no = 11;
+  string front_image = 12;
+  string back_image = 13;
+  string handheld_image = 14;
+}
+
+message SubmitIdentityResp {
+  common.RespBase base = 1;
+  user.UserIdentity data = 2;
+}
+
+message UpdateIdentityReq {
+  string phone = 1;
+  string email = 2;
+  string real_name = 3;
+  user.Gender gender = 4;
+  int64 birthday = 5;
+  string country_code = 6;
+  string province = 7;
+  string city = 8;
+  string address = 9;
+}
+
+message UpdateIdentityResp {
+  common.RespBase base = 1;
+  user.UserIdentity data = 2;
+}
+
+message GetSecurityReq {}
+
+message GetSecurityResp {
+  common.RespBase base = 1;
+  user.UserSecurity data = 2;
+}
+
+message SetPayPasswordReq {
+  string password = 1;
+  string confirm_password = 2;
+}
+
+message ChangePayPasswordReq {
+  string old_password = 1;
+  string new_password = 2;
+  string confirm_password = 3;
+}
+
+message InitGoogle2FAReq {}
+
+message InitGoogle2FAResp {
+  common.RespBase base = 1;
+  InitGoogle2FAData data = 2;
+}
+
+message InitGoogle2FAData {
+  string secret = 1;
+  string qr_code_url = 2;
+}
+
+message EnableGoogle2FAReq {
+  string google_code = 1;
+}
+
+message DisableGoogle2FAReq {
+  string google_code = 1;
+}
+
+message ListBanksReq {
+  common.PageReq page = 1;
+}
+
+message ListBanksResp {
+  common.RespBase base = 1;
+  repeated user.UserBankItem data = 2;
+}
+
+message AddBankReq {
+  string bank_name = 1;
+  string bank_code = 2;
+  string account_name = 3;
+  string account_no = 4;
+  string branch_name = 5;
+  string country_code = 6;
+  common.YesNo is_default = 7;
+}
+
+message AddBankResp {
+  common.RespBase base = 1;
+  user.UserBankItem data = 2;
+}
+
+message UpdateBankReq {
+  int64 id = 1;
+  string bank_name = 2;
+  string bank_code = 3;
+  string account_name = 4;
+  string account_no = 5;
+  string branch_name = 6;
+  string country_code = 7;
+  common.YesNo is_default = 8;
+}
+
+message UpdateBankResp {
+  common.RespBase base = 1;
+  user.UserBankItem data = 2;
+}
+
+message DeleteBankReq {
+  int64 id = 1;
+}
+
+message SetDefaultBankReq {
+  int64 id = 1;
+}
+
+// APP端接口
+service UserApp {
+  // 用户注册
+  rpc Register(RegisterReq) returns (RegisterResp);
+  // 用户登录
+  rpc Login(LoginReq) returns (LoginResp);
+  // 游客登了
+  rpc GuestLogin(GuestLoginReq) returns (GuestLoginResp);
+  // 创建游客跨域迁移码
+  rpc CreateGuestTransfer(CreateGuestTransferReq) returns (CreateGuestTransferResp);
+  // 兑换游客跨域迁移码
+  rpc ExchangeGuestTransfer(ExchangeGuestTransferReq) returns (ExchangeGuestTransferResp);
+  // 用户登出
+  rpc Logout(LogoutReq) returns (AppCommonResp);
+  // 刷新Token
+  rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenResp);
+
+  // 用户资料相关接口
+  rpc GetProfile(GetProfileReq) returns (GetProfileResp);
+  // 更新用户资料
+  rpc UpdateProfile(UpdateProfileReq) returns (UpdateProfileResp);
+  // 修改登录密码
+  rpc ChangeLoginPassword(ChangeLoginPasswordReq) returns (AppCommonResp);
+
+  // 实名认证相关接口
+  rpc GetIdentity(GetIdentityReq) returns (GetIdentityResp);
+  // 提交实名认证信息
+  rpc SubmitIdentity(SubmitIdentityReq) returns (SubmitIdentityResp);
+  // 修改实名认证信息
+  rpc UpdateIdentity(UpdateIdentityReq) returns (UpdateIdentityResp);
+
+  // 安全设置相关接口
+  rpc GetSecurity(GetSecurityReq) returns (GetSecurityResp);
+  // 设置支付密码
+  rpc SetPayPassword(SetPayPasswordReq) returns (AppCommonResp);
+  // 修改支付密码
+  rpc ChangePayPassword(ChangePayPasswordReq) returns (AppCommonResp);
+  // 初始化谷歌2FA
+  rpc InitGoogle2FA(InitGoogle2FAReq) returns (InitGoogle2FAResp);
+  // 启用谷歌2FA
+  rpc EnableGoogle2FA(EnableGoogle2FAReq) returns (AppCommonResp);
+  // 禁用谷歌2FA
+  rpc DisableGoogle2FA(DisableGoogle2FAReq) returns (AppCommonResp);
+
+  // 银行卡相关接口
+  rpc ListBanks(ListBanksReq) returns (ListBanksResp);
+  // 添加银行卡
+  rpc AddBank(AddBankReq) returns (AddBankResp);
+  // 更新银行卡
+  rpc UpdateBank(UpdateBankReq) returns (UpdateBankResp);
+  // 删除银行卡
+  rpc DeleteBank(DeleteBankReq) returns (AppCommonResp);
+  // 设置默认银行卡
+  rpc SetDefaultBank(SetDefaultBankReq) returns (AppCommonResp);
+}
+
+message AdminCommonResp {
+  common.RespBase base = 1;
+}
+
+message CreateUserReq {
+  string tenant_code = 1;
+  string username = 2;
+  string nickname = 3;
+  string avatar = 4;
+  string phone = 5;
+  string email = 6;
+  string password = 7;
+  user.RegisterType register_type = 8;
+  user.UserStatus status = 9;
+  int32 member_level = 10;
+  string language = 11;
+  string timezone = 12;
+  string invite_code = 13;
+  string signature = 14;
+  string source = 15;
+  int64 referrer_user_id = 16;
+  string remark = 17;
+}
+
+message CreateUserResp {
+  common.RespBase base = 1;
+  int64 data = 2;
+}
+
+message GetUserDetailReq {
+  int64 user_id = 1;
+}
+
+message GetUserDetailResp {
+  common.RespBase base = 1;
+  user.UserDetail data = 2;
+}
+
+message ListUsersReq {
+  common.PageReq page = 1;
+  int64 tenant_id = 2;
+  string tenant_code = 3;
+  string keyword = 4;
+  int64 user_id = 5;
+  string user_no = 6;
+  string username = 7;
+  string nickname = 8;
+  string phone = 9;
+  string email = 10;
+  user.UserStatus status = 11;
+  int32 member_level = 12;
+  user.VerifyStatus verify_status = 13;
+  user.KycLevel kyc_level = 14;
+  string invite_code = 15;
+  int64 register_time_start = 16;
+  int64 register_time_end = 17;
+}
+
+message ListUsersResp {
+  common.RespBase base = 1;
+  repeated user.UserItem data = 2;
+}
+
+message UpdateUserBaseReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string username = 3;
+  string nickname = 4;
+  string avatar = 5;
+  string language = 6;
+  string timezone = 7;
+  string signature = 8;
+  string source = 9;
+  int64 referrer_user_id = 10;
+  string remark = 11;
+  string phone = 12;
+  string email = 13;
+}
+
+message UpdateUserBaseResp {
+  common.RespBase base = 1;
+  user.UserDetail data = 2;
+}
+
+message UpdateUserStatusReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  user.UserStatus status = 3;
+  string remark = 4;
+}
+
+message UpdateUserLevelReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 member_level = 3;
+}
+
+message ResetLoginPasswordReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string new_password = 3;
+}
+
+message ResetPayPasswordReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string new_password = 3;
+}
+
+message UnlockUserReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+}
+
+message UpdateRiskLevelReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  user.RiskLevel risk_level = 3;
+}
+
+message DeleteUserReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+}
+
+message GetUserSecurityReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+}
+
+message GetUserSecurityResp {
+  common.RespBase base = 1;
+  user.UserSecurity data = 2;
+}
+
+message ResetUserGoogle2FAReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+}
+
+message ListUserIdentitiesReq {
+  common.PageReq page = 1;
+  int64 tenant_id = 2;
+  string tenant_code = 3;
+  string keyword = 4;
+  int64 user_id = 5;
+  string user_no = 6;
+  string username = 7;
+  string phone = 8;
+  string email = 9;
+  string real_name = 10;
+  user.VerifyStatus verify_status = 11;
+  user.KycLevel kyc_level = 12;
+  user.IdType id_type = 13;
+}
+
+message ListUserIdentitiesResp {
+  common.RespBase base = 1;
+  repeated user.UserIdentityItem data = 2;
+}
+
+message ReviewUserIdentityReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  user.VerifyStatus verify_status = 3;
+  string reject_reason = 4;
+  int64 verify_by = 5;
+}
+
+message ReviewUserIdentityResp {
+  common.RespBase base = 1;
+  user.UserIdentity data = 2;
+}
+
+message ListUserBanksReq {
+  common.PageReq page = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  string keyword = 4;
+  common.Enable enabled = 5;
+}
+
+message ListUserBanksResp {
+  common.RespBase base = 1;
+  repeated user.UserBankItem data = 2;
+}
+
+message GetUserBankReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message GetUserBankResp {
+  common.RespBase base = 1;
+  user.UserBankItem data = 2;
+}
+
+message AddUserBankReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string bank_name = 3;
+  string bank_code = 4;
+  string account_name = 5;
+  string account_no = 6;
+  string branch_name = 7;
+  string country_code = 8;
+  common.YesNo is_default = 9;
+  common.Enable enabled = 10;
+}
+
+message AddUserBankResp {
+  common.RespBase base = 1;
+  user.UserBankItem data = 2;
+}
+
+message UpdateUserBankReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  int64 user_id = 3;
+  string bank_name = 4;
+  string bank_code = 5;
+  string account_name = 6;
+  string account_no = 7;
+  string branch_name = 8;
+  string country_code = 9;
+  common.YesNo is_default = 10;
+  common.Enable enabled = 11;
+}
+
+message UpdateUserBankResp {
+  common.RespBase base = 1;
+  user.UserBankItem data = 2;
+}
+
+message DeleteUserBankReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message UpdateUserBankStatusReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  common.Enable enabled = 3;
+}
+
+message SetDefaultUserBankReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  int64 user_id = 3;
+}
+
+message GuestDomainMigrationStatsReq {
+  int64 tenant_id = 1;
+  string source_origin = 2;
+}
+
+message GuestDomainMigrationStatsData {
+  int64 not_migrated_count = 1;
+  int64 active_within_week_count = 2;
+  int64 active_week_to_month_count = 3;
+  int64 active_month_to_quarter_count = 4;
+  int64 inactive_over_quarter_count = 5;
+}
+
+message GuestDomainMigrationStatsResp {
+  common.RespBase base = 1;
+  GuestDomainMigrationStatsData data = 2;
+}
+
+// 管理后台接口
+service UserAdmin {
+  // 退役域名未迁移游客及活跃分布统计
+  rpc GuestDomainMigrationStats(GuestDomainMigrationStatsReq) returns (GuestDomainMigrationStatsResp);
+  // 创建用户
+  rpc CreateUser(CreateUserReq) returns (CreateUserResp);
+  // 获取用户详情
+  rpc GetUserDetail(GetUserDetailReq) returns (GetUserDetailResp);
+  // 用户列表
+  rpc ListUsers(ListUsersReq) returns (ListUsersResp);
+  // 更新用户基本信息
+  rpc UpdateUserBase(UpdateUserBaseReq) returns (UpdateUserBaseResp);
+  // 更新用户状态
+  rpc UpdateUserStatus(UpdateUserStatusReq) returns (AdminCommonResp);
+  // 更新用户会员等级
+  rpc UpdateUserLevel(UpdateUserLevelReq) returns (AdminCommonResp);
+  // 重置登录密码
+  rpc ResetLoginPassword(ResetLoginPasswordReq) returns (AdminCommonResp);
+  // 重置支付密码
+  rpc ResetPayPassword(ResetPayPasswordReq) returns (AdminCommonResp);
+  // 解锁用户（解除登录锁定）
+  rpc UnlockUser(UnlockUserReq) returns (AdminCommonResp);
+  // 更新用户风险等级
+  rpc UpdateRiskLevel(UpdateRiskLevelReq) returns (AdminCommonResp);
+  // 删除用户
+  rpc DeleteUser(DeleteUserReq) returns (AdminCommonResp);
+  // 获取用户安全设置
+  rpc GetUserSecurity(GetUserSecurityReq) returns (GetUserSecurityResp);
+  // 重置用户谷歌2FA
+  rpc ResetUserGoogle2FA(ResetUserGoogle2FAReq) returns (AdminCommonResp);
+  // 实名认证信息列表
+  rpc ListUserIdentities(ListUserIdentitiesReq) returns (ListUserIdentitiesResp);
+  // 审核实名认证信息
+  rpc ReviewUserIdentity(ReviewUserIdentityReq) returns (ReviewUserIdentityResp);
+  // 用户银行卡列表
+  rpc ListUserBanks(ListUserBanksReq) returns (ListUserBanksResp);
+  // 获取用户银行卡详情
+  rpc GetUserBank(GetUserBankReq) returns (GetUserBankResp);
+  // 添加用户银行卡
+  rpc AddUserBank(AddUserBankReq) returns (AddUserBankResp);
+  // 更新用户银行卡
+  rpc UpdateUserBank(UpdateUserBankReq) returns (UpdateUserBankResp);
+  // 删除用户银行卡
+  rpc DeleteUserBank(DeleteUserBankReq) returns (AdminCommonResp);
+  // 更新用户银行卡状态
+  rpc UpdateUserBankStatus(UpdateUserBankStatusReq) returns (AdminCommonResp);
+  // 设置默认用户银行卡
+  rpc SetDefaultUserBank(SetDefaultUserBankReq) returns (AdminCommonResp);
+}

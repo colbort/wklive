@@ -1,0 +1,76 @@
+package useradminlogic
+
+import (
+	"context"
+	"errors"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
+	"wklive/proto/user"
+	"wklive/services/user/internal/svc"
+	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type UpdateRiskLevelLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewUpdateRiskLevelLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateRiskLevelLogic {
+	return &UpdateRiskLevelLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 更新用户风险等级
+func (l *UpdateRiskLevelLogic) UpdateRiskLevel(in *user.UpdateRiskLevelReq) (*user.AdminCommonResp, error) {
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+	if tuser == nil {
+		return &user.AdminCommonResp{
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+		}, nil
+	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &user.AdminCommonResp{
+			Base: base,
+		}, nil
+	}
+
+	// 获取用户安全信息
+	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+
+	if userSecurity == nil {
+		return &user.AdminCommonResp{
+			Base: helper.ErrResp(i18n.UserSecurityInfoNotFound, i18n.Translate(i18n.UserSecurityInfoNotFound, l.ctx)),
+		}, nil
+	}
+
+	if in.RiskLevel != 0 {
+		userSecurity.RiskLevel = int64(in.RiskLevel)
+	}
+	userSecurity.UpdateTimes = utils.NowMillis()
+
+	err = l.svcCtx.UserSecurityModel.Update(l.ctx, userSecurity)
+	if err != nil {
+		return nil, err
+	}
+
+	l.Logger.Infof("管理员更新用户 %d 风险等级为 %d", in.UserId, in.RiskLevel)
+
+	return &user.AdminCommonResp{
+		Base: helper.OkResp(),
+	}, nil
+}

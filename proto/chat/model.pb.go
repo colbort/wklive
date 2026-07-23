@@ -4880,7 +4880,7 @@ var File_proto_chat_model_proto protoreflect.FileDescriptor
 
 const file_proto_chat_model_proto_rawDesc = "" +
 	"\n" +
-	"\x16proto/chat/model.proto\x12\x04chat\x1a\x1cgoogle/protobuf/struct.proto\x1a\x19proto/common/common.proto\x1a\x15proto/chat/enum.proto\"\x8b\x04\n" +
+	"\x16proto/chat/model.proto\x12\x04chat\x1a\x1cgoogle/protobuf/struct.proto\x1a\x15proto/chat/enum.proto\x1a\x19proto/common/common.proto\"\x8b\x04\n" +
 	"\bChatUser\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vmerchant_id\x18\x02 \x01(\x03R\n" +

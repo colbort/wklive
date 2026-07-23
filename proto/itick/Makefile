@@ -7,6 +7,7 @@ PROTOC_GEN_GO_GRPC := $(GOBIN)/protoc-gen-go-grpc
 
 gen: check-protoc
 	@echo "🔧 [proto/itick] generating itick pb..."
+	@rm -f itick_admin*.pb.go itick_app*.pb.go itick_internal*.pb.go itick_task*.pb.go
 	cd $(REPO_ROOT) && PATH="$(GOBIN):$$PATH" protoc \
 		-I . \
 		--go_out=. --go_opt=paths=source_relative \
@@ -14,10 +15,7 @@ gen: check-protoc
 		proto/common/common.proto \
 		proto/itick/enum.proto \
 		proto/itick/model.proto \
-		proto/itick/itick_app.proto \
-		proto/itick/itick_internal.proto \
-		proto/itick/itick_admin.proto \
-		proto/itick/itick_task.proto 
+		proto/itick/itick.proto
 	@echo "✅ [proto/itick] generated"
 
 check-protoc:

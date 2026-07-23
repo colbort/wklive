@@ -1,0 +1,179 @@
+package stakingtasklogic
+
+import (
+	"context"
+
+	"wklive/common/conv"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
+	"wklive/proto/common"
+	"wklive/proto/staking"
+	"wklive/services/staking/models"
+)
+
+func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
+	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(ctx, currentTenantId)
+	if err != nil {
+		return nil, i18n.StatusError(ctx, i18n.UserNotFound)
+	}
+	if forbidden {
+		return helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)), nil
+	}
+	if !allowed {
+		return helper.ErrResp(notAllowedCode, i18n.Translate(notAllowedCode, ctx)), nil
+	}
+	return nil, nil
+}
+
+func productToProto(item *models.TStakeProduct) *staking.StakeProduct {
+	if item == nil {
+		return nil
+	}
+	return &staking.StakeProduct{
+		Id:               item.Id,
+		TenantId:         item.TenantId,
+		ProductNo:        item.ProductNo,
+		ProductName:      item.ProductName,
+		ProductType:      staking.ProductType(item.ProductType),
+		CoinName:         item.CoinName,
+		CoinSymbol:       item.CoinSymbol,
+		RewardCoinName:   item.RewardCoinName,
+		RewardCoinSymbol: item.RewardCoinSymbol,
+		Apr:              conv.FloatString(item.Apr),
+		LockDays:         item.LockDays,
+		MinAmount:        conv.FloatString(item.MinAmount),
+		MaxAmount:        conv.FloatString(item.MaxAmount),
+		StepAmount:       conv.FloatString(item.StepAmount),
+		TotalAmount:      conv.FloatString(item.TotalAmount),
+		StakedAmount:     conv.FloatString(item.StakedAmount),
+		UserLimitAmount:  conv.FloatString(item.UserLimitAmount),
+		InterestMode:     staking.InterestMode(item.InterestMode),
+		RewardMode:       staking.RewardMode(item.RewardMode),
+		AllowEarlyRedeem: common.YesNo(item.AllowEarlyRedeem),
+		EarlyRedeemRate:  conv.FloatString(item.EarlyRedeemRate),
+		Status:           staking.ProductStatus(item.Status),
+		Sort:             item.Sort,
+		Remark:           item.Remark,
+		CreateUserId:     item.CreateUserId,
+		UpdateUserId:     item.UpdateUserId,
+		CreateTimes:      int64(item.CreateTimes),
+		UpdateTimes:      int64(item.UpdateTimes),
+	}
+}
+
+func orderToProto(item *models.TStakeOrder) *staking.StakeOrder {
+	if item == nil {
+		return nil
+	}
+	return &staking.StakeOrder{
+		Id:               item.Id,
+		TenantId:         item.TenantId,
+		OrderNo:          item.OrderNo,
+		UserId:           item.UserId,
+		ProductId:        item.ProductId,
+		ProductNo:        item.ProductNo,
+		ProductName:      item.ProductName,
+		ProductType:      staking.ProductType(item.ProductType),
+		CoinName:         item.CoinName,
+		CoinSymbol:       item.CoinSymbol,
+		RewardCoinName:   item.RewardCoinName,
+		RewardCoinSymbol: item.RewardCoinSymbol,
+		StakeAmount:      conv.FloatString(item.StakeAmount),
+		Apr:              conv.FloatString(item.Apr),
+		LockDays:         item.LockDays,
+		InterestMode:     staking.InterestMode(item.InterestMode),
+		RewardMode:       staking.RewardMode(item.RewardMode),
+		AllowEarlyRedeem: common.YesNo(item.AllowEarlyRedeem),
+		EarlyRedeemRate:  conv.FloatString(item.EarlyRedeemRate),
+		InterestDays:     item.InterestDays,
+		StartTimes:       int64(item.StartTimes),
+		EndTimes:         int64(item.EndTimes),
+		LastRewardTimes:  int64(item.LastRewardTimes),
+		NextRewardTimes:  int64(item.NextRewardTimes),
+		TotalReward:      conv.FloatString(item.TotalReward),
+		PendingReward:    conv.FloatString(item.PendingReward),
+		RedeemAmount:     conv.FloatString(item.RedeemAmount),
+		RedeemFee:        conv.FloatString(item.RedeemFee),
+		Status:           staking.OrderStatus(item.Status),
+		RedeemType:       staking.RedeemType(item.RedeemType),
+		RedeemApplyTimes: int64(item.RedeemApplyTimes),
+		RedeemTimes:      int64(item.RedeemTimes),
+		Source:           staking.SourceType(item.Source),
+		Remark:           item.Remark,
+		CreateUserId:     item.CreateUserId,
+		UpdateUserId:     item.UpdateUserId,
+		CreateTimes:      int64(item.CreateTimes),
+		UpdateTimes:      int64(item.UpdateTimes),
+	}
+}
+
+func rewardLogToProto(item *models.TStakeRewardLog) *staking.StakeRewardLog {
+	if item == nil {
+		return nil
+	}
+	return &staking.StakeRewardLog{
+		Id:               item.Id,
+		TenantId:         item.TenantId,
+		OrderId:          item.OrderId,
+		OrderNo:          item.OrderNo,
+		UserId:           item.UserId,
+		ProductId:        item.ProductId,
+		ProductName:      item.ProductName,
+		CoinSymbol:       item.CoinSymbol,
+		RewardCoinSymbol: item.RewardCoinSymbol,
+		RewardAmount:     conv.FloatString(item.RewardAmount),
+		BeforeReward:     conv.FloatString(item.BeforeReward),
+		AfterReward:      conv.FloatString(item.AfterReward),
+		RewardType:       staking.RewardType(item.RewardType),
+		RewardStatus:     staking.RewardStatus(item.RewardStatus),
+		RewardTimes:      int64(item.RewardTimes),
+		Remark:           item.Remark,
+		CreateUserId:     item.CreateUserId,
+		UpdateUserId:     item.UpdateUserId,
+		CreateTimes:      int64(item.CreateTimes),
+		UpdateTimes:      int64(item.UpdateTimes),
+	}
+}
+
+func redeemLogToProto(item *models.TStakeRedeemLog) *staking.StakeRedeemLog {
+	if item == nil {
+		return nil
+	}
+	return &staking.StakeRedeemLog{
+		Id:           item.Id,
+		TenantId:     item.TenantId,
+		OrderId:      item.OrderId,
+		OrderNo:      item.OrderNo,
+		UserId:       item.UserId,
+		ProductId:    item.ProductId,
+		RedeemNo:     item.RedeemNo,
+		RedeemType:   staking.RedeemType(item.RedeemType),
+		StakeAmount:  conv.FloatString(item.StakeAmount),
+		RedeemAmount: conv.FloatString(item.RedeemAmount),
+		RewardAmount: conv.FloatString(item.RewardAmount),
+		FeeRate:      conv.FloatString(item.FeeRate),
+		FeeAmount:    conv.FloatString(item.FeeAmount),
+		RedeemStatus: staking.RedeemStatus(item.RedeemStatus),
+		RedeemTimes:  int64(item.RedeemTimes),
+		Remark:       item.Remark,
+		CreateUserId: item.CreateUserId,
+		UpdateUserId: item.UpdateUserId,
+		CreateTimes:  int64(item.CreateTimes),
+		UpdateTimes:  int64(item.UpdateTimes),
+	}
+}
+
+func activeOrderStatuses() []int64 {
+	return []int64{
+		int64(staking.OrderStatus_ORDER_STATUS_STAKING),
+		int64(staking.OrderStatus_ORDER_STATUS_EXPIRED),
+	}
+}
+
+func calcNextRewardTime(now int64, rewardMode staking.RewardMode, endTime int64) int64 {
+	if rewardMode == staking.RewardMode_REWARD_MODE_DAILY {
+		return now + 24*3600*1000
+	}
+	return endTime
+}

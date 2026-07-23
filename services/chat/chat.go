@@ -8,7 +8,9 @@ import (
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/config"
 	"wklive/services/chat/internal/helper"
-	"wklive/services/chat/internal/server"
+	admin "wklive/services/chat/internal/server/chatadmin"
+	app "wklive/services/chat/internal/server/chatapp"
+	internal "wklive/services/chat/internal/server/chatinternal"
 	"wklive/services/chat/internal/svc"
 
 	"wklive/common/etcd"
@@ -40,9 +42,9 @@ func main() {
 	defer stopSweeper()
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		chat.RegisterChatAdminServer(grpcServer, server.NewChatAdminServer(svcCtx))
-		chat.RegisterChatAppServer(grpcServer, server.NewChatAppServer(svcCtx))
-		chat.RegisterChatInternalServer(grpcServer, server.NewChatInternalServer(svcCtx))
+		chat.RegisterChatAdminServer(grpcServer, admin.NewChatAdminServer(svcCtx))
+		chat.RegisterChatAppServer(grpcServer, app.NewChatAppServer(svcCtx))
+		chat.RegisterChatInternalServer(grpcServer, internal.NewChatInternalServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

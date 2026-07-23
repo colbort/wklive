@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"wklive/services/trade/internal/logic"
+	logic "wklive/services/trade/internal/logic/tradetask"
 	"wklive/services/trade/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"

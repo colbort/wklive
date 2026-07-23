@@ -16,7 +16,10 @@ import (
 	"wklive/services/itick/internal/market/kline"
 	"wklive/services/itick/internal/pkg/bootstrap"
 	"wklive/services/itick/internal/pkg/utils"
-	"wklive/services/itick/internal/server"
+	admin "wklive/services/itick/internal/server/itickadmin"
+	app "wklive/services/itick/internal/server/itickapp"
+	internal "wklive/services/itick/internal/server/itickinternal"
+	task "wklive/services/itick/internal/server/iticktask"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/internal/tasks"
 
@@ -121,10 +124,10 @@ func main() {
 	}
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		itick.RegisterItickAdminServer(grpcServer, server.NewItickAdminServer(svcCtx))
-		itick.RegisterItickAppServer(grpcServer, server.NewItickAppServer(svcCtx))
-		itick.RegisterItickInternalServer(grpcServer, server.NewItickInternalServer(svcCtx))
-		itick.RegisterItickTaskServer(grpcServer, server.NewItickTaskServer(svcCtx))
+		itick.RegisterItickAdminServer(grpcServer, admin.NewItickAdminServer(svcCtx))
+		itick.RegisterItickAppServer(grpcServer, app.NewItickAppServer(svcCtx))
+		itick.RegisterItickInternalServer(grpcServer, internal.NewItickInternalServer(svcCtx))
+		itick.RegisterItickTaskServer(grpcServer, task.NewItickTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

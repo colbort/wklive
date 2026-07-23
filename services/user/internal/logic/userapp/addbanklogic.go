@@ -1,0 +1,96 @@
+package userapplogic
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
+	"wklive/proto/common"
+	"wklive/proto/user"
+	"wklive/services/user/internal/svc"
+	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type AddBankLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewAddBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddBankLogic {
+	return &AddBankLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 添加银行卡
+func (l *AddBankLogic) AddBank(in *user.AddBankReq) (*user.AddBankResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	// 获取用户信息
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+
+	if tuser == nil {
+		return &user.AddBankResp{
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+		}, nil
+	}
+
+	now := utils.NowMillis()
+	isDefault := int64(in.IsDefault)
+	if common.YesNo(in.IsDefault) == common.YesNo_YES_NO_UNKNOWN {
+		isDefault = int64(common.YesNo_YES_NO_NO)
+	}
+
+	// 如果设置为默认，需要取消其他卡的默认设置
+	if common.YesNo(isDefault) == common.YesNo_YES_NO_YES {
+		// TODO: 更新其他卡的默认状态
+	}
+
+	// 创建银行卡
+	bank := &models.TUserBank{
+		Id:          l.svcCtx.Node.Generate().Int64(),
+		TenantId:    tuser.TenantId,
+		UserId:      userId,
+		BankName:    in.BankName,
+		BankCode:    sql.NullString{String: in.BankCode, Valid: in.BankCode != ""},
+		AccountName: in.AccountName,
+		AccountNo:   in.AccountNo,
+		BranchName:  sql.NullString{String: in.BranchName, Valid: in.BranchName != ""},
+		CountryCode: sql.NullString{String: in.CountryCode, Valid: in.CountryCode != ""},
+		IsDefault:   isDefault,
+		Enabled:     1, // 正常
+		CreateTimes: now,
+		UpdateTimes: now,
+	}
+
+	_, err = l.svcCtx.UserBankModel.Insert(l.ctx, bank)
+	if err != nil {
+		return nil, err
+	}
+
+	l.Logger.Infof("用户 %d 添加银行卡成功，卡号后4位：%s", userId, getLastFourDigits(in.AccountNo))
+
+	return &user.AddBankResp{
+		Base: helper.OkResp(),
+		Data: toUserBankItemProto(bank),
+	}, nil
+}
+
+func getLastFourDigits(accountNo string) string {
+	if len(accountNo) < 4 {
+		return accountNo
+	}
+	return accountNo[len(accountNo)-4:]
+}

@@ -4,16 +4,13 @@ REPO_ROOT := ../..
 
 gen:
 	@echo "🔧 [proto/chat] generating chat pb..."
+	@rm -f chat_*.pb.go
 	cd $(REPO_ROOT) && protoc \
 		-I . \
 		--go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		proto/common/common.proto \
-		proto/chat/enum.proto \
-		proto/chat/model.proto \
-		proto/chat/chat_app.proto \
-		proto/chat/chat_admin.proto \
-		proto/chat/chat_internal.proto 
+		proto/chat/*.proto
 	@echo "✅ [proto/chat] generated"
 
 clean:

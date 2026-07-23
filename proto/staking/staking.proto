@@ -1,0 +1,418 @@
+syntax = "proto3";
+
+package staking;
+
+import "proto/common/common.proto";
+import "proto/staking/enum.proto";
+import "proto/staking/model.proto";
+
+option go_package = "wklive/proto/staking;staking";
+
+//
+service StakingApp {
+  // 获取质押产品列表
+  // 用户端查询可参与的质押产品，支持按产品类型、币种筛选。
+  rpc AppProductList(AppProductListReq) returns (AppProductListResp);
+
+  // 获取质押产品详情
+  // 根据产品ID查询单个质押产品的详细信息。
+  rpc AppProductDetail(AppProductDetailReq) returns (AppProductDetailResp);
+
+  // 创建质押订单
+  // 用户选择质押产品后发起质押，生成一笔新的质押订单。
+  rpc CreateOrder(AppCreateOrderReq) returns (AppCreateOrderResp);
+
+  // 获取我的质押订单列表
+  // 查询当前用户在当前租户下的质押订单，支持按状态筛选。
+  rpc MyOrderList(AppMyOrderListReq) returns (AppMyOrderListResp);
+
+  // 获取我的质押订单详情
+  // 根据订单ID查询当前用户的单笔质押订单详情。
+  rpc MyOrderDetail(AppMyOrderDetailReq) returns (AppMyOrderDetailResp);
+
+  // 获取我的收益记录列表
+  // 查询当前用户的收益发放记录，可按订单ID、收益类型筛选。
+  rpc MyRewardLogList(AppMyRewardLogListReq) returns (AppMyRewardLogListResp);
+
+  // 发起赎回
+  // 用户对指定质押订单发起赎回申请，支持到期赎回或提前赎回。
+  rpc Redeem(AppRedeemReq) returns (AppRedeemResp);
+
+  // 获取我的赎回记录列表
+  // 查询当前用户的赎回记录，可按订单ID筛选。
+  rpc MyRedeemLogList(AppMyRedeemLogListReq) returns (AppMyRedeemLogListResp);
+}
+
+// 产品列表
+message AppProductListReq {
+  ProductType product_type = 1;
+  string coin_symbol = 2;
+  common.PageReq page = 3;
+}
+
+message AppProductListResp {
+  common.RespBase base = 1;
+  repeated StakeProduct data = 2;
+}
+
+// 产品详情
+message AppProductDetailReq {
+  int64 id = 1;
+}
+
+message AppProductDetailResp {
+  common.RespBase base = 1;
+  StakeProduct data = 2;
+}
+
+// 创建订单
+message AppCreateOrderReq {
+  int64 product_id = 1;
+  string stake_amount = 2;
+  SourceType source = 3;
+  string remark = 4;
+}
+
+message AppCreateOrderResp {
+  common.RespBase base = 1;
+  AppCreateOrderData data = 2;
+}
+
+message AppCreateOrderData {
+  int64 id = 1;
+  string order_no = 2;
+}
+
+// 我的订单列表
+message AppMyOrderListReq {
+  OrderStatus status = 1;
+  RedeemType redeem_type = 2;
+  common.PageReq page = 3;
+}
+
+message AppMyOrderListResp {
+  common.RespBase base = 1;
+  repeated StakeOrder data = 2;
+}
+
+// 我的订单详情
+message AppMyOrderDetailReq {
+  int64 id = 1;
+}
+
+message AppMyOrderDetailResp {
+  common.RespBase base = 1;
+  StakeOrder data = 2;
+}
+
+// 我的收益记录
+message AppMyRewardLogListReq {
+  int64 order_id = 1;
+  RewardType reward_type = 2;
+  common.PageReq page = 3;
+}
+
+message AppMyRewardLogListResp {
+  common.RespBase base = 1;
+  repeated StakeRewardLog data = 2;
+}
+
+// 赎回
+message AppRedeemReq {
+  int64 order_id = 1;
+  RedeemType redeem_type = 2;
+  string remark = 3;
+}
+
+message AppRedeemResp {
+  common.RespBase base = 1;
+  AppRedeemData data = 2;
+}
+
+message AppRedeemData {
+  int64 success = 1;
+  string redeem_no = 2;
+}
+
+// 我的赎回记录
+message AppMyRedeemLogListReq {
+  int64 order_id = 1;
+  common.PageReq page = 2;
+}
+
+message AppMyRedeemLogListResp {
+  common.RespBase base = 1;
+  repeated StakeRedeemLog data = 2;
+}
+
+//
+service StakingAdmin {
+  // 获取质押产品列表
+  // 后台分页查询质押产品，支持按产品编号、产品名称、币种、产品类型、状态筛选。
+  rpc AdminProductList(AdminProductListReq) returns (AdminProductListResp);
+
+  // 获取质押产品详情
+  // 根据产品ID查询质押产品详细信息。
+  rpc AdminProductDetail(AdminProductDetailReq) returns (AdminProductDetailResp);
+
+  // 创建质押产品
+  // 后台新增一个质押产品配置。
+  rpc ProductCreate(AdminProductCreateReq) returns (AdminProductCreateResp);
+
+  // 更新质押产品
+  // 后台修改指定质押产品的配置参数。
+  rpc ProductUpdate(AdminProductUpdateReq) returns (AdminProductUpdateResp);
+
+  // 修改质押产品状态
+  // 启用、禁用或下架指定质押产品。
+  rpc ProductChangeStatus(AdminProductChangeStatusReq) returns (AdminProductChangeStatusResp);
+
+  // 获取质押订单列表
+  // 后台分页查询质押订单，支持按订单号、用户ID、产品、状态、赎回类型、来源、时间范围筛选。
+  rpc OrderList(AdminOrderListReq) returns (AdminOrderListResp);
+
+  // 获取质押订单详情
+  // 根据订单ID查询质押订单详细信息。
+  rpc OrderDetail(AdminOrderDetailReq) returns (AdminOrderDetailResp);
+
+  // 获取收益记录列表
+  // 后台分页查询收益发放记录，支持按订单号、用户ID、产品、收益类型、收益状态、发放时间筛选。
+  rpc RewardLogList(AdminRewardLogListReq) returns (AdminRewardLogListResp);
+
+  // 获取赎回记录列表
+  // 后台分页查询赎回记录，支持按订单号、赎回单号、用户ID、产品、赎回类型、赎回状态、赎回时间筛选。
+  rpc RedeemLogList(AdminRedeemLogListReq) returns (AdminRedeemLogListResp);
+
+  // 手动发放收益
+  // 后台对指定质押订单执行手动收益发放或补发收益。
+  rpc ManualReward(AdminManualRewardReq) returns (AdminManualRewardResp);
+
+  // 手动赎回
+  // 后台对指定质押订单执行手动赎回操作。
+  rpc ManualRedeem(AdminManualRedeemReq) returns (AdminManualRedeemResp);
+}
+
+// 产品列表
+message AdminProductListReq {
+  int64 tenant_id = 1;
+  string product_no = 2;
+  string product_name = 3;
+  string coin_symbol = 4;
+  ProductType product_type = 5;
+  ProductStatus status = 6;
+  common.PageReq page = 7;
+}
+
+message AdminProductListResp {
+  common.RespBase page = 1;
+  repeated StakeProduct data = 2;
+}
+
+// 产品详情
+message AdminProductDetailReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message AdminProductDetailResp {
+  common.RespBase page = 1;
+  StakeProduct data = 2;
+}
+
+// 创建产品
+message AdminProductCreateReq {
+  int64 tenant_id = 1;
+  string product_no = 2;
+  string product_name = 3;
+  ProductType product_type = 4;
+  string coin_name = 5;
+  string coin_symbol = 6;
+  string reward_coin_name = 7;
+  string reward_coin_symbol = 8;
+  string apr = 9;
+  int64 lock_days = 10;
+  string min_amount = 11;
+  string max_amount = 12;
+  string step_amount = 13;
+  string total_amount = 14;
+  string user_limit_amount = 15;
+  InterestMode interest_mode = 16;
+  RewardMode reward_mode = 17;
+  common.YesNo allow_early_redeem = 18; // 是否允许提前赎回
+  string early_redeem_rate = 19;
+  ProductStatus status = 20;
+  int64 sort = 21;
+  string remark = 22;
+  int64 operator_uid = 23;
+}
+
+message AdminProductCreateResp {
+  common.RespBase page = 1;
+  int64 data = 2;
+}
+
+// 更新产品
+message AdminProductUpdateReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string product_name = 3;
+  ProductType product_type = 4;
+  string coin_name = 5;
+  string coin_symbol = 6;
+  string reward_coin_name = 7;
+  string reward_coin_symbol = 8;
+  string apr = 9;
+  int64 lock_days = 10;
+  string min_amount = 11;
+  string max_amount = 12;
+  string step_amount = 13;
+  string total_amount = 14;
+  string user_limit_amount = 15;
+  InterestMode interest_mode = 16;
+  RewardMode reward_mode = 17;
+  common.YesNo allow_early_redeem = 18; // 是否允许提前赎回
+  string early_redeem_rate = 19;
+  ProductStatus status = 20;
+  int64 sort = 21;
+  string remark = 22;
+  int64 operator_uid = 23;
+}
+
+message AdminProductUpdateResp {
+  common.RespBase page = 1;
+  int64 data = 2;
+}
+
+// 修改产品状态
+message AdminProductChangeStatusReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  ProductStatus status = 3;
+  int64 operator_uid = 4;
+}
+
+message AdminProductChangeStatusResp {
+  common.RespBase page = 1;
+  int64 data = 2;
+}
+
+// 订单列表
+message AdminOrderListReq {
+  int64 tenant_id = 1;
+  string order_no = 2;
+  int64 user_id = 3;
+  int64 product_id = 4;
+  string product_name = 5;
+  string coin_symbol = 6;
+  OrderStatus status = 7;
+  RedeemType redeem_type = 8;
+  SourceType source = 9;
+  int64 start_times_begin = 10;
+  int64 start_times_end = 11;
+  int64 end_times_begin = 12;
+  int64 end_times_end = 13;
+  common.PageReq page = 14;
+}
+
+message AdminOrderListResp {
+  common.RespBase page = 1;
+  repeated StakeOrder data = 2;
+}
+
+// 订单详情
+message AdminOrderDetailReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message AdminOrderDetailResp {
+  common.RespBase page = 1;
+  StakeOrder data = 2;
+}
+
+// 收益记录列表
+message AdminRewardLogListReq {
+  int64 tenant_id = 1;
+  string order_no = 2;
+  int64 user_id = 3;
+  int64 product_id = 4;
+  RewardType reward_type = 5;
+  RewardStatus reward_status = 6;
+  int64 reward_times_begin = 7;
+  int64 reward_times_end = 8;
+  common.PageReq page = 9;
+}
+
+message AdminRewardLogListResp {
+  common.RespBase page = 1;
+  repeated StakeRewardLog data = 2;
+}
+
+// 赎回记录列表
+message AdminRedeemLogListReq {
+  int64 tenant_id = 1;
+  string order_no = 2;
+  string redeem_no = 3;
+  int64 user_id = 4;
+  int64 product_id = 5;
+  RedeemType redeem_type = 6;
+  RedeemStatus redeem_status = 7;
+  int64 redeem_times_begin = 8;
+  int64 redeem_times_end = 9;
+  common.PageReq page = 10;
+}
+
+message AdminRedeemLogListResp {
+  common.RespBase page = 1;
+  repeated StakeRedeemLog data = 2;
+}
+
+// 手动发放收益
+message AdminManualRewardReq {
+  int64 tenant_id = 1;
+  int64 order_id = 2;
+  string reward_amount = 3;
+  RewardType reward_type = 4;
+  string remark = 5;
+  int64 operator_uid = 6;
+}
+
+message AdminManualRewardResp {
+  common.RespBase page = 1;
+  int64 data = 2;
+}
+
+// 手动赎回
+message AdminManualRedeemReq {
+  int64 tenant_id = 1;
+  int64 order_id = 2;
+  RedeemType redeem_type = 3;
+  string redeem_amount = 4;
+  string reward_amount = 5;
+  string fee_rate = 6;
+  string fee_amount = 7;
+  string remark = 8;
+  int64 operator_uid = 9;
+}
+
+message AdminManualRedeemResp {
+  common.RespBase page = 1;
+  int64 success = 2;
+  string redeem_no = 3;
+}
+
+message StakingTaskReq {
+  int64 tenant_id = 1;
+}
+
+message StakingTaskResp {
+  common.RespBase base = 1;
+}
+
+// ====================
+// 定时任务
+// ====================
+service StakingTask {
+  // 质押收益发放/到期结算
+  rpc ProcessRewardsAndSettleOrders(StakingTaskReq) returns (StakingTaskResp);
+}

@@ -7,8 +7,8 @@ REPO_ROOT := ../..
 # proto 目录（属于 proto/payment 模块）
 PROTO_DIR := $(REPO_ROOT)/proto/payment
 
-# 自动查找所有 proto 文件
-PROTO_FILES := $(wildcard $(PROTO_DIR)/*.proto)
+
+PROTO_FILE := $(PROTO_DIR)/payment.proto
 
 GOCTL ?= $(shell go env GOPATH)/bin/goctl
 
@@ -26,25 +26,19 @@ install-goctl:
 # 查看匹配到的 proto 文件
 print-protos:
 	@echo "PROTO_DIR=$(PROTO_DIR)"
-	@echo "PROTO_FILES=$(PROTO_FILES)"
+	@echo "PROTO_FILE=$(PROTO_FILE)"
 
-# 一键：只生成包含 service 的 proto
+# 所有 RPC service 统一在 payment.proto 中，以 multiple 模式分组生成。
 gen-rpc:
 	@echo "🔧 [services/payment] goctl rpc protoc..."
-	@for file in $(PROTO_FILES); do \
-		if grep -Eq '^[[:space:]]*service[[:space:]]+[A-Za-z0-9_]+' $$file; then \
-			echo "➡️ generating rpc for $$file"; \
-			$(GOCTL) rpc protoc $$file \
-				--proto_path=$(REPO_ROOT) \
-				--module=$(MODULE) \
-				--go_out=. \
-				--go-grpc_out=. \
-				--zrpc_out=. \
-				--style=gozero || exit $$?; \
-		else \
-			echo "⏭️ skip(no service): $$file"; \
-		fi; \
-	done
+	@$(GOCTL) rpc protoc $(PROTO_FILE) \
+		--multiple \
+		--proto_path=$(REPO_ROOT) \
+		--module=$(MODULE) \
+		--go_out=. \
+		--go-grpc_out=. \
+		--zrpc_out=. \
+		--style=gozero
 	@$(MAKE) fix-imports
 	@$(MAKE) fmt
 	@$(MAKE) tidy

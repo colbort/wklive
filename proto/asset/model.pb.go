@@ -1222,7 +1222,7 @@ var File_proto_asset_model_proto protoreflect.FileDescriptor
 
 const file_proto_asset_model_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/asset/model.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x16proto/asset/enum.proto\"\xd4\x03\n" +
+	"\x17proto/asset/model.proto\x12\x05asset\x1a\x1cgoogle/protobuf/struct.proto\x1a\x16proto/asset/enum.proto\x1a\x19proto/common/common.proto\"\xd4\x03\n" +
 	"\tUserAsset\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +

@@ -26,7 +26,7 @@ type ServiceContext struct {
 	ChatGroupModel        models.TChatGroupModel
 	ChatWorkOrderModel    models.TChatWorkOrderModel
 	ChatMessageFactory    *models.ChatMessageModelFactory
-	Redis              *redis.Redis
+	Redis                 *redis.Redis
 	MQPublisher           *mq.Publisher
 	ChatEventHub          *ChatEventHub
 }
@@ -59,7 +59,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ChatGroupModel:        models.NewTChatGroupModel(conn, c.CacheRedis),
 		ChatWorkOrderModel:    models.NewTChatWorkOrderModel(conn, c.CacheRedis),
 		ChatMessageFactory:    models.NewChatMessageModelFactory(c.Mongo.Url, c.Mongo.Db),
-		Redis:              busRedis,
+		Redis:                 busRedis,
 		MQPublisher:           mq.MustNewPublisher(mq.ForService(c.MQ, c.Name)),
 		ChatEventHub:          eventHub,
 	}

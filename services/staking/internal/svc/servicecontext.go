@@ -40,4 +40,3 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AssetClient:         asset.NewAssetInternalClient(assetCli.Conn()),
 	}
 }
-

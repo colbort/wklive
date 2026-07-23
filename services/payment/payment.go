@@ -7,7 +7,8 @@ import (
 
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/config"
-	"wklive/services/payment/internal/server"
+	admin "wklive/services/payment/internal/server/paymentadmin"
+	app "wklive/services/payment/internal/server/paymentapp"
 	"wklive/services/payment/internal/svc"
 
 	"wklive/common/etcd"
@@ -37,8 +38,8 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		payment.RegisterPaymentAdminServer(grpcServer, server.NewPaymentAdminServer(ctx))
-		payment.RegisterPaymentAppServer(grpcServer, server.NewPaymentAppServer(ctx))
+		payment.RegisterPaymentAdminServer(grpcServer, admin.NewPaymentAdminServer(ctx))
+		payment.RegisterPaymentAppServer(grpcServer, app.NewPaymentAppServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

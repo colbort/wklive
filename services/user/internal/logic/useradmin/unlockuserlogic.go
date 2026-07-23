@@ -1,0 +1,76 @@
+package useradminlogic
+
+import (
+	"context"
+	"errors"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
+	"wklive/proto/user"
+	"wklive/services/user/internal/svc"
+	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type UnlockUserLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewUnlockUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UnlockUserLogic {
+	return &UnlockUserLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 解锁用户（解除登录锁定）
+func (l *UnlockUserLogic) UnlockUser(in *user.UnlockUserReq) (*user.AdminCommonResp, error) {
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+	if tuser == nil {
+		return &user.AdminCommonResp{
+			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
+		}, nil
+	}
+	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &user.AdminCommonResp{
+			Base: base,
+		}, nil
+	}
+
+	// 获取用户安全信息
+	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+
+	if userSecurity == nil {
+		return &user.AdminCommonResp{
+			Base: helper.ErrResp(i18n.UserSecurityInfoNotFound, i18n.Translate(i18n.UserSecurityInfoNotFound, l.ctx)),
+		}, nil
+	}
+
+	// 重置登录失败计数和解除锁定
+	userSecurity.LoginErrorCount = 0
+	userSecurity.LockUntil = 0
+	userSecurity.UpdateTimes = utils.NowMillis()
+
+	err = l.svcCtx.UserSecurityModel.Update(l.ctx, userSecurity)
+	if err != nil {
+		return nil, err
+	}
+
+	l.Logger.Infof("管理员解锁用户 %d", in.UserId)
+
+	return &user.AdminCommonResp{
+		Base: helper.OkResp(),
+	}, nil
+}

@@ -8,7 +8,10 @@ import (
 
 	"wklive/proto/option"
 	"wklive/services/option/internal/config"
-	"wklive/services/option/internal/server"
+	admin "wklive/services/option/internal/server/optionadmin"
+	app "wklive/services/option/internal/server/optionapp"
+	internal "wklive/services/option/internal/server/optioninternal"
+	task "wklive/services/option/internal/server/optiontask"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/internal/tasks"
 
@@ -42,10 +45,10 @@ func main() {
 	tasks.StartTaskSubscriber(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		option.RegisterOptionAdminServer(grpcServer, server.NewOptionAdminServer(svcCtx))
-		option.RegisterOptionAppServer(grpcServer, server.NewOptionAppServer(svcCtx))
-		option.RegisterOptionInternalServer(grpcServer, server.NewOptionInternalServer(svcCtx))
-		option.RegisterOptionTaskServer(grpcServer, server.NewOptionTaskServer(svcCtx))
+		option.RegisterOptionAdminServer(grpcServer, admin.NewOptionAdminServer(svcCtx))
+		option.RegisterOptionAppServer(grpcServer, app.NewOptionAppServer(svcCtx))
+		option.RegisterOptionInternalServer(grpcServer, internal.NewOptionInternalServer(svcCtx))
+		option.RegisterOptionTaskServer(grpcServer, task.NewOptionTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

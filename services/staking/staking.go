@@ -8,7 +8,9 @@ import (
 
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/config"
-	"wklive/services/staking/internal/server"
+	admin "wklive/services/staking/internal/server/stakingadmin"
+	app "wklive/services/staking/internal/server/stakingapp"
+	task "wklive/services/staking/internal/server/stakingtask"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/internal/tasks"
 
@@ -42,9 +44,9 @@ func main() {
 	tasks.StartTaskSubscriber(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		staking.RegisterStakingAdminServer(grpcServer, server.NewStakingAdminServer(svcCtx))
-		staking.RegisterStakingAppServer(grpcServer, server.NewStakingAppServer(svcCtx))
-		staking.RegisterStakingTaskServer(grpcServer, server.NewStakingTaskServer(svcCtx))
+		staking.RegisterStakingAdminServer(grpcServer, admin.NewStakingAdminServer(svcCtx))
+		staking.RegisterStakingAppServer(grpcServer, app.NewStakingAppServer(svcCtx))
+		staking.RegisterStakingTaskServer(grpcServer, task.NewStakingTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
