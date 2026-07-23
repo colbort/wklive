@@ -316,7 +316,7 @@ CREATE TABLE `t_trade_order_seconds` (
   UNIQUE KEY `uk_tenant_order_id` (`tenant_id`, `order_id`),
   KEY `idx_settlement_due` (`tenant_id`, `settlement_status`, `expire_time`),
   KEY `idx_seconds_retry_due` (`tenant_id`, `settlement_status`, `next_retry_at`, `id`),
-  CONSTRAINT `chk_seconds_order` CHECK (`direction` IN (1, 2) AND `duration_seconds` > 0 AND `stake_amount` > 0 AND `payout_rate` >= 0 AND `fee_rate` >= 0 AND `result` IN (0, 1, 2, 3, 4) AND `settlement_status` BETWEEN 0 AND 7 AND `retry_count` >= 0 AND `profit_amount` >= 0 AND `fee_amount` >= 0 AND `return_amount` >= 0 AND `version` >= 0 AND ((`settlement_status` IN (0, 1) AND `start_price` = 0 AND `start_price_time` = 0 AND `expire_time` = 0) OR (`settlement_status` >= 2 AND `start_price` > 0 AND `start_price_time` > 0 AND `activated_at` > 0 AND `expire_time` > `activated_at`)))
+  CONSTRAINT `chk_seconds_order` CHECK (`direction` IN (1, 2) AND `duration_seconds` > 0 AND `stake_amount` > 0 AND `payout_rate` >= 0 AND `fee_rate` >= 0 AND `result` IN (0, 1, 2, 3, 4) AND `settlement_status` BETWEEN 0 AND 7 AND `retry_count` >= 0 AND `profit_amount` >= 0 AND `fee_amount` >= 0 AND `return_amount` >= 0 AND `version` >= 0 AND ((`settlement_status` IN (0, 1) AND `start_price` = 0 AND `start_price_time` = 0 AND `expire_time` = 0) OR (`settlement_status` IN (2, 3, 4) AND `start_price` > 0 AND `start_price_time` > 0 AND `activated_at` > 0 AND `expire_time` > `activated_at`) OR `settlement_status` IN (5, 6, 7)))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='秒合约订单及到期结算快照';
 
 DROP TABLE IF EXISTS `t_trade_market_snapshot`;

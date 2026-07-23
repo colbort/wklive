@@ -11,6 +11,7 @@ import (
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/authz"
 	"wklive/services/trade/internal/svc"
+	"wklive/services/trade/internal/validation"
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -43,6 +44,12 @@ func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(in *trade.SetSecond
 		return nil, err
 	} else if base != nil {
 		return &trade.CommonResp{Base: base}, nil
+	}
+	if err := validation.AuthoritativeQuoteSources("start_price_source", in.StartPriceSource); err != nil {
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
+	}
+	if err := validation.AuthoritativeQuoteSources("settlement_price_source", in.SettlementPriceSource); err != nil {
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
 	item, err := l.svcCtx.TradeSymbolSecondsModel.FindOneByTenantIdSymbolIdDurationSeconds(l.ctx, symbol.TenantId, in.SymbolId, in.DurationSeconds)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {

@@ -1595,6 +1595,7 @@ export default {
     stakeRange: '本金范围',
     directionStatus: '方向状态',
     startPriceSource: '起始价格来源',
+    priceSourcePlaceholder: '格式：crypto:BA:BTCUSDT，多个用逗号分隔',
     minStake: '最小本金',
     maxStake: '最大本金',
     upEnabled: '看涨开关',

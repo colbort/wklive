@@ -2,6 +2,8 @@ package tasklogic
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"wklive/common/generate"
 	"wklive/common/utils"
@@ -29,14 +31,18 @@ func NewProcessContractSettlementsLogic(ctx context.Context, svcCtx *svc.Service
 // 合约结算（永续资金费率/交割合约）；秒合约是独立产品，不属于 contract_type。
 func (l *ProcessContractSettlementsLogic) ProcessContractSettlements(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	return runTaskWithLock(l.ctx, l.svcCtx, "process_contract_settlements", func() (*trade.TradeTaskResp, error) {
+		var result error
 		if err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
-			return nil, err
+			result = errors.Join(result, fmt.Errorf("seconds settlements: %w", err))
 		}
 		if err := NewProcessFundingSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
-			return nil, err
+			result = errors.Join(result, fmt.Errorf("funding settlements: %w", err))
 		}
 		if err := NewProcessDeliverySettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
-			return nil, err
+			result = errors.Join(result, fmt.Errorf("delivery settlements: %w", err))
+		}
+		if result != nil {
+			return nil, result
 		}
 		return okTaskResp(), nil
 	})

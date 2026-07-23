@@ -61,8 +61,10 @@ const POSITION_SIDE_UNKNOWN = 0
 const POSITION_SIDE_NET = 1
 const POSITION_SIDE_LONG = 2
 const POSITION_SIDE_SHORT = 3
+const ORDER_TYPE_UNKNOWN = 0
 const ORDER_TYPE_LIMIT = 1
 const ORDER_TYPE_MARKET = 2
+const TIME_IN_FORCE_UNKNOWN = 0
 const TIME_IN_FORCE_GTC = 1
 const TIME_IN_FORCE_IOC = 2
 const ORDER_SOURCE_WEB = 2
@@ -292,7 +294,6 @@ watch(
   },
   { immediate: true },
 )
-
 onMounted(() => {
   syncAuthState()
   void loadTradeSymbols()
@@ -757,6 +758,9 @@ async function submitTradeOrder(side: SubmitSide) {
     }
     params.amount = qty
     params.qty = undefined
+    params.positionSide = POSITION_SIDE_UNKNOWN
+    params.orderType = ORDER_TYPE_UNKNOWN
+    params.timeInForce = TIME_IN_FORCE_UNKNOWN
     params.secondsDirection = side === 'buy' ? 1 : 2
     params.durationSeconds = secondsConfig.durationSeconds
   }

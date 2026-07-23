@@ -3,10 +3,12 @@ package applogic
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -56,16 +58,20 @@ func freezeOrderAsset(
 		Remark:     "trade place order freeze",
 	})
 	if err != nil {
-		return "", &assetFreezeError{err: err}
+		return "", &assetFreezeError{err: freezeAssetContextError(order.UserId, walletTypeForProduct(trade.ProductType(order.ProductType)), frozenAsset, err)}
 	}
 	if resp == nil || resp.Base == nil {
-		return "", &assetFreezeError{err: i18n.StatusError(ctx, i18n.InternalServerError)}
+		return "", &assetFreezeError{err: freezeAssetContextError(order.UserId, walletTypeForProduct(trade.ProductType(order.ProductType)), frozenAsset, i18n.StatusError(ctx, i18n.InternalServerError))}
 	}
 	if resp.Base.Code != 200 {
-		return "", &assetFreezeError{err: i18n.StatusError(ctx, resp.Base.Code), definitive: true}
+		return "", &assetFreezeError{err: freezeAssetContextError(order.UserId, walletTypeForProduct(trade.ProductType(order.ProductType)), frozenAsset, i18n.StatusError(ctx, resp.Base.Code)), definitive: true}
 	}
 
 	return resp.GetData().GetFreezeNo(), nil
+}
+
+func freezeAssetContextError(userID int64, walletType common.WalletType, coin string, err error) error {
+	return fmt.Errorf("userId=%d walletType=%s(%d) coin=%s: %w", userID, walletType.String(), walletType, coin, err)
 }
 
 func unfreezeRemainingOrderAsset(svcCtx *svc.ServiceContext, ctx context.Context, order *models.TTradeOrder, reason string) error {

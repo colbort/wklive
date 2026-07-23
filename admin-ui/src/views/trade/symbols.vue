@@ -417,10 +417,16 @@
             <el-input-number v-model="secondsForm.settlementWindowMs" :min="1" class="full-width" />
           </el-form-item>
           <el-form-item :label="t('trade.startPriceSource')">
-            <el-input v-model="secondsForm.startPriceSource" />
+            <el-input
+              v-model="secondsForm.startPriceSource"
+              :placeholder="t('trade.priceSourcePlaceholder')"
+            />
           </el-form-item>
           <el-form-item :label="t('trade.settlementPriceSource')">
-            <el-input v-model="secondsForm.settlementPriceSource" />
+            <el-input
+              v-model="secondsForm.settlementPriceSource"
+              :placeholder="t('trade.priceSourcePlaceholder')"
+            />
           </el-form-item>
           <el-form-item :label="t('trade.settlementPriceAlgorithm')">
             <el-input v-model="secondsForm.settlementPriceAlgorithm" />

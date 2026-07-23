@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import { apiGetCoreOptions } from '@/api/core'
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
@@ -101,7 +101,15 @@ const orderTypeOptions = computed(() => {
 })
 const marginModeOptions = computed(() => {
   const options = tradeOptions.getGroup('marginMode').filter((option) => option.value > 0)
-  return options.length ? options : [{ value: 1, code: 'MARGIN_MODE_CROSS' }]
+  const contract = props.tradeSymbolDetail?.contract
+
+  if (!contract) return []
+
+  return options.filter((option) => {
+    if (option.code === 'MARGIN_MODE_CROSS') return contract.supportCross === 1
+    if (option.code === 'MARGIN_MODE_ISOLATED') return contract.supportIsolated === 1
+    return false
+  })
 })
 const isSpotTrade = computed(() => props.selectedTradeSymbol?.productType === PRODUCT_TYPE_SPOT)
 const isSecondsTrade = computed(
@@ -156,12 +164,19 @@ const contractMetaValue = computed(() => {
         }).format(contract.deliveryTime)
       : '--'
   }
-  return contract.fundingIntervalMinutes
-    ? t('trade.minutesValue', { value: contract.fundingIntervalMinutes })
-    : '--'
+  const intervalMinutes = contract.fundingIntervalMinutes
+  if (!intervalMinutes) return '--'
+  if (intervalMinutes >= 60 && intervalMinutes % 60 === 0) {
+    return t('trade.hoursValue', { value: intervalMinutes / 60 })
+  }
+  return t('trade.minutesValue', { value: intervalMinutes })
 })
 const canSubmit = computed(
-  () => props.isLoggedIn && props.tradeAvailable && !props.tradeSymbolLoading,
+  () =>
+    props.isLoggedIn &&
+    props.tradeAvailable &&
+    !props.tradeSymbolLoading &&
+    (!isContractTrade.value || marginModeOptions.value.length > 0),
 )
 const submitDisabled = computed(() => !canSubmit.value || Boolean(props.submittingSide))
 const baseAsset = computed(() => {
@@ -173,10 +188,7 @@ const baseAsset = computed(() => {
   )
 })
 const selectedMarginMode = computed(() => {
-  return (
-    marginModeOptions.value.find((option) => option.value === props.marginMode) ||
-    marginModeOptions.value[0] || { value: 1, code: 'MARGIN_MODE_CROSS' }
-  )
+  return marginModeOptions.value.find((option) => option.value === props.marginMode) || null
 })
 const conversionText = computed(() => {
   const contractSize = props.tradeSymbolDetail?.contract?.contractSize || ''
@@ -211,6 +223,17 @@ const unavailableText = computed(() => {
   if (!props.tradeAvailable) return t('trade.unavailable')
   return ''
 })
+
+watch(
+  marginModeOptions,
+  (options) => {
+    if (!isContractTrade.value || !options.length) return
+    if (!options.some((option) => option.value === props.marginMode)) {
+      emit('update:marginMode', options[0].value)
+    }
+  },
+  { immediate: true },
+)
 
 function orderModeFromCode(code: string): 'market' | 'limit' {
   return code === 'ORDER_TYPE_LIMIT' ? 'limit' : 'market'
@@ -535,7 +558,12 @@ function confirmRiskSettings() {
     <div class="trade-form">
       <div v-if="isContractTrade" class="contract-meta">
         <strong>{{ contractTypeLabel }}</strong>
-        <span>{{ contractMetaLabel }}：{{ contractMetaValue }}</span>
+        <span>
+          <template v-if="selectedTradeSymbol?.contractType !== CONTRACT_TYPE_DELIVERY">
+            {{ contractMetaLabel }}：
+          </template>
+          {{ contractMetaValue }}
+        </span>
       </div>
 
       <div class="mode-switch">
@@ -557,7 +585,11 @@ function confirmRiskSettings() {
           :disabled="isSpotTrade"
           @click="openSelectionSheet('margin')"
         >
-          {{ optionText(selectedMarginMode) }}
+          {{
+            selectedMarginMode
+              ? optionText(selectedMarginMode)
+              : t('trade.marginModeUnavailableShort')
+          }}
         </button>
         <button
           type="button"
@@ -619,7 +651,15 @@ function confirmRiskSettings() {
         <span>{{ t('trade.conversion') }}</span><strong>{{ conversionText }}</strong>
         <template v-if="isContractTrade">
           <span>{{ t('trade.mode') }}</span>
-          <strong>{{ optionText(selectedMarginMode) }} / {{ leverage }}X</strong>
+          <strong>
+            {{
+              selectedMarginMode
+                ? optionText(selectedMarginMode)
+                : t('trade.marginModeUnavailableShort')
+            }}
+            /
+            {{ leverage }}X
+          </strong>
         </template>
       </div>
 
@@ -1392,27 +1432,34 @@ function confirmRiskSettings() {
 }
 
 .contract-meta {
-  display: flex;
-  min-height: 38px;
+  display: grid;
+  min-height: 42px;
   margin-bottom: 12px;
-  padding: 8px 10px;
+  padding: 8px 12px;
   border: 1px solid var(--divider-visible);
   border-radius: 10px;
   background: var(--panel-bg-soft);
+  grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 
 .contract-meta strong {
   color: var(--text);
-  font-size: 0.7rem;
+  font-size: 0.66rem;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .contract-meta span {
+  min-width: 0;
+  overflow: hidden;
   color: var(--muted);
-  font-size: 0.6rem;
+  font-size: 0.54rem;
+  line-height: 1.2;
   text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mini-chart {

@@ -1600,6 +1600,7 @@ export default {
     stakeRange: 'Stake Range',
     directionStatus: 'Direction Status',
     startPriceSource: 'Start Price Source',
+    priceSourcePlaceholder: 'e.g. crypto:BA:BTCUSDT; separate multiple sources with commas',
     minStake: 'Minimum Stake',
     maxStake: 'Maximum Stake',
     upEnabled: 'Up Enabled',

@@ -235,6 +235,7 @@ func (l *ProcessSecondsSettlementsLogic) processRefunds(tenantID int64) error {
 			conn := sqlx.NewSqlConnFromSession(session)
 			secondsModel := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
 			orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
+			reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
 			current, err := secondsModel.FindOneForUpdate(ctx, item.Id)
 			if err != nil {
 				return err
@@ -244,6 +245,17 @@ func (l *ProcessSecondsSettlementsLogic) processRefunds(tenantID int64) error {
 			}
 			if !secondsWorkLeaseOwned(current, trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDING, item.UpdateTimes) {
 				return errors.New("seconds refund lease lost")
+			}
+			reservation, err := reservationModel.FindOneByReservationNoForUpdate(ctx, item.TenantId, item.OrderNo)
+			if err != nil {
+				return err
+			}
+			released, err := reservationModel.AddReleased(ctx, reservation.Id, current.StakeAmount, now)
+			if err != nil {
+				return err
+			}
+			if !released {
+				return errors.New("seconds refund exceeds remaining reservation amount")
 			}
 			current.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDED)
 			current.Result = int64(trade.SecondsResult_SECONDS_RESULT_VOID)

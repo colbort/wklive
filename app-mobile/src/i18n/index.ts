@@ -53,7 +53,14 @@ export function t(path: string, params?: Params) {
 export function translateApiError(code: number | string | null | undefined, fallback = '') {
   const numericCode = Number(code)
   const path = Number.isFinite(numericCode) ? `apiErrors.${numericCode}` : ''
-  return (path && (resolveMessage(path, state.locale) || resolveMessage(path, 'zh-CN'))) || fallback
+  const translated = path && (resolveMessage(path, state.locale) || resolveMessage(path, 'zh-CN'))
+  const genericMessages = new Set(['Operation not allowed', '操作不被允许'])
+
+  // Business services often return a specific rejection reason with a generic
+  // error code. Preserve that detail instead of replacing it with the generic
+  // localized message.
+  if (fallback && !genericMessages.has(fallback)) return fallback
+  return translated || fallback
 }
 
 export function setLocale(locale: AppLocale) {

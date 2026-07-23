@@ -130,7 +130,11 @@ func (l *ProcessReservationReleasesLogic) executeClaimed(item *models.TTradeSett
 	if item.BizType != "order" || item.Action != int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN) || item.ReservationNo == "" || !item.Amount.IsPositive() {
 		return fmt.Errorf("invalid order reservation release instruction")
 	}
-	resp, err := l.svcCtx.AssetClient.UnfreezeAssetByBizNo(l.ctx, &asset.UnfreezeAssetByBizNoReq{TenantId: item.TenantId, TargetBizType: asset.BizType_BIZ_TYPE_TRADE, TargetBizNo: item.ReservationNo, Amount: item.Amount.String(), BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_CANCEL_ORDER, BizId: item.OrderId, BizNo: item.InstructionNo, Remark: "trade order reservation release"})
+	// Release the freeze's remaining amount instead of replaying the original
+	// amount. The asset service treats an empty amount as an idempotent
+	// "unfreeze remaining" operation, so a retry after a successful unfreeze
+	// can still complete the local reservation and instruction ledger.
+	resp, err := l.svcCtx.AssetClient.UnfreezeAssetByBizNo(l.ctx, &asset.UnfreezeAssetByBizNoReq{TenantId: item.TenantId, TargetBizType: asset.BizType_BIZ_TYPE_TRADE, TargetBizNo: item.ReservationNo, Amount: "", BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_CANCEL_ORDER, BizId: item.OrderId, BizNo: item.InstructionNo, Remark: "trade order reservation release"})
 	if err != nil {
 		return err
 	}
