@@ -33,7 +33,7 @@ type ServiceContext struct {
 	UserRateLimit           rest.Middleware
 	SensitiveRateLimit      rest.Middleware
 	RefreshTokenRateLimit   rest.Middleware
-	SystemCli               system.SystemClient
+	SystemCli               system.SystemAppClient
 	UserCli                 user.UserAppClient
 	PaymentCli              payment.PaymentAppClient
 	ItickCli                itick.ItickAppClient
@@ -89,7 +89,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserRateLimit:           middleware.NewUserRateLimitMiddleware(rds).Handle,
 		SensitiveRateLimit:      middleware.NewSensitiveRateLimitMiddleware(rds).Handle,
 		RefreshTokenRateLimit:   middleware.NewRefreshTokenRateLimitMiddleware(rds).Handle,
-		SystemCli:               system.NewSystemClient(systemCli.Conn()),
+		SystemCli:               system.NewSystemAppClient(systemCli.Conn()),
 		UserCli:                 user.NewUserAppClient(userCli.Conn()),
 		PaymentCli:              payment.NewPaymentAppClient(paymentCli.Conn()),
 		ItickCli:                itick.NewItickAppClient(itickCli.Conn()),

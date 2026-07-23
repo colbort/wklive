@@ -35,7 +35,7 @@ import (
 type ServiceContext struct {
 	Config                      config.Config
 	ItickRuntimeConfig          *system.ItickConfig
-	SystemCli                   system.SystemClient
+	SystemCli                   system.SystemInternalClient
 	OptionCli                   option.OptionInternalClient
 	ItickManager                *client.ItickManager
 	MarketDataCache             *icache.MarketDataCache
@@ -82,7 +82,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	itickRestLimiter := rate.NewLimiter(rate.Limit(float64(restRatePerMinute)/60.0), restRateBurst)
 	itickRestClient := itickrest.New(c.Itick.Token, itickRestLimiter, nil)
 
-	systemCli := system.NewSystemClient(zrpc.MustNewClient(c.SystemRpc).Conn())
+	systemCli := system.NewSystemInternalClient(zrpc.MustNewClient(c.SystemRpc).Conn())
 	optionCli := option.NewOptionInternalClient(zrpc.MustNewClient(c.OptionRpc).Conn())
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 

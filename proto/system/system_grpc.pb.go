@@ -19,2663 +19,2859 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	System_AdminLogin_FullMethodName                   = "/system.System/AdminLogin"
-	System_GetProfile_FullMethodName                   = "/system.System/GetProfile"
-	System_UpdateProfile_FullMethodName                = "/system.System/UpdateProfile"
-	System_Google2FAInit_FullMethodName                = "/system.System/Google2FAInit"
-	System_Google2FABind_FullMethodName                = "/system.System/Google2FABind"
-	System_Google2FAEnable_FullMethodName              = "/system.System/Google2FAEnable"
-	System_Google2FADisable_FullMethodName             = "/system.System/Google2FADisable"
-	System_Google2FAReset_FullMethodName               = "/system.System/Google2FAReset"
-	System_SysUserList_FullMethodName                  = "/system.System/SysUserList"
-	System_SysUserDetail_FullMethodName                = "/system.System/SysUserDetail"
-	System_SysUserCreate_FullMethodName                = "/system.System/SysUserCreate"
-	System_SysUserUpdate_FullMethodName                = "/system.System/SysUserUpdate"
-	System_SysUserDelete_FullMethodName                = "/system.System/SysUserDelete"
-	System_ChangeUserStatus_FullMethodName             = "/system.System/ChangeUserStatus"
-	System_ResetUserPwd_FullMethodName                 = "/system.System/ResetUserPwd"
-	System_AssignUserRoles_FullMethodName              = "/system.System/AssignUserRoles"
-	System_SysRoleList_FullMethodName                  = "/system.System/SysRoleList"
-	System_SysRoleCreate_FullMethodName                = "/system.System/SysRoleCreate"
-	System_SysRoleUpdate_FullMethodName                = "/system.System/SysRoleUpdate"
-	System_SysRoleDelete_FullMethodName                = "/system.System/SysRoleDelete"
-	System_SysRoleGrant_FullMethodName                 = "/system.System/SysRoleGrant"
-	System_SysRoleGrantDetail_FullMethodName           = "/system.System/SysRoleGrantDetail"
-	System_SysPermList_FullMethodName                  = "/system.System/SysPermList"
-	System_GetMenuTree_FullMethodName                  = "/system.System/GetMenuTree"
-	System_SysMenuCreate_FullMethodName                = "/system.System/SysMenuCreate"
-	System_SysMenuUpdate_FullMethodName                = "/system.System/SysMenuUpdate"
-	System_SysMenuDelete_FullMethodName                = "/system.System/SysMenuDelete"
-	System_SysMenuList_FullMethodName                  = "/system.System/SysMenuList"
-	System_LoginLogList_FullMethodName                 = "/system.System/LoginLogList"
-	System_OpLogList_FullMethodName                    = "/system.System/OpLogList"
-	System_SysConfigCreate_FullMethodName              = "/system.System/SysConfigCreate"
-	System_SysConfigUpdate_FullMethodName              = "/system.System/SysConfigUpdate"
-	System_SysConfigDelete_FullMethodName              = "/system.System/SysConfigDelete"
-	System_SysConfigList_FullMethodName                = "/system.System/SysConfigList"
-	System_SysConfigDetail_FullMethodName              = "/system.System/SysConfigDetail"
-	System_SysConfigByKeys_FullMethodName              = "/system.System/SysConfigByKeys"
-	System_SendVerificationCode_FullMethodName         = "/system.System/SendVerificationCode"
-	System_TestVerificationCode_FullMethodName         = "/system.System/TestVerificationCode"
-	System_VerificationCodeRecordList_FullMethodName   = "/system.System/VerificationCodeRecordList"
-	System_VerificationCodeRecordDetail_FullMethodName = "/system.System/VerificationCodeRecordDetail"
-	System_LoginUserPerms_FullMethodName               = "/system.System/LoginUserPerms"
-	System_SysCronJobList_FullMethodName               = "/system.System/SysCronJobList"
-	System_SysCronJobCreate_FullMethodName             = "/system.System/SysCronJobCreate"
-	System_SysCronJobUpdate_FullMethodName             = "/system.System/SysCronJobUpdate"
-	System_SysCronJobDelete_FullMethodName             = "/system.System/SysCronJobDelete"
-	System_SysCronJobRun_FullMethodName                = "/system.System/SysCronJobRun"
-	System_SysCronJobStart_FullMethodName              = "/system.System/SysCronJobStart"
-	System_SysCronJobStop_FullMethodName               = "/system.System/SysCronJobStop"
-	System_SysCronJobHandlers_FullMethodName           = "/system.System/SysCronJobHandlers"
-	System_SysCronJobLogList_FullMethodName            = "/system.System/SysCronJobLogList"
-	System_SysTenantCreate_FullMethodName              = "/system.System/SysTenantCreate"
-	System_SysTenantUpdate_FullMethodName              = "/system.System/SysTenantUpdate"
-	System_SysTenantDelete_FullMethodName              = "/system.System/SysTenantDelete"
-	System_SysTenantList_FullMethodName                = "/system.System/SysTenantList"
-	System_SysTenantDetail_FullMethodName              = "/system.System/SysTenantDetail"
-	System_SysTenantDomainList_FullMethodName          = "/system.System/SysTenantDomainList"
-	System_SysTenantDomainCreate_FullMethodName        = "/system.System/SysTenantDomainCreate"
-	System_SysTenantDomainUpdate_FullMethodName        = "/system.System/SysTenantDomainUpdate"
-	System_SysTenantDomainDelete_FullMethodName        = "/system.System/SysTenantDomainDelete"
-	System_ResolveTenantDomain_FullMethodName          = "/system.System/ResolveTenantDomain"
-	System_SysChatMerchantCreate_FullMethodName        = "/system.System/SysChatMerchantCreate"
-	System_SysChatMerchantUpdate_FullMethodName        = "/system.System/SysChatMerchantUpdate"
-	System_SysChatMerchantDelete_FullMethodName        = "/system.System/SysChatMerchantDelete"
-	System_SysChatMerchantList_FullMethodName          = "/system.System/SysChatMerchantList"
-	System_SysChatMerchantDetail_FullMethodName        = "/system.System/SysChatMerchantDetail"
+	SystemAdmin_AdminLogin_FullMethodName                   = "/system.SystemAdmin/AdminLogin"
+	SystemAdmin_GetProfile_FullMethodName                   = "/system.SystemAdmin/GetProfile"
+	SystemAdmin_UpdateProfile_FullMethodName                = "/system.SystemAdmin/UpdateProfile"
+	SystemAdmin_Google2FAInit_FullMethodName                = "/system.SystemAdmin/Google2FAInit"
+	SystemAdmin_Google2FABind_FullMethodName                = "/system.SystemAdmin/Google2FABind"
+	SystemAdmin_Google2FAEnable_FullMethodName              = "/system.SystemAdmin/Google2FAEnable"
+	SystemAdmin_Google2FADisable_FullMethodName             = "/system.SystemAdmin/Google2FADisable"
+	SystemAdmin_Google2FAReset_FullMethodName               = "/system.SystemAdmin/Google2FAReset"
+	SystemAdmin_SysUserList_FullMethodName                  = "/system.SystemAdmin/SysUserList"
+	SystemAdmin_SysUserDetail_FullMethodName                = "/system.SystemAdmin/SysUserDetail"
+	SystemAdmin_SysUserCreate_FullMethodName                = "/system.SystemAdmin/SysUserCreate"
+	SystemAdmin_SysUserUpdate_FullMethodName                = "/system.SystemAdmin/SysUserUpdate"
+	SystemAdmin_SysUserDelete_FullMethodName                = "/system.SystemAdmin/SysUserDelete"
+	SystemAdmin_ChangeUserStatus_FullMethodName             = "/system.SystemAdmin/ChangeUserStatus"
+	SystemAdmin_ResetUserPwd_FullMethodName                 = "/system.SystemAdmin/ResetUserPwd"
+	SystemAdmin_AssignUserRoles_FullMethodName              = "/system.SystemAdmin/AssignUserRoles"
+	SystemAdmin_SysRoleList_FullMethodName                  = "/system.SystemAdmin/SysRoleList"
+	SystemAdmin_SysRoleCreate_FullMethodName                = "/system.SystemAdmin/SysRoleCreate"
+	SystemAdmin_SysRoleUpdate_FullMethodName                = "/system.SystemAdmin/SysRoleUpdate"
+	SystemAdmin_SysRoleDelete_FullMethodName                = "/system.SystemAdmin/SysRoleDelete"
+	SystemAdmin_SysRoleGrant_FullMethodName                 = "/system.SystemAdmin/SysRoleGrant"
+	SystemAdmin_SysRoleGrantDetail_FullMethodName           = "/system.SystemAdmin/SysRoleGrantDetail"
+	SystemAdmin_SysPermList_FullMethodName                  = "/system.SystemAdmin/SysPermList"
+	SystemAdmin_GetMenuTree_FullMethodName                  = "/system.SystemAdmin/GetMenuTree"
+	SystemAdmin_SysMenuCreate_FullMethodName                = "/system.SystemAdmin/SysMenuCreate"
+	SystemAdmin_SysMenuUpdate_FullMethodName                = "/system.SystemAdmin/SysMenuUpdate"
+	SystemAdmin_SysMenuDelete_FullMethodName                = "/system.SystemAdmin/SysMenuDelete"
+	SystemAdmin_SysMenuList_FullMethodName                  = "/system.SystemAdmin/SysMenuList"
+	SystemAdmin_LoginLogList_FullMethodName                 = "/system.SystemAdmin/LoginLogList"
+	SystemAdmin_OpLogList_FullMethodName                    = "/system.SystemAdmin/OpLogList"
+	SystemAdmin_SysConfigCreate_FullMethodName              = "/system.SystemAdmin/SysConfigCreate"
+	SystemAdmin_SysConfigUpdate_FullMethodName              = "/system.SystemAdmin/SysConfigUpdate"
+	SystemAdmin_SysConfigDelete_FullMethodName              = "/system.SystemAdmin/SysConfigDelete"
+	SystemAdmin_SysConfigList_FullMethodName                = "/system.SystemAdmin/SysConfigList"
+	SystemAdmin_SysConfigDetail_FullMethodName              = "/system.SystemAdmin/SysConfigDetail"
+	SystemAdmin_TestVerificationCode_FullMethodName         = "/system.SystemAdmin/TestVerificationCode"
+	SystemAdmin_VerificationCodeRecordList_FullMethodName   = "/system.SystemAdmin/VerificationCodeRecordList"
+	SystemAdmin_VerificationCodeRecordDetail_FullMethodName = "/system.SystemAdmin/VerificationCodeRecordDetail"
+	SystemAdmin_LoginUserPerms_FullMethodName               = "/system.SystemAdmin/LoginUserPerms"
+	SystemAdmin_SysCronJobList_FullMethodName               = "/system.SystemAdmin/SysCronJobList"
+	SystemAdmin_SysCronJobCreate_FullMethodName             = "/system.SystemAdmin/SysCronJobCreate"
+	SystemAdmin_SysCronJobUpdate_FullMethodName             = "/system.SystemAdmin/SysCronJobUpdate"
+	SystemAdmin_SysCronJobDelete_FullMethodName             = "/system.SystemAdmin/SysCronJobDelete"
+	SystemAdmin_SysCronJobRun_FullMethodName                = "/system.SystemAdmin/SysCronJobRun"
+	SystemAdmin_SysCronJobStart_FullMethodName              = "/system.SystemAdmin/SysCronJobStart"
+	SystemAdmin_SysCronJobStop_FullMethodName               = "/system.SystemAdmin/SysCronJobStop"
+	SystemAdmin_SysCronJobHandlers_FullMethodName           = "/system.SystemAdmin/SysCronJobHandlers"
+	SystemAdmin_SysCronJobLogList_FullMethodName            = "/system.SystemAdmin/SysCronJobLogList"
+	SystemAdmin_SysTenantCreate_FullMethodName              = "/system.SystemAdmin/SysTenantCreate"
+	SystemAdmin_SysTenantUpdate_FullMethodName              = "/system.SystemAdmin/SysTenantUpdate"
+	SystemAdmin_SysTenantDelete_FullMethodName              = "/system.SystemAdmin/SysTenantDelete"
+	SystemAdmin_SysTenantList_FullMethodName                = "/system.SystemAdmin/SysTenantList"
+	SystemAdmin_SysTenantDetail_FullMethodName              = "/system.SystemAdmin/SysTenantDetail"
+	SystemAdmin_SysTenantDomainList_FullMethodName          = "/system.SystemAdmin/SysTenantDomainList"
+	SystemAdmin_SysTenantDomainCreate_FullMethodName        = "/system.SystemAdmin/SysTenantDomainCreate"
+	SystemAdmin_SysTenantDomainUpdate_FullMethodName        = "/system.SystemAdmin/SysTenantDomainUpdate"
+	SystemAdmin_SysTenantDomainDelete_FullMethodName        = "/system.SystemAdmin/SysTenantDomainDelete"
+	SystemAdmin_SysChatMerchantCreate_FullMethodName        = "/system.SystemAdmin/SysChatMerchantCreate"
+	SystemAdmin_SysChatMerchantUpdate_FullMethodName        = "/system.SystemAdmin/SysChatMerchantUpdate"
+	SystemAdmin_SysChatMerchantDelete_FullMethodName        = "/system.SystemAdmin/SysChatMerchantDelete"
+	SystemAdmin_SysChatMerchantList_FullMethodName          = "/system.SystemAdmin/SysChatMerchantList"
+	SystemAdmin_SysChatMerchantDetail_FullMethodName        = "/system.SystemAdmin/SysChatMerchantDetail"
 )
 
-// SystemClient is the client API for System service.
+// SystemAdminClient is the client API for SystemAdmin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // ////////////////////
 // Service
 // ////////////////////
-type SystemClient interface {
-	// P0
+type SystemAdminClient interface {
 	AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error)
-	// 获取当前用户信息
 	GetProfile(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProfileResp, error)
-	// 修改头像，密码，昵称
 	UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 2FA
 	Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
-	// 绑定Google 2FA
 	Google2FABind(ctx context.Context, in *Google2FABindReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 启用Google 2FA
 	Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 禁用Google 2FA
 	Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 重置Google 2FA
 	Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 用户
 	SysUserList(ctx context.Context, in *SysUserListReq, opts ...grpc.CallOption) (*SysUserListResp, error)
-	// 获取用户详情
 	SysUserDetail(ctx context.Context, in *SysUserDetailReq, opts ...grpc.CallOption) (*SysUserDetailResp, error)
-	// 创建系统用户
 	SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 更新系统用户
 	SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 删除系统用户
 	SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 修改用户状态
 	ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 重置用户密码
 	ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 分配用户角色
 	AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 角色
 	SysRoleList(ctx context.Context, in *SysRoleListReq, opts ...grpc.CallOption) (*SysRoleListResp, error)
-	// 创建角色
 	SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 更新角色
 	SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 删除角色
 	SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 角色授权
 	SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 获取角色授权详情
 	SysRoleGrantDetail(ctx context.Context, in *SysRoleGrantDetailReq, opts ...grpc.CallOption) (*SysRoleGrantDetailResp, error)
-	// 获取权限列表
 	SysPermList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysPermListResp, error)
-	// 获取菜单树
 	GetMenuTree(ctx context.Context, in *SysMenuTreeReq, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
-	// 菜单
 	SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 更新菜单
 	SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 删除菜单
 	SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 获取菜单列表
 	SysMenuList(ctx context.Context, in *SysMenuListReq, opts ...grpc.CallOption) (*SysMenuListResp, error)
-	// 日志
 	LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error)
-	// 操作日志
 	OpLogList(ctx context.Context, in *OpLogListReq, opts ...grpc.CallOption) (*OpLogListResp, error)
-	// 新增系统配置
 	SysConfigCreate(ctx context.Context, in *SysConfigCreateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 更新系统配置
 	SysConfigUpdate(ctx context.Context, in *SysConfigUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 删除系统配置
 	SysConfigDelete(ctx context.Context, in *SysConfigDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 获取系统配置列表
 	SysConfigList(ctx context.Context, in *SysConfigListReq, opts ...grpc.CallOption) (*SysConfigListResp, error)
-	// 获取系统配置详情
 	SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error)
-	// 获取系统配置根据keys
-	SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error)
-	// 发送验证码
-	SendVerificationCode(ctx context.Context, in *SendVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 测试发送验证码
 	TestVerificationCode(ctx context.Context, in *TestVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 验证码发送记录
 	VerificationCodeRecordList(ctx context.Context, in *VerificationCodeRecordListReq, opts ...grpc.CallOption) (*VerificationCodeRecordListResp, error)
-	// 验证码发送记录详情
 	VerificationCodeRecordDetail(ctx context.Context, in *VerificationCodeRecordDetailReq, opts ...grpc.CallOption) (*VerificationCodeRecordDetailResp, error)
-	// 获取登录用户的权限列表
 	LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error)
-	// 系统定时任务列表
 	SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error)
-	// 创建系统定时任务
 	SysCronJobCreate(ctx context.Context, in *SysCronJobCreateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 更新系统定时任务
 	SysCronJobUpdate(ctx context.Context, in *SysCronJobUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 删除系统定时任务
 	SysCronJobDelete(ctx context.Context, in *SysCronJobDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 执行一次系统定时任务
 	SysCronJobRun(ctx context.Context, in *SysCronJobRunReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 开始系统定时任务
 	SysCronJobStart(ctx context.Context, in *SysCronJobStartReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 停止系统定时任务
 	SysCronJobStop(ctx context.Context, in *SysCronJobStopReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 获取系统支持的定时任务处理器列表
 	SysCronJobHandlers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysCronJobHandlersResp, error)
-	// 系统定时任务日志列表
 	SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error)
-	// 创建租户
 	SysTenantCreate(ctx context.Context, in *SysTenantCreateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 更新租户
 	SysTenantUpdate(ctx context.Context, in *SysTenantUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 删除租户
 	SysTenantDelete(ctx context.Context, in *SysTenantDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 获取租户列表
 	SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
-	// 根据 code 获取租户
 	SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error)
 	SysTenantDomainList(ctx context.Context, in *SysTenantDomainListReq, opts ...grpc.CallOption) (*SysTenantDomainListResp, error)
 	SysTenantDomainCreate(ctx context.Context, in *SysTenantDomainCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 	SysTenantDomainUpdate(ctx context.Context, in *SysTenantDomainUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 	SysTenantDomainDelete(ctx context.Context, in *SysTenantDomainDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 根据租户和来源域名解析游客迁移目标
-	ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error)
-	// 创建客服商户
 	SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 更新客服商户
 	SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 删除客服商户
 	SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-	// 获取客服商户列表
 	SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error)
-	// 获取客服商户详情
 	SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error)
 }
 
-type systemClient struct {
+type systemAdminClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewSystemClient(cc grpc.ClientConnInterface) SystemClient {
-	return &systemClient{cc}
+func NewSystemAdminClient(cc grpc.ClientConnInterface) SystemAdminClient {
+	return &systemAdminClient{cc}
 }
 
-func (c *systemClient) AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error) {
+func (c *systemAdminClient) AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminLoginResp)
-	err := c.cc.Invoke(ctx, System_AdminLogin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_AdminLogin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) GetProfile(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProfileResp, error) {
+func (c *systemAdminClient) GetProfile(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProfileResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProfileResp)
-	err := c.cc.Invoke(ctx, System_GetProfile_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_GetProfile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_UpdateProfile_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_UpdateProfile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error) {
+func (c *systemAdminClient) Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Google2FAInitResp)
-	err := c.cc.Invoke(ctx, System_Google2FAInit_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_Google2FAInit_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) Google2FABind(ctx context.Context, in *Google2FABindReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) Google2FABind(ctx context.Context, in *Google2FABindReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_Google2FABind_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_Google2FABind_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_Google2FAEnable_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_Google2FAEnable_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_Google2FADisable_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_Google2FADisable_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_Google2FAReset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_Google2FAReset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysUserList(ctx context.Context, in *SysUserListReq, opts ...grpc.CallOption) (*SysUserListResp, error) {
+func (c *systemAdminClient) SysUserList(ctx context.Context, in *SysUserListReq, opts ...grpc.CallOption) (*SysUserListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysUserListResp)
-	err := c.cc.Invoke(ctx, System_SysUserList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysUserList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysUserDetail(ctx context.Context, in *SysUserDetailReq, opts ...grpc.CallOption) (*SysUserDetailResp, error) {
+func (c *systemAdminClient) SysUserDetail(ctx context.Context, in *SysUserDetailReq, opts ...grpc.CallOption) (*SysUserDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysUserDetailResp)
-	err := c.cc.Invoke(ctx, System_SysUserDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysUserDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysUserCreate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysUserCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysUserUpdate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysUserUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysUserDelete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysUserDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_ChangeUserStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_ChangeUserStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_ResetUserPwd_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_ResetUserPwd_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_AssignUserRoles_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_AssignUserRoles_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysRoleList(ctx context.Context, in *SysRoleListReq, opts ...grpc.CallOption) (*SysRoleListResp, error) {
+func (c *systemAdminClient) SysRoleList(ctx context.Context, in *SysRoleListReq, opts ...grpc.CallOption) (*SysRoleListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysRoleListResp)
-	err := c.cc.Invoke(ctx, System_SysRoleList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysRoleList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysRoleCreate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysRoleCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysRoleUpdate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysRoleUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysRoleDelete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysRoleDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysRoleGrant_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysRoleGrant_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysRoleGrantDetail(ctx context.Context, in *SysRoleGrantDetailReq, opts ...grpc.CallOption) (*SysRoleGrantDetailResp, error) {
+func (c *systemAdminClient) SysRoleGrantDetail(ctx context.Context, in *SysRoleGrantDetailReq, opts ...grpc.CallOption) (*SysRoleGrantDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysRoleGrantDetailResp)
-	err := c.cc.Invoke(ctx, System_SysRoleGrantDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysRoleGrantDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysPermList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysPermListResp, error) {
+func (c *systemAdminClient) SysPermList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysPermListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysPermListResp)
-	err := c.cc.Invoke(ctx, System_SysPermList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysPermList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) GetMenuTree(ctx context.Context, in *SysMenuTreeReq, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
+func (c *systemAdminClient) GetMenuTree(ctx context.Context, in *SysMenuTreeReq, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysMenuTreeResp)
-	err := c.cc.Invoke(ctx, System_GetMenuTree_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_GetMenuTree_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysMenuCreate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysMenuCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysMenuUpdate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysMenuUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysMenuDelete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysMenuDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysMenuList(ctx context.Context, in *SysMenuListReq, opts ...grpc.CallOption) (*SysMenuListResp, error) {
+func (c *systemAdminClient) SysMenuList(ctx context.Context, in *SysMenuListReq, opts ...grpc.CallOption) (*SysMenuListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysMenuListResp)
-	err := c.cc.Invoke(ctx, System_SysMenuList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysMenuList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error) {
+func (c *systemAdminClient) LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginLogListResp)
-	err := c.cc.Invoke(ctx, System_LoginLogList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_LoginLogList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) OpLogList(ctx context.Context, in *OpLogListReq, opts ...grpc.CallOption) (*OpLogListResp, error) {
+func (c *systemAdminClient) OpLogList(ctx context.Context, in *OpLogListReq, opts ...grpc.CallOption) (*OpLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OpLogListResp)
-	err := c.cc.Invoke(ctx, System_OpLogList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_OpLogList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysConfigCreate(ctx context.Context, in *SysConfigCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysConfigCreate(ctx context.Context, in *SysConfigCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysConfigCreate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysConfigCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysConfigUpdate(ctx context.Context, in *SysConfigUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysConfigUpdate(ctx context.Context, in *SysConfigUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysConfigUpdate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysConfigUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysConfigDelete(ctx context.Context, in *SysConfigDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysConfigDelete(ctx context.Context, in *SysConfigDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysConfigDelete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysConfigDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysConfigList(ctx context.Context, in *SysConfigListReq, opts ...grpc.CallOption) (*SysConfigListResp, error) {
+func (c *systemAdminClient) SysConfigList(ctx context.Context, in *SysConfigListReq, opts ...grpc.CallOption) (*SysConfigListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysConfigListResp)
-	err := c.cc.Invoke(ctx, System_SysConfigList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysConfigList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error) {
+func (c *systemAdminClient) SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysConfigDetailResp)
-	err := c.cc.Invoke(ctx, System_SysConfigDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysConfigDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SysConfigByKeysResp)
-	err := c.cc.Invoke(ctx, System_SysConfigByKeys_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *systemClient) SendVerificationCode(ctx context.Context, in *SendVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) TestVerificationCode(ctx context.Context, in *TestVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SendVerificationCode_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_TestVerificationCode_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) TestVerificationCode(ctx context.Context, in *TestVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_TestVerificationCode_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *systemClient) VerificationCodeRecordList(ctx context.Context, in *VerificationCodeRecordListReq, opts ...grpc.CallOption) (*VerificationCodeRecordListResp, error) {
+func (c *systemAdminClient) VerificationCodeRecordList(ctx context.Context, in *VerificationCodeRecordListReq, opts ...grpc.CallOption) (*VerificationCodeRecordListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(VerificationCodeRecordListResp)
-	err := c.cc.Invoke(ctx, System_VerificationCodeRecordList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_VerificationCodeRecordList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) VerificationCodeRecordDetail(ctx context.Context, in *VerificationCodeRecordDetailReq, opts ...grpc.CallOption) (*VerificationCodeRecordDetailResp, error) {
+func (c *systemAdminClient) VerificationCodeRecordDetail(ctx context.Context, in *VerificationCodeRecordDetailReq, opts ...grpc.CallOption) (*VerificationCodeRecordDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(VerificationCodeRecordDetailResp)
-	err := c.cc.Invoke(ctx, System_VerificationCodeRecordDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_VerificationCodeRecordDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error) {
+func (c *systemAdminClient) LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginUserPermsResp)
-	err := c.cc.Invoke(ctx, System_LoginUserPerms_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_LoginUserPerms_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error) {
+func (c *systemAdminClient) SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysCronJobListResp)
-	err := c.cc.Invoke(ctx, System_SysCronJobList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysCronJobList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysCronJobCreate(ctx context.Context, in *SysCronJobCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysCronJobCreate(ctx context.Context, in *SysCronJobCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysCronJobCreate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysCronJobCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysCronJobUpdate(ctx context.Context, in *SysCronJobUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysCronJobUpdate(ctx context.Context, in *SysCronJobUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysCronJobUpdate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysCronJobUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysCronJobDelete(ctx context.Context, in *SysCronJobDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysCronJobDelete(ctx context.Context, in *SysCronJobDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysCronJobDelete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysCronJobDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysCronJobRun(ctx context.Context, in *SysCronJobRunReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysCronJobRun(ctx context.Context, in *SysCronJobRunReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysCronJobRun_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysCronJobRun_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysCronJobStart(ctx context.Context, in *SysCronJobStartReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysCronJobStart(ctx context.Context, in *SysCronJobStartReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysCronJobStart_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysCronJobStart_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysCronJobStop(ctx context.Context, in *SysCronJobStopReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysCronJobStop(ctx context.Context, in *SysCronJobStopReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysCronJobStop_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysCronJobStop_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysCronJobHandlers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysCronJobHandlersResp, error) {
+func (c *systemAdminClient) SysCronJobHandlers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysCronJobHandlersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysCronJobHandlersResp)
-	err := c.cc.Invoke(ctx, System_SysCronJobHandlers_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysCronJobHandlers_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error) {
+func (c *systemAdminClient) SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysCronJobLogListResp)
-	err := c.cc.Invoke(ctx, System_SysCronJobLogList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysCronJobLogList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysTenantCreate(ctx context.Context, in *SysTenantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysTenantCreate(ctx context.Context, in *SysTenantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysTenantCreate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysTenantCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysTenantUpdate(ctx context.Context, in *SysTenantUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysTenantUpdate(ctx context.Context, in *SysTenantUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysTenantUpdate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysTenantUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysTenantDelete(ctx context.Context, in *SysTenantDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysTenantDelete(ctx context.Context, in *SysTenantDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysTenantDelete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysTenantDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error) {
+func (c *systemAdminClient) SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysTenantListResp)
-	err := c.cc.Invoke(ctx, System_SysTenantList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysTenantList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error) {
+func (c *systemAdminClient) SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysTenantDetailResp)
-	err := c.cc.Invoke(ctx, System_SysTenantDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysTenantDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysTenantDomainList(ctx context.Context, in *SysTenantDomainListReq, opts ...grpc.CallOption) (*SysTenantDomainListResp, error) {
+func (c *systemAdminClient) SysTenantDomainList(ctx context.Context, in *SysTenantDomainListReq, opts ...grpc.CallOption) (*SysTenantDomainListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysTenantDomainListResp)
-	err := c.cc.Invoke(ctx, System_SysTenantDomainList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysTenantDomainList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysTenantDomainCreate(ctx context.Context, in *SysTenantDomainCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysTenantDomainCreate(ctx context.Context, in *SysTenantDomainCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysTenantDomainCreate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysTenantDomainCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysTenantDomainUpdate(ctx context.Context, in *SysTenantDomainUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysTenantDomainUpdate(ctx context.Context, in *SysTenantDomainUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysTenantDomainUpdate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysTenantDomainUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysTenantDomainDelete(ctx context.Context, in *SysTenantDomainDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysTenantDomainDelete(ctx context.Context, in *SysTenantDomainDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysTenantDomainDelete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysTenantDomainDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ResolveTenantDomainResp)
-	err := c.cc.Invoke(ctx, System_ResolveTenantDomain_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *systemClient) SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysChatMerchantCreate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysChatMerchantCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysChatMerchantUpdate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysChatMerchantUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+func (c *systemAdminClient) SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RespBase)
-	err := c.cc.Invoke(ctx, System_SysChatMerchantDelete_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysChatMerchantDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error) {
+func (c *systemAdminClient) SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysChatMerchantListResp)
-	err := c.cc.Invoke(ctx, System_SysChatMerchantList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysChatMerchantList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *systemClient) SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error) {
+func (c *systemAdminClient) SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysChatMerchantDetailResp)
-	err := c.cc.Invoke(ctx, System_SysChatMerchantDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, SystemAdmin_SysChatMerchantDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// SystemServer is the server API for System service.
-// All implementations must embed UnimplementedSystemServer
+// SystemAdminServer is the server API for SystemAdmin service.
+// All implementations must embed UnimplementedSystemAdminServer
 // for forward compatibility.
 //
 // ////////////////////
 // Service
 // ////////////////////
-type SystemServer interface {
-	// P0
+type SystemAdminServer interface {
 	AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error)
-	// 获取当前用户信息
 	GetProfile(context.Context, *Empty) (*ProfileResp, error)
-	// 修改头像，密码，昵称
 	UpdateProfile(context.Context, *UpdateProfileReq) (*RespBase, error)
-	// 2FA
 	Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error)
-	// 绑定Google 2FA
 	Google2FABind(context.Context, *Google2FABindReq) (*RespBase, error)
-	// 启用Google 2FA
 	Google2FAEnable(context.Context, *Google2FAEnableReq) (*RespBase, error)
-	// 禁用Google 2FA
 	Google2FADisable(context.Context, *Google2FADisableReq) (*RespBase, error)
-	// 重置Google 2FA
 	Google2FAReset(context.Context, *Google2FAResetReq) (*RespBase, error)
-	// 用户
 	SysUserList(context.Context, *SysUserListReq) (*SysUserListResp, error)
-	// 获取用户详情
 	SysUserDetail(context.Context, *SysUserDetailReq) (*SysUserDetailResp, error)
-	// 创建系统用户
 	SysUserCreate(context.Context, *SysUserCreateReq) (*RespBase, error)
-	// 更新系统用户
 	SysUserUpdate(context.Context, *SysUserUpdateReq) (*RespBase, error)
-	// 删除系统用户
 	SysUserDelete(context.Context, *SysUserDeleteReq) (*RespBase, error)
-	// 修改用户状态
 	ChangeUserStatus(context.Context, *ChangeUserStatusReq) (*RespBase, error)
-	// 重置用户密码
 	ResetUserPwd(context.Context, *ResetUserPwdReq) (*RespBase, error)
-	// 分配用户角色
 	AssignUserRoles(context.Context, *AssignUserRolesReq) (*RespBase, error)
-	// 角色
 	SysRoleList(context.Context, *SysRoleListReq) (*SysRoleListResp, error)
-	// 创建角色
 	SysRoleCreate(context.Context, *SysRoleCreateReq) (*RespBase, error)
-	// 更新角色
 	SysRoleUpdate(context.Context, *SysRoleUpdateReq) (*RespBase, error)
-	// 删除角色
 	SysRoleDelete(context.Context, *SysRoleDeleteReq) (*RespBase, error)
-	// 角色授权
 	SysRoleGrant(context.Context, *SysRoleGrantReq) (*RespBase, error)
-	// 获取角色授权详情
 	SysRoleGrantDetail(context.Context, *SysRoleGrantDetailReq) (*SysRoleGrantDetailResp, error)
-	// 获取权限列表
 	SysPermList(context.Context, *Empty) (*SysPermListResp, error)
-	// 获取菜单树
 	GetMenuTree(context.Context, *SysMenuTreeReq) (*SysMenuTreeResp, error)
-	// 菜单
 	SysMenuCreate(context.Context, *SysMenuCreateReq) (*RespBase, error)
-	// 更新菜单
 	SysMenuUpdate(context.Context, *SysMenuUpdateReq) (*RespBase, error)
-	// 删除菜单
 	SysMenuDelete(context.Context, *SysMenuDeleteReq) (*RespBase, error)
-	// 获取菜单列表
 	SysMenuList(context.Context, *SysMenuListReq) (*SysMenuListResp, error)
-	// 日志
 	LoginLogList(context.Context, *LoginLogListReq) (*LoginLogListResp, error)
-	// 操作日志
 	OpLogList(context.Context, *OpLogListReq) (*OpLogListResp, error)
-	// 新增系统配置
 	SysConfigCreate(context.Context, *SysConfigCreateReq) (*RespBase, error)
-	// 更新系统配置
 	SysConfigUpdate(context.Context, *SysConfigUpdateReq) (*RespBase, error)
-	// 删除系统配置
 	SysConfigDelete(context.Context, *SysConfigDeleteReq) (*RespBase, error)
-	// 获取系统配置列表
 	SysConfigList(context.Context, *SysConfigListReq) (*SysConfigListResp, error)
-	// 获取系统配置详情
 	SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error)
-	// 获取系统配置根据keys
-	SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error)
-	// 发送验证码
-	SendVerificationCode(context.Context, *SendVerificationCodeReq) (*RespBase, error)
-	// 测试发送验证码
 	TestVerificationCode(context.Context, *TestVerificationCodeReq) (*RespBase, error)
-	// 验证码发送记录
 	VerificationCodeRecordList(context.Context, *VerificationCodeRecordListReq) (*VerificationCodeRecordListResp, error)
-	// 验证码发送记录详情
 	VerificationCodeRecordDetail(context.Context, *VerificationCodeRecordDetailReq) (*VerificationCodeRecordDetailResp, error)
-	// 获取登录用户的权限列表
 	LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error)
-	// 系统定时任务列表
 	SysCronJobList(context.Context, *SysCronJobListReq) (*SysCronJobListResp, error)
-	// 创建系统定时任务
 	SysCronJobCreate(context.Context, *SysCronJobCreateReq) (*RespBase, error)
-	// 更新系统定时任务
 	SysCronJobUpdate(context.Context, *SysCronJobUpdateReq) (*RespBase, error)
-	// 删除系统定时任务
 	SysCronJobDelete(context.Context, *SysCronJobDeleteReq) (*RespBase, error)
-	// 执行一次系统定时任务
 	SysCronJobRun(context.Context, *SysCronJobRunReq) (*RespBase, error)
-	// 开始系统定时任务
 	SysCronJobStart(context.Context, *SysCronJobStartReq) (*RespBase, error)
-	// 停止系统定时任务
 	SysCronJobStop(context.Context, *SysCronJobStopReq) (*RespBase, error)
-	// 获取系统支持的定时任务处理器列表
 	SysCronJobHandlers(context.Context, *Empty) (*SysCronJobHandlersResp, error)
-	// 系统定时任务日志列表
 	SysCronJobLogList(context.Context, *SysCronJobLogListReq) (*SysCronJobLogListResp, error)
-	// 创建租户
 	SysTenantCreate(context.Context, *SysTenantCreateReq) (*RespBase, error)
-	// 更新租户
 	SysTenantUpdate(context.Context, *SysTenantUpdateReq) (*RespBase, error)
-	// 删除租户
 	SysTenantDelete(context.Context, *SysTenantDeleteReq) (*RespBase, error)
-	// 获取租户列表
 	SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error)
-	// 根据 code 获取租户
 	SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error)
 	SysTenantDomainList(context.Context, *SysTenantDomainListReq) (*SysTenantDomainListResp, error)
 	SysTenantDomainCreate(context.Context, *SysTenantDomainCreateReq) (*RespBase, error)
 	SysTenantDomainUpdate(context.Context, *SysTenantDomainUpdateReq) (*RespBase, error)
 	SysTenantDomainDelete(context.Context, *SysTenantDomainDeleteReq) (*RespBase, error)
-	// 根据租户和来源域名解析游客迁移目标
-	ResolveTenantDomain(context.Context, *ResolveTenantDomainReq) (*ResolveTenantDomainResp, error)
-	// 创建客服商户
 	SysChatMerchantCreate(context.Context, *SysChatMerchantCreateReq) (*RespBase, error)
-	// 更新客服商户
 	SysChatMerchantUpdate(context.Context, *SysChatMerchantUpdateReq) (*RespBase, error)
-	// 删除客服商户
 	SysChatMerchantDelete(context.Context, *SysChatMerchantDeleteReq) (*RespBase, error)
-	// 获取客服商户列表
 	SysChatMerchantList(context.Context, *SysChatMerchantListReq) (*SysChatMerchantListResp, error)
-	// 获取客服商户详情
 	SysChatMerchantDetail(context.Context, *SysChatMerchantDetailReq) (*SysChatMerchantDetailResp, error)
-	mustEmbedUnimplementedSystemServer()
+	mustEmbedUnimplementedSystemAdminServer()
 }
 
-// UnimplementedSystemServer must be embedded to have
+// UnimplementedSystemAdminServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedSystemServer struct{}
+type UnimplementedSystemAdminServer struct{}
 
-func (UnimplementedSystemServer) AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error) {
+func (UnimplementedSystemAdminServer) AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AdminLogin not implemented")
 }
-func (UnimplementedSystemServer) GetProfile(context.Context, *Empty) (*ProfileResp, error) {
+func (UnimplementedSystemAdminServer) GetProfile(context.Context, *Empty) (*ProfileResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProfile not implemented")
 }
-func (UnimplementedSystemServer) UpdateProfile(context.Context, *UpdateProfileReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) UpdateProfile(context.Context, *UpdateProfileReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateProfile not implemented")
 }
-func (UnimplementedSystemServer) Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error) {
+func (UnimplementedSystemAdminServer) Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Google2FAInit not implemented")
 }
-func (UnimplementedSystemServer) Google2FABind(context.Context, *Google2FABindReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) Google2FABind(context.Context, *Google2FABindReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method Google2FABind not implemented")
 }
-func (UnimplementedSystemServer) Google2FAEnable(context.Context, *Google2FAEnableReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) Google2FAEnable(context.Context, *Google2FAEnableReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method Google2FAEnable not implemented")
 }
-func (UnimplementedSystemServer) Google2FADisable(context.Context, *Google2FADisableReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) Google2FADisable(context.Context, *Google2FADisableReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method Google2FADisable not implemented")
 }
-func (UnimplementedSystemServer) Google2FAReset(context.Context, *Google2FAResetReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) Google2FAReset(context.Context, *Google2FAResetReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method Google2FAReset not implemented")
 }
-func (UnimplementedSystemServer) SysUserList(context.Context, *SysUserListReq) (*SysUserListResp, error) {
+func (UnimplementedSystemAdminServer) SysUserList(context.Context, *SysUserListReq) (*SysUserListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysUserList not implemented")
 }
-func (UnimplementedSystemServer) SysUserDetail(context.Context, *SysUserDetailReq) (*SysUserDetailResp, error) {
+func (UnimplementedSystemAdminServer) SysUserDetail(context.Context, *SysUserDetailReq) (*SysUserDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysUserDetail not implemented")
 }
-func (UnimplementedSystemServer) SysUserCreate(context.Context, *SysUserCreateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysUserCreate(context.Context, *SysUserCreateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysUserCreate not implemented")
 }
-func (UnimplementedSystemServer) SysUserUpdate(context.Context, *SysUserUpdateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysUserUpdate(context.Context, *SysUserUpdateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysUserUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysUserDelete(context.Context, *SysUserDeleteReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysUserDelete(context.Context, *SysUserDeleteReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysUserDelete not implemented")
 }
-func (UnimplementedSystemServer) ChangeUserStatus(context.Context, *ChangeUserStatusReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) ChangeUserStatus(context.Context, *ChangeUserStatusReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method ChangeUserStatus not implemented")
 }
-func (UnimplementedSystemServer) ResetUserPwd(context.Context, *ResetUserPwdReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) ResetUserPwd(context.Context, *ResetUserPwdReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResetUserPwd not implemented")
 }
-func (UnimplementedSystemServer) AssignUserRoles(context.Context, *AssignUserRolesReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) AssignUserRoles(context.Context, *AssignUserRolesReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method AssignUserRoles not implemented")
 }
-func (UnimplementedSystemServer) SysRoleList(context.Context, *SysRoleListReq) (*SysRoleListResp, error) {
+func (UnimplementedSystemAdminServer) SysRoleList(context.Context, *SysRoleListReq) (*SysRoleListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysRoleList not implemented")
 }
-func (UnimplementedSystemServer) SysRoleCreate(context.Context, *SysRoleCreateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysRoleCreate(context.Context, *SysRoleCreateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysRoleCreate not implemented")
 }
-func (UnimplementedSystemServer) SysRoleUpdate(context.Context, *SysRoleUpdateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysRoleUpdate(context.Context, *SysRoleUpdateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysRoleUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysRoleDelete(context.Context, *SysRoleDeleteReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysRoleDelete(context.Context, *SysRoleDeleteReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysRoleDelete not implemented")
 }
-func (UnimplementedSystemServer) SysRoleGrant(context.Context, *SysRoleGrantReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysRoleGrant(context.Context, *SysRoleGrantReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysRoleGrant not implemented")
 }
-func (UnimplementedSystemServer) SysRoleGrantDetail(context.Context, *SysRoleGrantDetailReq) (*SysRoleGrantDetailResp, error) {
+func (UnimplementedSystemAdminServer) SysRoleGrantDetail(context.Context, *SysRoleGrantDetailReq) (*SysRoleGrantDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysRoleGrantDetail not implemented")
 }
-func (UnimplementedSystemServer) SysPermList(context.Context, *Empty) (*SysPermListResp, error) {
+func (UnimplementedSystemAdminServer) SysPermList(context.Context, *Empty) (*SysPermListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysPermList not implemented")
 }
-func (UnimplementedSystemServer) GetMenuTree(context.Context, *SysMenuTreeReq) (*SysMenuTreeResp, error) {
+func (UnimplementedSystemAdminServer) GetMenuTree(context.Context, *SysMenuTreeReq) (*SysMenuTreeResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMenuTree not implemented")
 }
-func (UnimplementedSystemServer) SysMenuCreate(context.Context, *SysMenuCreateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysMenuCreate(context.Context, *SysMenuCreateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysMenuCreate not implemented")
 }
-func (UnimplementedSystemServer) SysMenuUpdate(context.Context, *SysMenuUpdateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysMenuUpdate(context.Context, *SysMenuUpdateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysMenuUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysMenuDelete(context.Context, *SysMenuDeleteReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysMenuDelete(context.Context, *SysMenuDeleteReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysMenuDelete not implemented")
 }
-func (UnimplementedSystemServer) SysMenuList(context.Context, *SysMenuListReq) (*SysMenuListResp, error) {
+func (UnimplementedSystemAdminServer) SysMenuList(context.Context, *SysMenuListReq) (*SysMenuListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysMenuList not implemented")
 }
-func (UnimplementedSystemServer) LoginLogList(context.Context, *LoginLogListReq) (*LoginLogListResp, error) {
+func (UnimplementedSystemAdminServer) LoginLogList(context.Context, *LoginLogListReq) (*LoginLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method LoginLogList not implemented")
 }
-func (UnimplementedSystemServer) OpLogList(context.Context, *OpLogListReq) (*OpLogListResp, error) {
+func (UnimplementedSystemAdminServer) OpLogList(context.Context, *OpLogListReq) (*OpLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method OpLogList not implemented")
 }
-func (UnimplementedSystemServer) SysConfigCreate(context.Context, *SysConfigCreateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysConfigCreate(context.Context, *SysConfigCreateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysConfigCreate not implemented")
 }
-func (UnimplementedSystemServer) SysConfigUpdate(context.Context, *SysConfigUpdateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysConfigUpdate(context.Context, *SysConfigUpdateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysConfigUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysConfigDelete(context.Context, *SysConfigDeleteReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysConfigDelete(context.Context, *SysConfigDeleteReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysConfigDelete not implemented")
 }
-func (UnimplementedSystemServer) SysConfigList(context.Context, *SysConfigListReq) (*SysConfigListResp, error) {
+func (UnimplementedSystemAdminServer) SysConfigList(context.Context, *SysConfigListReq) (*SysConfigListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysConfigList not implemented")
 }
-func (UnimplementedSystemServer) SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error) {
+func (UnimplementedSystemAdminServer) SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysConfigDetail not implemented")
 }
-func (UnimplementedSystemServer) SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method SysConfigByKeys not implemented")
-}
-func (UnimplementedSystemServer) SendVerificationCode(context.Context, *SendVerificationCodeReq) (*RespBase, error) {
-	return nil, status.Error(codes.Unimplemented, "method SendVerificationCode not implemented")
-}
-func (UnimplementedSystemServer) TestVerificationCode(context.Context, *TestVerificationCodeReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) TestVerificationCode(context.Context, *TestVerificationCodeReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method TestVerificationCode not implemented")
 }
-func (UnimplementedSystemServer) VerificationCodeRecordList(context.Context, *VerificationCodeRecordListReq) (*VerificationCodeRecordListResp, error) {
+func (UnimplementedSystemAdminServer) VerificationCodeRecordList(context.Context, *VerificationCodeRecordListReq) (*VerificationCodeRecordListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method VerificationCodeRecordList not implemented")
 }
-func (UnimplementedSystemServer) VerificationCodeRecordDetail(context.Context, *VerificationCodeRecordDetailReq) (*VerificationCodeRecordDetailResp, error) {
+func (UnimplementedSystemAdminServer) VerificationCodeRecordDetail(context.Context, *VerificationCodeRecordDetailReq) (*VerificationCodeRecordDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method VerificationCodeRecordDetail not implemented")
 }
-func (UnimplementedSystemServer) LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error) {
+func (UnimplementedSystemAdminServer) LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method LoginUserPerms not implemented")
 }
-func (UnimplementedSystemServer) SysCronJobList(context.Context, *SysCronJobListReq) (*SysCronJobListResp, error) {
+func (UnimplementedSystemAdminServer) SysCronJobList(context.Context, *SysCronJobListReq) (*SysCronJobListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysCronJobList not implemented")
 }
-func (UnimplementedSystemServer) SysCronJobCreate(context.Context, *SysCronJobCreateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysCronJobCreate(context.Context, *SysCronJobCreateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysCronJobCreate not implemented")
 }
-func (UnimplementedSystemServer) SysCronJobUpdate(context.Context, *SysCronJobUpdateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysCronJobUpdate(context.Context, *SysCronJobUpdateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysCronJobUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysCronJobDelete(context.Context, *SysCronJobDeleteReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysCronJobDelete(context.Context, *SysCronJobDeleteReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysCronJobDelete not implemented")
 }
-func (UnimplementedSystemServer) SysCronJobRun(context.Context, *SysCronJobRunReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysCronJobRun(context.Context, *SysCronJobRunReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysCronJobRun not implemented")
 }
-func (UnimplementedSystemServer) SysCronJobStart(context.Context, *SysCronJobStartReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysCronJobStart(context.Context, *SysCronJobStartReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysCronJobStart not implemented")
 }
-func (UnimplementedSystemServer) SysCronJobStop(context.Context, *SysCronJobStopReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysCronJobStop(context.Context, *SysCronJobStopReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysCronJobStop not implemented")
 }
-func (UnimplementedSystemServer) SysCronJobHandlers(context.Context, *Empty) (*SysCronJobHandlersResp, error) {
+func (UnimplementedSystemAdminServer) SysCronJobHandlers(context.Context, *Empty) (*SysCronJobHandlersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysCronJobHandlers not implemented")
 }
-func (UnimplementedSystemServer) SysCronJobLogList(context.Context, *SysCronJobLogListReq) (*SysCronJobLogListResp, error) {
+func (UnimplementedSystemAdminServer) SysCronJobLogList(context.Context, *SysCronJobLogListReq) (*SysCronJobLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysCronJobLogList not implemented")
 }
-func (UnimplementedSystemServer) SysTenantCreate(context.Context, *SysTenantCreateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysTenantCreate(context.Context, *SysTenantCreateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantCreate not implemented")
 }
-func (UnimplementedSystemServer) SysTenantUpdate(context.Context, *SysTenantUpdateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysTenantUpdate(context.Context, *SysTenantUpdateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysTenantDelete(context.Context, *SysTenantDeleteReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysTenantDelete(context.Context, *SysTenantDeleteReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantDelete not implemented")
 }
-func (UnimplementedSystemServer) SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error) {
+func (UnimplementedSystemAdminServer) SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantList not implemented")
 }
-func (UnimplementedSystemServer) SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error) {
+func (UnimplementedSystemAdminServer) SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantDetail not implemented")
 }
-func (UnimplementedSystemServer) SysTenantDomainList(context.Context, *SysTenantDomainListReq) (*SysTenantDomainListResp, error) {
+func (UnimplementedSystemAdminServer) SysTenantDomainList(context.Context, *SysTenantDomainListReq) (*SysTenantDomainListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantDomainList not implemented")
 }
-func (UnimplementedSystemServer) SysTenantDomainCreate(context.Context, *SysTenantDomainCreateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysTenantDomainCreate(context.Context, *SysTenantDomainCreateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantDomainCreate not implemented")
 }
-func (UnimplementedSystemServer) SysTenantDomainUpdate(context.Context, *SysTenantDomainUpdateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysTenantDomainUpdate(context.Context, *SysTenantDomainUpdateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantDomainUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysTenantDomainDelete(context.Context, *SysTenantDomainDeleteReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysTenantDomainDelete(context.Context, *SysTenantDomainDeleteReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantDomainDelete not implemented")
 }
-func (UnimplementedSystemServer) ResolveTenantDomain(context.Context, *ResolveTenantDomainReq) (*ResolveTenantDomainResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method ResolveTenantDomain not implemented")
-}
-func (UnimplementedSystemServer) SysChatMerchantCreate(context.Context, *SysChatMerchantCreateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysChatMerchantCreate(context.Context, *SysChatMerchantCreateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantCreate not implemented")
 }
-func (UnimplementedSystemServer) SysChatMerchantUpdate(context.Context, *SysChatMerchantUpdateReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysChatMerchantUpdate(context.Context, *SysChatMerchantUpdateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysChatMerchantDelete(context.Context, *SysChatMerchantDeleteReq) (*RespBase, error) {
+func (UnimplementedSystemAdminServer) SysChatMerchantDelete(context.Context, *SysChatMerchantDeleteReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantDelete not implemented")
 }
-func (UnimplementedSystemServer) SysChatMerchantList(context.Context, *SysChatMerchantListReq) (*SysChatMerchantListResp, error) {
+func (UnimplementedSystemAdminServer) SysChatMerchantList(context.Context, *SysChatMerchantListReq) (*SysChatMerchantListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantList not implemented")
 }
-func (UnimplementedSystemServer) SysChatMerchantDetail(context.Context, *SysChatMerchantDetailReq) (*SysChatMerchantDetailResp, error) {
+func (UnimplementedSystemAdminServer) SysChatMerchantDetail(context.Context, *SysChatMerchantDetailReq) (*SysChatMerchantDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantDetail not implemented")
 }
-func (UnimplementedSystemServer) mustEmbedUnimplementedSystemServer() {}
-func (UnimplementedSystemServer) testEmbeddedByValue()                {}
+func (UnimplementedSystemAdminServer) mustEmbedUnimplementedSystemAdminServer() {}
+func (UnimplementedSystemAdminServer) testEmbeddedByValue()                     {}
 
-// UnsafeSystemServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to SystemServer will
+// UnsafeSystemAdminServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SystemAdminServer will
 // result in compilation errors.
-type UnsafeSystemServer interface {
-	mustEmbedUnimplementedSystemServer()
+type UnsafeSystemAdminServer interface {
+	mustEmbedUnimplementedSystemAdminServer()
 }
 
-func RegisterSystemServer(s grpc.ServiceRegistrar, srv SystemServer) {
-	// If the following call panics, it indicates UnimplementedSystemServer was
+func RegisterSystemAdminServer(s grpc.ServiceRegistrar, srv SystemAdminServer) {
+	// If the following call panics, it indicates UnimplementedSystemAdminServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&System_ServiceDesc, srv)
+	s.RegisterService(&SystemAdmin_ServiceDesc, srv)
 }
 
-func _System_AdminLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_AdminLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AdminLoginReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).AdminLogin(ctx, in)
+		return srv.(SystemAdminServer).AdminLogin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_AdminLogin_FullMethodName,
+		FullMethod: SystemAdmin_AdminLogin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).AdminLogin(ctx, req.(*AdminLoginReq))
+		return srv.(SystemAdminServer).AdminLogin(ctx, req.(*AdminLoginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).GetProfile(ctx, in)
+		return srv.(SystemAdminServer).GetProfile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_GetProfile_FullMethodName,
+		FullMethod: SystemAdmin_GetProfile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).GetProfile(ctx, req.(*Empty))
+		return srv.(SystemAdminServer).GetProfile(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateProfileReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).UpdateProfile(ctx, in)
+		return srv.(SystemAdminServer).UpdateProfile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_UpdateProfile_FullMethodName,
+		FullMethod: SystemAdmin_UpdateProfile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).UpdateProfile(ctx, req.(*UpdateProfileReq))
+		return srv.(SystemAdminServer).UpdateProfile(ctx, req.(*UpdateProfileReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_Google2FAInit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_Google2FAInit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Google2FAInitReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).Google2FAInit(ctx, in)
+		return srv.(SystemAdminServer).Google2FAInit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_Google2FAInit_FullMethodName,
+		FullMethod: SystemAdmin_Google2FAInit_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).Google2FAInit(ctx, req.(*Google2FAInitReq))
+		return srv.(SystemAdminServer).Google2FAInit(ctx, req.(*Google2FAInitReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_Google2FABind_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_Google2FABind_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Google2FABindReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).Google2FABind(ctx, in)
+		return srv.(SystemAdminServer).Google2FABind(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_Google2FABind_FullMethodName,
+		FullMethod: SystemAdmin_Google2FABind_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).Google2FABind(ctx, req.(*Google2FABindReq))
+		return srv.(SystemAdminServer).Google2FABind(ctx, req.(*Google2FABindReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_Google2FAEnable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_Google2FAEnable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Google2FAEnableReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).Google2FAEnable(ctx, in)
+		return srv.(SystemAdminServer).Google2FAEnable(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_Google2FAEnable_FullMethodName,
+		FullMethod: SystemAdmin_Google2FAEnable_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).Google2FAEnable(ctx, req.(*Google2FAEnableReq))
+		return srv.(SystemAdminServer).Google2FAEnable(ctx, req.(*Google2FAEnableReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_Google2FADisable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_Google2FADisable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Google2FADisableReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).Google2FADisable(ctx, in)
+		return srv.(SystemAdminServer).Google2FADisable(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_Google2FADisable_FullMethodName,
+		FullMethod: SystemAdmin_Google2FADisable_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).Google2FADisable(ctx, req.(*Google2FADisableReq))
+		return srv.(SystemAdminServer).Google2FADisable(ctx, req.(*Google2FADisableReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_Google2FAReset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_Google2FAReset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Google2FAResetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).Google2FAReset(ctx, in)
+		return srv.(SystemAdminServer).Google2FAReset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_Google2FAReset_FullMethodName,
+		FullMethod: SystemAdmin_Google2FAReset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).Google2FAReset(ctx, req.(*Google2FAResetReq))
+		return srv.(SystemAdminServer).Google2FAReset(ctx, req.(*Google2FAResetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysUserList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysUserList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysUserListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysUserList(ctx, in)
+		return srv.(SystemAdminServer).SysUserList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysUserList_FullMethodName,
+		FullMethod: SystemAdmin_SysUserList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysUserList(ctx, req.(*SysUserListReq))
+		return srv.(SystemAdminServer).SysUserList(ctx, req.(*SysUserListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysUserDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysUserDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysUserDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysUserDetail(ctx, in)
+		return srv.(SystemAdminServer).SysUserDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysUserDetail_FullMethodName,
+		FullMethod: SystemAdmin_SysUserDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysUserDetail(ctx, req.(*SysUserDetailReq))
+		return srv.(SystemAdminServer).SysUserDetail(ctx, req.(*SysUserDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysUserCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysUserCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysUserCreateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysUserCreate(ctx, in)
+		return srv.(SystemAdminServer).SysUserCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysUserCreate_FullMethodName,
+		FullMethod: SystemAdmin_SysUserCreate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysUserCreate(ctx, req.(*SysUserCreateReq))
+		return srv.(SystemAdminServer).SysUserCreate(ctx, req.(*SysUserCreateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysUserUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysUserUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysUserUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysUserUpdate(ctx, in)
+		return srv.(SystemAdminServer).SysUserUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysUserUpdate_FullMethodName,
+		FullMethod: SystemAdmin_SysUserUpdate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysUserUpdate(ctx, req.(*SysUserUpdateReq))
+		return srv.(SystemAdminServer).SysUserUpdate(ctx, req.(*SysUserUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysUserDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysUserDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysUserDeleteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysUserDelete(ctx, in)
+		return srv.(SystemAdminServer).SysUserDelete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysUserDelete_FullMethodName,
+		FullMethod: SystemAdmin_SysUserDelete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysUserDelete(ctx, req.(*SysUserDeleteReq))
+		return srv.(SystemAdminServer).SysUserDelete(ctx, req.(*SysUserDeleteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_ChangeUserStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_ChangeUserStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ChangeUserStatusReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).ChangeUserStatus(ctx, in)
+		return srv.(SystemAdminServer).ChangeUserStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_ChangeUserStatus_FullMethodName,
+		FullMethod: SystemAdmin_ChangeUserStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).ChangeUserStatus(ctx, req.(*ChangeUserStatusReq))
+		return srv.(SystemAdminServer).ChangeUserStatus(ctx, req.(*ChangeUserStatusReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_ResetUserPwd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_ResetUserPwd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResetUserPwdReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).ResetUserPwd(ctx, in)
+		return srv.(SystemAdminServer).ResetUserPwd(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_ResetUserPwd_FullMethodName,
+		FullMethod: SystemAdmin_ResetUserPwd_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).ResetUserPwd(ctx, req.(*ResetUserPwdReq))
+		return srv.(SystemAdminServer).ResetUserPwd(ctx, req.(*ResetUserPwdReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_AssignUserRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_AssignUserRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AssignUserRolesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).AssignUserRoles(ctx, in)
+		return srv.(SystemAdminServer).AssignUserRoles(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_AssignUserRoles_FullMethodName,
+		FullMethod: SystemAdmin_AssignUserRoles_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).AssignUserRoles(ctx, req.(*AssignUserRolesReq))
+		return srv.(SystemAdminServer).AssignUserRoles(ctx, req.(*AssignUserRolesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysRoleList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysRoleList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysRoleListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysRoleList(ctx, in)
+		return srv.(SystemAdminServer).SysRoleList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysRoleList_FullMethodName,
+		FullMethod: SystemAdmin_SysRoleList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysRoleList(ctx, req.(*SysRoleListReq))
+		return srv.(SystemAdminServer).SysRoleList(ctx, req.(*SysRoleListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysRoleCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysRoleCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysRoleCreateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysRoleCreate(ctx, in)
+		return srv.(SystemAdminServer).SysRoleCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysRoleCreate_FullMethodName,
+		FullMethod: SystemAdmin_SysRoleCreate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysRoleCreate(ctx, req.(*SysRoleCreateReq))
+		return srv.(SystemAdminServer).SysRoleCreate(ctx, req.(*SysRoleCreateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysRoleUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysRoleUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysRoleUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysRoleUpdate(ctx, in)
+		return srv.(SystemAdminServer).SysRoleUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysRoleUpdate_FullMethodName,
+		FullMethod: SystemAdmin_SysRoleUpdate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysRoleUpdate(ctx, req.(*SysRoleUpdateReq))
+		return srv.(SystemAdminServer).SysRoleUpdate(ctx, req.(*SysRoleUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysRoleDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysRoleDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysRoleDeleteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysRoleDelete(ctx, in)
+		return srv.(SystemAdminServer).SysRoleDelete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysRoleDelete_FullMethodName,
+		FullMethod: SystemAdmin_SysRoleDelete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysRoleDelete(ctx, req.(*SysRoleDeleteReq))
+		return srv.(SystemAdminServer).SysRoleDelete(ctx, req.(*SysRoleDeleteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysRoleGrant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysRoleGrant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysRoleGrantReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysRoleGrant(ctx, in)
+		return srv.(SystemAdminServer).SysRoleGrant(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysRoleGrant_FullMethodName,
+		FullMethod: SystemAdmin_SysRoleGrant_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysRoleGrant(ctx, req.(*SysRoleGrantReq))
+		return srv.(SystemAdminServer).SysRoleGrant(ctx, req.(*SysRoleGrantReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysRoleGrantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysRoleGrantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysRoleGrantDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysRoleGrantDetail(ctx, in)
+		return srv.(SystemAdminServer).SysRoleGrantDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysRoleGrantDetail_FullMethodName,
+		FullMethod: SystemAdmin_SysRoleGrantDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysRoleGrantDetail(ctx, req.(*SysRoleGrantDetailReq))
+		return srv.(SystemAdminServer).SysRoleGrantDetail(ctx, req.(*SysRoleGrantDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysPermList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysPermList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysPermList(ctx, in)
+		return srv.(SystemAdminServer).SysPermList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysPermList_FullMethodName,
+		FullMethod: SystemAdmin_SysPermList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysPermList(ctx, req.(*Empty))
+		return srv.(SystemAdminServer).SysPermList(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_GetMenuTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_GetMenuTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysMenuTreeReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).GetMenuTree(ctx, in)
+		return srv.(SystemAdminServer).GetMenuTree(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_GetMenuTree_FullMethodName,
+		FullMethod: SystemAdmin_GetMenuTree_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).GetMenuTree(ctx, req.(*SysMenuTreeReq))
+		return srv.(SystemAdminServer).GetMenuTree(ctx, req.(*SysMenuTreeReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysMenuCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysMenuCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysMenuCreateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysMenuCreate(ctx, in)
+		return srv.(SystemAdminServer).SysMenuCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysMenuCreate_FullMethodName,
+		FullMethod: SystemAdmin_SysMenuCreate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysMenuCreate(ctx, req.(*SysMenuCreateReq))
+		return srv.(SystemAdminServer).SysMenuCreate(ctx, req.(*SysMenuCreateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysMenuUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysMenuUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysMenuUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysMenuUpdate(ctx, in)
+		return srv.(SystemAdminServer).SysMenuUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysMenuUpdate_FullMethodName,
+		FullMethod: SystemAdmin_SysMenuUpdate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysMenuUpdate(ctx, req.(*SysMenuUpdateReq))
+		return srv.(SystemAdminServer).SysMenuUpdate(ctx, req.(*SysMenuUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysMenuDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysMenuDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysMenuDeleteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysMenuDelete(ctx, in)
+		return srv.(SystemAdminServer).SysMenuDelete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysMenuDelete_FullMethodName,
+		FullMethod: SystemAdmin_SysMenuDelete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysMenuDelete(ctx, req.(*SysMenuDeleteReq))
+		return srv.(SystemAdminServer).SysMenuDelete(ctx, req.(*SysMenuDeleteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysMenuList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysMenuList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysMenuListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysMenuList(ctx, in)
+		return srv.(SystemAdminServer).SysMenuList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysMenuList_FullMethodName,
+		FullMethod: SystemAdmin_SysMenuList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysMenuList(ctx, req.(*SysMenuListReq))
+		return srv.(SystemAdminServer).SysMenuList(ctx, req.(*SysMenuListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_LoginLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_LoginLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginLogListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).LoginLogList(ctx, in)
+		return srv.(SystemAdminServer).LoginLogList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_LoginLogList_FullMethodName,
+		FullMethod: SystemAdmin_LoginLogList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).LoginLogList(ctx, req.(*LoginLogListReq))
+		return srv.(SystemAdminServer).LoginLogList(ctx, req.(*LoginLogListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_OpLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_OpLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OpLogListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).OpLogList(ctx, in)
+		return srv.(SystemAdminServer).OpLogList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_OpLogList_FullMethodName,
+		FullMethod: SystemAdmin_OpLogList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).OpLogList(ctx, req.(*OpLogListReq))
+		return srv.(SystemAdminServer).OpLogList(ctx, req.(*OpLogListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysConfigCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysConfigCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysConfigCreateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysConfigCreate(ctx, in)
+		return srv.(SystemAdminServer).SysConfigCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysConfigCreate_FullMethodName,
+		FullMethod: SystemAdmin_SysConfigCreate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysConfigCreate(ctx, req.(*SysConfigCreateReq))
+		return srv.(SystemAdminServer).SysConfigCreate(ctx, req.(*SysConfigCreateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysConfigUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysConfigUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysConfigUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysConfigUpdate(ctx, in)
+		return srv.(SystemAdminServer).SysConfigUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysConfigUpdate_FullMethodName,
+		FullMethod: SystemAdmin_SysConfigUpdate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysConfigUpdate(ctx, req.(*SysConfigUpdateReq))
+		return srv.(SystemAdminServer).SysConfigUpdate(ctx, req.(*SysConfigUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysConfigDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysConfigDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysConfigDeleteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysConfigDelete(ctx, in)
+		return srv.(SystemAdminServer).SysConfigDelete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysConfigDelete_FullMethodName,
+		FullMethod: SystemAdmin_SysConfigDelete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysConfigDelete(ctx, req.(*SysConfigDeleteReq))
+		return srv.(SystemAdminServer).SysConfigDelete(ctx, req.(*SysConfigDeleteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysConfigList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysConfigList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysConfigListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysConfigList(ctx, in)
+		return srv.(SystemAdminServer).SysConfigList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysConfigList_FullMethodName,
+		FullMethod: SystemAdmin_SysConfigList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysConfigList(ctx, req.(*SysConfigListReq))
+		return srv.(SystemAdminServer).SysConfigList(ctx, req.(*SysConfigListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysConfigDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysConfigDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysConfigDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysConfigDetail(ctx, in)
+		return srv.(SystemAdminServer).SysConfigDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysConfigDetail_FullMethodName,
+		FullMethod: SystemAdmin_SysConfigDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysConfigDetail(ctx, req.(*SysConfigDetailReq))
+		return srv.(SystemAdminServer).SysConfigDetail(ctx, req.(*SysConfigDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysConfigByKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SysConfigByKeysReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SystemServer).SysConfigByKeys(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: System_SysConfigByKeys_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysConfigByKeys(ctx, req.(*SysConfigByKeysReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _System_SendVerificationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendVerificationCodeReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SystemServer).SendVerificationCode(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: System_SendVerificationCode_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SendVerificationCode(ctx, req.(*SendVerificationCodeReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _System_TestVerificationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_TestVerificationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TestVerificationCodeReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).TestVerificationCode(ctx, in)
+		return srv.(SystemAdminServer).TestVerificationCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_TestVerificationCode_FullMethodName,
+		FullMethod: SystemAdmin_TestVerificationCode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).TestVerificationCode(ctx, req.(*TestVerificationCodeReq))
+		return srv.(SystemAdminServer).TestVerificationCode(ctx, req.(*TestVerificationCodeReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_VerificationCodeRecordList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_VerificationCodeRecordList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VerificationCodeRecordListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).VerificationCodeRecordList(ctx, in)
+		return srv.(SystemAdminServer).VerificationCodeRecordList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_VerificationCodeRecordList_FullMethodName,
+		FullMethod: SystemAdmin_VerificationCodeRecordList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).VerificationCodeRecordList(ctx, req.(*VerificationCodeRecordListReq))
+		return srv.(SystemAdminServer).VerificationCodeRecordList(ctx, req.(*VerificationCodeRecordListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_VerificationCodeRecordDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_VerificationCodeRecordDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VerificationCodeRecordDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).VerificationCodeRecordDetail(ctx, in)
+		return srv.(SystemAdminServer).VerificationCodeRecordDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_VerificationCodeRecordDetail_FullMethodName,
+		FullMethod: SystemAdmin_VerificationCodeRecordDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).VerificationCodeRecordDetail(ctx, req.(*VerificationCodeRecordDetailReq))
+		return srv.(SystemAdminServer).VerificationCodeRecordDetail(ctx, req.(*VerificationCodeRecordDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_LoginUserPerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_LoginUserPerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginUserPermsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).LoginUserPerms(ctx, in)
+		return srv.(SystemAdminServer).LoginUserPerms(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_LoginUserPerms_FullMethodName,
+		FullMethod: SystemAdmin_LoginUserPerms_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).LoginUserPerms(ctx, req.(*LoginUserPermsReq))
+		return srv.(SystemAdminServer).LoginUserPerms(ctx, req.(*LoginUserPermsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysCronJobList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysCronJobList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysCronJobListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysCronJobList(ctx, in)
+		return srv.(SystemAdminServer).SysCronJobList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysCronJobList_FullMethodName,
+		FullMethod: SystemAdmin_SysCronJobList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysCronJobList(ctx, req.(*SysCronJobListReq))
+		return srv.(SystemAdminServer).SysCronJobList(ctx, req.(*SysCronJobListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysCronJobCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysCronJobCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysCronJobCreateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysCronJobCreate(ctx, in)
+		return srv.(SystemAdminServer).SysCronJobCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysCronJobCreate_FullMethodName,
+		FullMethod: SystemAdmin_SysCronJobCreate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysCronJobCreate(ctx, req.(*SysCronJobCreateReq))
+		return srv.(SystemAdminServer).SysCronJobCreate(ctx, req.(*SysCronJobCreateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysCronJobUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysCronJobUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysCronJobUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysCronJobUpdate(ctx, in)
+		return srv.(SystemAdminServer).SysCronJobUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysCronJobUpdate_FullMethodName,
+		FullMethod: SystemAdmin_SysCronJobUpdate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysCronJobUpdate(ctx, req.(*SysCronJobUpdateReq))
+		return srv.(SystemAdminServer).SysCronJobUpdate(ctx, req.(*SysCronJobUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysCronJobDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysCronJobDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysCronJobDeleteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysCronJobDelete(ctx, in)
+		return srv.(SystemAdminServer).SysCronJobDelete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysCronJobDelete_FullMethodName,
+		FullMethod: SystemAdmin_SysCronJobDelete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysCronJobDelete(ctx, req.(*SysCronJobDeleteReq))
+		return srv.(SystemAdminServer).SysCronJobDelete(ctx, req.(*SysCronJobDeleteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysCronJobRun_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysCronJobRun_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysCronJobRunReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysCronJobRun(ctx, in)
+		return srv.(SystemAdminServer).SysCronJobRun(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysCronJobRun_FullMethodName,
+		FullMethod: SystemAdmin_SysCronJobRun_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysCronJobRun(ctx, req.(*SysCronJobRunReq))
+		return srv.(SystemAdminServer).SysCronJobRun(ctx, req.(*SysCronJobRunReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysCronJobStart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysCronJobStart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysCronJobStartReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysCronJobStart(ctx, in)
+		return srv.(SystemAdminServer).SysCronJobStart(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysCronJobStart_FullMethodName,
+		FullMethod: SystemAdmin_SysCronJobStart_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysCronJobStart(ctx, req.(*SysCronJobStartReq))
+		return srv.(SystemAdminServer).SysCronJobStart(ctx, req.(*SysCronJobStartReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysCronJobStop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysCronJobStop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysCronJobStopReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysCronJobStop(ctx, in)
+		return srv.(SystemAdminServer).SysCronJobStop(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysCronJobStop_FullMethodName,
+		FullMethod: SystemAdmin_SysCronJobStop_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysCronJobStop(ctx, req.(*SysCronJobStopReq))
+		return srv.(SystemAdminServer).SysCronJobStop(ctx, req.(*SysCronJobStopReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysCronJobHandlers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysCronJobHandlers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysCronJobHandlers(ctx, in)
+		return srv.(SystemAdminServer).SysCronJobHandlers(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysCronJobHandlers_FullMethodName,
+		FullMethod: SystemAdmin_SysCronJobHandlers_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysCronJobHandlers(ctx, req.(*Empty))
+		return srv.(SystemAdminServer).SysCronJobHandlers(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysCronJobLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysCronJobLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysCronJobLogListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysCronJobLogList(ctx, in)
+		return srv.(SystemAdminServer).SysCronJobLogList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysCronJobLogList_FullMethodName,
+		FullMethod: SystemAdmin_SysCronJobLogList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysCronJobLogList(ctx, req.(*SysCronJobLogListReq))
+		return srv.(SystemAdminServer).SysCronJobLogList(ctx, req.(*SysCronJobLogListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysTenantCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysTenantCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantCreateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysTenantCreate(ctx, in)
+		return srv.(SystemAdminServer).SysTenantCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysTenantCreate_FullMethodName,
+		FullMethod: SystemAdmin_SysTenantCreate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysTenantCreate(ctx, req.(*SysTenantCreateReq))
+		return srv.(SystemAdminServer).SysTenantCreate(ctx, req.(*SysTenantCreateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysTenantUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysTenantUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysTenantUpdate(ctx, in)
+		return srv.(SystemAdminServer).SysTenantUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysTenantUpdate_FullMethodName,
+		FullMethod: SystemAdmin_SysTenantUpdate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysTenantUpdate(ctx, req.(*SysTenantUpdateReq))
+		return srv.(SystemAdminServer).SysTenantUpdate(ctx, req.(*SysTenantUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysTenantDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysTenantDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantDeleteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysTenantDelete(ctx, in)
+		return srv.(SystemAdminServer).SysTenantDelete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysTenantDelete_FullMethodName,
+		FullMethod: SystemAdmin_SysTenantDelete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysTenantDelete(ctx, req.(*SysTenantDeleteReq))
+		return srv.(SystemAdminServer).SysTenantDelete(ctx, req.(*SysTenantDeleteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysTenantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysTenantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysTenantList(ctx, in)
+		return srv.(SystemAdminServer).SysTenantList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysTenantList_FullMethodName,
+		FullMethod: SystemAdmin_SysTenantList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysTenantList(ctx, req.(*SysTenantListReq))
+		return srv.(SystemAdminServer).SysTenantList(ctx, req.(*SysTenantListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysTenantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysTenantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysTenantDetail(ctx, in)
+		return srv.(SystemAdminServer).SysTenantDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysTenantDetail_FullMethodName,
+		FullMethod: SystemAdmin_SysTenantDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysTenantDetail(ctx, req.(*SysTenantDetailReq))
+		return srv.(SystemAdminServer).SysTenantDetail(ctx, req.(*SysTenantDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysTenantDomainList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysTenantDomainList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantDomainListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysTenantDomainList(ctx, in)
+		return srv.(SystemAdminServer).SysTenantDomainList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysTenantDomainList_FullMethodName,
+		FullMethod: SystemAdmin_SysTenantDomainList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysTenantDomainList(ctx, req.(*SysTenantDomainListReq))
+		return srv.(SystemAdminServer).SysTenantDomainList(ctx, req.(*SysTenantDomainListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysTenantDomainCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysTenantDomainCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantDomainCreateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysTenantDomainCreate(ctx, in)
+		return srv.(SystemAdminServer).SysTenantDomainCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysTenantDomainCreate_FullMethodName,
+		FullMethod: SystemAdmin_SysTenantDomainCreate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysTenantDomainCreate(ctx, req.(*SysTenantDomainCreateReq))
+		return srv.(SystemAdminServer).SysTenantDomainCreate(ctx, req.(*SysTenantDomainCreateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysTenantDomainUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysTenantDomainUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantDomainUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysTenantDomainUpdate(ctx, in)
+		return srv.(SystemAdminServer).SysTenantDomainUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysTenantDomainUpdate_FullMethodName,
+		FullMethod: SystemAdmin_SysTenantDomainUpdate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysTenantDomainUpdate(ctx, req.(*SysTenantDomainUpdateReq))
+		return srv.(SystemAdminServer).SysTenantDomainUpdate(ctx, req.(*SysTenantDomainUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysTenantDomainDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysTenantDomainDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantDomainDeleteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysTenantDomainDelete(ctx, in)
+		return srv.(SystemAdminServer).SysTenantDomainDelete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysTenantDomainDelete_FullMethodName,
+		FullMethod: SystemAdmin_SysTenantDomainDelete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysTenantDomainDelete(ctx, req.(*SysTenantDomainDeleteReq))
+		return srv.(SystemAdminServer).SysTenantDomainDelete(ctx, req.(*SysTenantDomainDeleteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_ResolveTenantDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ResolveTenantDomainReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SystemServer).ResolveTenantDomain(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: System_ResolveTenantDomain_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).ResolveTenantDomain(ctx, req.(*ResolveTenantDomainReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _System_SysChatMerchantCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysChatMerchantCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysChatMerchantCreateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysChatMerchantCreate(ctx, in)
+		return srv.(SystemAdminServer).SysChatMerchantCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysChatMerchantCreate_FullMethodName,
+		FullMethod: SystemAdmin_SysChatMerchantCreate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysChatMerchantCreate(ctx, req.(*SysChatMerchantCreateReq))
+		return srv.(SystemAdminServer).SysChatMerchantCreate(ctx, req.(*SysChatMerchantCreateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysChatMerchantUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysChatMerchantUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysChatMerchantUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysChatMerchantUpdate(ctx, in)
+		return srv.(SystemAdminServer).SysChatMerchantUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysChatMerchantUpdate_FullMethodName,
+		FullMethod: SystemAdmin_SysChatMerchantUpdate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysChatMerchantUpdate(ctx, req.(*SysChatMerchantUpdateReq))
+		return srv.(SystemAdminServer).SysChatMerchantUpdate(ctx, req.(*SysChatMerchantUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysChatMerchantDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysChatMerchantDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysChatMerchantDeleteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysChatMerchantDelete(ctx, in)
+		return srv.(SystemAdminServer).SysChatMerchantDelete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysChatMerchantDelete_FullMethodName,
+		FullMethod: SystemAdmin_SysChatMerchantDelete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysChatMerchantDelete(ctx, req.(*SysChatMerchantDeleteReq))
+		return srv.(SystemAdminServer).SysChatMerchantDelete(ctx, req.(*SysChatMerchantDeleteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysChatMerchantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysChatMerchantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysChatMerchantListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysChatMerchantList(ctx, in)
+		return srv.(SystemAdminServer).SysChatMerchantList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysChatMerchantList_FullMethodName,
+		FullMethod: SystemAdmin_SysChatMerchantList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysChatMerchantList(ctx, req.(*SysChatMerchantListReq))
+		return srv.(SystemAdminServer).SysChatMerchantList(ctx, req.(*SysChatMerchantListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysChatMerchantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SystemAdmin_SysChatMerchantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysChatMerchantDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysChatMerchantDetail(ctx, in)
+		return srv.(SystemAdminServer).SysChatMerchantDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysChatMerchantDetail_FullMethodName,
+		FullMethod: SystemAdmin_SysChatMerchantDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysChatMerchantDetail(ctx, req.(*SysChatMerchantDetailReq))
+		return srv.(SystemAdminServer).SysChatMerchantDetail(ctx, req.(*SysChatMerchantDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// System_ServiceDesc is the grpc.ServiceDesc for System service.
+// SystemAdmin_ServiceDesc is the grpc.ServiceDesc for SystemAdmin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var System_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "system.System",
-	HandlerType: (*SystemServer)(nil),
+var SystemAdmin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "system.SystemAdmin",
+	HandlerType: (*SystemAdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "AdminLogin",
-			Handler:    _System_AdminLogin_Handler,
+			Handler:    _SystemAdmin_AdminLogin_Handler,
 		},
 		{
 			MethodName: "GetProfile",
-			Handler:    _System_GetProfile_Handler,
+			Handler:    _SystemAdmin_GetProfile_Handler,
 		},
 		{
 			MethodName: "UpdateProfile",
-			Handler:    _System_UpdateProfile_Handler,
+			Handler:    _SystemAdmin_UpdateProfile_Handler,
 		},
 		{
 			MethodName: "Google2FAInit",
-			Handler:    _System_Google2FAInit_Handler,
+			Handler:    _SystemAdmin_Google2FAInit_Handler,
 		},
 		{
 			MethodName: "Google2FABind",
-			Handler:    _System_Google2FABind_Handler,
+			Handler:    _SystemAdmin_Google2FABind_Handler,
 		},
 		{
 			MethodName: "Google2FAEnable",
-			Handler:    _System_Google2FAEnable_Handler,
+			Handler:    _SystemAdmin_Google2FAEnable_Handler,
 		},
 		{
 			MethodName: "Google2FADisable",
-			Handler:    _System_Google2FADisable_Handler,
+			Handler:    _SystemAdmin_Google2FADisable_Handler,
 		},
 		{
 			MethodName: "Google2FAReset",
-			Handler:    _System_Google2FAReset_Handler,
+			Handler:    _SystemAdmin_Google2FAReset_Handler,
 		},
 		{
 			MethodName: "SysUserList",
-			Handler:    _System_SysUserList_Handler,
+			Handler:    _SystemAdmin_SysUserList_Handler,
 		},
 		{
 			MethodName: "SysUserDetail",
-			Handler:    _System_SysUserDetail_Handler,
+			Handler:    _SystemAdmin_SysUserDetail_Handler,
 		},
 		{
 			MethodName: "SysUserCreate",
-			Handler:    _System_SysUserCreate_Handler,
+			Handler:    _SystemAdmin_SysUserCreate_Handler,
 		},
 		{
 			MethodName: "SysUserUpdate",
-			Handler:    _System_SysUserUpdate_Handler,
+			Handler:    _SystemAdmin_SysUserUpdate_Handler,
 		},
 		{
 			MethodName: "SysUserDelete",
-			Handler:    _System_SysUserDelete_Handler,
+			Handler:    _SystemAdmin_SysUserDelete_Handler,
 		},
 		{
 			MethodName: "ChangeUserStatus",
-			Handler:    _System_ChangeUserStatus_Handler,
+			Handler:    _SystemAdmin_ChangeUserStatus_Handler,
 		},
 		{
 			MethodName: "ResetUserPwd",
-			Handler:    _System_ResetUserPwd_Handler,
+			Handler:    _SystemAdmin_ResetUserPwd_Handler,
 		},
 		{
 			MethodName: "AssignUserRoles",
-			Handler:    _System_AssignUserRoles_Handler,
+			Handler:    _SystemAdmin_AssignUserRoles_Handler,
 		},
 		{
 			MethodName: "SysRoleList",
-			Handler:    _System_SysRoleList_Handler,
+			Handler:    _SystemAdmin_SysRoleList_Handler,
 		},
 		{
 			MethodName: "SysRoleCreate",
-			Handler:    _System_SysRoleCreate_Handler,
+			Handler:    _SystemAdmin_SysRoleCreate_Handler,
 		},
 		{
 			MethodName: "SysRoleUpdate",
-			Handler:    _System_SysRoleUpdate_Handler,
+			Handler:    _SystemAdmin_SysRoleUpdate_Handler,
 		},
 		{
 			MethodName: "SysRoleDelete",
-			Handler:    _System_SysRoleDelete_Handler,
+			Handler:    _SystemAdmin_SysRoleDelete_Handler,
 		},
 		{
 			MethodName: "SysRoleGrant",
-			Handler:    _System_SysRoleGrant_Handler,
+			Handler:    _SystemAdmin_SysRoleGrant_Handler,
 		},
 		{
 			MethodName: "SysRoleGrantDetail",
-			Handler:    _System_SysRoleGrantDetail_Handler,
+			Handler:    _SystemAdmin_SysRoleGrantDetail_Handler,
 		},
 		{
 			MethodName: "SysPermList",
-			Handler:    _System_SysPermList_Handler,
+			Handler:    _SystemAdmin_SysPermList_Handler,
 		},
 		{
 			MethodName: "GetMenuTree",
-			Handler:    _System_GetMenuTree_Handler,
+			Handler:    _SystemAdmin_GetMenuTree_Handler,
 		},
 		{
 			MethodName: "SysMenuCreate",
-			Handler:    _System_SysMenuCreate_Handler,
+			Handler:    _SystemAdmin_SysMenuCreate_Handler,
 		},
 		{
 			MethodName: "SysMenuUpdate",
-			Handler:    _System_SysMenuUpdate_Handler,
+			Handler:    _SystemAdmin_SysMenuUpdate_Handler,
 		},
 		{
 			MethodName: "SysMenuDelete",
-			Handler:    _System_SysMenuDelete_Handler,
+			Handler:    _SystemAdmin_SysMenuDelete_Handler,
 		},
 		{
 			MethodName: "SysMenuList",
-			Handler:    _System_SysMenuList_Handler,
+			Handler:    _SystemAdmin_SysMenuList_Handler,
 		},
 		{
 			MethodName: "LoginLogList",
-			Handler:    _System_LoginLogList_Handler,
+			Handler:    _SystemAdmin_LoginLogList_Handler,
 		},
 		{
 			MethodName: "OpLogList",
-			Handler:    _System_OpLogList_Handler,
+			Handler:    _SystemAdmin_OpLogList_Handler,
 		},
 		{
 			MethodName: "SysConfigCreate",
-			Handler:    _System_SysConfigCreate_Handler,
+			Handler:    _SystemAdmin_SysConfigCreate_Handler,
 		},
 		{
 			MethodName: "SysConfigUpdate",
-			Handler:    _System_SysConfigUpdate_Handler,
+			Handler:    _SystemAdmin_SysConfigUpdate_Handler,
 		},
 		{
 			MethodName: "SysConfigDelete",
-			Handler:    _System_SysConfigDelete_Handler,
+			Handler:    _SystemAdmin_SysConfigDelete_Handler,
 		},
 		{
 			MethodName: "SysConfigList",
-			Handler:    _System_SysConfigList_Handler,
+			Handler:    _SystemAdmin_SysConfigList_Handler,
 		},
 		{
 			MethodName: "SysConfigDetail",
-			Handler:    _System_SysConfigDetail_Handler,
-		},
-		{
-			MethodName: "SysConfigByKeys",
-			Handler:    _System_SysConfigByKeys_Handler,
-		},
-		{
-			MethodName: "SendVerificationCode",
-			Handler:    _System_SendVerificationCode_Handler,
+			Handler:    _SystemAdmin_SysConfigDetail_Handler,
 		},
 		{
 			MethodName: "TestVerificationCode",
-			Handler:    _System_TestVerificationCode_Handler,
+			Handler:    _SystemAdmin_TestVerificationCode_Handler,
 		},
 		{
 			MethodName: "VerificationCodeRecordList",
-			Handler:    _System_VerificationCodeRecordList_Handler,
+			Handler:    _SystemAdmin_VerificationCodeRecordList_Handler,
 		},
 		{
 			MethodName: "VerificationCodeRecordDetail",
-			Handler:    _System_VerificationCodeRecordDetail_Handler,
+			Handler:    _SystemAdmin_VerificationCodeRecordDetail_Handler,
 		},
 		{
 			MethodName: "LoginUserPerms",
-			Handler:    _System_LoginUserPerms_Handler,
+			Handler:    _SystemAdmin_LoginUserPerms_Handler,
 		},
 		{
 			MethodName: "SysCronJobList",
-			Handler:    _System_SysCronJobList_Handler,
+			Handler:    _SystemAdmin_SysCronJobList_Handler,
 		},
 		{
 			MethodName: "SysCronJobCreate",
-			Handler:    _System_SysCronJobCreate_Handler,
+			Handler:    _SystemAdmin_SysCronJobCreate_Handler,
 		},
 		{
 			MethodName: "SysCronJobUpdate",
-			Handler:    _System_SysCronJobUpdate_Handler,
+			Handler:    _SystemAdmin_SysCronJobUpdate_Handler,
 		},
 		{
 			MethodName: "SysCronJobDelete",
-			Handler:    _System_SysCronJobDelete_Handler,
+			Handler:    _SystemAdmin_SysCronJobDelete_Handler,
 		},
 		{
 			MethodName: "SysCronJobRun",
-			Handler:    _System_SysCronJobRun_Handler,
+			Handler:    _SystemAdmin_SysCronJobRun_Handler,
 		},
 		{
 			MethodName: "SysCronJobStart",
-			Handler:    _System_SysCronJobStart_Handler,
+			Handler:    _SystemAdmin_SysCronJobStart_Handler,
 		},
 		{
 			MethodName: "SysCronJobStop",
-			Handler:    _System_SysCronJobStop_Handler,
+			Handler:    _SystemAdmin_SysCronJobStop_Handler,
 		},
 		{
 			MethodName: "SysCronJobHandlers",
-			Handler:    _System_SysCronJobHandlers_Handler,
+			Handler:    _SystemAdmin_SysCronJobHandlers_Handler,
 		},
 		{
 			MethodName: "SysCronJobLogList",
-			Handler:    _System_SysCronJobLogList_Handler,
+			Handler:    _SystemAdmin_SysCronJobLogList_Handler,
 		},
 		{
 			MethodName: "SysTenantCreate",
-			Handler:    _System_SysTenantCreate_Handler,
+			Handler:    _SystemAdmin_SysTenantCreate_Handler,
 		},
 		{
 			MethodName: "SysTenantUpdate",
-			Handler:    _System_SysTenantUpdate_Handler,
+			Handler:    _SystemAdmin_SysTenantUpdate_Handler,
 		},
 		{
 			MethodName: "SysTenantDelete",
-			Handler:    _System_SysTenantDelete_Handler,
+			Handler:    _SystemAdmin_SysTenantDelete_Handler,
 		},
 		{
 			MethodName: "SysTenantList",
-			Handler:    _System_SysTenantList_Handler,
+			Handler:    _SystemAdmin_SysTenantList_Handler,
 		},
 		{
 			MethodName: "SysTenantDetail",
-			Handler:    _System_SysTenantDetail_Handler,
+			Handler:    _SystemAdmin_SysTenantDetail_Handler,
 		},
 		{
 			MethodName: "SysTenantDomainList",
-			Handler:    _System_SysTenantDomainList_Handler,
+			Handler:    _SystemAdmin_SysTenantDomainList_Handler,
 		},
 		{
 			MethodName: "SysTenantDomainCreate",
-			Handler:    _System_SysTenantDomainCreate_Handler,
+			Handler:    _SystemAdmin_SysTenantDomainCreate_Handler,
 		},
 		{
 			MethodName: "SysTenantDomainUpdate",
-			Handler:    _System_SysTenantDomainUpdate_Handler,
+			Handler:    _SystemAdmin_SysTenantDomainUpdate_Handler,
 		},
 		{
 			MethodName: "SysTenantDomainDelete",
-			Handler:    _System_SysTenantDomainDelete_Handler,
-		},
-		{
-			MethodName: "ResolveTenantDomain",
-			Handler:    _System_ResolveTenantDomain_Handler,
+			Handler:    _SystemAdmin_SysTenantDomainDelete_Handler,
 		},
 		{
 			MethodName: "SysChatMerchantCreate",
-			Handler:    _System_SysChatMerchantCreate_Handler,
+			Handler:    _SystemAdmin_SysChatMerchantCreate_Handler,
 		},
 		{
 			MethodName: "SysChatMerchantUpdate",
-			Handler:    _System_SysChatMerchantUpdate_Handler,
+			Handler:    _SystemAdmin_SysChatMerchantUpdate_Handler,
 		},
 		{
 			MethodName: "SysChatMerchantDelete",
-			Handler:    _System_SysChatMerchantDelete_Handler,
+			Handler:    _SystemAdmin_SysChatMerchantDelete_Handler,
 		},
 		{
 			MethodName: "SysChatMerchantList",
-			Handler:    _System_SysChatMerchantList_Handler,
+			Handler:    _SystemAdmin_SysChatMerchantList_Handler,
 		},
 		{
 			MethodName: "SysChatMerchantDetail",
-			Handler:    _System_SysChatMerchantDetail_Handler,
+			Handler:    _SystemAdmin_SysChatMerchantDetail_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/system/system.proto",
+}
+
+const (
+	SystemApp_SysConfigDetail_FullMethodName      = "/system.SystemApp/SysConfigDetail"
+	SystemApp_SendVerificationCode_FullMethodName = "/system.SystemApp/SendVerificationCode"
+	SystemApp_SysTenantDetail_FullMethodName      = "/system.SystemApp/SysTenantDetail"
+)
+
+// SystemAppClient is the client API for SystemApp service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SystemAppClient interface {
+	SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error)
+	SendVerificationCode(ctx context.Context, in *SendVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error)
+	SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error)
+}
+
+type systemAppClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSystemAppClient(cc grpc.ClientConnInterface) SystemAppClient {
+	return &systemAppClient{cc}
+}
+
+func (c *systemAppClient) SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysConfigDetailResp)
+	err := c.cc.Invoke(ctx, SystemApp_SysConfigDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemAppClient) SendVerificationCode(ctx context.Context, in *SendVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, SystemApp_SendVerificationCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemAppClient) SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysTenantDetailResp)
+	err := c.cc.Invoke(ctx, SystemApp_SysTenantDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SystemAppServer is the server API for SystemApp service.
+// All implementations must embed UnimplementedSystemAppServer
+// for forward compatibility.
+type SystemAppServer interface {
+	SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error)
+	SendVerificationCode(context.Context, *SendVerificationCodeReq) (*RespBase, error)
+	SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error)
+	mustEmbedUnimplementedSystemAppServer()
+}
+
+// UnimplementedSystemAppServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedSystemAppServer struct{}
+
+func (UnimplementedSystemAppServer) SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysConfigDetail not implemented")
+}
+func (UnimplementedSystemAppServer) SendVerificationCode(context.Context, *SendVerificationCodeReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method SendVerificationCode not implemented")
+}
+func (UnimplementedSystemAppServer) SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysTenantDetail not implemented")
+}
+func (UnimplementedSystemAppServer) mustEmbedUnimplementedSystemAppServer() {}
+func (UnimplementedSystemAppServer) testEmbeddedByValue()                   {}
+
+// UnsafeSystemAppServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SystemAppServer will
+// result in compilation errors.
+type UnsafeSystemAppServer interface {
+	mustEmbedUnimplementedSystemAppServer()
+}
+
+func RegisterSystemAppServer(s grpc.ServiceRegistrar, srv SystemAppServer) {
+	// If the following call panics, it indicates UnimplementedSystemAppServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&SystemApp_ServiceDesc, srv)
+}
+
+func _SystemApp_SysConfigDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysConfigDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemAppServer).SysConfigDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SystemApp_SysConfigDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemAppServer).SysConfigDetail(ctx, req.(*SysConfigDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SystemApp_SendVerificationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendVerificationCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemAppServer).SendVerificationCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SystemApp_SendVerificationCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemAppServer).SendVerificationCode(ctx, req.(*SendVerificationCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SystemApp_SysTenantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemAppServer).SysTenantDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SystemApp_SysTenantDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemAppServer).SysTenantDetail(ctx, req.(*SysTenantDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SystemApp_ServiceDesc is the grpc.ServiceDesc for SystemApp service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SystemApp_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "system.SystemApp",
+	HandlerType: (*SystemAppServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SysConfigDetail",
+			Handler:    _SystemApp_SysConfigDetail_Handler,
+		},
+		{
+			MethodName: "SendVerificationCode",
+			Handler:    _SystemApp_SendVerificationCode_Handler,
+		},
+		{
+			MethodName: "SysTenantDetail",
+			Handler:    _SystemApp_SysTenantDetail_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/system/system.proto",
+}
+
+const (
+	SystemInternal_SysConfigDetail_FullMethodName     = "/system.SystemInternal/SysConfigDetail"
+	SystemInternal_SysConfigByKeys_FullMethodName     = "/system.SystemInternal/SysConfigByKeys"
+	SystemInternal_SysTenantList_FullMethodName       = "/system.SystemInternal/SysTenantList"
+	SystemInternal_SysTenantDetail_FullMethodName     = "/system.SystemInternal/SysTenantDetail"
+	SystemInternal_ResolveTenantDomain_FullMethodName = "/system.SystemInternal/ResolveTenantDomain"
+)
+
+// SystemInternalClient is the client API for SystemInternal service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SystemInternalClient interface {
+	SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error)
+	SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error)
+	SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
+	SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error)
+	ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error)
+}
+
+type systemInternalClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSystemInternalClient(cc grpc.ClientConnInterface) SystemInternalClient {
+	return &systemInternalClient{cc}
+}
+
+func (c *systemInternalClient) SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysConfigDetailResp)
+	err := c.cc.Invoke(ctx, SystemInternal_SysConfigDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemInternalClient) SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysConfigByKeysResp)
+	err := c.cc.Invoke(ctx, SystemInternal_SysConfigByKeys_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemInternalClient) SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysTenantListResp)
+	err := c.cc.Invoke(ctx, SystemInternal_SysTenantList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemInternalClient) SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysTenantDetailResp)
+	err := c.cc.Invoke(ctx, SystemInternal_SysTenantDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemInternalClient) ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResolveTenantDomainResp)
+	err := c.cc.Invoke(ctx, SystemInternal_ResolveTenantDomain_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SystemInternalServer is the server API for SystemInternal service.
+// All implementations must embed UnimplementedSystemInternalServer
+// for forward compatibility.
+type SystemInternalServer interface {
+	SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error)
+	SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error)
+	SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error)
+	SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error)
+	ResolveTenantDomain(context.Context, *ResolveTenantDomainReq) (*ResolveTenantDomainResp, error)
+	mustEmbedUnimplementedSystemInternalServer()
+}
+
+// UnimplementedSystemInternalServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedSystemInternalServer struct{}
+
+func (UnimplementedSystemInternalServer) SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysConfigDetail not implemented")
+}
+func (UnimplementedSystemInternalServer) SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysConfigByKeys not implemented")
+}
+func (UnimplementedSystemInternalServer) SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysTenantList not implemented")
+}
+func (UnimplementedSystemInternalServer) SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysTenantDetail not implemented")
+}
+func (UnimplementedSystemInternalServer) ResolveTenantDomain(context.Context, *ResolveTenantDomainReq) (*ResolveTenantDomainResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveTenantDomain not implemented")
+}
+func (UnimplementedSystemInternalServer) mustEmbedUnimplementedSystemInternalServer() {}
+func (UnimplementedSystemInternalServer) testEmbeddedByValue()                        {}
+
+// UnsafeSystemInternalServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SystemInternalServer will
+// result in compilation errors.
+type UnsafeSystemInternalServer interface {
+	mustEmbedUnimplementedSystemInternalServer()
+}
+
+func RegisterSystemInternalServer(s grpc.ServiceRegistrar, srv SystemInternalServer) {
+	// If the following call panics, it indicates UnimplementedSystemInternalServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&SystemInternal_ServiceDesc, srv)
+}
+
+func _SystemInternal_SysConfigDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysConfigDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemInternalServer).SysConfigDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SystemInternal_SysConfigDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemInternalServer).SysConfigDetail(ctx, req.(*SysConfigDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SystemInternal_SysConfigByKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysConfigByKeysReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemInternalServer).SysConfigByKeys(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SystemInternal_SysConfigByKeys_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemInternalServer).SysConfigByKeys(ctx, req.(*SysConfigByKeysReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SystemInternal_SysTenantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemInternalServer).SysTenantList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SystemInternal_SysTenantList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemInternalServer).SysTenantList(ctx, req.(*SysTenantListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SystemInternal_SysTenantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemInternalServer).SysTenantDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SystemInternal_SysTenantDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemInternalServer).SysTenantDetail(ctx, req.(*SysTenantDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SystemInternal_ResolveTenantDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResolveTenantDomainReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemInternalServer).ResolveTenantDomain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SystemInternal_ResolveTenantDomain_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemInternalServer).ResolveTenantDomain(ctx, req.(*ResolveTenantDomainReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// SystemInternal_ServiceDesc is the grpc.ServiceDesc for SystemInternal service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SystemInternal_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "system.SystemInternal",
+	HandlerType: (*SystemInternalServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SysConfigDetail",
+			Handler:    _SystemInternal_SysConfigDetail_Handler,
+		},
+		{
+			MethodName: "SysConfigByKeys",
+			Handler:    _SystemInternal_SysConfigByKeys_Handler,
+		},
+		{
+			MethodName: "SysTenantList",
+			Handler:    _SystemInternal_SysTenantList_Handler,
+		},
+		{
+			MethodName: "SysTenantDetail",
+			Handler:    _SystemInternal_SysTenantDetail_Handler,
+		},
+		{
+			MethodName: "ResolveTenantDomain",
+			Handler:    _SystemInternal_ResolveTenantDomain_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -28,7 +28,7 @@ type ServiceContext struct {
 	UserIdentityModel models.TUserIdentityModel
 	UserBankModel     models.TUserBankModel
 	FingerprintModel  models.TUserFingerprintModel
-	SystemCli         system.SystemClient
+	SystemCli         system.SystemInternalClient
 	MQPublisher       *mq.Publisher
 }
 
@@ -49,7 +49,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserIdentityModel: models.NewTUserIdentityModel(conn, c.CacheRedis),
 		UserBankModel:     models.NewTUserBankModel(conn, c.CacheRedis),
 		FingerprintModel:  models.NewTUserFingerprintModel(conn, c.CacheRedis),
-		SystemCli:         system.NewSystemClient(systemCli.Conn()),
+		SystemCli:         system.NewSystemInternalClient(systemCli.Conn()),
 		MQPublisher:       mq.MustNewPublisher(mq.ForService(c.MQ, c.Name)),
 	}
 }

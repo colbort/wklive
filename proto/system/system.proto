@@ -794,134 +794,81 @@ message SysChatMerchantDetailResp {
 //////////////////////
 // Service
 //////////////////////
-service System {
-  // P0
+service SystemAdmin {
   rpc AdminLogin(AdminLoginReq) returns (AdminLoginResp);
-  // 获取当前用户信息
   rpc GetProfile(Empty) returns (ProfileResp);
-  // 修改头像，密码，昵称
   rpc UpdateProfile(UpdateProfileReq) returns (RespBase);
-
-  // 2FA
   rpc Google2FAInit(Google2FAInitReq) returns (Google2FAInitResp);
-  // 绑定Google 2FA
   rpc Google2FABind(Google2FABindReq) returns (RespBase);
-  // 启用Google 2FA
   rpc Google2FAEnable(Google2FAEnableReq) returns (RespBase);
-  // 禁用Google 2FA
   rpc Google2FADisable(Google2FADisableReq) returns (RespBase);
-  // 重置Google 2FA
   rpc Google2FAReset(Google2FAResetReq) returns (RespBase);
-
-  // 用户
   rpc SysUserList(SysUserListReq) returns (SysUserListResp);
-  // 获取用户详情
   rpc SysUserDetail(SysUserDetailReq) returns (SysUserDetailResp);
-  // 创建系统用户
   rpc SysUserCreate(SysUserCreateReq) returns (RespBase);
-  // 更新系统用户
   rpc SysUserUpdate(SysUserUpdateReq) returns (RespBase);
-  // 删除系统用户
   rpc SysUserDelete(SysUserDeleteReq) returns (RespBase);
-  // 修改用户状态
   rpc ChangeUserStatus(ChangeUserStatusReq) returns (RespBase);
-  // 重置用户密码
   rpc ResetUserPwd(ResetUserPwdReq) returns (RespBase);
-  // 分配用户角色
   rpc AssignUserRoles(AssignUserRolesReq) returns (RespBase);
-
-  // 角色
   rpc SysRoleList(SysRoleListReq) returns (SysRoleListResp);
-  // 创建角色
   rpc SysRoleCreate(SysRoleCreateReq) returns (RespBase);
-  // 更新角色
   rpc SysRoleUpdate(SysRoleUpdateReq) returns (RespBase);
-  // 删除角色
   rpc SysRoleDelete(SysRoleDeleteReq) returns (RespBase);
-  // 角色授权
   rpc SysRoleGrant(SysRoleGrantReq) returns (RespBase);
-  // 获取角色授权详情
   rpc SysRoleGrantDetail(SysRoleGrantDetailReq) returns (SysRoleGrantDetailResp);
-  // 获取权限列表
   rpc SysPermList(Empty) returns (SysPermListResp);
-  // 获取菜单树
   rpc GetMenuTree(SysMenuTreeReq) returns (SysMenuTreeResp);
-  // 菜单
   rpc SysMenuCreate(SysMenuCreateReq) returns (RespBase);
-  // 更新菜单
   rpc SysMenuUpdate(SysMenuUpdateReq) returns (RespBase);
-  // 删除菜单
   rpc SysMenuDelete(SysMenuDeleteReq) returns (RespBase);
-  // 获取菜单列表
   rpc SysMenuList(SysMenuListReq) returns (SysMenuListResp);
-  // 日志
   rpc LoginLogList(LoginLogListReq) returns (LoginLogListResp);
-  // 操作日志
   rpc OpLogList(OpLogListReq) returns (OpLogListResp);
-  // 新增系统配置
   rpc SysConfigCreate(SysConfigCreateReq) returns (RespBase);
-  // 更新系统配置
   rpc SysConfigUpdate(SysConfigUpdateReq) returns (RespBase);
-  // 删除系统配置
   rpc SysConfigDelete(SysConfigDeleteReq) returns (RespBase);
-  // 获取系统配置列表
   rpc SysConfigList(SysConfigListReq) returns (SysConfigListResp);
-  // 获取系统配置详情
   rpc SysConfigDetail(SysConfigDetailReq) returns (SysConfigDetailResp);
-  // 获取系统配置根据keys
-  rpc SysConfigByKeys(SysConfigByKeysReq) returns (SysConfigByKeysResp);
-  // 发送验证码
-  rpc SendVerificationCode(SendVerificationCodeReq) returns (RespBase);
-  // 测试发送验证码
   rpc TestVerificationCode(TestVerificationCodeReq) returns (RespBase);
-  // 验证码发送记录
   rpc VerificationCodeRecordList(VerificationCodeRecordListReq) returns (VerificationCodeRecordListResp);
-  // 验证码发送记录详情
   rpc VerificationCodeRecordDetail(VerificationCodeRecordDetailReq) returns (VerificationCodeRecordDetailResp);
-  // 获取登录用户的权限列表
   rpc LoginUserPerms(LoginUserPermsReq) returns (LoginUserPermsResp);
-  // 系统定时任务列表
   rpc SysCronJobList(SysCronJobListReq) returns (SysCronJobListResp);
-  // 创建系统定时任务
   rpc SysCronJobCreate(SysCronJobCreateReq) returns (RespBase);
-  // 更新系统定时任务
   rpc SysCronJobUpdate(SysCronJobUpdateReq) returns (RespBase);
-  // 删除系统定时任务
   rpc SysCronJobDelete(SysCronJobDeleteReq) returns (RespBase);
-  // 执行一次系统定时任务
   rpc SysCronJobRun(SysCronJobRunReq) returns (RespBase);
-  // 开始系统定时任务
   rpc SysCronJobStart(SysCronJobStartReq) returns (RespBase);
-  // 停止系统定时任务
   rpc SysCronJobStop(SysCronJobStopReq) returns (RespBase);
-  // 获取系统支持的定时任务处理器列表
   rpc SysCronJobHandlers(Empty) returns (SysCronJobHandlersResp);
-  // 系统定时任务日志列表
   rpc SysCronJobLogList(SysCronJobLogListReq) returns (SysCronJobLogListResp);
-  // 创建租户
   rpc SysTenantCreate(SysTenantCreateReq) returns (RespBase);
-  // 更新租户
   rpc SysTenantUpdate(SysTenantUpdateReq) returns (RespBase);
-  // 删除租户
   rpc SysTenantDelete(SysTenantDeleteReq) returns (RespBase);
-  // 获取租户列表
   rpc SysTenantList(SysTenantListReq) returns (SysTenantListResp);
-  // 根据 code 获取租户
   rpc SysTenantDetail(SysTenantDetailReq) returns (SysTenantDetailResp);
   rpc SysTenantDomainList(SysTenantDomainListReq) returns (SysTenantDomainListResp);
   rpc SysTenantDomainCreate(SysTenantDomainCreateReq) returns (RespBase);
   rpc SysTenantDomainUpdate(SysTenantDomainUpdateReq) returns (RespBase);
   rpc SysTenantDomainDelete(SysTenantDomainDeleteReq) returns (RespBase);
-  // 根据租户和来源域名解析游客迁移目标
-  rpc ResolveTenantDomain(ResolveTenantDomainReq) returns (ResolveTenantDomainResp);
-  // 创建客服商户
   rpc SysChatMerchantCreate(SysChatMerchantCreateReq) returns (RespBase);
-  // 更新客服商户
   rpc SysChatMerchantUpdate(SysChatMerchantUpdateReq) returns (RespBase);
-  // 删除客服商户
   rpc SysChatMerchantDelete(SysChatMerchantDeleteReq) returns (RespBase);
-  // 获取客服商户列表
   rpc SysChatMerchantList(SysChatMerchantListReq) returns (SysChatMerchantListResp);
-  // 获取客服商户详情
   rpc SysChatMerchantDetail(SysChatMerchantDetailReq) returns (SysChatMerchantDetailResp);
+}
+
+service SystemApp {
+  rpc SysConfigDetail(SysConfigDetailReq) returns (SysConfigDetailResp);
+  rpc SendVerificationCode(SendVerificationCodeReq) returns (RespBase);
+  rpc SysTenantDetail(SysTenantDetailReq) returns (SysTenantDetailResp);
+}
+
+service SystemInternal {
+  rpc SysConfigDetail(SysConfigDetailReq) returns (SysConfigDetailResp);
+  rpc SysConfigByKeys(SysConfigByKeysReq) returns (SysConfigByKeysResp);
+  rpc SysTenantList(SysTenantListReq) returns (SysTenantListResp);
+  rpc SysTenantDetail(SysTenantDetailReq) returns (SysTenantDetailResp);
+  rpc ResolveTenantDomain(ResolveTenantDomainReq) returns (ResolveTenantDomainResp);
 }

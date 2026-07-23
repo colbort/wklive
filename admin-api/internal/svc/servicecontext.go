@@ -30,7 +30,7 @@ import (
 
 type ServiceContext struct {
 	Config            config.Config
-	SystemCli         system.SystemClient
+	SystemCli         system.SystemAdminClient
 	UserCli           user.UserAdminClient
 	PaymentCli        payment.PaymentAdminClient
 	ItickCli          itick.ItickAdminClient
@@ -92,7 +92,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	return &ServiceContext{
 		Config:          c,
-		SystemCli:       system.NewSystemClient(systemCli.Conn()),
+		SystemCli:       system.NewSystemAdminClient(systemCli.Conn()),
 		UserCli:         user.NewUserAdminClient(userCli.Conn()),
 		PaymentCli:      payment.NewPaymentAdminClient(paymentCli.Conn()),
 		ItickCli:        itick.NewItickAdminClient(itickCli.Conn()),

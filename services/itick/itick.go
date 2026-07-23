@@ -139,7 +139,7 @@ func main() {
 	s.Start()
 }
 
-func loadItickRuntimeConfig(ctx context.Context, cli system.SystemClient) *system.ItickConfig {
+func loadItickRuntimeConfig(ctx context.Context, cli system.SystemInternalClient) *system.ItickConfig {
 	config := &system.ItickConfig{ReconcileIntervalMinutes: 5, ReconcileWindowBars: 30,
 		GapScanIntervalMinutes: 60, RepairBatchSize: 10, BuildingBucketTtlMinutes: 120, WsKlineStaleSeconds: 30}
 	key := system.SysConfigType_ITICK_CONFIG
