@@ -261,6 +261,19 @@
           </el-select>
         </el-form-item>
 
+        <el-form-item
+          v-if="formMode === 'edit'"
+          :label="t('itick.displayName')"
+          prop="displayName"
+        >
+          <el-input
+            v-model="form.displayName"
+            maxlength="128"
+            show-word-limit
+            :placeholder="t('itick.displayName')"
+          />
+        </el-form-item>
+
         <el-form-item :label="t('common.sort')" prop="sort">
           <el-input-number
             v-model="form.sort"
@@ -666,6 +679,7 @@ type FormData = {
   productId?: number
   enabled: number
   appVisible: number
+  displayName: string
   sort: number
   remark: string
 }
@@ -701,6 +715,7 @@ const {
     productId: undefined,
     enabled: 1,
     appVisible: 1,
+    displayName: '',
     sort: 0,
     remark: '',
   },
@@ -1074,6 +1089,7 @@ const handleEdit = async (row: ItickTenantProduct) => {
       productId: data.productId,
       enabled: data.enabled,
       appVisible: data.appVisible,
+      displayName: data.displayName || '',
       sort: data.sort || 0,
       remark: data.remark || '',
     })
@@ -1121,6 +1137,7 @@ const submitForm = async () => {
         tenantId: Number(form.tenantId),
         enabled: form.enabled,
         appVisible: form.appVisible,
+        displayName: form.displayName.trim(),
         sort: form.sort,
         remark: form.remark,
       })

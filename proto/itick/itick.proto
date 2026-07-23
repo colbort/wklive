@@ -417,6 +417,7 @@ message UpdateTenantProductReq {
   common.Switch app_visible = 4; // APP可见开关 0表示全部，1表示显示，2表示隐藏
   int64 sort = 5;
   string remark = 6;
+  string display_name = 7; // 租户自定义展示名称
 }
 
 message BatchUpsertTenantProductsReq {

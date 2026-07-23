@@ -84,6 +84,7 @@ CREATE TABLE `t_itick_tenant_product` (
   `product_id` bigint NOT NULL DEFAULT '0' COMMENT '产品ID, 对应 itick_product.id',
   `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '启用状态: 1-启用 2-禁用',
   `app_visible` tinyint NOT NULL DEFAULT '1' COMMENT 'APP可见开关: 1-显示 2-隐藏',
+  `display_name` varchar(128) NOT NULL DEFAULT '' COMMENT '租户自定义展示名称，为空时使用产品展示名称',
   `sort` int NOT NULL DEFAULT '0' COMMENT '租户排序, 越小越靠前',
   `remark` varchar(500) NOT NULL DEFAULT '' COMMENT '备注',
   `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',

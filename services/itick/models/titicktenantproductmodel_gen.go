@@ -47,6 +47,7 @@ type (
 		ProductId   int64  `db:"product_id"`   // 产品ID, 对应 itick_product.id
 		Enabled     int64  `db:"enabled"`      // 启用状态: 1-启用 2-禁用
 		AppVisible  int64  `db:"app_visible"`  // APP可见开关: 1-显示 2-隐藏
+		DisplayName string `db:"display_name"` // 租户自定义展示名称，为空时使用产品展示名称
 		Sort        int64  `db:"sort"`         // 租户排序, 越小越靠前
 		Remark      string `db:"remark"`       // 备注
 		CreateTimes int64  `db:"create_times"` // 创建时间(毫秒时间戳)
@@ -117,8 +118,8 @@ func (m *defaultTItickTenantProductModel) Insert(ctx context.Context, data *TIti
 	tItickTenantProductIdKey := fmt.Sprintf("%s%v", cacheTItickTenantProductIdPrefix, data.Id)
 	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantProductTenantIdProductIdPrefix, data.TenantId, data.ProductId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickTenantProductRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ProductId, data.Enabled, data.AppVisible, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickTenantProductRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ProductId, data.Enabled, data.AppVisible, data.DisplayName, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tItickTenantProductIdKey, tItickTenantProductTenantIdProductIdKey)
 	return ret, err
 }
@@ -133,7 +134,7 @@ func (m *defaultTItickTenantProductModel) Update(ctx context.Context, newData *T
 	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantProductTenantIdProductIdPrefix, data.TenantId, data.ProductId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickTenantProductRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ProductId, newData.Enabled, newData.AppVisible, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ProductId, newData.Enabled, newData.AppVisible, newData.DisplayName, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickTenantProductIdKey, tItickTenantProductTenantIdProductIdKey)
 	return err
 }

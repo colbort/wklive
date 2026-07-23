@@ -97,6 +97,7 @@ const emit = defineEmits<{
     <TradeHeader
       :selected-category="selectedCategory"
       :selected-product="selectedProduct"
+      :selected-trade-symbol="selectedTradeSymbol"
       :selected-product-key="selectedProductKey"
       :trade-kind="tradeKind"
       :price-trend="priceTrend"

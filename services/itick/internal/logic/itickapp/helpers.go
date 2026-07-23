@@ -202,6 +202,9 @@ func toTenantProductProto(item *models.TItickTenantProduct, product *models.TIti
 		data.QuoteCoin = product.QuoteCoin
 		data.Icon = product.Icon
 	}
+	if item.DisplayName != "" {
+		data.DisplayName = item.DisplayName
+	}
 	if tenant != nil {
 		data.TenantName = tenant.TenantName
 	}

@@ -83,7 +83,7 @@ func (l *ListTenantProductsLogic) ListTenantProducts(in *itick.ListTenantProduct
 		if !statusMatches(int32(in.AppVisible), item.AppVisible) {
 			continue
 		}
-		if !keywordMatches(in.Keyword, product.Symbol, product.Code, product.Name, product.DisplayName, product.CategoryName) {
+		if !keywordMatches(in.Keyword, product.Symbol, product.Code, product.Name, item.DisplayName, product.DisplayName, product.CategoryName) {
 			continue
 		}
 

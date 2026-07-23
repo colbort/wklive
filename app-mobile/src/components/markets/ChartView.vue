@@ -80,6 +80,7 @@ const selectedProduct = computed(() => {
 const selectedDisplaySymbol = computed(() => {
   const product = selectedProduct.value
   if (!product) return '--'
+  if (product.displayName) return product.displayName
   if (product.baseCoin && product.quoteCoin && product.symbol.endsWith('USDT')) return `${product.baseCoin}/USDT`
 
   const quote = product.quoteCoin || 'USDT'

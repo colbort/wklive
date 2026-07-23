@@ -46,6 +46,7 @@ export type UpdateTenantProductReq = {
   tenantId: number
   enabled?: number
   appVisible?: number
+  displayName?: string
   sort?: number
   remark?: string
 }

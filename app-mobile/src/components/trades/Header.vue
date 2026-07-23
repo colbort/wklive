@@ -4,6 +4,7 @@ import AppIcon from '@/components/common/AppIcon.vue'
 import QuoteRow from '@/components/markets/QuoteRow.vue'
 import { useI18n } from '@/i18n'
 import type { ItickTenantCategory, ItickTenantProduct } from '@/types/itick'
+import type { TradeSymbol } from '@/types/trade'
 import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type ProductSheetRow = {
@@ -19,6 +20,7 @@ type ProductSheetRow = {
 defineProps<{
   selectedCategory: ItickTenantCategory | null
   selectedProduct: ItickTenantProduct | null
+  selectedTradeSymbol: TradeSymbol | null
   selectedProductKey: string
   tradeKind: 'stock' | 'option' | 'forex' | 'commodity' | 'crypto'
   priceTrend: 'up' | 'down' | 'flat'
@@ -41,7 +43,13 @@ const { t } = useI18n()
   <div class="trade-header">
     <header class="trade-symbol">
       <button type="button" class="trade-symbol__main" @click="emit('open-product-menu')">
-        <strong>{{ selectedProduct?.symbol || t('market.selectProduct') }}</strong>
+        <strong>{{
+          selectedTradeSymbol?.displaySymbol ||
+          selectedProduct?.displayName ||
+          selectedTradeSymbol?.symbol ||
+          selectedProduct?.symbol ||
+          t('market.selectProduct')
+        }}</strong>
         <span />
       </button>
 

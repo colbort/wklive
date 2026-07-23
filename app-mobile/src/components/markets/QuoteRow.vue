@@ -60,6 +60,10 @@ function productIconText(product: ItickTenantProduct) {
   return (product.baseCoin || product.symbol || product.code || '?').slice(0, 2).toUpperCase()
 }
 
+function productDisplayName(product: ItickTenantProduct) {
+  return product.displayName || product.symbol || product.code || '--'
+}
+
 function resolveIconUrl(icon?: string) {
   return resolveSystemAssetUrl(systemStore.systemCore.assetUrl, icon)
 }
@@ -93,12 +97,12 @@ function displayPercent() {
     @click="emit('select', product)"
   >
     <span class="quote-row__icon">
-      <img v-if="product.icon" :src="iconUrl" :alt="product.symbol">
+      <img v-if="product.icon" :src="iconUrl" :alt="productDisplayName(product)">
       <span v-else>{{ productIconText(product) }}</span>
     </span>
 
     <span class="quote-row__name">
-      <strong>{{ product.symbol }}</strong>
+      <strong>{{ productDisplayName(product) }}</strong>
     </span>
 
     <strong class="quote-row__price">

@@ -3314,6 +3314,7 @@ type UpdateTenantProductReq struct {
 	AppVisible    common.Switch          `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"` // APP可见开关 0表示全部，1表示显示，2表示隐藏
 	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
+	DisplayName   string                 `protobuf:"bytes,7,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"` // 租户自定义展示名称
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3386,6 +3387,13 @@ func (x *UpdateTenantProductReq) GetSort() int64 {
 func (x *UpdateTenantProductReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
+	}
+	return ""
+}
+
+func (x *UpdateTenantProductReq) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
 	}
 	return ""
 }
@@ -5373,7 +5381,7 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x16\n" +
-	"\x06remark\x18\x06 \x01(\tR\x06remark\"\xcc\x01\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remark\"\xef\x01\n" +
 	"\x16UpdateTenantProductReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12(\n" +
@@ -5381,7 +5389,8 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\vapp_visible\x18\x04 \x01(\x0e2\x0e.common.SwitchR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x16\n" +
-	"\x06remark\x18\x06 \x01(\tR\x06remark\"i\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remark\x12!\n" +
+	"\fdisplay_name\x18\a \x01(\tR\vdisplayName\"i\n" +
 	"\x1cBatchUpsertTenantProductsReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12,\n" +
 	"\x04data\x18\x02 \x03(\v2\x18.itick.TenantProductItemR\x04data\"\xc9\x01\n" +

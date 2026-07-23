@@ -354,12 +354,13 @@ type CreateTenantProductReq {
 }
 
 type UpdateTenantProductReq {
-	id         int64  `json:"id"`
-	tenantId   int64  `json:"tenantId"`
-	enabled    int64  `json:"enabled"`
-	appVisible int64  `json:"appVisible"`
-	sort       int64  `json:"sort"`
-	remark     string `json:"remark"`
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	enabled     int64  `json:"enabled"`
+	appVisible  int64  `json:"appVisible"`
+	displayName string `json:"displayName"`
+	sort        int64  `json:"sort"`
+	remark      string `json:"remark"`
 }
 
 type BatchUpsertTenantProductsReq {
@@ -645,4 +646,3 @@ service admin {
 	@handler RevokeAuthoritativeSnapshot
 	post /authoritative-snapshots/revoke (RevokeAuthoritativeSnapshotReq) returns (RespBase)
 }
-

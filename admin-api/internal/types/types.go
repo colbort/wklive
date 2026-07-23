@@ -4974,12 +4974,13 @@ type UpdateTenantPayPlatformReq struct {
 }
 
 type UpdateTenantProductReq struct {
-	Id         int64  `json:"id"`
-	TenantId   int64  `json:"tenantId"`
-	Enabled    int64  `json:"enabled"`
-	AppVisible int64  `json:"appVisible"`
-	Sort       int64  `json:"sort"`
-	Remark     string `json:"remark"`
+	Id          int64  `json:"id"`
+	TenantId    int64  `json:"tenantId"`
+	Enabled     int64  `json:"enabled"`
+	AppVisible  int64  `json:"appVisible"`
+	DisplayName string `json:"displayName"`
+	Sort        int64  `json:"sort"`
+	Remark      string `json:"remark"`
 }
 
 type UpdateUserBankReq struct {

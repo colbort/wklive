@@ -2,6 +2,7 @@ package itickadminlogic
 
 import (
 	"context"
+	"strings"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -63,6 +64,9 @@ func (l *UpdateTenantProductLogic) UpdateTenantProduct(in *itick.UpdateTenantPro
 	}
 	if in.Remark != "" {
 		item.Remark = in.Remark
+	}
+	if in.DisplayName != "" {
+		item.DisplayName = strings.TrimSpace(in.DisplayName)
 	}
 	item.UpdateTimes = cutils.NowMillis()
 
