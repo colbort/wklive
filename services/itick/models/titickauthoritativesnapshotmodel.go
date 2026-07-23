@@ -40,12 +40,20 @@ func (m *defaultTItickAuthoritativeSnapshotModel) FindLatestPage(ctx context.Con
 		limit = 500
 	}
 	var rows []*TItickAuthoritativeSnapshot
-	query := `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
-FROM (
-	SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times,
-		ROW_NUMBER() OVER (PARTITION BY authority,snapshot_kind,category_code,market,symbol ORDER BY source_timestamp DESC,revision DESC,id DESC) AS row_num
-	FROM t_itick_authoritative_snapshot
-) ranked WHERE row_num=1 AND id>? ORDER BY id LIMIT ?`
+	query := `SELECT s.id,s.snapshot_id,s.authority,s.snapshot_kind,s.category_code,s.market,s.symbol,s.price,s.source_timestamp,s.snapshot_timestamp,s.revision,s.formula_version,s.raw_payload,s.create_times
+	FROM t_itick_authoritative_snapshot AS s
+	WHERE s.id>?
+		AND NOT EXISTS (
+			SELECT 1
+			FROM t_itick_authoritative_snapshot AS newer
+			WHERE newer.authority=s.authority
+				AND newer.snapshot_kind=s.snapshot_kind
+				AND newer.category_code=s.category_code
+				AND newer.market=s.market
+				AND newer.symbol=s.symbol
+				AND (newer.source_timestamp,newer.revision,newer.id)>(s.source_timestamp,s.revision,s.id)
+		)
+	ORDER BY s.id LIMIT ?`
 	err := m.QueryRowsNoCacheCtx(ctx, &rows, query, afterID, limit)
 	return rows, err
 }
