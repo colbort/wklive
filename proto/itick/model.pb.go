@@ -666,6 +666,140 @@ func (x *Quote) GetMarket() string {
 	return ""
 }
 
+// 权威行情快照。作为 App/Internal RPC 的公共响应数据，RPC 顶层出入参
+// 仍分别声明在各自的 service proto 中，兼容 goctl 的代码生成约束。
+type AuthoritativeSnapshot struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	SnapshotId        string                 `protobuf:"bytes,1,opt,name=snapshot_id,json=snapshotId,proto3" json:"snapshot_id,omitempty"`
+	Authority         string                 `protobuf:"bytes,2,opt,name=authority,proto3" json:"authority,omitempty"`
+	SnapshotKind      string                 `protobuf:"bytes,3,opt,name=snapshot_kind,json=snapshotKind,proto3" json:"snapshot_kind,omitempty"`
+	CategoryCode      string                 `protobuf:"bytes,4,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	Market            string                 `protobuf:"bytes,5,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol            string                 `protobuf:"bytes,6,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Price             string                 `protobuf:"bytes,7,opt,name=price,proto3" json:"price,omitempty"`
+	SourceTimestamp   int64                  `protobuf:"varint,8,opt,name=source_timestamp,json=sourceTimestamp,proto3" json:"source_timestamp,omitempty"`
+	SnapshotTimestamp int64                  `protobuf:"varint,9,opt,name=snapshot_timestamp,json=snapshotTimestamp,proto3" json:"snapshot_timestamp,omitempty"`
+	Revision          int64                  `protobuf:"varint,10,opt,name=revision,proto3" json:"revision,omitempty"`
+	FormulaVersion    string                 `protobuf:"bytes,11,opt,name=formula_version,json=formulaVersion,proto3" json:"formula_version,omitempty"`
+	RawPayload        string                 `protobuf:"bytes,12,opt,name=raw_payload,json=rawPayload,proto3" json:"raw_payload,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *AuthoritativeSnapshot) Reset() {
+	*x = AuthoritativeSnapshot{}
+	mi := &file_proto_itick_model_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuthoritativeSnapshot) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuthoritativeSnapshot) ProtoMessage() {}
+
+func (x *AuthoritativeSnapshot) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_model_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuthoritativeSnapshot.ProtoReflect.Descriptor instead.
+func (*AuthoritativeSnapshot) Descriptor() ([]byte, []int) {
+	return file_proto_itick_model_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *AuthoritativeSnapshot) GetSnapshotId() string {
+	if x != nil {
+		return x.SnapshotId
+	}
+	return ""
+}
+
+func (x *AuthoritativeSnapshot) GetAuthority() string {
+	if x != nil {
+		return x.Authority
+	}
+	return ""
+}
+
+func (x *AuthoritativeSnapshot) GetSnapshotKind() string {
+	if x != nil {
+		return x.SnapshotKind
+	}
+	return ""
+}
+
+func (x *AuthoritativeSnapshot) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
+}
+
+func (x *AuthoritativeSnapshot) GetMarket() string {
+	if x != nil {
+		return x.Market
+	}
+	return ""
+}
+
+func (x *AuthoritativeSnapshot) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *AuthoritativeSnapshot) GetPrice() string {
+	if x != nil {
+		return x.Price
+	}
+	return ""
+}
+
+func (x *AuthoritativeSnapshot) GetSourceTimestamp() int64 {
+	if x != nil {
+		return x.SourceTimestamp
+	}
+	return 0
+}
+
+func (x *AuthoritativeSnapshot) GetSnapshotTimestamp() int64 {
+	if x != nil {
+		return x.SnapshotTimestamp
+	}
+	return 0
+}
+
+func (x *AuthoritativeSnapshot) GetRevision() int64 {
+	if x != nil {
+		return x.Revision
+	}
+	return 0
+}
+
+func (x *AuthoritativeSnapshot) GetFormulaVersion() string {
+	if x != nil {
+		return x.FormulaVersion
+	}
+	return ""
+}
+
+func (x *AuthoritativeSnapshot) GetRawPayload() string {
+	if x != nil {
+		return x.RawPayload
+	}
+	return ""
+}
+
 type ItickTenantCategory struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -689,7 +823,7 @@ type ItickTenantCategory struct {
 
 func (x *ItickTenantCategory) Reset() {
 	*x = ItickTenantCategory{}
-	mi := &file_proto_itick_model_proto_msgTypes[4]
+	mi := &file_proto_itick_model_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -701,7 +835,7 @@ func (x *ItickTenantCategory) String() string {
 func (*ItickTenantCategory) ProtoMessage() {}
 
 func (x *ItickTenantCategory) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_model_proto_msgTypes[4]
+	mi := &file_proto_itick_model_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -714,7 +848,7 @@ func (x *ItickTenantCategory) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItickTenantCategory.ProtoReflect.Descriptor instead.
 func (*ItickTenantCategory) Descriptor() ([]byte, []int) {
-	return file_proto_itick_model_proto_rawDescGZIP(), []int{4}
+	return file_proto_itick_model_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ItickTenantCategory) GetId() int64 {
@@ -845,7 +979,7 @@ type ItickTenantProduct struct {
 
 func (x *ItickTenantProduct) Reset() {
 	*x = ItickTenantProduct{}
-	mi := &file_proto_itick_model_proto_msgTypes[5]
+	mi := &file_proto_itick_model_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -857,7 +991,7 @@ func (x *ItickTenantProduct) String() string {
 func (*ItickTenantProduct) ProtoMessage() {}
 
 func (x *ItickTenantProduct) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_model_proto_msgTypes[5]
+	mi := &file_proto_itick_model_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -870,7 +1004,7 @@ func (x *ItickTenantProduct) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItickTenantProduct.ProtoReflect.Descriptor instead.
 func (*ItickTenantProduct) Descriptor() ([]byte, []int) {
-	return file_proto_itick_model_proto_rawDescGZIP(), []int{5}
+	return file_proto_itick_model_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ItickTenantProduct) GetId() int64 {
@@ -1101,7 +1235,23 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\bturnover\x18\v \x01(\tR\bturnover\x12\x19\n" +
 	"\bquote_ts\x18\f \x01(\x03R\aquoteTs\x12!\n" +
 	"\ftrade_status\x18\r \x01(\x03R\vtradeStatus\x12\x16\n" +
-	"\x06market\x18\x0e \x01(\tR\x06market\"\xe9\x03\n" +
+	"\x06market\x18\x0e \x01(\tR\x06market\"\xa6\x03\n" +
+	"\x15AuthoritativeSnapshot\x12\x1f\n" +
+	"\vsnapshot_id\x18\x01 \x01(\tR\n" +
+	"snapshotId\x12\x1c\n" +
+	"\tauthority\x18\x02 \x01(\tR\tauthority\x12#\n" +
+	"\rsnapshot_kind\x18\x03 \x01(\tR\fsnapshotKind\x12#\n" +
+	"\rcategory_code\x18\x04 \x01(\tR\fcategoryCode\x12\x16\n" +
+	"\x06market\x18\x05 \x01(\tR\x06market\x12\x16\n" +
+	"\x06symbol\x18\x06 \x01(\tR\x06symbol\x12\x14\n" +
+	"\x05price\x18\a \x01(\tR\x05price\x12)\n" +
+	"\x10source_timestamp\x18\b \x01(\x03R\x0fsourceTimestamp\x12-\n" +
+	"\x12snapshot_timestamp\x18\t \x01(\x03R\x11snapshotTimestamp\x12\x1a\n" +
+	"\brevision\x18\n" +
+	" \x01(\x03R\brevision\x12'\n" +
+	"\x0fformula_version\x18\v \x01(\tR\x0eformulaVersion\x12\x1f\n" +
+	"\vraw_payload\x18\f \x01(\tR\n" +
+	"rawPayload\"\xe9\x03\n" +
 	"\x13ItickTenantCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -1161,36 +1311,37 @@ func file_proto_itick_model_proto_rawDescGZIP() []byte {
 	return file_proto_itick_model_proto_rawDescData
 }
 
-var file_proto_itick_model_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_proto_itick_model_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_proto_itick_model_proto_goTypes = []any{
-	(*ItickCategory)(nil),       // 0: itick.ItickCategory
-	(*ItickProduct)(nil),        // 1: itick.ItickProduct
-	(*Kline)(nil),               // 2: itick.Kline
-	(*Quote)(nil),               // 3: itick.Quote
-	(*ItickTenantCategory)(nil), // 4: itick.ItickTenantCategory
-	(*ItickTenantProduct)(nil),  // 5: itick.ItickTenantProduct
-	(CategoryType)(0),           // 6: itick.CategoryType
-	(common.Enable)(0),          // 7: common.Enable
-	(common.Switch)(0),          // 8: common.Switch
-	(SyncKlinePriority)(0),      // 9: itick.SyncKlinePriority
-	(KlineType)(0),              // 10: itick.KlineType
+	(*ItickCategory)(nil),         // 0: itick.ItickCategory
+	(*ItickProduct)(nil),          // 1: itick.ItickProduct
+	(*Kline)(nil),                 // 2: itick.Kline
+	(*Quote)(nil),                 // 3: itick.Quote
+	(*AuthoritativeSnapshot)(nil), // 4: itick.AuthoritativeSnapshot
+	(*ItickTenantCategory)(nil),   // 5: itick.ItickTenantCategory
+	(*ItickTenantProduct)(nil),    // 6: itick.ItickTenantProduct
+	(CategoryType)(0),             // 7: itick.CategoryType
+	(common.Enable)(0),            // 8: common.Enable
+	(common.Switch)(0),            // 9: common.Switch
+	(SyncKlinePriority)(0),        // 10: itick.SyncKlinePriority
+	(KlineType)(0),                // 11: itick.KlineType
 }
 var file_proto_itick_model_proto_depIdxs = []int32{
-	6,  // 0: itick.ItickCategory.category_type:type_name -> itick.CategoryType
-	7,  // 1: itick.ItickCategory.enabled:type_name -> common.Enable
-	8,  // 2: itick.ItickCategory.app_visible:type_name -> common.Switch
-	9,  // 3: itick.ItickCategory.sync_priority:type_name -> itick.SyncKlinePriority
-	6,  // 4: itick.ItickProduct.category_type:type_name -> itick.CategoryType
-	7,  // 5: itick.ItickProduct.enabled:type_name -> common.Enable
-	8,  // 6: itick.ItickProduct.app_visible:type_name -> common.Switch
-	9,  // 7: itick.ItickProduct.sync_priority:type_name -> itick.SyncKlinePriority
-	10, // 8: itick.Kline.k_type:type_name -> itick.KlineType
-	7,  // 9: itick.ItickTenantCategory.enabled:type_name -> common.Enable
-	8,  // 10: itick.ItickTenantCategory.app_visible:type_name -> common.Switch
-	6,  // 11: itick.ItickTenantCategory.category_type:type_name -> itick.CategoryType
-	7,  // 12: itick.ItickTenantProduct.enabled:type_name -> common.Enable
-	8,  // 13: itick.ItickTenantProduct.app_visible:type_name -> common.Switch
-	6,  // 14: itick.ItickTenantProduct.category_type:type_name -> itick.CategoryType
+	7,  // 0: itick.ItickCategory.category_type:type_name -> itick.CategoryType
+	8,  // 1: itick.ItickCategory.enabled:type_name -> common.Enable
+	9,  // 2: itick.ItickCategory.app_visible:type_name -> common.Switch
+	10, // 3: itick.ItickCategory.sync_priority:type_name -> itick.SyncKlinePriority
+	7,  // 4: itick.ItickProduct.category_type:type_name -> itick.CategoryType
+	8,  // 5: itick.ItickProduct.enabled:type_name -> common.Enable
+	9,  // 6: itick.ItickProduct.app_visible:type_name -> common.Switch
+	10, // 7: itick.ItickProduct.sync_priority:type_name -> itick.SyncKlinePriority
+	11, // 8: itick.Kline.k_type:type_name -> itick.KlineType
+	8,  // 9: itick.ItickTenantCategory.enabled:type_name -> common.Enable
+	9,  // 10: itick.ItickTenantCategory.app_visible:type_name -> common.Switch
+	7,  // 11: itick.ItickTenantCategory.category_type:type_name -> itick.CategoryType
+	8,  // 12: itick.ItickTenantProduct.enabled:type_name -> common.Enable
+	9,  // 13: itick.ItickTenantProduct.app_visible:type_name -> common.Switch
+	7,  // 14: itick.ItickTenantProduct.category_type:type_name -> itick.CategoryType
 	15, // [15:15] is the sub-list for method output_type
 	15, // [15:15] is the sub-list for method input_type
 	15, // [15:15] is the sub-list for extension type_name
@@ -1210,7 +1361,7 @@ func file_proto_itick_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_itick_model_proto_rawDesc), len(file_proto_itick_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -14,9 +14,12 @@ import (
 )
 
 type (
+	GetAuthoritativeSnapshotInternalReq  = itick.GetAuthoritativeSnapshotInternalReq
+	GetAuthoritativeSnapshotInternalResp = itick.GetAuthoritativeSnapshotInternalResp
+
 	ItickInternal interface {
 		// Reads an authoritative snapshot from the permanent archive at or before
-		GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error)
+		GetAuthoritativeSnapshotInternal(ctx context.Context, in *GetAuthoritativeSnapshotInternalReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotInternalResp, error)
 	}
 
 	defaultItickInternal struct {
@@ -31,7 +34,7 @@ func NewItickInternal(cli zrpc.Client) ItickInternal {
 }
 
 // Reads an authoritative snapshot from the permanent archive at or before
-func (m *defaultItickInternal) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
+func (m *defaultItickInternal) GetAuthoritativeSnapshotInternal(ctx context.Context, in *GetAuthoritativeSnapshotInternalReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotInternalResp, error) {
 	client := itick.NewItickInternalClient(m.cli.Conn())
-	return client.GetAuthoritativeSnapshot(ctx, in, opts...)
+	return client.GetAuthoritativeSnapshotInternal(ctx, in, opts...)
 }

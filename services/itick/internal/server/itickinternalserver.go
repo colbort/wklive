@@ -24,7 +24,7 @@ func NewItickInternalServer(svcCtx *svc.ServiceContext) *ItickInternalServer {
 }
 
 // Reads an authoritative snapshot from the permanent archive at or before
-func (s *ItickInternalServer) GetAuthoritativeSnapshot(ctx context.Context, in *itick.GetAuthoritativeSnapshotReq) (*itick.GetAuthoritativeSnapshotResp, error) {
-	l := logic.NewGetAuthoritativeSnapshotLogic(ctx, s.svcCtx)
-	return l.GetAuthoritativeSnapshot(in)
+func (s *ItickInternalServer) GetAuthoritativeSnapshotInternal(ctx context.Context, in *itick.GetAuthoritativeSnapshotInternalReq) (*itick.GetAuthoritativeSnapshotInternalResp, error) {
+	l := logic.NewGetAuthoritativeSnapshotInternalLogic(ctx, s.svcCtx)
+	return l.GetAuthoritativeSnapshotInternal(in)
 }

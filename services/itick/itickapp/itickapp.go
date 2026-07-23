@@ -16,7 +16,6 @@ import (
 type (
 	AppCommonResp                = itick.AppCommonResp
 	AppEmpty                     = itick.AppEmpty
-	AuthoritativeSnapshot        = itick.AuthoritativeSnapshot
 	BatchGetQuoteReq             = itick.BatchGetQuoteReq
 	BatchGetQuoteResp            = itick.BatchGetQuoteResp
 	GetAuthoritativeSnapshotReq  = itick.GetAuthoritativeSnapshotReq

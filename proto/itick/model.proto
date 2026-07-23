@@ -85,6 +85,23 @@ message Quote {
   string market = 14;
 }
 
+// 权威行情快照。作为 App/Internal RPC 的公共响应数据，RPC 顶层出入参
+// 仍分别声明在各自的 service proto 中，兼容 goctl 的代码生成约束。
+message AuthoritativeSnapshot {
+  string snapshot_id = 1;
+  string authority = 2;
+  string snapshot_kind = 3;
+  string category_code = 4;
+  string market = 5;
+  string symbol = 6;
+  string price = 7;
+  int64 source_timestamp = 8;
+  int64 snapshot_timestamp = 9;
+  int64 revision = 10;
+  string formula_version = 11;
+  string raw_payload = 12;
+}
+
 message ItickTenantCategory {
   int64 id = 1;
   int64 tenant_id = 2;

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	mysql "github.com/go-sql-driver/mysql"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -63,14 +62,17 @@ func (m *defaultTItickAuthoritativeSnapshotModel) FindAfterID(ctx context.Contex
 func (m *defaultTItickAuthoritativeSnapshotModel) InsertImmutableAndEnqueue(ctx context.Context, row *TItickAuthoritativeSnapshot, payload string) error {
 	return m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		_, err := conn.ExecCtx(ctx, `INSERT INTO t_itick_authoritative_snapshot
+		result, err := conn.ExecCtx(ctx, `INSERT INTO t_itick_authoritative_snapshot
 (snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times)
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE snapshot_id=snapshot_id`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
 		if err != nil {
-			var mysqlErr *mysql.MySQLError
-			if !errors.As(err, &mysqlErr) || mysqlErr.Number != 1062 {
-				return err
-			}
+			return err
+		}
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return err
+		}
+		if affected == 0 {
 			var existing TItickAuthoritativeSnapshot
 			query := `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
 FROM t_itick_authoritative_snapshot WHERE snapshot_id=? LIMIT 1`
@@ -90,15 +92,18 @@ FROM t_itick_authoritative_snapshot WHERE snapshot_id=? LIMIT 1`
 }
 
 func (m *defaultTItickAuthoritativeSnapshotModel) InsertImmutable(ctx context.Context, row *TItickAuthoritativeSnapshot) error {
-	_, err := m.ExecNoCacheCtx(ctx, `INSERT INTO t_itick_authoritative_snapshot
+	result, err := m.ExecNoCacheCtx(ctx, `INSERT INTO t_itick_authoritative_snapshot
 (snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times)
-VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
-	if err == nil {
-		return nil
-	}
-	var mysqlErr *mysql.MySQLError
-	if !errors.As(err, &mysqlErr) || mysqlErr.Number != 1062 {
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE snapshot_id=snapshot_id`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
+	if err != nil {
 		return err
+	}
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affected > 0 {
+		return nil
 	}
 	existing, findErr := m.findByImmutableKey(ctx, row)
 	if findErr == nil && sameAuthoritativeSnapshotIdentity(existing, row) {

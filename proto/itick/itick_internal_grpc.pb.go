@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ItickInternal_GetAuthoritativeSnapshot_FullMethodName = "/itick.ItickInternal/GetAuthoritativeSnapshot"
+	ItickInternal_GetAuthoritativeSnapshotInternal_FullMethodName = "/itick.ItickInternal/GetAuthoritativeSnapshotInternal"
 )
 
 // ItickInternalClient is the client API for ItickInternal service.
@@ -31,7 +31,7 @@ const (
 type ItickInternalClient interface {
 	// Reads an authoritative snapshot from the permanent archive at or before
 	// the requested business timestamp.
-	GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error)
+	GetAuthoritativeSnapshotInternal(ctx context.Context, in *GetAuthoritativeSnapshotInternalReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotInternalResp, error)
 }
 
 type itickInternalClient struct {
@@ -42,10 +42,10 @@ func NewItickInternalClient(cc grpc.ClientConnInterface) ItickInternalClient {
 	return &itickInternalClient{cc}
 }
 
-func (c *itickInternalClient) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
+func (c *itickInternalClient) GetAuthoritativeSnapshotInternal(ctx context.Context, in *GetAuthoritativeSnapshotInternalReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotInternalResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetAuthoritativeSnapshotResp)
-	err := c.cc.Invoke(ctx, ItickInternal_GetAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
+	out := new(GetAuthoritativeSnapshotInternalResp)
+	err := c.cc.Invoke(ctx, ItickInternal_GetAuthoritativeSnapshotInternal_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (c *itickInternalClient) GetAuthoritativeSnapshot(ctx context.Context, in *
 type ItickInternalServer interface {
 	// Reads an authoritative snapshot from the permanent archive at or before
 	// the requested business timestamp.
-	GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error)
+	GetAuthoritativeSnapshotInternal(context.Context, *GetAuthoritativeSnapshotInternalReq) (*GetAuthoritativeSnapshotInternalResp, error)
 	mustEmbedUnimplementedItickInternalServer()
 }
 
@@ -72,8 +72,8 @@ type ItickInternalServer interface {
 // pointer dereference when methods are called.
 type UnimplementedItickInternalServer struct{}
 
-func (UnimplementedItickInternalServer) GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetAuthoritativeSnapshot not implemented")
+func (UnimplementedItickInternalServer) GetAuthoritativeSnapshotInternal(context.Context, *GetAuthoritativeSnapshotInternalReq) (*GetAuthoritativeSnapshotInternalResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAuthoritativeSnapshotInternal not implemented")
 }
 func (UnimplementedItickInternalServer) mustEmbedUnimplementedItickInternalServer() {}
 func (UnimplementedItickInternalServer) testEmbeddedByValue()                       {}
@@ -96,20 +96,20 @@ func RegisterItickInternalServer(s grpc.ServiceRegistrar, srv ItickInternalServe
 	s.RegisterService(&ItickInternal_ServiceDesc, srv)
 }
 
-func _ItickInternal_GetAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAuthoritativeSnapshotReq)
+func _ItickInternal_GetAuthoritativeSnapshotInternal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAuthoritativeSnapshotInternalReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickInternalServer).GetAuthoritativeSnapshot(ctx, in)
+		return srv.(ItickInternalServer).GetAuthoritativeSnapshotInternal(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickInternal_GetAuthoritativeSnapshot_FullMethodName,
+		FullMethod: ItickInternal_GetAuthoritativeSnapshotInternal_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickInternalServer).GetAuthoritativeSnapshot(ctx, req.(*GetAuthoritativeSnapshotReq))
+		return srv.(ItickInternalServer).GetAuthoritativeSnapshotInternal(ctx, req.(*GetAuthoritativeSnapshotInternalReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -122,8 +122,8 @@ var ItickInternal_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ItickInternalServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetAuthoritativeSnapshot",
-			Handler:    _ItickInternal_GetAuthoritativeSnapshot_Handler,
+			MethodName: "GetAuthoritativeSnapshotInternal",
+			Handler:    _ItickInternal_GetAuthoritativeSnapshotInternal_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

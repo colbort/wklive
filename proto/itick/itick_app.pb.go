@@ -830,138 +830,6 @@ func (x *GetAuthoritativeSnapshotReq) GetSnapshotKind() string {
 	return ""
 }
 
-type AuthoritativeSnapshot struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	SnapshotId        string                 `protobuf:"bytes,1,opt,name=snapshot_id,json=snapshotId,proto3" json:"snapshot_id,omitempty"`
-	Authority         string                 `protobuf:"bytes,2,opt,name=authority,proto3" json:"authority,omitempty"`
-	SnapshotKind      string                 `protobuf:"bytes,3,opt,name=snapshot_kind,json=snapshotKind,proto3" json:"snapshot_kind,omitempty"`
-	CategoryCode      string                 `protobuf:"bytes,4,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
-	Market            string                 `protobuf:"bytes,5,opt,name=market,proto3" json:"market,omitempty"`
-	Symbol            string                 `protobuf:"bytes,6,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	Price             string                 `protobuf:"bytes,7,opt,name=price,proto3" json:"price,omitempty"`
-	SourceTimestamp   int64                  `protobuf:"varint,8,opt,name=source_timestamp,json=sourceTimestamp,proto3" json:"source_timestamp,omitempty"`
-	SnapshotTimestamp int64                  `protobuf:"varint,9,opt,name=snapshot_timestamp,json=snapshotTimestamp,proto3" json:"snapshot_timestamp,omitempty"`
-	Revision          int64                  `protobuf:"varint,10,opt,name=revision,proto3" json:"revision,omitempty"`
-	FormulaVersion    string                 `protobuf:"bytes,11,opt,name=formula_version,json=formulaVersion,proto3" json:"formula_version,omitempty"`
-	RawPayload        string                 `protobuf:"bytes,12,opt,name=raw_payload,json=rawPayload,proto3" json:"raw_payload,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *AuthoritativeSnapshot) Reset() {
-	*x = AuthoritativeSnapshot{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AuthoritativeSnapshot) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AuthoritativeSnapshot) ProtoMessage() {}
-
-func (x *AuthoritativeSnapshot) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AuthoritativeSnapshot.ProtoReflect.Descriptor instead.
-func (*AuthoritativeSnapshot) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *AuthoritativeSnapshot) GetSnapshotId() string {
-	if x != nil {
-		return x.SnapshotId
-	}
-	return ""
-}
-
-func (x *AuthoritativeSnapshot) GetAuthority() string {
-	if x != nil {
-		return x.Authority
-	}
-	return ""
-}
-
-func (x *AuthoritativeSnapshot) GetSnapshotKind() string {
-	if x != nil {
-		return x.SnapshotKind
-	}
-	return ""
-}
-
-func (x *AuthoritativeSnapshot) GetCategoryCode() string {
-	if x != nil {
-		return x.CategoryCode
-	}
-	return ""
-}
-
-func (x *AuthoritativeSnapshot) GetMarket() string {
-	if x != nil {
-		return x.Market
-	}
-	return ""
-}
-
-func (x *AuthoritativeSnapshot) GetSymbol() string {
-	if x != nil {
-		return x.Symbol
-	}
-	return ""
-}
-
-func (x *AuthoritativeSnapshot) GetPrice() string {
-	if x != nil {
-		return x.Price
-	}
-	return ""
-}
-
-func (x *AuthoritativeSnapshot) GetSourceTimestamp() int64 {
-	if x != nil {
-		return x.SourceTimestamp
-	}
-	return 0
-}
-
-func (x *AuthoritativeSnapshot) GetSnapshotTimestamp() int64 {
-	if x != nil {
-		return x.SnapshotTimestamp
-	}
-	return 0
-}
-
-func (x *AuthoritativeSnapshot) GetRevision() int64 {
-	if x != nil {
-		return x.Revision
-	}
-	return 0
-}
-
-func (x *AuthoritativeSnapshot) GetFormulaVersion() string {
-	if x != nil {
-		return x.FormulaVersion
-	}
-	return ""
-}
-
-func (x *AuthoritativeSnapshot) GetRawPayload() string {
-	if x != nil {
-		return x.RawPayload
-	}
-	return ""
-}
-
 type GetAuthoritativeSnapshotResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
@@ -972,7 +840,7 @@ type GetAuthoritativeSnapshotResp struct {
 
 func (x *GetAuthoritativeSnapshotResp) Reset() {
 	*x = GetAuthoritativeSnapshotResp{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[15]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -984,7 +852,7 @@ func (x *GetAuthoritativeSnapshotResp) String() string {
 func (*GetAuthoritativeSnapshotResp) ProtoMessage() {}
 
 func (x *GetAuthoritativeSnapshotResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[15]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -997,7 +865,7 @@ func (x *GetAuthoritativeSnapshotResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAuthoritativeSnapshotResp.ProtoReflect.Descriptor instead.
 func (*GetAuthoritativeSnapshotResp) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{15}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetAuthoritativeSnapshotResp) GetBase() *common.RespBase {
@@ -1023,7 +891,7 @@ type SubscribeRequest struct {
 
 func (x *SubscribeRequest) Reset() {
 	*x = SubscribeRequest{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[16]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1035,7 +903,7 @@ func (x *SubscribeRequest) String() string {
 func (*SubscribeRequest) ProtoMessage() {}
 
 func (x *SubscribeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[16]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1048,7 +916,7 @@ func (x *SubscribeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubscribeRequest.ProtoReflect.Descriptor instead.
 func (*SubscribeRequest) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{16}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *SubscribeRequest) GetTopics() []*SubscribeTopic {
@@ -1071,7 +939,7 @@ type SubscribeTopic struct {
 
 func (x *SubscribeTopic) Reset() {
 	*x = SubscribeTopic{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[17]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1083,7 +951,7 @@ func (x *SubscribeTopic) String() string {
 func (*SubscribeTopic) ProtoMessage() {}
 
 func (x *SubscribeTopic) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[17]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1096,7 +964,7 @@ func (x *SubscribeTopic) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubscribeTopic.ProtoReflect.Descriptor instead.
 func (*SubscribeTopic) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{17}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *SubscribeTopic) GetTopic() string {
@@ -1148,7 +1016,7 @@ type PushReply struct {
 
 func (x *PushReply) Reset() {
 	*x = PushReply{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[18]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1160,7 +1028,7 @@ func (x *PushReply) String() string {
 func (*PushReply) ProtoMessage() {}
 
 func (x *PushReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[18]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1173,7 +1041,7 @@ func (x *PushReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PushReply.ProtoReflect.Descriptor instead.
 func (*PushReply) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{18}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *PushReply) GetTopic() string {
@@ -1228,7 +1096,7 @@ type KlineInterval struct {
 
 func (x *KlineInterval) Reset() {
 	*x = KlineInterval{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[19]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1240,7 +1108,7 @@ func (x *KlineInterval) String() string {
 func (*KlineInterval) ProtoMessage() {}
 
 func (x *KlineInterval) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[19]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1253,7 +1121,7 @@ func (x *KlineInterval) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KlineInterval.ProtoReflect.Descriptor instead.
 func (*KlineInterval) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{19}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *KlineInterval) GetName() string {
@@ -1279,7 +1147,7 @@ type KlineIntervalsResp struct {
 
 func (x *KlineIntervalsResp) Reset() {
 	*x = KlineIntervalsResp{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[20]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1291,7 +1159,7 @@ func (x *KlineIntervalsResp) String() string {
 func (*KlineIntervalsResp) ProtoMessage() {}
 
 func (x *KlineIntervalsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[20]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1304,7 +1172,7 @@ func (x *KlineIntervalsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KlineIntervalsResp.ProtoReflect.Descriptor instead.
 func (*KlineIntervalsResp) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{20}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *KlineIntervalsResp) GetData() []*KlineInterval {
@@ -1372,23 +1240,7 @@ const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\vtarget_time\x18\x05 \x01(\x03R\n" +
 	"targetTime\x12&\n" +
 	"\x0fmax_lookback_ms\x18\x06 \x01(\x03R\rmaxLookbackMs\x12#\n" +
-	"\rsnapshot_kind\x18\a \x01(\tR\fsnapshotKind\"\xa6\x03\n" +
-	"\x15AuthoritativeSnapshot\x12\x1f\n" +
-	"\vsnapshot_id\x18\x01 \x01(\tR\n" +
-	"snapshotId\x12\x1c\n" +
-	"\tauthority\x18\x02 \x01(\tR\tauthority\x12#\n" +
-	"\rsnapshot_kind\x18\x03 \x01(\tR\fsnapshotKind\x12#\n" +
-	"\rcategory_code\x18\x04 \x01(\tR\fcategoryCode\x12\x16\n" +
-	"\x06market\x18\x05 \x01(\tR\x06market\x12\x16\n" +
-	"\x06symbol\x18\x06 \x01(\tR\x06symbol\x12\x14\n" +
-	"\x05price\x18\a \x01(\tR\x05price\x12)\n" +
-	"\x10source_timestamp\x18\b \x01(\x03R\x0fsourceTimestamp\x12-\n" +
-	"\x12snapshot_timestamp\x18\t \x01(\x03R\x11snapshotTimestamp\x12\x1a\n" +
-	"\brevision\x18\n" +
-	" \x01(\x03R\brevision\x12'\n" +
-	"\x0fformula_version\x18\v \x01(\tR\x0eformulaVersion\x12\x1f\n" +
-	"\vraw_payload\x18\f \x01(\tR\n" +
-	"rawPayload\"v\n" +
+	"\rsnapshot_kind\x18\a \x01(\tR\fsnapshotKind\"v\n" +
 	"\x1cGetAuthoritativeSnapshotResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
 	"\x04data\x18\x02 \x01(\v2\x1c.itick.AuthoritativeSnapshotR\x04data\"A\n" +
@@ -1434,7 +1286,7 @@ func file_proto_itick_itick_app_proto_rawDescGZIP() []byte {
 	return file_proto_itick_itick_app_proto_rawDescData
 }
 
-var file_proto_itick_itick_app_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
+var file_proto_itick_itick_app_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_proto_itick_itick_app_proto_goTypes = []any{
 	(*AppEmpty)(nil),                     // 0: itick.AppEmpty
 	(*AppCommonResp)(nil),                // 1: itick.AppCommonResp
@@ -1450,59 +1302,59 @@ var file_proto_itick_itick_app_proto_goTypes = []any{
 	(*BatchGetQuoteReq)(nil),             // 11: itick.BatchGetQuoteReq
 	(*BatchGetQuoteResp)(nil),            // 12: itick.BatchGetQuoteResp
 	(*GetAuthoritativeSnapshotReq)(nil),  // 13: itick.GetAuthoritativeSnapshotReq
-	(*AuthoritativeSnapshot)(nil),        // 14: itick.AuthoritativeSnapshot
-	(*GetAuthoritativeSnapshotResp)(nil), // 15: itick.GetAuthoritativeSnapshotResp
-	(*SubscribeRequest)(nil),             // 16: itick.SubscribeRequest
-	(*SubscribeTopic)(nil),               // 17: itick.SubscribeTopic
-	(*PushReply)(nil),                    // 18: itick.PushReply
-	(*KlineInterval)(nil),                // 19: itick.KlineInterval
-	(*KlineIntervalsResp)(nil),           // 20: itick.KlineIntervalsResp
-	(*common.RespBase)(nil),              // 21: common.RespBase
-	(*common.PageReq)(nil),               // 22: common.PageReq
-	(*ItickTenantCategory)(nil),          // 23: itick.ItickTenantCategory
-	(CategoryType)(0),                    // 24: itick.CategoryType
-	(*ItickTenantProduct)(nil),           // 25: itick.ItickTenantProduct
-	(KlineType)(0),                       // 26: itick.KlineType
-	(*Kline)(nil),                        // 27: itick.Kline
-	(*Quote)(nil),                        // 28: itick.Quote
+	(*GetAuthoritativeSnapshotResp)(nil), // 14: itick.GetAuthoritativeSnapshotResp
+	(*SubscribeRequest)(nil),             // 15: itick.SubscribeRequest
+	(*SubscribeTopic)(nil),               // 16: itick.SubscribeTopic
+	(*PushReply)(nil),                    // 17: itick.PushReply
+	(*KlineInterval)(nil),                // 18: itick.KlineInterval
+	(*KlineIntervalsResp)(nil),           // 19: itick.KlineIntervalsResp
+	(*common.RespBase)(nil),              // 20: common.RespBase
+	(*common.PageReq)(nil),               // 21: common.PageReq
+	(*ItickTenantCategory)(nil),          // 22: itick.ItickTenantCategory
+	(CategoryType)(0),                    // 23: itick.CategoryType
+	(*ItickTenantProduct)(nil),           // 24: itick.ItickTenantProduct
+	(KlineType)(0),                       // 25: itick.KlineType
+	(*Kline)(nil),                        // 26: itick.Kline
+	(*Quote)(nil),                        // 27: itick.Quote
+	(*AuthoritativeSnapshot)(nil),        // 28: itick.AuthoritativeSnapshot
 }
 var file_proto_itick_itick_app_proto_depIdxs = []int32{
-	21, // 0: itick.AppCommonResp.base:type_name -> common.RespBase
-	22, // 1: itick.ListVisibleCategoriesReq.page:type_name -> common.PageReq
-	21, // 2: itick.ListVisibleCategoriesResp.base:type_name -> common.RespBase
-	23, // 3: itick.ListVisibleCategoriesResp.data:type_name -> itick.ItickTenantCategory
-	24, // 4: itick.ListVisibleProductsReq.category_type:type_name -> itick.CategoryType
-	22, // 5: itick.ListVisibleProductsReq.page:type_name -> common.PageReq
-	21, // 6: itick.ListVisibleProductsResp.base:type_name -> common.RespBase
-	25, // 7: itick.ListVisibleProductsResp.data:type_name -> itick.ItickTenantProduct
-	26, // 8: itick.GetKlineReq.k_type:type_name -> itick.KlineType
-	21, // 9: itick.GetKlineResp.base:type_name -> common.RespBase
-	27, // 10: itick.GetKlineResp.data:type_name -> itick.Kline
-	21, // 11: itick.GetQuoteResp.base:type_name -> common.RespBase
-	28, // 12: itick.GetQuoteResp.data:type_name -> itick.Quote
+	20, // 0: itick.AppCommonResp.base:type_name -> common.RespBase
+	21, // 1: itick.ListVisibleCategoriesReq.page:type_name -> common.PageReq
+	20, // 2: itick.ListVisibleCategoriesResp.base:type_name -> common.RespBase
+	22, // 3: itick.ListVisibleCategoriesResp.data:type_name -> itick.ItickTenantCategory
+	23, // 4: itick.ListVisibleProductsReq.category_type:type_name -> itick.CategoryType
+	21, // 5: itick.ListVisibleProductsReq.page:type_name -> common.PageReq
+	20, // 6: itick.ListVisibleProductsResp.base:type_name -> common.RespBase
+	24, // 7: itick.ListVisibleProductsResp.data:type_name -> itick.ItickTenantProduct
+	25, // 8: itick.GetKlineReq.k_type:type_name -> itick.KlineType
+	20, // 9: itick.GetKlineResp.base:type_name -> common.RespBase
+	26, // 10: itick.GetKlineResp.data:type_name -> itick.Kline
+	20, // 11: itick.GetQuoteResp.base:type_name -> common.RespBase
+	27, // 12: itick.GetQuoteResp.data:type_name -> itick.Quote
 	10, // 13: itick.BatchGetQuoteReq.data:type_name -> itick.MarketSymbol
-	21, // 14: itick.BatchGetQuoteResp.base:type_name -> common.RespBase
-	28, // 15: itick.BatchGetQuoteResp.data:type_name -> itick.Quote
-	21, // 16: itick.GetAuthoritativeSnapshotResp.base:type_name -> common.RespBase
-	14, // 17: itick.GetAuthoritativeSnapshotResp.data:type_name -> itick.AuthoritativeSnapshot
-	17, // 18: itick.SubscribeRequest.topics:type_name -> itick.SubscribeTopic
-	19, // 19: itick.KlineIntervalsResp.data:type_name -> itick.KlineInterval
+	20, // 14: itick.BatchGetQuoteResp.base:type_name -> common.RespBase
+	27, // 15: itick.BatchGetQuoteResp.data:type_name -> itick.Quote
+	20, // 16: itick.GetAuthoritativeSnapshotResp.base:type_name -> common.RespBase
+	28, // 17: itick.GetAuthoritativeSnapshotResp.data:type_name -> itick.AuthoritativeSnapshot
+	16, // 18: itick.SubscribeRequest.topics:type_name -> itick.SubscribeTopic
+	18, // 19: itick.KlineIntervalsResp.data:type_name -> itick.KlineInterval
 	2,  // 20: itick.ItickApp.ListVisibleCategories:input_type -> itick.ListVisibleCategoriesReq
 	4,  // 21: itick.ItickApp.ListVisibleProducts:input_type -> itick.ListVisibleProductsReq
 	6,  // 22: itick.ItickApp.GetKline:input_type -> itick.GetKlineReq
 	8,  // 23: itick.ItickApp.GetQuote:input_type -> itick.GetQuoteReq
 	11, // 24: itick.ItickApp.BatchGetQuote:input_type -> itick.BatchGetQuoteReq
 	13, // 25: itick.ItickApp.GetAuthoritativeSnapshot:input_type -> itick.GetAuthoritativeSnapshotReq
-	16, // 26: itick.ItickApp.SubscribeStream:input_type -> itick.SubscribeRequest
+	15, // 26: itick.ItickApp.SubscribeStream:input_type -> itick.SubscribeRequest
 	0,  // 27: itick.ItickApp.GetKlineIntervals:input_type -> itick.AppEmpty
 	3,  // 28: itick.ItickApp.ListVisibleCategories:output_type -> itick.ListVisibleCategoriesResp
 	5,  // 29: itick.ItickApp.ListVisibleProducts:output_type -> itick.ListVisibleProductsResp
 	7,  // 30: itick.ItickApp.GetKline:output_type -> itick.GetKlineResp
 	9,  // 31: itick.ItickApp.GetQuote:output_type -> itick.GetQuoteResp
 	12, // 32: itick.ItickApp.BatchGetQuote:output_type -> itick.BatchGetQuoteResp
-	15, // 33: itick.ItickApp.GetAuthoritativeSnapshot:output_type -> itick.GetAuthoritativeSnapshotResp
-	18, // 34: itick.ItickApp.SubscribeStream:output_type -> itick.PushReply
-	20, // 35: itick.ItickApp.GetKlineIntervals:output_type -> itick.KlineIntervalsResp
+	14, // 33: itick.ItickApp.GetAuthoritativeSnapshot:output_type -> itick.GetAuthoritativeSnapshotResp
+	17, // 34: itick.ItickApp.SubscribeStream:output_type -> itick.PushReply
+	19, // 35: itick.ItickApp.GetKlineIntervals:output_type -> itick.KlineIntervalsResp
 	28, // [28:36] is the sub-list for method output_type
 	20, // [20:28] is the sub-list for method input_type
 	20, // [20:20] is the sub-list for extension type_name
@@ -1523,7 +1375,7 @@ func file_proto_itick_itick_app_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_itick_itick_app_proto_rawDesc), len(file_proto_itick_itick_app_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   21,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
