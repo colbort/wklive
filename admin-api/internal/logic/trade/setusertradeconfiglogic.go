@@ -27,6 +27,6 @@ func NewSetUserTradeConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *SetUserTradeConfigLogic) SetUserTradeConfig(req *types.SetUserTradeConfigReq) (resp *types.AdminCommonResp, err error) {
-	return logicutil.Proxy[types.AdminCommonResp](l.ctx, req, l.svcCtx.TradeCli.SetUserTradeConfig)
+func (l *SetUserTradeConfigLogic) SetUserTradeConfig(req *types.SetUserTradeConfigReq) (resp *types.CommonResp, err error) {
+	return logicutil.Proxy[types.CommonResp](l.ctx, req, l.svcCtx.TradeCli.SetUserTradeConfig)
 }

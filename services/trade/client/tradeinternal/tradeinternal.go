@@ -14,8 +14,8 @@ import (
 )
 
 type (
-	AdminCommonResp                  = trade.AdminCommonResp
-	AppCommonResp                    = trade.AppCommonResp
+	CommonResp                       = trade.CommonResp
+	UserCommonResp                   = trade.UserCommonResp
 	CancelAllOrdersReq               = trade.CancelAllOrdersReq
 	CancelAllOrdersResp              = trade.CancelAllOrdersResp
 	CancelOrderReq                   = trade.CancelOrderReq

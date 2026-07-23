@@ -27,6 +27,6 @@ func NewOrderDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Order
 	}
 }
 
-func (l *OrderDetailLogic) OrderDetail(req *types.AdminOrderDetailReq) (resp *types.AdminOrderDetailResp, err error) {
-	return logicutil.Proxy[types.AdminOrderDetailResp](l.ctx, req, l.svcCtx.StakingCli.OrderDetail)
+func (l *OrderDetailLogic) OrderDetail(req *types.OrderDetailReq) (resp *types.OrderDetailResp, err error) {
+	return logicutil.Proxy[types.OrderDetailResp](l.ctx, req, l.svcCtx.StakingCli.OrderDetail)
 }

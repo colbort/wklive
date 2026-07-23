@@ -33,26 +33,26 @@ func NewCreateChatAgentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 }
 
 // 创建坐席
-func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*chat.AdminChatAgentResp, error) {
+func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*chat.ChatAgentResp, error) {
 	username := strings.TrimSpace(in.GetUsername())
 	password := strings.TrimSpace(in.GetPassword())
 	nickname := strings.TrimSpace(in.GetNickname())
 	if username == "" || password == "" || nickname == "" {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "username, password and nickname are required")}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(400, "username, password and nickname are required")}, nil
 	}
 
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if _, err := l.svcCtx.ChatUserModel.FindOneByMerchantIdUsername(l.ctx, merchantID, username); err == nil {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "username already exists")}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(400, "username already exists")}, nil
 	} else if err != models.ErrNotFound {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 
 	maxCount := int64(in.GetMaxSessionCount())
@@ -96,9 +96,9 @@ func (l *CreateChatAgentLogic) CreateChatAgent(in *chat.CreateChatAgentReq) (*ch
 	}
 
 	if err := l.createAgentWithUser(user, agent); err != nil {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: ih.ToProtoAgent(agent)}, nil
+	return &chat.ChatAgentResp{Base: helper.OkResp(), Data: ih.ToProtoAgent(agent)}, nil
 }
 
 func (l *CreateChatAgentLogic) createAgentWithUser(user *models.TChatUser, agent *models.TChatAgent) error {

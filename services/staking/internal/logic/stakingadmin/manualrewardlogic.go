@@ -32,23 +32,23 @@ func NewManualRewardLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Manu
 }
 
 // 手动发放收益
-func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*staking.AdminManualRewardResp, error) {
+func (l *ManualRewardLogic) ManualReward(in *staking.ManualRewardReq) (*staking.ManualRewardResp, error) {
 	order, err := l.svcCtx.StakeOrderModel.FindOne(l.ctx, in.OrderId)
 	if err != nil {
 		return nil, err
 	}
 	if order == nil || order.TenantId != in.TenantId {
-		return &staking.AdminManualRewardResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &staking.ManualRewardResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &staking.AdminManualRewardResp{Page: base}, nil
+		return &staking.ManualRewardResp{Page: base}, nil
 	}
 
 	rewardAmount, err := conv.ParseDecimalField(in.RewardAmount)
 	if err != nil || !rewardAmount.IsPositive() {
-		return &staking.AdminManualRewardResp{Page: helper.ErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
+		return &staking.ManualRewardResp{Page: helper.ErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
 	}
 
 	now := utils.NowMillis()
@@ -73,7 +73,7 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 		l.Errorf("staking manual reward add asset failed, tenantId=%d userId=%d orderId=%d orderNo=%s coin=%s amount=%v msg=%s",
 			order.TenantId, order.UserId, order.Id, order.OrderNo, order.RewardCoinSymbol, rewardAmount, assetBaseMsg(resp))
 		if resp != nil && resp.Base != nil {
-			return &staking.AdminManualRewardResp{Page: resp.Base}, nil
+			return &staking.ManualRewardResp{Page: resp.Base}, nil
 		}
 		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 	}
@@ -121,5 +121,5 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 		return nil, err
 	}
 
-	return &staking.AdminManualRewardResp{Page: helper.OkResp(), Data: 1}, nil
+	return &staking.ManualRewardResp{Page: helper.OkResp(), Data: 1}, nil
 }

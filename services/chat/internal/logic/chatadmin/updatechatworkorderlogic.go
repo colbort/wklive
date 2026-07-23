@@ -30,28 +30,28 @@ func NewUpdateChatWorkOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 更新工单
-func (l *UpdateChatWorkOrderLogic) UpdateChatWorkOrder(in *chat.UpdateChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+func (l *UpdateChatWorkOrderLogic) UpdateChatWorkOrder(in *chat.UpdateChatWorkOrderReq) (*chat.ChatWorkOrderResp, error) {
 	if in.GetId() <= 0 {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "id is required")}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
 	title := strings.TrimSpace(in.GetTitle())
 	content := strings.TrimSpace(in.GetContent())
 	if title == "" || content == "" {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "title and content are required")}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(400, "title and content are required")}, nil
 	}
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatWorkOrderModel.FindOne(l.ctx, in.GetId())
 	if err == models.ErrNotFound {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(404, "chat work order not found")}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(404, "chat work order not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if data.MerchantId != merchantID {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(404, "chat work order not found")}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(404, "chat work order not found")}, nil
 	}
 	status := int64(in.GetStatus())
 	if status <= 0 {
@@ -72,7 +72,7 @@ func (l *UpdateChatWorkOrderLogic) UpdateChatWorkOrder(in *chat.UpdateChatWorkOr
 		data.FinishTime = data.UpdateTimes
 	}
 	if err := l.svcCtx.ChatWorkOrderModel.Update(l.ctx, data); err != nil {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatWorkOrderResp{Base: helper.OkResp(), Data: ih.ToProtoChatWorkOrder(data)}, nil
+	return &chat.ChatWorkOrderResp{Base: helper.OkResp(), Data: ih.ToProtoChatWorkOrder(data)}, nil
 }

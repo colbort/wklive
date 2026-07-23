@@ -25,7 +25,7 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 }
 
 // 用户登出
-func (l *LogoutLogic) Logout(in *user.LogoutReq) (*user.AppCommonResp, error) {
+func (l *LogoutLogic) Logout(in *user.LogoutReq) (*user.UserCommonResp, error) {
 	// 可以在这里执行登出逻辑，如删除 session 或 token 黑名单
-	return &user.AppCommonResp{Base: helper.OkResp()}, nil
+	return &user.UserCommonResp{Base: helper.OkResp()}, nil
 }

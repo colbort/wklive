@@ -27,26 +27,26 @@ func NewDeleteChatGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *D
 }
 
 // 删除客服分组
-func (l *DeleteChatGroupLogic) DeleteChatGroup(in *chat.DeleteChatGroupReq) (*chat.AdminCommonResp, error) {
+func (l *DeleteChatGroupLogic) DeleteChatGroup(in *chat.DeleteChatGroupReq) (*chat.CommonResp, error) {
 	if in.GetId() <= 0 {
-		return &chat.AdminCommonResp{Base: helper.ErrResp(400, "id is required")}, nil
+		return &chat.CommonResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.CommonResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatGroupModel.FindOne(l.ctx, in.GetId())
 	if err == models.ErrNotFound {
-		return &chat.AdminCommonResp{Base: helper.ErrResp(404, "chat group not found")}, nil
+		return &chat.CommonResp{Base: helper.ErrResp(404, "chat group not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.CommonResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if data.MerchantId != merchantID {
-		return &chat.AdminCommonResp{Base: helper.ErrResp(404, "chat group not found")}, nil
+		return &chat.CommonResp{Base: helper.ErrResp(404, "chat group not found")}, nil
 	}
 	if err := l.svcCtx.ChatGroupModel.Delete(l.ctx, in.GetId()); err != nil {
-		return &chat.AdminCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.CommonResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &chat.CommonResp{Base: helper.OkResp()}, nil
 }

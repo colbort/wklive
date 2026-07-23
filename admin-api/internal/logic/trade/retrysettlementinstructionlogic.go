@@ -27,6 +27,6 @@ func NewRetrySettlementInstructionLogic(ctx context.Context, svcCtx *svc.Service
 	}
 }
 
-func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(req *types.RetrySettlementInstructionReq) (resp *types.AdminCommonResp, err error) {
-	return logicutil.Proxy[types.AdminCommonResp](l.ctx, req, l.svcCtx.TradeCli.RetrySettlementInstruction)
+func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(req *types.RetrySettlementInstructionReq) (resp *types.CommonResp, err error) {
+	return logicutil.Proxy[types.CommonResp](l.ctx, req, l.svcCtx.TradeCli.RetrySettlementInstruction)
 }

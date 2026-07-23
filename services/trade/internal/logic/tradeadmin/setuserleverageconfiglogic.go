@@ -31,11 +31,11 @@ func NewSetUserLeverageConfigLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 // 设置用户杠杆配置
-func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeverageConfigReq) (*trade.AdminCommonResp, error) {
+func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeverageConfigReq) (*trade.CommonResp, error) {
 	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &trade.AdminCommonResp{Base: base}, nil
+		return &trade.CommonResp{Base: base}, nil
 	}
 
 	now := utils.NowMillis()
@@ -68,5 +68,5 @@ func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeve
 	if err != nil {
 		return nil, err
 	}
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }

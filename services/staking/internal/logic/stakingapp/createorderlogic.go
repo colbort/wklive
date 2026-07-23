@@ -34,7 +34,7 @@ func NewCreateOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 }
 
 // 创建质押订单
-func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.AppCreateOrderResp, error) {
+func (l *CreateOrderLogic) CreateOrder(in *staking.CreateOrderReq) (*staking.CreateOrderResp, error) {
 	product, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, in.ProductId)
 	if err != nil {
 		return nil, err
@@ -48,29 +48,29 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		return nil, err
 	}
 	if product == nil || product.TenantId != tenantId {
-		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+		return &staking.CreateOrderResp{Base: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 	if product.Status != int64(staking.ProductStatus_PRODUCT_STATUS_ENABLE) {
-		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.StakingProductUnavailable, i18n.Translate(i18n.StakingProductUnavailable, l.ctx))}, nil
+		return &staking.CreateOrderResp{Base: helper.ErrResp(i18n.StakingProductUnavailable, i18n.Translate(i18n.StakingProductUnavailable, l.ctx))}, nil
 	}
 
 	amount, err := conv.ParseDecimalField(in.StakeAmount)
 	if err != nil || !amount.IsPositive() {
-		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountInvalid, i18n.Translate(i18n.StakeAmountInvalid, l.ctx))}, nil
+		return &staking.CreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountInvalid, i18n.Translate(i18n.StakeAmountInvalid, l.ctx))}, nil
 	}
 	if product.MinAmount.IsPositive() && amount.LessThan(product.MinAmount) {
-		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountBelowMinimum, i18n.Translate(i18n.StakeAmountBelowMinimum, l.ctx))}, nil
+		return &staking.CreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountBelowMinimum, i18n.Translate(i18n.StakeAmountBelowMinimum, l.ctx))}, nil
 	}
 	if product.MaxAmount.IsPositive() && amount.GreaterThan(product.MaxAmount) {
-		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountAboveMaximum, i18n.Translate(i18n.StakeAmountAboveMaximum, l.ctx))}, nil
+		return &staking.CreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountAboveMaximum, i18n.Translate(i18n.StakeAmountAboveMaximum, l.ctx))}, nil
 	}
 	if product.StepAmount.IsPositive() {
 		if !amount.Mod(product.StepAmount).IsZero() {
-			return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountStepInvalid, i18n.Translate(i18n.StakeAmountStepInvalid, l.ctx))}, nil
+			return &staking.CreateOrderResp{Base: helper.ErrResp(i18n.StakeAmountStepInvalid, i18n.Translate(i18n.StakeAmountStepInvalid, l.ctx))}, nil
 		}
 	}
 	if product.TotalAmount.IsPositive() && product.StakedAmount.Add(amount).GreaterThan(product.TotalAmount) {
-		return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.ProductQuotaInsufficient, i18n.Translate(i18n.ProductQuotaInsufficient, l.ctx))}, nil
+		return &staking.CreateOrderResp{Base: helper.ErrResp(i18n.ProductQuotaInsufficient, i18n.Translate(i18n.ProductQuotaInsufficient, l.ctx))}, nil
 	}
 	if product.UserLimitAmount.IsPositive() {
 		userStaked, err := l.svcCtx.StakeOrderModel.SumStakeAmountByStatuses(l.ctx, tenantId, userId, in.ProductId, activeOrderStatuses())
@@ -78,7 +78,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 			return nil, err
 		}
 		if userStaked.Add(amount).GreaterThan(product.UserLimitAmount) {
-			return &staking.AppCreateOrderResp{Base: helper.ErrResp(i18n.UserStakeLimitExceeded, i18n.Translate(i18n.UserStakeLimitExceeded, l.ctx))}, nil
+			return &staking.CreateOrderResp{Base: helper.ErrResp(i18n.UserStakeLimitExceeded, i18n.Translate(i18n.UserStakeLimitExceeded, l.ctx))}, nil
 		}
 	}
 
@@ -154,7 +154,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		l.Errorf("staking create order lock asset failed, tenantId=%d userId=%d orderNo=%s coin=%s amount=%v msg=%s",
 			tenantId, userId, orderNo, product.CoinSymbol, amount, assetBaseMsg(lockResp))
 		if lockResp != nil && lockResp.Base != nil {
-			return &staking.AppCreateOrderResp{Base: lockResp.Base}, nil
+			return &staking.CreateOrderResp{Base: lockResp.Base}, nil
 		}
 		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 	}
@@ -197,9 +197,9 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		return nil, err
 	}
 
-	return &staking.AppCreateOrderResp{
+	return &staking.CreateOrderResp{
 		Base: helper.OkResp(),
-		Data: &staking.AppCreateOrderData{
+		Data: &staking.CreateOrderData{
 			Id:      id,
 			OrderNo: orderNo,
 		},

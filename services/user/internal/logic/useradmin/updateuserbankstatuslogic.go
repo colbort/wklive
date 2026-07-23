@@ -28,7 +28,7 @@ func NewUpdateUserBankStatusLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 // 更新用户银行卡状态
-func (l *UpdateUserBankStatusLogic) UpdateUserBankStatus(in *user.UpdateUserBankStatusReq) (*user.AdminCommonResp, error) {
+func (l *UpdateUserBankStatusLogic) UpdateUserBankStatus(in *user.UpdateUserBankStatusReq) (*user.CommonResp, error) {
 	// 获取银行卡信息
 	userBank, err := l.svcCtx.UserBankModel.FindOne(l.ctx, in.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -36,14 +36,14 @@ func (l *UpdateUserBankStatusLogic) UpdateUserBankStatus(in *user.UpdateUserBank
 	}
 
 	if userBank == nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, userBank.TenantId, i18n.NoPermissionOperateThisBankCard); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: base,
 		}, nil
 	}
@@ -61,7 +61,7 @@ func (l *UpdateUserBankStatusLogic) UpdateUserBankStatus(in *user.UpdateUserBank
 
 	l.Logger.Infof("管理员更新银行卡 %d 状态为 %d", in.Id, in.Enabled)
 
-	return &user.AdminCommonResp{
+	return &user.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

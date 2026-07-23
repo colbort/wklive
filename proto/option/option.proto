@@ -11,74 +11,74 @@ option go_package = "wklive/proto/option;option";
 // 期权 APP 端服务
 service OptionApp {
   // 获取可交易期权合约列表
-  rpc AppListContracts(AppListContractsReq) returns (AppListContractsResp);
+  rpc ListContracts(UserListContractsReq) returns (UserListContractsResp);
 
   // 获取期权合约详情
-  rpc AppGetContractDetail(AppGetContractDetailReq) returns (AppGetContractDetailResp);
+  rpc GetContractDetail(GetContractDetailReq) returns (GetContractDetailResp);
 
   // 提交期权下单请求
-  rpc AppPlaceOrder(AppPlaceOrderReq) returns (AppPlaceOrderResp);
+  rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp);
 
   // 撤销期权委托订单
-  rpc AppCancelOrder(AppCancelOrderReq) returns (AppCommonResp);
+  rpc CancelOrder(CancelOrderReq) returns (UserCommonResp);
 
   // 获取单个委托订单详情
-  rpc AppGetOrderDetail(AppGetOrderDetailReq) returns (AppGetOrderDetailResp);
+  rpc GetOrderDetail(GetOrderDetailReq) returns (GetOrderDetailResp);
 
   // 获取当前委托列表
-  rpc AppListCurrentOrders(AppListCurrentOrdersReq) returns (AppListCurrentOrdersResp);
+  rpc ListCurrentOrders(ListCurrentOrdersReq) returns (ListCurrentOrdersResp);
 
   // 获取历史委托列表
-  rpc AppListHistoryOrders(AppListHistoryOrdersReq) returns (AppListHistoryOrdersResp);
+  rpc ListHistoryOrders(ListHistoryOrdersReq) returns (ListHistoryOrdersResp);
 
   // 获取成交记录列表
-  rpc AppListTrades(AppListTradesReq) returns (AppListTradesResp);
+  rpc ListTrades(UserListTradesReq) returns (UserListTradesResp);
 
   // 获取持仓列表
-  rpc AppListPositions(AppListPositionsReq) returns (AppListPositionsResp);
+  rpc ListPositions(UserListPositionsReq) returns (UserListPositionsResp);
 
   // 获取单个持仓详情
-  rpc AppGetPositionDetail(AppGetPositionDetailReq) returns (AppGetPositionDetailResp);
+  rpc GetPositionDetail(GetPositionDetailReq) returns (GetPositionDetailResp);
 
   // 发起行权
-  rpc AppExercise(AppExerciseReq) returns (AppExerciseResp);
+  rpc Exercise(ExerciseReq) returns (ExerciseResp);
 
   // 获取行权记录列表
-  rpc AppListExercises(AppListExercisesReq) returns (AppListExercisesResp);
+  rpc ListExercises(UserListExercisesReq) returns (UserListExercisesResp);
 
   // 获取账户资产列表
-  rpc AppListAccounts(AppListAccountsReq) returns (AppListAccountsResp);
+  rpc ListAccounts(UserListAccountsReq) returns (UserListAccountsResp);
 
   // 获取资金流水列表
-  rpc AppListBills(AppListBillsReq) returns (AppListBillsResp);
+  rpc ListBills(UserListBillsReq) returns (UserListBillsResp);
 }
 
-message AppCommonResp {
+message UserCommonResp {
   common.RespBase base = 1;
 }
 
-message AppListContractsReq {
+message UserListContractsReq {
   string underlying_symbol = 1;
   OptionType option_type = 2;
   ContractStatus status = 3;
   common.PageReq page = 4;
 }
 
-message AppListContractsResp {
+message UserListContractsResp {
   common.RespBase base = 1;
   repeated OptionContractDetail data = 2;
 }
 
-message AppGetContractDetailReq {
+message GetContractDetailReq {
   int64 contract_id = 1;
 }
 
-message AppGetContractDetailResp {
+message GetContractDetailResp {
   common.RespBase base = 1;
   OptionContractDetail data = 2;
 }
 
-message AppPlaceOrderReq {
+message PlaceOrderReq {
   int64 account_id = 1;
   int64 contract_id = 2;
   common.Side side = 3; // 买卖方向
@@ -91,46 +91,46 @@ message AppPlaceOrderReq {
   common.YesNo mmp = 10; // 是否做市商保护单
 }
 
-message AppPlaceOrderResp {
+message PlaceOrderResp {
   common.RespBase base = 1;
-  AppPlaceOrderData data = 2;
+  PlaceOrderData data = 2;
 }
 
-message AppPlaceOrderData {
+message PlaceOrderData {
   string order_no = 1;
   int64 order_id = 2;
 }
 
-message AppCancelOrderReq {
+message CancelOrderReq {
   int64 account_id = 1;
   int64 order_id = 2;
   string order_no = 3;
 }
 
-message AppGetOrderDetailReq {
+message GetOrderDetailReq {
   int64 account_id = 1;
   int64 order_id = 2;
   string order_no = 3;
 }
 
-message AppGetOrderDetailResp {
+message GetOrderDetailResp {
   common.RespBase base = 1;
   OptionOrderDetail data = 2;
 }
 
-message AppListCurrentOrdersReq {
+message ListCurrentOrdersReq {
   int64 account_id = 1;
   int64 contract_id = 2;
   common.Side side = 3; // 买卖方向
   common.PageReq page = 4;
 }
 
-message AppListCurrentOrdersResp {
+message ListCurrentOrdersResp {
   common.RespBase base = 1;
   repeated OptionOrderDetail data = 2;
 }
 
-message AppListHistoryOrdersReq {
+message ListHistoryOrdersReq {
   int64 account_id = 1;
   int64 contract_id = 2;
   OrderStatus status = 3;
@@ -138,62 +138,62 @@ message AppListHistoryOrdersReq {
   common.PageReq page = 5;
 }
 
-message AppListHistoryOrdersResp {
+message ListHistoryOrdersResp {
   common.RespBase base = 1;
   repeated OptionOrderDetail data = 2;
 }
 
-message AppListTradesReq {
+message UserListTradesReq {
   int64 account_id = 1;
   int64 contract_id = 2;
   common.TimeRange trade_time_range = 3;
   common.PageReq page = 4;
 }
 
-message AppListTradesResp {
+message UserListTradesResp {
   common.RespBase base = 1;
   repeated OptionTradeDetail data = 2;
 }
 
-message AppListPositionsReq {
+message UserListPositionsReq {
   int64 account_id = 1;
   PositionStatus status = 2;
   common.PageReq page = 3;
 }
 
-message AppListPositionsResp {
+message UserListPositionsResp {
   common.RespBase base = 1;
   repeated OptionPositionDetail data = 2;
 }
 
-message AppGetPositionDetailReq {
+message GetPositionDetailReq {
   int64 account_id = 1;
   int64 position_id = 2;
 }
 
-message AppGetPositionDetailResp {
+message GetPositionDetailResp {
   common.RespBase base = 1;
   OptionPositionDetail data = 2;
 }
 
-message AppExerciseReq {
+message ExerciseReq {
   int64 account_id = 1;
   int64 position_id = 2;
   int64 contract_id = 3;
   string exercise_qty = 4;
 }
 
-message AppExerciseResp {
+message ExerciseResp {
   common.RespBase base = 1;
-  AppExerciseData data = 2;
+  ExerciseData data = 2;
 }
 
-message AppExerciseData {
+message ExerciseData {
   string exercise_no = 1;
   int64 exercise_id = 2;
 }
 
-message AppListExercisesReq {
+message UserListExercisesReq {
   int64 account_id = 1;
   int64 contract_id = 2;
   ExerciseStatus status = 3;
@@ -201,28 +201,28 @@ message AppListExercisesReq {
   common.PageReq page = 5;
 }
 
-message AppListExercisesResp {
+message UserListExercisesResp {
   common.RespBase base = 1;
   repeated OptionExerciseDetail data = 2;
 }
 
-message AppListAccountsReq {
+message UserListAccountsReq {
   int64 account_id = 1;
 }
 
-message AppListAccountsResp {
+message UserListAccountsResp {
   common.RespBase base = 1;
   repeated OptionAccount data = 2;
 }
 
-message AppListBillsReq {
+message UserListBillsReq {
   int64 account_id = 1;
   BillRefType ref_type = 2;
   common.TimeRange create_time_range = 3;
   common.PageReq page = 4;
 }
 
-message AppListBillsResp {
+message UserListBillsResp {
   common.RespBase base = 1;
   repeated OptionBill data = 2;
 }
@@ -230,70 +230,70 @@ message AppListBillsResp {
 // 期权管理后台服务
 service OptionAdmin {
   // 创建期权合约
-  rpc AdminCreateContract(CreateContractReq) returns (CreateContractResp);
+  rpc CreateContract(CreateContractReq) returns (CreateContractResp);
 
   // 更新期权合约
-  rpc AdminUpdateContract(UpdateContractReq) returns (AdminCommonResp);
+  rpc UpdateContract(UpdateContractReq) returns (CommonResp);
 
   // 获取单个期权合约详情
-  rpc AdminGetContract(GetContractReq) returns (GetContractResp);
+  rpc GetContract(GetContractReq) returns (GetContractResp);
 
   // 分页查询期权合约列表
-  rpc AdminListContracts(ListContractsReq) returns (ListContractsResp);
+  rpc ListContracts(ListContractsReq) returns (ListContractsResp);
 
   // 更新期权行情数据
-  rpc AdminUpdateMarket(UpdateMarketReq) returns (AdminCommonResp);
+  rpc UpdateMarket(UpdateMarketReq) returns (CommonResp);
 
   // 获取单个期权当前行情
-  rpc AdminGetMarket(GetMarketReq) returns (GetMarketResp);
+  rpc GetMarket(GetMarketReq) returns (GetMarketResp);
 
   // 分页查询期权行情快照列表
-  rpc AdminListMarketSnapshots(ListMarketSnapshotsReq) returns (ListMarketSnapshotsResp);
+  rpc ListMarketSnapshots(ListMarketSnapshotsReq) returns (ListMarketSnapshotsResp);
 
   // 获取单个委托订单详情
-  rpc AdminGetOrder(GetOrderReq) returns (GetOrderResp);
+  rpc GetOrder(GetOrderReq) returns (GetOrderResp);
 
   // 分页查询委托订单列表
-  rpc AdminListOrders(ListOrdersReq) returns (ListOrdersResp);
+  rpc ListOrders(ListOrdersReq) returns (ListOrdersResp);
 
   // 获取单个成交记录详情
-  rpc AdminGetTrade(GetTradeReq) returns (GetTradeResp);
+  rpc GetTrade(GetTradeReq) returns (GetTradeResp);
 
   // 分页查询成交记录列表
-  rpc AdminListTrades(ListTradesReq) returns (ListTradesResp);
+  rpc ListTrades(ListTradesReq) returns (ListTradesResp);
 
   // 获取单个持仓详情
-  rpc AdminGetPosition(GetPositionReq) returns (GetPositionResp);
+  rpc GetPosition(GetPositionReq) returns (GetPositionResp);
 
   // 分页查询持仓列表
-  rpc AdminListPositions(ListPositionsReq) returns (ListPositionsResp);
+  rpc ListPositions(ListPositionsReq) returns (ListPositionsResp);
 
   // 获取单个行权记录详情
-  rpc AdminGetExercise(GetExerciseReq) returns (GetExerciseResp);
+  rpc GetExercise(GetExerciseReq) returns (GetExerciseResp);
 
   // 分页查询行权记录列表
-  rpc AdminListExercises(ListExercisesReq) returns (ListExercisesResp);
+  rpc ListExercises(ListExercisesReq) returns (ListExercisesResp);
 
   // 获取单个到期结算记录详情
-  rpc AdminGetSettlement(GetSettlementReq) returns (GetSettlementResp);
+  rpc GetSettlement(GetSettlementReq) returns (GetSettlementResp);
 
   // 分页查询到期结算记录列表
-  rpc AdminListSettlements(ListSettlementsReq) returns (ListSettlementsResp);
+  rpc ListSettlements(ListSettlementsReq) returns (ListSettlementsResp);
 
   // 获取单个账户资产详情
-  rpc AdminGetAccount(GetAccountReq) returns (GetAccountResp);
+  rpc GetAccount(GetAccountReq) returns (GetAccountResp);
 
   // 分页查询账户资产列表
-  rpc AdminListAccounts(ListAccountsReq) returns (ListAccountsResp);
+  rpc ListAccounts(ListAccountsReq) returns (ListAccountsResp);
 
   // 获取单个资金流水详情
-  rpc AdminGetBill(GetBillReq) returns (GetBillResp);
+  rpc GetBill(GetBillReq) returns (GetBillResp);
 
   // 分页查询资金流水列表
-  rpc AdminListBills(ListBillsReq) returns (ListBillsResp);
+  rpc ListBills(ListBillsReq) returns (ListBillsResp);
 }
 
-message AdminCommonResp {
+message CommonResp {
   common.RespBase base = 1;
 }
 

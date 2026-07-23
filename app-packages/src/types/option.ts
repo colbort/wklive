@@ -221,17 +221,17 @@ export interface OptionExerciseDetail {
   contract: OptionContract
 }
 
-export interface AppListContractsReq extends PageReq {
+export interface ListContractsReq extends PageReq {
   underlyingSymbol?: string
   optionType?: number
   status?: number
 }
 
-export interface AppGetContractDetailReq {
+export interface GetContractDetailReq {
   contractId: number
 }
 
-export interface AppPlaceOrderReq {
+export interface OptionPlaceOrderReq {
   accountId: number
   contractId: number
   side: number
@@ -244,66 +244,66 @@ export interface AppPlaceOrderReq {
   mmp?: number // 是否做市商保护单：1是 2否
 }
 
-export interface AppCancelOrderReq {
+export interface OptionCancelOrderReq {
   accountId: number
   orderId?: number
   orderNo?: string
 }
 
-export interface AppGetOrderDetailReq {
+export interface OptionGetOrderDetailReq {
   accountId: number
   orderId?: number
   orderNo?: string
 }
 
-export interface AppListCurrentOrdersReq extends PageReq {
+export interface ListCurrentOrdersReq extends PageReq {
   accountId: number
   contractId?: number
   side?: number
 }
 
-export interface AppListHistoryOrdersReq extends PageReq {
+export interface ListHistoryOrdersReq extends PageReq {
   accountId: number
   contractId?: number
   status?: number
   createTimeRange?: TimeRange
 }
 
-export interface AppListTradesReq extends PageReq {
+export interface ListTradesReq extends PageReq {
   accountId: number
   contractId?: number
   tradeTimeRange?: TimeRange
 }
 
-export interface AppListPositionsReq extends PageReq {
+export interface ListPositionsReq extends PageReq {
   accountId: number
   status?: number
 }
 
-export interface AppGetPositionDetailReq {
+export interface GetPositionDetailReq {
   accountId: number
   positionId: number
 }
 
-export interface AppExerciseReq {
+export interface ExerciseReq {
   accountId: number
   positionId: number
   contractId: number
   exerciseQty: string
 }
 
-export interface AppListExercisesReq extends PageReq {
+export interface ListExercisesReq extends PageReq {
   accountId: number
   contractId?: number
   status?: number
   exerciseTimeRange?: TimeRange
 }
 
-export interface AppListAccountsReq {
+export interface ListAccountsReq {
   accountId?: number
 }
 
-export interface AppListBillsReq extends PageReq {
+export interface ListBillsReq extends PageReq {
   accountId?: number
   refType?: number
   createTimeRange?: TimeRange

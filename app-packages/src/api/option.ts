@@ -2,20 +2,20 @@ import { authHttp, http } from './http'
 import { compactParams } from './utils'
 import type { RespBase } from '../types/api'
 import type {
-  AppCancelOrderReq,
-  AppExerciseReq,
-  AppGetContractDetailReq,
-  AppGetOrderDetailReq,
-  AppGetPositionDetailReq,
-  AppListAccountsReq,
-  AppListBillsReq,
-  AppListContractsReq,
-  AppListCurrentOrdersReq,
-  AppListExercisesReq,
-  AppListHistoryOrdersReq,
-  AppListPositionsReq,
-  AppListTradesReq,
-  AppPlaceOrderReq,
+  OptionCancelOrderReq,
+  ExerciseReq,
+  GetContractDetailReq,
+  OptionGetOrderDetailReq,
+  GetPositionDetailReq,
+  ListAccountsReq,
+  ListBillsReq,
+  ListContractsReq,
+  ListCurrentOrdersReq,
+  ListExercisesReq,
+  ListHistoryOrdersReq,
+  ListPositionsReq,
+  ListTradesReq,
+  OptionPlaceOrderReq,
   OptionAccount,
   OptionBill,
   OptionContractDetail,
@@ -26,7 +26,7 @@ import type {
 } from '../types/option'
 
 export function apiOptionListContracts(
-  params: AppListContractsReq,
+  params: ListContractsReq,
 ): Promise<RespBase & { data: OptionContractDetail[] }> {
   return http
     .get('/option/contracts', { params: compactParams(params) })
@@ -34,7 +34,7 @@ export function apiOptionListContracts(
 }
 
 export function apiOptionGetContractDetail(
-  params: AppGetContractDetailReq,
+  params: GetContractDetailReq,
 ): Promise<RespBase & { data: OptionContractDetail }> {
   return http
     .get('/option/contracts/detail', { params: compactParams(params) })
@@ -42,7 +42,7 @@ export function apiOptionGetContractDetail(
 }
 
 export function apiOptionPlaceOrder(
-  params: AppPlaceOrderReq,
+  params: OptionPlaceOrderReq,
 ): Promise<RespBase & { data: { orderNo: string; orderId: number } }> {
   return authHttp
     .post('/option/orders', params)
@@ -50,7 +50,7 @@ export function apiOptionPlaceOrder(
 }
 
 export function apiOptionCancelOrder(
-  params: AppCancelOrderReq,
+  params: OptionCancelOrderReq,
 ): Promise<RespBase> {
   return authHttp
     .post('/option/orders/cancel', params)
@@ -58,7 +58,7 @@ export function apiOptionCancelOrder(
 }
 
 export function apiOptionGetOrderDetail(
-  params: AppGetOrderDetailReq,
+  params: OptionGetOrderDetailReq,
 ): Promise<RespBase & { data: OptionOrderDetail }> {
   return authHttp
     .get('/option/orders/detail', { params: compactParams(params) })
@@ -66,7 +66,7 @@ export function apiOptionGetOrderDetail(
 }
 
 export function apiOptionListCurrentOrders(
-  params: AppListCurrentOrdersReq,
+  params: ListCurrentOrdersReq,
 ): Promise<RespBase & { data: OptionOrderDetail[] }> {
   return authHttp
     .get('/option/orders/current', { params: compactParams(params) })
@@ -74,7 +74,7 @@ export function apiOptionListCurrentOrders(
 }
 
 export function apiOptionListHistoryOrders(
-  params: AppListHistoryOrdersReq,
+  params: ListHistoryOrdersReq,
 ): Promise<RespBase & { data: OptionOrderDetail[] }> {
   return authHttp
     .get('/option/orders/history', { params: compactParams(params) })
@@ -82,7 +82,7 @@ export function apiOptionListHistoryOrders(
 }
 
 export function apiOptionListTrades(
-  params: AppListTradesReq,
+  params: ListTradesReq,
 ): Promise<RespBase & { data: OptionTradeDetail[] }> {
   return authHttp
     .get('/option/trades', { params: compactParams(params) })
@@ -90,7 +90,7 @@ export function apiOptionListTrades(
 }
 
 export function apiOptionListPositions(
-  params: AppListPositionsReq,
+  params: ListPositionsReq,
 ): Promise<RespBase & { data: OptionPositionDetail[] }> {
   return authHttp
     .get('/option/positions', { params: compactParams(params) })
@@ -98,7 +98,7 @@ export function apiOptionListPositions(
 }
 
 export function apiOptionGetPositionDetail(
-  params: AppGetPositionDetailReq,
+  params: GetPositionDetailReq,
 ): Promise<RespBase & { data: OptionPositionDetail }> {
   return authHttp
     .get('/option/positions/detail', { params: compactParams(params) })
@@ -106,7 +106,7 @@ export function apiOptionGetPositionDetail(
 }
 
 export function apiOptionExercise(
-  params: AppExerciseReq,
+  params: ExerciseReq,
 ): Promise<RespBase & { data: { exerciseNo: string; exerciseId: number } }> {
   return authHttp
     .post('/option/exercise', params)
@@ -114,7 +114,7 @@ export function apiOptionExercise(
 }
 
 export function apiOptionListExercises(
-  params: AppListExercisesReq,
+  params: ListExercisesReq,
 ): Promise<RespBase & { data: OptionExerciseDetail[] }> {
   return authHttp
     .get('/option/exercises', { params: compactParams(params) })
@@ -122,7 +122,7 @@ export function apiOptionListExercises(
 }
 
 export function apiOptionListAccounts(
-  params: AppListAccountsReq,
+  params: ListAccountsReq,
 ): Promise<RespBase & { data: OptionAccount[] }> {
   return authHttp
     .get('/option/accounts', { params: compactParams(params) })
@@ -130,7 +130,7 @@ export function apiOptionListAccounts(
 }
 
 export function apiOptionListBills(
-  params: AppListBillsReq,
+  params: ListBillsReq,
 ): Promise<RespBase & { data: OptionBill[] }> {
   return authHttp
     .get('/option/bills', { params: compactParams(params) })

@@ -18,8 +18,8 @@ type (
 	AddBankResp                   = user.AddBankResp
 	AddUserBankReq                = user.AddUserBankReq
 	AddUserBankResp               = user.AddUserBankResp
-	AdminCommonResp               = user.AdminCommonResp
-	AppCommonResp                 = user.AppCommonResp
+	CommonResp                    = user.CommonResp
+	UserCommonResp                = user.UserCommonResp
 	ChangeLoginPasswordReq        = user.ChangeLoginPasswordReq
 	ChangePayPasswordReq          = user.ChangePayPasswordReq
 	CreateGuestTransferData       = user.CreateGuestTransferData
@@ -111,23 +111,23 @@ type (
 		// 更新用户基本信息
 		UpdateUserBase(ctx context.Context, in *UpdateUserBaseReq, opts ...grpc.CallOption) (*UpdateUserBaseResp, error)
 		// 更新用户状态
-		UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新用户会员等级
-		UpdateUserLevel(ctx context.Context, in *UpdateUserLevelReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateUserLevel(ctx context.Context, in *UpdateUserLevelReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 重置登录密码
-		ResetLoginPassword(ctx context.Context, in *ResetLoginPasswordReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		ResetLoginPassword(ctx context.Context, in *ResetLoginPasswordReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 重置支付密码
-		ResetPayPassword(ctx context.Context, in *ResetPayPasswordReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		ResetPayPassword(ctx context.Context, in *ResetPayPasswordReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 解锁用户（解除登录锁定）
-		UnlockUser(ctx context.Context, in *UnlockUserReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UnlockUser(ctx context.Context, in *UnlockUserReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新用户风险等级
-		UpdateRiskLevel(ctx context.Context, in *UpdateRiskLevelReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateRiskLevel(ctx context.Context, in *UpdateRiskLevelReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 删除用户
-		DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取用户安全设置
 		GetUserSecurity(ctx context.Context, in *GetUserSecurityReq, opts ...grpc.CallOption) (*GetUserSecurityResp, error)
 		// 重置用户谷歌2FA
-		ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 实名认证信息列表
 		ListUserIdentities(ctx context.Context, in *ListUserIdentitiesReq, opts ...grpc.CallOption) (*ListUserIdentitiesResp, error)
 		// 审核实名认证信息
@@ -141,11 +141,11 @@ type (
 		// 更新用户银行卡
 		UpdateUserBank(ctx context.Context, in *UpdateUserBankReq, opts ...grpc.CallOption) (*UpdateUserBankResp, error)
 		// 删除用户银行卡
-		DeleteUserBank(ctx context.Context, in *DeleteUserBankReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		DeleteUserBank(ctx context.Context, in *DeleteUserBankReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新用户银行卡状态
-		UpdateUserBankStatus(ctx context.Context, in *UpdateUserBankStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateUserBankStatus(ctx context.Context, in *UpdateUserBankStatusReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 设置默认用户银行卡
-		SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*CommonResp, error)
 	}
 
 	defaultUserAdmin struct {
@@ -190,43 +190,43 @@ func (m *defaultUserAdmin) UpdateUserBase(ctx context.Context, in *UpdateUserBas
 }
 
 // 更新用户状态
-func (m *defaultUserAdmin) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.UpdateUserStatus(ctx, in, opts...)
 }
 
 // 更新用户会员等级
-func (m *defaultUserAdmin) UpdateUserLevel(ctx context.Context, in *UpdateUserLevelReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) UpdateUserLevel(ctx context.Context, in *UpdateUserLevelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.UpdateUserLevel(ctx, in, opts...)
 }
 
 // 重置登录密码
-func (m *defaultUserAdmin) ResetLoginPassword(ctx context.Context, in *ResetLoginPasswordReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) ResetLoginPassword(ctx context.Context, in *ResetLoginPasswordReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.ResetLoginPassword(ctx, in, opts...)
 }
 
 // 重置支付密码
-func (m *defaultUserAdmin) ResetPayPassword(ctx context.Context, in *ResetPayPasswordReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) ResetPayPassword(ctx context.Context, in *ResetPayPasswordReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.ResetPayPassword(ctx, in, opts...)
 }
 
 // 解锁用户（解除登录锁定）
-func (m *defaultUserAdmin) UnlockUser(ctx context.Context, in *UnlockUserReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) UnlockUser(ctx context.Context, in *UnlockUserReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.UnlockUser(ctx, in, opts...)
 }
 
 // 更新用户风险等级
-func (m *defaultUserAdmin) UpdateRiskLevel(ctx context.Context, in *UpdateRiskLevelReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) UpdateRiskLevel(ctx context.Context, in *UpdateRiskLevelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.UpdateRiskLevel(ctx, in, opts...)
 }
 
 // 删除用户
-func (m *defaultUserAdmin) DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.DeleteUser(ctx, in, opts...)
 }
@@ -238,7 +238,7 @@ func (m *defaultUserAdmin) GetUserSecurity(ctx context.Context, in *GetUserSecur
 }
 
 // 重置用户谷歌2FA
-func (m *defaultUserAdmin) ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.ResetUserGoogle2FA(ctx, in, opts...)
 }
@@ -280,19 +280,19 @@ func (m *defaultUserAdmin) UpdateUserBank(ctx context.Context, in *UpdateUserBan
 }
 
 // 删除用户银行卡
-func (m *defaultUserAdmin) DeleteUserBank(ctx context.Context, in *DeleteUserBankReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) DeleteUserBank(ctx context.Context, in *DeleteUserBankReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.DeleteUserBank(ctx, in, opts...)
 }
 
 // 更新用户银行卡状态
-func (m *defaultUserAdmin) UpdateUserBankStatus(ctx context.Context, in *UpdateUserBankStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) UpdateUserBankStatus(ctx context.Context, in *UpdateUserBankStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.UpdateUserBankStatus(ctx, in, opts...)
 }
 
 // 设置默认用户银行卡
-func (m *defaultUserAdmin) SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultUserAdmin) SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.SetDefaultUserBank(ctx, in, opts...)
 }

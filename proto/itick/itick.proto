@@ -8,9 +8,9 @@ import "proto/itick/model.proto";
 
 option go_package = "wklive/proto/itick;itick";
 
-message AppEmpty {}
+message Empty {}
 
-message AppCommonResp {
+message UserCommonResp {
   common.RespBase base = 1;
 }
 
@@ -160,7 +160,7 @@ service ItickApp {
   rpc SubscribeStream(SubscribeRequest) returns (stream PushReply);
 
   // 获取 kline 粒度
-  rpc GetKlineIntervals(AppEmpty) returns (KlineIntervalsResp);
+  rpc GetKlineIntervals(Empty) returns (KlineIntervalsResp);
 }
 
 // ItickInternal exposes service-to-service market-data capabilities. Public
@@ -171,7 +171,7 @@ service ItickInternal {
   rpc GetAuthoritativeSnapshot(GetAuthoritativeSnapshotReq) returns (GetAuthoritativeSnapshotResp);
 }
 
-message AdminCommonResp {
+message CommonResp {
   common.RespBase base = 1;
 }
 
@@ -597,9 +597,9 @@ service ItickAdmin {
   // 产品类型列表
   rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp);
   // 产品类型
-  rpc CreateCategory(CreateCategoryReq) returns (AdminCommonResp);
+  rpc CreateCategory(CreateCategoryReq) returns (CommonResp);
   // 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-  rpc UpdateCategory(UpdateCategoryReq) returns (AdminCommonResp);
+  rpc UpdateCategory(UpdateCategoryReq) returns (CommonResp);
   // 获取产品类型详情
   rpc GetCategory(GetCategoryReq) returns (GetCategoryResp);
   // 同步类型下的产品
@@ -610,9 +610,9 @@ service ItickAdmin {
   // 产品列表
   rpc ListProducts(ListProductsReq) returns (ListProductsResp);
   // 产品
-  rpc CreateProduct(CreateProductReq) returns (AdminCommonResp);
+  rpc CreateProduct(CreateProductReq) returns (CommonResp);
   // 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
-  rpc UpdateProduct(UpdateProductReq) returns (AdminCommonResp);
+  rpc UpdateProduct(UpdateProductReq) returns (CommonResp);
   // 获取产品详情
   rpc GetProduct(GetProductReq) returns (GetProductResp);
 
@@ -624,22 +624,22 @@ service ItickAdmin {
   // 租户产品类型列表
   rpc ListTenantCategories(ListTenantCategoriesReq) returns (ListTenantCategoriesResp);
   // 租户产品类型
-  rpc CreateTenantCategory(CreateTenantCategoryReq) returns (AdminCommonResp);
+  rpc CreateTenantCategory(CreateTenantCategoryReq) returns (CommonResp);
   // 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-  rpc UpdateTenantCategory(UpdateTenantCategoryReq) returns (AdminCommonResp);
+  rpc UpdateTenantCategory(UpdateTenantCategoryReq) returns (CommonResp);
   // 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-  rpc BatchUpsertTenantCategories(BatchUpsertTenantCategoriesReq) returns (AdminCommonResp);
+  rpc BatchUpsertTenantCategories(BatchUpsertTenantCategoriesReq) returns (CommonResp);
   // 获取租户产品类型详情
   rpc GetTenantCategory(GetTenantCategoryReq) returns (GetTenantCategoryResp);
 
   // 租户产品列表
   rpc ListTenantProducts(ListTenantProductsReq) returns (ListTenantProductsResp);
   // 租户产品
-  rpc CreateTenantProduct(CreateTenantProductReq) returns (AdminCommonResp);
+  rpc CreateTenantProduct(CreateTenantProductReq) returns (CommonResp);
   // 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
-  rpc UpdateTenantProduct(UpdateTenantProductReq) returns (AdminCommonResp);
+  rpc UpdateTenantProduct(UpdateTenantProductReq) returns (CommonResp);
   // 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-  rpc BatchUpsertTenantProducts(BatchUpsertTenantProductsReq) returns (AdminCommonResp);
+  rpc BatchUpsertTenantProducts(BatchUpsertTenantProductsReq) returns (CommonResp);
   // 获取租户产品详情
   rpc GetTenantProduct(GetTenantProductReq) returns (GetTenantProductResp);
 
@@ -650,10 +650,10 @@ service ItickAdmin {
   rpc CreatePriceFormula(CreatePriceFormulaReq) returns (PriceFormulaResp);
   rpc GetPriceFormula(PriceFormulaReq) returns (PriceFormulaResp);
   rpc ListPriceFormulas(ListPriceFormulasReq) returns (ListPriceFormulasResp);
-  rpc ChangePriceFormulaStatus(ChangePriceFormulaStatusReq) returns (AdminCommonResp);
+  rpc ChangePriceFormulaStatus(ChangePriceFormulaStatusReq) returns (CommonResp);
   rpc ListSnapshotOutbox(ListSnapshotOutboxReq) returns (ListSnapshotOutboxResp);
-  rpc RetrySnapshotOutbox(RetrySnapshotOutboxReq) returns (AdminCommonResp);
-  rpc RevokeAuthoritativeSnapshot(RevokeAuthoritativeSnapshotReq) returns (AdminCommonResp);
+  rpc RetrySnapshotOutbox(RetrySnapshotOutboxReq) returns (CommonResp);
+  rpc RevokeAuthoritativeSnapshot(RevokeAuthoritativeSnapshotReq) returns (CommonResp);
 }
 message SyncProductsReq {}
 

@@ -30,7 +30,7 @@ func NewUpdateTenantPayAccountLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 // 更新租户支付账号
-func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateTenantPayAccountReq) (*payment.AdminCommonResp, error) {
+func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateTenantPayAccountReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "UpdateTenantPayAccount"
 	)
@@ -43,7 +43,7 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 	}
 
 	if account == nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.TenantPayAccountNotFound, i18n.Translate(i18n.TenantPayAccountNotFound, l.ctx)),
 		}, nil
 	}
@@ -109,7 +109,7 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 
 	l.Logger.Infof("Update tenant pay account success: %d", in.Id)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

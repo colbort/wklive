@@ -28,7 +28,7 @@ func NewGetChatConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 }
 
 // 获取chat-ui配置
-func (l *GetChatConfigLogic) GetChatConfig(in *chat.GetAppChatConfigReq) (*chat.AppChatConfigResp, error) {
+func (l *GetChatConfigLogic) GetChatConfig(in *chat.GetAppChatConfigReq) (*chat.UserChatConfigResp, error) {
 	var (
 		data *models.TChatMerchantInfo
 		err  error
@@ -40,13 +40,13 @@ func (l *GetChatConfigLogic) GetChatConfig(in *chat.GetAppChatConfigReq) (*chat.
 	data, err = l.svcCtx.ChatMerchantInfoModel.FindOneByMerchantId(l.ctx, merchantId)
 
 	if err == models.ErrNotFound {
-		return &chat.AppChatConfigResp{Base: helper.ErrResp(404, "chat merchant config not found")}, nil
+		return &chat.UserChatConfigResp{Base: helper.ErrResp(404, "chat merchant config not found")}, nil
 	}
 	if err != nil {
-		return &chat.AppChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.UserChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	merchant := ih.ToProtoMerchant(data)
-	return &chat.AppChatConfigResp{Base: helper.OkResp(), Data: &chat.ChatAppConfig{
+	return &chat.UserChatConfigResp{Base: helper.OkResp(), Data: &chat.ChatAppConfig{
 		Title:         merchant.GetTitle(),
 		UiConfig:      merchant.GetUiConfig(),
 		FeatureConfig: merchant.GetFeatureConfig(),

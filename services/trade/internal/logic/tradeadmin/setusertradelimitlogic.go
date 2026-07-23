@@ -31,11 +31,11 @@ func NewSetUserTradeLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 // 设置用户交易限制
-func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitReq) (*trade.AdminCommonResp, error) {
+func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitReq) (*trade.CommonResp, error) {
 	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &trade.AdminCommonResp{Base: base}, nil
+		return &trade.CommonResp{Base: base}, nil
 	}
 
 	now := utils.NowMillis()
@@ -82,5 +82,5 @@ func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitRe
 	if err != nil {
 		return nil, err
 	}
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }

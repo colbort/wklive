@@ -24,16 +24,16 @@ func NewAdminInsuranceSnapshotLogic(ctx context.Context, s *svc.ServiceContext) 
 	return &AdminInsuranceSnapshotLogic{ctx, s}
 }
 
-func (l *AdminInsuranceSnapshotLogic) SetInsuranceFundAccount(in *trade.SetInsuranceFundAccountReq) (*trade.AdminCommonResp, error) {
+func (l *AdminInsuranceSnapshotLogic) SetInsuranceFundAccount(in *trade.SetInsuranceFundAccountReq) (*trade.CommonResp, error) {
 	tenant := adminTenantID(l.ctx, in.TenantId)
 	assetCode := strings.ToUpper(strings.TrimSpace(in.SettleAsset))
 	if tenant <= 0 || assetCode == "" {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, "invalid insurance fund account")}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, "invalid insurance fund account")}, nil
 	}
 	if in.SymbolId > 0 {
 		s, err := l.svc.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 		if err != nil || s.TenantId != tenant {
-			return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "symbol not found")}, nil
+			return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "symbol not found")}, nil
 		}
 	}
 	now := utils.NowMillis()
@@ -50,13 +50,13 @@ func (l *AdminInsuranceSnapshotLogic) SetInsuranceFundAccount(in *trade.SetInsur
 	if in.Id > 0 {
 		old, e := l.svc.ContractInsuranceFundModel.FindOne(l.ctx, in.Id)
 		if errors.Is(e, models.ErrNotFound) || (e == nil && old.TenantId != tenant) {
-			return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "insurance fund account not found")}, nil
+			return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "insurance fund account not found")}, nil
 		}
 		if e != nil {
 			return nil, e
 		}
 		if old.Version != in.Version {
-			return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, "insurance fund account version conflict")}, nil
+			return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, "insurance fund account version conflict")}, nil
 		}
 		row.Id, row.CreateTimes = old.Id, old.CreateTimes
 		err = l.svc.ContractInsuranceFundModel.Update(l.ctx, row)
@@ -66,7 +66,7 @@ func (l *AdminInsuranceSnapshotLogic) SetInsuranceFundAccount(in *trade.SetInsur
 	if err != nil {
 		return nil, err
 	}
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }
 func (l *AdminInsuranceSnapshotLogic) GetInsuranceFundAccountList(in *trade.GetInsuranceFundAccountListReq) (*trade.GetInsuranceFundAccountListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)

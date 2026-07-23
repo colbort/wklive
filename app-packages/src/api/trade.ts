@@ -3,19 +3,19 @@ import { compactParams } from './utils'
 import type { RespBase } from '../types/api'
 import type {
   CancelAllOrdersReq,
-  CancelOrderReq,
+  TradeCancelOrderReq,
   ContractLeverageConfig,
   ContractMarginSnapshot,
   ContractPosition,
   GetFillListReq,
   GetLeverageConfigReq,
   GetMarginSnapshotListReq,
-  GetOrderDetailReq,
+  TradeGetOrderDetailReq,
   GetOrderListReq,
   GetPositionListReq,
   GetSymbolDetailReq,
   GetSymbolListReq,
-  PlaceOrderReq,
+  TradePlaceOrderReq,
   SetLeverageReq,
   TradeFill,
   TradeOrder,
@@ -52,14 +52,14 @@ export function apiTradeGetSymbolDetail(params: GetSymbolDetailReq): Promise<
 }
 
 export function apiTradePlaceOrder(
-  params: PlaceOrderReq,
+  params: TradePlaceOrderReq,
 ): Promise<RespBase & { data: TradeOrder }> {
   return authHttp
     .post('/trade/orders', params)
     .then((res: { data: any }) => res.data)
 }
 
-export function apiTradeCancelOrder(params: CancelOrderReq): Promise<RespBase> {
+export function apiTradeCancelOrder(params: TradeCancelOrderReq): Promise<RespBase> {
   return authHttp
     .post('/trade/orders/cancel', params)
     .then((res: { data: any }) => res.data)
@@ -81,7 +81,7 @@ export function apiTradeGetOrderList(
     .then((res: { data: any }) => res.data)
 }
 
-export function apiTradeGetOrderDetail(params: GetOrderDetailReq): Promise<
+export function apiTradeGetOrderDetail(params: TradeGetOrderDetailReq): Promise<
   RespBase & {
     data: {
       order: TradeOrder

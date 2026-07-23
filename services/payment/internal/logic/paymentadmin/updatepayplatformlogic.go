@@ -27,14 +27,14 @@ func NewUpdatePayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 // 更新平台
-func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatformReq) (*payment.AdminCommonResp, error) {
+func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatformReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "UpdatePayPlatform"
 	)
 	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: base,
 		}, nil
 	}
@@ -47,7 +47,7 @@ func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatform
 	}
 
 	if platform == nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.PlatformNotFound, i18n.Translate(i18n.PlatformNotFound, l.ctx)),
 		}, nil
 	}
@@ -84,7 +84,7 @@ func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatform
 
 	l.Logger.Infof("Update pay platform success: %d", in.Id)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

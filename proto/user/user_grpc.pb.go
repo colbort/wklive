@@ -62,7 +62,7 @@ type UserAppClient interface {
 	// 兑换游客跨域迁移码
 	ExchangeGuestTransfer(ctx context.Context, in *ExchangeGuestTransferReq, opts ...grpc.CallOption) (*ExchangeGuestTransferResp, error)
 	// 用户登出
-	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	// 刷新Token
 	RefreshToken(ctx context.Context, in *RefreshTokenReq, opts ...grpc.CallOption) (*RefreshTokenResp, error)
 	// 用户资料相关接口
@@ -70,7 +70,7 @@ type UserAppClient interface {
 	// 更新用户资料
 	UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*UpdateProfileResp, error)
 	// 修改登录密码
-	ChangeLoginPassword(ctx context.Context, in *ChangeLoginPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	ChangeLoginPassword(ctx context.Context, in *ChangeLoginPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	// 实名认证相关接口
 	GetIdentity(ctx context.Context, in *GetIdentityReq, opts ...grpc.CallOption) (*GetIdentityResp, error)
 	// 提交实名认证信息
@@ -80,15 +80,15 @@ type UserAppClient interface {
 	// 安全设置相关接口
 	GetSecurity(ctx context.Context, in *GetSecurityReq, opts ...grpc.CallOption) (*GetSecurityResp, error)
 	// 设置支付密码
-	SetPayPassword(ctx context.Context, in *SetPayPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	SetPayPassword(ctx context.Context, in *SetPayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	// 修改支付密码
-	ChangePayPassword(ctx context.Context, in *ChangePayPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	ChangePayPassword(ctx context.Context, in *ChangePayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	// 初始化谷歌2FA
 	InitGoogle2FA(ctx context.Context, in *InitGoogle2FAReq, opts ...grpc.CallOption) (*InitGoogle2FAResp, error)
 	// 启用谷歌2FA
-	EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FAReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	// 禁用谷歌2FA
-	DisableGoogle2FA(ctx context.Context, in *DisableGoogle2FAReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	DisableGoogle2FA(ctx context.Context, in *DisableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	// 银行卡相关接口
 	ListBanks(ctx context.Context, in *ListBanksReq, opts ...grpc.CallOption) (*ListBanksResp, error)
 	// 添加银行卡
@@ -96,9 +96,9 @@ type UserAppClient interface {
 	// 更新银行卡
 	UpdateBank(ctx context.Context, in *UpdateBankReq, opts ...grpc.CallOption) (*UpdateBankResp, error)
 	// 删除银行卡
-	DeleteBank(ctx context.Context, in *DeleteBankReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	DeleteBank(ctx context.Context, in *DeleteBankReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	// 设置默认银行卡
-	SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 }
 
 type userAppClient struct {
@@ -159,9 +159,9 @@ func (c *userAppClient) ExchangeGuestTransfer(ctx context.Context, in *ExchangeG
 	return out, nil
 }
 
-func (c *userAppClient) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *userAppClient) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, UserApp_Logout_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -199,9 +199,9 @@ func (c *userAppClient) UpdateProfile(ctx context.Context, in *UpdateProfileReq,
 	return out, nil
 }
 
-func (c *userAppClient) ChangeLoginPassword(ctx context.Context, in *ChangeLoginPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *userAppClient) ChangeLoginPassword(ctx context.Context, in *ChangeLoginPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, UserApp_ChangeLoginPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -249,9 +249,9 @@ func (c *userAppClient) GetSecurity(ctx context.Context, in *GetSecurityReq, opt
 	return out, nil
 }
 
-func (c *userAppClient) SetPayPassword(ctx context.Context, in *SetPayPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *userAppClient) SetPayPassword(ctx context.Context, in *SetPayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, UserApp_SetPayPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -259,9 +259,9 @@ func (c *userAppClient) SetPayPassword(ctx context.Context, in *SetPayPasswordRe
 	return out, nil
 }
 
-func (c *userAppClient) ChangePayPassword(ctx context.Context, in *ChangePayPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *userAppClient) ChangePayPassword(ctx context.Context, in *ChangePayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, UserApp_ChangePayPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -279,9 +279,9 @@ func (c *userAppClient) InitGoogle2FA(ctx context.Context, in *InitGoogle2FAReq,
 	return out, nil
 }
 
-func (c *userAppClient) EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FAReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *userAppClient) EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, UserApp_EnableGoogle2FA_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -289,9 +289,9 @@ func (c *userAppClient) EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FA
 	return out, nil
 }
 
-func (c *userAppClient) DisableGoogle2FA(ctx context.Context, in *DisableGoogle2FAReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *userAppClient) DisableGoogle2FA(ctx context.Context, in *DisableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, UserApp_DisableGoogle2FA_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -329,9 +329,9 @@ func (c *userAppClient) UpdateBank(ctx context.Context, in *UpdateBankReq, opts 
 	return out, nil
 }
 
-func (c *userAppClient) DeleteBank(ctx context.Context, in *DeleteBankReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *userAppClient) DeleteBank(ctx context.Context, in *DeleteBankReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, UserApp_DeleteBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -339,9 +339,9 @@ func (c *userAppClient) DeleteBank(ctx context.Context, in *DeleteBankReq, opts 
 	return out, nil
 }
 
-func (c *userAppClient) SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *userAppClient) SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, UserApp_SetDefaultBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -366,7 +366,7 @@ type UserAppServer interface {
 	// 兑换游客跨域迁移码
 	ExchangeGuestTransfer(context.Context, *ExchangeGuestTransferReq) (*ExchangeGuestTransferResp, error)
 	// 用户登出
-	Logout(context.Context, *LogoutReq) (*AppCommonResp, error)
+	Logout(context.Context, *LogoutReq) (*UserCommonResp, error)
 	// 刷新Token
 	RefreshToken(context.Context, *RefreshTokenReq) (*RefreshTokenResp, error)
 	// 用户资料相关接口
@@ -374,7 +374,7 @@ type UserAppServer interface {
 	// 更新用户资料
 	UpdateProfile(context.Context, *UpdateProfileReq) (*UpdateProfileResp, error)
 	// 修改登录密码
-	ChangeLoginPassword(context.Context, *ChangeLoginPasswordReq) (*AppCommonResp, error)
+	ChangeLoginPassword(context.Context, *ChangeLoginPasswordReq) (*UserCommonResp, error)
 	// 实名认证相关接口
 	GetIdentity(context.Context, *GetIdentityReq) (*GetIdentityResp, error)
 	// 提交实名认证信息
@@ -384,15 +384,15 @@ type UserAppServer interface {
 	// 安全设置相关接口
 	GetSecurity(context.Context, *GetSecurityReq) (*GetSecurityResp, error)
 	// 设置支付密码
-	SetPayPassword(context.Context, *SetPayPasswordReq) (*AppCommonResp, error)
+	SetPayPassword(context.Context, *SetPayPasswordReq) (*UserCommonResp, error)
 	// 修改支付密码
-	ChangePayPassword(context.Context, *ChangePayPasswordReq) (*AppCommonResp, error)
+	ChangePayPassword(context.Context, *ChangePayPasswordReq) (*UserCommonResp, error)
 	// 初始化谷歌2FA
 	InitGoogle2FA(context.Context, *InitGoogle2FAReq) (*InitGoogle2FAResp, error)
 	// 启用谷歌2FA
-	EnableGoogle2FA(context.Context, *EnableGoogle2FAReq) (*AppCommonResp, error)
+	EnableGoogle2FA(context.Context, *EnableGoogle2FAReq) (*UserCommonResp, error)
 	// 禁用谷歌2FA
-	DisableGoogle2FA(context.Context, *DisableGoogle2FAReq) (*AppCommonResp, error)
+	DisableGoogle2FA(context.Context, *DisableGoogle2FAReq) (*UserCommonResp, error)
 	// 银行卡相关接口
 	ListBanks(context.Context, *ListBanksReq) (*ListBanksResp, error)
 	// 添加银行卡
@@ -400,9 +400,9 @@ type UserAppServer interface {
 	// 更新银行卡
 	UpdateBank(context.Context, *UpdateBankReq) (*UpdateBankResp, error)
 	// 删除银行卡
-	DeleteBank(context.Context, *DeleteBankReq) (*AppCommonResp, error)
+	DeleteBank(context.Context, *DeleteBankReq) (*UserCommonResp, error)
 	// 设置默认银行卡
-	SetDefaultBank(context.Context, *SetDefaultBankReq) (*AppCommonResp, error)
+	SetDefaultBank(context.Context, *SetDefaultBankReq) (*UserCommonResp, error)
 	mustEmbedUnimplementedUserAppServer()
 }
 
@@ -428,7 +428,7 @@ func (UnimplementedUserAppServer) CreateGuestTransfer(context.Context, *CreateGu
 func (UnimplementedUserAppServer) ExchangeGuestTransfer(context.Context, *ExchangeGuestTransferReq) (*ExchangeGuestTransferResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ExchangeGuestTransfer not implemented")
 }
-func (UnimplementedUserAppServer) Logout(context.Context, *LogoutReq) (*AppCommonResp, error) {
+func (UnimplementedUserAppServer) Logout(context.Context, *LogoutReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedUserAppServer) RefreshToken(context.Context, *RefreshTokenReq) (*RefreshTokenResp, error) {
@@ -440,7 +440,7 @@ func (UnimplementedUserAppServer) GetProfile(context.Context, *GetProfileReq) (*
 func (UnimplementedUserAppServer) UpdateProfile(context.Context, *UpdateProfileReq) (*UpdateProfileResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateProfile not implemented")
 }
-func (UnimplementedUserAppServer) ChangeLoginPassword(context.Context, *ChangeLoginPasswordReq) (*AppCommonResp, error) {
+func (UnimplementedUserAppServer) ChangeLoginPassword(context.Context, *ChangeLoginPasswordReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ChangeLoginPassword not implemented")
 }
 func (UnimplementedUserAppServer) GetIdentity(context.Context, *GetIdentityReq) (*GetIdentityResp, error) {
@@ -455,19 +455,19 @@ func (UnimplementedUserAppServer) UpdateIdentity(context.Context, *UpdateIdentit
 func (UnimplementedUserAppServer) GetSecurity(context.Context, *GetSecurityReq) (*GetSecurityResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSecurity not implemented")
 }
-func (UnimplementedUserAppServer) SetPayPassword(context.Context, *SetPayPasswordReq) (*AppCommonResp, error) {
+func (UnimplementedUserAppServer) SetPayPassword(context.Context, *SetPayPasswordReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetPayPassword not implemented")
 }
-func (UnimplementedUserAppServer) ChangePayPassword(context.Context, *ChangePayPasswordReq) (*AppCommonResp, error) {
+func (UnimplementedUserAppServer) ChangePayPassword(context.Context, *ChangePayPasswordReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ChangePayPassword not implemented")
 }
 func (UnimplementedUserAppServer) InitGoogle2FA(context.Context, *InitGoogle2FAReq) (*InitGoogle2FAResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method InitGoogle2FA not implemented")
 }
-func (UnimplementedUserAppServer) EnableGoogle2FA(context.Context, *EnableGoogle2FAReq) (*AppCommonResp, error) {
+func (UnimplementedUserAppServer) EnableGoogle2FA(context.Context, *EnableGoogle2FAReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method EnableGoogle2FA not implemented")
 }
-func (UnimplementedUserAppServer) DisableGoogle2FA(context.Context, *DisableGoogle2FAReq) (*AppCommonResp, error) {
+func (UnimplementedUserAppServer) DisableGoogle2FA(context.Context, *DisableGoogle2FAReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DisableGoogle2FA not implemented")
 }
 func (UnimplementedUserAppServer) ListBanks(context.Context, *ListBanksReq) (*ListBanksResp, error) {
@@ -479,10 +479,10 @@ func (UnimplementedUserAppServer) AddBank(context.Context, *AddBankReq) (*AddBan
 func (UnimplementedUserAppServer) UpdateBank(context.Context, *UpdateBankReq) (*UpdateBankResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateBank not implemented")
 }
-func (UnimplementedUserAppServer) DeleteBank(context.Context, *DeleteBankReq) (*AppCommonResp, error) {
+func (UnimplementedUserAppServer) DeleteBank(context.Context, *DeleteBankReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteBank not implemented")
 }
-func (UnimplementedUserAppServer) SetDefaultBank(context.Context, *SetDefaultBankReq) (*AppCommonResp, error) {
+func (UnimplementedUserAppServer) SetDefaultBank(context.Context, *SetDefaultBankReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetDefaultBank not implemented")
 }
 func (UnimplementedUserAppServer) mustEmbedUnimplementedUserAppServer() {}
@@ -1089,23 +1089,23 @@ type UserAdminClient interface {
 	// 更新用户基本信息
 	UpdateUserBase(ctx context.Context, in *UpdateUserBaseReq, opts ...grpc.CallOption) (*UpdateUserBaseResp, error)
 	// 更新用户状态
-	UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新用户会员等级
-	UpdateUserLevel(ctx context.Context, in *UpdateUserLevelReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateUserLevel(ctx context.Context, in *UpdateUserLevelReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 重置登录密码
-	ResetLoginPassword(ctx context.Context, in *ResetLoginPasswordReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	ResetLoginPassword(ctx context.Context, in *ResetLoginPasswordReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 重置支付密码
-	ResetPayPassword(ctx context.Context, in *ResetPayPasswordReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	ResetPayPassword(ctx context.Context, in *ResetPayPasswordReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 解锁用户（解除登录锁定）
-	UnlockUser(ctx context.Context, in *UnlockUserReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UnlockUser(ctx context.Context, in *UnlockUserReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新用户风险等级
-	UpdateRiskLevel(ctx context.Context, in *UpdateRiskLevelReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateRiskLevel(ctx context.Context, in *UpdateRiskLevelReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 删除用户
-	DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取用户安全设置
 	GetUserSecurity(ctx context.Context, in *GetUserSecurityReq, opts ...grpc.CallOption) (*GetUserSecurityResp, error)
 	// 重置用户谷歌2FA
-	ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 实名认证信息列表
 	ListUserIdentities(ctx context.Context, in *ListUserIdentitiesReq, opts ...grpc.CallOption) (*ListUserIdentitiesResp, error)
 	// 审核实名认证信息
@@ -1119,11 +1119,11 @@ type UserAdminClient interface {
 	// 更新用户银行卡
 	UpdateUserBank(ctx context.Context, in *UpdateUserBankReq, opts ...grpc.CallOption) (*UpdateUserBankResp, error)
 	// 删除用户银行卡
-	DeleteUserBank(ctx context.Context, in *DeleteUserBankReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	DeleteUserBank(ctx context.Context, in *DeleteUserBankReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新用户银行卡状态
-	UpdateUserBankStatus(ctx context.Context, in *UpdateUserBankStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateUserBankStatus(ctx context.Context, in *UpdateUserBankStatusReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 设置默认用户银行卡
-	SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
 type userAdminClient struct {
@@ -1184,9 +1184,9 @@ func (c *userAdminClient) UpdateUserBase(ctx context.Context, in *UpdateUserBase
 	return out, nil
 }
 
-func (c *userAdminClient) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_UpdateUserStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1194,9 +1194,9 @@ func (c *userAdminClient) UpdateUserStatus(ctx context.Context, in *UpdateUserSt
 	return out, nil
 }
 
-func (c *userAdminClient) UpdateUserLevel(ctx context.Context, in *UpdateUserLevelReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) UpdateUserLevel(ctx context.Context, in *UpdateUserLevelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_UpdateUserLevel_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1204,9 +1204,9 @@ func (c *userAdminClient) UpdateUserLevel(ctx context.Context, in *UpdateUserLev
 	return out, nil
 }
 
-func (c *userAdminClient) ResetLoginPassword(ctx context.Context, in *ResetLoginPasswordReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) ResetLoginPassword(ctx context.Context, in *ResetLoginPasswordReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_ResetLoginPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1214,9 +1214,9 @@ func (c *userAdminClient) ResetLoginPassword(ctx context.Context, in *ResetLogin
 	return out, nil
 }
 
-func (c *userAdminClient) ResetPayPassword(ctx context.Context, in *ResetPayPasswordReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) ResetPayPassword(ctx context.Context, in *ResetPayPasswordReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_ResetPayPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1224,9 +1224,9 @@ func (c *userAdminClient) ResetPayPassword(ctx context.Context, in *ResetPayPass
 	return out, nil
 }
 
-func (c *userAdminClient) UnlockUser(ctx context.Context, in *UnlockUserReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) UnlockUser(ctx context.Context, in *UnlockUserReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_UnlockUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1234,9 +1234,9 @@ func (c *userAdminClient) UnlockUser(ctx context.Context, in *UnlockUserReq, opt
 	return out, nil
 }
 
-func (c *userAdminClient) UpdateRiskLevel(ctx context.Context, in *UpdateRiskLevelReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) UpdateRiskLevel(ctx context.Context, in *UpdateRiskLevelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_UpdateRiskLevel_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1244,9 +1244,9 @@ func (c *userAdminClient) UpdateRiskLevel(ctx context.Context, in *UpdateRiskLev
 	return out, nil
 }
 
-func (c *userAdminClient) DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_DeleteUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1264,9 +1264,9 @@ func (c *userAdminClient) GetUserSecurity(ctx context.Context, in *GetUserSecuri
 	return out, nil
 }
 
-func (c *userAdminClient) ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_ResetUserGoogle2FA_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1334,9 +1334,9 @@ func (c *userAdminClient) UpdateUserBank(ctx context.Context, in *UpdateUserBank
 	return out, nil
 }
 
-func (c *userAdminClient) DeleteUserBank(ctx context.Context, in *DeleteUserBankReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) DeleteUserBank(ctx context.Context, in *DeleteUserBankReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_DeleteUserBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1344,9 +1344,9 @@ func (c *userAdminClient) DeleteUserBank(ctx context.Context, in *DeleteUserBank
 	return out, nil
 }
 
-func (c *userAdminClient) UpdateUserBankStatus(ctx context.Context, in *UpdateUserBankStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) UpdateUserBankStatus(ctx context.Context, in *UpdateUserBankStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_UpdateUserBankStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1354,9 +1354,9 @@ func (c *userAdminClient) UpdateUserBankStatus(ctx context.Context, in *UpdateUs
 	return out, nil
 }
 
-func (c *userAdminClient) SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *userAdminClient) SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, UserAdmin_SetDefaultUserBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1381,23 +1381,23 @@ type UserAdminServer interface {
 	// 更新用户基本信息
 	UpdateUserBase(context.Context, *UpdateUserBaseReq) (*UpdateUserBaseResp, error)
 	// 更新用户状态
-	UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*AdminCommonResp, error)
+	UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*CommonResp, error)
 	// 更新用户会员等级
-	UpdateUserLevel(context.Context, *UpdateUserLevelReq) (*AdminCommonResp, error)
+	UpdateUserLevel(context.Context, *UpdateUserLevelReq) (*CommonResp, error)
 	// 重置登录密码
-	ResetLoginPassword(context.Context, *ResetLoginPasswordReq) (*AdminCommonResp, error)
+	ResetLoginPassword(context.Context, *ResetLoginPasswordReq) (*CommonResp, error)
 	// 重置支付密码
-	ResetPayPassword(context.Context, *ResetPayPasswordReq) (*AdminCommonResp, error)
+	ResetPayPassword(context.Context, *ResetPayPasswordReq) (*CommonResp, error)
 	// 解锁用户（解除登录锁定）
-	UnlockUser(context.Context, *UnlockUserReq) (*AdminCommonResp, error)
+	UnlockUser(context.Context, *UnlockUserReq) (*CommonResp, error)
 	// 更新用户风险等级
-	UpdateRiskLevel(context.Context, *UpdateRiskLevelReq) (*AdminCommonResp, error)
+	UpdateRiskLevel(context.Context, *UpdateRiskLevelReq) (*CommonResp, error)
 	// 删除用户
-	DeleteUser(context.Context, *DeleteUserReq) (*AdminCommonResp, error)
+	DeleteUser(context.Context, *DeleteUserReq) (*CommonResp, error)
 	// 获取用户安全设置
 	GetUserSecurity(context.Context, *GetUserSecurityReq) (*GetUserSecurityResp, error)
 	// 重置用户谷歌2FA
-	ResetUserGoogle2FA(context.Context, *ResetUserGoogle2FAReq) (*AdminCommonResp, error)
+	ResetUserGoogle2FA(context.Context, *ResetUserGoogle2FAReq) (*CommonResp, error)
 	// 实名认证信息列表
 	ListUserIdentities(context.Context, *ListUserIdentitiesReq) (*ListUserIdentitiesResp, error)
 	// 审核实名认证信息
@@ -1411,11 +1411,11 @@ type UserAdminServer interface {
 	// 更新用户银行卡
 	UpdateUserBank(context.Context, *UpdateUserBankReq) (*UpdateUserBankResp, error)
 	// 删除用户银行卡
-	DeleteUserBank(context.Context, *DeleteUserBankReq) (*AdminCommonResp, error)
+	DeleteUserBank(context.Context, *DeleteUserBankReq) (*CommonResp, error)
 	// 更新用户银行卡状态
-	UpdateUserBankStatus(context.Context, *UpdateUserBankStatusReq) (*AdminCommonResp, error)
+	UpdateUserBankStatus(context.Context, *UpdateUserBankStatusReq) (*CommonResp, error)
 	// 设置默认用户银行卡
-	SetDefaultUserBank(context.Context, *SetDefaultUserBankReq) (*AdminCommonResp, error)
+	SetDefaultUserBank(context.Context, *SetDefaultUserBankReq) (*CommonResp, error)
 	mustEmbedUnimplementedUserAdminServer()
 }
 
@@ -1441,31 +1441,31 @@ func (UnimplementedUserAdminServer) ListUsers(context.Context, *ListUsersReq) (*
 func (UnimplementedUserAdminServer) UpdateUserBase(context.Context, *UpdateUserBaseReq) (*UpdateUserBaseResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserBase not implemented")
 }
-func (UnimplementedUserAdminServer) UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserStatus not implemented")
 }
-func (UnimplementedUserAdminServer) UpdateUserLevel(context.Context, *UpdateUserLevelReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) UpdateUserLevel(context.Context, *UpdateUserLevelReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserLevel not implemented")
 }
-func (UnimplementedUserAdminServer) ResetLoginPassword(context.Context, *ResetLoginPasswordReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) ResetLoginPassword(context.Context, *ResetLoginPasswordReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResetLoginPassword not implemented")
 }
-func (UnimplementedUserAdminServer) ResetPayPassword(context.Context, *ResetPayPasswordReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) ResetPayPassword(context.Context, *ResetPayPasswordReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResetPayPassword not implemented")
 }
-func (UnimplementedUserAdminServer) UnlockUser(context.Context, *UnlockUserReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) UnlockUser(context.Context, *UnlockUserReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnlockUser not implemented")
 }
-func (UnimplementedUserAdminServer) UpdateRiskLevel(context.Context, *UpdateRiskLevelReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) UpdateRiskLevel(context.Context, *UpdateRiskLevelReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateRiskLevel not implemented")
 }
-func (UnimplementedUserAdminServer) DeleteUser(context.Context, *DeleteUserReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) DeleteUser(context.Context, *DeleteUserReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedUserAdminServer) GetUserSecurity(context.Context, *GetUserSecurityReq) (*GetUserSecurityResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserSecurity not implemented")
 }
-func (UnimplementedUserAdminServer) ResetUserGoogle2FA(context.Context, *ResetUserGoogle2FAReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) ResetUserGoogle2FA(context.Context, *ResetUserGoogle2FAReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResetUserGoogle2FA not implemented")
 }
 func (UnimplementedUserAdminServer) ListUserIdentities(context.Context, *ListUserIdentitiesReq) (*ListUserIdentitiesResp, error) {
@@ -1486,13 +1486,13 @@ func (UnimplementedUserAdminServer) AddUserBank(context.Context, *AddUserBankReq
 func (UnimplementedUserAdminServer) UpdateUserBank(context.Context, *UpdateUserBankReq) (*UpdateUserBankResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserBank not implemented")
 }
-func (UnimplementedUserAdminServer) DeleteUserBank(context.Context, *DeleteUserBankReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) DeleteUserBank(context.Context, *DeleteUserBankReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteUserBank not implemented")
 }
-func (UnimplementedUserAdminServer) UpdateUserBankStatus(context.Context, *UpdateUserBankStatusReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) UpdateUserBankStatus(context.Context, *UpdateUserBankStatusReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserBankStatus not implemented")
 }
-func (UnimplementedUserAdminServer) SetDefaultUserBank(context.Context, *SetDefaultUserBankReq) (*AdminCommonResp, error) {
+func (UnimplementedUserAdminServer) SetDefaultUserBank(context.Context, *SetDefaultUserBankReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetDefaultUserBank not implemented")
 }
 func (UnimplementedUserAdminServer) mustEmbedUnimplementedUserAdminServer() {}

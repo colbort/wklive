@@ -42,7 +42,7 @@ func (s *TradeAppServer) PlaceOrder(ctx context.Context, in *trade.PlaceOrderReq
 }
 
 // 撤销指定订单
-func (s *TradeAppServer) CancelOrder(ctx context.Context, in *trade.CancelOrderReq) (*trade.AppCommonResp, error) {
+func (s *TradeAppServer) CancelOrder(ctx context.Context, in *trade.CancelOrderReq) (*trade.UserCommonResp, error) {
 	l := tradeapplogic.NewCancelOrderLogic(ctx, s.svcCtx)
 	return l.CancelOrder(in)
 }
@@ -90,7 +90,7 @@ func (s *TradeAppServer) GetLeverageConfig(ctx context.Context, in *trade.GetLev
 }
 
 // 设置杠杆倍数
-func (s *TradeAppServer) SetLeverage(ctx context.Context, in *trade.SetLeverageReq) (*trade.AppCommonResp, error) {
+func (s *TradeAppServer) SetLeverage(ctx context.Context, in *trade.SetLeverageReq) (*trade.UserCommonResp, error) {
 	l := tradeapplogic.NewSetLeverageLogic(ctx, s.svcCtx)
 	return l.SetLeverage(in)
 }

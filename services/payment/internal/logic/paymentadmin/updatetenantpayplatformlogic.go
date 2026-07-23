@@ -27,7 +27,7 @@ func NewUpdateTenantPayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 // 更新租户开通平台
-func (l *UpdateTenantPayPlatformLogic) UpdateTenantPayPlatform(in *payment.UpdateTenantPayPlatformReq) (*payment.AdminCommonResp, error) {
+func (l *UpdateTenantPayPlatformLogic) UpdateTenantPayPlatform(in *payment.UpdateTenantPayPlatformReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "UpdateTenantPayPlatform"
 	)
@@ -40,7 +40,7 @@ func (l *UpdateTenantPayPlatformLogic) UpdateTenantPayPlatform(in *payment.Updat
 	}
 
 	if tenantPlatform == nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.TenantPlatformNotFound, i18n.Translate(i18n.TenantPlatformNotFound, l.ctx)),
 		}, nil
 	}
@@ -76,7 +76,7 @@ func (l *UpdateTenantPayPlatformLogic) UpdateTenantPayPlatform(in *payment.Updat
 
 	l.Logger.Infof("Update tenant pay platform success: %d", in.Id)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

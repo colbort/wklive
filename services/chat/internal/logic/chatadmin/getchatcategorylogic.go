@@ -27,23 +27,23 @@ func NewGetChatCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 // 查询问题分类详情
-func (l *GetChatCategoryLogic) GetChatCategory(in *chat.GetChatCategoryReq) (*chat.AdminChatCategoryResp, error) {
+func (l *GetChatCategoryLogic) GetChatCategory(in *chat.GetChatCategoryReq) (*chat.ChatCategoryResp, error) {
 	if in.GetId() <= 0 {
-		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(400, "id is required")}, nil
+		return &chat.ChatCategoryResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatCategoryModel.FindOne(l.ctx, in.GetId())
 	if err == models.ErrNotFound {
-		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(404, "chat category not found")}, nil
+		return &chat.ChatCategoryResp{Base: helper.ErrResp(404, "chat category not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if data.MerchantId != merchantID {
-		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(404, "chat category not found")}, nil
+		return &chat.ChatCategoryResp{Base: helper.ErrResp(404, "chat category not found")}, nil
 	}
-	return &chat.AdminChatCategoryResp{Base: helper.OkResp(), Data: ih.ToProtoChatCategory(data)}, nil
+	return &chat.ChatCategoryResp{Base: helper.OkResp(), Data: ih.ToProtoChatCategory(data)}, nil
 }

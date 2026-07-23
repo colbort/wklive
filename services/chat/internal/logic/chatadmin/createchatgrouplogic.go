@@ -30,22 +30,22 @@ func NewCreateChatGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 }
 
 // 创建客服分组
-func (l *CreateChatGroupLogic) CreateChatGroup(in *chat.CreateChatGroupReq) (*chat.AdminChatGroupResp, error) {
+func (l *CreateChatGroupLogic) CreateChatGroup(in *chat.CreateChatGroupReq) (*chat.ChatGroupResp, error) {
 	groupCode := strings.TrimSpace(in.GetGroupCode())
 	groupName := strings.TrimSpace(in.GetGroupName())
 	if groupCode == "" || groupName == "" {
-		return &chat.AdminChatGroupResp{Base: helper.ErrResp(400, "group_code and group_name are required")}, nil
+		return &chat.ChatGroupResp{Base: helper.ErrResp(400, "group_code and group_name are required")}, nil
 	}
 
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 
 	if _, err := l.svcCtx.ChatGroupModel.FindOneByMerchantIdGroupCode(l.ctx, merchantID, groupCode); err == nil {
-		return &chat.AdminChatGroupResp{Base: helper.ErrResp(400, "group_code already exists")}, nil
+		return &chat.ChatGroupResp{Base: helper.ErrResp(400, "group_code already exists")}, nil
 	} else if err != models.ErrNotFound {
-		return &chat.AdminChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 
 	enabled := int64(in.GetEnabled())
@@ -67,11 +67,11 @@ func (l *CreateChatGroupLogic) CreateChatGroup(in *chat.CreateChatGroupReq) (*ch
 	}
 	result, err := l.svcCtx.ChatGroupModel.Insert(l.ctx, data)
 	if err != nil {
-		return &chat.AdminChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatGroupResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if id, err := result.LastInsertId(); err == nil {
 		data.Id = id
 	}
 
-	return &chat.AdminChatGroupResp{Base: helper.OkResp(), Data: ih.ToProtoChatGroup(data)}, nil
+	return &chat.ChatGroupResp{Base: helper.OkResp(), Data: ih.ToProtoChatGroup(data)}, nil
 }

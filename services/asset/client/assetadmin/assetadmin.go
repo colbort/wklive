@@ -16,14 +16,14 @@ import (
 type (
 	AddAvailableReq             = asset.AddAvailableReq
 	AdjustPlatformAccountReq    = asset.AdjustPlatformAccountReq
-	AdminAddAssetReq            = asset.AdminAddAssetReq
-	AdminChangeAssetData        = asset.AdminChangeAssetData
-	AdminChangeAssetResp        = asset.AdminChangeAssetResp
-	AdminFreezeAssetReq         = asset.AdminFreezeAssetReq
-	AdminLockAssetReq           = asset.AdminLockAssetReq
-	AdminSubAssetReq            = asset.AdminSubAssetReq
-	AdminUnfreezeAssetReq       = asset.AdminUnfreezeAssetReq
-	AdminUnlockAssetReq         = asset.AdminUnlockAssetReq
+	AddAssetReq                 = asset.AddAssetReq
+	ManualChangeAssetData       = asset.ManualChangeAssetData
+	ManualChangeAssetResp       = asset.ManualChangeAssetResp
+	ManualFreezeAssetReq        = asset.ManualFreezeAssetReq
+	ManualLockAssetReq          = asset.ManualLockAssetReq
+	SubAssetReq                 = asset.SubAssetReq
+	ManualUnfreezeAssetReq      = asset.ManualUnfreezeAssetReq
+	ManualUnlockAssetReq        = asset.ManualUnlockAssetReq
 	AssetCoinConfigResp         = asset.AssetCoinConfigResp
 	ChangeAssetData             = asset.ChangeAssetData
 	ChangeAssetResp             = asset.ChangeAssetResp
@@ -109,17 +109,17 @@ type (
 		// 分页查询锁仓明细
 		PageAssetLocks(ctx context.Context, in *PageAssetLocksReq, opts ...grpc.CallOption) (*PageAssetLocksResp, error)
 		// 后台人工加币
-		AdminAddAsset(ctx context.Context, in *AdminAddAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+		AddAsset(ctx context.Context, in *AddAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 		// 后台人工减币
-		AdminSubAsset(ctx context.Context, in *AdminSubAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+		SubAsset(ctx context.Context, in *SubAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 		// 后台冻结资产
-		AdminFreezeAsset(ctx context.Context, in *AdminFreezeAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+		FreezeAsset(ctx context.Context, in *ManualFreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 		// 后台解冻资产
-		AdminUnfreezeAsset(ctx context.Context, in *AdminUnfreezeAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+		UnfreezeAsset(ctx context.Context, in *ManualUnfreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 		// 后台锁仓资产
-		AdminLockAsset(ctx context.Context, in *AdminLockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+		LockAsset(ctx context.Context, in *ManualLockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 		// 后台解锁资产
-		AdminUnlockAsset(ctx context.Context, in *AdminUnlockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+		UnlockAsset(ctx context.Context, in *ManualUnlockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 		// 设置平台账户（保险基金等，不属于任何用户）
 		SetPlatformAccount(ctx context.Context, in *SetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
 		// 查询平台账户
@@ -200,39 +200,39 @@ func (m *defaultAssetAdmin) PageAssetLocks(ctx context.Context, in *PageAssetLoc
 }
 
 // 后台人工加币
-func (m *defaultAssetAdmin) AdminAddAsset(ctx context.Context, in *AdminAddAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (m *defaultAssetAdmin) AddAsset(ctx context.Context, in *AddAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	client := asset.NewAssetAdminClient(m.cli.Conn())
-	return client.AdminAddAsset(ctx, in, opts...)
+	return client.AddAsset(ctx, in, opts...)
 }
 
 // 后台人工减币
-func (m *defaultAssetAdmin) AdminSubAsset(ctx context.Context, in *AdminSubAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (m *defaultAssetAdmin) SubAsset(ctx context.Context, in *SubAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	client := asset.NewAssetAdminClient(m.cli.Conn())
-	return client.AdminSubAsset(ctx, in, opts...)
+	return client.SubAsset(ctx, in, opts...)
 }
 
 // 后台冻结资产
-func (m *defaultAssetAdmin) AdminFreezeAsset(ctx context.Context, in *AdminFreezeAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (m *defaultAssetAdmin) FreezeAsset(ctx context.Context, in *ManualFreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	client := asset.NewAssetAdminClient(m.cli.Conn())
-	return client.AdminFreezeAsset(ctx, in, opts...)
+	return client.FreezeAsset(ctx, in, opts...)
 }
 
 // 后台解冻资产
-func (m *defaultAssetAdmin) AdminUnfreezeAsset(ctx context.Context, in *AdminUnfreezeAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (m *defaultAssetAdmin) UnfreezeAsset(ctx context.Context, in *ManualUnfreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	client := asset.NewAssetAdminClient(m.cli.Conn())
-	return client.AdminUnfreezeAsset(ctx, in, opts...)
+	return client.UnfreezeAsset(ctx, in, opts...)
 }
 
 // 后台锁仓资产
-func (m *defaultAssetAdmin) AdminLockAsset(ctx context.Context, in *AdminLockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (m *defaultAssetAdmin) LockAsset(ctx context.Context, in *ManualLockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	client := asset.NewAssetAdminClient(m.cli.Conn())
-	return client.AdminLockAsset(ctx, in, opts...)
+	return client.LockAsset(ctx, in, opts...)
 }
 
 // 后台解锁资产
-func (m *defaultAssetAdmin) AdminUnlockAsset(ctx context.Context, in *AdminUnlockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (m *defaultAssetAdmin) UnlockAsset(ctx context.Context, in *ManualUnlockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	client := asset.NewAssetAdminClient(m.cli.Conn())
-	return client.AdminUnlockAsset(ctx, in, opts...)
+	return client.UnlockAsset(ctx, in, opts...)
 }
 
 // 设置平台账户（保险基金等，不属于任何用户）

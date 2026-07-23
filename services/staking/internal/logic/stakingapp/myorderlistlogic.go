@@ -28,7 +28,7 @@ func NewMyOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MyOrd
 }
 
 // 获取我的质押订单列表
-func (l *MyOrderListLogic) MyOrderList(in *staking.AppMyOrderListReq) (*staking.AppMyOrderListResp, error) {
+func (l *MyOrderListLogic) MyOrderList(in *staking.MyOrderListReq) (*staking.MyOrderListResp, error) {
 	page := in.GetPage()
 	cursor, limit := int64(0), int64(10)
 	if page != nil {
@@ -52,7 +52,7 @@ func (l *MyOrderListLogic) MyOrderList(in *staking.AppMyOrderListReq) (*staking.
 		return nil, err
 	}
 
-	resp := &staking.AppMyOrderListResp{Base: helper.OkResp()}
+	resp := &staking.MyOrderListResp{Base: helper.OkResp()}
 	if len(items) == 0 {
 		resp.Base = pageutil.Base(cursor, limit, 0, total, 0)
 		return resp, nil

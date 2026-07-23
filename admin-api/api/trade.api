@@ -429,7 +429,7 @@ type BizTradeEvent {
 	deliveredAt    int64  `json:"deliveredAt"`
 }
 
-type AdminCommonResp {
+type CommonResp {
 	RespBase
 }
 
@@ -1314,10 +1314,10 @@ type RetrySettlementInstructionReq {
 )
 service admin {
 	@handler CreateSymbol
-	post /symbols (CreateSymbolReq) returns (AdminCommonResp)
+	post /symbols (CreateSymbolReq) returns (CommonResp)
 
 	@handler UpdateSymbol
-	post /symbols/update (UpdateSymbolReq) returns (AdminCommonResp)
+	post /symbols/update (UpdateSymbolReq) returns (CommonResp)
 
 	@handler GetSymbolListAdmin
 	get /symbols (GetSymbolListAdminReq) returns (GetSymbolListAdminResp)
@@ -1326,19 +1326,19 @@ service admin {
 	get /symbols/detail (GetSymbolDetailAdminReq) returns (GetSymbolDetailAdminResp)
 
 	@handler SetSpotSymbolConfig
-	post /symbols/spot-config (SetSpotSymbolConfigReq) returns (AdminCommonResp)
+	post /symbols/spot-config (SetSpotSymbolConfigReq) returns (CommonResp)
 
 	@handler SetContractSymbolConfig
-	post /symbols/contract-config (SetContractSymbolConfigReq) returns (AdminCommonResp)
+	post /symbols/contract-config (SetContractSymbolConfigReq) returns (CommonResp)
 
 	@handler SetSecondsSymbolConfig
-	post /symbols/seconds-config (SetSecondsSymbolConfigReq) returns (AdminCommonResp)
+	post /symbols/seconds-config (SetSecondsSymbolConfigReq) returns (CommonResp)
 
 	@handler SetSymbolSession
-	post /symbols/session (SetSymbolSessionReq) returns (AdminCommonResp)
+	post /symbols/session (SetSymbolSessionReq) returns (CommonResp)
 
 	@handler SetSymbolLeverageConfig
-	post /symbols/leverage-config (SetSymbolLeverageConfigReq) returns (AdminCommonResp)
+	post /symbols/leverage-config (SetSymbolLeverageConfigReq) returns (CommonResp)
 
 	@handler GetSymbolLeverageConfig
 	get /symbols/leverage-config (GetSymbolLeverageConfigReq) returns (GetSymbolLeverageConfigResp)
@@ -1374,10 +1374,10 @@ service admin {
 	get /cancel-logs (GetCancelLogListAdminReq) returns (GetCancelLogListAdminResp)
 
 	@handler SetUserTradeLimit
-	post /user-trade-limit (SetUserTradeLimitReq) returns (AdminCommonResp)
+	post /user-trade-limit (SetUserTradeLimitReq) returns (CommonResp)
 
 	@handler SetUserSymbolLimit
-	post /user-symbol-limit (SetUserSymbolLimitReq) returns (AdminCommonResp)
+	post /user-symbol-limit (SetUserSymbolLimitReq) returns (CommonResp)
 
 	@handler GetUserTradeLimit
 	get /user-trade-limit (GetUserTradeLimitReq) returns (GetUserTradeLimitResp)
@@ -1386,13 +1386,13 @@ service admin {
 	get /user-symbol-limit (GetUserSymbolLimitReq) returns (GetUserSymbolLimitResp)
 
 	@handler SetUserTradeConfig
-	post /user-trade-config (SetUserTradeConfigReq) returns (AdminCommonResp)
+	post /user-trade-config (SetUserTradeConfigReq) returns (CommonResp)
 
 	@handler GetUserTradeConfig
 	get /user-trade-config (GetUserTradeConfigReq) returns (GetUserTradeConfigResp)
 
 	@handler SetContractUserConfig
-	post /contract-user-config (SetContractUserConfigReq) returns (AdminCommonResp)
+	post /contract-user-config (SetContractUserConfigReq) returns (CommonResp)
 
 	@handler GetContractUserConfig
 	get /contract-user-config (GetContractUserConfigReq) returns (GetContractUserConfigResp)
@@ -1401,7 +1401,7 @@ service admin {
 	get /risk-order-check-logs (GetRiskOrderCheckLogListReq) returns (GetRiskOrderCheckLogListResp)
 
 	@handler SetUserLeverageConfig
-	post /user-leverage-config (SetUserLeverageConfigReq) returns (AdminCommonResp)
+	post /user-leverage-config (SetUserLeverageConfigReq) returns (CommonResp)
 
 	@handler GetUserLeverageConfig
 	get /user-leverage-config (GetUserLeverageConfigReq) returns (GetUserLeverageConfigResp)
@@ -1413,10 +1413,10 @@ service admin {
 	get /events/detail (GetTradeEventDetailReq) returns (GetTradeEventDetailResp)
 
 	@handler RetryTradeEvent
-	post /events/retry (RetryTradeEventReq) returns (AdminCommonResp)
+	post /events/retry (RetryTradeEventReq) returns (CommonResp)
 
 	@handler SetContractRiskLimitTier
-	post /risk-tiers (SetContractRiskLimitTierReq) returns (AdminCommonResp)
+	post /risk-tiers (SetContractRiskLimitTierReq) returns (CommonResp)
 
 	@handler GetContractRiskLimitTierList
 	get /risk-tiers (GetContractRiskLimitTierListReq) returns (GetContractRiskLimitTierListResp)
@@ -1446,10 +1446,10 @@ service admin {
 	get /operations/settlement-instructions (GetSettlementInstructionListReq) returns (GetSettlementInstructionListResp)
 
 	@handler RetrySettlementInstruction
-	post /operations/settlement-instructions/retry (RetrySettlementInstructionReq) returns (AdminCommonResp)
+	post /operations/settlement-instructions/retry (RetrySettlementInstructionReq) returns (CommonResp)
 
 	@handler SetInsuranceFundAccount
-	post /insurance-fund/accounts (SetInsuranceFundAccountReq) returns (AdminCommonResp)
+	post /insurance-fund/accounts (SetInsuranceFundAccountReq) returns (CommonResp)
 
 	@handler GetInsuranceFundAccountList
 	get /insurance-fund/accounts (GetInsuranceFundAccountListReq) returns (GetInsuranceFundAccountListResp)

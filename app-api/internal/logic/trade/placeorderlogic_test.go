@@ -7,7 +7,7 @@ import (
 )
 
 func TestNormalizePlaceOrderReqScalesAmountOnly(t *testing.T) {
-	req := &types.PlaceOrderReq{
+	req := &types.TradePlaceOrderReq{
 		Qty:    "1.23",
 		Amount: "1.23",
 	}

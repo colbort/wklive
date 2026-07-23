@@ -14,7 +14,7 @@ import (
 
 func MyRedeemLogListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.AppMyRedeemLogListReq
+		var req types.MyRedeemLogListReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return

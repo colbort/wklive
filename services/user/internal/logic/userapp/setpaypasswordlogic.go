@@ -31,7 +31,7 @@ func NewSetPayPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 }
 
 // 设置支付密码
-func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.AppCommonResp, error) {
+func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.UserCommonResp, error) {
 	userId, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		return nil, err
@@ -43,14 +43,14 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 	}
 
 	if tuser == nil {
-		return &user.AppCommonResp{
+		return &user.UserCommonResp{
 			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证密码是否一致
 	if in.Password != in.ConfirmPassword {
-		return &user.AppCommonResp{
+		return &user.UserCommonResp{
 			Base: helper.ErrResp(i18n.PasswordsDoNotMatch, i18n.Translate(i18n.PasswordsDoNotMatch, l.ctx)),
 		}, nil
 	}
@@ -100,7 +100,7 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 
 	l.Logger.Infof("用户 %d 设置支付密码成功", userId)
 
-	return &user.AppCommonResp{
+	return &user.UserCommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

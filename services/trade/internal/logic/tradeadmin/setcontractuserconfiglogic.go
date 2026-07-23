@@ -30,11 +30,11 @@ func NewSetContractUserConfigLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 // 设置用户合约偏好配置
-func (l *SetContractUserConfigLogic) SetContractUserConfig(in *trade.SetContractUserConfigReq) (*trade.AdminCommonResp, error) {
+func (l *SetContractUserConfigLogic) SetContractUserConfig(in *trade.SetContractUserConfigReq) (*trade.CommonResp, error) {
 	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &trade.AdminCommonResp{Base: base}, nil
+		return &trade.CommonResp{Base: base}, nil
 	}
 	item, err := l.svcCtx.ContractUserConfigModel.FindOneByTenantIdUserIdSymbolId(l.ctx, in.TenantId, in.UserId, in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -54,5 +54,5 @@ func (l *SetContractUserConfigLogic) SetContractUserConfig(in *trade.SetContract
 	if err != nil {
 		return nil, err
 	}
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }

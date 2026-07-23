@@ -26,7 +26,7 @@ func NewSetSymbolSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *SetSymbolSessionLogic) SetSymbolSession(req *types.SetSymbolSessionReq) (resp *types.AdminCommonResp, err error) {
+func (l *SetSymbolSessionLogic) SetSymbolSession(req *types.SetSymbolSessionReq) (resp *types.CommonResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

@@ -29,11 +29,11 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.LoginReq, ip string) (resp *types.LoginResp, err error) {
-	protoReq := &system.AdminLoginReq{
+	protoReq := &system.LoginReq{
 		Username:   req.Username,
 		Password:   req.Password,
 		GoogleCode: req.GoogleCode,
 		Ip:         ip,
 	}
-	return logicutil.Proxy[types.LoginResp](l.ctx, protoReq, l.svcCtx.SystemCli.AdminLogin)
+	return logicutil.Proxy[types.LoginResp](l.ctx, protoReq, l.svcCtx.SystemCli.Login)
 }

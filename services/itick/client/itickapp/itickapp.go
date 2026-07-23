@@ -14,9 +14,9 @@ import (
 )
 
 type (
-	AdminCommonResp                = itick.AdminCommonResp
-	AppCommonResp                  = itick.AppCommonResp
-	AppEmpty                       = itick.AppEmpty
+	CommonResp                     = itick.CommonResp
+	UserCommonResp                 = itick.UserCommonResp
+	Empty                          = itick.Empty
 	BatchGetQuoteReq               = itick.BatchGetQuoteReq
 	BatchGetQuoteResp              = itick.BatchGetQuoteResp
 	BatchUpsertTenantCategoriesReq = itick.BatchUpsertTenantCategoriesReq
@@ -109,7 +109,7 @@ type (
 		// 订阅数据流
 		SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (itick.ItickApp_SubscribeStreamClient, error)
 		// 获取 kline 粒度
-		GetKlineIntervals(ctx context.Context, in *AppEmpty, opts ...grpc.CallOption) (*KlineIntervalsResp, error)
+		GetKlineIntervals(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*KlineIntervalsResp, error)
 	}
 
 	defaultItickApp struct {
@@ -166,7 +166,7 @@ func (m *defaultItickApp) SubscribeStream(ctx context.Context, in *SubscribeRequ
 }
 
 // 获取 kline 粒度
-func (m *defaultItickApp) GetKlineIntervals(ctx context.Context, in *AppEmpty, opts ...grpc.CallOption) (*KlineIntervalsResp, error) {
+func (m *defaultItickApp) GetKlineIntervals(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*KlineIntervalsResp, error) {
 	client := itick.NewItickAppClient(m.cli.Conn())
 	return client.GetKlineIntervals(ctx, in, opts...)
 }

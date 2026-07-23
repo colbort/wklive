@@ -224,7 +224,7 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
-  AdminProductUpdateReq,
+  ProductUpdateReq,
   stakingService,
   type OptionGroup,
   type StakeProduct,
@@ -264,7 +264,7 @@ const query = reactive({
   limit: 20,
 })
 
-const productForm = reactive<AdminProductUpdateReq>({
+const productForm = reactive<ProductUpdateReq>({
   id: 0,
   tenantId: 0,
   productNo: '',

@@ -30,10 +30,10 @@ func NewProductCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pro
 }
 
 // 创建质押产品
-func (l *ProductCreateLogic) ProductCreate(in *staking.AdminProductCreateReq) (*staking.AdminProductCreateResp, error) {
+func (l *ProductCreateLogic) ProductCreate(in *staking.ProductCreateReq) (*staking.ProductCreateResp, error) {
 	exists, err := l.svcCtx.StakeProductModel.FindOneByTenantIdProductNo(l.ctx, in.TenantId, in.ProductNo)
 	if err == nil && exists != nil {
-		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ProductNoAlreadyExists, i18n.Translate(i18n.ProductNoAlreadyExists, l.ctx))}, nil
+		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ProductNoAlreadyExists, i18n.Translate(i18n.ProductNoAlreadyExists, l.ctx))}, nil
 	}
 	if err != nil && err != models.ErrNotFound {
 		return nil, err
@@ -41,31 +41,31 @@ func (l *ProductCreateLogic) ProductCreate(in *staking.AdminProductCreateReq) (*
 
 	apr, err := conv.ParseDecimalField(in.Apr)
 	if err != nil {
-		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	minAmount, err := conv.ParseDecimalField(in.MinAmount)
 	if err != nil {
-		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	maxAmount, err := conv.ParseDecimalField(in.MaxAmount)
 	if err != nil {
-		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	stepAmount, err := conv.ParseDecimalField(in.StepAmount)
 	if err != nil {
-		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	totalAmount, err := conv.ParseDecimalField(in.TotalAmount)
 	if err != nil {
-		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	userLimitAmount, err := conv.ParseDecimalField(in.UserLimitAmount)
 	if err != nil {
-		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	earlyRedeemRate, err := conv.ParseDecimalField(in.EarlyRedeemRate)
 	if err != nil {
-		return &staking.AdminProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
 	now := utils.NowMillis()
@@ -106,5 +106,5 @@ func (l *ProductCreateLogic) ProductCreate(in *staking.AdminProductCreateReq) (*
 		return nil, err
 	}
 
-	return &staking.AdminProductCreateResp{Page: helper.OkResp(), Data: id}, nil
+	return &staking.ProductCreateResp{Page: helper.OkResp(), Data: id}, nil
 }

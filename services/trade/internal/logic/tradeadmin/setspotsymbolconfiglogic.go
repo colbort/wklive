@@ -31,10 +31,10 @@ func NewSetSpotSymbolConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 设置现货交易对配置
-func (l *SetSpotSymbolConfigLogic) SetSpotSymbolConfig(in *trade.SetSpotSymbolConfigReq) (*trade.AdminCommonResp, error) {
+func (l *SetSpotSymbolConfigLogic) SetSpotSymbolConfig(in *trade.SetSpotSymbolConfigReq) (*trade.CommonResp, error) {
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 	if errors.Is(err, models.ErrNotFound) {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (l *SetSpotSymbolConfigLogic) SetSpotSymbolConfig(in *trade.SetSpotSymbolCo
 	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &trade.AdminCommonResp{Base: base}, nil
+		return &trade.CommonResp{Base: base}, nil
 	}
 	now := utils.NowMillis()
 	cfg, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, in.SymbolId)
@@ -71,5 +71,5 @@ func (l *SetSpotSymbolConfigLogic) SetSpotSymbolConfig(in *trade.SetSpotSymbolCo
 		return nil, err
 	}
 
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }

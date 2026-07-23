@@ -30,7 +30,7 @@ func NewUpdateTenantPayChannelLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 // 更新租户支付通道
-func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateTenantPayChannelReq) (*payment.AdminCommonResp, error) {
+func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateTenantPayChannelReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "UpdateTenantPayChannel"
 	)
@@ -43,7 +43,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 	}
 
 	if channel == nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.PaymentChannelNotFound, i18n.Translate(i18n.PaymentChannelNotFound, l.ctx)),
 		}, nil
 	}
@@ -122,7 +122,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 
 	l.Logger.Infof("Update tenant pay channel success: %d", in.Id)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

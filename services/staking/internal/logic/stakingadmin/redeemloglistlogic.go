@@ -28,7 +28,7 @@ func NewRedeemLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Red
 }
 
 // 获取赎回记录列表
-func (l *RedeemLogListLogic) RedeemLogList(in *staking.AdminRedeemLogListReq) (*staking.AdminRedeemLogListResp, error) {
+func (l *RedeemLogListLogic) RedeemLogList(in *staking.RedeemLogListReq) (*staking.RedeemLogListResp, error) {
 	if in.TenantId <= 0 {
 		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
 			in.TenantId = tenantId
@@ -59,7 +59,7 @@ func (l *RedeemLogListLogic) RedeemLogList(in *staking.AdminRedeemLogListReq) (*
 		return nil, err
 	}
 
-	resp := &staking.AdminRedeemLogListResp{Page: helper.OkResp()}
+	resp := &staking.RedeemLogListResp{Page: helper.OkResp()}
 	if len(items) == 0 {
 		resp.Page = pageutil.Base(cursor, limit, 0, total, 0)
 		return resp, nil

@@ -27,6 +27,6 @@ func NewCreateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 	}
 }
 
-func (l *CreateSymbolLogic) CreateSymbol(req *types.CreateSymbolReq) (resp *types.AdminCommonResp, err error) {
-	return logicutil.Proxy[types.AdminCommonResp](l.ctx, req, l.svcCtx.TradeCli.CreateSymbol)
+func (l *CreateSymbolLogic) CreateSymbol(req *types.CreateSymbolReq) (resp *types.CommonResp, err error) {
+	return logicutil.Proxy[types.CommonResp](l.ctx, req, l.svcCtx.TradeCli.CreateSymbol)
 }

@@ -163,22 +163,22 @@ service AssetAdmin {
   rpc PageAssetLocks(PageAssetLocksReq) returns (PageAssetLocksResp);
 
   // 后台人工加币
-  rpc AdminAddAsset(AdminAddAssetReq) returns (AdminChangeAssetResp);
+  rpc AddAsset(AddAssetReq) returns (ManualChangeAssetResp);
 
   // 后台人工减币
-  rpc AdminSubAsset(AdminSubAssetReq) returns (AdminChangeAssetResp);
+  rpc SubAsset(SubAssetReq) returns (ManualChangeAssetResp);
 
   // 后台冻结资产
-  rpc AdminFreezeAsset(AdminFreezeAssetReq) returns (AdminChangeAssetResp);
+  rpc FreezeAsset(ManualFreezeAssetReq) returns (ManualChangeAssetResp);
 
   // 后台解冻资产
-  rpc AdminUnfreezeAsset(AdminUnfreezeAssetReq) returns (AdminChangeAssetResp);
+  rpc UnfreezeAsset(ManualUnfreezeAssetReq) returns (ManualChangeAssetResp);
 
   // 后台锁仓资产
-  rpc AdminLockAsset(AdminLockAssetReq) returns (AdminChangeAssetResp);
+  rpc LockAsset(ManualLockAssetReq) returns (ManualChangeAssetResp);
 
   // 后台解锁资产
-  rpc AdminUnlockAsset(AdminUnlockAssetReq) returns (AdminChangeAssetResp);
+  rpc UnlockAsset(ManualUnlockAssetReq) returns (ManualChangeAssetResp);
 
   // 设置平台账户（保险基金等，不属于任何用户）
   rpc SetPlatformAccount(SetPlatformAccountReq) returns (PlatformAccountResp);
@@ -387,7 +387,7 @@ message PageAssetLocksResp {
   repeated AssetLock data = 2; // 锁仓列表
 }
 
-message AdminAddAssetReq {
+message AddAssetReq {
   int64 tenant_id = 1; // 租户ID
   int64 user_id = 2; // 用户ID
   common.WalletType wallet_type = 3; // 钱包类型
@@ -398,7 +398,7 @@ message AdminAddAssetReq {
   int64 operator_id = 8; // 操作人ID
 }
 
-message AdminSubAssetReq {
+message SubAssetReq {
   int64 tenant_id = 1; // 租户ID
   int64 user_id = 2; // 用户ID
   common.WalletType wallet_type = 3; // 钱包类型
@@ -409,7 +409,7 @@ message AdminSubAssetReq {
   int64 operator_id = 8; // 操作人ID
 }
 
-message AdminFreezeAssetReq {
+message ManualFreezeAssetReq {
   int64 tenant_id = 1; // 租户ID
   int64 user_id = 2; // 用户ID
   common.WalletType wallet_type = 3; // 钱包类型
@@ -420,7 +420,7 @@ message AdminFreezeAssetReq {
   int64 operator_id = 8; // 操作人ID
 }
 
-message AdminUnfreezeAssetReq {
+message ManualUnfreezeAssetReq {
   int64 tenant_id = 1; // 租户ID
   string freeze_no = 2; // 冻结单号
   string amount = 3; // 解冻金额
@@ -429,7 +429,7 @@ message AdminUnfreezeAssetReq {
   int64 operator_id = 6; // 操作人ID
 }
 
-message AdminLockAssetReq {
+message ManualLockAssetReq {
   int64 tenant_id = 1; // 租户ID
   int64 user_id = 2; // 用户ID
   common.WalletType wallet_type = 3; // 钱包类型
@@ -440,7 +440,7 @@ message AdminLockAssetReq {
   int64 operator_id = 8; // 操作人ID
 }
 
-message AdminUnlockAssetReq {
+message ManualUnlockAssetReq {
   int64 tenant_id = 1; // 租户ID
   string lock_no = 2; // 锁仓单号
   string amount = 3; // 解锁金额
@@ -449,12 +449,12 @@ message AdminUnlockAssetReq {
   int64 operator_id = 6; // 操作人ID
 }
 
-message AdminChangeAssetResp {
+message ManualChangeAssetResp {
   common.RespBase base = 1;
-  AdminChangeAssetData data = 2;
+  ManualChangeAssetData data = 2;
 }
 
-message AdminChangeAssetData {
+message ManualChangeAssetData {
   string biz_no = 1;
   UserAsset asset = 2;
 }

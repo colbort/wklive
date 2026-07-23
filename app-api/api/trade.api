@@ -306,7 +306,7 @@ type GetSymbolDetailResp {
 	data GetSymbolDetailData `json:"data"`
 }
 
-type PlaceOrderReq {
+type TradePlaceOrderReq {
 	symbolId         int64  `json:"symbolId"` // 交易对ID
 	side             int64  `json:"side"`
 	positionSide     int64  `json:"positionSide"`
@@ -329,12 +329,12 @@ type PlaceOrderReq {
 	durationSeconds  int64  `json:"durationSeconds,optional"`
 }
 
-type PlaceOrderResp {
+type TradePlaceOrderResp {
 	RespBase
 	data TradeOrder `json:"data"`
 }
 
-type CancelOrderReq {
+type TradeCancelOrderReq {
 	orderId       int64  `json:"orderId,optional"`
 	orderNo       string `json:"orderNo,optional"`
 	clientOrderId string `json:"clientOrderId,optional"`
@@ -366,7 +366,7 @@ type GetOrderListResp {
 	data []TradeOrder `json:"data"`
 }
 
-type GetOrderDetailReq {
+type TradeGetOrderDetailReq {
 	orderId int64  `form:"orderId,optional"`
 	orderNo string `form:"orderNo,optional"`
 }
@@ -378,7 +378,7 @@ type GetOrderDetailData {
 	seconds  TradeOrderSeconds   `json:"seconds"`
 }
 
-type GetOrderDetailResp {
+type TradeGetOrderDetailResp {
 	RespBase
 	data GetOrderDetailData `json:"data"`
 }
@@ -455,7 +455,7 @@ service app {
 	get /orders (GetOrderListReq) returns (GetOrderListResp)
 
 	@handler GetOrderDetail
-	get /orders/detail (GetOrderDetailReq) returns (GetOrderDetailResp)
+	get /orders/detail (TradeGetOrderDetailReq) returns (TradeGetOrderDetailResp)
 
 	@handler GetFillList
 	get /fills (GetFillListReq) returns (GetFillListResp)
@@ -478,10 +478,10 @@ service app {
 )
 service app {
 	@handler PlaceOrder
-	post /orders (PlaceOrderReq) returns (PlaceOrderResp)
+	post /orders (TradePlaceOrderReq) returns (TradePlaceOrderResp)
 
 	@handler CancelOrder
-	post /orders/cancel (CancelOrderReq) returns (TradeAppCommonResp)
+	post /orders/cancel (TradeCancelOrderReq) returns (TradeAppCommonResp)
 
 	@handler CancelAllOrders
 	post /orders/cancel-all (CancelAllOrdersReq) returns (CancelAllOrdersResp)

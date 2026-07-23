@@ -146,7 +146,7 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 	if conn == nil || l.svcCtx == nil || l.svcCtx.ChatAdminCli == nil {
 		return
 	}
-	stream, err := l.svcCtx.ChatAdminCli.AdminSubscribeStream(ctx, &chat.AdminChatSubscribeRequest{})
+	stream, err := l.svcCtx.ChatAdminCli.SubscribeStream(ctx, &chat.SubscribeRequest{})
 	if err != nil {
 		logx.Errorf("subscribe chat admin stream failed, merchantId=%d agentId=%d err=%v", conn.MerchantId, conn.AgentId, err)
 		return

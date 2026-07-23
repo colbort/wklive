@@ -14,9 +14,9 @@ import (
 )
 
 type (
-	AdminCommonResp                   = payment.AdminCommonResp
-	AdminEmpty                        = payment.AdminEmpty
-	AppCommonResp                     = payment.AppCommonResp
+	CommonResp                        = payment.CommonResp
+	Empty                             = payment.Empty
+	UserCommonResp                    = payment.UserCommonResp
 	AuditWithdrawOrderReq             = payment.AuditWithdrawOrderReq
 	CancelMyRechargeOrderReq          = payment.CancelMyRechargeOrderReq
 	CloseRechargeOrderReq             = payment.CloseRechargeOrderReq
@@ -130,51 +130,51 @@ type (
 
 	PaymentAdmin interface {
 		// 获取系统支持的平台
-		GetPayPlatforms(ctx context.Context, in *AdminEmpty, opts ...grpc.CallOption) (*PayPlatformsResp, error)
+		GetPayPlatforms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PayPlatformsResp, error)
 		// 创建平台
-		CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新平台
-		UpdatePayPlatform(ctx context.Context, in *UpdatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdatePayPlatform(ctx context.Context, in *UpdatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取平台详情
 		GetPayPlatform(ctx context.Context, in *GetPayPlatformReq, opts ...grpc.CallOption) (*GetPayPlatformResp, error)
 		// 平台列表
 		ListPayPlatforms(ctx context.Context, in *ListPayPlatformsReq, opts ...grpc.CallOption) (*ListPayPlatformsResp, error)
 		// 创建产品
-		CreatePayProduct(ctx context.Context, in *CreatePayProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreatePayProduct(ctx context.Context, in *CreatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新产品
-		UpdatePayProduct(ctx context.Context, in *UpdatePayProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdatePayProduct(ctx context.Context, in *UpdatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取产品详情
 		GetPayProduct(ctx context.Context, in *GetPayProductReq, opts ...grpc.CallOption) (*GetPayProductResp, error)
 		// 产品列表
 		ListPayProducts(ctx context.Context, in *ListPayProductsReq, opts ...grpc.CallOption) (*ListPayProductsResp, error)
 		// 租户开通平台
-		OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新租户开通平台
-		UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取租户开通平台详情
 		GetTenantPayPlatform(ctx context.Context, in *GetTenantPayPlatformReq, opts ...grpc.CallOption) (*GetTenantPayPlatformResp, error)
 		// 租户开通平台列表
 		ListTenantPayPlatforms(ctx context.Context, in *ListTenantPayPlatformsReq, opts ...grpc.CallOption) (*ListTenantPayPlatformsResp, error)
 		// 租户支付账号
-		CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新租户支付账号
-		UpdateTenantPayAccount(ctx context.Context, in *UpdateTenantPayAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateTenantPayAccount(ctx context.Context, in *UpdateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取租户支付账号详情
 		GetTenantPayAccount(ctx context.Context, in *GetTenantPayAccountReq, opts ...grpc.CallOption) (*GetTenantPayAccountResp, error)
 		// 租户支付账号列表
 		ListTenantPayAccounts(ctx context.Context, in *ListTenantPayAccountsReq, opts ...grpc.CallOption) (*ListTenantPayAccountsResp, error)
 		// 创建租户支付通道
-		CreateTenantPayChannel(ctx context.Context, in *CreateTenantPayChannelReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateTenantPayChannel(ctx context.Context, in *CreateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新租户支付通道
-		UpdateTenantPayChannel(ctx context.Context, in *UpdateTenantPayChannelReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateTenantPayChannel(ctx context.Context, in *UpdateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取租户支付通道详情
 		GetTenantPayChannel(ctx context.Context, in *GetTenantPayChannelReq, opts ...grpc.CallOption) (*GetTenantPayChannelResp, error)
 		// 租户支付通道列表
 		ListTenantPayChannels(ctx context.Context, in *ListTenantPayChannelsReq, opts ...grpc.CallOption) (*ListTenantPayChannelsResp, error)
 		// 创建通道规则
-		CreateTenantPayChannelRule(ctx context.Context, in *CreateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateTenantPayChannelRule(ctx context.Context, in *CreateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新通道规则
-		UpdateTenantPayChannelRule(ctx context.Context, in *UpdateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateTenantPayChannelRule(ctx context.Context, in *UpdateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取通道规则详情
 		GetTenantPayChannelRule(ctx context.Context, in *GetTenantPayChannelRuleReq, opts ...grpc.CallOption) (*GetTenantPayChannelRuleResp, error)
 		// 通道规则列表
@@ -188,11 +188,11 @@ type (
 		// 获取充值订单
 		GetRechargeOrder(ctx context.Context, in *GetRechargeOrderReq, opts ...grpc.CallOption) (*GetRechargeOrderResp, error)
 		// 关闭充值订单
-		CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 人工标记充值订单支付成功
-		ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 重试回调
-		RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 充值回调日志列表
 		ListRechargeNotifyLogs(ctx context.Context, in *ListRechargeNotifyLogsReq, opts ...grpc.CallOption) (*ListRechargeNotifyLogsResp, error)
 		// 充值回调日志
@@ -202,31 +202,31 @@ type (
 		// 获取提现订单详情
 		GetWithdrawOrder(ctx context.Context, in *GetWithdrawOrderReq, opts ...grpc.CallOption) (*GetWithdrawOrderResp, error)
 		// 审核提现订单
-		AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 提现回调日志列表
 		ListWithdrawNotifyLogs(ctx context.Context, in *ListWithdrawNotifyLogsReq, opts ...grpc.CallOption) (*ListWithdrawNotifyLogsResp, error)
 		// 获取提现回调日志详情
 		GetWithdrawNotifyLog(ctx context.Context, in *GetWithdrawNotifyLogReq, opts ...grpc.CallOption) (*GetWithdrawNotifyLogResp, error)
 		// 创建链上充值地址
-		CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新链上充值地址
-		UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取链上充值地址详情
 		GetCryptoRechargeAddress(ctx context.Context, in *GetCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetCryptoRechargeAddressResp, error)
 		// 链上充值地址列表
 		ListCryptoRechargeAddresses(ctx context.Context, in *ListCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListCryptoRechargeAddressesResp, error)
 		// 创建链上钱包账号
-		CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新链上钱包账号
-		UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取链上钱包账号详情
 		GetCryptoWalletAccount(ctx context.Context, in *GetCryptoWalletAccountReq, opts ...grpc.CallOption) (*GetCryptoWalletAccountResp, error)
 		// 链上钱包账号列表
 		ListCryptoWalletAccounts(ctx context.Context, in *ListCryptoWalletAccountsReq, opts ...grpc.CallOption) (*ListCryptoWalletAccountsResp, error)
 		// 创建链上充值交易
-		CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新链上充值交易
-		UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取链上充值交易详情
 		GetCryptoRechargeTx(ctx context.Context, in *GetCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetCryptoRechargeTxResp, error)
 		// 链上充值交易列表
@@ -245,19 +245,19 @@ func NewPaymentAdmin(cli zrpc.Client) PaymentAdmin {
 }
 
 // 获取系统支持的平台
-func (m *defaultPaymentAdmin) GetPayPlatforms(ctx context.Context, in *AdminEmpty, opts ...grpc.CallOption) (*PayPlatformsResp, error) {
+func (m *defaultPaymentAdmin) GetPayPlatforms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PayPlatformsResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.GetPayPlatforms(ctx, in, opts...)
 }
 
 // 创建平台
-func (m *defaultPaymentAdmin) CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.CreatePayPlatform(ctx, in, opts...)
 }
 
 // 更新平台
-func (m *defaultPaymentAdmin) UpdatePayPlatform(ctx context.Context, in *UpdatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) UpdatePayPlatform(ctx context.Context, in *UpdatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.UpdatePayPlatform(ctx, in, opts...)
 }
@@ -275,13 +275,13 @@ func (m *defaultPaymentAdmin) ListPayPlatforms(ctx context.Context, in *ListPayP
 }
 
 // 创建产品
-func (m *defaultPaymentAdmin) CreatePayProduct(ctx context.Context, in *CreatePayProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) CreatePayProduct(ctx context.Context, in *CreatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.CreatePayProduct(ctx, in, opts...)
 }
 
 // 更新产品
-func (m *defaultPaymentAdmin) UpdatePayProduct(ctx context.Context, in *UpdatePayProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) UpdatePayProduct(ctx context.Context, in *UpdatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.UpdatePayProduct(ctx, in, opts...)
 }
@@ -299,13 +299,13 @@ func (m *defaultPaymentAdmin) ListPayProducts(ctx context.Context, in *ListPayPr
 }
 
 // 租户开通平台
-func (m *defaultPaymentAdmin) OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.OpenTenantPayPlatform(ctx, in, opts...)
 }
 
 // 更新租户开通平台
-func (m *defaultPaymentAdmin) UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.UpdateTenantPayPlatform(ctx, in, opts...)
 }
@@ -323,13 +323,13 @@ func (m *defaultPaymentAdmin) ListTenantPayPlatforms(ctx context.Context, in *Li
 }
 
 // 租户支付账号
-func (m *defaultPaymentAdmin) CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.CreateTenantPayAccount(ctx, in, opts...)
 }
 
 // 更新租户支付账号
-func (m *defaultPaymentAdmin) UpdateTenantPayAccount(ctx context.Context, in *UpdateTenantPayAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) UpdateTenantPayAccount(ctx context.Context, in *UpdateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.UpdateTenantPayAccount(ctx, in, opts...)
 }
@@ -347,13 +347,13 @@ func (m *defaultPaymentAdmin) ListTenantPayAccounts(ctx context.Context, in *Lis
 }
 
 // 创建租户支付通道
-func (m *defaultPaymentAdmin) CreateTenantPayChannel(ctx context.Context, in *CreateTenantPayChannelReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) CreateTenantPayChannel(ctx context.Context, in *CreateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.CreateTenantPayChannel(ctx, in, opts...)
 }
 
 // 更新租户支付通道
-func (m *defaultPaymentAdmin) UpdateTenantPayChannel(ctx context.Context, in *UpdateTenantPayChannelReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) UpdateTenantPayChannel(ctx context.Context, in *UpdateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.UpdateTenantPayChannel(ctx, in, opts...)
 }
@@ -371,13 +371,13 @@ func (m *defaultPaymentAdmin) ListTenantPayChannels(ctx context.Context, in *Lis
 }
 
 // 创建通道规则
-func (m *defaultPaymentAdmin) CreateTenantPayChannelRule(ctx context.Context, in *CreateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) CreateTenantPayChannelRule(ctx context.Context, in *CreateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.CreateTenantPayChannelRule(ctx, in, opts...)
 }
 
 // 更新通道规则
-func (m *defaultPaymentAdmin) UpdateTenantPayChannelRule(ctx context.Context, in *UpdateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) UpdateTenantPayChannelRule(ctx context.Context, in *UpdateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.UpdateTenantPayChannelRule(ctx, in, opts...)
 }
@@ -419,19 +419,19 @@ func (m *defaultPaymentAdmin) GetRechargeOrder(ctx context.Context, in *GetRecha
 }
 
 // 关闭充值订单
-func (m *defaultPaymentAdmin) CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.CloseRechargeOrder(ctx, in, opts...)
 }
 
 // 人工标记充值订单支付成功
-func (m *defaultPaymentAdmin) ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.ManualMarkRechargeOrderSuccess(ctx, in, opts...)
 }
 
 // 重试回调
-func (m *defaultPaymentAdmin) RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.RetryNotify(ctx, in, opts...)
 }
@@ -461,7 +461,7 @@ func (m *defaultPaymentAdmin) GetWithdrawOrder(ctx context.Context, in *GetWithd
 }
 
 // 审核提现订单
-func (m *defaultPaymentAdmin) AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.AuditWithdrawOrder(ctx, in, opts...)
 }
@@ -479,13 +479,13 @@ func (m *defaultPaymentAdmin) GetWithdrawNotifyLog(ctx context.Context, in *GetW
 }
 
 // 创建链上充值地址
-func (m *defaultPaymentAdmin) CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.CreateCryptoRechargeAddress(ctx, in, opts...)
 }
 
 // 更新链上充值地址
-func (m *defaultPaymentAdmin) UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.UpdateCryptoRechargeAddress(ctx, in, opts...)
 }
@@ -503,13 +503,13 @@ func (m *defaultPaymentAdmin) ListCryptoRechargeAddresses(ctx context.Context, i
 }
 
 // 创建链上钱包账号
-func (m *defaultPaymentAdmin) CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.CreateCryptoWalletAccount(ctx, in, opts...)
 }
 
 // 更新链上钱包账号
-func (m *defaultPaymentAdmin) UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.UpdateCryptoWalletAccount(ctx, in, opts...)
 }
@@ -527,13 +527,13 @@ func (m *defaultPaymentAdmin) ListCryptoWalletAccounts(ctx context.Context, in *
 }
 
 // 创建链上充值交易
-func (m *defaultPaymentAdmin) CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.CreateCryptoRechargeTx(ctx, in, opts...)
 }
 
 // 更新链上充值交易
-func (m *defaultPaymentAdmin) UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultPaymentAdmin) UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.UpdateCryptoRechargeTx(ctx, in, opts...)
 }

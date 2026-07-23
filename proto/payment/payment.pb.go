@@ -22,27 +22,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AppCommonResp struct {
+type UserCommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppCommonResp) Reset() {
-	*x = AppCommonResp{}
+func (x *UserCommonResp) Reset() {
+	*x = UserCommonResp{}
 	mi := &file_proto_payment_payment_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppCommonResp) String() string {
+func (x *UserCommonResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppCommonResp) ProtoMessage() {}
+func (*UserCommonResp) ProtoMessage() {}
 
-func (x *AppCommonResp) ProtoReflect() protoreflect.Message {
+func (x *UserCommonResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -54,12 +54,12 @@ func (x *AppCommonResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppCommonResp.ProtoReflect.Descriptor instead.
-func (*AppCommonResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserCommonResp.ProtoReflect.Descriptor instead.
+func (*UserCommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AppCommonResp) GetBase() *common.RespBase {
+func (x *UserCommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1785,27 +1785,27 @@ func (x *GetMyCryptoRechargeTxResp) GetData() *CryptoRechargeTx {
 	return nil
 }
 
-type AdminCommonResp struct {
+type CommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminCommonResp) Reset() {
-	*x = AdminCommonResp{}
+func (x *CommonResp) Reset() {
+	*x = CommonResp{}
 	mi := &file_proto_payment_payment_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminCommonResp) String() string {
+func (x *CommonResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminCommonResp) ProtoMessage() {}
+func (*CommonResp) ProtoMessage() {}
 
-func (x *AdminCommonResp) ProtoReflect() protoreflect.Message {
+func (x *CommonResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1817,12 +1817,12 @@ func (x *AdminCommonResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminCommonResp.ProtoReflect.Descriptor instead.
-func (*AdminCommonResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use CommonResp.ProtoReflect.Descriptor instead.
+func (*CommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_proto_rawDescGZIP(), []int{31}
 }
 
-func (x *AdminCommonResp) GetBase() *common.RespBase {
+func (x *CommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -7906,26 +7906,26 @@ func (x *ListCryptoRechargeTxsResp) GetData() []*CryptoRechargeTx {
 	return nil
 }
 
-type AdminEmpty struct {
+type Empty struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminEmpty) Reset() {
-	*x = AdminEmpty{}
+func (x *Empty) Reset() {
+	*x = Empty{}
 	mi := &file_proto_payment_payment_proto_msgTypes[110]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminEmpty) String() string {
+func (x *Empty) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminEmpty) ProtoMessage() {}
+func (*Empty) ProtoMessage() {}
 
-func (x *AdminEmpty) ProtoReflect() protoreflect.Message {
+func (x *Empty) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_proto_msgTypes[110]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -7937,8 +7937,8 @@ func (x *AdminEmpty) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminEmpty.ProtoReflect.Descriptor instead.
-func (*AdminEmpty) Descriptor() ([]byte, []int) {
+// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
+func (*Empty) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_proto_rawDescGZIP(), []int{110}
 }
 
@@ -8050,8 +8050,8 @@ var File_proto_payment_payment_proto protoreflect.FileDescriptor
 
 const file_proto_payment_payment_proto_rawDesc = "" +
 	"\n" +
-	"\x1bproto/payment/payment.proto\x12\apayment\x1a\x19proto/common/common.proto\x1a\x18proto/payment/enum.proto\x1a\x19proto/payment/model.proto\"5\n" +
-	"\rAppCommonResp\x12$\n" +
+	"\x1bproto/payment/payment.proto\x12\apayment\x1a\x19proto/common/common.proto\x1a\x18proto/payment/enum.proto\x1a\x19proto/payment/model.proto\"6\n" +
+	"\x0eUserCommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x16\n" +
 	"\x14GetMyRechargeStatReq\"l\n" +
 	"\x15GetMyRechargeStatResp\x12$\n" +
@@ -8173,8 +8173,9 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\atx_hash\x18\x02 \x01(\tR\x06txHash\"p\n" +
 	"\x19GetMyCryptoRechargeTxResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.payment.CryptoRechargeTxR\x04data\"7\n" +
-	"\x0fAdminCommonResp\x12$\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.payment.CryptoRechargeTxR\x04data\"2\n" +
+	"\n" +
+	"CommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xb0\x02\n" +
 	"\x14CreatePayPlatformReq\x12#\n" +
 	"\rplatform_code\x18\x01 \x01(\tR\fplatformCode\x12#\n" +
@@ -8738,15 +8739,14 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x0fcreate_time_end\x18\v \x01(\x03R\rcreateTimeEnd\"p\n" +
 	"\x19ListCryptoRechargeTxsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x03(\v2\x19.payment.CryptoRechargeTxR\x04data\"\f\n" +
-	"\n" +
-	"AdminEmpty\"[\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.payment.CryptoRechargeTxR\x04data\"\a\n" +
+	"\x05Empty\"[\n" +
 	"\x0fPayPlatformItem\x12#\n" +
 	"\rplatform_code\x18\x01 \x01(\tR\fplatformCode\x12#\n" +
 	"\rplatform_name\x18\x02 \x01(\tR\fplatformName\"f\n" +
 	"\x10PayPlatformsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
-	"\x04data\x18\x02 \x03(\v2\x18.payment.PayPlatformItemR\x04data2\xd0\v\n" +
+	"\x04data\x18\x02 \x03(\v2\x18.payment.PayPlatformItemR\x04data2\xd1\v\n" +
 	"\n" +
 	"PaymentApp\x12R\n" +
 	"\x11GetMyRechargeStat\x12\x1d.payment.GetMyRechargeStatReq\x1a\x1e.payment.GetMyRechargeStatResp\x12v\n" +
@@ -8754,8 +8754,8 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x13CreateRechargeOrder\x12\x1f.payment.CreateRechargeOrderReq\x1a .payment.CreateRechargeOrderResp\x12j\n" +
 	"\x19CreateCryptoRechargeOrder\x12%.payment.CreateCryptoRechargeOrderReq\x1a&.payment.CreateCryptoRechargeOrderResp\x12U\n" +
 	"\x12GetMyRechargeOrder\x12\x1e.payment.GetMyRechargeOrderReq\x1a\x1f.payment.GetMyRechargeOrderResp\x12[\n" +
-	"\x14ListMyRechargeOrders\x12 .payment.ListMyRechargeOrdersReq\x1a!.payment.ListMyRechargeOrdersResp\x12R\n" +
-	"\x15CancelMyRechargeOrder\x12!.payment.CancelMyRechargeOrderReq\x1a\x16.payment.AppCommonResp\x12m\n" +
+	"\x14ListMyRechargeOrders\x12 .payment.ListMyRechargeOrdersReq\x1a!.payment.ListMyRechargeOrdersResp\x12S\n" +
+	"\x15CancelMyRechargeOrder\x12!.payment.CancelMyRechargeOrderReq\x1a\x17.payment.UserCommonResp\x12m\n" +
 	"\x1aQueryMyRechargeOrderStatus\x12&.payment.QueryMyRechargeOrderStatusReq\x1a'.payment.QueryMyRechargeOrderStatusResp\x12X\n" +
 	"\x13CreateWithdrawOrder\x12\x1f.payment.CreateWithdrawOrderReq\x1a .payment.CreateWithdrawOrderResp\x12[\n" +
 	"\x14ListMyWithdrawOrders\x12 .payment.ListMyWithdrawOrdersReq\x1a!.payment.ListMyWithdrawOrdersResp\x12U\n" +
@@ -8763,57 +8763,57 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x1aGetMyCryptoRechargeAddress\x12&.payment.GetMyCryptoRechargeAddressReq\x1a'.payment.GetMyCryptoRechargeAddressResp\x12v\n" +
 	"\x1dListMyCryptoRechargeAddresses\x12).payment.ListMyCryptoRechargeAddressesReq\x1a*.payment.ListMyCryptoRechargeAddressesResp\x12d\n" +
 	"\x17ListMyCryptoRechargeTxs\x12#.payment.ListMyCryptoRechargeTxsReq\x1a$.payment.ListMyCryptoRechargeTxsResp\x12^\n" +
-	"\x15GetMyCryptoRechargeTx\x12!.payment.GetMyCryptoRechargeTxReq\x1a\".payment.GetMyCryptoRechargeTxResp2\xf2#\n" +
-	"\fPaymentAdmin\x12A\n" +
-	"\x0fGetPayPlatforms\x12\x13.payment.AdminEmpty\x1a\x19.payment.PayPlatformsResp\x12L\n" +
-	"\x11CreatePayPlatform\x12\x1d.payment.CreatePayPlatformReq\x1a\x18.payment.AdminCommonResp\x12L\n" +
-	"\x11UpdatePayPlatform\x12\x1d.payment.UpdatePayPlatformReq\x1a\x18.payment.AdminCommonResp\x12I\n" +
+	"\x15GetMyCryptoRechargeTx\x12!.payment.GetMyCryptoRechargeTxReq\x1a\".payment.GetMyCryptoRechargeTxResp2\xff\"\n" +
+	"\fPaymentAdmin\x12<\n" +
+	"\x0fGetPayPlatforms\x12\x0e.payment.Empty\x1a\x19.payment.PayPlatformsResp\x12G\n" +
+	"\x11CreatePayPlatform\x12\x1d.payment.CreatePayPlatformReq\x1a\x13.payment.CommonResp\x12G\n" +
+	"\x11UpdatePayPlatform\x12\x1d.payment.UpdatePayPlatformReq\x1a\x13.payment.CommonResp\x12I\n" +
 	"\x0eGetPayPlatform\x12\x1a.payment.GetPayPlatformReq\x1a\x1b.payment.GetPayPlatformResp\x12O\n" +
-	"\x10ListPayPlatforms\x12\x1c.payment.ListPayPlatformsReq\x1a\x1d.payment.ListPayPlatformsResp\x12J\n" +
-	"\x10CreatePayProduct\x12\x1c.payment.CreatePayProductReq\x1a\x18.payment.AdminCommonResp\x12J\n" +
-	"\x10UpdatePayProduct\x12\x1c.payment.UpdatePayProductReq\x1a\x18.payment.AdminCommonResp\x12F\n" +
+	"\x10ListPayPlatforms\x12\x1c.payment.ListPayPlatformsReq\x1a\x1d.payment.ListPayPlatformsResp\x12E\n" +
+	"\x10CreatePayProduct\x12\x1c.payment.CreatePayProductReq\x1a\x13.payment.CommonResp\x12E\n" +
+	"\x10UpdatePayProduct\x12\x1c.payment.UpdatePayProductReq\x1a\x13.payment.CommonResp\x12F\n" +
 	"\rGetPayProduct\x12\x19.payment.GetPayProductReq\x1a\x1a.payment.GetPayProductResp\x12L\n" +
-	"\x0fListPayProducts\x12\x1b.payment.ListPayProductsReq\x1a\x1c.payment.ListPayProductsResp\x12T\n" +
-	"\x15OpenTenantPayPlatform\x12!.payment.OpenTenantPayPlatformReq\x1a\x18.payment.AdminCommonResp\x12X\n" +
-	"\x17UpdateTenantPayPlatform\x12#.payment.UpdateTenantPayPlatformReq\x1a\x18.payment.AdminCommonResp\x12[\n" +
+	"\x0fListPayProducts\x12\x1b.payment.ListPayProductsReq\x1a\x1c.payment.ListPayProductsResp\x12O\n" +
+	"\x15OpenTenantPayPlatform\x12!.payment.OpenTenantPayPlatformReq\x1a\x13.payment.CommonResp\x12S\n" +
+	"\x17UpdateTenantPayPlatform\x12#.payment.UpdateTenantPayPlatformReq\x1a\x13.payment.CommonResp\x12[\n" +
 	"\x14GetTenantPayPlatform\x12 .payment.GetTenantPayPlatformReq\x1a!.payment.GetTenantPayPlatformResp\x12a\n" +
-	"\x16ListTenantPayPlatforms\x12\".payment.ListTenantPayPlatformsReq\x1a#.payment.ListTenantPayPlatformsResp\x12V\n" +
-	"\x16CreateTenantPayAccount\x12\".payment.CreateTenantPayAccountReq\x1a\x18.payment.AdminCommonResp\x12V\n" +
-	"\x16UpdateTenantPayAccount\x12\".payment.UpdateTenantPayAccountReq\x1a\x18.payment.AdminCommonResp\x12X\n" +
+	"\x16ListTenantPayPlatforms\x12\".payment.ListTenantPayPlatformsReq\x1a#.payment.ListTenantPayPlatformsResp\x12Q\n" +
+	"\x16CreateTenantPayAccount\x12\".payment.CreateTenantPayAccountReq\x1a\x13.payment.CommonResp\x12Q\n" +
+	"\x16UpdateTenantPayAccount\x12\".payment.UpdateTenantPayAccountReq\x1a\x13.payment.CommonResp\x12X\n" +
 	"\x13GetTenantPayAccount\x12\x1f.payment.GetTenantPayAccountReq\x1a .payment.GetTenantPayAccountResp\x12^\n" +
-	"\x15ListTenantPayAccounts\x12!.payment.ListTenantPayAccountsReq\x1a\".payment.ListTenantPayAccountsResp\x12V\n" +
-	"\x16CreateTenantPayChannel\x12\".payment.CreateTenantPayChannelReq\x1a\x18.payment.AdminCommonResp\x12V\n" +
-	"\x16UpdateTenantPayChannel\x12\".payment.UpdateTenantPayChannelReq\x1a\x18.payment.AdminCommonResp\x12X\n" +
+	"\x15ListTenantPayAccounts\x12!.payment.ListTenantPayAccountsReq\x1a\".payment.ListTenantPayAccountsResp\x12Q\n" +
+	"\x16CreateTenantPayChannel\x12\".payment.CreateTenantPayChannelReq\x1a\x13.payment.CommonResp\x12Q\n" +
+	"\x16UpdateTenantPayChannel\x12\".payment.UpdateTenantPayChannelReq\x1a\x13.payment.CommonResp\x12X\n" +
 	"\x13GetTenantPayChannel\x12\x1f.payment.GetTenantPayChannelReq\x1a .payment.GetTenantPayChannelResp\x12^\n" +
-	"\x15ListTenantPayChannels\x12!.payment.ListTenantPayChannelsReq\x1a\".payment.ListTenantPayChannelsResp\x12^\n" +
-	"\x1aCreateTenantPayChannelRule\x12&.payment.CreateTenantPayChannelRuleReq\x1a\x18.payment.AdminCommonResp\x12^\n" +
-	"\x1aUpdateTenantPayChannelRule\x12&.payment.UpdateTenantPayChannelRuleReq\x1a\x18.payment.AdminCommonResp\x12d\n" +
+	"\x15ListTenantPayChannels\x12!.payment.ListTenantPayChannelsReq\x1a\".payment.ListTenantPayChannelsResp\x12Y\n" +
+	"\x1aCreateTenantPayChannelRule\x12&.payment.CreateTenantPayChannelRuleReq\x1a\x13.payment.CommonResp\x12Y\n" +
+	"\x1aUpdateTenantPayChannelRule\x12&.payment.UpdateTenantPayChannelRuleReq\x1a\x13.payment.CommonResp\x12d\n" +
 	"\x17GetTenantPayChannelRule\x12#.payment.GetTenantPayChannelRuleReq\x1a$.payment.GetTenantPayChannelRuleResp\x12j\n" +
 	"\x19ListTenantPayChannelRules\x12%.payment.ListTenantPayChannelRulesReq\x1a&.payment.ListTenantPayChannelRulesResp\x12X\n" +
 	"\x13GetUserRechargeStat\x12\x1f.payment.GetUserRechargeStatReq\x1a .payment.GetUserRechargeStatResp\x12^\n" +
 	"\x15ListUserRechargeStats\x12!.payment.ListUserRechargeStatsReq\x1a\".payment.ListUserRechargeStatsResp\x12U\n" +
 	"\x12ListRechargeOrders\x12\x1e.payment.ListRechargeOrdersReq\x1a\x1f.payment.ListRechargeOrdersResp\x12O\n" +
-	"\x10GetRechargeOrder\x12\x1c.payment.GetRechargeOrderReq\x1a\x1d.payment.GetRechargeOrderResp\x12N\n" +
-	"\x12CloseRechargeOrder\x12\x1e.payment.CloseRechargeOrderReq\x1a\x18.payment.AdminCommonResp\x12f\n" +
-	"\x1eManualMarkRechargeOrderSuccess\x12*.payment.ManualMarkRechargeOrderSuccessReq\x1a\x18.payment.AdminCommonResp\x12@\n" +
-	"\vRetryNotify\x12\x17.payment.RetryNotifyReq\x1a\x18.payment.AdminCommonResp\x12a\n" +
+	"\x10GetRechargeOrder\x12\x1c.payment.GetRechargeOrderReq\x1a\x1d.payment.GetRechargeOrderResp\x12I\n" +
+	"\x12CloseRechargeOrder\x12\x1e.payment.CloseRechargeOrderReq\x1a\x13.payment.CommonResp\x12a\n" +
+	"\x1eManualMarkRechargeOrderSuccess\x12*.payment.ManualMarkRechargeOrderSuccessReq\x1a\x13.payment.CommonResp\x12;\n" +
+	"\vRetryNotify\x12\x17.payment.RetryNotifyReq\x1a\x13.payment.CommonResp\x12a\n" +
 	"\x16ListRechargeNotifyLogs\x12\".payment.ListRechargeNotifyLogsReq\x1a#.payment.ListRechargeNotifyLogsResp\x12[\n" +
 	"\x14GetRechargeNotifyLog\x12 .payment.GetRechargeNotifyLogReq\x1a!.payment.GetRechargeNotifyLogResp\x12U\n" +
 	"\x12ListWithdrawOrders\x12\x1e.payment.ListWithdrawOrdersReq\x1a\x1f.payment.ListWithdrawOrdersResp\x12O\n" +
-	"\x10GetWithdrawOrder\x12\x1c.payment.GetWithdrawOrderReq\x1a\x1d.payment.GetWithdrawOrderResp\x12N\n" +
-	"\x12AuditWithdrawOrder\x12\x1e.payment.AuditWithdrawOrderReq\x1a\x18.payment.AdminCommonResp\x12a\n" +
+	"\x10GetWithdrawOrder\x12\x1c.payment.GetWithdrawOrderReq\x1a\x1d.payment.GetWithdrawOrderResp\x12I\n" +
+	"\x12AuditWithdrawOrder\x12\x1e.payment.AuditWithdrawOrderReq\x1a\x13.payment.CommonResp\x12a\n" +
 	"\x16ListWithdrawNotifyLogs\x12\".payment.ListWithdrawNotifyLogsReq\x1a#.payment.ListWithdrawNotifyLogsResp\x12[\n" +
-	"\x14GetWithdrawNotifyLog\x12 .payment.GetWithdrawNotifyLogReq\x1a!.payment.GetWithdrawNotifyLogResp\x12`\n" +
-	"\x1bCreateCryptoRechargeAddress\x12'.payment.CreateCryptoRechargeAddressReq\x1a\x18.payment.AdminCommonResp\x12`\n" +
-	"\x1bUpdateCryptoRechargeAddress\x12'.payment.UpdateCryptoRechargeAddressReq\x1a\x18.payment.AdminCommonResp\x12g\n" +
+	"\x14GetWithdrawNotifyLog\x12 .payment.GetWithdrawNotifyLogReq\x1a!.payment.GetWithdrawNotifyLogResp\x12[\n" +
+	"\x1bCreateCryptoRechargeAddress\x12'.payment.CreateCryptoRechargeAddressReq\x1a\x13.payment.CommonResp\x12[\n" +
+	"\x1bUpdateCryptoRechargeAddress\x12'.payment.UpdateCryptoRechargeAddressReq\x1a\x13.payment.CommonResp\x12g\n" +
 	"\x18GetCryptoRechargeAddress\x12$.payment.GetCryptoRechargeAddressReq\x1a%.payment.GetCryptoRechargeAddressResp\x12p\n" +
-	"\x1bListCryptoRechargeAddresses\x12'.payment.ListCryptoRechargeAddressesReq\x1a(.payment.ListCryptoRechargeAddressesResp\x12\\\n" +
-	"\x19CreateCryptoWalletAccount\x12%.payment.CreateCryptoWalletAccountReq\x1a\x18.payment.AdminCommonResp\x12\\\n" +
-	"\x19UpdateCryptoWalletAccount\x12%.payment.UpdateCryptoWalletAccountReq\x1a\x18.payment.AdminCommonResp\x12a\n" +
+	"\x1bListCryptoRechargeAddresses\x12'.payment.ListCryptoRechargeAddressesReq\x1a(.payment.ListCryptoRechargeAddressesResp\x12W\n" +
+	"\x19CreateCryptoWalletAccount\x12%.payment.CreateCryptoWalletAccountReq\x1a\x13.payment.CommonResp\x12W\n" +
+	"\x19UpdateCryptoWalletAccount\x12%.payment.UpdateCryptoWalletAccountReq\x1a\x13.payment.CommonResp\x12a\n" +
 	"\x16GetCryptoWalletAccount\x12\".payment.GetCryptoWalletAccountReq\x1a#.payment.GetCryptoWalletAccountResp\x12g\n" +
-	"\x18ListCryptoWalletAccounts\x12$.payment.ListCryptoWalletAccountsReq\x1a%.payment.ListCryptoWalletAccountsResp\x12V\n" +
-	"\x16CreateCryptoRechargeTx\x12\".payment.CreateCryptoRechargeTxReq\x1a\x18.payment.AdminCommonResp\x12V\n" +
-	"\x16UpdateCryptoRechargeTx\x12\".payment.UpdateCryptoRechargeTxReq\x1a\x18.payment.AdminCommonResp\x12X\n" +
+	"\x18ListCryptoWalletAccounts\x12$.payment.ListCryptoWalletAccountsReq\x1a%.payment.ListCryptoWalletAccountsResp\x12Q\n" +
+	"\x16CreateCryptoRechargeTx\x12\".payment.CreateCryptoRechargeTxReq\x1a\x13.payment.CommonResp\x12Q\n" +
+	"\x16UpdateCryptoRechargeTx\x12\".payment.UpdateCryptoRechargeTxReq\x1a\x13.payment.CommonResp\x12X\n" +
 	"\x13GetCryptoRechargeTx\x12\x1f.payment.GetCryptoRechargeTxReq\x1a .payment.GetCryptoRechargeTxResp\x12^\n" +
 	"\x15ListCryptoRechargeTxs\x12!.payment.ListCryptoRechargeTxsReq\x1a\".payment.ListCryptoRechargeTxsRespB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
 
@@ -8831,7 +8831,7 @@ func file_proto_payment_payment_proto_rawDescGZIP() []byte {
 
 var file_proto_payment_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 113)
 var file_proto_payment_payment_proto_goTypes = []any{
-	(*AppCommonResp)(nil),                     // 0: payment.AppCommonResp
+	(*UserCommonResp)(nil),                    // 0: payment.UserCommonResp
 	(*GetMyRechargeStatReq)(nil),              // 1: payment.GetMyRechargeStatReq
 	(*GetMyRechargeStatResp)(nil),             // 2: payment.GetMyRechargeStatResp
 	(*ListAvailableRechargeChannelsReq)(nil),  // 3: payment.ListAvailableRechargeChannelsReq
@@ -8862,7 +8862,7 @@ var file_proto_payment_payment_proto_goTypes = []any{
 	(*ListMyCryptoRechargeTxsResp)(nil),       // 28: payment.ListMyCryptoRechargeTxsResp
 	(*GetMyCryptoRechargeTxReq)(nil),          // 29: payment.GetMyCryptoRechargeTxReq
 	(*GetMyCryptoRechargeTxResp)(nil),         // 30: payment.GetMyCryptoRechargeTxResp
-	(*AdminCommonResp)(nil),                   // 31: payment.AdminCommonResp
+	(*CommonResp)(nil),                        // 31: payment.CommonResp
 	(*CreatePayPlatformReq)(nil),              // 32: payment.CreatePayPlatformReq
 	(*UpdatePayPlatformReq)(nil),              // 33: payment.UpdatePayPlatformReq
 	(*GetPayPlatformReq)(nil),                 // 34: payment.GetPayPlatformReq
@@ -8941,7 +8941,7 @@ var file_proto_payment_payment_proto_goTypes = []any{
 	(*GetCryptoRechargeTxResp)(nil),           // 107: payment.GetCryptoRechargeTxResp
 	(*ListCryptoRechargeTxsReq)(nil),          // 108: payment.ListCryptoRechargeTxsReq
 	(*ListCryptoRechargeTxsResp)(nil),         // 109: payment.ListCryptoRechargeTxsResp
-	(*AdminEmpty)(nil),                        // 110: payment.AdminEmpty
+	(*Empty)(nil),                             // 110: payment.Empty
 	(*PayPlatformItem)(nil),                   // 111: payment.PayPlatformItem
 	(*PayPlatformsResp)(nil),                  // 112: payment.PayPlatformsResp
 	(*common.RespBase)(nil),                   // 113: common.RespBase
@@ -8980,7 +8980,7 @@ var file_proto_payment_payment_proto_goTypes = []any{
 	(*CryptoWalletAccount)(nil),               // 146: payment.CryptoWalletAccount
 }
 var file_proto_payment_payment_proto_depIdxs = []int32{
-	113, // 0: payment.AppCommonResp.base:type_name -> common.RespBase
+	113, // 0: payment.UserCommonResp.base:type_name -> common.RespBase
 	113, // 1: payment.GetMyRechargeStatResp.base:type_name -> common.RespBase
 	114, // 2: payment.GetMyRechargeStatResp.data:type_name -> payment.UserRechargeStat
 	115, // 3: payment.ListAvailableRechargeChannelsReq.client_type:type_name -> payment.ClientType
@@ -9026,7 +9026,7 @@ var file_proto_payment_payment_proto_depIdxs = []int32{
 	125, // 43: payment.ListMyCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
 	113, // 44: payment.GetMyCryptoRechargeTxResp.base:type_name -> common.RespBase
 	125, // 45: payment.GetMyCryptoRechargeTxResp.data:type_name -> payment.CryptoRechargeTx
-	113, // 46: payment.AdminCommonResp.base:type_name -> common.RespBase
+	113, // 46: payment.CommonResp.base:type_name -> common.RespBase
 	126, // 47: payment.CreatePayPlatformReq.platform_type:type_name -> payment.PlatformType
 	127, // 48: payment.CreatePayPlatformReq.enabled:type_name -> common.Enable
 	126, // 49: payment.UpdatePayPlatformReq.platform_type:type_name -> payment.PlatformType
@@ -9182,7 +9182,7 @@ var file_proto_payment_payment_proto_depIdxs = []int32{
 	25,  // 199: payment.PaymentApp.ListMyCryptoRechargeAddresses:input_type -> payment.ListMyCryptoRechargeAddressesReq
 	27,  // 200: payment.PaymentApp.ListMyCryptoRechargeTxs:input_type -> payment.ListMyCryptoRechargeTxsReq
 	29,  // 201: payment.PaymentApp.GetMyCryptoRechargeTx:input_type -> payment.GetMyCryptoRechargeTxReq
-	110, // 202: payment.PaymentAdmin.GetPayPlatforms:input_type -> payment.AdminEmpty
+	110, // 202: payment.PaymentAdmin.GetPayPlatforms:input_type -> payment.Empty
 	32,  // 203: payment.PaymentAdmin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
 	33,  // 204: payment.PaymentAdmin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
 	34,  // 205: payment.PaymentAdmin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
@@ -9239,7 +9239,7 @@ var file_proto_payment_payment_proto_depIdxs = []int32{
 	8,   // 256: payment.PaymentApp.CreateCryptoRechargeOrder:output_type -> payment.CreateCryptoRechargeOrderResp
 	11,  // 257: payment.PaymentApp.GetMyRechargeOrder:output_type -> payment.GetMyRechargeOrderResp
 	13,  // 258: payment.PaymentApp.ListMyRechargeOrders:output_type -> payment.ListMyRechargeOrdersResp
-	0,   // 259: payment.PaymentApp.CancelMyRechargeOrder:output_type -> payment.AppCommonResp
+	0,   // 259: payment.PaymentApp.CancelMyRechargeOrder:output_type -> payment.UserCommonResp
 	16,  // 260: payment.PaymentApp.QueryMyRechargeOrderStatus:output_type -> payment.QueryMyRechargeOrderStatusResp
 	18,  // 261: payment.PaymentApp.CreateWithdrawOrder:output_type -> payment.CreateWithdrawOrderResp
 	20,  // 262: payment.PaymentApp.ListMyWithdrawOrders:output_type -> payment.ListMyWithdrawOrdersResp
@@ -9249,54 +9249,54 @@ var file_proto_payment_payment_proto_depIdxs = []int32{
 	28,  // 266: payment.PaymentApp.ListMyCryptoRechargeTxs:output_type -> payment.ListMyCryptoRechargeTxsResp
 	30,  // 267: payment.PaymentApp.GetMyCryptoRechargeTx:output_type -> payment.GetMyCryptoRechargeTxResp
 	112, // 268: payment.PaymentAdmin.GetPayPlatforms:output_type -> payment.PayPlatformsResp
-	31,  // 269: payment.PaymentAdmin.CreatePayPlatform:output_type -> payment.AdminCommonResp
-	31,  // 270: payment.PaymentAdmin.UpdatePayPlatform:output_type -> payment.AdminCommonResp
+	31,  // 269: payment.PaymentAdmin.CreatePayPlatform:output_type -> payment.CommonResp
+	31,  // 270: payment.PaymentAdmin.UpdatePayPlatform:output_type -> payment.CommonResp
 	35,  // 271: payment.PaymentAdmin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
 	37,  // 272: payment.PaymentAdmin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
-	31,  // 273: payment.PaymentAdmin.CreatePayProduct:output_type -> payment.AdminCommonResp
-	31,  // 274: payment.PaymentAdmin.UpdatePayProduct:output_type -> payment.AdminCommonResp
+	31,  // 273: payment.PaymentAdmin.CreatePayProduct:output_type -> payment.CommonResp
+	31,  // 274: payment.PaymentAdmin.UpdatePayProduct:output_type -> payment.CommonResp
 	41,  // 275: payment.PaymentAdmin.GetPayProduct:output_type -> payment.GetPayProductResp
 	43,  // 276: payment.PaymentAdmin.ListPayProducts:output_type -> payment.ListPayProductsResp
-	31,  // 277: payment.PaymentAdmin.OpenTenantPayPlatform:output_type -> payment.AdminCommonResp
-	31,  // 278: payment.PaymentAdmin.UpdateTenantPayPlatform:output_type -> payment.AdminCommonResp
+	31,  // 277: payment.PaymentAdmin.OpenTenantPayPlatform:output_type -> payment.CommonResp
+	31,  // 278: payment.PaymentAdmin.UpdateTenantPayPlatform:output_type -> payment.CommonResp
 	47,  // 279: payment.PaymentAdmin.GetTenantPayPlatform:output_type -> payment.GetTenantPayPlatformResp
 	49,  // 280: payment.PaymentAdmin.ListTenantPayPlatforms:output_type -> payment.ListTenantPayPlatformsResp
-	31,  // 281: payment.PaymentAdmin.CreateTenantPayAccount:output_type -> payment.AdminCommonResp
-	31,  // 282: payment.PaymentAdmin.UpdateTenantPayAccount:output_type -> payment.AdminCommonResp
+	31,  // 281: payment.PaymentAdmin.CreateTenantPayAccount:output_type -> payment.CommonResp
+	31,  // 282: payment.PaymentAdmin.UpdateTenantPayAccount:output_type -> payment.CommonResp
 	53,  // 283: payment.PaymentAdmin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
 	55,  // 284: payment.PaymentAdmin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
-	31,  // 285: payment.PaymentAdmin.CreateTenantPayChannel:output_type -> payment.AdminCommonResp
-	31,  // 286: payment.PaymentAdmin.UpdateTenantPayChannel:output_type -> payment.AdminCommonResp
+	31,  // 285: payment.PaymentAdmin.CreateTenantPayChannel:output_type -> payment.CommonResp
+	31,  // 286: payment.PaymentAdmin.UpdateTenantPayChannel:output_type -> payment.CommonResp
 	59,  // 287: payment.PaymentAdmin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
 	61,  // 288: payment.PaymentAdmin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
-	31,  // 289: payment.PaymentAdmin.CreateTenantPayChannelRule:output_type -> payment.AdminCommonResp
-	31,  // 290: payment.PaymentAdmin.UpdateTenantPayChannelRule:output_type -> payment.AdminCommonResp
+	31,  // 289: payment.PaymentAdmin.CreateTenantPayChannelRule:output_type -> payment.CommonResp
+	31,  // 290: payment.PaymentAdmin.UpdateTenantPayChannelRule:output_type -> payment.CommonResp
 	65,  // 291: payment.PaymentAdmin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
 	67,  // 292: payment.PaymentAdmin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
 	69,  // 293: payment.PaymentAdmin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
 	71,  // 294: payment.PaymentAdmin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
 	75,  // 295: payment.PaymentAdmin.ListRechargeOrders:output_type -> payment.ListRechargeOrdersResp
 	73,  // 296: payment.PaymentAdmin.GetRechargeOrder:output_type -> payment.GetRechargeOrderResp
-	31,  // 297: payment.PaymentAdmin.CloseRechargeOrder:output_type -> payment.AdminCommonResp
-	31,  // 298: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:output_type -> payment.AdminCommonResp
-	31,  // 299: payment.PaymentAdmin.RetryNotify:output_type -> payment.AdminCommonResp
+	31,  // 297: payment.PaymentAdmin.CloseRechargeOrder:output_type -> payment.CommonResp
+	31,  // 298: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:output_type -> payment.CommonResp
+	31,  // 299: payment.PaymentAdmin.RetryNotify:output_type -> payment.CommonResp
 	82,  // 300: payment.PaymentAdmin.ListRechargeNotifyLogs:output_type -> payment.ListRechargeNotifyLogsResp
 	80,  // 301: payment.PaymentAdmin.GetRechargeNotifyLog:output_type -> payment.GetRechargeNotifyLogResp
 	84,  // 302: payment.PaymentAdmin.ListWithdrawOrders:output_type -> payment.ListWithdrawOrdersResp
 	86,  // 303: payment.PaymentAdmin.GetWithdrawOrder:output_type -> payment.GetWithdrawOrderResp
-	31,  // 304: payment.PaymentAdmin.AuditWithdrawOrder:output_type -> payment.AdminCommonResp
+	31,  // 304: payment.PaymentAdmin.AuditWithdrawOrder:output_type -> payment.CommonResp
 	89,  // 305: payment.PaymentAdmin.ListWithdrawNotifyLogs:output_type -> payment.ListWithdrawNotifyLogsResp
 	91,  // 306: payment.PaymentAdmin.GetWithdrawNotifyLog:output_type -> payment.GetWithdrawNotifyLogResp
-	31,  // 307: payment.PaymentAdmin.CreateCryptoRechargeAddress:output_type -> payment.AdminCommonResp
-	31,  // 308: payment.PaymentAdmin.UpdateCryptoRechargeAddress:output_type -> payment.AdminCommonResp
+	31,  // 307: payment.PaymentAdmin.CreateCryptoRechargeAddress:output_type -> payment.CommonResp
+	31,  // 308: payment.PaymentAdmin.UpdateCryptoRechargeAddress:output_type -> payment.CommonResp
 	95,  // 309: payment.PaymentAdmin.GetCryptoRechargeAddress:output_type -> payment.GetCryptoRechargeAddressResp
 	97,  // 310: payment.PaymentAdmin.ListCryptoRechargeAddresses:output_type -> payment.ListCryptoRechargeAddressesResp
-	31,  // 311: payment.PaymentAdmin.CreateCryptoWalletAccount:output_type -> payment.AdminCommonResp
-	31,  // 312: payment.PaymentAdmin.UpdateCryptoWalletAccount:output_type -> payment.AdminCommonResp
+	31,  // 311: payment.PaymentAdmin.CreateCryptoWalletAccount:output_type -> payment.CommonResp
+	31,  // 312: payment.PaymentAdmin.UpdateCryptoWalletAccount:output_type -> payment.CommonResp
 	101, // 313: payment.PaymentAdmin.GetCryptoWalletAccount:output_type -> payment.GetCryptoWalletAccountResp
 	103, // 314: payment.PaymentAdmin.ListCryptoWalletAccounts:output_type -> payment.ListCryptoWalletAccountsResp
-	31,  // 315: payment.PaymentAdmin.CreateCryptoRechargeTx:output_type -> payment.AdminCommonResp
-	31,  // 316: payment.PaymentAdmin.UpdateCryptoRechargeTx:output_type -> payment.AdminCommonResp
+	31,  // 315: payment.PaymentAdmin.CreateCryptoRechargeTx:output_type -> payment.CommonResp
+	31,  // 316: payment.PaymentAdmin.UpdateCryptoRechargeTx:output_type -> payment.CommonResp
 	107, // 317: payment.PaymentAdmin.GetCryptoRechargeTx:output_type -> payment.GetCryptoRechargeTxResp
 	109, // 318: payment.PaymentAdmin.ListCryptoRechargeTxs:output_type -> payment.ListCryptoRechargeTxsResp
 	253, // [253:319] is the sub-list for method output_type

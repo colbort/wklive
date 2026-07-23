@@ -26,14 +26,14 @@ func NewGetChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 }
 
 // 查询会话详情
-func (l *GetChatSessionLogic) GetChatSession(in *chat.GetChatSessionReq) (*chat.AdminChatSessionResp, error) {
+func (l *GetChatSessionLogic) GetChatSession(in *chat.GetChatSessionReq) (*chat.ChatSessionResp, error) {
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	session, err := ih.GetSession(l.ctx, l.svcCtx, merchantID, in.GetSessionNo(), false)
 	if err != nil {
-		return &chat.AdminChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, false)}, nil
+	return &chat.ChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, false)}, nil
 }

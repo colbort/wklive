@@ -30,7 +30,7 @@ func (s *ChatAppServer) AuthChatMerchant(ctx context.Context, in *chat.AuthChatM
 }
 
 // 获取chat-ui配置
-func (s *ChatAppServer) GetChatConfig(ctx context.Context, in *chat.GetAppChatConfigReq) (*chat.AppChatConfigResp, error) {
+func (s *ChatAppServer) GetChatConfig(ctx context.Context, in *chat.GetAppChatConfigReq) (*chat.UserChatConfigResp, error) {
 	l := chatapplogic.NewGetChatConfigLogic(ctx, s.svcCtx)
 	return l.GetChatConfig(in)
 }
@@ -48,49 +48,49 @@ func (s *ChatAppServer) GenerateChatSessionNo(ctx context.Context, in *chat.Gene
 }
 
 // 按商户和用户查询会话
-func (s *ChatAppServer) GetChatSessionByUser(ctx context.Context, in *chat.GetChatSessionByUserReq) (*chat.AppChatSessionResp, error) {
+func (s *ChatAppServer) GetChatSessionByUser(ctx context.Context, in *chat.GetChatSessionByUserReq) (*chat.UserChatSessionResp, error) {
 	l := chatapplogic.NewGetChatSessionByUserLogic(ctx, s.svcCtx)
 	return l.GetChatSessionByUser(in)
 }
 
 // 发送用户消息
-func (s *ChatAppServer) SendUserMessage(ctx context.Context, in *chat.SendUserMessageReq) (*chat.AppChatMessageResp, error) {
+func (s *ChatAppServer) SendUserMessage(ctx context.Context, in *chat.SendUserMessageReq) (*chat.UserChatMessageResp, error) {
 	l := chatapplogic.NewSendUserMessageLogic(ctx, s.svcCtx)
 	return l.SendUserMessage(in)
 }
 
 // 发送用户输入状态
-func (s *ChatAppServer) SendUserTyping(ctx context.Context, in *chat.SendUserTypingReq) (*chat.AppCommonResp, error) {
+func (s *ChatAppServer) SendUserTyping(ctx context.Context, in *chat.SendUserTypingReq) (*chat.UserCommonResp, error) {
 	l := chatapplogic.NewSendUserTypingLogic(ctx, s.svcCtx)
 	return l.SendUserTyping(in)
 }
 
 // 用户侧消息删除/撤回
-func (s *ChatAppServer) OperateUserMessage(ctx context.Context, in *chat.OperateUserMessageReq) (*chat.AppCommonResp, error) {
+func (s *ChatAppServer) OperateUserMessage(ctx context.Context, in *chat.OperateUserMessageReq) (*chat.UserCommonResp, error) {
 	l := chatapplogic.NewOperateUserMessageLogic(ctx, s.svcCtx)
 	return l.OperateUserMessage(in)
 }
 
 // 查询会话消息
-func (s *ChatAppServer) ListMyChatMessages(ctx context.Context, in *chat.ListMyChatMessagesReq) (*chat.AppListChatMessagesResp, error) {
+func (s *ChatAppServer) ListMyChatMessages(ctx context.Context, in *chat.ListMyChatMessagesReq) (*chat.ListChatMessagesResp, error) {
 	l := chatapplogic.NewListMyChatMessagesLogic(ctx, s.svcCtx)
 	return l.ListMyChatMessages(in)
 }
 
 // 关闭我的会话
-func (s *ChatAppServer) CloseMyChatSession(ctx context.Context, in *chat.CloseMyChatSessionReq) (*chat.AppChatSessionResp, error) {
+func (s *ChatAppServer) CloseMyChatSession(ctx context.Context, in *chat.CloseMyChatSessionReq) (*chat.UserChatSessionResp, error) {
 	l := chatapplogic.NewCloseMyChatSessionLogic(ctx, s.svcCtx)
 	return l.CloseMyChatSession(in)
 }
 
 // 提交会话评价
-func (s *ChatAppServer) SubmitChatSatisfaction(ctx context.Context, in *chat.SubmitChatSatisfactionReq) (*chat.AppChatSatisfactionResp, error) {
+func (s *ChatAppServer) SubmitChatSatisfaction(ctx context.Context, in *chat.SubmitChatSatisfactionReq) (*chat.ChatSatisfactionResp, error) {
 	l := chatapplogic.NewSubmitChatSatisfactionLogic(ctx, s.svcCtx)
 	return l.SubmitChatSatisfaction(in)
 }
 
 // 订阅客服消息事件流
-func (s *ChatAppServer) AppSubscribeStream(in *chat.AppChatSubscribeRequest, stream chat.ChatApp_AppSubscribeStreamServer) error {
-	l := chatapplogic.NewAppSubscribeStreamLogic(stream.Context(), s.svcCtx)
-	return l.AppSubscribeStream(in, stream)
+func (s *ChatAppServer) SubscribeStream(in *chat.SubscribeRequest, stream chat.ChatApp_SubscribeStreamServer) error {
+	l := chatapplogic.NewSubscribeStreamLogic(stream.Context(), s.svcCtx)
+	return l.SubscribeStream(in, stream)
 }

@@ -24,19 +24,19 @@ func NewPaymentAdminServer(svcCtx *svc.ServiceContext) *PaymentAdminServer {
 }
 
 // 获取系统支持的平台
-func (s *PaymentAdminServer) GetPayPlatforms(ctx context.Context, in *payment.AdminEmpty) (*payment.PayPlatformsResp, error) {
+func (s *PaymentAdminServer) GetPayPlatforms(ctx context.Context, in *payment.Empty) (*payment.PayPlatformsResp, error) {
 	l := paymentadminlogic.NewGetPayPlatformsLogic(ctx, s.svcCtx)
 	return l.GetPayPlatforms(in)
 }
 
 // 创建平台
-func (s *PaymentAdminServer) CreatePayPlatform(ctx context.Context, in *payment.CreatePayPlatformReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) CreatePayPlatform(ctx context.Context, in *payment.CreatePayPlatformReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewCreatePayPlatformLogic(ctx, s.svcCtx)
 	return l.CreatePayPlatform(in)
 }
 
 // 更新平台
-func (s *PaymentAdminServer) UpdatePayPlatform(ctx context.Context, in *payment.UpdatePayPlatformReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) UpdatePayPlatform(ctx context.Context, in *payment.UpdatePayPlatformReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewUpdatePayPlatformLogic(ctx, s.svcCtx)
 	return l.UpdatePayPlatform(in)
 }
@@ -54,13 +54,13 @@ func (s *PaymentAdminServer) ListPayPlatforms(ctx context.Context, in *payment.L
 }
 
 // 创建产品
-func (s *PaymentAdminServer) CreatePayProduct(ctx context.Context, in *payment.CreatePayProductReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) CreatePayProduct(ctx context.Context, in *payment.CreatePayProductReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewCreatePayProductLogic(ctx, s.svcCtx)
 	return l.CreatePayProduct(in)
 }
 
 // 更新产品
-func (s *PaymentAdminServer) UpdatePayProduct(ctx context.Context, in *payment.UpdatePayProductReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) UpdatePayProduct(ctx context.Context, in *payment.UpdatePayProductReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewUpdatePayProductLogic(ctx, s.svcCtx)
 	return l.UpdatePayProduct(in)
 }
@@ -78,13 +78,13 @@ func (s *PaymentAdminServer) ListPayProducts(ctx context.Context, in *payment.Li
 }
 
 // 租户开通平台
-func (s *PaymentAdminServer) OpenTenantPayPlatform(ctx context.Context, in *payment.OpenTenantPayPlatformReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) OpenTenantPayPlatform(ctx context.Context, in *payment.OpenTenantPayPlatformReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewOpenTenantPayPlatformLogic(ctx, s.svcCtx)
 	return l.OpenTenantPayPlatform(in)
 }
 
 // 更新租户开通平台
-func (s *PaymentAdminServer) UpdateTenantPayPlatform(ctx context.Context, in *payment.UpdateTenantPayPlatformReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) UpdateTenantPayPlatform(ctx context.Context, in *payment.UpdateTenantPayPlatformReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewUpdateTenantPayPlatformLogic(ctx, s.svcCtx)
 	return l.UpdateTenantPayPlatform(in)
 }
@@ -102,13 +102,13 @@ func (s *PaymentAdminServer) ListTenantPayPlatforms(ctx context.Context, in *pay
 }
 
 // 租户支付账号
-func (s *PaymentAdminServer) CreateTenantPayAccount(ctx context.Context, in *payment.CreateTenantPayAccountReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) CreateTenantPayAccount(ctx context.Context, in *payment.CreateTenantPayAccountReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewCreateTenantPayAccountLogic(ctx, s.svcCtx)
 	return l.CreateTenantPayAccount(in)
 }
 
 // 更新租户支付账号
-func (s *PaymentAdminServer) UpdateTenantPayAccount(ctx context.Context, in *payment.UpdateTenantPayAccountReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) UpdateTenantPayAccount(ctx context.Context, in *payment.UpdateTenantPayAccountReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewUpdateTenantPayAccountLogic(ctx, s.svcCtx)
 	return l.UpdateTenantPayAccount(in)
 }
@@ -126,13 +126,13 @@ func (s *PaymentAdminServer) ListTenantPayAccounts(ctx context.Context, in *paym
 }
 
 // 创建租户支付通道
-func (s *PaymentAdminServer) CreateTenantPayChannel(ctx context.Context, in *payment.CreateTenantPayChannelReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) CreateTenantPayChannel(ctx context.Context, in *payment.CreateTenantPayChannelReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewCreateTenantPayChannelLogic(ctx, s.svcCtx)
 	return l.CreateTenantPayChannel(in)
 }
 
 // 更新租户支付通道
-func (s *PaymentAdminServer) UpdateTenantPayChannel(ctx context.Context, in *payment.UpdateTenantPayChannelReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) UpdateTenantPayChannel(ctx context.Context, in *payment.UpdateTenantPayChannelReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewUpdateTenantPayChannelLogic(ctx, s.svcCtx)
 	return l.UpdateTenantPayChannel(in)
 }
@@ -150,13 +150,13 @@ func (s *PaymentAdminServer) ListTenantPayChannels(ctx context.Context, in *paym
 }
 
 // 创建通道规则
-func (s *PaymentAdminServer) CreateTenantPayChannelRule(ctx context.Context, in *payment.CreateTenantPayChannelRuleReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) CreateTenantPayChannelRule(ctx context.Context, in *payment.CreateTenantPayChannelRuleReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewCreateTenantPayChannelRuleLogic(ctx, s.svcCtx)
 	return l.CreateTenantPayChannelRule(in)
 }
 
 // 更新通道规则
-func (s *PaymentAdminServer) UpdateTenantPayChannelRule(ctx context.Context, in *payment.UpdateTenantPayChannelRuleReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) UpdateTenantPayChannelRule(ctx context.Context, in *payment.UpdateTenantPayChannelRuleReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewUpdateTenantPayChannelRuleLogic(ctx, s.svcCtx)
 	return l.UpdateTenantPayChannelRule(in)
 }
@@ -198,19 +198,19 @@ func (s *PaymentAdminServer) GetRechargeOrder(ctx context.Context, in *payment.G
 }
 
 // 关闭充值订单
-func (s *PaymentAdminServer) CloseRechargeOrder(ctx context.Context, in *payment.CloseRechargeOrderReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) CloseRechargeOrder(ctx context.Context, in *payment.CloseRechargeOrderReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewCloseRechargeOrderLogic(ctx, s.svcCtx)
 	return l.CloseRechargeOrder(in)
 }
 
 // 人工标记充值订单支付成功
-func (s *PaymentAdminServer) ManualMarkRechargeOrderSuccess(ctx context.Context, in *payment.ManualMarkRechargeOrderSuccessReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) ManualMarkRechargeOrderSuccess(ctx context.Context, in *payment.ManualMarkRechargeOrderSuccessReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewManualMarkRechargeOrderSuccessLogic(ctx, s.svcCtx)
 	return l.ManualMarkRechargeOrderSuccess(in)
 }
 
 // 重试回调
-func (s *PaymentAdminServer) RetryNotify(ctx context.Context, in *payment.RetryNotifyReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) RetryNotify(ctx context.Context, in *payment.RetryNotifyReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewRetryNotifyLogic(ctx, s.svcCtx)
 	return l.RetryNotify(in)
 }
@@ -240,7 +240,7 @@ func (s *PaymentAdminServer) GetWithdrawOrder(ctx context.Context, in *payment.G
 }
 
 // 审核提现订单
-func (s *PaymentAdminServer) AuditWithdrawOrder(ctx context.Context, in *payment.AuditWithdrawOrderReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) AuditWithdrawOrder(ctx context.Context, in *payment.AuditWithdrawOrderReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewAuditWithdrawOrderLogic(ctx, s.svcCtx)
 	return l.AuditWithdrawOrder(in)
 }
@@ -258,13 +258,13 @@ func (s *PaymentAdminServer) GetWithdrawNotifyLog(ctx context.Context, in *payme
 }
 
 // 创建链上充值地址
-func (s *PaymentAdminServer) CreateCryptoRechargeAddress(ctx context.Context, in *payment.CreateCryptoRechargeAddressReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) CreateCryptoRechargeAddress(ctx context.Context, in *payment.CreateCryptoRechargeAddressReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewCreateCryptoRechargeAddressLogic(ctx, s.svcCtx)
 	return l.CreateCryptoRechargeAddress(in)
 }
 
 // 更新链上充值地址
-func (s *PaymentAdminServer) UpdateCryptoRechargeAddress(ctx context.Context, in *payment.UpdateCryptoRechargeAddressReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) UpdateCryptoRechargeAddress(ctx context.Context, in *payment.UpdateCryptoRechargeAddressReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewUpdateCryptoRechargeAddressLogic(ctx, s.svcCtx)
 	return l.UpdateCryptoRechargeAddress(in)
 }
@@ -282,13 +282,13 @@ func (s *PaymentAdminServer) ListCryptoRechargeAddresses(ctx context.Context, in
 }
 
 // 创建链上钱包账号
-func (s *PaymentAdminServer) CreateCryptoWalletAccount(ctx context.Context, in *payment.CreateCryptoWalletAccountReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) CreateCryptoWalletAccount(ctx context.Context, in *payment.CreateCryptoWalletAccountReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewCreateCryptoWalletAccountLogic(ctx, s.svcCtx)
 	return l.CreateCryptoWalletAccount(in)
 }
 
 // 更新链上钱包账号
-func (s *PaymentAdminServer) UpdateCryptoWalletAccount(ctx context.Context, in *payment.UpdateCryptoWalletAccountReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) UpdateCryptoWalletAccount(ctx context.Context, in *payment.UpdateCryptoWalletAccountReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewUpdateCryptoWalletAccountLogic(ctx, s.svcCtx)
 	return l.UpdateCryptoWalletAccount(in)
 }
@@ -306,13 +306,13 @@ func (s *PaymentAdminServer) ListCryptoWalletAccounts(ctx context.Context, in *p
 }
 
 // 创建链上充值交易
-func (s *PaymentAdminServer) CreateCryptoRechargeTx(ctx context.Context, in *payment.CreateCryptoRechargeTxReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) CreateCryptoRechargeTx(ctx context.Context, in *payment.CreateCryptoRechargeTxReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewCreateCryptoRechargeTxLogic(ctx, s.svcCtx)
 	return l.CreateCryptoRechargeTx(in)
 }
 
 // 更新链上充值交易
-func (s *PaymentAdminServer) UpdateCryptoRechargeTx(ctx context.Context, in *payment.UpdateCryptoRechargeTxReq) (*payment.AdminCommonResp, error) {
+func (s *PaymentAdminServer) UpdateCryptoRechargeTx(ctx context.Context, in *payment.UpdateCryptoRechargeTxReq) (*payment.CommonResp, error) {
 	l := paymentadminlogic.NewUpdateCryptoRechargeTxLogic(ctx, s.svcCtx)
 	return l.UpdateCryptoRechargeTx(in)
 }

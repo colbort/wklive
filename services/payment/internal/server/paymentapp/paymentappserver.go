@@ -60,7 +60,7 @@ func (s *PaymentAppServer) ListMyRechargeOrders(ctx context.Context, in *payment
 }
 
 // 取消未支付订单
-func (s *PaymentAppServer) CancelMyRechargeOrder(ctx context.Context, in *payment.CancelMyRechargeOrderReq) (*payment.AppCommonResp, error) {
+func (s *PaymentAppServer) CancelMyRechargeOrder(ctx context.Context, in *payment.CancelMyRechargeOrderReq) (*payment.UserCommonResp, error) {
 	l := paymentapplogic.NewCancelMyRechargeOrderLogic(ctx, s.svcCtx)
 	return l.CancelMyRechargeOrder(in)
 }

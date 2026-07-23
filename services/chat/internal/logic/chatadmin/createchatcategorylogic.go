@@ -30,20 +30,20 @@ func NewCreateChatCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // 创建问题分类
-func (l *CreateChatCategoryLogic) CreateChatCategory(in *chat.CreateChatCategoryReq) (*chat.AdminChatCategoryResp, error) {
+func (l *CreateChatCategoryLogic) CreateChatCategory(in *chat.CreateChatCategoryReq) (*chat.ChatCategoryResp, error) {
 	categoryCode := strings.TrimSpace(in.GetCategoryCode())
 	categoryName := strings.TrimSpace(in.GetCategoryName())
 	if categoryCode == "" || categoryName == "" {
-		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(400, "category_code and category_name are required")}, nil
+		return &chat.ChatCategoryResp{Base: helper.ErrResp(400, "category_code and category_name are required")}, nil
 	}
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if _, err := l.svcCtx.ChatCategoryModel.FindOneByMerchantIdCategoryCode(l.ctx, merchantID, categoryCode); err == nil {
-		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(400, "category_code already exists")}, nil
+		return &chat.ChatCategoryResp{Base: helper.ErrResp(400, "category_code already exists")}, nil
 	} else if err != models.ErrNotFound {
-		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	enabled := int64(in.GetEnabled())
 	if enabled == 0 {
@@ -64,10 +64,10 @@ func (l *CreateChatCategoryLogic) CreateChatCategory(in *chat.CreateChatCategory
 	}
 	result, err := l.svcCtx.ChatCategoryModel.Insert(l.ctx, data)
 	if err != nil {
-		return &chat.AdminChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatCategoryResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if id, err := result.LastInsertId(); err == nil {
 		data.Id = id
 	}
-	return &chat.AdminChatCategoryResp{Base: helper.OkResp(), Data: ih.ToProtoChatCategory(data)}, nil
+	return &chat.ChatCategoryResp{Base: helper.OkResp(), Data: ih.ToProtoChatCategory(data)}, nil
 }

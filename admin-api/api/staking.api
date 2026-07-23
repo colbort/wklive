@@ -118,7 +118,7 @@ type StakeRedeemLog {
 	updateTimes  int64  `json:"updateTimes"`
 }
 
-type AdminProductListReq {
+type ProductListReq {
 	PageReq
 	tenantId    int64  `form:"tenantId,optional"`
 	productNo   string `form:"productNo,optional"`
@@ -128,22 +128,22 @@ type AdminProductListReq {
 	status      int64  `form:"status,optional"`
 }
 
-type AdminProductListResp {
+type ProductListResp {
 	RespBase
 	data []StakeProduct `json:"data"`
 }
 
-type AdminProductDetailReq {
+type ProductDetailReq {
 	tenantId int64 `form:"tenantId,optional"`
 	id       int64 `form:"id"`
 }
 
-type AdminProductDetailResp {
+type ProductDetailResp {
 	RespBase
 	data StakeProduct `json:"data"`
 }
 
-type AdminProductCreateReq {
+type ProductCreateReq {
 	tenantId         int64  `json:"tenantId"`
 	productNo        string `json:"productNo"`
 	productName      string `json:"productName"`
@@ -169,12 +169,12 @@ type AdminProductCreateReq {
 	operatorUid      int64  `json:"operatorUid"`
 }
 
-type AdminProductCreateResp {
+type ProductCreateResp {
 	RespBase
 	data int64 `json:"data"`
 }
 
-type AdminProductUpdateReq {
+type ProductUpdateReq {
 	tenantId         int64  `json:"tenantId"`
 	id               int64  `json:"id"`
 	productName      string `json:"productName"`
@@ -200,24 +200,24 @@ type AdminProductUpdateReq {
 	operatorUid      int64  `json:"operatorUid"`
 }
 
-type AdminProductUpdateResp {
+type ProductUpdateResp {
 	RespBase
 	data int64 `json:"data"`
 }
 
-type AdminProductChangeStatusReq {
+type ProductChangeStatusReq {
 	tenantId    int64 `json:"tenantId"`
 	id          int64 `json:"id"`
 	status      int64 `json:"status"`
 	operatorUid int64 `json:"operatorUid"`
 }
 
-type AdminProductChangeStatusResp {
+type ProductChangeStatusResp {
 	RespBase
 	data int64 `json:"data"`
 }
 
-type AdminOrderListReq {
+type OrderListReq {
 	PageReq
 	tenantId        int64  `form:"tenantId,optional"`
 	orderNo         string `form:"orderNo,optional"`
@@ -234,22 +234,22 @@ type AdminOrderListReq {
 	endTimesEnd     int64  `form:"endTimesEnd,optional"`
 }
 
-type AdminOrderListResp {
+type OrderListResp {
 	RespBase
 	data []StakeOrder `json:"data"`
 }
 
-type AdminOrderDetailReq {
+type OrderDetailReq {
 	tenantId int64 `form:"tenantId,optional"`
 	id       int64 `form:"id"`
 }
 
-type AdminOrderDetailResp {
+type OrderDetailResp {
 	RespBase
 	data StakeOrder `json:"data"`
 }
 
-type AdminRewardLogListReq {
+type RewardLogListReq {
 	PageReq
 	tenantId         int64  `form:"tenantId,optional"`
 	orderNo          string `form:"orderNo,optional"`
@@ -261,12 +261,12 @@ type AdminRewardLogListReq {
 	rewardTimesEnd   int64  `form:"rewardTimesEnd,optional"`
 }
 
-type AdminRewardLogListResp {
+type RewardLogListResp {
 	RespBase
 	data []StakeRewardLog `json:"data"`
 }
 
-type AdminRedeemLogListReq {
+type RedeemLogListReq {
 	PageReq
 	tenantId         int64  `form:"tenantId,optional"`
 	orderNo          string `form:"orderNo,optional"`
@@ -279,12 +279,12 @@ type AdminRedeemLogListReq {
 	redeemTimesEnd   int64  `form:"redeemTimesEnd,optional"`
 }
 
-type AdminRedeemLogListResp {
+type RedeemLogListResp {
 	RespBase
 	data []StakeRedeemLog `json:"data"`
 }
 
-type AdminManualRewardReq {
+type ManualRewardReq {
 	tenantId     int64  `json:"tenantId"`
 	orderId      int64  `json:"orderId"`
 	rewardAmount string `json:"rewardAmount"`
@@ -293,12 +293,12 @@ type AdminManualRewardReq {
 	operatorUid  int64  `json:"operatorUid"`
 }
 
-type AdminManualRewardResp {
+type ManualRewardResp {
 	RespBase
 	data int64 `json:"data"`
 }
 
-type AdminManualRedeemReq {
+type ManualRedeemReq {
 	tenantId     int64  `json:"tenantId"`
 	orderId      int64  `json:"orderId"`
 	redeemType   int64  `json:"redeemType"`
@@ -310,14 +310,14 @@ type AdminManualRedeemReq {
 	operatorUid  int64  `json:"operatorUid"`
 }
 
-type AdminManualRedeemData {
+type ManualRedeemData {
 	success  int64  `json:"success"`
 	redeemNo string `json:"redeemNo"`
 }
 
-type AdminManualRedeemResp {
+type ManualRedeemResp {
 	RespBase
-	data AdminManualRedeemData `json:"data"`
+	data ManualRedeemData `json:"data"`
 }
 
 @server (
@@ -326,37 +326,37 @@ type AdminManualRedeemResp {
 	jwt:    Jwt
 )
 service admin {
-	@handler AdminProductList
-	get /products (AdminProductListReq) returns (AdminProductListResp)
+	@handler ProductList
+	get /products (ProductListReq) returns (ProductListResp)
 
-	@handler AdminProductDetail
-	get /products/detail (AdminProductDetailReq) returns (AdminProductDetailResp)
+	@handler ProductDetail
+	get /products/detail (ProductDetailReq) returns (ProductDetailResp)
 
 	@handler ProductCreate
-	post /products (AdminProductCreateReq) returns (AdminProductCreateResp)
+	post /products (ProductCreateReq) returns (ProductCreateResp)
 
 	@handler ProductUpdate
-	post /products/update (AdminProductUpdateReq) returns (AdminProductUpdateResp)
+	post /products/update (ProductUpdateReq) returns (ProductUpdateResp)
 
 	@handler ProductChangeStatus
-	post /products/status (AdminProductChangeStatusReq) returns (AdminProductChangeStatusResp)
+	post /products/status (ProductChangeStatusReq) returns (ProductChangeStatusResp)
 
 	@handler OrderList
-	get /orders (AdminOrderListReq) returns (AdminOrderListResp)
+	get /orders (OrderListReq) returns (OrderListResp)
 
 	@handler OrderDetail
-	get /orders/detail (AdminOrderDetailReq) returns (AdminOrderDetailResp)
+	get /orders/detail (OrderDetailReq) returns (OrderDetailResp)
 
 	@handler RewardLogList
-	get /reward-logs (AdminRewardLogListReq) returns (AdminRewardLogListResp)
+	get /reward-logs (RewardLogListReq) returns (RewardLogListResp)
 
 	@handler RedeemLogList
-	get /redeem-logs (AdminRedeemLogListReq) returns (AdminRedeemLogListResp)
+	get /redeem-logs (RedeemLogListReq) returns (RedeemLogListResp)
 
 	@handler ManualReward
-	post /manual-reward (AdminManualRewardReq) returns (AdminManualRewardResp)
+	post /manual-reward (ManualRewardReq) returns (ManualRewardResp)
 
 	@handler ManualRedeem
-	post /manual-redeem (AdminManualRedeemReq) returns (AdminManualRedeemResp)
+	post /manual-redeem (ManualRedeemReq) returns (ManualRedeemResp)
 }
 

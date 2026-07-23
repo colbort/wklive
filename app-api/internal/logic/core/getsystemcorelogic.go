@@ -55,7 +55,7 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 		},
 		func() error {
 			var callErr error
-			intervalsResult, callErr = l.svcCtx.ItickCli.GetKlineIntervals(l.ctx, &itick.AppEmpty{})
+			intervalsResult, callErr = l.svcCtx.ItickCli.GetKlineIntervals(l.ctx, &itick.Empty{})
 			return callErr
 		},
 	)

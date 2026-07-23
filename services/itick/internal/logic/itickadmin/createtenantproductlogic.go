@@ -29,13 +29,13 @@ func NewCreateTenantProductLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 租户产品
-func (l *CreateTenantProductLogic) CreateTenantProduct(in *itick.CreateTenantProductReq) (*itick.AdminCommonResp, error) {
+func (l *CreateTenantProductLogic) CreateTenantProduct(in *itick.CreateTenantProductReq) (*itick.CommonResp, error) {
 	product, err := l.svcCtx.ItickProductModel.FindOne(l.ctx, in.ProductId)
 	if err != nil {
 		return nil, err
 	}
 	if product == nil {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
 	}
@@ -45,7 +45,7 @@ func (l *CreateTenantProductLogic) CreateTenantProduct(in *itick.CreateTenantPro
 		return nil, err
 	}
 	if exist != nil {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.ResourceAlreadyExists, i18n.Translate(i18n.ResourceAlreadyExists, l.ctx)),
 		}, nil
 	}
@@ -68,5 +68,5 @@ func (l *CreateTenantProductLogic) CreateTenantProduct(in *itick.CreateTenantPro
 		l.Errorf("refresh active products after create failed: %v", err)
 	}
 
-	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &itick.CommonResp{Base: helper.OkResp()}, nil
 }

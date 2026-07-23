@@ -31,7 +31,7 @@ func NewCancelOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cance
 }
 
 // 撤销指定订单
-func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.AppCommonResp, error) {
+func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.UserCommonResp, error) {
 	var (
 		item *models.TTradeOrder
 		err  error
@@ -52,10 +52,10 @@ func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.AppComm
 	case in.ClientOrderId != "":
 		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, sql.NullString{String: in.ClientOrderId, Valid: true})
 	default:
-		return &trade.AppCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.UserCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if errors.Is(err, models.ErrNotFound) || (err == nil && (item.TenantId != tenantId || item.UserId != userId)) {
-		return &trade.AppCommonResp{Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &trade.UserCommonResp{Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -108,5 +108,5 @@ func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.AppComm
 		}
 	}
 
-	return &trade.AppCommonResp{Base: helper.OkResp()}, nil
+	return &trade.UserCommonResp{Base: helper.OkResp()}, nil
 }

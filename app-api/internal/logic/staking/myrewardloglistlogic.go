@@ -27,6 +27,6 @@ func NewMyRewardLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *M
 	}
 }
 
-func (l *MyRewardLogListLogic) MyRewardLogList(req *types.AppMyRewardLogListReq) (resp *types.AppMyRewardLogListResp, err error) {
-	return logicutil.Proxy[types.AppMyRewardLogListResp](l.ctx, req, l.svcCtx.StakingCli.MyRewardLogList)
+func (l *MyRewardLogListLogic) MyRewardLogList(req *types.MyRewardLogListReq) (resp *types.MyRewardLogListResp, err error) {
+	return logicutil.Proxy[types.MyRewardLogListResp](l.ctx, req, l.svcCtx.StakingCli.MyRewardLogList)
 }

@@ -14,8 +14,8 @@ import (
 )
 
 type (
-	AdminCommonResp                  = trade.AdminCommonResp
-	AppCommonResp                    = trade.AppCommonResp
+	CommonResp                       = trade.CommonResp
+	UserCommonResp                   = trade.UserCommonResp
 	CancelAllOrdersReq               = trade.CancelAllOrdersReq
 	CancelAllOrdersResp              = trade.CancelAllOrdersResp
 	CancelOrderReq                   = trade.CancelOrderReq
@@ -149,7 +149,7 @@ type (
 		// 下单
 		PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error)
 		// 撤销指定订单
-		CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 撤销当前用户全部订单
 		CancelAllOrders(ctx context.Context, in *CancelAllOrdersReq, opts ...grpc.CallOption) (*CancelAllOrdersResp, error)
 		// 获取订单列表
@@ -165,7 +165,7 @@ type (
 		// 获取当前杠杆配置
 		GetLeverageConfig(ctx context.Context, in *GetLeverageConfigReq, opts ...grpc.CallOption) (*GetLeverageConfigResp, error)
 		// 设置杠杆倍数
-		SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	}
 
 	defaultTradeApp struct {
@@ -198,7 +198,7 @@ func (m *defaultTradeApp) PlaceOrder(ctx context.Context, in *PlaceOrderReq, opt
 }
 
 // 撤销指定订单
-func (m *defaultTradeApp) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultTradeApp) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.CancelOrder(ctx, in, opts...)
 }
@@ -246,7 +246,7 @@ func (m *defaultTradeApp) GetLeverageConfig(ctx context.Context, in *GetLeverage
 }
 
 // 设置杠杆倍数
-func (m *defaultTradeApp) SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultTradeApp) SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.SetLeverage(ctx, in, opts...)
 }

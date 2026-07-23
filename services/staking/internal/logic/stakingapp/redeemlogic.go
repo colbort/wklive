@@ -35,7 +35,7 @@ func NewRedeemLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RedeemLogi
 }
 
 // 发起赎回
-func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, error) {
+func (l *RedeemLogic) Redeem(in *staking.RedeemReq) (*staking.RedeemResp, error) {
 	userId, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		return nil, err
@@ -49,13 +49,13 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		return nil, err
 	}
 	if order == nil || order.TenantId != tenantId {
-		return &staking.AppRedeemResp{Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &staking.RedeemResp{Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if order.UserId != userId {
-		return &staking.AppRedeemResp{Base: helper.ErrResp(i18n.NoPermissionAccessOrder, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
+		return &staking.RedeemResp{Base: helper.ErrResp(i18n.NoPermissionAccessOrder, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
 	}
 	if order.Status == int64(staking.OrderStatus_ORDER_STATUS_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_EARLY_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_CANCELLED) {
-		return &staking.AppRedeemResp{Base: helper.ErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
+		return &staking.RedeemResp{Base: helper.ErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
 	}
 
 	redeemType := in.RedeemType
@@ -67,7 +67,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		}
 	}
 	if redeemType == staking.RedeemType_REDEEM_TYPE_EARLY && order.AllowEarlyRedeem != int64(common.YesNo_YES_NO_YES) {
-		return &staking.AppRedeemResp{Base: helper.ErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
+		return &staking.RedeemResp{Base: helper.ErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
 	}
 
 	redeemAmount := order.StakeAmount
@@ -107,7 +107,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			l.Errorf("staking redeem unlock asset failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v msg=%s",
 				order.TenantId, order.UserId, order.OrderNo, redeemNo, unlockAmount, assetBaseMsg(resp))
 			if resp != nil && resp.Base != nil {
-				return &staking.AppRedeemResp{Base: resp.Base}, nil
+				return &staking.RedeemResp{Base: resp.Base}, nil
 			}
 			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
@@ -133,7 +133,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			l.Errorf("staking redeem deduct locked fee failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v msg=%s",
 				order.TenantId, order.UserId, order.OrderNo, redeemNo, feeAmount, assetBaseMsg(resp))
 			if resp != nil && resp.Base != nil {
-				return &staking.AppRedeemResp{Base: resp.Base}, nil
+				return &staking.RedeemResp{Base: resp.Base}, nil
 			}
 			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
@@ -160,7 +160,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			l.Errorf("staking redeem add reward failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s coin=%s amount=%v msg=%s",
 				order.TenantId, order.UserId, order.OrderNo, redeemNo, order.RewardCoinSymbol, rewardAmount, assetBaseMsg(resp))
 			if resp != nil && resp.Base != nil {
-				return &staking.AppRedeemResp{Base: resp.Base}, nil
+				return &staking.RedeemResp{Base: resp.Base}, nil
 			}
 			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
@@ -235,9 +235,9 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		return nil, err
 	}
 
-	return &staking.AppRedeemResp{
+	return &staking.RedeemResp{
 		Base: helper.OkResp(),
-		Data: &staking.AppRedeemData{
+		Data: &staking.RedeemData{
 			Success:  1,
 			RedeemNo: redeemNo,
 		},

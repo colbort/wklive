@@ -8,7 +8,7 @@ import "proto/user/model.proto";
 
 option go_package = "wklive/proto/user;user";
 
-message AppCommonResp {
+message UserCommonResp {
   common.RespBase base = 1;
 }
 
@@ -291,7 +291,7 @@ service UserApp {
   // 兑换游客跨域迁移码
   rpc ExchangeGuestTransfer(ExchangeGuestTransferReq) returns (ExchangeGuestTransferResp);
   // 用户登出
-  rpc Logout(LogoutReq) returns (AppCommonResp);
+  rpc Logout(LogoutReq) returns (UserCommonResp);
   // 刷新Token
   rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenResp);
 
@@ -300,7 +300,7 @@ service UserApp {
   // 更新用户资料
   rpc UpdateProfile(UpdateProfileReq) returns (UpdateProfileResp);
   // 修改登录密码
-  rpc ChangeLoginPassword(ChangeLoginPasswordReq) returns (AppCommonResp);
+  rpc ChangeLoginPassword(ChangeLoginPasswordReq) returns (UserCommonResp);
 
   // 实名认证相关接口
   rpc GetIdentity(GetIdentityReq) returns (GetIdentityResp);
@@ -312,15 +312,15 @@ service UserApp {
   // 安全设置相关接口
   rpc GetSecurity(GetSecurityReq) returns (GetSecurityResp);
   // 设置支付密码
-  rpc SetPayPassword(SetPayPasswordReq) returns (AppCommonResp);
+  rpc SetPayPassword(SetPayPasswordReq) returns (UserCommonResp);
   // 修改支付密码
-  rpc ChangePayPassword(ChangePayPasswordReq) returns (AppCommonResp);
+  rpc ChangePayPassword(ChangePayPasswordReq) returns (UserCommonResp);
   // 初始化谷歌2FA
   rpc InitGoogle2FA(InitGoogle2FAReq) returns (InitGoogle2FAResp);
   // 启用谷歌2FA
-  rpc EnableGoogle2FA(EnableGoogle2FAReq) returns (AppCommonResp);
+  rpc EnableGoogle2FA(EnableGoogle2FAReq) returns (UserCommonResp);
   // 禁用谷歌2FA
-  rpc DisableGoogle2FA(DisableGoogle2FAReq) returns (AppCommonResp);
+  rpc DisableGoogle2FA(DisableGoogle2FAReq) returns (UserCommonResp);
 
   // 银行卡相关接口
   rpc ListBanks(ListBanksReq) returns (ListBanksResp);
@@ -329,12 +329,12 @@ service UserApp {
   // 更新银行卡
   rpc UpdateBank(UpdateBankReq) returns (UpdateBankResp);
   // 删除银行卡
-  rpc DeleteBank(DeleteBankReq) returns (AppCommonResp);
+  rpc DeleteBank(DeleteBankReq) returns (UserCommonResp);
   // 设置默认银行卡
-  rpc SetDefaultBank(SetDefaultBankReq) returns (AppCommonResp);
+  rpc SetDefaultBank(SetDefaultBankReq) returns (UserCommonResp);
 }
 
-message AdminCommonResp {
+message CommonResp {
   common.RespBase base = 1;
 }
 
@@ -616,23 +616,23 @@ service UserAdmin {
   // 更新用户基本信息
   rpc UpdateUserBase(UpdateUserBaseReq) returns (UpdateUserBaseResp);
   // 更新用户状态
-  rpc UpdateUserStatus(UpdateUserStatusReq) returns (AdminCommonResp);
+  rpc UpdateUserStatus(UpdateUserStatusReq) returns (CommonResp);
   // 更新用户会员等级
-  rpc UpdateUserLevel(UpdateUserLevelReq) returns (AdminCommonResp);
+  rpc UpdateUserLevel(UpdateUserLevelReq) returns (CommonResp);
   // 重置登录密码
-  rpc ResetLoginPassword(ResetLoginPasswordReq) returns (AdminCommonResp);
+  rpc ResetLoginPassword(ResetLoginPasswordReq) returns (CommonResp);
   // 重置支付密码
-  rpc ResetPayPassword(ResetPayPasswordReq) returns (AdminCommonResp);
+  rpc ResetPayPassword(ResetPayPasswordReq) returns (CommonResp);
   // 解锁用户（解除登录锁定）
-  rpc UnlockUser(UnlockUserReq) returns (AdminCommonResp);
+  rpc UnlockUser(UnlockUserReq) returns (CommonResp);
   // 更新用户风险等级
-  rpc UpdateRiskLevel(UpdateRiskLevelReq) returns (AdminCommonResp);
+  rpc UpdateRiskLevel(UpdateRiskLevelReq) returns (CommonResp);
   // 删除用户
-  rpc DeleteUser(DeleteUserReq) returns (AdminCommonResp);
+  rpc DeleteUser(DeleteUserReq) returns (CommonResp);
   // 获取用户安全设置
   rpc GetUserSecurity(GetUserSecurityReq) returns (GetUserSecurityResp);
   // 重置用户谷歌2FA
-  rpc ResetUserGoogle2FA(ResetUserGoogle2FAReq) returns (AdminCommonResp);
+  rpc ResetUserGoogle2FA(ResetUserGoogle2FAReq) returns (CommonResp);
   // 实名认证信息列表
   rpc ListUserIdentities(ListUserIdentitiesReq) returns (ListUserIdentitiesResp);
   // 审核实名认证信息
@@ -646,9 +646,9 @@ service UserAdmin {
   // 更新用户银行卡
   rpc UpdateUserBank(UpdateUserBankReq) returns (UpdateUserBankResp);
   // 删除用户银行卡
-  rpc DeleteUserBank(DeleteUserBankReq) returns (AdminCommonResp);
+  rpc DeleteUserBank(DeleteUserBankReq) returns (CommonResp);
   // 更新用户银行卡状态
-  rpc UpdateUserBankStatus(UpdateUserBankStatusReq) returns (AdminCommonResp);
+  rpc UpdateUserBankStatus(UpdateUserBankStatusReq) returns (CommonResp);
   // 设置默认用户银行卡
-  rpc SetDefaultUserBank(SetDefaultUserBankReq) returns (AdminCommonResp);
+  rpc SetDefaultUserBank(SetDefaultUserBankReq) returns (CommonResp);
 }

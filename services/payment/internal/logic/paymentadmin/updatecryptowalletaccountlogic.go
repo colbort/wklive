@@ -24,6 +24,6 @@ func NewUpdateCryptoWalletAccountLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 // 更新链上钱包账号
-func (l *UpdateCryptoWalletAccountLogic) UpdateCryptoWalletAccount(in *payment.UpdateCryptoWalletAccountReq) (*payment.AdminCommonResp, error) {
+func (l *UpdateCryptoWalletAccountLogic) UpdateCryptoWalletAccount(in *payment.UpdateCryptoWalletAccountReq) (*payment.CommonResp, error) {
 	return updateCryptoWalletAccount(l.ctx, l.svcCtx, in)
 }

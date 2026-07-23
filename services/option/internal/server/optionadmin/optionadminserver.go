@@ -24,127 +24,127 @@ func NewOptionAdminServer(svcCtx *svc.ServiceContext) *OptionAdminServer {
 }
 
 // 创建期权合约
-func (s *OptionAdminServer) AdminCreateContract(ctx context.Context, in *option.CreateContractReq) (*option.CreateContractResp, error) {
-	l := optionadminlogic.NewAdminCreateContractLogic(ctx, s.svcCtx)
-	return l.AdminCreateContract(in)
+func (s *OptionAdminServer) CreateContract(ctx context.Context, in *option.CreateContractReq) (*option.CreateContractResp, error) {
+	l := optionadminlogic.NewCreateContractLogic(ctx, s.svcCtx)
+	return l.CreateContract(in)
 }
 
 // 更新期权合约
-func (s *OptionAdminServer) AdminUpdateContract(ctx context.Context, in *option.UpdateContractReq) (*option.AdminCommonResp, error) {
-	l := optionadminlogic.NewAdminUpdateContractLogic(ctx, s.svcCtx)
-	return l.AdminUpdateContract(in)
+func (s *OptionAdminServer) UpdateContract(ctx context.Context, in *option.UpdateContractReq) (*option.CommonResp, error) {
+	l := optionadminlogic.NewUpdateContractLogic(ctx, s.svcCtx)
+	return l.UpdateContract(in)
 }
 
 // 获取单个期权合约详情
-func (s *OptionAdminServer) AdminGetContract(ctx context.Context, in *option.GetContractReq) (*option.GetContractResp, error) {
-	l := optionadminlogic.NewAdminGetContractLogic(ctx, s.svcCtx)
-	return l.AdminGetContract(in)
+func (s *OptionAdminServer) GetContract(ctx context.Context, in *option.GetContractReq) (*option.GetContractResp, error) {
+	l := optionadminlogic.NewGetContractLogic(ctx, s.svcCtx)
+	return l.GetContract(in)
 }
 
 // 分页查询期权合约列表
-func (s *OptionAdminServer) AdminListContracts(ctx context.Context, in *option.ListContractsReq) (*option.ListContractsResp, error) {
-	l := optionadminlogic.NewAdminListContractsLogic(ctx, s.svcCtx)
-	return l.AdminListContracts(in)
+func (s *OptionAdminServer) ListContracts(ctx context.Context, in *option.ListContractsReq) (*option.ListContractsResp, error) {
+	l := optionadminlogic.NewListContractsLogic(ctx, s.svcCtx)
+	return l.ListContracts(in)
 }
 
 // 更新期权行情数据
-func (s *OptionAdminServer) AdminUpdateMarket(ctx context.Context, in *option.UpdateMarketReq) (*option.AdminCommonResp, error) {
-	l := optionadminlogic.NewAdminUpdateMarketLogic(ctx, s.svcCtx)
-	return l.AdminUpdateMarket(in)
+func (s *OptionAdminServer) UpdateMarket(ctx context.Context, in *option.UpdateMarketReq) (*option.CommonResp, error) {
+	l := optionadminlogic.NewUpdateMarketLogic(ctx, s.svcCtx)
+	return l.UpdateMarket(in)
 }
 
 // 获取单个期权当前行情
-func (s *OptionAdminServer) AdminGetMarket(ctx context.Context, in *option.GetMarketReq) (*option.GetMarketResp, error) {
-	l := optionadminlogic.NewAdminGetMarketLogic(ctx, s.svcCtx)
-	return l.AdminGetMarket(in)
+func (s *OptionAdminServer) GetMarket(ctx context.Context, in *option.GetMarketReq) (*option.GetMarketResp, error) {
+	l := optionadminlogic.NewGetMarketLogic(ctx, s.svcCtx)
+	return l.GetMarket(in)
 }
 
 // 分页查询期权行情快照列表
-func (s *OptionAdminServer) AdminListMarketSnapshots(ctx context.Context, in *option.ListMarketSnapshotsReq) (*option.ListMarketSnapshotsResp, error) {
-	l := optionadminlogic.NewAdminListMarketSnapshotsLogic(ctx, s.svcCtx)
-	return l.AdminListMarketSnapshots(in)
+func (s *OptionAdminServer) ListMarketSnapshots(ctx context.Context, in *option.ListMarketSnapshotsReq) (*option.ListMarketSnapshotsResp, error) {
+	l := optionadminlogic.NewListMarketSnapshotsLogic(ctx, s.svcCtx)
+	return l.ListMarketSnapshots(in)
 }
 
 // 获取单个委托订单详情
-func (s *OptionAdminServer) AdminGetOrder(ctx context.Context, in *option.GetOrderReq) (*option.GetOrderResp, error) {
-	l := optionadminlogic.NewAdminGetOrderLogic(ctx, s.svcCtx)
-	return l.AdminGetOrder(in)
+func (s *OptionAdminServer) GetOrder(ctx context.Context, in *option.GetOrderReq) (*option.GetOrderResp, error) {
+	l := optionadminlogic.NewGetOrderLogic(ctx, s.svcCtx)
+	return l.GetOrder(in)
 }
 
 // 分页查询委托订单列表
-func (s *OptionAdminServer) AdminListOrders(ctx context.Context, in *option.ListOrdersReq) (*option.ListOrdersResp, error) {
-	l := optionadminlogic.NewAdminListOrdersLogic(ctx, s.svcCtx)
-	return l.AdminListOrders(in)
+func (s *OptionAdminServer) ListOrders(ctx context.Context, in *option.ListOrdersReq) (*option.ListOrdersResp, error) {
+	l := optionadminlogic.NewListOrdersLogic(ctx, s.svcCtx)
+	return l.ListOrders(in)
 }
 
 // 获取单个成交记录详情
-func (s *OptionAdminServer) AdminGetTrade(ctx context.Context, in *option.GetTradeReq) (*option.GetTradeResp, error) {
-	l := optionadminlogic.NewAdminGetTradeLogic(ctx, s.svcCtx)
-	return l.AdminGetTrade(in)
+func (s *OptionAdminServer) GetTrade(ctx context.Context, in *option.GetTradeReq) (*option.GetTradeResp, error) {
+	l := optionadminlogic.NewGetTradeLogic(ctx, s.svcCtx)
+	return l.GetTrade(in)
 }
 
 // 分页查询成交记录列表
-func (s *OptionAdminServer) AdminListTrades(ctx context.Context, in *option.ListTradesReq) (*option.ListTradesResp, error) {
-	l := optionadminlogic.NewAdminListTradesLogic(ctx, s.svcCtx)
-	return l.AdminListTrades(in)
+func (s *OptionAdminServer) ListTrades(ctx context.Context, in *option.ListTradesReq) (*option.ListTradesResp, error) {
+	l := optionadminlogic.NewListTradesLogic(ctx, s.svcCtx)
+	return l.ListTrades(in)
 }
 
 // 获取单个持仓详情
-func (s *OptionAdminServer) AdminGetPosition(ctx context.Context, in *option.GetPositionReq) (*option.GetPositionResp, error) {
-	l := optionadminlogic.NewAdminGetPositionLogic(ctx, s.svcCtx)
-	return l.AdminGetPosition(in)
+func (s *OptionAdminServer) GetPosition(ctx context.Context, in *option.GetPositionReq) (*option.GetPositionResp, error) {
+	l := optionadminlogic.NewGetPositionLogic(ctx, s.svcCtx)
+	return l.GetPosition(in)
 }
 
 // 分页查询持仓列表
-func (s *OptionAdminServer) AdminListPositions(ctx context.Context, in *option.ListPositionsReq) (*option.ListPositionsResp, error) {
-	l := optionadminlogic.NewAdminListPositionsLogic(ctx, s.svcCtx)
-	return l.AdminListPositions(in)
+func (s *OptionAdminServer) ListPositions(ctx context.Context, in *option.ListPositionsReq) (*option.ListPositionsResp, error) {
+	l := optionadminlogic.NewListPositionsLogic(ctx, s.svcCtx)
+	return l.ListPositions(in)
 }
 
 // 获取单个行权记录详情
-func (s *OptionAdminServer) AdminGetExercise(ctx context.Context, in *option.GetExerciseReq) (*option.GetExerciseResp, error) {
-	l := optionadminlogic.NewAdminGetExerciseLogic(ctx, s.svcCtx)
-	return l.AdminGetExercise(in)
+func (s *OptionAdminServer) GetExercise(ctx context.Context, in *option.GetExerciseReq) (*option.GetExerciseResp, error) {
+	l := optionadminlogic.NewGetExerciseLogic(ctx, s.svcCtx)
+	return l.GetExercise(in)
 }
 
 // 分页查询行权记录列表
-func (s *OptionAdminServer) AdminListExercises(ctx context.Context, in *option.ListExercisesReq) (*option.ListExercisesResp, error) {
-	l := optionadminlogic.NewAdminListExercisesLogic(ctx, s.svcCtx)
-	return l.AdminListExercises(in)
+func (s *OptionAdminServer) ListExercises(ctx context.Context, in *option.ListExercisesReq) (*option.ListExercisesResp, error) {
+	l := optionadminlogic.NewListExercisesLogic(ctx, s.svcCtx)
+	return l.ListExercises(in)
 }
 
 // 获取单个到期结算记录详情
-func (s *OptionAdminServer) AdminGetSettlement(ctx context.Context, in *option.GetSettlementReq) (*option.GetSettlementResp, error) {
-	l := optionadminlogic.NewAdminGetSettlementLogic(ctx, s.svcCtx)
-	return l.AdminGetSettlement(in)
+func (s *OptionAdminServer) GetSettlement(ctx context.Context, in *option.GetSettlementReq) (*option.GetSettlementResp, error) {
+	l := optionadminlogic.NewGetSettlementLogic(ctx, s.svcCtx)
+	return l.GetSettlement(in)
 }
 
 // 分页查询到期结算记录列表
-func (s *OptionAdminServer) AdminListSettlements(ctx context.Context, in *option.ListSettlementsReq) (*option.ListSettlementsResp, error) {
-	l := optionadminlogic.NewAdminListSettlementsLogic(ctx, s.svcCtx)
-	return l.AdminListSettlements(in)
+func (s *OptionAdminServer) ListSettlements(ctx context.Context, in *option.ListSettlementsReq) (*option.ListSettlementsResp, error) {
+	l := optionadminlogic.NewListSettlementsLogic(ctx, s.svcCtx)
+	return l.ListSettlements(in)
 }
 
 // 获取单个账户资产详情
-func (s *OptionAdminServer) AdminGetAccount(ctx context.Context, in *option.GetAccountReq) (*option.GetAccountResp, error) {
-	l := optionadminlogic.NewAdminGetAccountLogic(ctx, s.svcCtx)
-	return l.AdminGetAccount(in)
+func (s *OptionAdminServer) GetAccount(ctx context.Context, in *option.GetAccountReq) (*option.GetAccountResp, error) {
+	l := optionadminlogic.NewGetAccountLogic(ctx, s.svcCtx)
+	return l.GetAccount(in)
 }
 
 // 分页查询账户资产列表
-func (s *OptionAdminServer) AdminListAccounts(ctx context.Context, in *option.ListAccountsReq) (*option.ListAccountsResp, error) {
-	l := optionadminlogic.NewAdminListAccountsLogic(ctx, s.svcCtx)
-	return l.AdminListAccounts(in)
+func (s *OptionAdminServer) ListAccounts(ctx context.Context, in *option.ListAccountsReq) (*option.ListAccountsResp, error) {
+	l := optionadminlogic.NewListAccountsLogic(ctx, s.svcCtx)
+	return l.ListAccounts(in)
 }
 
 // 获取单个资金流水详情
-func (s *OptionAdminServer) AdminGetBill(ctx context.Context, in *option.GetBillReq) (*option.GetBillResp, error) {
-	l := optionadminlogic.NewAdminGetBillLogic(ctx, s.svcCtx)
-	return l.AdminGetBill(in)
+func (s *OptionAdminServer) GetBill(ctx context.Context, in *option.GetBillReq) (*option.GetBillResp, error) {
+	l := optionadminlogic.NewGetBillLogic(ctx, s.svcCtx)
+	return l.GetBill(in)
 }
 
 // 分页查询资金流水列表
-func (s *OptionAdminServer) AdminListBills(ctx context.Context, in *option.ListBillsReq) (*option.ListBillsResp, error) {
-	l := optionadminlogic.NewAdminListBillsLogic(ctx, s.svcCtx)
-	return l.AdminListBills(in)
+func (s *OptionAdminServer) ListBills(ctx context.Context, in *option.ListBillsReq) (*option.ListBillsResp, error) {
+	l := optionadminlogic.NewListBillsLogic(ctx, s.svcCtx)
+	return l.ListBills(in)
 }

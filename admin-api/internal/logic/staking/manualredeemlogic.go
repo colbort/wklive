@@ -27,6 +27,6 @@ func NewManualRedeemLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Manu
 	}
 }
 
-func (l *ManualRedeemLogic) ManualRedeem(req *types.AdminManualRedeemReq) (resp *types.AdminManualRedeemResp, err error) {
-	return logicutil.Proxy[types.AdminManualRedeemResp](l.ctx, req, l.svcCtx.StakingCli.ManualRedeem)
+func (l *ManualRedeemLogic) ManualRedeem(req *types.ManualRedeemReq) (resp *types.ManualRedeemResp, err error) {
+	return logicutil.Proxy[types.ManualRedeemResp](l.ctx, req, l.svcCtx.StakingCli.ManualRedeem)
 }

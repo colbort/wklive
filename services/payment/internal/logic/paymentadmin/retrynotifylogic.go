@@ -27,7 +27,7 @@ func NewRetryNotifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Retry
 }
 
 // 重试回调
-func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.AdminCommonResp, error) {
+func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "RetryNotify"
 	)
@@ -40,7 +40,7 @@ func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.Adm
 	}
 
 	if order == nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
@@ -52,7 +52,7 @@ func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.Adm
 
 	// 只有已支付的订单才需要重试回调
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS) {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.OnlyPaidOrdersCanRetryNotify, i18n.Translate(i18n.OnlyPaidOrdersCanRetryNotify, l.ctx)),
 		}, nil
 	}
@@ -65,7 +65,7 @@ func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.Adm
 	}
 
 	if notifyLog == nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.NotifyRecordNotFound, i18n.Translate(i18n.NotifyRecordNotFound, l.ctx)),
 		}, nil
 	}
@@ -81,7 +81,7 @@ func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.Adm
 
 	l.Logger.Infof("Retry notify success: %s", in.OrderNo)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

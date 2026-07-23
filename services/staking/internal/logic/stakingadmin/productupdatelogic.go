@@ -30,11 +30,11 @@ func NewProductUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pro
 }
 
 // 更新质押产品
-func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*staking.AdminProductUpdateResp, error) {
+func (l *ProductUpdateLogic) ProductUpdate(in *staking.ProductUpdateReq) (*staking.ProductUpdateResp, error) {
 	item, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+			return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
@@ -43,10 +43,10 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+		return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
 	if !allowed {
-		return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+		return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 	if allowTenantUpdate {
 		item.TenantId = in.TenantId
@@ -73,7 +73,7 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*
 	if in.Apr != "" {
 		apr, err := conv.ParseDecimalField(in.Apr)
 		if err != nil {
-			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.Apr = apr
 	}
@@ -83,35 +83,35 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*
 	if in.MinAmount != "" {
 		minAmount, err := conv.ParseDecimalField(in.MinAmount)
 		if err != nil {
-			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.MinAmount = minAmount
 	}
 	if in.MaxAmount != "" {
 		maxAmount, err := conv.ParseDecimalField(in.MaxAmount)
 		if err != nil {
-			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.MaxAmount = maxAmount
 	}
 	if in.StepAmount != "" {
 		stepAmount, err := conv.ParseDecimalField(in.StepAmount)
 		if err != nil {
-			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.StepAmount = stepAmount
 	}
 	if in.TotalAmount != "" {
 		totalAmount, err := conv.ParseDecimalField(in.TotalAmount)
 		if err != nil {
-			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.TotalAmount = totalAmount
 	}
 	if in.UserLimitAmount != "" {
 		userLimitAmount, err := conv.ParseDecimalField(in.UserLimitAmount)
 		if err != nil {
-			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.UserLimitAmount = userLimitAmount
 	}
@@ -127,7 +127,7 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*
 	if in.EarlyRedeemRate != "" {
 		earlyRedeemRate, err := conv.ParseDecimalField(in.EarlyRedeemRate)
 		if err != nil {
-			return &staking.AdminProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 		item.EarlyRedeemRate = earlyRedeemRate
 	}
@@ -148,5 +148,5 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*
 		return nil, err
 	}
 
-	return &staking.AdminProductUpdateResp{Page: helper.OkResp(), Data: 1}, nil
+	return &staking.ProductUpdateResp{Page: helper.OkResp(), Data: 1}, nil
 }

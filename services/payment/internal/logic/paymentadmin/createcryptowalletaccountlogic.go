@@ -24,6 +24,6 @@ func NewCreateCryptoWalletAccountLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 // 创建链上钱包账号
-func (l *CreateCryptoWalletAccountLogic) CreateCryptoWalletAccount(in *payment.CreateCryptoWalletAccountReq) (*payment.AdminCommonResp, error) {
+func (l *CreateCryptoWalletAccountLogic) CreateCryptoWalletAccount(in *payment.CreateCryptoWalletAccountReq) (*payment.CommonResp, error) {
 	return createCryptoWalletAccount(l.ctx, l.svcCtx, in)
 }

@@ -29,7 +29,7 @@ func NewChangeLoginPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 修改登录密码
-func (l *ChangeLoginPasswordLogic) ChangeLoginPassword(in *user.ChangeLoginPasswordReq) (*user.AppCommonResp, error) {
+func (l *ChangeLoginPasswordLogic) ChangeLoginPassword(in *user.ChangeLoginPasswordReq) (*user.UserCommonResp, error) {
 	userId, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		return nil, err
@@ -41,14 +41,14 @@ func (l *ChangeLoginPasswordLogic) ChangeLoginPassword(in *user.ChangeLoginPassw
 	}
 
 	if tuser == nil {
-		return &user.AppCommonResp{
+		return &user.UserCommonResp{
 			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证密码是否一致
 	if in.NewPassword != in.ConfirmPassword {
-		return &user.AppCommonResp{
+		return &user.UserCommonResp{
 			Base: helper.ErrResp(i18n.PasswordsDoNotMatch, i18n.Translate(i18n.PasswordsDoNotMatch, l.ctx)),
 		}, nil
 	}
@@ -76,7 +76,7 @@ func (l *ChangeLoginPasswordLogic) ChangeLoginPassword(in *user.ChangeLoginPassw
 
 	l.Logger.Infof("用户 %d 修改登录密码成功", userId)
 
-	return &user.AppCommonResp{
+	return &user.UserCommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

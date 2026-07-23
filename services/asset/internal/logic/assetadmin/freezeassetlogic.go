@@ -1,0 +1,100 @@
+package assetadminlogic
+
+import (
+	"context"
+
+	"wklive/common/conv"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
+	"wklive/proto/asset"
+	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
+
+type FreezeAssetLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewFreezeAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FreezeAssetLogic {
+	return &FreezeAssetLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 后台冻结资产
+func (l *FreezeAssetLogic) FreezeAsset(in *asset.ManualFreezeAssetReq) (*asset.ManualChangeAssetResp, error) {
+	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &asset.ManualChangeAssetResp{Base: base}, nil
+	}
+
+	amount, err := conv.ParseDecimalField(in.Amount)
+	if err != nil {
+		l.Errorf("AdminFreezeAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+		return nil, err
+	}
+	if !amount.IsPositive() {
+		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
+		l.Errorf("AdminFreezeAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+		return nil, err
+	}
+
+	ts := utils.NowMillis()
+	var (
+		after  *models.TUserAsset
+		freeze *models.TAssetFreeze
+	)
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis)
+		assetFreezeModel := models.NewTAssetFreezeModel(conn, l.svcCtx.Config.CacheRedis)
+		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis)
+
+		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
+		if err != nil {
+			return err
+		}
+
+		ok, err := userAssetModel.FreezeAmount(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, amount, ts)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return i18n.StatusError(ctx, i18n.InsufficientAvailableBalance)
+		}
+
+		after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
+		if err != nil {
+			return err
+		}
+
+		freeze = buildAssetFreezeRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", in.BizNo, in.Remark, amount, 0, ts)
+		if _, err := assetFreezeModel.Insert(ctx, freeze); err != nil {
+			return err
+		}
+
+		flow := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE, amount, before, after, in.Remark, ts)
+		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		l.Errorf("AdminFreezeAsset transaction failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+		return nil, err
+	}
+
+	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: toUserAssetProto(after)}}, nil
+}

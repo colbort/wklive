@@ -28,7 +28,7 @@ func NewUpdateUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 管理员更新用户状态
-func (l *UpdateUserStatusLogic) UpdateUserStatus(in *user.UpdateUserStatusReq) (*user.AdminCommonResp, error) {
+func (l *UpdateUserStatusLogic) UpdateUserStatus(in *user.UpdateUserStatusReq) (*user.CommonResp, error) {
 	// 获取用户信息
 	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -36,14 +36,14 @@ func (l *UpdateUserStatusLogic) UpdateUserStatus(in *user.UpdateUserStatusReq) (
 	}
 
 	if tuser == nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: base,
 		}, nil
 	}
@@ -65,7 +65,7 @@ func (l *UpdateUserStatusLogic) UpdateUserStatus(in *user.UpdateUserStatusReq) (
 
 	l.Logger.Infof("管理员更新用户 %d 状态为 %d，备注：%s", in.UserId, in.Status, in.Remark)
 
-	return &user.AdminCommonResp{
+	return &user.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

@@ -29,7 +29,7 @@ func NewSetDefaultUserBankLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // 设置默认用户银行卡
-func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBankReq) (*user.AdminCommonResp, error) {
+func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBankReq) (*user.CommonResp, error) {
 	// 获取要设置为默认的银行卡
 	userBank, err := l.svcCtx.UserBankModel.FindOne(l.ctx, in.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -37,27 +37,27 @@ func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBank
 	}
 
 	if userBank == nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, userBank.TenantId, i18n.NoPermissionOperateThisBankCard); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: base,
 		}, nil
 	}
 
 	if userBank.UserId != in.UserId {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: helper.ErrResp(i18n.NoPermissionModify, i18n.Translate(i18n.NoPermissionModify, l.ctx)),
 		}, nil
 	}
 
 	// 如果已经是默认卡，直接返回
 	if userBank.IsDefault == int64(common.YesNo_YES_NO_YES) {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: helper.OkResp(),
 		}, nil
 	}
@@ -75,7 +75,7 @@ func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBank
 
 	l.Logger.Infof("用户 %d 设置默认银行卡 %d", in.UserId, in.Id)
 
-	return &user.AdminCommonResp{
+	return &user.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

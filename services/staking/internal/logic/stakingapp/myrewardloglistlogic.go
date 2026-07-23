@@ -28,7 +28,7 @@ func NewMyRewardLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *M
 }
 
 // 获取我的收益记录列表
-func (l *MyRewardLogListLogic) MyRewardLogList(in *staking.AppMyRewardLogListReq) (*staking.AppMyRewardLogListResp, error) {
+func (l *MyRewardLogListLogic) MyRewardLogList(in *staking.MyRewardLogListReq) (*staking.MyRewardLogListResp, error) {
 	page := in.GetPage()
 	cursor, limit := int64(0), int64(10)
 	if page != nil {
@@ -52,7 +52,7 @@ func (l *MyRewardLogListLogic) MyRewardLogList(in *staking.AppMyRewardLogListReq
 		return nil, err
 	}
 
-	resp := &staking.AppMyRewardLogListResp{Base: helper.OkResp()}
+	resp := &staking.MyRewardLogListResp{Base: helper.OkResp()}
 	if len(items) == 0 {
 		resp.Base = pageutil.Base(cursor, limit, 0, total, 0)
 		return resp, nil

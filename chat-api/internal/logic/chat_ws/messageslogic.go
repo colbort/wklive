@@ -193,7 +193,7 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 		logx.Error("app subscribe err")
 		return
 	}
-	stream, err := l.svcCtx.ChatAppCli.AppSubscribeStream(ctx, &chat.AppChatSubscribeRequest{})
+	stream, err := l.svcCtx.ChatAppCli.SubscribeStream(ctx, &chat.SubscribeRequest{})
 	if err != nil {
 		logx.Errorf("subscribe chat app stream failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 		return

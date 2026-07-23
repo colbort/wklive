@@ -26,7 +26,7 @@ func NewSendAgentMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 发送客服消息
-func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (*chat.AdminChatMessageResp, error) {
+func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (*chat.ChatMessageResp, error) {
 	msg, err := ih.SendMessage(l.ctx, l.svcCtx, ih.SendMessageOptions{
 		MerchantId:     in.GetMerchantId(),
 		SessionNo:      in.GetSessionNo(),
@@ -44,7 +44,7 @@ func (l *SendAgentMessageLogic) SendAgentMessage(in *chat.SendAgentMessageReq) (
 		ReceiptChannel: chat.ChatAdminEventChannel,
 	})
 	if err != nil {
-		return &chat.AdminChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatMessageResp{Base: helper.OkResp(), Data: msg}, nil
+	return &chat.ChatMessageResp{Base: helper.OkResp(), Data: msg}, nil
 }

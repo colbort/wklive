@@ -54,43 +54,43 @@ func (s *UserAdminServer) UpdateUserBase(ctx context.Context, in *user.UpdateUse
 }
 
 // 更新用户状态
-func (s *UserAdminServer) UpdateUserStatus(ctx context.Context, in *user.UpdateUserStatusReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) UpdateUserStatus(ctx context.Context, in *user.UpdateUserStatusReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewUpdateUserStatusLogic(ctx, s.svcCtx)
 	return l.UpdateUserStatus(in)
 }
 
 // 更新用户会员等级
-func (s *UserAdminServer) UpdateUserLevel(ctx context.Context, in *user.UpdateUserLevelReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) UpdateUserLevel(ctx context.Context, in *user.UpdateUserLevelReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewUpdateUserLevelLogic(ctx, s.svcCtx)
 	return l.UpdateUserLevel(in)
 }
 
 // 重置登录密码
-func (s *UserAdminServer) ResetLoginPassword(ctx context.Context, in *user.ResetLoginPasswordReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) ResetLoginPassword(ctx context.Context, in *user.ResetLoginPasswordReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewResetLoginPasswordLogic(ctx, s.svcCtx)
 	return l.ResetLoginPassword(in)
 }
 
 // 重置支付密码
-func (s *UserAdminServer) ResetPayPassword(ctx context.Context, in *user.ResetPayPasswordReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) ResetPayPassword(ctx context.Context, in *user.ResetPayPasswordReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewResetPayPasswordLogic(ctx, s.svcCtx)
 	return l.ResetPayPassword(in)
 }
 
 // 解锁用户（解除登录锁定）
-func (s *UserAdminServer) UnlockUser(ctx context.Context, in *user.UnlockUserReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) UnlockUser(ctx context.Context, in *user.UnlockUserReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewUnlockUserLogic(ctx, s.svcCtx)
 	return l.UnlockUser(in)
 }
 
 // 更新用户风险等级
-func (s *UserAdminServer) UpdateRiskLevel(ctx context.Context, in *user.UpdateRiskLevelReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) UpdateRiskLevel(ctx context.Context, in *user.UpdateRiskLevelReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewUpdateRiskLevelLogic(ctx, s.svcCtx)
 	return l.UpdateRiskLevel(in)
 }
 
 // 删除用户
-func (s *UserAdminServer) DeleteUser(ctx context.Context, in *user.DeleteUserReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) DeleteUser(ctx context.Context, in *user.DeleteUserReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewDeleteUserLogic(ctx, s.svcCtx)
 	return l.DeleteUser(in)
 }
@@ -102,7 +102,7 @@ func (s *UserAdminServer) GetUserSecurity(ctx context.Context, in *user.GetUserS
 }
 
 // 重置用户谷歌2FA
-func (s *UserAdminServer) ResetUserGoogle2FA(ctx context.Context, in *user.ResetUserGoogle2FAReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) ResetUserGoogle2FA(ctx context.Context, in *user.ResetUserGoogle2FAReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewResetUserGoogle2FALogic(ctx, s.svcCtx)
 	return l.ResetUserGoogle2FA(in)
 }
@@ -144,19 +144,19 @@ func (s *UserAdminServer) UpdateUserBank(ctx context.Context, in *user.UpdateUse
 }
 
 // 删除用户银行卡
-func (s *UserAdminServer) DeleteUserBank(ctx context.Context, in *user.DeleteUserBankReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) DeleteUserBank(ctx context.Context, in *user.DeleteUserBankReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewDeleteUserBankLogic(ctx, s.svcCtx)
 	return l.DeleteUserBank(in)
 }
 
 // 更新用户银行卡状态
-func (s *UserAdminServer) UpdateUserBankStatus(ctx context.Context, in *user.UpdateUserBankStatusReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) UpdateUserBankStatus(ctx context.Context, in *user.UpdateUserBankStatusReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewUpdateUserBankStatusLogic(ctx, s.svcCtx)
 	return l.UpdateUserBankStatus(in)
 }
 
 // 设置默认用户银行卡
-func (s *UserAdminServer) SetDefaultUserBank(ctx context.Context, in *user.SetDefaultUserBankReq) (*user.AdminCommonResp, error) {
+func (s *UserAdminServer) SetDefaultUserBank(ctx context.Context, in *user.SetDefaultUserBankReq) (*user.CommonResp, error) {
 	l := useradminlogic.NewSetDefaultUserBankLogic(ctx, s.svcCtx)
 	return l.SetDefaultUserBank(in)
 }

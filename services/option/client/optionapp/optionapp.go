@@ -14,111 +14,111 @@ import (
 )
 
 type (
-	AdminCommonResp          = option.AdminCommonResp
-	AppCancelOrderReq        = option.AppCancelOrderReq
-	AppCommonResp            = option.AppCommonResp
-	AppExerciseData          = option.AppExerciseData
-	AppExerciseReq           = option.AppExerciseReq
-	AppExerciseResp          = option.AppExerciseResp
-	AppGetContractDetailReq  = option.AppGetContractDetailReq
-	AppGetContractDetailResp = option.AppGetContractDetailResp
-	AppGetOrderDetailReq     = option.AppGetOrderDetailReq
-	AppGetOrderDetailResp    = option.AppGetOrderDetailResp
-	AppGetPositionDetailReq  = option.AppGetPositionDetailReq
-	AppGetPositionDetailResp = option.AppGetPositionDetailResp
-	AppListAccountsReq       = option.AppListAccountsReq
-	AppListAccountsResp      = option.AppListAccountsResp
-	AppListBillsReq          = option.AppListBillsReq
-	AppListBillsResp         = option.AppListBillsResp
-	AppListContractsReq      = option.AppListContractsReq
-	AppListContractsResp     = option.AppListContractsResp
-	AppListCurrentOrdersReq  = option.AppListCurrentOrdersReq
-	AppListCurrentOrdersResp = option.AppListCurrentOrdersResp
-	AppListExercisesReq      = option.AppListExercisesReq
-	AppListExercisesResp     = option.AppListExercisesResp
-	AppListHistoryOrdersReq  = option.AppListHistoryOrdersReq
-	AppListHistoryOrdersResp = option.AppListHistoryOrdersResp
-	AppListPositionsReq      = option.AppListPositionsReq
-	AppListPositionsResp     = option.AppListPositionsResp
-	AppListTradesReq         = option.AppListTradesReq
-	AppListTradesResp        = option.AppListTradesResp
-	AppPlaceOrderData        = option.AppPlaceOrderData
-	AppPlaceOrderReq         = option.AppPlaceOrderReq
-	AppPlaceOrderResp        = option.AppPlaceOrderResp
-	CreateContractReq        = option.CreateContractReq
-	CreateContractResp       = option.CreateContractResp
-	GetAccountReq            = option.GetAccountReq
-	GetAccountResp           = option.GetAccountResp
-	GetBillReq               = option.GetBillReq
-	GetBillResp              = option.GetBillResp
-	GetContractReq           = option.GetContractReq
-	GetContractResp          = option.GetContractResp
-	GetExerciseReq           = option.GetExerciseReq
-	GetExerciseResp          = option.GetExerciseResp
-	GetMarketReq             = option.GetMarketReq
-	GetMarketResp            = option.GetMarketResp
-	GetOrderReq              = option.GetOrderReq
-	GetOrderResp             = option.GetOrderResp
-	GetPositionReq           = option.GetPositionReq
-	GetPositionResp          = option.GetPositionResp
-	GetSettlementReq         = option.GetSettlementReq
-	GetSettlementResp        = option.GetSettlementResp
-	GetTradeReq              = option.GetTradeReq
-	GetTradeResp             = option.GetTradeResp
-	InternalCommonResp       = option.InternalCommonResp
-	ListAccountsReq          = option.ListAccountsReq
-	ListAccountsResp         = option.ListAccountsResp
-	ListBillsReq             = option.ListBillsReq
-	ListBillsResp            = option.ListBillsResp
-	ListContractsReq         = option.ListContractsReq
-	ListContractsResp        = option.ListContractsResp
-	ListExercisesReq         = option.ListExercisesReq
-	ListExercisesResp        = option.ListExercisesResp
-	ListMarketSnapshotsReq   = option.ListMarketSnapshotsReq
-	ListMarketSnapshotsResp  = option.ListMarketSnapshotsResp
-	ListOrdersReq            = option.ListOrdersReq
-	ListOrdersResp           = option.ListOrdersResp
-	ListPositionsReq         = option.ListPositionsReq
-	ListPositionsResp        = option.ListPositionsResp
-	ListSettlementsReq       = option.ListSettlementsReq
-	ListSettlementsResp      = option.ListSettlementsResp
-	ListTradesReq            = option.ListTradesReq
-	ListTradesResp           = option.ListTradesResp
-	OptionTaskReq            = option.OptionTaskReq
-	OptionTaskResp           = option.OptionTaskResp
-	SyncMarketQuoteReq       = option.SyncMarketQuoteReq
-	UpdateContractReq        = option.UpdateContractReq
-	UpdateMarketReq          = option.UpdateMarketReq
+	CommonResp              = option.CommonResp
+	CancelOrderReq          = option.CancelOrderReq
+	UserCommonResp          = option.UserCommonResp
+	ExerciseData            = option.ExerciseData
+	ExerciseReq             = option.ExerciseReq
+	ExerciseResp            = option.ExerciseResp
+	GetContractDetailReq    = option.GetContractDetailReq
+	GetContractDetailResp   = option.GetContractDetailResp
+	GetOrderDetailReq       = option.GetOrderDetailReq
+	GetOrderDetailResp      = option.GetOrderDetailResp
+	GetPositionDetailReq    = option.GetPositionDetailReq
+	GetPositionDetailResp   = option.GetPositionDetailResp
+	UserListAccountsReq     = option.UserListAccountsReq
+	UserListAccountsResp    = option.UserListAccountsResp
+	UserListBillsReq        = option.UserListBillsReq
+	UserListBillsResp       = option.UserListBillsResp
+	UserListContractsReq    = option.UserListContractsReq
+	UserListContractsResp   = option.UserListContractsResp
+	ListCurrentOrdersReq    = option.ListCurrentOrdersReq
+	ListCurrentOrdersResp   = option.ListCurrentOrdersResp
+	UserListExercisesReq    = option.UserListExercisesReq
+	UserListExercisesResp   = option.UserListExercisesResp
+	ListHistoryOrdersReq    = option.ListHistoryOrdersReq
+	ListHistoryOrdersResp   = option.ListHistoryOrdersResp
+	UserListPositionsReq    = option.UserListPositionsReq
+	UserListPositionsResp   = option.UserListPositionsResp
+	UserListTradesReq       = option.UserListTradesReq
+	UserListTradesResp      = option.UserListTradesResp
+	PlaceOrderData          = option.PlaceOrderData
+	PlaceOrderReq           = option.PlaceOrderReq
+	PlaceOrderResp          = option.PlaceOrderResp
+	CreateContractReq       = option.CreateContractReq
+	CreateContractResp      = option.CreateContractResp
+	GetAccountReq           = option.GetAccountReq
+	GetAccountResp          = option.GetAccountResp
+	GetBillReq              = option.GetBillReq
+	GetBillResp             = option.GetBillResp
+	GetContractReq          = option.GetContractReq
+	GetContractResp         = option.GetContractResp
+	GetExerciseReq          = option.GetExerciseReq
+	GetExerciseResp         = option.GetExerciseResp
+	GetMarketReq            = option.GetMarketReq
+	GetMarketResp           = option.GetMarketResp
+	GetOrderReq             = option.GetOrderReq
+	GetOrderResp            = option.GetOrderResp
+	GetPositionReq          = option.GetPositionReq
+	GetPositionResp         = option.GetPositionResp
+	GetSettlementReq        = option.GetSettlementReq
+	GetSettlementResp       = option.GetSettlementResp
+	GetTradeReq             = option.GetTradeReq
+	GetTradeResp            = option.GetTradeResp
+	InternalCommonResp      = option.InternalCommonResp
+	ListAccountsReq         = option.ListAccountsReq
+	ListAccountsResp        = option.ListAccountsResp
+	ListBillsReq            = option.ListBillsReq
+	ListBillsResp           = option.ListBillsResp
+	ListContractsReq        = option.ListContractsReq
+	ListContractsResp       = option.ListContractsResp
+	ListExercisesReq        = option.ListExercisesReq
+	ListExercisesResp       = option.ListExercisesResp
+	ListMarketSnapshotsReq  = option.ListMarketSnapshotsReq
+	ListMarketSnapshotsResp = option.ListMarketSnapshotsResp
+	ListOrdersReq           = option.ListOrdersReq
+	ListOrdersResp          = option.ListOrdersResp
+	ListPositionsReq        = option.ListPositionsReq
+	ListPositionsResp       = option.ListPositionsResp
+	ListSettlementsReq      = option.ListSettlementsReq
+	ListSettlementsResp     = option.ListSettlementsResp
+	ListTradesReq           = option.ListTradesReq
+	ListTradesResp          = option.ListTradesResp
+	OptionTaskReq           = option.OptionTaskReq
+	OptionTaskResp          = option.OptionTaskResp
+	SyncMarketQuoteReq      = option.SyncMarketQuoteReq
+	UpdateContractReq       = option.UpdateContractReq
+	UpdateMarketReq         = option.UpdateMarketReq
 
 	OptionApp interface {
 		// 获取可交易期权合约列表
-		AppListContracts(ctx context.Context, in *AppListContractsReq, opts ...grpc.CallOption) (*AppListContractsResp, error)
+		ListContracts(ctx context.Context, in *UserListContractsReq, opts ...grpc.CallOption) (*UserListContractsResp, error)
 		// 获取期权合约详情
-		AppGetContractDetail(ctx context.Context, in *AppGetContractDetailReq, opts ...grpc.CallOption) (*AppGetContractDetailResp, error)
+		GetContractDetail(ctx context.Context, in *GetContractDetailReq, opts ...grpc.CallOption) (*GetContractDetailResp, error)
 		// 提交期权下单请求
-		AppPlaceOrder(ctx context.Context, in *AppPlaceOrderReq, opts ...grpc.CallOption) (*AppPlaceOrderResp, error)
+		PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error)
 		// 撤销期权委托订单
-		AppCancelOrder(ctx context.Context, in *AppCancelOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 获取单个委托订单详情
-		AppGetOrderDetail(ctx context.Context, in *AppGetOrderDetailReq, opts ...grpc.CallOption) (*AppGetOrderDetailResp, error)
+		GetOrderDetail(ctx context.Context, in *GetOrderDetailReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error)
 		// 获取当前委托列表
-		AppListCurrentOrders(ctx context.Context, in *AppListCurrentOrdersReq, opts ...grpc.CallOption) (*AppListCurrentOrdersResp, error)
+		ListCurrentOrders(ctx context.Context, in *ListCurrentOrdersReq, opts ...grpc.CallOption) (*ListCurrentOrdersResp, error)
 		// 获取历史委托列表
-		AppListHistoryOrders(ctx context.Context, in *AppListHistoryOrdersReq, opts ...grpc.CallOption) (*AppListHistoryOrdersResp, error)
+		ListHistoryOrders(ctx context.Context, in *ListHistoryOrdersReq, opts ...grpc.CallOption) (*ListHistoryOrdersResp, error)
 		// 获取成交记录列表
-		AppListTrades(ctx context.Context, in *AppListTradesReq, opts ...grpc.CallOption) (*AppListTradesResp, error)
+		ListTrades(ctx context.Context, in *UserListTradesReq, opts ...grpc.CallOption) (*UserListTradesResp, error)
 		// 获取持仓列表
-		AppListPositions(ctx context.Context, in *AppListPositionsReq, opts ...grpc.CallOption) (*AppListPositionsResp, error)
+		ListPositions(ctx context.Context, in *UserListPositionsReq, opts ...grpc.CallOption) (*UserListPositionsResp, error)
 		// 获取单个持仓详情
-		AppGetPositionDetail(ctx context.Context, in *AppGetPositionDetailReq, opts ...grpc.CallOption) (*AppGetPositionDetailResp, error)
+		GetPositionDetail(ctx context.Context, in *GetPositionDetailReq, opts ...grpc.CallOption) (*GetPositionDetailResp, error)
 		// 发起行权
-		AppExercise(ctx context.Context, in *AppExerciseReq, opts ...grpc.CallOption) (*AppExerciseResp, error)
+		Exercise(ctx context.Context, in *ExerciseReq, opts ...grpc.CallOption) (*ExerciseResp, error)
 		// 获取行权记录列表
-		AppListExercises(ctx context.Context, in *AppListExercisesReq, opts ...grpc.CallOption) (*AppListExercisesResp, error)
+		ListExercises(ctx context.Context, in *UserListExercisesReq, opts ...grpc.CallOption) (*UserListExercisesResp, error)
 		// 获取账户资产列表
-		AppListAccounts(ctx context.Context, in *AppListAccountsReq, opts ...grpc.CallOption) (*AppListAccountsResp, error)
+		ListAccounts(ctx context.Context, in *UserListAccountsReq, opts ...grpc.CallOption) (*UserListAccountsResp, error)
 		// 获取资金流水列表
-		AppListBills(ctx context.Context, in *AppListBillsReq, opts ...grpc.CallOption) (*AppListBillsResp, error)
+		ListBills(ctx context.Context, in *UserListBillsReq, opts ...grpc.CallOption) (*UserListBillsResp, error)
 	}
 
 	defaultOptionApp struct {
@@ -133,85 +133,85 @@ func NewOptionApp(cli zrpc.Client) OptionApp {
 }
 
 // 获取可交易期权合约列表
-func (m *defaultOptionApp) AppListContracts(ctx context.Context, in *AppListContractsReq, opts ...grpc.CallOption) (*AppListContractsResp, error) {
+func (m *defaultOptionApp) ListContracts(ctx context.Context, in *UserListContractsReq, opts ...grpc.CallOption) (*UserListContractsResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppListContracts(ctx, in, opts...)
+	return client.ListContracts(ctx, in, opts...)
 }
 
 // 获取期权合约详情
-func (m *defaultOptionApp) AppGetContractDetail(ctx context.Context, in *AppGetContractDetailReq, opts ...grpc.CallOption) (*AppGetContractDetailResp, error) {
+func (m *defaultOptionApp) GetContractDetail(ctx context.Context, in *GetContractDetailReq, opts ...grpc.CallOption) (*GetContractDetailResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppGetContractDetail(ctx, in, opts...)
+	return client.GetContractDetail(ctx, in, opts...)
 }
 
 // 提交期权下单请求
-func (m *defaultOptionApp) AppPlaceOrder(ctx context.Context, in *AppPlaceOrderReq, opts ...grpc.CallOption) (*AppPlaceOrderResp, error) {
+func (m *defaultOptionApp) PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppPlaceOrder(ctx, in, opts...)
+	return client.PlaceOrder(ctx, in, opts...)
 }
 
 // 撤销期权委托订单
-func (m *defaultOptionApp) AppCancelOrder(ctx context.Context, in *AppCancelOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultOptionApp) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppCancelOrder(ctx, in, opts...)
+	return client.CancelOrder(ctx, in, opts...)
 }
 
 // 获取单个委托订单详情
-func (m *defaultOptionApp) AppGetOrderDetail(ctx context.Context, in *AppGetOrderDetailReq, opts ...grpc.CallOption) (*AppGetOrderDetailResp, error) {
+func (m *defaultOptionApp) GetOrderDetail(ctx context.Context, in *GetOrderDetailReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppGetOrderDetail(ctx, in, opts...)
+	return client.GetOrderDetail(ctx, in, opts...)
 }
 
 // 获取当前委托列表
-func (m *defaultOptionApp) AppListCurrentOrders(ctx context.Context, in *AppListCurrentOrdersReq, opts ...grpc.CallOption) (*AppListCurrentOrdersResp, error) {
+func (m *defaultOptionApp) ListCurrentOrders(ctx context.Context, in *ListCurrentOrdersReq, opts ...grpc.CallOption) (*ListCurrentOrdersResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppListCurrentOrders(ctx, in, opts...)
+	return client.ListCurrentOrders(ctx, in, opts...)
 }
 
 // 获取历史委托列表
-func (m *defaultOptionApp) AppListHistoryOrders(ctx context.Context, in *AppListHistoryOrdersReq, opts ...grpc.CallOption) (*AppListHistoryOrdersResp, error) {
+func (m *defaultOptionApp) ListHistoryOrders(ctx context.Context, in *ListHistoryOrdersReq, opts ...grpc.CallOption) (*ListHistoryOrdersResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppListHistoryOrders(ctx, in, opts...)
+	return client.ListHistoryOrders(ctx, in, opts...)
 }
 
 // 获取成交记录列表
-func (m *defaultOptionApp) AppListTrades(ctx context.Context, in *AppListTradesReq, opts ...grpc.CallOption) (*AppListTradesResp, error) {
+func (m *defaultOptionApp) ListTrades(ctx context.Context, in *UserListTradesReq, opts ...grpc.CallOption) (*UserListTradesResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppListTrades(ctx, in, opts...)
+	return client.ListTrades(ctx, in, opts...)
 }
 
 // 获取持仓列表
-func (m *defaultOptionApp) AppListPositions(ctx context.Context, in *AppListPositionsReq, opts ...grpc.CallOption) (*AppListPositionsResp, error) {
+func (m *defaultOptionApp) ListPositions(ctx context.Context, in *UserListPositionsReq, opts ...grpc.CallOption) (*UserListPositionsResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppListPositions(ctx, in, opts...)
+	return client.ListPositions(ctx, in, opts...)
 }
 
 // 获取单个持仓详情
-func (m *defaultOptionApp) AppGetPositionDetail(ctx context.Context, in *AppGetPositionDetailReq, opts ...grpc.CallOption) (*AppGetPositionDetailResp, error) {
+func (m *defaultOptionApp) GetPositionDetail(ctx context.Context, in *GetPositionDetailReq, opts ...grpc.CallOption) (*GetPositionDetailResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppGetPositionDetail(ctx, in, opts...)
+	return client.GetPositionDetail(ctx, in, opts...)
 }
 
 // 发起行权
-func (m *defaultOptionApp) AppExercise(ctx context.Context, in *AppExerciseReq, opts ...grpc.CallOption) (*AppExerciseResp, error) {
+func (m *defaultOptionApp) Exercise(ctx context.Context, in *ExerciseReq, opts ...grpc.CallOption) (*ExerciseResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppExercise(ctx, in, opts...)
+	return client.Exercise(ctx, in, opts...)
 }
 
 // 获取行权记录列表
-func (m *defaultOptionApp) AppListExercises(ctx context.Context, in *AppListExercisesReq, opts ...grpc.CallOption) (*AppListExercisesResp, error) {
+func (m *defaultOptionApp) ListExercises(ctx context.Context, in *UserListExercisesReq, opts ...grpc.CallOption) (*UserListExercisesResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppListExercises(ctx, in, opts...)
+	return client.ListExercises(ctx, in, opts...)
 }
 
 // 获取账户资产列表
-func (m *defaultOptionApp) AppListAccounts(ctx context.Context, in *AppListAccountsReq, opts ...grpc.CallOption) (*AppListAccountsResp, error) {
+func (m *defaultOptionApp) ListAccounts(ctx context.Context, in *UserListAccountsReq, opts ...grpc.CallOption) (*UserListAccountsResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppListAccounts(ctx, in, opts...)
+	return client.ListAccounts(ctx, in, opts...)
 }
 
 // 获取资金流水列表
-func (m *defaultOptionApp) AppListBills(ctx context.Context, in *AppListBillsReq, opts ...grpc.CallOption) (*AppListBillsResp, error) {
+func (m *defaultOptionApp) ListBills(ctx context.Context, in *UserListBillsReq, opts ...grpc.CallOption) (*UserListBillsResp, error) {
 	client := option.NewOptionAppClient(m.cli.Conn())
-	return client.AppListBills(ctx, in, opts...)
+	return client.ListBills(ctx, in, opts...)
 }

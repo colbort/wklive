@@ -105,7 +105,7 @@ func (x *RespBase) GetBase() *common.RespBase {
 // ////////////////////
 // Auth / 登录
 // ////////////////////
-type AdminLoginReq struct {
+type LoginReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
@@ -116,20 +116,20 @@ type AdminLoginReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminLoginReq) Reset() {
-	*x = AdminLoginReq{}
+func (x *LoginReq) Reset() {
+	*x = LoginReq{}
 	mi := &file_proto_system_system_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminLoginReq) String() string {
+func (x *LoginReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminLoginReq) ProtoMessage() {}
+func (*LoginReq) ProtoMessage() {}
 
-func (x *AdminLoginReq) ProtoReflect() protoreflect.Message {
+func (x *LoginReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_system_system_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -141,68 +141,68 @@ func (x *AdminLoginReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminLoginReq.ProtoReflect.Descriptor instead.
-func (*AdminLoginReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoginReq.ProtoReflect.Descriptor instead.
+func (*LoginReq) Descriptor() ([]byte, []int) {
 	return file_proto_system_system_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AdminLoginReq) GetUsername() string {
+func (x *LoginReq) GetUsername() string {
 	if x != nil {
 		return x.Username
 	}
 	return ""
 }
 
-func (x *AdminLoginReq) GetPassword() string {
+func (x *LoginReq) GetPassword() string {
 	if x != nil {
 		return x.Password
 	}
 	return ""
 }
 
-func (x *AdminLoginReq) GetGoogleCode() string {
+func (x *LoginReq) GetGoogleCode() string {
 	if x != nil {
 		return x.GoogleCode
 	}
 	return ""
 }
 
-func (x *AdminLoginReq) GetIp() string {
+func (x *LoginReq) GetIp() string {
 	if x != nil {
 		return x.Ip
 	}
 	return ""
 }
 
-func (x *AdminLoginReq) GetUa() string {
+func (x *LoginReq) GetUa() string {
 	if x != nil {
 		return x.Ua
 	}
 	return ""
 }
 
-type AdminLoginResp struct {
+type LoginResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *AdminLoginData        `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *LoginData             `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminLoginResp) Reset() {
-	*x = AdminLoginResp{}
+func (x *LoginResp) Reset() {
+	*x = LoginResp{}
 	mi := &file_proto_system_system_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminLoginResp) String() string {
+func (x *LoginResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminLoginResp) ProtoMessage() {}
+func (*LoginResp) ProtoMessage() {}
 
-func (x *AdminLoginResp) ProtoReflect() protoreflect.Message {
+func (x *LoginResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_system_system_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -214,26 +214,26 @@ func (x *AdminLoginResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminLoginResp.ProtoReflect.Descriptor instead.
-func (*AdminLoginResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoginResp.ProtoReflect.Descriptor instead.
+func (*LoginResp) Descriptor() ([]byte, []int) {
 	return file_proto_system_system_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *AdminLoginResp) GetBase() *common.RespBase {
+func (x *LoginResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AdminLoginResp) GetData() *AdminLoginData {
+func (x *LoginResp) GetData() *LoginData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AdminLoginData struct {
+type LoginData struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Token            string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	Exp              int64                  `protobuf:"varint,2,opt,name=exp,proto3" json:"exp,omitempty"`
@@ -250,20 +250,20 @@ type AdminLoginData struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *AdminLoginData) Reset() {
-	*x = AdminLoginData{}
+func (x *LoginData) Reset() {
+	*x = LoginData{}
 	mi := &file_proto_system_system_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminLoginData) String() string {
+func (x *LoginData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminLoginData) ProtoMessage() {}
+func (*LoginData) ProtoMessage() {}
 
-func (x *AdminLoginData) ProtoReflect() protoreflect.Message {
+func (x *LoginData) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_system_system_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -275,82 +275,82 @@ func (x *AdminLoginData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminLoginData.ProtoReflect.Descriptor instead.
-func (*AdminLoginData) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoginData.ProtoReflect.Descriptor instead.
+func (*LoginData) Descriptor() ([]byte, []int) {
 	return file_proto_system_system_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *AdminLoginData) GetToken() string {
+func (x *LoginData) GetToken() string {
 	if x != nil {
 		return x.Token
 	}
 	return ""
 }
 
-func (x *AdminLoginData) GetExp() int64 {
+func (x *LoginData) GetExp() int64 {
 	if x != nil {
 		return x.Exp
 	}
 	return 0
 }
 
-func (x *AdminLoginData) GetUserId() int64 {
+func (x *LoginData) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *AdminLoginData) GetNickname() string {
+func (x *LoginData) GetNickname() string {
 	if x != nil {
 		return x.Nickname
 	}
 	return ""
 }
 
-func (x *AdminLoginData) GetRoleIds() []int64 {
+func (x *LoginData) GetRoleIds() []int64 {
 	if x != nil {
 		return x.RoleIds
 	}
 	return nil
 }
 
-func (x *AdminLoginData) GetGoogle2FaEnabled() common.Enable {
+func (x *LoginData) GetGoogle2FaEnabled() common.Enable {
 	if x != nil {
 		return x.Google2FaEnabled
 	}
 	return common.Enable(0)
 }
 
-func (x *AdminLoginData) GetPermsVer() int64 {
+func (x *LoginData) GetPermsVer() int64 {
 	if x != nil {
 		return x.PermsVer
 	}
 	return 0
 }
 
-func (x *AdminLoginData) GetTenantId() int64 {
+func (x *LoginData) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminLoginData) GetUserType() UserType {
+func (x *LoginData) GetUserType() UserType {
 	if x != nil {
 		return x.UserType
 	}
 	return UserType_USER_TYPE_UNKNOWN
 }
 
-func (x *AdminLoginData) GetIsOwner() common.YesNo {
+func (x *LoginData) GetIsOwner() common.YesNo {
 	if x != nil {
 		return x.IsOwner
 	}
 	return common.YesNo(0)
 }
 
-func (x *AdminLoginData) GetAvatar() string {
+func (x *LoginData) GetAvatar() string {
 	if x != nil {
 		return x.Avatar
 	}
@@ -7737,18 +7737,18 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x19proto/system/system.proto\x12\x06system\x1a\x19proto/common/common.proto\x1a\x17proto/system/enum.proto\"\a\n" +
 	"\x05Empty\"0\n" +
 	"\bRespBase\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x88\x01\n" +
-	"\rAdminLoginReq\x12\x1a\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x83\x01\n" +
+	"\bLoginReq\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1f\n" +
 	"\vgoogle_code\x18\x03 \x01(\tR\n" +
 	"googleCode\x12\x0e\n" +
 	"\x02ip\x18\x04 \x01(\tR\x02ip\x12\x0e\n" +
-	"\x02ua\x18\x05 \x01(\tR\x02ua\"b\n" +
-	"\x0eAdminLoginResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.system.AdminLoginDataR\x04data\"\xf0\x02\n" +
-	"\x0eAdminLoginData\x12\x14\n" +
+	"\x02ua\x18\x05 \x01(\tR\x02ua\"X\n" +
+	"\tLoginResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
+	"\x04data\x18\x02 \x01(\v2\x11.system.LoginDataR\x04data\"\xeb\x02\n" +
+	"\tLoginData\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x10\n" +
 	"\x03exp\x18\x02 \x01(\x03R\x03exp\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1a\n" +
@@ -8354,10 +8354,9 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x0e_merchant_code\"r\n" +
 	"\x19SysChatMerchantDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12/\n" +
-	"\x04data\x18\x02 \x01(\v2\x1b.system.SysChatMerchantItemR\x04data2\xcd!\n" +
-	"\vSystemAdmin\x12;\n" +
-	"\n" +
-	"AdminLogin\x12\x15.system.AdminLoginReq\x1a\x16.system.AdminLoginResp\x120\n" +
+	"\x04data\x18\x02 \x01(\v2\x1b.system.SysChatMerchantItemR\x04data2\xbe!\n" +
+	"\vSystemAdmin\x12,\n" +
+	"\x05Login\x12\x10.system.LoginReq\x1a\x11.system.LoginResp\x120\n" +
 	"\n" +
 	"GetProfile\x12\r.system.Empty\x1a\x13.system.ProfileResp\x12;\n" +
 	"\rUpdateProfile\x12\x18.system.UpdateProfileReq\x1a\x10.system.RespBase\x12D\n" +
@@ -8447,9 +8446,9 @@ var file_proto_system_system_proto_msgTypes = make([]protoimpl.MessageInfo, 111)
 var file_proto_system_system_proto_goTypes = []any{
 	(*Empty)(nil),                            // 0: system.Empty
 	(*RespBase)(nil),                         // 1: system.RespBase
-	(*AdminLoginReq)(nil),                    // 2: system.AdminLoginReq
-	(*AdminLoginResp)(nil),                   // 3: system.AdminLoginResp
-	(*AdminLoginData)(nil),                   // 4: system.AdminLoginData
+	(*LoginReq)(nil),                         // 2: system.LoginReq
+	(*LoginResp)(nil),                        // 3: system.LoginResp
+	(*LoginData)(nil),                        // 4: system.LoginData
 	(*ProfileUser)(nil),                      // 5: system.ProfileUser
 	(*SysMenuNode)(nil),                      // 6: system.SysMenuNode
 	(*ProfileData)(nil),                      // 7: system.ProfileData
@@ -8573,11 +8572,11 @@ var file_proto_system_system_proto_goTypes = []any{
 }
 var file_proto_system_system_proto_depIdxs = []int32{
 	111, // 0: system.RespBase.base:type_name -> common.RespBase
-	111, // 1: system.AdminLoginResp.base:type_name -> common.RespBase
-	4,   // 2: system.AdminLoginResp.data:type_name -> system.AdminLoginData
-	112, // 3: system.AdminLoginData.google2fa_enabled:type_name -> common.Enable
-	113, // 4: system.AdminLoginData.user_type:type_name -> system.UserType
-	114, // 5: system.AdminLoginData.is_owner:type_name -> common.YesNo
+	111, // 1: system.LoginResp.base:type_name -> common.RespBase
+	4,   // 2: system.LoginResp.data:type_name -> system.LoginData
+	112, // 3: system.LoginData.google2fa_enabled:type_name -> common.Enable
+	113, // 4: system.LoginData.user_type:type_name -> system.UserType
+	114, // 5: system.LoginData.is_owner:type_name -> common.YesNo
 	113, // 6: system.ProfileUser.user_type:type_name -> system.UserType
 	114, // 7: system.ProfileUser.is_owner:type_name -> common.YesNo
 	112, // 8: system.ProfileUser.google2fa_enabled:type_name -> common.Enable
@@ -8708,7 +8707,7 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	112, // 133: system.SysChatMerchantUpdateReq.enabled:type_name -> common.Enable
 	111, // 134: system.SysChatMerchantDetailResp.base:type_name -> common.RespBase
 	103, // 135: system.SysChatMerchantDetailResp.data:type_name -> system.SysChatMerchantItem
-	2,   // 136: system.SystemAdmin.AdminLogin:input_type -> system.AdminLoginReq
+	2,   // 136: system.SystemAdmin.Login:input_type -> system.LoginReq
 	0,   // 137: system.SystemAdmin.GetProfile:input_type -> system.Empty
 	9,   // 138: system.SystemAdmin.UpdateProfile:input_type -> system.UpdateProfileReq
 	13,  // 139: system.SystemAdmin.Google2FAInit:input_type -> system.Google2FAInitReq
@@ -8778,7 +8777,7 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	88,  // 203: system.SystemInternal.SysTenantList:input_type -> system.SysTenantListReq
 	93,  // 204: system.SystemInternal.SysTenantDetail:input_type -> system.SysTenantDetailReq
 	101, // 205: system.SystemInternal.ResolveTenantDomain:input_type -> system.ResolveTenantDomainReq
-	3,   // 206: system.SystemAdmin.AdminLogin:output_type -> system.AdminLoginResp
+	3,   // 206: system.SystemAdmin.Login:output_type -> system.LoginResp
 	8,   // 207: system.SystemAdmin.GetProfile:output_type -> system.ProfileResp
 	1,   // 208: system.SystemAdmin.UpdateProfile:output_type -> system.RespBase
 	14,  // 209: system.SystemAdmin.Google2FAInit:output_type -> system.Google2FAInitResp

@@ -31,20 +31,20 @@ func NewCreateChatWorkOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 创建工单/离线留言
-func (l *CreateChatWorkOrderLogic) CreateChatWorkOrder(in *chat.CreateChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+func (l *CreateChatWorkOrderLogic) CreateChatWorkOrder(in *chat.CreateChatWorkOrderReq) (*chat.ChatWorkOrderResp, error) {
 	title := strings.TrimSpace(in.GetTitle())
 	content := strings.TrimSpace(in.GetContent())
 	if title == "" || content == "" {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "title and content are required")}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(400, "title and content are required")}, nil
 	}
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	workOrderNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "chat", "WO", "")
 	if err != nil {
 		logx.Errorf("generate work order no error: %v", err)
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "generate message no error")}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(400, "generate message no error")}, nil
 	}
 	now := utils.NowMillis()
 	data := &models.TChatWorkOrder{
@@ -70,8 +70,8 @@ func (l *CreateChatWorkOrderLogic) CreateChatWorkOrder(in *chat.CreateChatWorkOr
 		if id, err := result.LastInsertId(); err == nil {
 			data.Id = id
 		}
-		return &chat.AdminChatWorkOrderResp{Base: helper.OkResp(), Data: ih.ToProtoChatWorkOrder(data)}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.OkResp(), Data: ih.ToProtoChatWorkOrder(data)}, nil
 	} else {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 }

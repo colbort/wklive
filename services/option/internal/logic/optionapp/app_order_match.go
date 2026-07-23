@@ -14,7 +14,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-func (l *AppPlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *models.TOptionOrder) error {
+func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *models.TOptionOrder) error {
 	if order.OrderType == int64(option.OrderType_ORDER_TYPE_POST_ONLY) {
 		return nil
 	}

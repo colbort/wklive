@@ -14,66 +14,66 @@ import (
 )
 
 type (
-	AdminManualRedeemReq         = staking.AdminManualRedeemReq
-	AdminManualRedeemResp        = staking.AdminManualRedeemResp
-	AdminManualRewardReq         = staking.AdminManualRewardReq
-	AdminManualRewardResp        = staking.AdminManualRewardResp
-	AdminOrderDetailReq          = staking.AdminOrderDetailReq
-	AdminOrderDetailResp         = staking.AdminOrderDetailResp
-	AdminOrderListReq            = staking.AdminOrderListReq
-	AdminOrderListResp           = staking.AdminOrderListResp
-	AdminProductChangeStatusReq  = staking.AdminProductChangeStatusReq
-	AdminProductChangeStatusResp = staking.AdminProductChangeStatusResp
-	AdminProductCreateReq        = staking.AdminProductCreateReq
-	AdminProductCreateResp       = staking.AdminProductCreateResp
-	AdminProductDetailReq        = staking.AdminProductDetailReq
-	AdminProductDetailResp       = staking.AdminProductDetailResp
-	AdminProductListReq          = staking.AdminProductListReq
-	AdminProductListResp         = staking.AdminProductListResp
-	AdminProductUpdateReq        = staking.AdminProductUpdateReq
-	AdminProductUpdateResp       = staking.AdminProductUpdateResp
-	AdminRedeemLogListReq        = staking.AdminRedeemLogListReq
-	AdminRedeemLogListResp       = staking.AdminRedeemLogListResp
-	AdminRewardLogListReq        = staking.AdminRewardLogListReq
-	AdminRewardLogListResp       = staking.AdminRewardLogListResp
-	AppCreateOrderData           = staking.AppCreateOrderData
-	AppCreateOrderReq            = staking.AppCreateOrderReq
-	AppCreateOrderResp           = staking.AppCreateOrderResp
-	AppMyOrderDetailReq          = staking.AppMyOrderDetailReq
-	AppMyOrderDetailResp         = staking.AppMyOrderDetailResp
-	AppMyOrderListReq            = staking.AppMyOrderListReq
-	AppMyOrderListResp           = staking.AppMyOrderListResp
-	AppMyRedeemLogListReq        = staking.AppMyRedeemLogListReq
-	AppMyRedeemLogListResp       = staking.AppMyRedeemLogListResp
-	AppMyRewardLogListReq        = staking.AppMyRewardLogListReq
-	AppMyRewardLogListResp       = staking.AppMyRewardLogListResp
-	AppProductDetailReq          = staking.AppProductDetailReq
-	AppProductDetailResp         = staking.AppProductDetailResp
-	AppProductListReq            = staking.AppProductListReq
-	AppProductListResp           = staking.AppProductListResp
-	AppRedeemData                = staking.AppRedeemData
-	AppRedeemReq                 = staking.AppRedeemReq
-	AppRedeemResp                = staking.AppRedeemResp
-	StakingTaskReq               = staking.StakingTaskReq
-	StakingTaskResp              = staking.StakingTaskResp
+	ManualRedeemReq         = staking.ManualRedeemReq
+	ManualRedeemResp        = staking.ManualRedeemResp
+	ManualRewardReq         = staking.ManualRewardReq
+	ManualRewardResp        = staking.ManualRewardResp
+	OrderDetailReq          = staking.OrderDetailReq
+	OrderDetailResp         = staking.OrderDetailResp
+	OrderListReq            = staking.OrderListReq
+	OrderListResp           = staking.OrderListResp
+	ProductChangeStatusReq  = staking.ProductChangeStatusReq
+	ProductChangeStatusResp = staking.ProductChangeStatusResp
+	ProductCreateReq        = staking.ProductCreateReq
+	ProductCreateResp       = staking.ProductCreateResp
+	ProductDetailReq        = staking.ProductDetailReq
+	ProductDetailResp       = staking.ProductDetailResp
+	ProductListReq          = staking.ProductListReq
+	ProductListResp         = staking.ProductListResp
+	ProductUpdateReq        = staking.ProductUpdateReq
+	ProductUpdateResp       = staking.ProductUpdateResp
+	RedeemLogListReq        = staking.RedeemLogListReq
+	RedeemLogListResp       = staking.RedeemLogListResp
+	RewardLogListReq        = staking.RewardLogListReq
+	RewardLogListResp       = staking.RewardLogListResp
+	CreateOrderData         = staking.CreateOrderData
+	CreateOrderReq          = staking.CreateOrderReq
+	CreateOrderResp         = staking.CreateOrderResp
+	MyOrderDetailReq        = staking.MyOrderDetailReq
+	MyOrderDetailResp       = staking.MyOrderDetailResp
+	MyOrderListReq          = staking.MyOrderListReq
+	MyOrderListResp         = staking.MyOrderListResp
+	MyRedeemLogListReq      = staking.MyRedeemLogListReq
+	MyRedeemLogListResp     = staking.MyRedeemLogListResp
+	MyRewardLogListReq      = staking.MyRewardLogListReq
+	MyRewardLogListResp     = staking.MyRewardLogListResp
+	UserProductDetailReq    = staking.UserProductDetailReq
+	UserProductDetailResp   = staking.UserProductDetailResp
+	UserProductListReq      = staking.UserProductListReq
+	UserProductListResp     = staking.UserProductListResp
+	RedeemData              = staking.RedeemData
+	RedeemReq               = staking.RedeemReq
+	RedeemResp              = staking.RedeemResp
+	StakingTaskReq          = staking.StakingTaskReq
+	StakingTaskResp         = staking.StakingTaskResp
 
 	StakingApp interface {
 		// 获取质押产品列表
-		AppProductList(ctx context.Context, in *AppProductListReq, opts ...grpc.CallOption) (*AppProductListResp, error)
+		ProductList(ctx context.Context, in *UserProductListReq, opts ...grpc.CallOption) (*UserProductListResp, error)
 		// 获取质押产品详情
-		AppProductDetail(ctx context.Context, in *AppProductDetailReq, opts ...grpc.CallOption) (*AppProductDetailResp, error)
+		ProductDetail(ctx context.Context, in *UserProductDetailReq, opts ...grpc.CallOption) (*UserProductDetailResp, error)
 		// 创建质押订单
-		CreateOrder(ctx context.Context, in *AppCreateOrderReq, opts ...grpc.CallOption) (*AppCreateOrderResp, error)
+		CreateOrder(ctx context.Context, in *CreateOrderReq, opts ...grpc.CallOption) (*CreateOrderResp, error)
 		// 获取我的质押订单列表
-		MyOrderList(ctx context.Context, in *AppMyOrderListReq, opts ...grpc.CallOption) (*AppMyOrderListResp, error)
+		MyOrderList(ctx context.Context, in *MyOrderListReq, opts ...grpc.CallOption) (*MyOrderListResp, error)
 		// 获取我的质押订单详情
-		MyOrderDetail(ctx context.Context, in *AppMyOrderDetailReq, opts ...grpc.CallOption) (*AppMyOrderDetailResp, error)
+		MyOrderDetail(ctx context.Context, in *MyOrderDetailReq, opts ...grpc.CallOption) (*MyOrderDetailResp, error)
 		// 获取我的收益记录列表
-		MyRewardLogList(ctx context.Context, in *AppMyRewardLogListReq, opts ...grpc.CallOption) (*AppMyRewardLogListResp, error)
+		MyRewardLogList(ctx context.Context, in *MyRewardLogListReq, opts ...grpc.CallOption) (*MyRewardLogListResp, error)
 		// 发起赎回
-		Redeem(ctx context.Context, in *AppRedeemReq, opts ...grpc.CallOption) (*AppRedeemResp, error)
+		Redeem(ctx context.Context, in *RedeemReq, opts ...grpc.CallOption) (*RedeemResp, error)
 		// 获取我的赎回记录列表
-		MyRedeemLogList(ctx context.Context, in *AppMyRedeemLogListReq, opts ...grpc.CallOption) (*AppMyRedeemLogListResp, error)
+		MyRedeemLogList(ctx context.Context, in *MyRedeemLogListReq, opts ...grpc.CallOption) (*MyRedeemLogListResp, error)
 	}
 
 	defaultStakingApp struct {
@@ -88,49 +88,49 @@ func NewStakingApp(cli zrpc.Client) StakingApp {
 }
 
 // 获取质押产品列表
-func (m *defaultStakingApp) AppProductList(ctx context.Context, in *AppProductListReq, opts ...grpc.CallOption) (*AppProductListResp, error) {
+func (m *defaultStakingApp) ProductList(ctx context.Context, in *UserProductListReq, opts ...grpc.CallOption) (*UserProductListResp, error) {
 	client := staking.NewStakingAppClient(m.cli.Conn())
-	return client.AppProductList(ctx, in, opts...)
+	return client.ProductList(ctx, in, opts...)
 }
 
 // 获取质押产品详情
-func (m *defaultStakingApp) AppProductDetail(ctx context.Context, in *AppProductDetailReq, opts ...grpc.CallOption) (*AppProductDetailResp, error) {
+func (m *defaultStakingApp) ProductDetail(ctx context.Context, in *UserProductDetailReq, opts ...grpc.CallOption) (*UserProductDetailResp, error) {
 	client := staking.NewStakingAppClient(m.cli.Conn())
-	return client.AppProductDetail(ctx, in, opts...)
+	return client.ProductDetail(ctx, in, opts...)
 }
 
 // 创建质押订单
-func (m *defaultStakingApp) CreateOrder(ctx context.Context, in *AppCreateOrderReq, opts ...grpc.CallOption) (*AppCreateOrderResp, error) {
+func (m *defaultStakingApp) CreateOrder(ctx context.Context, in *CreateOrderReq, opts ...grpc.CallOption) (*CreateOrderResp, error) {
 	client := staking.NewStakingAppClient(m.cli.Conn())
 	return client.CreateOrder(ctx, in, opts...)
 }
 
 // 获取我的质押订单列表
-func (m *defaultStakingApp) MyOrderList(ctx context.Context, in *AppMyOrderListReq, opts ...grpc.CallOption) (*AppMyOrderListResp, error) {
+func (m *defaultStakingApp) MyOrderList(ctx context.Context, in *MyOrderListReq, opts ...grpc.CallOption) (*MyOrderListResp, error) {
 	client := staking.NewStakingAppClient(m.cli.Conn())
 	return client.MyOrderList(ctx, in, opts...)
 }
 
 // 获取我的质押订单详情
-func (m *defaultStakingApp) MyOrderDetail(ctx context.Context, in *AppMyOrderDetailReq, opts ...grpc.CallOption) (*AppMyOrderDetailResp, error) {
+func (m *defaultStakingApp) MyOrderDetail(ctx context.Context, in *MyOrderDetailReq, opts ...grpc.CallOption) (*MyOrderDetailResp, error) {
 	client := staking.NewStakingAppClient(m.cli.Conn())
 	return client.MyOrderDetail(ctx, in, opts...)
 }
 
 // 获取我的收益记录列表
-func (m *defaultStakingApp) MyRewardLogList(ctx context.Context, in *AppMyRewardLogListReq, opts ...grpc.CallOption) (*AppMyRewardLogListResp, error) {
+func (m *defaultStakingApp) MyRewardLogList(ctx context.Context, in *MyRewardLogListReq, opts ...grpc.CallOption) (*MyRewardLogListResp, error) {
 	client := staking.NewStakingAppClient(m.cli.Conn())
 	return client.MyRewardLogList(ctx, in, opts...)
 }
 
 // 发起赎回
-func (m *defaultStakingApp) Redeem(ctx context.Context, in *AppRedeemReq, opts ...grpc.CallOption) (*AppRedeemResp, error) {
+func (m *defaultStakingApp) Redeem(ctx context.Context, in *RedeemReq, opts ...grpc.CallOption) (*RedeemResp, error) {
 	client := staking.NewStakingAppClient(m.cli.Conn())
 	return client.Redeem(ctx, in, opts...)
 }
 
 // 获取我的赎回记录列表
-func (m *defaultStakingApp) MyRedeemLogList(ctx context.Context, in *AppMyRedeemLogListReq, opts ...grpc.CallOption) (*AppMyRedeemLogListResp, error) {
+func (m *defaultStakingApp) MyRedeemLogList(ctx context.Context, in *MyRedeemLogListReq, opts ...grpc.CallOption) (*MyRedeemLogListResp, error) {
 	client := staking.NewStakingAppClient(m.cli.Conn())
 	return client.MyRedeemLogList(ctx, in, opts...)
 }

@@ -27,6 +27,6 @@ func NewGetOrderDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 	}
 }
 
-func (l *GetOrderDetailLogic) GetOrderDetail(req *types.GetOrderDetailReq) (resp *types.GetOrderDetailResp, err error) {
-	return logicutil.Proxy[types.GetOrderDetailResp](l.ctx, req, l.svcCtx.TradeCli.GetOrderDetail)
+func (l *GetOrderDetailLogic) GetOrderDetail(req *types.TradeGetOrderDetailReq) (resp *types.TradeGetOrderDetailResp, err error) {
+	return logicutil.Proxy[types.TradeGetOrderDetailResp](l.ctx, req, l.svcCtx.TradeCli.GetOrderDetail)
 }

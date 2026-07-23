@@ -27,6 +27,6 @@ func NewSetInsuranceFundAccountLogic(ctx context.Context, svcCtx *svc.ServiceCon
 	}
 }
 
-func (l *SetInsuranceFundAccountLogic) SetInsuranceFundAccount(req *types.SetInsuranceFundAccountReq) (resp *types.AdminCommonResp, err error) {
-	return logicutil.Proxy[types.AdminCommonResp](l.ctx, req, l.svcCtx.TradeCli.SetInsuranceFundAccount)
+func (l *SetInsuranceFundAccountLogic) SetInsuranceFundAccount(req *types.SetInsuranceFundAccountReq) (resp *types.CommonResp, err error) {
+	return logicutil.Proxy[types.CommonResp](l.ctx, req, l.svcCtx.TradeCli.SetInsuranceFundAccount)
 }

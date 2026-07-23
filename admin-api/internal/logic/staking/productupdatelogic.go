@@ -27,6 +27,6 @@ func NewProductUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pro
 	}
 }
 
-func (l *ProductUpdateLogic) ProductUpdate(req *types.AdminProductUpdateReq) (resp *types.AdminProductUpdateResp, err error) {
-	return logicutil.Proxy[types.AdminProductUpdateResp](l.ctx, req, l.svcCtx.StakingCli.ProductUpdate)
+func (l *ProductUpdateLogic) ProductUpdate(req *types.ProductUpdateReq) (resp *types.ProductUpdateResp, err error) {
+	return logicutil.Proxy[types.ProductUpdateResp](l.ctx, req, l.svcCtx.StakingCli.ProductUpdate)
 }

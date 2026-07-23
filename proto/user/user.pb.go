@@ -22,27 +22,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AppCommonResp struct {
+type UserCommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppCommonResp) Reset() {
-	*x = AppCommonResp{}
+func (x *UserCommonResp) Reset() {
+	*x = UserCommonResp{}
 	mi := &file_proto_user_user_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppCommonResp) String() string {
+func (x *UserCommonResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppCommonResp) ProtoMessage() {}
+func (*UserCommonResp) ProtoMessage() {}
 
-func (x *AppCommonResp) ProtoReflect() protoreflect.Message {
+func (x *UserCommonResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_user_user_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -54,12 +54,12 @@ func (x *AppCommonResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppCommonResp.ProtoReflect.Descriptor instead.
-func (*AppCommonResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserCommonResp.ProtoReflect.Descriptor instead.
+func (*UserCommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AppCommonResp) GetBase() *common.RespBase {
+func (x *UserCommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2786,27 +2786,27 @@ func (x *SetDefaultBankReq) GetId() int64 {
 	return 0
 }
 
-type AdminCommonResp struct {
+type CommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminCommonResp) Reset() {
-	*x = AdminCommonResp{}
+func (x *CommonResp) Reset() {
+	*x = CommonResp{}
 	mi := &file_proto_user_user_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminCommonResp) String() string {
+func (x *CommonResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminCommonResp) ProtoMessage() {}
+func (*CommonResp) ProtoMessage() {}
 
-func (x *AdminCommonResp) ProtoReflect() protoreflect.Message {
+func (x *CommonResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_user_user_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2818,12 +2818,12 @@ func (x *AdminCommonResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminCommonResp.ProtoReflect.Descriptor instead.
-func (*AdminCommonResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use CommonResp.ProtoReflect.Descriptor instead.
+func (*CommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_proto_rawDescGZIP(), []int{47}
 }
 
-func (x *AdminCommonResp) GetBase() *common.RespBase {
+func (x *CommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -5386,8 +5386,8 @@ var File_proto_user_user_proto protoreflect.FileDescriptor
 
 const file_proto_user_user_proto_rawDesc = "" +
 	"\n" +
-	"\x15proto/user/user.proto\x12\x04user\x1a\x19proto/common/common.proto\x1a\x15proto/user/enum.proto\x1a\x16proto/user/model.proto\"5\n" +
-	"\rAppCommonResp\x12$\n" +
+	"\x15proto/user/user.proto\x12\x04user\x1a\x19proto/common/common.proto\x1a\x15proto/user/enum.proto\x1a\x16proto/user/model.proto\"6\n" +
+	"\x0eUserCommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xcd\x02\n" +
 	"\vRegisterReq\x127\n" +
 	"\rregister_type\x18\x02 \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12\x1a\n" +
@@ -5585,8 +5585,9 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"\rDeleteBankReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"#\n" +
 	"\x11SetDefaultBankReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"7\n" +
-	"\x0fAdminCommonResp\x12$\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"2\n" +
+	"\n" +
+	"CommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x9f\x04\n" +
 	"\rCreateUserReq\x12\x1f\n" +
 	"\vtenant_code\x18\x01 \x01(\tR\n" +
@@ -5798,63 +5799,63 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"\x1binactive_over_quarter_count\x18\x05 \x01(\x03R\x18inactiveOverQuarterCount\"~\n" +
 	"\x1dGuestDomainMigrationStatsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x127\n" +
-	"\x04data\x18\x02 \x01(\v2#.user.GuestDomainMigrationStatsDataR\x04data2\xe8\v\n" +
+	"\x04data\x18\x02 \x01(\v2#.user.GuestDomainMigrationStatsDataR\x04data2\xf0\v\n" +
 	"\aUserApp\x121\n" +
 	"\bRegister\x12\x11.user.RegisterReq\x1a\x12.user.RegisterResp\x12(\n" +
 	"\x05Login\x12\x0e.user.LoginReq\x1a\x0f.user.LoginResp\x127\n" +
 	"\n" +
 	"GuestLogin\x12\x13.user.GuestLoginReq\x1a\x14.user.GuestLoginResp\x12R\n" +
 	"\x13CreateGuestTransfer\x12\x1c.user.CreateGuestTransferReq\x1a\x1d.user.CreateGuestTransferResp\x12X\n" +
-	"\x15ExchangeGuestTransfer\x12\x1e.user.ExchangeGuestTransferReq\x1a\x1f.user.ExchangeGuestTransferResp\x12.\n" +
-	"\x06Logout\x12\x0f.user.LogoutReq\x1a\x13.user.AppCommonResp\x12=\n" +
+	"\x15ExchangeGuestTransfer\x12\x1e.user.ExchangeGuestTransferReq\x1a\x1f.user.ExchangeGuestTransferResp\x12/\n" +
+	"\x06Logout\x12\x0f.user.LogoutReq\x1a\x14.user.UserCommonResp\x12=\n" +
 	"\fRefreshToken\x12\x15.user.RefreshTokenReq\x1a\x16.user.RefreshTokenResp\x127\n" +
 	"\n" +
 	"GetProfile\x12\x13.user.GetProfileReq\x1a\x14.user.GetProfileResp\x12@\n" +
-	"\rUpdateProfile\x12\x16.user.UpdateProfileReq\x1a\x17.user.UpdateProfileResp\x12H\n" +
-	"\x13ChangeLoginPassword\x12\x1c.user.ChangeLoginPasswordReq\x1a\x13.user.AppCommonResp\x12:\n" +
+	"\rUpdateProfile\x12\x16.user.UpdateProfileReq\x1a\x17.user.UpdateProfileResp\x12I\n" +
+	"\x13ChangeLoginPassword\x12\x1c.user.ChangeLoginPasswordReq\x1a\x14.user.UserCommonResp\x12:\n" +
 	"\vGetIdentity\x12\x14.user.GetIdentityReq\x1a\x15.user.GetIdentityResp\x12C\n" +
 	"\x0eSubmitIdentity\x12\x17.user.SubmitIdentityReq\x1a\x18.user.SubmitIdentityResp\x12C\n" +
 	"\x0eUpdateIdentity\x12\x17.user.UpdateIdentityReq\x1a\x18.user.UpdateIdentityResp\x12:\n" +
-	"\vGetSecurity\x12\x14.user.GetSecurityReq\x1a\x15.user.GetSecurityResp\x12>\n" +
-	"\x0eSetPayPassword\x12\x17.user.SetPayPasswordReq\x1a\x13.user.AppCommonResp\x12D\n" +
-	"\x11ChangePayPassword\x12\x1a.user.ChangePayPasswordReq\x1a\x13.user.AppCommonResp\x12@\n" +
-	"\rInitGoogle2FA\x12\x16.user.InitGoogle2FAReq\x1a\x17.user.InitGoogle2FAResp\x12@\n" +
-	"\x0fEnableGoogle2FA\x12\x18.user.EnableGoogle2FAReq\x1a\x13.user.AppCommonResp\x12B\n" +
-	"\x10DisableGoogle2FA\x12\x19.user.DisableGoogle2FAReq\x1a\x13.user.AppCommonResp\x124\n" +
+	"\vGetSecurity\x12\x14.user.GetSecurityReq\x1a\x15.user.GetSecurityResp\x12?\n" +
+	"\x0eSetPayPassword\x12\x17.user.SetPayPasswordReq\x1a\x14.user.UserCommonResp\x12E\n" +
+	"\x11ChangePayPassword\x12\x1a.user.ChangePayPasswordReq\x1a\x14.user.UserCommonResp\x12@\n" +
+	"\rInitGoogle2FA\x12\x16.user.InitGoogle2FAReq\x1a\x17.user.InitGoogle2FAResp\x12A\n" +
+	"\x0fEnableGoogle2FA\x12\x18.user.EnableGoogle2FAReq\x1a\x14.user.UserCommonResp\x12C\n" +
+	"\x10DisableGoogle2FA\x12\x19.user.DisableGoogle2FAReq\x1a\x14.user.UserCommonResp\x124\n" +
 	"\tListBanks\x12\x12.user.ListBanksReq\x1a\x13.user.ListBanksResp\x12.\n" +
 	"\aAddBank\x12\x10.user.AddBankReq\x1a\x11.user.AddBankResp\x127\n" +
 	"\n" +
-	"UpdateBank\x12\x13.user.UpdateBankReq\x1a\x14.user.UpdateBankResp\x126\n" +
+	"UpdateBank\x12\x13.user.UpdateBankReq\x1a\x14.user.UpdateBankResp\x127\n" +
 	"\n" +
-	"DeleteBank\x12\x13.user.DeleteBankReq\x1a\x13.user.AppCommonResp\x12>\n" +
-	"\x0eSetDefaultBank\x12\x17.user.SetDefaultBankReq\x1a\x13.user.AppCommonResp2\xc6\f\n" +
+	"DeleteBank\x12\x13.user.DeleteBankReq\x1a\x14.user.UserCommonResp\x12?\n" +
+	"\x0eSetDefaultBank\x12\x17.user.SetDefaultBankReq\x1a\x14.user.UserCommonResp2\x8f\f\n" +
 	"\tUserAdmin\x12d\n" +
 	"\x19GuestDomainMigrationStats\x12\".user.GuestDomainMigrationStatsReq\x1a#.user.GuestDomainMigrationStatsResp\x127\n" +
 	"\n" +
 	"CreateUser\x12\x13.user.CreateUserReq\x1a\x14.user.CreateUserResp\x12@\n" +
 	"\rGetUserDetail\x12\x16.user.GetUserDetailReq\x1a\x17.user.GetUserDetailResp\x124\n" +
 	"\tListUsers\x12\x12.user.ListUsersReq\x1a\x13.user.ListUsersResp\x12C\n" +
-	"\x0eUpdateUserBase\x12\x17.user.UpdateUserBaseReq\x1a\x18.user.UpdateUserBaseResp\x12D\n" +
-	"\x10UpdateUserStatus\x12\x19.user.UpdateUserStatusReq\x1a\x15.user.AdminCommonResp\x12B\n" +
-	"\x0fUpdateUserLevel\x12\x18.user.UpdateUserLevelReq\x1a\x15.user.AdminCommonResp\x12H\n" +
-	"\x12ResetLoginPassword\x12\x1b.user.ResetLoginPasswordReq\x1a\x15.user.AdminCommonResp\x12D\n" +
-	"\x10ResetPayPassword\x12\x19.user.ResetPayPasswordReq\x1a\x15.user.AdminCommonResp\x128\n" +
+	"\x0eUpdateUserBase\x12\x17.user.UpdateUserBaseReq\x1a\x18.user.UpdateUserBaseResp\x12?\n" +
+	"\x10UpdateUserStatus\x12\x19.user.UpdateUserStatusReq\x1a\x10.user.CommonResp\x12=\n" +
+	"\x0fUpdateUserLevel\x12\x18.user.UpdateUserLevelReq\x1a\x10.user.CommonResp\x12C\n" +
+	"\x12ResetLoginPassword\x12\x1b.user.ResetLoginPasswordReq\x1a\x10.user.CommonResp\x12?\n" +
+	"\x10ResetPayPassword\x12\x19.user.ResetPayPasswordReq\x1a\x10.user.CommonResp\x123\n" +
 	"\n" +
-	"UnlockUser\x12\x13.user.UnlockUserReq\x1a\x15.user.AdminCommonResp\x12B\n" +
-	"\x0fUpdateRiskLevel\x12\x18.user.UpdateRiskLevelReq\x1a\x15.user.AdminCommonResp\x128\n" +
+	"UnlockUser\x12\x13.user.UnlockUserReq\x1a\x10.user.CommonResp\x12=\n" +
+	"\x0fUpdateRiskLevel\x12\x18.user.UpdateRiskLevelReq\x1a\x10.user.CommonResp\x123\n" +
 	"\n" +
-	"DeleteUser\x12\x13.user.DeleteUserReq\x1a\x15.user.AdminCommonResp\x12F\n" +
-	"\x0fGetUserSecurity\x12\x18.user.GetUserSecurityReq\x1a\x19.user.GetUserSecurityResp\x12H\n" +
-	"\x12ResetUserGoogle2FA\x12\x1b.user.ResetUserGoogle2FAReq\x1a\x15.user.AdminCommonResp\x12O\n" +
+	"DeleteUser\x12\x13.user.DeleteUserReq\x1a\x10.user.CommonResp\x12F\n" +
+	"\x0fGetUserSecurity\x12\x18.user.GetUserSecurityReq\x1a\x19.user.GetUserSecurityResp\x12C\n" +
+	"\x12ResetUserGoogle2FA\x12\x1b.user.ResetUserGoogle2FAReq\x1a\x10.user.CommonResp\x12O\n" +
 	"\x12ListUserIdentities\x12\x1b.user.ListUserIdentitiesReq\x1a\x1c.user.ListUserIdentitiesResp\x12O\n" +
 	"\x12ReviewUserIdentity\x12\x1b.user.ReviewUserIdentityReq\x1a\x1c.user.ReviewUserIdentityResp\x12@\n" +
 	"\rListUserBanks\x12\x16.user.ListUserBanksReq\x1a\x17.user.ListUserBanksResp\x12:\n" +
 	"\vGetUserBank\x12\x14.user.GetUserBankReq\x1a\x15.user.GetUserBankResp\x12:\n" +
 	"\vAddUserBank\x12\x14.user.AddUserBankReq\x1a\x15.user.AddUserBankResp\x12C\n" +
-	"\x0eUpdateUserBank\x12\x17.user.UpdateUserBankReq\x1a\x18.user.UpdateUserBankResp\x12@\n" +
-	"\x0eDeleteUserBank\x12\x17.user.DeleteUserBankReq\x1a\x15.user.AdminCommonResp\x12L\n" +
-	"\x14UpdateUserBankStatus\x12\x1d.user.UpdateUserBankStatusReq\x1a\x15.user.AdminCommonResp\x12H\n" +
-	"\x12SetDefaultUserBank\x12\x1b.user.SetDefaultUserBankReq\x1a\x15.user.AdminCommonRespB\x18Z\x16wklive/proto/user;userb\x06proto3"
+	"\x0eUpdateUserBank\x12\x17.user.UpdateUserBankReq\x1a\x18.user.UpdateUserBankResp\x12;\n" +
+	"\x0eDeleteUserBank\x12\x17.user.DeleteUserBankReq\x1a\x10.user.CommonResp\x12G\n" +
+	"\x14UpdateUserBankStatus\x12\x1d.user.UpdateUserBankStatusReq\x1a\x10.user.CommonResp\x12C\n" +
+	"\x12SetDefaultUserBank\x12\x1b.user.SetDefaultUserBankReq\x1a\x10.user.CommonRespB\x18Z\x16wklive/proto/user;userb\x06proto3"
 
 var (
 	file_proto_user_user_proto_rawDescOnce sync.Once
@@ -5870,7 +5871,7 @@ func file_proto_user_user_proto_rawDescGZIP() []byte {
 
 var file_proto_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 84)
 var file_proto_user_user_proto_goTypes = []any{
-	(*AppCommonResp)(nil),                 // 0: user.AppCommonResp
+	(*UserCommonResp)(nil),                // 0: user.UserCommonResp
 	(*RegisterReq)(nil),                   // 1: user.RegisterReq
 	(*RegisterResp)(nil),                  // 2: user.RegisterResp
 	(*RegisterData)(nil),                  // 3: user.RegisterData
@@ -5917,7 +5918,7 @@ var file_proto_user_user_proto_goTypes = []any{
 	(*UpdateBankResp)(nil),                // 44: user.UpdateBankResp
 	(*DeleteBankReq)(nil),                 // 45: user.DeleteBankReq
 	(*SetDefaultBankReq)(nil),             // 46: user.SetDefaultBankReq
-	(*AdminCommonResp)(nil),               // 47: user.AdminCommonResp
+	(*CommonResp)(nil),                    // 47: user.CommonResp
 	(*CreateUserReq)(nil),                 // 48: user.CreateUserReq
 	(*CreateUserResp)(nil),                // 49: user.CreateUserResp
 	(*GetUserDetailReq)(nil),              // 50: user.GetUserDetailReq
@@ -5976,7 +5977,7 @@ var file_proto_user_user_proto_goTypes = []any{
 	(common.Enable)(0),                    // 103: common.Enable
 }
 var file_proto_user_user_proto_depIdxs = []int32{
-	84,  // 0: user.AppCommonResp.base:type_name -> common.RespBase
+	84,  // 0: user.UserCommonResp.base:type_name -> common.RespBase
 	85,  // 1: user.RegisterReq.register_type:type_name -> user.RegisterType
 	84,  // 2: user.RegisterResp.base:type_name -> common.RespBase
 	3,   // 3: user.RegisterResp.data:type_name -> user.RegisterData
@@ -6022,7 +6023,7 @@ var file_proto_user_user_proto_depIdxs = []int32{
 	95,  // 43: user.UpdateBankReq.is_default:type_name -> common.YesNo
 	84,  // 44: user.UpdateBankResp.base:type_name -> common.RespBase
 	94,  // 45: user.UpdateBankResp.data:type_name -> user.UserBankItem
-	84,  // 46: user.AdminCommonResp.base:type_name -> common.RespBase
+	84,  // 46: user.CommonResp.base:type_name -> common.RespBase
 	85,  // 47: user.CreateUserReq.register_type:type_name -> user.RegisterType
 	96,  // 48: user.CreateUserReq.status:type_name -> user.UserStatus
 	84,  // 49: user.CreateUserResp.base:type_name -> common.RespBase
@@ -6118,48 +6119,48 @@ var file_proto_user_user_proto_depIdxs = []int32{
 	9,   // 139: user.UserApp.GuestLogin:output_type -> user.GuestLoginResp
 	12,  // 140: user.UserApp.CreateGuestTransfer:output_type -> user.CreateGuestTransferResp
 	15,  // 141: user.UserApp.ExchangeGuestTransfer:output_type -> user.ExchangeGuestTransferResp
-	0,   // 142: user.UserApp.Logout:output_type -> user.AppCommonResp
+	0,   // 142: user.UserApp.Logout:output_type -> user.UserCommonResp
 	18,  // 143: user.UserApp.RefreshToken:output_type -> user.RefreshTokenResp
 	20,  // 144: user.UserApp.GetProfile:output_type -> user.GetProfileResp
 	22,  // 145: user.UserApp.UpdateProfile:output_type -> user.UpdateProfileResp
-	0,   // 146: user.UserApp.ChangeLoginPassword:output_type -> user.AppCommonResp
+	0,   // 146: user.UserApp.ChangeLoginPassword:output_type -> user.UserCommonResp
 	25,  // 147: user.UserApp.GetIdentity:output_type -> user.GetIdentityResp
 	27,  // 148: user.UserApp.SubmitIdentity:output_type -> user.SubmitIdentityResp
 	29,  // 149: user.UserApp.UpdateIdentity:output_type -> user.UpdateIdentityResp
 	31,  // 150: user.UserApp.GetSecurity:output_type -> user.GetSecurityResp
-	0,   // 151: user.UserApp.SetPayPassword:output_type -> user.AppCommonResp
-	0,   // 152: user.UserApp.ChangePayPassword:output_type -> user.AppCommonResp
+	0,   // 151: user.UserApp.SetPayPassword:output_type -> user.UserCommonResp
+	0,   // 152: user.UserApp.ChangePayPassword:output_type -> user.UserCommonResp
 	35,  // 153: user.UserApp.InitGoogle2FA:output_type -> user.InitGoogle2FAResp
-	0,   // 154: user.UserApp.EnableGoogle2FA:output_type -> user.AppCommonResp
-	0,   // 155: user.UserApp.DisableGoogle2FA:output_type -> user.AppCommonResp
+	0,   // 154: user.UserApp.EnableGoogle2FA:output_type -> user.UserCommonResp
+	0,   // 155: user.UserApp.DisableGoogle2FA:output_type -> user.UserCommonResp
 	40,  // 156: user.UserApp.ListBanks:output_type -> user.ListBanksResp
 	42,  // 157: user.UserApp.AddBank:output_type -> user.AddBankResp
 	44,  // 158: user.UserApp.UpdateBank:output_type -> user.UpdateBankResp
-	0,   // 159: user.UserApp.DeleteBank:output_type -> user.AppCommonResp
-	0,   // 160: user.UserApp.SetDefaultBank:output_type -> user.AppCommonResp
+	0,   // 159: user.UserApp.DeleteBank:output_type -> user.UserCommonResp
+	0,   // 160: user.UserApp.SetDefaultBank:output_type -> user.UserCommonResp
 	83,  // 161: user.UserAdmin.GuestDomainMigrationStats:output_type -> user.GuestDomainMigrationStatsResp
 	49,  // 162: user.UserAdmin.CreateUser:output_type -> user.CreateUserResp
 	51,  // 163: user.UserAdmin.GetUserDetail:output_type -> user.GetUserDetailResp
 	53,  // 164: user.UserAdmin.ListUsers:output_type -> user.ListUsersResp
 	55,  // 165: user.UserAdmin.UpdateUserBase:output_type -> user.UpdateUserBaseResp
-	47,  // 166: user.UserAdmin.UpdateUserStatus:output_type -> user.AdminCommonResp
-	47,  // 167: user.UserAdmin.UpdateUserLevel:output_type -> user.AdminCommonResp
-	47,  // 168: user.UserAdmin.ResetLoginPassword:output_type -> user.AdminCommonResp
-	47,  // 169: user.UserAdmin.ResetPayPassword:output_type -> user.AdminCommonResp
-	47,  // 170: user.UserAdmin.UnlockUser:output_type -> user.AdminCommonResp
-	47,  // 171: user.UserAdmin.UpdateRiskLevel:output_type -> user.AdminCommonResp
-	47,  // 172: user.UserAdmin.DeleteUser:output_type -> user.AdminCommonResp
+	47,  // 166: user.UserAdmin.UpdateUserStatus:output_type -> user.CommonResp
+	47,  // 167: user.UserAdmin.UpdateUserLevel:output_type -> user.CommonResp
+	47,  // 168: user.UserAdmin.ResetLoginPassword:output_type -> user.CommonResp
+	47,  // 169: user.UserAdmin.ResetPayPassword:output_type -> user.CommonResp
+	47,  // 170: user.UserAdmin.UnlockUser:output_type -> user.CommonResp
+	47,  // 171: user.UserAdmin.UpdateRiskLevel:output_type -> user.CommonResp
+	47,  // 172: user.UserAdmin.DeleteUser:output_type -> user.CommonResp
 	64,  // 173: user.UserAdmin.GetUserSecurity:output_type -> user.GetUserSecurityResp
-	47,  // 174: user.UserAdmin.ResetUserGoogle2FA:output_type -> user.AdminCommonResp
+	47,  // 174: user.UserAdmin.ResetUserGoogle2FA:output_type -> user.CommonResp
 	67,  // 175: user.UserAdmin.ListUserIdentities:output_type -> user.ListUserIdentitiesResp
 	69,  // 176: user.UserAdmin.ReviewUserIdentity:output_type -> user.ReviewUserIdentityResp
 	71,  // 177: user.UserAdmin.ListUserBanks:output_type -> user.ListUserBanksResp
 	73,  // 178: user.UserAdmin.GetUserBank:output_type -> user.GetUserBankResp
 	75,  // 179: user.UserAdmin.AddUserBank:output_type -> user.AddUserBankResp
 	77,  // 180: user.UserAdmin.UpdateUserBank:output_type -> user.UpdateUserBankResp
-	47,  // 181: user.UserAdmin.DeleteUserBank:output_type -> user.AdminCommonResp
-	47,  // 182: user.UserAdmin.UpdateUserBankStatus:output_type -> user.AdminCommonResp
-	47,  // 183: user.UserAdmin.SetDefaultUserBank:output_type -> user.AdminCommonResp
+	47,  // 181: user.UserAdmin.DeleteUserBank:output_type -> user.CommonResp
+	47,  // 182: user.UserAdmin.UpdateUserBankStatus:output_type -> user.CommonResp
+	47,  // 183: user.UserAdmin.SetDefaultUserBank:output_type -> user.CommonResp
 	137, // [137:184] is the sub-list for method output_type
 	90,  // [90:137] is the sub-list for method input_type
 	90,  // [90:90] is the sub-list for extension type_name

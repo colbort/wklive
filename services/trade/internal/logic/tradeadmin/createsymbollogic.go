@@ -30,16 +30,16 @@ func NewCreateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 }
 
 // 创建交易对
-func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.AdminCommonResp, error) {
+func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.CommonResp, error) {
 	if err := validation.SymbolTradingTimeline(in.ProductType, in.ContractType, in.ListingTime, in.TradingStartTime, in.TradingEndTime); err != nil {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
 	exists, err := l.svcCtx.TradeSymbolModel.FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(l.ctx, in.TenantId, in.Symbol, int64(in.ProductType), int64(in.ContractType), int64(in.ContractValueType))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if exists != nil {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	now := utils.NowMillis()
 	data := &models.TTradeSymbol{
@@ -76,5 +76,5 @@ func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.Admi
 		return nil, err
 	}
 
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }

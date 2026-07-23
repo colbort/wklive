@@ -1,0 +1,64 @@
+package optionapplogic
+
+import (
+	"context"
+	"errors"
+
+	pageutil "wklive/common/pageutil"
+	"wklive/common/utils"
+	"wklive/proto/option"
+	"wklive/services/option/internal/svc"
+	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type ListBillsLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewListBillsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListBillsLogic {
+	return &ListBillsLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 获取资金流水列表
+func (l *ListBillsLogic) ListBills(in *option.UserListBillsReq) (*option.UserListBillsResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	items, total, err := l.svcCtx.OptionBillModel.FindPage(l.ctx, models.OptionBillPageFilter{
+		TenantId:        tenantId,
+		UserId:          userId,
+		AccountId:       in.AccountId,
+		RefType:         int64(in.RefType),
+		CreateTimeStart: pageutil.TimeRangeStart(in.CreateTimeRange),
+		CreateTimeEnd:   pageutil.TimeRangeEnd(in.CreateTimeRange),
+	}, cursor, limit)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+
+	data := make([]*option.OptionBill, 0, len(items))
+	lastID := int64(0)
+	for _, item := range items {
+		lastID = item.Id
+		data = append(data, toBillProto(item))
+	}
+
+	return &option.UserListBillsResp{
+		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
+		Data: data,
+	}, nil
+}

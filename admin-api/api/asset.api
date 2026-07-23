@@ -270,7 +270,7 @@ type PageAssetLocksResp {
 	data []AssetLock `json:"data"`
 }
 
-type AdminAddAssetReq {
+type AddAssetReq {
 	tenantId   int64  `json:"tenantId"`
 	userId     int64  `json:"userId"`
 	walletType int64  `json:"walletType"`
@@ -281,7 +281,7 @@ type AdminAddAssetReq {
 	operatorId int64  `json:"operatorId"`
 }
 
-type AdminSubAssetReq {
+type SubAssetReq {
 	tenantId   int64  `json:"tenantId"`
 	userId     int64  `json:"userId"`
 	walletType int64  `json:"walletType"`
@@ -292,7 +292,7 @@ type AdminSubAssetReq {
 	operatorId int64  `json:"operatorId"`
 }
 
-type AdminFreezeAssetReq {
+type FreezeAssetReq {
 	tenantId   int64  `json:"tenantId"`
 	userId     int64  `json:"userId"`
 	walletType int64  `json:"walletType"`
@@ -303,7 +303,7 @@ type AdminFreezeAssetReq {
 	operatorId int64  `json:"operatorId"`
 }
 
-type AdminUnfreezeAssetReq {
+type UnfreezeAssetReq {
 	tenantId   int64  `json:"tenantId"`
 	freezeNo   string `json:"freezeNo"`
 	amount     string `json:"amount"`
@@ -312,7 +312,7 @@ type AdminUnfreezeAssetReq {
 	operatorId int64  `json:"operatorId"`
 }
 
-type AdminLockAssetReq {
+type LockAssetReq {
 	tenantId   int64  `json:"tenantId"`
 	userId     int64  `json:"userId"`
 	walletType int64  `json:"walletType"`
@@ -323,7 +323,7 @@ type AdminLockAssetReq {
 	operatorId int64  `json:"operatorId"`
 }
 
-type AdminUnlockAssetReq {
+type UnlockAssetReq {
 	tenantId   int64  `json:"tenantId"`
 	lockNo     string `json:"lockNo"`
 	amount     string `json:"amount"`
@@ -332,14 +332,14 @@ type AdminUnlockAssetReq {
 	operatorId int64  `json:"operatorId"`
 }
 
-type AdminChangeAssetData {
+type ChangeAssetData {
 	bizNo string         `json:"bizNo"`
 	asset AssetUserAsset `json:"asset"`
 }
 
-type AdminChangeAssetResp {
+type ChangeAssetResp {
 	RespBase
-	data AdminChangeAssetData `json:"data"`
+	data ChangeAssetData `json:"data"`
 }
 
 type PlatformAccount {
@@ -420,23 +420,23 @@ service admin {
 	@handler PageAssetLocks
 	get /locks (PageAssetLocksReq) returns (PageAssetLocksResp)
 
-	@handler AdminAddAsset
-	post /add (AdminAddAssetReq) returns (AdminChangeAssetResp)
+	@handler AddAsset
+	post /add (AddAssetReq) returns (ChangeAssetResp)
 
-	@handler AdminSubAsset
-	post /sub (AdminSubAssetReq) returns (AdminChangeAssetResp)
+	@handler SubAsset
+	post /sub (SubAssetReq) returns (ChangeAssetResp)
 
-	@handler AdminFreezeAsset
-	post /freeze (AdminFreezeAssetReq) returns (AdminChangeAssetResp)
+	@handler FreezeAsset
+	post /freeze (FreezeAssetReq) returns (ChangeAssetResp)
 
-	@handler AdminUnfreezeAsset
-	post /unfreeze (AdminUnfreezeAssetReq) returns (AdminChangeAssetResp)
+	@handler UnfreezeAsset
+	post /unfreeze (UnfreezeAssetReq) returns (ChangeAssetResp)
 
-	@handler AdminLockAsset
-	post /lock (AdminLockAssetReq) returns (AdminChangeAssetResp)
+	@handler LockAsset
+	post /lock (LockAssetReq) returns (ChangeAssetResp)
 
-	@handler AdminUnlockAsset
-	post /unlock (AdminUnlockAssetReq) returns (AdminChangeAssetResp)
+	@handler UnlockAsset
+	post /unlock (UnlockAssetReq) returns (ChangeAssetResp)
 
 	@handler SetPlatformAccount
 	post /platform-accounts (SetPlatformAccountReq) returns (PlatformAccountResp)

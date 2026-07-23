@@ -27,20 +27,20 @@ func NewGetChatAgentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetC
 }
 
 // 查询坐席详情
-func (l *GetChatAgentLogic) GetChatAgent(in *chat.GetChatAgentReq) (*chat.AdminChatAgentResp, error) {
+func (l *GetChatAgentLogic) GetChatAgent(in *chat.GetChatAgentReq) (*chat.ChatAgentResp, error) {
 	if in.GetId() <= 0 {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "id is required")}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetId())
 	if err == models.ErrNotFound || data.MerchantId != merchantID {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(404, "chat agent not found")}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(404, "chat agent not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: ih.ToProtoAgent(data)}, nil
+	return &chat.ChatAgentResp{Base: helper.OkResp(), Data: ih.ToProtoAgent(data)}, nil
 }

@@ -14,72 +14,72 @@ import (
 )
 
 type (
-	AdminManualRedeemReq         = staking.AdminManualRedeemReq
-	AdminManualRedeemResp        = staking.AdminManualRedeemResp
-	AdminManualRewardReq         = staking.AdminManualRewardReq
-	AdminManualRewardResp        = staking.AdminManualRewardResp
-	AdminOrderDetailReq          = staking.AdminOrderDetailReq
-	AdminOrderDetailResp         = staking.AdminOrderDetailResp
-	AdminOrderListReq            = staking.AdminOrderListReq
-	AdminOrderListResp           = staking.AdminOrderListResp
-	AdminProductChangeStatusReq  = staking.AdminProductChangeStatusReq
-	AdminProductChangeStatusResp = staking.AdminProductChangeStatusResp
-	AdminProductCreateReq        = staking.AdminProductCreateReq
-	AdminProductCreateResp       = staking.AdminProductCreateResp
-	AdminProductDetailReq        = staking.AdminProductDetailReq
-	AdminProductDetailResp       = staking.AdminProductDetailResp
-	AdminProductListReq          = staking.AdminProductListReq
-	AdminProductListResp         = staking.AdminProductListResp
-	AdminProductUpdateReq        = staking.AdminProductUpdateReq
-	AdminProductUpdateResp       = staking.AdminProductUpdateResp
-	AdminRedeemLogListReq        = staking.AdminRedeemLogListReq
-	AdminRedeemLogListResp       = staking.AdminRedeemLogListResp
-	AdminRewardLogListReq        = staking.AdminRewardLogListReq
-	AdminRewardLogListResp       = staking.AdminRewardLogListResp
-	AppCreateOrderData           = staking.AppCreateOrderData
-	AppCreateOrderReq            = staking.AppCreateOrderReq
-	AppCreateOrderResp           = staking.AppCreateOrderResp
-	AppMyOrderDetailReq          = staking.AppMyOrderDetailReq
-	AppMyOrderDetailResp         = staking.AppMyOrderDetailResp
-	AppMyOrderListReq            = staking.AppMyOrderListReq
-	AppMyOrderListResp           = staking.AppMyOrderListResp
-	AppMyRedeemLogListReq        = staking.AppMyRedeemLogListReq
-	AppMyRedeemLogListResp       = staking.AppMyRedeemLogListResp
-	AppMyRewardLogListReq        = staking.AppMyRewardLogListReq
-	AppMyRewardLogListResp       = staking.AppMyRewardLogListResp
-	AppProductDetailReq          = staking.AppProductDetailReq
-	AppProductDetailResp         = staking.AppProductDetailResp
-	AppProductListReq            = staking.AppProductListReq
-	AppProductListResp           = staking.AppProductListResp
-	AppRedeemData                = staking.AppRedeemData
-	AppRedeemReq                 = staking.AppRedeemReq
-	AppRedeemResp                = staking.AppRedeemResp
-	StakingTaskReq               = staking.StakingTaskReq
-	StakingTaskResp              = staking.StakingTaskResp
+	ManualRedeemReq         = staking.ManualRedeemReq
+	ManualRedeemResp        = staking.ManualRedeemResp
+	ManualRewardReq         = staking.ManualRewardReq
+	ManualRewardResp        = staking.ManualRewardResp
+	OrderDetailReq          = staking.OrderDetailReq
+	OrderDetailResp         = staking.OrderDetailResp
+	OrderListReq            = staking.OrderListReq
+	OrderListResp           = staking.OrderListResp
+	ProductChangeStatusReq  = staking.ProductChangeStatusReq
+	ProductChangeStatusResp = staking.ProductChangeStatusResp
+	ProductCreateReq        = staking.ProductCreateReq
+	ProductCreateResp       = staking.ProductCreateResp
+	ProductDetailReq        = staking.ProductDetailReq
+	ProductDetailResp       = staking.ProductDetailResp
+	ProductListReq          = staking.ProductListReq
+	ProductListResp         = staking.ProductListResp
+	ProductUpdateReq        = staking.ProductUpdateReq
+	ProductUpdateResp       = staking.ProductUpdateResp
+	RedeemLogListReq        = staking.RedeemLogListReq
+	RedeemLogListResp       = staking.RedeemLogListResp
+	RewardLogListReq        = staking.RewardLogListReq
+	RewardLogListResp       = staking.RewardLogListResp
+	CreateOrderData         = staking.CreateOrderData
+	CreateOrderReq          = staking.CreateOrderReq
+	CreateOrderResp         = staking.CreateOrderResp
+	MyOrderDetailReq        = staking.MyOrderDetailReq
+	MyOrderDetailResp       = staking.MyOrderDetailResp
+	MyOrderListReq          = staking.MyOrderListReq
+	MyOrderListResp         = staking.MyOrderListResp
+	MyRedeemLogListReq      = staking.MyRedeemLogListReq
+	MyRedeemLogListResp     = staking.MyRedeemLogListResp
+	MyRewardLogListReq      = staking.MyRewardLogListReq
+	MyRewardLogListResp     = staking.MyRewardLogListResp
+	UserProductDetailReq    = staking.UserProductDetailReq
+	UserProductDetailResp   = staking.UserProductDetailResp
+	UserProductListReq      = staking.UserProductListReq
+	UserProductListResp     = staking.UserProductListResp
+	RedeemData              = staking.RedeemData
+	RedeemReq               = staking.RedeemReq
+	RedeemResp              = staking.RedeemResp
+	StakingTaskReq          = staking.StakingTaskReq
+	StakingTaskResp         = staking.StakingTaskResp
 
 	StakingAdmin interface {
 		// 获取质押产品列表
-		AdminProductList(ctx context.Context, in *AdminProductListReq, opts ...grpc.CallOption) (*AdminProductListResp, error)
+		ProductList(ctx context.Context, in *ProductListReq, opts ...grpc.CallOption) (*ProductListResp, error)
 		// 获取质押产品详情
-		AdminProductDetail(ctx context.Context, in *AdminProductDetailReq, opts ...grpc.CallOption) (*AdminProductDetailResp, error)
+		ProductDetail(ctx context.Context, in *ProductDetailReq, opts ...grpc.CallOption) (*ProductDetailResp, error)
 		// 创建质押产品
-		ProductCreate(ctx context.Context, in *AdminProductCreateReq, opts ...grpc.CallOption) (*AdminProductCreateResp, error)
+		ProductCreate(ctx context.Context, in *ProductCreateReq, opts ...grpc.CallOption) (*ProductCreateResp, error)
 		// 更新质押产品
-		ProductUpdate(ctx context.Context, in *AdminProductUpdateReq, opts ...grpc.CallOption) (*AdminProductUpdateResp, error)
+		ProductUpdate(ctx context.Context, in *ProductUpdateReq, opts ...grpc.CallOption) (*ProductUpdateResp, error)
 		// 修改质押产品状态
-		ProductChangeStatus(ctx context.Context, in *AdminProductChangeStatusReq, opts ...grpc.CallOption) (*AdminProductChangeStatusResp, error)
+		ProductChangeStatus(ctx context.Context, in *ProductChangeStatusReq, opts ...grpc.CallOption) (*ProductChangeStatusResp, error)
 		// 获取质押订单列表
-		OrderList(ctx context.Context, in *AdminOrderListReq, opts ...grpc.CallOption) (*AdminOrderListResp, error)
+		OrderList(ctx context.Context, in *OrderListReq, opts ...grpc.CallOption) (*OrderListResp, error)
 		// 获取质押订单详情
-		OrderDetail(ctx context.Context, in *AdminOrderDetailReq, opts ...grpc.CallOption) (*AdminOrderDetailResp, error)
+		OrderDetail(ctx context.Context, in *OrderDetailReq, opts ...grpc.CallOption) (*OrderDetailResp, error)
 		// 获取收益记录列表
-		RewardLogList(ctx context.Context, in *AdminRewardLogListReq, opts ...grpc.CallOption) (*AdminRewardLogListResp, error)
+		RewardLogList(ctx context.Context, in *RewardLogListReq, opts ...grpc.CallOption) (*RewardLogListResp, error)
 		// 获取赎回记录列表
-		RedeemLogList(ctx context.Context, in *AdminRedeemLogListReq, opts ...grpc.CallOption) (*AdminRedeemLogListResp, error)
+		RedeemLogList(ctx context.Context, in *RedeemLogListReq, opts ...grpc.CallOption) (*RedeemLogListResp, error)
 		// 手动发放收益
-		ManualReward(ctx context.Context, in *AdminManualRewardReq, opts ...grpc.CallOption) (*AdminManualRewardResp, error)
+		ManualReward(ctx context.Context, in *ManualRewardReq, opts ...grpc.CallOption) (*ManualRewardResp, error)
 		// 手动赎回
-		ManualRedeem(ctx context.Context, in *AdminManualRedeemReq, opts ...grpc.CallOption) (*AdminManualRedeemResp, error)
+		ManualRedeem(ctx context.Context, in *ManualRedeemReq, opts ...grpc.CallOption) (*ManualRedeemResp, error)
 	}
 
 	defaultStakingAdmin struct {
@@ -94,67 +94,67 @@ func NewStakingAdmin(cli zrpc.Client) StakingAdmin {
 }
 
 // 获取质押产品列表
-func (m *defaultStakingAdmin) AdminProductList(ctx context.Context, in *AdminProductListReq, opts ...grpc.CallOption) (*AdminProductListResp, error) {
+func (m *defaultStakingAdmin) ProductList(ctx context.Context, in *ProductListReq, opts ...grpc.CallOption) (*ProductListResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
-	return client.AdminProductList(ctx, in, opts...)
+	return client.ProductList(ctx, in, opts...)
 }
 
 // 获取质押产品详情
-func (m *defaultStakingAdmin) AdminProductDetail(ctx context.Context, in *AdminProductDetailReq, opts ...grpc.CallOption) (*AdminProductDetailResp, error) {
+func (m *defaultStakingAdmin) ProductDetail(ctx context.Context, in *ProductDetailReq, opts ...grpc.CallOption) (*ProductDetailResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
-	return client.AdminProductDetail(ctx, in, opts...)
+	return client.ProductDetail(ctx, in, opts...)
 }
 
 // 创建质押产品
-func (m *defaultStakingAdmin) ProductCreate(ctx context.Context, in *AdminProductCreateReq, opts ...grpc.CallOption) (*AdminProductCreateResp, error) {
+func (m *defaultStakingAdmin) ProductCreate(ctx context.Context, in *ProductCreateReq, opts ...grpc.CallOption) (*ProductCreateResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
 	return client.ProductCreate(ctx, in, opts...)
 }
 
 // 更新质押产品
-func (m *defaultStakingAdmin) ProductUpdate(ctx context.Context, in *AdminProductUpdateReq, opts ...grpc.CallOption) (*AdminProductUpdateResp, error) {
+func (m *defaultStakingAdmin) ProductUpdate(ctx context.Context, in *ProductUpdateReq, opts ...grpc.CallOption) (*ProductUpdateResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
 	return client.ProductUpdate(ctx, in, opts...)
 }
 
 // 修改质押产品状态
-func (m *defaultStakingAdmin) ProductChangeStatus(ctx context.Context, in *AdminProductChangeStatusReq, opts ...grpc.CallOption) (*AdminProductChangeStatusResp, error) {
+func (m *defaultStakingAdmin) ProductChangeStatus(ctx context.Context, in *ProductChangeStatusReq, opts ...grpc.CallOption) (*ProductChangeStatusResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
 	return client.ProductChangeStatus(ctx, in, opts...)
 }
 
 // 获取质押订单列表
-func (m *defaultStakingAdmin) OrderList(ctx context.Context, in *AdminOrderListReq, opts ...grpc.CallOption) (*AdminOrderListResp, error) {
+func (m *defaultStakingAdmin) OrderList(ctx context.Context, in *OrderListReq, opts ...grpc.CallOption) (*OrderListResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
 	return client.OrderList(ctx, in, opts...)
 }
 
 // 获取质押订单详情
-func (m *defaultStakingAdmin) OrderDetail(ctx context.Context, in *AdminOrderDetailReq, opts ...grpc.CallOption) (*AdminOrderDetailResp, error) {
+func (m *defaultStakingAdmin) OrderDetail(ctx context.Context, in *OrderDetailReq, opts ...grpc.CallOption) (*OrderDetailResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
 	return client.OrderDetail(ctx, in, opts...)
 }
 
 // 获取收益记录列表
-func (m *defaultStakingAdmin) RewardLogList(ctx context.Context, in *AdminRewardLogListReq, opts ...grpc.CallOption) (*AdminRewardLogListResp, error) {
+func (m *defaultStakingAdmin) RewardLogList(ctx context.Context, in *RewardLogListReq, opts ...grpc.CallOption) (*RewardLogListResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
 	return client.RewardLogList(ctx, in, opts...)
 }
 
 // 获取赎回记录列表
-func (m *defaultStakingAdmin) RedeemLogList(ctx context.Context, in *AdminRedeemLogListReq, opts ...grpc.CallOption) (*AdminRedeemLogListResp, error) {
+func (m *defaultStakingAdmin) RedeemLogList(ctx context.Context, in *RedeemLogListReq, opts ...grpc.CallOption) (*RedeemLogListResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
 	return client.RedeemLogList(ctx, in, opts...)
 }
 
 // 手动发放收益
-func (m *defaultStakingAdmin) ManualReward(ctx context.Context, in *AdminManualRewardReq, opts ...grpc.CallOption) (*AdminManualRewardResp, error) {
+func (m *defaultStakingAdmin) ManualReward(ctx context.Context, in *ManualRewardReq, opts ...grpc.CallOption) (*ManualRewardResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
 	return client.ManualReward(ctx, in, opts...)
 }
 
 // 手动赎回
-func (m *defaultStakingAdmin) ManualRedeem(ctx context.Context, in *AdminManualRedeemReq, opts ...grpc.CallOption) (*AdminManualRedeemResp, error) {
+func (m *defaultStakingAdmin) ManualRedeem(ctx context.Context, in *ManualRedeemReq, opts ...grpc.CallOption) (*ManualRedeemResp, error) {
 	client := staking.NewStakingAdminClient(m.cli.Conn())
 	return client.ManualRedeem(ctx, in, opts...)
 }

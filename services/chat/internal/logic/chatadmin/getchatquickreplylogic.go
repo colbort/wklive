@@ -27,23 +27,23 @@ func NewGetChatQuickReplyLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 // 查询快捷回复详情
-func (l *GetChatQuickReplyLogic) GetChatQuickReply(in *chat.GetChatQuickReplyReq) (*chat.AdminChatQuickReplyResp, error) {
+func (l *GetChatQuickReplyLogic) GetChatQuickReply(in *chat.GetChatQuickReplyReq) (*chat.ChatQuickReplyResp, error) {
 	if in.GetId() <= 0 {
-		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(400, "id is required")}, nil
+		return &chat.ChatQuickReplyResp{Base: helper.ErrResp(400, "id is required")}, nil
 	}
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatQuickReplyModel.FindOne(l.ctx, in.GetId())
 	if err == models.ErrNotFound {
-		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(404, "chat quick reply not found")}, nil
+		return &chat.ChatQuickReplyResp{Base: helper.ErrResp(404, "chat quick reply not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if data.MerchantId != merchantID {
-		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(404, "chat quick reply not found")}, nil
+		return &chat.ChatQuickReplyResp{Base: helper.ErrResp(404, "chat quick reply not found")}, nil
 	}
-	return &chat.AdminChatQuickReplyResp{Base: helper.OkResp(), Data: ih.ToProtoChatQuickReply(data)}, nil
+	return &chat.ChatQuickReplyResp{Base: helper.OkResp(), Data: ih.ToProtoChatQuickReply(data)}, nil
 }

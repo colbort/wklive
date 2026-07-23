@@ -25,7 +25,7 @@ func NewGetKlineIntervalsLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 // 获取 kline 粒度
-func (l *GetKlineIntervalsLogic) GetKlineIntervals(in *itick.AppEmpty) (*itick.KlineIntervalsResp, error) {
+func (l *GetKlineIntervalsLogic) GetKlineIntervals(in *itick.Empty) (*itick.KlineIntervalsResp, error) {
 
 	data := make([]*itick.KlineInterval, 0, len(utils.KlineIntervals))
 	for _, v := range utils.KlineIntervals {

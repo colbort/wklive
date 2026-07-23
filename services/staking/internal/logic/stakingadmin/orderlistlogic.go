@@ -28,7 +28,7 @@ func NewOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrderLi
 }
 
 // 获取质押订单列表
-func (l *OrderListLogic) OrderList(in *staking.AdminOrderListReq) (*staking.AdminOrderListResp, error) {
+func (l *OrderListLogic) OrderList(in *staking.OrderListReq) (*staking.OrderListResp, error) {
 	if in.TenantId <= 0 {
 		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
 			in.TenantId = tenantId
@@ -63,7 +63,7 @@ func (l *OrderListLogic) OrderList(in *staking.AdminOrderListReq) (*staking.Admi
 		return nil, err
 	}
 
-	resp := &staking.AdminOrderListResp{Page: helper.OkResp()}
+	resp := &staking.OrderListResp{Page: helper.OkResp()}
 	if len(items) == 0 {
 		resp.Page = pageutil.Base(cursor, limit, 0, total, 0)
 		return resp, nil

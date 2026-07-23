@@ -29,7 +29,7 @@ func NewCreatePayProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 创建产品
-func (l *CreatePayProductLogic) CreatePayProduct(in *payment.CreatePayProductReq) (*payment.AdminCommonResp, error) {
+func (l *CreatePayProductLogic) CreatePayProduct(in *payment.CreatePayProductReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "CreatePayProduct"
 	)
@@ -55,7 +55,7 @@ func (l *CreatePayProductLogic) CreatePayProduct(in *payment.CreatePayProductReq
 
 	l.Logger.Infof("Create pay product success: %s", in.ProductCode)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

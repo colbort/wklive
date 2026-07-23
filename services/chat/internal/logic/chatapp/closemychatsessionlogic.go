@@ -28,26 +28,26 @@ func NewCloseMyChatSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // 关闭我的会话
-func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSessionReq) (*chat.AppChatSessionResp, error) {
+func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSessionReq) (*chat.UserChatSessionResp, error) {
 	session, err := ih.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.GetIsGuest())
 	if err != nil {
-		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.UserChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if session.UserId != in.GetUserId() {
-		return &chat.AppChatSessionResp{Base: helper.ErrResp(404, "chat session not found")}, nil
+		return &chat.UserChatSessionResp{Base: helper.ErrResp(404, "chat session not found")}, nil
 	}
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
-		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, true)}, nil
+		return &chat.UserChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, true)}, nil
 	}
 	if ih.IsInternetErrorCloseReason(in.GetCloseReasonType(), in.GetCloseReason()) {
 		if in.IsGuest {
 			session, err = ih.MarkTransientSessionInternetError(l.ctx, l.svcCtx, session)
 			if err != nil {
-				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+				return &chat.UserChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		} else {
 			if err := ih.MarkSessionInternetError(l.ctx, l.svcCtx, session); err != nil {
-				return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+				return &chat.UserChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 			}
 		}
 		_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAdminEventChannel, ih.PublishEventError, &chat.ChatWsResponse_Error{
@@ -59,7 +59,7 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 				Retryable:    false,
 			},
 		})
-		return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
+		return &chat.UserChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 	}
 	if in.GetIsGuest() {
 		now := utils.NowMillis()
@@ -72,11 +72,11 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 		_ = ih.RemoveTransientInternetErrorTimeout(l.ctx, l.svcCtx, session.MerchantId, session.SessionNo)
 		session, err = ih.UpsertTransientSession(l.ctx, l.svcCtx.Redis, session)
 		if err != nil {
-			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+			return &chat.UserChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	} else {
 		if err := ih.CloseSession(l.ctx, l.svcCtx, session, in.GetCloseReason()); err != nil {
-			return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+			return &chat.UserChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	}
 	sessionPayload := chat.ChatWsResponse_Session{Session: ih.ToProtoSession(session, in.IsGuest)}
@@ -91,5 +91,5 @@ func (l *CloseMyChatSessionLogic) CloseMyChatSession(in *chat.CloseMyChatSession
 			Source:    chat.ChatSessionSource_CHAT_SESSION_SOURCE_APP,
 		},
 	})
-	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
+	return &chat.UserChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(session, in.IsGuest)}, nil
 }

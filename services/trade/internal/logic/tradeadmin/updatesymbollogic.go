@@ -30,10 +30,10 @@ func NewUpdateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 }
 
 // 更新交易对信息
-func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.AdminCommonResp, error) {
+func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.CommonResp, error) {
 	item, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -43,10 +43,10 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Admi
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
 	if !allowed {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if allowTenantUpdate {
 		item.TenantId = in.TenantId
@@ -103,12 +103,12 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Admi
 		item.Remark = in.Remark
 	}
 	if err := validation.SymbolTradingTimeline(trade.ProductType(item.ProductType), trade.ContractType(item.ContractType), item.ListingTime, item.TradingStartTime, item.TradingEndTime); err != nil {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
 	item.UpdateTimes = utils.NowMillis()
 	if err = l.svcCtx.TradeSymbolModel.Update(l.ctx, item); err != nil {
 		return nil, err
 	}
 
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }

@@ -18,274 +18,6 @@ type AddBankResp struct {
 	Data UserBank `json:"data"`
 }
 
-type AppCancelOrderReq struct {
-	AccountId int64  `json:"accountId"`
-	OrderId   int64  `json:"orderId,optional"`
-	OrderNo   string `json:"orderNo,optional"`
-}
-
-type AppCommonResp struct {
-	RespBase
-}
-
-type AppCreateOrderData struct {
-	Id      int64  `json:"id"`
-	OrderNo string `json:"orderNo"`
-}
-
-type AppCreateOrderReq struct {
-	ProductId   int64  `json:"productId"`
-	StakeAmount string `json:"stakeAmount"`
-	Source      int64  `json:"source"`
-	Remark      string `json:"remark,optional"`
-}
-
-type AppCreateOrderResp struct {
-	RespBase
-	Data AppCreateOrderData `json:"data"`
-}
-
-type AppExerciseData struct {
-	ExerciseNo string `json:"exerciseNo"`
-	ExerciseId int64  `json:"exerciseId"`
-}
-
-type AppExerciseReq struct {
-	AccountId   int64  `json:"accountId"`
-	PositionId  int64  `json:"positionId"`
-	ContractId  int64  `json:"contractId"`
-	ExerciseQty string `json:"exerciseQty"`
-}
-
-type AppExerciseResp struct {
-	RespBase
-	Data AppExerciseData `json:"data"`
-}
-
-type AppGetContractDetailReq struct {
-	ContractId int64 `form:"contractId"` // 合约ID
-}
-
-type AppGetContractDetailResp struct {
-	RespBase
-	Data OptionContractDetail `json:"data"`
-}
-
-type AppGetOrderDetailReq struct {
-	AccountId int64  `form:"accountId"`
-	OrderId   int64  `form:"orderId,optional"`
-	OrderNo   string `form:"orderNo,optional"`
-}
-
-type AppGetOrderDetailResp struct {
-	RespBase
-	Data OptionOrderDetail `json:"data"`
-}
-
-type AppGetPositionDetailReq struct {
-	AccountId  int64 `form:"accountId"`
-	PositionId int64 `form:"positionId"`
-}
-
-type AppGetPositionDetailResp struct {
-	RespBase
-	Data OptionPositionDetail `json:"data"`
-}
-
-type AppListAccountsReq struct {
-	AccountId int64 `form:"accountId,optional"`
-}
-
-type AppListAccountsResp struct {
-	RespBase
-	Data []OptionAccount `json:"data"`
-}
-
-type AppListBillsReq struct {
-	PageReq
-	AccountId       int64     `form:"accountId,optional"`
-	RefType         int64     `form:"refType,optional"`
-	CreateTimeRange TimeRange `form:"createTimeRange,optional"`
-}
-
-type AppListBillsResp struct {
-	RespBase
-	Data []OptionBill `json:"data"`
-}
-
-type AppListContractsReq struct {
-	PageReq
-	UnderlyingSymbol string `form:"underlyingSymbol,optional"` // 标的符号
-	OptionType       int64  `form:"optionType,optional"`       // 期权类型
-	Status           int64  `form:"status,optional"`           // 状态
-}
-
-type AppListContractsResp struct {
-	RespBase
-	Data []OptionContractDetail `json:"data"`
-}
-
-type AppListCurrentOrdersReq struct {
-	PageReq
-	AccountId  int64 `form:"accountId"`
-	ContractId int64 `form:"contractId,optional"`
-	Side       int64 `form:"side,optional"`
-}
-
-type AppListCurrentOrdersResp struct {
-	RespBase
-	Data []OptionOrderDetail `json:"data"`
-}
-
-type AppListExercisesReq struct {
-	PageReq
-	AccountId         int64     `form:"accountId"`
-	ContractId        int64     `form:"contractId,optional"`
-	Status            int64     `form:"status,optional"`
-	ExerciseTimeRange TimeRange `form:"exerciseTimeRange,optional"`
-}
-
-type AppListExercisesResp struct {
-	RespBase
-	Data []OptionExerciseDetail `json:"data"`
-}
-
-type AppListHistoryOrdersReq struct {
-	PageReq
-	AccountId       int64     `form:"accountId"`
-	ContractId      int64     `form:"contractId,optional"`
-	Status          int64     `form:"status,optional"`
-	CreateTimeRange TimeRange `form:"createTimeRange,optional"`
-}
-
-type AppListHistoryOrdersResp struct {
-	RespBase
-	Data []OptionOrderDetail `json:"data"`
-}
-
-type AppListPositionsReq struct {
-	PageReq
-	AccountId int64 `form:"accountId"`
-	Status    int64 `form:"status,optional"`
-}
-
-type AppListPositionsResp struct {
-	RespBase
-	Data []OptionPositionDetail `json:"data"`
-}
-
-type AppListTradesReq struct {
-	PageReq
-	AccountId      int64     `form:"accountId"`
-	ContractId     int64     `form:"contractId,optional"`
-	TradeTimeRange TimeRange `form:"tradeTimeRange,optional"`
-}
-
-type AppListTradesResp struct {
-	RespBase
-	Data []OptionTradeDetail `json:"data"`
-}
-
-type AppMyOrderDetailReq struct {
-	Id int64 `form:"id"`
-}
-
-type AppMyOrderDetailResp struct {
-	RespBase
-	Data StakeOrder `json:"data"`
-}
-
-type AppMyOrderListReq struct {
-	PageReq
-	Status     int64 `form:"status,optional"`
-	RedeemType int64 `form:"redeemType,optional"`
-}
-
-type AppMyOrderListResp struct {
-	RespBase
-	Data []StakeOrder `json:"data"`
-}
-
-type AppMyRedeemLogListReq struct {
-	PageReq
-	OrderId int64 `form:"orderId,optional"`
-}
-
-type AppMyRedeemLogListResp struct {
-	RespBase
-	Data []StakeRedeemLog `json:"data"`
-}
-
-type AppMyRewardLogListReq struct {
-	PageReq
-	OrderId    int64 `form:"orderId,optional"`
-	RewardType int64 `form:"rewardType,optional"`
-}
-
-type AppMyRewardLogListResp struct {
-	RespBase
-	Data []StakeRewardLog `json:"data"`
-}
-
-type AppPlaceOrderData struct {
-	OrderNo string `json:"orderNo"`
-	OrderId int64  `json:"orderId"`
-}
-
-type AppPlaceOrderReq struct {
-	AccountId      int64  `json:"accountId"`  // 账户ID
-	ContractId     int64  `json:"contractId"` // 合约ID
-	Side           int64  `json:"side"`
-	PositionEffect int64  `json:"positionEffect"`
-	OrderType      int64  `json:"orderType"`
-	Price          string `json:"price"`
-	Qty            string `json:"qty"`
-	ClientOrderId  string `json:"clientOrderId,optional"` // 客户端订单号
-	ReduceOnly     int64  `json:"reduceOnly,optional"`    // 是否只减仓：1是 2否
-	Mmp            int64  `json:"mmp,optional"`           // 是否做市商保护：1是 2否
-}
-
-type AppPlaceOrderResp struct {
-	RespBase
-	Data AppPlaceOrderData `json:"data"`
-}
-
-type AppProductDetailReq struct {
-	Id int64 `form:"id"`
-}
-
-type AppProductDetailResp struct {
-	RespBase
-	Data StakeProduct `json:"data"`
-}
-
-type AppProductListReq struct {
-	PageReq
-	ProductType int64  `form:"productType,optional"`
-	CoinSymbol  string `form:"coinSymbol,optional"`
-}
-
-type AppProductListResp struct {
-	RespBase
-	Data []StakeProduct `json:"data"`
-}
-
-type AppRedeemData struct {
-	Success  int64  `json:"success"`  // 执行结果：0失败 1成功
-	RedeemNo string `json:"redeemNo"` // 赎回单号
-}
-
-type AppRedeemReq struct {
-	OrderId    int64  `json:"orderId"`
-	RedeemType int64  `json:"redeemType"`
-	Remark     string `json:"remark,optional"`
-}
-
-type AppRedeemResp struct {
-	RespBase
-	Data AppRedeemData `json:"data"`
-}
-
 type AssetCoinConfig struct {
 	Id              int64  `json:"id"`              // 主键ID
 	TenantId        int64  `json:"tenantId"`        // 租户ID
@@ -459,12 +191,6 @@ type CancelMyRechargeOrderReq struct {
 	OrderNo string `path:"orderNo"`
 }
 
-type CancelOrderReq struct {
-	OrderId       int64  `json:"orderId,optional"`
-	OrderNo       string `json:"orderNo,optional"`
-	ClientOrderId string `json:"clientOrderId,optional"`
-}
-
 type ChangeLoginPasswordReq struct {
 	OldPassword     string `json:"oldPassword"`
 	NewPassword     string `json:"newPassword"`
@@ -483,6 +209,10 @@ type ChatToken struct {
 	SessionNo string `json:"sessionNo"`
 	ChatUiUrl string `json:"chatUiUrl"`
 	ChatWsUrl string `json:"chatWsUrl,optional"`
+}
+
+type CommonResp struct {
+	RespBase
 }
 
 type ContractLeverageConfig struct {
@@ -591,6 +321,23 @@ type CreateGuestTransferResp struct {
 	Data CreateGuestTransferData `json:"data"`
 }
 
+type CreateOrderData struct {
+	Id      int64  `json:"id"`
+	OrderNo string `json:"orderNo"`
+}
+
+type CreateOrderReq struct {
+	ProductId   int64  `json:"productId"`
+	StakeAmount string `json:"stakeAmount"`
+	Source      int64  `json:"source"`
+	Remark      string `json:"remark,optional"`
+}
+
+type CreateOrderResp struct {
+	RespBase
+	Data CreateOrderData `json:"data"`
+}
+
 type CreateRechargeOrderReq struct {
 	ChannelId      int64  `json:"channelId"`
 	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
@@ -691,6 +438,23 @@ type ExchangeGuestTransferResp struct {
 	Data ExchangeGuestTransferData `json:"data"`
 }
 
+type ExerciseData struct {
+	ExerciseNo string `json:"exerciseNo"`
+	ExerciseId int64  `json:"exerciseId"`
+}
+
+type ExerciseReq struct {
+	AccountId   int64  `json:"accountId"`
+	PositionId  int64  `json:"positionId"`
+	ContractId  int64  `json:"contractId"`
+	ExerciseQty string `json:"exerciseQty"`
+}
+
+type ExerciseResp struct {
+	RespBase
+	Data ExerciseData `json:"data"`
+}
+
 type GetAuthoritativeSnapshotReq struct {
 	Authority     string `form:"authority"`
 	CategoryCode  string `form:"categoryCode"`
@@ -704,6 +468,15 @@ type GetAuthoritativeSnapshotReq struct {
 type GetAuthoritativeSnapshotResp struct {
 	RespBase
 	Data AuthoritativeSnapshot `json:"data"`
+}
+
+type GetContractDetailReq struct {
+	ContractId int64 `form:"contractId"` // 合约ID
+}
+
+type GetContractDetailResp struct {
+	RespBase
+	Data OptionContractDetail `json:"data"`
 }
 
 type GetFillListReq struct {
@@ -828,16 +601,6 @@ type GetOrderDetailData struct {
 	Seconds  TradeOrderSeconds   `json:"seconds"`
 }
 
-type GetOrderDetailReq struct {
-	OrderId int64  `form:"orderId,optional"`
-	OrderNo string `form:"orderNo,optional"`
-}
-
-type GetOrderDetailResp struct {
-	RespBase
-	Data GetOrderDetailData `json:"data"`
-}
-
 type GetOrderListReq struct {
 	PageReq
 	ProductType int64     `form:"productType,optional"`
@@ -850,6 +613,16 @@ type GetOrderListReq struct {
 type GetOrderListResp struct {
 	RespBase
 	Data []TradeOrder `json:"data"`
+}
+
+type GetPositionDetailReq struct {
+	AccountId  int64 `form:"accountId"`
+	PositionId int64 `form:"positionId"`
+}
+
+type GetPositionDetailResp struct {
+	RespBase
+	Data OptionPositionDetail `json:"data"`
 }
 
 type GetPositionListReq struct {
@@ -1050,6 +823,15 @@ type KlineIntervalsResp struct {
 	Data []KlineInterval `json:"data"`
 }
 
+type ListAccountsReq struct {
+	AccountId int64 `form:"accountId,optional"`
+}
+
+type ListAccountsResp struct {
+	RespBase
+	Data []OptionAccount `json:"data"`
+}
+
 type ListAssetCoinConfigsReq struct {
 	WalletType    int64 `form:"walletType"`        // 账户类型
 	OperationType int64 `form:"operationType"`     // 操作场景:1充值 2提现 3划转
@@ -1079,6 +861,68 @@ type ListBanksReq struct {
 type ListBanksResp struct {
 	RespBase
 	Data []UserBank `json:"data"`
+}
+
+type ListBillsReq struct {
+	PageReq
+	AccountId       int64     `form:"accountId,optional"`
+	RefType         int64     `form:"refType,optional"`
+	CreateTimeRange TimeRange `form:"createTimeRange,optional"`
+}
+
+type ListBillsResp struct {
+	RespBase
+	Data []OptionBill `json:"data"`
+}
+
+type ListContractsReq struct {
+	PageReq
+	UnderlyingSymbol string `form:"underlyingSymbol,optional"` // 标的符号
+	OptionType       int64  `form:"optionType,optional"`       // 期权类型
+	Status           int64  `form:"status,optional"`           // 状态
+}
+
+type ListContractsResp struct {
+	RespBase
+	Data []OptionContractDetail `json:"data"`
+}
+
+type ListCurrentOrdersReq struct {
+	PageReq
+	AccountId  int64 `form:"accountId"`
+	ContractId int64 `form:"contractId,optional"`
+	Side       int64 `form:"side,optional"`
+}
+
+type ListCurrentOrdersResp struct {
+	RespBase
+	Data []OptionOrderDetail `json:"data"`
+}
+
+type ListExercisesReq struct {
+	PageReq
+	AccountId         int64     `form:"accountId"`
+	ContractId        int64     `form:"contractId,optional"`
+	Status            int64     `form:"status,optional"`
+	ExerciseTimeRange TimeRange `form:"exerciseTimeRange,optional"`
+}
+
+type ListExercisesResp struct {
+	RespBase
+	Data []OptionExerciseDetail `json:"data"`
+}
+
+type ListHistoryOrdersReq struct {
+	PageReq
+	AccountId       int64     `form:"accountId"`
+	ContractId      int64     `form:"contractId,optional"`
+	Status          int64     `form:"status,optional"`
+	CreateTimeRange TimeRange `form:"createTimeRange,optional"`
+}
+
+type ListHistoryOrdersResp struct {
+	RespBase
+	Data []OptionOrderDetail `json:"data"`
 }
 
 type ListMyAssetFlowsReq struct {
@@ -1180,6 +1024,29 @@ type ListMyWithdrawOrdersResp struct {
 	Data []WithdrawOrder `json:"data"`
 }
 
+type ListPositionsReq struct {
+	PageReq
+	AccountId int64 `form:"accountId"`
+	Status    int64 `form:"status,optional"`
+}
+
+type ListPositionsResp struct {
+	RespBase
+	Data []OptionPositionDetail `json:"data"`
+}
+
+type ListTradesReq struct {
+	PageReq
+	AccountId      int64     `form:"accountId"`
+	ContractId     int64     `form:"contractId,optional"`
+	TradeTimeRange TimeRange `form:"tradeTimeRange,optional"`
+}
+
+type ListTradesResp struct {
+	RespBase
+	Data []OptionTradeDetail `json:"data"`
+}
+
 type ListVisibleCategoriesReq struct {
 	PageReq
 }
@@ -1226,6 +1093,47 @@ type MarketSymbol struct {
 	Symbol       string `json:"symbol"`
 }
 
+type MyOrderDetailReq struct {
+	Id int64 `form:"id"`
+}
+
+type MyOrderDetailResp struct {
+	RespBase
+	Data StakeOrder `json:"data"`
+}
+
+type MyOrderListReq struct {
+	PageReq
+	Status     int64 `form:"status,optional"`
+	RedeemType int64 `form:"redeemType,optional"`
+}
+
+type MyOrderListResp struct {
+	RespBase
+	Data []StakeOrder `json:"data"`
+}
+
+type MyRedeemLogListReq struct {
+	PageReq
+	OrderId int64 `form:"orderId,optional"`
+}
+
+type MyRedeemLogListResp struct {
+	RespBase
+	Data []StakeRedeemLog `json:"data"`
+}
+
+type MyRewardLogListReq struct {
+	PageReq
+	OrderId    int64 `form:"orderId,optional"`
+	RewardType int64 `form:"rewardType,optional"`
+}
+
+type MyRewardLogListResp struct {
+	RespBase
+	Data []StakeRewardLog `json:"data"`
+}
+
 type OptionAccount struct {
 	Id               int64  `json:"id"`
 	TenantId         int64  `json:"tenantId"`
@@ -1259,6 +1167,12 @@ type OptionBill struct {
 	BalanceAfter  string `json:"balanceAfter"`
 	Remark        string `json:"remark"`
 	CreateTimes   int64  `json:"createTimes"`
+}
+
+type OptionCancelOrderReq struct {
+	AccountId int64  `json:"accountId"`
+	OrderId   int64  `json:"orderId,optional"`
+	OrderNo   string `json:"orderNo,optional"`
 }
 
 type OptionContract struct {
@@ -1324,6 +1238,17 @@ type OptionExerciseDetail struct {
 	Contract OptionContract `json:"contract"`
 }
 
+type OptionGetOrderDetailReq struct {
+	AccountId int64  `form:"accountId"`
+	OrderId   int64  `form:"orderId,optional"`
+	OrderNo   string `form:"orderNo,optional"`
+}
+
+type OptionGetOrderDetailResp struct {
+	RespBase
+	Data OptionOrderDetail `json:"data"`
+}
+
 type OptionMarket struct {
 	Id               int64  `json:"id"`         // 主键ID
 	TenantId         int64  `json:"tenantId"`   // 租户ID
@@ -1384,6 +1309,24 @@ type OptionOrder struct {
 type OptionOrderDetail struct {
 	Order    OptionOrder    `json:"order"`
 	Contract OptionContract `json:"contract"`
+}
+
+type OptionPlaceOrderReq struct {
+	AccountId      int64  `json:"accountId"`  // 账户ID
+	ContractId     int64  `json:"contractId"` // 合约ID
+	Side           int64  `json:"side"`
+	PositionEffect int64  `json:"positionEffect"`
+	OrderType      int64  `json:"orderType"`
+	Price          string `json:"price"`
+	Qty            string `json:"qty"`
+	ClientOrderId  string `json:"clientOrderId,optional"` // 客户端订单号
+	ReduceOnly     int64  `json:"reduceOnly,optional"`    // 是否只减仓：1是 2否
+	Mmp            int64  `json:"mmp,optional"`           // 是否做市商保护：1是 2否
+}
+
+type OptionPlaceOrderResp struct {
+	RespBase
+	Data PlaceOrderData `json:"data"`
 }
 
 type OptionPosition struct {
@@ -1463,32 +1406,29 @@ type PageReq struct {
 	Limit  int64 `form:"limit,optional"`
 }
 
-type PlaceOrderReq struct {
-	SymbolId         int64  `json:"symbolId"` // 交易对ID
-	Side             int64  `json:"side"`
-	PositionSide     int64  `json:"positionSide"`
-	OrderType        int64  `json:"orderType"`
-	TimeInForce      int64  `json:"timeInForce"`
-	ClientOrderId    string `json:"clientOrderId,optional"`
-	Price            string `json:"price,optional"`
-	Qty              string `json:"qty,optional"`
-	Amount           string `json:"amount,optional"`
-	IsReduceOnly     int64  `json:"isReduceOnly,optional"` // 是否只减仓：1是 2否
-	TriggerPrice     string `json:"triggerPrice,optional"`
-	TriggerType      int64  `json:"triggerType,optional"`
-	TriggerKind      int64  `json:"triggerKind,optional"`
-	MarginMode       int64  `json:"marginMode,optional"`
-	Leverage         int64  `json:"leverage,optional"` // 杠杆倍数
-	TakeProfitPrice  string `json:"takeProfitPrice,optional"`
-	StopLossPrice    string `json:"stopLossPrice,optional"`
-	OrderSource      int64  `json:"orderSource,optional"`
-	SecondsDirection int64  `json:"secondsDirection,optional"`
-	DurationSeconds  int64  `json:"durationSeconds,optional"`
+type PlaceOrderData struct {
+	OrderNo string `json:"orderNo"`
+	OrderId int64  `json:"orderId"`
 }
 
-type PlaceOrderResp struct {
+type ProductDetailReq struct {
+	Id int64 `form:"id"`
+}
+
+type ProductDetailResp struct {
 	RespBase
-	Data TradeOrder `json:"data"`
+	Data StakeProduct `json:"data"`
+}
+
+type ProductListReq struct {
+	PageReq
+	ProductType int64  `form:"productType,optional"`
+	CoinSymbol  string `form:"coinSymbol,optional"`
+}
+
+type ProductListResp struct {
+	RespBase
+	Data []StakeProduct `json:"data"`
 }
 
 type QueryMyRechargeOrderStatusReq struct {
@@ -1552,6 +1492,22 @@ type RechargeOrder struct {
 	Remark       string `json:"remark"`
 	CreateTimes  int64  `json:"createTimes"`
 	UpdateTimes  int64  `json:"updateTimes"`
+}
+
+type RedeemData struct {
+	Success  int64  `json:"success"`  // 执行结果：0失败 1成功
+	RedeemNo string `json:"redeemNo"` // 赎回单号
+}
+
+type RedeemReq struct {
+	OrderId    int64  `json:"orderId"`
+	RedeemType int64  `json:"redeemType"`
+	Remark     string `json:"remark,optional"`
+}
+
+type RedeemResp struct {
+	RespBase
+	Data RedeemData `json:"data"`
 }
 
 type RefreshTokenReq struct {
@@ -1793,6 +1749,12 @@ type TradeAppCommonResp struct {
 	RespBase
 }
 
+type TradeCancelOrderReq struct {
+	OrderId       int64  `json:"orderId,optional"`
+	OrderNo       string `json:"orderNo,optional"`
+	ClientOrderId string `json:"clientOrderId,optional"`
+}
+
 type TradeFill struct {
 	Id                   int64  `json:"id"`
 	TenantId             int64  `json:"tenantId"`
@@ -1819,6 +1781,16 @@ type TradeFill struct {
 	RealizedPnl          string `json:"realizedPnl"`
 	MatchTime            int64  `json:"matchTime"`
 	CreateTimes          int64  `json:"createTimes"`
+}
+
+type TradeGetOrderDetailReq struct {
+	OrderId int64  `form:"orderId,optional"`
+	OrderNo string `form:"orderNo,optional"`
+}
+
+type TradeGetOrderDetailResp struct {
+	RespBase
+	Data GetOrderDetailData `json:"data"`
 }
 
 type TradeOrder struct {
@@ -1875,6 +1847,34 @@ type TradeOrderSeconds struct {
 	ReservationNo       string `json:"reservationNo"`
 	CreateTimes         int64  `json:"createTimes"`
 	UpdateTimes         int64  `json:"updateTimes"`
+}
+
+type TradePlaceOrderReq struct {
+	SymbolId         int64  `json:"symbolId"` // 交易对ID
+	Side             int64  `json:"side"`
+	PositionSide     int64  `json:"positionSide"`
+	OrderType        int64  `json:"orderType"`
+	TimeInForce      int64  `json:"timeInForce"`
+	ClientOrderId    string `json:"clientOrderId,optional"`
+	Price            string `json:"price,optional"`
+	Qty              string `json:"qty,optional"`
+	Amount           string `json:"amount,optional"`
+	IsReduceOnly     int64  `json:"isReduceOnly,optional"` // 是否只减仓：1是 2否
+	TriggerPrice     string `json:"triggerPrice,optional"`
+	TriggerType      int64  `json:"triggerType,optional"`
+	TriggerKind      int64  `json:"triggerKind,optional"`
+	MarginMode       int64  `json:"marginMode,optional"`
+	Leverage         int64  `json:"leverage,optional"` // 杠杆倍数
+	TakeProfitPrice  string `json:"takeProfitPrice,optional"`
+	StopLossPrice    string `json:"stopLossPrice,optional"`
+	OrderSource      int64  `json:"orderSource,optional"`
+	SecondsDirection int64  `json:"secondsDirection,optional"`
+	DurationSeconds  int64  `json:"durationSeconds,optional"`
+}
+
+type TradePlaceOrderResp struct {
+	RespBase
+	Data TradeOrder `json:"data"`
 }
 
 type TradeSymbol struct {

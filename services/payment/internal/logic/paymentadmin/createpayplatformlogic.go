@@ -29,7 +29,7 @@ func NewCreatePayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 // 创建平台
-func (l *CreatePayPlatformLogic) CreatePayPlatform(in *payment.CreatePayPlatformReq) (*payment.AdminCommonResp, error) {
+func (l *CreatePayPlatformLogic) CreatePayPlatform(in *payment.CreatePayPlatformReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "CreatePayPlatform"
 	)
@@ -56,7 +56,7 @@ func (l *CreatePayPlatformLogic) CreatePayPlatform(in *payment.CreatePayPlatform
 
 	l.Logger.Infof("Create pay platform success: %s", in.PlatformCode)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

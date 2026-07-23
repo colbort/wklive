@@ -28,26 +28,26 @@ func NewUpdateChatAgentStatusLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 // 更新坐席在线状态
-func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAgentStatusReq) (*chat.AdminChatAgentResp, error) {
+func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAgentStatusReq) (*chat.ChatAgentResp, error) {
 	if in.Id <= 0 || in.GetStatus() == chat.ChatAgentStatus_CHAT_AGENT_STATUS_UNKNOWN {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(400, "agent_id and status are required")}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(400, "agent_id and status are required")}, nil
 	}
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatAgentModel.FindOne(l.ctx, in.GetId())
 	if err == models.ErrNotFound || data.MerchantId != merchantID {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(404, "chat agent not found")}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(404, "chat agent not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data.Status = int64(in.GetStatus())
 	data.LastActiveTime = utils.NowMillis()
 	data.UpdateTimes = utils.NowMillis()
 	if err := l.svcCtx.ChatAgentModel.Update(l.ctx, data); err != nil {
-		return &chat.AdminChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatAgentResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	_ = ih.PublishMessageEvent(l.ctx, l.svcCtx.MQPublisher, chat.ChatAdminEventChannel, ih.PublishEventSystemNotice, &chat.ChatWsResponse_SystemNotice{SystemNotice: &chat.ChatSystemNoticePayload{
 		SessionNo:  "",
@@ -56,5 +56,5 @@ func (l *UpdateChatAgentStatusLogic) UpdateChatAgentStatus(in *chat.UpdateChatAg
 		Level:      "info",
 		ShowInChat: false,
 	}})
-	return &chat.AdminChatAgentResp{Base: helper.OkResp(), Data: ih.ToProtoAgent(data)}, nil
+	return &chat.ChatAgentResp{Base: helper.OkResp(), Data: ih.ToProtoAgent(data)}, nil
 }

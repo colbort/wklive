@@ -54,7 +54,7 @@ func (s *UserAppServer) ExchangeGuestTransfer(ctx context.Context, in *user.Exch
 }
 
 // 用户登出
-func (s *UserAppServer) Logout(ctx context.Context, in *user.LogoutReq) (*user.AppCommonResp, error) {
+func (s *UserAppServer) Logout(ctx context.Context, in *user.LogoutReq) (*user.UserCommonResp, error) {
 	l := userapplogic.NewLogoutLogic(ctx, s.svcCtx)
 	return l.Logout(in)
 }
@@ -78,7 +78,7 @@ func (s *UserAppServer) UpdateProfile(ctx context.Context, in *user.UpdateProfil
 }
 
 // 修改登录密码
-func (s *UserAppServer) ChangeLoginPassword(ctx context.Context, in *user.ChangeLoginPasswordReq) (*user.AppCommonResp, error) {
+func (s *UserAppServer) ChangeLoginPassword(ctx context.Context, in *user.ChangeLoginPasswordReq) (*user.UserCommonResp, error) {
 	l := userapplogic.NewChangeLoginPasswordLogic(ctx, s.svcCtx)
 	return l.ChangeLoginPassword(in)
 }
@@ -108,13 +108,13 @@ func (s *UserAppServer) GetSecurity(ctx context.Context, in *user.GetSecurityReq
 }
 
 // 设置支付密码
-func (s *UserAppServer) SetPayPassword(ctx context.Context, in *user.SetPayPasswordReq) (*user.AppCommonResp, error) {
+func (s *UserAppServer) SetPayPassword(ctx context.Context, in *user.SetPayPasswordReq) (*user.UserCommonResp, error) {
 	l := userapplogic.NewSetPayPasswordLogic(ctx, s.svcCtx)
 	return l.SetPayPassword(in)
 }
 
 // 修改支付密码
-func (s *UserAppServer) ChangePayPassword(ctx context.Context, in *user.ChangePayPasswordReq) (*user.AppCommonResp, error) {
+func (s *UserAppServer) ChangePayPassword(ctx context.Context, in *user.ChangePayPasswordReq) (*user.UserCommonResp, error) {
 	l := userapplogic.NewChangePayPasswordLogic(ctx, s.svcCtx)
 	return l.ChangePayPassword(in)
 }
@@ -126,13 +126,13 @@ func (s *UserAppServer) InitGoogle2FA(ctx context.Context, in *user.InitGoogle2F
 }
 
 // 启用谷歌2FA
-func (s *UserAppServer) EnableGoogle2FA(ctx context.Context, in *user.EnableGoogle2FAReq) (*user.AppCommonResp, error) {
+func (s *UserAppServer) EnableGoogle2FA(ctx context.Context, in *user.EnableGoogle2FAReq) (*user.UserCommonResp, error) {
 	l := userapplogic.NewEnableGoogle2FALogic(ctx, s.svcCtx)
 	return l.EnableGoogle2FA(in)
 }
 
 // 禁用谷歌2FA
-func (s *UserAppServer) DisableGoogle2FA(ctx context.Context, in *user.DisableGoogle2FAReq) (*user.AppCommonResp, error) {
+func (s *UserAppServer) DisableGoogle2FA(ctx context.Context, in *user.DisableGoogle2FAReq) (*user.UserCommonResp, error) {
 	l := userapplogic.NewDisableGoogle2FALogic(ctx, s.svcCtx)
 	return l.DisableGoogle2FA(in)
 }
@@ -156,13 +156,13 @@ func (s *UserAppServer) UpdateBank(ctx context.Context, in *user.UpdateBankReq) 
 }
 
 // 删除银行卡
-func (s *UserAppServer) DeleteBank(ctx context.Context, in *user.DeleteBankReq) (*user.AppCommonResp, error) {
+func (s *UserAppServer) DeleteBank(ctx context.Context, in *user.DeleteBankReq) (*user.UserCommonResp, error) {
 	l := userapplogic.NewDeleteBankLogic(ctx, s.svcCtx)
 	return l.DeleteBank(in)
 }
 
 // 设置默认银行卡
-func (s *UserAppServer) SetDefaultBank(ctx context.Context, in *user.SetDefaultBankReq) (*user.AppCommonResp, error) {
+func (s *UserAppServer) SetDefaultBank(ctx context.Context, in *user.SetDefaultBankReq) (*user.UserCommonResp, error) {
 	l := userapplogic.NewSetDefaultBankLogic(ctx, s.svcCtx)
 	return l.SetDefaultBank(in)
 }

@@ -25,7 +25,7 @@ func NewGetPayPlatformsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 // 获取系统支持的平台
-func (l *GetPayPlatformsLogic) GetPayPlatforms(in *payment.AdminEmpty) (*payment.PayPlatformsResp, error) {
+func (l *GetPayPlatformsLogic) GetPayPlatforms(in *payment.Empty) (*payment.PayPlatformsResp, error) {
 	data := make([]*payment.PayPlatformItem, 0)
 	data = append(data, &payment.PayPlatformItem{
 		PlatformCode: "dongfang",

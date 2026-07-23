@@ -84,39 +84,39 @@ func (s *AssetAdminServer) PageAssetLocks(ctx context.Context, in *asset.PageAss
 }
 
 // 后台人工加币
-func (s *AssetAdminServer) AdminAddAsset(ctx context.Context, in *asset.AdminAddAssetReq) (*asset.AdminChangeAssetResp, error) {
-	l := assetadminlogic.NewAdminAddAssetLogic(ctx, s.svcCtx)
-	return l.AdminAddAsset(in)
+func (s *AssetAdminServer) AddAsset(ctx context.Context, in *asset.AddAssetReq) (*asset.ManualChangeAssetResp, error) {
+	l := assetadminlogic.NewAddAssetLogic(ctx, s.svcCtx)
+	return l.AddAsset(in)
 }
 
 // 后台人工减币
-func (s *AssetAdminServer) AdminSubAsset(ctx context.Context, in *asset.AdminSubAssetReq) (*asset.AdminChangeAssetResp, error) {
-	l := assetadminlogic.NewAdminSubAssetLogic(ctx, s.svcCtx)
-	return l.AdminSubAsset(in)
+func (s *AssetAdminServer) SubAsset(ctx context.Context, in *asset.SubAssetReq) (*asset.ManualChangeAssetResp, error) {
+	l := assetadminlogic.NewSubAssetLogic(ctx, s.svcCtx)
+	return l.SubAsset(in)
 }
 
 // 后台冻结资产
-func (s *AssetAdminServer) AdminFreezeAsset(ctx context.Context, in *asset.AdminFreezeAssetReq) (*asset.AdminChangeAssetResp, error) {
-	l := assetadminlogic.NewAdminFreezeAssetLogic(ctx, s.svcCtx)
-	return l.AdminFreezeAsset(in)
+func (s *AssetAdminServer) FreezeAsset(ctx context.Context, in *asset.ManualFreezeAssetReq) (*asset.ManualChangeAssetResp, error) {
+	l := assetadminlogic.NewFreezeAssetLogic(ctx, s.svcCtx)
+	return l.FreezeAsset(in)
 }
 
 // 后台解冻资产
-func (s *AssetAdminServer) AdminUnfreezeAsset(ctx context.Context, in *asset.AdminUnfreezeAssetReq) (*asset.AdminChangeAssetResp, error) {
-	l := assetadminlogic.NewAdminUnfreezeAssetLogic(ctx, s.svcCtx)
-	return l.AdminUnfreezeAsset(in)
+func (s *AssetAdminServer) UnfreezeAsset(ctx context.Context, in *asset.ManualUnfreezeAssetReq) (*asset.ManualChangeAssetResp, error) {
+	l := assetadminlogic.NewUnfreezeAssetLogic(ctx, s.svcCtx)
+	return l.UnfreezeAsset(in)
 }
 
 // 后台锁仓资产
-func (s *AssetAdminServer) AdminLockAsset(ctx context.Context, in *asset.AdminLockAssetReq) (*asset.AdminChangeAssetResp, error) {
-	l := assetadminlogic.NewAdminLockAssetLogic(ctx, s.svcCtx)
-	return l.AdminLockAsset(in)
+func (s *AssetAdminServer) LockAsset(ctx context.Context, in *asset.ManualLockAssetReq) (*asset.ManualChangeAssetResp, error) {
+	l := assetadminlogic.NewLockAssetLogic(ctx, s.svcCtx)
+	return l.LockAsset(in)
 }
 
 // 后台解锁资产
-func (s *AssetAdminServer) AdminUnlockAsset(ctx context.Context, in *asset.AdminUnlockAssetReq) (*asset.AdminChangeAssetResp, error) {
-	l := assetadminlogic.NewAdminUnlockAssetLogic(ctx, s.svcCtx)
-	return l.AdminUnlockAsset(in)
+func (s *AssetAdminServer) UnlockAsset(ctx context.Context, in *asset.ManualUnlockAssetReq) (*asset.ManualChangeAssetResp, error) {
+	l := assetadminlogic.NewUnlockAssetLogic(ctx, s.svcCtx)
+	return l.UnlockAsset(in)
 }
 
 // 设置平台账户（保险基金等，不属于任何用户）

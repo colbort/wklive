@@ -28,12 +28,12 @@ func NewPlaceOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlaceO
 	}
 }
 
-func (l *PlaceOrderLogic) PlaceOrder(req *types.PlaceOrderReq) (resp *types.PlaceOrderResp, err error) {
+func (l *PlaceOrderLogic) PlaceOrder(req *types.TradePlaceOrderReq) (resp *types.TradePlaceOrderResp, err error) {
 	nextReq := normalizePlaceOrderReq(req)
-	return logicutil.Proxy[types.PlaceOrderResp](l.ctx, &nextReq, l.svcCtx.TradeCli.PlaceOrder)
+	return logicutil.Proxy[types.TradePlaceOrderResp](l.ctx, &nextReq, l.svcCtx.TradeCli.PlaceOrder)
 }
 
-func normalizePlaceOrderReq(req *types.PlaceOrderReq) types.PlaceOrderReq {
+func normalizePlaceOrderReq(req *types.TradePlaceOrderReq) types.TradePlaceOrderReq {
 	nextReq := *req
 	nextReq.Amount = scaleTradeMinorText(req.Amount)
 	return nextReq

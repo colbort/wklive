@@ -30,7 +30,7 @@ func NewCreateTenantPayChannelLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 // 创建租户支付通道
-func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateTenantPayChannelReq) (*payment.AdminCommonResp, error) {
+func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateTenantPayChannelReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "CreateTenantPayChannel"
 	)
@@ -75,7 +75,7 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 
 	l.Logger.Infof("Create tenant pay channel success: %s", in.ChannelCode)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

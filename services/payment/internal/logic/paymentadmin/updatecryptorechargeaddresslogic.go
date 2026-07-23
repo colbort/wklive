@@ -24,6 +24,6 @@ func NewUpdateCryptoRechargeAddressLogic(ctx context.Context, svcCtx *svc.Servic
 }
 
 // 更新链上充值地址
-func (l *UpdateCryptoRechargeAddressLogic) UpdateCryptoRechargeAddress(in *payment.UpdateCryptoRechargeAddressReq) (*payment.AdminCommonResp, error) {
+func (l *UpdateCryptoRechargeAddressLogic) UpdateCryptoRechargeAddress(in *payment.UpdateCryptoRechargeAddressReq) (*payment.CommonResp, error) {
 	return updateCryptoRechargeAddress(l.ctx, l.svcCtx, in)
 }

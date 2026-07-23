@@ -27,13 +27,13 @@ func NewUpdateTenantProductLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
-func (l *UpdateTenantProductLogic) UpdateTenantProduct(in *itick.UpdateTenantProductReq) (*itick.AdminCommonResp, error) {
+func (l *UpdateTenantProductLogic) UpdateTenantProduct(in *itick.UpdateTenantProductReq) (*itick.CommonResp, error) {
 	item, err := l.svcCtx.ItickTenantProductModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 	if item == nil {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
@@ -42,12 +42,12 @@ func (l *UpdateTenantProductLogic) UpdateTenantProduct(in *itick.UpdateTenantPro
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx)),
 		}, nil
 	}
 	if !allowed {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
@@ -73,5 +73,5 @@ func (l *UpdateTenantProductLogic) UpdateTenantProduct(in *itick.UpdateTenantPro
 		l.Errorf("refresh active products after update failed: %v", err)
 	}
 
-	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &itick.CommonResp{Base: helper.OkResp()}, nil
 }

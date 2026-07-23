@@ -27,6 +27,6 @@ func NewSetSecondsSymbolConfigLogic(ctx context.Context, svcCtx *svc.ServiceCont
 	}
 }
 
-func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(req *types.SetSecondsSymbolConfigReq) (resp *types.AdminCommonResp, err error) {
-	return logicutil.Proxy[types.AdminCommonResp](l.ctx, req, l.svcCtx.TradeCli.SetSecondsSymbolConfig)
+func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(req *types.SetSecondsSymbolConfigReq) (resp *types.CommonResp, err error) {
+	return logicutil.Proxy[types.CommonResp](l.ctx, req, l.svcCtx.TradeCli.SetSecondsSymbolConfig)
 }

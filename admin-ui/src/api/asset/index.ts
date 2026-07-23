@@ -1,11 +1,11 @@
 import { del, get, post, put } from '@/utils/request'
 import type {
-  AdminAddAssetReq,
-  AdminFreezeAssetReq,
-  AdminLockAssetReq,
-  AdminSubAssetReq,
-  AdminUnfreezeAssetReq,
-  AdminUnlockAssetReq,
+  AddAssetReq,
+  FreezeAssetReq,
+  LockAssetReq,
+  SubAssetReq,
+  UnfreezeAssetReq,
+  UnlockAssetReq,
   AssetChangeResp,
   AssetCoinConfig,
   AssetFlow,
@@ -85,32 +85,32 @@ export function apiDeleteAssetCoinConfig(
   return del('/admin/asset/coin-configs/' + id, params)
 }
 
-export function apiAdminAddAsset(params: AdminAddAssetReq): Promise<RespBase<AssetChangeResp>> {
+export function apiAdminAddAsset(params: AddAssetReq): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/add', params)
 }
 
-export function apiAdminSubAsset(params: AdminSubAssetReq): Promise<RespBase<AssetChangeResp>> {
+export function apiAdminSubAsset(params: SubAssetReq): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/sub', params)
 }
 
 export function apiAdminFreezeAsset(
-  params: AdminFreezeAssetReq,
+  params: FreezeAssetReq,
 ): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/freeze', params)
 }
 
 export function apiAdminUnfreezeAsset(
-  params: AdminUnfreezeAssetReq,
+  params: UnfreezeAssetReq,
 ): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/unfreeze', params)
 }
 
-export function apiAdminLockAsset(params: AdminLockAssetReq): Promise<RespBase<AssetChangeResp>> {
+export function apiAdminLockAsset(params: LockAssetReq): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/lock', params)
 }
 
 export function apiAdminUnlockAsset(
-  params: AdminUnlockAssetReq,
+  params: UnlockAssetReq,
 ): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/unlock', params)
 }

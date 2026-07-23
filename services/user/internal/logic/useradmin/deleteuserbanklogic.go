@@ -28,20 +28,20 @@ func NewDeleteUserBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 }
 
 // 删除用户银行卡
-func (l *DeleteUserBankLogic) DeleteUserBank(in *user.DeleteUserBankReq) (*user.AdminCommonResp, error) {
+func (l *DeleteUserBankLogic) DeleteUserBank(in *user.DeleteUserBankReq) (*user.CommonResp, error) {
 	bank, err := l.svcCtx.UserBankModel.FindOne(l.ctx, in.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if bank == nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, bank.TenantId, i18n.NoPermissionDeleteThisBankCard); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: base,
 		}, nil
 	}
@@ -50,7 +50,7 @@ func (l *DeleteUserBankLogic) DeleteUserBank(in *user.DeleteUserBankReq) (*user.
 	if err != nil {
 		return nil, err
 	}
-	return &user.AdminCommonResp{
+	return &user.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

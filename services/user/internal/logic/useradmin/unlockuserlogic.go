@@ -28,20 +28,20 @@ func NewUnlockUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unlock
 }
 
 // 解锁用户（解除登录锁定）
-func (l *UnlockUserLogic) UnlockUser(in *user.UnlockUserReq) (*user.AdminCommonResp, error) {
+func (l *UnlockUserLogic) UnlockUser(in *user.UnlockUserReq) (*user.CommonResp, error) {
 	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if tuser == nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: base,
 		}, nil
 	}
@@ -53,7 +53,7 @@ func (l *UnlockUserLogic) UnlockUser(in *user.UnlockUserReq) (*user.AdminCommonR
 	}
 
 	if userSecurity == nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: helper.ErrResp(i18n.UserSecurityInfoNotFound, i18n.Translate(i18n.UserSecurityInfoNotFound, l.ctx)),
 		}, nil
 	}
@@ -70,7 +70,7 @@ func (l *UnlockUserLogic) UnlockUser(in *user.UnlockUserReq) (*user.AdminCommonR
 
 	l.Logger.Infof("管理员解锁用户 %d", in.UserId)
 
-	return &user.AdminCommonResp{
+	return &user.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

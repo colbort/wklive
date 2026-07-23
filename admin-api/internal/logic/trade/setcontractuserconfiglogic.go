@@ -26,7 +26,7 @@ func NewSetContractUserConfigLogic(ctx context.Context, svcCtx *svc.ServiceConte
 	}
 }
 
-func (l *SetContractUserConfigLogic) SetContractUserConfig(req *types.SetContractUserConfigReq) (resp *types.AdminCommonResp, err error) {
+func (l *SetContractUserConfigLogic) SetContractUserConfig(req *types.SetContractUserConfigReq) (resp *types.CommonResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

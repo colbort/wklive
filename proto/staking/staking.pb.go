@@ -23,7 +23,7 @@ const (
 )
 
 // 产品列表
-type AppProductListReq struct {
+type UserProductListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProductType   ProductType            `protobuf:"varint,1,opt,name=product_type,json=productType,proto3,enum=staking.ProductType" json:"product_type,omitempty"`
 	CoinSymbol    string                 `protobuf:"bytes,2,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
@@ -32,20 +32,20 @@ type AppProductListReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppProductListReq) Reset() {
-	*x = AppProductListReq{}
+func (x *UserProductListReq) Reset() {
+	*x = UserProductListReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppProductListReq) String() string {
+func (x *UserProductListReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppProductListReq) ProtoMessage() {}
+func (*UserProductListReq) ProtoMessage() {}
 
-func (x *AppProductListReq) ProtoReflect() protoreflect.Message {
+func (x *UserProductListReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -57,33 +57,33 @@ func (x *AppProductListReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppProductListReq.ProtoReflect.Descriptor instead.
-func (*AppProductListReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserProductListReq.ProtoReflect.Descriptor instead.
+func (*UserProductListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AppProductListReq) GetProductType() ProductType {
+func (x *UserProductListReq) GetProductType() ProductType {
 	if x != nil {
 		return x.ProductType
 	}
 	return ProductType_PRODUCT_TYPE_UNKNOWN
 }
 
-func (x *AppProductListReq) GetCoinSymbol() string {
+func (x *UserProductListReq) GetCoinSymbol() string {
 	if x != nil {
 		return x.CoinSymbol
 	}
 	return ""
 }
 
-func (x *AppProductListReq) GetPage() *common.PageReq {
+func (x *UserProductListReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppProductListResp struct {
+type UserProductListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*StakeProduct        `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -91,20 +91,20 @@ type AppProductListResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppProductListResp) Reset() {
-	*x = AppProductListResp{}
+func (x *UserProductListResp) Reset() {
+	*x = UserProductListResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppProductListResp) String() string {
+func (x *UserProductListResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppProductListResp) ProtoMessage() {}
+func (*UserProductListResp) ProtoMessage() {}
 
-func (x *AppProductListResp) ProtoReflect() protoreflect.Message {
+func (x *UserProductListResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -116,19 +116,19 @@ func (x *AppProductListResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppProductListResp.ProtoReflect.Descriptor instead.
-func (*AppProductListResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserProductListResp.ProtoReflect.Descriptor instead.
+func (*UserProductListResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AppProductListResp) GetBase() *common.RespBase {
+func (x *UserProductListResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppProductListResp) GetData() []*StakeProduct {
+func (x *UserProductListResp) GetData() []*StakeProduct {
 	if x != nil {
 		return x.Data
 	}
@@ -136,27 +136,27 @@ func (x *AppProductListResp) GetData() []*StakeProduct {
 }
 
 // 产品详情
-type AppProductDetailReq struct {
+type UserProductDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppProductDetailReq) Reset() {
-	*x = AppProductDetailReq{}
+func (x *UserProductDetailReq) Reset() {
+	*x = UserProductDetailReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppProductDetailReq) String() string {
+func (x *UserProductDetailReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppProductDetailReq) ProtoMessage() {}
+func (*UserProductDetailReq) ProtoMessage() {}
 
-func (x *AppProductDetailReq) ProtoReflect() protoreflect.Message {
+func (x *UserProductDetailReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -168,19 +168,19 @@ func (x *AppProductDetailReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppProductDetailReq.ProtoReflect.Descriptor instead.
-func (*AppProductDetailReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserProductDetailReq.ProtoReflect.Descriptor instead.
+func (*UserProductDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AppProductDetailReq) GetId() int64 {
+func (x *UserProductDetailReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-type AppProductDetailResp struct {
+type UserProductDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *StakeProduct          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -188,20 +188,20 @@ type AppProductDetailResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppProductDetailResp) Reset() {
-	*x = AppProductDetailResp{}
+func (x *UserProductDetailResp) Reset() {
+	*x = UserProductDetailResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppProductDetailResp) String() string {
+func (x *UserProductDetailResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppProductDetailResp) ProtoMessage() {}
+func (*UserProductDetailResp) ProtoMessage() {}
 
-func (x *AppProductDetailResp) ProtoReflect() protoreflect.Message {
+func (x *UserProductDetailResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -213,19 +213,19 @@ func (x *AppProductDetailResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppProductDetailResp.ProtoReflect.Descriptor instead.
-func (*AppProductDetailResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserProductDetailResp.ProtoReflect.Descriptor instead.
+func (*UserProductDetailResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *AppProductDetailResp) GetBase() *common.RespBase {
+func (x *UserProductDetailResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppProductDetailResp) GetData() *StakeProduct {
+func (x *UserProductDetailResp) GetData() *StakeProduct {
 	if x != nil {
 		return x.Data
 	}
@@ -233,7 +233,7 @@ func (x *AppProductDetailResp) GetData() *StakeProduct {
 }
 
 // 创建订单
-type AppCreateOrderReq struct {
+type CreateOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProductId     int64                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	StakeAmount   string                 `protobuf:"bytes,2,opt,name=stake_amount,json=stakeAmount,proto3" json:"stake_amount,omitempty"`
@@ -243,20 +243,20 @@ type AppCreateOrderReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppCreateOrderReq) Reset() {
-	*x = AppCreateOrderReq{}
+func (x *CreateOrderReq) Reset() {
+	*x = CreateOrderReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppCreateOrderReq) String() string {
+func (x *CreateOrderReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppCreateOrderReq) ProtoMessage() {}
+func (*CreateOrderReq) ProtoMessage() {}
 
-func (x *AppCreateOrderReq) ProtoReflect() protoreflect.Message {
+func (x *CreateOrderReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -268,61 +268,61 @@ func (x *AppCreateOrderReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppCreateOrderReq.ProtoReflect.Descriptor instead.
-func (*AppCreateOrderReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateOrderReq.ProtoReflect.Descriptor instead.
+func (*CreateOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *AppCreateOrderReq) GetProductId() int64 {
+func (x *CreateOrderReq) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
 	return 0
 }
 
-func (x *AppCreateOrderReq) GetStakeAmount() string {
+func (x *CreateOrderReq) GetStakeAmount() string {
 	if x != nil {
 		return x.StakeAmount
 	}
 	return ""
 }
 
-func (x *AppCreateOrderReq) GetSource() SourceType {
+func (x *CreateOrderReq) GetSource() SourceType {
 	if x != nil {
 		return x.Source
 	}
 	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
-func (x *AppCreateOrderReq) GetRemark() string {
+func (x *CreateOrderReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
 	return ""
 }
 
-type AppCreateOrderResp struct {
+type CreateOrderResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *AppCreateOrderData    `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *CreateOrderData       `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppCreateOrderResp) Reset() {
-	*x = AppCreateOrderResp{}
+func (x *CreateOrderResp) Reset() {
+	*x = CreateOrderResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppCreateOrderResp) String() string {
+func (x *CreateOrderResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppCreateOrderResp) ProtoMessage() {}
+func (*CreateOrderResp) ProtoMessage() {}
 
-func (x *AppCreateOrderResp) ProtoReflect() protoreflect.Message {
+func (x *CreateOrderResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -334,26 +334,26 @@ func (x *AppCreateOrderResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppCreateOrderResp.ProtoReflect.Descriptor instead.
-func (*AppCreateOrderResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateOrderResp.ProtoReflect.Descriptor instead.
+func (*CreateOrderResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *AppCreateOrderResp) GetBase() *common.RespBase {
+func (x *CreateOrderResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppCreateOrderResp) GetData() *AppCreateOrderData {
+func (x *CreateOrderResp) GetData() *CreateOrderData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppCreateOrderData struct {
+type CreateOrderData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
@@ -361,20 +361,20 @@ type AppCreateOrderData struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppCreateOrderData) Reset() {
-	*x = AppCreateOrderData{}
+func (x *CreateOrderData) Reset() {
+	*x = CreateOrderData{}
 	mi := &file_proto_staking_staking_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppCreateOrderData) String() string {
+func (x *CreateOrderData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppCreateOrderData) ProtoMessage() {}
+func (*CreateOrderData) ProtoMessage() {}
 
-func (x *AppCreateOrderData) ProtoReflect() protoreflect.Message {
+func (x *CreateOrderData) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -386,19 +386,19 @@ func (x *AppCreateOrderData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppCreateOrderData.ProtoReflect.Descriptor instead.
-func (*AppCreateOrderData) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateOrderData.ProtoReflect.Descriptor instead.
+func (*CreateOrderData) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *AppCreateOrderData) GetId() int64 {
+func (x *CreateOrderData) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *AppCreateOrderData) GetOrderNo() string {
+func (x *CreateOrderData) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
@@ -406,7 +406,7 @@ func (x *AppCreateOrderData) GetOrderNo() string {
 }
 
 // 我的订单列表
-type AppMyOrderListReq struct {
+type MyOrderListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Status        OrderStatus            `protobuf:"varint,1,opt,name=status,proto3,enum=staking.OrderStatus" json:"status,omitempty"`
 	RedeemType    RedeemType             `protobuf:"varint,2,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
@@ -415,20 +415,20 @@ type AppMyOrderListReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppMyOrderListReq) Reset() {
-	*x = AppMyOrderListReq{}
+func (x *MyOrderListReq) Reset() {
+	*x = MyOrderListReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppMyOrderListReq) String() string {
+func (x *MyOrderListReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppMyOrderListReq) ProtoMessage() {}
+func (*MyOrderListReq) ProtoMessage() {}
 
-func (x *AppMyOrderListReq) ProtoReflect() protoreflect.Message {
+func (x *MyOrderListReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -440,33 +440,33 @@ func (x *AppMyOrderListReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppMyOrderListReq.ProtoReflect.Descriptor instead.
-func (*AppMyOrderListReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use MyOrderListReq.ProtoReflect.Descriptor instead.
+func (*MyOrderListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *AppMyOrderListReq) GetStatus() OrderStatus {
+func (x *MyOrderListReq) GetStatus() OrderStatus {
 	if x != nil {
 		return x.Status
 	}
 	return OrderStatus_ORDER_STATUS_UNKNOWN
 }
 
-func (x *AppMyOrderListReq) GetRedeemType() RedeemType {
+func (x *MyOrderListReq) GetRedeemType() RedeemType {
 	if x != nil {
 		return x.RedeemType
 	}
 	return RedeemType_REDEEM_TYPE_UNKNOWN
 }
 
-func (x *AppMyOrderListReq) GetPage() *common.PageReq {
+func (x *MyOrderListReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppMyOrderListResp struct {
+type MyOrderListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*StakeOrder          `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -474,20 +474,20 @@ type AppMyOrderListResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppMyOrderListResp) Reset() {
-	*x = AppMyOrderListResp{}
+func (x *MyOrderListResp) Reset() {
+	*x = MyOrderListResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppMyOrderListResp) String() string {
+func (x *MyOrderListResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppMyOrderListResp) ProtoMessage() {}
+func (*MyOrderListResp) ProtoMessage() {}
 
-func (x *AppMyOrderListResp) ProtoReflect() protoreflect.Message {
+func (x *MyOrderListResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -499,19 +499,19 @@ func (x *AppMyOrderListResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppMyOrderListResp.ProtoReflect.Descriptor instead.
-func (*AppMyOrderListResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use MyOrderListResp.ProtoReflect.Descriptor instead.
+func (*MyOrderListResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *AppMyOrderListResp) GetBase() *common.RespBase {
+func (x *MyOrderListResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppMyOrderListResp) GetData() []*StakeOrder {
+func (x *MyOrderListResp) GetData() []*StakeOrder {
 	if x != nil {
 		return x.Data
 	}
@@ -519,27 +519,27 @@ func (x *AppMyOrderListResp) GetData() []*StakeOrder {
 }
 
 // 我的订单详情
-type AppMyOrderDetailReq struct {
+type MyOrderDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppMyOrderDetailReq) Reset() {
-	*x = AppMyOrderDetailReq{}
+func (x *MyOrderDetailReq) Reset() {
+	*x = MyOrderDetailReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppMyOrderDetailReq) String() string {
+func (x *MyOrderDetailReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppMyOrderDetailReq) ProtoMessage() {}
+func (*MyOrderDetailReq) ProtoMessage() {}
 
-func (x *AppMyOrderDetailReq) ProtoReflect() protoreflect.Message {
+func (x *MyOrderDetailReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -551,19 +551,19 @@ func (x *AppMyOrderDetailReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppMyOrderDetailReq.ProtoReflect.Descriptor instead.
-func (*AppMyOrderDetailReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use MyOrderDetailReq.ProtoReflect.Descriptor instead.
+func (*MyOrderDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *AppMyOrderDetailReq) GetId() int64 {
+func (x *MyOrderDetailReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-type AppMyOrderDetailResp struct {
+type MyOrderDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *StakeOrder            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -571,20 +571,20 @@ type AppMyOrderDetailResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppMyOrderDetailResp) Reset() {
-	*x = AppMyOrderDetailResp{}
+func (x *MyOrderDetailResp) Reset() {
+	*x = MyOrderDetailResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppMyOrderDetailResp) String() string {
+func (x *MyOrderDetailResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppMyOrderDetailResp) ProtoMessage() {}
+func (*MyOrderDetailResp) ProtoMessage() {}
 
-func (x *AppMyOrderDetailResp) ProtoReflect() protoreflect.Message {
+func (x *MyOrderDetailResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -596,19 +596,19 @@ func (x *AppMyOrderDetailResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppMyOrderDetailResp.ProtoReflect.Descriptor instead.
-func (*AppMyOrderDetailResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use MyOrderDetailResp.ProtoReflect.Descriptor instead.
+func (*MyOrderDetailResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *AppMyOrderDetailResp) GetBase() *common.RespBase {
+func (x *MyOrderDetailResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppMyOrderDetailResp) GetData() *StakeOrder {
+func (x *MyOrderDetailResp) GetData() *StakeOrder {
 	if x != nil {
 		return x.Data
 	}
@@ -616,7 +616,7 @@ func (x *AppMyOrderDetailResp) GetData() *StakeOrder {
 }
 
 // 我的收益记录
-type AppMyRewardLogListReq struct {
+type MyRewardLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OrderId       int64                  `protobuf:"varint,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	RewardType    RewardType             `protobuf:"varint,2,opt,name=reward_type,json=rewardType,proto3,enum=staking.RewardType" json:"reward_type,omitempty"`
@@ -625,20 +625,20 @@ type AppMyRewardLogListReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppMyRewardLogListReq) Reset() {
-	*x = AppMyRewardLogListReq{}
+func (x *MyRewardLogListReq) Reset() {
+	*x = MyRewardLogListReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppMyRewardLogListReq) String() string {
+func (x *MyRewardLogListReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppMyRewardLogListReq) ProtoMessage() {}
+func (*MyRewardLogListReq) ProtoMessage() {}
 
-func (x *AppMyRewardLogListReq) ProtoReflect() protoreflect.Message {
+func (x *MyRewardLogListReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -650,33 +650,33 @@ func (x *AppMyRewardLogListReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppMyRewardLogListReq.ProtoReflect.Descriptor instead.
-func (*AppMyRewardLogListReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use MyRewardLogListReq.ProtoReflect.Descriptor instead.
+func (*MyRewardLogListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *AppMyRewardLogListReq) GetOrderId() int64 {
+func (x *MyRewardLogListReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
 	return 0
 }
 
-func (x *AppMyRewardLogListReq) GetRewardType() RewardType {
+func (x *MyRewardLogListReq) GetRewardType() RewardType {
 	if x != nil {
 		return x.RewardType
 	}
 	return RewardType_REWARD_TYPE_UNKNOWN
 }
 
-func (x *AppMyRewardLogListReq) GetPage() *common.PageReq {
+func (x *MyRewardLogListReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppMyRewardLogListResp struct {
+type MyRewardLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*StakeRewardLog      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -684,20 +684,20 @@ type AppMyRewardLogListResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppMyRewardLogListResp) Reset() {
-	*x = AppMyRewardLogListResp{}
+func (x *MyRewardLogListResp) Reset() {
+	*x = MyRewardLogListResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppMyRewardLogListResp) String() string {
+func (x *MyRewardLogListResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppMyRewardLogListResp) ProtoMessage() {}
+func (*MyRewardLogListResp) ProtoMessage() {}
 
-func (x *AppMyRewardLogListResp) ProtoReflect() protoreflect.Message {
+func (x *MyRewardLogListResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -709,19 +709,19 @@ func (x *AppMyRewardLogListResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppMyRewardLogListResp.ProtoReflect.Descriptor instead.
-func (*AppMyRewardLogListResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use MyRewardLogListResp.ProtoReflect.Descriptor instead.
+func (*MyRewardLogListResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *AppMyRewardLogListResp) GetBase() *common.RespBase {
+func (x *MyRewardLogListResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppMyRewardLogListResp) GetData() []*StakeRewardLog {
+func (x *MyRewardLogListResp) GetData() []*StakeRewardLog {
 	if x != nil {
 		return x.Data
 	}
@@ -729,7 +729,7 @@ func (x *AppMyRewardLogListResp) GetData() []*StakeRewardLog {
 }
 
 // 赎回
-type AppRedeemReq struct {
+type RedeemReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OrderId       int64                  `protobuf:"varint,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	RedeemType    RedeemType             `protobuf:"varint,2,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
@@ -738,20 +738,20 @@ type AppRedeemReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppRedeemReq) Reset() {
-	*x = AppRedeemReq{}
+func (x *RedeemReq) Reset() {
+	*x = RedeemReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppRedeemReq) String() string {
+func (x *RedeemReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppRedeemReq) ProtoMessage() {}
+func (*RedeemReq) ProtoMessage() {}
 
-func (x *AppRedeemReq) ProtoReflect() protoreflect.Message {
+func (x *RedeemReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -763,54 +763,54 @@ func (x *AppRedeemReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppRedeemReq.ProtoReflect.Descriptor instead.
-func (*AppRedeemReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use RedeemReq.ProtoReflect.Descriptor instead.
+func (*RedeemReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *AppRedeemReq) GetOrderId() int64 {
+func (x *RedeemReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
 	return 0
 }
 
-func (x *AppRedeemReq) GetRedeemType() RedeemType {
+func (x *RedeemReq) GetRedeemType() RedeemType {
 	if x != nil {
 		return x.RedeemType
 	}
 	return RedeemType_REDEEM_TYPE_UNKNOWN
 }
 
-func (x *AppRedeemReq) GetRemark() string {
+func (x *RedeemReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
 	return ""
 }
 
-type AppRedeemResp struct {
+type RedeemResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *AppRedeemData         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *RedeemData            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppRedeemResp) Reset() {
-	*x = AppRedeemResp{}
+func (x *RedeemResp) Reset() {
+	*x = RedeemResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppRedeemResp) String() string {
+func (x *RedeemResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppRedeemResp) ProtoMessage() {}
+func (*RedeemResp) ProtoMessage() {}
 
-func (x *AppRedeemResp) ProtoReflect() protoreflect.Message {
+func (x *RedeemResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -822,26 +822,26 @@ func (x *AppRedeemResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppRedeemResp.ProtoReflect.Descriptor instead.
-func (*AppRedeemResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use RedeemResp.ProtoReflect.Descriptor instead.
+func (*RedeemResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *AppRedeemResp) GetBase() *common.RespBase {
+func (x *RedeemResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppRedeemResp) GetData() *AppRedeemData {
+func (x *RedeemResp) GetData() *RedeemData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppRedeemData struct {
+type RedeemData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       int64                  `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	RedeemNo      string                 `protobuf:"bytes,2,opt,name=redeem_no,json=redeemNo,proto3" json:"redeem_no,omitempty"`
@@ -849,20 +849,20 @@ type AppRedeemData struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppRedeemData) Reset() {
-	*x = AppRedeemData{}
+func (x *RedeemData) Reset() {
+	*x = RedeemData{}
 	mi := &file_proto_staking_staking_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppRedeemData) String() string {
+func (x *RedeemData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppRedeemData) ProtoMessage() {}
+func (*RedeemData) ProtoMessage() {}
 
-func (x *AppRedeemData) ProtoReflect() protoreflect.Message {
+func (x *RedeemData) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -874,19 +874,19 @@ func (x *AppRedeemData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppRedeemData.ProtoReflect.Descriptor instead.
-func (*AppRedeemData) Descriptor() ([]byte, []int) {
+// Deprecated: Use RedeemData.ProtoReflect.Descriptor instead.
+func (*RedeemData) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *AppRedeemData) GetSuccess() int64 {
+func (x *RedeemData) GetSuccess() int64 {
 	if x != nil {
 		return x.Success
 	}
 	return 0
 }
 
-func (x *AppRedeemData) GetRedeemNo() string {
+func (x *RedeemData) GetRedeemNo() string {
 	if x != nil {
 		return x.RedeemNo
 	}
@@ -894,7 +894,7 @@ func (x *AppRedeemData) GetRedeemNo() string {
 }
 
 // 我的赎回记录
-type AppMyRedeemLogListReq struct {
+type MyRedeemLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OrderId       int64                  `protobuf:"varint,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
@@ -902,20 +902,20 @@ type AppMyRedeemLogListReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppMyRedeemLogListReq) Reset() {
-	*x = AppMyRedeemLogListReq{}
+func (x *MyRedeemLogListReq) Reset() {
+	*x = MyRedeemLogListReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppMyRedeemLogListReq) String() string {
+func (x *MyRedeemLogListReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppMyRedeemLogListReq) ProtoMessage() {}
+func (*MyRedeemLogListReq) ProtoMessage() {}
 
-func (x *AppMyRedeemLogListReq) ProtoReflect() protoreflect.Message {
+func (x *MyRedeemLogListReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -927,26 +927,26 @@ func (x *AppMyRedeemLogListReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppMyRedeemLogListReq.ProtoReflect.Descriptor instead.
-func (*AppMyRedeemLogListReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use MyRedeemLogListReq.ProtoReflect.Descriptor instead.
+func (*MyRedeemLogListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *AppMyRedeemLogListReq) GetOrderId() int64 {
+func (x *MyRedeemLogListReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
 	return 0
 }
 
-func (x *AppMyRedeemLogListReq) GetPage() *common.PageReq {
+func (x *MyRedeemLogListReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppMyRedeemLogListResp struct {
+type MyRedeemLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*StakeRedeemLog      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -954,20 +954,20 @@ type AppMyRedeemLogListResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppMyRedeemLogListResp) Reset() {
-	*x = AppMyRedeemLogListResp{}
+func (x *MyRedeemLogListResp) Reset() {
+	*x = MyRedeemLogListResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppMyRedeemLogListResp) String() string {
+func (x *MyRedeemLogListResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppMyRedeemLogListResp) ProtoMessage() {}
+func (*MyRedeemLogListResp) ProtoMessage() {}
 
-func (x *AppMyRedeemLogListResp) ProtoReflect() protoreflect.Message {
+func (x *MyRedeemLogListResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -979,19 +979,19 @@ func (x *AppMyRedeemLogListResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppMyRedeemLogListResp.ProtoReflect.Descriptor instead.
-func (*AppMyRedeemLogListResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use MyRedeemLogListResp.ProtoReflect.Descriptor instead.
+func (*MyRedeemLogListResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *AppMyRedeemLogListResp) GetBase() *common.RespBase {
+func (x *MyRedeemLogListResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppMyRedeemLogListResp) GetData() []*StakeRedeemLog {
+func (x *MyRedeemLogListResp) GetData() []*StakeRedeemLog {
 	if x != nil {
 		return x.Data
 	}
@@ -999,7 +999,7 @@ func (x *AppMyRedeemLogListResp) GetData() []*StakeRedeemLog {
 }
 
 // 产品列表
-type AdminProductListReq struct {
+type ProductListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProductNo     string                 `protobuf:"bytes,2,opt,name=product_no,json=productNo,proto3" json:"product_no,omitempty"`
@@ -1012,20 +1012,20 @@ type AdminProductListReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminProductListReq) Reset() {
-	*x = AdminProductListReq{}
+func (x *ProductListReq) Reset() {
+	*x = ProductListReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminProductListReq) String() string {
+func (x *ProductListReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminProductListReq) ProtoMessage() {}
+func (*ProductListReq) ProtoMessage() {}
 
-func (x *AdminProductListReq) ProtoReflect() protoreflect.Message {
+func (x *ProductListReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1037,61 +1037,61 @@ func (x *AdminProductListReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminProductListReq.ProtoReflect.Descriptor instead.
-func (*AdminProductListReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProductListReq.ProtoReflect.Descriptor instead.
+func (*ProductListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *AdminProductListReq) GetTenantId() int64 {
+func (x *ProductListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminProductListReq) GetProductNo() string {
+func (x *ProductListReq) GetProductNo() string {
 	if x != nil {
 		return x.ProductNo
 	}
 	return ""
 }
 
-func (x *AdminProductListReq) GetProductName() string {
+func (x *ProductListReq) GetProductName() string {
 	if x != nil {
 		return x.ProductName
 	}
 	return ""
 }
 
-func (x *AdminProductListReq) GetCoinSymbol() string {
+func (x *ProductListReq) GetCoinSymbol() string {
 	if x != nil {
 		return x.CoinSymbol
 	}
 	return ""
 }
 
-func (x *AdminProductListReq) GetProductType() ProductType {
+func (x *ProductListReq) GetProductType() ProductType {
 	if x != nil {
 		return x.ProductType
 	}
 	return ProductType_PRODUCT_TYPE_UNKNOWN
 }
 
-func (x *AdminProductListReq) GetStatus() ProductStatus {
+func (x *ProductListReq) GetStatus() ProductStatus {
 	if x != nil {
 		return x.Status
 	}
 	return ProductStatus_PRODUCT_STATUS_UNKNOWN
 }
 
-func (x *AdminProductListReq) GetPage() *common.PageReq {
+func (x *ProductListReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AdminProductListResp struct {
+type ProductListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Data          []*StakeProduct        `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -1099,20 +1099,20 @@ type AdminProductListResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminProductListResp) Reset() {
-	*x = AdminProductListResp{}
+func (x *ProductListResp) Reset() {
+	*x = ProductListResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminProductListResp) String() string {
+func (x *ProductListResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminProductListResp) ProtoMessage() {}
+func (*ProductListResp) ProtoMessage() {}
 
-func (x *AdminProductListResp) ProtoReflect() protoreflect.Message {
+func (x *ProductListResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1124,19 +1124,19 @@ func (x *AdminProductListResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminProductListResp.ProtoReflect.Descriptor instead.
-func (*AdminProductListResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProductListResp.ProtoReflect.Descriptor instead.
+func (*ProductListResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *AdminProductListResp) GetPage() *common.RespBase {
+func (x *ProductListResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminProductListResp) GetData() []*StakeProduct {
+func (x *ProductListResp) GetData() []*StakeProduct {
 	if x != nil {
 		return x.Data
 	}
@@ -1144,7 +1144,7 @@ func (x *AdminProductListResp) GetData() []*StakeProduct {
 }
 
 // 产品详情
-type AdminProductDetailReq struct {
+type ProductDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
@@ -1152,20 +1152,20 @@ type AdminProductDetailReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminProductDetailReq) Reset() {
-	*x = AdminProductDetailReq{}
+func (x *ProductDetailReq) Reset() {
+	*x = ProductDetailReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminProductDetailReq) String() string {
+func (x *ProductDetailReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminProductDetailReq) ProtoMessage() {}
+func (*ProductDetailReq) ProtoMessage() {}
 
-func (x *AdminProductDetailReq) ProtoReflect() protoreflect.Message {
+func (x *ProductDetailReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1177,26 +1177,26 @@ func (x *AdminProductDetailReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminProductDetailReq.ProtoReflect.Descriptor instead.
-func (*AdminProductDetailReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProductDetailReq.ProtoReflect.Descriptor instead.
+func (*ProductDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *AdminProductDetailReq) GetTenantId() int64 {
+func (x *ProductDetailReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminProductDetailReq) GetId() int64 {
+func (x *ProductDetailReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-type AdminProductDetailResp struct {
+type ProductDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Data          *StakeProduct          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -1204,20 +1204,20 @@ type AdminProductDetailResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminProductDetailResp) Reset() {
-	*x = AdminProductDetailResp{}
+func (x *ProductDetailResp) Reset() {
+	*x = ProductDetailResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminProductDetailResp) String() string {
+func (x *ProductDetailResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminProductDetailResp) ProtoMessage() {}
+func (*ProductDetailResp) ProtoMessage() {}
 
-func (x *AdminProductDetailResp) ProtoReflect() protoreflect.Message {
+func (x *ProductDetailResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1229,19 +1229,19 @@ func (x *AdminProductDetailResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminProductDetailResp.ProtoReflect.Descriptor instead.
-func (*AdminProductDetailResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProductDetailResp.ProtoReflect.Descriptor instead.
+func (*ProductDetailResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *AdminProductDetailResp) GetPage() *common.RespBase {
+func (x *ProductDetailResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminProductDetailResp) GetData() *StakeProduct {
+func (x *ProductDetailResp) GetData() *StakeProduct {
 	if x != nil {
 		return x.Data
 	}
@@ -1249,7 +1249,7 @@ func (x *AdminProductDetailResp) GetData() *StakeProduct {
 }
 
 // 创建产品
-type AdminProductCreateReq struct {
+type ProductCreateReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProductNo        string                 `protobuf:"bytes,2,opt,name=product_no,json=productNo,proto3" json:"product_no,omitempty"`
@@ -1278,20 +1278,20 @@ type AdminProductCreateReq struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *AdminProductCreateReq) Reset() {
-	*x = AdminProductCreateReq{}
+func (x *ProductCreateReq) Reset() {
+	*x = ProductCreateReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminProductCreateReq) String() string {
+func (x *ProductCreateReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminProductCreateReq) ProtoMessage() {}
+func (*ProductCreateReq) ProtoMessage() {}
 
-func (x *AdminProductCreateReq) ProtoReflect() protoreflect.Message {
+func (x *ProductCreateReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1303,173 +1303,173 @@ func (x *AdminProductCreateReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminProductCreateReq.ProtoReflect.Descriptor instead.
-func (*AdminProductCreateReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProductCreateReq.ProtoReflect.Descriptor instead.
+func (*ProductCreateReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *AdminProductCreateReq) GetTenantId() int64 {
+func (x *ProductCreateReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminProductCreateReq) GetProductNo() string {
+func (x *ProductCreateReq) GetProductNo() string {
 	if x != nil {
 		return x.ProductNo
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetProductName() string {
+func (x *ProductCreateReq) GetProductName() string {
 	if x != nil {
 		return x.ProductName
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetProductType() ProductType {
+func (x *ProductCreateReq) GetProductType() ProductType {
 	if x != nil {
 		return x.ProductType
 	}
 	return ProductType_PRODUCT_TYPE_UNKNOWN
 }
 
-func (x *AdminProductCreateReq) GetCoinName() string {
+func (x *ProductCreateReq) GetCoinName() string {
 	if x != nil {
 		return x.CoinName
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetCoinSymbol() string {
+func (x *ProductCreateReq) GetCoinSymbol() string {
 	if x != nil {
 		return x.CoinSymbol
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetRewardCoinName() string {
+func (x *ProductCreateReq) GetRewardCoinName() string {
 	if x != nil {
 		return x.RewardCoinName
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetRewardCoinSymbol() string {
+func (x *ProductCreateReq) GetRewardCoinSymbol() string {
 	if x != nil {
 		return x.RewardCoinSymbol
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetApr() string {
+func (x *ProductCreateReq) GetApr() string {
 	if x != nil {
 		return x.Apr
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetLockDays() int64 {
+func (x *ProductCreateReq) GetLockDays() int64 {
 	if x != nil {
 		return x.LockDays
 	}
 	return 0
 }
 
-func (x *AdminProductCreateReq) GetMinAmount() string {
+func (x *ProductCreateReq) GetMinAmount() string {
 	if x != nil {
 		return x.MinAmount
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetMaxAmount() string {
+func (x *ProductCreateReq) GetMaxAmount() string {
 	if x != nil {
 		return x.MaxAmount
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetStepAmount() string {
+func (x *ProductCreateReq) GetStepAmount() string {
 	if x != nil {
 		return x.StepAmount
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetTotalAmount() string {
+func (x *ProductCreateReq) GetTotalAmount() string {
 	if x != nil {
 		return x.TotalAmount
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetUserLimitAmount() string {
+func (x *ProductCreateReq) GetUserLimitAmount() string {
 	if x != nil {
 		return x.UserLimitAmount
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetInterestMode() InterestMode {
+func (x *ProductCreateReq) GetInterestMode() InterestMode {
 	if x != nil {
 		return x.InterestMode
 	}
 	return InterestMode_INTEREST_MODE_UNKNOWN
 }
 
-func (x *AdminProductCreateReq) GetRewardMode() RewardMode {
+func (x *ProductCreateReq) GetRewardMode() RewardMode {
 	if x != nil {
 		return x.RewardMode
 	}
 	return RewardMode_REWARD_MODE_UNKNOWN
 }
 
-func (x *AdminProductCreateReq) GetAllowEarlyRedeem() common.YesNo {
+func (x *ProductCreateReq) GetAllowEarlyRedeem() common.YesNo {
 	if x != nil {
 		return x.AllowEarlyRedeem
 	}
 	return common.YesNo(0)
 }
 
-func (x *AdminProductCreateReq) GetEarlyRedeemRate() string {
+func (x *ProductCreateReq) GetEarlyRedeemRate() string {
 	if x != nil {
 		return x.EarlyRedeemRate
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetStatus() ProductStatus {
+func (x *ProductCreateReq) GetStatus() ProductStatus {
 	if x != nil {
 		return x.Status
 	}
 	return ProductStatus_PRODUCT_STATUS_UNKNOWN
 }
 
-func (x *AdminProductCreateReq) GetSort() int64 {
+func (x *ProductCreateReq) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
 	return 0
 }
 
-func (x *AdminProductCreateReq) GetRemark() string {
+func (x *ProductCreateReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetOperatorUid() int64 {
+func (x *ProductCreateReq) GetOperatorUid() int64 {
 	if x != nil {
 		return x.OperatorUid
 	}
 	return 0
 }
 
-type AdminProductCreateResp struct {
+type ProductCreateResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -1477,20 +1477,20 @@ type AdminProductCreateResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminProductCreateResp) Reset() {
-	*x = AdminProductCreateResp{}
+func (x *ProductCreateResp) Reset() {
+	*x = ProductCreateResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminProductCreateResp) String() string {
+func (x *ProductCreateResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminProductCreateResp) ProtoMessage() {}
+func (*ProductCreateResp) ProtoMessage() {}
 
-func (x *AdminProductCreateResp) ProtoReflect() protoreflect.Message {
+func (x *ProductCreateResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1502,19 +1502,19 @@ func (x *AdminProductCreateResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminProductCreateResp.ProtoReflect.Descriptor instead.
-func (*AdminProductCreateResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProductCreateResp.ProtoReflect.Descriptor instead.
+func (*ProductCreateResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *AdminProductCreateResp) GetPage() *common.RespBase {
+func (x *ProductCreateResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminProductCreateResp) GetData() int64 {
+func (x *ProductCreateResp) GetData() int64 {
 	if x != nil {
 		return x.Data
 	}
@@ -1522,7 +1522,7 @@ func (x *AdminProductCreateResp) GetData() int64 {
 }
 
 // 更新产品
-type AdminProductUpdateReq struct {
+type ProductUpdateReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Id               int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
@@ -1551,20 +1551,20 @@ type AdminProductUpdateReq struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *AdminProductUpdateReq) Reset() {
-	*x = AdminProductUpdateReq{}
+func (x *ProductUpdateReq) Reset() {
+	*x = ProductUpdateReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminProductUpdateReq) String() string {
+func (x *ProductUpdateReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminProductUpdateReq) ProtoMessage() {}
+func (*ProductUpdateReq) ProtoMessage() {}
 
-func (x *AdminProductUpdateReq) ProtoReflect() protoreflect.Message {
+func (x *ProductUpdateReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1576,173 +1576,173 @@ func (x *AdminProductUpdateReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminProductUpdateReq.ProtoReflect.Descriptor instead.
-func (*AdminProductUpdateReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProductUpdateReq.ProtoReflect.Descriptor instead.
+func (*ProductUpdateReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *AdminProductUpdateReq) GetTenantId() int64 {
+func (x *ProductUpdateReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminProductUpdateReq) GetId() int64 {
+func (x *ProductUpdateReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *AdminProductUpdateReq) GetProductName() string {
+func (x *ProductUpdateReq) GetProductName() string {
 	if x != nil {
 		return x.ProductName
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetProductType() ProductType {
+func (x *ProductUpdateReq) GetProductType() ProductType {
 	if x != nil {
 		return x.ProductType
 	}
 	return ProductType_PRODUCT_TYPE_UNKNOWN
 }
 
-func (x *AdminProductUpdateReq) GetCoinName() string {
+func (x *ProductUpdateReq) GetCoinName() string {
 	if x != nil {
 		return x.CoinName
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetCoinSymbol() string {
+func (x *ProductUpdateReq) GetCoinSymbol() string {
 	if x != nil {
 		return x.CoinSymbol
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetRewardCoinName() string {
+func (x *ProductUpdateReq) GetRewardCoinName() string {
 	if x != nil {
 		return x.RewardCoinName
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetRewardCoinSymbol() string {
+func (x *ProductUpdateReq) GetRewardCoinSymbol() string {
 	if x != nil {
 		return x.RewardCoinSymbol
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetApr() string {
+func (x *ProductUpdateReq) GetApr() string {
 	if x != nil {
 		return x.Apr
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetLockDays() int64 {
+func (x *ProductUpdateReq) GetLockDays() int64 {
 	if x != nil {
 		return x.LockDays
 	}
 	return 0
 }
 
-func (x *AdminProductUpdateReq) GetMinAmount() string {
+func (x *ProductUpdateReq) GetMinAmount() string {
 	if x != nil {
 		return x.MinAmount
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetMaxAmount() string {
+func (x *ProductUpdateReq) GetMaxAmount() string {
 	if x != nil {
 		return x.MaxAmount
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetStepAmount() string {
+func (x *ProductUpdateReq) GetStepAmount() string {
 	if x != nil {
 		return x.StepAmount
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetTotalAmount() string {
+func (x *ProductUpdateReq) GetTotalAmount() string {
 	if x != nil {
 		return x.TotalAmount
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetUserLimitAmount() string {
+func (x *ProductUpdateReq) GetUserLimitAmount() string {
 	if x != nil {
 		return x.UserLimitAmount
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetInterestMode() InterestMode {
+func (x *ProductUpdateReq) GetInterestMode() InterestMode {
 	if x != nil {
 		return x.InterestMode
 	}
 	return InterestMode_INTEREST_MODE_UNKNOWN
 }
 
-func (x *AdminProductUpdateReq) GetRewardMode() RewardMode {
+func (x *ProductUpdateReq) GetRewardMode() RewardMode {
 	if x != nil {
 		return x.RewardMode
 	}
 	return RewardMode_REWARD_MODE_UNKNOWN
 }
 
-func (x *AdminProductUpdateReq) GetAllowEarlyRedeem() common.YesNo {
+func (x *ProductUpdateReq) GetAllowEarlyRedeem() common.YesNo {
 	if x != nil {
 		return x.AllowEarlyRedeem
 	}
 	return common.YesNo(0)
 }
 
-func (x *AdminProductUpdateReq) GetEarlyRedeemRate() string {
+func (x *ProductUpdateReq) GetEarlyRedeemRate() string {
 	if x != nil {
 		return x.EarlyRedeemRate
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetStatus() ProductStatus {
+func (x *ProductUpdateReq) GetStatus() ProductStatus {
 	if x != nil {
 		return x.Status
 	}
 	return ProductStatus_PRODUCT_STATUS_UNKNOWN
 }
 
-func (x *AdminProductUpdateReq) GetSort() int64 {
+func (x *ProductUpdateReq) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
 	return 0
 }
 
-func (x *AdminProductUpdateReq) GetRemark() string {
+func (x *ProductUpdateReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetOperatorUid() int64 {
+func (x *ProductUpdateReq) GetOperatorUid() int64 {
 	if x != nil {
 		return x.OperatorUid
 	}
 	return 0
 }
 
-type AdminProductUpdateResp struct {
+type ProductUpdateResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -1750,20 +1750,20 @@ type AdminProductUpdateResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminProductUpdateResp) Reset() {
-	*x = AdminProductUpdateResp{}
+func (x *ProductUpdateResp) Reset() {
+	*x = ProductUpdateResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminProductUpdateResp) String() string {
+func (x *ProductUpdateResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminProductUpdateResp) ProtoMessage() {}
+func (*ProductUpdateResp) ProtoMessage() {}
 
-func (x *AdminProductUpdateResp) ProtoReflect() protoreflect.Message {
+func (x *ProductUpdateResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1775,19 +1775,19 @@ func (x *AdminProductUpdateResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminProductUpdateResp.ProtoReflect.Descriptor instead.
-func (*AdminProductUpdateResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProductUpdateResp.ProtoReflect.Descriptor instead.
+func (*ProductUpdateResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *AdminProductUpdateResp) GetPage() *common.RespBase {
+func (x *ProductUpdateResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminProductUpdateResp) GetData() int64 {
+func (x *ProductUpdateResp) GetData() int64 {
 	if x != nil {
 		return x.Data
 	}
@@ -1795,7 +1795,7 @@ func (x *AdminProductUpdateResp) GetData() int64 {
 }
 
 // 修改产品状态
-type AdminProductChangeStatusReq struct {
+type ProductChangeStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
@@ -1805,20 +1805,20 @@ type AdminProductChangeStatusReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminProductChangeStatusReq) Reset() {
-	*x = AdminProductChangeStatusReq{}
+func (x *ProductChangeStatusReq) Reset() {
+	*x = ProductChangeStatusReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminProductChangeStatusReq) String() string {
+func (x *ProductChangeStatusReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminProductChangeStatusReq) ProtoMessage() {}
+func (*ProductChangeStatusReq) ProtoMessage() {}
 
-func (x *AdminProductChangeStatusReq) ProtoReflect() protoreflect.Message {
+func (x *ProductChangeStatusReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1830,40 +1830,40 @@ func (x *AdminProductChangeStatusReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminProductChangeStatusReq.ProtoReflect.Descriptor instead.
-func (*AdminProductChangeStatusReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProductChangeStatusReq.ProtoReflect.Descriptor instead.
+func (*ProductChangeStatusReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *AdminProductChangeStatusReq) GetTenantId() int64 {
+func (x *ProductChangeStatusReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminProductChangeStatusReq) GetId() int64 {
+func (x *ProductChangeStatusReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *AdminProductChangeStatusReq) GetStatus() ProductStatus {
+func (x *ProductChangeStatusReq) GetStatus() ProductStatus {
 	if x != nil {
 		return x.Status
 	}
 	return ProductStatus_PRODUCT_STATUS_UNKNOWN
 }
 
-func (x *AdminProductChangeStatusReq) GetOperatorUid() int64 {
+func (x *ProductChangeStatusReq) GetOperatorUid() int64 {
 	if x != nil {
 		return x.OperatorUid
 	}
 	return 0
 }
 
-type AdminProductChangeStatusResp struct {
+type ProductChangeStatusResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -1871,20 +1871,20 @@ type AdminProductChangeStatusResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminProductChangeStatusResp) Reset() {
-	*x = AdminProductChangeStatusResp{}
+func (x *ProductChangeStatusResp) Reset() {
+	*x = ProductChangeStatusResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminProductChangeStatusResp) String() string {
+func (x *ProductChangeStatusResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminProductChangeStatusResp) ProtoMessage() {}
+func (*ProductChangeStatusResp) ProtoMessage() {}
 
-func (x *AdminProductChangeStatusResp) ProtoReflect() protoreflect.Message {
+func (x *ProductChangeStatusResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1896,19 +1896,19 @@ func (x *AdminProductChangeStatusResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminProductChangeStatusResp.ProtoReflect.Descriptor instead.
-func (*AdminProductChangeStatusResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProductChangeStatusResp.ProtoReflect.Descriptor instead.
+func (*ProductChangeStatusResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{27}
 }
 
-func (x *AdminProductChangeStatusResp) GetPage() *common.RespBase {
+func (x *ProductChangeStatusResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminProductChangeStatusResp) GetData() int64 {
+func (x *ProductChangeStatusResp) GetData() int64 {
 	if x != nil {
 		return x.Data
 	}
@@ -1916,7 +1916,7 @@ func (x *AdminProductChangeStatusResp) GetData() int64 {
 }
 
 // 订单列表
-type AdminOrderListReq struct {
+type OrderListReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo         string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
@@ -1936,20 +1936,20 @@ type AdminOrderListReq struct {
 	sizeCache       protoimpl.SizeCache
 }
 
-func (x *AdminOrderListReq) Reset() {
-	*x = AdminOrderListReq{}
+func (x *OrderListReq) Reset() {
+	*x = OrderListReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminOrderListReq) String() string {
+func (x *OrderListReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminOrderListReq) ProtoMessage() {}
+func (*OrderListReq) ProtoMessage() {}
 
-func (x *AdminOrderListReq) ProtoReflect() protoreflect.Message {
+func (x *OrderListReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1961,110 +1961,110 @@ func (x *AdminOrderListReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminOrderListReq.ProtoReflect.Descriptor instead.
-func (*AdminOrderListReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrderListReq.ProtoReflect.Descriptor instead.
+func (*OrderListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{28}
 }
 
-func (x *AdminOrderListReq) GetTenantId() int64 {
+func (x *OrderListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminOrderListReq) GetOrderNo() string {
+func (x *OrderListReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-func (x *AdminOrderListReq) GetUserId() int64 {
+func (x *OrderListReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *AdminOrderListReq) GetProductId() int64 {
+func (x *OrderListReq) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
 	return 0
 }
 
-func (x *AdminOrderListReq) GetProductName() string {
+func (x *OrderListReq) GetProductName() string {
 	if x != nil {
 		return x.ProductName
 	}
 	return ""
 }
 
-func (x *AdminOrderListReq) GetCoinSymbol() string {
+func (x *OrderListReq) GetCoinSymbol() string {
 	if x != nil {
 		return x.CoinSymbol
 	}
 	return ""
 }
 
-func (x *AdminOrderListReq) GetStatus() OrderStatus {
+func (x *OrderListReq) GetStatus() OrderStatus {
 	if x != nil {
 		return x.Status
 	}
 	return OrderStatus_ORDER_STATUS_UNKNOWN
 }
 
-func (x *AdminOrderListReq) GetRedeemType() RedeemType {
+func (x *OrderListReq) GetRedeemType() RedeemType {
 	if x != nil {
 		return x.RedeemType
 	}
 	return RedeemType_REDEEM_TYPE_UNKNOWN
 }
 
-func (x *AdminOrderListReq) GetSource() SourceType {
+func (x *OrderListReq) GetSource() SourceType {
 	if x != nil {
 		return x.Source
 	}
 	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
-func (x *AdminOrderListReq) GetStartTimesBegin() int64 {
+func (x *OrderListReq) GetStartTimesBegin() int64 {
 	if x != nil {
 		return x.StartTimesBegin
 	}
 	return 0
 }
 
-func (x *AdminOrderListReq) GetStartTimesEnd() int64 {
+func (x *OrderListReq) GetStartTimesEnd() int64 {
 	if x != nil {
 		return x.StartTimesEnd
 	}
 	return 0
 }
 
-func (x *AdminOrderListReq) GetEndTimesBegin() int64 {
+func (x *OrderListReq) GetEndTimesBegin() int64 {
 	if x != nil {
 		return x.EndTimesBegin
 	}
 	return 0
 }
 
-func (x *AdminOrderListReq) GetEndTimesEnd() int64 {
+func (x *OrderListReq) GetEndTimesEnd() int64 {
 	if x != nil {
 		return x.EndTimesEnd
 	}
 	return 0
 }
 
-func (x *AdminOrderListReq) GetPage() *common.PageReq {
+func (x *OrderListReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AdminOrderListResp struct {
+type OrderListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Data          []*StakeOrder          `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -2072,20 +2072,20 @@ type AdminOrderListResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminOrderListResp) Reset() {
-	*x = AdminOrderListResp{}
+func (x *OrderListResp) Reset() {
+	*x = OrderListResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminOrderListResp) String() string {
+func (x *OrderListResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminOrderListResp) ProtoMessage() {}
+func (*OrderListResp) ProtoMessage() {}
 
-func (x *AdminOrderListResp) ProtoReflect() protoreflect.Message {
+func (x *OrderListResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2097,19 +2097,19 @@ func (x *AdminOrderListResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminOrderListResp.ProtoReflect.Descriptor instead.
-func (*AdminOrderListResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrderListResp.ProtoReflect.Descriptor instead.
+func (*OrderListResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *AdminOrderListResp) GetPage() *common.RespBase {
+func (x *OrderListResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminOrderListResp) GetData() []*StakeOrder {
+func (x *OrderListResp) GetData() []*StakeOrder {
 	if x != nil {
 		return x.Data
 	}
@@ -2117,7 +2117,7 @@ func (x *AdminOrderListResp) GetData() []*StakeOrder {
 }
 
 // 订单详情
-type AdminOrderDetailReq struct {
+type OrderDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
@@ -2125,20 +2125,20 @@ type AdminOrderDetailReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminOrderDetailReq) Reset() {
-	*x = AdminOrderDetailReq{}
+func (x *OrderDetailReq) Reset() {
+	*x = OrderDetailReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminOrderDetailReq) String() string {
+func (x *OrderDetailReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminOrderDetailReq) ProtoMessage() {}
+func (*OrderDetailReq) ProtoMessage() {}
 
-func (x *AdminOrderDetailReq) ProtoReflect() protoreflect.Message {
+func (x *OrderDetailReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2150,26 +2150,26 @@ func (x *AdminOrderDetailReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminOrderDetailReq.ProtoReflect.Descriptor instead.
-func (*AdminOrderDetailReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrderDetailReq.ProtoReflect.Descriptor instead.
+func (*OrderDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{30}
 }
 
-func (x *AdminOrderDetailReq) GetTenantId() int64 {
+func (x *OrderDetailReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminOrderDetailReq) GetId() int64 {
+func (x *OrderDetailReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-type AdminOrderDetailResp struct {
+type OrderDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Data          *StakeOrder            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -2177,20 +2177,20 @@ type AdminOrderDetailResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminOrderDetailResp) Reset() {
-	*x = AdminOrderDetailResp{}
+func (x *OrderDetailResp) Reset() {
+	*x = OrderDetailResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminOrderDetailResp) String() string {
+func (x *OrderDetailResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminOrderDetailResp) ProtoMessage() {}
+func (*OrderDetailResp) ProtoMessage() {}
 
-func (x *AdminOrderDetailResp) ProtoReflect() protoreflect.Message {
+func (x *OrderDetailResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2202,19 +2202,19 @@ func (x *AdminOrderDetailResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminOrderDetailResp.ProtoReflect.Descriptor instead.
-func (*AdminOrderDetailResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use OrderDetailResp.ProtoReflect.Descriptor instead.
+func (*OrderDetailResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{31}
 }
 
-func (x *AdminOrderDetailResp) GetPage() *common.RespBase {
+func (x *OrderDetailResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminOrderDetailResp) GetData() *StakeOrder {
+func (x *OrderDetailResp) GetData() *StakeOrder {
 	if x != nil {
 		return x.Data
 	}
@@ -2222,7 +2222,7 @@ func (x *AdminOrderDetailResp) GetData() *StakeOrder {
 }
 
 // 收益记录列表
-type AdminRewardLogListReq struct {
+type RewardLogListReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo          string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
@@ -2237,20 +2237,20 @@ type AdminRewardLogListReq struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *AdminRewardLogListReq) Reset() {
-	*x = AdminRewardLogListReq{}
+func (x *RewardLogListReq) Reset() {
+	*x = RewardLogListReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminRewardLogListReq) String() string {
+func (x *RewardLogListReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminRewardLogListReq) ProtoMessage() {}
+func (*RewardLogListReq) ProtoMessage() {}
 
-func (x *AdminRewardLogListReq) ProtoReflect() protoreflect.Message {
+func (x *RewardLogListReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2262,75 +2262,75 @@ func (x *AdminRewardLogListReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminRewardLogListReq.ProtoReflect.Descriptor instead.
-func (*AdminRewardLogListReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use RewardLogListReq.ProtoReflect.Descriptor instead.
+func (*RewardLogListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{32}
 }
 
-func (x *AdminRewardLogListReq) GetTenantId() int64 {
+func (x *RewardLogListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminRewardLogListReq) GetOrderNo() string {
+func (x *RewardLogListReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-func (x *AdminRewardLogListReq) GetUserId() int64 {
+func (x *RewardLogListReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *AdminRewardLogListReq) GetProductId() int64 {
+func (x *RewardLogListReq) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
 	return 0
 }
 
-func (x *AdminRewardLogListReq) GetRewardType() RewardType {
+func (x *RewardLogListReq) GetRewardType() RewardType {
 	if x != nil {
 		return x.RewardType
 	}
 	return RewardType_REWARD_TYPE_UNKNOWN
 }
 
-func (x *AdminRewardLogListReq) GetRewardStatus() RewardStatus {
+func (x *RewardLogListReq) GetRewardStatus() RewardStatus {
 	if x != nil {
 		return x.RewardStatus
 	}
 	return RewardStatus_REWARD_STATUS_UNKNOWN
 }
 
-func (x *AdminRewardLogListReq) GetRewardTimesBegin() int64 {
+func (x *RewardLogListReq) GetRewardTimesBegin() int64 {
 	if x != nil {
 		return x.RewardTimesBegin
 	}
 	return 0
 }
 
-func (x *AdminRewardLogListReq) GetRewardTimesEnd() int64 {
+func (x *RewardLogListReq) GetRewardTimesEnd() int64 {
 	if x != nil {
 		return x.RewardTimesEnd
 	}
 	return 0
 }
 
-func (x *AdminRewardLogListReq) GetPage() *common.PageReq {
+func (x *RewardLogListReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AdminRewardLogListResp struct {
+type RewardLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Data          []*StakeRewardLog      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -2338,20 +2338,20 @@ type AdminRewardLogListResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminRewardLogListResp) Reset() {
-	*x = AdminRewardLogListResp{}
+func (x *RewardLogListResp) Reset() {
+	*x = RewardLogListResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminRewardLogListResp) String() string {
+func (x *RewardLogListResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminRewardLogListResp) ProtoMessage() {}
+func (*RewardLogListResp) ProtoMessage() {}
 
-func (x *AdminRewardLogListResp) ProtoReflect() protoreflect.Message {
+func (x *RewardLogListResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2363,19 +2363,19 @@ func (x *AdminRewardLogListResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminRewardLogListResp.ProtoReflect.Descriptor instead.
-func (*AdminRewardLogListResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use RewardLogListResp.ProtoReflect.Descriptor instead.
+func (*RewardLogListResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{33}
 }
 
-func (x *AdminRewardLogListResp) GetPage() *common.RespBase {
+func (x *RewardLogListResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminRewardLogListResp) GetData() []*StakeRewardLog {
+func (x *RewardLogListResp) GetData() []*StakeRewardLog {
 	if x != nil {
 		return x.Data
 	}
@@ -2383,7 +2383,7 @@ func (x *AdminRewardLogListResp) GetData() []*StakeRewardLog {
 }
 
 // 赎回记录列表
-type AdminRedeemLogListReq struct {
+type RedeemLogListReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo          string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
@@ -2399,20 +2399,20 @@ type AdminRedeemLogListReq struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *AdminRedeemLogListReq) Reset() {
-	*x = AdminRedeemLogListReq{}
+func (x *RedeemLogListReq) Reset() {
+	*x = RedeemLogListReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminRedeemLogListReq) String() string {
+func (x *RedeemLogListReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminRedeemLogListReq) ProtoMessage() {}
+func (*RedeemLogListReq) ProtoMessage() {}
 
-func (x *AdminRedeemLogListReq) ProtoReflect() protoreflect.Message {
+func (x *RedeemLogListReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2424,82 +2424,82 @@ func (x *AdminRedeemLogListReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminRedeemLogListReq.ProtoReflect.Descriptor instead.
-func (*AdminRedeemLogListReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use RedeemLogListReq.ProtoReflect.Descriptor instead.
+func (*RedeemLogListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{34}
 }
 
-func (x *AdminRedeemLogListReq) GetTenantId() int64 {
+func (x *RedeemLogListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminRedeemLogListReq) GetOrderNo() string {
+func (x *RedeemLogListReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-func (x *AdminRedeemLogListReq) GetRedeemNo() string {
+func (x *RedeemLogListReq) GetRedeemNo() string {
 	if x != nil {
 		return x.RedeemNo
 	}
 	return ""
 }
 
-func (x *AdminRedeemLogListReq) GetUserId() int64 {
+func (x *RedeemLogListReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *AdminRedeemLogListReq) GetProductId() int64 {
+func (x *RedeemLogListReq) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
 	return 0
 }
 
-func (x *AdminRedeemLogListReq) GetRedeemType() RedeemType {
+func (x *RedeemLogListReq) GetRedeemType() RedeemType {
 	if x != nil {
 		return x.RedeemType
 	}
 	return RedeemType_REDEEM_TYPE_UNKNOWN
 }
 
-func (x *AdminRedeemLogListReq) GetRedeemStatus() RedeemStatus {
+func (x *RedeemLogListReq) GetRedeemStatus() RedeemStatus {
 	if x != nil {
 		return x.RedeemStatus
 	}
 	return RedeemStatus_REDEEM_STATUS_UNKNOWN
 }
 
-func (x *AdminRedeemLogListReq) GetRedeemTimesBegin() int64 {
+func (x *RedeemLogListReq) GetRedeemTimesBegin() int64 {
 	if x != nil {
 		return x.RedeemTimesBegin
 	}
 	return 0
 }
 
-func (x *AdminRedeemLogListReq) GetRedeemTimesEnd() int64 {
+func (x *RedeemLogListReq) GetRedeemTimesEnd() int64 {
 	if x != nil {
 		return x.RedeemTimesEnd
 	}
 	return 0
 }
 
-func (x *AdminRedeemLogListReq) GetPage() *common.PageReq {
+func (x *RedeemLogListReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AdminRedeemLogListResp struct {
+type RedeemLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Data          []*StakeRedeemLog      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -2507,20 +2507,20 @@ type AdminRedeemLogListResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminRedeemLogListResp) Reset() {
-	*x = AdminRedeemLogListResp{}
+func (x *RedeemLogListResp) Reset() {
+	*x = RedeemLogListResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminRedeemLogListResp) String() string {
+func (x *RedeemLogListResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminRedeemLogListResp) ProtoMessage() {}
+func (*RedeemLogListResp) ProtoMessage() {}
 
-func (x *AdminRedeemLogListResp) ProtoReflect() protoreflect.Message {
+func (x *RedeemLogListResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2532,19 +2532,19 @@ func (x *AdminRedeemLogListResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminRedeemLogListResp.ProtoReflect.Descriptor instead.
-func (*AdminRedeemLogListResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use RedeemLogListResp.ProtoReflect.Descriptor instead.
+func (*RedeemLogListResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{35}
 }
 
-func (x *AdminRedeemLogListResp) GetPage() *common.RespBase {
+func (x *RedeemLogListResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminRedeemLogListResp) GetData() []*StakeRedeemLog {
+func (x *RedeemLogListResp) GetData() []*StakeRedeemLog {
 	if x != nil {
 		return x.Data
 	}
@@ -2552,7 +2552,7 @@ func (x *AdminRedeemLogListResp) GetData() []*StakeRedeemLog {
 }
 
 // 手动发放收益
-type AdminManualRewardReq struct {
+type ManualRewardReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderId       int64                  `protobuf:"varint,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
@@ -2564,20 +2564,20 @@ type AdminManualRewardReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminManualRewardReq) Reset() {
-	*x = AdminManualRewardReq{}
+func (x *ManualRewardReq) Reset() {
+	*x = ManualRewardReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminManualRewardReq) String() string {
+func (x *ManualRewardReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminManualRewardReq) ProtoMessage() {}
+func (*ManualRewardReq) ProtoMessage() {}
 
-func (x *AdminManualRewardReq) ProtoReflect() protoreflect.Message {
+func (x *ManualRewardReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2589,54 +2589,54 @@ func (x *AdminManualRewardReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminManualRewardReq.ProtoReflect.Descriptor instead.
-func (*AdminManualRewardReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ManualRewardReq.ProtoReflect.Descriptor instead.
+func (*ManualRewardReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{36}
 }
 
-func (x *AdminManualRewardReq) GetTenantId() int64 {
+func (x *ManualRewardReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminManualRewardReq) GetOrderId() int64 {
+func (x *ManualRewardReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
 	return 0
 }
 
-func (x *AdminManualRewardReq) GetRewardAmount() string {
+func (x *ManualRewardReq) GetRewardAmount() string {
 	if x != nil {
 		return x.RewardAmount
 	}
 	return ""
 }
 
-func (x *AdminManualRewardReq) GetRewardType() RewardType {
+func (x *ManualRewardReq) GetRewardType() RewardType {
 	if x != nil {
 		return x.RewardType
 	}
 	return RewardType_REWARD_TYPE_UNKNOWN
 }
 
-func (x *AdminManualRewardReq) GetRemark() string {
+func (x *ManualRewardReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
 	return ""
 }
 
-func (x *AdminManualRewardReq) GetOperatorUid() int64 {
+func (x *ManualRewardReq) GetOperatorUid() int64 {
 	if x != nil {
 		return x.OperatorUid
 	}
 	return 0
 }
 
-type AdminManualRewardResp struct {
+type ManualRewardResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -2644,20 +2644,20 @@ type AdminManualRewardResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminManualRewardResp) Reset() {
-	*x = AdminManualRewardResp{}
+func (x *ManualRewardResp) Reset() {
+	*x = ManualRewardResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminManualRewardResp) String() string {
+func (x *ManualRewardResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminManualRewardResp) ProtoMessage() {}
+func (*ManualRewardResp) ProtoMessage() {}
 
-func (x *AdminManualRewardResp) ProtoReflect() protoreflect.Message {
+func (x *ManualRewardResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2669,19 +2669,19 @@ func (x *AdminManualRewardResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminManualRewardResp.ProtoReflect.Descriptor instead.
-func (*AdminManualRewardResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ManualRewardResp.ProtoReflect.Descriptor instead.
+func (*ManualRewardResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{37}
 }
 
-func (x *AdminManualRewardResp) GetPage() *common.RespBase {
+func (x *ManualRewardResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminManualRewardResp) GetData() int64 {
+func (x *ManualRewardResp) GetData() int64 {
 	if x != nil {
 		return x.Data
 	}
@@ -2689,7 +2689,7 @@ func (x *AdminManualRewardResp) GetData() int64 {
 }
 
 // 手动赎回
-type AdminManualRedeemReq struct {
+type ManualRedeemReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderId       int64                  `protobuf:"varint,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
@@ -2704,20 +2704,20 @@ type AdminManualRedeemReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminManualRedeemReq) Reset() {
-	*x = AdminManualRedeemReq{}
+func (x *ManualRedeemReq) Reset() {
+	*x = ManualRedeemReq{}
 	mi := &file_proto_staking_staking_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminManualRedeemReq) String() string {
+func (x *ManualRedeemReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminManualRedeemReq) ProtoMessage() {}
+func (*ManualRedeemReq) ProtoMessage() {}
 
-func (x *AdminManualRedeemReq) ProtoReflect() protoreflect.Message {
+func (x *ManualRedeemReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2729,75 +2729,75 @@ func (x *AdminManualRedeemReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminManualRedeemReq.ProtoReflect.Descriptor instead.
-func (*AdminManualRedeemReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ManualRedeemReq.ProtoReflect.Descriptor instead.
+func (*ManualRedeemReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{38}
 }
 
-func (x *AdminManualRedeemReq) GetTenantId() int64 {
+func (x *ManualRedeemReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminManualRedeemReq) GetOrderId() int64 {
+func (x *ManualRedeemReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
 	return 0
 }
 
-func (x *AdminManualRedeemReq) GetRedeemType() RedeemType {
+func (x *ManualRedeemReq) GetRedeemType() RedeemType {
 	if x != nil {
 		return x.RedeemType
 	}
 	return RedeemType_REDEEM_TYPE_UNKNOWN
 }
 
-func (x *AdminManualRedeemReq) GetRedeemAmount() string {
+func (x *ManualRedeemReq) GetRedeemAmount() string {
 	if x != nil {
 		return x.RedeemAmount
 	}
 	return ""
 }
 
-func (x *AdminManualRedeemReq) GetRewardAmount() string {
+func (x *ManualRedeemReq) GetRewardAmount() string {
 	if x != nil {
 		return x.RewardAmount
 	}
 	return ""
 }
 
-func (x *AdminManualRedeemReq) GetFeeRate() string {
+func (x *ManualRedeemReq) GetFeeRate() string {
 	if x != nil {
 		return x.FeeRate
 	}
 	return ""
 }
 
-func (x *AdminManualRedeemReq) GetFeeAmount() string {
+func (x *ManualRedeemReq) GetFeeAmount() string {
 	if x != nil {
 		return x.FeeAmount
 	}
 	return ""
 }
 
-func (x *AdminManualRedeemReq) GetRemark() string {
+func (x *ManualRedeemReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
 	return ""
 }
 
-func (x *AdminManualRedeemReq) GetOperatorUid() int64 {
+func (x *ManualRedeemReq) GetOperatorUid() int64 {
 	if x != nil {
 		return x.OperatorUid
 	}
 	return 0
 }
 
-type AdminManualRedeemResp struct {
+type ManualRedeemResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Success       int64                  `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
@@ -2806,20 +2806,20 @@ type AdminManualRedeemResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminManualRedeemResp) Reset() {
-	*x = AdminManualRedeemResp{}
+func (x *ManualRedeemResp) Reset() {
+	*x = ManualRedeemResp{}
 	mi := &file_proto_staking_staking_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminManualRedeemResp) String() string {
+func (x *ManualRedeemResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminManualRedeemResp) ProtoMessage() {}
+func (*ManualRedeemResp) ProtoMessage() {}
 
-func (x *AdminManualRedeemResp) ProtoReflect() protoreflect.Message {
+func (x *ManualRedeemResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_staking_staking_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2831,26 +2831,26 @@ func (x *AdminManualRedeemResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminManualRedeemResp.ProtoReflect.Descriptor instead.
-func (*AdminManualRedeemResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ManualRedeemResp.ProtoReflect.Descriptor instead.
+func (*ManualRedeemResp) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_proto_rawDescGZIP(), []int{39}
 }
 
-func (x *AdminManualRedeemResp) GetPage() *common.RespBase {
+func (x *ManualRedeemResp) GetPage() *common.RespBase {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *AdminManualRedeemResp) GetSuccess() int64 {
+func (x *ManualRedeemResp) GetSuccess() int64 {
 	if x != nil {
 		return x.Success
 	}
 	return 0
 }
 
-func (x *AdminManualRedeemResp) GetRedeemNo() string {
+func (x *ManualRedeemResp) GetRedeemNo() string {
 	if x != nil {
 		return x.RedeemNo
 	}
@@ -2949,71 +2949,73 @@ var File_proto_staking_staking_proto protoreflect.FileDescriptor
 
 const file_proto_staking_staking_proto_rawDesc = "" +
 	"\n" +
-	"\x1bproto/staking/staking.proto\x12\astaking\x1a\x19proto/common/common.proto\x1a\x18proto/staking/enum.proto\x1a\x19proto/staking/model.proto\"\x92\x01\n" +
-	"\x11AppProductListReq\x127\n" +
+	"\x1bproto/staking/staking.proto\x12\astaking\x1a\x19proto/common/common.proto\x1a\x18proto/staking/enum.proto\x1a\x19proto/staking/model.proto\"\x93\x01\n" +
+	"\x12UserProductListReq\x127\n" +
 	"\fproduct_type\x18\x01 \x01(\x0e2\x14.staking.ProductTypeR\vproductType\x12\x1f\n" +
 	"\vcoin_symbol\x18\x02 \x01(\tR\n" +
 	"coinSymbol\x12#\n" +
-	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"e\n" +
-	"\x12AppProductListResp\x12$\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"f\n" +
+	"\x13UserProductListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x03(\v2\x15.staking.StakeProductR\x04data\"%\n" +
-	"\x13AppProductDetailReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"g\n" +
-	"\x14AppProductDetailResp\x12$\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.staking.StakeProductR\x04data\"&\n" +
+	"\x14UserProductDetailReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"h\n" +
+	"\x15UserProductDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\x9a\x01\n" +
-	"\x11AppCreateOrderReq\x12\x1d\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\x97\x01\n" +
+	"\x0eCreateOrderReq\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\x03R\tproductId\x12!\n" +
 	"\fstake_amount\x18\x02 \x01(\tR\vstakeAmount\x12+\n" +
 	"\x06source\x18\x03 \x01(\x0e2\x13.staking.SourceTypeR\x06source\x12\x16\n" +
-	"\x06remark\x18\x04 \x01(\tR\x06remark\"k\n" +
-	"\x12AppCreateOrderResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12/\n" +
-	"\x04data\x18\x02 \x01(\v2\x1b.staking.AppCreateOrderDataR\x04data\"?\n" +
-	"\x12AppCreateOrderData\x12\x0e\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\"e\n" +
+	"\x0fCreateOrderResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
+	"\x04data\x18\x02 \x01(\v2\x18.staking.CreateOrderDataR\x04data\"<\n" +
+	"\x0fCreateOrderData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\"\x9c\x01\n" +
-	"\x11AppMyOrderListReq\x12,\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"\x99\x01\n" +
+	"\x0eMyOrderListReq\x12,\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x14.staking.OrderStatusR\x06status\x124\n" +
 	"\vredeem_type\x18\x02 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12#\n" +
-	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"c\n" +
-	"\x12AppMyOrderListResp\x12$\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"`\n" +
+	"\x0fMyOrderListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x03(\v2\x13.staking.StakeOrderR\x04data\"%\n" +
-	"\x13AppMyOrderDetailReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"e\n" +
-	"\x14AppMyOrderDetailResp\x12$\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.staking.StakeOrderR\x04data\"\"\n" +
+	"\x10MyOrderDetailReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"b\n" +
+	"\x11MyOrderDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x01(\v2\x13.staking.StakeOrderR\x04data\"\x8d\x01\n" +
-	"\x15AppMyRewardLogListReq\x12\x19\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.staking.StakeOrderR\x04data\"\x8a\x01\n" +
+	"\x12MyRewardLogListReq\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x124\n" +
 	"\vreward_type\x18\x02 \x01(\x0e2\x13.staking.RewardTypeR\n" +
 	"rewardType\x12#\n" +
-	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
-	"\x16AppMyRewardLogListResp\x12$\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"h\n" +
+	"\x13MyRewardLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
-	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRewardLogR\x04data\"w\n" +
-	"\fAppRedeemReq\x12\x19\n" +
+	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRewardLogR\x04data\"t\n" +
+	"\tRedeemReq\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x124\n" +
 	"\vredeem_type\x18\x02 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12\x16\n" +
-	"\x06remark\x18\x03 \x01(\tR\x06remark\"a\n" +
-	"\rAppRedeemResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.staking.AppRedeemDataR\x04data\"F\n" +
-	"\rAppRedeemData\x12\x18\n" +
+	"\x06remark\x18\x03 \x01(\tR\x06remark\"[\n" +
+	"\n" +
+	"RedeemResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.staking.RedeemDataR\x04data\"C\n" +
+	"\n" +
+	"RedeemData\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\x03R\asuccess\x12\x1b\n" +
-	"\tredeem_no\x18\x02 \x01(\tR\bredeemNo\"W\n" +
-	"\x15AppMyRedeemLogListReq\x12\x19\n" +
+	"\tredeem_no\x18\x02 \x01(\tR\bredeemNo\"T\n" +
+	"\x12MyRedeemLogListReq\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x12#\n" +
-	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
-	"\x16AppMyRedeemLogListResp\x12$\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"h\n" +
+	"\x13MyRedeemLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
-	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRedeemLogR\x04data\"\xa3\x02\n" +
-	"\x13AdminProductListReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRedeemLogR\x04data\"\x9e\x02\n" +
+	"\x0eProductListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
 	"product_no\x18\x02 \x01(\tR\tproductNo\x12!\n" +
@@ -3022,17 +3024,17 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"coinSymbol\x127\n" +
 	"\fproduct_type\x18\x05 \x01(\x0e2\x14.staking.ProductTypeR\vproductType\x12.\n" +
 	"\x06status\x18\x06 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12#\n" +
-	"\x04page\x18\a \x01(\v2\x0f.common.PageReqR\x04page\"g\n" +
-	"\x14AdminProductListResp\x12$\n" +
+	"\x04page\x18\a \x01(\v2\x0f.common.PageReqR\x04page\"b\n" +
+	"\x0fProductListResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12)\n" +
-	"\x04data\x18\x02 \x03(\v2\x15.staking.StakeProductR\x04data\"D\n" +
-	"\x15AdminProductDetailReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.staking.StakeProductR\x04data\"?\n" +
+	"\x10ProductDetailReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"i\n" +
-	"\x16AdminProductDetailResp\x12$\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"d\n" +
+	"\x11ProductDetailResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12)\n" +
-	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\xfc\x06\n" +
-	"\x15AdminProductCreateReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\xf7\x06\n" +
+	"\x10ProductCreateReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
 	"product_no\x18\x02 \x01(\tR\tproductNo\x12!\n" +
@@ -3062,11 +3064,11 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\x06status\x18\x14 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x15 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\x17 \x01(\x03R\voperatorUid\"R\n" +
-	"\x16AdminProductCreateResp\x12$\n" +
+	"\foperator_uid\x18\x17 \x01(\x03R\voperatorUid\"M\n" +
+	"\x11ProductCreateResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\x03R\x04data\"\xed\x06\n" +
-	"\x15AdminProductUpdateReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\xe8\x06\n" +
+	"\x10ProductUpdateReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12!\n" +
 	"\fproduct_name\x18\x03 \x01(\tR\vproductName\x127\n" +
@@ -3095,19 +3097,19 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\x06status\x18\x14 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x15 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\x17 \x01(\x03R\voperatorUid\"R\n" +
-	"\x16AdminProductUpdateResp\x12$\n" +
+	"\foperator_uid\x18\x17 \x01(\x03R\voperatorUid\"M\n" +
+	"\x11ProductUpdateResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\x03R\x04data\"\x9d\x01\n" +
-	"\x1bAdminProductChangeStatusReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\x98\x01\n" +
+	"\x16ProductChangeStatusReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12.\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12!\n" +
-	"\foperator_uid\x18\x04 \x01(\x03R\voperatorUid\"X\n" +
-	"\x1cAdminProductChangeStatusResp\x12$\n" +
+	"\foperator_uid\x18\x04 \x01(\x03R\voperatorUid\"S\n" +
+	"\x17ProductChangeStatusResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\x03R\x04data\"\x9d\x04\n" +
-	"\x11AdminOrderListReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\x98\x04\n" +
+	"\fOrderListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1d\n" +
@@ -3125,17 +3127,17 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\x0fstart_times_end\x18\v \x01(\x03R\rstartTimesEnd\x12&\n" +
 	"\x0fend_times_begin\x18\f \x01(\x03R\rendTimesBegin\x12\"\n" +
 	"\rend_times_end\x18\r \x01(\x03R\vendTimesEnd\x12#\n" +
-	"\x04page\x18\x0e \x01(\v2\x0f.common.PageReqR\x04page\"c\n" +
-	"\x12AdminOrderListResp\x12$\n" +
+	"\x04page\x18\x0e \x01(\v2\x0f.common.PageReqR\x04page\"^\n" +
+	"\rOrderListResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12'\n" +
-	"\x04data\x18\x02 \x03(\v2\x13.staking.StakeOrderR\x04data\"B\n" +
-	"\x13AdminOrderDetailReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.staking.StakeOrderR\x04data\"=\n" +
+	"\x0eOrderDetailReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"e\n" +
-	"\x14AdminOrderDetailResp\x12$\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"`\n" +
+	"\x0fOrderDetailResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12'\n" +
-	"\x04data\x18\x02 \x01(\v2\x13.staking.StakeOrderR\x04data\"\xf6\x02\n" +
-	"\x15AdminRewardLogListReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.staking.StakeOrderR\x04data\"\xf1\x02\n" +
+	"\x10RewardLogListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1d\n" +
@@ -3146,11 +3148,11 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\rreward_status\x18\x06 \x01(\x0e2\x15.staking.RewardStatusR\frewardStatus\x12,\n" +
 	"\x12reward_times_begin\x18\a \x01(\x03R\x10rewardTimesBegin\x12(\n" +
 	"\x10reward_times_end\x18\b \x01(\x03R\x0erewardTimesEnd\x12#\n" +
-	"\x04page\x18\t \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
-	"\x16AdminRewardLogListResp\x12$\n" +
+	"\x04page\x18\t \x01(\v2\x0f.common.PageReqR\x04page\"f\n" +
+	"\x11RewardLogListResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12+\n" +
-	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRewardLogR\x04data\"\x93\x03\n" +
-	"\x15AdminRedeemLogListReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRewardLogR\x04data\"\x8e\x03\n" +
+	"\x10RedeemLogListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x1b\n" +
 	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo\x12\x17\n" +
@@ -3163,22 +3165,22 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\x12redeem_times_begin\x18\b \x01(\x03R\x10redeemTimesBegin\x12(\n" +
 	"\x10redeem_times_end\x18\t \x01(\x03R\x0eredeemTimesEnd\x12#\n" +
 	"\x04page\x18\n" +
-	" \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
-	"\x16AdminRedeemLogListResp\x12$\n" +
+	" \x01(\v2\x0f.common.PageReqR\x04page\"f\n" +
+	"\x11RedeemLogListResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12+\n" +
-	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRedeemLogR\x04data\"\xe4\x01\n" +
-	"\x14AdminManualRewardReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRedeemLogR\x04data\"\xdf\x01\n" +
+	"\x0fManualRewardReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\x03R\aorderId\x12#\n" +
 	"\rreward_amount\x18\x03 \x01(\tR\frewardAmount\x124\n" +
 	"\vreward_type\x18\x04 \x01(\x0e2\x13.staking.RewardTypeR\n" +
 	"rewardType\x12\x16\n" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\x06 \x01(\x03R\voperatorUid\"Q\n" +
-	"\x15AdminManualRewardResp\x12$\n" +
+	"\foperator_uid\x18\x06 \x01(\x03R\voperatorUid\"L\n" +
+	"\x10ManualRewardResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\x03R\x04data\"\xc3\x02\n" +
-	"\x14AdminManualRedeemReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\xbe\x02\n" +
+	"\x0fManualRedeemReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\x03R\aorderId\x124\n" +
 	"\vredeem_type\x18\x03 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
@@ -3189,37 +3191,37 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\n" +
 	"fee_amount\x18\a \x01(\tR\tfeeAmount\x12\x16\n" +
 	"\x06remark\x18\b \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\t \x01(\x03R\voperatorUid\"t\n" +
-	"\x15AdminManualRedeemResp\x12$\n" +
+	"\foperator_uid\x18\t \x01(\x03R\voperatorUid\"o\n" +
+	"\x10ManualRedeemResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\x03R\asuccess\x12\x1b\n" +
 	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo\"-\n" +
 	"\x0eStakingTaskReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"7\n" +
 	"\x0fStakingTaskResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\xe7\x04\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\xc1\x04\n" +
 	"\n" +
-	"StakingApp\x12I\n" +
-	"\x0eAppProductList\x12\x1a.staking.AppProductListReq\x1a\x1b.staking.AppProductListResp\x12O\n" +
-	"\x10AppProductDetail\x12\x1c.staking.AppProductDetailReq\x1a\x1d.staking.AppProductDetailResp\x12F\n" +
-	"\vCreateOrder\x12\x1a.staking.AppCreateOrderReq\x1a\x1b.staking.AppCreateOrderResp\x12F\n" +
-	"\vMyOrderList\x12\x1a.staking.AppMyOrderListReq\x1a\x1b.staking.AppMyOrderListResp\x12L\n" +
-	"\rMyOrderDetail\x12\x1c.staking.AppMyOrderDetailReq\x1a\x1d.staking.AppMyOrderDetailResp\x12R\n" +
-	"\x0fMyRewardLogList\x12\x1e.staking.AppMyRewardLogListReq\x1a\x1f.staking.AppMyRewardLogListResp\x127\n" +
-	"\x06Redeem\x12\x15.staking.AppRedeemReq\x1a\x16.staking.AppRedeemResp\x12R\n" +
-	"\x0fMyRedeemLogList\x12\x1e.staking.AppMyRedeemLogListReq\x1a\x1f.staking.AppMyRedeemLogListResp2\x92\a\n" +
-	"\fStakingAdmin\x12O\n" +
-	"\x10AdminProductList\x12\x1c.staking.AdminProductListReq\x1a\x1d.staking.AdminProductListResp\x12U\n" +
-	"\x12AdminProductDetail\x12\x1e.staking.AdminProductDetailReq\x1a\x1f.staking.AdminProductDetailResp\x12P\n" +
-	"\rProductCreate\x12\x1e.staking.AdminProductCreateReq\x1a\x1f.staking.AdminProductCreateResp\x12P\n" +
-	"\rProductUpdate\x12\x1e.staking.AdminProductUpdateReq\x1a\x1f.staking.AdminProductUpdateResp\x12b\n" +
-	"\x13ProductChangeStatus\x12$.staking.AdminProductChangeStatusReq\x1a%.staking.AdminProductChangeStatusResp\x12D\n" +
-	"\tOrderList\x12\x1a.staking.AdminOrderListReq\x1a\x1b.staking.AdminOrderListResp\x12J\n" +
-	"\vOrderDetail\x12\x1c.staking.AdminOrderDetailReq\x1a\x1d.staking.AdminOrderDetailResp\x12P\n" +
-	"\rRewardLogList\x12\x1e.staking.AdminRewardLogListReq\x1a\x1f.staking.AdminRewardLogListResp\x12P\n" +
-	"\rRedeemLogList\x12\x1e.staking.AdminRedeemLogListReq\x1a\x1f.staking.AdminRedeemLogListResp\x12M\n" +
-	"\fManualReward\x12\x1d.staking.AdminManualRewardReq\x1a\x1e.staking.AdminManualRewardResp\x12M\n" +
-	"\fManualRedeem\x12\x1d.staking.AdminManualRedeemReq\x1a\x1e.staking.AdminManualRedeemResp2a\n" +
+	"StakingApp\x12H\n" +
+	"\vProductList\x12\x1b.staking.UserProductListReq\x1a\x1c.staking.UserProductListResp\x12N\n" +
+	"\rProductDetail\x12\x1d.staking.UserProductDetailReq\x1a\x1e.staking.UserProductDetailResp\x12@\n" +
+	"\vCreateOrder\x12\x17.staking.CreateOrderReq\x1a\x18.staking.CreateOrderResp\x12@\n" +
+	"\vMyOrderList\x12\x17.staking.MyOrderListReq\x1a\x18.staking.MyOrderListResp\x12F\n" +
+	"\rMyOrderDetail\x12\x19.staking.MyOrderDetailReq\x1a\x1a.staking.MyOrderDetailResp\x12L\n" +
+	"\x0fMyRewardLogList\x12\x1b.staking.MyRewardLogListReq\x1a\x1c.staking.MyRewardLogListResp\x121\n" +
+	"\x06Redeem\x12\x12.staking.RedeemReq\x1a\x13.staking.RedeemResp\x12L\n" +
+	"\x0fMyRedeemLogList\x12\x1b.staking.MyRedeemLogListReq\x1a\x1c.staking.MyRedeemLogListResp2\x9a\x06\n" +
+	"\fStakingAdmin\x12@\n" +
+	"\vProductList\x12\x17.staking.ProductListReq\x1a\x18.staking.ProductListResp\x12F\n" +
+	"\rProductDetail\x12\x19.staking.ProductDetailReq\x1a\x1a.staking.ProductDetailResp\x12F\n" +
+	"\rProductCreate\x12\x19.staking.ProductCreateReq\x1a\x1a.staking.ProductCreateResp\x12F\n" +
+	"\rProductUpdate\x12\x19.staking.ProductUpdateReq\x1a\x1a.staking.ProductUpdateResp\x12X\n" +
+	"\x13ProductChangeStatus\x12\x1f.staking.ProductChangeStatusReq\x1a .staking.ProductChangeStatusResp\x12:\n" +
+	"\tOrderList\x12\x15.staking.OrderListReq\x1a\x16.staking.OrderListResp\x12@\n" +
+	"\vOrderDetail\x12\x17.staking.OrderDetailReq\x1a\x18.staking.OrderDetailResp\x12F\n" +
+	"\rRewardLogList\x12\x19.staking.RewardLogListReq\x1a\x1a.staking.RewardLogListResp\x12F\n" +
+	"\rRedeemLogList\x12\x19.staking.RedeemLogListReq\x1a\x1a.staking.RedeemLogListResp\x12C\n" +
+	"\fManualReward\x12\x18.staking.ManualRewardReq\x1a\x19.staking.ManualRewardResp\x12C\n" +
+	"\fManualRedeem\x12\x18.staking.ManualRedeemReq\x1a\x19.staking.ManualRedeemResp2a\n" +
 	"\vStakingTask\x12R\n" +
 	"\x1dProcessRewardsAndSettleOrders\x12\x17.staking.StakingTaskReq\x1a\x18.staking.StakingTaskRespB\x1eZ\x1cwklive/proto/staking;stakingb\x06proto3"
 
@@ -3237,176 +3239,176 @@ func file_proto_staking_staking_proto_rawDescGZIP() []byte {
 
 var file_proto_staking_staking_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
 var file_proto_staking_staking_proto_goTypes = []any{
-	(*AppProductListReq)(nil),            // 0: staking.AppProductListReq
-	(*AppProductListResp)(nil),           // 1: staking.AppProductListResp
-	(*AppProductDetailReq)(nil),          // 2: staking.AppProductDetailReq
-	(*AppProductDetailResp)(nil),         // 3: staking.AppProductDetailResp
-	(*AppCreateOrderReq)(nil),            // 4: staking.AppCreateOrderReq
-	(*AppCreateOrderResp)(nil),           // 5: staking.AppCreateOrderResp
-	(*AppCreateOrderData)(nil),           // 6: staking.AppCreateOrderData
-	(*AppMyOrderListReq)(nil),            // 7: staking.AppMyOrderListReq
-	(*AppMyOrderListResp)(nil),           // 8: staking.AppMyOrderListResp
-	(*AppMyOrderDetailReq)(nil),          // 9: staking.AppMyOrderDetailReq
-	(*AppMyOrderDetailResp)(nil),         // 10: staking.AppMyOrderDetailResp
-	(*AppMyRewardLogListReq)(nil),        // 11: staking.AppMyRewardLogListReq
-	(*AppMyRewardLogListResp)(nil),       // 12: staking.AppMyRewardLogListResp
-	(*AppRedeemReq)(nil),                 // 13: staking.AppRedeemReq
-	(*AppRedeemResp)(nil),                // 14: staking.AppRedeemResp
-	(*AppRedeemData)(nil),                // 15: staking.AppRedeemData
-	(*AppMyRedeemLogListReq)(nil),        // 16: staking.AppMyRedeemLogListReq
-	(*AppMyRedeemLogListResp)(nil),       // 17: staking.AppMyRedeemLogListResp
-	(*AdminProductListReq)(nil),          // 18: staking.AdminProductListReq
-	(*AdminProductListResp)(nil),         // 19: staking.AdminProductListResp
-	(*AdminProductDetailReq)(nil),        // 20: staking.AdminProductDetailReq
-	(*AdminProductDetailResp)(nil),       // 21: staking.AdminProductDetailResp
-	(*AdminProductCreateReq)(nil),        // 22: staking.AdminProductCreateReq
-	(*AdminProductCreateResp)(nil),       // 23: staking.AdminProductCreateResp
-	(*AdminProductUpdateReq)(nil),        // 24: staking.AdminProductUpdateReq
-	(*AdminProductUpdateResp)(nil),       // 25: staking.AdminProductUpdateResp
-	(*AdminProductChangeStatusReq)(nil),  // 26: staking.AdminProductChangeStatusReq
-	(*AdminProductChangeStatusResp)(nil), // 27: staking.AdminProductChangeStatusResp
-	(*AdminOrderListReq)(nil),            // 28: staking.AdminOrderListReq
-	(*AdminOrderListResp)(nil),           // 29: staking.AdminOrderListResp
-	(*AdminOrderDetailReq)(nil),          // 30: staking.AdminOrderDetailReq
-	(*AdminOrderDetailResp)(nil),         // 31: staking.AdminOrderDetailResp
-	(*AdminRewardLogListReq)(nil),        // 32: staking.AdminRewardLogListReq
-	(*AdminRewardLogListResp)(nil),       // 33: staking.AdminRewardLogListResp
-	(*AdminRedeemLogListReq)(nil),        // 34: staking.AdminRedeemLogListReq
-	(*AdminRedeemLogListResp)(nil),       // 35: staking.AdminRedeemLogListResp
-	(*AdminManualRewardReq)(nil),         // 36: staking.AdminManualRewardReq
-	(*AdminManualRewardResp)(nil),        // 37: staking.AdminManualRewardResp
-	(*AdminManualRedeemReq)(nil),         // 38: staking.AdminManualRedeemReq
-	(*AdminManualRedeemResp)(nil),        // 39: staking.AdminManualRedeemResp
-	(*StakingTaskReq)(nil),               // 40: staking.StakingTaskReq
-	(*StakingTaskResp)(nil),              // 41: staking.StakingTaskResp
-	(ProductType)(0),                     // 42: staking.ProductType
-	(*common.PageReq)(nil),               // 43: common.PageReq
-	(*common.RespBase)(nil),              // 44: common.RespBase
-	(*StakeProduct)(nil),                 // 45: staking.StakeProduct
-	(SourceType)(0),                      // 46: staking.SourceType
-	(OrderStatus)(0),                     // 47: staking.OrderStatus
-	(RedeemType)(0),                      // 48: staking.RedeemType
-	(*StakeOrder)(nil),                   // 49: staking.StakeOrder
-	(RewardType)(0),                      // 50: staking.RewardType
-	(*StakeRewardLog)(nil),               // 51: staking.StakeRewardLog
-	(*StakeRedeemLog)(nil),               // 52: staking.StakeRedeemLog
-	(ProductStatus)(0),                   // 53: staking.ProductStatus
-	(InterestMode)(0),                    // 54: staking.InterestMode
-	(RewardMode)(0),                      // 55: staking.RewardMode
-	(common.YesNo)(0),                    // 56: common.YesNo
-	(RewardStatus)(0),                    // 57: staking.RewardStatus
-	(RedeemStatus)(0),                    // 58: staking.RedeemStatus
+	(*UserProductListReq)(nil),      // 0: staking.UserProductListReq
+	(*UserProductListResp)(nil),     // 1: staking.UserProductListResp
+	(*UserProductDetailReq)(nil),    // 2: staking.UserProductDetailReq
+	(*UserProductDetailResp)(nil),   // 3: staking.UserProductDetailResp
+	(*CreateOrderReq)(nil),          // 4: staking.CreateOrderReq
+	(*CreateOrderResp)(nil),         // 5: staking.CreateOrderResp
+	(*CreateOrderData)(nil),         // 6: staking.CreateOrderData
+	(*MyOrderListReq)(nil),          // 7: staking.MyOrderListReq
+	(*MyOrderListResp)(nil),         // 8: staking.MyOrderListResp
+	(*MyOrderDetailReq)(nil),        // 9: staking.MyOrderDetailReq
+	(*MyOrderDetailResp)(nil),       // 10: staking.MyOrderDetailResp
+	(*MyRewardLogListReq)(nil),      // 11: staking.MyRewardLogListReq
+	(*MyRewardLogListResp)(nil),     // 12: staking.MyRewardLogListResp
+	(*RedeemReq)(nil),               // 13: staking.RedeemReq
+	(*RedeemResp)(nil),              // 14: staking.RedeemResp
+	(*RedeemData)(nil),              // 15: staking.RedeemData
+	(*MyRedeemLogListReq)(nil),      // 16: staking.MyRedeemLogListReq
+	(*MyRedeemLogListResp)(nil),     // 17: staking.MyRedeemLogListResp
+	(*ProductListReq)(nil),          // 18: staking.ProductListReq
+	(*ProductListResp)(nil),         // 19: staking.ProductListResp
+	(*ProductDetailReq)(nil),        // 20: staking.ProductDetailReq
+	(*ProductDetailResp)(nil),       // 21: staking.ProductDetailResp
+	(*ProductCreateReq)(nil),        // 22: staking.ProductCreateReq
+	(*ProductCreateResp)(nil),       // 23: staking.ProductCreateResp
+	(*ProductUpdateReq)(nil),        // 24: staking.ProductUpdateReq
+	(*ProductUpdateResp)(nil),       // 25: staking.ProductUpdateResp
+	(*ProductChangeStatusReq)(nil),  // 26: staking.ProductChangeStatusReq
+	(*ProductChangeStatusResp)(nil), // 27: staking.ProductChangeStatusResp
+	(*OrderListReq)(nil),            // 28: staking.OrderListReq
+	(*OrderListResp)(nil),           // 29: staking.OrderListResp
+	(*OrderDetailReq)(nil),          // 30: staking.OrderDetailReq
+	(*OrderDetailResp)(nil),         // 31: staking.OrderDetailResp
+	(*RewardLogListReq)(nil),        // 32: staking.RewardLogListReq
+	(*RewardLogListResp)(nil),       // 33: staking.RewardLogListResp
+	(*RedeemLogListReq)(nil),        // 34: staking.RedeemLogListReq
+	(*RedeemLogListResp)(nil),       // 35: staking.RedeemLogListResp
+	(*ManualRewardReq)(nil),         // 36: staking.ManualRewardReq
+	(*ManualRewardResp)(nil),        // 37: staking.ManualRewardResp
+	(*ManualRedeemReq)(nil),         // 38: staking.ManualRedeemReq
+	(*ManualRedeemResp)(nil),        // 39: staking.ManualRedeemResp
+	(*StakingTaskReq)(nil),          // 40: staking.StakingTaskReq
+	(*StakingTaskResp)(nil),         // 41: staking.StakingTaskResp
+	(ProductType)(0),                // 42: staking.ProductType
+	(*common.PageReq)(nil),          // 43: common.PageReq
+	(*common.RespBase)(nil),         // 44: common.RespBase
+	(*StakeProduct)(nil),            // 45: staking.StakeProduct
+	(SourceType)(0),                 // 46: staking.SourceType
+	(OrderStatus)(0),                // 47: staking.OrderStatus
+	(RedeemType)(0),                 // 48: staking.RedeemType
+	(*StakeOrder)(nil),              // 49: staking.StakeOrder
+	(RewardType)(0),                 // 50: staking.RewardType
+	(*StakeRewardLog)(nil),          // 51: staking.StakeRewardLog
+	(*StakeRedeemLog)(nil),          // 52: staking.StakeRedeemLog
+	(ProductStatus)(0),              // 53: staking.ProductStatus
+	(InterestMode)(0),               // 54: staking.InterestMode
+	(RewardMode)(0),                 // 55: staking.RewardMode
+	(common.YesNo)(0),               // 56: common.YesNo
+	(RewardStatus)(0),               // 57: staking.RewardStatus
+	(RedeemStatus)(0),               // 58: staking.RedeemStatus
 }
 var file_proto_staking_staking_proto_depIdxs = []int32{
-	42, // 0: staking.AppProductListReq.product_type:type_name -> staking.ProductType
-	43, // 1: staking.AppProductListReq.page:type_name -> common.PageReq
-	44, // 2: staking.AppProductListResp.base:type_name -> common.RespBase
-	45, // 3: staking.AppProductListResp.data:type_name -> staking.StakeProduct
-	44, // 4: staking.AppProductDetailResp.base:type_name -> common.RespBase
-	45, // 5: staking.AppProductDetailResp.data:type_name -> staking.StakeProduct
-	46, // 6: staking.AppCreateOrderReq.source:type_name -> staking.SourceType
-	44, // 7: staking.AppCreateOrderResp.base:type_name -> common.RespBase
-	6,  // 8: staking.AppCreateOrderResp.data:type_name -> staking.AppCreateOrderData
-	47, // 9: staking.AppMyOrderListReq.status:type_name -> staking.OrderStatus
-	48, // 10: staking.AppMyOrderListReq.redeem_type:type_name -> staking.RedeemType
-	43, // 11: staking.AppMyOrderListReq.page:type_name -> common.PageReq
-	44, // 12: staking.AppMyOrderListResp.base:type_name -> common.RespBase
-	49, // 13: staking.AppMyOrderListResp.data:type_name -> staking.StakeOrder
-	44, // 14: staking.AppMyOrderDetailResp.base:type_name -> common.RespBase
-	49, // 15: staking.AppMyOrderDetailResp.data:type_name -> staking.StakeOrder
-	50, // 16: staking.AppMyRewardLogListReq.reward_type:type_name -> staking.RewardType
-	43, // 17: staking.AppMyRewardLogListReq.page:type_name -> common.PageReq
-	44, // 18: staking.AppMyRewardLogListResp.base:type_name -> common.RespBase
-	51, // 19: staking.AppMyRewardLogListResp.data:type_name -> staking.StakeRewardLog
-	48, // 20: staking.AppRedeemReq.redeem_type:type_name -> staking.RedeemType
-	44, // 21: staking.AppRedeemResp.base:type_name -> common.RespBase
-	15, // 22: staking.AppRedeemResp.data:type_name -> staking.AppRedeemData
-	43, // 23: staking.AppMyRedeemLogListReq.page:type_name -> common.PageReq
-	44, // 24: staking.AppMyRedeemLogListResp.base:type_name -> common.RespBase
-	52, // 25: staking.AppMyRedeemLogListResp.data:type_name -> staking.StakeRedeemLog
-	42, // 26: staking.AdminProductListReq.product_type:type_name -> staking.ProductType
-	53, // 27: staking.AdminProductListReq.status:type_name -> staking.ProductStatus
-	43, // 28: staking.AdminProductListReq.page:type_name -> common.PageReq
-	44, // 29: staking.AdminProductListResp.page:type_name -> common.RespBase
-	45, // 30: staking.AdminProductListResp.data:type_name -> staking.StakeProduct
-	44, // 31: staking.AdminProductDetailResp.page:type_name -> common.RespBase
-	45, // 32: staking.AdminProductDetailResp.data:type_name -> staking.StakeProduct
-	42, // 33: staking.AdminProductCreateReq.product_type:type_name -> staking.ProductType
-	54, // 34: staking.AdminProductCreateReq.interest_mode:type_name -> staking.InterestMode
-	55, // 35: staking.AdminProductCreateReq.reward_mode:type_name -> staking.RewardMode
-	56, // 36: staking.AdminProductCreateReq.allow_early_redeem:type_name -> common.YesNo
-	53, // 37: staking.AdminProductCreateReq.status:type_name -> staking.ProductStatus
-	44, // 38: staking.AdminProductCreateResp.page:type_name -> common.RespBase
-	42, // 39: staking.AdminProductUpdateReq.product_type:type_name -> staking.ProductType
-	54, // 40: staking.AdminProductUpdateReq.interest_mode:type_name -> staking.InterestMode
-	55, // 41: staking.AdminProductUpdateReq.reward_mode:type_name -> staking.RewardMode
-	56, // 42: staking.AdminProductUpdateReq.allow_early_redeem:type_name -> common.YesNo
-	53, // 43: staking.AdminProductUpdateReq.status:type_name -> staking.ProductStatus
-	44, // 44: staking.AdminProductUpdateResp.page:type_name -> common.RespBase
-	53, // 45: staking.AdminProductChangeStatusReq.status:type_name -> staking.ProductStatus
-	44, // 46: staking.AdminProductChangeStatusResp.page:type_name -> common.RespBase
-	47, // 47: staking.AdminOrderListReq.status:type_name -> staking.OrderStatus
-	48, // 48: staking.AdminOrderListReq.redeem_type:type_name -> staking.RedeemType
-	46, // 49: staking.AdminOrderListReq.source:type_name -> staking.SourceType
-	43, // 50: staking.AdminOrderListReq.page:type_name -> common.PageReq
-	44, // 51: staking.AdminOrderListResp.page:type_name -> common.RespBase
-	49, // 52: staking.AdminOrderListResp.data:type_name -> staking.StakeOrder
-	44, // 53: staking.AdminOrderDetailResp.page:type_name -> common.RespBase
-	49, // 54: staking.AdminOrderDetailResp.data:type_name -> staking.StakeOrder
-	50, // 55: staking.AdminRewardLogListReq.reward_type:type_name -> staking.RewardType
-	57, // 56: staking.AdminRewardLogListReq.reward_status:type_name -> staking.RewardStatus
-	43, // 57: staking.AdminRewardLogListReq.page:type_name -> common.PageReq
-	44, // 58: staking.AdminRewardLogListResp.page:type_name -> common.RespBase
-	51, // 59: staking.AdminRewardLogListResp.data:type_name -> staking.StakeRewardLog
-	48, // 60: staking.AdminRedeemLogListReq.redeem_type:type_name -> staking.RedeemType
-	58, // 61: staking.AdminRedeemLogListReq.redeem_status:type_name -> staking.RedeemStatus
-	43, // 62: staking.AdminRedeemLogListReq.page:type_name -> common.PageReq
-	44, // 63: staking.AdminRedeemLogListResp.page:type_name -> common.RespBase
-	52, // 64: staking.AdminRedeemLogListResp.data:type_name -> staking.StakeRedeemLog
-	50, // 65: staking.AdminManualRewardReq.reward_type:type_name -> staking.RewardType
-	44, // 66: staking.AdminManualRewardResp.page:type_name -> common.RespBase
-	48, // 67: staking.AdminManualRedeemReq.redeem_type:type_name -> staking.RedeemType
-	44, // 68: staking.AdminManualRedeemResp.page:type_name -> common.RespBase
+	42, // 0: staking.UserProductListReq.product_type:type_name -> staking.ProductType
+	43, // 1: staking.UserProductListReq.page:type_name -> common.PageReq
+	44, // 2: staking.UserProductListResp.base:type_name -> common.RespBase
+	45, // 3: staking.UserProductListResp.data:type_name -> staking.StakeProduct
+	44, // 4: staking.UserProductDetailResp.base:type_name -> common.RespBase
+	45, // 5: staking.UserProductDetailResp.data:type_name -> staking.StakeProduct
+	46, // 6: staking.CreateOrderReq.source:type_name -> staking.SourceType
+	44, // 7: staking.CreateOrderResp.base:type_name -> common.RespBase
+	6,  // 8: staking.CreateOrderResp.data:type_name -> staking.CreateOrderData
+	47, // 9: staking.MyOrderListReq.status:type_name -> staking.OrderStatus
+	48, // 10: staking.MyOrderListReq.redeem_type:type_name -> staking.RedeemType
+	43, // 11: staking.MyOrderListReq.page:type_name -> common.PageReq
+	44, // 12: staking.MyOrderListResp.base:type_name -> common.RespBase
+	49, // 13: staking.MyOrderListResp.data:type_name -> staking.StakeOrder
+	44, // 14: staking.MyOrderDetailResp.base:type_name -> common.RespBase
+	49, // 15: staking.MyOrderDetailResp.data:type_name -> staking.StakeOrder
+	50, // 16: staking.MyRewardLogListReq.reward_type:type_name -> staking.RewardType
+	43, // 17: staking.MyRewardLogListReq.page:type_name -> common.PageReq
+	44, // 18: staking.MyRewardLogListResp.base:type_name -> common.RespBase
+	51, // 19: staking.MyRewardLogListResp.data:type_name -> staking.StakeRewardLog
+	48, // 20: staking.RedeemReq.redeem_type:type_name -> staking.RedeemType
+	44, // 21: staking.RedeemResp.base:type_name -> common.RespBase
+	15, // 22: staking.RedeemResp.data:type_name -> staking.RedeemData
+	43, // 23: staking.MyRedeemLogListReq.page:type_name -> common.PageReq
+	44, // 24: staking.MyRedeemLogListResp.base:type_name -> common.RespBase
+	52, // 25: staking.MyRedeemLogListResp.data:type_name -> staking.StakeRedeemLog
+	42, // 26: staking.ProductListReq.product_type:type_name -> staking.ProductType
+	53, // 27: staking.ProductListReq.status:type_name -> staking.ProductStatus
+	43, // 28: staking.ProductListReq.page:type_name -> common.PageReq
+	44, // 29: staking.ProductListResp.page:type_name -> common.RespBase
+	45, // 30: staking.ProductListResp.data:type_name -> staking.StakeProduct
+	44, // 31: staking.ProductDetailResp.page:type_name -> common.RespBase
+	45, // 32: staking.ProductDetailResp.data:type_name -> staking.StakeProduct
+	42, // 33: staking.ProductCreateReq.product_type:type_name -> staking.ProductType
+	54, // 34: staking.ProductCreateReq.interest_mode:type_name -> staking.InterestMode
+	55, // 35: staking.ProductCreateReq.reward_mode:type_name -> staking.RewardMode
+	56, // 36: staking.ProductCreateReq.allow_early_redeem:type_name -> common.YesNo
+	53, // 37: staking.ProductCreateReq.status:type_name -> staking.ProductStatus
+	44, // 38: staking.ProductCreateResp.page:type_name -> common.RespBase
+	42, // 39: staking.ProductUpdateReq.product_type:type_name -> staking.ProductType
+	54, // 40: staking.ProductUpdateReq.interest_mode:type_name -> staking.InterestMode
+	55, // 41: staking.ProductUpdateReq.reward_mode:type_name -> staking.RewardMode
+	56, // 42: staking.ProductUpdateReq.allow_early_redeem:type_name -> common.YesNo
+	53, // 43: staking.ProductUpdateReq.status:type_name -> staking.ProductStatus
+	44, // 44: staking.ProductUpdateResp.page:type_name -> common.RespBase
+	53, // 45: staking.ProductChangeStatusReq.status:type_name -> staking.ProductStatus
+	44, // 46: staking.ProductChangeStatusResp.page:type_name -> common.RespBase
+	47, // 47: staking.OrderListReq.status:type_name -> staking.OrderStatus
+	48, // 48: staking.OrderListReq.redeem_type:type_name -> staking.RedeemType
+	46, // 49: staking.OrderListReq.source:type_name -> staking.SourceType
+	43, // 50: staking.OrderListReq.page:type_name -> common.PageReq
+	44, // 51: staking.OrderListResp.page:type_name -> common.RespBase
+	49, // 52: staking.OrderListResp.data:type_name -> staking.StakeOrder
+	44, // 53: staking.OrderDetailResp.page:type_name -> common.RespBase
+	49, // 54: staking.OrderDetailResp.data:type_name -> staking.StakeOrder
+	50, // 55: staking.RewardLogListReq.reward_type:type_name -> staking.RewardType
+	57, // 56: staking.RewardLogListReq.reward_status:type_name -> staking.RewardStatus
+	43, // 57: staking.RewardLogListReq.page:type_name -> common.PageReq
+	44, // 58: staking.RewardLogListResp.page:type_name -> common.RespBase
+	51, // 59: staking.RewardLogListResp.data:type_name -> staking.StakeRewardLog
+	48, // 60: staking.RedeemLogListReq.redeem_type:type_name -> staking.RedeemType
+	58, // 61: staking.RedeemLogListReq.redeem_status:type_name -> staking.RedeemStatus
+	43, // 62: staking.RedeemLogListReq.page:type_name -> common.PageReq
+	44, // 63: staking.RedeemLogListResp.page:type_name -> common.RespBase
+	52, // 64: staking.RedeemLogListResp.data:type_name -> staking.StakeRedeemLog
+	50, // 65: staking.ManualRewardReq.reward_type:type_name -> staking.RewardType
+	44, // 66: staking.ManualRewardResp.page:type_name -> common.RespBase
+	48, // 67: staking.ManualRedeemReq.redeem_type:type_name -> staking.RedeemType
+	44, // 68: staking.ManualRedeemResp.page:type_name -> common.RespBase
 	44, // 69: staking.StakingTaskResp.base:type_name -> common.RespBase
-	0,  // 70: staking.StakingApp.AppProductList:input_type -> staking.AppProductListReq
-	2,  // 71: staking.StakingApp.AppProductDetail:input_type -> staking.AppProductDetailReq
-	4,  // 72: staking.StakingApp.CreateOrder:input_type -> staking.AppCreateOrderReq
-	7,  // 73: staking.StakingApp.MyOrderList:input_type -> staking.AppMyOrderListReq
-	9,  // 74: staking.StakingApp.MyOrderDetail:input_type -> staking.AppMyOrderDetailReq
-	11, // 75: staking.StakingApp.MyRewardLogList:input_type -> staking.AppMyRewardLogListReq
-	13, // 76: staking.StakingApp.Redeem:input_type -> staking.AppRedeemReq
-	16, // 77: staking.StakingApp.MyRedeemLogList:input_type -> staking.AppMyRedeemLogListReq
-	18, // 78: staking.StakingAdmin.AdminProductList:input_type -> staking.AdminProductListReq
-	20, // 79: staking.StakingAdmin.AdminProductDetail:input_type -> staking.AdminProductDetailReq
-	22, // 80: staking.StakingAdmin.ProductCreate:input_type -> staking.AdminProductCreateReq
-	24, // 81: staking.StakingAdmin.ProductUpdate:input_type -> staking.AdminProductUpdateReq
-	26, // 82: staking.StakingAdmin.ProductChangeStatus:input_type -> staking.AdminProductChangeStatusReq
-	28, // 83: staking.StakingAdmin.OrderList:input_type -> staking.AdminOrderListReq
-	30, // 84: staking.StakingAdmin.OrderDetail:input_type -> staking.AdminOrderDetailReq
-	32, // 85: staking.StakingAdmin.RewardLogList:input_type -> staking.AdminRewardLogListReq
-	34, // 86: staking.StakingAdmin.RedeemLogList:input_type -> staking.AdminRedeemLogListReq
-	36, // 87: staking.StakingAdmin.ManualReward:input_type -> staking.AdminManualRewardReq
-	38, // 88: staking.StakingAdmin.ManualRedeem:input_type -> staking.AdminManualRedeemReq
+	0,  // 70: staking.StakingApp.ProductList:input_type -> staking.UserProductListReq
+	2,  // 71: staking.StakingApp.ProductDetail:input_type -> staking.UserProductDetailReq
+	4,  // 72: staking.StakingApp.CreateOrder:input_type -> staking.CreateOrderReq
+	7,  // 73: staking.StakingApp.MyOrderList:input_type -> staking.MyOrderListReq
+	9,  // 74: staking.StakingApp.MyOrderDetail:input_type -> staking.MyOrderDetailReq
+	11, // 75: staking.StakingApp.MyRewardLogList:input_type -> staking.MyRewardLogListReq
+	13, // 76: staking.StakingApp.Redeem:input_type -> staking.RedeemReq
+	16, // 77: staking.StakingApp.MyRedeemLogList:input_type -> staking.MyRedeemLogListReq
+	18, // 78: staking.StakingAdmin.ProductList:input_type -> staking.ProductListReq
+	20, // 79: staking.StakingAdmin.ProductDetail:input_type -> staking.ProductDetailReq
+	22, // 80: staking.StakingAdmin.ProductCreate:input_type -> staking.ProductCreateReq
+	24, // 81: staking.StakingAdmin.ProductUpdate:input_type -> staking.ProductUpdateReq
+	26, // 82: staking.StakingAdmin.ProductChangeStatus:input_type -> staking.ProductChangeStatusReq
+	28, // 83: staking.StakingAdmin.OrderList:input_type -> staking.OrderListReq
+	30, // 84: staking.StakingAdmin.OrderDetail:input_type -> staking.OrderDetailReq
+	32, // 85: staking.StakingAdmin.RewardLogList:input_type -> staking.RewardLogListReq
+	34, // 86: staking.StakingAdmin.RedeemLogList:input_type -> staking.RedeemLogListReq
+	36, // 87: staking.StakingAdmin.ManualReward:input_type -> staking.ManualRewardReq
+	38, // 88: staking.StakingAdmin.ManualRedeem:input_type -> staking.ManualRedeemReq
 	40, // 89: staking.StakingTask.ProcessRewardsAndSettleOrders:input_type -> staking.StakingTaskReq
-	1,  // 90: staking.StakingApp.AppProductList:output_type -> staking.AppProductListResp
-	3,  // 91: staking.StakingApp.AppProductDetail:output_type -> staking.AppProductDetailResp
-	5,  // 92: staking.StakingApp.CreateOrder:output_type -> staking.AppCreateOrderResp
-	8,  // 93: staking.StakingApp.MyOrderList:output_type -> staking.AppMyOrderListResp
-	10, // 94: staking.StakingApp.MyOrderDetail:output_type -> staking.AppMyOrderDetailResp
-	12, // 95: staking.StakingApp.MyRewardLogList:output_type -> staking.AppMyRewardLogListResp
-	14, // 96: staking.StakingApp.Redeem:output_type -> staking.AppRedeemResp
-	17, // 97: staking.StakingApp.MyRedeemLogList:output_type -> staking.AppMyRedeemLogListResp
-	19, // 98: staking.StakingAdmin.AdminProductList:output_type -> staking.AdminProductListResp
-	21, // 99: staking.StakingAdmin.AdminProductDetail:output_type -> staking.AdminProductDetailResp
-	23, // 100: staking.StakingAdmin.ProductCreate:output_type -> staking.AdminProductCreateResp
-	25, // 101: staking.StakingAdmin.ProductUpdate:output_type -> staking.AdminProductUpdateResp
-	27, // 102: staking.StakingAdmin.ProductChangeStatus:output_type -> staking.AdminProductChangeStatusResp
-	29, // 103: staking.StakingAdmin.OrderList:output_type -> staking.AdminOrderListResp
-	31, // 104: staking.StakingAdmin.OrderDetail:output_type -> staking.AdminOrderDetailResp
-	33, // 105: staking.StakingAdmin.RewardLogList:output_type -> staking.AdminRewardLogListResp
-	35, // 106: staking.StakingAdmin.RedeemLogList:output_type -> staking.AdminRedeemLogListResp
-	37, // 107: staking.StakingAdmin.ManualReward:output_type -> staking.AdminManualRewardResp
-	39, // 108: staking.StakingAdmin.ManualRedeem:output_type -> staking.AdminManualRedeemResp
+	1,  // 90: staking.StakingApp.ProductList:output_type -> staking.UserProductListResp
+	3,  // 91: staking.StakingApp.ProductDetail:output_type -> staking.UserProductDetailResp
+	5,  // 92: staking.StakingApp.CreateOrder:output_type -> staking.CreateOrderResp
+	8,  // 93: staking.StakingApp.MyOrderList:output_type -> staking.MyOrderListResp
+	10, // 94: staking.StakingApp.MyOrderDetail:output_type -> staking.MyOrderDetailResp
+	12, // 95: staking.StakingApp.MyRewardLogList:output_type -> staking.MyRewardLogListResp
+	14, // 96: staking.StakingApp.Redeem:output_type -> staking.RedeemResp
+	17, // 97: staking.StakingApp.MyRedeemLogList:output_type -> staking.MyRedeemLogListResp
+	19, // 98: staking.StakingAdmin.ProductList:output_type -> staking.ProductListResp
+	21, // 99: staking.StakingAdmin.ProductDetail:output_type -> staking.ProductDetailResp
+	23, // 100: staking.StakingAdmin.ProductCreate:output_type -> staking.ProductCreateResp
+	25, // 101: staking.StakingAdmin.ProductUpdate:output_type -> staking.ProductUpdateResp
+	27, // 102: staking.StakingAdmin.ProductChangeStatus:output_type -> staking.ProductChangeStatusResp
+	29, // 103: staking.StakingAdmin.OrderList:output_type -> staking.OrderListResp
+	31, // 104: staking.StakingAdmin.OrderDetail:output_type -> staking.OrderDetailResp
+	33, // 105: staking.StakingAdmin.RewardLogList:output_type -> staking.RewardLogListResp
+	35, // 106: staking.StakingAdmin.RedeemLogList:output_type -> staking.RedeemLogListResp
+	37, // 107: staking.StakingAdmin.ManualReward:output_type -> staking.ManualRewardResp
+	39, // 108: staking.StakingAdmin.ManualRedeem:output_type -> staking.ManualRedeemResp
 	41, // 109: staking.StakingTask.ProcessRewardsAndSettleOrders:output_type -> staking.StakingTaskResp
 	90, // [90:110] is the sub-list for method output_type
 	70, // [70:90] is the sub-list for method input_type

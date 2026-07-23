@@ -14,9 +14,9 @@ import (
 )
 
 type (
-	AdminCommonResp                = itick.AdminCommonResp
-	AppCommonResp                  = itick.AppCommonResp
-	AppEmpty                       = itick.AppEmpty
+	CommonResp                     = itick.CommonResp
+	UserCommonResp                 = itick.UserCommonResp
+	Empty                          = itick.Empty
 	BatchGetQuoteReq               = itick.BatchGetQuoteReq
 	BatchGetQuoteResp              = itick.BatchGetQuoteResp
 	BatchUpsertTenantCategoriesReq = itick.BatchUpsertTenantCategoriesReq

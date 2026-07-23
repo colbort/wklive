@@ -29,13 +29,13 @@ func NewCreateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 }
 
 // 产品类型
-func (l *CreateCategoryLogic) CreateCategory(in *itick.CreateCategoryReq) (*itick.AdminCommonResp, error) {
+func (l *CreateCategoryLogic) CreateCategory(in *itick.CreateCategoryReq) (*itick.CommonResp, error) {
 	exist, err := l.svcCtx.ItickCategoryModel.FindOneByCategoryType(l.ctx, int64(in.CategoryType))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if exist != nil {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.ResourceAlreadyExists, i18n.Translate(i18n.ResourceAlreadyExists, l.ctx)),
 		}, nil
 	}
@@ -58,5 +58,5 @@ func (l *CreateCategoryLogic) CreateCategory(in *itick.CreateCategoryReq) (*itic
 		return nil, err
 	}
 
-	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &itick.CommonResp{Base: helper.OkResp()}, nil
 }

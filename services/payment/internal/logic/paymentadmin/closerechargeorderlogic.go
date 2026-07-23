@@ -28,7 +28,7 @@ func NewCloseRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // 关闭充值订单
-func (l *CloseRechargeOrderLogic) CloseRechargeOrder(in *payment.CloseRechargeOrderReq) (*payment.AdminCommonResp, error) {
+func (l *CloseRechargeOrderLogic) CloseRechargeOrder(in *payment.CloseRechargeOrderReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "CloseRechargeOrder"
 	)
@@ -41,14 +41,14 @@ func (l *CloseRechargeOrderLogic) CloseRechargeOrder(in *payment.CloseRechargeOr
 	}
 
 	if order == nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 仅有pending状态的订单才能关闭
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.OnlyUnpaidOrdersCanClose, i18n.Translate(i18n.OnlyUnpaidOrdersCanClose, l.ctx)),
 		}, nil
 	}
@@ -65,7 +65,7 @@ func (l *CloseRechargeOrderLogic) CloseRechargeOrder(in *payment.CloseRechargeOr
 
 	l.Logger.Infof("Close recharge order success: %s", in.OrderNo)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

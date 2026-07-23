@@ -55,7 +55,7 @@ type PaymentAppClient interface {
 	// 查询我的充值订单列表
 	ListMyRechargeOrders(ctx context.Context, in *ListMyRechargeOrdersReq, opts ...grpc.CallOption) (*ListMyRechargeOrdersResp, error)
 	// 取消未支付订单
-	CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	// 轮询订单状态
 	QueryMyRechargeOrderStatus(ctx context.Context, in *QueryMyRechargeOrderStatusReq, opts ...grpc.CallOption) (*QueryMyRechargeOrderStatusResp, error)
 	// 提现
@@ -142,9 +142,9 @@ func (c *paymentAppClient) ListMyRechargeOrders(ctx context.Context, in *ListMyR
 	return out, nil
 }
 
-func (c *paymentAppClient) CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *paymentAppClient) CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, PaymentApp_CancelMyRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -251,7 +251,7 @@ type PaymentAppServer interface {
 	// 查询我的充值订单列表
 	ListMyRechargeOrders(context.Context, *ListMyRechargeOrdersReq) (*ListMyRechargeOrdersResp, error)
 	// 取消未支付订单
-	CancelMyRechargeOrder(context.Context, *CancelMyRechargeOrderReq) (*AppCommonResp, error)
+	CancelMyRechargeOrder(context.Context, *CancelMyRechargeOrderReq) (*UserCommonResp, error)
 	// 轮询订单状态
 	QueryMyRechargeOrderStatus(context.Context, *QueryMyRechargeOrderStatusReq) (*QueryMyRechargeOrderStatusResp, error)
 	// 提现
@@ -296,7 +296,7 @@ func (UnimplementedPaymentAppServer) GetMyRechargeOrder(context.Context, *GetMyR
 func (UnimplementedPaymentAppServer) ListMyRechargeOrders(context.Context, *ListMyRechargeOrdersReq) (*ListMyRechargeOrdersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyRechargeOrders not implemented")
 }
-func (UnimplementedPaymentAppServer) CancelMyRechargeOrder(context.Context, *CancelMyRechargeOrderReq) (*AppCommonResp, error) {
+func (UnimplementedPaymentAppServer) CancelMyRechargeOrder(context.Context, *CancelMyRechargeOrderReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelMyRechargeOrder not implemented")
 }
 func (UnimplementedPaymentAppServer) QueryMyRechargeOrderStatus(context.Context, *QueryMyRechargeOrderStatusReq) (*QueryMyRechargeOrderStatusResp, error) {
@@ -747,51 +747,51 @@ const (
 // Admin 接口
 type PaymentAdminClient interface {
 	// 获取系统支持的平台
-	GetPayPlatforms(ctx context.Context, in *AdminEmpty, opts ...grpc.CallOption) (*PayPlatformsResp, error)
+	GetPayPlatforms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PayPlatformsResp, error)
 	// 创建平台
-	CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新平台
-	UpdatePayPlatform(ctx context.Context, in *UpdatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdatePayPlatform(ctx context.Context, in *UpdatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取平台详情
 	GetPayPlatform(ctx context.Context, in *GetPayPlatformReq, opts ...grpc.CallOption) (*GetPayPlatformResp, error)
 	// 平台列表
 	ListPayPlatforms(ctx context.Context, in *ListPayPlatformsReq, opts ...grpc.CallOption) (*ListPayPlatformsResp, error)
 	// 创建产品
-	CreatePayProduct(ctx context.Context, in *CreatePayProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreatePayProduct(ctx context.Context, in *CreatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新产品
-	UpdatePayProduct(ctx context.Context, in *UpdatePayProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdatePayProduct(ctx context.Context, in *UpdatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取产品详情
 	GetPayProduct(ctx context.Context, in *GetPayProductReq, opts ...grpc.CallOption) (*GetPayProductResp, error)
 	// 产品列表
 	ListPayProducts(ctx context.Context, in *ListPayProductsReq, opts ...grpc.CallOption) (*ListPayProductsResp, error)
 	// 租户开通平台
-	OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新租户开通平台
-	UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取租户开通平台详情
 	GetTenantPayPlatform(ctx context.Context, in *GetTenantPayPlatformReq, opts ...grpc.CallOption) (*GetTenantPayPlatformResp, error)
 	// 租户开通平台列表
 	ListTenantPayPlatforms(ctx context.Context, in *ListTenantPayPlatformsReq, opts ...grpc.CallOption) (*ListTenantPayPlatformsResp, error)
 	// 租户支付账号
-	CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新租户支付账号
-	UpdateTenantPayAccount(ctx context.Context, in *UpdateTenantPayAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateTenantPayAccount(ctx context.Context, in *UpdateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取租户支付账号详情
 	GetTenantPayAccount(ctx context.Context, in *GetTenantPayAccountReq, opts ...grpc.CallOption) (*GetTenantPayAccountResp, error)
 	// 租户支付账号列表
 	ListTenantPayAccounts(ctx context.Context, in *ListTenantPayAccountsReq, opts ...grpc.CallOption) (*ListTenantPayAccountsResp, error)
 	// 创建租户支付通道
-	CreateTenantPayChannel(ctx context.Context, in *CreateTenantPayChannelReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateTenantPayChannel(ctx context.Context, in *CreateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新租户支付通道
-	UpdateTenantPayChannel(ctx context.Context, in *UpdateTenantPayChannelReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateTenantPayChannel(ctx context.Context, in *UpdateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取租户支付通道详情
 	GetTenantPayChannel(ctx context.Context, in *GetTenantPayChannelReq, opts ...grpc.CallOption) (*GetTenantPayChannelResp, error)
 	// 租户支付通道列表
 	ListTenantPayChannels(ctx context.Context, in *ListTenantPayChannelsReq, opts ...grpc.CallOption) (*ListTenantPayChannelsResp, error)
 	// 创建通道规则
-	CreateTenantPayChannelRule(ctx context.Context, in *CreateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateTenantPayChannelRule(ctx context.Context, in *CreateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新通道规则
-	UpdateTenantPayChannelRule(ctx context.Context, in *UpdateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateTenantPayChannelRule(ctx context.Context, in *UpdateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取通道规则详情
 	GetTenantPayChannelRule(ctx context.Context, in *GetTenantPayChannelRuleReq, opts ...grpc.CallOption) (*GetTenantPayChannelRuleResp, error)
 	// 通道规则列表
@@ -805,11 +805,11 @@ type PaymentAdminClient interface {
 	// 获取充值订单
 	GetRechargeOrder(ctx context.Context, in *GetRechargeOrderReq, opts ...grpc.CallOption) (*GetRechargeOrderResp, error)
 	// 关闭充值订单
-	CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 人工标记充值订单支付成功
-	ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 重试回调
-	RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 充值回调日志列表
 	ListRechargeNotifyLogs(ctx context.Context, in *ListRechargeNotifyLogsReq, opts ...grpc.CallOption) (*ListRechargeNotifyLogsResp, error)
 	// 充值回调日志
@@ -819,31 +819,31 @@ type PaymentAdminClient interface {
 	// 获取提现订单详情
 	GetWithdrawOrder(ctx context.Context, in *GetWithdrawOrderReq, opts ...grpc.CallOption) (*GetWithdrawOrderResp, error)
 	// 审核提现订单
-	AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 提现回调日志列表
 	ListWithdrawNotifyLogs(ctx context.Context, in *ListWithdrawNotifyLogsReq, opts ...grpc.CallOption) (*ListWithdrawNotifyLogsResp, error)
 	// 获取提现回调日志详情
 	GetWithdrawNotifyLog(ctx context.Context, in *GetWithdrawNotifyLogReq, opts ...grpc.CallOption) (*GetWithdrawNotifyLogResp, error)
 	// 创建链上充值地址
-	CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新链上充值地址
-	UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取链上充值地址详情
 	GetCryptoRechargeAddress(ctx context.Context, in *GetCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetCryptoRechargeAddressResp, error)
 	// 链上充值地址列表
 	ListCryptoRechargeAddresses(ctx context.Context, in *ListCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListCryptoRechargeAddressesResp, error)
 	// 创建链上钱包账号
-	CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新链上钱包账号
-	UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取链上钱包账号详情
 	GetCryptoWalletAccount(ctx context.Context, in *GetCryptoWalletAccountReq, opts ...grpc.CallOption) (*GetCryptoWalletAccountResp, error)
 	// 链上钱包账号列表
 	ListCryptoWalletAccounts(ctx context.Context, in *ListCryptoWalletAccountsReq, opts ...grpc.CallOption) (*ListCryptoWalletAccountsResp, error)
 	// 创建链上充值交易
-	CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新链上充值交易
-	UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取链上充值交易详情
 	GetCryptoRechargeTx(ctx context.Context, in *GetCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetCryptoRechargeTxResp, error)
 	// 链上充值交易列表
@@ -858,7 +858,7 @@ func NewPaymentAdminClient(cc grpc.ClientConnInterface) PaymentAdminClient {
 	return &paymentAdminClient{cc}
 }
 
-func (c *paymentAdminClient) GetPayPlatforms(ctx context.Context, in *AdminEmpty, opts ...grpc.CallOption) (*PayPlatformsResp, error) {
+func (c *paymentAdminClient) GetPayPlatforms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PayPlatformsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PayPlatformsResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_GetPayPlatforms_FullMethodName, in, out, cOpts...)
@@ -868,9 +868,9 @@ func (c *paymentAdminClient) GetPayPlatforms(ctx context.Context, in *AdminEmpty
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_CreatePayPlatform_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -878,9 +878,9 @@ func (c *paymentAdminClient) CreatePayPlatform(ctx context.Context, in *CreatePa
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdatePayPlatform(ctx context.Context, in *UpdatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) UpdatePayPlatform(ctx context.Context, in *UpdatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_UpdatePayPlatform_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -908,9 +908,9 @@ func (c *paymentAdminClient) ListPayPlatforms(ctx context.Context, in *ListPayPl
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreatePayProduct(ctx context.Context, in *CreatePayProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) CreatePayProduct(ctx context.Context, in *CreatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_CreatePayProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -918,9 +918,9 @@ func (c *paymentAdminClient) CreatePayProduct(ctx context.Context, in *CreatePay
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdatePayProduct(ctx context.Context, in *UpdatePayProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) UpdatePayProduct(ctx context.Context, in *UpdatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_UpdatePayProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -948,9 +948,9 @@ func (c *paymentAdminClient) ListPayProducts(ctx context.Context, in *ListPayPro
 	return out, nil
 }
 
-func (c *paymentAdminClient) OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_OpenTenantPayPlatform_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -958,9 +958,9 @@ func (c *paymentAdminClient) OpenTenantPayPlatform(ctx context.Context, in *Open
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateTenantPayPlatform_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -988,9 +988,9 @@ func (c *paymentAdminClient) ListTenantPayPlatforms(ctx context.Context, in *Lis
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_CreateTenantPayAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -998,9 +998,9 @@ func (c *paymentAdminClient) CreateTenantPayAccount(ctx context.Context, in *Cre
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateTenantPayAccount(ctx context.Context, in *UpdateTenantPayAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) UpdateTenantPayAccount(ctx context.Context, in *UpdateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateTenantPayAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1028,9 +1028,9 @@ func (c *paymentAdminClient) ListTenantPayAccounts(ctx context.Context, in *List
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateTenantPayChannel(ctx context.Context, in *CreateTenantPayChannelReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) CreateTenantPayChannel(ctx context.Context, in *CreateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_CreateTenantPayChannel_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1038,9 +1038,9 @@ func (c *paymentAdminClient) CreateTenantPayChannel(ctx context.Context, in *Cre
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateTenantPayChannel(ctx context.Context, in *UpdateTenantPayChannelReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) UpdateTenantPayChannel(ctx context.Context, in *UpdateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateTenantPayChannel_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1068,9 +1068,9 @@ func (c *paymentAdminClient) ListTenantPayChannels(ctx context.Context, in *List
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateTenantPayChannelRule(ctx context.Context, in *CreateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) CreateTenantPayChannelRule(ctx context.Context, in *CreateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_CreateTenantPayChannelRule_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1078,9 +1078,9 @@ func (c *paymentAdminClient) CreateTenantPayChannelRule(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateTenantPayChannelRule(ctx context.Context, in *UpdateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) UpdateTenantPayChannelRule(ctx context.Context, in *UpdateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateTenantPayChannelRule_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1148,9 +1148,9 @@ func (c *paymentAdminClient) GetRechargeOrder(ctx context.Context, in *GetRechar
 	return out, nil
 }
 
-func (c *paymentAdminClient) CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_CloseRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1158,9 +1158,9 @@ func (c *paymentAdminClient) CloseRechargeOrder(ctx context.Context, in *CloseRe
 	return out, nil
 }
 
-func (c *paymentAdminClient) ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_ManualMarkRechargeOrderSuccess_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1168,9 +1168,9 @@ func (c *paymentAdminClient) ManualMarkRechargeOrderSuccess(ctx context.Context,
 	return out, nil
 }
 
-func (c *paymentAdminClient) RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_RetryNotify_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1218,9 +1218,9 @@ func (c *paymentAdminClient) GetWithdrawOrder(ctx context.Context, in *GetWithdr
 	return out, nil
 }
 
-func (c *paymentAdminClient) AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_AuditWithdrawOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1248,9 +1248,9 @@ func (c *paymentAdminClient) GetWithdrawNotifyLog(ctx context.Context, in *GetWi
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_CreateCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1258,9 +1258,9 @@ func (c *paymentAdminClient) CreateCryptoRechargeAddress(ctx context.Context, in
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1288,9 +1288,9 @@ func (c *paymentAdminClient) ListCryptoRechargeAddresses(ctx context.Context, in
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_CreateCryptoWalletAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1298,9 +1298,9 @@ func (c *paymentAdminClient) CreateCryptoWalletAccount(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateCryptoWalletAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1328,9 +1328,9 @@ func (c *paymentAdminClient) ListCryptoWalletAccounts(ctx context.Context, in *L
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_CreateCryptoRechargeTx_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1338,9 +1338,9 @@ func (c *paymentAdminClient) CreateCryptoRechargeTx(ctx context.Context, in *Cre
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateCryptoRechargeTx_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1375,51 +1375,51 @@ func (c *paymentAdminClient) ListCryptoRechargeTxs(ctx context.Context, in *List
 // Admin 接口
 type PaymentAdminServer interface {
 	// 获取系统支持的平台
-	GetPayPlatforms(context.Context, *AdminEmpty) (*PayPlatformsResp, error)
+	GetPayPlatforms(context.Context, *Empty) (*PayPlatformsResp, error)
 	// 创建平台
-	CreatePayPlatform(context.Context, *CreatePayPlatformReq) (*AdminCommonResp, error)
+	CreatePayPlatform(context.Context, *CreatePayPlatformReq) (*CommonResp, error)
 	// 更新平台
-	UpdatePayPlatform(context.Context, *UpdatePayPlatformReq) (*AdminCommonResp, error)
+	UpdatePayPlatform(context.Context, *UpdatePayPlatformReq) (*CommonResp, error)
 	// 获取平台详情
 	GetPayPlatform(context.Context, *GetPayPlatformReq) (*GetPayPlatformResp, error)
 	// 平台列表
 	ListPayPlatforms(context.Context, *ListPayPlatformsReq) (*ListPayPlatformsResp, error)
 	// 创建产品
-	CreatePayProduct(context.Context, *CreatePayProductReq) (*AdminCommonResp, error)
+	CreatePayProduct(context.Context, *CreatePayProductReq) (*CommonResp, error)
 	// 更新产品
-	UpdatePayProduct(context.Context, *UpdatePayProductReq) (*AdminCommonResp, error)
+	UpdatePayProduct(context.Context, *UpdatePayProductReq) (*CommonResp, error)
 	// 获取产品详情
 	GetPayProduct(context.Context, *GetPayProductReq) (*GetPayProductResp, error)
 	// 产品列表
 	ListPayProducts(context.Context, *ListPayProductsReq) (*ListPayProductsResp, error)
 	// 租户开通平台
-	OpenTenantPayPlatform(context.Context, *OpenTenantPayPlatformReq) (*AdminCommonResp, error)
+	OpenTenantPayPlatform(context.Context, *OpenTenantPayPlatformReq) (*CommonResp, error)
 	// 更新租户开通平台
-	UpdateTenantPayPlatform(context.Context, *UpdateTenantPayPlatformReq) (*AdminCommonResp, error)
+	UpdateTenantPayPlatform(context.Context, *UpdateTenantPayPlatformReq) (*CommonResp, error)
 	// 获取租户开通平台详情
 	GetTenantPayPlatform(context.Context, *GetTenantPayPlatformReq) (*GetTenantPayPlatformResp, error)
 	// 租户开通平台列表
 	ListTenantPayPlatforms(context.Context, *ListTenantPayPlatformsReq) (*ListTenantPayPlatformsResp, error)
 	// 租户支付账号
-	CreateTenantPayAccount(context.Context, *CreateTenantPayAccountReq) (*AdminCommonResp, error)
+	CreateTenantPayAccount(context.Context, *CreateTenantPayAccountReq) (*CommonResp, error)
 	// 更新租户支付账号
-	UpdateTenantPayAccount(context.Context, *UpdateTenantPayAccountReq) (*AdminCommonResp, error)
+	UpdateTenantPayAccount(context.Context, *UpdateTenantPayAccountReq) (*CommonResp, error)
 	// 获取租户支付账号详情
 	GetTenantPayAccount(context.Context, *GetTenantPayAccountReq) (*GetTenantPayAccountResp, error)
 	// 租户支付账号列表
 	ListTenantPayAccounts(context.Context, *ListTenantPayAccountsReq) (*ListTenantPayAccountsResp, error)
 	// 创建租户支付通道
-	CreateTenantPayChannel(context.Context, *CreateTenantPayChannelReq) (*AdminCommonResp, error)
+	CreateTenantPayChannel(context.Context, *CreateTenantPayChannelReq) (*CommonResp, error)
 	// 更新租户支付通道
-	UpdateTenantPayChannel(context.Context, *UpdateTenantPayChannelReq) (*AdminCommonResp, error)
+	UpdateTenantPayChannel(context.Context, *UpdateTenantPayChannelReq) (*CommonResp, error)
 	// 获取租户支付通道详情
 	GetTenantPayChannel(context.Context, *GetTenantPayChannelReq) (*GetTenantPayChannelResp, error)
 	// 租户支付通道列表
 	ListTenantPayChannels(context.Context, *ListTenantPayChannelsReq) (*ListTenantPayChannelsResp, error)
 	// 创建通道规则
-	CreateTenantPayChannelRule(context.Context, *CreateTenantPayChannelRuleReq) (*AdminCommonResp, error)
+	CreateTenantPayChannelRule(context.Context, *CreateTenantPayChannelRuleReq) (*CommonResp, error)
 	// 更新通道规则
-	UpdateTenantPayChannelRule(context.Context, *UpdateTenantPayChannelRuleReq) (*AdminCommonResp, error)
+	UpdateTenantPayChannelRule(context.Context, *UpdateTenantPayChannelRuleReq) (*CommonResp, error)
 	// 获取通道规则详情
 	GetTenantPayChannelRule(context.Context, *GetTenantPayChannelRuleReq) (*GetTenantPayChannelRuleResp, error)
 	// 通道规则列表
@@ -1433,11 +1433,11 @@ type PaymentAdminServer interface {
 	// 获取充值订单
 	GetRechargeOrder(context.Context, *GetRechargeOrderReq) (*GetRechargeOrderResp, error)
 	// 关闭充值订单
-	CloseRechargeOrder(context.Context, *CloseRechargeOrderReq) (*AdminCommonResp, error)
+	CloseRechargeOrder(context.Context, *CloseRechargeOrderReq) (*CommonResp, error)
 	// 人工标记充值订单支付成功
-	ManualMarkRechargeOrderSuccess(context.Context, *ManualMarkRechargeOrderSuccessReq) (*AdminCommonResp, error)
+	ManualMarkRechargeOrderSuccess(context.Context, *ManualMarkRechargeOrderSuccessReq) (*CommonResp, error)
 	// 重试回调
-	RetryNotify(context.Context, *RetryNotifyReq) (*AdminCommonResp, error)
+	RetryNotify(context.Context, *RetryNotifyReq) (*CommonResp, error)
 	// 充值回调日志列表
 	ListRechargeNotifyLogs(context.Context, *ListRechargeNotifyLogsReq) (*ListRechargeNotifyLogsResp, error)
 	// 充值回调日志
@@ -1447,31 +1447,31 @@ type PaymentAdminServer interface {
 	// 获取提现订单详情
 	GetWithdrawOrder(context.Context, *GetWithdrawOrderReq) (*GetWithdrawOrderResp, error)
 	// 审核提现订单
-	AuditWithdrawOrder(context.Context, *AuditWithdrawOrderReq) (*AdminCommonResp, error)
+	AuditWithdrawOrder(context.Context, *AuditWithdrawOrderReq) (*CommonResp, error)
 	// 提现回调日志列表
 	ListWithdrawNotifyLogs(context.Context, *ListWithdrawNotifyLogsReq) (*ListWithdrawNotifyLogsResp, error)
 	// 获取提现回调日志详情
 	GetWithdrawNotifyLog(context.Context, *GetWithdrawNotifyLogReq) (*GetWithdrawNotifyLogResp, error)
 	// 创建链上充值地址
-	CreateCryptoRechargeAddress(context.Context, *CreateCryptoRechargeAddressReq) (*AdminCommonResp, error)
+	CreateCryptoRechargeAddress(context.Context, *CreateCryptoRechargeAddressReq) (*CommonResp, error)
 	// 更新链上充值地址
-	UpdateCryptoRechargeAddress(context.Context, *UpdateCryptoRechargeAddressReq) (*AdminCommonResp, error)
+	UpdateCryptoRechargeAddress(context.Context, *UpdateCryptoRechargeAddressReq) (*CommonResp, error)
 	// 获取链上充值地址详情
 	GetCryptoRechargeAddress(context.Context, *GetCryptoRechargeAddressReq) (*GetCryptoRechargeAddressResp, error)
 	// 链上充值地址列表
 	ListCryptoRechargeAddresses(context.Context, *ListCryptoRechargeAddressesReq) (*ListCryptoRechargeAddressesResp, error)
 	// 创建链上钱包账号
-	CreateCryptoWalletAccount(context.Context, *CreateCryptoWalletAccountReq) (*AdminCommonResp, error)
+	CreateCryptoWalletAccount(context.Context, *CreateCryptoWalletAccountReq) (*CommonResp, error)
 	// 更新链上钱包账号
-	UpdateCryptoWalletAccount(context.Context, *UpdateCryptoWalletAccountReq) (*AdminCommonResp, error)
+	UpdateCryptoWalletAccount(context.Context, *UpdateCryptoWalletAccountReq) (*CommonResp, error)
 	// 获取链上钱包账号详情
 	GetCryptoWalletAccount(context.Context, *GetCryptoWalletAccountReq) (*GetCryptoWalletAccountResp, error)
 	// 链上钱包账号列表
 	ListCryptoWalletAccounts(context.Context, *ListCryptoWalletAccountsReq) (*ListCryptoWalletAccountsResp, error)
 	// 创建链上充值交易
-	CreateCryptoRechargeTx(context.Context, *CreateCryptoRechargeTxReq) (*AdminCommonResp, error)
+	CreateCryptoRechargeTx(context.Context, *CreateCryptoRechargeTxReq) (*CommonResp, error)
 	// 更新链上充值交易
-	UpdateCryptoRechargeTx(context.Context, *UpdateCryptoRechargeTxReq) (*AdminCommonResp, error)
+	UpdateCryptoRechargeTx(context.Context, *UpdateCryptoRechargeTxReq) (*CommonResp, error)
 	// 获取链上充值交易详情
 	GetCryptoRechargeTx(context.Context, *GetCryptoRechargeTxReq) (*GetCryptoRechargeTxResp, error)
 	// 链上充值交易列表
@@ -1486,13 +1486,13 @@ type PaymentAdminServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPaymentAdminServer struct{}
 
-func (UnimplementedPaymentAdminServer) GetPayPlatforms(context.Context, *AdminEmpty) (*PayPlatformsResp, error) {
+func (UnimplementedPaymentAdminServer) GetPayPlatforms(context.Context, *Empty) (*PayPlatformsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPayPlatforms not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreatePayPlatform(context.Context, *CreatePayPlatformReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) CreatePayPlatform(context.Context, *CreatePayPlatformReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreatePayPlatform not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdatePayPlatform(context.Context, *UpdatePayPlatformReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) UpdatePayPlatform(context.Context, *UpdatePayPlatformReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdatePayPlatform not implemented")
 }
 func (UnimplementedPaymentAdminServer) GetPayPlatform(context.Context, *GetPayPlatformReq) (*GetPayPlatformResp, error) {
@@ -1501,10 +1501,10 @@ func (UnimplementedPaymentAdminServer) GetPayPlatform(context.Context, *GetPayPl
 func (UnimplementedPaymentAdminServer) ListPayPlatforms(context.Context, *ListPayPlatformsReq) (*ListPayPlatformsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPayPlatforms not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreatePayProduct(context.Context, *CreatePayProductReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) CreatePayProduct(context.Context, *CreatePayProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreatePayProduct not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdatePayProduct(context.Context, *UpdatePayProductReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) UpdatePayProduct(context.Context, *UpdatePayProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdatePayProduct not implemented")
 }
 func (UnimplementedPaymentAdminServer) GetPayProduct(context.Context, *GetPayProductReq) (*GetPayProductResp, error) {
@@ -1513,10 +1513,10 @@ func (UnimplementedPaymentAdminServer) GetPayProduct(context.Context, *GetPayPro
 func (UnimplementedPaymentAdminServer) ListPayProducts(context.Context, *ListPayProductsReq) (*ListPayProductsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPayProducts not implemented")
 }
-func (UnimplementedPaymentAdminServer) OpenTenantPayPlatform(context.Context, *OpenTenantPayPlatformReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) OpenTenantPayPlatform(context.Context, *OpenTenantPayPlatformReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method OpenTenantPayPlatform not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateTenantPayPlatform(context.Context, *UpdateTenantPayPlatformReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) UpdateTenantPayPlatform(context.Context, *UpdateTenantPayPlatformReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantPayPlatform not implemented")
 }
 func (UnimplementedPaymentAdminServer) GetTenantPayPlatform(context.Context, *GetTenantPayPlatformReq) (*GetTenantPayPlatformResp, error) {
@@ -1525,10 +1525,10 @@ func (UnimplementedPaymentAdminServer) GetTenantPayPlatform(context.Context, *Ge
 func (UnimplementedPaymentAdminServer) ListTenantPayPlatforms(context.Context, *ListTenantPayPlatformsReq) (*ListTenantPayPlatformsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantPayPlatforms not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateTenantPayAccount(context.Context, *CreateTenantPayAccountReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) CreateTenantPayAccount(context.Context, *CreateTenantPayAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantPayAccount not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateTenantPayAccount(context.Context, *UpdateTenantPayAccountReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) UpdateTenantPayAccount(context.Context, *UpdateTenantPayAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantPayAccount not implemented")
 }
 func (UnimplementedPaymentAdminServer) GetTenantPayAccount(context.Context, *GetTenantPayAccountReq) (*GetTenantPayAccountResp, error) {
@@ -1537,10 +1537,10 @@ func (UnimplementedPaymentAdminServer) GetTenantPayAccount(context.Context, *Get
 func (UnimplementedPaymentAdminServer) ListTenantPayAccounts(context.Context, *ListTenantPayAccountsReq) (*ListTenantPayAccountsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantPayAccounts not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateTenantPayChannel(context.Context, *CreateTenantPayChannelReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) CreateTenantPayChannel(context.Context, *CreateTenantPayChannelReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantPayChannel not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateTenantPayChannel(context.Context, *UpdateTenantPayChannelReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) UpdateTenantPayChannel(context.Context, *UpdateTenantPayChannelReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantPayChannel not implemented")
 }
 func (UnimplementedPaymentAdminServer) GetTenantPayChannel(context.Context, *GetTenantPayChannelReq) (*GetTenantPayChannelResp, error) {
@@ -1549,10 +1549,10 @@ func (UnimplementedPaymentAdminServer) GetTenantPayChannel(context.Context, *Get
 func (UnimplementedPaymentAdminServer) ListTenantPayChannels(context.Context, *ListTenantPayChannelsReq) (*ListTenantPayChannelsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantPayChannels not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateTenantPayChannelRule(context.Context, *CreateTenantPayChannelRuleReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) CreateTenantPayChannelRule(context.Context, *CreateTenantPayChannelRuleReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantPayChannelRule not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateTenantPayChannelRule(context.Context, *UpdateTenantPayChannelRuleReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) UpdateTenantPayChannelRule(context.Context, *UpdateTenantPayChannelRuleReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantPayChannelRule not implemented")
 }
 func (UnimplementedPaymentAdminServer) GetTenantPayChannelRule(context.Context, *GetTenantPayChannelRuleReq) (*GetTenantPayChannelRuleResp, error) {
@@ -1573,13 +1573,13 @@ func (UnimplementedPaymentAdminServer) ListRechargeOrders(context.Context, *List
 func (UnimplementedPaymentAdminServer) GetRechargeOrder(context.Context, *GetRechargeOrderReq) (*GetRechargeOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAdminServer) CloseRechargeOrder(context.Context, *CloseRechargeOrderReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) CloseRechargeOrder(context.Context, *CloseRechargeOrderReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CloseRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAdminServer) ManualMarkRechargeOrderSuccess(context.Context, *ManualMarkRechargeOrderSuccessReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) ManualMarkRechargeOrderSuccess(context.Context, *ManualMarkRechargeOrderSuccessReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ManualMarkRechargeOrderSuccess not implemented")
 }
-func (UnimplementedPaymentAdminServer) RetryNotify(context.Context, *RetryNotifyReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) RetryNotify(context.Context, *RetryNotifyReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryNotify not implemented")
 }
 func (UnimplementedPaymentAdminServer) ListRechargeNotifyLogs(context.Context, *ListRechargeNotifyLogsReq) (*ListRechargeNotifyLogsResp, error) {
@@ -1594,7 +1594,7 @@ func (UnimplementedPaymentAdminServer) ListWithdrawOrders(context.Context, *List
 func (UnimplementedPaymentAdminServer) GetWithdrawOrder(context.Context, *GetWithdrawOrderReq) (*GetWithdrawOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetWithdrawOrder not implemented")
 }
-func (UnimplementedPaymentAdminServer) AuditWithdrawOrder(context.Context, *AuditWithdrawOrderReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) AuditWithdrawOrder(context.Context, *AuditWithdrawOrderReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AuditWithdrawOrder not implemented")
 }
 func (UnimplementedPaymentAdminServer) ListWithdrawNotifyLogs(context.Context, *ListWithdrawNotifyLogsReq) (*ListWithdrawNotifyLogsResp, error) {
@@ -1603,10 +1603,10 @@ func (UnimplementedPaymentAdminServer) ListWithdrawNotifyLogs(context.Context, *
 func (UnimplementedPaymentAdminServer) GetWithdrawNotifyLog(context.Context, *GetWithdrawNotifyLogReq) (*GetWithdrawNotifyLogResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetWithdrawNotifyLog not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateCryptoRechargeAddress(context.Context, *CreateCryptoRechargeAddressReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) CreateCryptoRechargeAddress(context.Context, *CreateCryptoRechargeAddressReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCryptoRechargeAddress not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateCryptoRechargeAddress(context.Context, *UpdateCryptoRechargeAddressReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) UpdateCryptoRechargeAddress(context.Context, *UpdateCryptoRechargeAddressReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateCryptoRechargeAddress not implemented")
 }
 func (UnimplementedPaymentAdminServer) GetCryptoRechargeAddress(context.Context, *GetCryptoRechargeAddressReq) (*GetCryptoRechargeAddressResp, error) {
@@ -1615,10 +1615,10 @@ func (UnimplementedPaymentAdminServer) GetCryptoRechargeAddress(context.Context,
 func (UnimplementedPaymentAdminServer) ListCryptoRechargeAddresses(context.Context, *ListCryptoRechargeAddressesReq) (*ListCryptoRechargeAddressesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCryptoRechargeAddresses not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateCryptoWalletAccount(context.Context, *CreateCryptoWalletAccountReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) CreateCryptoWalletAccount(context.Context, *CreateCryptoWalletAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCryptoWalletAccount not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateCryptoWalletAccount(context.Context, *UpdateCryptoWalletAccountReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) UpdateCryptoWalletAccount(context.Context, *UpdateCryptoWalletAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateCryptoWalletAccount not implemented")
 }
 func (UnimplementedPaymentAdminServer) GetCryptoWalletAccount(context.Context, *GetCryptoWalletAccountReq) (*GetCryptoWalletAccountResp, error) {
@@ -1627,10 +1627,10 @@ func (UnimplementedPaymentAdminServer) GetCryptoWalletAccount(context.Context, *
 func (UnimplementedPaymentAdminServer) ListCryptoWalletAccounts(context.Context, *ListCryptoWalletAccountsReq) (*ListCryptoWalletAccountsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCryptoWalletAccounts not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateCryptoRechargeTx(context.Context, *CreateCryptoRechargeTxReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) CreateCryptoRechargeTx(context.Context, *CreateCryptoRechargeTxReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCryptoRechargeTx not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateCryptoRechargeTx(context.Context, *UpdateCryptoRechargeTxReq) (*AdminCommonResp, error) {
+func (UnimplementedPaymentAdminServer) UpdateCryptoRechargeTx(context.Context, *UpdateCryptoRechargeTxReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateCryptoRechargeTx not implemented")
 }
 func (UnimplementedPaymentAdminServer) GetCryptoRechargeTx(context.Context, *GetCryptoRechargeTxReq) (*GetCryptoRechargeTxResp, error) {
@@ -1661,7 +1661,7 @@ func RegisterPaymentAdminServer(s grpc.ServiceRegistrar, srv PaymentAdminServer)
 }
 
 func _PaymentAdmin_GetPayPlatforms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminEmpty)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1673,7 +1673,7 @@ func _PaymentAdmin_GetPayPlatforms_Handler(srv interface{}, ctx context.Context,
 		FullMethod: PaymentAdmin_GetPayPlatforms_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetPayPlatforms(ctx, req.(*AdminEmpty))
+		return srv.(PaymentAdminServer).GetPayPlatforms(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -27,6 +27,6 @@ func NewRetryTradeEventLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 	}
 }
 
-func (l *RetryTradeEventLogic) RetryTradeEvent(req *types.RetryTradeEventReq) (resp *types.AdminCommonResp, err error) {
-	return logicutil.Proxy[types.AdminCommonResp](l.ctx, req, l.svcCtx.TradeCli.RetryTradeEvent)
+func (l *RetryTradeEventLogic) RetryTradeEvent(req *types.RetryTradeEventReq) (resp *types.CommonResp, err error) {
+	return logicutil.Proxy[types.CommonResp](l.ctx, req, l.svcCtx.TradeCli.RetryTradeEvent)
 }

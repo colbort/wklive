@@ -46,7 +46,7 @@ type TradeAppClient interface {
 	// 下单
 	PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error)
 	// 撤销指定订单
-	CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	// 撤销当前用户全部订单
 	CancelAllOrders(ctx context.Context, in *CancelAllOrdersReq, opts ...grpc.CallOption) (*CancelAllOrdersResp, error)
 	// 获取订单列表
@@ -62,7 +62,7 @@ type TradeAppClient interface {
 	// 获取当前杠杆配置
 	GetLeverageConfig(ctx context.Context, in *GetLeverageConfigReq, opts ...grpc.CallOption) (*GetLeverageConfigResp, error)
 	// 设置杠杆倍数
-	SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 }
 
 type tradeAppClient struct {
@@ -103,9 +103,9 @@ func (c *tradeAppClient) PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts
 	return out, nil
 }
 
-func (c *tradeAppClient) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *tradeAppClient) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, TradeApp_CancelOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -183,9 +183,9 @@ func (c *tradeAppClient) GetLeverageConfig(ctx context.Context, in *GetLeverageC
 	return out, nil
 }
 
-func (c *tradeAppClient) SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *tradeAppClient) SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
+	out := new(UserCommonResp)
 	err := c.cc.Invoke(ctx, TradeApp_SetLeverage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -206,7 +206,7 @@ type TradeAppServer interface {
 	// 下单
 	PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error)
 	// 撤销指定订单
-	CancelOrder(context.Context, *CancelOrderReq) (*AppCommonResp, error)
+	CancelOrder(context.Context, *CancelOrderReq) (*UserCommonResp, error)
 	// 撤销当前用户全部订单
 	CancelAllOrders(context.Context, *CancelAllOrdersReq) (*CancelAllOrdersResp, error)
 	// 获取订单列表
@@ -222,7 +222,7 @@ type TradeAppServer interface {
 	// 获取当前杠杆配置
 	GetLeverageConfig(context.Context, *GetLeverageConfigReq) (*GetLeverageConfigResp, error)
 	// 设置杠杆倍数
-	SetLeverage(context.Context, *SetLeverageReq) (*AppCommonResp, error)
+	SetLeverage(context.Context, *SetLeverageReq) (*UserCommonResp, error)
 	mustEmbedUnimplementedTradeAppServer()
 }
 
@@ -242,7 +242,7 @@ func (UnimplementedTradeAppServer) GetSymbolDetail(context.Context, *GetSymbolDe
 func (UnimplementedTradeAppServer) PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PlaceOrder not implemented")
 }
-func (UnimplementedTradeAppServer) CancelOrder(context.Context, *CancelOrderReq) (*AppCommonResp, error) {
+func (UnimplementedTradeAppServer) CancelOrder(context.Context, *CancelOrderReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelOrder not implemented")
 }
 func (UnimplementedTradeAppServer) CancelAllOrders(context.Context, *CancelAllOrdersReq) (*CancelAllOrdersResp, error) {
@@ -266,7 +266,7 @@ func (UnimplementedTradeAppServer) GetMarginSnapshotList(context.Context, *GetMa
 func (UnimplementedTradeAppServer) GetLeverageConfig(context.Context, *GetLeverageConfigReq) (*GetLeverageConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLeverageConfig not implemented")
 }
-func (UnimplementedTradeAppServer) SetLeverage(context.Context, *SetLeverageReq) (*AppCommonResp, error) {
+func (UnimplementedTradeAppServer) SetLeverage(context.Context, *SetLeverageReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetLeverage not implemented")
 }
 func (UnimplementedTradeAppServer) mustEmbedUnimplementedTradeAppServer() {}
@@ -624,23 +624,23 @@ const (
 // 交易服务管理后台接口
 type TradeAdminClient interface {
 	// 创建交易对
-	CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新交易对信息
-	UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取后台交易对列表
 	GetSymbolListAdmin(ctx context.Context, in *GetSymbolListAdminReq, opts ...grpc.CallOption) (*GetSymbolListAdminResp, error)
 	// 获取交易对详情
 	GetSymbolDetailAdmin(ctx context.Context, in *GetSymbolDetailAdminReq, opts ...grpc.CallOption) (*GetSymbolDetailAdminResp, error)
 	// 设置现货交易对配置
-	SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 设置合约交易对配置
-	SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 设置秒合约产品配置
-	SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 保存交易时段配置
-	SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 保存交易对杠杆档位配置
-	SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取交易对杠杆档位配置
 	GetSymbolLeverageConfig(ctx context.Context, in *GetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigResp, error)
 	// 获取交易对杠杆档位配置列表
@@ -664,25 +664,25 @@ type TradeAdminClient interface {
 	// 获取撤单日志列表
 	GetCancelLogListAdmin(ctx context.Context, in *GetCancelLogListAdminReq, opts ...grpc.CallOption) (*GetCancelLogListAdminResp, error)
 	// 设置用户交易限制
-	SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 设置用户交易对限制
-	SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取用户交易限制
 	GetUserTradeLimit(ctx context.Context, in *GetUserTradeLimitReq, opts ...grpc.CallOption) (*GetUserTradeLimitResp, error)
 	// 获取用户交易对限制
 	GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolLimitReq, opts ...grpc.CallOption) (*GetUserSymbolLimitResp, error)
 	// 设置用户交易配置
-	SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取用户交易配置
 	GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error)
 	// 设置用户合约偏好配置
-	SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取用户合约偏好配置
 	GetContractUserConfig(ctx context.Context, in *GetContractUserConfigReq, opts ...grpc.CallOption) (*GetContractUserConfigResp, error)
 	// 获取风控订单校验日志列表
 	GetRiskOrderCheckLogList(ctx context.Context, in *GetRiskOrderCheckLogListReq, opts ...grpc.CallOption) (*GetRiskOrderCheckLogListResp, error)
 	// 设置用户杠杆配置
-	SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取用户杠杆配置
 	GetUserLeverageConfig(ctx context.Context, in *GetUserLeverageConfigReq, opts ...grpc.CallOption) (*GetUserLeverageConfigResp, error)
 	// 获取交易事件列表
@@ -690,9 +690,9 @@ type TradeAdminClient interface {
 	// 获取交易事件详情
 	GetTradeEventDetail(ctx context.Context, in *GetTradeEventDetailReq, opts ...grpc.CallOption) (*GetTradeEventDetailResp, error)
 	// 重试交易事件
-	RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 保存合约风险限额档位
-	SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取合约风险限额档位列表
 	GetContractRiskLimitTierList(ctx context.Context, in *GetContractRiskLimitTierListReq, opts ...grpc.CallOption) (*GetContractRiskLimitTierListResp, error)
 	// 资金费批次与结算明细（只读）
@@ -707,8 +707,8 @@ type TradeAdminClient interface {
 	GetAssetReservationList(ctx context.Context, in *GetAssetReservationListReq, opts ...grpc.CallOption) (*GetAssetReservationListResp, error)
 	GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error)
 	// 仅重置失败/人工处理的结算指令；不得修改金额
-	RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
-	SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error)
+	SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 	GetInsuranceFundAccountList(ctx context.Context, in *GetInsuranceFundAccountListReq, opts ...grpc.CallOption) (*GetInsuranceFundAccountListResp, error)
 	GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error)
 }
@@ -721,9 +721,9 @@ func NewTradeAdminClient(cc grpc.ClientConnInterface) TradeAdminClient {
 	return &tradeAdminClient{cc}
 }
 
-func (c *tradeAdminClient) CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_CreateSymbol_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -731,9 +731,9 @@ func (c *tradeAdminClient) CreateSymbol(ctx context.Context, in *CreateSymbolReq
 	return out, nil
 }
 
-func (c *tradeAdminClient) UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_UpdateSymbol_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -761,9 +761,9 @@ func (c *tradeAdminClient) GetSymbolDetailAdmin(ctx context.Context, in *GetSymb
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetSpotSymbolConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -771,9 +771,9 @@ func (c *tradeAdminClient) SetSpotSymbolConfig(ctx context.Context, in *SetSpotS
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetContractSymbolConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -781,9 +781,9 @@ func (c *tradeAdminClient) SetContractSymbolConfig(ctx context.Context, in *SetC
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetSecondsSymbolConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -791,9 +791,9 @@ func (c *tradeAdminClient) SetSecondsSymbolConfig(ctx context.Context, in *SetSe
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetSymbolSession_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -801,9 +801,9 @@ func (c *tradeAdminClient) SetSymbolSession(ctx context.Context, in *SetSymbolSe
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetSymbolLeverageConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -921,9 +921,9 @@ func (c *tradeAdminClient) GetCancelLogListAdmin(ctx context.Context, in *GetCan
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetUserTradeLimit_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -931,9 +931,9 @@ func (c *tradeAdminClient) SetUserTradeLimit(ctx context.Context, in *SetUserTra
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetUserSymbolLimit_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -961,9 +961,9 @@ func (c *tradeAdminClient) GetUserSymbolLimit(ctx context.Context, in *GetUserSy
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetUserTradeConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -981,9 +981,9 @@ func (c *tradeAdminClient) GetUserTradeConfig(ctx context.Context, in *GetUserTr
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetContractUserConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1011,9 +1011,9 @@ func (c *tradeAdminClient) GetRiskOrderCheckLogList(ctx context.Context, in *Get
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetUserLeverageConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1051,9 +1051,9 @@ func (c *tradeAdminClient) GetTradeEventDetail(ctx context.Context, in *GetTrade
 	return out, nil
 }
 
-func (c *tradeAdminClient) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_RetryTradeEvent_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1061,9 +1061,9 @@ func (c *tradeAdminClient) RetryTradeEvent(ctx context.Context, in *RetryTradeEv
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetContractRiskLimitTier_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1161,9 +1161,9 @@ func (c *tradeAdminClient) GetSettlementInstructionList(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *tradeAdminClient) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_RetrySettlementInstruction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1171,9 +1171,9 @@ func (c *tradeAdminClient) RetrySettlementInstruction(ctx context.Context, in *R
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *tradeAdminClient) SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetInsuranceFundAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -1208,23 +1208,23 @@ func (c *tradeAdminClient) GetMarketSnapshotList(ctx context.Context, in *GetMar
 // 交易服务管理后台接口
 type TradeAdminServer interface {
 	// 创建交易对
-	CreateSymbol(context.Context, *CreateSymbolReq) (*AdminCommonResp, error)
+	CreateSymbol(context.Context, *CreateSymbolReq) (*CommonResp, error)
 	// 更新交易对信息
-	UpdateSymbol(context.Context, *UpdateSymbolReq) (*AdminCommonResp, error)
+	UpdateSymbol(context.Context, *UpdateSymbolReq) (*CommonResp, error)
 	// 获取后台交易对列表
 	GetSymbolListAdmin(context.Context, *GetSymbolListAdminReq) (*GetSymbolListAdminResp, error)
 	// 获取交易对详情
 	GetSymbolDetailAdmin(context.Context, *GetSymbolDetailAdminReq) (*GetSymbolDetailAdminResp, error)
 	// 设置现货交易对配置
-	SetSpotSymbolConfig(context.Context, *SetSpotSymbolConfigReq) (*AdminCommonResp, error)
+	SetSpotSymbolConfig(context.Context, *SetSpotSymbolConfigReq) (*CommonResp, error)
 	// 设置合约交易对配置
-	SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*AdminCommonResp, error)
+	SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*CommonResp, error)
 	// 设置秒合约产品配置
-	SetSecondsSymbolConfig(context.Context, *SetSecondsSymbolConfigReq) (*AdminCommonResp, error)
+	SetSecondsSymbolConfig(context.Context, *SetSecondsSymbolConfigReq) (*CommonResp, error)
 	// 保存交易时段配置
-	SetSymbolSession(context.Context, *SetSymbolSessionReq) (*AdminCommonResp, error)
+	SetSymbolSession(context.Context, *SetSymbolSessionReq) (*CommonResp, error)
 	// 保存交易对杠杆档位配置
-	SetSymbolLeverageConfig(context.Context, *SetSymbolLeverageConfigReq) (*AdminCommonResp, error)
+	SetSymbolLeverageConfig(context.Context, *SetSymbolLeverageConfigReq) (*CommonResp, error)
 	// 获取交易对杠杆档位配置
 	GetSymbolLeverageConfig(context.Context, *GetSymbolLeverageConfigReq) (*GetSymbolLeverageConfigResp, error)
 	// 获取交易对杠杆档位配置列表
@@ -1248,25 +1248,25 @@ type TradeAdminServer interface {
 	// 获取撤单日志列表
 	GetCancelLogListAdmin(context.Context, *GetCancelLogListAdminReq) (*GetCancelLogListAdminResp, error)
 	// 设置用户交易限制
-	SetUserTradeLimit(context.Context, *SetUserTradeLimitReq) (*AdminCommonResp, error)
+	SetUserTradeLimit(context.Context, *SetUserTradeLimitReq) (*CommonResp, error)
 	// 设置用户交易对限制
-	SetUserSymbolLimit(context.Context, *SetUserSymbolLimitReq) (*AdminCommonResp, error)
+	SetUserSymbolLimit(context.Context, *SetUserSymbolLimitReq) (*CommonResp, error)
 	// 获取用户交易限制
 	GetUserTradeLimit(context.Context, *GetUserTradeLimitReq) (*GetUserTradeLimitResp, error)
 	// 获取用户交易对限制
 	GetUserSymbolLimit(context.Context, *GetUserSymbolLimitReq) (*GetUserSymbolLimitResp, error)
 	// 设置用户交易配置
-	SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*AdminCommonResp, error)
+	SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*CommonResp, error)
 	// 获取用户交易配置
 	GetUserTradeConfig(context.Context, *GetUserTradeConfigReq) (*GetUserTradeConfigResp, error)
 	// 设置用户合约偏好配置
-	SetContractUserConfig(context.Context, *SetContractUserConfigReq) (*AdminCommonResp, error)
+	SetContractUserConfig(context.Context, *SetContractUserConfigReq) (*CommonResp, error)
 	// 获取用户合约偏好配置
 	GetContractUserConfig(context.Context, *GetContractUserConfigReq) (*GetContractUserConfigResp, error)
 	// 获取风控订单校验日志列表
 	GetRiskOrderCheckLogList(context.Context, *GetRiskOrderCheckLogListReq) (*GetRiskOrderCheckLogListResp, error)
 	// 设置用户杠杆配置
-	SetUserLeverageConfig(context.Context, *SetUserLeverageConfigReq) (*AdminCommonResp, error)
+	SetUserLeverageConfig(context.Context, *SetUserLeverageConfigReq) (*CommonResp, error)
 	// 获取用户杠杆配置
 	GetUserLeverageConfig(context.Context, *GetUserLeverageConfigReq) (*GetUserLeverageConfigResp, error)
 	// 获取交易事件列表
@@ -1274,9 +1274,9 @@ type TradeAdminServer interface {
 	// 获取交易事件详情
 	GetTradeEventDetail(context.Context, *GetTradeEventDetailReq) (*GetTradeEventDetailResp, error)
 	// 重试交易事件
-	RetryTradeEvent(context.Context, *RetryTradeEventReq) (*AdminCommonResp, error)
+	RetryTradeEvent(context.Context, *RetryTradeEventReq) (*CommonResp, error)
 	// 保存合约风险限额档位
-	SetContractRiskLimitTier(context.Context, *SetContractRiskLimitTierReq) (*AdminCommonResp, error)
+	SetContractRiskLimitTier(context.Context, *SetContractRiskLimitTierReq) (*CommonResp, error)
 	// 获取合约风险限额档位列表
 	GetContractRiskLimitTierList(context.Context, *GetContractRiskLimitTierListReq) (*GetContractRiskLimitTierListResp, error)
 	// 资金费批次与结算明细（只读）
@@ -1291,8 +1291,8 @@ type TradeAdminServer interface {
 	GetAssetReservationList(context.Context, *GetAssetReservationListReq) (*GetAssetReservationListResp, error)
 	GetSettlementInstructionList(context.Context, *GetSettlementInstructionListReq) (*GetSettlementInstructionListResp, error)
 	// 仅重置失败/人工处理的结算指令；不得修改金额
-	RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*AdminCommonResp, error)
-	SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*AdminCommonResp, error)
+	RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*CommonResp, error)
+	SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*CommonResp, error)
 	GetInsuranceFundAccountList(context.Context, *GetInsuranceFundAccountListReq) (*GetInsuranceFundAccountListResp, error)
 	GetMarketSnapshotList(context.Context, *GetMarketSnapshotListReq) (*GetMarketSnapshotListResp, error)
 	mustEmbedUnimplementedTradeAdminServer()
@@ -1305,10 +1305,10 @@ type TradeAdminServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTradeAdminServer struct{}
 
-func (UnimplementedTradeAdminServer) CreateSymbol(context.Context, *CreateSymbolReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) CreateSymbol(context.Context, *CreateSymbolReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateSymbol not implemented")
 }
-func (UnimplementedTradeAdminServer) UpdateSymbol(context.Context, *UpdateSymbolReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) UpdateSymbol(context.Context, *UpdateSymbolReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateSymbol not implemented")
 }
 func (UnimplementedTradeAdminServer) GetSymbolListAdmin(context.Context, *GetSymbolListAdminReq) (*GetSymbolListAdminResp, error) {
@@ -1317,19 +1317,19 @@ func (UnimplementedTradeAdminServer) GetSymbolListAdmin(context.Context, *GetSym
 func (UnimplementedTradeAdminServer) GetSymbolDetailAdmin(context.Context, *GetSymbolDetailAdminReq) (*GetSymbolDetailAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSymbolDetailAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) SetSpotSymbolConfig(context.Context, *SetSpotSymbolConfigReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetSpotSymbolConfig(context.Context, *SetSpotSymbolConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetSpotSymbolConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetContractSymbolConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) SetSecondsSymbolConfig(context.Context, *SetSecondsSymbolConfigReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetSecondsSymbolConfig(context.Context, *SetSecondsSymbolConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetSecondsSymbolConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) SetSymbolSession(context.Context, *SetSymbolSessionReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetSymbolSession(context.Context, *SetSymbolSessionReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetSymbolSession not implemented")
 }
-func (UnimplementedTradeAdminServer) SetSymbolLeverageConfig(context.Context, *SetSymbolLeverageConfigReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetSymbolLeverageConfig(context.Context, *SetSymbolLeverageConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetSymbolLeverageConfig not implemented")
 }
 func (UnimplementedTradeAdminServer) GetSymbolLeverageConfig(context.Context, *GetSymbolLeverageConfigReq) (*GetSymbolLeverageConfigResp, error) {
@@ -1365,10 +1365,10 @@ func (UnimplementedTradeAdminServer) GetMarginSnapshotListAdmin(context.Context,
 func (UnimplementedTradeAdminServer) GetCancelLogListAdmin(context.Context, *GetCancelLogListAdminReq) (*GetCancelLogListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCancelLogListAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) SetUserTradeLimit(context.Context, *SetUserTradeLimitReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetUserTradeLimit(context.Context, *SetUserTradeLimitReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetUserTradeLimit not implemented")
 }
-func (UnimplementedTradeAdminServer) SetUserSymbolLimit(context.Context, *SetUserSymbolLimitReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetUserSymbolLimit(context.Context, *SetUserSymbolLimitReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetUserSymbolLimit not implemented")
 }
 func (UnimplementedTradeAdminServer) GetUserTradeLimit(context.Context, *GetUserTradeLimitReq) (*GetUserTradeLimitResp, error) {
@@ -1377,13 +1377,13 @@ func (UnimplementedTradeAdminServer) GetUserTradeLimit(context.Context, *GetUser
 func (UnimplementedTradeAdminServer) GetUserSymbolLimit(context.Context, *GetUserSymbolLimitReq) (*GetUserSymbolLimitResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserSymbolLimit not implemented")
 }
-func (UnimplementedTradeAdminServer) SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetUserTradeConfig not implemented")
 }
 func (UnimplementedTradeAdminServer) GetUserTradeConfig(context.Context, *GetUserTradeConfigReq) (*GetUserTradeConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserTradeConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) SetContractUserConfig(context.Context, *SetContractUserConfigReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetContractUserConfig(context.Context, *SetContractUserConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetContractUserConfig not implemented")
 }
 func (UnimplementedTradeAdminServer) GetContractUserConfig(context.Context, *GetContractUserConfigReq) (*GetContractUserConfigResp, error) {
@@ -1392,7 +1392,7 @@ func (UnimplementedTradeAdminServer) GetContractUserConfig(context.Context, *Get
 func (UnimplementedTradeAdminServer) GetRiskOrderCheckLogList(context.Context, *GetRiskOrderCheckLogListReq) (*GetRiskOrderCheckLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRiskOrderCheckLogList not implemented")
 }
-func (UnimplementedTradeAdminServer) SetUserLeverageConfig(context.Context, *SetUserLeverageConfigReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetUserLeverageConfig(context.Context, *SetUserLeverageConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetUserLeverageConfig not implemented")
 }
 func (UnimplementedTradeAdminServer) GetUserLeverageConfig(context.Context, *GetUserLeverageConfigReq) (*GetUserLeverageConfigResp, error) {
@@ -1404,10 +1404,10 @@ func (UnimplementedTradeAdminServer) GetTradeEventList(context.Context, *GetTrad
 func (UnimplementedTradeAdminServer) GetTradeEventDetail(context.Context, *GetTradeEventDetailReq) (*GetTradeEventDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTradeEventDetail not implemented")
 }
-func (UnimplementedTradeAdminServer) RetryTradeEvent(context.Context, *RetryTradeEventReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) RetryTradeEvent(context.Context, *RetryTradeEventReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryTradeEvent not implemented")
 }
-func (UnimplementedTradeAdminServer) SetContractRiskLimitTier(context.Context, *SetContractRiskLimitTierReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetContractRiskLimitTier(context.Context, *SetContractRiskLimitTierReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetContractRiskLimitTier not implemented")
 }
 func (UnimplementedTradeAdminServer) GetContractRiskLimitTierList(context.Context, *GetContractRiskLimitTierListReq) (*GetContractRiskLimitTierListResp, error) {
@@ -1437,10 +1437,10 @@ func (UnimplementedTradeAdminServer) GetAssetReservationList(context.Context, *G
 func (UnimplementedTradeAdminServer) GetSettlementInstructionList(context.Context, *GetSettlementInstructionListReq) (*GetSettlementInstructionListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSettlementInstructionList not implemented")
 }
-func (UnimplementedTradeAdminServer) RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetrySettlementInstruction not implemented")
 }
-func (UnimplementedTradeAdminServer) SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*AdminCommonResp, error) {
+func (UnimplementedTradeAdminServer) SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetInsuranceFundAccount not implemented")
 }
 func (UnimplementedTradeAdminServer) GetInsuranceFundAccountList(context.Context, *GetInsuranceFundAccountListReq) (*GetInsuranceFundAccountListResp, error) {

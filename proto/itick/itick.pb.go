@@ -22,26 +22,26 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AppEmpty struct {
+type Empty struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppEmpty) Reset() {
-	*x = AppEmpty{}
+func (x *Empty) Reset() {
+	*x = Empty{}
 	mi := &file_proto_itick_itick_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppEmpty) String() string {
+func (x *Empty) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppEmpty) ProtoMessage() {}
+func (*Empty) ProtoMessage() {}
 
-func (x *AppEmpty) ProtoReflect() protoreflect.Message {
+func (x *Empty) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_itick_itick_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -53,32 +53,32 @@ func (x *AppEmpty) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppEmpty.ProtoReflect.Descriptor instead.
-func (*AppEmpty) Descriptor() ([]byte, []int) {
+// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
+func (*Empty) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_proto_rawDescGZIP(), []int{0}
 }
 
-type AppCommonResp struct {
+type UserCommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppCommonResp) Reset() {
-	*x = AppCommonResp{}
+func (x *UserCommonResp) Reset() {
+	*x = UserCommonResp{}
 	mi := &file_proto_itick_itick_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppCommonResp) String() string {
+func (x *UserCommonResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppCommonResp) ProtoMessage() {}
+func (*UserCommonResp) ProtoMessage() {}
 
-func (x *AppCommonResp) ProtoReflect() protoreflect.Message {
+func (x *UserCommonResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_itick_itick_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -90,12 +90,12 @@ func (x *AppCommonResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppCommonResp.ProtoReflect.Descriptor instead.
-func (*AppCommonResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserCommonResp.ProtoReflect.Descriptor instead.
+func (*UserCommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AppCommonResp) GetBase() *common.RespBase {
+func (x *UserCommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1182,27 +1182,27 @@ func (x *KlineIntervalsResp) GetData() []*KlineInterval {
 	return nil
 }
 
-type AdminCommonResp struct {
+type CommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminCommonResp) Reset() {
-	*x = AdminCommonResp{}
+func (x *CommonResp) Reset() {
+	*x = CommonResp{}
 	mi := &file_proto_itick_itick_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminCommonResp) String() string {
+func (x *CommonResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminCommonResp) ProtoMessage() {}
+func (*CommonResp) ProtoMessage() {}
 
-func (x *AdminCommonResp) ProtoReflect() protoreflect.Message {
+func (x *CommonResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_itick_itick_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1214,12 +1214,12 @@ func (x *AdminCommonResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminCommonResp.ProtoReflect.Descriptor instead.
-func (*AdminCommonResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use CommonResp.ProtoReflect.Descriptor instead.
+func (*CommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *AdminCommonResp) GetBase() *common.RespBase {
+func (x *CommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -5122,10 +5122,9 @@ var File_proto_itick_itick_proto protoreflect.FileDescriptor
 
 const file_proto_itick_itick_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/itick/itick.proto\x12\x05itick\x1a\x19proto/common/common.proto\x1a\x16proto/itick/enum.proto\x1a\x17proto/itick/model.proto\"\n" +
-	"\n" +
-	"\bAppEmpty\"5\n" +
-	"\rAppCommonResp\x12$\n" +
+	"\x17proto/itick/itick.proto\x12\x05itick\x1a\x19proto/common/common.proto\x1a\x16proto/itick/enum.proto\x1a\x17proto/itick/model.proto\"\a\n" +
+	"\x05Empty\"6\n" +
+	"\x0eUserCommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"?\n" +
 	"\x18ListVisibleCategoriesReq\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"q\n" +
@@ -5199,8 +5198,9 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x15\n" +
 	"\x06k_type\x18\x02 \x01(\x05R\x05kType\">\n" +
 	"\x12KlineIntervalsResp\x12(\n" +
-	"\x04data\x18\x01 \x03(\v2\x14.itick.KlineIntervalR\x04data\"7\n" +
-	"\x0fAdminCommonResp\x12$\n" +
+	"\x04data\x18\x01 \x03(\v2\x14.itick.KlineIntervalR\x04data\"2\n" +
+	"\n" +
+	"CommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xcc\x02\n" +
 	"\x11CreateCategoryReq\x128\n" +
 	"\rcategory_type\x18\x01 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
@@ -5524,7 +5524,7 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x0f\n" +
 	"\rSyncKlinesReq\"6\n" +
 	"\x0eSyncKlinesResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\xd0\x04\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\xcd\x04\n" +
 	"\bItickApp\x12Z\n" +
 	"\x15ListVisibleCategories\x12\x1f.itick.ListVisibleCategoriesReq\x1a .itick.ListVisibleCategoriesResp\x12T\n" +
 	"\x13ListVisibleProducts\x12\x1d.itick.ListVisibleProductsReq\x1a\x1e.itick.ListVisibleProductsResp\x123\n" +
@@ -5532,43 +5532,43 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\bGetQuote\x12\x12.itick.GetQuoteReq\x1a\x13.itick.GetQuoteResp\x12B\n" +
 	"\rBatchGetQuote\x12\x17.itick.BatchGetQuoteReq\x1a\x18.itick.BatchGetQuoteResp\x12c\n" +
 	"\x18GetAuthoritativeSnapshot\x12\".itick.GetAuthoritativeSnapshotReq\x1a#.itick.GetAuthoritativeSnapshotResp\x12>\n" +
-	"\x0fSubscribeStream\x12\x17.itick.SubscribeRequest\x1a\x10.itick.PushReply0\x01\x12?\n" +
-	"\x11GetKlineIntervals\x12\x0f.itick.AppEmpty\x1a\x19.itick.KlineIntervalsResp2t\n" +
+	"\x0fSubscribeStream\x12\x17.itick.SubscribeRequest\x1a\x10.itick.PushReply0\x01\x12<\n" +
+	"\x11GetKlineIntervals\x12\f.itick.Empty\x1a\x19.itick.KlineIntervalsResp2t\n" +
 	"\rItickInternal\x12c\n" +
-	"\x18GetAuthoritativeSnapshot\x12\".itick.GetAuthoritativeSnapshotReq\x1a#.itick.GetAuthoritativeSnapshotResp2\xc2\x12\n" +
+	"\x18GetAuthoritativeSnapshot\x12\".itick.GetAuthoritativeSnapshotReq\x1a#.itick.GetAuthoritativeSnapshotResp2\x81\x12\n" +
 	"\n" +
 	"ItickAdmin\x12E\n" +
-	"\x0eListCategories\x12\x18.itick.ListCategoriesReq\x1a\x19.itick.ListCategoriesResp\x12B\n" +
-	"\x0eCreateCategory\x12\x18.itick.CreateCategoryReq\x1a\x16.itick.AdminCommonResp\x12B\n" +
-	"\x0eUpdateCategory\x12\x18.itick.UpdateCategoryReq\x1a\x16.itick.AdminCommonResp\x12<\n" +
+	"\x0eListCategories\x12\x18.itick.ListCategoriesReq\x1a\x19.itick.ListCategoriesResp\x12=\n" +
+	"\x0eCreateCategory\x12\x18.itick.CreateCategoryReq\x1a\x11.itick.CommonResp\x12=\n" +
+	"\x0eUpdateCategory\x12\x18.itick.UpdateCategoryReq\x1a\x11.itick.CommonResp\x12<\n" +
 	"\vGetCategory\x12\x15.itick.GetCategoryReq\x1a\x16.itick.GetCategoryResp\x12W\n" +
 	"\x14SyncCategoryProducts\x12\x1e.itick.SyncCategoryProductsReq\x1a\x1f.itick.SyncCategoryProductsResp\x12N\n" +
 	"\x11GetSyncTaskStatus\x12\x1b.itick.GetSyncTaskStatusReq\x1a\x1c.itick.GetSyncTaskStatusResp\x12?\n" +
-	"\fListProducts\x12\x16.itick.ListProductsReq\x1a\x17.itick.ListProductsResp\x12@\n" +
-	"\rCreateProduct\x12\x17.itick.CreateProductReq\x1a\x16.itick.AdminCommonResp\x12@\n" +
-	"\rUpdateProduct\x12\x17.itick.UpdateProductReq\x1a\x16.itick.AdminCommonResp\x129\n" +
+	"\fListProducts\x12\x16.itick.ListProductsReq\x1a\x17.itick.ListProductsResp\x12;\n" +
+	"\rCreateProduct\x12\x17.itick.CreateProductReq\x1a\x11.itick.CommonResp\x12;\n" +
+	"\rUpdateProduct\x12\x17.itick.UpdateProductReq\x1a\x11.itick.CommonResp\x129\n" +
 	"\n" +
 	"GetProduct\x12\x14.itick.GetProductReq\x1a\x15.itick.GetProductResp\x12H\n" +
 	"\x0fGetProductKline\x12\x19.itick.GetProductKlineReq\x1a\x1a.itick.GetProductKlineResp\x12`\n" +
 	"\x17SyncProductKlineHistory\x12!.itick.SyncProductKlineHistoryReq\x1a\".itick.SyncProductKlineHistoryResp\x12W\n" +
-	"\x14ListTenantCategories\x12\x1e.itick.ListTenantCategoriesReq\x1a\x1f.itick.ListTenantCategoriesResp\x12N\n" +
-	"\x14CreateTenantCategory\x12\x1e.itick.CreateTenantCategoryReq\x1a\x16.itick.AdminCommonResp\x12N\n" +
-	"\x14UpdateTenantCategory\x12\x1e.itick.UpdateTenantCategoryReq\x1a\x16.itick.AdminCommonResp\x12\\\n" +
-	"\x1bBatchUpsertTenantCategories\x12%.itick.BatchUpsertTenantCategoriesReq\x1a\x16.itick.AdminCommonResp\x12N\n" +
+	"\x14ListTenantCategories\x12\x1e.itick.ListTenantCategoriesReq\x1a\x1f.itick.ListTenantCategoriesResp\x12I\n" +
+	"\x14CreateTenantCategory\x12\x1e.itick.CreateTenantCategoryReq\x1a\x11.itick.CommonResp\x12I\n" +
+	"\x14UpdateTenantCategory\x12\x1e.itick.UpdateTenantCategoryReq\x1a\x11.itick.CommonResp\x12W\n" +
+	"\x1bBatchUpsertTenantCategories\x12%.itick.BatchUpsertTenantCategoriesReq\x1a\x11.itick.CommonResp\x12N\n" +
 	"\x11GetTenantCategory\x12\x1b.itick.GetTenantCategoryReq\x1a\x1c.itick.GetTenantCategoryResp\x12Q\n" +
-	"\x12ListTenantProducts\x12\x1c.itick.ListTenantProductsReq\x1a\x1d.itick.ListTenantProductsResp\x12L\n" +
-	"\x13CreateTenantProduct\x12\x1d.itick.CreateTenantProductReq\x1a\x16.itick.AdminCommonResp\x12L\n" +
-	"\x13UpdateTenantProduct\x12\x1d.itick.UpdateTenantProductReq\x1a\x16.itick.AdminCommonResp\x12X\n" +
-	"\x19BatchUpsertTenantProducts\x12#.itick.BatchUpsertTenantProductsReq\x1a\x16.itick.AdminCommonResp\x12K\n" +
+	"\x12ListTenantProducts\x12\x1c.itick.ListTenantProductsReq\x1a\x1d.itick.ListTenantProductsResp\x12G\n" +
+	"\x13CreateTenantProduct\x12\x1d.itick.CreateTenantProductReq\x1a\x11.itick.CommonResp\x12G\n" +
+	"\x13UpdateTenantProduct\x12\x1d.itick.UpdateTenantProductReq\x1a\x11.itick.CommonResp\x12S\n" +
+	"\x19BatchUpsertTenantProducts\x12#.itick.BatchUpsertTenantProductsReq\x1a\x11.itick.CommonResp\x12K\n" +
 	"\x10GetTenantProduct\x12\x1a.itick.GetTenantProductReq\x1a\x1b.itick.GetTenantProductResp\x12]\n" +
 	"\x16InitTenantItickDisplay\x12 .itick.InitTenantItickDisplayReq\x1a!.itick.InitTenantItickDisplayResp\x12K\n" +
 	"\x12CreatePriceFormula\x12\x1c.itick.CreatePriceFormulaReq\x1a\x17.itick.PriceFormulaResp\x12B\n" +
 	"\x0fGetPriceFormula\x12\x16.itick.PriceFormulaReq\x1a\x17.itick.PriceFormulaResp\x12N\n" +
-	"\x11ListPriceFormulas\x12\x1b.itick.ListPriceFormulasReq\x1a\x1c.itick.ListPriceFormulasResp\x12V\n" +
-	"\x18ChangePriceFormulaStatus\x12\".itick.ChangePriceFormulaStatusReq\x1a\x16.itick.AdminCommonResp\x12Q\n" +
-	"\x12ListSnapshotOutbox\x12\x1c.itick.ListSnapshotOutboxReq\x1a\x1d.itick.ListSnapshotOutboxResp\x12L\n" +
-	"\x13RetrySnapshotOutbox\x12\x1d.itick.RetrySnapshotOutboxReq\x1a\x16.itick.AdminCommonResp\x12\\\n" +
-	"\x1bRevokeAuthoritativeSnapshot\x12%.itick.RevokeAuthoritativeSnapshotReq\x1a\x16.itick.AdminCommonResp2\x87\x01\n" +
+	"\x11ListPriceFormulas\x12\x1b.itick.ListPriceFormulasReq\x1a\x1c.itick.ListPriceFormulasResp\x12Q\n" +
+	"\x18ChangePriceFormulaStatus\x12\".itick.ChangePriceFormulaStatusReq\x1a\x11.itick.CommonResp\x12Q\n" +
+	"\x12ListSnapshotOutbox\x12\x1c.itick.ListSnapshotOutboxReq\x1a\x1d.itick.ListSnapshotOutboxResp\x12G\n" +
+	"\x13RetrySnapshotOutbox\x12\x1d.itick.RetrySnapshotOutboxReq\x1a\x11.itick.CommonResp\x12W\n" +
+	"\x1bRevokeAuthoritativeSnapshot\x12%.itick.RevokeAuthoritativeSnapshotReq\x1a\x11.itick.CommonResp2\x87\x01\n" +
 	"\tItickTask\x12?\n" +
 	"\fSyncProducts\x12\x16.itick.SyncProductsReq\x1a\x17.itick.SyncProductsResp\x129\n" +
 	"\n" +
@@ -5588,8 +5588,8 @@ func file_proto_itick_itick_proto_rawDescGZIP() []byte {
 
 var file_proto_itick_itick_proto_msgTypes = make([]protoimpl.MessageInfo, 78)
 var file_proto_itick_itick_proto_goTypes = []any{
-	(*AppEmpty)(nil),                       // 0: itick.AppEmpty
-	(*AppCommonResp)(nil),                  // 1: itick.AppCommonResp
+	(*Empty)(nil),                          // 0: itick.Empty
+	(*UserCommonResp)(nil),                 // 1: itick.UserCommonResp
 	(*ListVisibleCategoriesReq)(nil),       // 2: itick.ListVisibleCategoriesReq
 	(*ListVisibleCategoriesResp)(nil),      // 3: itick.ListVisibleCategoriesResp
 	(*ListVisibleProductsReq)(nil),         // 4: itick.ListVisibleProductsReq
@@ -5608,7 +5608,7 @@ var file_proto_itick_itick_proto_goTypes = []any{
 	(*PushReply)(nil),                      // 17: itick.PushReply
 	(*KlineInterval)(nil),                  // 18: itick.KlineInterval
 	(*KlineIntervalsResp)(nil),             // 19: itick.KlineIntervalsResp
-	(*AdminCommonResp)(nil),                // 20: itick.AdminCommonResp
+	(*CommonResp)(nil),                     // 20: itick.CommonResp
 	(*CreateCategoryReq)(nil),              // 21: itick.CreateCategoryReq
 	(*UpdateCategoryReq)(nil),              // 22: itick.UpdateCategoryReq
 	(*GetCategoryReq)(nil),                 // 23: itick.GetCategoryReq
@@ -5683,7 +5683,7 @@ var file_proto_itick_itick_proto_goTypes = []any{
 	(PriceAlgorithm)(0),                    // 92: itick.PriceAlgorithm
 }
 var file_proto_itick_itick_proto_depIdxs = []int32{
-	78,  // 0: itick.AppCommonResp.base:type_name -> common.RespBase
+	78,  // 0: itick.UserCommonResp.base:type_name -> common.RespBase
 	79,  // 1: itick.ListVisibleCategoriesReq.page:type_name -> common.PageReq
 	78,  // 2: itick.ListVisibleCategoriesResp.base:type_name -> common.RespBase
 	80,  // 3: itick.ListVisibleCategoriesResp.data:type_name -> itick.ItickTenantCategory
@@ -5703,7 +5703,7 @@ var file_proto_itick_itick_proto_depIdxs = []int32{
 	86,  // 17: itick.GetAuthoritativeSnapshotResp.data:type_name -> itick.AuthoritativeSnapshot
 	16,  // 18: itick.SubscribeRequest.topics:type_name -> itick.SubscribeTopic
 	18,  // 19: itick.KlineIntervalsResp.data:type_name -> itick.KlineInterval
-	78,  // 20: itick.AdminCommonResp.base:type_name -> common.RespBase
+	78,  // 20: itick.CommonResp.base:type_name -> common.RespBase
 	81,  // 21: itick.CreateCategoryReq.category_type:type_name -> itick.CategoryType
 	87,  // 22: itick.CreateCategoryReq.enabled:type_name -> common.Enable
 	88,  // 23: itick.CreateCategoryReq.app_visible:type_name -> common.Switch
@@ -5795,7 +5795,7 @@ var file_proto_itick_itick_proto_depIdxs = []int32{
 	11,  // 109: itick.ItickApp.BatchGetQuote:input_type -> itick.BatchGetQuoteReq
 	13,  // 110: itick.ItickApp.GetAuthoritativeSnapshot:input_type -> itick.GetAuthoritativeSnapshotReq
 	15,  // 111: itick.ItickApp.SubscribeStream:input_type -> itick.SubscribeRequest
-	0,   // 112: itick.ItickApp.GetKlineIntervals:input_type -> itick.AppEmpty
+	0,   // 112: itick.ItickApp.GetKlineIntervals:input_type -> itick.Empty
 	13,  // 113: itick.ItickInternal.GetAuthoritativeSnapshot:input_type -> itick.GetAuthoritativeSnapshotReq
 	25,  // 114: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
 	21,  // 115: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
@@ -5839,35 +5839,35 @@ var file_proto_itick_itick_proto_depIdxs = []int32{
 	19,  // 153: itick.ItickApp.GetKlineIntervals:output_type -> itick.KlineIntervalsResp
 	14,  // 154: itick.ItickInternal.GetAuthoritativeSnapshot:output_type -> itick.GetAuthoritativeSnapshotResp
 	26,  // 155: itick.ItickAdmin.ListCategories:output_type -> itick.ListCategoriesResp
-	20,  // 156: itick.ItickAdmin.CreateCategory:output_type -> itick.AdminCommonResp
-	20,  // 157: itick.ItickAdmin.UpdateCategory:output_type -> itick.AdminCommonResp
+	20,  // 156: itick.ItickAdmin.CreateCategory:output_type -> itick.CommonResp
+	20,  // 157: itick.ItickAdmin.UpdateCategory:output_type -> itick.CommonResp
 	24,  // 158: itick.ItickAdmin.GetCategory:output_type -> itick.GetCategoryResp
 	28,  // 159: itick.ItickAdmin.SyncCategoryProducts:output_type -> itick.SyncCategoryProductsResp
 	30,  // 160: itick.ItickAdmin.GetSyncTaskStatus:output_type -> itick.GetSyncTaskStatusResp
 	37,  // 161: itick.ItickAdmin.ListProducts:output_type -> itick.ListProductsResp
-	20,  // 162: itick.ItickAdmin.CreateProduct:output_type -> itick.AdminCommonResp
-	20,  // 163: itick.ItickAdmin.UpdateProduct:output_type -> itick.AdminCommonResp
+	20,  // 162: itick.ItickAdmin.CreateProduct:output_type -> itick.CommonResp
+	20,  // 163: itick.ItickAdmin.UpdateProduct:output_type -> itick.CommonResp
 	35,  // 164: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
 	39,  // 165: itick.ItickAdmin.GetProductKline:output_type -> itick.GetProductKlineResp
 	41,  // 166: itick.ItickAdmin.SyncProductKlineHistory:output_type -> itick.SyncProductKlineHistoryResp
 	49,  // 167: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
-	20,  // 168: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.AdminCommonResp
-	20,  // 169: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.AdminCommonResp
-	20,  // 170: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.AdminCommonResp
+	20,  // 168: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.CommonResp
+	20,  // 169: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.CommonResp
+	20,  // 170: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.CommonResp
 	47,  // 171: itick.ItickAdmin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
 	57,  // 172: itick.ItickAdmin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
-	20,  // 173: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.AdminCommonResp
-	20,  // 174: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.AdminCommonResp
-	20,  // 175: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.AdminCommonResp
+	20,  // 173: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.CommonResp
+	20,  // 174: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.CommonResp
+	20,  // 175: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.CommonResp
 	55,  // 176: itick.ItickAdmin.GetTenantProduct:output_type -> itick.GetTenantProductResp
 	59,  // 177: itick.ItickAdmin.InitTenantItickDisplay:output_type -> itick.InitTenantItickDisplayResp
 	67,  // 178: itick.ItickAdmin.CreatePriceFormula:output_type -> itick.PriceFormulaResp
 	67,  // 179: itick.ItickAdmin.GetPriceFormula:output_type -> itick.PriceFormulaResp
 	68,  // 180: itick.ItickAdmin.ListPriceFormulas:output_type -> itick.ListPriceFormulasResp
-	20,  // 181: itick.ItickAdmin.ChangePriceFormulaStatus:output_type -> itick.AdminCommonResp
+	20,  // 181: itick.ItickAdmin.ChangePriceFormulaStatus:output_type -> itick.CommonResp
 	71,  // 182: itick.ItickAdmin.ListSnapshotOutbox:output_type -> itick.ListSnapshotOutboxResp
-	20,  // 183: itick.ItickAdmin.RetrySnapshotOutbox:output_type -> itick.AdminCommonResp
-	20,  // 184: itick.ItickAdmin.RevokeAuthoritativeSnapshot:output_type -> itick.AdminCommonResp
+	20,  // 183: itick.ItickAdmin.RetrySnapshotOutbox:output_type -> itick.CommonResp
+	20,  // 184: itick.ItickAdmin.RevokeAuthoritativeSnapshot:output_type -> itick.CommonResp
 	75,  // 185: itick.ItickTask.SyncProducts:output_type -> itick.SyncProductsResp
 	77,  // 186: itick.ItickTask.SyncKlines:output_type -> itick.SyncKlinesResp
 	146, // [146:187] is the sub-list for method output_type

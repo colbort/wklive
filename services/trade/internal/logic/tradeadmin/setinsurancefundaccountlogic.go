@@ -23,6 +23,6 @@ func NewSetInsuranceFundAccountLogic(ctx context.Context, svcCtx *svc.ServiceCon
 	}
 }
 
-func (l *SetInsuranceFundAccountLogic) SetInsuranceFundAccount(in *trade.SetInsuranceFundAccountReq) (*trade.AdminCommonResp, error) {
+func (l *SetInsuranceFundAccountLogic) SetInsuranceFundAccount(in *trade.SetInsuranceFundAccountReq) (*trade.CommonResp, error) {
 	return NewAdminInsuranceSnapshotLogic(l.ctx, l.svcCtx).SetInsuranceFundAccount(in)
 }

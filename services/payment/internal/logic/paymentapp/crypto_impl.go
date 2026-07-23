@@ -16,7 +16,7 @@ import (
 	"wklive/services/payment/models"
 )
 
-func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoRechargeAddressReq) (*payment.AdminCommonResp, error) {
+func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoRechargeAddressReq) (*payment.CommonResp, error) {
 	now := utils.NowMillis()
 	status := toCryptoAddressStatusDB(in.Status, int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED))
 	if in.AddressSource == 0 {
@@ -42,10 +42,10 @@ func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 	if err != nil {
 		return nil, err
 	}
-	return &payment.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &payment.CommonResp{Base: helper.OkResp()}, nil
 }
 
-func updateCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.UpdateCryptoRechargeAddressReq) (*payment.AdminCommonResp, error) {
+func updateCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.UpdateCryptoRechargeAddressReq) (*payment.CommonResp, error) {
 	item, err := svcCtx.CryptoRechargeAddressModel.FindOne(ctx, in.Id)
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func updateCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 	if err := svcCtx.CryptoRechargeAddressModel.Update(ctx, item); err != nil {
 		return nil, err
 	}
-	return &payment.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &payment.CommonResp{Base: helper.OkResp()}, nil
 }
 
 func getCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, tenantId int64, id int64) (*models.TCryptoRechargeAddress, error) {
@@ -117,7 +117,7 @@ func listCryptoRechargeAddresses(ctx context.Context, svcCtx *svc.ServiceContext
 	}, nil
 }
 
-func createCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoWalletAccountReq) (*payment.AdminCommonResp, error) {
+func createCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoWalletAccountReq) (*payment.CommonResp, error) {
 	now := utils.NowMillis()
 	isDefault := int64(in.IsDefault)
 	if common.YesNo(in.IsDefault) == common.YesNo_YES_NO_UNKNOWN {
@@ -140,10 +140,10 @@ func createCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if err != nil {
 		return nil, err
 	}
-	return &payment.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &payment.CommonResp{Base: helper.OkResp()}, nil
 }
 
-func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.UpdateCryptoWalletAccountReq) (*payment.AdminCommonResp, error) {
+func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.UpdateCryptoWalletAccountReq) (*payment.CommonResp, error) {
 	item, err := svcCtx.CryptoWalletAccountModel.FindOne(ctx, in.Id)
 	if err != nil {
 		return nil, err
@@ -184,7 +184,7 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if err := svcCtx.CryptoWalletAccountModel.Update(ctx, item); err != nil {
 		return nil, err
 	}
-	return &payment.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &payment.CommonResp{Base: helper.OkResp()}, nil
 }
 
 func listCryptoWalletAccounts(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.ListCryptoWalletAccountsReq) (*payment.ListCryptoWalletAccountsResp, error) {
@@ -208,7 +208,7 @@ func listCryptoWalletAccounts(ctx context.Context, svcCtx *svc.ServiceContext, i
 	}, nil
 }
 
-func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoRechargeTxReq) (*payment.AdminCommonResp, error) {
+func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoRechargeTxReq) (*payment.CommonResp, error) {
 	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		return nil, err
@@ -242,10 +242,10 @@ func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 			return nil, err
 		}
 	}
-	return &payment.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &payment.CommonResp{Base: helper.OkResp()}, nil
 }
 
-func updateCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.UpdateCryptoRechargeTxReq) (*payment.AdminCommonResp, error) {
+func updateCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.UpdateCryptoRechargeTxReq) (*payment.CommonResp, error) {
 	item, err := svcCtx.CryptoRechargeTxModel.FindOne(ctx, in.Id)
 	if err != nil {
 		return nil, err
@@ -287,7 +287,7 @@ func updateCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 	if err := svcCtx.CryptoRechargeTxModel.Update(ctx, item); err != nil {
 		return nil, err
 	}
-	return &payment.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &payment.CommonResp{Base: helper.OkResp()}, nil
 }
 
 func creditCryptoRechargeOrder(ctx context.Context, svcCtx *svc.ServiceContext, orderNo string, txHash string) error {
@@ -335,18 +335,18 @@ func applyAdminTenantUpdateScope(
 	ctx context.Context,
 	currentTenantId int64,
 	notFoundCode int32,
-) (bool, *payment.AdminCommonResp, error) {
+) (bool, *payment.CommonResp, error) {
 	allowTenantUpdate, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(ctx, currentTenantId)
 	if err != nil {
 		return false, nil, i18n.StatusError(ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return false, &payment.AdminCommonResp{
+		return false, &payment.CommonResp{
 			Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)),
 		}, nil
 	}
 	if !allowed {
-		return false, &payment.AdminCommonResp{
+		return false, &payment.CommonResp{
 			Base: helper.ErrResp(notFoundCode, i18n.Translate(notFoundCode, ctx)),
 		}, nil
 	}
@@ -378,8 +378,8 @@ func lastCryptoTxID(items []*models.TCryptoRechargeTx) int64 {
 	return items[len(items)-1].Id
 }
 
-func cryptoNotFoundResp() *payment.AdminCommonResp {
-	return &payment.AdminCommonResp{Base: helper.ErrResp(i18n.NotFound, i18n.Translate(i18n.NotFound, context.Background()))}
+func cryptoNotFoundResp() *payment.CommonResp {
+	return &payment.CommonResp{Base: helper.ErrResp(i18n.NotFound, i18n.Translate(i18n.NotFound, context.Background()))}
 }
 
 func isNotFound(err error) bool {

@@ -223,32 +223,32 @@ type OptionExerciseDetail {
 	contract OptionContract `json:"contract"`
 }
 
-type AppCommonResp {
+type CommonResp {
 	RespBase
 }
 
-type AppListContractsReq {
+type ListContractsReq {
 	PageReq
 	underlyingSymbol string `form:"underlyingSymbol,optional"` // 标的符号
 	optionType       int64  `form:"optionType,optional"` // 期权类型
 	status           int64  `form:"status,optional"` // 状态
 }
 
-type AppListContractsResp {
+type ListContractsResp {
 	RespBase
 	data []OptionContractDetail `json:"data"`
 }
 
-type AppGetContractDetailReq {
+type GetContractDetailReq {
 	contractId int64 `form:"contractId"` // 合约ID
 }
 
-type AppGetContractDetailResp {
+type GetContractDetailResp {
 	RespBase
 	data OptionContractDetail `json:"data"`
 }
 
-type AppPlaceOrderReq {
+type OptionPlaceOrderReq {
 	accountId      int64  `json:"accountId"` // 账户ID
 	contractId     int64  `json:"contractId"` // 合约ID
 	side           int64  `json:"side"`
@@ -261,46 +261,46 @@ type AppPlaceOrderReq {
 	mmp            int64  `json:"mmp,optional"` // 是否做市商保护：1是 2否
 }
 
-type AppPlaceOrderData {
+type PlaceOrderData {
 	orderNo string `json:"orderNo"`
 	orderId int64  `json:"orderId"`
 }
 
-type AppPlaceOrderResp {
+type OptionPlaceOrderResp {
 	RespBase
-	data AppPlaceOrderData `json:"data"`
+	data PlaceOrderData `json:"data"`
 }
 
-type AppCancelOrderReq {
+type OptionCancelOrderReq {
 	accountId int64  `json:"accountId"`
 	orderId   int64  `json:"orderId,optional"`
 	orderNo   string `json:"orderNo,optional"`
 }
 
-type AppGetOrderDetailReq {
+type OptionGetOrderDetailReq {
 	accountId int64  `form:"accountId"`
 	orderId   int64  `form:"orderId,optional"`
 	orderNo   string `form:"orderNo,optional"`
 }
 
-type AppGetOrderDetailResp {
+type OptionGetOrderDetailResp {
 	RespBase
 	data OptionOrderDetail `json:"data"`
 }
 
-type AppListCurrentOrdersReq {
+type ListCurrentOrdersReq {
 	PageReq
 	accountId  int64 `form:"accountId"`
 	contractId int64 `form:"contractId,optional"`
 	side       int64 `form:"side,optional"`
 }
 
-type AppListCurrentOrdersResp {
+type ListCurrentOrdersResp {
 	RespBase
 	data []OptionOrderDetail `json:"data"`
 }
 
-type AppListHistoryOrdersReq {
+type ListHistoryOrdersReq {
 	PageReq
 	accountId       int64     `form:"accountId"`
 	contractId      int64     `form:"contractId,optional"`
@@ -308,62 +308,62 @@ type AppListHistoryOrdersReq {
 	createTimeRange TimeRange `form:"createTimeRange,optional"`
 }
 
-type AppListHistoryOrdersResp {
+type ListHistoryOrdersResp {
 	RespBase
 	data []OptionOrderDetail `json:"data"`
 }
 
-type AppListTradesReq {
+type ListTradesReq {
 	PageReq
 	accountId      int64     `form:"accountId"`
 	contractId     int64     `form:"contractId,optional"`
 	tradeTimeRange TimeRange `form:"tradeTimeRange,optional"`
 }
 
-type AppListTradesResp {
+type ListTradesResp {
 	RespBase
 	data []OptionTradeDetail `json:"data"`
 }
 
-type AppListPositionsReq {
+type ListPositionsReq {
 	PageReq
 	accountId int64 `form:"accountId"`
 	status    int64 `form:"status,optional"`
 }
 
-type AppListPositionsResp {
+type ListPositionsResp {
 	RespBase
 	data []OptionPositionDetail `json:"data"`
 }
 
-type AppGetPositionDetailReq {
+type GetPositionDetailReq {
 	accountId  int64 `form:"accountId"`
 	positionId int64 `form:"positionId"`
 }
 
-type AppGetPositionDetailResp {
+type GetPositionDetailResp {
 	RespBase
 	data OptionPositionDetail `json:"data"`
 }
 
-type AppExerciseReq {
+type ExerciseReq {
 	accountId   int64  `json:"accountId"`
 	positionId  int64  `json:"positionId"`
 	contractId  int64  `json:"contractId"`
 	exerciseQty string `json:"exerciseQty"`
 }
 
-type AppExerciseData {
+type ExerciseData {
 	exerciseNo string `json:"exerciseNo"`
 	exerciseId int64  `json:"exerciseId"`
 }
 
-type AppExerciseResp {
+type ExerciseResp {
 	RespBase
-	data AppExerciseData `json:"data"`
+	data ExerciseData `json:"data"`
 }
 
-type AppListExercisesReq {
+type ListExercisesReq {
 	PageReq
 	accountId         int64     `form:"accountId"`
 	contractId        int64     `form:"contractId,optional"`
@@ -371,28 +371,28 @@ type AppListExercisesReq {
 	exerciseTimeRange TimeRange `form:"exerciseTimeRange,optional"`
 }
 
-type AppListExercisesResp {
+type ListExercisesResp {
 	RespBase
 	data []OptionExerciseDetail `json:"data"`
 }
 
-type AppListAccountsReq {
+type ListAccountsReq {
 	accountId int64 `form:"accountId,optional"`
 }
 
-type AppListAccountsResp {
+type ListAccountsResp {
 	RespBase
 	data []OptionAccount `json:"data"`
 }
 
-type AppListBillsReq {
+type ListBillsReq {
 	PageReq
 	accountId       int64     `form:"accountId,optional"`
 	refType         int64     `form:"refType,optional"`
 	createTimeRange TimeRange `form:"createTimeRange,optional"`
 }
 
-type AppListBillsResp {
+type ListBillsResp {
 	RespBase
 	data []OptionBill `json:"data"`
 }
@@ -403,11 +403,11 @@ type AppListBillsResp {
 	middleware: PublicRateLimit
 )
 service app {
-	@handler AppListContracts
-	get /contracts (AppListContractsReq) returns (AppListContractsResp)
+	@handler ListContracts
+	get /contracts (ListContractsReq) returns (ListContractsResp)
 
-	@handler AppGetContractDetail
-	get /contracts/detail (AppGetContractDetailReq) returns (AppGetContractDetailResp)
+	@handler GetContractDetail
+	get /contracts/detail (GetContractDetailReq) returns (GetContractDetailResp)
 }
 
 @server (
@@ -417,32 +417,32 @@ service app {
 	middleware: UserRateLimit
 )
 service app {
-	@handler AppGetOrderDetail
-	get /orders/detail (AppGetOrderDetailReq) returns (AppGetOrderDetailResp)
+	@handler GetOrderDetail
+	get /orders/detail (OptionGetOrderDetailReq) returns (OptionGetOrderDetailResp)
 
-	@handler AppListCurrentOrders
-	get /orders/current (AppListCurrentOrdersReq) returns (AppListCurrentOrdersResp)
+	@handler ListCurrentOrders
+	get /orders/current (ListCurrentOrdersReq) returns (ListCurrentOrdersResp)
 
-	@handler AppListHistoryOrders
-	get /orders/history (AppListHistoryOrdersReq) returns (AppListHistoryOrdersResp)
+	@handler ListHistoryOrders
+	get /orders/history (ListHistoryOrdersReq) returns (ListHistoryOrdersResp)
 
-	@handler AppListTrades
-	get /trades (AppListTradesReq) returns (AppListTradesResp)
+	@handler ListTrades
+	get /trades (ListTradesReq) returns (ListTradesResp)
 
-	@handler AppListPositions
-	get /positions (AppListPositionsReq) returns (AppListPositionsResp)
+	@handler ListPositions
+	get /positions (ListPositionsReq) returns (ListPositionsResp)
 
-	@handler AppGetPositionDetail
-	get /positions/detail (AppGetPositionDetailReq) returns (AppGetPositionDetailResp)
+	@handler GetPositionDetail
+	get /positions/detail (GetPositionDetailReq) returns (GetPositionDetailResp)
 
-	@handler AppListExercises
-	get /exercises (AppListExercisesReq) returns (AppListExercisesResp)
+	@handler ListExercises
+	get /exercises (ListExercisesReq) returns (ListExercisesResp)
 
-	@handler AppListAccounts
-	get /accounts (AppListAccountsReq) returns (AppListAccountsResp)
+	@handler ListAccounts
+	get /accounts (ListAccountsReq) returns (ListAccountsResp)
 
-	@handler AppListBills
-	get /bills (AppListBillsReq) returns (AppListBillsResp)
+	@handler ListBills
+	get /bills (ListBillsReq) returns (ListBillsResp)
 }
 
 @server (
@@ -452,13 +452,13 @@ service app {
 	middleware: SensitiveRateLimit
 )
 service app {
-	@handler AppPlaceOrder
-	post /orders (AppPlaceOrderReq) returns (AppPlaceOrderResp)
+	@handler PlaceOrder
+	post /orders (OptionPlaceOrderReq) returns (OptionPlaceOrderResp)
 
-	@handler AppCancelOrder
-	post /orders/cancel (AppCancelOrderReq) returns (AppCommonResp)
+	@handler CancelOrder
+	post /orders/cancel (OptionCancelOrderReq) returns (CommonResp)
 
-	@handler AppExercise
-	post /exercise (AppExerciseReq) returns (AppExerciseResp)
+	@handler Exercise
+	post /exercise (ExerciseReq) returns (ExerciseResp)
 }
 

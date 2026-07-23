@@ -29,7 +29,7 @@ func NewCreateTenantPayChannelRuleLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 // 创建通道规则
-func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment.CreateTenantPayChannelRuleReq) (*payment.AdminCommonResp, error) {
+func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment.CreateTenantPayChannelRuleReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "CreateTenantPayChannelRule"
 	)
@@ -74,7 +74,7 @@ func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment
 
 	l.Logger.Infof("Create tenant pay channel rule success: %s", in.RuleName)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

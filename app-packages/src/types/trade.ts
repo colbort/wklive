@@ -258,7 +258,7 @@ export interface GetSymbolDetailReq {
   symbolId: number
 }
 
-export interface PlaceOrderReq {
+export interface TradePlaceOrderReq {
   symbolId: number
   side: number
   positionSide: number
@@ -281,7 +281,7 @@ export interface PlaceOrderReq {
   durationSeconds?: number
 }
 
-export interface CancelOrderReq {
+export interface TradeCancelOrderReq {
   orderId?: number
   orderNo?: string
   clientOrderId?: string
@@ -302,7 +302,7 @@ export interface GetOrderListReq extends PageReq {
   timeRange?: TimeRange
 }
 
-export interface GetOrderDetailReq {
+export interface TradeGetOrderDetailReq {
   orderId?: number
   orderNo?: string
 }

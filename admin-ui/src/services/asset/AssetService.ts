@@ -267,7 +267,7 @@ export type UpdateAssetCoinConfigReq = Partial<CreateAssetCoinConfigReq> & {
   id: number // 主键ID
 }
 
-export type AdminAddAssetReq = {
+export type AddAssetReq = {
   tenantId: number // 租户ID
   userId: number // 用户ID
   walletType: number // 钱包类型
@@ -278,11 +278,11 @@ export type AdminAddAssetReq = {
   operatorId: number // 操作人ID
 }
 
-export type AdminSubAssetReq = AdminAddAssetReq
+export type SubAssetReq = AddAssetReq
 
-export type AdminFreezeAssetReq = AdminAddAssetReq
+export type FreezeAssetReq = AddAssetReq
 
-export type AdminUnfreezeAssetReq = {
+export type UnfreezeAssetReq = {
   tenantId: number // 租户ID
   freezeNo: string // 冻结单号
   amount: string // 解冻金额
@@ -291,9 +291,9 @@ export type AdminUnfreezeAssetReq = {
   operatorId: number // 操作人ID
 }
 
-export type AdminLockAssetReq = AdminAddAssetReq
+export type LockAssetReq = AddAssetReq
 
-export type AdminUnlockAssetReq = {
+export type UnlockAssetReq = {
   tenantId: number // 租户ID
   lockNo: string // 锁仓单号
   amount: string // 解锁金额
@@ -347,27 +347,27 @@ export class AssetService {
     return apiDeleteAssetCoinConfig(id, params)
   }
 
-  addAsset(params: AdminAddAssetReq) {
+  addAsset(params: AddAssetReq) {
     return apiAdminAddAsset(params)
   }
 
-  subAsset(params: AdminSubAssetReq) {
+  subAsset(params: SubAssetReq) {
     return apiAdminSubAsset(params)
   }
 
-  freezeAsset(params: AdminFreezeAssetReq) {
+  freezeAsset(params: FreezeAssetReq) {
     return apiAdminFreezeAsset(params)
   }
 
-  unfreezeAsset(params: AdminUnfreezeAssetReq) {
+  unfreezeAsset(params: UnfreezeAssetReq) {
     return apiAdminUnfreezeAsset(params)
   }
 
-  lockAsset(params: AdminLockAssetReq) {
+  lockAsset(params: LockAssetReq) {
     return apiAdminLockAsset(params)
   }
 
-  unlockAsset(params: AdminUnlockAssetReq) {
+  unlockAsset(params: UnlockAssetReq) {
     return apiAdminUnlockAsset(params)
   }
 

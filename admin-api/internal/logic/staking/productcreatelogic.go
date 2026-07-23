@@ -27,6 +27,6 @@ func NewProductCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pro
 	}
 }
 
-func (l *ProductCreateLogic) ProductCreate(req *types.AdminProductCreateReq) (resp *types.AdminProductCreateResp, err error) {
-	return logicutil.Proxy[types.AdminProductCreateResp](l.ctx, req, l.svcCtx.StakingCli.ProductCreate)
+func (l *ProductCreateLogic) ProductCreate(req *types.ProductCreateReq) (resp *types.ProductCreateResp, err error) {
+	return logicutil.Proxy[types.ProductCreateResp](l.ctx, req, l.svcCtx.StakingCli.ProductCreate)
 }

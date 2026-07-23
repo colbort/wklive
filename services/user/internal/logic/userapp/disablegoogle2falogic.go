@@ -29,7 +29,7 @@ func NewDisableGoogle2FALogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 禁用Google 2FA
-func (l *DisableGoogle2FALogic) DisableGoogle2FA(in *user.DisableGoogle2FAReq) (*user.AppCommonResp, error) {
+func (l *DisableGoogle2FALogic) DisableGoogle2FA(in *user.DisableGoogle2FAReq) (*user.UserCommonResp, error) {
 	userId, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (l *DisableGoogle2FALogic) DisableGoogle2FA(in *user.DisableGoogle2FAReq) (
 	}
 
 	if tuser == nil {
-		return &user.AppCommonResp{
+		return &user.UserCommonResp{
 			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
@@ -53,14 +53,14 @@ func (l *DisableGoogle2FALogic) DisableGoogle2FA(in *user.DisableGoogle2FAReq) (
 	}
 
 	if userSecurity == nil {
-		return &user.AppCommonResp{
+		return &user.UserCommonResp{
 			Base: helper.ErrResp(i18n.SecuritySettingsNotFound, i18n.Translate(i18n.SecuritySettingsNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证Google 2FA code
 	if !utils.VerifyGoogle2FACode(userSecurity.GoogleSecret.String, in.GoogleCode) {
-		return &user.AppCommonResp{
+		return &user.UserCommonResp{
 			Base: helper.ErrResp(i18n.VerificationCodeInvalid, i18n.Translate(i18n.VerificationCodeInvalid, l.ctx)),
 		}, nil
 	}
@@ -76,7 +76,7 @@ func (l *DisableGoogle2FALogic) DisableGoogle2FA(in *user.DisableGoogle2FAReq) (
 
 	l.Logger.Infof("用户 %d 禁用Google 2FA成功", userId)
 
-	return &user.AppCommonResp{
+	return &user.UserCommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

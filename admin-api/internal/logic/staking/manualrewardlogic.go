@@ -27,6 +27,6 @@ func NewManualRewardLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Manu
 	}
 }
 
-func (l *ManualRewardLogic) ManualReward(req *types.AdminManualRewardReq) (resp *types.AdminManualRewardResp, err error) {
-	return logicutil.Proxy[types.AdminManualRewardResp](l.ctx, req, l.svcCtx.StakingCli.ManualReward)
+func (l *ManualRewardLogic) ManualReward(req *types.ManualRewardReq) (resp *types.ManualRewardResp, err error) {
+	return logicutil.Proxy[types.ManualRewardResp](l.ctx, req, l.svcCtx.StakingCli.ManualReward)
 }

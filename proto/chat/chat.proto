@@ -15,7 +15,7 @@ service ChatApp {
   rpc AuthChatMerchant(AuthChatMerchantReq) returns (AuthChatMerchantResp);
 
   // 获取chat-ui配置
-  rpc GetChatConfig(GetAppChatConfigReq) returns (AppChatConfigResp);
+  rpc GetChatConfig(GetAppChatConfigReq) returns (UserChatConfigResp);
 
   // 创建或获取当前未关闭会话；服务端负责生成 session_no
   rpc OpenChatSession(OpenChatSessionReq) returns (OpenChatSessionResp);
@@ -24,31 +24,31 @@ service ChatApp {
   rpc GenerateChatSessionNo(GenerateChatSessionNoReq) returns (GenerateChatSessionNoResp);
 
   // 按商户和用户查询会话
-  rpc GetChatSessionByUser(GetChatSessionByUserReq) returns (AppChatSessionResp);
+  rpc GetChatSessionByUser(GetChatSessionByUserReq) returns (UserChatSessionResp);
 
   // 发送用户消息
-  rpc SendUserMessage(SendUserMessageReq) returns (AppChatMessageResp);
+  rpc SendUserMessage(SendUserMessageReq) returns (UserChatMessageResp);
 
   // 发送用户输入状态
-  rpc SendUserTyping(SendUserTypingReq) returns (AppCommonResp);
+  rpc SendUserTyping(SendUserTypingReq) returns (UserCommonResp);
 
   // 用户侧消息删除/撤回
-  rpc OperateUserMessage(OperateUserMessageReq) returns (AppCommonResp);
+  rpc OperateUserMessage(OperateUserMessageReq) returns (UserCommonResp);
 
   // 查询会话消息
-  rpc ListMyChatMessages(ListMyChatMessagesReq) returns (AppListChatMessagesResp);
+  rpc ListMyChatMessages(ListMyChatMessagesReq) returns (ListChatMessagesResp);
 
   // 关闭我的会话
-  rpc CloseMyChatSession(CloseMyChatSessionReq) returns (AppChatSessionResp);
+  rpc CloseMyChatSession(CloseMyChatSessionReq) returns (UserChatSessionResp);
 
   // 提交会话评价
-  rpc SubmitChatSatisfaction(SubmitChatSatisfactionReq) returns (AppChatSatisfactionResp);
+  rpc SubmitChatSatisfaction(SubmitChatSatisfactionReq) returns (ChatSatisfactionResp);
 
   // 订阅客服消息事件流
-  rpc AppSubscribeStream(AppChatSubscribeRequest) returns (stream ChatWsResponse);
+  rpc SubscribeStream(SubscribeRequest) returns (stream ChatWsResponse);
 }
 
-message AppCommonResp {
+message UserCommonResp {
   common.RespBase base = 1;
 }
 
@@ -79,7 +79,7 @@ message AuthChatMerchantResp {
 
 message GetAppChatConfigReq {}
 
-message AppChatConfigResp {
+message UserChatConfigResp {
   common.RespBase base = 1;
   ChatAppConfig data = 2;
 }
@@ -183,24 +183,24 @@ message SubmitChatSatisfactionReq {
   bool is_guest = 7; // 是否游客/临时会话
 }
 
-message AppChatSubscribeRequest {}
+message SubscribeRequest {}
 
-message AppListChatMessagesResp {
+message ListChatMessagesResp {
   common.RespBase base = 1;
   repeated ChatMessage data = 2;
 }
 
-message AppChatSessionResp {
+message UserChatSessionResp {
   common.RespBase base = 1;
   ChatSession data = 2;
 }
 
-message AppChatMessageResp {
+message UserChatMessageResp {
   common.RespBase base = 1;
   ChatMessage data = 2;
 }
 
-message AppChatSatisfactionResp {
+message ChatSatisfactionResp {
   common.RespBase base = 1;
   ChatSatisfaction data = 2;
 }
@@ -211,7 +211,7 @@ service ChatAdmin {
   rpc Login(ChatAdminLoginReq) returns (ChatAdminLoginResp);
 
   // 退出登录
-  rpc Logout(ChatAdminLogoutReq) returns (AdminCommonResp);
+  rpc Logout(ChatAdminLogoutReq) returns (CommonResp);
 
   // 当前登录用户资料
   rpc Profile(ChatAdminProfileReq) returns (ChatAdminProfileResp);
@@ -223,37 +223,37 @@ service ChatAdmin {
   rpc GetChatUserById(GetChatUserByIdReq) returns (GetChatUserByIdResp);
 
   // 查询chat-ui配置
-  rpc GetChatConfig(GetChatConfigReq) returns (AdminChatConfigResp);
+  rpc GetChatConfig(GetChatConfigReq) returns (ChatConfigResp);
 
   // 更新chat-ui配置
-  rpc UpdateChatConfig(UpdateChatConfigReq) returns (AdminChatConfigResp);
+  rpc UpdateChatConfig(UpdateChatConfigReq) returns (ChatConfigResp);
 
   // 创建客服分组
-  rpc CreateChatGroup(CreateChatGroupReq) returns (AdminChatGroupResp);
+  rpc CreateChatGroup(CreateChatGroupReq) returns (ChatGroupResp);
 
   // 更新客服分组
-  rpc UpdateChatGroup(UpdateChatGroupReq) returns (AdminChatGroupResp);
+  rpc UpdateChatGroup(UpdateChatGroupReq) returns (ChatGroupResp);
 
   // 查询客服分组详情
-  rpc GetChatGroup(GetChatGroupReq) returns (AdminChatGroupResp);
+  rpc GetChatGroup(GetChatGroupReq) returns (ChatGroupResp);
 
   // 分页查询客服分组
   rpc PageChatGroups(PageChatGroupsReq) returns (PageChatGroupsResp);
 
   // 删除客服分组
-  rpc DeleteChatGroup(DeleteChatGroupReq) returns (AdminCommonResp);
+  rpc DeleteChatGroup(DeleteChatGroupReq) returns (CommonResp);
 
   // 创建坐席
-  rpc CreateChatAgent(CreateChatAgentReq) returns (AdminChatAgentResp);
+  rpc CreateChatAgent(CreateChatAgentReq) returns (ChatAgentResp);
 
   // 更新坐席
-  rpc UpdateChatAgent(UpdateChatAgentReq) returns (AdminChatAgentResp);
+  rpc UpdateChatAgent(UpdateChatAgentReq) returns (ChatAgentResp);
 
   // 更新坐席在线状态
-  rpc UpdateChatAgentStatus(UpdateChatAgentStatusReq) returns (AdminChatAgentResp);
+  rpc UpdateChatAgentStatus(UpdateChatAgentStatusReq) returns (ChatAgentResp);
 
   // 查询坐席详情
-  rpc GetChatAgent(GetChatAgentReq) returns (AdminChatAgentResp);
+  rpc GetChatAgent(GetChatAgentReq) returns (ChatAgentResp);
 
   // 分页查询坐席
   rpc PageChatAgents(PageChatAgentsReq) returns (PageChatAgentsResp);
@@ -262,37 +262,37 @@ service ChatAdmin {
   rpc PageChatSessions(PageChatSessionsReq) returns (PageChatSessionsResp);
 
   // 查询会话详情
-  rpc GetChatSession(GetChatSessionReq) returns (AdminChatSessionResp);
+  rpc GetChatSession(GetChatSessionReq) returns (ChatSessionResp);
 
   // 接待会话
   rpc AcceptChatSession(AcceptChatSessionReq) returns (AcceptChatSessionResp);
 
   // 发送客服消息
-  rpc SendAgentMessage(SendAgentMessageReq) returns (AdminChatMessageResp);
+  rpc SendAgentMessage(SendAgentMessageReq) returns (ChatMessageResp);
 
   // 发送用户输入状态
-  rpc SendAgentTyping(SendAgentTypingReq) returns (AdminCommonResp);
+  rpc SendAgentTyping(SendAgentTypingReq) returns (CommonResp);
 
   // 客服侧消息删除/撤回
-  rpc OperateAgentMessage(OperateAgentMessageReq) returns (AdminCommonResp);
+  rpc OperateAgentMessage(OperateAgentMessageReq) returns (CommonResp);
 
   // 查询会话消息
   rpc PageChatMessages(PageChatMessagesReq) returns (PageChatMessagesResp);
 
   // 标记客服侧已读
-  rpc MarkAgentMessagesRead(MarkAgentMessagesReadReq) returns (AdminMarkMessagesReadResp);
+  rpc MarkAgentMessagesRead(MarkAgentMessagesReadReq) returns (MarkMessagesReadResp);
 
   // 关闭会话
-  rpc CloseChatSession(CloseChatSessionReq) returns (AdminChatSessionResp);
+  rpc CloseChatSession(CloseChatSessionReq) returns (ChatSessionResp);
 
   // 创建快捷回复
-  rpc CreateChatQuickReply(CreateChatQuickReplyReq) returns (AdminChatQuickReplyResp);
+  rpc CreateChatQuickReply(CreateChatQuickReplyReq) returns (ChatQuickReplyResp);
 
   // 更新快捷回复
-  rpc UpdateChatQuickReply(UpdateChatQuickReplyReq) returns (AdminChatQuickReplyResp);
+  rpc UpdateChatQuickReply(UpdateChatQuickReplyReq) returns (ChatQuickReplyResp);
 
   // 查询快捷回复详情
-  rpc GetChatQuickReply(GetChatQuickReplyReq) returns (AdminChatQuickReplyResp);
+  rpc GetChatQuickReply(GetChatQuickReplyReq) returns (ChatQuickReplyResp);
 
   // 分页查询快捷回复
   rpc PageChatQuickReplies(PageChatQuickRepliesReq) returns (PageChatQuickRepliesResp);
@@ -301,16 +301,16 @@ service ChatAdmin {
   rpc ListEnabledChatQuickReplies(ListEnabledChatQuickRepliesReq) returns (ListChatQuickRepliesResp);
 
   // 删除快捷回复
-  rpc DeleteChatQuickReply(DeleteChatQuickReplyReq) returns (AdminCommonResp);
+  rpc DeleteChatQuickReply(DeleteChatQuickReplyReq) returns (CommonResp);
 
   // 创建问题分类
-  rpc CreateChatCategory(CreateChatCategoryReq) returns (AdminChatCategoryResp);
+  rpc CreateChatCategory(CreateChatCategoryReq) returns (ChatCategoryResp);
 
   // 更新问题分类
-  rpc UpdateChatCategory(UpdateChatCategoryReq) returns (AdminChatCategoryResp);
+  rpc UpdateChatCategory(UpdateChatCategoryReq) returns (ChatCategoryResp);
 
   // 查询问题分类详情
-  rpc GetChatCategory(GetChatCategoryReq) returns (AdminChatCategoryResp);
+  rpc GetChatCategory(GetChatCategoryReq) returns (ChatCategoryResp);
 
   // 分页查询问题分类
   rpc PageChatCategories(PageChatCategoriesReq) returns (PageChatCategoriesResp);
@@ -319,35 +319,33 @@ service ChatAdmin {
   rpc ListEnabledChatCategories(ListEnabledChatCategoriesReq) returns (ListChatCategoriesResp);
 
   // 删除问题分类
-  rpc DeleteChatCategory(DeleteChatCategoryReq) returns (AdminCommonResp);
+  rpc DeleteChatCategory(DeleteChatCategoryReq) returns (CommonResp);
 
   // 创建工单/离线留言
-  rpc CreateChatWorkOrder(CreateChatWorkOrderReq) returns (AdminChatWorkOrderResp);
+  rpc CreateChatWorkOrder(CreateChatWorkOrderReq) returns (ChatWorkOrderResp);
 
   // 更新工单
-  rpc UpdateChatWorkOrder(UpdateChatWorkOrderReq) returns (AdminChatWorkOrderResp);
+  rpc UpdateChatWorkOrder(UpdateChatWorkOrderReq) returns (ChatWorkOrderResp);
 
   // 处理工单
-  rpc HandleChatWorkOrder(HandleChatWorkOrderReq) returns (AdminChatWorkOrderResp);
+  rpc HandleChatWorkOrder(HandleChatWorkOrderReq) returns (ChatWorkOrderResp);
 
   // 查询工单详情
-  rpc GetChatWorkOrder(GetChatWorkOrderReq) returns (AdminChatWorkOrderResp);
+  rpc GetChatWorkOrder(GetChatWorkOrderReq) returns (ChatWorkOrderResp);
 
   // 分页查询工单
   rpc PageChatWorkOrders(PageChatWorkOrdersReq) returns (PageChatWorkOrdersResp);
 
   // 删除工单
-  rpc DeleteChatWorkOrder(DeleteChatWorkOrderReq) returns (AdminCommonResp);
+  rpc DeleteChatWorkOrder(DeleteChatWorkOrderReq) returns (CommonResp);
 
   // 订阅客服消息事件流
-  rpc AdminSubscribeStream(AdminChatSubscribeRequest) returns (stream ChatWsResponse);
+  rpc SubscribeStream(SubscribeRequest) returns (stream ChatWsResponse);
 }
 
-message AdminCommonResp {
+message CommonResp {
   common.RespBase base = 1;
 }
-
-message AdminChatSubscribeRequest {}
 
 message ChatAdminLoginReq {
   string username = 1; // 登录账号
@@ -393,7 +391,7 @@ message UpdateChatConfigReq {
   ChatFeatureConfig feature_config = 3; // chat-ui功能开关
 }
 
-message AdminChatConfigResp {
+message ChatConfigResp {
   common.RespBase base = 1;
   ChatMerchant data = 2;
 }
@@ -759,41 +757,41 @@ message PageChatWorkOrdersResp {
   repeated ChatWorkOrder data = 2;
 }
 
-message AdminChatAgentResp {
+message ChatAgentResp {
   common.RespBase base = 1;
   ChatAgent data = 2;
 }
 
-message AdminChatGroupResp {
+message ChatGroupResp {
   common.RespBase base = 1;
   ChatGroup data = 2;
 }
 
-message AdminChatSessionResp {
+message ChatSessionResp {
   common.RespBase base = 1;
   ChatSession data = 2;
 }
 
-message AdminChatMessageResp {
+message ChatMessageResp {
   common.RespBase base = 1;
   ChatMessage data = 2;
 }
 
-message AdminMarkMessagesReadResp {
+message MarkMessagesReadResp {
   common.RespBase base = 1;
 }
 
-message AdminChatQuickReplyResp {
+message ChatQuickReplyResp {
   common.RespBase base = 1;
   ChatQuickReply data = 2;
 }
 
-message AdminChatCategoryResp {
+message ChatCategoryResp {
   common.RespBase base = 1;
   ChatCategory data = 2;
 }
 
-message AdminChatWorkOrderResp {
+message ChatWorkOrderResp {
   common.RespBase base = 1;
   ChatWorkOrder data = 2;
 }

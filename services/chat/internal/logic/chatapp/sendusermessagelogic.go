@@ -26,7 +26,7 @@ func NewSendUserMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 // 发送用户消息
-func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*chat.AppChatMessageResp, error) {
+func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*chat.UserChatMessageResp, error) {
 	msg, err := ih.SendMessage(l.ctx, l.svcCtx, ih.SendMessageOptions{
 		MerchantId:     in.GetMerchantId(),
 		SessionNo:      in.GetSessionNo(),
@@ -44,7 +44,7 @@ func (l *SendUserMessageLogic) SendUserMessage(in *chat.SendUserMessageReq) (*ch
 		ReceiptChannel: chat.ChatAppEventChannel,
 	})
 	if err != nil {
-		return &chat.AppChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.UserChatMessageResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AppChatMessageResp{Base: helper.OkResp(), Data: msg}, nil
+	return &chat.UserChatMessageResp{Base: helper.OkResp(), Data: msg}, nil
 }

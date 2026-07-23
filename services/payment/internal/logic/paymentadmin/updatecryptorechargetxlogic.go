@@ -24,6 +24,6 @@ func NewUpdateCryptoRechargeTxLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 // 更新链上充值交易
-func (l *UpdateCryptoRechargeTxLogic) UpdateCryptoRechargeTx(in *payment.UpdateCryptoRechargeTxReq) (*payment.AdminCommonResp, error) {
+func (l *UpdateCryptoRechargeTxLogic) UpdateCryptoRechargeTx(in *payment.UpdateCryptoRechargeTxReq) (*payment.CommonResp, error) {
 	return updateCryptoRechargeTx(l.ctx, l.svcCtx, in)
 }

@@ -52,7 +52,7 @@ type ItickAppClient interface {
 	// 订阅数据流
 	SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[PushReply], error)
 	// 获取 kline 粒度
-	GetKlineIntervals(ctx context.Context, in *AppEmpty, opts ...grpc.CallOption) (*KlineIntervalsResp, error)
+	GetKlineIntervals(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*KlineIntervalsResp, error)
 }
 
 type itickAppClient struct {
@@ -142,7 +142,7 @@ func (c *itickAppClient) SubscribeStream(ctx context.Context, in *SubscribeReque
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ItickApp_SubscribeStreamClient = grpc.ServerStreamingClient[PushReply]
 
-func (c *itickAppClient) GetKlineIntervals(ctx context.Context, in *AppEmpty, opts ...grpc.CallOption) (*KlineIntervalsResp, error) {
+func (c *itickAppClient) GetKlineIntervals(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*KlineIntervalsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(KlineIntervalsResp)
 	err := c.cc.Invoke(ctx, ItickApp_GetKlineIntervals_FullMethodName, in, out, cOpts...)
@@ -175,7 +175,7 @@ type ItickAppServer interface {
 	// 订阅数据流
 	SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error
 	// 获取 kline 粒度
-	GetKlineIntervals(context.Context, *AppEmpty) (*KlineIntervalsResp, error)
+	GetKlineIntervals(context.Context, *Empty) (*KlineIntervalsResp, error)
 	mustEmbedUnimplementedItickAppServer()
 }
 
@@ -207,7 +207,7 @@ func (UnimplementedItickAppServer) GetAuthoritativeSnapshot(context.Context, *Ge
 func (UnimplementedItickAppServer) SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error {
 	return status.Error(codes.Unimplemented, "method SubscribeStream not implemented")
 }
-func (UnimplementedItickAppServer) GetKlineIntervals(context.Context, *AppEmpty) (*KlineIntervalsResp, error) {
+func (UnimplementedItickAppServer) GetKlineIntervals(context.Context, *Empty) (*KlineIntervalsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetKlineIntervals not implemented")
 }
 func (UnimplementedItickAppServer) mustEmbedUnimplementedItickAppServer() {}
@@ -351,7 +351,7 @@ func _ItickApp_SubscribeStream_Handler(srv interface{}, stream grpc.ServerStream
 type ItickApp_SubscribeStreamServer = grpc.ServerStreamingServer[PushReply]
 
 func _ItickApp_GetKlineIntervals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppEmpty)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -363,7 +363,7 @@ func _ItickApp_GetKlineIntervals_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: ItickApp_GetKlineIntervals_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).GetKlineIntervals(ctx, req.(*AppEmpty))
+		return srv.(ItickAppServer).GetKlineIntervals(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -570,9 +570,9 @@ type ItickAdminClient interface {
 	// 产品类型列表
 	ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error)
 	// 产品类型
-	CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-	UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取产品类型详情
 	GetCategory(ctx context.Context, in *GetCategoryReq, opts ...grpc.CallOption) (*GetCategoryResp, error)
 	// 同步类型下的产品
@@ -582,9 +582,9 @@ type ItickAdminClient interface {
 	// 产品列表
 	ListProducts(ctx context.Context, in *ListProductsReq, opts ...grpc.CallOption) (*ListProductsResp, error)
 	// 产品
-	CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
-	UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取产品详情
 	GetProduct(ctx context.Context, in *GetProductReq, opts ...grpc.CallOption) (*GetProductResp, error)
 	// K线查看
@@ -594,21 +594,21 @@ type ItickAdminClient interface {
 	// 租户产品类型列表
 	ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error)
 	// 租户产品类型
-	CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-	UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-	BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取租户产品类型详情
 	GetTenantCategory(ctx context.Context, in *GetTenantCategoryReq, opts ...grpc.CallOption) (*GetTenantCategoryResp, error)
 	// 租户产品列表
 	ListTenantProducts(ctx context.Context, in *ListTenantProductsReq, opts ...grpc.CallOption) (*ListTenantProductsResp, error)
 	// 租户产品
-	CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
-	UpdateTenantProduct(ctx context.Context, in *UpdateTenantProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	UpdateTenantProduct(ctx context.Context, in *UpdateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-	BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取租户产品详情
 	GetTenantProduct(ctx context.Context, in *GetTenantProductReq, opts ...grpc.CallOption) (*GetTenantProductResp, error)
 	// 初始化租户展示配置
@@ -617,10 +617,10 @@ type ItickAdminClient interface {
 	CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
 	GetPriceFormula(ctx context.Context, in *PriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
 	ListPriceFormulas(ctx context.Context, in *ListPriceFormulasReq, opts ...grpc.CallOption) (*ListPriceFormulasResp, error)
-	ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*CommonResp, error)
 	ListSnapshotOutbox(ctx context.Context, in *ListSnapshotOutboxReq, opts ...grpc.CallOption) (*ListSnapshotOutboxResp, error)
-	RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
-	RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*CommonResp, error)
+	RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
 type itickAdminClient struct {
@@ -641,9 +641,9 @@ func (c *itickAdminClient) ListCategories(ctx context.Context, in *ListCategorie
 	return out, nil
 }
 
-func (c *itickAdminClient) CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_CreateCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -651,9 +651,9 @@ func (c *itickAdminClient) CreateCategory(ctx context.Context, in *CreateCategor
 	return out, nil
 }
 
-func (c *itickAdminClient) UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_UpdateCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -701,9 +701,9 @@ func (c *itickAdminClient) ListProducts(ctx context.Context, in *ListProductsReq
 	return out, nil
 }
 
-func (c *itickAdminClient) CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_CreateProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -711,9 +711,9 @@ func (c *itickAdminClient) CreateProduct(ctx context.Context, in *CreateProductR
 	return out, nil
 }
 
-func (c *itickAdminClient) UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_UpdateProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -761,9 +761,9 @@ func (c *itickAdminClient) ListTenantCategories(ctx context.Context, in *ListTen
 	return out, nil
 }
 
-func (c *itickAdminClient) CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_CreateTenantCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -771,9 +771,9 @@ func (c *itickAdminClient) CreateTenantCategory(ctx context.Context, in *CreateT
 	return out, nil
 }
 
-func (c *itickAdminClient) UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_UpdateTenantCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -781,9 +781,9 @@ func (c *itickAdminClient) UpdateTenantCategory(ctx context.Context, in *UpdateT
 	return out, nil
 }
 
-func (c *itickAdminClient) BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_BatchUpsertTenantCategories_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -811,9 +811,9 @@ func (c *itickAdminClient) ListTenantProducts(ctx context.Context, in *ListTenan
 	return out, nil
 }
 
-func (c *itickAdminClient) CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_CreateTenantProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -821,9 +821,9 @@ func (c *itickAdminClient) CreateTenantProduct(ctx context.Context, in *CreateTe
 	return out, nil
 }
 
-func (c *itickAdminClient) UpdateTenantProduct(ctx context.Context, in *UpdateTenantProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) UpdateTenantProduct(ctx context.Context, in *UpdateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_UpdateTenantProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -831,9 +831,9 @@ func (c *itickAdminClient) UpdateTenantProduct(ctx context.Context, in *UpdateTe
 	return out, nil
 }
 
-func (c *itickAdminClient) BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_BatchUpsertTenantProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -891,9 +891,9 @@ func (c *itickAdminClient) ListPriceFormulas(ctx context.Context, in *ListPriceF
 	return out, nil
 }
 
-func (c *itickAdminClient) ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_ChangePriceFormulaStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -911,9 +911,9 @@ func (c *itickAdminClient) ListSnapshotOutbox(ctx context.Context, in *ListSnaps
 	return out, nil
 }
 
-func (c *itickAdminClient) RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_RetrySnapshotOutbox_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -921,9 +921,9 @@ func (c *itickAdminClient) RetrySnapshotOutbox(ctx context.Context, in *RetrySna
 	return out, nil
 }
 
-func (c *itickAdminClient) RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *itickAdminClient) RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(CommonResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_RevokeAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -942,9 +942,9 @@ type ItickAdminServer interface {
 	// 产品类型列表
 	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error)
 	// 产品类型
-	CreateCategory(context.Context, *CreateCategoryReq) (*AdminCommonResp, error)
+	CreateCategory(context.Context, *CreateCategoryReq) (*CommonResp, error)
 	// 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-	UpdateCategory(context.Context, *UpdateCategoryReq) (*AdminCommonResp, error)
+	UpdateCategory(context.Context, *UpdateCategoryReq) (*CommonResp, error)
 	// 获取产品类型详情
 	GetCategory(context.Context, *GetCategoryReq) (*GetCategoryResp, error)
 	// 同步类型下的产品
@@ -954,9 +954,9 @@ type ItickAdminServer interface {
 	// 产品列表
 	ListProducts(context.Context, *ListProductsReq) (*ListProductsResp, error)
 	// 产品
-	CreateProduct(context.Context, *CreateProductReq) (*AdminCommonResp, error)
+	CreateProduct(context.Context, *CreateProductReq) (*CommonResp, error)
 	// 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
-	UpdateProduct(context.Context, *UpdateProductReq) (*AdminCommonResp, error)
+	UpdateProduct(context.Context, *UpdateProductReq) (*CommonResp, error)
 	// 获取产品详情
 	GetProduct(context.Context, *GetProductReq) (*GetProductResp, error)
 	// K线查看
@@ -966,21 +966,21 @@ type ItickAdminServer interface {
 	// 租户产品类型列表
 	ListTenantCategories(context.Context, *ListTenantCategoriesReq) (*ListTenantCategoriesResp, error)
 	// 租户产品类型
-	CreateTenantCategory(context.Context, *CreateTenantCategoryReq) (*AdminCommonResp, error)
+	CreateTenantCategory(context.Context, *CreateTenantCategoryReq) (*CommonResp, error)
 	// 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-	UpdateTenantCategory(context.Context, *UpdateTenantCategoryReq) (*AdminCommonResp, error)
+	UpdateTenantCategory(context.Context, *UpdateTenantCategoryReq) (*CommonResp, error)
 	// 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-	BatchUpsertTenantCategories(context.Context, *BatchUpsertTenantCategoriesReq) (*AdminCommonResp, error)
+	BatchUpsertTenantCategories(context.Context, *BatchUpsertTenantCategoriesReq) (*CommonResp, error)
 	// 获取租户产品类型详情
 	GetTenantCategory(context.Context, *GetTenantCategoryReq) (*GetTenantCategoryResp, error)
 	// 租户产品列表
 	ListTenantProducts(context.Context, *ListTenantProductsReq) (*ListTenantProductsResp, error)
 	// 租户产品
-	CreateTenantProduct(context.Context, *CreateTenantProductReq) (*AdminCommonResp, error)
+	CreateTenantProduct(context.Context, *CreateTenantProductReq) (*CommonResp, error)
 	// 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
-	UpdateTenantProduct(context.Context, *UpdateTenantProductReq) (*AdminCommonResp, error)
+	UpdateTenantProduct(context.Context, *UpdateTenantProductReq) (*CommonResp, error)
 	// 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-	BatchUpsertTenantProducts(context.Context, *BatchUpsertTenantProductsReq) (*AdminCommonResp, error)
+	BatchUpsertTenantProducts(context.Context, *BatchUpsertTenantProductsReq) (*CommonResp, error)
 	// 获取租户产品详情
 	GetTenantProduct(context.Context, *GetTenantProductReq) (*GetTenantProductResp, error)
 	// 初始化租户展示配置
@@ -989,10 +989,10 @@ type ItickAdminServer interface {
 	CreatePriceFormula(context.Context, *CreatePriceFormulaReq) (*PriceFormulaResp, error)
 	GetPriceFormula(context.Context, *PriceFormulaReq) (*PriceFormulaResp, error)
 	ListPriceFormulas(context.Context, *ListPriceFormulasReq) (*ListPriceFormulasResp, error)
-	ChangePriceFormulaStatus(context.Context, *ChangePriceFormulaStatusReq) (*AdminCommonResp, error)
+	ChangePriceFormulaStatus(context.Context, *ChangePriceFormulaStatusReq) (*CommonResp, error)
 	ListSnapshotOutbox(context.Context, *ListSnapshotOutboxReq) (*ListSnapshotOutboxResp, error)
-	RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*AdminCommonResp, error)
-	RevokeAuthoritativeSnapshot(context.Context, *RevokeAuthoritativeSnapshotReq) (*AdminCommonResp, error)
+	RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*CommonResp, error)
+	RevokeAuthoritativeSnapshot(context.Context, *RevokeAuthoritativeSnapshotReq) (*CommonResp, error)
 	mustEmbedUnimplementedItickAdminServer()
 }
 
@@ -1006,10 +1006,10 @@ type UnimplementedItickAdminServer struct{}
 func (UnimplementedItickAdminServer) ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCategories not implemented")
 }
-func (UnimplementedItickAdminServer) CreateCategory(context.Context, *CreateCategoryReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) CreateCategory(context.Context, *CreateCategoryReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCategory not implemented")
 }
-func (UnimplementedItickAdminServer) UpdateCategory(context.Context, *UpdateCategoryReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) UpdateCategory(context.Context, *UpdateCategoryReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateCategory not implemented")
 }
 func (UnimplementedItickAdminServer) GetCategory(context.Context, *GetCategoryReq) (*GetCategoryResp, error) {
@@ -1024,10 +1024,10 @@ func (UnimplementedItickAdminServer) GetSyncTaskStatus(context.Context, *GetSync
 func (UnimplementedItickAdminServer) ListProducts(context.Context, *ListProductsReq) (*ListProductsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListProducts not implemented")
 }
-func (UnimplementedItickAdminServer) CreateProduct(context.Context, *CreateProductReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) CreateProduct(context.Context, *CreateProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateProduct not implemented")
 }
-func (UnimplementedItickAdminServer) UpdateProduct(context.Context, *UpdateProductReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) UpdateProduct(context.Context, *UpdateProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateProduct not implemented")
 }
 func (UnimplementedItickAdminServer) GetProduct(context.Context, *GetProductReq) (*GetProductResp, error) {
@@ -1042,13 +1042,13 @@ func (UnimplementedItickAdminServer) SyncProductKlineHistory(context.Context, *S
 func (UnimplementedItickAdminServer) ListTenantCategories(context.Context, *ListTenantCategoriesReq) (*ListTenantCategoriesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantCategories not implemented")
 }
-func (UnimplementedItickAdminServer) CreateTenantCategory(context.Context, *CreateTenantCategoryReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) CreateTenantCategory(context.Context, *CreateTenantCategoryReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantCategory not implemented")
 }
-func (UnimplementedItickAdminServer) UpdateTenantCategory(context.Context, *UpdateTenantCategoryReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) UpdateTenantCategory(context.Context, *UpdateTenantCategoryReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantCategory not implemented")
 }
-func (UnimplementedItickAdminServer) BatchUpsertTenantCategories(context.Context, *BatchUpsertTenantCategoriesReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) BatchUpsertTenantCategories(context.Context, *BatchUpsertTenantCategoriesReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method BatchUpsertTenantCategories not implemented")
 }
 func (UnimplementedItickAdminServer) GetTenantCategory(context.Context, *GetTenantCategoryReq) (*GetTenantCategoryResp, error) {
@@ -1057,13 +1057,13 @@ func (UnimplementedItickAdminServer) GetTenantCategory(context.Context, *GetTena
 func (UnimplementedItickAdminServer) ListTenantProducts(context.Context, *ListTenantProductsReq) (*ListTenantProductsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantProducts not implemented")
 }
-func (UnimplementedItickAdminServer) CreateTenantProduct(context.Context, *CreateTenantProductReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) CreateTenantProduct(context.Context, *CreateTenantProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantProduct not implemented")
 }
-func (UnimplementedItickAdminServer) UpdateTenantProduct(context.Context, *UpdateTenantProductReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) UpdateTenantProduct(context.Context, *UpdateTenantProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantProduct not implemented")
 }
-func (UnimplementedItickAdminServer) BatchUpsertTenantProducts(context.Context, *BatchUpsertTenantProductsReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) BatchUpsertTenantProducts(context.Context, *BatchUpsertTenantProductsReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method BatchUpsertTenantProducts not implemented")
 }
 func (UnimplementedItickAdminServer) GetTenantProduct(context.Context, *GetTenantProductReq) (*GetTenantProductResp, error) {
@@ -1081,16 +1081,16 @@ func (UnimplementedItickAdminServer) GetPriceFormula(context.Context, *PriceForm
 func (UnimplementedItickAdminServer) ListPriceFormulas(context.Context, *ListPriceFormulasReq) (*ListPriceFormulasResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPriceFormulas not implemented")
 }
-func (UnimplementedItickAdminServer) ChangePriceFormulaStatus(context.Context, *ChangePriceFormulaStatusReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) ChangePriceFormulaStatus(context.Context, *ChangePriceFormulaStatusReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ChangePriceFormulaStatus not implemented")
 }
 func (UnimplementedItickAdminServer) ListSnapshotOutbox(context.Context, *ListSnapshotOutboxReq) (*ListSnapshotOutboxResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListSnapshotOutbox not implemented")
 }
-func (UnimplementedItickAdminServer) RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetrySnapshotOutbox not implemented")
 }
-func (UnimplementedItickAdminServer) RevokeAuthoritativeSnapshot(context.Context, *RevokeAuthoritativeSnapshotReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) RevokeAuthoritativeSnapshot(context.Context, *RevokeAuthoritativeSnapshotReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RevokeAuthoritativeSnapshot not implemented")
 }
 func (UnimplementedItickAdminServer) mustEmbedUnimplementedItickAdminServer() {}

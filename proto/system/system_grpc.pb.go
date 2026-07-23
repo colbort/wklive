@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SystemAdmin_AdminLogin_FullMethodName                   = "/system.SystemAdmin/AdminLogin"
+	SystemAdmin_Login_FullMethodName                        = "/system.SystemAdmin/Login"
 	SystemAdmin_GetProfile_FullMethodName                   = "/system.SystemAdmin/GetProfile"
 	SystemAdmin_UpdateProfile_FullMethodName                = "/system.SystemAdmin/UpdateProfile"
 	SystemAdmin_Google2FAInit_FullMethodName                = "/system.SystemAdmin/Google2FAInit"
@@ -91,7 +91,7 @@ const (
 // Service
 // ////////////////////
 type SystemAdminClient interface {
-	AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error)
+	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	GetProfile(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProfileResp, error)
 	UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error)
 	Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
@@ -163,10 +163,10 @@ func NewSystemAdminClient(cc grpc.ClientConnInterface) SystemAdminClient {
 	return &systemAdminClient{cc}
 }
 
-func (c *systemAdminClient) AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error) {
+func (c *systemAdminClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminLoginResp)
-	err := c.cc.Invoke(ctx, SystemAdmin_AdminLogin_FullMethodName, in, out, cOpts...)
+	out := new(LoginResp)
+	err := c.cc.Invoke(ctx, SystemAdmin_Login_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -791,7 +791,7 @@ func (c *systemAdminClient) SysChatMerchantDetail(ctx context.Context, in *SysCh
 // Service
 // ////////////////////
 type SystemAdminServer interface {
-	AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error)
+	Login(context.Context, *LoginReq) (*LoginResp, error)
 	GetProfile(context.Context, *Empty) (*ProfileResp, error)
 	UpdateProfile(context.Context, *UpdateProfileReq) (*RespBase, error)
 	Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error)
@@ -863,8 +863,8 @@ type SystemAdminServer interface {
 // pointer dereference when methods are called.
 type UnimplementedSystemAdminServer struct{}
 
-func (UnimplementedSystemAdminServer) AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminLogin not implemented")
+func (UnimplementedSystemAdminServer) Login(context.Context, *LoginReq) (*LoginResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedSystemAdminServer) GetProfile(context.Context, *Empty) (*ProfileResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProfile not implemented")
@@ -1070,20 +1070,20 @@ func RegisterSystemAdminServer(s grpc.ServiceRegistrar, srv SystemAdminServer) {
 	s.RegisterService(&SystemAdmin_ServiceDesc, srv)
 }
 
-func _SystemAdmin_AdminLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminLoginReq)
+func _SystemAdmin_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemAdminServer).AdminLogin(ctx, in)
+		return srv.(SystemAdminServer).Login(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SystemAdmin_AdminLogin_FullMethodName,
+		FullMethod: SystemAdmin_Login_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemAdminServer).AdminLogin(ctx, req.(*AdminLoginReq))
+		return srv.(SystemAdminServer).Login(ctx, req.(*LoginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2194,8 +2194,8 @@ var SystemAdmin_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*SystemAdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "AdminLogin",
-			Handler:    _SystemAdmin_AdminLogin_Handler,
+			MethodName: "Login",
+			Handler:    _SystemAdmin_Login_Handler,
 		},
 		{
 			MethodName: "GetProfile",

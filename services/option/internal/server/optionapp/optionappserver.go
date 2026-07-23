@@ -24,85 +24,85 @@ func NewOptionAppServer(svcCtx *svc.ServiceContext) *OptionAppServer {
 }
 
 // 获取可交易期权合约列表
-func (s *OptionAppServer) AppListContracts(ctx context.Context, in *option.AppListContractsReq) (*option.AppListContractsResp, error) {
-	l := optionapplogic.NewAppListContractsLogic(ctx, s.svcCtx)
-	return l.AppListContracts(in)
+func (s *OptionAppServer) ListContracts(ctx context.Context, in *option.UserListContractsReq) (*option.UserListContractsResp, error) {
+	l := optionapplogic.NewListContractsLogic(ctx, s.svcCtx)
+	return l.ListContracts(in)
 }
 
 // 获取期权合约详情
-func (s *OptionAppServer) AppGetContractDetail(ctx context.Context, in *option.AppGetContractDetailReq) (*option.AppGetContractDetailResp, error) {
-	l := optionapplogic.NewAppGetContractDetailLogic(ctx, s.svcCtx)
-	return l.AppGetContractDetail(in)
+func (s *OptionAppServer) GetContractDetail(ctx context.Context, in *option.GetContractDetailReq) (*option.GetContractDetailResp, error) {
+	l := optionapplogic.NewGetContractDetailLogic(ctx, s.svcCtx)
+	return l.GetContractDetail(in)
 }
 
 // 提交期权下单请求
-func (s *OptionAppServer) AppPlaceOrder(ctx context.Context, in *option.AppPlaceOrderReq) (*option.AppPlaceOrderResp, error) {
-	l := optionapplogic.NewAppPlaceOrderLogic(ctx, s.svcCtx)
-	return l.AppPlaceOrder(in)
+func (s *OptionAppServer) PlaceOrder(ctx context.Context, in *option.PlaceOrderReq) (*option.PlaceOrderResp, error) {
+	l := optionapplogic.NewPlaceOrderLogic(ctx, s.svcCtx)
+	return l.PlaceOrder(in)
 }
 
 // 撤销期权委托订单
-func (s *OptionAppServer) AppCancelOrder(ctx context.Context, in *option.AppCancelOrderReq) (*option.AppCommonResp, error) {
-	l := optionapplogic.NewAppCancelOrderLogic(ctx, s.svcCtx)
-	return l.AppCancelOrder(in)
+func (s *OptionAppServer) CancelOrder(ctx context.Context, in *option.CancelOrderReq) (*option.UserCommonResp, error) {
+	l := optionapplogic.NewCancelOrderLogic(ctx, s.svcCtx)
+	return l.CancelOrder(in)
 }
 
 // 获取单个委托订单详情
-func (s *OptionAppServer) AppGetOrderDetail(ctx context.Context, in *option.AppGetOrderDetailReq) (*option.AppGetOrderDetailResp, error) {
-	l := optionapplogic.NewAppGetOrderDetailLogic(ctx, s.svcCtx)
-	return l.AppGetOrderDetail(in)
+func (s *OptionAppServer) GetOrderDetail(ctx context.Context, in *option.GetOrderDetailReq) (*option.GetOrderDetailResp, error) {
+	l := optionapplogic.NewGetOrderDetailLogic(ctx, s.svcCtx)
+	return l.GetOrderDetail(in)
 }
 
 // 获取当前委托列表
-func (s *OptionAppServer) AppListCurrentOrders(ctx context.Context, in *option.AppListCurrentOrdersReq) (*option.AppListCurrentOrdersResp, error) {
-	l := optionapplogic.NewAppListCurrentOrdersLogic(ctx, s.svcCtx)
-	return l.AppListCurrentOrders(in)
+func (s *OptionAppServer) ListCurrentOrders(ctx context.Context, in *option.ListCurrentOrdersReq) (*option.ListCurrentOrdersResp, error) {
+	l := optionapplogic.NewListCurrentOrdersLogic(ctx, s.svcCtx)
+	return l.ListCurrentOrders(in)
 }
 
 // 获取历史委托列表
-func (s *OptionAppServer) AppListHistoryOrders(ctx context.Context, in *option.AppListHistoryOrdersReq) (*option.AppListHistoryOrdersResp, error) {
-	l := optionapplogic.NewAppListHistoryOrdersLogic(ctx, s.svcCtx)
-	return l.AppListHistoryOrders(in)
+func (s *OptionAppServer) ListHistoryOrders(ctx context.Context, in *option.ListHistoryOrdersReq) (*option.ListHistoryOrdersResp, error) {
+	l := optionapplogic.NewListHistoryOrdersLogic(ctx, s.svcCtx)
+	return l.ListHistoryOrders(in)
 }
 
 // 获取成交记录列表
-func (s *OptionAppServer) AppListTrades(ctx context.Context, in *option.AppListTradesReq) (*option.AppListTradesResp, error) {
-	l := optionapplogic.NewAppListTradesLogic(ctx, s.svcCtx)
-	return l.AppListTrades(in)
+func (s *OptionAppServer) ListTrades(ctx context.Context, in *option.UserListTradesReq) (*option.UserListTradesResp, error) {
+	l := optionapplogic.NewListTradesLogic(ctx, s.svcCtx)
+	return l.ListTrades(in)
 }
 
 // 获取持仓列表
-func (s *OptionAppServer) AppListPositions(ctx context.Context, in *option.AppListPositionsReq) (*option.AppListPositionsResp, error) {
-	l := optionapplogic.NewAppListPositionsLogic(ctx, s.svcCtx)
-	return l.AppListPositions(in)
+func (s *OptionAppServer) ListPositions(ctx context.Context, in *option.UserListPositionsReq) (*option.UserListPositionsResp, error) {
+	l := optionapplogic.NewListPositionsLogic(ctx, s.svcCtx)
+	return l.ListPositions(in)
 }
 
 // 获取单个持仓详情
-func (s *OptionAppServer) AppGetPositionDetail(ctx context.Context, in *option.AppGetPositionDetailReq) (*option.AppGetPositionDetailResp, error) {
-	l := optionapplogic.NewAppGetPositionDetailLogic(ctx, s.svcCtx)
-	return l.AppGetPositionDetail(in)
+func (s *OptionAppServer) GetPositionDetail(ctx context.Context, in *option.GetPositionDetailReq) (*option.GetPositionDetailResp, error) {
+	l := optionapplogic.NewGetPositionDetailLogic(ctx, s.svcCtx)
+	return l.GetPositionDetail(in)
 }
 
 // 发起行权
-func (s *OptionAppServer) AppExercise(ctx context.Context, in *option.AppExerciseReq) (*option.AppExerciseResp, error) {
-	l := optionapplogic.NewAppExerciseLogic(ctx, s.svcCtx)
-	return l.AppExercise(in)
+func (s *OptionAppServer) Exercise(ctx context.Context, in *option.ExerciseReq) (*option.ExerciseResp, error) {
+	l := optionapplogic.NewExerciseLogic(ctx, s.svcCtx)
+	return l.Exercise(in)
 }
 
 // 获取行权记录列表
-func (s *OptionAppServer) AppListExercises(ctx context.Context, in *option.AppListExercisesReq) (*option.AppListExercisesResp, error) {
-	l := optionapplogic.NewAppListExercisesLogic(ctx, s.svcCtx)
-	return l.AppListExercises(in)
+func (s *OptionAppServer) ListExercises(ctx context.Context, in *option.UserListExercisesReq) (*option.UserListExercisesResp, error) {
+	l := optionapplogic.NewListExercisesLogic(ctx, s.svcCtx)
+	return l.ListExercises(in)
 }
 
 // 获取账户资产列表
-func (s *OptionAppServer) AppListAccounts(ctx context.Context, in *option.AppListAccountsReq) (*option.AppListAccountsResp, error) {
-	l := optionapplogic.NewAppListAccountsLogic(ctx, s.svcCtx)
-	return l.AppListAccounts(in)
+func (s *OptionAppServer) ListAccounts(ctx context.Context, in *option.UserListAccountsReq) (*option.UserListAccountsResp, error) {
+	l := optionapplogic.NewListAccountsLogic(ctx, s.svcCtx)
+	return l.ListAccounts(in)
 }
 
 // 获取资金流水列表
-func (s *OptionAppServer) AppListBills(ctx context.Context, in *option.AppListBillsReq) (*option.AppListBillsResp, error) {
-	l := optionapplogic.NewAppListBillsLogic(ctx, s.svcCtx)
-	return l.AppListBills(in)
+func (s *OptionAppServer) ListBills(ctx context.Context, in *option.UserListBillsReq) (*option.UserListBillsResp, error) {
+	l := optionapplogic.NewListBillsLogic(ctx, s.svcCtx)
+	return l.ListBills(in)
 }

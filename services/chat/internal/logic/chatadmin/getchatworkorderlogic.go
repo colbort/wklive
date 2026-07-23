@@ -28,13 +28,13 @@ func NewGetChatWorkOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 查询工单详情
-func (l *GetChatWorkOrderLogic) GetChatWorkOrder(in *chat.GetChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+func (l *GetChatWorkOrderLogic) GetChatWorkOrder(in *chat.GetChatWorkOrderReq) (*chat.ChatWorkOrderResp, error) {
 	if in.GetId() <= 0 && strings.TrimSpace(in.GetWorkOrderNo()) == "" {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(400, "id or work_order_no is required")}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(400, "id or work_order_no is required")}, nil
 	}
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	var data *models.TChatWorkOrder
 	if in.GetId() > 0 {
@@ -43,13 +43,13 @@ func (l *GetChatWorkOrderLogic) GetChatWorkOrder(in *chat.GetChatWorkOrderReq) (
 		data, err = l.svcCtx.ChatWorkOrderModel.FindOneByWorkOrderNo(l.ctx, strings.TrimSpace(in.GetWorkOrderNo()))
 	}
 	if err == models.ErrNotFound {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(404, "chat work order not found")}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(404, "chat work order not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if data.MerchantId != merchantID {
-		return &chat.AdminChatWorkOrderResp{Base: helper.ErrResp(404, "chat work order not found")}, nil
+		return &chat.ChatWorkOrderResp{Base: helper.ErrResp(404, "chat work order not found")}, nil
 	}
-	return &chat.AdminChatWorkOrderResp{Base: helper.OkResp(), Data: ih.ToProtoChatWorkOrder(data)}, nil
+	return &chat.ChatWorkOrderResp{Base: helper.OkResp(), Data: ih.ToProtoChatWorkOrder(data)}, nil
 }

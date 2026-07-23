@@ -28,7 +28,7 @@ func NewUpdateUserLevelLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 }
 
 // 更新用户会员等级
-func (l *UpdateUserLevelLogic) UpdateUserLevel(in *user.UpdateUserLevelReq) (*user.AdminCommonResp, error) {
+func (l *UpdateUserLevelLogic) UpdateUserLevel(in *user.UpdateUserLevelReq) (*user.CommonResp, error) {
 	// 获取用户信息
 	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -36,14 +36,14 @@ func (l *UpdateUserLevelLogic) UpdateUserLevel(in *user.UpdateUserLevelReq) (*us
 	}
 
 	if tuser == nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &user.AdminCommonResp{
+		return &user.CommonResp{
 			Base: base,
 		}, nil
 	}
@@ -61,7 +61,7 @@ func (l *UpdateUserLevelLogic) UpdateUserLevel(in *user.UpdateUserLevelReq) (*us
 
 	l.Logger.Infof("管理员更新用户 %d 会员等级为 %d", in.UserId, in.MemberLevel)
 
-	return &user.AdminCommonResp{
+	return &user.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

@@ -29,5 +29,5 @@ func NewGetKlineIntervalsLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetKlineIntervalsLogic) GetKlineIntervals() (resp *types.KlineIntervalsResp, err error) {
-	return logicutil.Proxy[types.KlineIntervalsResp](l.ctx, &itick.AppEmpty{}, l.svcCtx.ItickCli.GetKlineIntervals)
+	return logicutil.Proxy[types.KlineIntervalsResp](l.ctx, &itick.Empty{}, l.svcCtx.ItickCli.GetKlineIntervals)
 }

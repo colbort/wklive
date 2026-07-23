@@ -31,11 +31,11 @@ func NewRetrySettlementInstructionLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 // 仅重置失败/人工处理的结算指令；不得修改金额
-func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(in *trade.RetrySettlementInstructionReq) (*trade.AdminCommonResp, error) {
+func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(in *trade.RetrySettlementInstructionReq) (*trade.CommonResp, error) {
 	tenantID := adminTenantID(l.ctx, in.TenantId)
 	operatorID, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil || operatorID <= 0 {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "missing admin operator identity")}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "missing admin operator identity")}, nil
 	}
 	eventNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "TRE", "")
 	if err != nil {
@@ -50,12 +50,12 @@ func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(in *trade.R
 		return nil, err
 	}
 	if notFound {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "settlement instruction not found")}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "settlement instruction not found")}, nil
 	}
 	if invalidStatus {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "only failed or manual-review instructions can be retried")}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "only failed or manual-review instructions can be retried")}, nil
 	}
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }
 
 func retrySettlementInstructionTx(ctx context.Context, conn sqlx.SqlConn, svcCtx *svc.ServiceContext, in *trade.RetrySettlementInstructionReq, tenantID, operatorID int64, eventNo string, now int64) (bool, bool, error) {

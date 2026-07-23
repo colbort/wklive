@@ -26,7 +26,7 @@ func NewChangePriceFormulaStatusLogic(ctx context.Context, svcCtx *svc.ServiceCo
 	}
 }
 
-func (l *ChangePriceFormulaStatusLogic) ChangePriceFormulaStatus(in *itick.ChangePriceFormulaStatusReq) (*itick.AdminCommonResp, error) {
+func (l *ChangePriceFormulaStatusLogic) ChangePriceFormulaStatus(in *itick.ChangePriceFormulaStatusReq) (*itick.CommonResp, error) {
 	if in == nil || in.Id <= 0 || (in.Status != 1 && in.Status != 3) {
 		return nil, errors.New("status must be activate(1) or revoke(3)")
 	}
@@ -40,5 +40,5 @@ func (l *ChangePriceFormulaStatusLogic) ChangePriceFormulaStatus(in *itick.Chang
 	if err != nil {
 		return nil, err
 	}
-	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &itick.CommonResp{Base: helper.OkResp()}, nil
 }

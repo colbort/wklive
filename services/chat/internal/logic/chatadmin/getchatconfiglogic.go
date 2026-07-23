@@ -27,17 +27,17 @@ func NewGetChatConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 }
 
 // 查询chat-ui配置
-func (l *GetChatConfigLogic) GetChatConfig(in *chat.GetChatConfigReq) (*chat.AdminChatConfigResp, error) {
+func (l *GetChatConfigLogic) GetChatConfig(in *chat.GetChatConfigReq) (*chat.ChatConfigResp, error) {
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatMerchantInfoModel.FindOneByMerchantId(l.ctx, merchantID)
 	if err == models.ErrNotFound {
-		return &chat.AdminChatConfigResp{Base: helper.ErrResp(404, "chat merchant config not found")}, nil
+		return &chat.ChatConfigResp{Base: helper.ErrResp(404, "chat merchant config not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AdminChatConfigResp{Base: helper.OkResp(), Data: ih.ToProtoMerchant(data)}, nil
+	return &chat.ChatConfigResp{Base: helper.OkResp(), Data: ih.ToProtoMerchant(data)}, nil
 }

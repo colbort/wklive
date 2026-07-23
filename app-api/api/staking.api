@@ -120,96 +120,96 @@ type StakeRedeemLog {
 	updateTimes  int64  `json:"updateTimes"`
 }
 
-type AppProductListReq {
+type ProductListReq {
 	PageReq
 	productType int64  `form:"productType,optional"`
 	coinSymbol  string `form:"coinSymbol,optional"`
 }
 
-type AppProductListResp {
+type ProductListResp {
 	RespBase
 	data []StakeProduct `json:"data"`
 }
 
-type AppProductDetailReq {
+type ProductDetailReq {
 	id int64 `form:"id"`
 }
 
-type AppProductDetailResp {
+type ProductDetailResp {
 	RespBase
 	data StakeProduct `json:"data"`
 }
 
-type AppCreateOrderReq {
+type CreateOrderReq {
 	productId   int64  `json:"productId"`
 	stakeAmount string `json:"stakeAmount"`
 	source      int64  `json:"source"`
 	remark      string `json:"remark,optional"`
 }
 
-type AppCreateOrderData {
+type CreateOrderData {
 	id      int64  `json:"id"`
 	orderNo string `json:"orderNo"`
 }
 
-type AppCreateOrderResp {
+type CreateOrderResp {
 	RespBase
-	data AppCreateOrderData `json:"data"`
+	data CreateOrderData `json:"data"`
 }
 
-type AppMyOrderListReq {
+type MyOrderListReq {
 	PageReq
 	status     int64 `form:"status,optional"`
 	redeemType int64 `form:"redeemType,optional"`
 }
 
-type AppMyOrderListResp {
+type MyOrderListResp {
 	RespBase
 	data []StakeOrder `json:"data"`
 }
 
-type AppMyOrderDetailReq {
+type MyOrderDetailReq {
 	id int64 `form:"id"`
 }
 
-type AppMyOrderDetailResp {
+type MyOrderDetailResp {
 	RespBase
 	data StakeOrder `json:"data"`
 }
 
-type AppMyRewardLogListReq {
+type MyRewardLogListReq {
 	PageReq
 	orderId    int64 `form:"orderId,optional"`
 	rewardType int64 `form:"rewardType,optional"`
 }
 
-type AppMyRewardLogListResp {
+type MyRewardLogListResp {
 	RespBase
 	data []StakeRewardLog `json:"data"`
 }
 
-type AppRedeemReq {
+type RedeemReq {
 	orderId    int64  `json:"orderId"`
 	redeemType int64  `json:"redeemType"`
 	remark     string `json:"remark,optional"`
 }
 
-type AppRedeemData {
+type RedeemData {
 	success  int64  `json:"success"` // 执行结果：0失败 1成功
 	redeemNo string `json:"redeemNo"` // 赎回单号
 }
 
-type AppRedeemResp {
+type RedeemResp {
 	RespBase
-	data AppRedeemData `json:"data"`
+	data RedeemData `json:"data"`
 }
 
-type AppMyRedeemLogListReq {
+type MyRedeemLogListReq {
 	PageReq
 	orderId int64 `form:"orderId,optional"`
 }
 
-type AppMyRedeemLogListResp {
+type MyRedeemLogListResp {
 	RespBase
 	data []StakeRedeemLog `json:"data"`
 }
@@ -220,11 +220,11 @@ type AppMyRedeemLogListResp {
 	middleware: PublicRateLimit
 )
 service app {
-	@handler AppProductList
-	get /products (AppProductListReq) returns (AppProductListResp)
+	@handler ProductList
+	get /products (ProductListReq) returns (ProductListResp)
 
-	@handler AppProductDetail
-	get /products/detail (AppProductDetailReq) returns (AppProductDetailResp)
+	@handler ProductDetail
+	get /products/detail (ProductDetailReq) returns (ProductDetailResp)
 }
 
 @server (
@@ -235,16 +235,16 @@ service app {
 )
 service app {
 	@handler MyOrderList
-	get /my/orders (AppMyOrderListReq) returns (AppMyOrderListResp)
+	get /my/orders (MyOrderListReq) returns (MyOrderListResp)
 
 	@handler MyOrderDetail
-	get /my/orders/detail (AppMyOrderDetailReq) returns (AppMyOrderDetailResp)
+	get /my/orders/detail (MyOrderDetailReq) returns (MyOrderDetailResp)
 
 	@handler MyRewardLogList
-	get /my/reward-logs (AppMyRewardLogListReq) returns (AppMyRewardLogListResp)
+	get /my/reward-logs (MyRewardLogListReq) returns (MyRewardLogListResp)
 
 	@handler MyRedeemLogList
-	get /my/redeem-logs (AppMyRedeemLogListReq) returns (AppMyRedeemLogListResp)
+	get /my/redeem-logs (MyRedeemLogListReq) returns (MyRedeemLogListResp)
 }
 
 @server (
@@ -255,9 +255,9 @@ service app {
 )
 service app {
 	@handler CreateOrder
-	post /orders (AppCreateOrderReq) returns (AppCreateOrderResp)
+	post /orders (CreateOrderReq) returns (CreateOrderResp)
 
 	@handler Redeem
-	post /redeem (AppRedeemReq) returns (AppRedeemResp)
+	post /redeem (RedeemReq) returns (RedeemResp)
 }
 

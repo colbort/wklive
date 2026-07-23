@@ -16,14 +16,14 @@ import (
 type (
 	AddAvailableReq             = asset.AddAvailableReq
 	AdjustPlatformAccountReq    = asset.AdjustPlatformAccountReq
-	AdminAddAssetReq            = asset.AdminAddAssetReq
-	AdminChangeAssetData        = asset.AdminChangeAssetData
-	AdminChangeAssetResp        = asset.AdminChangeAssetResp
-	AdminFreezeAssetReq         = asset.AdminFreezeAssetReq
-	AdminLockAssetReq           = asset.AdminLockAssetReq
-	AdminSubAssetReq            = asset.AdminSubAssetReq
-	AdminUnfreezeAssetReq       = asset.AdminUnfreezeAssetReq
-	AdminUnlockAssetReq         = asset.AdminUnlockAssetReq
+	AddAssetReq                 = asset.AddAssetReq
+	ManualChangeAssetData       = asset.ManualChangeAssetData
+	ManualChangeAssetResp       = asset.ManualChangeAssetResp
+	ManualFreezeAssetReq        = asset.ManualFreezeAssetReq
+	ManualLockAssetReq          = asset.ManualLockAssetReq
+	SubAssetReq                 = asset.SubAssetReq
+	ManualUnfreezeAssetReq      = asset.ManualUnfreezeAssetReq
+	ManualUnlockAssetReq        = asset.ManualUnlockAssetReq
 	AssetCoinConfigResp         = asset.AssetCoinConfigResp
 	ChangeAssetData             = asset.ChangeAssetData
 	ChangeAssetResp             = asset.ChangeAssetResp

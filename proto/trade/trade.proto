@@ -20,7 +20,7 @@ service TradeApp {
   rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp);
 
   // 撤销指定订单
-  rpc CancelOrder(CancelOrderReq) returns (AppCommonResp);
+  rpc CancelOrder(CancelOrderReq) returns (UserCommonResp);
 
   // 撤销当前用户全部订单
   rpc CancelAllOrders(CancelAllOrdersReq) returns (CancelAllOrdersResp);
@@ -44,10 +44,10 @@ service TradeApp {
   rpc GetLeverageConfig(GetLeverageConfigReq) returns (GetLeverageConfigResp);
 
   // 设置杠杆倍数
-  rpc SetLeverage(SetLeverageReq) returns (AppCommonResp);
+  rpc SetLeverage(SetLeverageReq) returns (UserCommonResp);
 }
 
-message AppCommonResp {
+message UserCommonResp {
   common.RespBase base = 1;
 }
 
@@ -213,10 +213,10 @@ message SetLeverageReq {
 // 交易服务管理后台接口
 service TradeAdmin {
   // 创建交易对
-  rpc CreateSymbol(CreateSymbolReq) returns (AdminCommonResp);
+  rpc CreateSymbol(CreateSymbolReq) returns (CommonResp);
 
   // 更新交易对信息
-  rpc UpdateSymbol(UpdateSymbolReq) returns (AdminCommonResp);
+  rpc UpdateSymbol(UpdateSymbolReq) returns (CommonResp);
 
   // 获取后台交易对列表
   rpc GetSymbolListAdmin(GetSymbolListAdminReq) returns (GetSymbolListAdminResp);
@@ -225,19 +225,19 @@ service TradeAdmin {
   rpc GetSymbolDetailAdmin(GetSymbolDetailAdminReq) returns (GetSymbolDetailAdminResp);
 
   // 设置现货交易对配置
-  rpc SetSpotSymbolConfig(SetSpotSymbolConfigReq) returns (AdminCommonResp);
+  rpc SetSpotSymbolConfig(SetSpotSymbolConfigReq) returns (CommonResp);
 
   // 设置合约交易对配置
-  rpc SetContractSymbolConfig(SetContractSymbolConfigReq) returns (AdminCommonResp);
+  rpc SetContractSymbolConfig(SetContractSymbolConfigReq) returns (CommonResp);
 
   // 设置秒合约产品配置
-  rpc SetSecondsSymbolConfig(SetSecondsSymbolConfigReq) returns (AdminCommonResp);
+  rpc SetSecondsSymbolConfig(SetSecondsSymbolConfigReq) returns (CommonResp);
 
   // 保存交易时段配置
-  rpc SetSymbolSession(SetSymbolSessionReq) returns (AdminCommonResp);
+  rpc SetSymbolSession(SetSymbolSessionReq) returns (CommonResp);
 
   // 保存交易对杠杆档位配置
-  rpc SetSymbolLeverageConfig(SetSymbolLeverageConfigReq) returns (AdminCommonResp);
+  rpc SetSymbolLeverageConfig(SetSymbolLeverageConfigReq) returns (CommonResp);
 
   // 获取交易对杠杆档位配置
   rpc GetSymbolLeverageConfig(GetSymbolLeverageConfigReq) returns (GetSymbolLeverageConfigResp);
@@ -273,10 +273,10 @@ service TradeAdmin {
   rpc GetCancelLogListAdmin(GetCancelLogListAdminReq) returns (GetCancelLogListAdminResp);
 
   // 设置用户交易限制
-  rpc SetUserTradeLimit(SetUserTradeLimitReq) returns (AdminCommonResp);
+  rpc SetUserTradeLimit(SetUserTradeLimitReq) returns (CommonResp);
 
   // 设置用户交易对限制
-  rpc SetUserSymbolLimit(SetUserSymbolLimitReq) returns (AdminCommonResp);
+  rpc SetUserSymbolLimit(SetUserSymbolLimitReq) returns (CommonResp);
 
   // 获取用户交易限制
   rpc GetUserTradeLimit(GetUserTradeLimitReq) returns (GetUserTradeLimitResp);
@@ -285,13 +285,13 @@ service TradeAdmin {
   rpc GetUserSymbolLimit(GetUserSymbolLimitReq) returns (GetUserSymbolLimitResp);
 
   // 设置用户交易配置
-  rpc SetUserTradeConfig(SetUserTradeConfigReq) returns (AdminCommonResp);
+  rpc SetUserTradeConfig(SetUserTradeConfigReq) returns (CommonResp);
 
   // 获取用户交易配置
   rpc GetUserTradeConfig(GetUserTradeConfigReq) returns (GetUserTradeConfigResp);
 
   // 设置用户合约偏好配置
-  rpc SetContractUserConfig(SetContractUserConfigReq) returns (AdminCommonResp);
+  rpc SetContractUserConfig(SetContractUserConfigReq) returns (CommonResp);
 
   // 获取用户合约偏好配置
   rpc GetContractUserConfig(GetContractUserConfigReq) returns (GetContractUserConfigResp);
@@ -300,7 +300,7 @@ service TradeAdmin {
   rpc GetRiskOrderCheckLogList(GetRiskOrderCheckLogListReq) returns (GetRiskOrderCheckLogListResp);
 
   // 设置用户杠杆配置
-  rpc SetUserLeverageConfig(SetUserLeverageConfigReq) returns (AdminCommonResp);
+  rpc SetUserLeverageConfig(SetUserLeverageConfigReq) returns (CommonResp);
 
   // 获取用户杠杆配置
   rpc GetUserLeverageConfig(GetUserLeverageConfigReq) returns (GetUserLeverageConfigResp);
@@ -312,10 +312,10 @@ service TradeAdmin {
   rpc GetTradeEventDetail(GetTradeEventDetailReq) returns (GetTradeEventDetailResp);
 
   // 重试交易事件
-  rpc RetryTradeEvent(RetryTradeEventReq) returns (AdminCommonResp);
+  rpc RetryTradeEvent(RetryTradeEventReq) returns (CommonResp);
 
   // 保存合约风险限额档位
-  rpc SetContractRiskLimitTier(SetContractRiskLimitTierReq) returns (AdminCommonResp);
+  rpc SetContractRiskLimitTier(SetContractRiskLimitTierReq) returns (CommonResp);
   // 获取合约风险限额档位列表
   rpc GetContractRiskLimitTierList(GetContractRiskLimitTierListReq) returns (GetContractRiskLimitTierListResp);
   // 资金费批次与结算明细（只读）
@@ -330,13 +330,13 @@ service TradeAdmin {
   rpc GetAssetReservationList(GetAssetReservationListReq) returns (GetAssetReservationListResp);
   rpc GetSettlementInstructionList(GetSettlementInstructionListReq) returns (GetSettlementInstructionListResp);
   // 仅重置失败/人工处理的结算指令；不得修改金额
-  rpc RetrySettlementInstruction(RetrySettlementInstructionReq) returns (AdminCommonResp);
-  rpc SetInsuranceFundAccount(SetInsuranceFundAccountReq) returns (AdminCommonResp);
+  rpc RetrySettlementInstruction(RetrySettlementInstructionReq) returns (CommonResp);
+  rpc SetInsuranceFundAccount(SetInsuranceFundAccountReq) returns (CommonResp);
   rpc GetInsuranceFundAccountList(GetInsuranceFundAccountListReq) returns (GetInsuranceFundAccountListResp);
   rpc GetMarketSnapshotList(GetMarketSnapshotListReq) returns (GetMarketSnapshotListResp);
 }
 
-message AdminCommonResp {
+message CommonResp {
   common.RespBase base = 1;
 }
 

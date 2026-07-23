@@ -27,6 +27,6 @@ func NewCreateOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 	}
 }
 
-func (l *CreateOrderLogic) CreateOrder(req *types.AppCreateOrderReq) (resp *types.AppCreateOrderResp, err error) {
-	return logicutil.Proxy[types.AppCreateOrderResp](l.ctx, req, l.svcCtx.StakingCli.CreateOrder)
+func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.CreateOrderResp, err error) {
+	return logicutil.Proxy[types.CreateOrderResp](l.ctx, req, l.svcCtx.StakingCli.CreateOrder)
 }

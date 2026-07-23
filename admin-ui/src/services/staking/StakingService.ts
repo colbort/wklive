@@ -132,7 +132,7 @@ export type StakeRedeemLog = {
   updateTimes: number // 更新时间
 }
 
-export type AdminProductListReq = {
+export type ProductListReq = {
   cursor?: number // 游标
   limit?: number // 每页条数
   tenantId?: number // 租户ID
@@ -143,12 +143,12 @@ export type AdminProductListReq = {
   status?: number // 状态
 }
 
-export type AdminProductDetailReq = {
+export type ProductDetailReq = {
   tenantId?: number // 租户ID
   id: number // 产品ID
 }
 
-export type AdminProductCreateReq = {
+export type ProductCreateReq = {
   tenantId: number // 租户ID
   productNo: string // 产品编号
   productName: string // 产品名称
@@ -174,18 +174,18 @@ export type AdminProductCreateReq = {
   operatorUid: number // 操作人ID
 }
 
-export type AdminProductUpdateReq = AdminProductCreateReq & {
+export type ProductUpdateReq = ProductCreateReq & {
   id: number
 }
 
-export type AdminProductChangeStatusReq = {
+export type ProductChangeStatusReq = {
   tenantId: number // 租户ID
   id: number // 产品ID
   status: number // 状态
   operatorUid: number // 操作人ID
 }
 
-export type AdminOrderListReq = {
+export type OrderListReq = {
   cursor?: number // 游标
   limit?: number // 每页条数
   tenantId?: number // 租户ID
@@ -203,12 +203,12 @@ export type AdminOrderListReq = {
   endTimesEnd?: number // 结束时间止
 }
 
-export type AdminOrderDetailReq = {
+export type OrderDetailReq = {
   tenantId?: number // 租户ID
   id: number // 订单ID
 }
 
-export type AdminRewardLogListReq = {
+export type RewardLogListReq = {
   cursor?: number // 游标
   limit?: number // 每页条数
   tenantId?: number // 租户ID
@@ -221,7 +221,7 @@ export type AdminRewardLogListReq = {
   rewardTimesEnd?: number // 奖励结束时间
 }
 
-export type AdminRedeemLogListReq = {
+export type RedeemLogListReq = {
   cursor?: number // 游标
   limit?: number // 每页条数
   tenantId?: number // 租户ID
@@ -235,7 +235,7 @@ export type AdminRedeemLogListReq = {
   redeemTimesEnd?: number // 赎回结束时间
 }
 
-export type AdminManualRewardReq = {
+export type ManualRewardReq = {
   tenantId: number // 租户ID
   orderId: number // 订单ID
   rewardAmount: string // 奖励金额
@@ -244,7 +244,7 @@ export type AdminManualRewardReq = {
   operatorUid: number // 操作人ID
 }
 
-export type AdminManualRedeemReq = {
+export type ManualRedeemReq = {
   tenantId: number // 租户ID
   orderId: number // 订单ID
   redeemType: number // 赎回类型
@@ -261,47 +261,47 @@ export class StakingService {
     return getCoreOptions()
   }
 
-  listProducts(params: AdminProductListReq) {
+  listProducts(params: ProductListReq) {
     return apiStakingListProducts(params)
   }
 
-  getProduct(params: AdminProductDetailReq) {
+  getProduct(params: ProductDetailReq) {
     return apiStakingGetProduct(params)
   }
 
-  createProduct(params: AdminProductCreateReq) {
+  createProduct(params: ProductCreateReq) {
     return apiStakingCreateProduct(params)
   }
 
-  updateProduct(params: AdminProductUpdateReq) {
+  updateProduct(params: ProductUpdateReq) {
     return apiStakingUpdateProduct(params)
   }
 
-  changeProductStatus(params: AdminProductChangeStatusReq) {
+  changeProductStatus(params: ProductChangeStatusReq) {
     return apiStakingChangeProductStatus(params)
   }
 
-  listOrders(params: AdminOrderListReq) {
+  listOrders(params: OrderListReq) {
     return apiStakingListOrders(params)
   }
 
-  getOrder(params: AdminOrderDetailReq) {
+  getOrder(params: OrderDetailReq) {
     return apiStakingGetOrder(params)
   }
 
-  listRewardLogs(params: AdminRewardLogListReq) {
+  listRewardLogs(params: RewardLogListReq) {
     return apiStakingListRewardLogs(params)
   }
 
-  listRedeemLogs(params: AdminRedeemLogListReq) {
+  listRedeemLogs(params: RedeemLogListReq) {
     return apiStakingListRedeemLogs(params)
   }
 
-  manualReward(params: AdminManualRewardReq) {
+  manualReward(params: ManualRewardReq) {
     return apiStakingManualReward(params)
   }
 
-  manualRedeem(params: AdminManualRedeemReq) {
+  manualRedeem(params: ManualRedeemReq) {
     return apiStakingManualRedeem(params)
   }
 }

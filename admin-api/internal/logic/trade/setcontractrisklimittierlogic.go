@@ -27,6 +27,6 @@ func NewSetContractRiskLimitTierLogic(ctx context.Context, svcCtx *svc.ServiceCo
 	}
 }
 
-func (l *SetContractRiskLimitTierLogic) SetContractRiskLimitTier(req *types.SetContractRiskLimitTierReq) (resp *types.AdminCommonResp, err error) {
-	return logicutil.Proxy[types.AdminCommonResp](l.ctx, req, l.svcCtx.TradeCli.SetContractRiskLimitTier)
+func (l *SetContractRiskLimitTierLogic) SetContractRiskLimitTier(req *types.SetContractRiskLimitTierReq) (resp *types.CommonResp, err error) {
+	return logicutil.Proxy[types.CommonResp](l.ctx, req, l.svcCtx.TradeCli.SetContractRiskLimitTier)
 }

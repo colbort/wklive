@@ -588,67 +588,67 @@ type ListBillsResp {
 	jwt:    Jwt
 )
 service admin {
-	@handler AdminCreateContract
+	@handler CreateContract
 	post /contracts (CreateContractReq) returns (CreateContractResp)
 
-	@handler AdminUpdateContract
+	@handler UpdateContract
 	post /contracts/update (UpdateContractReq) returns (OptionAdminCommonResp)
 
-	@handler AdminGetContract
+	@handler GetContract
 	get /contracts/detail (GetContractReq) returns (GetContractResp)
 
-	@handler AdminListContracts
+	@handler ListContracts
 	get /contracts (ListContractsReq) returns (ListContractsResp)
 
-	@handler AdminUpdateMarket
+	@handler UpdateMarket
 	post /market/update (UpdateMarketReq) returns (OptionAdminCommonResp)
 
-	@handler AdminGetMarket
+	@handler GetMarket
 	get /market/detail (GetMarketReq) returns (GetMarketResp)
 
-	@handler AdminListMarketSnapshots
+	@handler ListMarketSnapshots
 	get /market/snapshots (ListMarketSnapshotsReq) returns (ListMarketSnapshotsResp)
 
-	@handler AdminGetOrder
+	@handler GetOrder
 	get /orders/detail (GetOrderReq) returns (GetOrderResp)
 
-	@handler AdminListOrders
+	@handler ListOrders
 	get /orders (ListOrdersReq) returns (ListOrdersResp)
 
-	@handler AdminGetTrade
+	@handler GetTrade
 	get /trades/detail (GetTradeReq) returns (GetTradeResp)
 
-	@handler AdminListTrades
+	@handler ListTrades
 	get /trades (ListTradesReq) returns (ListTradesResp)
 
-	@handler AdminGetPosition
+	@handler GetPosition
 	get /positions/detail (GetPositionReq) returns (GetPositionResp)
 
-	@handler AdminListPositions
+	@handler ListPositions
 	get /positions (ListPositionsReq) returns (ListPositionsResp)
 
-	@handler AdminGetExercise
+	@handler GetExercise
 	get /exercises/detail (GetExerciseReq) returns (GetExerciseResp)
 
-	@handler AdminListExercises
+	@handler ListExercises
 	get /exercises (ListExercisesReq) returns (ListExercisesResp)
 
-	@handler AdminGetSettlement
+	@handler GetSettlement
 	get /settlements/detail (GetSettlementReq) returns (GetSettlementResp)
 
-	@handler AdminListSettlements
+	@handler ListSettlements
 	get /settlements (ListSettlementsReq) returns (ListSettlementsResp)
 
-	@handler AdminGetAccount
+	@handler GetAccount
 	get /accounts/detail (GetAccountReq) returns (GetAccountResp)
 
-	@handler AdminListAccounts
+	@handler ListAccounts
 	get /accounts (ListAccountsReq) returns (ListAccountsResp)
 
-	@handler AdminGetBill
+	@handler GetBill
 	get /bills/detail (GetBillReq) returns (GetBillResp)
 
-	@handler AdminListBills
+	@handler ListBills
 	get /bills (ListBillsReq) returns (ListBillsResp)
 }
 

@@ -14,9 +14,9 @@ import (
 )
 
 type (
-	AdminLoginData                   = system.AdminLoginData
-	AdminLoginReq                    = system.AdminLoginReq
-	AdminLoginResp                   = system.AdminLoginResp
+	LoginData                        = system.LoginData
+	LoginReq                         = system.LoginReq
+	LoginResp                        = system.LoginResp
 	AssignUserRolesReq               = system.AssignUserRolesReq
 	ChangeUserStatusReq              = system.ChangeUserStatusReq
 	Empty                            = system.Empty

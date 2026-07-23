@@ -27,6 +27,6 @@ func NewOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrderLi
 	}
 }
 
-func (l *OrderListLogic) OrderList(req *types.AdminOrderListReq) (resp *types.AdminOrderListResp, err error) {
-	return logicutil.Proxy[types.AdminOrderListResp](l.ctx, req, l.svcCtx.StakingCli.OrderList)
+func (l *OrderListLogic) OrderList(req *types.OrderListReq) (resp *types.OrderListResp, err error) {
+	return logicutil.Proxy[types.OrderListResp](l.ctx, req, l.svcCtx.StakingCli.OrderList)
 }

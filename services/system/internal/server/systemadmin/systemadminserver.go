@@ -23,9 +23,9 @@ func NewSystemAdminServer(svcCtx *svc.ServiceContext) *SystemAdminServer {
 	}
 }
 
-func (s *SystemAdminServer) AdminLogin(ctx context.Context, in *system.AdminLoginReq) (*system.AdminLoginResp, error) {
-	l := systemadminlogic.NewAdminLoginLogic(ctx, s.svcCtx)
-	return l.AdminLogin(in)
+func (s *SystemAdminServer) Login(ctx context.Context, in *system.LoginReq) (*system.LoginResp, error) {
+	l := systemadminlogic.NewLoginLogic(ctx, s.svcCtx)
+	return l.Login(in)
 }
 
 func (s *SystemAdminServer) GetProfile(ctx context.Context, in *system.Empty) (*system.ProfileResp, error) {

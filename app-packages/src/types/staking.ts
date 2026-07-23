@@ -118,42 +118,42 @@ export interface StakeRedeemLog {
   updateTimes: number
 }
 
-export interface AppProductListReq extends PageReq {
+export interface ProductListReq extends PageReq {
   productType?: number
   coinSymbol?: string
 }
 
-export interface AppProductDetailReq {
+export interface ProductDetailReq {
   id: number
 }
 
-export interface AppCreateOrderReq {
+export interface CreateOrderReq {
   productId: number
   stakeAmount: string
   source: number
   remark?: string
 }
 
-export interface AppMyOrderListReq extends PageReq {
+export interface MyOrderListReq extends PageReq {
   status?: number
   redeemType?: number
 }
 
-export interface AppMyOrderDetailReq {
+export interface MyOrderDetailReq {
   id: number
 }
 
-export interface AppMyRewardLogListReq extends PageReq {
+export interface MyRewardLogListReq extends PageReq {
   orderId?: number
   rewardType?: number
 }
 
-export interface AppRedeemReq {
+export interface RedeemReq {
   orderId: number
   redeemType: number
   remark?: string
 }
 
-export interface AppMyRedeemLogListReq extends PageReq {
+export interface MyRedeemLogListReq extends PageReq {
   orderId?: number
 }

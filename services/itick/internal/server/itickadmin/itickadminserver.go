@@ -30,13 +30,13 @@ func (s *ItickAdminServer) ListCategories(ctx context.Context, in *itick.ListCat
 }
 
 // 产品类型
-func (s *ItickAdminServer) CreateCategory(ctx context.Context, in *itick.CreateCategoryReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) CreateCategory(ctx context.Context, in *itick.CreateCategoryReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewCreateCategoryLogic(ctx, s.svcCtx)
 	return l.CreateCategory(in)
 }
 
 // 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-func (s *ItickAdminServer) UpdateCategory(ctx context.Context, in *itick.UpdateCategoryReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) UpdateCategory(ctx context.Context, in *itick.UpdateCategoryReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewUpdateCategoryLogic(ctx, s.svcCtx)
 	return l.UpdateCategory(in)
 }
@@ -66,13 +66,13 @@ func (s *ItickAdminServer) ListProducts(ctx context.Context, in *itick.ListProdu
 }
 
 // 产品
-func (s *ItickAdminServer) CreateProduct(ctx context.Context, in *itick.CreateProductReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) CreateProduct(ctx context.Context, in *itick.CreateProductReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewCreateProductLogic(ctx, s.svcCtx)
 	return l.CreateProduct(in)
 }
 
 // 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
-func (s *ItickAdminServer) UpdateProduct(ctx context.Context, in *itick.UpdateProductReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) UpdateProduct(ctx context.Context, in *itick.UpdateProductReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewUpdateProductLogic(ctx, s.svcCtx)
 	return l.UpdateProduct(in)
 }
@@ -102,19 +102,19 @@ func (s *ItickAdminServer) ListTenantCategories(ctx context.Context, in *itick.L
 }
 
 // 租户产品类型
-func (s *ItickAdminServer) CreateTenantCategory(ctx context.Context, in *itick.CreateTenantCategoryReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) CreateTenantCategory(ctx context.Context, in *itick.CreateTenantCategoryReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewCreateTenantCategoryLogic(ctx, s.svcCtx)
 	return l.CreateTenantCategory(in)
 }
 
 // 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-func (s *ItickAdminServer) UpdateTenantCategory(ctx context.Context, in *itick.UpdateTenantCategoryReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) UpdateTenantCategory(ctx context.Context, in *itick.UpdateTenantCategoryReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewUpdateTenantCategoryLogic(ctx, s.svcCtx)
 	return l.UpdateTenantCategory(in)
 }
 
 // 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-func (s *ItickAdminServer) BatchUpsertTenantCategories(ctx context.Context, in *itick.BatchUpsertTenantCategoriesReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) BatchUpsertTenantCategories(ctx context.Context, in *itick.BatchUpsertTenantCategoriesReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewBatchUpsertTenantCategoriesLogic(ctx, s.svcCtx)
 	return l.BatchUpsertTenantCategories(in)
 }
@@ -132,19 +132,19 @@ func (s *ItickAdminServer) ListTenantProducts(ctx context.Context, in *itick.Lis
 }
 
 // 租户产品
-func (s *ItickAdminServer) CreateTenantProduct(ctx context.Context, in *itick.CreateTenantProductReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) CreateTenantProduct(ctx context.Context, in *itick.CreateTenantProductReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewCreateTenantProductLogic(ctx, s.svcCtx)
 	return l.CreateTenantProduct(in)
 }
 
 // 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
-func (s *ItickAdminServer) UpdateTenantProduct(ctx context.Context, in *itick.UpdateTenantProductReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) UpdateTenantProduct(ctx context.Context, in *itick.UpdateTenantProductReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewUpdateTenantProductLogic(ctx, s.svcCtx)
 	return l.UpdateTenantProduct(in)
 }
 
 // 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-func (s *ItickAdminServer) BatchUpsertTenantProducts(ctx context.Context, in *itick.BatchUpsertTenantProductsReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) BatchUpsertTenantProducts(ctx context.Context, in *itick.BatchUpsertTenantProductsReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewBatchUpsertTenantProductsLogic(ctx, s.svcCtx)
 	return l.BatchUpsertTenantProducts(in)
 }
@@ -177,7 +177,7 @@ func (s *ItickAdminServer) ListPriceFormulas(ctx context.Context, in *itick.List
 	return l.ListPriceFormulas(in)
 }
 
-func (s *ItickAdminServer) ChangePriceFormulaStatus(ctx context.Context, in *itick.ChangePriceFormulaStatusReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) ChangePriceFormulaStatus(ctx context.Context, in *itick.ChangePriceFormulaStatusReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewChangePriceFormulaStatusLogic(ctx, s.svcCtx)
 	return l.ChangePriceFormulaStatus(in)
 }
@@ -187,12 +187,12 @@ func (s *ItickAdminServer) ListSnapshotOutbox(ctx context.Context, in *itick.Lis
 	return l.ListSnapshotOutbox(in)
 }
 
-func (s *ItickAdminServer) RetrySnapshotOutbox(ctx context.Context, in *itick.RetrySnapshotOutboxReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) RetrySnapshotOutbox(ctx context.Context, in *itick.RetrySnapshotOutboxReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewRetrySnapshotOutboxLogic(ctx, s.svcCtx)
 	return l.RetrySnapshotOutbox(in)
 }
 
-func (s *ItickAdminServer) RevokeAuthoritativeSnapshot(ctx context.Context, in *itick.RevokeAuthoritativeSnapshotReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) RevokeAuthoritativeSnapshot(ctx context.Context, in *itick.RevokeAuthoritativeSnapshotReq) (*itick.CommonResp, error) {
 	l := itickadminlogic.NewRevokeAuthoritativeSnapshotLogic(ctx, s.svcCtx)
 	return l.RevokeAuthoritativeSnapshot(in)
 }

@@ -22,27 +22,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AppCommonResp struct {
+type UserCommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppCommonResp) Reset() {
-	*x = AppCommonResp{}
+func (x *UserCommonResp) Reset() {
+	*x = UserCommonResp{}
 	mi := &file_proto_option_option_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppCommonResp) String() string {
+func (x *UserCommonResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppCommonResp) ProtoMessage() {}
+func (*UserCommonResp) ProtoMessage() {}
 
-func (x *AppCommonResp) ProtoReflect() protoreflect.Message {
+func (x *UserCommonResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -54,19 +54,19 @@ func (x *AppCommonResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppCommonResp.ProtoReflect.Descriptor instead.
-func (*AppCommonResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserCommonResp.ProtoReflect.Descriptor instead.
+func (*UserCommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AppCommonResp) GetBase() *common.RespBase {
+func (x *UserCommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-type AppListContractsReq struct {
+type UserListContractsReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	UnderlyingSymbol string                 `protobuf:"bytes,1,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
 	OptionType       OptionType             `protobuf:"varint,2,opt,name=option_type,json=optionType,proto3,enum=option.OptionType" json:"option_type,omitempty"`
@@ -76,20 +76,20 @@ type AppListContractsReq struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *AppListContractsReq) Reset() {
-	*x = AppListContractsReq{}
+func (x *UserListContractsReq) Reset() {
+	*x = UserListContractsReq{}
 	mi := &file_proto_option_option_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListContractsReq) String() string {
+func (x *UserListContractsReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListContractsReq) ProtoMessage() {}
+func (*UserListContractsReq) ProtoMessage() {}
 
-func (x *AppListContractsReq) ProtoReflect() protoreflect.Message {
+func (x *UserListContractsReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -101,40 +101,40 @@ func (x *AppListContractsReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListContractsReq.ProtoReflect.Descriptor instead.
-func (*AppListContractsReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListContractsReq.ProtoReflect.Descriptor instead.
+func (*UserListContractsReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AppListContractsReq) GetUnderlyingSymbol() string {
+func (x *UserListContractsReq) GetUnderlyingSymbol() string {
 	if x != nil {
 		return x.UnderlyingSymbol
 	}
 	return ""
 }
 
-func (x *AppListContractsReq) GetOptionType() OptionType {
+func (x *UserListContractsReq) GetOptionType() OptionType {
 	if x != nil {
 		return x.OptionType
 	}
 	return OptionType_OPTION_TYPE_UNKNOWN
 }
 
-func (x *AppListContractsReq) GetStatus() ContractStatus {
+func (x *UserListContractsReq) GetStatus() ContractStatus {
 	if x != nil {
 		return x.Status
 	}
 	return ContractStatus_CONTRACT_STATUS_UNKNOWN
 }
 
-func (x *AppListContractsReq) GetPage() *common.PageReq {
+func (x *UserListContractsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppListContractsResp struct {
+type UserListContractsResp struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Base          *common.RespBase        `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*OptionContractDetail `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -142,20 +142,20 @@ type AppListContractsResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListContractsResp) Reset() {
-	*x = AppListContractsResp{}
+func (x *UserListContractsResp) Reset() {
+	*x = UserListContractsResp{}
 	mi := &file_proto_option_option_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListContractsResp) String() string {
+func (x *UserListContractsResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListContractsResp) ProtoMessage() {}
+func (*UserListContractsResp) ProtoMessage() {}
 
-func (x *AppListContractsResp) ProtoReflect() protoreflect.Message {
+func (x *UserListContractsResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -167,46 +167,46 @@ func (x *AppListContractsResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListContractsResp.ProtoReflect.Descriptor instead.
-func (*AppListContractsResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListContractsResp.ProtoReflect.Descriptor instead.
+func (*UserListContractsResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AppListContractsResp) GetBase() *common.RespBase {
+func (x *UserListContractsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppListContractsResp) GetData() []*OptionContractDetail {
+func (x *UserListContractsResp) GetData() []*OptionContractDetail {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppGetContractDetailReq struct {
+type GetContractDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ContractId    int64                  `protobuf:"varint,1,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppGetContractDetailReq) Reset() {
-	*x = AppGetContractDetailReq{}
+func (x *GetContractDetailReq) Reset() {
+	*x = GetContractDetailReq{}
 	mi := &file_proto_option_option_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppGetContractDetailReq) String() string {
+func (x *GetContractDetailReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppGetContractDetailReq) ProtoMessage() {}
+func (*GetContractDetailReq) ProtoMessage() {}
 
-func (x *AppGetContractDetailReq) ProtoReflect() protoreflect.Message {
+func (x *GetContractDetailReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -218,19 +218,19 @@ func (x *AppGetContractDetailReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppGetContractDetailReq.ProtoReflect.Descriptor instead.
-func (*AppGetContractDetailReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetContractDetailReq.ProtoReflect.Descriptor instead.
+func (*GetContractDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *AppGetContractDetailReq) GetContractId() int64 {
+func (x *GetContractDetailReq) GetContractId() int64 {
 	if x != nil {
 		return x.ContractId
 	}
 	return 0
 }
 
-type AppGetContractDetailResp struct {
+type GetContractDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *OptionContractDetail  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -238,20 +238,20 @@ type AppGetContractDetailResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppGetContractDetailResp) Reset() {
-	*x = AppGetContractDetailResp{}
+func (x *GetContractDetailResp) Reset() {
+	*x = GetContractDetailResp{}
 	mi := &file_proto_option_option_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppGetContractDetailResp) String() string {
+func (x *GetContractDetailResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppGetContractDetailResp) ProtoMessage() {}
+func (*GetContractDetailResp) ProtoMessage() {}
 
-func (x *AppGetContractDetailResp) ProtoReflect() protoreflect.Message {
+func (x *GetContractDetailResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -263,26 +263,26 @@ func (x *AppGetContractDetailResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppGetContractDetailResp.ProtoReflect.Descriptor instead.
-func (*AppGetContractDetailResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetContractDetailResp.ProtoReflect.Descriptor instead.
+func (*GetContractDetailResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *AppGetContractDetailResp) GetBase() *common.RespBase {
+func (x *GetContractDetailResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppGetContractDetailResp) GetData() *OptionContractDetail {
+func (x *GetContractDetailResp) GetData() *OptionContractDetail {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppPlaceOrderReq struct {
+type PlaceOrderReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	AccountId      int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId     int64                  `protobuf:"varint,2,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
@@ -298,20 +298,20 @@ type AppPlaceOrderReq struct {
 	sizeCache      protoimpl.SizeCache
 }
 
-func (x *AppPlaceOrderReq) Reset() {
-	*x = AppPlaceOrderReq{}
+func (x *PlaceOrderReq) Reset() {
+	*x = PlaceOrderReq{}
 	mi := &file_proto_option_option_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppPlaceOrderReq) String() string {
+func (x *PlaceOrderReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppPlaceOrderReq) ProtoMessage() {}
+func (*PlaceOrderReq) ProtoMessage() {}
 
-func (x *AppPlaceOrderReq) ProtoReflect() protoreflect.Message {
+func (x *PlaceOrderReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -323,103 +323,103 @@ func (x *AppPlaceOrderReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppPlaceOrderReq.ProtoReflect.Descriptor instead.
-func (*AppPlaceOrderReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use PlaceOrderReq.ProtoReflect.Descriptor instead.
+func (*PlaceOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *AppPlaceOrderReq) GetAccountId() int64 {
+func (x *PlaceOrderReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppPlaceOrderReq) GetContractId() int64 {
+func (x *PlaceOrderReq) GetContractId() int64 {
 	if x != nil {
 		return x.ContractId
 	}
 	return 0
 }
 
-func (x *AppPlaceOrderReq) GetSide() common.Side {
+func (x *PlaceOrderReq) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
 	return common.Side(0)
 }
 
-func (x *AppPlaceOrderReq) GetPositionEffect() PositionEffect {
+func (x *PlaceOrderReq) GetPositionEffect() PositionEffect {
 	if x != nil {
 		return x.PositionEffect
 	}
 	return PositionEffect_POSITION_EFFECT_UNKNOWN
 }
 
-func (x *AppPlaceOrderReq) GetOrderType() OrderType {
+func (x *PlaceOrderReq) GetOrderType() OrderType {
 	if x != nil {
 		return x.OrderType
 	}
 	return OrderType_ORDER_TYPE_UNKNOWN
 }
 
-func (x *AppPlaceOrderReq) GetPrice() string {
+func (x *PlaceOrderReq) GetPrice() string {
 	if x != nil {
 		return x.Price
 	}
 	return ""
 }
 
-func (x *AppPlaceOrderReq) GetQty() string {
+func (x *PlaceOrderReq) GetQty() string {
 	if x != nil {
 		return x.Qty
 	}
 	return ""
 }
 
-func (x *AppPlaceOrderReq) GetClientOrderId() string {
+func (x *PlaceOrderReq) GetClientOrderId() string {
 	if x != nil {
 		return x.ClientOrderId
 	}
 	return ""
 }
 
-func (x *AppPlaceOrderReq) GetReduceOnly() common.YesNo {
+func (x *PlaceOrderReq) GetReduceOnly() common.YesNo {
 	if x != nil {
 		return x.ReduceOnly
 	}
 	return common.YesNo(0)
 }
 
-func (x *AppPlaceOrderReq) GetMmp() common.YesNo {
+func (x *PlaceOrderReq) GetMmp() common.YesNo {
 	if x != nil {
 		return x.Mmp
 	}
 	return common.YesNo(0)
 }
 
-type AppPlaceOrderResp struct {
+type PlaceOrderResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *AppPlaceOrderData     `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *PlaceOrderData        `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppPlaceOrderResp) Reset() {
-	*x = AppPlaceOrderResp{}
+func (x *PlaceOrderResp) Reset() {
+	*x = PlaceOrderResp{}
 	mi := &file_proto_option_option_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppPlaceOrderResp) String() string {
+func (x *PlaceOrderResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppPlaceOrderResp) ProtoMessage() {}
+func (*PlaceOrderResp) ProtoMessage() {}
 
-func (x *AppPlaceOrderResp) ProtoReflect() protoreflect.Message {
+func (x *PlaceOrderResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -431,26 +431,26 @@ func (x *AppPlaceOrderResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppPlaceOrderResp.ProtoReflect.Descriptor instead.
-func (*AppPlaceOrderResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use PlaceOrderResp.ProtoReflect.Descriptor instead.
+func (*PlaceOrderResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *AppPlaceOrderResp) GetBase() *common.RespBase {
+func (x *PlaceOrderResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppPlaceOrderResp) GetData() *AppPlaceOrderData {
+func (x *PlaceOrderResp) GetData() *PlaceOrderData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppPlaceOrderData struct {
+type PlaceOrderData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OrderNo       string                 `protobuf:"bytes,1,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	OrderId       int64                  `protobuf:"varint,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
@@ -458,20 +458,20 @@ type AppPlaceOrderData struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppPlaceOrderData) Reset() {
-	*x = AppPlaceOrderData{}
+func (x *PlaceOrderData) Reset() {
+	*x = PlaceOrderData{}
 	mi := &file_proto_option_option_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppPlaceOrderData) String() string {
+func (x *PlaceOrderData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppPlaceOrderData) ProtoMessage() {}
+func (*PlaceOrderData) ProtoMessage() {}
 
-func (x *AppPlaceOrderData) ProtoReflect() protoreflect.Message {
+func (x *PlaceOrderData) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -483,26 +483,26 @@ func (x *AppPlaceOrderData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppPlaceOrderData.ProtoReflect.Descriptor instead.
-func (*AppPlaceOrderData) Descriptor() ([]byte, []int) {
+// Deprecated: Use PlaceOrderData.ProtoReflect.Descriptor instead.
+func (*PlaceOrderData) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *AppPlaceOrderData) GetOrderNo() string {
+func (x *PlaceOrderData) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-func (x *AppPlaceOrderData) GetOrderId() int64 {
+func (x *PlaceOrderData) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
 	return 0
 }
 
-type AppCancelOrderReq struct {
+type CancelOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	OrderId       int64                  `protobuf:"varint,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
@@ -511,20 +511,20 @@ type AppCancelOrderReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppCancelOrderReq) Reset() {
-	*x = AppCancelOrderReq{}
+func (x *CancelOrderReq) Reset() {
+	*x = CancelOrderReq{}
 	mi := &file_proto_option_option_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppCancelOrderReq) String() string {
+func (x *CancelOrderReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppCancelOrderReq) ProtoMessage() {}
+func (*CancelOrderReq) ProtoMessage() {}
 
-func (x *AppCancelOrderReq) ProtoReflect() protoreflect.Message {
+func (x *CancelOrderReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -536,33 +536,33 @@ func (x *AppCancelOrderReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppCancelOrderReq.ProtoReflect.Descriptor instead.
-func (*AppCancelOrderReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use CancelOrderReq.ProtoReflect.Descriptor instead.
+func (*CancelOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *AppCancelOrderReq) GetAccountId() int64 {
+func (x *CancelOrderReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppCancelOrderReq) GetOrderId() int64 {
+func (x *CancelOrderReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
 	return 0
 }
 
-func (x *AppCancelOrderReq) GetOrderNo() string {
+func (x *CancelOrderReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-type AppGetOrderDetailReq struct {
+type GetOrderDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	OrderId       int64                  `protobuf:"varint,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
@@ -571,20 +571,20 @@ type AppGetOrderDetailReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppGetOrderDetailReq) Reset() {
-	*x = AppGetOrderDetailReq{}
+func (x *GetOrderDetailReq) Reset() {
+	*x = GetOrderDetailReq{}
 	mi := &file_proto_option_option_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppGetOrderDetailReq) String() string {
+func (x *GetOrderDetailReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppGetOrderDetailReq) ProtoMessage() {}
+func (*GetOrderDetailReq) ProtoMessage() {}
 
-func (x *AppGetOrderDetailReq) ProtoReflect() protoreflect.Message {
+func (x *GetOrderDetailReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -596,33 +596,33 @@ func (x *AppGetOrderDetailReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppGetOrderDetailReq.ProtoReflect.Descriptor instead.
-func (*AppGetOrderDetailReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetOrderDetailReq.ProtoReflect.Descriptor instead.
+func (*GetOrderDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *AppGetOrderDetailReq) GetAccountId() int64 {
+func (x *GetOrderDetailReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppGetOrderDetailReq) GetOrderId() int64 {
+func (x *GetOrderDetailReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
 	return 0
 }
 
-func (x *AppGetOrderDetailReq) GetOrderNo() string {
+func (x *GetOrderDetailReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-type AppGetOrderDetailResp struct {
+type GetOrderDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *OptionOrderDetail     `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -630,20 +630,20 @@ type AppGetOrderDetailResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppGetOrderDetailResp) Reset() {
-	*x = AppGetOrderDetailResp{}
+func (x *GetOrderDetailResp) Reset() {
+	*x = GetOrderDetailResp{}
 	mi := &file_proto_option_option_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppGetOrderDetailResp) String() string {
+func (x *GetOrderDetailResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppGetOrderDetailResp) ProtoMessage() {}
+func (*GetOrderDetailResp) ProtoMessage() {}
 
-func (x *AppGetOrderDetailResp) ProtoReflect() protoreflect.Message {
+func (x *GetOrderDetailResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -655,26 +655,26 @@ func (x *AppGetOrderDetailResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppGetOrderDetailResp.ProtoReflect.Descriptor instead.
-func (*AppGetOrderDetailResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetOrderDetailResp.ProtoReflect.Descriptor instead.
+func (*GetOrderDetailResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *AppGetOrderDetailResp) GetBase() *common.RespBase {
+func (x *GetOrderDetailResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppGetOrderDetailResp) GetData() *OptionOrderDetail {
+func (x *GetOrderDetailResp) GetData() *OptionOrderDetail {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppListCurrentOrdersReq struct {
+type ListCurrentOrdersReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId    int64                  `protobuf:"varint,2,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
@@ -684,20 +684,20 @@ type AppListCurrentOrdersReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListCurrentOrdersReq) Reset() {
-	*x = AppListCurrentOrdersReq{}
+func (x *ListCurrentOrdersReq) Reset() {
+	*x = ListCurrentOrdersReq{}
 	mi := &file_proto_option_option_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListCurrentOrdersReq) String() string {
+func (x *ListCurrentOrdersReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListCurrentOrdersReq) ProtoMessage() {}
+func (*ListCurrentOrdersReq) ProtoMessage() {}
 
-func (x *AppListCurrentOrdersReq) ProtoReflect() protoreflect.Message {
+func (x *ListCurrentOrdersReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -709,40 +709,40 @@ func (x *AppListCurrentOrdersReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListCurrentOrdersReq.ProtoReflect.Descriptor instead.
-func (*AppListCurrentOrdersReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListCurrentOrdersReq.ProtoReflect.Descriptor instead.
+func (*ListCurrentOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *AppListCurrentOrdersReq) GetAccountId() int64 {
+func (x *ListCurrentOrdersReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppListCurrentOrdersReq) GetContractId() int64 {
+func (x *ListCurrentOrdersReq) GetContractId() int64 {
 	if x != nil {
 		return x.ContractId
 	}
 	return 0
 }
 
-func (x *AppListCurrentOrdersReq) GetSide() common.Side {
+func (x *ListCurrentOrdersReq) GetSide() common.Side {
 	if x != nil {
 		return x.Side
 	}
 	return common.Side(0)
 }
 
-func (x *AppListCurrentOrdersReq) GetPage() *common.PageReq {
+func (x *ListCurrentOrdersReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppListCurrentOrdersResp struct {
+type ListCurrentOrdersResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*OptionOrderDetail   `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -750,20 +750,20 @@ type AppListCurrentOrdersResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListCurrentOrdersResp) Reset() {
-	*x = AppListCurrentOrdersResp{}
+func (x *ListCurrentOrdersResp) Reset() {
+	*x = ListCurrentOrdersResp{}
 	mi := &file_proto_option_option_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListCurrentOrdersResp) String() string {
+func (x *ListCurrentOrdersResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListCurrentOrdersResp) ProtoMessage() {}
+func (*ListCurrentOrdersResp) ProtoMessage() {}
 
-func (x *AppListCurrentOrdersResp) ProtoReflect() protoreflect.Message {
+func (x *ListCurrentOrdersResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -775,26 +775,26 @@ func (x *AppListCurrentOrdersResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListCurrentOrdersResp.ProtoReflect.Descriptor instead.
-func (*AppListCurrentOrdersResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListCurrentOrdersResp.ProtoReflect.Descriptor instead.
+func (*ListCurrentOrdersResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *AppListCurrentOrdersResp) GetBase() *common.RespBase {
+func (x *ListCurrentOrdersResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppListCurrentOrdersResp) GetData() []*OptionOrderDetail {
+func (x *ListCurrentOrdersResp) GetData() []*OptionOrderDetail {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppListHistoryOrdersReq struct {
+type ListHistoryOrdersReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	AccountId       int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId      int64                  `protobuf:"varint,2,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
@@ -805,20 +805,20 @@ type AppListHistoryOrdersReq struct {
 	sizeCache       protoimpl.SizeCache
 }
 
-func (x *AppListHistoryOrdersReq) Reset() {
-	*x = AppListHistoryOrdersReq{}
+func (x *ListHistoryOrdersReq) Reset() {
+	*x = ListHistoryOrdersReq{}
 	mi := &file_proto_option_option_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListHistoryOrdersReq) String() string {
+func (x *ListHistoryOrdersReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListHistoryOrdersReq) ProtoMessage() {}
+func (*ListHistoryOrdersReq) ProtoMessage() {}
 
-func (x *AppListHistoryOrdersReq) ProtoReflect() protoreflect.Message {
+func (x *ListHistoryOrdersReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -830,47 +830,47 @@ func (x *AppListHistoryOrdersReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListHistoryOrdersReq.ProtoReflect.Descriptor instead.
-func (*AppListHistoryOrdersReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListHistoryOrdersReq.ProtoReflect.Descriptor instead.
+func (*ListHistoryOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *AppListHistoryOrdersReq) GetAccountId() int64 {
+func (x *ListHistoryOrdersReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppListHistoryOrdersReq) GetContractId() int64 {
+func (x *ListHistoryOrdersReq) GetContractId() int64 {
 	if x != nil {
 		return x.ContractId
 	}
 	return 0
 }
 
-func (x *AppListHistoryOrdersReq) GetStatus() OrderStatus {
+func (x *ListHistoryOrdersReq) GetStatus() OrderStatus {
 	if x != nil {
 		return x.Status
 	}
 	return OrderStatus_ORDER_STATUS_UNKNOWN
 }
 
-func (x *AppListHistoryOrdersReq) GetCreateTimeRange() *common.TimeRange {
+func (x *ListHistoryOrdersReq) GetCreateTimeRange() *common.TimeRange {
 	if x != nil {
 		return x.CreateTimeRange
 	}
 	return nil
 }
 
-func (x *AppListHistoryOrdersReq) GetPage() *common.PageReq {
+func (x *ListHistoryOrdersReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppListHistoryOrdersResp struct {
+type ListHistoryOrdersResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*OptionOrderDetail   `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -878,20 +878,20 @@ type AppListHistoryOrdersResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListHistoryOrdersResp) Reset() {
-	*x = AppListHistoryOrdersResp{}
+func (x *ListHistoryOrdersResp) Reset() {
+	*x = ListHistoryOrdersResp{}
 	mi := &file_proto_option_option_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListHistoryOrdersResp) String() string {
+func (x *ListHistoryOrdersResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListHistoryOrdersResp) ProtoMessage() {}
+func (*ListHistoryOrdersResp) ProtoMessage() {}
 
-func (x *AppListHistoryOrdersResp) ProtoReflect() protoreflect.Message {
+func (x *ListHistoryOrdersResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -903,26 +903,26 @@ func (x *AppListHistoryOrdersResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListHistoryOrdersResp.ProtoReflect.Descriptor instead.
-func (*AppListHistoryOrdersResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListHistoryOrdersResp.ProtoReflect.Descriptor instead.
+func (*ListHistoryOrdersResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *AppListHistoryOrdersResp) GetBase() *common.RespBase {
+func (x *ListHistoryOrdersResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppListHistoryOrdersResp) GetData() []*OptionOrderDetail {
+func (x *ListHistoryOrdersResp) GetData() []*OptionOrderDetail {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppListTradesReq struct {
+type UserListTradesReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	AccountId      int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId     int64                  `protobuf:"varint,2,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
@@ -932,20 +932,20 @@ type AppListTradesReq struct {
 	sizeCache      protoimpl.SizeCache
 }
 
-func (x *AppListTradesReq) Reset() {
-	*x = AppListTradesReq{}
+func (x *UserListTradesReq) Reset() {
+	*x = UserListTradesReq{}
 	mi := &file_proto_option_option_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListTradesReq) String() string {
+func (x *UserListTradesReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListTradesReq) ProtoMessage() {}
+func (*UserListTradesReq) ProtoMessage() {}
 
-func (x *AppListTradesReq) ProtoReflect() protoreflect.Message {
+func (x *UserListTradesReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -957,40 +957,40 @@ func (x *AppListTradesReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListTradesReq.ProtoReflect.Descriptor instead.
-func (*AppListTradesReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListTradesReq.ProtoReflect.Descriptor instead.
+func (*UserListTradesReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *AppListTradesReq) GetAccountId() int64 {
+func (x *UserListTradesReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppListTradesReq) GetContractId() int64 {
+func (x *UserListTradesReq) GetContractId() int64 {
 	if x != nil {
 		return x.ContractId
 	}
 	return 0
 }
 
-func (x *AppListTradesReq) GetTradeTimeRange() *common.TimeRange {
+func (x *UserListTradesReq) GetTradeTimeRange() *common.TimeRange {
 	if x != nil {
 		return x.TradeTimeRange
 	}
 	return nil
 }
 
-func (x *AppListTradesReq) GetPage() *common.PageReq {
+func (x *UserListTradesReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppListTradesResp struct {
+type UserListTradesResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*OptionTradeDetail   `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -998,20 +998,20 @@ type AppListTradesResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListTradesResp) Reset() {
-	*x = AppListTradesResp{}
+func (x *UserListTradesResp) Reset() {
+	*x = UserListTradesResp{}
 	mi := &file_proto_option_option_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListTradesResp) String() string {
+func (x *UserListTradesResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListTradesResp) ProtoMessage() {}
+func (*UserListTradesResp) ProtoMessage() {}
 
-func (x *AppListTradesResp) ProtoReflect() protoreflect.Message {
+func (x *UserListTradesResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1023,26 +1023,26 @@ func (x *AppListTradesResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListTradesResp.ProtoReflect.Descriptor instead.
-func (*AppListTradesResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListTradesResp.ProtoReflect.Descriptor instead.
+func (*UserListTradesResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *AppListTradesResp) GetBase() *common.RespBase {
+func (x *UserListTradesResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppListTradesResp) GetData() []*OptionTradeDetail {
+func (x *UserListTradesResp) GetData() []*OptionTradeDetail {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppListPositionsReq struct {
+type UserListPositionsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	Status        PositionStatus         `protobuf:"varint,2,opt,name=status,proto3,enum=option.PositionStatus" json:"status,omitempty"`
@@ -1051,20 +1051,20 @@ type AppListPositionsReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListPositionsReq) Reset() {
-	*x = AppListPositionsReq{}
+func (x *UserListPositionsReq) Reset() {
+	*x = UserListPositionsReq{}
 	mi := &file_proto_option_option_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListPositionsReq) String() string {
+func (x *UserListPositionsReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListPositionsReq) ProtoMessage() {}
+func (*UserListPositionsReq) ProtoMessage() {}
 
-func (x *AppListPositionsReq) ProtoReflect() protoreflect.Message {
+func (x *UserListPositionsReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1076,33 +1076,33 @@ func (x *AppListPositionsReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListPositionsReq.ProtoReflect.Descriptor instead.
-func (*AppListPositionsReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListPositionsReq.ProtoReflect.Descriptor instead.
+func (*UserListPositionsReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *AppListPositionsReq) GetAccountId() int64 {
+func (x *UserListPositionsReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppListPositionsReq) GetStatus() PositionStatus {
+func (x *UserListPositionsReq) GetStatus() PositionStatus {
 	if x != nil {
 		return x.Status
 	}
 	return PositionStatus_POSITION_STATUS_UNKNOWN
 }
 
-func (x *AppListPositionsReq) GetPage() *common.PageReq {
+func (x *UserListPositionsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppListPositionsResp struct {
+type UserListPositionsResp struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Base          *common.RespBase        `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*OptionPositionDetail `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -1110,20 +1110,20 @@ type AppListPositionsResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListPositionsResp) Reset() {
-	*x = AppListPositionsResp{}
+func (x *UserListPositionsResp) Reset() {
+	*x = UserListPositionsResp{}
 	mi := &file_proto_option_option_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListPositionsResp) String() string {
+func (x *UserListPositionsResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListPositionsResp) ProtoMessage() {}
+func (*UserListPositionsResp) ProtoMessage() {}
 
-func (x *AppListPositionsResp) ProtoReflect() protoreflect.Message {
+func (x *UserListPositionsResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1135,26 +1135,26 @@ func (x *AppListPositionsResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListPositionsResp.ProtoReflect.Descriptor instead.
-func (*AppListPositionsResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListPositionsResp.ProtoReflect.Descriptor instead.
+func (*UserListPositionsResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *AppListPositionsResp) GetBase() *common.RespBase {
+func (x *UserListPositionsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppListPositionsResp) GetData() []*OptionPositionDetail {
+func (x *UserListPositionsResp) GetData() []*OptionPositionDetail {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppGetPositionDetailReq struct {
+type GetPositionDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	PositionId    int64                  `protobuf:"varint,2,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
@@ -1162,20 +1162,20 @@ type AppGetPositionDetailReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppGetPositionDetailReq) Reset() {
-	*x = AppGetPositionDetailReq{}
+func (x *GetPositionDetailReq) Reset() {
+	*x = GetPositionDetailReq{}
 	mi := &file_proto_option_option_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppGetPositionDetailReq) String() string {
+func (x *GetPositionDetailReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppGetPositionDetailReq) ProtoMessage() {}
+func (*GetPositionDetailReq) ProtoMessage() {}
 
-func (x *AppGetPositionDetailReq) ProtoReflect() protoreflect.Message {
+func (x *GetPositionDetailReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1187,26 +1187,26 @@ func (x *AppGetPositionDetailReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppGetPositionDetailReq.ProtoReflect.Descriptor instead.
-func (*AppGetPositionDetailReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetPositionDetailReq.ProtoReflect.Descriptor instead.
+func (*GetPositionDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *AppGetPositionDetailReq) GetAccountId() int64 {
+func (x *GetPositionDetailReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppGetPositionDetailReq) GetPositionId() int64 {
+func (x *GetPositionDetailReq) GetPositionId() int64 {
 	if x != nil {
 		return x.PositionId
 	}
 	return 0
 }
 
-type AppGetPositionDetailResp struct {
+type GetPositionDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *OptionPositionDetail  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -1214,20 +1214,20 @@ type AppGetPositionDetailResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppGetPositionDetailResp) Reset() {
-	*x = AppGetPositionDetailResp{}
+func (x *GetPositionDetailResp) Reset() {
+	*x = GetPositionDetailResp{}
 	mi := &file_proto_option_option_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppGetPositionDetailResp) String() string {
+func (x *GetPositionDetailResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppGetPositionDetailResp) ProtoMessage() {}
+func (*GetPositionDetailResp) ProtoMessage() {}
 
-func (x *AppGetPositionDetailResp) ProtoReflect() protoreflect.Message {
+func (x *GetPositionDetailResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1239,26 +1239,26 @@ func (x *AppGetPositionDetailResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppGetPositionDetailResp.ProtoReflect.Descriptor instead.
-func (*AppGetPositionDetailResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetPositionDetailResp.ProtoReflect.Descriptor instead.
+func (*GetPositionDetailResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *AppGetPositionDetailResp) GetBase() *common.RespBase {
+func (x *GetPositionDetailResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppGetPositionDetailResp) GetData() *OptionPositionDetail {
+func (x *GetPositionDetailResp) GetData() *OptionPositionDetail {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppExerciseReq struct {
+type ExerciseReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	PositionId    int64                  `protobuf:"varint,2,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
@@ -1268,20 +1268,20 @@ type AppExerciseReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppExerciseReq) Reset() {
-	*x = AppExerciseReq{}
+func (x *ExerciseReq) Reset() {
+	*x = ExerciseReq{}
 	mi := &file_proto_option_option_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppExerciseReq) String() string {
+func (x *ExerciseReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppExerciseReq) ProtoMessage() {}
+func (*ExerciseReq) ProtoMessage() {}
 
-func (x *AppExerciseReq) ProtoReflect() protoreflect.Message {
+func (x *ExerciseReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1293,61 +1293,61 @@ func (x *AppExerciseReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppExerciseReq.ProtoReflect.Descriptor instead.
-func (*AppExerciseReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ExerciseReq.ProtoReflect.Descriptor instead.
+func (*ExerciseReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *AppExerciseReq) GetAccountId() int64 {
+func (x *ExerciseReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppExerciseReq) GetPositionId() int64 {
+func (x *ExerciseReq) GetPositionId() int64 {
 	if x != nil {
 		return x.PositionId
 	}
 	return 0
 }
 
-func (x *AppExerciseReq) GetContractId() int64 {
+func (x *ExerciseReq) GetContractId() int64 {
 	if x != nil {
 		return x.ContractId
 	}
 	return 0
 }
 
-func (x *AppExerciseReq) GetExerciseQty() string {
+func (x *ExerciseReq) GetExerciseQty() string {
 	if x != nil {
 		return x.ExerciseQty
 	}
 	return ""
 }
 
-type AppExerciseResp struct {
+type ExerciseResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *AppExerciseData       `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *ExerciseData          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppExerciseResp) Reset() {
-	*x = AppExerciseResp{}
+func (x *ExerciseResp) Reset() {
+	*x = ExerciseResp{}
 	mi := &file_proto_option_option_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppExerciseResp) String() string {
+func (x *ExerciseResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppExerciseResp) ProtoMessage() {}
+func (*ExerciseResp) ProtoMessage() {}
 
-func (x *AppExerciseResp) ProtoReflect() protoreflect.Message {
+func (x *ExerciseResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1359,26 +1359,26 @@ func (x *AppExerciseResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppExerciseResp.ProtoReflect.Descriptor instead.
-func (*AppExerciseResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ExerciseResp.ProtoReflect.Descriptor instead.
+func (*ExerciseResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *AppExerciseResp) GetBase() *common.RespBase {
+func (x *ExerciseResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppExerciseResp) GetData() *AppExerciseData {
+func (x *ExerciseResp) GetData() *ExerciseData {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppExerciseData struct {
+type ExerciseData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ExerciseNo    string                 `protobuf:"bytes,1,opt,name=exercise_no,json=exerciseNo,proto3" json:"exercise_no,omitempty"`
 	ExerciseId    int64                  `protobuf:"varint,2,opt,name=exercise_id,json=exerciseId,proto3" json:"exercise_id,omitempty"`
@@ -1386,20 +1386,20 @@ type AppExerciseData struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppExerciseData) Reset() {
-	*x = AppExerciseData{}
+func (x *ExerciseData) Reset() {
+	*x = ExerciseData{}
 	mi := &file_proto_option_option_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppExerciseData) String() string {
+func (x *ExerciseData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppExerciseData) ProtoMessage() {}
+func (*ExerciseData) ProtoMessage() {}
 
-func (x *AppExerciseData) ProtoReflect() protoreflect.Message {
+func (x *ExerciseData) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1411,26 +1411,26 @@ func (x *AppExerciseData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppExerciseData.ProtoReflect.Descriptor instead.
-func (*AppExerciseData) Descriptor() ([]byte, []int) {
+// Deprecated: Use ExerciseData.ProtoReflect.Descriptor instead.
+func (*ExerciseData) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *AppExerciseData) GetExerciseNo() string {
+func (x *ExerciseData) GetExerciseNo() string {
 	if x != nil {
 		return x.ExerciseNo
 	}
 	return ""
 }
 
-func (x *AppExerciseData) GetExerciseId() int64 {
+func (x *ExerciseData) GetExerciseId() int64 {
 	if x != nil {
 		return x.ExerciseId
 	}
 	return 0
 }
 
-type AppListExercisesReq struct {
+type UserListExercisesReq struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	AccountId         int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId        int64                  `protobuf:"varint,2,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
@@ -1441,20 +1441,20 @@ type AppListExercisesReq struct {
 	sizeCache         protoimpl.SizeCache
 }
 
-func (x *AppListExercisesReq) Reset() {
-	*x = AppListExercisesReq{}
+func (x *UserListExercisesReq) Reset() {
+	*x = UserListExercisesReq{}
 	mi := &file_proto_option_option_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListExercisesReq) String() string {
+func (x *UserListExercisesReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListExercisesReq) ProtoMessage() {}
+func (*UserListExercisesReq) ProtoMessage() {}
 
-func (x *AppListExercisesReq) ProtoReflect() protoreflect.Message {
+func (x *UserListExercisesReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1466,47 +1466,47 @@ func (x *AppListExercisesReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListExercisesReq.ProtoReflect.Descriptor instead.
-func (*AppListExercisesReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListExercisesReq.ProtoReflect.Descriptor instead.
+func (*UserListExercisesReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *AppListExercisesReq) GetAccountId() int64 {
+func (x *UserListExercisesReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppListExercisesReq) GetContractId() int64 {
+func (x *UserListExercisesReq) GetContractId() int64 {
 	if x != nil {
 		return x.ContractId
 	}
 	return 0
 }
 
-func (x *AppListExercisesReq) GetStatus() ExerciseStatus {
+func (x *UserListExercisesReq) GetStatus() ExerciseStatus {
 	if x != nil {
 		return x.Status
 	}
 	return ExerciseStatus_EXERCISE_STATUS_UNKNOWN
 }
 
-func (x *AppListExercisesReq) GetExerciseTimeRange() *common.TimeRange {
+func (x *UserListExercisesReq) GetExerciseTimeRange() *common.TimeRange {
 	if x != nil {
 		return x.ExerciseTimeRange
 	}
 	return nil
 }
 
-func (x *AppListExercisesReq) GetPage() *common.PageReq {
+func (x *UserListExercisesReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppListExercisesResp struct {
+type UserListExercisesResp struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Base          *common.RespBase        `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*OptionExerciseDetail `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -1514,20 +1514,20 @@ type AppListExercisesResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListExercisesResp) Reset() {
-	*x = AppListExercisesResp{}
+func (x *UserListExercisesResp) Reset() {
+	*x = UserListExercisesResp{}
 	mi := &file_proto_option_option_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListExercisesResp) String() string {
+func (x *UserListExercisesResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListExercisesResp) ProtoMessage() {}
+func (*UserListExercisesResp) ProtoMessage() {}
 
-func (x *AppListExercisesResp) ProtoReflect() protoreflect.Message {
+func (x *UserListExercisesResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1539,46 +1539,46 @@ func (x *AppListExercisesResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListExercisesResp.ProtoReflect.Descriptor instead.
-func (*AppListExercisesResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListExercisesResp.ProtoReflect.Descriptor instead.
+func (*UserListExercisesResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *AppListExercisesResp) GetBase() *common.RespBase {
+func (x *UserListExercisesResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppListExercisesResp) GetData() []*OptionExerciseDetail {
+func (x *UserListExercisesResp) GetData() []*OptionExerciseDetail {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppListAccountsReq struct {
+type UserListAccountsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccountId     int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListAccountsReq) Reset() {
-	*x = AppListAccountsReq{}
+func (x *UserListAccountsReq) Reset() {
+	*x = UserListAccountsReq{}
 	mi := &file_proto_option_option_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListAccountsReq) String() string {
+func (x *UserListAccountsReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListAccountsReq) ProtoMessage() {}
+func (*UserListAccountsReq) ProtoMessage() {}
 
-func (x *AppListAccountsReq) ProtoReflect() protoreflect.Message {
+func (x *UserListAccountsReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1590,19 +1590,19 @@ func (x *AppListAccountsReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListAccountsReq.ProtoReflect.Descriptor instead.
-func (*AppListAccountsReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListAccountsReq.ProtoReflect.Descriptor instead.
+func (*UserListAccountsReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *AppListAccountsReq) GetAccountId() int64 {
+func (x *UserListAccountsReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-type AppListAccountsResp struct {
+type UserListAccountsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*OptionAccount       `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -1610,20 +1610,20 @@ type AppListAccountsResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListAccountsResp) Reset() {
-	*x = AppListAccountsResp{}
+func (x *UserListAccountsResp) Reset() {
+	*x = UserListAccountsResp{}
 	mi := &file_proto_option_option_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListAccountsResp) String() string {
+func (x *UserListAccountsResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListAccountsResp) ProtoMessage() {}
+func (*UserListAccountsResp) ProtoMessage() {}
 
-func (x *AppListAccountsResp) ProtoReflect() protoreflect.Message {
+func (x *UserListAccountsResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1635,26 +1635,26 @@ func (x *AppListAccountsResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListAccountsResp.ProtoReflect.Descriptor instead.
-func (*AppListAccountsResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListAccountsResp.ProtoReflect.Descriptor instead.
+func (*UserListAccountsResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{27}
 }
 
-func (x *AppListAccountsResp) GetBase() *common.RespBase {
+func (x *UserListAccountsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppListAccountsResp) GetData() []*OptionAccount {
+func (x *UserListAccountsResp) GetData() []*OptionAccount {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AppListBillsReq struct {
+type UserListBillsReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	AccountId       int64                  `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	RefType         BillRefType            `protobuf:"varint,2,opt,name=ref_type,json=refType,proto3,enum=option.BillRefType" json:"ref_type,omitempty"`
@@ -1664,20 +1664,20 @@ type AppListBillsReq struct {
 	sizeCache       protoimpl.SizeCache
 }
 
-func (x *AppListBillsReq) Reset() {
-	*x = AppListBillsReq{}
+func (x *UserListBillsReq) Reset() {
+	*x = UserListBillsReq{}
 	mi := &file_proto_option_option_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListBillsReq) String() string {
+func (x *UserListBillsReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListBillsReq) ProtoMessage() {}
+func (*UserListBillsReq) ProtoMessage() {}
 
-func (x *AppListBillsReq) ProtoReflect() protoreflect.Message {
+func (x *UserListBillsReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1689,40 +1689,40 @@ func (x *AppListBillsReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListBillsReq.ProtoReflect.Descriptor instead.
-func (*AppListBillsReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListBillsReq.ProtoReflect.Descriptor instead.
+func (*UserListBillsReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{28}
 }
 
-func (x *AppListBillsReq) GetAccountId() int64 {
+func (x *UserListBillsReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *AppListBillsReq) GetRefType() BillRefType {
+func (x *UserListBillsReq) GetRefType() BillRefType {
 	if x != nil {
 		return x.RefType
 	}
 	return BillRefType_BILL_REF_TYPE_UNKNOWN
 }
 
-func (x *AppListBillsReq) GetCreateTimeRange() *common.TimeRange {
+func (x *UserListBillsReq) GetCreateTimeRange() *common.TimeRange {
 	if x != nil {
 		return x.CreateTimeRange
 	}
 	return nil
 }
 
-func (x *AppListBillsReq) GetPage() *common.PageReq {
+func (x *UserListBillsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-type AppListBillsResp struct {
+type UserListBillsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*OptionBill          `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -1730,20 +1730,20 @@ type AppListBillsResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AppListBillsResp) Reset() {
-	*x = AppListBillsResp{}
+func (x *UserListBillsResp) Reset() {
+	*x = UserListBillsResp{}
 	mi := &file_proto_option_option_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AppListBillsResp) String() string {
+func (x *UserListBillsResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AppListBillsResp) ProtoMessage() {}
+func (*UserListBillsResp) ProtoMessage() {}
 
-func (x *AppListBillsResp) ProtoReflect() protoreflect.Message {
+func (x *UserListBillsResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1755,46 +1755,46 @@ func (x *AppListBillsResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AppListBillsResp.ProtoReflect.Descriptor instead.
-func (*AppListBillsResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserListBillsResp.ProtoReflect.Descriptor instead.
+func (*UserListBillsResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *AppListBillsResp) GetBase() *common.RespBase {
+func (x *UserListBillsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *AppListBillsResp) GetData() []*OptionBill {
+func (x *UserListBillsResp) GetData() []*OptionBill {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type AdminCommonResp struct {
+type CommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AdminCommonResp) Reset() {
-	*x = AdminCommonResp{}
+func (x *CommonResp) Reset() {
+	*x = CommonResp{}
 	mi := &file_proto_option_option_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AdminCommonResp) String() string {
+func (x *CommonResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminCommonResp) ProtoMessage() {}
+func (*CommonResp) ProtoMessage() {}
 
-func (x *AdminCommonResp) ProtoReflect() protoreflect.Message {
+func (x *CommonResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_option_option_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1806,12 +1806,12 @@ func (x *AdminCommonResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminCommonResp.ProtoReflect.Descriptor instead.
-func (*AdminCommonResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use CommonResp.ProtoReflect.Descriptor instead.
+func (*CommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_proto_rawDescGZIP(), []int{30}
 }
 
-func (x *AdminCommonResp) GetBase() *common.RespBase {
+func (x *CommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -5038,25 +5038,25 @@ var File_proto_option_option_proto protoreflect.FileDescriptor
 
 const file_proto_option_option_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/option/option.proto\x12\x06option\x1a\x19proto/common/common.proto\x1a\x17proto/option/enum.proto\x1a\x18proto/option/model.proto\"5\n" +
-	"\rAppCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xcc\x01\n" +
-	"\x13AppListContractsReq\x12+\n" +
+	"\x19proto/option/option.proto\x12\x06option\x1a\x19proto/common/common.proto\x1a\x17proto/option/enum.proto\x1a\x18proto/option/model.proto\"6\n" +
+	"\x0eUserCommonResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xcd\x01\n" +
+	"\x14UserListContractsReq\x12+\n" +
 	"\x11underlying_symbol\x18\x01 \x01(\tR\x10underlyingSymbol\x123\n" +
 	"\voption_type\x18\x02 \x01(\x0e2\x12.option.OptionTypeR\n" +
 	"optionType\x12.\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x16.option.ContractStatusR\x06status\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"n\n" +
-	"\x14AppListContractsResp\x12$\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"o\n" +
+	"\x15UserListContractsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x03(\v2\x1c.option.OptionContractDetailR\x04data\":\n" +
-	"\x17AppGetContractDetailReq\x12\x1f\n" +
+	"\x04data\x18\x02 \x03(\v2\x1c.option.OptionContractDetailR\x04data\"7\n" +
+	"\x14GetContractDetailReq\x12\x1f\n" +
 	"\vcontract_id\x18\x01 \x01(\x03R\n" +
-	"contractId\"r\n" +
-	"\x18AppGetContractDetailResp\x12$\n" +
+	"contractId\"o\n" +
+	"\x15GetContractDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionContractDetailR\x04data\"\x88\x03\n" +
-	"\x10AppPlaceOrderReq\x12\x1d\n" +
+	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionContractDetailR\x04data\"\x85\x03\n" +
+	"\rPlaceOrderReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +
@@ -5071,116 +5071,117 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"\vreduce_only\x18\t \x01(\x0e2\r.common.YesNoR\n" +
 	"reduceOnly\x12\x1f\n" +
 	"\x03mmp\x18\n" +
-	" \x01(\x0e2\r.common.YesNoR\x03mmp\"h\n" +
-	"\x11AppPlaceOrderResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.option.AppPlaceOrderDataR\x04data\"I\n" +
-	"\x11AppPlaceOrderData\x12\x19\n" +
+	" \x01(\x0e2\r.common.YesNoR\x03mmp\"b\n" +
+	"\x0ePlaceOrderResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.option.PlaceOrderDataR\x04data\"F\n" +
+	"\x0ePlaceOrderData\x12\x19\n" +
 	"\border_no\x18\x01 \x01(\tR\aorderNo\x12\x19\n" +
-	"\border_id\x18\x02 \x01(\x03R\aorderId\"h\n" +
-	"\x11AppCancelOrderReq\x12\x1d\n" +
+	"\border_id\x18\x02 \x01(\x03R\aorderId\"e\n" +
+	"\x0eCancelOrderReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\x03R\aorderId\x12\x19\n" +
-	"\border_no\x18\x03 \x01(\tR\aorderNo\"k\n" +
-	"\x14AppGetOrderDetailReq\x12\x1d\n" +
+	"\border_no\x18\x03 \x01(\tR\aorderNo\"h\n" +
+	"\x11GetOrderDetailReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\x03R\aorderId\x12\x19\n" +
-	"\border_no\x18\x03 \x01(\tR\aorderNo\"l\n" +
-	"\x15AppGetOrderDetailResp\x12$\n" +
+	"\border_no\x18\x03 \x01(\tR\aorderNo\"i\n" +
+	"\x12GetOrderDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.option.OptionOrderDetailR\x04data\"\xa0\x01\n" +
-	"\x17AppListCurrentOrdersReq\x12\x1d\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.option.OptionOrderDetailR\x04data\"\x9d\x01\n" +
+	"\x14ListCurrentOrdersReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +
 	"contractId\x12 \n" +
 	"\x04side\x18\x03 \x01(\x0e2\f.common.SideR\x04side\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"o\n" +
-	"\x18AppListCurrentOrdersResp\x12$\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"l\n" +
+	"\x15ListCurrentOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x03(\v2\x19.option.OptionOrderDetailR\x04data\"\xea\x01\n" +
-	"\x17AppListHistoryOrdersReq\x12\x1d\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.option.OptionOrderDetailR\x04data\"\xe7\x01\n" +
+	"\x14ListHistoryOrdersReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +
 	"contractId\x12+\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x13.option.OrderStatusR\x06status\x12=\n" +
 	"\x11create_time_range\x18\x04 \x01(\v2\x11.common.TimeRangeR\x0fcreateTimeRange\x12#\n" +
-	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"o\n" +
-	"\x18AppListHistoryOrdersResp\x12$\n" +
+	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"l\n" +
+	"\x15ListHistoryOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x03(\v2\x19.option.OptionOrderDetailR\x04data\"\xb4\x01\n" +
-	"\x10AppListTradesReq\x12\x1d\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.option.OptionOrderDetailR\x04data\"\xb5\x01\n" +
+	"\x11UserListTradesReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +
 	"contractId\x12;\n" +
 	"\x10trade_time_range\x18\x03 \x01(\v2\x11.common.TimeRangeR\x0etradeTimeRange\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"h\n" +
-	"\x11AppListTradesResp\x12$\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"i\n" +
+	"\x12UserListTradesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x03(\v2\x19.option.OptionTradeDetailR\x04data\"\x89\x01\n" +
-	"\x13AppListPositionsReq\x12\x1d\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.option.OptionTradeDetailR\x04data\"\x8a\x01\n" +
+	"\x14UserListPositionsReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12.\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x16.option.PositionStatusR\x06status\x12#\n" +
-	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"n\n" +
-	"\x14AppListPositionsResp\x12$\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"o\n" +
+	"\x15UserListPositionsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x03(\v2\x1c.option.OptionPositionDetailR\x04data\"Y\n" +
-	"\x17AppGetPositionDetailReq\x12\x1d\n" +
+	"\x04data\x18\x02 \x03(\v2\x1c.option.OptionPositionDetailR\x04data\"V\n" +
+	"\x14GetPositionDetailReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vposition_id\x18\x02 \x01(\x03R\n" +
-	"positionId\"r\n" +
-	"\x18AppGetPositionDetailResp\x12$\n" +
+	"positionId\"o\n" +
+	"\x15GetPositionDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionPositionDetailR\x04data\"\x94\x01\n" +
-	"\x0eAppExerciseReq\x12\x1d\n" +
+	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionPositionDetailR\x04data\"\x91\x01\n" +
+	"\vExerciseReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vposition_id\x18\x02 \x01(\x03R\n" +
 	"positionId\x12\x1f\n" +
 	"\vcontract_id\x18\x03 \x01(\x03R\n" +
 	"contractId\x12!\n" +
-	"\fexercise_qty\x18\x04 \x01(\tR\vexerciseQty\"d\n" +
-	"\x0fAppExerciseResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
-	"\x04data\x18\x02 \x01(\v2\x17.option.AppExerciseDataR\x04data\"S\n" +
-	"\x0fAppExerciseData\x12\x1f\n" +
+	"\fexercise_qty\x18\x04 \x01(\tR\vexerciseQty\"^\n" +
+	"\fExerciseResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
+	"\x04data\x18\x02 \x01(\v2\x14.option.ExerciseDataR\x04data\"P\n" +
+	"\fExerciseData\x12\x1f\n" +
 	"\vexercise_no\x18\x01 \x01(\tR\n" +
 	"exerciseNo\x12\x1f\n" +
 	"\vexercise_id\x18\x02 \x01(\x03R\n" +
-	"exerciseId\"\xed\x01\n" +
-	"\x13AppListExercisesReq\x12\x1d\n" +
+	"exerciseId\"\xee\x01\n" +
+	"\x14UserListExercisesReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +
 	"contractId\x12.\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x16.option.ExerciseStatusR\x06status\x12A\n" +
 	"\x13exercise_time_range\x18\x04 \x01(\v2\x11.common.TimeRangeR\x11exerciseTimeRange\x12#\n" +
-	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"n\n" +
-	"\x14AppListExercisesResp\x12$\n" +
+	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"o\n" +
+	"\x15UserListExercisesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x03(\v2\x1c.option.OptionExerciseDetailR\x04data\"3\n" +
-	"\x12AppListAccountsReq\x12\x1d\n" +
+	"\x04data\x18\x02 \x03(\v2\x1c.option.OptionExerciseDetailR\x04data\"4\n" +
+	"\x13UserListAccountsReq\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\x03R\taccountId\"f\n" +
-	"\x13AppListAccountsResp\x12$\n" +
+	"account_id\x18\x01 \x01(\x03R\taccountId\"g\n" +
+	"\x14UserListAccountsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x03(\v2\x15.option.OptionAccountR\x04data\"\xc4\x01\n" +
-	"\x0fAppListBillsReq\x12\x1d\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.option.OptionAccountR\x04data\"\xc5\x01\n" +
+	"\x10UserListBillsReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x03R\taccountId\x12.\n" +
 	"\bref_type\x18\x02 \x01(\x0e2\x13.option.BillRefTypeR\arefType\x12=\n" +
 	"\x11create_time_range\x18\x03 \x01(\v2\x11.common.TimeRangeR\x0fcreateTimeRange\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"`\n" +
-	"\x10AppListBillsResp\x12$\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"a\n" +
+	"\x11UserListBillsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04data\x18\x02 \x03(\v2\x12.option.OptionBillR\x04data\"7\n" +
-	"\x0fAdminCommonResp\x12$\n" +
+	"\x04data\x18\x02 \x03(\v2\x12.option.OptionBillR\x04data\"2\n" +
+	"\n" +
+	"CommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xd6\x06\n" +
 	"\x11CreateContractReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
@@ -5474,44 +5475,50 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"\rOptionTaskReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"6\n" +
 	"\x0eOptionTaskResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\xd5\b\n" +
-	"\tOptionApp\x12M\n" +
-	"\x10AppListContracts\x12\x1b.option.AppListContractsReq\x1a\x1c.option.AppListContractsResp\x12Y\n" +
-	"\x14AppGetContractDetail\x12\x1f.option.AppGetContractDetailReq\x1a .option.AppGetContractDetailResp\x12D\n" +
-	"\rAppPlaceOrder\x12\x18.option.AppPlaceOrderReq\x1a\x19.option.AppPlaceOrderResp\x12B\n" +
-	"\x0eAppCancelOrder\x12\x19.option.AppCancelOrderReq\x1a\x15.option.AppCommonResp\x12P\n" +
-	"\x11AppGetOrderDetail\x12\x1c.option.AppGetOrderDetailReq\x1a\x1d.option.AppGetOrderDetailResp\x12Y\n" +
-	"\x14AppListCurrentOrders\x12\x1f.option.AppListCurrentOrdersReq\x1a .option.AppListCurrentOrdersResp\x12Y\n" +
-	"\x14AppListHistoryOrders\x12\x1f.option.AppListHistoryOrdersReq\x1a .option.AppListHistoryOrdersResp\x12D\n" +
-	"\rAppListTrades\x12\x18.option.AppListTradesReq\x1a\x19.option.AppListTradesResp\x12M\n" +
-	"\x10AppListPositions\x12\x1b.option.AppListPositionsReq\x1a\x1c.option.AppListPositionsResp\x12Y\n" +
-	"\x14AppGetPositionDetail\x12\x1f.option.AppGetPositionDetailReq\x1a .option.AppGetPositionDetailResp\x12>\n" +
-	"\vAppExercise\x12\x16.option.AppExerciseReq\x1a\x17.option.AppExerciseResp\x12M\n" +
-	"\x10AppListExercises\x12\x1b.option.AppListExercisesReq\x1a\x1c.option.AppListExercisesResp\x12J\n" +
-	"\x0fAppListAccounts\x12\x1a.option.AppListAccountsReq\x1a\x1b.option.AppListAccountsResp\x12A\n" +
-	"\fAppListBills\x12\x17.option.AppListBillsReq\x1a\x18.option.AppListBillsResp2\xd3\v\n" +
-	"\vOptionAdmin\x12L\n" +
-	"\x13AdminCreateContract\x12\x19.option.CreateContractReq\x1a\x1a.option.CreateContractResp\x12I\n" +
-	"\x13AdminUpdateContract\x12\x19.option.UpdateContractReq\x1a\x17.option.AdminCommonResp\x12C\n" +
-	"\x10AdminGetContract\x12\x16.option.GetContractReq\x1a\x17.option.GetContractResp\x12I\n" +
-	"\x12AdminListContracts\x12\x18.option.ListContractsReq\x1a\x19.option.ListContractsResp\x12E\n" +
-	"\x11AdminUpdateMarket\x12\x17.option.UpdateMarketReq\x1a\x17.option.AdminCommonResp\x12=\n" +
-	"\x0eAdminGetMarket\x12\x14.option.GetMarketReq\x1a\x15.option.GetMarketResp\x12[\n" +
-	"\x18AdminListMarketSnapshots\x12\x1e.option.ListMarketSnapshotsReq\x1a\x1f.option.ListMarketSnapshotsResp\x12:\n" +
-	"\rAdminGetOrder\x12\x13.option.GetOrderReq\x1a\x14.option.GetOrderResp\x12@\n" +
-	"\x0fAdminListOrders\x12\x15.option.ListOrdersReq\x1a\x16.option.ListOrdersResp\x12:\n" +
-	"\rAdminGetTrade\x12\x13.option.GetTradeReq\x1a\x14.option.GetTradeResp\x12@\n" +
-	"\x0fAdminListTrades\x12\x15.option.ListTradesReq\x1a\x16.option.ListTradesResp\x12C\n" +
-	"\x10AdminGetPosition\x12\x16.option.GetPositionReq\x1a\x17.option.GetPositionResp\x12I\n" +
-	"\x12AdminListPositions\x12\x18.option.ListPositionsReq\x1a\x19.option.ListPositionsResp\x12C\n" +
-	"\x10AdminGetExercise\x12\x16.option.GetExerciseReq\x1a\x17.option.GetExerciseResp\x12I\n" +
-	"\x12AdminListExercises\x12\x18.option.ListExercisesReq\x1a\x19.option.ListExercisesResp\x12I\n" +
-	"\x12AdminGetSettlement\x12\x18.option.GetSettlementReq\x1a\x19.option.GetSettlementResp\x12O\n" +
-	"\x14AdminListSettlements\x12\x1a.option.ListSettlementsReq\x1a\x1b.option.ListSettlementsResp\x12@\n" +
-	"\x0fAdminGetAccount\x12\x15.option.GetAccountReq\x1a\x16.option.GetAccountResp\x12F\n" +
-	"\x11AdminListAccounts\x12\x17.option.ListAccountsReq\x1a\x18.option.ListAccountsResp\x127\n" +
-	"\fAdminGetBill\x12\x12.option.GetBillReq\x1a\x13.option.GetBillResp\x12=\n" +
-	"\x0eAdminListBills\x12\x14.option.ListBillsReq\x1a\x15.option.ListBillsResp2[\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\x8b\b\n" +
+	"\tOptionApp\x12L\n" +
+	"\rListContracts\x12\x1c.option.UserListContractsReq\x1a\x1d.option.UserListContractsResp\x12P\n" +
+	"\x11GetContractDetail\x12\x1c.option.GetContractDetailReq\x1a\x1d.option.GetContractDetailResp\x12;\n" +
+	"\n" +
+	"PlaceOrder\x12\x15.option.PlaceOrderReq\x1a\x16.option.PlaceOrderResp\x12=\n" +
+	"\vCancelOrder\x12\x16.option.CancelOrderReq\x1a\x16.option.UserCommonResp\x12G\n" +
+	"\x0eGetOrderDetail\x12\x19.option.GetOrderDetailReq\x1a\x1a.option.GetOrderDetailResp\x12P\n" +
+	"\x11ListCurrentOrders\x12\x1c.option.ListCurrentOrdersReq\x1a\x1d.option.ListCurrentOrdersResp\x12P\n" +
+	"\x11ListHistoryOrders\x12\x1c.option.ListHistoryOrdersReq\x1a\x1d.option.ListHistoryOrdersResp\x12C\n" +
+	"\n" +
+	"ListTrades\x12\x19.option.UserListTradesReq\x1a\x1a.option.UserListTradesResp\x12L\n" +
+	"\rListPositions\x12\x1c.option.UserListPositionsReq\x1a\x1d.option.UserListPositionsResp\x12P\n" +
+	"\x11GetPositionDetail\x12\x1c.option.GetPositionDetailReq\x1a\x1d.option.GetPositionDetailResp\x125\n" +
+	"\bExercise\x12\x13.option.ExerciseReq\x1a\x14.option.ExerciseResp\x12L\n" +
+	"\rListExercises\x12\x1c.option.UserListExercisesReq\x1a\x1d.option.UserListExercisesResp\x12I\n" +
+	"\fListAccounts\x12\x1b.option.UserListAccountsReq\x1a\x1c.option.UserListAccountsResp\x12@\n" +
+	"\tListBills\x12\x18.option.UserListBillsReq\x1a\x19.option.UserListBillsResp2\xe0\n" +
+	"\n" +
+	"\vOptionAdmin\x12G\n" +
+	"\x0eCreateContract\x12\x19.option.CreateContractReq\x1a\x1a.option.CreateContractResp\x12?\n" +
+	"\x0eUpdateContract\x12\x19.option.UpdateContractReq\x1a\x12.option.CommonResp\x12>\n" +
+	"\vGetContract\x12\x16.option.GetContractReq\x1a\x17.option.GetContractResp\x12D\n" +
+	"\rListContracts\x12\x18.option.ListContractsReq\x1a\x19.option.ListContractsResp\x12;\n" +
+	"\fUpdateMarket\x12\x17.option.UpdateMarketReq\x1a\x12.option.CommonResp\x128\n" +
+	"\tGetMarket\x12\x14.option.GetMarketReq\x1a\x15.option.GetMarketResp\x12V\n" +
+	"\x13ListMarketSnapshots\x12\x1e.option.ListMarketSnapshotsReq\x1a\x1f.option.ListMarketSnapshotsResp\x125\n" +
+	"\bGetOrder\x12\x13.option.GetOrderReq\x1a\x14.option.GetOrderResp\x12;\n" +
+	"\n" +
+	"ListOrders\x12\x15.option.ListOrdersReq\x1a\x16.option.ListOrdersResp\x125\n" +
+	"\bGetTrade\x12\x13.option.GetTradeReq\x1a\x14.option.GetTradeResp\x12;\n" +
+	"\n" +
+	"ListTrades\x12\x15.option.ListTradesReq\x1a\x16.option.ListTradesResp\x12>\n" +
+	"\vGetPosition\x12\x16.option.GetPositionReq\x1a\x17.option.GetPositionResp\x12D\n" +
+	"\rListPositions\x12\x18.option.ListPositionsReq\x1a\x19.option.ListPositionsResp\x12>\n" +
+	"\vGetExercise\x12\x16.option.GetExerciseReq\x1a\x17.option.GetExerciseResp\x12D\n" +
+	"\rListExercises\x12\x18.option.ListExercisesReq\x1a\x19.option.ListExercisesResp\x12D\n" +
+	"\rGetSettlement\x12\x18.option.GetSettlementReq\x1a\x19.option.GetSettlementResp\x12J\n" +
+	"\x0fListSettlements\x12\x1a.option.ListSettlementsReq\x1a\x1b.option.ListSettlementsResp\x12;\n" +
+	"\n" +
+	"GetAccount\x12\x15.option.GetAccountReq\x1a\x16.option.GetAccountResp\x12A\n" +
+	"\fListAccounts\x12\x17.option.ListAccountsReq\x1a\x18.option.ListAccountsResp\x122\n" +
+	"\aGetBill\x12\x12.option.GetBillReq\x1a\x13.option.GetBillResp\x128\n" +
+	"\tListBills\x12\x14.option.ListBillsReq\x1a\x15.option.ListBillsResp2[\n" +
 	"\x0eOptionInternal\x12I\n" +
 	"\x0fSyncMarketQuote\x12\x1a.option.SyncMarketQuoteReq\x1a\x1a.option.InternalCommonResp2\x9e\x01\n" +
 	"\n" +
@@ -5533,163 +5540,163 @@ func file_proto_option_option_proto_rawDescGZIP() []byte {
 
 var file_proto_option_option_proto_msgTypes = make([]protoimpl.MessageInfo, 75)
 var file_proto_option_option_proto_goTypes = []any{
-	(*AppCommonResp)(nil),            // 0: option.AppCommonResp
-	(*AppListContractsReq)(nil),      // 1: option.AppListContractsReq
-	(*AppListContractsResp)(nil),     // 2: option.AppListContractsResp
-	(*AppGetContractDetailReq)(nil),  // 3: option.AppGetContractDetailReq
-	(*AppGetContractDetailResp)(nil), // 4: option.AppGetContractDetailResp
-	(*AppPlaceOrderReq)(nil),         // 5: option.AppPlaceOrderReq
-	(*AppPlaceOrderResp)(nil),        // 6: option.AppPlaceOrderResp
-	(*AppPlaceOrderData)(nil),        // 7: option.AppPlaceOrderData
-	(*AppCancelOrderReq)(nil),        // 8: option.AppCancelOrderReq
-	(*AppGetOrderDetailReq)(nil),     // 9: option.AppGetOrderDetailReq
-	(*AppGetOrderDetailResp)(nil),    // 10: option.AppGetOrderDetailResp
-	(*AppListCurrentOrdersReq)(nil),  // 11: option.AppListCurrentOrdersReq
-	(*AppListCurrentOrdersResp)(nil), // 12: option.AppListCurrentOrdersResp
-	(*AppListHistoryOrdersReq)(nil),  // 13: option.AppListHistoryOrdersReq
-	(*AppListHistoryOrdersResp)(nil), // 14: option.AppListHistoryOrdersResp
-	(*AppListTradesReq)(nil),         // 15: option.AppListTradesReq
-	(*AppListTradesResp)(nil),        // 16: option.AppListTradesResp
-	(*AppListPositionsReq)(nil),      // 17: option.AppListPositionsReq
-	(*AppListPositionsResp)(nil),     // 18: option.AppListPositionsResp
-	(*AppGetPositionDetailReq)(nil),  // 19: option.AppGetPositionDetailReq
-	(*AppGetPositionDetailResp)(nil), // 20: option.AppGetPositionDetailResp
-	(*AppExerciseReq)(nil),           // 21: option.AppExerciseReq
-	(*AppExerciseResp)(nil),          // 22: option.AppExerciseResp
-	(*AppExerciseData)(nil),          // 23: option.AppExerciseData
-	(*AppListExercisesReq)(nil),      // 24: option.AppListExercisesReq
-	(*AppListExercisesResp)(nil),     // 25: option.AppListExercisesResp
-	(*AppListAccountsReq)(nil),       // 26: option.AppListAccountsReq
-	(*AppListAccountsResp)(nil),      // 27: option.AppListAccountsResp
-	(*AppListBillsReq)(nil),          // 28: option.AppListBillsReq
-	(*AppListBillsResp)(nil),         // 29: option.AppListBillsResp
-	(*AdminCommonResp)(nil),          // 30: option.AdminCommonResp
-	(*CreateContractReq)(nil),        // 31: option.CreateContractReq
-	(*CreateContractResp)(nil),       // 32: option.CreateContractResp
-	(*UpdateContractReq)(nil),        // 33: option.UpdateContractReq
-	(*GetContractReq)(nil),           // 34: option.GetContractReq
-	(*GetContractResp)(nil),          // 35: option.GetContractResp
-	(*ListContractsReq)(nil),         // 36: option.ListContractsReq
-	(*ListContractsResp)(nil),        // 37: option.ListContractsResp
-	(*UpdateMarketReq)(nil),          // 38: option.UpdateMarketReq
-	(*GetMarketReq)(nil),             // 39: option.GetMarketReq
-	(*GetMarketResp)(nil),            // 40: option.GetMarketResp
-	(*ListMarketSnapshotsReq)(nil),   // 41: option.ListMarketSnapshotsReq
-	(*ListMarketSnapshotsResp)(nil),  // 42: option.ListMarketSnapshotsResp
-	(*GetOrderReq)(nil),              // 43: option.GetOrderReq
-	(*GetOrderResp)(nil),             // 44: option.GetOrderResp
-	(*ListOrdersReq)(nil),            // 45: option.ListOrdersReq
-	(*ListOrdersResp)(nil),           // 46: option.ListOrdersResp
-	(*GetTradeReq)(nil),              // 47: option.GetTradeReq
-	(*GetTradeResp)(nil),             // 48: option.GetTradeResp
-	(*ListTradesReq)(nil),            // 49: option.ListTradesReq
-	(*ListTradesResp)(nil),           // 50: option.ListTradesResp
-	(*GetPositionReq)(nil),           // 51: option.GetPositionReq
-	(*GetPositionResp)(nil),          // 52: option.GetPositionResp
-	(*ListPositionsReq)(nil),         // 53: option.ListPositionsReq
-	(*ListPositionsResp)(nil),        // 54: option.ListPositionsResp
-	(*GetExerciseReq)(nil),           // 55: option.GetExerciseReq
-	(*GetExerciseResp)(nil),          // 56: option.GetExerciseResp
-	(*ListExercisesReq)(nil),         // 57: option.ListExercisesReq
-	(*ListExercisesResp)(nil),        // 58: option.ListExercisesResp
-	(*GetSettlementReq)(nil),         // 59: option.GetSettlementReq
-	(*GetSettlementResp)(nil),        // 60: option.GetSettlementResp
-	(*ListSettlementsReq)(nil),       // 61: option.ListSettlementsReq
-	(*ListSettlementsResp)(nil),      // 62: option.ListSettlementsResp
-	(*GetAccountReq)(nil),            // 63: option.GetAccountReq
-	(*GetAccountResp)(nil),           // 64: option.GetAccountResp
-	(*ListAccountsReq)(nil),          // 65: option.ListAccountsReq
-	(*ListAccountsResp)(nil),         // 66: option.ListAccountsResp
-	(*GetBillReq)(nil),               // 67: option.GetBillReq
-	(*GetBillResp)(nil),              // 68: option.GetBillResp
-	(*ListBillsReq)(nil),             // 69: option.ListBillsReq
-	(*ListBillsResp)(nil),            // 70: option.ListBillsResp
-	(*SyncMarketQuoteReq)(nil),       // 71: option.SyncMarketQuoteReq
-	(*InternalCommonResp)(nil),       // 72: option.InternalCommonResp
-	(*OptionTaskReq)(nil),            // 73: option.OptionTaskReq
-	(*OptionTaskResp)(nil),           // 74: option.OptionTaskResp
-	(*common.RespBase)(nil),          // 75: common.RespBase
-	(OptionType)(0),                  // 76: option.OptionType
-	(ContractStatus)(0),              // 77: option.ContractStatus
-	(*common.PageReq)(nil),           // 78: common.PageReq
-	(*OptionContractDetail)(nil),     // 79: option.OptionContractDetail
-	(common.Side)(0),                 // 80: common.Side
-	(PositionEffect)(0),              // 81: option.PositionEffect
-	(OrderType)(0),                   // 82: option.OrderType
-	(common.YesNo)(0),                // 83: common.YesNo
-	(*OptionOrderDetail)(nil),        // 84: option.OptionOrderDetail
-	(OrderStatus)(0),                 // 85: option.OrderStatus
-	(*common.TimeRange)(nil),         // 86: common.TimeRange
-	(*OptionTradeDetail)(nil),        // 87: option.OptionTradeDetail
-	(PositionStatus)(0),              // 88: option.PositionStatus
-	(*OptionPositionDetail)(nil),     // 89: option.OptionPositionDetail
-	(ExerciseStatus)(0),              // 90: option.ExerciseStatus
-	(*OptionExerciseDetail)(nil),     // 91: option.OptionExerciseDetail
-	(*OptionAccount)(nil),            // 92: option.OptionAccount
-	(BillRefType)(0),                 // 93: option.BillRefType
-	(*OptionBill)(nil),               // 94: option.OptionBill
-	(ExerciseStyle)(0),               // 95: option.ExerciseStyle
-	(SettlementType)(0),              // 96: option.SettlementType
-	(*OptionMarket)(nil),             // 97: option.OptionMarket
-	(*OptionMarketSnapshot)(nil),     // 98: option.OptionMarketSnapshot
-	(common.PositionSide)(0),         // 99: common.PositionSide
-	(ExerciseType)(0),                // 100: option.ExerciseType
-	(*OptionSettlementDetail)(nil),   // 101: option.OptionSettlementDetail
-	(SettlementStatus)(0),            // 102: option.SettlementStatus
-	(AccountStatus)(0),               // 103: option.AccountStatus
+	(*UserCommonResp)(nil),          // 0: option.UserCommonResp
+	(*UserListContractsReq)(nil),    // 1: option.UserListContractsReq
+	(*UserListContractsResp)(nil),   // 2: option.UserListContractsResp
+	(*GetContractDetailReq)(nil),    // 3: option.GetContractDetailReq
+	(*GetContractDetailResp)(nil),   // 4: option.GetContractDetailResp
+	(*PlaceOrderReq)(nil),           // 5: option.PlaceOrderReq
+	(*PlaceOrderResp)(nil),          // 6: option.PlaceOrderResp
+	(*PlaceOrderData)(nil),          // 7: option.PlaceOrderData
+	(*CancelOrderReq)(nil),          // 8: option.CancelOrderReq
+	(*GetOrderDetailReq)(nil),       // 9: option.GetOrderDetailReq
+	(*GetOrderDetailResp)(nil),      // 10: option.GetOrderDetailResp
+	(*ListCurrentOrdersReq)(nil),    // 11: option.ListCurrentOrdersReq
+	(*ListCurrentOrdersResp)(nil),   // 12: option.ListCurrentOrdersResp
+	(*ListHistoryOrdersReq)(nil),    // 13: option.ListHistoryOrdersReq
+	(*ListHistoryOrdersResp)(nil),   // 14: option.ListHistoryOrdersResp
+	(*UserListTradesReq)(nil),       // 15: option.UserListTradesReq
+	(*UserListTradesResp)(nil),      // 16: option.UserListTradesResp
+	(*UserListPositionsReq)(nil),    // 17: option.UserListPositionsReq
+	(*UserListPositionsResp)(nil),   // 18: option.UserListPositionsResp
+	(*GetPositionDetailReq)(nil),    // 19: option.GetPositionDetailReq
+	(*GetPositionDetailResp)(nil),   // 20: option.GetPositionDetailResp
+	(*ExerciseReq)(nil),             // 21: option.ExerciseReq
+	(*ExerciseResp)(nil),            // 22: option.ExerciseResp
+	(*ExerciseData)(nil),            // 23: option.ExerciseData
+	(*UserListExercisesReq)(nil),    // 24: option.UserListExercisesReq
+	(*UserListExercisesResp)(nil),   // 25: option.UserListExercisesResp
+	(*UserListAccountsReq)(nil),     // 26: option.UserListAccountsReq
+	(*UserListAccountsResp)(nil),    // 27: option.UserListAccountsResp
+	(*UserListBillsReq)(nil),        // 28: option.UserListBillsReq
+	(*UserListBillsResp)(nil),       // 29: option.UserListBillsResp
+	(*CommonResp)(nil),              // 30: option.CommonResp
+	(*CreateContractReq)(nil),       // 31: option.CreateContractReq
+	(*CreateContractResp)(nil),      // 32: option.CreateContractResp
+	(*UpdateContractReq)(nil),       // 33: option.UpdateContractReq
+	(*GetContractReq)(nil),          // 34: option.GetContractReq
+	(*GetContractResp)(nil),         // 35: option.GetContractResp
+	(*ListContractsReq)(nil),        // 36: option.ListContractsReq
+	(*ListContractsResp)(nil),       // 37: option.ListContractsResp
+	(*UpdateMarketReq)(nil),         // 38: option.UpdateMarketReq
+	(*GetMarketReq)(nil),            // 39: option.GetMarketReq
+	(*GetMarketResp)(nil),           // 40: option.GetMarketResp
+	(*ListMarketSnapshotsReq)(nil),  // 41: option.ListMarketSnapshotsReq
+	(*ListMarketSnapshotsResp)(nil), // 42: option.ListMarketSnapshotsResp
+	(*GetOrderReq)(nil),             // 43: option.GetOrderReq
+	(*GetOrderResp)(nil),            // 44: option.GetOrderResp
+	(*ListOrdersReq)(nil),           // 45: option.ListOrdersReq
+	(*ListOrdersResp)(nil),          // 46: option.ListOrdersResp
+	(*GetTradeReq)(nil),             // 47: option.GetTradeReq
+	(*GetTradeResp)(nil),            // 48: option.GetTradeResp
+	(*ListTradesReq)(nil),           // 49: option.ListTradesReq
+	(*ListTradesResp)(nil),          // 50: option.ListTradesResp
+	(*GetPositionReq)(nil),          // 51: option.GetPositionReq
+	(*GetPositionResp)(nil),         // 52: option.GetPositionResp
+	(*ListPositionsReq)(nil),        // 53: option.ListPositionsReq
+	(*ListPositionsResp)(nil),       // 54: option.ListPositionsResp
+	(*GetExerciseReq)(nil),          // 55: option.GetExerciseReq
+	(*GetExerciseResp)(nil),         // 56: option.GetExerciseResp
+	(*ListExercisesReq)(nil),        // 57: option.ListExercisesReq
+	(*ListExercisesResp)(nil),       // 58: option.ListExercisesResp
+	(*GetSettlementReq)(nil),        // 59: option.GetSettlementReq
+	(*GetSettlementResp)(nil),       // 60: option.GetSettlementResp
+	(*ListSettlementsReq)(nil),      // 61: option.ListSettlementsReq
+	(*ListSettlementsResp)(nil),     // 62: option.ListSettlementsResp
+	(*GetAccountReq)(nil),           // 63: option.GetAccountReq
+	(*GetAccountResp)(nil),          // 64: option.GetAccountResp
+	(*ListAccountsReq)(nil),         // 65: option.ListAccountsReq
+	(*ListAccountsResp)(nil),        // 66: option.ListAccountsResp
+	(*GetBillReq)(nil),              // 67: option.GetBillReq
+	(*GetBillResp)(nil),             // 68: option.GetBillResp
+	(*ListBillsReq)(nil),            // 69: option.ListBillsReq
+	(*ListBillsResp)(nil),           // 70: option.ListBillsResp
+	(*SyncMarketQuoteReq)(nil),      // 71: option.SyncMarketQuoteReq
+	(*InternalCommonResp)(nil),      // 72: option.InternalCommonResp
+	(*OptionTaskReq)(nil),           // 73: option.OptionTaskReq
+	(*OptionTaskResp)(nil),          // 74: option.OptionTaskResp
+	(*common.RespBase)(nil),         // 75: common.RespBase
+	(OptionType)(0),                 // 76: option.OptionType
+	(ContractStatus)(0),             // 77: option.ContractStatus
+	(*common.PageReq)(nil),          // 78: common.PageReq
+	(*OptionContractDetail)(nil),    // 79: option.OptionContractDetail
+	(common.Side)(0),                // 80: common.Side
+	(PositionEffect)(0),             // 81: option.PositionEffect
+	(OrderType)(0),                  // 82: option.OrderType
+	(common.YesNo)(0),               // 83: common.YesNo
+	(*OptionOrderDetail)(nil),       // 84: option.OptionOrderDetail
+	(OrderStatus)(0),                // 85: option.OrderStatus
+	(*common.TimeRange)(nil),        // 86: common.TimeRange
+	(*OptionTradeDetail)(nil),       // 87: option.OptionTradeDetail
+	(PositionStatus)(0),             // 88: option.PositionStatus
+	(*OptionPositionDetail)(nil),    // 89: option.OptionPositionDetail
+	(ExerciseStatus)(0),             // 90: option.ExerciseStatus
+	(*OptionExerciseDetail)(nil),    // 91: option.OptionExerciseDetail
+	(*OptionAccount)(nil),           // 92: option.OptionAccount
+	(BillRefType)(0),                // 93: option.BillRefType
+	(*OptionBill)(nil),              // 94: option.OptionBill
+	(ExerciseStyle)(0),              // 95: option.ExerciseStyle
+	(SettlementType)(0),             // 96: option.SettlementType
+	(*OptionMarket)(nil),            // 97: option.OptionMarket
+	(*OptionMarketSnapshot)(nil),    // 98: option.OptionMarketSnapshot
+	(common.PositionSide)(0),        // 99: common.PositionSide
+	(ExerciseType)(0),               // 100: option.ExerciseType
+	(*OptionSettlementDetail)(nil),  // 101: option.OptionSettlementDetail
+	(SettlementStatus)(0),           // 102: option.SettlementStatus
+	(AccountStatus)(0),              // 103: option.AccountStatus
 }
 var file_proto_option_option_proto_depIdxs = []int32{
-	75,  // 0: option.AppCommonResp.base:type_name -> common.RespBase
-	76,  // 1: option.AppListContractsReq.option_type:type_name -> option.OptionType
-	77,  // 2: option.AppListContractsReq.status:type_name -> option.ContractStatus
-	78,  // 3: option.AppListContractsReq.page:type_name -> common.PageReq
-	75,  // 4: option.AppListContractsResp.base:type_name -> common.RespBase
-	79,  // 5: option.AppListContractsResp.data:type_name -> option.OptionContractDetail
-	75,  // 6: option.AppGetContractDetailResp.base:type_name -> common.RespBase
-	79,  // 7: option.AppGetContractDetailResp.data:type_name -> option.OptionContractDetail
-	80,  // 8: option.AppPlaceOrderReq.side:type_name -> common.Side
-	81,  // 9: option.AppPlaceOrderReq.position_effect:type_name -> option.PositionEffect
-	82,  // 10: option.AppPlaceOrderReq.order_type:type_name -> option.OrderType
-	83,  // 11: option.AppPlaceOrderReq.reduce_only:type_name -> common.YesNo
-	83,  // 12: option.AppPlaceOrderReq.mmp:type_name -> common.YesNo
-	75,  // 13: option.AppPlaceOrderResp.base:type_name -> common.RespBase
-	7,   // 14: option.AppPlaceOrderResp.data:type_name -> option.AppPlaceOrderData
-	75,  // 15: option.AppGetOrderDetailResp.base:type_name -> common.RespBase
-	84,  // 16: option.AppGetOrderDetailResp.data:type_name -> option.OptionOrderDetail
-	80,  // 17: option.AppListCurrentOrdersReq.side:type_name -> common.Side
-	78,  // 18: option.AppListCurrentOrdersReq.page:type_name -> common.PageReq
-	75,  // 19: option.AppListCurrentOrdersResp.base:type_name -> common.RespBase
-	84,  // 20: option.AppListCurrentOrdersResp.data:type_name -> option.OptionOrderDetail
-	85,  // 21: option.AppListHistoryOrdersReq.status:type_name -> option.OrderStatus
-	86,  // 22: option.AppListHistoryOrdersReq.create_time_range:type_name -> common.TimeRange
-	78,  // 23: option.AppListHistoryOrdersReq.page:type_name -> common.PageReq
-	75,  // 24: option.AppListHistoryOrdersResp.base:type_name -> common.RespBase
-	84,  // 25: option.AppListHistoryOrdersResp.data:type_name -> option.OptionOrderDetail
-	86,  // 26: option.AppListTradesReq.trade_time_range:type_name -> common.TimeRange
-	78,  // 27: option.AppListTradesReq.page:type_name -> common.PageReq
-	75,  // 28: option.AppListTradesResp.base:type_name -> common.RespBase
-	87,  // 29: option.AppListTradesResp.data:type_name -> option.OptionTradeDetail
-	88,  // 30: option.AppListPositionsReq.status:type_name -> option.PositionStatus
-	78,  // 31: option.AppListPositionsReq.page:type_name -> common.PageReq
-	75,  // 32: option.AppListPositionsResp.base:type_name -> common.RespBase
-	89,  // 33: option.AppListPositionsResp.data:type_name -> option.OptionPositionDetail
-	75,  // 34: option.AppGetPositionDetailResp.base:type_name -> common.RespBase
-	89,  // 35: option.AppGetPositionDetailResp.data:type_name -> option.OptionPositionDetail
-	75,  // 36: option.AppExerciseResp.base:type_name -> common.RespBase
-	23,  // 37: option.AppExerciseResp.data:type_name -> option.AppExerciseData
-	90,  // 38: option.AppListExercisesReq.status:type_name -> option.ExerciseStatus
-	86,  // 39: option.AppListExercisesReq.exercise_time_range:type_name -> common.TimeRange
-	78,  // 40: option.AppListExercisesReq.page:type_name -> common.PageReq
-	75,  // 41: option.AppListExercisesResp.base:type_name -> common.RespBase
-	91,  // 42: option.AppListExercisesResp.data:type_name -> option.OptionExerciseDetail
-	75,  // 43: option.AppListAccountsResp.base:type_name -> common.RespBase
-	92,  // 44: option.AppListAccountsResp.data:type_name -> option.OptionAccount
-	93,  // 45: option.AppListBillsReq.ref_type:type_name -> option.BillRefType
-	86,  // 46: option.AppListBillsReq.create_time_range:type_name -> common.TimeRange
-	78,  // 47: option.AppListBillsReq.page:type_name -> common.PageReq
-	75,  // 48: option.AppListBillsResp.base:type_name -> common.RespBase
-	94,  // 49: option.AppListBillsResp.data:type_name -> option.OptionBill
-	75,  // 50: option.AdminCommonResp.base:type_name -> common.RespBase
+	75,  // 0: option.UserCommonResp.base:type_name -> common.RespBase
+	76,  // 1: option.UserListContractsReq.option_type:type_name -> option.OptionType
+	77,  // 2: option.UserListContractsReq.status:type_name -> option.ContractStatus
+	78,  // 3: option.UserListContractsReq.page:type_name -> common.PageReq
+	75,  // 4: option.UserListContractsResp.base:type_name -> common.RespBase
+	79,  // 5: option.UserListContractsResp.data:type_name -> option.OptionContractDetail
+	75,  // 6: option.GetContractDetailResp.base:type_name -> common.RespBase
+	79,  // 7: option.GetContractDetailResp.data:type_name -> option.OptionContractDetail
+	80,  // 8: option.PlaceOrderReq.side:type_name -> common.Side
+	81,  // 9: option.PlaceOrderReq.position_effect:type_name -> option.PositionEffect
+	82,  // 10: option.PlaceOrderReq.order_type:type_name -> option.OrderType
+	83,  // 11: option.PlaceOrderReq.reduce_only:type_name -> common.YesNo
+	83,  // 12: option.PlaceOrderReq.mmp:type_name -> common.YesNo
+	75,  // 13: option.PlaceOrderResp.base:type_name -> common.RespBase
+	7,   // 14: option.PlaceOrderResp.data:type_name -> option.PlaceOrderData
+	75,  // 15: option.GetOrderDetailResp.base:type_name -> common.RespBase
+	84,  // 16: option.GetOrderDetailResp.data:type_name -> option.OptionOrderDetail
+	80,  // 17: option.ListCurrentOrdersReq.side:type_name -> common.Side
+	78,  // 18: option.ListCurrentOrdersReq.page:type_name -> common.PageReq
+	75,  // 19: option.ListCurrentOrdersResp.base:type_name -> common.RespBase
+	84,  // 20: option.ListCurrentOrdersResp.data:type_name -> option.OptionOrderDetail
+	85,  // 21: option.ListHistoryOrdersReq.status:type_name -> option.OrderStatus
+	86,  // 22: option.ListHistoryOrdersReq.create_time_range:type_name -> common.TimeRange
+	78,  // 23: option.ListHistoryOrdersReq.page:type_name -> common.PageReq
+	75,  // 24: option.ListHistoryOrdersResp.base:type_name -> common.RespBase
+	84,  // 25: option.ListHistoryOrdersResp.data:type_name -> option.OptionOrderDetail
+	86,  // 26: option.UserListTradesReq.trade_time_range:type_name -> common.TimeRange
+	78,  // 27: option.UserListTradesReq.page:type_name -> common.PageReq
+	75,  // 28: option.UserListTradesResp.base:type_name -> common.RespBase
+	87,  // 29: option.UserListTradesResp.data:type_name -> option.OptionTradeDetail
+	88,  // 30: option.UserListPositionsReq.status:type_name -> option.PositionStatus
+	78,  // 31: option.UserListPositionsReq.page:type_name -> common.PageReq
+	75,  // 32: option.UserListPositionsResp.base:type_name -> common.RespBase
+	89,  // 33: option.UserListPositionsResp.data:type_name -> option.OptionPositionDetail
+	75,  // 34: option.GetPositionDetailResp.base:type_name -> common.RespBase
+	89,  // 35: option.GetPositionDetailResp.data:type_name -> option.OptionPositionDetail
+	75,  // 36: option.ExerciseResp.base:type_name -> common.RespBase
+	23,  // 37: option.ExerciseResp.data:type_name -> option.ExerciseData
+	90,  // 38: option.UserListExercisesReq.status:type_name -> option.ExerciseStatus
+	86,  // 39: option.UserListExercisesReq.exercise_time_range:type_name -> common.TimeRange
+	78,  // 40: option.UserListExercisesReq.page:type_name -> common.PageReq
+	75,  // 41: option.UserListExercisesResp.base:type_name -> common.RespBase
+	91,  // 42: option.UserListExercisesResp.data:type_name -> option.OptionExerciseDetail
+	75,  // 43: option.UserListAccountsResp.base:type_name -> common.RespBase
+	92,  // 44: option.UserListAccountsResp.data:type_name -> option.OptionAccount
+	93,  // 45: option.UserListBillsReq.ref_type:type_name -> option.BillRefType
+	86,  // 46: option.UserListBillsReq.create_time_range:type_name -> common.TimeRange
+	78,  // 47: option.UserListBillsReq.page:type_name -> common.PageReq
+	75,  // 48: option.UserListBillsResp.base:type_name -> common.RespBase
+	94,  // 49: option.UserListBillsResp.data:type_name -> option.OptionBill
+	75,  // 50: option.CommonResp.base:type_name -> common.RespBase
 	76,  // 51: option.CreateContractReq.option_type:type_name -> option.OptionType
 	95,  // 52: option.CreateContractReq.exercise_style:type_name -> option.ExerciseStyle
 	96,  // 53: option.CreateContractReq.settlement_type:type_name -> option.SettlementType
@@ -5770,79 +5777,79 @@ var file_proto_option_option_proto_depIdxs = []int32{
 	94,  // 128: option.ListBillsResp.data:type_name -> option.OptionBill
 	75,  // 129: option.InternalCommonResp.base:type_name -> common.RespBase
 	75,  // 130: option.OptionTaskResp.base:type_name -> common.RespBase
-	1,   // 131: option.OptionApp.AppListContracts:input_type -> option.AppListContractsReq
-	3,   // 132: option.OptionApp.AppGetContractDetail:input_type -> option.AppGetContractDetailReq
-	5,   // 133: option.OptionApp.AppPlaceOrder:input_type -> option.AppPlaceOrderReq
-	8,   // 134: option.OptionApp.AppCancelOrder:input_type -> option.AppCancelOrderReq
-	9,   // 135: option.OptionApp.AppGetOrderDetail:input_type -> option.AppGetOrderDetailReq
-	11,  // 136: option.OptionApp.AppListCurrentOrders:input_type -> option.AppListCurrentOrdersReq
-	13,  // 137: option.OptionApp.AppListHistoryOrders:input_type -> option.AppListHistoryOrdersReq
-	15,  // 138: option.OptionApp.AppListTrades:input_type -> option.AppListTradesReq
-	17,  // 139: option.OptionApp.AppListPositions:input_type -> option.AppListPositionsReq
-	19,  // 140: option.OptionApp.AppGetPositionDetail:input_type -> option.AppGetPositionDetailReq
-	21,  // 141: option.OptionApp.AppExercise:input_type -> option.AppExerciseReq
-	24,  // 142: option.OptionApp.AppListExercises:input_type -> option.AppListExercisesReq
-	26,  // 143: option.OptionApp.AppListAccounts:input_type -> option.AppListAccountsReq
-	28,  // 144: option.OptionApp.AppListBills:input_type -> option.AppListBillsReq
-	31,  // 145: option.OptionAdmin.AdminCreateContract:input_type -> option.CreateContractReq
-	33,  // 146: option.OptionAdmin.AdminUpdateContract:input_type -> option.UpdateContractReq
-	34,  // 147: option.OptionAdmin.AdminGetContract:input_type -> option.GetContractReq
-	36,  // 148: option.OptionAdmin.AdminListContracts:input_type -> option.ListContractsReq
-	38,  // 149: option.OptionAdmin.AdminUpdateMarket:input_type -> option.UpdateMarketReq
-	39,  // 150: option.OptionAdmin.AdminGetMarket:input_type -> option.GetMarketReq
-	41,  // 151: option.OptionAdmin.AdminListMarketSnapshots:input_type -> option.ListMarketSnapshotsReq
-	43,  // 152: option.OptionAdmin.AdminGetOrder:input_type -> option.GetOrderReq
-	45,  // 153: option.OptionAdmin.AdminListOrders:input_type -> option.ListOrdersReq
-	47,  // 154: option.OptionAdmin.AdminGetTrade:input_type -> option.GetTradeReq
-	49,  // 155: option.OptionAdmin.AdminListTrades:input_type -> option.ListTradesReq
-	51,  // 156: option.OptionAdmin.AdminGetPosition:input_type -> option.GetPositionReq
-	53,  // 157: option.OptionAdmin.AdminListPositions:input_type -> option.ListPositionsReq
-	55,  // 158: option.OptionAdmin.AdminGetExercise:input_type -> option.GetExerciseReq
-	57,  // 159: option.OptionAdmin.AdminListExercises:input_type -> option.ListExercisesReq
-	59,  // 160: option.OptionAdmin.AdminGetSettlement:input_type -> option.GetSettlementReq
-	61,  // 161: option.OptionAdmin.AdminListSettlements:input_type -> option.ListSettlementsReq
-	63,  // 162: option.OptionAdmin.AdminGetAccount:input_type -> option.GetAccountReq
-	65,  // 163: option.OptionAdmin.AdminListAccounts:input_type -> option.ListAccountsReq
-	67,  // 164: option.OptionAdmin.AdminGetBill:input_type -> option.GetBillReq
-	69,  // 165: option.OptionAdmin.AdminListBills:input_type -> option.ListBillsReq
+	1,   // 131: option.OptionApp.ListContracts:input_type -> option.UserListContractsReq
+	3,   // 132: option.OptionApp.GetContractDetail:input_type -> option.GetContractDetailReq
+	5,   // 133: option.OptionApp.PlaceOrder:input_type -> option.PlaceOrderReq
+	8,   // 134: option.OptionApp.CancelOrder:input_type -> option.CancelOrderReq
+	9,   // 135: option.OptionApp.GetOrderDetail:input_type -> option.GetOrderDetailReq
+	11,  // 136: option.OptionApp.ListCurrentOrders:input_type -> option.ListCurrentOrdersReq
+	13,  // 137: option.OptionApp.ListHistoryOrders:input_type -> option.ListHistoryOrdersReq
+	15,  // 138: option.OptionApp.ListTrades:input_type -> option.UserListTradesReq
+	17,  // 139: option.OptionApp.ListPositions:input_type -> option.UserListPositionsReq
+	19,  // 140: option.OptionApp.GetPositionDetail:input_type -> option.GetPositionDetailReq
+	21,  // 141: option.OptionApp.Exercise:input_type -> option.ExerciseReq
+	24,  // 142: option.OptionApp.ListExercises:input_type -> option.UserListExercisesReq
+	26,  // 143: option.OptionApp.ListAccounts:input_type -> option.UserListAccountsReq
+	28,  // 144: option.OptionApp.ListBills:input_type -> option.UserListBillsReq
+	31,  // 145: option.OptionAdmin.CreateContract:input_type -> option.CreateContractReq
+	33,  // 146: option.OptionAdmin.UpdateContract:input_type -> option.UpdateContractReq
+	34,  // 147: option.OptionAdmin.GetContract:input_type -> option.GetContractReq
+	36,  // 148: option.OptionAdmin.ListContracts:input_type -> option.ListContractsReq
+	38,  // 149: option.OptionAdmin.UpdateMarket:input_type -> option.UpdateMarketReq
+	39,  // 150: option.OptionAdmin.GetMarket:input_type -> option.GetMarketReq
+	41,  // 151: option.OptionAdmin.ListMarketSnapshots:input_type -> option.ListMarketSnapshotsReq
+	43,  // 152: option.OptionAdmin.GetOrder:input_type -> option.GetOrderReq
+	45,  // 153: option.OptionAdmin.ListOrders:input_type -> option.ListOrdersReq
+	47,  // 154: option.OptionAdmin.GetTrade:input_type -> option.GetTradeReq
+	49,  // 155: option.OptionAdmin.ListTrades:input_type -> option.ListTradesReq
+	51,  // 156: option.OptionAdmin.GetPosition:input_type -> option.GetPositionReq
+	53,  // 157: option.OptionAdmin.ListPositions:input_type -> option.ListPositionsReq
+	55,  // 158: option.OptionAdmin.GetExercise:input_type -> option.GetExerciseReq
+	57,  // 159: option.OptionAdmin.ListExercises:input_type -> option.ListExercisesReq
+	59,  // 160: option.OptionAdmin.GetSettlement:input_type -> option.GetSettlementReq
+	61,  // 161: option.OptionAdmin.ListSettlements:input_type -> option.ListSettlementsReq
+	63,  // 162: option.OptionAdmin.GetAccount:input_type -> option.GetAccountReq
+	65,  // 163: option.OptionAdmin.ListAccounts:input_type -> option.ListAccountsReq
+	67,  // 164: option.OptionAdmin.GetBill:input_type -> option.GetBillReq
+	69,  // 165: option.OptionAdmin.ListBills:input_type -> option.ListBillsReq
 	71,  // 166: option.OptionInternal.SyncMarketQuote:input_type -> option.SyncMarketQuoteReq
 	73,  // 167: option.OptionTask.ProcessContractLifecycle:input_type -> option.OptionTaskReq
 	73,  // 168: option.OptionTask.CleanMarketSnapshots:input_type -> option.OptionTaskReq
-	2,   // 169: option.OptionApp.AppListContracts:output_type -> option.AppListContractsResp
-	4,   // 170: option.OptionApp.AppGetContractDetail:output_type -> option.AppGetContractDetailResp
-	6,   // 171: option.OptionApp.AppPlaceOrder:output_type -> option.AppPlaceOrderResp
-	0,   // 172: option.OptionApp.AppCancelOrder:output_type -> option.AppCommonResp
-	10,  // 173: option.OptionApp.AppGetOrderDetail:output_type -> option.AppGetOrderDetailResp
-	12,  // 174: option.OptionApp.AppListCurrentOrders:output_type -> option.AppListCurrentOrdersResp
-	14,  // 175: option.OptionApp.AppListHistoryOrders:output_type -> option.AppListHistoryOrdersResp
-	16,  // 176: option.OptionApp.AppListTrades:output_type -> option.AppListTradesResp
-	18,  // 177: option.OptionApp.AppListPositions:output_type -> option.AppListPositionsResp
-	20,  // 178: option.OptionApp.AppGetPositionDetail:output_type -> option.AppGetPositionDetailResp
-	22,  // 179: option.OptionApp.AppExercise:output_type -> option.AppExerciseResp
-	25,  // 180: option.OptionApp.AppListExercises:output_type -> option.AppListExercisesResp
-	27,  // 181: option.OptionApp.AppListAccounts:output_type -> option.AppListAccountsResp
-	29,  // 182: option.OptionApp.AppListBills:output_type -> option.AppListBillsResp
-	32,  // 183: option.OptionAdmin.AdminCreateContract:output_type -> option.CreateContractResp
-	30,  // 184: option.OptionAdmin.AdminUpdateContract:output_type -> option.AdminCommonResp
-	35,  // 185: option.OptionAdmin.AdminGetContract:output_type -> option.GetContractResp
-	37,  // 186: option.OptionAdmin.AdminListContracts:output_type -> option.ListContractsResp
-	30,  // 187: option.OptionAdmin.AdminUpdateMarket:output_type -> option.AdminCommonResp
-	40,  // 188: option.OptionAdmin.AdminGetMarket:output_type -> option.GetMarketResp
-	42,  // 189: option.OptionAdmin.AdminListMarketSnapshots:output_type -> option.ListMarketSnapshotsResp
-	44,  // 190: option.OptionAdmin.AdminGetOrder:output_type -> option.GetOrderResp
-	46,  // 191: option.OptionAdmin.AdminListOrders:output_type -> option.ListOrdersResp
-	48,  // 192: option.OptionAdmin.AdminGetTrade:output_type -> option.GetTradeResp
-	50,  // 193: option.OptionAdmin.AdminListTrades:output_type -> option.ListTradesResp
-	52,  // 194: option.OptionAdmin.AdminGetPosition:output_type -> option.GetPositionResp
-	54,  // 195: option.OptionAdmin.AdminListPositions:output_type -> option.ListPositionsResp
-	56,  // 196: option.OptionAdmin.AdminGetExercise:output_type -> option.GetExerciseResp
-	58,  // 197: option.OptionAdmin.AdminListExercises:output_type -> option.ListExercisesResp
-	60,  // 198: option.OptionAdmin.AdminGetSettlement:output_type -> option.GetSettlementResp
-	62,  // 199: option.OptionAdmin.AdminListSettlements:output_type -> option.ListSettlementsResp
-	64,  // 200: option.OptionAdmin.AdminGetAccount:output_type -> option.GetAccountResp
-	66,  // 201: option.OptionAdmin.AdminListAccounts:output_type -> option.ListAccountsResp
-	68,  // 202: option.OptionAdmin.AdminGetBill:output_type -> option.GetBillResp
-	70,  // 203: option.OptionAdmin.AdminListBills:output_type -> option.ListBillsResp
+	2,   // 169: option.OptionApp.ListContracts:output_type -> option.UserListContractsResp
+	4,   // 170: option.OptionApp.GetContractDetail:output_type -> option.GetContractDetailResp
+	6,   // 171: option.OptionApp.PlaceOrder:output_type -> option.PlaceOrderResp
+	0,   // 172: option.OptionApp.CancelOrder:output_type -> option.UserCommonResp
+	10,  // 173: option.OptionApp.GetOrderDetail:output_type -> option.GetOrderDetailResp
+	12,  // 174: option.OptionApp.ListCurrentOrders:output_type -> option.ListCurrentOrdersResp
+	14,  // 175: option.OptionApp.ListHistoryOrders:output_type -> option.ListHistoryOrdersResp
+	16,  // 176: option.OptionApp.ListTrades:output_type -> option.UserListTradesResp
+	18,  // 177: option.OptionApp.ListPositions:output_type -> option.UserListPositionsResp
+	20,  // 178: option.OptionApp.GetPositionDetail:output_type -> option.GetPositionDetailResp
+	22,  // 179: option.OptionApp.Exercise:output_type -> option.ExerciseResp
+	25,  // 180: option.OptionApp.ListExercises:output_type -> option.UserListExercisesResp
+	27,  // 181: option.OptionApp.ListAccounts:output_type -> option.UserListAccountsResp
+	29,  // 182: option.OptionApp.ListBills:output_type -> option.UserListBillsResp
+	32,  // 183: option.OptionAdmin.CreateContract:output_type -> option.CreateContractResp
+	30,  // 184: option.OptionAdmin.UpdateContract:output_type -> option.CommonResp
+	35,  // 185: option.OptionAdmin.GetContract:output_type -> option.GetContractResp
+	37,  // 186: option.OptionAdmin.ListContracts:output_type -> option.ListContractsResp
+	30,  // 187: option.OptionAdmin.UpdateMarket:output_type -> option.CommonResp
+	40,  // 188: option.OptionAdmin.GetMarket:output_type -> option.GetMarketResp
+	42,  // 189: option.OptionAdmin.ListMarketSnapshots:output_type -> option.ListMarketSnapshotsResp
+	44,  // 190: option.OptionAdmin.GetOrder:output_type -> option.GetOrderResp
+	46,  // 191: option.OptionAdmin.ListOrders:output_type -> option.ListOrdersResp
+	48,  // 192: option.OptionAdmin.GetTrade:output_type -> option.GetTradeResp
+	50,  // 193: option.OptionAdmin.ListTrades:output_type -> option.ListTradesResp
+	52,  // 194: option.OptionAdmin.GetPosition:output_type -> option.GetPositionResp
+	54,  // 195: option.OptionAdmin.ListPositions:output_type -> option.ListPositionsResp
+	56,  // 196: option.OptionAdmin.GetExercise:output_type -> option.GetExerciseResp
+	58,  // 197: option.OptionAdmin.ListExercises:output_type -> option.ListExercisesResp
+	60,  // 198: option.OptionAdmin.GetSettlement:output_type -> option.GetSettlementResp
+	62,  // 199: option.OptionAdmin.ListSettlements:output_type -> option.ListSettlementsResp
+	64,  // 200: option.OptionAdmin.GetAccount:output_type -> option.GetAccountResp
+	66,  // 201: option.OptionAdmin.ListAccounts:output_type -> option.ListAccountsResp
+	68,  // 202: option.OptionAdmin.GetBill:output_type -> option.GetBillResp
+	70,  // 203: option.OptionAdmin.ListBills:output_type -> option.ListBillsResp
 	72,  // 204: option.OptionInternal.SyncMarketQuote:output_type -> option.InternalCommonResp
 	74,  // 205: option.OptionTask.ProcessContractLifecycle:output_type -> option.OptionTaskResp
 	74,  // 206: option.OptionTask.CleanMarketSnapshots:output_type -> option.OptionTaskResp

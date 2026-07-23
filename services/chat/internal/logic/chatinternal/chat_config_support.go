@@ -36,17 +36,17 @@ func NewUpdateChatConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 更新chat-ui配置
-func (l *UpdateChatConfigLogic) UpdateChatConfig(in *chat.UpdateChatConfigReq) (*chat.AdminChatConfigResp, error) {
+func (l *UpdateChatConfigLogic) UpdateChatConfig(in *chat.UpdateChatConfigReq) (*chat.ChatConfigResp, error) {
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	data, err := l.svcCtx.ChatMerchantInfoModel.FindOneByMerchantId(l.ctx, merchantID)
 	if err == models.ErrNotFound {
-		return &chat.AdminChatConfigResp{Base: helper.ErrResp(404, "chat merchant config not found")}, nil
+		return &chat.ChatConfigResp{Base: helper.ErrResp(404, "chat merchant config not found")}, nil
 	}
 	if err != nil {
-		return &chat.AdminChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 
 	changed := false
@@ -56,7 +56,7 @@ func (l *UpdateChatConfigLogic) UpdateChatConfig(in *chat.UpdateChatConfigReq) (
 	}
 	if in.GetUiConfig() != nil {
 		if err := validateChatThemeConfig(in.GetUiConfig()); err != nil {
-			return &chat.AdminChatConfigResp{Base: helper.ErrResp(400, err.Error())}, nil
+			return &chat.ChatConfigResp{Base: helper.ErrResp(400, err.Error())}, nil
 		}
 		data.UiConfig = protoMessageToNullString(mergeChatThemeConfig(ih.NullStringToChatThemeConfig(data.UiConfig), in.GetUiConfig()))
 		changed = true
@@ -68,10 +68,10 @@ func (l *UpdateChatConfigLogic) UpdateChatConfig(in *chat.UpdateChatConfigReq) (
 	if changed {
 		data.UpdateTimes = utils.NowMillis()
 		if err := l.svcCtx.ChatMerchantInfoModel.Update(l.ctx, data); err != nil {
-			return &chat.AdminChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
+			return &chat.ChatConfigResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	}
-	return &chat.AdminChatConfigResp{Base: helper.OkResp(), Data: ih.ToProtoMerchant(data)}, nil
+	return &chat.ChatConfigResp{Base: helper.OkResp(), Data: ih.ToProtoMerchant(data)}, nil
 }
 
 func validateChatThemeConfig(cfg *chat.ChatThemeConfig) error {

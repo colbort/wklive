@@ -28,7 +28,7 @@ func NewDeleteBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 }
 
 // 删除银行卡
-func (l *DeleteBankLogic) DeleteBank(in *user.DeleteBankReq) (*user.AppCommonResp, error) {
+func (l *DeleteBankLogic) DeleteBank(in *user.DeleteBankReq) (*user.UserCommonResp, error) {
 	userId, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		return nil, err
@@ -40,14 +40,14 @@ func (l *DeleteBankLogic) DeleteBank(in *user.DeleteBankReq) (*user.AppCommonRes
 	}
 
 	if bank == nil {
-		return &user.AppCommonResp{
+		return &user.UserCommonResp{
 			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证银行卡是否属于该用户
 	if bank.UserId != userId {
-		return &user.AppCommonResp{
+		return &user.UserCommonResp{
 			Base: helper.ErrResp(i18n.NoPermissionDeleteThisBankCard, i18n.Translate(i18n.NoPermissionDeleteThisBankCard, l.ctx)),
 		}, nil
 	}
@@ -61,7 +61,7 @@ func (l *DeleteBankLogic) DeleteBank(in *user.DeleteBankReq) (*user.AppCommonRes
 
 	l.Logger.Infof("用户 %d 删除银行卡 %d 成功", userId, in.Id)
 
-	return &user.AppCommonResp{
+	return &user.UserCommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

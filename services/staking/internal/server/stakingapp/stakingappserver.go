@@ -24,49 +24,49 @@ func NewStakingAppServer(svcCtx *svc.ServiceContext) *StakingAppServer {
 }
 
 // 获取质押产品列表
-func (s *StakingAppServer) AppProductList(ctx context.Context, in *staking.AppProductListReq) (*staking.AppProductListResp, error) {
-	l := stakingapplogic.NewAppProductListLogic(ctx, s.svcCtx)
-	return l.AppProductList(in)
+func (s *StakingAppServer) ProductList(ctx context.Context, in *staking.UserProductListReq) (*staking.UserProductListResp, error) {
+	l := stakingapplogic.NewProductListLogic(ctx, s.svcCtx)
+	return l.ProductList(in)
 }
 
 // 获取质押产品详情
-func (s *StakingAppServer) AppProductDetail(ctx context.Context, in *staking.AppProductDetailReq) (*staking.AppProductDetailResp, error) {
-	l := stakingapplogic.NewAppProductDetailLogic(ctx, s.svcCtx)
-	return l.AppProductDetail(in)
+func (s *StakingAppServer) ProductDetail(ctx context.Context, in *staking.UserProductDetailReq) (*staking.UserProductDetailResp, error) {
+	l := stakingapplogic.NewProductDetailLogic(ctx, s.svcCtx)
+	return l.ProductDetail(in)
 }
 
 // 创建质押订单
-func (s *StakingAppServer) CreateOrder(ctx context.Context, in *staking.AppCreateOrderReq) (*staking.AppCreateOrderResp, error) {
+func (s *StakingAppServer) CreateOrder(ctx context.Context, in *staking.CreateOrderReq) (*staking.CreateOrderResp, error) {
 	l := stakingapplogic.NewCreateOrderLogic(ctx, s.svcCtx)
 	return l.CreateOrder(in)
 }
 
 // 获取我的质押订单列表
-func (s *StakingAppServer) MyOrderList(ctx context.Context, in *staking.AppMyOrderListReq) (*staking.AppMyOrderListResp, error) {
+func (s *StakingAppServer) MyOrderList(ctx context.Context, in *staking.MyOrderListReq) (*staking.MyOrderListResp, error) {
 	l := stakingapplogic.NewMyOrderListLogic(ctx, s.svcCtx)
 	return l.MyOrderList(in)
 }
 
 // 获取我的质押订单详情
-func (s *StakingAppServer) MyOrderDetail(ctx context.Context, in *staking.AppMyOrderDetailReq) (*staking.AppMyOrderDetailResp, error) {
+func (s *StakingAppServer) MyOrderDetail(ctx context.Context, in *staking.MyOrderDetailReq) (*staking.MyOrderDetailResp, error) {
 	l := stakingapplogic.NewMyOrderDetailLogic(ctx, s.svcCtx)
 	return l.MyOrderDetail(in)
 }
 
 // 获取我的收益记录列表
-func (s *StakingAppServer) MyRewardLogList(ctx context.Context, in *staking.AppMyRewardLogListReq) (*staking.AppMyRewardLogListResp, error) {
+func (s *StakingAppServer) MyRewardLogList(ctx context.Context, in *staking.MyRewardLogListReq) (*staking.MyRewardLogListResp, error) {
 	l := stakingapplogic.NewMyRewardLogListLogic(ctx, s.svcCtx)
 	return l.MyRewardLogList(in)
 }
 
 // 发起赎回
-func (s *StakingAppServer) Redeem(ctx context.Context, in *staking.AppRedeemReq) (*staking.AppRedeemResp, error) {
+func (s *StakingAppServer) Redeem(ctx context.Context, in *staking.RedeemReq) (*staking.RedeemResp, error) {
 	l := stakingapplogic.NewRedeemLogic(ctx, s.svcCtx)
 	return l.Redeem(in)
 }
 
 // 获取我的赎回记录列表
-func (s *StakingAppServer) MyRedeemLogList(ctx context.Context, in *staking.AppMyRedeemLogListReq) (*staking.AppMyRedeemLogListResp, error) {
+func (s *StakingAppServer) MyRedeemLogList(ctx context.Context, in *staking.MyRedeemLogListReq) (*staking.MyRedeemLogListResp, error) {
 	l := stakingapplogic.NewMyRedeemLogListLogic(ctx, s.svcCtx)
 	return l.MyRedeemLogList(in)
 }

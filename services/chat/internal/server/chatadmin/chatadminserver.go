@@ -30,7 +30,7 @@ func (s *ChatAdminServer) Login(ctx context.Context, in *chat.ChatAdminLoginReq)
 }
 
 // 退出登录
-func (s *ChatAdminServer) Logout(ctx context.Context, in *chat.ChatAdminLogoutReq) (*chat.AdminCommonResp, error) {
+func (s *ChatAdminServer) Logout(ctx context.Context, in *chat.ChatAdminLogoutReq) (*chat.CommonResp, error) {
 	l := chatadminlogic.NewLogoutLogic(ctx, s.svcCtx)
 	return l.Logout(in)
 }
@@ -54,31 +54,31 @@ func (s *ChatAdminServer) GetChatUserById(ctx context.Context, in *chat.GetChatU
 }
 
 // 查询chat-ui配置
-func (s *ChatAdminServer) GetChatConfig(ctx context.Context, in *chat.GetChatConfigReq) (*chat.AdminChatConfigResp, error) {
+func (s *ChatAdminServer) GetChatConfig(ctx context.Context, in *chat.GetChatConfigReq) (*chat.ChatConfigResp, error) {
 	l := chatadminlogic.NewGetChatConfigLogic(ctx, s.svcCtx)
 	return l.GetChatConfig(in)
 }
 
 // 更新chat-ui配置
-func (s *ChatAdminServer) UpdateChatConfig(ctx context.Context, in *chat.UpdateChatConfigReq) (*chat.AdminChatConfigResp, error) {
+func (s *ChatAdminServer) UpdateChatConfig(ctx context.Context, in *chat.UpdateChatConfigReq) (*chat.ChatConfigResp, error) {
 	l := chatadminlogic.NewUpdateChatConfigLogic(ctx, s.svcCtx)
 	return l.UpdateChatConfig(in)
 }
 
 // 创建客服分组
-func (s *ChatAdminServer) CreateChatGroup(ctx context.Context, in *chat.CreateChatGroupReq) (*chat.AdminChatGroupResp, error) {
+func (s *ChatAdminServer) CreateChatGroup(ctx context.Context, in *chat.CreateChatGroupReq) (*chat.ChatGroupResp, error) {
 	l := chatadminlogic.NewCreateChatGroupLogic(ctx, s.svcCtx)
 	return l.CreateChatGroup(in)
 }
 
 // 更新客服分组
-func (s *ChatAdminServer) UpdateChatGroup(ctx context.Context, in *chat.UpdateChatGroupReq) (*chat.AdminChatGroupResp, error) {
+func (s *ChatAdminServer) UpdateChatGroup(ctx context.Context, in *chat.UpdateChatGroupReq) (*chat.ChatGroupResp, error) {
 	l := chatadminlogic.NewUpdateChatGroupLogic(ctx, s.svcCtx)
 	return l.UpdateChatGroup(in)
 }
 
 // 查询客服分组详情
-func (s *ChatAdminServer) GetChatGroup(ctx context.Context, in *chat.GetChatGroupReq) (*chat.AdminChatGroupResp, error) {
+func (s *ChatAdminServer) GetChatGroup(ctx context.Context, in *chat.GetChatGroupReq) (*chat.ChatGroupResp, error) {
 	l := chatadminlogic.NewGetChatGroupLogic(ctx, s.svcCtx)
 	return l.GetChatGroup(in)
 }
@@ -90,31 +90,31 @@ func (s *ChatAdminServer) PageChatGroups(ctx context.Context, in *chat.PageChatG
 }
 
 // 删除客服分组
-func (s *ChatAdminServer) DeleteChatGroup(ctx context.Context, in *chat.DeleteChatGroupReq) (*chat.AdminCommonResp, error) {
+func (s *ChatAdminServer) DeleteChatGroup(ctx context.Context, in *chat.DeleteChatGroupReq) (*chat.CommonResp, error) {
 	l := chatadminlogic.NewDeleteChatGroupLogic(ctx, s.svcCtx)
 	return l.DeleteChatGroup(in)
 }
 
 // 创建坐席
-func (s *ChatAdminServer) CreateChatAgent(ctx context.Context, in *chat.CreateChatAgentReq) (*chat.AdminChatAgentResp, error) {
+func (s *ChatAdminServer) CreateChatAgent(ctx context.Context, in *chat.CreateChatAgentReq) (*chat.ChatAgentResp, error) {
 	l := chatadminlogic.NewCreateChatAgentLogic(ctx, s.svcCtx)
 	return l.CreateChatAgent(in)
 }
 
 // 更新坐席
-func (s *ChatAdminServer) UpdateChatAgent(ctx context.Context, in *chat.UpdateChatAgentReq) (*chat.AdminChatAgentResp, error) {
+func (s *ChatAdminServer) UpdateChatAgent(ctx context.Context, in *chat.UpdateChatAgentReq) (*chat.ChatAgentResp, error) {
 	l := chatadminlogic.NewUpdateChatAgentLogic(ctx, s.svcCtx)
 	return l.UpdateChatAgent(in)
 }
 
 // 更新坐席在线状态
-func (s *ChatAdminServer) UpdateChatAgentStatus(ctx context.Context, in *chat.UpdateChatAgentStatusReq) (*chat.AdminChatAgentResp, error) {
+func (s *ChatAdminServer) UpdateChatAgentStatus(ctx context.Context, in *chat.UpdateChatAgentStatusReq) (*chat.ChatAgentResp, error) {
 	l := chatadminlogic.NewUpdateChatAgentStatusLogic(ctx, s.svcCtx)
 	return l.UpdateChatAgentStatus(in)
 }
 
 // 查询坐席详情
-func (s *ChatAdminServer) GetChatAgent(ctx context.Context, in *chat.GetChatAgentReq) (*chat.AdminChatAgentResp, error) {
+func (s *ChatAdminServer) GetChatAgent(ctx context.Context, in *chat.GetChatAgentReq) (*chat.ChatAgentResp, error) {
 	l := chatadminlogic.NewGetChatAgentLogic(ctx, s.svcCtx)
 	return l.GetChatAgent(in)
 }
@@ -132,7 +132,7 @@ func (s *ChatAdminServer) PageChatSessions(ctx context.Context, in *chat.PageCha
 }
 
 // 查询会话详情
-func (s *ChatAdminServer) GetChatSession(ctx context.Context, in *chat.GetChatSessionReq) (*chat.AdminChatSessionResp, error) {
+func (s *ChatAdminServer) GetChatSession(ctx context.Context, in *chat.GetChatSessionReq) (*chat.ChatSessionResp, error) {
 	l := chatadminlogic.NewGetChatSessionLogic(ctx, s.svcCtx)
 	return l.GetChatSession(in)
 }
@@ -144,19 +144,19 @@ func (s *ChatAdminServer) AcceptChatSession(ctx context.Context, in *chat.Accept
 }
 
 // 发送客服消息
-func (s *ChatAdminServer) SendAgentMessage(ctx context.Context, in *chat.SendAgentMessageReq) (*chat.AdminChatMessageResp, error) {
+func (s *ChatAdminServer) SendAgentMessage(ctx context.Context, in *chat.SendAgentMessageReq) (*chat.ChatMessageResp, error) {
 	l := chatadminlogic.NewSendAgentMessageLogic(ctx, s.svcCtx)
 	return l.SendAgentMessage(in)
 }
 
 // 发送用户输入状态
-func (s *ChatAdminServer) SendAgentTyping(ctx context.Context, in *chat.SendAgentTypingReq) (*chat.AdminCommonResp, error) {
+func (s *ChatAdminServer) SendAgentTyping(ctx context.Context, in *chat.SendAgentTypingReq) (*chat.CommonResp, error) {
 	l := chatadminlogic.NewSendAgentTypingLogic(ctx, s.svcCtx)
 	return l.SendAgentTyping(in)
 }
 
 // 客服侧消息删除/撤回
-func (s *ChatAdminServer) OperateAgentMessage(ctx context.Context, in *chat.OperateAgentMessageReq) (*chat.AdminCommonResp, error) {
+func (s *ChatAdminServer) OperateAgentMessage(ctx context.Context, in *chat.OperateAgentMessageReq) (*chat.CommonResp, error) {
 	l := chatadminlogic.NewOperateAgentMessageLogic(ctx, s.svcCtx)
 	return l.OperateAgentMessage(in)
 }
@@ -168,31 +168,31 @@ func (s *ChatAdminServer) PageChatMessages(ctx context.Context, in *chat.PageCha
 }
 
 // 标记客服侧已读
-func (s *ChatAdminServer) MarkAgentMessagesRead(ctx context.Context, in *chat.MarkAgentMessagesReadReq) (*chat.AdminMarkMessagesReadResp, error) {
+func (s *ChatAdminServer) MarkAgentMessagesRead(ctx context.Context, in *chat.MarkAgentMessagesReadReq) (*chat.MarkMessagesReadResp, error) {
 	l := chatadminlogic.NewMarkAgentMessagesReadLogic(ctx, s.svcCtx)
 	return l.MarkAgentMessagesRead(in)
 }
 
 // 关闭会话
-func (s *ChatAdminServer) CloseChatSession(ctx context.Context, in *chat.CloseChatSessionReq) (*chat.AdminChatSessionResp, error) {
+func (s *ChatAdminServer) CloseChatSession(ctx context.Context, in *chat.CloseChatSessionReq) (*chat.ChatSessionResp, error) {
 	l := chatadminlogic.NewCloseChatSessionLogic(ctx, s.svcCtx)
 	return l.CloseChatSession(in)
 }
 
 // 创建快捷回复
-func (s *ChatAdminServer) CreateChatQuickReply(ctx context.Context, in *chat.CreateChatQuickReplyReq) (*chat.AdminChatQuickReplyResp, error) {
+func (s *ChatAdminServer) CreateChatQuickReply(ctx context.Context, in *chat.CreateChatQuickReplyReq) (*chat.ChatQuickReplyResp, error) {
 	l := chatadminlogic.NewCreateChatQuickReplyLogic(ctx, s.svcCtx)
 	return l.CreateChatQuickReply(in)
 }
 
 // 更新快捷回复
-func (s *ChatAdminServer) UpdateChatQuickReply(ctx context.Context, in *chat.UpdateChatQuickReplyReq) (*chat.AdminChatQuickReplyResp, error) {
+func (s *ChatAdminServer) UpdateChatQuickReply(ctx context.Context, in *chat.UpdateChatQuickReplyReq) (*chat.ChatQuickReplyResp, error) {
 	l := chatadminlogic.NewUpdateChatQuickReplyLogic(ctx, s.svcCtx)
 	return l.UpdateChatQuickReply(in)
 }
 
 // 查询快捷回复详情
-func (s *ChatAdminServer) GetChatQuickReply(ctx context.Context, in *chat.GetChatQuickReplyReq) (*chat.AdminChatQuickReplyResp, error) {
+func (s *ChatAdminServer) GetChatQuickReply(ctx context.Context, in *chat.GetChatQuickReplyReq) (*chat.ChatQuickReplyResp, error) {
 	l := chatadminlogic.NewGetChatQuickReplyLogic(ctx, s.svcCtx)
 	return l.GetChatQuickReply(in)
 }
@@ -210,25 +210,25 @@ func (s *ChatAdminServer) ListEnabledChatQuickReplies(ctx context.Context, in *c
 }
 
 // 删除快捷回复
-func (s *ChatAdminServer) DeleteChatQuickReply(ctx context.Context, in *chat.DeleteChatQuickReplyReq) (*chat.AdminCommonResp, error) {
+func (s *ChatAdminServer) DeleteChatQuickReply(ctx context.Context, in *chat.DeleteChatQuickReplyReq) (*chat.CommonResp, error) {
 	l := chatadminlogic.NewDeleteChatQuickReplyLogic(ctx, s.svcCtx)
 	return l.DeleteChatQuickReply(in)
 }
 
 // 创建问题分类
-func (s *ChatAdminServer) CreateChatCategory(ctx context.Context, in *chat.CreateChatCategoryReq) (*chat.AdminChatCategoryResp, error) {
+func (s *ChatAdminServer) CreateChatCategory(ctx context.Context, in *chat.CreateChatCategoryReq) (*chat.ChatCategoryResp, error) {
 	l := chatadminlogic.NewCreateChatCategoryLogic(ctx, s.svcCtx)
 	return l.CreateChatCategory(in)
 }
 
 // 更新问题分类
-func (s *ChatAdminServer) UpdateChatCategory(ctx context.Context, in *chat.UpdateChatCategoryReq) (*chat.AdminChatCategoryResp, error) {
+func (s *ChatAdminServer) UpdateChatCategory(ctx context.Context, in *chat.UpdateChatCategoryReq) (*chat.ChatCategoryResp, error) {
 	l := chatadminlogic.NewUpdateChatCategoryLogic(ctx, s.svcCtx)
 	return l.UpdateChatCategory(in)
 }
 
 // 查询问题分类详情
-func (s *ChatAdminServer) GetChatCategory(ctx context.Context, in *chat.GetChatCategoryReq) (*chat.AdminChatCategoryResp, error) {
+func (s *ChatAdminServer) GetChatCategory(ctx context.Context, in *chat.GetChatCategoryReq) (*chat.ChatCategoryResp, error) {
 	l := chatadminlogic.NewGetChatCategoryLogic(ctx, s.svcCtx)
 	return l.GetChatCategory(in)
 }
@@ -246,31 +246,31 @@ func (s *ChatAdminServer) ListEnabledChatCategories(ctx context.Context, in *cha
 }
 
 // 删除问题分类
-func (s *ChatAdminServer) DeleteChatCategory(ctx context.Context, in *chat.DeleteChatCategoryReq) (*chat.AdminCommonResp, error) {
+func (s *ChatAdminServer) DeleteChatCategory(ctx context.Context, in *chat.DeleteChatCategoryReq) (*chat.CommonResp, error) {
 	l := chatadminlogic.NewDeleteChatCategoryLogic(ctx, s.svcCtx)
 	return l.DeleteChatCategory(in)
 }
 
 // 创建工单/离线留言
-func (s *ChatAdminServer) CreateChatWorkOrder(ctx context.Context, in *chat.CreateChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+func (s *ChatAdminServer) CreateChatWorkOrder(ctx context.Context, in *chat.CreateChatWorkOrderReq) (*chat.ChatWorkOrderResp, error) {
 	l := chatadminlogic.NewCreateChatWorkOrderLogic(ctx, s.svcCtx)
 	return l.CreateChatWorkOrder(in)
 }
 
 // 更新工单
-func (s *ChatAdminServer) UpdateChatWorkOrder(ctx context.Context, in *chat.UpdateChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+func (s *ChatAdminServer) UpdateChatWorkOrder(ctx context.Context, in *chat.UpdateChatWorkOrderReq) (*chat.ChatWorkOrderResp, error) {
 	l := chatadminlogic.NewUpdateChatWorkOrderLogic(ctx, s.svcCtx)
 	return l.UpdateChatWorkOrder(in)
 }
 
 // 处理工单
-func (s *ChatAdminServer) HandleChatWorkOrder(ctx context.Context, in *chat.HandleChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+func (s *ChatAdminServer) HandleChatWorkOrder(ctx context.Context, in *chat.HandleChatWorkOrderReq) (*chat.ChatWorkOrderResp, error) {
 	l := chatadminlogic.NewHandleChatWorkOrderLogic(ctx, s.svcCtx)
 	return l.HandleChatWorkOrder(in)
 }
 
 // 查询工单详情
-func (s *ChatAdminServer) GetChatWorkOrder(ctx context.Context, in *chat.GetChatWorkOrderReq) (*chat.AdminChatWorkOrderResp, error) {
+func (s *ChatAdminServer) GetChatWorkOrder(ctx context.Context, in *chat.GetChatWorkOrderReq) (*chat.ChatWorkOrderResp, error) {
 	l := chatadminlogic.NewGetChatWorkOrderLogic(ctx, s.svcCtx)
 	return l.GetChatWorkOrder(in)
 }
@@ -282,13 +282,13 @@ func (s *ChatAdminServer) PageChatWorkOrders(ctx context.Context, in *chat.PageC
 }
 
 // 删除工单
-func (s *ChatAdminServer) DeleteChatWorkOrder(ctx context.Context, in *chat.DeleteChatWorkOrderReq) (*chat.AdminCommonResp, error) {
+func (s *ChatAdminServer) DeleteChatWorkOrder(ctx context.Context, in *chat.DeleteChatWorkOrderReq) (*chat.CommonResp, error) {
 	l := chatadminlogic.NewDeleteChatWorkOrderLogic(ctx, s.svcCtx)
 	return l.DeleteChatWorkOrder(in)
 }
 
 // 订阅客服消息事件流
-func (s *ChatAdminServer) AdminSubscribeStream(in *chat.AdminChatSubscribeRequest, stream chat.ChatAdmin_AdminSubscribeStreamServer) error {
-	l := chatadminlogic.NewAdminSubscribeStreamLogic(stream.Context(), s.svcCtx)
-	return l.AdminSubscribeStream(in, stream)
+func (s *ChatAdminServer) SubscribeStream(in *chat.SubscribeRequest, stream chat.ChatAdmin_SubscribeStreamServer) error {
+	l := chatadminlogic.NewSubscribeStreamLogic(stream.Context(), s.svcCtx)
+	return l.SubscribeStream(in, stream)
 }

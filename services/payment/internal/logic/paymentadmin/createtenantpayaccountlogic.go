@@ -29,7 +29,7 @@ func NewCreateTenantPayAccountLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 // 租户支付账号
-func (l *CreateTenantPayAccountLogic) CreateTenantPayAccount(in *payment.CreateTenantPayAccountReq) (*payment.AdminCommonResp, error) {
+func (l *CreateTenantPayAccountLogic) CreateTenantPayAccount(in *payment.CreateTenantPayAccountReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "CreateTenantPayAccount"
 	)
@@ -69,7 +69,7 @@ func (l *CreateTenantPayAccountLogic) CreateTenantPayAccount(in *payment.CreateT
 
 	l.Logger.Infof("Create tenant pay account success: %s", in.AccountCode)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

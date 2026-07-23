@@ -29,13 +29,13 @@ func NewCreateTenantCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 // 租户产品类型
-func (l *CreateTenantCategoryLogic) CreateTenantCategory(in *itick.CreateTenantCategoryReq) (*itick.AdminCommonResp, error) {
+func (l *CreateTenantCategoryLogic) CreateTenantCategory(in *itick.CreateTenantCategoryReq) (*itick.CommonResp, error) {
 	category, err := l.svcCtx.ItickCategoryModel.FindOne(l.ctx, in.CategoryId)
 	if err != nil {
 		return nil, err
 	}
 	if category == nil {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.CategoryNotFound, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
 		}, nil
 	}
@@ -45,7 +45,7 @@ func (l *CreateTenantCategoryLogic) CreateTenantCategory(in *itick.CreateTenantC
 		return nil, err
 	}
 	if exist != nil {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.ResourceAlreadyExists, i18n.Translate(i18n.ResourceAlreadyExists, l.ctx)),
 		}, nil
 	}
@@ -65,5 +65,5 @@ func (l *CreateTenantCategoryLogic) CreateTenantCategory(in *itick.CreateTenantC
 		return nil, err
 	}
 
-	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &itick.CommonResp{Base: helper.OkResp()}, nil
 }

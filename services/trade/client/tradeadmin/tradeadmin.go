@@ -14,8 +14,8 @@ import (
 )
 
 type (
-	AdminCommonResp                  = trade.AdminCommonResp
-	AppCommonResp                    = trade.AppCommonResp
+	CommonResp                       = trade.CommonResp
+	UserCommonResp                   = trade.UserCommonResp
 	CancelAllOrdersReq               = trade.CancelAllOrdersReq
 	CancelAllOrdersResp              = trade.CancelAllOrdersResp
 	CancelOrderReq                   = trade.CancelOrderReq
@@ -143,23 +143,23 @@ type (
 
 	TradeAdmin interface {
 		// 创建交易对
-		CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新交易对信息
-		UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取后台交易对列表
 		GetSymbolListAdmin(ctx context.Context, in *GetSymbolListAdminReq, opts ...grpc.CallOption) (*GetSymbolListAdminResp, error)
 		// 获取交易对详情
 		GetSymbolDetailAdmin(ctx context.Context, in *GetSymbolDetailAdminReq, opts ...grpc.CallOption) (*GetSymbolDetailAdminResp, error)
 		// 设置现货交易对配置
-		SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 设置合约交易对配置
-		SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 设置秒合约产品配置
-		SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 保存交易时段配置
-		SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 保存交易对杠杆档位配置
-		SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取交易对杠杆档位配置
 		GetSymbolLeverageConfig(ctx context.Context, in *GetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigResp, error)
 		// 获取交易对杠杆档位配置列表
@@ -183,25 +183,25 @@ type (
 		// 获取撤单日志列表
 		GetCancelLogListAdmin(ctx context.Context, in *GetCancelLogListAdminReq, opts ...grpc.CallOption) (*GetCancelLogListAdminResp, error)
 		// 设置用户交易限制
-		SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 设置用户交易对限制
-		SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取用户交易限制
 		GetUserTradeLimit(ctx context.Context, in *GetUserTradeLimitReq, opts ...grpc.CallOption) (*GetUserTradeLimitResp, error)
 		// 获取用户交易对限制
 		GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolLimitReq, opts ...grpc.CallOption) (*GetUserSymbolLimitResp, error)
 		// 设置用户交易配置
-		SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取用户交易配置
 		GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error)
 		// 设置用户合约偏好配置
-		SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取用户合约偏好配置
 		GetContractUserConfig(ctx context.Context, in *GetContractUserConfigReq, opts ...grpc.CallOption) (*GetContractUserConfigResp, error)
 		// 获取风控订单校验日志列表
 		GetRiskOrderCheckLogList(ctx context.Context, in *GetRiskOrderCheckLogListReq, opts ...grpc.CallOption) (*GetRiskOrderCheckLogListResp, error)
 		// 设置用户杠杆配置
-		SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取用户杠杆配置
 		GetUserLeverageConfig(ctx context.Context, in *GetUserLeverageConfigReq, opts ...grpc.CallOption) (*GetUserLeverageConfigResp, error)
 		// 获取交易事件列表
@@ -209,9 +209,9 @@ type (
 		// 获取交易事件详情
 		GetTradeEventDetail(ctx context.Context, in *GetTradeEventDetailReq, opts ...grpc.CallOption) (*GetTradeEventDetailResp, error)
 		// 重试交易事件
-		RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 保存合约风险限额档位
-		SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取合约风险限额档位列表
 		GetContractRiskLimitTierList(ctx context.Context, in *GetContractRiskLimitTierListReq, opts ...grpc.CallOption) (*GetContractRiskLimitTierListResp, error)
 		// 资金费批次与结算明细（只读）
@@ -226,8 +226,8 @@ type (
 		GetAssetReservationList(ctx context.Context, in *GetAssetReservationListReq, opts ...grpc.CallOption) (*GetAssetReservationListResp, error)
 		GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error)
 		// 仅重置失败/人工处理的结算指令；不得修改金额
-		RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
-		SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error)
+		SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 		GetInsuranceFundAccountList(ctx context.Context, in *GetInsuranceFundAccountListReq, opts ...grpc.CallOption) (*GetInsuranceFundAccountListResp, error)
 		GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error)
 	}
@@ -244,13 +244,13 @@ func NewTradeAdmin(cli zrpc.Client) TradeAdmin {
 }
 
 // 创建交易对
-func (m *defaultTradeAdmin) CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.CreateSymbol(ctx, in, opts...)
 }
 
 // 更新交易对信息
-func (m *defaultTradeAdmin) UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.UpdateSymbol(ctx, in, opts...)
 }
@@ -268,31 +268,31 @@ func (m *defaultTradeAdmin) GetSymbolDetailAdmin(ctx context.Context, in *GetSym
 }
 
 // 设置现货交易对配置
-func (m *defaultTradeAdmin) SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetSpotSymbolConfig(ctx, in, opts...)
 }
 
 // 设置合约交易对配置
-func (m *defaultTradeAdmin) SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetContractSymbolConfig(ctx, in, opts...)
 }
 
 // 设置秒合约产品配置
-func (m *defaultTradeAdmin) SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetSecondsSymbolConfig(ctx, in, opts...)
 }
 
 // 保存交易时段配置
-func (m *defaultTradeAdmin) SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetSymbolSession(ctx, in, opts...)
 }
 
 // 保存交易对杠杆档位配置
-func (m *defaultTradeAdmin) SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetSymbolLeverageConfig(ctx, in, opts...)
 }
@@ -364,13 +364,13 @@ func (m *defaultTradeAdmin) GetCancelLogListAdmin(ctx context.Context, in *GetCa
 }
 
 // 设置用户交易限制
-func (m *defaultTradeAdmin) SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetUserTradeLimit(ctx, in, opts...)
 }
 
 // 设置用户交易对限制
-func (m *defaultTradeAdmin) SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetUserSymbolLimit(ctx, in, opts...)
 }
@@ -388,7 +388,7 @@ func (m *defaultTradeAdmin) GetUserSymbolLimit(ctx context.Context, in *GetUserS
 }
 
 // 设置用户交易配置
-func (m *defaultTradeAdmin) SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetUserTradeConfig(ctx, in, opts...)
 }
@@ -400,7 +400,7 @@ func (m *defaultTradeAdmin) GetUserTradeConfig(ctx context.Context, in *GetUserT
 }
 
 // 设置用户合约偏好配置
-func (m *defaultTradeAdmin) SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetContractUserConfig(ctx, in, opts...)
 }
@@ -418,7 +418,7 @@ func (m *defaultTradeAdmin) GetRiskOrderCheckLogList(ctx context.Context, in *Ge
 }
 
 // 设置用户杠杆配置
-func (m *defaultTradeAdmin) SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetUserLeverageConfig(ctx, in, opts...)
 }
@@ -442,13 +442,13 @@ func (m *defaultTradeAdmin) GetTradeEventDetail(ctx context.Context, in *GetTrad
 }
 
 // 重试交易事件
-func (m *defaultTradeAdmin) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.RetryTradeEvent(ctx, in, opts...)
 }
 
 // 保存合约风险限额档位
-func (m *defaultTradeAdmin) SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetContractRiskLimitTier(ctx, in, opts...)
 }
@@ -503,12 +503,12 @@ func (m *defaultTradeAdmin) GetSettlementInstructionList(ctx context.Context, in
 }
 
 // 仅重置失败/人工处理的结算指令；不得修改金额
-func (m *defaultTradeAdmin) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.RetrySettlementInstruction(ctx, in, opts...)
 }
 
-func (m *defaultTradeAdmin) SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultTradeAdmin) SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetInsuranceFundAccount(ctx, in, opts...)
 }

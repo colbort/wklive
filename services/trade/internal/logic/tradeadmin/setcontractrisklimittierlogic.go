@@ -29,17 +29,17 @@ func NewSetContractRiskLimitTierLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 // 保存合约风险限额档位
-func (l *SetContractRiskLimitTierLogic) SetContractRiskLimitTier(in *trade.SetContractRiskLimitTierReq) (*trade.AdminCommonResp, error) {
+func (l *SetContractRiskLimitTierLogic) SetContractRiskLimitTier(in *trade.SetContractRiskLimitTierReq) (*trade.CommonResp, error) {
 	tenantID := adminTenantID(l.ctx, in.TenantId)
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 	if err != nil || symbol.TenantId != tenantID || symbol.ProductType != int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "derivative symbol not found")}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "derivative symbol not found")}, nil
 	}
 	floor, capValue := mustParseFloat(in.NotionalFloor), mustParseFloat(in.NotionalCap)
 	initial, maintenance := mustParseFloat(in.InitialMarginRate), mustParseFloat(in.MaintenanceMarginRate)
 	maintenanceAmount := mustParseFloat(in.MaintenanceAmount)
 	if in.TierNo <= 0 || in.MaxLeverage <= 0 || floor.IsNegative() || (capValue.IsPositive() && !capValue.GreaterThan(floor)) || maintenance.IsNegative() || initial.LessThan(maintenance) || maintenanceAmount.IsNegative() {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, "invalid risk tier")}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, "invalid risk tier")}, nil
 	}
 	var overlap int64
 	query := "SELECT COUNT(1) FROM t_contract_risk_limit_tier WHERE tenant_id=? AND symbol_id=? AND id<>? AND tier_no<>? AND (notional_cap=0 OR notional_cap>?) AND (?=0 OR notional_floor<?)"
@@ -47,7 +47,7 @@ func (l *SetContractRiskLimitTierLogic) SetContractRiskLimitTier(in *trade.SetCo
 		return nil, err
 	}
 	if overlap > 0 {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, "risk tier notional range overlaps existing tier")}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, "risk tier notional range overlaps existing tier")}, nil
 	}
 	now, enabled := utils.NowMillis(), int64(in.Enabled)
 	if enabled == 0 {
@@ -57,7 +57,7 @@ func (l *SetContractRiskLimitTierLogic) SetContractRiskLimitTier(in *trade.SetCo
 	if in.Id > 0 {
 		existing, findErr := l.svcCtx.ContractRiskLimitTierModel.FindOne(l.ctx, in.Id)
 		if errors.Is(findErr, models.ErrNotFound) || (findErr == nil && existing.TenantId != tenantID) {
-			return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "risk tier not found")}, nil
+			return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "risk tier not found")}, nil
 		}
 		if findErr != nil {
 			return nil, findErr
@@ -70,5 +70,5 @@ func (l *SetContractRiskLimitTierLogic) SetContractRiskLimitTier(in *trade.SetCo
 	if err != nil {
 		return nil, err
 	}
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }

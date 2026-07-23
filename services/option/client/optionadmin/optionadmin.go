@@ -14,125 +14,125 @@ import (
 )
 
 type (
-	AdminCommonResp          = option.AdminCommonResp
-	AppCancelOrderReq        = option.AppCancelOrderReq
-	AppCommonResp            = option.AppCommonResp
-	AppExerciseData          = option.AppExerciseData
-	AppExerciseReq           = option.AppExerciseReq
-	AppExerciseResp          = option.AppExerciseResp
-	AppGetContractDetailReq  = option.AppGetContractDetailReq
-	AppGetContractDetailResp = option.AppGetContractDetailResp
-	AppGetOrderDetailReq     = option.AppGetOrderDetailReq
-	AppGetOrderDetailResp    = option.AppGetOrderDetailResp
-	AppGetPositionDetailReq  = option.AppGetPositionDetailReq
-	AppGetPositionDetailResp = option.AppGetPositionDetailResp
-	AppListAccountsReq       = option.AppListAccountsReq
-	AppListAccountsResp      = option.AppListAccountsResp
-	AppListBillsReq          = option.AppListBillsReq
-	AppListBillsResp         = option.AppListBillsResp
-	AppListContractsReq      = option.AppListContractsReq
-	AppListContractsResp     = option.AppListContractsResp
-	AppListCurrentOrdersReq  = option.AppListCurrentOrdersReq
-	AppListCurrentOrdersResp = option.AppListCurrentOrdersResp
-	AppListExercisesReq      = option.AppListExercisesReq
-	AppListExercisesResp     = option.AppListExercisesResp
-	AppListHistoryOrdersReq  = option.AppListHistoryOrdersReq
-	AppListHistoryOrdersResp = option.AppListHistoryOrdersResp
-	AppListPositionsReq      = option.AppListPositionsReq
-	AppListPositionsResp     = option.AppListPositionsResp
-	AppListTradesReq         = option.AppListTradesReq
-	AppListTradesResp        = option.AppListTradesResp
-	AppPlaceOrderData        = option.AppPlaceOrderData
-	AppPlaceOrderReq         = option.AppPlaceOrderReq
-	AppPlaceOrderResp        = option.AppPlaceOrderResp
-	CreateContractReq        = option.CreateContractReq
-	CreateContractResp       = option.CreateContractResp
-	GetAccountReq            = option.GetAccountReq
-	GetAccountResp           = option.GetAccountResp
-	GetBillReq               = option.GetBillReq
-	GetBillResp              = option.GetBillResp
-	GetContractReq           = option.GetContractReq
-	GetContractResp          = option.GetContractResp
-	GetExerciseReq           = option.GetExerciseReq
-	GetExerciseResp          = option.GetExerciseResp
-	GetMarketReq             = option.GetMarketReq
-	GetMarketResp            = option.GetMarketResp
-	GetOrderReq              = option.GetOrderReq
-	GetOrderResp             = option.GetOrderResp
-	GetPositionReq           = option.GetPositionReq
-	GetPositionResp          = option.GetPositionResp
-	GetSettlementReq         = option.GetSettlementReq
-	GetSettlementResp        = option.GetSettlementResp
-	GetTradeReq              = option.GetTradeReq
-	GetTradeResp             = option.GetTradeResp
-	InternalCommonResp       = option.InternalCommonResp
-	ListAccountsReq          = option.ListAccountsReq
-	ListAccountsResp         = option.ListAccountsResp
-	ListBillsReq             = option.ListBillsReq
-	ListBillsResp            = option.ListBillsResp
-	ListContractsReq         = option.ListContractsReq
-	ListContractsResp        = option.ListContractsResp
-	ListExercisesReq         = option.ListExercisesReq
-	ListExercisesResp        = option.ListExercisesResp
-	ListMarketSnapshotsReq   = option.ListMarketSnapshotsReq
-	ListMarketSnapshotsResp  = option.ListMarketSnapshotsResp
-	ListOrdersReq            = option.ListOrdersReq
-	ListOrdersResp           = option.ListOrdersResp
-	ListPositionsReq         = option.ListPositionsReq
-	ListPositionsResp        = option.ListPositionsResp
-	ListSettlementsReq       = option.ListSettlementsReq
-	ListSettlementsResp      = option.ListSettlementsResp
-	ListTradesReq            = option.ListTradesReq
-	ListTradesResp           = option.ListTradesResp
-	OptionTaskReq            = option.OptionTaskReq
-	OptionTaskResp           = option.OptionTaskResp
-	SyncMarketQuoteReq       = option.SyncMarketQuoteReq
-	UpdateContractReq        = option.UpdateContractReq
-	UpdateMarketReq          = option.UpdateMarketReq
+	CommonResp              = option.CommonResp
+	CancelOrderReq          = option.CancelOrderReq
+	UserCommonResp          = option.UserCommonResp
+	ExerciseData            = option.ExerciseData
+	ExerciseReq             = option.ExerciseReq
+	ExerciseResp            = option.ExerciseResp
+	GetContractDetailReq    = option.GetContractDetailReq
+	GetContractDetailResp   = option.GetContractDetailResp
+	GetOrderDetailReq       = option.GetOrderDetailReq
+	GetOrderDetailResp      = option.GetOrderDetailResp
+	GetPositionDetailReq    = option.GetPositionDetailReq
+	GetPositionDetailResp   = option.GetPositionDetailResp
+	UserListAccountsReq     = option.UserListAccountsReq
+	UserListAccountsResp    = option.UserListAccountsResp
+	UserListBillsReq        = option.UserListBillsReq
+	UserListBillsResp       = option.UserListBillsResp
+	UserListContractsReq    = option.UserListContractsReq
+	UserListContractsResp   = option.UserListContractsResp
+	ListCurrentOrdersReq    = option.ListCurrentOrdersReq
+	ListCurrentOrdersResp   = option.ListCurrentOrdersResp
+	UserListExercisesReq    = option.UserListExercisesReq
+	UserListExercisesResp   = option.UserListExercisesResp
+	ListHistoryOrdersReq    = option.ListHistoryOrdersReq
+	ListHistoryOrdersResp   = option.ListHistoryOrdersResp
+	UserListPositionsReq    = option.UserListPositionsReq
+	UserListPositionsResp   = option.UserListPositionsResp
+	UserListTradesReq       = option.UserListTradesReq
+	UserListTradesResp      = option.UserListTradesResp
+	PlaceOrderData          = option.PlaceOrderData
+	PlaceOrderReq           = option.PlaceOrderReq
+	PlaceOrderResp          = option.PlaceOrderResp
+	CreateContractReq       = option.CreateContractReq
+	CreateContractResp      = option.CreateContractResp
+	GetAccountReq           = option.GetAccountReq
+	GetAccountResp          = option.GetAccountResp
+	GetBillReq              = option.GetBillReq
+	GetBillResp             = option.GetBillResp
+	GetContractReq          = option.GetContractReq
+	GetContractResp         = option.GetContractResp
+	GetExerciseReq          = option.GetExerciseReq
+	GetExerciseResp         = option.GetExerciseResp
+	GetMarketReq            = option.GetMarketReq
+	GetMarketResp           = option.GetMarketResp
+	GetOrderReq             = option.GetOrderReq
+	GetOrderResp            = option.GetOrderResp
+	GetPositionReq          = option.GetPositionReq
+	GetPositionResp         = option.GetPositionResp
+	GetSettlementReq        = option.GetSettlementReq
+	GetSettlementResp       = option.GetSettlementResp
+	GetTradeReq             = option.GetTradeReq
+	GetTradeResp            = option.GetTradeResp
+	InternalCommonResp      = option.InternalCommonResp
+	ListAccountsReq         = option.ListAccountsReq
+	ListAccountsResp        = option.ListAccountsResp
+	ListBillsReq            = option.ListBillsReq
+	ListBillsResp           = option.ListBillsResp
+	ListContractsReq        = option.ListContractsReq
+	ListContractsResp       = option.ListContractsResp
+	ListExercisesReq        = option.ListExercisesReq
+	ListExercisesResp       = option.ListExercisesResp
+	ListMarketSnapshotsReq  = option.ListMarketSnapshotsReq
+	ListMarketSnapshotsResp = option.ListMarketSnapshotsResp
+	ListOrdersReq           = option.ListOrdersReq
+	ListOrdersResp          = option.ListOrdersResp
+	ListPositionsReq        = option.ListPositionsReq
+	ListPositionsResp       = option.ListPositionsResp
+	ListSettlementsReq      = option.ListSettlementsReq
+	ListSettlementsResp     = option.ListSettlementsResp
+	ListTradesReq           = option.ListTradesReq
+	ListTradesResp          = option.ListTradesResp
+	OptionTaskReq           = option.OptionTaskReq
+	OptionTaskResp          = option.OptionTaskResp
+	SyncMarketQuoteReq      = option.SyncMarketQuoteReq
+	UpdateContractReq       = option.UpdateContractReq
+	UpdateMarketReq         = option.UpdateMarketReq
 
 	OptionAdmin interface {
 		// 创建期权合约
-		AdminCreateContract(ctx context.Context, in *CreateContractReq, opts ...grpc.CallOption) (*CreateContractResp, error)
+		CreateContract(ctx context.Context, in *CreateContractReq, opts ...grpc.CallOption) (*CreateContractResp, error)
 		// 更新期权合约
-		AdminUpdateContract(ctx context.Context, in *UpdateContractReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateContract(ctx context.Context, in *UpdateContractReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取单个期权合约详情
-		AdminGetContract(ctx context.Context, in *GetContractReq, opts ...grpc.CallOption) (*GetContractResp, error)
+		GetContract(ctx context.Context, in *GetContractReq, opts ...grpc.CallOption) (*GetContractResp, error)
 		// 分页查询期权合约列表
-		AdminListContracts(ctx context.Context, in *ListContractsReq, opts ...grpc.CallOption) (*ListContractsResp, error)
+		ListContracts(ctx context.Context, in *ListContractsReq, opts ...grpc.CallOption) (*ListContractsResp, error)
 		// 更新期权行情数据
-		AdminUpdateMarket(ctx context.Context, in *UpdateMarketReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateMarket(ctx context.Context, in *UpdateMarketReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取单个期权当前行情
-		AdminGetMarket(ctx context.Context, in *GetMarketReq, opts ...grpc.CallOption) (*GetMarketResp, error)
+		GetMarket(ctx context.Context, in *GetMarketReq, opts ...grpc.CallOption) (*GetMarketResp, error)
 		// 分页查询期权行情快照列表
-		AdminListMarketSnapshots(ctx context.Context, in *ListMarketSnapshotsReq, opts ...grpc.CallOption) (*ListMarketSnapshotsResp, error)
+		ListMarketSnapshots(ctx context.Context, in *ListMarketSnapshotsReq, opts ...grpc.CallOption) (*ListMarketSnapshotsResp, error)
 		// 获取单个委托订单详情
-		AdminGetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderResp, error)
+		GetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderResp, error)
 		// 分页查询委托订单列表
-		AdminListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersResp, error)
+		ListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersResp, error)
 		// 获取单个成交记录详情
-		AdminGetTrade(ctx context.Context, in *GetTradeReq, opts ...grpc.CallOption) (*GetTradeResp, error)
+		GetTrade(ctx context.Context, in *GetTradeReq, opts ...grpc.CallOption) (*GetTradeResp, error)
 		// 分页查询成交记录列表
-		AdminListTrades(ctx context.Context, in *ListTradesReq, opts ...grpc.CallOption) (*ListTradesResp, error)
+		ListTrades(ctx context.Context, in *ListTradesReq, opts ...grpc.CallOption) (*ListTradesResp, error)
 		// 获取单个持仓详情
-		AdminGetPosition(ctx context.Context, in *GetPositionReq, opts ...grpc.CallOption) (*GetPositionResp, error)
+		GetPosition(ctx context.Context, in *GetPositionReq, opts ...grpc.CallOption) (*GetPositionResp, error)
 		// 分页查询持仓列表
-		AdminListPositions(ctx context.Context, in *ListPositionsReq, opts ...grpc.CallOption) (*ListPositionsResp, error)
+		ListPositions(ctx context.Context, in *ListPositionsReq, opts ...grpc.CallOption) (*ListPositionsResp, error)
 		// 获取单个行权记录详情
-		AdminGetExercise(ctx context.Context, in *GetExerciseReq, opts ...grpc.CallOption) (*GetExerciseResp, error)
+		GetExercise(ctx context.Context, in *GetExerciseReq, opts ...grpc.CallOption) (*GetExerciseResp, error)
 		// 分页查询行权记录列表
-		AdminListExercises(ctx context.Context, in *ListExercisesReq, opts ...grpc.CallOption) (*ListExercisesResp, error)
+		ListExercises(ctx context.Context, in *ListExercisesReq, opts ...grpc.CallOption) (*ListExercisesResp, error)
 		// 获取单个到期结算记录详情
-		AdminGetSettlement(ctx context.Context, in *GetSettlementReq, opts ...grpc.CallOption) (*GetSettlementResp, error)
+		GetSettlement(ctx context.Context, in *GetSettlementReq, opts ...grpc.CallOption) (*GetSettlementResp, error)
 		// 分页查询到期结算记录列表
-		AdminListSettlements(ctx context.Context, in *ListSettlementsReq, opts ...grpc.CallOption) (*ListSettlementsResp, error)
+		ListSettlements(ctx context.Context, in *ListSettlementsReq, opts ...grpc.CallOption) (*ListSettlementsResp, error)
 		// 获取单个账户资产详情
-		AdminGetAccount(ctx context.Context, in *GetAccountReq, opts ...grpc.CallOption) (*GetAccountResp, error)
+		GetAccount(ctx context.Context, in *GetAccountReq, opts ...grpc.CallOption) (*GetAccountResp, error)
 		// 分页查询账户资产列表
-		AdminListAccounts(ctx context.Context, in *ListAccountsReq, opts ...grpc.CallOption) (*ListAccountsResp, error)
+		ListAccounts(ctx context.Context, in *ListAccountsReq, opts ...grpc.CallOption) (*ListAccountsResp, error)
 		// 获取单个资金流水详情
-		AdminGetBill(ctx context.Context, in *GetBillReq, opts ...grpc.CallOption) (*GetBillResp, error)
+		GetBill(ctx context.Context, in *GetBillReq, opts ...grpc.CallOption) (*GetBillResp, error)
 		// 分页查询资金流水列表
-		AdminListBills(ctx context.Context, in *ListBillsReq, opts ...grpc.CallOption) (*ListBillsResp, error)
+		ListBills(ctx context.Context, in *ListBillsReq, opts ...grpc.CallOption) (*ListBillsResp, error)
 	}
 
 	defaultOptionAdmin struct {
@@ -147,127 +147,127 @@ func NewOptionAdmin(cli zrpc.Client) OptionAdmin {
 }
 
 // 创建期权合约
-func (m *defaultOptionAdmin) AdminCreateContract(ctx context.Context, in *CreateContractReq, opts ...grpc.CallOption) (*CreateContractResp, error) {
+func (m *defaultOptionAdmin) CreateContract(ctx context.Context, in *CreateContractReq, opts ...grpc.CallOption) (*CreateContractResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminCreateContract(ctx, in, opts...)
+	return client.CreateContract(ctx, in, opts...)
 }
 
 // 更新期权合约
-func (m *defaultOptionAdmin) AdminUpdateContract(ctx context.Context, in *UpdateContractReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultOptionAdmin) UpdateContract(ctx context.Context, in *UpdateContractReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminUpdateContract(ctx, in, opts...)
+	return client.UpdateContract(ctx, in, opts...)
 }
 
 // 获取单个期权合约详情
-func (m *defaultOptionAdmin) AdminGetContract(ctx context.Context, in *GetContractReq, opts ...grpc.CallOption) (*GetContractResp, error) {
+func (m *defaultOptionAdmin) GetContract(ctx context.Context, in *GetContractReq, opts ...grpc.CallOption) (*GetContractResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminGetContract(ctx, in, opts...)
+	return client.GetContract(ctx, in, opts...)
 }
 
 // 分页查询期权合约列表
-func (m *defaultOptionAdmin) AdminListContracts(ctx context.Context, in *ListContractsReq, opts ...grpc.CallOption) (*ListContractsResp, error) {
+func (m *defaultOptionAdmin) ListContracts(ctx context.Context, in *ListContractsReq, opts ...grpc.CallOption) (*ListContractsResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminListContracts(ctx, in, opts...)
+	return client.ListContracts(ctx, in, opts...)
 }
 
 // 更新期权行情数据
-func (m *defaultOptionAdmin) AdminUpdateMarket(ctx context.Context, in *UpdateMarketReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultOptionAdmin) UpdateMarket(ctx context.Context, in *UpdateMarketReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminUpdateMarket(ctx, in, opts...)
+	return client.UpdateMarket(ctx, in, opts...)
 }
 
 // 获取单个期权当前行情
-func (m *defaultOptionAdmin) AdminGetMarket(ctx context.Context, in *GetMarketReq, opts ...grpc.CallOption) (*GetMarketResp, error) {
+func (m *defaultOptionAdmin) GetMarket(ctx context.Context, in *GetMarketReq, opts ...grpc.CallOption) (*GetMarketResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminGetMarket(ctx, in, opts...)
+	return client.GetMarket(ctx, in, opts...)
 }
 
 // 分页查询期权行情快照列表
-func (m *defaultOptionAdmin) AdminListMarketSnapshots(ctx context.Context, in *ListMarketSnapshotsReq, opts ...grpc.CallOption) (*ListMarketSnapshotsResp, error) {
+func (m *defaultOptionAdmin) ListMarketSnapshots(ctx context.Context, in *ListMarketSnapshotsReq, opts ...grpc.CallOption) (*ListMarketSnapshotsResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminListMarketSnapshots(ctx, in, opts...)
+	return client.ListMarketSnapshots(ctx, in, opts...)
 }
 
 // 获取单个委托订单详情
-func (m *defaultOptionAdmin) AdminGetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderResp, error) {
+func (m *defaultOptionAdmin) GetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminGetOrder(ctx, in, opts...)
+	return client.GetOrder(ctx, in, opts...)
 }
 
 // 分页查询委托订单列表
-func (m *defaultOptionAdmin) AdminListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersResp, error) {
+func (m *defaultOptionAdmin) ListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminListOrders(ctx, in, opts...)
+	return client.ListOrders(ctx, in, opts...)
 }
 
 // 获取单个成交记录详情
-func (m *defaultOptionAdmin) AdminGetTrade(ctx context.Context, in *GetTradeReq, opts ...grpc.CallOption) (*GetTradeResp, error) {
+func (m *defaultOptionAdmin) GetTrade(ctx context.Context, in *GetTradeReq, opts ...grpc.CallOption) (*GetTradeResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminGetTrade(ctx, in, opts...)
+	return client.GetTrade(ctx, in, opts...)
 }
 
 // 分页查询成交记录列表
-func (m *defaultOptionAdmin) AdminListTrades(ctx context.Context, in *ListTradesReq, opts ...grpc.CallOption) (*ListTradesResp, error) {
+func (m *defaultOptionAdmin) ListTrades(ctx context.Context, in *ListTradesReq, opts ...grpc.CallOption) (*ListTradesResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminListTrades(ctx, in, opts...)
+	return client.ListTrades(ctx, in, opts...)
 }
 
 // 获取单个持仓详情
-func (m *defaultOptionAdmin) AdminGetPosition(ctx context.Context, in *GetPositionReq, opts ...grpc.CallOption) (*GetPositionResp, error) {
+func (m *defaultOptionAdmin) GetPosition(ctx context.Context, in *GetPositionReq, opts ...grpc.CallOption) (*GetPositionResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminGetPosition(ctx, in, opts...)
+	return client.GetPosition(ctx, in, opts...)
 }
 
 // 分页查询持仓列表
-func (m *defaultOptionAdmin) AdminListPositions(ctx context.Context, in *ListPositionsReq, opts ...grpc.CallOption) (*ListPositionsResp, error) {
+func (m *defaultOptionAdmin) ListPositions(ctx context.Context, in *ListPositionsReq, opts ...grpc.CallOption) (*ListPositionsResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminListPositions(ctx, in, opts...)
+	return client.ListPositions(ctx, in, opts...)
 }
 
 // 获取单个行权记录详情
-func (m *defaultOptionAdmin) AdminGetExercise(ctx context.Context, in *GetExerciseReq, opts ...grpc.CallOption) (*GetExerciseResp, error) {
+func (m *defaultOptionAdmin) GetExercise(ctx context.Context, in *GetExerciseReq, opts ...grpc.CallOption) (*GetExerciseResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminGetExercise(ctx, in, opts...)
+	return client.GetExercise(ctx, in, opts...)
 }
 
 // 分页查询行权记录列表
-func (m *defaultOptionAdmin) AdminListExercises(ctx context.Context, in *ListExercisesReq, opts ...grpc.CallOption) (*ListExercisesResp, error) {
+func (m *defaultOptionAdmin) ListExercises(ctx context.Context, in *ListExercisesReq, opts ...grpc.CallOption) (*ListExercisesResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminListExercises(ctx, in, opts...)
+	return client.ListExercises(ctx, in, opts...)
 }
 
 // 获取单个到期结算记录详情
-func (m *defaultOptionAdmin) AdminGetSettlement(ctx context.Context, in *GetSettlementReq, opts ...grpc.CallOption) (*GetSettlementResp, error) {
+func (m *defaultOptionAdmin) GetSettlement(ctx context.Context, in *GetSettlementReq, opts ...grpc.CallOption) (*GetSettlementResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminGetSettlement(ctx, in, opts...)
+	return client.GetSettlement(ctx, in, opts...)
 }
 
 // 分页查询到期结算记录列表
-func (m *defaultOptionAdmin) AdminListSettlements(ctx context.Context, in *ListSettlementsReq, opts ...grpc.CallOption) (*ListSettlementsResp, error) {
+func (m *defaultOptionAdmin) ListSettlements(ctx context.Context, in *ListSettlementsReq, opts ...grpc.CallOption) (*ListSettlementsResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminListSettlements(ctx, in, opts...)
+	return client.ListSettlements(ctx, in, opts...)
 }
 
 // 获取单个账户资产详情
-func (m *defaultOptionAdmin) AdminGetAccount(ctx context.Context, in *GetAccountReq, opts ...grpc.CallOption) (*GetAccountResp, error) {
+func (m *defaultOptionAdmin) GetAccount(ctx context.Context, in *GetAccountReq, opts ...grpc.CallOption) (*GetAccountResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminGetAccount(ctx, in, opts...)
+	return client.GetAccount(ctx, in, opts...)
 }
 
 // 分页查询账户资产列表
-func (m *defaultOptionAdmin) AdminListAccounts(ctx context.Context, in *ListAccountsReq, opts ...grpc.CallOption) (*ListAccountsResp, error) {
+func (m *defaultOptionAdmin) ListAccounts(ctx context.Context, in *ListAccountsReq, opts ...grpc.CallOption) (*ListAccountsResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminListAccounts(ctx, in, opts...)
+	return client.ListAccounts(ctx, in, opts...)
 }
 
 // 获取单个资金流水详情
-func (m *defaultOptionAdmin) AdminGetBill(ctx context.Context, in *GetBillReq, opts ...grpc.CallOption) (*GetBillResp, error) {
+func (m *defaultOptionAdmin) GetBill(ctx context.Context, in *GetBillReq, opts ...grpc.CallOption) (*GetBillResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminGetBill(ctx, in, opts...)
+	return client.GetBill(ctx, in, opts...)
 }
 
 // 分页查询资金流水列表
-func (m *defaultOptionAdmin) AdminListBills(ctx context.Context, in *ListBillsReq, opts ...grpc.CallOption) (*ListBillsResp, error) {
+func (m *defaultOptionAdmin) ListBills(ctx context.Context, in *ListBillsReq, opts ...grpc.CallOption) (*ListBillsResp, error) {
 	client := option.NewOptionAdminClient(m.cli.Conn())
-	return client.AdminListBills(ctx, in, opts...)
+	return client.ListBills(ctx, in, opts...)
 }

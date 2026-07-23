@@ -27,13 +27,13 @@ func NewUpdateProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 // 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
-func (l *UpdateProductLogic) UpdateProduct(in *itick.UpdateProductReq) (*itick.AdminCommonResp, error) {
+func (l *UpdateProductLogic) UpdateProduct(in *itick.UpdateProductReq) (*itick.CommonResp, error) {
 	item, err := l.svcCtx.ItickProductModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 	if item == nil {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
 	}
@@ -74,5 +74,5 @@ func (l *UpdateProductLogic) UpdateProduct(in *itick.UpdateProductReq) (*itick.A
 		return nil, err
 	}
 
-	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &itick.CommonResp{Base: helper.OkResp()}, nil
 }

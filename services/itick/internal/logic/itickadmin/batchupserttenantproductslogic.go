@@ -29,11 +29,11 @@ func NewBatchUpsertTenantProductsLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 // 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-func (l *BatchUpsertTenantProductsLogic) BatchUpsertTenantProducts(in *itick.BatchUpsertTenantProductsReq) (*itick.AdminCommonResp, error) {
+func (l *BatchUpsertTenantProductsLogic) BatchUpsertTenantProducts(in *itick.BatchUpsertTenantProductsReq) (*itick.CommonResp, error) {
 	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &itick.AdminCommonResp{Base: base}, nil
+		return &itick.CommonResp{Base: base}, nil
 	}
 
 	current := make([]*models.TItickTenantProduct, 0)
@@ -100,5 +100,5 @@ func (l *BatchUpsertTenantProductsLogic) BatchUpsertTenantProducts(in *itick.Bat
 		l.Errorf("refresh active products after batch update failed: %v", err)
 	}
 
-	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &itick.CommonResp{Base: helper.OkResp()}, nil
 }

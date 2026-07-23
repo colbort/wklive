@@ -27,7 +27,7 @@ func NewManualMarkRechargeOrderSuccessLogic(ctx context.Context, svcCtx *svc.Ser
 }
 
 // 人工标记充值订单支付成功
-func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in *payment.ManualMarkRechargeOrderSuccessReq) (*payment.AdminCommonResp, error) {
+func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in *payment.ManualMarkRechargeOrderSuccessReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "ManualMarkRechargeOrderSuccess"
 	)
@@ -40,7 +40,7 @@ func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in 
 	}
 
 	if order == nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
@@ -53,7 +53,7 @@ func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in 
 	// 只有待支付/支付中状态的订单才能标记为成功
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) &&
 		order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PAYING) {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.OnlyPendingPaymentOrdersCanMarkSuccess, i18n.Translate(i18n.OnlyPendingPaymentOrdersCanMarkSuccess, l.ctx)),
 		}, nil
 	}
@@ -65,7 +65,7 @@ func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in 
 
 	l.Logger.Infof("Manual mark recharge order success: %s", in.OrderNo)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

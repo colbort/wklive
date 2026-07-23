@@ -14,9 +14,9 @@ import (
 )
 
 type (
-	AdminCommonResp                = itick.AdminCommonResp
-	AppCommonResp                  = itick.AppCommonResp
-	AppEmpty                       = itick.AppEmpty
+	CommonResp                     = itick.CommonResp
+	UserCommonResp                 = itick.UserCommonResp
+	Empty                          = itick.Empty
 	BatchGetQuoteReq               = itick.BatchGetQuoteReq
 	BatchGetQuoteResp              = itick.BatchGetQuoteResp
 	BatchUpsertTenantCategoriesReq = itick.BatchUpsertTenantCategoriesReq
@@ -97,9 +97,9 @@ type (
 		// 产品类型列表
 		ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error)
 		// 产品类型
-		CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-		UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取产品类型详情
 		GetCategory(ctx context.Context, in *GetCategoryReq, opts ...grpc.CallOption) (*GetCategoryResp, error)
 		// 同步类型下的产品
@@ -109,9 +109,9 @@ type (
 		// 产品列表
 		ListProducts(ctx context.Context, in *ListProductsReq, opts ...grpc.CallOption) (*ListProductsResp, error)
 		// 产品
-		CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
-		UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取产品详情
 		GetProduct(ctx context.Context, in *GetProductReq, opts ...grpc.CallOption) (*GetProductResp, error)
 		// K线查看
@@ -121,21 +121,21 @@ type (
 		// 租户产品类型列表
 		ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error)
 		// 租户产品类型
-		CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-		UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-		BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取租户产品类型详情
 		GetTenantCategory(ctx context.Context, in *GetTenantCategoryReq, opts ...grpc.CallOption) (*GetTenantCategoryResp, error)
 		// 租户产品列表
 		ListTenantProducts(ctx context.Context, in *ListTenantProductsReq, opts ...grpc.CallOption) (*ListTenantProductsResp, error)
 		// 租户产品
-		CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
-		UpdateTenantProduct(ctx context.Context, in *UpdateTenantProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateTenantProduct(ctx context.Context, in *UpdateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-		BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取租户产品详情
 		GetTenantProduct(ctx context.Context, in *GetTenantProductReq, opts ...grpc.CallOption) (*GetTenantProductResp, error)
 		// 初始化租户展示配置
@@ -144,10 +144,10 @@ type (
 		CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
 		GetPriceFormula(ctx context.Context, in *PriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
 		ListPriceFormulas(ctx context.Context, in *ListPriceFormulasReq, opts ...grpc.CallOption) (*ListPriceFormulasResp, error)
-		ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*CommonResp, error)
 		ListSnapshotOutbox(ctx context.Context, in *ListSnapshotOutboxReq, opts ...grpc.CallOption) (*ListSnapshotOutboxResp, error)
-		RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
-		RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*CommonResp, error)
+		RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*CommonResp, error)
 	}
 
 	defaultItickAdmin struct {
@@ -168,13 +168,13 @@ func (m *defaultItickAdmin) ListCategories(ctx context.Context, in *ListCategori
 }
 
 // 产品类型
-func (m *defaultItickAdmin) CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.CreateCategory(ctx, in, opts...)
 }
 
 // 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-func (m *defaultItickAdmin) UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.UpdateCategory(ctx, in, opts...)
 }
@@ -204,13 +204,13 @@ func (m *defaultItickAdmin) ListProducts(ctx context.Context, in *ListProductsRe
 }
 
 // 产品
-func (m *defaultItickAdmin) CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.CreateProduct(ctx, in, opts...)
 }
 
 // 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
-func (m *defaultItickAdmin) UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.UpdateProduct(ctx, in, opts...)
 }
@@ -240,19 +240,19 @@ func (m *defaultItickAdmin) ListTenantCategories(ctx context.Context, in *ListTe
 }
 
 // 租户产品类型
-func (m *defaultItickAdmin) CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.CreateTenantCategory(ctx, in, opts...)
 }
 
 // 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-func (m *defaultItickAdmin) UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.UpdateTenantCategory(ctx, in, opts...)
 }
 
 // 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-func (m *defaultItickAdmin) BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.BatchUpsertTenantCategories(ctx, in, opts...)
 }
@@ -270,19 +270,19 @@ func (m *defaultItickAdmin) ListTenantProducts(ctx context.Context, in *ListTena
 }
 
 // 租户产品
-func (m *defaultItickAdmin) CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.CreateTenantProduct(ctx, in, opts...)
 }
 
 // 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
-func (m *defaultItickAdmin) UpdateTenantProduct(ctx context.Context, in *UpdateTenantProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) UpdateTenantProduct(ctx context.Context, in *UpdateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.UpdateTenantProduct(ctx, in, opts...)
 }
 
 // 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-func (m *defaultItickAdmin) BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.BatchUpsertTenantProducts(ctx, in, opts...)
 }
@@ -315,7 +315,7 @@ func (m *defaultItickAdmin) ListPriceFormulas(ctx context.Context, in *ListPrice
 	return client.ListPriceFormulas(ctx, in, opts...)
 }
 
-func (m *defaultItickAdmin) ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.ChangePriceFormulaStatus(ctx, in, opts...)
 }
@@ -325,12 +325,12 @@ func (m *defaultItickAdmin) ListSnapshotOutbox(ctx context.Context, in *ListSnap
 	return client.ListSnapshotOutbox(ctx, in, opts...)
 }
 
-func (m *defaultItickAdmin) RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.RetrySnapshotOutbox(ctx, in, opts...)
 }
 
-func (m *defaultItickAdmin) RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.RevokeAuthoritativeSnapshot(ctx, in, opts...)
 }

@@ -25,8 +25,8 @@ func NewOperateUserMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 // 用户侧消息删除/撤回
-func (l *OperateUserMessageLogic) OperateUserMessage(in *chat.OperateUserMessageReq) (*chat.AppCommonResp, error) {
-	return &chat.AppCommonResp{
+func (l *OperateUserMessageLogic) OperateUserMessage(in *chat.OperateUserMessageReq) (*chat.UserCommonResp, error) {
+	return &chat.UserCommonResp{
 		Base: ih.OperateMessage(l.ctx, l.svcCtx, in.GetMessageOperate(), chat.ChatSenderType_CHAT_SENDER_TYPE_USER, in.GetIsGuest()),
 	}, nil
 }

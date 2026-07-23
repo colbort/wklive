@@ -27,13 +27,13 @@ func NewUpdateTenantCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 // 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-func (l *UpdateTenantCategoryLogic) UpdateTenantCategory(in *itick.UpdateTenantCategoryReq) (*itick.AdminCommonResp, error) {
+func (l *UpdateTenantCategoryLogic) UpdateTenantCategory(in *itick.UpdateTenantCategoryReq) (*itick.CommonResp, error) {
 	item, err := l.svcCtx.ItickTenantCategoryModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 	if item == nil {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
@@ -42,12 +42,12 @@ func (l *UpdateTenantCategoryLogic) UpdateTenantCategory(in *itick.UpdateTenantC
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 	if forbidden {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx)),
 		}, nil
 	}
 	if !allowed {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
@@ -70,5 +70,5 @@ func (l *UpdateTenantCategoryLogic) UpdateTenantCategory(in *itick.UpdateTenantC
 		return nil, err
 	}
 
-	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &itick.CommonResp{Base: helper.OkResp()}, nil
 }

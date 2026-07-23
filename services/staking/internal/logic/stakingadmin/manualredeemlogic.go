@@ -35,41 +35,41 @@ func NewManualRedeemLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Manu
 }
 
 // 手动赎回
-func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*staking.AdminManualRedeemResp, error) {
+func (l *ManualRedeemLogic) ManualRedeem(in *staking.ManualRedeemReq) (*staking.ManualRedeemResp, error) {
 	order, err := l.svcCtx.StakeOrderModel.FindOne(l.ctx, in.OrderId)
 	if err != nil {
 		return nil, err
 	}
 	if order == nil || order.TenantId != in.TenantId {
-		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &staking.AdminManualRedeemResp{Page: base}, nil
+		return &staking.ManualRedeemResp{Page: base}, nil
 	}
 	if order.Status == int64(staking.OrderStatus_ORDER_STATUS_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_EARLY_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_CANCELLED) {
-		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
+		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
 	}
 	if in.RedeemType == staking.RedeemType_REDEEM_TYPE_EARLY && order.AllowEarlyRedeem != int64(common.YesNo_YES_NO_YES) {
-		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
+		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
 	}
 
 	redeemAmount, err := conv.ParseDecimalField(in.RedeemAmount)
 	if err != nil || !redeemAmount.IsPositive() || redeemAmount.GreaterThan(order.StakeAmount) {
-		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.RedeemAmountInvalid, i18n.Translate(i18n.RedeemAmountInvalid, l.ctx))}, nil
+		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.RedeemAmountInvalid, i18n.Translate(i18n.RedeemAmountInvalid, l.ctx))}, nil
 	}
 	rewardAmount, err := conv.ParseDecimalField(in.RewardAmount)
 	if err != nil || rewardAmount.IsNegative() {
-		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
+		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
 	}
 	feeRate, err := conv.ParseDecimalField(in.FeeRate)
 	if err != nil || feeRate.IsNegative() {
-		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	feeAmount, err := conv.ParseDecimalField(in.FeeAmount)
 	if err != nil || feeAmount.IsNegative() {
-		return &staking.AdminManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
 	redeemNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "SKR", "")
@@ -102,7 +102,7 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 			l.Errorf("staking manual redeem unlock asset failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v msg=%s",
 				order.TenantId, order.UserId, order.OrderNo, redeemNo, unlockAmount, assetBaseMsg(resp))
 			if resp != nil && resp.Base != nil {
-				return &staking.AdminManualRedeemResp{Page: resp.Base}, nil
+				return &staking.ManualRedeemResp{Page: resp.Base}, nil
 			}
 			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
@@ -128,7 +128,7 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 			l.Errorf("staking manual redeem deduct locked fee failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v msg=%s",
 				order.TenantId, order.UserId, order.OrderNo, redeemNo, feeAmount, assetBaseMsg(resp))
 			if resp != nil && resp.Base != nil {
-				return &staking.AdminManualRedeemResp{Page: resp.Base}, nil
+				return &staking.ManualRedeemResp{Page: resp.Base}, nil
 			}
 			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
@@ -155,7 +155,7 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 			l.Errorf("staking manual redeem add reward failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s coin=%s amount=%v msg=%s",
 				order.TenantId, order.UserId, order.OrderNo, redeemNo, order.RewardCoinSymbol, rewardAmount, assetBaseMsg(resp))
 			if resp != nil && resp.Base != nil {
-				return &staking.AdminManualRedeemResp{Page: resp.Base}, nil
+				return &staking.ManualRedeemResp{Page: resp.Base}, nil
 			}
 			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
@@ -230,5 +230,5 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		return nil, err
 	}
 
-	return &staking.AdminManualRedeemResp{Page: helper.OkResp(), Success: 1, RedeemNo: redeemNo}, nil
+	return &staking.ManualRedeemResp{Page: helper.OkResp(), Success: 1, RedeemNo: redeemNo}, nil
 }

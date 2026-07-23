@@ -18,8 +18,8 @@ type (
 	AddBankResp                   = user.AddBankResp
 	AddUserBankReq                = user.AddUserBankReq
 	AddUserBankResp               = user.AddUserBankResp
-	AdminCommonResp               = user.AdminCommonResp
-	AppCommonResp                 = user.AppCommonResp
+	CommonResp                    = user.CommonResp
+	UserCommonResp                = user.UserCommonResp
 	ChangeLoginPasswordReq        = user.ChangeLoginPasswordReq
 	ChangePayPasswordReq          = user.ChangePayPasswordReq
 	CreateGuestTransferData       = user.CreateGuestTransferData
@@ -111,7 +111,7 @@ type (
 		// 兑换游客跨域迁移码
 		ExchangeGuestTransfer(ctx context.Context, in *ExchangeGuestTransferReq, opts ...grpc.CallOption) (*ExchangeGuestTransferResp, error)
 		// 用户登出
-		Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 刷新Token
 		RefreshToken(ctx context.Context, in *RefreshTokenReq, opts ...grpc.CallOption) (*RefreshTokenResp, error)
 		// 用户资料相关接口
@@ -119,7 +119,7 @@ type (
 		// 更新用户资料
 		UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*UpdateProfileResp, error)
 		// 修改登录密码
-		ChangeLoginPassword(ctx context.Context, in *ChangeLoginPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		ChangeLoginPassword(ctx context.Context, in *ChangeLoginPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 实名认证相关接口
 		GetIdentity(ctx context.Context, in *GetIdentityReq, opts ...grpc.CallOption) (*GetIdentityResp, error)
 		// 提交实名认证信息
@@ -129,15 +129,15 @@ type (
 		// 安全设置相关接口
 		GetSecurity(ctx context.Context, in *GetSecurityReq, opts ...grpc.CallOption) (*GetSecurityResp, error)
 		// 设置支付密码
-		SetPayPassword(ctx context.Context, in *SetPayPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		SetPayPassword(ctx context.Context, in *SetPayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 修改支付密码
-		ChangePayPassword(ctx context.Context, in *ChangePayPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		ChangePayPassword(ctx context.Context, in *ChangePayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 初始化谷歌2FA
 		InitGoogle2FA(ctx context.Context, in *InitGoogle2FAReq, opts ...grpc.CallOption) (*InitGoogle2FAResp, error)
 		// 启用谷歌2FA
-		EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FAReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 禁用谷歌2FA
-		DisableGoogle2FA(ctx context.Context, in *DisableGoogle2FAReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		DisableGoogle2FA(ctx context.Context, in *DisableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 银行卡相关接口
 		ListBanks(ctx context.Context, in *ListBanksReq, opts ...grpc.CallOption) (*ListBanksResp, error)
 		// 添加银行卡
@@ -145,9 +145,9 @@ type (
 		// 更新银行卡
 		UpdateBank(ctx context.Context, in *UpdateBankReq, opts ...grpc.CallOption) (*UpdateBankResp, error)
 		// 删除银行卡
-		DeleteBank(ctx context.Context, in *DeleteBankReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		DeleteBank(ctx context.Context, in *DeleteBankReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 设置默认银行卡
-		SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 	}
 
 	defaultUserApp struct {
@@ -192,7 +192,7 @@ func (m *defaultUserApp) ExchangeGuestTransfer(ctx context.Context, in *Exchange
 }
 
 // 用户登出
-func (m *defaultUserApp) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultUserApp) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.Logout(ctx, in, opts...)
 }
@@ -216,7 +216,7 @@ func (m *defaultUserApp) UpdateProfile(ctx context.Context, in *UpdateProfileReq
 }
 
 // 修改登录密码
-func (m *defaultUserApp) ChangeLoginPassword(ctx context.Context, in *ChangeLoginPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultUserApp) ChangeLoginPassword(ctx context.Context, in *ChangeLoginPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.ChangeLoginPassword(ctx, in, opts...)
 }
@@ -246,13 +246,13 @@ func (m *defaultUserApp) GetSecurity(ctx context.Context, in *GetSecurityReq, op
 }
 
 // 设置支付密码
-func (m *defaultUserApp) SetPayPassword(ctx context.Context, in *SetPayPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultUserApp) SetPayPassword(ctx context.Context, in *SetPayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.SetPayPassword(ctx, in, opts...)
 }
 
 // 修改支付密码
-func (m *defaultUserApp) ChangePayPassword(ctx context.Context, in *ChangePayPasswordReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultUserApp) ChangePayPassword(ctx context.Context, in *ChangePayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.ChangePayPassword(ctx, in, opts...)
 }
@@ -264,13 +264,13 @@ func (m *defaultUserApp) InitGoogle2FA(ctx context.Context, in *InitGoogle2FAReq
 }
 
 // 启用谷歌2FA
-func (m *defaultUserApp) EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FAReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultUserApp) EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.EnableGoogle2FA(ctx, in, opts...)
 }
 
 // 禁用谷歌2FA
-func (m *defaultUserApp) DisableGoogle2FA(ctx context.Context, in *DisableGoogle2FAReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultUserApp) DisableGoogle2FA(ctx context.Context, in *DisableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.DisableGoogle2FA(ctx, in, opts...)
 }
@@ -294,13 +294,13 @@ func (m *defaultUserApp) UpdateBank(ctx context.Context, in *UpdateBankReq, opts
 }
 
 // 删除银行卡
-func (m *defaultUserApp) DeleteBank(ctx context.Context, in *DeleteBankReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultUserApp) DeleteBank(ctx context.Context, in *DeleteBankReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.DeleteBank(ctx, in, opts...)
 }
 
 // 设置默认银行卡
-func (m *defaultUserApp) SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultUserApp) SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.SetDefaultBank(ctx, in, opts...)
 }

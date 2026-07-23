@@ -27,7 +27,7 @@ func NewSendUserTypingLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 }
 
 // 发送用户输入状态
-func (l *SendUserTypingLogic) SendUserTyping(in *chat.SendUserTypingReq) (*chat.AppCommonResp, error) {
+func (l *SendUserTypingLogic) SendUserTyping(in *chat.SendUserTypingReq) (*chat.UserCommonResp, error) {
 	event := &chat.ChatWsResponse{
 		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_TYPING,
 		CreatedAt: utils.NowMillis(),
@@ -35,10 +35,10 @@ func (l *SendUserTypingLogic) SendUserTyping(in *chat.SendUserTypingReq) (*chat.
 	}
 	payload, err := protojson.MarshalOptions{UseProtoNames: false, UseEnumNumbers: true}.Marshal(event)
 	if err != nil {
-		return &chat.AppCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.UserCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if err := l.svcCtx.MQPublisher.Publish(l.ctx, chat.ChatAdminEventChannel, payload); err != nil {
-		return &chat.AppCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.UserCommonResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AppCommonResp{Base: helper.OkResp()}, nil
+	return &chat.UserCommonResp{Base: helper.OkResp()}, nil
 }

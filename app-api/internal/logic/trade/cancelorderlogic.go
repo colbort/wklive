@@ -27,6 +27,6 @@ func NewCancelOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cance
 	}
 }
 
-func (l *CancelOrderLogic) CancelOrder(req *types.CancelOrderReq) (resp *types.TradeAppCommonResp, err error) {
+func (l *CancelOrderLogic) CancelOrder(req *types.TradeCancelOrderReq) (resp *types.TradeAppCommonResp, err error) {
 	return logicutil.Proxy[types.TradeAppCommonResp](l.ctx, req, l.svcCtx.TradeCli.CancelOrder)
 }

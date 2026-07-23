@@ -14,9 +14,9 @@ import (
 )
 
 type (
-	AdminLoginData                   = system.AdminLoginData
-	AdminLoginReq                    = system.AdminLoginReq
-	AdminLoginResp                   = system.AdminLoginResp
+	LoginData                        = system.LoginData
+	LoginReq                         = system.LoginReq
+	LoginResp                        = system.LoginResp
 	AssignUserRolesReq               = system.AssignUserRolesReq
 	ChangeUserStatusReq              = system.ChangeUserStatusReq
 	Empty                            = system.Empty
@@ -127,7 +127,7 @@ type (
 	VerificationCodeRecordListResp   = system.VerificationCodeRecordListResp
 
 	SystemAdmin interface {
-		AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error)
+		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		GetProfile(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProfileResp, error)
 		UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error)
 		Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
@@ -202,9 +202,9 @@ func NewSystemAdmin(cli zrpc.Client) SystemAdmin {
 	}
 }
 
-func (m *defaultSystemAdmin) AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error) {
+func (m *defaultSystemAdmin) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
 	client := system.NewSystemAdminClient(m.cli.Conn())
-	return client.AdminLogin(ctx, in, opts...)
+	return client.Login(ctx, in, opts...)
 }
 
 func (m *defaultSystemAdmin) GetProfile(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProfileResp, error) {

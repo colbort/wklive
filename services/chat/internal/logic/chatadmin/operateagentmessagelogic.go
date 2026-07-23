@@ -25,8 +25,8 @@ func NewOperateAgentMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 // 客服侧消息删除/撤回
-func (l *OperateAgentMessageLogic) OperateAgentMessage(in *chat.OperateAgentMessageReq) (*chat.AdminCommonResp, error) {
-	return &chat.AdminCommonResp{
+func (l *OperateAgentMessageLogic) OperateAgentMessage(in *chat.OperateAgentMessageReq) (*chat.CommonResp, error) {
+	return &chat.CommonResp{
 		Base: ih.OperateMessage(l.ctx, l.svcCtx, in.GetMessageOperate(), chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT, in.GetIsGuest()),
 	}, nil
 }

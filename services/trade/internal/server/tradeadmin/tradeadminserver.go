@@ -24,13 +24,13 @@ func NewTradeAdminServer(svcCtx *svc.ServiceContext) *TradeAdminServer {
 }
 
 // 创建交易对
-func (s *TradeAdminServer) CreateSymbol(ctx context.Context, in *trade.CreateSymbolReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) CreateSymbol(ctx context.Context, in *trade.CreateSymbolReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewCreateSymbolLogic(ctx, s.svcCtx)
 	return l.CreateSymbol(in)
 }
 
 // 更新交易对信息
-func (s *TradeAdminServer) UpdateSymbol(ctx context.Context, in *trade.UpdateSymbolReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) UpdateSymbol(ctx context.Context, in *trade.UpdateSymbolReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewUpdateSymbolLogic(ctx, s.svcCtx)
 	return l.UpdateSymbol(in)
 }
@@ -48,31 +48,31 @@ func (s *TradeAdminServer) GetSymbolDetailAdmin(ctx context.Context, in *trade.G
 }
 
 // 设置现货交易对配置
-func (s *TradeAdminServer) SetSpotSymbolConfig(ctx context.Context, in *trade.SetSpotSymbolConfigReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetSpotSymbolConfig(ctx context.Context, in *trade.SetSpotSymbolConfigReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetSpotSymbolConfigLogic(ctx, s.svcCtx)
 	return l.SetSpotSymbolConfig(in)
 }
 
 // 设置合约交易对配置
-func (s *TradeAdminServer) SetContractSymbolConfig(ctx context.Context, in *trade.SetContractSymbolConfigReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetContractSymbolConfig(ctx context.Context, in *trade.SetContractSymbolConfigReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetContractSymbolConfigLogic(ctx, s.svcCtx)
 	return l.SetContractSymbolConfig(in)
 }
 
 // 设置秒合约产品配置
-func (s *TradeAdminServer) SetSecondsSymbolConfig(ctx context.Context, in *trade.SetSecondsSymbolConfigReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetSecondsSymbolConfig(ctx context.Context, in *trade.SetSecondsSymbolConfigReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetSecondsSymbolConfigLogic(ctx, s.svcCtx)
 	return l.SetSecondsSymbolConfig(in)
 }
 
 // 保存交易时段配置
-func (s *TradeAdminServer) SetSymbolSession(ctx context.Context, in *trade.SetSymbolSessionReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetSymbolSession(ctx context.Context, in *trade.SetSymbolSessionReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetSymbolSessionLogic(ctx, s.svcCtx)
 	return l.SetSymbolSession(in)
 }
 
 // 保存交易对杠杆档位配置
-func (s *TradeAdminServer) SetSymbolLeverageConfig(ctx context.Context, in *trade.SetSymbolLeverageConfigReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetSymbolLeverageConfig(ctx context.Context, in *trade.SetSymbolLeverageConfigReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetSymbolLeverageConfigLogic(ctx, s.svcCtx)
 	return l.SetSymbolLeverageConfig(in)
 }
@@ -144,13 +144,13 @@ func (s *TradeAdminServer) GetCancelLogListAdmin(ctx context.Context, in *trade.
 }
 
 // 设置用户交易限制
-func (s *TradeAdminServer) SetUserTradeLimit(ctx context.Context, in *trade.SetUserTradeLimitReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetUserTradeLimit(ctx context.Context, in *trade.SetUserTradeLimitReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetUserTradeLimitLogic(ctx, s.svcCtx)
 	return l.SetUserTradeLimit(in)
 }
 
 // 设置用户交易对限制
-func (s *TradeAdminServer) SetUserSymbolLimit(ctx context.Context, in *trade.SetUserSymbolLimitReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetUserSymbolLimit(ctx context.Context, in *trade.SetUserSymbolLimitReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetUserSymbolLimitLogic(ctx, s.svcCtx)
 	return l.SetUserSymbolLimit(in)
 }
@@ -168,7 +168,7 @@ func (s *TradeAdminServer) GetUserSymbolLimit(ctx context.Context, in *trade.Get
 }
 
 // 设置用户交易配置
-func (s *TradeAdminServer) SetUserTradeConfig(ctx context.Context, in *trade.SetUserTradeConfigReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetUserTradeConfig(ctx context.Context, in *trade.SetUserTradeConfigReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetUserTradeConfigLogic(ctx, s.svcCtx)
 	return l.SetUserTradeConfig(in)
 }
@@ -180,7 +180,7 @@ func (s *TradeAdminServer) GetUserTradeConfig(ctx context.Context, in *trade.Get
 }
 
 // 设置用户合约偏好配置
-func (s *TradeAdminServer) SetContractUserConfig(ctx context.Context, in *trade.SetContractUserConfigReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetContractUserConfig(ctx context.Context, in *trade.SetContractUserConfigReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetContractUserConfigLogic(ctx, s.svcCtx)
 	return l.SetContractUserConfig(in)
 }
@@ -198,7 +198,7 @@ func (s *TradeAdminServer) GetRiskOrderCheckLogList(ctx context.Context, in *tra
 }
 
 // 设置用户杠杆配置
-func (s *TradeAdminServer) SetUserLeverageConfig(ctx context.Context, in *trade.SetUserLeverageConfigReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetUserLeverageConfig(ctx context.Context, in *trade.SetUserLeverageConfigReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetUserLeverageConfigLogic(ctx, s.svcCtx)
 	return l.SetUserLeverageConfig(in)
 }
@@ -222,13 +222,13 @@ func (s *TradeAdminServer) GetTradeEventDetail(ctx context.Context, in *trade.Ge
 }
 
 // 重试交易事件
-func (s *TradeAdminServer) RetryTradeEvent(ctx context.Context, in *trade.RetryTradeEventReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) RetryTradeEvent(ctx context.Context, in *trade.RetryTradeEventReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewRetryTradeEventLogic(ctx, s.svcCtx)
 	return l.RetryTradeEvent(in)
 }
 
 // 保存合约风险限额档位
-func (s *TradeAdminServer) SetContractRiskLimitTier(ctx context.Context, in *trade.SetContractRiskLimitTierReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetContractRiskLimitTier(ctx context.Context, in *trade.SetContractRiskLimitTierReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetContractRiskLimitTierLogic(ctx, s.svcCtx)
 	return l.SetContractRiskLimitTier(in)
 }
@@ -283,12 +283,12 @@ func (s *TradeAdminServer) GetSettlementInstructionList(ctx context.Context, in 
 }
 
 // 仅重置失败/人工处理的结算指令；不得修改金额
-func (s *TradeAdminServer) RetrySettlementInstruction(ctx context.Context, in *trade.RetrySettlementInstructionReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) RetrySettlementInstruction(ctx context.Context, in *trade.RetrySettlementInstructionReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewRetrySettlementInstructionLogic(ctx, s.svcCtx)
 	return l.RetrySettlementInstruction(in)
 }
 
-func (s *TradeAdminServer) SetInsuranceFundAccount(ctx context.Context, in *trade.SetInsuranceFundAccountReq) (*trade.AdminCommonResp, error) {
+func (s *TradeAdminServer) SetInsuranceFundAccount(ctx context.Context, in *trade.SetInsuranceFundAccountReq) (*trade.CommonResp, error) {
 	l := tradeadminlogic.NewSetInsuranceFundAccountLogic(ctx, s.svcCtx)
 	return l.SetInsuranceFundAccount(in)
 }

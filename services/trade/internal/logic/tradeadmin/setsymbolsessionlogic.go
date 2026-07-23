@@ -30,13 +30,13 @@ func NewSetSymbolSessionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 保存交易时段配置
-func (l *SetSymbolSessionLogic) SetSymbolSession(in *trade.SetSymbolSessionReq) (*trade.AdminCommonResp, error) {
+func (l *SetSymbolSessionLogic) SetSymbolSession(in *trade.SetSymbolSessionReq) (*trade.CommonResp, error) {
 	if in.DayOfWeek < 1 || in.DayOfWeek > 7 || in.StartSecond < 0 || in.EndSecond <= in.StartSecond || in.EndSecond > 86400 || in.Timezone == "" {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 	if errors.Is(err, models.ErrNotFound) {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (l *SetSymbolSessionLogic) SetSymbolSession(in *trade.SetSymbolSessionReq) 
 	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &trade.AdminCommonResp{Base: base}, nil
+		return &trade.CommonResp{Base: base}, nil
 	}
 	item, err := l.svcCtx.TradeSymbolSessionModel.FindOneByTenantIdSymbolIdDayOfWeekStartSecondEndSecond(l.ctx, symbol.TenantId, in.SymbolId, in.DayOfWeek, in.StartSecond, in.EndSecond)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -68,5 +68,5 @@ func (l *SetSymbolSessionLogic) SetSymbolSession(in *trade.SetSymbolSessionReq) 
 	if err != nil {
 		return nil, err
 	}
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }

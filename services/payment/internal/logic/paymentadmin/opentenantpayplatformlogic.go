@@ -29,7 +29,7 @@ func NewOpenTenantPayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 // 租户开通平台
-func (l *OpenTenantPayPlatformLogic) OpenTenantPayPlatform(in *payment.OpenTenantPayPlatformReq) (*payment.AdminCommonResp, error) {
+func (l *OpenTenantPayPlatformLogic) OpenTenantPayPlatform(in *payment.OpenTenantPayPlatformReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "OpenTenantPayPlatform"
 	)
@@ -53,7 +53,7 @@ func (l *OpenTenantPayPlatformLogic) OpenTenantPayPlatform(in *payment.OpenTenan
 
 	l.Logger.Infof("Open tenant pay platform success: %d", in.TenantId)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }

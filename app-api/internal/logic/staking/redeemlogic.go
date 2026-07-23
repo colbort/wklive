@@ -27,6 +27,6 @@ func NewRedeemLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RedeemLogi
 	}
 }
 
-func (l *RedeemLogic) Redeem(req *types.AppRedeemReq) (resp *types.AppRedeemResp, err error) {
-	return logicutil.Proxy[types.AppRedeemResp](l.ctx, req, l.svcCtx.StakingCli.Redeem)
+func (l *RedeemLogic) Redeem(req *types.RedeemReq) (resp *types.RedeemResp, err error) {
+	return logicutil.Proxy[types.RedeemResp](l.ctx, req, l.svcCtx.StakingCli.Redeem)
 }

@@ -3,6 +3,17 @@
 
 package types
 
+type AddAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	UserId     int64  `json:"userId"`
+	WalletType int64  `json:"walletType"`
+	Coin       string `json:"coin"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
+}
+
 type AddUserBankReq struct {
 	TenantId    int64  `json:"tenantId"`
 	UserId      int64  `json:"userId"`
@@ -29,284 +40,6 @@ type AdjustPlatformAccountReq struct {
 	Direction   int64  `json:"direction"`
 	Amount      string `json:"amount"`
 	Remark      string `json:"remark,optional"`
-}
-
-type AdminAddAssetReq struct {
-	TenantId   int64  `json:"tenantId"`
-	UserId     int64  `json:"userId"`
-	WalletType int64  `json:"walletType"`
-	Coin       string `json:"coin"`
-	Amount     string `json:"amount"`
-	BizNo      string `json:"bizNo"`
-	Remark     string `json:"remark,optional"`
-	OperatorId int64  `json:"operatorId"`
-}
-
-type AdminChangeAssetData struct {
-	BizNo string         `json:"bizNo"`
-	Asset AssetUserAsset `json:"asset"`
-}
-
-type AdminChangeAssetResp struct {
-	RespBase
-	Data AdminChangeAssetData `json:"data"`
-}
-
-type AdminCommonResp struct {
-	RespBase
-}
-
-type AdminFreezeAssetReq struct {
-	TenantId   int64  `json:"tenantId"`
-	UserId     int64  `json:"userId"`
-	WalletType int64  `json:"walletType"`
-	Coin       string `json:"coin"`
-	Amount     string `json:"amount"`
-	BizNo      string `json:"bizNo"`
-	Remark     string `json:"remark,optional"`
-	OperatorId int64  `json:"operatorId"`
-}
-
-type AdminLockAssetReq struct {
-	TenantId   int64  `json:"tenantId"`
-	UserId     int64  `json:"userId"`
-	WalletType int64  `json:"walletType"`
-	Coin       string `json:"coin"`
-	Amount     string `json:"amount"`
-	BizNo      string `json:"bizNo"`
-	Remark     string `json:"remark,optional"`
-	OperatorId int64  `json:"operatorId"`
-}
-
-type AdminManualRedeemData struct {
-	Success  int64  `json:"success"`
-	RedeemNo string `json:"redeemNo"`
-}
-
-type AdminManualRedeemReq struct {
-	TenantId     int64  `json:"tenantId"`
-	OrderId      int64  `json:"orderId"`
-	RedeemType   int64  `json:"redeemType"`
-	RedeemAmount string `json:"redeemAmount"`
-	RewardAmount string `json:"rewardAmount"`
-	FeeRate      string `json:"feeRate"`
-	FeeAmount    string `json:"feeAmount"`
-	Remark       string `json:"remark,optional"`
-	OperatorUid  int64  `json:"operatorUid"`
-}
-
-type AdminManualRedeemResp struct {
-	RespBase
-	Data AdminManualRedeemData `json:"data"`
-}
-
-type AdminManualRewardReq struct {
-	TenantId     int64  `json:"tenantId"`
-	OrderId      int64  `json:"orderId"`
-	RewardAmount string `json:"rewardAmount"`
-	RewardType   int64  `json:"rewardType"`
-	Remark       string `json:"remark,optional"`
-	OperatorUid  int64  `json:"operatorUid"`
-}
-
-type AdminManualRewardResp struct {
-	RespBase
-	Data int64 `json:"data"`
-}
-
-type AdminOrderDetailReq struct {
-	TenantId int64 `form:"tenantId,optional"`
-	Id       int64 `form:"id"`
-}
-
-type AdminOrderDetailResp struct {
-	RespBase
-	Data StakeOrder `json:"data"`
-}
-
-type AdminOrderListReq struct {
-	PageReq
-	TenantId        int64  `form:"tenantId,optional"`
-	OrderNo         string `form:"orderNo,optional"`
-	UserId          int64  `form:"userId,optional"`
-	ProductId       int64  `form:"productId,optional"`
-	ProductName     string `form:"productName,optional"`
-	CoinSymbol      string `form:"coinSymbol,optional"`
-	Status          int64  `form:"status,optional"`
-	RedeemType      int64  `form:"redeemType,optional"`
-	Source          int64  `form:"source,optional"`
-	StartTimesBegin int64  `form:"startTimesBegin,optional"`
-	StartTimesEnd   int64  `form:"startTimesEnd,optional"`
-	EndTimesBegin   int64  `form:"endTimesBegin,optional"`
-	EndTimesEnd     int64  `form:"endTimesEnd,optional"`
-}
-
-type AdminOrderListResp struct {
-	RespBase
-	Data []StakeOrder `json:"data"`
-}
-
-type AdminProductChangeStatusReq struct {
-	TenantId    int64 `json:"tenantId"`
-	Id          int64 `json:"id"`
-	Status      int64 `json:"status"`
-	OperatorUid int64 `json:"operatorUid"`
-}
-
-type AdminProductChangeStatusResp struct {
-	RespBase
-	Data int64 `json:"data"`
-}
-
-type AdminProductCreateReq struct {
-	TenantId         int64  `json:"tenantId"`
-	ProductNo        string `json:"productNo"`
-	ProductName      string `json:"productName"`
-	ProductType      int64  `json:"productType"`
-	CoinName         string `json:"coinName"`
-	CoinSymbol       string `json:"coinSymbol"`
-	RewardCoinName   string `json:"rewardCoinName"`
-	RewardCoinSymbol string `json:"rewardCoinSymbol"`
-	Apr              string `json:"apr"`
-	LockDays         int64  `json:"lockDays"`
-	MinAmount        string `json:"minAmount"`
-	MaxAmount        string `json:"maxAmount"`
-	StepAmount       string `json:"stepAmount"`
-	TotalAmount      string `json:"totalAmount"`
-	UserLimitAmount  string `json:"userLimitAmount"`
-	InterestMode     int64  `json:"interestMode"`
-	RewardMode       int64  `json:"rewardMode"`
-	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
-	EarlyRedeemRate  string `json:"earlyRedeemRate"`
-	Status           int64  `json:"status"`
-	Sort             int64  `json:"sort"`
-	Remark           string `json:"remark,optional"`
-	OperatorUid      int64  `json:"operatorUid"`
-}
-
-type AdminProductCreateResp struct {
-	RespBase
-	Data int64 `json:"data"`
-}
-
-type AdminProductDetailReq struct {
-	TenantId int64 `form:"tenantId,optional"`
-	Id       int64 `form:"id"`
-}
-
-type AdminProductDetailResp struct {
-	RespBase
-	Data StakeProduct `json:"data"`
-}
-
-type AdminProductListReq struct {
-	PageReq
-	TenantId    int64  `form:"tenantId,optional"`
-	ProductNo   string `form:"productNo,optional"`
-	ProductName string `form:"productName,optional"`
-	CoinSymbol  string `form:"coinSymbol,optional"`
-	ProductType int64  `form:"productType,optional"`
-	Status      int64  `form:"status,optional"`
-}
-
-type AdminProductListResp struct {
-	RespBase
-	Data []StakeProduct `json:"data"`
-}
-
-type AdminProductUpdateReq struct {
-	TenantId         int64  `json:"tenantId"`
-	Id               int64  `json:"id"`
-	ProductName      string `json:"productName"`
-	ProductType      int64  `json:"productType"`
-	CoinName         string `json:"coinName"`
-	CoinSymbol       string `json:"coinSymbol"`
-	RewardCoinName   string `json:"rewardCoinName"`
-	RewardCoinSymbol string `json:"rewardCoinSymbol"`
-	Apr              string `json:"apr"`
-	LockDays         int64  `json:"lockDays"`
-	MinAmount        string `json:"minAmount"`
-	MaxAmount        string `json:"maxAmount"`
-	StepAmount       string `json:"stepAmount"`
-	TotalAmount      string `json:"totalAmount"`
-	UserLimitAmount  string `json:"userLimitAmount"`
-	InterestMode     int64  `json:"interestMode"`
-	RewardMode       int64  `json:"rewardMode"`
-	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
-	EarlyRedeemRate  string `json:"earlyRedeemRate"`
-	Status           int64  `json:"status"`
-	Sort             int64  `json:"sort"`
-	Remark           string `json:"remark,optional"`
-	OperatorUid      int64  `json:"operatorUid"`
-}
-
-type AdminProductUpdateResp struct {
-	RespBase
-	Data int64 `json:"data"`
-}
-
-type AdminRedeemLogListReq struct {
-	PageReq
-	TenantId         int64  `form:"tenantId,optional"`
-	OrderNo          string `form:"orderNo,optional"`
-	RedeemNo         string `form:"redeemNo,optional"`
-	UserId           int64  `form:"userId,optional"`
-	ProductId        int64  `form:"productId,optional"`
-	RedeemType       int64  `form:"redeemType,optional"`
-	RedeemStatus     int64  `form:"redeemStatus,optional"`
-	RedeemTimesBegin int64  `form:"redeemTimesBegin,optional"`
-	RedeemTimesEnd   int64  `form:"redeemTimesEnd,optional"`
-}
-
-type AdminRedeemLogListResp struct {
-	RespBase
-	Data []StakeRedeemLog `json:"data"`
-}
-
-type AdminRewardLogListReq struct {
-	PageReq
-	TenantId         int64  `form:"tenantId,optional"`
-	OrderNo          string `form:"orderNo,optional"`
-	UserId           int64  `form:"userId,optional"`
-	ProductId        int64  `form:"productId,optional"`
-	RewardType       int64  `form:"rewardType,optional"`
-	RewardStatus     int64  `form:"rewardStatus,optional"`
-	RewardTimesBegin int64  `form:"rewardTimesBegin,optional"`
-	RewardTimesEnd   int64  `form:"rewardTimesEnd,optional"`
-}
-
-type AdminRewardLogListResp struct {
-	RespBase
-	Data []StakeRewardLog `json:"data"`
-}
-
-type AdminSubAssetReq struct {
-	TenantId   int64  `json:"tenantId"`
-	UserId     int64  `json:"userId"`
-	WalletType int64  `json:"walletType"`
-	Coin       string `json:"coin"`
-	Amount     string `json:"amount"`
-	BizNo      string `json:"bizNo"`
-	Remark     string `json:"remark,optional"`
-	OperatorId int64  `json:"operatorId"`
-}
-
-type AdminUnfreezeAssetReq struct {
-	TenantId   int64  `json:"tenantId"`
-	FreezeNo   string `json:"freezeNo"`
-	Amount     string `json:"amount"`
-	BizNo      string `json:"bizNo"`
-	Remark     string `json:"remark,optional"`
-	OperatorId int64  `json:"operatorId"`
-}
-
-type AdminUnlockAssetReq struct {
-	TenantId   int64  `json:"tenantId"`
-	LockNo     string `json:"lockNo"`
-	Amount     string `json:"amount"`
-	BizNo      string `json:"bizNo"`
-	Remark     string `json:"remark,optional"`
-	OperatorId int64  `json:"operatorId"`
 }
 
 type AssetCoinConfig struct {
@@ -477,6 +210,16 @@ type BizTradeEvent struct {
 	DeliveredAt    int64  `json:"deliveredAt"`
 }
 
+type ChangeAssetData struct {
+	BizNo string         `json:"bizNo"`
+	Asset AssetUserAsset `json:"asset"`
+}
+
+type ChangeAssetResp struct {
+	RespBase
+	Data ChangeAssetData `json:"data"`
+}
+
 type ChangePriceFormulaStatusReq struct {
 	Id     int64 `path:"id"`
 	Status int32 `json:"status"`
@@ -505,6 +248,10 @@ type CloseRechargeOrderReq struct {
 	TenantId int64  `json:"tenantId"`
 	OrderNo  string `path:"orderNo"`
 	Remark   string `json:"remark,optional"`
+}
+
+type CommonResp struct {
+	RespBase
 }
 
 type ContractDeliveryBatch struct {
@@ -1202,6 +949,17 @@ type EncryptionSessionData struct {
 type EncryptionSessionResp struct {
 	RespBase
 	Data EncryptionSessionData `json:"data"`
+}
+
+type FreezeAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	UserId     int64  `json:"userId"`
+	WalletType int64  `json:"walletType"`
+	Coin       string `json:"coin"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
 }
 
 type GetAccountReq struct {
@@ -2638,6 +2396,17 @@ type ListWithdrawOrdersResp struct {
 	Data []WithdrawOrder `json:"data"`
 }
 
+type LockAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	UserId     int64  `json:"userId"`
+	WalletType int64  `json:"walletType"`
+	Coin       string `json:"coin"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
+}
+
 type LoginData struct {
 	Token string `json:"token"`
 	Exp   int64  `json:"exp"`
@@ -2682,6 +2451,42 @@ type ManualMarkRechargeOrderSuccessReq struct {
 	ThirdTradeNo string `json:"thirdTradeNo,optional"`
 	PayAmount    int64  `json:"payAmount"`
 	Remark       string `json:"remark,optional"`
+}
+
+type ManualRedeemData struct {
+	Success  int64  `json:"success"`
+	RedeemNo string `json:"redeemNo"`
+}
+
+type ManualRedeemReq struct {
+	TenantId     int64  `json:"tenantId"`
+	OrderId      int64  `json:"orderId"`
+	RedeemType   int64  `json:"redeemType"`
+	RedeemAmount string `json:"redeemAmount"`
+	RewardAmount string `json:"rewardAmount"`
+	FeeRate      string `json:"feeRate"`
+	FeeAmount    string `json:"feeAmount"`
+	Remark       string `json:"remark,optional"`
+	OperatorUid  int64  `json:"operatorUid"`
+}
+
+type ManualRedeemResp struct {
+	RespBase
+	Data ManualRedeemData `json:"data"`
+}
+
+type ManualRewardReq struct {
+	TenantId     int64  `json:"tenantId"`
+	OrderId      int64  `json:"orderId"`
+	RewardAmount string `json:"rewardAmount"`
+	RewardType   int64  `json:"rewardType"`
+	Remark       string `json:"remark,optional"`
+	OperatorUid  int64  `json:"operatorUid"`
+}
+
+type ManualRewardResp struct {
+	RespBase
+	Data int64 `json:"data"`
 }
 
 type MenuNode struct {
@@ -3013,6 +2818,38 @@ type OptionsItem struct {
 	Code  string `json:"code"`
 }
 
+type OrderDetailReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+	Id       int64 `form:"id"`
+}
+
+type OrderDetailResp struct {
+	RespBase
+	Data StakeOrder `json:"data"`
+}
+
+type OrderListReq struct {
+	PageReq
+	TenantId        int64  `form:"tenantId,optional"`
+	OrderNo         string `form:"orderNo,optional"`
+	UserId          int64  `form:"userId,optional"`
+	ProductId       int64  `form:"productId,optional"`
+	ProductName     string `form:"productName,optional"`
+	CoinSymbol      string `form:"coinSymbol,optional"`
+	Status          int64  `form:"status,optional"`
+	RedeemType      int64  `form:"redeemType,optional"`
+	Source          int64  `form:"source,optional"`
+	StartTimesBegin int64  `form:"startTimesBegin,optional"`
+	StartTimesEnd   int64  `form:"startTimesEnd,optional"`
+	EndTimesBegin   int64  `form:"endTimesBegin,optional"`
+	EndTimesEnd     int64  `form:"endTimesEnd,optional"`
+}
+
+type OrderListResp struct {
+	RespBase
+	Data []StakeOrder `json:"data"`
+}
+
 type PageAssetCoinConfigsReq struct {
 	PageReq
 	TenantId        int64  `form:"tenantId,optional"`
@@ -3206,6 +3043,105 @@ type PriceFormulaResp struct {
 	Data PriceFormulaData `json:"data"`
 }
 
+type ProductChangeStatusReq struct {
+	TenantId    int64 `json:"tenantId"`
+	Id          int64 `json:"id"`
+	Status      int64 `json:"status"`
+	OperatorUid int64 `json:"operatorUid"`
+}
+
+type ProductChangeStatusResp struct {
+	RespBase
+	Data int64 `json:"data"`
+}
+
+type ProductCreateReq struct {
+	TenantId         int64  `json:"tenantId"`
+	ProductNo        string `json:"productNo"`
+	ProductName      string `json:"productName"`
+	ProductType      int64  `json:"productType"`
+	CoinName         string `json:"coinName"`
+	CoinSymbol       string `json:"coinSymbol"`
+	RewardCoinName   string `json:"rewardCoinName"`
+	RewardCoinSymbol string `json:"rewardCoinSymbol"`
+	Apr              string `json:"apr"`
+	LockDays         int64  `json:"lockDays"`
+	MinAmount        string `json:"minAmount"`
+	MaxAmount        string `json:"maxAmount"`
+	StepAmount       string `json:"stepAmount"`
+	TotalAmount      string `json:"totalAmount"`
+	UserLimitAmount  string `json:"userLimitAmount"`
+	InterestMode     int64  `json:"interestMode"`
+	RewardMode       int64  `json:"rewardMode"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
+	EarlyRedeemRate  string `json:"earlyRedeemRate"`
+	Status           int64  `json:"status"`
+	Sort             int64  `json:"sort"`
+	Remark           string `json:"remark,optional"`
+	OperatorUid      int64  `json:"operatorUid"`
+}
+
+type ProductCreateResp struct {
+	RespBase
+	Data int64 `json:"data"`
+}
+
+type ProductDetailReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+	Id       int64 `form:"id"`
+}
+
+type ProductDetailResp struct {
+	RespBase
+	Data StakeProduct `json:"data"`
+}
+
+type ProductListReq struct {
+	PageReq
+	TenantId    int64  `form:"tenantId,optional"`
+	ProductNo   string `form:"productNo,optional"`
+	ProductName string `form:"productName,optional"`
+	CoinSymbol  string `form:"coinSymbol,optional"`
+	ProductType int64  `form:"productType,optional"`
+	Status      int64  `form:"status,optional"`
+}
+
+type ProductListResp struct {
+	RespBase
+	Data []StakeProduct `json:"data"`
+}
+
+type ProductUpdateReq struct {
+	TenantId         int64  `json:"tenantId"`
+	Id               int64  `json:"id"`
+	ProductName      string `json:"productName"`
+	ProductType      int64  `json:"productType"`
+	CoinName         string `json:"coinName"`
+	CoinSymbol       string `json:"coinSymbol"`
+	RewardCoinName   string `json:"rewardCoinName"`
+	RewardCoinSymbol string `json:"rewardCoinSymbol"`
+	Apr              string `json:"apr"`
+	LockDays         int64  `json:"lockDays"`
+	MinAmount        string `json:"minAmount"`
+	MaxAmount        string `json:"maxAmount"`
+	StepAmount       string `json:"stepAmount"`
+	TotalAmount      string `json:"totalAmount"`
+	UserLimitAmount  string `json:"userLimitAmount"`
+	InterestMode     int64  `json:"interestMode"`
+	RewardMode       int64  `json:"rewardMode"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
+	EarlyRedeemRate  string `json:"earlyRedeemRate"`
+	Status           int64  `json:"status"`
+	Sort             int64  `json:"sort"`
+	Remark           string `json:"remark,optional"`
+	OperatorUid      int64  `json:"operatorUid"`
+}
+
+type ProductUpdateResp struct {
+	RespBase
+	Data int64 `json:"data"`
+}
+
 type ProfileData struct {
 	User  ProfileUser `json:"user"`
 	Menus []MenuNode  `json:"menus"`
@@ -3282,6 +3218,24 @@ type RechargeOrder struct {
 	UpdateTimes  int64  `json:"updateTimes"`
 }
 
+type RedeemLogListReq struct {
+	PageReq
+	TenantId         int64  `form:"tenantId,optional"`
+	OrderNo          string `form:"orderNo,optional"`
+	RedeemNo         string `form:"redeemNo,optional"`
+	UserId           int64  `form:"userId,optional"`
+	ProductId        int64  `form:"productId,optional"`
+	RedeemType       int64  `form:"redeemType,optional"`
+	RedeemStatus     int64  `form:"redeemStatus,optional"`
+	RedeemTimesBegin int64  `form:"redeemTimesBegin,optional"`
+	RedeemTimesEnd   int64  `form:"redeemTimesEnd,optional"`
+}
+
+type RedeemLogListResp struct {
+	RespBase
+	Data []StakeRedeemLog `json:"data"`
+}
+
 type ResetLoginPasswordReq struct {
 	TenantId    int64  `json:"tenantId"`
 	UserId      int64  `path:"userId"`
@@ -3352,6 +3306,23 @@ type RevokeAuthoritativeSnapshotReq struct {
 	SnapshotId            string `json:"snapshotId"`
 	ReplacementSnapshotId string `json:"replacementSnapshotId,optional"`
 	Reason                string `json:"reason"`
+}
+
+type RewardLogListReq struct {
+	PageReq
+	TenantId         int64  `form:"tenantId,optional"`
+	OrderNo          string `form:"orderNo,optional"`
+	UserId           int64  `form:"userId,optional"`
+	ProductId        int64  `form:"productId,optional"`
+	RewardType       int64  `form:"rewardType,optional"`
+	RewardStatus     int64  `form:"rewardStatus,optional"`
+	RewardTimesBegin int64  `form:"rewardTimesBegin,optional"`
+	RewardTimesEnd   int64  `form:"rewardTimesEnd,optional"`
+}
+
+type RewardLogListResp struct {
+	RespBase
+	Data []StakeRewardLog `json:"data"`
 }
 
 type RiskOrderCheckLog struct {
@@ -3751,6 +3722,17 @@ type StakeRewardLog struct {
 	UpdateUserId     int64  `json:"updateUserId"`
 	CreateTimes      int64  `json:"createTimes"`
 	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type SubAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	UserId     int64  `json:"userId"`
+	WalletType int64  `json:"walletType"`
+	Coin       string `json:"coin"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
 }
 
 type SyncCategoryProductsReq struct {
@@ -4705,6 +4687,24 @@ type TradeUserConfig struct {
 	TradeEnabled int64 `json:"tradeEnabled"`
 	CreateTimes  int64 `json:"createTimes"`
 	UpdateTimes  int64 `json:"updateTimes"`
+}
+
+type UnfreezeAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	FreezeNo   string `json:"freezeNo"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
+}
+
+type UnlockAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	LockNo     string `json:"lockNo"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
 }
 
 type UnlockUserReq struct {

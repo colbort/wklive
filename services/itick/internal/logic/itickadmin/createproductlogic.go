@@ -29,13 +29,13 @@ func NewCreateProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 }
 
 // 产品
-func (l *CreateProductLogic) CreateProduct(in *itick.CreateProductReq) (*itick.AdminCommonResp, error) {
+func (l *CreateProductLogic) CreateProduct(in *itick.CreateProductReq) (*itick.CommonResp, error) {
 	category, err := l.svcCtx.ItickCategoryModel.FindOneByCategoryType(l.ctx, int64(in.CategoryType))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if category == nil {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.CategoryNotFound, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
 		}, nil
 	}
@@ -45,7 +45,7 @@ func (l *CreateProductLogic) CreateProduct(in *itick.CreateProductReq) (*itick.A
 		return nil, err
 	}
 	if exist != nil {
-		return &itick.AdminCommonResp{
+		return &itick.CommonResp{
 			Base: helper.ErrResp(i18n.ResourceAlreadyExists, i18n.Translate(i18n.ResourceAlreadyExists, l.ctx)),
 		}, nil
 	}
@@ -75,5 +75,5 @@ func (l *CreateProductLogic) CreateProduct(in *itick.CreateProductReq) (*itick.A
 		return nil, err
 	}
 
-	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &itick.CommonResp{Base: helper.OkResp()}, nil
 }

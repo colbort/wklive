@@ -17,24 +17,6 @@ type (
 	AcceptChatSessionReq           = chat.AcceptChatSessionReq
 	AcceptChatSessionResp          = chat.AcceptChatSessionResp
 	AcceptChatSessionUser          = chat.AcceptChatSessionUser
-	AdminChatAgentResp             = chat.AdminChatAgentResp
-	AdminChatCategoryResp          = chat.AdminChatCategoryResp
-	AdminChatConfigResp            = chat.AdminChatConfigResp
-	AdminChatGroupResp             = chat.AdminChatGroupResp
-	AdminChatMessageResp           = chat.AdminChatMessageResp
-	AdminChatQuickReplyResp        = chat.AdminChatQuickReplyResp
-	AdminChatSessionResp           = chat.AdminChatSessionResp
-	AdminChatSubscribeRequest      = chat.AdminChatSubscribeRequest
-	AdminChatWorkOrderResp         = chat.AdminChatWorkOrderResp
-	AdminCommonResp                = chat.AdminCommonResp
-	AdminMarkMessagesReadResp      = chat.AdminMarkMessagesReadResp
-	AppChatConfigResp              = chat.AppChatConfigResp
-	AppChatMessageResp             = chat.AppChatMessageResp
-	AppChatSatisfactionResp        = chat.AppChatSatisfactionResp
-	AppChatSessionResp             = chat.AppChatSessionResp
-	AppChatSubscribeRequest        = chat.AppChatSubscribeRequest
-	AppCommonResp                  = chat.AppCommonResp
-	AppListChatMessagesResp        = chat.AppListChatMessagesResp
 	AuthChatMerchantData           = chat.AuthChatMerchantData
 	AuthChatMerchantReq            = chat.AuthChatMerchantReq
 	AuthChatMerchantResp           = chat.AuthChatMerchantResp
@@ -44,9 +26,19 @@ type (
 	ChatAdminLogoutReq             = chat.ChatAdminLogoutReq
 	ChatAdminProfileReq            = chat.ChatAdminProfileReq
 	ChatAdminProfileResp           = chat.ChatAdminProfileResp
+	ChatAgentResp                  = chat.ChatAgentResp
 	ChatAppConfig                  = chat.ChatAppConfig
+	ChatCategoryResp               = chat.ChatCategoryResp
+	ChatConfigResp                 = chat.ChatConfigResp
+	ChatGroupResp                  = chat.ChatGroupResp
+	ChatMessageResp                = chat.ChatMessageResp
+	ChatQuickReplyResp             = chat.ChatQuickReplyResp
+	ChatSatisfactionResp           = chat.ChatSatisfactionResp
+	ChatSessionResp                = chat.ChatSessionResp
+	ChatWorkOrderResp              = chat.ChatWorkOrderResp
 	CloseChatSessionReq            = chat.CloseChatSessionReq
 	CloseMyChatSessionReq          = chat.CloseMyChatSessionReq
+	CommonResp                     = chat.CommonResp
 	CreateChatAgentReq             = chat.CreateChatAgentReq
 	CreateChatCategoryReq          = chat.CreateChatCategoryReq
 	CreateChatGroupReq             = chat.CreateChatGroupReq
@@ -71,11 +63,13 @@ type (
 	GetChatWorkOrderReq            = chat.GetChatWorkOrderReq
 	HandleChatWorkOrderReq         = chat.HandleChatWorkOrderReq
 	ListChatCategoriesResp         = chat.ListChatCategoriesResp
+	ListChatMessagesResp           = chat.ListChatMessagesResp
 	ListChatQuickRepliesResp       = chat.ListChatQuickRepliesResp
 	ListEnabledChatCategoriesReq   = chat.ListEnabledChatCategoriesReq
 	ListEnabledChatQuickRepliesReq = chat.ListEnabledChatQuickRepliesReq
 	ListMyChatMessagesReq          = chat.ListMyChatMessagesReq
 	MarkAgentMessagesReadReq       = chat.MarkAgentMessagesReadReq
+	MarkMessagesReadResp           = chat.MarkMessagesReadResp
 	OpenChatSessionReq             = chat.OpenChatSessionReq
 	OpenChatSessionResp            = chat.OpenChatSessionResp
 	OperateAgentMessageReq         = chat.OperateAgentMessageReq
@@ -99,6 +93,7 @@ type (
 	SendUserMessageReq             = chat.SendUserMessageReq
 	SendUserTypingReq              = chat.SendUserTypingReq
 	SubmitChatSatisfactionReq      = chat.SubmitChatSatisfactionReq
+	SubscribeRequest               = chat.SubscribeRequest
 	SyncChatMerchantUserReq        = chat.SyncChatMerchantUserReq
 	SyncChatMerchantUserResp       = chat.SyncChatMerchantUserResp
 	UpdateChatAdminProfileReq      = chat.UpdateChatAdminProfileReq
@@ -109,12 +104,16 @@ type (
 	UpdateChatGroupReq             = chat.UpdateChatGroupReq
 	UpdateChatQuickReplyReq        = chat.UpdateChatQuickReplyReq
 	UpdateChatWorkOrderReq         = chat.UpdateChatWorkOrderReq
+	UserChatConfigResp             = chat.UserChatConfigResp
+	UserChatMessageResp            = chat.UserChatMessageResp
+	UserChatSessionResp            = chat.UserChatSessionResp
+	UserCommonResp                 = chat.UserCommonResp
 
 	ChatAdmin interface {
 		// 登录
 		Login(ctx context.Context, in *ChatAdminLoginReq, opts ...grpc.CallOption) (*ChatAdminLoginResp, error)
 		// 退出登录
-		Logout(ctx context.Context, in *ChatAdminLogoutReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		Logout(ctx context.Context, in *ChatAdminLogoutReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 当前登录用户资料
 		Profile(ctx context.Context, in *ChatAdminProfileReq, opts ...grpc.CallOption) (*ChatAdminProfileResp, error)
 		// 更新当前登录用户资料
@@ -122,85 +121,85 @@ type (
 		// 获取用户
 		GetChatUserById(ctx context.Context, in *GetChatUserByIdReq, opts ...grpc.CallOption) (*GetChatUserByIdResp, error)
 		// 查询chat-ui配置
-		GetChatConfig(ctx context.Context, in *GetChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error)
+		GetChatConfig(ctx context.Context, in *GetChatConfigReq, opts ...grpc.CallOption) (*ChatConfigResp, error)
 		// 更新chat-ui配置
-		UpdateChatConfig(ctx context.Context, in *UpdateChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error)
+		UpdateChatConfig(ctx context.Context, in *UpdateChatConfigReq, opts ...grpc.CallOption) (*ChatConfigResp, error)
 		// 创建客服分组
-		CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
+		CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*ChatGroupResp, error)
 		// 更新客服分组
-		UpdateChatGroup(ctx context.Context, in *UpdateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
+		UpdateChatGroup(ctx context.Context, in *UpdateChatGroupReq, opts ...grpc.CallOption) (*ChatGroupResp, error)
 		// 查询客服分组详情
-		GetChatGroup(ctx context.Context, in *GetChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error)
+		GetChatGroup(ctx context.Context, in *GetChatGroupReq, opts ...grpc.CallOption) (*ChatGroupResp, error)
 		// 分页查询客服分组
 		PageChatGroups(ctx context.Context, in *PageChatGroupsReq, opts ...grpc.CallOption) (*PageChatGroupsResp, error)
 		// 删除客服分组
-		DeleteChatGroup(ctx context.Context, in *DeleteChatGroupReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		DeleteChatGroup(ctx context.Context, in *DeleteChatGroupReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 创建坐席
-		CreateChatAgent(ctx context.Context, in *CreateChatAgentReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error)
+		CreateChatAgent(ctx context.Context, in *CreateChatAgentReq, opts ...grpc.CallOption) (*ChatAgentResp, error)
 		// 更新坐席
-		UpdateChatAgent(ctx context.Context, in *UpdateChatAgentReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error)
+		UpdateChatAgent(ctx context.Context, in *UpdateChatAgentReq, opts ...grpc.CallOption) (*ChatAgentResp, error)
 		// 更新坐席在线状态
-		UpdateChatAgentStatus(ctx context.Context, in *UpdateChatAgentStatusReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error)
+		UpdateChatAgentStatus(ctx context.Context, in *UpdateChatAgentStatusReq, opts ...grpc.CallOption) (*ChatAgentResp, error)
 		// 查询坐席详情
-		GetChatAgent(ctx context.Context, in *GetChatAgentReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error)
+		GetChatAgent(ctx context.Context, in *GetChatAgentReq, opts ...grpc.CallOption) (*ChatAgentResp, error)
 		// 分页查询坐席
 		PageChatAgents(ctx context.Context, in *PageChatAgentsReq, opts ...grpc.CallOption) (*PageChatAgentsResp, error)
 		// 分页查询会话
 		PageChatSessions(ctx context.Context, in *PageChatSessionsReq, opts ...grpc.CallOption) (*PageChatSessionsResp, error)
 		// 查询会话详情
-		GetChatSession(ctx context.Context, in *GetChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
+		GetChatSession(ctx context.Context, in *GetChatSessionReq, opts ...grpc.CallOption) (*ChatSessionResp, error)
 		// 接待会话
 		AcceptChatSession(ctx context.Context, in *AcceptChatSessionReq, opts ...grpc.CallOption) (*AcceptChatSessionResp, error)
 		// 发送客服消息
-		SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error)
+		SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*ChatMessageResp, error)
 		// 发送用户输入状态
-		SendAgentTyping(ctx context.Context, in *SendAgentTypingReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		SendAgentTyping(ctx context.Context, in *SendAgentTypingReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 客服侧消息删除/撤回
-		OperateAgentMessage(ctx context.Context, in *OperateAgentMessageReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		OperateAgentMessage(ctx context.Context, in *OperateAgentMessageReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 查询会话消息
 		PageChatMessages(ctx context.Context, in *PageChatMessagesReq, opts ...grpc.CallOption) (*PageChatMessagesResp, error)
 		// 标记客服侧已读
-		MarkAgentMessagesRead(ctx context.Context, in *MarkAgentMessagesReadReq, opts ...grpc.CallOption) (*AdminMarkMessagesReadResp, error)
+		MarkAgentMessagesRead(ctx context.Context, in *MarkAgentMessagesReadReq, opts ...grpc.CallOption) (*MarkMessagesReadResp, error)
 		// 关闭会话
-		CloseChatSession(ctx context.Context, in *CloseChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error)
+		CloseChatSession(ctx context.Context, in *CloseChatSessionReq, opts ...grpc.CallOption) (*ChatSessionResp, error)
 		// 创建快捷回复
-		CreateChatQuickReply(ctx context.Context, in *CreateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error)
+		CreateChatQuickReply(ctx context.Context, in *CreateChatQuickReplyReq, opts ...grpc.CallOption) (*ChatQuickReplyResp, error)
 		// 更新快捷回复
-		UpdateChatQuickReply(ctx context.Context, in *UpdateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error)
+		UpdateChatQuickReply(ctx context.Context, in *UpdateChatQuickReplyReq, opts ...grpc.CallOption) (*ChatQuickReplyResp, error)
 		// 查询快捷回复详情
-		GetChatQuickReply(ctx context.Context, in *GetChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error)
+		GetChatQuickReply(ctx context.Context, in *GetChatQuickReplyReq, opts ...grpc.CallOption) (*ChatQuickReplyResp, error)
 		// 分页查询快捷回复
 		PageChatQuickReplies(ctx context.Context, in *PageChatQuickRepliesReq, opts ...grpc.CallOption) (*PageChatQuickRepliesResp, error)
 		// 查询启用快捷回复
 		ListEnabledChatQuickReplies(ctx context.Context, in *ListEnabledChatQuickRepliesReq, opts ...grpc.CallOption) (*ListChatQuickRepliesResp, error)
 		// 删除快捷回复
-		DeleteChatQuickReply(ctx context.Context, in *DeleteChatQuickReplyReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		DeleteChatQuickReply(ctx context.Context, in *DeleteChatQuickReplyReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 创建问题分类
-		CreateChatCategory(ctx context.Context, in *CreateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error)
+		CreateChatCategory(ctx context.Context, in *CreateChatCategoryReq, opts ...grpc.CallOption) (*ChatCategoryResp, error)
 		// 更新问题分类
-		UpdateChatCategory(ctx context.Context, in *UpdateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error)
+		UpdateChatCategory(ctx context.Context, in *UpdateChatCategoryReq, opts ...grpc.CallOption) (*ChatCategoryResp, error)
 		// 查询问题分类详情
-		GetChatCategory(ctx context.Context, in *GetChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error)
+		GetChatCategory(ctx context.Context, in *GetChatCategoryReq, opts ...grpc.CallOption) (*ChatCategoryResp, error)
 		// 分页查询问题分类
 		PageChatCategories(ctx context.Context, in *PageChatCategoriesReq, opts ...grpc.CallOption) (*PageChatCategoriesResp, error)
 		// 查询启用问题分类
 		ListEnabledChatCategories(ctx context.Context, in *ListEnabledChatCategoriesReq, opts ...grpc.CallOption) (*ListChatCategoriesResp, error)
 		// 删除问题分类
-		DeleteChatCategory(ctx context.Context, in *DeleteChatCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		DeleteChatCategory(ctx context.Context, in *DeleteChatCategoryReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 创建工单/离线留言
-		CreateChatWorkOrder(ctx context.Context, in *CreateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+		CreateChatWorkOrder(ctx context.Context, in *CreateChatWorkOrderReq, opts ...grpc.CallOption) (*ChatWorkOrderResp, error)
 		// 更新工单
-		UpdateChatWorkOrder(ctx context.Context, in *UpdateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+		UpdateChatWorkOrder(ctx context.Context, in *UpdateChatWorkOrderReq, opts ...grpc.CallOption) (*ChatWorkOrderResp, error)
 		// 处理工单
-		HandleChatWorkOrder(ctx context.Context, in *HandleChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+		HandleChatWorkOrder(ctx context.Context, in *HandleChatWorkOrderReq, opts ...grpc.CallOption) (*ChatWorkOrderResp, error)
 		// 查询工单详情
-		GetChatWorkOrder(ctx context.Context, in *GetChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error)
+		GetChatWorkOrder(ctx context.Context, in *GetChatWorkOrderReq, opts ...grpc.CallOption) (*ChatWorkOrderResp, error)
 		// 分页查询工单
 		PageChatWorkOrders(ctx context.Context, in *PageChatWorkOrdersReq, opts ...grpc.CallOption) (*PageChatWorkOrdersResp, error)
 		// 删除工单
-		DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 订阅客服消息事件流
-		AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatAdmin_AdminSubscribeStreamClient, error)
+		SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (chat.ChatAdmin_SubscribeStreamClient, error)
 	}
 
 	defaultChatAdmin struct {
@@ -221,7 +220,7 @@ func (m *defaultChatAdmin) Login(ctx context.Context, in *ChatAdminLoginReq, opt
 }
 
 // 退出登录
-func (m *defaultChatAdmin) Logout(ctx context.Context, in *ChatAdminLogoutReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultChatAdmin) Logout(ctx context.Context, in *ChatAdminLogoutReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.Logout(ctx, in, opts...)
 }
@@ -245,31 +244,31 @@ func (m *defaultChatAdmin) GetChatUserById(ctx context.Context, in *GetChatUserB
 }
 
 // 查询chat-ui配置
-func (m *defaultChatAdmin) GetChatConfig(ctx context.Context, in *GetChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error) {
+func (m *defaultChatAdmin) GetChatConfig(ctx context.Context, in *GetChatConfigReq, opts ...grpc.CallOption) (*ChatConfigResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.GetChatConfig(ctx, in, opts...)
 }
 
 // 更新chat-ui配置
-func (m *defaultChatAdmin) UpdateChatConfig(ctx context.Context, in *UpdateChatConfigReq, opts ...grpc.CallOption) (*AdminChatConfigResp, error) {
+func (m *defaultChatAdmin) UpdateChatConfig(ctx context.Context, in *UpdateChatConfigReq, opts ...grpc.CallOption) (*ChatConfigResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.UpdateChatConfig(ctx, in, opts...)
 }
 
 // 创建客服分组
-func (m *defaultChatAdmin) CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error) {
+func (m *defaultChatAdmin) CreateChatGroup(ctx context.Context, in *CreateChatGroupReq, opts ...grpc.CallOption) (*ChatGroupResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.CreateChatGroup(ctx, in, opts...)
 }
 
 // 更新客服分组
-func (m *defaultChatAdmin) UpdateChatGroup(ctx context.Context, in *UpdateChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error) {
+func (m *defaultChatAdmin) UpdateChatGroup(ctx context.Context, in *UpdateChatGroupReq, opts ...grpc.CallOption) (*ChatGroupResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.UpdateChatGroup(ctx, in, opts...)
 }
 
 // 查询客服分组详情
-func (m *defaultChatAdmin) GetChatGroup(ctx context.Context, in *GetChatGroupReq, opts ...grpc.CallOption) (*AdminChatGroupResp, error) {
+func (m *defaultChatAdmin) GetChatGroup(ctx context.Context, in *GetChatGroupReq, opts ...grpc.CallOption) (*ChatGroupResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.GetChatGroup(ctx, in, opts...)
 }
@@ -281,31 +280,31 @@ func (m *defaultChatAdmin) PageChatGroups(ctx context.Context, in *PageChatGroup
 }
 
 // 删除客服分组
-func (m *defaultChatAdmin) DeleteChatGroup(ctx context.Context, in *DeleteChatGroupReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultChatAdmin) DeleteChatGroup(ctx context.Context, in *DeleteChatGroupReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.DeleteChatGroup(ctx, in, opts...)
 }
 
 // 创建坐席
-func (m *defaultChatAdmin) CreateChatAgent(ctx context.Context, in *CreateChatAgentReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error) {
+func (m *defaultChatAdmin) CreateChatAgent(ctx context.Context, in *CreateChatAgentReq, opts ...grpc.CallOption) (*ChatAgentResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.CreateChatAgent(ctx, in, opts...)
 }
 
 // 更新坐席
-func (m *defaultChatAdmin) UpdateChatAgent(ctx context.Context, in *UpdateChatAgentReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error) {
+func (m *defaultChatAdmin) UpdateChatAgent(ctx context.Context, in *UpdateChatAgentReq, opts ...grpc.CallOption) (*ChatAgentResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.UpdateChatAgent(ctx, in, opts...)
 }
 
 // 更新坐席在线状态
-func (m *defaultChatAdmin) UpdateChatAgentStatus(ctx context.Context, in *UpdateChatAgentStatusReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error) {
+func (m *defaultChatAdmin) UpdateChatAgentStatus(ctx context.Context, in *UpdateChatAgentStatusReq, opts ...grpc.CallOption) (*ChatAgentResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.UpdateChatAgentStatus(ctx, in, opts...)
 }
 
 // 查询坐席详情
-func (m *defaultChatAdmin) GetChatAgent(ctx context.Context, in *GetChatAgentReq, opts ...grpc.CallOption) (*AdminChatAgentResp, error) {
+func (m *defaultChatAdmin) GetChatAgent(ctx context.Context, in *GetChatAgentReq, opts ...grpc.CallOption) (*ChatAgentResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.GetChatAgent(ctx, in, opts...)
 }
@@ -323,7 +322,7 @@ func (m *defaultChatAdmin) PageChatSessions(ctx context.Context, in *PageChatSes
 }
 
 // 查询会话详情
-func (m *defaultChatAdmin) GetChatSession(ctx context.Context, in *GetChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
+func (m *defaultChatAdmin) GetChatSession(ctx context.Context, in *GetChatSessionReq, opts ...grpc.CallOption) (*ChatSessionResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.GetChatSession(ctx, in, opts...)
 }
@@ -335,19 +334,19 @@ func (m *defaultChatAdmin) AcceptChatSession(ctx context.Context, in *AcceptChat
 }
 
 // 发送客服消息
-func (m *defaultChatAdmin) SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*AdminChatMessageResp, error) {
+func (m *defaultChatAdmin) SendAgentMessage(ctx context.Context, in *SendAgentMessageReq, opts ...grpc.CallOption) (*ChatMessageResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.SendAgentMessage(ctx, in, opts...)
 }
 
 // 发送用户输入状态
-func (m *defaultChatAdmin) SendAgentTyping(ctx context.Context, in *SendAgentTypingReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultChatAdmin) SendAgentTyping(ctx context.Context, in *SendAgentTypingReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.SendAgentTyping(ctx, in, opts...)
 }
 
 // 客服侧消息删除/撤回
-func (m *defaultChatAdmin) OperateAgentMessage(ctx context.Context, in *OperateAgentMessageReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultChatAdmin) OperateAgentMessage(ctx context.Context, in *OperateAgentMessageReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.OperateAgentMessage(ctx, in, opts...)
 }
@@ -359,31 +358,31 @@ func (m *defaultChatAdmin) PageChatMessages(ctx context.Context, in *PageChatMes
 }
 
 // 标记客服侧已读
-func (m *defaultChatAdmin) MarkAgentMessagesRead(ctx context.Context, in *MarkAgentMessagesReadReq, opts ...grpc.CallOption) (*AdminMarkMessagesReadResp, error) {
+func (m *defaultChatAdmin) MarkAgentMessagesRead(ctx context.Context, in *MarkAgentMessagesReadReq, opts ...grpc.CallOption) (*MarkMessagesReadResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.MarkAgentMessagesRead(ctx, in, opts...)
 }
 
 // 关闭会话
-func (m *defaultChatAdmin) CloseChatSession(ctx context.Context, in *CloseChatSessionReq, opts ...grpc.CallOption) (*AdminChatSessionResp, error) {
+func (m *defaultChatAdmin) CloseChatSession(ctx context.Context, in *CloseChatSessionReq, opts ...grpc.CallOption) (*ChatSessionResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.CloseChatSession(ctx, in, opts...)
 }
 
 // 创建快捷回复
-func (m *defaultChatAdmin) CreateChatQuickReply(ctx context.Context, in *CreateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error) {
+func (m *defaultChatAdmin) CreateChatQuickReply(ctx context.Context, in *CreateChatQuickReplyReq, opts ...grpc.CallOption) (*ChatQuickReplyResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.CreateChatQuickReply(ctx, in, opts...)
 }
 
 // 更新快捷回复
-func (m *defaultChatAdmin) UpdateChatQuickReply(ctx context.Context, in *UpdateChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error) {
+func (m *defaultChatAdmin) UpdateChatQuickReply(ctx context.Context, in *UpdateChatQuickReplyReq, opts ...grpc.CallOption) (*ChatQuickReplyResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.UpdateChatQuickReply(ctx, in, opts...)
 }
 
 // 查询快捷回复详情
-func (m *defaultChatAdmin) GetChatQuickReply(ctx context.Context, in *GetChatQuickReplyReq, opts ...grpc.CallOption) (*AdminChatQuickReplyResp, error) {
+func (m *defaultChatAdmin) GetChatQuickReply(ctx context.Context, in *GetChatQuickReplyReq, opts ...grpc.CallOption) (*ChatQuickReplyResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.GetChatQuickReply(ctx, in, opts...)
 }
@@ -401,25 +400,25 @@ func (m *defaultChatAdmin) ListEnabledChatQuickReplies(ctx context.Context, in *
 }
 
 // 删除快捷回复
-func (m *defaultChatAdmin) DeleteChatQuickReply(ctx context.Context, in *DeleteChatQuickReplyReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultChatAdmin) DeleteChatQuickReply(ctx context.Context, in *DeleteChatQuickReplyReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.DeleteChatQuickReply(ctx, in, opts...)
 }
 
 // 创建问题分类
-func (m *defaultChatAdmin) CreateChatCategory(ctx context.Context, in *CreateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error) {
+func (m *defaultChatAdmin) CreateChatCategory(ctx context.Context, in *CreateChatCategoryReq, opts ...grpc.CallOption) (*ChatCategoryResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.CreateChatCategory(ctx, in, opts...)
 }
 
 // 更新问题分类
-func (m *defaultChatAdmin) UpdateChatCategory(ctx context.Context, in *UpdateChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error) {
+func (m *defaultChatAdmin) UpdateChatCategory(ctx context.Context, in *UpdateChatCategoryReq, opts ...grpc.CallOption) (*ChatCategoryResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.UpdateChatCategory(ctx, in, opts...)
 }
 
 // 查询问题分类详情
-func (m *defaultChatAdmin) GetChatCategory(ctx context.Context, in *GetChatCategoryReq, opts ...grpc.CallOption) (*AdminChatCategoryResp, error) {
+func (m *defaultChatAdmin) GetChatCategory(ctx context.Context, in *GetChatCategoryReq, opts ...grpc.CallOption) (*ChatCategoryResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.GetChatCategory(ctx, in, opts...)
 }
@@ -437,31 +436,31 @@ func (m *defaultChatAdmin) ListEnabledChatCategories(ctx context.Context, in *Li
 }
 
 // 删除问题分类
-func (m *defaultChatAdmin) DeleteChatCategory(ctx context.Context, in *DeleteChatCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultChatAdmin) DeleteChatCategory(ctx context.Context, in *DeleteChatCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.DeleteChatCategory(ctx, in, opts...)
 }
 
 // 创建工单/离线留言
-func (m *defaultChatAdmin) CreateChatWorkOrder(ctx context.Context, in *CreateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+func (m *defaultChatAdmin) CreateChatWorkOrder(ctx context.Context, in *CreateChatWorkOrderReq, opts ...grpc.CallOption) (*ChatWorkOrderResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.CreateChatWorkOrder(ctx, in, opts...)
 }
 
 // 更新工单
-func (m *defaultChatAdmin) UpdateChatWorkOrder(ctx context.Context, in *UpdateChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+func (m *defaultChatAdmin) UpdateChatWorkOrder(ctx context.Context, in *UpdateChatWorkOrderReq, opts ...grpc.CallOption) (*ChatWorkOrderResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.UpdateChatWorkOrder(ctx, in, opts...)
 }
 
 // 处理工单
-func (m *defaultChatAdmin) HandleChatWorkOrder(ctx context.Context, in *HandleChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+func (m *defaultChatAdmin) HandleChatWorkOrder(ctx context.Context, in *HandleChatWorkOrderReq, opts ...grpc.CallOption) (*ChatWorkOrderResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.HandleChatWorkOrder(ctx, in, opts...)
 }
 
 // 查询工单详情
-func (m *defaultChatAdmin) GetChatWorkOrder(ctx context.Context, in *GetChatWorkOrderReq, opts ...grpc.CallOption) (*AdminChatWorkOrderResp, error) {
+func (m *defaultChatAdmin) GetChatWorkOrder(ctx context.Context, in *GetChatWorkOrderReq, opts ...grpc.CallOption) (*ChatWorkOrderResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.GetChatWorkOrder(ctx, in, opts...)
 }
@@ -473,13 +472,13 @@ func (m *defaultChatAdmin) PageChatWorkOrders(ctx context.Context, in *PageChatW
 }
 
 // 删除工单
-func (m *defaultChatAdmin) DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultChatAdmin) DeleteChatWorkOrder(ctx context.Context, in *DeleteChatWorkOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
 	return client.DeleteChatWorkOrder(ctx, in, opts...)
 }
 
 // 订阅客服消息事件流
-func (m *defaultChatAdmin) AdminSubscribeStream(ctx context.Context, in *AdminChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatAdmin_AdminSubscribeStreamClient, error) {
+func (m *defaultChatAdmin) SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (chat.ChatAdmin_SubscribeStreamClient, error) {
 	client := chat.NewChatAdminClient(m.cli.Conn())
-	return client.AdminSubscribeStream(ctx, in, opts...)
+	return client.SubscribeStream(ctx, in, opts...)
 }

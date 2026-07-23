@@ -29,20 +29,20 @@ func NewSubmitChatSatisfactionLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 // 提交会话评价
-func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChatSatisfactionReq) (*chat.AppChatSatisfactionResp, error) {
+func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChatSatisfactionReq) (*chat.ChatSatisfactionResp, error) {
 	if strings.TrimSpace(in.GetSessionNo()) == "" {
-		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "session_no is required")}, nil
+		return &chat.ChatSatisfactionResp{Base: helper.ErrResp(400, "session_no is required")}, nil
 	}
 	if in.GetScore() < 1 || in.GetScore() > 5 {
-		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "score must be between 1 and 5")}, nil
+		return &chat.ChatSatisfactionResp{Base: helper.ErrResp(400, "score must be between 1 and 5")}, nil
 	}
 
 	session, err := ih.GetSession(l.ctx, l.svcCtx, in.MerchantId, in.GetSessionNo(), in.IsGuest)
 	if err != nil {
-		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if session.UserId != in.UserId {
-		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(400, "permission denied")}, nil
+		return &chat.ChatSatisfactionResp{Base: helper.ErrResp(400, "permission denied")}, nil
 	}
 
 	now := utils.NowMillis()
@@ -61,13 +61,13 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		}
 		result, err := l.svcCtx.ChatSatisfactionModel.Insert(l.ctx, satisfaction)
 		if err != nil {
-			return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
+			return &chat.ChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 		if id, err := result.LastInsertId(); err == nil {
 			satisfaction.Id = id
 		}
 	} else if err != nil {
-		return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	} else {
 		satisfaction.Score = int64(in.GetScore())
 		satisfaction.Content = strings.TrimSpace(in.GetContent())
@@ -75,7 +75,7 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		satisfaction.AgentId = session.AgentId
 		satisfaction.UpdateTimes = now
 		if err := l.svcCtx.ChatSatisfactionModel.Update(l.ctx, satisfaction); err != nil {
-			return &chat.AppChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
+			return &chat.ChatSatisfactionResp{Base: helper.ErrResp(500, err.Error())}, nil
 		}
 	}
 
@@ -90,5 +90,5 @@ func (l *SubmitChatSatisfactionLogic) SubmitChatSatisfaction(in *chat.SubmitChat
 		Submitted:    true,
 		EvaluatedAt:  now,
 	}})
-	return &chat.AppChatSatisfactionResp{Base: helper.OkResp(), Data: ih.ToProtoSatisfaction(satisfaction)}, nil
+	return &chat.ChatSatisfactionResp{Base: helper.OkResp(), Data: ih.ToProtoSatisfaction(satisfaction)}, nil
 }

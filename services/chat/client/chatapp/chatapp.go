@@ -17,24 +17,6 @@ type (
 	AcceptChatSessionReq           = chat.AcceptChatSessionReq
 	AcceptChatSessionResp          = chat.AcceptChatSessionResp
 	AcceptChatSessionUser          = chat.AcceptChatSessionUser
-	AdminChatAgentResp             = chat.AdminChatAgentResp
-	AdminChatCategoryResp          = chat.AdminChatCategoryResp
-	AdminChatConfigResp            = chat.AdminChatConfigResp
-	AdminChatGroupResp             = chat.AdminChatGroupResp
-	AdminChatMessageResp           = chat.AdminChatMessageResp
-	AdminChatQuickReplyResp        = chat.AdminChatQuickReplyResp
-	AdminChatSessionResp           = chat.AdminChatSessionResp
-	AdminChatSubscribeRequest      = chat.AdminChatSubscribeRequest
-	AdminChatWorkOrderResp         = chat.AdminChatWorkOrderResp
-	AdminCommonResp                = chat.AdminCommonResp
-	AdminMarkMessagesReadResp      = chat.AdminMarkMessagesReadResp
-	AppChatConfigResp              = chat.AppChatConfigResp
-	AppChatMessageResp             = chat.AppChatMessageResp
-	AppChatSatisfactionResp        = chat.AppChatSatisfactionResp
-	AppChatSessionResp             = chat.AppChatSessionResp
-	AppChatSubscribeRequest        = chat.AppChatSubscribeRequest
-	AppCommonResp                  = chat.AppCommonResp
-	AppListChatMessagesResp        = chat.AppListChatMessagesResp
 	AuthChatMerchantData           = chat.AuthChatMerchantData
 	AuthChatMerchantReq            = chat.AuthChatMerchantReq
 	AuthChatMerchantResp           = chat.AuthChatMerchantResp
@@ -44,9 +26,19 @@ type (
 	ChatAdminLogoutReq             = chat.ChatAdminLogoutReq
 	ChatAdminProfileReq            = chat.ChatAdminProfileReq
 	ChatAdminProfileResp           = chat.ChatAdminProfileResp
+	ChatAgentResp                  = chat.ChatAgentResp
 	ChatAppConfig                  = chat.ChatAppConfig
+	ChatCategoryResp               = chat.ChatCategoryResp
+	ChatConfigResp                 = chat.ChatConfigResp
+	ChatGroupResp                  = chat.ChatGroupResp
+	ChatMessageResp                = chat.ChatMessageResp
+	ChatQuickReplyResp             = chat.ChatQuickReplyResp
+	ChatSatisfactionResp           = chat.ChatSatisfactionResp
+	ChatSessionResp                = chat.ChatSessionResp
+	ChatWorkOrderResp              = chat.ChatWorkOrderResp
 	CloseChatSessionReq            = chat.CloseChatSessionReq
 	CloseMyChatSessionReq          = chat.CloseMyChatSessionReq
+	CommonResp                     = chat.CommonResp
 	CreateChatAgentReq             = chat.CreateChatAgentReq
 	CreateChatCategoryReq          = chat.CreateChatCategoryReq
 	CreateChatGroupReq             = chat.CreateChatGroupReq
@@ -71,11 +63,13 @@ type (
 	GetChatWorkOrderReq            = chat.GetChatWorkOrderReq
 	HandleChatWorkOrderReq         = chat.HandleChatWorkOrderReq
 	ListChatCategoriesResp         = chat.ListChatCategoriesResp
+	ListChatMessagesResp           = chat.ListChatMessagesResp
 	ListChatQuickRepliesResp       = chat.ListChatQuickRepliesResp
 	ListEnabledChatCategoriesReq   = chat.ListEnabledChatCategoriesReq
 	ListEnabledChatQuickRepliesReq = chat.ListEnabledChatQuickRepliesReq
 	ListMyChatMessagesReq          = chat.ListMyChatMessagesReq
 	MarkAgentMessagesReadReq       = chat.MarkAgentMessagesReadReq
+	MarkMessagesReadResp           = chat.MarkMessagesReadResp
 	OpenChatSessionReq             = chat.OpenChatSessionReq
 	OpenChatSessionResp            = chat.OpenChatSessionResp
 	OperateAgentMessageReq         = chat.OperateAgentMessageReq
@@ -99,6 +93,7 @@ type (
 	SendUserMessageReq             = chat.SendUserMessageReq
 	SendUserTypingReq              = chat.SendUserTypingReq
 	SubmitChatSatisfactionReq      = chat.SubmitChatSatisfactionReq
+	SubscribeRequest               = chat.SubscribeRequest
 	SyncChatMerchantUserReq        = chat.SyncChatMerchantUserReq
 	SyncChatMerchantUserResp       = chat.SyncChatMerchantUserResp
 	UpdateChatAdminProfileReq      = chat.UpdateChatAdminProfileReq
@@ -109,32 +104,36 @@ type (
 	UpdateChatGroupReq             = chat.UpdateChatGroupReq
 	UpdateChatQuickReplyReq        = chat.UpdateChatQuickReplyReq
 	UpdateChatWorkOrderReq         = chat.UpdateChatWorkOrderReq
+	UserChatConfigResp             = chat.UserChatConfigResp
+	UserChatMessageResp            = chat.UserChatMessageResp
+	UserChatSessionResp            = chat.UserChatSessionResp
+	UserCommonResp                 = chat.UserCommonResp
 
 	ChatApp interface {
 		// 商户接入鉴权
 		AuthChatMerchant(ctx context.Context, in *AuthChatMerchantReq, opts ...grpc.CallOption) (*AuthChatMerchantResp, error)
 		// 获取chat-ui配置
-		GetChatConfig(ctx context.Context, in *GetAppChatConfigReq, opts ...grpc.CallOption) (*AppChatConfigResp, error)
+		GetChatConfig(ctx context.Context, in *GetAppChatConfigReq, opts ...grpc.CallOption) (*UserChatConfigResp, error)
 		// 创建或获取当前未关闭会话；服务端负责生成 session_no
 		OpenChatSession(ctx context.Context, in *OpenChatSessionReq, opts ...grpc.CallOption) (*OpenChatSessionResp, error)
 		// 生成会话编号
 		GenerateChatSessionNo(ctx context.Context, in *GenerateChatSessionNoReq, opts ...grpc.CallOption) (*GenerateChatSessionNoResp, error)
 		// 按商户和用户查询会话
-		GetChatSessionByUser(ctx context.Context, in *GetChatSessionByUserReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+		GetChatSessionByUser(ctx context.Context, in *GetChatSessionByUserReq, opts ...grpc.CallOption) (*UserChatSessionResp, error)
 		// 发送用户消息
-		SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error)
+		SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*UserChatMessageResp, error)
 		// 发送用户输入状态
-		SendUserTyping(ctx context.Context, in *SendUserTypingReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		SendUserTyping(ctx context.Context, in *SendUserTypingReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 用户侧消息删除/撤回
-		OperateUserMessage(ctx context.Context, in *OperateUserMessageReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		OperateUserMessage(ctx context.Context, in *OperateUserMessageReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 查询会话消息
-		ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*AppListChatMessagesResp, error)
+		ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*ListChatMessagesResp, error)
 		// 关闭我的会话
-		CloseMyChatSession(ctx context.Context, in *CloseMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error)
+		CloseMyChatSession(ctx context.Context, in *CloseMyChatSessionReq, opts ...grpc.CallOption) (*UserChatSessionResp, error)
 		// 提交会话评价
-		SubmitChatSatisfaction(ctx context.Context, in *SubmitChatSatisfactionReq, opts ...grpc.CallOption) (*AppChatSatisfactionResp, error)
+		SubmitChatSatisfaction(ctx context.Context, in *SubmitChatSatisfactionReq, opts ...grpc.CallOption) (*ChatSatisfactionResp, error)
 		// 订阅客服消息事件流
-		AppSubscribeStream(ctx context.Context, in *AppChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatApp_AppSubscribeStreamClient, error)
+		SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (chat.ChatApp_SubscribeStreamClient, error)
 	}
 
 	defaultChatApp struct {
@@ -155,7 +154,7 @@ func (m *defaultChatApp) AuthChatMerchant(ctx context.Context, in *AuthChatMerch
 }
 
 // 获取chat-ui配置
-func (m *defaultChatApp) GetChatConfig(ctx context.Context, in *GetAppChatConfigReq, opts ...grpc.CallOption) (*AppChatConfigResp, error) {
+func (m *defaultChatApp) GetChatConfig(ctx context.Context, in *GetAppChatConfigReq, opts ...grpc.CallOption) (*UserChatConfigResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.GetChatConfig(ctx, in, opts...)
 }
@@ -173,49 +172,49 @@ func (m *defaultChatApp) GenerateChatSessionNo(ctx context.Context, in *Generate
 }
 
 // 按商户和用户查询会话
-func (m *defaultChatApp) GetChatSessionByUser(ctx context.Context, in *GetChatSessionByUserReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
+func (m *defaultChatApp) GetChatSessionByUser(ctx context.Context, in *GetChatSessionByUserReq, opts ...grpc.CallOption) (*UserChatSessionResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.GetChatSessionByUser(ctx, in, opts...)
 }
 
 // 发送用户消息
-func (m *defaultChatApp) SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*AppChatMessageResp, error) {
+func (m *defaultChatApp) SendUserMessage(ctx context.Context, in *SendUserMessageReq, opts ...grpc.CallOption) (*UserChatMessageResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.SendUserMessage(ctx, in, opts...)
 }
 
 // 发送用户输入状态
-func (m *defaultChatApp) SendUserTyping(ctx context.Context, in *SendUserTypingReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultChatApp) SendUserTyping(ctx context.Context, in *SendUserTypingReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.SendUserTyping(ctx, in, opts...)
 }
 
 // 用户侧消息删除/撤回
-func (m *defaultChatApp) OperateUserMessage(ctx context.Context, in *OperateUserMessageReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultChatApp) OperateUserMessage(ctx context.Context, in *OperateUserMessageReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.OperateUserMessage(ctx, in, opts...)
 }
 
 // 查询会话消息
-func (m *defaultChatApp) ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*AppListChatMessagesResp, error) {
+func (m *defaultChatApp) ListMyChatMessages(ctx context.Context, in *ListMyChatMessagesReq, opts ...grpc.CallOption) (*ListChatMessagesResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.ListMyChatMessages(ctx, in, opts...)
 }
 
 // 关闭我的会话
-func (m *defaultChatApp) CloseMyChatSession(ctx context.Context, in *CloseMyChatSessionReq, opts ...grpc.CallOption) (*AppChatSessionResp, error) {
+func (m *defaultChatApp) CloseMyChatSession(ctx context.Context, in *CloseMyChatSessionReq, opts ...grpc.CallOption) (*UserChatSessionResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.CloseMyChatSession(ctx, in, opts...)
 }
 
 // 提交会话评价
-func (m *defaultChatApp) SubmitChatSatisfaction(ctx context.Context, in *SubmitChatSatisfactionReq, opts ...grpc.CallOption) (*AppChatSatisfactionResp, error) {
+func (m *defaultChatApp) SubmitChatSatisfaction(ctx context.Context, in *SubmitChatSatisfactionReq, opts ...grpc.CallOption) (*ChatSatisfactionResp, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
 	return client.SubmitChatSatisfaction(ctx, in, opts...)
 }
 
 // 订阅客服消息事件流
-func (m *defaultChatApp) AppSubscribeStream(ctx context.Context, in *AppChatSubscribeRequest, opts ...grpc.CallOption) (chat.ChatApp_AppSubscribeStreamClient, error) {
+func (m *defaultChatApp) SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (chat.ChatApp_SubscribeStreamClient, error) {
 	client := chat.NewChatAppClient(m.cli.Conn())
-	return client.AppSubscribeStream(ctx, in, opts...)
+	return client.SubscribeStream(ctx, in, opts...)
 }

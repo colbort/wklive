@@ -27,13 +27,13 @@ func NewGetChatSessionByUserLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 // 按商户和用户查询会话
-func (l *GetChatSessionByUserLogic) GetChatSessionByUser(in *chat.GetChatSessionByUserReq) (*chat.AppChatSessionResp, error) {
+func (l *GetChatSessionByUserLogic) GetChatSessionByUser(in *chat.GetChatSessionByUserReq) (*chat.UserChatSessionResp, error) {
 	data, err := l.svcCtx.ChatSessionModel.FindLatestByUser(l.ctx, in.GetMerchantId(), in.GetUserId())
 	if err == models.ErrNotFound {
-		return &chat.AppChatSessionResp{Base: helper.ErrResp(404, "chat session not found")}, nil
+		return &chat.UserChatSessionResp{Base: helper.ErrResp(404, "chat session not found")}, nil
 	}
 	if err != nil {
-		return &chat.AppChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.UserChatSessionResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
-	return &chat.AppChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(data, false)}, nil
+	return &chat.UserChatSessionResp{Base: helper.OkResp(), Data: ih.ToProtoSession(data, false)}, nil
 }

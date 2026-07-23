@@ -14,9 +14,9 @@ import (
 )
 
 type (
-	AdminCommonResp                   = payment.AdminCommonResp
-	AdminEmpty                        = payment.AdminEmpty
-	AppCommonResp                     = payment.AppCommonResp
+	CommonResp                        = payment.CommonResp
+	Empty                             = payment.Empty
+	UserCommonResp                    = payment.UserCommonResp
 	AuditWithdrawOrderReq             = payment.AuditWithdrawOrderReq
 	CancelMyRechargeOrderReq          = payment.CancelMyRechargeOrderReq
 	CloseRechargeOrderReq             = payment.CloseRechargeOrderReq
@@ -142,7 +142,7 @@ type (
 		// 查询我的充值订单列表
 		ListMyRechargeOrders(ctx context.Context, in *ListMyRechargeOrdersReq, opts ...grpc.CallOption) (*ListMyRechargeOrdersResp, error)
 		// 取消未支付订单
-		CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 		// 轮询订单状态
 		QueryMyRechargeOrderStatus(ctx context.Context, in *QueryMyRechargeOrderStatusReq, opts ...grpc.CallOption) (*QueryMyRechargeOrderStatusResp, error)
 		// 提现
@@ -209,7 +209,7 @@ func (m *defaultPaymentApp) ListMyRechargeOrders(ctx context.Context, in *ListMy
 }
 
 // 取消未支付订单
-func (m *defaultPaymentApp) CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultPaymentApp) CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
 	return client.CancelMyRechargeOrder(ctx, in, opts...)
 }

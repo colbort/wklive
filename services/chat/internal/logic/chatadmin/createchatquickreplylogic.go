@@ -31,15 +31,15 @@ func NewCreateChatQuickReplyLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 // 创建快捷回复
-func (l *CreateChatQuickReplyLogic) CreateChatQuickReply(in *chat.CreateChatQuickReplyReq) (*chat.AdminChatQuickReplyResp, error) {
+func (l *CreateChatQuickReplyLogic) CreateChatQuickReply(in *chat.CreateChatQuickReplyReq) (*chat.ChatQuickReplyResp, error) {
 	title := strings.TrimSpace(in.GetTitle())
 	content := strings.TrimSpace(in.GetContent())
 	if title == "" || content == "" {
-		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(400, "title and content are required")}, nil
+		return &chat.ChatQuickReplyResp{Base: helper.ErrResp(400, "title and content are required")}, nil
 	}
 	merchantID, err := ih.MerchantIDFromMetadata(l.ctx)
 	if err != nil {
-		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	enabled := int64(in.GetEnabled())
 	if enabled == 0 {
@@ -60,10 +60,10 @@ func (l *CreateChatQuickReplyLogic) CreateChatQuickReply(in *chat.CreateChatQuic
 	}
 	result, err := l.svcCtx.ChatQuickReplyModel.Insert(l.ctx, data)
 	if err != nil {
-		return &chat.AdminChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
+		return &chat.ChatQuickReplyResp{Base: helper.ErrResp(500, err.Error())}, nil
 	}
 	if id, err := result.LastInsertId(); err == nil {
 		data.Id = id
 	}
-	return &chat.AdminChatQuickReplyResp{Base: helper.OkResp(), Data: ih.ToProtoChatQuickReply(data)}, nil
+	return &chat.ChatQuickReplyResp{Base: helper.OkResp(), Data: ih.ToProtoChatQuickReply(data)}, nil
 }

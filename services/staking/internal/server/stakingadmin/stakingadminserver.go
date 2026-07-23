@@ -24,67 +24,67 @@ func NewStakingAdminServer(svcCtx *svc.ServiceContext) *StakingAdminServer {
 }
 
 // 获取质押产品列表
-func (s *StakingAdminServer) AdminProductList(ctx context.Context, in *staking.AdminProductListReq) (*staking.AdminProductListResp, error) {
-	l := stakingadminlogic.NewAdminProductListLogic(ctx, s.svcCtx)
-	return l.AdminProductList(in)
+func (s *StakingAdminServer) ProductList(ctx context.Context, in *staking.ProductListReq) (*staking.ProductListResp, error) {
+	l := stakingadminlogic.NewProductListLogic(ctx, s.svcCtx)
+	return l.ProductList(in)
 }
 
 // 获取质押产品详情
-func (s *StakingAdminServer) AdminProductDetail(ctx context.Context, in *staking.AdminProductDetailReq) (*staking.AdminProductDetailResp, error) {
-	l := stakingadminlogic.NewAdminProductDetailLogic(ctx, s.svcCtx)
-	return l.AdminProductDetail(in)
+func (s *StakingAdminServer) ProductDetail(ctx context.Context, in *staking.ProductDetailReq) (*staking.ProductDetailResp, error) {
+	l := stakingadminlogic.NewProductDetailLogic(ctx, s.svcCtx)
+	return l.ProductDetail(in)
 }
 
 // 创建质押产品
-func (s *StakingAdminServer) ProductCreate(ctx context.Context, in *staking.AdminProductCreateReq) (*staking.AdminProductCreateResp, error) {
+func (s *StakingAdminServer) ProductCreate(ctx context.Context, in *staking.ProductCreateReq) (*staking.ProductCreateResp, error) {
 	l := stakingadminlogic.NewProductCreateLogic(ctx, s.svcCtx)
 	return l.ProductCreate(in)
 }
 
 // 更新质押产品
-func (s *StakingAdminServer) ProductUpdate(ctx context.Context, in *staking.AdminProductUpdateReq) (*staking.AdminProductUpdateResp, error) {
+func (s *StakingAdminServer) ProductUpdate(ctx context.Context, in *staking.ProductUpdateReq) (*staking.ProductUpdateResp, error) {
 	l := stakingadminlogic.NewProductUpdateLogic(ctx, s.svcCtx)
 	return l.ProductUpdate(in)
 }
 
 // 修改质押产品状态
-func (s *StakingAdminServer) ProductChangeStatus(ctx context.Context, in *staking.AdminProductChangeStatusReq) (*staking.AdminProductChangeStatusResp, error) {
+func (s *StakingAdminServer) ProductChangeStatus(ctx context.Context, in *staking.ProductChangeStatusReq) (*staking.ProductChangeStatusResp, error) {
 	l := stakingadminlogic.NewProductChangeStatusLogic(ctx, s.svcCtx)
 	return l.ProductChangeStatus(in)
 }
 
 // 获取质押订单列表
-func (s *StakingAdminServer) OrderList(ctx context.Context, in *staking.AdminOrderListReq) (*staking.AdminOrderListResp, error) {
+func (s *StakingAdminServer) OrderList(ctx context.Context, in *staking.OrderListReq) (*staking.OrderListResp, error) {
 	l := stakingadminlogic.NewOrderListLogic(ctx, s.svcCtx)
 	return l.OrderList(in)
 }
 
 // 获取质押订单详情
-func (s *StakingAdminServer) OrderDetail(ctx context.Context, in *staking.AdminOrderDetailReq) (*staking.AdminOrderDetailResp, error) {
+func (s *StakingAdminServer) OrderDetail(ctx context.Context, in *staking.OrderDetailReq) (*staking.OrderDetailResp, error) {
 	l := stakingadminlogic.NewOrderDetailLogic(ctx, s.svcCtx)
 	return l.OrderDetail(in)
 }
 
 // 获取收益记录列表
-func (s *StakingAdminServer) RewardLogList(ctx context.Context, in *staking.AdminRewardLogListReq) (*staking.AdminRewardLogListResp, error) {
+func (s *StakingAdminServer) RewardLogList(ctx context.Context, in *staking.RewardLogListReq) (*staking.RewardLogListResp, error) {
 	l := stakingadminlogic.NewRewardLogListLogic(ctx, s.svcCtx)
 	return l.RewardLogList(in)
 }
 
 // 获取赎回记录列表
-func (s *StakingAdminServer) RedeemLogList(ctx context.Context, in *staking.AdminRedeemLogListReq) (*staking.AdminRedeemLogListResp, error) {
+func (s *StakingAdminServer) RedeemLogList(ctx context.Context, in *staking.RedeemLogListReq) (*staking.RedeemLogListResp, error) {
 	l := stakingadminlogic.NewRedeemLogListLogic(ctx, s.svcCtx)
 	return l.RedeemLogList(in)
 }
 
 // 手动发放收益
-func (s *StakingAdminServer) ManualReward(ctx context.Context, in *staking.AdminManualRewardReq) (*staking.AdminManualRewardResp, error) {
+func (s *StakingAdminServer) ManualReward(ctx context.Context, in *staking.ManualRewardReq) (*staking.ManualRewardResp, error) {
 	l := stakingadminlogic.NewManualRewardLogic(ctx, s.svcCtx)
 	return l.ManualReward(in)
 }
 
 // 手动赎回
-func (s *StakingAdminServer) ManualRedeem(ctx context.Context, in *staking.AdminManualRedeemReq) (*staking.AdminManualRedeemResp, error) {
+func (s *StakingAdminServer) ManualRedeem(ctx context.Context, in *staking.ManualRedeemReq) (*staking.ManualRedeemResp, error) {
 	l := stakingadminlogic.NewManualRedeemLogic(ctx, s.svcCtx)
 	return l.ManualRedeem(in)
 }

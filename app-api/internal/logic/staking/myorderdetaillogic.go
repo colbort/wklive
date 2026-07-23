@@ -27,6 +27,6 @@ func NewMyOrderDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MyO
 	}
 }
 
-func (l *MyOrderDetailLogic) MyOrderDetail(req *types.AppMyOrderDetailReq) (resp *types.AppMyOrderDetailResp, err error) {
-	return logicutil.Proxy[types.AppMyOrderDetailResp](l.ctx, req, l.svcCtx.StakingCli.MyOrderDetail)
+func (l *MyOrderDetailLogic) MyOrderDetail(req *types.MyOrderDetailReq) (resp *types.MyOrderDetailResp, err error) {
+	return logicutil.Proxy[types.MyOrderDetailResp](l.ctx, req, l.svcCtx.StakingCli.MyOrderDetail)
 }

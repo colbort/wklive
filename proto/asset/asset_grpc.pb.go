@@ -417,12 +417,12 @@ const (
 	AssetAdmin_PageAssetFlows_FullMethodName        = "/asset.AssetAdmin/PageAssetFlows"
 	AssetAdmin_PageAssetFreezes_FullMethodName      = "/asset.AssetAdmin/PageAssetFreezes"
 	AssetAdmin_PageAssetLocks_FullMethodName        = "/asset.AssetAdmin/PageAssetLocks"
-	AssetAdmin_AdminAddAsset_FullMethodName         = "/asset.AssetAdmin/AdminAddAsset"
-	AssetAdmin_AdminSubAsset_FullMethodName         = "/asset.AssetAdmin/AdminSubAsset"
-	AssetAdmin_AdminFreezeAsset_FullMethodName      = "/asset.AssetAdmin/AdminFreezeAsset"
-	AssetAdmin_AdminUnfreezeAsset_FullMethodName    = "/asset.AssetAdmin/AdminUnfreezeAsset"
-	AssetAdmin_AdminLockAsset_FullMethodName        = "/asset.AssetAdmin/AdminLockAsset"
-	AssetAdmin_AdminUnlockAsset_FullMethodName      = "/asset.AssetAdmin/AdminUnlockAsset"
+	AssetAdmin_AddAsset_FullMethodName              = "/asset.AssetAdmin/AddAsset"
+	AssetAdmin_SubAsset_FullMethodName              = "/asset.AssetAdmin/SubAsset"
+	AssetAdmin_FreezeAsset_FullMethodName           = "/asset.AssetAdmin/FreezeAsset"
+	AssetAdmin_UnfreezeAsset_FullMethodName         = "/asset.AssetAdmin/UnfreezeAsset"
+	AssetAdmin_LockAsset_FullMethodName             = "/asset.AssetAdmin/LockAsset"
+	AssetAdmin_UnlockAsset_FullMethodName           = "/asset.AssetAdmin/UnlockAsset"
 	AssetAdmin_SetPlatformAccount_FullMethodName    = "/asset.AssetAdmin/SetPlatformAccount"
 	AssetAdmin_GetPlatformAccount_FullMethodName    = "/asset.AssetAdmin/GetPlatformAccount"
 	AssetAdmin_AdjustPlatformAccount_FullMethodName = "/asset.AssetAdmin/AdjustPlatformAccount"
@@ -455,17 +455,17 @@ type AssetAdminClient interface {
 	// 分页查询锁仓明细
 	PageAssetLocks(ctx context.Context, in *PageAssetLocksReq, opts ...grpc.CallOption) (*PageAssetLocksResp, error)
 	// 后台人工加币
-	AdminAddAsset(ctx context.Context, in *AdminAddAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+	AddAsset(ctx context.Context, in *AddAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 	// 后台人工减币
-	AdminSubAsset(ctx context.Context, in *AdminSubAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+	SubAsset(ctx context.Context, in *SubAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 	// 后台冻结资产
-	AdminFreezeAsset(ctx context.Context, in *AdminFreezeAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+	FreezeAsset(ctx context.Context, in *ManualFreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 	// 后台解冻资产
-	AdminUnfreezeAsset(ctx context.Context, in *AdminUnfreezeAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+	UnfreezeAsset(ctx context.Context, in *ManualUnfreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 	// 后台锁仓资产
-	AdminLockAsset(ctx context.Context, in *AdminLockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+	LockAsset(ctx context.Context, in *ManualLockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 	// 后台解锁资产
-	AdminUnlockAsset(ctx context.Context, in *AdminUnlockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error)
+	UnlockAsset(ctx context.Context, in *ManualUnlockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error)
 	// 设置平台账户（保险基金等，不属于任何用户）
 	SetPlatformAccount(ctx context.Context, in *SetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
 	// 查询平台账户
@@ -582,60 +582,60 @@ func (c *assetAdminClient) PageAssetLocks(ctx context.Context, in *PageAssetLock
 	return out, nil
 }
 
-func (c *assetAdminClient) AdminAddAsset(ctx context.Context, in *AdminAddAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (c *assetAdminClient) AddAsset(ctx context.Context, in *AddAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_AdminAddAsset_FullMethodName, in, out, cOpts...)
+	out := new(ManualChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_AddAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) AdminSubAsset(ctx context.Context, in *AdminSubAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (c *assetAdminClient) SubAsset(ctx context.Context, in *SubAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_AdminSubAsset_FullMethodName, in, out, cOpts...)
+	out := new(ManualChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_SubAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) AdminFreezeAsset(ctx context.Context, in *AdminFreezeAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (c *assetAdminClient) FreezeAsset(ctx context.Context, in *ManualFreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_AdminFreezeAsset_FullMethodName, in, out, cOpts...)
+	out := new(ManualChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_FreezeAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) AdminUnfreezeAsset(ctx context.Context, in *AdminUnfreezeAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (c *assetAdminClient) UnfreezeAsset(ctx context.Context, in *ManualUnfreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_AdminUnfreezeAsset_FullMethodName, in, out, cOpts...)
+	out := new(ManualChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_UnfreezeAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) AdminLockAsset(ctx context.Context, in *AdminLockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (c *assetAdminClient) LockAsset(ctx context.Context, in *ManualLockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_AdminLockAsset_FullMethodName, in, out, cOpts...)
+	out := new(ManualChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_LockAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) AdminUnlockAsset(ctx context.Context, in *AdminUnlockAssetReq, opts ...grpc.CallOption) (*AdminChangeAssetResp, error) {
+func (c *assetAdminClient) UnlockAsset(ctx context.Context, in *ManualUnlockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_AdminUnlockAsset_FullMethodName, in, out, cOpts...)
+	out := new(ManualChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_UnlockAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -699,17 +699,17 @@ type AssetAdminServer interface {
 	// 分页查询锁仓明细
 	PageAssetLocks(context.Context, *PageAssetLocksReq) (*PageAssetLocksResp, error)
 	// 后台人工加币
-	AdminAddAsset(context.Context, *AdminAddAssetReq) (*AdminChangeAssetResp, error)
+	AddAsset(context.Context, *AddAssetReq) (*ManualChangeAssetResp, error)
 	// 后台人工减币
-	AdminSubAsset(context.Context, *AdminSubAssetReq) (*AdminChangeAssetResp, error)
+	SubAsset(context.Context, *SubAssetReq) (*ManualChangeAssetResp, error)
 	// 后台冻结资产
-	AdminFreezeAsset(context.Context, *AdminFreezeAssetReq) (*AdminChangeAssetResp, error)
+	FreezeAsset(context.Context, *ManualFreezeAssetReq) (*ManualChangeAssetResp, error)
 	// 后台解冻资产
-	AdminUnfreezeAsset(context.Context, *AdminUnfreezeAssetReq) (*AdminChangeAssetResp, error)
+	UnfreezeAsset(context.Context, *ManualUnfreezeAssetReq) (*ManualChangeAssetResp, error)
 	// 后台锁仓资产
-	AdminLockAsset(context.Context, *AdminLockAssetReq) (*AdminChangeAssetResp, error)
+	LockAsset(context.Context, *ManualLockAssetReq) (*ManualChangeAssetResp, error)
 	// 后台解锁资产
-	AdminUnlockAsset(context.Context, *AdminUnlockAssetReq) (*AdminChangeAssetResp, error)
+	UnlockAsset(context.Context, *ManualUnlockAssetReq) (*ManualChangeAssetResp, error)
 	// 设置平台账户（保险基金等，不属于任何用户）
 	SetPlatformAccount(context.Context, *SetPlatformAccountReq) (*PlatformAccountResp, error)
 	// 查询平台账户
@@ -756,23 +756,23 @@ func (UnimplementedAssetAdminServer) PageAssetFreezes(context.Context, *PageAsse
 func (UnimplementedAssetAdminServer) PageAssetLocks(context.Context, *PageAssetLocksReq) (*PageAssetLocksResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PageAssetLocks not implemented")
 }
-func (UnimplementedAssetAdminServer) AdminAddAsset(context.Context, *AdminAddAssetReq) (*AdminChangeAssetResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminAddAsset not implemented")
+func (UnimplementedAssetAdminServer) AddAsset(context.Context, *AddAssetReq) (*ManualChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) AdminSubAsset(context.Context, *AdminSubAssetReq) (*AdminChangeAssetResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminSubAsset not implemented")
+func (UnimplementedAssetAdminServer) SubAsset(context.Context, *SubAssetReq) (*ManualChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SubAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) AdminFreezeAsset(context.Context, *AdminFreezeAssetReq) (*AdminChangeAssetResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminFreezeAsset not implemented")
+func (UnimplementedAssetAdminServer) FreezeAsset(context.Context, *ManualFreezeAssetReq) (*ManualChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method FreezeAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) AdminUnfreezeAsset(context.Context, *AdminUnfreezeAssetReq) (*AdminChangeAssetResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminUnfreezeAsset not implemented")
+func (UnimplementedAssetAdminServer) UnfreezeAsset(context.Context, *ManualUnfreezeAssetReq) (*ManualChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UnfreezeAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) AdminLockAsset(context.Context, *AdminLockAssetReq) (*AdminChangeAssetResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminLockAsset not implemented")
+func (UnimplementedAssetAdminServer) LockAsset(context.Context, *ManualLockAssetReq) (*ManualChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method LockAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) AdminUnlockAsset(context.Context, *AdminUnlockAssetReq) (*AdminChangeAssetResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method AdminUnlockAsset not implemented")
+func (UnimplementedAssetAdminServer) UnlockAsset(context.Context, *ManualUnlockAssetReq) (*ManualChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UnlockAsset not implemented")
 }
 func (UnimplementedAssetAdminServer) SetPlatformAccount(context.Context, *SetPlatformAccountReq) (*PlatformAccountResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetPlatformAccount not implemented")
@@ -984,110 +984,110 @@ func _AssetAdmin_PageAssetLocks_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_AdminAddAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminAddAssetReq)
+func _AssetAdmin_AddAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).AdminAddAsset(ctx, in)
+		return srv.(AssetAdminServer).AddAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_AdminAddAsset_FullMethodName,
+		FullMethod: AssetAdmin_AddAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).AdminAddAsset(ctx, req.(*AdminAddAssetReq))
+		return srv.(AssetAdminServer).AddAsset(ctx, req.(*AddAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_AdminSubAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminSubAssetReq)
+func _AssetAdmin_SubAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).AdminSubAsset(ctx, in)
+		return srv.(AssetAdminServer).SubAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_AdminSubAsset_FullMethodName,
+		FullMethod: AssetAdmin_SubAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).AdminSubAsset(ctx, req.(*AdminSubAssetReq))
+		return srv.(AssetAdminServer).SubAsset(ctx, req.(*SubAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_AdminFreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminFreezeAssetReq)
+func _AssetAdmin_FreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManualFreezeAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).AdminFreezeAsset(ctx, in)
+		return srv.(AssetAdminServer).FreezeAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_AdminFreezeAsset_FullMethodName,
+		FullMethod: AssetAdmin_FreezeAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).AdminFreezeAsset(ctx, req.(*AdminFreezeAssetReq))
+		return srv.(AssetAdminServer).FreezeAsset(ctx, req.(*ManualFreezeAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_AdminUnfreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminUnfreezeAssetReq)
+func _AssetAdmin_UnfreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManualUnfreezeAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).AdminUnfreezeAsset(ctx, in)
+		return srv.(AssetAdminServer).UnfreezeAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_AdminUnfreezeAsset_FullMethodName,
+		FullMethod: AssetAdmin_UnfreezeAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).AdminUnfreezeAsset(ctx, req.(*AdminUnfreezeAssetReq))
+		return srv.(AssetAdminServer).UnfreezeAsset(ctx, req.(*ManualUnfreezeAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_AdminLockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminLockAssetReq)
+func _AssetAdmin_LockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManualLockAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).AdminLockAsset(ctx, in)
+		return srv.(AssetAdminServer).LockAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_AdminLockAsset_FullMethodName,
+		FullMethod: AssetAdmin_LockAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).AdminLockAsset(ctx, req.(*AdminLockAssetReq))
+		return srv.(AssetAdminServer).LockAsset(ctx, req.(*ManualLockAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_AdminUnlockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminUnlockAssetReq)
+func _AssetAdmin_UnlockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManualUnlockAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).AdminUnlockAsset(ctx, in)
+		return srv.(AssetAdminServer).UnlockAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_AdminUnlockAsset_FullMethodName,
+		FullMethod: AssetAdmin_UnlockAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).AdminUnlockAsset(ctx, req.(*AdminUnlockAssetReq))
+		return srv.(AssetAdminServer).UnlockAsset(ctx, req.(*ManualUnlockAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1194,28 +1194,28 @@ var AssetAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AssetAdmin_PageAssetLocks_Handler,
 		},
 		{
-			MethodName: "AdminAddAsset",
-			Handler:    _AssetAdmin_AdminAddAsset_Handler,
+			MethodName: "AddAsset",
+			Handler:    _AssetAdmin_AddAsset_Handler,
 		},
 		{
-			MethodName: "AdminSubAsset",
-			Handler:    _AssetAdmin_AdminSubAsset_Handler,
+			MethodName: "SubAsset",
+			Handler:    _AssetAdmin_SubAsset_Handler,
 		},
 		{
-			MethodName: "AdminFreezeAsset",
-			Handler:    _AssetAdmin_AdminFreezeAsset_Handler,
+			MethodName: "FreezeAsset",
+			Handler:    _AssetAdmin_FreezeAsset_Handler,
 		},
 		{
-			MethodName: "AdminUnfreezeAsset",
-			Handler:    _AssetAdmin_AdminUnfreezeAsset_Handler,
+			MethodName: "UnfreezeAsset",
+			Handler:    _AssetAdmin_UnfreezeAsset_Handler,
 		},
 		{
-			MethodName: "AdminLockAsset",
-			Handler:    _AssetAdmin_AdminLockAsset_Handler,
+			MethodName: "LockAsset",
+			Handler:    _AssetAdmin_LockAsset_Handler,
 		},
 		{
-			MethodName: "AdminUnlockAsset",
-			Handler:    _AssetAdmin_AdminUnlockAsset_Handler,
+			MethodName: "UnlockAsset",
+			Handler:    _AssetAdmin_UnlockAsset_Handler,
 		},
 		{
 			MethodName: "SetPlatformAccount",

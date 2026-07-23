@@ -31,10 +31,10 @@ func NewSetSecondsSymbolConfigLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 // 设置秒合约产品配置
-func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(in *trade.SetSecondsSymbolConfigReq) (*trade.AdminCommonResp, error) {
+func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(in *trade.SetSecondsSymbolConfigReq) (*trade.CommonResp, error) {
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.ProductType != int64(trade.ProductType_PRODUCT_TYPE_SECONDS)) {
-		return &trade.AdminCommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(in *trade.SetSecond
 	if base, err := authz.AdminTenantWriteScopeResp(l.ctx, symbol.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &trade.AdminCommonResp{Base: base}, nil
+		return &trade.CommonResp{Base: base}, nil
 	}
 	item, err := l.svcCtx.TradeSymbolSecondsModel.FindOneByTenantIdSymbolIdDurationSeconds(l.ctx, symbol.TenantId, in.SymbolId, in.DurationSeconds)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -72,5 +72,5 @@ func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(in *trade.SetSecond
 	if err != nil {
 		return nil, err
 	}
-	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }

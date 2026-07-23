@@ -28,7 +28,7 @@ func NewMyRedeemLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *M
 }
 
 // 获取我的赎回记录列表
-func (l *MyRedeemLogListLogic) MyRedeemLogList(in *staking.AppMyRedeemLogListReq) (*staking.AppMyRedeemLogListResp, error) {
+func (l *MyRedeemLogListLogic) MyRedeemLogList(in *staking.MyRedeemLogListReq) (*staking.MyRedeemLogListResp, error) {
 	page := in.GetPage()
 	cursor, limit := int64(0), int64(10)
 	if page != nil {
@@ -51,7 +51,7 @@ func (l *MyRedeemLogListLogic) MyRedeemLogList(in *staking.AppMyRedeemLogListReq
 		return nil, err
 	}
 
-	resp := &staking.AppMyRedeemLogListResp{Base: helper.OkResp()}
+	resp := &staking.MyRedeemLogListResp{Base: helper.OkResp()}
 	if len(items) == 0 {
 		resp.Base = pageutil.Base(cursor, limit, 0, total, 0)
 		return resp, nil

@@ -28,7 +28,7 @@ func NewRevokeAuthoritativeSnapshotLogic(ctx context.Context, svcCtx *svc.Servic
 	}
 }
 
-func (l *RevokeAuthoritativeSnapshotLogic) RevokeAuthoritativeSnapshot(in *itick.RevokeAuthoritativeSnapshotReq) (*itick.AdminCommonResp, error) {
+func (l *RevokeAuthoritativeSnapshotLogic) RevokeAuthoritativeSnapshot(in *itick.RevokeAuthoritativeSnapshotReq) (*itick.CommonResp, error) {
 	if in == nil || strings.TrimSpace(in.SnapshotId) == "" || strings.TrimSpace(in.Reason) == "" || in.SnapshotId == in.ReplacementSnapshotId {
 		return nil, errors.New("invalid authoritative snapshot revocation")
 	}
@@ -58,5 +58,5 @@ func (l *RevokeAuthoritativeSnapshotLogic) RevokeAuthoritativeSnapshot(in *itick
 	if err = l.svcCtx.MarketDataCache.RevokeAuthoritativeSnapshot(l.ctx, original.SnapshotId, strings.TrimSpace(in.ReplacementSnapshotId), strings.TrimSpace(in.Reason)); err != nil {
 		return nil, err
 	}
-	return &itick.AdminCommonResp{Base: helper.OkResp()}, nil
+	return &itick.CommonResp{Base: helper.OkResp()}, nil
 }

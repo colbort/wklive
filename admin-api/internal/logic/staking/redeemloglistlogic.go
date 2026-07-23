@@ -27,6 +27,6 @@ func NewRedeemLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Red
 	}
 }
 
-func (l *RedeemLogListLogic) RedeemLogList(req *types.AdminRedeemLogListReq) (resp *types.AdminRedeemLogListResp, err error) {
-	return logicutil.Proxy[types.AdminRedeemLogListResp](l.ctx, req, l.svcCtx.StakingCli.RedeemLogList)
+func (l *RedeemLogListLogic) RedeemLogList(req *types.RedeemLogListReq) (resp *types.RedeemLogListResp, err error) {
+	return logicutil.Proxy[types.RedeemLogListResp](l.ctx, req, l.svcCtx.StakingCli.RedeemLogList)
 }

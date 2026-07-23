@@ -28,7 +28,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodPost,
 				Path:    "/add",
-				Handler: asset.AdminAddAssetHandler(serverCtx),
+				Handler: asset.AddAssetHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
@@ -63,7 +63,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodPost,
 				Path:    "/freeze",
-				Handler: asset.AdminFreezeAssetHandler(serverCtx),
+				Handler: asset.FreezeAssetHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -73,7 +73,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodPost,
 				Path:    "/lock",
-				Handler: asset.AdminLockAssetHandler(serverCtx),
+				Handler: asset.LockAssetHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -98,17 +98,17 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodPost,
 				Path:    "/sub",
-				Handler: asset.AdminSubAssetHandler(serverCtx),
+				Handler: asset.SubAssetHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/unfreeze",
-				Handler: asset.AdminUnfreezeAssetHandler(serverCtx),
+				Handler: asset.UnfreezeAssetHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/unlock",
-				Handler: asset.AdminUnlockAssetHandler(serverCtx),
+				Handler: asset.UnlockAssetHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -320,107 +320,107 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodGet,
 				Path:    "/accounts",
-				Handler: option.AdminListAccountsHandler(serverCtx),
+				Handler: option.ListAccountsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/accounts/detail",
-				Handler: option.AdminGetAccountHandler(serverCtx),
+				Handler: option.GetAccountHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/bills",
-				Handler: option.AdminListBillsHandler(serverCtx),
+				Handler: option.ListBillsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/bills/detail",
-				Handler: option.AdminGetBillHandler(serverCtx),
+				Handler: option.GetBillHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/contracts",
-				Handler: option.AdminCreateContractHandler(serverCtx),
+				Handler: option.CreateContractHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/contracts",
-				Handler: option.AdminListContractsHandler(serverCtx),
+				Handler: option.ListContractsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/contracts/detail",
-				Handler: option.AdminGetContractHandler(serverCtx),
+				Handler: option.GetContractHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/contracts/update",
-				Handler: option.AdminUpdateContractHandler(serverCtx),
+				Handler: option.UpdateContractHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/exercises",
-				Handler: option.AdminListExercisesHandler(serverCtx),
+				Handler: option.ListExercisesHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/exercises/detail",
-				Handler: option.AdminGetExerciseHandler(serverCtx),
+				Handler: option.GetExerciseHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/market/detail",
-				Handler: option.AdminGetMarketHandler(serverCtx),
+				Handler: option.GetMarketHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/market/snapshots",
-				Handler: option.AdminListMarketSnapshotsHandler(serverCtx),
+				Handler: option.ListMarketSnapshotsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/market/update",
-				Handler: option.AdminUpdateMarketHandler(serverCtx),
+				Handler: option.UpdateMarketHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/orders",
-				Handler: option.AdminListOrdersHandler(serverCtx),
+				Handler: option.ListOrdersHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/orders/detail",
-				Handler: option.AdminGetOrderHandler(serverCtx),
+				Handler: option.GetOrderHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/positions",
-				Handler: option.AdminListPositionsHandler(serverCtx),
+				Handler: option.ListPositionsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/positions/detail",
-				Handler: option.AdminGetPositionHandler(serverCtx),
+				Handler: option.GetPositionHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/settlements",
-				Handler: option.AdminListSettlementsHandler(serverCtx),
+				Handler: option.ListSettlementsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/settlements/detail",
-				Handler: option.AdminGetSettlementHandler(serverCtx),
+				Handler: option.GetSettlementHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/trades",
-				Handler: option.AdminListTradesHandler(serverCtx),
+				Handler: option.ListTradesHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/trades/detail",
-				Handler: option.AdminGetTradeHandler(serverCtx),
+				Handler: option.GetTradeHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
@@ -760,7 +760,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodGet,
 				Path:    "/products",
-				Handler: staking.AdminProductListHandler(serverCtx),
+				Handler: staking.ProductListHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
@@ -770,7 +770,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodGet,
 				Path:    "/products/detail",
-				Handler: staking.AdminProductDetailHandler(serverCtx),
+				Handler: staking.ProductDetailHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,

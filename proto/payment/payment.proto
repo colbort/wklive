@@ -8,7 +8,7 @@ import "proto/payment/model.proto";
 
 option go_package = "wklive/proto/payment;payment";
 
-message AppCommonResp {
+message UserCommonResp {
   common.RespBase base = 1;
 }
 
@@ -215,7 +215,7 @@ service PaymentApp {
   rpc ListMyRechargeOrders(ListMyRechargeOrdersReq) returns (ListMyRechargeOrdersResp);
 
   // 取消未支付订单
-  rpc CancelMyRechargeOrder(CancelMyRechargeOrderReq) returns (AppCommonResp);
+  rpc CancelMyRechargeOrder(CancelMyRechargeOrderReq) returns (UserCommonResp);
 
   // 轮询订单状态
   rpc QueryMyRechargeOrderStatus(QueryMyRechargeOrderStatusReq) returns (QueryMyRechargeOrderStatusResp);
@@ -242,7 +242,7 @@ service PaymentApp {
   rpc GetMyCryptoRechargeTx(GetMyCryptoRechargeTxReq) returns (GetMyCryptoRechargeTxResp);
 }
 
-message AdminCommonResp {
+message CommonResp {
   common.RespBase base = 1;
 }
 
@@ -900,7 +900,7 @@ message ListCryptoRechargeTxsResp {
   repeated payment.CryptoRechargeTx data = 2;
 }
 
-message AdminEmpty {}
+message Empty {}
 
 message PayPlatformItem {
   string platform_code = 1;
@@ -915,56 +915,56 @@ message PayPlatformsResp {
 // Admin 接口
 service PaymentAdmin {
   // 获取系统支持的平台
-  rpc GetPayPlatforms(AdminEmpty) returns (PayPlatformsResp);
+  rpc GetPayPlatforms(Empty) returns (PayPlatformsResp);
   // 创建平台
-  rpc CreatePayPlatform(CreatePayPlatformReq) returns (AdminCommonResp);
+  rpc CreatePayPlatform(CreatePayPlatformReq) returns (CommonResp);
   // 更新平台
-  rpc UpdatePayPlatform(UpdatePayPlatformReq) returns (AdminCommonResp);
+  rpc UpdatePayPlatform(UpdatePayPlatformReq) returns (CommonResp);
   // 获取平台详情
   rpc GetPayPlatform(GetPayPlatformReq) returns (GetPayPlatformResp);
   // 平台列表
   rpc ListPayPlatforms(ListPayPlatformsReq) returns (ListPayPlatformsResp);
 
   // 创建产品
-  rpc CreatePayProduct(CreatePayProductReq) returns (AdminCommonResp);
+  rpc CreatePayProduct(CreatePayProductReq) returns (CommonResp);
   // 更新产品
-  rpc UpdatePayProduct(UpdatePayProductReq) returns (AdminCommonResp);
+  rpc UpdatePayProduct(UpdatePayProductReq) returns (CommonResp);
   // 获取产品详情
   rpc GetPayProduct(GetPayProductReq) returns (GetPayProductResp);
   // 产品列表
   rpc ListPayProducts(ListPayProductsReq) returns (ListPayProductsResp);
 
   // 租户开通平台
-  rpc OpenTenantPayPlatform(OpenTenantPayPlatformReq) returns (AdminCommonResp);
+  rpc OpenTenantPayPlatform(OpenTenantPayPlatformReq) returns (CommonResp);
   // 更新租户开通平台
-  rpc UpdateTenantPayPlatform(UpdateTenantPayPlatformReq) returns (AdminCommonResp);
+  rpc UpdateTenantPayPlatform(UpdateTenantPayPlatformReq) returns (CommonResp);
   // 获取租户开通平台详情
   rpc GetTenantPayPlatform(GetTenantPayPlatformReq) returns (GetTenantPayPlatformResp);
   // 租户开通平台列表
   rpc ListTenantPayPlatforms(ListTenantPayPlatformsReq) returns (ListTenantPayPlatformsResp);
 
   // 租户支付账号
-  rpc CreateTenantPayAccount(CreateTenantPayAccountReq) returns (AdminCommonResp);
+  rpc CreateTenantPayAccount(CreateTenantPayAccountReq) returns (CommonResp);
   // 更新租户支付账号
-  rpc UpdateTenantPayAccount(UpdateTenantPayAccountReq) returns (AdminCommonResp);
+  rpc UpdateTenantPayAccount(UpdateTenantPayAccountReq) returns (CommonResp);
   // 获取租户支付账号详情
   rpc GetTenantPayAccount(GetTenantPayAccountReq) returns (GetTenantPayAccountResp);
   // 租户支付账号列表
   rpc ListTenantPayAccounts(ListTenantPayAccountsReq) returns (ListTenantPayAccountsResp);
 
   // 创建租户支付通道
-  rpc CreateTenantPayChannel(CreateTenantPayChannelReq) returns (AdminCommonResp);
+  rpc CreateTenantPayChannel(CreateTenantPayChannelReq) returns (CommonResp);
   // 更新租户支付通道
-  rpc UpdateTenantPayChannel(UpdateTenantPayChannelReq) returns (AdminCommonResp);
+  rpc UpdateTenantPayChannel(UpdateTenantPayChannelReq) returns (CommonResp);
   // 获取租户支付通道详情
   rpc GetTenantPayChannel(GetTenantPayChannelReq) returns (GetTenantPayChannelResp);
   // 租户支付通道列表
   rpc ListTenantPayChannels(ListTenantPayChannelsReq) returns (ListTenantPayChannelsResp);
 
   // 创建通道规则
-  rpc CreateTenantPayChannelRule(CreateTenantPayChannelRuleReq) returns (AdminCommonResp);
+  rpc CreateTenantPayChannelRule(CreateTenantPayChannelRuleReq) returns (CommonResp);
   // 更新通道规则
-  rpc UpdateTenantPayChannelRule(UpdateTenantPayChannelRuleReq) returns (AdminCommonResp);
+  rpc UpdateTenantPayChannelRule(UpdateTenantPayChannelRuleReq) returns (CommonResp);
   // 获取通道规则详情
   rpc GetTenantPayChannelRule(GetTenantPayChannelRuleReq) returns (GetTenantPayChannelRuleResp);
   // 通道规则列表
@@ -980,11 +980,11 @@ service PaymentAdmin {
   // 获取充值订单
   rpc GetRechargeOrder(GetRechargeOrderReq) returns (GetRechargeOrderResp);
   // 关闭充值订单
-  rpc CloseRechargeOrder(CloseRechargeOrderReq) returns (AdminCommonResp);
+  rpc CloseRechargeOrder(CloseRechargeOrderReq) returns (CommonResp);
   // 人工标记充值订单支付成功
-  rpc ManualMarkRechargeOrderSuccess(ManualMarkRechargeOrderSuccessReq) returns (AdminCommonResp);
+  rpc ManualMarkRechargeOrderSuccess(ManualMarkRechargeOrderSuccessReq) returns (CommonResp);
   // 重试回调
-  rpc RetryNotify(RetryNotifyReq) returns (AdminCommonResp);
+  rpc RetryNotify(RetryNotifyReq) returns (CommonResp);
 
   // 充值回调日志列表
   rpc ListRechargeNotifyLogs(ListRechargeNotifyLogsReq) returns (ListRechargeNotifyLogsResp);
@@ -996,7 +996,7 @@ service PaymentAdmin {
   // 获取提现订单详情
   rpc GetWithdrawOrder(GetWithdrawOrderReq) returns (GetWithdrawOrderResp);
   // 审核提现订单
-  rpc AuditWithdrawOrder(AuditWithdrawOrderReq) returns (AdminCommonResp);
+  rpc AuditWithdrawOrder(AuditWithdrawOrderReq) returns (CommonResp);
 
   // 提现回调日志列表
   rpc ListWithdrawNotifyLogs(ListWithdrawNotifyLogsReq) returns (ListWithdrawNotifyLogsResp);
@@ -1004,27 +1004,27 @@ service PaymentAdmin {
   rpc GetWithdrawNotifyLog(GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp);
 
   // 创建链上充值地址
-  rpc CreateCryptoRechargeAddress(CreateCryptoRechargeAddressReq) returns (AdminCommonResp);
+  rpc CreateCryptoRechargeAddress(CreateCryptoRechargeAddressReq) returns (CommonResp);
   // 更新链上充值地址
-  rpc UpdateCryptoRechargeAddress(UpdateCryptoRechargeAddressReq) returns (AdminCommonResp);
+  rpc UpdateCryptoRechargeAddress(UpdateCryptoRechargeAddressReq) returns (CommonResp);
   // 获取链上充值地址详情
   rpc GetCryptoRechargeAddress(GetCryptoRechargeAddressReq) returns (GetCryptoRechargeAddressResp);
   // 链上充值地址列表
   rpc ListCryptoRechargeAddresses(ListCryptoRechargeAddressesReq) returns (ListCryptoRechargeAddressesResp);
 
   // 创建链上钱包账号
-  rpc CreateCryptoWalletAccount(CreateCryptoWalletAccountReq) returns (AdminCommonResp);
+  rpc CreateCryptoWalletAccount(CreateCryptoWalletAccountReq) returns (CommonResp);
   // 更新链上钱包账号
-  rpc UpdateCryptoWalletAccount(UpdateCryptoWalletAccountReq) returns (AdminCommonResp);
+  rpc UpdateCryptoWalletAccount(UpdateCryptoWalletAccountReq) returns (CommonResp);
   // 获取链上钱包账号详情
   rpc GetCryptoWalletAccount(GetCryptoWalletAccountReq) returns (GetCryptoWalletAccountResp);
   // 链上钱包账号列表
   rpc ListCryptoWalletAccounts(ListCryptoWalletAccountsReq) returns (ListCryptoWalletAccountsResp);
 
   // 创建链上充值交易
-  rpc CreateCryptoRechargeTx(CreateCryptoRechargeTxReq) returns (AdminCommonResp);
+  rpc CreateCryptoRechargeTx(CreateCryptoRechargeTxReq) returns (CommonResp);
   // 更新链上充值交易
-  rpc UpdateCryptoRechargeTx(UpdateCryptoRechargeTxReq) returns (AdminCommonResp);
+  rpc UpdateCryptoRechargeTx(UpdateCryptoRechargeTxReq) returns (CommonResp);
   // 获取链上充值交易详情
   rpc GetCryptoRechargeTx(GetCryptoRechargeTxReq) returns (GetCryptoRechargeTxResp);
   // 链上充值交易列表

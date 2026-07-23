@@ -22,7 +22,7 @@ import type {
   ContractLeverageConfig,
   ContractMarginSnapshot,
   ContractPosition,
-  PlaceOrderReq,
+  TradePlaceOrderReq,
   TradeOrder,
   TradeSymbol,
   TradeSymbolContract,
@@ -681,7 +681,7 @@ async function submitTradeOrder(side: SubmitSide) {
     return
   }
 
-  const params: PlaceOrderReq = {
+  const params: TradePlaceOrderReq = {
     symbolId: symbol.id,
     side: side === 'buy' ? TRADE_SIDE_BUY : TRADE_SIDE_SELL,
     positionSide: orderPositionSide(symbol, side),

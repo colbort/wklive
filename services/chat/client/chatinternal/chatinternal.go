@@ -17,24 +17,6 @@ type (
 	AcceptChatSessionReq           = chat.AcceptChatSessionReq
 	AcceptChatSessionResp          = chat.AcceptChatSessionResp
 	AcceptChatSessionUser          = chat.AcceptChatSessionUser
-	AdminChatAgentResp             = chat.AdminChatAgentResp
-	AdminChatCategoryResp          = chat.AdminChatCategoryResp
-	AdminChatConfigResp            = chat.AdminChatConfigResp
-	AdminChatGroupResp             = chat.AdminChatGroupResp
-	AdminChatMessageResp           = chat.AdminChatMessageResp
-	AdminChatQuickReplyResp        = chat.AdminChatQuickReplyResp
-	AdminChatSessionResp           = chat.AdminChatSessionResp
-	AdminChatSubscribeRequest      = chat.AdminChatSubscribeRequest
-	AdminChatWorkOrderResp         = chat.AdminChatWorkOrderResp
-	AdminCommonResp                = chat.AdminCommonResp
-	AdminMarkMessagesReadResp      = chat.AdminMarkMessagesReadResp
-	AppChatConfigResp              = chat.AppChatConfigResp
-	AppChatMessageResp             = chat.AppChatMessageResp
-	AppChatSatisfactionResp        = chat.AppChatSatisfactionResp
-	AppChatSessionResp             = chat.AppChatSessionResp
-	AppChatSubscribeRequest        = chat.AppChatSubscribeRequest
-	AppCommonResp                  = chat.AppCommonResp
-	AppListChatMessagesResp        = chat.AppListChatMessagesResp
 	AuthChatMerchantData           = chat.AuthChatMerchantData
 	AuthChatMerchantReq            = chat.AuthChatMerchantReq
 	AuthChatMerchantResp           = chat.AuthChatMerchantResp
@@ -44,9 +26,19 @@ type (
 	ChatAdminLogoutReq             = chat.ChatAdminLogoutReq
 	ChatAdminProfileReq            = chat.ChatAdminProfileReq
 	ChatAdminProfileResp           = chat.ChatAdminProfileResp
+	ChatAgentResp                  = chat.ChatAgentResp
 	ChatAppConfig                  = chat.ChatAppConfig
+	ChatCategoryResp               = chat.ChatCategoryResp
+	ChatConfigResp                 = chat.ChatConfigResp
+	ChatGroupResp                  = chat.ChatGroupResp
+	ChatMessageResp                = chat.ChatMessageResp
+	ChatQuickReplyResp             = chat.ChatQuickReplyResp
+	ChatSatisfactionResp           = chat.ChatSatisfactionResp
+	ChatSessionResp                = chat.ChatSessionResp
+	ChatWorkOrderResp              = chat.ChatWorkOrderResp
 	CloseChatSessionReq            = chat.CloseChatSessionReq
 	CloseMyChatSessionReq          = chat.CloseMyChatSessionReq
+	CommonResp                     = chat.CommonResp
 	CreateChatAgentReq             = chat.CreateChatAgentReq
 	CreateChatCategoryReq          = chat.CreateChatCategoryReq
 	CreateChatGroupReq             = chat.CreateChatGroupReq
@@ -71,11 +63,13 @@ type (
 	GetChatWorkOrderReq            = chat.GetChatWorkOrderReq
 	HandleChatWorkOrderReq         = chat.HandleChatWorkOrderReq
 	ListChatCategoriesResp         = chat.ListChatCategoriesResp
+	ListChatMessagesResp           = chat.ListChatMessagesResp
 	ListChatQuickRepliesResp       = chat.ListChatQuickRepliesResp
 	ListEnabledChatCategoriesReq   = chat.ListEnabledChatCategoriesReq
 	ListEnabledChatQuickRepliesReq = chat.ListEnabledChatQuickRepliesReq
 	ListMyChatMessagesReq          = chat.ListMyChatMessagesReq
 	MarkAgentMessagesReadReq       = chat.MarkAgentMessagesReadReq
+	MarkMessagesReadResp           = chat.MarkMessagesReadResp
 	OpenChatSessionReq             = chat.OpenChatSessionReq
 	OpenChatSessionResp            = chat.OpenChatSessionResp
 	OperateAgentMessageReq         = chat.OperateAgentMessageReq
@@ -99,6 +93,7 @@ type (
 	SendUserMessageReq             = chat.SendUserMessageReq
 	SendUserTypingReq              = chat.SendUserTypingReq
 	SubmitChatSatisfactionReq      = chat.SubmitChatSatisfactionReq
+	SubscribeRequest               = chat.SubscribeRequest
 	SyncChatMerchantUserReq        = chat.SyncChatMerchantUserReq
 	SyncChatMerchantUserResp       = chat.SyncChatMerchantUserResp
 	UpdateChatAdminProfileReq      = chat.UpdateChatAdminProfileReq
@@ -109,6 +104,10 @@ type (
 	UpdateChatGroupReq             = chat.UpdateChatGroupReq
 	UpdateChatQuickReplyReq        = chat.UpdateChatQuickReplyReq
 	UpdateChatWorkOrderReq         = chat.UpdateChatWorkOrderReq
+	UserChatConfigResp             = chat.UserChatConfigResp
+	UserChatMessageResp            = chat.UserChatMessageResp
+	UserChatSessionResp            = chat.UserChatSessionResp
+	UserCommonResp                 = chat.UserCommonResp
 
 	ChatInternal interface {
 		// 同步客服商户主账号

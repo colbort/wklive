@@ -177,8 +177,8 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import {
-  AdminManualRedeemReq,
-  AdminManualRewardReq,
+  ManualRedeemReq,
+  ManualRewardReq,
   stakingService,
   type StakeOrder,
 } from '@/services'
@@ -207,7 +207,7 @@ const query = reactive({
   productId: undefined as number | undefined,
   limit: 20,
 })
-const rewardForm = reactive<AdminManualRewardReq>({
+const rewardForm = reactive<ManualRewardReq>({
   tenantId: 0,
   orderId: 0,
   rewardAmount: '',
@@ -215,7 +215,7 @@ const rewardForm = reactive<AdminManualRewardReq>({
   operatorUid: 0,
   remark: '',
 })
-const redeemForm = reactive<AdminManualRedeemReq>({
+const redeemForm = reactive<ManualRedeemReq>({
   tenantId: 0,
   orderId: 0,
   redeemType: 1,

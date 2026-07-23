@@ -27,6 +27,6 @@ func NewUpdateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 	}
 }
 
-func (l *UpdateSymbolLogic) UpdateSymbol(req *types.UpdateSymbolReq) (resp *types.AdminCommonResp, err error) {
-	return logicutil.Proxy[types.AdminCommonResp](l.ctx, req, l.svcCtx.TradeCli.UpdateSymbol)
+func (l *UpdateSymbolLogic) UpdateSymbol(req *types.UpdateSymbolReq) (resp *types.CommonResp, err error) {
+	return logicutil.Proxy[types.CommonResp](l.ctx, req, l.svcCtx.TradeCli.UpdateSymbol)
 }

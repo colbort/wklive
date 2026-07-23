@@ -27,14 +27,14 @@ func NewUpdatePayProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 // 更新产品
-func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq) (*payment.AdminCommonResp, error) {
+func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq) (*payment.CommonResp, error) {
 	var (
 		errLogic = "UpdatePayProduct"
 	)
 	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: base,
 		}, nil
 	}
@@ -47,7 +47,7 @@ func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq
 	}
 
 	if product == nil {
-		return &payment.AdminCommonResp{
+		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
 	}
@@ -78,7 +78,7 @@ func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq
 
 	l.Logger.Infof("Update pay product success: %d", in.Id)
 
-	return &payment.AdminCommonResp{
+	return &payment.CommonResp{
 		Base: helper.OkResp(),
 	}, nil
 }
