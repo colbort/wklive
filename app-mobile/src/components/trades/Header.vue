@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import AppIcon from '@/components/common/AppIcon.vue'
 import QuoteRow from '@/components/markets/QuoteRow.vue'
@@ -16,12 +18,22 @@ type ProductSheetRow = {
   change: string
   direction: 'up' | 'down' | 'flat'
 }
+type TradeMarketMode =
+  | 'spot'
+  | 'seconds'
+  | 'delivery-linear'
+  | 'delivery-inverse'
+  | 'perpetual-linear'
+  | 'perpetual-inverse'
 
 defineProps<{
   selectedCategory: ItickTenantCategory | null
   selectedProduct: ItickTenantProduct | null
   selectedTradeSymbol: TradeSymbol | null
   selectedProductKey: string
+  tradeMarketMode: TradeMarketMode
+  tradeMarketModeLabel: string
+  tradeMarketModeOptions: Array<{ value: TradeMarketMode; label: string; available: boolean }>
   tradeKind: 'stock' | 'option' | 'forex' | 'commodity' | 'crypto'
   priceTrend: 'up' | 'down' | 'flat'
   placeholderPrice: string
@@ -34,24 +46,43 @@ const emit = defineEmits<{
   (e: 'open-product-menu'): void
   (e: 'close-product-sheet'): void
   (e: 'select-product', product: ItickTenantProduct): void
+  (e: 'select-trade-market-mode', mode: TradeMarketMode): void
 }>()
 
 const { t } = useI18n()
+const marketModeMenuOpen = ref(false)
+
+function selectTradeMarketMode(mode: TradeMarketMode, available: boolean) {
+  if (!available) return
+  emit('select-trade-market-mode', mode)
+  marketModeMenuOpen.value = false
+}
 </script>
 
 <template>
   <div class="trade-header">
     <header class="trade-symbol">
-      <button type="button" class="trade-symbol__main" @click="emit('open-product-menu')">
-        <strong>{{
-          selectedTradeSymbol?.displaySymbol ||
-          selectedProduct?.displayName ||
-          selectedTradeSymbol?.symbol ||
-          selectedProduct?.symbol ||
-          t('market.selectProduct')
-        }}</strong>
-        <span />
-      </button>
+      <div class="trade-symbol__selectors">
+        <button type="button" class="trade-symbol__main" @click="emit('open-product-menu')">
+          <strong>{{
+            selectedTradeSymbol?.displaySymbol ||
+            selectedProduct?.displayName ||
+            selectedTradeSymbol?.symbol ||
+            selectedProduct?.symbol ||
+            t('market.selectProduct')
+          }}</strong>
+          <span />
+        </button>
+        <button
+          v-if="tradeKind === 'crypto'"
+          type="button"
+          class="trade-symbol__market-mode"
+          @click="marketModeMenuOpen = true"
+        >
+          {{ tradeMarketModeLabel }}
+          <i />
+        </button>
+      </div>
 
       <div v-if="tradeKind === 'stock'" class="trade-symbol__sub">
         {{ selectedProduct?.displayName || selectedProduct?.name || '--' }}
@@ -106,6 +137,32 @@ const { t } = useI18n()
           </div>
         </template>
       </BottomDrawer>
+
+      <BottomDrawer
+        v-model="marketModeMenuOpen"
+        :title="t('trade.marketMode')"
+        :close-label="t('common.close')"
+        max-height="62dvh"
+        :z-index="82"
+      >
+        <div class="market-mode-sheet">
+          <button
+            v-for="mode in tradeMarketModeOptions"
+            :key="mode.value"
+            type="button"
+            class="market-mode-sheet__item"
+            :class="{
+              'market-mode-sheet__item--active': mode.value === tradeMarketMode,
+              'market-mode-sheet__item--disabled': !mode.available,
+            }"
+            :disabled="!mode.available"
+            @click="selectTradeMarketMode(mode.value, mode.available)"
+          >
+            <span>{{ mode.label }}</span>
+            <em v-if="!mode.available">{{ t('trade.marketModeUnavailable') }}</em>
+          </button>
+        </div>
+      </BottomDrawer>
     </header>
   </div>
 </template>
@@ -132,6 +189,13 @@ const { t } = useI18n()
   margin-bottom: 22px;
 }
 
+.trade-symbol__selectors {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
 .trade-symbol__main {
   display: inline-flex;
   align-items: center;
@@ -140,6 +204,68 @@ const { t } = useI18n()
   min-width: 0;
   max-width: 100%;
   padding: 0;
+}
+
+.trade-symbol__market-mode {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 3px 10px;
+  border: 1px solid var(--divider-visible) !important;
+  border-radius: 8px;
+  background: var(--panel-bg-soft) !important;
+  color: var(--text-soft) !important;
+  font-size: 14px !important;
+  white-space: nowrap;
+}
+
+.trade-symbol__market-mode i {
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentcolor;
+  border-bottom: 1.5px solid currentcolor;
+  transform: rotate(45deg) translateY(-2px);
+}
+
+.market-mode-sheet {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 4px 0 12px;
+}
+
+.market-mode-sheet__item {
+  display: flex;
+  min-height: 54px;
+  padding: 10px 12px;
+  border: 1px solid var(--divider-visible) !important;
+  border-radius: 10px;
+  background: var(--panel-bg-soft) !important;
+  color: var(--text) !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.market-mode-sheet__item--active {
+  border-color: var(--border-strong) !important;
+  background: var(--selection-bg) !important;
+  color: var(--text-strong) !important;
+  font-weight: 600;
+}
+
+.market-mode-sheet__item--disabled {
+  color: var(--text-disabled) !important;
+  opacity: 0.55;
+}
+
+.market-mode-sheet__item em {
+  color: var(--text-subtle);
+  font-size: 11px;
+  font-style: normal;
 }
 
 .trade-symbol__main strong {

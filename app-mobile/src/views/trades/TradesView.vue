@@ -33,6 +33,13 @@ import type {
 import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type SubmitSide = 'buy' | 'sell'
+type TradeMarketMode =
+  | 'spot'
+  | 'seconds'
+  | 'delivery-linear'
+  | 'delivery-inverse'
+  | 'perpetual-linear'
+  | 'perpetual-inverse'
 type TradeSymbolDetail = {
   symbol: TradeSymbol | null
   spot: TradeSymbolSpot | null
@@ -44,6 +51,8 @@ type TradeSymbolDetail = {
 const PRODUCT_TYPE_SPOT = 1
 const PRODUCT_TYPE_DERIVATIVE = 2
 const PRODUCT_TYPE_SECONDS = 3
+const CONTRACT_TYPE_PERPETUAL = 1
+const CONTRACT_TYPE_DELIVERY = 2
 const CONTRACT_VALUE_TYPE_LINEAR = 1
 const CONTRACT_VALUE_TYPE_INVERSE = 2
 const TRADE_SIDE_BUY = 1
@@ -63,6 +72,7 @@ const FALLBACK_LEVERAGE_VALUES = [1, 2, 5, 10, 20, 50, 75, 100, 125]
 const route = useRoute()
 const detailVisible = computed(() => true)
 const orderMode = ref<'market' | 'limit'>('market')
+const tradeMarketMode = ref<TradeMarketMode>('spot')
 const productMenuOpen = ref(false)
 const authToken = ref(getAccessToken())
 const tradeSymbols = ref<TradeSymbol[]>([])
@@ -82,6 +92,7 @@ const takeProfitPrice = ref('')
 const stopLossPrice = ref('')
 const marginMode = ref(1)
 const leverage = ref(1)
+const secondsDuration = ref(0)
 const submittingSide = ref<SubmitSide | null>(null)
 const cancelingOrderId = ref<number | null>(null)
 const tradeMessage = ref('')
@@ -123,6 +134,26 @@ const tradeKind = computed(() => {
   }
   return 'crypto'
 })
+const tradeMarketModeOptions = computed(() => {
+  const options: Array<{ value: TradeMarketMode; label: string }> = [
+    { value: 'spot', label: t('trade.marketModeSpot') },
+    { value: 'seconds', label: t('trade.marketModeSeconds') },
+    { value: 'delivery-linear', label: t('trade.marketModeDeliveryLinear') },
+    { value: 'delivery-inverse', label: t('trade.marketModeDeliveryInverse') },
+    { value: 'perpetual-linear', label: t('trade.marketModePerpetualLinear') },
+    { value: 'perpetual-inverse', label: t('trade.marketModePerpetualInverse') },
+  ]
+
+  return options.map((option) => ({
+    ...option,
+    available: matchingTradeSymbols(option.value).length > 0,
+  }))
+})
+const tradeMarketModeLabel = computed(
+  () =>
+    tradeMarketModeOptions.value.find((option) => option.value === tradeMarketMode.value)?.label ||
+    t('trade.marketModeSpot'),
+)
 const isLoggedIn = computed(() => Boolean(authToken.value))
 const selectedTradeSymbol = computed(() => matchTradeSymbol())
 const selectedTradeSettleAsset = computed(() => {
@@ -231,6 +262,7 @@ watch(
     tradePercent.value = 0
     takeProfitPrice.value = ''
     stopLossPrice.value = ''
+    secondsDuration.value = 0
     tradeSymbolDetail.value = null
     userLeverageConfig.value = null
     tradeOrders.value = []
@@ -325,27 +357,46 @@ function symbolCandidates(symbol: TradeSymbol) {
     .filter(Boolean)
 }
 
-function marketPreference(symbol: TradeSymbol) {
-  if (tradeKind.value === 'crypto') {
-    if (symbol.productType === PRODUCT_TYPE_DERIVATIVE && symbol.contractValueType === CONTRACT_VALUE_TYPE_LINEAR) return 0
-    if (symbol.productType === PRODUCT_TYPE_DERIVATIVE && symbol.contractValueType === CONTRACT_VALUE_TYPE_INVERSE) return 1
-    if (symbol.productType === PRODUCT_TYPE_SPOT) return 2
-    if (symbol.productType === PRODUCT_TYPE_SECONDS) return 3
-  }
+function matchesTradeMarketMode(symbol: TradeSymbol, mode: TradeMarketMode) {
+  if (mode === 'spot') return symbol.productType === PRODUCT_TYPE_SPOT
+  if (mode === 'seconds') return symbol.productType === PRODUCT_TYPE_SECONDS
+  if (symbol.productType !== PRODUCT_TYPE_DERIVATIVE) return false
 
-  if (symbol.productType === PRODUCT_TYPE_SPOT) return 0
-  return 1
+  const contractType =
+    mode === 'delivery-linear' || mode === 'delivery-inverse'
+      ? CONTRACT_TYPE_DELIVERY
+      : CONTRACT_TYPE_PERPETUAL
+  const contractValueType =
+    mode === 'delivery-linear' || mode === 'perpetual-linear'
+      ? CONTRACT_VALUE_TYPE_LINEAR
+      : CONTRACT_VALUE_TYPE_INVERSE
+
+  return symbol.contractType === contractType && symbol.contractValueType === contractValueType
+}
+
+function matchesSelectedProduct(symbol: TradeSymbol) {
+  const candidates = productCandidates()
+  if (!candidates.size) return false
+  if (symbolCandidates(symbol).some((candidate) => candidates.has(candidate))) return true
+
+  const baseCoin = normalizeSymbolText(selectedProduct.value?.baseCoin || '')
+  return Boolean(baseCoin && normalizeSymbolText(symbol.baseAsset) === baseCoin)
+}
+
+function matchingTradeSymbols(mode: TradeMarketMode) {
+  return tradeSymbols.value
+    .filter((symbol) => matchesTradeMarketMode(symbol, mode))
+    .filter(matchesSelectedProduct)
+    .sort((left, right) => left.sort - right.sort || left.id - right.id)
 }
 
 function matchTradeSymbol() {
-  const candidates = productCandidates()
-  if (!candidates.size) return null
+  return matchingTradeSymbols(tradeMarketMode.value)[0] || null
+}
 
-  return (
-    tradeSymbols.value
-      .filter((symbol) => symbolCandidates(symbol).some((candidate) => candidates.has(candidate)))
-      .sort((left, right) => marketPreference(left) - marketPreference(right))[0] || null
-  )
+function selectTradeMarketMode(mode: TradeMarketMode) {
+  if (!matchingTradeSymbols(mode).length) return
+  tradeMarketMode.value = mode
 }
 
 function isPositiveDecimal(value: string) {
@@ -464,7 +515,6 @@ async function loadTradeSymbols() {
 
   try {
     const resp = await apiTradeGetSymbolList({
-      productType: PRODUCT_TYPE_SPOT,
       status: SYMBOL_STATUS_ENABLED,
     })
     if (requestId !== tradeSymbolsRequestId) return
@@ -510,6 +560,7 @@ async function loadTradeSymbolDetail(symbolId: number) {
       leverageConfigs: resp.data?.leverageConfigs || [],
       secondsConfigs: resp.data?.secondsConfigs || [],
     }
+    secondsDuration.value = tradeSymbolDetail.value.secondsConfigs[0]?.durationSeconds || 0
     leverage.value = defaultTradeLeverage()
     void loadUserLeverageConfig()
   } catch (error) {
@@ -674,7 +725,8 @@ async function submitTradeOrder(side: SubmitSide) {
     return
   }
 
-  const isLimitOrder = orderMode.value === 'limit'
+  const isLimitOrder =
+    symbol.productType !== PRODUCT_TYPE_SECONDS && orderMode.value === 'limit'
   const price = tradePrice.value.trim()
   if (isLimitOrder && !isPositiveDecimal(price)) {
     tradeError.value = t('trade.inputValidPrice')
@@ -694,7 +746,10 @@ async function submitTradeOrder(side: SubmitSide) {
 
   if (symbol.productType === PRODUCT_TYPE_SECONDS) {
     const secondsConfig = tradeSymbolDetail.value?.secondsConfigs.find((config) => {
-      return side === 'buy' ? config.upEnabled === 1 : config.downEnabled === 1
+      return (
+        config.durationSeconds === secondsDuration.value &&
+        (side === 'buy' ? config.upEnabled === 1 : config.downEnabled === 1)
+      )
     })
     if (!secondsConfig) {
       tradeError.value = t('trade.symbolNotConfigured')
@@ -819,6 +874,9 @@ async function cancelTradeOrder(order: TradeOrder) {
         :selected-category="selectedCategory"
         :selected-product="selectedProduct"
         :selected-product-key="selectedProductKey"
+        :trade-market-mode="tradeMarketMode"
+        :trade-market-mode-label="tradeMarketModeLabel"
+        :trade-market-mode-options="tradeMarketModeOptions"
         :trade-kind="tradeKind"
         :price-trend="priceTrend"
         :placeholder-price="placeholderPrice"
@@ -839,6 +897,7 @@ async function cancelTradeOrder(order: TradeOrder) {
         :trade-percent="tradePercent"
         :margin-mode="marginMode"
         :leverage="leverage"
+        :seconds-duration="secondsDuration"
         :max-leverage="maxTradeLeverage"
         :leverage-values="tradeLeverageValues"
         :take-profit-price="takeProfitPrice"
@@ -857,12 +916,14 @@ async function cancelTradeOrder(order: TradeOrder) {
         @open-product-menu="productMenuOpen = true"
         @close-product-sheet="closeProductSheet"
         @select-product="selectProduct"
+        @select-trade-market-mode="selectTradeMarketMode"
         @update:order-mode="orderMode = $event"
         @update:trade-price="tradePrice = $event"
         @update:trade-qty="tradeQty = $event"
         @update:trade-percent="tradePercent = $event"
         @update:margin-mode="updateMarginMode"
         @update:leverage="updateLeverage"
+        @update:seconds-duration="secondsDuration = $event"
         @update:take-profit-price="takeProfitPrice = $event"
         @update:stop-loss-price="stopLossPrice = $event"
         @submit-order="submitTradeOrder"

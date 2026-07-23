@@ -15,6 +15,7 @@ import type {
   TradeSymbol,
   TradeSymbolContract,
   TradeSymbolLeverageConfig,
+  TradeSymbolSeconds,
   TradeSymbolSpot,
 } from '@/types/trade'
 
@@ -26,17 +27,28 @@ type ProductSheetRow = {
   direction: 'up' | 'down' | 'flat'
 }
 type SubmitSide = 'buy' | 'sell'
+type TradeMarketMode =
+  | 'spot'
+  | 'seconds'
+  | 'delivery-linear'
+  | 'delivery-inverse'
+  | 'perpetual-linear'
+  | 'perpetual-inverse'
 type TradeSymbolDetail = {
   symbol: TradeSymbol | null
   spot: TradeSymbolSpot | null
   contract: TradeSymbolContract | null
   leverageConfigs: TradeSymbolLeverageConfig[]
+  secondsConfigs: TradeSymbolSeconds[]
 }
 
 defineProps<{
   selectedCategory: ItickTenantCategory | null
   selectedProduct: ItickTenantProduct | null
   selectedProductKey: string
+  tradeMarketMode: TradeMarketMode
+  tradeMarketModeLabel: string
+  tradeMarketModeOptions: Array<{ value: TradeMarketMode; label: string; available: boolean }>
   tradeKind: 'stock' | 'option' | 'forex' | 'commodity' | 'crypto'
   priceTrend: 'up' | 'down' | 'flat'
   placeholderPrice: string
@@ -57,6 +69,7 @@ defineProps<{
   tradePercent: number
   marginMode: number
   leverage: number
+  secondsDuration: number
   maxLeverage: number
   leverageValues: number[]
   takeProfitPrice: string
@@ -78,12 +91,14 @@ const emit = defineEmits<{
   (e: 'open-product-menu'): void
   (e: 'close-product-sheet'): void
   (e: 'select-product', product: ItickTenantProduct): void
+  (e: 'select-trade-market-mode', mode: TradeMarketMode): void
   (e: 'update:orderMode', value: 'market' | 'limit'): void
   (e: 'update:tradePrice', value: string): void
   (e: 'update:tradeQty', value: string): void
   (e: 'update:tradePercent', value: number): void
   (e: 'update:marginMode', value: number): void
   (e: 'update:leverage', value: number): void
+  (e: 'update:seconds-duration', value: number): void
   (e: 'update:takeProfitPrice', value: string): void
   (e: 'update:stopLossPrice', value: string): void
   (e: 'submit-order', side: SubmitSide): void
@@ -99,6 +114,9 @@ const emit = defineEmits<{
       :selected-product="selectedProduct"
       :selected-trade-symbol="selectedTradeSymbol"
       :selected-product-key="selectedProductKey"
+      :trade-market-mode="tradeMarketMode"
+      :trade-market-mode-label="tradeMarketModeLabel"
+      :trade-market-mode-options="tradeMarketModeOptions"
       :trade-kind="tradeKind"
       :price-trend="priceTrend"
       :placeholder-price="placeholderPrice"
@@ -108,6 +126,7 @@ const emit = defineEmits<{
       @open-product-menu="emit('open-product-menu')"
       @close-product-sheet="emit('close-product-sheet')"
       @select-product="emit('select-product', $event)"
+      @select-trade-market-mode="emit('select-trade-market-mode', $event)"
     />
 
     <section v-if="tradeKind === 'crypto'" class="contract-layout">
@@ -126,6 +145,7 @@ const emit = defineEmits<{
         :reference-price="selectedQuote?.lastPrice || placeholderPrice"
         :margin-mode="marginMode"
         :leverage="leverage"
+        :seconds-duration="secondsDuration"
         :max-leverage="maxLeverage"
         :leverage-values="leverageValues"
         :take-profit-price="takeProfitPrice"
@@ -143,6 +163,7 @@ const emit = defineEmits<{
         @update:trade-percent="emit('update:tradePercent', $event)"
         @update:margin-mode="emit('update:marginMode', $event)"
         @update:leverage="emit('update:leverage', $event)"
+        @update:seconds-duration="emit('update:seconds-duration', $event)"
         @update:take-profit-price="emit('update:takeProfitPrice', $event)"
         @update:stop-loss-price="emit('update:stopLossPrice', $event)"
         @submit-order="emit('submit-order', $event)"
@@ -172,6 +193,7 @@ const emit = defineEmits<{
       :reference-price="selectedQuote?.lastPrice || placeholderPrice"
       :margin-mode="marginMode"
       :leverage="leverage"
+      :seconds-duration="secondsDuration"
       :max-leverage="maxLeverage"
       :leverage-values="leverageValues"
       :take-profit-price="takeProfitPrice"
@@ -189,6 +211,7 @@ const emit = defineEmits<{
       @update:trade-percent="emit('update:tradePercent', $event)"
       @update:margin-mode="emit('update:marginMode', $event)"
       @update:leverage="emit('update:leverage', $event)"
+      @update:seconds-duration="emit('update:seconds-duration', $event)"
       @update:take-profit-price="emit('update:takeProfitPrice', $event)"
       @update:stop-loss-price="emit('update:stopLossPrice', $event)"
       @submit-order="emit('submit-order', $event)"

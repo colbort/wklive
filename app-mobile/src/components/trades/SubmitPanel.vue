@@ -10,6 +10,7 @@ import type {
   TradeSymbol,
   TradeSymbolContract,
   TradeSymbolLeverageConfig,
+  TradeSymbolSeconds,
   TradeSymbolSpot,
 } from '@/types/trade'
 
@@ -19,6 +20,7 @@ type TradeSymbolDetail = {
   spot: TradeSymbolSpot | null
   contract: TradeSymbolContract | null
   leverageConfigs: TradeSymbolLeverageConfig[]
+  secondsConfigs: TradeSymbolSeconds[]
 }
 
 const props = defineProps<{
@@ -36,6 +38,7 @@ const props = defineProps<{
   referencePrice: string | number
   marginMode: number
   leverage: number
+  secondsDuration: number
   maxLeverage: number
   leverageValues: number[]
   takeProfitPrice: string
@@ -56,12 +59,19 @@ const emit = defineEmits<{
   (e: 'update:tradePercent', value: number): void
   (e: 'update:marginMode', value: number): void
   (e: 'update:leverage', value: number): void
+  (e: 'update:seconds-duration', value: number): void
   (e: 'update:takeProfitPrice', value: string): void
   (e: 'update:stopLossPrice', value: string): void
   (e: 'submit-order', side: SubmitSide): void
 }>()
 
 const PRODUCT_TYPE_SPOT = 1
+const PRODUCT_TYPE_DERIVATIVE = 2
+const PRODUCT_TYPE_SECONDS = 3
+const CONTRACT_TYPE_PERPETUAL = 1
+const CONTRACT_TYPE_DELIVERY = 2
+const CONTRACT_VALUE_TYPE_LINEAR = 1
+const CONTRACT_VALUE_TYPE_INVERSE = 2
 const percentSteps = [0, 25, 50, 75, 100]
 type SelectionSheet = 'margin' | 'leverage' | 'risk' | null
 type RiskEntrySide = 'long' | 'short'
@@ -94,6 +104,62 @@ const marginModeOptions = computed(() => {
   return options.length ? options : [{ value: 1, code: 'MARGIN_MODE_CROSS' }]
 })
 const isSpotTrade = computed(() => props.selectedTradeSymbol?.productType === PRODUCT_TYPE_SPOT)
+const isSecondsTrade = computed(
+  () => props.selectedTradeSymbol?.productType === PRODUCT_TYPE_SECONDS,
+)
+const isContractTrade = computed(
+  () => props.selectedTradeSymbol?.productType === PRODUCT_TYPE_DERIVATIVE,
+)
+const secondsConfigs = computed(() =>
+  [...(props.tradeSymbolDetail?.secondsConfigs || [])].sort(
+    (left, right) => left.durationSeconds - right.durationSeconds,
+  ),
+)
+const selectedSecondsConfig = computed(
+  () =>
+    secondsConfigs.value.find((config) => config.durationSeconds === props.secondsDuration) ||
+    secondsConfigs.value[0] ||
+    null,
+)
+const contractTypeLabel = computed(() => {
+  const symbol = props.selectedTradeSymbol
+  if (!symbol || !isContractTrade.value) return ''
+  const term =
+    symbol.contractType === CONTRACT_TYPE_DELIVERY
+      ? t('trade.contractDelivery')
+      : symbol.contractType === CONTRACT_TYPE_PERPETUAL
+        ? t('trade.contractPerpetual')
+        : ''
+  const valueType =
+    symbol.contractValueType === CONTRACT_VALUE_TYPE_LINEAR
+      ? t('trade.contractLinear')
+      : symbol.contractValueType === CONTRACT_VALUE_TYPE_INVERSE
+        ? t('trade.contractInverse')
+        : ''
+  return [term, valueType].filter(Boolean).join(' · ')
+})
+const contractMetaLabel = computed(() =>
+  props.selectedTradeSymbol?.contractType === CONTRACT_TYPE_DELIVERY
+    ? t('trade.deliveryTime')
+    : t('trade.fundingInterval'),
+)
+const contractMetaValue = computed(() => {
+  const contract = props.tradeSymbolDetail?.contract
+  if (!contract) return '--'
+  if (props.selectedTradeSymbol?.contractType === CONTRACT_TYPE_DELIVERY) {
+    return contract.deliveryTime
+      ? new Intl.DateTimeFormat(undefined, {
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+        }).format(contract.deliveryTime)
+      : '--'
+  }
+  return contract.fundingIntervalMinutes
+    ? t('trade.minutesValue', { value: contract.fundingIntervalMinutes })
+    : '--'
+})
 const canSubmit = computed(
   () => props.isLoggedIn && props.tradeAvailable && !props.tradeSymbolLoading,
 )
@@ -152,6 +218,12 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 
 function inputValue(event: Event) {
   return (event.target as HTMLInputElement).value
+}
+
+function formatPayoutRate(value?: string) {
+  const rate = Number(value)
+  if (!Number.isFinite(rate)) return '--'
+  return `${rate <= 1 ? rate * 100 : rate}%`
 }
 
 function updateTradePercent(value: number) {
@@ -257,7 +329,7 @@ const selectionSheetTitle = computed(() => {
 })
 
 function openSelectionSheet(type: Exclude<SelectionSheet, null>, side?: RiskEntrySide) {
-  if (isSpotTrade.value) return
+  if (isSpotTrade.value || isSecondsTrade.value) return
   if (type === 'risk' && submitDisabled.value) return
   if (type === 'risk') {
     editingRiskEntrySide.value = side || riskEntrySide.value || 'long'
@@ -398,8 +470,74 @@ function confirmRiskSettings() {
     </div>
   </section>
 
+  <section v-else-if="isSecondsTrade" class="seconds-panel">
+    <h3>{{ t('trade.expiryDuration') }}</h3>
+    <div class="duration-grid">
+      <button
+        v-for="config in secondsConfigs"
+        :key="config.id"
+        type="button"
+        :class="{ active: config.durationSeconds === secondsDuration }"
+        @click="emit('update:seconds-duration', config.durationSeconds)"
+      >
+        <strong>{{ config.durationSeconds }}S</strong>
+        <span>{{ t('trade.payoutRate') }} {{ formatPayoutRate(config.payoutRate) }}</span>
+      </button>
+    </div>
+
+    <h3>{{ t('trade.investmentAmount') }}</h3>
+    <div class="trade-input trade-input--field">
+      <input
+        :value="tradeQty"
+        inputmode="decimal"
+        :placeholder="`${selectedSecondsConfig?.minStake || '--'} - ${selectedSecondsConfig?.maxStake || '--'} ${settleAsset}`"
+        @input="emit('update:tradeQty', inputValue($event))"
+      >
+    </div>
+
+    <div class="seconds-summary">
+      <span>{{ t('trade.available') }}</span>
+      <strong>{{ availableBalance }} {{ settleAsset }}</strong>
+      <span>{{ t('trade.expiryDuration') }}</span>
+      <strong>{{ secondsDuration || '--' }}S</strong>
+      <span>{{ t('trade.payoutRate') }}</span>
+      <strong>{{ formatPayoutRate(selectedSecondsConfig?.payoutRate) }}</strong>
+    </div>
+
+    <div class="seconds-actions">
+      <button
+        type="button"
+        class="wide-action wide-action--buy"
+        :disabled="submitDisabled || selectedSecondsConfig?.upEnabled !== 1"
+        @click="emit('submit-order', 'buy')"
+      >
+        {{ submittingSide === 'buy' ? t('common.submitting') : t('trade.buyUp') }}
+      </button>
+      <button
+        type="button"
+        class="wide-action wide-action--sell"
+        :disabled="submitDisabled || selectedSecondsConfig?.downEnabled !== 1"
+        @click="emit('submit-order', 'sell')"
+      >
+        {{ submittingSide === 'sell' ? t('common.submitting') : t('trade.buyDown') }}
+      </button>
+    </div>
+
+    <p v-if="tradeError || unavailableText" class="order-message order-message--error">
+      {{ tradeError || unavailableText }}
+    </p>
+    <p v-else-if="tradeMessage" class="order-message">
+      {{ tradeMessage }}
+    </p>
+  </section>
+
   <section v-else class="contract-panel">
     <div class="trade-form">
+      <div v-if="isContractTrade" class="contract-meta">
+        <strong>{{ contractTypeLabel }}</strong>
+        <span>{{ contractMetaLabel }}：{{ contractMetaValue }}</span>
+      </div>
+
       <div class="mode-switch">
         <button
           v-for="option in orderTypeOptions"
@@ -412,7 +550,7 @@ function confirmRiskSettings() {
         </button>
       </div>
 
-      <div class="form-row">
+      <div v-if="isContractTrade" class="form-row">
         <button
           type="button"
           class="picker-trigger"
@@ -479,12 +617,14 @@ function confirmRiskSettings() {
         <span>{{ t('trade.available') }}</span>
         <strong>{{ availableBalance }} {{ settleAsset }}</strong>
         <span>{{ t('trade.conversion') }}</span><strong>{{ conversionText }}</strong>
-        <span>{{ t('trade.mode') }}</span>
-        <strong>{{ optionText(selectedMarginMode) }} /
-          {{ isSpotTrade ? t('trade.noLeverage') : `${leverage}X` }}</strong>
+        <template v-if="isContractTrade">
+          <span>{{ t('trade.mode') }}</span>
+          <strong>{{ optionText(selectedMarginMode) }} / {{ leverage }}X</strong>
+        </template>
       </div>
 
       <button
+        v-if="isContractTrade"
         type="button"
         class="risk-trigger"
         :disabled="submitDisabled"
@@ -500,7 +640,10 @@ function confirmRiskSettings() {
       <div class="account-lines">
         <span>{{ isSpotTrade ? t('trade.canBuy') : t('trade.canOpenLong') }}</span>
         <strong>{{ longPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
-        <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        <template v-if="isContractTrade">
+          <span>{{ t('trade.margin') }}</span>
+          <strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        </template>
       </div>
       <button
         class="wide-action wide-action--buy"
@@ -512,6 +655,7 @@ function confirmRiskSettings() {
       </button>
 
       <button
+        v-if="isContractTrade"
         type="button"
         class="risk-trigger"
         :disabled="submitDisabled"
@@ -527,7 +671,10 @@ function confirmRiskSettings() {
       <div class="account-lines">
         <span>{{ isSpotTrade ? t('trade.canSell') : t('trade.canOpenShort') }}</span>
         <strong>{{ shortPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
-        <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        <template v-if="isContractTrade">
+          <span>{{ t('trade.margin') }}</span>
+          <strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        </template>
       </div>
       <button
         class="wide-action wide-action--sell"
@@ -1173,6 +1320,99 @@ function confirmRiskSettings() {
   margin: 24px 0 14px;
   font-size: 0.85rem;
   font-weight: 500;
+}
+
+.seconds-panel h3 {
+  margin: 18px 0 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.seconds-panel .duration-grid button.active {
+  border: 1px solid var(--border-strong);
+  background: var(--selection-bg);
+  color: var(--text-strong);
+}
+
+.seconds-panel .duration-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.seconds-panel .duration-grid button {
+  display: flex;
+  min-width: 0;
+  min-height: 58px;
+  gap: 3px;
+  padding: 7px 4px;
+  border: 1px solid var(--divider-visible);
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.seconds-panel .duration-grid strong {
+  font-size: 0.82rem;
+  line-height: 1.1;
+}
+
+.seconds-panel .duration-grid span {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 0.52rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seconds-summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 12px;
+  margin: 16px 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.seconds-summary strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.seconds-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.seconds-actions .wide-action {
+  margin-top: 0;
+}
+
+.contract-meta {
+  display: flex;
+  min-height: 38px;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--divider-visible);
+  border-radius: 10px;
+  background: var(--panel-bg-soft);
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.contract-meta strong {
+  color: var(--text);
+  font-size: 0.7rem;
+}
+
+.contract-meta span {
+  color: var(--muted);
+  font-size: 0.6rem;
+  text-align: right;
 }
 
 .mini-chart {
