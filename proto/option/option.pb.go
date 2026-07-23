@@ -5518,8 +5518,8 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"GetAccount\x12\x15.option.GetAccountReq\x1a\x16.option.GetAccountResp\x12A\n" +
 	"\fListAccounts\x12\x17.option.ListAccountsReq\x1a\x18.option.ListAccountsResp\x122\n" +
 	"\aGetBill\x12\x12.option.GetBillReq\x1a\x13.option.GetBillResp\x128\n" +
-	"\tListBills\x12\x14.option.ListBillsReq\x1a\x15.option.ListBillsResp2U\n" +
-	"\bInternal\x12I\n" +
+	"\tListBills\x12\x14.option.ListBillsReq\x1a\x15.option.ListBillsResp2S\n" +
+	"\x06Option\x12I\n" +
 	"\x0fSyncMarketQuote\x12\x1a.option.SyncMarketQuoteReq\x1a\x1a.option.InternalCommonResp2\x98\x01\n" +
 	"\x04Task\x12I\n" +
 	"\x18ProcessContractLifecycle\x12\x15.option.OptionTaskReq\x1a\x16.option.OptionTaskResp\x12E\n" +
@@ -5811,7 +5811,7 @@ var file_proto_option_option_proto_depIdxs = []int32{
 	65,  // 163: option.Admin.ListAccounts:input_type -> option.ListAccountsReq
 	67,  // 164: option.Admin.GetBill:input_type -> option.GetBillReq
 	69,  // 165: option.Admin.ListBills:input_type -> option.ListBillsReq
-	71,  // 166: option.Internal.SyncMarketQuote:input_type -> option.SyncMarketQuoteReq
+	71,  // 166: option.Option.SyncMarketQuote:input_type -> option.SyncMarketQuoteReq
 	73,  // 167: option.Task.ProcessContractLifecycle:input_type -> option.OptionTaskReq
 	73,  // 168: option.Task.CleanMarketSnapshots:input_type -> option.OptionTaskReq
 	2,   // 169: option.App.ListContracts:output_type -> option.UserListContractsResp
@@ -5849,7 +5849,7 @@ var file_proto_option_option_proto_depIdxs = []int32{
 	66,  // 201: option.Admin.ListAccounts:output_type -> option.ListAccountsResp
 	68,  // 202: option.Admin.GetBill:output_type -> option.GetBillResp
 	70,  // 203: option.Admin.ListBills:output_type -> option.ListBillsResp
-	72,  // 204: option.Internal.SyncMarketQuote:output_type -> option.InternalCommonResp
+	72,  // 204: option.Option.SyncMarketQuote:output_type -> option.InternalCommonResp
 	74,  // 205: option.Task.ProcessContractLifecycle:output_type -> option.OptionTaskResp
 	74,  // 206: option.Task.CleanMarketSnapshots:output_type -> option.OptionTaskResp
 	169, // [169:207] is the sub-list for method output_type

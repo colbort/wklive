@@ -11154,8 +11154,8 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x1aRetrySettlementInstruction\x12$.trade.RetrySettlementInstructionReq\x1a\x11.trade.CommonResp\x12O\n" +
 	"\x17SetInsuranceFundAccount\x12!.trade.SetInsuranceFundAccountReq\x1a\x11.trade.CommonResp\x12l\n" +
 	"\x1bGetInsuranceFundAccountList\x12%.trade.GetInsuranceFundAccountListReq\x1a&.trade.GetInsuranceFundAccountListResp\x12Z\n" +
-	"\x15GetMarketSnapshotList\x12\x1f.trade.GetMarketSnapshotListReq\x1a .trade.GetMarketSnapshotListResp2\xf1\x01\n" +
-	"\bInternal\x12S\n" +
+	"\x15GetMarketSnapshotList\x12\x1f.trade.GetMarketSnapshotListReq\x1a .trade.GetMarketSnapshotListResp2\xee\x01\n" +
+	"\x05Trade\x12S\n" +
 	"\x15RecordPositionHistory\x12\x1f.trade.RecordPositionHistoryReq\x1a\x19.trade.InternalCommonResp\x12I\n" +
 	"\x10CreateTradeEvent\x12\x1a.trade.CreateTradeEventReq\x1a\x19.trade.InternalCommonResp\x12E\n" +
 	"\x0eCheckOrderRisk\x12\x18.trade.CheckOrderRiskReq\x1a\x19.trade.CheckOrderRiskResp2\xd1\x02\n" +
@@ -11671,9 +11671,9 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	105, // 302: trade.Admin.SetInsuranceFundAccount:input_type -> trade.SetInsuranceFundAccountReq
 	106, // 303: trade.Admin.GetInsuranceFundAccountList:input_type -> trade.GetInsuranceFundAccountListReq
 	109, // 304: trade.Admin.GetMarketSnapshotList:input_type -> trade.GetMarketSnapshotListReq
-	120, // 305: trade.Internal.RecordPositionHistory:input_type -> trade.RecordPositionHistoryReq
-	121, // 306: trade.Internal.CreateTradeEvent:input_type -> trade.CreateTradeEventReq
-	122, // 307: trade.Internal.CheckOrderRisk:input_type -> trade.CheckOrderRiskReq
+	120, // 305: trade.Trade.RecordPositionHistory:input_type -> trade.RecordPositionHistoryReq
+	121, // 306: trade.Trade.CreateTradeEvent:input_type -> trade.CreateTradeEventReq
+	122, // 307: trade.Trade.CheckOrderRisk:input_type -> trade.CheckOrderRiskReq
 	124, // 308: trade.Task.ProcessOrderMatching:input_type -> trade.TradeTaskReq
 	124, // 309: trade.Task.ProcessPositions:input_type -> trade.TradeTaskReq
 	124, // 310: trade.Task.ProcessContractSettlements:input_type -> trade.TradeTaskReq
@@ -11739,9 +11739,9 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	25,  // 370: trade.Admin.SetInsuranceFundAccount:output_type -> trade.CommonResp
 	107, // 371: trade.Admin.GetInsuranceFundAccountList:output_type -> trade.GetInsuranceFundAccountListResp
 	110, // 372: trade.Admin.GetMarketSnapshotList:output_type -> trade.GetMarketSnapshotListResp
-	118, // 373: trade.Internal.RecordPositionHistory:output_type -> trade.InternalCommonResp
-	118, // 374: trade.Internal.CreateTradeEvent:output_type -> trade.InternalCommonResp
-	123, // 375: trade.Internal.CheckOrderRisk:output_type -> trade.CheckOrderRiskResp
+	118, // 373: trade.Trade.RecordPositionHistory:output_type -> trade.InternalCommonResp
+	118, // 374: trade.Trade.CreateTradeEvent:output_type -> trade.InternalCommonResp
+	123, // 375: trade.Trade.CheckOrderRisk:output_type -> trade.CheckOrderRiskResp
 	125, // 376: trade.Task.ProcessOrderMatching:output_type -> trade.TradeTaskResp
 	125, // 377: trade.Task.ProcessPositions:output_type -> trade.TradeTaskResp
 	125, // 378: trade.Task.ProcessContractSettlements:output_type -> trade.TradeTaskResp

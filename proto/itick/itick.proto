@@ -165,7 +165,7 @@ service App {
 
 // ItickInternal exposes service-to-service market-data capabilities. Public
 // API gateways should continue to use ItickApp.
-service Internal {
+service Itick {
   // Reads an authoritative snapshot from the permanent archive at or before
   // the requested business timestamp.
   rpc GetAuthoritativeSnapshot(GetAuthoritativeSnapshotReq) returns (GetAuthoritativeSnapshotResp);

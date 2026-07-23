@@ -2625,17 +2625,17 @@ var App_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Internal_SysConfigDetail_FullMethodName     = "/system.Internal/SysConfigDetail"
-	Internal_SysConfigByKeys_FullMethodName     = "/system.Internal/SysConfigByKeys"
-	Internal_SysTenantList_FullMethodName       = "/system.Internal/SysTenantList"
-	Internal_SysTenantDetail_FullMethodName     = "/system.Internal/SysTenantDetail"
-	Internal_ResolveTenantDomain_FullMethodName = "/system.Internal/ResolveTenantDomain"
+	System_SysConfigDetail_FullMethodName     = "/system.System/SysConfigDetail"
+	System_SysConfigByKeys_FullMethodName     = "/system.System/SysConfigByKeys"
+	System_SysTenantList_FullMethodName       = "/system.System/SysTenantList"
+	System_SysTenantDetail_FullMethodName     = "/system.System/SysTenantDetail"
+	System_ResolveTenantDomain_FullMethodName = "/system.System/ResolveTenantDomain"
 )
 
-// InternalClient is the client API for Internal service.
+// SystemClient is the client API for System service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type InternalClient interface {
+type SystemClient interface {
 	SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error)
 	SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error)
 	SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
@@ -2643,235 +2643,235 @@ type InternalClient interface {
 	ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error)
 }
 
-type internalClient struct {
+type systemClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewInternalClient(cc grpc.ClientConnInterface) InternalClient {
-	return &internalClient{cc}
+func NewSystemClient(cc grpc.ClientConnInterface) SystemClient {
+	return &systemClient{cc}
 }
 
-func (c *internalClient) SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error) {
+func (c *systemClient) SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysConfigDetailResp)
-	err := c.cc.Invoke(ctx, Internal_SysConfigDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, System_SysConfigDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *internalClient) SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error) {
+func (c *systemClient) SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysConfigByKeysResp)
-	err := c.cc.Invoke(ctx, Internal_SysConfigByKeys_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, System_SysConfigByKeys_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *internalClient) SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error) {
+func (c *systemClient) SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysTenantListResp)
-	err := c.cc.Invoke(ctx, Internal_SysTenantList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, System_SysTenantList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *internalClient) SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error) {
+func (c *systemClient) SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysTenantDetailResp)
-	err := c.cc.Invoke(ctx, Internal_SysTenantDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, System_SysTenantDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *internalClient) ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error) {
+func (c *systemClient) ResolveTenantDomain(ctx context.Context, in *ResolveTenantDomainReq, opts ...grpc.CallOption) (*ResolveTenantDomainResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ResolveTenantDomainResp)
-	err := c.cc.Invoke(ctx, Internal_ResolveTenantDomain_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, System_ResolveTenantDomain_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// InternalServer is the server API for Internal service.
-// All implementations must embed UnimplementedInternalServer
+// SystemServer is the server API for System service.
+// All implementations must embed UnimplementedSystemServer
 // for forward compatibility.
-type InternalServer interface {
+type SystemServer interface {
 	SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error)
 	SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error)
 	SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error)
 	SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error)
 	ResolveTenantDomain(context.Context, *ResolveTenantDomainReq) (*ResolveTenantDomainResp, error)
-	mustEmbedUnimplementedInternalServer()
+	mustEmbedUnimplementedSystemServer()
 }
 
-// UnimplementedInternalServer must be embedded to have
+// UnimplementedSystemServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedInternalServer struct{}
+type UnimplementedSystemServer struct{}
 
-func (UnimplementedInternalServer) SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error) {
+func (UnimplementedSystemServer) SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysConfigDetail not implemented")
 }
-func (UnimplementedInternalServer) SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error) {
+func (UnimplementedSystemServer) SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysConfigByKeys not implemented")
 }
-func (UnimplementedInternalServer) SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error) {
+func (UnimplementedSystemServer) SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantList not implemented")
 }
-func (UnimplementedInternalServer) SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error) {
+func (UnimplementedSystemServer) SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantDetail not implemented")
 }
-func (UnimplementedInternalServer) ResolveTenantDomain(context.Context, *ResolveTenantDomainReq) (*ResolveTenantDomainResp, error) {
+func (UnimplementedSystemServer) ResolveTenantDomain(context.Context, *ResolveTenantDomainReq) (*ResolveTenantDomainResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResolveTenantDomain not implemented")
 }
-func (UnimplementedInternalServer) mustEmbedUnimplementedInternalServer() {}
-func (UnimplementedInternalServer) testEmbeddedByValue()                  {}
+func (UnimplementedSystemServer) mustEmbedUnimplementedSystemServer() {}
+func (UnimplementedSystemServer) testEmbeddedByValue()                {}
 
-// UnsafeInternalServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to InternalServer will
+// UnsafeSystemServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SystemServer will
 // result in compilation errors.
-type UnsafeInternalServer interface {
-	mustEmbedUnimplementedInternalServer()
+type UnsafeSystemServer interface {
+	mustEmbedUnimplementedSystemServer()
 }
 
-func RegisterInternalServer(s grpc.ServiceRegistrar, srv InternalServer) {
-	// If the following call panics, it indicates UnimplementedInternalServer was
+func RegisterSystemServer(s grpc.ServiceRegistrar, srv SystemServer) {
+	// If the following call panics, it indicates UnimplementedSystemServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Internal_ServiceDesc, srv)
+	s.RegisterService(&System_ServiceDesc, srv)
 }
 
-func _Internal_SysConfigDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _System_SysConfigDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysConfigDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).SysConfigDetail(ctx, in)
+		return srv.(SystemServer).SysConfigDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_SysConfigDetail_FullMethodName,
+		FullMethod: System_SysConfigDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).SysConfigDetail(ctx, req.(*SysConfigDetailReq))
+		return srv.(SystemServer).SysConfigDetail(ctx, req.(*SysConfigDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Internal_SysConfigByKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _System_SysConfigByKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysConfigByKeysReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).SysConfigByKeys(ctx, in)
+		return srv.(SystemServer).SysConfigByKeys(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_SysConfigByKeys_FullMethodName,
+		FullMethod: System_SysConfigByKeys_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).SysConfigByKeys(ctx, req.(*SysConfigByKeysReq))
+		return srv.(SystemServer).SysConfigByKeys(ctx, req.(*SysConfigByKeysReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Internal_SysTenantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _System_SysTenantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).SysTenantList(ctx, in)
+		return srv.(SystemServer).SysTenantList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_SysTenantList_FullMethodName,
+		FullMethod: System_SysTenantList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).SysTenantList(ctx, req.(*SysTenantListReq))
+		return srv.(SystemServer).SysTenantList(ctx, req.(*SysTenantListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Internal_SysTenantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _System_SysTenantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysTenantDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).SysTenantDetail(ctx, in)
+		return srv.(SystemServer).SysTenantDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_SysTenantDetail_FullMethodName,
+		FullMethod: System_SysTenantDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).SysTenantDetail(ctx, req.(*SysTenantDetailReq))
+		return srv.(SystemServer).SysTenantDetail(ctx, req.(*SysTenantDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Internal_ResolveTenantDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _System_ResolveTenantDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResolveTenantDomainReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).ResolveTenantDomain(ctx, in)
+		return srv.(SystemServer).ResolveTenantDomain(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_ResolveTenantDomain_FullMethodName,
+		FullMethod: System_ResolveTenantDomain_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).ResolveTenantDomain(ctx, req.(*ResolveTenantDomainReq))
+		return srv.(SystemServer).ResolveTenantDomain(ctx, req.(*ResolveTenantDomainReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Internal_ServiceDesc is the grpc.ServiceDesc for Internal service.
+// System_ServiceDesc is the grpc.ServiceDesc for System service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Internal_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "system.Internal",
-	HandlerType: (*InternalServer)(nil),
+var System_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "system.System",
+	HandlerType: (*SystemServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SysConfigDetail",
-			Handler:    _Internal_SysConfigDetail_Handler,
+			Handler:    _System_SysConfigDetail_Handler,
 		},
 		{
 			MethodName: "SysConfigByKeys",
-			Handler:    _Internal_SysConfigByKeys_Handler,
+			Handler:    _System_SysConfigByKeys_Handler,
 		},
 		{
 			MethodName: "SysTenantList",
-			Handler:    _Internal_SysTenantList_Handler,
+			Handler:    _System_SysTenantList_Handler,
 		},
 		{
 			MethodName: "SysTenantDetail",
-			Handler:    _Internal_SysTenantDetail_Handler,
+			Handler:    _System_SysTenantDetail_Handler,
 		},
 		{
 			MethodName: "ResolveTenantDomain",
-			Handler:    _Internal_ResolveTenantDomain_Handler,
+			Handler:    _System_ResolveTenantDomain_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

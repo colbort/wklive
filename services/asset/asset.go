@@ -13,7 +13,7 @@ import (
 
 	admin "wklive/services/asset/internal/server/admin"
 	app "wklive/services/asset/internal/server/app"
-	internal "wklive/services/asset/internal/server/internal"
+	assets "wklive/services/asset/internal/server/asset"
 
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -42,7 +42,7 @@ func main() {
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		asset.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
 		asset.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
-		asset.RegisterInternalServer(grpcServer, internal.NewInternalServer(svcCtx))
+		asset.RegisterAssetServer(grpcServer, assets.NewAssetServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

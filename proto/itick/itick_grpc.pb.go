@@ -415,111 +415,111 @@ var App_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Internal_GetAuthoritativeSnapshot_FullMethodName = "/itick.Internal/GetAuthoritativeSnapshot"
+	Itick_GetAuthoritativeSnapshot_FullMethodName = "/itick.Itick/GetAuthoritativeSnapshot"
 )
 
-// InternalClient is the client API for Internal service.
+// ItickClient is the client API for Itick service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // ItickInternal exposes service-to-service market-data capabilities. Public
 // API gateways should continue to use ItickApp.
-type InternalClient interface {
+type ItickClient interface {
 	// Reads an authoritative snapshot from the permanent archive at or before
 	// the requested business timestamp.
 	GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error)
 }
 
-type internalClient struct {
+type itickClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewInternalClient(cc grpc.ClientConnInterface) InternalClient {
-	return &internalClient{cc}
+func NewItickClient(cc grpc.ClientConnInterface) ItickClient {
+	return &itickClient{cc}
 }
 
-func (c *internalClient) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
+func (c *itickClient) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAuthoritativeSnapshotResp)
-	err := c.cc.Invoke(ctx, Internal_GetAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Itick_GetAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// InternalServer is the server API for Internal service.
-// All implementations must embed UnimplementedInternalServer
+// ItickServer is the server API for Itick service.
+// All implementations must embed UnimplementedItickServer
 // for forward compatibility.
 //
 // ItickInternal exposes service-to-service market-data capabilities. Public
 // API gateways should continue to use ItickApp.
-type InternalServer interface {
+type ItickServer interface {
 	// Reads an authoritative snapshot from the permanent archive at or before
 	// the requested business timestamp.
 	GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error)
-	mustEmbedUnimplementedInternalServer()
+	mustEmbedUnimplementedItickServer()
 }
 
-// UnimplementedInternalServer must be embedded to have
+// UnimplementedItickServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedInternalServer struct{}
+type UnimplementedItickServer struct{}
 
-func (UnimplementedInternalServer) GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error) {
+func (UnimplementedItickServer) GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAuthoritativeSnapshot not implemented")
 }
-func (UnimplementedInternalServer) mustEmbedUnimplementedInternalServer() {}
-func (UnimplementedInternalServer) testEmbeddedByValue()                  {}
+func (UnimplementedItickServer) mustEmbedUnimplementedItickServer() {}
+func (UnimplementedItickServer) testEmbeddedByValue()               {}
 
-// UnsafeInternalServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to InternalServer will
+// UnsafeItickServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ItickServer will
 // result in compilation errors.
-type UnsafeInternalServer interface {
-	mustEmbedUnimplementedInternalServer()
+type UnsafeItickServer interface {
+	mustEmbedUnimplementedItickServer()
 }
 
-func RegisterInternalServer(s grpc.ServiceRegistrar, srv InternalServer) {
-	// If the following call panics, it indicates UnimplementedInternalServer was
+func RegisterItickServer(s grpc.ServiceRegistrar, srv ItickServer) {
+	// If the following call panics, it indicates UnimplementedItickServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Internal_ServiceDesc, srv)
+	s.RegisterService(&Itick_ServiceDesc, srv)
 }
 
-func _Internal_GetAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Itick_GetAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAuthoritativeSnapshotReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).GetAuthoritativeSnapshot(ctx, in)
+		return srv.(ItickServer).GetAuthoritativeSnapshot(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_GetAuthoritativeSnapshot_FullMethodName,
+		FullMethod: Itick_GetAuthoritativeSnapshot_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).GetAuthoritativeSnapshot(ctx, req.(*GetAuthoritativeSnapshotReq))
+		return srv.(ItickServer).GetAuthoritativeSnapshot(ctx, req.(*GetAuthoritativeSnapshotReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Internal_ServiceDesc is the grpc.ServiceDesc for Internal service.
+// Itick_ServiceDesc is the grpc.ServiceDesc for Itick service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Internal_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "itick.Internal",
-	HandlerType: (*InternalServer)(nil),
+var Itick_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "itick.Itick",
+	HandlerType: (*ItickServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetAuthoritativeSnapshot",
-			Handler:    _Internal_GetAuthoritativeSnapshot_Handler,
+			Handler:    _Itick_GetAuthoritativeSnapshot_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

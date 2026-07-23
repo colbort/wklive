@@ -865,7 +865,7 @@ service App {
   rpc SysTenantDetail(SysTenantDetailReq) returns (SysTenantDetailResp);
 }
 
-service Internal {
+service System {
   rpc SysConfigDetail(SysConfigDetailReq) returns (SysConfigDetailResp);
   rpc SysConfigByKeys(SysConfigByKeysReq) returns (SysConfigByKeysResp);
   rpc SysTenantList(SysTenantListReq) returns (SysTenantListResp);

@@ -12,8 +12,8 @@ import (
 	logic "wklive/services/trade/internal/logic/task"
 	admin "wklive/services/trade/internal/server/admin"
 	app "wklive/services/trade/internal/server/app"
-	internal "wklive/services/trade/internal/server/internal"
 	task "wklive/services/trade/internal/server/task"
+	trades "wklive/services/trade/internal/server/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/internal/tasks"
 
@@ -57,7 +57,7 @@ func main() {
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		trade.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
 		trade.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
-		trade.RegisterInternalServer(grpcServer, internal.NewInternalServer(svcCtx))
+		trade.RegisterTradeServer(grpcServer, trades.NewTradeServer(svcCtx))
 		trade.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {

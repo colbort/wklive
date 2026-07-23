@@ -2539,17 +2539,17 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Internal_RecordPositionHistory_FullMethodName = "/trade.Internal/RecordPositionHistory"
-	Internal_CreateTradeEvent_FullMethodName      = "/trade.Internal/CreateTradeEvent"
-	Internal_CheckOrderRisk_FullMethodName        = "/trade.Internal/CheckOrderRisk"
+	Trade_RecordPositionHistory_FullMethodName = "/trade.Trade/RecordPositionHistory"
+	Trade_CreateTradeEvent_FullMethodName      = "/trade.Trade/CreateTradeEvent"
+	Trade_CheckOrderRisk_FullMethodName        = "/trade.Trade/CheckOrderRisk"
 )
 
-// InternalClient is the client API for Internal service.
+// TradeClient is the client API for Trade service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 交易服务内部接口
-type InternalClient interface {
+type TradeClient interface {
 	// 记录持仓历史信息
 	RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
 	// 创建交易事件
@@ -2558,168 +2558,168 @@ type InternalClient interface {
 	CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq, opts ...grpc.CallOption) (*CheckOrderRiskResp, error)
 }
 
-type internalClient struct {
+type tradeClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewInternalClient(cc grpc.ClientConnInterface) InternalClient {
-	return &internalClient{cc}
+func NewTradeClient(cc grpc.ClientConnInterface) TradeClient {
+	return &tradeClient{cc}
 }
 
-func (c *internalClient) RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
+func (c *tradeClient) RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InternalCommonResp)
-	err := c.cc.Invoke(ctx, Internal_RecordPositionHistory_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Trade_RecordPositionHistory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *internalClient) CreateTradeEvent(ctx context.Context, in *CreateTradeEventReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
+func (c *tradeClient) CreateTradeEvent(ctx context.Context, in *CreateTradeEventReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InternalCommonResp)
-	err := c.cc.Invoke(ctx, Internal_CreateTradeEvent_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Trade_CreateTradeEvent_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *internalClient) CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq, opts ...grpc.CallOption) (*CheckOrderRiskResp, error) {
+func (c *tradeClient) CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq, opts ...grpc.CallOption) (*CheckOrderRiskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CheckOrderRiskResp)
-	err := c.cc.Invoke(ctx, Internal_CheckOrderRisk_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Trade_CheckOrderRisk_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// InternalServer is the server API for Internal service.
-// All implementations must embed UnimplementedInternalServer
+// TradeServer is the server API for Trade service.
+// All implementations must embed UnimplementedTradeServer
 // for forward compatibility.
 //
 // 交易服务内部接口
-type InternalServer interface {
+type TradeServer interface {
 	// 记录持仓历史信息
 	RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error)
 	// 创建交易事件
 	CreateTradeEvent(context.Context, *CreateTradeEventReq) (*InternalCommonResp, error)
 	// 校验订单风控
 	CheckOrderRisk(context.Context, *CheckOrderRiskReq) (*CheckOrderRiskResp, error)
-	mustEmbedUnimplementedInternalServer()
+	mustEmbedUnimplementedTradeServer()
 }
 
-// UnimplementedInternalServer must be embedded to have
+// UnimplementedTradeServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedInternalServer struct{}
+type UnimplementedTradeServer struct{}
 
-func (UnimplementedInternalServer) RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error) {
+func (UnimplementedTradeServer) RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RecordPositionHistory not implemented")
 }
-func (UnimplementedInternalServer) CreateTradeEvent(context.Context, *CreateTradeEventReq) (*InternalCommonResp, error) {
+func (UnimplementedTradeServer) CreateTradeEvent(context.Context, *CreateTradeEventReq) (*InternalCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTradeEvent not implemented")
 }
-func (UnimplementedInternalServer) CheckOrderRisk(context.Context, *CheckOrderRiskReq) (*CheckOrderRiskResp, error) {
+func (UnimplementedTradeServer) CheckOrderRisk(context.Context, *CheckOrderRiskReq) (*CheckOrderRiskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CheckOrderRisk not implemented")
 }
-func (UnimplementedInternalServer) mustEmbedUnimplementedInternalServer() {}
-func (UnimplementedInternalServer) testEmbeddedByValue()                  {}
+func (UnimplementedTradeServer) mustEmbedUnimplementedTradeServer() {}
+func (UnimplementedTradeServer) testEmbeddedByValue()               {}
 
-// UnsafeInternalServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to InternalServer will
+// UnsafeTradeServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TradeServer will
 // result in compilation errors.
-type UnsafeInternalServer interface {
-	mustEmbedUnimplementedInternalServer()
+type UnsafeTradeServer interface {
+	mustEmbedUnimplementedTradeServer()
 }
 
-func RegisterInternalServer(s grpc.ServiceRegistrar, srv InternalServer) {
-	// If the following call panics, it indicates UnimplementedInternalServer was
+func RegisterTradeServer(s grpc.ServiceRegistrar, srv TradeServer) {
+	// If the following call panics, it indicates UnimplementedTradeServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Internal_ServiceDesc, srv)
+	s.RegisterService(&Trade_ServiceDesc, srv)
 }
 
-func _Internal_RecordPositionHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Trade_RecordPositionHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RecordPositionHistoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).RecordPositionHistory(ctx, in)
+		return srv.(TradeServer).RecordPositionHistory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_RecordPositionHistory_FullMethodName,
+		FullMethod: Trade_RecordPositionHistory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).RecordPositionHistory(ctx, req.(*RecordPositionHistoryReq))
+		return srv.(TradeServer).RecordPositionHistory(ctx, req.(*RecordPositionHistoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Internal_CreateTradeEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Trade_CreateTradeEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTradeEventReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).CreateTradeEvent(ctx, in)
+		return srv.(TradeServer).CreateTradeEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_CreateTradeEvent_FullMethodName,
+		FullMethod: Trade_CreateTradeEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).CreateTradeEvent(ctx, req.(*CreateTradeEventReq))
+		return srv.(TradeServer).CreateTradeEvent(ctx, req.(*CreateTradeEventReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Internal_CheckOrderRisk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Trade_CheckOrderRisk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckOrderRiskReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).CheckOrderRisk(ctx, in)
+		return srv.(TradeServer).CheckOrderRisk(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_CheckOrderRisk_FullMethodName,
+		FullMethod: Trade_CheckOrderRisk_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).CheckOrderRisk(ctx, req.(*CheckOrderRiskReq))
+		return srv.(TradeServer).CheckOrderRisk(ctx, req.(*CheckOrderRiskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Internal_ServiceDesc is the grpc.ServiceDesc for Internal service.
+// Trade_ServiceDesc is the grpc.ServiceDesc for Trade service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Internal_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "trade.Internal",
-	HandlerType: (*InternalServer)(nil),
+var Trade_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "trade.Trade",
+	HandlerType: (*TradeServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "RecordPositionHistory",
-			Handler:    _Internal_RecordPositionHistory_Handler,
+			Handler:    _Trade_RecordPositionHistory_Handler,
 		},
 		{
 			MethodName: "CreateTradeEvent",
-			Handler:    _Internal_CreateTradeEvent_Handler,
+			Handler:    _Trade_CreateTradeEvent_Handler,
 		},
 		{
 			MethodName: "CheckOrderRisk",
-			Handler:    _Internal_CheckOrderRisk_Handler,
+			Handler:    _Trade_CheckOrderRisk_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

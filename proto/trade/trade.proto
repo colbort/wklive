@@ -1208,7 +1208,7 @@ message RetrySettlementInstructionReq {
 }
 
 // 交易服务内部接口
-service Internal {
+service Trade {
   // 记录持仓历史信息
   rpc RecordPositionHistory(RecordPositionHistoryReq) returns (InternalCommonResp);
 

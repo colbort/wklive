@@ -10,7 +10,7 @@ import (
 	"wklive/services/chat/internal/helper"
 	admin "wklive/services/chat/internal/server/admin"
 	app "wklive/services/chat/internal/server/app"
-	internal "wklive/services/chat/internal/server/internal"
+	chats "wklive/services/chat/internal/server/chat"
 	"wklive/services/chat/internal/svc"
 
 	"wklive/common/etcd"
@@ -44,7 +44,7 @@ func main() {
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		chat.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
 		chat.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
-		chat.RegisterInternalServer(grpcServer, internal.NewInternalServer(svcCtx))
+		chat.RegisterChatServer(grpcServer, chats.NewChatServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

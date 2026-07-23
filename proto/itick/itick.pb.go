@@ -5542,8 +5542,8 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\rBatchGetQuote\x12\x17.itick.BatchGetQuoteReq\x1a\x18.itick.BatchGetQuoteResp\x12c\n" +
 	"\x18GetAuthoritativeSnapshot\x12\".itick.GetAuthoritativeSnapshotReq\x1a#.itick.GetAuthoritativeSnapshotResp\x12>\n" +
 	"\x0fSubscribeStream\x12\x17.itick.SubscribeRequest\x1a\x10.itick.PushReply0\x01\x12<\n" +
-	"\x11GetKlineIntervals\x12\f.itick.Empty\x1a\x19.itick.KlineIntervalsResp2o\n" +
-	"\bInternal\x12c\n" +
+	"\x11GetKlineIntervals\x12\f.itick.Empty\x1a\x19.itick.KlineIntervalsResp2l\n" +
+	"\x05Itick\x12c\n" +
 	"\x18GetAuthoritativeSnapshot\x12\".itick.GetAuthoritativeSnapshotReq\x1a#.itick.GetAuthoritativeSnapshotResp2\xfc\x11\n" +
 	"\x05Admin\x12E\n" +
 	"\x0eListCategories\x12\x18.itick.ListCategoriesReq\x1a\x19.itick.ListCategoriesResp\x12=\n" +
@@ -5804,7 +5804,7 @@ var file_proto_itick_itick_proto_depIdxs = []int32{
 	13,  // 110: itick.App.GetAuthoritativeSnapshot:input_type -> itick.GetAuthoritativeSnapshotReq
 	15,  // 111: itick.App.SubscribeStream:input_type -> itick.SubscribeRequest
 	0,   // 112: itick.App.GetKlineIntervals:input_type -> itick.Empty
-	13,  // 113: itick.Internal.GetAuthoritativeSnapshot:input_type -> itick.GetAuthoritativeSnapshotReq
+	13,  // 113: itick.Itick.GetAuthoritativeSnapshot:input_type -> itick.GetAuthoritativeSnapshotReq
 	25,  // 114: itick.Admin.ListCategories:input_type -> itick.ListCategoriesReq
 	21,  // 115: itick.Admin.CreateCategory:input_type -> itick.CreateCategoryReq
 	22,  // 116: itick.Admin.UpdateCategory:input_type -> itick.UpdateCategoryReq
@@ -5845,7 +5845,7 @@ var file_proto_itick_itick_proto_depIdxs = []int32{
 	14,  // 151: itick.App.GetAuthoritativeSnapshot:output_type -> itick.GetAuthoritativeSnapshotResp
 	17,  // 152: itick.App.SubscribeStream:output_type -> itick.PushReply
 	19,  // 153: itick.App.GetKlineIntervals:output_type -> itick.KlineIntervalsResp
-	14,  // 154: itick.Internal.GetAuthoritativeSnapshot:output_type -> itick.GetAuthoritativeSnapshotResp
+	14,  // 154: itick.Itick.GetAuthoritativeSnapshot:output_type -> itick.GetAuthoritativeSnapshotResp
 	26,  // 155: itick.Admin.ListCategories:output_type -> itick.ListCategoriesResp
 	20,  // 156: itick.Admin.CreateCategory:output_type -> itick.CommonResp
 	20,  // 157: itick.Admin.UpdateCategory:output_type -> itick.CommonResp

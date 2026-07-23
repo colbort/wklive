@@ -1555,103 +1555,103 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Internal_SyncMarketQuote_FullMethodName = "/option.Internal/SyncMarketQuote"
+	Option_SyncMarketQuote_FullMethodName = "/option.Option/SyncMarketQuote"
 )
 
-// InternalClient is the client API for Internal service.
+// OptionClient is the client API for Option service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type InternalClient interface {
+type OptionClient interface {
 	// 同步标的行情，更新对应期权合约行情和快照。
 	SyncMarketQuote(ctx context.Context, in *SyncMarketQuoteReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
 }
 
-type internalClient struct {
+type optionClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewInternalClient(cc grpc.ClientConnInterface) InternalClient {
-	return &internalClient{cc}
+func NewOptionClient(cc grpc.ClientConnInterface) OptionClient {
+	return &optionClient{cc}
 }
 
-func (c *internalClient) SyncMarketQuote(ctx context.Context, in *SyncMarketQuoteReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
+func (c *optionClient) SyncMarketQuote(ctx context.Context, in *SyncMarketQuoteReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InternalCommonResp)
-	err := c.cc.Invoke(ctx, Internal_SyncMarketQuote_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Option_SyncMarketQuote_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// InternalServer is the server API for Internal service.
-// All implementations must embed UnimplementedInternalServer
+// OptionServer is the server API for Option service.
+// All implementations must embed UnimplementedOptionServer
 // for forward compatibility.
-type InternalServer interface {
+type OptionServer interface {
 	// 同步标的行情，更新对应期权合约行情和快照。
 	SyncMarketQuote(context.Context, *SyncMarketQuoteReq) (*InternalCommonResp, error)
-	mustEmbedUnimplementedInternalServer()
+	mustEmbedUnimplementedOptionServer()
 }
 
-// UnimplementedInternalServer must be embedded to have
+// UnimplementedOptionServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedInternalServer struct{}
+type UnimplementedOptionServer struct{}
 
-func (UnimplementedInternalServer) SyncMarketQuote(context.Context, *SyncMarketQuoteReq) (*InternalCommonResp, error) {
+func (UnimplementedOptionServer) SyncMarketQuote(context.Context, *SyncMarketQuoteReq) (*InternalCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncMarketQuote not implemented")
 }
-func (UnimplementedInternalServer) mustEmbedUnimplementedInternalServer() {}
-func (UnimplementedInternalServer) testEmbeddedByValue()                  {}
+func (UnimplementedOptionServer) mustEmbedUnimplementedOptionServer() {}
+func (UnimplementedOptionServer) testEmbeddedByValue()                {}
 
-// UnsafeInternalServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to InternalServer will
+// UnsafeOptionServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OptionServer will
 // result in compilation errors.
-type UnsafeInternalServer interface {
-	mustEmbedUnimplementedInternalServer()
+type UnsafeOptionServer interface {
+	mustEmbedUnimplementedOptionServer()
 }
 
-func RegisterInternalServer(s grpc.ServiceRegistrar, srv InternalServer) {
-	// If the following call panics, it indicates UnimplementedInternalServer was
+func RegisterOptionServer(s grpc.ServiceRegistrar, srv OptionServer) {
+	// If the following call panics, it indicates UnimplementedOptionServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Internal_ServiceDesc, srv)
+	s.RegisterService(&Option_ServiceDesc, srv)
 }
 
-func _Internal_SyncMarketQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Option_SyncMarketQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncMarketQuoteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).SyncMarketQuote(ctx, in)
+		return srv.(OptionServer).SyncMarketQuote(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_SyncMarketQuote_FullMethodName,
+		FullMethod: Option_SyncMarketQuote_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).SyncMarketQuote(ctx, req.(*SyncMarketQuoteReq))
+		return srv.(OptionServer).SyncMarketQuote(ctx, req.(*SyncMarketQuoteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Internal_ServiceDesc is the grpc.ServiceDesc for Internal service.
+// Option_ServiceDesc is the grpc.ServiceDesc for Option service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Internal_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "option.Internal",
-	HandlerType: (*InternalServer)(nil),
+var Option_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "option.Option",
+	HandlerType: (*OptionServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SyncMarketQuote",
-			Handler:    _Internal_SyncMarketQuote_Handler,
+			Handler:    _Option_SyncMarketQuote_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

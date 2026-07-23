@@ -8422,8 +8422,8 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x03App\x12J\n" +
 	"\x0fSysConfigDetail\x12\x1a.system.SysConfigDetailReq\x1a\x1b.system.SysConfigDetailResp\x12I\n" +
 	"\x14SendVerificationCode\x12\x1f.system.SendVerificationCodeReq\x1a\x10.system.RespBase\x12J\n" +
-	"\x0fSysTenantDetail\x12\x1a.system.SysTenantDetailReq\x1a\x1b.system.SysTenantDetailResp2\x8c\x03\n" +
-	"\bInternal\x12J\n" +
+	"\x0fSysTenantDetail\x12\x1a.system.SysTenantDetailReq\x1a\x1b.system.SysTenantDetailResp2\x8a\x03\n" +
+	"\x06System\x12J\n" +
 	"\x0fSysConfigDetail\x12\x1a.system.SysConfigDetailReq\x1a\x1b.system.SysConfigDetailResp\x12J\n" +
 	"\x0fSysConfigByKeys\x12\x1a.system.SysConfigByKeysReq\x1a\x1b.system.SysConfigByKeysResp\x12D\n" +
 	"\rSysTenantList\x12\x18.system.SysTenantListReq\x1a\x19.system.SysTenantListResp\x12J\n" +
@@ -8772,11 +8772,11 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	60,  // 198: system.App.SysConfigDetail:input_type -> system.SysConfigDetailReq
 	64,  // 199: system.App.SendVerificationCode:input_type -> system.SendVerificationCodeReq
 	93,  // 200: system.App.SysTenantDetail:input_type -> system.SysTenantDetailReq
-	60,  // 201: system.Internal.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	62,  // 202: system.Internal.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
-	88,  // 203: system.Internal.SysTenantList:input_type -> system.SysTenantListReq
-	93,  // 204: system.Internal.SysTenantDetail:input_type -> system.SysTenantDetailReq
-	101, // 205: system.Internal.ResolveTenantDomain:input_type -> system.ResolveTenantDomainReq
+	60,  // 201: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	62,  // 202: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
+	88,  // 203: system.System.SysTenantList:input_type -> system.SysTenantListReq
+	93,  // 204: system.System.SysTenantDetail:input_type -> system.SysTenantDetailReq
+	101, // 205: system.System.ResolveTenantDomain:input_type -> system.ResolveTenantDomainReq
 	3,   // 206: system.Admin.Login:output_type -> system.LoginResp
 	8,   // 207: system.Admin.GetProfile:output_type -> system.ProfileResp
 	1,   // 208: system.Admin.UpdateProfile:output_type -> system.RespBase
@@ -8842,11 +8842,11 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	61,  // 268: system.App.SysConfigDetail:output_type -> system.SysConfigDetailResp
 	1,   // 269: system.App.SendVerificationCode:output_type -> system.RespBase
 	94,  // 270: system.App.SysTenantDetail:output_type -> system.SysTenantDetailResp
-	61,  // 271: system.Internal.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	63,  // 272: system.Internal.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
-	89,  // 273: system.Internal.SysTenantList:output_type -> system.SysTenantListResp
-	94,  // 274: system.Internal.SysTenantDetail:output_type -> system.SysTenantDetailResp
-	102, // 275: system.Internal.ResolveTenantDomain:output_type -> system.ResolveTenantDomainResp
+	61,  // 271: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	63,  // 272: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
+	89,  // 273: system.System.SysTenantList:output_type -> system.SysTenantListResp
+	94,  // 274: system.System.SysTenantDetail:output_type -> system.SysTenantDetailResp
+	102, // 275: system.System.ResolveTenantDomain:output_type -> system.ResolveTenantDomainResp
 	206, // [206:276] is the sub-list for method output_type
 	136, // [136:206] is the sub-list for method input_type
 	136, // [136:136] is the sub-list for extension type_name

@@ -18,7 +18,7 @@ import (
 	"wklive/services/itick/internal/pkg/utils"
 	admin "wklive/services/itick/internal/server/admin"
 	app "wklive/services/itick/internal/server/app"
-	internal "wklive/services/itick/internal/server/internal"
+	iticks "wklive/services/itick/internal/server/itick"
 	task "wklive/services/itick/internal/server/task"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/internal/tasks"
@@ -126,7 +126,7 @@ func main() {
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		itick.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
 		itick.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
-		itick.RegisterInternalServer(grpcServer, internal.NewInternalServer(svcCtx))
+		itick.RegisterItickServer(grpcServer, iticks.NewItickServer(svcCtx))
 		itick.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
@@ -139,7 +139,7 @@ func main() {
 	s.Start()
 }
 
-func loadItickRuntimeConfig(ctx context.Context, cli system.InternalClient) *system.ItickConfig {
+func loadItickRuntimeConfig(ctx context.Context, cli system.SystemClient) *system.ItickConfig {
 	config := &system.ItickConfig{ReconcileIntervalMinutes: 5, ReconcileWindowBars: 30,
 		GapScanIntervalMinutes: 60, RepairBatchSize: 10, BuildingBucketTtlMinutes: 120, WsKlineStaleSeconds: 30}
 	key := system.SysConfigType_ITICK_CONFIG

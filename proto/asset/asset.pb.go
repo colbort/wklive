@@ -6189,8 +6189,8 @@ const file_proto_asset_asset_proto_rawDesc = "" +
 	"\vUnlockAsset\x12\x1b.asset.ManualUnlockAssetReq\x1a\x1c.asset.ManualChangeAssetResp\x12N\n" +
 	"\x12SetPlatformAccount\x12\x1c.asset.SetPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp\x12N\n" +
 	"\x12GetPlatformAccount\x12\x1c.asset.GetPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp\x12T\n" +
-	"\x15AdjustPlatformAccount\x12\x1f.asset.AdjustPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp2\xd2\b\n" +
-	"\bInternal\x12>\n" +
+	"\x15AdjustPlatformAccount\x12\x1f.asset.AdjustPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp2\xcf\b\n" +
+	"\x05Asset\x12>\n" +
 	"\fAddAvailable\x12\x16.asset.AddAvailableReq\x1a\x16.asset.ChangeAssetResp\x12>\n" +
 	"\fSubAvailable\x12\x16.asset.SubAvailableReq\x1a\x16.asset.ChangeAssetResp\x12<\n" +
 	"\vFreezeAsset\x12\x15.asset.FreezeAssetReq\x1a\x16.asset.FreezeAssetResp\x12@\n" +
@@ -6495,21 +6495,21 @@ var file_proto_asset_asset_proto_depIdxs = []int32{
 	18,  // 178: asset.Admin.SetPlatformAccount:input_type -> asset.SetPlatformAccountReq
 	19,  // 179: asset.Admin.GetPlatformAccount:input_type -> asset.GetPlatformAccountReq
 	20,  // 180: asset.Admin.AdjustPlatformAccount:input_type -> asset.AdjustPlatformAccountReq
-	48,  // 181: asset.Internal.AddAvailable:input_type -> asset.AddAvailableReq
-	49,  // 182: asset.Internal.SubAvailable:input_type -> asset.SubAvailableReq
-	50,  // 183: asset.Internal.FreezeAsset:input_type -> asset.FreezeAssetReq
-	53,  // 184: asset.Internal.UnfreezeAsset:input_type -> asset.UnfreezeAssetReq
-	54,  // 185: asset.Internal.UnfreezeAssetByBizNo:input_type -> asset.UnfreezeAssetByBizNoReq
-	55,  // 186: asset.Internal.DeductFrozenAsset:input_type -> asset.DeductFrozenAssetReq
-	56,  // 187: asset.Internal.DeductFrozenAssetByBizNo:input_type -> asset.DeductFrozenAssetByBizNoReq
-	57,  // 188: asset.Internal.LockAsset:input_type -> asset.LockAssetReq
-	60,  // 189: asset.Internal.UnlockAsset:input_type -> asset.UnlockAssetReq
-	61,  // 190: asset.Internal.UnlockAssetByBizNo:input_type -> asset.UnlockAssetByBizNoReq
-	62,  // 191: asset.Internal.DeductLockedAsset:input_type -> asset.DeductLockedAssetReq
-	63,  // 192: asset.Internal.DeductLockedAssetByBizNo:input_type -> asset.DeductLockedAssetByBizNoReq
-	64,  // 193: asset.Internal.TransferAsset:input_type -> asset.TransferAssetReq
-	69,  // 194: asset.Internal.CoverInsuranceDeficit:input_type -> asset.CoverInsuranceDeficitReq
-	71,  // 195: asset.Internal.ReverseInsuranceCover:input_type -> asset.ReverseInsuranceCoverReq
+	48,  // 181: asset.Asset.AddAvailable:input_type -> asset.AddAvailableReq
+	49,  // 182: asset.Asset.SubAvailable:input_type -> asset.SubAvailableReq
+	50,  // 183: asset.Asset.FreezeAsset:input_type -> asset.FreezeAssetReq
+	53,  // 184: asset.Asset.UnfreezeAsset:input_type -> asset.UnfreezeAssetReq
+	54,  // 185: asset.Asset.UnfreezeAssetByBizNo:input_type -> asset.UnfreezeAssetByBizNoReq
+	55,  // 186: asset.Asset.DeductFrozenAsset:input_type -> asset.DeductFrozenAssetReq
+	56,  // 187: asset.Asset.DeductFrozenAssetByBizNo:input_type -> asset.DeductFrozenAssetByBizNoReq
+	57,  // 188: asset.Asset.LockAsset:input_type -> asset.LockAssetReq
+	60,  // 189: asset.Asset.UnlockAsset:input_type -> asset.UnlockAssetReq
+	61,  // 190: asset.Asset.UnlockAssetByBizNo:input_type -> asset.UnlockAssetByBizNoReq
+	62,  // 191: asset.Asset.DeductLockedAsset:input_type -> asset.DeductLockedAssetReq
+	63,  // 192: asset.Asset.DeductLockedAssetByBizNo:input_type -> asset.DeductLockedAssetByBizNoReq
+	64,  // 193: asset.Asset.TransferAsset:input_type -> asset.TransferAssetReq
+	69,  // 194: asset.Asset.CoverInsuranceDeficit:input_type -> asset.CoverInsuranceDeficitReq
+	71,  // 195: asset.Asset.ReverseInsuranceCover:input_type -> asset.ReverseInsuranceCoverReq
 	1,   // 196: asset.App.ListAssetCoinConfigs:output_type -> asset.ListAssetCoinConfigsResp
 	3,   // 197: asset.App.GetMyAssetSummary:output_type -> asset.GetMyAssetSummaryResp
 	5,   // 198: asset.App.ListMyAssets:output_type -> asset.ListMyAssetsResp
@@ -6537,21 +6537,21 @@ var file_proto_asset_asset_proto_depIdxs = []int32{
 	21,  // 220: asset.Admin.SetPlatformAccount:output_type -> asset.PlatformAccountResp
 	21,  // 221: asset.Admin.GetPlatformAccount:output_type -> asset.PlatformAccountResp
 	21,  // 222: asset.Admin.AdjustPlatformAccount:output_type -> asset.PlatformAccountResp
-	67,  // 223: asset.Internal.AddAvailable:output_type -> asset.ChangeAssetResp
-	67,  // 224: asset.Internal.SubAvailable:output_type -> asset.ChangeAssetResp
-	51,  // 225: asset.Internal.FreezeAsset:output_type -> asset.FreezeAssetResp
-	67,  // 226: asset.Internal.UnfreezeAsset:output_type -> asset.ChangeAssetResp
-	67,  // 227: asset.Internal.UnfreezeAssetByBizNo:output_type -> asset.ChangeAssetResp
-	67,  // 228: asset.Internal.DeductFrozenAsset:output_type -> asset.ChangeAssetResp
-	67,  // 229: asset.Internal.DeductFrozenAssetByBizNo:output_type -> asset.ChangeAssetResp
-	58,  // 230: asset.Internal.LockAsset:output_type -> asset.LockAssetResp
-	67,  // 231: asset.Internal.UnlockAsset:output_type -> asset.ChangeAssetResp
-	67,  // 232: asset.Internal.UnlockAssetByBizNo:output_type -> asset.ChangeAssetResp
-	67,  // 233: asset.Internal.DeductLockedAsset:output_type -> asset.ChangeAssetResp
-	67,  // 234: asset.Internal.DeductLockedAssetByBizNo:output_type -> asset.ChangeAssetResp
-	65,  // 235: asset.Internal.TransferAsset:output_type -> asset.TransferAssetResp
-	70,  // 236: asset.Internal.CoverInsuranceDeficit:output_type -> asset.CoverInsuranceDeficitResp
-	67,  // 237: asset.Internal.ReverseInsuranceCover:output_type -> asset.ChangeAssetResp
+	67,  // 223: asset.Asset.AddAvailable:output_type -> asset.ChangeAssetResp
+	67,  // 224: asset.Asset.SubAvailable:output_type -> asset.ChangeAssetResp
+	51,  // 225: asset.Asset.FreezeAsset:output_type -> asset.FreezeAssetResp
+	67,  // 226: asset.Asset.UnfreezeAsset:output_type -> asset.ChangeAssetResp
+	67,  // 227: asset.Asset.UnfreezeAssetByBizNo:output_type -> asset.ChangeAssetResp
+	67,  // 228: asset.Asset.DeductFrozenAsset:output_type -> asset.ChangeAssetResp
+	67,  // 229: asset.Asset.DeductFrozenAssetByBizNo:output_type -> asset.ChangeAssetResp
+	58,  // 230: asset.Asset.LockAsset:output_type -> asset.LockAssetResp
+	67,  // 231: asset.Asset.UnlockAsset:output_type -> asset.ChangeAssetResp
+	67,  // 232: asset.Asset.UnlockAssetByBizNo:output_type -> asset.ChangeAssetResp
+	67,  // 233: asset.Asset.DeductLockedAsset:output_type -> asset.ChangeAssetResp
+	67,  // 234: asset.Asset.DeductLockedAssetByBizNo:output_type -> asset.ChangeAssetResp
+	65,  // 235: asset.Asset.TransferAsset:output_type -> asset.TransferAssetResp
+	70,  // 236: asset.Asset.CoverInsuranceDeficit:output_type -> asset.CoverInsuranceDeficitResp
+	67,  // 237: asset.Asset.ReverseInsuranceCover:output_type -> asset.ChangeAssetResp
 	196, // [196:238] is the sub-list for method output_type
 	154, // [154:196] is the sub-list for method input_type
 	154, // [154:154] is the sub-list for extension type_name

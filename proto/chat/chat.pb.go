@@ -6798,8 +6798,8 @@ const file_proto_chat_chat_proto_rawDesc = "" +
 	"\x10GetChatWorkOrder\x12\x19.chat.GetChatWorkOrderReq\x1a\x17.chat.ChatWorkOrderResp\x12O\n" +
 	"\x12PageChatWorkOrders\x12\x1b.chat.PageChatWorkOrdersReq\x1a\x1c.chat.PageChatWorkOrdersResp\x12E\n" +
 	"\x13DeleteChatWorkOrder\x12\x1c.chat.DeleteChatWorkOrderReq\x1a\x10.chat.CommonResp\x12A\n" +
-	"\x0fSubscribeStream\x12\x16.chat.SubscribeRequest\x1a\x14.chat.ChatWsResponse0\x012a\n" +
-	"\bInternal\x12U\n" +
+	"\x0fSubscribeStream\x12\x16.chat.SubscribeRequest\x1a\x14.chat.ChatWsResponse0\x012]\n" +
+	"\x04Chat\x12U\n" +
 	"\x14SyncChatMerchantUser\x12\x1d.chat.SyncChatMerchantUserReq\x1a\x1e.chat.SyncChatMerchantUserRespB\x18Z\x16wklive/proto/chat;chatb\x06proto3"
 
 var (
@@ -7124,7 +7124,7 @@ var file_proto_chat_chat_proto_depIdxs = []int32{
 	73,  // 177: chat.Admin.PageChatWorkOrders:input_type -> chat.PageChatWorkOrdersReq
 	74,  // 178: chat.Admin.DeleteChatWorkOrder:input_type -> chat.DeleteChatWorkOrderReq
 	18,  // 179: chat.Admin.SubscribeStream:input_type -> chat.SubscribeRequest
-	92,  // 180: chat.Internal.SyncChatMerchantUser:input_type -> chat.SyncChatMerchantUserReq
+	92,  // 180: chat.Chat.SyncChatMerchantUser:input_type -> chat.SyncChatMerchantUserReq
 	3,   // 181: chat.App.AuthChatMerchant:output_type -> chat.AuthChatMerchantResp
 	5,   // 182: chat.App.GetChatConfig:output_type -> chat.UserChatConfigResp
 	11,  // 183: chat.App.OpenChatSession:output_type -> chat.OpenChatSessionResp
@@ -7182,7 +7182,7 @@ var file_proto_chat_chat_proto_depIdxs = []int32{
 	83,  // 235: chat.Admin.PageChatWorkOrders:output_type -> chat.PageChatWorkOrdersResp
 	23,  // 236: chat.Admin.DeleteChatWorkOrder:output_type -> chat.CommonResp
 	125, // 237: chat.Admin.SubscribeStream:output_type -> chat.ChatWsResponse
-	93,  // 238: chat.Internal.SyncChatMerchantUser:output_type -> chat.SyncChatMerchantUserResp
+	93,  // 238: chat.Chat.SyncChatMerchantUser:output_type -> chat.SyncChatMerchantUserResp
 	181, // [181:239] is the sub-list for method output_type
 	123, // [123:181] is the sub-list for method input_type
 	123, // [123:123] is the sub-list for extension type_name

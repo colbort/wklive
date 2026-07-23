@@ -2445,109 +2445,109 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Internal_SyncChatMerchantUser_FullMethodName = "/chat.Internal/SyncChatMerchantUser"
+	Chat_SyncChatMerchantUser_FullMethodName = "/chat.Chat/SyncChatMerchantUser"
 )
 
-// InternalClient is the client API for Internal service.
+// ChatClient is the client API for Chat service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 内部客服服务
 // 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
-type InternalClient interface {
+type ChatClient interface {
 	// 同步客服商户主账号
 	SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error)
 }
 
-type internalClient struct {
+type chatClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewInternalClient(cc grpc.ClientConnInterface) InternalClient {
-	return &internalClient{cc}
+func NewChatClient(cc grpc.ClientConnInterface) ChatClient {
+	return &chatClient{cc}
 }
 
-func (c *internalClient) SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error) {
+func (c *chatClient) SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SyncChatMerchantUserResp)
-	err := c.cc.Invoke(ctx, Internal_SyncChatMerchantUser_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Chat_SyncChatMerchantUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// InternalServer is the server API for Internal service.
-// All implementations must embed UnimplementedInternalServer
+// ChatServer is the server API for Chat service.
+// All implementations must embed UnimplementedChatServer
 // for forward compatibility.
 //
 // 内部客服服务
 // 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
-type InternalServer interface {
+type ChatServer interface {
 	// 同步客服商户主账号
 	SyncChatMerchantUser(context.Context, *SyncChatMerchantUserReq) (*SyncChatMerchantUserResp, error)
-	mustEmbedUnimplementedInternalServer()
+	mustEmbedUnimplementedChatServer()
 }
 
-// UnimplementedInternalServer must be embedded to have
+// UnimplementedChatServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedInternalServer struct{}
+type UnimplementedChatServer struct{}
 
-func (UnimplementedInternalServer) SyncChatMerchantUser(context.Context, *SyncChatMerchantUserReq) (*SyncChatMerchantUserResp, error) {
+func (UnimplementedChatServer) SyncChatMerchantUser(context.Context, *SyncChatMerchantUserReq) (*SyncChatMerchantUserResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncChatMerchantUser not implemented")
 }
-func (UnimplementedInternalServer) mustEmbedUnimplementedInternalServer() {}
-func (UnimplementedInternalServer) testEmbeddedByValue()                  {}
+func (UnimplementedChatServer) mustEmbedUnimplementedChatServer() {}
+func (UnimplementedChatServer) testEmbeddedByValue()              {}
 
-// UnsafeInternalServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to InternalServer will
+// UnsafeChatServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ChatServer will
 // result in compilation errors.
-type UnsafeInternalServer interface {
-	mustEmbedUnimplementedInternalServer()
+type UnsafeChatServer interface {
+	mustEmbedUnimplementedChatServer()
 }
 
-func RegisterInternalServer(s grpc.ServiceRegistrar, srv InternalServer) {
-	// If the following call panics, it indicates UnimplementedInternalServer was
+func RegisterChatServer(s grpc.ServiceRegistrar, srv ChatServer) {
+	// If the following call panics, it indicates UnimplementedChatServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Internal_ServiceDesc, srv)
+	s.RegisterService(&Chat_ServiceDesc, srv)
 }
 
-func _Internal_SyncChatMerchantUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Chat_SyncChatMerchantUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncChatMerchantUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InternalServer).SyncChatMerchantUser(ctx, in)
+		return srv.(ChatServer).SyncChatMerchantUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Internal_SyncChatMerchantUser_FullMethodName,
+		FullMethod: Chat_SyncChatMerchantUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InternalServer).SyncChatMerchantUser(ctx, req.(*SyncChatMerchantUserReq))
+		return srv.(ChatServer).SyncChatMerchantUser(ctx, req.(*SyncChatMerchantUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Internal_ServiceDesc is the grpc.ServiceDesc for Internal service.
+// Chat_ServiceDesc is the grpc.ServiceDesc for Chat service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Internal_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "chat.Internal",
-	HandlerType: (*InternalServer)(nil),
+var Chat_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "chat.Chat",
+	HandlerType: (*ChatServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SyncChatMerchantUser",
-			Handler:    _Internal_SyncChatMerchantUser_Handler,
+			Handler:    _Chat_SyncChatMerchantUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

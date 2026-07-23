@@ -460,7 +460,7 @@ message ManualChangeAssetData {
 }
 
 // 内部资产服务
-service Internal {
+service Asset {
   // 增加可用余额
   rpc AddAvailable(AddAvailableReq) returns (ChangeAssetResp);
 

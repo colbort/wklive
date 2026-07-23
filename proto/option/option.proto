@@ -625,7 +625,7 @@ message InternalCommonResp {
   common.RespBase base = 1;
 }
 
-service Internal {
+service Option {
   // 同步标的行情，更新对应期权合约行情和快照。
   rpc SyncMarketQuote(SyncMarketQuoteReq) returns (InternalCommonResp);
 }
